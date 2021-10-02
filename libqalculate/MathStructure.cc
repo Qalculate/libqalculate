@@ -2966,6 +2966,7 @@ bool MathStructure::calculateReplace(const MathStructure &mfrom, const MathStruc
 			else if(mfrom.isLogicalAnd()) transform(STRUCT_LOGICAL_AND, mto);
 			else if(mfrom.isLogicalOr()) transform(STRUCT_LOGICAL_OR, mto);
 			calculatesub(eo, eo, false);
+			if(eo.calculate_functions && m_type == STRUCT_FUNCTION) calculateFunctions(eo, false);
 			return true;
 		}
 	}
@@ -2979,6 +2980,7 @@ bool MathStructure::calculateReplace(const MathStructure &mfrom, const MathStruc
 	}
 	if(b) {
 		calculatesub(eo, eo, false);
+		if(eo.calculate_functions && m_type == STRUCT_FUNCTION) calculateFunctions(eo, false);
 	}
 	return b;
 }

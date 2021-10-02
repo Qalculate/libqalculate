@@ -1661,6 +1661,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						mr_sinh.calculateSubtract(m_emx, eo3);
 						MathStructure mr_cosh(m_ex);
 						mr_cosh.calculateAdd(m_emx, eo3);
+						eo3.calculate_functions = false;
 						mtest[0].calculateReplace(*m_sinh, mr_sinh, eo3);
 						mtest[0].calculateReplace(*m_cosh, mr_cosh, eo3);
 						if(mtest.isolate_x_sub(eo, eo3, x_var, morig)) {
@@ -3963,17 +3964,6 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 									}
 								}
 							}
-							MathStructure *mreq3a = new MathStructure(*marg);
-							mreq3a->transformById(FUNCTION_ID_IM);
-							mreq3a->transform(ct_comp == COMPARISON_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-							mreq3a->last().negate();
-							mreq3a->last().calculatesub(eo2, eo, true);
-							mreq3a->childUpdated(2);
-							MathStructure *mreq3b = new MathStructure(*marg);
-							mreq3b->transformById(FUNCTION_ID_IM);
-							mreq3b->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-							mreq3b->last().calculatesub(eo2, eo, true);
-							mreq3b->childUpdated(2);
 							if(!mexp.isOne()) marg->calculateMultiply(mexp, eo2);
 							if(!mmul.isOne()) marg->calculateDivide(mmul, eo2);
 							MathStructure *marg2 = new MathStructure(*marg);
@@ -3982,6 +3972,12 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							marg2->addChild(m_minus_one);
 							if(marg2->calculateFunctions(eo)) marg2->calculatesub(eo2, eo, true);
 							if(!mexp.isOne()) marg2->calculateDivide(mexp, eo2);
+							MathStructure *mreq3a = new MathStructure(*marg2);
+							mreq3a->transformById(FUNCTION_ID_IM);
+							mreq3a->transform(ct_comp == COMPARISON_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+							mreq3a->last().negate();
+							mreq3a->last().calculatesub(eo2, eo, true);
+							mreq3a->childUpdated(2);
 							marg2->transform(STRUCT_POWER);
 							marg2->insertChild(CALCULATOR->getVariableById(VARIABLE_ID_E), 1);
 							(*marg2)[0].calculatesub(eo2, eo, true);
@@ -3990,6 +3986,11 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							marg3->addChild(m_one);
 							if(marg3->calculateFunctions(eo)) marg3->calculatesub(eo2, eo, true);
 							if(!mexp.isOne()) marg3->calculateDivide(mexp, eo2);
+							MathStructure *mreq3b = new MathStructure(*marg3);
+							mreq3b->transformById(FUNCTION_ID_IM);
+							mreq3b->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+							mreq3b->last().calculatesub(eo2, eo, true);
+							mreq3b->childUpdated(2);
 							marg3->transform(STRUCT_POWER);
 							marg3->insertChild(CALCULATOR->getVariableById(VARIABLE_ID_E), 1);
 							(*marg3)[0].calculatesub(eo2, eo, true);
@@ -4005,7 +4006,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							marg3->swapChildren(1, 2);
 							marg3->isolate_x_sub(eo, eo2, x_var, morig);
 							marg3->add(*mreq3b, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
-							if(mreq1) marg3->add(*mreq2, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+							if(mreq1) marg3->add(*mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 							if(mreq2) marg3->add(*mreq2, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 							marg3->calculatesub(eo2, eo, false);
 							marg->transformById(FUNCTION_ID_LAMBERT_W);
@@ -5138,7 +5139,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				}
 				return true;
 			} else if(CHILD(0).function()->id() == FUNCTION_ID_ASIN && (ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_EQUALS)) {
-				MathStructure m1(CHILD(1));
+				MathStructure m1(CHILD(1)), m2(CHILD(1));
 				CHILD(0).setToChild(1, true);
 				switch(eo.parse_options.angle_unit) {
 					case ANGLE_UNIT_DEGREES: {CHILD(1) *= CALCULATOR->getDegUnit(); break;}
@@ -5156,17 +5157,34 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				}
 				m1.transformById(FUNCTION_ID_RE);
 				if(m1.calculateFunctions(eo)) m1.calculatesub(eo2, eo, true);
+				m2.transformById(FUNCTION_ID_IM);
+				if(m2.calculateFunctions(eo)) m2.calculatesub(eo2, eo, true);
 				MathStructure *mreq1 = new MathStructure(m1);
 				MathStructure *mreq2 = new MathStructure(m1);
+				MathStructure *mreq3 = NULL, *mreq4 = NULL, *mreq5 = NULL, *mreq6 = NULL;
+				if(!m2.isZero()) {
+					if(!m1.representsNonNegative() && !m2.representsNonNegative()) {
+						mreq3 = new MathStructure(m1);
+						mreq4 = new MathStructure(m2);
+					}
+					if(!m1.representsNonPositive() && !m2.representsNonPositive()) {
+						mreq5 = new MathStructure(m1);
+						mreq6 = new MathStructure(m2);
+					}
+				}
 				switch(eo.parse_options.angle_unit) {
 					case ANGLE_UNIT_DEGREES: {
 						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, Number(90, 1));
 						mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, Number(-90, 1));
+						if(mreq3) mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, Number(-90, 1));
+						if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, Number(90, 1));
 						break;
 					}
 					case ANGLE_UNIT_GRADIANS: {
 						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, Number(100, 1));
 						mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, Number(-100, 1));
+						if(mreq3) mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, Number(-100, 1));
+						if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, Number(100, 1));
 						break;
 					}
 					default: {
@@ -5174,12 +5192,36 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 						mreq1->last() *= nr_half;
 						mreq2->last() *= nr_minus_half;
+						if(mreq3) {
+							mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+							mreq3->last() *= nr_minus_half;
+						}
+						if(mreq5) {
+							mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+							mreq5->last() *= nr_half;
+						}
 					}
 				}
+				if(mreq4) mreq4->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
+				if(mreq6) mreq6->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, m_zero);
 				mreq1->isolate_x(eo2, eo);
 				mreq2->isolate_x(eo2, eo);
 				add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 				add_nocopy(mreq2, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				if(mreq3) {
+					mreq3->isolate_x(eo2, eo);
+					mreq4->isolate_x(eo2, eo);
+					mreq3->add_nocopy(mreq4, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+					mreq3->calculatesub(eo2, eo, false);
+					add_nocopy(mreq3, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				}
+				if(mreq5) {
+					mreq5->isolate_x(eo2, eo);
+					mreq6->isolate_x(eo2, eo);
+					mreq5->add_nocopy(mreq6, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+					mreq5->calculatesub(eo2, eo, false);
+					add_nocopy(mreq5, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				}
 				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) convert(CALCULATOR->getRadUnit());
 				calculatesub(eo2, eo, false);
 				return true;
@@ -5205,40 +5247,63 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				m2.transformById(FUNCTION_ID_IM);
 				m1.transformById(FUNCTION_ID_RE);
 				if(m1.calculateFunctions(eo)) m1.calculatesub(eo2, eo, true);
+				if(m2.calculateFunctions(eo)) m2.calculatesub(eo2, eo, true);
 				MathStructure *mreq1 = new MathStructure(m1);
 				MathStructure *mreq2 = new MathStructure(m1);
-				MathStructure *mreq3 = new MathStructure(m1);
-				MathStructure *mreq4 = new MathStructure(m2);
+				MathStructure *mreq3 = NULL, *mreq4 = NULL, *mreq5 = NULL, *mreq6 = NULL;
+				if(!m2.isZero()) {
+					if(!m1.representsNonZero() && !m2.representsNonNegative()) {
+						mreq3 = new MathStructure(m1);
+						mreq4 = new MathStructure(m2);
+					}
+					if(!m2.representsNonPositive()) {
+						mreq5 = new MathStructure(m1);
+						mreq6 = new MathStructure(m2);
+					}
+				}
 				switch(eo.parse_options.angle_unit) {
 					case ANGLE_UNIT_DEGREES: {
 						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, Number(180, 1));
+						if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, Number(180, 1));
 						break;
 					}
 					case ANGLE_UNIT_GRADIANS: {
 						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, Number(200, 1));
+						if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, Number(200, 1));
 						break;
 					}
 					default: {
 						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+						if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 					}
 				}
+				if(mreq3) mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, m_zero);
+				if(mreq4) mreq4->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
+				if(mreq6) mreq6->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, m_zero);
 				mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
-				mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, m_zero);
-				mreq4->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
 				mreq1->isolate_x(eo2, eo);
 				mreq2->isolate_x(eo2, eo);
-				mreq3->isolate_x(eo2, eo);
-				mreq4->isolate_x(eo2, eo);
 				add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 				add_nocopy(mreq2, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
-				mreq3->add_nocopy(mreq4, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
-				mreq3->calculatesub(eo2, eo, false);
-				add_nocopy(mreq3, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				if(mreq3) {
+					mreq3->isolate_x(eo2, eo);
+					mreq4->isolate_x(eo2, eo);
+					mreq3->add_nocopy(mreq4, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+					mreq3->calculatesub(eo2, eo, false);
+					add_nocopy(mreq3, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				}
+				if(mreq5) {
+					mreq5->isolate_x(eo2, eo);
+					mreq6->isolate_x(eo2, eo);
+					mreq5->add_nocopy(mreq6, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+					mreq5->calculatesub(eo2, eo, false);
+					add_nocopy(mreq5, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				}
 				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) convert(CALCULATOR->getRadUnit());
 				calculatesub(eo2, eo, false);
 				return true;
 			} else if(CHILD(0).function()->id() == FUNCTION_ID_ATAN && (ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_EQUALS)) {
-				MathStructure m1(CHILD(1));
+				MathStructure m1(CHILD(1)), m2(CHILD(1));
 				CHILD(0).setToChild(1, true);
 				switch(eo.parse_options.angle_unit) {
 					case ANGLE_UNIT_DEGREES: {CHILD(1) *= CALCULATOR->getDegUnit(); break;}
@@ -5254,19 +5319,36 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					m1 /= CALCULATOR->getRadUnit();
 					m1.convert(CALCULATOR->getRadUnit());
 				}
+				m2.transformById(FUNCTION_ID_IM);
 				m1.transformById(FUNCTION_ID_RE);
 				if(m1.calculateFunctions(eo)) m1.calculatesub(eo2, eo, true);
+				if(m2.calculateFunctions(eo)) m2.calculatesub(eo2, eo, true);
 				MathStructure *mreq1 = new MathStructure(m1);
 				MathStructure *mreq2 = new MathStructure(m1);
+				MathStructure *mreq3 = NULL, *mreq4 = NULL, *mreq5 = NULL, *mreq6 = NULL;
+				if(!m2.isZero()) {
+					if(!m1.representsNonNegative() && !m2.representsPositive()) {
+						mreq3 = new MathStructure(m1);
+						mreq4 = new MathStructure(m2);
+					}
+					if(!m1.representsNonPositive() && !m2.representsNegative()) {
+						mreq5 = new MathStructure(m1);
+						mreq6 = new MathStructure(m2);
+					}
+				}
 				switch(eo.parse_options.angle_unit) {
 					case ANGLE_UNIT_DEGREES: {
 						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, Number(90, 1));
 						mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, Number(-90, 1));
+						if(mreq3) mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, Number(-90, 1));
+						if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, Number(90, 1));
 						break;
 					}
 					case ANGLE_UNIT_GRADIANS: {
 						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, Number(100, 1));
 						mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, Number(-100, 1));
+						if(mreq3) mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, Number(-100, 1));
+						if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, Number(100, 1));
 						break;
 					}
 					default: {
@@ -5274,38 +5356,96 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 						mreq1->last() *= nr_half;
 						mreq2->last() *= nr_minus_half;
+						if(mreq3) {
+							mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+							mreq3->last() *= nr_minus_half;
+						}
+						if(mreq5) {
+							mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+							mreq5->last() *= nr_half;
+						}
 					}
 				}
+				if(mreq4) mreq4->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_GREATER : COMPARISON_LESS, m_zero);
+				if(mreq6) mreq6->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_LESS : COMPARISON_GREATER, m_zero);
 				mreq1->isolate_x(eo2, eo);
 				mreq2->isolate_x(eo2, eo);
 				add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 				add_nocopy(mreq2, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				if(mreq3) {
+					mreq3->isolate_x(eo2, eo);
+					mreq4->isolate_x(eo2, eo);
+					mreq3->add_nocopy(mreq4, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+					mreq3->calculatesub(eo2, eo, false);
+					add_nocopy(mreq3, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				}
+				if(mreq5) {
+					mreq5->isolate_x(eo2, eo);
+					mreq6->isolate_x(eo2, eo);
+					mreq5->add_nocopy(mreq6, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+					mreq5->calculatesub(eo2, eo, false);
+					add_nocopy(mreq5, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				}
 				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) convert(CALCULATOR->getRadUnit());
 				calculatesub(eo2, eo, false);
 				return true;
 			} else if(CHILD(0).function()->id() == FUNCTION_ID_ASINH && (ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_EQUALS)) {
-				MathStructure m1(CHILD(1));
+				MathStructure m1(CHILD(1)), m2(CHILD(1));
 				CHILD(0).setToChild(1, true);
 				CHILD(1).transformById(FUNCTION_ID_SINH);
 				if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
 				CHILDREN_UPDATED;
 				isolate_x_sub(eo, eo2, x_var, morig);
-				m1.transformById(FUNCTION_ID_IM);
-				if(m1.calculateFunctions(eo)) m1.calculatesub(eo2, eo, true);
-				MathStructure *mreq1 = new MathStructure(m1);
-				MathStructure *mreq2 = new MathStructure(m1);
-				mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-				mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-				mreq1->last() *= nr_half;
-				mreq2->last() *= nr_minus_half;
-				mreq1->isolate_x(eo2, eo);
-				mreq2->isolate_x(eo2, eo);
-				add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
-				add_nocopy(mreq2, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				m2.transformById(FUNCTION_ID_IM);
+				if(m2.calculateFunctions(eo)) m2.calculatesub(eo2, eo, true);
+				if(!m2.isZero()) {
+					MathStructure *mreq1 = NULL, *mreq2 = NULL, *mreq3 = NULL, *mreq4 = NULL, *mreq5 = NULL, *mreq6 = NULL;
+					m1.transformById(FUNCTION_ID_RE);
+					if(m1.calculateFunctions(eo)) m1.calculatesub(eo2, eo, true);
+					mreq1 = new MathStructure(m2);
+					mreq2 = new MathStructure(m2);
+					if(m1.isZero()) {
+						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+						mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					} else {
+						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_GREATER : COMPARISON_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+						mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_LESS : COMPARISON_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+						mreq3 = new MathStructure(m2);
+						mreq4 = new MathStructure(m2);
+						mreq5 = new MathStructure(m1);
+						mreq6 = new MathStructure(m1);
+						mreq3->transform(ct_comp, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+						mreq4->transform(ct_comp, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+						mreq3->last() *= nr_half;
+						mreq4->last() *= nr_minus_half;
+						mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
+						mreq6->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, m_zero);
+					}
+					mreq1->last() *= nr_half;
+					mreq2->last() *= nr_minus_half;
+					mreq1->isolate_x(eo2, eo);
+					mreq2->isolate_x(eo2, eo);
+					if(mreq3) {
+						mreq3->isolate_x(eo2, eo);
+						mreq4->isolate_x(eo2, eo);
+						mreq5->isolate_x(eo2, eo);
+						mreq6->isolate_x(eo2, eo);
+						mreq3->add_nocopy(mreq5, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+						mreq3->calculatesub(eo2, eo, false);
+						mreq4->add_nocopy(mreq6, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+						mreq4->calculatesub(eo2, eo, false);
+						mreq1->add_nocopy(mreq3, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+						mreq1->calculatesub(eo2, eo, false);
+						mreq2->add_nocopy(mreq4, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+						mreq2->calculatesub(eo2, eo, false);
+					}
+					add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+					add_nocopy(mreq2, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				}
 				calculatesub(eo2, eo, false);
 				return true;
 			} else if(CHILD(0).function()->id() == FUNCTION_ID_ACOSH && (ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_EQUALS)) {
-				MathStructure m1(CHILD(1));
+				MathStructure m1(CHILD(1)), m2(CHILD(1));
 				CHILD(0).setToChild(1, true);
 				CHILD(1).transformById(FUNCTION_ID_COSH);
 				if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
@@ -5313,49 +5453,114 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				isolate_x_sub(eo, eo2, x_var, morig);
 				MathStructure m1im(m1);
 				m1.transformById(FUNCTION_ID_RE);
-				m1im.transformById(FUNCTION_ID_IM);
+				m2.transformById(FUNCTION_ID_IM);
 				if(m1.calculateFunctions(eo)) m1.calculatesub(eo2, eo, true);
-				if(m1im.calculateFunctions(eo)) m1im.calculatesub(eo2, eo, true);
-				MathStructure *mreq1 = new MathStructure(m1);
-				MathStructure *mreq2 = new MathStructure(m1im);
-				MathStructure *mreq3 = new MathStructure(m1im);
-				mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
-				mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-				mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
-				mreq3->last().negate();
-				mreq1->isolate_x(eo2, eo);
-				mreq2->isolate_x(eo2, eo);
-				mreq3->isolate_x(eo2, eo);
-				add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
-				add_nocopy(mreq2, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
-				add_nocopy(mreq3, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
-				calculatesub(eo2, eo, false);
+				if(m2.calculateFunctions(eo)) m2.calculatesub(eo2, eo, true);
+				if(m1.representsNegative() || (m1.isZero() && m2.representsNegative())) {
+					if(ct_comp == COMPARISON_NOT_EQUALS) set(1, 1, 0, true);
+					else clear(true);
+					return true;
+				}
+				if(m2.isZero()) {
+					if(!m1.representsNonNegative()) {
+						MathStructure *mreq1 = new MathStructure(m1);
+						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
+						mreq1->isolate_x(eo2, eo);
+						add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+						calculatesub(eo2, eo, false);
+					}
+				} else {
+					MathStructure *mreq1 = new MathStructure(m1);
+					mreq1->transform(ct_comp, m_zero);
+					mreq1->isolate_x(eo2, eo);
+					MathStructure *mreq2 = new MathStructure(m1);
+					mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_LESS : COMPARISON_GREATER, m_zero);
+					mreq2->isolate_x(eo2, eo);
+					MathStructure *mreq3 = new MathStructure(m2);
+					mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
+					mreq3->isolate_x(eo2, eo);
+					MathStructure *mreq4 = new MathStructure(m2);
+					mreq4->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq4->isolate_x(eo2, eo);
+					MathStructure *mreq5 = new MathStructure(m2);
+					mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq5->last().negate();
+					mreq5->isolate_x(eo2, eo);
+					MathStructure *mreq6 = new MathStructure(m2);
+					mreq6->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq6->isolate_x(eo2, eo);
+					mreq1->add_nocopy(mreq3, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+					mreq1->add_nocopy(mreq4, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+					mreq1->calculatesub(eo2, eo, false);
+					mreq2->add_nocopy(mreq5, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+					mreq2->add_nocopy(mreq6, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+					mreq2->calculatesub(eo2, eo, false);
+					mreq1->add_nocopy(mreq2, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+					mreq1->calculatesub(eo2, eo, false);
+					add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+					calculatesub(eo2, eo, false);
+				}
 				return true;
 			} else if(CHILD(0).function()->id() == FUNCTION_ID_ATANH && (ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_EQUALS)) {
-				MathStructure m1(CHILD(1));
+				MathStructure m1(CHILD(1)), m2(CHILD(1));
 				CHILD(0).setToChild(1, true);
 				CHILD(1).transformById(FUNCTION_ID_TANH);
 				if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
 				CHILDREN_UPDATED;
 				isolate_x_sub(eo, eo2, x_var, morig);
-				m1.transformById(FUNCTION_ID_IM);
-				if(m1.calculateFunctions(eo)) m1.calculatesub(eo2, eo, true);
-				MathStructure *mreq1 = new MathStructure(m1);
-				MathStructure *mreq2 = new MathStructure(m1);
-				mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-				mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-				mreq1->last() *= nr_half;
-				mreq2->last() *= nr_minus_half;
-				mreq1->isolate_x(eo2, eo);
-				mreq2->isolate_x(eo2, eo);
-				add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
-				add_nocopy(mreq2, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
-				calculatesub(eo2, eo, false);
+				m2.transformById(FUNCTION_ID_IM);
+				if(m2.calculateFunctions(eo)) m2.calculatesub(eo2, eo, true);
+				if(!m2.isZero()) {
+					MathStructure *mreq1 = NULL, *mreq2 = NULL, *mreq3 = NULL, *mreq4 = NULL, *mreq5 = NULL, *mreq6 = NULL;
+					m1.transformById(FUNCTION_ID_RE);
+					if(m1.calculateFunctions(eo)) m1.calculatesub(eo2, eo, true);
+					mreq1 = new MathStructure(m2);
+					mreq2 = new MathStructure(m2);
+					mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_GREATER : COMPARISON_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_LESS : COMPARISON_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq3 = new MathStructure(m2);
+					mreq4 = new MathStructure(m2);
+					mreq5 = new MathStructure(m1);
+					mreq6 = new MathStructure(m1);
+					mreq3->transform(ct_comp, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq4->transform(ct_comp, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq3->last() *= nr_half;
+					mreq4->last() *= nr_minus_half;
+					mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_GREATER : COMPARISON_LESS, m_zero);
+					mreq6->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_LESS : COMPARISON_GREATER, m_zero);
+					mreq1->last() *= nr_half;
+					mreq2->last() *= nr_minus_half;
+					mreq1->isolate_x(eo2, eo);
+					mreq2->isolate_x(eo2, eo);
+					mreq3->isolate_x(eo2, eo);
+					mreq4->isolate_x(eo2, eo);
+					mreq5->isolate_x(eo2, eo);
+					mreq6->isolate_x(eo2, eo);
+					mreq3->add_nocopy(mreq5, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+					mreq3->calculatesub(eo2, eo, false);
+					mreq4->add_nocopy(mreq6, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+					mreq4->calculatesub(eo2, eo, false);
+					mreq1->add_nocopy(mreq3, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+					mreq1->calculatesub(eo2, eo, false);
+					mreq2->add_nocopy(mreq4, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+					mreq2->calculatesub(eo2, eo, false);
+					add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+					add_nocopy(mreq2, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				}
 				return true;
 			} else if(CHILD(0).function()->id() == FUNCTION_ID_ABS && CHILD(0).size() == 1) {
 				if(CHILD(0)[0].contains(x_var)) {
-					if(CHILD(1).representsComplex() || CHILD(1).representsNegative()) {
-						clear(true);
+					if(CHILD(1).representsComplex() && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS)) {
+						if(ct_comp == COMPARISON_EQUALS) clear(true);
+						else set(1, 1, 0, true);
+						return true;
+					} else if(CHILD(1).representsNegative()) {
+						if(ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_LESS || ct_comp == COMPARISON_EQUALS_LESS) clear(true);
+						else if(ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_GREATER || ct_comp == COMPARISON_EQUALS_GREATER) set(1, 1, 0, true);
+						return true;
+					} else if((ct_comp == COMPARISON_LESS || ct_comp == COMPARISON_EQUALS_GREATER) && CHILD(1).representsNonPositive()) {
+						if(ct_comp == COMPARISON_LESS) clear(true);
+						else set(1, 1, 0, true);
 						return true;
 					} else if(CHILD(1).representsReal(true)) {
 						if(CHILD(0)[0].representsReal(true)) {
