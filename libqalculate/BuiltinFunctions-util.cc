@@ -1000,11 +1000,13 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	eo2.approximation = APPROXIMATION_APPROXIMATE;
 	eo2.parse_options.read_precision = DONT_READ_PRECISION;
 	eo2.interval_calculation = INTERVAL_CALCULATION_NONE;
-	bool use_step_size = vargs[5].number().getBoolean();
+	bool use_step_size = vargs[5].number().getBoolean() || !vargs[3].isInteger() || vargs[3].number() < 2;
 	mstruct = vargs[0];
 	CALCULATOR->beginTemporaryStopIntervalArithmetic();
-	if(!mstruct.contains(vargs[4], true)) {
+	if(!mstruct.contains(vargs[4], true) || (!mstruct.isVector() && !mstruct.representsScalar())) {
+		CALCULATOR->beginTemporaryStopMessages();
 		mstruct.eval(eo2);
+		CALCULATOR->endTemporaryStopMessages();
 	} else {
 		eo2.calculate_functions = false;
 		eo2.expand = false;
