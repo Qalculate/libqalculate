@@ -5023,9 +5023,8 @@ msgid "Drill Bit Size"
 msgstr "Диаметр (калибр) сверла"
 
 #: ../data/functions.xml.in.h:501
-#, fuzzy
 msgid "r:drillbit"
-msgstr "квадриллион"
+msgstr "сверло"
 
 #: ../data/functions.xml.in.h:502
 msgid ""
