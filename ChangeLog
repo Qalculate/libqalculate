@@ -1,3 +1,53 @@
+2021-10-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix parsing of percentage before space (e.g. "10 - x% = 8")
+	* Interpret | before most operators as absolute value instead of bitwise or
+
+2021-10-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Show input/output number base in parentheses after expression, in qalc, if the base is not decimal or indicated by the number formatting, and the base was not changed by the most recent command
+
+2021-10-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support plot functions, in plot(), that results in a vector first when evaluated (e.g. plot(entrywise(x^y, [1, 2, 3, 4], y), -5, 5))
+	* Use frequency as step size, in plot(), if the argument value is not an integer > 1
+
+2021-09-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Function for drill bit size conversion
+
+2021-09-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix errournous simplifications in some cases when incompletely evaluated numerator and denominator are passed to merge_multiplication()
+	* Avoid unnecessary calculations in if() function, when first argument is vector
+	* Output 1/2+x/2 as (1+x)/2 and similar
+
+2021-09-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Exact values for Im((a*i)^(n/2)
+	* Improved simplification of radical expressions
+	* 1/(sqrt(a)+1)=(sqrt(a)-1)/(a-1), 1/(sqrt(a)-1)=(sqrt(a)+1)/(a-1)
+	* Additional exact values in tan()
+
+2021-09-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improved exact return values for im(), re(), and arg()
+	* Additional exact return values in atan()
+	* Improved output for complex forms (primarily in exact mode)
+
+2021-09-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve division for non-rational polynomials
+
+2021-08-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Ask the user for correct interpretation (once) when entering expression with ambiguous implicit multiplication
+	* Use LOCALE_CUSTOM_UI_DEFAULT on Windows
+
+2021-08-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix "l" as symbol for liter in Swedish translations, and other potential undiscovered issues with reference name not properly case-sensitive
+
 2021-07-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Save answer to dot and temperature questions in non-interactive mode and do not show the questions in non-interactive terse mode

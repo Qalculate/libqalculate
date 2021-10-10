@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-05 09:33+0700\n"
+"POT-Creation-Date: 2021-10-10 16:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2931,7 +2931,7 @@ msgid "Returns the number of columns in a matrix."
 msgstr ""
 
 #: ../data/functions.xml.in.h:58
-msgid "Extract row as vector"
+msgid "Extract Row as Vector"
 msgstr ""
 
 #: ../data/functions.xml.in.h:59

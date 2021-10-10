@@ -1853,7 +1853,7 @@ bool test_float(const Number &nr) {
 
 int main(int argc, char *argv[]) {
 
-	new Calculator(true);
+	new Calculator(false);
 	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
 	CALCULATOR->setPrecision(8);
@@ -1893,7 +1893,7 @@ int main(int argc, char *argv[]) {
 	evalops.structuring = STRUCTURING_SIMPLIFY;
 	//evalops.approximation = APPROXIMATION_EXACT;
 
-	po.use_unicode_signs = true;
+	/*po.use_unicode_signs = true;
 	po.number_fraction_format = FRACTION_DECIMAL;
 	bool b_approx = false;
 	po.is_approximate = &b_approx;
@@ -1916,7 +1916,7 @@ int main(int argc, char *argv[]) {
 			cout << str2 << endl << endl;
 		}
 	}
-	return 0;
+	return 0;*/
 
 	/*MathStructure m;
 	for(size_t i = 0; i < 100000L; i++) {
@@ -1933,9 +1933,9 @@ int main(int argc, char *argv[]) {
 	mstruct.eval(evalops);
 	cout << mstruct << endl;*/
 	//speed_test();
-	/*test_integration();
-	cout << successes << ":" << imaginary << endl;
-	return 0;*/
+	test_integration();
+	//cout << successes << ":" << imaginary << endl;
+	return 0;
 	//test_intervals(true);
 
 	/*Number nr;
@@ -2051,7 +2051,7 @@ int main(int argc, char *argv[]) {
 	//CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
 	//CALCULATOR->useIntervalArithmetic();
 
-	for(size_t i = 0; i <= 15000; i++) {
+	//for(size_t i = 0; i <= 150000; i++) {
 		/*string str = rnd_expression(17, false, 20, 4, false, false, false, false, true);
 		cout << str << endl;
 		MathStructure mstruct;
@@ -2060,20 +2060,21 @@ int main(int argc, char *argv[]) {
 		cout << mstruct.print() << endl;
 		if(mstruct.isAborted()) break;*/
 		//if(mstruct.isPower() || (mstruct.isMultiplication() && !mstruct.containsType(STRUCT_DIVISION))) cout << str << "\n" << mstruct << endl;
-		rnd_test(evalops, 4, false, false, false, false, false, false);
+		/*rnd_test(evalops, 4, true, false, true, false, false, false);
 		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
 
-	return 0;
+	return 0;*/
 
 	for(size_t i2 = 0; i2 <= 100000; i2++) {
 		string str;
-		size_t n = rand() % 100;
+		size_t n = rand() % 10;
 		for(size_t i = 0; i <= n; i++) {
 			str += (char) (rand() % (126 - 32) + 32);
 			//if(str[i] == '{' || str[i] == '}') str[i] = '+';
 		}
+		str = "}!{1";
 		cout << str << endl;
 		MathStructure mstruct;
 		/*CALCULATOR->parse(&mstruct, str, evalops.parse_options);
