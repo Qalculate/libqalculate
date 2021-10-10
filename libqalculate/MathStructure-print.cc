@@ -2069,7 +2069,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 	switch(m_type) {
 		case STRUCT_ADDITION: {
 			if(po.preserve_format) break;
-			for(size_t i = 0; i < SIZE - 1; i++) {
+			for(size_t i = 0; i + 1 < SIZE; i++) {
 				if(CHILD(i).isDivision() || CHILD(i).isInverse()) {
 					size_t iden = 0;
 					if(CHILD(i).isDivision()) iden = 1;

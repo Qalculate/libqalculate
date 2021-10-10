@@ -151,7 +151,7 @@
       </argument>
     </builtin_function>
     <builtin_function name="row">
-      <_title>Extract row as vector</_title>
+      <_title>Extract Row as Vector</_title>
       <_names>r:row</_names>
       <_description>Returns a row in a matrix as a vector.</_description>
       <argument index="1">
@@ -1555,9 +1555,9 @@
       <_title>Drill Bit Size</_title>
       <_names>r:drillbit</_names>
       <_description>Returns drill bit gauge number or letter, if argument is fraction or diameter value with length unit, or drill bit diameter (with length unit), if argument is an integer or an upper-case character (quoted)</_description>
+      <example>$name("A") = 0.234 in; $name(4.4 mm) = 17</example>
       <subfunction precalculate="true">if(isNumber(\x),\x,\x/in)</subfunction>
       <subfunction precalculate="true">[0.413,0.404,0.397,0.386,0.377,0.368,0.358,0.348,0.339,0.332,0.323,0.316,0.302,0.295,0.290,0.281,0.277,0.272,0.266,0.261,0.257,0.250,0.246,0.242,0.238,0.234,0.228,0.221,0.213,0.209,0.2055,0.204,0.201,0.199,0.196,0.1935,0.191,0.189,0.185,0.182,0.180,0.177,0.173,0.1695,0.166,0.161,0.159,0.157,0.154,0.152,0.1495,0.147,0.144,0.1405,0.136,0.1285,0.120,0.116,0.113,0.111,0.110,0.1065,0.104,0.1015,0.0995,0.098,0.096,0.0935,0.089,0.086,0.082,0.081,0.0785,0.076,0.073,0.070,0.067,0.0635,0.0595,0.055,0.052,0.0465,0.043,0.042,0.041,0.040,0.039,0.038,0.037,0.036,0.035,0.033,0.032,0.031,0.0292,0.028,0.026,0.025,0.024,0.0225,0.021,0.020,0.018,0.016,0.0145,0.0135,0.013,0.0125,0.012,0.0115,0.011,0.0105,0.010,0.0095,0.0091,0.0087,0.0083,0.0079,0.0075,0.0071,0.0067,0.0063,0.0059,0.0055,0.0051,0.0047,0.0043,0.0039,0.0035,0.0031,0.0027,0.0023,0.0019]</subfunction>
-      <example>$name("A") = 0.234 in; $name(4.4 mm) = 17</example>
       <expression>if([isInteger(\x),isNumber(\1),len(\x)=1&amp;&amp;code(\x)&lt;91&amp;&amp;code(\x)&gt;64],[if(\x&gt;107||\x&lt;1,undefined,element(\2,\x+26)*in),if(sum(\1&gt;(element(\2,"i")+element(\2,"i"+1))/2,1,132,"i")&gt;106,char(sum(\1&gt;(element(\2,"i")+element(\2,"i"+1))/2,1,132,"i")-42),107-sum(\1&gt;(element(\2,"i")+element(\2,"i"+1))/2,1,132,"i")),element(\2,26-(code(\x)-65))*in],undefined, 1)</expression>
       <argument index="1">
         <title>Diameter or Gauge</title>

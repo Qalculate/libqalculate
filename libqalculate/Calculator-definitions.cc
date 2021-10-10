@@ -737,7 +737,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 	string locale;
 #ifdef _WIN32
 	WCHAR wlocale[LOCALE_NAME_MAX_LENGTH];
-	if(GetUserDefaultLocaleName(LOCALE_CUSTOM_UI_DEFAULT, wlocale, LOCALE_NAME_MAX_LENGTH, 0) != 0) locale = utf8_encode(wlocale);
+	if(LCIDToLocaleName(LOCALE_CUSTOM_UI_DEFAULT, wlocale, LOCALE_NAME_MAX_LENGTH, 0) != 0) locale = utf8_encode(wlocale);
 	gsub("-", "_", locale);
 #else
 	char *clocale = setlocale(LC_MESSAGES, NULL);
@@ -820,7 +820,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {3, 20, 0};
+	int version_numbers[] = {3, 21, 0};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);

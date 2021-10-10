@@ -1007,6 +1007,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		CALCULATOR->beginTemporaryStopMessages();
 		mstruct.eval(eo2);
 		CALCULATOR->endTemporaryStopMessages();
+		if(!mstruct.isVector() && vargs[0].contains(vargs[4], true)) mstruct = vargs[0];
 	} else {
 		eo2.calculate_functions = false;
 		eo2.expand = false;
