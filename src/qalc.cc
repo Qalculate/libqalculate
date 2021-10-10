@@ -995,7 +995,7 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
 			evalops.parse_options.parsing_mode = (ParsingMode) v;
-			if(evalops.parse_options.parsing_mode <= PARSING_MODE_CONVENTIONAL) implicit_question_asked = true;
+			if(evalops.parse_options.parsing_mode == PARSING_MODE_CONVENTIONAL || evalops.parse_options.parsing_mode == PARSING_MODE_IMPLICIT_MULTIPLICATION_FIRST) implicit_question_asked = true;
 			expression_format_updated(true);
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "update exchange rates", _("update exchange rates")) || svar == "upxrates") {
@@ -6597,7 +6597,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {3, 20, 0};
+	int version_numbers[] = {3, 21, 0};
 
 	if(file) {
 		char line[10000];
@@ -6680,6 +6680,7 @@ void load_preferences() {
 						} else {
 							evalops.parse_options.parsing_mode = (ParsingMode) v;
 						}
+						if(v == PARSING_MODE_CONVENTIONAL || v == PARSING_MODE_IMPLICIT_MULTIPLICATION_FIRST) implicit_question_asked = true;
 					}
 				} else if(svar == "implicit_question_asked") {
 					implicit_question_asked = true;
