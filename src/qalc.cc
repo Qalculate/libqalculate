@@ -5051,6 +5051,8 @@ bool ask_implicit() {
 	return pm_bak != evalops.parse_options.parsing_mode;
 }
 
+int save_base = 10;
+
 void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_index, bool register_moved, bool noprint) {
 
 	if(i_maxtime < 0) return;
@@ -5222,6 +5224,23 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 			if(mstruct->isComparison() || mstruct->isLogicalAnd() || mstruct->isLogicalOr()) strout += LEFT_PARENTHESIS;
 			if(update_parse) {
 				strout += parsed_text;
+				if(((evalops.parse_options.base <= 36 && evalops.parse_options.base >= 2 && evalops.parse_options.base != BASE_DECIMAL && evalops.parse_options.base != BASE_HEXADECIMAL && evalops.parse_options.base != BASE_OCTAL && evalops.parse_options.base != BASE_BINARY) || evalops.parse_options.base == BASE_CUSTOM || (evalops.parse_options.base <= BASE_GOLDEN_RATIO && evalops.parse_options.base >= BASE_SQRT2)) && (interactive_mode || saved_evalops.parse_options.base == evalops.parse_options.base)) {
+					BEGIN_ITALIC(strout)
+					strout += " (";
+					//number base
+					strout += _("base: ");
+					switch(evalops.parse_options.base) {
+						case BASE_GOLDEN_RATIO: {strout += "golden"; break;}
+						case BASE_SUPER_GOLDEN_RATIO: {strout += "supergolden"; break;}
+						case BASE_E: {strout += "e"; break;}
+						case BASE_PI: {strout += "pi"; break;}
+						case BASE_SQRT2: {strout += "sqrt(2)"; break;}
+						case BASE_CUSTOM: {strout += CALCULATOR->customInputBase().print(CALCULATOR->messagePrintOptions()); break;}
+						default: {strout += i2s(evalops.parse_options.base);}
+					}
+					strout += ")";
+					END_ITALIC(strout)
+				}
 			} else {
 				strout += prev_result_text;
 			}
@@ -5252,6 +5271,25 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 			strout += RIGHT_PARENTHESIS;
 		} else {
 			strout += result_text.c_str();
+		}
+		if(!result_only && save_base == printops.base && (interactive_mode || saved_printops.base == printops.base)) {
+			if((printops.base <= 36 && printops.base >= 2 && printops.base != BASE_DECIMAL && printops.base != BASE_HEXADECIMAL && printops.base != BASE_OCTAL && printops.base != BASE_BINARY) || printops.base == BASE_CUSTOM || (printops.base <= BASE_GOLDEN_RATIO && printops.base >= BASE_SQRT2)) {
+				BEGIN_ITALIC(strout)
+				strout += " (";
+				//number base
+				strout += _("base: ");
+				switch(printops.base) {
+					case BASE_GOLDEN_RATIO: {strout += "golden"; break;}
+					case BASE_SUPER_GOLDEN_RATIO: {strout += "supergolden"; break;}
+					case BASE_E: {strout += "e"; break;}
+					case BASE_PI: {strout += "pi"; break;}
+					case BASE_SQRT2: {strout += "sqrt(2)"; break;}
+					case BASE_CUSTOM: {strout += CALCULATOR->customOutputBase().print(CALCULATOR->messagePrintOptions()); break;}
+					default: {strout += i2s(printops.base);}
+				}
+				strout += ")";
+				END_ITALIC(strout)
+			}
 		}
 		if(goto_input) {
 			if(!result_only) {
@@ -5701,7 +5739,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	avoid_recalculation = false;
 	if(!interactive_mode) goto_input = false;
 
-	int save_base = printops.base;
+	save_base = printops.base;
 	bool save_pre = printops.use_unit_prefixes;
 	bool save_cur = printops.use_prefixes_for_currencies;
 	bool save_den = printops.use_denominator_prefix;
