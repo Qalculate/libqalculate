@@ -1295,9 +1295,13 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				str.replace(i_mod, 1, v_percent->referenceName());
 				i_mod += v_percent->referenceName().length() - 1;
 			}
-		} else if(i_mod == 0 || i_mod == str.length() - 1 || (is_in(RIGHT_PARENTHESIS RIGHT_VECTOR_WRAP COMMA OPERATORS INTERNAL_OPERATORS, str[i_mod + 1]) && str[i_mod + 1] != BITWISE_NOT_CH && str[i_mod + 1] != NOT_CH && str[i_mod + 1] != '%') || (is_in(LEFT_PARENTHESIS LEFT_VECTOR_WRAP COMMA OPERATORS INTERNAL_OPERATORS, str[i_mod - 1]) && str[i_mod - 1] != '%')) {
-			str.replace(i_mod, 1, v_percent->referenceName());
-			i_mod += v_percent->referenceName().length() - 1;
+		} else {
+			size_t i_nonspace = string::npos;
+			if(i_mod < str.length() - 1) i_nonspace = str.find_first_not_of(SPACE, i_mod + 1);
+			if(i_mod == 0 || i_mod == str.length() - 1 || (i_nonspace != string::npos && is_in(RIGHT_PARENTHESIS RIGHT_VECTOR_WRAP COMMA OPERATORS INTERNAL_OPERATORS, str[i_nonspace]) && str[i_nonspace] != BITWISE_NOT_CH && str[i_nonspace] != NOT_CH && str[i_nonspace] != '%') || (is_in(LEFT_PARENTHESIS LEFT_VECTOR_WRAP COMMA OPERATORS INTERNAL_OPERATORS, str[i_mod - 1]) && str[i_mod - 1] != '%')) {
+				str.replace(i_mod, 1, v_percent->referenceName());
+				i_mod += v_percent->referenceName().length() - 1;
+			}
 		}
 		i_mod = str.find("%", i_mod + 1);
 	}
@@ -1434,7 +1438,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							i3--;
 						}
 					}
-				} else if(str[i5] == ID_WRAP_RIGHT_CH && (i3 = str.find_last_of(ID_WRAP_LEFT, i5 - 1)) != string::npos) {
+				} else if(i5 > 0 && str[i5] == ID_WRAP_RIGHT_CH && (i3 = str.find_last_of(ID_WRAP_LEFT, i5 - 1)) != string::npos) {
 					stmp2 = str.substr(i3, i5 + 1 - i3);
 				} else if(is_not_in(RESERVED OPERATORS INTERNAL_OPERATORS SPACES VECTOR_WRAPS PARENTHESISS COMMAS, str[i5])) {
 					i3 = str.find_last_of(RESERVED OPERATORS INTERNAL_OPERATORS SPACES VECTOR_WRAPS PARENTHESISS COMMAS, i5);
@@ -2786,7 +2790,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	if(po.parsing_mode != PARSING_MODE_RPN) {
 		// determine if | is used for absolute value
 		while(po.base != BASE_ROMAN_NUMERALS && (i = str.find('|', i)) != string::npos) {
-			if(i == 0 || i == str.length() - 1 || is_in(OPERATORS INTERNAL_OPERATORS SPACE, str[i - 1])) {b_abs_or = true; break;}
+			if(i == 0 || i == str.length() - 1 || is_in(OPERATORS INTERNAL_OPERATORS SPACE, str[i - 1]) || is_in("*/^<>=", str[i + 1])) {b_abs_or = true; break;}
 			if(str[i + 1] == '|') {
 				if(i == str.length() - 2) {b_abs_or = true; break;}
 				if(b_bit_or) {
