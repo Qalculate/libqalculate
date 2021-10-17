@@ -1,0 +1,32 @@
+52 to bin
+	0011 0100
+52 to bin16
+	0000 0000 0011 0100
+52 to oct
+	064
+52 to hex
+	0x34
+0x34
+	52
+hex(34)
+	52
+523<<2&250 to bin
+	0010 1000
+52.345 to float
+	0100 0010 0101 0001 0110 0001 0100 1000
+float(01000010010100010110000101001000)
+	52.34500122
+floatError(52.345)
+	0.000001220703125
+52.34 to sexa
+	52°20′24″
+1978 to roman
+	MCMLXXVIII
+52 to base 32
+	1K
+sqrt(32) to base sqrt(2)
+	100000
+#0xD8 to unicode
+#	Ø
+code(Ø) to hex
+	0xD8

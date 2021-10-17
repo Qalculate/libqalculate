@@ -76,25 +76,24 @@ int main(int argc, char *argv[]) {
 	FILE* p_qalc_in = fdopen(p_qalc_stdin, "w");
 	FILE* p_qalc_out = fdopen(p_qalc_stdout, "r");
 
+	char query[1024 * 1024] = "";
 	char input[1024 * 1024] = "";
 	char result[1024 * 1024] = "";
 	int line = 0;
-	bool wrote_input = false;
+	int tests = 0;
 
 	while (fgets(input, sizeof(input), ftestcase)) {
 		if (input[0] != '\t') {
+			input[strcspn(input, "\r\n")] = '\n';
 			int written = fputs(input, p_qalc_in);
 			if (!written) {
 				printf(RED "Unexpected error at writing line number %d, '%s'" RESET, line, input);
 				exit(EXIT_FAILURE);
 			}
 			fflush(p_qalc_in);
-			if (wrote_input) {
-				printf("\n");
-			}
 			input[strcspn(input, "\r\n")] = 0;
-			printf("%s", input);
-			wrote_input = true;
+			strcpy(query, input);
+			// puts(input);
 		} else {
 			char *expected = &input[1];
 
@@ -103,17 +102,22 @@ int main(int argc, char *argv[]) {
 				exit(EXIT_FAILURE);
 			}
 
+			expected[strcspn(expected, "\r\n")] = 0;
+			result[strcspn(result, "\r\n")] = 0;
 			if (strcmp(expected, result) != 0) {
-				expected[strcspn(expected, "\r\n")] = 0;
-				result[strcspn(result, "\r\n")] = 0;
-				printf(RED "\n\nMismatch detected at line %d\nexpected '%s'\nreceived '%s'\n\n" RESET, line, expected, result);
+				printf(RED "\nMismatch detected at line %d\n%s\nexpected '%s'\nreceived '%s'\n\n" RESET, line, query, expected, result);
 				exit(EXIT_FAILURE);
 			}
+			tests++;
 		}
 
 		line++;
 	}
 
-	printf(GRN "\n\nAll good!\n\n" RESET);
+	if (tests == 0) {
+		printf(RED "\nWARNING: 0 tests were runned (indentation needs to be tab-based)\n\n" RESET);
+	} else {
+		printf(GRN "\n%s - %d tests passed\n\n" RESET, filename, tests);
+	}
 	return EXIT_SUCCESS;
 }
