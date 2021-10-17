@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include <dirent.h>
 #include <errno.h>
 #include <cstdlib>
 #include <cstdio>
@@ -13,6 +14,7 @@
 
 void print_usage () {
 	puts("Usage: ./src/unittest [filename]");
+	puts("If filename is omited, it will run all unit tests");
 }
 
 pid_t popen2(const char *command, int *infp, int *outfp) {
@@ -52,13 +54,7 @@ pid_t popen2(const char *command, int *infp, int *outfp) {
 	return pid;
 }
 
-int main(int argc, char *argv[]) {
-	if (argc != 2) {
-		print_usage();
-		exit(EXIT_FAILURE);
-	}
-
-	char *filename = argv[1];
+void run_unit_test(char *filename) {
 	FILE *ftestcase = fopen(filename, "r");
 	if (ftestcase == NULL) {
 		puts(RED "Cannot open file!" RESET);
@@ -119,5 +115,47 @@ int main(int argc, char *argv[]) {
 	} else {
 		printf(GRN "\n%s - %d tests passed\n\n" RESET, filename, tests);
 	}
+}
+
+int ends_with (const char *str, const char *suffix) {
+	if (!str || !suffix)
+		return 0;
+	size_t lenstr = strlen(str);
+	size_t lensuffix = strlen(suffix);
+	if (lensuffix >  lenstr)
+		return 0;
+	return strncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
+}
+
+int main(int argc, char *argv[]) {
+	if (argc == 1) {
+		puts("Running all unit tests\n");
+		chdir("..");
+		char path[] = "./tests";
+		DIR *d;
+		struct dirent *dir;
+		d = opendir(path);
+		if (d) {
+			while ((dir = readdir(d)) != NULL) {
+				if (dir->d_type != DT_REG) continue;
+				char *filename = dir->d_name;
+				if (!ends_with(filename, ".batch")) continue;
+				printf("Running unit tests from '%s'\n", filename);
+				char fullPath[4096] = "";
+				strcat(fullPath, path);
+				strcat(fullPath, "/");
+				strcat(fullPath, filename);
+				run_unit_test(fullPath);
+			}
+			closedir(d);
+		}
+	} else if (argc == 2) {
+		char *filename = argv[1];
+		run_unit_test(filename);
+	} else {
+		print_usage();
+		exit(EXIT_FAILURE);
+	}
+
 	return EXIT_SUCCESS;
 }

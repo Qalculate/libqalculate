@@ -11,6 +11,7 @@ AM_CPPFLAGS = \
 bin_PROGRAMS = @QALCULATE_TEXT@
 noinst_PROGRAMS = @QALCULATE_DEFS2DOC@ @QALCULATE_TEST@ @QALCULATE_UNITTEST@
 EXTRA_PROGRAMS = qalc defs2doc test unittest
+TESTS = unittest
 
 qalc_SOURCES = qalc.cc
 

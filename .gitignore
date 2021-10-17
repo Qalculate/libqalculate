@@ -28,6 +28,8 @@ po/stamp-it
 src/.*
 src/qalc
 src/unittest
+*.trs
+src/*.log
 stamp-h1
 lokalize-scripts/
 main.lqa
