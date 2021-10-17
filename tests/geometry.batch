@@ -1,0 +1,74 @@
+circle(3)
+	28.27433388
+circumference(3)
+	18.84955592
+
+cone(3, 4)
+	37.69911184
+cone_sa(3, 4)
+	75.39822369
+
+cube(3)
+	27
+cube_sa(3)
+	54
+
+cylinder(3, 4)
+	113.0973355
+cylinder_sa(3, 4)
+	131.9468915
+
+parallelogram(3, 4)
+	12
+parallelogram_perimeter(3,4)
+	14
+
+rectprism(3, 4, 5)
+	60
+rectprism_sa(3, 4, 5)
+	94
+
+#triangleprism(3, 4, 5)
+#	6
+
+tetrahedron(3)
+	3.181980515
+tetrahedron_height(3)
+	2.449489743
+tetrahedron_sa(3)
+	15.58845727
+
+#sqpyramid(3)
+#	
+#sqpyramid_height(3)
+#	
+#sqpyramid_sa(3)
+#	
+
+pyramid(3, 4, 5)
+	20
+
+rect(3, 4)
+	12
+rect_perimeter(3, 4)
+	14
+
+sphere(4)
+	268.0825731
+sphere_sa(4)
+	201.0619298
+
+square(3)
+	9
+square_perimeter(3)
+	12
+
+trapezoid(3, 4, 5)
+	17.5
+
+triangle(3, 4)
+	6
+triangle_perimeter(3, 4, 5)
+	12
+hypot(3, 4)
+	5
