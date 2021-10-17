@@ -89,10 +89,8 @@ struct timeval t_end;
 int dual_fraction = -1, saved_dual_fraction = -1;
 int dual_approximation = -1, saved_dual_approximation = -1;
 bool tc_set = false;
-
 bool ignore_locale = false;
-
-bool result_only;
+bool result_only = false, vertical_space = true;
 
 static char buffer[100000];
 
@@ -940,6 +938,7 @@ void set_option(string str) {
 		int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value."));} else {printops.limit_implicit_multiplication = v; evalops.parse_options.limit_implicit_multiplication = v; expression_format_updated(true);}
 	//extra space next to operators
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "spacious", _("spacious")) || svar == "space") SET_BOOL_D(printops.spacious)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "vertical space", _("vertical space")) || svar == "vspace") SET_BOOL(vertical_space)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unicode", _("unicode")) || svar == "uni") {
 		int v = s2b(svalue);
 		if(v < 0) {
@@ -3303,7 +3302,7 @@ int main(int argc, char *argv[]) {
 				string base_str;
 				int cols = 0;
 				if(interactive_mode && !cfile) {
-					base_str = "\n  ";
+					if(vertical_space) base_str = "\n  ";
 #ifdef HAVE_LIBREADLINE
 					int rows = 0;
 					rl_get_screen_size(&rows, &cols);
@@ -3337,7 +3336,7 @@ int main(int argc, char *argv[]) {
 					base_str += result_text;
 				}
 				if(interactive_mode && !cfile) {
-					base_str += "\n";
+					if(vertical_space) base_str += "\n";
 					addLineBreaks(base_str, cols, true, 2, base_str.length());
 				}
 				PUTS_UNICODE(base_str.c_str());
@@ -3579,6 +3578,7 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("spacious"), "space"); str += b2oo(printops.spacious, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("spell out logical"), "spellout"); str += b2oo(printops.spell_out_logical_operators, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("unicode"), "uni"); str += b2oo(printops.use_unicode_signs, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("vertical space"), "vspace"); str += b2oo(vertical_space, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Numerical Display"));
 
@@ -4377,6 +4377,7 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("spacious"), "space", _("Add extra space around operators."), printops.spacious);
 				STR_AND_TABS_BOOL(_("spell out logical"), "spellout", "", printops.spell_out_logical_operators);
 				STR_AND_TABS_BOOL(_("unicode"), "uni", _("Display Unicode characters."), printops.use_unicode_signs);
+				STR_AND_TABS_BOOL(_("vertical space"), "vspace", _("Add empty lines before and after result."), vertical_space);
 
 				CHECK_IF_SCREEN_FILLED_HEADING_S(_("Numerical Display"));
 
@@ -5186,7 +5187,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 	b_busy = true;
 
 	if(has_printed) printf("\n");
-	if(goto_input) printf("\n");
+	if(goto_input && vertical_space) printf("\n");
 
 	if(register_moved) {
 		update_parse = true;
@@ -5307,7 +5308,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 				}
 			}
 			addLineBreaks(strout, cols, true, result_only ? 2 : i_result_u, i_result);
-			strout += "\n";
+			if(vertical_space) strout += "\n";
 		}
 		PUTS_UNICODE(strout.c_str());
 	}
@@ -6537,6 +6538,8 @@ void load_preferences() {
 
 	ignore_locale = false;
 
+	vertical_space = true;
+
 	adaptive_interval_display = true;
 
 	CALCULATOR->useIntervalArithmetic(true);
@@ -6666,6 +6669,8 @@ void load_preferences() {
 					printops.sort_options.minus_last = v;
 				} else if(svar == "spacious") {
 					printops.spacious = v;
+				} else if(svar == "vertical_space") {
+					vertical_space = v;
 				} else if(svar == "excessive_parenthesis") {
 					printops.excessive_parenthesis = v;
 				} else if(svar == "short_multiplication") {
@@ -6941,6 +6946,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "colorize=%i\n", colorize);
 	fprintf(file, "auto_update_exchange_rates=%i\n", auto_update_exchange_rates);
 	fprintf(file, "spacious=%i\n", printops.spacious);
+	fprintf(file, "vertical_space=%i\n", vertical_space);
 	fprintf(file, "excessive_parenthesis=%i\n", printops.excessive_parenthesis);
 	fprintf(file, "short_multiplication=%i\n", printops.short_multiplication);
 	fprintf(file, "use_unicode_signs=%i\n", printops.use_unicode_signs);
