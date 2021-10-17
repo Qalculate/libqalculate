@@ -28,6 +28,11 @@ AC_ARG_ENABLE(tests,
               enable_tests=$enableval, 
               enable_tests="no")
 
+AC_ARG_ENABLE(unittests, 
+              [  --enable-unittests	  Enable compiling unittest runner], 
+              enable_unittests=$enableval, 
+              enable_unittests="yes")
+
 
 dnl  -------------------------------
 dnl | check for neccessary programs |------------------------------------------
@@ -257,6 +262,12 @@ if test "x$enable_tests" = "xyes" ; then
 	QALCULATE_TEST="test$EXEEXT"
 fi
 AC_SUBST(QALCULATE_TEST)
+
+QALCULATE_UNITTEST=""
+if test "x$enable_unittests" = "xyes" ; then
+	QALCULATE_UNITTEST="unittest$EXEEXT"
+fi
+AC_SUBST(QALCULATE_UNITTEST)
 
 AC_SEARCH_LIBS([nanosleep],[rt posix4])
 

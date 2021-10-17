@@ -4818,6 +4818,9 @@ int main(int argc, char *argv[]) {
 			free(rlbuffer);
 		}
 #endif
+		if (cfile == stdin) {
+			fflush(stdout);
+		}
 	}
 	if(cfile && cfile != stdin) {
 		fclose(cfile);
@@ -5014,6 +5017,7 @@ bool ask_implicit() {
 	FPUTS_UNICODE(_("Parsing mode"), stdout);
 	implicit_question_asked = true;
 	ParsingMode pm_bak = evalops.parse_options.parsing_mode;
+	bool b_ret = false;
 	while(true) {
 #ifdef HAVE_LIBREADLINE
 		char *rlbuffer = readline(": ");
