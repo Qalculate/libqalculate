@@ -130,7 +130,9 @@ int ends_with (const char *str, const char *suffix) {
 int main(int argc, char *argv[]) {
 	if (argc == 1) {
 		puts("Running all unit tests\n");
-		chdir("..");
+		if (chdir("..") != 0) {
+			printf(RED "\nCannot change directory\n\n" RESET);
+		}
 		char path[] = "./tests";
 		DIR *d;
 		struct dirent *dir;
