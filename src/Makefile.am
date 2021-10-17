@@ -9,8 +9,8 @@ AM_CPPFLAGS = \
 	@LIBCURL_CFLAGS@ @LIBXML_CFLAGS@ @ICU_CFLAGS@
 
 bin_PROGRAMS = @QALCULATE_TEXT@
-noinst_PROGRAMS = @QALCULATE_DEFS2DOC@ @QALCULATE_TEST@
-EXTRA_PROGRAMS = qalc defs2doc test
+noinst_PROGRAMS = @QALCULATE_DEFS2DOC@ @QALCULATE_TEST@ @QALCULATE_UNITTEST@
+EXTRA_PROGRAMS = qalc defs2doc test unittest
 
 qalc_SOURCES = qalc.cc
 
@@ -42,6 +42,8 @@ test_LDADD = \
 	@LTLIBINTL@ \
 	@LTLIBICONV@ \
 	../libqalculate/libqalculate.la
+
+unittest_SOURCES = unittest.cc
 
 #install-exec-local:
 #	cd $(DESTDIR)$(bindir) && rm -f qalculate; $(LN_S) @LN_QALCULATE@ qalculate
