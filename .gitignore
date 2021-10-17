@@ -27,7 +27,9 @@ po/POTFILES
 po/stamp-it
 src/.*
 src/qalc
+src/unittest
 stamp-h1
 lokalize-scripts/
 main.lqa
 libqalculate.lokalize
+po-defs
