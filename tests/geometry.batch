@@ -28,8 +28,8 @@ rectprism(3, 4, 5)
 rectprism_sa(3, 4, 5)
 	94
 
-#triangleprism(3, 4, 5)
-#	6
+triangleprism(3, 4, 5)
+	30
 
 tetrahedron(3)
 	3.181980515
@@ -38,12 +38,12 @@ tetrahedron_height(3)
 tetrahedron_sa(3)
 	15.58845727
 
-#sqpyramid(3)
-#	
-#sqpyramid_height(3)
-#	
-#sqpyramid_sa(3)
-#	
+sqpyramid(3)
+	6.363961031
+sqpyramid_height(3)
+	2.121320344
+sqpyramid_sa(3)
+	24.58845727
 
 pyramid(3, 4, 5)
 	20

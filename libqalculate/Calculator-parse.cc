@@ -1298,7 +1298,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		} else {
 			size_t i_nonspace = string::npos;
 			if(i_mod < str.length() - 1) i_nonspace = str.find_first_not_of(SPACE, i_mod + 1);
-			if(i_mod == 0 || i_mod == str.length() - 1 || (i_nonspace != string::npos && is_in(RIGHT_PARENTHESIS RIGHT_VECTOR_WRAP COMMA OPERATORS INTERNAL_OPERATORS, str[i_nonspace]) && str[i_nonspace] != BITWISE_NOT_CH && str[i_nonspace] != NOT_CH && str[i_nonspace] != '%') || (is_in(LEFT_PARENTHESIS LEFT_VECTOR_WRAP COMMA OPERATORS INTERNAL_OPERATORS, str[i_mod - 1]) && str[i_mod - 1] != '%')) {
+			if(i_mod == 0 || i_mod == str.length() - 1 || (str[i_mod - 1] != '%' && str[i_mod + 1] != '%' && ((i_nonspace != string::npos && is_in(RIGHT_PARENTHESIS RIGHT_VECTOR_WRAP COMMA OPERATORS INTERNAL_OPERATORS, str[i_nonspace]) && str[i_nonspace] != BITWISE_NOT_CH && str[i_nonspace] != NOT_CH && str[i_nonspace] != '%') || is_in(LEFT_PARENTHESIS LEFT_VECTOR_WRAP COMMA OPERATORS INTERNAL_OPERATORS, str[i_mod - 1])))) {
 				str.replace(i_mod, 1, v_percent->referenceName());
 				i_mod += v_percent->referenceName().length() - 1;
 			}
