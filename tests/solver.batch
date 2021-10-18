@@ -1,0 +1,68 @@
+set approximation exact
+set fr 2
+
+1/3 * sin(3x) - 1/3 = 0
+	x = π / 6 + (2/3) × πn
+
+2/3 * sin(3x) - 1/3 = 0
+	x = (5/18) × π + (2/3) × πn or x = π / 18 + (2/3) × πn
+
+sin(x) + cos(x) = 1
+	x = π / 2 + 2πn
+
+sin(x) = 1 + cos(x)
+	x = π + 2πn or x = π / 2 + 2πn
+
+sqrt(2) * cos(3x + pi/6) = 1
+	x = (2/3) × πn − (5/36) × π or x = π / 36 + (2/3) × πn
+
+2 * sin(3x/4) = 1
+	x = (10/9) × π + (8/3) × πn or x = (2/9) × π + (8/3) × πn
+
+tan(x/4 + pi/3) = sqrt(3)
+	x = 4πn
+
+#sqrt(3) * sin(x) + cos(x) = sqrt(3)
+#	x = 2πn + π/6 or 2πn + π/2
+
+#(sqrt(3) + 1) * cos(x) - (sqrt(3) - 1) * sin(x) = 2
+#	x = 2πn - π/3 or x = 2πn + π/6
+
+sin(x) = sin(x/2)
+	x = 2πn or x = 4πn − (2/3) × π or x = (2/3) × π + 4πn
+
+#3*sin(7x) - 2*sin(4x) + 3*sin(x) = 0
+#	x = 2πn or ...
+
+#tan(x + pi/4) - tan(x - pi/4) = 4
+#	x = πn - π/6 or x = πn + π/6
+
+#solve(cos(3x) = sin(x))
+#	x = πn - 7π/8 or x = πn - 3π/8 or x = πn - π/4
+
+#sin(7x) + sin(3x) = 0
+#	x = 2πn or ...
+
+#sin(x) + sin(2x) = sin(3x)
+#	x = πn or x = 2πn - 2π/3 or x = 2πn + 2π/3
+
+#sin(2x + pi/4) = cos(pi/6 - x)
+#	x = 2πn - 19π/36 or ...
+
+sin(4x) + cos(2x) = 0
+	x = πn − π / 12 or x = (7/12) × π + πn or x = (πn) / 2 − π / 4
+
+#sin(5x) + sin(3x) = sin(8x)
+#	x = 2πn or ...
+
+#2(cos(x)^2) + sqrt(3) * sin(x) = 1
+#	x = πn - π/3 or ...
+
+#cos(2x) + 4*(sin(x)^2) - cos(x) = 2
+#	x = πn - π / 2
+
+sin(x)^2 = sin(x)^3
+	x = πn or x = π / 2 + 2πn
+
+#sin(x)^2 + sin(2x)^2 = sin(3x)^2
+#	x = πn or x = πn - x = π / 2 or x = πn - 5π/6 or x = πn - π / 6
