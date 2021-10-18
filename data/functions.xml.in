@@ -1946,7 +1946,7 @@
       </function>
     </category>
     <category>
-      <_title>Regression</_title>
+      <_title>Correlation</_title>
       <function>
         <_title>Statistical Correlation</_title>
         <_names>r:cor</_names>
