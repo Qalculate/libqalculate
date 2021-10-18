@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+#include <sys/stat.h>
 
 #define PIPE_READ 0
 #define PIPE_WRITE 1
@@ -64,7 +65,7 @@ void run_unit_test(char *filename) {
 	int p_qalc_stdin;
 	int p_qalc_stdout;
 
-	if (popen2("./src/qalc -t -f -", &p_qalc_stdin, &p_qalc_stdout) <= 0) {
+	if (popen2("LC_ALL=C ./src/qalc --defaults -t -f -", &p_qalc_stdin, &p_qalc_stdout) <= 0) {
 		puts(RED "Cannot start qalc!" RESET);
 		exit(EXIT_FAILURE);
 	}
@@ -128,10 +129,14 @@ int ends_with (const char *str, const char *suffix) {
 }
 
 int main(int argc, char *argv[]) {
+
 	if (argc == 1) {
 		puts("Running all unit tests\n");
-		if (chdir("..") != 0) {
-			printf(RED "\nCannot change directory\n\n" RESET);
+		struct stat info;
+		if(stat("./tests", &info) != 0) {
+			if(chdir("..") != 0) {
+				printf(RED "\nCannot change directory\n\n" RESET);
+			}
 		}
 		char path[] = "./tests";
 		DIR *d;

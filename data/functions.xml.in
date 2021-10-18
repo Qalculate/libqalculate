@@ -3679,7 +3679,7 @@
         </argument>
       </function>
       <function>
-        <_title>Volume of Square Pyramid</_title>
+        <_title>Volume of Square Pyramid (Equilateral)</_title>
         <_names>r:sqpyramid</_names>
         <expression>sqrt(2)/6*\x^3</expression>
         <argument type="free" index="1">
@@ -3687,7 +3687,7 @@
         </argument>
       </function>
       <function>
-        <_title>Surface Area of Square Pyramid</_title>
+        <_title>Surface Area of Square Pyramid (Equilateral)</_title>
         <_names>r:sqpyramid_sa</_names>
         <expression>(1+sqrt(3))*\x^2</expression>
         <argument type="free" index="1">
@@ -3695,7 +3695,7 @@
         </argument>
       </function>
       <function>
-        <_title>Height of Square Pyramid</_title>
+        <_title>Height of Square Pyramid (Equilateral)</_title>
         <_names>r:sqpyramid_height</_names>
         <expression>sqrt(2)/2*\x</expression>
         <argument type="free" index="1">
