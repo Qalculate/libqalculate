@@ -53,7 +53,7 @@ MathStructure *mstruct, *parsed_mstruct, mstruct_exact, prepend_mstruct;
 KnownVariable *vans[5], *v_memory;
 string result_text, parsed_text, original_expression;
 vector<string> alt_results;
-bool load_global_defs, fetch_exchange_rates_at_startup, first_time, save_mode_on_exit, save_defs_on_exit;
+bool load_global_defs, fetch_exchange_rates_at_startup, first_time, save_mode_on_exit, save_defs_on_exit, load_defaults = false;
 int auto_update_exchange_rates;
 PrintOptions printops, saved_printops;
 bool complex_angle_form = false, saved_caf = false;
@@ -2059,6 +2059,8 @@ int main(int argc, char *argv[]) {
 			fputs("\t", stdout); PUTS_UNICODE(_("set the number base for results and, optionally, expressions"));
 			fputs("\n\t-c, -color\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("use colors to highlight different elements of expressions and results"));
+			fputs("\n\t-defaults\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("load default settings"));
 #ifdef HAVE_LIBCURL
 			fputs("\n\t-e, -exrates\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("update exchange rates"));
@@ -2211,6 +2213,8 @@ int main(int argc, char *argv[]) {
 				search_str = argv[i];
 				remove_blank_ends(search_str);
 			}
+		} else if(!calc_arg_begun && (svar == "-defaults" || svar == "--defaults")) {
+			load_defaults = true;
 		} else if(!calc_arg_begun && strcmp(argv[i], "-nounits") == 0) {
 			load_units = false;
 		} else if(!calc_arg_begun && strcmp(argv[i], "-nocurrencies") == 0) {
@@ -5049,11 +5053,11 @@ bool ask_implicit() {
 			FPUTS_UNICODE(_("Parsing mode"), stdout);
 		}
 	}
-	if(!interactive_mode) {
+	if(!interactive_mode && !load_defaults) {
 		saved_evalops.parse_options.parsing_mode = evalops.parse_options.parsing_mode;
 		save_preferences(false);
 	}
-	return pm_bak != evalops.parse_options.parsing_mode;
+	return b_ret && pm_bak != evalops.parse_options.parsing_mode;
 }
 
 int save_base = 10;
@@ -5650,7 +5654,7 @@ bool ask_tc() {
 			FPUTS_UNICODE(_("Temperature calculation mode"), stdout);
 		}
 	}
-	if(!interactive_mode) save_preferences(false);
+	if(!interactive_mode && !load_defaults) save_preferences(false);
 	return b_ret;
 }
 
@@ -5731,7 +5735,7 @@ bool ask_dot() {
 			FPUTS_UNICODE(_("Dot interpretation"), stdout);
 		}
 	}
-	if(!interactive_mode) save_preferences(false);
+	if(!interactive_mode && !load_defaults) save_preferences(false);
 	return b_ret;
 }
 
@@ -5824,7 +5828,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					printops.base = BASE_FP128;
 				} else if(equalsIgnoreCase(to_str, "time") || equalsIgnoreCase(to_str, _("time"))) {
 					printops.base = BASE_TIME;
-				} else if(equalsIgnoreCase(str, "unicode")) {
+				} else if(equalsIgnoreCase(to_str, "unicode")) {
 					printops.base = BASE_UNICODE;
 				} else if(equalsIgnoreCase(to_str, "utc") || equalsIgnoreCase(to_str, "gmt")) {
 					printops.time_zone = TIME_ZONE_UTC;
@@ -6566,6 +6570,8 @@ void load_preferences() {
 	colorize = 1;
 #endif
 
+	if(load_defaults && !interactive_mode) return;
+
 	FILE *file = NULL;
 #ifdef HAVE_LIBREADLINE
 	string historyfile = buildPath(getLocalDir(), "qalc.history");
@@ -6611,7 +6617,7 @@ void load_preferences() {
 		string stmp, svalue, svar;
 		size_t i;
 		int v;
-		while(true) {
+		while(true && !load_defaults) {
 			if(fgets(line, 10000, file) == NULL) break;
 			stmp = line;
 			remove_blank_ends(stmp);

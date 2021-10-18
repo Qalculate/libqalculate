@@ -26,7 +26,7 @@ floatError(52.345)
 	1K
 sqrt(32) to base sqrt(2)
 	100000
-#0xD8 to unicode
-#	Ø
+0xD8 to unicode
+	Ø
 code(Ø) to hex
 	0xD8

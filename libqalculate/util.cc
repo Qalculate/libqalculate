@@ -610,6 +610,14 @@ string getGlobalDefinitionsDir() {
 	return "";
 #else
 #	ifndef WIN32
+	char buffer[500];
+	if(getcwd(buffer, 500)) {
+		string dir = buffer;
+		if(dirExists(buildPath(dir, "libqalculate")) && fileExists(buildPath(dir, "data", "functions.xml"))) return buildPath(dir, "data");
+		size_t i = dir.rfind("/");
+		if(i != string::npos && i > 0 && i < dir.length() - 1) dir = dir.substr(0, i);
+		if(dirExists(buildPath(dir, "libqalculate")) && fileExists(buildPath(dir, "data", "functions.xml"))) return buildPath(dir, "data");
+	}
 	return string(PACKAGE_DATA_DIR) + "/qalculate";
 #	else
 	char exepath[MAX_PATH];
