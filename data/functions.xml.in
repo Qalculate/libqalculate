@@ -1514,6 +1514,27 @@
       </argument>
     </function>
     <function>
+      <_title>RAM Latency</_title>
+      <_names>r:ramlatency</_names>
+      <example>$name(3600, 18) = 10 ns</example>
+      <expression>(\A{2}*\y+(\Z{1}-1))/if(isNumber(\x),\x*MHz,\x)</expression>
+      <argument type="free" index="2">
+        <_title>Data Rate</_title>
+      </argument>
+      <argument type="number" index="1">
+        <_title>CAS Latency</_title>
+        <min include_equals="false">0</min>
+      </argument>
+      <argument type="integer" index="3">
+        <_title>Word</_title>
+        <min>1</min>
+      </argument>
+      <argument type="integer" index="3">
+        <_title>Transfers per Clock Cycle</_title>
+        <min>1</min>
+      </argument>
+    </function>
+    <function>
       <_title>Depth of Field</_title>
       <_names>r:dof</_names>
       <_description>Returns the estimated distance between the nearest and the farthest objects that are in acceptably sharp focus in a photo. Enter focal length (e.g. 50 mm) and distance (e.g. 5 m) with units, and f-stop without unit (2.8, 4.0, 5.6, etc.). Specify either a cicle of confusion diameter limit (e.g. 0.05 mm) or the sensor size of the camera - 0="35mm", 1="APS-H", 2="APS-CN" (Nikon, Pentax, Sony), 3="APS-C" (Canon), 4="4/3" (Four Thirds System), or 5='1"' (Nikon 1, Sony RX10, Sony RX100) - for a diameter based on d/1500.</_description>
@@ -1942,6 +1963,24 @@
         </argument>
         <argument type="vector" index="2">
           <_title>Data 2</_title>
+        </argument>
+      </function>
+    </category>
+    <category>
+      <_title>Regression</_title>
+      <function>
+        <_title>Simple Linear Regression</_title>
+        <_names>r:linearregression</_names>
+        <_description>Returns the linear function, for a set a of x and y values, estimated using simple linear regression with a single explanatory variable using the ordinary least squares method. If the vector of y values is empty, the first argument is used for y values and [1, 2, ..., n] are used as x values. It is possible to pass both x and y values in a two column matrix as the first argument.</_description>
+        <condition>dimension(\x)=dimension(\y) || dimension(\y)=0</condition>
+        <subfunction precalculate="true">if([dimension(\Y{[]})>0,rows(\x)>1&amp;&amp;columns(\x)=2],[\x,column(\x,1)],genvector("i",1,dimension(\x),1,"i",1))</subfunction>
+        <subfunction precalculate="true">if([dimension(\y)>0,rows(\x)>1&amp;&amp;columns(\x)=2],[\y,column(\x,2)],\x)</subfunction>
+        <expression>((covar(\1,\2)/varp(\1))*(x-mean(\1)))+mean(\2)</expression>
+        <argument type="vector" index="1">
+          <_title>X Values</_title>
+        </argument>
+        <argument type="vector" index="2">
+          <_title>Y Values</_title>
         </argument>
       </function>
     </category>
