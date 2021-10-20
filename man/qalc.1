@@ -561,6 +561,10 @@ Save functions, units, and variables on exit.
 .TP 8
 .B save mode \fI(yes*, no)\fP
 Save settings on exit.
+.PP
+.TP 8
+.B sigint action, sigint \fI(0 = kill*, 1 = exit, 2 = interrupt)\fP
+Determines how the SIGINT signal (Ctrl+C) is handled.
 .SH "SYNTAX"
 Mathematical entities:
 .RS
