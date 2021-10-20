@@ -1003,6 +1003,37 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						}
 					}
 				}
+				size_t v_id_i = v_id.size() - 1;
+				string str2;
+				for(int i3 = i - 1; i3 >= 0; i3--) {
+					i2 = 0;
+					svar = '\\';
+					svar += i2s(i3 + 1);
+					while(true) {
+						if((i2 = str.find(svar, i2)) != string::npos) {
+							if(i2 != 0 && str[i2 - 1] == '\\') {
+								i2 += 2;
+							} else {
+								if(subfunctionPrecalculated(i3 + 1)) {
+									if(str2.empty()) {
+										str2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+										str2 += i2s(v_id[v_id_i]);
+										str2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+									}
+									str.replace(i2, svar.size(), str2);
+								} else {
+									str.replace(i2, svar.size(), string("(") + priv->v_subs_calc[i] + ")");
+								}
+							}
+						} else {
+							break;
+						}
+					}
+					if(subfunctionPrecalculated(i3 + 1)) {
+						v_id_i--;
+						str2 = "";
+					}
+				}
 				if(maxargs() < 0) {
 					i2 = 0;
 					while(true) {
@@ -1044,13 +1075,45 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						if(i2 != 0 && stmp[i2 - 1] == '\\') {
 							i2 += 2;
 						} else {
-							stmp.replace(i2, 2, str);
+							stmp.replace(i2, svar.size(), str);
 						}
 					} else {
 						break;
 					}
 				}
 			} else {
+				size_t v_id_i = v_id.size() - 1;
+				string str = priv->v_subs_calc[i];
+				string str2;
+				for(int i3 = i - 1; i3 >= 0; i3--) {
+					i2 = 0;
+					svar = '\\';
+					svar += i2s(i3 + 1);
+					while(true) {
+						if((i2 = str.find(svar, i2)) != string::npos) {
+							if(i2 != 0 && str[i2 - 1] == '\\') {
+								i2 += 2;
+							} else {
+								if(subfunctionPrecalculated(i3 + 1)) {
+									if(str2.empty()) {
+										str2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+										str2 += i2s(v_id[v_id_i]);
+										str2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+									}
+									str.replace(i2, svar.size(), str2);
+								} else {
+									str.replace(i2, svar.size(), string("(") + priv->v_subs_calc[i] + ")");
+								}
+							}
+						} else {
+							break;
+						}
+					}
+					if(subfunctionPrecalculated(i3 + 1)) {
+						v_id_i--;
+						str2 = "";
+					}
+				}
 				i2 = 0;
 				svar = '\\';
 				svar += i2s(i + 1);
@@ -1059,7 +1122,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						if(i2 != 0 && stmp[i2 - 1] == '\\') {
 							i2 += svar.size();
 						} else {
-							stmp.replace(i2, svar.size(), string("(") + priv->v_subs_calc[i] + ")");
+							stmp.replace(i2, svar.size(), string("(") + str + ")");
 						}
 					} else {
 						break;
@@ -1158,15 +1221,10 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 			i4 = 0; i5 = 0;
 			svar = '\\';
 			svar_o = '\\';
-			if('x' + i > 'z')
-				svar += (char) ('a' + i - 3);
-			else
-				svar += 'x' + i;
-			if('X' + i > 'Z')
-				svar_o += (char) ('A' + i - 3);
-			else
-				svar_o += 'X' + i;
-
+			if('x' + i > 'z') svar += (char) ('a' + i - 3);
+			else svar += 'x' + i;
+			if('X' + i > 'Z') svar_o += (char) ('A' + i - 3);
+			else svar_o += 'X' + i;
 			before_find_in_set_formula:
 			if(i < 24 && (i2 = new_formula.find(svar_o, i4)) != string::npos) {
 				if(i2 > 0 && new_formula[i2 - 1] == '\\') {
