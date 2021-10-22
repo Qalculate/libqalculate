@@ -1,0 +1,51 @@
+""
+	""
+"x"
+	'x'
+"xx"
+	"xx"
+"meters"
+	"meters"
+'12'
+	"12"
+"12"
+	"12"
+#"12345"
+#	"12345"
+
+concatenate("a", "bc", 'defg')
+	"abcdefg"
+concatenate("", "c", '', 'd')
+	"cd"
+concatenate(1,2)
+	"12"
+concatenate(1*2, 5)
+	"1*25"
+#concatenate(1+2, 5)
+#	"1+25"
+
+len("")
+	0
+len(" ")
+	1
+len(5)
+	1
+len(5/6)
+	3
+#len(concatenate("a", "bc"))
+#	3
+
+0xD8 to unicode
+	Ø
+char(0xD8)
+	'Ø'
+char([0xD8, 0x61])
+	['Ø', 'a']
+code(Ø) to hex
+	0xD8
+code(😀) to hex
+	0x1F600
+#code(🍉) to hex
+#	0xF09F8D89
+code(abc)
+	[97, 98, 99]
