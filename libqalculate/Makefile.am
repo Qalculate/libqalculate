@@ -12,7 +12,7 @@ definitions.c: ${top_builddir}/data/currencies.xml ${top_builddir}/data/datasets
 		printf "const char * " >> $@ || (rm $@;exit 1); \
 		basename -- $$FILE | sed 's/[.-]/_/g' >> $@ || (rm $@;exit 1); \
 		printf " = " >> $@ || (rm $@;exit 1); \
-		sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/^/\"/' -e 's/$$/\\n\"/' $$FILE >>$@ || (rm $@;exit 1); \
+		sed -e 's/^[ \t]*//' -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/^/\"/' -e 's/$$/\\n\"/' $$FILE >>$@ || (rm $@;exit 1); \
 		printf ';\n\n' >>$@ || (rm $@;exit 1); \
 	done
 
