@@ -749,7 +749,7 @@ int test_frac(const MathStructure &m, bool test_combined = true, int limit = 100
 void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, vector<string> &results_v, MathStructure &m, const MathStructure *mresult, const string &original_expression, const MathStructure *mparse, int dfrac, int dappr, bool cplx_angle, bool only_cmp = false, bool format = false, int colorize = 0, int tagtype = TAG_TYPE_HTML, int max_length = -1) {
 	bool b_exact = !mresult->isApproximate();
 	// avoid multiple results with inequalities
-	if((dfrac != 0 || dappr < 0) && (only_cmp || dfrac <= 0) && b_exact && m.isComparison() && (m.comparisonType() != COMPARISON_EQUALS || (!m[0].isSymbolic() && !m[0].isVariable())) && po.number_fraction_format == FRACTION_DECIMAL) {
+	if((dfrac != 0 || dappr < 0) && (only_cmp || dfrac <= 0) && b_exact && m.isComparison() && m.comparisonType() != COMPARISON_EQUALS && po.number_fraction_format == FRACTION_DECIMAL) {
 		po.number_fraction_format = (dfrac != 0 && (!m[0].isSymbolic() || !m[0].isVariable())) ? FRACTION_FRACTIONAL : FRACTION_DECIMAL_EXACT;
 		m.format(po);
 		str = m.print(po, format, colorize, tagtype);
@@ -780,7 +780,7 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 		}
 	}
 	// do not show simple fractions in auto modes if result includes units or expression contains decimals
-	if(!CALCULATOR->aborted() && (b_cmp3 || ((dfrac || (dappr && po.is_approximate && *po.is_approximate)) && (!only_cmp || (m.isComparison() && m.comparisonType() == COMPARISON_EQUALS && (m[0].isSymbolic() || m[0].isVariable()))) && po.base == 10 && b_exact && (po.number_fraction_format == FRACTION_DECIMAL_EXACT || po.number_fraction_format == FRACTION_DECIMAL) && (dfrac > 0 || dappr > 0 || mresult->containsType(STRUCT_UNIT, false, true, true) <= 0)))) {
+	if(!CALCULATOR->aborted() && (b_cmp3 || ((dfrac || (dappr && po.is_approximate && *po.is_approximate)) && (!only_cmp || (m.isComparison() && m.comparisonType() == COMPARISON_EQUALS)) && po.base == 10 && b_exact && (po.number_fraction_format == FRACTION_DECIMAL_EXACT || po.number_fraction_format == FRACTION_DECIMAL) && (dfrac > 0 || dappr > 0 || mresult->containsType(STRUCT_UNIT, false, true, true) <= 0)))) {
 		bool do_frac = false, do_mixed = false;
 		const MathStructure *mcmp = mresult;
 		if(b_cmp3) {
@@ -788,7 +788,7 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 			mcmp = &m[2];
 		} else if(!mparse || ((dfrac > 0 || dappr > 0 || !contains_decimal(*mparse, &original_expression)) && !mparse->isNumber())) {
 			if(contains_decimal(m)) {
-				if(m.isComparison() && m.comparisonType() == COMPARISON_EQUALS && (m[0].isSymbolic() || m[0].isVariable())) {
+				if(m.isComparison() && m.comparisonType() == COMPARISON_EQUALS) {
 					mcmp = mresult->getChild(2);
 				}
 				int itf = test_frac(*mcmp, !only_cmp, dfrac > 0 || dappr > 0 ? -1 : 1000);
@@ -842,7 +842,7 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 			}
 		}
 		// results are added to equalities instead of shown as multiple results
-		if(m.isComparison() && m.comparisonType() == COMPARISON_EQUALS && (m[0].isSymbolic() || m[0].isVariable()) && !results_v.empty()) {
+		if(m.isComparison() && m.comparisonType() == COMPARISON_EQUALS && !results_v.empty()) {
 			size_t ipos = str.find(" = ");
 			if(ipos == string::npos) ipos = str.find(" " SIGN_ALMOST_EQUAL " ");
 			if(ipos != string::npos) {
