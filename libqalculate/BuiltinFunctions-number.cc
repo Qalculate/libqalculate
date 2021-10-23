@@ -1284,6 +1284,12 @@ int ImFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 		mstruct *= nr_minus_i;
 		return 1;
 	}
+	if(has_predominately_negative_sign(mstruct)) {
+		negate_struct(mstruct);
+		mstruct.transform(this);
+		mstruct.negate();
+		return 1;
+	}
 	return -1;
 }
 bool ImFunction::representsPositive(const MathStructure&, bool) const {return false;}
@@ -1408,6 +1414,12 @@ int ReFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 			else if(mstruct.size() == 1) mstruct.setToChild(1, true);
 			return 1;
 		}
+	}
+	if(has_predominately_negative_sign(mstruct)) {
+		negate_struct(mstruct);
+		mstruct.transform(this);
+		mstruct.negate();
+		return 1;
 	}
 	return -1;
 }

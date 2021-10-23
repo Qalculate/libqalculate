@@ -3731,7 +3731,6 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						if(!mvar || !get_multiplier(CHILD(0)[1], *mvar, mmul) || mmul.contains(x_var) || COMPARISON_MIGHT_BE_EQUAL(mmul.compare(m_zero))) return false;
 						MathStructure mexp(1, 1, 0);
 						if(mvar->isPower() && *mvar != CHILD(0)[0]) mexp = (*mvar)[1];
-						if(!mexp.representsPositive()) return false;
 						if(mmul.isOne() && mexp.isOne() && CHILD(1).isNumber() && CHILD(1).number().isRational() && CHILD(0)[0].representsNonComplex()) {
 							// x is real, a=1, b is rational
 							if(CHILD(1).number().isInteger()) {
@@ -3876,7 +3875,11 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								else clear(true);
 								return true;
 							}
+						} else if(mmul.isOne() && mexp.isMinusOne() && CHILD(0)[0].representsNonComplex() && (CHILD(1).isOne() || CHILD(1).isMinusOne())) {
+							CHILD(0).setToChild(1, true);
+							return true;
 						}
+						//if(!mexp.representsPositive()) return false;
 						MathStructure *marg = new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &CHILD(1), NULL);
 						if(marg->calculateFunctions(eo)) marg->calculatesub(eo2, eo, true);
 						if(CHILD(0)[0].representsNonComplex() && CHILD(1).compare(m_zero) == COMPARISON_RESULT_LESS) {
