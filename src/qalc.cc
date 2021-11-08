@@ -2310,6 +2310,8 @@ int main(int argc, char *argv[]) {
 			} else {
 				PUTS_UNICODE(_("No file specified."));
 			}
+		} else if(!calc_arg_begun && svar == "--") {
+			calc_arg_begun = true;
 		} else {
 			calc_arg += argv[i];
 			calc_arg_begun = true;
