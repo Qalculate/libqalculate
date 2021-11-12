@@ -44,6 +44,24 @@
         <exponent>1</exponent>
       </part>
     </unit>
+    <unit type="composite">
+      <_title>Micrometer</_title>
+      <names>r:um_c</names>
+      <part>
+        <unit>m</unit>
+        <prefix>-6</prefix>
+        <exponent>1</exponent>
+      </part>
+    </unit>
+    <unit type="composite">
+      <_title>Nanometer</_title>
+      <names>r:nm_c</names>
+      <part>
+        <unit>m</unit>
+        <prefix>-9</prefix>
+        <exponent>1</exponent>
+      </part>
+    </unit>
     <unit type="alias">
       <_title>Nautical Mile</_title>
       <_names>r:nautical_mile,p:nautical_miles</_names>
