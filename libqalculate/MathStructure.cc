@@ -3092,3 +3092,8 @@ bool flattenMultiplication(MathStructure &mstruct) {
 	return retval;
 }
 
+bool comparison_is_not_equal(ComparisonResult cr) {return COMPARISON_IS_NOT_EQUAL(cr);}
+bool comparison_is_equal_or_less(ComparisonResult cr) {return COMPARISON_IS_EQUAL_OR_LESS(cr);}
+bool comparison_is_equal_or_greater(ComparisonResult cr) {return COMPARISON_IS_EQUAL_OR_GREATER(cr);}
+bool comparison_might_be_equal(ComparisonResult cr) {return COMPARISON_MIGHT_BE_EQUAL(cr);}
+

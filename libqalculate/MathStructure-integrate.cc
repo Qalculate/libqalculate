@@ -329,7 +329,7 @@ bool transform_absln(MathStructure &mstruct, int use_abs, bool definite_integral
 // Make sure that m does not contains division by zero. Used after differentiation.
 bool check_zero_div(const MathStructure &m, const MathStructure &x_var, const EvaluationOptions &eo, bool top = true) {
 	if(top && (!x_var.isVariable() || x_var.variable()->isKnown() || ((UnknownVariable*) x_var.variable())->interval().isUndefined())) return true;
-	if(m.isPower() && m[1].compare(m_zero) == COMPARISON_RESULT_GREATER && m[0].contains(x_var, true) > 0 && COMPARISON_MIGHT_BE_EQUAL(m[0].compare(m_zero))) return false;
+	if(m.isPower() && m[1].compare(m_zero) == COMPARISON_RESULT_GREATER && m[0].contains(x_var, true) > 0 && comparison_might_be_equal(m[0].compare(m_zero))) return false;
 	for(size_t i = 0; i < m.size(); i++) {
 		if(!check_zero_div(m[i], x_var, eo)) return false;
 	}
@@ -467,7 +467,8 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 								mtest[0] /= nr_two;
 								mtest[0].transformById(FUNCTION_ID_ABS);
 								mtest[0].transformById(FUNCTION_ID_FRAC);
-								if(COMPARISON_MIGHT_BE_EQUAL(mtest.compare(nr_half))) return -1;
+								ComparisonResult cr = mtest.compare(nr_half);
+								if(COMPARISON_MIGHT_BE_EQUAL(cr)) return -1;
 							}
 							mstruct.setFunctionId(FUNCTION_ID_TAN);
 							mstruct[0] *= nr_half;
@@ -513,7 +514,8 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 								mtest[0] /= nr_two;
 								mtest[0].transformById(FUNCTION_ID_ABS);
 								mtest[0].transformById(FUNCTION_ID_FRAC);
-								if(COMPARISON_MIGHT_BE_EQUAL(mtest.compare(nr_half))) return -1;
+								ComparisonResult cr = mtest.compare(nr_half);
+								if(COMPARISON_MIGHT_BE_EQUAL(cr)) return -1;
 							}
 							mstruct.setFunctionId(FUNCTION_ID_TAN);
 							mstruct[0] *= nr_half;
@@ -641,7 +643,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 	// mpowadd=0 and mpowmul=1: mfac*mstruct^mpow
 
 	if(mstruct.function()->id() == FUNCTION_ID_LOG && mstruct.size() == 1) {
-		if(mstruct[0].isFunction() && mstruct[0].function()->id() == FUNCTION_ID_ROOT && VALID_ROOT(mstruct[0]) && mpow.isOne() && mfac.isOne() && (!definite_integral || COMPARISON_IS_NOT_EQUAL(mstruct[0][0].compare(m_zero)))) {
+		if(mstruct[0].isFunction() && mstruct[0].function()->id() == FUNCTION_ID_ROOT && VALID_ROOT(mstruct[0]) && mpow.isOne() && mfac.isOne() && (!definite_integral || comparison_is_not_equal(mstruct[0][0].compare(m_zero)))) {
 			MathStructure mexp, mmul, madd;
 			if(integrate_info(mstruct[0][0], x_var, madd, mmul, mexp) && mexp.isOne()) {
 				if(madd.isZero()) {
@@ -790,7 +792,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 					} else if(mpow.number().isMinusOne()) {
 						if(mexp.isOne()) {
 							// ln(ax+b)^-1: li(ax+b)/a
-							if(!definite_integral || COMPARISON_IS_NOT_EQUAL(mstruct[0].compare(m_zero))) {
+							if(!definite_integral || comparison_is_not_equal(mstruct[0].compare(m_zero))) {
 								mstruct.setFunctionId(FUNCTION_ID_LOGINT);
 								if(!mmul.isOne()) mstruct /= mmul;
 								b = true;
@@ -873,7 +875,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 						b = true;
 					} else if(mpow.isInteger() && mpow.number().isLessThanOrEqualTo(100) && mpow.number().isGreaterThanOrEqualTo(-100)) {
 						if(mpow.isMinusOne()) {
-							if(!definite_integral || COMPARISON_IS_NOT_EQUAL(mstruct[0].compare(m_zero))) {
+							if(!definite_integral || comparison_is_not_equal(mstruct[0].compare(m_zero))) {
 								if(mexp.isOne()) {
 									MathStructure mmulfac(mmul);
 									if(!mmul.isOne()) {
@@ -1831,7 +1833,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 	} else if(mstruct.function()->id() == FUNCTION_ID_ASIN && mstruct.size() == 1) {
 		MathStructure mexp, mmul, madd;
 		if(mpow.isInteger() && mpow.number().isLessThanOrEqualTo(100) && mpow.number().isGreaterThanOrEqualTo(-100) && !mpow.isZero() && integrate_info(mstruct[0], x_var, madd, mmul, mexp)) {
-			if(definite_integral && !madd.isZero() && (!mmul.representsNonComplex(true) || !mexp.representsInteger()) && COMPARISON_MIGHT_BE_EQUAL(x_var.compare(m_zero))) return false;
+			if(definite_integral && !madd.isZero() && (!mmul.representsNonComplex(true) || !mexp.representsInteger()) && comparison_might_be_equal(x_var.compare(m_zero))) return false;
 			if(mexp.isOne() && mfac.isOne()) {
 				if(mpow.isOne()) {
 					MathStructure marg(mstruct[0]);
@@ -2025,7 +2027,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 	} else if(mstruct.function()->id() == FUNCTION_ID_ACOS && mstruct.size() == 1) {
 		MathStructure mexp, mmul, madd;
 		if(mpow.isInteger() && mpow.number().isLessThanOrEqualTo(100) && mpow.number().isGreaterThanOrEqualTo(-100) && !mpow.isZero() && integrate_info(mstruct[0], x_var, madd, mmul, mexp)) {
-			if(definite_integral && !madd.isZero() && (!mmul.representsNonComplex(true) || !mexp.representsInteger()) && COMPARISON_MIGHT_BE_EQUAL(x_var.compare(m_zero))) return false;
+			if(definite_integral && !madd.isZero() && (!mmul.representsNonComplex(true) || !mexp.representsInteger()) && comparison_might_be_equal(x_var.compare(m_zero))) return false;
 			if(mexp.isOne() && mfac.isOne()) {
 				if(mpow.isOne()) {
 					MathStructure marg(mstruct[0]);
@@ -2285,7 +2287,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 					minteg ^= nr_two;
 					if(!mmul.isOne()) {minteg *= mmul; minteg.last() ^= nr_two;}
 					minteg += m_one;
-					if(!definite_integral || COMPARISON_IS_NOT_EQUAL(minteg.compare(m_zero))) {
+					if(!definite_integral || comparison_is_not_equal(minteg.compare(m_zero))) {
 						minteg ^= nr_minus_one;
 						minteg *= mxexp;
 						if(minteg.integrate(x_var, eo, true, use_abs, definite_integral, true, max_part_depth, parent_parts) < 0) return -1;
@@ -2300,7 +2302,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 			}
 		}
 	} else if(mstruct.function()->id() == FUNCTION_ID_SINH && mstruct.size() == 1) {
-		if(mstruct[0].isFunction() && mstruct[0].function()->id() == FUNCTION_ID_LOG && mstruct[0].size() == 1 && (!definite_integral || COMPARISON_IS_NOT_EQUAL(mstruct[0][0].compare(m_zero)))) {
+		if(mstruct[0].isFunction() && mstruct[0].function()->id() == FUNCTION_ID_LOG && mstruct[0].size() == 1 && (!definite_integral || comparison_is_not_equal(mstruct[0][0].compare(m_zero)))) {
 			MathStructure mtest(mstruct[0][0]);
 			mtest *= Number(-2, 1);
 			mtest.inverse();
@@ -2517,7 +2519,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 			}
 		}
 	} else if(mstruct.function()->id() == FUNCTION_ID_COSH && mstruct.size() == 1) {
-		if(mstruct[0].isFunction() && mstruct[0].function()->id() == FUNCTION_ID_LOG && mstruct[0].size() == 1 && (!definite_integral || COMPARISON_IS_NOT_EQUAL(mstruct[0][0].compare(m_zero)))) {
+		if(mstruct[0].isFunction() && mstruct[0].function()->id() == FUNCTION_ID_LOG && mstruct[0].size() == 1 && (!definite_integral || comparison_is_not_equal(mstruct[0][0].compare(m_zero)))) {
 			MathStructure mtest(mstruct[0][0]);
 			mtest *= nr_two;
 			mtest.inverse();
@@ -2739,7 +2741,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 			}
 		}
 	} else if(mstruct.function()->id() == FUNCTION_ID_TANH && mstruct.size() == 1) {
-		if(mstruct[0].isFunction() && mstruct[0].function()->id() == FUNCTION_ID_LOG && mstruct[0].size() == 1 && (!definite_integral || COMPARISON_IS_NOT_EQUAL(mstruct[0][0].compare(m_zero)))) {
+		if(mstruct[0].isFunction() && mstruct[0].function()->id() == FUNCTION_ID_LOG && mstruct[0].size() == 1 && (!definite_integral || comparison_is_not_equal(mstruct[0][0].compare(m_zero)))) {
 			MathStructure mtest(mstruct[0][0]);
 			mtest ^= nr_two;
 			mtest += m_one;
@@ -2795,7 +2797,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 	} else if(mstruct.function()->id() == FUNCTION_ID_ASINH && mstruct.size() == 1) {
 		MathStructure mexp, mmul, madd;
 		if(mpow.isInteger() && mpow.number().isLessThanOrEqualTo(100) && mpow.number().isGreaterThanOrEqualTo(-100) && !mpow.isZero() && integrate_info(mstruct[0], x_var, madd, mmul, mexp) && mexp.isOne()) {
-			if(definite_integral && !madd.representsNonComplex(true) && COMPARISON_MIGHT_BE_EQUAL(x_var.compare(m_zero))) return false;
+			if(definite_integral && !madd.representsNonComplex(true) && comparison_might_be_equal(x_var.compare(m_zero))) return false;
 			if(mfac.isOne()) {
 				if(mpow.isOne()) {
 					MathStructure marg(mstruct[0]);
@@ -3283,7 +3285,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 					if(!mmul.isOne()) {minteg *= mmul; minteg.last() ^= nr_two;}
 					minteg.negate();
 					minteg += m_one;
-					if(!definite_integral || COMPARISON_IS_NOT_EQUAL(minteg.compare(m_zero))) {
+					if(!definite_integral || comparison_is_not_equal(minteg.compare(m_zero))) {
 						minteg ^= nr_minus_one;
 						minteg *= mxexp;
 						if(minteg.integrate(x_var, eo, true, use_abs, definite_integral, true, max_part_depth, parent_parts) < 0) return -1;
@@ -4565,7 +4567,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							if(!mmul.isOne()) divide(mmul);
 							return true;
 						} else {
-							if(definite_integral && !madd.isZero() && (!x_var.representsNonComplex(true) || !mmul.representsNonComplex(true)) && !CHILD(1).representsInteger() && COMPARISON_MIGHT_BE_EQUAL(x_var.compare(m_zero)) && !COMPARISON_IS_EQUAL_OR_LESS(madd.compare(m_zero))) CANNOT_INTEGRATE
+							if(definite_integral && !madd.isZero() && (!x_var.representsNonComplex(true) || !mmul.representsNonComplex(true)) && !CHILD(1).representsInteger() && comparison_might_be_equal(x_var.compare(m_zero)) && !comparison_is_equal_or_less(madd.compare(m_zero))) CANNOT_INTEGRATE
 							// (ax+b)^c: (ax+b)^(c+1)/(a(c+1))
 							mexp = CHILD(1);
 							mexp += m_one;
@@ -4895,7 +4897,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							MathStructure *mchild = &mtest[0][0];
 							mchild->ref();
 							mtest[0].delChild(1, true);
-							if(mtest[1].representsInteger(true) || COMPARISON_IS_EQUAL_OR_LESS(mchild->compare(m_zero)) || COMPARISON_IS_EQUAL_OR_LESS(mtest[0].compare(m_zero))) {
+							if(mtest[1].representsInteger(true) || comparison_is_equal_or_less(mchild->compare(m_zero)) || comparison_is_equal_or_less(mtest[0].compare(m_zero))) {
 								if(mmul.isOne()) mmul = *mchild;
 								else mmul *= *mchild;
 								mchild->unref();
@@ -4928,7 +4930,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							MathStructure *mchild = &mtest[0][0];
 							mchild->ref();
 							mtest[0].delChild(1, true);
-							if(mtest[1].representsInteger(true) || COMPARISON_IS_EQUAL_OR_LESS(mchild->compare(m_zero)) || COMPARISON_IS_EQUAL_OR_LESS(mtest[0].compare(m_zero))) {
+							if(mtest[1].representsInteger(true) || comparison_is_equal_or_less(mchild->compare(m_zero)) || comparison_is_equal_or_less(mtest[0].compare(m_zero))) {
 								mmul2 = *mchild;
 								mmul2.calculateRaise(mtest[1], eo2);
 								mchild->unref();
@@ -4937,11 +4939,11 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							}
 						}
 						if(mtest[0].isPower()) {
-							if(mtest[1].representsInteger() || mtest[0][1].representsFraction() || COMPARISON_IS_EQUAL_OR_LESS(mtest[0][0].compare(m_zero))) {
+							if(mtest[1].representsInteger() || mtest[0][1].representsFraction() || comparison_is_equal_or_less(mtest[0][0].compare(m_zero))) {
 								mtest[1].calculateMultiply(mtest[0][1], eo2);
 								mtest[0].setToChild(1);
 							} else if(mtest[0][1].representsEven()) {
-								if(COMPARISON_IS_EQUAL_OR_GREATER(mtest[0][0].compare(m_zero))) {
+								if(comparison_is_equal_or_greater(mtest[0][0].compare(m_zero))) {
 									mtest[1].calculateMultiply(mtest[0][1], eo2);
 									mtest[0].setToChild(1);
 									mtest[0].calculateNegate(eo2);
@@ -4983,8 +4985,8 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							divide(mmulfac);
 							return true;
 						}
-					} else if(madd.isZero() || COMPARISON_IS_NOT_EQUAL(madd.compare(m_zero))) {
-						if(mmul.representsPositive(true) && COMPARISON_IS_EQUAL_OR_GREATER(CHILD(0).compare(m_one)) && CHILD(0).compare(m_zero) == COMPARISON_RESULT_LESS) {
+					} else if(madd.isZero() || comparison_is_not_equal(madd.compare(m_zero))) {
+						if(mmul.representsPositive(true) && comparison_is_equal_or_greater(CHILD(0).compare(m_one)) && CHILD(0).compare(m_zero) == COMPARISON_RESULT_LESS) {
 							madd.negate();
 							mmul.negate();
 							CHILD(0).inverse();
@@ -5934,7 +5936,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 								MathStructure *mchild = &mtest[1][0][0];
 								mchild->ref();
 								mtest[1][0].delChild(1, true);
-								if(CHILD(1)[1].representsInteger(true) || COMPARISON_IS_EQUAL_OR_LESS(mchild->compare(m_zero)) || COMPARISON_IS_EQUAL_OR_LESS(mtest[1][0].compare(m_zero))) {
+								if(CHILD(1)[1].representsInteger(true) || comparison_is_equal_or_less(mchild->compare(m_zero)) || comparison_is_equal_or_less(mtest[1][0].compare(m_zero))) {
 									if(mmul.isOne()) mmul = *mchild;
 									else mmul *= *mchild;
 									mchild->unref();
@@ -5992,7 +5994,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 								MathStructure *mchild = &mtest[1][0][0];
 								mchild->ref();
 								mtest[1][0].delChild(1, true);
-								if(CHILD(1)[1].representsInteger(true) || COMPARISON_IS_EQUAL_OR_LESS(mchild->compare(m_zero)) || COMPARISON_IS_EQUAL_OR_LESS(mtest[1][0].compare(m_zero))) {
+								if(CHILD(1)[1].representsInteger(true) || comparison_is_equal_or_less(mchild->compare(m_zero)) || comparison_is_equal_or_less(mtest[1][0].compare(m_zero))) {
 									mmul2 = *mchild;
 									mmul2.calculateRaise(CHILD(1)[1], eo2);
 									mchild->unref();
@@ -6001,11 +6003,11 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 								}
 							}
 							if(mtest[1][0].isPower()) {
-								if(mtest[1][1].representsInteger() || mtest[1][0][1].representsFraction() || COMPARISON_IS_EQUAL_OR_LESS(mtest[1][0][0].compare(m_zero))) {
+								if(mtest[1][1].representsInteger() || mtest[1][0][1].representsFraction() || comparison_is_equal_or_less(mtest[1][0][0].compare(m_zero))) {
 									mtest[1][1].calculateMultiply(mtest[1][0][1], eo2);
 									mtest[1][0].setToChild(1);
 								} else if(mtest[1][0][1].representsEven()) {
-									if(COMPARISON_IS_EQUAL_OR_GREATER(mtest[1][0][0].compare(m_zero))) {
+									if(comparison_is_equal_or_greater(mtest[1][0][0].compare(m_zero))) {
 										mtest[1][1].calculateMultiply(mtest[1][0][1], eo2);
 										mtest[1][0].setToChild(1);
 										mtest[1][0].calculateNegate(eo2);
@@ -6472,7 +6474,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 									msolve.evalSort(false);
 									msolve.calculatesub(eo2, eo2, true);
 									MathStructure msolve_d(msolve);
-									if(msolve_d.differentiate(mvar, eo2) && COMPARISON_IS_NOT_EQUAL(msolve_d.compare(m_one))) {
+									if(msolve_d.differentiate(mvar, eo2) && comparison_is_not_equal(msolve_d.compare(m_one))) {
 										msolve.transform(COMPARISON_EQUALS, mvar);
 										msolve.isolate_x(eo2, mvar);
 										if(msolve.isComparison() && msolve.comparisonType() == COMPARISON_EQUALS && msolve[0] == mvar && msolve[1].contains(mvar, true) <= 0) {
@@ -7266,7 +7268,7 @@ bool contains_incalc_function(const MathStructure &mstruct, const EvaluationOpti
 #if MPFR_VERSION_MAJOR < 4
 			return true;
 #else
-			return !COMPARISON_IS_EQUAL_OR_LESS(mstruct[1].compare(m_zero));
+			return !comparison_is_equal_or_less(mstruct[1].compare(m_zero));
 #endif
 		}
 	}
@@ -7547,7 +7549,7 @@ bool MathStructure::integrate(const MathStructure &lower_limit, const MathStruct
 			if(mtest.compare(m_zero) != COMPARISON_RESULT_EQUAL) mabs = NULL;
 		}
 		if(mabs) {
-			bool b_reversed = COMPARISON_IS_EQUAL_OR_GREATER(m2.compare(m1));
+			bool b_reversed = comparison_is_equal_or_greater(m2.compare(m1));
 			MathStructure m0((*mabs)[0]);
 			m0.transform(COMPARISON_EQUALS, m_zero);
 			EvaluationOptions eo3 = eo;

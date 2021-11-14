@@ -484,7 +484,7 @@ bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, co
 	} else if(cmp != COMPARISON_RESULT_UNKNOWN || (undef_depth <= 5 && contains_undefined(mtest))) {
 		if(cmp == COMPARISON_RESULT_EQUAL || (nr_intval.precision(1) > (orig_prec > PRECISION ? orig_prec + 5 : PRECISION + 5) || (!nr_intval.isNonZero() && nr_intval.uncertainty().isLessThan(nr_prec)))) {
 			if(cmp == COMPARISON_RESULT_EQUAL && depth <= 3) return false;
-			if(malts.size() > 0 && (cmp = malts.last().compare(nr_intval)) != COMPARISON_RESULT_UNKNOWN && COMPARISON_MIGHT_BE_EQUAL(cmp)) {
+			if(malts.size() > 0 && (cmp = malts.last().compare(nr_intval)) != COMPARISON_RESULT_UNKNOWN && cmp != COMPARISON_RESULT_EQUAL && COMPARISON_MIGHT_BE_EQUAL(cmp)) {
 				malts.last().number().setInterval(malts.last().number(), nr_intval);
 				if(malts.last().number().precision(1) < (orig_prec > PRECISION ? orig_prec + 3 : PRECISION + 3)) {
 					return false;
