@@ -45,7 +45,7 @@ code(Ø) to hex
 	0xD8
 code(😀) to hex
 	0x1F600
-#code(🍉) to hex
-#	0xF09F8D89
+code(🍉, utf-8, 0) to hex
+	0xF09F8D89
 code(abc)
 	[97, 98, 99]

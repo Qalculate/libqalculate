@@ -5074,7 +5074,6 @@ bool ask_implicit() {
 	PUTS_UNICODE(str.c_str());
 	puts("");
 	str = ""; BEGIN_BOLD(str); str += "0 = "; str += _("Adaptive"); END_BOLD(str);
-	str += " ("; str += _("default"); str += ")";
 	PUTS_UNICODE(str.c_str());
 	string s_eg = "1/2x = 1/(2x); 1/2 x = (1/2)x";
 	PUTS_ITALIC(s_eg);

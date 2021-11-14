@@ -5187,7 +5187,7 @@ bool test_var_int(const MathStructure &mstruct, bool *v = NULL) {
 				nr_f.floor();
 				Number nr_c(nr_f);
 				nr_c++;
-				return COMPARISON_IS_NOT_EQUAL(mstruct.number().compareApproximately(nr_f)) && COMPARISON_IS_NOT_EQUAL(mstruct.number().compareApproximately(nr_c));
+				return comparison_is_not_equal(mstruct.number().compareApproximately(nr_f)) && comparison_is_not_equal(mstruct.number().compareApproximately(nr_c));
 			}
 			return !mstruct.number().isInterval() && !mstruct.number().isInteger();
 		}
@@ -6022,7 +6022,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					if(ct_comp == COMPARISON_EQUALS) clear(true);
 					else set(1, 1, 0, true);
 					b = true;
-				} else if((CHILD(0).representsBoolean() && ((CHILD(1).isNumber() && CHILD(1).number().isNonZero() && COMPARISON_IS_NOT_EQUAL(CHILD(1).number().compare(nr_one))) || CHILD(1).representsNegative())) || (CHILD(1).representsBoolean() && ((CHILD(0).isNumber() && CHILD(0).number().isNonZero() && COMPARISON_IS_NOT_EQUAL(CHILD(0).number().compare(nr_one))) || CHILD(0).representsNegative()))) {
+				} else if((CHILD(0).representsBoolean() && ((CHILD(1).isNumber() && CHILD(1).number().isNonZero() && comparison_is_not_equal(CHILD(1).number().compare(nr_one))) || CHILD(1).representsNegative())) || (CHILD(1).representsBoolean() && ((CHILD(0).isNumber() && CHILD(0).number().isNonZero() && comparison_is_not_equal(CHILD(0).number().compare(nr_one))) || CHILD(0).representsNegative()))) {
 					if(ct_comp == COMPARISON_EQUALS) clear(true);
 					else set(1, 1, 0, true);
 					b = true;

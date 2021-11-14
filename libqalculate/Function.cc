@@ -1442,7 +1442,7 @@ string Argument::printlong() const {
 		str += " ";
 		str += _("that fulfills the condition:");
 		str += " \"";
-		string str2 = scondition;
+		string str2 = CALCULATOR->localizeExpression(scondition);
 		if(name().empty()) gsub("\\x", _("argument"), str2);
 		else gsub("\\x", name(), str2);
 		str += str2;

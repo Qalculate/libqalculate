@@ -1088,7 +1088,7 @@ msgstr "Nom"
 #: ../src/qalc.cc:1523 ../src/qalc.cc:2648 ../src/qalc.cc:2712
 #: ../src/qalc.cc:2773
 msgid "Illegal name."
-msgstr "Base illégale."
+msgstr "Nom illégale."
 
 #: ../src/qalc.cc:1526 ../src/qalc.cc:1528 ../src/qalc.cc:2651
 #: ../src/qalc.cc:2653 ../src/qalc.cc:2715 ../src/qalc.cc:2717
