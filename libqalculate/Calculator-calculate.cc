@@ -1394,12 +1394,16 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 #define EQUALS_IGNORECASE_AND_LOCAL_NR(x,y,z,a)	(equalsIgnoreCase(x, y a) || (x.length() == strlen(z) + strlen(a) && equalsIgnoreCase(x.substr(0, x.length() - strlen(a)), z) && equalsIgnoreCase(x.substr(x.length() - strlen(a)), a)))
 
 string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po) {
-	return calculateAndPrint(str, msecs, eo, po, NULL);
+	return calculateAndPrint(str, msecs, eo, po, AUTOMATIC_FRACTION_OFF, AUTOMATIC_APPROXIMATION_OFF, NULL, -1, NULL, false, 0, TAG_TYPE_HTML);
 }
 string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, std::string *parsed_expression) {
-	return calculateAndPrint(str, msecs, eo, po, AUTOMATIC_FRACTION_OFF, AUTOMATIC_APPROXIMATION_OFF, parsed_expression, -1);
+	return calculateAndPrint(str, msecs, eo, po, AUTOMATIC_FRACTION_OFF, AUTOMATIC_APPROXIMATION_OFF, parsed_expression, -1, NULL, false, 0, TAG_TYPE_HTML);
 }
 string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, AutomaticFractionFormat auto_fraction, AutomaticApproximation auto_approx, std::string *parsed_expression, int max_length, bool *result_is_comparison) {
+	return calculateAndPrint(str, msecs, eo, po, AUTOMATIC_FRACTION_OFF, AUTOMATIC_APPROXIMATION_OFF, parsed_expression, max_length, result_is_comparison, false, 0, TAG_TYPE_HTML);
+}
+
+string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, AutomaticFractionFormat auto_fraction, AutomaticApproximation auto_approx, std::string *parsed_expression, int max_length, bool *result_is_comparison, bool format, int colorize, int tagtype) {
 
 	if(msecs > 0) startControl(msecs);
 
@@ -1752,16 +1756,16 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	} else if(do_bases) {
 		// handle "to bases"
 		printops.base = BASE_BINARY;
-		result = print(mstruct, 0, printops);
+		result = print(mstruct, 0, printops, format, colorize, tagtype);
 		result += " = ";
 		printops.base = BASE_OCTAL;
-		result += print(mstruct, 0, printops);
+		result += print(mstruct, 0, printops, format, colorize, tagtype);
 		result += " = ";
 		printops.base = BASE_DECIMAL;
-		result += print(mstruct, 0, printops);
+		result += print(mstruct, 0, printops, format, colorize, tagtype);
 		result += " = ";
 		printops.base = BASE_HEXADECIMAL;
-		result += print(mstruct, 0, printops);
+		result += print(mstruct, 0, printops, format, colorize, tagtype);
 		if(complex_angle_form) gsub(" cis ", "∠", result);
 		goto after_print;
 	} else if(do_binary_prefixes) {
@@ -1783,7 +1787,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	if(result_is_comparison) *result_is_comparison = false;
 
 	if(auto_fraction != AUTOMATIC_FRACTION_OFF || auto_approx != AUTOMATIC_APPROXIMATION_OFF) {
-		print_dual(mstruct, str, parsed_struct, mstruct_exact, result, alt_results, printops, evalops, auto_fraction, auto_approx, complex_angle_form, &exact_comparison, true, false, 0, TAG_TYPE_HTML, max_length);
+		print_dual(mstruct, str, parsed_struct, mstruct_exact, result, alt_results, printops, evalops, auto_fraction, auto_approx, complex_angle_form, &exact_comparison, true, format, colorize, tagtype, max_length);
 		if(!alt_results.empty()) {
 			bool use_par = mstruct.isComparison() || mstruct.isLogicalAnd() || mstruct.isLogicalOr();
 			str = result; result = "";
@@ -1870,7 +1874,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		// format and print
 		mstruct.format(printops);
 		mstruct.removeDefaultAngleUnit(evalops);
-		result = mstruct.print(printops);
+		result = mstruct.print(printops, format, colorize, tagtype);
 
 		// "to angle": replace "cis" with angle symbol
 		if(complex_angle_form) gsub(" cis ", "∠", result);
@@ -1921,7 +1925,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			setCustomOutputBase(nr_base);
 		}
 		parsed_struct.format(po_parsed);
-		*parsed_expression = parsed_struct.print(po_parsed);
+		*parsed_expression = parsed_struct.print(po_parsed, format, colorize, tagtype);
 	}
 
 	printops.is_approximate = save_is_approximate;

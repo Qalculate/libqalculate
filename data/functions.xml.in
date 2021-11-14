@@ -1969,9 +1969,9 @@
     <category>
       <_title>Regression</_title>
       <function>
-        <_title>Simple Linear Regression</_title>
-        <_names>r:linearregression</_names>
-        <_description>Returns the linear function, for a set a of x and y values, estimated using simple linear regression with a single explanatory variable using the ordinary least squares method. If the vector of y values is empty, the first argument is used for sequential y values (with x values 1, 2, ..., n). It is possible to pass both x and y values in a two column matrix as the first argument.</_description>
+        <_title>Simple Linear Fit</_title>
+        <_names>r:linearfit</_names>
+        <_description>Returns the linear function, for a set of x and y values, estimated using simple linear regression with a single explanatory variable using the ordinary least squares method. If the vector of y values is empty, the first argument is used for sequential y values (with x values 1, 2, ..., n). It is possible to pass both x and y values in a two column matrix as the first argument.</_description>
         <condition>dimension(\x)=dimension(\y) || dimension(\y)=0</condition>
         <subfunction precalculate="true">if([dimension(\Y{[]})>0,rows(\x)>1&amp;&amp;columns(\x)=2],[\x,column(\x,1)],genvector("i",1,dimension(\x),1,"i",1))</subfunction>
         <subfunction precalculate="true">if([dimension(\y)>0,rows(\x)>1&amp;&amp;columns(\x)=2],[\y,column(\x,2)],\x)</subfunction>

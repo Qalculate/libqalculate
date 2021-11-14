@@ -468,6 +468,7 @@ class Calculator {
 	std::string calculateAndPrint(std::string str, int msecs = 10000, const EvaluationOptions &eo = default_user_evaluation_options, const PrintOptions &po = default_print_options);
 	std::string calculateAndPrint(std::string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, std::string *parsed_expression);
 	std::string calculateAndPrint(std::string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, AutomaticFractionFormat auto_fraction, AutomaticApproximation auto_approx = AUTOMATIC_APPROXIMATION_OFF, std::string *parsed_expression = NULL, int max_length = -1, bool *result_is_comparison = NULL);
+	std::string calculateAndPrint(std::string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, AutomaticFractionFormat auto_fraction, AutomaticApproximation auto_approx, std::string *parsed_expression, int max_length, bool *result_is_comparison, bool format, int colorize = 0, int tagtype = TAG_TYPE_HTML);
 	int testCondition(std::string expression);
 	//@}
 

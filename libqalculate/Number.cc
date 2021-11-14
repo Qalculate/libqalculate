@@ -2617,7 +2617,7 @@ ComparisonResult Number::compare(const Number &o, bool ignore_imag) const {
 			if(o.hasImaginaryPart()) {
 				ComparisonResult cr = realPart().compare(o.realPart());
 				if(COMPARISON_IS_NOT_EQUAL(cr)) return COMPARISON_RESULT_NOT_EQUAL;
-				if(cr == COMPARISON_RESULT_EQUAL || COMPARISON_MIGHT_BE_EQUAL(cr)) {
+				if(COMPARISON_MIGHT_BE_EQUAL(cr)) {
 					cr = imaginaryPart().compare(o.imaginaryPart());
 					if(COMPARISON_IS_NOT_EQUAL(cr)) return COMPARISON_RESULT_NOT_EQUAL;
 					return COMPARISON_RESULT_UNKNOWN;
@@ -2724,7 +2724,7 @@ ComparisonResult Number::compareApproximately(const Number &o, int prec) const {
 			if(o.hasImaginaryPart()) {
 				ComparisonResult cr = realPart().compareApproximately(o.realPart());
 				if(COMPARISON_IS_NOT_EQUAL(cr)) return COMPARISON_RESULT_NOT_EQUAL;
-				if(cr == COMPARISON_RESULT_EQUAL || COMPARISON_MIGHT_BE_EQUAL(cr)) {
+				if(COMPARISON_MIGHT_BE_EQUAL(cr)) {
 					cr = imaginaryPart().compareApproximately(o.imaginaryPart());
 					if(COMPARISON_IS_NOT_EQUAL(cr)) return COMPARISON_RESULT_NOT_EQUAL;
 					return COMPARISON_RESULT_UNKNOWN;
@@ -7337,7 +7337,8 @@ bool Number::lambertW(const Number &k) {
 			setPrecisionAndApproximateFrom(nr_u);
 			if(k.isZero()) {
 				Number mexpm1(-1, 1); mexpm1.exp(); mexpm1.negate();
-				if(COMPARISON_MIGHT_BE_EQUAL(compare(mexpm1))) nr_l.setInterval(nr_minus_one, nr_l);
+				ComparisonResult cr = compare(mexpm1);
+				if(COMPARISON_MIGHT_BE_EQUAL(cr)) nr_l.setInterval(nr_minus_one, nr_l);
 			} else {
 				if(!isNonZero()) nr_l.setInterval(nr_minus_inf, nr_l);
 			}

@@ -3266,7 +3266,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						MathStructure *marg = NULL;
 						if(mln.representsNonZero()) {
 							marg = new MathStructure(mln);
-							if(COMPARISON_MIGHT_BE_EQUAL(m_c.compare(m_zero))) {marg->unref(); marg = NULL;}
+							if(comparison_might_be_equal(m_c.compare(m_zero))) {marg->unref(); marg = NULL;}
 							else if(!m_c.isOne()) marg->calculateMultiply(m_c, eo2);
 						}
 						if(marg) {
@@ -3728,7 +3728,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						// x^(a*x)=b => x=e^(lambertw(ln(x)/a))
 						MathStructure mmul(1, 1, 0);
 						const MathStructure *mvar = get_power_term(CHILD(0)[1], CHILD(0)[0]);
-						if(!mvar || !get_multiplier(CHILD(0)[1], *mvar, mmul) || mmul.contains(x_var) || COMPARISON_MIGHT_BE_EQUAL(mmul.compare(m_zero))) return false;
+						if(!mvar || !get_multiplier(CHILD(0)[1], *mvar, mmul) || mmul.contains(x_var) || comparison_might_be_equal(mmul.compare(m_zero))) return false;
 						MathStructure mexp(1, 1, 0);
 						if(mvar->isPower() && *mvar != CHILD(0)[0]) mexp = (*mvar)[1];
 						if(mmul.isOne() && mexp.isOne() && CHILD(1).isNumber() && CHILD(1).number().isRational() && CHILD(0)[0].representsNonComplex()) {
