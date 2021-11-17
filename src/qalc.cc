@@ -1486,6 +1486,16 @@ bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t 
 	return l >= minlength;
 }
 
+int key_clear(int, int) {
+#ifdef _WIN32
+	system("cls");
+#else
+	printf("\e[1;1H\e[2J");
+#endif
+	fputs("> ", stdout);
+	return 0;
+}
+
 int key_exact(int i1, int i2) {
 #ifdef HAVE_LIBREADLINE
 	if(rl_end > 0) {
@@ -2532,6 +2542,7 @@ int main(int argc, char *argv[]) {
 		rl_bind_keyseq("\\C-e", key_exact);
 		rl_bind_keyseq("\\C-f", key_fraction);
 		rl_bind_keyseq("\\C-a", key_save);
+		rl_bind_keyseq("\\C-l", key_clear);
 	}
 #endif
 
@@ -4843,6 +4854,13 @@ int main(int argc, char *argv[]) {
 			} else {
 				goto show_info;
 			}
+		//qalc command
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear", _("clear"))) {
+#ifdef _WIN32
+			system("cls");
+#else
+			printf("\e[1;1H\e[2J");
+#endif
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "quit", _("quit")) || EQUALS_IGNORECASE_AND_LOCAL(str, "exit", _("exit"))) {
 #ifdef HAVE_LIBREADLINE
