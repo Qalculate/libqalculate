@@ -5310,6 +5310,49 @@ int contains_temp_unit(const MathStructure &m, bool top = true) {
 	}
 	return 0;
 }
+bool is_resistance(const MathStructure &m, bool b_inv = false) {
+	switch(m.type()) {
+		case STRUCT_MULTIPLICATION: {
+			bool b = false;
+			for(size_t i = 0; i < m.size(); i++) {
+				if(!b && is_resistance(m[i], b_inv)) b = true;
+				else if(m[i].containsType(STRUCT_UNIT, false, true, true)) {b = false; break;}
+			}
+			return b;
+		}
+		case STRUCT_POWER: {
+			if(m[1].isMinusOne()) {
+				return is_resistance(m[0], !b_inv);
+			}
+			break;
+		}
+		case STRUCT_LOGICAL_OR: {}
+		case STRUCT_ADDITION: {
+			bool b = true;
+			for(size_t i = 0; i < m.size(); i++) {
+				if(!is_resistance(m[i], b_inv)) {b = false;}
+			}
+			return b;
+		}
+		case STRUCT_UNIT: {
+			if(b_inv) break;
+			Unit *u = m.unit();
+			while(u) {
+				if(u->referenceName() == "ohm" || u->referenceName() == "H" || u->referenceName() == "F") {
+					return true;
+				}
+				if(u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseExponent() == 1) {
+					u = ((AliasUnit*) u)->firstBaseUnit();
+				} else {
+					break;
+				}
+			}
+			break;
+		}
+		default: {}
+	}
+	return false;
+}
 
 bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOptions &feo, bool recursive, MathStructure *mparent, size_t index_this) {
 
@@ -5623,12 +5666,13 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 			break;
 		}
 		case STRUCT_LOGICAL_OR: {
-			bool isResistance = false;
 			// calculate resistance || resistance as parallel resistor (?)
+			bool b_resistance = true;
 			if(recursive) {
 				bool comp = false;
 				for(size_t i = 0; i < SIZE; i++) {
 					CHILD(i).calculatesub(eo, feo, true, this, i);
+					if(!is_resistance(CHILD(i))) b_resistance = false;
 					CHILD_UPDATED(i)
 					if(CHILD(i).representsNonZero()) {
 						set(1, 1, 0, true);
@@ -5659,32 +5703,18 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					}
 					if(b) break;
 				}
+			} else {
+				for(size_t i = 0; i < SIZE; i++) {
+					if(!is_resistance(CHILD(i))) b_resistance = false;
+				}
 			}
-			switch(CHILD(0).type()) {
-				case STRUCT_MULTIPLICATION: {
-					if(CHILD(0)[1] != 0 && CHILD(0)[1].unit() && CHILD(0)[1].unit()->name().find("ohm") != string::npos) {
-						isResistance = true;
-					}
-					break;
+			if(b_resistance) {
+				for(size_t i = 0; i < SIZE; i++) {
+					CHILD(i).inverse();
 				}
-				case STRUCT_UNIT: {
-					if(CHILD(0).unit() && CHILD(0).unit()->name().find("ohm") != string::npos) {
-						isResistance = true;
-					}
-					break;
-				}
-				default: {}
-			}
-			if(isResistance) {
-				MathStructure mstruct;
-				for (size_t i = 0; i < SIZE; i++) {
-					MathStructure mtemp(CHILD(i));
-					mtemp.inverse();
-					mstruct += mtemp;
-				}
-				mstruct.inverse();
-				clear();
-				set(mstruct);
+				m_type = STRUCT_ADDITION;
+				inverse();
+				b = true;
 				break;
 			}
 			MERGE_ALL(merge_logical_or, try_logor)
