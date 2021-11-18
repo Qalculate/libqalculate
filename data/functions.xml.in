@@ -356,7 +356,13 @@
       <_title>Element-wise Multiplication</_title>
       <_names>r:multiply,times</_names>
       <argument index="1">
-        <_title>Factors</_title>
+        <_title>Factor 1</_title>
+      </argument>
+      <argument index="2">
+        <_title>Factor 2</_title>
+      </argument>
+      <argument index="2">
+        <_title>Factor 3</_title>
       </argument>
     </builtin_function>
     <builtin_function name="rdivide">
@@ -552,6 +558,11 @@
         <argument index="2">
           <_title>Denominator</_title>
         </argument>
+      </builtin_function>
+      <builtin_function name="parallel">
+        <_title>Parallel</_title>
+        <_names>r:parallel</_names>
+        <hidden>true</hidden>
       </builtin_function>
       <function>
         <_title>Integer Division</_title>

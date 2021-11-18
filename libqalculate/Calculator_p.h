@@ -57,13 +57,14 @@ class Calculator_p {
 	public:
 		unordered_map<size_t, MathStructure*> id_structs;
 		unordered_map<size_t, bool> ids_p;
+		unordered_map<size_t, size_t> ids_ref;
 		vector<size_t> freed_ids;
 		size_t ids_i;
 		Number custom_input_base, custom_output_base;
 		long int custom_input_base_i;
 		Unit *local_currency;
 		int use_binary_prefixes;
-		MathFunction *f_cis, *f_erfi, *f_fresnels, *f_fresnelc, *f_dot, *f_times, *f_rdivide, *f_power;
+		MathFunction *f_cis, *f_erfi, *f_fresnels, *f_fresnelc, *f_dot, *f_times, *f_rdivide, *f_power, *f_parallel;
 		Unit *u_byn;
 		Unit *u_kelvin, *u_rankine, *u_celsius, *u_fahrenheit;
 		unordered_map<int, MathFunction*> id_functions;
