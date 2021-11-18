@@ -1,3 +1,71 @@
+2021-11-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Interpret || as paralell to operator for all units, add support for Unicode paralell to symbol, and move || as paralell to parsing stage
+
+2021-11-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add clear command, and Ctrl+L shortcut (for Windows)
+
+2021-11-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add Calculator::calculateAndPrint() variant with formatting arguments
+	* Remove "(default)" from adaptive mode in qalc
+	* Localize condition expression in argument description
+
+2021-11-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add micrometer and nanometer
+
+2021-11-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support "--" as end of options in qalc command line
+
+2021-11-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix pearson() and spearman()
+
+2021-11-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Avoid precision loss on output of interval when precerve_precision is true (e.g. when saving approximate variable)
+
+2021-10-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix display of uncompletely solved equation (equality where value on the left is not a variable) with dual approximation
+	* Solve x^(x^(-a))=b
+	* Im(-x)=-Im(x), Re(-x)=-Re(x)
+
+2021-10-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add functions for quadratic and cubic regression (quadraticfit() and cubicfit())
+	* Allow nested subfunctions (use of subfunction in another subfunction)
+
+2021-10-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Configurable SIGINT (Ctrl+C) action (in interactive mode) - by default qalc will now exit, orderly, if inactive
+
+2021-10-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add function for RAM latency calculation
+	* Add function for simple linear regression
+	* Fix genvector() when step size requires evaluation
+
+2021-10-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix "to unicode" in qalc
+	* Fix a%%-b (interpret %% as mod not percent)
+	* Add (Equilateral) at end of square pyramide function titles
+	* Add --defaults command line option to qalc
+	* Look global definitions in data and ../data first (if running from build directory)
+	* Change title of function category from "Regression" to "Correlation"
+
+2021-10-18 Dani Biró <danibiro93@gmail.com>
+
+	* Unit tests
+
+2021-10-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add vertical space option ("vspace") in qalc
+
 2021-10-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix parsing of percentage before space (e.g. "10 - x% = 8")

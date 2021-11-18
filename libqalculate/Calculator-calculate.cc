@@ -137,6 +137,7 @@ void Calculator::clearBuffers() {
 		if(!it->second) {
 			priv->freed_ids.push_back(it->first);
 			priv->id_structs.erase(it->first);
+			priv->ids_ref.erase(it->first);
 			priv->ids_p.erase(it);
 		}
 	}

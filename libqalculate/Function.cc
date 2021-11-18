@@ -457,11 +457,26 @@ void MathFunction::setArgumentDefinition(size_t index, Argument *argdef) {
 	if(priv->argdefs.find(index) != priv->argdefs.end()) {
 		delete priv->argdefs[index];
 	}
-	priv->argdefs[index] = argdef;
-	if(index > last_argdef_index) {
-		last_argdef_index = index;
+	if(argdef) {
+		priv->argdefs[index] = argdef;
+		if(index > last_argdef_index) {
+			last_argdef_index = index;
+		}
+		argdef->setIsLastArgument((int) index == maxargs());
+	} else {
+		priv->argdefs.erase(index);
+		if(index == last_argdef_index) {
+			last_argdef_index = 0;
+			if(!priv->argdefs.empty()) {
+				for(size_t i = index - 1; i > 0; i--) {
+					if(priv->argdefs.find(i) != priv->argdefs.end()) {
+						last_argdef_index = i;
+						break;
+					}
+				}
+			}
+		}
 	}
-	argdef->setIsLastArgument((int) index == maxargs());
 	setChanged(true);
 }
 bool MathFunction::testArgumentCount(int itmp) {

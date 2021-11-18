@@ -1497,6 +1497,7 @@ void Calculator::addBuiltinFunctions() {
 	f_mod = addFunction(new ModFunction());
 	addFunction(new BernoulliFunction());
 	addFunction(new TotientFunction());
+	priv->f_parallel = addFunction(new ParallelFunction());
 
 	f_polynomial_unit = addFunction(new PolynomialUnitFunction());
 	f_polynomial_primpart = addFunction(new PolynomialPrimpartFunction());
