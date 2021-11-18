@@ -659,6 +659,34 @@ int ModFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	FR_FUNCTION_2(mod)
 }
 
+ParallelFunction::ParallelFunction() : MathFunction("parallel", 2, -1) {}
+int ParallelFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(!mstruct[i].representsNonZero(true)) mstruct[i].eval(eo);
+		if(mstruct[i].representsZero(true)) {
+			mstruct = vargs;
+			mstruct.eval(eo);
+			for(size_t i2 = 0; i2 < mstruct.size(); i2++) {
+				if((i2 > i && !mstruct[i2].representsNonZero(true)) || (i2 < mstruct.size() - 1 && !mstruct[i2].isUnitCompatible(mstruct[i2 + 1]))) {
+					return 0;
+				}
+			}
+			mstruct.setToChild(i + 1);
+			return 1;
+		}
+		mstruct[i].inverse();
+	}
+	if(mstruct.size() == 0) {
+		mstruct.clear();
+	} else {
+		if(mstruct.size() == 1) mstruct.setToChild(1);
+		else mstruct.setType(STRUCT_ADDITION);
+		mstruct.inverse();
+	}
+	return 1;
+}
+
 BernoulliFunction::BernoulliFunction() : MathFunction("bernoulli", 1, 2) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
 	setDefaultValue(2, "0");

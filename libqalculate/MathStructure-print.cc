@@ -3816,7 +3816,20 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 		}
 		case STRUCT_FUNCTION: {
 			ips_n.depth++;
-			if(o_function->id() == FUNCTION_ID_ABS && SIZE == 1 && !po.preserve_format) {
+			if(o_function->id() == FUNCTION_ID_PARALLEL && SIZE >= 2) {
+				for(size_t i = 0; i < SIZE; i++) {
+					if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
+					if(i > 0) {
+						if(po.spacious) print_str += " ";
+						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("∥", po.can_display_unicode_string_arg))) print_str += "∥";
+						else print_str += "||";
+						if(po.spacious) print_str += " ";
+					}
+					ips_n.wrap = CHILD(i).isAddition();
+					print_str += CHILD(i).print(po, format, colorize, tagtype, ips_n);
+				}
+				break;
+			} else if(o_function->id() == FUNCTION_ID_ABS && SIZE == 1 && !po.preserve_format) {
 				print_str += "|";
 				print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
 				print_str += "|";

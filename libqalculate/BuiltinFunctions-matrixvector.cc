@@ -611,29 +611,27 @@ int DotProductFunction::calculate(MathStructure &mstruct, const MathStructure &v
 	return -3;
 }
 
-EntrywiseMultiplicationFunction::EntrywiseMultiplicationFunction() : MathFunction("times", 1) {
-	setArgumentDefinition(1, new VectorArgument(""));
-}
+EntrywiseMultiplicationFunction::EntrywiseMultiplicationFunction() : MathFunction("times", 2, -1) {}
 int EntrywiseMultiplicationFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[0].size() == 0) {mstruct.clear(); return 1;}
-	if(vargs[0].size() == 1) {mstruct = vargs[0][0]; return 1;}
-	if(vargs[0].size() > 2) {
-		mstruct = vargs[0][0];
+	if(vargs.size() == 0) {mstruct.clear(); return 1;}
+	if(vargs.size() == 1) {mstruct = vargs[0]; return 1;}
+	if(vargs.size() > 2) {
+		mstruct = vargs[0];
 		bool b_scalar = mstruct.representsScalar();
-		for(size_t index = 1; index < vargs[0].size(); index++) {
+		for(size_t index = 1; index < vargs.size(); index++) {
 			if(CALCULATOR->aborted()) return 0;
-			if(b_scalar || vargs[0][index].representsScalar()) {
-				mstruct.multiply(vargs[0][index], true);
+			if(b_scalar || vargs[index].representsScalar()) {
+				mstruct.multiply(vargs[index], true);
 				if(b_scalar) b_scalar = mstruct.representsScalar();
 			} else {
-				mstruct.transform(STRUCT_VECTOR, vargs[0][index]);
+				mstruct.transform(STRUCT_VECTOR, vargs[index]);
 				mstruct.transform(this);
 			}
 		}
 		return 1;
 	}
-	mstruct = vargs[0][0];
-	MathStructure m2(vargs[0][1]);
+	mstruct = vargs[0];
+	MathStructure m2(vargs[1]);
 	bool b_eval = false;
 	if(mstruct.representsScalar() || m2.representsScalar()) {
 		mstruct *= m2;

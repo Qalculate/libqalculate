@@ -1133,7 +1133,7 @@ bool MathStructure::representsNonZero(bool allow_units) const {
 			return true;
 		}
 		case STRUCT_POWER: {
-			return (CHILD(0).representsNonZero(allow_units) && ((CHILD(1).isNumber() && !CHILD(1).number().includesInfinity()) || (!CHILD(1).isNumber() && CHILD(1).representsNumber(true)))) || (!CHILD(0).isApproximatelyZero() && CHILD(1).representsNonPositive());
+			return (CHILD(0).representsNonZero(allow_units) && CHILD(1).representsNumber(true)) || (((!CHILD(0).isApproximatelyZero() && CHILD(1).representsNonPositive()) || CHILD(1).representsNegative()) && CHILD(0).representsNumber(allow_units) && CHILD(1).representsNumber(true));
 		}
 		default: {return false;}
 	}

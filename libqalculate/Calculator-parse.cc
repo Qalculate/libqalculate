@@ -67,6 +67,7 @@ size_t Calculator::addId(MathStructure *mstruct, bool persistent) {
 		id = priv->ids_i;
 	}
 	priv->ids_p[id] = persistent;
+	priv->ids_ref[id] = 1;
 	priv->id_structs[id] = mstruct;
 	return id;
 }
@@ -80,6 +81,7 @@ size_t Calculator::parseAddId(MathFunction *f, const string &str, const ParseOpt
 		id = priv->ids_i;
 	}
 	priv->ids_p[id] = persistent;
+	priv->ids_ref[id] = 1;
 	priv->id_structs[id] = new MathStructure();
 	f->parse(*priv->id_structs[id], str, po);
 	return id;
@@ -94,6 +96,7 @@ size_t Calculator::parseAddIdAppend(MathFunction *f, const MathStructure &append
 		id = priv->ids_i;
 	}
 	priv->ids_p[id] = persistent;
+	priv->ids_ref[id] = 1;
 	priv->id_structs[id] = new MathStructure();
 	f->parse(*priv->id_structs[id], str, po);
 	priv->id_structs[id]->addChild(append_mstruct);
@@ -109,19 +112,22 @@ size_t Calculator::parseAddVectorId(const string &str, const ParseOptions &po, b
 		id = priv->ids_i;
 	}
 	priv->ids_p[id] = persistent;
+	priv->ids_ref[id] = 1;
 	priv->id_structs[id] = new MathStructure();
 	f_vector->args(str, *priv->id_structs[id], po);
 	return id;
 }
 MathStructure *Calculator::getId(size_t id) {
 	if(priv->id_structs.find(id) != priv->id_structs.end()) {
-		if(priv->ids_p[id]) {
+		if(priv->ids_p[id] || priv->ids_ref[id] > 1) {
+			if(priv->ids_ref[id] > 0) priv->ids_ref[id]--;
 			return new MathStructure(*priv->id_structs[id]);
 		} else {
 			MathStructure *mstruct = priv->id_structs[id];
 			priv->freed_ids.push_back(id);
 			priv->id_structs.erase(id);
 			priv->ids_p.erase(id);
+			priv->ids_ref.erase(id);
 			return mstruct;
 		}
 	}
@@ -129,11 +135,17 @@ MathStructure *Calculator::getId(size_t id) {
 }
 
 void Calculator::delId(size_t id) {
-	if(priv->ids_p.find(id) != priv->ids_p.end()) {
-		priv->freed_ids.push_back(id);
-		priv->id_structs[id]->unref();
-		priv->id_structs.erase(id);
-		priv->ids_p.erase(id);
+	unordered_map<size_t, size_t>::iterator it = priv->ids_ref.find(id);
+	if(it != priv->ids_ref.end()) {
+		if(it->second > 1) {
+			it->second--;
+		} else {
+			priv->freed_ids.push_back(id);
+			priv->id_structs[id]->unref();
+			priv->id_structs.erase(id);
+			priv->ids_p.erase(id);
+			priv->ids_ref.erase(it);
+		}
 	}
 }
 
@@ -212,13 +224,13 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 	return is - str_index;
 }
 
-const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", "∠", "\x1c", "⊼", "\x1d", "⊽", "\x1e", "⊕", "\x1f", "⨯", "\x15"};
-#define INTERNAL_SIGNS_COUNT 16
+const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", "∠", "\x1c", "⊼", "\x1d", "⊽", "\x1e", "⊕", "\x1f", "⨯", "\x15", "∥", "\x14"};
+#define INTERNAL_SIGNS_COUNT 18
 #define INTERNAL_NUMBER_CHARS "\b"
-#define INTERNAL_OPERATORS "\a\b%\x1c\x1d\x1e\x1f\x15\x16\x17\x18\x19\x1a"
-#define INTERNAL_OPERATORS_TWO "\a\b%\x1c\x1d\x1e\x1f\x15\x16\x17\x18\x19"
-#define INTERNAL_OPERATORS_NOPM "\a%\x1c\x1d\x1e\x1f\x15\x16\x17\x18\x19\x1a"
-#define INTERNAL_OPERATORS_NOMOD "\a\b\x1c\x1d\x1e\x1f\x15\x16\x17\x18\x19\x1a"
+#define INTERNAL_OPERATORS "\a\b%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a"
+#define INTERNAL_OPERATORS_TWO "\a\b%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19"
+#define INTERNAL_OPERATORS_NOPM "\a%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a"
+#define INTERNAL_OPERATORS_NOMOD "\a\b\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a"
 #define DUODECIMAL_CHARS "EXABab"
 
 string Calculator::parseComments(string &str, const ParseOptions &po, bool *double_tag) {
@@ -608,6 +620,7 @@ void replace_internal_operators(string &str) {
 	gsub("\x1d", " nand ", str);
 	gsub("\x1e", " nor ", str);
 	gsub("\x1f", " xor ", str);
+	gsub("\x15", "∥", str);
 	gsub("\x15", " cross ", str);
 	gsub("\x16", DOT, str);
 	gsub("\x17", DOT MULTIPLICATION, str);
@@ -625,6 +638,7 @@ const char *internal_operator_replacement(char c) {
 		case '\x1d': return "nand";
 		case '\x1e': return "nor";
 		case '\x1f': return "xor";
+		case '\x14': return "∥";
 		case '\x15': return "cross";
 		case '\x16': return DOT;
 		case '\x17': return DOT MULTIPLICATION;
@@ -958,6 +972,21 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
 	return str;
 }
 
+bool contains_parallel(const MathStructure &m) {
+	if(m.isLogicalOr()) {
+		for(size_t i = 0; i < m.size(); i++) {
+			if(m[i].containsType(STRUCT_UNIT, false, true, true) <= 0) return false;
+			if(m[i].representsBoolean() && (!m[i].isLogicalOr() || !contains_parallel(m[i]))) return false;
+		}
+		return true;
+	}
+	if(m.representsBoolean()) return false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_parallel(m[i])) return true;
+	}
+	return false;
+}
+
 void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &parseoptions) {
 
 	ParseOptions po = parseoptions;
@@ -1075,8 +1104,12 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	int ascii_bitwise = 0;
 	if(str.find_first_of(BITWISE_AND BITWISE_OR LOGICAL_NOT) != string::npos) ascii_bitwise = 1;
 
+	bool test_or_parallel = (str.find("||") != string::npos);
+
 	// replace alternative strings (primarily operators) with default ascii versions
 	parseSigns(str, true);
+
+	if(test_or_parallel) test_or_parallel = (str.find("&&") == string::npos && str.find('\x14') == string::npos);
 
 	// parse quoted string as symbolic MathStructure
 	for(size_t str_index = 0; str_index < str.length(); str_index++) {
@@ -1504,10 +1537,12 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				} else if(or_str_len > 0 && i == or_str_len && (il = compare_name_no_case(or_str, str, or_str_len, str_index + 1, base))) {
 					str.replace(str_index + 1, il, LOGICAL_OR);
 					if(!ascii_bitwise) ascii_bitwise = 2;
+					test_or_parallel = false;
 					str_index += 2;
 				} else if(i == OR_str_len && (il = compare_name_no_case(OR_str, str, OR_str_len, str_index + 1, base))) {
 					str.replace(str_index + 1, il, LOGICAL_OR);
 					if(!ascii_bitwise) ascii_bitwise = 2;
+					test_or_parallel = false;
 					str_index += 2;
 				} else if(i == XOR_str_len && (il = compare_name_no_case(XOR_str, str, XOR_str_len, str_index + 1, base))) {
 					str.replace(str_index + 1, il, "\a");
@@ -2439,7 +2474,26 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		}
 	}
 
-	parseOperators(mstruct, str, po);
+	if(test_or_parallel) {
+		beginTemporaryStopMessages();
+		for(unordered_map<size_t, size_t>::iterator it = priv->ids_ref.begin(); it != priv->ids_ref.end(); ++it) {
+			it->second++;
+		}
+		parseOperators(mstruct, str, po);
+		if(contains_parallel(*mstruct)) {
+			endTemporaryStopMessages();
+			gsub("||", "\x14", str);
+			parseOperators(mstruct, str, po);
+		} else {
+			endTemporaryStopMessages(true);
+			unordered_map<size_t, size_t> ids_ref_bak = priv->ids_ref;
+			for(unordered_map<size_t, size_t>::iterator it = ids_ref_bak.begin(); it != ids_ref_bak.end(); ++it) {
+				delId(it->first);
+			}
+		}
+	} else {
+		parseOperators(mstruct, str, po);
+	}
 
 	if(is_boolean_algebra_expression(*mstruct, ascii_bitwise)) {
 		bitwise_to_logical(*mstruct);
@@ -2508,7 +2562,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			// ignore operators
 			error(false, _("Misplaced '%c' ignored"), str[i], NULL);
 			str.erase(i, 1);
-		} else if(str[i] == '\a' || (str[i] <= '\x1f' && str[i] >= '\x1c') || (str[i] <= '\x1a' && str[i] >= '\x15')) {
+		} else if(str[i] == '\a' || (str[i] <= '\x1f' && str[i] >= '\x1c') || (str[i] <= '\x1a' && str[i] >= '\x14')) {
 			// ignore operators
 			error(false, _("Misplaced operator(s) \"%s\" ignored"), internal_operator_replacement(str[i]), NULL);
 			str.erase(i, 1);
@@ -3959,6 +4013,34 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					i = str.find(ID_WRAP_LEFT_CH, i + 1);
 				}
 			}
+		}
+
+		// Parse parallel operator
+		if((i = str.find('\x14', 1)) != string::npos && i + 1 != str.length()) {
+			bool b = false;
+			while(i != string::npos && i + 1 != str.length()) {
+				str2 = str.substr(0, i);
+				str = str.substr(i + 1, str.length() - (i + 1));
+				if(b) {
+					MathStructure *mstruct2 = new MathStructure();
+					parseAdd(str2, mstruct2, po);
+					mstruct->addChild_nocopy(mstruct2);
+				} else {
+					parseAdd(str2, mstruct, po);
+					mstruct->transform(priv->f_parallel);
+					b = true;
+				}
+				i = str.find('\x14', 1);
+			}
+			if(b) {
+				MathStructure *mstruct2 = new MathStructure();
+				parseAdd(str, mstruct2, po);
+				mstruct->addChild_nocopy(mstruct2);
+			} else {
+				parseAdd(str, mstruct, po);
+				mstruct->transform(priv->f_parallel);
+			}
+			return true;
 		}
 
 		// Parse explicit multiplication, division, and mod
