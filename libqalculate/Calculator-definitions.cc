@@ -1456,7 +1456,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 								} else {
 									f->getArgumentDefinition(itmp)->setName(argname);
 								}
-							} else if(itmp <= f->maxargs() || itmp <= f->minargs()) {
+							} else if(f->maxargs() < 0 || itmp <= f->maxargs()) {
 								if(!argname.empty() && argname[0] == '!') {
 									size_t i = argname.find('!', 1);
 									if(i == string::npos) {
@@ -2527,7 +2527,7 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 	string cat, cat_sub;
 	for(size_t i = 0; i < units.size(); i++) {
 		u = units[i];
-		if(save_global || u->isLocal() || u->hasChanged()) {
+		if((save_global || u->isLocal() || u->hasChanged()) && u->category() != _("Temporary") && u->category() != "Temporary") {
 			item = &top;
 			if(!u->category().empty()) {
 				cat = u->category();
@@ -2696,7 +2696,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 	NumberArgument *farg;
 	string str;
 	for(size_t i = 0; i < functions.size(); i++) {
-		if(functions[i]->subtype() != SUBTYPE_DATA_SET && (save_global || functions[i]->isLocal() || functions[i]->hasChanged())) {
+		if(functions[i]->subtype() != SUBTYPE_DATA_SET && (save_global || functions[i]->isLocal() || functions[i]->hasChanged()) && functions[i]->category() != _("Temporary") && functions[i]->category() != "Temporary") {
 			item = &top;
 			if(!functions[i]->category().empty()) {
 				cat = functions[i]->category();

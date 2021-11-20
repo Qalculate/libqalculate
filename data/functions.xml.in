@@ -361,9 +361,6 @@
       <argument index="2">
         <_title>Factor 2</_title>
       </argument>
-      <argument index="2">
-        <_title>Factor 3</_title>
-      </argument>
     </builtin_function>
     <builtin_function name="rdivide">
       <_title>Element-wise Right Division</_title>
@@ -560,9 +557,8 @@
         </argument>
       </builtin_function>
       <builtin_function name="parallel">
-        <_title>Parallel</_title>
+        <_title>Parallel Sum</_title>
         <_names>r:parallel</_names>
-        <hidden>true</hidden>
       </builtin_function>
       <function>
         <_title>Integer Division</_title>
@@ -1529,10 +1525,10 @@
       <_names>r:ramlatency</_names>
       <example>$name(3600, 18) = 10 ns</example>
       <expression>(\A{2}*\y+(\Z{1}-1))/if(isNumber(\x),\x*MHz,\x)</expression>
-      <argument type="free" index="2">
+      <argument type="free" index="1">
         <_title>Data Rate</_title>
       </argument>
-      <argument type="number" index="1">
+      <argument type="number" index="2">
         <_title>CAS Latency</_title>
         <min include_equals="false">0</min>
       </argument>
@@ -1540,7 +1536,7 @@
         <_title>Word</_title>
         <min>1</min>
       </argument>
-      <argument type="integer" index="3">
+      <argument type="integer" index="4">
         <_title>Transfers per Clock Cycle</_title>
         <min>1</min>
       </argument>

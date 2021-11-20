@@ -2637,6 +2637,7 @@ int namelen(const MathStructure &mstruct, const PrintOptions &po, const Internal
 
 bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrintStruct &ips, const MathStructure &parent, size_t index, bool flat_division, bool flat_power) const {
 	// determines, using the type of the parent, the type of the child, the index of the child, and if division is displayed on one line or not (only relevant in the GUI), if this child should be displayed surrounded by parentheses
+	if(m_type == STRUCT_FUNCTION && o_function && o_function->id() == FUNCTION_ID_PARALLEL) return true;
 	switch(parent.type()) {
 		case STRUCT_MULTIPLICATION: {
 			switch(m_type) {
@@ -2904,6 +2905,24 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 			}
 		}
 		case STRUCT_FUNCTION: {
+			if(parent.function() && parent.function()->id() == FUNCTION_ID_PARALLEL) {
+				switch(m_type) {
+					case STRUCT_MULTIPLICATION: {return po.excessive_parenthesis;}
+					case STRUCT_DIVISION: {return po.excessive_parenthesis;}
+					case STRUCT_INVERSE: {return po.excessive_parenthesis;}
+					case STRUCT_POWER: {return po.excessive_parenthesis;}
+					case STRUCT_NEGATE: {return po.excessive_parenthesis;}
+					case STRUCT_FUNCTION: {return false;}
+					case STRUCT_VECTOR: {return false;}
+					case STRUCT_NUMBER: {return false;}
+					case STRUCT_VARIABLE: {return false;}
+					case STRUCT_ABORTED: {return false;}
+					case STRUCT_SYMBOLIC: {return false;}
+					case STRUCT_UNIT: {return false;}
+					case STRUCT_UNDEFINED: {return false;}
+					default: {return true;}
+				}
+			}
 			return false;
 		}
 		case STRUCT_VECTOR: {
@@ -3825,7 +3844,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 						else print_str += "||";
 						if(po.spacious) print_str += " ";
 					}
-					ips_n.wrap = CHILD(i).isAddition();
+					ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);;
 					print_str += CHILD(i).print(po, format, colorize, tagtype, ips_n);
 				}
 				break;

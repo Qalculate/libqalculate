@@ -3034,6 +3034,12 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 									mstack.pop_back();
 									break;
 								}
+								case '\x14': {
+									mstack[mstack.size() - 2]->transform(priv->f_parallel);
+									mstack[mstack.size() - 2]->addChild_nocopy(mstack.back());
+									mstack.pop_back();
+									break;
+								}
 								case '\x1d': {
 									mstack[mstack.size() - 2]->transform_nocopy(STRUCT_LOGICAL_AND, mstack.back());
 									mstack[mstack.size() - 2]->transform(STRUCT_LOGICAL_NOT);
@@ -3256,6 +3262,12 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						}
 						case '\a': {
 							mstack[mstack.size() - 2]->transform_nocopy(STRUCT_BITWISE_XOR, mstack.back());
+							mstack.pop_back();
+							break;
+						}
+						case '\x14': {
+							mstack[mstack.size() - 2]->transform(priv->f_parallel);
+							mstack[mstack.size() - 2]->add_nocopy(mstack.back());
 							mstack.pop_back();
 							break;
 						}
@@ -3548,7 +3560,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		while(true) {
 			i3 = str.find_first_not_of(OPERATORS INTERNAL_OPERATORS, 0);
 			if(i3 == string::npos) i = string::npos;
-			else i = str.find_first_of(PLUS MINUS MULTIPLICATION DIVISION POWER BITWISE_AND BITWISE_OR "<>%\x1c", i3);
+			else i = str.find_first_of(PLUS MINUS MULTIPLICATION DIVISION POWER BITWISE_AND BITWISE_OR "<>%\x1c\x14", i3);
 			i3 = str.find_first_not_of(OPERATORS INTERNAL_OPERATORS, i);
 			if(i3 == string::npos) i = string::npos;
 			if(c_operator == 0) {
@@ -3695,6 +3707,13 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 							}
 							mstruct->last().transform(priv->f_cis);
 						}
+						break;
+					}
+					case '\x14': {
+						MathStructure *mstruct2 = new MathStructure();
+						parseAdd(str2, mstruct2, po);
+						if(!append) mstruct->transform(priv->f_parallel);
+						mstruct->addChild_nocopy(mstruct2);
 						break;
 					}
 				}

@@ -611,10 +611,21 @@ int DotProductFunction::calculate(MathStructure &mstruct, const MathStructure &v
 	return -3;
 }
 
-EntrywiseMultiplicationFunction::EntrywiseMultiplicationFunction() : MathFunction("times", 2, -1) {}
+EntrywiseMultiplicationFunction::EntrywiseMultiplicationFunction() : MathFunction("times", 1, -1) {}
 int EntrywiseMultiplicationFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs.size() == 0) {mstruct.clear(); return 1;}
-	if(vargs.size() == 1) {mstruct = vargs[0]; return 1;}
+	if(vargs.size() == 1) {
+		mstruct = vargs[0];
+		if(!mstruct.isVector()) {
+			if(mstruct.representsScalar()) return 1;
+			mstruct.eval(eo);
+			mstruct = vargs[0];
+			if(!mstruct.isVector()) return 1;
+		}
+		mstruct.setType(STRUCT_FUNCTION);
+		mstruct.setFunction(this);
+		return 1;
+	}
 	if(vargs.size() > 2) {
 		mstruct = vargs[0];
 		bool b_scalar = mstruct.representsScalar();
