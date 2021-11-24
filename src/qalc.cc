@@ -29,7 +29,7 @@
 #	include <VersionHelpers.h>
 #endif
 #ifndef _WIN32
-#include <signal.h>
+#	include <signal.h>
 #endif
 
 #include <libqalculate/MathStructure-support.h>
@@ -2542,7 +2542,9 @@ int main(int argc, char *argv[]) {
 		rl_bind_keyseq("\\C-e", key_exact);
 		rl_bind_keyseq("\\C-f", key_fraction);
 		rl_bind_keyseq("\\C-a", key_save);
+#	ifdef _WIN32
 		rl_bind_keyseq("\\C-l", key_clear);
+#	endif
 	}
 #endif
 
@@ -3510,10 +3512,33 @@ int main(int argc, char *argv[]) {
 				}
 				CALCULATOR->resetExchangeRatesUsed();
 				ParseOptions pa = evalops.parse_options; pa.base = 10;
+				bool update_parse = false;
+				if(!mstruct->containsType(STRUCT_UNIT)) {
+					MathStructure to_struct;
+					CALCULATOR->convert(MathStructure(), str, evalops, &to_struct);
+					to_struct.unformat(evalops);
+					to_struct = CALCULATOR->convertToOptimalUnit(to_struct, evalops, true);
+					fix_to_struct(to_struct);
+					if(!to_struct.isZero()) {
+						mstruct->multiply(to_struct);
+						PrintOptions po = printops;
+						po.negative_exponents = false;
+						to_struct.format(po);
+						if(to_struct.isMultiplication() && to_struct.size() >= 2) {
+							if(to_struct[0].isOne()) to_struct.delChild(1, true);
+							else if(to_struct[1].isOne()) to_struct.delChild(2, true);
+						}
+						parsed_mstruct->multiply(to_struct);
+						update_parse = true;
+					}
+				}
 				MathStructure mstruct_new(CALCULATOR->convert(*mstruct, CALCULATOR->unlocalizeExpression(str, pa), evalops));
 				if(check_exchange_rates()) mstruct->set(CALCULATOR->convert(*mstruct, CALCULATOR->unlocalizeExpression(str, pa), evalops));
 				else mstruct->set(mstruct_new);
-				result_action_executed();
+				if(expression_executed) {
+					printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
+					setResult(NULL, update_parse);
+				}
 				printops.use_unit_prefixes = save_pre;
 				printops.use_all_prefixes = save_all;
 				printops.use_prefixes_for_currencies = save_cur;
@@ -5109,7 +5134,6 @@ bool ask_implicit() {
 	FPUTS_UNICODE(_("Parsing mode"), stdout);
 	implicit_question_asked = true;
 	ParsingMode pm_bak = evalops.parse_options.parsing_mode;
-	bool b_ret = false;
 	while(true) {
 #ifdef HAVE_LIBREADLINE
 		char *rlbuffer = readline(": ");
@@ -5118,7 +5142,7 @@ bool ask_implicit() {
 		free(rlbuffer);
 #else
 		fputs(": ", stdout);
-		if(!fgets(buffer, 1000, stdin)) {b_ret = false; break;}
+		if(!fgets(buffer, 1000, stdin)) break;
 		string svalue = buffer;
 #endif
 		remove_blank_ends(svalue);
@@ -5145,7 +5169,7 @@ bool ask_implicit() {
 		saved_evalops.parse_options.parsing_mode = evalops.parse_options.parsing_mode;
 		save_preferences(false);
 	}
-	return b_ret && pm_bak != evalops.parse_options.parsing_mode;
+	return pm_bak != evalops.parse_options.parsing_mode;
 }
 
 int save_base = 10;
@@ -6700,7 +6724,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {3, 21, 0};
+	int version_numbers[] = {3, 22, 0};
 
 	if(file) {
 		char line[10000];
