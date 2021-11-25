@@ -1,3 +1,17 @@
+2021-11-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix transformation of a*sin(x)+b*cos(x) to a*sqrt((b/a)^2+1)*sin(x+atan(b/a)) (primarily fixes some equations)
+	* Add representsNonMatrix() and representsScalar() to many builtin functions (do not rely on representsNumber() which might return false for unknown variables - this fixes limit() unpredictability in some cases)
+	* Make sorting more predictive
+
+2021-11-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Apply same logic with separate to command, as with "to" at end of expression, when result contains no unit
+
+2021-11-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix title of arguments > minimum argument when max arguments = -1, for builtin functions with arguments not defined in code
+
 2021-11-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Interpret || as paralell to operator for all units, add support for Unicode paralell to symbol, and move || as paralell to parsing stage

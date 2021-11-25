@@ -55,6 +55,7 @@ inline void MathStructure::init() {
 	b_approx = false;
 	i_precision = -1;
 	i_ref = 1;
+	ct_comp = COMPARISON_EQUALS;
 	function_value = NULL;
 	b_protected = false;
 	o_variable = NULL;

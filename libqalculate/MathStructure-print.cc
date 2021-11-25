@@ -111,13 +111,16 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 			return 0;
 		}
 		if(mstruct1.isNumber() && mstruct2.isPower() && mstruct2[0].isInteger() && mstruct2[1].isInteger() && mstruct2[1].representsPositive()) {
-			return sortCompare(mstruct1, mstruct2[0], parent, po);
+			int ie = sortCompare(mstruct1, mstruct2[0], parent, po);
+			if(ie != 0) return ie;
 		}
 		if(mstruct2.isNumber() && mstruct1.isPower() && mstruct1[0].isInteger() && mstruct1[1].isInteger() && mstruct1[1].representsPositive()) {
-			return sortCompare(mstruct1[0], mstruct2, parent, po);
+			int ie = sortCompare(mstruct1[0], mstruct2, parent, po);
+			if(ie != 0) return ie;
 		}
 		if(mstruct1.isPower() && mstruct2.isPower() && mstruct1[0].isInteger() && mstruct1[1].isInteger() && mstruct1[1].representsPositive() && mstruct2[0].isInteger() && mstruct2[1].isInteger() && mstruct2[1].representsPositive()) {
-			return sortCompare(mstruct1[0], mstruct2[0], parent, po);
+			int ie = sortCompare(mstruct1[0], mstruct2[0], parent, po);
+			if(ie != 0) return ie;
 		}
 	}
 	if(parent.isAddition()) {
@@ -435,7 +438,7 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 			}
 		}
 		case STRUCT_COMPARISON: {
-			if(mstruct1.comparisonType() != mstruct2.comparisonType()) {
+			if(mstruct1.type() == STRUCT_COMPARISON && mstruct1.comparisonType() != mstruct2.comparisonType()) {
 				// place equality before inequality, place greater before less
 				if(mstruct2.comparisonType() == COMPARISON_EQUALS || ((mstruct1.comparisonType() == COMPARISON_LESS || mstruct1.comparisonType() == COMPARISON_EQUALS_LESS) && (mstruct2.comparisonType() == COMPARISON_GREATER || mstruct2.comparisonType() == COMPARISON_EQUALS_GREATER))) {
 					return 1;
@@ -456,6 +459,7 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 					return ie;
 				}
 			}
+			if(mstruct2.size() > mstruct1.size()) return -1;
 		}
 	}
 	return 0;

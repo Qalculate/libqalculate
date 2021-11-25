@@ -18,11 +18,12 @@ float(01000010010100010110000101001000)
 	52.34500122
 floatError(52.345)
 	0.000001220703125
-52.34 to sexa
-	52°20′24″
 1978 to roman
 	MCMLXXVIII
 52 to base 32
 	1K
 sqrt(32) to base sqrt(2)
 	100000
+/set unicode 1
+52.34 to sexa
+	52°20′24″
