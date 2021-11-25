@@ -1,8 +1,8 @@
-set unicode off
-set decimal comma off
-set approximation exact
-set fr 2
-set precision 8
+/set unicode off
+/set decimal comma off
+/set approximation exact
+/set fr 2
+/set precision 8
 
 limit(x^2-4,2)
 	0
@@ -130,8 +130,10 @@ limit((cbrt(1+x)-cbrt(1-x))/(x),0)
 	2/3
 limit((x^(2/3)-1)/(x^(3/5)-1),1)
 	10/9
-#limit((1-root(x,z))/(1-root(x,y)),1)
-#	y/z
+/assume positive
+limit((1 − (x^(1 / z))) / (1 − (x^(1 / y))), 1)
+	y / z
+/assume unknown
 limit(sqrt(x-2)-sqrt(x),infinity)
 	0
 limit(sqrt(x^2+x)-x,infinity)
@@ -179,20 +181,20 @@ limit((1+1/(5x))^(2x),infinity)
 	e^(2/5)
 #limit((1+1/(5x))^(2x+6),infinity)
 #	e^(2/5)
-#limit((1+7/(3x))^(x),infinity)
-#	e^(7/3)
+limit((1+7/(3x))^(x),infinity)
+	e^2 * cbrt(e)
 #limit((1+7/(3x))^(x-1),infinity)
 #	e^(7/3)
-#limit((1-1/3x)^x,infinity)
-#	e^(-1/3)
-#limit((1-5/x)^x,infinity)
-#	e^(-5)
-#limit(((x-1)/(x+1))^x,infinity)
-#	e^(-2)
+limit((1-1/3x)^x,infinity)
+	1 / cbrt(e)
+limit((1-5/x)^x,infinity)
+	1 / e^5
+limit(((x-1)/(x+1))^x,infinity)
+	1 / e^2
 limit(((x+6)/(x+5))^x,infinity)
 	e
-#limit(((x-3)/(x))^(x/2),infinity)
-#	e^(-3/2)
+limit(((x-3)/(x))^(x/2),infinity)
+	1 / (e * sqrt(e))
 limit(((7x+10)/(1+7x))^(x/3),infinity)
 	e^(3/7)
 limit(((2x-1)/(2x+1))^(x),infinity)
@@ -200,15 +202,15 @@ limit(((2x-1)/(2x+1))^(x),infinity)
 limit(((6+4x)/(2+4x))^(-2x),infinity)
 	1 / e^2
 #limit(((6+4x)/(2+4x))^(3-2x),infinity)
-#	e^(-2)
+#	1 / e^2
 limit(((x+5)/(x+4))^(2x),infinity)
 	e^2
 #limit(((x+5)/(x+4))^(2x-1),infinity)
 #	e^2
-#limit(((2x+5)/(2x))^(3x),infinity)
-#	e^(15/2)
+limit(((2x+5)/(2x))^(3x),infinity)
+	e^7 * sqrt(e)
 #limit(((2x+5)/(2x))^(3x-7),infinity)
-#	e^(15/2)
+	e^7 * sqrt(e)
 limit(((2x+1)/(2x-3))^(3x),infinity)
 	e^6
 limit(((x-1)/(x+3))^(-4x),infinity)
@@ -270,8 +272,8 @@ limit((sin(4x)+sin(7x))/(sin(3x)),0)
 #	sqrt(2)
 limit((tan(x)-sin(x))/(x^3),0)
 	1/2
-limit(x*sin(pi/x),infinity)
-	pi
+#limit(x*sin(pi/x),infinity)
+#	pi
 limit((x^3+1)/sin(x+1),-1)
 	3
 #limit(abs(sin(x))/(x),0)
@@ -284,8 +286,8 @@ limit((sin(3x)+sin(5x))/sin(2x),0)
 	4
 limit((cos(x)-cos(x)^3)/(x^2),0)
 	1
-#limit(x*cot(2x),0)
-#	1/2
+limit(x*cot(2x),0)
+	1/2
 #limit(sqrt((1-cos(x))/(x^2)),0)
 #	sqrt(2)/2
 limit((sqrt(1-tan(x))-sqrt(1+tan(x)))/sin(2x),pi)
@@ -319,8 +321,8 @@ limit(1/x*ln(sqrt((1+x)/(1-x))),0)
 	1
 limit((ln(x^x)-x)/(2-ln(x^2)),e)
 	-e / 2
-#limit((1-3^x)/(sin(3x)),0)
-#	-1 / 3*ln(3)
+limit((1-3^x)/(sin(3x)),0)
+	-ln(3) / 3
 limit(2^x*sin(2pi*x),-infinity)
 	0
 limit((sin(2x))/(sqrt(x+3)-sqrt(3)),0)
@@ -331,12 +333,12 @@ limit(cos(x)^(1/x),0)
 	1
 limit((1-sin(x))/(pi-2x),pi/2)
 	0
-#limit((sin(x)-cos(x))/cos(2x),pi/4)
-#	-sqrt(2)/2
+limit((sin(x)-cos(x))/cos(2x),pi/4)
+	-1 / sqrt(2)
 #limit(sin(sqrt(x+1))-sin(sqrt(x)),infinity)
 #	undefined
 #limit(tan(x)^tan(2x),pi/4)
-#	1/e
+#	1 / e
 limit(asin(x)/(x),0)
 	1
 limit(asin(5x)/(3x),0)
@@ -356,8 +358,8 @@ limit((x^3-9x)/(x^4-3x^3-x+3),3)
 	9/13
 limit((cbrt(8x)-2x)/(root(x,4)-x),1)
 	16/9
-#limit((sqrt(x+1)-sqrt(2))/(x^2-1),1)
-#	sqrt(2)/8
+limit((sqrt(x+1)-sqrt(2))/(x^2-1),1)
+	1 / (sqrt(2) * 4)
 limit((5^x-1)/(x),0)
 	ln(5)
 limit((3x^3-3)/(3^x-3),1)
@@ -366,8 +368,8 @@ limit((e^x-e^(-x))/(x),0)
 	2
 #limit((e^x-1)/(x^2),0)
 #	undefined
-#limit((1-2*cos(x))/(pi-3x),pi/3)
-#	-sqrt(3) / 3
+limit((1-2*cos(x))/(pi-3x),pi/3)
+	-1 / sqrt(3)
 limit((sin(x))/(e^x-1),0)
 	1
 limit(atan(3x)/asin(2x),0)

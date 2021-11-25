@@ -1443,7 +1443,7 @@ bool simplify_functions(MathStructure &mstruct, const EvaluationOptions &eo, con
 							else m_a.add(m_one, true);
 							b = true;
 						} else if(mstruct[i3].isFunction() && mstruct[i3].size() == 1 && mstruct[i3].function()->id() == FUNCTION_ID_COS && mstruct[i3][0] == *marg) {
-							if(m_b.isZero()) m_a = m_one;
+							if(m_b.isZero()) m_b = m_one;
 							else m_b.add(m_one, true);
 							b = true;
 						} else if(mstruct[i3].isMultiplication()) {

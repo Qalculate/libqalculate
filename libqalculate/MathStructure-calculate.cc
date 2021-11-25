@@ -7102,8 +7102,8 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 			if(CALCULATOR->aborted()) return 0;
 			if(b_abs) {
 				ComparisonResult cmp = mstruct1.number().compareAbsolute(mstruct2.number());
-				if(cmp == COMPARISON_RESULT_LESS) return -1;
-				else if(cmp == COMPARISON_RESULT_GREATER) return 1;
+				if(cmp == COMPARISON_RESULT_LESS || cmp == COMPARISON_RESULT_EQUAL_OR_LESS || cmp == COMPARISON_RESULT_OVERLAPPING_LESS || cmp == COMPARISON_RESULT_CONTAINS) return -1;
+				else if(cmp == COMPARISON_RESULT_GREATER || cmp == COMPARISON_RESULT_EQUAL_OR_GREATER || cmp == COMPARISON_RESULT_OVERLAPPING_GREATER || cmp == COMPARISON_RESULT_CONTAINED) return 1;
 				return 0;
 			}
 			if(!mstruct1.number().hasImaginaryPart() && !mstruct2.number().hasImaginaryPart()) {
@@ -7114,8 +7114,8 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 					} else if(mstruct2.number().isInterval()) return -1;
 				} else if(mstruct2.number().isFloatingPoint()) return -1;
 				ComparisonResult cmp = mstruct1.number().compare(mstruct2.number());
-				if(cmp == COMPARISON_RESULT_LESS) return -1;
-				else if(cmp == COMPARISON_RESULT_GREATER) return 1;
+				if(cmp == COMPARISON_RESULT_LESS || cmp == COMPARISON_RESULT_EQUAL_OR_LESS || cmp == COMPARISON_RESULT_OVERLAPPING_LESS || cmp == COMPARISON_RESULT_CONTAINS) return -1;
+				else if(cmp == COMPARISON_RESULT_GREATER || cmp == COMPARISON_RESULT_EQUAL_OR_GREATER || cmp == COMPARISON_RESULT_OVERLAPPING_GREATER || cmp == COMPARISON_RESULT_CONTAINED) return 1;
 				return 0;
 			} else {
 				if(!mstruct1.number().hasRealPart()) {
@@ -7123,8 +7123,8 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 						return 1;
 					} else {
 						ComparisonResult cmp = mstruct1.number().compareImaginaryParts(mstruct2.number());
-						if(cmp == COMPARISON_RESULT_LESS) return -1;
-						else if(cmp == COMPARISON_RESULT_GREATER) return 1;
+						if(cmp == COMPARISON_RESULT_LESS || cmp == COMPARISON_RESULT_EQUAL_OR_LESS || cmp == COMPARISON_RESULT_OVERLAPPING_LESS || cmp == COMPARISON_RESULT_CONTAINS) return -1;
+					else if(cmp == COMPARISON_RESULT_GREATER || cmp == COMPARISON_RESULT_EQUAL_OR_GREATER || cmp == COMPARISON_RESULT_OVERLAPPING_GREATER || cmp == COMPARISON_RESULT_CONTAINED) return 1;
 						return 0;
 					}
 				} else if(mstruct2.number().hasRealPart()) {
@@ -7132,8 +7132,8 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 					if(cmp == COMPARISON_RESULT_EQUAL) {
 						cmp = mstruct1.number().compareImaginaryParts(mstruct2.number());
 					}
-					if(cmp == COMPARISON_RESULT_LESS) return -1;
-					else if(cmp == COMPARISON_RESULT_GREATER) return 1;
+					if(cmp == COMPARISON_RESULT_LESS || cmp == COMPARISON_RESULT_EQUAL_OR_LESS || cmp == COMPARISON_RESULT_OVERLAPPING_LESS || cmp == COMPARISON_RESULT_CONTAINS) return -1;
+					else if(cmp == COMPARISON_RESULT_GREATER || cmp == COMPARISON_RESULT_EQUAL_OR_GREATER || cmp == COMPARISON_RESULT_OVERLAPPING_GREATER || cmp == COMPARISON_RESULT_CONTAINED) return 1;
 					return 0;
 				} else {
 					return -1;
@@ -7152,11 +7152,25 @@ int evalSortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2
 			return 1;
 		}
 		case STRUCT_VARIABLE: {
+			if(mstruct1.variable()->isKnown() != mstruct2.variable()->isKnown()) {
+				if(mstruct1.variable()->isKnown()) return -1;
+				return 1;
+			}
+			if(mstruct1.variable()->id() != mstruct2.variable()->id()) {
+				if(mstruct1.variable()->id() == 0) return 1;
+				if(mstruct1.variable()->id() > mstruct2.variable()->id()) return -1;
+				return 1;
+			}
 			if(mstruct1.variable() < mstruct2.variable()) return -1;
 			else if(mstruct1.variable() == mstruct2.variable()) return 0;
 			return 1;
 		}
 		case STRUCT_FUNCTION: {
+			if(mstruct1.function()->id() != mstruct2.function()->id()) {
+				if(mstruct1.function()->id() == 0) return 1;
+				if(mstruct1.function()->id() < mstruct2.function()->id()) return -1;
+				return 1;
+			}
 			if(mstruct1.function() < mstruct2.function()) return -1;
 			if(mstruct1.function() == mstruct2.function()) {
 				for(size_t i = 0; i < mstruct2.size(); i++) {

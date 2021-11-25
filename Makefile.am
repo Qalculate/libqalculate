@@ -7,6 +7,7 @@ SUBDIRS = po-defs po-defs/fixed data libqalculate src man po docs
 EXTRA_DIST = config.rpath  \
 	autogen.sh \
 	README.translate \
+	tests/* \
 	libqalculate.pc.in
 
 pkgconfigdir = $(libdir)/pkgconfig
