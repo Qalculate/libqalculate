@@ -96,6 +96,7 @@ bool ignore_locale = false;
 bool result_only = false, vertical_space = true;
 bool do_imaginary_j = false;
 int sigint_action = 1;
+bool unittest = false;
 
 static char buffer[100000];
 
@@ -791,31 +792,33 @@ void set_option(string str) {
 		} else {
 			set_assumption(svalue, false);
 		}
-		string value;
-		if(CALCULATOR->defaultAssumptions()->type() != ASSUMPTION_TYPE_BOOLEAN) {
-			switch(CALCULATOR->defaultAssumptions()->sign()) {
-				case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
-				case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
-				case ASSUMPTION_SIGN_NEGATIVE: {value = _("negative"); break;}
-				case ASSUMPTION_SIGN_NONNEGATIVE: {value = _("non-negative"); break;}
-				case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
+		if(interactive_mode) {
+			string value;
+			if(CALCULATOR->defaultAssumptions()->type() != ASSUMPTION_TYPE_BOOLEAN) {
+				switch(CALCULATOR->defaultAssumptions()->sign()) {
+					case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
+					case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
+					case ASSUMPTION_SIGN_NEGATIVE: {value = _("negative"); break;}
+					case ASSUMPTION_SIGN_NONNEGATIVE: {value = _("non-negative"); break;}
+					case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
+					default: {}
+				}
+			}
+			if(!value.empty() && CALCULATOR->defaultAssumptions()->type() != ASSUMPTION_TYPE_NONE) value += " ";
+			switch(CALCULATOR->defaultAssumptions()->type()) {
+				case ASSUMPTION_TYPE_INTEGER: {value += _("integer"); break;}
+				case ASSUMPTION_TYPE_BOOLEAN: {value += _("boolean"); break;}
+				case ASSUMPTION_TYPE_RATIONAL: {value += _("rational"); break;}
+				case ASSUMPTION_TYPE_REAL: {value += _("real"); break;}
+				//complex number
+				case ASSUMPTION_TYPE_COMPLEX: {value += _("complex"); break;}
+				case ASSUMPTION_TYPE_NUMBER: {value += _("number"); break;}
+				case ASSUMPTION_TYPE_NONMATRIX: {value += _("non-matrix"); break;}
 				default: {}
 			}
+			if(value.empty()) value = _("unknown");
+			FPUTS_UNICODE(_("assumptions"), stdout); fputs(": ", stdout); PUTS_UNICODE(value.c_str());
 		}
-		if(!value.empty() && CALCULATOR->defaultAssumptions()->type() != ASSUMPTION_TYPE_NONE) value += " ";
-		switch(CALCULATOR->defaultAssumptions()->type()) {
-			case ASSUMPTION_TYPE_INTEGER: {value += _("integer"); break;}
-			case ASSUMPTION_TYPE_BOOLEAN: {value += _("boolean"); break;}
-			case ASSUMPTION_TYPE_RATIONAL: {value += _("rational"); break;}
-			case ASSUMPTION_TYPE_REAL: {value += _("real"); break;}
-			//complex number
-			case ASSUMPTION_TYPE_COMPLEX: {value += _("complex"); break;}
-			case ASSUMPTION_TYPE_NUMBER: {value += _("number"); break;}
-			case ASSUMPTION_TYPE_NONMATRIX: {value += _("non-matrix"); break;}
-			default: {}
-		}
-		if(value.empty()) value = _("unknown");
-		FPUTS_UNICODE(_("assumptions"), stdout); fputs(": ", stdout); PUTS_UNICODE(value.c_str());
 		expression_calculation_updated();
 	}
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "all prefixes", _("all prefixes")) || svar == "allpref") SET_BOOL_D(printops.use_all_prefixes)
@@ -2309,7 +2312,7 @@ int main(int argc, char *argv[]) {
 			} else {
 				PUTS_UNICODE(_("No option and value specified for set command."));
 			}
-		} else if(!calc_arg_begun && (svar == "-file" || svar == "-f" || svar == "--file")) {
+		} else if(!calc_arg_begun && (svar == "-file" || svar == "-f" || svar == "--file" || svar == "--test-file")) {
 			if(!svalue.empty()) {
 				command_file = svalue;
 				remove_blank_ends(svalue);
@@ -2319,6 +2322,15 @@ int main(int argc, char *argv[]) {
 				remove_blank_ends(command_file);
 			} else {
 				PUTS_UNICODE(_("No file specified."));
+			}
+			if(svar == "--test-file") {
+				load_defaults = true;
+				result_only = true;
+				ignore_locale = true;
+				unittest = true;
+				enable_unicode = 0;
+				interactive_mode = false;
+				break;
 			}
 		} else if(!calc_arg_begun && svar == "--") {
 			calc_arg_begun = true;
@@ -2416,7 +2428,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	//load local definitions
-	CALCULATOR->loadLocalDefinitions();
+	if(!unittest) CALCULATOR->loadLocalDefinitions();
 
 	if(do_imaginary_j && CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") == 0) {
 		ExpressionName ename = CALCULATOR->getVariableById(VARIABLE_ID_I)->getName(1);
@@ -2462,7 +2474,7 @@ int main(int argc, char *argv[]) {
 				if(!interactive_mode) {
 					if(!view_thread->write(NULL)) view_thread->cancel();
 					CALCULATOR->terminateThreads();
-					return 0;
+					return EXIT_FAILURE;
 				}
 			}
 		}
@@ -2554,6 +2566,7 @@ int main(int argc, char *argv[]) {
 
 	string scom;
 	size_t slen, ispace;
+	int nline = 0, ntests = 0, retval = EXIT_SUCCESS;
 
 	while(true) {
 		if(cfile) {
@@ -2586,7 +2599,8 @@ int main(int argc, char *argv[]) {
 				i_maxtime = 0;
 				continue;
 			}
-			if(!printops.use_unicode_signs && contains_unicode_char(buffer)) {
+			nline++;
+			if(!unittest && !printops.use_unicode_signs && contains_unicode_char(buffer)) {
 				char *gstr = locale_to_utf8(buffer);
 				if(gstr) {
 					str = gstr;
@@ -2597,7 +2611,7 @@ int main(int argc, char *argv[]) {
 			} else {
 				str = buffer;
 			}
-			remove_blank_ends(str);
+			if(!unittest || str.empty() || str[0] != '\t') remove_blank_ends(str);
 			if(str.empty() || str[0] == '#' || (str.length() >= 2 && str[0] == '/' && str[1] == '/')) continue;
 		} else {
 #ifdef HAVE_LIBREADLINE
@@ -2633,7 +2647,7 @@ int main(int argc, char *argv[]) {
 		}
 		bool explicit_command = (!str.empty() && str[0] == '/');
 		if(explicit_command) str.erase(0, 1);
-		remove_blank_ends(str);
+		if(!unittest || str.empty() || str[0] != '\t') remove_blank_ends(str);
 		if(rpn_mode && explicit_command && str.empty()) {str = "/"; explicit_command = false;}
 		slen = str.length();
 		ispace = str.find_first_of(SPACES);
@@ -4918,8 +4932,21 @@ int main(int argc, char *argv[]) {
 				printf(_("Illegal character, \'%c\', in expression."), str[index]);
 				puts("");
 			} else {
-				expression_str = str;
-				execute_expression();
+				if(unittest && str[0] == '\t') {
+#define RED   "\x1B[31m"
+#define GRN   "\x1B[32m"
+#define RESET "\x1B[0m"
+					remove_blank_ends(str);
+					if(str != result_text) {
+						printf(RED "\nMismatch detected at line %d\n%s\nexpected '%s'\nreceived '%s'\n\n" RESET, nline, expression_str.c_str(), str.c_str(), result_text.c_str());
+						retval = EXIT_FAILURE;
+						break;
+					}
+					ntests++;
+				} else {
+					expression_str = str;
+					execute_expression();
+				}
 			}
 		}
 #ifdef HAVE_LIBREADLINE
@@ -4936,7 +4963,7 @@ int main(int argc, char *argv[]) {
 			free(rlbuffer);
 		}
 #endif
-		if (cfile == stdin) {
+		if(cfile == stdin) {
 			fflush(stdout);
 		}
 	}
@@ -4950,7 +4977,15 @@ int main(int argc, char *argv[]) {
 	if(DO_WIN_FORMAT) SetConsoleMode(hOut, outMode);
 #endif
 
-	return 0;
+	if(unittest && retval != EXIT_FAILURE) {
+		if(ntests == 0) {
+			printf(RED "\nWARNING: 0 tests were runned (indentation needs to be tab-based)\n\n" RESET);
+		} else if(unittest) {
+			printf(GRN "\n%s - %d tests passed\n\n" RESET, command_file.c_str(), ntests);
+		}
+	}
+
+	return retval;
 
 }
 
@@ -5337,7 +5372,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 
 	if(stack_index != 0) {
 		RPNRegisterChanged(result_text, stack_index);
-	} else {
+	} else if(!unittest) {
 		string strout, sextra;
 		if(goto_input) strout += "  ";
 		size_t i_result = 0, i_result_u = 0, i_result2 = 0, i_result_u2 = 0;

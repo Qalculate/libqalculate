@@ -1,7 +1,7 @@
 diff(6x^2)
 	12x
 diff(sinh(x^2)/(5x) + 3xy/sqrt(x))
-	0.4 × cosh(x^2) − sinh(x^2) / (5x^2) + (3y) / (2 × √(x))
+	0.4 * cosh(x^2) - sinh(x^2) / (5x^2) + (3y) / (2 * sqrt(x))
 
 
 integrate(6x^2)
@@ -9,6 +9,6 @@ integrate(6x^2)
 integrate(6x^2; 1; 5)
 	248
 integrate(sinh(x^2)/(5x) + 3xy/sqrt(x))
-	2x × √(x) × y + 0.1 × Shi(x^2) + C
+	2x * sqrt(x) * y + 0.1 * Shi(x^2) + C
 integrate(sinh(x^2)/(5x) + 3xy/sqrt(x); 1; 2)
 	3.656854249y + 0.8760076036

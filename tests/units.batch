@@ -13,22 +13,22 @@
 1.74 m to -ft
 	5.708661417 ft
 
-#100 lbf × 60 mph to hp
-#	16 hp
+100 lbf * 60 mph to hp
+	15.99999752 hp
 
-50 Ω × 2 A
+50 Ω * 2 A
 	100 V
 
-50 Ω × 2 A to base
-	100 kg·m²/(A·s³)
+50 Ω * 2 A to base
+	100 kg*m^2/(A*s^3)
 
 10 N / 5 Pa
-	2 m²
+	2 m^2
 (10 N)/(5 Pa)
-	2 m²
+	2 m^2
 
 5 m/s to s/m
 	0.2 s/m
 
-500 megabit/s × 2 h to b?byte
+500 megabit/s * 2 h to b?byte
 	419.0951586 GiB
