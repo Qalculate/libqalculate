@@ -4737,7 +4737,7 @@ int main(int argc, char *argv[]) {
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "list", _("list")) || EQUALS_IGNORECASE_AND_LOCAL(str, "find", _("find"))) {
 				puts("");
 				PUTS_UNICODE(_("Displays a list of variables, functions, units, and prefixes."));
-				PUTS_UNICODE(_("Enter with argument 'currencies', 'functions', 'variables', 'units', or 'prefixes' to show a list of all currencies, functions, variables, units, or prefixes. Enter a search term to find matching variables, functions, units, and/or prefixes. If command is called with no argument all user-definied objects are listed."));
+				PUTS_UNICODE(_("Enter with argument 'currencies', 'functions', 'variables', 'units', or 'prefixes' to show a list of all currencies, functions, variables, units, or prefixes. Enter a search term to find matching variables, functions, units, and/or prefixes. If command is called with no argument all user-defined objects are listed."));
 				puts("");
 				PUTS_UNICODE(_("Example: list functions."));
 				PUTS_UNICODE(_("Example: find dinar."));

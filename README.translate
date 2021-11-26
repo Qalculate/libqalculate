@@ -1,12 +1,12 @@
 The Qalculate! developer(s) are thankful for every possible translation and willing to answer any questions or help with any problems you may have as a translator. Please read through this document before starting the translation.
 
-Qalculate! is split up in one library package (libqalculate, which also includes the text interface) and GUI packages (currently only qalculate-gtk).
+Qalculate! is split up into one library package (libqalculate, which also includes the text interface) and GUI packages (currently only qalculate-gtk).
 
-The GUI packages contains translations for the GUI text as usual in the po directory. The libqalculate translations is split up in two -- translation of error messages, type information and the text interface in po, and translation of definitions of functions, variables, units, etc. in po-defs (merged with the data files in data).
+The GUI packages contain translations for the GUI text as usual in the po directory. The libqalculate translations are split up into two -- translation of error messages, type information and the text interface in po, and translation of definitions of functions, variables, units, etc. in po-defs (merged with the data files in data).
 
 The source packages for libqalculate and qalculate-gtk do not include any .pot files. Instead the pot file is created with "intltool-update --pot". You can then run "msginit --locale=??" or just copy the pot-file to ??.po. The translation file is updated with "intltool-update language code" (ex. intltool-update sv, for the Swedish translation) from the po directories. intltool-update is distributed with intltool.
 
-The translation of the libqalculate message strings in po-defs require some further knowledge. These are merged with the xml data files in libqalculate/data. The different types of message strings in these files are:
+The translation of the libqalculate message strings in po-defs requires some further knowledge. These are merged with the xml data files in libqalculate/data. The different types of message strings in these files are:
 
 Data objects: Values of text properties
 Data sets: Categories, titles, names, descriptions, property titles, property names and property descriptions
@@ -16,9 +16,9 @@ Units: Categories, titles and names
 Currencies: Categories, titles, countries, and names
 Prefixes: Names
 
-To distinguish equal text strings with different meaning (for example "Mercury" as a planet and as a chemical element), some text strings is preceded by "!type!" (for example "!units!" for units). Everything between and including a exclamation mark in the beginning and the second exclamation mark is not displayed in the application. Translators do not need to include "!type!" in the translation.
+To distinguish equal text strings with different meanings (for example "Mercury" as a planet and as a chemical element), some text strings are preceded by "!type!" (for example "!units!" for units). Everything between and including a exclamation mark in the beginning and the second exclamation mark is not displayed in the application. Translators do not need to include "!type!" in the translation.
 
-Names require some special considerations from the translator. The names are used to reference an object in a mathematical expression and to display them in a result. An object can have any number of names but each must be fully unique, with the exception that functions can have names used by other types of objects (for example "min" is used as a name for the minute unit but also for a function returning smallest value in a vector). The translation does not need to have the same number of names as the the untranslated object.
+Names require some special considerations from the translator. The names are used to reference an object in a mathematical expression and to display them in a result. An object can have any number of names but each must be fully unique, with the exception that functions can have names used by other types of objects (for example "min" is used as a name for the minute unit but also for a function returning smallest value in a vector). The translation does not need to have the same number of names as the untranslated object.
 
 There are some characters which are reserved for other purposes (mainly mathematical operators) and may not be included in names. These are
 - ~ + - * / ^ & | ! <> = ' @ ? \ { } " . , ; : ( ) [ ],
@@ -27,7 +27,7 @@ There are some characters which are reserved for other purposes (mainly mathemat
 
 No name may begin with a digit and units are not allowed to contain a digit anywhere.
 
-All names of a object is contained in one text string. The names are separated by commas (','). The order of names decides their priority, which name is by default used for display and input. Each name may be preceeded by a a number of properties before a colon (':'). The format of the names strings is thus [properties1:]name1,[properties2:]name2,... The possible properties are
+All names of a object are contained in one text string. The names are separated by commas (','). The order of names decides their priority, which name is by default used for display and input. Each name may be preceded by a number of properties before a colon (':'). The format of the names strings is thus [properties1:]name1,[properties2:]name2,... The possible properties are
 - 'a': the name is an abbreviation,
 - 'c': the name is case-sensitive,
 - 'i': the name should not be presented to the user for input (but looks good for display),
@@ -37,15 +37,15 @@ All names of a object is contained in one text string. The names are separated b
 - 's': the name ends with a suffix (the text after the last '_' will displayed as subscript with the '_' removed, often used in combination with 'i'), and
 - 'u': the name contains a unicode sign.
 
-All properties is off by default, except for names with only one sign which are interpreted as abbreviations by default, and for abbreviations which by default are case-sensitive. A property can be turned off by preceeding it with a minus '-'.
+All properties are off by default, except for names with only one sign which are interpreted as abbreviations by default, and for abbreviations which by default are case-sensitive. A property can be turned off by preceding it with a minus '-'.
 
-The reference property tells that the name will be available to all users regardless of the language used. If a reference name is not included in the translated list of names, it is appended at the end by the program. The translator can include the reference names to select the position of the name and change all properties except 'r', 'c' and 'u'. All untranslated first names has the reference property explicitely specified, so names can easily be distinguished from other text strings by the preceeding properties and colon.
+The reference property tells that the name will be available to all users regardless of the language used. If a reference name is not included in the translated list of names, it is appended at the end by the program. The translator can include the reference names to select the position of the name and change all properties except 'r', 'c' and 'u'. All untranslated first names have the reference property explicitly specified, so names can easily be distinguished from other text strings by the preceding properties and colon.
 
 Most functions and variables have only one name. Units usually have an abbreviated name, a normal name and a name in plural form. Units should always have a name in plural form if it differs from the singular form.
 
-Property names works like the names described above except that 'r' for reference is the only possible property.
+Property names work like the names described above except that 'r' for reference is the only possible property.
 
-Below follows some examples from the Swedish translation.
+Below follow some examples from the Swedish translation.
 
 msgid "ar:m,meter,p:meters,metre,p:metres"
 msgstr "a:m,meter"

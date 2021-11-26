@@ -27,7 +27,7 @@ typedef enum {
 } PrefixType;
 
 ///Abstract class for prefixes.
-/** A prefix is prepended to a unit to specificy a quantity multiplicator. A prefix has a numerical value which raised to the units power defines the quantity. In for example the expression "3 kilometers", meter is the unit, 3 is regular quantity, and kilo is a prefix with a value 1000, thus the example equals "3000 meters". If the unit instead had been squared, the value of the prefix would have been raised by two and the total quantity would have been 3.000.000.
+/** A prefix is prepended to a unit to specify a quantity multiplicator. A prefix has a numerical value which raised to the units power defines the quantity. In for example the expression "3 kilometers", meter is the unit, 3 is regular quantity, and kilo is a prefix with a value 1000, thus the example equals "3000 meters". If the unit instead had been squared, the value of the prefix would have been raised by two and the total quantity would have been 3.000.000.
 
 Prefixes can have up to free different three names -- a long name, a short name and a short unicode name. The unicode name is an alternative to the short name that is preferred if unicode characters can be displayed. The names or used to reference the prefix in mathematical expressions and to display a prefix in a result.
  */
