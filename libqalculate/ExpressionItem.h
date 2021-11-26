@@ -43,7 +43,7 @@ struct ExpressionName {
 	/** Create an empty expression name. All properties are set to false.
 	*/
 	ExpressionName();
-	/** Create an expression name. All properties are set to false, unless the name only has one character in which case abbreviation and case_sesnsitive is set to true.
+	/** Create an expression name. All properties are set to false, unless the name only has one character in which case abbreviation and case_sensitive is set to true.
 	*
 	* @param sname The name.
 	*/
@@ -62,7 +62,7 @@ struct ExpressionName {
 * (for example "min" is used as a name for the minute unit but also for a function returning smallest value in a vector).
 *
 * Items have an optional title and description for information to the end user.
-* The categoy property is used to organize items, so that the end user can easily find them.
+* The category property is used to organize items, so that the end user can easily find them.
 * Subcategories are separated by a slash, '/' (ex. "Physical Constants/Electromagnetic Constants").
 *
 * A local item is created/edited by the end user.
@@ -71,7 +71,7 @@ struct ExpressionName {
 *
 * An inactive item can not be used in expressions and can share the name of an active item.
 *
-* The hidden propery defines if the item should be hidden from the end user.
+* The hidden property defines if the item should be hidden from the end user.
 *
 * Before an item can be used in expressions, it must be added to the Calculator object using CALCULATOR->addExpressionItem().
 * It is then said to be registered.
@@ -107,7 +107,7 @@ class ExpressionItem {
 	virtual const std::string &name(bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
 	virtual const std::string &referenceName() const;
 
-	/** Returns the name that best fulfils provided criterias. If two names are equally preferred, the one with lowest index is returned.
+	/** Returns the name that best fulfils provided criteria. If two names are equally preferred, the one with lowest index is returned.
 	*
 	* @param abbreviation If an abbreviated name is preferred.
 	* @param use_unicode If a name with unicode characters can be displayed/is preferred (prioritized if false).
@@ -118,7 +118,7 @@ class ExpressionItem {
 	* @returns The preferred name.
 	*/
 	virtual const ExpressionName &preferredName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
-	/** Returns the name that best fulfils provided criterias and is suitable for user input. If two names are equally preferred, the one with lowest index is returned.
+	/** Returns the name that best fulfils provided criteria and is suitable for user input. If two names are equally preferred, the one with lowest index is returned.
 	*
 	* @param abbreviation If an abbreviated name is preferred.
 	* @param use_unicode If a name with unicode characters can be displayed/is preferred (prioritized if false).
@@ -129,7 +129,7 @@ class ExpressionItem {
 	* @returns The preferred name.
 	*/
 	virtual const ExpressionName &preferredInputName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
-	/** Returns the name that best fulfils provided criterias and is suitable for display. If two names are equally preferred, the one with lowest index is returned.
+	/** Returns the name that best fulfils provided criteria and is suitable for display. If two names are equally preferred, the one with lowest index is returned.
 	*
 	* @param abbreviation If an abbreviated name is preferred.
 	* @param use_unicode If a name with unicode characters can be displayed/is preferred (prioritized if false).

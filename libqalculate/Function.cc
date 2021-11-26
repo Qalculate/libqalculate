@@ -143,7 +143,7 @@ void MathFunction::setExample(string new_example) {
 	sexample = new_example;
 }
 
-/*int MathFunction::countArgOccurence(size_t arg_) {
+/*int MathFunction::countArgOccurrence(size_t arg_) {
 	if((int) arg_ > argc && max_argc < 0) {
 		arg_ = argc + 1;
 	}
@@ -302,7 +302,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 						remove_blank_ends(stmp);
 						arg = getArgumentDefinition(itmp);
 						// index is greater than minimum number of arguments,
-						// and maximimum number of arguments is unlimited, use the last argument definition
+						// and maximum number of arguments is unlimited, use the last argument definition
 						if(!arg && itmp > argc && args() < 0 && itmp > (int) last_argdef_index && (int) last_argdef_index > argc) {
 							 arg = priv->argdefs[last_argdef_index];
 						}
