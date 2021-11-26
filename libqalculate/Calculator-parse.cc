@@ -384,7 +384,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 					}
 				}
 				if(ui == string::npos) break;
-				// adjust quotion mark indeces
+				// adjust quotation mark indices
 				int index_shift = real_signs[i].length() - signs[i].length();
 				for(size_t ui3 = ui2; ui3 < q_begin.size(); ui3++) {
 					q_begin[ui3] += index_shift;
@@ -426,7 +426,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 			int index_shift = (str[ui] == '\xc2' ? -2 : -3);
 			if(ui == prev_ui) index_shift += 1;
 			else index_shift += 4;
-			// adjust quotion mark indeces
+			// adjust quotation mark indices
 			for(size_t ui3 = 0; ui3 < q_begin.size(); ui3++) {
 				if(q_begin[ui3] >= ui) {
 					q_begin[ui3] += index_shift;
@@ -494,7 +494,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 			}
 			int index_shift = (b_add ? 7 : 5) - 3;
 			if(str[ui + 2] == -110) index_shift++;
-			// adjust quotion mark indeces
+			// adjust quotation mark indices
 			for(size_t ui2 = 0; ui2 < q_begin.size(); ui2++) {
 				if(q_begin[ui2] >= ui) {
 					q_begin[ui2] += index_shift;
@@ -550,7 +550,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 				ui += 1;
 			}
 			int index_shift = (b_add ? 7 : 5) - 2;
-			// adjust quotion mark indeces
+			// adjust quotation mark indices
 			for(size_t ui2 = 0; ui2 < q_begin.size(); ui2++) {
 				if(q_begin[ui2] >= ui) {
 					q_begin[ui2] += index_shift;
@@ -589,7 +589,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 						}
 					}
 					if(ui == string::npos) break;
-					// adjust quotion mark indeces
+					// adjust quotation mark indices
 					int index_shift = strlen(internal_signs[i + 1]) - strlen(internal_signs[i]);
 					for(size_t ui3 = ui2; ui3 < q_begin.size(); ui3++) {
 						q_begin[ui3] += index_shift;
@@ -1030,7 +1030,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	const string *name = NULL;
 	string stmp, stmp2;
 
-	// search for degree sign in epxressions (affects interpretation of ' and ")
+	// search for degree sign in expressions (affects interpretation of ' and ")
 	size_t i_degree = str.find(SIGN_DEGREE);
 	if(i_degree != string::npos && i_degree + strlen(SIGN_DEGREE) < str.length() && is_in("CRF", str[i_degree + strlen(SIGN_DEGREE)])) {
 		i_degree = string::npos;
@@ -1192,7 +1192,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	}
 
 	if(base != -1 && base <= BASE_HEXADECIMAL) {
-		// replace prime and double prime with feet and inches, or arcminues and arcseconds (if degree sign was previously found)
+		// replace prime and double prime with feet and inches, or arcminutes and arcseconds (if degree sign was previously found)
 		bool b_degree = (i_degree != string::npos);
 		size_t i_quote = str.find("′");
 		size_t i_dquote = str.find("″");
@@ -1500,11 +1500,11 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				}
 			}
 		} else if(po.parsing_mode != PARSING_MODE_RPN && (str[str_index] == 'c' || str[str_index] == 'C') && str.length() > str_index + 6 && str[str_index + 5] == SPACE_CH && (str_index == 0 || is_in(OPERATORS INTERNAL_OPERATORS PARENTHESISS, str[str_index - 1])) && compare_name_no_case("compl", str, 5, str_index, base)) {
-			// interprate "compl" followed by space as bitwise not
+			// interpret "compl" followed by space as bitwise not
 			str.replace(str_index, 6, BITWISE_NOT);
 			ascii_bitwise = 1;
 		} else if(po.parsing_mode != PARSING_MODE_RPN && (str[str_index] == 'n' || str[str_index] == 'N') && str.length() > str_index + 4 && str[str_index + 3] == SPACE_CH && (str_index == 0 || is_in(OPERATORS INTERNAL_OPERATORS PARENTHESISS, str[str_index - 1])) && compare_name_no_case("not", str, 3, str_index, base)) {
-			// interprate "NOT" followed by space as logical not
+			// interpret "NOT" followed by space as logical not
 			str.replace(str_index, 4, LOGICAL_NOT);
 			ascii_bitwise = 1;
 		} else if(str[str_index] == SPACE_CH) {
@@ -3905,7 +3905,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			}
 		}
 
-		// In adaptive parsing mode division might be handled differentiately depending on usage of whitespace characters, e.g. 5/2 m = (5/2)*m, 5/2m=5/(2m)
+		// In adaptive parsing mode division might be handled differently depending on usage of whitespace characters, e.g. 5/2 m = (5/2)*m, 5/2m=5/(2m)
 		if(po.parsing_mode == PARSING_MODE_ADAPTIVE && (i = str.find(DIVISION_CH, 1)) != string::npos && i + 1 != str.length()) {
 			while(i != string::npos && i + 1 != str.length()) {
 				bool b = false;

@@ -1519,12 +1519,12 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 	if(!b) return false;
 
 	if(b_ready_candidate) {
-		// remove polynomial divisions that inrease complexity
+		// remove polynomial divisions that increase complexity
 		for(size_t i = 0; i < nums.size(); i++) {
 			if(!nums[i].isZero() && points[i] < 0) nums[i].clear();
 		}
 	} else {
-		// no simplying polynomial division found; see if result can be combined with other terms
+		// no simplifying polynomial division found; see if result can be combined with other terms
 		b = false;
 		for(size_t i = 0; i < nums.size(); i++) {
 			if(!nums[i].isZero()) {
