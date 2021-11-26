@@ -1573,7 +1573,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				evalops.auto_post_conversion = POST_CONVERSION_NONE;
 				evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
 			} else {
-				// ? in front of unit epxression is interpreted as a request for the optimal prefix.
+				// ? in front of unit expression is interpreted as a request for the optimal prefix.
 				evalops.parse_options.units_enabled = true;
 				if(to_str[0] == '?' || (to_str.length() > 1 && to_str[1] == '?' && (to_str[0] == 'a' || to_str[0] == 'd'))) {
 					printops.use_unit_prefixes = true;
@@ -1582,10 +1582,10 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 					if(to_str[0] == 'a') printops.use_all_prefixes = true;
 					else if(to_str[0] == 'd') priv->use_binary_prefixes = 0;
 				} else if(to_str.length() > 1 && to_str[1] == '?' && to_str[0] == 'b') {
-					// b? in front of unit epxression: use binary prefixes
+					// b? in front of unit expression: use binary prefixes
 					do_binary_prefixes = true;
 				}
-				// expression after "to" is by default interpreted as unit epxression
+				// expression after "to" is by default interpreted as unit expression
 				if(!str_conv.empty()) str_conv += " to ";
 				str_conv += to_str;
 			}
@@ -2323,7 +2323,7 @@ bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const Eva
 			return handle_where_expression(m, mstruct, eo, vars, varms, false, false);
 		}
 	} else if(m.isLogicalAnd()) {
-		// logical and (e.g. x=2&&y=3): perform multiple "where" replacments
+		// logical and (e.g. x=2&&y=3): perform multiple "where" replacements
 		bool ret = true;
 		for(size_t i = 0; i < m.size(); i++) {
 			if(!handle_where_expression(m[i], mstruct, eo, vars, varms, empty_func, do_eval)) ret = false;
@@ -2389,7 +2389,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 
 		current_stage = MESSAGE_STAGE_CALCULATION;
 
-		// replace answer variables and functions in expression before performing any replacements from "where" epxression
+		// replace answer variables and functions in expression before performing any replacements from "where" expression
 		calculate_ans(mstruct, eo);
 
 		string str_test = str_where;
