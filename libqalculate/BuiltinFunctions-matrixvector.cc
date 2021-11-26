@@ -333,13 +333,27 @@ int AdjointFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	if(!mstruct.adjointMatrix(eo)) return 0;
 	return !mstruct.isUndefined();
 }
-InverseFunction::InverseFunction() : MathFunction("inverse", 1) {
+InverseFunction::InverseFunction() : MathFunction("inv", 1) {
 	MatrixArgument *marg = new MatrixArgument();
+	marg->setTests(false);
 	marg->setSquareDemanded(true);
 	setArgumentDefinition(1, marg);
 }
 int InverseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
+	if(mstruct.representsScalar()) {mstruct.inverse(); return 1;}
+	if(!mstruct.isVector()) {
+		mstruct.eval(eo);
+		if(mstruct.representsScalar()) {mstruct.inverse(); return 1;}
+		else if(!mstruct.isVector()) return -1;
+	}
+	if(!mstruct.isMatrix() || !mstruct.matrixIsSquare()) {
+		Argument *arg = getArgumentDefinition(1);
+		arg->setTests(true);
+		arg->test(mstruct, 1, this, eo);
+		arg->setTests(false);
+		return -1;
+	}
 	return mstruct.invertMatrix(eo);
 }
 MagnitudeFunction::MagnitudeFunction() : MathFunction("magnitude", 1) {
