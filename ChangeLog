@@ -1,3 +1,7 @@
+2021-11-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add name "inv" to matrix inverse function (remove reciprocal function) and add support for scalars
+
 2021-11-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix transformation of a*sin(x)+b*cos(x) to a*sqrt((b/a)^2+1)*sin(x+atan(b/a)) (primarily fixes some equations)

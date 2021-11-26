@@ -249,9 +249,9 @@
         <_title>Column</_title>
       </argument>
     </builtin_function>
-    <builtin_function name="inverse">
+    <builtin_function name="inv">
       <_title>Matrix Inverse</_title>
-      <_names>r:inverse</_names>
+      <_names>r:inv,r:inverse</_names>
       <_description>Calculates the inverse of a matrix. The inverse is the matrix that multiplied by the original matrix equals the identity matrix (AB = BA = I).</_description>
       <argument index="1">
         <_title>Matrix</_title>
@@ -579,15 +579,6 @@
         <expression>-\x</expression>
         <argument type="free" index="1">
           <_title>Value</_title>
-        </argument>
-      </function>
-      <function>
-        <_title>Reciprocal</_title>
-        <_names>r:inv</_names>
-        <expression>\x^(-1)</expression>
-        <argument type="free" index="1">
-          <_title>Value</_title>
-          <handle_vector>true</handle_vector>
         </argument>
       </function>
       <function>
