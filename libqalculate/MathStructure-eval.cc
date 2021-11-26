@@ -387,7 +387,7 @@ bool fix_eqs(MathStructure &m, const EvaluationOptions &eo) {
 
 /*
 
-	Functions for handling of interval variables using interval arithmetic. Calculates the derivative of the expression for each interval variable, searches 	points where the derivative is zero, and calculates the epxression separately for approriate subintervals.
+	Functions for handling of interval variables using interval arithmetic. Calculates the derivative of the expression for each interval variable, searches 	points where the derivative is zero, and calculates the expression separately for appropriate subintervals.
 
 */
 
@@ -2386,7 +2386,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 				CALCULATOR->beginTemporaryStopMessages();
 
-				// calcute uncertainty
+				// calculate uncertainty
 				munc = calculate_uncertainty(*this, eo, b_failed);
 
 				if(!b_failed && !munc.isZero()) {

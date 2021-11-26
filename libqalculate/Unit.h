@@ -71,12 +71,12 @@ class Unit : public ExpressionItem {
 	* @returns System string.
 	*/
 	const std::string &system() const;
-	/** Returns wether prefixes should be used with this unit or not.
+	/** Returns whether prefixes should be used with this unit or not.
 	*
 	* @returns true if the prefixes is appropriate for this unit.
 	*/
 	bool useWithPrefixesByDefault() const;
-	/** Sets wether prefixes are approriate with this unit or not.
+	/** Sets whether prefixes are appropriate with this unit or not.
 	*/
 	void setUseWithPrefixesByDefault(bool use_with_prefixes);
 	/** Returns if the unit is a currency (Euro is base unit).
@@ -265,10 +265,10 @@ class AliasUnit_Composite : public AliasUnit {
 * Composite units often have an alias unit associated with them, as they do not have a reference name on their own.
 * For example, a joule is defined as an alias defined in relation to a composite unit defined as "Newton * meter".
 *
-* The names of composite units is only used to reference the unit in definitions of other units.
+* The names of composite units are only used to reference the unit in definitions of other units.
 * They can not be used in expressions.
 *
-* Composite units is definited as a composition of units.
+* Composite units are defined as a composition of units.
 * The units, with prefixes and exponents, can either be added one by one with add() or
 * parsed from an expression (ex. "cm^3/g) with setBaseExpression().
 */
