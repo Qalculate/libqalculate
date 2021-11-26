@@ -16,7 +16,7 @@
 
 void print_usage() {
 	puts("Usage: ./src/unittest [filename]");
-	puts("If filename is omited, it will run all unit tests");
+	puts("If filename is omitted, it will run all unit tests");
 }
 
 void run_unit_test(char *filename) {

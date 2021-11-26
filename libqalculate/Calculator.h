@@ -22,7 +22,7 @@
 *
 * \section intro_sec Introduction
 *
-* libqalculate is math libary for expression evaluation with units, variables and functions support and CAS functionality.
+* libqalculate is a math library for expression evaluation with units, variables and functions support and CAS functionality.
 *
 * The main parts of the library is the almighty Calculator class, the MathStructure class for mathematical expressions and classes for objects in an expression,
 * mostly of the class Numbers and sub classes of ExpressionItem.
@@ -35,7 +35,7 @@
 * CALCULATOR->loadLocalDefinitions();
 * cout << CALCULATOR->calculateAndPrint("1 + 1", 2000) << endl;\endcode
 * In the above example, the calculation is terminated after two seconds (2000 ms), if it is not finished before then.
-* Applications using localized numbers should first call Calculalor::unlocalizeExpression() on the expression.
+* Applications using localized numbers should first call Calculator::unlocalizeExpression() on the expression.
 *
 * A less simple application might calculate and output the expression separately.
 * \code
@@ -49,9 +49,9 @@
 * \code
 * PrintOptions po;
 * string result_str = CALCULATOR->print(result, 2000, po);\endcode
-* Alternatively MathStructure::format() followed by MathStructure::print() can be used, whithout the possiblity to specify a time limit.
+* Alternatively MathStructure::format() followed by MathStructure::print() can be used, without the possibility to specify a time limit.
 *
-* Central to the flexiblity of libqalculate is the many options passed to evaluating and display functions with EvaluationOptions and PrintOptions.
+* Central to the flexibility of libqalculate is the many options passed to evaluating and display functions with EvaluationOptions and PrintOptions.
 *
 * \section usage_sec Using the library
 *
@@ -102,13 +102,13 @@ struct PlotParameters {
 	float y_max;
 	/// Maximum x-axis value.
 	float x_max;
-	/// If a logarithimic scale shall be used for the y-axis. Default: false
+	/// If a logarithmic scale shall be used for the y-axis. Default: false
 	bool y_log;
-	/// If a logarithimic scale shall be used for the x-axis. Default: false
+	/// If a logarithmic scale shall be used for the x-axis. Default: false
 	bool x_log;
-	/// Logarithimic base for the y-axis. Default: 10
+	/// Logarithmic base for the y-axis. Default: 10
 	int y_log_base;
-	/// Logarithimic base for the x-axis. Default: 10
+	/// Logarithmic base for the x-axis. Default: 10
 	int x_log_base;
 	/// If  a grid shall be shown in the plot. Default: false
 	bool grid;
@@ -420,7 +420,7 @@ class Calculator {
 	* @param eo Options for the evaluation and parsing of the expression.
 	* @param[out] parsed_struct NULL or a math structure to fill with the result of the parsing of the expression.
 	* @param[out] to_struct NULL or a math structure to fill with unit expression parsed after "to". If expression does not contain a "to" string, and to_struct is a unit or a symbol (a unit expression string), to_struct will be used instead.
-	* @param make_to_division If true, the expression after "to" will be interpreted as a unit epxression to convert the result to.
+	* @param make_to_division If true, the expression after "to" will be interpreted as a unit expression to convert the result to.
 	* @returns true if the calculation was successfully started (and finished if msecs > 0).
 	*/
 	bool calculate(MathStructure *mstruct, std::string str, int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
@@ -430,7 +430,7 @@ class Calculator {
 	* @param eo Options for the evaluation and parsing of the expression.
 	* @param[out] parsed_struct NULL or a math structure to fill with the result of the parsing of the expression.
 	* @param[out] to_struct NULL or a math structure to fill with unit expression parsed after "to". If expression does not contain a "to" string, and to_struct is a unit or a symbol (a unit expression string), to_struct will be used instead.
-	* @param make_to_division If true, the expression after "to" will be interpreted as a unit epxression to convert the result to.
+	* @param make_to_division If true, the expression after "to" will be interpreted as a unit expression to convert the result to.
 	* @returns The result of the calculation.
 	*/
 	MathStructure calculate(std::string str, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
@@ -455,7 +455,7 @@ class Calculator {
 	MathStructure calculate(const MathStructure &mstruct, const EvaluationOptions &eo = default_user_evaluation_options, std::string to_str = "");
 	/** Calculates an expression.and outputs the result to a text string. The expression should be unlocalized first with unlocalizeExpression().
 	*
-	* Unlike other functions for expression evaluation this function handles ending "to"-commmands, in addition to unit conversion, such "to hexadecimal" or to "fractions", similar to the qalc application.
+	* Unlike other functions for expression evaluation this function handles ending "to"-commands, in addition to unit conversion, such "to hexadecimal" or to "fractions", similar to the qalc application.
 	*
 	*
 	* @param str Expression.
@@ -644,7 +644,7 @@ class Calculator {
 	* @param eo Options for the evaluation and parsing of the expression.
 	* @param[out] parsed_struct NULL or a math structure to fill with the result of the parsing of the expression.
 	* @param[out] to_struct NULL or a math structure to fill with unit expression parsed after "to".
-	* @param make_to_division If true, the expression after "to" will be interpreted as a unit epxression to convert the result to.
+	* @param make_to_division If true, the expression after "to" will be interpreted as a unit expression to convert the result to.
 	* @returns true if the calculation was successfully started (and finished if msecs > 0).
 	*/
 	bool RPNStackEnter(std::string str, int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
@@ -660,7 +660,7 @@ class Calculator {
 	* @param eo Options for the evaluation and parsing of the expression.
 	* @param[out] parsed_struct NULL or a math structure to fill with the result of the parsing of the expression.
 	* @param[out] to_struct NULL or a math structure to fill with unit expression parsed after "to".
-	* @param make_to_division If true, the expression after "to" will be interpreted as a unit epxression to convert the result to.
+	* @param make_to_division If true, the expression after "to" will be interpreted as a unit expression to convert the result to.
 	*/
 	void RPNStackEnter(std::string str, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
 	bool setRPNRegister(size_t index, MathStructure *mstruct, int msecs, const EvaluationOptions &eo = default_user_evaluation_options);
@@ -721,7 +721,7 @@ class Calculator {
 	bool parseAdd(std::string &str, MathStructure *mstruct, const ParseOptions &po);
 	//@}
 
-	/** @name Functions converting epxressions between units. */
+	/** @name Functions converting expressions between units. */
 	//@{
 	/** Converts to a unit expression.
 	* The converted value is evaluated.
@@ -729,7 +729,7 @@ class Calculator {
 	* @param mstruct The value to convert.
 	* @param composite_ Unit expression.
 	* @param eo Evaluation options.
-	* @param[out] units NULL or a math structure to fill with the parsed unit expression(or set to undefined if no units were found).
+	* @param[out] units NULL or a math structure to fill with the parsed unit expression (or set to undefined if no units were found).
 	* @returns Converted value.
 	*/
 	MathStructure convert(const MathStructure &mstruct, std::string composite_, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *units = NULL);
@@ -746,7 +746,7 @@ class Calculator {
 	MathStructure convert(const MathStructure &mstruct, KnownVariable *to_var, const EvaluationOptions &eo = default_user_evaluation_options);
 	MathStructure convert(double value, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo = default_user_evaluation_options);
 	MathStructure convert(std::string str, Unit *from_unit, Unit *to_unit, int milliseconds, const EvaluationOptions &eo = default_user_evaluation_options);
-	/** Depecated: use convert() */
+	/** Deprecated: use convert() */
 	MathStructure convertTimeOut(std::string str, Unit *from_unit, Unit *to_unit, int milliseconds, const EvaluationOptions &eo = default_user_evaluation_options);
 	MathStructure convert(std::string str, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo = default_user_evaluation_options);
 	MathStructure convertToBaseUnits(const MathStructure &mstruct, const EvaluationOptions &eo = default_user_evaluation_options);
@@ -823,7 +823,7 @@ class Calculator {
 	*
 	* @param exp10 Base-10 exponent of the value.
 	* @param exp The exponent of the unit.
-	* @param all_prefixes If false, prefixes which is not a multiple of thousand (centi, deci, deka, hekto) will be skipped.
+	* @param all_prefixes If false, prefixes which is not a multiple of thousand (centi, deci, deca, hecto) will be skipped.
 	* @returns A prefix or NULL if the unit should be left without prefix.
 	*/
 	DecimalPrefix *getOptimalDecimalPrefix(int exp10, int exp = 1, bool all_prefixes = true) const;
@@ -831,7 +831,7 @@ class Calculator {
 	*
 	* @param exp10 Base-10 exponent of the value.
 	* @param exp The exponent of the unit.
-	* @param all_prefixes If false, prefixes which is not a multiple of thousand (centi, deci, deka, hekto) will be skipped.
+	* @param all_prefixes If false, prefixes which is not a multiple of thousand (centi, deci, deca, hecto) will be skipped.
 	* @returns A prefix or NULL if the unit should be left without prefix.
 	*/
 	DecimalPrefix *getOptimalDecimalPrefix(const Number &exp10, const Number &exp, bool all_prefixes = true) const;
@@ -1163,7 +1163,7 @@ class Calculator {
 	bool fetchExchangeRates(int seconds, std::string wget_args);
 	/** Download current exchange rates from the Internet to local disc with default wget arguments.
 	*
-	* @param seconds Maximum time for donwload try
+	* @param seconds Maximum time for download try
 	* @returns true if operation was successful.
 	*/
 	bool fetchExchangeRates(int seconds = 15, int n = -1);

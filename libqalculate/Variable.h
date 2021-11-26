@@ -138,7 +138,7 @@ class Variable : public ExpressionItem {
 	* @returns ::VariableSubtype.
 	*/
 	virtual int subtype() const {return SUBTYPE_VARIABLE;}
-	/** Returns if the variable has a known value (as oppossed to assumptions).
+	/** Returns if the variable has a known value (as opposed to assumptions).
 	*
 	* @returns true if the variable is of class KnownVariable, false if UnknownVariable.
 	*/

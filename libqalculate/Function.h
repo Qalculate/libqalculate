@@ -63,7 +63,7 @@ class MathFunction_p;
 
 /// Abstract base class for mathematical functions.
 /**
-* A mathemical function, subclassed from MathFunction, should at least reimplement
+* A mathematical function, subclassed from MathFunction, should at least reimplement
 * calculate(MathStructure&, const MathStructure&, const EvaluationOptions&) and copy(), and preferably also the represents* functions.
 * Argument definitions should be added in the constructor.
 */
@@ -324,13 +324,13 @@ class Argument {
 	*/
 	virtual Argument *copy() const;
 
-	/** Resturns a short description of the argument definition.
+	/** Returns a short description of the argument definition.
 	* Ex. "number" for NumberArgument.
 	*
 	* @returns Short description.
 	*/
 	virtual std::string print() const;
-	/** Resturns a long description of the argument definition.
+	/** Returns a long description of the argument definition.
 	* Ex. "A real number > 2".
 	*
 	* @returns Long description.
@@ -761,7 +761,7 @@ class FileArgument : public Argument {
 };
 
 /// A set of accepted arguments.
-/** This is used when several different type of argments shall be accepted by a function.
+/** This is used when several different type of arguments shall be accepted by a function.
 */
 class ArgumentSet : public Argument {
 

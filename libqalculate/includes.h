@@ -491,7 +491,7 @@ static const struct PrintOptions {
 	bool spell_out_logical_operators;
 	/// Displays children of the structure with no higher precision than the parent. Default: true
 	bool restrict_to_parent_precision;
-	/// Restrict the length of numerators and demonitor as integers in decimal mode for fractional display of numbers. Default: false
+	/// Restrict the length of numerators and denominator as integers in decimal mode for fractional display of numbers. Default: false
 	bool restrict_fraction_length;
 	/// Transform exponentiation positive base and unit fraction exponent (if denominator < 10) to root function. Default: false
 	bool exp_to_root;
@@ -563,7 +563,7 @@ typedef enum {
 	POST_CONVERSION_OPTIMAL_SI,
 	/// Convert to base units
 	POST_CONVERSION_BASE,
-	/// Convert to the the least amount of units. Non-SI units is kept (if optimal), but for conversion only SI units are used.
+	/// Convert to the least amount of units. Non-SI units is kept (if optimal), but for conversion only SI units are used.
 	POST_CONVERSION_OPTIMAL
 } AutoPostConversion;
 
@@ -635,7 +635,7 @@ static const struct ParseOptions {
 	int base;
 	/// When implicit multiplication is limited variables, functions and units must be separated by a space, operator or parenthesis ("xy" does not equal "x * y").  Default: false
 	/**
-	* If the limit implicit multiplication mode is activated, the use of implicite multiplication when parsing expressions and displaying results will be limited to avoid confusion. For example, if this mode is not activated and "integrte(5x)" is accidently typed instead of "integrate(5x)", the expression is interpreted as "int(e * e * (5 * x) * gr * t)". If limit implicit multiplication is turned on to mistyped expression would instead show an error telling that "integrte" is not a valid variable, function or unit (unless unknowns is not enabled in which case the result will be "5 'integrate' * x".
+	* If the limit implicit multiplication mode is activated, the use of implicit multiplication when parsing expressions and displaying results will be limited to avoid confusion. For example, if this mode is not activated and "integrte(5x)" is accidently typed instead of "integrate(5x)", the expression is interpreted as "int(e * e * (5 * x) * gr * t)". If limit implicit multiplication is turned on to mistyped expression would instead show an error telling that "integrte" is not a valid variable, function or unit (unless unknowns is not enabled in which case the result will be "5 'integrate' * x".
 	*/
 	bool limit_implicit_multiplication;
 	/// If and when precisions will be read from number of digits in a number. Default: DONT_READ_PRECISION
@@ -652,7 +652,7 @@ static const struct ParseOptions {
 	MathStructure *unended_function;
 	/// Preserve the expression structure as much as possible. Default: false
 	bool preserve_format;
-	/// Default dataset. Used for object.property syntax without a preceeding data set. Default: NULL
+	/// Default dataset. Used for object.property syntax without a preceding data set. Default: NULL
 	DataSet *default_dataset;
 	/// Parsing mode. Default: PARSING_MODE_ADAPTIVE
 	ParsingMode parsing_mode;
@@ -671,7 +671,7 @@ static const struct EvaluationOptions {
 	ApproximationMode approximation;
 	/// If units will be synced/converted to allow evaluation (ex. 1 min + 1 s=60 s+ 1 s = 61 s). Default: true
 	bool sync_units;
-	/// If units with complex/non-linear relations (ex. degress celsius and fahrenheit) will synced/converted. Default: true
+	/// If units with complex/non-linear relations (ex. degrees Celsius and Fahrenheit) will synced/converted. Default: true
 	bool sync_nonlinear_unit_relations;
 	/// If unit prefixes in original expression will be kept. Default: false
 	bool keep_prefixes;
@@ -681,7 +681,7 @@ static const struct EvaluationOptions {
 	bool calculate_functions;
 	/// If comparisons will be evaluated (ex. 5>2 => 1). Default: true
 	int test_comparisons;
-	/// If a varaible will be isolated to the left side in equations/comparisons (ex. x+y=2 => x=2-y). Default: true
+	/// If a variable will be isolated to the left side in equations/comparisons (ex. x+y=2 => x=2-y). Default: true
 	bool isolate_x;
 	/// If factors (and bases) containing addition will be expanded (ex. z(x+y)=zx+zy). Default: true
 	int expand;
