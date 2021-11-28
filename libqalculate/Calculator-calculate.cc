@@ -1250,7 +1250,7 @@ void replace_zero_symbol(MathStructure &m) {
 		replace_zero_symbol(m[i]);
 	}
 }
-bool comparison_compare(const MathStructure m1, const MathStructure &m2) {
+bool comparison_compare(const MathStructure &m1, MathStructure &m2) {
 	if(m1.isNumber() && m2.isNumber()) {
 		ComparisonResult cr = m1.number().compare(m2.number(), true);
 		if(cr == COMPARISON_RESULT_EQUAL || cr > COMPARISON_RESULT_UNKNOWN) {
@@ -1261,29 +1261,73 @@ bool comparison_compare(const MathStructure m1, const MathStructure &m2) {
 			return true;
 		}
 		return false;
-	} else if(m1.isMultiplication() && m2.isMultiplication() && m1.size() > 0 && (m1[0].isNumber() || m2[0].isNumber())) {
-		size_t i1 = 0, i2 = 0;
-		if(m1[0].isNumber()) i1 = 1;
-		if(m2[0].isNumber()) i2 = 1;
-		if(m1.size() + i1 == m2.size() + i2) {
-			for(size_t i = 0; i < m1.size() - i1; i++) {
-				if(!m1[i + i1].equals(m2[i + i2], true)) return false;
+	} else {
+		if(m1.type() == m2.type() && m1.size() == m2.size()) {
+			if(m1.size() == 0) return m1.equals(m2, true);
+			if(m1.type() == STRUCT_COMPARISON) {
+				if(m1.comparisonType() != m2.comparisonType()) return false;
+			} else if(m1.type() == STRUCT_FUNCTION) {
+				if(m1.function() != m2.function()) return false;
 			}
-			ComparisonResult cr;
-			if(i1 == 0) cr = nr_one.compare(m2[0].number(), true);
-			else cr = m1[0].number().compare(i2 == 0 ? nr_one : m2[0].number(), true);
-			if(cr == COMPARISON_RESULT_EQUAL || cr > COMPARISON_RESULT_UNKNOWN) {
-				if((i1 > 0 && m1[0].number().hasImaginaryPart()) || (i2 > 0 && m2[0].number().hasImaginaryPart())) {
-					if(i1 == 0) cr = nr_one.compareImaginaryParts(m2[0].number());
-					else cr = m1[0].number().compareImaginaryParts(i2 == 0 ? nr_one : m2[0].number());
-					return cr == COMPARISON_RESULT_EQUAL || cr > COMPARISON_RESULT_UNKNOWN;
+			for(size_t i = 0; i < m1.size(); i++) {
+				if(!comparison_compare(m1[i], m2[i])) return false;
+			}
+			return true;
+		} else if(m1.isAddition() && m2.isAddition()) {
+			if(m1.size() + 1 == m2.size() && m2.last().isNumber() && !m2.last().number().isNonZero()) {
+				for(size_t i = 0; i < m1.size(); i++) {
+					if(!comparison_compare(m1[i], m2[i])) return false;
+				}
+				m2.delChild(m2.size(), true);
+				return true;
+			} else if(m2.size() + 1 == m1.size() && m1.last().isNumber() && !m1.last().number().isNonZero()) {
+				for(size_t i = 0; i < m2.size(); i++) {
+					if(!comparison_compare(m1[i], m2[i])) return false;
 				}
 				return true;
 			}
+		} else if(m1.isMultiplication() && m2.isMultiplication()) {
+			if(m1.size() + 1 == m2.size() && m2[0].isNumber() && !m2[0].number().imaginaryPartIsNonZero()) {
+				for(size_t i = 0; i < m1.size(); i++) {
+					if(!comparison_compare(m1[i], m2[i + 1])) return false;
+				}
+				ComparisonResult cr = m2[0].number().compare(nr_one, true);
+				if(cr == COMPARISON_RESULT_EQUAL || cr > COMPARISON_RESULT_UNKNOWN) {
+					m2.delChild(1, true);
+					return true;
+				}
+			} else if(m2.size() + 1 == m1.size() && m1[0].isNumber() && !m1[0].number().imaginaryPartIsNonZero()) {
+				for(size_t i = 0; i < m2.size(); i++) {
+					if(!comparison_compare(m1[i + 1], m2[i])) return false;
+				}
+				ComparisonResult cr = m1[0].number().compare(nr_one, true);
+				if(cr == COMPARISON_RESULT_EQUAL || cr > COMPARISON_RESULT_UNKNOWN) {
+					return true;
+				}
+			}
+		} else if(m2.isAddition() && m2.size() == 2 && m2.last().isNumber() && !m2.last().number().isNonZero()) {
+			if(comparison_compare(m1, m2[0])) {
+				m2.delChild(m2.size(), true);
+				return true;
+			}
+		} else if(m1.isAddition() && m1.size() == 2 && m1.last().isNumber() && !m1.last().number().isNonZero()) {
+			if(comparison_compare(m1[0], m2)) {
+				return true;
+			}
+		} else if(m2.isMultiplication() && m2.size() == 2 && m2[0].isNumber() && !m2[0].number().imaginaryPartIsNonZero()) {
+			if(!comparison_compare(m1, m2[1])) return false;
+			ComparisonResult cr = m2[0].number().compare(nr_one, true);
+			if(cr == COMPARISON_RESULT_EQUAL || cr > COMPARISON_RESULT_UNKNOWN) {
+				m2.delChild(1, true);
+				return true;
+			}
+		} else if(m1.isMultiplication() && m1.size() == 2 && m1[0].isNumber() && !m1[0].number().imaginaryPartIsNonZero()) {
+			if(!comparison_compare(m1[1], m2)) return false;
+			ComparisonResult cr = m1[0].number().compare(nr_one, true);
+			if(cr == COMPARISON_RESULT_EQUAL || cr > COMPARISON_RESULT_UNKNOWN) {
+				return true;
+			}
 		}
-		return false;
-	} else {
-		return m1.equals(m2, true);
 	}
 	return false;
 }
@@ -1315,6 +1359,7 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 		evalops.expand = true;
 		if(mstruct_exact.containsType(STRUCT_COMPARISON)) {
 			bool b = false;
+			MathStructure mbak(*mstruct);
 			MathStructure *mcmp = mstruct;
 			if(mcmp->isLogicalAnd() && mcmp->size() > 0) mcmp = &(*mcmp)[0];
 			if(mcmp->isComparison() && (mcmp->comparisonType() == COMPARISON_EQUALS || dual_approximation > 0) && !(*mcmp)[0].isNumber()) {
@@ -1322,8 +1367,10 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 				if(mstruct_exact.isComparison() && mstruct_exact.comparisonType() == mcmp->comparisonType() && mstruct_exact[0] == (*mcmp)[0]) {
 					MathStructure mtest(mstruct_exact[1]);
 					mtest.eval(evalops);
-					if(comparison_compare(mtest, (*mcmp)[1])) {
+					MathStructure m2((*mcmp)[1]);
+					if(comparison_compare(mtest, m2)) {
 						if(!mtest.isApproximate()) {(*mcmp)[1].set(mtest); mstruct_exact[1].setUndefined();}
+						else (*mcmp)[1].set(m2);
 						b = true;
 					}
 				} else if(mstruct_exact.isLogicalOr()) {
@@ -1333,9 +1380,11 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 							MathStructure mtest(mstruct_exact[i][1]);
 							if(CALCULATOR->aborted()) break;
 							mtest.eval(evalops);
-							if(comparison_compare(mtest, (*mcmp)[1])) {
+							MathStructure m2((*mcmp)[1]);
+							if(comparison_compare(mtest, m2)) {
 								mstruct_exact.setToChild(i + 1);
 								if(!mtest.isApproximate()) {(*mcmp)[1].set(mtest); mstruct_exact[1].setUndefined();}
+								else (*mcmp)[1].set(m2);
 								b = true;
 								break;
 							}
@@ -1358,8 +1407,10 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 									MathStructure mtest(mstruct_exact[i2][1]);
 									if(CALCULATOR->aborted()) break;
 									mtest.eval(evalops);
-									if(comparison_compare(mtest, (*mcmpi)[1])) {
+									MathStructure m2((*mcmpi)[1]);
+									if(comparison_compare(mtest, m2)) {
 										if(!mtest.isApproximate()) {(*mcmpi)[1].set(mtest); mstruct_exact[i2][1].setUndefined();}
+										else (*mcmpi)[1].set(m2);
 										mstruct_exact[i2].setProtected();
 										break;
 									}
@@ -1374,6 +1425,7 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 					}
 				}
 			}
+			if(!b) mstruct->set(mbak);
 			if(!b) mstruct_exact.setUndefined();
 		}
 		if(!mstruct_exact.isUndefined()) {
