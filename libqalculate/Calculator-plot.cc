@@ -14,6 +14,7 @@
 #include "Calculator.h"
 #include "util.h"
 #include "MathStructure.h"
+#include "MathStructure-support.h"
 
 #include <locale.h>
 #include <unistd.h>
@@ -228,7 +229,6 @@ bool Calculator::invokeGnuplot(string, string, bool) {
 #	endif
 #endif
 
-
 bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<PlotDataParameters*> &pdps, bool persistent, int msecs) {
 
 	string homedir;
@@ -364,8 +364,31 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 		plot += title;
 		plot += "\"\n";
 	}
-	if(!param->y_label.empty()) {
+	vector<MathStructure> munit;
+	string sunit;
+	if(!param->y_label.empty()) sunit = "0";
+	for(size_t serie = 0; serie < y_vectors.size(); serie++) {
+		if(y_vectors[serie].isUndefined()) {
+			munit.push_back(m_undefined);
+		} else {
+			munit.push_back(m_zero);
+			if(y_vectors[serie].size() > 0 && !y_vectors[serie][0].isNumber() && (is_unit_multiexp(y_vectors[serie][0]) || (y_vectors[serie][0].isMultiplication() && y_vectors[serie][0].size() >= 2 && y_vectors[serie][0][0].isNumber()))) {
+				munit[serie] = y_vectors[serie][0];
+				munit[serie].delChild(1, true);
+				if(!is_unit_multiexp(munit[serie])) {
+					munit[serie].clear();
+					sunit = "0";
+				} else if(sunit != "0") {
+					string str = munit[serie].print();
+					if(sunit.empty()) sunit = str;
+					else if(str != sunit) sunit = "0";
+				}
+			}
+		}
+	}
+	if(!param->y_label.empty() || !sunit.empty()) {
 		string title = param->y_label;
+		if(title.empty()) title = sunit;
 		gsub("\"", "\\\"", title);
 		plot += "set ylabel \"";
 		plot += title;
@@ -503,6 +526,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 #ifndef HAVE_GNUPLOT_CALL
 	vector<std::pair<string, string>> data_files;
 #endif
+	MathStructure m, mprev;
 	for(size_t serie = 0; serie < y_vectors.size(); serie++) {
 		if(!y_vectors[serie].isUndefined()) {
 			string filename = "gnuplot_data";
@@ -524,19 +548,26 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 			size_t last_index = string::npos, last_index2 = string::npos;
 			bool check_continuous = pdps[serie]->test_continuous && (pdps[serie]->style == PLOT_STYLE_LINES || pdps[serie]->style == PLOT_STYLE_POINTS_LINES);
 			bool prev_failed = false;
+			const MathStructure *yprev = NULL;
 			for(size_t i = 1; i <= y_vectors[serie].countChildren(); i++) {
 				ComparisonResult ct = COMPARISON_RESULT_UNKNOWN;
 				bool invalid_nr = false, b_imagzero_x = false, b_imagzero_y = false;
-				if(!y_vectors[serie].getChild(i)->isNumber()) {
+				const MathStructure *yvalue = y_vectors[serie].getChild(i);
+				if(!yvalue->isNumber() && !munit[serie].isZero()) {
+					m = *yvalue;
+					m.calculateDivide(munit[serie], default_evaluation_options);
+					yvalue = &m;
+				}
+				if(!yvalue->isNumber()) {
 					invalid_nr = true;
 					non_numerical++;
-					//if(non_numerical == 1) str = y_vectors[serie].getChild(i)->print(po);
-				} else if(!y_vectors[serie].getChild(i)->number().isReal()) {
-					b_imagzero_y = testComplexZero(&y_vectors[serie].getChild(i)->number(), y_vectors[serie].getChild(i)->number().internalImaginary());
+					//if(non_numerical == 1) str = yvalue->print(po);
+				} else if(!yvalue->number().isReal()) {
+					b_imagzero_y = testComplexZero(&yvalue->number(), yvalue->number().internalImaginary());
 					if(!b_imagzero_y) {
 						invalid_nr = true;
 						non_real++;
-						//if(non_numerical + non_real == 1) str = y_vectors[serie].getChild(i)->print(po);
+						//if(non_numerical + non_real == 1) str = yvalue->print(po);
 					}
 				}
 				if(serie < x_vectors.size() && !x_vectors[serie].isUndefined() && x_vectors[serie].countChildren() == y_vectors[serie].countChildren()) {
@@ -561,7 +592,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 				if(!invalid_nr) {
 					if(check_continuous && !prev_failed) {
 						if(i == 1 || ct2 == COMPARISON_RESULT_UNKNOWN) ct = COMPARISON_RESULT_EQUAL;
-						else ct = y_vectors[serie].getChild(i - 1)->number().compare(y_vectors[serie].getChild(i)->number());
+						else ct = yprev->number().compare(yvalue->number());
 						if((ct == COMPARISON_RESULT_GREATER || ct == COMPARISON_RESULT_LESS) && (ct1 == COMPARISON_RESULT_GREATER || ct1 == COMPARISON_RESULT_LESS) && (ct2 == COMPARISON_RESULT_GREATER || ct2 == COMPARISON_RESULT_LESS) && ct1 != ct2 && ct != ct2) {
 							if(last_index2 != string::npos) {
 								plot_data.insert(last_index2 + 1, "  \n");
@@ -569,14 +600,21 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 							}
 						}
 					}
-					if(b_imagzero_x) plot_data += y_vectors[serie].getChild(i)->number().realPart().print(po);
-					else plot_data += y_vectors[serie].getChild(i)->print(po);
+					if(b_imagzero_x) plot_data += yvalue->number().realPart().print(po);
+					else plot_data += yvalue->print(po);
 					plot_data += "\n";
 					prev_failed = false;
 				} else if(!prev_failed) {
 					ct = COMPARISON_RESULT_UNKNOWN;
 					plot_data += "  \n";
 					prev_failed = true;
+				}
+				if(m.isZero()) {
+					yprev = yvalue;
+				} else {
+					mprev = m;
+					yprev = &mprev;
+					m.clear();
 				}
 				last_index2 = last_index;
 				last_index = plot_data.length() - 1;

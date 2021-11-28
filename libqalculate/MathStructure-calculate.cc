@@ -6791,6 +6791,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 		Argument *arg = NULL, *last_arg = NULL;
 		int last_i = 0;
 
+		bool b = true;
 		for(size_t i = 0; i < SIZE; i++) {
 			arg = o_function->getArgumentDefinition(i + 1);
 			if(arg) {
@@ -6831,9 +6832,8 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 						return b;
 					}
 					// argument/child did not fulfil criteria
-					m_type = STRUCT_FUNCTION;
 					CHILD_UPDATED(i);
-					return false;
+					b = false;
 				} else {
 					CHILD_UPDATED(i);
 				}
@@ -6859,6 +6859,10 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 					}
 				}
 			}
+		}
+		if(!b) {
+			m_type = STRUCT_FUNCTION;
+			return false;
 		}
 
 		if(last_arg && o_function->maxargs() < 0 && last_i >= o_function->minargs()) {
