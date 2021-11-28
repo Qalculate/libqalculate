@@ -120,7 +120,7 @@ size_t Calculator::parseAddVectorId(const string &str, const ParseOptions &po, b
 MathStructure *Calculator::getId(size_t id) {
 	if(priv->id_structs.find(id) != priv->id_structs.end()) {
 		if(priv->ids_p[id] || priv->ids_ref[id] > 1) {
-			if(priv->ids_ref[id] > 0) priv->ids_ref[id]--;
+			if(!priv->ids_p[id]) priv->ids_ref[id]--;
 			return new MathStructure(*priv->id_structs[id]);
 		} else {
 			MathStructure *mstruct = priv->id_structs[id];
@@ -2476,6 +2476,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 
 	if(test_or_parallel) {
 		beginTemporaryStopMessages();
+		unordered_map<size_t, size_t> ids_ref_bak = priv->ids_ref;
 		for(unordered_map<size_t, size_t>::iterator it = priv->ids_ref.begin(); it != priv->ids_ref.end(); ++it) {
 			it->second++;
 		}
@@ -2486,7 +2487,6 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			parseOperators(mstruct, str, po);
 		} else {
 			endTemporaryStopMessages(true);
-			unordered_map<size_t, size_t> ids_ref_bak = priv->ids_ref;
 			for(unordered_map<size_t, size_t>::iterator it = ids_ref_bak.begin(); it != ids_ref_bak.end(); ++it) {
 				delId(it->first);
 			}
