@@ -1292,18 +1292,15 @@ bool comparison_compare(const MathStructure &m1, MathStructure &m2) {
 					if(!comparison_compare(m1[i], m2[i + 1])) return false;
 				}
 				ComparisonResult cr = m2[0].number().compare(nr_one, true);
-				if(cr == COMPARISON_RESULT_EQUAL || cr > COMPARISON_RESULT_UNKNOWN) {
-					m2.delChild(1, true);
-					return true;
-				}
+				if(cr != COMPARISON_RESULT_EQUAL && cr <= COMPARISON_RESULT_UNKNOWN) return false;
+				m2.delChild(1, true);
+				return true;
 			} else if(m2.size() + 1 == m1.size() && m1[0].isNumber() && !m1[0].number().imaginaryPartIsNonZero()) {
 				for(size_t i = 0; i < m2.size(); i++) {
 					if(!comparison_compare(m1[i + 1], m2[i])) return false;
 				}
 				ComparisonResult cr = m1[0].number().compare(nr_one, true);
-				if(cr == COMPARISON_RESULT_EQUAL || cr > COMPARISON_RESULT_UNKNOWN) {
-					return true;
-				}
+				if(cr != COMPARISON_RESULT_EQUAL && cr <= COMPARISON_RESULT_UNKNOWN) return false;
 			}
 		} else if(m2.isAddition() && m2.size() == 2 && m2.last().isNumber() && !m2.last().number().isNonZero()) {
 			if(comparison_compare(m1, m2[0])) {
@@ -1317,16 +1314,14 @@ bool comparison_compare(const MathStructure &m1, MathStructure &m2) {
 		} else if(m2.isMultiplication() && m2.size() == 2 && m2[0].isNumber() && !m2[0].number().imaginaryPartIsNonZero()) {
 			if(!comparison_compare(m1, m2[1])) return false;
 			ComparisonResult cr = m2[0].number().compare(nr_one, true);
-			if(cr == COMPARISON_RESULT_EQUAL || cr > COMPARISON_RESULT_UNKNOWN) {
-				m2.delChild(1, true);
-				return true;
-			}
+			if(cr != COMPARISON_RESULT_EQUAL && cr <= COMPARISON_RESULT_UNKNOWN) return false;
+			m2.delChild(1, true);
+			return true;
 		} else if(m1.isMultiplication() && m1.size() == 2 && m1[0].isNumber() && !m1[0].number().imaginaryPartIsNonZero()) {
 			if(!comparison_compare(m1[1], m2)) return false;
 			ComparisonResult cr = m1[0].number().compare(nr_one, true);
-			if(cr == COMPARISON_RESULT_EQUAL || cr > COMPARISON_RESULT_UNKNOWN) {
-				return true;
-			}
+			if(cr != COMPARISON_RESULT_EQUAL && cr <= COMPARISON_RESULT_UNKNOWN) return false;
+			return true;
 		}
 	}
 	return false;

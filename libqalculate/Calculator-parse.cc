@@ -2487,9 +2487,9 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			parseOperators(mstruct, str, po);
 		} else {
 			endTemporaryStopMessages(true);
-			for(unordered_map<size_t, size_t>::iterator it = ids_ref_bak.begin(); it != ids_ref_bak.end(); ++it) {
-				delId(it->first);
-			}
+		}
+		for(unordered_map<size_t, size_t>::iterator it = ids_ref_bak.begin(); it != ids_ref_bak.end(); ++it) {
+			delId(it->first);
 		}
 	} else {
 		parseOperators(mstruct, str, po);
