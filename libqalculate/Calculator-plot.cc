@@ -364,6 +364,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 		plot += title;
 		plot += "\"\n";
 	}
+
 	vector<MathStructure> munit;
 	string sunit;
 	if(!param->y_label.empty()) sunit = "0";
@@ -372,13 +373,19 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 			munit.push_back(m_undefined);
 		} else {
 			munit.push_back(m_zero);
-			if(y_vectors[serie].size() > 0 && !y_vectors[serie][0].isNumber() && (is_unit_multiexp(y_vectors[serie][0]) || (y_vectors[serie][0].isMultiplication() && y_vectors[serie][0].size() >= 2 && y_vectors[serie][0][0].isNumber()))) {
-				munit[serie] = y_vectors[serie][0];
-				munit[serie].delChild(1, true);
-				if(!is_unit_multiexp(munit[serie])) {
-					munit[serie].clear();
+			if(y_vectors[serie].size() > 0 && !y_vectors[serie][0].isNumber()) {
+				if(is_unit_multiexp(y_vectors[serie][0])) {
+					munit[serie] = y_vectors[serie][0];
+				} else if(y_vectors[serie][0].isMultiplication() && y_vectors[serie][0].size() >= 2 && y_vectors[serie][0][0].isNumber()) {
+					munit[serie] = y_vectors[serie][0];
+					munit[serie].delChild(1, true);
+					if(!is_unit_multiexp(munit[serie])) munit[serie].clear();
+				}
+			}
+			if(sunit != "0") {
+				if(munit[serie].isZero()) {
 					sunit = "0";
-				} else if(sunit != "0") {
+				} else {
 					string str = munit[serie].print();
 					if(sunit.empty()) sunit = str;
 					else if(str != sunit) sunit = "0";
@@ -386,7 +393,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 			}
 		}
 	}
-	if(!param->y_label.empty() || !sunit.empty()) {
+	if(!param->y_label.empty() || (!sunit.empty() && sunit != "0")) {
 		string title = param->y_label;
 		if(title.empty()) title = sunit;
 		gsub("\"", "\\\"", title);
@@ -554,9 +561,27 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 				bool invalid_nr = false, b_imagzero_x = false, b_imagzero_y = false;
 				const MathStructure *yvalue = y_vectors[serie].getChild(i);
 				if(!yvalue->isNumber() && !munit[serie].isZero()) {
-					m = *yvalue;
-					m.calculateDivide(munit[serie], default_evaluation_options);
-					yvalue = &m;
+					if(yvalue->isMultiplication() && yvalue->size() >= 2 && yvalue->getChild(1)->isNumber()) {
+						bool b = false;
+						if(yvalue->size() == 2 && yvalue->getChild(2)->equals(munit[serie])) {
+							b = true;
+						} else if(yvalue->size() > 2 && munit[serie].isMultiplication() && munit[serie].size() == yvalue->size() - 1) {
+							b = true;
+							for(size_t i2 = 0; i2 < munit[serie].size(); i2++) {
+								if(!yvalue->getChild(i2 + 2)->equals(munit[serie][i2])) {
+									b = false;
+									break;
+								}
+							}
+						}
+						if(b) {
+							m = *yvalue->getChild(1);
+							yvalue = &m;
+						}
+					} else if(yvalue->equals(munit[serie])) {
+						m.set(1, 1, 0);
+						yvalue = &m;
+					}
 				}
 				if(!yvalue->isNumber()) {
 					invalid_nr = true;
@@ -609,12 +634,12 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 					plot_data += "  \n";
 					prev_failed = true;
 				}
-				if(m.isZero()) {
-					yprev = yvalue;
-				} else {
+				if(yprev == &m) {
 					mprev = m;
 					yprev = &mprev;
 					m.clear();
+				} else {
+					yprev = yvalue;
 				}
 				last_index2 = last_index;
 				last_index = plot_data.length() - 1;

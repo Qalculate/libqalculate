@@ -2554,9 +2554,7 @@ int main(int argc, char *argv[]) {
 		rl_bind_keyseq("\\C-e", key_exact);
 		rl_bind_keyseq("\\C-f", key_fraction);
 		rl_bind_keyseq("\\C-a", key_save);
-#	ifdef _WIN32
 		rl_bind_keyseq("\\C-l", key_clear);
-#	endif
 	}
 #endif
 

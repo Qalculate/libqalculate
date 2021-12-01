@@ -6791,7 +6791,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 		Argument *arg = NULL, *last_arg = NULL;
 		int last_i = 0;
 
-		bool b = true;
+		bool b_valid = true;
 		for(size_t i = 0; i < SIZE; i++) {
 			arg = o_function->getArgumentDefinition(i + 1);
 			if(arg) {
@@ -6833,7 +6833,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 					}
 					// argument/child did not fulfil criteria
 					CHILD_UPDATED(i);
-					b = false;
+					b_valid = false;
 				} else {
 					CHILD_UPDATED(i);
 				}
@@ -6860,22 +6860,17 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 				}
 			}
 		}
-		if(!b) {
-			m_type = STRUCT_FUNCTION;
-			return false;
-		}
 
 		if(last_arg && o_function->maxargs() < 0 && last_i >= o_function->minargs()) {
 			// use the last argument to test additional arguments (if number of arguments is unlimited and last argument was above minimum number of arguments)
 			for(size_t i = last_i + 1; i < SIZE; i++) {
-				if(!last_arg->test(CHILD(i), i + 1, o_function, eo)) {
-					m_type = STRUCT_FUNCTION;
-					CHILD_UPDATED(i);
-					return false;
-				} else {
-					CHILD_UPDATED(i);
-				}
+				if(!last_arg->test(CHILD(i), i + 1, o_function, eo)) b_valid = false;
+				CHILD_UPDATED(i);
 			}
+		}
+		if(!b_valid) {
+			m_type = STRUCT_FUNCTION;
+			return false;
 		}
 
 		if(!o_function->testCondition(*this)) {
