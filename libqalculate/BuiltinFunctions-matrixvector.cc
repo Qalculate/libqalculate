@@ -342,7 +342,7 @@ InverseFunction::InverseFunction() : MathFunction("inv", 1) {
 int InverseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	if(mstruct.representsScalar()) {mstruct.inverse(); return 1;}
-	if(!mstruct.isVector()) {
+	if(!mstruct.isMatrix()) {
 		mstruct.eval(eo);
 		if(mstruct.representsScalar()) {mstruct.inverse(); return 1;}
 		else if(!mstruct.isVector()) return -1;

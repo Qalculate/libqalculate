@@ -1,3 +1,8 @@
+2021-11-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not stop testing functions argument values after first failure
+	* Handle units in plot data;
+
 2021-11-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add name "inv" to matrix inverse function (remove reciprocal function) and add support for scalars
@@ -22,7 +27,7 @@
 
 2021-11-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Add clear command, and Ctrl+L shortcut (for Windows)
+	* Add clear command, with Ctrl+L shortcut
 
 2021-11-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
