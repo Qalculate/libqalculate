@@ -1672,7 +1672,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		// handle case where conversion to units requested, but original expression and result does not contains any unit
 		MathStructure to_struct;
 		mstruct = calculate(str, evalops, &parsed_struct, &to_struct);
-		if(to_struct.containsType(STRUCT_UNIT, true) && !mstruct.contains(STRUCT_UNIT) && !parsed_struct.containsType(STRUCT_UNIT, false, true, true)) {
+		if(to_struct.containsType(STRUCT_UNIT, true) && !mstruct.containsType(STRUCT_UNIT) && !parsed_struct.containsType(STRUCT_UNIT, false, true, true)) {
 			// convert "to"-expression to base units
 			to_struct.unformat();
 			to_struct = CALCULATOR->convertToOptimalUnit(to_struct, evalops, true);
