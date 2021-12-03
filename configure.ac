@@ -105,7 +105,11 @@ dnl  --------------------------------
 
 AC_CHECK_LIB(pthread, pthread_create, [LIBS="$LIBS -lpthread"])
 
-AC_CHECK_HEADERS(mpfr.h, [LIBS="$LIBS -lmpfr -lgmp"], [AC_MSG_ERROR([Unable to find mpfr header])])
+AC_CHECK_HEADER(gmp.h, [], [AC_MSG_ERROR([gmp.h can't be found, or is unusable.])])
+AC_CHECK_LIB(gmp, __gmpz_init, [LIBS="-lgmp $LIBS"], [AC_MSG_ERROR([libgmp not found or uses a different ABI.])])
+
+AC_CHECK_HEADERS(mpfr.h, [], [AC_MSG_ERROR([mpfr.h can't be found, or is unusable.])])
+AC_CHECK_LIB(mpfr, mpfr_get_version, [LIBS="-lmpfr $LIBS"], [AC_MSG_ERROR([libmpfr not found or uses a different ABI.])])
 
 AC_LANG([C++])
 
