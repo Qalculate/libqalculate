@@ -17,7 +17,9 @@
 
 #include <string.h>
 #include <time.h>
-#include <iconv.h>
+#ifdef HAVE_ICONV
+#	include <iconv.h>
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sstream>
@@ -735,6 +737,7 @@ bool removeDir(string dirpath) {
 }
 
 char *locale_from_utf8(const char *str) {
+#ifdef HAVE_ICONV
 	iconv_t conv = iconv_open("", "UTF-8");
 	if(conv == (iconv_t) -1) return NULL;
 	size_t inlength = strlen(str);
@@ -748,8 +751,12 @@ char *locale_from_utf8(const char *str) {
 	memset(buffer, 0, 4);
 	if(err == (size_t) -1) {free(dest); return NULL;}
 	return dest;
+#else
+	return NULL;
+#endif
 }
 char *locale_to_utf8(const char *str) {
+#ifdef HAVE_ICONV
 	iconv_t conv = iconv_open("UTF-8", "");
 	if(conv == (iconv_t) -1) return NULL;
 	size_t inlength = strlen(str);
@@ -763,6 +770,9 @@ char *locale_to_utf8(const char *str) {
 	memset(buffer, 0, 4 * sizeof(char));
 	if(err == (size_t) -1) {free(dest); return NULL;}
 	return dest;
+#else
+	return NULL;
+#endif
 }
 char *utf8_strdown(const char *str, int l) {
 #ifdef HAVE_ICU
