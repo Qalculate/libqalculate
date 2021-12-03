@@ -1740,6 +1740,10 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 								}
 							}
 						}
+						if(SIZE == 1 && CHILD(1).size() == 1) {
+							SET_CHILD_MAP(0)
+							SET_CHILD_MAP(0)
+						}
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
 					} else if(isMatrix() && mstruct.isVector()) {
@@ -1758,6 +1762,16 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 								mtmp = msave[index_r][index_c];
 								mtmp.calculateMultiply(mstruct[index_c], eo);
 								CHILD(index_r)[0].calculateAdd(mtmp, eo, &CHILD(index_r), 0);
+							}
+						}
+						if(CHILD(1).size() == 1) {
+							if(SIZE == 1) {
+								SET_CHILD_MAP(0)
+								SET_CHILD_MAP(0)
+							} else {
+								for(size_t i = 0; i < SIZE; i++) {
+									CHILD(i).setToChild(1, true);
+								}
 							}
 						}
 						MERGE_APPROX_AND_PREC(mstruct)
