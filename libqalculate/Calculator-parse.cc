@@ -15,6 +15,7 @@
 #include "BuiltinFunctions.h"
 #include "util.h"
 #include "MathStructure.h"
+#include "MathStructure-support.h"
 #include "Unit.h"
 #include "Variable.h"
 #include "Function.h"
@@ -399,6 +400,34 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 
 	if(b_unicode) {
 
+		// replace thin space
+		size_t ui = str.find(THIN_SPACE);
+		size_t ui2 = 0;
+		while(ui != string::npos) {
+			// check that found index is outside quotes
+			for(; ui2 < q_end.size(); ui2++) {
+				if(ui >= q_begin[ui2]) {
+					if(ui <= q_end[ui2]) {
+						ui = str.find(THIN_SPACE, q_end[ui2] + 1);
+						if(ui == string::npos) break;
+					}
+				} else {
+					break;
+				}
+			}
+			if(ui == string::npos) break;
+			bool b_erase = (ui > 0 && str[ui - 1] >= '0' && str[ui - 1] <= '9' && ui < str.length() - 1 && str[ui + 1] >= '0' && str[ui + 1] <= '9');
+			// adjust quotation mark indices
+			int index_shift = (b_erase ? 3 : 2);
+			for(size_t ui3 = ui2; ui3 < q_begin.size(); ui3++) {
+				q_begin[ui3] += index_shift;
+				q_end[ui3] += index_shift;
+			}
+			if(b_erase) str.erase(ui, 3);
+			else str.replace(ui, 3, SPACE);
+			ui = str.find(THIN_SPACE, ui + (b_erase ? 0 : 1));
+		}
+
 		// replace Unicode exponents
 		size_t prev_ui = string::npos, space_n = 0;
 		while(true) {
@@ -602,6 +631,56 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 			}
 		}
 	}
+
+	// replace semicolon outside matrices
+	if(str.find(";") != string::npos) {
+		bool in_cit1 = false, in_cit2 = false;
+		vector<int> pars;
+		int brackets = 0;
+		for(size_t i = 0; i < str.length(); i++) {
+			switch(str[i]) {
+				case LEFT_VECTOR_WRAP_CH: {
+					if(!in_cit1 && !in_cit2) {
+						brackets++;
+						pars.push_back(0);
+					}
+					break;
+				}
+				case LEFT_PARENTHESIS_CH: {
+					if(brackets > 0 && !in_cit1 && !in_cit2) pars[brackets - 1]++;
+					break;
+				}
+				case RIGHT_PARENTHESIS_CH: {
+					if(brackets > 0 && !in_cit1 && !in_cit2 && pars[brackets - 1] > 0) pars[brackets - 1]--;
+					break;
+				}
+				case '\"': {
+					if(in_cit1) in_cit1 = false;
+					else if(!in_cit2) in_cit1 = true;
+					break;
+				}
+				case '\'': {
+					if(in_cit2) in_cit2 = false;
+					else if(!in_cit1) in_cit1 = true;
+					break;
+				}
+				case RIGHT_VECTOR_WRAP_CH: {
+					if(!in_cit1 && !in_cit2) {
+						brackets--;
+						pars.pop_back();
+					}
+					break;
+				}
+				case ';': {
+					if((brackets == 0 || pars[brackets - 1] > 0) && !in_cit1 && !in_cit2) {
+						str[i] = COMMA_CH;
+					}
+					break;
+				}
+			}
+		}
+	}
+
 }
 
 
@@ -732,63 +811,110 @@ string Calculator::localizeExpression(string str, const ParseOptions &po) const 
 	} else if(base < 2 || base > 36) {
 		base = -1;
 	}
-	vector<size_t> q_begin;
-	vector<size_t> q_end;
-	size_t i3 = 0;
-	while(true) {
-		i3 = str.find_first_of("\"\'", i3);
-		if(i3 == string::npos) {
-			break;
-		}
-		q_begin.push_back(i3);
-		i3 = str.find(str[i3], i3 + 1);
-		if(i3 == string::npos) {
-			q_end.push_back(str.length() - 1);
-			break;
-		}
-		q_end.push_back(i3);
-		i3++;
-	}
-	if(COMMA_STR != COMMA || po.comma_as_separator) {
-		bool b_alt_comma = po.comma_as_separator && COMMA_STR == COMMA;
-		size_t ui = str.find(COMMA);
-		size_t ui2 = 0;
-		while(ui != string::npos) {
-			for(; ui2 < q_end.size(); ui2++) {
-				if(ui >= q_begin[ui2]) {
-					if(ui <= q_end[ui2]) {
-						ui = str.find(COMMA, q_end[ui2] + 1);
-						if(ui == string::npos) break;
-					}
-				} else {
-					break;
+	bool in_cit1 = false, in_cit2 = false;
+	vector<int> pars;
+	vector<size_t> espace;
+	vector<size_t> epos;
+	int brackets = 0;
+	int comma_type = 0;
+	if(COMMA_STR == ";" || (po.comma_as_separator && COMMA_STR == COMMA)) comma_type = 1;
+	else if(COMMA_STR != COMMA) comma_type = 2;
+	int dot_type = 0;
+	if(DOT_STR == COMMA) dot_type = 1;
+	else if(DOT_STR != DOT) comma_type = 2;
+	for(size_t i = 0; i < str.length(); i++) {
+		switch(str[i]) {
+			case LEFT_VECTOR_WRAP_CH: {
+				if(!in_cit1 && !in_cit2) {
+					brackets++;
+					pars.push_back(0);
+					epos.push_back(0);
+					espace.push_back(false);
 				}
+				break;
 			}
-			if(ui == string::npos) break;
-			str.replace(ui, strlen(COMMA), b_alt_comma ? ";" : COMMA_STR);
-			ui = str.find(COMMA, ui + (b_alt_comma ? 1 : COMMA_STR.length()));
-		}
-	}
-	if(DOT_STR != DOT) {
-		size_t ui = str.find(DOT);
-		size_t ui2 = 0;
-		while(ui != string::npos) {
-			for(; ui2 < q_end.size(); ui2++) {
-				if(ui >= q_begin[ui2]) {
-					if(ui <= q_end[ui2]) {
-						ui = str.find(DOT, q_end[ui2] + 1);
-						if(ui == string::npos) break;
+			case RIGHT_VECTOR_WRAP_CH: {
+				if(!in_cit1 && !in_cit2 && brackets > 0) {
+					if(epos[brackets - 1] > 0 && espace[brackets - 1] > 0) {
+						str.insert(epos[brackets - 1], LEFT_PARENTHESIS); i++;
+						str.insert(i, RIGHT_PARENTHESIS); i++;
 					}
-				} else {
-					break;
+					brackets--;
+					pars.pop_back();
+					epos.pop_back();
+					espace.pop_back();
 				}
+				break;
 			}
-			if(ui == string::npos) break;
-			if(!po.rpn && ui > 0 && ui < str.length() - 1 && is_not_number(str[ui - 1], base) && is_not_number(str[ui + 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[ui - 1]) && (str[ui + 1] == '\'' || str[ui + 1] == POWER_CH || str[ui + 1] == MULTIPLICATION_CH || str[ui + 1] == DIVISION_CH || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[ui + 1]))) {
-				ui = str.find(DOT, ui + 1);
-			} else {
-				str.replace(ui, strlen(DOT), DOT_STR);
-				ui = str.find(DOT, ui + DOT_STR.length());
+			case LEFT_PARENTHESIS_CH: {
+				if(!in_cit1 && !in_cit2 && brackets > 0) pars[brackets - 1]++;
+				break;
+			}
+			case RIGHT_PARENTHESIS_CH: {
+				if(!in_cit1 && !in_cit2 && brackets > 0 && pars[brackets - 1] > 0) pars[brackets - 1]--;
+				break;
+			}
+			case '\"': {
+				if(in_cit1) in_cit1 = false;
+				else if(!in_cit2) in_cit1 = true;
+				break;
+			}
+			case '\'': {
+				if(in_cit2) in_cit2 = false;
+				else if(!in_cit1) in_cit1 = true;
+				break;
+			}
+			case '\n': {}
+			case '\t': {}
+			case SPACE_CH: {
+				if(!in_cit1 && !in_cit2 && brackets > 0 && pars[brackets - 1] == 0 && epos[brackets - 1] > 0 && espace[brackets - 1] == 0) {
+					espace[brackets - 1] = i;
+				}
+				break;
+			}
+			case COMMA_CH: {
+				if(!in_cit1 && !in_cit2 && comma_type != 0) {
+					if(priv->matlab_matrices && brackets > 0 && pars[brackets - 1] == 0) {
+						if(epos[brackets - 1] > 0 && espace[brackets - 1] > 0) {
+							str.insert(epos[brackets - 1], LEFT_PARENTHESIS); i++;
+							size_t i2 = str.find_last_not_of(SPACES, i - 1);
+							str.insert(i2 + 1, RIGHT_PARENTHESIS); i++;
+						}
+						if(dot_type == 1 && str[i - 1] != RIGHT_VECTOR_WRAP_CH) {
+							if(i < str.length() - 1 && is_in(SPACES, str[i + 1])) {
+								str.erase(i, 1); i--;
+							} else {
+								str[i] = SPACE_CH;
+							}
+							i = str.find_first_not_of(SPACES, i + 1);
+							if(i == string::npos) return str;
+							epos[brackets - 1] = i;
+							espace[brackets - 1] = 0;
+							i--;
+						}
+					} else {
+						if(comma_type == 1) {
+							str[i] = ';';
+						} else {
+							str.replace(i, 1, COMMA_STR);
+							i += COMMA_STR.length() - 1;
+						}
+					}
+				}
+				break;
+			}
+			case DOT_CH: {
+				if(!in_cit1 && !in_cit2 && dot_type != 0) {
+					if(po.rpn || i == 0 || i == str.length() - 1 || is_not_number(str[i - 1], base) || is_not_number(str[i + 1], base) || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i - 1]) || (str[i + 1] != '\'' && str[i + 1] != POWER_CH && str[i + 1] != MULTIPLICATION_CH && str[i + 1] != DIVISION_CH && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i + 1]))) {
+						if(dot_type == 1) {
+							str[i] = COMMA_CH;
+						} else {
+							str.replace(i, 1, DOT_STR);
+							i += DOT_STR.length() - 1;
+						}
+					}
+				}
+				break;
 			}
 		}
 	}
@@ -812,162 +938,171 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
 	} else if(base < 2 || base > 36) {
 		base = -1;
 	}
-	vector<size_t> q_begin;
-	vector<size_t> q_end;
-	size_t i3 = 0;
-	while(true) {
-		i3 = str.find_first_of("\"\'", i3);
-		if(i3 == string::npos) {
-			break;
-		}
-		q_begin.push_back(i3);
-		i3 = str.find(str[i3], i3 + 1);
-		if(i3 == string::npos) {
-			q_end.push_back(str.length() - 1);
-			break;
-		}
-		q_end.push_back(i3);
-		i3++;
-	}
-	if(DOT_STR != DOT) {
-		bool comma_argsep = false;
-		if(!po.dot_as_separator && DOT_STR == COMMA) {
-			size_t ui = 0;
-			size_t ui2 = 0;
-			while(true) {
-				ui = str.find_first_of(RIGHT_VECTOR_WRAP RIGHT_PARENTHESIS, ui);
-				for(; ui2 < q_end.size(); ui2++) {
-					if(ui >= q_begin[ui2]) {
-						if(ui <= q_end[ui2]) {
-							ui = str.find_first_of(RIGHT_VECTOR_WRAP RIGHT_PARENTHESIS, q_end[ui2] + 1);
-							if(ui == string::npos) break;
-						}
-					} else {
-						break;
-					}
+	bool in_cit1 = false, in_cit2 = false;
+	vector<int> pars;
+	int brackets = 0;
+	int comma_type = 0;
+	if(COMMA_STR == ";") comma_type = 1;
+	else if(COMMA_STR != COMMA) comma_type = 2;
+	int dot_type = 0;
+	if(DOT_STR == COMMA) dot_type = 1;
+	else if(DOT_STR != DOT) comma_type = 2;
+	bool b_matrix_comma = (dot_type != 1);
+	pars.push_back(0);
+	for(size_t i = 0; dot_type == 1 && i < str.length(); i++) {
+		switch(str[i]) {
+			case LEFT_VECTOR_WRAP_CH: {
+				if(!in_cit1 && !in_cit2) {
+					brackets++;
+					pars.push_back(0);
 				}
-				if(ui == string::npos || ui == str.length() - 1) break;
-				ui = str.find_first_not_of(SPACES, ui + 1);
-				if(ui == string::npos) break;
-				if(str[ui] == COMMA_CH) {
-					comma_argsep = true;
-					break;
-				}
+				break;
 			}
-		}
-		if(!comma_argsep && DOT_STR == COMMA && str.find(COMMA_STR) == string::npos && base > 0 && base <= 10) {
-			bool b_vector = (!po.dot_as_separator && str.find(LEFT_VECTOR_WRAP) != string::npos);
-			bool b_dot = (str.find(DOT) != string::npos);
-			size_t ui = str.find_first_of(b_vector ? DOT COMMA : COMMA);
-			size_t ui2 = 0;
-			while(ui != string::npos) {
-				for(; ui2 < q_end.size(); ui2++) {
-					if(ui >= q_begin[ui2]) {
-						if(ui <= q_end[ui2]) {
-							ui = str.find_first_of(b_vector ? DOT COMMA : COMMA, q_end[ui2] + 1);
-							if(ui == string::npos) break;
-						}
-					} else {
-						break;
-					}
-				}
-				if(ui == string::npos) break;
-				if(ui > 0) {
-					size_t ui3 = str.find_last_not_of(SPACES, ui - 1);
-					if(ui3 != string::npos && ((str[ui3] > 'a' && str[ui3] < 'z') || (str[ui3] > 'A' && str[ui3] < 'Z')) && is_not_number(str[ui3], base)) return str;
-				}
-				if(ui != str.length() - 1) {
-					size_t ui3 = str.find_first_not_of(SPACES, ui + 1);
-					if(ui3 != string::npos && is_not_number(str[ui3], base)) return str;
-					if(b_vector || !b_dot) {
-						ui3 = str.find_first_not_of(SPACES NUMBERS, ui3 + 1);
-						if(ui3 != string::npos && (str[ui3] == COMMA_CH || (b_vector && str[ui3] == DOT_CH))) return str;
-					}
-				}
-				ui = str.find(b_vector ? DOT COMMA : COMMA, ui + 1);
+			case LEFT_PARENTHESIS_CH: {
+				if(!in_cit1 && !in_cit2) pars[brackets]++;
+				break;
 			}
-		}
-		if(po.dot_as_separator) {
-			size_t ui = str.find(DOT);
-			size_t ui2 = 0;
-			while(ui != string::npos) {
-				for(; ui2 < q_end.size(); ui2++) {
-					if(ui >= q_begin[ui2]) {
-						if(ui <= q_end[ui2]) {
-							ui = str.find(DOT, q_end[ui2] + 1);
-							if(ui == string::npos) break;
-						}
-					} else {
-						break;
-					}
-				}
-				if(ui == string::npos) break;
-				if(!po.rpn && ui > 0 && ui < str.length() - 1 && is_not_number(str[ui - 1], base) && is_not_number(str[ui + 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[ui - 1]) && (str[ui + 1] == '\'' || str[ui + 1] == POWER_CH || str[ui + 1] == MULTIPLICATION_CH || str[ui + 1] == DIVISION_CH || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[ui + 1]))) {
-					ui = str.find(DOT, ui + 1);
-				} else {
-					str.replace(ui, strlen(DOT), SPACE);
-					ui = str.find(DOT, ui + strlen(SPACE));
-				}
+			case RIGHT_PARENTHESIS_CH: {
+				if(!in_cit1 && !in_cit2 && pars[brackets] > 0) pars[brackets]--;
+				break;
 			}
-		}
-		if(!comma_argsep) {
-			size_t ui2 = 0;
-			size_t ui = str.find(DOT_STR);
-			while(ui != string::npos) {
-				for(; ui2 < q_end.size(); ui2++) {
-					if(ui >= q_begin[ui2]) {
-						if(ui <= q_end[ui2]) {
-							ui = str.find(DOT_STR, q_end[ui2] + 1);
-							if(ui == string::npos) break;
+			case '\"': {
+				if(in_cit1) in_cit1 = false;
+				else if(!in_cit2) in_cit1 = true;
+				break;
+			}
+			case '\'': {
+				if(in_cit2) in_cit2 = false;
+				else if(!in_cit1) in_cit1 = true;
+				break;
+			}
+			case RIGHT_VECTOR_WRAP_CH: {
+				if(!in_cit1 && !in_cit2 && brackets > 0) {
+					brackets--;
+					pars.pop_back();
+				}
+				break;
+			}
+			case COMMA_CH: {
+				if(!in_cit1 && !in_cit2 && ((priv->matlab_matrices && brackets > 0 && !b_matrix_comma) || pars[brackets] > 0)) {
+					if(i > 0) {
+						size_t i2 = str.find_last_not_of(SPACES, i - 1);
+						if(i2 != string::npos && (str[i2] == RIGHT_PARENTHESIS_CH || str[i2] == RIGHT_VECTOR_WRAP_CH || (((str[i2] > 'a' && str[i2] < 'z') || (str[i2] > 'A' && str[i2] < 'Z')) && is_not_number(str[i2], base)))) {
+							b_matrix_comma = true;
+							if(pars[brackets] > 0) {dot_type = 0; break;}
 						}
-					} else {
+					}
+					if(i != str.length() - 1) {
+						size_t i2 = str.find_first_not_of(SPACES, i + 1);
+						if(i2 != string::npos) {
+							if(is_not_number(str[i2], base)) {
+								b_matrix_comma = true;
+								if(pars[brackets] > 0) {dot_type = 0; break;}
+							} else {
+								for(i2 = i2 + 1; i2 < str.length(); i2++) {
+									if(str[i2] == COMMA_CH) {
+										b_matrix_comma = true;
+										if(pars[brackets] > 0) dot_type = 0;
+										break;
+									} else if(is_not_number(str[i2], base) && (is_not_in(SPACES, str[i2]) || (brackets > 0 && pars[brackets] == 0))) {
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
+				break;
+			}
+			case DOT_CH: {
+				if(!po.dot_as_separator && brackets > 0 && !b_matrix_comma) {
+					if(po.rpn || i == 0 || i == str.length() - 1 || is_not_number(str[i - 1], base) || is_not_number(str[i + 1], base) || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i - 1]) || (str[i + 1] != '\'' && str[i + 1] != POWER_CH && str[i + 1] != MULTIPLICATION_CH && str[i + 1] != DIVISION_CH && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i + 1]))) {
+						b_matrix_comma = true;
 						break;
 					}
 				}
-				if(ui == string::npos) break;
-				str.replace(ui, DOT_STR.length(), DOT);
-				ui = str.find(DOT_STR, ui + strlen(DOT));
+				break;
 			}
 		}
 	}
-	if(COMMA_STR != COMMA || po.comma_as_separator) {
-		bool b_alt_comma = po.comma_as_separator && COMMA_STR == COMMA;
-		if(po.comma_as_separator) {
-			size_t ui = str.find(COMMA);
-			size_t ui2 = 0;
-			while(ui != string::npos) {
-				for(; ui2 < q_end.size(); ui2++) {
-					if(ui >= q_begin[ui2]) {
-						if(ui <= q_end[ui2]) {
-							ui = str.find(COMMA, q_end[ui2] + 1);
-							if(ui == string::npos) break;
-						}
-					} else {
-						break;
+	if(!priv->matlab_matrices) b_matrix_comma = false;
+	pars.clear();
+	in_cit1 = false; in_cit2 = false; brackets = 0;
+	for(size_t i = 0; i < str.length();) {
+		switch(str[i]) {
+			case LEFT_VECTOR_WRAP_CH: {
+				if(!in_cit1 && !in_cit2) {
+					brackets++;
+					pars.push_back(0);
+				}
+				break;
+			}
+			case LEFT_PARENTHESIS_CH: {
+				if(brackets > 0 && !in_cit1 && !in_cit2) pars[brackets - 1]++;
+				break;
+			}
+			case RIGHT_PARENTHESIS_CH: {
+				if(brackets > 0 && !in_cit1 && !in_cit2 && pars[brackets - 1] > 0) pars[brackets - 1]--;
+				break;
+			}
+			case '\"': {
+				if(in_cit1) in_cit1 = false;
+				else if(!in_cit2) in_cit1 = true;
+				break;
+			}
+			case '\'': {
+				if(in_cit2) in_cit2 = false;
+				else if(!in_cit1) in_cit1 = true;
+				break;
+			}
+			case RIGHT_VECTOR_WRAP_CH: {
+				if(!in_cit1 && !in_cit2 && brackets > 0) {
+					brackets--;
+					pars.pop_back();
+				}
+				break;
+			}
+			case COMMA_CH: {
+				if(!in_cit1 && !in_cit2 && (dot_type == 1 || po.comma_as_separator) && (!b_matrix_comma || brackets == 0 || pars[brackets - 1] > 0)) {
+					if(dot_type == 1) str[i] = DOT_CH;
+					else {str.erase(i, 1); continue;}
+				}
+				break;
+			}
+			case ';': {
+				if((comma_type == 1 || po.comma_as_separator) && (!priv->matlab_matrices || brackets == 0 || pars[brackets - 1] > 0) && !in_cit1 && !in_cit2) {
+					str[i] = COMMA_CH;
+				}
+				break;
+			}
+			case DOT_CH: {
+				if((dot_type != 0 && po.dot_as_separator) && !in_cit1 && !in_cit2) {
+					if(po.rpn || i == 0 || i == str.length() - 1 || is_not_number(str[i - 1], base) || is_not_number(str[i + 1], base) || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i - 1]) || (str[i + 1] != '\'' && str[i + 1] != POWER_CH && str[i + 1] != MULTIPLICATION_CH && str[i + 1] != DIVISION_CH && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i + 1]))) {
+						str.erase(i, 1);
+						continue;
 					}
 				}
-				if(ui == string::npos) break;
-				str.erase(ui, strlen(COMMA));
-				ui = str.find(COMMA, ui);
+				break;
 			}
-		}
-		size_t ui2 = 0;
-		size_t ui = str.find(b_alt_comma ? ";" : COMMA_STR);
-		while(ui != string::npos) {
-			for(; ui2 < q_end.size(); ui2++) {
-				if(ui >= q_begin[ui2]) {
-					if(ui <= q_end[ui2]) {
-						ui = str.find(b_alt_comma ? ";" : COMMA_STR, q_end[ui2] + 1);
-						if(ui == string::npos) break;
+			default: {
+				if(dot_type == 2 && !in_cit1 && !in_cit2 && str[i] == DOT_STR[0] && i + DOT_STR.length() <= str.length()) {
+					bool b = true;
+					for(size_t i2 = 1; i2 < DOT_STR.length(); i2++) {
+						if(str[i + i2] != DOT_STR[i2]) {b = false; break;}
 					}
-				} else {
-					break;
+					if(b) {str.replace(i, DOT_STR.length(), DOT); i += DOT_STR.length() - 1;}
 				}
+				if(comma_type == 2 && !in_cit1 && !in_cit2 && str[i] == COMMA_STR[0] && i + COMMA_STR.length() <= str.length()) {
+					bool b = true;
+					for(size_t i2 = 1; i2 < COMMA_STR.length(); i2++) {
+						if(str[i + i2] != COMMA_STR[i2]) {b = false; break;}
+					}
+					if(b) {str.replace(i, COMMA_STR.length(), COMMA); i += COMMA_STR.length() - 1;}
+				}
+				break;
 			}
-			if(ui == string::npos) break;
-			str.replace(ui, b_alt_comma ? 1 : COMMA_STR.length(), COMMA);
-			ui = str.find(b_alt_comma ? ";" : COMMA_STR, ui + strlen(COMMA));
 		}
+		i++;
 	}
 	return str;
 }
@@ -985,6 +1120,17 @@ bool contains_parallel(const MathStructure &m) {
 		if(contains_parallel(m[i])) return true;
 	}
 	return false;
+}
+
+bool first_is_unit(const MathStructure &m) {
+	if(m.isUnit()) return true;
+	if(m.size() == 0 || m.isNegate()) return false;
+	return first_is_unit(m[0]);
+}
+MathStructure *last_is_function(MathStructure &m) {
+	if(m.isFunction() && m.size() == 0 && m.function()->minargs() == 1) return &m;
+	if(m.size() == 0) return NULL;
+	return last_is_function(m.last());
 }
 
 void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &parseoptions) {
@@ -1179,15 +1325,39 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	}
 
 	//remove spaces in numbers
-	size_t space_i = 0;
-	if(po.parsing_mode != PARSING_MODE_RPN) {
-		space_i = str.find(SPACE_CH, 0);
-		while(space_i != string::npos) {
-			if(is_in(NUMBERS INTERNAL_NUMBER_CHARS DOT, str[space_i + 1]) && is_in(NUMBERS INTERNAL_NUMBER_CHARS DOT, str[space_i - 1])) {
-				str.erase(space_i, 1);
-				space_i--;
+	if(po.parsing_mode != PARSING_MODE_RPN && !str.empty()) {
+		bool in_cit1 = false, in_cit2 = false;
+		int brackets = 1;
+		for(size_t i = 0; i < str.length() - 1; i++) {
+			switch(str[i]) {
+				case LEFT_VECTOR_WRAP_CH: {
+					if(!in_cit1 && !in_cit2) brackets++;
+					break;
+				}
+				case RIGHT_VECTOR_WRAP_CH: {
+					if(!in_cit1 && !in_cit2 && brackets > 0) brackets--;
+					break;
+				}
+				case '\"': {
+					if(in_cit1) in_cit1 = false;
+					else if(!in_cit2) in_cit1 = true;
+					break;
+				}
+				case '\'': {
+					if(in_cit2) in_cit2 = false;
+					else if(!in_cit1) in_cit1 = true;
+					break;
+				}
+				case SPACE_CH: {
+					if(brackets == 0 && !in_cit1 && !in_cit2 && i > 0) {
+						if(is_in(NUMBERS INTERNAL_NUMBER_CHARS DOT, str[i + 1]) && is_in(NUMBERS INTERNAL_NUMBER_CHARS DOT, str[i - 1])) {
+							str.erase(i, 1);
+							i--;
+						}
+					}
+					break;
+				}
 			}
-			space_i = str.find(SPACE_CH, space_i + 1);
 		}
 	}
 
@@ -1331,7 +1501,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		} else {
 			size_t i_nonspace = string::npos;
 			if(i_mod < str.length() - 1) i_nonspace = str.find_first_not_of(SPACE, i_mod + 1);
-			if(i_mod == 0 || i_mod == str.length() - 1 || (str[i_mod - 1] != '%' && str[i_mod + 1] != '%' && ((i_nonspace != string::npos && is_in(RIGHT_PARENTHESIS RIGHT_VECTOR_WRAP COMMA OPERATORS INTERNAL_OPERATORS, str[i_nonspace]) && str[i_nonspace] != BITWISE_NOT_CH && str[i_nonspace] != NOT_CH && str[i_nonspace] != '%') || is_in(LEFT_PARENTHESIS LEFT_VECTOR_WRAP COMMA OPERATORS INTERNAL_OPERATORS, str[i_mod - 1])))) {
+			if(i_mod == 0 || i_mod == str.length() - 1 || (str[i_mod - 1] != '%' && str[i_mod + 1] != '%' && ((i_nonspace != string::npos && is_in(RIGHT_PARENTHESIS RIGHT_VECTOR_WRAP COMMAS OPERATORS INTERNAL_OPERATORS, str[i_nonspace]) && str[i_nonspace] != BITWISE_NOT_CH && str[i_nonspace] != NOT_CH && str[i_nonspace] != '%') || is_in(LEFT_PARENTHESIS LEFT_VECTOR_WRAP COMMAS OPERATORS INTERNAL_OPERATORS, str[i_mod - 1])))) {
 				str.replace(i_mod, 1, v_percent->referenceName());
 				i_mod += v_percent->referenceName().length() - 1;
 			}
@@ -1385,34 +1555,212 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	for(size_t str_index = 0; str_index < str.length(); str_index++) {
 		if(str[str_index] == LEFT_VECTOR_WRAP_CH) {
 			// vector
-			int i4 = 1;
-			size_t i3 = str_index;
-			while(true) {
-				i3 = str.find_first_of(LEFT_VECTOR_WRAP RIGHT_VECTOR_WRAP, i3 + 1);
-				if(i3 == string::npos) {
-					for(; i4 > 0; i4--) {
-						str += RIGHT_VECTOR_WRAP;
-					}
-					i3 = str.length() - 1;
-				} else if(str[i3] == LEFT_VECTOR_WRAP_CH) {
-					i4++;
-				} else if(str[i3] == RIGHT_VECTOR_WRAP_CH) {
-					i4--;
-					if(i4 > 0) {
-						size_t i5 = str.find_first_not_of(SPACE, i3 + 1);
-						if(i5 != string::npos && str[i5] == LEFT_VECTOR_WRAP_CH) {
-							str.insert(i5, COMMA);
+			if(priv->matlab_matrices) {
+				MathStructure *mstruct2 = new MathStructure();
+				mstruct2->clearVector();
+				MathStructure *mrow = NULL;
+				MathStructure unended_test;
+				if(unended_function) po.unended_function = &unended_test;
+				string prev_func;
+				bool in_cit1 = false, in_cit2 = false, first_not_unit = false;
+				int pars = 0;
+				int brackets = 1;
+				bool b_comma = false;
+				for(size_t i = str_index + 1; i < str.length() && brackets > 0 && !b_comma; i++) {
+					switch(str[i]) {
+						case LEFT_VECTOR_WRAP_CH: {
+							if(!in_cit1 && !in_cit2) brackets++;
+							break;
+						}
+						case RIGHT_VECTOR_WRAP_CH: {
+							if(!in_cit1 && !in_cit2 && brackets > 0) brackets--;
+							break;
+						}
+						case LEFT_PARENTHESIS_CH: {
+							if(brackets == 1 && !in_cit1 && !in_cit2) pars++;
+							break;
+						}
+						case RIGHT_PARENTHESIS_CH: {
+							if(brackets == 1 && !in_cit1 && !in_cit2 && pars > 0) pars--;
+							break;
+						}
+						case '\"': {
+							if(in_cit1) in_cit1 = false;
+							else if(!in_cit2) in_cit1 = true;
+							break;
+						}
+						case '\'': {
+							if(in_cit2) in_cit2 = false;
+							else if(!in_cit1) in_cit1 = true;
+							break;
+						}
+						case ',': {
+							if(brackets == 1 && pars == 0 && !in_cit1 && !in_cit2) b_comma = true;
+							break;
 						}
 					}
 				}
-				if(i4 == 0) {
-					stmp2 = str.substr(str_index + 1, i3 - str_index - 1);
-					stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
-					stmp += i2s(parseAddVectorId(stmp2, po));
-					stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
-					str.replace(str_index, i3 + 1 - str_index, stmp);
-					str_index += stmp.length() - 1;
-					break;
+				in_cit1 = false; in_cit2 = false; first_not_unit = false;
+				pars = 0;
+				brackets = 1;
+				size_t i = str_index + 1;
+				size_t col_index = i;
+				for(; i < str.length() && brackets > 0; i++) {
+					bool b_row = false, b_col = false;
+					switch(str[i]) {
+						case LEFT_VECTOR_WRAP_CH: {
+							if(!in_cit1 && !in_cit2) brackets++;
+							break;
+						}
+						case RIGHT_VECTOR_WRAP_CH: {
+							if(!in_cit1 && !in_cit2 && brackets > 0) {
+								if(i < str.length() - 1) {
+									size_t i2 = b_comma ? str.find_first_not_of(SPACE, i + 1) : i + 1;
+									if(i2 != string::npos && str[i2] == LEFT_VECTOR_WRAP_CH) {
+										str.insert(i + 1, b_comma ? COMMA : SPACE);
+									}
+								}
+								brackets--;
+							}
+							break;
+						}
+						case LEFT_PARENTHESIS_CH: {
+							if(brackets == 1 && !in_cit1 && !in_cit2) pars++;
+							break;
+						}
+						case RIGHT_PARENTHESIS_CH: {
+							if(brackets == 1 && !in_cit1 && !in_cit2 && pars > 0) pars--;
+							break;
+						}
+						case '\"': {
+							if(in_cit1) in_cit1 = false;
+							else if(!in_cit2) in_cit1 = true;
+							break;
+						}
+						case '\'': {
+							if(in_cit2) in_cit2 = false;
+							else if(!in_cit1) in_cit1 = true;
+							break;
+						}
+						case ';': {
+							if(brackets == 1 && pars == 0 && !in_cit1 && !in_cit2) b_row = true;
+							break;
+						}
+						case SPACE_CH: {
+							if(b_comma) break;
+						}
+						case ',': {
+							if(brackets == 1 && pars == 0 && !in_cit1 && !in_cit2) {
+								if(!b_comma && (str[i - 1] == ';' || (is_in(OPERATORS INTERNAL_OPERATORS, str[i - 1]) && str[i - 1] != NOT_CH))) break;
+								if(!b_comma && i + 1 < str.length()) {
+									if(is_in(OPERATORS INTERNAL_OPERATORS, str[i + 1])) {
+										if(str[i + 1] == PLUS_CH || str[i + 1] == MINUS_CH) {
+											if(i + 2 == str.length() || str[i + 2] == SPACE_CH) {
+												break;
+											}
+										} else if(str[i + 1] != BITWISE_NOT_CH && str[i + 1] != LOGICAL_NOT_CH) {
+											break;
+										}
+									}
+								}
+								b_col = true;
+							}
+							break;
+						}
+						default: {}
+					}
+					if(i == str.length() - 1 || brackets == 0) b_row = true;
+					if(b_row) b_col = true;
+					if(b_col) {
+						stmp2 = str.substr(col_index, i - col_index);
+						remove_blank_ends(stmp2);
+						MathStructure *mcol = NULL;
+						if(b_comma | !b_row || !stmp2.empty()) {
+							bool b_unit = false;
+							if(!b_comma && !prev_func.empty()) {
+								prev_func += stmp2;
+								prev_func += SPACE_CH;
+								parse(mrow ? &mrow->last() : &mstruct2->last(), prev_func, po);
+							} else {
+								mcol = new MathStructure();
+								parse(mcol, stmp2, po);
+								b_unit = !b_comma && first_is_unit(*mcol) && stmp2.size() > 0 && is_not_in(ILLEGAL_IN_UNITNAMES, stmp2[0]) && is_unit_multiexp(*mcol);
+								if(b_unit) {
+									if(!first_not_unit) b_unit = false;
+									else if(mrow) mrow->last().multiply_nocopy(mcol);
+									else mstruct2->last().multiply_nocopy(mcol);
+									if(b_unit) mcol = NULL;
+								} else if((mrow && mrow->size() == 0) || (!mrow && mstruct2->size() == 0)) {
+									first_not_unit = true;
+								}
+							}
+						}
+						col_index = i + 1;
+						if(mrow) {
+							if(mcol) mrow->addChild_nocopy(mcol);
+							if(b_row) {
+								mstruct2->addChild_nocopy(mrow);
+							}
+						} else if(mcol) {
+							mstruct2->addChild_nocopy(mcol);
+						}
+						if(i < str.length() - 1 && brackets > 0) {
+							if(b_row) {
+								if(!mrow) mstruct2->transform(STRUCT_VECTOR);
+								mrow = new MathStructure();
+								mrow->clearVector();
+								first_not_unit = false;
+								prev_func = "";
+							} else if(mcol && !b_comma) {
+								if(last_is_function(*mcol) && is_not_in(ILLEGAL_IN_NAMES, stmp2[stmp2.size() - 1])) {
+									prev_func = stmp2;
+								}
+							}
+						}
+					}
+					if(brackets == 0) {
+						i--;
+					}
+				}
+				if(brackets != 0 && unended_function && !unended_test.isZero()) {
+					unended_function->set(unended_test);
+				}
+				po.unended_function = NULL;
+				stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+				stmp += i2s(addId(mstruct2));
+				stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+				str.replace(str_index, i + 1 - str_index, stmp);
+				str_index += stmp.length() - 1;
+			} else {
+				int i4 = 1;
+				size_t i3 = str_index;
+				while(true) {
+					i3 = str.find_first_of(LEFT_VECTOR_WRAP RIGHT_VECTOR_WRAP, i3 + 1);
+					if(i3 == string::npos) {
+						for(; i4 > 0; i4--) {
+							str += RIGHT_VECTOR_WRAP;
+						}
+						i3 = str.length() - 1;
+					} else if(str[i3] == LEFT_VECTOR_WRAP_CH) {
+						i4++;
+					} else if(str[i3] == RIGHT_VECTOR_WRAP_CH) {
+						i4--;
+						if(i4 > 0) {
+							size_t i5 = str.find_first_not_of(SPACE, i3 + 1);
+							if(i5 != string::npos && str[i5] == LEFT_VECTOR_WRAP_CH) {
+								str.insert(i5, COMMA);
+							}
+						}
+					}
+					if(i4 == 0) {
+						stmp2 = str.substr(str_index + 1, i3 - str_index - 1);
+						stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+						stmp += i2s(parseAddVectorId(stmp2, po));
+						stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+						str.replace(str_index, i3 + 1 - str_index, stmp);
+						str_index += stmp.length() - 1;
+						break;
+					}
 				}
 			}
 		} else if(str[str_index] == '\\' && str_index + 1 < str.length() && (is_not_in(NOT_IN_NAMES INTERNAL_OPERATORS NUMBERS, str[str_index + 1]) || (po.parsing_mode != PARSING_MODE_RPN && str_index > 0 && is_in(NUMBERS SPACE PLUS MINUS BITWISE_NOT NOT LEFT_PARENTHESIS, str[str_index + 1])))) {
@@ -2464,7 +2812,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		remove_blanks(str);
 	} else {
 		//remove spaces between next to operators (except '/') and before/after parentheses
-		space_i = str.find(SPACE_CH, 0);
+		size_t space_i = str.find(SPACE_CH, 0);
 		while(space_i != string::npos) {
 			if((str[space_i + 1] != DIVISION_CH && is_in(OPERATORS INTERNAL_OPERATORS RIGHT_PARENTHESIS, str[space_i + 1])) || (str[space_i - 1] != DIVISION_CH && is_in(OPERATORS INTERNAL_OPERATORS LEFT_PARENTHESIS, str[space_i - 1]))) {
 				str.erase(space_i, 1);

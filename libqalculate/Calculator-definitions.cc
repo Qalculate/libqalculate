@@ -825,6 +825,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);
 	bool new_prefix_names = version_numbers[0] > 3 || (version_numbers[0] == 3 && version_numbers[1] > 18);
+	bool old_names = VERSION_BEFORE(0, 6, 3);
 
 	ParseOptions po;
 
@@ -888,7 +889,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					done_something = true;
 				}
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "function")) {
-				if(VERSION_BEFORE(0, 6, 3)) {
+				if(old_names) {
 					XML_GET_STRING_FROM_PROP(cur, "name", name)
 				} else {
 					name = "";
@@ -1493,7 +1494,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					done_something = true;
 				}
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "unknown")) {
-				if(VERSION_BEFORE(0, 6, 3)) {
+				if(old_names) {
 					XML_GET_STRING_FROM_PROP(cur, "name", name)
 				} else {
 					name = "";
@@ -1574,7 +1575,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					v->setChanged(false);
 				}
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "variable")) {
-				if(VERSION_BEFORE(0, 6, 3)) {
+				if(old_names) {
 					XML_GET_STRING_FROM_PROP(cur, "name", name)
 				} else {
 					name = "";
@@ -1667,7 +1668,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "unit")) {
 				XML_GET_STRING_FROM_PROP(cur, "type", type)
 				if(type == "base") {
-					if(VERSION_BEFORE(0, 6, 3)) {
+					if(old_names) {
 						XML_GET_STRING_FROM_PROP(cur, "name", name)
 					} else {
 						name = "";
@@ -1688,12 +1689,12 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "use_with_prefixes")) {
 							XML_GET_TRUE_FROM_TEXT(child, use_with_prefixes)
 							use_with_prefixes_set = true;
-						} else if((VERSION_BEFORE(0, 6, 3)) && !xmlStrcmp(child->name, (const xmlChar*) "singular")) {
+						} else if(old_names && !xmlStrcmp(child->name, (const xmlChar*) "singular")) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, singular, best_singular, next_best_singular)
 							if(!unitNameIsValid(singular, version_numbers, is_user_defs)) {
 								singular = "";
 							}
-						} else if((VERSION_BEFORE(0, 6, 3)) && !xmlStrcmp(child->name, (const xmlChar*) "plural") && !xmlGetProp(child, (xmlChar*) "index")) {
+						} else if(old_names && !xmlStrcmp(child->name, (const xmlChar*) "plural") && !xmlGetProp(child, (xmlChar*) "index")) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, plural, best_plural, next_best_plural)
 							if(!unitNameIsValid(plural, version_numbers, is_user_defs)) {
 								plural = "";
@@ -1739,7 +1740,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					}
 					done_something = true;
 				} else if(type == "alias") {
-					if(VERSION_BEFORE(0, 6, 3)) {
+					if(old_names) {
 						XML_GET_STRING_FROM_PROP(cur, "name", name)
 					} else {
 						name = "";
@@ -1809,12 +1810,12 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "use_with_prefixes")) {
 							XML_GET_TRUE_FROM_TEXT(child, use_with_prefixes)
 							use_with_prefixes_set = true;
-						} else if((VERSION_BEFORE(0, 6, 3)) && !xmlStrcmp(child->name, (const xmlChar*) "singular")) {
+						} else if(old_names && !xmlStrcmp(child->name, (const xmlChar*) "singular")) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, singular, best_singular, next_best_singular)
 							if(!unitNameIsValid(singular, version_numbers, is_user_defs)) {
 								singular = "";
 							}
-						} else if((VERSION_BEFORE(0, 6, 3)) && !xmlStrcmp(child->name, (const xmlChar*) "plural") && !xmlGetProp(child, (xmlChar*) "index")) {
+						} else if(old_names && !xmlStrcmp(child->name, (const xmlChar*) "plural") && !xmlGetProp(child, (xmlChar*) "index")) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, plural, best_plural, next_best_plural)
 							if(!unitNameIsValid(plural, version_numbers, is_user_defs)) {
 								plural = "";
@@ -1889,7 +1890,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 						done_something = true;
 					}
 				} else if(type == "composite") {
-					if(VERSION_BEFORE(0, 6, 3)) {
+					if(old_names) {
 						XML_GET_STRING_FROM_PROP(cur, "name", name)
 					} else {
 						name = "";
@@ -2341,6 +2342,8 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 	top.node = doc->children;
 	node_tree_item *item;
 	string cat, cat_sub;
+	bool matlab_matrices_bak = priv->matlab_matrices;
+	priv->matlab_matrices = false;
 	for(size_t i = 0; i < variables.size(); i++) {
 		if((save_global || variables[i]->isLocal() || variables[i]->hasChanged()) && variables[i]->category() != _("Temporary") && variables[i]->category() != "Temporary") {
 			item = &top;
@@ -2505,6 +2508,7 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 			}
 		}
 	}
+	priv->matlab_matrices = matlab_matrices_bak;
 	int returnvalue = xmlSaveFormatFile(file_name, doc, 1);
 	xmlFreeDoc(doc);
 	return returnvalue;

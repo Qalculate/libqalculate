@@ -1228,6 +1228,9 @@ class Calculator {
 	void endTemporaryEnableIntervalArithmetic();
 	//@}
 
+	bool usesMatlabStyleMatrices() const;
+	void useMatlabStyleMatrices(bool use_matlab_style_matrices);
+
 	void setCustomInputBase(Number nr);
 	void setCustomOutputBase(Number nr);
 	const Number &customInputBase() const;

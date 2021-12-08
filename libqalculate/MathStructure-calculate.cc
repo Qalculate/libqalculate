@@ -1719,7 +1719,55 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					return 0;
 				}
 				case STRUCT_VECTOR: {
-					if(isMatrix() && mstruct.isMatrix()) {
+					if(!isMatrix() && mstruct.isMatrix()) {
+						if(!representsNonMatrix()) return -1;
+						if(SIZE != mstruct.size()) {
+							CALCULATOR->error(true, _("The second matrix must have as many rows (was %s) as the first has columns (was %s) for matrix multiplication."), i2s(mstruct.size()).c_str(), i2s(SIZE).c_str(), NULL);
+							return -1;
+						}
+						transform(STRUCT_VECTOR);
+					}
+					if(isMatrix()) {
+						if(!mstruct.isMatrix()) {
+							if(!mstruct.representsNonMatrix()) return -1;
+							if(CALCULATOR->usesMatlabStyleMatrices()) {
+								if(CHILD(0).size() != 1) {
+									CALCULATOR->error(true, _("The second matrix must have as many rows (was %s) as the first has columns (was %s) for matrix multiplication."), i2s(1).c_str(), i2s(CHILD(0).size()).c_str(), NULL);
+									return -1;
+								}
+								mstruct.transform(STRUCT_VECTOR);
+							} else {
+								// matrix multiplication (vector is treated as matrix with 1 column)
+								if(CHILD(0).size() != mstruct.size()) {
+									CALCULATOR->error(true, _("The second matrix must have as many rows (was %s) as the first has columns (was %s) for matrix multiplication."), i2s(mstruct.size()).c_str(), i2s(CHILD(0).size()).c_str(), NULL);
+									return -1;
+								}
+								MathStructure msave(*this);
+								size_t rows = SIZE;
+								clearMatrix(true);
+								resizeMatrix(rows, 1, m_zero);
+								MathStructure mtmp;
+								for(size_t index_r = 0; index_r < SIZE; index_r++) {
+									for(size_t index_c = 0; index_c < msave[0].size(); index_c++) {
+										mtmp = msave[index_r][index_c];
+										mtmp.calculateMultiply(mstruct[index_c], eo);
+										CHILD(index_r)[0].calculateAdd(mtmp, eo, &CHILD(index_r), 0);
+									}
+								}
+								if(CHILD(1).size() == 1) {
+									if(SIZE == 1) {
+										SET_CHILD_MAP(0)
+										SET_CHILD_MAP(0)
+									} else {
+										for(size_t i = 0; i < SIZE; i++) {
+											CHILD(i).setToChild(1, true);
+										}
+									}
+								}
+								MERGE_APPROX_AND_PREC(mstruct)
+								return 1;
+							}
+						}
 						// matrix multiplication
 						// the number of columns in the first matrix must be equal to the number of rows in the second matrix
 						if(CHILD(0).size() != mstruct.size()) {
@@ -1743,36 +1791,6 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						if(SIZE == 1 && CHILD(1).size() == 1) {
 							SET_CHILD_MAP(0)
 							SET_CHILD_MAP(0)
-						}
-						MERGE_APPROX_AND_PREC(mstruct)
-						return 1;
-					} else if(isMatrix() && mstruct.isVector()) {
-						// matrix multiplication (vector is treated as matrix with 1 column)
-						if(CHILD(0).size() != mstruct.size()) {
-							CALCULATOR->error(true, _("The second matrix must have as many rows (was %s) as the first has columns (was %s) for matrix multiplication."), i2s(1).c_str(), i2s(CHILD(0).size()).c_str(), NULL);
-							return -1;
-						}
-						MathStructure msave(*this);
-						size_t rows = SIZE;
-						clearMatrix(true);
-						resizeMatrix(rows, 1, m_zero);
-						MathStructure mtmp;
-						for(size_t index_r = 0; index_r < SIZE; index_r++) {
-							for(size_t index_c = 0; index_c < msave[0].size(); index_c++) {
-								mtmp = msave[index_r][index_c];
-								mtmp.calculateMultiply(mstruct[index_c], eo);
-								CHILD(index_r)[0].calculateAdd(mtmp, eo, &CHILD(index_r), 0);
-							}
-						}
-						if(CHILD(1).size() == 1) {
-							if(SIZE == 1) {
-								SET_CHILD_MAP(0)
-								SET_CHILD_MAP(0)
-							} else {
-								for(size_t i = 0; i < SIZE; i++) {
-									CHILD(i).setToChild(1, true);
-								}
-							}
 						}
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
