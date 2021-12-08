@@ -158,6 +158,7 @@ Calculator::Calculator() {
 	priv->local_currency = NULL;
 	priv->use_binary_prefixes = 0;
 	priv->temperature_calculation = TEMPERATURE_CALCULATION_HYBRID;
+	priv->matlab_matrices = true;
 
 #ifdef HAVE_ICU
 	UErrorCode err = U_ZERO_ERROR;
@@ -203,12 +204,10 @@ Calculator::Calculator() {
 	addStringAlternative("~=", NOT EQUALS);
 	addStringAlternative(SIGN_GREATER_OR_EQUAL, GREATER EQUALS);
 	addStringAlternative(SIGN_LESS_OR_EQUAL, LESS EQUALS);
-	addStringAlternative(";", COMMA);
 	addStringAlternative("\t", SPACE);
 	addStringAlternative("\n", SPACE);
-	addStringAlternative(THIN_SPACE, SPACE);
 	addStringAlternative(" ", SPACE);
-	addStringAlternative(" ", SPACE);
+	addStringAlternative(" ", THIN_SPACE);
 	addStringAlternative("**", POWER);
 	addStringAlternative("^^", "⊻");
 	addStringAlternative("↊", "X");
@@ -397,6 +396,7 @@ Calculator::Calculator(bool ignore_locale) {
 	priv->local_currency = NULL;
 	priv->use_binary_prefixes = 0;
 	priv->temperature_calculation = TEMPERATURE_CALCULATION_HYBRID;
+	priv->matlab_matrices = true;
 
 #ifdef HAVE_ICU
 	UErrorCode err = U_ZERO_ERROR;
@@ -442,12 +442,10 @@ Calculator::Calculator(bool ignore_locale) {
 	addStringAlternative("~=", NOT EQUALS);
 	addStringAlternative(SIGN_GREATER_OR_EQUAL, GREATER EQUALS);
 	addStringAlternative(SIGN_LESS_OR_EQUAL, LESS EQUALS);
-	addStringAlternative(";", COMMA);
 	addStringAlternative("\t", SPACE);
 	addStringAlternative("\n", SPACE);
-	addStringAlternative(THIN_SPACE, SPACE);
 	addStringAlternative(" ", SPACE);
-	addStringAlternative(" ", SPACE);
+	addStringAlternative(" ", THIN_SPACE);
 	addStringAlternative("**", POWER);
 	addStringAlternative("^^", "⊻");
 	addStringAlternative("↊", "X");
@@ -1271,6 +1269,9 @@ void Calculator::beginTemporaryEnableIntervalArithmetic() {
 void Calculator::endTemporaryEnableIntervalArithmetic() {
 	i_start_interval--;
 }
+
+bool Calculator::usesMatlabStyleMatrices() const {return priv->matlab_matrices;}
+void Calculator::useMatlabStyleMatrices(bool use_matlab_style_matrices) {priv->matlab_matrices = use_matlab_style_matrices;}
 
 void Calculator::setCustomInputBase(Number nr) {
 	priv->custom_input_base = nr;

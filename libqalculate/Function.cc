@@ -2220,8 +2220,12 @@ MatrixArgument::~MatrixArgument() {}
 bool MatrixArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
 	value.eval(eo);
 	if(!b_square && !value.isMatrix() && value.isVector() && value.size() > 0 && !value[0].isVector()) {
-		for(size_t i = 0; i < value.size(); i++) {
-			value[i].transform(STRUCT_VECTOR);
+		if(CALCULATOR->usesMatlabStyleMatrices()) {
+			value.transform(STRUCT_VECTOR);
+		} else {
+			for(size_t i = 0; i < value.size(); i++) {
+				value[i].transform(STRUCT_VECTOR);
+			}
 		}
 	}
 	return value.isMatrix() && (!b_square || value.matrixIsSquare());
