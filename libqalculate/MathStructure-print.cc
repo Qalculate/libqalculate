@@ -3711,7 +3711,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				print_str += CHILD(i).print(po, format, colorize, tagtype, ips_n);
 			}
 			break;
-		}
+			}
 		case STRUCT_LOGICAL_OR: {
 			ips_n.depth++;
 			for(size_t i = 0; i < SIZE; i++) {
@@ -3755,17 +3755,104 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 		}
 		case STRUCT_VECTOR: {
 			ips_n.depth++;
-			print_str = "[";
-			for(size_t i = 0; i < SIZE; i++) {
-				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
-				if(i > 0) {
-					print_str += po.comma();
-					if(po.spacious) print_str += " ";
+			bool b_matrix = false;
+			if(CALCULATOR->usesMatlabStyleMatrices()) {
+				for(size_t i = 0; i < SIZE; i++) {
+					if(CHILD(i).isVector()) b_matrix = true;
 				}
-				ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);
-				print_str += CHILD(i).print(po, format, colorize, tagtype, ips_n);
 			}
-			print_str += "]";
+			if(b_matrix) {
+				print_str = "[";
+				ips_n.wrap = false;
+				for(size_t i = 0; i < SIZE; i++) {
+					if(i > 0) {
+						print_str += ";";
+						if(po.spacious) print_str += " ";
+					}
+					for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
+						if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
+						if(i2 > 0) print_str += " ";
+						string str_e = CHILD(i)[i2].print(po, format, colorize, tagtype, ips_n);
+						bool in_format = false;
+						bool in_cit1 = false, in_cit2 = false;
+						int pars = 0, brackets = 0;
+						for(size_t i3 = 0; i3 < str_e.size(); i3++) {
+							switch(str_e[i3]) {
+								case '<': {
+									if(format && tagtype == TAG_TYPE_HTML) in_format = true;
+									break;
+								}
+								case '>': {
+									if(format && tagtype == TAG_TYPE_HTML) in_format = false;
+									break;
+								}
+								case '\033': {
+									if(format && tagtype == TAG_TYPE_TERMINAL) in_format = true;
+									break;
+								}
+								case 'm': {
+									if(format && tagtype == TAG_TYPE_TERMINAL) in_format = false;
+									break;
+								}
+								case LEFT_VECTOR_WRAP_CH: {
+									if(in_format) break;
+									if(!in_cit1 && !in_cit2) brackets++;
+									break;
+								}
+								case RIGHT_VECTOR_WRAP_CH: {
+									if(in_format) break;
+									if(!in_cit1 && !in_cit2 && brackets > 0) brackets--;
+									break;
+								}
+								case LEFT_PARENTHESIS_CH: {
+									if(in_format) break;
+									if(brackets == 0 && !in_cit1 && !in_cit2) pars++;
+									break;
+								}
+								case RIGHT_PARENTHESIS_CH: {
+									if(in_format) break;
+									if(brackets == 0 && !in_cit1 && !in_cit2 && pars > 0) pars--;
+									break;
+								}
+								case '\"': {
+									if(in_format) break;
+									if(in_cit1) in_cit1 = false;
+									else if(!in_cit2) in_cit1 = true;
+									break;
+								}
+								case '\'': {
+									if(in_format) break;
+									if(in_cit2) in_cit2 = false;
+									else if(!in_cit1) in_cit1 = true;
+									break;
+								}
+								default: {
+									if(!in_format && brackets == 0 && pars == 0 && (str_e[i3] == ' ' || ((unsigned char) str_e[i3] == 0xE2 && i3 + 2 < str_e.size() && (unsigned char) str_e[i3 + 1] == 0x80 && (unsigned char) str_e[i3 + 2] == 0x89))) {
+										print_str += "(";
+										str_e += ")";
+										i3 = str_e.size() - 1;
+										break;
+									}
+								}
+							}
+						}
+						print_str += str_e;
+					}
+				}
+				print_str += "]";
+			} else {
+				print_str = "(";
+				for(size_t i = 0; i < SIZE; i++) {
+					if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
+					if(i > 0) {
+						print_str += po.comma();
+						if(po.spacious) print_str += " ";
+					}
+					ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);
+					print_str += CHILD(i).print(po, format, colorize, tagtype, ips_n);
+				}
+				print_str += ")";
+			}
 			break;
 		}
 		case STRUCT_UNIT: {
