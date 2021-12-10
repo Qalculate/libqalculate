@@ -1468,6 +1468,8 @@ void Calculator::addBuiltinFunctions() {
 	priv->f_rdivide = addFunction(new EntrywiseDivisionFunction());
 	priv->f_power = addFunction(new EntrywisePowerFunction());
 	addFunction(new NormFunction());
+	priv->f_vertcat = addFunction(new VertCatFunction());
+	priv->f_horzcat = addFunction(new HorzCatFunction());
 
 	f_factorial = addFunction(new FactorialFunction());
 	f_factorial2 = addFunction(new DoubleFactorialFunction());

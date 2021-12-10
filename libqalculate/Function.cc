@@ -2147,6 +2147,7 @@ bool VectorArgument::subtest(MathStructure &value, const EvaluationOptions &eo) 
 	//}
 	if(!value.isVector()) {
 		if(isLastArgument()) value.transform(STRUCT_VECTOR);
+		else if(value.representsScalar()) value.transform(STRUCT_VECTOR);
 		else return false;
 	}
 	if(b_argloop && subargs.size() > 0) {
@@ -2219,13 +2220,18 @@ MatrixArgument::MatrixArgument(const MatrixArgument *arg) {
 MatrixArgument::~MatrixArgument() {}
 bool MatrixArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
 	value.eval(eo);
-	if(!b_square && !value.isMatrix() && value.isVector() && value.size() > 0 && !value[0].isVector()) {
-		if(CALCULATOR->usesMatlabStyleMatrices()) {
-			value.transform(STRUCT_VECTOR);
-		} else {
-			for(size_t i = 0; i < value.size(); i++) {
-				value[i].transform(STRUCT_VECTOR);
+	if(!b_square && !value.isMatrix()) {
+		if(value.isVector() && (value.size() == 0 || value[0].representsScalar())) {
+			if(CALCULATOR->usesMatlabStyleMatrices()) {
+				value.transform(STRUCT_VECTOR);
+			} else {
+				for(size_t i = 0; i < value.size(); i++) {
+					value[i].transform(STRUCT_VECTOR);
+				}
 			}
+		} else if(value.representsScalar()) {
+			value.transform(STRUCT_VECTOR);
+			value.transform(STRUCT_VECTOR);
 		}
 	}
 	return value.isMatrix() && (!b_square || value.matrixIsSquare());

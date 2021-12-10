@@ -16,166 +16,207 @@
 #include <libqalculate/MathStructure.h>
 #include <libqalculate/includes.h>
 
-#define DECLARE_BUILTIN_FUNCTION(x, i)	class x : public MathFunction { \
-					  public: \
-						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
-						x(); \
-						x(const x *function) {set(function);} \
-						ExpressionItem *copy() const {return new x(this);} \
-						int id() const {return i;}\
-					};
+#define DECLARE_BUILTIN_FUNCTION(x, i)		class x : public MathFunction { \
+						  public: \
+							int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+							x(); \
+							x(const x *function) {set(function);} \
+							ExpressionItem *copy() const {return new x(this);} \
+							int id() const {return i;}\
+						};
+
+#define DECLARE_BUILTIN_FUNCTION_M(x, i)	class x : public MathFunction { \
+						  public: \
+							int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+							x(); \
+							x(const x *function) {set(function);} \
+							ExpressionItem *copy() const {return new x(this);} \
+							bool representsScalar(const MathStructure &vargs) const;\
+							bool representsNonMatrix(const MathStructure &vargs) const;\
+							int id() const {return i;}\
+						};
 
 #define DECLARE_BUILTIN_FUNCTION_B(x, i)	class x : public MathFunction { \
-					  public: \
-						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
-						x(); \
-						x(const x *function) {set(function);} \
-						ExpressionItem *copy() const {return new x(this);} \
-						bool representsBoolean(const MathStructure&) const {return true;}\
-						int id() const {return i;}\
-					};
+						  public: \
+							int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+							x(); \
+							x(const x *function) {set(function);} \
+							ExpressionItem *copy() const {return new x(this);} \
+							bool representsBoolean(const MathStructure&) const {return true;}\
+							int id() const {return i;}\
+						};
 
 #define DECLARE_BUILTIN_FUNCTION_PI(x, i)	class x : public MathFunction { \
-					  public: \
-						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
-						x(); \
-						x(const x *function) {set(function);} \
-						ExpressionItem *copy() const {return new x(this);} \
-						bool representsInteger(const MathStructure&, bool) const {return true;}\
-						bool representsPositive(const MathStructure&, bool) const {return true;}\
-						int id() const {return i;}\
-					};
+						  public: \
+							int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+							x(); \
+							x(const x *function) {set(function);} \
+							ExpressionItem *copy() const {return new x(this);} \
+							bool representsInteger(const MathStructure&, bool) const {return true;}\
+							bool representsPositive(const MathStructure&, bool) const {return true;}\
+							int id() const {return i;}\
+						};
 
 #define DECLARE_BUILTIN_FUNCTION_RPI(x, i)	class x : public MathFunction { \
-					  public: \
-						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
-						x(); \
-						x(const x *function) {set(function);} \
-						ExpressionItem *copy() const {return new x(this);} \
-						bool representsReal(const MathStructure&, bool) const;\
-						bool representsInteger(const MathStructure&, bool) const;\
-						bool representsNonNegative(const MathStructure&, bool) const;\
-						bool representsNonMatrix(const MathStructure &vargs) const {\
-							for(size_t i = 0; i < vargs.size(); i++) {\
-								if(!vargs[i].representsNonMatrix()) return false;\
+						  public: \
+							int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+							x(); \
+							x(const x *function) {set(function);} \
+							ExpressionItem *copy() const {return new x(this);} \
+							bool representsReal(const MathStructure&, bool) const;\
+							bool representsInteger(const MathStructure&, bool) const;\
+							bool representsNonNegative(const MathStructure&, bool) const;\
+							bool representsNonMatrix(const MathStructure &vargs) const {\
+								if(vargs.size() == 1) return vargs[0].representsNonMatrix();\
+								bool non_scalar = false;\
+								for(size_t i = 0; i < vargs.size(); i++) {\
+									if(!vargs[i].representsNonMatrix()) return false;\
+									if(!vargs[i].representsScalar()) {\
+										if(non_scalar) return false;\
+										non_scalar = true;\
+									}\
+								}\
+								return true;\
 							}\
-							return true;\
-						}\
-						bool representsScalar(const MathStructure &vargs) const {\
-							for(size_t i = 0; i < vargs.size(); i++) {\
-								if(!vargs[i].representsScalar()) return false;\
+							bool representsScalar(const MathStructure &vargs) const {\
+								for(size_t i = 0; i < vargs.size(); i++) {\
+									if(!vargs[i].representsScalar()) return false;\
+								}\
+								return true;\
 							}\
-							return true;\
-						}\
-						int id() const {return i;}\
-					};
+							int id() const {return i;}\
+						};
 
 #define DECLARE_BUILTIN_FUNCTION_R(x, i)	class x : public MathFunction { \
-					  public: \
-						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
-						x(); \
-						x(const x *function) {set(function);} \
-						ExpressionItem *copy() const {return new x(this);} \
-						bool representsPositive(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsNegative(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsNonNegative(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsNonPositive(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsInteger(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsRational(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsReal(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsComplex(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsNonZero(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsEven(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsOdd(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsUndefined(const MathStructure &vargs) const;\
-						bool representsNonMatrix(const MathStructure &vargs) const {\
-							for(size_t i = 0; i < vargs.size(); i++) {\
-								if(!vargs[i].representsNonMatrix()) return false;\
+						  public: \
+							int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+							x(); \
+							x(const x *function) {set(function);} \
+							ExpressionItem *copy() const {return new x(this);} \
+							bool representsPositive(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsNegative(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsNonNegative(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsNonPositive(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsInteger(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsRational(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsReal(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsComplex(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsNonZero(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsEven(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsOdd(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsUndefined(const MathStructure &vargs) const;\
+							bool representsNonMatrix(const MathStructure &vargs) const {\
+								if(vargs.size() == 1) return vargs[0].representsNonMatrix();\
+								bool non_scalar = false;\
+								for(size_t i = 0; i < vargs.size(); i++) {\
+									if(!vargs[i].representsNonMatrix()) return false;\
+									if(!vargs[i].representsScalar()) {\
+										if(non_scalar) return false;\
+										non_scalar = true;\
+									}\
+								}\
+								return true;\
 							}\
-							return true;\
-						}\
-						bool representsScalar(const MathStructure &vargs) const {\
-							for(size_t i = 0; i < vargs.size(); i++) {\
-								if(!vargs[i].representsScalar()) return false;\
+							bool representsScalar(const MathStructure &vargs) const {\
+								for(size_t i = 0; i < vargs.size(); i++) {\
+									if(!vargs[i].representsScalar()) return false;\
+								}\
+								return true;\
 							}\
-							return true;\
-						}\
-						int id() const {return i;}\
-					};
+							int id() const {return i;}\
+						};
 
 #define DECLARE_BUILTIN_FUNCTION_R2(x, i)	class x : public MathFunction { \
-					  public: \
-						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
-						x(); \
-						x(const x *function) {set(function);} \
-						ExpressionItem *copy() const {return new x(this);} \
-						bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsReal(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsNonMatrix(const MathStructure &vargs) const {\
-							for(size_t i = 0; i < vargs.size(); i++) {\
-								if(!vargs[i].representsNonMatrix()) return false;\
+						  public: \
+							int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+							x(); \
+							x(const x *function) {set(function);} \
+							ExpressionItem *copy() const {return new x(this);} \
+							bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsReal(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsNonMatrix(const MathStructure &vargs) const {\
+								if(vargs.size() == 1) return vargs[0].representsNonMatrix();\
+								bool non_scalar = false;\
+								for(size_t i = 0; i < vargs.size(); i++) {\
+									if(!vargs[i].representsNonMatrix()) return false;\
+									if(!vargs[i].representsScalar()) {\
+										if(non_scalar) return false;\
+										non_scalar = true;\
+									}\
+								}\
+								return true;\
 							}\
-							return true;\
-						}\
-						bool representsScalar(const MathStructure &vargs) const {\
-							for(size_t i = 0; i < vargs.size(); i++) {\
-								if(!vargs[i].representsScalar()) return false;\
+							bool representsScalar(const MathStructure &vargs) const {\
+								for(size_t i = 0; i < vargs.size(); i++) {\
+									if(!vargs[i].representsScalar()) return false;\
+								}\
+								return true;\
 							}\
-							return true;\
-						}\
-						int id() const {return i;}\
-					};
+							int id() const {return i;}\
+						};
 
 #define DECLARE_BUILTIN_FUNCTION_R3(x, i)	class x : public MathFunction { \
-					  public: \
-						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
-						x(); \
-						x(const x *function) {set(function);} \
-						ExpressionItem *copy() const {return new x(this);} \
-						bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsReal(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsComplex(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsNonZero(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsNonMatrix(const MathStructure &vargs) const {\
-							for(size_t i = 0; i < vargs.size(); i++) {\
-								if(!vargs[i].representsNonMatrix()) return false;\
+						  public: \
+							int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+							x(); \
+							x(const x *function) {set(function);} \
+							ExpressionItem *copy() const {return new x(this);} \
+							bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsReal(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsComplex(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsNonZero(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsNonMatrix(const MathStructure &vargs) const {\
+								if(vargs.size() == 1) return vargs[0].representsNonMatrix();\
+								bool non_scalar = false;\
+								for(size_t i = 0; i < vargs.size(); i++) {\
+									if(!vargs[i].representsNonMatrix()) return false;\
+									if(!vargs[i].representsScalar()) {\
+										if(non_scalar) return false;\
+										non_scalar = true;\
+									}\
+								}\
+								return true;\
 							}\
-							return true;\
-						}\
-						bool representsScalar(const MathStructure &vargs) const {\
-							for(size_t i = 0; i < vargs.size(); i++) {\
-								if(!vargs[i].representsScalar()) return false;\
+							bool representsScalar(const MathStructure &vargs) const {\
+								for(size_t i = 0; i < vargs.size(); i++) {\
+									if(!vargs[i].representsScalar()) return false;\
+								}\
+								return true;\
 							}\
-							return true;\
-						}\
-						int id() const {return i;}\
-					};
+							int id() const {return i;}\
+						};
 
 #define DECLARE_BUILTIN_FUNCTION_R1(x, i)	class x : public MathFunction { \
-					  public: \
-						int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
-						x(); \
-						x(const x *function) {set(function);} \
-						ExpressionItem *copy() const {return new x(this);} \
-						bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
-						bool representsNonMatrix(const MathStructure &vargs) const {\
-							for(size_t i = 0; i < vargs.size(); i++) {\
-								if(!vargs[i].representsNonMatrix()) return false;\
+						  public: \
+							int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+							x(); \
+							x(const x *function) {set(function);} \
+							ExpressionItem *copy() const {return new x(this);} \
+							bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsNonMatrix(const MathStructure &vargs) const {\
+								if(vargs.size() == 1) return vargs[0].representsNonMatrix();\
+								bool non_scalar = false;\
+								for(size_t i = 0; i < vargs.size(); i++) {\
+									if(!vargs[i].representsNonMatrix()) return false;\
+									if(!vargs[i].representsScalar()) {\
+										if(non_scalar) return false;\
+										non_scalar = true;\
+									}\
+								}\
+								return true;\
 							}\
-							return true;\
-						}\
-						bool representsScalar(const MathStructure &vargs) const {\
-							for(size_t i = 0; i < vargs.size(); i++) {\
-								if(!vargs[i].representsScalar()) return false;\
+							bool representsScalar(const MathStructure &vargs) const {\
+								for(size_t i = 0; i < vargs.size(); i++) {\
+									if(!vargs[i].representsScalar()) return false;\
+								}\
+								return true;\
 							}\
-							return true;\
-						}\
-						int id() const {return i;}\
-					};
+							int id() const {return i;}\
+						};
 
 
 enum {
@@ -218,6 +259,8 @@ enum {
 	FUNCTION_ID_ENTRYWISE_DIVISION = 1135,
 	FUNCTION_ID_ENTRYWISE_POWER = 1137,
 	FUNCTION_ID_NORM = 1138,
+	FUNCTION_ID_VERTCAT = 1139,
+	FUNCTION_ID_HORZCAT = 1140,
 	FUNCTION_ID_SQRT = 1200,
 	FUNCTION_ID_CBRT = 1201,
 	FUNCTION_ID_ROOT = 1202,
@@ -396,6 +439,8 @@ DECLARE_BUILTIN_FUNCTION(SortFunction, FUNCTION_ID_SORT)
 DECLARE_BUILTIN_FUNCTION(ComponentFunction, FUNCTION_ID_COMPONENT)
 DECLARE_BUILTIN_FUNCTION_PI(DimensionFunction, FUNCTION_ID_DIMENSION)
 DECLARE_BUILTIN_FUNCTION(MatrixFunction, FUNCTION_ID_MATRIX)
+DECLARE_BUILTIN_FUNCTION(VertCatFunction, FUNCTION_ID_VERTCAT)
+DECLARE_BUILTIN_FUNCTION_M(HorzCatFunction, FUNCTION_ID_HORZCAT)
 DECLARE_BUILTIN_FUNCTION(MergeVectorsFunction, FUNCTION_ID_MERGE_VECTORS)
 DECLARE_BUILTIN_FUNCTION(MatrixToVectorFunction, FUNCTION_ID_MATRIX_TO_VECTOR)
 DECLARE_BUILTIN_FUNCTION(AreaFunction, FUNCTION_ID_AREA)

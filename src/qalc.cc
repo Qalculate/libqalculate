@@ -5108,7 +5108,8 @@ void ViewThread::run() {
 
 static bool wait_for_key_press(int timeout_ms) {
 #ifdef _WIN32
-	return WaitForSingleObject(GetStdHandle(STD_INPUT_HANDLE), timeout_ms) == WAIT_OBJECT_0;
+	//return WaitForSingleObject(GetStdHandle(STD_INPUT_HANDLE), timeout_ms) == WAIT_OBJECT_0;
+	return false;
 #else
 	fd_set in_set;
 	struct timeval timeout;
@@ -5292,7 +5293,11 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 
 		if(b_busy && view_thread->running && !cfile) {
 			if(!result_only) {
-				FPUTS_UNICODE(_("Processing (press Enter to abort)"), stdout);
+				FPUTS_UNICODE(_("Processing"), stdout);
+#ifndef _WIN32
+				fputs(" ", stdout);
+				FPUTS_UNICODE(_("(press Enter to abort)"), stdout);
+#endif
 				has_printed = true;
 				fflush(stdout);
 			}
@@ -5326,10 +5331,16 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 						fflush(stdout);
 					}
 					sleep_ms(100);
+#ifdef _WIN32
+					i++;
+					if(i == 1000) on_abort_display();
+#endif
 				}
 			}
 		}
+		i = 0;
 	}
+
 
 	printops.prefix = NULL;
 
@@ -5631,22 +5642,26 @@ void execute_command(int command_type, bool show_result) {
 			if(!result_only) {
 				switch(command_type) {
 					case COMMAND_FACTORIZE: {
-						FPUTS_UNICODE(_("Factorizing (press Enter to abort)"), stdout);
+						FPUTS_UNICODE(_("Factorizing"), stdout);
 						break;
 					}
 					case COMMAND_EXPAND_PARTIAL_FRACTIONS: {
-						FPUTS_UNICODE(_("Expanding partial fractions…"), stdout);
+						FPUTS_UNICODE(_("Expanding partial fractions"), stdout);
 						break;
 					}
 					case COMMAND_EXPAND: {
-						FPUTS_UNICODE(_("Expanding (press Enter to abort)"), stdout);
+						FPUTS_UNICODE(_("Expanding"), stdout);
 						break;
 					}
 					case COMMAND_EVAL: {
-						FPUTS_UNICODE(_("Calculating (press Enter to abort)"), stdout);
+						FPUTS_UNICODE(_("Calculating"), stdout);
 						break;
 					}
 				}
+#ifndef _WIN32
+				fputs(" ", stdout);
+				FPUTS_UNICODE(_("(press Enter to abort)"), stdout);
+#endif
 				has_printed = true;
 				fflush(stdout);
 			}
@@ -5679,9 +5694,14 @@ void execute_command(int command_type, bool show_result) {
 						fflush(stdout);
 					}
 					sleep_ms(100);
+#ifdef _WIN32
+					i++;
+					if(i == 1000) on_abort_display();
+#endif
 				}
 			}
 		}
+		i = 0;
 
 		if(has_printed) printf("\n");
 
@@ -6283,7 +6303,12 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 
 		if(CALCULATOR->busy() && !cfile) {
 			if(!result_only) {
-				FPUTS_UNICODE(_("Calculating (press Enter to abort)"), stdout);
+				FPUTS_UNICODE(_("Calculating"), stdout);
+#ifndef _WIN32
+				fputs(" ", stdout);
+				FPUTS_UNICODE(_("(press Enter to abort)"), stdout);
+#endif
+
 				fflush(stdout);
 				has_printed = 1;
 			}
@@ -6319,9 +6344,14 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 						fflush(stdout);
 					}
 					sleep_ms(100);
+#ifdef _WIN32
+					i++;
+					if(i == 1000) on_abort_display();
+#endif
 				}
 			}
 		}
+		i = 0;
 	}
 
 	bool units_changed = false;

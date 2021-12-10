@@ -75,15 +75,19 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 		}
 		size_t i_deci = str.find(po.decimalpoint());
 		size_t i;
-		bool do_thin_space = po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (THIN_SPACE, po.can_display_unicode_string_arg));
-#ifdef _WIN32
-		// do not use thin space on Windows < 10
-		if(!IsWindows10OrGreater()) do_thin_space = false;
-#endif
+		int do_thin_space = -1;
 		if(i_deci != string::npos) {
 			if(po.digit_grouping != DIGIT_GROUPING_LOCALE && i_deci + po.decimalpoint().length() < str.length() - 4 && str.find("…") == string::npos && str.find("...") == string::npos) {
 				i = i_deci + 3 + po.decimalpoint().length();
 				while(i < str.length()) {
+					if(do_thin_space == -1) {
+						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (THIN_SPACE, po.can_display_unicode_string_arg))) do_thin_space = 1;
+						else do_thin_space = 0;
+#ifdef _WIN32
+						// do not use thin space on Windows < 10
+						if(!IsWindows10OrGreater()) do_thin_space = 0;
+#endif
+					}
 					if(do_thin_space) {
 						str.insert(i, THIN_SPACE);
 						i += 3 + strlen(THIN_SPACE);
@@ -101,6 +105,14 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 			while(i > group_size) {
 				i -= group_size;
 				if(po.digit_grouping != DIGIT_GROUPING_LOCALE || CALCULATOR->local_digit_group_separator.empty()) {
+					if(do_thin_space == -1) {
+						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (THIN_SPACE, po.can_display_unicode_string_arg))) do_thin_space = 1;
+						else do_thin_space = 0;
+#ifdef _WIN32
+						// do not use thin space on Windows < 10
+						if(!IsWindows10OrGreater()) do_thin_space = 0;
+#endif
+					}
 					if(do_thin_space) {
 						// thin space is preferred
 						str.insert(i, THIN_SPACE);

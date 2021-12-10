@@ -3757,8 +3757,9 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			ips_n.depth++;
 			bool b_matrix = false;
 			if(CALCULATOR->usesMatlabStyleMatrices()) {
+				b_matrix = true;
 				for(size_t i = 0; i < SIZE; i++) {
-					if(CHILD(i).isVector()) b_matrix = true;
+					if(!CHILD(i).isVector()) b_matrix = false;
 				}
 			}
 			if(b_matrix) {
@@ -3841,7 +3842,8 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				}
 				print_str += "]";
 			} else {
-				print_str = "(";
+				if(SIZE <= 1) print_str = "[";
+				else print_str = "(";
 				for(size_t i = 0; i < SIZE; i++) {
 					if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 					if(i > 0) {
@@ -3851,7 +3853,8 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);
 					print_str += CHILD(i).print(po, format, colorize, tagtype, ips_n);
 				}
-				print_str += ")";
+				if(SIZE <= 1) print_str += "]";
+				else print_str += ")";
 			}
 			break;
 		}
