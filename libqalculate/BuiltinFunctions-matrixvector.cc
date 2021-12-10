@@ -120,6 +120,61 @@ int MergeVectorsFunction::calculate(MathStructure &mstruct, const MathStructure 
 	}
 	return 1;
 }
+VertCatFunction::VertCatFunction() : MathFunction("vertcat", 2, -1) {
+	setArgumentDefinition(1, new MatrixArgument(""));
+	setArgumentDefinition(2, new MatrixArgument(""));
+	setCondition("columns(\\x)=columns(\\y)");
+}
+int VertCatFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	mstruct = vargs[0];
+	for(size_t i = 1; i < vargs.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
+		if(vargs[i].columns() != mstruct.columns()) {
+			if(i > 1) {
+				mstruct.transform(this);
+				for(; i < vargs.size(); i++) mstruct.addChild(vargs[i]);
+				return 1;
+			}
+			return 0;
+		}
+		for(size_t i2 = 0; i2 < vargs[i].size(); i2++) {
+			mstruct.addChild(vargs[i][i2]);
+		}
+	}
+	return 1;
+}
+HorzCatFunction::HorzCatFunction() : MathFunction("horzcat", 2, -1) {
+	setArgumentDefinition(1, new MatrixArgument(""));
+	setArgumentDefinition(2, new MatrixArgument(""));
+	setCondition("rows(\\x)=rows(\\y)");
+}
+bool HorzCatFunction::representsScalar(const MathStructure &vargs) const {return false;}
+bool HorzCatFunction::representsNonMatrix(const MathStructure &vargs) const {
+	for(size_t i = 0; i < vargs.size(); i++) {
+		if(!vargs[i].representsNonMatrix()) return false;
+	}
+	return true;
+}
+int HorzCatFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	mstruct = vargs[0];
+	for(size_t i = 1; i < vargs.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
+		if(vargs[i].rows() != mstruct.rows()) {
+			if(i > 1) {
+				mstruct.transform(this);
+				for(; i < vargs.size(); i++) mstruct.addChild(vargs[i]);
+				return 1;
+			}
+			return 0;
+		}
+		for(size_t i2 = 0; i2 < vargs[i].size(); i2++) {
+			for(size_t i3 = 0; i3 < vargs[i][i2].size(); i3++) {
+				mstruct[i2].addChild(vargs[i][i2][i3]);
+			}
+		}
+	}
+	return 1;
+}
 MatrixToVectorFunction::MatrixToVectorFunction() : MathFunction("matrix2vector", 1) {
 	setArgumentDefinition(1, new MatrixArgument());
 }
@@ -154,7 +209,7 @@ int ColumnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	return 1;
 }
 RowsFunction::RowsFunction() : MathFunction("rows", 1) {
-	setArgumentDefinition(1, new VectorArgument(""));
+	setArgumentDefinition(1, new MatrixArgument(""));
 }
 int RowsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	if(!vargs[0].isMatrix()) mstruct = m_one;
@@ -162,7 +217,7 @@ int RowsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	return 1;
 }
 ColumnsFunction::ColumnsFunction() : MathFunction("columns", 1) {
-	setArgumentDefinition(1, new VectorArgument(""));
+	setArgumentDefinition(1, new MatrixArgument(""));
 }
 int ColumnsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	if(!vargs[0].isMatrix()) mstruct = (int) vargs[0].countChildren();
@@ -181,42 +236,26 @@ int ElementsFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	return 1;
 }
 ElementFunction::ElementFunction() : MathFunction("element", 2, 3) {
-	setArgumentDefinition(1, new VectorArgument(""));
+	setArgumentDefinition(1, new MatrixArgument(""));
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
-	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SIZE));
-	setDefaultValue(3, "0");
+	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
+	setDefaultValue(3, "1");
 }
 int ElementFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	if(vargs[2].number().isPositive() && vargs[0].isMatrix()) {
-		size_t row = (size_t) vargs[1].number().uintValue();
-		size_t col = (size_t) vargs[2].number().uintValue();
-		bool b = true;
-		if(col > vargs[0].columns()) {
-			CALCULATOR->error(true, _("Column %s does not exist in matrix."), format_and_print(vargs[2]).c_str(), NULL);
-			b = false;
-		}
-		if(row > vargs[0].rows()) {
-			CALCULATOR->error(true, _("Row %s does not exist in matrix."), format_and_print(vargs[1]).c_str(), NULL);
-			b = false;
-		}
-		if(b) {
-			const MathStructure *em = vargs[0].getElement(row, col);
-			if(em) mstruct = *em;
-			else b = false;
-		}
-		return b;
-	} else {
-		if(vargs[2].number().isGreaterThan(1)) {
-			CALCULATOR->error(false, _("Argument 3, %s, is ignored for vectors."), getArgumentDefinition(3)->name().c_str(), NULL);
-		}
-		size_t row = (size_t) vargs[1].number().uintValue();
-		if(row > vargs[0].countChildren()) {
-			CALCULATOR->error(true, _("Element %s does not exist in vector."), format_and_print(vargs[1]).c_str(), NULL);
-			return 0;
-		}
-		mstruct = *vargs[0].getChild(row);
-		return 1;
+	size_t row = (size_t) vargs[1].number().uintValue();
+	size_t col = (size_t) vargs[2].number().uintValue();
+	if(col > vargs[0].columns()) {
+		CALCULATOR->error(true, _("Column %s does not exist in matrix."), format_and_print(vargs[2]).c_str(), NULL);
+		return 0;
 	}
+	if(row > vargs[0].rows()) {
+		CALCULATOR->error(true, _("Row %s does not exist in matrix."), format_and_print(vargs[1]).c_str(), NULL);
+		return 0;
+	}
+	const MathStructure *em = vargs[0].getElement(row, col);
+	if(em) mstruct = *em;
+	else return 0;
+	return 1;
 }
 DimensionFunction::DimensionFunction() : MathFunction("dimension", 1) {
 	setArgumentDefinition(1, new VectorArgument(""));
@@ -434,30 +473,20 @@ int NormFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	return -1;
 }
 HadamardFunction::HadamardFunction() : MathFunction("hadamard", 1, -1) {
-	setArgumentDefinition(1, new VectorArgument());
-	setArgumentDefinition(2, new VectorArgument());
+	setArgumentDefinition(1, new MatrixArgument());
+	setArgumentDefinition(2, new MatrixArgument());
 }
 int HadamardFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	bool b_matrix = vargs[0].isMatrix();
 	for(size_t i3 = 1; i3 < vargs.size(); i3++) {
-		if(b_matrix) {
-			if(!vargs[i3].isMatrix() || vargs[i3].columns() != vargs[0].columns() || vargs[i3].rows() != vargs[0].rows()) {
-				CALCULATOR->error(true, _("%s() requires that all matrices/vectors have the same dimensions."), preferredDisplayName().name.c_str(), NULL);
-				return 0;
-			}
-		} else if(vargs[i3].size() != vargs[0].size()) {
+		if(vargs[i3].columns() != vargs[0].columns() || vargs[i3].rows() != vargs[0].rows()) {
 			CALCULATOR->error(true, _("%s() requires that all matrices/vectors have the same dimensions."), preferredDisplayName().name.c_str(), NULL);
 			return 0;
 		}
 	}
 	mstruct = vargs[0];
 	for(size_t i = 0; i < mstruct.size(); i++) {
-		if(b_matrix) {
-			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
-				for(size_t i3 = 1; i3 < vargs.size(); i3++) mstruct[i][i2] *= vargs[i3][i][i2];
-			}
-		} else {
-			for(size_t i3 = 1; i3 < vargs.size(); i3++) mstruct[i] *= vargs[i3][i];
+		for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+			for(size_t i3 = 1; i3 < vargs.size(); i3++) mstruct[i][i2] *= vargs[i3][i][i2];
 		}
 	}
 	return 1;
