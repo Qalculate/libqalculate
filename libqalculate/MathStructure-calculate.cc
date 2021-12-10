@@ -6913,6 +6913,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 		int ret = o_function->calculate(*mstruct, *this, eo);
 		if(ret > 0) {
 			// function calculation was successful
+			while(mstruct->isVector() && mstruct->size() == 1) mstruct->setToChild(1, true);
 			set_nocopy(*mstruct, true);
 			if(recursive) calculateFunctions(eo);
 			mstruct->unref();

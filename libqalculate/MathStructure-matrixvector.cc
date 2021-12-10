@@ -160,11 +160,12 @@ void MathStructure::resizeVector(size_t i, const MathStructure &mfill) {
 }
 
 size_t MathStructure::rows() const {
-	if(m_type != STRUCT_VECTOR || SIZE == 0 || (SIZE == 1 && (!CHILD(0).isVector() || CHILD(0).size() == 0))) return 0;
+	//if(m_type != STRUCT_VECTOR || SIZE == 0 || (SIZE == 1 && (!CHILD(0).isVector() || CHILD(0).size() == 0))) return 0;
 	return SIZE;
 }
 size_t MathStructure::columns() const {
-	if(m_type != STRUCT_VECTOR || SIZE == 0 || !CHILD(0).isVector()) return 0;
+	if(m_type == STRUCT_VECTOR && SIZE == 0) return 0;
+	if(m_type != STRUCT_VECTOR || !CHILD(0).isVector()) return 1;
 	return CHILD(0).size();
 }
 const MathStructure *MathStructure::getElement(size_t row, size_t column) const {

@@ -1555,25 +1555,31 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	for(size_t str_index = 0; str_index < str.length(); str_index++) {
 		if(str[str_index] == LEFT_VECTOR_WRAP_CH) {
 			// vector
+			int b_old_matrix = 2;
+			bool b_comma = false;
 			if(priv->matlab_matrices) {
-				MathStructure *mstruct2 = new MathStructure();
-				mstruct2->clearVector();
-				MathStructure *mrow = NULL;
-				MathStructure unended_test;
-				if(unended_function) po.unended_function = &unended_test;
-				string prev_func;
-				bool in_cit1 = false, in_cit2 = false, first_not_unit = false;
+				b_old_matrix = -1;
+				bool in_cit1 = false, in_cit2 = false;
 				int pars = 0;
 				int brackets = 1;
-				bool b_comma = false;
-				for(size_t i = str_index + 1; i < str.length() && brackets > 0 && !b_comma; i++) {
+				for(size_t i = str_index + 1; i < str.length() && brackets > 0 && (b_old_matrix != 0 || !b_comma); i++) {
 					switch(str[i]) {
 						case LEFT_VECTOR_WRAP_CH: {
 							if(!in_cit1 && !in_cit2) brackets++;
 							break;
 						}
 						case RIGHT_VECTOR_WRAP_CH: {
-							if(!in_cit1 && !in_cit2 && brackets > 0) brackets--;
+							if(!in_cit1 && !in_cit2 && brackets > 0) {
+								if(b_old_matrix != 0 && brackets == 2 && i < str.length() - 1) {
+									size_t i2 = str.find_first_not_of(SPACE, i + 1);
+									if(i2 != string::npos && (str[i2] == COMMA_CH || str[i2] == ';')) i2 = str.find_first_not_of(SPACE, i2 + 1);
+									if(i2 != string::npos) {
+										if(str[i2] == LEFT_VECTOR_WRAP_CH) b_old_matrix = 1;
+										else if(str[i2] != RIGHT_VECTOR_WRAP_CH) b_old_matrix = 0;
+									}
+								}
+								brackets--;
+							}
 							break;
 						}
 						case LEFT_PARENTHESIS_CH: {
@@ -1594,15 +1600,37 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							else if(!in_cit1) in_cit1 = true;
 							break;
 						}
-						case ',': {
-							if(brackets == 1 && pars == 0 && !in_cit1 && !in_cit2) b_comma = true;
+						case ' ': {
+							if(pars == 0 && !in_cit1 && !in_cit2 && i < str.length() - 1) {
+								if((brackets == 1 && i != str_index + 2) || (brackets == 2 && !is_not_number(str[i - 1], base) && !is_not_number(str[i + 1], base))) {
+									b_old_matrix = 0;
+								}
+							}
 							break;
+						}
+						case ',': {
+							if(brackets == 1 && pars == 0 && !in_cit1 && !in_cit2) {
+								b_comma = true;
+								b_old_matrix = 0;
+							}
+							break;
+						}
+						case ';': {
+							if(brackets == 1 && pars == 0 && !in_cit1 && !in_cit2) b_old_matrix = 0;
 						}
 					}
 				}
-				in_cit1 = false; in_cit2 = false; first_not_unit = false;
-				pars = 0;
-				brackets = 1;
+			}
+			if(b_old_matrix <= 0) {
+				MathStructure *mstruct2 = new MathStructure();
+				mstruct2->clearVector();
+				MathStructure *mrow = NULL;
+				MathStructure unended_test;
+				if(unended_function) po.unended_function = &unended_test;
+				string prev_func;
+				bool in_cit1 = false, in_cit2 = false, first_not_unit = false;
+				int pars = 0;
+				int brackets = 1;
 				size_t i = str_index + 1;
 				size_t col_index = i;
 				for(; i < str.length() && brackets > 0; i++) {
@@ -1613,15 +1641,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							break;
 						}
 						case RIGHT_VECTOR_WRAP_CH: {
-							if(!in_cit1 && !in_cit2 && brackets > 0) {
-								if(i < str.length() - 1) {
-									size_t i2 = b_comma ? str.find_first_not_of(SPACE, i + 1) : i + 1;
-									if(i2 != string::npos && str[i2] == LEFT_VECTOR_WRAP_CH) {
-										str.insert(i + 1, b_comma ? COMMA : SPACE);
-									}
-								}
-								brackets--;
-							}
+							if(!in_cit1 && !in_cit2 && brackets > 0) brackets--;
 							break;
 						}
 						case LEFT_PARENTHESIS_CH: {
@@ -1697,11 +1717,19 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						}
 						col_index = i + 1;
 						if(mrow) {
-							if(mcol) mrow->addChild_nocopy(mcol);
-							if(b_row) {
-								mstruct2->addChild_nocopy(mrow);
+							if(mcol) {
+								if(mrow->isVector() && (!b_row || mrow->size() > 0) && !mcol->representsScalar()) {
+									mrow->setType(STRUCT_FUNCTION);
+									mrow->setFunction(priv->f_horzcat);
+								}
+								mrow->addChild_nocopy(mcol);
 							}
+							if(b_row) mstruct2->addChild_nocopy(mrow);
 						} else if(mcol) {
+							if(mstruct2->isVector() && (!b_row || mstruct2->size() > 0) && !mcol->representsScalar()) {
+								mstruct2->setType(STRUCT_FUNCTION);
+								mstruct2->setFunction(priv->f_horzcat);
+							}
 							mstruct2->addChild_nocopy(mcol);
 						}
 						if(i < str.length() - 1 && brackets > 0) {
@@ -1716,6 +1744,10 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									prev_func = stmp2;
 								}
 							}
+						}
+						if(b_row && mrow && !mstruct2->last().representsNonMatrix()) {
+							mstruct2->setType(STRUCT_FUNCTION);
+							mstruct2->setFunction(priv->f_vertcat);
 						}
 					}
 					if(brackets == 0) {
@@ -1732,6 +1764,37 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				str.replace(str_index, i + 1 - str_index, stmp);
 				str_index += stmp.length() - 1;
 			} else {
+				if(b_old_matrix == 1) {
+					priv->matlab_matrices = false;
+					bool in_cit1 = false, in_cit2 = false;
+					int brackets = 1;
+					for(size_t i = str_index + 1; i < str.length() && brackets > 0 && (b_old_matrix != 0 || !b_comma); i++) {
+						switch(str[i]) {
+							case LEFT_VECTOR_WRAP_CH: {
+								if(!in_cit1 && !in_cit2) brackets++;
+								break;
+							}
+							case RIGHT_VECTOR_WRAP_CH: {
+								if(!in_cit1 && !in_cit2 && brackets > 0) brackets--;
+								break;
+							}
+							case '\"': {
+								if(in_cit1) in_cit1 = false;
+								else if(!in_cit2) in_cit1 = true;
+								break;
+							}
+							case '\'': {
+								if(in_cit2) in_cit2 = false;
+								else if(!in_cit1) in_cit1 = true;
+								break;
+							}
+							case ';': {
+								if(!in_cit1 && !in_cit2) str[i] = COMMA_CH;
+								break;
+							}
+						}
+					}
+				}
 				int i4 = 1;
 				size_t i3 = str_index;
 				while(true) {
@@ -1762,6 +1825,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						break;
 					}
 				}
+				if(b_old_matrix == 1) priv->matlab_matrices = true;
 			}
 		} else if(str[str_index] == '\\' && str_index + 1 < str.length() && (is_not_in(NOT_IN_NAMES INTERNAL_OPERATORS NUMBERS, str[str_index + 1]) || (po.parsing_mode != PARSING_MODE_RPN && str_index > 0 && is_in(NUMBERS SPACE PLUS MINUS BITWISE_NOT NOT LEFT_PARENTHESIS, str[str_index + 1])))) {
 			if(is_in(NUMBERS SPACE PLUS MINUS BITWISE_NOT NOT LEFT_PARENTHESIS, str[str_index + 1])) {
