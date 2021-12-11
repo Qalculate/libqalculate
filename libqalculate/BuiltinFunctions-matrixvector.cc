@@ -123,6 +123,7 @@ int MergeVectorsFunction::calculate(MathStructure &mstruct, const MathStructure 
 VertCatFunction::VertCatFunction() : MathFunction("vertcat", 2, -1) {
 	setArgumentDefinition(1, new MatrixArgument(""));
 	setArgumentDefinition(2, new MatrixArgument(""));
+	setArgumentDefinition(3, new MatrixArgument(""));
 	setCondition("columns(\\x)=columns(\\y)");
 }
 int VertCatFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
@@ -146,6 +147,7 @@ int VertCatFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 HorzCatFunction::HorzCatFunction() : MathFunction("horzcat", 2, -1) {
 	setArgumentDefinition(1, new MatrixArgument(""));
 	setArgumentDefinition(2, new MatrixArgument(""));
+	setArgumentDefinition(3, new MatrixArgument(""));
 	setCondition("rows(\\x)=rows(\\y)");
 }
 bool HorzCatFunction::representsScalar(const MathStructure &vargs) const {return false;}
@@ -212,44 +214,46 @@ RowsFunction::RowsFunction() : MathFunction("rows", 1) {
 	setArgumentDefinition(1, new MatrixArgument(""));
 }
 int RowsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	if(!vargs[0].isMatrix()) mstruct = m_one;
-	else mstruct = (int) vargs[0].rows();
+	mstruct = (int) vargs[0].rows();
 	return 1;
 }
 ColumnsFunction::ColumnsFunction() : MathFunction("columns", 1) {
 	setArgumentDefinition(1, new MatrixArgument(""));
 }
 int ColumnsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	if(!vargs[0].isMatrix()) mstruct = (int) vargs[0].countChildren();
-	else mstruct = (int) vargs[0].columns();
+	mstruct = (int) vargs[0].columns();
 	return 1;
 }
 ElementsFunction::ElementsFunction() : MathFunction("elements", 1) {
-	setArgumentDefinition(1, new VectorArgument(""));
+	setArgumentDefinition(1, new MatrixArgument(""));
 }
 int ElementsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	if(vargs[0].isMatrix()) {
-		mstruct = (int) (vargs[0].rows() * vargs[0].columns());
-	} else {
-		mstruct = (int) vargs[0].countChildren();
-	}
+	mstruct = (int) (vargs[0].rows() * vargs[0].columns());
 	return 1;
 }
 ElementFunction::ElementFunction() : MathFunction("element", 2, 3) {
-	setArgumentDefinition(1, new MatrixArgument(""));
+	setArgumentDefinition(1, new VectorArgument(""));
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
-	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
-	setDefaultValue(3, "1");
+	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SIZE));
+	setDefaultValue(3, "0");
 }
 int ElementFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	size_t row = (size_t) vargs[1].number().uintValue();
 	size_t col = (size_t) vargs[2].number().uintValue();
+	if(col == 0) {
+		if(row > vargs[0].size()) {
+			CALCULATOR->error(true, _("Element %s does not exist in vector."), format_and_print(vargs[0]).c_str(), NULL);
+			return 0;
+		}
+		mstruct = vargs[0][row - 1];
+		return 1;
+	}
 	if(col > vargs[0].columns()) {
-		CALCULATOR->error(true, _("Column %s does not exist in matrix."), format_and_print(vargs[2]).c_str(), NULL);
+		CALCULATOR->error(true, _("Column %s does not exist in matrix."), format_and_print(vargs[1]).c_str(), NULL);
 		return 0;
 	}
 	if(row > vargs[0].rows()) {
-		CALCULATOR->error(true, _("Row %s does not exist in matrix."), format_and_print(vargs[1]).c_str(), NULL);
+		CALCULATOR->error(true, _("Row %s does not exist in matrix."), format_and_print(vargs[0]).c_str(), NULL);
 		return 0;
 	}
 	const MathStructure *em = vargs[0].getElement(row, col);
@@ -1193,7 +1197,7 @@ int LoadFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	return 1;
 }
 ExportFunction::ExportFunction() : MathFunction("export", 2, 3) {
-	setArgumentDefinition(1, new VectorArgument());
+	setArgumentDefinition(1, new MatrixArgument());
 	setArgumentDefinition(2, new FileArgument());
 	setArgumentDefinition(3, new TextArgument());
 	setDefaultValue(3, "\",\"");

@@ -160,22 +160,42 @@ void MathStructure::resizeVector(size_t i, const MathStructure &mfill) {
 }
 
 size_t MathStructure::rows() const {
-	//if(m_type != STRUCT_VECTOR || SIZE == 0 || (SIZE == 1 && (!CHILD(0).isVector() || CHILD(0).size() == 0))) return 0;
+	if(m_type == STRUCT_VECTOR && SIZE == 0) return 0;
+	if(m_type != STRUCT_VECTOR || !isMatrix()) return 1;
 	return SIZE;
 }
 size_t MathStructure::columns() const {
 	if(m_type == STRUCT_VECTOR && SIZE == 0) return 0;
-	if(m_type != STRUCT_VECTOR || !CHILD(0).isVector()) return 1;
+	if(m_type != STRUCT_VECTOR) return 1;
+	if(!isMatrix()) return SIZE;
 	return CHILD(0).size();
 }
 const MathStructure *MathStructure::getElement(size_t row, size_t column) const {
-	if(row == 0 || column == 0 || row > rows() || column > columns()) return NULL;
-	if(CHILD(row - 1).size() < column) return NULL;
+	if(row == 0 || column == 0) return NULL;
+	if(m_type != STRUCT_VECTOR) {
+		if(row == 1 && column == 1) return this;
+		return NULL;
+	}
+	if(SIZE == 0) return NULL;
+	if(row == 1 && !CHILD(0).isVector()) {
+		if(column > SIZE) return NULL;
+		return &CHILD(column - 1);
+	}
+	if(row > SIZE || column > CHILD(row - 1).size()) return NULL;
 	return &CHILD(row - 1)[column - 1];
 }
 MathStructure *MathStructure::getElement(size_t row, size_t column) {
-	if(row == 0 || column == 0 || row > rows() || column > columns()) return NULL;
-	if(CHILD(row - 1).size() < column) return NULL;
+	if(row == 0 || column == 0) return NULL;
+	if(m_type != STRUCT_VECTOR) {
+		if(row == 1 && column == 1) return this;
+		return NULL;
+	}
+	if(SIZE == 0) return NULL;
+	if(row == 1 && !CHILD(0).isVector()) {
+		if(column > SIZE) return NULL;
+		return &CHILD(column - 1);
+	}
+	if(row > SIZE || column > CHILD(row - 1).size()) return NULL;
 	return &CHILD(row - 1)[column - 1];
 }
 MathStructure &MathStructure::getArea(size_t r1, size_t c1, size_t r2, size_t c2, MathStructure &mstruct) const {

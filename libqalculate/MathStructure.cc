@@ -705,7 +705,7 @@ bool MathStructure::isAborted() const {return m_type == STRUCT_ABORTED;}
 bool MathStructure::isEmptySymbol() const {return m_type == STRUCT_SYMBOLIC && s_sym.empty();}
 bool MathStructure::isVector() const {return m_type == STRUCT_VECTOR;}
 bool MathStructure::isMatrix() const {
-	if(m_type != STRUCT_VECTOR || SIZE < 1 || CHILD(0).size() == 0) return false;
+	if(m_type != STRUCT_VECTOR || SIZE < 1) return false;
 	for(size_t i = 0; i < SIZE; i++) {
 		if(!CHILD(i).isVector() || (i > 0 && CHILD(i).size() != CHILD(i - 1).size())) return false;
 	}

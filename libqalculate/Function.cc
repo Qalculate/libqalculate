@@ -2220,9 +2220,9 @@ MatrixArgument::MatrixArgument(const MatrixArgument *arg) {
 MatrixArgument::~MatrixArgument() {}
 bool MatrixArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
 	value.eval(eo);
-	if(!b_square && !value.isMatrix()) {
+	if(!value.isMatrix()) {
 		if(value.isVector() && (value.size() == 0 || value[0].representsScalar())) {
-			if(CALCULATOR->usesMatlabStyleMatrices()) {
+			if(CALCULATOR->usesMatlabStyleMatrices() || value.size() == 0) {
 				value.transform(STRUCT_VECTOR);
 			} else {
 				for(size_t i = 0; i < value.size(); i++) {
