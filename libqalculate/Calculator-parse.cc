@@ -1327,7 +1327,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	//remove spaces in numbers
 	if(po.parsing_mode != PARSING_MODE_RPN && !str.empty()) {
 		bool in_cit1 = false, in_cit2 = false;
-		int brackets = 1;
+		int brackets = 0;
 		for(size_t i = 0; i < str.length() - 1; i++) {
 			switch(str[i]) {
 				case LEFT_VECTOR_WRAP_CH: {
@@ -1602,7 +1602,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						}
 						case ' ': {
 							if(pars == 0 && !in_cit1 && !in_cit2 && i < str.length() - 1) {
-								if((brackets == 1 && i != str_index + 2) || (brackets == 2 && !is_not_number(str[i - 1], base) && !is_not_number(str[i + 1], base))) {
+								if(b_old_matrix != 0 && ((brackets == 1 && i != str_index + 1) || (brackets == 2 && !is_not_number(str[i - 1], base) && !is_not_number(str[i + 1], base))) && str[i - 1] != ',' && str[i - 1] != ';' && str[i + 1] != ',' && str[i + 1] != ';') {
 									b_old_matrix = 0;
 								}
 							}
@@ -1611,12 +1611,21 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						case ',': {
 							if(brackets == 1 && pars == 0 && !in_cit1 && !in_cit2) {
 								b_comma = true;
-								b_old_matrix = 0;
+								size_t i2 = str.find_last_not_of(SPACE, i - 1);
+								if(i2 != string::npos && str[i2] != RIGHT_VECTOR_WRAP_CH) {
+									b_old_matrix = 0;
+								}
 							}
 							break;
 						}
 						case ';': {
-							if(brackets == 1 && pars == 0 && !in_cit1 && !in_cit2) b_old_matrix = 0;
+							if(brackets == 1 && pars == 0 && !in_cit1 && !in_cit2) {
+								size_t i2 = str.find_last_not_of(SPACE, i - 1);
+								if(i2 != string::npos && str[i2] != RIGHT_VECTOR_WRAP_CH) {
+									b_old_matrix = 0;
+								}
+							}
+							break;
 						}
 					}
 				}
