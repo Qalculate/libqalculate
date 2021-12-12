@@ -732,6 +732,11 @@
       <names>au:&#x3C4;,r:tau</names>
       <value>2*pi</value>
     </variable>
+    <variable>
+      <_title>Plastic Number</_title>
+      <names>r:plastic,au:&#x3C1;,aos:rho</names>
+      <value>cbrt((9+sqrt(69))/18)+cbrt((9-sqrt(69))/18)</value>
+    </variable>
     <builtin_variable name="e">
       <_title>Base of Natural Logarithms (e)</_title>
       <names>r:e</names>
