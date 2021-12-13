@@ -97,6 +97,7 @@ bool result_only = false, vertical_space = true;
 bool do_imaginary_j = false;
 int sigint_action = 1;
 bool unittest = false;
+bool truncate_numbers = false, saved_truncate = false;
 
 static char buffer[100000];
 
@@ -876,7 +877,11 @@ void set_option(string str) {
 			tc_set = true;
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "round to even", _("round to even")) || svar == "rndeven") SET_BOOL_D(printops.round_halfway_to_even)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn syntax", _("rpn syntax")) || svar == "rpnsyn") {
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "truncate", _("truncate"))) {
+		SET_BOOL(truncate_numbers)
+		printops.custom_time_zone = (truncate_numbers ? -21586 : 0);
+		result_format_updated();
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn syntax", _("rpn syntax")) || svar == "rpnsyn") {
 		bool b = (evalops.parse_options.parsing_mode == PARSING_MODE_RPN);
 		SET_BOOL(b)
 		if(b != (evalops.parse_options.parsing_mode == PARSING_MODE_RPN)) {
@@ -3316,13 +3321,13 @@ int main(int argc, char *argv[]) {
 				printops.time_zone = TIME_ZONE_CUSTOM;
 				printops.custom_time_zone = itz;
 				setResult(NULL, false);
-				printops.custom_time_zone = 0;
+				printops.custom_time_zone = (truncate_numbers ? -21586 : 0);
 				printops.time_zone = TIME_ZONE_LOCAL;
 			} else if(str == "CET") {
 				printops.time_zone = TIME_ZONE_CUSTOM;
 				printops.custom_time_zone = 60;
 				setResult(NULL, false);
-				printops.custom_time_zone = 0;
+				printops.custom_time_zone = (truncate_numbers ? -21586 : 0);
 				printops.time_zone = TIME_ZONE_LOCAL;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(str, "cartesian", _("cartesian")) || str == "rect") {
 				avoid_recalculation = false;
@@ -3809,6 +3814,7 @@ int main(int argc, char *argv[]) {
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("show ending zeroes"), "zeroes"); str += b2oo(printops.show_ending_zeroes, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("truncate"), ""); str += b2oo(truncate_numbers, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("two's complement"), "twos"); str += b2oo(printops.twos_complement, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Parsing"));
@@ -4582,6 +4588,7 @@ int main(int argc, char *argv[]) {
 				if(printops.min_exp != EXP_NONE && printops.min_exp != EXP_NONE && printops.min_exp != EXP_PRECISION && printops.min_exp != EXP_BASE_3 && printops.min_exp != EXP_PURE && printops.min_exp != EXP_SCIENTIFIC) {str += " "; str += i2s(printops.min_exp); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("show ending zeroes"), "zeroes", _("If activated, zeroes are kept at the end of approximate numbers."), printops.show_ending_zeroes);
+				STR_AND_TABS_BOOL(_("truncate"), "", _("If activated, numbers are truncated, instead of rounded to nearest."), truncate_numbers);
 				STR_AND_TABS_BOOL(_("two's complement"), "twos", _("Enables two's complement representation for display of negative binary numbers."), printops.twos_complement);
 
 				CHECK_IF_SCREEN_FILLED_HEADING_S(_("Parsing"));
@@ -6434,7 +6441,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		if(custom_base_set) CALCULATOR->setCustomOutputBase(save_cbase);
 		evalops.complex_number_form = save_complex_number_form;
 		complex_angle_form = caf_bak;
-		printops.custom_time_zone = 0;
+		printops.custom_time_zone = (truncate_numbers ? -21586 : 0);
 		printops.time_zone = TIME_ZONE_LOCAL;
 		printops.binary_bits = 0;
 		printops.base = save_base;
@@ -6598,7 +6605,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	if(custom_base_set) CALCULATOR->setCustomOutputBase(save_cbase);
 	evalops.complex_number_form = save_complex_number_form;
 	complex_angle_form = caf_bak;
-	printops.custom_time_zone = 0;
+	printops.custom_time_zone = (truncate_numbers ? -21586 : 0);
 	printops.time_zone = TIME_ZONE_LOCAL;
 	printops.binary_bits = 0;
 	printops.base = save_base;
@@ -6631,6 +6638,7 @@ void set_saved_mode() {
 	saved_variable_units_enabled = CALCULATOR->variableUnitsEnabled();
 	saved_printops = printops;
 	saved_printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
+	saved_truncate = truncate_numbers;
 	saved_caf = complex_angle_form;
 	saved_evalops = evalops;
 	saved_parsing_mode = (evalops.parse_options.parsing_mode == PARSING_MODE_RPN ? nonrpn_parsing_mode : evalops.parse_options.parsing_mode);
@@ -6714,6 +6722,8 @@ void load_preferences() {
 
 	dual_fraction = -1;
 	dual_approximation = -1;
+
+	truncate_numbers = false;
 
 	CALCULATOR->setPrecision(10);
 
@@ -7054,6 +7064,9 @@ void load_preferences() {
 					}
 				} else if(svar == "round_halfway_to_even") {
 					printops.round_halfway_to_even = v;
+				} else if(svar == "truncate_numbers") {
+					truncate_numbers = v;
+					printops.custom_time_zone = (truncate_numbers ? -21586 : 0);
 				} else if(svar == "approximation") {
 					if(version_numbers[0] > 3 || (version_numbers[0] == 3 && (version_numbers[1] > 14 || (version_numbers[1] == 14 && version_numbers[2] > 0)))) {
 						if(v >= APPROXIMATION_EXACT && v <= APPROXIMATION_APPROXIMATE) {
@@ -7225,6 +7238,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "indicate_infinite_series=%i\n", saved_printops.indicate_infinite_series);
 	fprintf(file, "show_ending_zeroes=%i\n", saved_printops.show_ending_zeroes);
 	fprintf(file, "round_halfway_to_even=%i\n", saved_printops.round_halfway_to_even);
+	if(truncate_numbers) fprintf(file, "truncate_numbers=%i\n", saved_truncate);
 	if(saved_dual_approximation < 0) fprintf(file, "approximation=%i\n", saved_evalops.approximation == APPROXIMATION_EXACT ? -2 : -1);
 	else if(saved_dual_approximation > 0) fprintf(file, "approximation=%i\n", APPROXIMATION_APPROXIMATE + 1);
 	else fprintf(file, "approximation=%i\n", saved_evalops.approximation);
