@@ -41,7 +41,7 @@ len(5/6)
 char(0xD8)
 	'Ø'
 char([0xD8, 0x61])
-	['Ø', 'a']
+	['Ø'  'a']
 code(Ø) to hex
 	0xD8
 code(😀) to hex
@@ -49,4 +49,4 @@ code(😀) to hex
 code(🍉, utf-8, 0) to hex
 	0xF09F8D89
 code(abc)
-	[97, 98, 99]
+	[97  98  99]

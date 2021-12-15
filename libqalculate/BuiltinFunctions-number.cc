@@ -1768,7 +1768,18 @@ int IsNumberFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	return 1;
 }
 
-#define IS_NUMBER_FUNCTION(x, y) x::x() : MathFunction(#y, 1) {} int x::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {mstruct = vargs[0]; if(!mstruct.isNumber()) mstruct.eval(eo); if(mstruct.isNumber() && mstruct.number().y()) {mstruct.number().setTrue();} else {mstruct.clear(); mstruct.number().setFalse();} return 1;}
+#define IS_NUMBER_FUNCTION(x, y) x::x() : MathFunction(#y, 1) {\
+	Argument *arg = new Argument();\
+	arg->setHandleVector(true);\
+	setArgumentDefinition(1, arg);\
+}\
+int x::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {\
+	mstruct = vargs[0];\
+	if(!mstruct.isNumber()) mstruct.eval(eo);\
+	if(mstruct.isVector()) return -1;\
+	if(mstruct.isNumber() && mstruct.number().y()) {mstruct.number().setTrue();} else {mstruct.clear(); mstruct.number().setFalse();}\
+	return 1;\
+}
 
 IS_NUMBER_FUNCTION(IsIntegerFunction, isInteger)
 IS_NUMBER_FUNCTION(IsRealFunction, isReal)

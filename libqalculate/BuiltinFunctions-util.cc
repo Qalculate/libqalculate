@@ -472,7 +472,7 @@ int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		MathStructure meval(vargs[2]);
 		CALCULATOR->beginTemporaryStopMessages();
 		meval.eval(eo);
-		if(vargs[1].isVector() && meval.isVector() && vargs[1].size() == meval.size()) {
+		if(meval.isVector() && vargs[1].size() == meval.size()) {
 			CALCULATOR->endTemporaryStopMessages(true);
 			for(size_t i = 0; i < vargs[1].size(); i++) {
 				if(vargs[1][i].isFunction() && meval[i].isFunction() && vargs[1][i].size() == 0 && meval[i].size() == 0) {
@@ -1018,6 +1018,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		eo2.calculate_functions = eo.calculate_functions;
 		eo2.expand = eo.expand;
 	}
+	if(mstruct.isMatrix() && mstruct.columns() == 1 && mstruct.rows() > 1) mstruct.transposeMatrix();
 	CALCULATOR->endTemporaryStopIntervalArithmetic();
 	vector<MathStructure> x_vectors, y_vectors;
 	vector<PlotDataParameters*> dpds;
@@ -1032,6 +1033,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		dpds.push_back(dpd);
 	} else if(mstruct.isVector()) {
 		int matrix_index = 1, vector_index = 1;
+		if(mstruct.containsFunctionId(FUNCTION_ID_HORZCAT)) mstruct.eval(eo2);
 		if(mstruct.size() > 0 && (mstruct[0].isVector() || mstruct[0].contains(vargs[4], false, true, true))) {
 			for(size_t i = 0; i < mstruct.size() && !CALCULATOR->aborted(); i++) {
 				MathStructure x_vector;
