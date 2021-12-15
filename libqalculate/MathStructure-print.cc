@@ -2930,6 +2930,45 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 			return false;
 		}
 		case STRUCT_VECTOR: {
+			if(!CALCULATOR->usesMatlabStyleMatrices() || (!flat_division && (isDivision() || isInverse())) || (!flat_power && isPower())) return false;
+			string str_e = print(po);
+			bool in_cit1 = false, in_cit2 = false;
+			int pars = 0, brackets = 0;
+			for(size_t i = 0; i < str_e.size(); i++) {
+				switch(str_e[i]) {
+					case LEFT_VECTOR_WRAP_CH: {
+						if(!in_cit1 && !in_cit2) brackets++;
+						break;
+					}
+					case RIGHT_VECTOR_WRAP_CH: {
+						if(!in_cit1 && !in_cit2 && brackets > 0) brackets--;
+						break;
+					}
+					case LEFT_PARENTHESIS_CH: {
+						if(brackets == 0 && !in_cit1 && !in_cit2) pars++;
+						break;
+					}
+					case RIGHT_PARENTHESIS_CH: {
+						if(brackets == 0 && !in_cit1 && !in_cit2 && pars > 0) pars--;
+						break;
+					}
+					case '\"': {
+						if(in_cit1) in_cit1 = false;
+						else if(!in_cit2) in_cit1 = true;
+						break;
+					}
+					case '\'': {
+						if(in_cit2) in_cit2 = false;
+						else if(!in_cit1) in_cit1 = true;
+						break;
+					}
+					default: {
+						if(!in_cit1 && !in_cit2 && brackets == 0 && pars == 0 && (str_e[i] == ';' || str_e[i] == ',' || str_e[i] == ' ' || ((unsigned char) str_e[i] == 0xE2 && i + 2 < str_e.size() && (unsigned char) str_e[i + 1] == 0x80 && (unsigned char) str_e[i + 2] == 0x89))) {
+							return true;
+						}
+					}
+				}
+			}
 			return false;
 		}
 		default: {
@@ -3753,112 +3792,6 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
 			break;
 		}
-		case STRUCT_VECTOR: {
-			ips_n.depth++;
-			if(CALCULATOR->usesMatlabStyleMatrices()) {
-				print_str = "[";
-				ips_n.wrap = false;
-				bool b_matrix = isMatrix();
-				bool b_comma = !b_matrix && (po.comma() == ",");
-				for(size_t i = 0; i < SIZE; i++) {
-					if(i > 0) {
-						print_str += ";";
-						if(po.spacious) print_str += " ";
-					}
-					for(size_t i2 = 0; i2 < (b_matrix ? CHILD(i).size() : SIZE); i2++) {
-						if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
-						if(i2 > 0) {
-							if(b_comma) print_str += ",";
-							if(!b_comma || po.spacious) print_str += " ";
-						}
-						string str_e = b_matrix ? CHILD(i)[i2].print(po, format, colorize, tagtype, ips_n) : CHILD(i2).print(po, format, colorize, tagtype, ips_n);
-						if(!b_comma) {
-							bool in_format = false;
-							bool in_cit1 = false, in_cit2 = false;
-							int pars = 0, brackets = 0;
-							for(size_t i3 = 0; i3 < str_e.size(); i3++) {
-								switch(str_e[i3]) {
-									case '<': {
-										if(format && tagtype == TAG_TYPE_HTML) in_format = true;
-										break;
-									}
-									case '>': {
-										if(format && tagtype == TAG_TYPE_HTML) in_format = false;
-										break;
-									}
-									case '\033': {
-										if(format && tagtype == TAG_TYPE_TERMINAL) in_format = true;
-										break;
-									}
-									case 'm': {
-										if(format && tagtype == TAG_TYPE_TERMINAL) in_format = false;
-										break;
-									}
-									case LEFT_VECTOR_WRAP_CH: {
-										if(in_format) break;
-										if(!in_cit1 && !in_cit2) brackets++;
-										break;
-									}
-									case RIGHT_VECTOR_WRAP_CH: {
-										if(in_format) break;
-										if(!in_cit1 && !in_cit2 && brackets > 0) brackets--;
-										break;
-									}
-									case LEFT_PARENTHESIS_CH: {
-										if(in_format) break;
-										if(brackets == 0 && !in_cit1 && !in_cit2) pars++;
-										break;
-									}
-									case RIGHT_PARENTHESIS_CH: {
-										if(in_format) break;
-										if(brackets == 0 && !in_cit1 && !in_cit2 && pars > 0) pars--;
-										break;
-									}
-									case '\"': {
-										if(in_format) break;
-										if(in_cit1) in_cit1 = false;
-										else if(!in_cit2) in_cit1 = true;
-										break;
-									}
-									case '\'': {
-										if(in_format) break;
-										if(in_cit2) in_cit2 = false;
-										else if(!in_cit1) in_cit1 = true;
-										break;
-									}
-									default: {
-										if(!in_format && brackets == 0 && pars == 0 && (str_e[i3] == ' ' || ((unsigned char) str_e[i3] == 0xE2 && i3 + 2 < str_e.size() && (unsigned char) str_e[i3 + 1] == 0x80 && (unsigned char) str_e[i3 + 2] == 0x89))) {
-											print_str += "(";
-											str_e += ")";
-											i3 = str_e.size() - 1;
-											break;
-										}
-									}
-								}
-							}
-						}
-						print_str += str_e;
-					}
-					if(!b_matrix) break;
-				}
-				print_str += "]";
-			} else {
-				if(SIZE <= 1) print_str = "[";
-				else print_str = "(";
-				for(size_t i = 0; i < SIZE; i++) {
-					if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
-					if(i > 0) {
-						print_str += po.comma();
-						if(po.spacious) print_str += " ";
-					}
-					ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);
-					print_str += CHILD(i).print(po, format, colorize, tagtype, ips_n);
-				}
-				if(SIZE <= 1) print_str += "]";
-				else print_str += ")";
-			}
-			break;
-		}
 		case STRUCT_UNIT: {
 			const ExpressionName *ename = &o_unit->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, b_plural, po.use_reference_names || (po.preserve_format && o_unit->isCurrency()), po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
 			if(o_prefix) print_str += o_prefix->preferredDisplayName(po.abbreviate_names && ename->abbreviation, po.use_unicode_signs, b_plural, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name;
@@ -3929,114 +3862,191 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			break;
 		}
 		case STRUCT_FUNCTION: {
+			if(SIZE < 2 || (o_function->id() != FUNCTION_ID_HORZCAT && o_function->id() != FUNCTION_ID_VERTCAT) || !CALCULATOR->usesMatlabStyleMatrices()) {
+				ips_n.depth++;
+				if(o_function->id() == FUNCTION_ID_PARALLEL && SIZE >= 2) {
+					for(size_t i = 0; i < SIZE; i++) {
+						if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
+						if(i > 0) {
+							if(po.spacious) print_str += " ";
+							if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("∥", po.can_display_unicode_string_arg))) print_str += "∥";
+							else print_str += "||";
+							if(po.spacious) print_str += " ";
+						}
+						ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);;
+						print_str += CHILD(i).print(po, format, colorize, tagtype, ips_n);
+					}
+					break;
+				} else if(o_function->id() == FUNCTION_ID_ABS && SIZE == 1 && !po.preserve_format) {
+					print_str += "|";
+					print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
+					print_str += "|";
+					break;
+				} else if(o_function->id() == FUNCTION_ID_UNCERTAINTY && SIZE == 3 && CHILD(2).isZero()) {
+					MathStructure *mmid = NULL, *munc = NULL;
+					if(o_function->id() == FUNCTION_ID_UNCERTAINTY) {
+						mmid = &CHILD(0);
+						munc = &CHILD(1);
+					} else if(CHILD(0)[0].equals(CHILD(1)[0], true, true)) {
+						mmid = &CHILD(0)[0];
+						if(CHILD(0)[1].isNegate() && CHILD(0)[1][0].equals(CHILD(1)[1], true, true)) munc = &CHILD(1)[1];
+						if(CHILD(1)[1].isNegate() && CHILD(1)[1][0].equals(CHILD(0)[1], true, true)) munc = &CHILD(0)[1];
+					} else if(CHILD(0)[1].equals(CHILD(1)[1], true, true)) {
+						mmid = &CHILD(0)[1];
+						if(CHILD(0)[0].isNegate() && CHILD(0)[0][0].equals(CHILD(1)[0], true, true)) munc = &CHILD(1)[0];
+						if(CHILD(1)[0].isNegate() && CHILD(1)[0][0].equals(CHILD(0)[0], true, true)) munc = &CHILD(0)[0];
+					} else if(CHILD(0)[0].equals(CHILD(1)[1], true, true)) {
+						mmid = &CHILD(0)[0];
+						if(CHILD(0)[1].isNegate() && CHILD(0)[1][0].equals(CHILD(1)[0], true, true)) munc = &CHILD(1)[0];
+						if(CHILD(1)[0].isNegate() && CHILD(1)[0][0].equals(CHILD(0)[1], true, true)) munc = &CHILD(0)[1];
+					} else if(CHILD(0)[1].equals(CHILD(1)[0], true, true)) {
+						mmid = &CHILD(0)[0];
+						if(CHILD(0)[0].isNegate() && CHILD(0)[0][0].equals(CHILD(1)[1], true, true)) munc = &CHILD(1)[1];
+						if(CHILD(1)[1].isNegate() && CHILD(1)[1][0].equals(CHILD(0)[0], true, true)) munc = &CHILD(0)[0];
+					}
+					if(mmid && munc) {
+						PrintOptions po2 = po;
+						po2.show_ending_zeroes = false;
+						po2.number_fraction_format = FRACTION_DECIMAL;
+						ips_n.wrap = !CHILD(0).isNumber();
+						print_str += CHILD(0).print(po2, format, colorize, tagtype, ips_n);
+						print_str += SIGN_PLUSMINUS;
+						ips_n.wrap = !CHILD(1).isNumber();
+						print_str += CHILD(1).print(po2, format, colorize, tagtype, ips_n);
+						break;
+					}
+				}
+				const ExpressionName *ename = &o_function->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
+				if(ename->suffix && format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0) {
+					print_str += sub_suffix_html(ename->name);
+				} else {
+					print_str += ename->name;
+				}
+				if(po.hide_underscore_spaces && !ename->suffix) {
+					gsub("_", " ", print_str);
+				}
+				print_str += "(";
+				size_t argcount = SIZE;
+				if(o_function->id() == FUNCTION_ID_SIGNUM && argcount > 1) {
+					argcount = 1;
+				} else if(o_function->maxargs() > 0 && o_function->minargs() < o_function->maxargs() && SIZE > (size_t) o_function->minargs()) {
+					while(true) {
+						string defstr = o_function->getDefaultValue(argcount);
+						Argument *arg = o_function->getArgumentDefinition(argcount);
+						remove_blank_ends(defstr);
+						if(defstr.empty()) break;
+						if(CHILD(argcount - 1).isUndefined() && defstr == "undefined") {
+							argcount--;
+						} else if(arg && arg->type() == ARGUMENT_TYPE_SYMBOLIC && ((argcount > 1 && defstr == "undefined" && CHILD(argcount - 1) == CHILD(0).find_x_var()) || (defstr == "\"\"" && CHILD(argcount - 1) == ""))) {
+							argcount--;
+						} else if(CHILD(argcount - 1).isVariable() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr == CHILD(argcount - 1).variable()->referenceName()) {
+							argcount--;
+						} else if(CHILD(argcount - 1).isInteger() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr.find_first_not_of(NUMBERS, defstr[0] == '-' && defstr.length() > 1 ? 1 : 0) == string::npos && CHILD(argcount - 1).number() == s2i(defstr)) {
+							argcount--;
+						} else if(defstr[0] == '-' && CHILD(argcount - 1).isNegate() && CHILD(argcount - 1)[0].isInteger() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr.find_first_not_of(NUMBERS, 1) == string::npos && CHILD(argcount - 1)[0].number() == -s2i(defstr)) {
+							argcount--;
+						} else if(defstr[0] == '-' && CHILD(argcount - 1).isMultiplication() && CHILD(argcount - 1).size() == 2 && (CHILD(argcount - 1)[0].isMinusOne() || (CHILD(argcount - 1)[0].isNegate() && CHILD(argcount - 1)[0][0].isOne())) && CHILD(argcount - 1)[1].isInteger() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr.find_first_not_of(NUMBERS, 1) == string::npos && CHILD(argcount - 1)[1].number() == -s2i(defstr)) {
+							argcount--;
+						} else if(CHILD(argcount - 1).isSymbolic() && arg && arg->type() == ARGUMENT_TYPE_TEXT && (CHILD(argcount - 1).symbol() == defstr || (defstr == "\"\"" && CHILD(argcount - 1).symbol().empty()))) {
+							argcount--;
+						} else {
+							break;
+						}
+						if(argcount == 0 || argcount == (size_t) o_function->minargs()) break;
+					}
+				}
+				for(size_t i = 0; i < argcount; i++) {
+					if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
+					if(i > 0) {
+						print_str += po.comma();
+						if(po.spacious) print_str += " ";
+					}
+					ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);
+					if(o_function->id() == FUNCTION_ID_INTERVAL) {
+						PrintOptions po2 = po;
+						po2.show_ending_zeroes = false;
+						print_str += CHILD(i).print(po2, format, colorize, tagtype, ips_n);
+					} else {
+						print_str += CHILD(i).print(po, format, colorize, tagtype, ips_n);
+					}
+				}
+				print_str += ")";
+				break;
+			}
+		}
+		case STRUCT_VECTOR: {
 			ips_n.depth++;
-			if(o_function->id() == FUNCTION_ID_PARALLEL && SIZE >= 2) {
+			bool b_newstyle = false;
+			bool b_matrix = false;
+			bool b_vertcat = false;
+			if(m_type == STRUCT_FUNCTION) {
+				b_newstyle = true;
+				b_vertcat = (o_function->id() == FUNCTION_ID_VERTCAT);
+			} else if(CALCULATOR->usesMatlabStyleMatrices() && SIZE > 0) {
+				b_newstyle = true;
+				b_matrix = true;
+				size_t cols = 0;
+				for(size_t i = 0; i < SIZE; i++) {
+					if(CHILD(i).isVector() || (CHILD(i).isFunction() && CHILD(i).function()->id() == FUNCTION_ID_HORZCAT)) {
+						if(cols == 0) {
+							cols = CHILD(i).size();
+						} else if(cols != CHILD(i).size()) {
+							b_newstyle = false;
+							break;
+						}
+					} else if(cols > 1 || (CHILD(i).isFunction() && CHILD(i).function()->id() == FUNCTION_ID_VERTCAT)) {
+						b_newstyle = false;
+						break;
+					} else {
+						cols = 1;
+						b_matrix = false;
+					}
+				}
+			}
+			if(b_newstyle) {
+				print_str = "[";
+				ips_n.wrap = false;
+				bool b_comma = false;//!b_matrix && (po.comma() == ",");
+				for(size_t i = 0; i < SIZE; i++) {
+					if(i > 0) {
+						print_str += ";";
+						if(po.spacious) print_str += " ";
+					}
+					for(size_t i2 = 0; i2 < (b_matrix ? CHILD(i).size() : SIZE); i2++) {
+						if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
+						if(i2 > 0) {
+							if(b_vertcat) print_str += ";";
+							else if(b_comma) print_str += ",";
+							else if(format && tagtype == TAG_TYPE_HTML && po.spacious) print_str += "&nbsp;";
+							else print_str += " ";
+							if(po.spacious) print_str += " ";
+						}
+						if(b_matrix) {
+							ips_n.wrap = !b_comma && CHILD(i)[i2].needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);
+							print_str += CHILD(i)[i2].print(po, format, colorize, tagtype, ips_n);
+						} else {
+							ips_n.wrap = !b_comma && CHILD(i2).needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);
+							print_str += CHILD(i2).print(po, format, colorize, tagtype, ips_n);
+						}
+					}
+					if(!b_matrix) break;
+				}
+				print_str += "]";
+			} else {
+				if(SIZE <= 1) print_str = "[";
+				else print_str = "(";
 				for(size_t i = 0; i < SIZE; i++) {
 					if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 					if(i > 0) {
-						if(po.spacious) print_str += " ";
-						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("∥", po.can_display_unicode_string_arg))) print_str += "∥";
-						else print_str += "||";
+						print_str += po.comma();
 						if(po.spacious) print_str += " ";
 					}
-					ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);;
+					ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);
 					print_str += CHILD(i).print(po, format, colorize, tagtype, ips_n);
 				}
-				break;
-			} else if(o_function->id() == FUNCTION_ID_ABS && SIZE == 1 && !po.preserve_format) {
-				print_str += "|";
-				print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
-				print_str += "|";
-				break;
-			} else if(o_function->id() == FUNCTION_ID_UNCERTAINTY && SIZE == 3 && CHILD(2).isZero()) {
-				MathStructure *mmid = NULL, *munc = NULL;
-				if(o_function->id() == FUNCTION_ID_UNCERTAINTY) {
-					mmid = &CHILD(0);
-					munc = &CHILD(1);
-				} else if(CHILD(0)[0].equals(CHILD(1)[0], true, true)) {
-					mmid = &CHILD(0)[0];
-					if(CHILD(0)[1].isNegate() && CHILD(0)[1][0].equals(CHILD(1)[1], true, true)) munc = &CHILD(1)[1];
-					if(CHILD(1)[1].isNegate() && CHILD(1)[1][0].equals(CHILD(0)[1], true, true)) munc = &CHILD(0)[1];
-				} else if(CHILD(0)[1].equals(CHILD(1)[1], true, true)) {
-					mmid = &CHILD(0)[1];
-					if(CHILD(0)[0].isNegate() && CHILD(0)[0][0].equals(CHILD(1)[0], true, true)) munc = &CHILD(1)[0];
-					if(CHILD(1)[0].isNegate() && CHILD(1)[0][0].equals(CHILD(0)[0], true, true)) munc = &CHILD(0)[0];
-				} else if(CHILD(0)[0].equals(CHILD(1)[1], true, true)) {
-					mmid = &CHILD(0)[0];
-					if(CHILD(0)[1].isNegate() && CHILD(0)[1][0].equals(CHILD(1)[0], true, true)) munc = &CHILD(1)[0];
-					if(CHILD(1)[0].isNegate() && CHILD(1)[0][0].equals(CHILD(0)[1], true, true)) munc = &CHILD(0)[1];
-				} else if(CHILD(0)[1].equals(CHILD(1)[0], true, true)) {
-					mmid = &CHILD(0)[0];
-					if(CHILD(0)[0].isNegate() && CHILD(0)[0][0].equals(CHILD(1)[1], true, true)) munc = &CHILD(1)[1];
-					if(CHILD(1)[1].isNegate() && CHILD(1)[1][0].equals(CHILD(0)[0], true, true)) munc = &CHILD(0)[0];
-				}
-				if(mmid && munc) {
-					PrintOptions po2 = po;
-					po2.show_ending_zeroes = false;
-					po2.number_fraction_format = FRACTION_DECIMAL;
-					ips_n.wrap = !CHILD(0).isNumber();
-					print_str += CHILD(0).print(po2, format, colorize, tagtype, ips_n);
-					print_str += SIGN_PLUSMINUS;
-					ips_n.wrap = !CHILD(1).isNumber();
-					print_str += CHILD(1).print(po2, format, colorize, tagtype, ips_n);
-					break;
-				}
+				if(SIZE <= 1) print_str += "]";
+				else print_str += ")";
 			}
-			const ExpressionName *ename = &o_function->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
-			if(ename->suffix && format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0) {
-				print_str += sub_suffix_html(ename->name);
-			} else {
-				print_str += ename->name;
-			}
-			if(po.hide_underscore_spaces && !ename->suffix) {
-				gsub("_", " ", print_str);
-			}
-			print_str += "(";
-			size_t argcount = SIZE;
-			if(o_function->id() == FUNCTION_ID_SIGNUM && argcount > 1) {
-				argcount = 1;
-			} else if(o_function->maxargs() > 0 && o_function->minargs() < o_function->maxargs() && SIZE > (size_t) o_function->minargs()) {
-				while(true) {
-					string defstr = o_function->getDefaultValue(argcount);
-					Argument *arg = o_function->getArgumentDefinition(argcount);
-					remove_blank_ends(defstr);
-					if(defstr.empty()) break;
-					if(CHILD(argcount - 1).isUndefined() && defstr == "undefined") {
-						argcount--;
-					} else if(arg && arg->type() == ARGUMENT_TYPE_SYMBOLIC && ((argcount > 1 && defstr == "undefined" && CHILD(argcount - 1) == CHILD(0).find_x_var()) || (defstr == "\"\"" && CHILD(argcount - 1) == ""))) {
-						argcount--;
-					} else if(CHILD(argcount - 1).isVariable() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr == CHILD(argcount - 1).variable()->referenceName()) {
-						argcount--;
-					} else if(CHILD(argcount - 1).isInteger() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr.find_first_not_of(NUMBERS, defstr[0] == '-' && defstr.length() > 1 ? 1 : 0) == string::npos && CHILD(argcount - 1).number() == s2i(defstr)) {
-						argcount--;
-					} else if(defstr[0] == '-' && CHILD(argcount - 1).isNegate() && CHILD(argcount - 1)[0].isInteger() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr.find_first_not_of(NUMBERS, 1) == string::npos && CHILD(argcount - 1)[0].number() == -s2i(defstr)) {
-						argcount--;
-					} else if(defstr[0] == '-' && CHILD(argcount - 1).isMultiplication() && CHILD(argcount - 1).size() == 2 && (CHILD(argcount - 1)[0].isMinusOne() || (CHILD(argcount - 1)[0].isNegate() && CHILD(argcount - 1)[0][0].isOne())) && CHILD(argcount - 1)[1].isInteger() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr.find_first_not_of(NUMBERS, 1) == string::npos && CHILD(argcount - 1)[1].number() == -s2i(defstr)) {
-						argcount--;
-					} else if(CHILD(argcount - 1).isSymbolic() && arg && arg->type() == ARGUMENT_TYPE_TEXT && (CHILD(argcount - 1).symbol() == defstr || (defstr == "\"\"" && CHILD(argcount - 1).symbol().empty()))) {
-						argcount--;
-					} else {
-						break;
-					}
-					if(argcount == 0 || argcount == (size_t) o_function->minargs()) break;
-				}
-			}
-			for(size_t i = 0; i < argcount; i++) {
-				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
-				if(i > 0) {
-					print_str += po.comma();
-					if(po.spacious) print_str += " ";
-				}
-				ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);
-				if(o_function->id() == FUNCTION_ID_INTERVAL) {
-					PrintOptions po2 = po;
-					po2.show_ending_zeroes = false;
-					print_str += CHILD(i).print(po2, format, colorize, tagtype, ips_n);
-				} else {
-					print_str += CHILD(i).print(po, format, colorize, tagtype, ips_n);
-				}
-			}
-			print_str += ")";
 			break;
 		}
 		case STRUCT_UNDEFINED: {

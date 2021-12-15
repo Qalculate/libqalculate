@@ -237,6 +237,26 @@ ElementFunction::ElementFunction() : MathFunction("element", 2, 3) {
 	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SIZE));
 	setDefaultValue(3, "0");
 }
+bool ElementFunction::representsScalar(const MathStructure &vargs) const {
+	if(vargs.size() >= 2 && vargs[0].isVector() && vargs[1].isInteger() && vargs[1].number().isPositive()) {
+		if(vargs.size() == 2 || vargs[2].isZero()) {
+			if(vargs[1].number() <= vargs[0].size()) return vargs[0][vargs[1].number().uintValue() - 1].representsScalar();
+		} else if(vargs[0].isMatrix() && vargs[1].number() <= vargs[0].size() && vargs[2].isInteger() && vargs[2].number().isPositive() && vargs[2].number() <= vargs[0][0].size()) {
+			return vargs[0][vargs[1].number().uintValue() - 1][vargs[2].number().uintValue() - 1].representsScalar();
+		}
+	}
+	return false;
+}
+bool ElementFunction::representsNonMatrix(const MathStructure &vargs) const {
+	if(vargs.size() >= 2 && vargs[0].isVector() && vargs[1].isInteger() && vargs[1].number().isPositive()) {
+		if(vargs.size() == 2 || vargs[2].isZero()) {
+			if(vargs[1].number() <= vargs[0].size()) return vargs[0][vargs[1].number().uintValue() - 1].representsNonMatrix();
+		} else if(vargs[0].isMatrix() && vargs[1].number() <= vargs[0].size() && vargs[2].isInteger() && vargs[2].number().isPositive() && vargs[2].number() <= vargs[0][0].size()) {
+			return vargs[0][vargs[1].number().uintValue() - 1][vargs[2].number().uintValue() - 1].representsNonMatrix();
+		}
+	}
+	return false;
+}
 int ElementFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	size_t row = (size_t) vargs[1].number().uintValue();
 	size_t col = (size_t) vargs[2].number().uintValue();
@@ -271,6 +291,18 @@ int DimensionFunction::calculate(MathStructure &mstruct, const MathStructure &va
 ComponentFunction::ComponentFunction() : MathFunction("component", 2) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
 	setArgumentDefinition(2, new VectorArgument(""));
+}
+bool ComponentFunction::representsScalar(const MathStructure &vargs) const {
+	if(vargs.size() >= 2 && vargs[0].isVector() && vargs[1].isInteger() && vargs[1].number().isPositive() && vargs[1].number() <= vargs[0].size()) {
+		return vargs[0][vargs[1].number().uintValue() - 1].representsScalar();
+	}
+	return false;
+}
+bool ComponentFunction::representsNonMatrix(const MathStructure &vargs) const {
+	if(vargs.size() >= 2 && vargs[0].isVector() && vargs[1].isInteger() && vargs[1].number().isPositive() && vargs[1].number() <= vargs[0].size()) {
+		return vargs[0][vargs[1].number().uintValue() - 1].representsNonMatrix();
+	}
+	return false;
 }
 int ComponentFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	size_t i = (size_t) vargs[0].number().uintValue();

@@ -780,6 +780,12 @@ bool MathStructure::adjointMatrix(const EvaluationOptions &eo) {
 	return true;
 }
 bool MathStructure::transposeMatrix() {
+	if(SIZE > 0 && CHILD(0).size() == 1) {
+		for(size_t i = 0; i < SIZE; i++) {
+			CHILD(i).setToChild(1, true);
+		}
+		return true;
+	}
 	MathStructure msave(*this);
 	resizeMatrix(CHILD(0).size(), SIZE, m_undefined);
 	for(size_t index_r = 0; index_r < SIZE; index_r++) {

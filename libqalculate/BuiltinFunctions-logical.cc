@@ -188,6 +188,12 @@ IFFunction::IFFunction() : MathFunction("if", 3, 4) {
 	setArgumentDefinition(4, new BooleanArgument());
 	setDefaultValue(4, "0");
 }
+bool IFFunction::representsScalar(const MathStructure &vargs) const {
+	return vargs.size() >= 3 && vargs[1].representsScalar() && vargs[2].representsScalar();
+}
+bool IFFunction::representsNonMatrix(const MathStructure &vargs) const {
+	return vargs.size() >= 3 && vargs[1].representsNonMatrix() && vargs[2].representsNonMatrix();
+}
 int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isNumber()) {
 		int result = vargs[0].number().getBoolean();
@@ -201,7 +207,10 @@ int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 		return 1;
 	}
 	mstruct = vargs[0];
+	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_HORZCAT) mstruct.calculateFunctions(eo, false);
 	if(mstruct.isVector()) {
+		MathStructure m2(vargs[1]);
+		if(m2.isFunction() && m2.function()->id() == FUNCTION_ID_HORZCAT) m2.calculateFunctions(eo, false);
 		for(size_t i = 0; i < mstruct.size(); i++) {
 			mstruct[i].eval(eo);
 			if(!mstruct[i].isNumber() && vargs[3].isZero()) {
@@ -209,10 +218,10 @@ int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 			}
 			int result = mstruct[i].number().getBoolean();
 			if(result > 0) {
-				if(vargs[1].isVector() && vargs[1].size() == vargs[0].size()) {
-					mstruct = vargs[1][i];
+				if(m2.isVector() && m2.size() == vargs[0].size()) {
+					mstruct = m2[i];
 				} else {
-					mstruct = vargs[1];
+					mstruct = m2[1];
 				}
 				return 1;
 			} else if(result < 0 && vargs[3].isZero()) {
