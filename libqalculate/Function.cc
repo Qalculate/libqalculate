@@ -2150,6 +2150,9 @@ bool VectorArgument::subtest(MathStructure &value, const EvaluationOptions &eo) 
 		else if(value.representsScalar()) value.transform(STRUCT_VECTOR);
 		else return false;
 	}
+	if(value.isMatrix() && value.columns() == 1 && value.rows() > 1) {
+		value.transposeMatrix();
+	}
 	if(b_argloop && subargs.size() > 0) {
 		for(size_t i = 0; i < value.countChildren(); i++) {
 			if(!subargs[i % subargs.size()]->test(value[i], 1, NULL, eo)) {

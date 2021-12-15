@@ -1704,7 +1704,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						stmp2 = str.substr(col_index, i - col_index);
 						remove_blank_ends(stmp2);
 						MathStructure *mcol = NULL;
-						if(b_comma | !b_row || !stmp2.empty()) {
+						if(b_comma || !b_row || !stmp2.empty()) {
 							bool b_unit = false;
 							if(!b_comma && !prev_func.empty()) {
 								prev_func += stmp2;
@@ -1766,6 +1766,12 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				if(brackets != 0 && unended_function && !unended_test.isZero()) {
 					unended_function->set(unended_test);
 				}
+				if(mstruct2->type() == STRUCT_FUNCTION) {
+					for(size_t i = 1; i <= mstruct2->size(); i++) {
+						while(mstruct2->getChild(i)->isVector() && mstruct2->getChild(i)->size() == 1) mstruct2->getChild(i)->setToChild(1);
+					}
+				}
+				while(mstruct2->isVector() && mstruct2->size() == 1) mstruct2->setToChild(1);
 				po.unended_function = NULL;
 				stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 				stmp += i2s(addId(mstruct2));

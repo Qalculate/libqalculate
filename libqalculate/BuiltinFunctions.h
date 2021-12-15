@@ -16,6 +16,26 @@
 #include <libqalculate/MathStructure.h>
 #include <libqalculate/includes.h>
 
+#define TEST_NM_S_FUNCTIONS \
+	bool representsNonMatrix(const MathStructure &vargs) const {\
+		if(vargs.size() == 1) return vargs[0].representsNonMatrix();\
+		bool non_scalar = false;\
+		for(size_t i = 0; i < vargs.size(); i++) {\
+			if(!vargs[i].representsNonMatrix()) return false;\
+			if(!vargs[i].representsScalar()) {\
+				if(non_scalar) return false;\
+				non_scalar = true;\
+			}\
+		}\
+		return true;\
+	}\
+	bool representsScalar(const MathStructure &vargs) const {\
+		for(size_t i = 0; i < vargs.size(); i++) {\
+			if(!vargs[i].representsScalar()) return false;\
+		}\
+		return true;\
+	}\
+
 #define DECLARE_BUILTIN_FUNCTION(x, i)		class x : public MathFunction { \
 						  public: \
 							int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
@@ -36,13 +56,23 @@
 							int id() const {return i;}\
 						};
 
+#define DECLARE_BUILTIN_FUNCTION_MT(x, i)	class x : public MathFunction { \
+						  public: \
+							int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+							x(); \
+							x(const x *function) {set(function);} \
+							ExpressionItem *copy() const {return new x(this);} \
+							TEST_NM_S_FUNCTIONS\
+							int id() const {return i;}\
+						};
+
 #define DECLARE_BUILTIN_FUNCTION_B(x, i)	class x : public MathFunction { \
 						  public: \
 							int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
 							x(); \
 							x(const x *function) {set(function);} \
 							ExpressionItem *copy() const {return new x(this);} \
-							bool representsBoolean(const MathStructure&) const {return true;}\
+							bool representsBoolean(const MathStructure &vargs) const {return vargs.size() > 0 && vargs[0].representsScalar();}\
 							int id() const {return i;}\
 						};
 
@@ -52,8 +82,8 @@
 							x(); \
 							x(const x *function) {set(function);} \
 							ExpressionItem *copy() const {return new x(this);} \
-							bool representsInteger(const MathStructure&, bool) const {return true;}\
-							bool representsPositive(const MathStructure&, bool) const {return true;}\
+							bool representsInteger(const MathStructure &vargs, bool) const {return vargs.size() > 0 && vargs[0].representsScalar();}\
+							bool representsPositive(const MathStructure &vargs, bool) const {return vargs.size() > 0 && vargs[0].representsScalar();}\
 							int id() const {return i;}\
 						};
 
@@ -66,24 +96,7 @@
 							bool representsReal(const MathStructure&, bool) const;\
 							bool representsInteger(const MathStructure&, bool) const;\
 							bool representsNonNegative(const MathStructure&, bool) const;\
-							bool representsNonMatrix(const MathStructure &vargs) const {\
-								if(vargs.size() == 1) return vargs[0].representsNonMatrix();\
-								bool non_scalar = false;\
-								for(size_t i = 0; i < vargs.size(); i++) {\
-									if(!vargs[i].representsNonMatrix()) return false;\
-									if(!vargs[i].representsScalar()) {\
-										if(non_scalar) return false;\
-										non_scalar = true;\
-									}\
-								}\
-								return true;\
-							}\
-							bool representsScalar(const MathStructure &vargs) const {\
-								for(size_t i = 0; i < vargs.size(); i++) {\
-									if(!vargs[i].representsScalar()) return false;\
-								}\
-								return true;\
-							}\
+							TEST_NM_S_FUNCTIONS\
 							int id() const {return i;}\
 						};
 
@@ -107,24 +120,7 @@
 							bool representsEven(const MathStructure &vargs, bool allow_units = false) const;\
 							bool representsOdd(const MathStructure &vargs, bool allow_units = false) const;\
 							bool representsUndefined(const MathStructure &vargs) const;\
-							bool representsNonMatrix(const MathStructure &vargs) const {\
-								if(vargs.size() == 1) return vargs[0].representsNonMatrix();\
-								bool non_scalar = false;\
-								for(size_t i = 0; i < vargs.size(); i++) {\
-									if(!vargs[i].representsNonMatrix()) return false;\
-									if(!vargs[i].representsScalar()) {\
-										if(non_scalar) return false;\
-										non_scalar = true;\
-									}\
-								}\
-								return true;\
-							}\
-							bool representsScalar(const MathStructure &vargs) const {\
-								for(size_t i = 0; i < vargs.size(); i++) {\
-									if(!vargs[i].representsScalar()) return false;\
-								}\
-								return true;\
-							}\
+							TEST_NM_S_FUNCTIONS\
 							int id() const {return i;}\
 						};
 
@@ -137,24 +133,7 @@
 							bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
 							bool representsReal(const MathStructure &vargs, bool allow_units = false) const;\
 							bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
-							bool representsNonMatrix(const MathStructure &vargs) const {\
-								if(vargs.size() == 1) return vargs[0].representsNonMatrix();\
-								bool non_scalar = false;\
-								for(size_t i = 0; i < vargs.size(); i++) {\
-									if(!vargs[i].representsNonMatrix()) return false;\
-									if(!vargs[i].representsScalar()) {\
-										if(non_scalar) return false;\
-										non_scalar = true;\
-									}\
-								}\
-								return true;\
-							}\
-							bool representsScalar(const MathStructure &vargs) const {\
-								for(size_t i = 0; i < vargs.size(); i++) {\
-									if(!vargs[i].representsScalar()) return false;\
-								}\
-								return true;\
-							}\
+							TEST_NM_S_FUNCTIONS\
 							int id() const {return i;}\
 						};
 
@@ -169,24 +148,7 @@
 							bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
 							bool representsComplex(const MathStructure &vargs, bool allow_units = false) const;\
 							bool representsNonZero(const MathStructure &vargs, bool allow_units = false) const;\
-							bool representsNonMatrix(const MathStructure &vargs) const {\
-								if(vargs.size() == 1) return vargs[0].representsNonMatrix();\
-								bool non_scalar = false;\
-								for(size_t i = 0; i < vargs.size(); i++) {\
-									if(!vargs[i].representsNonMatrix()) return false;\
-									if(!vargs[i].representsScalar()) {\
-										if(non_scalar) return false;\
-										non_scalar = true;\
-									}\
-								}\
-								return true;\
-							}\
-							bool representsScalar(const MathStructure &vargs) const {\
-								for(size_t i = 0; i < vargs.size(); i++) {\
-									if(!vargs[i].representsScalar()) return false;\
-								}\
-								return true;\
-							}\
+							TEST_NM_S_FUNCTIONS\
 							int id() const {return i;}\
 						};
 
@@ -197,24 +159,7 @@
 							x(const x *function) {set(function);} \
 							ExpressionItem *copy() const {return new x(this);} \
 							bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
-							bool representsNonMatrix(const MathStructure &vargs) const {\
-								if(vargs.size() == 1) return vargs[0].representsNonMatrix();\
-								bool non_scalar = false;\
-								for(size_t i = 0; i < vargs.size(); i++) {\
-									if(!vargs[i].representsNonMatrix()) return false;\
-									if(!vargs[i].representsScalar()) {\
-										if(non_scalar) return false;\
-										non_scalar = true;\
-									}\
-								}\
-								return true;\
-							}\
-							bool representsScalar(const MathStructure &vargs) const {\
-								for(size_t i = 0; i < vargs.size(); i++) {\
-									if(!vargs[i].representsScalar()) return false;\
-								}\
-								return true;\
-							}\
+							TEST_NM_S_FUNCTIONS\
 							int id() const {return i;}\
 						};
 
@@ -436,7 +381,7 @@ DECLARE_BUILTIN_FUNCTION(VectorFunction, FUNCTION_ID_VECTOR)
 DECLARE_BUILTIN_FUNCTION(LimitsFunction, FUNCTION_ID_LIMITS)
 DECLARE_BUILTIN_FUNCTION(RankFunction, FUNCTION_ID_RANK)
 DECLARE_BUILTIN_FUNCTION(SortFunction, FUNCTION_ID_SORT)
-DECLARE_BUILTIN_FUNCTION(ComponentFunction, FUNCTION_ID_COMPONENT)
+DECLARE_BUILTIN_FUNCTION_M(ComponentFunction, FUNCTION_ID_COMPONENT)
 DECLARE_BUILTIN_FUNCTION_PI(DimensionFunction, FUNCTION_ID_DIMENSION)
 DECLARE_BUILTIN_FUNCTION(MatrixFunction, FUNCTION_ID_MATRIX)
 DECLARE_BUILTIN_FUNCTION(VertCatFunction, FUNCTION_ID_VERTCAT)
@@ -449,7 +394,7 @@ DECLARE_BUILTIN_FUNCTION_PI(ColumnsFunction, FUNCTION_ID_COLUMNS)
 DECLARE_BUILTIN_FUNCTION(RowFunction, FUNCTION_ID_ROW)
 DECLARE_BUILTIN_FUNCTION(ColumnFunction, FUNCTION_ID_COLUMN)
 DECLARE_BUILTIN_FUNCTION_PI(ElementsFunction, FUNCTION_ID_ELEMENTS)
-DECLARE_BUILTIN_FUNCTION(ElementFunction, FUNCTION_ID_ELEMENT)
+DECLARE_BUILTIN_FUNCTION_M(ElementFunction, FUNCTION_ID_ELEMENT)
 DECLARE_BUILTIN_FUNCTION(TransposeFunction, FUNCTION_ID_TRANSPOSE)
 DECLARE_BUILTIN_FUNCTION(IdentityMatrixFunction, FUNCTION_ID_IDENTITY)
 DECLARE_BUILTIN_FUNCTION(DeterminantFunction, FUNCTION_ID_DETERMINANT)
@@ -480,9 +425,9 @@ DECLARE_BUILTIN_FUNCTION_R(RootFunction, FUNCTION_ID_ROOT)
 DECLARE_BUILTIN_FUNCTION(SquareFunction, FUNCTION_ID_SQUARE)
 DECLARE_BUILTIN_FUNCTION(ExpFunction, FUNCTION_ID_EXP)
 DECLARE_BUILTIN_FUNCTION_R(LogFunction, FUNCTION_ID_LOG)
-DECLARE_BUILTIN_FUNCTION(LognFunction, FUNCTION_ID_LOGN)
+DECLARE_BUILTIN_FUNCTION_MT(LognFunction, FUNCTION_ID_LOGN)
 DECLARE_BUILTIN_FUNCTION_R3(LambertWFunction, FUNCTION_ID_LAMBERT_W)
-DECLARE_BUILTIN_FUNCTION(CisFunction, FUNCTION_ID_CIS)
+DECLARE_BUILTIN_FUNCTION_MT(CisFunction, FUNCTION_ID_CIS)
 
 DECLARE_BUILTIN_FUNCTION_R2(SinFunction, FUNCTION_ID_SIN)
 DECLARE_BUILTIN_FUNCTION_R2(CosFunction, FUNCTION_ID_COS)
@@ -500,17 +445,17 @@ DECLARE_BUILTIN_FUNCTION_R2(SincFunction, FUNCTION_ID_SINC)
 DECLARE_BUILTIN_FUNCTION_R1(Atan2Function, FUNCTION_ID_ATAN2)
 DECLARE_BUILTIN_FUNCTION(RadiansToDefaultAngleUnitFunction, FUNCTION_ID_RADIANS_TO_DEFAULT_ANGLE_UNIT)
 
-DECLARE_BUILTIN_FUNCTION(ZetaFunction, FUNCTION_ID_ZETA)
-DECLARE_BUILTIN_FUNCTION(GammaFunction, FUNCTION_ID_GAMMA)
-DECLARE_BUILTIN_FUNCTION(DigammaFunction, FUNCTION_ID_DIGAMMA)
-DECLARE_BUILTIN_FUNCTION(BetaFunction, FUNCTION_ID_BETA)
-DECLARE_BUILTIN_FUNCTION(AiryFunction, FUNCTION_ID_AIRY)
-DECLARE_BUILTIN_FUNCTION(BesseljFunction, FUNCTION_ID_BESSELJ)
-DECLARE_BUILTIN_FUNCTION(BesselyFunction, FUNCTION_ID_BESSELY)
+DECLARE_BUILTIN_FUNCTION_MT(ZetaFunction, FUNCTION_ID_ZETA)
+DECLARE_BUILTIN_FUNCTION_MT(GammaFunction, FUNCTION_ID_GAMMA)
+DECLARE_BUILTIN_FUNCTION_MT(DigammaFunction, FUNCTION_ID_DIGAMMA)
+DECLARE_BUILTIN_FUNCTION_MT(BetaFunction, FUNCTION_ID_BETA)
+DECLARE_BUILTIN_FUNCTION_MT(AiryFunction, FUNCTION_ID_AIRY)
+DECLARE_BUILTIN_FUNCTION_MT(BesseljFunction, FUNCTION_ID_BESSELJ)
+DECLARE_BUILTIN_FUNCTION_MT(BesselyFunction, FUNCTION_ID_BESSELY)
 DECLARE_BUILTIN_FUNCTION_R(ErfFunction, FUNCTION_ID_ERF)
 DECLARE_BUILTIN_FUNCTION_R(ErfiFunction, FUNCTION_ID_ERFI)
 DECLARE_BUILTIN_FUNCTION_R(ErfcFunction, FUNCTION_ID_ERFC)
-DECLARE_BUILTIN_FUNCTION(ErfinvFunction, FUNCTION_ID_ERFINV)
+DECLARE_BUILTIN_FUNCTION_MT(ErfinvFunction, FUNCTION_ID_ERFINV)
 DECLARE_BUILTIN_FUNCTION_R2(LiFunction, FUNCTION_ID_POLYLOG)
 
 DECLARE_BUILTIN_FUNCTION_R(HeavisideFunction, FUNCTION_ID_HEAVISIDE)
@@ -552,21 +497,21 @@ DECLARE_BUILTIN_FUNCTION_R(ImFunction, FUNCTION_ID_IM)
 DECLARE_BUILTIN_FUNCTION_R2(ArgFunction, FUNCTION_ID_ARG)
 
 DECLARE_BUILTIN_FUNCTION_R(AbsFunction, FUNCTION_ID_ABS)
-DECLARE_BUILTIN_FUNCTION(GcdFunction, FUNCTION_ID_GCD)
-DECLARE_BUILTIN_FUNCTION(LcmFunction, FUNCTION_ID_LCM)
+DECLARE_BUILTIN_FUNCTION_MT(GcdFunction, FUNCTION_ID_GCD)
+DECLARE_BUILTIN_FUNCTION_MT(LcmFunction, FUNCTION_ID_LCM)
 DECLARE_BUILTIN_FUNCTION_R(SignumFunction, FUNCTION_ID_SIGNUM)
 DECLARE_BUILTIN_FUNCTION_R(RoundFunction, FUNCTION_ID_ROUND)
 DECLARE_BUILTIN_FUNCTION_R(FloorFunction, FUNCTION_ID_FLOOR)
 DECLARE_BUILTIN_FUNCTION_R(CeilFunction, FUNCTION_ID_CEIL)
 DECLARE_BUILTIN_FUNCTION_R(TruncFunction, FUNCTION_ID_TRUNC)
-DECLARE_BUILTIN_FUNCTION(NumeratorFunction, FUNCTION_ID_NUMERATOR)
-DECLARE_BUILTIN_FUNCTION(DenominatorFunction, FUNCTION_ID_DENOMINATOR)
-DECLARE_BUILTIN_FUNCTION(IntFunction, FUNCTION_ID_INT)
-DECLARE_BUILTIN_FUNCTION(FracFunction, FUNCTION_ID_FRAC)
-DECLARE_BUILTIN_FUNCTION(RemFunction, FUNCTION_ID_REM)
-DECLARE_BUILTIN_FUNCTION(ModFunction, FUNCTION_ID_MOD)
-DECLARE_BUILTIN_FUNCTION(BernoulliFunction, FUNCTION_ID_BERNOULLI)
-DECLARE_BUILTIN_FUNCTION(TotientFunction, FUNCTION_ID_TOTIENT)
+DECLARE_BUILTIN_FUNCTION_MT(NumeratorFunction, FUNCTION_ID_NUMERATOR)
+DECLARE_BUILTIN_FUNCTION_MT(DenominatorFunction, FUNCTION_ID_DENOMINATOR)
+DECLARE_BUILTIN_FUNCTION_MT(IntFunction, FUNCTION_ID_INT)
+DECLARE_BUILTIN_FUNCTION_MT(FracFunction, FUNCTION_ID_FRAC)
+DECLARE_BUILTIN_FUNCTION_MT(RemFunction, FUNCTION_ID_REM)
+DECLARE_BUILTIN_FUNCTION_MT(ModFunction, FUNCTION_ID_MOD)
+DECLARE_BUILTIN_FUNCTION_MT(BernoulliFunction, FUNCTION_ID_BERNOULLI)
+DECLARE_BUILTIN_FUNCTION_MT(TotientFunction, FUNCTION_ID_TOTIENT)
 DECLARE_BUILTIN_FUNCTION(ParallelFunction, FUNCTION_ID_PARALLEL)
 
 DECLARE_BUILTIN_FUNCTION(BinFunction, FUNCTION_ID_BIN)
@@ -606,7 +551,7 @@ DECLARE_BUILTIN_FUNCTION(ShiftFunction, FUNCTION_ID_SHIFT)
 DECLARE_BUILTIN_FUNCTION(CircularShiftFunction, FUNCTION_ID_CIRCULAR_SHIFT)
 
 DECLARE_BUILTIN_FUNCTION(ForFunction, FUNCTION_ID_FOR)
-DECLARE_BUILTIN_FUNCTION(IFFunction, FUNCTION_ID_IF)
+DECLARE_BUILTIN_FUNCTION_M(IFFunction, FUNCTION_ID_IF)
 
 DECLARE_BUILTIN_FUNCTION(TotalFunction, FUNCTION_ID_TOTAL)
 DECLARE_BUILTIN_FUNCTION(PercentileFunction, FUNCTION_ID_PERCENTILE)
