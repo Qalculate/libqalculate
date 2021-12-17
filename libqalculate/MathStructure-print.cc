@@ -2963,7 +2963,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 						break;
 					}
 					default: {
-						if(!in_cit1 && !in_cit2 && brackets == 0 && pars == 0 && (str_e[i] == ';' || str_e[i] == ',' || str_e[i] == ' ' || ((unsigned char) str_e[i] == 0xE2 && i + 2 < str_e.size() && (unsigned char) str_e[i + 1] == 0x80 && (unsigned char) str_e[i + 2] == 0x89))) {
+						if(!in_cit1 && !in_cit2 && brackets == 0 && pars == 0 && (str_e[i] == ';' || (str_e[i] == ',' && po.decimalpoint() != ",") || str_e[i] == ' ' || ((unsigned char) str_e[i] == 0xE2 && i + 2 < str_e.size() && (unsigned char) str_e[i + 1] == 0x80 && (unsigned char) str_e[i + 2] == 0x89))) {
 							return true;
 						}
 					}
@@ -3164,6 +3164,21 @@ bool has_power_in_power(const MathStructure &m) {
 	}
 	return false;
 }
+
+size_t unformatted_unicode_length(const string &str) {
+	size_t l = str.length(), l2 = 0;
+	for(size_t i = 0; i < l; i++) {
+		if(str[i] == '\033') {
+			do {
+				i++;
+			} while(i < l && str[i] != 'm');
+		} else if(str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
+			l2++;
+		}
+	}
+	return l2;
+}
+
 string MathStructure::print(const PrintOptions &po, bool format, int colorize, int tagtype, const InternalPrintStruct &ips) const {
 	if(ips.depth == 0 && po.is_approximate) *po.is_approximate = false;
 	string print_str;
@@ -3508,6 +3523,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			break;
 		}
 		case STRUCT_POWER: {
+			ips_n.depth++;
 			if(!po.negative_exponents && tagtype == TAG_TYPE_TERMINAL && po.use_unicode_signs && po.place_units_separately && !po.preserve_format && CHILD(0).isUnit() && CHILD(1).isInteger() && CHILD(1).number() >= 2 && CHILD(1).number() <= 9) {
 				string s_super;
 				if(CHILD(1).number() == 2) s_super = SIGN_POWER_2;
@@ -3990,6 +4006,10 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					if(CHILD(i).isVector() || (CHILD(i).isFunction() && CHILD(i).function()->id() == FUNCTION_ID_HORZCAT)) {
 						if(cols == 0) {
 							cols = CHILD(i).size();
+							if(cols == 0) {
+								b_newstyle = false;
+								break;
+							}
 						} else if(cols != CHILD(i).size()) {
 							b_newstyle = false;
 							break;
@@ -4004,34 +4024,68 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				}
 			}
 			if(b_newstyle) {
-				print_str = "[";
-				ips_n.wrap = false;
-				bool b_comma = false;//!b_matrix && (po.comma() == ",");
-				for(size_t i = 0; i < SIZE; i++) {
-					if(i > 0) {
-						print_str += ";";
-						if(po.spacious) print_str += " ";
+				if((b_matrix || b_vertcat) && format && tagtype == TAG_TYPE_TERMINAL && ips.depth == 0 && po.allow_non_usable && !po.preserve_format) {
+					vector<vector<string> > vstr;
+					vector<size_t> lengths;
+					lengths.resize(b_matrix ? CHILD(0).size() : SIZE);
+					vstr.resize(b_matrix ? SIZE : 1);
+					string estr;
+					ips_n.wrap = false;
+					for(size_t i = 0; i < SIZE; i++) {
+						for(size_t i2 = 0; i2 < (b_matrix ? CHILD(i).size() : SIZE); i2++) {
+							if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
+							if(b_matrix) {
+								ips_n.wrap = CHILD(i)[i2].needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);
+								estr = CHILD(i)[i2].print(po, format, colorize, tagtype, ips_n);
+							} else {
+								ips_n.wrap = CHILD(i2).needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);
+								estr = CHILD(i2).print(po, format, colorize, tagtype, ips_n);
+							}
+							if(i == 0 || unformatted_unicode_length(estr) > lengths[i2]) lengths[i2] = unformatted_unicode_length(estr);
+							vstr[i].push_back(estr);
+						}
+						if(!b_matrix) break;
 					}
-					for(size_t i2 = 0; i2 < (b_matrix ? CHILD(i).size() : SIZE); i2++) {
-						if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
-						if(i2 > 0) {
-							if(b_vertcat) print_str += ";";
-							else if(b_comma) print_str += ",";
-							else if(format && tagtype == TAG_TYPE_HTML && po.spacious) print_str += "&nbsp;";
-							else print_str += " ";
+					for(size_t i = 0; i < vstr.size(); i++) {
+						for(size_t i2 = 0; i2 < vstr[i].size(); i2++) {
+							vstr[i][i2].insert(0, lengths[i2] - unformatted_unicode_length(vstr[i][i2]) + (i2 == 0 ? 0 : 2), ' ');
+						}
+					}
+					for(size_t i = 0; i < vstr.size(); i++) {
+						if(i > 0) print_str += "\n\n";
+						for(size_t i2 = 0; i2 < vstr[i].size(); i2++) {
+							print_str += vstr[i][i2];
+						}
+						if(!b_matrix) break;
+					}
+				} else {
+					print_str = "[";
+					ips_n.wrap = false;
+					for(size_t i = 0; i < SIZE; i++) {
+						if(i > 0) {
+							print_str += ";";
 							if(po.spacious) print_str += " ";
 						}
-						if(b_matrix) {
-							ips_n.wrap = !b_comma && CHILD(i)[i2].needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);
-							print_str += CHILD(i)[i2].print(po, format, colorize, tagtype, ips_n);
-						} else {
-							ips_n.wrap = !b_comma && CHILD(i2).needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);
-							print_str += CHILD(i2).print(po, format, colorize, tagtype, ips_n);
+						for(size_t i2 = 0; i2 < (b_matrix ? CHILD(i).size() : SIZE); i2++) {
+							if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
+							if(i2 > 0) {
+								if(b_vertcat) print_str += ";";
+								else if(format && tagtype == TAG_TYPE_HTML && po.spacious) print_str += "&nbsp;";
+								else print_str += " ";
+								if(po.spacious) print_str += " ";
+							}
+							if(b_matrix) {
+								ips_n.wrap = CHILD(i)[i2].needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);
+								print_str += CHILD(i)[i2].print(po, format, colorize, tagtype, ips_n);
+							} else {
+								ips_n.wrap = CHILD(i2).needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);
+								print_str += CHILD(i2).print(po, format, colorize, tagtype, ips_n);
+							}
 						}
+						if(!b_matrix) break;
 					}
-					if(!b_matrix) break;
+					print_str += "]";
 				}
-				print_str += "]";
 			} else {
 				if(SIZE <= 1) print_str = "[";
 				else print_str = "(";

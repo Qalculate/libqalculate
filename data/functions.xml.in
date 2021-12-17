@@ -38,7 +38,7 @@
       <_title>Sort</_title>
       <_names>r:sort</_names>
       <_description>Returns a sorted vector.</_description>
-      <example>$name([6, 1, 4]) = [1, 4, 6]</example>
+      <example>$name([6  1  4]) = [1, 4, 6]</example>
       <argument index="1">
         <_title>Vector</_title>
       </argument>
@@ -50,7 +50,7 @@
       <_title>Rank</_title>
       <_names>r:rank</_names>
       <_description>Returns a vector with values of elements replaced with their mutual ranks.</_description>
-      <example>$name([6, 1, 4]) = [3, 1, 2]</example>
+      <example>$name([6  1  4]) = [3  1  2]</example>
       <argument index="1">
         <_title>Vector</_title>
       </argument>
@@ -293,17 +293,6 @@
         <_title>Value</_title>
       </argument>
     </builtin_function>
-    <builtin_function name="hadamard">
-      <_title>Hadamard Product</_title>
-      <_names>r:hadamard</_names>
-      <_description>Mulitplies each separate element in matrix 1 with the corresponding element in matrix 2.</_description>
-      <argument index="1">
-        <_title>Matrix 1</_title>
-      </argument>
-      <argument index="2">
-        <_title>Matrix 2</_title>
-      </argument>
-    </builtin_function>
     <builtin_function name="rk">
       <_title>Matrix Rank</_title>
       <_names>r:rk</_names>
@@ -318,11 +307,31 @@
         <_title>Matrix</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="horzcat">
+      <_title>Concatenate Horizontally</_title>
+      <names>r:horzcat</names>
+      <argument index="1">
+        <_title>Matrix 1</_title>
+      </argument>
+      <argument index="2">
+        <_title>Matrix 2</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="vertcat">
+      <_title>Concatenate Vertically</_title>
+      <names>r:vertcat</names>
+      <argument index="1">
+        <_title>Matrix 1</_title>
+      </argument>
+      <argument index="2">
+        <_title>Matrix 2</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="entrywise">
       <_title>Entrywise Function</_title>
       <_names>r:entrywise</_names>
       <_description>Calculates a new matrix or vector using each separate element in matrix/vector 1 and the corresponding (in the same row and column) elements in matrix/vector 2. An unlimited number of matrices/vectors can be specified, with each matrix/vector argument followed by the corresponding variable used in the function argument.</_description>
-      <example>$name(x / y, [4, 10, 12], x, [2, 2, 4], y) = [2, 5, 3]</example>
+      <example>$name(x / y, [4  10  12], x, [2  2  4], y) = [2  5  3]</example>
       <argument index="1">
         <_title>Function</_title>
       </argument>
@@ -354,7 +363,7 @@
     </builtin_function>
     <builtin_function name="times">
       <_title>Element-wise Multiplication</_title>
-      <_names>r:multiply,times</_names>
+      <_names>r:multiply,times,hadamard</_names>
       <argument index="1">
         <_title>Factor 1</_title>
       </argument>
@@ -386,7 +395,7 @@
       <_title>Cross Product</_title>
       <_names>r:cross</_names>
       <_description>Calculates the cross product of two 3-dimensional vectors.</_description>
-      <expression>[(element(\x,2)*element(\y,3))-(element(\x,3)*element(\y,2)),(element(\x,3)*element(\y,1))-(element(\x,1)*element(\y,3)),(element(\x,1)*element(\y,2))-(element(\x,2)*element(\y,1))]</expression>
+      <expression>((element(\x,2)*element(\y,3))-(element(\x,3)*element(\y,2)),(element(\x,3)*element(\y,1))-(element(\x,1)*element(\y,3)),(element(\x,1)*element(\y,2))-(element(\x,2)*element(\y,1)))</expression>
       <argument type="vector" index="1">
         <_title>Vector 1</_title>
         <condition>dimension(\x)==3</condition>
@@ -1495,7 +1504,7 @@
       <_names>r:raid</_names>
       <_description>Calculates RAID array disk capacity usable for data storage. If the combination of number of disks and RAID level is invalid, zero is returned. Supported RAID levels are 0, 1, 2, 3, 4, 5, 6, 1+0/10, 0+1, 5+0/50, 6+0/60, and 1+6. Stripes are optional and only used for nested RAID levels (except 1+0).</_description>
       <example>$name(4, 12, 5) = 12</example>
-      <expression>if([\x="0",\x="1"||\x="1E",\x="2",\x="3"||\x="4"||\x="5",\x="6",\x="10"||\x="1+0",\x="01"||\x="0+1",\x="1+6",\x="50"||\x="5+0",\x="60"||\x="6+0"],[\z*\y,if(\z&gt;=2,\y,0),if(\z&gt;=3,(\z-log(\z+1,2))*\y,0),if(\z&gt;=3,(\z-1)*\y,0),if(\z&gt;=4,(\z-2)*\y,0),if(\z&gt;=4&amp;&amp;even(\z),\z/2*\y,0),if(\z&gt;=4,\z/\A{2}*\y,0),if(\z&gt;=8,(\A-2)*\y,0),if(\z&gt;=6,(\z-\A)*\y,0),if(\z&gt;=8,(\z-\A*2)*\y,0)],error("Unknown RAID level"),1)</expression>
+      <expression>if((\x="0",\x="1"||\x="1E",\x="2",\x="3"||\x="4"||\x="5",\x="6",\x="10"||\x="1+0",\x="01"||\x="0+1",\x="1+6",\x="50"||\x="5+0",\x="60"||\x="6+0"),(\z*\y,if(\z&gt;=2,\y,0),if(\z&gt;=3,(\z-log(\z+1,2))*\y,0),if(\z&gt;=3,(\z-1)*\y,0),if(\z&gt;=4,(\z-2)*\y,0),if(\z&gt;=4&amp;&amp;even(\z),\z/2*\y,0),if(\z&gt;=4,\z/\A{2}*\y,0),if(\z&gt;=8,(\A-2)*\y,0),if(\z&gt;=6,(\z-\A)*\y,0),if(\z&gt;=8,(\z-\A*2)*\y,0)),error("Unknown RAID level"),1)</expression>
       <argument type="text" index="1">
         <_title>RAID level</_title>
       </argument>
@@ -1537,7 +1546,7 @@
       <_names>r:dof</_names>
       <_description>Returns the estimated distance between the nearest and the farthest objects that are in acceptably sharp focus in a photo. Enter focal length (e.g. 50 mm) and distance (e.g. 5 m) with units, and f-stop without unit (2.8, 4.0, 5.6, etc.). Specify either a cicle of confusion diameter limit (e.g. 0.05 mm) or the sensor size of the camera - 0="35mm", 1="APS-H", 2="APS-CN" (Nikon, Pentax, Sony), 3="APS-C" (Canon), 4="4/3" (Four Thirds System), or 5='1"' (Nikon 1, Sony RX10, Sony RX100) - for a diameter based on d/1500.</_description>
       <example>$name(50 mm, 2.8, 2 m, "APS-C") ≈ 161 mm</example>
-      <expression approximate="true">2*\z^2*\y*if([\A{0}=0||\a="35mm"||\a="35 mm"||\a=35mm,\a=1||\a="APS-H",\a=2||\a="APC-CN",\a=3||\a="APS-C",\a=4||\a="3/4"||\a=3/4,\a=5||\a='1"'||\a="1"||\a=1in||\a=1],[0.029mm,0.023mm,0.019mm,0.018mm,0.015mm,0.011mm],\a,1))/\x^2</expression>
+      <expression approximate="true">2*\z^2*\y*if((\A{0}=0||\a="35mm"||\a="35 mm"||\a=35mm,\a=1||\a="APS-H",\a=2||\a="APC-CN",\a=3||\a="APS-C",\a=4||\a="3/4"||\a=3/4,\a=5||\a='1"'||\a="1"||\a=1in||\a=1),(0.029mm,0.023mm,0.019mm,0.018mm,0.015mm,0.011mm),\a,1))/\x^2</expression>
       <argument type="free" index="1">
         <_title>Focal Length</_title>
       </argument>
@@ -1556,7 +1565,7 @@
       <_title>American Wire Gauge Cross-Section Area</_title>
       <_names>r:awg</_names>
       <_description>For gauges larger than 0000 (4/0), please use negative values (00=-1, 000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation (e.g. awg(x) = 20 mm^2).</_description>
-      <expression>25*8464^((36-if([\x="0000"||\x="4/0",\x="000"||\x="3/0",\x="00"||\x="2/0",\x="1/0"],[-3,-2,-1,0],dec(\x),1))/39)*cmil</expression>
+      <expression>25*8464^((36-if((\x="0000"||\x="4/0",\x="000"||\x="3/0",\x="00"||\x="2/0",\x="1/0"),(-3,-2,-1,0),dec(\x),1))/39)*cmil</expression>
       <argument type="text" index="1">
         <title>AWG</title>
       </argument>
@@ -1565,7 +1574,7 @@
       <_title>American Wire Gauge Diameter</_title>
       <_names>r:awgd</_names>
       <_description>For gauges larger than 0000 (4/0), please use negative values (00=-1, 000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation (e.g. awgd(x) = 5 mm).</_description>
-      <expression>1.27E-4*92^((36-if([\x="0000"||\x="4/0",\x="000"||\x="3/0",\x="00"||\x="2/0",\x="1/0"],[-3,-2,-1,0],dec(\x),1))/39)*m</expression>
+      <expression>1.27E-4*92^((36-if((\x="0000"||\x="4/0",\x="000"||\x="3/0",\x="00"||\x="2/0",\x="1/0"),(-3,-2,-1,0),dec(\x),1))/39)*m</expression>
       <argument type="text" index="1">
         <title>AWG</title>
       </argument>
@@ -1577,7 +1586,7 @@
       <example>$name("A") = 0.234 in; $name(4.4 mm) = 17</example>
       <subfunction precalculate="true">if(isNumber(\x),\x,\x/in)</subfunction>
       <subfunction precalculate="true">[0.413,0.404,0.397,0.386,0.377,0.368,0.358,0.348,0.339,0.332,0.323,0.316,0.302,0.295,0.290,0.281,0.277,0.272,0.266,0.261,0.257,0.250,0.246,0.242,0.238,0.234,0.228,0.221,0.213,0.209,0.2055,0.204,0.201,0.199,0.196,0.1935,0.191,0.189,0.185,0.182,0.180,0.177,0.173,0.1695,0.166,0.161,0.159,0.157,0.154,0.152,0.1495,0.147,0.144,0.1405,0.136,0.1285,0.120,0.116,0.113,0.111,0.110,0.1065,0.104,0.1015,0.0995,0.098,0.096,0.0935,0.089,0.086,0.082,0.081,0.0785,0.076,0.073,0.070,0.067,0.0635,0.0595,0.055,0.052,0.0465,0.043,0.042,0.041,0.040,0.039,0.038,0.037,0.036,0.035,0.033,0.032,0.031,0.0292,0.028,0.026,0.025,0.024,0.0225,0.021,0.020,0.018,0.016,0.0145,0.0135,0.013,0.0125,0.012,0.0115,0.011,0.0105,0.010,0.0095,0.0091,0.0087,0.0083,0.0079,0.0075,0.0071,0.0067,0.0063,0.0059,0.0055,0.0051,0.0047,0.0043,0.0039,0.0035,0.0031,0.0027,0.0023,0.0019]</subfunction>
-      <expression>if([isInteger(\x),isNumber(\1),len(\x)=1&amp;&amp;code(\x)&lt;91&amp;&amp;code(\x)&gt;64],[if(\x&gt;107||\x&lt;1,undefined,element(\2,\x+26)*in),if(sum(\1&gt;(element(\2,"i")+element(\2,"i"+1))/2,1,132,"i")&gt;106,char(sum(\1&gt;(element(\2,"i")+element(\2,"i"+1))/2,1,132,"i")-42),107-sum(\1&gt;(element(\2,"i")+element(\2,"i"+1))/2,1,132,"i")),element(\2,26-(code(\x)-65))*in],undefined, 1)</expression>
+      <expression>if((isInteger(\x),isNumber(\1),len(\x)=1&amp;&amp;code(\x)&lt;91&amp;&amp;code(\x)&gt;64),(if(\x&gt;107||\x&lt;1,undefined,element(\2,\x+26)*in),if(sum(\1&gt;(element(\2,"i")+element(\2,"i"+1))/2,1,132,"i")&gt;106,char(sum(\1&gt;(element(\2,"i")+element(\2,"i"+1))/2,1,132,"i")-42),107-sum(\1&gt;(element(\2,"i")+element(\2,"i"+1))/2,1,132,"i")),element(\2,26-(code(\x)-65))*in),undefined, 1)</expression>
       <argument index="1">
         <title>Diameter or Gauge</title>
       </argument>
@@ -1971,8 +1980,8 @@
         <_names>r:linearfit</_names>
         <_description>Returns the linear function, for a set of x and y values, estimated using simple linear regression with a single explanatory variable using the ordinary least squares method. If the vector of y values is empty, the first argument is used for sequential y values (with x values 1, 2, ..., n). It is possible to pass both x and y values in a two column matrix as the first argument.</_description>
         <condition>dimension(\x)=dimension(\y) || dimension(\y)=0</condition>
-        <subfunction precalculate="true">if([dimension(\Y{[]})>0,rows(\x)>1&amp;&amp;columns(\x)=2],[\x,column(\x,1)],genvector("i",1,dimension(\x),1,"i",1))</subfunction>
-        <subfunction precalculate="true">if([dimension(\y)>0,rows(\x)>1&amp;&amp;columns(\x)=2],[\y,column(\x,2)],\x)</subfunction>
+        <subfunction precalculate="true">if((dimension(\Y{[]})>0,rows(\x)>1&amp;&amp;columns(\x)=2),(\x,column(\x,1)),genvector("i",1,dimension(\x),1,"i",1))</subfunction>
+        <subfunction precalculate="true">if((dimension(\y)>0,rows(\x)>1&amp;&amp;columns(\x)=2),(\y,column(\x,2)),\x)</subfunction>
         <expression>((covar(\1,\2)/varp(\1))*(x-mean(\1)))+mean(\2)</expression>
         <argument type="vector" index="1">
           <_title>X Values</_title>
@@ -1986,9 +1995,9 @@
         <_names>r:quadraticfit</_names>
         <_description>Fit data to a polynomial of degree 2, using least-squares method. If the vector of y values is empty, the first argument is used for sequential y values (with x values 1, 2, ..., n). It is possible to pass both x and y values in a two column matrix as the first argument.</_description>
         <condition>dimension(\x)=dimension(\y) || dimension(\y)=0</condition>
-        <subfunction precalculate="true">if([dimension(\Y{[]})>0,rows(\x)>1&amp;&amp;columns(\x)=2],[\x,column(\x,1)],genvector("i",1,dimension(\x),1,"i",1))</subfunction>
-        <subfunction precalculate="true">if([dimension(\y)>0,rows(\x)>1&amp;&amp;columns(\x)=2],[\y,column(\x,2)],\x)</subfunction>
-        <subfunction precalculate="true">multisolve(["a"*total(\1.^4)+"b"*total(\1.^3)+"c"*total(\1.^2)=total((\1.^2).*\2),"a"*total(\1.^3)+"b"*total(\1.^2)+"c"*total(\1)=total(\1.*\2),"a"*total(\1.^2)+"b"*total(\1)+"c"*dimension(\1)=total(\2)],["a","b","c"])</subfunction>
+        <subfunction precalculate="true">if((dimension(\Y{[]})>0,rows(\x)>1&amp;&amp;columns(\x)=2),(\x,column(\x,1)),genvector("i",1,dimension(\x),1,"i",1))</subfunction>
+        <subfunction precalculate="true">if((dimension(\y)>0,rows(\x)>1&amp;&amp;columns(\x)=2),(\y,column(\x,2)),\x)</subfunction>
+        <subfunction precalculate="true">multisolve(("a"*total(\1.^4)+"b"*total(\1.^3)+"c"*total(\1.^2)=total((\1.^2).*\2),"a"*total(\1.^3)+"b"*total(\1.^2)+"c"*total(\1)=total(\1.*\2),"a"*total(\1.^2)+"b"*total(\1)+"c"*dimension(\1)=total(\2)),("a","b","c"))</subfunction>
         <expression>element(\3,1)*x^2+element(\3,2)*x+element(\3,3)</expression>
         <argument type="vector" index="1">
           <_title>X Values</_title>
@@ -2001,10 +2010,10 @@
         <_title>Cubic Fit</_title>
         <_names>r:cubicfit</_names>
         <_description>Fit data to a polynomial of degree 3, using least-squares method. If the vector of y values is empty, the first argument is used for sequential y values (with x values 1, 2, ..., n). It is possible to pass both x and y values in a two column matrix as the first argument.</_description>
-        <condition>dimension(\x)=dimension(\y)</condition>
-        <subfunction precalculate="true">if([dimension(\Y{[]})>0,rows(\x)>1&amp;&amp;columns(\x)=2],[\x,column(\x,1)],genvector("i",1,dimension(\x),1,"i",1))</subfunction>
-        <subfunction precalculate="true">if([dimension(\y)>0,rows(\x)>1&amp;&amp;columns(\x)=2],[\y,column(\x,2)],\x)</subfunction>
-        <subfunction precalculate="true">multisolve(["a"*total(\1.^6)+"b"*total(\1.^5)+"c"*total(\1.^4)+"d"*total(\1.^3)=total((\1.^3).*\2),"a"*total(\1.^5)+"b"*total(\1.^4)+"c"*total(\1.^3)+"d"*total(\1.^2)=total((\1.^2).*\2),"a"*total(\1.^4)+"b"*total(\1.^3)+"c"*total(\1.^2)+"d"*total(\1)=total(\1.*\2),"a"*total(\1.^3)+"b"*total(\1.^2)+"c"*total(\1)+"d"*dimension(\1)=total(\2)],["a","b","c","d"])</subfunction>
+        <condition>dimension(\x)=dimension(\y) || dimension(\y)=0</condition>
+        <subfunction precalculate="true">if((dimension(\Y{[]})>0,rows(\x)>1&amp;&amp;columns(\x)=2),(\x,column(\x,1)),genvector("i",1,dimension(\x),1,"i",1))</subfunction>
+        <subfunction precalculate="true">if((dimension(\y)>0,rows(\x)>1&amp;&amp;columns(\x)=2),(\y,column(\x,2)),\x)</subfunction>
+        <subfunction precalculate="true">multisolve(("a"*total(\1.^6)+"b"*total(\1.^5)+"c"*total(\1.^4)+"d"*total(\1.^3)=total((\1.^3).*\2),"a"*total(\1.^5)+"b"*total(\1.^4)+"c"*total(\1.^3)+"d"*total(\1.^2)=total((\1.^2).*\2),"a"*total(\1.^4)+"b"*total(\1.^3)+"c"*total(\1.^2)+"d"*total(\1)=total(\1.*\2),"a"*total(\1.^3)+"b"*total(\1.^2)+"c"*total(\1)+"d"*dimension(\1)=total(\2)),("a","b","c","d"))</subfunction>
         <expression>element(\3,1)*x^3+element(\3,2)*x^2+element(\3,3)*x+element(\3,4)</expression>
         <argument type="vector" index="1">
           <_title>X Values</_title>
@@ -2305,7 +2314,7 @@
         <_title>Inverse of Chi-Square Cumulative Distribution</_title>
         <_names>r:chisqdistinv</_names>
         <subfunction precalculate="true">(probit(\x)+sqrt(2*\y-1)^2)/2</subfunction>
-        <expression>if([\x=0,\x=1],[0,plus_infinity],newtonsolve(1-igamma(\y/2,"x"/2)/gamma(\y/2)=\x,if(\1&lt;=0,1e-6,\1),"x"))</expression>
+        <expression>if((\x=0,\x=1),(0,plus_infinity),newtonsolve(1-igamma(\y/2,"x"/2)/gamma(\y/2)=\x,if(\1&lt;=0,1e-6,\1),"x"))</expression>
         <argument type="number" index="1">
           <_title>P</_title>
           <min include_equals="true">0</min>
@@ -2397,7 +2406,7 @@
         <_title>Inverse Cumulative Student's t-distribution</_title>
         <_names>r:tdistinv</_names>
         <subfunction precalculate="true">betaincinv(if(\x&lt;0.5,2*\x,2*(1-\x)),\y/2,1/2)</subfunction>
-        <expression>if([\x=0,\x=1,\x&lt;0.5],[minus_infinity,plus_infinity,-sqrt((\y-\1*\y)/\1)],sqrt((\y-\1*\y)/\1))</expression>
+        <expression>if((\x=0,\x=1,\x&lt;0.5),(minus_infinity,plus_infinity,-sqrt((\y-\1*\y)/\1)),sqrt((\y-\1*\y)/\1))</expression>
         <argument type="number" index="1">
           <_title>P</_title>
           <min include_equals="true">0</min>
@@ -2687,7 +2696,7 @@
       <_names>r:daysInMonth</_names>
       <subfunction precalculate="true">month(\X{today})</subfunction>
       <subfunction precalculate="true">year(\x)</subfunction>
-      <expression>if([\1=2,\1=4||\1=6||\1=9||\1=11],[if(\2%4=0&amp;&amp;(\2%100!=0||\2%400==0),29,28),30],31)</expression>
+      <expression>if((\1=2,\1=4||\1=6||\1=9||\1=11),(if(\2%4=0&amp;&amp;(\2%100!=0||\2%400==0),29,28),30),31)</expression>
       <argument type="date" index="1">
         <_title>Date</_title>
       </argument>
@@ -2720,7 +2729,7 @@
         <_title>Persistent</_title>
       </argument>
       <_description>Plots one or more expressions or vectors. Use a vector for the first argument to plot multiple series. Only the first argument is used for vector series. It is also possible to plot a matrix where each row is a pair of x and y values.</_description>
-      <example>$name([x^2, 2x, [0,1,4,8,16]], 0, 4).</example>
+      <example>$name((x^2, 2x, [0,1,4,8,16]), 0, 4).</example>
     </builtin_function>
     <builtin_function name="code">
       <_title>Unicode Value</_title>
