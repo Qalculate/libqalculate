@@ -120,17 +120,16 @@ int MergeVectorsFunction::calculate(MathStructure &mstruct, const MathStructure 
 	}
 	return 1;
 }
-VertCatFunction::VertCatFunction() : MathFunction("vertcat", 2, -1) {
+VertCatFunction::VertCatFunction() : MathFunction("vertcat", 1, -1) {
 	setArgumentDefinition(1, new MatrixArgument(""));
 	setArgumentDefinition(2, new MatrixArgument(""));
-	setArgumentDefinition(3, new MatrixArgument(""));
-	setCondition("columns(\\x)=columns(\\y)");
 }
 int VertCatFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	mstruct = vargs[0];
 	for(size_t i = 1; i < vargs.size(); i++) {
 		if(CALCULATOR->aborted()) return 0;
 		if(vargs[i].columns() != mstruct.columns()) {
+			CALCULATOR->error(true, _("Vertical concatenation requires equal number of columns."), NULL);
 			if(i > 1) {
 				mstruct.transform(this);
 				for(; i < vargs.size(); i++) mstruct.addChild(vargs[i]);
@@ -144,11 +143,9 @@ int VertCatFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	}
 	return 1;
 }
-HorzCatFunction::HorzCatFunction() : MathFunction("horzcat", 2, -1) {
+HorzCatFunction::HorzCatFunction() : MathFunction("horzcat", 1, -1) {
 	setArgumentDefinition(1, new MatrixArgument(""));
 	setArgumentDefinition(2, new MatrixArgument(""));
-	setArgumentDefinition(3, new MatrixArgument(""));
-	setCondition("rows(\\x)=rows(\\y)");
 }
 bool HorzCatFunction::representsScalar(const MathStructure &vargs) const {return false;}
 bool HorzCatFunction::representsNonMatrix(const MathStructure &vargs) const {
@@ -162,6 +159,7 @@ int HorzCatFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	for(size_t i = 1; i < vargs.size(); i++) {
 		if(CALCULATOR->aborted()) return 0;
 		if(vargs[i].rows() != mstruct.rows()) {
+			CALCULATOR->error(true, _("Horizontal concatenation requires equal number of rows."), NULL);
 			if(i > 1) {
 				mstruct.transform(this);
 				for(; i < vargs.size(); i++) mstruct.addChild(vargs[i]);
@@ -390,7 +388,9 @@ int PermanentFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	return !mstruct.isUndefined();
 }
 CofactorFunction::CofactorFunction() : MathFunction("cofactor", 3) {
-	setArgumentDefinition(1, new MatrixArgument());
+	MatrixArgument *marg = new MatrixArgument();
+	marg->setSquareDemanded(true);
+	setArgumentDefinition(1, marg);
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
 	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
 }
@@ -507,25 +507,6 @@ int NormFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		return 1;
 	}
 	return -1;
-}
-HadamardFunction::HadamardFunction() : MathFunction("hadamard", 1, -1) {
-	setArgumentDefinition(1, new MatrixArgument());
-	setArgumentDefinition(2, new MatrixArgument());
-}
-int HadamardFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	for(size_t i3 = 1; i3 < vargs.size(); i3++) {
-		if(vargs[i3].columns() != vargs[0].columns() || vargs[i3].rows() != vargs[0].rows()) {
-			CALCULATOR->error(true, _("%s() requires that all matrices/vectors have the same dimensions."), preferredDisplayName().name.c_str(), NULL);
-			return 0;
-		}
-	}
-	mstruct = vargs[0];
-	for(size_t i = 0; i < mstruct.size(); i++) {
-		for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
-			for(size_t i3 = 1; i3 < vargs.size(); i3++) mstruct[i][i2] *= vargs[i3][i][i2];
-		}
-	}
-	return 1;
 }
 bool matrix_to_rref(MathStructure &m, const EvaluationOptions &eo) {
 	size_t rows = m.rows();

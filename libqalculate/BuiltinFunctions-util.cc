@@ -1003,10 +1003,11 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	bool use_step_size = vargs[5].number().getBoolean() || !vargs[3].isInteger() || vargs[3].number() < 2;
 	mstruct = vargs[0];
 	CALCULATOR->beginTemporaryStopIntervalArithmetic();
-	if(!mstruct.contains(vargs[4], true) || (!mstruct.isVector() && !mstruct.representsScalar())) {
+	if(!mstruct.contains(vargs[4], true) || (!mstruct.isVector() && (!mstruct.isFunction() || (mstruct.function()->id() != FUNCTION_ID_HORZCAT && mstruct.function()->id() != FUNCTION_ID_VERTCAT)) && !mstruct.representsScalar())) {
 		CALCULATOR->beginTemporaryStopMessages();
 		mstruct.eval(eo2);
 		CALCULATOR->endTemporaryStopMessages();
+		if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_HORZCAT || mstruct.function()->id() == FUNCTION_ID_VERTCAT)) mstruct.setType(STRUCT_VECTOR);
 		if(!mstruct.isVector() && vargs[0].contains(vargs[4], true)) mstruct = vargs[0];
 	} else {
 		eo2.calculate_functions = false;
@@ -1018,6 +1019,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		eo2.calculate_functions = eo.calculate_functions;
 		eo2.expand = eo.expand;
 	}
+	if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_HORZCAT || mstruct.function()->id() == FUNCTION_ID_VERTCAT)) mstruct.setType(STRUCT_VECTOR);
 	if(mstruct.isMatrix() && mstruct.columns() == 1 && mstruct.rows() > 1) mstruct.transposeMatrix();
 	CALCULATOR->endTemporaryStopIntervalArithmetic();
 	vector<MathStructure> x_vectors, y_vectors;
@@ -1033,7 +1035,6 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		dpds.push_back(dpd);
 	} else if(mstruct.isVector()) {
 		int matrix_index = 1, vector_index = 1;
-		if(mstruct.containsFunctionId(FUNCTION_ID_HORZCAT)) mstruct.eval(eo2);
 		if(mstruct.size() > 0 && (mstruct[0].isVector() || mstruct[0].contains(vargs[4], false, true, true))) {
 			for(size_t i = 0; i < mstruct.size() && !CALCULATOR->aborted(); i++) {
 				MathStructure x_vector;

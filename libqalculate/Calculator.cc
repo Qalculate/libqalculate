@@ -1459,12 +1459,12 @@ void Calculator::addBuiltinFunctions() {
 	f_cofactor = addFunction(new CofactorFunction());
 	f_inverse = addFunction(new InverseFunction());
 	f_magnitude = addFunction(new MagnitudeFunction());
-	f_hadamard = addFunction(new HadamardFunction());
 	f_entrywise = addFunction(new EntrywiseFunction());
 	addFunction(new RRefFunction());
 	addFunction(new MatrixRankFunction());
 	priv->f_dot = addFunction(new DotProductFunction());
 	priv->f_times = addFunction(new EntrywiseMultiplicationFunction());
+	f_hadamard = priv->f_times;
 	priv->f_rdivide = addFunction(new EntrywiseDivisionFunction());
 	priv->f_power = addFunction(new EntrywisePowerFunction());
 	addFunction(new NormFunction());

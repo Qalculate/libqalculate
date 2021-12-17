@@ -2142,9 +2142,19 @@ VectorArgument::~VectorArgument() {
 	}
 }
 bool VectorArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
-	//if(!value.isVector()) {
+	bool subvector = false;
+	for(size_t i = 0; i < subargs.size(); i++) {
+		if(subargs[i] && (subargs[i]->type() == ARGUMENT_TYPE_VECTOR || subargs[i]->type() == ARGUMENT_TYPE_MATRIX)) {
+			subvector = true;
+			break;
+		}
+	}
+	if(subvector && value.isFunction() && (value.function()->id() == FUNCTION_ID_HORZCAT || value.function()->id() == FUNCTION_ID_VERTCAT)) {
+		value.setType(STRUCT_VECTOR);
+	}
+	if(!subvector || !value.isVector()) {
 		value.eval(eo);
-	//}
+	}
 	if(!value.isVector()) {
 		if(isLastArgument()) value.transform(STRUCT_VECTOR);
 		else if(value.representsScalar()) value.transform(STRUCT_VECTOR);
