@@ -97,7 +97,7 @@ bool result_only = false, vertical_space = true;
 bool do_imaginary_j = false;
 int sigint_action = 1;
 bool unittest = false;
-bool truncate_numbers = false, saved_truncate = false;
+int rounding_mode = 0, saved_rounding = 0;
 
 static char buffer[100000];
 
@@ -876,11 +876,31 @@ void set_option(string str) {
 			expression_calculation_updated();
 			tc_set = true;
 		}
-	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "round to even", _("round to even")) || svar == "rndeven") SET_BOOL_D(printops.round_halfway_to_even)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "truncate", _("truncate"))) {
-		SET_BOOL(truncate_numbers)
-		printops.custom_time_zone = (truncate_numbers ? -21586 : 0);
-		result_format_updated();
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "round to even", _("round to even")) || svar == "rndeven") {
+		bool b = printops.round_halfway_to_even;
+		SET_BOOL(b)
+		if(b != printops.round_halfway_to_even || rounding_mode == 2) {
+			rounding_mode = b ? 0 : 1;
+			printops.custom_time_zone = 0;
+			printops.round_halfway_to_even = b;
+			result_format_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rounding", _("rounding"))) {
+		int v = -1;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "even", _("even")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "round to even", _("round to even"))) v = 1;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "standard", _("standard"))) v = 0;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "truncate", _("truncate"))) v = 2;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		if(v < 0 || v > 2) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else if(v != rounding_mode) {
+			rounding_mode = v;
+			printops.custom_time_zone = (v == 2 ? -21586 : 0);
+			printops.round_halfway_to_even = (v == 1);
+			result_format_updated();
+		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn syntax", _("rpn syntax")) || svar == "rpnsyn") {
 		bool b = (evalops.parse_options.parsing_mode == PARSING_MODE_RPN);
 		SET_BOOL(b)
@@ -3321,13 +3341,13 @@ int main(int argc, char *argv[]) {
 				printops.time_zone = TIME_ZONE_CUSTOM;
 				printops.custom_time_zone = itz;
 				setResult(NULL, false);
-				printops.custom_time_zone = (truncate_numbers ? -21586 : 0);
+				printops.custom_time_zone = (rounding_mode == 2 ? -21586 : 0);
 				printops.time_zone = TIME_ZONE_LOCAL;
 			} else if(str == "CET") {
 				printops.time_zone = TIME_ZONE_CUSTOM;
 				printops.custom_time_zone = 60;
 				setResult(NULL, false);
-				printops.custom_time_zone = (truncate_numbers ? -21586 : 0);
+				printops.custom_time_zone = (rounding_mode == 2 ? -21586 : 0);
 				printops.time_zone = TIME_ZONE_LOCAL;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(str, "cartesian", _("cartesian")) || str == "rect") {
 				avoid_recalculation = false;
@@ -3802,7 +3822,12 @@ int main(int argc, char *argv[]) {
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("repeating decimals"), "repdeci"); str += b2oo(printops.indicate_infinite_series, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
-			PRINT_AND_COLON_TABS(_("round to even"), "rndeven"); str += b2oo(printops.round_halfway_to_even, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("rounding"), "");
+			switch(rounding_mode) {
+				case 1: {str += _("round halfway to even"); break;}
+				case 2: {str += _("truncate"); break;}
+				default: {str += _("round halfway up"); break;}
+			}
 			PRINT_AND_COLON_TABS(_("scientific notation"), "exp");
 			switch(printops.min_exp) {
 				case EXP_NONE: {str += _("off"); break;}
@@ -3814,7 +3839,6 @@ int main(int argc, char *argv[]) {
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("show ending zeroes"), "zeroes"); str += b2oo(printops.show_ending_zeroes, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
-			PRINT_AND_COLON_TABS(_("truncate"), ""); str += b2oo(truncate_numbers, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("two's complement"), "twos"); str += b2oo(printops.twos_complement, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Parsing"));
@@ -4570,7 +4594,7 @@ int main(int argc, char *argv[]) {
 				if(printops.min_decimals >= 0 && printops.use_min_decimals) {str += " "; str += i2s(printops.min_decimals); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("repeating decimals"), "repdeci", _("If activated, 1/6 is displayed as '0.1 666...', otherwise as '0.166667'."), printops.indicate_infinite_series);
-				STR_AND_TABS_BOOL(_("round to even"), "rndeven", _("Determines whether halfway numbers are rounded upwards or towards the nearest even integer."), printops.round_halfway_to_even);
+				STR_AND_TABS_2(_("rounding"), "", _("Determines whether how approximate numbers are rounded (round halfway numbers upwards, towards the nearest even digit, or round all numbers towards zero)."), rounding_mode, _("standard"), _("even"), _("truncate"));
 				STR_AND_TABS_SET(_("scientific notation"), "exp");
 				SET_DESCRIPTION(_("Determines how scientific notation is used (e.g. 5 543 000 = 5.543E6)."));
 				str += "(0 = ";
@@ -4588,7 +4612,6 @@ int main(int argc, char *argv[]) {
 				if(printops.min_exp != EXP_NONE && printops.min_exp != EXP_NONE && printops.min_exp != EXP_PRECISION && printops.min_exp != EXP_BASE_3 && printops.min_exp != EXP_PURE && printops.min_exp != EXP_SCIENTIFIC) {str += " "; str += i2s(printops.min_exp); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("show ending zeroes"), "zeroes", _("If activated, zeroes are kept at the end of approximate numbers."), printops.show_ending_zeroes);
-				STR_AND_TABS_BOOL(_("truncate"), "", _("If activated, numbers are truncated, instead of rounded to nearest."), truncate_numbers);
 				STR_AND_TABS_BOOL(_("two's complement"), "twos", _("Enables two's complement representation for display of negative binary numbers."), printops.twos_complement);
 
 				CHECK_IF_SCREEN_FILLED_HEADING_S(_("Parsing"));
@@ -5130,18 +5153,21 @@ static bool wait_for_key_press(int timeout_ms) {
 #endif
 }
 
-void add_equals(string &strout, bool b_exact, size_t *i_result_u = NULL, size_t *i_result = NULL) {
+void add_equals(string &strout, bool b_exact, size_t *i_result_u = NULL, size_t *i_result = NULL, bool add_space = true) {
 	if(b_exact) {
-		strout += " = ";
+		if(add_space) strout += " = ";
+		else strout += "= ";
 		if(i_result_u) *i_result_u = unicode_length_check(strout.c_str());
 		if(i_result) *i_result = strout.length();
 	} else {
 		if(printops.use_unicode_signs) {
-			strout += " " SIGN_ALMOST_EQUAL " ";
+			if(add_space) strout += " " SIGN_ALMOST_EQUAL " ";
+			else strout += SIGN_ALMOST_EQUAL " ";
 			if(i_result_u) *i_result_u = unicode_length_check(strout.c_str());
 			if(i_result) *i_result = strout.length();
 		} else {
-			strout += " = ";
+			if(add_space) strout += " = ";
+			else strout += "= ";
 			if(i_result_u) *i_result_u = unicode_length_check(strout.c_str());
 			if(i_result) *i_result = strout.length();
 			strout += _("approx.");
@@ -5340,7 +5366,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 					sleep_ms(100);
 #ifdef _WIN32
 					i++;
-					if(i == 1000) on_abort_display();
+					if(i == 1000 && !result_only) on_abort_display();
 #endif
 				}
 			}
@@ -5425,13 +5451,21 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 			strout += alt_results[i];
 			if(mstruct->isComparison() || mstruct->isLogicalAnd() || mstruct->isLogicalOr()) strout += RIGHT_PARENTHESIS;
 		}
+		bool b_matrix = mstruct->isMatrix() && DO_FORMAT && result_text.find('\n') != string::npos;
 		if(!alt_results.empty()) {
-			if(!result_only && goto_input && i_result_u > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols) {
+			if(b_matrix) {
+				if(!result_only) {
+					strout[i_result - 1] = '\n';
+					strout.insert(i_result, 1, '\n');
+				}
+				strout += "\n\n";
+			} else if(!result_only && goto_input && i_result_u > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols) {
 				strout[i_result - 1] = '\n';
 				strout.insert(i_result, "  ");
 				i_result_u = 2;
 			}
-			add_equals(strout, !(*printops.is_approximate) && !mstruct->isApproximate(), &i_result_u2, &i_result2);
+			add_equals(strout, !(*printops.is_approximate) && !mstruct->isApproximate(), &i_result_u2, &i_result2, !b_matrix);
+			if(b_matrix && result_only) strout += "\n\n";
 		} else if(!result_only) {
 			add_equals(strout, (update_parse || !prev_approximate) && (exact_comparison || (!(*printops.is_approximate) && !mstruct->isApproximate())), &i_result_u, &i_result);
 			i_result_u2 = i_result_u;
@@ -5463,9 +5497,13 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 				END_ITALIC(strout)
 			}
 		}
-		if(goto_input) {
+		if(goto_input || b_matrix) {
 			if(!result_only) {
-				if(i_result_u == 2 && i_result_u != i_result_u2) {
+				if(b_matrix) {
+					strout[i_result2 - 1] = '\n';
+					strout.insert(i_result2, 1, '\n');
+					gsub("\n\n", "\n\n  ", strout);
+				} else if(i_result_u == 2 && i_result_u != i_result_u2) {
 					strout[i_result2 - 1] = '\n';
 					strout.insert(i_result2, "  ");
 				} else if(i_result_u2 > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols) {
@@ -5477,8 +5515,11 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 					strout.insert(i_result, "  ");
 					i_result_u = 2;
 				}
+			} else if(b_matrix) {
+				if(!goto_input) strout.insert(0, 1, '\n');
+				gsub("\n", "\n  ", strout);
 			}
-			addLineBreaks(strout, cols, true, result_only ? 2 : i_result_u, i_result);
+			if(!b_matrix) addLineBreaks(strout, cols, true, result_only ? 2 : i_result_u, i_result);
 			if(vertical_space) strout += "\n";
 		}
 		PUTS_UNICODE(strout.c_str());
@@ -5703,7 +5744,7 @@ void execute_command(int command_type, bool show_result) {
 					sleep_ms(100);
 #ifdef _WIN32
 					i++;
-					if(i == 1000) on_abort_display();
+					if(i == 1000 && !result_only) on_abort_display();
 #endif
 				}
 			}
@@ -6353,7 +6394,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					sleep_ms(100);
 #ifdef _WIN32
 					i++;
-					if(i == 1000) on_abort_display();
+					if(i == 1000 && !result_only) on_abort_display();
 #endif
 				}
 			}
@@ -6441,7 +6482,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		if(custom_base_set) CALCULATOR->setCustomOutputBase(save_cbase);
 		evalops.complex_number_form = save_complex_number_form;
 		complex_angle_form = caf_bak;
-		printops.custom_time_zone = (truncate_numbers ? -21586 : 0);
+		printops.custom_time_zone = (rounding_mode == 2 ? -21586 : 0);
 		printops.time_zone = TIME_ZONE_LOCAL;
 		printops.binary_bits = 0;
 		printops.base = save_base;
@@ -6605,7 +6646,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	if(custom_base_set) CALCULATOR->setCustomOutputBase(save_cbase);
 	evalops.complex_number_form = save_complex_number_form;
 	complex_angle_form = caf_bak;
-	printops.custom_time_zone = (truncate_numbers ? -21586 : 0);
+	printops.custom_time_zone = (rounding_mode == 2 ? -21586 : 0);
 	printops.time_zone = TIME_ZONE_LOCAL;
 	printops.binary_bits = 0;
 	printops.base = save_base;
@@ -6638,7 +6679,7 @@ void set_saved_mode() {
 	saved_variable_units_enabled = CALCULATOR->variableUnitsEnabled();
 	saved_printops = printops;
 	saved_printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
-	saved_truncate = truncate_numbers;
+	saved_rounding = rounding_mode;
 	saved_caf = complex_angle_form;
 	saved_evalops = evalops;
 	saved_parsing_mode = (evalops.parse_options.parsing_mode == PARSING_MODE_RPN ? nonrpn_parsing_mode : evalops.parse_options.parsing_mode);
@@ -6723,7 +6764,7 @@ void load_preferences() {
 	dual_fraction = -1;
 	dual_approximation = -1;
 
-	truncate_numbers = false;
+	rounding_mode = 0;
 
 	CALCULATOR->setPrecision(10);
 
@@ -7064,9 +7105,14 @@ void load_preferences() {
 					}
 				} else if(svar == "round_halfway_to_even") {
 					printops.round_halfway_to_even = v;
-				} else if(svar == "truncate_numbers") {
-					truncate_numbers = v;
-					printops.custom_time_zone = (truncate_numbers ? -21586 : 0);
+					printops.custom_time_zone = 0;
+					rounding_mode = (v ? 1 : 0);
+				} else if(svar == "rounding_mode") {
+					if(v >= 0 && v <= 2) {
+						rounding_mode = v;
+						printops.custom_time_zone = (v == 2 ? -21586 : 0);
+						printops.round_halfway_to_even = (v == 1);
+					}
 				} else if(svar == "approximation") {
 					if(version_numbers[0] > 3 || (version_numbers[0] == 3 && (version_numbers[1] > 14 || (version_numbers[1] == 14 && version_numbers[2] > 0)))) {
 						if(v >= APPROXIMATION_EXACT && v <= APPROXIMATION_APPROXIMATE) {
@@ -7237,8 +7283,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "allow_infinite=%i\n", saved_evalops.allow_infinite);
 	fprintf(file, "indicate_infinite_series=%i\n", saved_printops.indicate_infinite_series);
 	fprintf(file, "show_ending_zeroes=%i\n", saved_printops.show_ending_zeroes);
-	fprintf(file, "round_halfway_to_even=%i\n", saved_printops.round_halfway_to_even);
-	if(truncate_numbers) fprintf(file, "truncate_numbers=%i\n", saved_truncate);
+	fprintf(file, "rounding_mode=%i\n", rounding_mode);
 	if(saved_dual_approximation < 0) fprintf(file, "approximation=%i\n", saved_evalops.approximation == APPROXIMATION_EXACT ? -2 : -1);
 	else if(saved_dual_approximation > 0) fprintf(file, "approximation=%i\n", APPROXIMATION_APPROXIMATE + 1);
 	else fprintf(file, "approximation=%i\n", saved_evalops.approximation);

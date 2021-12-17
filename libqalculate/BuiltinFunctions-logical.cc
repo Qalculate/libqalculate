@@ -207,10 +207,8 @@ int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 		return 1;
 	}
 	mstruct = vargs[0];
-	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_HORZCAT) mstruct.calculateFunctions(eo, false);
-	if(mstruct.isVector()) {
+	if(mstruct.isVector() || (mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_HORZCAT || mstruct.function()->id() == FUNCTION_ID_VERTCAT))) {
 		MathStructure m2(vargs[1]);
-		if(m2.isFunction() && m2.function()->id() == FUNCTION_ID_HORZCAT) m2.calculateFunctions(eo, false);
 		for(size_t i = 0; i < mstruct.size(); i++) {
 			mstruct[i].eval(eo);
 			if(!mstruct[i].isNumber() && vargs[3].isZero()) {
@@ -218,7 +216,7 @@ int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 			}
 			int result = mstruct[i].number().getBoolean();
 			if(result > 0) {
-				if(m2.isVector() && m2.size() == vargs[0].size()) {
+				if((m2.isVector() || (m2.isFunction() && (m2.function()->id() == FUNCTION_ID_HORZCAT || m2.function()->id() == FUNCTION_ID_VERTCAT))) && m2.size() == vargs[0].size()) {
 					mstruct = m2[i];
 				} else {
 					mstruct = m2[1];

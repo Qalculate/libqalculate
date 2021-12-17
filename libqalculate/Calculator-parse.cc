@@ -1698,13 +1698,18 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						}
 						default: {}
 					}
-					if(i == str.length() - 1 || brackets == 0) b_row = true;
+					if(brackets == 0) {
+						b_row = true;
+					} else if(i == str.length() - 1) {
+						i++;
+						b_row = true;
+					}
 					if(b_row) b_col = true;
 					if(b_col) {
 						stmp2 = str.substr(col_index, i - col_index);
 						remove_blank_ends(stmp2);
 						MathStructure *mcol = NULL;
-						if(b_comma || !b_row || !stmp2.empty()) {
+						if(b_comma || (b_row && ((mrow && mrow->size() == 0) || (mstruct2->size() == 0 && brackets > 0 && i < str.length() - 1))) || !stmp2.empty()) {
 							bool b_unit = false;
 							if(!b_comma && !prev_func.empty()) {
 								prev_func += stmp2;
@@ -1759,10 +1764,8 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							mstruct2->setFunction(priv->f_vertcat);
 						}
 					}
-					if(brackets == 0) {
-						i--;
-					}
 				}
+				i--;
 				if(brackets != 0 && unended_function && !unended_test.isZero()) {
 					unended_function->set(unended_test);
 				}
