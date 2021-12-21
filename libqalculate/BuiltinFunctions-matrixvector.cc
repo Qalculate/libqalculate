@@ -1136,6 +1136,7 @@ int GenerateVectorFunction::calculate(MathStructure &mstruct, const MathStructur
 	return 1;
 }
 SelectFunction::SelectFunction() : MathFunction("select", 2, 4) {
+	setArgumentDefinition(1, new VectorArgument());
 	setArgumentDefinition(3, new SymbolicArgument());
 	setDefaultValue(3, "undefined");
 	setArgumentDefinition(4, new BooleanArgument());
@@ -1144,31 +1145,14 @@ SelectFunction::SelectFunction() : MathFunction("select", 2, 4) {
 int SelectFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	MathStructure mtest;
 	mstruct = vargs[0];
-	mstruct.eval(eo);
-	if(!mstruct.isVector()) {
-		mtest = vargs[1];
-		mtest.replace(vargs[2], mstruct);
-		mtest.eval(eo);
-		if(!mtest.isNumber() || mtest.number().getBoolean() < 0) {
-			CALCULATOR->error(true, _("Comparison failed."), NULL);
-			return -1;
-		}
-		if(mtest.number().getBoolean() == 0) {
-			if(vargs[3].number().getBoolean() > 0) {
-				CALCULATOR->error(true, _("No matching item found."), NULL);
-				return -1;
-			}
-			mstruct.clearVector();
-		}
-		return 1;
-	}
 	for(size_t i = 0; i < mstruct.size();) {
+		if(CALCULATOR->aborted()) return 0;
 		mtest = vargs[1];
 		mtest.replace(vargs[2], mstruct[i]);
 		mtest.eval(eo);
 		if(!mtest.isNumber() || mtest.number().getBoolean() < 0) {
 			CALCULATOR->error(true, _("Comparison failed."), NULL);
-			return -1;
+			return 0;
 		}
 		if(mtest.number().getBoolean() == 0) {
 			if(vargs[3].number().getBoolean() == 0) {
@@ -1185,7 +1169,7 @@ int SelectFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	}
 	if(vargs[3].number().getBoolean() > 0) {
 		CALCULATOR->error(true, _("No matching item found."), NULL);
-		return -1;
+		return 0;
 	}
 	return 1;
 }
