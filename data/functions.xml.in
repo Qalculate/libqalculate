@@ -706,6 +706,13 @@
         <_title>2nd value</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="divisors">
+      <_title>Divisors</_title>
+      <_names>r:divisors</_names>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="bernoulli">
       <_title>Bernoulli Number/Polynomial</_title>
       <_description>Returns the nth Bernoulli number or polynomial (if the second argument is non-zero).</_description>

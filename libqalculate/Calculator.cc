@@ -1489,6 +1489,7 @@ void Calculator::addBuiltinFunctions() {
 	f_heaviside = addFunction(new HeavisideFunction());
 	f_dirac = addFunction(new DiracFunction());
 	f_gcd = addFunction(new GcdFunction());
+	addFunction(new DivisorsFunction());
 	f_lcm = addFunction(new LcmFunction());
 	f_round = addFunction(new RoundFunction());
 	f_floor = addFunction(new FloorFunction());

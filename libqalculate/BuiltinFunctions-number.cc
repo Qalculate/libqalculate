@@ -301,6 +301,21 @@ int LcmFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 	return 0;
 }
+DivisorsFunction::DivisorsFunction() : MathFunction("divisors", 1) {
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONZERO, true, true, INTEGER_TYPE_SLONG));
+}
+int DivisorsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	long int n = vargs[0].number().lintValue();
+	if(n < 0) n = -n;
+	mstruct.clearVector();
+	mstruct.addChild(m_one);
+	for(long int i = 2; i < n / 2; i++) {
+		if(CALCULATOR->aborted()) return 0;
+		if(n % i == 0) mstruct.addChild(MathStructure(i, 1L, 0L));
+	}
+	mstruct.addChild(MathStructure(n, 1L, 0L));
+	return 1;
+}
 
 SignumFunction::SignumFunction() : MathFunction("sgn", 1, 2) {
 	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
