@@ -301,19 +301,64 @@ int LcmFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 	return 0;
 }
+bool divisors_combine(MathStructure &m, vector<Number> factors, size_t skip, size_t pos = 0, Number nr = nr_one) {
+	for(; pos < factors.size() - skip; pos++) {
+		if(CALCULATOR->aborted()) return false;
+		if(skip > 0) {
+			if(!divisors_combine(m, factors, skip - 1, pos + 1, nr)) return false;
+		}
+		nr *= factors[pos];
+	}
+	bool b = false;
+	for(size_t i = m.size(); i > 0; i--) {
+		if(nr >= m[i - 1].number()) {
+			if(nr != m[i - 1].number()) m.insertChild(nr, i + 1);
+			b = true;
+			break;
+		}
+	}
+	if(!b) m.insertChild(nr, 1);
+	return true;
+}
 DivisorsFunction::DivisorsFunction() : MathFunction("divisors", 1) {
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONZERO, true, true, INTEGER_TYPE_SLONG));
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONZERO));
 }
 int DivisorsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	long int n = vargs[0].number().lintValue();
-	if(n < 0) n = -n;
+	vector<Number> factors;
+	Number nr(vargs[0].number());
+	nr.abs();
 	mstruct.clearVector();
-	mstruct.addChild(m_one);
-	for(long int i = 2; i < n / 2; i++) {
-		if(CALCULATOR->aborted()) return 0;
-		if(n % i == 0) mstruct.addChild(MathStructure(i, 1L, 0L));
+	if(nr.isOne()) {
+		mstruct.addChild(nr);
+		return 1;
 	}
-	mstruct.addChild(MathStructure(n, 1L, 0L));
+	if(!nr.factorize(factors)) return 0;
+	if(nr.isLessThan(Number(1, 1, factors.size() / 2.5))) {
+		bool b = false;
+		long int n = vargs[0].number().lintValue(&b);
+		if(!b) {
+			if(n < 0) n = -n;
+			mstruct.clearVector();
+			mstruct.addChild(m_one);
+			long int i_last = n / factors[0].lintValue();
+			for(long int i = 2; i <= i_last; i++) {
+				if(CALCULATOR->aborted()) return 0;
+				if(n % i == 0) mstruct.addChild(MathStructure(i, 1L, 0L));
+			}
+			mstruct.addChild(MathStructure(n, 1L, 0L));
+			return 1;
+		}
+	}
+	if(factors.size() == 2) {
+		mstruct.addChild(factors[0]);
+		if(factors[0] != factors[1]) mstruct.addChild(factors[1]);
+	} else if(factors.size() > 2) {
+		for(size_t i = factors.size() - 1; i > 0; i--) {
+			if(!divisors_combine(mstruct, factors, i)) return 0;
+		}
+	}
+	mstruct.insertChild(m_one, 1);
+	mstruct.addChild(nr);
 	return 1;
 }
 
