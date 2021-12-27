@@ -226,12 +226,15 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 }
 
 const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", "∠", "\x1c", "⊼", "\x1d", "⊽", "\x1e", "⊕", "\x1f", "⨯", "\x15", "∥", "\x14"};
+#define INTERNAL_UPOW "\x13"
+#define INTERNAL_UPOW_CH '\x13'
 #define INTERNAL_SIGNS_COUNT 18
 #define INTERNAL_NUMBER_CHARS "\b"
-#define INTERNAL_OPERATORS "\a\b%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a"
-#define INTERNAL_OPERATORS_TWO "\a\b%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19"
-#define INTERNAL_OPERATORS_NOPM "\a%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a"
-#define INTERNAL_OPERATORS_NOMOD "\a\b\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a"
+#define INTERNAL_OPERATORS "\a\b%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a\x13"
+#define INTERNAL_OPERATORS_TWO "\a\b%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x13"
+#define INTERNAL_OPERATORS_NOPM "\a%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a\x13"
+#define INTERNAL_OPERATORS_RPN "\a%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a"
+#define INTERNAL_OPERATORS_NOMOD "\a\b\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a\x13"
 #define DUODECIMAL_CHARS "EXABab"
 
 string Calculator::parseComments(string &str, const ParseOptions &po, bool *double_tag) {
@@ -462,23 +465,24 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 					q_end[ui3] += index_shift;
 				}
 			}
+#define PS_UPOW(x) (convert_to_internal_representation ? INTERNAL_UPOW x : POWER x)
 			// perform replacement; if next to previous Unicode power combine the powers
 			if(str[ui] == '\xc2') {
-				if(str[ui + 1] == -71) str.replace(ui, 2, ui == prev_ui ? "1)" : "^(1)");
-				else if(str[ui + 1] == -78) str.replace(ui, 2, ui == prev_ui ? "2)" : "^(2)");
-				else if(str[ui + 1] == -77) str.replace(ui, 2, ui == prev_ui ? "3)" : "^(3)");
+				if(str[ui + 1] == -71) str.replace(ui, 2, ui == prev_ui ? "1)" : PS_UPOW("(1)"));
+				else if(str[ui + 1] == -78) str.replace(ui, 2, ui == prev_ui ? "2)" : PS_UPOW("(2)"));
+				else if(str[ui + 1] == -77) str.replace(ui, 2, ui == prev_ui ? "3)" : PS_UPOW("(3)"));
 			} else {
-				if(str[ui + 2] == -80) str.replace(ui, 3, ui == prev_ui ? "0)" : "^(0)");
-				else if(str[ui + 2] == -76) str.replace(ui, 3, ui == prev_ui ? "4)" : "^(4)");
-				else if(str[ui + 2] == -75) str.replace(ui, 3, ui == prev_ui ? "5)" : "^(5)");
-				else if(str[ui + 2] == -74) str.replace(ui, 3, ui == prev_ui ? "6)" : "^(6)");
-				else if(str[ui + 2] == -73) str.replace(ui, 3, ui == prev_ui ? "7)" : "^(7)");
-				else if(str[ui + 2] == -72) str.replace(ui, 3, ui == prev_ui ? "8)" : "^(8)");
-				else if(str[ui + 2] == -71) str.replace(ui, 3, ui == prev_ui ? "9)" : "^(9)");
-				else if(str[ui + 2] == -70) str.replace(ui, 3, ui == prev_ui ? "+)" : "^(+)");
-				else if(str[ui + 2] == -69) str.replace(ui, 3, ui == prev_ui ? "-)" : "^(-)");
-				else if(str[ui + 2] == -67) str.replace(ui, 3, ui == prev_ui ? "()" : "^(()");
-				else if(str[ui + 2] == -66) str.replace(ui, 3, ui == prev_ui ? "))" : "^())");
+				if(str[ui + 2] == -80) str.replace(ui, 3, ui == prev_ui ? "0)" : PS_UPOW("(0)"));
+				else if(str[ui + 2] == -76) str.replace(ui, 3, ui == prev_ui ? "4)" : PS_UPOW("(4)"));
+				else if(str[ui + 2] == -75) str.replace(ui, 3, ui == prev_ui ? "5)" : PS_UPOW("(5)"));
+				else if(str[ui + 2] == -74) str.replace(ui, 3, ui == prev_ui ? "6)" : PS_UPOW("(6)"));
+				else if(str[ui + 2] == -73) str.replace(ui, 3, ui == prev_ui ? "7)" : PS_UPOW("(7)"));
+				else if(str[ui + 2] == -72) str.replace(ui, 3, ui == prev_ui ? "8)" : PS_UPOW("(8)"));
+				else if(str[ui + 2] == -71) str.replace(ui, 3, ui == prev_ui ? "9)" : PS_UPOW("(9)"));
+				else if(str[ui + 2] == -70) str.replace(ui, 3, ui == prev_ui ? "+)" : PS_UPOW("(+)"));
+				else if(str[ui + 2] == -69) str.replace(ui, 3, ui == prev_ui ? "-)" : PS_UPOW("(-)"));
+				else if(str[ui + 2] == -67) str.replace(ui, 3, ui == prev_ui ? "()" : PS_UPOW("(()"));
+				else if(str[ui + 2] == -66) str.replace(ui, 3, ui == prev_ui ? "))" : PS_UPOW("())"));
 			}
 			if(ui == prev_ui) {
 				str.erase(prev_ui - space_n - 1, 1);
@@ -699,7 +703,8 @@ void replace_internal_operators(string &str) {
 	gsub("\x1d", " nand ", str);
 	gsub("\x1e", " nor ", str);
 	gsub("\x1f", " xor ", str);
-	gsub("\x15", "∥", str);
+	gsub("\x13", POWER, str);
+	gsub("\x14", "∥", str);
 	gsub("\x15", " cross ", str);
 	gsub("\x16", DOT, str);
 	gsub("\x17", DOT MULTIPLICATION, str);
@@ -717,6 +722,7 @@ const char *internal_operator_replacement(char c) {
 		case '\x1d': return "nand";
 		case '\x1e': return "nor";
 		case '\x1f': return "xor";
+		case '\x13': return POWER;
 		case '\x14': return "∥";
 		case '\x15': return "cross";
 		case '\x16': return DOT;
@@ -2430,7 +2436,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							}
 							set_function:
 							MathFunction *f = (MathFunction*) object;
-							if(str_index + name_length + 2 < str.length() && str[str_index + name_length] == POWER_CH && (f->id() == FUNCTION_ID_SIN || f->id() == FUNCTION_ID_COS || f->id() == FUNCTION_ID_TAN || f->id() == FUNCTION_ID_SINH || f->id() == FUNCTION_ID_COSH || f->id() == FUNCTION_ID_TANH) && str[str_index + name_length + 1] == MINUS_CH && str[str_index + name_length + 2] == '1' && (str_index + name_length + 3 == str.length() || is_not_in(NUMBER_ELEMENTS, str[str_index + name_length + 3]))) {
+							if(str_index + name_length + 2 < str.length() && (str[str_index + name_length] == POWER_CH || str[str_index + name_length] == INTERNAL_UPOW_CH) && (f->id() == FUNCTION_ID_SIN || f->id() == FUNCTION_ID_COS || f->id() == FUNCTION_ID_TAN || f->id() == FUNCTION_ID_SINH || f->id() == FUNCTION_ID_COSH || f->id() == FUNCTION_ID_TANH) && ((str[str_index + name_length + 1] == MINUS_CH && str[str_index + name_length + 2] == '1' && (str_index + name_length + 3 == str.length() || is_not_in(NUMBER_ELEMENTS, str[str_index + name_length + 3]))) || (str[str_index + name_length + 1] == LEFT_PARENTHESIS_CH && str[str_index + name_length + 2] == MINUS_CH && str_index + name_length + 4 < str.length() && str[str_index + name_length + 3] == '1' && str[str_index + name_length + 4] == RIGHT_PARENTHESIS_CH))) {
 								name_length += 3;
 								if(f->id() == FUNCTION_ID_SIN) f = f_asin;
 								else if(f->id() == FUNCTION_ID_COS) f = f_acos;
@@ -2549,7 +2555,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 										} else if(c == RIGHT_PARENTHESIS_CH) {
 											if(i5 <= 2) b = true;
 											else i5--;
-										} else if(c == POWER_CH) {
+										} else if(c == POWER_CH || c == INTERNAL_UPOW_CH) {
 											if(i5 < 2) i5 = 2;
 											b_power_before = true;
 										} else if(!b_comma_before && !b_power_before && c == ' ' && ((arg_i >= f->args() && f->args() >= 0) || arg_i >= f->minargs())) {
@@ -2558,7 +2564,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 												if(arg_i >= f->args() && f->args() >= 0) b = true;
 												else icand = i6 + 1;
 											}
-										} else if(!b_comma_before && i5 == 2 && ((arg_i >= f->args() && f->args() >= 0) || arg_i >= f->minargs()) && is_in(OPERATORS INTERNAL_OPERATORS, c) && c != POWER_CH && (!b_power_before || (c != MINUS_CH && c != PLUS_CH))) {
+										} else if(!b_comma_before && i5 == 2 && ((arg_i >= f->args() && f->args() >= 0) || arg_i >= f->minargs()) && is_in(OPERATORS INTERNAL_OPERATORS, c) && c != POWER_CH && c != INTERNAL_UPOW_CH && (!b_power_before || (c != MINUS_CH && c != PLUS_CH))) {
 											if(arg_i >= f->args() && f->args() >= 0) b = true;
 											else icand = i6 + 1;
 										} else if(c == COMMA_CH) {
@@ -2573,7 +2579,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 											i5 = 2;
 										}
 										if(c != COMMA_CH && c != ' ') b_comma_before = false;
-										if(c != POWER_CH && c != ' ') b_power_before = false;
+										if(c != POWER_CH && c != INTERNAL_UPOW_CH && c != ' ') b_power_before = false;
 									}
 									i6++;
 								}
@@ -3336,7 +3342,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		char last_operator = 0;
 		char last_operator2 = 0;
 		while(true) {
-			i = str.find_first_of(OPERATORS INTERNAL_OPERATORS_NOPM SPACE "\\", i3 + 1);
+			i = str.find_first_of(OPERATORS INTERNAL_OPERATORS_RPN SPACE "\\", i3 + 1);
 			if(i == string::npos) {
 				if(!b) {
 					parseAdd(str, mstruct, po2);
@@ -3990,7 +3996,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		while(true) {
 			i3 = str.find_first_not_of(OPERATORS INTERNAL_OPERATORS, 0);
 			if(i3 == string::npos) i = string::npos;
-			else i = str.find_first_of(PLUS MINUS MULTIPLICATION DIVISION POWER BITWISE_AND BITWISE_OR "<>%\x1c\x14", i3);
+			else i = str.find_first_of(PLUS MINUS MULTIPLICATION DIVISION POWER INTERNAL_UPOW BITWISE_AND BITWISE_OR "<>%\x1c\x14", i3);
 			i3 = str.find_first_not_of(OPERATORS INTERNAL_OPERATORS, i);
 			if(i3 == string::npos) i = string::npos;
 			if(c_operator == 0) {
@@ -4078,6 +4084,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						}
 						break;
 					}
+					case INTERNAL_UPOW_CH: {}
 					case POWER_CH: {
 						parseAdd(str2, mstruct, po, OPERATION_RAISE);
 						break;
@@ -4765,7 +4772,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	if((i = str.find(ID_WRAP_RIGHT_CH, 1)) != string::npos && i + 1 != str.length()) {
 		bool b = false, append = false;
 		while(i != string::npos && i + 1 != str.length()) {
-			if(str[i + 1] != POWER_CH && str[i + 1] != '\x19' && str[i + 1] != '\x1a' && str[i + 1] != '\b') {
+			if(str[i + 1] != POWER_CH && str[i + 1] != INTERNAL_UPOW_CH && str[i + 1] != '\x19' && str[i + 1] != '\x1a' && str[i + 1] != '\b') {
 				str2 = str.substr(0, i + 1);
 				str = str.substr(i + 1, str.length() - (i + 1));
 				if(b) {
@@ -4839,7 +4846,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	if((i = str.find(ID_WRAP_LEFT_CH, 1)) != string::npos) {
 		bool b = false, append = false;
 		while(i != string::npos) {
-			if(str[i - 1] != POWER_CH && str[i - 1] != '\x19' && str[i - 1] != '\x1a' && (i < 2 || str[i - 1] != MINUS_CH || (str[i - 2] != POWER_CH && str[i - 2] != '\x19' && str[i - 2] != '\x1a')) && str[i - 1] != '\b') {
+			if(str[i - 1] != POWER_CH && str[i - 1] != INTERNAL_UPOW_CH && str[i - 1] != '\x19' && str[i - 1] != '\x1a' && (i < 2 || str[i - 1] != MINUS_CH || (str[i - 2] != POWER_CH && str[i - 2] != '\x19' && str[i - 2] != '\x1a')) && str[i - 1] != '\b') {
 				str2 = str.substr(0, i);
 				str = str.substr(i, str.length() - i);
 				if(b) {
@@ -4925,6 +4932,12 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str, mstruct, po, OPERATION_EXP10);
 		if(i == 0 && mstruct->isMultiplication() && mstruct->size() == 2 && (*mstruct)[0].isOne()) mstruct->setToChild(2);
+	} else if((i = str.find(INTERNAL_UPOW_CH, 1)) != string::npos && i + 1 != str.length()) {
+		// Parse exponentiation (^)
+		str2 = str.substr(0, i);
+		str = str.substr(i + 1, str.length() - (i + 1));
+		parseAdd(str2, mstruct, po);
+		parseAdd(str, mstruct, po, OPERATION_RAISE);
 	} else if((i = str.find(ID_WRAP_LEFT_CH, 1)) != string::npos && i + 1 != str.length() && str.find(ID_WRAP_RIGHT_CH, i + 1) && str.find_first_not_of(PLUS MINUS, 0) != i) {
 		// Implicit multiplication
 		str2 = str.substr(0, i);
