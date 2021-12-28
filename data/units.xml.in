@@ -2914,6 +2914,16 @@
         </base>
       </unit>
       <unit type="alias">
+        <_title>Kilopound per Square Inch (ksi)</_title>
+        <system>Imperial/US</system>
+        <_names>a-cr:ksi</_names>
+        <base>
+          <unit>psi</unit>
+          <relation>1000</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
         <_title>Bar</_title>
         <_names>r:bar,p:bars</_names>
         <use_with_prefixes>true</use_with_prefixes>
