@@ -481,7 +481,7 @@
       </argument>
       <argument type="integer" index="2">
         <_title>Size</_title>
-        <min>1</min>
+        <min>0</min>
       </argument>
     </function>
     <function>
@@ -495,7 +495,7 @@
       </argument>
       <argument type="integer" index="2">
         <_title>Size</_title>
-        <min>1</min>
+        <min>0</min>
       </argument>
     </function>
     <function>
