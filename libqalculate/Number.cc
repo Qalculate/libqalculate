@@ -73,7 +73,7 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 		size_t group_size = 3, i_format = 0;
 		if(po.digit_grouping == DIGIT_GROUPING_LOCALE && CALCULATOR->local_digit_group_format.size() > i_format) {
 			if(CALCULATOR->local_digit_group_format[i_format] == CHAR_MAX) return;
-			if(CALCULATOR->local_digit_group_format[i_format] > 0) group_size = CALCULATOR->local_digit_group_format[i_format];
+			if((signed char) CALCULATOR->local_digit_group_format[i_format] > 0) group_size = CALCULATOR->local_digit_group_format[i_format];
 		}
 		size_t i_deci = str.find(po.decimalpoint());
 		size_t i;
@@ -127,7 +127,7 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 				if(po.digit_grouping == DIGIT_GROUPING_LOCALE && CALCULATOR->local_digit_group_format.size() - 1 > i_format) {
 					i_format++;
 					if(CALCULATOR->local_digit_group_format[i_format] == CHAR_MAX) break;
-					if(CALCULATOR->local_digit_group_format[i_format] > 0) group_size = CALCULATOR->local_digit_group_format[i_format];
+					if((signed char) CALCULATOR->local_digit_group_format[i_format] > 0) group_size = CALCULATOR->local_digit_group_format[i_format];
 				}
 			}
 		}
@@ -383,7 +383,7 @@ void Number::set(string number, const ParseOptions &po) {
 			if(!(str[i] >= 'a' && str[i] <= 'z') && !(str[i] >= 'A' && str[i] <= 'Z')) {
 				size_t n = 1;
 				// include whole Unicode character in error message
-				while(i + n < str.length() && str[i + n] < 0 && (unsigned char) str[i + n] < 0xC0) {
+				while(i + n < str.length() && (signed char) str[i + n] < 0 && (unsigned char) str[i + n] < 0xC0) {
 					n++;
 				}
 				CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" in bijective base-26."), str.substr(i, n).c_str(), number.c_str(), NULL);
@@ -479,7 +479,7 @@ void Number::set(string number, const ParseOptions &po) {
 					// unrecognized character
 					string str_char = number.substr(i, 1);
 					// include whole Unicode character in error message
-					while(i + 1 < number.length() && number[i + 1] < 0 && (unsigned char) number[i + 1] < 0xC0) {
+					while(i + 1 < number.length() && (signed char) number[i + 1] < 0 && (unsigned char) number[i + 1] < 0xC0) {
 						i++;
 						str_char += number[i];
 					}
@@ -996,7 +996,7 @@ void Number::set(string number, const ParseOptions &po) {
 		} else if(number[index] != ' ') {
 			string str_char = number.substr(index, 1);
 			// unrecognized digit: read whole Unicode character and show error
-			while(index + 1 < number.length() && number[index + 1] < 0 && (unsigned char) number[index + 1] < 0xC0) {
+			while(index + 1 < number.length() && (signed char) number[index + 1] < 0 && (unsigned char) number[index + 1] < 0xC0) {
 				index++;
 				str_char += number[index];
 			}

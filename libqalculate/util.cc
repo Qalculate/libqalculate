@@ -306,7 +306,7 @@ int gcd(int i1, int i2) {
 size_t unicode_length(const string &str) {
 	size_t l = str.length(), l2 = 0;
 	for(size_t i = 0; i < l; i++) {
-		if(str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
+		if((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
 			l2++;
 		}
 	}
@@ -315,7 +315,7 @@ size_t unicode_length(const string &str) {
 size_t unicode_length(const char *str) {
 	size_t l = strlen(str), l2 = 0;
 	for(size_t i = 0; i < l; i++) {
-		if(str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
+		if((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
 			l2++;
 		}
 	}
@@ -325,9 +325,9 @@ size_t unicode_length(const char *str) {
 bool text_length_is_one(const string &str) {
 	if(str.empty()) return false;
 	if(str.length() == 1) return true;
-	if(str[0] >= 0) return false;
+	if((signed char) str[0] >= 0) return false;
 	for(size_t i = 1; i < str.length(); i++) {
-		if(str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
+		if((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
 			return false;
 		}
 	}

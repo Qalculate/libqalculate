@@ -264,7 +264,7 @@ Calculator::Calculator() {
 	place_currency_code_before_negative = place_currency_sign_before_negative;
 #endif
 	local_digit_group_separator = lc->thousands_sep;
-	if((local_digit_group_separator.length() == 1 && local_digit_group_separator[0] < 0) || local_digit_group_separator == " ") local_digit_group_separator = " ";
+	if((local_digit_group_separator.length() == 1 && (signed char) local_digit_group_separator[0] < 0) || local_digit_group_separator == " ") local_digit_group_separator = " ";
 	else if(local_digit_group_separator == " ") local_digit_group_separator = THIN_SPACE;
 	local_digit_group_format = lc->grouping;
 	remove_blank_ends(local_digit_group_format);
@@ -496,7 +496,7 @@ Calculator::Calculator(bool ignore_locale) {
 	place_currency_code_before_negative = place_currency_sign_before_negative;
 #endif
 	local_digit_group_separator = lc->thousands_sep;
-	if((local_digit_group_separator.length() == 1 && local_digit_group_separator[0] < 0) || local_digit_group_separator == " ") local_digit_group_separator = " ";
+	if((local_digit_group_separator.length() == 1 && (signed char) local_digit_group_separator[0] < 0) || local_digit_group_separator == " ") local_digit_group_separator = " ";
 	else if(local_digit_group_separator == " ") local_digit_group_separator = THIN_SPACE;
 	local_digit_group_format = lc->grouping;
 	remove_blank_ends(local_digit_group_format);
@@ -644,15 +644,15 @@ bool Calculator::utf8_pos_is_valid_in_name(char *pos) {
 				// thin space
 				if(pos[2] == '\x89') return false;
 				// quotation marks
-				if((pos[2] >= -104 && pos[2] <= -97) || pos[2] == -70 || pos[2] == -71) return false;
+				if(((signed char) pos[2] >= -104 && (signed char) pos[2] <= -97) || (signed char) pos[2] == -70 || (signed char) pos[2] == -71) return false;
 				// operator
 				if(pos[2] == '\xa2') return false;
 			} else if(pos[1] == '\x81') {
 				// exponents
-				if(pos[2] == -80 || (pos[2] >= -76 && pos[2] <= -69) || pos[2] == -67 || pos[2] == -66) return false;
+				if((signed char) pos[2] == -80 || ((signed char) pos[2] >= -76 && (signed char) pos[2] <= -69) || (signed char) pos[2] == -67 || (signed char) pos[2] == -66) return false;
 			} else if(pos[1] == '\x85') {
 				// fractions
-				if(pos[2] >= -112 && pos[2] <= -98) return false;
+				if((signed char) pos[2] >= -112 && (signed char) pos[2] <= -98) return false;
 			} else if(pos[1] == '\x88') {
 				// operators
 				if(pos[2] == '\x95' || pos[2] == '\x99' || pos[2] == '\x92') return false;
@@ -667,9 +667,9 @@ bool Calculator::utf8_pos_is_valid_in_name(char *pos) {
 			if(pos[1] == '\xbc' && pos[2] == '\x8b') return false;
 		} else if(l == 2 && pos[0] == '\xc2') {
 			// exponents
-			if(pos[1] == -71 || pos[1] == -77 || pos[1] == -78) return false;
+			if((signed char) pos[1] == -71 || (signed char) pos[1] == -77 || (signed char) pos[1] == -78) return false;
 			// fractions
-			if(pos[1] == -66 || pos[1] == -67 || pos[1] == -68) return false;
+			if((signed char) pos[1] == -66 || (signed char) pos[1] == -67 || (signed char) pos[1] == -68) return false;
 			// operators
 			if(pos[1] == '\xb1' || pos[1] == '\xb7') return false;
 		} else if(l == 2 && pos[0] == '\xc3') {
