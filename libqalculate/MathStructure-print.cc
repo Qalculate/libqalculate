@@ -3172,7 +3172,7 @@ size_t unformatted_unicode_length(const string &str) {
 			do {
 				i++;
 			} while(i < l && str[i] != 'm');
-		} else if(str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
+		} else if((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
 			l2++;
 		}
 	}

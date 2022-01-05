@@ -141,7 +141,7 @@ enum {
 
 bool contains_unicode_char(const char *str) {
 	for(int i = strlen(str) - 1; i >= 0; i--) {
-		if(str[i] < 0) return true;
+		if((signed char) str[i] < 0) return true;
 	}
 	return false;
 }
@@ -182,7 +182,7 @@ size_t unicode_length_check(const char *str) {
 			do {
 				i++;
 			} while(i < l && str[i] != 'm');
-		} else if(str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
+		} else if((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
 			l2++;
 		}
 	}
@@ -209,15 +209,15 @@ bool is_answer_variable(Variable *v) {
 
 bool equalsIgnoreCaseFirst(const string &str1, const char *str2) {
 	if(str1.length() < 1 || strlen(str2) < 1) return false;
-	if((str1[0] < 0 && str1.length() > 1) || (str2[0] < 0 && strlen(str2) > 1)) {
+	if(((signed char) str1[0] < 0 && str1.length() > 1) || ((signed char) str2[0] < 0 && strlen(str2) > 1)) {
 		size_t iu1 = 1, iu2 = 1;
-		if(str1[0] < 0) {
-			while(iu1 < str1.length() && str1[iu1] < 0) {
+		if((signed char) str1[0] < 0) {
+			while(iu1 < str1.length() && (signed char) str1[iu1] < 0) {
 				iu1++;
 			}
 		}
-		if(str2[0] < 0) {
-			while(iu2 < strlen(str2) && str2[iu2] < 0) {
+		if((signed char) str2[0] < 0) {
+			while(iu2 < strlen(str2) && (signed char) str2[iu2] < 0) {
 				iu2++;
 			}
 		}
@@ -487,7 +487,7 @@ int countRows(const char *str, int cols) {
 			do {
 				i++;
 			} while(i < l && str[i] != 'm');
-		} else if(str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
+		} else if((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
 			if(str[i] == '\n') {
 				r++;
 				c = 0;
@@ -518,9 +518,9 @@ int addLineBreaks(string &str, int cols, bool expr = false, size_t indent = 0, s
 				str.erase(i, 1);
 				if(i < result_start) result_start--;
 				if(i >= str.length()) break;
-			} else if(expr && printops.use_unicode_signs && printops.digit_grouping != DIGIT_GROUPING_NONE && str[i] <= 0 && (unsigned char) str[i] >= 0xC0) {
+			} else if(expr && printops.use_unicode_signs && printops.digit_grouping != DIGIT_GROUPING_NONE && (signed char) str[i] <= 0 && (unsigned char) str[i] >= 0xC0) {
 				size_t l = 1;
-				while(i + l < str.length() && str[i + l] <= 0 && (unsigned char) str[i + l] < 0xC0) l++;
+				while(i + l < str.length() && (signed char) str[i + l] <= 0 && (unsigned char) str[i + l] < 0xC0) l++;
 				if(str.substr(i, l) == " ") {
 					str.erase(i, l);
 					if(i < result_start) result_start--;
@@ -535,7 +535,7 @@ int addLineBreaks(string &str, int cols, bool expr = false, size_t indent = 0, s
 			i++;
 			if(i >= str.length()) break;
 		}
-		if(str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
+		if((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
 			if(str[i] == '\n') {
 				r++;
 				c = 0;
@@ -607,10 +607,10 @@ int addLineBreaks(string &str, int cols, bool expr = false, size_t indent = 0, s
 					else c++;
 				}
 			}
-		} else if(expr && !printops.spacious && printops.use_unicode_signs && i + 1 < str.length() && (str[i + 1] > 0 || (unsigned char) str[i + 1] >= 0xC0)) {
+		} else if(expr && !printops.spacious && printops.use_unicode_signs && i + 1 < str.length() && ((signed char) str[i + 1] > 0 || (unsigned char) str[i + 1] >= 0xC0)) {
 			if(c > indent && (c - indent) > (cols - indent) / 2 && is_not_in(" \t.;,", str[i + 1])) {
 				size_t index = i;
-				while(index > 0 && str[index - 1] <= 0) {
+				while(index > 0 && (signed char) str[index - 1] <= 0) {
 					index--;
 					if((unsigned char) str[index] >= 0xC0) break;
 				}
@@ -1470,15 +1470,15 @@ bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t 
 			return i1 >= str1.length();
 		}
 		if(i1 >= str1.length()) break;
-		if((str1[i1] < 0 && i1 + 1 < str1.length()) || (str2[i2] < 0 && i2 + 1 < str2.length())) {
+		if(((signed char) str1[i1] < 0 && i1 + 1 < str1.length()) || ((signed char) str2[i2] < 0 && i2 + 1 < str2.length())) {
 			size_t iu1 = 1, iu2 = 1;
-			if(str1[i1] < 0) {
-				while(iu1 + i1 < str1.length() && str1[i1 + iu1] < 0) {
+			if((signed char) str1[i1] < 0) {
+				while(iu1 + i1 < str1.length() && (signed char) str1[i1 + iu1] < 0) {
 					iu1++;
 				}
 			}
-			if(str2[i2] < 0) {
-				while(iu2 + i2 < str2.length() && str2[i2 + iu2] < 0) {
+			if((signed char) str2[i2] < 0) {
+				while(iu2 + i2 < str2.length() && (signed char) str2[i2 + iu2] < 0) {
 					iu2++;
 				}
 			}

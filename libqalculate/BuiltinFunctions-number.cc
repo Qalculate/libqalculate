@@ -1031,7 +1031,7 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						d_i = 0; v++; i++;
 					} else {
 						size_t l = 1;
-						while(i + l < sdigits.length() && sdigits[i + l] <= 0 && (unsigned char) sdigits[i + l] < 0xC0) l++;
+						while(i + l < sdigits.length() && (signed char) sdigits[i + l] <= 0 && (unsigned char) sdigits[i + l] < 0xC0) l++;
 						if(d_i == vdigits.size()) vdigits.resize(d_i + 1);
 						vdigits[d_i][sdigits.substr(i, l)] = v;
 						i += l;
@@ -1042,7 +1042,7 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				i_dot = number.length();
 				for(size_t i = 0; i < number.length();) {
 					size_t l = 1;
-					while(i + l < number.length() && number[i + l] <= 0 && (unsigned char) number[i + l] < 0xC0) l++;
+					while(i + l < number.length() && (signed char) number[i + l] <= 0 && (unsigned char) number[i + l] < 0xC0) l++;
 					for(d_i = 0; d_i < vdigits.size(); d_i++) {
 						unordered_map<string, long int>::iterator it = vdigits[d_i].find(number.substr(i, l));
 						if(it != vdigits[d_i].end()) {
@@ -1062,35 +1062,35 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			} else if(idigits == 4 || idigits == 5) {
 				for(size_t i = 0; i < number.length();) {
 					size_t l = 1;
-					while(i + l < number.length() && number[i + l] <= 0 && (unsigned char) number[i + l] < 0xC0) l++;
+					while(i + l < number.length() && (signed char) number[i + l] <= 0 && (unsigned char) number[i + l] < 0xC0) l++;
 					char c = 0;
 					if(l == 1) {
 						c = number[i];
-					} else if(l == 2 && number[i] == -61) {
-						if(number[i + 1] >= -128 && number[i + 1] <= -122) c = 'A';
-						else if(number[i + 1] == -121) c = 'C';
-						else if(number[i + 1] >= -120 && number[i + 1] <= -117) c = 'E';
-						else if(number[i + 1] >= -116 && number[i + 1] <= -113) c = 'I';
-						//else if(number[i + 1] == -112) c = 'D';
-						else if(number[i + 1] == -111) c = 'N';
-						else if(number[i + 1] >= -110 && number[i + 1] <= -106) c = 'O';
-						else if(number[i + 1] == -104) c = 'O';
-						else if(number[i + 1] >= -103 && number[i + 1] <= -100) c = 'U';
-						else if(number[i + 1] == -99) c = 'Y';
-						//else if(number[i + 1] == -98) c = 'T';
-						else if(number[i + 1] == -97) c = 'S';
-						else if(number[i + 1] >= -96 && number[i + 1] <= -90) c = 'a';
-						else if(number[i + 1] == -89) c = 'c';
-						else if(number[i + 1] >= -88 && number[i + 1] <= -85) c = 'e';
-						else if(number[i + 1] >= -84 && number[i + 1] <= -81) c = 'i';
-						//else if(number[i + 1] == -80) c = 'd';
-						else if(number[i + 1] == -79) c = 'n';
-						else if(number[i + 1] >= -78 && number[i + 1] <= -74) c = 'o';
-						else if(number[i + 1] == -72) c = 'o';
-						else if(number[i + 1] >= -71 && number[i + 1] <= -68) c = 'u';
-						else if(number[i + 1] == -67) c = 'y';
-						//else if(number[i + 1] == -66) c = 't';
-						else if(number[i + 1] == -65) c = 'y';
+					} else if(l == 2 && (signed char) number[i] == -61) {
+						if((signed char) number[i + 1] >= -128 && (signed char) number[i + 1] <= -122) c = 'A';
+						else if((signed char) number[i + 1] == -121) c = 'C';
+						else if((signed char) number[i + 1] >= -120 && (signed char) number[i + 1] <= -117) c = 'E';
+						else if((signed char) number[i + 1] >= -116 && (signed char) number[i + 1] <= -113) c = 'I';
+						//else if((signed char) number[i + 1] == -112) c = 'D';
+						else if((signed char) number[i + 1] == -111) c = 'N';
+						else if((signed char) number[i + 1] >= -110 && (signed char) number[i + 1] <= -106) c = 'O';
+						else if((signed char) number[i + 1] == -104) c = 'O';
+						else if((signed char) number[i + 1] >= -103 && (signed char) number[i + 1] <= -100) c = 'U';
+						else if((signed char) number[i + 1] == -99) c = 'Y';
+						//else if((signed char) number[i + 1] == -98) c = 'T';
+						else if((signed char) number[i + 1] == -97) c = 'S';
+						else if((signed char) number[i + 1] >= -96 && (signed char) number[i + 1] <= -90) c = 'a';
+						else if((signed char) number[i + 1] == -89) c = 'c';
+						else if((signed char) number[i + 1] >= -88 && (signed char) number[i + 1] <= -85) c = 'e';
+						else if((signed char) number[i + 1] >= -84 && (signed char) number[i + 1] <= -81) c = 'i';
+						//else if((signed char) number[i + 1] == -80) c = 'd';
+						else if((signed char) number[i + 1] == -79) c = 'n';
+						else if((signed char) number[i + 1] >= -78 && (signed char) number[i + 1] <= -74) c = 'o';
+						else if((signed char) number[i + 1] == -72) c = 'o';
+						else if((signed char) number[i + 1] >= -71 && (signed char) number[i + 1] <= -68) c = 'u';
+						else if((signed char) number[i + 1] == -67) c = 'y';
+						//else if((signed char) number[i + 1] == -66) c = 't';
+						else if((signed char) number[i + 1] == -65) c = 'y';
 					}
 					if(c != 0) {
 						if(c == '0') digits.push_back(0);
@@ -1125,7 +1125,7 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						b_minus = !b_minus;
 					} else {
 						string str_char = number.substr(i, 1);
-						while(i + 1 < number.length() && number[i + 1] < 0 && number[i + 1] && (unsigned char) number[i + 1] < 0xC0) {
+						while(i + 1 < number.length() && (signed char) number[i + 1] < 0 && number[i + 1] && (unsigned char) number[i + 1] < 0xC0) {
 							i++;
 							str_char += number[i];
 						}
@@ -1158,7 +1158,7 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 							i = i2 - 1;
 							b_esc = true;
 						}
-						if(digits.empty() && number[i] == (char) -30 && i + 3 < number.length() && number[i + 1] == (char) -120 && number[i + 2] == (char) -110) {
+						if(digits.empty() && (signed char) number[i] == (char) -30 && i + 3 < number.length() && number[i + 1] == (char) -120 && number[i + 2] == (char) -110) {
 							i += 2;
 							b_minus = !b_minus;
 							b_esc = true;
