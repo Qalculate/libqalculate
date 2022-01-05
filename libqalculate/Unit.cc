@@ -958,7 +958,7 @@ string CompositeUnit::print(bool plural_, bool short_, bool use_unicode, bool (*
 			} else {
 				str += units[i]->print(false, short_, use_unicode, can_display_unicode_string_function, can_display_unicode_string_arg);
 			}
-			if(short_ && use_unicode && units[i]->firstBaseExponent() != (b ? -1 : 1) && str.length() >= 2 && str[str.length() - 1] == -80 && str[str.length() - 2] == -62) {
+			if(short_ && use_unicode && units[i]->firstBaseExponent() != (b ? -1 : 1) && str.length() >= 2 && str[str.length() - 1] == (char) -80 && str[str.length() - 2] == (char) -62) {
 				str.erase(str.length() - 2, 2);
 				str += units[i]->print(plural_ && i == 0 && units[i]->firstBaseExponent() > 0, short_, false, can_display_unicode_string_function, can_display_unicode_string_arg);
 			}

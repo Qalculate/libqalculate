@@ -177,17 +177,17 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 	size_t is = str_index;
 	for(size_t i = 0; i < name_length; i++, is++) {
 		if(is >= str.length()) return 0;
-		if((name[i] < 0 && i + 1 < name_length) || (str[is] < 0 && is + 1 < str.length())) {
+		if(((signed char) name[i] < 0 && i + 1 < name_length) || ((signed char) str[is] < 0 && is + 1 < str.length())) {
 			// assumed Unicode character found
 			size_t i2 = 1, is2 = 1;
 			// determine length of Unicode character(s)
-			if(name[i] < 0) {
-				while(i2 + i < name_length && name[i2 + i] < 0) {
+			if((signed char) name[i] < 0) {
+				while(i2 + i < name_length && (signed char) name[i2 + i] < 0) {
 					i2++;
 				}
 			}
-			if(str[is] < 0) {
-				while(is2 + is < str.length() && str[is2 + is] < 0) {
+			if((signed char) str[is] < 0) {
+				while(is2 + is < str.length() && (signed char) str[is2 + is] < 0) {
 					is2++;
 				}
 			}
@@ -320,15 +320,15 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 		size_t ui = str.find("\xe2\x80");
 		bool b_double = false, b_single = false, b_angle = false;
 		while(ui != string::npos && ui + 2 < str.length()) {
-			if(str[ui + 2] >= -104 && str[ui + 2] <= -101) {
+			if((signed char) str[ui + 2] >= -104 && (signed char) str[ui + 2] <= -101) {
 				// single quotation marks
 				str.replace(ui, 3, "\'");
 				b_single = true;
-			} else if(str[ui + 2] >= -100 && str[ui + 2] <= -97) {
+			} else if((signed char) str[ui + 2] >= -100 && (signed char) str[ui + 2] <= -97) {
 				// double quotation marks
 				str.replace(ui, 3, "\"");
 				b_double = true;
-			} else if(str[ui + 2] == -70 || str[ui + 2] == -71) {
+			} else if((signed char) str[ui + 2] == -70 || (signed char) str[ui + 2] == -71) {
 				// single angle quotation marks
 				b_angle = true;
 				ui += 2;
@@ -396,7 +396,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 				}
 				str.replace(ui, signs[i].length(), real_signs[i]);
 				ui = str.find(signs[i], ui + real_signs[i].length());
-				if(!b_unicode && real_signs[i][0] < 0) b_unicode = true;
+				if(!b_unicode && (signed char) real_signs[i][0] < 0) b_unicode = true;
 			}
 		}
 	}
@@ -436,19 +436,19 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 		while(true) {
 			// Unicode powers 0 and 4-9 use three chars and begin with \xe2\x81
 			size_t ui = str.find("\xe2\x81", prev_ui == string::npos ? 0 : prev_ui);
-			while(ui != string::npos && (ui == str.length() - 2 || (str[ui + 2] != -80 && (str[ui + 2] < -76 || str[ui + 2] > -66 || str[ui + 2] == -68)))) ui = str.find("\xe2\x81", ui + 3);
+			while(ui != string::npos && (ui == str.length() - 2 || ((signed char) str[ui + 2] != -80 && ((signed char) str[ui + 2] < -76 || (signed char) str[ui + 2] > -66 || (signed char) str[ui + 2] == -68)))) ui = str.find("\xe2\x81", ui + 3);
 			// Unicode powers 1-3 use two chars and begin with \xc2
 			size_t ui2 = str.find('\xc2', prev_ui == string::npos ? 0 : prev_ui);
-			while(ui2 != string::npos && (ui2 == str.length() - 1 || (str[ui2 + 1] != -71 && str[ui2 + 1] != -77 && str[ui2 + 1] != -78))) ui2 = str.find('\xc2', ui2 + 2);
+			while(ui2 != string::npos && (ui2 == str.length() - 1 || ((signed char) str[ui2 + 1] != -71 && (signed char) str[ui2 + 1] != -77 && (signed char) str[ui2 + 1] != -78))) ui2 = str.find('\xc2', ui2 + 2);
 			if(ui2 != string::npos && (ui == string::npos || ui2 < ui)) ui = ui2;
 			if(ui != string::npos) {
 				// check that found index is outside quotes
 				for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
 					if(ui <= q_end[ui3] && ui >= q_begin[ui3]) {
 						ui = str.find("\xe2\x81", q_end[ui3] + 1);
-						if(ui != string::npos && (ui == str.length() - 2 || (str[ui + 2] != -80 && (str[ui + 2] < -76 || str[ui + 2] > -66 || str[ui + 2] != -68)))) ui = string::npos;
+						if(ui != string::npos && (ui == str.length() - 2 || ((signed char) str[ui + 2] != -80 && ((signed char) str[ui + 2] < -76 || (signed char) str[ui + 2] > -66 || (signed char) str[ui + 2] != -68)))) ui = string::npos;
 						ui2 = str.find('\xc2', q_end[ui3] + 1);
-						if(ui2 != string::npos && (ui2 == str.length() - 1 || (str[ui2 + 1] != -71 && str[ui2 + 1] != -77 && str[ui2 + 1] != -78))) ui2 = string::npos;
+						if(ui2 != string::npos && (ui2 == str.length() - 1 || ((signed char) str[ui2 + 1] != -71 && (signed char) str[ui2 + 1] != -77 && (signed char) str[ui2 + 1] != -78))) ui2 = string::npos;
 						if(ui2 != string::npos && (ui == string::npos || ui2 < ui)) ui = ui2;
 						if(ui == string::npos) break;
 					}
@@ -468,21 +468,21 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 #define PS_UPOW(x) (convert_to_internal_representation ? INTERNAL_UPOW x : POWER x)
 			// perform replacement; if next to previous Unicode power combine the powers
 			if(str[ui] == '\xc2') {
-				if(str[ui + 1] == -71) str.replace(ui, 2, ui == prev_ui ? "1)" : PS_UPOW("(1)"));
-				else if(str[ui + 1] == -78) str.replace(ui, 2, ui == prev_ui ? "2)" : PS_UPOW("(2)"));
-				else if(str[ui + 1] == -77) str.replace(ui, 2, ui == prev_ui ? "3)" : PS_UPOW("(3)"));
+				if((signed char) str[ui + 1] == -71) str.replace(ui, 2, ui == prev_ui ? "1)" : PS_UPOW("(1)"));
+				else if((signed char) str[ui + 1] == -78) str.replace(ui, 2, ui == prev_ui ? "2)" : PS_UPOW("(2)"));
+				else if((signed char) str[ui + 1] == -77) str.replace(ui, 2, ui == prev_ui ? "3)" : PS_UPOW("(3)"));
 			} else {
-				if(str[ui + 2] == -80) str.replace(ui, 3, ui == prev_ui ? "0)" : PS_UPOW("(0)"));
-				else if(str[ui + 2] == -76) str.replace(ui, 3, ui == prev_ui ? "4)" : PS_UPOW("(4)"));
-				else if(str[ui + 2] == -75) str.replace(ui, 3, ui == prev_ui ? "5)" : PS_UPOW("(5)"));
-				else if(str[ui + 2] == -74) str.replace(ui, 3, ui == prev_ui ? "6)" : PS_UPOW("(6)"));
-				else if(str[ui + 2] == -73) str.replace(ui, 3, ui == prev_ui ? "7)" : PS_UPOW("(7)"));
-				else if(str[ui + 2] == -72) str.replace(ui, 3, ui == prev_ui ? "8)" : PS_UPOW("(8)"));
-				else if(str[ui + 2] == -71) str.replace(ui, 3, ui == prev_ui ? "9)" : PS_UPOW("(9)"));
-				else if(str[ui + 2] == -70) str.replace(ui, 3, ui == prev_ui ? "+)" : PS_UPOW("(+)"));
-				else if(str[ui + 2] == -69) str.replace(ui, 3, ui == prev_ui ? "-)" : PS_UPOW("(-)"));
-				else if(str[ui + 2] == -67) str.replace(ui, 3, ui == prev_ui ? "()" : PS_UPOW("(()"));
-				else if(str[ui + 2] == -66) str.replace(ui, 3, ui == prev_ui ? "))" : PS_UPOW("())"));
+				if((signed char) str[ui + 2] == -80) str.replace(ui, 3, ui == prev_ui ? "0)" : PS_UPOW("(0)"));
+				else if((signed char) str[ui + 2] == -76) str.replace(ui, 3, ui == prev_ui ? "4)" : PS_UPOW("(4)"));
+				else if((signed char) str[ui + 2] == -75) str.replace(ui, 3, ui == prev_ui ? "5)" : PS_UPOW("(5)"));
+				else if((signed char) str[ui + 2] == -74) str.replace(ui, 3, ui == prev_ui ? "6)" : PS_UPOW("(6)"));
+				else if((signed char) str[ui + 2] == -73) str.replace(ui, 3, ui == prev_ui ? "7)" : PS_UPOW("(7)"));
+				else if((signed char) str[ui + 2] == -72) str.replace(ui, 3, ui == prev_ui ? "8)" : PS_UPOW("(8)"));
+				else if((signed char) str[ui + 2] == -71) str.replace(ui, 3, ui == prev_ui ? "9)" : PS_UPOW("(9)"));
+				else if((signed char) str[ui + 2] == -70) str.replace(ui, 3, ui == prev_ui ? "+)" : PS_UPOW("(+)"));
+				else if((signed char) str[ui + 2] == -69) str.replace(ui, 3, ui == prev_ui ? "-)" : PS_UPOW("(-)"));
+				else if((signed char) str[ui + 2] == -67) str.replace(ui, 3, ui == prev_ui ? "()" : PS_UPOW("(()"));
+				else if((signed char) str[ui + 2] == -66) str.replace(ui, 3, ui == prev_ui ? "))" : PS_UPOW("())"));
 			}
 			if(ui == prev_ui) {
 				str.erase(prev_ui - space_n - 1, 1);
@@ -502,13 +502,13 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 		while(true) {
 			// three char Unicode fractions begin with \xe2\x85
 			size_t ui = str.find("\xe2\x85", prev_ui == string::npos ? 0 : prev_ui);
-			while(ui != string::npos && (ui == str.length() - 2 || str[ui + 2] < -112 || str[ui + 2] > -98)) ui = str.find("\xe2\x85", ui + 3);
+			while(ui != string::npos && (ui == str.length() - 2 || (signed char) str[ui + 2] < -112 || (signed char) str[ui + 2] > -98)) ui = str.find("\xe2\x85", ui + 3);
 			if(ui != string::npos) {
 				// check that found index is outside quotes
 				for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
 					if(ui <= q_end[ui3] && ui >= q_begin[ui3]) {
 						ui = str.find("\xe2\x85", q_end[ui3] + 1);
-						if(ui != string::npos && (ui == str.length() - 2 || str[ui + 2] < -112 || str[ui + 2] > -98)) ui = string::npos;
+						if(ui != string::npos && (ui == str.length() - 2 || (signed char) str[ui + 2] < -112 || (signed char) str[ui + 2] > -98)) ui = string::npos;
 						if(ui == string::npos) break;
 					}
 				}
@@ -526,7 +526,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 				ui += 1;
 			}
 			int index_shift = (b_add ? 7 : 5) - 3;
-			if(str[ui + 2] == -110) index_shift++;
+			if((signed char) str[ui + 2] == -110) index_shift++;
 			// adjust quotation mark indices
 			for(size_t ui2 = 0; ui2 < q_begin.size(); ui2++) {
 				if(q_begin[ui2] >= ui) {
@@ -535,21 +535,21 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 				}
 			}
 			// perform replacement; interpret as addition if previous character is a numeral digit
-			if(str[ui + 2] == -98) str.replace(ui, 3, b_add ? "+(7/8))" : "(7/8)");
-			else if(str[ui + 2] == -99) str.replace(ui, 3, b_add ? "+(5/8))" : "(5/8)");
-			else if(str[ui + 2] == -100) str.replace(ui, 3, b_add ? "+(3/8))" : "(3/8)");
-			else if(str[ui + 2] == -101) str.replace(ui, 3, b_add ? "+(1/8))" : "(1/8)");
-			else if(str[ui + 2] == -102) str.replace(ui, 3, b_add ? "+(5/6))" : "(5/6)");
-			else if(str[ui + 2] == -103) str.replace(ui, 3, b_add ? "+(1/6))" : "(1/6)");
-			else if(str[ui + 2] == -104) str.replace(ui, 3, b_add ? "+(4/5))" : "(4/5)");
-			else if(str[ui + 2] == -105) str.replace(ui, 3, b_add ? "+(3/5))" : "(3/5)");
-			else if(str[ui + 2] == -106) str.replace(ui, 3, b_add ? "+(2/5))" : "(2/5)");
-			else if(str[ui + 2] == -107) str.replace(ui, 3, b_add ? "+(1/5))" : "(1/5)");
-			else if(str[ui + 2] == -108) str.replace(ui, 3, b_add ? "+(2/3))" : "(2/3)");
-			else if(str[ui + 2] == -109) str.replace(ui, 3, b_add ? "+(1/3))" : "(1/3)");
-			else if(str[ui + 2] == -110) {str.replace(ui, 3, b_add ? "+(1/10))" : "(1/10)"); ui++;}
-			else if(str[ui + 2] == -111) str.replace(ui, 3, b_add ? "+(1/9))" : "(1/9)");
-			else if(str[ui + 2] == -112) str.replace(ui, 3, b_add ? "+(1/7))" : "(1/7)");
+			if((signed char) str[ui + 2] == -98) str.replace(ui, 3, b_add ? "+(7/8))" : "(7/8)");
+			else if((signed char) str[ui + 2] == -99) str.replace(ui, 3, b_add ? "+(5/8))" : "(5/8)");
+			else if((signed char) str[ui + 2] == -100) str.replace(ui, 3, b_add ? "+(3/8))" : "(3/8)");
+			else if((signed char) str[ui + 2] == -101) str.replace(ui, 3, b_add ? "+(1/8))" : "(1/8)");
+			else if((signed char) str[ui + 2] == -102) str.replace(ui, 3, b_add ? "+(5/6))" : "(5/6)");
+			else if((signed char) str[ui + 2] == -103) str.replace(ui, 3, b_add ? "+(1/6))" : "(1/6)");
+			else if((signed char) str[ui + 2] == -104) str.replace(ui, 3, b_add ? "+(4/5))" : "(4/5)");
+			else if((signed char) str[ui + 2] == -105) str.replace(ui, 3, b_add ? "+(3/5))" : "(3/5)");
+			else if((signed char) str[ui + 2] == -106) str.replace(ui, 3, b_add ? "+(2/5))" : "(2/5)");
+			else if((signed char) str[ui + 2] == -107) str.replace(ui, 3, b_add ? "+(1/5))" : "(1/5)");
+			else if((signed char) str[ui + 2] == -108) str.replace(ui, 3, b_add ? "+(2/3))" : "(2/3)");
+			else if((signed char) str[ui + 2] == -109) str.replace(ui, 3, b_add ? "+(1/3))" : "(1/3)");
+			else if((signed char) str[ui + 2] == -110) {str.replace(ui, 3, b_add ? "+(1/10))" : "(1/10)"); ui++;}
+			else if((signed char) str[ui + 2] == -111) str.replace(ui, 3, b_add ? "+(1/9))" : "(1/9)");
+			else if((signed char) str[ui + 2] == -112) str.replace(ui, 3, b_add ? "+(1/7))" : "(1/7)");
 			if(b_add) prev_ui = ui + 7;
 			else prev_ui = ui + 5;
 		}
@@ -559,13 +559,13 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 		while(true) {
 			// two char Unicode fractions begin with \xc2
 			size_t ui = str.find('\xc2', prev_ui == string::npos ? 0 : prev_ui);
-			while(ui != string::npos && (ui == str.length() - 1 || (str[ui + 1] != -66 && str[ui + 1] != -67 && str[ui + 1] != -68))) ui = str.find('\xc2', ui + 2);
+			while(ui != string::npos && (ui == str.length() - 1 || ((signed char) str[ui + 1] != -66 && (signed char) str[ui + 1] != -67 && (signed char) str[ui + 1] != -68))) ui = str.find('\xc2', ui + 2);
 			if(ui != string::npos) {
 				// check that found index is outside quotes
 				for(size_t ui3 = 0; ui3 < q_end.size(); ui3++) {
 					if(ui <= q_end[ui3] && ui >= q_begin[ui3]) {
 						ui = str.find('\xc2', q_end[ui3] + 1);
-						if(ui != string::npos && (ui == str.length() - 1 || (str[ui + 1] != -66 && str[ui + 1] != -67 && str[ui + 1] != -68))) ui = string::npos;
+						if(ui != string::npos && (ui == str.length() - 1 || ((signed char) str[ui + 1] != -66 && (signed char) str[ui + 1] != -67 && (signed char) str[ui + 1] != -68))) ui = string::npos;
 						if(ui == string::npos) break;
 					}
 				}
@@ -591,9 +591,9 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 				}
 			}
 			// perform replacement; interpret as addition if previous character is a numeral digit
-			if(str[ui + 1] == -66) str.replace(ui, 2, b_add ? "+(3/4))" : "(3/4)");
-			else if(str[ui + 1] == -67) str.replace(ui, 2, b_add ? "+(1/2))" : "(1/2)");
-			else if(str[ui + 1] == -68) str.replace(ui, 2, b_add ? "+(1/4))" : "(1/4)");
+			if((signed char) str[ui + 1] == -66) str.replace(ui, 2, b_add ? "+(3/4))" : "(3/4)");
+			else if((signed char) str[ui + 1] == -67) str.replace(ui, 2, b_add ? "+(1/2))" : "(1/2)");
+			else if((signed char) str[ui + 1] == -68) str.replace(ui, 2, b_add ? "+(1/4))" : "(1/4)");
 			if(b_add) prev_ui = ui + 7;
 			else prev_ui = ui + 5;
 		}
@@ -1860,10 +1860,10 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				// replaced \ followed by a character with symbolic MathStructure
 				stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 				size_t l = 1;
-				if(str[str_index + l] < 0) {
+				if((signed char) str[str_index + l] < 0) {
 					do {
 						l++;
-					} while(str_index + l < str.length() && str[str_index + l] < 0 && (unsigned char) str[str_index + l] < 0xC0);
+					} while(str_index + l < str.length() && (signed char) str[str_index + l] < 0 && (unsigned char) str[str_index + l] < 0xC0);
 					l--;
 				}
 				MathStructure *mstruct = new MathStructure(str.substr(str_index + 1, l));
@@ -2171,10 +2171,10 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			else str[str_index] = '\x16';
 		} else if(is_not_in(NUMBERS INTERNAL_OPERATORS NOT_IN_NAMES, str[str_index])) {
 			// dx/dy derivative notation
-			if((str[str_index] == 'd' && is_not_number('d', base)) || (str[str_index] == -50 && str_index + 1 < str.length() && str[str_index + 1] == -108) || (str[str_index] == -16 && str_index + 3 < str.length() && str[str_index + 1] == -99 && str[str_index + 2] == -102 && str[str_index + 3] == -85)) {
+			if((str[str_index] == 'd' && is_not_number('d', base)) || ((signed char) str[str_index] == -50 && str_index + 1 < str.length() && (signed char) str[str_index + 1] == -108) || ((signed char) str[str_index] == -16 && str_index + 3 < str.length() && (signed char) str[str_index + 1] == -99 && (signed char) str[str_index + 2] == -102 && (signed char) str[str_index + 3] == -85)) {
 				size_t d_len = 1;
-				if(str[str_index] == -50) d_len = 2;
-				else if(str[str_index] == -16) d_len = 4;
+				if((signed char) str[str_index] == -50) d_len = 2;
+				else if((signed char) str[str_index] == -16) d_len = 4;
 				if(str_index + (d_len * 2) + 1 < str.length() && (str[str_index + d_len] == '/' || (str[str_index + d_len + 1] == '/' && is_in("xyz", str[str_index + d_len]) && str_index + (d_len * 2) + 2 < str.length()))) {
 					size_t i_div = str_index + d_len;
 					if(str[str_index + d_len] != '/') i_div++;
@@ -2821,7 +2821,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					}
 				} else if(b) {
 					size_t i = 1;
-					if(str[str_index + 1] < 0) {
+					if((signed char) str[str_index + 1] < 0) {
 						i++;
 						while(i <= unit_chars_left && (unsigned char) str[str_index + i] >= 0x80 && (unsigned char) str[str_index + i] <= 0xBF) {
 							i++;
