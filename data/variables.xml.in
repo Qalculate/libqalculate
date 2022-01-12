@@ -169,7 +169,7 @@
       </variable>
       <variable>
         <_title>Reduced Planck Constant (Dirac constant)</_title>
-        <names>r:planck2pi,dirac,au:&#x210f;</names>
+        <names>r:planck2pi,dirac,au:&#x210f;,o:hbar</names>
         <value>planck/(2*pi)</value>
       </variable>
       <variable>
