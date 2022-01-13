@@ -672,49 +672,6 @@ int has_information_unit(const MathStructure &m, bool top) {
 	return 0;
 }
 
-void fix_to_struct(MathStructure &m) {
-	if(m.isPower() && m[0].isUnit()) {
-		if(m[0].prefix() == NULL && m[0].unit()->referenceName() == "g") {
-			m[0].setPrefix(CALCULATOR->getOptimalDecimalPrefix(3));
-		} else if(m[0].unit() == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
-			Unit *u = CALCULATOR->getLocalCurrency();
-			if(u) m[0].setUnit(u);
-		}
-	} else if(m.isUnit()) {
-		if(m.prefix() == NULL && m.unit()->referenceName() == "g") {
-			m.setPrefix(CALCULATOR->getOptimalDecimalPrefix(3));
-		} else if(m.unit() == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
-			Unit *u = CALCULATOR->getLocalCurrency();
-			if(u) m.setUnit(u);
-		}
-	} else {
-		for(size_t i = 0; i < m.size();) {
-			if(m[i].isUnit()) {
-				if(m[i].prefix() == NULL && m[i].unit()->referenceName() == "g") {
-					m[i].setPrefix(CALCULATOR->getOptimalDecimalPrefix(3));
-				} else if(m[i].unit() == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
-					Unit *u = CALCULATOR->getLocalCurrency();
-					if(u) m[i].setUnit(u);
-				}
-				i++;
-			} else if(m[i].isPower() && m[i][0].isUnit()) {
-				if(m[i][0].prefix() == NULL && m[i][0].unit()->referenceName() == "g") {
-					m[i][0].setPrefix(CALCULATOR->getOptimalDecimalPrefix(3));
-				} else if(m[i][0].unit() == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
-					Unit *u = CALCULATOR->getLocalCurrency();
-					if(u) m[i][0].setUnit(u);
-				}
-				i++;
-			} else {
-				m.delChild(i + 1);
-			}
-		}
-		if(m.size() == 0) m.clear();
-		if(m.size() == 1) m.setToChild(1);
-	}
-}
-
-
 void replace_result_cis(string &resstr) {
 	gsub(" cis ", "∠", resstr);
 }
@@ -1666,31 +1623,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	bool units_changed = false;
 
 	// perform calculation
-	if(str_conv.empty() || hasToExpression(str_conv, false, evalops)) {
-		mstruct = calculate(str, evalops, &parsed_struct);
-	} else {
-		// handle case where conversion to units requested, but original expression and result does not contains any unit
-		MathStructure to_struct;
-		mstruct = calculate(str, evalops, &parsed_struct, &to_struct);
-		if(to_struct.containsType(STRUCT_UNIT, true) && !mstruct.containsType(STRUCT_UNIT) && !parsed_struct.containsType(STRUCT_UNIT, false, true, true)) {
-			// convert "to"-expression to base units
-			to_struct.unformat();
-			to_struct = CALCULATOR->convertToOptimalUnit(to_struct, evalops, true);
-			// remove non-units, set local currency and use kg instead of g
-			fix_to_struct(to_struct);
-			// add base unit to from value
-			mstruct.multiply(to_struct);
-			to_struct.format(printops);
-			if(to_struct.isMultiplication() && to_struct.size() >= 2) {
-				if(to_struct[0].isOne()) to_struct.delChild(1, true);
-				else if(to_struct[1].isOne()) to_struct.delChild(2, true);
-			}
-			parsed_struct.multiply(to_struct, true);
-			// recalculate
-			if(!to_struct.isZero()) mstruct = calculate(mstruct, evalops, str_conv);
-			units_changed = true;
-		}
-	}
+	mstruct = calculate(str, evalops, &parsed_struct);
 
 	// Always perform conversion to optimal (SI) unit when the expression is a number multiplied by a unit and input equals output
 	if(!had_to_expression && ((evalops.approximation == APPROXIMATION_EXACT && evalops.auto_post_conversion != POST_CONVERSION_NONE) || evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) && ((parsed_struct.isMultiplication() && parsed_struct.size() == 2 && parsed_struct[0].isNumber() && parsed_struct[1].isUnit_exp() && parsed_struct.equals(mstruct)) || (parsed_struct.isNegate() && parsed_struct[0].isMultiplication() && parsed_struct[0].size() == 2 && parsed_struct[0][0].isNumber() && parsed_struct[0][1].isUnit_exp() && mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[1] == parsed_struct[0][1] && mstruct[0].isNumber() && parsed_struct[0][0].number() == -mstruct[0].number()) || (parsed_struct.isUnit_exp() && parsed_struct.equals(mstruct)))) {
@@ -2490,7 +2423,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 		} else if(!str2.empty()) {
 			// conversion using "to" expression
 			if(provided_to) {
-				mstruct.set(convert(mstruct, str2, eo, to_struct));
+				mstruct.set(convert(mstruct, str2, eo, to_struct, parsed_struct));
 			} else {
 				string str2b;
 				while(true) {
@@ -2498,10 +2431,10 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 					if(to_struct && !to_struct->isUndefined()) {
 						MathStructure mto;
 						mto.setUndefined();
-						mstruct.set(convert(mstruct, str2, eo, &mto));
+						mstruct.set(convert(mstruct, str2, eo, &mto, parsed_struct));
 						if(!mto.isUndefined()) to_struct->multiply(mto, true);
 					} else {
-						mstruct.set(convert(mstruct, str2, eo, to_struct));
+						mstruct.set(convert(mstruct, str2, eo, to_struct, parsed_struct));
 					}
 					if(str2b.empty()) break;
 					str2 = str2b;
