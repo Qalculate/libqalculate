@@ -3071,6 +3071,9 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 		} else if(po.base == BASE_DECIMAL && itmp == str.length() - 1 && (str[itmp] == 'k' || str[itmp] == 'K')) {
 			mulexp = 3;
 			str.erase(itmp, str.length() - itmp);
+		} else if(po.base == BASE_DECIMAL && itmp == str.length() - 1 && (str[itmp] == 'm' || str[itmp] == 'M')) {
+			mulexp = 6;
+			str.erase(itmp, str.length() - itmp);
 		} else {
 			string stmp = str.substr(itmp, str.length() - itmp);
 			error(true, _("Trailing characters \"%s\" (not a valid variable/function/unit) in number \"%s\" were ignored."), stmp.c_str(), str.c_str(), NULL);

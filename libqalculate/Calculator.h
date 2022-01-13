@@ -732,6 +732,7 @@ class Calculator {
 	* @param[out] units NULL or a math structure to fill with the parsed unit expression (or set to undefined if no units were found).
 	* @returns Converted value.
 	*/
+	MathStructure convert(const MathStructure &mstruct, std::string composite_, const EvaluationOptions &eo, MathStructure *units, MathStructure *parsed_struct);
 	MathStructure convert(const MathStructure &mstruct, std::string composite_, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *units = NULL);
 	/** Converts to a unit.
 	* The converted value is evaluated.
