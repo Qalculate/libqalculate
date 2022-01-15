@@ -151,38 +151,42 @@ void Calculator::delId(size_t id) {
 }
 
 // case sensitive string comparison; compares whole name with str from str_index to str_index + name_length
-bool compare_name(const string &name, const string &str, const size_t &name_length, const size_t &str_index, int base) {
-	if(name_length == 0) return false;
-	if(name[0] != str[str_index]) return false;
+size_t compare_name(const string &name, const string &str, const size_t &name_length, const size_t &str_index, int base, size_t ignore_us = 0) {
+	if(name_length == 0) return 0;
+	if(name[0] != str[str_index]) return 0;
 	if(name_length == 1) {
-		if(base < 2 || base > 10) return is_not_number(str[str_index], base);
-		return true;
+		if((base < 2 || base > 10) && !is_not_number(str[str_index], base)) return 0;
+		return name_length;
 	}
+	size_t ip = 0;
 	for(size_t i = 1; i < name_length; i++) {
-		if(name[i] != str[str_index + i]) return false;
+		if(ignore_us > 0 && name[i + ip] == '_') {ip++; ignore_us--;}
+		if(name[i + ip] != str[str_index + i]) return 0;
 	}
 	// number base uses digits other than 0-9, check that at least one non-digit is used
 	if(base < 2 || base > 10) {
 		for(size_t i = 0; i < name_length; i++) {
-			if(is_not_number(str[str_index + i], base)) return true;
+			if(is_not_number(str[str_index + i], base)) return name_length;
 		}
 		return false;
 	}
-	return true;
+	return name_length;
 }
 
 // case insensitive string comparison; compares whole name with str from str_index to str_index + name_length
-size_t compare_name_no_case(const string &name, const string &str, const size_t &name_length, const size_t &str_index, int base) {
+size_t compare_name_no_case(const string &name, const string &str, const size_t &name_length, const size_t &str_index, int base, size_t ignore_us = 0) {
 	if(name_length == 0) return 0;
 	size_t is = str_index;
+	size_t ip = 0;
 	for(size_t i = 0; i < name_length; i++, is++) {
+		if(ignore_us > 0 && name[i + ip] == '_') {ip++; ignore_us--;}
 		if(is >= str.length()) return 0;
-		if(((signed char) name[i] < 0 && i + 1 < name_length) || ((signed char) str[is] < 0 && is + 1 < str.length())) {
+		if(((signed char) name[i + ip] < 0 && i + 1 < name_length) || ((signed char) str[is] < 0 && is + 1 < str.length())) {
 			// assumed Unicode character found
 			size_t i2 = 1, is2 = 1;
 			// determine length of Unicode character(s)
-			if((signed char) name[i] < 0) {
-				while(i2 + i < name_length && (signed char) name[i2 + i] < 0) {
+			if((signed char) name[i + ip] < 0) {
+				while(i2 + i < name_length && (signed char) name[i2 + i + ip] < 0) {
 					i2++;
 				}
 			}
@@ -195,7 +199,7 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 			bool isequal = (i2 == is2);
 			if(isequal) {
 				for(size_t i3 = 0; i3 < i2; i3++) {
-					if(str[is + i3] != name[i + i3]) {
+					if(str[is + i3] != name[i + i3 + ip]) {
 						isequal = false;
 						break;
 					}
@@ -203,7 +207,7 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 			}
 			// get lower case character and compare again
 			if(!isequal) {
-				char *gstr1 = utf8_strdown(name.c_str() + (sizeof(char) * i), i2);
+				char *gstr1 = utf8_strdown(name.c_str() + (sizeof(char) * (i + ip)), i2);
 				char *gstr2 = utf8_strdown(str.c_str() + (sizeof(char) * (is)), is2);
 				if(!gstr1 || !gstr2) return 0;
 				if(strcmp(gstr1, gstr2) != 0) {free(gstr1); free(gstr2); return 0;}
@@ -211,7 +215,7 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 			}
 			i += i2 - 1;
 			is += is2 - 1;
-		} else if(name[i] != str[is] && !((name[i] >= 'a' && name[i] <= 'z') && name[i] - 32 == str[is]) && !((name[i] <= 'Z' && name[i] >= 'A') && name[i] + 32 == str[is])) {
+		} else if(name[i + ip] != str[is] && !((name[i + ip] >= 'a' && name[i + ip] <= 'z') && name[i + ip] - 32 == str[is]) && !((name[i + ip] <= 'Z' && name[i + ip] >= 'A') && name[i + ip] + 32 == str[is])) {
 			return 0;
 		}
 	}
@@ -2229,6 +2233,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			size_t ufv_index;
 			size_t name_length;
 			size_t vt3 = 0;
+			size_t underscore = false;
 			char ufvt = 0;
 			size_t last_name_char = str.find_first_of(NOT_IN_NAMES INTERNAL_OPERATORS, str_index + 1);
 			if(last_name_char == string::npos) {
@@ -2258,6 +2263,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 										name = &((ExpressionItem*) ufvl[ufv_index])->getName(ufvl_i[ufv_index]).name;
 										case_sensitive = ((ExpressionItem*) ufvl[ufv_index])->getName(ufvl_i[ufv_index]).case_sensitive;
 										name_length = name->length();
+										underscore = priv->ufvl_us[ufv_index]; name_length -= underscore;
 										if(name_length < found_function_name_length) {
 											name = NULL;
 										} else if(po.limit_implicit_multiplication) {
@@ -2273,6 +2279,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 										name = &((ExpressionItem*) ufvl[ufv_index])->getName(ufvl_i[ufv_index]).name;
 										case_sensitive = ((ExpressionItem*) ufvl[ufv_index])->getName(ufvl_i[ufv_index]).case_sensitive;
 										name_length = name->length();
+										underscore = priv->ufvl_us[ufv_index]; name_length -= underscore;
 										if(po.limit_implicit_multiplication) {
 											if(name_length != name_chars_left && name_length != unit_chars_left) name = NULL;
 										} else if(name_length > name_chars_left || name_length < found_function_name_length) {
@@ -2286,6 +2293,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 										name = &((ExpressionItem*) ufvl[ufv_index])->getName(ufvl_i[ufv_index]).name;
 										case_sensitive = ((ExpressionItem*) ufvl[ufv_index])->getName(ufvl_i[ufv_index]).case_sensitive;
 										name_length = name->length();
+										underscore = priv->ufvl_us[ufv_index]; name_length -= underscore;
 										if(name_length < found_function_name_length) {
 											name = NULL;
 										} else if(po.limit_implicit_multiplication || ((ExpressionItem*) ufvl[ufv_index])->getName(ufvl_i[ufv_index]).plural) {
@@ -2300,6 +2308,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									if(!p && po.units_enabled) {
 										name = &((Prefix*) ufvl[ufv_index])->getName(ufvl_i[ufv_index]).name;
 										name_length = name->length();
+										underscore = priv->ufvl_us[ufv_index]; name_length -= underscore;
 										if(name_length >= unit_chars_left || name_length < found_function_name_length) {
 											name = NULL;
 										}
@@ -2311,6 +2320,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									if(!p && po.units_enabled) {
 										name = &((Prefix*) ufvl[ufv_index])->getName(ufvl_i[ufv_index]).name;
 										name_length = name->length();
+										underscore = priv->ufvl_us[ufv_index]; name_length -= underscore;
 										if(name_length > unit_chars_left || name_length < found_function_name_length) {
 											name = NULL;
 										}
@@ -2345,12 +2355,14 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									ufvt = 'p';
 									name = &((Prefix*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
 									name_length = name->length();
+									underscore = priv->ufv_us[vt2][ufv_index][vt3]; name_length -= underscore;
 									case_sensitive = ((Prefix*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
 								}
 							} else {
 								ufvt = 'P';
 								name = &((Prefix*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
 								name_length = name->length();
+								underscore = priv->ufv_us[vt2][ufv_index][vt3]; name_length -= underscore;
 								case_sensitive = ((Prefix*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
 							}
 							vt3++;
@@ -2365,6 +2377,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							ufvt = 'f';
 							name = &((MathFunction*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
 							name_length = name->length();
+							underscore = priv->ufv_us[vt2][ufv_index][vt3]; name_length -= underscore;
 							case_sensitive = ((MathFunction*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
 							vt3++;
 							break;
@@ -2379,6 +2392,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								ufvt = 'u';
 								name = &((Unit*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
 								name_length = name->length();
+								underscore = priv->ufv_us[vt2][ufv_index][vt3]; name_length -= underscore;
 								case_sensitive = ((Unit*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
 							}
 							vt3++;
@@ -2393,6 +2407,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							ufvt = 'v';
 							name = &((Variable*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
 							name_length = name->length();
+							underscore = priv->ufv_us[vt2][ufv_index][vt3]; name_length -= underscore;
 							case_sensitive = ((Variable*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
 							vt3++;
 							break;
@@ -2406,7 +2421,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						}
 					}
 				}
-				if(name && name_length >= found_function_name_length && ((case_sensitive && compare_name(*name, str, name_length, str_index, base)) || (!case_sensitive && (name_length = compare_name_no_case(*name, str, name_length, str_index, base))))) {
+				if(name && name_length >= found_function_name_length && ((case_sensitive && (name_length = compare_name(*name, str, name_length, str_index, base, underscore))) || (!case_sensitive && (name_length = compare_name_no_case(*name, str, name_length, str_index, base, underscore))))) {
 					moved_forward = false;
 					switch(ufvt) {
 						case 'v': {
@@ -2718,6 +2733,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 											name = &((Unit*) ufvl[ufv_index2])->getName(ufvl_i[ufv_index2]).name;
 											case_sensitive = ((Unit*) ufvl[ufv_index2])->getName(ufvl_i[ufv_index2]).case_sensitive;
 											name_length = name->length();
+											underscore = priv->ufvl_us[ufv_index2]; name_length -= underscore;
 											if(po.limit_implicit_multiplication || ((Unit*) ufvl[ufv_index2])->getName(ufvl_i[ufv_index2]).plural) {
 												if(name_length != unit_chars_left) name = NULL;
 											} else if(name_length > unit_chars_left) {
@@ -2726,7 +2742,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 											break;
 										}
 									}
-									if(name && ((case_sensitive && compare_name(*name, str, name_length, str_index, base)) || (!case_sensitive && (name_length = compare_name_no_case(*name, str, name_length, str_index, base))))) {
+									if(name && ((case_sensitive && (name_length = compare_name(*name, str, name_length, str_index, base, underscore))) || (!case_sensitive && (name_length = compare_name_no_case(*name, str, name_length, str_index, base, underscore))))) {
 										if((!p_mode && name_length_old > 1) || (p_mode && (name_length + name_length_old > best_pl || ((ufvt != 'P' || !((Unit*) ufvl[ufv_index2])->getName(ufvl_i[ufv_index2]).abbreviation) && name_length + name_length_old == best_pl)))) {
 											p_mode = true;
 											best_p = p;
@@ -2759,8 +2775,9 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									name = &((Unit*) ufv[2][index][ufv_index2])->getName(ufv_i[2][index][ufv_index2]).name;
 									case_sensitive = ((Unit*) ufv[2][index][ufv_index2])->getName(ufv_i[2][index][ufv_index2]).case_sensitive;
 									name_length = name->length();
+									underscore = priv->ufv_us[2][ufv_index][ufv_index2]; name_length -= underscore;
 									if(index + 1 == (int) unit_chars_left || !((Unit*) ufv[2][index][ufv_index2])->getName(ufv_i[2][index][ufv_index2]).plural) {
-										if(name_length <= unit_chars_left && ((case_sensitive && compare_name(*name, str, name_length, str_index, base)) || (!case_sensitive && (name_length = compare_name_no_case(*name, str, name_length, str_index, base))))) {
+										if(name_length <= unit_chars_left && ((case_sensitive && (name_length = compare_name(*name, str, name_length, str_index, base, underscore))) || (!case_sensitive && (name_length = compare_name_no_case(*name, str, name_length, str_index, base, underscore))))) {
 											if((!p_mode && name_length_old > 1) || (p_mode && (name_length + name_length_old > best_pl || ((ufvt != 'P' || !((Unit*) ufv[2][index][ufv_index2])->getName(ufv_i[2][index][ufv_index2]).abbreviation) && name_length + name_length_old == best_pl)))) {
 												p_mode = true;
 												best_p = p;
