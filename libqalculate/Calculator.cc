@@ -819,7 +819,7 @@ ExpressionItem *Calculator::getActiveExpressionItem(string name_, ExpressionItem
 	if(l > UFV_LENGTHS) {
 		for(size_t i = 0; i < ufvl.size(); i++) {
 			if(ufvl_t[i] == 'f' || ufvl_t[i] == 'v' || ufvl_t[i] == 'u') {
-				if(ufvl[i] != item) {
+				if(priv->ufvl_us[i] == 0 && ufvl[i] != item) {
 					const ExpressionName &ename = ((ExpressionItem*) ufvl[i])->getName(ufvl_i[i]);
 					if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
 						return (ExpressionItem*) ufvl[i];
@@ -831,7 +831,7 @@ ExpressionItem *Calculator::getActiveExpressionItem(string name_, ExpressionItem
 		l--;
 		for(size_t i2 = 1; i2 <= 3; i2++) {
 			for(size_t i = 0; i < ufv[i2][l].size(); i++) {
-				if(ufv[i2][l][i] != item) {
+				if(priv->ufv_us[i2][l][i] == 0 && ufv[i2][l][i] != item) {
 					const ExpressionName &ename = ((ExpressionItem*) ufv[i2][l][i])->getName(ufv_i[i2][l][i]);
 					if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
 						return (ExpressionItem*) ufv[i2][l][i];
@@ -1219,22 +1219,23 @@ void Calculator::prefixNameChanged(Prefix *p, bool new_item) {
 			for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
 				l = 0;
 				if(it != ufvl.end()) {
-					if(ufvl_t[i] == 'v') l = ((Variable*) (*it))->getName(ufvl_i[i]).name.length();
-					else if(ufvl_t[i] == 'f') l = ((MathFunction*) (*it))->getName(ufvl_i[i]).name.length();
-					else if(ufvl_t[i] == 'u') l = ((Unit*) (*it))->getName(ufvl_i[i]).name.length();
+					if(ufvl_t[i] == 'v' || ufvl_t[i] == 'f' || ufvl_t[i] == 'u') l = ((ExpressionItem*) (*it))->getName(ufvl_i[i]).name.length();
 					else if(ufvl_t[i] == 'p' || ufvl_t[i] == 'P') l = ((Prefix*) (*it))->getName(ufvl_i[i]).name.length();
+					l -= priv->ufvl_us[i];
 				}
 				if(it == ufvl.end()) {
 					ufvl.push_back((void*) p);
 					if(ename.abbreviation) ufvl_t.push_back('p');
 					else ufvl_t.push_back('P');
 					ufvl_i.push_back(i2);
+					priv->ufvl_us.push_back(0);
 					break;
 				} else if(l <= l2) {
 					ufvl.insert(it, (void*) p);
 					if(ename.abbreviation) ufvl_t.insert(ufvl_t.begin() + i, 'p');
 					else ufvl_t.insert(ufvl_t.begin() + i, 'P');
 					ufvl_i.insert(ufvl_i.begin() + i, i2);
+					priv->ufvl_us.insert(priv->ufvl_us.begin() + i, 0);
 					break;
 				}
 				i++;
@@ -1243,6 +1244,7 @@ void Calculator::prefixNameChanged(Prefix *p, bool new_item) {
 			l2--;
 			ufv[0][l2].push_back((void*) p);
 			ufv_i[0][l2].push_back(i2);
+			priv->ufv_us[0][l2].push_back(0);
 		}
 	}
 }
@@ -1905,6 +1907,7 @@ void Calculator::delPrefixUFV(Prefix *object) {
 			it = ufvl.erase(it);
 			ufvl_t.erase(ufvl_t.begin() + i);
 			ufvl_i.erase(ufvl_i.begin() + i);
+			priv->ufvl_us.erase(priv->ufvl_us.begin() + i);
 			if(it == ufvl.end()) break;
 			goto del_ufvl;
 		}
@@ -1920,6 +1923,7 @@ void Calculator::delPrefixUFV(Prefix *object) {
 			if(*it == object) {
 				it = ufv[0][i2].erase(it);
 				ufv_i[0][i2].erase(ufv_i[0][i2].begin() + i);
+				priv->ufv_us[0][i2].erase(priv->ufv_us[0][i2].begin() + i);
 				if(it == ufv[0][i2].end()) break;
 				goto del_ufv;
 			}
@@ -1938,6 +1942,7 @@ void Calculator::delUFV(ExpressionItem *object) {
 			it = ufvl.erase(it);
 			ufvl_t.erase(ufvl_t.begin() + i);
 			ufvl_i.erase(ufvl_i.begin() + i);
+			priv->ufvl_us.erase(priv->ufvl_us.begin() + i);
 			if(it == ufvl.end()) break;
 			goto del_ufvl;
 		}
@@ -1959,6 +1964,7 @@ void Calculator::delUFV(ExpressionItem *object) {
 			if(*it == object) {
 				it = ufv[i3][i2].erase(it);
 				ufv_i[i3][i2].erase(ufv_i[i3][i2].begin() + i);
+				priv->ufv_us[i3][i2].erase(priv->ufv_us[i3][i2].begin() + i);
 				if(it == ufv[i3][i2].end()) break;
 				goto del_ufv;
 			}
@@ -2000,7 +2006,7 @@ Unit* Calculator::getActiveUnit(string name_) {
 	size_t l = name_.length();
 	if(l > UFV_LENGTHS) {
 		for(size_t i = 0; i < ufvl.size(); i++) {
-			if(ufvl_t[i] == 'u') {
+			if(priv->ufvl_us[i] == 0 && ufvl_t[i] == 'u') {
 				const ExpressionName &ename = ((ExpressionItem*) ufvl[i])->getName(ufvl_i[i]);
 				if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
 					return (Unit*) ufvl[i];
@@ -2010,9 +2016,11 @@ Unit* Calculator::getActiveUnit(string name_) {
 	} else {
 		l--;
 		for(size_t i = 0; i < ufv[2][l].size(); i++) {
-			const ExpressionName &ename = ((ExpressionItem*) ufv[2][l][i])->getName(ufv_i[2][l][i]);
-			if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
-				return (Unit*) ufv[2][l][i];
+			if(priv->ufv_us[2][l][i] == 0) {
+				const ExpressionName &ename = ((ExpressionItem*) ufv[2][l][i])->getName(ufv_i[2][l][i]);
+				if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
+					return (Unit*) ufv[2][l][i];
+				}
 			}
 		}
 	}
@@ -2141,63 +2149,108 @@ void Calculator::nameChanged(ExpressionItem *item, bool new_item) {
 	}
 	size_t l2;
 	if(!new_item) delUFV(item);
+	size_t itype;
+	switch(item->type()) {
+		case TYPE_VARIABLE: {
+			itype = 3;
+			break;
+		}
+		case TYPE_FUNCTION:  {
+			itype = 1;
+			break;
+		}
+		case TYPE_UNIT:  {
+			itype = 2;
+			break;
+		}
+	}
 	for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
 		l2 = item->getName(i2).name.length();
-		if(l2 > UFV_LENGTHS) {
-			size_t i = 0, l = 0;
-			for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
-				if(it != ufvl.end()) {
-					if(ufvl_t[i] == 'v') l = ((Variable*) (*it))->getName(ufvl_i[i]).name.length();
-					else if(ufvl_t[i] == 'f') l = ((MathFunction*) (*it))->getName(ufvl_i[i]).name.length();
-					else if(ufvl_t[i] == 'u') l = ((Unit*) (*it))->getName(ufvl_i[i]).name.length();
-					else if(ufvl_t[i] == 'p' || ufvl_t[i] == 'P') l = ((Prefix*) (*it))->getName(ufvl_i[i]).name.length();
-				}
-				if(it == ufvl.end()) {
-					ufvl.push_back((void*) item);
-					switch(item->type()) {
-						case TYPE_VARIABLE: {ufvl_t.push_back('v'); break;}
-						case TYPE_FUNCTION: {ufvl_t.push_back('f'); break;}
-						case TYPE_UNIT: {ufvl_t.push_back('u'); break;}
+		size_t i_us = 0;
+		while(true) {
+			if(l2 > UFV_LENGTHS) {
+				size_t i = 0, l = 0;
+				for(vector<void*>::iterator it = ufvl.begin(); ; ++it) {
+					if(it != ufvl.end()) {
+						if(ufvl_t[i] == 'f' || ufvl_t[i] == 'u' || ufvl_t[i] == 'v') l = ((ExpressionItem*) (*it))->getName(ufvl_i[i]).name.length();
+						else if(ufvl_t[i] == 'p' || ufvl_t[i] == 'P') l = ((Prefix*) (*it))->getName(ufvl_i[i]).name.length();
+						l -= priv->ufvl_us[i];
 					}
-					ufvl_i.push_back(i2);
-					break;
-				} else {
-					if(l < l2
-					|| (item->type() == TYPE_VARIABLE && l == l2 && ufvl_t[i] == 'v')
-					|| (item->type() == TYPE_FUNCTION && l == l2 && (ufvl_t[i] != 'p' && ufvl_t[i] != 'P'))
-					|| (item->type() == TYPE_UNIT && l == l2 && (ufvl_t[i] != 'p' && ufvl_t[i] != 'P' && ufvl_t[i] != 'f'))
-					) {
-						ufvl.insert(it, (void*) item);
+					if(it == ufvl.end()) {
+						ufvl.push_back((void*) item);
 						switch(item->type()) {
-							case TYPE_VARIABLE: {ufvl_t.insert(ufvl_t.begin() + i, 'v'); break;}
-							case TYPE_FUNCTION: {ufvl_t.insert(ufvl_t.begin() + i, 'f'); break;}
-							case TYPE_UNIT: {ufvl_t.insert(ufvl_t.begin() + i, 'u'); break;}
+							case TYPE_VARIABLE: {ufvl_t.push_back('v'); break;}
+							case TYPE_FUNCTION: {ufvl_t.push_back('f'); break;}
+							case TYPE_UNIT: {ufvl_t.push_back('u'); break;}
 						}
-						ufvl_i.insert(ufvl_i.begin() + i, i2);
+						priv->ufvl_us.push_back(i_us);
+						ufvl_i.push_back(i2);
 						break;
+					} else {
+						if(l < l2 || (i_us == 0 && priv->ufvl_us[i] > 0) || ((i_us == 0 || priv->ufvl_us[i] > 0) && (
+						(item->type() == TYPE_VARIABLE && l == l2 && ufvl_t[i] == 'v')
+						|| (item->type() == TYPE_FUNCTION && l == l2 && (ufvl_t[i] != 'p' && ufvl_t[i] != 'P'))
+						|| (item->type() == TYPE_UNIT && l == l2 && (ufvl_t[i] != 'p' && ufvl_t[i] != 'P' && ufvl_t[i] != 'f'))
+						))) {
+							ufvl.insert(it, (void*) item);
+							switch(item->type()) {
+								case TYPE_VARIABLE: {ufvl_t.insert(ufvl_t.begin() + i, 'v'); break;}
+								case TYPE_FUNCTION: {ufvl_t.insert(ufvl_t.begin() + i, 'f'); break;}
+								case TYPE_UNIT: {ufvl_t.insert(ufvl_t.begin() + i, 'u'); break;}
+							}
+							priv->ufvl_us.insert(priv->ufvl_us.begin() + i, i_us);
+							ufvl_i.insert(ufvl_i.begin() + i, i2);
+							break;
+						}
 					}
+					i++;
 				}
-				i++;
+			} else if(l2 > 0) {
+				l2--;
+				if(i_us == 0) {
+					size_t i = 0;
+					for(vector<size_t>::reverse_iterator it = priv->ufv_us[itype][l2].rbegin(); ; ++it) {
+						i++;
+						if(it == priv->ufv_us[itype][l2].rend()) {
+							ufv[itype][l2].insert(ufv[itype][l2].begin(), (void*) item);
+							ufv_i[itype][l2].insert(ufv_i[itype][l2].begin(), i2);
+							priv->ufv_us[itype][l2].insert(priv->ufv_us[itype][l2].begin(), 0);
+							break;
+						}
+						if((*it) == 0) {
+							if(it == priv->ufv_us[itype][l2].rbegin()) {
+								ufv[itype][l2].push_back((void*) item);
+								ufv_i[itype][l2].push_back(i2);
+								priv->ufv_us[itype][l2].push_back(0);
+							} else {
+								ufv[itype][l2].insert(ufv[itype][l2].end() - i, (void*) item);
+								ufv_i[itype][l2].insert(ufv_i[itype][l2].end() - i, i2);
+								priv->ufv_us[itype][l2].insert(priv->ufv_us[itype][l2].end() - i, 0);
+							}
+							break;
+						}
+					}
+				} else {
+					ufv[itype][l2].push_back((void*) item);
+					ufv_i[itype][l2].push_back(i2);
+					priv->ufv_us[itype][l2].push_back(i_us);
+				}
+				l2++;
 			}
-		} else if(l2 > 0) {
-			l2--;
-			switch(item->type()) {
-				case TYPE_VARIABLE: {
-					ufv[3][l2].push_back((void*) item);
-					ufv_i[3][l2].push_back(i2);
+			if(i_us > 0) break;
+			size_t i = item->getName(i2).name.find('_', 1);
+			while(true) {
+				if(i == string::npos) {
+					break;
+				} else if(i == item->getName(i2).name.length() - 1 || item->getName(i2).name[i - 1] == '_' || (i == item->getName(i2).name.length() - 2 && is_not_in(NUMBERS, item->getName(i2).name[item->getName(i2).name.length() - 1]))) {
+					i_us = 0;
 					break;
 				}
-				case TYPE_FUNCTION:  {
-					ufv[1][l2].push_back((void*) item);
-					ufv_i[1][l2].push_back(i2);
-					break;
-				}
-				case TYPE_UNIT:  {
-					ufv[2][l2].push_back((void*) item);
-					ufv_i[2][l2].push_back(i2);
-					break;
-				}
+				i_us++;
+				i = item->getName(i2).name.find('_', i + 1);
 			}
+			if(i_us == 0) break;
+			l2 -= i_us;
 		}
 	}
 }
@@ -2248,7 +2301,7 @@ Variable* Calculator::getActiveVariable(string name_) {
 	size_t l = name_.length();
 	if(l > UFV_LENGTHS) {
 		for(size_t i = 0; i < ufvl.size(); i++) {
-			if(ufvl_t[i] == 'v') {
+			if(ufvl_t[i] == 'v' && priv->ufvl_us[i] == 0) {
 				const ExpressionName &ename = ((ExpressionItem*) ufvl[i])->getName(ufvl_i[i]);
 				if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
 					return (Variable*) ufvl[i];
@@ -2258,9 +2311,11 @@ Variable* Calculator::getActiveVariable(string name_) {
 	} else {
 		l--;
 		for(size_t i = 0; i < ufv[3][l].size(); i++) {
-			const ExpressionName &ename = ((ExpressionItem*) ufv[3][l][i])->getName(ufv_i[3][l][i]);
-			if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
-				return (Variable*) ufv[3][l][i];
+			if(priv->ufv_us[3][l][i] == 0) {
+				const ExpressionName &ename = ((ExpressionItem*) ufv[3][l][i])->getName(ufv_i[3][l][i]);
+				if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
+					return (Variable*) ufv[3][l][i];
+				}
 			}
 		}
 	}
@@ -2406,7 +2461,7 @@ MathFunction* Calculator::getActiveFunction(string name_) {
 	size_t l = name_.length();
 	if(l > UFV_LENGTHS) {
 		for(size_t i = 0; i < ufvl.size(); i++) {
-			if(ufvl_t[i] == 'f') {
+			if(ufvl_t[i] == 'f' && priv->ufvl_us[i] == 0) {
 				const ExpressionName &ename = ((ExpressionItem*) ufvl[i])->getName(ufvl_i[i]);
 				if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
 					return (MathFunction*) ufvl[i];
@@ -2416,9 +2471,11 @@ MathFunction* Calculator::getActiveFunction(string name_) {
 	} else {
 		l--;
 		for(size_t i = 0; i < ufv[1][l].size(); i++) {
-			const ExpressionName &ename = ((ExpressionItem*) ufv[1][l][i])->getName(ufv_i[1][l][i]);
-			if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
-				return (MathFunction*) ufv[1][l][i];
+			if(priv->ufv_us[1][l][i] == 0) {
+				const ExpressionName &ename = ((ExpressionItem*) ufv[1][l][i])->getName(ufv_i[1][l][i]);
+				if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
+					return (MathFunction*) ufv[1][l][i];
+				}
 			}
 		}
 	}

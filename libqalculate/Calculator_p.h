@@ -58,6 +58,8 @@ class Calculator_p {
 		unordered_map<size_t, MathStructure*> id_structs;
 		unordered_map<size_t, bool> ids_p;
 		unordered_map<size_t, size_t> ids_ref;
+		std::vector<size_t> ufvl_us;
+		std::vector<size_t> ufv_us[4][20];
 		vector<size_t> freed_ids;
 		size_t ids_i;
 		Number custom_input_base, custom_output_base;
