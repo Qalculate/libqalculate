@@ -1538,6 +1538,13 @@ MathStructure Argument::parse(const string &str, const ParseOptions &po) const {
 }
 void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptions &po) const {
 	if(b_text) {
+		MathFunction *f_cat = CALCULATOR->getFunctionById(FUNCTION_ID_CONCATENATE);
+		for(size_t i = 1; i <= f_cat->countNames(); i++) {
+			if(str.find(f_cat->getName(i).name) != string::npos) {
+				CALCULATOR->parse(mstruct, str, po);
+				return;
+			}
+		}
 		size_t pars = 0;
 		while(true) {
 			size_t pars2 = 1;

@@ -38,7 +38,7 @@
       <_title>Sort</_title>
       <_names>r:sort</_names>
       <_description>Returns a sorted vector.</_description>
-      <example>$name([6  1  4]) = [1, 4, 6]</example>
+      <example>$name([6  1  4]) = [1  4  6]</example>
       <argument index="1">
         <_title>Vector</_title>
       </argument>

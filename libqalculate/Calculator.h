@@ -732,7 +732,7 @@ class Calculator {
 	* @param[out] units NULL or a math structure to fill with the parsed unit expression (or set to undefined if no units were found).
 	* @returns Converted value.
 	*/
-	MathStructure convert(const MathStructure &mstruct, std::string composite_, const EvaluationOptions &eo, MathStructure *units, MathStructure *parsed_struct);
+	MathStructure convert(const MathStructure &mstruct, std::string composite_, const EvaluationOptions &eo, MathStructure *units, bool transform_orig, MathStructure *parsed_struct = NULL);
 	MathStructure convert(const MathStructure &mstruct, std::string composite_, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *units = NULL);
 	/** Converts to a unit.
 	* The converted value is evaluated.
@@ -743,6 +743,7 @@ class Calculator {
 	* @param always_convert ...
 	* @returns Converted value.
 	*/
+	MathStructure convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo, bool always_convert, bool convert_to_mixed_units, bool transform_orig, MathStructure *parsed_struct = NULL);
 	MathStructure convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo = default_user_evaluation_options, bool always_convert = true, bool convert_to_mixed_units = true);
 	MathStructure convert(const MathStructure &mstruct, KnownVariable *to_var, const EvaluationOptions &eo = default_user_evaluation_options);
 	MathStructure convert(double value, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo = default_user_evaluation_options);

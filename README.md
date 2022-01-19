@@ -108,13 +108,13 @@ _For more details about the syntax, and available functions, units, and variable
 
 ## Examples (expressions)
 
-_Note that semicolon can be replaced with comma, if comma is not used as decimal or thousands separator._
+_Note that semicolon can be replaced with comma in function arguments, if comma is not used as decimal or thousands separator._
 
 ### Basic functions and operators
 
 sqrt 4 _= sqrt(4) = 4^(0.5) = 4^(1/2) = 2_
 
-sqrt(25; 16; 9; 4) _= \[5; 4; 3; 2\]_
+sqrt(25; 16; 9; 4) _= \[5  4  3  2\]_
 
 sqrt(32) _= 4 × √(2) (in exact mode)_
 
@@ -238,7 +238,7 @@ solve(x = y+ln(y); y) _= lambertw(e^x)_
 
 solve2(5x=2y^2; sqrt(y)=2; x; y) _= 32/5_
 
-multisolve(\[5x=2y+32; y=2z; z=2x\]; \[x; y; z\]) _= \[−32/3; −128/3; −64/3\]_
+multisolve(\[5x=2y+32, y=2z, z=2x\]; \[x, y, z\]) _= \[−32/3  −128/3  −64/3\]_
 
 dsolve(diff(y; x) − 2y = 4x; 5) _= 6e^(2x) − 2x − 1_
 
@@ -260,19 +260,19 @@ limit(ln(1 + 4x)/(3^x − 1); 0) _= 4 / ln(3)_
 
 ### Matrices and vectors
 
-((1; 2; 3); (4; 5; 6)) _= \[\[1; 2; 3\]; \[4; 5; 6\]\] (2×3 matrix)_
+\[1, 2, 3; 4, 5, 6\] _= ((1; 2; 3); (4; 5; 6)) = \[1  2  3; 4  5  6\] (2×3 matrix)_
 
-(1; 2; 3) × 2 − 2 _= \[1 × 2 − 2; 2 × 2 − 2; 3 × 2 − 2\] = \[0; 2; 4\]_
+(1; 2; 3) × 2 − 2 _= \[(1 × 2 − 2), (2 × 2 − 2), (3 × 2 − 2)] = \[0  2  4\]_
 
-(1; 2; 3).(4; 5; 6) = dot((1; 2; 3); (4; 5; 6)) _= 32 (dot product)_
+\[1 2 3\].\[4 5 6\] = dot(\[1 2 3\]; \[4 5 6\]) _= 32 (dot product)_
 
-cross((1; 2; 3); (4; 5; 6)) _= \[−3; 6; −3\] (cross product)_
+cross(\[1 2 3\]; \[4 5 6\]) _= \[−3 6 −3\] (cross product)_
 
-hadamard(\[\[1; 2; 3\]; \[4; 5; 6\]\]; \[\[7; 8; 9\]; \[10; 11; 12\]\]) _= \[\[7; 16; 27\]; \[40; 55; 72\]\] (hadamard product)_
+hadamard(\[1 2 3; 4 5 6\]; \[7 8 9; 10 11 12\]) _= \[7  16  27; 40  55  72\] (hadamard product)_
 
-((1; 2; 3); (4; 5; 6)) × ((7; 8); (9; 10); (11; 12)) _= \[\[58; 64\]; \[139; 154\]\] (matrix multiplication)_
+\[1 2 3; 4 5 6\] × \[7 8; 9 10; 11 12\] _= \[58  64; 139  154\] (matrix multiplication)_
 
-((1; 2); (3; 4))^-1 _= inverse(\[\[1; 2\]; \[3; 4\]\]) = \[\[−2; 1\]; \[1.5; −0.5\]\]_
+\[1 2; 3 4\]^-1 _= inverse(\[1 2; 3 4\]) = \[−2  1; 1.5  −0.5\]_
 
 ### Statistics
 
@@ -280,7 +280,7 @@ mean(5; 6; 4; 2; 3; 7) _= 4.5_
 
 stdev(5; 6; 4; 2; 3; 7) _≈ 1.87_
 
-quartile((5; 6; 4; 2; 3; 7); 1) _= percentile(\[5; 6; 4; 2; 3; 7\]; 25) ≈ 2.9166667_
+quartile(\[5 6 4 2 3 7\]; 1) _= percentile((5; 6; 4; 2; 3; 7); 25) ≈ 2.9166667_
 
 normdist(7; 5) _≈ 0.053990967_
 

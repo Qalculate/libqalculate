@@ -3130,27 +3130,6 @@ ostream& operator << (ostream &os, const MathStructure &mstruct) {
 	os << format_and_print(mstruct);
 	return os;
 }
-string sub_suffix_html(const string &name) {
-	size_t i = name.rfind('_');
-	bool b = (i == string::npos || i == name.length() - 1 || i == 0);
-	size_t i2 = 1;
-	string str;
-	if(b) {
-		if(is_in(NUMBERS, name[name.length() - 1])) {
-			while(name.length() > i2 + 1 && is_in(NUMBERS, name[name.length() - 1 - i2])) {
-				i2++;
-			}
-		}
-		str += name.substr(0, name.length() - i2);
-	} else {
-		str += name.substr(0, i);
-	}
-	str += "<sub>";
-	if(b) str += name.substr(name.length() - i2, i2);
-	else str += name.substr(i + 1, name.length() - (i + 1));
-	str += "</sub>";
-	return str;
-}
 
 #define COLORIZE_AS_UNIT(x) (x.isUnit() || (x.isPower() && x[0].isUnit() && (x[1].isInteger() || (x[1].isNegate() && x[1][0].isInteger()))))
 

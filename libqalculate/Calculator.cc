@@ -2237,12 +2237,12 @@ void Calculator::nameChanged(ExpressionItem *item, bool new_item) {
 				}
 				l2++;
 			}
-			if(i_us > 0) break;
+			if(i_us > 0 || l2 < 3) break;
 			size_t i = item->getName(i2).name.find('_', 1);
 			while(true) {
 				if(i == string::npos) {
 					break;
-				} else if(i == item->getName(i2).name.length() - 1 || item->getName(i2).name[i - 1] == '_' || (i == item->getName(i2).name.length() - 2 && is_not_in(NUMBERS, item->getName(i2).name[item->getName(i2).name.length() - 1]))) {
+				} else if(i == item->getName(i2).name.length() - 1 || item->getName(i2).name[i - 1] == '_' || (i == item->getName(i2).name.length() - 2 && is_not_in(NUMBERS, item->getName(i2).name[item->getName(i2).name.length() - 1]) && ((signed char) item->getName(i2).name[i - 1] >= 0 || getPrefix(item->getName(i2).name.substr(0, i))))) {
 					i_us = 0;
 					break;
 				}
@@ -2451,6 +2451,7 @@ MathFunction* Calculator::getFunctionById(int id) const {
 		case FUNCTION_ID_MESSAGE: {return f_message;}
 		case FUNCTION_ID_PLOT: {return f_plot;}
 		case FUNCTION_ID_SAVE: {return f_save;}
+		case FUNCTION_ID_CONCATENATE: {return f_concatenate;}
 	}
 	unordered_map<int, MathFunction*>::iterator it = priv->id_functions.find(id);
 	if(it == priv->id_functions.end()) return NULL;
