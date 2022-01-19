@@ -82,6 +82,8 @@ char *utf8_strdown(const char *str, int l = -1);
 size_t unicode_length(const std::string &str);
 size_t unicode_length(const char *str);
 bool text_length_is_one(const std::string &str);
+std::string sub_suffix_html(const std::string &name);
+std::string sub_suffix(const std::string &name, const std::string &tag_begin, const std::string &tag_end);
 bool equalsIgnoreCase(const std::string &str1, const std::string &str2);
 bool equalsIgnoreCase(const std::string &str1, const char *str2);
 
