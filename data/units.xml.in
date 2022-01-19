@@ -2914,7 +2914,7 @@
         </base>
       </unit>
       <unit type="alias">
-        <_title>Kilopound per Square Inch (ksi)</_title>
+        <_title>Kilopound-force per Square Inch (ksi)</_title>
         <system>Imperial/US</system>
         <_names>a-cr:ksi</_names>
         <base>

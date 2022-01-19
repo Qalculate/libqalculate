@@ -2417,7 +2417,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 			if(to_struct) to_struct->set(u);
 			if(b_units) {
 				current_stage = MESSAGE_STAGE_CONVERSION;
-				mstruct.set(convert(mstruct, u, eo, false, false));
+				mstruct.set(convert(mstruct, u, eo, false, false, true, parsed_struct));
 				if(eo.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) mstruct.set(convertToMixedUnits(mstruct, eo));
 			}
 		} else if(!str2.empty()) {
@@ -2431,10 +2431,10 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 					if(to_struct && !to_struct->isUndefined()) {
 						MathStructure mto;
 						mto.setUndefined();
-						mstruct.set(convert(mstruct, str2, eo, &mto, parsed_struct));
+						mstruct.set(convert(mstruct, str2, eo, &mto, true, parsed_struct));
 						if(!mto.isUndefined()) to_struct->multiply(mto, true);
 					} else {
-						mstruct.set(convert(mstruct, str2, eo, to_struct, parsed_struct));
+						mstruct.set(convert(mstruct, str2, eo, to_struct, true, parsed_struct));
 					}
 					if(str2b.empty()) break;
 					str2 = str2b;

@@ -3548,33 +3548,18 @@ int main(int argc, char *argv[]) {
 					}
 				}
 				CALCULATOR->resetExchangeRatesUsed();
+				MathStructure parsebak(*parsed_mstruct);
 				ParseOptions pa = evalops.parse_options; pa.base = 10;
-				bool update_parse = false;
-				if(!mstruct->containsType(STRUCT_UNIT)) {
-					MathStructure to_struct;
-					CALCULATOR->convert(MathStructure(), str, evalops, &to_struct);
-					to_struct.unformat(evalops);
-					to_struct = CALCULATOR->convertToOptimalUnit(to_struct, evalops, true);
-					fix_to_struct(to_struct);
-					if(!to_struct.isZero()) {
-						mstruct->multiply(to_struct);
-						PrintOptions po = printops;
-						po.negative_exponents = false;
-						to_struct.format(po);
-						if(to_struct.isMultiplication() && to_struct.size() >= 2) {
-							if(to_struct[0].isOne()) to_struct.delChild(1, true);
-							else if(to_struct[1].isOne()) to_struct.delChild(2, true);
-						}
-						parsed_mstruct->multiply(to_struct);
-						update_parse = true;
-					}
+				MathStructure mstruct_new(CALCULATOR->convert(*mstruct, CALCULATOR->unlocalizeExpression(str, pa), evalops, NULL, true, parsed_mstruct));
+				if(check_exchange_rates()) {
+					parsed_mstruct->set(parsebak);
+					mstruct->set(CALCULATOR->convert(*mstruct, CALCULATOR->unlocalizeExpression(str, pa), evalops, NULL, true, parsed_mstruct));
+				} else {
+					mstruct->set(mstruct_new);
 				}
-				MathStructure mstruct_new(CALCULATOR->convert(*mstruct, CALCULATOR->unlocalizeExpression(str, pa), evalops));
-				if(check_exchange_rates()) mstruct->set(CALCULATOR->convert(*mstruct, CALCULATOR->unlocalizeExpression(str, pa), evalops));
-				else mstruct->set(mstruct_new);
 				if(expression_executed) {
 					printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
-					setResult(NULL, update_parse);
+					setResult(NULL, !parsed_mstruct->equals(parsebak, true, true));
 				}
 				printops.use_unit_prefixes = save_pre;
 				printops.use_all_prefixes = save_all;
@@ -3824,10 +3809,14 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("repeating decimals"), "repdeci"); str += b2oo(printops.indicate_infinite_series, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("rounding"), "");
 			switch(rounding_mode) {
-				case 1: {str += _("round halfway to even"); break;}
+				// rounding mode
+				case 1: {str += _("even"); break;}
+				// rounding mode
 				case 2: {str += _("truncate"); break;}
-				default: {str += _("round halfway up"); break;}
+				// rounding mode
+				default: {str += _("standard"); break;}
 			}
+			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("scientific notation"), "exp");
 			switch(printops.min_exp) {
 				case EXP_NONE: {str += _("off"); break;}
@@ -4594,7 +4583,7 @@ int main(int argc, char *argv[]) {
 				if(printops.min_decimals >= 0 && printops.use_min_decimals) {str += " "; str += i2s(printops.min_decimals); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("repeating decimals"), "repdeci", _("If activated, 1/6 is displayed as '0.1 666...', otherwise as '0.166667'."), printops.indicate_infinite_series);
-				STR_AND_TABS_2(_("rounding"), "", _("Determines whether how approximate numbers are rounded (round halfway numbers upwards, towards the nearest even digit, or round all numbers towards zero)."), rounding_mode, _("standard"), _("even"), _("truncate"));
+				STR_AND_TABS_2(_("rounding"), "", _("Determines whether how approximate numbers are rounded (round halfway numbers upwards or towards the nearest even digit, or round all numbers towards zero)."), rounding_mode, _("standard"), _("even"), _("truncate"));
 				STR_AND_TABS_SET(_("scientific notation"), "exp");
 				SET_DESCRIPTION(_("Determines how scientific notation is used (e.g. 5 543 000 = 5.543E6)."));
 				str += "(0 = ";
@@ -5418,10 +5407,14 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		string strout, sextra;
 		if(goto_input) strout += "  ";
 		size_t i_result = 0, i_result_u = 0, i_result2 = 0, i_result_u2 = 0;
+		int b_comparison = 0;
 		if(!result_only) {
-			if(mstruct->isComparison() || mstruct->isLogicalAnd() || mstruct->isLogicalOr()) strout += LEFT_PARENTHESIS;
 			if(update_parse) {
+				if(parsed_mstruct->isComparison() || parsed_mstruct->isLogicalAnd() || parsed_mstruct->isLogicalOr()) b_comparison += 2;
+				if(mstruct->isComparison() || mstruct->isLogicalAnd() || mstruct->isLogicalOr()) b_comparison += (alt_results.empty() ? 1 : 4);
+				if(b_comparison && !(b_comparison & 1)) strout += LEFT_PARENTHESIS;
 				strout += parsed_text;
+				if(b_comparison && !(b_comparison & 1)) strout += RIGHT_PARENTHESIS;
 				if(((evalops.parse_options.base <= 36 && evalops.parse_options.base >= 2 && evalops.parse_options.base != BASE_DECIMAL && evalops.parse_options.base != BASE_HEXADECIMAL && evalops.parse_options.base != BASE_OCTAL && evalops.parse_options.base != BASE_BINARY) || evalops.parse_options.base == BASE_CUSTOM || (evalops.parse_options.base <= BASE_GOLDEN_RATIO && evalops.parse_options.base >= BASE_SQRT2)) && (interactive_mode || saved_evalops.parse_options.base == evalops.parse_options.base)) {
 					BEGIN_ITALIC(strout)
 					strout += " (";
@@ -5440,16 +5433,19 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 					END_ITALIC(strout)
 				}
 			} else {
+				if(mstruct->isComparison() || mstruct->isLogicalAnd() || mstruct->isLogicalOr()) b_comparison = 3;
+				if(b_comparison && !(b_comparison & 1)) strout += LEFT_PARENTHESIS;
 				strout += prev_result_text;
+				if(b_comparison && !(b_comparison & 1)) strout += RIGHT_PARENTHESIS;
 			}
-			if(mstruct->isComparison() || mstruct->isLogicalAnd() || mstruct->isLogicalOr()) strout += RIGHT_PARENTHESIS;
 		}
+		if(!exact_comparison && (b_comparison & 1)) exact_comparison = (update_parse || !prev_approximate) && !(*printops.is_approximate) && !mstruct->isApproximate();
 		for(size_t i = 0; i < alt_results.size(); i++) {
 			if(i != 0) add_equals(strout, true);
 			else if(!result_only) add_equals(strout, update_parse || !prev_approximate, &i_result_u, &i_result);
-			if(mstruct->isComparison() || mstruct->isLogicalAnd() || mstruct->isLogicalOr()) strout += LEFT_PARENTHESIS;
+			if(b_comparison & 4) strout += LEFT_PARENTHESIS;
 			strout += alt_results[i];
-			if(mstruct->isComparison() || mstruct->isLogicalAnd() || mstruct->isLogicalOr()) strout += RIGHT_PARENTHESIS;
+			if(b_comparison & 4) strout += RIGHT_PARENTHESIS;
 		}
 		bool b_matrix = mstruct->isMatrix() && DO_FORMAT && result_text.find('\n') != string::npos;
 		if(!alt_results.empty()) {
@@ -5459,25 +5455,27 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 					strout.insert(i_result, 1, '\n');
 				}
 				strout += "\n\n";
-			} else if(!result_only && goto_input && i_result_u > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols) {
+				i_result_u = 0;
+			} else if(!result_only && ((b_comparison & 1) || (goto_input && i_result_u > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols))) {
 				strout[i_result - 1] = '\n';
-				strout.insert(i_result, "  ");
-				i_result_u = 2;
+				if(goto_input) {
+					strout.insert(i_result, "  ");
+					i_result_u = 2;
+				} else {
+					i_result_u = 0;
+				}
 			}
 			add_equals(strout, !(*printops.is_approximate) && !mstruct->isApproximate(), &i_result_u2, &i_result2, !b_matrix);
 			if(b_matrix && result_only) strout += "\n\n";
 		} else if(!result_only) {
-			add_equals(strout, (update_parse || !prev_approximate) && (exact_comparison || (!(*printops.is_approximate) && !mstruct->isApproximate())), &i_result_u, &i_result);
+			if(exact_comparison) {i_result_u = unicode_length_check(strout.c_str()); i_result = strout.length();}
+			else add_equals(strout, (update_parse || !prev_approximate) && (exact_comparison || (!(*printops.is_approximate) && !mstruct->isApproximate())), &i_result_u, &i_result);
 			i_result_u2 = i_result_u;
 			i_result2 = i_result;
 		}
-		if((!result_only || !alt_results.empty()) && (mstruct->isComparison() || mstruct->isLogicalAnd() || (mstruct->isLogicalOr() && !goto_input))) {
-			strout += LEFT_PARENTHESIS;
-			strout += result_text.c_str();
-			strout += RIGHT_PARENTHESIS;
-		} else {
-			strout += result_text.c_str();
-		}
+		if(b_comparison & 4) strout += LEFT_PARENTHESIS;
+		strout += result_text;
+		if(b_comparison & 4) strout += RIGHT_PARENTHESIS;
 		if(!result_only && save_base == printops.base && (interactive_mode || saved_printops.base == printops.base)) {
 			if((printops.base <= 36 && printops.base >= 2 && printops.base != BASE_DECIMAL && printops.base != BASE_HEXADECIMAL && printops.base != BASE_OCTAL && printops.base != BASE_BINARY) || printops.base == BASE_CUSTOM || (printops.base <= BASE_GOLDEN_RATIO && printops.base >= BASE_SQRT2)) {
 				BEGIN_ITALIC(strout)
@@ -5497,30 +5495,38 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 				END_ITALIC(strout)
 			}
 		}
-		if(goto_input || b_matrix) {
+		if(goto_input || b_matrix || (b_comparison & 1)) {
 			if(!result_only) {
 				if(b_matrix) {
 					strout[i_result2 - 1] = '\n';
 					strout.insert(i_result2, 1, '\n');
 					gsub("\n\n", "\n\n  ", strout);
+				} else if(!goto_input && (b_comparison & 1)) {
+					if(exact_comparison) strout.insert(i_result2, 1, '\n');
+					else strout[i_result2 - 1] = '\n';
 				} else if(i_result_u == 2 && i_result_u != i_result_u2) {
 					strout[i_result2 - 1] = '\n';
 					strout.insert(i_result2, "  ");
-				} else if(i_result_u2 > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols) {
+				} else if((b_comparison & 1) || (i_result_u2 > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols)) {
 					if(i_result != i_result2) {
 						strout[i_result2 - 1] = '\n';
 						strout.insert(i_result2, "  ");
 					}
-					strout[i_result - 1] = '\n';
-					strout.insert(i_result, "  ");
+					if(exact_comparison && i_result == i_result2) {
+						strout.insert(i_result, "\n\n  ");
+					} else {
+						strout[i_result - 1] = '\n';
+						if((b_comparison & 1) && i_result == i_result2) strout.insert(i_result, "\n  ");
+						else strout.insert(i_result, "  ");
+					}
 					i_result_u = 2;
 				}
 			} else if(b_matrix) {
 				if(!goto_input) strout.insert(0, 1, '\n');
 				gsub("\n", "\n  ", strout);
 			}
-			if(!b_matrix) addLineBreaks(strout, cols, true, result_only ? 2 : i_result_u, i_result);
-			if(vertical_space) strout += "\n";
+			if(!b_matrix && goto_input) addLineBreaks(strout, cols, true, result_only ? 2 : i_result_u, i_result);
+			if(vertical_space && (b_matrix || goto_input)) strout += "\n";
 		}
 		PUTS_UNICODE(strout.c_str());
 	}
@@ -6315,8 +6321,6 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		CALCULATOR->calculate(mstruct, original_expression, 0, evalops, parsed_mstruct, &to_struct);
 	}
 
-	calculation_wait:
-
 	int has_printed = 0;
 
 	if(i_maxtime != 0) {
@@ -6402,32 +6406,6 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		i = 0;
 	}
 
-	bool units_changed = false;
-
-	if(!avoid_recalculation && !do_mathoperation && !str_conv.empty() && to_struct.containsType(STRUCT_UNIT, true) && !mstruct->containsType(STRUCT_UNIT) && !parsed_mstruct->containsType(STRUCT_UNIT, false, true, true) && !CALCULATOR->hasToExpression(str_conv, false, evalops)) {
-		to_struct.unformat();
-		to_struct = CALCULATOR->convertToOptimalUnit(to_struct, evalops, true);
-		fix_to_struct(to_struct);
-		if(!to_struct.isZero()) {
-			mstruct->multiply(to_struct);
-			PrintOptions po = printops;
-			po.negative_exponents = false;
-			to_struct.format(po);
-			if(to_struct.isMultiplication() && to_struct.size() >= 2) {
-				if(to_struct[0].isOne()) to_struct.delChild(1, true);
-				else if(to_struct[1].isOne()) to_struct.delChild(2, true);
-			}
-			parsed_mstruct->multiply(to_struct);
-			to_struct.clear();
-			CALCULATOR->calculate(mstruct, 0, evalops, CALCULATOR->unlocalizeExpression(str_conv, evalops.parse_options));
-			int had_printed = has_printed;
-			if(has_printed) printf("\n");
-			units_changed = true;
-			goto calculation_wait;
-			has_printed += had_printed;
-		}
-	}
-
 	// Always perform conversion to optimal (SI) unit when the expression is a number multiplied by a unit and input equals output
 	if(!rpn_mode && !avoid_recalculation && !had_to_expression && ((evalops.approximation == APPROXIMATION_EXACT && evalops.auto_post_conversion != POST_CONVERSION_NONE) || evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) && parsed_mstruct && mstruct && ((parsed_mstruct->isMultiplication() && parsed_mstruct->size() == 2 && (*parsed_mstruct)[0].isNumber() && (*parsed_mstruct)[1].isUnit_exp() && parsed_mstruct->equals(*mstruct)) || (parsed_mstruct->isNegate() && (*parsed_mstruct)[0].isMultiplication() && (*parsed_mstruct)[0].size() == 2 && (*parsed_mstruct)[0][0].isNumber() && (*parsed_mstruct)[0][1].isUnit_exp() && mstruct->isMultiplication() && mstruct->size() == 2 && (*mstruct)[1] == (*parsed_mstruct)[0][1] && (*mstruct)[0].isNumber() && (*parsed_mstruct)[0][0].number() == -(*mstruct)[0].number()) || (parsed_mstruct->isUnit_exp() && parsed_mstruct->equals(*mstruct)))) {
 		Unit *u = NULL;
@@ -6448,10 +6426,10 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			if(evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) {
 				if(munit->isUnit() && u->referenceName() == "oF") {
 					u = CALCULATOR->getActiveUnit("oC");
-					if(u) mstruct->set(CALCULATOR->convert(*mstruct, u, evalops, true, false));
+					if(u) mstruct->set(CALCULATOR->convert(*mstruct, u, evalops, true, false, false));
 				} else if(munit->isUnit() && u->referenceName() == "oC") {
 					u = CALCULATOR->getActiveUnit("oF");
-					if(u) mstruct->set(CALCULATOR->convert(*mstruct, u, evalops, true, false));
+					if(u) mstruct->set(CALCULATOR->convert(*mstruct, u, evalops, true, false, false));
 				} else {
 					mstruct->set(CALCULATOR->convertToOptimalUnit(*mstruct, evalops, true));
 				}
@@ -6499,7 +6477,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 
 	mstruct_exact.setUndefined();
 
-	if((!rpn_mode || (!do_stack && !do_mathoperation)) && (!do_calendars || !mstruct->isDateTime()) && (dual_approximation > 0 || printops.base == BASE_DECIMAL) && !do_bases && !avoid_recalculation && !units_changed && i_maxtime >= 0) {
+	if((!rpn_mode || (!do_stack && !do_mathoperation)) && (!do_calendars || !mstruct->isDateTime()) && (dual_approximation > 0 || printops.base == BASE_DECIMAL) && !do_bases && !avoid_recalculation && i_maxtime >= 0) {
 		long int i_timeleft = 0;
 #ifndef CLOCK_MONOTONIC
 		if(i_maxtime) {struct timeval tv; gettimeofday(&tv, NULL); i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_usec) / 1000;}

@@ -1,3 +1,79 @@
+2021-01-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	*  Support input of functions, units, and variables with underscores omitted in names (e.g. µ0 = µ_0), with some exceptions (e.g. if underscore is followed by a single character that is not a digit or a Unicode symbol)
+
+2021-01-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Convert K, Hz, and m^-1 to J, and derived units, using conversion factor constants (e.g. 1/(550nm) to eV = 1/(550nm) * m_to_J ≈ 2.25 eV)
+	* Move conversion of expression without unit (e.g. 5 to ft = 5 m to ft) from user interfaces to libqalculate
+	* Allow use of M as 10^6 without unit
+
+2021-01-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add hbar name (for completion) to reduced Planck constant
+
+2021-01-12 Stephan Troyer <stephantroyer@live.at>
+
+	* Add second Unicode codepoint for µ-sign in variable names
+
+2021-01-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not assume that char is signed
+	* Fix bitrot()
+
+2021-01-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Allow zero (1st and/or 2nd argument) in comb() and perm(), and return zero if second argument (k) is greater than the first (n)
+
+2021-12-27 ioio85 <ioio85@gmail.com>
+
+	* Add ksi unit
+
+2021-12-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix Unicode superscript followed by ^ or +/- (e.g. 5²±1)
+	* Interpret sin⁻¹ (with Unicode superscripts) as arcsin, and similar
+
+2021-12-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault in multisolve() when initial order of equations is not optimal
+
+2021-12-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add divisors() function
+	* Improve select() function
+
+2021-12-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Nicer formatted terminal output for matrices (in qalc)
+	* Replace round halfway to even and truncate options, in qalc, with rounding option
+
+2021-12-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Option to truncate (instead of round to nearest) numbers in result
+
+2021-12-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add plastic number (ρ) constant
+
+2021-12-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Transform vector to matrix with single row and scalar to matrix with a single row and column when a matrix is expected
+	* Transform matrix with single row to vector, and matrix/vector with single element to scalar
+	* Use time limit, instead of wait for keypress with time limit (which does not work), for slow calculations in qalc on Windows
+
+2021-12-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Matlab syntax for matrices and vector (within square brackets, space and comma separates columns, semicolon separates rows)
+
+2021-12-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not try to use iconv if not found
+
+2021-12-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix MathStructure::containsType(STRUCT_UNIT, false, ?, true) for value containing data set function
+
 2021-11-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Do not stop testing functions argument values after first failure

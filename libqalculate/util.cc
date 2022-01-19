@@ -338,15 +338,15 @@ bool equalsIgnoreCase(const string &str1, const string &str2) {
 	if(str1.empty() || str2.empty()) return false;
 	for(size_t i1 = 0, i2 = 0; i1 < str1.length() || i2 < str2.length(); i1++, i2++) {
 		if(i1 >= str1.length() || i2 >= str2.length()) return false;
-		if((str1[i1] < 0 && i1 + 1 < str1.length()) || (str2[i2] < 0 && i2 + 1 < str2.length())) {
+		if(((signed char) str1[i1] < 0 && i1 + 1 < str1.length()) || ((signed char) str2[i2] < 0 && i2 + 1 < str2.length())) {
 			size_t iu1 = 1, iu2 = 1;
-			if(str1[i1] < 0) {
-				while(iu1 + i1 < str1.length() && str1[i1 + iu1] < 0) {
+			if((signed char) str1[i1] < 0) {
+				while(iu1 + i1 < str1.length() && (signed char) str1[i1 + iu1] < 0) {
 					iu1++;
 				}
 			}
-			if(str2[i2] < 0) {
-				while(iu2 + i2 < str2.length() && str2[i2 + iu2] < 0) {
+			if((signed char) str2[i2] < 0) {
+				while(iu2 + i2 < str2.length() && (signed char) str2[i2 + iu2] < 0) {
 					iu2++;
 				}
 			}
@@ -385,15 +385,15 @@ bool equalsIgnoreCase(const string &str1, const char *str2) {
 	if(str1.empty() || strlen(str2) == 0) return false;
 	for(size_t i1 = 0, i2 = 0; i1 < str1.length() || i2 < strlen(str2); i1++, i2++) {
 		if(i1 >= str1.length() || i2 >= strlen(str2)) return false;
-		if((str1[i1] < 0 && i1 + 1 < str1.length()) || (str2[i2] < 0 && i2 + 1 < strlen(str2))) {
+		if(((signed char) str1[i1] < 0 && i1 + 1 < str1.length()) || ((signed char) str2[i2] < 0 && i2 + 1 < strlen(str2))) {
 			size_t iu1 = 1, iu2 = 1;
-			if(str1[i1] < 0) {
-				while(iu1 + i1 < str1.length() && str1[i1 + iu1] < 0) {
+			if((signed char) str1[i1] < 0) {
+				while(iu1 + i1 < str1.length() && (signed char) str1[i1 + iu1] < 0) {
 					iu1++;
 				}
 			}
-			if(str2[i2] < 0) {
-				while(iu2 + i2 < strlen(str2) && str2[i2 + iu2] < 0) {
+			if((signed char) str2[i2] < 0) {
+				while(iu2 + i2 < strlen(str2) && (signed char) str2[i2 + iu2] < 0) {
 					iu2++;
 				}
 			}
@@ -426,6 +426,61 @@ bool equalsIgnoreCase(const string &str1, const char *str2) {
 		}
 	}
 	return true;
+}
+
+string sub_suffix_html(const string &name) {
+	size_t i = name.rfind('_');
+	bool b = (i == string::npos || i == name.length() - 1 || i == 0);
+	size_t i2 = 1;
+	string str;
+	if(b) {
+		if(is_in(NUMBERS, name[name.length() - 1])) {
+			while(name.length() > i2 + 1 && is_in(NUMBERS, name[name.length() - 1 - i2])) {
+				i2++;
+			}
+		} else {
+			while((signed char) name[name.length() - i2] < 0 && (unsigned char) name[name.length() - i2] < 0xC0 && i2 < name.length()) {
+				i2++;
+			}
+		}
+		str += name.substr(0, name.length() - i2);
+	} else {
+		str += name.substr(0, i);
+	}
+	if(b) {
+		str += "<sub class=\"nous\">";
+		str += name.substr(name.length() - i2, i2);
+	} else {
+		str += "<sub>";
+		str += name.substr(i + 1, name.length() - (i + 1));
+	}
+	str += "</sub>";
+	return str;
+}
+string sub_suffix(const string &name, const string &tag_begin, const string &tag_end) {
+	size_t i = name.rfind('_');
+	bool b = (i == string::npos || i == name.length() - 1 || i == 0);
+	size_t i2 = 1;
+	string str;
+	if(b) {
+		if(is_in(NUMBERS, name[name.length() - 1])) {
+			while(name.length() > i2 + 1 && is_in(NUMBERS, name[name.length() - 1 - i2])) {
+				i2++;
+			}
+		} else {
+			while((signed char) name[name.length() - i2] < 0 && (unsigned char) name[name.length() - i2] < 0xC0 && i2 < name.length()) {
+				i2++;
+			}
+		}
+		str += name.substr(0, name.length() - i2);
+	} else {
+		str += name.substr(0, i);
+	}
+	str += tag_begin;
+	if(b) str += name.substr(name.length() - i2, i2);
+	else str += name.substr(i + 1, name.length() - (i + 1));
+	str += tag_end;
+	return str;
 }
 
 void parse_qalculate_version(string qalculate_version, int *qalculate_version_numbers) {

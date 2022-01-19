@@ -421,7 +421,7 @@ int ConcatenateFunction::calculate(MathStructure &mstruct, const MathStructure &
 	for(size_t i = 0; i < vargs.size(); i++) {
 		str += vargs[i].symbol();
 	}
-	mstruct = str;
+	mstruct.set(str, false, true);
 	return 1;
 }
 LengthFunction::LengthFunction() : MathFunction("len", 1) {
