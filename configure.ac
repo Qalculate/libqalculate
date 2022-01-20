@@ -51,21 +51,6 @@ dnl  ------------------------------------
 dnl | check for compiler characteristics |-------------------------------------
 dnl  ------------------------------------
 
-dnl Replace -Os with -O2 to stop segfault on startup
-if test "x$GCC" = "xyes"; then
-	case $CFLAGS in
-	*-Os*)
-		CFLAGS="$CFLAGS -O2"
-		;;
-	esac
-	case $CXXFLAGS in
-	*-Os*)
-		CXXFLAGS="$CXXFLAGS -O2"
-		;;
-	esac
-fi
-
-
 dnl Use -Wall if we have gcc.
 changequote(,)dnl
 if test "x$GCC" = "xyes"; then
