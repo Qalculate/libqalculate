@@ -1118,6 +1118,10 @@ class Calculator {
 	int saveUnits(const char *file_name, bool save_global = false);
 	int saveFunctions(const char *file_name, bool save_global = false);
 	int saveDataSets(const char *file_name, bool save_global = false);
+	std::string saveTemporaryDefinitions();
+	void saveVariables(void *xmldoc, bool save_global = false, bool save_only_temp = false);
+	void saveUnits(void *xmldoc, bool save_global = false, bool save_only_temp = false);
+	void saveFunctions(void *xmldoc, bool save_global = false, bool save_only_temp = false);
 	//@}
 
 	/** @name Functions for CSV file import/export. */

@@ -791,15 +791,11 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 	xmlChar *value, *lang, *value2;
 	int in_unfinished = 0;
 	bool done_something = false;
-#ifdef COMPILED_DEFINITIONS
 	if(strlen(file_name) > 1 && file_name[0] == '<') {
 		doc = xmlParseMemory(file_name, strlen(file_name));
 	} else {
 		doc = xmlParseFile(file_name);
 	}
-#else
-	doc = xmlParseFile(file_name);
-#endif
 	if(doc == NULL) {
 		return false;
 	}
@@ -2330,13 +2326,33 @@ string Calculator::temporaryCategory() const {
 	return _("Temporary");
 }
 
-int Calculator::saveVariables(const char* file_name, bool save_global) {
-	string str;
-	const ExpressionName *ename;
+string Calculator::saveTemporaryDefinitions() {
 	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");
-	xmlNodePtr cur, newnode, newnode2;
 	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);
 	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
+	saveVariables(doc, false, true);
+	int len = 0;
+	xmlChar *s = NULL;
+	xmlDocDumpMemory(doc, &s, &len);
+	string str = (char*) s;
+	xmlFree(s);
+	xmlFreeDoc(doc);
+	return str;
+}
+int Calculator::saveVariables(const char* file_name, bool save_global) {
+	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");
+	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);
+	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
+	saveVariables(doc, save_global, false);
+	int returnvalue = xmlSaveFormatFile(file_name, doc, 1);
+	xmlFreeDoc(doc);
+	return returnvalue;
+}
+void Calculator::saveVariables(void *xmldoc, bool save_global, bool save_only_temp) {
+	xmlDocPtr doc = (xmlDocPtr) xmldoc;
+	xmlNodePtr cur, newnode, newnode2;
+	string str;
+	const ExpressionName *ename;
 	node_tree_item top;
 	top.category = "";
 	top.node = doc->children;
@@ -2345,7 +2361,7 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 	bool matlab_matrices_bak = priv->matlab_matrices;
 	priv->matlab_matrices = false;
 	for(size_t i = 0; i < variables.size(); i++) {
-		if((save_global || variables[i]->isLocal() || variables[i]->hasChanged()) && variables[i]->category() != _("Temporary") && variables[i]->category() != "Temporary") {
+		if((save_global || variables[i]->isLocal() || (!save_only_temp && variables[i]->hasChanged())) && (variables[i]->category() != _("Temporary") && variables[i]->category() != "Temporary") == !save_only_temp && (!save_only_temp || !variables[i]->isBuiltin())) {
 			item = &top;
 			if(!variables[i]->category().empty()) {
 				cat = variables[i]->category();
@@ -2509,17 +2525,21 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 		}
 	}
 	priv->matlab_matrices = matlab_matrices_bak;
+}
+
+int Calculator::saveUnits(const char* file_name, bool save_global) {
+	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");
+	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);
+	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
+	saveUnits(doc, save_global, false);
 	int returnvalue = xmlSaveFormatFile(file_name, doc, 1);
 	xmlFreeDoc(doc);
 	return returnvalue;
 }
-
-int Calculator::saveUnits(const char* file_name, bool save_global) {
+void Calculator::saveUnits(void *xmldoc, bool save_global, bool save_only_temp) {
+	xmlDocPtr doc = (xmlDocPtr) xmldoc;
 	string str;
-	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");
 	xmlNodePtr cur, newnode, newnode2, newnode3;
-	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);
-	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
 	const ExpressionName *ename;
 	CompositeUnit *cu = NULL;
 	AliasUnit *au = NULL;
@@ -2531,7 +2551,7 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 	string cat, cat_sub;
 	for(size_t i = 0; i < units.size(); i++) {
 		u = units[i];
-		if((save_global || u->isLocal() || u->hasChanged()) && u->category() != _("Temporary") && u->category() != "Temporary") {
+		if((save_global || u->isLocal() || (!save_only_temp && u->hasChanged())) && (u->category() != _("Temporary") && u->category() != "Temporary") == !save_only_temp && (!save_only_temp || !units[i]->isBuiltin())) {
 			item = &top;
 			if(!u->category().empty()) {
 				cat = u->category();
@@ -2679,16 +2699,20 @@ int Calculator::saveUnits(const char* file_name, bool save_global) {
 			}
 		}
 	}
-	int returnvalue = xmlSaveFormatFile(file_name, doc, 1);
-	xmlFreeDoc(doc);
-	return returnvalue;
 }
 
 int Calculator::saveFunctions(const char* file_name, bool save_global) {
 	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");
-	xmlNodePtr cur, newnode, newnode2;
 	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);
 	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
+	saveFunctions(doc, save_global, false);
+	int returnvalue = xmlSaveFormatFile(file_name, doc, 1);
+	xmlFreeDoc(doc);
+	return returnvalue;
+}
+void Calculator::saveFunctions(void *xmldoc, bool save_global, bool save_only_temp) {
+	xmlDocPtr doc = (xmlDocPtr) xmldoc;
+	xmlNodePtr cur, newnode, newnode2;
 	const ExpressionName *ename;
 	node_tree_item top;
 	top.category = "";
@@ -2700,7 +2724,7 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 	NumberArgument *farg;
 	string str;
 	for(size_t i = 0; i < functions.size(); i++) {
-		if(functions[i]->subtype() != SUBTYPE_DATA_SET && (save_global || functions[i]->isLocal() || functions[i]->hasChanged()) && functions[i]->category() != _("Temporary") && functions[i]->category() != "Temporary") {
+		if(functions[i]->subtype() != SUBTYPE_DATA_SET && (save_global || functions[i]->isLocal() || (!save_only_temp && functions[i]->hasChanged())) && (functions[i]->category() != _("Temporary") && functions[i]->category() != "Temporary") == !save_only_temp && (!save_only_temp || !functions[i]->isBuiltin())) {
 			item = &top;
 			if(!functions[i]->category().empty()) {
 				cat = functions[i]->category();
@@ -2891,9 +2915,6 @@ int Calculator::saveFunctions(const char* file_name, bool save_global) {
 			}
 		}
 	}
-	int returnvalue = xmlSaveFormatFile(file_name, doc, 1);
-	xmlFreeDoc(doc);
-	return returnvalue;
 }
 int Calculator::saveDataSets(const char* file_name, bool save_global) {
 	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");
