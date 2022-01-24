@@ -2149,21 +2149,9 @@ void Calculator::nameChanged(ExpressionItem *item, bool new_item) {
 	}
 	size_t l2;
 	if(!new_item) delUFV(item);
-	size_t itype;
-	switch(item->type()) {
-		case TYPE_VARIABLE: {
-			itype = 3;
-			break;
-		}
-		case TYPE_FUNCTION:  {
-			itype = 1;
-			break;
-		}
-		case TYPE_UNIT:  {
-			itype = 2;
-			break;
-		}
-	}
+	size_t itype = 1;
+	if(item->type() == TYPE_VARIABLE) itype = 3;
+	else if(item->type() == TYPE_UNIT) itype = 2;
 	for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
 		l2 = item->getName(i2).name.length();
 		size_t i_us = 0;
