@@ -1,21 +1,21 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the libqalculate package.
 #
-# Damir Islamov <damir@secretlaboratory.ru>, 2021.
+# Damir Islamov <damir@secretlaboratory.ru>, 2021, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-19 11:36+0100\n"
-"PO-Revision-Date: 2021-12-01 15:07+0700\n"
+"POT-Creation-Date: 2022-01-29 14:33+0700\n"
+"PO-Revision-Date: 2022-01-29 15:09+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<"
+"=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Lokalize 21.08.0\n"
 
 #: ../data/currencies.xml.in.h:1
@@ -3203,9 +3203,8 @@ msgid "r:rref"
 msgstr "псвс"
 
 #: ../data/functions.xml.in.h:114
-#, fuzzy
 msgid "Concatenate Horizontally"
-msgstr "Объединить строки"
+msgstr "Объединить по горизонтали (сторбцы)"
 
 #: ../data/functions.xml.in.h:115
 msgid "Matrix 1"
@@ -3216,9 +3215,8 @@ msgid "Matrix 2"
 msgstr "Матрица 2"
 
 #: ../data/functions.xml.in.h:117
-#, fuzzy
 msgid "Concatenate Vertically"
-msgstr "Объединить строки"
+msgstr "Объединить по вертикали (строки)"
 
 #: ../data/functions.xml.in.h:118
 msgid "Entrywise Function"
@@ -3279,9 +3277,8 @@ msgid "Element-wise Multiplication"
 msgstr "Поэлементное умножение"
 
 #: ../data/functions.xml.in.h:130
-#, fuzzy
 msgid "r:multiply,times,hadamard"
-msgstr "умножить,times,hadamard"
+msgstr "умножить,адамар"
 
 #: ../data/functions.xml.in.h:131
 msgid "Factor 1"
