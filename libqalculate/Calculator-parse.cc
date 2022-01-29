@@ -4035,7 +4035,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 							MathStructure *mstruct_a = get_out_of_negate(mstruct->last(), &i_neg);
 							MathStructure *mstruct_b = mstruct_a;
 							if(mstruct_a->isMultiplication() && mstruct_a->size() >= 2) mstruct_b = &mstruct_a->last();
-							if(mstruct_b->isVariable() && (mstruct_b->variable() == v_percent || mstruct_b->variable() == v_permille || mstruct_b->variable() == v_permyriad)) {
+							if(!(po.parsing_mode & PARSE_PERCENT_AS_ORDINARY_CONSTANT) && mstruct_b->isVariable() && (mstruct_b->variable() == v_percent || mstruct_b->variable() == v_permille || mstruct_b->variable() == v_permyriad)) {
 								Variable *v = mstruct_b->variable();
 								bool b_neg = (i_neg % 2 == 1);
 								while(i_neg > 0) {
@@ -4220,7 +4220,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 
 		// Parse addition and subtraction
 		if((i = str.find_first_of(PLUS MINUS, 1)) != string::npos && i + 1 != str.length()) {
-			bool b = false, c = false, append = false, do_percent = true;
+			bool b = false, c = false, append = false, do_percent = !(po.parsing_mode & PARSE_PERCENT_AS_ORDINARY_CONSTANT);
 			bool min = false;
 			while(i != string::npos && i + 1 != str.length()) {
 				if(is_not_in(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS_TWO EXPS, str[i - 1])) {
