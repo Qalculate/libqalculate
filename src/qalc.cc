@@ -77,6 +77,7 @@ bool expression_executed = false;
 bool avoid_recalculation = false;
 bool hide_parse_errors = false;
 ParsingMode nonrpn_parsing_mode = PARSING_MODE_ADAPTIVE, saved_parsing_mode;
+bool saved_percent;
 bool rpn_mode = false, saved_rpn_mode = false;
 bool caret_as_xor = false, saved_caret_as_xor = false;
 bool use_readline = true;
@@ -98,6 +99,7 @@ bool do_imaginary_j = false;
 int sigint_action = 1;
 bool unittest = false;
 int rounding_mode = 0, saved_rounding = 0;
+bool simplified_percentage = true;
 
 static char buffer[100000];
 
@@ -914,6 +916,7 @@ void set_option(string str) {
 			expression_format_updated(false);
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn", _("rpn")) && svalue.find(" ") == string::npos) {SET_BOOL(rpn_mode) if(!rpn_mode) CALCULATOR->clearRPNStack();}
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "simplified percentage", _("simplified percentage")) || svar == "percent") SET_BOOL_PT(simplified_percentage)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "short multiplication", _("short multiplication")) || svar == "shortmul") SET_BOOL_D(printops.short_multiplication)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "lowercase e", _("lowercase e")) || svar == "lowe") SET_BOOL_D(printops.lower_case_e)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "lowercase numbers", _("lowercase numbers")) || svar == "lownum") SET_BOOL_D(printops.lower_case_numbers)
@@ -3875,6 +3878,7 @@ int main(int argc, char *argv[]) {
 				case ALWAYS_READ_PRECISION: {str += _("always"); break;}
 				case READ_PRECISION_WHEN_DECIMALS: {str += _("when decimals"); break;}
 			}
+			PRINT_AND_COLON_TABS(_("simplified percentage"), "percent"); str += b2oo(simplified_percentage, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Units"));
@@ -4647,7 +4651,7 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("limit implicit multiplication"), "limimpl", "", evalops.parse_options.limit_implicit_multiplication);
 				STR_AND_TABS_4(_("parsing mode"), "syntax", _("See 'help parsing mode'."), evalops.parse_options.parsing_mode, _("adaptive"), _("implicit first"), _("conventional"), _("chain"), _("rpn"));
 				STR_AND_TABS_2(_("read precision"), "readprec", _("If activated, numbers are interpreted as approximate with precision equal to the number of significant digits (3.20 = 3.20+/-0.005)."), evalops.parse_options.read_precision, _("off"), _("always"), _("when decimals"))
-
+				STR_AND_TABS_BOOL(_("simplified percentage"), "percent", _("Interpret addition/subtraction of percentage as percentage increase/decrease of the first term (100 + 10% = 110)."), simplified_percentage);
 				CHECK_IF_SCREEN_FILLED_HEADING_S(_("Units"));
 
 				STR_AND_TABS_BOOL(_("all prefixes"), "allpref", _("Enables automatic use of hecto, deca, deci, and centi."), printops.use_all_prefixes);
@@ -6197,6 +6201,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 
 	MathStructure to_struct;
 
+	if(!simplified_percentage) evalops.parse_options.parsing_mode = (ParsingMode) (evalops.parse_options.parsing_mode |PARSE_PERCENT_AS_ORDINARY_CONSTANT);
 	if(do_stack) {
 		stack_size = CALCULATOR->RPNStackSize();
 		CALCULATOR->setRPNRegister(stack_index + 1, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), 0, evalops, parsed_mstruct, NULL);
@@ -6472,6 +6477,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		printops.restrict_fraction_length = save_rfl;
 		printops.number_fraction_format = save_format;
 		CALCULATOR->useBinaryPrefixes(save_bin);
+		if(!simplified_percentage) evalops.parse_options.parsing_mode = (ParsingMode) (evalops.parse_options.parsing_mode & ~PARSE_PERCENT_AS_ORDINARY_CONSTANT);
 		return;
 	}
 
@@ -6636,6 +6642,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	printops.restrict_fraction_length = save_rfl;
 	printops.number_fraction_format = save_format;
 	CALCULATOR->useBinaryPrefixes(save_bin);
+	if(!simplified_percentage) evalops.parse_options.parsing_mode = (ParsingMode) (evalops.parse_options.parsing_mode & ~PARSE_PERCENT_AS_ORDINARY_CONSTANT);
 
 }
 
@@ -6661,6 +6668,7 @@ void set_saved_mode() {
 	saved_caf = complex_angle_form;
 	saved_evalops = evalops;
 	saved_parsing_mode = (evalops.parse_options.parsing_mode == PARSING_MODE_RPN ? nonrpn_parsing_mode : evalops.parse_options.parsing_mode);
+	saved_percent = simplified_percentage;
 	saved_rpn_mode = rpn_mode;
 	saved_caret_as_xor = caret_as_xor;
 	saved_dual_fraction = dual_fraction;
@@ -6737,6 +6745,7 @@ void load_preferences() {
 	evalops.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 	evalops.local_currency_conversion = true;
 	evalops.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
+	simplified_percentage = true;
 	b_decimal_comma = -1;
 
 	dual_fraction = -1;
@@ -6905,6 +6914,8 @@ void load_preferences() {
 						}
 						if(v == PARSING_MODE_CONVENTIONAL || v == PARSING_MODE_IMPLICIT_MULTIPLICATION_FIRST) implicit_question_asked = true;
 					}
+				} else if(svar == "simplified_percentage") {
+					simplified_percentage = v;
 				} else if(svar == "implicit_question_asked") {
 					implicit_question_asked = true;
 				} else if(svar == "place_units_separately") {
@@ -7270,6 +7281,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "rpn_syntax=%i\n", saved_evalops.parse_options.parsing_mode == PARSING_MODE_RPN);
 	fprintf(file, "limit_implicit_multiplication=%i\n", saved_evalops.parse_options.limit_implicit_multiplication);
 	fprintf(file, "parsing_mode=%i\n", saved_parsing_mode);
+	if(!saved_percent) fprintf(file, "simplified_percentage=%i\n", saved_percent);
 	fprintf(file, "default_assumption_type=%i\n", saved_assumption_type);
 	if(saved_assumption_type != ASSUMPTION_TYPE_BOOLEAN) fprintf(file, "default_assumption_sign=%i\n", saved_assumption_sign);
 

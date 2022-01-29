@@ -610,6 +610,8 @@ typedef enum {
 	PARSING_MODE_RPN
 } ParsingMode;
 
+#define PARSE_PERCENT_AS_ORDINARY_CONSTANT 0x10
+
 typedef enum {
 	/// Ignores uncertainties and uses the middle value of intervals
 	INTERVAL_CALCULATION_NONE,
