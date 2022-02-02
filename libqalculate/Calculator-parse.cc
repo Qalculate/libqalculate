@@ -2775,7 +2775,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									name = &((Unit*) ufv[2][index][ufv_index2])->getName(ufv_i[2][index][ufv_index2]).name;
 									case_sensitive = ((Unit*) ufv[2][index][ufv_index2])->getName(ufv_i[2][index][ufv_index2]).case_sensitive;
 									name_length = name->length();
-									underscore = priv->ufv_us[2][ufv_index][ufv_index2]; name_length -= underscore;
+									underscore = priv->ufv_us[2][index][ufv_index2]; name_length -= underscore;
 									if(index + 1 == (int) unit_chars_left || !((Unit*) ufv[2][index][ufv_index2])->getName(ufv_i[2][index][ufv_index2]).plural) {
 										if(name_length <= unit_chars_left && ((case_sensitive && (name_length = compare_name(*name, str, name_length, str_index, base, underscore))) || (!case_sensitive && (name_length = compare_name_no_case(*name, str, name_length, str_index, base, underscore))))) {
 											if((!p_mode && name_length_old > 1) || (p_mode && (name_length + name_length_old > best_pl || ((ufvt != 'P' || !((Unit*) ufv[2][index][ufv_index2])->getName(ufv_i[2][index][ufv_index2]).abbreviation) && name_length + name_length_old == best_pl)))) {
