@@ -502,7 +502,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 				if(mstruct_new.isUnit_exp()) {
 					mstruct_u = &mstruct_new;
 				} else if(mstruct_new.isMultiplication() && mstruct_new.size() >= 2 && mstruct_new.last().isUnit_exp() && !mstruct_new[mstruct_new.size() - 2].isUnit_exp()) {
-					mstruct_u = &mstruct_new[mstruct_new.size() - 1];
+					mstruct_u = &mstruct_new.last();
 				}
 				if(mstruct_u && (!mstruct_u->isPower() || (u1_type == 1 && (*mstruct_u)[1].isMinusOne()))) {
 					if(mstruct_u->isPower()) bu = (*mstruct_u)[0].unit();

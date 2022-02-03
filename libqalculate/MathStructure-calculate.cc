@@ -6805,7 +6805,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 		}
 
 		if(o_function->maxargs() > -1 && (long int) SIZE > o_function->maxargs()) {
-			if(o_function->maxargs() == 1 && o_function->getArgumentDefinition(1) && o_function->getArgumentDefinition(1)->handlesVector()) {
+			if(o_function->maxargs() == 1 && o_function->getArgumentDefinition(1) && o_function->getArgumentDefinition(1)->handlesVector() && o_function->getArgumentDefinition(1)->type() != ARGUMENT_TYPE_VECTOR) {
 				// for functions which takes exactly one argument: if there are additional children calculate the function separately for each child and place results in vector
 				bool b = false;
 				for(size_t i2 = 0; i2 < CHILD(0).size(); i2++) {
@@ -6848,7 +6848,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 				}
 				// test if argument/child can be used by function
 				if(!arg->test(CHILD(i), i + 1, o_function, eo)) {
-					if(arg->handlesVector() && CHILD(i).isVector()) {
+					if(arg->handlesVector() && arg->type() != ARGUMENT_TYPE_VECTOR && CHILD(i).isVector()) {
 						// calculate the function separately for each child of vector
 						bool b = false;
 						for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
@@ -6870,24 +6870,43 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 					CHILD_UPDATED(i);
 				}
 				if(arg->handlesVector()) {
-					if((arg->tests() || (o_function->subtype() == SUBTYPE_USER_FUNCTION && CHILD(i).containsType(STRUCT_VECTOR, false, true, false) > 0)) && !CHILD(i).isVector() && !CHILD(i).representsScalar()) {
-						CHILD(i).eval(eo);
-						CHILD_UPDATED(i);
-					}
-					if(CHILD(i).isVector()) {
-						bool b = false;
-						// calculate the function separately for each child of vector
-						for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
-							CHILD(i)[i2].transform(o_function);
-							for(size_t i3 = 0; i3 < SIZE; i3++) {
-								if(i3 < i) CHILD(i)[i2].insertChild(CHILD(i3), i3 + 1);
-								else if(i3 > i) CHILD(i)[i2].addChild(CHILD(i3));
+					if(arg->type() == ARGUMENT_TYPE_VECTOR) {
+						if(CHILD(i).isMatrix()) {
+							bool b = false;
+							// calculate the function separately for each column of matrix
+							CHILD(i).transposeMatrix();
+							for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
+								CHILD(i)[i2].transform(o_function);
+								for(size_t i3 = 0; i3 < SIZE; i3++) {
+									if(i3 < i) CHILD(i)[i2].insertChild(CHILD(i3), i3 + 1);
+									else if(i3 > i) CHILD(i)[i2].addChild(CHILD(i3));
+								}
+								if(CHILD(i)[i2].calculateFunctions(eo, recursive, do_unformat)) b = true;
+								CHILD(i).childUpdated(i2 + 1);
 							}
-							if(CHILD(i)[i2].calculateFunctions(eo, recursive, do_unformat)) b = true;
-							CHILD(i).childUpdated(i2 + 1);
+							SET_CHILD_MAP(i);
+							return b;
 						}
-						SET_CHILD_MAP(i);
-						return b;
+					} else {
+						if((arg->tests() || (o_function->subtype() == SUBTYPE_USER_FUNCTION && CHILD(i).containsType(STRUCT_VECTOR, false, true, false) > 0)) && !CHILD(i).isVector() && !CHILD(i).representsScalar()) {
+							CHILD(i).eval(eo);
+							CHILD_UPDATED(i);
+						}
+						if(CHILD(i).isVector()) {
+							bool b = false;
+							// calculate the function separately for each child of vector
+							for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
+								CHILD(i)[i2].transform(o_function);
+								for(size_t i3 = 0; i3 < SIZE; i3++) {
+									if(i3 < i) CHILD(i)[i2].insertChild(CHILD(i3), i3 + 1);
+									else if(i3 > i) CHILD(i)[i2].addChild(CHILD(i3));
+								}
+								if(CHILD(i)[i2].calculateFunctions(eo, recursive, do_unformat)) b = true;
+								CHILD(i).childUpdated(i2 + 1);
+							}
+							SET_CHILD_MAP(i);
+							return b;
+						}
 					}
 				}
 			}
@@ -6957,7 +6976,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 			mstruct->unref();
 			for(size_t i = 0; i < SIZE; i++) {
 				arg = o_function->getArgumentDefinition(i + 1);
-				if(arg && arg->handlesVector()) {
+				if(arg && arg->handlesVector() && arg->type() != ARGUMENT_TYPE_VECTOR) {
 					if(!CHILD(i).isVector() && !CHILD(i).representsScalar()) {
 						CHILD(i).calculatesub(eo, eo, false);
 						CHILD_UPDATED(i);

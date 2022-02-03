@@ -457,7 +457,7 @@ Use lowercase letters for number bases > 10.
 .PP
 .TP 8
 .B rounding \fI(0 = standard*, 1 = even, 2 = truncate)\fP
-Determines whether how approximate numbers are rounded (round halfway numbers upwards or towards the nearest even digit, or round all numbers
+Determines whether how approximate numbers are rounded (round halfway numbers away from zero or towards the nearest even digit, or round all numbers
 towards zero).
 .PP
 .TP 8
@@ -1082,7 +1082,9 @@ cross([1 2 3]; [4 5 6])
 = [-3  6  -3] \fI(cross product)\fP
 .PP
 .TP 8
-hadamard([1 2 3; 4 5 6]; [7 8 9; 10 11 12])
+[1 2 3; 4 5 6].*[7 8 9; 10 11 12]
+= hadamard([1 2 3; 4 5 6]; [7 8 9; 10 11 12])
+.br
 = [7  16  27; 40  55  72] \fI(hadamard product)\fP
 .PP
 .TP 8
