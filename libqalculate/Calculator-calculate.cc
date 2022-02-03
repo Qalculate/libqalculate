@@ -737,6 +737,7 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 			b_cmp3 = true;
 		}
 	}
+
 	// do not show simple fractions in auto modes if result includes units or expression contains decimals
 	if(!CALCULATOR->aborted() && (b_cmp3 || ((dfrac || (dappr && po.is_approximate && *po.is_approximate)) && (!only_cmp || (m.isComparison() && m.comparisonType() == COMPARISON_EQUALS)) && po.base == 10 && b_exact && (po.number_fraction_format == FRACTION_DECIMAL_EXACT || po.number_fraction_format == FRACTION_DECIMAL) && (dfrac > 0 || dappr > 0 || mresult->containsType(STRUCT_UNIT, false, true, true) <= 0)))) {
 		bool do_frac = false, do_mixed = false;
@@ -750,7 +751,7 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 					mcmp = mresult->getChild(2);
 				}
 				int itf = test_frac(*mcmp, !only_cmp, dfrac > 0 || dappr > 0 ? -1 : 1000);
-				if(itf) {
+				if(itf && !mcmp->isInteger()) {
 					do_frac = (itf == 1);
 					if(mcmp == mresult && mparse) {
 						if(mcmp->isNumber() && mcmp->number().isRational()) {
@@ -775,7 +776,7 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 			m.removeDefaultAngleUnit(evalops);
 			m2.format(po);
 			results_v.push_back(m2.print(po, format, colorize, tagtype));
-			if(b_approx) {
+			if(b_approx || results_v[results_v.size() - 1] == str) {
 				results_v.pop_back();
 			} else {
 				if(cplx_angle) replace_result_cis(results_v.back());
@@ -791,7 +792,7 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 			m2.format(po);
 			if(m2 != *mparse) {
 				results_v.push_back(m2.print(po, format, colorize, tagtype));
-				if(b_approx) {
+				if(b_approx || results_v[results_v.size() - 1] == str) {
 					results_v.pop_back();
 				} else {
 					if(cplx_angle) replace_result_cis(results_v.back());
@@ -802,12 +803,20 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 		// results are added to equalities instead of shown as multiple results
 		if(m.isComparison() && m.comparisonType() == COMPARISON_EQUALS && !results_v.empty()) {
 			size_t ipos = str.find(" = ");
-			if(ipos == string::npos) ipos = str.find(" " SIGN_ALMOST_EQUAL " ");
+			size_t ipos2 = 0;
+			if(ipos == string::npos) {
+				ipos = str.find(" " SIGN_ALMOST_EQUAL " ");
+				if(ipos != string::npos) ipos2 = ipos + strlen(" " SIGN_ALMOST_EQUAL " ");
+			} else {
+				ipos2 = ipos + 3;
+			}
 			if(ipos != string::npos) {
 				for(size_t i = results_v.size(); i > 0; i--) {
-					if(max_length < 0 || (unicode_length(str) + unicode_length(results_v[i - 1]) + 3 <= (size_t) max_length)) {
+					if((max_length < 0 || (unicode_length(str) + unicode_length(results_v[i - 1]) + 3 <= (size_t) max_length)) && results_v[i - 1] != str.substr(ipos2)) {
 						str.insert(ipos, results_v[i - 1]);
 						str.insert(ipos, " = ");
+						ipos2 += 3;
+						ipos2 += results_v[i - 1].size();
 					}
 				}
 			}
