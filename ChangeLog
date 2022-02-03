@@ -1,6 +1,30 @@
+2021-02-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Return the lowest value if there are multiple values with equal frequency in mode()
+	* Calculate statistical functions (e.g. mode(), min(), max(), percentile()) separately for each column of matrix (adds special handling for handle vector property in vector arguments)
+	* Fix duplicated right equality value in output in some cases
+
+2021-01-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add option to disable "simplified" percentage calculations (e.g. intepret 100 + 20% as 100 + 0.2 instead of 100 * 120%)
+
+2021-01-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Calculator::saveTemporaryDefinitions() for use in qalculate-qt when saving workspace
+
+2022-01-21 Jakub Jirutka <jakub@jirutka.cz>
+
+	* Do not rewrite -Os to -O2
+
+2021-01-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Parse text argument as expression if concatenate function name is found in text string
+	* Fix concatenate returning date
+	* New layout for output of result of equations, in qalc
+
 2021-01-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	*  Support input of functions, units, and variables with underscores omitted in names (e.g. µ0 = µ_0), with some exceptions (e.g. if underscore is followed by a single character that is not a digit or a Unicode symbol)
+	* Support input of functions, units, and variables with underscores omitted in names (e.g. µ0 = µ_0), with some exceptions (e.g. if underscore is followed by a single character that is not a digit or a Unicode symbol)
 
 2021-01-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

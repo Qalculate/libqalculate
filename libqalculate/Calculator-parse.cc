@@ -673,7 +673,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 					break;
 				}
 				case RIGHT_VECTOR_WRAP_CH: {
-					if(!in_cit1 && !in_cit2) {
+					if(!in_cit1 && !in_cit2 && brackets > 0) {
 						brackets--;
 						pars.pop_back();
 					}

@@ -16,6 +16,7 @@
 #include "MathStructure.h"
 #include "Number.h"
 #include "Calculator.h"
+#include "MathStructure-support.h"
 
 #include <sstream>
 #include <time.h>
@@ -39,7 +40,9 @@ int TotalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	return 1;
 }
 PercentileFunction::PercentileFunction() : MathFunction("percentile", 2, 3) {
-	setArgumentDefinition(1, new VectorArgument(""));
+	Argument *varg = new VectorArgument("");
+	varg->setHandleVector(true);
+	setArgumentDefinition(1, varg);
 	NumberArgument *arg = new NumberArgument();
 	Number fr;
 	arg->setMin(&fr);
@@ -161,7 +164,9 @@ int PercentileFunction::calculate(MathStructure &mstruct, const MathStructure &v
 	return 1;
 }
 MinFunction::MinFunction() : MathFunction("min", 1) {
-	setArgumentDefinition(1, new VectorArgument(""));
+	Argument *arg = new VectorArgument("");
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 }
 int MinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	ComparisonResult cmp;
@@ -204,7 +209,9 @@ int MinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	return 0;
 }
 MaxFunction::MaxFunction() : MathFunction("max", 1) {
-	setArgumentDefinition(1, new VectorArgument(""));
+	Argument *arg = new VectorArgument("");
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 }
 int MaxFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	ComparisonResult cmp;
@@ -247,7 +254,9 @@ int MaxFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	return 0;
 }
 ModeFunction::ModeFunction() : MathFunction("mode", 1) {
-	setArgumentDefinition(1, new VectorArgument(""));
+	Argument *arg = new VectorArgument("");
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 }
 int ModeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	if(vargs[0].size() <= 0) {
@@ -273,7 +282,7 @@ int ModeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	}
 	for(size_t index = 0; index < is.size(); index++) {
-		if(is[index] > n) {
+		if(is[index] > n || (is[index] == n && comparison_is_equal_or_less(value->compare(*vargs_nodup[index])))) {
 			n = is[index];
 			value = vargs_nodup[index];
 		}

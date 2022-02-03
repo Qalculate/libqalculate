@@ -4587,7 +4587,7 @@ int main(int argc, char *argv[]) {
 				if(printops.min_decimals >= 0 && printops.use_min_decimals) {str += " "; str += i2s(printops.min_decimals); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("repeating decimals"), "repdeci", _("If activated, 1/6 is displayed as '0.1 666...', otherwise as '0.166667'."), printops.indicate_infinite_series);
-				STR_AND_TABS_2(_("rounding"), "", _("Determines whether how approximate numbers are rounded (round halfway numbers upwards or towards the nearest even digit, or round all numbers towards zero)."), rounding_mode, _("standard"), _("even"), _("truncate"));
+				STR_AND_TABS_2(_("rounding"), "", _("Determines whether how approximate numbers are rounded (round halfway numbers away from zero or towards the nearest even digit, or round all numbers towards zero)."), rounding_mode, _("standard"), _("even"), _("truncate"));
 				STR_AND_TABS_SET(_("scientific notation"), "exp");
 				SET_DESCRIPTION(_("Determines how scientific notation is used (e.g. 5 543 000 = 5.543E6)."));
 				str += "(0 = ";
