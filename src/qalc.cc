@@ -6825,7 +6825,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {3, 22, 0};
+	int version_numbers[] = {4, 0, 0};
 
 	if(file) {
 		char line[10000];
@@ -7106,6 +7106,7 @@ void load_preferences() {
 					if(version_numbers[0] > 3 || (version_numbers[0] == 3 && (version_numbers[1] > 14 || (version_numbers[1] == 14 && version_numbers[2] > 0)))) {
 						if(v >= APPROXIMATION_EXACT && v <= APPROXIMATION_APPROXIMATE) {
 							evalops.approximation = (ApproximationMode) v;
+							dual_approximation = 0;
 						} else if(v == APPROXIMATION_APPROXIMATE + 1) {
 							evalops.approximation = APPROXIMATION_TRY_EXACT;
 							dual_approximation = 1;

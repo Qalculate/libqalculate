@@ -3794,7 +3794,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			if(ename->suffix) {
 				size_t i = string::npos;
 				if(!po.use_reference_names && !po.preserve_format) i = print_str.rfind('_');
-				if(i != string::npos && i + 5 <= print_str.length() && print_str.substr(print_str.length() - 4, 4) == "unit") {
+				if(i != string::npos && i + 5 <= print_str.length() && print_str.substr(print_str.length() - 4, 4) == "unit" && CALCULATOR->getActiveVariable(print_str.substr(0, i + 5 == print_str.length() ? i : print_str.length() - 4))) {
 					if(i + 5 == print_str.length()) {
 						print_str = print_str.substr(0, i);
 						if(po.hide_underscore_spaces) gsub("_", " ", print_str);
@@ -3824,7 +3824,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			if(ename->suffix) {
 				size_t i = string::npos;
 				if(!po.use_reference_names && !po.preserve_format) i = print_str.rfind('_');
-				if(i != string::npos && i + 9 <= print_str.length() && print_str.substr(print_str.length() - 8, 8) == "constant") {
+				if(i != string::npos && i + 9 <= print_str.length() && print_str.substr(print_str.length() - 8, 8) == "constant" && CALCULATOR->getActiveUnit(print_str.substr(0, i + 9 == print_str.length() ? i : print_str.length() - 8))) {
 					if(i + 9 == print_str.length()) {
 						print_str = print_str.substr(0, i);
 						if(po.hide_underscore_spaces) gsub("_", " ", print_str);
@@ -3836,6 +3836,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					print_str = sub_suffix_html(print_str);
 				}
 			}
+
 			if(po.hide_underscore_spaces && !ename->suffix) {
 				gsub("_", " ", print_str);
 			}

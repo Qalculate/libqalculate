@@ -1452,6 +1452,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 	}
 	EvaluationOptions eo2 = eo;
 	eo2.keep_prefixes = !do_prefix;
+	if(str2.find(SIGN_MINUS) == 0) str2.replace(0, strlen(SIGN_MINUS), "-");
 	if(str2[0] == '-') eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_NONE;
 	else if(str2[0] == '+') eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
 	else if(eo2.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_DOWNWARDS_KEEP;

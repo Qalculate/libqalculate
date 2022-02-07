@@ -1,3 +1,9 @@
+2021-02-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix incompletely calculated nounit(), e.g. in unit conversion
+	* Fix parsing modes with simplified percentage disabled; Handle Unicode minus in conversion (disables mixed units)
+	* Fix saving of try exact single approximation mode in qalc
+
 2021-02-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Return the lowest value if there are multiple values with equal frequency in mode()

@@ -971,6 +971,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 				CHILD(0).add_nocopy(&mstruct[0]);
 				EvaluationOptions eo2 = eo;
 				eo2.sync_units = false;
+				eo2.keep_prefixes = true;
 				if(CHILD(0).calculateAddLast(eo2)) {
 					CHILD_UPDATED(0)
 					calculatesub(eo, eo, false);
@@ -2896,6 +2897,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					CHILD(0).multiply_nocopy(&mstruct[0]);
 					EvaluationOptions eo2 = eo;
 					eo2.sync_units = false;
+					eo2.keep_prefixes = true;
 					if(CHILD(0).calculateMultiplyLast(eo2)) {
 						CHILD_UPDATED(0)
 						calculatesub(eo, eo, false);
@@ -3916,6 +3918,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 				CHILD(0).raise_nocopy(&mstruct);
 				EvaluationOptions eo2 = eo;
 				eo2.sync_units = false;
+				eo2.keep_prefixes = true;
 				if(CHILD(0).calculateRaiseExponent(eo2)) {
 					CHILD_UPDATED(0)
 					calculatesub(eo, eo, false);
@@ -6307,18 +6310,19 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				b = calculateFunctions(eo, false);
 				if(b) {
 					calculatesub(eo, feo, true, mparent, index_this);
-					break;
-				} else if(recursive && (eo.sync_units || feo.sync_units)) {
+				} else if(recursive) {
 					EvaluationOptions eo2 = eo;
 					EvaluationOptions feo2 = eo;
 					eo2.sync_units = false;
 					feo2.sync_units = false;
+					eo2.keep_prefixes = true;
+					feo2.keep_prefixes = true;
 					for(size_t i = 0; i < SIZE; i++) {
 						if(CHILD(i).calculatesub(eo2, feo2, true, this, i)) b = true;
 					}
 					CHILDREN_UPDATED;
-					break;
 				}
+				break;
 			}
 		}
 		default: {
