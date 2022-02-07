@@ -1143,6 +1143,8 @@ MathStructure *last_is_function(MathStructure &m) {
 	return last_is_function(m.last());
 }
 
+#define PARSING_MODE (po.parsing_mode & ~PARSE_PERCENT_AS_ORDINARY_CONSTANT)
+
 void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &parseoptions) {
 
 	ParseOptions po = parseoptions;
@@ -1159,7 +1161,11 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		return;
 	}
 
-	if(po.rpn) {po.parsing_mode = PARSING_MODE_RPN; po.rpn = false;}
+	if(po.rpn) {
+		if(po.parsing_mode & PARSE_PERCENT_AS_ORDINARY_CONSTANT) po.parsing_mode = (ParsingMode) (PARSING_MODE_RPN | PARSE_PERCENT_AS_ORDINARY_CONSTANT);
+		else po.parsing_mode = PARSING_MODE_RPN;
+		po.rpn = false;
+	}
 
 	MathStructure *unended_function = po.unended_function;
 	po.unended_function = NULL;
@@ -1335,7 +1341,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	}
 
 	//remove spaces in numbers
-	if(po.parsing_mode != PARSING_MODE_RPN && !str.empty()) {
+	if(PARSING_MODE != PARSING_MODE_RPN && !str.empty()) {
 		bool in_cit1 = false, in_cit2 = false;
 		int brackets = 0;
 		for(size_t i = 0; i < str.length() - 1; i++) {
@@ -1503,7 +1509,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	size_t i_mod = str.find("%");
 	if(i_mod != string::npos && !v_percent->hasName("%")) i_mod = string::npos;
 	while(i_mod != string::npos) {
-		if(po.parsing_mode == PARSING_MODE_RPN) {
+		if(PARSING_MODE == PARSING_MODE_RPN) {
 			if(i_mod == 0 || is_not_in(OPERATORS "\\" INTERNAL_OPERATORS SPACE, str[i_mod - 1])) {
 				str.replace(i_mod, 1, v_percent->referenceName());
 				i_mod += v_percent->referenceName().length() - 1;
@@ -1555,7 +1561,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		i_dx = str.find("dx", i_dx + 1);
 	}
 
-	if(po.parsing_mode == PARSING_MODE_RPN) {
+	if(PARSING_MODE == PARSING_MODE_RPN) {
 		// add space between double operators in rpn mode in order to ensure that they are interpreted as two single operators
 		gsub("&&", "& &", str);
 		gsub("||", "| |", str);
@@ -1855,7 +1861,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				}
 				if(b_old_matrix == 1) priv->matlab_matrices = true;
 			}
-		} else if(str[str_index] == '\\' && str_index + 1 < str.length() && (is_not_in(NOT_IN_NAMES INTERNAL_OPERATORS NUMBERS, str[str_index + 1]) || (po.parsing_mode != PARSING_MODE_RPN && str_index > 0 && is_in(NUMBERS SPACE PLUS MINUS BITWISE_NOT NOT LEFT_PARENTHESIS, str[str_index + 1])))) {
+		} else if(str[str_index] == '\\' && str_index + 1 < str.length() && (is_not_in(NOT_IN_NAMES INTERNAL_OPERATORS NUMBERS, str[str_index + 1]) || (PARSING_MODE != PARSING_MODE_RPN && str_index > 0 && is_in(NUMBERS SPACE PLUS MINUS BITWISE_NOT NOT LEFT_PARENTHESIS, str[str_index + 1])))) {
 			if(is_in(NUMBERS SPACE PLUS MINUS BITWISE_NOT NOT LEFT_PARENTHESIS, str[str_index + 1])) {
 				// replace \ followed by number with // for integer division
 				str.replace(str_index, 1, "//");
@@ -1939,17 +1945,17 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str_index = stmp.length() + i5 - stmp2.length();
 				}
 			}
-		} else if(po.parsing_mode != PARSING_MODE_RPN && (str[str_index] == 'c' || str[str_index] == 'C') && str.length() > str_index + 6 && str[str_index + 5] == SPACE_CH && (str_index == 0 || is_in(OPERATORS INTERNAL_OPERATORS PARENTHESISS, str[str_index - 1])) && compare_name_no_case("compl", str, 5, str_index, base)) {
+		} else if(PARSING_MODE != PARSING_MODE_RPN && (str[str_index] == 'c' || str[str_index] == 'C') && str.length() > str_index + 6 && str[str_index + 5] == SPACE_CH && (str_index == 0 || is_in(OPERATORS INTERNAL_OPERATORS PARENTHESISS, str[str_index - 1])) && compare_name_no_case("compl", str, 5, str_index, base)) {
 			// interpret "compl" followed by space as bitwise not
 			str.replace(str_index, 6, BITWISE_NOT);
 			ascii_bitwise = 1;
-		} else if(po.parsing_mode != PARSING_MODE_RPN && (str[str_index] == 'n' || str[str_index] == 'N') && str.length() > str_index + 4 && str[str_index + 3] == SPACE_CH && (str_index == 0 || is_in(OPERATORS INTERNAL_OPERATORS PARENTHESISS, str[str_index - 1])) && compare_name_no_case("not", str, 3, str_index, base)) {
+		} else if(PARSING_MODE != PARSING_MODE_RPN && (str[str_index] == 'n' || str[str_index] == 'N') && str.length() > str_index + 4 && str[str_index + 3] == SPACE_CH && (str_index == 0 || is_in(OPERATORS INTERNAL_OPERATORS PARENTHESISS, str[str_index - 1])) && compare_name_no_case("not", str, 3, str_index, base)) {
 			// interpret "NOT" followed by space as logical not
 			str.replace(str_index, 4, LOGICAL_NOT);
 			ascii_bitwise = 1;
 		} else if(str[str_index] == SPACE_CH) {
 			size_t i = str.find(SPACE, str_index + 1);
-			if(po.parsing_mode == PARSING_MODE_RPN && i == string::npos) i = str.length();
+			if(PARSING_MODE == PARSING_MODE_RPN && i == string::npos) i = str.length();
 			if(i != string::npos) {
 				// replace text operators, surrounded by space, with default operator characters
 				i -= str_index + 1;
@@ -2063,7 +2069,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str.replace(str_index + 1, il, "\x15");
 					str_index++;
 				} else if(i == 3 && (il = compare_name_no_case("div", str, 3, str_index + 1, base))) {
-					if(po.parsing_mode == PARSING_MODE_RPN) {
+					if(PARSING_MODE == PARSING_MODE_RPN) {
 						str.replace(str_index + 1, il, "\\");
 						str_index++;
 					} else {
@@ -2081,12 +2087,12 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str.erase(str_index, 2);
 				} else {
 					size_t i;
-					if(po.parsing_mode == PARSING_MODE_RPN) i = str.find_first_not_of(NUMBER_ELEMENTS "abcdefABCDEF", str_index + 2);
+					if(PARSING_MODE == PARSING_MODE_RPN) i = str.find_first_not_of(NUMBER_ELEMENTS "abcdefABCDEF", str_index + 2);
 					else i = str.find_first_not_of(SPACE NUMBER_ELEMENTS "abcdefABCDEF", str_index + 2);
 					size_t name_length;
 					if(i == string::npos) {
 						i = str.length();
-					} else if(po.parsing_mode != PARSING_MODE_RPN && is_not_in(ILLEGAL_IN_UNITNAMES, str[i]) && is_in("abcdefABCDEF", str[i - 1])) {
+					} else if(PARSING_MODE != PARSING_MODE_RPN && is_not_in(ILLEGAL_IN_UNITNAMES, str[i]) && is_in("abcdefABCDEF", str[i - 1])) {
 						size_t i2 = str.find_last_not_of("abcdefABCDEF", i - 1);
 						if(i2 != string::npos && i2 > str_index + 2 && is_in(SPACE, str[i2])) {
 							i = i2;
@@ -2110,7 +2116,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str.erase(str_index, 2);
 				} else {
 					size_t i;
-					if(po.parsing_mode == PARSING_MODE_RPN) i = str.find_first_not_of(NUMBER_ELEMENTS, str_index + 2);
+					if(PARSING_MODE == PARSING_MODE_RPN) i = str.find_first_not_of(NUMBER_ELEMENTS, str_index + 2);
 					else i = str.find_first_not_of(SPACE NUMBER_ELEMENTS, str_index + 2);
 					size_t name_length;
 					if(i == string::npos) i = str.length();
@@ -2131,7 +2137,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str.erase(str_index, 2);
 				} else {
 					size_t i;
-					if(po.parsing_mode == PARSING_MODE_RPN) i = str.find_first_not_of(NUMBER_ELEMENTS DUODECIMAL_CHARS, str_index + 2);
+					if(PARSING_MODE == PARSING_MODE_RPN) i = str.find_first_not_of(NUMBER_ELEMENTS DUODECIMAL_CHARS, str_index + 2);
 					else i = str.find_first_not_of(SPACE NUMBER_ELEMENTS DUODECIMAL_CHARS, str_index + 2);
 					size_t name_length;
 					if(i == string::npos) i = str.length();
@@ -2152,7 +2158,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str.erase(str_index, 2);
 				} else {
 					size_t i;
-					if(po.parsing_mode == PARSING_MODE_RPN) i = str.find_first_not_of(NUMBER_ELEMENTS, str_index + 2);
+					if(PARSING_MODE == PARSING_MODE_RPN) i = str.find_first_not_of(NUMBER_ELEMENTS, str_index + 2);
 					else i = str.find_first_not_of(SPACE NUMBER_ELEMENTS, str_index + 2);
 					size_t name_length;
 					if(i == string::npos) i = str.length();
@@ -2474,7 +2480,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								stmp += i2s(parseAddId(f, empty_string, po));
 								stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 								if(i4 < 0) i4 = name_length;
-							} else if(po.parsing_mode == PARSING_MODE_CHAIN && f->minargs() == 1 && str_index > 0 && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != string::npos && str[i6] != LEFT_PARENTHESIS_CH && is_not_in(OPERATORS INTERNAL_OPERATORS, str[i6]) && (str_index + name_length >= str.length() || (str.find_first_not_of(SPACE, str_index + name_length) == string::npos || is_in(OPERATORS INTERNAL_OPERATORS, str[str.find_first_not_of(SPACE, str_index + name_length)])))) {
+							} else if(PARSING_MODE == PARSING_MODE_CHAIN && f->minargs() == 1 && str_index > 0 && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != string::npos && str[i6] != LEFT_PARENTHESIS_CH && is_not_in(OPERATORS INTERNAL_OPERATORS, str[i6]) && (str_index + name_length >= str.length() || (str.find_first_not_of(SPACE, str_index + name_length) == string::npos || is_in(OPERATORS INTERNAL_OPERATORS, str[str.find_first_not_of(SPACE, str_index + name_length)])))) {
 								size_t i7 = i6;
 								int nr_of_p = 0;
 								while(true) {
@@ -2506,7 +2512,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								str.replace(i7, str_index + name_length - i7, stmp);
 								str_index += name_length;
 								moved_forward = true;
-							} else if(po.parsing_mode == PARSING_MODE_RPN && f->args() == 1 && str_index > 0 && str[str_index - 1] != LEFT_PARENTHESIS_CH && (str_index + name_length >= str.length() || str[str_index + name_length] != LEFT_PARENTHESIS_CH) && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != string::npos) {
+							} else if(PARSING_MODE == PARSING_MODE_RPN && f->args() == 1 && str_index > 0 && str[str_index - 1] != LEFT_PARENTHESIS_CH && (str_index + name_length >= str.length() || str[str_index + name_length] != LEFT_PARENTHESIS_CH) && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != string::npos) {
 								size_t i7 = i6;
 								int nr_of_p = 0, nr_of_op = 0;
 								bool b_started = false;
@@ -2565,7 +2571,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 										char c = str[str_index + name_length + i6];
 										if(c == LEFT_PARENTHESIS_CH) {
 											if(i5 < 2) b = true;
-											else if(i5 == 2 && po.parsing_mode >= PARSING_MODE_CONVENTIONAL && !b_power_before) b = true;
+											else if(i5 == 2 && PARSING_MODE >= PARSING_MODE_CONVENTIONAL && !b_power_before) b = true;
 											else i5++;
 										} else if(c == RIGHT_PARENTHESIS_CH) {
 											if(i5 <= 2) b = true;
@@ -2680,7 +2686,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							str.replace(str_index, name_length, stmp);
 							if(str.length() > str_index + stmp.length() && is_in("23", str[str_index + stmp.length()]) && (str.length() == str_index + stmp.length() + 1 || is_not_in(NUMBER_ELEMENTS, str[str_index + stmp.length() + 1])) && (!name || *name != SIGN_DEGREE) && !((Unit*) object)->isCurrency()) {
 								str.insert(str_index + stmp.length(), 1, POWER_CH);
-								if(po.parsing_mode == PARSING_MODE_CHAIN) {
+								if(PARSING_MODE == PARSING_MODE_CHAIN) {
 									str.insert(str_index + stmp.length() + 2, 1, RIGHT_PARENTHESIS_CH);
 									str.insert(str_index, 1, LEFT_PARENTHESIS_CH);
 									str_index++;
@@ -2903,7 +2909,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		comma_i = str.find(COMMA, comma_i + 1);
 	}
 
-	if(po.parsing_mode == PARSING_MODE_RPN) {
+	if(PARSING_MODE == PARSING_MODE_RPN) {
 		size_t rpn_i = str.find(SPACE, 0);
 		while(rpn_i != string::npos) {
 			if(rpn_i == 0 || rpn_i + 1 == str.length() || is_in("~+-*/^\\" INTERNAL_OPERATORS_NOMOD, str[rpn_i - 1]) || (is_in("%&|", str[rpn_i - 1]) && str[rpn_i + 1] != str[rpn_i - 1]) || (is_in("!><=", str[rpn_i - 1]) && is_not_in("=<>", str[rpn_i + 1])) || (is_in(SPACE OPERATORS INTERNAL_OPERATORS, str[rpn_i + 1]) && (str[rpn_i - 1] == SPACE_CH || (str[rpn_i - 1] != str[rpn_i + 1] && is_not_in("!><=", str[rpn_i - 1]))))) {
@@ -2913,7 +2919,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			}
 			rpn_i = str.find(SPACE, rpn_i);
 		}
-	} else if(po.parsing_mode != PARSING_MODE_ADAPTIVE) {
+	} else if(PARSING_MODE != PARSING_MODE_ADAPTIVE) {
 		remove_blanks(str);
 	} else {
 		//remove spaces between next to operators (except '/') and before/after parentheses
@@ -3260,7 +3266,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			}
 		}
 		if(i > 0 && is_not_in(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS SPACE, str[i - 1]) && (!BASE_2_10 || (str[i - 1] != EXP_CH && str[i - 1] != EXP2_CH))) {
-			if(po.parsing_mode == PARSING_MODE_RPN) {
+			if(PARSING_MODE == PARSING_MODE_RPN) {
 				str.insert(i2 + 1, MULTIPLICATION);
 				str.insert(i, SPACE);
 				i++;
@@ -3268,7 +3274,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			}
 		}
 		if(i2 + 1 < str.length() && is_not_in(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS SPACE, str[i2 + 1]) && (!BASE_2_10 || (str[i2 + 1] != EXP_CH && str[i2 + 1] != EXP2_CH))) {
-			if(po.parsing_mode == PARSING_MODE_RPN) {
+			if(PARSING_MODE == PARSING_MODE_RPN) {
 				i3 = str.find(SPACE, i2 + 1);
 				if(i3 == string::npos) {
 					str += MULTIPLICATION;
@@ -3278,7 +3284,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				str.insert(i2 + 1, SPACE);
 			}
 		}
-		if(po.parsing_mode == PARSING_MODE_RPN && i > 0 && i2 + 1 == str.length() && is_not_in(PARENTHESISS SPACE, str[i - 1])) {
+		if(PARSING_MODE == PARSING_MODE_RPN && i > 0 && i2 + 1 == str.length() && is_not_in(PARENTHESISS SPACE, str[i - 1])) {
 			str += MULTIPLICATION_CH;
 		}
 		str2 = str.substr(i + 1, i2 - (i + 1));
@@ -3297,7 +3303,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	}
 	bool b_abs_or = false, b_bit_or = false;
 	i = 0;
-	if(po.parsing_mode != PARSING_MODE_RPN) {
+	if(PARSING_MODE != PARSING_MODE_RPN) {
 		// determine if | is used for absolute value
 		while(po.base != BASE_ROMAN_NUMERALS && (i = str.find('|', i)) != string::npos) {
 			if(i == 0 || i == str.length() - 1 || is_in(OPERATORS INTERNAL_OPERATORS SPACE, str[i - 1]) || is_in("*/^<>=", str[i + 1])) {b_abs_or = true; break;}
@@ -3350,7 +3356,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			}
 		}
 	}
-	if(po.parsing_mode == PARSING_MODE_RPN) {
+	if(PARSING_MODE == PARSING_MODE_RPN) {
 		// parse operators with RPN syntax
 		i = 0;
 		i3 = 0;
@@ -3781,7 +3787,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			i3 = i;
 		}
 	}
-	if(po.parsing_mode == PARSING_MODE_RPN) remove_blanks(str);
+	if(PARSING_MODE == PARSING_MODE_RPN) remove_blanks(str);
 
 	i = 0;
 	i3 = 0;
@@ -3882,7 +3888,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		return true;
 	}
 	// Parse | as bitwise or
-	if(po.parsing_mode != PARSING_MODE_CHAIN && po.base != BASE_ROMAN_NUMERALS && (i = str.find(BITWISE_OR, 1)) != string::npos && i + 1 != str.length()) {
+	if(PARSING_MODE != PARSING_MODE_CHAIN && po.base != BASE_ROMAN_NUMERALS && (i = str.find(BITWISE_OR, 1)) != string::npos && i + 1 != str.length()) {
 		bool b = false, append = false;
 		while(i != string::npos && i + 1 != str.length()) {
 			str2 = str.substr(0, i);
@@ -3904,7 +3910,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		return true;
 	}
 	// Parse \a (internal single character substitution for xor operators) as bitwise xor
-	if(po.parsing_mode != PARSING_MODE_CHAIN && (i = str.find('\a', 1)) != string::npos && i + 1 != str.length()) {
+	if(PARSING_MODE != PARSING_MODE_CHAIN && (i = str.find('\a', 1)) != string::npos && i + 1 != str.length()) {
 		str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str2, mstruct, po);
@@ -3912,7 +3918,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		return true;
 	}
 	// Parse & as bitwise and
-	if(po.parsing_mode != PARSING_MODE_CHAIN && (i = str.find(BITWISE_AND, 1)) != string::npos && i + 1 != str.length()) {
+	if(PARSING_MODE != PARSING_MODE_CHAIN && (i = str.find(BITWISE_AND, 1)) != string::npos && i + 1 != str.length()) {
 		bool b = false, append = false;
 		while(i != string::npos && i + 1 != str.length()) {
 			str2 = str.substr(0, i);
@@ -4010,7 +4016,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 	}
 
-	if(po.parsing_mode == PARSING_MODE_CHAIN) {
+	if(PARSING_MODE == PARSING_MODE_CHAIN) {
 		char c_operator = 0, prev_operator = 0;
 		bool append = false;
 		while(true) {
@@ -4182,7 +4188,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 	}
 
-	if(po.parsing_mode != PARSING_MODE_CHAIN) {
+	if(PARSING_MODE != PARSING_MODE_CHAIN) {
 
 		// Parse << and >> as bitwise shift
 		i = str.find(SHIFT_LEFT, 1);
@@ -4363,7 +4369,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 
 		// In adaptive parsing mode division might be handled differently depending on usage of whitespace characters, e.g. 5/2 m = (5/2)*m, 5/2m=5/(2m)
-		if(po.parsing_mode == PARSING_MODE_ADAPTIVE && (i = str.find(DIVISION_CH, 1)) != string::npos && i + 1 != str.length()) {
+		if(PARSING_MODE == PARSING_MODE_ADAPTIVE && (i = str.find(DIVISION_CH, 1)) != string::npos && i + 1 != str.length()) {
 			while(i != string::npos && i + 1 != str.length()) {
 				bool b = false;
 				if(i > 2 && i < str.length() - 3 && str[i + 1] == ID_WRAP_LEFT_CH) {
@@ -4467,10 +4473,10 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				i = str.find(DIVISION_CH, i + 1);
 			}
 		}
-		if(po.parsing_mode == PARSING_MODE_ADAPTIVE) remove_blanks(str);
+		if(PARSING_MODE == PARSING_MODE_ADAPTIVE) remove_blanks(str);
 
 		// In conventional parsing mode there is not difference between implicit and explicit multiplication
-		if(po.parsing_mode >= PARSING_MODE_CONVENTIONAL) {
+		if(PARSING_MODE >= PARSING_MODE_CONVENTIONAL) {
 			if((i = str.find(ID_WRAP_RIGHT_CH, 1)) != string::npos && i + 1 != str.length()) {
 				while(i != string::npos && i + 1 != str.length()) {
 					if(is_in(NUMBERS ID_WRAP_LEFT, str[i + 1])) {
@@ -4545,7 +4551,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						switch(type) {
 							case 1: {
 								parseAdd(str2, mstruct, po, OPERATION_DIVIDE, append);
-								if(po.parsing_mode == PARSING_MODE_ADAPTIVE && !str2.empty() && str2[0] != LEFT_PARENTHESIS_CH) {
+								if(PARSING_MODE == PARSING_MODE_ADAPTIVE && !str2.empty() && str2[0] != LEFT_PARENTHESIS_CH) {
 									MathStructure *mden = NULL, *mnum = NULL;
 									if(po.preserve_format && mstruct->isDivision()) {
 										mden = &(*mstruct)[1];
@@ -4621,7 +4627,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				switch(type) {
 					case 1: {
 						parseAdd(str, mstruct, po, OPERATION_DIVIDE, append);
-						if(po.parsing_mode == PARSING_MODE_ADAPTIVE && !str.empty() && str[0] != LEFT_PARENTHESIS_CH) {
+						if(PARSING_MODE == PARSING_MODE_ADAPTIVE && !str.empty() && str[0] != LEFT_PARENTHESIS_CH) {
 							MathStructure *mden = NULL, *mnum = NULL;
 							if(po.preserve_format && mstruct->isDivision()) {
 								mden = &(*mstruct)[1];
@@ -4702,7 +4708,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	}
 
 	// Parse \x1c (internal single substitution character for angle operator) for complex angle format
-	if((i = str.find('\x1c', 0)) != string::npos && i + 1 != str.length() && (po.parsing_mode != PARSING_MODE_CHAIN || i == 0)) {
+	if((i = str.find('\x1c', 0)) != string::npos && i + 1 != str.length() && (PARSING_MODE != PARSING_MODE_CHAIN || i == 0)) {
 		if(i != 0) str2 = str.substr(0, i);
 		str = str.substr(i + 1, str.length() - (i + 1));
 		if(i != 0) parseAdd(str2, mstruct, po);
