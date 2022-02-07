@@ -1,4 +1,4 @@
-# Doxyfile 1.9.2
+# Doxyfile 1.9.3
 
 # This file describes the settings to be used by the documentation system
 # doxygen (www.doxygen.org) for a project.
@@ -32,7 +32,7 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = libqalculate-3.22.0
+PROJECT_NAME           = libqalculate-4.0.0
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
@@ -847,7 +847,10 @@ WARN_FORMAT            = "$file:$line: $text"
 
 # The WARN_LOGFILE tag can be used to specify a file to which warning and error
 # messages should be written. If left blank the output is written to standard
-# error (stderr).
+# error (stderr). In case the file specified cannot be opened for writing the
+# warning and error messages are written to standard error. When as file - is
+# specified the warning and error messages are written to standard output
+# (stdout).
 
 WARN_LOGFILE           =
 
@@ -929,7 +932,7 @@ EXCLUDE_PATTERNS       =
 # (namespaces, classes, functions, etc.) that should be excluded from the
 # output. The symbol name can be a fully qualified name, a word, or if the
 # wildcard * is used, a substring. Examples: ANamespace, AClass,
-# AClass::ANamespace, ANamespace::*Test
+# ANamespace::AClass, ANamespace::*Test
 #
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories use the pattern */test/*
@@ -1306,6 +1309,13 @@ GENERATE_DOCSET        = NO
 
 DOCSET_FEEDNAME        = "Doxygen generated docs"
 
+# This tag determines the URL of the docset feed. A documentation feed provides
+# an umbrella under which multiple documentation sets from a single provider
+# (such as a company or product suite) can be grouped.
+# This tag requires that the tag GENERATE_DOCSET is set to YES.
+
+DOCSET_FEEDURL         =
+
 # This tag specifies a string that should uniquely identify the documentation
 # set bundle. This should be a reverse domain-name style string, e.g.
 # com.mycompany.MyDocSet. Doxygen will append .docset to the name.
@@ -1510,7 +1520,7 @@ GENERATE_TREEVIEW      = NO
 # area (value NO) or if it should extend to the full height of the window (value
 # YES). Setting this to YES gives a layout similar to
 # https://docs.readthedocs.io with more room for contents, but less room for the
-# project logo, title, and description. If either GENERATOR_TREEVIEW or
+# project logo, title, and description. If either GENERATE_TREEVIEW or
 # DISABLE_INDEX is set to NO, this option has no effect.
 # The default value is: NO.
 # This tag requires that the tag GENERATE_HTML is set to YES.
@@ -1540,6 +1550,13 @@ TREEVIEW_WIDTH         = 250
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
 EXT_LINKS_IN_WINDOW    = NO
+
+# If the OBFUSCATE_EMAILS tag is set to YES, doxygen will obfuscate email
+# addresses.
+# The default value is: YES.
+# This tag requires that the tag GENERATE_HTML is set to YES.
+
+OBFUSCATE_EMAILS       = YES
 
 # If the HTML_FORMULA_FORMAT option is set to svg, doxygen will use the pdf2svg
 # tool (see https://github.com/dawbarton/pdf2svg) or inkscape (see
@@ -2254,15 +2271,6 @@ EXTERNAL_PAGES         = YES
 # Configuration options related to the dot tool
 #---------------------------------------------------------------------------
 
-# If the CLASS_DIAGRAMS tag is set to YES, doxygen will generate a class diagram
-# (in HTML and LaTeX) for classes with base or super classes. Setting the tag to
-# NO turns the diagrams off. Note that this option also works with HAVE_DOT
-# disabled, but it is recommended to install and use dot, since it yields more
-# powerful graphs.
-# The default value is: YES.
-
-CLASS_DIAGRAMS         = YES
-
 # You can include diagrams made with dia in doxygen documentation. Doxygen will
 # then run dia to produce the diagram and insert it in the documentation. The
 # DIA_PATH tag allows you to specify the directory where the dia binary resides.
@@ -2319,11 +2327,14 @@ DOT_FONTSIZE           = 10
 
 DOT_FONTPATH           =
 
-# If the CLASS_GRAPH tag is set to YES then doxygen will generate a graph for
-# each documented class showing the direct and indirect inheritance relations.
-# Setting this tag to YES will force the CLASS_DIAGRAMS tag to NO.
+# If the CLASS_GRAPH tag is set to YES (or GRAPH) then doxygen will generate a
+# graph for each documented class showing the direct and indirect inheritance
+# relations. In case HAVE_DOT is set as well dot will be used to draw the graph,
+# otherwise the built-in generator will be used. If the CLASS_GRAPH tag is set
+# to TEXT the direct and indirect inheritance relations will be shown as texts /
+# links.
+# Possible values are: NO, YES, TEXT and GRAPH.
 # The default value is: YES.
-# This tag requires that the tag HAVE_DOT is set to YES.
 
 CLASS_GRAPH            = YES
 
@@ -2452,6 +2463,13 @@ GRAPHICAL_HIERARCHY    = YES
 
 DIRECTORY_GRAPH        = YES
 
+# The DIR_GRAPH_MAX_DEPTH tag can be used to limit the maximum number of levels
+# of child directories generated in directory dependency graphs by dot.
+# Minimum value: 1, maximum value: 25, default value: 1.
+# This tag requires that the tag DIRECTORY_GRAPH is set to YES.
+
+DIR_GRAPH_MAX_DEPTH    = 1
+
 # The DOT_IMAGE_FORMAT tag can be used to set the image format of the images
 # generated by dot. For an explanation of the image formats see the section
 # output formats in the documentation of the dot tool (Graphviz (see:
@@ -2505,10 +2523,10 @@ MSCFILE_DIRS           =
 DIAFILE_DIRS           =
 
 # When using plantuml, the PLANTUML_JAR_PATH tag should be used to specify the
-# path where java can find the plantuml.jar file. If left blank, it is assumed
-# PlantUML is not used or called during a preprocessing step. Doxygen will
-# generate a warning when it encounters a \startuml command in this case and
-# will not generate output for the diagram.
+# path where java can find the plantuml.jar file or to the filename of jar file
+# to be used. If left blank, it is assumed PlantUML is not used or called during
+# a preprocessing step. Doxygen will generate a warning when it encounters a
+# \startuml command in this case and will not generate output for the diagram.
 
 PLANTUML_JAR_PATH      =
 
@@ -2570,6 +2588,8 @@ DOT_MULTI_TARGETS      = NO
 # If the GENERATE_LEGEND tag is set to YES doxygen will generate a legend page
 # explaining the meaning of the various boxes and arrows in the dot generated
 # graphs.
+# Note: This tag requires that UML_LOOK isn't set, i.e. the doxygen internal
+# graphical representation for inheritance and collaboration diagrams is used.
 # The default value is: YES.
 # This tag requires that the tag HAVE_DOT is set to YES.
 

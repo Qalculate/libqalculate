@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<QALCULATE version="3.22.0">
+<QALCULATE version="4.0.0">
   <category>
     <_title>Matrices &amp; Vectors</_title>
     <builtin_function name="vector">
@@ -1722,6 +1722,7 @@
         <expression>dimension(\x)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
+          <handle_vector>true</handle_vector>
         </argument>
       </function>
     </category>
@@ -1831,6 +1832,7 @@
         <expression>total(\x)/dimension(\x)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
+          <handle_vector>true</handle_vector>
         </argument>
       </function>
       <function>
@@ -1839,6 +1841,7 @@
         <expression>dimension(\x)/csum(1,-1,0,"y"+1/"x","x","y",\x)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
+          <handle_vector>true</handle_vector>
         </argument>
       </function>
       <function>
@@ -1847,6 +1850,7 @@
         <expression>abs(csum(1,-1,1,"y"*"x","x","y",\x)^(1/dimension(\x)))</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
+          <handle_vector>true</handle_vector>
         </argument>
       </function>
       <function>
@@ -1870,6 +1874,7 @@
         <expression>(element(\1,\2-\3)*\3+element(\1,\3+1)*\3+total(limits(\1,\3+1,\2-\3)))/\2</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
+          <handle_vector>true</handle_vector>
         </argument>
         <argument type="free" index="2">
           <_title>Winsorized percentage (at each end)</_title>
@@ -1895,6 +1900,7 @@
         <expression>abs((csum(1,-1,0,"y"+"x"^2,"x","y",\x)/dimension(\x))^(1/2))</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
+          <handle_vector>true</handle_vector>
         </argument>
       </function>
     </category>
@@ -1906,6 +1912,7 @@
         <expression>abs(varp(\x)^(1/2))</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
+          <handle_vector>true</handle_vector>
         </argument>
       </function>
       <function>
@@ -1914,6 +1921,7 @@
         <expression>abs(var(\x)^(1/2))</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
+          <handle_vector>true</handle_vector>
         </argument>
       </function>
       <function>
@@ -1923,6 +1931,7 @@
         <expression>csum(1,-1,0,"y"+("x"-\1)^2,"x","y",\x)/dimension(\x)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
+          <handle_vector>true</handle_vector>
         </argument>
       </function>
       <function>
@@ -1932,6 +1941,7 @@
         <expression>csum(1,-1,0,"y"+("x"-\1)^2,"x","y",\x)/(dimension(\x)-1)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
+          <handle_vector>true</handle_vector>
         </argument>
       </function>
       <function>
@@ -1940,6 +1950,7 @@
         <expression>abs((var(\x)/dimension(\x))^(1/2))</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
+          <handle_vector>true</handle_vector>
         </argument>
       </function>
       <function>
@@ -1949,6 +1960,7 @@
         <expression>csum(1,-1,0,"y"+abs("x"-\1),"x","y",\x)/dimension(\x)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
+          <handle_vector>true</handle_vector>
         </argument>
       </function>
       <function>
