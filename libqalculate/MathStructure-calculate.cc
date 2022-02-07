@@ -969,6 +969,12 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 				// nounit(x)+nounit(y)=nounit(x+y)
 				mstruct[0].ref();
 				CHILD(0).add_nocopy(&mstruct[0]);
+				EvaluationOptions eo2 = eo;
+				eo2.sync_units = false;
+				if(CHILD(0).calculateAddLast(eo2)) {
+					CHILD_UPDATED(0)
+					calculatesub(eo, eo, false);
+				}
 				return 1;
 			}
 			goto default_addition_merge;
@@ -2888,6 +2894,12 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					// nounit(x)*nounit(y)=nounit(x*y)
 					mstruct[0].ref();
 					CHILD(0).multiply_nocopy(&mstruct[0]);
+					EvaluationOptions eo2 = eo;
+					eo2.sync_units = false;
+					if(CHILD(0).calculateMultiplyLast(eo2)) {
+						CHILD_UPDATED(0)
+						calculatesub(eo, eo, false);
+					}
 					return 1;
 				} else if(mstruct.isVariable() && mstruct.variable()->isKnown() && CHILD(0).contains(mstruct, false) > 0) {
 					// nounit(v)*v=nounit(v)*nounit(v)*(units in v)
@@ -3902,6 +3914,12 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 				// nounit(x)^y=nounit(x^y)
 				mstruct.ref();
 				CHILD(0).raise_nocopy(&mstruct);
+				EvaluationOptions eo2 = eo;
+				eo2.sync_units = false;
+				if(CHILD(0).calculateRaiseExponent(eo2)) {
+					CHILD_UPDATED(0)
+					calculatesub(eo, eo, false);
+				}
 				return 1;
 			}
 			goto default_power_merge;
@@ -6287,8 +6305,20 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				}
 			} else if(o_function->id() == FUNCTION_ID_STRIP_UNITS) {
 				b = calculateFunctions(eo, false);
-				if(b) calculatesub(eo, feo, true, mparent, index_this);
-				break;
+				if(b) {
+					calculatesub(eo, feo, true, mparent, index_this);
+					break;
+				} else if(recursive && (eo.sync_units || feo.sync_units)) {
+					EvaluationOptions eo2 = eo;
+					EvaluationOptions feo2 = eo;
+					eo2.sync_units = false;
+					feo2.sync_units = false;
+					for(size_t i = 0; i < SIZE; i++) {
+						if(CHILD(i).calculatesub(eo2, feo2, true, this, i)) b = true;
+					}
+					CHILDREN_UPDATED;
+					break;
+				}
 			}
 		}
 		default: {
@@ -6869,44 +6899,27 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 				} else {
 					CHILD_UPDATED(i);
 				}
-				if(arg->handlesVector()) {
+				if(arg->handlesVector() && (arg->type() != ARGUMENT_TYPE_VECTOR || CHILD(i).isMatrix())) {
 					if(arg->type() == ARGUMENT_TYPE_VECTOR) {
-						if(CHILD(i).isMatrix()) {
-							bool b = false;
-							// calculate the function separately for each column of matrix
-							CHILD(i).transposeMatrix();
-							for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
-								CHILD(i)[i2].transform(o_function);
-								for(size_t i3 = 0; i3 < SIZE; i3++) {
-									if(i3 < i) CHILD(i)[i2].insertChild(CHILD(i3), i3 + 1);
-									else if(i3 > i) CHILD(i)[i2].addChild(CHILD(i3));
-								}
-								if(CHILD(i)[i2].calculateFunctions(eo, recursive, do_unformat)) b = true;
-								CHILD(i).childUpdated(i2 + 1);
+						CHILD(i).transposeMatrix();
+					} else if((arg->tests() || (o_function->subtype() == SUBTYPE_USER_FUNCTION && CHILD(i).containsType(STRUCT_VECTOR, false, true, false) > 0)) && !CHILD(i).isVector() && !CHILD(i).representsScalar()) {
+						CHILD(i).eval(eo);
+						CHILD_UPDATED(i);
+					}
+					if(CHILD(i).isVector()) {
+						bool b = false;
+						// calculate the function separately for each child of vector
+						for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
+							CHILD(i)[i2].transform(o_function);
+							for(size_t i3 = 0; i3 < SIZE; i3++) {
+								if(i3 < i) CHILD(i)[i2].insertChild(CHILD(i3), i3 + 1);
+								else if(i3 > i) CHILD(i)[i2].addChild(CHILD(i3));
 							}
-							SET_CHILD_MAP(i);
-							return b;
+							if(CHILD(i)[i2].calculateFunctions(eo, recursive, do_unformat)) b = true;
+							CHILD(i).childUpdated(i2 + 1);
 						}
-					} else {
-						if((arg->tests() || (o_function->subtype() == SUBTYPE_USER_FUNCTION && CHILD(i).containsType(STRUCT_VECTOR, false, true, false) > 0)) && !CHILD(i).isVector() && !CHILD(i).representsScalar()) {
-							CHILD(i).eval(eo);
-							CHILD_UPDATED(i);
-						}
-						if(CHILD(i).isVector()) {
-							bool b = false;
-							// calculate the function separately for each child of vector
-							for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
-								CHILD(i)[i2].transform(o_function);
-								for(size_t i3 = 0; i3 < SIZE; i3++) {
-									if(i3 < i) CHILD(i)[i2].insertChild(CHILD(i3), i3 + 1);
-									else if(i3 > i) CHILD(i)[i2].addChild(CHILD(i3));
-								}
-								if(CHILD(i)[i2].calculateFunctions(eo, recursive, do_unformat)) b = true;
-								CHILD(i).childUpdated(i2 + 1);
-							}
-							SET_CHILD_MAP(i);
-							return b;
-						}
+						SET_CHILD_MAP(i);
+						return b;
 					}
 				}
 			}
