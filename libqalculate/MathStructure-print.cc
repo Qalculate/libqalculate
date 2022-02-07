@@ -3258,7 +3258,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				} else if(tagtype == TAG_TYPE_HTML) {
 					if(format && m_type != STRUCT_ABORTED) print_str.insert(0, "<i class=\"symbol\">");
 					if(colorize && m_type == STRUCT_ABORTED) print_str.insert(0, (colorize == 2 ? "<span style=\"color:#FFAAAA\">" : "<span style=\"color:#800000\">"));
-					else if(colorize) print_str.insert(0, (colorize == 2 ? "<span style=\"color:#FFFFAA\">" : "<span style=\"#585800\">"));
+					else if(colorize) print_str.insert(0, (colorize == 2 ? "<span style=\"color:#FFFFAA\">" : "<span style=\"color:#585800\">"));
 					if(format && m_type != STRUCT_ABORTED) print_str += "</i>";
 					if(colorize) print_str += "</span>";
 				}
