@@ -1883,7 +1883,7 @@ bool MathStructure::equals(const MathStructure &o, bool allow_interval, bool all
 			return o_unit == o.unit() && p1 == p2;
 		}
 		case STRUCT_COMPARISON: {if(ct_comp != o.comparisonType()) return false; break;}
-		case STRUCT_FUNCTION: {if(o_function != o.function()) return false; break;}
+		case STRUCT_FUNCTION: {if(o_function != o.function() || o_function->args() == 0) return false; break;}
 		case STRUCT_LOGICAL_OR: {}
 		case STRUCT_LOGICAL_XOR: {}
 		case STRUCT_LOGICAL_AND: {
@@ -1915,7 +1915,7 @@ bool MathStructure::equals(const MathStructure &o, bool allow_interval, bool all
 		}
 		default: {}
 	}
-	if(SIZE < 1) return false;
+	if(SIZE < 1) return true;
 	for(size_t i = 0; i < SIZE; i++) {
 		if(!CHILD(i).equals(o[i], allow_interval)) return false;
 	}
