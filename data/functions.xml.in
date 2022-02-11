@@ -4035,6 +4035,31 @@
       </argument>
     </function>
     <function>
+      <_title>Rate of investment</_title>
+      <_names>r:rate</_names>
+      <_description>Calculates the rate of return. &#10;&#10;If type = 1 then the payment is made at the beginning of the period. If type = 0 (or omitted) it is made at the end of each period.&#10;&#10;Note that the optional guess is needed because there can be more than one valid result. It defaults to 10%.</_description>
+      <example>$name(10, -1500, 10000) ≈ 0.0814</example>
+      <expression>newtonsolve(pmt("x",\x,\z,\A{0},\B{0})=\y,\C{0.1},"x")</expression>
+      <argument type="free" index="1">
+        <_title>Number of periods</_title>
+      </argument>
+      <argument type="free" index="2">
+        <_title>Payment made each period</_title>
+      </argument>
+      <argument type="free" index="3">
+        <_title>Present value</_title>
+      </argument>
+      <argument type="free" index="4">
+        <_title>Future value</_title>
+      </argument>
+      <argument type="boolean" index="5">
+        <_title>Type</_title>
+      </argument>
+      <argument type="number" index="6">
+        <_title>Guess</_title>
+      </argument>
+    </function>
+    <function>
       <_title>Periods of an investment</_title>
       <_names>r:nper</_names>
       <_description>Calculates number of periods of an investment based on periodic constant payments and a constant interest rate.&#10;&#10;Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period.</_description>
