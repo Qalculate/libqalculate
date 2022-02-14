@@ -4669,10 +4669,12 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 				} else {
 					CHILD(1).set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &msave, NULL);
-					CHILD(1) += nr_one_i;
-					CHILD(1)[1] *= nr_two;
-					CHILD(1)[1].multiply(CALCULATOR->getVariableById(VARIABLE_ID_PI), true);
-					CHILD(1)[1].multiply(CALCULATOR->getVariableById(VARIABLE_ID_N), true);
+					if(!msave.isZero()) {
+						CHILD(1) += nr_one_i;
+						CHILD(1)[1] *= nr_two;
+						CHILD(1)[1].multiply(CALCULATOR->getVariableById(VARIABLE_ID_PI), true);
+						CHILD(1)[1].multiply(CALCULATOR->getVariableById(VARIABLE_ID_N), true);
+					}
 					CHILD(1).divide_nocopy(new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &CHILD(0)[0], NULL));
 					CHILD(1).evalSort(true);
 					bool b = CHILD(1).calculateFunctions(eo);

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate-defs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-19 12:11+0100\n"
+"POT-Creation-Date: 2022-02-13 14:19+0100\n"
 "PO-Revision-Date: 2007-05-18 15:47+0200\n"
 "Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
 "Language-Team:  <kde-i18n-nl@kde.org>\n"
@@ -8080,14 +8080,40 @@ msgid "Rate"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1164
-msgid "Periods of an investment"
+#, fuzzy
+msgid "Rate of investment"
 msgstr "Termijnen van een investering"
 
 #: ../data/functions.xml.in.h:1165
+#, fuzzy
+msgid "r:rate"
+msgstr "renteperc"
+
+#: ../data/functions.xml.in.h:1167
+#, fuzzy, no-c-format
+msgid ""
+"Calculates the rate of return. &#10;&#10;If type = 1 then the payment is "
+"made at the beginning of the period. If type = 0 (or omitted) it is made at "
+"the end of each period.&#10;&#10;Note that the optional guess is needed "
+"because there can be more than one valid result. It defaults to 10%."
+msgstr ""
+"Berekent de huidige waarde van een investering.&#10;&#10;Indien type = 1 is "
+"de uitbetaling aan het begin van de termijn, indien type = 0 (of weggelaten) "
+"aan het einde van elke termijn."
+
+#: ../data/functions.xml.in.h:1168
+msgid "Guess"
+msgstr ""
+
+#: ../data/functions.xml.in.h:1169
+msgid "Periods of an investment"
+msgstr "Termijnen van een investering"
+
+#: ../data/functions.xml.in.h:1170
 msgid "r:nper"
 msgstr "nterm"
 
-#: ../data/functions.xml.in.h:1166
+#: ../data/functions.xml.in.h:1171
 msgid ""
 "Calculates number of periods of an investment based on periodic constant "
 "payments and a constant interest rate.&#10;&#10;Type defines the due date. 1 "
@@ -8099,15 +8125,15 @@ msgstr ""
 "bepaalt de datum waarop moet worden betaald. 1 voor betalen aan het begin "
 "van een termijn en 0 (standaard) voor betalen aan het eind van een termijn."
 
-#: ../data/functions.xml.in.h:1167
+#: ../data/functions.xml.in.h:1172
 msgid "Periods for investment to attain desired value"
 msgstr "Termijnen waarin een investering de gewenste waarde bereikt"
 
-#: ../data/functions.xml.in.h:1168
+#: ../data/functions.xml.in.h:1173
 msgid "r:g_duration"
 msgstr "g_duur"
 
-#: ../data/functions.xml.in.h:1169
+#: ../data/functions.xml.in.h:1174
 msgid ""
 "Returns the number of periods needed for an investment to attain a desired "
 "value."
@@ -8115,15 +8141,15 @@ msgstr ""
 "Retourneert het aantal benodigde termijnen waarna een investering een "
 "gewenste waarde bereikt."
 
-#: ../data/functions.xml.in.h:1170
+#: ../data/functions.xml.in.h:1175
 msgid "Payment of an annuity going towards principal (PPMT)"
 msgstr "Aflossingsdeel van een termijn van een annuïteit (PPMT)"
 
-#: ../data/functions.xml.in.h:1171
+#: ../data/functions.xml.in.h:1176
 msgid "r:ppmt"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1172
+#: ../data/functions.xml.in.h:1177
 msgid ""
 "Calculates the amount of a payment of an annuity going towards principal."
 "&#10;&#10;Type defines the due date. 1 for payment at the beginning of a "
@@ -8134,35 +8160,35 @@ msgstr ""
 "aanhet het begin van de termijn en 0 (standaard) voor betaling aan het einde "
 "van de termijn."
 
-#: ../data/functions.xml.in.h:1173
+#: ../data/functions.xml.in.h:1178
 msgid "Desired future value"
 msgstr "Gewenste toekomstige waarde"
 
-#: ../data/functions.xml.in.h:1174
+#: ../data/functions.xml.in.h:1179
 msgid "Effective Interest Rate"
 msgstr "Effectief rentepercentage"
 
-#: ../data/functions.xml.in.h:1175
+#: ../data/functions.xml.in.h:1180
 msgid "r:effect"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1176
+#: ../data/functions.xml.in.h:1181
 msgid "Calculates the effective interest for a given nominal rate."
 msgstr "Berekent de effectieve rente bij een gegeven nominale rente."
 
-#: ../data/functions.xml.in.h:1177
+#: ../data/functions.xml.in.h:1182
 msgid "Nominal interest rate"
 msgstr "Nominaal rentepercentage"
 
-#: ../data/functions.xml.in.h:1178
+#: ../data/functions.xml.in.h:1183
 msgid "Future Value"
 msgstr "Toekomstige waarde"
 
-#: ../data/functions.xml.in.h:1179
+#: ../data/functions.xml.in.h:1184
 msgid "r:fv"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1180
+#: ../data/functions.xml.in.h:1185
 msgid ""
 "Computes the future value of an investment. This is based on periodic, "
 "constant payments and a constant interest rate.&#10;&#10;If type = 1 then "
@@ -8174,15 +8200,15 @@ msgstr ""
 "type = 1 wordt er betaald aanhet het begin van de termijn, als type = 0 (of "
 "weggelaten)wordt er betaald aan het einde van elke termijn."
 
-#: ../data/functions.xml.in.h:1181
+#: ../data/functions.xml.in.h:1186
 msgid "Return on continuously compounded interest"
 msgstr "Opbrengst van continu samengestelde rente"
 
-#: ../data/functions.xml.in.h:1182
+#: ../data/functions.xml.in.h:1187
 msgid "r:continuous"
 msgstr "continu"
 
-#: ../data/functions.xml.in.h:1183
+#: ../data/functions.xml.in.h:1188
 msgid ""
 "Calculates the return on continuously compounded interest, given the "
 "principal, nominal rate and time in years."
@@ -8190,19 +8216,19 @@ msgstr ""
 "Berekent de opbrengst bij een continu samengestelde rente, gegeven de "
 "hoofdsom, nominale rente en de tijd in jaren."
 
-#: ../data/functions.xml.in.h:1184
+#: ../data/functions.xml.in.h:1189
 msgid "Principal"
 msgstr "Hoofdsom"
 
-#: ../data/functions.xml.in.h:1185
+#: ../data/functions.xml.in.h:1190
 msgid "Compound"
 msgstr "Samengesteld"
 
-#: ../data/functions.xml.in.h:1186
+#: ../data/functions.xml.in.h:1191
 msgid "r:compound"
 msgstr "samenstellen"
 
-#: ../data/functions.xml.in.h:1187
+#: ../data/functions.xml.in.h:1192
 msgid ""
 "Returns the value of an investment, given the principal, nominal interest "
 "rate, compounding frequency and time."
@@ -8210,19 +8236,19 @@ msgstr ""
 "Berekent de waarde van een investering, gegeven de hoofdsom, nominale rente, "
 "samenstellingsfrequentie en tijdsduur."
 
-#: ../data/functions.xml.in.h:1188
+#: ../data/functions.xml.in.h:1193
 msgid "Periods per year"
 msgstr "Termijnen per jaar"
 
-#: ../data/functions.xml.in.h:1189
+#: ../data/functions.xml.in.h:1194
 msgid "Payment of an annuity going towards interest (IPMT)"
 msgstr "Interestdeel van een termijn van een annuïteit (IPMT)"
 
-#: ../data/functions.xml.in.h:1190
+#: ../data/functions.xml.in.h:1195
 msgid "r:ipmt"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1191
+#: ../data/functions.xml.in.h:1196
 msgid ""
 "Calculates the amount of a payment of an annuity going towards interest.&#10;"
 "&#10;Type defines the due date. 1 for payment at the beginning of a period "
@@ -8233,17 +8259,17 @@ msgstr ""
 "aanhet het begin van de termijn en 0 (standaard) voor betaling aan het einde "
 "van de termijn."
 
-#: ../data/functions.xml.in.h:1192
+#: ../data/functions.xml.in.h:1197
 msgid "Interest rate for a fully invested security"
 msgstr ""
 "Interestpercentage voor een waardepapier waarvan de hoofdsom aan het einde "
 "vrijvalt"
 
-#: ../data/functions.xml.in.h:1193
+#: ../data/functions.xml.in.h:1198
 msgid "r:intrate"
 msgstr "renteperc"
 
-#: ../data/functions.xml.in.h:1194
+#: ../data/functions.xml.in.h:1199
 msgid ""
 "Returns the interest rate for a fully invested security.&#10;&#10;Basis is "
 "the type of day counting you want to use: 0: US 30/360 (default), 1: real "
@@ -8254,46 +8280,46 @@ msgstr ""
 "(standaard), 1: werkelijke dagen, 2: werkelijke dagen/360, 3: werkelijke "
 "dagen/365 of 4: Europees 30/360."
 
-#: ../data/functions.xml.in.h:1195
+#: ../data/functions.xml.in.h:1200
 msgid "Investment"
 msgstr "Investering"
 
-#: ../data/functions.xml.in.h:1196
+#: ../data/functions.xml.in.h:1201
 msgid "Redemption"
 msgstr "Aflossing"
 
-#: ../data/functions.xml.in.h:1197
+#: ../data/functions.xml.in.h:1202
 msgid "Dollar Fraction"
 msgstr "Dollar fractie"
 
-#: ../data/functions.xml.in.h:1198
+#: ../data/functions.xml.in.h:1203
 msgid "r:dollarfr"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1199
+#: ../data/functions.xml.in.h:1204
 msgid ""
 "Converts a decimal dollar price into a dollar price expressed as a fraction."
 msgstr ""
 "Converteert een prijs in decimale dollars naar een prijs in dollars "
 "uitgedrukt als een breuk."
 
-#: ../data/functions.xml.in.h:1200
+#: ../data/functions.xml.in.h:1205
 msgid "Decimal dollar"
 msgstr "Decimale dollar"
 
-#: ../data/functions.xml.in.h:1201
+#: ../data/functions.xml.in.h:1206
 msgid "Denominator of fraction"
 msgstr "Noemer van breuk"
 
-#: ../data/functions.xml.in.h:1202
+#: ../data/functions.xml.in.h:1207
 msgid "Dollar Decimal"
 msgstr "Dollar decimaal"
 
-#: ../data/functions.xml.in.h:1203
+#: ../data/functions.xml.in.h:1208
 msgid "r:dollarde"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1204
+#: ../data/functions.xml.in.h:1209
 msgid ""
 "Converts a dollar price expressed as a fraction into a dollar price "
 "expressed as a decimal number."
@@ -8301,19 +8327,19 @@ msgstr ""
 "Converteert een prijs in dollars uitgedrukt als een breuk naar een prijs "
 "uitgedrukt in een decimaal getal."
 
-#: ../data/functions.xml.in.h:1205
+#: ../data/functions.xml.in.h:1210
 msgid "Fractional dollar"
 msgstr "Dollar als breuk"
 
-#: ../data/functions.xml.in.h:1206
+#: ../data/functions.xml.in.h:1211
 msgid "Amount received at maturity for a security bond"
 msgstr "Ontvangen bedrag voor een waardepapier op vervaldatum"
 
-#: ../data/functions.xml.in.h:1207
+#: ../data/functions.xml.in.h:1212
 msgid "r:received"
 msgstr "ontvangen"
 
-#: ../data/functions.xml.in.h:1208
+#: ../data/functions.xml.in.h:1213
 msgid ""
 "Returns the amount received at the maturity date for an invested security."
 "&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360 "
@@ -8326,15 +8352,15 @@ msgstr ""
 "dagen/360, 3: werkelijke dagen/365 of 4: Europees 30/360. De afwikkeling "
 "moet plaats vinden voor de afloopdatum."
 
-#: ../data/functions.xml.in.h:1209
+#: ../data/functions.xml.in.h:1214
 msgid "Discount rate for a security"
 msgstr "Discontopercentage voor een waardepapier"
 
-#: ../data/functions.xml.in.h:1210
+#: ../data/functions.xml.in.h:1215
 msgid "r:disc"
 msgstr "kort"
 
-#: ../data/functions.xml.in.h:1211
+#: ../data/functions.xml.in.h:1216
 msgid ""
 "Returns the discount rate for a security.&#10;&#10;Basis is the type of day "
 "counting you want to use: 0: US 30/360 (default), 1: real days, 2: real "
@@ -8345,15 +8371,15 @@ msgstr ""
 "dagen, 2: werkelijke dagen/360, 3: werkelijke dagen/365 of 4: Europees "
 "30/360."
 
-#: ../data/functions.xml.in.h:1212
+#: ../data/functions.xml.in.h:1217
 msgid "Accrued interest of security paying at maturity"
 msgstr "Totale rente van waardepapier op vervaldatum"
 
-#: ../data/functions.xml.in.h:1213
+#: ../data/functions.xml.in.h:1218
 msgid "r:accrintm"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1214
+#: ../data/functions.xml.in.h:1219
 msgid ""
 "Returns the accrued interest for a security which pays interest at maturity "
 "date.&#10;&#10;Basis is the type of day counting you want to use: 0: US "
@@ -8365,27 +8391,27 @@ msgstr ""
 "gebruiken: 0: US 30/360 (standaard), 1: werkelijke dagen, 2: werkelijke "
 "dagen/360, 3: werkelijke dagen/365 of 4: Europees 30/360."
 
-#: ../data/functions.xml.in.h:1215
+#: ../data/functions.xml.in.h:1220
 msgid "Issue date"
 msgstr "Uitgiftedatum"
 
-#: ../data/functions.xml.in.h:1216
+#: ../data/functions.xml.in.h:1221
 msgid "Annual rate of security"
 msgstr "Jaarlijkse rente van waardepapier"
 
-#: ../data/functions.xml.in.h:1217
+#: ../data/functions.xml.in.h:1222
 msgid "Par value"
 msgstr "Nominale waarde"
 
-#: ../data/functions.xml.in.h:1218
+#: ../data/functions.xml.in.h:1223
 msgid "Accrued interest of security with periodic interest payments"
 msgstr "Totale rente van waardepapier met periodieke renteuitkeringen"
 
-#: ../data/functions.xml.in.h:1219
+#: ../data/functions.xml.in.h:1224
 msgid "r:accrint"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1220
+#: ../data/functions.xml.in.h:1225
 msgid ""
 "Returns accrued interest for a security which pays periodic interest.&#10;"
 "&#10;Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. "
@@ -8398,23 +8424,23 @@ msgstr ""
 "gebruiken: 0: US 30/360 (standaard), 1: werkelijke dagen, 2: werkelijke "
 "dagen/360, 3: werkelijke dagen/365 of 4: Europees 30/360."
 
-#: ../data/functions.xml.in.h:1221
+#: ../data/functions.xml.in.h:1226
 msgid "First interest"
 msgstr "Eerste rente"
 
-#: ../data/functions.xml.in.h:1222
+#: ../data/functions.xml.in.h:1227
 msgid "Frequency"
 msgstr "Frequentie"
 
-#: ../data/functions.xml.in.h:1223
+#: ../data/functions.xml.in.h:1228
 msgid "Number of coupons to be paid"
 msgstr "Aantal te betalen coupons"
 
-#: ../data/functions.xml.in.h:1224
+#: ../data/functions.xml.in.h:1229
 msgid "r:coupnum"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1225
+#: ../data/functions.xml.in.h:1230
 msgid ""
 "Returns the number of coupons to be paid between the settlement and the "
 "maturity.&#10;&#10;Basis is the type of day counting you want to use: 0: US "
@@ -8426,16 +8452,16 @@ msgstr ""
 "(standaard), 1: werkelijke dagen, 2: werkelijke dagen/360, 3: werkelijke "
 "dagen/365 of 4: Europees 30/360."
 
-#: ../data/functions.xml.in.h:1226
+#: ../data/functions.xml.in.h:1231
 #, fuzzy
 msgid "Price per $100 face value of a discounted security"
 msgstr "Prijs per &euro;100 nominale waarde van een waardepapier"
 
-#: ../data/functions.xml.in.h:1227
+#: ../data/functions.xml.in.h:1232
 msgid "r:pricedisc"
 msgstr "prijskorting"
 
-#: ../data/functions.xml.in.h:1228
+#: ../data/functions.xml.in.h:1233
 #, fuzzy
 msgid ""
 "Calculates and returns the price per $100 face value of a discounted "
@@ -8449,19 +8475,19 @@ msgstr ""
 "werkelijke dagen, 2: werkelijke dagen/360, 3: werkelijke dagen/365 of 4: "
 "Europees 30/360."
 
-#: ../data/functions.xml.in.h:1229
+#: ../data/functions.xml.in.h:1234
 msgid "Discount"
 msgstr "Korting"
 
-#: ../data/functions.xml.in.h:1230
+#: ../data/functions.xml.in.h:1235
 msgid "Price per $100 face value of a security"
 msgstr "Prijs per &euro;100 nominale waarde van een waardepapier"
 
-#: ../data/functions.xml.in.h:1231
+#: ../data/functions.xml.in.h:1236
 msgid "r:pricemat"
 msgstr "prijsmat"
 
-#: ../data/functions.xml.in.h:1232
+#: ../data/functions.xml.in.h:1237
 msgid ""
 "Calculates and returns the price per $100 face value of a security. The "
 "security pays interest at maturity.&#10;&#10;Basis is the type of day "
@@ -8474,31 +8500,31 @@ msgstr ""
 "werkelijke dagen, 2: werkelijke dagen/360, 3: werkelijke dagen/365 of 4: "
 "Europees 30/360."
 
-#: ../data/functions.xml.in.h:1233
+#: ../data/functions.xml.in.h:1238
 msgid "Annual yield"
 msgstr "Opbrengst per jaar"
 
-#: ../data/functions.xml.in.h:1234
+#: ../data/functions.xml.in.h:1239
 msgid "Level-Coupon Bond"
 msgstr "Obligatie met gelijkblijvende coupons"
 
-#: ../data/functions.xml.in.h:1235
+#: ../data/functions.xml.in.h:1240
 msgid "r:level_coupon"
 msgstr "gelijke_coupon"
 
-#: ../data/functions.xml.in.h:1236
+#: ../data/functions.xml.in.h:1241
 msgid "Calculates the value of a level-coupon bond."
 msgstr "Berekent de waarde van een obligatie met gelijkblijvende coupons."
 
-#: ../data/functions.xml.in.h:1237
+#: ../data/functions.xml.in.h:1242
 msgid "Coupon rate"
 msgstr "Couponrente"
 
-#: ../data/functions.xml.in.h:1238
+#: ../data/functions.xml.in.h:1243
 msgid "Coupons per year"
 msgstr "Aantal coupons per jaar"
 
-#: ../data/functions.xml.in.h:1239
+#: ../data/functions.xml.in.h:1244
 msgid "Market interest rate"
 msgstr "Marktrente"
 

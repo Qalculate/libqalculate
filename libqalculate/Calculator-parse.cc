@@ -993,6 +993,16 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
 				}
 				break;
 			}
+			/*case SPACE_CH: {
+				if(!in_cit1 && !in_cit2 && po.comma_as_separator && b_matrix_comma && brackets > 0 && pars[brackets] == 0 && i != str.length() - 1) {
+					size_t i2 = str.find_last_not_of(SPACES, i - 1);
+					size_t i3 = str.find_first_not_of(SPACES, i + 1);
+					if(i2 != string::npos && i3 != string::npos && !is_not_number(str[i2], base) && !is_not_number(str[i3], base)) {
+						b_matrix_comma = false;
+					}
+					break;
+				}
+			}*/
 			case COMMA_CH: {
 				if(!in_cit1 && !in_cit2 && ((priv->matlab_matrices && brackets > 0 && !b_matrix_comma) || pars[brackets] > 0)) {
 					if(i > 0) {
