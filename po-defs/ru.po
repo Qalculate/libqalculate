@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-29 14:33+0700\n"
+"POT-Creation-Date: 2022-02-13 14:19+0100\n"
 "PO-Revision-Date: 2022-01-29 15:09+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<"
-"=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Lokalize 21.08.0\n"
 
 #: ../data/currencies.xml.in.h:1
@@ -7996,14 +7996,40 @@ msgid "Rate"
 msgstr "Ставка"
 
 #: ../data/functions.xml.in.h:1164
-msgid "Periods of an investment"
+#, fuzzy
+msgid "Rate of investment"
 msgstr "Периоды вложения "
 
 #: ../data/functions.xml.in.h:1165
+#, fuzzy
+msgid "r:rate"
+msgstr "прствк"
+
+#: ../data/functions.xml.in.h:1167
+#, fuzzy, no-c-format
+msgid ""
+"Calculates the rate of return. &#10;&#10;If type = 1 then the payment is "
+"made at the beginning of the period. If type = 0 (or omitted) it is made at "
+"the end of each period.&#10;&#10;Note that the optional guess is needed "
+"because there can be more than one valid result. It defaults to 10%."
+msgstr ""
+"Возвращает текущую стоимость инвестиции.&#10;&#10;Если type = 1, то выплата "
+"производится в начале периода. Если type = 0 (или опущено), это делается в "
+"конце каждого периода."
+
+#: ../data/functions.xml.in.h:1168
+msgid "Guess"
+msgstr ""
+
+#: ../data/functions.xml.in.h:1169
+msgid "Periods of an investment"
+msgstr "Периоды вложения "
+
+#: ../data/functions.xml.in.h:1170
 msgid "r:nper"
 msgstr "перинв"
 
-#: ../data/functions.xml.in.h:1166
+#: ../data/functions.xml.in.h:1171
 msgid ""
 "Calculates number of periods of an investment based on periodic constant "
 "payments and a constant interest rate.&#10;&#10;Type defines the due date. 1 "
@@ -8015,15 +8041,15 @@ msgstr ""
 "срок погашения. 1 для выплаты в начале периода и 0 (по умолчанию) для "
 "выплаты в конце периода."
 
-#: ../data/functions.xml.in.h:1167
+#: ../data/functions.xml.in.h:1172
 msgid "Periods for investment to attain desired value"
 msgstr "Сроки инвестиций достижения желаемой стоимости"
 
-#: ../data/functions.xml.in.h:1168
+#: ../data/functions.xml.in.h:1173
 msgid "r:g_duration"
 msgstr "г_инв"
 
-#: ../data/functions.xml.in.h:1169
+#: ../data/functions.xml.in.h:1174
 msgid ""
 "Returns the number of periods needed for an investment to attain a desired "
 "value."
@@ -8031,15 +8057,15 @@ msgstr ""
 "Возвращает количество периодов, необходимых для того, чтобы инвестиции "
 "достигли желаемой стоимости."
 
-#: ../data/functions.xml.in.h:1170
+#: ../data/functions.xml.in.h:1175
 msgid "Payment of an annuity going towards principal (PPMT)"
 msgstr "Оплата периодического платежа в счёт основной суммы долга (ОСПЛТ)"
 
-#: ../data/functions.xml.in.h:1171
+#: ../data/functions.xml.in.h:1176
 msgid "r:ppmt"
 msgstr "ОСПЛТ"
 
-#: ../data/functions.xml.in.h:1172
+#: ../data/functions.xml.in.h:1177
 msgid ""
 "Calculates the amount of a payment of an annuity going towards principal."
 "&#10;&#10;Type defines the due date. 1 for payment at the beginning of a "
@@ -8049,36 +8075,36 @@ msgstr ""
 "&#10;&#10;Тип определяет срок выполнения. 1 для оплаты в начале периода и 0 "
 "(по умолчанию) для оплаты в конце периода."
 
-#: ../data/functions.xml.in.h:1173
+#: ../data/functions.xml.in.h:1178
 msgid "Desired future value"
 msgstr "Желаемая будущая стоимость"
 
-#: ../data/functions.xml.in.h:1174
+#: ../data/functions.xml.in.h:1179
 msgid "Effective Interest Rate"
 msgstr "Эффективная процентная ставка"
 
-#: ../data/functions.xml.in.h:1175
+#: ../data/functions.xml.in.h:1180
 msgid "r:effect"
 msgstr "эпс"
 
-#: ../data/functions.xml.in.h:1176
+#: ../data/functions.xml.in.h:1181
 msgid "Calculates the effective interest for a given nominal rate."
 msgstr ""
 "Вычисляет эффективную процентную ставку для заданной номинальной ставки."
 
-#: ../data/functions.xml.in.h:1177
+#: ../data/functions.xml.in.h:1182
 msgid "Nominal interest rate"
 msgstr "Номинальная процентная ставка"
 
-#: ../data/functions.xml.in.h:1178
+#: ../data/functions.xml.in.h:1183
 msgid "Future Value"
 msgstr "Будущая стоимость"
 
-#: ../data/functions.xml.in.h:1179
+#: ../data/functions.xml.in.h:1184
 msgid "r:fv"
 msgstr "a:БС,a:ПС"
 
-#: ../data/functions.xml.in.h:1180
+#: ../data/functions.xml.in.h:1185
 msgid ""
 "Computes the future value of an investment. This is based on periodic, "
 "constant payments and a constant interest rate.&#10;&#10;If type = 1 then "
@@ -8090,15 +8116,15 @@ msgstr ""
 "то платёж производится в начале периода, если type = 0 (или опущен), он "
 "производится в конец каждого периода."
 
-#: ../data/functions.xml.in.h:1181
+#: ../data/functions.xml.in.h:1186
 msgid "Return on continuously compounded interest"
 msgstr "Процентный доход"
 
-#: ../data/functions.xml.in.h:1182
+#: ../data/functions.xml.in.h:1187
 msgid "r:continuous"
 msgstr "постоянно"
 
-#: ../data/functions.xml.in.h:1183
+#: ../data/functions.xml.in.h:1188
 msgid ""
 "Calculates the return on continuously compounded interest, given the "
 "principal, nominal rate and time in years."
@@ -8106,19 +8132,19 @@ msgstr ""
 "Рассчитывает доходность непрерывно начисленных процентов с учётом основной "
 "суммы долга, номинальной ставки и времени в годах."
 
-#: ../data/functions.xml.in.h:1184
+#: ../data/functions.xml.in.h:1189
 msgid "Principal"
 msgstr "Исходная сумма"
 
-#: ../data/functions.xml.in.h:1185
+#: ../data/functions.xml.in.h:1190
 msgid "Compound"
 msgstr "Наращенная сумма"
 
-#: ../data/functions.xml.in.h:1186
+#: ../data/functions.xml.in.h:1191
 msgid "r:compound"
 msgstr "наращеннаясумма,наращенная_сумма"
 
-#: ../data/functions.xml.in.h:1187
+#: ../data/functions.xml.in.h:1192
 msgid ""
 "Returns the value of an investment, given the principal, nominal interest "
 "rate, compounding frequency and time."
@@ -8126,19 +8152,19 @@ msgstr ""
 "Возвращает стоимость инвестиции с учётом основной суммы, номинальной "
 "процентной ставки, частоты начисления процентов и времени."
 
-#: ../data/functions.xml.in.h:1188
+#: ../data/functions.xml.in.h:1193
 msgid "Periods per year"
 msgstr "Периоды в годах"
 
-#: ../data/functions.xml.in.h:1189
+#: ../data/functions.xml.in.h:1194
 msgid "Payment of an annuity going towards interest (IPMT)"
 msgstr "Выплата аннуитета в счёт процентов (васп)"
 
-#: ../data/functions.xml.in.h:1190
+#: ../data/functions.xml.in.h:1195
 msgid "r:ipmt"
 msgstr "васп"
 
-#: ../data/functions.xml.in.h:1191
+#: ../data/functions.xml.in.h:1196
 msgid ""
 "Calculates the amount of a payment of an annuity going towards interest.&#10;"
 "&#10;Type defines the due date. 1 for payment at the beginning of a period "
@@ -8148,15 +8174,15 @@ msgstr ""
 "&#10;Тип определяет срок выполнения. 1 для выплаты в начале периода и 0 (по "
 "умолчанию) для выплаты в конце периода."
 
-#: ../data/functions.xml.in.h:1192
+#: ../data/functions.xml.in.h:1197
 msgid "Interest rate for a fully invested security"
 msgstr "Процентная ставка за полностью инвестированную ценную бумагу"
 
-#: ../data/functions.xml.in.h:1193
+#: ../data/functions.xml.in.h:1198
 msgid "r:intrate"
 msgstr "прствк"
 
-#: ../data/functions.xml.in.h:1194
+#: ../data/functions.xml.in.h:1199
 msgid ""
 "Returns the interest rate for a fully invested security.&#10;&#10;Basis is "
 "the type of day counting you want to use: 0: US 30/360 (default), 1: real "
@@ -8167,46 +8193,46 @@ msgstr ""
 "30/360 долларов США (по умолчанию), 1: реальные дни, 2: реальные дни / 360, "
 "3: реальные дни / 365 или 4: европейские дни 30/360."
 
-#: ../data/functions.xml.in.h:1195
+#: ../data/functions.xml.in.h:1200
 msgid "Investment"
 msgstr "Выкуп"
 
-#: ../data/functions.xml.in.h:1196
+#: ../data/functions.xml.in.h:1201
 msgid "Redemption"
 msgstr "Выкуп"
 
-#: ../data/functions.xml.in.h:1197
+#: ../data/functions.xml.in.h:1202
 msgid "Dollar Fraction"
 msgstr "Доля доллара"
 
-#: ../data/functions.xml.in.h:1198
+#: ../data/functions.xml.in.h:1203
 msgid "r:dollarfr"
 msgstr "долядоллар"
 
-#: ../data/functions.xml.in.h:1199
+#: ../data/functions.xml.in.h:1204
 msgid ""
 "Converts a decimal dollar price into a dollar price expressed as a fraction."
 msgstr ""
 "Преобразует десятичную долларовую цену в долларовую цену, выраженную в виде "
 "дроби."
 
-#: ../data/functions.xml.in.h:1200
+#: ../data/functions.xml.in.h:1205
 msgid "Decimal dollar"
 msgstr "Десятичная запись доллара"
 
-#: ../data/functions.xml.in.h:1201
+#: ../data/functions.xml.in.h:1206
 msgid "Denominator of fraction"
 msgstr "Знаменатель дроби"
 
-#: ../data/functions.xml.in.h:1202
+#: ../data/functions.xml.in.h:1207
 msgid "Dollar Decimal"
 msgstr "Доллар десятичный"
 
-#: ../data/functions.xml.in.h:1203
+#: ../data/functions.xml.in.h:1208
 msgid "r:dollarde"
 msgstr "долларде"
 
-#: ../data/functions.xml.in.h:1204
+#: ../data/functions.xml.in.h:1209
 msgid ""
 "Converts a dollar price expressed as a fraction into a dollar price "
 "expressed as a decimal number."
@@ -8214,20 +8240,20 @@ msgstr ""
 "Преобразует долларовую цену, выраженную в виде дроби, в долларовую цену, "
 "выраженную в виде десятичного числа."
 
-#: ../data/functions.xml.in.h:1205
+#: ../data/functions.xml.in.h:1210
 msgid "Fractional dollar"
 msgstr "Дробный доллар"
 
-#: ../data/functions.xml.in.h:1206
+#: ../data/functions.xml.in.h:1211
 msgid "Amount received at maturity for a security bond"
 msgstr ""
 "Сумма, полученная при наступлении срока погашения по гарантийному залогу"
 
-#: ../data/functions.xml.in.h:1207
+#: ../data/functions.xml.in.h:1212
 msgid "r:received"
 msgstr "получено"
 
-#: ../data/functions.xml.in.h:1208
+#: ../data/functions.xml.in.h:1213
 msgid ""
 "Returns the amount received at the maturity date for an invested security."
 "&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360 "
@@ -8240,15 +8266,15 @@ msgstr ""
 "реальные дни/365 или 4: европейские 30/360. Дата расчёта должна быть раньше "
 "срока погашения."
 
-#: ../data/functions.xml.in.h:1209
+#: ../data/functions.xml.in.h:1214
 msgid "Discount rate for a security"
 msgstr "Учётная ставка по ценной бумаге"
 
-#: ../data/functions.xml.in.h:1210
+#: ../data/functions.xml.in.h:1215
 msgid "r:disc"
 msgstr "уч"
 
-#: ../data/functions.xml.in.h:1211
+#: ../data/functions.xml.in.h:1216
 msgid ""
 "Returns the discount rate for a security.&#10;&#10;Basis is the type of day "
 "counting you want to use: 0: US 30/360 (default), 1: real days, 2: real "
@@ -8259,15 +8285,15 @@ msgstr ""
 "1: реальные дни (по умолчанию), 2: реальные дни/360, 3: реальные дни/365 или "
 "4: 30/360 для Европы."
 
-#: ../data/functions.xml.in.h:1212
+#: ../data/functions.xml.in.h:1217
 msgid "Accrued interest of security paying at maturity"
 msgstr "Начисленные проценты по ценной бумаге, выплачиваемые в конце срока"
 
-#: ../data/functions.xml.in.h:1213
+#: ../data/functions.xml.in.h:1218
 msgid "r:accrintm"
 msgstr "начпроццбкон"
 
-#: ../data/functions.xml.in.h:1214
+#: ../data/functions.xml.in.h:1219
 msgid ""
 "Returns the accrued interest for a security which pays interest at maturity "
 "date.&#10;&#10;Basis is the type of day counting you want to use: 0: US "
@@ -8280,28 +8306,28 @@ msgstr ""
 "реальные дни (по умолчанию), 2: реальные дни/360, 3: реальные дни/365 или 4: "
 "30/360 для Европы."
 
-#: ../data/functions.xml.in.h:1215
+#: ../data/functions.xml.in.h:1220
 msgid "Issue date"
 msgstr "Дата выпуска"
 
-#: ../data/functions.xml.in.h:1216
+#: ../data/functions.xml.in.h:1221
 msgid "Annual rate of security"
 msgstr "Годовая ставка обеспечения"
 
-#: ../data/functions.xml.in.h:1217
+#: ../data/functions.xml.in.h:1222
 msgid "Par value"
 msgstr "Номинальная стоимость"
 
-#: ../data/functions.xml.in.h:1218
+#: ../data/functions.xml.in.h:1223
 msgid "Accrued interest of security with periodic interest payments"
 msgstr ""
 "Начисленные проценты по ценной бумаге с периодической выплатой процентов"
 
-#: ../data/functions.xml.in.h:1219
+#: ../data/functions.xml.in.h:1224
 msgid "r:accrint"
 msgstr "начпроц"
 
-#: ../data/functions.xml.in.h:1220
+#: ../data/functions.xml.in.h:1225
 msgid ""
 "Returns accrued interest for a security which pays periodic interest.&#10;"
 "&#10;Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. "
@@ -8314,23 +8340,23 @@ msgstr ""
 "умолчанию), 2: реальные дни/360, 3: реальные дни/365 или 4: 30/360 для "
 "Европы."
 
-#: ../data/functions.xml.in.h:1221
+#: ../data/functions.xml.in.h:1226
 msgid "First interest"
 msgstr "Дата первой выплаты"
 
-#: ../data/functions.xml.in.h:1222
+#: ../data/functions.xml.in.h:1227
 msgid "Frequency"
 msgstr "Частота"
 
-#: ../data/functions.xml.in.h:1223
+#: ../data/functions.xml.in.h:1228
 msgid "Number of coupons to be paid"
 msgstr "Количество купонов к оплате"
 
-#: ../data/functions.xml.in.h:1224
+#: ../data/functions.xml.in.h:1229
 msgid "r:coupnum"
 msgstr "колкуп"
 
-#: ../data/functions.xml.in.h:1225
+#: ../data/functions.xml.in.h:1230
 msgid ""
 "Returns the number of coupons to be paid between the settlement and the "
 "maturity.&#10;&#10;Basis is the type of day counting you want to use: 0: US "
@@ -8342,16 +8368,16 @@ msgstr ""
 "вы хотите использовать: 0: 30/360 для США, 1: реальные дни (по умолчанию), "
 "2: реальные дни/360, 3: реальные дни/365 или 4: 30/360 для Европы."
 
-#: ../data/functions.xml.in.h:1226
+#: ../data/functions.xml.in.h:1231
 msgid "Price per $100 face value of a discounted security"
 msgstr ""
 "Цена за 100 долларов США номинальной стоимости ценной бумаги со скидкой"
 
-#: ../data/functions.xml.in.h:1227
+#: ../data/functions.xml.in.h:1232
 msgid "r:pricedisc"
 msgstr "ценаскид"
 
-#: ../data/functions.xml.in.h:1228
+#: ../data/functions.xml.in.h:1233
 msgid ""
 "Calculates and returns the price per $100 face value of a discounted "
 "security. The security does not pay interest at maturity.&#10;&#10;Basis is "
@@ -8365,19 +8391,19 @@ msgstr ""
 "реальные дни (по умолчанию), 2: реальные дни/360, 3: реальные дни/365 или 4: "
 "30/360 для Европы."
 
-#: ../data/functions.xml.in.h:1229
+#: ../data/functions.xml.in.h:1234
 msgid "Discount"
 msgstr "Скидка"
 
-#: ../data/functions.xml.in.h:1230
+#: ../data/functions.xml.in.h:1235
 msgid "Price per $100 face value of a security"
 msgstr "Цена за 100 долларов США номинальной стоимости ценной бумаги"
 
-#: ../data/functions.xml.in.h:1231
+#: ../data/functions.xml.in.h:1236
 msgid "r:pricemat"
 msgstr "ценацб"
 
-#: ../data/functions.xml.in.h:1232
+#: ../data/functions.xml.in.h:1237
 msgid ""
 "Calculates and returns the price per $100 face value of a security. The "
 "security pays interest at maturity.&#10;&#10;Basis is the type of day "
@@ -8390,31 +8416,31 @@ msgstr ""
 "вы хотите использовать: 0: 30/360 для США, 1: реальные дни (по умолчанию), "
 "2: реальные дни/360, 3: реальные дни/365 или 4: 30/360 для Европы."
 
-#: ../data/functions.xml.in.h:1233
+#: ../data/functions.xml.in.h:1238
 msgid "Annual yield"
 msgstr "Годовая доходность"
 
-#: ../data/functions.xml.in.h:1234
+#: ../data/functions.xml.in.h:1239
 msgid "Level-Coupon Bond"
 msgstr "Облигация с уровневым купоном"
 
-#: ../data/functions.xml.in.h:1235
+#: ../data/functions.xml.in.h:1240
 msgid "r:level_coupon"
 msgstr "уровневый_купон"
 
-#: ../data/functions.xml.in.h:1236
+#: ../data/functions.xml.in.h:1241
 msgid "Calculates the value of a level-coupon bond."
 msgstr "Вычисляет стоимость облигации с уровневым купоном."
 
-#: ../data/functions.xml.in.h:1237
+#: ../data/functions.xml.in.h:1242
 msgid "Coupon rate"
 msgstr "Купонная ставка"
 
-#: ../data/functions.xml.in.h:1238
+#: ../data/functions.xml.in.h:1243
 msgid "Coupons per year"
 msgstr "Купонов в год"
 
-#: ../data/functions.xml.in.h:1239
+#: ../data/functions.xml.in.h:1244
 msgid "Market interest rate"
 msgstr "Рыночная процентная ставка"
 

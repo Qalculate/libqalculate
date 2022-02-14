@@ -5444,6 +5444,8 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 			}
 		}
 		if(!exact_comparison && (b_comparison & 1)) exact_comparison = (update_parse || !prev_approximate) && !(*printops.is_approximate) && !mstruct->isApproximate();
+		bool b_matrix = mstruct->isMatrix() && DO_FORMAT && result_text.find('\n') != string::npos;
+		if(!result_only && b_matrix) addLineBreaks(strout, cols, true, 2);
 		for(size_t i = 0; i < alt_results.size(); i++) {
 			if(i != 0) add_equals(strout, true);
 			else if(!result_only) add_equals(strout, update_parse || !prev_approximate, &i_result_u, &i_result);
@@ -5451,9 +5453,9 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 			strout += alt_results[i];
 			if(b_comparison & 4) strout += RIGHT_PARENTHESIS;
 		}
-		bool b_matrix = mstruct->isMatrix() && DO_FORMAT && result_text.find('\n') != string::npos;
 		if(!alt_results.empty()) {
 			if(b_matrix) {
+				if(!printops.use_unicode_signs && strout.find(_("approx."), i_result) == i_result) i_result += strlen(_("approx.")) + 1;
 				if(!result_only) {
 					strout[i_result - 1] = '\n';
 					strout.insert(i_result, 1, '\n');
@@ -5461,6 +5463,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 				strout += "\n\n";
 				i_result_u = 0;
 			} else if(!result_only && ((b_comparison & 1) || (goto_input && i_result_u > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols))) {
+				if(!printops.use_unicode_signs && strout.find(_("approx."), i_result) == i_result) i_result += strlen(_("approx.")) + 1;
 				strout[i_result - 1] = '\n';
 				if(goto_input) {
 					strout.insert(i_result, "  ");
@@ -5502,6 +5505,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		if(goto_input || b_matrix || (b_comparison & 1)) {
 			if(!result_only) {
 				if(b_matrix) {
+					if(!printops.use_unicode_signs && strout.find(_("approx."), i_result2) == i_result2) i_result2 += strlen(_("approx.")) + 1;
 					strout[i_result2 - 1] = '\n';
 					strout.insert(i_result2, 1, '\n');
 					gsub("\n\n", "\n\n  ", strout);
@@ -5509,9 +5513,16 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 					if(exact_comparison) strout.insert(i_result2, 1, '\n');
 					else strout[i_result2 - 1] = '\n';
 				} else if(i_result_u == 2 && i_result_u != i_result_u2) {
+					if(!printops.use_unicode_signs && strout.find(_("approx."), i_result2) == i_result2) i_result2 += strlen(_("approx.")) + 1;
 					strout[i_result2 - 1] = '\n';
 					strout.insert(i_result2, "  ");
 				} else if((b_comparison & 1) || (i_result_u2 > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols)) {
+					if(!printops.use_unicode_signs && strout.find(_("approx."), i_result) == i_result) {
+						i_result += strlen(_("approx.")) + 1;
+					}
+					if(!printops.use_unicode_signs && strout.find(_("approx."), i_result2) == i_result2) {
+						i_result2 += strlen(_("approx.")) + 1;
+					}
 					if(i_result != i_result2) {
 						strout[i_result2 - 1] = '\n';
 						strout.insert(i_result2, "  ");

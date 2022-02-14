@@ -1,8 +1,18 @@
+2021-02-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Move "approx." to same place as Unicode almost equal symbol with dual result
+	* Add financial rate() function
+
+2021-02-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault with empty sqrt inside sqrt, e.g. sqrt(1+sqrt())
+
 2021-02-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix incompletely calculated nounit(), e.g. in unit conversion
-	* Fix parsing modes with simplified percentage disabled; Handle Unicode minus in conversion (disables mixed units)
+	* Handle Unicode minus in conversion (disables mixed units)
 	* Fix saving of try exact single approximation mode in qalc
+	* Return x = -infinity for a^x = 0
 
 2021-02-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
@@ -1142,7 +1152,7 @@
 
 2019-08-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Interpet comma as vector/argument separator if decimal separator is comma but numbers contains multiple commas or comma at end, e.g. [5,2,3,x]=[5;2;3;x], and add misplaced decimal separator warning for unhandled cases
+	* Interpret comma as vector/argument separator if decimal separator is comma but numbers contains multiple commas or comma at end, e.g. [5,2,3,x]=[5;2;3;x], and add misplaced decimal separator warning for unhandled cases
 
 2019-08-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

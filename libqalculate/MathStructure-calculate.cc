@@ -6323,6 +6323,10 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					CHILDREN_UPDATED;
 				}
 				break;
+			} else if(recursive && eo.expand > 0 && (o_function->id() == FUNCTION_ID_NEWTON_RAPHSON || o_function->id() == FUNCTION_ID_SECANT_METHOD)) {
+				EvaluationOptions eo2 = eo;
+				eo2.expand = -1;
+				return calculatesub(eo2, feo, true, mparent, index_this);
 			}
 		}
 		default: {
