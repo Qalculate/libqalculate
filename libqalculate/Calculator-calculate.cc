@@ -719,10 +719,15 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 	// do not use thin space (meaningless with monospace font) in terminal
 	if(po.use_unicode_signs) gsub(" ", " ", str);
 	// use almost equal sign in approximate equality
-	if(m.isComparison() && m.comparisonType() == COMPARISON_EQUALS && po.is_approximate && *po.is_approximate && po.use_unicode_signs) {
+	if(m.isComparison() && m.comparisonType() == COMPARISON_EQUALS && po.is_approximate && *po.is_approximate) {
 		size_t ipos = str.find(" = ");
 		if(ipos != string::npos) {
-			str.replace(ipos + 1, 1, SIGN_ALMOST_EQUAL);
+			if(po.use_unicode_signs) {
+				str.replace(ipos + 1, 1, SIGN_ALMOST_EQUAL);
+			} else {
+				str.insert(ipos + 3, " ");
+				str.insert(ipos + 3, _("approx."));
+			}
 			if(po.is_approximate) *po.is_approximate = false;
 		}
 	}
@@ -807,6 +812,13 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 			if(ipos == string::npos) {
 				ipos = str.find(" " SIGN_ALMOST_EQUAL " ");
 				if(ipos != string::npos) ipos2 = ipos + strlen(" " SIGN_ALMOST_EQUAL " ");
+			} else if(!po.use_unicode_signs) {
+				size_t ipos2 = str.find(_("approx."), ipos + 3);
+				if(ipos2 == ipos + 3) {
+					ipos2 = ipos + 4 + strlen("approx.");
+				} else {
+					ipos2 = ipos + 3;
+				}
 			} else {
 				ipos2 = ipos + 3;
 			}
@@ -923,13 +935,13 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 			mexact[1].ref();
 			if(m.isComparison()) {
 				m.addChild_nocopy(&mexact[1]);
-				if(exact_cmp && po.use_unicode_signs) *exact_cmp = true;
+				if(exact_cmp) *exact_cmp = true;
 			} else {
 				// only the first exact value is used from logical and
 				m[0].addChild_nocopy(&mexact[1]);
 			}
 		} else if(mexact.isLogicalOr()) {
-			if(exact_cmp && po.use_unicode_signs) *exact_cmp = true;
+			if(exact_cmp) *exact_cmp = true;
 			for(size_t i = 0; i < mexact.size(); i++) {
 				mexact[i][1].ref();
 				if(m[i].isComparison()) {

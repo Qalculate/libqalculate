@@ -1272,7 +1272,7 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 		ret = -1;
 	}
 	bool compare_with_1 = false;
-	calculate_userfunctions(mfunc, vargs[3], eo);
+	calculate_userfunctions(mfunc, vargs[2], eo);
 	MathStructure mdiff(mfunc);
 	mdiff.differentiate(vargs[2], eo);
 	if(mdiff.containsFunction(CALCULATOR->getFunctionById(FUNCTION_ID_DIFFERENTIATE))) return ret;

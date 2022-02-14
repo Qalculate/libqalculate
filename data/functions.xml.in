@@ -4039,9 +4039,11 @@
       <_names>r:rate</_names>
       <_description>Calculates the rate of return. &#10;&#10;If type = 1 then the payment is made at the beginning of the period. If type = 0 (or omitted) it is made at the end of each period.&#10;&#10;Note that the optional guess is needed because there can be more than one valid result. It defaults to 10%.</_description>
       <example>$name(10, -1500, 10000) ≈ 0.0814</example>
-      <expression>newtonsolve(pmt("x",\x,\z,\A{0},\B{0})=\y,\C{0.1},"x")</expression>
-      <argument type="free" index="1">
+      <subfunction precalculate="true">newtonsolve(pmt("rate",\x,\z,\A{0},\B{0})=\y,\C{0.1},"rate",0,20)</subfunction>
+      <expression>if(isNumber(\1),\1,undefined)</expression>
+      <argument type="number" index="1">
         <_title>Number of periods</_title>
+        <min include_equals="false">0</min>
       </argument>
       <argument type="free" index="2">
         <_title>Payment made each period</_title>

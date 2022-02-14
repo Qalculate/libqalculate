@@ -1263,7 +1263,11 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 					if(i2 > 0 && new_formula[i2 - 1] == '\\') {
 						i2++;
 					} else {
-						new_formula.replace(i2, 2, svar);
+						if(i2 + 4 < new_formula.length() && new_formula[i2 + 2] == ID_WRAP_LEFT_CH && (i3 = new_formula.find(ID_WRAP_RIGHT_CH, i2 + 3)) != string::npos) {
+							new_formula.replace(i2, i3 - i2 + 1, svar);
+						} else {
+							new_formula.replace(i2, 2, svar);
+						}
 					}
 				}
 				for(size_t sub_i = 0; sub_i < priv->v_subs_calc.size(); sub_i++) {

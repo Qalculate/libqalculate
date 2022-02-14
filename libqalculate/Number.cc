@@ -8650,9 +8650,6 @@ bool Number::sinint() {
 				set(nr_bak);
 				return false;
 			}
-			mpfr_prec_t prec = mpfr_get_prec(fl_value) + mpfr_get_exp(fl_value);
-			if(nr_round > 100 + PRECISION * 5) prec += nr_round.intValue() * 5;
-			else prec += 10;
 			mpfr_inits2(mpfr_get_prec(fl_value) + mpfr_get_exp(fl_value), f_pi, f_mid1, f_mid2, NULL);
 			mpfr_const_pi(f_pi, MPFR_RNDN);
 			mpfr_div(f_mid1, nr_lower.internalLowerFloat(), f_pi, MPFR_RNDN);
@@ -9108,9 +9105,6 @@ bool Number::cosint() {
 				set(nr_bak);
 				return false;
 			}
-			mpfr_prec_t prec = mpfr_get_prec(fl_value) + mpfr_get_exp(fl_value);
-			if(nr_round > 100 + PRECISION * 5) prec += nr_round.intValue() * 5;
-			else prec += 10;
 			mpfr_inits2(mpfr_get_prec(fl_value) + mpfr_get_exp(fl_value), f_pi, f_mid1, f_mid2, NULL);
 			mpfr_const_pi(f_pi, MPFR_RNDN);
 			mpfr_div(f_mid1, nr_lower.internalLowerFloat(), f_pi, MPFR_RNDN);
