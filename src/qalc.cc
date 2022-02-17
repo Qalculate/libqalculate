@@ -3878,8 +3878,8 @@ int main(int argc, char *argv[]) {
 				case ALWAYS_READ_PRECISION: {str += _("always"); break;}
 				case READ_PRECISION_WHEN_DECIMALS: {str += _("when decimals"); break;}
 			}
-			PRINT_AND_COLON_TABS(_("simplified percentage"), "percent"); str += b2oo(simplified_percentage, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("simplified percentage"), "percent"); str += b2oo(simplified_percentage, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Units"));
 
