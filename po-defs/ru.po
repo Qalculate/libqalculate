@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-13 14:19+0100\n"
-"PO-Revision-Date: 2022-01-29 15:09+0700\n"
+"PO-Revision-Date: 2022-02-19 14:54+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<"
+"=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Lokalize 21.08.0\n"
 
 #: ../data/currencies.xml.in.h:1
@@ -7996,30 +7996,30 @@ msgid "Rate"
 msgstr "Ставка"
 
 #: ../data/functions.xml.in.h:1164
-#, fuzzy
 msgid "Rate of investment"
-msgstr "Периоды вложения "
+msgstr "Скорость инвестиций"
 
 #: ../data/functions.xml.in.h:1165
-#, fuzzy
 msgid "r:rate"
-msgstr "прствк"
+msgstr "ставка"
 
 #: ../data/functions.xml.in.h:1167
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "Calculates the rate of return. &#10;&#10;If type = 1 then the payment is "
 "made at the beginning of the period. If type = 0 (or omitted) it is made at "
 "the end of each period.&#10;&#10;Note that the optional guess is needed "
 "because there can be more than one valid result. It defaults to 10%."
 msgstr ""
-"Возвращает текущую стоимость инвестиции.&#10;&#10;Если type = 1, то выплата "
-"производится в начале периода. Если type = 0 (или опущено), это делается в "
-"конце каждого периода."
+"Рассчитывает доходность.&#10;&#10;Если тип = 1, то оплата производится в"
+" начале периода. Если тип = 0 (или опущен), это делается в конце каждого"
+" периода.&#10;&#10;Обратите внимание, что необходимо необязательное"
+" предположение, поскольку допустимых результатов может быть несколько. По"
+" умолчанию это 10%."
 
 #: ../data/functions.xml.in.h:1168
 msgid "Guess"
-msgstr ""
+msgstr "Предположение"
 
 #: ../data/functions.xml.in.h:1169
 msgid "Periods of an investment"
