@@ -1761,7 +1761,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 										CHILD(index_r)[0].calculateAdd(mtmp, eo, &CHILD(index_r), 0);
 									}
 								}
-								if(CHILD(1).size() == 1) {
+								if(CHILD(0).size() == 1) {
 									if(SIZE == 1) {
 										SET_CHILD_MAP(0)
 										SET_CHILD_MAP(0)
@@ -1795,7 +1795,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 								}
 							}
 						}
-						if(SIZE == 1 && CHILD(1).size() == 1) {
+						if(SIZE == 1 && CHILD(0).size() == 1) {
 							SET_CHILD_MAP(0)
 							SET_CHILD_MAP(0)
 						}
