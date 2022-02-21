@@ -237,7 +237,7 @@
       <_names>ar:AU,astronomical_unit,p:astronomical_units</_names>
       <base>
         <unit>m</unit>
-        <relation>149578706600</relation>
+        <relation>149597870700</relation>
         <exponent>1</exponent>
       </base>
     </unit>
