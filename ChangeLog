@@ -1,30 +1,30 @@
-2021-02-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2022-02-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Move "approx." to same place as Unicode almost equal symbol with dual result
 	* Add financial rate() function
 
-2021-02-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2022-02-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault with empty sqrt inside sqrt, e.g. sqrt(1+sqrt())
 
-2021-02-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2022-02-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix incompletely calculated nounit(), e.g. in unit conversion
 	* Handle Unicode minus in conversion (disables mixed units)
 	* Fix saving of try exact single approximation mode in qalc
 	* Return x = -infinity for a^x = 0
 
-2021-02-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2022-02-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Return the lowest value if there are multiple values with equal frequency in mode()
 	* Calculate statistical functions (e.g. mode(), min(), max(), percentile()) separately for each column of matrix (adds special handling for handle vector property in vector arguments)
 	* Fix duplicated right equality value in output in some cases
 
-2021-01-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2022-01-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add option to disable "simplified" percentage calculations (e.g. intepret 100 + 20% as 100 + 0.2 instead of 100 * 120%)
 
-2021-01-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2022-01-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Calculator::saveTemporaryDefinitions() for use in qalculate-qt when saving workspace
 
@@ -32,36 +32,36 @@
 
 	* Do not rewrite -Os to -O2
 
-2021-01-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2022-01-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Parse text argument as expression if concatenate function name is found in text string
 	* Fix concatenate returning date
 	* New layout for output of result of equations, in qalc
 
-2021-01-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2022-01-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Support input of functions, units, and variables with underscores omitted in names (e.g. µ0 = µ_0), with some exceptions (e.g. if underscore is followed by a single character that is not a digit or a Unicode symbol)
 
-2021-01-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2022-01-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Convert K, Hz, and m^-1 to J, and derived units, using conversion factor constants (e.g. 1/(550nm) to eV = 1/(550nm) * m_to_J ≈ 2.25 eV)
 	* Move conversion of expression without unit (e.g. 5 to ft = 5 m to ft) from user interfaces to libqalculate
 	* Allow use of M as 10^6 without unit
 
-2021-01-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2022-01-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add hbar name (for completion) to reduced Planck constant
 
-2021-01-12 Stephan Troyer <stephantroyer@live.at>
+2022-01-12 Stephan Troyer <stephantroyer@live.at>
 
 	* Add second Unicode codepoint for µ-sign in variable names
 
-2021-01-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2022-01-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Do not assume that char is signed
 	* Fix bitrot()
 
-2021-01-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2022-01-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Allow zero (1st and/or 2nd argument) in comb() and perm(), and return zero if second argument (k) is greater than the first (n)
 
