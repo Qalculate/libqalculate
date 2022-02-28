@@ -4012,6 +4012,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					string estr;
 					ips_n.wrap = false;
 					for(size_t i = 0; i < SIZE; i++) {
+						if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 						for(size_t i2 = 0; i2 < (b_matrix ? CHILD(i).size() : SIZE); i2++) {
 							if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 							if(b_matrix) {
@@ -4042,6 +4043,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					print_str = "[";
 					ips_n.wrap = false;
 					for(size_t i = 0; i < SIZE; i++) {
+						if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 						if(i > 0) {
 							print_str += ";";
 							if(po.spacious) print_str += " ";

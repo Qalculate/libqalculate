@@ -297,7 +297,10 @@ int ModeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 RandFunction::RandFunction() : MathFunction("rand", 0, 2) {
 	setArgumentDefinition(1, new IntegerArgument());
 	setDefaultValue(1, "0");
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
+	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE);
+	Number nr(1, 1, 7);
+	iarg->setMax(&nr);
+	setArgumentDefinition(2, iarg);
 	setDefaultValue(2, "1");
 }
 int RandFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
@@ -305,6 +308,7 @@ int RandFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	if(n > 1) {mstruct.clearVector(); mstruct.resizeVector(n, m_zero);}
 	Number nr;
 	for(size_t i = 0; i < n; i++) {
+		if(n > 1 && CALCULATOR->aborted()) return 0;
 		if(vargs[0].number().isZero() || vargs[0].number().isNegative()) {
 			nr.rand();
 		} else {
@@ -323,7 +327,10 @@ bool RandFunction::representsNonNegative(const MathStructure&, bool) const {retu
 RandnFunction::RandnFunction() : MathFunction("randnorm", 0, 3) {
 	setDefaultValue(1, "0");
 	setDefaultValue(2, "1");
-	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
+	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE);
+	Number nr(1, 1, 7);
+	iarg->setMax(&nr);
+	setArgumentDefinition(3, iarg);
 	setDefaultValue(3, "1");
 }
 int RandnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
@@ -332,6 +339,7 @@ int RandnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 #if MPFR_VERSION_MAJOR < 4
 	Number nr_u, nr_v, nr_r2;
 	for(size_t i = 0; i < n; i++) {
+		if(n > 1 && CALCULATOR->aborted()) return 0;
 		do {
 			nr_u.rand(); nr_u *= 2; nr_u -= 1;
 			nr_v.rand(); nr_v *= 2; nr_v -= 1;
@@ -357,6 +365,7 @@ int RandnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 #else
 	Number nr;
 	for(size_t i = 0; i < n; i++) {
+		if(n > 1 && CALCULATOR->aborted()) return 0;
 		nr.randn();
 		if(n > 1) mstruct[i] = nr;
 		else mstruct = nr;
@@ -373,7 +382,10 @@ bool RandnFunction::representsNumber(const MathStructure&, bool) const {return t
 RandPoissonFunction::RandPoissonFunction() : MathFunction("randpoisson", 1, 2) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
 	setDefaultValue(1, "0");
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
+	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE);
+	Number nr(1, 1, 7);
+	iarg->setMax(&nr);
+	setArgumentDefinition(2, iarg);
 	setDefaultValue(2, "1");
 }
 int RandPoissonFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
@@ -383,6 +395,7 @@ int RandPoissonFunction::calculate(MathStructure &mstruct, const MathStructure &
 	nr_L.exp();
 	Number nr_k, nr_p, nr_u;
 	for(size_t i = 0; i < n; i++) {
+		if(n > 1 && CALCULATOR->aborted()) return 0;
 		nr_k.clear(); nr_p = 1;
 		do {
 			nr_k++;

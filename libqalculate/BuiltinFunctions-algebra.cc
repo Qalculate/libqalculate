@@ -725,6 +725,7 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 
 	MathStructure mv; mv.clearVector();
 	MathStructure mand; mand.resizeVector(eorder.size(), mv);
+	if(mand.size() < eorder.size()) return 0;
 
 	for(size_t i = 0; i < eorder.size(); i++) {
 		MathStructure msolve(vargs[0][eorder[i]]);
@@ -835,6 +836,7 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 						MathStructure m;
 						m.clearVector();
 						m.resizeVector(mstruct[index2].size(), mstruct[index1]);
+						if(m.size() < mstruct[index2].size()) return 0;
 						for(size_t i4 = 0; i4 < mstruct[index2].size(); i4++) {
 							m[i4].replace(vargs[1][index2], mstruct[index2][i4]);
 						}

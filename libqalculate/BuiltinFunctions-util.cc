@@ -301,6 +301,7 @@ int AsciiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			if(vargs[2].number().getBoolean() && str.length() > 1) {
 				mstruct.clearVector();
 				mstruct.resizeVector(str.length(), m_zero);
+				if(mstruct.size() < str.length()) return 0;
 				for(size_t i = 0; i < str.length(); i++) {
 					mstruct[i] = (long int) ((unsigned char) str[i]);
 				}

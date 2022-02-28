@@ -1750,9 +1750,13 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 									return -1;
 								}
 								MathStructure msave(*this);
-								size_t rows = SIZE;
+								size_t r = SIZE;
 								clearMatrix(true);
-								resizeMatrix(rows, 1, m_zero);
+								resizeMatrix(r, 1, m_zero);
+								if(rows() < r) {
+									set(msave);
+									return -1;
+								}
 								MathStructure mtmp;
 								for(size_t index_r = 0; index_r < SIZE; index_r++) {
 									for(size_t index_c = 0; index_c < msave[0].size(); index_c++) {
@@ -1782,9 +1786,13 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							return -1;
 						}
 						MathStructure msave(*this);
-						size_t rows = SIZE;
+						size_t r = SIZE;
 						clearMatrix(true);
-						resizeMatrix(rows, mstruct[0].size(), m_zero);
+						resizeMatrix(r, mstruct[0].size(), m_zero);
+						if(rows() < r || columns() < mstruct[0].size()) {
+							set(msave);
+							return -1;
+						}
 						MathStructure mtmp;
 						for(size_t index_r = 0; index_r < SIZE; index_r++) {
 							for(size_t index_c = 0; index_c < CHILD(0).size(); index_c++) {

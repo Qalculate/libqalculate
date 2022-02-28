@@ -151,7 +151,8 @@ MathStructure &MathStructure::getRange(int start, int end, MathStructure &mstruc
 
 void MathStructure::resizeVector(size_t i, const MathStructure &mfill) {
 	if(i > SIZE) {
-		while(i > SIZE) {
+		for(size_t index = 0; index < i; index++) {
+			if(index % 10002 == 10001 && CALCULATOR->aborted()) return;
 			APPEND(mfill);
 		}
 	} else if(i < SIZE) {
@@ -265,7 +266,7 @@ void MathStructure::addRows(size_t r, const MathStructure &mfill) {
 	if(r == 0) return;
 	size_t cols = columns();
 	MathStructure mstruct; mstruct.clearVector();
-	mstruct.resizeVector(cols, mfill);
+	for(size_t i = 0; i < cols; i++) mstruct.addChild(mfill);
 	for(size_t i = 0; i < r; i++) {
 		APPEND(mstruct);
 	}
@@ -298,7 +299,7 @@ void MathStructure::resizeMatrix(size_t r, size_t c, const MathStructure &mfill)
 		addColumns(c - cols, mfill);
 	} else if(c != cols) {
 		for(size_t i = 0; i < SIZE; i++) {
-			CHILD(i).resizeVector(c, mfill);
+			while(c > CHILD(i).size()) CHILD(i).addChild(mfill);
 		}
 	}
 }

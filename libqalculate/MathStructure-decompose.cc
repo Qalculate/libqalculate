@@ -232,6 +232,7 @@ bool MathStructure::decomposeFractions(const MathStructure &x_var, const Evaluat
 				if(b) {
 					MathStructure m_eqs;
 					m_eqs.resizeVector(i_degree + 1, m_zero);
+					if(m_eqs.size() < i_degree + 1) return false;
 					for(size_t i = 0; i < m_eqs.size(); i++) {
 						for(size_t i2 = 0; i2 < mfac_expand.size();) {
 							if(CALCULATOR->aborted()) return false;
