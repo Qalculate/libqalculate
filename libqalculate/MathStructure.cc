@@ -204,7 +204,12 @@ MathStructure::MathStructure(const Number &o) {
 	i_precision = o_number.precision();
 }
 MathStructure::~MathStructure() {
-	clear();
+	if(function_value) function_value->unref();
+	if(o_function) o_function->unref();
+	if(o_variable) o_variable->unref();
+	if(o_unit) o_unit->unref();
+	if(o_datetime) delete o_datetime;
+	for(size_t i = 0; i < v_subs.size(); i++) {v_subs[i]->unref();}
 }
 
 void MathStructure::set(const MathStructure &o, bool merge_precision) {
