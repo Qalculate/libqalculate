@@ -206,8 +206,8 @@ Calculator::Calculator() {
 	addStringAlternative(SIGN_LESS_OR_EQUAL, LESS EQUALS);
 	addStringAlternative("\t", SPACE);
 	addStringAlternative("\n", SPACE);
-	addStringAlternative(" ", SPACE);
-	addStringAlternative(" ", THIN_SPACE);
+	addStringAlternative(NBSP, SPACE);
+	addStringAlternative(NNBSP, THIN_SPACE);
 	addStringAlternative("**", POWER);
 	addStringAlternative("^^", "⊻");
 	addStringAlternative("↊", "X");
@@ -444,8 +444,8 @@ Calculator::Calculator(bool ignore_locale) {
 	addStringAlternative(SIGN_LESS_OR_EQUAL, LESS EQUALS);
 	addStringAlternative("\t", SPACE);
 	addStringAlternative("\n", SPACE);
-	addStringAlternative(" ", SPACE);
-	addStringAlternative(" ", THIN_SPACE);
+	addStringAlternative(NBSP, SPACE);
+	addStringAlternative(NNBSP, THIN_SPACE);
 	addStringAlternative("**", POWER);
 	addStringAlternative("^^", "⊻");
 	addStringAlternative("↊", "X");
