@@ -25,6 +25,10 @@
 
 #include "MathStructure-support.h"
 
+#ifdef _WIN32
+#	include <VersionHelpers.h>
+#endif
+
 using std::string;
 using std::cout;
 using std::vector;
@@ -3256,7 +3260,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					if(format && m_type != STRUCT_ABORTED) print_str += "\033[23m";
 					if(colorize) print_str += "\033[0m";
 				} else if(tagtype == TAG_TYPE_HTML) {
-					if(format && m_type != STRUCT_ABORTED) print_str.insert(0, "<i class=\"symbol\">");
+					if(format && m_type != STRUCT_ABORTED) print_str.insert(0, po.allow_non_usable ? "<i class=\"symbol\">" : "<i>");
 					if(colorize && m_type == STRUCT_ABORTED) print_str.insert(0, (colorize == 2 ? "<span style=\"color:#FFAAAA\">" : "<span style=\"color:#800000\">"));
 					else if(colorize) print_str.insert(0, (colorize == 2 ? "<span style=\"color:#FFFFAA\">" : "<span style=\"color:#585800\">"));
 					if(format && m_type != STRUCT_ABORTED) print_str += "</i>";
@@ -3350,7 +3354,15 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 						i_sign = CHILD(i).neededMultiplicationSign(po2, ips_n, *this, i + 1, ips_n.wrap || (CHILD(i).isPower() && CHILD(i)[0].needsParenthesis(po, ips_n, CHILD(i), 1, true, flat_power)), par_prev, true, flat_power);
 					}
 					switch(i_sign) {
-						case MULTIPLICATION_SIGN_SPACE: {print_str += " "; break;}
+						case MULTIPLICATION_SIGN_SPACE: {
+							if(is_unit_multiexp(CHILD(i)) && po.use_unicode_signs
+#ifdef _WIN32
+							&& IsWindows10OrGreater()
+#endif
+							&& (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (NNBSP, po.can_display_unicode_string_arg))) print_str += NNBSP;
+							else print_str += " ";
+							break;
+						}
 						case MULTIPLICATION_SIGN_OPERATOR: {
 							if(po.spacious) {
 								if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) print_str += " " SIGN_MULTIDOT " ";
@@ -3935,13 +3947,13 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 							argcount--;
 						} else if(arg && arg->type() == ARGUMENT_TYPE_SYMBOLIC && ((argcount > 1 && defstr == "undefined" && CHILD(argcount - 1) == CHILD(0).find_x_var()) || (defstr == "\"\"" && CHILD(argcount - 1) == ""))) {
 							argcount--;
-						} else if(CHILD(argcount - 1).isVariable() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr == CHILD(argcount - 1).variable()->referenceName()) {
+						} else if(CHILD(argcount - 1).isVariable() && (!arg || (arg->type() != ARGUMENT_TYPE_TEXT && !arg->suggestsQuotes())) && defstr == CHILD(argcount - 1).variable()->referenceName()) {
 							argcount--;
-						} else if(CHILD(argcount - 1).isInteger() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr.find_first_not_of(NUMBERS, defstr[0] == '-' && defstr.length() > 1 ? 1 : 0) == string::npos && CHILD(argcount - 1).number() == s2i(defstr)) {
+						} else if(CHILD(argcount - 1).isInteger() && (!arg || (arg->type() != ARGUMENT_TYPE_TEXT && !arg->suggestsQuotes())) && defstr.find_first_not_of(NUMBERS, defstr[0] == '-' && defstr.length() > 1 ? 1 : 0) == string::npos && CHILD(argcount - 1).number() == s2i(defstr)) {
 							argcount--;
-						} else if(defstr[0] == '-' && CHILD(argcount - 1).isNegate() && CHILD(argcount - 1)[0].isInteger() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr.find_first_not_of(NUMBERS, 1) == string::npos && CHILD(argcount - 1)[0].number() == -s2i(defstr)) {
+						} else if(defstr[0] == '-' && CHILD(argcount - 1).isNegate() && CHILD(argcount - 1)[0].isInteger() && (!arg || (arg->type() != ARGUMENT_TYPE_TEXT && !arg->suggestsQuotes())) && defstr.find_first_not_of(NUMBERS, 1) == string::npos && CHILD(argcount - 1)[0].number() == -s2i(defstr)) {
 							argcount--;
-						} else if(defstr[0] == '-' && CHILD(argcount - 1).isMultiplication() && CHILD(argcount - 1).size() == 2 && (CHILD(argcount - 1)[0].isMinusOne() || (CHILD(argcount - 1)[0].isNegate() && CHILD(argcount - 1)[0][0].isOne())) && CHILD(argcount - 1)[1].isInteger() && (!arg || arg->type() != ARGUMENT_TYPE_TEXT) && defstr.find_first_not_of(NUMBERS, 1) == string::npos && CHILD(argcount - 1)[1].number() == -s2i(defstr)) {
+						} else if(defstr[0] == '-' && CHILD(argcount - 1).isMultiplication() && CHILD(argcount - 1).size() == 2 && (CHILD(argcount - 1)[0].isMinusOne() || (CHILD(argcount - 1)[0].isNegate() && CHILD(argcount - 1)[0][0].isOne())) && CHILD(argcount - 1)[1].isInteger() && (!arg || (arg->type() != ARGUMENT_TYPE_TEXT && !arg->suggestsQuotes())) && defstr.find_first_not_of(NUMBERS, 1) == string::npos && CHILD(argcount - 1)[1].number() == -s2i(defstr)) {
 							argcount--;
 						} else if(CHILD(argcount - 1).isSymbolic() && arg && arg->type() == ARGUMENT_TYPE_TEXT && (CHILD(argcount - 1).symbol() == defstr || (defstr == "\"\"" && CHILD(argcount - 1).symbol().empty()))) {
 							argcount--;

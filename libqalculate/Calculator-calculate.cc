@@ -716,8 +716,6 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 		str = m.print(po, format, colorize, tagtype);
 	}
 	if(cplx_angle) replace_result_cis(str);
-	// do not use thin space (meaningless with monospace font) in terminal
-	if(po.use_unicode_signs) gsub(" ", " ", str);
 	// use almost equal sign in approximate equality
 	if(m.isComparison() && m.comparisonType() == COMPARISON_EQUALS && po.is_approximate && *po.is_approximate) {
 		size_t ipos = str.find(" = ");
@@ -785,7 +783,6 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 				results_v.pop_back();
 			} else {
 				if(cplx_angle) replace_result_cis(results_v.back());
-				if(po.use_unicode_signs) gsub(" ", " ", results_v.back());
 			}
 		}
 		if(do_mixed) {
@@ -801,7 +798,6 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 					results_v.pop_back();
 				} else {
 					if(cplx_angle) replace_result_cis(results_v.back());
-					if(po.use_unicode_signs) gsub(" ", " ", results_v.back());
 				}
 			}
 		}

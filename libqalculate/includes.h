@@ -788,6 +788,8 @@ extern Calculator *calculator;
 #define SIGN_PLUSMINUS			"±"
 
 #define THIN_SPACE " "
+#define NNBSP " "
+#define NBSP " "
 
 #define ID_WRAP_LEFT_CH		'{'
 #define ID_WRAP_RIGHT_CH	'}'

@@ -1699,7 +1699,7 @@ bool Argument::alerts() const {
 void Argument::setAlerts(bool does_error) {
 	b_error = does_error;
 }
-bool Argument::suggestsQuotes() const {return false;}
+bool Argument::suggestsQuotes() const {return b_text || type() == ARGUMENT_TYPE_DATE;}
 int Argument::type() const {
 	return ARGUMENT_TYPE_FREE;
 }
@@ -2109,7 +2109,7 @@ int TextArgument::type() const {return ARGUMENT_TYPE_TEXT;}
 Argument *TextArgument::copy() const {return new TextArgument(this);}
 string TextArgument::print() const {return _("text");}
 string TextArgument::subprintlong() const {return _("a text string");}
-bool TextArgument::suggestsQuotes() const {return false;}
+bool TextArgument::suggestsQuotes() const {return b_text;}
 
 DateArgument::DateArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
 DateArgument::DateArgument(const DateArgument *arg) {set(arg);}

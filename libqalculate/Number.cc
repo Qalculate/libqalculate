@@ -77,6 +77,7 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 		}
 		size_t i_deci = str.find(po.decimalpoint());
 		size_t i;
+		bool nobreak = str.length() <= 20;
 		int do_thin_space = -1;
 		if(i_deci != string::npos) {
 			if(po.digit_grouping != DIGIT_GROUPING_LOCALE && i_deci + po.decimalpoint().length() < str.length() - 4 && str.find("…") == string::npos && str.find("...") == string::npos) {
@@ -91,8 +92,8 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 #endif
 					}
 					if(do_thin_space) {
-						str.insert(i, THIN_SPACE);
-						i += 3 + strlen(THIN_SPACE);
+						str.insert(i, nobreak ? NNBSP : THIN_SPACE);
+						i += 3 + strlen(nobreak ? NNBSP : THIN_SPACE);
 					} else {
 						str.insert(i, " ");
 						i += 4;
@@ -108,7 +109,7 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 				i -= group_size;
 				if(po.digit_grouping != DIGIT_GROUPING_LOCALE || CALCULATOR->local_digit_group_separator.empty()) {
 					if(do_thin_space == -1) {
-						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (THIN_SPACE, po.can_display_unicode_string_arg))) do_thin_space = 1;
+						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (nobreak ? NNBSP : THIN_SPACE, po.can_display_unicode_string_arg))) do_thin_space = 1;
 						else do_thin_space = 0;
 #ifdef _WIN32
 						// do not use thin space on Windows < 10
@@ -117,7 +118,7 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 					}
 					if(do_thin_space) {
 						// thin space is preferred
-						str.insert(i, THIN_SPACE);
+						str.insert(i, nobreak ? NNBSP : THIN_SPACE);
 					} else {
 						str.insert(i, " ");
 					}
@@ -12594,13 +12595,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		if(infinite_series) {
 			size_t i_dp = str.find(po.decimalpoint());
+			bool nobreak = str.length() <= 20;
 			if(i_dp != string::npos && ((infinite_series == 1 && i_dp + po.decimalpoint().length() + 2 < str.length() - infinite_series) || (infinite_series > 1 && i_dp + po.decimalpoint().length() < str.length() - infinite_series))) {
+				if(po.use_unicode_signs
 #ifdef _WIN32
-				if(IsWindows10OrGreater() && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (THIN_SPACE, po.can_display_unicode_string_arg))) {
-#else
-				if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (THIN_SPACE, po.can_display_unicode_string_arg))) {
+				&& IsWindows10OrGreater()
 #endif
-					str.insert(str.length() - (infinite_series == 1 ? 3 : infinite_series), THIN_SPACE);
+				&& (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (nobreak ? NNBSP : THIN_SPACE, po.can_display_unicode_string_arg))) {
+					str.insert(str.length() - (infinite_series == 1 ? 3 : infinite_series), nobreak ? NNBSP : THIN_SPACE);
 				} else {
 					str.insert(str.length() - (infinite_series == 1 ? 3 : infinite_series), " ");
 				}
