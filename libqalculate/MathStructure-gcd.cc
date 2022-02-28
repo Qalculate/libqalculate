@@ -1173,6 +1173,7 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 					MathStructure mcomps;
 					mcomps.resizeVector(nums[0].isAddition() ? nums[0].size() : 1, m_zero);
 					if(nums[0].isAddition()) {
+						if(mcomps.size() < nums[0].size()) {if(mstruct.size() == 1) mstruct.setToChild(1); return false;}
 						for(size_t i = 0; i < nums[0].size(); i++) {
 							if((b_unknown && nums[0][i].containsUnknowns()) || (!b_unknown && !nums[0][i].isNumber())) {
 								mcomps[i].setType(STRUCT_MULTIPLICATION);
@@ -1419,6 +1420,7 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 	// combine numerators with same denominator
 	MathStructure nums, numleft, mleft;
 	nums.resizeVector(divs.size(), m_zero);
+	if(nums.size() < divs.size()) return false;
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		bool b = false;
 		if(mstruct[i].isMultiplication()) {
