@@ -265,10 +265,10 @@ void MathStructure::setElement(const MathStructure &mstruct, size_t row, size_t 
 void MathStructure::addRows(size_t r, const MathStructure &mfill) {
 	if(r == 0) return;
 	size_t cols = columns();
-	MathStructure mstruct; mstruct.clearVector();
-	for(size_t i = 0; i < cols; i++) mstruct.addChild(mfill);
 	for(size_t i = 0; i < r; i++) {
-		APPEND(mstruct);
+		APPEND(m_zero)
+		LAST.clearVector();
+		for(size_t i2 = 0; i2 < cols; i2++) LAST.addChild(mfill);
 	}
 }
 void MathStructure::addColumns(size_t c, const MathStructure &mfill) {
@@ -299,7 +299,7 @@ void MathStructure::resizeMatrix(size_t r, size_t c, const MathStructure &mfill)
 		addColumns(c - cols, mfill);
 	} else if(c != cols) {
 		for(size_t i = 0; i < SIZE; i++) {
-			while(c > CHILD(i).size()) CHILD(i).addChild(mfill);
+			CHILD(i).resizeVector(c, mfill);
 		}
 	}
 }
@@ -704,7 +704,7 @@ bool MathStructure::invertMatrix(const EvaluationOptions &eo) {
 				for (i = d + 1; i < n; i++) {
 					if(!mtrx[i][d].isZero()) break;
 				}
-
+				if(CALCULATOR->aborted()) return false;
 				if(i == n) {
 					CALCULATOR->error(true, _("Inverse of singular matrix."), NULL);
 					return false;
@@ -728,7 +728,7 @@ bool MathStructure::invertMatrix(const EvaluationOptions &eo) {
 			mtmp.recip();
 
 			for(j = 0; j < n; j++) {
-
+				if(CALCULATOR->aborted()) return false;
 				if(j > d) {
 					mtrx[d][j].number() *= mtmp;
 				}
@@ -745,7 +745,7 @@ bool MathStructure::invertMatrix(const EvaluationOptions &eo) {
 				mtmp.negate();
 
 				for(j = 0; j < n; j++) {
-
+					if(CALCULATOR->aborted()) return false;
 					if(j > d) {
 						mtrx[i][j].number() += mtrx[d][j].number() * mtmp;
 					}
@@ -774,6 +774,7 @@ bool MathStructure::adjointMatrix(const EvaluationOptions &eo) {
 	MathStructure msave(*this);
 	for(size_t index_r = 0; index_r < SIZE; index_r++) {
 		for(size_t index_c = 0; index_c < CHILD(0).size(); index_c++) {
+			if(CALCULATOR->aborted()) return false;
 			msave.cofactor(index_r + 1, index_c + 1, CHILD(index_r)[index_c], eo);
 		}
 	}
@@ -791,6 +792,7 @@ bool MathStructure::transposeMatrix() {
 	resizeMatrix(CHILD(0).size(), SIZE, m_undefined);
 	for(size_t index_r = 0; index_r < SIZE; index_r++) {
 		for(size_t index_c = 0; index_c < CHILD(0).size(); index_c++) {
+			if(CALCULATOR->aborted()) return false;
 			CHILD(index_r)[index_c] = msave[index_c][index_r];
 		}
 	}
