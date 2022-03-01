@@ -82,15 +82,15 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 		if(i_deci != string::npos) {
 			if(po.digit_grouping != DIGIT_GROUPING_LOCALE && i_deci + po.decimalpoint().length() < str.length() - 4 && str.find("…") == string::npos && str.find("...") == string::npos) {
 				i = i_deci + 3 + po.decimalpoint().length();
-				while(i < str.length()) {
-					if(do_thin_space == -1) {
-						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (THIN_SPACE, po.can_display_unicode_string_arg))) do_thin_space = 1;
-						else do_thin_space = 0;
+				if(do_thin_space == -1) {
+					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (THIN_SPACE, po.can_display_unicode_string_arg))) do_thin_space = 1;
+					else do_thin_space = 0;
 #ifdef _WIN32
-						// do not use thin space on Windows < 10
-						if(!IsWindows10OrGreater()) do_thin_space = 0;
+					// do not use thin space on Windows < 10
+					if(do_thin_space != 0 && !IsWindows10OrGreater()) do_thin_space = 0;
 #endif
-					}
+				}
+				while(i < str.length()) {
 					if(do_thin_space) {
 						str.insert(i, nobreak ? NNBSP : THIN_SPACE);
 						i += 3 + strlen(nobreak ? NNBSP : THIN_SPACE);
@@ -113,7 +113,7 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 						else do_thin_space = 0;
 #ifdef _WIN32
 						// do not use thin space on Windows < 10
-						if(!IsWindows10OrGreater()) do_thin_space = 0;
+						if(do_thin_space != 0 && !IsWindows10OrGreater()) do_thin_space = 0;
 #endif
 					}
 					if(do_thin_space) {
@@ -125,7 +125,7 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 				} else {
 					str.insert(i, CALCULATOR->local_digit_group_separator);
 				}
-				if(po.digit_grouping == DIGIT_GROUPING_LOCALE && CALCULATOR->local_digit_group_format.size() - 1 > i_format) {
+				if(po.digit_grouping == DIGIT_GROUPING_LOCALE && CALCULATOR->local_digit_group_format.size() > i_format + 1) {
 					i_format++;
 					if(CALCULATOR->local_digit_group_format[i_format] == CHAR_MAX) break;
 					if((signed char) CALCULATOR->local_digit_group_format[i_format] > 0) group_size = CALCULATOR->local_digit_group_format[i_format];
