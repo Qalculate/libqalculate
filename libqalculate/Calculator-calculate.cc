@@ -2440,7 +2440,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 		} else if(!str2.empty()) {
 			// conversion using "to" expression
 			if(provided_to) {
-				mstruct.set(convert(mstruct, str2, eo, to_struct, parsed_struct));
+				mstruct.set(convert(mstruct, str2, eo, to_struct, false, parsed_struct));
 			} else {
 				string str2b;
 				while(true) {
