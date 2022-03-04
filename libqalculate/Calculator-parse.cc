@@ -700,25 +700,7 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 
 }
 
-void replace_internal_operators(string &str) {
-	gsub("\a", " xor ", str);
-	gsub("\b", SIGN_PLUSMINUS, str);
-	gsub("\x1c", "∠", str);
-	gsub("\x1d", " nand ", str);
-	gsub("\x1e", " nor ", str);
-	gsub("\x1f", " xor ", str);
-	gsub("\x13", POWER, str);
-	gsub("\x14", "∥", str);
-	gsub("\x15", " cross ", str);
-	gsub("\x16", DOT, str);
-	gsub("\x17", DOT MULTIPLICATION, str);
-	gsub("\x18", DOT DIVISION, str);
-	gsub("\x19", DOT POWER, str);
-	gsub("\x1a", DOT "\'", str);
-	remove_blank_ends(str);
-	remove_duplicate_blanks(str);
-}
-const char *internal_operator_replacement(char c) {
+string internal_operator_replacement(char c) {
 	switch(c) {
 		case '\a': return "xor";
 		case '\b': return SIGN_PLUSMINUS;
@@ -730,12 +712,44 @@ const char *internal_operator_replacement(char c) {
 		case '\x14': return "∥";
 		case '\x15': return "cross";
 		case '\x16': return DOT;
-		case '\x17': return DOT MULTIPLICATION;
-		case '\x18': return DOT DIVISION;
+		case '\x17': return string(DOT) + internal_operator_replacement(MULTIPLICATION_CH);
+		case '\x18': return string(DOT) + internal_operator_replacement(DIVISION_CH);
 		case '\x19': return DOT POWER;
 		case '\x1a': return DOT "\'";
+		case MULTIPLICATION_CH: {
+			if(CALCULATOR->messagePrintOptions().use_unicode_signs && CALCULATOR->messagePrintOptions().multiplication_sign == MULTIPLICATION_SIGN_DOT && (!CALCULATOR->messagePrintOptions().can_display_unicode_string_function || (*CALCULATOR->messagePrintOptions().can_display_unicode_string_function) (SIGN_MULTIDOT, CALCULATOR->messagePrintOptions().can_display_unicode_string_arg))) return SIGN_MULTIDOT;
+			else if(CALCULATOR->messagePrintOptions().use_unicode_signs && (CALCULATOR->messagePrintOptions().multiplication_sign == MULTIPLICATION_SIGN_DOT || CALCULATOR->messagePrintOptions().multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!CALCULATOR->messagePrintOptions().can_display_unicode_string_function || (*CALCULATOR->messagePrintOptions().can_display_unicode_string_function) (SIGN_MIDDLEDOT, CALCULATOR->messagePrintOptions().can_display_unicode_string_arg))) return SIGN_MIDDLEDOT;
+			else if(CALCULATOR->messagePrintOptions().use_unicode_signs && CALCULATOR->messagePrintOptions().multiplication_sign == MULTIPLICATION_SIGN_X && (!CALCULATOR->messagePrintOptions().can_display_unicode_string_function || (*CALCULATOR->messagePrintOptions().can_display_unicode_string_function) (SIGN_MULTIPLICATION, CALCULATOR->messagePrintOptions().can_display_unicode_string_arg))) return SIGN_MULTIPLICATION;
+			break;
+		}
+		case DIVISION_CH: {
+			if(CALCULATOR->messagePrintOptions().use_unicode_signs && CALCULATOR->messagePrintOptions().division_sign == DIVISION_SIGN_DIVISION && (!CALCULATOR->messagePrintOptions().can_display_unicode_string_function || (*CALCULATOR->messagePrintOptions().can_display_unicode_string_function) (SIGN_DIVISION, CALCULATOR->messagePrintOptions().can_display_unicode_string_arg))) return SIGN_DIVISION;
+			break;
+		}
+		case MINUS_CH: {
+			if(CALCULATOR->messagePrintOptions().use_unicode_signs && (!CALCULATOR->messagePrintOptions().can_display_unicode_string_function || (*CALCULATOR->messagePrintOptions().can_display_unicode_string_function) (SIGN_MINUS, CALCULATOR->messagePrintOptions().can_display_unicode_string_arg))) return SIGN_MINUS;
+			break;
+		}
 	}
-	return "";
+	string str; str += c;
+	return str;
+}
+void replace_internal_operators(string &str) {
+	bool prev_s = true;
+	for(size_t i = 0; i < str.length(); i++) {
+		if(str[i] == '\a' || str[i] == '\x1d' || str[i] == '\x1e' || str[i] == '\x1f' || str[i] == '\x15') {
+			if(prev_s && i + 1 == str.length()) str.replace(i, 1, internal_operator_replacement(str[i]));
+			else if(prev_s) str.replace(i, 1, internal_operator_replacement(str[i]) + SPACE);
+			else if(i + 1 == str.length()) str.replace(i, 1, string(SPACE) + internal_operator_replacement(str[i]));
+			else str.replace(i, 1, string(SPACE) + internal_operator_replacement(str[i]) + SPACE);
+			prev_s = true;
+		} else if(str[i] == '\b' || str[i] == '\x13' || str[i] == '\x14' || str[i] == '\x1c' || str[i] >= '\x16' || str[i] <= '\x1a' || str[i] == MULTIPLICATION_CH || str[i] == MINUS_CH || str[i] == DIVISION_CH) {
+			str.replace(i, 1, internal_operator_replacement(str[i]));
+			prev_s = false;
+		} else {
+			prev_s = (str[i] == SPACE_CH);
+		}
+	}
 }
 
 bool has_boolean_variable(const MathStructure &m) {
@@ -3029,11 +3043,11 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			had_non_sign = true;
 		} else if(is_in(OPERATORS, str[i]) && (po.base != BASE_ROMAN_NUMERALS || (str[i] != '(' && str[i] != ')' && str[i] != '|'))) {
 			// ignore operators
-			error(false, _("Misplaced '%c' ignored"), str[i], NULL);
+			error(false, _("Misplaced operator(s) \"%s\" ignored"), internal_operator_replacement(str[i]).c_str(), NULL);
 			str.erase(i, 1);
 		} else if(str[i] == '\a' || (str[i] <= '\x1f' && str[i] >= '\x1c') || (str[i] <= '\x1a' && str[i] >= '\x14')) {
 			// ignore operators
-			error(false, _("Misplaced operator(s) \"%s\" ignored"), internal_operator_replacement(str[i]), NULL);
+			error(false, _("Misplaced operator(s) \"%s\" ignored"), internal_operator_replacement(str[i]).c_str(), NULL);
 			str.erase(i, 1);
 		} else if(str[i] == '\b') {
 			// +/-
@@ -4624,7 +4638,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						while(i2 + i + 1 != str.length() && is_in(MULTIPLICATION DIVISION "%", str[i2 + i + 1])) {
 							i2++;
 						}
-						string errstr = str.substr(i, i2);
+						string errstr = str.substr(i + 1, i2);
 						replace_internal_operators(errstr);
 						error(false, _("Misplaced operator(s) \"%s\" ignored"), errstr.c_str(), NULL);
 						i += i2;
@@ -4763,8 +4777,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		} else if(str[i] == BITWISE_NOT_CH || str[i] == LOGICAL_NOT_CH) {
 			break;
 		} else if(is_in(OPERATORS INTERNAL_OPERATORS_TWO, str[i]) && str[i] != '\x19' && (po.base != BASE_ROMAN_NUMERALS || (str[i] != '(' && str[i] != ')' && str[i] != '|'))) {
-			if(str[i] < ' ') error(false, _("Misplaced operator(s) \"%s\" ignored"), internal_operator_replacement(str[i]), NULL);
-			else error(false, _("Misplaced '%c' ignored"), str[i], NULL);
+			error(false, _("Misplaced operator(s) \"%s\" ignored"), internal_operator_replacement(str[i]).c_str(), NULL);
 			str.erase(i, 1);
 		} else {
 			break;
