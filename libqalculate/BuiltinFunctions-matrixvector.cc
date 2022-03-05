@@ -50,7 +50,7 @@ MatrixFunction::MatrixFunction() : MathFunction("matrix", 3) {
 int MatrixFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	size_t rows = (size_t) vargs[0].number().uintValue();
 	size_t columns = (size_t) vargs[1].number().uintValue();
-	if(rows > 1000000L || columns > 1000000L || (long long int) rows * (long long int) columns > 1000000L) return 0;
+	if((rows > 1000 || columns > 1000) && vargs[0].number() * vargs[1].number() > Number(1, 1, 6)) return 0;
 	mstruct.clearMatrix(); mstruct.resizeMatrix(rows, columns, m_zero);
 	if(mstruct.rows() < rows || mstruct.columns() < columns) return 0;
 	size_t r = 1, c = 1;
@@ -732,6 +732,7 @@ int EntrywiseMultiplicationFunction::calculate(MathStructure &mstruct, const Mat
 					if(mstruct[0].size() == m2[0].size()) {
 						for(size_t i = 0; i < mstruct.size(); i++) {
 							for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+								if(CALCULATOR->aborted()) return 0;
 								mstruct[i][i2] *= m2[i][i2];
 							}
 						}
@@ -739,9 +740,11 @@ int EntrywiseMultiplicationFunction::calculate(MathStructure &mstruct, const Mat
 					} else if(mstruct[0].size() == 1) {
 						for(size_t i = 0; i < m2.size(); i++) {
 							for(size_t i2 = 1; i2 < m2[i].size(); i2++) {
+								if(CALCULATOR->aborted()) return 0;
 								mstruct[i].addChild(mstruct[i][0]);
 							}
 							for(size_t i2 = 0; i2 < m2[i].size(); i2++) {
+								if(CALCULATOR->aborted()) return 0;
 								mstruct[i][i2] *= m2[i][i2];
 							}
 						}
@@ -749,6 +752,7 @@ int EntrywiseMultiplicationFunction::calculate(MathStructure &mstruct, const Mat
 					} else if(m2[0].size() == 1) {
 						for(size_t i = 0; i < mstruct.size(); i++) {
 							for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+								if(CALCULATOR->aborted()) return 0;
 								mstruct[i][i2] *= m2[i][0];
 							}
 						}
@@ -758,9 +762,11 @@ int EntrywiseMultiplicationFunction::calculate(MathStructure &mstruct, const Mat
 			} else if(mstruct.columns() == 1) {
 				for(size_t i = 0; i < mstruct.size(); i++) {
 					for(size_t i2 = 1; i2 < m2.size(); i2++) {
+						if(CALCULATOR->aborted()) return 0;
 						mstruct[i].addChild(mstruct[i][0]);
 					}
 					for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+						if(CALCULATOR->aborted()) return 0;
 						mstruct[i][i2] *= m2[i2];
 					}
 				}
@@ -770,16 +776,19 @@ int EntrywiseMultiplicationFunction::calculate(MathStructure &mstruct, const Mat
 			if(m2.isMatrix() && m2.columns() == 1) {
 				mstruct.transform(STRUCT_VECTOR);
 				for(size_t i = 1; i < m2.size(); i++) {
+					if(CALCULATOR->aborted()) return 0;
 					mstruct.addChild(mstruct[0]);
 				}
 				for(size_t i = 0; i < mstruct.size(); i++) {
 					for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+						if(CALCULATOR->aborted()) return 0;
 						mstruct[i][i2] *= m2[i][0];
 					}
 				}
 				return 1;
 			} else if(mstruct.size() == m2.size()) {
 				for(size_t i = 0; i < mstruct.size(); i++) {
+					if(CALCULATOR->aborted()) return 0;
 					mstruct[i] *= m2[i];
 				}
 				return 1;
@@ -1117,7 +1126,7 @@ bool process_matrix_replace(MathStructure &mprocess, const MathStructure &mstruc
 	}
 	bool b = false;
 	for(size_t i = 0; i < mprocess.size(); i++) {
-		if(CALCULATOR->aborted()) return false;
+		if(CALCULATOR->aborted()) break;
 		if(process_matrix_replace(mprocess[i], mstruct, vargs, rindex, cindex)) {
 			mprocess.childUpdated(i + 1);
 			b = true;
@@ -1142,9 +1151,9 @@ int ProcessMatrixFunction::calculate(MathStructure &mstruct, const MathStructure
 	MathStructure mprocess;
 	for(size_t rindex = 0; rindex < mstruct.size(); rindex++) {
 		for(size_t cindex = 0; cindex < mstruct[rindex].size(); cindex++) {
-			if(CALCULATOR->aborted()) return 0;
 			mprocess = vargs[0];
-			if(!process_matrix_replace(mprocess, mstruct, vargs, rindex, cindex)) return false;
+			process_matrix_replace(mprocess, mstruct, vargs, rindex, cindex);
+			if(CALCULATOR->aborted()) return 0;
 			mstruct[rindex][cindex] = mprocess;
 		}
 	}
