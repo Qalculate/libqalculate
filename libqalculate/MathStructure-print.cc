@@ -3355,12 +3355,15 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					}
 					switch(i_sign) {
 						case MULTIPLICATION_SIGN_SPACE: {
-							if(is_unit_multiexp(CHILD(i)) && po.use_unicode_signs
+							if(is_unit_multiexp(CHILD(i)) && ((po.digit_grouping == DIGIT_GROUPING_LOCALE && CALCULATOR->local_digit_group_separator == THIN_SPACE) || (po.use_unicode_signs && (po.digit_grouping == DIGIT_GROUPING_STANDARD || (po.digit_grouping == DIGIT_GROUPING_LOCALE && CALCULATOR->local_digit_group_separator.empty()))
 #ifdef _WIN32
 							&& IsWindows10OrGreater()
 #endif
-							&& (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (NNBSP, po.can_display_unicode_string_arg))) print_str += NNBSP;
-							else print_str += " ";
+							)) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (NNBSP, po.can_display_unicode_string_arg))) {
+								print_str += NNBSP;
+							} else {
+								print_str += " ";
+							}
 							break;
 						}
 						case MULTIPLICATION_SIGN_OPERATOR: {
@@ -4006,6 +4009,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 							b_newstyle = false;
 							break;
 						}
+						if(CHILD(i).isMatrix()) {b_newstyle = false; break;}
 					} else if(cols > 1 || (CHILD(i).isFunction() && CHILD(i).function()->id() == FUNCTION_ID_VERTCAT)) {
 						b_newstyle = false;
 						break;

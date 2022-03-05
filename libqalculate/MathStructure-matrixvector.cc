@@ -151,7 +151,7 @@ MathStructure &MathStructure::getRange(int start, int end, MathStructure &mstruc
 
 void MathStructure::resizeVector(size_t i, const MathStructure &mfill) {
 	if(i > SIZE) {
-		for(size_t index = 0; index < i; index++) {
+		for(size_t index = SIZE; index < i; index++) {
 			if(index % 10002 == 10001 && CALCULATOR->aborted()) return;
 			APPEND(mfill);
 		}

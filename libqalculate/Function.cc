@@ -2410,7 +2410,7 @@ ArgumentSet::~ArgumentSet() {
 }
 bool ArgumentSet::subtest(MathStructure &value, const EvaluationOptions &eo) const {
 	for(size_t i = 0; i < subargs.size(); i++) {
-		if(subargs[i]->test(value, 1, NULL, eo)) {
+		if((i == 0 || subargs[i]->type() != ARGUMENT_TYPE_MATRIX || !subargs[i]->tests() || !value.representsScalar()) && subargs[i]->test(value, 1, NULL, eo)) {
 			return true;
 		}
 	}

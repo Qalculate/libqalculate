@@ -3861,7 +3861,27 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, string *sbuffer) {
 	sbuffer->append((char*) ptr, size * nmemb);
 	return size * nmemb;
 }
+
+#define FER_ERROR(x, y, z, u) \
+	if(n <= 0 && strlen(z) > 0) {\
+		char buffer[10000];\
+		int n1 = 0;\
+		if(strlen(u) > 0) n1 = snprintf(buffer, 10000, _("Failed to download exchange rates (%s) from %s: %s."), u, x, y);\
+		else n1 = snprintf(buffer, 10000, _("Failed to download exchange rates from %s: %s."), x, y);\
+		if(n1 > 0 && n1 < 9000) {\
+			buffer[n1] = ' '; n1++;\
+			int n2 = snprintf(buffer + (sizeof(char) * n1), 10000 - n1, _("Exchange rates were successfully downloaded from %s."), z);\
+			if(n2 > 0 && n2 + n1 < 10000) {\
+				error(true, buffer, NULL);\
+			}\
+		}\
+	} else {\
+		if(strlen(u) > 0) error(true, _("Failed to download exchange rates (%s) from %s: %s."), u, x, y, NULL);\
+		else error(true, _("Failed to download exchange rates from %s: %s."), x, y, NULL);\
+	}
+
 #define FETCH_FAIL_CLEANUP curl_easy_cleanup(curl); curl_global_cleanup(); time(&exchange_rates_check_time[0]); time(&exchange_rates_check_time[1]); time(&exchange_rates_check_time[2]); time(&priv->exchange_rates_check_time2[0]);
+
 bool Calculator::fetchExchangeRates(int timeout, int n) {
 #ifdef HAVE_LIBCURL
 
@@ -3895,15 +3915,15 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 	res = curl_easy_perform(curl);
 
 	if(res != CURLE_OK) {
-		if(strlen(error_buffer)) error(true, _("Failed to download exchange rates from %s: %s."), "ECB", error_buffer, NULL);
-		else error(true, _("Failed to download exchange rates from %s: %s."), "ECB", curl_easy_strerror(res), NULL);
+		if(strlen(error_buffer)) {FER_ERROR("ecb.europa.eu", error_buffer, "", "");}
+		else {FER_ERROR("ecb.europa.eu", curl_easy_strerror(res), "", "");}
 		FETCH_FAIL_CLEANUP;
 		return false;
 	}
-	if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from %s: %s."), "ECB", "Document empty", NULL); FETCH_FAIL_CLEANUP; return false;}
+	if(sbuffer.empty()) {FER_ERROR("ecb.europa.eu", "Document empty", "", ""); FETCH_FAIL_CLEANUP; return false;}
 	ofstream file(getExchangeRatesFileName(1).c_str(), ios::out | ios::trunc | ios::binary);
 	if(!file.is_open()) {
-		error(true, _("Failed to download exchange rates from %s: %s."), "ECB", strerror(errno), NULL);
+		FER_ERROR("ecb.europa.eu", strerror(errno), "", "");
 		FETCH_FAIL_CLEANUP
 		return false;
 	}
@@ -3935,11 +3955,13 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 
 		res = curl_easy_perform(curl);
 
-		if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from %s: %s."), "coinbase.com", error_buffer, NULL); FETCH_FAIL_CLEANUP; return false;}
-		if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from %s: %s."), "coinbase.com", "Document empty", NULL); FETCH_FAIL_CLEANUP; return false;}
+		
+
+		if(res != CURLE_OK) {FER_ERROR("coinbase.com", error_buffer, "ecb.europa.eu", u_btc->title().c_str()); FETCH_FAIL_CLEANUP; return false;}
+		if(sbuffer.empty()) {FER_ERROR("coinbase.com", "Document empty", "ecb.europa.eu", u_btc->title().c_str()); FETCH_FAIL_CLEANUP; return false;}
 		ofstream file3(getExchangeRatesFileName(2).c_str(), ios::out | ios::trunc | ios::binary);
 		if(!file3.is_open()) {
-			error(true, _("Failed to download exchange rates from %s: %s."), "coinbase.com", strerror(errno), NULL);
+			FER_ERROR("coinbase.com", strerror(errno), "ECB", u_btc->title().c_str());
 			FETCH_FAIL_CLEANUP
 			return false;
 		}
@@ -3958,11 +3980,11 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 		curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
 		res = curl_easy_perform(curl);
 
-		if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", error_buffer, NULL); FETCH_FAIL_CLEANUP; return false;}
-		if(sbuffer.empty() || sbuffer.find("Internal Server Error") != string::npos) {error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", "Document empty", NULL); FETCH_FAIL_CLEANUP; return false;}
+		if(res != CURLE_OK) {FER_ERROR("mycurrency.net", error_buffer, "ecb.europa.eu, coinbase.com", ""); FETCH_FAIL_CLEANUP; return false;}
+		if(sbuffer.empty() || sbuffer.find("Internal Server Error") != string::npos) {FER_ERROR("mycurrency.net", "Document empty", "ecb.europa.eu, coinbase.com", ""); FETCH_FAIL_CLEANUP; return false;}
 		ofstream file2(getExchangeRatesFileName(3).c_str(), ios::out | ios::trunc | ios::binary);
 		if(!file2.is_open()) {
-			error(true, _("Failed to download exchange rates from %s: %s."), "mycurrency.net", strerror(errno), NULL);
+			FER_ERROR("mycurrency.net", strerror(errno), "ecb.europa.eu, coinbase.com", "");
 			FETCH_FAIL_CLEANUP
 			return false;
 		}
@@ -3975,18 +3997,18 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 
 		sbuffer = "";
 		curl_easy_setopt(curl, CURLOPT_URL, getExchangeRatesUrl(4).c_str());
-		curl_easy_setopt(curl, CURLOPT_TIMEOUT, (timeout > 4 && n <= 0) ? 4 : timeout);
+		curl_easy_setopt(curl, CURLOPT_TIMEOUT, (timeout > 1 && n <= 0) ? 1 : timeout);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
 		curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
 
 		res = curl_easy_perform(curl);
 
-		if(res != CURLE_OK) {error(true, _("Failed to download exchange rates from %s: %s."), "nbrb.by", error_buffer, NULL); FETCH_FAIL_CLEANUP; return false;}
-		if(sbuffer.empty()) {error(true, _("Failed to download exchange rates from %s: %s."), "nbrb.by", "Document empty", NULL); FETCH_FAIL_CLEANUP; return false;}
+		if(res != CURLE_OK) {FER_ERROR("nbrb.by", error_buffer, n == 4 ? "ecb.europa.eu, coinbase.com" : "ecb.europa.eu, coinbase.com, mycurrency.net", priv->u_byn->title().c_str()); FETCH_FAIL_CLEANUP; return false;}
+		if(sbuffer.empty()) {FER_ERROR("nbrb.by", "Document empty", n == 4 ? "ecb.europa.eu, coinbase.com" : "ecb.europa.eu, coinbase.com, mycurrency.net", priv->u_byn->title().c_str()); FETCH_FAIL_CLEANUP; return false;}
 		ofstream file4(getExchangeRatesFileName(4).c_str(), ios::out | ios::trunc | ios::binary);
 		if(!file4.is_open()) {
-			error(true, _("Failed to download exchange rates from %s: %s."), "nbrb.by", strerror(errno), NULL);
+			FER_ERROR("nbrb.by", strerror(errno), n == 4 ? "ecb.europa.eu, coinbase.com" : "ecb.europa.eu, coinbase.com, mycurrency.net", priv->u_byn->title().c_str());
 			FETCH_FAIL_CLEANUP
 			return false;
 		}

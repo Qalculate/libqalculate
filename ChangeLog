@@ -1,3 +1,44 @@
+2022-03-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Show successfully updated exchange rates sources in error message when full update has partially failed
+	* Show title of currency in update exchange rates error message for single currency sources
+
+2022-03-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Replace *, /, and - with the corresponding operator symbol (determined by message print options) in misplaced operator error messages
+	* Fix error message for a*/b (and similar)
+	* Do not transform original expression (e.g. multiply by base unit if unit is missing), and set correct parsed expression conversion argument, during conversion to unit expression provided in to_struct argument to Calculator::calculate() (primarily relevant for conversion view in qalculate-gtk)
+
+2022-03-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault (when compiled with -D_GLIBCXX_ASSERTIONS) with local digit grouping when separator is empty (e.g. with ignore locale)
+
+2022-02-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use narrow non-break space instead of thin space as digit separator for reasonably short numbers and between quantity and unit (if thin space is digit grouping separator)
+	* Improve handling suggestsQuotes() argument property
+	* Do not use class="symbol" when quotation marks are used (fixes history layout errors in qalculate-gtk)
+	* Do not remove thin space in print_dual (as it's used in qalculate-qt)
+	* Add safeguards against extremely large vectors causing freezes and crashes
+
+2022-02-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Update austronomical unit value
+
+2022-02-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault (when compiled with -D_GLIBCXX_ASSERTIONS) in matrix multiplication when one of the matrices has exacly one row
+
+2022-02-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix readprec (duplicate percent) in mode list, in qalc
+
+2022-02-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Move "approx." to same place as Unicode almost equal symbol with dual result
+	* Automatically remove superfluous default values from function expressions
+	* Return x = -infinity for a^x = 0
+
 2022-02-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Move "approx." to same place as Unicode almost equal symbol with dual result

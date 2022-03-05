@@ -107,9 +107,9 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 		if(po.digit_grouping == DIGIT_GROUPING_LOCALE || i > group_size + 1) {
 			while(i > group_size) {
 				i -= group_size;
-				if(po.digit_grouping != DIGIT_GROUPING_LOCALE || CALCULATOR->local_digit_group_separator.empty()) {
+				if(po.digit_grouping != DIGIT_GROUPING_LOCALE || CALCULATOR->local_digit_group_separator.empty() || (nobreak && CALCULATOR->local_digit_group_separator == THIN_SPACE && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (NNBSP, po.can_display_unicode_string_arg)))) {
 					if(do_thin_space == -1) {
-						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (nobreak ? NNBSP : THIN_SPACE, po.can_display_unicode_string_arg))) do_thin_space = 1;
+						if((po.digit_grouping == DIGIT_GROUPING_LOCALE && !CALCULATOR->local_digit_group_separator.empty()) || (po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (nobreak ? NNBSP : THIN_SPACE, po.can_display_unicode_string_arg)))) do_thin_space = 1;
 						else do_thin_space = 0;
 #ifdef _WIN32
 						// do not use thin space on Windows < 10

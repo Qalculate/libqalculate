@@ -520,7 +520,7 @@ int addLineBreaks(string &str, int cols, bool expr = false, size_t indent = 0, s
 				str.erase(i, 1);
 				if(i < result_start) result_start--;
 				if(i >= str.length()) break;
-			} else if(expr && printops.use_unicode_signs && printops.digit_grouping != DIGIT_GROUPING_NONE && (signed char) str[i] <= 0 && (unsigned char) str[i] >= 0xC0) {
+			} else if(expr && printops.digit_grouping != DIGIT_GROUPING_NONE && (signed char) str[i] <= 0 && (unsigned char) str[i] >= 0xC0) {
 				size_t l = 1;
 				while(i + l < str.length() && (signed char) str[i + l] <= 0 && (unsigned char) str[i + l] < 0xC0) l++;
 				if(str.substr(i, l) == THIN_SPACE || str.substr(i, l) == NNBSP) {
@@ -563,13 +563,6 @@ int addLineBreaks(string &str, int cols, bool expr = false, size_t indent = 0, s
 								else if(str[i - 3] == ' ' && str[i - 4] <= '9' && str[i - 4] >= '0') i -= 3;
 								else if((str[i - 2] == '.' || str[i - 2] == ',') && str[i - 3] <= '9' && str[i - 3] >= '0') i--;
 								else if((str[i - 3] == '.' || str[i - 3] == ',') && str[i - 4] <= '9' && str[i - 4] >= '0') i -= 2;
-								else if(printops.use_unicode_signs && i > 6) {
-									size_t i2 = str.find(THIN_SPACE, i - 6);
-									if(i2 == string::npos) i2 = str.find(NNBSP, i - 6);
-									if(i2 != string::npos && i2 > 0 && i2 < i && str[i2 - 1] <= '9' && str[i2 - 1] >= '0') {
-										i = i2;
-									}
-								}
 							} else if(i > 4 && (str[i] == '.' || str[i] == ',') && str[i - 1] <= '9' && str[i - 1] >= '0' && str[i - 4] == str[i] && str[i - 5] <= '9' && str[i - 5] >= '0') {
 								i -= 3;
 							}
@@ -3017,9 +3010,9 @@ int main(int argc, char *argv[]) {
 					m.format(printops);
 					string regstr = m.print(printops, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
 					if(complex_angle_form) replace_result_cis(regstr);
-					if(printops.use_unicode_signs) {
-						gsub(THIN_SPACE, " ", str);
-						gsub(NNBSP, " ", str);
+					if(printops.digit_grouping != DIGIT_GROUPING_NONE) {
+						gsub(THIN_SPACE, " ", regstr);
+						gsub(NNBSP, " ", regstr);
 					}
 					printf("  %i:\t%s\n", (int) i, regstr.c_str());
 				}
@@ -4510,7 +4503,7 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("units"), "", "", evalops.parse_options.units_enabled);
 				STR_AND_TABS_BOOL(_("unknowns"), "", _("Interpret undefined symbols in expressions as unknown variables."), evalops.parse_options.unknowns_enabled);
 				STR_AND_TABS_BOOL(_("variables"), "var", "", evalops.parse_options.variables_enabled);
-				STR_AND_TABS_BOOL(_("variable units"), "varunit", _("If activated physical constants include units (e.g. c = 299 792 458 m∕s)."), CALCULATOR->variableUnitsEnabled());
+				STR_AND_TABS_BOOL(_("variable units"), "varunit", _("If activated physical constants include units (e.g. c = 299 792 458 m∕s)."), CALCULATOR->variableUnitsEnabled());
 
 				CHECK_IF_SCREEN_FILLED_HEADING_S(_("Generic Display Options"));
 
@@ -5108,10 +5101,6 @@ void ViewThread::run() {
 			MathStructure mp(*mparse);
 			mp.format(po);
 			parsed_text = mp.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
-			if(po.use_unicode_signs) {
-				gsub(THIN_SPACE, " ", parsed_text);
-				gsub(NNBSP, " ", parsed_text);
-			}
 			if(po.base == BASE_CUSTOM) {
 				CALCULATOR->setCustomOutputBase(nr_base);
 			}
@@ -5123,18 +5112,10 @@ void ViewThread::run() {
 
 		print_dual(*mresult, original_expression, mparse ? *mparse : *parsed_mstruct, mstruct_exact, result_text, alt_results, po, evalops, dual_fraction < 0 ? AUTOMATIC_FRACTION_AUTO : (dual_fraction > 0 ? AUTOMATIC_FRACTION_DUAL : AUTOMATIC_FRACTION_OFF), dual_approximation < 0 ? AUTOMATIC_APPROXIMATION_AUTO : (dual_fraction > 0 ? AUTOMATIC_APPROXIMATION_DUAL : AUTOMATIC_APPROXIMATION_OFF), complex_angle_form, &exact_comparison, mparse != NULL, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
 
-		gsub(THIN_SPACE, " ", result_text);
-		gsub(NNBSP, " ", result_text);
-
 		if(!prepend_mstruct.isUndefined() && !CALCULATOR->aborted()) {
 			prepend_mstruct.format(po);
 			po.min_exp = 0;
 			alt_results.insert(alt_results.begin(), prepend_mstruct.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL));
-		}
-
-		for(size_t i = 0; i < alt_results.size(); i++) {
-			gsub(THIN_SPACE, " ", alt_results[i]);
-			gsub(NNBSP, " ", alt_results[i]);
 		}
 
 		b_busy = false;
@@ -5460,7 +5441,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		}
 		if(!exact_comparison && (b_comparison & 1)) exact_comparison = (update_parse || !prev_approximate) && !(*printops.is_approximate) && !mstruct->isApproximate();
 		bool b_matrix = mstruct->isMatrix() && DO_FORMAT && result_text.find('\n') != string::npos;
-		if(!result_only && b_matrix) addLineBreaks(strout, cols, true, 2);
+		if(!result_only && b_matrix && goto_input) addLineBreaks(strout, cols, true, 2);
 		for(size_t i = 0; i < alt_results.size(); i++) {
 			if(i != 0) add_equals(strout, true);
 			else if(!result_only) add_equals(strout, update_parse || !prev_approximate, &i_result_u, &i_result);
@@ -5557,6 +5538,10 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 			}
 			if(!b_matrix && goto_input) addLineBreaks(strout, cols, true, result_only ? 2 : i_result_u, i_result);
 			if(vertical_space && (b_matrix || goto_input)) strout += "\n";
+		}
+		if(b_matrix && goto_input && printops.digit_grouping != DIGIT_GROUPING_NONE) {
+			gsub(THIN_SPACE, " ", strout);
+			gsub(NNBSP, " ", strout);
 		}
 		PUTS_UNICODE(strout.c_str());
 	}
