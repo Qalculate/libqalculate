@@ -2967,7 +2967,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 						break;
 					}
 					default: {
-						if(!in_cit1 && !in_cit2 && brackets == 0 && pars == 0 && (str_e[i] == ';' || (str_e[i] == ',' && po.decimalpoint() != ",") || str_e[i] == ' ' || ((unsigned char) str_e[i] == 0xE2 && i + 2 < str_e.size() && (unsigned char) str_e[i + 1] == 0x80 && (unsigned char) str_e[i + 2] == 0x89))) {
+						if(!in_cit1 && !in_cit2 && brackets == 0 && pars == 0 && (str_e[i] == ';' || (str_e[i] == ',' && po.decimalpoint() != ",") || str_e[i] == ' ' || ((unsigned char) str_e[i] == 0xE2 && i + 2 < str_e.size() && (unsigned char) str_e[i + 1] == 0x80 && ((unsigned char) str_e[i + 2] == 0x89 || (unsigned char) str_e[i + 2] == 0xAF)))) {
 							return true;
 						}
 					}
