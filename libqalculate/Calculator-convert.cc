@@ -633,13 +633,29 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 				int exp = 1;
 				if(n > 0) {
 					MathStructure mtest(mbak);
-					mtest.inverse();
-					mtest.divide_nocopy(new MathStructure(to_unit, NULL));
-					mtest.eval(eo2);
-					if(!mtest.containsType(STRUCT_UNIT)) {
-						mstruct_new = mtest;
-					} else if(!cu || (cu->countUnits() == 1 && (cu->get(1, &exp) && exp == 1))) {
-						mtest = mbak;
+					bool b_pos = false, b_neg = false;
+					if(cu || to_unit->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+						CompositeUnit *cu2 = cu;
+						if(cu2) b_pos = true;
+						else cu2 = (CompositeUnit*) to_unit->baseUnit();
+						int exp2 = 1;
+						for(size_t i = 1; i <= cu2->countUnits(); i++) {
+							cu2->get(i, &exp2);
+							if(exp2 < 0) b_neg = true;
+							else b_pos = true;
+						}
+					}
+					if(b_pos && b_neg) {
+						mtest.inverse();
+						mtest.divide_nocopy(new MathStructure(to_unit, NULL));
+						mtest.eval(eo2);
+						if(!mtest.containsType(STRUCT_UNIT)) {
+							mstruct_new = mtest;
+							n = 0;
+						}
+					}
+					if(n > 0 && (!cu || (cu->countUnits() == 1 && (cu->get(1, &exp) && exp == 1)))) {
+						if(b_pos && b_neg) mtest = mbak;
 						while(exp > -10) {
 							mtest.multiply_nocopy(new MathStructure(to_unit, NULL));
 							mtest.eval(eo2);
