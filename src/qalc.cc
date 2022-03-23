@@ -100,7 +100,7 @@ int sigint_action = 1;
 bool unittest = false;
 int rounding_mode = 0, saved_rounding = 0;
 bool simplified_percentage = true;
-bool defs_edited = false;
+int defs_edited = 0;
 
 static char buffer[100000];
 
@@ -429,8 +429,8 @@ void handle_exit() {
 	if(enable_unicode >= 0) {
 		printops.use_unicode_signs = !enable_unicode;
 	}
-	bool b_savedefs = false;
-	if(save_defs_on_exit && (CALCULATOR->checkSaveFunctionCalled() || defs_edited)) {
+	bool b_savedefs = defs_edited > 0;
+	if(save_defs_on_exit && (CALCULATOR->checkSaveFunctionCalled() || defs_edited < 0)) {
 		for(size_t i = 0; !b_savedefs && i < CALCULATOR->variables.size(); i++) {
 			if(CALCULATOR->variables[i]->hasChanged() && CALCULATOR->variables[i]->category() != CALCULATOR->temporaryCategory() && CALCULATOR->variables[i]->category() != "Temporary") {
 				b_savedefs = true;
@@ -1655,10 +1655,13 @@ int key_save(int, int) {
 			} else {
 				v->setName(name, 1);
 			}
+			if(defs_edited == 0) defs_edited = -1;
 		} else {
 			CALCULATOR->addVariable(new KnownVariable(cat, name, *mstruct, title))->setChanged(true);
+			if(defs_edited <= 0 && cat != CALCULATOR->temporaryCategory()) {
+				defs_edited = 1;
+			}
 		}
-		defs_edited = true;
 	}
 	fputs("> ", stdout);
 #ifdef HAVE_LIBREADLINE
@@ -2792,6 +2795,7 @@ int main(int argc, char *argv[]) {
 				}
 				if(b) {
 					if(v && v->isLocal() && v->isKnown()) {
+						if(defs_edited <= 0 && v->category() != CALCULATOR->temporaryCategory()) defs_edited = 1;
 						if(catset) v->setCategory(cat);
 						if(!title.empty()) v->setTitle(title);
 						((KnownVariable*) v)->set(*mstruct);
@@ -2802,10 +2806,11 @@ int main(int argc, char *argv[]) {
 						} else {
 							v->setName(name, 1);
 						}
+						if(defs_edited <= 0 && v->category() != CALCULATOR->temporaryCategory()) defs_edited = 1;
 					} else {
 						CALCULATOR->addVariable(new KnownVariable(cat, name, *mstruct, title))->setChanged(true);
+						if(defs_edited <= 0 && cat != CALCULATOR->temporaryCategory()) defs_edited = 1;
 					}
-					defs_edited = true;
 				}
 			}
 		//qalc command
@@ -2865,10 +2870,11 @@ int main(int argc, char *argv[]) {
 					} else {
 						v->setName(name, 1);
 					}
+					if(defs_edited <= 0 && v->category() != CALCULATOR->temporaryCategory()) defs_edited = 1;
 				} else {
 					CALCULATOR->addVariable(new KnownVariable("", name, expr))->setChanged(true);
+					defs_edited = 1;
 				}
-				defs_edited = true;
 			}
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "function", _("function"))) {
@@ -2933,10 +2939,11 @@ int main(int argc, char *argv[]) {
 					} else {
 						f->setName(name, 1);
 					}
+					if(defs_edited <= 0 && f->category() != CALCULATOR->temporaryCategory()) defs_edited = 1;
 				} else {
 					CALCULATOR->addFunction(new UserFunction("", name, expr))->setChanged(true);
+					defs_edited = 1;
 				}
-				defs_edited = true;
 			}
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "delete", _("delete"))) {
@@ -2944,13 +2951,13 @@ int main(int argc, char *argv[]) {
 			remove_blank_ends(str);
 			Variable *v = CALCULATOR->getActiveVariable(str);
 			if(v && v->isLocal()) {
+				if(defs_edited <= 0 && v->category() != CALCULATOR->temporaryCategory()) defs_edited = 1;
 				v->destroy();
-				defs_edited = true;
 			} else {
 				MathFunction *f = CALCULATOR->getActiveFunction(str);
 				if(f && f->isLocal()) {
+					if(defs_edited <= 0 && f->category() != CALCULATOR->temporaryCategory()) defs_edited = 1;
 					f->destroy();
-					defs_edited = true;
 				} else {
 					PUTS_UNICODE(_("No user-defined variable or function with the specified name exist."));
 				}
