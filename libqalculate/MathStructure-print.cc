@@ -2005,6 +2005,7 @@ void separate_units(MathStructure &m, MathStructure *parent = NULL, size_t index
 }
 
 void MathStructure::format(const PrintOptions &po) {
+	cout << print(po) << endl;
 	if(!po.preserve_format) {
 		if(po.place_units_separately) {
 			// a*u+b*u=(a+b)*u
@@ -2025,7 +2026,9 @@ void MathStructure::format(const PrintOptions &po) {
 		// 1*a=a
 		remove_multi_one(*this);
 	}
+	cout << print(po) << endl;
 	formatsub(po, NULL, 0, true, this);
+	cout << "C:" << print(po) << endl;
 	if(!po.preserve_format) {
 		postFormatUnits(po);
 		if(po.sort_options.prefix_currencies) {
@@ -2089,9 +2092,9 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 								size_t iden2 = 0;
 								if(CHILD(i2).isDivision()) iden2 = 1;
 								if(CHILD(i2)[iden2] == CHILD(i)[iden]) {
-									if(CHILD(i)[iden].isInverse()) {
-										CHILD(i)[iden].setType(STRUCT_DIVISION);
-										CHILD(i)[iden].insertChild(m_one, 1);
+									if(CHILD(i).isInverse()) {
+										CHILD(i).setType(STRUCT_DIVISION);
+										CHILD(i).insertChild(m_one, 1);
 										iden = 1;
 									}
 									CHILD(i)[0].add(CHILD(i2).isDivision() ? CHILD(i2)[0] : m_one, true);
