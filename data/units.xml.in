@@ -2952,11 +2952,22 @@
         </base>
       </unit>
       <unit type="alias">
+        <_title>Meter of Mercury</_title>
+        <_names>ar:mHg</_names>
+        <hidden>true</hidden>
+        <base>
+          <unit>atm</unit>
+          <relation>1000/760</relation>
+          <exponent>1</exponent>
+        </base>
+        <use_with_prefixes>true</use_with_prefixes>
+      </unit>
+      <unit type="alias">
         <_title>Millimeter of Mercury</_title>
         <_names>ar:mmHg</_names>
         <base>
-          <unit>atm</unit>
-          <relation>1/760</relation>
+          <unit>mHg</unit>
+          <relation>0.001</relation>
           <exponent>1</exponent>
         </base>
       </unit>
