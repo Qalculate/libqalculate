@@ -1114,7 +1114,7 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po, MathStr
 }
 
 bool use_prefix_with_unit(Unit *u, const PrintOptions &po) {
-	if(!po.prefix && !po.use_unit_prefixes) {return u->referenceName() == "g" || u->referenceName() == "a";}
+	if(!po.prefix && !po.use_unit_prefixes) {return u->referenceName() == "g" || u->referenceName() == "a" || u->referenceName() == "mHg";}
 	if(po.prefix) return true;
 	if(u->isCurrency()) return po.use_prefixes_for_currencies;
 	if(po.use_prefixes_for_all_units) return true;
@@ -1406,6 +1406,8 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 							p = CALCULATOR->getExactDecimalPrefix(3);
 						} else if((munit->isUnit() && munit->unit()->referenceName() == "a") || (munit->isPower() && (*munit)[0].unit()->referenceName() == "a")) {
 							p = CALCULATOR->getExactDecimalPrefix(2);
+						} else if((munit->isUnit() && munit->unit()->referenceName() == "mHg") || (munit->isPower() && (*munit)[0].unit()->referenceName() == "mHg")) {
+							p = CALCULATOR->getExactDecimalPrefix(-3);
 						}
 						if(p) {
 							if(munit->isUnit()) munit->setPrefix(p);
@@ -3804,7 +3806,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 		}
 		case STRUCT_UNIT: {
 			const ExpressionName *ename = &o_unit->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, b_plural, po.use_reference_names || (po.preserve_format && o_unit->isCurrency()), po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
-			if(o_prefix) print_str += o_prefix->preferredDisplayName(po.abbreviate_names && ename->abbreviation, po.use_unicode_signs, b_plural, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name;
+			if(o_prefix) print_str += o_prefix->preferredDisplayName(ename->abbreviation, po.use_unicode_signs, b_plural, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name;
 			print_str += ename->name;
 			if(ename->suffix) {
 				size_t i = string::npos;
