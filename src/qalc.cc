@@ -456,7 +456,7 @@ void handle_exit() {
 	}
 	if(b_savedefs) save_defs();
 	if(!view_thread->write(NULL)) view_thread->cancel();
-	if(command_thread->running && (!command_thread->write(0) || !command_thread->write(NULL))) command_thread->cancel();
+	if(command_thread->running && (!command_thread->write((int) 0) || !command_thread->write(NULL))) command_thread->cancel();
 	CALCULATOR->terminateThreads();
 }
 
@@ -6866,7 +6866,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {4, 1, 0};
+	int version_numbers[] = {4, 1, 1};
 
 	if(file) {
 		char line[10000];
