@@ -816,7 +816,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {4, 1, 0};
+	int version_numbers[] = {4, 1, 1};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);
@@ -853,6 +853,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 			}
 			if(!category.empty()) {
 				category += "/";
+			} else if(category_title == "Temporary") {
+				category_title = temporaryCategory();
 			}
 			if(!category_title.empty() && category_title[0] == '!') {\
 				size_t i = category_title.find('!', 1);
@@ -2331,6 +2333,8 @@ string Calculator::saveTemporaryDefinitions() {
 	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);
 	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
 	saveVariables(doc, false, true);
+	saveFunctions(doc, false, true);
+	saveUnits(doc, false, true);
 	int len = 0;
 	xmlChar *s = NULL;
 	xmlDocDumpMemory(doc, &s, &len);
@@ -2364,7 +2368,8 @@ void Calculator::saveVariables(void *xmldoc, bool save_global, bool save_only_te
 		if((save_global || variables[i]->isLocal() || (!save_only_temp && variables[i]->hasChanged())) && (variables[i]->category() != _("Temporary") && variables[i]->category() != "Temporary") == !save_only_temp && (!save_only_temp || !variables[i]->isBuiltin())) {
 			item = &top;
 			if(!variables[i]->category().empty()) {
-				cat = variables[i]->category();
+				if(save_only_temp) cat = "Temporary";
+				else cat = variables[i]->category();
 				size_t cat_i = cat.find("/"); size_t cat_i_prev = 0;
 				bool b = false;
 				while(true) {
@@ -2554,7 +2559,8 @@ void Calculator::saveUnits(void *xmldoc, bool save_global, bool save_only_temp) 
 		if((save_global || u->isLocal() || (!save_only_temp && u->hasChanged())) && (u->category() != _("Temporary") && u->category() != "Temporary") == !save_only_temp && (!save_only_temp || !units[i]->isBuiltin())) {
 			item = &top;
 			if(!u->category().empty()) {
-				cat = u->category();
+				if(save_only_temp) cat = "Temporary";
+				else cat = u->category();
 				size_t cat_i = cat.find("/"); size_t cat_i_prev = 0;
 				bool b = false;
 				while(true) {
@@ -2727,7 +2733,8 @@ void Calculator::saveFunctions(void *xmldoc, bool save_global, bool save_only_te
 		if(functions[i]->subtype() != SUBTYPE_DATA_SET && (save_global || functions[i]->isLocal() || (!save_only_temp && functions[i]->hasChanged())) && (functions[i]->category() != _("Temporary") && functions[i]->category() != "Temporary") == !save_only_temp && (!save_only_temp || !functions[i]->isBuiltin())) {
 			item = &top;
 			if(!functions[i]->category().empty()) {
-				cat = functions[i]->category();
+				if(save_only_temp) cat = "Temporary";
+				else cat = functions[i]->category();
 				size_t cat_i = cat.find("/"); size_t cat_i_prev = 0;
 				bool b = false;
 				while(true) {
@@ -4004,7 +4011,7 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 
 		res = curl_easy_perform(curl);
 
-		if(res != CURLE_OK) {FER_ERROR("nbrb.by", error_buffer, n == 4 ? "ecb.europa.eu, coinbase.com" : "ecb.europa.eu, coinbase.com, mycurrency.net", priv->u_byn->title().c_str()); FETCH_FAIL_CLEANUP; return false;}
+		if(res != CURLE_OK) {if(n > 0) {FER_ERROR("nbrb.by", error_buffer, n == 4 ? "ecb.europa.eu, coinbase.com" : "ecb.europa.eu, coinbase.com, mycurrency.net", priv->u_byn->title().c_str());} FETCH_FAIL_CLEANUP; return false;}
 		if(sbuffer.empty()) {FER_ERROR("nbrb.by", "Document empty", n == 4 ? "ecb.europa.eu, coinbase.com" : "ecb.europa.eu, coinbase.com, mycurrency.net", priv->u_byn->title().c_str()); FETCH_FAIL_CLEANUP; return false;}
 		ofstream file4(getExchangeRatesFileName(4).c_str(), ios::out | ios::trunc | ios::binary);
 		if(!file4.is_open()) {
