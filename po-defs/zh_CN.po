@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-13 08:58+0100\n"
+"POT-Creation-Date: 2022-03-27 11:46+0200\n"
 "PO-Revision-Date: 2021-08-23 09:54+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
@@ -10034,614 +10034,622 @@ msgid "ar:Torr,torr,p:torrs"
 msgstr "ar:Torr,托,torr"
 
 #: ../data/units.xml.in.h:431
+msgid "Meter of Mercury"
+msgstr "米汞柱"
+
+#: ../data/units.xml.in.h:432
+msgid "ar:mHg"
+msgstr "ar:mHg,米汞柱"
+
+#: ../data/units.xml.in.h:433
 msgid "Millimeter of Mercury"
 msgstr "毫米汞柱"
 
-#: ../data/units.xml.in.h:432
+#: ../data/units.xml.in.h:434
 msgid "ar:mmHg"
 msgstr "ar:mmHg,毫米汞柱"
 
-#: ../data/units.xml.in.h:433
+#: ../data/units.xml.in.h:435
 msgid "Inch of Mercury"
 msgstr "英寸汞柱"
 
-#: ../data/units.xml.in.h:434
+#: ../data/units.xml.in.h:436
 msgid "ar:inHg"
 msgstr "ar:inHg,英寸汞柱"
 
-#: ../data/units.xml.in.h:435
+#: ../data/units.xml.in.h:437
 msgid "Millitorr"
 msgstr "毫托"
 
-#: ../data/units.xml.in.h:436
+#: ../data/units.xml.in.h:438
 msgid "Barye"
 msgstr "巴列"
 
-#: ../data/units.xml.in.h:437
+#: ../data/units.xml.in.h:439
 msgid "ar:Ba,barye"
 msgstr "ar:Ba,巴列,barye"
 
-#: ../data/units.xml.in.h:438
+#: ../data/units.xml.in.h:440
 msgid "Dynamic Viscosity"
 msgstr "动态粘度"
 
-#: ../data/units.xml.in.h:439
+#: ../data/units.xml.in.h:441
 msgid "Pascal Second"
 msgstr "帕秒"
 
-#: ../data/units.xml.in.h:440
+#: ../data/units.xml.in.h:442
 msgid "Poise"
 msgstr "泊"
 
-#: ../data/units.xml.in.h:441
+#: ../data/units.xml.in.h:443
 msgid "ar:P,poise,p:poises"
 msgstr "ar:P,泊,poise"
 
-#: ../data/units.xml.in.h:442
+#: ../data/units.xml.in.h:444
 msgid "Centipoise"
 msgstr "厘泊"
 
-#: ../data/units.xml.in.h:443
+#: ../data/units.xml.in.h:445
 msgid "Kinematic Viscosity"
 msgstr "运动粘度"
 
-#: ../data/units.xml.in.h:444
+#: ../data/units.xml.in.h:446
 msgid "Square Meter per Second"
 msgstr "平方米每秒"
 
-#: ../data/units.xml.in.h:445
+#: ../data/units.xml.in.h:447
 msgid "Stokes"
 msgstr "沱"
 
-#: ../data/units.xml.in.h:446
+#: ../data/units.xml.in.h:448
 msgid "ar:St,stokes"
 msgstr "ar:St,沱,stokes"
 
-#: ../data/units.xml.in.h:447
+#: ../data/units.xml.in.h:449
 msgid "Centistokes"
 msgstr "厘沱"
 
-#: ../data/units.xml.in.h:448
+#: ../data/units.xml.in.h:450
 msgid "Surface Tension"
 msgstr "表面张力"
 
-#: ../data/units.xml.in.h:449
+#: ../data/units.xml.in.h:451
 msgid "Newton per Meter"
 msgstr "牛每米"
 
-#: ../data/units.xml.in.h:450
+#: ../data/units.xml.in.h:452
 msgid "Energy"
 msgstr "能量"
 
-#: ../data/units.xml.in.h:451
+#: ../data/units.xml.in.h:453
 msgid "Joule"
 msgstr "焦耳"
 
-#: ../data/units.xml.in.h:452
+#: ../data/units.xml.in.h:454
 msgid "ar:J,joule,p:joules"
 msgstr "ar:J,焦,joule"
 
-#: ../data/units.xml.in.h:453
+#: ../data/units.xml.in.h:455
 msgid "Watt Hour"
 msgstr "瓦小时"
 
-#: ../data/units.xml.in.h:454
+#: ../data/units.xml.in.h:456
 msgid "Kilowatt Hour"
 msgstr "度(千瓦时)"
 
-#: ../data/units.xml.in.h:455
+#: ../data/units.xml.in.h:457
 msgid "Calorie (international table)"
 msgstr "卡路里(国际表)"
 
-#: ../data/units.xml.in.h:456
+#: ../data/units.xml.in.h:458
 msgid "ais:cal_IT,ar:cal,c:calorie,cp:calories"
 msgstr "ais:cal_IT,ar:cal,卡路里,c:calorie"
 
-#: ../data/units.xml.in.h:457
+#: ../data/units.xml.in.h:459
 msgid "Calorie (capital C)"
 msgstr "卡路里(大C)"
 
-#: ../data/units.xml.in.h:458
+#: ../data/units.xml.in.h:460
 msgid "cr:Calorie,cp:Calories"
 msgstr "cr:Calorie,卡"
 
-#: ../data/units.xml.in.h:459
+#: ../data/units.xml.in.h:461
 msgid "Calorie (thermochemical)"
 msgstr "卡路里(热化学)"
 
-#: ../data/units.xml.in.h:460
+#: ../data/units.xml.in.h:462
 msgid "ars:cal_th"
 msgstr "ars:cal_th,热化学卡"
 
-#: ../data/units.xml.in.h:461
+#: ../data/units.xml.in.h:463
 msgid "Gram of TNT"
 msgstr "克TNT当量"
 
-#: ../data/units.xml.in.h:462
+#: ../data/units.xml.in.h:464
 msgid "a-cr:gTNT,gramTNT"
 msgstr "a-cr:gTNT,克TNT当量,gramTNT"
 
-#: ../data/units.xml.in.h:463
+#: ../data/units.xml.in.h:465
 msgid "Ton of TNT"
 msgstr "吨TNT当量"
 
-#: ../data/units.xml.in.h:464
+#: ../data/units.xml.in.h:466
 msgid "a-cr:tTNT,tonTNT"
 msgstr "a-cr:tTNT,吨TNT当量,tonTNT"
 
-#: ../data/units.xml.in.h:465
+#: ../data/units.xml.in.h:467
 msgid "Calorie (15 degrees Celsius)"
 msgstr "卡路里(15摄氏度)"
 
-#: ../data/units.xml.in.h:466
+#: ../data/units.xml.in.h:468
 msgid "ars:cal_fifteen"
 msgstr "ars:cal_fifteen,十五度卡"
 
-#: ../data/units.xml.in.h:467
+#: ../data/units.xml.in.h:469
 msgid "Calorie (mean)"
 msgstr "卡路里(平均)"
 
-#: ../data/units.xml.in.h:468
+#: ../data/units.xml.in.h:470
 msgid "ars:cal_mean"
 msgstr "ars:cal_mean,平均卡"
 
-#: ../data/units.xml.in.h:469
+#: ../data/units.xml.in.h:471
 msgid "British Thermal Unit (IT)"
 msgstr "英制热量单位(IT)"
 
-#: ../data/units.xml.in.h:470
+#: ../data/units.xml.in.h:472
 msgid "ar:Btu"
 msgstr "-"
 
-#: ../data/units.xml.in.h:471
+#: ../data/units.xml.in.h:473
 msgid "Electronvolt"
 msgstr "电子伏特"
 
-#: ../data/units.xml.in.h:472
+#: ../data/units.xml.in.h:474
 msgid "ar:eV,electronvolt,p:electronvolts"
 msgstr "ar:eV,电子伏,electronvolt"
 
-#: ../data/units.xml.in.h:473
+#: ../data/units.xml.in.h:475
 msgid "Erg"
 msgstr "尔格"
 
-#: ../data/units.xml.in.h:474
+#: ../data/units.xml.in.h:476
 msgid "r:erg,p:ergs"
 msgstr "尔格"
 
-#: ../data/units.xml.in.h:475
+#: ../data/units.xml.in.h:477
 msgid "Foe"
 msgstr "Foe"
 
-#: ../data/units.xml.in.h:476
+#: ../data/units.xml.in.h:478
 msgid "r:foe,p:foes"
 msgstr "-"
 
-#: ../data/units.xml.in.h:477
+#: ../data/units.xml.in.h:479
 msgid "Foot-Pound Force"
 msgstr "尺磅力"
 
-#: ../data/units.xml.in.h:478
+#: ../data/units.xml.in.h:480
 msgid "Hartree (Atomic Unit of Energy)"
 msgstr "哈特里(原子能量单位)"
 
-#: ../data/units.xml.in.h:479
+#: ../data/units.xml.in.h:481
 msgid "Rydberg (unit)"
 msgstr "里德伯(单位)"
 
-#: ../data/units.xml.in.h:480
+#: ../data/units.xml.in.h:482
 msgid "Natural Unit of Energy"
 msgstr "自然能量单位"
 
-#: ../data/units.xml.in.h:481
+#: ../data/units.xml.in.h:483
 msgid "Specific Energy"
 msgstr "比能"
 
-#: ../data/units.xml.in.h:482
+#: ../data/units.xml.in.h:484
 msgid "Joule per Kilogram"
 msgstr "焦耳每千克"
 
-#: ../data/units.xml.in.h:483
+#: ../data/units.xml.in.h:485
 msgid "Power"
 msgstr "功率"
 
-#: ../data/units.xml.in.h:484
+#: ../data/units.xml.in.h:486
 msgid "Watt"
 msgstr "瓦特"
 
-#: ../data/units.xml.in.h:485
+#: ../data/units.xml.in.h:487
 msgid "ar:W,watt,p:watts"
 msgstr "ar:W,瓦,watt"
 
-#: ../data/units.xml.in.h:486
+#: ../data/units.xml.in.h:488
 msgid "Horse Power"
 msgstr "马力"
 
-#: ../data/units.xml.in.h:487
+#: ../data/units.xml.in.h:489
 msgid "ar:hp,horsepower,p:horsepowers"
 msgstr "ar:hp,horsepower,匹"
 
-#: ../data/units.xml.in.h:488
+#: ../data/units.xml.in.h:490
 msgid "Pferdest&#xE4;rke"
 msgstr "Pferdest&#xE4;rke"
 
-#: ../data/units.xml.in.h:489
+#: ../data/units.xml.in.h:491
 msgid "ar:PS,u:pferdest&#xE4;rke"
 msgstr "-"
 
-#: ../data/units.xml.in.h:490
+#: ../data/units.xml.in.h:492
 msgid "Decibel Milliwatt"
 msgstr "分贝毫瓦"
 
-#: ../data/units.xml.in.h:491
+#: ../data/units.xml.in.h:493
 msgid "ar:dBm"
 msgstr "ar:dBm,分贝毫瓦"
 
-#: ../data/units.xml.in.h:492
+#: ../data/units.xml.in.h:494
 msgid "Decibel Watt"
 msgstr "分贝瓦"
 
-#: ../data/units.xml.in.h:493
+#: ../data/units.xml.in.h:495
 msgid "ar:dBW"
 msgstr "ar:dBW,分贝瓦"
 
-#: ../data/units.xml.in.h:494
+#: ../data/units.xml.in.h:496
 msgid "Erg per Second"
 msgstr "尔格每秒"
 
-#: ../data/units.xml.in.h:495
+#: ../data/units.xml.in.h:497
 msgid "Entropy"
 msgstr "熵"
 
-#: ../data/units.xml.in.h:496
+#: ../data/units.xml.in.h:498
 msgid "Joule per Kelvin"
 msgstr "焦每开"
 
-#: ../data/units.xml.in.h:497
+#: ../data/units.xml.in.h:499
 msgid "Boltzmann (unit)"
 msgstr "玻耳兹曼(单位)"
 
-#: ../data/units.xml.in.h:498
+#: ../data/units.xml.in.h:500
 msgid "Specific Entropy"
 msgstr "比熵"
 
-#: ../data/units.xml.in.h:499
+#: ../data/units.xml.in.h:501
 msgid "Joule per Kilogram Kelvin"
 msgstr "焦耳每千克开尔文"
 
-#: ../data/units.xml.in.h:500
+#: ../data/units.xml.in.h:502
 msgid "Thermal Conductivity"
 msgstr "导热系数"
 
-#: ../data/units.xml.in.h:501
+#: ../data/units.xml.in.h:503
 msgid "Watt per Meter Kelvin"
 msgstr "瓦每米开尔文"
 
-#: ../data/units.xml.in.h:502
+#: ../data/units.xml.in.h:504
 msgid "Energy Density"
 msgstr "能量密度"
 
-#: ../data/units.xml.in.h:503
+#: ../data/units.xml.in.h:505
 msgid "Joule per Cubic Meter"
 msgstr "焦耳每立方米"
 
-#: ../data/units.xml.in.h:504
+#: ../data/units.xml.in.h:506
 msgid "Molar Energy"
 msgstr "摩尔能"
 
-#: ../data/units.xml.in.h:505
+#: ../data/units.xml.in.h:507
 msgid "Joule per Mole"
 msgstr "焦每摩"
 
-#: ../data/units.xml.in.h:506
+#: ../data/units.xml.in.h:508
 msgid "Molar Entropy"
 msgstr "摩尔熵"
 
-#: ../data/units.xml.in.h:507
+#: ../data/units.xml.in.h:509
 msgid "Joule per Mole Kelvin"
 msgstr "焦耳每摩尔开尔文"
 
-#: ../data/units.xml.in.h:508
+#: ../data/units.xml.in.h:510
 msgid "Action"
 msgstr "作用量"
 
-#: ../data/units.xml.in.h:509
+#: ../data/units.xml.in.h:511
 msgid "Joule Second"
 msgstr "焦耳秒"
 
-#: ../data/units.xml.in.h:510
+#: ../data/units.xml.in.h:512
 msgid "Reduced Planck (Atomic/Natural Unit of Action)"
 msgstr "约化普朗克(原子/自然作用单位)"
 
-#: ../data/units.xml.in.h:511
+#: ../data/units.xml.in.h:513
 msgid "Radioactivity"
 msgstr "放射性"
 
-#: ../data/units.xml.in.h:512
+#: ../data/units.xml.in.h:514
 msgid "Becquerel"
 msgstr "贝可"
 
-#: ../data/units.xml.in.h:513
+#: ../data/units.xml.in.h:515
 msgid "ar:Bq,becquerel,p:becquerels"
 msgstr "贝可"
 
-#: ../data/units.xml.in.h:514
+#: ../data/units.xml.in.h:516
 msgid "Curie"
 msgstr "居里"
 
-#: ../data/units.xml.in.h:515
+#: ../data/units.xml.in.h:517
 msgid "ar:Ci,curie,p:curies"
 msgstr "ar:Ci,居里,curie"
 
-#: ../data/units.xml.in.h:516
+#: ../data/units.xml.in.h:518
 msgid "Rutherford"
 msgstr "卢瑟福"
 
-#: ../data/units.xml.in.h:517
+#: ../data/units.xml.in.h:519
 msgid "ar:Rd,rutherford,p:rutherfords"
 msgstr "ar:Rd,卢瑟福,rutherford"
 
-#: ../data/units.xml.in.h:518
+#: ../data/units.xml.in.h:520
 msgid "Absorbed Dose"
 msgstr "吸收剂量"
 
-#: ../data/units.xml.in.h:519
+#: ../data/units.xml.in.h:521
 msgid "Gray"
 msgstr "戈瑞"
 
-#: ../data/units.xml.in.h:520
+#: ../data/units.xml.in.h:522
 msgid "ar:Gy,gray,p:grays"
 msgstr "ar:Gy,戈,gray"
 
-#: ../data/units.xml.in.h:521
+#: ../data/units.xml.in.h:523
 msgid "Rad"
 msgstr "拉德"
 
-#: ../data/units.xml.in.h:522
+#: ../data/units.xml.in.h:524
 msgid "r:rad_radioactivity"
 msgstr "拉德"
 
-#: ../data/units.xml.in.h:523
+#: ../data/units.xml.in.h:525
 msgid "Dose Equivalent"
 msgstr "剂量当量"
 
-#: ../data/units.xml.in.h:524
+#: ../data/units.xml.in.h:526
 msgid "Sievert"
 msgstr "西韦特"
 
-#: ../data/units.xml.in.h:525
+#: ../data/units.xml.in.h:527
 msgid "ar:Sv,sievert,p:sieverts"
 msgstr "ar:Sv,西韦特,sievert"
 
-#: ../data/units.xml.in.h:526
+#: ../data/units.xml.in.h:528
 msgid "Roentgen Equivalent Man (Rem)"
 msgstr "人体伦琴当量"
 
-#: ../data/units.xml.in.h:527
+#: ../data/units.xml.in.h:529
 msgid "ros:rem_radioactivity,a:rem"
 msgstr "雷姆,ros:rem_radioactivity,a:rem"
 
-#: ../data/units.xml.in.h:528
+#: ../data/units.xml.in.h:530
 msgid "Millirem"
 msgstr "毫雷姆"
 
-#: ../data/units.xml.in.h:529
+#: ../data/units.xml.in.h:531
 msgid "Erg per Gram"
 msgstr "尔格每秒"
 
-#: ../data/units.xml.in.h:530
+#: ../data/units.xml.in.h:532
 msgid "Exposure"
 msgstr "照射量"
 
-#: ../data/units.xml.in.h:531
+#: ../data/units.xml.in.h:533
 msgid "Coulomb per Kilogram"
 msgstr "库仑每千克"
 
-#: ../data/units.xml.in.h:532
+#: ../data/units.xml.in.h:534
 msgid "Roentgen"
 msgstr "伦琴"
 
-#: ../data/units.xml.in.h:533
+#: ../data/units.xml.in.h:535
 msgid "ar:R,roentgen,r&#x00f6;ntgen,p:roentgens,p:r&#x00f6;ntgens"
 msgstr "ar:R,roentgen,r&#x00f6;,伦琴,ntgen"
 
-#: ../data/units.xml.in.h:534
+#: ../data/units.xml.in.h:536
 msgid "Absorbed Dose Rate"
 msgstr "剂量吸收率"
 
-#: ../data/units.xml.in.h:535
+#: ../data/units.xml.in.h:537
 msgid "Gray per Second"
 msgstr "戈每秒"
 
-#: ../data/units.xml.in.h:536
+#: ../data/units.xml.in.h:538
 msgid "Millirem per Hour"
 msgstr "毫雷姆每小时"
 
-#: ../data/units.xml.in.h:537
+#: ../data/units.xml.in.h:539
 msgid "Ratio"
 msgstr "比值"
 
-#: ../data/units.xml.in.h:538
+#: ../data/units.xml.in.h:540
 msgid "Neper"
 msgstr "奈培"
 
-#: ../data/units.xml.in.h:539
+#: ../data/units.xml.in.h:541
 msgid "ar:Np,neper,p:nepers"
 msgstr "ar:Np,奈培,neper"
 
-#: ../data/units.xml.in.h:540
+#: ../data/units.xml.in.h:542
 msgid "Bel"
 msgstr "贝"
 
-#: ../data/units.xml.in.h:541
+#: ../data/units.xml.in.h:543
 msgid "r:bel,p:bels"
 msgstr "贝"
 
-#: ../data/units.xml.in.h:542
+#: ../data/units.xml.in.h:544
 msgid "Decibel"
 msgstr "分贝"
 
-#: ../data/units.xml.in.h:543
+#: ../data/units.xml.in.h:545
 msgid "ar:dB,decibel,p:decibels"
 msgstr "ar:dB,分贝,decibel"
 
-#: ../data/units.xml.in.h:544
+#: ../data/units.xml.in.h:546
 msgid "Information"
 msgstr "信息"
 
-#: ../data/units.xml.in.h:545
+#: ../data/units.xml.in.h:547
 msgid "Bit"
 msgstr "比特"
 
-#: ../data/units.xml.in.h:546
+#: ../data/units.xml.in.h:548
 msgid "r:bit,p:bits"
 msgstr "比特"
 
-#: ../data/units.xml.in.h:547
+#: ../data/units.xml.in.h:549
 msgid "Byte (8-bit)"
 msgstr "字节(8比特)"
 
-#: ../data/units.xml.in.h:548
+#: ../data/units.xml.in.h:550
 msgid "r:byte,a:B,p:bytes,octet,p:octets"
 msgstr "字节,byte,a:B,octet"
 
-#: ../data/units.xml.in.h:549
+#: ../data/units.xml.in.h:551
 msgid "Nibble"
 msgstr "半字节"
 
-#: ../data/units.xml.in.h:550
+#: ../data/units.xml.in.h:552
 msgid "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets"
 msgstr "半字节,nibble,nybble,semioctet"
 
-#: ../data/units.xml.in.h:551
+#: ../data/units.xml.in.h:553
 msgid "Tribble"
 msgstr "一个半字节"
 
-#: ../data/units.xml.in.h:552
+#: ../data/units.xml.in.h:554
 msgid "r:tribble,p:tribbles"
 msgstr "-"
 
-#: ../data/units.xml.in.h:553
+#: ../data/units.xml.in.h:555
 msgid "Word (16-bit)"
 msgstr "字(16比特)"
 
-#: ../data/units.xml.in.h:554
+#: ../data/units.xml.in.h:556
 msgid "r:word,p:words"
 msgstr "字"
 
-#: ../data/units.xml.in.h:555
+#: ../data/units.xml.in.h:557
 msgid "Kilobyte"
 msgstr "千字节"
 
-#: ../data/units.xml.in.h:556
+#: ../data/units.xml.in.h:558
 msgid "Kibibyte"
 msgstr "千二进制字节(KiB)"
 
-#: ../data/units.xml.in.h:557
+#: ../data/units.xml.in.h:559
 msgid "Mebibyte"
 msgstr "兆二进制字节(MiB)"
 
-#: ../data/units.xml.in.h:558
+#: ../data/units.xml.in.h:560
 msgid "Gibibyte"
 msgstr "吉二进制字节(GiB)"
 
-#: ../data/units.xml.in.h:559
+#: ../data/units.xml.in.h:561
 msgid "Megabyte"
 msgstr "兆字节"
 
-#: ../data/units.xml.in.h:560
+#: ../data/units.xml.in.h:562
 msgid "Gigabyte"
 msgstr "千兆字节"
 
-#: ../data/units.xml.in.h:561
+#: ../data/units.xml.in.h:563
 msgid "Terabyte"
 msgstr "万亿字节"
 
-#: ../data/units.xml.in.h:562
+#: ../data/units.xml.in.h:564
 msgid "Kilobit"
 msgstr "千比特"
 
-#: ../data/units.xml.in.h:563
+#: ../data/units.xml.in.h:565
 msgid "Kibibit"
 msgstr "千二进制比特(Kib)"
 
-#: ../data/units.xml.in.h:564
+#: ../data/units.xml.in.h:566
 msgid "Mebibit"
 msgstr "兆二进制比特(Mib)"
 
-#: ../data/units.xml.in.h:565
+#: ../data/units.xml.in.h:567
 msgid "Gibibit"
 msgstr "吉二进制比特(Gib)"
 
-#: ../data/units.xml.in.h:566
+#: ../data/units.xml.in.h:568
 msgid "Megabit"
 msgstr "兆比特"
 
-#: ../data/units.xml.in.h:567
+#: ../data/units.xml.in.h:569
 msgid "Gigabit"
 msgstr "千兆比特"
 
-#: ../data/units.xml.in.h:568
+#: ../data/units.xml.in.h:570
 msgid "Terabit"
 msgstr "万亿比特"
 
-#: ../data/units.xml.in.h:569
+#: ../data/units.xml.in.h:571
 msgid "Typography"
 msgstr "印刷"
 
-#: ../data/units.xml.in.h:570
+#: ../data/units.xml.in.h:572
 msgid "PostScript Point"
 msgstr "PostScript点"
 
-#: ../data/units.xml.in.h:571
+#: ../data/units.xml.in.h:573
 msgid "ar:pt,a:pts,point,p:points"
 msgstr "ar:pt,a:pts,点,point"
 
-#: ../data/units.xml.in.h:572
+#: ../data/units.xml.in.h:574
 msgid "PostScript Pica"
 msgstr "PostScript派卡"
 
-#: ../data/units.xml.in.h:573
+#: ../data/units.xml.in.h:575
 msgid "r:pica,p:picas"
 msgstr "派卡"
 
-#: ../data/units.xml.in.h:574
+#: ../data/units.xml.in.h:576
 msgid "ATA Pica"
 msgstr "ATA派卡"
 
-#: ../data/units.xml.in.h:575
+#: ../data/units.xml.in.h:577
 msgid "r:ata_pica,p:ata_picas"
 msgstr "-"
 
-#: ../data/units.xml.in.h:576
+#: ../data/units.xml.in.h:578
 msgid "ATA Point"
 msgstr "ATA点"
 
-#: ../data/units.xml.in.h:577
+#: ../data/units.xml.in.h:579
 msgid "r:ata_point,a:ata_pt,p:ata_points"
 msgstr "-"
 
-#: ../data/units.xml.in.h:578
+#: ../data/units.xml.in.h:580
 msgid "New Didot Point"
 msgstr "新迪氏点"
 
-#: ../data/units.xml.in.h:579
+#: ../data/units.xml.in.h:581
 msgid "r:new_didot"
 msgstr "-"
 
-#: ../data/units.xml.in.h:580
+#: ../data/units.xml.in.h:582
 msgid "Didot Point"
 msgstr "迪氏点"
 
-#: ../data/units.xml.in.h:581
+#: ../data/units.xml.in.h:583
 msgid "r:didot,a:dd"
 msgstr "迪氏点,didot,a:dd"
 
-#: ../data/units.xml.in.h:582
+#: ../data/units.xml.in.h:584
 msgid "Cicero"
 msgstr "西塞罗"
 
-#: ../data/units.xml.in.h:583
+#: ../data/units.xml.in.h:585
 msgid "r:cicero"
 msgstr "西塞罗"
 

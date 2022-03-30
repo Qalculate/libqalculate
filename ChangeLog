@@ -1,3 +1,27 @@
+2022-03-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not display error at all when BYN fails to update during complete exchange rates update, and mark BYN as hidden (moves it secondary menus)
+	* Save temporary functions and units in Calculator::saveTemporaryDefinitions()
+
+2022-03-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix output of (1+f(x))/n
+	* mHg unit (allows use with prefixes other than milli)
+	* Always display abbreviated unit name (symbol) with abbreviated prefix (when unit only has short name)
+
+2022-03-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Save definitions on exit (only) if definitions has changed regardless of interactive mode status
+	* Set variables and functions created using save() as modified
+
+2022-03-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Restrict use of reciprocal in unit conversion, e.g. invert in "5m/s to s/m" (= 0.2 s/m) but not in "500/lb to g" (= 1.1/g)
+
+2022-03-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not interpret dot as dot operator if preceded and followed by dots
+
 2022-03-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Show successfully updated exchange rates sources in error message when full update has partially failed

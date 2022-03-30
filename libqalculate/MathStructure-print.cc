@@ -2005,7 +2005,6 @@ void separate_units(MathStructure &m, MathStructure *parent = NULL, size_t index
 }
 
 void MathStructure::format(const PrintOptions &po) {
-	cout << print(po) << endl;
 	if(!po.preserve_format) {
 		if(po.place_units_separately) {
 			// a*u+b*u=(a+b)*u
@@ -2026,9 +2025,7 @@ void MathStructure::format(const PrintOptions &po) {
 		// 1*a=a
 		remove_multi_one(*this);
 	}
-	cout << print(po) << endl;
 	formatsub(po, NULL, 0, true, this);
-	cout << "C:" << print(po) << endl;
 	if(!po.preserve_format) {
 		postFormatUnits(po);
 		if(po.sort_options.prefix_currencies) {
