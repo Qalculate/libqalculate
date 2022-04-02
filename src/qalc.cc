@@ -5027,7 +5027,7 @@ int main(int argc, char *argv[]) {
 
 	if(unittest && retval != EXIT_FAILURE) {
 		if(ntests == 0) {
-			printf(RED "\nWARNING: 0 tests were runned (indentation needs to be tab-based)\n\n" RESET);
+			printf(RED "\nWARNING: 0 tests were run (indentation needs to be tab-based)\n\n" RESET);
 		} else if(unittest) {
 			printf(GRN "\n%s - %d tests passed\n\n" RESET, command_file.c_str(), ntests);
 		}
