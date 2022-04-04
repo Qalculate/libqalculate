@@ -388,6 +388,27 @@ void fix_to_struct(MathStructure &m) {
 		if(m.size() == 1) m.setToChild(1);
 	}
 }
+void fix_to_struct2(MathStructure &m) {
+	if(m.isPower() && m[0].isUnit()) {
+		m[0].setPrefix(NULL);
+	} else if(m.isUnit()) {
+		m.setPrefix(NULL);
+	} else {
+		for(size_t i = 0; i < m.size();) {
+			if(m[i].isUnit()) {
+				m[i].setPrefix(NULL);
+				i++;
+			} else if(m[i].isPower() && m[i][0].isUnit()) {
+				m[i][0].setPrefix(NULL);
+				i++;
+			} else {
+				m.delChild(i + 1);
+			}
+		}
+		if(m.size() == 0) m.clear();
+		if(m.size() == 1) m.setToChild(1);
+	}
+}
 MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo, bool always_convert, bool convert_to_mixed_units) {
 	return convert(mstruct, to_unit, eo, always_convert, convert_to_mixed_units, false, NULL);
 }
@@ -401,6 +422,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 		if(transform_orig && (!parsed_struct || !parsed_struct->containsType(STRUCT_UNIT, false, true, true))) {
 			// multiply original value with base units
 			MathStructure munit(convertToOptimalUnit(to_unit, eo, true));
+			munit.unformat();
 			fix_to_struct(munit);
 			if(!munit.isZero()) {
 				MathStructure mstruct_new(mstruct);
@@ -932,28 +954,78 @@ Unit *Calculator::getOptimalUnit(Unit *u, bool allow_only_div, bool convert_to_l
 					has_positive = true;
 				}
 			}
-			for(size_t i = 0; i < units.size(); i++) {
-				if(units[i]->subtype() == SUBTYPE_COMPOSITE_UNIT) {
-					CompositeUnit *cu2 = (CompositeUnit*) units[i];
-					if(cu == cu2 && !cu2->isHidden()) {
-						points = max_points - 1;
-					} else if(!cu2->isHidden() && cu2->isSIUnit() && cu2->countUnits() == cu->countUnits()) {
-						bool b_match = true;
-						for(size_t i2 = 1; i2 <= cu->countUnits(); i2++) {
-							int exp2;
-							if(cu->get(i2, &exp) != cu2->get(i2, &exp2) || exp != exp2) {
-								b_match = false;
+			Unit *best_u = NULL;
+			if(cu->countUnits() > 1) {
+				for(size_t i = 0; i < units.size(); i++) {
+					if(units[i]->subtype() == SUBTYPE_COMPOSITE_UNIT && !units[i]->isHidden() && units[i]->isSIUnit()) {
+						CompositeUnit *cu2 = (CompositeUnit*) units[i];
+						if(cu == cu2 && !cu2->isHidden()) {
+							points = max_points - 1;
+						} else if(!cu2->isHidden() && cu2->isSIUnit() && cu2->countUnits() == cu->countUnits()) {
+							bool b_match = true;
+							for(size_t i2 = 1; i2 <= cu->countUnits(); i2++) {
+								int exp2;
+								if(cu->get(i2, &exp) != cu2->get(i2, &exp2) || exp != exp2) {
+									b_match = false;
+									break;
+								}
+							}
+							if(b_match) {
+								points = max_points - 1;
 								break;
 							}
 						}
-						if(b_match) {
-							points = max_points - 1;
-							break;
+					}
+				}
+				for(size_t i = 0; i < units.size() && !best_u; i++) {
+					if(units[i]->subtype() == SUBTYPE_COMPOSITE_UNIT && !units[i]->isHidden() && units[i]->isSIUnit()) {
+						CompositeUnit *cu2 = (CompositeUnit*) units[i];
+						if(cu2->countUnits() <= cu->countUnits()) {
+							for(size_t i2 = 1; i2 <= cu2->countUnits(); i2++) {
+								if(cu2->get(i2)->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT || cu2->get(i2)->baseExponent() != 1) {
+									MathStructure *cu_mstruct = NULL;
+									unordered_map<Unit*, MathStructure*>::iterator it = priv->composite_unit_base.find(cu2);
+									if(!cu2->hasChanged() && it != priv->composite_unit_base.end()) {
+										cu_mstruct = it->second;
+									} else {
+										if(it != priv->composite_unit_base.end()) it->second->unref();
+										cu_mstruct = new MathStructure(cu2->generateMathStructure());
+										if(cu_mstruct->convertToBaseUnits(true, NULL, true)) {
+											beginTemporaryStopMessages();
+											cu_mstruct->eval();
+											endTemporaryStopMessages();
+										}
+										fix_to_struct2(*cu_mstruct);
+										cu_mstruct->sort();
+										priv->composite_unit_base[cu2] = cu_mstruct;
+									}
+									if(cu_mstruct->size() == cu->countUnits()) {
+										bool b_match = true;
+										for(size_t i3 = 1; i3 <= cu->countUnits(); i3++) {
+											const MathStructure *i3_m = cu_mstruct->getChild(i3);
+											bool b_exp = i3_m->isPower() && i3_m->getChild(1)->isUnit();
+											if((!b_exp && (!i3_m->isUnit() || cu->get(i3, &exp) != i3_m->unit() || exp != 1)) || (b_exp && (cu->get(i3, &exp) != i3_m->getChild(1)->unit() || exp == 1 || !i3_m->getChild(2)->equals(exp)))) {
+												b_match = false;
+												break;
+											}
+										}
+										if(b_match) {
+											points = max_points - 1;
+											best_u = cu2;
+										}
+									}
+									break;
+								}
+							}
 						}
 					}
 				}
+				int exp2 = 1;
+				// Fix units for G
+				if(cu->countUnits() == 3 && cu->get(1, &exp2)->referenceName() == "m" && exp2 == 3 && cu->get(2, &exp2)->referenceName() == "g" && exp2 == -1 && cu->get(3, &exp2)->referenceName() == "s" && exp2 == -2) {
+					points = max_points - 1;
+				}
 			}
-			Unit *best_u = NULL;
 			Unit *bu, *u2;
 			AliasUnit *au;
 			for(size_t i = 0; i < units.size(); i++) {
@@ -1006,33 +1078,42 @@ Unit *Calculator::getOptimalUnit(Unit *u, bool allow_only_div, bool convert_to_l
 								}
 							}
 						} else if(au->firstBaseExponent() != 1 || au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
-							MathStructure cu_mstruct = ((CompositeUnit*) bu)->generateMathStructure();
-							if(b_exp != 1) {
-								if(cu_mstruct.isMultiplication()) {
-									for(size_t i2 = 0; i2 < cu_mstruct.size(); i2++) {
-										if(cu_mstruct[i2].isPower()) cu_mstruct[i2][1].number() *= b_exp;
-										else cu_mstruct[i2].raise(b_exp);
+							MathStructure *cu_mstruct = NULL;
+							unordered_map<Unit*, MathStructure*>::iterator it = priv->composite_unit_base.find(bu);
+							if(!bu->hasChanged() && it != priv->composite_unit_base.end()) {
+								cu_mstruct = it->second;
+							} else {
+								if(it != priv->composite_unit_base.end()) it->second->unref();
+								cu_mstruct = new MathStructure(((CompositeUnit*) bu)->generateMathStructure());
+								if(b_exp != 1) {
+									if(cu_mstruct->isMultiplication()) {
+										for(size_t i2 = 0; i2 < cu_mstruct->size(); i2++) {
+											if((*cu_mstruct)[i2].isPower()) (*cu_mstruct)[i2][1].number() *= b_exp;
+											else (*cu_mstruct)[i2].raise(b_exp);
+										}
+									} else if(cu_mstruct->isPower()) {
+										(*cu_mstruct)[1].number() *= b_exp;
+									} else {
+										cu_mstruct->raise(b_exp);
 									}
-								} else if(cu_mstruct.isPower()) {
-									cu_mstruct[1].number() *= b_exp;
-								} else {
-									cu_mstruct.raise(b_exp);
 								}
+								if(cu_mstruct->convertToBaseUnits(true, NULL, true)) {
+									beginTemporaryStopMessages();
+									cu_mstruct->eval();
+									endTemporaryStopMessages();
+								}
+								fix_to_struct2(*cu_mstruct);
+								priv->composite_unit_base[bu] = cu_mstruct;
 							}
-							if(cu_mstruct.convertToBaseUnits(true, NULL, true)) {
-								beginTemporaryStopMessages();
-								cu_mstruct.eval();
-								endTemporaryStopMessages();
-							}
-							if(cu_mstruct.isMultiplication()) {
-								for(size_t i2 = 1; i2 <= cu_mstruct.countChildren(); i2++) {
+							if(cu_mstruct->isMultiplication()) {
+								for(size_t i2 = 1; i2 <= cu_mstruct->countChildren(); i2++) {
 									bu = NULL;
-									if(cu_mstruct.getChild(i2)->isUnit()) {
-										bu = cu_mstruct.getChild(i2)->unit();
+									if(cu_mstruct->getChild(i2)->isUnit()) {
+										bu = cu_mstruct->getChild(i2)->unit();
 										b_exp = 1;
-									} else if(cu_mstruct.getChild(i2)->isPower() && cu_mstruct.getChild(i2)->base()->isUnit() && cu_mstruct.getChild(i2)->exponent()->isNumber() && cu_mstruct.getChild(i2)->exponent()->number().isInteger()) {
-										bu = cu_mstruct.getChild(i2)->base()->unit();
-										b_exp = cu_mstruct.getChild(i2)->exponent()->number().intValue();
+									} else if(cu_mstruct->getChild(i2)->isPower() && cu_mstruct->getChild(i2)->base()->isUnit() && cu_mstruct->getChild(i2)->exponent()->isNumber() && cu_mstruct->getChild(i2)->exponent()->number().isInteger()) {
+										bu = cu_mstruct->getChild(i2)->base()->unit();
+										b_exp = cu_mstruct->getChild(i2)->exponent()->number().intValue();
 									}
 									if(bu) {
 										bool b = false;
@@ -1221,6 +1302,7 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 					delete cu;
 					mstruct_new = convert(mstruct_new, u, eo, true);
 					if(!u->isRegistered()) delete u;
+					mstruct_new.unformat();
 				}
 				int new_points = 0;
 				bool new_is_si_units = true;
@@ -1306,6 +1388,7 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 				if((u->isSIUnit() || (u->isCurrency() && eo.local_currency_conversion)) && (eo.approximation != APPROXIMATION_EXACT || !mstruct.unit()->hasApproximateRelationTo(u, true))) {
 					MathStructure mstruct_new = convert(mstruct, u, eo, true);
 					if(!u->isRegistered()) delete u;
+					mstruct_new.unformat();
 					return mstruct_new;
 				}
 				if(!u->isRegistered()) delete u;
@@ -1360,6 +1443,7 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 				CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_optimal_unit");
 				bool b = false;
 				child_updated = false;
+				mstruct_new.sort();
 				for(size_t i = 1; i <= mstruct_new.countChildren(); i++) {
 					if(aborted()) {
 						delete cu;
@@ -1384,6 +1468,7 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 					if(u != cu) {
 						if(eo.approximation != APPROXIMATION_EXACT || !cu->hasApproximateRelationTo(u, true)) {
 							mstruct_new = convert(mstruct_new, u, eo, true);
+							mstruct_new.unformat();
 							is_converted = true;
 						}
 						if(!u->isRegistered()) delete u;

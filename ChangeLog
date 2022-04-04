@@ -1,3 +1,10 @@
+2022-04-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve optimal unit selection for unit expression with corresponding composite SI unit (e.g. W/m^2)
+	* Add special case for conversion of units of gravitational constant to optimal unit (do not convert to Gy)
+	* Fix segfault when converting expression without unit in some cases (e.g. "5 to V/1")
+	* Make MathStructure comparison with integer more efficient
+
 2022-03-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Do not display error at all when BYN fails to update during complete exchange rates update, and mark BYN as hidden (moves it secondary menus)
