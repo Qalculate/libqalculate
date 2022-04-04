@@ -72,6 +72,7 @@ class Calculator_p {
 		unordered_map<int, MathFunction*> id_functions;
 		unordered_map<int, Variable*> id_variables;
 		unordered_map<int, Unit*> id_units;
+		unordered_map<Unit*, MathStructure*> composite_unit_base;
 		time_t exchange_rates_time2[1], exchange_rates_check_time2[1];
 		TemperatureCalculationMode temperature_calculation;
 		bool matlab_matrices;
