@@ -1932,7 +1932,7 @@ bool MathStructure::equals(const Number &o, bool allow_interval, bool allow_infi
 }
 bool MathStructure::equals(int i) const {
 	if(m_type != STRUCT_NUMBER) return false;
-	return o_number.equals(Number(i, 1, 0));
+	return o_number.equals((long int) i);
 }
 bool MathStructure::equals(Unit *u) const {
 	if(m_type != STRUCT_UNIT) return false;
