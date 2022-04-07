@@ -31,7 +31,7 @@
 #   and this notice are preserved. This file is offered as-is, without any
 #   warranty.
 
-#serial 3
+#serial 4
 
 AU_ALIAS([AC_PROG_CXX_FOR_BUILD], [AX_PROG_CXX_FOR_BUILD])
 AC_DEFUN([AX_PROG_CXX_FOR_BUILD], [dnl
@@ -49,6 +49,7 @@ pushdef([ac_cv_prog_cxx_cross], ac_cv_build_prog_cxx_cross)dnl
 pushdef([ac_cv_prog_cxx_g], ac_cv_build_prog_cxx_g)dnl
 pushdef([CXX], CXX_FOR_BUILD)dnl
 pushdef([CXXCPP], CXXCPP_FOR_BUILD)dnl
+pushdef([GXX], GXX_FOR_BUILD)dnl
 pushdef([CXXFLAGS], CXXFLAGS_FOR_BUILD)dnl
 pushdef([CPPFLAGS], CPPFLAGS_FOR_BUILD)dnl
 pushdef([CXXCPPFLAGS], CXXCPPFLAGS_FOR_BUILD)dnl
@@ -62,26 +63,25 @@ pushdef([ac_cv_host_alias], ac_cv_build_alias)dnl
 pushdef([ac_cv_host_cpu], ac_cv_build_cpu)dnl
 pushdef([ac_cv_host_vendor], ac_cv_build_vendor)dnl
 pushdef([ac_cv_host_os], ac_cv_build_os)dnl
-pushdef([ac_cxxcpp], ac_build_cxxcpp)dnl
-pushdef([ac_compile], ac_build_compile)dnl
-pushdef([ac_link], ac_build_link)dnl
+pushdef([ac_tool_prefix], ac_build_tool_prefix)dnl
+pushdef([am_cv_CXX_dependencies_compiler_type], am_cv_build_CXX_dependencies_compiler_type)dnl
+pushdef([cross_compiling], cross_compiling_build)dnl
 
-save_cross_compiling=$cross_compiling
-save_ac_tool_prefix=$ac_tool_prefix
-cross_compiling=no
-ac_tool_prefix=
+cross_compiling_build=no
 
+ac_build_tool_prefix=
+AS_IF([test -n "$build"],      [ac_build_tool_prefix="$build-"],
+      [test -n "$build_alias"],[ac_build_tool_prefix="$build_alias-"])
+
+AC_LANG_PUSH([C++])
 AC_PROG_CXX
 AC_PROG_CXXCPP
 
-ac_tool_prefix=$save_ac_tool_prefix
-cross_compiling=$save_cross_compiling
-
 dnl Restore the old definitions
 dnl
-popdef([ac_link])dnl
-popdef([ac_compile])dnl
-popdef([ac_cxxcpp])dnl
+popdef([cross_compiling])dnl
+popdef([am_cv_CXX_dependencies_compiler_type])dnl
+popdef([ac_tool_prefix])dnl
 popdef([ac_cv_host_os])dnl
 popdef([ac_cv_host_vendor])dnl
 popdef([ac_cv_host_cpu])dnl
@@ -102,6 +102,10 @@ popdef([ac_cv_prog_cxx_cross])dnl
 popdef([ac_cv_prog_cxx_works])dnl
 popdef([ac_cv_prog_gxx])dnl
 popdef([ac_cv_prog_CXXCPP])dnl
+
+dnl restore global variables (dependant on the current
+dnl language after popping):
+AC_LANG_POP([C++])
 
 dnl Finally, set Makefile variables
 dnl
