@@ -1755,8 +1755,8 @@
       <builtin_function name="randpoisson">
         <_title>Poisson Distributed Random Number</_title>
         <_names>r:randpoisson</_names>
-        <argument index="1">
-          <_title>Mean</_title>
+	<argument index="1">
+          <_title>Rate (λ)</_title>
         </argument>
         <argument index="2">
           <_title>Number of values</_title>
