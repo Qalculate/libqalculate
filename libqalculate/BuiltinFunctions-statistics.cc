@@ -381,7 +381,6 @@ bool RandnFunction::representsNumber(const MathStructure&, bool) const {return t
 
 RandPoissonFunction::RandPoissonFunction() : MathFunction("randpoisson", 1, 2) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
-	setDefaultValue(1, "0");
 	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE);
 	Number nr(1, 1, 7);
 	iarg->setMax(&nr);
@@ -389,9 +388,10 @@ RandPoissonFunction::RandPoissonFunction() : MathFunction("randpoisson", 1, 2) {
 	setDefaultValue(2, "1");
 }
 int RandPoissonFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	size_t n = (size_t) vargs[2].number().uintValue();
+	size_t n = (size_t) vargs[1].number().uintValue();
 	if(n > 1) {mstruct.clearVector(); mstruct.resizeVector(n, m_zero);}
-	Number nr_L(vargs[1].number());
+	Number nr_L(vargs[0].number());
+	nr_L.negate();
 	nr_L.exp();
 	Number nr_k, nr_p, nr_u;
 	for(size_t i = 0; i < n; i++) {
