@@ -281,25 +281,35 @@ int AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 	return -1;
 }
-GcdFunction::GcdFunction() : MathFunction("gcd", 2) {
+GcdFunction::GcdFunction() : MathFunction("gcd", 1, -1) {
 	RATIONAL_POLYNOMIAL_ARGUMENT_HV(1)
 	RATIONAL_POLYNOMIAL_ARGUMENT_HV(2)
 }
 int GcdFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(MathStructure::gcd(vargs[0], vargs[1], mstruct, eo)) {
-		return 1;
+	mstruct = vargs[0];
+	MathStructure m1;
+	for(size_t i = 1; i < vargs.size(); i++) {
+		m1 = mstruct;
+		if(!MathStructure::gcd(m1, vargs[i], mstruct, eo)) {
+			return 0;
+		}
 	}
-	return 0;
+	return 1;
 }
-LcmFunction::LcmFunction() : MathFunction("lcm", 2) {
+LcmFunction::LcmFunction() : MathFunction("lcm", 1, -1) {
 	RATIONAL_POLYNOMIAL_ARGUMENT_HV(1)
 	RATIONAL_POLYNOMIAL_ARGUMENT_HV(2)
 }
 int LcmFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(MathStructure::lcm(vargs[0], vargs[1], mstruct, eo)) {
-		return 1;
+	mstruct = vargs[0];
+	MathStructure m1;
+	for(size_t i = 1; i < vargs.size(); i++) {
+		m1 = mstruct;
+		if(!MathStructure::lcm(m1, vargs[i], mstruct, eo)) {
+			return 0;
+		}
 	}
-	return 0;
+	return 1;
 }
 bool divisors_combine(MathStructure &m, vector<Number> factors, size_t skip, size_t pos = 0, Number nr = nr_one) {
 	for(; pos < factors.size() - skip; pos++) {
