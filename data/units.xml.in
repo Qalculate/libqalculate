@@ -3983,4 +3983,78 @@
       </base>
     </unit>
   </category>
+
+  <category>
+    <_title>Flow</_title>
+    <unit type="composite">
+      <_title>Cubic feet per minute</_title>
+      <names>r:CF_p_min</names>
+      <part>
+        <unit>ft</unit>
+        <prefix>0</prefix>
+        <exponent>3</exponent>
+      </part>
+      <part>
+        <unit>min</unit>
+        <prefix>0</prefix>
+        <exponent>-1</exponent>
+      </part>
+    </unit>
+    <unit type="alias">
+      <_title>Cubic feet per minute</_title>
+      <_names>ar:CFM,cfm</_names>
+      <base>
+        <unit>CF_p_min</unit>
+        <relation>1</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="composite">
+      <_title>Gallon per minute</_title>
+      <names>r:Ga_p_min</names>
+      <part>
+        <unit>gal</unit>
+        <prefix>0</prefix>
+        <exponent>1</exponent>
+      </part>
+      <part>
+        <unit>min</unit>
+        <prefix>0</prefix>
+        <exponent>-1</exponent>
+      </part>
+    </unit>
+    <unit type="alias">
+      <_title>Gallon per minute</_title>
+      <_names>ar:GPM,gpm</_names>
+      <base>
+        <unit>Ga_p_min</unit>
+        <relation>1</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="composite">
+      <_title>Gallon per hours</_title>
+      <names>r:Ga_p_h</names>
+      <part>
+        <unit>gal</unit>
+        <prefix>0</prefix>
+        <exponent>1</exponent>
+      </part>
+      <part>
+        <unit>h</unit>
+        <prefix>0</prefix>
+        <exponent>-1</exponent>
+      </part>
+    </unit>
+    <unit type="alias">
+      <_title>Gallon per hours</_title>
+      <_names>ar:GPH,gph</_names>
+      <base>
+        <unit>Ga_p_h</unit>
+        <relation>1</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+  </category>
+
 </QALCULATE>
