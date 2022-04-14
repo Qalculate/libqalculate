@@ -1,3 +1,26 @@
+2022-04-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve plot precision for value between real and non-real value
+	* Fix plotting of derivatives and integrals
+
+2022-04-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Update and add (m^3/s, cumecs, L/s, acre*ft/day, Sverdrup) flow units (volumetric flow rate)
+	* Do not ignore deactivated allow complex for fractional exponents with negative bases
+
+2022-04-12 ioio85 <ioio85@gmail.com>
+
+	* Add cfm, gpm and gph units
+
+2022-04-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Accept more than two arguments in gcd() and lcm()
+	* Interpret a single vector argument as a list of arguments if function requires more than one argument
+
+2022-04-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix randpoisson()
+
 2022-04-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Improve optimal unit selection for unit expression with corresponding composite SI unit (e.g. W/m^2)

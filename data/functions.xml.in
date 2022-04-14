@@ -690,20 +690,26 @@
       <_title>Greatest Common Divisor</_title>
       <_names>rc:gcd,c:GCD</_names>
       <argument index="1">
-        <_title>1st value</_title>
+        <_title>Value 1</_title>
       </argument>
       <argument index="2">
-        <_title>2nd value</_title>
+        <_title>Value 2</_title>
+      </argument>
+      <argument index="3">
+        <_title>Value 3</_title>
       </argument>
     </builtin_function>
     <builtin_function name="lcm">
       <_title>Least Common Multiple</_title>
       <_names>r:lcm</_names>
       <argument index="1">
-        <_title>1st value</_title>
+        <_title>Value 1</_title>
       </argument>
       <argument index="2">
-        <_title>2nd value</_title>
+        <_title>Value 2</_title>
+      </argument>
+      <argument index="3">
+        <_title>Value 3</_title>
       </argument>
     </builtin_function>
     <builtin_function name="divisors">

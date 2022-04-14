@@ -3203,7 +3203,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			} else {
 				Number nr_floor(mstruct.number());
 				nr_floor.floor();
-				if(mstruct.number().denominatorIsTwo()) {
+				if(eo.allow_complex && mstruct.number().denominatorIsTwo()) {
 					// (-1)^(n/2) equals i if floor(n/2) is even and -i if floor(n/2) is odd
 					if(nr_floor.isEven()) set(nr_one_i, true);
 					else set(nr_minus_i, true);
@@ -3212,7 +3212,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 				} else {
 					mstruct.number() -= nr_floor;
 					mstruct.numberUpdated();
-					if(mstruct.number().denominator() == 3) {
+					if(eo.allow_complex && mstruct.number().denominator() == 3) {
 						// (-1)^(n/3) equals (1+sqrt(3)*i)/2; negate if floor(n/3) is odd
 						set(3, 1, 0, true);
 						calculateRaise(nr_half, eo);
@@ -3223,7 +3223,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						else calculateAdd(nr_minus_half, eo);
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
-					} else if(mstruct.number().denominator() == 4) {
+					} else if(eo.allow_complex && mstruct.number().denominator() == 4) {
 						// (-1)^(n/4) equals (1+i)*1/sqrt(2) if floor(n/4) is even and (-1-i)*1/sqrt(2) if floor(n/4) is odd
 						if(nr_floor.isEven() == mstruct.number().numeratorIsOne()) set(1, 1, 0, true);
 						else set(-1, 1, 0, true);
@@ -6846,6 +6846,25 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 		}
 
 		// test if the number of arguments (children) is appropriate for the function
+		if(SIZE == 1 && o_function->minargs() > 1 && !CHILD(0).representsScalar()) {
+			if(!CHILD(0).isVector()) {
+				MathStructure mtest(CHILD(0));
+				CALCULATOR->beginTemporaryStopMessages();
+				mtest.eval(eo);
+				if(mtest.isVector() && mtest.size() >= (size_t) o_function->minargs() && (o_function->maxargs() < 0 || mtest.size() <= (size_t) o_function->maxargs())) {
+					mtest.setType(STRUCT_FUNCTION);
+					mtest.setFunction(o_function);
+					set_nocopy(mtest, true);
+					CALCULATOR->endTemporaryStopMessages(true);
+				} else {
+					CALCULATOR->endTemporaryStopMessages(false);
+				}
+			} else if(CHILD(0).size() >= (size_t) o_function->minargs() && (o_function->maxargs() < 0 || CHILD(0).size() <= (size_t) o_function->maxargs())) {
+				CHILD(0).setType(STRUCT_FUNCTION);
+				CHILD(0).setFunction(o_function);
+				SET_CHILD_MAP(0)
+			}
+		}
 		if(!o_function->testArgumentCount(SIZE)) {
 			return false;
 		}
