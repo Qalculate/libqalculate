@@ -104,7 +104,7 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	parse_and_precalculate_plot(expression, mparse, po, eo);
 	beginTemporaryStopMessages();
 	MathStructure y_vector;
-	generate_plotvector(mparse, x_mstruct, min, max, steps, *x_vector, y_vector, eo, false);
+	generate_plotvector(mparse, x_mstruct, min, max, steps, *x_vector, y_vector, eo);
 	endTemporaryStopMessages();
 	endTemporaryStopIntervalArithmetic();
 	if(msecs > 0) {

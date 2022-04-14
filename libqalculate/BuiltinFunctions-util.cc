@@ -1080,7 +1080,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						int steps = vargs[3].number().intValue(&overflow);
 						CALCULATOR->beginTemporaryStopMessages();
 						CALCULATOR->beginTemporaryStopIntervalArithmetic();
-						if(steps <= 1000000 && !overflow) generate_plotvector(mstruct[i], vargs[4], vargs[1], vargs[2], steps, x_vector, y_vector, eo2, false);
+						if(steps <= 1000000 && !overflow) generate_plotvector(mstruct[i], vargs[4], vargs[1], vargs[2], steps, x_vector, y_vector, eo2);
 						CALCULATOR->endTemporaryStopIntervalArithmetic();
 						CALCULATOR->endTemporaryStopMessages();
 						if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
@@ -1126,7 +1126,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			int steps = vargs[3].number().intValue(&overflow);
 			CALCULATOR->beginTemporaryStopMessages();
 			CALCULATOR->beginTemporaryStopIntervalArithmetic();
-			if(steps <= 1000000 && !overflow) generate_plotvector(mstruct, vargs[4], vargs[1], vargs[2], steps, x_vector, y_vector, eo2, false);
+			if(steps <= 1000000 && !overflow) generate_plotvector(mstruct, vargs[4], vargs[1], vargs[2], steps, x_vector, y_vector, eo2);
 			CALCULATOR->endTemporaryStopIntervalArithmetic();
 			CALCULATOR->endTemporaryStopMessages();
 			if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
