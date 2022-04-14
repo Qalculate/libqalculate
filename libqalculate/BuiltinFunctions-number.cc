@@ -281,9 +281,10 @@ int AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 	return -1;
 }
-GcdFunction::GcdFunction() : MathFunction("gcd", 1, -1) {
+GcdFunction::GcdFunction() : MathFunction("gcd", 2, -1) {
 	RATIONAL_POLYNOMIAL_ARGUMENT_HV(1)
 	RATIONAL_POLYNOMIAL_ARGUMENT_HV(2)
+	RATIONAL_POLYNOMIAL_ARGUMENT_HV(3)
 }
 int GcdFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
@@ -296,9 +297,10 @@ int GcdFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 	return 1;
 }
-LcmFunction::LcmFunction() : MathFunction("lcm", 1, -1) {
+LcmFunction::LcmFunction() : MathFunction("lcm", 2, -1) {
 	RATIONAL_POLYNOMIAL_ARGUMENT_HV(1)
 	RATIONAL_POLYNOMIAL_ARGUMENT_HV(2)
+	RATIONAL_POLYNOMIAL_ARGUMENT_HV(3)
 }
 int LcmFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
