@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-27 11:49+0200\n"
+"POT-Creation-Date: 2022-04-14 18:31+0200\n"
 "PO-Revision-Date: 2021-05-15 10:13+0100\n"
 "Last-Translator: Alexander Krause <akay.devel@protonmail.com>\n"
 "Language-Team: German\n"
@@ -208,10 +208,10 @@ msgstr "und"
 
 #: ../src/defs2doc.cc:624 ../src/defs2doc.cc:627 ../src/defs2doc.cc:628
 #: ../src/defs2doc.cc:629 ../src/defs2doc.cc:630
-#: ../libqalculate/Calculator-definitions.cc:2326
-#: ../libqalculate/Calculator-definitions.cc:2366
-#: ../libqalculate/Calculator-definitions.cc:2556
-#: ../libqalculate/Calculator-definitions.cc:2729
+#: ../libqalculate/Calculator-definitions.cc:2328
+#: ../libqalculate/Calculator-definitions.cc:2368
+#: ../libqalculate/Calculator-definitions.cc:2559
+#: ../libqalculate/Calculator-definitions.cc:2733
 msgid "Temporary"
 msgstr "Vorübergehend"
 
@@ -331,7 +331,7 @@ msgstr "Nicht erkannte Annahme."
 msgid "or"
 msgstr "oder"
 
-#: ../src/qalc.cc:649 ../libqalculate/Calculator-definitions.cc:4047
+#: ../src/qalc.cc:649 ../libqalculate/Calculator-definitions.cc:4052
 #, c-format
 msgid "It has been %s day since the exchange rates last were updated."
 msgid_plural "It has been %s days since the exchange rates last were updated."
@@ -1723,7 +1723,7 @@ msgstr "AUSDRUCK"
 
 #. qalc command
 #: ../src/qalc.cc:3986 ../src/qalc.cc:4048 ../src/qalc.cc:4794
-#: ../src/qalc.cc:4967 ../libqalculate/Calculator-definitions.cc:3030
+#: ../src/qalc.cc:4967 ../libqalculate/Calculator-definitions.cc:3035
 #: ../libqalculate/DataSet.cc:372 ../libqalculate/DataSet.cc:399
 #: ../libqalculate/DataSet.cc:1068
 msgid "info"
@@ -2989,24 +2989,24 @@ msgstr "Grenzwert kann nicht gefunden werden."
 msgid "Unable to integrate the expression."
 msgstr "Kann den Ausdruck nicht integrieren."
 
-#: ../libqalculate/BuiltinFunctions-number.cc:971
+#: ../libqalculate/BuiltinFunctions-number.cc:983
 msgid "phoneword"
 msgstr "Buchstabenwahl"
 
-#: ../libqalculate/BuiltinFunctions-number.cc:1057
-#: ../libqalculate/BuiltinFunctions-number.cc:1132
+#: ../libqalculate/BuiltinFunctions-number.cc:1069
+#: ../libqalculate/BuiltinFunctions-number.cc:1144
 #: ../libqalculate/Number.cc:487 ../libqalculate/Number.cc:1004
 #, c-format
 msgid "Character '%s' was ignored in the number \"%s\" with base %s."
 msgstr "Zeichen '%s' wurde in der Zahl \"%s\" mit Basis %s ignoriert."
 
-#: ../libqalculate/BuiltinFunctions-number.cc:1909
+#: ../libqalculate/BuiltinFunctions-number.cc:1921
 #: ../libqalculate/Number.cc:2075 ../libqalculate/Number.cc:2200
 msgid "Floating point overflow"
 msgstr "Gleitkomma-Überlauf."
 
 #. test calculated floating point value and show mpfr errors (show as errors if error_level > 1, show as warnings if error_level = 1, do not generate message if error_level is zero)
-#: ../libqalculate/BuiltinFunctions-number.cc:1910
+#: ../libqalculate/BuiltinFunctions-number.cc:1922
 #: ../libqalculate/Number.cc:2074 ../libqalculate/Number.cc:2199
 msgid "Floating point underflow"
 msgstr "Gleitkomma-Unterlauf"
@@ -3088,7 +3088,7 @@ msgstr "Vektor"
 
 #: ../libqalculate/BuiltinFunctions-util.cc:1075
 #: ../libqalculate/BuiltinFunctions-util.cc:1121
-#: ../libqalculate/Calculator-plot.cc:144
+#: ../libqalculate/Calculator-plot.cc:145
 msgid "Unable to generate plot data with current min, max and step size."
 msgstr ""
 "Es können keine Plotdaten mit aktueller Min-, Max- und Schrittweite erzeugt "
@@ -3101,7 +3101,7 @@ msgstr "Die Abtastrate muss eine positive ganze Zahl sein."
 
 #: ../libqalculate/BuiltinFunctions-util.cc:1086
 #: ../libqalculate/BuiltinFunctions-util.cc:1132
-#: ../libqalculate/Calculator-plot.cc:114
+#: ../libqalculate/Calculator-plot.cc:115
 msgid "Unable to generate plot data with current min, max and sampling rate."
 msgstr ""
 "Es können keine Plotdaten mit aktuellem Min, Max und Abtastrate erzeugt "
@@ -3185,15 +3185,15 @@ msgstr "Die Einheit Grad fehlt. Erstelle eine für diese Sitzung."
 
 #: ../libqalculate/Calculator.cc:1696 ../libqalculate/Calculator.cc:1697
 #: ../libqalculate/Calculator.cc:1701 ../libqalculate/Calculator.cc:1706
-#: ../libqalculate/Calculator-definitions.cc:3440
 #: ../libqalculate/Calculator-definitions.cc:3445
-#: ../libqalculate/Calculator-definitions.cc:3524
-#: ../libqalculate/Calculator-definitions.cc:3715
-#: ../libqalculate/Calculator-definitions.cc:3777
+#: ../libqalculate/Calculator-definitions.cc:3450
+#: ../libqalculate/Calculator-definitions.cc:3529
+#: ../libqalculate/Calculator-definitions.cc:3720
+#: ../libqalculate/Calculator-definitions.cc:3782
 msgid "Currency"
 msgstr "Währung"
 
-#: ../libqalculate/Calculator.cc:2530
+#: ../libqalculate/Calculator.cc:2531
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name of \"%s\", or "
@@ -3202,7 +3202,7 @@ msgstr ""
 "\"%s\" ist in Namen nicht mehr erlaubt. Bitte ändern Sie den Namen von \"%s"
 "\", oder die Variable wird verloren gehen."
 
-#: ../libqalculate/Calculator.cc:2548
+#: ../libqalculate/Calculator.cc:2549
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
@@ -3211,7 +3211,7 @@ msgstr ""
 "\"%s\" ist in Namen nicht mehr erlaubt. Bitte ändern Sie den Namen \"%s\", "
 "oder die Funktion wird verloren gehen."
 
-#: ../libqalculate/Calculator.cc:2565
+#: ../libqalculate/Calculator.cc:2566
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
@@ -3220,7 +3220,7 @@ msgstr ""
 "\"%s\" ist in Namen nicht mehr erlaubt. Bitte ändern Sie den Namen \"%s\", "
 "oder die Einheit wird verloren gehen."
 
-#: ../libqalculate/Calculator.cc:2772
+#: ../libqalculate/Calculator.cc:2773
 #, c-format
 msgid "Name \"%s\" is in use. Replacing with \"%s\"."
 msgstr "Name \"%s\" ist in Gebrauch. Ersetzen mit \"%s\"."
@@ -3230,37 +3230,37 @@ msgstr "Name \"%s\" ist in Gebrauch. Ersetzen mit \"%s\"."
 msgid "File not identified as Qalculate! definitions file: %s."
 msgstr "Datei nicht als Qalculate!-Definitionsdatei identifiziert: %s."
 
-#: ../libqalculate/Calculator-definitions.cc:3013
+#: ../libqalculate/Calculator-definitions.cc:3018
 #: ../libqalculate/DataSet.cc:370
 msgid "Object"
 msgstr "Objekt"
 
-#: ../libqalculate/Calculator-definitions.cc:3022
+#: ../libqalculate/Calculator-definitions.cc:3027
 #: ../libqalculate/DataSet.cc:371
 msgid "Property"
 msgstr "Eigenschaft"
 
-#: ../libqalculate/Calculator-definitions.cc:3321
+#: ../libqalculate/Calculator-definitions.cc:3326
 msgid "column"
 msgstr "spalte"
 
-#: ../libqalculate/Calculator-definitions.cc:3324
+#: ../libqalculate/Calculator-definitions.cc:3329
 msgid "Column "
 msgstr "Spalte"
 
-#: ../libqalculate/Calculator-definitions.cc:3871
-#: ../libqalculate/Calculator-definitions.cc:3881
+#: ../libqalculate/Calculator-definitions.cc:3876
+#: ../libqalculate/Calculator-definitions.cc:3886
 #, c-format
 msgid "Failed to download exchange rates (%s) from %s: %s."
 msgstr "Download der Wechselkurse (%s) von %s fehlgeschlagen: %s."
 
-#: ../libqalculate/Calculator-definitions.cc:3872
-#: ../libqalculate/Calculator-definitions.cc:3882
+#: ../libqalculate/Calculator-definitions.cc:3877
+#: ../libqalculate/Calculator-definitions.cc:3887
 #, c-format
 msgid "Failed to download exchange rates from %s: %s."
 msgstr "Download der Wechselkurse von %s fehlgeschlagen: %s."
 
-#: ../libqalculate/Calculator-definitions.cc:3875
+#: ../libqalculate/Calculator-definitions.cc:3880
 #, c-format
 msgid "Exchange rates were successfully downloaded from %s."
 msgstr ""
@@ -3350,14 +3350,14 @@ msgstr ""
 msgid "%s interpreted as 10^%s (1%s)"
 msgstr "%s interpretiert als 10^%s (1%s)"
 
-#: ../libqalculate/Calculator-plot.cc:110
-#: ../libqalculate/Calculator-plot.cc:140
-#: ../libqalculate/Calculator-plot.cc:170
-#: ../libqalculate/Calculator-plot.cc:653
+#: ../libqalculate/Calculator-plot.cc:111
+#: ../libqalculate/Calculator-plot.cc:141
+#: ../libqalculate/Calculator-plot.cc:171
+#: ../libqalculate/Calculator-plot.cc:654
 msgid "It took too long to generate the plot data."
 msgstr "Die Generierung der Plotdaten hat zu lange gedauert."
 
-#: ../libqalculate/Calculator-plot.cc:196
+#: ../libqalculate/Calculator-plot.cc:197
 msgid ""
 "Failed to invoke gnuplot. Make sure that you have gnuplot installed in your "
 "path."
@@ -3365,15 +3365,15 @@ msgstr ""
 "Der Aufruf von gnuplot ist fehlgeschlagen. Stellen Sie sicher, dass Sie "
 "gnuplot in Ihrem Pfad installiert haben."
 
-#: ../libqalculate/Calculator-plot.cc:267
+#: ../libqalculate/Calculator-plot.cc:268
 msgid "No extension in file name. Saving as PNG image."
 msgstr "Keine Erweiterung im Dateinamen. Speichern als PNG-Bild."
 
-#: ../libqalculate/Calculator-plot.cc:286
+#: ../libqalculate/Calculator-plot.cc:287
 msgid "Unknown extension in file name. Saving as PNG image."
 msgstr "Unbekannte Erweiterung im Dateinamen. Speichern als PNG-Bild."
 
-#: ../libqalculate/Calculator-plot.cc:545
+#: ../libqalculate/Calculator-plot.cc:546
 #, c-format
 msgid "Could not create temporary file %s"
 msgstr "Konnte temporäre Datei %s nicht erstellen."
@@ -3470,7 +3470,7 @@ msgstr ""
 msgid "This is a bug. Please report it."
 msgstr "Dies ist ein Fehler. Bitte melden Sie ihn."
 
-#: ../libqalculate/MathStructure-calculate.cc:6891
+#: ../libqalculate/MathStructure-calculate.cc:6910
 #: ../libqalculate/Function.cc:568
 msgid "No unknown variable/symbol was found."
 msgstr "Es wurde keine unbekannte Variable/Symbol gefunden."
@@ -3568,12 +3568,14 @@ msgstr "Die Permanente kann nur für quadratische Matrizen berechnet werden."
 msgid "Inverse of singular matrix."
 msgstr "Umkehrung der singulären Matrix."
 
-#: ../libqalculate/MathStructure-matrixvector.cc:882
-#: ../libqalculate/MathStructure-matrixvector.cc:930
+#: ../libqalculate/MathStructure-matrixvector.cc:1063
+#: ../libqalculate/MathStructure-matrixvector.cc:1215
+#: ../libqalculate/MathStructure-matrixvector.cc:1263
 msgid "Too many data points"
 msgstr "Zu viele Datenpunkte"
 
-#: ../libqalculate/MathStructure-matrixvector.cc:890
+#: ../libqalculate/MathStructure-matrixvector.cc:1073
+#: ../libqalculate/MathStructure-matrixvector.cc:1223
 msgid ""
 "The selected min and max do not result in a positive, finite number of data "
 "points"
@@ -3581,7 +3583,7 @@ msgstr ""
 "Die gewählten min und max ergeben keine positive, endliche Anzahl von Daten-"
 "punkten"
 
-#: ../libqalculate/MathStructure-matrixvector.cc:927
+#: ../libqalculate/MathStructure-matrixvector.cc:1260
 msgid ""
 "The selected min, max and step size do not result in a positive, finite "
 "number of data points"
