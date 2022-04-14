@@ -1,6 +1,7 @@
 2022-04-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Improve plot precision for value between real and non-real value
+	* Improve plot precision for real values before and after non-real values
+	* Variable spacing of x values in plot
 	* Fix plotting of derivatives and integrals
 
 2022-04-13 Hanna Knutsson <hanna.knutsson@protonmail.com>

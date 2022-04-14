@@ -2397,7 +2397,7 @@
         </base>
       </unit>
       <unit type="composite">
-        <_title>Cubic Foot per Minute</_title>
+        <_title>Cubic Foot per Second</_title>
         <system>Imperial/US</system>
         <names>r:cuf_p_s</names>
         <part>
