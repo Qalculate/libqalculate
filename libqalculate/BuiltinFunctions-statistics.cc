@@ -380,7 +380,7 @@ bool RandnFunction::representsNonComplex(const MathStructure&, bool) const {retu
 bool RandnFunction::representsNumber(const MathStructure&, bool) const {return true;}
 
 RandPoissonFunction::RandPoissonFunction() : MathFunction("randpoisson", 1, 2) {
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
 	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE);
 	Number nr(1, 1, 7);
 	iarg->setMax(&nr);
