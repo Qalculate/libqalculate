@@ -9755,7 +9755,7 @@ msgstr "Литр на километр"
 
 #: ../data/units.xml.in.h:301
 msgid "Kilometer per Liter"
-msgstr "Километр на литр "
+msgstr "Километр на литр"
 
 #: ../data/units.xml.in.h:302
 msgid "Miles per Gallon"
@@ -10013,57 +10013,51 @@ msgstr "Кубический метр в секунду"
 
 #: ../data/units.xml.in.h:363
 msgid "Sverdrup"
-msgstr ""
+msgstr "Свердруп"
 
 #: ../data/units.xml.in.h:364
 msgid "r:sverdrup"
-msgstr ""
+msgstr "Sv"
 
 #: ../data/units.xml.in.h:365
-#, fuzzy
 msgid "Cubic Foot per Minute"
-msgstr "Кубическая регрессия"
+msgstr "Кубический фут в минуту"
 
 #: ../data/units.xml.in.h:366
 msgid "Cubic Foot per Minute (CFM)"
-msgstr ""
+msgstr "Кубический фут в минуту (фут³/м)"
 
 #: ../data/units.xml.in.h:367
-#, fuzzy
 msgid "a-cr:cfm"
-msgstr "миль_галлон"
+msgstr "фут³/м"
 
 #: ../data/units.xml.in.h:368
-#, fuzzy
 msgid "Cubic Foot per Second"
-msgstr "Метр в секунду"
+msgstr "Кубический фут в секунду"
 
 #: ../data/units.xml.in.h:369
 msgid "Cubic Foot per Second (CFS)"
-msgstr ""
+msgstr "Кубический фут в секунду (фут³/c)"
 
 #: ../data/units.xml.in.h:370
-#, fuzzy
 msgid "a-cr:cfs"
-msgstr "a-c:psi"
+msgstr "фут³/c"
 
 #: ../data/units.xml.in.h:371
 msgid "Gallons per Minute (U.S.)"
-msgstr ""
+msgstr "Галлон США в минуту"
 
 #: ../data/units.xml.in.h:372
-#, fuzzy
 msgid "a-cr:gpm"
-msgstr "миль_галлон"
+msgstr "гал/м"
 
 #: ../data/units.xml.in.h:373
 msgid "Gallons per Hour (U.S.)"
-msgstr ""
+msgstr "Галлон США в час"
 
 #: ../data/units.xml.in.h:374
-#, fuzzy
 msgid "a-cr:gph"
-msgstr "a-cr:миль/ч"
+msgstr "гал/ч"
 
 #: ../data/units.xml.in.h:375
 msgid "Speed"
