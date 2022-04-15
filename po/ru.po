@@ -3266,7 +3266,7 @@ msgstr "Не удалось загрузить курсы валют из %s: %s
 #: ../libqalculate/Calculator-definitions.cc:3880
 #, c-format
 msgid "Exchange rates were successfully downloaded from %s."
-msgstr ""
+msgstr "Курсы обмена валют были успешно загружены с %s."
 
 #. ignore operators
 #: ../libqalculate/Calculator-parse.cc:2997
