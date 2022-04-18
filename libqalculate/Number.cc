@@ -5397,6 +5397,7 @@ bool Number::gamma() {
 					mpfr_t f_test;
 					mpfr_init2(f_test, mpfr_get_prec(fl_test));
 					mpfr_nextbelow(fl_test);
+					size_t i = 0;
 					while(true) {
 						// from lower to upper value
 						mpfr_nextabove(fl_test);
@@ -5407,6 +5408,8 @@ bool Number::gamma() {
 							if(c1 > 0 ? c2 > 0 : c2 < 0) b_iverror = true;
 							break;
 						}
+						i++;
+						if(i > 100 || CALCULATOR->aborted()) {b_iverror = true; break;}
 					}
 					while(!b_iverror && !mpfr_equal_p(fu_test, fl_test)) {
 						// from upper to lower value
@@ -5418,6 +5421,8 @@ bool Number::gamma() {
 							if(c1 > 0 ? c2 < 0 : c2 > 0) b_iverror = true;
 							break;
 						}
+						i++;
+						if(i > 100 || CALCULATOR->aborted()) {b_iverror = true; break;}
 					}
 					mpfr_clear(f_test);
 				}

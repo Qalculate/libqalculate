@@ -93,18 +93,23 @@ void parse_and_precalculate_plot(string &expression, MathStructure &mstruct, con
 }
 
 MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector, string x_var, const ParseOptions &po, int msecs) {
+	return expressionToPlotVector(expression, min, max, steps, true, x_vector, x_var, po, msecs);
+}
+MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, int steps, bool separate_complex_part, MathStructure *x_vector, string x_var, const ParseOptions &po, int msecs) {
 	Variable *v = getActiveVariable(x_var);
 	MathStructure x_mstruct;
 	if(v) x_mstruct = v;
 	else x_mstruct = x_var;
 	EvaluationOptions eo;
+	eo.allow_complex = separate_complex_part;
 	MathStructure mparse;
 	if(msecs > 0) startControl(msecs);
 	beginTemporaryStopIntervalArithmetic();
 	parse_and_precalculate_plot(expression, mparse, po, eo);
 	beginTemporaryStopMessages();
+	MathStructure x_v;
 	MathStructure y_vector;
-	generate_plotvector(mparse, x_mstruct, min, max, steps, *x_vector, y_vector, eo);
+	generate_plotvector(mparse, x_mstruct, min, max, steps, x_vector ? *x_vector : x_v, y_vector, eo);
 	endTemporaryStopMessages();
 	endTemporaryStopIntervalArithmetic();
 	if(msecs > 0) {
@@ -120,21 +125,27 @@ MathStructure Calculator::expressionToPlotVector(string expression, float min, f
 	MathStructure min_mstruct(min), max_mstruct(max);
 	ParseOptions po2 = po;
 	po2.read_precision = DONT_READ_PRECISION;
-	MathStructure y_vector(expressionToPlotVector(expression, min_mstruct, max_mstruct, steps, x_vector, x_var, po2, msecs));
+	MathStructure y_vector(expressionToPlotVector(expression, min_mstruct, max_mstruct, steps, true, x_vector, x_var, po2, msecs));
 	return y_vector;
 }
 MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector, string x_var, const ParseOptions &po, int msecs) {
+	return expressionToPlotVector(expression, min, max, step, true, x_vector, x_var, po, msecs);
+}
+MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &min, const MathStructure &max, const MathStructure &step, bool separate_complex_part, MathStructure *x_vector, string x_var, const ParseOptions &po, int msecs) {
 	Variable *v = getActiveVariable(x_var);
 	MathStructure x_mstruct;
 	if(v) x_mstruct = v;
 	else x_mstruct = x_var;
 	EvaluationOptions eo;
+	eo.allow_complex = separate_complex_part;
 	MathStructure mparse;
 	if(msecs > 0) startControl(msecs);
 	beginTemporaryStopIntervalArithmetic();
 	parse_and_precalculate_plot(expression, mparse, po, eo);
 	beginTemporaryStopMessages();
-	MathStructure y_vector(mparse.generateVector(x_mstruct, min, max, step, x_vector, eo));
+	MathStructure x_v;
+	MathStructure y_vector;
+	generate_plotvector(mparse, x_mstruct, min, max, step, x_vector ? *x_vector : x_v, y_vector, eo);
 	endTemporaryStopMessages();
 	endTemporaryStopIntervalArithmetic();
 	if(msecs > 0) {
@@ -150,7 +161,7 @@ MathStructure Calculator::expressionToPlotVector(string expression, float min, f
 	MathStructure min_mstruct(min), max_mstruct(max), step_mstruct(step);
 	ParseOptions po2 = po;
 	po2.read_precision = DONT_READ_PRECISION;
-	MathStructure y_vector(expressionToPlotVector(expression, min_mstruct, max_mstruct, step_mstruct, x_vector, x_var, po2, msecs));
+	MathStructure y_vector(expressionToPlotVector(expression, min_mstruct, max_mstruct, step_mstruct, true, x_vector, x_var, po2, msecs));
 	return y_vector;
 }
 MathStructure Calculator::expressionToPlotVector(string expression, const MathStructure &x_vector, string x_var, const ParseOptions &po, int msecs) {
@@ -250,6 +261,31 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 	if(!param) {
 		PlotParameters pp;
 		param = &pp;
+	}
+
+	vector<MathStructure> yim_vectors;
+	for(size_t i = 0; i < y_vectors.size(); i++) {
+		yim_vectors.push_back(m_undefined);
+		if(!y_vectors[i].isUndefined()) {
+			for(size_t i2 = 0; i2 < y_vectors[i].size() - 1; i2++) {
+				if(y_vectors[i][i2].isNumber() && y_vectors[i][i2].number().hasImaginaryPart()) {
+					if(y_vectors[i][i2 + 1].isNumber() && y_vectors[i][i2 + 1].number().hasImaginaryPart()) {
+						yim_vectors[i].clearVector();
+						yim_vectors[i].resizeVector(y_vectors[i].size(), m_zero);
+						for(i2 = 0; i2 < y_vectors[i].size(); i2++) {
+							if(y_vectors[i][i2].isNumber()) {
+								if(y_vectors[i][i2].number().hasImaginaryPart()) {
+									yim_vectors[i][i2].number() = y_vectors[i][i2].number().imaginaryPart();
+								}
+							} else {
+								yim_vectors[i][i2].setUndefined();
+							}
+						}
+						break;
+					}
+				}
+			}
+		}
 	}
 
 	string plot;
@@ -468,13 +504,16 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 	plot += i2s(samples);
 	plot += "\n";
 	plot += "plot ";
-	for(size_t i = 0; i < y_vectors.size(); i++) {
-		if(!y_vectors[i].isUndefined()) {
-			if(i != 0) {
+	size_t file_index = 1;
+	for(size_t i_pre = 0; i_pre < y_vectors.size() * 2; i_pre++) {
+		size_t i = i_pre / 2;
+		if((i_pre % 2 == 0 && !y_vectors[i].isUndefined()) || (i_pre % 2 == 1 && !yim_vectors[i].isUndefined())) {
+			if(file_index != 1) {
 				plot += ",";
 			}
 			string filename = "gnuplot_data";
-			filename += i2s(i + 1);
+			filename += i2s(file_index);
+			file_index++;
 			filename = buildPath(homedir, filename);
 #ifdef _WIN32
 			gsub("\\", "\\\\", filename);
@@ -500,6 +539,8 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 				if(!pdps[i]->title.empty()) {
 					title = pdps[i]->title;
 					gsub("\"", "\\\"", title);
+					if(i_pre % 2 == 1) {title += " : "; title += _("imaginary part");}
+					else if(!yim_vectors[i].isUndefined()) {title += " : "; title += _("real part");}
 					plot += " title \"";
 					plot += title;
 					plot += "\"";
@@ -535,10 +576,13 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 	vector<std::pair<string, string>> data_files;
 #endif
 	MathStructure m, mprev;
-	for(size_t serie = 0; serie < y_vectors.size(); serie++) {
-		if(!y_vectors[serie].isUndefined()) {
+	file_index = 1;
+	for(size_t i_pre = 0; i_pre < y_vectors.size() * 2; i_pre++) {
+		size_t serie = i_pre / 2;
+		if((i_pre % 2 == 0 && !y_vectors[serie].isUndefined()) || (i_pre % 2 == 1 && !yim_vectors[serie].isUndefined())) {
 			string filename = "gnuplot_data";
-			filename += i2s(serie + 1);
+			filename += i2s(file_index);
+			file_index++;
 #ifdef HAVE_GNUPLOT_CALL
 			string filepath = buildPath(homedir, filename);
 			FILE *fdata = fopen(filepath.c_str(), "w+");
@@ -557,10 +601,13 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 			bool check_continuous = pdps[serie]->test_continuous && (pdps[serie]->style == PLOT_STYLE_LINES || pdps[serie]->style == PLOT_STYLE_POINTS_LINES);
 			bool prev_failed = false;
 			const MathStructure *yprev = NULL;
-			for(size_t i = 1; i <= y_vectors[serie].countChildren(); i++) {
+			for(size_t i = 1; (i_pre % 2 == 0 && i <= y_vectors[serie].countChildren()) || (i_pre % 2 == 1 && i <= yim_vectors[serie].countChildren()); i++) {
+				bool b_real = (i_pre % 2 == 0 && !yim_vectors[serie].isUndefined());
 				ComparisonResult ct = COMPARISON_RESULT_UNKNOWN;
 				bool invalid_nr = false, b_imagzero_x = false, b_imagzero_y = false;
-				const MathStructure *yvalue = y_vectors[serie].getChild(i);
+				const MathStructure *yvalue;
+				if(i_pre % 2 == 1) yvalue = yim_vectors[serie].getChild(i);
+				else yvalue = y_vectors[serie].getChild(i);
 				if(!yvalue->isNumber() && !munit[serie].isZero()) {
 					if(yvalue->isMultiplication() && yvalue->size() >= 2 && yvalue->getChild(1)->isNumber()) {
 						bool b = false;
@@ -588,8 +635,8 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 					invalid_nr = true;
 					non_numerical++;
 					//if(non_numerical == 1) str = yvalue->print(po);
-				} else if(!yvalue->number().isReal()) {
-					b_imagzero_y = testComplexZero(&yvalue->number(), yvalue->number().internalImaginary());
+				} else if(i_pre % 2 == 0 && !yvalue->number().isReal()) {
+					b_imagzero_y = b_real || testComplexZero(&yvalue->number(), yvalue->number().internalImaginary());
 					if(!b_imagzero_y) {
 						invalid_nr = true;
 						non_real++;
@@ -610,7 +657,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 						}
 					}
 					if(!invalid_nr) {
-						if(b_imagzero_y) plot_data += x_vectors[serie].getChild(i)->number().realPart().print(po);
+						if(b_imagzero_x) plot_data += x_vectors[serie].getChild(i)->number().realPart().print(po);
 						else plot_data += x_vectors[serie].getChild(i)->print(po);
 						plot_data += " ";
 					}
@@ -626,7 +673,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 							}
 						}
 					}
-					if(b_imagzero_x) plot_data += yvalue->number().realPart().print(po);
+					if(b_imagzero_y) plot_data += yvalue->number().realPart().print(po);
 					else plot_data += yvalue->print(po);
 					plot_data += "\n";
 					prev_failed = false;
