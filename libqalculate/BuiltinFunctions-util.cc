@@ -1001,6 +1001,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	eo2.approximation = APPROXIMATION_APPROXIMATE;
 	eo2.parse_options.read_precision = DONT_READ_PRECISION;
 	eo2.interval_calculation = INTERVAL_CALCULATION_NONE;
+	eo2.allow_complex = eo.allow_complex;
 	bool use_step_size = vargs[5].number().getBoolean() || !vargs[3].isInteger() || vargs[3].number() < 2;
 	mstruct = vargs[0];
 	CALCULATOR->beginTemporaryStopIntervalArithmetic();
@@ -1069,7 +1070,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					if(use_step_size) {
 						CALCULATOR->beginTemporaryStopMessages();
 						CALCULATOR->beginTemporaryStopIntervalArithmetic();
-						y_vector.set(mstruct[i].generateVector(vargs[4], vargs[1], vargs[2], vargs[3], &x_vector, eo2));
+						generate_plotvector(mstruct[i], vargs[4], vargs[1], vargs[2], vargs[3], x_vector, y_vector, eo2);
 						CALCULATOR->endTemporaryStopIntervalArithmetic();
 						CALCULATOR->endTemporaryStopMessages();
 						if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
@@ -1115,7 +1116,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(use_step_size) {
 			CALCULATOR->beginTemporaryStopMessages();
 			CALCULATOR->beginTemporaryStopIntervalArithmetic();
-			y_vector.set(mstruct.generateVector(vargs[4], vargs[1], vargs[2], vargs[3], &x_vector, eo2));
+			generate_plotvector(mstruct, vargs[4], vargs[1], vargs[2], vargs[3], x_vector, y_vector, eo2);
 			CALCULATOR->endTemporaryStopIntervalArithmetic();
 			CALCULATOR->endTemporaryStopMessages();
 			if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);

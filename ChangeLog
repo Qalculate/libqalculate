@@ -1,3 +1,11 @@
+2022-04-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Option to plot real and imaginary parts separately (determined by allow_complex in plot() function and on by default in other cases)
+	* Look for points where plot changes direction (derivative is zero) and include in data
+	* Avoid extremely slow calculation of gamma for negative intervals
+	* Do not return interval in newtonsolve() and secantsolve() if interval arithmetic is deactivated
+	* Remove Cyrillic c name from KGS
+
 2022-04-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Improve plot precision for real values before and after non-real values

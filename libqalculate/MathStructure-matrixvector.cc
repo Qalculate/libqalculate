@@ -885,107 +885,6 @@ bool calculate_userfunctions(MathStructure &m, const MathStructure &x_mstruct, c
 	}
 	return b_ret;
 }
-/*bool generate_xvector(const MathStructure &x_mstruct, const MathStructure &mdiff, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector, const EvaluationOptions &eo) {
-	if(steps < 1) return false;
-	MathStructure x_value(min);
-	if(steps >= 50) {
-		int dsteps = steps / 10;
-		MathStructure step(max);
-		step.calculateSubtract(min, eo);
-		step.calculateDivide(dsteps - 1, eo);
-		step.eval(eo);
-		if(!step.isNumber() || step.number().isNegative()) {
-			CALCULATOR->error(true, _("The selected min and max do not result in a positive, finite number of data points"), NULL);
-			return false;
-		}
-		MathStructure y_value;
-		Number dmax;
-		MathStructure dx, dy;
-		for(int i = 0; i < dsteps; i++) {
-			dx.addChild(x_value);
-			y_value = mdiff;
-			y_value.replace(x_mstruct, x_value);
-			y_value.eval(eo);
-			if(y_value.isNumber() && y_value.number().isReal()) {
-				if(i == 0 || i == steps - 1) y_value.number() /= 2;
-				else if(i > 0 && dy.last().isUndefined()) y_value.number() *= Number(3, 2);
-				y_value.number().abs();
-				if(y_value.number() > dmax) dmax = y_value.number();
-			} else {
-				if(i > 0 && !dy.last().isUndefined()) {
-					dy.last().number() *= Number(3, 2);
-					if(dy.last().number() > dmax) dmax = dy.last().number();
-				}
-				y_value.setUndefined();
-			}
-			dy.addChild(y_value);
-			if(CALCULATOR->aborted()) return false;
-			if(i + 1 == dsteps) {}
-			else if(i + 2 == dsteps) x_value = max;
-			else if(x_value.isNumber()) x_value.number().add(step.number());
-			else x_value.calculateAdd(step, eo);
-		}
-		if(dmax > 0) {
-			MathStructure halfstep(step);
-			halfstep.calculateDivide(nr_two, eo);
-			MathStructure min2, max2;
-			halfstep.eval(eo);
-			Number dtotal;
-			for(int i = 0; i < dsteps; i++) {
-				if(dy[i].isUndefined()) {
-					dy[i].set(-1, 1, 0);
-				} else {
-					if(dy[i].number().isNegative()) dy[i].number() = dmax * 2;
-					dtotal += dy[i].number();
-				}
-			}
-			for(int i = 0; i < dsteps; i++) {
-				int substeps = 1;
-				if(dy[i].number().isPositive()) {
-					dy[i].number() /= dtotal;
-					dy[i].number() *= steps;
-					dy[i].number().round();
-					substeps = dy[i].number().intValue();
-					if(substeps < 1) substeps = 1;
-				}
-				if(substeps > 1) {
-					min2 = dx[i];
-					max2 = dx[i];
-					if(i > 0) {
-						if(dy[i - 1].number().isNegative()) min2 = dx[i - 1];
-						else min2.calculateSubtract(halfstep, eo);
-					}
-					if(i < dsteps - 1) {
-						if(dy[i + 1].number().isNegative()) max2 = dx[i + 1];
-						else max2.calculateAdd(halfstep, eo);
-					}
-					if(!generate_xvector(x_mstruct, mdiff, min2, max2, substeps, x_vector, eo)) return false;
-				} else {
-					x_vector->addChild(dx[i]);
-				}
-				if(CALCULATOR->aborted()) return false;
-			}
-			return true;
-		}
-	}
-	MathStructure step(max);
-	step.calculateSubtract(min, eo);
-	step.calculateDivide(steps - 1, eo);
-	step.eval(eo);
-	if(!step.isNumber() || step.number().isNegative()) {
-		CALCULATOR->error(true, _("The selected min and max do not result in a positive, finite number of data points"), NULL);
-		return false;
-	}
-	for(int i = 0; i < steps; i++) {
-		x_vector->addChild(x_value);
-		if(CALCULATOR->aborted()) return false;
-		if(i + 1 == steps - 1) {}
-		else if(i + 2 == steps) x_value = max;
-		else if(x_value.isNumber()) x_value.number().add(step.number());
-		else x_value.calculateAdd(step, eo);
-	}
-	return true;
-}*/
 bool find_legal_point(const MathStructure &m, const MathStructure &x_mstruct, MathStructure &mx, const MathStructure &min, const MathStructure &max, const EvaluationOptions &eo, bool b_number) {
 	if(m.isFunction() && (m.function()->id() == FUNCTION_ID_RE || m.function()->id() == FUNCTION_ID_IM || m.function()->id() == FUNCTION_ID_ABS)) return false;
 	if((b_number && ((m.isPower() && m[1].isNumber() && m[1].number().isReal() && !m[1].number().isInteger() && m[0].contains(x_mstruct, true) > 0) || (m.isFunction() && m.size() > 0 && (m.function()->id() == FUNCTION_ID_ACOS || m.function()->id() == FUNCTION_ID_ASIN || m.function()->id() == FUNCTION_ID_ACOSH || (m.function()->id() == FUNCTION_ID_LAMBERT_W && (m.size() == 1 || m[1].isZero())))))) || (!b_number && m.isFunction() && m.size() > 0 && m.isFunction() && m.function()->id() == FUNCTION_ID_ROOT && m.size() >= 2 && m[1].representsEven())) {
@@ -1017,41 +916,79 @@ bool find_legal_point(const MathStructure &m, const MathStructure &x_mstruct, Ma
 	}
 	return false;
 }
-void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, int steps, MathStructure &x_vector, MathStructure &y_vector, const EvaluationOptions &eo, bool adaptive) {
-	/*if(adaptive) {
-		MathStructure y_value;
-		y_vector.clearVector();
-		x_vector.clearVector();
-		if(steps > 1000000) {
+bool find_zero_point(const MathStructure &m, const MathStructure &x_mstruct, MathStructure &mx, const MathStructure &min, const MathStructure &max, const EvaluationOptions &eo) {
+	MathFunction *f = CALCULATOR->getFunctionById(FUNCTION_ID_SECANT_METHOD);
+	if(f) {
+		MathStructure msolve(f, NULL);
+		msolve.addChild(m);
+		msolve.addChild(min);
+		msolve.addChild(max);
+		msolve.addChild(x_mstruct);
+		msolve.addChild(Number(-10, 1, 0));
+		msolve.addChild(Number(10, 1, 0));
+		msolve.calculateFunctions(eo, true);
+		if(msolve.isNumber() && msolve.number() > min.number() && msolve.number() < max.number()) {
+			mx = msolve;
+			return true;
+		}
+	}
+	return false;
+}
+void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure &x_vector, MathStructure &y_vector, const EvaluationOptions &eo2) {
+	EvaluationOptions eo = eo2;
+	eo.allow_complex = true;
+	MathStructure x_value(min);
+	MathStructure y_value;
+	y_vector.clearVector();
+	x_vector.clearVector();
+	if(min != max) {
+		MathStructure mtest(max);
+		mtest.calculateSubtract(min, eo);
+		if(!step.isZero()) mtest.calculateDivide(step, eo);
+		mtest.eval(eo);
+		if(step.isZero() || !mtest.isNumber() || mtest.number().isNegative()) {
+			CALCULATOR->error(true, _("The selected min, max and step size do not result in a positive, finite number of data points"), NULL);
+			return;
+		} else if(mtest.number().isGreaterThan(1000000)) {
 			CALCULATOR->error(true, _("Too many data points"), NULL);
 			return;
 		}
-		MathStructure mthis(m);
-		mthis.unformat();
-		calculate_userfunctions(mthis, x_mstruct, eo, true);
-		MathStructure mdiff(mthis);
-		mdiff.differentiate(x_mstruct, eo);
-		mdiff.eval(eo);
-		if(!generate_xvector(x_mstruct, mdiff, min, max, steps, &x_vector, eo)) {
-			x_vector.clearVector();
-			return;
+		mtest.number().round();
+		unsigned int steps = mtest.number().uintValue();
+		y_vector.resizeVector(steps, m_zero);
+		x_vector.resizeVector(steps, m_zero);
+	}
+	MathStructure mthis(m);
+	mthis.unformat();
+	calculate_userfunctions(mthis, x_mstruct, eo, true);
+	ComparisonResult cr = max.compare(x_value);
+	size_t i = 0;
+	while(COMPARISON_IS_EQUAL_OR_LESS(cr)) {
+		if(i >= x_vector.size()) x_vector.addChild(x_value);
+		else x_vector[i] = x_value;
+		y_value = mthis;
+		y_value.replace(x_mstruct, x_value);
+		y_value.eval(eo);
+		if(!eo2.allow_complex && y_value.isNumber() && y_value.number().hasImaginaryPart()) {
+			if(testComplexZero(&y_value.number(), y_value.number().internalImaginary())) y_value.number().clearImaginary();
+			else y_value.setUndefined();
 		}
-		if(steps < 1) {
-			steps = 1;
+		if(i >= y_vector.size()) y_vector.addChild(y_value);
+		else y_vector[i] = y_value;
+		if(x_value.isNumber()) x_value.number().add(step.number());
+		else x_value.calculateAdd(step, eo);
+		cr = max.compare(x_value);
+		if(CALCULATOR->aborted()) {
+			break;
 		}
-		y_vector.resizeVector(x_vector.size(), m_zero);
-		for(size_t i = 0; i < x_vector.size(); i++) {
-			y_value = mthis;
-			y_value.replace(x_mstruct, x_vector[i]);
-			y_value.eval(eo);
-			y_vector[i] = y_value;
-			if(CALCULATOR->aborted()) {
-				y_vector.resizeVector(i, m_zero);
-				x_vector.resizeVector(i, m_zero);
-				break;
-			}
-		}
-	}*/
+		i++;
+	}
+	y_vector.resizeVector(i, m_zero);
+	x_vector.resizeVector(i, m_zero);
+}
+void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, int steps, MathStructure &x_vector, MathStructure &y_vector, const EvaluationOptions &eo2, bool adaptive) {
+	EvaluationOptions eo = eo2;
+	eo.allow_complex = true;
 	if(steps < 1) {
 		steps = 1;
 	}
@@ -1076,13 +1013,16 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 	MathStructure ydiff;
 	if(adaptive) ydiff.resizeVector(steps, m_zero);
 	Number ydiff_total;
+	Number ydiff_real;
 	y_vector.resizeVector(steps, m_zero);
 	x_vector.resizeVector(steps, m_zero);
 	MathStructure mthis(m);
 	mthis.unformat();
 	calculate_userfunctions(mthis, x_mstruct, eo, true);
 	MathStructure meval;
+	MathStructure mdiff;
 	int prev_illegal = -1;
+	int prev_diff_sgn = 0;
 	for(int i = 0; i < steps; i++) {
 		y_value = mthis;
 		y_value.replace(x_mstruct, x_value);
@@ -1090,17 +1030,99 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 		x_vector[i] = x_value;
 		y_vector[i] = y_value;
 		int find_x = 0;
-		if(y_value.isNumber()) {
+		if(y_value.isNumber() && !y_value.number().includesInfinity()) {
 			if(y_value.number().hasImaginaryPart() && testComplexZero(&y_value.number(), y_value.number().internalImaginary())) y_value.number().clearImaginary();
 			if(y_value.number().hasImaginaryPart()) {
 				if(prev_illegal == 0) find_x = 1;
+				if(eo2.allow_complex && adaptive && (prev_illegal == 0 || prev_illegal == 1)) {
+					ydiff[i].number() = y_vector[i].number().imaginaryPart();
+					ydiff[i].number() -= y_vector[i - 1].number().imaginaryPart();
+					ydiff[i].number().abs();
+					if(y_value.number().hasRealPart()) {
+						ydiff_real = y_vector[i].number().realPart();
+						ydiff_real -= y_vector[i - 1].number().realPart();
+						ydiff_real.abs();
+						if(ydiff_real > ydiff[i].number()) ydiff[i].number() = ydiff_real;
+					}
+					ydiff_total += ydiff[i].number();
+				}
 				prev_illegal = 1;
+				prev_diff_sgn = 0;
 			} else {
 				if(prev_illegal == 0 && adaptive) {
 					ydiff[i].number() = y_vector[i].number();
 					ydiff[i].number() -= y_vector[i - 1].number();
-					ydiff[i].number().abs();
+					if(prev_diff_sgn != 0 && (ydiff[i].number().isZero() || ((prev_diff_sgn > 0) != ydiff[i].number().isPositive()))) {
+						if(mdiff.isZero()) {
+							mdiff = mthis;
+							CALCULATOR->beginTemporaryStopMessages();
+							mdiff.differentiate(x_mstruct, eo);
+							if(mdiff.containsFunctionId(FUNCTION_ID_DIFFERENTIATE)) {
+								mdiff.setUndefined();
+							} else {
+								mdiff.eval(eo);
+							}
+							CALCULATOR->endTemporaryStopMessages();
+						}
+						ydiff[i].number().abs();
+						MathStructure x_value2, y_value2;
+						if(!mdiff.isUndefined() && find_zero_point(mdiff, x_mstruct, x_value2, i >= 2 && !ydiff[i].number().isZero() && y_vector[i - 2].isNumber() && y_vector[i - 2].number().isReal() ? x_vector[i - 2] : x_vector[i - 1], x_value, eo)) {
+							int new_i = i;
+							if(i >= 2 && x_value2.number() < x_vector[i - 1].number()) {
+								new_i = i - 1;
+							}
+							y_value2 = mthis;
+							y_value2.replace(x_mstruct, x_value2);
+							y_value2.eval(eo);
+							if(y_value2.isNumber() && y_value2.number().hasImaginaryPart() && testComplexZero(&y_value2.number(), y_value2.number().internalImaginary())) y_value2.number().clearImaginary();
+							x_vector.insertChild(x_value2, new_i + 1);
+							y_vector.insertChild(y_value2, new_i + 1);
+							ydiff.insertChild(m_zero, new_i + 1);
+							if(!y_value2.isNumber() || !y_value2.number().isReal()) {
+								ydiff[new_i + 1].number() /= 2;
+								ydiff[new_i].number() = ydiff[new_i + 1].number();
+								ydiff_total += ydiff[i].number();
+							} else if(new_i == i - 1) {
+								ydiff_total -= ydiff[i - 1].number();
+								ydiff[i - 1].number() = y_vector[i - 2].number();
+								ydiff[i - 1].number() -= y_value2.number();
+								ydiff[i - 1].number().abs();
+								ydiff_total += ydiff[i - 1].number();
+								ydiff[i].number() = y_value.number();
+								ydiff[i].number() -= y_value2.number();
+								ydiff[i].number().abs();
+								ydiff_total += ydiff[i].number();
+							} else {
+								ydiff[i].number() = y_value2.number();
+								ydiff[i].number() -= y_vector[i - 1].number();
+								ydiff[i].number().abs();
+								ydiff_total += ydiff[i].number();
+								ydiff[i + 1].number() = y_value.number();
+								ydiff[i + 1].number() -= y_value2.number();
+								ydiff[i + 1].number().abs();
+							}
+							i++;
+							steps++;
+						}
+						prev_diff_sgn = 0;
+					} else if(ydiff[i].number().isPositive()) {
+						prev_diff_sgn = 1;
+					} else if(ydiff[i].number().isNegative()) {
+						prev_diff_sgn = -1;
+						ydiff[i].number().abs();
+					} else {
+						prev_diff_sgn = 0;
+					}
 					ydiff_total += ydiff[i].number();
+				} else if(eo2.allow_complex && adaptive && prev_illegal == 1) {
+					ydiff[i].number() = y_vector[i - 1].number().imaginaryPart();
+					ydiff_real = y_vector[i].number();
+					ydiff_real -= y_vector[i - 1].number().realPart();
+					ydiff_real.abs();
+					if(ydiff_real > ydiff[i].number()) ydiff[i].number() = ydiff_real;
+					ydiff_total += ydiff[i].number();
+				} else {
+					prev_diff_sgn = 0;
 				}
 				if(prev_illegal > 0 && y_value.number().isReal()) find_x = 2;
 				else prev_illegal = 0;
@@ -1108,6 +1130,7 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 		} else {
 			if(prev_illegal == 0) find_x = 1;
 			prev_illegal = 2;
+			prev_diff_sgn = 0;
 		}
 		if(find_x > 0 && x_value.isNumber() && step.isNumber()) {
 			if(meval.isZero()) {
@@ -1118,8 +1141,7 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 			}
 			MathStructure x_value2;
 			if(find_legal_point(meval, x_mstruct, x_value2, x_vector[i - 1], x_value, eo, prev_illegal == 1)) {
-				if(find_x == 1) x_value2.number() -= step.number() / 1000000L;
-				else x_value2.number() += step.number() / 1000000L;
+				if(x_value2.number().precision() > 0) x_value2.number() += step.number() * Number(find_x == 1 ? -1 : 1, 1, -x_value2.number().precision());
 				if(x_value2.number() > x_vector[i - 1].number() && x_value2.number() < x_vector[i].number()) {
 					y_value = mthis;
 					y_value.replace(x_mstruct, x_value2);
@@ -1133,17 +1155,33 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 							y_vector.insertChild(y_value, i);
 							if(adaptive) {
 								ydiff.insertChild(m_zero, i);
+								ydiff_total -= ydiff[i].number();
 								if(find_x == 1) {
 									ydiff[i - 1].number() = y_value.number();
-									ydiff[i - 1].number() -= y_vector[i].number();
+									ydiff[i - 1].number() -= y_vector[i - 2].number();
 									ydiff[i - 1].number().abs();
-									ydiff_total += ydiff[i].number();
+									if(eo2.allow_complex && y_vector[i].isNumber() && !y_vector[i].number().includesInfinity()) {
+										ydiff[i].number() = y_vector[i].number().imaginaryPart();
+										ydiff_real = y_vector[i].number().realPart();
+										ydiff_real -= y_value.number();
+										ydiff_real.abs();
+										if(ydiff_real > ydiff[i].number()) ydiff[i].number() = ydiff_real;
+									}
 								} else {
+									if(eo2.allow_complex && y_vector[i - 2].isNumber() && !y_vector[i - 2].number().includesInfinity()) {
+										ydiff[i - 1].number() = y_vector[i - 2].number().imaginaryPart();
+										ydiff[i - 1].number().abs();
+										ydiff_real = y_value.number().realPart();
+										ydiff_real -= y_vector[i - 2].number().realPart();
+										ydiff_real.abs();
+										if(ydiff_real > ydiff[i - 1].number()) ydiff[i - 1].number() = ydiff_real;
+									}
 									ydiff[i].number() = y_vector[i].number();
 									ydiff[i].number() -= y_value.number();
 									ydiff[i].number().abs();
-									ydiff_total += ydiff[i].number();
 								}
+								ydiff_total += ydiff[i].number();
+								ydiff_total += ydiff[i - 1].number();
 							}
 						}
 					}
@@ -1159,6 +1197,11 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 			y_vector.resizeVector(i, m_zero);
 			x_vector.resizeVector(i, m_zero);
 			break;
+		}
+	}
+	if(!eo2.allow_complex) {
+		for(size_t i = 0; i < y_vector.size(); i++) {
+			if(y_vector[i].isNumber() && !y_vector[i].number().isReal()) y_vector[i].setUndefined();
 		}
 	}
 	if(adaptive) {
@@ -1179,11 +1222,22 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 				int new_steps = 0;
 				if(!ydiff[i].number().isZero()) {
 					ydiff[i].number() /= ydiff_total;
-					ydiff[i].number() *= steps;
+					ydiff[i].number() *= (steps - 1);
 					ydiff[i].number().round();
 					new_steps = ydiff[i].number().intValue();
 				}
-				if(new_steps > 0) {
+				if(new_steps == 1) {
+					x_value = x_vector[i];
+					x_value.number() += x_vector[i - 1].number();
+					x_value.number() /= 2;
+					x_vector.insertChild(x_value, i + 1);
+					y_value = mthis;
+					y_value.replace(x_mstruct, x_value);
+					y_value.eval(eo);
+					y_vector.insertChild(y_value, i + 1);
+					ydiff.insertChild(m_zero, i + 1);
+					i++;
+				} else if(new_steps > 0) {
 					new_step_size = x_vector[i].number();
 					new_step_size -= x_vector[i - 1].number();
 					new_step_size /= (new_steps + 1);

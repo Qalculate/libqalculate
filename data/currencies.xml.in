@@ -475,7 +475,7 @@
     </builtin_unit>
     <builtin_unit name="KGS">
       <_title>Kyrgyzstani Som</_title>
-      <_names>acr:KGS,au:&#x0441;</_names>
+      <_names>acr:KGS</_names>
       <_countries>Kyrgyzstan</_countries>
     </builtin_unit>
     <builtin_unit name="LAK">

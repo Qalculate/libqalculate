@@ -1198,8 +1198,10 @@ class Calculator {
 	* @returns true if gnuplot was found.
 	*/
 	bool canPlot();
+	MathStructure expressionToPlotVector(std::string expression, const MathStructure &min, const MathStructure &max, int steps, bool separate_complex_part, MathStructure *x_vector = NULL, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
 	MathStructure expressionToPlotVector(std::string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector = NULL, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
 	MathStructure expressionToPlotVector(std::string expression, float min, float max, int steps, MathStructure *x_vector = NULL, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
+	MathStructure expressionToPlotVector(std::string expression, const MathStructure &min, const MathStructure &max, const MathStructure &step, bool separate_complex_part, MathStructure *x_vector = NULL, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
 	MathStructure expressionToPlotVector(std::string expression, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector = NULL, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
 	MathStructure expressionToPlotVector(std::string expression, float min, float max, float step, MathStructure *x_vector = NULL, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
 	MathStructure expressionToPlotVector(std::string expression, const MathStructure &x_vector, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
