@@ -1,3 +1,7 @@
+2022-04-18 Brendan Early <mymindstorm@evermiss.net>
+
+	* Change defualt log base from e to 10
+
 2022-04-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Option to plot real and imaginary parts separately (determined by allow_complex in plot() function and on by default in other cases)

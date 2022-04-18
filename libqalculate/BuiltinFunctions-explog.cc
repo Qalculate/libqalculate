@@ -691,7 +691,7 @@ LognFunction::LognFunction() : MathFunction("log", 1, 2) {
 	arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, false);
 	arg->setHandleVector(true);
 	setArgumentDefinition(2, arg);
-	setDefaultValue(2, "e");
+	setDefaultValue(2, "10");
 }
 int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector() || vargs[1].isVector()) return 0;
