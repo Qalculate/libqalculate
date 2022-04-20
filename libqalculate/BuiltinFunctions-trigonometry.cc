@@ -1776,6 +1776,7 @@ int SincFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		return 1;
 	} else if(vargs[0].representsNonZero(true)) {
 		mstruct = vargs[0];
+		if(getDefaultValue(2) == "pi") mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 		bool b = replace_f_interval(mstruct, eo);
 		b = replace_intervals_f(mstruct) || b;
 		MathStructure *m_sin = new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_SIN), &mstruct, NULL);

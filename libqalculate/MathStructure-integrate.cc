@@ -1183,6 +1183,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 		MathStructure mexp, mmul, madd;
 		if(mfac.isOne() && mpow.isInteger() && mpow.number().isLessThanOrEqualTo(100) && mpow.number().isGreaterThanOrEqualTo(-2) && !mpow.isZero() && integrate_info(mstruct[0], x_var, madd, mmul, mexp) && mexp.isOne()) {
 			if(mpow.isOne()) {
+				if(mstruct.function()->getDefaultValue(2) == "pi") {mstruct[0] *= CALCULATOR->getVariableById(VARIABLE_ID_PI); mmul *= CALCULATOR->getVariableById(VARIABLE_ID_PI);}
 				mstruct.setFunctionId(FUNCTION_ID_SININT);
 				if(!mmul.isOne()) mstruct.divide(mmul);
 				return true;

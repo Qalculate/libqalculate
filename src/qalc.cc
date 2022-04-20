@@ -92,7 +92,7 @@ long int i_maxtime = 0;
 struct timeval t_end;
 int dual_fraction = -1, saved_dual_fraction = -1;
 int dual_approximation = -1, saved_dual_approximation = -1;
-bool tc_set = false;
+bool tc_set = false, sinc_set = false;
 bool ignore_locale = false;
 bool result_only = false, vertical_space = true;
 bool do_imaginary_j = false;
@@ -888,6 +888,23 @@ void set_option(string str) {
 			CALCULATOR->setTemperatureCalculationMode((TemperatureCalculationMode) v);
 			expression_calculation_updated();
 			tc_set = true;
+		}
+	}else if(svar == "sinc")  {
+		int v = -1;
+		//sinc function variant
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "unnormalized", _("unnormalized"))) v = 0;
+		//sinc function variant
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "normalized", _("normalized"))) v = 1;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		if(v < 0 || v > 1) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			if(v == 0) CALCULATOR->getFunctionById(FUNCTION_ID_SINC)->setDefaultValue(2, "");
+			else CALCULATOR->getFunctionById(FUNCTION_ID_SINC)->setDefaultValue(2, "pi");
+			expression_calculation_updated();
+			sinc_set = true;
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "round to even", _("round to even")) || svar == "rndeven") {
 		bool b = printops.round_halfway_to_even;
@@ -5830,6 +5847,65 @@ void execute_command(int command_type, bool show_result) {
 
 }
 
+bool test_ask_sinc(MathStructure &m) {
+	if(sinc_set) return false;
+	if(m.isFunction() && m.function()->id() == FUNCTION_ID_SINC) {
+		return true;
+	}
+	for(size_t i = 0; i < m.size(); i++) {
+		if(test_ask_sinc(m[i])) return true;
+	}
+	return false;
+}
+bool ask_sinc() {
+	INIT_COLS
+	string str = _("Please select desired variant of the sinc function.");
+	addLineBreaks(str, cols, true);
+	PUTS_UNICODE(str.c_str());
+	puts("");
+	str = ""; BEGIN_BOLD(str); str += "0 = "; str += _("unnormalized"); END_BOLD(str); str += " ("; str += _("default"); str += ")";
+	PUTS_UNICODE(str.c_str());
+	PUTS_ITALIC("sinc(x) = sin(x)/x");
+	puts("");
+	str = ""; BEGIN_BOLD(str); str += "1 = "; str += _("normalized"); END_BOLD(str);
+	PUTS_UNICODE(str.c_str());
+	if(printops.use_unicode_signs) {PUTS_ITALIC("sinc(x) = sinc(πx)/(πx)");}
+	else {PUTS_ITALIC("sinc(x) = sinc(pi * x)/(pi * x)");}
+	puts("");
+	FPUTS_UNICODE(_("Sinc function"), stdout);
+	sinc_set = true;
+	bool b_ret = false;
+	while(true) {
+#ifdef HAVE_LIBREADLINE
+		char *rlbuffer = readline(": ");
+		if(!rlbuffer) {b_ret = false; break;}
+		string svalue = rlbuffer;
+		free(rlbuffer);
+#else
+		fputs(": ", stdout);
+		if(!fgets(buffer, 1000, stdin)) {b_ret = false; break;}
+		string svalue = buffer;
+#endif
+		remove_blank_ends(svalue);
+		int v = -1;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "normalized", _("normalized"))) v = 1;
+		else if(svalue.empty() || EQUALS_IGNORECASE_AND_LOCAL(svalue, "unnormalized", _("unnormalized"))) v = 0;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		if(v == 0) {
+			break;
+		} else if(v == 1) {
+			CALCULATOR->getFunctionById(FUNCTION_ID_SINC)->setDefaultValue(2, "pi");
+			b_ret = true;
+			break;
+		} else {
+			FPUTS_UNICODE(_("Sinc function"), stdout);
+		}
+	}
+	if(!interactive_mode && !load_defaults) save_preferences(false);
+	return b_ret;
+}
 bool contains_temperature_unit_q(const MathStructure &m) {
 	if(m.isUnit()) {
 		return m.unit() == CALCULATOR->getUnitById(UNIT_ID_CELSIUS) || m.unit() == CALCULATOR->getUnitById(UNIT_ID_FAHRENHEIT);
@@ -6479,7 +6555,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				} else {
 					mstruct->set(CALCULATOR->convertToOptimalUnit(*mstruct, evalops, true));
 				}
-			}
+				}
 			if(evalops.approximation == APPROXIMATION_EXACT && (evalops.auto_post_conversion != POST_CONVERSION_OPTIMAL || mstruct->equals(mbak))) {
 				evalops.approximation = APPROXIMATION_TRY_EXACT;
 				if(evalops.auto_post_conversion == POST_CONVERSION_BASE) mstruct->set(CALCULATOR->convertToBaseUnits(*mstruct, evalops));
@@ -6496,7 +6572,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		else mstruct->ref();
 	}
 
-	if(!avoid_recalculation && !do_mathoperation && ((ask_questions && test_ask_tc(*parsed_mstruct) && ask_tc()) || (check_exrates && check_exchange_rates()))) {
+	if(!avoid_recalculation && !do_mathoperation && ((ask_questions && test_ask_tc(*parsed_mstruct) && ask_tc()) || (ask_questions && (test_ask_sinc(*parsed_mstruct) || test_ask_sinc(*mstruct)) && ask_sinc()) || (check_exrates && check_exchange_rates()))) {
 		if(has_printed) printf("\n");
 		b_busy = false;
 		execute_expression(goto_input, do_mathoperation, op, f, rpn_mode, do_stack ? stack_index : 0, false);
@@ -6811,6 +6887,8 @@ void load_preferences() {
 	CALCULATOR->setTemperatureCalculationMode(TEMPERATURE_CALCULATION_HYBRID);
 	tc_set = false;
 
+	sinc_set = false;
+
 	CALCULATOR->useBinaryPrefixes(0);
 
 	rpn_mode = false;
@@ -7044,11 +7122,20 @@ void load_preferences() {
 					evalops.calculate_variables = v;
 				} else if(svar == "calculate_functions") {
 					evalops.calculate_functions = v;
+				} else if(svar == "sinc_function") {
+					if(v == 1) {
+						CALCULATOR->getFunctionById(FUNCTION_ID_SINC)->setDefaultValue(2, "pi");
+						sinc_set = true;
+					} else if(v == 0) {
+						sinc_set = true;
+					}
 				} else if(svar == "sync_units") {
 					evalops.sync_units = v;
 				} else if(svar == "temperature_calculation") {
-					CALCULATOR->setTemperatureCalculationMode((TemperatureCalculationMode) v);
-					tc_set = true;
+					if(v >= TEMPERATURE_CALCULATION_HYBRID && v <= TEMPERATURE_CALCULATION_RELATIVE) {
+						CALCULATOR->setTemperatureCalculationMode((TemperatureCalculationMode) v);
+						tc_set = true;
+					}
 				} else if(svar == "unknownvariables_enabled") {
 					evalops.parse_options.unknowns_enabled = v;
 				} else if(svar == "units_enabled") {
@@ -7303,8 +7390,9 @@ bool save_preferences(bool mode) {
 	fprintf(file, "caret_as_xor=%i\n", saved_caret_as_xor);
 	fprintf(file, "functions_enabled=%i\n", saved_evalops.parse_options.functions_enabled);
 	fprintf(file, "variables_enabled=%i\n", saved_evalops.parse_options.variables_enabled);
-	fprintf(file, "calculate_variables=%i\n", saved_evalops.calculate_variables);
+		fprintf(file, "calculate_variables=%i\n", saved_evalops.calculate_variables);
 	fprintf(file, "calculate_functions=%i\n", saved_evalops.calculate_functions);
+	if(sinc_set) fprintf(file, "sinc_function=%i\n", CALCULATOR->getFunctionById(FUNCTION_ID_SINC)->getDefaultValue(2) == "pi" ? 1 : 0);
 	fprintf(file, "variable_units_enabled=%i\n", saved_variable_units_enabled);
 	fprintf(file, "sync_units=%i\n", saved_evalops.sync_units);
 	if(tc_set) fprintf(file, "temperature_calculation=%i\n", CALCULATOR->getTemperatureCalculationMode());
