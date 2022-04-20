@@ -3937,8 +3937,8 @@
   <category>
     <_title>Information</_title>
     <unit type="base">
-      <_title>Bit</_title>
-      <_names>r:bit,p:bits,binary_digit,p:binary_digits,shannon,p:shannons,Sh</_names>
+      <_title>Bit (binary digit)</_title>
+      <_names>r:bit,p:bits,binary_digit,p:binary_digits,shannon,p:shannons,c:Sh</_names>
       <use_with_prefixes>true</use_with_prefixes>
     </unit>
     <unit type="alias">
@@ -3951,7 +3951,7 @@
       </base>
     </unit>
     <unit type="alias">
-      <_title>Trit</_title>
+      <_title>Trit (ternary digit)</_title>
       <_names>r:trit,p:trits,trinary_digit,p:trinary_digits,ternary_digit,p:ternary_digits</_names>
       <base>
         <unit>bit</unit>
@@ -3969,8 +3969,8 @@
       </base>
     </unit>
     <unit type="alias">
-      <_title>Hartley</_title>
-      <_names>r:hartley,p:hartleys,a:Hart,decimal_digit,p:decimal_digits</_names>
+      <_title>Dit (decimal digit)</_title>
+      <_names>r:dit,p:dits,hartley,p:hartleys,c:Hart,decimal_digit,p:decimal_digits</_names>
       <base>
         <unit>bit</unit>
         <relation>log2(10)</relation>
