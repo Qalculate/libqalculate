@@ -4042,33 +4042,6 @@
       </part>
     </unit>
     <unit type="composite">
-      <_title>Kibibyte</_title>
-      <names>r:Kibyte_c</names>
-      <part>
-        <unit>byte</unit>
-        <prefix type="binary">10</prefix>
-        <exponent>1</exponent>
-      </part>
-    </unit>
-    <unit type="composite">
-      <_title>Mebibyte</_title>
-      <names>r:Mibyte_c</names>
-      <part>
-        <unit>byte</unit>
-        <prefix type="binary">20</prefix>
-        <exponent>1</exponent>
-      </part>
-    </unit>
-    <unit type="composite">
-      <_title>Gibibyte</_title>
-      <names>r:Gibyte_c</names>
-      <part>
-        <unit>byte</unit>
-        <prefix type="binary">30</prefix>
-        <exponent>1</exponent>
-      </part>
-    </unit>
-    <unit type="composite">
       <_title>Megabyte</_title>
       <names>r:Mbyte_c</names>
       <part>
@@ -4096,11 +4069,119 @@
       </part>
     </unit>
     <unit type="composite">
+      <_title>Petabyte</_title>
+      <names>r:Pbyte_c</names>
+      <part>
+        <unit>byte</unit>
+        <prefix>15</prefix>
+        <exponent>1</exponent>
+      </part>
+    </unit>
+    <unit type="composite">
+      <_title>Exabyte</_title>
+      <names>r:Ebyte_c</names>
+      <part>
+        <unit>byte</unit>
+        <prefix>18</prefix>
+        <exponent>1</exponent>
+      </part>
+    </unit>
+    <unit type="composite">
+      <_title>Kibibyte</_title>
+      <names>r:Kibyte_c</names>
+      <part>
+        <unit>byte</unit>
+        <prefix type="binary">10</prefix>
+        <exponent>1</exponent>
+      </part>
+    </unit>
+    <unit type="composite">
+      <_title>Mebibyte</_title>
+      <names>r:Mibyte_c</names>
+      <part>
+        <unit>byte</unit>
+        <prefix type="binary">20</prefix>
+        <exponent>1</exponent>
+      </part>
+    </unit>
+    <unit type="composite">
+      <_title>Gibibyte</_title>
+      <names>r:Gibyte_c</names>
+      <part>
+        <unit>byte</unit>
+        <prefix type="binary">30</prefix>
+        <exponent>1</exponent>
+      </part>
+    </unit>
+    <unit type="composite">
+      <_title>Tebibyte</_title>
+      <names>r:Tibyte_c</names>
+      <part>
+        <unit>byte</unit>
+        <prefix type="binary">40</prefix>
+        <exponent>1</exponent>
+      </part>
+    </unit>
+    <unit type="composite">
+      <_title>Pebibyte</_title>
+      <names>r:Pibyte_c</names>
+      <part>
+        <unit>byte</unit>
+        <prefix type="binary">50</prefix>
+        <exponent>1</exponent>
+      </part>
+    </unit>
+    <unit type="composite">
+      <_title>Exbibyte</_title>
+      <names>r:Eibyte_c</names>
+      <part>
+        <unit>byte</unit>
+        <prefix type="binary">60</prefix>
+        <exponent>1</exponent>
+      </part>
+    </unit>
+    <unit type="composite">
       <_title>Kilobit</_title>
       <names>r:kbit_c</names>
       <part>
         <unit>bit</unit>
         <prefix>3</prefix>
+        <exponent>1</exponent>
+      </part>
+    </unit>
+    <unit type="composite">
+      <_title>Megabit</_title>
+      <names>r:Mbit_c</names>
+      <part>
+        <unit>bit</unit>
+        <prefix>6</prefix>
+        <exponent>1</exponent>
+      </part>
+    </unit>
+    <unit type="composite">
+      <_title>Gigabit</_title>
+      <names>r:Gbit_c</names>
+      <part>
+        <unit>bit</unit>
+        <prefix>9</prefix>
+        <exponent>1</exponent>
+      </part>
+    </unit>
+    <unit type="composite">
+      <_title>Terabit</_title>
+      <names>r:Tbit_c</names>
+      <part>
+        <unit>bit</unit>
+        <prefix>12</prefix>
+        <exponent>1</exponent>
+      </part>
+    </unit>
+    <unit type="composite">
+      <_title>Petabit</_title>
+      <names>r:Pbit_c</names>
+      <part>
+        <unit>bit</unit>
+        <prefix>15</prefix>
         <exponent>1</exponent>
       </part>
     </unit>
@@ -4132,29 +4213,20 @@
       </part>
     </unit>
     <unit type="composite">
-      <_title>Megabit</_title>
-      <names>r:Mbit_c</names>
+      <_title>Tebibit</_title>
+      <names>r:Tibit_c</names>
       <part>
         <unit>bit</unit>
-        <prefix>6</prefix>
+        <prefix type="binary">40</prefix>
         <exponent>1</exponent>
       </part>
     </unit>
     <unit type="composite">
-      <_title>Gigabit</_title>
-      <names>r:Gbit_c</names>
+      <_title>Pebibit</_title>
+      <names>r:Pibit_c</names>
       <part>
         <unit>bit</unit>
-        <prefix>9</prefix>
-        <exponent>1</exponent>
-      </part>
-    </unit>
-    <unit type="composite">
-      <_title>Terabit</_title>
-      <names>r:Tbit_c</names>
-      <part>
-        <unit>bit</unit>
-        <prefix>12</prefix>
+        <prefix type="binary">50</prefix>
         <exponent>1</exponent>
       </part>
     </unit>
