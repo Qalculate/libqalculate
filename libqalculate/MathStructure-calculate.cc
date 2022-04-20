@@ -1662,7 +1662,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 				SET_CHILD_MAP(0)
 				return 1;
 			}
-		} else if(eo.transform_trigonometric_functions && mstruct.function()->id() == FUNCTION_ID_SINC && mstruct.size() == 1 && equals(mstruct[0])) {
+		} else if(eo.transform_trigonometric_functions && mstruct.function()->id() == FUNCTION_ID_SINC && mstruct.size() == 1 && equals(mstruct[0]) && mstruct.function()->getDefaultValue(2) != "pi") {
 			// sinc(x)*x=sin(x)
 			calculateMultiply(CALCULATOR->getRadUnit(), eo);
 			transformById(FUNCTION_ID_SIN);
@@ -2822,7 +2822,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						return 3;
 					}
 					setFunctionId(FUNCTION_ID_TAN);
-				} else if(eo.transform_trigonometric_functions && o_function->id() == FUNCTION_ID_SINC && SIZE == 1 && CHILD(0) == mstruct) {
+				} else if(eo.transform_trigonometric_functions && o_function->id() == FUNCTION_ID_SINC && SIZE == 1 && CHILD(0) == mstruct && o_function->getDefaultValue(2) != "pi") {
 					// sinc(x)*x=sin(x)
 					CHILD(0).calculateMultiply(CALCULATOR->getRadUnit(), eo);
 					CHILD_UPDATED(0)
