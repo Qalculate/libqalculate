@@ -418,8 +418,8 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 			} else if(o_function->id() == FUNCTION_ID_SININT && SIZE == 1) {
 				// Si(f)'=f'*sinc(f)
 				setFunctionId(FUNCTION_ID_SINC);
-				CHILD_UPDATED(0)
 				MathStructure mdiff(CHILD(0));
+				if(o_function->getDefaultValue(2) == "pi") CHILD(0) /= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 				mdiff.differentiate(x_var, eo);
 				multiply(mdiff);
 			} else if(o_function->id() == FUNCTION_ID_COSINT && SIZE == 1) {
@@ -589,6 +589,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				multiply(mstruct);
 			} else if(o_function->id() == FUNCTION_ID_SINC && SIZE == 1) {
 				// sinc(f)'=f'*(cos(f)/f-sin(f)/f^2)
+				if(o_function->getDefaultValue(2) == "pi") CHILD(0) *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 				MathStructure m_cos(CALCULATOR->getFunctionById(FUNCTION_ID_COS), &CHILD(0), NULL);
 				if(CALCULATOR->getRadUnit()) m_cos[0].multiply(CALCULATOR->getRadUnit());
 				m_cos.divide(CHILD(0));

@@ -614,12 +614,13 @@ int MathFunction::calculate(MathStructure&, const MathStructure&, const Evaluati
 	return 0;
 }
 void MathFunction::setDefaultValue(size_t arg_, string value_) {
-	if((int) arg_ > argc && (int) arg_ <= max_argc && (int) default_values.size() >= (int) arg_ - argc) {
+	if((int) arg_ > argc) {
+		while(default_values.size() < arg_ - argc) default_values.push_back("");
 		default_values[arg_ - argc - 1] = value_;
 	}
 }
 const string &MathFunction::getDefaultValue(size_t arg_) const {
-	if((int) arg_ > argc && (int) arg_ <= max_argc && (int) default_values.size() >= (int) arg_ - argc) {
+	if((int) arg_ > argc && (int) default_values.size() >= (int) arg_ - argc) {
 		return default_values[arg_ - argc - 1];
 	}
 	return empty_string;
