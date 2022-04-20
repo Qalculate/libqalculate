@@ -3938,7 +3938,7 @@
     <_title>Information</_title>
     <unit type="base">
       <_title>Bit</_title>
-      <_names>r:bit,p:bits,binary_digit,p:binary_digits,shannon,p:shannons,a:Sh</_names>
+      <_names>r:bit,p:bits,binary_digit,p:binary_digits,shannon,p:shannons,Sh</_names>
       <use_with_prefixes>true</use_with_prefixes>
     </unit>
     <unit type="alias">
