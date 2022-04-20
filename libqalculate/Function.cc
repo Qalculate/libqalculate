@@ -425,6 +425,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 	// append default values
 	if(itmp < maxargs() && itmp >= minargs()) {
 		int itmp2 = itmp;
+		if(id() == FUNCTION_ID_LOGN) CALCULATOR->error(false, _("log() with a single argument is considered ambigious please use ln() or log10() instead."), NULL);
 		while(itmp2 < maxargs()) {
 			arg = getArgumentDefinition(itmp2 + 1);
 			MathStructure *mstruct = new MathStructure();
