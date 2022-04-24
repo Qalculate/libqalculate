@@ -51,6 +51,85 @@ bool ExpressionName::operator == (const ExpressionName &ename) const {
 bool ExpressionName::operator != (const ExpressionName &ename) const {
 	return name != ename.name || abbreviation != ename.abbreviation || case_sensitive != ename.case_sensitive || suffix != ename.suffix || unicode != ename.unicode || plural != ename.plural || reference != ename.reference || avoid_input != ename.avoid_input || completion_only != ename.completion_only;
 }
+string ExpressionName::formattedName(int type, bool capitalize, bool html_suffix, bool remove_typename, bool hide_underscore, bool *was_formatted, bool *was_capitalized) const {
+	if(was_formatted) *was_formatted = false;
+	if(was_capitalized) *was_capitalized = false;
+	if(name.length() < 2) return name;
+	string str = name;
+	if(suffix && (html_suffix || remove_typename)) {
+		size_t i = string::npos;
+		if(remove_typename && (type == TYPE_VARIABLE || type == TYPE_UNIT)) i = name.rfind('_');
+		size_t l = 4;
+		if(type == TYPE_VARIABLE) l = 8;
+		if(i != string::npos && i + l + 1 <= name.length() && ((type == TYPE_VARIABLE && name.substr(name.length() - l, l) == "constant" && CALCULATOR->getActiveUnit(name.substr(0, i + l + 1 == name.length() ? i : name.length() - l))) || (type == TYPE_UNIT && name.substr(name.length() - l, l) == "unit" && CALCULATOR->getActiveVariable(name.substr(0, i + l + 1 == name.length() ? i : name.length() - l))))) {
+			if(i + l + 1 == name.length()) {
+				str = name.substr(0, i);
+			} else {
+				str = str.substr(0, name.length() - l);
+				if(html_suffix) str = sub_suffix_html(str);
+			}
+			if(was_formatted) *was_formatted = true;
+		} else if(html_suffix) {
+			str = sub_suffix_html(name);
+			if(was_formatted) *was_formatted = true;
+		}
+	}
+	if(type < 0 || !capitalize || completion_only || case_sensitive || str.length() <= 4) {
+		if(hide_underscore && str.find('_') != string::npos) {if(was_formatted) *was_formatted = true; gsub("_", " ", str);}
+		return str;
+	}
+	size_t i = str.find('_');
+	if(i == string::npos || str[str.length() - 1] == '_' || unicode_length(str, i) < 3) {
+		if(hide_underscore && i != string::npos) {if(was_formatted) *was_formatted = true; gsub("_", " ", str);}
+		return str;
+	}
+	bool b_first = true;
+	string str_bak = str;
+	while(true) {
+		if(i == string::npos) break;
+		if(b_first && i == str.length() - 2 && (str[str.length() - 1] < '0' || str[str.length() - 1] > '9') && ((signed char) str[i - 1] >= 0 || CALCULATOR->getPrefix(str.substr(0, i)))) {
+			if(hide_underscore) {if(was_formatted) *was_formatted = true; gsub("_", " ", str_bak);}
+			return str_bak;
+		}
+		str.erase(i, 1);
+		if(str[i] >= 'a' && str[i] <= 'z') {
+			str[i] -= ('a' - 'A');
+		} else if((unsigned char) str[i] >= 0xC0) {
+			size_t l = 1;
+			while(i + l < str.length() && (signed char) str[i + l] < 0 && (unsigned char) str[i + l] < 0xC0) l++;
+			char *strup = utf8_strup(str.c_str() + (sizeof(char) * i), l);
+			if(strup) {
+				str.replace(i, l, strup);
+				free(strup);
+			} else {
+				if(hide_underscore) {if(was_formatted) *was_formatted = true; gsub("_", " ", str_bak);}
+				return str_bak;
+			}
+		}
+		if(b_first && type != TYPE_FUNCTION) {
+			if(str[0] >= 'a' && str[0] <= 'z') {
+				str[0] -= ('a' - 'A');
+			} else if((unsigned char) str[0] >= 0xC0) {
+				size_t l = 1;
+				while(l < str.length() && (signed char) str[l] < 0 && (unsigned char) str[l] < 0xC0) l++;
+				char *strup = utf8_strup(str.c_str(), l);
+				if(strup) {
+					str.replace(0, l, strup);
+					free(strup);
+				} else {
+					if(hide_underscore) {if(was_formatted) *was_formatted = true; gsub("_", " ", str_bak);}
+					return str_bak;
+				}
+			}
+		}
+		b_first = false;
+		i = str.find('_', i + 1);
+	}
+	if(hide_underscore && !suffix) gsub("_", " ", str);
+	if(was_formatted) *was_formatted = true;
+	if(was_capitalized) *was_capitalized = true;
+	return str;
+}
 
 ExpressionItem::ExpressionItem(string cat_, string name_, string title_, string descr_, bool is_local, bool is_builtin, bool is_active) {
 

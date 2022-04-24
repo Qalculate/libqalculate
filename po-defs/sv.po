@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-14 18:44+0200\n"
+"POT-Creation-Date: 2022-04-24 14:06+0200\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -1170,7 +1170,7 @@ msgid "Kyrgyzstani Som"
 msgstr "Kirgizistansk som"
 
 #: ../data/currencies.xml.in.h:284
-msgid "acr:KGS,au:&#x0441;"
+msgid "acr:KGS"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:285
@@ -1895,7 +1895,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:465
 msgid "French Franc (obsolete)"
-msgstr "Fransk franc (obsolet="
+msgstr "Fransk franc (obsolet)"
 
 #: ../data/currencies.xml.in.h:466
 msgid "a-cr:FRF,au:&#x20A3;"
@@ -5903,7 +5903,7 @@ msgstr "Lägesparameter (x_0)"
 msgid "Scale (γ)"
 msgstr "Skalparameter (γ)"
 
-#: ../data/functions.xml.in.h:712 ../data/variables.xml.in.h:206
+#: ../data/functions.xml.in.h:712 ../data/variables.xml.in.h:221
 msgid "Date &amp; Time"
 msgstr "Datum &amp; Tid"
 
@@ -6226,7 +6226,7 @@ msgstr "Dagar i månad"
 msgid "r:daysInMonth"
 msgstr ""
 
-#: ../data/functions.xml.in.h:780 ../data/variables.xml.in.h:199
+#: ../data/functions.xml.in.h:780 ../data/variables.xml.in.h:214
 msgid "Utilities"
 msgstr "Verktyg"
 
@@ -6951,7 +6951,7 @@ msgstr ""
 msgid "Initial estimate"
 msgstr "Initial uppskattning"
 
-#: ../data/functions.xml.in.h:942 ../data/variables.xml.in.h:200
+#: ../data/functions.xml.in.h:942 ../data/variables.xml.in.h:215
 msgid "Precision"
 msgstr ""
 
@@ -8840,7 +8840,7 @@ msgid "Ounce (troy)"
 msgstr ""
 
 #: ../data/units.xml.in.h:97
-msgid "ar:oz_t,troy_ounce,p:troy_ounces"
+msgid "ars:oz_t,troy_ounce,p:troy_ounces"
 msgstr ""
 
 #: ../data/units.xml.in.h:98
@@ -8848,7 +8848,7 @@ msgid "Pound (troy)"
 msgstr "Pund (troy)"
 
 #: ../data/units.xml.in.h:99
-msgid "ar:lb_t,troy_pound,p:troy_pounds"
+msgid "ars:lb_t,troy_pound,p:troy_pounds"
 msgstr ""
 
 #: ../data/units.xml.in.h:100
@@ -10578,8 +10578,8 @@ msgid "Rad"
 msgstr ""
 
 #: ../data/units.xml.in.h:540
-msgid "r:rad_radioactivity"
-msgstr "rad_radioaktivitet"
+msgid "rs:rad_radioactivity"
+msgstr "s:rad_radioaktivitet"
 
 #: ../data/units.xml.in.h:541
 msgid "Dose Equivalent"
@@ -10670,158 +10670,225 @@ msgid "Information"
 msgstr ""
 
 #: ../data/units.xml.in.h:563
-msgid "Bit"
+msgid "Bit (Binary Digit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:564
-msgid "r:bit,p:bits"
-msgstr "bit,p:bits"
+msgid "r:bit,p:bits,shannon,p:shannons,c:Sh,binary_digit,p:binary_digits"
+msgstr ""
 
 #: ../data/units.xml.in.h:565
-msgid "Byte (8-bit)"
+msgid "Nat"
 msgstr ""
 
 #: ../data/units.xml.in.h:566
-msgid "r:byte,a:B,p:bytes,octet,p:octets"
-msgstr "byte,a:B,p:byte,p:bytes"
+msgid "r:nat,p:nats"
+msgstr ""
 
 #: ../data/units.xml.in.h:567
-msgid "Nibble"
+msgid "Trit (Ternary Digit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:568
-msgid "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets"
+msgid ""
+"r:trit,p:trits,trinary_digit,p:trinary_digits,ternary_digit,p:ternary_digits"
 msgstr ""
 
 #: ../data/units.xml.in.h:569
-msgid "Tribble"
+msgid "Octal Digit"
 msgstr ""
 
 #: ../data/units.xml.in.h:570
-msgid "r:tribble,p:tribbles"
+msgid "r:octal_digit,p:octal_digits"
 msgstr ""
 
 #: ../data/units.xml.in.h:571
-msgid "Word (16-bit)"
+msgid "Hartley (Decimal Digit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:572
-msgid "r:word,p:words"
+msgid "r:hartley,p:hartleys,a:Hart,dit,p:dits,decimal_digit,p:decimal_digits"
 msgstr ""
 
 #: ../data/units.xml.in.h:573
-msgid "Kilobyte"
+msgid "Byte (8-bit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:574
-msgid "Kibibyte"
-msgstr ""
+msgid "r:byte,a:B,p:bytes,octet,p:octets,a:o"
+msgstr "byte,a:B,p:byte,p:bytes"
 
 #: ../data/units.xml.in.h:575
-msgid "Mebibyte"
+msgid "Nibble (Hexadecimal Digit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:576
-msgid "Gibibyte"
+msgid ""
+"r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets,hex_digit,p:"
+"hex_digits,hexadecimal_digit,p:hexadecimal_digits"
 msgstr ""
 
 #: ../data/units.xml.in.h:577
-msgid "Megabyte"
+msgid "Tribble"
 msgstr ""
 
 #: ../data/units.xml.in.h:578
-msgid "Gigabyte"
+msgid "r:tribble,p:tribbles"
 msgstr ""
 
 #: ../data/units.xml.in.h:579
-msgid "Terabyte"
+msgid "Nonet"
 msgstr ""
 
 #: ../data/units.xml.in.h:580
-msgid "Kilobit"
+msgid "r:nonet,p:nonets"
 msgstr ""
 
 #: ../data/units.xml.in.h:581
-msgid "Kibibit"
+msgid "Declet"
 msgstr ""
 
 #: ../data/units.xml.in.h:582
-msgid "Mebibit"
+msgid "r:declet,p:declets"
 msgstr ""
 
 #: ../data/units.xml.in.h:583
-msgid "Gibibit"
+msgid "Word (16-bit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:584
-msgid "Megabit"
+msgid "r:word,p:words"
 msgstr ""
 
 #: ../data/units.xml.in.h:585
-msgid "Gigabit"
+msgid "Kilobyte"
 msgstr ""
 
 #: ../data/units.xml.in.h:586
-msgid "Terabit"
+msgid "Megabyte"
 msgstr ""
 
 #: ../data/units.xml.in.h:587
-msgid "Typography"
-msgstr "Typografi"
+msgid "Gigabyte"
+msgstr ""
 
 #: ../data/units.xml.in.h:588
-msgid "PostScript Point"
-msgstr "PostScipt-punkt"
+msgid "Terabyte"
+msgstr ""
 
 #: ../data/units.xml.in.h:589
-msgid "ar:pt,a:pts,point,p:points"
-msgstr "punkt,point,p:punkter,p:points"
+msgid "Petabyte"
+msgstr ""
 
 #: ../data/units.xml.in.h:590
-msgid "PostScript Pica"
-msgstr "PostScript-pica"
+msgid "Exabyte"
+msgstr ""
 
 #: ../data/units.xml.in.h:591
-msgid "r:pica,p:picas"
+msgid "Kibibyte"
 msgstr ""
 
 #: ../data/units.xml.in.h:592
-msgid "ATA Pica"
-msgstr "ATA-pica"
+msgid "Mebibyte"
+msgstr ""
 
 #: ../data/units.xml.in.h:593
-msgid "r:ata_pica,p:ata_picas"
+msgid "Gibibyte"
 msgstr ""
 
 #: ../data/units.xml.in.h:594
-msgid "ATA Point"
-msgstr "ATA-punkt"
+msgid "Tebibyte"
+msgstr ""
 
 #: ../data/units.xml.in.h:595
-msgid "r:ata_point,a:ata_pt,p:ata_points"
+msgid "Kilobit"
 msgstr ""
 
 #: ../data/units.xml.in.h:596
-msgid "New Didot Point"
-msgstr "Ny Didotpunkt"
+msgid "Megabit"
+msgstr ""
 
 #: ../data/units.xml.in.h:597
-msgid "r:new_didot"
+msgid "Gigabit"
 msgstr ""
 
 #: ../data/units.xml.in.h:598
-msgid "Didot Point"
-msgstr "Didotpunkt"
+msgid "Terabit"
+msgstr ""
 
 #: ../data/units.xml.in.h:599
-msgid "r:didot,a:dd"
+msgid "Petabit"
 msgstr ""
 
 #: ../data/units.xml.in.h:600
-msgid "Cicero"
+msgid "Kibibit"
 msgstr ""
 
 #: ../data/units.xml.in.h:601
+msgid "Mebibit"
+msgstr ""
+
+#: ../data/units.xml.in.h:602
+msgid "Gibibit"
+msgstr ""
+
+#: ../data/units.xml.in.h:603
+msgid "Typography"
+msgstr "Typografi"
+
+#: ../data/units.xml.in.h:604
+msgid "PostScript Point"
+msgstr "PostScipt-punkt"
+
+#: ../data/units.xml.in.h:605
+msgid "ar:pt,a:pts,point,p:points"
+msgstr "punkt,point,p:punkter,p:points"
+
+#: ../data/units.xml.in.h:606
+msgid "PostScript Pica"
+msgstr "PostScript-pica"
+
+#: ../data/units.xml.in.h:607
+msgid "r:pica,p:picas"
+msgstr ""
+
+#: ../data/units.xml.in.h:608
+msgid "ATA Pica"
+msgstr "ATA-pica"
+
+#: ../data/units.xml.in.h:609
+msgid "r:ata_pica,p:ata_picas"
+msgstr ""
+
+#: ../data/units.xml.in.h:610
+msgid "ATA Point"
+msgstr "ATA-punkt"
+
+#: ../data/units.xml.in.h:611
+msgid "r:ata_point,a:ata_pt,p:ata_points"
+msgstr ""
+
+#: ../data/units.xml.in.h:612
+msgid "New Didot Point"
+msgstr "Ny Didotpunkt"
+
+#: ../data/units.xml.in.h:613
+msgid "r:new_didot"
+msgstr ""
+
+#: ../data/units.xml.in.h:614
+msgid "Didot Point"
+msgstr "Didotpunkt"
+
+#: ../data/units.xml.in.h:615
+msgid "r:didot,a:dd"
+msgstr ""
+
+#: ../data/units.xml.in.h:616
+msgid "Cicero"
+msgstr ""
+
+#: ../data/units.xml.in.h:617
 msgid "r:cicero"
 msgstr ""
 
@@ -11059,612 +11126,675 @@ msgid "-r:hundred"
 msgstr "hundra,hundred"
 
 #: ../data/variables.xml.in.h:60
+msgid "Traditional Numbers"
+msgstr "Traditionella tal"
+
+#: ../data/variables.xml.in.h:61
+msgid "Dozen"
+msgstr "Dussin"
+
+#: ../data/variables.xml.in.h:62
+msgid "-r:dozen,a:dz,a:doz"
+msgstr "dussin"
+
+#: ../data/variables.xml.in.h:63
+msgid "Baker's Dozen"
+msgstr "Bagardussin"
+
+#: ../data/variables.xml.in.h:64
+msgid "-r:bakers_dozen"
+msgstr "bagardussin"
+
+#: ../data/variables.xml.in.h:65
+msgid "Score"
+msgstr "Tjog"
+
+#: ../data/variables.xml.in.h:66
+msgid "-r:score"
+msgstr "tjog"
+
+#: ../data/variables.xml.in.h:67
+msgid "Long Hundred"
+msgstr "Stor-hundrade"
+
+#: ../data/variables.xml.in.h:68
+msgid "-r:long_hundred,great_hundred,twelfty"
+msgstr "storhundra,storhundrade,p:sotrhundraden"
+
+#: ../data/variables.xml.in.h:69
+msgid "Gross"
+msgstr "Gross"
+
+#: ../data/variables.xml.in.h:70
+msgid "-r:gross,a:gro"
+msgstr "gross"
+
+#: ../data/variables.xml.in.h:71
+msgid "Long Thousand"
+msgstr ""
+
+#: ../data/variables.xml.in.h:72
+msgid "-r:long_thousand"
+msgstr ""
+
+#: ../data/variables.xml.in.h:73
+msgid "Great Gross"
+msgstr ""
+
+#: ../data/variables.xml.in.h:74
+msgid "-r:great_gross"
+msgstr ""
+
+#: ../data/variables.xml.in.h:75
 msgid "Physical Constants"
 msgstr "Fysikaliska konstanter"
 
-#: ../data/variables.xml.in.h:61
+#: ../data/variables.xml.in.h:76
 msgid "Universal Constants"
 msgstr "Universala konstanter"
 
-#: ../data/variables.xml.in.h:62
+#: ../data/variables.xml.in.h:77
 msgid "Characteristic Impedance of Vacuum"
 msgstr "Karaktäristisk impedans för vakuum"
 
-#: ../data/variables.xml.in.h:63
+#: ../data/variables.xml.in.h:78
 msgid "Electric Constant (Permittivity of Free Space)"
 msgstr "Elektriska konstanten (tomrummets permettivitet)"
 
-#: ../data/variables.xml.in.h:64
+#: ../data/variables.xml.in.h:79
 msgid "Magnetic Constant (Permeability of Free Space)"
 msgstr "Magnetiska konstanten (tomrummets permeabilitet)"
 
-#: ../data/variables.xml.in.h:65
+#: ../data/variables.xml.in.h:80
 msgid "Planck Constant"
 msgstr "Plancks konstant"
 
-#: ../data/variables.xml.in.h:66
+#: ../data/variables.xml.in.h:81
 msgid "Reduced Planck Constant (Dirac constant)"
 msgstr "Reducerad Plancks konstant (Diracs konstant)"
 
-#: ../data/variables.xml.in.h:67
+#: ../data/variables.xml.in.h:82
 msgid "Newtonian Constant of Gravitation"
 msgstr "Newtonska gravitationskonstanten"
 
-#: ../data/variables.xml.in.h:68
+#: ../data/variables.xml.in.h:83
 msgid "Speed of Light in Vacuum"
 msgstr "Ljusets hastighet i vakuum"
 
-#: ../data/variables.xml.in.h:69
+#: ../data/variables.xml.in.h:84
 msgid "Standard Acceleration due to Gravity"
 msgstr "Standardacceleration av gravitet"
 
-#: ../data/variables.xml.in.h:70
+#: ../data/variables.xml.in.h:85
 msgid "Electromagnetic Constants"
 msgstr "Elektromagnetiska konstanter"
 
-#: ../data/variables.xml.in.h:71
+#: ../data/variables.xml.in.h:86
 msgid "Bohr Magneton"
 msgstr "Bohrs magneton"
 
-#: ../data/variables.xml.in.h:72
+#: ../data/variables.xml.in.h:87
 msgid "Conductance Quantum"
 msgstr "Konduktanskvantum"
 
-#: ../data/variables.xml.in.h:73
+#: ../data/variables.xml.in.h:88
 msgid "Coulomb's Constant (Electric Force Constant)"
 msgstr "Coulombs konstant"
 
-#: ../data/variables.xml.in.h:74
+#: ../data/variables.xml.in.h:89
 msgid "Elementary Charge"
 msgstr "Elementarladdning"
 
-#: ../data/variables.xml.in.h:75
+#: ../data/variables.xml.in.h:90
 msgid "Inverse of Conductance Quantum"
 msgstr "Invers av Konduktanskvantum"
 
-#: ../data/variables.xml.in.h:76
+#: ../data/variables.xml.in.h:91
 msgid "Josephson Constant"
 msgstr "Josephsons konstant"
 
-#: ../data/variables.xml.in.h:77
+#: ../data/variables.xml.in.h:92
 msgid "Josephson Constant (conventional value)"
 msgstr "Josephsons konstant (konventionellt värde)"
 
-#: ../data/variables.xml.in.h:78
+#: ../data/variables.xml.in.h:93
 msgid "Magnetic Flux Quantum"
 msgstr "Magnetflödeskonstanten"
 
-#: ../data/variables.xml.in.h:79
+#: ../data/variables.xml.in.h:94
 msgid "Nuclear Magneton"
 msgstr "Kärnmagneton"
 
-#: ../data/variables.xml.in.h:80
+#: ../data/variables.xml.in.h:95
 msgid "von Klitzing Constant"
 msgstr "von Klitzing-konstanten"
 
-#: ../data/variables.xml.in.h:81
+#: ../data/variables.xml.in.h:96
 msgid "von Klitzing Constant (conventional value)"
 msgstr "von Klitzing-konstanten (konventionellt värde)"
 
-#: ../data/variables.xml.in.h:82
+#: ../data/variables.xml.in.h:97
 msgid "Particle Mass in u"
 msgstr "Partikelmassa i u"
 
-#: ../data/variables.xml.in.h:83
+#: ../data/variables.xml.in.h:98
 msgid "Deuteron Mass (in u)"
 msgstr "Deuteronmassa (i u)"
 
-#: ../data/variables.xml.in.h:84
+#: ../data/variables.xml.in.h:99
 msgid "Electron Mass (in u)"
 msgstr "Elektronmassa (i u)"
 
-#: ../data/variables.xml.in.h:85
+#: ../data/variables.xml.in.h:100
 msgid "Helion Mass (in u)"
 msgstr "Helionmassa (i u)"
 
-#: ../data/variables.xml.in.h:86
+#: ../data/variables.xml.in.h:101
 msgid "Neutron Mass (in u)"
 msgstr "Neutronmassa (i u)"
 
-#: ../data/variables.xml.in.h:87
+#: ../data/variables.xml.in.h:102
 msgid "Proton Mass (in u)"
 msgstr "Protonmassa (i u)"
 
-#: ../data/variables.xml.in.h:88
+#: ../data/variables.xml.in.h:103
 msgid "Tau Mass (in u)"
 msgstr "Taumassa (i u)"
 
-#: ../data/variables.xml.in.h:89
+#: ../data/variables.xml.in.h:104
 msgid "Muon Mass (in u)"
 msgstr "Muonmassa (i u)"
 
-#: ../data/variables.xml.in.h:90
+#: ../data/variables.xml.in.h:105
 msgid "Triton Mass (in u)"
 msgstr "Tritonmassa (i u)"
 
-#: ../data/variables.xml.in.h:91
+#: ../data/variables.xml.in.h:106
 msgid "Alpha Particle Mass (in u)"
 msgstr "Alfapartikelmassa (i u)"
 
-#: ../data/variables.xml.in.h:92
+#: ../data/variables.xml.in.h:107
 msgid "Particle Mass in MeV*c^(-2)"
 msgstr "Partikelmassa i MeV*c^(-2)"
 
-#: ../data/variables.xml.in.h:93
+#: ../data/variables.xml.in.h:108
 msgid "Electron Mass (in MeV/c^2)"
 msgstr "Elektronmassa (i MeV/c^2)"
 
-#: ../data/variables.xml.in.h:94
+#: ../data/variables.xml.in.h:109
 msgid "Neutron Mass (in MeV/c^2)"
 msgstr "Neutronmassa (i MeV/c^2)"
 
-#: ../data/variables.xml.in.h:95
+#: ../data/variables.xml.in.h:110
 msgid "Proton Mass (in MeV/c^2)"
 msgstr "Protonmassa (i MeV/c^2)"
 
-#: ../data/variables.xml.in.h:96
+#: ../data/variables.xml.in.h:111
 msgid "Tau Mass (in MeV/c^2)"
 msgstr "Taumassa (i MeV/c^2)"
 
-#: ../data/variables.xml.in.h:97
+#: ../data/variables.xml.in.h:112
 msgid "Muon Mass (in MeV/c^2)"
 msgstr "Muonmassa (i MeV/c^2)"
 
-#: ../data/variables.xml.in.h:98
+#: ../data/variables.xml.in.h:113
 msgid "Alpha Particle Mass (in MeV/c^2)"
 msgstr "Alfapartikelmassa (i MeV/c^2)"
 
-#: ../data/variables.xml.in.h:99
+#: ../data/variables.xml.in.h:114
 msgid "Up Quark Mass (in MeV/c^2)"
 msgstr "Uppkvarks massa (i MeV/c^2)"
 
-#: ../data/variables.xml.in.h:100
+#: ../data/variables.xml.in.h:115
 msgid "Down Quark Mass (in MeV/c^2)"
 msgstr "Nerkvarks massa (i MeV/c^2)"
 
-#: ../data/variables.xml.in.h:101
+#: ../data/variables.xml.in.h:116
 msgid "Charm Quark Mass (in MeV/c^2)"
 msgstr "Charmkvarks massa (i MeV/c^2)"
 
-#: ../data/variables.xml.in.h:102
+#: ../data/variables.xml.in.h:117
 msgid "Strange Quark Mass (in MeV/c^2)"
 msgstr "Särkvarks massa (i MeV/c^2)"
 
-#: ../data/variables.xml.in.h:103
+#: ../data/variables.xml.in.h:118
 msgid "Top Quark Mass (in MeV/c^2)"
 msgstr "Toppkvarks massa (i MeV/c^2)"
 
-#: ../data/variables.xml.in.h:104
+#: ../data/variables.xml.in.h:119
 msgid "Bottom Quark Mass (in MeV/c^2)"
 msgstr "Bottenkvarks massa (i MeV/c^2)"
 
-#: ../data/variables.xml.in.h:105
+#: ../data/variables.xml.in.h:120
 msgid "Higgs Boson Mass (in MeV/c^2)"
 msgstr "Higgsbosons massa (i MeV/c^2)"
 
-#: ../data/variables.xml.in.h:106
+#: ../data/variables.xml.in.h:121
 msgid "W Boson Mass (in MeV/c^2)"
 msgstr "W-bosons massa (i MeV/c^2)"
 
-#: ../data/variables.xml.in.h:107
+#: ../data/variables.xml.in.h:122
 msgid "Z Boson Mass (in MeV/c^2)"
 msgstr "Z-bosons massa (i MeV/c^2)"
 
-#: ../data/variables.xml.in.h:108
+#: ../data/variables.xml.in.h:123
 msgid "Particle Mass in kg"
 msgstr "Partikelmassa i kg"
 
-#: ../data/variables.xml.in.h:109
+#: ../data/variables.xml.in.h:124
 msgid "Deuteron Mass"
 msgstr "Deuteronmassa"
 
-#: ../data/variables.xml.in.h:110
+#: ../data/variables.xml.in.h:125
 msgid "Electron Mass"
 msgstr "Elektronmassa"
 
-#: ../data/variables.xml.in.h:111
+#: ../data/variables.xml.in.h:126
 msgid "Helion Mass"
 msgstr "Helionmassa"
 
-#: ../data/variables.xml.in.h:112
+#: ../data/variables.xml.in.h:127
 msgid "Neutron Mass"
 msgstr "Neutronmassa"
 
-#: ../data/variables.xml.in.h:113
+#: ../data/variables.xml.in.h:128
 msgid "Proton Mass"
 msgstr "Protonmassa"
 
-#: ../data/variables.xml.in.h:114
+#: ../data/variables.xml.in.h:129
 msgid "Tau Mass"
 msgstr "Taumassa"
 
-#: ../data/variables.xml.in.h:115
+#: ../data/variables.xml.in.h:130
 msgid "Muon Mass"
 msgstr "Muonmassa"
 
-#: ../data/variables.xml.in.h:116
+#: ../data/variables.xml.in.h:131
 msgid "Triton Mass"
 msgstr "Tritonmassa"
 
-#: ../data/variables.xml.in.h:117
+#: ../data/variables.xml.in.h:132
 msgid "Alpha Particle Mass"
 msgstr "Alfapartikelmassa"
 
-#: ../data/variables.xml.in.h:118
+#: ../data/variables.xml.in.h:133
 msgid "Atomic and Nuclear Constants"
 msgstr "Atomära och nukleära konstanter"
 
-#: ../data/variables.xml.in.h:119
+#: ../data/variables.xml.in.h:134
 msgid "Bohr Radius"
 msgstr "Bohr-radie"
 
-#: ../data/variables.xml.in.h:120
+#: ../data/variables.xml.in.h:135
 msgid "Classical Electron Radius"
 msgstr "Klassisk elektron-radie"
 
-#: ../data/variables.xml.in.h:121
+#: ../data/variables.xml.in.h:136
 msgid "Fermi Coupling Constant"
 msgstr "Fermi Coupling-konstanten"
 
-#: ../data/variables.xml.in.h:122
+#: ../data/variables.xml.in.h:137
 msgid "Fine-Structure Constant"
 msgstr "Finstrukturkonstanten"
 
-#: ../data/variables.xml.in.h:123
+#: ../data/variables.xml.in.h:138
 msgid "Hartree Energy (constant)"
 msgstr "Hartreeenergi (konstant)"
 
-#: ../data/variables.xml.in.h:124
+#: ../data/variables.xml.in.h:139
 msgid "Quantum of Circulation"
 msgstr "Cirkulationskvantum"
 
-#: ../data/variables.xml.in.h:125
+#: ../data/variables.xml.in.h:140
 msgid "Quantum of Circulation times 2"
 msgstr "Cirkulationskvantum gånger 2"
 
-#: ../data/variables.xml.in.h:126
+#: ../data/variables.xml.in.h:141
 msgid "Rydberg Constant"
 msgstr "Rydbergs konstant"
 
-#: ../data/variables.xml.in.h:127
+#: ../data/variables.xml.in.h:142
 msgid "Thomson cross section"
 msgstr "Thomsons krossektion"
 
-#: ../data/variables.xml.in.h:128
+#: ../data/variables.xml.in.h:143
 msgid "Weak Mixing Angle (Weinberg Angle)"
 msgstr "Svag blandningsvinken (Weinbergvinkeln)"
 
-#: ../data/variables.xml.in.h:129
+#: ../data/variables.xml.in.h:144
 msgid "W to Z Mass Ratio"
 msgstr "W till Z massförhållande"
 
-#: ../data/variables.xml.in.h:130
+#: ../data/variables.xml.in.h:145
 msgid "Physico-Chemical Constants"
 msgstr "Fysikalisk-kemiska konstanter"
 
-#: ../data/variables.xml.in.h:131
+#: ../data/variables.xml.in.h:146
 msgid "Lattice Spacing of Ideal Silicon (220)"
 msgstr "Gitteravstånd för idealt silikon (220)"
 
-#: ../data/variables.xml.in.h:132
+#: ../data/variables.xml.in.h:147
 msgid "Atomic Mass Constant"
 msgstr "Atommassakonstanten"
 
-#: ../data/variables.xml.in.h:133
+#: ../data/variables.xml.in.h:148
 msgid "Avogadro Constant"
 msgstr "Avogadros konstant"
 
-#: ../data/variables.xml.in.h:134
+#: ../data/variables.xml.in.h:149
 msgid "Boltzmann Constant"
 msgstr "Boltzmanns konstant"
 
-#: ../data/variables.xml.in.h:135
+#: ../data/variables.xml.in.h:150
 msgid "Molar Mass Constant"
 msgstr "Molmassakonstant"
 
-#: ../data/variables.xml.in.h:136
+#: ../data/variables.xml.in.h:151
 msgid "Compton Wavelength"
 msgstr "Compton-våglängd"
 
-#: ../data/variables.xml.in.h:137
+#: ../data/variables.xml.in.h:152
 msgid "Reduced Compton Wavelength"
 msgstr "Reducerad Compton-våglängd"
 
-#: ../data/variables.xml.in.h:138
+#: ../data/variables.xml.in.h:153
 msgid "Electronvolt (constant)"
 msgstr "Elektronvolt (konstant)"
 
-#: ../data/variables.xml.in.h:139
+#: ../data/variables.xml.in.h:154
 msgid "Faraday Constant"
 msgstr "Faradays konstant"
 
-#: ../data/variables.xml.in.h:140
+#: ../data/variables.xml.in.h:155
 msgid "First Radiation Constant"
 msgstr "Första strålningskonstanten"
 
-#: ../data/variables.xml.in.h:141
+#: ../data/variables.xml.in.h:156
 msgid "First Radiation Constant for Spectral Radiance"
 msgstr "Första strålningskonstanten för spektralradians"
 
-#: ../data/variables.xml.in.h:142
+#: ../data/variables.xml.in.h:157
 msgid "Gas Constant"
 msgstr "Gaskonstanten"
 
-#: ../data/variables.xml.in.h:143
+#: ../data/variables.xml.in.h:158
 msgid "Lattice Parameter of Silicon"
 msgstr "Gitterparameter för silikon"
 
-#: ../data/variables.xml.in.h:144
+#: ../data/variables.xml.in.h:159
 msgid "Loschmidt Constant (273.15 K, 100 kPa)"
 msgstr "Loschmidts konstant (273.15 K, 100 kPa)"
 
-#: ../data/variables.xml.in.h:145
+#: ../data/variables.xml.in.h:160
 msgid "Loschmidt Constant (273.15 K, 101.325 kPa)"
 msgstr "Loschmidts konstant (273.15 K, 101.325 kPa)"
 
-#: ../data/variables.xml.in.h:146
+#: ../data/variables.xml.in.h:161
 msgid "Molar Planck Constant"
 msgstr "Molplanckkonstant"
 
-#: ../data/variables.xml.in.h:147
+#: ../data/variables.xml.in.h:162
 msgid "Molar Volume of Ideal Gas (273.15 K, 100 kPa)"
 msgstr "Molvolym för ideal gas (273.15 K, 100 kPa)"
 
-#: ../data/variables.xml.in.h:148
+#: ../data/variables.xml.in.h:163
 msgid "Molar Volume of Ideal Gas (273.15 K, 101.325 kPa)"
 msgstr "Molvolym för ideal gas (273.15 K, 101.325 kPa)"
 
-#: ../data/variables.xml.in.h:149
+#: ../data/variables.xml.in.h:164
 msgid "Sackur-Tetrode constant (1 K, 100 kPa)"
 msgstr "Sackur-Tetrodes konstant (1 K, 100 kPa))"
 
-#: ../data/variables.xml.in.h:150
+#: ../data/variables.xml.in.h:165
 msgid "Sackur-Tetrode constant (1 K, 101.325 kPa)"
 msgstr "Sackur-Tetrodes konstant (1 K, 101.325 kPa)"
 
-#: ../data/variables.xml.in.h:151
+#: ../data/variables.xml.in.h:166
 msgid "Second Radiation Constant"
 msgstr "Andra strålningskonstanten"
 
-#: ../data/variables.xml.in.h:152
+#: ../data/variables.xml.in.h:167
 msgid "Stefan-Boltzmann Constant"
 msgstr "Stefan-Boltzmanns konstant"
 
-#: ../data/variables.xml.in.h:153
+#: ../data/variables.xml.in.h:168
 msgid "Wien frequency displacement law constant"
 msgstr "Wiens frekvensförskjutningskonstant"
 
-#: ../data/variables.xml.in.h:154
+#: ../data/variables.xml.in.h:169
 msgid "Wien wavelength displacement law constant"
 msgstr "Wiens våglängdsförskjutningskonstant"
 
-#: ../data/variables.xml.in.h:155
+#: ../data/variables.xml.in.h:170
 msgid "Conversion factors for energy equivalents"
 msgstr "Omvandlingsfaktorer för energiekvivalenter"
 
-#: ../data/variables.xml.in.h:156
+#: ../data/variables.xml.in.h:171
 msgid "Hertz - Inverse Meter Relationship"
 msgstr "Förhållande Hertz till reciprok meter"
 
-#: ../data/variables.xml.in.h:157
+#: ../data/variables.xml.in.h:172
 msgid "Hertz - Joule Relationship"
 msgstr "Förhållande Hertz till Joule"
 
-#: ../data/variables.xml.in.h:158
+#: ../data/variables.xml.in.h:173
 msgid "Hertz - Kelvin Relationship"
 msgstr "Förhållande Hertz till Kelvin"
 
-#: ../data/variables.xml.in.h:159
+#: ../data/variables.xml.in.h:174
 msgid "Hertz - Kilogram Relationship"
 msgstr "Förhållande Hertz till kilogram"
 
-#: ../data/variables.xml.in.h:160
+#: ../data/variables.xml.in.h:175
 msgid "Inverse Meter - Hertz Relationship"
 msgstr "Förhållande reciprok meter till Hertz"
 
-#: ../data/variables.xml.in.h:161
+#: ../data/variables.xml.in.h:176
 msgid "Inverse Meter - Joule Relationship"
 msgstr "Förhållande reciprok meter till Joule"
 
-#: ../data/variables.xml.in.h:162
+#: ../data/variables.xml.in.h:177
 msgid "Inverse Meter - Kelvin Relationship"
 msgstr "Förhållande reciprok meter till Kelvin"
 
-#: ../data/variables.xml.in.h:163
+#: ../data/variables.xml.in.h:178
 msgid "Inverse Meter - Kilogram Relationship"
 msgstr "Förhållande reciprok meter till kilogram"
 
-#: ../data/variables.xml.in.h:164
+#: ../data/variables.xml.in.h:179
 msgid "Joule - Hertz Relationship"
 msgstr "Förhållande Joule till Hertz"
 
-#: ../data/variables.xml.in.h:165
+#: ../data/variables.xml.in.h:180
 msgid "Joule - Inverse Meter Relationship"
 msgstr "Förhållande Joule till reciprok meter"
 
-#: ../data/variables.xml.in.h:166
+#: ../data/variables.xml.in.h:181
 msgid "Joule - Kelvin Relationship"
 msgstr "Förhållande Joule till Kelvin"
 
-#: ../data/variables.xml.in.h:167
+#: ../data/variables.xml.in.h:182
 msgid "Joule - Kilogram Relationship"
 msgstr "Förhållande Joule till kilogram"
 
-#: ../data/variables.xml.in.h:168
+#: ../data/variables.xml.in.h:183
 msgid "Kelvin - Hertz Relationship"
 msgstr "Förhållande Kelvin till Hertz"
 
-#: ../data/variables.xml.in.h:169
+#: ../data/variables.xml.in.h:184
 msgid "Kelvin - Inverse Meter Relationship"
 msgstr "Förhållande Kelvin till reciprok meter"
 
-#: ../data/variables.xml.in.h:170
+#: ../data/variables.xml.in.h:185
 msgid "Kelvin - Joule Relationship"
 msgstr "Förhållande Kelvin till Joule"
 
-#: ../data/variables.xml.in.h:171
+#: ../data/variables.xml.in.h:186
 msgid "Kelvin - Kilogram Relationship"
 msgstr "Förhållande Kelvin till kilogram"
 
-#: ../data/variables.xml.in.h:172
+#: ../data/variables.xml.in.h:187
 msgid "Kilogram - Hertz Relationship"
 msgstr "Förhållande kilogram till Hertz"
 
-#: ../data/variables.xml.in.h:173
+#: ../data/variables.xml.in.h:188
 msgid "Kilogram - Inverse Meter Relationship"
 msgstr "Förhållande kilogram till recriprok meter"
 
-#: ../data/variables.xml.in.h:174
+#: ../data/variables.xml.in.h:189
 msgid "Kilogram - Joule Relationship"
 msgstr "Förhållande kilogram till Joule"
 
-#: ../data/variables.xml.in.h:175
+#: ../data/variables.xml.in.h:190
 msgid "Kilogram - Kelvin Relationship"
 msgstr "Förhållande kilogram till Kelvin"
 
-#: ../data/variables.xml.in.h:176
+#: ../data/variables.xml.in.h:191
 msgid "Basic Constants"
 msgstr "Grundläggande konstanter"
 
-#: ../data/variables.xml.in.h:177
+#: ../data/variables.xml.in.h:192
 msgid "Golden Ratio"
 msgstr "Gyllene snittet"
 
-#: ../data/variables.xml.in.h:178
+#: ../data/variables.xml.in.h:193
 msgid "Omega Constant"
 msgstr "Omegakonstanten"
 
-#: ../data/variables.xml.in.h:179
+#: ../data/variables.xml.in.h:194
 msgid "Pythagoras' Constant (sqrt 2)"
 msgstr "Pythagoras konstant (sqrt 2)"
 
-#: ../data/variables.xml.in.h:180
+#: ../data/variables.xml.in.h:195
 msgid "Apery's Constant"
 msgstr "Aperys konstant"
 
-#: ../data/variables.xml.in.h:181
+#: ../data/variables.xml.in.h:196
 msgid "Tau (2pi)"
 msgstr ""
 
-#: ../data/variables.xml.in.h:182
+#: ../data/variables.xml.in.h:197
 msgid "Plastic Number"
 msgstr "Plastnummer"
 
-#: ../data/variables.xml.in.h:183
+#: ../data/variables.xml.in.h:198
 msgid "Base of Natural Logarithms (e)"
 msgstr "Basen för naturliga logaritmer (e)"
 
-#: ../data/variables.xml.in.h:184
+#: ../data/variables.xml.in.h:199
 msgid "Archimedes' Constant (pi)"
 msgstr "Arkimedes konstant (pi)"
 
-#: ../data/variables.xml.in.h:185
+#: ../data/variables.xml.in.h:200
 msgid "Euler's Constant"
 msgstr "Eulers konstant"
 
-#: ../data/variables.xml.in.h:186
+#: ../data/variables.xml.in.h:201
 msgid "Catalan's Constant"
 msgstr "Catalans konstant"
 
-#: ../data/variables.xml.in.h:187
+#: ../data/variables.xml.in.h:202
 msgid "Special Numbers"
 msgstr "Speciella nummer"
 
-#: ../data/variables.xml.in.h:188
+#: ../data/variables.xml.in.h:203
 msgid "Imaginary i (sqrt -1)"
 msgstr "Imaginärt i (sqrt -1)"
 
-#: ../data/variables.xml.in.h:189
+#: ../data/variables.xml.in.h:204
 msgid "Positive Infinity"
 msgstr "Positiv oändlighet"
 
-#: ../data/variables.xml.in.h:190
+#: ../data/variables.xml.in.h:205
 msgid "a:&#x221E;,r:plus_infinity,r:infinity"
 msgstr "a:&#x221E;,oändlighet"
 
-#: ../data/variables.xml.in.h:191
+#: ../data/variables.xml.in.h:206
 msgid "Negative Infinity"
 msgstr "Negativ oändlighet"
 
-#: ../data/variables.xml.in.h:192
+#: ../data/variables.xml.in.h:207
 msgid "r:minus_infinity"
 msgstr "minus_oändlighet"
 
-#: ../data/variables.xml.in.h:193
+#: ../data/variables.xml.in.h:208
 msgid "Undefined"
 msgstr "Odefinierad"
 
-#: ../data/variables.xml.in.h:194
+#: ../data/variables.xml.in.h:209
 msgid "r:undefined"
 msgstr "odefinierad"
 
-#: ../data/variables.xml.in.h:195
+#: ../data/variables.xml.in.h:210
 msgid "False"
 msgstr "Falskt"
 
-#: ../data/variables.xml.in.h:196
+#: ../data/variables.xml.in.h:211
 msgid "r:false,r:no"
 msgstr "falskt,nej"
 
-#: ../data/variables.xml.in.h:197
+#: ../data/variables.xml.in.h:212
 msgid "True"
 msgstr "Sant"
 
-#: ../data/variables.xml.in.h:198
+#: ../data/variables.xml.in.h:213
 msgid "r:true,r:yes"
 msgstr "sant,ja"
 
-#: ../data/variables.xml.in.h:201
+#: ../data/variables.xml.in.h:216
 msgid "r:precision"
 msgstr ""
 
-#: ../data/variables.xml.in.h:202
+#: ../data/variables.xml.in.h:217
 msgid "System Uptime"
 msgstr "Uptime för operativsystemet"
 
-#: ../data/variables.xml.in.h:203
+#: ../data/variables.xml.in.h:218
 msgid "r:uptime"
 msgstr ""
 
-#: ../data/variables.xml.in.h:204
+#: ../data/variables.xml.in.h:219
 msgid "Unknowns"
 msgstr "Okända"
 
-#: ../data/variables.xml.in.h:205
+#: ../data/variables.xml.in.h:220
 msgid "n (integer)"
 msgstr "n (heltal)"
 
-#: ../data/variables.xml.in.h:207
+#: ../data/variables.xml.in.h:222
 msgid "Today"
 msgstr "Idag"
 
-#: ../data/variables.xml.in.h:208
+#: ../data/variables.xml.in.h:223
 msgid "r:today"
 msgstr "idag"
 
-#: ../data/variables.xml.in.h:209
+#: ../data/variables.xml.in.h:224
 msgid "Tomorrow"
 msgstr "Imorgon"
 
-#: ../data/variables.xml.in.h:210
+#: ../data/variables.xml.in.h:225
 msgid "r:tomorrow"
 msgstr "imorgon"
 
-#: ../data/variables.xml.in.h:211
+#: ../data/variables.xml.in.h:226
 msgid "Yesterday"
 msgstr "Igår"
 
-#: ../data/variables.xml.in.h:212
+#: ../data/variables.xml.in.h:227
 msgid "r:yesterday"
 msgstr "igår"
 
-#: ../data/variables.xml.in.h:213
+#: ../data/variables.xml.in.h:228
 msgid "Now (date and time)"
 msgstr "Nu (datum och tid)"
 
-#: ../data/variables.xml.in.h:214
+#: ../data/variables.xml.in.h:229
 msgid "r:now"
 msgstr "nu"
+
+#~ msgid "r:bit,p:bits"
+#~ msgstr "bit,p:bits"
 
 #~ msgid "1st value"
 #~ msgstr "1:a värdet"

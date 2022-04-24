@@ -324,93 +324,89 @@ void set_assumption(const string &str, bool last_of_two = false) {
 	}
 }
 
-vector<const string*> matches;
+vector<string> matches;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+bool name_has_formatting(const ExpressionName *ename) {
+	if(ename->name.length() < 2) return false;
+	if(ename->suffix) return true;
+	if(ename->completion_only || ename->case_sensitive || ename->name.length() <= 4) return false;
+	size_t i = ename->name.find('_');
+	if(i == string::npos) return false;
+	return unicode_length(ename->name, i) >= 3;
+}
+
 #ifdef HAVE_LIBREADLINE
+
+void completion_match_item(ExpressionItem *item, const char *text, size_t l) {
+	const ExpressionName *ename = NULL;
+	bool b_match = false, b_formatted = false;
+	string strcmp;
+	for(size_t name_i = 1; name_i <= item->countNames() && !b_match; name_i++) {
+		ename = &item->getName(name_i);
+		if(ename && l <= ename->name.length()) {
+			b_match = true;
+			b_formatted = false;
+			for(size_t i2 = 0; i2 < l; i2++) {
+				if(ename->name[i2] != text[i2]) {
+					b_match = false;
+					break;
+				}
+			}
+		}
+		if(!b_match && name_has_formatting(ename)) {
+			strcmp = ename->formattedName(item->type(), true);
+			if(l <= strcmp.length()) {
+				b_match = true;
+				b_formatted = true;
+				for(size_t i2 = 0; i2 < l; i2++) {
+					if(strcmp[i2] != text[i2]) {
+						b_match = false;
+						break;
+					}
+				}
+			}
+		}
+	}
+	if(b_match && ename) {
+		if(ename->completion_only) {
+			ename = &item->preferredInputName(ename->abbreviation, printops.use_unicode_signs);
+			matches.push_back(ename->formattedName(item->type(), true));
+		} else if(b_formatted) {
+			matches.push_back(strcmp);
+		} else {
+			matches.push_back(ename->name);
+		}
+	}
+}
 
 char *qalc_completion(const char *text, int index) {
 	if(index == 0) {
 		if(strlen(text) < 1) return NULL;
 		matches.clear();
-		bool b_match;
 		size_t l = strlen(text);
 		for(size_t i = 0; i < CALCULATOR->functions.size(); i++) {
 			if(CALCULATOR->functions[i]->isActive()) {
-				ExpressionItem *item = CALCULATOR->functions[i];
-				const ExpressionName *ename = NULL;
-				b_match = false;
-				for(size_t name_i = 1; name_i <= item->countNames() && !b_match; name_i++) {
-					ename = &item->getName(name_i);
-					if(ename && l <= ename->name.length()) {
-						b_match = true;
-						for(size_t i2 = 0; i2 < l; i2++) {
-							if(ename->name[i2] != text[i2]) {
-								b_match = false;
-								break;
-							}
-						}
-					}
-				}
-				if(b_match && ename) {
-					if(ename->completion_only) ename = &item->preferredInputName(ename->abbreviation, printops.use_unicode_signs);
-					matches.push_back(&ename->name);
-				}
+				completion_match_item(CALCULATOR->functions[i], text, l);
 			}
 		}
 		for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
 			if(CALCULATOR->variables[i]->isActive()) {
-				ExpressionItem *item = CALCULATOR->variables[i];
-				const ExpressionName *ename = NULL;
-				b_match = false;
-				for(size_t name_i = 1; name_i <= item->countNames() && !b_match; name_i++) {
-					ename = &item->getName(name_i);
-					if(ename && l <= ename->name.length()) {
-						b_match = true;
-						for(size_t i2 = 0; i2 < l; i2++) {
-							if(ename->name[i2] != text[i2]) {
-								b_match = false;
-								break;
-							}
-						}
-					}
-				}
-				if(b_match && ename) {
-					if(ename->completion_only) ename = &item->preferredInputName(ename->abbreviation, printops.use_unicode_signs);
-					matches.push_back(&ename->name);
-				}
+				completion_match_item(CALCULATOR->variables[i], text, l);
 			}
 		}
 		for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
 			if(CALCULATOR->units[i]->isActive() && CALCULATOR->units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT) {
-				ExpressionItem *item = CALCULATOR->units[i];
-				const ExpressionName *ename = NULL;
-				b_match = false;
-				for(size_t name_i = 1; name_i <= item->countNames() && !b_match; name_i++) {
-					ename = &item->getName(name_i);
-					if(ename && l <= ename->name.length()) {
-						b_match = true;
-						for(size_t i2 = 0; i2 < l; i2++) {
-							if(ename->name[i2] != text[i2]) {
-								b_match = false;
-								break;
-							}
-						}
-					}
-				}
-				if(b_match && ename) {
-					if(ename->completion_only) ename = &item->preferredInputName(ename->abbreviation, printops.use_unicode_signs);
-					matches.push_back(&ename->name);
-				}
+				completion_match_item(CALCULATOR->units[i], text, l);
 			}
 		}
 	}
 	if(index >= 0 && index < (int) matches.size()) {
-		char *cstr = (char*) malloc(sizeof(char) *matches[index]->length() + 1);
-		strcpy(cstr, matches[index]->c_str());
+		char *cstr = (char*) malloc(sizeof(char) *matches[index].length() + 1);
+		strcpy(cstr, matches[index].c_str());
 		return cstr;
 	}
 	return NULL;
@@ -886,10 +882,10 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
 			CALCULATOR->setTemperatureCalculationMode((TemperatureCalculationMode) v);
-			expression_calculation_updated();
 			tc_set = true;
+			expression_calculation_updated();
 		}
-	}else if(svar == "sinc")  {
+	} else if(svar == "sinc")  {
 		int v = -1;
 		//sinc function variant
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "unnormalized", _("unnormalized"))) v = 0;
@@ -903,8 +899,8 @@ void set_option(string str) {
 		} else {
 			if(v == 0) CALCULATOR->getFunctionById(FUNCTION_ID_SINC)->setDefaultValue(2, "");
 			else CALCULATOR->getFunctionById(FUNCTION_ID_SINC)->setDefaultValue(2, "pi");
-			expression_calculation_updated();
 			sinc_set = true;
+			expression_calculation_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "round to even", _("round to even")) || svar == "rndeven") {
 		bool b = printops.round_halfway_to_even;
@@ -1003,8 +999,8 @@ void set_option(string str) {
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "spell out logical", _("spell out logical")) || svar == "spellout") SET_BOOL_D(printops.spell_out_logical_operators)
 	else if((EQUALS_IGNORECASE_AND_LOCAL(svar, "ignore dot", _("ignore dot")) || svar == "nodot") && CALCULATOR->getDecimalPoint() != DOT) {
-		SET_BOOL_PF(evalops.parse_options.dot_as_separator)
 		dot_question_asked = true;
+		SET_BOOL_PF(evalops.parse_options.dot_as_separator)
 	} else if((EQUALS_IGNORECASE_AND_LOCAL(svar, "ignore comma", _("ignore comma")) || svar == "nocomma") && CALCULATOR->getDecimalPoint() != COMMA) {
 		SET_BOOL(evalops.parse_options.comma_as_separator)
 		CALCULATOR->useDecimalPoint(evalops.parse_options.comma_as_separator);
@@ -1713,7 +1709,7 @@ bool name_matches(ExpressionItem *item, const string &str) {
 				return true;
 			}
 		} else {
-			if(equalsIgnoreCase(str, item->getName(i2).name, 0, str.length(), 0)) {
+			if(equalsIgnoreCase(str, item->getName(i2).name, 0, str.length(), 0) || (name_has_formatting(&item->getName(i2)) && equalsIgnoreCase(str, item->getName(i2).formattedName(item->type(), true), 0, str.length(), 0))) {
 				return true;
 			}
 		}
@@ -1838,14 +1834,14 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 					if(!b_match && i2 == 2 && country_matches((Unit*) item, search_str, list_type == 'c' ? 0 : 3)) b_match = true;
 					if(b_match) {
 						const ExpressionName &ename1 = item->preferredInputName(false, false);
-						name_str = ename1.name;
+						name_str = ename1.formattedName(item->type(), true);
 						size_t name_i = 1;
 						while(true) {
 							const ExpressionName &ename = item->getName(name_i);
 							if(ename == empty_expression_name) break;
 							if(ename != ename1 && !ename.avoid_input && !ename.plural && (!ename.unicode || printops.use_unicode_signs) && !ename.completion_only) {
 								name_str += " / ";
-								name_str += ename.name;
+								name_str += ename.formattedName(item->type(), true);
 							}
 							name_i++;
 						}
@@ -1915,7 +1911,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 					PUTS_UNICODE(str.c_str());
 					if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 				}
-				STR_AND_TABS(v->preferredInputName(false, false).name.c_str())
+				STR_AND_TABS(v->preferredInputName(false, false).formattedName(TYPE_VARIABLE, true).c_str())
 				FPUTS_UNICODE(str.c_str(), stdout);
 				string value;
 				if(v->isKnown()) {
@@ -2004,7 +2000,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 					b_functions = true;
 					PUTS_BOLD(_("Functions:"));
 				}
-				puts(f->preferredInputName(false, false).name.c_str());
+				puts(f->preferredInputName(false, false).formattedName(TYPE_FUNCTION, true).c_str());
 				if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 			}
 		}
@@ -2018,7 +2014,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 					b_units = true;
 					PUTS_BOLD(_("Units:"));
 				}
-				puts(u->preferredInputName(false, false).name.c_str());
+				puts(u->preferredInputName(false, false).formattedName(TYPE_UNIT, true).c_str());
 				if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 			}
 		}
@@ -2065,14 +2061,14 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 				name_list.push_front(name_str);
 			} else if((!item->isHidden() || list_type == 'c') && item->isActive() && (list_type != 'u' || (item->subtype() != SUBTYPE_COMPOSITE_UNIT && ((Unit*) item)->baseUnit() != CALCULATOR->getUnitById(UNIT_ID_EURO))) && (list_type != 'c' || ((Unit*) item)->isCurrency())) {
 				const ExpressionName &ename1 = item->preferredInputName(false, false);
-				name_str = ename1.name;
+				name_str = ename1.formattedName(item->type(), true);
 				size_t name_i = 1;
 				while(true) {
 					const ExpressionName &ename = item->getName(name_i);
 					if(ename == empty_expression_name) break;
 					if(ename != ename1 && !ename.avoid_input && !ename.plural && (!ename.unicode || printops.use_unicode_signs) && !ename.completion_only) {
 						name_str += " / ";
-						name_str += ename.name;
+						name_str += ename.formattedName(item->type(), true);
 					}
 					name_i++;
 				}
@@ -4095,7 +4091,7 @@ int main(int argc, char *argv[]) {
 							CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 							CHECK_IF_SCREEN_FILLED_PUTS("");
 							const ExpressionName *ename = &f->preferredName(false, printops.use_unicode_signs);
-							str = ename->name;
+							str = ename->formattedName(TYPE_FUNCTION, true);
 							int iargs = f->maxargs();
 							if(iargs < 0) {
 								iargs = f->minargs() + 1;
@@ -4132,7 +4128,7 @@ int main(int argc, char *argv[]) {
 							CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 							for(size_t i2 = 1; i2 <= f->countNames(); i2++) {
 								if(&f->getName(i2) != ename) {
-									CHECK_IF_SCREEN_FILLED_PUTS(f->getName(i2).name.c_str());
+									CHECK_IF_SCREEN_FILLED_PUTS(f->getName(i2).formattedName(TYPE_FUNCTION, true).c_str());
 								}
 							}
 							if(f->subtype() == SUBTYPE_DATA_SET) {
@@ -4146,7 +4142,7 @@ int main(int argc, char *argv[]) {
 							}
 							if(!f->example(true).empty()) {
 								CHECK_IF_SCREEN_FILLED_PUTS("");
-								str = _("Example:"); str += " "; str += f->example(false, ename->name);
+								str = _("Example:"); str += " "; str += f->example(false, ename->formattedName(TYPE_FUNCTION, true));
 								CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 							}
 							if(f->subtype() == SUBTYPE_DATA_SET && !((DataSet*) f)->copyright().empty()) {
@@ -4252,11 +4248,11 @@ int main(int argc, char *argv[]) {
 							PRINT_AND_COLON_TABS_INFO(_("Names"));
 							if(item->subtype() != SUBTYPE_COMPOSITE_UNIT) {
 								const ExpressionName *ename = &item->preferredName(true, printops.use_unicode_signs);
-								FPUTS_UNICODE(ename->name.c_str(), stdout);
+								FPUTS_UNICODE(ename->formattedName(TYPE_UNIT, true).c_str(), stdout);
 								for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
 									if(&item->getName(i2) != ename && !item->getName(i2).completion_only) {
 										fputs(" / ", stdout);
-										FPUTS_UNICODE(item->getName(i2).name.c_str(), stdout);
+										FPUTS_UNICODE(item->getName(i2).formattedName(TYPE_UNIT, true).c_str(), stdout);
 									}
 								}
 							}
@@ -4308,7 +4304,10 @@ int main(int argc, char *argv[]) {
 								}
 								case SUBTYPE_COMPOSITE_UNIT: {
 									PRINT_AND_COLON_TABS_INFO(_("Base Units"));
-									CHECK_IF_SCREEN_FILLED_PUTS(((CompositeUnit*) item)->print(false, true, printops.use_unicode_signs).c_str());
+									PrintOptions po = printops;
+									po.is_approximate = NULL;
+									po.abbreviate_names = true;
+									CHECK_IF_SCREEN_FILLED_PUTS(((CompositeUnit*) item)->print(po, false, TAG_TYPE_TERMINAL, false, false).c_str());
 									break;
 								}
 							}
@@ -4329,11 +4328,11 @@ int main(int argc, char *argv[]) {
 							CHECK_IF_SCREEN_FILLED_PUTS("");
 							PRINT_AND_COLON_TABS_INFO(_("Names"));
 							const ExpressionName *ename = &item->preferredName(false, printops.use_unicode_signs);
-							FPUTS_UNICODE(ename->name.c_str(), stdout);
+							FPUTS_UNICODE(ename->formattedName(TYPE_VARIABLE, true).c_str(), stdout);
 							for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
 								if(&item->getName(i2) != ename && !item->getName(i2).completion_only) {
 									fputs(" / ", stdout);
-									FPUTS_UNICODE(item->getName(i2).name.c_str(), stdout);
+									FPUTS_UNICODE(item->getName(i2).formattedName(TYPE_VARIABLE, true).c_str(), stdout);
 								}
 							}
 							Variable *v = (Variable*) item;
@@ -5848,14 +5847,7 @@ void execute_command(int command_type, bool show_result) {
 }
 
 bool test_ask_sinc(MathStructure &m) {
-	if(sinc_set) return false;
-	if(m.isFunction() && m.function()->id() == FUNCTION_ID_SINC) {
-		return true;
-	}
-	for(size_t i = 0; i < m.size(); i++) {
-		if(test_ask_sinc(m[i])) return true;
-	}
-	return false;
+	return !sinc_set && m.containsFunctionId(FUNCTION_ID_SINC);
 }
 bool ask_sinc() {
 	INIT_COLS
