@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-14 18:55+0200\n"
+"POT-Creation-Date: 2022-04-24 14:06+0200\n"
 "PO-Revision-Date: 2021-08-23 09:54+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
@@ -1169,7 +1169,8 @@ msgid "Kyrgyzstani Som"
 msgstr "吉尔吉斯斯坦索姆"
 
 #: ../data/currencies.xml.in.h:284
-msgid "acr:KGS,au:&#x0441;"
+#, fuzzy
+msgid "acr:KGS"
 msgstr "-"
 
 #: ../data/currencies.xml.in.h:285
@@ -5824,7 +5825,7 @@ msgstr "位置参数（x_0）"
 msgid "Scale (γ)"
 msgstr "尺度参数（γ）"
 
-#: ../data/functions.xml.in.h:712 ../data/variables.xml.in.h:206
+#: ../data/functions.xml.in.h:712 ../data/variables.xml.in.h:221
 msgid "Date &amp; Time"
 msgstr "日期与时间"
 
@@ -6139,7 +6140,7 @@ msgstr "每月的天数"
 msgid "r:daysInMonth"
 msgstr "-"
 
-#: ../data/functions.xml.in.h:780 ../data/variables.xml.in.h:199
+#: ../data/functions.xml.in.h:780 ../data/variables.xml.in.h:214
 msgid "Utilities"
 msgstr "工具"
 
@@ -6848,7 +6849,7 @@ msgstr "-"
 msgid "Initial estimate"
 msgstr "初始估值"
 
-#: ../data/functions.xml.in.h:942 ../data/variables.xml.in.h:200
+#: ../data/functions.xml.in.h:942 ../data/variables.xml.in.h:215
 msgid "Precision"
 msgstr "精度"
 
@@ -8727,7 +8728,8 @@ msgid "Ounce (troy)"
 msgstr "金衡制盎司"
 
 #: ../data/units.xml.in.h:97
-msgid "ar:oz_t,troy_ounce,p:troy_ounces"
+#, fuzzy
+msgid "ars:oz_t,troy_ounce,p:troy_ounces"
 msgstr "ar:oz_t,金衡制盎司,troy_ounce"
 
 #: ../data/units.xml.in.h:98
@@ -8735,7 +8737,8 @@ msgid "Pound (troy)"
 msgstr "金衡制磅"
 
 #: ../data/units.xml.in.h:99
-msgid "ar:lb_t,troy_pound,p:troy_pounds"
+#, fuzzy
+msgid "ars:lb_t,troy_pound,p:troy_pounds"
 msgstr "ar:lb_t,金衡制磅,troy_pound"
 
 #: ../data/units.xml.in.h:100
@@ -10475,7 +10478,8 @@ msgid "Rad"
 msgstr "拉德"
 
 #: ../data/units.xml.in.h:540
-msgid "r:rad_radioactivity"
+#, fuzzy
+msgid "rs:rad_radioactivity"
 msgstr "拉德"
 
 #: ../data/units.xml.in.h:541
@@ -10567,158 +10571,234 @@ msgid "Information"
 msgstr "信息"
 
 #: ../data/units.xml.in.h:563
-msgid "Bit"
+msgid "Bit (Binary Digit)"
 msgstr "比特"
 
 #: ../data/units.xml.in.h:564
-msgid "r:bit,p:bits"
-msgstr "比特"
+msgid "r:bit,p:bits,shannon,p:shannons,c:Sh,binary_digit,p:binary_digits"
+msgstr "比特,shannon,c:Sh,binary_digit"
 
 #: ../data/units.xml.in.h:565
-msgid "Byte (8-bit)"
-msgstr "字节(8比特)"
+msgid "Nat"
+msgstr "纳特"
 
 #: ../data/units.xml.in.h:566
-msgid "r:byte,a:B,p:bytes,octet,p:octets"
-msgstr "字节,byte,a:B,octet"
+#, fuzzy
+msgid "r:nat,p:nats"
+msgstr "节"
 
 #: ../data/units.xml.in.h:567
-msgid "Nibble"
-msgstr "半字节"
+msgid "Trit (Ternary Digit)"
+msgstr ""
 
 #: ../data/units.xml.in.h:568
-msgid "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets"
-msgstr "半字节,nibble,nybble,semioctet"
+msgid ""
+"r:trit,p:trits,trinary_digit,p:trinary_digits,ternary_digit,p:ternary_digits"
+msgstr ""
 
 #: ../data/units.xml.in.h:569
-msgid "Tribble"
-msgstr "一个半字节"
+#, fuzzy
+msgid "Octal Digit"
+msgstr "八进制"
 
 #: ../data/units.xml.in.h:570
-msgid "r:tribble,p:tribbles"
+#, fuzzy
+msgid "r:octal_digit,p:octal_digits"
 msgstr "-"
 
 #: ../data/units.xml.in.h:571
+msgid "Hartley (Decimal Digit)"
+msgstr ""
+
+#: ../data/units.xml.in.h:572
+msgid "r:hartley,p:hartleys,a:Hart,dit,p:dits,decimal_digit,p:decimal_digits"
+msgstr ""
+
+#: ../data/units.xml.in.h:573
+msgid "Byte (8-bit)"
+msgstr "字节(8比特)"
+
+#: ../data/units.xml.in.h:574
+msgid "r:byte,a:B,p:bytes,octet,p:octets,a:o"
+msgstr "字节,byte,a:B,octet,a:o"
+
+#: ../data/units.xml.in.h:575
+msgid "Nibble (Hexadecimal Digit)"
+msgstr "半字节"
+
+#: ../data/units.xml.in.h:576
+msgid ""
+"r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets,hex_digit,p:"
+"hex_digits,hexadecimal_digit,p:hexadecimal_digits"
+msgstr "半字节,nibble,nybble,semioctet,hex_digit,hexadecimal_digit"
+
+#: ../data/units.xml.in.h:577
+msgid "Tribble"
+msgstr "一个半字节"
+
+#: ../data/units.xml.in.h:578
+msgid "r:tribble,p:tribbles"
+msgstr "-"
+
+#: ../data/units.xml.in.h:579
+msgid "Nonet"
+msgstr ""
+
+#: ../data/units.xml.in.h:580
+#, fuzzy
+msgid "r:nonet,p:nonets"
+msgstr "节"
+
+#: ../data/units.xml.in.h:581
+msgid "Declet"
+msgstr ""
+
+#: ../data/units.xml.in.h:582
+#, fuzzy
+msgid "r:declet,p:declets"
+msgstr "欧分"
+
+#: ../data/units.xml.in.h:583
 msgid "Word (16-bit)"
 msgstr "字(16比特)"
 
-#: ../data/units.xml.in.h:572
+#: ../data/units.xml.in.h:584
 msgid "r:word,p:words"
 msgstr "字"
 
-#: ../data/units.xml.in.h:573
+#: ../data/units.xml.in.h:585
 msgid "Kilobyte"
 msgstr "千字节"
 
-#: ../data/units.xml.in.h:574
-msgid "Kibibyte"
-msgstr "千二进制字节(KiB)"
-
-#: ../data/units.xml.in.h:575
-msgid "Mebibyte"
-msgstr "兆二进制字节(MiB)"
-
-#: ../data/units.xml.in.h:576
-msgid "Gibibyte"
-msgstr "吉二进制字节(GiB)"
-
-#: ../data/units.xml.in.h:577
+#: ../data/units.xml.in.h:586
 msgid "Megabyte"
 msgstr "兆字节"
 
-#: ../data/units.xml.in.h:578
+#: ../data/units.xml.in.h:587
 msgid "Gigabyte"
 msgstr "千兆字节"
 
-#: ../data/units.xml.in.h:579
+#: ../data/units.xml.in.h:588
 msgid "Terabyte"
 msgstr "万亿字节"
 
-#: ../data/units.xml.in.h:580
+#: ../data/units.xml.in.h:589
+#, fuzzy
+msgid "Petabyte"
+msgstr "兆字节"
+
+#: ../data/units.xml.in.h:590
+#, fuzzy
+msgid "Exabyte"
+msgstr "兆字节"
+
+#: ../data/units.xml.in.h:591
+msgid "Kibibyte"
+msgstr "千二进制字节(KiB)"
+
+#: ../data/units.xml.in.h:592
+msgid "Mebibyte"
+msgstr "兆二进制字节(MiB)"
+
+#: ../data/units.xml.in.h:593
+msgid "Gibibyte"
+msgstr "吉二进制字节(GiB)"
+
+#: ../data/units.xml.in.h:594
+#, fuzzy
+msgid "Tebibyte"
+msgstr "兆二进制字节(MiB)"
+
+#: ../data/units.xml.in.h:595
 msgid "Kilobit"
 msgstr "千比特"
 
-#: ../data/units.xml.in.h:581
-msgid "Kibibit"
-msgstr "千二进制比特(Kib)"
-
-#: ../data/units.xml.in.h:582
-msgid "Mebibit"
-msgstr "兆二进制比特(Mib)"
-
-#: ../data/units.xml.in.h:583
-msgid "Gibibit"
-msgstr "吉二进制比特(Gib)"
-
-#: ../data/units.xml.in.h:584
+#: ../data/units.xml.in.h:596
 msgid "Megabit"
 msgstr "兆比特"
 
-#: ../data/units.xml.in.h:585
+#: ../data/units.xml.in.h:597
 msgid "Gigabit"
 msgstr "千兆比特"
 
-#: ../data/units.xml.in.h:586
+#: ../data/units.xml.in.h:598
 msgid "Terabit"
 msgstr "万亿比特"
 
-#: ../data/units.xml.in.h:587
+#: ../data/units.xml.in.h:599
+#, fuzzy
+msgid "Petabit"
+msgstr "兆比特"
+
+#: ../data/units.xml.in.h:600
+msgid "Kibibit"
+msgstr "千二进制比特(Kib)"
+
+#: ../data/units.xml.in.h:601
+msgid "Mebibit"
+msgstr "兆二进制比特(Mib)"
+
+#: ../data/units.xml.in.h:602
+msgid "Gibibit"
+msgstr "吉二进制比特(Gib)"
+
+#: ../data/units.xml.in.h:603
 msgid "Typography"
 msgstr "印刷"
 
-#: ../data/units.xml.in.h:588
+#: ../data/units.xml.in.h:604
 msgid "PostScript Point"
 msgstr "PostScript点"
 
-#: ../data/units.xml.in.h:589
+#: ../data/units.xml.in.h:605
 msgid "ar:pt,a:pts,point,p:points"
 msgstr "ar:pt,a:pts,点,point"
 
-#: ../data/units.xml.in.h:590
+#: ../data/units.xml.in.h:606
 msgid "PostScript Pica"
 msgstr "PostScript派卡"
 
-#: ../data/units.xml.in.h:591
+#: ../data/units.xml.in.h:607
 msgid "r:pica,p:picas"
 msgstr "派卡"
 
-#: ../data/units.xml.in.h:592
+#: ../data/units.xml.in.h:608
 msgid "ATA Pica"
 msgstr "ATA派卡"
 
-#: ../data/units.xml.in.h:593
+#: ../data/units.xml.in.h:609
 msgid "r:ata_pica,p:ata_picas"
 msgstr "-"
 
-#: ../data/units.xml.in.h:594
+#: ../data/units.xml.in.h:610
 msgid "ATA Point"
 msgstr "ATA点"
 
-#: ../data/units.xml.in.h:595
+#: ../data/units.xml.in.h:611
 msgid "r:ata_point,a:ata_pt,p:ata_points"
 msgstr "-"
 
-#: ../data/units.xml.in.h:596
+#: ../data/units.xml.in.h:612
 msgid "New Didot Point"
 msgstr "新迪氏点"
 
-#: ../data/units.xml.in.h:597
+#: ../data/units.xml.in.h:613
 msgid "r:new_didot"
 msgstr "-"
 
-#: ../data/units.xml.in.h:598
+#: ../data/units.xml.in.h:614
 msgid "Didot Point"
 msgstr "迪氏点"
 
-#: ../data/units.xml.in.h:599
+#: ../data/units.xml.in.h:615
 msgid "r:didot,a:dd"
 msgstr "迪氏点,didot,a:dd"
 
-#: ../data/units.xml.in.h:600
+#: ../data/units.xml.in.h:616
 msgid "Cicero"
 msgstr "西塞罗"
 
-#: ../data/units.xml.in.h:601
+#: ../data/units.xml.in.h:617
 msgid "r:cicero"
 msgstr "西塞罗"
 
@@ -10956,612 +11036,690 @@ msgid "-r:hundred"
 msgstr "-"
 
 #: ../data/variables.xml.in.h:60
+#, fuzzy
+msgid "Traditional Numbers"
+msgstr "随机数"
+
+#: ../data/variables.xml.in.h:61
+msgid "Dozen"
+msgstr ""
+
+#: ../data/variables.xml.in.h:62
+msgid "-r:dozen,a:dz,a:doz"
+msgstr ""
+
+#: ../data/variables.xml.in.h:63
+msgid "Baker's Dozen"
+msgstr ""
+
+#: ../data/variables.xml.in.h:64
+msgid "-r:bakers_dozen"
+msgstr ""
+
+#: ../data/variables.xml.in.h:65
+msgid "Score"
+msgstr ""
+
+#: ../data/variables.xml.in.h:66
+msgid "-r:score"
+msgstr ""
+
+#: ../data/variables.xml.in.h:67
+#, fuzzy
+msgid "Long Hundred"
+msgstr "长担"
+
+#: ../data/variables.xml.in.h:68
+#, fuzzy
+msgid "-r:long_hundred,great_hundred,twelfty"
+msgstr "ar:l_cwt,长担,long_hundredweight"
+
+#: ../data/variables.xml.in.h:69
+#, fuzzy
+msgid "Gross"
+msgstr "-"
+
+#: ../data/variables.xml.in.h:70
+msgid "-r:gross,a:gro"
+msgstr ""
+
+#: ../data/variables.xml.in.h:71
+#, fuzzy
+msgid "Long Thousand"
+msgstr "千"
+
+#: ../data/variables.xml.in.h:72
+#, fuzzy
+msgid "-r:long_thousand"
+msgstr "-"
+
+#: ../data/variables.xml.in.h:73
+msgid "Great Gross"
+msgstr ""
+
+#: ../data/variables.xml.in.h:74
+msgid "-r:great_gross"
+msgstr ""
+
+#: ../data/variables.xml.in.h:75
 msgid "Physical Constants"
 msgstr "物理常数"
 
-#: ../data/variables.xml.in.h:61
+#: ../data/variables.xml.in.h:76
 msgid "Universal Constants"
 msgstr "普适常数"
 
-#: ../data/variables.xml.in.h:62
+#: ../data/variables.xml.in.h:77
 msgid "Characteristic Impedance of Vacuum"
 msgstr "真空特性阻抗"
 
-#: ../data/variables.xml.in.h:63
+#: ../data/variables.xml.in.h:78
 msgid "Electric Constant (Permittivity of Free Space)"
 msgstr "介电常数(自由空间介电常数)"
 
-#: ../data/variables.xml.in.h:64
+#: ../data/variables.xml.in.h:79
 msgid "Magnetic Constant (Permeability of Free Space)"
 msgstr "磁常数(自由空间磁导率)"
 
-#: ../data/variables.xml.in.h:65
+#: ../data/variables.xml.in.h:80
 msgid "Planck Constant"
 msgstr "普朗克常数"
 
-#: ../data/variables.xml.in.h:66
+#: ../data/variables.xml.in.h:81
 msgid "Reduced Planck Constant (Dirac constant)"
 msgstr "约化普朗克常数(狄拉克常数)"
 
-#: ../data/variables.xml.in.h:67
+#: ../data/variables.xml.in.h:82
 msgid "Newtonian Constant of Gravitation"
 msgstr "牛顿引力常数"
 
-#: ../data/variables.xml.in.h:68
+#: ../data/variables.xml.in.h:83
 msgid "Speed of Light in Vacuum"
 msgstr "真空中光速"
 
-#: ../data/variables.xml.in.h:69
+#: ../data/variables.xml.in.h:84
 msgid "Standard Acceleration due to Gravity"
 msgstr "标准重力加速度"
 
-#: ../data/variables.xml.in.h:70
+#: ../data/variables.xml.in.h:85
 msgid "Electromagnetic Constants"
 msgstr "电磁常数"
 
-#: ../data/variables.xml.in.h:71
+#: ../data/variables.xml.in.h:86
 msgid "Bohr Magneton"
 msgstr "玻尔磁子"
 
-#: ../data/variables.xml.in.h:72
+#: ../data/variables.xml.in.h:87
 msgid "Conductance Quantum"
 msgstr "电导量子"
 
-#: ../data/variables.xml.in.h:73
+#: ../data/variables.xml.in.h:88
 msgid "Coulomb's Constant (Electric Force Constant)"
 msgstr "库仑常数(电力常数)"
 
-#: ../data/variables.xml.in.h:74
+#: ../data/variables.xml.in.h:89
 msgid "Elementary Charge"
 msgstr "基本电荷"
 
-#: ../data/variables.xml.in.h:75
+#: ../data/variables.xml.in.h:90
 msgid "Inverse of Conductance Quantum"
 msgstr "逆量子电导"
 
-#: ../data/variables.xml.in.h:76
+#: ../data/variables.xml.in.h:91
 msgid "Josephson Constant"
 msgstr "约瑟夫森常数"
 
-#: ../data/variables.xml.in.h:77
+#: ../data/variables.xml.in.h:92
 msgid "Josephson Constant (conventional value)"
 msgstr "约瑟夫逊常数(旧值)"
 
-#: ../data/variables.xml.in.h:78
+#: ../data/variables.xml.in.h:93
 msgid "Magnetic Flux Quantum"
 msgstr "磁通量量子"
 
-#: ../data/variables.xml.in.h:79
+#: ../data/variables.xml.in.h:94
 msgid "Nuclear Magneton"
 msgstr "核磁子"
 
-#: ../data/variables.xml.in.h:80
+#: ../data/variables.xml.in.h:95
 msgid "von Klitzing Constant"
 msgstr "冯·克里青常数"
 
-#: ../data/variables.xml.in.h:81
+#: ../data/variables.xml.in.h:96
 msgid "von Klitzing Constant (conventional value)"
 msgstr "冯·克里青常数(旧值)"
 
-#: ../data/variables.xml.in.h:82
+#: ../data/variables.xml.in.h:97
 msgid "Particle Mass in u"
 msgstr "粒子质量(u)"
 
-#: ../data/variables.xml.in.h:83
+#: ../data/variables.xml.in.h:98
 msgid "Deuteron Mass (in u)"
 msgstr "氘核质量(u)"
 
-#: ../data/variables.xml.in.h:84
+#: ../data/variables.xml.in.h:99
 msgid "Electron Mass (in u)"
 msgstr "电子质量(u)"
 
-#: ../data/variables.xml.in.h:85
+#: ../data/variables.xml.in.h:100
 msgid "Helion Mass (in u)"
 msgstr "氦3质量(u)"
 
-#: ../data/variables.xml.in.h:86
+#: ../data/variables.xml.in.h:101
 msgid "Neutron Mass (in u)"
 msgstr "中子质量(u)"
 
-#: ../data/variables.xml.in.h:87
+#: ../data/variables.xml.in.h:102
 msgid "Proton Mass (in u)"
 msgstr "质子质量(u)"
 
-#: ../data/variables.xml.in.h:88
+#: ../data/variables.xml.in.h:103
 msgid "Tau Mass (in u)"
 msgstr "τ子质量(u)"
 
-#: ../data/variables.xml.in.h:89
+#: ../data/variables.xml.in.h:104
 msgid "Muon Mass (in u)"
 msgstr "μ子质量(u)"
 
-#: ../data/variables.xml.in.h:90
+#: ../data/variables.xml.in.h:105
 msgid "Triton Mass (in u)"
 msgstr "氚核质量(u)"
 
-#: ../data/variables.xml.in.h:91
+#: ../data/variables.xml.in.h:106
 msgid "Alpha Particle Mass (in u)"
 msgstr "α粒子质量(u)"
 
-#: ../data/variables.xml.in.h:92
+#: ../data/variables.xml.in.h:107
 msgid "Particle Mass in MeV*c^(-2)"
 msgstr "粒子质量(MeV*c^(-2))"
 
-#: ../data/variables.xml.in.h:93
+#: ../data/variables.xml.in.h:108
 msgid "Electron Mass (in MeV/c^2)"
 msgstr "电子质量(MeV/c^2)"
 
-#: ../data/variables.xml.in.h:94
+#: ../data/variables.xml.in.h:109
 msgid "Neutron Mass (in MeV/c^2)"
 msgstr "中子质量(MeV/c^2)"
 
-#: ../data/variables.xml.in.h:95
+#: ../data/variables.xml.in.h:110
 msgid "Proton Mass (in MeV/c^2)"
 msgstr "质子质量(MeV/c^2)"
 
-#: ../data/variables.xml.in.h:96
+#: ../data/variables.xml.in.h:111
 msgid "Tau Mass (in MeV/c^2)"
 msgstr "τ子质量(MeV/c^2)"
 
-#: ../data/variables.xml.in.h:97
+#: ../data/variables.xml.in.h:112
 msgid "Muon Mass (in MeV/c^2)"
 msgstr "μ子质量(MeV/c^2)"
 
-#: ../data/variables.xml.in.h:98
+#: ../data/variables.xml.in.h:113
 msgid "Alpha Particle Mass (in MeV/c^2)"
 msgstr "α粒子质量(MeV/c^2)"
 
-#: ../data/variables.xml.in.h:99
+#: ../data/variables.xml.in.h:114
 msgid "Up Quark Mass (in MeV/c^2)"
 msgstr "上夸克质量(MeV/c^2)"
 
-#: ../data/variables.xml.in.h:100
+#: ../data/variables.xml.in.h:115
 msgid "Down Quark Mass (in MeV/c^2)"
 msgstr "下夸克质量(MeV/c^2)"
 
-#: ../data/variables.xml.in.h:101
+#: ../data/variables.xml.in.h:116
 msgid "Charm Quark Mass (in MeV/c^2)"
 msgstr "粲夸克质量(MeV/c^2)"
 
-#: ../data/variables.xml.in.h:102
+#: ../data/variables.xml.in.h:117
 msgid "Strange Quark Mass (in MeV/c^2)"
 msgstr "奇夸克质量(MeV/c^2)"
 
-#: ../data/variables.xml.in.h:103
+#: ../data/variables.xml.in.h:118
 msgid "Top Quark Mass (in MeV/c^2)"
 msgstr "顶夸克质量(MeV/c^2)"
 
-#: ../data/variables.xml.in.h:104
+#: ../data/variables.xml.in.h:119
 msgid "Bottom Quark Mass (in MeV/c^2)"
 msgstr "底夸克质量(MeV/c^2)"
 
-#: ../data/variables.xml.in.h:105
+#: ../data/variables.xml.in.h:120
 msgid "Higgs Boson Mass (in MeV/c^2)"
 msgstr "希格斯玻色子质量(MeV/c^2)"
 
-#: ../data/variables.xml.in.h:106
+#: ../data/variables.xml.in.h:121
 msgid "W Boson Mass (in MeV/c^2)"
 msgstr "W玻色子质量(MeV/c^2)"
 
-#: ../data/variables.xml.in.h:107
+#: ../data/variables.xml.in.h:122
 msgid "Z Boson Mass (in MeV/c^2)"
 msgstr "Z玻色子(MeV/c^2)"
 
-#: ../data/variables.xml.in.h:108
+#: ../data/variables.xml.in.h:123
 msgid "Particle Mass in kg"
 msgstr "粒子质量(kg)"
 
-#: ../data/variables.xml.in.h:109
+#: ../data/variables.xml.in.h:124
 msgid "Deuteron Mass"
 msgstr "氘核质量"
 
-#: ../data/variables.xml.in.h:110
+#: ../data/variables.xml.in.h:125
 msgid "Electron Mass"
 msgstr "电子质量"
 
-#: ../data/variables.xml.in.h:111
+#: ../data/variables.xml.in.h:126
 msgid "Helion Mass"
 msgstr "氦3质量"
 
-#: ../data/variables.xml.in.h:112
+#: ../data/variables.xml.in.h:127
 msgid "Neutron Mass"
 msgstr "中子质量"
 
-#: ../data/variables.xml.in.h:113
+#: ../data/variables.xml.in.h:128
 msgid "Proton Mass"
 msgstr "质子质量"
 
-#: ../data/variables.xml.in.h:114
+#: ../data/variables.xml.in.h:129
 msgid "Tau Mass"
 msgstr "τ子质量"
 
-#: ../data/variables.xml.in.h:115
+#: ../data/variables.xml.in.h:130
 msgid "Muon Mass"
 msgstr "μ子质量"
 
-#: ../data/variables.xml.in.h:116
+#: ../data/variables.xml.in.h:131
 msgid "Triton Mass"
 msgstr "氚核质量"
 
-#: ../data/variables.xml.in.h:117
+#: ../data/variables.xml.in.h:132
 msgid "Alpha Particle Mass"
 msgstr "α粒子质量"
 
-#: ../data/variables.xml.in.h:118
+#: ../data/variables.xml.in.h:133
 msgid "Atomic and Nuclear Constants"
 msgstr "原子与核物理常数"
 
-#: ../data/variables.xml.in.h:119
+#: ../data/variables.xml.in.h:134
 msgid "Bohr Radius"
 msgstr "玻尔半径"
 
-#: ../data/variables.xml.in.h:120
+#: ../data/variables.xml.in.h:135
 msgid "Classical Electron Radius"
 msgstr "经典电子半径"
 
-#: ../data/variables.xml.in.h:121
+#: ../data/variables.xml.in.h:136
 msgid "Fermi Coupling Constant"
 msgstr "费米耦合常数"
 
-#: ../data/variables.xml.in.h:122
+#: ../data/variables.xml.in.h:137
 msgid "Fine-Structure Constant"
 msgstr "精细结构常数"
 
-#: ../data/variables.xml.in.h:123
+#: ../data/variables.xml.in.h:138
 msgid "Hartree Energy (constant)"
 msgstr "哈特里能量(常数)"
 
-#: ../data/variables.xml.in.h:124
+#: ../data/variables.xml.in.h:139
 msgid "Quantum of Circulation"
 msgstr "环量量子"
 
-#: ../data/variables.xml.in.h:125
+#: ../data/variables.xml.in.h:140
 msgid "Quantum of Circulation times 2"
 msgstr "环量量子×2"
 
-#: ../data/variables.xml.in.h:126
+#: ../data/variables.xml.in.h:141
 msgid "Rydberg Constant"
 msgstr "里德伯常数"
 
-#: ../data/variables.xml.in.h:127
+#: ../data/variables.xml.in.h:142
 msgid "Thomson cross section"
 msgstr "汤姆逊散射截面"
 
-#: ../data/variables.xml.in.h:128
+#: ../data/variables.xml.in.h:143
 msgid "Weak Mixing Angle (Weinberg Angle)"
 msgstr "溫伯格角"
 
-#: ../data/variables.xml.in.h:129
+#: ../data/variables.xml.in.h:144
 msgid "W to Z Mass Ratio"
 msgstr "W与Z玻色子质量比"
 
-#: ../data/variables.xml.in.h:130
+#: ../data/variables.xml.in.h:145
 msgid "Physico-Chemical Constants"
 msgstr "物理化学常数"
 
-#: ../data/variables.xml.in.h:131
+#: ../data/variables.xml.in.h:146
 msgid "Lattice Spacing of Ideal Silicon (220)"
 msgstr "理想硅的晶格间距(220)"
 
-#: ../data/variables.xml.in.h:132
+#: ../data/variables.xml.in.h:147
 msgid "Atomic Mass Constant"
 msgstr "原子质量常数"
 
-#: ../data/variables.xml.in.h:133
+#: ../data/variables.xml.in.h:148
 msgid "Avogadro Constant"
 msgstr "阿伏伽德罗常数"
 
-#: ../data/variables.xml.in.h:134
+#: ../data/variables.xml.in.h:149
 msgid "Boltzmann Constant"
 msgstr "玻耳兹曼常数"
 
-#: ../data/variables.xml.in.h:135
+#: ../data/variables.xml.in.h:150
 msgid "Molar Mass Constant"
 msgstr "摩尔质量常数"
 
-#: ../data/variables.xml.in.h:136
+#: ../data/variables.xml.in.h:151
 msgid "Compton Wavelength"
 msgstr "康普顿波长"
 
-#: ../data/variables.xml.in.h:137
+#: ../data/variables.xml.in.h:152
 msgid "Reduced Compton Wavelength"
 msgstr "约化康普顿波长"
 
-#: ../data/variables.xml.in.h:138
+#: ../data/variables.xml.in.h:153
 msgid "Electronvolt (constant)"
 msgstr "电子伏(常数)"
 
-#: ../data/variables.xml.in.h:139
+#: ../data/variables.xml.in.h:154
 msgid "Faraday Constant"
 msgstr "法拉第常数"
 
-#: ../data/variables.xml.in.h:140
+#: ../data/variables.xml.in.h:155
 msgid "First Radiation Constant"
 msgstr "第一辐射常数"
 
-#: ../data/variables.xml.in.h:141
+#: ../data/variables.xml.in.h:156
 msgid "First Radiation Constant for Spectral Radiance"
 msgstr "光谱辐射的第一辐射常数"
 
-#: ../data/variables.xml.in.h:142
+#: ../data/variables.xml.in.h:157
 msgid "Gas Constant"
 msgstr "气体常数"
 
-#: ../data/variables.xml.in.h:143
+#: ../data/variables.xml.in.h:158
 msgid "Lattice Parameter of Silicon"
 msgstr "硅晶格参数"
 
-#: ../data/variables.xml.in.h:144
+#: ../data/variables.xml.in.h:159
 msgid "Loschmidt Constant (273.15 K, 100 kPa)"
 msgstr "洛施密特常数(273.15K,100kPa)"
 
-#: ../data/variables.xml.in.h:145
+#: ../data/variables.xml.in.h:160
 msgid "Loschmidt Constant (273.15 K, 101.325 kPa)"
 msgstr "洛施密特常数(273.15K,101.325kPa)"
 
-#: ../data/variables.xml.in.h:146
+#: ../data/variables.xml.in.h:161
 msgid "Molar Planck Constant"
 msgstr "摩尔普朗克常数"
 
-#: ../data/variables.xml.in.h:147
+#: ../data/variables.xml.in.h:162
 msgid "Molar Volume of Ideal Gas (273.15 K, 100 kPa)"
 msgstr "理想气体的摩尔体积(273.15K,100kPa)"
 
-#: ../data/variables.xml.in.h:148
+#: ../data/variables.xml.in.h:163
 msgid "Molar Volume of Ideal Gas (273.15 K, 101.325 kPa)"
 msgstr "理想气体的摩尔体积(273.15K,101.325kPa)"
 
-#: ../data/variables.xml.in.h:149
+#: ../data/variables.xml.in.h:164
 msgid "Sackur-Tetrode constant (1 K, 100 kPa)"
 msgstr "Sackur-Tetrode常数(1K,100kPa)"
 
-#: ../data/variables.xml.in.h:150
+#: ../data/variables.xml.in.h:165
 msgid "Sackur-Tetrode constant (1 K, 101.325 kPa)"
 msgstr "Sackur-Tetrode常数(1K,101325 kPa)"
 
-#: ../data/variables.xml.in.h:151
+#: ../data/variables.xml.in.h:166
 msgid "Second Radiation Constant"
 msgstr "第二辐射常数"
 
-#: ../data/variables.xml.in.h:152
+#: ../data/variables.xml.in.h:167
 msgid "Stefan-Boltzmann Constant"
 msgstr "斯忒藩-玻尔兹曼常数"
 
-#: ../data/variables.xml.in.h:153
+#: ../data/variables.xml.in.h:168
 msgid "Wien frequency displacement law constant"
 msgstr "维恩频率位移定律常数"
 
-#: ../data/variables.xml.in.h:154
+#: ../data/variables.xml.in.h:169
 msgid "Wien wavelength displacement law constant"
 msgstr "维恩波长位移定律常数"
 
-#: ../data/variables.xml.in.h:155
+#: ../data/variables.xml.in.h:170
 msgid "Conversion factors for energy equivalents"
 msgstr "能量当量换算系数"
 
-#: ../data/variables.xml.in.h:156
+#: ../data/variables.xml.in.h:171
 msgid "Hertz - Inverse Meter Relationship"
 msgstr "赫兹-倒数米关系"
 
-#: ../data/variables.xml.in.h:157
+#: ../data/variables.xml.in.h:172
 msgid "Hertz - Joule Relationship"
 msgstr "赫兹-焦耳关系"
 
-#: ../data/variables.xml.in.h:158
+#: ../data/variables.xml.in.h:173
 msgid "Hertz - Kelvin Relationship"
 msgstr "赫兹-开尔文关系"
 
-#: ../data/variables.xml.in.h:159
+#: ../data/variables.xml.in.h:174
 msgid "Hertz - Kilogram Relationship"
 msgstr "赫兹-千克关系"
 
-#: ../data/variables.xml.in.h:160
+#: ../data/variables.xml.in.h:175
 msgid "Inverse Meter - Hertz Relationship"
 msgstr "倒数米-赫兹关系"
 
-#: ../data/variables.xml.in.h:161
+#: ../data/variables.xml.in.h:176
 msgid "Inverse Meter - Joule Relationship"
 msgstr "倒数米-焦耳关系"
 
-#: ../data/variables.xml.in.h:162
+#: ../data/variables.xml.in.h:177
 msgid "Inverse Meter - Kelvin Relationship"
 msgstr "倒数米-开尔文关系"
 
-#: ../data/variables.xml.in.h:163
+#: ../data/variables.xml.in.h:178
 msgid "Inverse Meter - Kilogram Relationship"
 msgstr "倒数米-千克关系"
 
-#: ../data/variables.xml.in.h:164
+#: ../data/variables.xml.in.h:179
 msgid "Joule - Hertz Relationship"
 msgstr "焦耳-开尔文关系"
 
-#: ../data/variables.xml.in.h:165
+#: ../data/variables.xml.in.h:180
 msgid "Joule - Inverse Meter Relationship"
 msgstr "焦耳-倒数米关系"
 
-#: ../data/variables.xml.in.h:166
+#: ../data/variables.xml.in.h:181
 msgid "Joule - Kelvin Relationship"
 msgstr "焦耳-开尔文关系"
 
-#: ../data/variables.xml.in.h:167
+#: ../data/variables.xml.in.h:182
 msgid "Joule - Kilogram Relationship"
 msgstr "焦耳-千克关系"
 
-#: ../data/variables.xml.in.h:168
+#: ../data/variables.xml.in.h:183
 msgid "Kelvin - Hertz Relationship"
 msgstr "开尔文-赫兹关系"
 
-#: ../data/variables.xml.in.h:169
+#: ../data/variables.xml.in.h:184
 msgid "Kelvin - Inverse Meter Relationship"
 msgstr "开尔文-倒数米关系"
 
-#: ../data/variables.xml.in.h:170
+#: ../data/variables.xml.in.h:185
 msgid "Kelvin - Joule Relationship"
 msgstr "开尔文-焦耳关系"
 
-#: ../data/variables.xml.in.h:171
+#: ../data/variables.xml.in.h:186
 msgid "Kelvin - Kilogram Relationship"
 msgstr "开尔文-千克关系"
 
-#: ../data/variables.xml.in.h:172
+#: ../data/variables.xml.in.h:187
 msgid "Kilogram - Hertz Relationship"
 msgstr "千克-赫兹关系"
 
-#: ../data/variables.xml.in.h:173
+#: ../data/variables.xml.in.h:188
 msgid "Kilogram - Inverse Meter Relationship"
 msgstr "千克-倒数米关系"
 
-#: ../data/variables.xml.in.h:174
+#: ../data/variables.xml.in.h:189
 msgid "Kilogram - Joule Relationship"
 msgstr "千克-开尔文关系"
 
-#: ../data/variables.xml.in.h:175
+#: ../data/variables.xml.in.h:190
 msgid "Kilogram - Kelvin Relationship"
 msgstr "千克-开尔文关系"
 
-#: ../data/variables.xml.in.h:176
+#: ../data/variables.xml.in.h:191
 msgid "Basic Constants"
 msgstr "基本常数"
 
-#: ../data/variables.xml.in.h:177
+#: ../data/variables.xml.in.h:192
 msgid "Golden Ratio"
 msgstr "黄金分割率"
 
-#: ../data/variables.xml.in.h:178
+#: ../data/variables.xml.in.h:193
 msgid "Omega Constant"
 msgstr "欧米加常数"
 
-#: ../data/variables.xml.in.h:179
+#: ../data/variables.xml.in.h:194
 msgid "Pythagoras' Constant (sqrt 2)"
 msgstr "毕达哥拉斯常数(√2)"
 
-#: ../data/variables.xml.in.h:180
+#: ../data/variables.xml.in.h:195
 msgid "Apery's Constant"
 msgstr "阿培里常数"
 
-#: ../data/variables.xml.in.h:181
+#: ../data/variables.xml.in.h:196
 msgid "Tau (2pi)"
 msgstr "二倍圆周率(τ/2π)"
 
-#: ../data/variables.xml.in.h:182
+#: ../data/variables.xml.in.h:197
 msgid "Plastic Number"
 msgstr "塑膠數"
 
-#: ../data/variables.xml.in.h:183
+#: ../data/variables.xml.in.h:198
 msgid "Base of Natural Logarithms (e)"
 msgstr "自然对数底数(e)"
 
-#: ../data/variables.xml.in.h:184
+#: ../data/variables.xml.in.h:199
 msgid "Archimedes' Constant (pi)"
 msgstr "圆周率(π)"
 
-#: ../data/variables.xml.in.h:185
+#: ../data/variables.xml.in.h:200
 msgid "Euler's Constant"
 msgstr "欧拉常数"
 
-#: ../data/variables.xml.in.h:186
+#: ../data/variables.xml.in.h:201
 msgid "Catalan's Constant"
 msgstr "卡塔兰常数"
 
-#: ../data/variables.xml.in.h:187
+#: ../data/variables.xml.in.h:202
 msgid "Special Numbers"
 msgstr "特殊数字"
 
-#: ../data/variables.xml.in.h:188
+#: ../data/variables.xml.in.h:203
 msgid "Imaginary i (sqrt -1)"
 msgstr "虚数i(√-1)"
 
-#: ../data/variables.xml.in.h:189
+#: ../data/variables.xml.in.h:204
 msgid "Positive Infinity"
 msgstr "正无穷(+∞)"
 
-#: ../data/variables.xml.in.h:190
+#: ../data/variables.xml.in.h:205
 msgid "a:&#x221E;,r:plus_infinity,r:infinity"
 msgstr "a:&#x221E;,正无穷,r:plus_infinity,r:infinity"
 
-#: ../data/variables.xml.in.h:191
+#: ../data/variables.xml.in.h:206
 msgid "Negative Infinity"
 msgstr "负无穷(-∞)"
 
-#: ../data/variables.xml.in.h:192
+#: ../data/variables.xml.in.h:207
 msgid "r:minus_infinity"
 msgstr "负无穷"
 
-#: ../data/variables.xml.in.h:193
+#: ../data/variables.xml.in.h:208
 msgid "Undefined"
 msgstr "未定义(undefined)"
 
-#: ../data/variables.xml.in.h:194
+#: ../data/variables.xml.in.h:209
 msgid "r:undefined"
 msgstr "未定义"
 
-#: ../data/variables.xml.in.h:195
+#: ../data/variables.xml.in.h:210
 msgid "False"
 msgstr "假(false)"
 
-#: ../data/variables.xml.in.h:196
+#: ../data/variables.xml.in.h:211
 msgid "r:false,r:no"
 msgstr "假,否"
 
-#: ../data/variables.xml.in.h:197
+#: ../data/variables.xml.in.h:212
 msgid "True"
 msgstr "真(true)"
 
-#: ../data/variables.xml.in.h:198
+#: ../data/variables.xml.in.h:213
 msgid "r:true,r:yes"
 msgstr "真,是"
 
-#: ../data/variables.xml.in.h:201
+#: ../data/variables.xml.in.h:216
 msgid "r:precision"
 msgstr "-"
 
-#: ../data/variables.xml.in.h:202
+#: ../data/variables.xml.in.h:217
 msgid "System Uptime"
 msgstr "系统运行时间"
 
-#: ../data/variables.xml.in.h:203
+#: ../data/variables.xml.in.h:218
 msgid "r:uptime"
 msgstr "-"
 
-#: ../data/variables.xml.in.h:204
+#: ../data/variables.xml.in.h:219
 msgid "Unknowns"
 msgstr "未知数"
 
-#: ../data/variables.xml.in.h:205
+#: ../data/variables.xml.in.h:220
 msgid "n (integer)"
 msgstr "n(整数)"
 
-#: ../data/variables.xml.in.h:207
+#: ../data/variables.xml.in.h:222
 msgid "Today"
 msgstr "今天"
 
-#: ../data/variables.xml.in.h:208
+#: ../data/variables.xml.in.h:223
 msgid "r:today"
 msgstr "今天"
 
-#: ../data/variables.xml.in.h:209
+#: ../data/variables.xml.in.h:224
 msgid "Tomorrow"
 msgstr "明天"
 
-#: ../data/variables.xml.in.h:210
+#: ../data/variables.xml.in.h:225
 msgid "r:tomorrow"
 msgstr "明天"
 
-#: ../data/variables.xml.in.h:211
+#: ../data/variables.xml.in.h:226
 msgid "Yesterday"
 msgstr "昨天"
 
-#: ../data/variables.xml.in.h:212
+#: ../data/variables.xml.in.h:227
 msgid "r:yesterday"
 msgstr "昨天"
 
-#: ../data/variables.xml.in.h:213
+#: ../data/variables.xml.in.h:228
 msgid "Now (date and time)"
 msgstr "现在"
 
-#: ../data/variables.xml.in.h:214
+#: ../data/variables.xml.in.h:229
 msgid "r:now"
 msgstr "现在"
+
+#~ msgid "acr:KGS,au:&#x0441;"
+#~ msgstr "-"
+
+#~ msgid "Bit"
+#~ msgstr "比特"
+
+#~ msgid "r:bit,p:bits"
+#~ msgstr "比特"
+
+#~ msgid "Nibble"
+#~ msgstr "半字节"
 
 #~ msgid "1st value"
 #~ msgstr "值一"

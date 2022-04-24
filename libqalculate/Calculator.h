@@ -901,12 +901,14 @@ class Calculator {
 	void saveFunctionCalled();
 	bool checkSaveFunctionCalled();
 	ExpressionItem *getActiveExpressionItem(std::string name, ExpressionItem *item = NULL);
+	ExpressionItem *getActiveExpressionItem(std::string name, ExpressionItem *item, bool ignore_us);
 	ExpressionItem *getInactiveExpressionItem(std::string name, ExpressionItem *item = NULL);
 	ExpressionItem *getActiveExpressionItem(ExpressionItem *item);
 	ExpressionItem *getExpressionItem(std::string name, ExpressionItem *item = NULL);
 	Unit* getUnit(std::string name_);
 	Unit* getUnitById(int id) const;
 	Unit* getActiveUnit(std::string name_);
+	Unit* getActiveUnit(std::string name_, bool ignore_us);
 	Unit* getCompositeUnit(std::string internal_name_);
 	Unit* getLocalCurrency();
 	void setLocalCurrency(Unit *u);
@@ -931,6 +933,7 @@ class Calculator {
 	Variable* getVariable(std::string name_);
 	Variable* getVariableById(int id) const;
 	Variable* getActiveVariable(std::string name_);
+	Variable* getActiveVariable(std::string name_, bool ignore_us);
 	ExpressionItem *addExpressionItem(ExpressionItem *item, bool force = true);
 	MathFunction* addFunction(MathFunction *f, bool force = true, bool check_names = true);
 	DataSet* addDataSet(DataSet *dc, bool force = true, bool check_names = true);
@@ -939,6 +942,7 @@ class Calculator {
 	MathFunction* getFunction(std::string name_);
 	MathFunction* getFunctionById(int id) const;
 	MathFunction* getActiveFunction(std::string name_);
+	MathFunction* getActiveFunction(std::string name_, bool ignore_us);
 	/** Returns variable for an index (starting at zero). All variables can be traversed by starting at index zero and increasing the index until NULL is returned.
 	*
 	* @param index Index of variable.

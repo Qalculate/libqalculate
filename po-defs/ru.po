@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-14 18:52+0200\n"
+"POT-Creation-Date: 2022-04-24 14:01+0200\n"
 "PO-Revision-Date: 2022-02-19 14:54+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -1171,8 +1171,9 @@ msgid "Kyrgyzstani Som"
 msgstr "Киргизский сом"
 
 #: ../data/currencies.xml.in.h:284
-msgid "acr:KGS,au:&#x0441;"
-msgstr "ac:KGS,au:&#x0441;"
+#, fuzzy
+msgid "acr:KGS"
+msgstr "a-c:KES"
 
 #: ../data/currencies.xml.in.h:285
 msgid "Kyrgyzstan"
@@ -5965,7 +5966,7 @@ msgstr "Параметр сдвига (x_0)"
 msgid "Scale (γ)"
 msgstr "Параметр масштаба (γ)"
 
-#: ../data/functions.xml.in.h:712 ../data/variables.xml.in.h:206
+#: ../data/functions.xml.in.h:712 ../data/variables.xml.in.h:221
 msgid "Date &amp; Time"
 msgstr "Дата и время"
 
@@ -6291,7 +6292,7 @@ msgstr "Дней в месяце"
 msgid "r:daysInMonth"
 msgstr "ДнейвМесяце,ДнивМесяце"
 
-#: ../data/functions.xml.in.h:780 ../data/variables.xml.in.h:199
+#: ../data/functions.xml.in.h:780 ../data/variables.xml.in.h:214
 msgid "Utilities"
 msgstr "Инструменты"
 
@@ -7020,7 +7021,7 @@ msgstr "newtonsolve"
 msgid "Initial estimate"
 msgstr "Начальное приближение"
 
-#: ../data/functions.xml.in.h:942 ../data/variables.xml.in.h:200
+#: ../data/functions.xml.in.h:942 ../data/variables.xml.in.h:215
 msgid "Precision"
 msgstr "Точность"
 
@@ -8964,7 +8965,7 @@ msgid "Ounce (troy)"
 msgstr "Тройская унция"
 
 #: ../data/units.xml.in.h:97
-msgid "ar:oz_t,troy_ounce,p:troy_ounces"
+msgid "ars:oz_t,troy_ounce,p:troy_ounces"
 msgstr "тройская_унция,p:тройская_унции,p:тройская_унций"
 
 #: ../data/units.xml.in.h:98
@@ -8972,7 +8973,7 @@ msgid "Pound (troy)"
 msgstr "Тройский фунт"
 
 #: ../data/units.xml.in.h:99
-msgid "ar:lb_t,troy_pound,p:troy_pounds"
+msgid "ars:lb_t,troy_pound,p:troy_pounds"
 msgstr "тройский_фунт,p:тройских_фунта,p:тройских_фунтов"
 
 #: ../data/units.xml.in.h:100
@@ -9755,7 +9756,7 @@ msgstr "Литр на километр"
 
 #: ../data/units.xml.in.h:301
 msgid "Kilometer per Liter"
-msgstr "Километр на литр "
+msgstr "Километр на литр"
 
 #: ../data/units.xml.in.h:302
 msgid "Miles per Gallon"
@@ -10013,16 +10014,15 @@ msgstr "Кубический метр в секунду"
 
 #: ../data/units.xml.in.h:363
 msgid "Sverdrup"
-msgstr ""
+msgstr "Свердруп"
 
 #: ../data/units.xml.in.h:364
 msgid "r:sverdrup"
 msgstr ""
 
 #: ../data/units.xml.in.h:365
-#, fuzzy
 msgid "Cubic Foot per Minute"
-msgstr "Кубическая регрессия"
+msgstr "Кубический фут в минуту"
 
 #: ../data/units.xml.in.h:366
 msgid "Cubic Foot per Minute (CFM)"
@@ -10034,9 +10034,8 @@ msgid "a-cr:cfm"
 msgstr "миль_галлон"
 
 #: ../data/units.xml.in.h:368
-#, fuzzy
 msgid "Cubic Foot per Second"
-msgstr "Метр в секунду"
+msgstr "Кубический фут в секунду"
 
 #: ../data/units.xml.in.h:369
 msgid "Cubic Foot per Second (CFS)"
@@ -10049,7 +10048,7 @@ msgstr "a-c:psi"
 
 #: ../data/units.xml.in.h:371
 msgid "Gallons per Minute (U.S.)"
-msgstr ""
+msgstr "Галлон США в минуту"
 
 #: ../data/units.xml.in.h:372
 #, fuzzy
@@ -10058,7 +10057,7 @@ msgstr "миль_галлон"
 
 #: ../data/units.xml.in.h:373
 msgid "Gallons per Hour (U.S.)"
-msgstr ""
+msgstr "Галлон США в час"
 
 #: ../data/units.xml.in.h:374
 #, fuzzy
@@ -10728,7 +10727,7 @@ msgid "Rad"
 msgstr "Рад"
 
 #: ../data/units.xml.in.h:540
-msgid "r:rad_radioactivity"
+msgid "rs:rad_radioactivity"
 msgstr "s:рад_радиоактивность"
 
 #: ../data/units.xml.in.h:541
@@ -10820,158 +10819,232 @@ msgid "Information"
 msgstr "Информация"
 
 #: ../data/units.xml.in.h:563
-msgid "Bit"
-msgstr "Бит"
+msgid "Bit (Binary Digit)"
+msgstr ""
 
 #: ../data/units.xml.in.h:564
-msgid "r:bit,p:bits"
-msgstr "ac:б,бит"
+msgid "r:bit,p:bits,shannon,p:shannons,c:Sh,binary_digit,p:binary_digits"
+msgstr ""
 
 #: ../data/units.xml.in.h:565
+#, fuzzy
+msgid "Nat"
+msgstr "Отрицание"
+
+#: ../data/units.xml.in.h:566
+#, fuzzy
+msgid "r:nat,p:nats"
+msgstr "узел,p:узлы"
+
+#: ../data/units.xml.in.h:567
+msgid "Trit (Ternary Digit)"
+msgstr ""
+
+#: ../data/units.xml.in.h:568
+msgid ""
+"r:trit,p:trits,trinary_digit,p:trinary_digits,ternary_digit,p:ternary_digits"
+msgstr ""
+
+#: ../data/units.xml.in.h:569
+#, fuzzy
+msgid "Octal Digit"
+msgstr "Восьмеричное"
+
+#: ../data/units.xml.in.h:570
+#, fuzzy
+msgid "r:octal_digit,p:octal_digits"
+msgstr "фортнайт"
+
+#: ../data/units.xml.in.h:571
+msgid "Hartley (Decimal Digit)"
+msgstr ""
+
+#: ../data/units.xml.in.h:572
+msgid "r:hartley,p:hartleys,a:Hart,dit,p:dits,decimal_digit,p:decimal_digits"
+msgstr ""
+
+#: ../data/units.xml.in.h:573
 msgid "Byte (8-bit)"
 msgstr "Байт (8 бит)"
 
-#: ../data/units.xml.in.h:566
-msgid "r:byte,a:B,p:bytes,octet,p:octets"
+#: ../data/units.xml.in.h:574
+msgid "r:byte,a:B,p:bytes,octet,p:octets,a:o"
 msgstr "байт,ac:Б,октет"
 
-#: ../data/units.xml.in.h:567
-msgid "Nibble"
-msgstr "Ниббл"
+#: ../data/units.xml.in.h:575
+msgid "Nibble (Hexadecimal Digit)"
+msgstr ""
 
-#: ../data/units.xml.in.h:568
-msgid "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets"
+#: ../data/units.xml.in.h:576
+#, fuzzy
+msgid ""
+"r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets,hex_digit,p:"
+"hex_digits,hexadecimal_digit,p:hexadecimal_digits"
 msgstr "ниббл,полубайт"
 
-#: ../data/units.xml.in.h:569
+#: ../data/units.xml.in.h:577
 msgid "Tribble"
 msgstr "Триббл"
 
-#: ../data/units.xml.in.h:570
+#: ../data/units.xml.in.h:578
 msgid "r:tribble,p:tribbles"
 msgstr "триббл"
 
-#: ../data/units.xml.in.h:571
+#: ../data/units.xml.in.h:579
+msgid "Nonet"
+msgstr ""
+
+#: ../data/units.xml.in.h:580
+#, fuzzy
+msgid "r:nonet,p:nonets"
+msgstr "узел,p:узлы"
+
+#: ../data/units.xml.in.h:581
+msgid "Declet"
+msgstr ""
+
+#: ../data/units.xml.in.h:582
+#, fuzzy
+msgid "r:declet,p:declets"
+msgstr "евроцент,p:евроценты"
+
+#: ../data/units.xml.in.h:583
 msgid "Word (16-bit)"
 msgstr "Слово (16 бит)"
 
-#: ../data/units.xml.in.h:572
+#: ../data/units.xml.in.h:584
 msgid "r:word,p:words"
 msgstr "слово,p:слова,p:слов"
 
-#: ../data/units.xml.in.h:573
+#: ../data/units.xml.in.h:585
 msgid "Kilobyte"
 msgstr "Килобайт"
 
-#: ../data/units.xml.in.h:574
-msgid "Kibibyte"
-msgstr "Кибибайт"
-
-#: ../data/units.xml.in.h:575
-msgid "Mebibyte"
-msgstr "Мебибайт"
-
-#: ../data/units.xml.in.h:576
-msgid "Gibibyte"
-msgstr "Гибибайт"
-
-#: ../data/units.xml.in.h:577
+#: ../data/units.xml.in.h:586
 msgid "Megabyte"
 msgstr "Мегабайт"
 
-#: ../data/units.xml.in.h:578
+#: ../data/units.xml.in.h:587
 msgid "Gigabyte"
 msgstr "Гигабайт"
 
-#: ../data/units.xml.in.h:579
+#: ../data/units.xml.in.h:588
 msgid "Terabyte"
 msgstr "Терабайт"
 
-#: ../data/units.xml.in.h:580
+#: ../data/units.xml.in.h:589
+msgid "Petabyte"
+msgstr "Петабайт"
+
+#: ../data/units.xml.in.h:590
+msgid "Exabyte"
+msgstr "Эксабайт"
+
+#: ../data/units.xml.in.h:591
+msgid "Kibibyte"
+msgstr "Кибибайт"
+
+#: ../data/units.xml.in.h:592
+msgid "Mebibyte"
+msgstr "Мебибайт"
+
+#: ../data/units.xml.in.h:593
+msgid "Gibibyte"
+msgstr "Гибибайт"
+
+#: ../data/units.xml.in.h:594
+msgid "Tebibyte"
+msgstr "Тебибайт"
+
+#: ../data/units.xml.in.h:595
 msgid "Kilobit"
 msgstr "Килобит"
 
-#: ../data/units.xml.in.h:581
-msgid "Kibibit"
-msgstr "Кибибит"
-
-#: ../data/units.xml.in.h:582
-msgid "Mebibit"
-msgstr "Мебибит"
-
-#: ../data/units.xml.in.h:583
-msgid "Gibibit"
-msgstr "Гигибит"
-
-#: ../data/units.xml.in.h:584
+#: ../data/units.xml.in.h:596
 msgid "Megabit"
 msgstr "Мегабит"
 
-#: ../data/units.xml.in.h:585
+#: ../data/units.xml.in.h:597
 msgid "Gigabit"
 msgstr "Гигабит"
 
-#: ../data/units.xml.in.h:586
+#: ../data/units.xml.in.h:598
 msgid "Terabit"
 msgstr "Терабит"
 
-#: ../data/units.xml.in.h:587
+#: ../data/units.xml.in.h:599
+msgid "Petabit"
+msgstr "Петабит"
+
+#: ../data/units.xml.in.h:600
+msgid "Kibibit"
+msgstr "Кибибит"
+
+#: ../data/units.xml.in.h:601
+msgid "Mebibit"
+msgstr "Мебибит"
+
+#: ../data/units.xml.in.h:602
+msgid "Gibibit"
+msgstr "Гигибит"
+
+#: ../data/units.xml.in.h:603
 msgid "Typography"
 msgstr "Книгопечатание"
 
-#: ../data/units.xml.in.h:588
+#: ../data/units.xml.in.h:604
 msgid "PostScript Point"
 msgstr "PostScript пункт (1/72 дюйма)"
 
-#: ../data/units.xml.in.h:589
+#: ../data/units.xml.in.h:605
 msgid "ar:pt,a:pts,point,p:points"
 msgstr "a:pt,a:pts,пункт,p:пункты"
 
-#: ../data/units.xml.in.h:590
+#: ../data/units.xml.in.h:606
 msgid "PostScript Pica"
 msgstr "PostScript пайка"
 
-#: ../data/units.xml.in.h:591
+#: ../data/units.xml.in.h:607
 msgid "r:pica,p:picas"
 msgstr "пайка,p:пайки"
 
-#: ../data/units.xml.in.h:592
+#: ../data/units.xml.in.h:608
 msgid "ATA Pica"
 msgstr "Пайка Хоукса"
 
-#: ../data/units.xml.in.h:593
+#: ../data/units.xml.in.h:609
 msgid "r:ata_pica,p:ata_picas"
 msgstr "пайка_хоукс,p:ata_picas"
 
-#: ../data/units.xml.in.h:594
+#: ../data/units.xml.in.h:610
 msgid "ATA Point"
 msgstr "Пункт Хоукса"
 
-#: ../data/units.xml.in.h:595
+#: ../data/units.xml.in.h:611
 msgid "r:ata_point,a:ata_pt,p:ata_points"
 msgstr "пункт_хоукс,a:ata_pt,p:ata_points"
 
-#: ../data/units.xml.in.h:596
+#: ../data/units.xml.in.h:612
 msgid "New Didot Point"
 msgstr "Новый пункт Дидо"
 
-#: ../data/units.xml.in.h:597
+#: ../data/units.xml.in.h:613
 msgid "r:new_didot"
 msgstr "новый_дидо"
 
-#: ../data/units.xml.in.h:598
+#: ../data/units.xml.in.h:614
 msgid "Didot Point"
 msgstr "Пункт Дидо"
 
-#: ../data/units.xml.in.h:599
+#: ../data/units.xml.in.h:615
 msgid "r:didot,a:dd"
 msgstr "дидо,a:dd"
 
-#: ../data/units.xml.in.h:600
+#: ../data/units.xml.in.h:616
 msgid "Cicero"
 msgstr "Цицеро"
 
-#: ../data/units.xml.in.h:601
+#: ../data/units.xml.in.h:617
 msgid "r:cicero"
 msgstr "цицеро"
 
@@ -11209,612 +11282,692 @@ msgid "-r:hundred"
 msgstr "сотня"
 
 #: ../data/variables.xml.in.h:60
+#, fuzzy
+msgid "Traditional Numbers"
+msgstr "Случайные числа"
+
+#: ../data/variables.xml.in.h:61
+msgid "Dozen"
+msgstr ""
+
+#: ../data/variables.xml.in.h:62
+msgid "-r:dozen,a:dz,a:doz"
+msgstr ""
+
+#: ../data/variables.xml.in.h:63
+msgid "Baker's Dozen"
+msgstr ""
+
+#: ../data/variables.xml.in.h:64
+msgid "-r:bakers_dozen"
+msgstr ""
+
+#: ../data/variables.xml.in.h:65
+msgid "Score"
+msgstr ""
+
+#: ../data/variables.xml.in.h:66
+msgid "-r:score"
+msgstr ""
+
+#: ../data/variables.xml.in.h:67
+#, fuzzy
+msgid "Long Hundred"
+msgstr ""
+"Английский хандредвейт (длинный хандредвейт, длинный центнер, английский "
+"центнер, лондонский хандредвейт)"
+
+#: ../data/variables.xml.in.h:68
+#, fuzzy
+msgid "-r:long_hundred,great_hundred,twelfty"
+msgstr "a:дхв,длинный_хандредвейт"
+
+#: ../data/variables.xml.in.h:69
+#, fuzzy
+msgid "Gross"
+msgstr "векторноепроизведение"
+
+#: ../data/variables.xml.in.h:70
+msgid "-r:gross,a:gro"
+msgstr ""
+
+#: ../data/variables.xml.in.h:71
+#, fuzzy
+msgid "Long Thousand"
+msgstr "Тысяча"
+
+#: ../data/variables.xml.in.h:72
+#, fuzzy
+msgid "-r:long_thousand"
+msgstr "тысяча"
+
+#: ../data/variables.xml.in.h:73
+msgid "Great Gross"
+msgstr ""
+
+#: ../data/variables.xml.in.h:74
+msgid "-r:great_gross"
+msgstr ""
+
+#: ../data/variables.xml.in.h:75
 msgid "Physical Constants"
 msgstr "Физические константы"
 
-#: ../data/variables.xml.in.h:61
+#: ../data/variables.xml.in.h:76
 msgid "Universal Constants"
 msgstr "Мировые константы"
 
-#: ../data/variables.xml.in.h:62
+#: ../data/variables.xml.in.h:77
 msgid "Characteristic Impedance of Vacuum"
 msgstr "Волновое сопротивление вакуума"
 
-#: ../data/variables.xml.in.h:63
+#: ../data/variables.xml.in.h:78
 msgid "Electric Constant (Permittivity of Free Space)"
 msgstr "Электрическая постоянная (диэлектрическая проницаемость вакуума)"
 
-#: ../data/variables.xml.in.h:64
+#: ../data/variables.xml.in.h:79
 msgid "Magnetic Constant (Permeability of Free Space)"
 msgstr "Магнитная постоянная (магнитная проницаемость вакуума)"
 
-#: ../data/variables.xml.in.h:65
+#: ../data/variables.xml.in.h:80
 msgid "Planck Constant"
 msgstr "Постоянная Планка"
 
-#: ../data/variables.xml.in.h:66
+#: ../data/variables.xml.in.h:81
 msgid "Reduced Planck Constant (Dirac constant)"
 msgstr "Приведённая постоянная Планка (постоянная Дирака)"
 
-#: ../data/variables.xml.in.h:67
+#: ../data/variables.xml.in.h:82
 msgid "Newtonian Constant of Gravitation"
 msgstr "Гравитационная постоянная, постоянная Ньютона"
 
-#: ../data/variables.xml.in.h:68
+#: ../data/variables.xml.in.h:83
 msgid "Speed of Light in Vacuum"
 msgstr "Скорость света в вакууме"
 
-#: ../data/variables.xml.in.h:69
+#: ../data/variables.xml.in.h:84
 msgid "Standard Acceleration due to Gravity"
 msgstr "Ускорение свободного падения"
 
-#: ../data/variables.xml.in.h:70
+#: ../data/variables.xml.in.h:85
 msgid "Electromagnetic Constants"
 msgstr "Электромагнитные константы"
 
-#: ../data/variables.xml.in.h:71
+#: ../data/variables.xml.in.h:86
 msgid "Bohr Magneton"
 msgstr "Магнетон Бора"
 
-#: ../data/variables.xml.in.h:72
+#: ../data/variables.xml.in.h:87
 msgid "Conductance Quantum"
 msgstr "Квант кондактанса (точечного квантового контакта)"
 
-#: ../data/variables.xml.in.h:73
+#: ../data/variables.xml.in.h:88
 msgid "Coulomb's Constant (Electric Force Constant)"
 msgstr "Постоянная Кулона (постоянная электрической силы)"
 
-#: ../data/variables.xml.in.h:74
+#: ../data/variables.xml.in.h:89
 msgid "Elementary Charge"
 msgstr "Элементарный заряд"
 
-#: ../data/variables.xml.in.h:75
+#: ../data/variables.xml.in.h:90
 msgid "Inverse of Conductance Quantum"
 msgstr "Квант сопротивления (точечного квантового контакта)"
 
-#: ../data/variables.xml.in.h:76
+#: ../data/variables.xml.in.h:91
 msgid "Josephson Constant"
 msgstr "Постоянная Джозефсона"
 
-#: ../data/variables.xml.in.h:77
+#: ../data/variables.xml.in.h:92
 msgid "Josephson Constant (conventional value)"
 msgstr "Постоянная Джозефсона (конвенциональное определение)"
 
-#: ../data/variables.xml.in.h:78
+#: ../data/variables.xml.in.h:93
 msgid "Magnetic Flux Quantum"
 msgstr "Квант магнитного потока"
 
-#: ../data/variables.xml.in.h:79
+#: ../data/variables.xml.in.h:94
 msgid "Nuclear Magneton"
 msgstr "Ядерный магнетон"
 
-#: ../data/variables.xml.in.h:80
+#: ../data/variables.xml.in.h:95
 msgid "von Klitzing Constant"
 msgstr "константа фон Клитцинга"
 
-#: ../data/variables.xml.in.h:81
+#: ../data/variables.xml.in.h:96
 msgid "von Klitzing Constant (conventional value)"
 msgstr "константа фон Клитцинга (конвенциональное определение)"
 
-#: ../data/variables.xml.in.h:82
+#: ../data/variables.xml.in.h:97
 msgid "Particle Mass in u"
 msgstr "Масса частиц (а. е. м.)"
 
-#: ../data/variables.xml.in.h:83
+#: ../data/variables.xml.in.h:98
 msgid "Deuteron Mass (in u)"
 msgstr "Масса дейтрона (а. е. м.)"
 
-#: ../data/variables.xml.in.h:84
+#: ../data/variables.xml.in.h:99
 msgid "Electron Mass (in u)"
 msgstr "Масса электрона (а. е. м.)"
 
-#: ../data/variables.xml.in.h:85
+#: ../data/variables.xml.in.h:100
 msgid "Helion Mass (in u)"
 msgstr "Масса гелиона (а. е. м.)"
 
-#: ../data/variables.xml.in.h:86
+#: ../data/variables.xml.in.h:101
 msgid "Neutron Mass (in u)"
 msgstr "Масса нейтрона (а. е. м.)"
 
-#: ../data/variables.xml.in.h:87
+#: ../data/variables.xml.in.h:102
 msgid "Proton Mass (in u)"
 msgstr "Масса протона (а. е. м.)"
 
-#: ../data/variables.xml.in.h:88
+#: ../data/variables.xml.in.h:103
 msgid "Tau Mass (in u)"
 msgstr "Масса таона (тау-лептона) (а. е. м.)"
 
-#: ../data/variables.xml.in.h:89
+#: ../data/variables.xml.in.h:104
 msgid "Muon Mass (in u)"
 msgstr "Масса мюона (а. е. м.)"
 
-#: ../data/variables.xml.in.h:90
+#: ../data/variables.xml.in.h:105
 msgid "Triton Mass (in u)"
 msgstr "Масса тритона (ядро атома трития) (а. е. м.)"
 
-#: ../data/variables.xml.in.h:91
+#: ../data/variables.xml.in.h:106
 msgid "Alpha Particle Mass (in u)"
 msgstr "Масса альфа частицы (ядро атома гелия) (а. е. м.)"
 
-#: ../data/variables.xml.in.h:92
+#: ../data/variables.xml.in.h:107
 msgid "Particle Mass in MeV*c^(-2)"
 msgstr "Масса частицы в МэВ/c&#x00B2;"
 
-#: ../data/variables.xml.in.h:93
+#: ../data/variables.xml.in.h:108
 msgid "Electron Mass (in MeV/c^2)"
 msgstr "Масса электрона (в МэВ/c&#x00B2;)"
 
-#: ../data/variables.xml.in.h:94
+#: ../data/variables.xml.in.h:109
 msgid "Neutron Mass (in MeV/c^2)"
 msgstr "Масса нейтрона (в МэВ/c&#x00B2;)"
 
-#: ../data/variables.xml.in.h:95
+#: ../data/variables.xml.in.h:110
 msgid "Proton Mass (in MeV/c^2)"
 msgstr "Масса протона (в МэВ/c&#x00B2;)"
 
-#: ../data/variables.xml.in.h:96
+#: ../data/variables.xml.in.h:111
 msgid "Tau Mass (in MeV/c^2)"
 msgstr "Масса таона (тау-лептона) (в МэВ/c&#x00B2;)"
 
-#: ../data/variables.xml.in.h:97
+#: ../data/variables.xml.in.h:112
 msgid "Muon Mass (in MeV/c^2)"
 msgstr "Масса мюона (в МэВ/c&#x00B2;)"
 
-#: ../data/variables.xml.in.h:98
+#: ../data/variables.xml.in.h:113
 msgid "Alpha Particle Mass (in MeV/c^2)"
 msgstr "Масса альфа частицы (ядро атома гелия) (в МэВ/c&#x00B2;)"
 
-#: ../data/variables.xml.in.h:99
+#: ../data/variables.xml.in.h:114
 msgid "Up Quark Mass (in MeV/c^2)"
 msgstr "Масса u-кварка (в МэВ/c&#x00B2;)"
 
-#: ../data/variables.xml.in.h:100
+#: ../data/variables.xml.in.h:115
 msgid "Down Quark Mass (in MeV/c^2)"
 msgstr "Масса d-кварка (в МэВ/c&#x00B2;)"
 
-#: ../data/variables.xml.in.h:101
+#: ../data/variables.xml.in.h:116
 msgid "Charm Quark Mass (in MeV/c^2)"
 msgstr "Масса c-кварка (в МэВ/c&#x00B2;)"
 
-#: ../data/variables.xml.in.h:102
+#: ../data/variables.xml.in.h:117
 msgid "Strange Quark Mass (in MeV/c^2)"
 msgstr "Масса s-кварка (в МэВ/c&#x00B2;)"
 
-#: ../data/variables.xml.in.h:103
+#: ../data/variables.xml.in.h:118
 msgid "Top Quark Mass (in MeV/c^2)"
 msgstr "Масса t-кварка (в МэВ/c&#x00B2;)"
 
-#: ../data/variables.xml.in.h:104
+#: ../data/variables.xml.in.h:119
 msgid "Bottom Quark Mass (in MeV/c^2)"
 msgstr "Масса b-кварка (в МэВ/c&#x00B2;)"
 
-#: ../data/variables.xml.in.h:105
+#: ../data/variables.xml.in.h:120
 msgid "Higgs Boson Mass (in MeV/c^2)"
 msgstr "Масса бозона Хиггса (в МэВ/c&#x00B2;)"
 
-#: ../data/variables.xml.in.h:106
+#: ../data/variables.xml.in.h:121
 msgid "W Boson Mass (in MeV/c^2)"
 msgstr "Масса W-бозона (в МэВ/c&#x00B2;)"
 
-#: ../data/variables.xml.in.h:107
+#: ../data/variables.xml.in.h:122
 msgid "Z Boson Mass (in MeV/c^2)"
 msgstr "Масса Z-бозона (в МэВ/c&#x00B2;)"
 
-#: ../data/variables.xml.in.h:108
+#: ../data/variables.xml.in.h:123
 msgid "Particle Mass in kg"
 msgstr "Масса частиц (кг)"
 
-#: ../data/variables.xml.in.h:109
+#: ../data/variables.xml.in.h:124
 msgid "Deuteron Mass"
 msgstr "Масса дейтрона"
 
-#: ../data/variables.xml.in.h:110
+#: ../data/variables.xml.in.h:125
 msgid "Electron Mass"
 msgstr "Масса электрона"
 
-#: ../data/variables.xml.in.h:111
+#: ../data/variables.xml.in.h:126
 msgid "Helion Mass"
 msgstr "Масса гелиона (ядро лёгкого изотопа гелия)"
 
-#: ../data/variables.xml.in.h:112
+#: ../data/variables.xml.in.h:127
 msgid "Neutron Mass"
 msgstr "Масса нейтрона"
 
-#: ../data/variables.xml.in.h:113
+#: ../data/variables.xml.in.h:128
 msgid "Proton Mass"
 msgstr "Масса протона"
 
-#: ../data/variables.xml.in.h:114
+#: ../data/variables.xml.in.h:129
 msgid "Tau Mass"
 msgstr "Масса таона (тау-лептона)"
 
-#: ../data/variables.xml.in.h:115
+#: ../data/variables.xml.in.h:130
 msgid "Muon Mass"
 msgstr "Масса мюона"
 
-#: ../data/variables.xml.in.h:116
+#: ../data/variables.xml.in.h:131
 msgid "Triton Mass"
 msgstr "Масса тритона (ядро атома трития)"
 
-#: ../data/variables.xml.in.h:117
+#: ../data/variables.xml.in.h:132
 msgid "Alpha Particle Mass"
 msgstr "Масса альфа частицы (ядро атома гелия)"
 
-#: ../data/variables.xml.in.h:118
+#: ../data/variables.xml.in.h:133
 msgid "Atomic and Nuclear Constants"
 msgstr "Атомные и ядерные константы"
 
-#: ../data/variables.xml.in.h:119
+#: ../data/variables.xml.in.h:134
 msgid "Bohr Radius"
 msgstr "Боровский радиус"
 
-#: ../data/variables.xml.in.h:120
+#: ../data/variables.xml.in.h:135
 msgid "Classical Electron Radius"
 msgstr "Классический радиус электрона"
 
-#: ../data/variables.xml.in.h:121
+#: ../data/variables.xml.in.h:136
 msgid "Fermi Coupling Constant"
 msgstr "Константа слабого взаимодействия (постоянная Ферми)"
 
-#: ../data/variables.xml.in.h:122
+#: ../data/variables.xml.in.h:137
 msgid "Fine-Structure Constant"
 msgstr "Постоянная тонкой структуры"
 
-#: ../data/variables.xml.in.h:123
+#: ../data/variables.xml.in.h:138
 msgid "Hartree Energy (constant)"
 msgstr "Энергия Хартри (константа)"
 
-#: ../data/variables.xml.in.h:124
+#: ../data/variables.xml.in.h:139
 msgid "Quantum of Circulation"
 msgstr "Квант циркуляции скорости (для электрона)"
 
-#: ../data/variables.xml.in.h:125
+#: ../data/variables.xml.in.h:140
 msgid "Quantum of Circulation times 2"
 msgstr "Удвоенный квант циркуляции скорости (для электрона)"
 
-#: ../data/variables.xml.in.h:126
+#: ../data/variables.xml.in.h:141
 msgid "Rydberg Constant"
 msgstr "Постоянная Ридберга"
 
-#: ../data/variables.xml.in.h:127
+#: ../data/variables.xml.in.h:142
 msgid "Thomson cross section"
 msgstr "Томсоновское сечение рассеяния электрона"
 
-#: ../data/variables.xml.in.h:128
+#: ../data/variables.xml.in.h:143
 msgid "Weak Mixing Angle (Weinberg Angle)"
 msgstr "Угол смешивания слабого взаимодействия (угол Вайнберга)"
 
-#: ../data/variables.xml.in.h:129
+#: ../data/variables.xml.in.h:144
 msgid "W to Z Mass Ratio"
 msgstr "Отношение масс W и Z бозонов"
 
-#: ../data/variables.xml.in.h:130
+#: ../data/variables.xml.in.h:145
 msgid "Physico-Chemical Constants"
 msgstr "Физико-химические константы"
 
-#: ../data/variables.xml.in.h:131
+#: ../data/variables.xml.in.h:146
 msgid "Lattice Spacing of Ideal Silicon (220)"
 msgstr "Период кристаллической решётки идеального кремния (220)"
 
-#: ../data/variables.xml.in.h:132
+#: ../data/variables.xml.in.h:147
 msgid "Atomic Mass Constant"
 msgstr "Атомная единица массы (а. е. м.)"
 
-#: ../data/variables.xml.in.h:133
+#: ../data/variables.xml.in.h:148
 msgid "Avogadro Constant"
 msgstr "Постоянная Авогадро"
 
-#: ../data/variables.xml.in.h:134
+#: ../data/variables.xml.in.h:149
 msgid "Boltzmann Constant"
 msgstr "Постоянная Больцмана"
 
-#: ../data/variables.xml.in.h:135
+#: ../data/variables.xml.in.h:150
 msgid "Molar Mass Constant"
 msgstr "Молярная единица массы"
 
-#: ../data/variables.xml.in.h:136
+#: ../data/variables.xml.in.h:151
 msgid "Compton Wavelength"
 msgstr "Комптоновская длина волны (для электрона)"
 
-#: ../data/variables.xml.in.h:137
+#: ../data/variables.xml.in.h:152
 msgid "Reduced Compton Wavelength"
 msgstr "Приведённая комптоновская длина волны (для электрона)"
 
-#: ../data/variables.xml.in.h:138
+#: ../data/variables.xml.in.h:153
 msgid "Electronvolt (constant)"
 msgstr "Электронвольт (постоянная)"
 
-#: ../data/variables.xml.in.h:139
+#: ../data/variables.xml.in.h:154
 msgid "Faraday Constant"
 msgstr "Постоянная Фарадея"
 
-#: ../data/variables.xml.in.h:140
+#: ../data/variables.xml.in.h:155
 msgid "First Radiation Constant"
 msgstr "Постоянная радиационная первая"
 
-#: ../data/variables.xml.in.h:141
+#: ../data/variables.xml.in.h:156
 msgid "First Radiation Constant for Spectral Radiance"
 msgstr "Постоянная радиационная первая для спектральной яркости"
 
-#: ../data/variables.xml.in.h:142
+#: ../data/variables.xml.in.h:157
 msgid "Gas Constant"
 msgstr "Газовая постоянная"
 
-#: ../data/variables.xml.in.h:143
+#: ../data/variables.xml.in.h:158
 msgid "Lattice Parameter of Silicon"
 msgstr "Постоянная решётки кремния"
 
-#: ../data/variables.xml.in.h:144
+#: ../data/variables.xml.in.h:159
 msgid "Loschmidt Constant (273.15 K, 100 kPa)"
 msgstr "Постоянная Лошмидта (273,15 К, 100 кПа)"
 
-#: ../data/variables.xml.in.h:145
+#: ../data/variables.xml.in.h:160
 msgid "Loschmidt Constant (273.15 K, 101.325 kPa)"
 msgstr "Постоянная Лошмидта (273,15 К, 101,325 кПа)"
 
-#: ../data/variables.xml.in.h:146
+#: ../data/variables.xml.in.h:161
 msgid "Molar Planck Constant"
 msgstr "Молярная постоянная Планка"
 
-#: ../data/variables.xml.in.h:147
+#: ../data/variables.xml.in.h:162
 msgid "Molar Volume of Ideal Gas (273.15 K, 100 kPa)"
 msgstr "Молярный объём идеального газа (273,15 К, 100 кПа)"
 
-#: ../data/variables.xml.in.h:148
+#: ../data/variables.xml.in.h:163
 msgid "Molar Volume of Ideal Gas (273.15 K, 101.325 kPa)"
 msgstr "Молярный объём идеального газа (273,15 К, 101,325 кПа)"
 
-#: ../data/variables.xml.in.h:149
+#: ../data/variables.xml.in.h:164
 msgid "Sackur-Tetrode constant (1 K, 100 kPa)"
 msgstr "Постоянная Сакура–Тетроде (1 К, 100 кПа)"
 
-#: ../data/variables.xml.in.h:150
+#: ../data/variables.xml.in.h:165
 msgid "Sackur-Tetrode constant (1 K, 101.325 kPa)"
 msgstr "Постоянная Сакура–Тетроде (1 К, 101,325 кПа)"
 
-#: ../data/variables.xml.in.h:151
+#: ../data/variables.xml.in.h:166
 msgid "Second Radiation Constant"
 msgstr "Постоянная радиационная вторая"
 
-#: ../data/variables.xml.in.h:152
+#: ../data/variables.xml.in.h:167
 msgid "Stefan-Boltzmann Constant"
 msgstr "Постоянная Стефана-Больцмана"
 
-#: ../data/variables.xml.in.h:153
+#: ../data/variables.xml.in.h:168
 msgid "Wien frequency displacement law constant"
 msgstr "Постоянная Вина (для частоты)"
 
-#: ../data/variables.xml.in.h:154
+#: ../data/variables.xml.in.h:169
 msgid "Wien wavelength displacement law constant"
 msgstr "Постоянная Вина (для длины волны)"
 
-#: ../data/variables.xml.in.h:155
+#: ../data/variables.xml.in.h:170
 msgid "Conversion factors for energy equivalents"
 msgstr "Коэффициенты преобразования для эквивалентов энергии"
 
-#: ../data/variables.xml.in.h:156
+#: ../data/variables.xml.in.h:171
 msgid "Hertz - Inverse Meter Relationship"
 msgstr "Отношение метр&#x207B;&#x00B9;/герц"
 
-#: ../data/variables.xml.in.h:157
+#: ../data/variables.xml.in.h:172
 msgid "Hertz - Joule Relationship"
 msgstr "Отношение джоуль/герц"
 
-#: ../data/variables.xml.in.h:158
+#: ../data/variables.xml.in.h:173
 msgid "Hertz - Kelvin Relationship"
 msgstr "Отношение кельвин/герц"
 
-#: ../data/variables.xml.in.h:159
+#: ../data/variables.xml.in.h:174
 msgid "Hertz - Kilogram Relationship"
 msgstr "Отношение килограмм/герц"
 
-#: ../data/variables.xml.in.h:160
+#: ../data/variables.xml.in.h:175
 msgid "Inverse Meter - Hertz Relationship"
 msgstr "Отношение герц/метр&#x207B;&#x00B9;"
 
-#: ../data/variables.xml.in.h:161
+#: ../data/variables.xml.in.h:176
 msgid "Inverse Meter - Joule Relationship"
 msgstr "Отношение джоуль/метр&#x207B;&#x00B9;"
 
-#: ../data/variables.xml.in.h:162
+#: ../data/variables.xml.in.h:177
 msgid "Inverse Meter - Kelvin Relationship"
 msgstr "Отношение кельвин/метр&#x207B;&#x00B9;"
 
-#: ../data/variables.xml.in.h:163
+#: ../data/variables.xml.in.h:178
 msgid "Inverse Meter - Kilogram Relationship"
 msgstr "Отношение килограмм/метр&#x207B;&#x00B9;"
 
-#: ../data/variables.xml.in.h:164
+#: ../data/variables.xml.in.h:179
 msgid "Joule - Hertz Relationship"
 msgstr "Отношение герц/джоуль"
 
-#: ../data/variables.xml.in.h:165
+#: ../data/variables.xml.in.h:180
 msgid "Joule - Inverse Meter Relationship"
 msgstr "Отношение метр&#x207B;&#x00B9;/джоуль"
 
-#: ../data/variables.xml.in.h:166
+#: ../data/variables.xml.in.h:181
 msgid "Joule - Kelvin Relationship"
 msgstr "Отношение кельвин/джоуль"
 
-#: ../data/variables.xml.in.h:167
+#: ../data/variables.xml.in.h:182
 msgid "Joule - Kilogram Relationship"
 msgstr "Отношение килограмм/джоуль"
 
-#: ../data/variables.xml.in.h:168
+#: ../data/variables.xml.in.h:183
 msgid "Kelvin - Hertz Relationship"
 msgstr "Отношение герц/кельвин"
 
-#: ../data/variables.xml.in.h:169
+#: ../data/variables.xml.in.h:184
 msgid "Kelvin - Inverse Meter Relationship"
 msgstr "Отношение метр&#x207B;&#x00B9;/кельвин"
 
-#: ../data/variables.xml.in.h:170
+#: ../data/variables.xml.in.h:185
 msgid "Kelvin - Joule Relationship"
 msgstr "Отношение джоуль/кельвин"
 
-#: ../data/variables.xml.in.h:171
+#: ../data/variables.xml.in.h:186
 msgid "Kelvin - Kilogram Relationship"
 msgstr "Отношение килограмм/кельвин"
 
-#: ../data/variables.xml.in.h:172
+#: ../data/variables.xml.in.h:187
 msgid "Kilogram - Hertz Relationship"
 msgstr "Отношение герц/килограмм"
 
-#: ../data/variables.xml.in.h:173
+#: ../data/variables.xml.in.h:188
 msgid "Kilogram - Inverse Meter Relationship"
 msgstr "Отношение метр&#x207B;&#x00B9;/килограмм"
 
-#: ../data/variables.xml.in.h:174
+#: ../data/variables.xml.in.h:189
 msgid "Kilogram - Joule Relationship"
 msgstr "Отношение джоуль/килограмм"
 
-#: ../data/variables.xml.in.h:175
+#: ../data/variables.xml.in.h:190
 msgid "Kilogram - Kelvin Relationship"
 msgstr "Отношение кельвин/килограмм"
 
-#: ../data/variables.xml.in.h:176
+#: ../data/variables.xml.in.h:191
 msgid "Basic Constants"
 msgstr "Основные константы"
 
-#: ../data/variables.xml.in.h:177
+#: ../data/variables.xml.in.h:192
 msgid "Golden Ratio"
 msgstr "Золотое сечение"
 
-#: ../data/variables.xml.in.h:178
+#: ../data/variables.xml.in.h:193
 msgid "Omega Constant"
 msgstr "Постоянная Омега (LambertW(1))"
 
-#: ../data/variables.xml.in.h:179
+#: ../data/variables.xml.in.h:194
 msgid "Pythagoras' Constant (sqrt 2)"
 msgstr "константа Пифагора (&#x221A;2)"
 
-#: ../data/variables.xml.in.h:180
+#: ../data/variables.xml.in.h:195
 msgid "Apery's Constant"
 msgstr "Постоянная Апери"
 
-#: ../data/variables.xml.in.h:181
+#: ../data/variables.xml.in.h:196
 msgid "Tau (2pi)"
 msgstr "Оборот (тау, &#x3c4;=2&#x3c0;)"
 
-#: ../data/variables.xml.in.h:182
+#: ../data/variables.xml.in.h:197
 msgid "Plastic Number"
 msgstr "Пластическое число"
 
-#: ../data/variables.xml.in.h:183
+#: ../data/variables.xml.in.h:198
 msgid "Base of Natural Logarithms (e)"
 msgstr "Основание натурального логарифма (e)"
 
-#: ../data/variables.xml.in.h:184
+#: ../data/variables.xml.in.h:199
 msgid "Archimedes' Constant (pi)"
 msgstr "Постоянная Архимеда (&#x3c0;)"
 
-#: ../data/variables.xml.in.h:185
+#: ../data/variables.xml.in.h:200
 msgid "Euler's Constant"
 msgstr "Постоянная Эйлера"
 
-#: ../data/variables.xml.in.h:186
+#: ../data/variables.xml.in.h:201
 msgid "Catalan's Constant"
 msgstr "Постоянная Каталана"
 
-#: ../data/variables.xml.in.h:187
+#: ../data/variables.xml.in.h:202
 msgid "Special Numbers"
 msgstr "Специальные числа"
 
-#: ../data/variables.xml.in.h:188
+#: ../data/variables.xml.in.h:203
 msgid "Imaginary i (sqrt -1)"
 msgstr "Мнимая единица i (&#x221A;-1)"
 
-#: ../data/variables.xml.in.h:189
+#: ../data/variables.xml.in.h:204
 msgid "Positive Infinity"
 msgstr "Положительная бесконечность"
 
-#: ../data/variables.xml.in.h:190
+#: ../data/variables.xml.in.h:205
 msgid "a:&#x221E;,r:plus_infinity,r:infinity"
 msgstr "a:&#x221E;,plus_infinity,infinity,infty"
 
-#: ../data/variables.xml.in.h:191
+#: ../data/variables.xml.in.h:206
 msgid "Negative Infinity"
 msgstr "Отрицательная бесконечность"
 
-#: ../data/variables.xml.in.h:192
+#: ../data/variables.xml.in.h:207
 msgid "r:minus_infinity"
 msgstr "a:-&#x221E;,minus_infinity"
 
-#: ../data/variables.xml.in.h:193
+#: ../data/variables.xml.in.h:208
 msgid "Undefined"
 msgstr "Не определено"
 
-#: ../data/variables.xml.in.h:194
+#: ../data/variables.xml.in.h:209
 msgid "r:undefined"
 msgstr "не_определено"
 
-#: ../data/variables.xml.in.h:195
+#: ../data/variables.xml.in.h:210
 msgid "False"
 msgstr "Ложь"
 
-#: ../data/variables.xml.in.h:196
+#: ../data/variables.xml.in.h:211
 msgid "r:false,r:no"
 msgstr "ложь,нет"
 
-#: ../data/variables.xml.in.h:197
+#: ../data/variables.xml.in.h:212
 msgid "True"
 msgstr "Истина"
 
-#: ../data/variables.xml.in.h:198
+#: ../data/variables.xml.in.h:213
 msgid "r:true,r:yes"
 msgstr "истина,да"
 
-#: ../data/variables.xml.in.h:201
+#: ../data/variables.xml.in.h:216
 msgid "r:precision"
 msgstr "точность"
 
-#: ../data/variables.xml.in.h:202
+#: ../data/variables.xml.in.h:217
 msgid "System Uptime"
 msgstr "Аптайм — время непрерывной работы вычислительной системы"
 
-#: ../data/variables.xml.in.h:203
+#: ../data/variables.xml.in.h:218
 msgid "r:uptime"
 msgstr "аптайм"
 
-#: ../data/variables.xml.in.h:204
+#: ../data/variables.xml.in.h:219
 msgid "Unknowns"
 msgstr "Неизвестные"
 
-#: ../data/variables.xml.in.h:205
+#: ../data/variables.xml.in.h:220
 msgid "n (integer)"
 msgstr "n (целое)"
 
-#: ../data/variables.xml.in.h:207
+#: ../data/variables.xml.in.h:222
 msgid "Today"
 msgstr "Сегодня"
 
-#: ../data/variables.xml.in.h:208
+#: ../data/variables.xml.in.h:223
 msgid "r:today"
 msgstr "сегодня"
 
-#: ../data/variables.xml.in.h:209
+#: ../data/variables.xml.in.h:224
 msgid "Tomorrow"
 msgstr "Завтра"
 
-#: ../data/variables.xml.in.h:210
+#: ../data/variables.xml.in.h:225
 msgid "r:tomorrow"
 msgstr "завтра"
 
-#: ../data/variables.xml.in.h:211
+#: ../data/variables.xml.in.h:226
 msgid "Yesterday"
 msgstr "Вчера"
 
-#: ../data/variables.xml.in.h:212
+#: ../data/variables.xml.in.h:227
 msgid "r:yesterday"
 msgstr "вчера"
 
-#: ../data/variables.xml.in.h:213
+#: ../data/variables.xml.in.h:228
 msgid "Now (date and time)"
 msgstr "Сейчас (дата и время)"
 
-#: ../data/variables.xml.in.h:214
+#: ../data/variables.xml.in.h:229
 msgid "r:now"
 msgstr "сейчас"
+
+#~ msgid "acr:KGS,au:&#x0441;"
+#~ msgstr "ac:KGS,au:&#x0441;"
+
+#~ msgid "Bit"
+#~ msgstr "Бит"
+
+#~ msgid "r:bit,p:bits"
+#~ msgstr "ac:б,бит"
+
+#~ msgid "Nibble"
+#~ msgstr "Ниббл"
 
 #~ msgid "1st value"
 #~ msgstr "1-е значение"

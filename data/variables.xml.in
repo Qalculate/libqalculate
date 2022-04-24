@@ -147,37 +147,37 @@
     <_title>Traditional Numbers</_title>
     <variable require_translation="true">
       <_title>Dozen</_title>
-      <names>r:dozen,a:dz,a:doz</names>
+      <_names>-r:dozen,a:dz,a:doz</_names>
       <value>12</value>
     </variable>
     <variable require_translation="true">
       <_title>Baker's Dozen</_title>
-      <_names>r:bakers_dozen</_names>
+      <_names>-r:bakers_dozen</_names>
       <value>13</value>
     </variable>
     <variable require_translation="true">
       <_title>Score</_title>
-      <_names>r:score</_names>
+      <_names>-r:score</_names>
       <value>20</value>
     </variable>
     <variable require_translation="true">
       <_title>Long Hundred</_title>
-      <_names>r:long_hundred,great_hundred,twelfty</_names>
+      <_names>-r:long_hundred,great_hundred,twelfty</_names>
       <value>120</value>
     </variable>
     <variable require_translation="true">
       <_title>Gross</_title>
-      <_names>r:gross,a:gro</_names>
+      <_names>-r:gross,a:gro</_names>
       <value>144</value>
     </variable>
     <variable require_translation="true">
       <_title>Long Thousand</_title>
-      <_names>r:long_thousand</_names>
+      <_names>-r:long_thousand</_names>
       <value>1200</value>
     </variable>
     <variable require_translation="true">
       <_title>Great Gross</_title>
-      <_names>r:great_gross</_names>
+      <_names>-r:great_gross</_names>
       <value>1728</value>
     </variable>
   </category>

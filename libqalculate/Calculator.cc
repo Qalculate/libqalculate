@@ -803,15 +803,79 @@ bool Calculator::checkSaveFunctionCalled() {
 	}
 	return false;
 }
+bool equals_ignore_us(const string &str1, const string &str2, int ignore_us) {
+	if(ignore_us == 0) return str1 == str2;
+	if(str1.length() != str2.length() - ignore_us) return false;
+	size_t iu = 0;
+	for(size_t i = 0; i < str1.length(); i++) {
+		if(ignore_us > 0 && str2[i + iu] == '_') {ignore_us--; iu++;}
+		if(str1[i] != str2[i + iu]) return false;
+	}
+	return true;
+}
+bool equalsIgnoreCase(const string &str1, const string &str2, int ignore_us) {
+	if(str1.empty() || str2.empty()) return false;
+	for(size_t i1 = 0, i2 = 0; i1 < str1.length() || i2 < str2.length(); i1++, i2++) {
+		if(ignore_us > 0 && str2[i2] == '_') {i2++; ignore_us--;}
+		if(i1 >= str1.length() || i2 >= str2.length()) return false;
+		if(((signed char) str1[i1] < 0 && i1 + 1 < str1.length()) || ((signed char) str2[i2] < 0 && i2 + 1 < str2.length())) {
+			size_t iu1 = 1, iu2 = 1;
+			if((signed char) str1[i1] < 0) {
+				while(iu1 + i1 < str1.length() && (signed char) str1[i1 + iu1] < 0) {
+					iu1++;
+				}
+			}
+			if((signed char) str2[i2] < 0) {
+				while(iu2 + i2 < str2.length() && (signed char) str2[i2 + iu2] < 0) {
+					iu2++;
+				}
+			}
+			bool isequal = (iu1 == iu2);
+			if(isequal) {
+				for(size_t i = 0; i < iu1; i++) {
+					if(str1[i1 + i] != str2[i2 + i]) {
+						isequal = false;
+						break;
+					}
+				}
+			}
+			if(!isequal) {
+				char *gstr1 = utf8_strdown(str1.c_str() + (sizeof(char) * i1));
+				if(!gstr1) return false;
+				char *gstr2 = utf8_strdown(str2.c_str() + (sizeof(char) * i2));
+				if(!gstr2) {
+					free(gstr1);
+					return false;
+				}
+				bool b = strcmp(gstr1, gstr2) == 0;
+				free(gstr1);
+				free(gstr2);
+				return b;
+			}
+			i1 += iu1 - 1;
+			i2 += iu2 - 1;
+		} else if(str1[i1] != str2[i2] && !((str1[i1] >= 'a' && str1[i1] <= 'z') && str1[i1] - 32 == str2[i2]) && !((str1[i1] <= 'Z' && str1[i1] >= 'A') && str1[i1] + 32 == str2[i2])) {
+			return false;
+		}
+	}
+	return true;
+}
 ExpressionItem *Calculator::getActiveExpressionItem(ExpressionItem *item) {
 	if(!item) return NULL;
 	for(size_t i = 1; i <= item->countNames(); i++) {
-		ExpressionItem *item2 = getActiveExpressionItem(item->getName(i).name, item);
+		ExpressionItem *item2 = getActiveExpressionItem(item->getName(i).name, item, !item->getName(i).completion_only);
 		if(item2) {
 			return item2;
 		}
 	}
 	return NULL;
+}
+ExpressionItem *Calculator::getActiveExpressionItem(string name_, ExpressionItem *item, bool ignore_us) {
+	ExpressionItem *o = getActiveExpressionItem(name_, item);
+	size_t i;
+	if(o || !ignore_us || (i = name_.find('_')) == string::npos || i == name_.length() - 1 || name_[name_.length() - 1] == '_' || (i == name_.length() - 2 && is_not_in(NUMBERS, name_[name_.length() - 1]) && ((signed char) name_[i - 1] >= 0 || getPrefix(name_.substr(0, i))))) return o;
+	gsub("_", "", name_);
+	return getActiveExpressionItem(name_, o);
 }
 ExpressionItem *Calculator::getActiveExpressionItem(string name_, ExpressionItem *item) {
 	if(name_.empty()) return NULL;
@@ -819,9 +883,9 @@ ExpressionItem *Calculator::getActiveExpressionItem(string name_, ExpressionItem
 	if(l > UFV_LENGTHS) {
 		for(size_t i = 0; i < ufvl.size(); i++) {
 			if(ufvl_t[i] == 'f' || ufvl_t[i] == 'v' || ufvl_t[i] == 'u') {
-				if(priv->ufvl_us[i] == 0 && ufvl[i] != item) {
+				if(ufvl[i] != item) {
 					const ExpressionName &ename = ((ExpressionItem*) ufvl[i])->getName(ufvl_i[i]);
-					if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
+					if((ename.case_sensitive && equals_ignore_us(name_, ename.name, priv->ufvl_us[i])) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name, priv->ufvl_us[i]))) {
 						return (ExpressionItem*) ufvl[i];
 					}
 				}
@@ -831,9 +895,9 @@ ExpressionItem *Calculator::getActiveExpressionItem(string name_, ExpressionItem
 		l--;
 		for(size_t i2 = 1; i2 <= 3; i2++) {
 			for(size_t i = 0; i < ufv[i2][l].size(); i++) {
-				if(priv->ufv_us[i2][l][i] == 0 && ufv[i2][l][i] != item) {
+				if(ufv[i2][l][i] != item) {
 					const ExpressionName &ename = ((ExpressionItem*) ufv[i2][l][i])->getName(ufv_i[i2][l][i]);
-					if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
+					if((ename.case_sensitive && equals_ignore_us(name_, ename.name, priv->ufv_us[i2][l][i])) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name, priv->ufv_us[i2][l][i]))) {
 						return (ExpressionItem*) ufv[i2][l][i];
 					}
 				}
@@ -2002,14 +2066,21 @@ Unit* Calculator::getUnitById(int id) const {
 	if(it == priv->id_units.end()) return NULL;
 	return it->second;
 }
+Unit *Calculator::getActiveUnit(string name_, bool ignore_us) {
+	Unit *o = getActiveUnit(name_);
+	size_t i;
+	if(o || !ignore_us || (i = name_.find('_')) == string::npos || i == name_.length() - 1 || name_[name_.length() - 1] == '_' || (i == name_.length() - 2 && is_not_in(NUMBERS, name_[name_.length() - 1]) && ((signed char) name_[i - 1] >= 0 || getPrefix(name_.substr(0, i))))) return o;
+	gsub("_", "", name_);
+	return getActiveUnit(name_);
+}
 Unit* Calculator::getActiveUnit(string name_) {
 	if(name_.empty()) return NULL;
 	size_t l = name_.length();
 	if(l > UFV_LENGTHS) {
 		for(size_t i = 0; i < ufvl.size(); i++) {
-			if(priv->ufvl_us[i] == 0 && ufvl_t[i] == 'u') {
+			if(ufvl_t[i] == 'u') {
 				const ExpressionName &ename = ((ExpressionItem*) ufvl[i])->getName(ufvl_i[i]);
-				if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
+				if((ename.case_sensitive && equals_ignore_us(name_, ename.name, priv->ufvl_us[i])) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name, priv->ufvl_us[i]))) {
 					return (Unit*) ufvl[i];
 				}
 			}
@@ -2017,11 +2088,9 @@ Unit* Calculator::getActiveUnit(string name_) {
 	} else {
 		l--;
 		for(size_t i = 0; i < ufv[2][l].size(); i++) {
-			if(priv->ufv_us[2][l][i] == 0) {
-				const ExpressionName &ename = ((ExpressionItem*) ufv[2][l][i])->getName(ufv_i[2][l][i]);
-				if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
-					return (Unit*) ufv[2][l][i];
-				}
+			const ExpressionName &ename = ((ExpressionItem*) ufv[2][l][i])->getName(ufv_i[2][l][i]);
+			if((ename.case_sensitive && equals_ignore_us(name_, ename.name, priv->ufv_us[2][l][i])) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name, priv->ufv_us[2][l][i]))) {
+				return (Unit*) ufv[2][l][i];
 			}
 		}
 	}
@@ -2127,6 +2196,7 @@ void Calculator::expressionItemDeleted(ExpressionItem *item) {
 			break;
 		}
 	}
+	delUFV(item);
 	for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
 		if(item->type() == TYPE_VARIABLE || item->type() == TYPE_UNIT) {
 			for(size_t i = 0; i < variables.size(); i++) {
@@ -2141,7 +2211,6 @@ void Calculator::expressionItemDeleted(ExpressionItem *item) {
 			}
 		}
 	}
-	delUFV(item);
 }
 void Calculator::nameChanged(ExpressionItem *item, bool new_item) {
 	if(!item->isActive() || item->countNames() == 0) return;
@@ -2227,16 +2296,18 @@ void Calculator::nameChanged(ExpressionItem *item, bool new_item) {
 				l2++;
 			}
 			if(i_us > 0 || l2 < 3) break;
-			size_t i = item->getName(i2).name.find('_', 1);
-			while(true) {
-				if(i == string::npos) {
-					break;
-				} else if(i == item->getName(i2).name.length() - 1 || item->getName(i2).name[i - 1] == '_' || (i == item->getName(i2).name.length() - 2 && is_not_in(NUMBERS, item->getName(i2).name[item->getName(i2).name.length() - 1]) && ((signed char) item->getName(i2).name[i - 1] >= 0 || getPrefix(item->getName(i2).name.substr(0, i))))) {
-					i_us = 0;
-					break;
+			if(!item->getName(i2).completion_only) {
+				size_t i = item->getName(i2).name.find('_', 1);
+				while(true) {
+					if(i == string::npos) {
+						break;
+					} else if(i == item->getName(i2).name.length() - 1 || item->getName(i2).name[i - 1] == '_' || (i == item->getName(i2).name.length() - 2 && is_not_in(NUMBERS, item->getName(i2).name[item->getName(i2).name.length() - 1]) && ((signed char) item->getName(i2).name[i - 1] >= 0 || getPrefix(item->getName(i2).name.substr(0, i))))) {
+						i_us = 0;
+						break;
+					}
+					i_us++;
+					i = item->getName(i2).name.find('_', i + 1);
 				}
-				i_us++;
-				i = item->getName(i2).name.find('_', i + 1);
 			}
 			if(i_us == 0) break;
 			l2 -= i_us;
@@ -2285,14 +2356,21 @@ Variable* Calculator::getVariableById(int id) const {
 	if(it == priv->id_variables.end()) return NULL;
 	return it->second;
 }
+Variable *Calculator::getActiveVariable(string name_, bool ignore_us) {
+	Variable *o = getActiveVariable(name_);
+	size_t i;
+	if(o || !ignore_us || (i = name_.find('_')) == string::npos || i == name_.length() - 1 || name_[name_.length() - 1] == '_' || (i == name_.length() - 2 && is_not_in(NUMBERS, name_[name_.length() - 1]) && ((signed char) name_[i - 1] >= 0 || getPrefix(name_.substr(0, i))))) return o;
+	gsub("_", "", name_);
+	return getActiveVariable(name_);
+}
 Variable* Calculator::getActiveVariable(string name_) {
 	if(name_.empty()) return NULL;
 	size_t l = name_.length();
 	if(l > UFV_LENGTHS) {
 		for(size_t i = 0; i < ufvl.size(); i++) {
-			if(ufvl_t[i] == 'v' && priv->ufvl_us[i] == 0) {
+			if(ufvl_t[i] == 'v') {
 				const ExpressionName &ename = ((ExpressionItem*) ufvl[i])->getName(ufvl_i[i]);
-				if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
+				if((ename.case_sensitive && equals_ignore_us(name_, ename.name, priv->ufvl_us[i])) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name, priv->ufvl_us[i]))) {
 					return (Variable*) ufvl[i];
 				}
 			}
@@ -2300,11 +2378,9 @@ Variable* Calculator::getActiveVariable(string name_) {
 	} else {
 		l--;
 		for(size_t i = 0; i < ufv[3][l].size(); i++) {
-			if(priv->ufv_us[3][l][i] == 0) {
-				const ExpressionName &ename = ((ExpressionItem*) ufv[3][l][i])->getName(ufv_i[3][l][i]);
-				if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
-					return (Variable*) ufv[3][l][i];
-				}
+			const ExpressionName &ename = ((ExpressionItem*) ufv[3][l][i])->getName(ufv_i[3][l][i]);
+			if((ename.case_sensitive && equals_ignore_us(name_, ename.name, priv->ufv_us[3][l][i])) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name, priv->ufv_us[3][l][i]))) {
+				return (Variable*) ufv[3][l][i];
 			}
 		}
 	}
@@ -2447,14 +2523,21 @@ MathFunction* Calculator::getFunctionById(int id) const {
 	if(it == priv->id_functions.end()) return NULL;
 	return it->second;
 }
+MathFunction *Calculator::getActiveFunction(string name_, bool ignore_us) {
+	MathFunction *o = getActiveFunction(name_);
+	size_t i;
+	if(o || !ignore_us || (i = name_.find('_')) == string::npos || i == name_.length() - 1 || name_[name_.length() - 1] == '_' || (i == name_.length() - 2 && is_not_in(NUMBERS, name_[name_.length() - 1]) && ((signed char) name_[i - 1] >= 0 || getPrefix(name_.substr(0, i))))) return o;
+	gsub("_", "", name_);
+	return getActiveFunction(name_);
+}
 MathFunction* Calculator::getActiveFunction(string name_) {
 	if(name_.empty()) return NULL;
 	size_t l = name_.length();
 	if(l > UFV_LENGTHS) {
 		for(size_t i = 0; i < ufvl.size(); i++) {
-			if(ufvl_t[i] == 'f' && priv->ufvl_us[i] == 0) {
+			if(ufvl_t[i] == 'f') {
 				const ExpressionName &ename = ((ExpressionItem*) ufvl[i])->getName(ufvl_i[i]);
-				if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
+				if((ename.case_sensitive && equals_ignore_us(name_, ename.name, priv->ufvl_us[i])) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name, priv->ufvl_us[i]))) {
 					return (MathFunction*) ufvl[i];
 				}
 			}
@@ -2462,11 +2545,9 @@ MathFunction* Calculator::getActiveFunction(string name_) {
 	} else {
 		l--;
 		for(size_t i = 0; i < ufv[1][l].size(); i++) {
-			if(priv->ufv_us[1][l][i] == 0) {
-				const ExpressionName &ename = ((ExpressionItem*) ufv[1][l][i])->getName(ufv_i[1][l][i]);
-				if((ename.case_sensitive && name_ == ename.name) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name))) {
-					return (MathFunction*) ufv[1][l][i];
-				}
+			const ExpressionName &ename = ((ExpressionItem*) ufv[1][l][i])->getName(ufv_i[1][l][i]);
+			if((ename.case_sensitive && equals_ignore_us(name_, ename.name, priv->ufv_us[1][l][i])) || (!ename.case_sensitive && equalsIgnoreCase(name_, ename.name, priv->ufv_us[1][l][i]))) {
+				return (MathFunction*) ufv[1][l][i];
 			}
 		}
 	}
@@ -2603,28 +2684,9 @@ bool Calculator::nameTaken(string name, ExpressionItem *object) {
 	if(name.empty()) return false;
 	if(object) {
 		switch(object->type()) {
-			case TYPE_VARIABLE: {}
-			case TYPE_UNIT: {
-				for(size_t index = 0; index < variables.size(); index++) {
-					if(variables[index]->isActive() && variables[index]->hasName(name)) {
-						return variables[index] != object;
-					}
-				}
-				for(size_t i = 0; i < units.size(); i++) {
-					if(units[i]->isActive() && units[i]->hasName(name)) {
-						return units[i] != object;
-					}
-				}
-				break;
-			}
-			case TYPE_FUNCTION: {
-				for(size_t index = 0; index < functions.size(); index++) {
-					if(functions[index]->isActive() && functions[index]->hasName(name)) {
-						return functions[index] != object;
-					}
-				}
-				break;
-			}
+			case TYPE_VARIABLE: {return variableNameTaken(name, (Variable*) object);}
+			case TYPE_UNIT: {return unitNameTaken(name, (Unit*) object);}
+			case TYPE_FUNCTION: {return functionNameTaken(name, (MathFunction*) object);}
 		}
 	} else {
 		return getActiveExpressionItem(name) != NULL;
@@ -2633,42 +2695,19 @@ bool Calculator::nameTaken(string name, ExpressionItem *object) {
 }
 bool Calculator::variableNameTaken(string name, Variable *object) {
 	if(name.empty()) return false;
-	for(size_t index = 0; index < variables.size(); index++) {
-		if(variables[index]->isActive() && variables[index]->hasName(name)) {
-			return variables[index] != object;
-		}
-	}
-
-	for(size_t i = 0; i < units.size(); i++) {
-		if(units[i]->isActive() && units[i]->hasName(name)) {
-			return true;
-		}
-	}
-	return false;
+	Variable *v = getActiveVariable(name, true);
+	return (v && v != object) || getActiveUnit(name, true);
 }
 bool Calculator::unitNameTaken(string name, Unit *object) {
 	if(name.empty()) return false;
-	for(size_t index = 0; index < variables.size(); index++) {
-		if(variables[index]->isActive() && variables[index]->hasName(name)) {
-			return true;
-		}
-	}
-
-	for(size_t i = 0; i < units.size(); i++) {
-		if(units[i]->isActive() && units[i]->hasName(name)) {
-			return units[i] == object;
-		}
-	}
-	return false;
+	bool ignore_us = !object || object->subtype() != SUBTYPE_COMPOSITE_UNIT;
+	Unit *u = getActiveUnit(name, ignore_us);
+	return (u && u != object) || getActiveVariable(name, ignore_us);
 }
 bool Calculator::functionNameTaken(string name, MathFunction *object) {
 	if(name.empty()) return false;
-	for(size_t index = 0; index < functions.size(); index++) {
-		if(functions[index]->isActive() && functions[index]->hasName(name)) {
-			return functions[index] != object;
-		}
-	}
-	return false;
+	MathFunction *f = getActiveFunction(name, true);
+	return f && f != object;
 }
 bool Calculator::unitIsUsedByOtherUnits(const Unit *u) const {
 	const Unit *u2;
