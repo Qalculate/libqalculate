@@ -9703,41 +9703,31 @@ bool Number::factorize(vector<Number> &factors) {
 		mpz_neg(inr, inr);
 		factors.push_back(nr_minus_one);
 	}
-	size_t prime_index = 0;
-	bool b = true;
-	while(b) {
-		if(CALCULATOR->aborted()) {mpz_clears(inr, last_prime, facmax, NULL); return false;}
-		b = false;
-		mpz_sqrt(facmax, inr);
-		for(; prime_index < NR_OF_PRIMES && mpz_cmp_si(facmax, PRIMES[prime_index]) >= 0; prime_index++) {
-			if(mpz_divisible_ui_p(inr, (unsigned long int) PRIMES[prime_index])) {
-				mpz_divexact_ui(inr, inr, (unsigned long int) PRIMES[prime_index]);
-				Number fac(PRIMES[prime_index], 1);;
-				factors.push_back(fac);
-				b = true;
-				break;
-			}
-		}
-		if(prime_index == NR_OF_PRIMES) {
-			mpz_set_si(last_prime, PRIMES[NR_OF_PRIMES - 1] + 2);
-			prime_index++;
-		}
-		if(!b && prime_index > NR_OF_PRIMES) {
-			while(!b && mpz_cmp(facmax, last_prime) >= 0) {
-				if(CALCULATOR->aborted()) {mpz_clears(inr, last_prime, facmax, NULL); return false;}
-				if(mpz_divisible_p(inr, last_prime)) {
-					mpz_divexact(inr, inr, last_prime);
-					b = true;
-					Number fac;
-					fac.setInternal(last_prime);
-					factors.push_back(fac);
-					break;
-				}
-				mpz_add_ui(last_prime, last_prime, 2);
-			}
+	mpz_sqrt(facmax, inr);
+	for(size_t prime_index = 0; prime_index < NR_OF_PRIMES && mpz_cmp_si(facmax, PRIMES[prime_index]) >= 0; prime_index++) {
+		while(mpz_divisible_ui_p(inr, (unsigned long int) PRIMES[prime_index])) {
+			if(CALCULATOR->aborted()) {mpz_clears(inr, last_prime, facmax, NULL); return false;}
+			mpz_divexact_ui(inr, inr, (unsigned long int) PRIMES[prime_index]);
+			Number fac(PRIMES[prime_index], 1);;
+			factors.push_back(fac);
+			mpz_sqrt(facmax, inr);
 		}
 	}
-	if(mpz_cmp_si(mpq_numref(r_value), 1) != 0) {
+	if(mpz_cmp_si(inr, 1) > 0) {
+		mpz_set_si(last_prime, PRIMES[NR_OF_PRIMES - 1] + 2);
+		while(mpz_cmp(facmax, last_prime) >= 0) {
+			if(CALCULATOR->aborted()) {mpz_clears(inr, last_prime, facmax, NULL); return false;}
+			while(mpz_divisible_p(inr, last_prime)) {
+				mpz_divexact(inr, inr, last_prime);
+				Number fac;
+				fac.setInternal(last_prime);
+				factors.push_back(fac);
+				mpz_sqrt(facmax, inr);
+			}
+			mpz_add_ui(last_prime, last_prime, 2);
+		}
+	}
+	if(mpz_cmp_si(inr, 1) > 0) {
 		Number fac;
 		fac.setInternal(inr);
 		factors.push_back(fac);

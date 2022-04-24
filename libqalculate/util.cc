@@ -49,6 +49,8 @@
 #endif
 
 using std::string;
+using std::endl;
+using std::cout;
 using std::vector;
 using std::ifstream;
 using std::ofstream;
@@ -312,6 +314,15 @@ size_t unicode_length(const string &str) {
 	}
 	return l2;
 }
+size_t unicode_length(const string &str, size_t l) {
+	size_t l2 = 0;
+	for(size_t i = 0; i < l; i++) {
+		if((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
+			l2++;
+		}
+	}
+	return l2;
+}
 size_t unicode_length(const char *str) {
 	size_t l = strlen(str), l2 = 0;
 	for(size_t i = 0; i < l; i++) {
@@ -321,7 +332,15 @@ size_t unicode_length(const char *str) {
 	}
 	return l2;
 }
-
+size_t unicode_length(const char *str, size_t l) {
+	size_t l2 = 0;
+	for(size_t i = 0; i < l; i++) {
+		if((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
+			l2++;
+		}
+	}
+	return l2;
+}
 bool text_length_is_one(const string &str) {
 	if(str.empty()) return false;
 	if(str.length() == 1) return true;
@@ -380,7 +399,6 @@ bool equalsIgnoreCase(const string &str1, const string &str2) {
 	}
 	return true;
 }
-
 bool equalsIgnoreCase(const string &str1, const char *str2) {
 	if(str1.empty() || strlen(str2) == 0) return false;
 	for(size_t i1 = 0, i2 = 0; i1 < str1.length() || i2 < strlen(str2); i1++, i2++) {
@@ -447,11 +465,10 @@ string sub_suffix_html(const string &name) {
 	} else {
 		str += name.substr(0, i);
 	}
+	str += "<sub>";
 	if(b) {
-		str += "<sub class=\"nous\">";
 		str += name.substr(name.length() - i2, i2);
 	} else {
-		str += "<sub>";
 		str += name.substr(i + 1, name.length() - (i + 1));
 	}
 	str += "</sub>";
@@ -854,6 +871,36 @@ char *utf8_strdown(const char *str, int l) {
 		else {free(buffer); return NULL;}
 		err = U_ZERO_ERROR;
 		ucasemap_utf8ToLower(ucm, buffer, outlength, str, inlength, &err);
+		if(U_SUCCESS(err)) {
+			return buffer;
+		} else {
+			free(buffer);
+		}
+	}
+	return NULL;
+#else
+	return NULL;
+#endif
+}
+
+char *utf8_strup(const char *str, int l) {
+#ifdef HAVE_ICU
+	if(!ucm) return NULL;
+	UErrorCode err = U_ZERO_ERROR;
+	size_t inlength = l <= 0 ? strlen(str) : (size_t) l;
+	size_t outlength = inlength + 4;
+	char *buffer = (char*) malloc(outlength * sizeof(char));
+	if(!buffer) return NULL;
+	int32_t length = ucasemap_utf8ToUpper(ucm, buffer, outlength, str, inlength, &err);
+	if(U_SUCCESS(err)) {
+		return buffer;
+	} else if(err == U_BUFFER_OVERFLOW_ERROR) {
+		outlength = length + 4;
+		char *buffer_realloc = (char*) realloc(buffer, outlength * sizeof(char));
+		if(buffer_realloc) buffer = buffer_realloc;
+		else {free(buffer); return NULL;}
+		err = U_ZERO_ERROR;
+		ucasemap_utf8ToUpper(ucm, buffer, outlength, str, inlength, &err);
 		if(U_SUCCESS(err)) {
 			return buffer;
 		} else {

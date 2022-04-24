@@ -425,7 +425,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 	// append default values
 	if(itmp < maxargs() && itmp >= minargs()) {
 		int itmp2 = itmp;
-		if(id() == FUNCTION_ID_LOGN) CALCULATOR->error(false, _("log() with a single argument is considered ambigious please use ln() or log10() instead."), NULL);
+		if(id() == FUNCTION_ID_LOGN) CALCULATOR->error(false, _("log() with a single argument is considered ambigious. Please use ln() or log10() instead."), NULL);
 		while(itmp2 < maxargs()) {
 			arg = getArgumentDefinition(itmp2 + 1);
 			MathStructure *mstruct = new MathStructure();
@@ -1888,9 +1888,9 @@ string NumberArgument::subprintlong() const {
 	if(fmin) {
 		str += " ";
 		if(b_incl_min) {
-			str += _(">=");
+			str += ">=";
 		} else {
-			str += _(">");
+			str += ">";
 		}
 		str += " ";
 		str += fmin->print();
@@ -1902,9 +1902,9 @@ string NumberArgument::subprintlong() const {
 		}
 		str += " ";
 		if(b_incl_max) {
-			str += _("<=");
+			str += "<=";
 		} else {
-			str += _("<");
+			str += "<";
 		}
 		str += " ";
 		str += fmax->print();
@@ -2041,12 +2041,12 @@ string IntegerArgument::subprintlong() const {
 	string str = _("an integer");
 	if(imin) {
 		str += " ";
-		str += _(">=");
+		str += ">=";
 		str += " ";
 		str += imin->print();
 	} else if(i_inttype != INTEGER_TYPE_NONE) {
 		str += " ";
-		str += _(">=");
+		str += ">=";
 		str += " ";
 		switch(i_inttype) {
 			case INTEGER_TYPE_SIZE: {}
@@ -2063,14 +2063,14 @@ string IntegerArgument::subprintlong() const {
 			str += _("and");
 		}
 		str += " ";
-		str += _("<=");
+		str += "<=";
 		str += " ";
 		str += imax->print();
 	} else if(i_inttype != INTEGER_TYPE_NONE) {
 		str += " ";
 		str += _("and");
 		str += " ";
-		str += _("<=");
+		str += "<=";
 		str += " ";
 		switch(i_inttype) {
 			case INTEGER_TYPE_SIZE: {}

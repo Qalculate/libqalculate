@@ -358,7 +358,7 @@
     </unit>
     <unit type="alias">
       <_title>Natural Unit of Length</_title>
-      <names>ar:l_N,aus:&#x019B;_C</names>
+      <names>ars:l_N,aus:&#x019B;_C</names>
       <system>Natural</system>
       <base>
         <unit>planck_p_electron_c</unit>
@@ -547,7 +547,7 @@
     <unit type="alias">
       <_title>Ounce (troy)</_title>
       <system>Troy</system>
-      <_names>ar:oz_t,troy_ounce,p:troy_ounces</_names>
+      <_names>ars:oz_t,troy_ounce,p:troy_ounces</_names>
       <base>
         <unit>pwt</unit>
         <relation>20</relation>
@@ -558,7 +558,7 @@
     <unit type="alias">
       <_title>Pound (troy)</_title>
       <system>Troy</system>
-      <_names>ar:lb_t,troy_pound,p:troy_pounds</_names>
+      <_names>ars:lb_t,troy_pound,p:troy_pounds</_names>
       <base>
         <unit>oz_t</unit>
         <relation>12</relation>
@@ -3793,7 +3793,7 @@
       </unit>
       <unit type="alias">
         <_title>Rad</_title>
-        <_names>r:rad_radioactivity</_names>
+        <_names>rs:rad_radioactivity</_names>
         <base>
           <unit>Gy</unit>
           <relation>1/100</relation>
@@ -3937,8 +3937,8 @@
   <category>
     <_title>Information</_title>
     <unit type="base">
-      <_title>Bit (binary digit)</_title>
-      <_names>r:bit,p:bits,binary_digit,p:binary_digits,shannon,p:shannons,c:Sh</_names>
+      <_title>Bit (Binary Digit)</_title>
+      <_names>r:bit,p:bits,shannon,p:shannons,c:Sh,binary_digit,p:binary_digits</_names>
       <use_with_prefixes>true</use_with_prefixes>
     </unit>
     <unit type="alias">
@@ -3951,7 +3951,7 @@
       </base>
     </unit>
     <unit type="alias">
-      <_title>Trit (ternary digit)</_title>
+      <_title>Trit (Ternary Digit)</_title>
       <_names>r:trit,p:trits,trinary_digit,p:trinary_digits,ternary_digit,p:ternary_digits</_names>
       <base>
         <unit>bit</unit>
@@ -3960,7 +3960,7 @@
       </base>
     </unit>
     <unit type="alias">
-      <_title>Octal digit</_title>
+      <_title>Octal Digit</_title>
       <_names>r:octal_digit,p:octal_digits</_names>
       <base>
         <unit>bit</unit>
@@ -3969,8 +3969,8 @@
       </base>
     </unit>
     <unit type="alias">
-      <_title>Dit (decimal digit)</_title>
-      <_names>r:dit,p:dits,hartley,p:hartleys,c:Hart,decimal_digit,p:decimal_digits</_names>
+      <_title>Hartley (Decimal Digit)</_title>
+      <_names>r:hartley,p:hartleys,a:Hart,dit,p:dits,decimal_digit,p:decimal_digits</_names>
       <base>
         <unit>bit</unit>
         <relation>log2(10)</relation>
@@ -3988,8 +3988,8 @@
       </base>
     </unit>
     <unit type="alias">
-      <_title>Nibble</_title>
-      <_names>r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets,hexadecimal_digit,p:hexadecimal_digits,hex_digit,p:hex_digits</_names>
+      <_title>Nibble (Hexadecimal Digit)</_title>
+      <_names>r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets,hex_digit,p:hex_digits,hexadecimal_digit,p:hexadecimal_digits</_names>
       <base>
         <unit>bit</unit>
         <relation>4</relation>
@@ -4123,24 +4123,6 @@
       </part>
     </unit>
     <unit type="composite">
-      <_title>Pebibyte</_title>
-      <names>r:Pibyte_c</names>
-      <part>
-        <unit>byte</unit>
-        <prefix type="binary">50</prefix>
-        <exponent>1</exponent>
-      </part>
-    </unit>
-    <unit type="composite">
-      <_title>Exbibyte</_title>
-      <names>r:Eibyte_c</names>
-      <part>
-        <unit>byte</unit>
-        <prefix type="binary">60</prefix>
-        <exponent>1</exponent>
-      </part>
-    </unit>
-    <unit type="composite">
       <_title>Kilobit</_title>
       <names>r:kbit_c</names>
       <part>
@@ -4209,24 +4191,6 @@
       <part>
         <unit>bit</unit>
         <prefix type="binary">30</prefix>
-        <exponent>1</exponent>
-      </part>
-    </unit>
-    <unit type="composite">
-      <_title>Tebibit</_title>
-      <names>r:Tibit_c</names>
-      <part>
-        <unit>bit</unit>
-        <prefix type="binary">40</prefix>
-        <exponent>1</exponent>
-      </part>
-    </unit>
-    <unit type="composite">
-      <_title>Pebibit</_title>
-      <names>r:Pibit_c</names>
-      <part>
-        <unit>bit</unit>
-        <prefix type="binary">50</prefix>
         <exponent>1</exponent>
       </part>
     </unit>
