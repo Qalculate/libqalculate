@@ -3201,6 +3201,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 							case BASE_SQRT2: {str_base = "√2"; break;}
 							case BASE_UNICODE: {str_base = "Unicode"; break;}
 							case BASE_BIJECTIVE_26: {str_base = "b26"; break;}
+							case BASE_BINARY_DECIMAL: {str_base = "BCD"; break;}
 							case BASE_CUSTOM: {str_base = CALCULATOR->customOutputBase().print(CALCULATOR->messagePrintOptions()); break;}
 							default: {str_base = i2s(base);}
 						}

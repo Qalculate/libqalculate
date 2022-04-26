@@ -824,7 +824,7 @@ string Calculator::localizeExpression(string str, const ParseOptions &po) const 
 		base = (int) priv->custom_input_base_i;
 	} else if(base == BASE_BIJECTIVE_26) {
 		base = 36;
-	} else if(base == BASE_GOLDEN_RATIO || base == BASE_SUPER_GOLDEN_RATIO || base == BASE_SQRT2) {
+	} else if(base == BASE_GOLDEN_RATIO || base == BASE_SUPER_GOLDEN_RATIO || base == BASE_SQRT2 || base == BASE_BINARY_DECIMAL) {
 		base = 2;
 	} else if(base == BASE_PI) {
 		base = 4;
@@ -951,7 +951,7 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
 		base = (int) priv->custom_input_base_i;
 	} else if(base == BASE_BIJECTIVE_26) {
 		base = 36;
-	} else if(base == BASE_GOLDEN_RATIO || base == BASE_SUPER_GOLDEN_RATIO || base == BASE_SQRT2) {
+	} else if(base == BASE_GOLDEN_RATIO || base == BASE_SUPER_GOLDEN_RATIO || base == BASE_SQRT2 || base == BASE_BINARY_DECIMAL) {
 		base = 2;
 	} else if(base == BASE_PI) {
 		base = 4;
@@ -1199,7 +1199,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	int base = po.base;
 	if(base == BASE_CUSTOM) {
 		base = (int) priv->custom_input_base_i;
-	} else if(base == BASE_GOLDEN_RATIO || base == BASE_SUPER_GOLDEN_RATIO || base == BASE_SQRT2) {
+	} else if(base == BASE_GOLDEN_RATIO || base == BASE_SUPER_GOLDEN_RATIO || base == BASE_SQRT2 || base == BASE_BINARY_DECIMAL) {
 		base = 2;
 	} else if(base == BASE_PI) {
 		base = 4;

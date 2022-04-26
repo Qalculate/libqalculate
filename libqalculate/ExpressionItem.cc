@@ -51,6 +51,22 @@ bool ExpressionName::operator == (const ExpressionName &ename) const {
 bool ExpressionName::operator != (const ExpressionName &ename) const {
 	return name != ename.name || abbreviation != ename.abbreviation || case_sensitive != ename.case_sensitive || suffix != ename.suffix || unicode != ename.unicode || plural != ename.plural || reference != ename.reference || avoid_input != ename.avoid_input || completion_only != ename.completion_only;
 }
+int ExpressionName::underscoreRemovalAllowed() const {
+	if(completion_only) return 0;
+	size_t i = name.find('_', 1);
+	size_t i_us = 0;
+	while(true) {
+		if(i == string::npos) {
+			break;
+		} else if(i == name.length() - 1 || name[i - 1] == '_' || (i == name.length() - 2 && (name[name.length() - 1] < '0' || name[name.length() - 1] > '9') && ((signed char) name[i - 1] >= 0 || CALCULATOR->getPrefix(name.substr(0, i))))) {
+			i_us = 0;
+			break;
+		}
+		i_us++;
+		i = name.find('_', i + 1);
+	}
+	return i_us;
+}
 string ExpressionName::formattedName(int type, bool capitalize, bool html_suffix, bool remove_typename, bool hide_underscore, bool *was_formatted, bool *was_capitalized) const {
 	if(was_formatted) *was_formatted = false;
 	if(was_capitalized) *was_capitalized = false;
@@ -78,8 +94,8 @@ string ExpressionName::formattedName(int type, bool capitalize, bool html_suffix
 		if(hide_underscore && str.find('_') != string::npos) {if(was_formatted) *was_formatted = true; gsub("_", " ", str);}
 		return str;
 	}
-	size_t i = str.find('_');
-	if(i == string::npos || str[str.length() - 1] == '_' || unicode_length(str, i) < 3) {
+	size_t i = str.find('_', 1);
+	if(i == string::npos || unicode_length(str, i) < 3 || str[i - 1] == '_') {
 		if(hide_underscore && i != string::npos) {if(was_formatted) *was_formatted = true; gsub("_", " ", str);}
 		return str;
 	}
@@ -87,7 +103,7 @@ string ExpressionName::formattedName(int type, bool capitalize, bool html_suffix
 	string str_bak = str;
 	while(true) {
 		if(i == string::npos) break;
-		if(b_first && i == str.length() - 2 && (str[str.length() - 1] < '0' || str[str.length() - 1] > '9') && ((signed char) str[i - 1] >= 0 || CALCULATOR->getPrefix(str.substr(0, i)))) {
+		if(i == str.length() - 1 || str[i + 1] == '_' || (i == str.length() - 2 && (str[str.length() - 1] < '0' || str[str.length() - 1] > '9') && ((signed char) str[i - 1] >= 0 || CALCULATOR->getPrefix(str.substr(0, i))))) {
 			if(hide_underscore) {if(was_formatted) *was_formatted = true; gsub("_", " ", str_bak);}
 			return str_bak;
 		}
