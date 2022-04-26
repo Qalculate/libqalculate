@@ -863,7 +863,7 @@
           <_title>Bijective base-26 number</_title>
         </argument>
       </builtin_function>
-      <builtin_function name="bijective">
+      <builtin_function name="bcd">
         <_title>Binary-Coded Decimal (BCD)</_title>
         <_names>r:bcd</_names>
         <argument index="1">
