@@ -870,10 +870,24 @@ ExpressionItem *Calculator::getActiveExpressionItem(ExpressionItem *item) {
 	}
 	return NULL;
 }
+bool name_allows_underscore_removal(const string &name) {
+	size_t i = name.find('_', 1);
+	size_t i_us = 0;
+	while(true) {
+		if(i == string::npos) {
+			break;
+		} else if(i == name.length() - 1 || name[i - 1] == '_' || (i == name.length() - 2 && (name[name.length() - 1] < '0' || name[name.length() - 1] > '9') && ((signed char) name[i - 1] >= 0 || CALCULATOR->getPrefix(name.substr(0, i))))) {
+			i_us = 0;
+			break;
+		}
+		i_us++;
+		i = name.find('_', i + 1);
+	}
+	return i_us;
+}
 ExpressionItem *Calculator::getActiveExpressionItem(string name_, ExpressionItem *item, bool ignore_us) {
 	ExpressionItem *o = getActiveExpressionItem(name_, item);
-	size_t i;
-	if(o || !ignore_us || (i = name_.find('_')) == string::npos || i == name_.length() - 1 || name_[name_.length() - 1] == '_' || (i == name_.length() - 2 && is_not_in(NUMBERS, name_[name_.length() - 1]) && ((signed char) name_[i - 1] >= 0 || getPrefix(name_.substr(0, i))))) return o;
+	if(o || !ignore_us || !name_allows_underscore_removal(name_)) return o;
 	gsub("_", "", name_);
 	return getActiveExpressionItem(name_, o);
 }
@@ -1665,6 +1679,7 @@ void Calculator::addBuiltinFunctions() {
 	f_hex = addFunction(new HexFunction());
 	f_roman = addFunction(new RomanFunction());
 	addFunction(new BijectiveFunction());
+	addFunction(new BinaryDecimalFunction());
 
 	addFunction(new IEEE754FloatFunction());
 	addFunction(new IEEE754FloatBitsFunction());
@@ -2068,8 +2083,7 @@ Unit* Calculator::getUnitById(int id) const {
 }
 Unit *Calculator::getActiveUnit(string name_, bool ignore_us) {
 	Unit *o = getActiveUnit(name_);
-	size_t i;
-	if(o || !ignore_us || (i = name_.find('_')) == string::npos || i == name_.length() - 1 || name_[name_.length() - 1] == '_' || (i == name_.length() - 2 && is_not_in(NUMBERS, name_[name_.length() - 1]) && ((signed char) name_[i - 1] >= 0 || getPrefix(name_.substr(0, i))))) return o;
+	if(o || !ignore_us || !name_allows_underscore_removal(name_)) return o;
 	gsub("_", "", name_);
 	return getActiveUnit(name_);
 }
@@ -2296,19 +2310,7 @@ void Calculator::nameChanged(ExpressionItem *item, bool new_item) {
 				l2++;
 			}
 			if(i_us > 0 || l2 < 3) break;
-			if(!item->getName(i2).completion_only) {
-				size_t i = item->getName(i2).name.find('_', 1);
-				while(true) {
-					if(i == string::npos) {
-						break;
-					} else if(i == item->getName(i2).name.length() - 1 || item->getName(i2).name[i - 1] == '_' || (i == item->getName(i2).name.length() - 2 && is_not_in(NUMBERS, item->getName(i2).name[item->getName(i2).name.length() - 1]) && ((signed char) item->getName(i2).name[i - 1] >= 0 || getPrefix(item->getName(i2).name.substr(0, i))))) {
-						i_us = 0;
-						break;
-					}
-					i_us++;
-					i = item->getName(i2).name.find('_', i + 1);
-				}
-			}
+			i_us = item->getName(i2).underscoreRemovalAllowed();
 			if(i_us == 0) break;
 			l2 -= i_us;
 		}
@@ -2358,8 +2360,7 @@ Variable* Calculator::getVariableById(int id) const {
 }
 Variable *Calculator::getActiveVariable(string name_, bool ignore_us) {
 	Variable *o = getActiveVariable(name_);
-	size_t i;
-	if(o || !ignore_us || (i = name_.find('_')) == string::npos || i == name_.length() - 1 || name_[name_.length() - 1] == '_' || (i == name_.length() - 2 && is_not_in(NUMBERS, name_[name_.length() - 1]) && ((signed char) name_[i - 1] >= 0 || getPrefix(name_.substr(0, i))))) return o;
+	if(o || !ignore_us || !name_allows_underscore_removal(name_)) return o;
 	gsub("_", "", name_);
 	return getActiveVariable(name_);
 }
@@ -2525,8 +2526,7 @@ MathFunction* Calculator::getFunctionById(int id) const {
 }
 MathFunction *Calculator::getActiveFunction(string name_, bool ignore_us) {
 	MathFunction *o = getActiveFunction(name_);
-	size_t i;
-	if(o || !ignore_us || (i = name_.find('_')) == string::npos || i == name_.length() - 1 || name_[name_.length() - 1] == '_' || (i == name_.length() - 2 && is_not_in(NUMBERS, name_[name_.length() - 1]) && ((signed char) name_[i - 1] >= 0 || getPrefix(name_.substr(0, i))))) return o;
+	if(o || !ignore_us || !name_allows_underscore_removal(name_)) return o;
 	gsub("_", "", name_);
 	return getActiveFunction(name_);
 }

@@ -720,7 +720,8 @@ void set_option(string str) {
 		//roman numerals
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "roman", _("roman"))) v = BASE_ROMAN_NUMERALS;
 		//number base
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "bijective", _("bijective")) || str == "b26" || str == "B26") v = BASE_BIJECTIVE_26;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "bijective", _("bijective")) || svalue == "b26" || svalue == "B26") v = BASE_BIJECTIVE_26;
+		else if(equalsIgnoreCase(svalue, "bcd")) v = BASE_BINARY_DECIMAL;
 		else if(equalsIgnoreCase(svalue, "fp32") || equalsIgnoreCase(svalue, "binary32") || equalsIgnoreCase(svalue, "float")) {if(b_in) v = 0; else v = BASE_FP32;}
 		else if(equalsIgnoreCase(svalue, "fp64") || equalsIgnoreCase(svalue, "binary64") || equalsIgnoreCase(svalue, "double")) {if(b_in) v = 0; else v = BASE_FP64;}
 		else if(equalsIgnoreCase(svalue, "fp16") || equalsIgnoreCase(svalue, "binary16")) {if(b_in) v = 0; else v = BASE_FP16;}
@@ -3272,6 +3273,11 @@ int main(int argc, char *argv[]) {
 				printops.base = BASE_BIJECTIVE_26;
 				setResult(NULL, false);
 				printops.base = save_base;
+			} else if(equalsIgnoreCase(str, "bcd")) {
+				int save_base = printops.base;
+				printops.base = BASE_BINARY_DECIMAL;
+				setResult(NULL, false);
+				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "sexa") || EQUALS_IGNORECASE_AND_LOCAL(str, "sexagesimal", _("sexagesimal"))) {
 				int save_base = printops.base;
 				printops.base = BASE_SEXAGESIMAL;
@@ -3751,6 +3757,7 @@ int main(int argc, char *argv[]) {
 			switch(printops.base) {
 				case BASE_ROMAN_NUMERALS: {str += _("roman"); break;}
 				case BASE_BIJECTIVE_26: {str += _("bijective"); break;}
+				case BASE_BINARY_DECIMAL: {str += "BCD"; break;}
 				case BASE_SEXAGESIMAL: {str += _("sexagesimal"); break;}
 				case BASE_SEXAGESIMAL_2: {str += _("sexagesimal"); str += " (2)"; break;}
 				case BASE_SEXAGESIMAL_3: {str += _("sexagesimal"); str += " (3)"; break;}
@@ -3892,6 +3899,7 @@ int main(int argc, char *argv[]) {
 			switch(evalops.parse_options.base) {
 				case BASE_ROMAN_NUMERALS: {str += _("roman"); break;}
 				case BASE_BIJECTIVE_26: {str += _("bijective"); break;}
+				case BASE_BINARY_DECIMAL: {str += "BCD"; break;}
 				case BASE_GOLDEN_RATIO: {str += "golden"; break;}
 				case BASE_SUPER_GOLDEN_RATIO: {str += "supergolden"; break;}
 				case BASE_E: {str += "e"; break;}
@@ -4906,6 +4914,7 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- longitude / longitude2 (show as sexagesimal longitude)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- bijective (shown in bijective base-26)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- fp16, fp32, fp64, fp80, fp128 (show in binary floating-point format)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- bcd (show as binary-coded decimal)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- roman (show as roman numerals)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- time (show in time format)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- unicode"));
@@ -6134,6 +6143,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					printops.base = BASE_ROMAN_NUMERALS;
 				} else if(equalsIgnoreCase(to_str, "bijective") || equalsIgnoreCase(to_str, _("bijective"))) {
 					printops.base = BASE_BIJECTIVE_26;
+				} else if(equalsIgnoreCase(to_str, "bcd")) {
+					printops.base = BASE_BINARY_DECIMAL;
 				} else if(equalsIgnoreCase(to_str, "sexa") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "sexagesimal", _("sexagesimal"))) {
 					printops.base = BASE_SEXAGESIMAL;
 				} else if(equalsIgnoreCase(to_str, "sexa2") || EQUALS_IGNORECASE_AND_LOCAL_NR(to_str, "sexagesimal", _("sexagesimal"), "2")) {
@@ -6232,6 +6243,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					str_conv = "";
 				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str1, "base", _("base"))) {
 					if(to_str2 == "b26" || to_str2 == "B26") printops.base = BASE_BIJECTIVE_26;
+					else if(equalsIgnoreCase(to_str2, "bcd")) printops.base = BASE_BINARY_DECIMAL;
 					else if(equalsIgnoreCase(to_str2, "golden") || equalsIgnoreCase(to_str2, "golden ratio") || to_str2 == "φ") printops.base = BASE_GOLDEN_RATIO;
 					else if(equalsIgnoreCase(to_str2, "unicode")) printops.base = BASE_UNICODE;
 					else if(equalsIgnoreCase(to_str2, "supergolden") || equalsIgnoreCase(to_str2, "supergolden ratio") || to_str2 == "ψ") printops.base = BASE_SUPER_GOLDEN_RATIO;
