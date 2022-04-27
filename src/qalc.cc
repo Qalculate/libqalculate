@@ -4103,6 +4103,7 @@ int main(int argc, char *argv[]) {
 							int iargs = f->maxargs();
 							if(iargs < 0) {
 								iargs = f->minargs() + 1;
+								while(f->getArgumentDefinition(iargs + 1)) iargs++;
 							}
 							str += "(";
 							if(iargs != 0) {
