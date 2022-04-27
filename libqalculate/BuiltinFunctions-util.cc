@@ -974,7 +974,7 @@ int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 #endif
 }
 
-PlotFunction::PlotFunction() : MathFunction("plot", 1, 7) {
+PlotFunction::PlotFunction() : MathFunction("plot", 1, -1) {
 	NumberArgument *arg = new NumberArgument();
 	arg->setComplexAllowed(false);
 	arg->setHandleVector(false);
@@ -985,13 +985,7 @@ PlotFunction::PlotFunction() : MathFunction("plot", 1, 7) {
 	arg->setComplexAllowed(false);
 	setArgumentDefinition(3, arg);
 	setDefaultValue(3, "10");
-	setDefaultValue(4, "1001");
-	setArgumentDefinition(5, new SymbolicArgument());
-	setDefaultValue(5, "x");
-	setArgumentDefinition(6, new BooleanArgument());
-	setDefaultValue(6, "0");
-	setArgumentDefinition(7, new BooleanArgument());
-	setDefaultValue(7, "0");
+	setArgumentDefinition(4, new TextArgument());
 	setCondition("\\y < \\z");
 }
 int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
@@ -1002,15 +996,90 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	eo2.parse_options.read_precision = DONT_READ_PRECISION;
 	eo2.interval_calculation = INTERVAL_CALCULATION_NONE;
 	eo2.allow_complex = eo.allow_complex;
-	bool use_step_size = vargs[5].number().getBoolean() || !vargs[3].isInteger() || vargs[3].number() < 2;
+	bool b_persistent = false;
+	PlotParameters param;
+	PlotStyle style = PLOT_STYLE_LINES;
+	PlotSmoothing smoothing = PLOT_SMOOTHING_NONE;
+	MathStructure mstep, mvar(CALCULATOR->getVariableById(VARIABLE_ID_X));
+	int i_rate = 1001;
+	int i_prev = 0;
+	for(size_t i = 3; i < vargs.size(); i++) {
+		if(equalsIgnoreCase(vargs[i].symbol(), "persistent")) {b_persistent = true; i_prev = 5;}
+		else if(equalsIgnoreCase(vargs[i].symbol(), "smooth") || equalsIgnoreCase(vargs[i].symbol(), "smoothing")) {smoothing = PLOT_SMOOTHING_CSPLINES; i_prev = 3;}
+		else if(equalsIgnoreCase(vargs[i].symbol(), "style") || equalsIgnoreCase(vargs[i].symbol(), "type")) {style = PLOT_STYLE_POINTS; i_prev = 4;}
+		else if(equalsIgnoreCase(vargs[i].symbol(), "step")) {mstep = m_one; i_prev = 2;}
+		else if(equalsIgnoreCase(vargs[i].symbol(), "rate")) {mstep.clear(); i_rate = 1001; i_prev = 1;}
+		else if(equalsIgnoreCase(vargs[i].symbol(), "color")) {param.color = true; i_prev = 11;}
+		else if(equalsIgnoreCase(vargs[i].symbol(), "grid")) {param.grid = true; i_prev = 13;}
+		else if(equalsIgnoreCase(vargs[i].symbol(), "title")) i_prev = 15;
+		else if(equalsIgnoreCase(vargs[i].symbol(), "legend")) i_prev = 18;
+		else if(equalsIgnoreCase(vargs[i].symbol(), "ylabel") || equalsIgnoreCase(vargs[i].symbol(), "y-label") || equalsIgnoreCase(vargs[i].symbol(), "y label")) i_prev = 16;
+		else if(equalsIgnoreCase(vargs[i].symbol(), "xlabel") || equalsIgnoreCase(vargs[i].symbol(), "x-label") || equalsIgnoreCase(vargs[i].symbol(), "x label")) i_prev = 17;
+		else if(equalsIgnoreCase(vargs[i].symbol(), "line") || equalsIgnoreCase(vargs[i].symbol(), "linewidth") || equalsIgnoreCase(vargs[i].symbol(), "line width")) {i_prev = 14;}
+		else if(equalsIgnoreCase(vargs[i].symbol(), "mono") || equalsIgnoreCase(vargs[i].symbol(), "monochrome")) {param.color = false; i_prev = 12;}
+		else if(equalsIgnoreCase(vargs[i].symbol(), "ymin") || equalsIgnoreCase(vargs[i].symbol(), "y-min") || equalsIgnoreCase(vargs[i].symbol(), "y min")) i_prev = 7;
+		else if(equalsIgnoreCase(vargs[i].symbol(), "ymax") || equalsIgnoreCase(vargs[i].symbol(), "y-max") || equalsIgnoreCase(vargs[i].symbol(), "y max")) i_prev = 8;
+		else if(equalsIgnoreCase(vargs[i].symbol(), "ylog") || equalsIgnoreCase(vargs[i].symbol(), "y-log") || equalsIgnoreCase(vargs[i].symbol(), "y log")) {param.y_log = true; i_prev = 9;}
+		else if(equalsIgnoreCase(vargs[i].symbol(), "xlog") || equalsIgnoreCase(vargs[i].symbol(), "x-log") || equalsIgnoreCase(vargs[i].symbol(), "x log")) {param.x_log = true; i_prev = 10;}
+		else if(equalsIgnoreCase(vargs[i].symbol(), "x")) {mvar = CALCULATOR->getVariableById(VARIABLE_ID_X); i_prev = -1;}
+		else if(equalsIgnoreCase(vargs[i].symbol(), "y")) {mvar = CALCULATOR->getVariableById(VARIABLE_ID_Y); i_prev = -1;}
+		else if(equalsIgnoreCase(vargs[i].symbol(), "z")) {mvar = CALCULATOR->getVariableById(VARIABLE_ID_Z); i_prev = -1;}
+		else if(equalsIgnoreCase(vargs[i].symbol(), "variable") || equalsIgnoreCase(vargs[i].symbol(), "var")) i_prev = 6;
+		else if(equalsIgnoreCase(vargs[i].symbol(), "points")) {style = PLOT_STYLE_POINTS; i_prev = -1;}
+		else if(i_prev >= 0) {
+			MathStructure m;
+			CALCULATOR->beginTemporaryStopMessages();
+			CALCULATOR->beginTemporaryStopIntervalArithmetic();
+			CALCULATOR->parse(&m, vargs[i].symbol(), eo.parse_options);
+			m.eval(eo);
+			CALCULATOR->endTemporaryStopIntervalArithmetic();
+			CALCULATOR->endTemporaryStopMessages();
+			if(i_prev == 15 && m.isSymbolic()) {
+				param.title = m.symbol();
+			} else if(i_prev == 16 && m.isSymbolic()) {
+				param.y_label = m.symbol();
+			} else if(i_prev == 17 && m.isSymbolic()) {
+				param.x_label = m.symbol();
+			} else if((i_prev == 7 || i_prev == 8) && m.isNumber() && m.number().isReal()) {
+				if(i_prev == 7) {param.y_min = m.number().floatValue(); param.auto_y_min = false;}
+				else if(i_prev == 8) {param.y_max = m.number().floatValue(); param.auto_y_max = false;}
+			} else if(m.isNumber() && m.number().isInteger()) {
+				int i_value = m.number().intValue();
+				switch(i_prev) {
+					case 0: {
+						if(i_value <= 10) mstep = m;
+						else i_rate = i_value;
+						break;
+					}
+					case 1: {i_rate = i_value; break;}
+					case 2: {mstep = m; break;}
+					case 3: {if(i_value >= 0 && i_value <= PLOT_SMOOTHING_SBEZIER) {smoothing = (PlotSmoothing) i_value;} break;}
+					case 4: {if(i_value >= 0 && i_value <= PLOT_STYLE_DOTS) {style = (PlotStyle) i_value;} break;}
+					case 5: {b_persistent = i_value; break;}
+					case 9: {param.y_log_base = i_value; break;}
+					case 10: {param.x_log_base = i_value; break;}
+					case 11: {param.color = i_value; break;}
+					case 12: {param.color = !i_value; break;}
+					case 13: {param.grid = i_value; break;}
+					case 14: {if(i_value > 0 && i_value < 100) {param.linewidth = i_value;} break;}
+					case 18: {if(i_value >= 0 && i_value < PLOT_LEGEND_OUTSIDE) {param.legend_placement = (PlotLegendPlacement) i_value;} break;}
+				}
+			} else if((i_prev == 0 && (m.isNumber() || vargs[i].symbol().find_first_of(NUMBERS) != string::npos)) || i_prev == 2) {
+				mstep = m;
+			} else if(i_prev == 6) {
+				mvar = m;
+			}
+			i_prev = -1;
+		}
+	}
 	mstruct = vargs[0];
 	CALCULATOR->beginTemporaryStopIntervalArithmetic();
-	if(!mstruct.contains(vargs[4], true) || (!mstruct.isVector() && (!mstruct.isFunction() || (mstruct.function()->id() != FUNCTION_ID_HORZCAT && mstruct.function()->id() != FUNCTION_ID_VERTCAT)) && !mstruct.representsScalar())) {
+	if(!mstruct.contains(mvar, true) || (!mstruct.isVector() && (!mstruct.isFunction() || (mstruct.function()->id() != FUNCTION_ID_HORZCAT && mstruct.function()->id() != FUNCTION_ID_VERTCAT)) && !mstruct.representsScalar())) {
 		CALCULATOR->beginTemporaryStopMessages();
 		mstruct.eval(eo2);
 		CALCULATOR->endTemporaryStopMessages();
 		if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_HORZCAT || mstruct.function()->id() == FUNCTION_ID_VERTCAT)) mstruct.setType(STRUCT_VECTOR);
-		if(!mstruct.isVector() && vargs[0].contains(vargs[4], true)) mstruct = vargs[0];
+		if(!mstruct.isVector() && vargs[0].contains(mvar, true)) mstruct = vargs[0];
 	} else {
 		eo2.calculate_functions = false;
 		eo2.expand = false;
@@ -1034,10 +1103,12 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		x_vectors.push_back(x_vector);
 		PlotDataParameters *dpd = new PlotDataParameters;
 		dpd->title = _("Matrix");
+		dpd->style = style;
+		dpd->smoothing = smoothing;
 		dpds.push_back(dpd);
 	} else if(mstruct.isVector()) {
 		int matrix_index = 1, vector_index = 1;
-		if(mstruct.size() > 0 && (mstruct[0].isVector() || mstruct[0].contains(vargs[4], false, true, true))) {
+		if(mstruct.size() > 0 && (mstruct[0].isVector() || mstruct[0].contains(mvar, false, true, true))) {
 			for(size_t i = 0; i < mstruct.size() && !CALCULATOR->aborted(); i++) {
 				MathStructure x_vector;
 				if(mstruct[i].isMatrix() && mstruct[i].columns() == 2) {
@@ -1052,6 +1123,8 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						dpd->title += " ";
 						dpd->title += i2s(matrix_index);
 					}
+					dpd->style = style;
+					dpd->smoothing = smoothing;
 					matrix_index++;
 					dpds.push_back(dpd);
 				} else if(mstruct[i].isVector()) {
@@ -1063,25 +1136,25 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						dpd->title += " ";
 						dpd->title += i2s(vector_index);
 					}
+					dpd->style = style;
+					dpd->smoothing = smoothing;
 					vector_index++;
 					dpds.push_back(dpd);
 				} else {
 					MathStructure y_vector;
-					if(use_step_size) {
+					if(!mstep.isZero()) {
 						CALCULATOR->beginTemporaryStopMessages();
 						CALCULATOR->beginTemporaryStopIntervalArithmetic();
-						generate_plotvector(mstruct[i], vargs[4], vargs[1], vargs[2], vargs[3], x_vector, y_vector, eo2);
+						generate_plotvector(mstruct[i], mvar, vargs[1], vargs[2], mstep, x_vector, y_vector, eo2);
 						CALCULATOR->endTemporaryStopIntervalArithmetic();
 						CALCULATOR->endTemporaryStopMessages();
 						if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
-					} else if(!vargs[3].isInteger() || !vargs[3].representsPositive()) {
+					} else if(i_rate < 1) {
 						CALCULATOR->error(true, _("Sampling rate must be a positive integer."), NULL);
 					} else {
-						bool overflow = false;
-						int steps = vargs[3].number().intValue(&overflow);
 						CALCULATOR->beginTemporaryStopMessages();
 						CALCULATOR->beginTemporaryStopIntervalArithmetic();
-						if(steps <= 1000000 && !overflow) generate_plotvector(mstruct[i], vargs[4], vargs[1], vargs[2], steps, x_vector, y_vector, eo2);
+						if(i_rate <= 1000000) generate_plotvector(mstruct[i], mvar, vargs[1], vargs[2], i_rate, x_vector, y_vector, eo2);
 						CALCULATOR->endTemporaryStopIntervalArithmetic();
 						CALCULATOR->endTemporaryStopMessages();
 						if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
@@ -1099,6 +1172,8 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						else mprint = mstruct[i];
 						dpd->title = format_and_print(mprint);
 						dpd->test_continuous = true;
+						dpd->style = style;
+						dpd->smoothing = smoothing;
 						dpds.push_back(dpd);
 					}
 				}
@@ -1109,25 +1184,25 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			x_vectors.push_back(x_vector);
 			PlotDataParameters *dpd = new PlotDataParameters;
 			dpd->title = _("Vector");
+			dpd->style = style;
+			dpd->smoothing = smoothing;
 			dpds.push_back(dpd);
 		}
 	} else {
 		MathStructure x_vector, y_vector;
-		if(use_step_size) {
+		if(!mstep.isZero()) {
 			CALCULATOR->beginTemporaryStopMessages();
 			CALCULATOR->beginTemporaryStopIntervalArithmetic();
-			generate_plotvector(mstruct, vargs[4], vargs[1], vargs[2], vargs[3], x_vector, y_vector, eo2);
+			generate_plotvector(mstruct, mvar, vargs[1], vargs[2], mstep, x_vector, y_vector, eo2);
 			CALCULATOR->endTemporaryStopIntervalArithmetic();
 			CALCULATOR->endTemporaryStopMessages();
 			if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
-		} else if(!vargs[3].isInteger() || !vargs[3].representsPositive()) {
+		} else if(i_rate < 1) {
 			CALCULATOR->error(true, _("Sampling rate must be a positive integer."), NULL);
 		} else {
-			bool overflow = false;
-			int steps = vargs[3].number().intValue(&overflow);
 			CALCULATOR->beginTemporaryStopMessages();
 			CALCULATOR->beginTemporaryStopIntervalArithmetic();
-			if(steps <= 1000000 && !overflow) generate_plotvector(mstruct, vargs[4], vargs[1], vargs[2], steps, x_vector, y_vector, eo2);
+			if(i_rate <= 1000000) generate_plotvector(mstruct, mvar, vargs[1], vargs[2], i_rate, x_vector, y_vector, eo2);
 			CALCULATOR->endTemporaryStopIntervalArithmetic();
 			CALCULATOR->endTemporaryStopMessages();
 			if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
@@ -1143,12 +1218,13 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			MathStructure mprint(vargs[0]);
 			dpd->title = format_and_print(mprint);
 			dpd->test_continuous = true;
+			dpd->style = style;
+			dpd->smoothing = smoothing;
 			dpds.push_back(dpd);
 		}
 	}
 	if(x_vectors.size() > 0 && !CALCULATOR->aborted()) {
-		PlotParameters param;
-		CALCULATOR->plotVectors(&param, y_vectors, x_vectors, dpds, vargs.size() >= 7 && vargs[6].number().getBoolean(), 0);
+		CALCULATOR->plotVectors(&param, y_vectors, x_vectors, dpds, b_persistent, 0);
 		for(size_t i = 0; i < dpds.size(); i++) {
 			if(dpds[i]) delete dpds[i];
 		}

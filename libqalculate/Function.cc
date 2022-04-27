@@ -106,7 +106,7 @@ void MathFunction::set(const ExpressionItem *item) {
 		argc = f->minargs();
 		max_argc = f->maxargs();
 		default_values.clear();
-		for(int i = argc + 1; i <= max_argc; i++) {
+		for(int i = argc + 1; i <= max_argc || !f->getDefaultValue(i).empty(); i++) {
 			setDefaultValue(i, f->getDefaultValue(i));
 		}
 		last_argdef_index = f->lastArgumentDefinitionIndex();
@@ -174,12 +174,14 @@ bool MathFunction::testCondition(const MathStructure &vargs) {
 		return true;
 	}
 	// create a temporary function from the condition expression (for handling av arguments)
-	UserFunction test_function("", "CONDITION_TEST_FUNCTION", scondition, false, argc, "", "", max_argc);
+	UserFunction test_function("", "CONDITION_TEST_FUNCTION", scondition, false, argc, "", "", max_argc < 0 && argc < 10 && scondition.find("\\v") == string::npos && scondition.find("\\w") == string::npos ? argc + 5 : max_argc);
 	MathStructure vargs2(vargs);
 	MathStructure mstruct(test_function.MathFunction::calculate(vargs2));
 	EvaluationOptions eo;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
+	CALCULATOR->beginTemporaryStopMessages();
 	mstruct.eval(eo);
+	CALCULATOR->endTemporaryStopMessages();
 	// check if result is true
 	if(!mstruct.isNumber() || !mstruct.number().getBoolean()) {
 		if(CALCULATOR->showArgumentErrors() && !CALCULATOR->aborted()) {
@@ -197,11 +199,12 @@ string MathFunction::printCondition() {
 	Argument *arg;
 	int i_args = maxargs();
 	if(i_args < 0) {
-		i_args = minargs() + 2;
+		i_args = minargs() + 20;
 	}
+	bool b_v = maxargs() < 0 && (str.find("\\v") != string::npos || str.find("\\w") != string::npos);
 	for(int i = 0; i < i_args; i++) {
 		svar = '\\';
-		if(maxargs() < 0 && i >= minargs()) {
+		if(b_v && maxargs() < 0 && i >= minargs()) {
 			svar += (char) ('v' + i - minargs());
 		} else {
 			if('x' + i > 'z') {
@@ -214,7 +217,8 @@ string MathFunction::printCondition() {
 		while(true) {
 			if((i2 = str.find(svar, i2)) != string::npos) {
 				if(maxargs() < 0 && i > minargs()) {
-					arg = getArgumentDefinition(i);
+					arg = getArgumentDefinition(i + 1);
+					if(!arg) arg = getArgumentDefinition(i);
 				} else {
 					arg = getArgumentDefinition(i + 1);
 				}
@@ -423,10 +427,10 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 		}
 	}
 	// append default values
-	if(itmp < maxargs() && itmp >= minargs()) {
+	if((itmp < maxargs() && itmp >= minargs()) || (maxargs() < 0 && itmp >= minargs() && (size_t) itmp - minargs() < default_values.size() && !default_values[itmp - minargs()].empty())) {
 		int itmp2 = itmp;
 		if(id() == FUNCTION_ID_LOGN) CALCULATOR->error(false, _("log() with a single argument is considered ambigious. Please use ln() or log10() instead."), NULL);
-		while(itmp2 < maxargs()) {
+		while((size_t) itmp2 - minargs() < default_values.size() && (maxargs() > 0 || !default_values[itmp2 - minargs()].empty())) {
 			arg = getArgumentDefinition(itmp2 + 1);
 			MathStructure *mstruct = new MathStructure();
 			if(arg) arg->parse(mstruct, default_values[itmp2 - minargs()]);
@@ -627,7 +631,7 @@ const string &MathFunction::getDefaultValue(size_t arg_) const {
 }
 void MathFunction::appendDefaultValues(MathStructure &vargs) {
 	if((int) vargs.size() < minargs()) return;
-	while((int) vargs.size() < maxargs()) {
+	while((int) vargs.size() < maxargs() || (maxargs() < 0 && (size_t) vargs.size() - minargs() < default_values.size() && !default_values[vargs.size() - minargs()].empty())) {
 		Argument *arg = getArgumentDefinition(vargs.size() + 1);
 		if(arg) {
 			MathStructure *mstruct = new MathStructure();
@@ -710,9 +714,9 @@ int MathFunction::stringArgs(const string &argstr, vector<string> &svargs) {
 			svargs.push_back(stmp);
 		}
 	}
-	if(itmp < maxargs() && itmp >= minargs()) {
+	if((itmp < maxargs() && itmp >= minargs()) || (maxargs() < 0 && itmp >= minargs() && (size_t) itmp - minargs() < default_values.size() && !default_values[itmp - minargs()].empty())) {
 		int itmp2 = itmp;
-		while(itmp2 < maxargs()) {
+		while((size_t) itmp2 - minargs() < default_values.size() && (maxargs() > 0 || !default_values[itmp2 - minargs()].empty())) {
 			svargs.push_back(default_values[itmp2 - minargs()]);
 			itmp2++;
 		}
