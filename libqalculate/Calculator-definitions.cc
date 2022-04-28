@@ -592,7 +592,7 @@ bool Calculator::loadLocalDefinitions() {
 					}
 
 #define ITEM_SET_DTH\
-					item->setDescription(description);\
+					if(!description.empty()) item->setDescription(description);\
 					if(!title.empty() && title[0] == '!') {\
 						size_t i = title.find('!', 1);\
 						if(i == string::npos) {\

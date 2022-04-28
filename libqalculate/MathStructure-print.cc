@@ -3926,9 +3926,10 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				size_t argcount = SIZE;
 				if(o_function->id() == FUNCTION_ID_SIGNUM && argcount > 1) {
 					argcount = 1;
-				} else if(o_function->maxargs() > 0 && o_function->minargs() < o_function->maxargs() && SIZE > (size_t) o_function->minargs() && o_function->id() != FUNCTION_ID_LOGN) {
+				} else if((o_function->maxargs() < 0 || o_function->minargs() < o_function->maxargs()) && SIZE > (size_t) o_function->minargs() && o_function->id() != FUNCTION_ID_LOGN) {
 					while(true) {
 						string defstr = o_function->getDefaultValue(argcount);
+						if(defstr.empty() && o_function->maxargs() < 0) break;
 						Argument *arg = o_function->getArgumentDefinition(argcount);
 						remove_blank_ends(defstr);
 						if(defstr.empty()) break;

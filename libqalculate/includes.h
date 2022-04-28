@@ -239,7 +239,8 @@ typedef enum {
 	PLOT_STYLE_HISTOGRAM,
 	PLOT_STYLE_STEPS,
 	PLOT_STYLE_CANDLESTICKS,
-	PLOT_STYLE_DOTS
+	PLOT_STYLE_DOTS,
+	PLOT_STYLE_POLAR
 } PlotStyle;
 
 /// Smoothing a plotted lines
