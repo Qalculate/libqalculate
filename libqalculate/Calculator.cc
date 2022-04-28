@@ -159,6 +159,7 @@ Calculator::Calculator() {
 	priv->use_binary_prefixes = 0;
 	priv->temperature_calculation = TEMPERATURE_CALCULATION_HYBRID;
 	priv->matlab_matrices = true;
+	priv->persistent_plot = false;
 
 #ifdef HAVE_ICU
 	UErrorCode err = U_ZERO_ERROR;
@@ -397,6 +398,7 @@ Calculator::Calculator(bool ignore_locale) {
 	priv->use_binary_prefixes = 0;
 	priv->temperature_calculation = TEMPERATURE_CALCULATION_HYBRID;
 	priv->matlab_matrices = true;
+	priv->persistent_plot = false;
 
 #ifdef HAVE_ICU
 	UErrorCode err = U_ZERO_ERROR;

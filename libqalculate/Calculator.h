@@ -1210,6 +1210,7 @@ class Calculator {
 	MathStructure expressionToPlotVector(std::string expression, float min, float max, float step, MathStructure *x_vector = NULL, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
 	MathStructure expressionToPlotVector(std::string expression, const MathStructure &x_vector, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
 	bool plotVectors(PlotParameters *param, const std::vector<MathStructure> &y_vectors, const std::vector<MathStructure> &x_vectors, std::vector<PlotDataParameters*> &pdps, bool persistent = false, int msecs = 5000);
+	void forcePersistentPlot(bool persistent = true);
 	bool invokeGnuplot(std::string commands, std::string commandline_extra = "", bool persistent = false);
 	bool closeGnuplot();
 	bool gnuplotOpen();

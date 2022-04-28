@@ -12,6 +12,7 @@
 #include "support.h"
 
 #include "Calculator.h"
+#include "Calculator_p.h"
 #include "util.h"
 #include "MathStructure.h"
 #include "MathStructure-support.h"
@@ -187,6 +188,7 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 
 #ifdef HAVE_GNUPLOT_CALL
 bool Calculator::invokeGnuplot(string commands, string commandline_extra, bool persistent) {
+	if(priv->persistent_plot) persistent = true;
 	FILE *pipe = NULL;
 	if(!b_gnuplot_open || !gnuplot_pipe || persistent || commandline_extra != gnuplot_cmdline) {
 		if(!persistent) {
@@ -240,6 +242,10 @@ bool Calculator::invokeGnuplot(string, string, bool) {
 }
 #	endif
 #endif
+
+void Calculator::forcePersistentPlot(bool persistent) {
+	priv->persistent_plot = persistent;
+}
 
 bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> &y_vectors, const vector<MathStructure> &x_vectors, vector<PlotDataParameters*> &pdps, bool persistent, int msecs) {
 
@@ -445,9 +451,17 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 		plot += title;
 		plot += "\"\n";
 	}
+	bool b_polar = false;
+	for(size_t i = 0; i < pdps.size(); i++) {
+		if(pdps[i]->style == PLOT_STYLE_POLAR) {
+			b_polar = true;
+			plot += "set polar\n";
+			break;
+		}
+	}
 	if(param->grid) {
-		plot += "set grid\n";
-
+		if(b_polar) plot += "set grid polar\n";
+		else plot += "set grid\n";
 	}
 	if(!param->auto_y_min || !param->auto_y_max) {
 		plot += "set yrange [";
@@ -546,7 +560,6 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 					plot += "\"";
 				}
 				switch(pdps[i]->style) {
-					case PLOT_STYLE_LINES: {plot += " with lines"; break;}
 					case PLOT_STYLE_POINTS: {plot += " with points"; break;}
 					case PLOT_STYLE_POINTS_LINES: {plot += " with linespoints"; break;}
 					case PLOT_STYLE_BOXES: {plot += " with boxes"; break;}
@@ -554,6 +567,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 					case PLOT_STYLE_STEPS: {plot += " with steps"; break;}
 					case PLOT_STYLE_CANDLESTICKS: {plot += " with candlesticks"; break;}
 					case PLOT_STYLE_DOTS: {plot += " with dots"; break;}
+					default: {plot += " with lines"; break;}
 				}
 				if(param->linewidth < 1) {
 					plot += " lw 2";

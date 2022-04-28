@@ -4249,7 +4249,7 @@ msgstr "Komplexa tal"
 
 #: ../data/functions.xml.in.h:343
 msgid "Real Part"
-msgstr "Reell del"
+msgstr "Realdel"
 
 #: ../data/functions.xml.in.h:344
 msgid "r:re,au:&#x211C;"
@@ -4261,7 +4261,7 @@ msgstr "Komplext nummer"
 
 #: ../data/functions.xml.in.h:346
 msgid "Imaginary Part"
-msgstr "Imaginär del"
+msgstr "Imaginärdel"
 
 #: ../data/functions.xml.in.h:347
 msgid "r:im,au:&#x2111;"

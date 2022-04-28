@@ -60,7 +60,7 @@ class Calculator_p {
 		unordered_map<size_t, size_t> ids_ref;
 		std::vector<size_t> ufvl_us;
 		std::vector<size_t> ufv_us[4][20];
-		vector<size_t> freed_ids;
+		std::vector<size_t> freed_ids;
 		size_t ids_i;
 		Number custom_input_base, custom_output_base;
 		long int custom_input_base_i;
@@ -76,6 +76,7 @@ class Calculator_p {
 		time_t exchange_rates_time2[1], exchange_rates_check_time2[1];
 		TemperatureCalculationMode temperature_calculation;
 		bool matlab_matrices;
+		bool persistent_plot;
 };
 
 class CalculateThread : public Thread {

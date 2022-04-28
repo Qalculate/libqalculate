@@ -3335,11 +3335,11 @@ msgstr "Okänt tillägg i filnamnet. Sparar som PNG-bild."
 
 #: ../libqalculate/Calculator-plot.cc:542
 msgid "imaginary part"
-msgstr "imaginärt del"
+msgstr "imaginärdel"
 
 #: ../libqalculate/Calculator-plot.cc:543
 msgid "real part"
-msgstr "reell del"
+msgstr "realdel"
 
 #: ../libqalculate/Calculator-plot.cc:590
 #, c-format
