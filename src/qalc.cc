@@ -2552,8 +2552,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	if(!interactive_mode && (cfile || !calc_arg.empty())) {
-		MathFunction *f = CALCULATOR->getFunctionById(FUNCTION_ID_PLOT);
-		if(f) f->setDefaultValue(7, "1");
+		CALCULATOR->forcePersistentPlot(true);
 	}
 
 	if(!cfile && !calc_arg.empty()) {
@@ -4103,7 +4102,7 @@ int main(int argc, char *argv[]) {
 							int iargs = f->maxargs();
 							if(iargs < 0) {
 								iargs = f->minargs() + 1;
-								while(f->getArgumentDefinition(iargs + 1)) iargs++;
+								if((int) f->lastArgumentDefinitionIndex() > iargs) iargs = (int) f->lastArgumentDefinitionIndex();
 							}
 							str += "(";
 							if(iargs != 0) {
@@ -4120,8 +4119,10 @@ int main(int argc, char *argv[]) {
 										str2 = arg->name();
 									} else {
 										str2 = _("argument");
-										str2 += " ";
-										str2 += i2s(i2);
+										if(i2 > 1 || f->maxargs() != 1) {
+											str2 += " ";
+											str2 += i2s(i2);
+										}
 									}
 									str += str2;
 									if(i2 > f->minargs()) {
@@ -7395,7 +7396,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "caret_as_xor=%i\n", saved_caret_as_xor);
 	fprintf(file, "functions_enabled=%i\n", saved_evalops.parse_options.functions_enabled);
 	fprintf(file, "variables_enabled=%i\n", saved_evalops.parse_options.variables_enabled);
-		fprintf(file, "calculate_variables=%i\n", saved_evalops.calculate_variables);
+	fprintf(file, "calculate_variables=%i\n", saved_evalops.calculate_variables);
 	fprintf(file, "calculate_functions=%i\n", saved_evalops.calculate_functions);
 	if(sinc_set) fprintf(file, "sinc_function=%i\n", CALCULATOR->getFunctionById(FUNCTION_ID_SINC)->getDefaultValue(2) == "pi" ? 1 : 0);
 	fprintf(file, "variable_units_enabled=%i\n", saved_variable_units_enabled);
