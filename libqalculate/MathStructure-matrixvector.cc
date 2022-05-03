@@ -929,6 +929,8 @@ bool find_zero_point(const MathStructure &m, const MathStructure &x_mstruct, Mat
 		msolve.calculateFunctions(eo, true);
 		if(msolve.isNumber() && msolve.number() > min.number() && msolve.number() < max.number()) {
 			mx = msolve;
+			mx.number().setApproximate(false);
+			mx.setApproximate(false);
 			return true;
 		}
 	}

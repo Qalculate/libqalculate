@@ -974,6 +974,21 @@ int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 #endif
 }
 
+#define PLOT_OPTION_LOCALE_SEPARATOR " / "
+#define PLOT_OPTION_SEPARATOR "\n"
+#define LIST_PLOT_OPTION_1(x) if(strcmp(_c("plot", x), x)) {str += _c("plot", x); str += PLOT_OPTION_LOCALE_SEPARATOR;} str += x;
+#define LIST_PLOT_OPTION_2(x, y) str += _c("plot", x); str += PLOT_OPTION_LOCALE_SEPARATOR; str += y;
+#define LIST_PLOT_OPTION(x) LIST_PLOT_OPTION_1(x) str += PLOT_OPTION_SEPARATOR;
+#define LIST_PLOT_OPTION_ALT(x, y) LIST_PLOT_OPTION_2(x, y) str += PLOT_OPTION_SEPARATOR;
+#define LIST_PLOT_OPTION_LAST(x) LIST_PLOT_OPTION_1(x)
+#define LIST_PLOT_OPTION_WV(x) LIST_PLOT_OPTION_1(x)
+#define LIST_PLOT_OPTION_ALT_WV(x, y) LIST_PLOT_OPTION_2(x, y)
+#define LIST_PLOT_VALUE(y, x) if(strcmp(y, x)) {str += _c(y, x); str += PLOT_OPTION_LOCALE_SEPARATOR;} str += x; str += ", ";
+#define LIST_PLOT_VALUE_FIRST(y, x) str += " ("; if(strcmp(y, x)) {str += _c(y, x); str += PLOT_OPTION_LOCALE_SEPARATOR;} str += x; str += ", ";
+#define LIST_PLOT_VALUE_LAST(y, x) if(strcmp(y, x)) {str += _c(y, x); str += PLOT_OPTION_LOCALE_SEPARATOR;} str += x; str += ")\n";
+#define LIST_PLOT_OPTION_ALT_VALUES(x, y, z) LIST_PLOT_OPTION_2(x, y) str += " ("; str += z; str += ")"; str += PLOT_OPTION_SEPARATOR;
+#define LIST_PLOT_OPTION_VALUES(x, y) LIST_PLOT_OPTION_1(x) str += " ("; str += y; str += ")"; str += PLOT_OPTION_SEPARATOR;
+
 PlotFunction::PlotFunction() : MathFunction("plot", 1, -1) {
 	NumberArgument *arg = new NumberArgument();
 	arg->setComplexAllowed(false);
@@ -989,25 +1004,25 @@ PlotFunction::PlotFunction() : MathFunction("plot", 1, -1) {
 	setCondition("\\y < \\z");
 	string str = _("Plots one or more expressions or vectors. Use a vector for the first argument to plot multiple series. Only the first argument is used for vector series. It is also possible to plot a matrix where each row is a pair of x and y values.");
 	str += "\n\n";
-	str += ("Additional arguments specifies various plot options. Enter the name of the option and the value, either separated by space or as separate arguments. For most options the value can be omitted to enable a default active value. For options with named values the option name can be omitted (otherwise the value can be replaced by an integer, representing the index of the value starting from zero). If the first option specified is a numerical value, this is interpreted as either sampling rate (for integers > 10) or step value.");
+	str += _("Additional arguments specifies various plot options. Enter the name of the option and the desried value, either separated by space or as separate arguments. For most options, the value can be omitted to enable a default active value. For options with named values, the option name can be omitted (otherwise the value can be replaced by an integer, representing the index of the value starting from zero). If the first option specified is a numerical value, this is interpreted as either sampling rate (for integers > 10) or step value.");
 	str += "\n\n";
 	str += _("List of options:");
 	str += "\n";
-	str += _c("plot", "rate"); str += "; ";
-	str += _c("plot", "step"); str += "; ";
-	str += _c("plot", "variable"); str += " (= x, y, z, ...)"; str += "; ";
-	str += _c("plot", "style"); str += " (= "; str += _c("plot style", "line"); str += ", "; str += _c("plot style", "points"); str += ", "; str += _c("plot style", "pointsline"); str += ", "; str += _c("plot style", "boxes"); str += ", "; str += _c("plot style", "histogram"); str += ", "; str += _c("plot style", "steps"); str += ", "; str += _c("plot style", "candlesticks"); str += ", "; str += _c("plot style", "dots"); str += ", "; str += _c("plot", "polar"); str += ")"; str += "; ";
-	str += _c("plot", "smooth"); str += " (= "; str += _c("plot smoothing", "none"), str += ", "; str += _c("plot smoothing", "splines"); str += ", "; str += _c("plot smoothing", "bezier"); str += ")"; str += "; ";
-	str += _c("plot", "ymin"); str += "; ";
-	str += _c("plot", "ymax"); str += "; ";
-	str += _c("plot", "xlog"); str += "; ";
-	str += _c("plot", "ylog"); str += "; ";
-	str += _c("plot", "grid"); str += " (= 0, 1)"; str += "; ";
-	str += _c("plot", "linewidth"); str += "; ";
-	str += _c("plot", "legend"); str += " (= "; str += _c("plot legend", "none"), str += ", "; str += _c("plot legend", "top-left"); str += ", "; str += _c("plot legend", "top-right"); str += ", "; str += _c("plot legend", "bottom-left"); str += ", "; str += _c("plot legend", "bottom-right"); str += ", "; str += _c("plot legend", "below"); str += ", "; str += _c("plot legend", "outside"); str += ")"; str += "; ";
-	str += _c("plot", "title"); str += "; ";
-	str += _c("plot", "xlabel"); str += "; ";
-	str += _c("plot", "ylabel");
+	LIST_PLOT_OPTION("samples");
+	LIST_PLOT_OPTION("step");
+	LIST_PLOT_OPTION_ALT_VALUES("variable", "var", "x, y, z, ...");
+	LIST_PLOT_OPTION_WV("style"); LIST_PLOT_VALUE_FIRST("plot style", "lines"); LIST_PLOT_VALUE("plot style", "points"); LIST_PLOT_VALUE("plot style", "linespoints"); LIST_PLOT_VALUE("plot style", "boxes"); LIST_PLOT_VALUE("plot style", "histogram"); LIST_PLOT_VALUE("plot style", "steps"); LIST_PLOT_VALUE("plot style", "candlesticks"); LIST_PLOT_VALUE("plot style", "dots"); LIST_PLOT_VALUE_LAST("plot", "polar");
+	LIST_PLOT_OPTION_WV("smooth"); LIST_PLOT_VALUE_FIRST("plot smoothing", "none"); LIST_PLOT_VALUE("plot smoothing", "splines"); LIST_PLOT_VALUE_LAST("plot smoothing", "bezier");
+	LIST_PLOT_OPTION("ymin");
+	LIST_PLOT_OPTION("ymax");
+	LIST_PLOT_OPTION("xlog");
+	LIST_PLOT_OPTION("ylog");
+	LIST_PLOT_OPTION_VALUES("grid", "0, 1");
+	LIST_PLOT_OPTION_ALT("linewidth", "lw");
+	LIST_PLOT_OPTION_ALT_WV("legend", "key"); LIST_PLOT_VALUE_FIRST("plot legend", "none"); LIST_PLOT_VALUE("plot legend", "top-left"); LIST_PLOT_VALUE("plot legend", "top-right"); LIST_PLOT_VALUE("plot legend", "bottom-left"); LIST_PLOT_VALUE("plot legend", "bottom-right"); LIST_PLOT_VALUE("plot legend", "below"); LIST_PLOT_VALUE_LAST("plot legend", "outside");
+	LIST_PLOT_OPTION("title");
+	LIST_PLOT_OPTION("xlabel");
+	LIST_PLOT_OPTION_LAST("ylabel");
 	setDescription(str);
 }
 
@@ -1031,25 +1046,28 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		remove_blank_ends(svar);
 		gsub(SIGN_MINUS, MINUS, svar);
 		string svalue;
-		while(true) {
+		bool b_option = false;
+		while(!b_option) {
+			b_option = true;
 			if(equalsIgnoreCase(svar, "persistent")) {b_persistent = true; i_prev = 5; break;}
 			else if(equalsIgnoreCase(svar, "smooth") || equalsIgnoreCase(svar, "smoothing") || equalsIgnoreCase(svar, _c("plot", "smooth"))) {smoothing = PLOT_SMOOTHING_CSPLINES; i_prev = 3; break;}
 			else if(equalsIgnoreCase(svar, "style") || equalsIgnoreCase(svar, "type") || equalsIgnoreCase(svar, _c("plot", "style"))) {style = PLOT_STYLE_POINTS; i_prev = 4; break;}
-			else if(equalsIgnoreCase(svar, "step") || equalsIgnoreCase(svar, _c("plot", "step"))) {mstep = m_one; i_prev = 2; break;}
-			else if(equalsIgnoreCase(svar, "rate") || equalsIgnoreCase(svar, _c("plot", "rate"))) {mstep.clear(); i_rate = 1001; i_prev = 1; break;}
-			else if(equalsIgnoreCase(svar, "color") || equalsIgnoreCase(svar, _("color"))) {param.color = true; i_prev = 11; break;}
+			else if(equalsIgnoreCase(svar, "step") || equalsIgnoreCase(svar, "step size") || equalsIgnoreCase(svar, _c("plot", "step"))) {mstep = m_one; i_prev = 2; break;}
+			else if(equalsIgnoreCase(svar, "rate") || equalsIgnoreCase(svar, "samples") || equalsIgnoreCase(svar, _c("plot", "samples"))) {mstep.clear(); i_rate = 1001; i_prev = 1; break;}
+			else if(equalsIgnoreCase(svar, "color") || equalsIgnoreCase(svar, _c("plot", "color"))) {param.color = true; i_prev = 11; break;}
 			else if(equalsIgnoreCase(svar, "grid") || equalsIgnoreCase(svar, _c("plot", "grid"))) {param.grid = true; i_prev = 13; break;}
 			else if(equalsIgnoreCase(svar, "title") || equalsIgnoreCase(svar, _c("plot", "title"))) i_prev = 15;
-			else if(equalsIgnoreCase(svar, "legend") || equalsIgnoreCase(svar, _c("plot", "legend"))) i_prev = 18;
+			else if(equalsIgnoreCase(svar, "legend") || equalsIgnoreCase(svar, "key") || equalsIgnoreCase(svar, _c("plot", "legend"))) {i_prev = 18; param.legend_placement = PLOT_LEGEND_BELOW;}
 			else if(equalsIgnoreCase(svar, "ylabel") || equalsIgnoreCase(svar, "y-label") || equalsIgnoreCase(svar, "y label") || equalsIgnoreCase(svar, _c("plot", "ylabel"))) i_prev = 16;
 			else if(equalsIgnoreCase(svar, "xlabel") || equalsIgnoreCase(svar, "x-label") || equalsIgnoreCase(svar, "x label") || equalsIgnoreCase(svar, _c("plot", "xlabel"))) i_prev = 17;
-			else if(equalsIgnoreCase(svar, "linewidth") || equalsIgnoreCase(svar, "line width") || equalsIgnoreCase(svar, _c("plot", "linewidth"))) {i_prev = 14; break;}
-			else if(equalsIgnoreCase(svar, "mono") || equalsIgnoreCase(svar, "monochrome") || equalsIgnoreCase(svar, _("monochrome"))) {param.color = false; i_prev = 12; break;}
+			else if(equalsIgnoreCase(svar, "linewidth") || equalsIgnoreCase(svar, "lw") || equalsIgnoreCase(svar, "line width") || equalsIgnoreCase(svar, _c("plot", "linewidth"))) {i_prev = 14; break;}
+			else if(equalsIgnoreCase(svar, "mono") || equalsIgnoreCase(svar, "monochrome") || equalsIgnoreCase(svar, _c("plot", "monochrome"))) {param.color = false; i_prev = 12; break;}
 			else if(equalsIgnoreCase(svar, "ymin") || equalsIgnoreCase(svar, "y-min") || equalsIgnoreCase(svar, "y min") || equalsIgnoreCase(svar, _c("plot", "ymin"))) i_prev = 7;
 			else if(equalsIgnoreCase(svar, "ymax") || equalsIgnoreCase(svar, "y-max") || equalsIgnoreCase(svar, "y max") || equalsIgnoreCase(svar, _c("plot", "ymax"))) i_prev = 8;
-			else if(equalsIgnoreCase(svar, "ylog") || equalsIgnoreCase(svar, "y-log") || equalsIgnoreCase(svar, "y log") || equalsIgnoreCase(svar, _c("plot", "ylog"))) {param.y_log = true; i_prev = 9; break;}
-			else if(equalsIgnoreCase(svar, "xlog") || equalsIgnoreCase(svar, "x-log") || equalsIgnoreCase(svar, "x log") || equalsIgnoreCase(svar, _c("plot", "xlog"))) {param.x_log = true; i_prev = 10; break;}
-			else if(equalsIgnoreCase(svar, "variable") || equalsIgnoreCase(svar, "var") || equalsIgnoreCase(svar, _("variable"))) i_prev = 6;
+			else if(equalsIgnoreCase(svar, "ylog") || equalsIgnoreCase(svar, "logscale y") || equalsIgnoreCase(svar, "y-log") || equalsIgnoreCase(svar, "y log") || equalsIgnoreCase(svar, _c("plot", "ylog"))) {param.y_log = true; i_prev = 9; break;}
+			else if(equalsIgnoreCase(svar, "xlog") || equalsIgnoreCase(svar, "logscale x") || equalsIgnoreCase(svar, "x-log") || equalsIgnoreCase(svar, "x log") || equalsIgnoreCase(svar, _c("plot", "xlog"))) {param.x_log = true; i_prev = 10; break;}
+			else if(equalsIgnoreCase(svar, "logscale") || equalsIgnoreCase(svar, _c("plot", "logscale"))) {param.x_log = true; param.y_log = true; i_prev = 19; break;}
+			else if(equalsIgnoreCase(svar, "variable") || equalsIgnoreCase(svar, "var") || equalsIgnoreCase(svar, _c("plot", "variable"))) i_prev = 6;
 			else {
 				size_t i2 = svar.rfind(SPACE);
 				if(i2 == string::npos) {
@@ -1060,6 +1078,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				svalue += svar.substr(i2);
 				svar = svar.substr(0, i2);
 				remove_blank_ends(svar);
+				b_option = false;
 			}
 		}
 		remove_blank_ends(svalue);
@@ -1083,69 +1102,90 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					if(svar.empty() && equalsIgnoreCase(svalue, "x")) {mvar = CALCULATOR->getVariableById(VARIABLE_ID_X); break;}
 					else if(svar.empty() && equalsIgnoreCase(svalue, "y")) {mvar = CALCULATOR->getVariableById(VARIABLE_ID_Y);}
 					else if(svar.empty() && equalsIgnoreCase(svalue, "z")) {mvar = CALCULATOR->getVariableById(VARIABLE_ID_Z);}
-					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "line") || equalsIgnoreCase(svar, _c("plot style", "line")))) {style = PLOT_STYLE_LINES;}
-					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "points") || equalsIgnoreCase(svar, _c("plot style", "points")))) {style = PLOT_STYLE_POINTS;}
-					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "dots") || equalsIgnoreCase(svar, _c("plot style", "dots")))) {style = PLOT_STYLE_DOTS;}
-					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "boxes") || equalsIgnoreCase(svalue, "bars") || equalsIgnoreCase(svar, _c("plot style", "boxes")))) {style = PLOT_STYLE_BOXES;}
-					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "histogram") || equalsIgnoreCase(svar, _c("plot style", "histogram")))) {style = PLOT_STYLE_HISTOGRAM;}
-					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "candlesticks") || equalsIgnoreCase(svar, _c("plot style", "candlesticks")))) {style = PLOT_STYLE_CANDLESTICKS;}
-					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "steps") || equalsIgnoreCase(svar, _c("plot style", "steps")))) {style = PLOT_STYLE_STEPS;}
-					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "pointsline") || equalsIgnoreCase(svar, _c("plot style", "pointsline")))) {style = PLOT_STYLE_POINTS_LINES;}
-					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "polar") || equalsIgnoreCase(svar, _c("plot", "polar")))) {style = PLOT_STYLE_POLAR;}
-					else if((i_prev == 3 || svar.empty()) && (equalsIgnoreCase(svalue, "none") || equalsIgnoreCase(svar, _c("plot smoothing", "none")))) {smoothing = PLOT_SMOOTHING_CSPLINES;}
-					else if((i_prev == 3 || svar.empty()) && (equalsIgnoreCase(svalue, "splines") || equalsIgnoreCase(svar, _c("plot smoothing", "splines")))) {smoothing = PLOT_SMOOTHING_CSPLINES;}
-					else if((i_prev == 3 || svar.empty()) && (equalsIgnoreCase(svalue, "bezier") || equalsIgnoreCase(svar, _c("plot smoothing", "bezier")))) {smoothing = PLOT_SMOOTHING_BEZIER;}
-					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "none") || equalsIgnoreCase(svar, _c("plot legend", "none")))) {param.legend_placement = PLOT_LEGEND_NONE;}
-					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "top-left") || equalsIgnoreCase(svalue, "top left") || equalsIgnoreCase(svalue, "topleft") || equalsIgnoreCase(svar, _c("plot legend", "top-left")))) {param.legend_placement = PLOT_LEGEND_TOP_LEFT;}
-					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "top-right") || equalsIgnoreCase(svalue, "top right") || equalsIgnoreCase(svalue, "topright") || equalsIgnoreCase(svar, _c("plot legend", "top-right")))) {param.legend_placement = PLOT_LEGEND_TOP_RIGHT;}
-					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "bottom-left") || equalsIgnoreCase(svalue, "bottom left") || equalsIgnoreCase(svalue, "bottomleft") || equalsIgnoreCase(svar, _c("plot legend", "bottom-left")))) {param.legend_placement = PLOT_LEGEND_BOTTOM_LEFT;}
-					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "bottom-right") || equalsIgnoreCase(svalue, "bottm right") || equalsIgnoreCase(svalue, "bottomright") || equalsIgnoreCase(svar, _c("plot legend", "bottom-right")))) {param.legend_placement = PLOT_LEGEND_BOTTOM_RIGHT;}
-					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "below") || equalsIgnoreCase(svar, _c("plot legend", "below")))) {param.legend_placement = PLOT_LEGEND_BELOW;}
-					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "outside") || equalsIgnoreCase(svar, _c("plot legend", "outside")))) {param.legend_placement = PLOT_LEGEND_OUTSIDE;}
+					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "lines") || equalsIgnoreCase(svalue, _c("plot style", "lines")))) {style = PLOT_STYLE_LINES;}
+					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "points") || equalsIgnoreCase(svalue, _c("plot style", "points")))) {style = PLOT_STYLE_POINTS;}
+					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "dots") || equalsIgnoreCase(svalue, _c("plot style", "dots")))) {style = PLOT_STYLE_DOTS;}
+					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "boxes") || equalsIgnoreCase(svalue, "bars") || equalsIgnoreCase(svalue, _c("plot style", "boxes")))) {style = PLOT_STYLE_BOXES;}
+					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "histogram") || equalsIgnoreCase(svalue, "histeps") || equalsIgnoreCase(svalue, _c("plot style", "histogram")))) {style = PLOT_STYLE_HISTOGRAM;}
+					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "candlesticks") || equalsIgnoreCase(svalue, _c("plot style", "candlesticks")))) {style = PLOT_STYLE_CANDLESTICKS;}
+					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "steps") || equalsIgnoreCase(svalue, _c("plot style", "steps")))) {style = PLOT_STYLE_STEPS;}
+					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "linespoints") || equalsIgnoreCase(svalue, _c("plot style", "linespoints")))) {style = PLOT_STYLE_POINTS_LINES;}
+					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "polar") || equalsIgnoreCase(svalue, _c("plot", "polar")))) {style = PLOT_STYLE_POLAR;}
+					else if((i_prev == 3 || svar.empty()) && (equalsIgnoreCase(svalue, "none") || equalsIgnoreCase(svalue, _c("plot smoothing", "none")))) {smoothing = PLOT_SMOOTHING_CSPLINES;}
+					else if((i_prev == 3 || svar.empty()) && (equalsIgnoreCase(svalue, "splines") || equalsIgnoreCase(svalue, "csplines") || equalsIgnoreCase(svalue, _c("plot smoothing", "splines")))) {smoothing = PLOT_SMOOTHING_CSPLINES;}
+					else if((i_prev == 3 || svar.empty()) && (equalsIgnoreCase(svalue, "bezier") || equalsIgnoreCase(svalue, _c("plot smoothing", "bezier")))) {smoothing = PLOT_SMOOTHING_BEZIER;}
+					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "none") || equalsIgnoreCase(svalue, _c("plot legend", "none")))) {param.legend_placement = PLOT_LEGEND_NONE;}
+					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "top-left") || equalsIgnoreCase(svalue, "top left") || equalsIgnoreCase(svalue, "topleft") || equalsIgnoreCase(svalue, _c("plot legend", "top-left")))) {param.legend_placement = PLOT_LEGEND_TOP_LEFT;}
+					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "top-right") || equalsIgnoreCase(svalue, "top right") || equalsIgnoreCase(svalue, "topright") || equalsIgnoreCase(svalue, _c("plot legend", "top-right")))) {param.legend_placement = PLOT_LEGEND_TOP_RIGHT;}
+					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "bottom-left") || equalsIgnoreCase(svalue, "bottom left") || equalsIgnoreCase(svalue, "bottomleft") || equalsIgnoreCase(svalue, _c("plot legend", "bottom-left")))) {param.legend_placement = PLOT_LEGEND_BOTTOM_LEFT;}
+					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "bottom-right") || equalsIgnoreCase(svalue, "bottm right") || equalsIgnoreCase(svalue, "bottomright") || equalsIgnoreCase(svalue, _c("plot legend", "bottom-right")))) {param.legend_placement = PLOT_LEGEND_BOTTOM_RIGHT;}
+					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "below") || equalsIgnoreCase(svalue, _c("plot legend", "below")))) {param.legend_placement = PLOT_LEGEND_BELOW;}
+					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "outside") || equalsIgnoreCase(svalue, _c("plot legend", "outside")))) {param.legend_placement = PLOT_LEGEND_OUTSIDE;}
 					else b_value = false;
 					if(b_value) {
 						i_prev = -1;
+						i++;
 						continue;
 					}
 				}
-				MathStructure m;
-				CALCULATOR->beginTemporaryStopMessages();
-				CALCULATOR->beginTemporaryStopIntervalArithmetic();
-				CALCULATOR->parse(&m, svalue, eo.parse_options);
-				m.eval(eo);
-				CALCULATOR->endTemporaryStopIntervalArithmetic();
-				CALCULATOR->endTemporaryStopMessages();
-				if((i_prev == 7 || i_prev == 8) && m.isNumber() && m.number().isReal()) {
-					if(i_prev == 7) {param.y_min = m.number().floatValue(); param.auto_y_min = false;}
-					else if(i_prev == 8) {param.y_max = m.number().floatValue(); param.auto_y_max = false;}
-				} else if(m.isNumber() && m.number().isInteger()) {
-					int i_value = m.number().intValue();
-					switch(i_prev) {
-						case 0: {
-							if(i_value <= 10) mstep = m;
-							else i_rate = i_value;
-							break;
+				if(i_prev >= 0) {
+					MathStructure m;
+					CALCULATOR->beginTemporaryStopMessages();
+					CALCULATOR->beginTemporaryStopIntervalArithmetic();
+					CALCULATOR->parse(&m, svalue, eo.parse_options);
+					m.eval(eo);
+					CALCULATOR->endTemporaryStopIntervalArithmetic();
+					CALCULATOR->endTemporaryStopMessages();
+					if((i_prev == 7 || i_prev == 8) && m.isNumber() && m.number().isReal()) {
+						if(i_prev == 7) {param.y_min = m.number().floatValue(); param.auto_y_min = false;}
+						else if(i_prev == 8) {param.y_max = m.number().floatValue(); param.auto_y_max = false;}
+					} else if(m.isNumber() && m.number().isInteger()) {
+						int i_value = m.number().intValue();
+						switch(i_prev) {
+							case 0: {
+								if(i_value <= 10) mstep = m;
+								else i_rate = i_value;
+								break;
+							}
+							case 1: {i_rate = i_value; break;}
+							case 2: {mstep = m; break;}
+							case 3: {
+								if(i_value == 0) smoothing = PLOT_SMOOTHING_NONE;
+								else if(i_value == 1) smoothing = PLOT_SMOOTHING_CSPLINES;
+								else if(i_value == 2) smoothing = PLOT_SMOOTHING_BEZIER;
+								else CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), NULL);
+								break;
+							}
+							case 4: {
+								if(i_value >= 0 && i_value <= PLOT_STYLE_DOTS) style = (PlotStyle) i_value;
+								else CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), NULL);
+								break;
+							}
+							case 5: {b_persistent = i_value; break;}
+							case 9: {param.y_log_base = i_value; break;}
+							case 10: {param.x_log_base = i_value; break;}
+							case 19: {param.x_log_base = i_value; param.y_log_base = i_value; break;}
+							case 11: {param.color = i_value; break;}
+							case 12: {param.color = !i_value; break;}
+							case 13: {param.grid = i_value; break;}
+							case 14: {
+								if(i_value > 0 && i_value < 100) param.linewidth = i_value;
+								else CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), NULL);
+								break;
+							}
+							case 18: {
+								if(i_value >= 0 && i_value < PLOT_LEGEND_OUTSIDE) param.legend_placement = (PlotLegendPlacement) i_value;
+								else CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), NULL);
+								break;
+							}
 						}
-						case 1: {i_rate = i_value; break;}
-						case 2: {mstep = m; break;}
-						case 3: {
-							if(i_value == 0) smoothing = PLOT_SMOOTHING_NONE;
-							else if(i_value == 1) smoothing = PLOT_SMOOTHING_CSPLINES;
-							else if(i_value == 2) smoothing = PLOT_SMOOTHING_BEZIER;
-							break;
-						}
-						case 4: {if(i_value >= 0 && i_value <= PLOT_STYLE_DOTS) {style = (PlotStyle) i_value;} break;}
-						case 5: {b_persistent = i_value; break;}
-						case 9: {param.y_log_base = i_value; break;}
-						case 10: {param.x_log_base = i_value; break;}
-						case 11: {param.color = i_value; break;}
-						case 12: {param.color = !i_value; break;}
-						case 13: {param.grid = i_value; break;}
-						case 14: {if(i_value > 0 && i_value < 100) {param.linewidth = i_value;} break;}
-						case 18: {if(i_value >= 0 && i_value < PLOT_LEGEND_OUTSIDE) {param.legend_placement = (PlotLegendPlacement) i_value;} break;}
+					} else if((i_prev == 0 && (m.isNumber() || svalue.find_first_of(NUMBERS) != string::npos)) || i_prev == 2) {
+						mstep = m;
+					} else {
+						CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), NULL);
 					}
-				} else if((i_prev == 0 && (m.isNumber() || svalue.find_first_of(NUMBERS) != string::npos)) || i_prev == 2) {
-					mstep = m;
+				} else {
+					CALCULATOR->error(false, _("Unrecognized option: %s."), svalue.c_str(), NULL);
 				}
 			}
 			i_prev = -1;
