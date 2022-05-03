@@ -1605,6 +1605,7 @@ bool Number::mergeInterval(const Number &o, bool set_to_overlap) {
 }
 
 void Number::setUncertainty(const Number &o, bool to_precision) {
+	if(o.isZero()) return;
 	if(o.hasImaginaryPart()) {
 		if(!i_value) i_value = new Number();
 		i_value->setUncertainty(o.imaginaryPart(), to_precision);
@@ -1626,10 +1627,10 @@ void Number::setUncertainty(const Number &o, bool to_precision) {
 	b_approx = true;
 	if(to_precision && !isInterval()) {
 		Number nr(*this);
-		nr.divide(o);
+		if(!nr.divide(o)) return;
 		nr.abs();
 		nr.divide(2);
-		nr.log(10);
+		if(!nr.log(10)) return;
 		INTERVAL_FLOOR(nr);
 		long int i_prec = nr.lintValue();
 		if(i_prec > 0) {
