@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate-defs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-26 18:41+0200\n"
+"POT-Creation-Date: 2022-05-04 08:04+0200\n"
 "PO-Revision-Date: 2007-05-18 15:47+0200\n"
 "Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
 "Language-Team:  <kde-i18n-nl@kde.org>\n"
@@ -29,9 +29,8 @@ msgid "European Euro"
 msgstr "Europese euro"
 
 #: ../data/currencies.xml.in.h:3
-#, fuzzy
 msgid "a-cr:EUR,au:&#x20AC;,euro,p:euros"
-msgstr "a:grd,au:&#xB0;,graad,p:graden"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:4
 msgid ""
@@ -59,9 +58,8 @@ msgid "Japanese Yen"
 msgstr "Japanse yen"
 
 #: ../data/currencies.xml.in.h:9
-#, fuzzy
 msgid "a-cr:JPY,au:&#xA5;,yen"
-msgstr "a:ITL,au:&#x20A4;,lire"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:10
 msgid "Japan"
@@ -84,9 +82,8 @@ msgid "British Pound"
 msgstr "Britse Pond"
 
 #: ../data/currencies.xml.in.h:15
-#, fuzzy
 msgid "a-cr:GBP,au:&#xA3;"
-msgstr "a:ITL,au:&#x20A4;,lire"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:16
 msgid "United Kingdom"
@@ -1958,47 +1955,40 @@ msgid "au:&#xA2;,r:cent,p:cents"
 msgstr "au:&#xA2;,cent,p:centen"
 
 #: ../data/currencies.xml.in.h:461
-#, fuzzy
 msgid "Belgian Franc (obsolete)"
-msgstr "Belgische frank"
+msgstr "Belgische frank (verouderd)"
 
 #: ../data/currencies.xml.in.h:462
 msgid "a-cr:BEF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:463
-#, fuzzy
 msgid "Greek Drachma (obsolete)"
-msgstr "Griekse drachme"
+msgstr "Griekse drachme (verouderd)"
 
 #: ../data/currencies.xml.in.h:464
-#, fuzzy
 msgid "a-cr:GRD,au:&#x20AF;"
-msgstr "a:ITL,au:&#x20A4;,lire"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:465
-#, fuzzy
 msgid "French Franc (obsolete)"
-msgstr "Franse franc"
+msgstr "Franse franc (verouderd)"
 
 #: ../data/currencies.xml.in.h:466
-#, fuzzy
 msgid "a-cr:FRF,au:&#x20A3;"
-msgstr "a:ITL,au:&#x20A4;,lire"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:467
-#, fuzzy
 msgid "Italian Lira (obsolete)"
-msgstr "Italiaanse lire"
+msgstr "Italiaanse lire (verouderd)"
 
 #: ../data/currencies.xml.in.h:468
 msgid "a-cr:ITL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:469
-#, fuzzy
 msgid "Dutch Guilder (obsolete)"
-msgstr "Nederlandse gulden"
+msgstr "Nederlandse gulden (verouderd)"
 
 #: ../data/currencies.xml.in.h:470
 #, fuzzy
@@ -2006,127 +1996,112 @@ msgid "a-cr:NLG"
 msgstr "a:NLG,gulden"
 
 #: ../data/currencies.xml.in.h:471
-#, fuzzy
 msgid "Portuguese Escudo (obsolete)"
-msgstr "Portugese escudo"
+msgstr "Portugese escudo (verouderd)"
 
 #: ../data/currencies.xml.in.h:472
 msgid "a-cr:PTE"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:473
-#, fuzzy
 msgid "Deutsche Mark (obsolete)"
-msgstr "Duitse mark"
+msgstr "Duitse mark (verouderd)"
 
 #: ../data/currencies.xml.in.h:474
 msgid "a-cr:DEM"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:475
-#, fuzzy
 msgid "Spanish Peseta (obsolete)"
-msgstr "Spaanse peseta"
+msgstr "Spaanse peseta (verouderd)"
 
 #: ../data/currencies.xml.in.h:476
-#, fuzzy
 msgid "a-cr:ESP,au:&#x20A7;"
-msgstr "a:ITL,au:&#x20A4;,lire"
+msgstr ""
 
 #: ../data/currencies.xml.in.h:477
-#, fuzzy
 msgid "Irish Pound (obsolete)"
-msgstr "Ierse pond"
+msgstr "Ierse pond (verouderd)"
 
 #: ../data/currencies.xml.in.h:478
 msgid "a-cr:IEP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:479
-#, fuzzy
 msgid "Luxembourg Franc (obsolete)"
-msgstr "Luxemburgse frank"
+msgstr "Luxemburgse frank (verouderd)"
 
 #: ../data/currencies.xml.in.h:480
 msgid "a-cr:LUF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:481
-#, fuzzy
 msgid "Austrian Schilling (obsolete)"
-msgstr "Oostenrijkse schilling"
+msgstr "Oostenrijkse schilling (verouderd)"
 
 #: ../data/currencies.xml.in.h:482
 msgid "a-cr:ATS"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:483
-#, fuzzy
 msgid "Finnish Markka (obsolete)"
-msgstr "Finse mark"
+msgstr "Finse mark (verouderd)"
 
 #: ../data/currencies.xml.in.h:484
 msgid "a-cr:FIM"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:485
-#, fuzzy
 msgid "Slovenian Tolar (obsolete)"
-msgstr "Sloveense tolar"
+msgstr "Sloveense tolar (verouderd)"
 
 #: ../data/currencies.xml.in.h:486
 msgid "a-cr:SIT"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:487
-#, fuzzy
 msgid "Cypriot Pound (obsolete)"
-msgstr "Cypriotische pond"
+msgstr "Cypriotische pond (verouderd)"
 
 #: ../data/currencies.xml.in.h:488
 msgid "a-cr:CYP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:489
-#, fuzzy
 msgid "Estonian Kroon (obsolete)"
-msgstr "Estlandse kroon"
+msgstr "Estlandse kroon (verouderd)"
 
 #: ../data/currencies.xml.in.h:490
 msgid "a-cr:EEK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:491
-#, fuzzy
 msgid "Slovak Koruna (obsolete)"
-msgstr "Slowaakse kroon"
+msgstr "Slowaakse kroon (verouderd)"
 
 #: ../data/currencies.xml.in.h:492
 msgid "a-cr:SKK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:493
-#, fuzzy
 msgid "Maltese Lira (obsolete)"
-msgstr "Maltese Lira"
+msgstr "Maltese lira (verouderd)"
 
 #: ../data/currencies.xml.in.h:494
 msgid "a-cr:MTL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:495
-#, fuzzy
 msgid "Latvian Lats (obsolete)"
-msgstr "Letlandse lat"
+msgstr "Letlandse lat (verouderd)"
 
 #: ../data/currencies.xml.in.h:496
 msgid "a-cr:LVL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:497
-#, fuzzy
 msgid "Lithuanian Litas (obsolete)"
-msgstr "Litouwse litas"
+msgstr "Litouwse litas (verouderd)"
 
 #: ../data/currencies.xml.in.h:498
 msgid "a-cr:LTL"
@@ -2168,7 +2143,7 @@ msgstr "Getal"
 msgid "!datasets!r:number"
 msgstr "getal"
 
-#: ../data/datasets.xml.in.h:13 ../data/functions.xml.in.h:844
+#: ../data/datasets.xml.in.h:13 ../data/functions.xml.in.h:841
 msgid "Name"
 msgstr "Naam"
 
@@ -3355,14 +3330,12 @@ msgid "Calculates the norm/length of a vector."
 msgstr "Berekent de norm/lengte van een vector."
 
 #: ../data/functions.xml.in.h:125
-#, fuzzy
 msgid "Exponent (p)"
-msgstr "Exponent (e^x)"
+msgstr "Exponent (p)"
 
 #: ../data/functions.xml.in.h:126
-#, fuzzy
 msgid "Dot Product"
-msgstr "Product"
+msgstr "Inwendig product"
 
 #: ../data/functions.xml.in.h:127
 msgid "r:dot"
@@ -3815,12 +3788,11 @@ msgstr "kgv"
 
 #: ../data/functions.xml.in.h:223
 msgid "Divisors"
-msgstr ""
+msgstr "Delers"
 
 #: ../data/functions.xml.in.h:224
-#, fuzzy
 msgid "r:divisors"
-msgstr "delen"
+msgstr ""
 
 #: ../data/functions.xml.in.h:225
 msgid "Bernoulli Number/Polynomial"
@@ -4038,9 +4010,8 @@ msgid "Returns a value from a decimal expression."
 msgstr "Converteert een hexadecimaal getal naar een getal"
 
 #: ../data/functions.xml.in.h:269
-#, fuzzy
 msgid "Decimal number"
-msgstr "Hexadecimaal getal"
+msgstr "Decimaal getal"
 
 #: ../data/functions.xml.in.h:270
 msgid "Hexadecimal"
@@ -4083,9 +4054,8 @@ msgid "Bijective base-26 number"
 msgstr ""
 
 #: ../data/functions.xml.in.h:278
-#, fuzzy
 msgid "Binary-Coded Decimal (BCD)"
-msgstr "Hexadecimaal getal"
+msgstr ""
 
 #: ../data/functions.xml.in.h:279
 msgid "r:bcd"
@@ -4174,9 +4144,8 @@ msgid "r:erfi"
 msgstr ""
 
 #: ../data/functions.xml.in.h:301
-#, fuzzy
 msgid "Inverse Error Function"
-msgstr "Imaginaire errorfunctie"
+msgstr "Inverse errorfunctie"
 
 #: ../data/functions.xml.in.h:302
 msgid "r:erfinv"
@@ -4436,9 +4405,8 @@ msgstr ""
 
 #. nth root argument
 #: ../data/functions.xml.in.h:363
-#, fuzzy
 msgid "Degree (n)"
-msgstr "Graad"
+msgstr "Graad (n)"
 
 #: ../data/functions.xml.in.h:364
 msgid "Square"
@@ -4702,14 +4670,12 @@ msgid "Radians"
 msgstr "Radialen"
 
 #: ../data/functions.xml.in.h:427
-#, fuzzy
 msgid "Default Angle Unit to Radians"
-msgstr "Radialen naar standaard hoekeenheid"
+msgstr "Standaard hoekeenheid naar radialen"
 
 #: ../data/functions.xml.in.h:428
-#, fuzzy
 msgid "r:deftorad"
-msgstr "noemer"
+msgstr "defnaarrad"
 
 #: ../data/functions.xml.in.h:429
 msgid "Secant"
@@ -4764,18 +4730,16 @@ msgid "Inverse Secant"
 msgstr "Inverse secans"
 
 #: ../data/functions.xml.in.h:442
-#, fuzzy
 msgid "r:arcsec, r:asec"
-msgstr "boogseconde,p:boogseconden"
+msgstr ""
 
 #: ../data/functions.xml.in.h:443
 msgid "Inverse Cosecant"
 msgstr "Inverse cosecans"
 
 #: ../data/functions.xml.in.h:444
-#, fuzzy
 msgid "r:arccsc, r:acsc"
-msgstr "boogseconde,p:boogseconden"
+msgstr ""
 
 #: ../data/functions.xml.in.h:445
 msgid "Inverse Cotangent"
@@ -4834,14 +4798,12 @@ msgid "Floating-point number (binary)"
 msgstr ""
 
 #: ../data/functions.xml.in.h:458
-#, fuzzy
 msgid "Number of bits"
-msgstr "Aantal termijnen"
+msgstr ""
 
 #: ../data/functions.xml.in.h:459
-#, fuzzy
 msgid "Number of exponent bits"
-msgstr "Aantal elementen"
+msgstr ""
 
 #: ../data/functions.xml.in.h:460
 msgid "IEEE 754 Floating-Point Bits"
@@ -4864,9 +4826,8 @@ msgid "IEEE 754 Floating-Point Error"
 msgstr ""
 
 #: ../data/functions.xml.in.h:464
-#, fuzzy
 msgid "r:floatError"
-msgstr "fout"
+msgstr ""
 
 #: ../data/functions.xml.in.h:465
 msgid ""
@@ -4897,9 +4858,8 @@ msgid "IEEE 754 Floating-Point Value"
 msgstr ""
 
 #: ../data/functions.xml.in.h:470
-#, fuzzy
 msgid "r:floatValue"
-msgstr "tijd"
+msgstr ""
 
 #: ../data/functions.xml.in.h:471
 msgid ""
@@ -5147,7 +5107,6 @@ msgid "Sum (total)"
 msgstr "Som (totaal)"
 
 #: ../data/functions.xml.in.h:520
-#, fuzzy
 msgid "r:total,r:add"
 msgstr "totaal"
 
@@ -6264,9 +6223,8 @@ msgid "Unix Timestamp to Date"
 msgstr "Unix Timestamp naar datum"
 
 #: ../data/functions.xml.in.h:760
-#, fuzzy
 msgid "r:stamptodate,unix2date"
-msgstr "stampnaardatum"
+msgstr "stampnaardatum,unix2date"
 
 #: ../data/functions.xml.in.h:761
 msgid ""
@@ -6371,18 +6329,16 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:782
-#, fuzzy
 msgid "Start Date"
-msgstr "Matrix construeren"
+msgstr ""
 
 #: ../data/functions.xml.in.h:783
 msgid "Days in Month"
 msgstr "Dagen in maand"
 
 #: ../data/functions.xml.in.h:784
-#, fuzzy
 msgid "r:daysInMonth"
-msgstr "maanden bijtellen"
+msgstr ""
 
 #: ../data/functions.xml.in.h:785 ../data/variables.xml.in.h:214
 msgid "Utilities"
@@ -6393,55 +6349,34 @@ msgid "Plot Functions and Vectors"
 msgstr ""
 
 #: ../data/functions.xml.in.h:787
-#, fuzzy
 msgid "r:plot"
-msgstr "planeet"
+msgstr ""
 
 #: ../data/functions.xml.in.h:788
-#, fuzzy
 msgid "Expression or vector"
-msgstr "Matrix of vector"
+msgstr ""
 
 #: ../data/functions.xml.in.h:789
 msgid "Minimum x value"
 msgstr ""
 
 #: ../data/functions.xml.in.h:790
-#, fuzzy
 msgid "Maximum x value"
-msgstr "Matrixvariabele"
+msgstr ""
 
 #: ../data/functions.xml.in.h:791
-msgid "Number of samples / Step size"
-msgstr "Aantal monsters / stapgrootte"
+msgid "Options"
+msgstr ""
 
 #: ../data/functions.xml.in.h:792
-#, fuzzy
-msgid "X variable"
-msgstr "Rijvariabele"
+msgid "Unicode Value"
+msgstr "Unicode-waarde"
 
 #: ../data/functions.xml.in.h:793
-msgid "Persistent"
-msgstr ""
-
-#: ../data/functions.xml.in.h:794
-msgid ""
-"Plots one or more expressions or vectors. Use a vector for the first "
-"argument to plot multiple series. Only the first argument is used for vector "
-"series. It is also possible to plot a matrix where each row is a pair of x "
-"and y values."
-msgstr ""
-
-#: ../data/functions.xml.in.h:795
-#, fuzzy
-msgid "Unicode Value"
-msgstr "Uiterste waarden"
-
-#: ../data/functions.xml.in.h:796
 msgid "r:code"
 msgstr ""
 
-#: ../data/functions.xml.in.h:797
+#: ../data/functions.xml.in.h:794
 msgid ""
 "Encodes a Unicode character or text string using the selected format. "
 "Supported encodings are UTF-8 (0), UTF-16 (1), and UTF-32 (2). If the third "
@@ -6449,66 +6384,63 @@ msgid ""
 "encoding) is placed in a vector."
 msgstr ""
 
-#: ../data/functions.xml.in.h:798
+#: ../data/functions.xml.in.h:795
 msgid "Character"
 msgstr "Karakter"
 
-#: ../data/functions.xml.in.h:799
-#, fuzzy
+#: ../data/functions.xml.in.h:796
 msgid "Encoding"
-msgstr "Afronding"
+msgstr "Codering"
 
-#: ../data/functions.xml.in.h:800
-#, fuzzy
+#: ../data/functions.xml.in.h:797
 msgid "Use vector"
-msgstr "Variabele vector"
+msgstr "Gebruik vector"
 
-#: ../data/functions.xml.in.h:801
-#, fuzzy
+#: ../data/functions.xml.in.h:798
 msgid "Unicode Character"
-msgstr "Karakter"
+msgstr "Unicode-teken"
 
-#: ../data/functions.xml.in.h:802
+#: ../data/functions.xml.in.h:799
 msgid "r:char"
 msgstr ""
 
-#: ../data/functions.xml.in.h:803
+#: ../data/functions.xml.in.h:800
 msgid "Length of string"
 msgstr "Lengte van karakterrij"
 
-#: ../data/functions.xml.in.h:804
+#: ../data/functions.xml.in.h:801
 msgid "r:len"
 msgstr ""
 
-#: ../data/functions.xml.in.h:805
+#: ../data/functions.xml.in.h:802
 msgid "Text"
 msgstr "Tekst"
 
-#: ../data/functions.xml.in.h:806
+#: ../data/functions.xml.in.h:803
 msgid "Concatenate Strings"
 msgstr "Karakterrijen samenvoegen"
 
-#: ../data/functions.xml.in.h:807
+#: ../data/functions.xml.in.h:804
 msgid "r:concatenate"
 msgstr "samenvoegen"
 
-#: ../data/functions.xml.in.h:808
+#: ../data/functions.xml.in.h:805
 msgid "Text string 1"
 msgstr "Tekstrij 1"
 
-#: ../data/functions.xml.in.h:809
+#: ../data/functions.xml.in.h:806
 msgid "Text string 2"
 msgstr "Tekstrij 2"
 
-#: ../data/functions.xml.in.h:810
+#: ../data/functions.xml.in.h:807
 msgid "Replace"
 msgstr "Vervangen"
 
-#: ../data/functions.xml.in.h:811
+#: ../data/functions.xml.in.h:808
 msgid "r:replace"
 msgstr "vervangen"
 
-#: ../data/functions.xml.in.h:812
+#: ../data/functions.xml.in.h:809
 msgid ""
 "Replaces a certain value in an expression with a new value. The expression "
 "is calculated before the replacement if the fourth argument is true."
@@ -6516,31 +6448,31 @@ msgstr ""
 "Vervangt een waarde in een expressie door een nieuwe waarde. Eerst wordt de "
 "expressie berekend indien het vierde argument waar (true) is."
 
-#: ../data/functions.xml.in.h:813
+#: ../data/functions.xml.in.h:810
 msgid "Expression"
 msgstr "Expressie"
 
-#: ../data/functions.xml.in.h:814
+#: ../data/functions.xml.in.h:811
 msgid "Original value"
 msgstr "Originele waarde"
 
-#: ../data/functions.xml.in.h:815
+#: ../data/functions.xml.in.h:812
 msgid "New value"
 msgstr "Nieuwe waarde"
 
-#: ../data/functions.xml.in.h:816
+#: ../data/functions.xml.in.h:813
 msgid "Precalculate expression"
 msgstr "Voorbereken expressie"
 
-#: ../data/functions.xml.in.h:817
+#: ../data/functions.xml.in.h:814
 msgid "Strip Units"
 msgstr "Eenheden verwijderen"
 
-#: ../data/functions.xml.in.h:818
+#: ../data/functions.xml.in.h:815
 msgid "r:nounit,strip_units"
 msgstr "geeneenheid,eenheden_weg"
 
-#: ../data/functions.xml.in.h:819
+#: ../data/functions.xml.in.h:816
 msgid ""
 "Removes all units from an expression. The expression is calculated before "
 "the removal."
@@ -6548,140 +6480,139 @@ msgstr ""
 "Verwijdert alle eenheden uit een expressie. De expressie wordt hierbij eerst "
 "berekend."
 
-#: ../data/functions.xml.in.h:820
+#: ../data/functions.xml.in.h:817
 msgid "Process Vector Elements"
 msgstr "Vector-elementen verwerken"
 
-#: ../data/functions.xml.in.h:821
+#: ../data/functions.xml.in.h:818
 msgid "r:process"
 msgstr "verwerken"
 
-#: ../data/functions.xml.in.h:822
+#: ../data/functions.xml.in.h:819
 msgid "Element variable"
 msgstr "Elementvariabele"
 
-#: ../data/functions.xml.in.h:823
+#: ../data/functions.xml.in.h:820
 msgid "Index variable"
 msgstr "Indexvariabele"
 
-#: ../data/functions.xml.in.h:824
+#: ../data/functions.xml.in.h:821
 msgid "Vector variable"
 msgstr "Vectorvariabele"
 
-#: ../data/functions.xml.in.h:825
+#: ../data/functions.xml.in.h:822
 msgid "Process Matrix Elements"
 msgstr "Matrix-elementen verwerken"
 
-#: ../data/functions.xml.in.h:826
+#: ../data/functions.xml.in.h:823
 msgid "r:processm"
 msgstr ""
 
-#: ../data/functions.xml.in.h:827
+#: ../data/functions.xml.in.h:824
 msgid "Row variable"
 msgstr "Rijvariabele"
 
-#: ../data/functions.xml.in.h:828
+#: ../data/functions.xml.in.h:825
 msgid "Column variable"
 msgstr "Kolomvariabele"
 
-#: ../data/functions.xml.in.h:829
+#: ../data/functions.xml.in.h:826
 msgid "Matrix variable"
 msgstr "Matrixvariabele"
 
-#: ../data/functions.xml.in.h:830
+#: ../data/functions.xml.in.h:827
 msgid "Custom Sum of Elements"
 msgstr "Aangepaste som van elementen"
 
-#: ../data/functions.xml.in.h:831
+#: ../data/functions.xml.in.h:828
 msgid "r:csum"
 msgstr "csom"
 
-#: ../data/functions.xml.in.h:832
+#: ../data/functions.xml.in.h:829
 msgid "First element"
 msgstr "Eerste element"
 
-#: ../data/functions.xml.in.h:833
+#: ../data/functions.xml.in.h:830
 msgid "Last element"
 msgstr "Laatste element"
 
-#: ../data/functions.xml.in.h:834
+#: ../data/functions.xml.in.h:831
 msgid "Initial value"
 msgstr "Beginwaarde"
 
-#: ../data/functions.xml.in.h:835
+#: ../data/functions.xml.in.h:832
 msgid "Value variable"
 msgstr "Waarde variabele"
 
-#: ../data/functions.xml.in.h:836
+#: ../data/functions.xml.in.h:833
 msgid "Select Vector Elements"
 msgstr "Vectorelementen selecteren"
 
-#: ../data/functions.xml.in.h:837
+#: ../data/functions.xml.in.h:834
 msgid "r:select"
 msgstr "selecteer"
 
-#: ../data/functions.xml.in.h:838
+#: ../data/functions.xml.in.h:835
 msgid "Condition"
 msgstr "Conditie"
 
-#: ../data/functions.xml.in.h:839
+#: ../data/functions.xml.in.h:836
 msgid "Select first match"
 msgstr "Eerste overeenkomst secteren"
 
-#: ../data/functions.xml.in.h:840
+#: ../data/functions.xml.in.h:837
 msgid "r:function"
 msgstr "functie"
 
-#: ../data/functions.xml.in.h:841
+#: ../data/functions.xml.in.h:838
 msgid "Arguments"
 msgstr "Argumenten"
 
-#: ../data/functions.xml.in.h:842
+#: ../data/functions.xml.in.h:839
 msgid "Title"
 msgstr "Titel"
 
-#: ../data/functions.xml.in.h:843
+#: ../data/functions.xml.in.h:840
 msgid "r:title"
 msgstr "titel"
 
-#: ../data/functions.xml.in.h:845
+#: ../data/functions.xml.in.h:842
 msgid "Display Error"
 msgstr "Weergavefout"
 
-#: ../data/functions.xml.in.h:846
+#: ../data/functions.xml.in.h:843
 msgid "r:error"
 msgstr "fout"
 
-#: ../data/functions.xml.in.h:847
+#: ../data/functions.xml.in.h:844
 msgid "Message"
 msgstr "Bericht"
 
-#: ../data/functions.xml.in.h:848
+#: ../data/functions.xml.in.h:845
 msgid "Display Warning"
 msgstr "Waarschuwing weergeven"
 
-#: ../data/functions.xml.in.h:849
+#: ../data/functions.xml.in.h:846
 msgid "r:warning"
 msgstr "waarschuwing"
 
-#: ../data/functions.xml.in.h:850
+#: ../data/functions.xml.in.h:847
 msgid "Display Message"
 msgstr "Bericht weergeven"
 
-#: ../data/functions.xml.in.h:851
+#: ../data/functions.xml.in.h:848
 msgid "r:message"
 msgstr "bericht"
 
-#: ../data/functions.xml.in.h:852
-#, fuzzy
+#: ../data/functions.xml.in.h:849
 msgid "Save as Variable or Function"
-msgstr "Opslaan als variabele"
+msgstr "Opslaan als variabele of functie"
 
-#: ../data/functions.xml.in.h:853
+#: ../data/functions.xml.in.h:850
 msgid "r:save"
 msgstr "opslaan"
 
-#: ../data/functions.xml.in.h:854
+#: ../data/functions.xml.in.h:851
 msgid ""
 "Stores a value in a variable or saves an expression as a function.&#10;&#10;"
 "A function is created if the name includes parentheses (e.g. \"f()\"). "
@@ -6694,186 +6625,186 @@ msgid ""
 "this function."
 msgstr ""
 
-#: ../data/functions.xml.in.h:855
+#: ../data/functions.xml.in.h:852
 msgid "Category"
 msgstr "Categorie"
 
-#: ../data/functions.xml.in.h:856
+#: ../data/functions.xml.in.h:853
 msgid "RPN Stack Register"
 msgstr "RPN-register in stapelgeheugen"
 
-#: ../data/functions.xml.in.h:857
+#: ../data/functions.xml.in.h:854
 msgid "r:register"
 msgstr ""
 
-#: ../data/functions.xml.in.h:858
+#: ../data/functions.xml.in.h:855
 msgid "Returns the value of a RPN stack register."
 msgstr "Retourneert de waarde in een register van het RPN-stapelgeheugen."
 
-#: ../data/functions.xml.in.h:859
+#: ../data/functions.xml.in.h:856
 msgid "Index"
 msgstr ""
 
-#: ../data/functions.xml.in.h:860
+#: ../data/functions.xml.in.h:857
 msgid "RPN Stack Vector"
 msgstr "RPN-vector in stapelgeheugen"
 
-#: ../data/functions.xml.in.h:861
+#: ../data/functions.xml.in.h:858
 msgid "r:stack"
 msgstr "stapelgeheugen"
 
-#: ../data/functions.xml.in.h:862
+#: ../data/functions.xml.in.h:859
 msgid "Returns the RPN stack as a vector."
 msgstr "Retourneert de inhoud van het RPN-stapelgeheugen als een vector."
 
-#: ../data/functions.xml.in.h:863
+#: ../data/functions.xml.in.h:860
 msgid "Is Number"
 msgstr "Is een getal"
 
-#: ../data/functions.xml.in.h:864
+#: ../data/functions.xml.in.h:861
 msgid "r:isNumber"
 msgstr "isGetal"
 
-#: ../data/functions.xml.in.h:865
+#: ../data/functions.xml.in.h:862
 msgid "Is Real"
 msgstr "Is een reëel getal"
 
-#: ../data/functions.xml.in.h:866
+#: ../data/functions.xml.in.h:863
 msgid "r:isReal"
 msgstr "isReëel"
 
-#: ../data/functions.xml.in.h:867
+#: ../data/functions.xml.in.h:864
 msgid "Is Rational"
 msgstr "Is een rationaal getal"
 
-#: ../data/functions.xml.in.h:868
+#: ../data/functions.xml.in.h:865
 msgid "r:isRational"
 msgstr "isRationaal"
 
-#: ../data/functions.xml.in.h:869
+#: ../data/functions.xml.in.h:866
 msgid "Is Integer"
 msgstr "Is een geheel getal"
 
-#: ../data/functions.xml.in.h:870
+#: ../data/functions.xml.in.h:867
 msgid "r:isInteger"
 msgstr "isGeheel"
 
-#: ../data/functions.xml.in.h:871
+#: ../data/functions.xml.in.h:868
 msgid "Represents Number"
 msgstr "Geeft een getal weer"
 
-#: ../data/functions.xml.in.h:872
+#: ../data/functions.xml.in.h:869
 msgid "r:representsNumber"
 msgstr "isGetal"
 
-#: ../data/functions.xml.in.h:873
+#: ../data/functions.xml.in.h:870
 msgid "Represents Real"
 msgstr "Geeft een reëel getal weer"
 
-#: ../data/functions.xml.in.h:874
+#: ../data/functions.xml.in.h:871
 msgid "r:representsReal"
 msgstr "isReëel"
 
-#: ../data/functions.xml.in.h:875
+#: ../data/functions.xml.in.h:872
 msgid "Represents Rational"
 msgstr "Geeft een rationaal getal weer"
 
-#: ../data/functions.xml.in.h:876
+#: ../data/functions.xml.in.h:873
 msgid "r:representsRational"
 msgstr "isRationaalgetal"
 
-#: ../data/functions.xml.in.h:877
+#: ../data/functions.xml.in.h:874
 msgid "Represents Integer"
 msgstr "Geeft een geheel getal weer"
 
-#: ../data/functions.xml.in.h:878
+#: ../data/functions.xml.in.h:875
 msgid "r:representsInteger"
 msgstr "isGeheelgetal"
 
-#: ../data/functions.xml.in.h:879
+#: ../data/functions.xml.in.h:876
 msgid "Interval"
 msgstr ""
 
-#: ../data/functions.xml.in.h:880
+#: ../data/functions.xml.in.h:877
 msgid "r:interval"
 msgstr ""
 
-#: ../data/functions.xml.in.h:881
+#: ../data/functions.xml.in.h:878
 #, fuzzy
 msgid "Lower endpoint"
 msgstr "Ondergrens"
 
-#: ../data/functions.xml.in.h:882
+#: ../data/functions.xml.in.h:879
 #, fuzzy
 msgid "Upper endpoint"
 msgstr "Bovengrens"
 
-#: ../data/functions.xml.in.h:883
+#: ../data/functions.xml.in.h:880
 msgid "Uncertainty"
 msgstr ""
 
-#: ../data/functions.xml.in.h:884
+#: ../data/functions.xml.in.h:881
 msgid "r:uncertainty"
 msgstr ""
 
-#: ../data/functions.xml.in.h:885
+#: ../data/functions.xml.in.h:882
 msgid "Uncertainty is relative"
 msgstr ""
 
-#: ../data/functions.xml.in.h:886
+#: ../data/functions.xml.in.h:883
 msgid "External Command"
 msgstr ""
 
-#: ../data/functions.xml.in.h:887
+#: ../data/functions.xml.in.h:884
 #, fuzzy
 msgid "r:command"
 msgstr "samenstellen"
 
-#: ../data/functions.xml.in.h:888
+#: ../data/functions.xml.in.h:885
 msgid "Command"
 msgstr ""
 
-#: ../data/functions.xml.in.h:889
+#: ../data/functions.xml.in.h:886
 msgid "Logical"
 msgstr "Logisch"
 
-#: ../data/functions.xml.in.h:890
+#: ../data/functions.xml.in.h:887
 msgid "For...Do"
 msgstr "For...Do"
 
-#: ../data/functions.xml.in.h:891
+#: ../data/functions.xml.in.h:888
 msgid "r:for"
 msgstr ""
 
-#: ../data/functions.xml.in.h:892
+#: ../data/functions.xml.in.h:889
 msgid "Initial value of counter"
 msgstr "Beginwaarde van teller"
 
-#: ../data/functions.xml.in.h:893
+#: ../data/functions.xml.in.h:890
 msgid "Counter variable"
 msgstr "Tellervariabele"
 
-#: ../data/functions.xml.in.h:894
+#: ../data/functions.xml.in.h:891
 msgid "For condition"
 msgstr "For-voorwaarde"
 
-#: ../data/functions.xml.in.h:895
+#: ../data/functions.xml.in.h:892
 msgid "Counter update function"
 msgstr "Functie voor bijwerken van de teller"
 
-#: ../data/functions.xml.in.h:896
+#: ../data/functions.xml.in.h:893
 msgid "Do function"
 msgstr "Do-functie"
 
-#: ../data/functions.xml.in.h:897
+#: ../data/functions.xml.in.h:894
 msgid "If...Then...Else"
 msgstr "If...Then...Else"
 
-#: ../data/functions.xml.in.h:898
+#: ../data/functions.xml.in.h:895
 msgid "r:if"
 msgstr ""
 
-#: ../data/functions.xml.in.h:899
+#: ../data/functions.xml.in.h:896
 #, fuzzy
 msgid ""
 "Tests a condition and returns a value depending on the result. Vectors can "
@@ -6881,88 +6812,88 @@ msgid ""
 msgstr ""
 "Test een conditie en retourneert een waarde afhankelijk van het resultaat."
 
-#: ../data/functions.xml.in.h:900
+#: ../data/functions.xml.in.h:897
 msgid "Expression if condition is met"
 msgstr "Expressie indien aan conditie wordt voldaan"
 
-#: ../data/functions.xml.in.h:901
+#: ../data/functions.xml.in.h:898
 msgid "Expression if condition is NOT met"
 msgstr "Expressie indien NIET aan conditie wordt voldaan"
 
-#: ../data/functions.xml.in.h:902
+#: ../data/functions.xml.in.h:899
 msgid "Assume false if not true"
 msgstr ""
 
-#: ../data/functions.xml.in.h:903
+#: ../data/functions.xml.in.h:900
 msgid "Bitwise Exclusive OR"
 msgstr "Bitsgewijs XOR"
 
-#: ../data/functions.xml.in.h:904
+#: ../data/functions.xml.in.h:901
 msgid "r:xor"
 msgstr ""
 
-#: ../data/functions.xml.in.h:905
+#: ../data/functions.xml.in.h:902
 msgid "Logical Exclusive OR"
 msgstr "Booleaanse XOR"
 
-#: ../data/functions.xml.in.h:906
+#: ../data/functions.xml.in.h:903
 msgid "r:lxor"
 msgstr ""
 
-#: ../data/functions.xml.in.h:907
+#: ../data/functions.xml.in.h:904
 msgid "Bitwise Shift"
 msgstr "Bitsgewijs verschuiven (shift)"
 
-#: ../data/functions.xml.in.h:908
+#: ../data/functions.xml.in.h:905
 msgid ""
 "Applies logical or arithmetic bitwise shift to an integer. The second "
 "argument specifies the number of steps that each binary bit is shifted to "
 "the left (use negative values for right shift)."
 msgstr ""
 
-#: ../data/functions.xml.in.h:909
+#: ../data/functions.xml.in.h:906
 msgid "r:shift"
 msgstr ""
 
-#: ../data/functions.xml.in.h:910
+#: ../data/functions.xml.in.h:907
 msgid "Steps"
 msgstr ""
 
-#: ../data/functions.xml.in.h:911
+#: ../data/functions.xml.in.h:908
 msgid "Arithmetic shift using two's complement"
 msgstr ""
 
-#: ../data/functions.xml.in.h:912
+#: ../data/functions.xml.in.h:909
 msgid "Bitwise Complement (Not)"
 msgstr ""
 
-#: ../data/functions.xml.in.h:913
+#: ../data/functions.xml.in.h:910
 msgid ""
 "Applies bitwise NOT to an integer of specified bit width and signedness (use "
 "1 for signed and 0 for unsigned). If bit width is zero, the smallest "
 "necessary number of bits (of 8, 16, 32, 64, 128, ...) will be used."
 msgstr ""
 
-#: ../data/functions.xml.in.h:914
+#: ../data/functions.xml.in.h:911
 msgid "r:bitcmp"
 msgstr ""
 
-#: ../data/functions.xml.in.h:915
+#: ../data/functions.xml.in.h:912
 #, fuzzy
 msgid "Bit Width"
 msgstr "Breedte"
 
-#: ../data/functions.xml.in.h:916
+#: ../data/functions.xml.in.h:913
 #, fuzzy
 msgid "Signed Integer"
 msgstr "Sinusintegraal"
 
-#: ../data/functions.xml.in.h:917
+#: ../data/functions.xml.in.h:914
 #, fuzzy
 msgid "Bit Rotation"
 msgstr "Is een rationaal getal"
 
-#: ../data/functions.xml.in.h:918
+#: ../data/functions.xml.in.h:915
 msgid ""
 "Applies circular bitwise shift to an integer of specified bit width and "
 "signedness (use 1 for signed and 0 for unsigned). The second argument "
@@ -6971,23 +6902,23 @@ msgid ""
 "necessary number of bits (of 8, 16, 32, 64, 128, ...) will be used."
 msgstr ""
 
-#: ../data/functions.xml.in.h:919
+#: ../data/functions.xml.in.h:916
 msgid "r:bitrot"
 msgstr ""
 
-#: ../data/functions.xml.in.h:920
+#: ../data/functions.xml.in.h:917
 msgid "Algebra"
 msgstr "Algebra"
 
-#: ../data/functions.xml.in.h:921
+#: ../data/functions.xml.in.h:918
 msgid "Summation"
 msgstr "Sommatie"
 
-#: ../data/functions.xml.in.h:922
+#: ../data/functions.xml.in.h:919
 msgid "au:&#x3A3;,au:&#x2211;,r:sum"
 msgstr "au:&#x3A3;,au:&#x2211;,som"
 
-#: ../data/functions.xml.in.h:923
+#: ../data/functions.xml.in.h:920
 #, fuzzy
 msgid ""
 "Corresponds to the summation symbol. Adds terms for each x ranging from the "
@@ -6996,27 +6927,27 @@ msgstr ""
 "Komt overeen met symbool voor optellen. Telt termen op met een waarde tussen "
 "de kleinste en de grootste grenswaarde."
 
-#: ../data/functions.xml.in.h:924
+#: ../data/functions.xml.in.h:921
 msgid "Term expression"
 msgstr "Expressie voor term"
 
-#: ../data/functions.xml.in.h:925
+#: ../data/functions.xml.in.h:922
 msgid "Lower limit (i)"
 msgstr "Ondergrens (i)"
 
-#: ../data/functions.xml.in.h:926
+#: ../data/functions.xml.in.h:923
 msgid "Upper limit (n)"
 msgstr "Bovengrens (n)"
 
-#: ../data/functions.xml.in.h:927
+#: ../data/functions.xml.in.h:924
 msgid "Product of a sequence"
 msgstr "Product"
 
-#: ../data/functions.xml.in.h:928
+#: ../data/functions.xml.in.h:925
 msgid "au:&#x3A0;,r:product"
 msgstr ""
 
-#: ../data/functions.xml.in.h:929
+#: ../data/functions.xml.in.h:926
 msgid ""
 "Corresponds to the product symbol. Multiplies factors for each x ranging "
 "from the lower to the upper limit."
@@ -7024,118 +6955,118 @@ msgstr ""
 "Komt overeen met het symbool voor vermenigvuldiging. Vermenigvuldigt met "
 "factoren met een waarde tussen de kleinste en de grootste grenswaarde."
 
-#: ../data/functions.xml.in.h:930
+#: ../data/functions.xml.in.h:927
 msgid "Factor expression"
 msgstr "Expressie voor factor"
 
-#: ../data/functions.xml.in.h:931
+#: ../data/functions.xml.in.h:928
 msgid "Solve for multiple variables"
 msgstr "Oplossen voor meerdere variabelen"
 
-#: ../data/functions.xml.in.h:932
+#: ../data/functions.xml.in.h:929
 msgid "r:multisolve"
 msgstr "meerdereoplossen"
 
-#: ../data/functions.xml.in.h:933
+#: ../data/functions.xml.in.h:930
 msgid "Equation vector"
 msgstr "Vergelijkingsvector"
 
-#: ../data/functions.xml.in.h:934
+#: ../data/functions.xml.in.h:931
 msgid "Variable vector"
 msgstr "Variabele vector"
 
-#: ../data/functions.xml.in.h:935
+#: ../data/functions.xml.in.h:932
 msgid "Solve equation"
 msgstr "Vergelijking oplossen"
 
-#: ../data/functions.xml.in.h:936
+#: ../data/functions.xml.in.h:933
 msgid "r:solve"
 msgstr "oplossen"
 
-#: ../data/functions.xml.in.h:937
+#: ../data/functions.xml.in.h:934
 msgid "Equation"
 msgstr "Vergelijking"
 
-#: ../data/functions.xml.in.h:938
+#: ../data/functions.xml.in.h:935
 msgid "With respect to"
 msgstr "Met betrekking tot"
 
-#: ../data/functions.xml.in.h:939
+#: ../data/functions.xml.in.h:936
 msgid "Solve differential equation"
 msgstr "Differentiaalvergelijking oplossen"
 
-#: ../data/functions.xml.in.h:940
+#: ../data/functions.xml.in.h:937
 #, fuzzy
 msgid "r:dsolve"
 msgstr "oplossen"
 
-#: ../data/functions.xml.in.h:941
+#: ../data/functions.xml.in.h:938
 msgid "Initial condition: function value (y)"
 msgstr ""
 
-#: ../data/functions.xml.in.h:942
+#: ../data/functions.xml.in.h:939
 msgid "Initial condition: argument value (x)"
 msgstr ""
 
-#: ../data/functions.xml.in.h:943
+#: ../data/functions.xml.in.h:940
 msgid ""
 "Solves a differential equation and returns the value of y(x). The derivative "
 "in the equation should be in the format diff(y, x). Only first-order "
 "differential equations are currently supported."
 msgstr ""
 
-#: ../data/functions.xml.in.h:944
+#: ../data/functions.xml.in.h:941
 msgid "Solve using Newton's Method"
 msgstr ""
 
-#: ../data/functions.xml.in.h:945
+#: ../data/functions.xml.in.h:942
 #, fuzzy
 msgid "r:newtonsolve"
 msgstr "oplossen"
 
-#: ../data/functions.xml.in.h:946
+#: ../data/functions.xml.in.h:943
 #, fuzzy
 msgid "Initial estimate"
 msgstr "Beginwaarde"
 
-#: ../data/functions.xml.in.h:947 ../data/variables.xml.in.h:215
+#: ../data/functions.xml.in.h:944 ../data/variables.xml.in.h:215
 #, fuzzy
 msgid "Precision"
 msgstr "Regressie"
 
-#: ../data/functions.xml.in.h:948
+#: ../data/functions.xml.in.h:945
 #, fuzzy
 msgid "Max iterations"
 msgstr "Massafractie"
 
-#: ../data/functions.xml.in.h:949
+#: ../data/functions.xml.in.h:946
 msgid "Solve using Secant Method"
 msgstr ""
 
-#: ../data/functions.xml.in.h:950
+#: ../data/functions.xml.in.h:947
 #, fuzzy
 msgid "r:secantsolve"
 msgstr "oplossen"
 
-#: ../data/functions.xml.in.h:951
+#: ../data/functions.xml.in.h:948
 #, fuzzy
 msgid "Initial estimate 1"
 msgstr "Beginwaarde"
 
-#: ../data/functions.xml.in.h:952
+#: ../data/functions.xml.in.h:949
 #, fuzzy
 msgid "Initial estimate 2"
 msgstr "Beginwaarde"
 
-#: ../data/functions.xml.in.h:953
+#: ../data/functions.xml.in.h:950
 msgid "Solve for two variables"
 msgstr "Oplossen voor twee variabelen"
 
-#: ../data/functions.xml.in.h:954
+#: ../data/functions.xml.in.h:951
 msgid "r:solve2"
 msgstr "oplossen2"
 
-#: ../data/functions.xml.in.h:955
+#: ../data/functions.xml.in.h:952
 msgid ""
 "Solves two equations with two unknown variables. Returns the value of the "
 "first variable."
@@ -7143,543 +7074,543 @@ msgstr ""
 "Lost twee vergelijkingen op in twee variabelen. Retourneert de waarde van de "
 "eerste variabele."
 
-#: ../data/functions.xml.in.h:956
+#: ../data/functions.xml.in.h:953
 msgid "Equation 1"
 msgstr "Vergelijking 1"
 
-#: ../data/functions.xml.in.h:957
+#: ../data/functions.xml.in.h:954
 msgid "Equation 2"
 msgstr "Vergelijking 2"
 
-#: ../data/functions.xml.in.h:958
+#: ../data/functions.xml.in.h:955
 msgid "Variable 1"
 msgstr "Variabele 1"
 
-#: ../data/functions.xml.in.h:959
+#: ../data/functions.xml.in.h:956
 msgid "Variable 2"
 msgstr "Variabele 2"
 
-#: ../data/functions.xml.in.h:960
+#: ../data/functions.xml.in.h:957
 msgid "Find Linear Function"
 msgstr "Lineaire functie bepalen"
 
-#: ../data/functions.xml.in.h:961
+#: ../data/functions.xml.in.h:958
 msgid "r:linearfunction"
 msgstr "lineairefunctie"
 
-#: ../data/functions.xml.in.h:962
+#: ../data/functions.xml.in.h:959
 msgid ""
 "Finds the linear function for the straight line between two distinct points."
 msgstr ""
 "Bepaalt de lineaire functie voor de rechte lijn tussen twee verschillende "
 "punten."
 
-#: ../data/functions.xml.in.h:963
+#: ../data/functions.xml.in.h:960
 msgid "x1"
 msgstr ""
 
-#: ../data/functions.xml.in.h:964
+#: ../data/functions.xml.in.h:961
 msgid "y1"
 msgstr ""
 
-#: ../data/functions.xml.in.h:965
+#: ../data/functions.xml.in.h:962
 msgid "x2"
 msgstr ""
 
-#: ../data/functions.xml.in.h:966
+#: ../data/functions.xml.in.h:963
 msgid "y2"
 msgstr ""
 
-#: ../data/functions.xml.in.h:967
+#: ../data/functions.xml.in.h:964
 msgid "Calculus"
 msgstr "Calculus"
 
-#: ../data/functions.xml.in.h:968
+#: ../data/functions.xml.in.h:965
 msgid "Differentiate"
 msgstr "Afgeleide"
 
-#: ../data/functions.xml.in.h:969
+#: ../data/functions.xml.in.h:966
 msgid "r:diff,derivative"
 msgstr "diff,afgeleide"
 
-#: ../data/functions.xml.in.h:970
+#: ../data/functions.xml.in.h:967
 msgid "Variable value"
 msgstr "Variabele waarde"
 
-#: ../data/functions.xml.in.h:971
+#: ../data/functions.xml.in.h:968
 msgid "Integrate"
 msgstr "Integreren"
 
-#: ../data/functions.xml.in.h:972
+#: ../data/functions.xml.in.h:969
 msgid "r:integrate,integral,au:&#x222B;"
 msgstr "integreren,integraal,au:&#x222B;"
 
-#: ../data/functions.xml.in.h:973
+#: ../data/functions.xml.in.h:970
 msgid "Variable of integration"
 msgstr "Integratievariabele"
 
-#: ../data/functions.xml.in.h:974
+#: ../data/functions.xml.in.h:971
 #, fuzzy
 msgid "Force numerical integration"
 msgstr "Integratievariabele"
 
-#: ../data/functions.xml.in.h:975
+#: ../data/functions.xml.in.h:972
 #, fuzzy
 msgid "Romberg Integration"
 msgstr "Integratievariabele"
 
-#: ../data/functions.xml.in.h:976
+#: ../data/functions.xml.in.h:973
 #, fuzzy
 msgid "r:romberg"
 msgstr "getal"
 
-#: ../data/functions.xml.in.h:977
+#: ../data/functions.xml.in.h:974
 #, fuzzy
 msgid "Min iterations"
 msgstr "Gemiddelde afwijking"
 
-#: ../data/functions.xml.in.h:978
+#: ../data/functions.xml.in.h:975
 #, fuzzy
 msgid "Monte Carlo Integration"
 msgstr "Integratievariabele"
 
-#: ../data/functions.xml.in.h:979
+#: ../data/functions.xml.in.h:976
 #, fuzzy
 msgid "r:montecarlo"
 msgstr "maand"
 
-#: ../data/functions.xml.in.h:980
+#: ../data/functions.xml.in.h:977
 #, fuzzy
 msgid "Number of samples"
 msgstr "Aantal monsters"
 
-#: ../data/functions.xml.in.h:981
+#: ../data/functions.xml.in.h:978
 #, fuzzy
 msgid "Limit"
 msgstr "Ondergrens"
 
-#: ../data/functions.xml.in.h:982
+#: ../data/functions.xml.in.h:979
 msgid ""
 "Returns the two-sided limit of the function if direction is zero, limit from "
 "left (below) if direction is -1, or limit from right (above) if direction is "
 "+1."
 msgstr ""
 
-#: ../data/functions.xml.in.h:983
+#: ../data/functions.xml.in.h:980
 #, fuzzy
 msgid "r:limit"
 msgstr "grenzen"
 
-#: ../data/functions.xml.in.h:984
+#: ../data/functions.xml.in.h:981
 msgid "Value to approach"
 msgstr ""
 
-#: ../data/functions.xml.in.h:985
+#: ../data/functions.xml.in.h:982
 #, fuzzy
 msgid "Direction"
 msgstr "Sectie"
 
-#: ../data/functions.xml.in.h:986
+#: ../data/functions.xml.in.h:983
 msgid "Extreme Values"
 msgstr "Uiterste waarden"
 
-#: ../data/functions.xml.in.h:987
+#: ../data/functions.xml.in.h:984
 msgid "r:extremum"
 msgstr "uiterste"
 
-#: ../data/functions.xml.in.h:988
+#: ../data/functions.xml.in.h:985
 #, fuzzy
 msgid "Named Integrals"
 msgstr "Gehele getallen"
 
-#: ../data/functions.xml.in.h:989
+#: ../data/functions.xml.in.h:986
 msgid "Logarithmic Integral"
 msgstr "Logaritmische integraal"
 
-#: ../data/functions.xml.in.h:990
+#: ../data/functions.xml.in.h:987
 msgid "rc:li,logint"
 msgstr ""
 
-#: ../data/functions.xml.in.h:991
+#: ../data/functions.xml.in.h:988
 msgid "The integral of 1/ln(x)."
 msgstr ""
 
-#: ../data/functions.xml.in.h:992
+#: ../data/functions.xml.in.h:989
 msgid "Exponential Integral"
 msgstr "Exponentiële integraal"
 
-#: ../data/functions.xml.in.h:993
+#: ../data/functions.xml.in.h:990
 msgid "rc:Ei,expint"
 msgstr ""
 
-#: ../data/functions.xml.in.h:994
+#: ../data/functions.xml.in.h:991
 msgid "The integral of e^x/x."
 msgstr ""
 
-#: ../data/functions.xml.in.h:995
+#: ../data/functions.xml.in.h:992
 msgid "Sine Integral"
 msgstr "Sinusintegraal"
 
-#: ../data/functions.xml.in.h:996
+#: ../data/functions.xml.in.h:993
 msgid "rc:Si,sinint"
 msgstr ""
 
-#: ../data/functions.xml.in.h:997
+#: ../data/functions.xml.in.h:994
 msgid "The integral of sin(x)/x."
 msgstr ""
 
-#: ../data/functions.xml.in.h:998
+#: ../data/functions.xml.in.h:995
 msgid "Cosine Integral"
 msgstr "Cosinusintegraal"
 
-#: ../data/functions.xml.in.h:999
+#: ../data/functions.xml.in.h:996
 msgid "rc:Ci,cosint"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1000
+#: ../data/functions.xml.in.h:997
 msgid "The integral of cos(x)/x."
 msgstr ""
 
-#: ../data/functions.xml.in.h:1001
+#: ../data/functions.xml.in.h:998
 msgid "Hyperbolic Sine Integral"
 msgstr "Hyperbolische sinusintegraal"
 
-#: ../data/functions.xml.in.h:1002
+#: ../data/functions.xml.in.h:999
 msgid "rc:Shi,sinhint"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1003
+#: ../data/functions.xml.in.h:1000
 msgid "The integral of sinh(x)/x."
 msgstr ""
 
-#: ../data/functions.xml.in.h:1004
+#: ../data/functions.xml.in.h:1001
 msgid "Hyperbolic Cosine Integral"
 msgstr "Hyperbolische cosinusintegraal"
 
-#: ../data/functions.xml.in.h:1005
+#: ../data/functions.xml.in.h:1002
 msgid "rc:Chi,coshint"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1006
+#: ../data/functions.xml.in.h:1003
 msgid "The integral of cosh(x)/x."
 msgstr ""
 
-#: ../data/functions.xml.in.h:1007
+#: ../data/functions.xml.in.h:1004
 #, fuzzy
 msgid "Fresnel Integral S"
 msgstr "Cosinusintegraal"
 
-#: ../data/functions.xml.in.h:1008
+#: ../data/functions.xml.in.h:1005
 msgid "r:fresnels"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1009
+#: ../data/functions.xml.in.h:1006
 msgid "The integral of sin(pi*x^2/2)."
 msgstr ""
 
-#: ../data/functions.xml.in.h:1010
+#: ../data/functions.xml.in.h:1007
 #, fuzzy
 msgid "Fresnel Integral C"
 msgstr "Cosinusintegraal"
 
-#: ../data/functions.xml.in.h:1011
+#: ../data/functions.xml.in.h:1008
 msgid "r:fresnelc"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1012
+#: ../data/functions.xml.in.h:1009
 msgid "The integral of cos(pi*x^2/2)."
 msgstr ""
 
-#: ../data/functions.xml.in.h:1013
+#: ../data/functions.xml.in.h:1010
 #, fuzzy
 msgid "Upper Incomplete Gamma Function"
 msgstr "Gamma-functie"
 
-#: ../data/functions.xml.in.h:1014
+#: ../data/functions.xml.in.h:1011
 msgid "r:igamma"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1015
+#: ../data/functions.xml.in.h:1012
 #, fuzzy
 msgid "Lower Incomplete Gamma Function"
 msgstr "Gamma-functie"
 
-#: ../data/functions.xml.in.h:1016
+#: ../data/functions.xml.in.h:1013
 msgid "r:gammainc"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1017
+#: ../data/functions.xml.in.h:1014
 #, fuzzy
 msgid "Regularized Incomplete Beta Function"
 msgstr "Gamma-functie"
 
-#: ../data/functions.xml.in.h:1018
+#: ../data/functions.xml.in.h:1015
 msgid "r:betainc"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1019
+#: ../data/functions.xml.in.h:1016
 #, fuzzy
 msgid "Inverse Regularized Incomplete Beta Function"
 msgstr "Gamma-functie"
 
-#: ../data/functions.xml.in.h:1020
+#: ../data/functions.xml.in.h:1017
 #, fuzzy
 msgid "r:betaincinv"
 msgstr "nominaal"
 
-#: ../data/functions.xml.in.h:1021
+#: ../data/functions.xml.in.h:1018
 msgid "Geometry"
 msgstr "Meetkunde"
 
-#: ../data/functions.xml.in.h:1022
+#: ../data/functions.xml.in.h:1019
 msgid "Triangle"
 msgstr "Driehoek"
 
-#: ../data/functions.xml.in.h:1023
+#: ../data/functions.xml.in.h:1020
 msgid "Hypotenuse"
 msgstr "Hypotenusa"
 
-#: ../data/functions.xml.in.h:1024
+#: ../data/functions.xml.in.h:1021
 msgid "r:hypot"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1025
+#: ../data/functions.xml.in.h:1022
 msgid "Side A"
 msgstr "Zijde A"
 
-#: ../data/functions.xml.in.h:1026
+#: ../data/functions.xml.in.h:1023
 msgid "Side B"
 msgstr "Zijde B"
 
-#: ../data/functions.xml.in.h:1027
+#: ../data/functions.xml.in.h:1024
 msgid "Triangle Area"
 msgstr "Oppervlakte van driehoek"
 
-#: ../data/functions.xml.in.h:1028
+#: ../data/functions.xml.in.h:1025
 msgid "r:triangle"
 msgstr "driehoek"
 
-#: ../data/functions.xml.in.h:1029
+#: ../data/functions.xml.in.h:1026
 msgid "Height"
 msgstr "Hoogte"
 
-#: ../data/functions.xml.in.h:1030
+#: ../data/functions.xml.in.h:1027
 msgid "Triangle Perimeter"
 msgstr "Omtrek van driehoek"
 
-#: ../data/functions.xml.in.h:1031
+#: ../data/functions.xml.in.h:1028
 msgid "r:triangle_perimeter"
 msgstr "driehoek_omtrek"
 
-#: ../data/functions.xml.in.h:1032
+#: ../data/functions.xml.in.h:1029
 msgid "Side C"
 msgstr "Zijde C"
 
-#: ../data/functions.xml.in.h:1033
+#: ../data/functions.xml.in.h:1030
 msgid "Circle"
 msgstr "Cirkel"
 
-#: ../data/functions.xml.in.h:1034
+#: ../data/functions.xml.in.h:1031
 msgid "Circle Area"
 msgstr "Cirkeloppervlak"
 
-#: ../data/functions.xml.in.h:1035
+#: ../data/functions.xml.in.h:1032
 msgid "r:circle"
 msgstr "cirkel"
 
-#: ../data/functions.xml.in.h:1036
+#: ../data/functions.xml.in.h:1033
 msgid "Calculates the area of a circle using the radius"
 msgstr "Berekent met de straal het oppervlak van een cirkel"
 
-#: ../data/functions.xml.in.h:1037
+#: ../data/functions.xml.in.h:1034
 msgid "Radius"
 msgstr "Straal"
 
-#: ../data/functions.xml.in.h:1038
+#: ../data/functions.xml.in.h:1035
 msgid "Circle Circumference"
 msgstr "Cirkelomtrek"
 
-#: ../data/functions.xml.in.h:1039
+#: ../data/functions.xml.in.h:1036
 msgid "r:circumference"
 msgstr "cirkelomtrek"
 
-#: ../data/functions.xml.in.h:1040
+#: ../data/functions.xml.in.h:1037
 msgid "Cylinder"
 msgstr "Cilinder"
 
-#: ../data/functions.xml.in.h:1041
+#: ../data/functions.xml.in.h:1038
 msgid "Cylinder Volume"
 msgstr "Volume van cilinder"
 
-#: ../data/functions.xml.in.h:1042
+#: ../data/functions.xml.in.h:1039
 msgid "r:cylinder"
 msgstr "cilinder"
 
-#: ../data/functions.xml.in.h:1043
+#: ../data/functions.xml.in.h:1040
 msgid "Surface Area of Cylinder"
 msgstr "Oppervlaktegrootte van cilinder"
 
-#: ../data/functions.xml.in.h:1044
+#: ../data/functions.xml.in.h:1041
 msgid "r:cylinder_sa"
 msgstr "cilinder_opp"
 
-#: ../data/functions.xml.in.h:1045
+#: ../data/functions.xml.in.h:1042
 msgid "Cone"
 msgstr "Kegel"
 
-#: ../data/functions.xml.in.h:1046
+#: ../data/functions.xml.in.h:1043
 msgid "Cone Volume"
 msgstr "Volume van kegel"
 
-#: ../data/functions.xml.in.h:1047
+#: ../data/functions.xml.in.h:1044
 msgid "r:cone"
 msgstr "kegel"
 
-#: ../data/functions.xml.in.h:1048
+#: ../data/functions.xml.in.h:1045
 msgid "Surface Area of Cone"
 msgstr "Oppervlaktegrootte van kegel"
 
-#: ../data/functions.xml.in.h:1049
+#: ../data/functions.xml.in.h:1046
 msgid "r:cone_sa"
 msgstr "kegel_opp"
 
-#: ../data/functions.xml.in.h:1050
+#: ../data/functions.xml.in.h:1047
 msgid "Sphere"
 msgstr "Bol"
 
-#: ../data/functions.xml.in.h:1051
+#: ../data/functions.xml.in.h:1048
 msgid "Sphere Volume"
 msgstr "Volume van bol"
 
-#: ../data/functions.xml.in.h:1052
+#: ../data/functions.xml.in.h:1049
 msgid "r:sphere"
 msgstr "bol"
 
-#: ../data/functions.xml.in.h:1053
+#: ../data/functions.xml.in.h:1050
 msgid "Surface Area of Sphere"
 msgstr "Oppervlaktegrootte van bol"
 
-#: ../data/functions.xml.in.h:1054
+#: ../data/functions.xml.in.h:1051
 msgid "r:sphere_sa"
 msgstr "bol_oppervlak"
 
-#: ../data/functions.xml.in.h:1055
+#: ../data/functions.xml.in.h:1052
 msgid "Square Area"
 msgstr "Oppervlakte van vierkant"
 
-#: ../data/functions.xml.in.h:1056
+#: ../data/functions.xml.in.h:1053
 msgid "r:square"
 msgstr "vierkant"
 
-#: ../data/functions.xml.in.h:1057
+#: ../data/functions.xml.in.h:1054
 msgid "Length of side"
 msgstr "Lengte van zijde"
 
-#: ../data/functions.xml.in.h:1058
+#: ../data/functions.xml.in.h:1055
 msgid "Square Perimeter"
 msgstr "Omtrek van vierkant"
 
-#: ../data/functions.xml.in.h:1059
+#: ../data/functions.xml.in.h:1056
 msgid "r:square_perimeter"
 msgstr "vierkant_omtrek"
 
-#: ../data/functions.xml.in.h:1060
+#: ../data/functions.xml.in.h:1057
 msgid "Cube"
 msgstr "Derdemacht"
 
-#: ../data/functions.xml.in.h:1061
+#: ../data/functions.xml.in.h:1058
 msgid "Cube Volume"
 msgstr "Volume kubus"
 
-#: ../data/functions.xml.in.h:1062
+#: ../data/functions.xml.in.h:1059
 msgid "r:cube"
 msgstr "kubus"
 
-#: ../data/functions.xml.in.h:1063
+#: ../data/functions.xml.in.h:1060
 msgid "Surface Area of Cube"
 msgstr "Oppervlaktegrootte van kubus"
 
-#: ../data/functions.xml.in.h:1064
+#: ../data/functions.xml.in.h:1061
 msgid "r:cube_sa"
 msgstr "kubus_opp"
 
-#: ../data/functions.xml.in.h:1065
+#: ../data/functions.xml.in.h:1062
 msgid "Rectangle"
 msgstr "Rechthoek"
 
-#: ../data/functions.xml.in.h:1066
+#: ../data/functions.xml.in.h:1063
 msgid "Rectangle Area"
 msgstr "Oppervlak rechthoek"
 
-#: ../data/functions.xml.in.h:1067
+#: ../data/functions.xml.in.h:1064
 msgid "r:rect"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1068
+#: ../data/functions.xml.in.h:1065
 msgid "Width"
 msgstr "Breedte"
 
-#: ../data/functions.xml.in.h:1069
+#: ../data/functions.xml.in.h:1066
 msgid "Rectangle Perimeter"
 msgstr "Omtrek rechthoek"
 
-#: ../data/functions.xml.in.h:1070
+#: ../data/functions.xml.in.h:1067
 msgid "r:rect_perimeter"
 msgstr "rect_omtrek"
 
-#: ../data/functions.xml.in.h:1071
+#: ../data/functions.xml.in.h:1068
 msgid "Prism"
 msgstr "Prisma"
 
-#: ../data/functions.xml.in.h:1072
+#: ../data/functions.xml.in.h:1069
 msgid "Volume of Rectangular Prism"
 msgstr "Inhoud van rechthoekig prisma"
 
-#: ../data/functions.xml.in.h:1073
+#: ../data/functions.xml.in.h:1070
 msgid "r:rectprism"
 msgstr "rectprisma"
 
-#: ../data/functions.xml.in.h:1074
+#: ../data/functions.xml.in.h:1071
 msgid "Calculates the volume of a prism with rectangular base."
 msgstr "Berekent de inhoud van een prisma met een rechthoekig basisvlak."
 
-#: ../data/functions.xml.in.h:1075
+#: ../data/functions.xml.in.h:1072
 msgid "Surface Area of Rectangular Prism"
 msgstr "Oppervlaktegrootte van rechthoekig prisma"
 
-#: ../data/functions.xml.in.h:1076
+#: ../data/functions.xml.in.h:1073
 msgid "r:rectprism_sa"
 msgstr "rectprisma_opp"
 
-#: ../data/functions.xml.in.h:1077
+#: ../data/functions.xml.in.h:1074
 msgid "Calculates the surface area of a prism with rectangular base."
 msgstr "Berekent de oppervlakte van een prisma met een rechthoekig basisvlak."
 
-#: ../data/functions.xml.in.h:1078
+#: ../data/functions.xml.in.h:1075
 msgid "Volume of Triangular Prism"
 msgstr "Inhoud van driehoekig prisma"
 
-#: ../data/functions.xml.in.h:1079
+#: ../data/functions.xml.in.h:1076
 msgid "r:triangleprism"
 msgstr "driehoekprisma"
 
-#: ../data/functions.xml.in.h:1080
+#: ../data/functions.xml.in.h:1077
 msgid "Calculates the volume of a prism with triangular base."
 msgstr "Berekent de inhoud van een prisma met een driehoekig basisvlak."
 
-#: ../data/functions.xml.in.h:1081
+#: ../data/functions.xml.in.h:1078
 msgid "Pyramid"
 msgstr "Piramide"
 
-#: ../data/functions.xml.in.h:1082
+#: ../data/functions.xml.in.h:1079
 msgid "Pyramid Volume"
 msgstr "Volume van piramide"
 
-#: ../data/functions.xml.in.h:1083
+#: ../data/functions.xml.in.h:1080
 msgid "r:pyramid"
 msgstr "piramide"
 
-#: ../data/functions.xml.in.h:1084
+#: ../data/functions.xml.in.h:1081
 msgid ""
 "Calculates the volume of a 3-dimensional shape standing on a rectangular "
 "base and terminating in a point at the top."
@@ -7687,75 +7618,75 @@ msgstr ""
 "Berekent de inhoud van een 3-dimensionaal lichaam met een rechthoekig "
 "basisvlak en een top in de vorm van een punt."
 
-#: ../data/functions.xml.in.h:1085
+#: ../data/functions.xml.in.h:1082
 msgid "Length of base"
 msgstr "Lengte van basis"
 
-#: ../data/functions.xml.in.h:1086
+#: ../data/functions.xml.in.h:1083
 msgid "Width of base"
 msgstr "Basislengte"
 
-#: ../data/functions.xml.in.h:1087
+#: ../data/functions.xml.in.h:1084
 msgid "Volume of Regular Tetrahedron"
 msgstr "Inhoud van regelmatig viervlak (tetraëder)"
 
-#: ../data/functions.xml.in.h:1088
+#: ../data/functions.xml.in.h:1085
 msgid "r:tetrahedron"
 msgstr "tetraëder"
 
-#: ../data/functions.xml.in.h:1089
+#: ../data/functions.xml.in.h:1086
 msgid "Surface Area of Regular Tetrahedron"
 msgstr "Oppervlaktegrootte van regelmatig viervlak (tetraëder)"
 
-#: ../data/functions.xml.in.h:1090
+#: ../data/functions.xml.in.h:1087
 msgid "r:tetrahedron_sa"
 msgstr "tetraëder_opp"
 
-#: ../data/functions.xml.in.h:1091
+#: ../data/functions.xml.in.h:1088
 msgid "Height of Regular Tetrahedron"
 msgstr " Hoogte van een regelmatig viervlak (tetraëder)"
 
-#: ../data/functions.xml.in.h:1092
+#: ../data/functions.xml.in.h:1089
 msgid "r:tetrahedron_height"
 msgstr "tetraëder_hoogte"
 
-#: ../data/functions.xml.in.h:1093
+#: ../data/functions.xml.in.h:1090
 msgid "Volume of Square Pyramid (Equilateral)"
 msgstr "Inhoud van vierkant piramide (gelijkzijdige)"
 
-#: ../data/functions.xml.in.h:1094
+#: ../data/functions.xml.in.h:1091
 msgid "r:sqpyramid"
 msgstr "vierkpiramide"
 
-#: ../data/functions.xml.in.h:1095
+#: ../data/functions.xml.in.h:1092
 msgid "Surface Area of Square Pyramid (Equilateral)"
 msgstr "Oppervlaktegrootte van vierkante piramide (gelijkzijdige)"
 
-#: ../data/functions.xml.in.h:1096
+#: ../data/functions.xml.in.h:1093
 msgid "r:sqpyramid_sa"
 msgstr "vierkpiramide_opp"
 
-#: ../data/functions.xml.in.h:1097
+#: ../data/functions.xml.in.h:1094
 msgid "Height of Square Pyramid (Equilateral)"
 msgstr "Hoogte van een vierkante piramide (gelijkzijdige)"
 
-#: ../data/functions.xml.in.h:1098
+#: ../data/functions.xml.in.h:1095
 msgid "r:sqpyramid_height"
 msgstr "midhoogte_vierkpiramide"
 
-#: ../data/functions.xml.in.h:1099
+#: ../data/functions.xml.in.h:1096
 msgid "Parallelogram"
 msgstr "Parallellogram"
 
-#: ../data/functions.xml.in.h:1100
+#: ../data/functions.xml.in.h:1097
 msgid "Parallelogram Area"
 msgstr "Oppervlak van parallellogram"
 
-#: ../data/functions.xml.in.h:1101
+#: ../data/functions.xml.in.h:1098
 msgid "r:parallelogram"
 msgstr "parallellogram"
 
-#: ../data/functions.xml.in.h:1102
+#: ../data/functions.xml.in.h:1099
 msgid ""
 "Calculates the area of a four-sided figure whose opposite sides are both "
 "parallel and equal in length."
@@ -7763,15 +7694,15 @@ msgstr ""
 "Berekent de oppervlakte van een figuur met vier zijden waarvan de "
 "overstaande zijden zowel evenwijdig als even lang zijn."
 
-#: ../data/functions.xml.in.h:1103
+#: ../data/functions.xml.in.h:1100
 msgid "Parallelogram Perimeter"
 msgstr "Omtrek van parallellogram"
 
-#: ../data/functions.xml.in.h:1104
+#: ../data/functions.xml.in.h:1101
 msgid "r:parallelogram_perimeter"
 msgstr "parallellogram_omtrek"
 
-#: ../data/functions.xml.in.h:1105
+#: ../data/functions.xml.in.h:1102
 msgid ""
 "Calculates the perimeter of a four-sided figure whose opposite sides are "
 "both parallel and equal in length."
@@ -7779,41 +7710,41 @@ msgstr ""
 "Berekent de omtrek van een figuur met vier zijden waarvan de overstaande "
 "zijden zowel evenwijdig als even lang zijn."
 
-#: ../data/functions.xml.in.h:1106
+#: ../data/functions.xml.in.h:1103
 msgid "Trapezoid"
 msgstr "Trapezium"
 
-#: ../data/functions.xml.in.h:1107
+#: ../data/functions.xml.in.h:1104
 msgid "Trapezoid Area"
 msgstr "Oppervlakte van trapezium"
 
-#: ../data/functions.xml.in.h:1108
+#: ../data/functions.xml.in.h:1105
 msgid "r:trapezoid"
 msgstr "trapezium"
 
-#: ../data/functions.xml.in.h:1109
+#: ../data/functions.xml.in.h:1106
 msgid "Calculates the area of a four-sided figure with two parallel sides."
 msgstr ""
 "Berekent de oppervlakte van een figuur met vier zijden waarvan twee zijden "
 "evenwijdig zijn."
 
-#: ../data/functions.xml.in.h:1110
+#: ../data/functions.xml.in.h:1107
 msgid "Economics"
 msgstr "Economie"
 
-#: ../data/functions.xml.in.h:1111
+#: ../data/functions.xml.in.h:1108
 msgid "Microeconomics"
 msgstr "Microëconomie"
 
-#: ../data/functions.xml.in.h:1112
+#: ../data/functions.xml.in.h:1109
 msgid "Elasticity"
 msgstr "Elasticiteit"
 
-#: ../data/functions.xml.in.h:1113
+#: ../data/functions.xml.in.h:1110
 msgid "r:elasticity"
 msgstr "elasticiteit"
 
-#: ../data/functions.xml.in.h:1114
+#: ../data/functions.xml.in.h:1111
 msgid ""
 "Calculates the demand elasticity. Also works for supply elasticity, income "
 "elasticity, cross-price elasticity, etc. Just replace demand with supply, or "
@@ -7827,27 +7758,27 @@ msgstr ""
 "bijvoorbeeld berekent de vraagelasticiteit als de prijs 3 is voor de functie "
 "\"Q = 100 -x^2\". waar x de standaard prijsvariabele is."
 
-#: ../data/functions.xml.in.h:1115
+#: ../data/functions.xml.in.h:1112
 msgid "Demand function"
 msgstr "Vraagfunctie"
 
-#: ../data/functions.xml.in.h:1116
+#: ../data/functions.xml.in.h:1113
 msgid "Price"
 msgstr "Prijs"
 
-#: ../data/functions.xml.in.h:1117
+#: ../data/functions.xml.in.h:1114
 msgid "Price variable"
 msgstr "Prijsvariabele"
 
-#: ../data/functions.xml.in.h:1118
+#: ../data/functions.xml.in.h:1115
 msgid "Sum-of-Years Digits Depreciation"
 msgstr "Afschrijving volgens som der jaren"
 
-#: ../data/functions.xml.in.h:1119
+#: ../data/functions.xml.in.h:1116
 msgid "r:syd"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1120
+#: ../data/functions.xml.in.h:1117
 msgid ""
 "Calculates the sum-of-years digits depreciation for an asset based on its "
 "cost, salvage value, anticipated life, and a particular period. This method "
@@ -7864,31 +7795,31 @@ msgstr ""
 "aanschaf- en restwaarde. De economische levensduur is het aantal perioden "
 "(meestal jaren) waarin het actief word afgeschreven."
 
-#: ../data/functions.xml.in.h:1121
+#: ../data/functions.xml.in.h:1118
 msgid "Cost"
 msgstr "Kosten"
 
-#: ../data/functions.xml.in.h:1122
+#: ../data/functions.xml.in.h:1119
 msgid "Salvage value"
 msgstr "Restwaarde"
 
-#: ../data/functions.xml.in.h:1123
+#: ../data/functions.xml.in.h:1120
 msgid "Life"
 msgstr "Levensduur"
 
-#: ../data/functions.xml.in.h:1124
+#: ../data/functions.xml.in.h:1121
 msgid "Period"
 msgstr "Termijn"
 
-#: ../data/functions.xml.in.h:1125
+#: ../data/functions.xml.in.h:1122
 msgid "Straight Line Depreciation"
 msgstr "Gelijkblijvende afschrijving"
 
-#: ../data/functions.xml.in.h:1126
+#: ../data/functions.xml.in.h:1123
 msgid "r:sln"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1127
+#: ../data/functions.xml.in.h:1124
 msgid ""
 "Determines the straight line depreciation of an asset for a single period."
 "&#10;&#10;Cost is the amount you paid for the asset. Salvage is the value of "
@@ -7903,15 +7834,15 @@ msgstr ""
 "afgeschreven. Door deze vorm van afschrijven worden de kosten gelijkelijk "
 "verdeeld over de gehele afschrijvingsduur."
 
-#: ../data/functions.xml.in.h:1128
+#: ../data/functions.xml.in.h:1125
 msgid "Present Value"
 msgstr "Huidige waarde"
 
-#: ../data/functions.xml.in.h:1129
+#: ../data/functions.xml.in.h:1126
 msgid "r:pv"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1130
+#: ../data/functions.xml.in.h:1127
 msgid ""
 "Returns the present value of an investment.&#10;&#10;If type = 1 then the "
 "payment is made at the beginning of the period. If type = 0 (or omitted) it "
@@ -7921,35 +7852,35 @@ msgstr ""
 "de uitbetaling aan het begin van de termijn, indien type = 0 (of weggelaten) "
 "aan het einde van elke termijn."
 
-#: ../data/functions.xml.in.h:1131
+#: ../data/functions.xml.in.h:1128
 msgid "Interest rate"
 msgstr "Rentepercentage"
 
-#: ../data/functions.xml.in.h:1132
+#: ../data/functions.xml.in.h:1129
 msgid "Number of periods"
 msgstr "Aantal termijnen"
 
-#: ../data/functions.xml.in.h:1133
+#: ../data/functions.xml.in.h:1130
 msgid "Payment made each period"
 msgstr "Termijnbetaling"
 
-#: ../data/functions.xml.in.h:1134
+#: ../data/functions.xml.in.h:1131
 msgid "Future value"
 msgstr "Toekomstige waarde"
 
-#: ../data/functions.xml.in.h:1135
+#: ../data/functions.xml.in.h:1132
 msgid "Type"
 msgstr "Type"
 
-#: ../data/functions.xml.in.h:1136
+#: ../data/functions.xml.in.h:1133
 msgid "Nominal Interest Rate"
 msgstr "Nominaal rentepercentage"
 
-#: ../data/functions.xml.in.h:1137
+#: ../data/functions.xml.in.h:1134
 msgid "r:nominal"
 msgstr "nominaal"
 
-#: ../data/functions.xml.in.h:1138
+#: ../data/functions.xml.in.h:1135
 msgid ""
 "Calculates the nominal interest rate from a given effective interest rate "
 "compounded at given intervals."
@@ -7957,120 +7888,120 @@ msgstr ""
 "Berekent de nominale rente uit de effectieve rente betaald over het "
 "opgegeven tijdsinterval."
 
-#: ../data/functions.xml.in.h:1139
+#: ../data/functions.xml.in.h:1136
 msgid "Effective interest rate"
 msgstr "Effectief rentepercentage"
 
-#: ../data/functions.xml.in.h:1140
+#: ../data/functions.xml.in.h:1137
 msgid "Periods"
 msgstr "Termijnen"
 
-#: ../data/functions.xml.in.h:1141
+#: ../data/functions.xml.in.h:1138
 msgid "Zero Coupon"
 msgstr "Zonder coupons"
 
-#: ../data/functions.xml.in.h:1142
+#: ../data/functions.xml.in.h:1139
 msgid "r:zero_coupon"
 msgstr "geen_coupon"
 
-#: ../data/functions.xml.in.h:1143
+#: ../data/functions.xml.in.h:1140
 msgid "Calculates the value of a zero-coupon (pure discount) bond."
 msgstr "Berekent de waarde van een obligatie zonder coupons."
 
-#: ../data/functions.xml.in.h:1144
+#: ../data/functions.xml.in.h:1141
 msgid "Face value"
 msgstr "Nominale waarde"
 
-#: ../data/functions.xml.in.h:1145
+#: ../data/functions.xml.in.h:1142
 msgid "Treasury Bill Yield"
 msgstr "Opbrengst kortlopende overheidsobligatie zonder coupons"
 
-#: ../data/functions.xml.in.h:1146
+#: ../data/functions.xml.in.h:1143
 msgid "r:tbillyield"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1147
+#: ../data/functions.xml.in.h:1144
 msgid "Returns the yield for a treasury bill."
 msgstr ""
 "Berekent de opbrengst van een kortlopende overheidsobligatie zonder coupons."
 
-#: ../data/functions.xml.in.h:1148
+#: ../data/functions.xml.in.h:1145
 msgid "Settlement date"
 msgstr "Afwikkeldatum"
 
-#: ../data/functions.xml.in.h:1149
+#: ../data/functions.xml.in.h:1146
 msgid "Maturity date"
 msgstr "Vervaldatum"
 
-#: ../data/functions.xml.in.h:1150
+#: ../data/functions.xml.in.h:1147
 msgid "Price per $100 face value"
 msgstr "Prijs per &euro;100 nominale waarde"
 
-#: ../data/functions.xml.in.h:1151
+#: ../data/functions.xml.in.h:1148
 msgid "Treasury Bill Price"
 msgstr "Prijs kortlopende overheidsobligatie zonder coupons"
 
-#: ../data/functions.xml.in.h:1152
+#: ../data/functions.xml.in.h:1149
 msgid "r:tbillprice"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1153
+#: ../data/functions.xml.in.h:1150
 msgid "Returns the price per $100 value for a treasury bill."
 msgstr ""
 "Berekent de prijs per € 100 voor een kortlopende overheidsobligatie zonder "
 "coupons."
 
-#: ../data/functions.xml.in.h:1154
+#: ../data/functions.xml.in.h:1151
 msgid "Discount rate"
 msgstr "Discontopercentage"
 
-#: ../data/functions.xml.in.h:1155
+#: ../data/functions.xml.in.h:1152
 msgid "Treasury Bill Equivalent"
 msgstr "Equivalent van kortlopende overheidsobligatie zonder coupons"
 
-#: ../data/functions.xml.in.h:1156
+#: ../data/functions.xml.in.h:1153
 msgid "r:tbilleq"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1157
+#: ../data/functions.xml.in.h:1154
 msgid "Returns the bond equivalent for a treasury bill."
 msgstr ""
 "Berekent het obligatie-equivalent voor een kortlopende overheidsobligatie "
 "zonder coupons."
 
-#: ../data/functions.xml.in.h:1158
+#: ../data/functions.xml.in.h:1155
 msgid "Interest paid on a given period of an investment (ISPMT)"
 msgstr "Rente betaald over een gegeven investeringstermijn (ISPMT)"
 
-#: ../data/functions.xml.in.h:1159
+#: ../data/functions.xml.in.h:1156
 msgid "r:ispmt"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1160
+#: ../data/functions.xml.in.h:1157
 msgid "Calculates the interest paid on a given period of an investment."
 msgstr "Berekent de betaalde rente over de opgegeven investeringstermijn."
 
-#: ../data/functions.xml.in.h:1161
+#: ../data/functions.xml.in.h:1158
 msgid "Periodic interest rate"
 msgstr "Periodiek rentepercentage"
 
-#: ../data/functions.xml.in.h:1162
+#: ../data/functions.xml.in.h:1159
 msgid "Amortizement period"
 msgstr "Amortisatieperiode"
 
-#: ../data/functions.xml.in.h:1163
+#: ../data/functions.xml.in.h:1160
 msgid "Present value"
 msgstr "Huidige waarde"
 
-#: ../data/functions.xml.in.h:1164
+#: ../data/functions.xml.in.h:1161
 msgid "Payment for a loan"
 msgstr "Betaling voor een lening"
 
-#: ../data/functions.xml.in.h:1165
+#: ../data/functions.xml.in.h:1162
 msgid "r:pmt"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1166
+#: ../data/functions.xml.in.h:1163
 #, fuzzy
 msgid ""
 "Returns the amount of payment (negative) each period for a loan based on a "
@@ -8089,21 +8020,21 @@ msgstr ""
 "de termijn worden betaald, Indien type = 0 (ofweggelaten) aan het einde van "
 "elke termijn."
 
-#: ../data/functions.xml.in.h:1167
+#: ../data/functions.xml.in.h:1164
 msgid "Rate"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1168
+#: ../data/functions.xml.in.h:1165
 #, fuzzy
 msgid "Rate of investment"
 msgstr "Termijnen van een investering"
 
-#: ../data/functions.xml.in.h:1169
+#: ../data/functions.xml.in.h:1166
 #, fuzzy
 msgid "r:rate"
 msgstr "renteperc"
 
-#: ../data/functions.xml.in.h:1171
+#: ../data/functions.xml.in.h:1168
 #, fuzzy, no-c-format
 msgid ""
 "Calculates the rate of return. &#10;&#10;If type = 1 then the payment is "
@@ -8115,19 +8046,19 @@ msgstr ""
 "de uitbetaling aan het begin van de termijn, indien type = 0 (of weggelaten) "
 "aan het einde van elke termijn."
 
-#: ../data/functions.xml.in.h:1172
+#: ../data/functions.xml.in.h:1169
 msgid "Guess"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1173
+#: ../data/functions.xml.in.h:1170
 msgid "Periods of an investment"
 msgstr "Termijnen van een investering"
 
-#: ../data/functions.xml.in.h:1174
+#: ../data/functions.xml.in.h:1171
 msgid "r:nper"
 msgstr "nterm"
 
-#: ../data/functions.xml.in.h:1175
+#: ../data/functions.xml.in.h:1172
 msgid ""
 "Calculates number of periods of an investment based on periodic constant "
 "payments and a constant interest rate.&#10;&#10;Type defines the due date. 1 "
@@ -8139,15 +8070,15 @@ msgstr ""
 "bepaalt de datum waarop moet worden betaald. 1 voor betalen aan het begin "
 "van een termijn en 0 (standaard) voor betalen aan het eind van een termijn."
 
-#: ../data/functions.xml.in.h:1176
+#: ../data/functions.xml.in.h:1173
 msgid "Periods for investment to attain desired value"
 msgstr "Termijnen waarin een investering de gewenste waarde bereikt"
 
-#: ../data/functions.xml.in.h:1177
+#: ../data/functions.xml.in.h:1174
 msgid "r:g_duration"
 msgstr "g_duur"
 
-#: ../data/functions.xml.in.h:1178
+#: ../data/functions.xml.in.h:1175
 msgid ""
 "Returns the number of periods needed for an investment to attain a desired "
 "value."
@@ -8155,15 +8086,15 @@ msgstr ""
 "Retourneert het aantal benodigde termijnen waarna een investering een "
 "gewenste waarde bereikt."
 
-#: ../data/functions.xml.in.h:1179
+#: ../data/functions.xml.in.h:1176
 msgid "Payment of an annuity going towards principal (PPMT)"
 msgstr "Aflossingsdeel van een termijn van een annuïteit (PPMT)"
 
-#: ../data/functions.xml.in.h:1180
+#: ../data/functions.xml.in.h:1177
 msgid "r:ppmt"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1181
+#: ../data/functions.xml.in.h:1178
 msgid ""
 "Calculates the amount of a payment of an annuity going towards principal."
 "&#10;&#10;Type defines the due date. 1 for payment at the beginning of a "
@@ -8174,35 +8105,35 @@ msgstr ""
 "aanhet het begin van de termijn en 0 (standaard) voor betaling aan het einde "
 "van de termijn."
 
-#: ../data/functions.xml.in.h:1182
+#: ../data/functions.xml.in.h:1179
 msgid "Desired future value"
 msgstr "Gewenste toekomstige waarde"
 
-#: ../data/functions.xml.in.h:1183
+#: ../data/functions.xml.in.h:1180
 msgid "Effective Interest Rate"
 msgstr "Effectief rentepercentage"
 
-#: ../data/functions.xml.in.h:1184
+#: ../data/functions.xml.in.h:1181
 msgid "r:effect"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1185
+#: ../data/functions.xml.in.h:1182
 msgid "Calculates the effective interest for a given nominal rate."
 msgstr "Berekent de effectieve rente bij een gegeven nominale rente."
 
-#: ../data/functions.xml.in.h:1186
+#: ../data/functions.xml.in.h:1183
 msgid "Nominal interest rate"
 msgstr "Nominaal rentepercentage"
 
-#: ../data/functions.xml.in.h:1187
+#: ../data/functions.xml.in.h:1184
 msgid "Future Value"
 msgstr "Toekomstige waarde"
 
-#: ../data/functions.xml.in.h:1188
+#: ../data/functions.xml.in.h:1185
 msgid "r:fv"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1189
+#: ../data/functions.xml.in.h:1186
 msgid ""
 "Computes the future value of an investment. This is based on periodic, "
 "constant payments and a constant interest rate.&#10;&#10;If type = 1 then "
@@ -8214,15 +8145,15 @@ msgstr ""
 "type = 1 wordt er betaald aanhet het begin van de termijn, als type = 0 (of "
 "weggelaten)wordt er betaald aan het einde van elke termijn."
 
-#: ../data/functions.xml.in.h:1190
+#: ../data/functions.xml.in.h:1187
 msgid "Return on continuously compounded interest"
 msgstr "Opbrengst van continu samengestelde rente"
 
-#: ../data/functions.xml.in.h:1191
+#: ../data/functions.xml.in.h:1188
 msgid "r:continuous"
 msgstr "continu"
 
-#: ../data/functions.xml.in.h:1192
+#: ../data/functions.xml.in.h:1189
 msgid ""
 "Calculates the return on continuously compounded interest, given the "
 "principal, nominal rate and time in years."
@@ -8230,19 +8161,19 @@ msgstr ""
 "Berekent de opbrengst bij een continu samengestelde rente, gegeven de "
 "hoofdsom, nominale rente en de tijd in jaren."
 
-#: ../data/functions.xml.in.h:1193
+#: ../data/functions.xml.in.h:1190
 msgid "Principal"
 msgstr "Hoofdsom"
 
-#: ../data/functions.xml.in.h:1194
+#: ../data/functions.xml.in.h:1191
 msgid "Compound"
 msgstr "Samengesteld"
 
-#: ../data/functions.xml.in.h:1195
+#: ../data/functions.xml.in.h:1192
 msgid "r:compound"
 msgstr "samenstellen"
 
-#: ../data/functions.xml.in.h:1196
+#: ../data/functions.xml.in.h:1193
 msgid ""
 "Returns the value of an investment, given the principal, nominal interest "
 "rate, compounding frequency and time."
@@ -8250,19 +8181,19 @@ msgstr ""
 "Berekent de waarde van een investering, gegeven de hoofdsom, nominale rente, "
 "samenstellingsfrequentie en tijdsduur."
 
-#: ../data/functions.xml.in.h:1197
+#: ../data/functions.xml.in.h:1194
 msgid "Periods per year"
 msgstr "Termijnen per jaar"
 
-#: ../data/functions.xml.in.h:1198
+#: ../data/functions.xml.in.h:1195
 msgid "Payment of an annuity going towards interest (IPMT)"
 msgstr "Interestdeel van een termijn van een annuïteit (IPMT)"
 
-#: ../data/functions.xml.in.h:1199
+#: ../data/functions.xml.in.h:1196
 msgid "r:ipmt"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1200
+#: ../data/functions.xml.in.h:1197
 msgid ""
 "Calculates the amount of a payment of an annuity going towards interest.&#10;"
 "&#10;Type defines the due date. 1 for payment at the beginning of a period "
@@ -8273,17 +8204,17 @@ msgstr ""
 "aanhet het begin van de termijn en 0 (standaard) voor betaling aan het einde "
 "van de termijn."
 
-#: ../data/functions.xml.in.h:1201
+#: ../data/functions.xml.in.h:1198
 msgid "Interest rate for a fully invested security"
 msgstr ""
 "Interestpercentage voor een waardepapier waarvan de hoofdsom aan het einde "
 "vrijvalt"
 
-#: ../data/functions.xml.in.h:1202
+#: ../data/functions.xml.in.h:1199
 msgid "r:intrate"
 msgstr "renteperc"
 
-#: ../data/functions.xml.in.h:1203
+#: ../data/functions.xml.in.h:1200
 msgid ""
 "Returns the interest rate for a fully invested security.&#10;&#10;Basis is "
 "the type of day counting you want to use: 0: US 30/360 (default), 1: real "
@@ -8294,46 +8225,46 @@ msgstr ""
 "(standaard), 1: werkelijke dagen, 2: werkelijke dagen/360, 3: werkelijke "
 "dagen/365 of 4: Europees 30/360."
 
-#: ../data/functions.xml.in.h:1204
+#: ../data/functions.xml.in.h:1201
 msgid "Investment"
 msgstr "Investering"
 
-#: ../data/functions.xml.in.h:1205
+#: ../data/functions.xml.in.h:1202
 msgid "Redemption"
 msgstr "Aflossing"
 
-#: ../data/functions.xml.in.h:1206
+#: ../data/functions.xml.in.h:1203
 msgid "Dollar Fraction"
 msgstr "Dollar fractie"
 
-#: ../data/functions.xml.in.h:1207
+#: ../data/functions.xml.in.h:1204
 msgid "r:dollarfr"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1208
+#: ../data/functions.xml.in.h:1205
 msgid ""
 "Converts a decimal dollar price into a dollar price expressed as a fraction."
 msgstr ""
 "Converteert een prijs in decimale dollars naar een prijs in dollars "
 "uitgedrukt als een breuk."
 
-#: ../data/functions.xml.in.h:1209
+#: ../data/functions.xml.in.h:1206
 msgid "Decimal dollar"
 msgstr "Decimale dollar"
 
-#: ../data/functions.xml.in.h:1210
+#: ../data/functions.xml.in.h:1207
 msgid "Denominator of fraction"
 msgstr "Noemer van breuk"
 
-#: ../data/functions.xml.in.h:1211
+#: ../data/functions.xml.in.h:1208
 msgid "Dollar Decimal"
 msgstr "Dollar decimaal"
 
-#: ../data/functions.xml.in.h:1212
+#: ../data/functions.xml.in.h:1209
 msgid "r:dollarde"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1213
+#: ../data/functions.xml.in.h:1210
 msgid ""
 "Converts a dollar price expressed as a fraction into a dollar price "
 "expressed as a decimal number."
@@ -8341,19 +8272,19 @@ msgstr ""
 "Converteert een prijs in dollars uitgedrukt als een breuk naar een prijs "
 "uitgedrukt in een decimaal getal."
 
-#: ../data/functions.xml.in.h:1214
+#: ../data/functions.xml.in.h:1211
 msgid "Fractional dollar"
 msgstr "Dollar als breuk"
 
-#: ../data/functions.xml.in.h:1215
+#: ../data/functions.xml.in.h:1212
 msgid "Amount received at maturity for a security bond"
 msgstr "Ontvangen bedrag voor een waardepapier op vervaldatum"
 
-#: ../data/functions.xml.in.h:1216
+#: ../data/functions.xml.in.h:1213
 msgid "r:received"
 msgstr "ontvangen"
 
-#: ../data/functions.xml.in.h:1217
+#: ../data/functions.xml.in.h:1214
 msgid ""
 "Returns the amount received at the maturity date for an invested security."
 "&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360 "
@@ -8366,15 +8297,15 @@ msgstr ""
 "dagen/360, 3: werkelijke dagen/365 of 4: Europees 30/360. De afwikkeling "
 "moet plaats vinden voor de afloopdatum."
 
-#: ../data/functions.xml.in.h:1218
+#: ../data/functions.xml.in.h:1215
 msgid "Discount rate for a security"
 msgstr "Discontopercentage voor een waardepapier"
 
-#: ../data/functions.xml.in.h:1219
+#: ../data/functions.xml.in.h:1216
 msgid "r:disc"
 msgstr "kort"
 
-#: ../data/functions.xml.in.h:1220
+#: ../data/functions.xml.in.h:1217
 msgid ""
 "Returns the discount rate for a security.&#10;&#10;Basis is the type of day "
 "counting you want to use: 0: US 30/360 (default), 1: real days, 2: real "
@@ -8385,15 +8316,15 @@ msgstr ""
 "dagen, 2: werkelijke dagen/360, 3: werkelijke dagen/365 of 4: Europees "
 "30/360."
 
-#: ../data/functions.xml.in.h:1221
+#: ../data/functions.xml.in.h:1218
 msgid "Accrued interest of security paying at maturity"
 msgstr "Totale rente van waardepapier op vervaldatum"
 
-#: ../data/functions.xml.in.h:1222
+#: ../data/functions.xml.in.h:1219
 msgid "r:accrintm"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1223
+#: ../data/functions.xml.in.h:1220
 msgid ""
 "Returns the accrued interest for a security which pays interest at maturity "
 "date.&#10;&#10;Basis is the type of day counting you want to use: 0: US "
@@ -8405,27 +8336,27 @@ msgstr ""
 "gebruiken: 0: US 30/360 (standaard), 1: werkelijke dagen, 2: werkelijke "
 "dagen/360, 3: werkelijke dagen/365 of 4: Europees 30/360."
 
-#: ../data/functions.xml.in.h:1224
+#: ../data/functions.xml.in.h:1221
 msgid "Issue date"
 msgstr "Uitgiftedatum"
 
-#: ../data/functions.xml.in.h:1225
+#: ../data/functions.xml.in.h:1222
 msgid "Annual rate of security"
 msgstr "Jaarlijkse rente van waardepapier"
 
-#: ../data/functions.xml.in.h:1226
+#: ../data/functions.xml.in.h:1223
 msgid "Par value"
 msgstr "Nominale waarde"
 
-#: ../data/functions.xml.in.h:1227
+#: ../data/functions.xml.in.h:1224
 msgid "Accrued interest of security with periodic interest payments"
 msgstr "Totale rente van waardepapier met periodieke renteuitkeringen"
 
-#: ../data/functions.xml.in.h:1228
+#: ../data/functions.xml.in.h:1225
 msgid "r:accrint"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1229
+#: ../data/functions.xml.in.h:1226
 msgid ""
 "Returns accrued interest for a security which pays periodic interest.&#10;"
 "&#10;Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. "
@@ -8438,23 +8369,23 @@ msgstr ""
 "gebruiken: 0: US 30/360 (standaard), 1: werkelijke dagen, 2: werkelijke "
 "dagen/360, 3: werkelijke dagen/365 of 4: Europees 30/360."
 
-#: ../data/functions.xml.in.h:1230
+#: ../data/functions.xml.in.h:1227
 msgid "First interest"
 msgstr "Eerste rente"
 
-#: ../data/functions.xml.in.h:1231
+#: ../data/functions.xml.in.h:1228
 msgid "Frequency"
 msgstr "Frequentie"
 
-#: ../data/functions.xml.in.h:1232
+#: ../data/functions.xml.in.h:1229
 msgid "Number of coupons to be paid"
 msgstr "Aantal te betalen coupons"
 
-#: ../data/functions.xml.in.h:1233
+#: ../data/functions.xml.in.h:1230
 msgid "r:coupnum"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1234
+#: ../data/functions.xml.in.h:1231
 msgid ""
 "Returns the number of coupons to be paid between the settlement and the "
 "maturity.&#10;&#10;Basis is the type of day counting you want to use: 0: US "
@@ -8466,16 +8397,16 @@ msgstr ""
 "(standaard), 1: werkelijke dagen, 2: werkelijke dagen/360, 3: werkelijke "
 "dagen/365 of 4: Europees 30/360."
 
-#: ../data/functions.xml.in.h:1235
+#: ../data/functions.xml.in.h:1232
 #, fuzzy
 msgid "Price per $100 face value of a discounted security"
 msgstr "Prijs per &euro;100 nominale waarde van een waardepapier"
 
-#: ../data/functions.xml.in.h:1236
+#: ../data/functions.xml.in.h:1233
 msgid "r:pricedisc"
 msgstr "prijskorting"
 
-#: ../data/functions.xml.in.h:1237
+#: ../data/functions.xml.in.h:1234
 #, fuzzy
 msgid ""
 "Calculates and returns the price per $100 face value of a discounted "
@@ -8489,19 +8420,19 @@ msgstr ""
 "werkelijke dagen, 2: werkelijke dagen/360, 3: werkelijke dagen/365 of 4: "
 "Europees 30/360."
 
-#: ../data/functions.xml.in.h:1238
+#: ../data/functions.xml.in.h:1235
 msgid "Discount"
 msgstr "Korting"
 
-#: ../data/functions.xml.in.h:1239
+#: ../data/functions.xml.in.h:1236
 msgid "Price per $100 face value of a security"
 msgstr "Prijs per &euro;100 nominale waarde van een waardepapier"
 
-#: ../data/functions.xml.in.h:1240
+#: ../data/functions.xml.in.h:1237
 msgid "r:pricemat"
 msgstr "prijsmat"
 
-#: ../data/functions.xml.in.h:1241
+#: ../data/functions.xml.in.h:1238
 msgid ""
 "Calculates and returns the price per $100 face value of a security. The "
 "security pays interest at maturity.&#10;&#10;Basis is the type of day "
@@ -8514,31 +8445,31 @@ msgstr ""
 "werkelijke dagen, 2: werkelijke dagen/360, 3: werkelijke dagen/365 of 4: "
 "Europees 30/360."
 
-#: ../data/functions.xml.in.h:1242
+#: ../data/functions.xml.in.h:1239
 msgid "Annual yield"
 msgstr "Opbrengst per jaar"
 
-#: ../data/functions.xml.in.h:1243
+#: ../data/functions.xml.in.h:1240
 msgid "Level-Coupon Bond"
 msgstr "Obligatie met gelijkblijvende coupons"
 
-#: ../data/functions.xml.in.h:1244
+#: ../data/functions.xml.in.h:1241
 msgid "r:level_coupon"
 msgstr "gelijke_coupon"
 
-#: ../data/functions.xml.in.h:1245
+#: ../data/functions.xml.in.h:1242
 msgid "Calculates the value of a level-coupon bond."
 msgstr "Berekent de waarde van een obligatie met gelijkblijvende coupons."
 
-#: ../data/functions.xml.in.h:1246
+#: ../data/functions.xml.in.h:1243
 msgid "Coupon rate"
 msgstr "Couponrente"
 
-#: ../data/functions.xml.in.h:1247
+#: ../data/functions.xml.in.h:1244
 msgid "Coupons per year"
 msgstr "Aantal coupons per jaar"
 
-#: ../data/functions.xml.in.h:1248
+#: ../data/functions.xml.in.h:1245
 msgid "Market interest rate"
 msgstr "Marktrente"
 
@@ -8600,39 +8531,32 @@ msgid "ar:p,r:pico"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:6
-#, fuzzy
 msgid "ar:n,r:nano"
-msgstr "onwaar,nee"
+msgstr ""
 
 #: ../data/prefixes.xml.in.h:7
-#, fuzzy
 msgid "aur:&#x3BC;,auor:&#x0B5;,ar:u,r:micro"
-msgstr "au:&#x3A3;,au:&#x2211;,som"
+msgstr ""
 
 #: ../data/prefixes.xml.in.h:8
-#, fuzzy
 msgid "ar:m,r:milli"
-msgstr "miljoen"
+msgstr ""
 
 #: ../data/prefixes.xml.in.h:9
-#, fuzzy
 msgid "ar:c,r:centi"
-msgstr "a:%,procent"
+msgstr ""
 
 #: ../data/prefixes.xml.in.h:10
-#, fuzzy
 msgid "ar:d,r:deci"
-msgstr "deciel"
+msgstr ""
 
 #: ../data/prefixes.xml.in.h:11
-#, fuzzy
 msgid "ar:da,r:deca"
-msgstr "a:d,dag,p:dagen"
+msgstr ""
 
 #: ../data/prefixes.xml.in.h:12
-#, fuzzy
 msgid "ar:h,r:hecto"
-msgstr "a:h,uur,p:uren"
+msgstr ""
 
 #: ../data/prefixes.xml.in.h:13
 msgid "ar:k,r:kilo"
@@ -8651,9 +8575,8 @@ msgid "ar:T,r:tera"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:17
-#, fuzzy
 msgid "ar:P,r:peta"
-msgstr "a:%,procent"
+msgstr ""
 
 #: ../data/prefixes.xml.in.h:18
 msgid "ar:E,r:exa"
@@ -8729,9 +8652,8 @@ msgid "Millimeter"
 msgstr "Milimeter"
 
 #: ../data/units.xml.in.h:9
-#, fuzzy
 msgid "Micrometer"
-msgstr "Milimeter"
+msgstr ""
 
 #: ../data/units.xml.in.h:10
 msgid "Nanometer"
@@ -9015,7 +8937,7 @@ msgstr "Hoekversnelling"
 
 #: ../data/units.xml.in.h:81
 msgid "Radians per Second Squared"
-msgstr "Radialen per seconde kwadraat"
+msgstr "Radialen per vierkante seconde"
 
 #: ../data/units.xml.in.h:82
 msgid "Angular Velocity"
@@ -9200,14 +9122,12 @@ msgid "Dalton"
 msgstr ""
 
 #: ../data/units.xml.in.h:128
-#, fuzzy
 msgid "ar:Da,dalton,p:daltons"
-msgstr "a:rad,radiaal,p:radialen"
+msgstr ""
 
 #: ../data/units.xml.in.h:129
-#, fuzzy
 msgid "Kilodalton"
-msgstr "Kilowattuur"
+msgstr ""
 
 #: ../data/units.xml.in.h:131
 msgid "Kilogram per Cubic Meter"
@@ -9338,7 +9258,7 @@ msgstr "Stroomdichtheid"
 
 #: ../data/units.xml.in.h:170
 msgid "Ampere per Meter Squared"
-msgstr "Ampere per meter kwadraat"
+msgstr "Ampere per vierkante meter"
 
 #: ../data/units.xml.in.h:171
 msgid "Electric Charge"
@@ -9446,9 +9366,8 @@ msgid "Ohm"
 msgstr ""
 
 #: ../data/units.xml.in.h:197
-#, fuzzy
 msgid "au:&#x3A9;,r:ohm,p:ohms,auio:&#x2126;"
-msgstr "au:&#x3A9;,ohm"
+msgstr "au:&#x3A9;,ohm,auio:&#x2126;"
 
 #: ../data/units.xml.in.h:198
 msgid "Abohm"
@@ -9475,9 +9394,8 @@ msgid "Siemens"
 msgstr ""
 
 #: ../data/units.xml.in.h:204
-#, fuzzy
 msgid "ar:S,siemens,auio:&#x2127;"
-msgstr "gouden,&#x3C6;"
+msgstr ""
 
 #: ../data/units.xml.in.h:205
 msgid "Electric Field Strength"
@@ -9708,7 +9626,7 @@ msgstr "Irradiantie"
 
 #: ../data/units.xml.in.h:261
 msgid "Watt per Meter Squared"
-msgstr "Watt per meter kwadraat"
+msgstr "Watt per vierkante meter"
 
 #: ../data/units.xml.in.h:262
 msgid "Einstein per Meter Squared per Second"
@@ -9747,14 +9665,12 @@ msgid "ar:a,are,p:ares"
 msgstr ""
 
 #: ../data/units.xml.in.h:271
-#, fuzzy
 msgid "Circular Mil"
-msgstr "Vierkante mijl"
+msgstr ""
 
 #: ../data/units.xml.in.h:272
-#, fuzzy
 msgid "r:cmil,p:cmils"
-msgstr "kop,p:koppen"
+msgstr ""
 
 #: ../data/units.xml.in.h:273
 msgid "Thousand of Circular Mil"
@@ -9765,18 +9681,16 @@ msgid "Hectare"
 msgstr ""
 
 #: ../data/units.xml.in.h:275
-#, fuzzy
 msgid "ar:ha,hectare,p:hectares"
-msgstr "a:h,uur,p:uren"
+msgstr ""
 
 #: ../data/units.xml.in.h:276
 msgid "Decare"
 msgstr ""
 
 #: ../data/units.xml.in.h:277
-#, fuzzy
 msgid "a:da,r:decare,p:decares"
-msgstr "a:d,dag,p:dagen"
+msgstr ""
 
 #: ../data/units.xml.in.h:278
 msgid "Barn"
@@ -9917,7 +9831,7 @@ msgstr ""
 #: ../data/units.xml.in.h:312
 #, fuzzy
 msgid "r-c:cup,p-c:cups"
-msgstr "kop,p:koppen"
+msgstr "-c:kop,p-c:koppen"
 
 #: ../data/units.xml.in.h:313
 msgid "Imperial Capacity"
@@ -10093,9 +10007,8 @@ msgid "U.S. Barrel (oil)"
 msgstr "U.S. Barrell (olie)"
 
 #: ../data/units.xml.in.h:356
-#, fuzzy
 msgid "ar:bbl,barrel,p:barrels"
-msgstr "bar"
+msgstr ""
 
 #: ../data/units.xml.in.h:357
 #, fuzzy
@@ -10224,7 +10137,7 @@ msgstr "Versnelling"
 
 #: ../data/units.xml.in.h:387
 msgid "Meter per Second Squared"
-msgstr "Meter per seconde kwadraat"
+msgstr "Meter per vierkante seconde"
 
 #: ../data/units.xml.in.h:388
 msgid "Galileo"
@@ -10320,9 +10233,8 @@ msgid "Magnetic Dipole Moment"
 msgstr "Magnetisch dipoolmoment"
 
 #: ../data/units.xml.in.h:411
-#, fuzzy
 msgid "Ampere Square Meter"
-msgstr "Ampere per meter"
+msgstr "Ampere per vierkante meter"
 
 #: ../data/units.xml.in.h:412
 msgid "Atomic Unit of Magnetic Dipole Moment"
@@ -10423,27 +10335,24 @@ msgid "ar:Pa,pascal,p:pascals"
 msgstr ""
 
 #: ../data/units.xml.in.h:436
-#, fuzzy
 msgid "Kilogram-force per Square Centimetre"
-msgstr "Pound-force per inch kwadraat"
+msgstr "Kilogram-kracht per vierkante centimeter"
 
 #: ../data/units.xml.in.h:437
 msgid "Pound-force per Square Inch (psi)"
-msgstr "Pound-force per inch kwadraat (psi)"
+msgstr "Pound-force per vierkante inch (psi)"
 
 #: ../data/units.xml.in.h:438
 msgid "a-cr:psi"
 msgstr ""
 
 #: ../data/units.xml.in.h:439
-#, fuzzy
 msgid "Kilopound-force per Square Inch (ksi)"
-msgstr "Pound-force per inch kwadraat (psi)"
+msgstr "Kilopound-force per vierkante inch (ksi)"
 
 #: ../data/units.xml.in.h:440
-#, fuzzy
 msgid "a-cr:ksi"
-msgstr "a:NLG,gulden"
+msgstr ""
 
 #: ../data/units.xml.in.h:441
 msgid "Bar"
@@ -10466,9 +10375,8 @@ msgid "Torr"
 msgstr ""
 
 #: ../data/units.xml.in.h:446
-#, fuzzy
 msgid "ar:Torr,torr,p:torrs"
-msgstr "a:h,uur,p:uren"
+msgstr ""
 
 #: ../data/units.xml.in.h:447
 msgid "Meter of Mercury"
@@ -10495,9 +10403,8 @@ msgid "ar:inHg"
 msgstr ""
 
 #: ../data/units.xml.in.h:453
-#, fuzzy
 msgid "Millitorr"
-msgstr "Miljoen"
+msgstr ""
 
 #: ../data/units.xml.in.h:454
 msgid "Barye"
@@ -10524,9 +10431,8 @@ msgid "ar:P,poise,p:poises"
 msgstr ""
 
 #: ../data/units.xml.in.h:460
-#, fuzzy
 msgid "Centipoise"
-msgstr "Quinquagintiljard"
+msgstr ""
 
 #: ../data/units.xml.in.h:461
 msgid "Kinematic Viscosity"
@@ -10845,9 +10751,8 @@ msgid "Rad"
 msgstr ""
 
 #: ../data/units.xml.in.h:540
-#, fuzzy
 msgid "rs:rad_radioactivity"
-msgstr "Radioactiviteit"
+msgstr ""
 
 #: ../data/units.xml.in.h:541
 msgid "Dose Equivalent"
@@ -10866,14 +10771,12 @@ msgid "Roentgen Equivalent Man (Rem)"
 msgstr ""
 
 #: ../data/units.xml.in.h:545
-#, fuzzy
 msgid "ros:rem_radioactivity,a:rem"
-msgstr "Radioactiviteit"
+msgstr ""
 
 #: ../data/units.xml.in.h:546
-#, fuzzy
 msgid "Millirem"
-msgstr "Miljoen"
+msgstr ""
 
 #: ../data/units.xml.in.h:547
 msgid "Erg per Gram"
@@ -10904,7 +10807,6 @@ msgid "Gray per Second"
 msgstr "Gray per seconde"
 
 #: ../data/units.xml.in.h:554
-#, fuzzy
 msgid "Millirem per Hour"
 msgstr "Millirem per uur"
 
@@ -10925,18 +10827,16 @@ msgid "Bel"
 msgstr ""
 
 #: ../data/units.xml.in.h:559
-#, fuzzy
 msgid "r:bel,p:bels"
-msgstr "bar"
+msgstr ""
 
 #: ../data/units.xml.in.h:560
 msgid "Decibel"
 msgstr ""
 
 #: ../data/units.xml.in.h:561
-#, fuzzy
 msgid "ar:dB,decibel,p:decibels"
-msgstr "a:d,dag,p:dagen"
+msgstr ""
 
 #: ../data/units.xml.in.h:562
 msgid "Information"
@@ -10951,14 +10851,12 @@ msgid "r:bit,p:bits,shannon,p:shannons,c:Sh,binary_digit,p:binary_digits"
 msgstr ""
 
 #: ../data/units.xml.in.h:565
-#, fuzzy
 msgid "Nat"
-msgstr "Ander teken"
+msgstr ""
 
 #: ../data/units.xml.in.h:566
-#, fuzzy
 msgid "r:nat,p:nats"
-msgstr "knoop,p:knopen"
+msgstr ""
 
 #: ../data/units.xml.in.h:567
 msgid "Trit (Ternary Digit)"
@@ -11017,18 +10915,16 @@ msgid "Nonet"
 msgstr ""
 
 #: ../data/units.xml.in.h:580
-#, fuzzy
 msgid "r:nonet,p:nonets"
-msgstr "knoop,p:knopen"
+msgstr ""
 
 #: ../data/units.xml.in.h:581
 msgid "Declet"
 msgstr ""
 
 #: ../data/units.xml.in.h:582
-#, fuzzy
 msgid "r:declet,p:declets"
-msgstr "eurocent,p:eurocenten"
+msgstr ""
 
 #: ../data/units.xml.in.h:583
 msgid "Word (16-bit)"
@@ -11406,59 +11302,55 @@ msgstr "honderd"
 #: ../data/variables.xml.in.h:60
 #, fuzzy
 msgid "Traditional Numbers"
-msgstr "Willekeurige getallen"
+msgstr "Traditionele getallen"
 
 #: ../data/variables.xml.in.h:61
 msgid "Dozen"
-msgstr ""
+msgstr "Dozijn"
 
 #: ../data/variables.xml.in.h:62
 msgid "-r:dozen,a:dz,a:doz"
-msgstr ""
+msgstr "dozijn"
 
 #: ../data/variables.xml.in.h:63
 msgid "Baker's Dozen"
-msgstr ""
+msgstr "Bakkersdozijn"
 
 #: ../data/variables.xml.in.h:64
 msgid "-r:bakers_dozen"
-msgstr ""
+msgstr "bakkers_dozijn"
 
 #: ../data/variables.xml.in.h:65
 msgid "Score"
-msgstr ""
+msgstr "Stijg"
 
 #: ../data/variables.xml.in.h:66
 msgid "-r:score"
-msgstr ""
+msgstr "stijg"
 
 #: ../data/variables.xml.in.h:67
-#, fuzzy
 msgid "Long Hundred"
-msgstr "Honderd"
+msgstr ""
 
 #: ../data/variables.xml.in.h:68
 msgid "-r:long_hundred,great_hundred,twelfty"
 msgstr ""
 
 #: ../data/variables.xml.in.h:69
-#, fuzzy
 msgid "Gross"
-msgstr "uitproduct"
+msgstr "Gros"
 
 #: ../data/variables.xml.in.h:70
 msgid "-r:gross,a:gro"
-msgstr ""
+msgstr "gros"
 
 #: ../data/variables.xml.in.h:71
-#, fuzzy
 msgid "Long Thousand"
-msgstr "Duizend"
+msgstr ""
 
 #: ../data/variables.xml.in.h:72
-#, fuzzy
 msgid "-r:long_thousand"
-msgstr "duizend"
+msgstr ""
 
 #: ../data/variables.xml.in.h:73
 msgid "Great Gross"
@@ -12085,6 +11977,13 @@ msgstr ""
 #: ../data/variables.xml.in.h:229
 msgid "r:now"
 msgstr ""
+
+#~ msgid "Number of samples / Step size"
+#~ msgstr "Aantal monsters / stapgrootte"
+
+#, fuzzy
+#~ msgid "X variable"
+#~ msgstr "Rijvariabele"
 
 #, fuzzy
 #~ msgid "acr:KGS,au:&#x0441;"
