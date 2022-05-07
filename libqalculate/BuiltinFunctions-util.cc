@@ -1017,6 +1017,7 @@ PlotFunction::PlotFunction() : MathFunction("plot", 1, -1) {
 	LIST_PLOT_OPTION("ymax");
 	LIST_PLOT_OPTION("xlog");
 	LIST_PLOT_OPTION("ylog");
+	LIST_PLOT_OPTION_VALUES("complex", "0, 1");
 	LIST_PLOT_OPTION_VALUES("grid", "0, 1");
 	LIST_PLOT_OPTION_ALT("linewidth", "lw");
 	LIST_PLOT_OPTION_ALT_WV("legend", "key"); LIST_PLOT_VALUE_FIRST("plot legend", "none"); LIST_PLOT_VALUE("plot legend", "top-left"); LIST_PLOT_VALUE("plot legend", "top-right"); LIST_PLOT_VALUE("plot legend", "bottom-left"); LIST_PLOT_VALUE("plot legend", "bottom-right"); LIST_PLOT_VALUE("plot legend", "below"); LIST_PLOT_VALUE_LAST("plot legend", "outside");
@@ -1041,6 +1042,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	MathStructure mstep, mvar(CALCULATOR->getVariableById(VARIABLE_ID_X));
 	int i_rate = 1001;
 	int i_prev = 0;
+	int old_step = 0;
 	for(size_t i = 3; i < vargs.size(); i++) {
 		string svar = vargs[i].symbol();
 		remove_blank_ends(svar);
@@ -1068,6 +1070,8 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			else if(equalsIgnoreCase(svar, "xlog") || equalsIgnoreCase(svar, "logscale x") || equalsIgnoreCase(svar, "x-log") || equalsIgnoreCase(svar, "x log") || equalsIgnoreCase(svar, _c("plot", "xlog"))) {param.x_log = true; i_prev = 10; break;}
 			else if(equalsIgnoreCase(svar, "logscale") || equalsIgnoreCase(svar, _c("plot", "logscale"))) {param.x_log = true; param.y_log = true; i_prev = 19; break;}
 			else if(equalsIgnoreCase(svar, "variable") || equalsIgnoreCase(svar, "var") || equalsIgnoreCase(svar, _c("plot", "variable"))) i_prev = 6;
+			else if(equalsIgnoreCase(svar, "complex") || equalsIgnoreCase(svar, _c("plot", "complex"))) {i_prev = 20; eo2.allow_complex = true;}
+			else if(equalsIgnoreCase(svar, "real") || equalsIgnoreCase(svar, _c("plot", "real"))) {i_prev = 21; eo2.allow_complex = false;}
 			else {
 				size_t i2 = svar.rfind(SPACE);
 				if(i2 == string::npos) {
@@ -1093,15 +1097,26 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				if(svalue == "0") mvar = CALCULATOR->getVariableById(VARIABLE_ID_X);
 				else if(svalue == "1") mvar = CALCULATOR->getVariableById(VARIABLE_ID_Y);
 				else if(svalue == "2") mvar = CALCULATOR->getVariableById(VARIABLE_ID_Z);
-				else {Variable *v = CALCULATOR->getActiveVariable(svalue);
-					if(v) mvar = v;
+				else {
+					if(svalue[0] == '\\' && unicode_length(svalue) == 2) {
+						mvar.set(svalue.substr(1), false, true);
+					} else if(vargs[0].contains(MathStructure(svalue, true))) {
+						mvar.set(svalue, false, true);
+					} else {
+						Variable *v = CALCULATOR->getActiveVariable(svalue);
+						if(v && !v->isKnown()) mvar = v;
+						else mvar.set(svalue, false, true);
+					}
 				}
 			} else {
 				if(i_prev < 0 || (i_prev != 2 && i_prev != 6)) {
 					bool b_value = true;
-					if(svar.empty() && equalsIgnoreCase(svalue, "x")) {mvar = CALCULATOR->getVariableById(VARIABLE_ID_X); break;}
-					else if(svar.empty() && equalsIgnoreCase(svalue, "y")) {mvar = CALCULATOR->getVariableById(VARIABLE_ID_Y);}
-					else if(svar.empty() && equalsIgnoreCase(svalue, "z")) {mvar = CALCULATOR->getVariableById(VARIABLE_ID_Z);}
+					if(i_prev < 0 && i == 5 && old_step == 2 && svar.empty() && (svalue == "1" || svalue == "0")) {
+						if(svalue == "1" && mstep.isZero()) mstep = i_rate;
+						else if(svalue == "0" && !mstep.isZero() && mstep.isInteger()) {i_rate = mstep.number().intValue(); mstep.clear();}
+					} else if(svar.empty() && equalsIgnoreCase(svalue, "x")) {mvar = CALCULATOR->getVariableById(VARIABLE_ID_X); if(old_step == 1 && i == 4) {old_step = 2;};}
+					else if(svar.empty() && equalsIgnoreCase(svalue, "y")) {mvar = CALCULATOR->getVariableById(VARIABLE_ID_Y);if(old_step == 1 && i == 4) {old_step = 2;};}
+					else if(svar.empty() && equalsIgnoreCase(svalue, "z")) {mvar = CALCULATOR->getVariableById(VARIABLE_ID_Z); if(old_step == 1 && i == 4) {old_step = 2;};}
 					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "lines") || equalsIgnoreCase(svalue, _c("plot style", "lines")))) {style = PLOT_STYLE_LINES;}
 					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "points") || equalsIgnoreCase(svalue, _c("plot style", "points")))) {style = PLOT_STYLE_POINTS;}
 					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "dots") || equalsIgnoreCase(svalue, _c("plot style", "dots")))) {style = PLOT_STYLE_DOTS;}
@@ -1124,7 +1139,6 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					else b_value = false;
 					if(b_value) {
 						i_prev = -1;
-						i++;
 						continue;
 					}
 				}
@@ -1145,9 +1159,10 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 							case 0: {
 								if(i_value <= 10) mstep = m;
 								else i_rate = i_value;
+								if(vargs.size() == 6) old_step = 1;
 								break;
 							}
-							case 1: {i_rate = i_value; break;}
+							case 1: {i_rate = i_value; mstep.clear(); break;}
 							case 2: {mstep = m; break;}
 							case 3: {
 								if(i_value == 0) smoothing = PLOT_SMOOTHING_NONE;
@@ -1178,6 +1193,8 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 								else CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), NULL);
 								break;
 							}
+							case 20: {eo2.allow_complex = i_value; break;}
+							case 21: {eo2.allow_complex = !i_value; break;}
 						}
 					} else if((i_prev == 0 && (m.isNumber() || svalue.find_first_of(NUMBERS) != string::npos)) || i_prev == 2) {
 						mstep = m;

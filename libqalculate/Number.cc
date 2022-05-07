@@ -9738,25 +9738,29 @@ bool Number::factorize(vector<Number> &factors) {
 	}
 	mpz_sqrt(facmax, inr);
 	for(size_t prime_index = 0; prime_index < NR_OF_PRIMES && mpz_cmp_si(facmax, PRIMES[prime_index]) >= 0; prime_index++) {
+		bool b = false;
 		while(mpz_divisible_ui_p(inr, (unsigned long int) PRIMES[prime_index])) {
 			if(CALCULATOR->aborted()) {mpz_clears(inr, last_prime, facmax, NULL); return false;}
 			mpz_divexact_ui(inr, inr, (unsigned long int) PRIMES[prime_index]);
-			Number fac(PRIMES[prime_index], 1);;
+			Number fac(PRIMES[prime_index], 1);
 			factors.push_back(fac);
-			mpz_sqrt(facmax, inr);
+			b = true;
 		}
+		if(b) mpz_sqrt(facmax, inr);
 	}
 	if(mpz_cmp_si(inr, 1) > 0) {
 		mpz_set_si(last_prime, PRIMES[NR_OF_PRIMES - 1] + 2);
 		while(mpz_cmp(facmax, last_prime) >= 0) {
 			if(CALCULATOR->aborted()) {mpz_clears(inr, last_prime, facmax, NULL); return false;}
+			bool b = false;
 			while(mpz_divisible_p(inr, last_prime)) {
 				mpz_divexact(inr, inr, last_prime);
 				Number fac;
 				fac.setInternal(last_prime);
 				factors.push_back(fac);
-				mpz_sqrt(facmax, inr);
+				b = true;
 			}
+			if(b) mpz_sqrt(facmax, inr);
 			mpz_add_ui(last_prime, last_prime, 2);
 		}
 	}
@@ -10180,6 +10184,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		po10.decimalpoint_sign = DOT;
 		po10.digit_grouping = DIGIT_GROUPING_NONE;
 		po10.use_unicode_signs = false;
+		po10.min_exp = EXP_NONE;
 		string str10 = print(po10);
 		bool neg = false;
 		if(!str10.empty() && str10[0] == MINUS_CH) {
@@ -10220,7 +10225,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		Number nr(*this);
 		// number can only be displayed as integers using bijective bases
 		if(!nr.isInteger()) {
-// 			if(po.is_approximate) *po.is_approximate = true;
+ 			if(po.is_approximate) *po.is_approximate = true;
 			nr.intervalToMidValue();
 			if(TRUNCATE) nr.trunc();
 			else nr.round(po.round_halfway_to_even);

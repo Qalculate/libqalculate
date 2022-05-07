@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-03 07:46+0200\n"
+"POT-Creation-Date: 2022-05-05 17:58+0200\n"
 "PO-Revision-Date: 2020-12-02 13:25-0100\n"
 "Last-Translator: Polakrity\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -17,8 +17,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../src/defs2doc.cc:334 ../src/qalc.cc:4121 ../libqalculate/Function.cc:227
-#: ../libqalculate/Function.cc:1471
+#: ../src/defs2doc.cc:334 ../src/qalc.cc:4121 ../libqalculate/Function.cc:228
+#: ../libqalculate/Function.cc:1472
 msgid "argument"
 msgstr "argument"
 
@@ -99,12 +99,12 @@ msgid "relative uncertainty"
 msgstr "incertitude relative"
 
 #: ../src/defs2doc.cc:498 ../src/qalc.cc:1945 ../src/qalc.cc:4358
-#: ../libqalculate/Function.cc:2273
+#: ../libqalculate/Function.cc:2274
 msgid "matrix"
 msgstr "matrice"
 
 #: ../src/defs2doc.cc:500 ../src/qalc.cc:1947 ../src/qalc.cc:4360
-#: ../libqalculate/Function.cc:2200
+#: ../libqalculate/Function.cc:2201
 msgid "vector"
 msgstr "vecteur"
 
@@ -142,7 +142,7 @@ msgstr "non nul"
 
 #: ../src/defs2doc.cc:517 ../src/qalc.cc:305 ../src/qalc.cc:820
 #: ../src/qalc.cc:1975 ../src/qalc.cc:3660 ../src/qalc.cc:4381
-#: ../src/qalc.cc:4532 ../src/qalc.cc:4774 ../libqalculate/Function.cc:2042
+#: ../src/qalc.cc:4532 ../src/qalc.cc:4774 ../libqalculate/Function.cc:2043
 msgid "integer"
 msgstr "entier"
 
@@ -168,7 +168,7 @@ msgstr "complexe"
 
 #: ../src/defs2doc.cc:521 ../src/qalc.cc:297 ../src/qalc.cc:826
 #: ../src/qalc.cc:1980 ../src/qalc.cc:3665 ../src/qalc.cc:4386
-#: ../src/qalc.cc:4526 ../src/qalc.cc:4768 ../libqalculate/Function.cc:1881
+#: ../src/qalc.cc:4526 ../src/qalc.cc:4768 ../libqalculate/Function.cc:1882
 msgid "number"
 msgstr "nombre"
 
@@ -313,7 +313,7 @@ msgstr "aucun"
 
 #: ../src/qalc.cc:307 ../src/qalc.cc:821 ../src/qalc.cc:1976
 #: ../src/qalc.cc:3661 ../src/qalc.cc:4382 ../src/qalc.cc:4534
-#: ../src/qalc.cc:4776 ../libqalculate/Function.cc:2363
+#: ../src/qalc.cc:4776 ../libqalculate/Function.cc:2364
 msgid "boolean"
 msgstr "booléen"
 
@@ -327,7 +327,7 @@ msgstr "Supposition non reconnue."
 #: ../libqalculate/Calculator.cc:239 ../libqalculate/Calculator.cc:472
 #: ../libqalculate/Calculator.cc:607 ../libqalculate/DataSet.cc:1102
 #: ../libqalculate/DataSet.cc:1164 ../libqalculate/MathStructure-print.cc:3774
-#: ../libqalculate/Function.cc:2433 ../libqalculate/Function.cc:2449
+#: ../libqalculate/Function.cc:2434 ../libqalculate/Function.cc:2450
 msgid "or"
 msgstr "ou"
 
@@ -1085,7 +1085,7 @@ msgstr "polaire"
 #: ../src/qalc.cc:1401 ../src/qalc.cc:3436 ../src/qalc.cc:3796
 #: ../src/qalc.cc:4605 ../src/qalc.cc:6232
 #: ../libqalculate/Calculator-calculate.cc:1549
-#: ../libqalculate/Function.cc:2374
+#: ../libqalculate/Function.cc:2375
 msgid "angle"
 msgstr "angle"
 
@@ -1493,13 +1493,13 @@ msgstr "définitions sauvegardées"
 
 #. qalc command
 #: ../src/qalc.cc:2830 ../src/qalc.cc:4015 ../src/qalc.cc:4788
-#: ../src/qalc.cc:4994 ../libqalculate/Function.cc:2335
+#: ../src/qalc.cc:4994 ../libqalculate/Function.cc:2336
 msgid "variable"
 msgstr "variable"
 
 #. qalc command
 #: ../src/qalc.cc:2893 ../src/qalc.cc:4005 ../src/qalc.cc:4794
-#: ../src/qalc.cc:4994 ../libqalculate/Function.cc:2307
+#: ../src/qalc.cc:4994 ../libqalculate/Function.cc:2308
 msgid "function"
 msgstr "function"
 
@@ -3051,228 +3051,238 @@ msgstr ""
 msgid "List of options:"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1053
+#: ../libqalculate/BuiltinFunctions-util.cc:1055
 msgctxt "plot"
 msgid "smooth"
 msgstr "lissage"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1054
+#: ../libqalculate/BuiltinFunctions-util.cc:1056
 msgctxt "plot"
 msgid "style"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1055
+#: ../libqalculate/BuiltinFunctions-util.cc:1057
 msgctxt "plot"
 msgid "step"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1056
+#: ../libqalculate/BuiltinFunctions-util.cc:1058
 msgctxt "plot"
 msgid "samples"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1057
+#: ../libqalculate/BuiltinFunctions-util.cc:1059
 msgctxt "plot"
 msgid "color"
 msgstr "couleur"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1058
+#: ../libqalculate/BuiltinFunctions-util.cc:1060
 msgctxt "plot"
 msgid "grid"
 msgstr "grille"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1059
+#: ../libqalculate/BuiltinFunctions-util.cc:1061
 msgctxt "plot"
 msgid "title"
 msgstr "titre"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1060
+#: ../libqalculate/BuiltinFunctions-util.cc:1062
 msgctxt "plot"
 msgid "legend"
 msgstr "légende"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1061
+#: ../libqalculate/BuiltinFunctions-util.cc:1063
 msgctxt "plot"
 msgid "ylabel"
 msgstr "intitulé y"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1062
+#: ../libqalculate/BuiltinFunctions-util.cc:1064
 msgctxt "plot"
 msgid "xlabel"
 msgstr "intitulé x"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1063
+#: ../libqalculate/BuiltinFunctions-util.cc:1065
 msgctxt "plot"
 msgid "linewidth"
 msgstr "largeur ligne"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1064
+#: ../libqalculate/BuiltinFunctions-util.cc:1066
 msgctxt "plot"
 msgid "monochrome"
 msgstr "monochrome"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1065
+#: ../libqalculate/BuiltinFunctions-util.cc:1067
 msgctxt "plot"
 msgid "ymin"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1066
+#: ../libqalculate/BuiltinFunctions-util.cc:1068
 msgctxt "plot"
 msgid "ymax"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1067
+#: ../libqalculate/BuiltinFunctions-util.cc:1069
 msgctxt "plot"
 msgid "ylog"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1068
+#: ../libqalculate/BuiltinFunctions-util.cc:1070
 msgctxt "plot"
 msgid "xlog"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1069
+#: ../libqalculate/BuiltinFunctions-util.cc:1071
 msgctxt "plot"
 msgid "logscale"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1070
+#: ../libqalculate/BuiltinFunctions-util.cc:1072
 msgctxt "plot"
 msgid "variable"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1105
+#: ../libqalculate/BuiltinFunctions-util.cc:1073
+msgctxt "plot"
+msgid "complex"
+msgstr "complexe"
+
+#: ../libqalculate/BuiltinFunctions-util.cc:1074
+msgctxt "plot"
+msgid "real"
+msgstr "réel"
+
+#: ../libqalculate/BuiltinFunctions-util.cc:1112
 msgctxt "plot style"
 msgid "lines"
 msgstr "lignes"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1106
+#: ../libqalculate/BuiltinFunctions-util.cc:1113
 msgctxt "plot style"
 msgid "points"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1107
+#: ../libqalculate/BuiltinFunctions-util.cc:1114
 msgctxt "plot style"
 msgid "dots"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1108
+#: ../libqalculate/BuiltinFunctions-util.cc:1115
 msgctxt "plot style"
 msgid "boxes"
 msgstr "boîtes"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1109
+#: ../libqalculate/BuiltinFunctions-util.cc:1116
 msgctxt "plot style"
 msgid "histogram"
 msgstr "histogramme"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1110
+#: ../libqalculate/BuiltinFunctions-util.cc:1117
 msgctxt "plot style"
 msgid "candlesticks"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1111
+#: ../libqalculate/BuiltinFunctions-util.cc:1118
 msgctxt "plot style"
 msgid "steps"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1112
+#: ../libqalculate/BuiltinFunctions-util.cc:1119
 msgctxt "plot style"
 msgid "linespoints"
 msgstr "lignes-points"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1113
+#: ../libqalculate/BuiltinFunctions-util.cc:1120
 msgctxt "plot"
 msgid "polar"
 msgstr "polaire"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1114
+#: ../libqalculate/BuiltinFunctions-util.cc:1121
 msgctxt "plot smoothing"
 msgid "none"
 msgstr "aucun"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1115
+#: ../libqalculate/BuiltinFunctions-util.cc:1122
 msgctxt "plot smoothing"
 msgid "splines"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1116
+#: ../libqalculate/BuiltinFunctions-util.cc:1123
 msgctxt "plot smoothing"
 msgid "bezier"
 msgstr "bézier"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1117
+#: ../libqalculate/BuiltinFunctions-util.cc:1124
 msgctxt "plot legend"
 msgid "none"
 msgstr "aucun"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1118
+#: ../libqalculate/BuiltinFunctions-util.cc:1125
 msgctxt "plot legend"
 msgid "top-left"
 msgstr "haut-gauche"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1119
+#: ../libqalculate/BuiltinFunctions-util.cc:1126
 msgctxt "plot legend"
 msgid "top-right"
 msgstr "haut-droite"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1120
+#: ../libqalculate/BuiltinFunctions-util.cc:1127
 msgctxt "plot legend"
 msgid "bottom-left"
 msgstr "bas-gauche"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1121
+#: ../libqalculate/BuiltinFunctions-util.cc:1128
 msgctxt "plot legend"
 msgid "bottom-right"
 msgstr "bas-droite"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1122
+#: ../libqalculate/BuiltinFunctions-util.cc:1129
 msgctxt "plot legend"
 msgid "below"
 msgstr "dessous"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1123
+#: ../libqalculate/BuiltinFunctions-util.cc:1130
 msgctxt "plot legend"
 msgid "outside"
 msgstr "extérieur"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1156
-#: ../libqalculate/BuiltinFunctions-util.cc:1161
-#: ../libqalculate/BuiltinFunctions-util.cc:1173
-#: ../libqalculate/BuiltinFunctions-util.cc:1178
+#: ../libqalculate/BuiltinFunctions-util.cc:1163
+#: ../libqalculate/BuiltinFunctions-util.cc:1168
+#: ../libqalculate/BuiltinFunctions-util.cc:1180
 #: ../libqalculate/BuiltinFunctions-util.cc:1185
+#: ../libqalculate/BuiltinFunctions-util.cc:1194
 #, c-format
 msgid "Illegal value: %s."
 msgstr "Valeur illégale : %s"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1188
+#: ../libqalculate/BuiltinFunctions-util.cc:1197
 #, c-format
 msgid "Unrecognized option: %s."
 msgstr "Option inconnue : %s."
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1224
-#: ../libqalculate/BuiltinFunctions-util.cc:1240
+#: ../libqalculate/BuiltinFunctions-util.cc:1233
+#: ../libqalculate/BuiltinFunctions-util.cc:1249
 msgid "Matrix"
 msgstr "Matrice"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1253
-#: ../libqalculate/BuiltinFunctions-util.cc:1305
+#: ../libqalculate/BuiltinFunctions-util.cc:1262
+#: ../libqalculate/BuiltinFunctions-util.cc:1314
 msgid "Vector"
 msgstr "Vecteur"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1270
-#: ../libqalculate/BuiltinFunctions-util.cc:1318
+#: ../libqalculate/BuiltinFunctions-util.cc:1279
+#: ../libqalculate/BuiltinFunctions-util.cc:1327
 #: ../libqalculate/Calculator-plot.cc:157
 msgid "Unable to generate plot data with current min, max and step size."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1272
-#: ../libqalculate/BuiltinFunctions-util.cc:1320
+#: ../libqalculate/BuiltinFunctions-util.cc:1281
+#: ../libqalculate/BuiltinFunctions-util.cc:1329
 msgid "Sampling rate must be a positive integer."
 msgstr "Le taux d'échantillonnage doit être un entier positif."
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1279
-#: ../libqalculate/BuiltinFunctions-util.cc:1327
+#: ../libqalculate/BuiltinFunctions-util.cc:1288
+#: ../libqalculate/BuiltinFunctions-util.cc:1336
 #: ../libqalculate/Calculator-plot.cc:121
 msgid "Unable to generate plot data with current min, max and sampling rate."
 msgstr ""
@@ -3290,9 +3300,9 @@ msgstr ""
 #: ../libqalculate/Calculator-calculate.cc:1032
 #: ../libqalculate/Calculator.cc:233 ../libqalculate/Calculator.cc:467
 #: ../libqalculate/Calculator.cc:608
-#: ../libqalculate/MathStructure-print.cc:3753 ../libqalculate/Function.cc:1457
-#: ../libqalculate/Function.cc:1465 ../libqalculate/Function.cc:1905
-#: ../libqalculate/Function.cc:2067 ../libqalculate/Function.cc:2075
+#: ../libqalculate/MathStructure-print.cc:3753 ../libqalculate/Function.cc:1458
+#: ../libqalculate/Function.cc:1466 ../libqalculate/Function.cc:1906
+#: ../libqalculate/Function.cc:2068 ../libqalculate/Function.cc:2076
 msgid "and"
 msgstr "et"
 
@@ -3453,8 +3463,8 @@ msgstr ""
 msgid "Misplaced operator(s) \"%s\" ignored"
 msgstr "Opérateur(s) mal placé(s), \"%s\" ignoré"
 
-#: ../libqalculate/Calculator-parse.cc:3084 ../libqalculate/Function.cc:1622
-#: ../libqalculate/Function.cc:1653
+#: ../libqalculate/Calculator-parse.cc:3084 ../libqalculate/Function.cc:1623
+#: ../libqalculate/Function.cc:1654
 #, c-format
 msgid "Internal id %s does not exist."
 msgstr "L'identificateur interne %s n'existe pas."
@@ -3656,7 +3666,7 @@ msgid "This is a bug. Please report it."
 msgstr "Ceci est un bug. Merci de le reporter."
 
 #: ../libqalculate/MathStructure-calculate.cc:6910
-#: ../libqalculate/Function.cc:573
+#: ../libqalculate/Function.cc:574
 msgid "No unknown variable/symbol was found."
 msgstr "Aucune variable/symbole n'a été trouvée."
 
@@ -3774,13 +3784,13 @@ msgstr ""
 msgid "undefined"
 msgstr "indéfini"
 
-#: ../libqalculate/Function.cc:188
+#: ../libqalculate/Function.cc:189
 #, c-format
 msgid "%s() requires that %s"
 msgstr "%s() nécessite que %s"
 
-#: ../libqalculate/Function.cc:356 ../libqalculate/Function.cc:418
-#: ../libqalculate/Function.cc:490
+#: ../libqalculate/Function.cc:357 ../libqalculate/Function.cc:419
+#: ../libqalculate/Function.cc:491
 #, c-format
 msgid ""
 "Additional arguments for function %s() were ignored. Function can only use "
@@ -3795,13 +3805,13 @@ msgstr[1] ""
 "Les arguments supplémentaires de la fonction %s() ont été ignorés. La "
 "fonction ne peut utiliser que %s arguments."
 
-#: ../libqalculate/Function.cc:432
+#: ../libqalculate/Function.cc:433
 msgid ""
 "log() with a single argument is considered ambigious. Please use ln() or "
 "log10() instead."
 msgstr ""
 
-#: ../libqalculate/Function.cc:511
+#: ../libqalculate/Function.cc:512
 #, c-format
 msgid "You need at least %s argument (%s) in function %s()."
 msgid_plural "You need at least %s arguments (%s) in function %s()."
@@ -3810,136 +3820,136 @@ msgstr[0] ""
 msgstr[1] ""
 "Vous devez utiliser au moins %s arguments (%s) dans la fonction %s()."
 
-#: ../libqalculate/Function.cc:513
+#: ../libqalculate/Function.cc:514
 #, c-format
 msgid "You need at least %s argument in function %s()."
 msgid_plural "You need at least %s arguments in function %s()."
 msgstr[0] "Vous devez utiliser au moins %s argument dans la fonction %s()."
 msgstr[1] "Vous devez utiliser au moins %s arguments dans la fonction %s()."
 
-#: ../libqalculate/Function.cc:1447
+#: ../libqalculate/Function.cc:1448
 msgid "a free value"
 msgstr "une valeur libre"
 
-#: ../libqalculate/Function.cc:1452
+#: ../libqalculate/Function.cc:1453
 msgid "that is nonzero"
 msgstr "ceci est non nul"
 
-#: ../libqalculate/Function.cc:1460
+#: ../libqalculate/Function.cc:1461
 msgid "that is rational (polynomial)"
 msgstr "ceci est rationnel (polynomial)"
 
-#: ../libqalculate/Function.cc:1468
+#: ../libqalculate/Function.cc:1469
 msgid "that fulfills the condition:"
 msgstr "ceci remplit la condition :"
 
-#: ../libqalculate/Function.cc:1535
+#: ../libqalculate/Function.cc:1536
 #, c-format
 msgid "Argument %s in %s() must be %s."
 msgstr "L'argument %s de %s() doit être %s."
 
-#: ../libqalculate/Function.cc:1537
+#: ../libqalculate/Function.cc:1538
 #, c-format
 msgid "Argument %s, %s, in %s() must be %s."
 msgstr "L'argument %s, %s, de %s() doit être %s."
 
-#: ../libqalculate/Function.cc:1886
+#: ../libqalculate/Function.cc:1887
 msgid "a rational number"
 msgstr "un nombre rationnel"
 
-#: ../libqalculate/Function.cc:1888
+#: ../libqalculate/Function.cc:1889
 msgid "a number"
 msgstr "un nombre"
 
-#: ../libqalculate/Function.cc:1890
+#: ../libqalculate/Function.cc:1891
 msgid "a real number"
 msgstr "un nombre réel"
 
-#: ../libqalculate/Function.cc:2045
+#: ../libqalculate/Function.cc:2046
 msgid "an integer"
 msgstr "un entier"
 
-#: ../libqalculate/Function.cc:2102
+#: ../libqalculate/Function.cc:2103
 msgid "symbol"
 msgstr "symbole"
 
-#: ../libqalculate/Function.cc:2103
+#: ../libqalculate/Function.cc:2104
 msgid "an unknown variable/symbol"
 msgstr "symbole/variable inconnu"
 
-#: ../libqalculate/Function.cc:2116
+#: ../libqalculate/Function.cc:2117
 msgid "text"
 msgstr "texte"
 
-#: ../libqalculate/Function.cc:2117
+#: ../libqalculate/Function.cc:2118
 msgid "a text string"
 msgstr "une chaîne de caractères"
 
-#: ../libqalculate/Function.cc:2139
+#: ../libqalculate/Function.cc:2140
 msgid "date"
 msgstr "date"
 
-#: ../libqalculate/Function.cc:2140
+#: ../libqalculate/Function.cc:2141
 msgid "a date"
 msgstr "une date"
 
-#: ../libqalculate/Function.cc:2203
+#: ../libqalculate/Function.cc:2204
 msgid "a vector with "
 msgstr "un vecteur avec "
 
-#: ../libqalculate/Function.cc:2215
+#: ../libqalculate/Function.cc:2216
 msgid "a vector"
 msgstr "un vecteur"
 
-#: ../libqalculate/Function.cc:2276
+#: ../libqalculate/Function.cc:2277
 msgid "a square matrix"
 msgstr "une matrice carrée"
 
-#: ../libqalculate/Function.cc:2278
+#: ../libqalculate/Function.cc:2279
 msgid "a matrix"
 msgstr "une matrice"
 
-#: ../libqalculate/Function.cc:2293
+#: ../libqalculate/Function.cc:2294
 msgid "object"
 msgstr "objet"
 
-#: ../libqalculate/Function.cc:2294
+#: ../libqalculate/Function.cc:2295
 msgid "a valid function, unit or variable name"
 msgstr "une fonction, une unité ou un nom de variable valide"
 
-#: ../libqalculate/Function.cc:2308
+#: ../libqalculate/Function.cc:2309
 msgid "a valid function name"
 msgstr "un nom de fonction valide"
 
-#: ../libqalculate/Function.cc:2321
+#: ../libqalculate/Function.cc:2322
 msgid "unit"
 msgstr "unité"
 
-#: ../libqalculate/Function.cc:2322
+#: ../libqalculate/Function.cc:2323
 msgid "a valid unit name"
 msgstr "un nom d'unité valide"
 
-#: ../libqalculate/Function.cc:2336
+#: ../libqalculate/Function.cc:2337
 msgid "a valid variable name"
 msgstr "un nom de variable valide"
 
-#: ../libqalculate/Function.cc:2349
+#: ../libqalculate/Function.cc:2350
 msgid "file"
 msgstr "fichier"
 
-#: ../libqalculate/Function.cc:2350
+#: ../libqalculate/Function.cc:2351
 msgid "a valid file name"
 msgstr "un nom de fichier valide"
 
-#: ../libqalculate/Function.cc:2364
+#: ../libqalculate/Function.cc:2365
 msgid "a boolean (0 or 1)"
 msgstr "un booléen (0 ou 1)"
 
-#: ../libqalculate/Function.cc:2375
+#: ../libqalculate/Function.cc:2376
 msgid "an angle or a number (using the default angle unit)"
 msgstr "un angle ou un nombre (utilise l'unité d'angle par défaut)"
 
-#: ../libqalculate/Number.cc:290 ../libqalculate/Number.cc:10824
+#: ../libqalculate/Number.cc:290 ../libqalculate/Number.cc:10829
 msgid ""
 "Cannot display numbers greater than 9999 or less than -9999 as roman "
 "numerals."
@@ -4046,23 +4056,23 @@ msgid "%s() lacks proper support interval arithmetic."
 msgstr ""
 "%s() ne dispose pas d'un support suffisant de l'arithmétique des intervalles."
 
-#: ../libqalculate/Number.cc:10002
+#: ../libqalculate/Number.cc:10006
 #, c-format
 msgid "The value is too high for the number of floating point bits (%s)."
 msgstr ""
 "La valeur est trop grande pour le nombre de bits à virgule flottante (%s)."
 
-#: ../libqalculate/Number.cc:10302
+#: ../libqalculate/Number.cc:10307
 msgid "Unsupported base"
 msgstr "Base non supportée"
 
-#: ../libqalculate/Number.cc:10821
+#: ../libqalculate/Number.cc:10826
 msgid "Can only display rational numbers as roman numerals."
 msgstr ""
 "Ne peut seulement qu'afficher des nombres rationnels comme les chiffres "
 "romains."
 
-#: ../libqalculate/Number.cc:11312 ../libqalculate/Number.cc:11320
+#: ../libqalculate/Number.cc:11317 ../libqalculate/Number.cc:11325
 msgid "infinity"
 msgstr "infini"
 
