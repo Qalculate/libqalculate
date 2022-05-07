@@ -174,12 +174,13 @@ bool MathFunction::testCondition(const MathStructure &vargs) {
 		return true;
 	}
 	// create a temporary function from the condition expression (for handling av arguments)
-	UserFunction test_function("", "CONDITION_TEST_FUNCTION", scondition, false, argc, "", "", max_argc < 0 && argc < 10 && scondition.find("\\v") == string::npos && scondition.find("\\w") == string::npos ? argc + 5 : max_argc);
+	CALCULATOR->beginTemporaryStopMessages();
+	UserFunction test_function("", "CONDITION_TEST_FUNCTION", scondition, false, argc, "", "", max_argc < 0 && !default_values.empty() && scondition.find("\\v") == string::npos && scondition.find("\\w") == string::npos ? argc + default_values.size() : max_argc);
 	MathStructure vargs2(vargs);
+	if(test_function.maxargs() > 0 && vargs2.size() > (size_t) test_function.maxargs()) vargs2.resizeVector(test_function.maxargs(), m_zero);
 	MathStructure mstruct(test_function.MathFunction::calculate(vargs2));
 	EvaluationOptions eo;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
-	CALCULATOR->beginTemporaryStopMessages();
 	mstruct.eval(eo);
 	CALCULATOR->endTemporaryStopMessages();
 	// check if result is true
@@ -198,10 +199,9 @@ string MathFunction::printCondition() {
 	string svar, argstr;
 	Argument *arg;
 	int i_args = maxargs();
-	if(i_args < 0) {
-		i_args = minargs() + 20;
-	}
-	bool b_v = maxargs() < 0 && (str.find("\\v") != string::npos || str.find("\\w") != string::npos);
+	bool b_v = i_args < 0 && (default_values.empty() || scondition.find("\\v") != string::npos || scondition.find("\\w") != string::npos);
+	if(b_v) i_args = minargs() + 2;
+	else if(i_args < 0) i_args = minargs() + default_values.size();
 	for(int i = 0; i < i_args; i++) {
 		svar = '\\';
 		if(b_v && maxargs() < 0 && i >= minargs()) {

@@ -866,7 +866,7 @@ bool calculate_userfunctions(MathStructure &m, const MathStructure &x_mstruct, c
 				calculate_userfunctions(m, x_mstruct, eo, false);
 				b_ret = true;
 			}
-		} else if(b_vector && (m.function()->id() == FUNCTION_ID_DIFFERENTIATE || m.function()->id() == FUNCTION_ID_INTEGRATE)) {
+		} else if(b_vector && ((m.function()->id() == FUNCTION_ID_DIFFERENTIATE && (m.size() < 3 || m[3].isUndefined())) || (m.function()->id() == FUNCTION_ID_INTEGRATE && (m.size() < 3 || (m[1].isUndefined() && m[2].isUndefined()))))) {
 			size_t i_x = 1;
 			if(m.function()->id() == FUNCTION_ID_INTEGRATE) i_x = 3;
 			bool b = m.size() > i_x && m[i_x] == x_mstruct;
@@ -878,7 +878,7 @@ bool calculate_userfunctions(MathStructure &m, const MathStructure &x_mstruct, c
 				}
 			}
 			if(b && m.calculateFunctions(eo, false, true)) {
-				if(m.function()->id() == FUNCTION_ID_INTEGRATE) m.replace(CALCULATOR->getVariableById(VARIABLE_ID_C), m_zero);
+				if(i_x == 3) m.replace(CALCULATOR->getVariableById(VARIABLE_ID_C), m_zero);
 				b_ret = true;
 			}
 		}
