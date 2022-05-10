@@ -10025,11 +10025,11 @@ msgstr "Кубический фут в минуту"
 
 #: ../data/units.xml.in.h:366
 msgid "Cubic Foot per Minute (CFM)"
-msgstr "Кубический фут в минуту (фут³/м)"
+msgstr "Кубический фут в минуту (кфм)"
 
 #: ../data/units.xml.in.h:367
 msgid "a-cr:cfm"
-msgstr "фут³/м"
+msgstr "кфм"
 
 #: ../data/units.xml.in.h:368
 msgid "Cubic Foot per Second"
@@ -10037,11 +10037,11 @@ msgstr "Кубический фут в секунду"
 
 #: ../data/units.xml.in.h:369
 msgid "Cubic Foot per Second (CFS)"
-msgstr "Кубический фут в секунду (фут³/c)"
+msgstr "Кубический фут в секунду (кфс)"
 
 #: ../data/units.xml.in.h:370
 msgid "a-cr:cfs"
-msgstr "фут³/c"
+msgstr "кфс"
 
 #: ../data/units.xml.in.h:371
 msgid "Gallons per Minute (U.S.)"
@@ -10049,7 +10049,7 @@ msgstr "Галлон США в минуту"
 
 #: ../data/units.xml.in.h:372
 msgid "a-cr:gpm"
-msgstr "гал/м"
+msgstr "галлон_мин"
 
 #: ../data/units.xml.in.h:373
 msgid "Gallons per Hour (U.S.)"
@@ -10057,7 +10057,7 @@ msgstr "Галлон США в час"
 
 #: ../data/units.xml.in.h:374
 msgid "a-cr:gph"
-msgstr "гал/ч"
+msgstr "галлон_ч"
 
 #: ../data/units.xml.in.h:375
 msgid "Speed"
