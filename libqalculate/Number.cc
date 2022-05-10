@@ -374,6 +374,56 @@ Number::~Number() {
 
 void Number::set(string number, const ParseOptions &po) {
 
+	if(po.base != BASE_UNICODE && (po.base != BASE_CUSTOM || (CALCULATOR->customInputBase() <= 62 && CALCULATOR->customInputBase() >= -62))) {
+		// look for +/- for specified uncertainty of number
+		size_t pm_index = number.find(SIGN_PLUSMINUS);
+		if(pm_index == string::npos) pm_index = number.find("+/-");
+		if(pm_index != string::npos) {
+			ParseOptions po2 = po;
+			// +/- overrides read precision option
+			po2.read_precision = DONT_READ_PRECISION;
+			// read number without uncertainty
+			set(number.substr(0, pm_index), po2);
+			number = number.substr(pm_index + (number[pm_index] == '+' ? strlen("+/-") : strlen(SIGN_PLUSMINUS)));
+			if(!number.empty()) {
+				// read number after +/- and set uncertainty
+				Number pm_nr(number, po2);
+				setUncertainty(pm_nr);
+			}
+			return;
+		}
+	}
+	if(po.base == BASE_BINARY_DECIMAL) {
+		clear();
+		remove_blanks(number);
+		long int digit = 0;
+		long int index = 0;
+		for(size_t i = 0; i < number.size(); i++) {
+			if(i > 0 && i % 4 == 0) {
+				if(digit != 0) add(Number(digit, 1, index));
+				digit = 0;
+				index++;
+			}
+			bool b_on = number[number.size() - i - 1] == '1';
+			if(!b_on && number[number.size() - i - 1] != '0') {
+				string str_char = number.substr(number.size() - i - 1, 1);
+				// unrecognized digit: read whole Unicode character and show error
+				while((signed char) number[number.size() - i - 1] < 0 && (unsigned char) number[number.size() - i - 1] < 0xC0 && i + 1 < number.length()) {
+					i++;
+					str_char += number[number.size() - i - 1];
+				}
+				CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), str_char.c_str(), number.c_str(), "2", NULL);
+			}
+			if(b_on) {
+				if(i % 4 == 0) digit += 1;
+				else if(i % 4 == 1) digit += 2;
+				else if(i % 4 == 2) digit += 4;
+				else if(i % 4 == 3) digit += 8;
+			}
+		}
+		if(digit != 0) add(Number(digit, 1, index));
+		return;
+	}
 	if(po.base == BASE_BIJECTIVE_26) {
 		// Bijective base 26 (digits A-Z, case insensitive, A=1)
 		remove_blanks(number);
@@ -594,24 +644,6 @@ void Number::set(string number, const ParseOptions &po) {
 		}
 		// if number string begins with an odd number of minus symbols, negate the value
 		if(b_minus) negate();
-		return;
-	}
-
-	// look for +/- for specified uncertainty of number
-	size_t pm_index = number.find(SIGN_PLUSMINUS);
-	if(pm_index == string::npos) pm_index = number.find("+/-");
-	if(pm_index != string::npos) {
-		ParseOptions po2 = po;
-		// +/- overrides read precision option
-		po2.read_precision = DONT_READ_PRECISION;
-		// read number without uncertainty
-		set(number.substr(0, pm_index), po2);
-		number = number.substr(pm_index + (number[pm_index] == '+' ? strlen("+/-") : strlen(SIGN_PLUSMINUS)));
-		if(!number.empty()) {
-			// read number after +/- and set uncertainty
-			Number pm_nr(number, po2);
-			setUncertainty(pm_nr);
-		}
 		return;
 	}
 
@@ -1573,6 +1605,7 @@ bool Number::mergeInterval(const Number &o, bool set_to_overlap) {
 }
 
 void Number::setUncertainty(const Number &o, bool to_precision) {
+	if(o.isZero()) return;
 	if(o.hasImaginaryPart()) {
 		if(!i_value) i_value = new Number();
 		i_value->setUncertainty(o.imaginaryPart(), to_precision);
@@ -1594,10 +1627,10 @@ void Number::setUncertainty(const Number &o, bool to_precision) {
 	b_approx = true;
 	if(to_precision && !isInterval()) {
 		Number nr(*this);
-		nr.divide(o);
+		if(!nr.divide(o)) return;
 		nr.abs();
 		nr.divide(2);
-		nr.log(10);
+		if(!nr.log(10)) return;
 		INTERVAL_FLOOR(nr);
 		long int i_prec = nr.lintValue();
 		if(i_prec > 0) {
@@ -5397,6 +5430,7 @@ bool Number::gamma() {
 					mpfr_t f_test;
 					mpfr_init2(f_test, mpfr_get_prec(fl_test));
 					mpfr_nextbelow(fl_test);
+					size_t i = 0;
 					while(true) {
 						// from lower to upper value
 						mpfr_nextabove(fl_test);
@@ -5407,6 +5441,8 @@ bool Number::gamma() {
 							if(c1 > 0 ? c2 > 0 : c2 < 0) b_iverror = true;
 							break;
 						}
+						i++;
+						if(i > 100 || CALCULATOR->aborted()) {b_iverror = true; break;}
 					}
 					while(!b_iverror && !mpfr_equal_p(fu_test, fl_test)) {
 						// from upper to lower value
@@ -5418,6 +5454,8 @@ bool Number::gamma() {
 							if(c1 > 0 ? c2 < 0 : c2 > 0) b_iverror = true;
 							break;
 						}
+						i++;
+						if(i > 100 || CALCULATOR->aborted()) {b_iverror = true; break;}
 					}
 					mpfr_clear(f_test);
 				}
@@ -9698,41 +9736,35 @@ bool Number::factorize(vector<Number> &factors) {
 		mpz_neg(inr, inr);
 		factors.push_back(nr_minus_one);
 	}
-	size_t prime_index = 0;
-	bool b = true;
-	while(b) {
-		if(CALCULATOR->aborted()) {mpz_clears(inr, last_prime, facmax, NULL); return false;}
-		b = false;
-		mpz_sqrt(facmax, inr);
-		for(; prime_index < NR_OF_PRIMES && mpz_cmp_si(facmax, PRIMES[prime_index]) >= 0; prime_index++) {
-			if(mpz_divisible_ui_p(inr, (unsigned long int) PRIMES[prime_index])) {
-				mpz_divexact_ui(inr, inr, (unsigned long int) PRIMES[prime_index]);
-				Number fac(PRIMES[prime_index], 1);;
+	mpz_sqrt(facmax, inr);
+	for(size_t prime_index = 0; prime_index < NR_OF_PRIMES && mpz_cmp_si(facmax, PRIMES[prime_index]) >= 0; prime_index++) {
+		bool b = false;
+		while(mpz_divisible_ui_p(inr, (unsigned long int) PRIMES[prime_index])) {
+			if(CALCULATOR->aborted()) {mpz_clears(inr, last_prime, facmax, NULL); return false;}
+			mpz_divexact_ui(inr, inr, (unsigned long int) PRIMES[prime_index]);
+			Number fac(PRIMES[prime_index], 1);
+			factors.push_back(fac);
+			b = true;
+		}
+		if(b) mpz_sqrt(facmax, inr);
+	}
+	if(mpz_cmp_si(inr, 1) > 0) {
+		mpz_set_si(last_prime, PRIMES[NR_OF_PRIMES - 1] + 2);
+		while(mpz_cmp(facmax, last_prime) >= 0) {
+			if(CALCULATOR->aborted()) {mpz_clears(inr, last_prime, facmax, NULL); return false;}
+			bool b = false;
+			while(mpz_divisible_p(inr, last_prime)) {
+				mpz_divexact(inr, inr, last_prime);
+				Number fac;
+				fac.setInternal(last_prime);
 				factors.push_back(fac);
 				b = true;
-				break;
 			}
-		}
-		if(prime_index == NR_OF_PRIMES) {
-			mpz_set_si(last_prime, PRIMES[NR_OF_PRIMES - 1] + 2);
-			prime_index++;
-		}
-		if(!b && prime_index > NR_OF_PRIMES) {
-			while(!b && mpz_cmp(facmax, last_prime) >= 0) {
-				if(CALCULATOR->aborted()) {mpz_clears(inr, last_prime, facmax, NULL); return false;}
-				if(mpz_divisible_p(inr, last_prime)) {
-					mpz_divexact(inr, inr, last_prime);
-					b = true;
-					Number fac;
-					fac.setInternal(last_prime);
-					factors.push_back(fac);
-					break;
-				}
-				mpz_add_ui(last_prime, last_prime, 2);
-			}
+			if(b) mpz_sqrt(facmax, inr);
+			mpz_add_ui(last_prime, last_prime, 2);
 		}
 	}
-	if(mpz_cmp_si(mpq_numref(r_value), 1) != 0) {
+	if(mpz_cmp_si(inr, 1) > 0) {
 		Number fac;
 		fac.setInternal(inr);
 		factors.push_back(fac);
@@ -10145,12 +10177,55 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(ips.num) *ips.num = str;
 		return str;
 	}
+	if(po.base == BASE_BINARY_DECIMAL && isReal()) {
+		PrintOptions po10 = po;
+		po10.number_fraction_format = FRACTION_DECIMAL;
+		po10.base = 10;
+		po10.decimalpoint_sign = DOT;
+		po10.digit_grouping = DIGIT_GROUPING_NONE;
+		po10.use_unicode_signs = false;
+		po10.min_exp = EXP_NONE;
+		string str10 = print(po10);
+		bool neg = false;
+		if(!str10.empty() && str10[0] == MINUS_CH) {
+			neg = true;
+			str10.erase(0, 1);
+		}
+		if(str10.find_first_not_of(NUMBERS DOT) != string::npos) {
+			po10 = po;
+			po10.base = 10;
+			return print(po10, ips);
+		}
+		string str;
+		PrintOptions po2 = po;
+		po2.binary_bits = 0;
+		for(size_t i = 0; i < str10.length(); i++) {
+			switch(str10[i]) {
+				case '0': {str += "0000"; break;}
+				case '1': {str += "0001"; break;}
+				case '2': {str += "0010"; break;}
+				case '3': {str += "0011"; break;}
+				case '4': {str += "0100"; break;}
+				case '5': {str += "0101"; break;}
+				case '6': {str += "0110"; break;}
+				case '7': {str += "0111"; break;}
+				case '8': {str += "1000"; break;}
+				case '9': {str += "1001"; break;}
+				case '.': {po2.binary_bits = str.length(); str += po.decimalpoint(); break;}
+			}
+		}
+		if(po2.binary_bits == 0) po2.binary_bits = str.length();
+		if(ips.minus) *ips.minus = neg;
+		str = format_number_string(str, 2, po.base_display, !ips.minus && neg, true, po2);
+		if(ips.num) *ips.num = str;
+		return str;
+	}
 	if(po.base == BASE_BIJECTIVE_26 && isReal()) {
 		// bijective base 26 (uses digits A-Z, A=1)
 		Number nr(*this);
 		// number can only be displayed as integers using bijective bases
 		if(!nr.isInteger()) {
-			if(po.is_approximate) *po.is_approximate = true;
+ 			if(po.is_approximate) *po.is_approximate = true;
 			nr.intervalToMidValue();
 			if(TRUNCATE) nr.trunc();
 			else nr.round(po.round_halfway_to_even);
@@ -10182,6 +10257,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) str.insert(0, SIGN_MINUS);
 			else str.insert(0, "-");
 		}
+		if(ips.num) *ips.num = str;
 		return str;
 	}
 	if(((po.base < BASE_CUSTOM && po.base != BASE_BIJECTIVE_26) || (po.base == BASE_CUSTOM && (!CALCULATOR->customOutputBase().isInteger() || CALCULATOR->customOutputBase() > 62 || CALCULATOR->customOutputBase() < 2))) && isReal()) {

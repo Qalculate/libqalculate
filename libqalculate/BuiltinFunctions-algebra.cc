@@ -1300,7 +1300,7 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 		if(iter > 0) {
 			if(x_i.hasImaginaryPart()) {
 				if((x_itest.realPart() < nr_prec && x_itest.imaginaryPart() < nr_prec) || (!x_i.isNonZero() && (x_i.realPart() < nr_prec && x_i.imaginaryPart() < nr_prec && x_if.number().realPart() < nr_prec && x_if.number().imaginaryPart() < nr_prec))) {
-					x_i.setUncertainty(x_if.number());
+					x_i.setUncertainty(x_if.number(), !CALCULATOR->usesIntervalArithmetic());
 					ret = 1;
 					break;
 				}
@@ -1318,7 +1318,7 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 				}
 			} else {
 				if(x_itest < nr_prec || (!x_i.isNonZero() && x_i < nr_prec && x_if.number() < nr_prec)) {
-					x_i.setUncertainty(x_if.number());
+					x_i.setUncertainty(x_if.number(), !CALCULATOR->usesIntervalArithmetic());
 					ret = 1;
 					break;
 				}
@@ -1338,7 +1338,7 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 		}
 		iter++;
 		if(iter > max_iter) {
-			x_i.setUncertainty(x_if.number());
+			x_i.setUncertainty(x_if.number(), !CALCULATOR->usesIntervalArithmetic());
 			int prec = x_i.precision(true);
 			if(prec < 5) break;
 			ret = 1;
@@ -1402,7 +1402,7 @@ int SecantMethodFunction::calculate(MathStructure &mstruct, const MathStructure 
 			if(iter > 0) {
 				if(x_i.hasImaginaryPart()) {
 					if((x_itest.realPart() < nr_prec && x_itest.imaginaryPart() < nr_prec) || (!x_i.isNonZero() && (x_i.realPart() < nr_prec && x_i.imaginaryPart() < nr_prec && x_fi.realPart() < nr_prec && x_fi.imaginaryPart() < nr_prec))) {
-						x_i.setUncertainty(x_fi);
+						x_i.setUncertainty(x_fi, !CALCULATOR->usesIntervalArithmetic());
 						ret = 1;
 						break;
 					}
@@ -1420,7 +1420,7 @@ int SecantMethodFunction::calculate(MathStructure &mstruct, const MathStructure 
 					}
 				} else {
 					if(x_itest < nr_prec || (!x_i.isNonZero() && x_i < nr_prec && x_fi < nr_prec)) {
-						x_i.setUncertainty(x_fi);
+						x_i.setUncertainty(x_fi, !CALCULATOR->usesIntervalArithmetic());
 						ret = 1;
 						break;
 					}
@@ -1440,7 +1440,7 @@ int SecantMethodFunction::calculate(MathStructure &mstruct, const MathStructure 
 			}
 			iter++;
 			if(iter > max_iter) {
-				x_i.setUncertainty(x_fi);
+				x_i.setUncertainty(x_fi, !CALCULATOR->usesIntervalArithmetic());
 				int prec = x_i.precision(true);
 				if(prec < 5) break;
 				ret = 1;

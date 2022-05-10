@@ -106,7 +106,7 @@ void MathFunction::set(const ExpressionItem *item) {
 		argc = f->minargs();
 		max_argc = f->maxargs();
 		default_values.clear();
-		for(int i = argc + 1; i <= max_argc; i++) {
+		for(int i = argc + 1; i <= max_argc || !f->getDefaultValue(i).empty(); i++) {
 			setDefaultValue(i, f->getDefaultValue(i));
 		}
 		last_argdef_index = f->lastArgumentDefinitionIndex();
@@ -174,12 +174,15 @@ bool MathFunction::testCondition(const MathStructure &vargs) {
 		return true;
 	}
 	// create a temporary function from the condition expression (for handling av arguments)
-	UserFunction test_function("", "CONDITION_TEST_FUNCTION", scondition, false, argc, "", "", max_argc);
+	CALCULATOR->beginTemporaryStopMessages();
+	UserFunction test_function("", "CONDITION_TEST_FUNCTION", scondition, false, argc, "", "", max_argc < 0 && !default_values.empty() && scondition.find("\\v") == string::npos && scondition.find("\\w") == string::npos ? argc + default_values.size() : max_argc);
 	MathStructure vargs2(vargs);
+	if(test_function.maxargs() > 0 && vargs2.size() > (size_t) test_function.maxargs()) vargs2.resizeVector(test_function.maxargs(), m_zero);
 	MathStructure mstruct(test_function.MathFunction::calculate(vargs2));
 	EvaluationOptions eo;
 	eo.approximation = APPROXIMATION_APPROXIMATE;
 	mstruct.eval(eo);
+	CALCULATOR->endTemporaryStopMessages();
 	// check if result is true
 	if(!mstruct.isNumber() || !mstruct.number().getBoolean()) {
 		if(CALCULATOR->showArgumentErrors() && !CALCULATOR->aborted()) {
@@ -196,12 +199,12 @@ string MathFunction::printCondition() {
 	string svar, argstr;
 	Argument *arg;
 	int i_args = maxargs();
-	if(i_args < 0) {
-		i_args = minargs() + 2;
-	}
+	bool b_v = i_args < 0 && (default_values.empty() || scondition.find("\\v") != string::npos || scondition.find("\\w") != string::npos);
+	if(b_v) i_args = minargs() + 2;
+	else if(i_args < 0) i_args = minargs() + default_values.size();
 	for(int i = 0; i < i_args; i++) {
 		svar = '\\';
-		if(maxargs() < 0 && i >= minargs()) {
+		if(b_v && maxargs() < 0 && i >= minargs()) {
 			svar += (char) ('v' + i - minargs());
 		} else {
 			if('x' + i > 'z') {
@@ -214,7 +217,8 @@ string MathFunction::printCondition() {
 		while(true) {
 			if((i2 = str.find(svar, i2)) != string::npos) {
 				if(maxargs() < 0 && i > minargs()) {
-					arg = getArgumentDefinition(i);
+					arg = getArgumentDefinition(i + 1);
+					if(!arg) arg = getArgumentDefinition(i);
 				} else {
 					arg = getArgumentDefinition(i + 1);
 				}
@@ -423,9 +427,10 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 		}
 	}
 	// append default values
-	if(itmp < maxargs() && itmp >= minargs()) {
+	if((itmp < maxargs() && itmp >= minargs()) || (maxargs() < 0 && itmp >= minargs() && (size_t) itmp - minargs() < default_values.size() && !default_values[itmp - minargs()].empty())) {
 		int itmp2 = itmp;
-		while(itmp2 < maxargs()) {
+		if(id() == FUNCTION_ID_LOGN) CALCULATOR->error(false, _("log() with a single argument is considered ambigious. Please use ln() or log10() instead."), NULL);
+		while((size_t) itmp2 - minargs() < default_values.size() && (maxargs() > 0 || !default_values[itmp2 - minargs()].empty())) {
 			arg = getArgumentDefinition(itmp2 + 1);
 			MathStructure *mstruct = new MathStructure();
 			if(arg) arg->parse(mstruct, default_values[itmp2 - minargs()]);
@@ -613,19 +618,20 @@ int MathFunction::calculate(MathStructure&, const MathStructure&, const Evaluati
 	return 0;
 }
 void MathFunction::setDefaultValue(size_t arg_, string value_) {
-	if((int) arg_ > argc && (int) arg_ <= max_argc && (int) default_values.size() >= (int) arg_ - argc) {
+	if((int) arg_ > argc) {
+		while(default_values.size() < arg_ - argc) default_values.push_back("");
 		default_values[arg_ - argc - 1] = value_;
 	}
 }
 const string &MathFunction::getDefaultValue(size_t arg_) const {
-	if((int) arg_ > argc && (int) arg_ <= max_argc && (int) default_values.size() >= (int) arg_ - argc) {
+	if((int) arg_ > argc && (int) default_values.size() >= (int) arg_ - argc) {
 		return default_values[arg_ - argc - 1];
 	}
 	return empty_string;
 }
 void MathFunction::appendDefaultValues(MathStructure &vargs) {
 	if((int) vargs.size() < minargs()) return;
-	while((int) vargs.size() < maxargs()) {
+	while((int) vargs.size() < maxargs() || (maxargs() < 0 && (size_t) vargs.size() - minargs() < default_values.size() && !default_values[vargs.size() - minargs()].empty())) {
 		Argument *arg = getArgumentDefinition(vargs.size() + 1);
 		if(arg) {
 			MathStructure *mstruct = new MathStructure();
@@ -708,9 +714,9 @@ int MathFunction::stringArgs(const string &argstr, vector<string> &svargs) {
 			svargs.push_back(stmp);
 		}
 	}
-	if(itmp < maxargs() && itmp >= minargs()) {
+	if((itmp < maxargs() && itmp >= minargs()) || (maxargs() < 0 && itmp >= minargs() && (size_t) itmp - minargs() < default_values.size() && !default_values[itmp - minargs()].empty())) {
 		int itmp2 = itmp;
-		while(itmp2 < maxargs()) {
+		while((size_t) itmp2 - minargs() < default_values.size() && (maxargs() > 0 || !default_values[itmp2 - minargs()].empty())) {
 			svargs.push_back(default_values[itmp2 - minargs()]);
 			itmp2++;
 		}
@@ -1886,9 +1892,9 @@ string NumberArgument::subprintlong() const {
 	if(fmin) {
 		str += " ";
 		if(b_incl_min) {
-			str += _(">=");
+			str += ">=";
 		} else {
-			str += _(">");
+			str += ">";
 		}
 		str += " ";
 		str += fmin->print();
@@ -1900,9 +1906,9 @@ string NumberArgument::subprintlong() const {
 		}
 		str += " ";
 		if(b_incl_max) {
-			str += _("<=");
+			str += "<=";
 		} else {
-			str += _("<");
+			str += "<";
 		}
 		str += " ";
 		str += fmax->print();
@@ -2039,12 +2045,12 @@ string IntegerArgument::subprintlong() const {
 	string str = _("an integer");
 	if(imin) {
 		str += " ";
-		str += _(">=");
+		str += ">=";
 		str += " ";
 		str += imin->print();
 	} else if(i_inttype != INTEGER_TYPE_NONE) {
 		str += " ";
-		str += _(">=");
+		str += ">=";
 		str += " ";
 		switch(i_inttype) {
 			case INTEGER_TYPE_SIZE: {}
@@ -2061,14 +2067,14 @@ string IntegerArgument::subprintlong() const {
 			str += _("and");
 		}
 		str += " ";
-		str += _("<=");
+		str += "<=";
 		str += " ";
 		str += imax->print();
 	} else if(i_inttype != INTEGER_TYPE_NONE) {
 		str += " ";
 		str += _("and");
 		str += " ";
-		str += _("<=");
+		str += "<=";
 		str += " ";
 		switch(i_inttype) {
 			case INTEGER_TYPE_SIZE: {}

@@ -239,7 +239,8 @@ typedef enum {
 	PLOT_STYLE_HISTOGRAM,
 	PLOT_STYLE_STEPS,
 	PLOT_STYLE_CANDLESTICKS,
-	PLOT_STYLE_DOTS
+	PLOT_STYLE_DOTS,
+	PLOT_STYLE_POLAR
 } PlotStyle;
 
 /// Smoothing a plotted lines
@@ -321,6 +322,7 @@ typedef enum {
 #define BASE_PI			-7
 #define BASE_E			-8
 #define BASE_SQRT2		-9
+#define BASE_BINARY_DECIMAL	-20
 #define BASE_BIJECTIVE_26	-26
 #define BASE_FP16		-30
 #define BASE_FP32		-31

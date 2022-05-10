@@ -284,7 +284,7 @@ int AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 GcdFunction::GcdFunction() : MathFunction("gcd", 2, -1) {
 	RATIONAL_POLYNOMIAL_ARGUMENT_HV(1)
 	RATIONAL_POLYNOMIAL_ARGUMENT_HV(2)
-	RATIONAL_POLYNOMIAL_ARGUMENT_HV(3)
+	RATIONAL_POLYNOMIAL_ARGUMENT(3)
 }
 int GcdFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
@@ -300,7 +300,7 @@ int GcdFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 LcmFunction::LcmFunction() : MathFunction("lcm", 2, -1) {
 	RATIONAL_POLYNOMIAL_ARGUMENT_HV(1)
 	RATIONAL_POLYNOMIAL_ARGUMENT_HV(2)
-	RATIONAL_POLYNOMIAL_ARGUMENT_HV(3)
+	RATIONAL_POLYNOMIAL_ARGUMENT(3)
 }
 int LcmFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
@@ -1272,6 +1272,41 @@ int BijectiveFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	ParseOptions po = eo.parse_options;
 	po.base = BASE_BIJECTIVE_26;
 	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
+	return 1;
+}
+BinaryDecimalFunction::BinaryDecimalFunction() : MathFunction("bcd", 1, 2) {
+	setArgumentDefinition(1, new TextArgument());
+	setArgumentDefinition(2, new BooleanArgument());
+	setDefaultValue(2, "1");
+}
+int BinaryDecimalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	bool b_packed = vargs[1].number().getBoolean();
+	if(vargs[0].symbol().find_first_of("23456789") != string::npos) {
+		CALCULATOR->parse(&mstruct, vargs[0].symbol(), eo.parse_options);
+		PrintOptions po; po.base = BASE_BINARY_DECIMAL; po.base_display = BASE_DISPLAY_NORMAL;
+		mstruct.eval(eo);
+		string str = mstruct.print(po);
+		if(!b_packed) {
+			size_t i = 0;
+			while(i < str.length()) {
+				str.insert(i, "0000");
+				i += 9;
+			}
+		}
+		mstruct.set(str, true, true);
+		return 1;
+	}
+	ParseOptions po = eo.parse_options;
+	po.base = BASE_BINARY_DECIMAL;
+	string str = vargs[0].symbol();
+	if(!b_packed) {
+		remove_blanks(str);
+		for(size_t i = 0; i < str.length(); i++) {
+			if(i % 8 > 3) str[str.length() - i - 1] = ' ';
+		}
+		remove_blanks(str);
+	}
+	CALCULATOR->parse(&mstruct, str, po);
 	return 1;
 }
 ImFunction::ImFunction() : MathFunction("im", 1) {

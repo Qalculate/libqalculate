@@ -233,15 +233,15 @@ bool Calculator::loadLocalDefinitions() {
 
 #define X_SET_BEST_NAMES(validation, x) \
 	size_t names_i = 0, i2 = 0; \
-	string *str_names; \
+	string *str_names = NULL; \
 	if(best_names == "-") {best_names = ""; nextbest_names = "";} \
 	if(!best_names.empty()) {str_names = &best_names;} \
 	else if(!nextbest_names.empty()) {str_names = &nextbest_names;} \
-	else {str_names = &default_names;} \
-	if(!str_names->empty() && (*str_names)[0] == '!') { \
+	else if(!require_translation || best_title || next_best_title) {str_names = &default_names;} \
+	if(str_names && !str_names->empty() && (*str_names)[0] == '!') { \
 		names_i = str_names->find('!', 1) + 1; \
 	} \
-	while(true) { \
+	while(str_names != NULL) { \
 		size_t i3 = names_i; \
 		names_i = str_names->find(",", i3); \
 		if(i2 == 0) { \
@@ -592,7 +592,7 @@ bool Calculator::loadLocalDefinitions() {
 					}
 
 #define ITEM_SET_DTH\
-					item->setDescription(description);\
+					if(!description.empty()) item->setDescription(description);\
 					if(!title.empty() && title[0] == '!') {\
 						size_t i = title.find('!', 1);\
 						if(i == string::npos) {\
