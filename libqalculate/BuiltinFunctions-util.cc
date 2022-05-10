@@ -974,7 +974,22 @@ int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 #endif
 }
 
-PlotFunction::PlotFunction() : MathFunction("plot", 1, 7) {
+#define PLOT_OPTION_LOCALE_SEPARATOR " / "
+#define PLOT_OPTION_SEPARATOR "\n"
+#define LIST_PLOT_OPTION_1(x) if(strcmp(_c("plot", x), x)) {str += _c("plot", x); str += PLOT_OPTION_LOCALE_SEPARATOR;} str += x;
+#define LIST_PLOT_OPTION_2(x, y) str += _c("plot", x); str += PLOT_OPTION_LOCALE_SEPARATOR; str += y;
+#define LIST_PLOT_OPTION(x) LIST_PLOT_OPTION_1(x) str += PLOT_OPTION_SEPARATOR;
+#define LIST_PLOT_OPTION_ALT(x, y) LIST_PLOT_OPTION_2(x, y) str += PLOT_OPTION_SEPARATOR;
+#define LIST_PLOT_OPTION_LAST(x) LIST_PLOT_OPTION_1(x)
+#define LIST_PLOT_OPTION_WV(x) LIST_PLOT_OPTION_1(x)
+#define LIST_PLOT_OPTION_ALT_WV(x, y) LIST_PLOT_OPTION_2(x, y)
+#define LIST_PLOT_VALUE(y, x) if(strcmp(y, x)) {str += _c(y, x); str += PLOT_OPTION_LOCALE_SEPARATOR;} str += x; str += ", ";
+#define LIST_PLOT_VALUE_FIRST(y, x) str += " ("; if(strcmp(y, x)) {str += _c(y, x); str += PLOT_OPTION_LOCALE_SEPARATOR;} str += x; str += ", ";
+#define LIST_PLOT_VALUE_LAST(y, x) if(strcmp(y, x)) {str += _c(y, x); str += PLOT_OPTION_LOCALE_SEPARATOR;} str += x; str += ")\n";
+#define LIST_PLOT_OPTION_ALT_VALUES(x, y, z) LIST_PLOT_OPTION_2(x, y) str += " ("; str += z; str += ")"; str += PLOT_OPTION_SEPARATOR;
+#define LIST_PLOT_OPTION_VALUES(x, y) LIST_PLOT_OPTION_1(x) str += " ("; str += y; str += ")"; str += PLOT_OPTION_SEPARATOR;
+
+PlotFunction::PlotFunction() : MathFunction("plot", 1, -1) {
 	NumberArgument *arg = new NumberArgument();
 	arg->setComplexAllowed(false);
 	arg->setHandleVector(false);
@@ -985,15 +1000,33 @@ PlotFunction::PlotFunction() : MathFunction("plot", 1, 7) {
 	arg->setComplexAllowed(false);
 	setArgumentDefinition(3, arg);
 	setDefaultValue(3, "10");
-	setDefaultValue(4, "1001");
-	setArgumentDefinition(5, new SymbolicArgument());
-	setDefaultValue(5, "x");
-	setArgumentDefinition(6, new BooleanArgument());
-	setDefaultValue(6, "0");
-	setArgumentDefinition(7, new BooleanArgument());
-	setDefaultValue(7, "0");
+	setArgumentDefinition(4, new TextArgument());
 	setCondition("\\y < \\z");
+	string str = _("Plots one or more expressions or vectors. Use a vector for the first argument to plot multiple series. Only the first argument is used for vector series. It is also possible to plot a matrix where each row is a pair of x and y values.");
+	str += "\n\n";
+	str += _("Additional arguments specifies various plot options. Enter the name of the option and the desried value, either separated by space or as separate arguments. For most options, the value can be omitted to enable a default active value. For options with named values, the option name can be omitted (otherwise the value can be replaced by an integer, representing the index of the value starting from zero). If the first option specified is a numerical value, this is interpreted as either sampling rate (for integers > 10) or step value.");
+	str += "\n\n";
+	str += _("List of options:");
+	str += "\n";
+	LIST_PLOT_OPTION("samples");
+	LIST_PLOT_OPTION("step");
+	LIST_PLOT_OPTION_ALT_VALUES("variable", "var", "x, y, z, ...");
+	LIST_PLOT_OPTION_WV("style"); LIST_PLOT_VALUE_FIRST("plot style", "lines"); LIST_PLOT_VALUE("plot style", "points"); LIST_PLOT_VALUE("plot style", "linespoints"); LIST_PLOT_VALUE("plot style", "boxes"); LIST_PLOT_VALUE("plot style", "histogram"); LIST_PLOT_VALUE("plot style", "steps"); LIST_PLOT_VALUE("plot style", "candlesticks"); LIST_PLOT_VALUE("plot style", "dots"); LIST_PLOT_VALUE_LAST("plot", "polar");
+	LIST_PLOT_OPTION_WV("smooth"); LIST_PLOT_VALUE_FIRST("plot smoothing", "none"); LIST_PLOT_VALUE("plot smoothing", "splines"); LIST_PLOT_VALUE_LAST("plot smoothing", "bezier");
+	LIST_PLOT_OPTION("ymin");
+	LIST_PLOT_OPTION("ymax");
+	LIST_PLOT_OPTION("xlog");
+	LIST_PLOT_OPTION("ylog");
+	LIST_PLOT_OPTION_VALUES("complex", "0, 1");
+	LIST_PLOT_OPTION_VALUES("grid", "0, 1");
+	LIST_PLOT_OPTION_ALT("linewidth", "lw");
+	LIST_PLOT_OPTION_ALT_WV("legend", "key"); LIST_PLOT_VALUE_FIRST("plot legend", "none"); LIST_PLOT_VALUE("plot legend", "top-left"); LIST_PLOT_VALUE("plot legend", "top-right"); LIST_PLOT_VALUE("plot legend", "bottom-left"); LIST_PLOT_VALUE("plot legend", "bottom-right"); LIST_PLOT_VALUE("plot legend", "below"); LIST_PLOT_VALUE_LAST("plot legend", "outside");
+	LIST_PLOT_OPTION("title");
+	LIST_PLOT_OPTION("xlabel");
+	LIST_PLOT_OPTION_LAST("ylabel");
+	setDescription(str);
 }
+
 int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	EvaluationOptions eo2;
@@ -1001,15 +1034,188 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	eo2.approximation = APPROXIMATION_APPROXIMATE;
 	eo2.parse_options.read_precision = DONT_READ_PRECISION;
 	eo2.interval_calculation = INTERVAL_CALCULATION_NONE;
-	bool use_step_size = vargs[5].number().getBoolean() || !vargs[3].isInteger() || vargs[3].number() < 2;
+	eo2.allow_complex = eo.allow_complex;
+	bool b_persistent = false;
+	PlotParameters param;
+	PlotStyle style = PLOT_STYLE_LINES;
+	PlotSmoothing smoothing = PLOT_SMOOTHING_NONE;
+	MathStructure mstep, mvar(CALCULATOR->getVariableById(VARIABLE_ID_X));
+	int i_rate = 1001;
+	int i_prev = 0;
+	int old_step = 0;
+	for(size_t i = 3; i < vargs.size(); i++) {
+		string svar = vargs[i].symbol();
+		remove_blank_ends(svar);
+		gsub(SIGN_MINUS, MINUS, svar);
+		string svalue;
+		bool b_option = false;
+		while(!b_option) {
+			b_option = true;
+			if(equalsIgnoreCase(svar, "persistent")) {b_persistent = true; i_prev = 5; break;}
+			else if(equalsIgnoreCase(svar, "smooth") || equalsIgnoreCase(svar, "smoothing") || equalsIgnoreCase(svar, _c("plot", "smooth"))) {smoothing = PLOT_SMOOTHING_CSPLINES; i_prev = 3; break;}
+			else if(equalsIgnoreCase(svar, "style") || equalsIgnoreCase(svar, "type") || equalsIgnoreCase(svar, _c("plot", "style"))) {style = PLOT_STYLE_POINTS; i_prev = 4; break;}
+			else if(equalsIgnoreCase(svar, "step") || equalsIgnoreCase(svar, "step size") || equalsIgnoreCase(svar, _c("plot", "step"))) {mstep = m_one; i_prev = 2; break;}
+			else if(equalsIgnoreCase(svar, "rate") || equalsIgnoreCase(svar, "samples") || equalsIgnoreCase(svar, _c("plot", "samples"))) {mstep.clear(); i_rate = 1001; i_prev = 1; break;}
+			else if(equalsIgnoreCase(svar, "color") || equalsIgnoreCase(svar, _c("plot", "color"))) {param.color = true; i_prev = 11; break;}
+			else if(equalsIgnoreCase(svar, "grid") || equalsIgnoreCase(svar, _c("plot", "grid"))) {param.grid = true; i_prev = 13; break;}
+			else if(equalsIgnoreCase(svar, "title") || equalsIgnoreCase(svar, _c("plot", "title"))) i_prev = 15;
+			else if(equalsIgnoreCase(svar, "legend") || equalsIgnoreCase(svar, "key") || equalsIgnoreCase(svar, _c("plot", "legend"))) {i_prev = 18; param.legend_placement = PLOT_LEGEND_BELOW;}
+			else if(equalsIgnoreCase(svar, "ylabel") || equalsIgnoreCase(svar, "y-label") || equalsIgnoreCase(svar, "y label") || equalsIgnoreCase(svar, _c("plot", "ylabel"))) i_prev = 16;
+			else if(equalsIgnoreCase(svar, "xlabel") || equalsIgnoreCase(svar, "x-label") || equalsIgnoreCase(svar, "x label") || equalsIgnoreCase(svar, _c("plot", "xlabel"))) i_prev = 17;
+			else if(equalsIgnoreCase(svar, "linewidth") || equalsIgnoreCase(svar, "lw") || equalsIgnoreCase(svar, "line width") || equalsIgnoreCase(svar, _c("plot", "linewidth"))) {i_prev = 14; break;}
+			else if(equalsIgnoreCase(svar, "mono") || equalsIgnoreCase(svar, "monochrome") || equalsIgnoreCase(svar, _c("plot", "monochrome"))) {param.color = false; i_prev = 12; break;}
+			else if(equalsIgnoreCase(svar, "ymin") || equalsIgnoreCase(svar, "y-min") || equalsIgnoreCase(svar, "y min") || equalsIgnoreCase(svar, _c("plot", "ymin"))) i_prev = 7;
+			else if(equalsIgnoreCase(svar, "ymax") || equalsIgnoreCase(svar, "y-max") || equalsIgnoreCase(svar, "y max") || equalsIgnoreCase(svar, _c("plot", "ymax"))) i_prev = 8;
+			else if(equalsIgnoreCase(svar, "ylog") || equalsIgnoreCase(svar, "logscale y") || equalsIgnoreCase(svar, "y-log") || equalsIgnoreCase(svar, "y log") || equalsIgnoreCase(svar, _c("plot", "ylog"))) {param.y_log = true; i_prev = 9; break;}
+			else if(equalsIgnoreCase(svar, "xlog") || equalsIgnoreCase(svar, "logscale x") || equalsIgnoreCase(svar, "x-log") || equalsIgnoreCase(svar, "x log") || equalsIgnoreCase(svar, _c("plot", "xlog"))) {param.x_log = true; i_prev = 10; break;}
+			else if(equalsIgnoreCase(svar, "logscale") || equalsIgnoreCase(svar, _c("plot", "logscale"))) {param.x_log = true; param.y_log = true; i_prev = 19; break;}
+			else if(equalsIgnoreCase(svar, "variable") || equalsIgnoreCase(svar, "var") || equalsIgnoreCase(svar, _c("plot", "variable"))) i_prev = 6;
+			else if(equalsIgnoreCase(svar, "complex") || equalsIgnoreCase(svar, _c("plot", "complex"))) {i_prev = 20; eo2.allow_complex = true;}
+			else if(equalsIgnoreCase(svar, "real") || equalsIgnoreCase(svar, _c("plot", "real"))) {i_prev = 21; eo2.allow_complex = false;}
+			else {
+				size_t i2 = svar.rfind(SPACE);
+				if(i2 == string::npos) {
+					svalue = svar;
+					svar = "";
+					break;
+				}
+				svalue += svar.substr(i2);
+				svar = svar.substr(0, i2);
+				remove_blank_ends(svar);
+				b_option = false;
+			}
+		}
+		remove_blank_ends(svalue);
+		if(!svalue.empty()) {
+			if(i_prev == 15) {
+				param.title = svalue;
+			} else if(i_prev == 16) {
+				param.y_label = svalue;
+			} else if(i_prev == 17) {
+				param.x_label = svalue;
+			} else if(i_prev == 6) {
+				if(svalue == "0") mvar = CALCULATOR->getVariableById(VARIABLE_ID_X);
+				else if(svalue == "1") mvar = CALCULATOR->getVariableById(VARIABLE_ID_Y);
+				else if(svalue == "2") mvar = CALCULATOR->getVariableById(VARIABLE_ID_Z);
+				else {
+					if(svalue[0] == '\\' && unicode_length(svalue) == 2) {
+						mvar.set(svalue.substr(1), false, true);
+					} else if(vargs[0].contains(MathStructure(svalue, true))) {
+						mvar.set(svalue, false, true);
+					} else {
+						Variable *v = CALCULATOR->getActiveVariable(svalue);
+						if(v && !v->isKnown()) mvar = v;
+						else mvar.set(svalue, false, true);
+					}
+				}
+			} else {
+				if(i_prev < 0 || (i_prev != 2 && i_prev != 6)) {
+					bool b_value = true;
+					if(i_prev < 0 && i == 5 && old_step == 2 && svar.empty() && (svalue == "1" || svalue == "0")) {
+						if(svalue == "1" && mstep.isZero()) mstep = i_rate;
+						else if(svalue == "0" && !mstep.isZero() && mstep.isInteger()) {i_rate = mstep.number().intValue(); mstep.clear();}
+					} else if(svar.empty() && equalsIgnoreCase(svalue, "x")) {mvar = CALCULATOR->getVariableById(VARIABLE_ID_X); if(old_step == 1 && i == 4) {old_step = 2;};}
+					else if(svar.empty() && equalsIgnoreCase(svalue, "y")) {mvar = CALCULATOR->getVariableById(VARIABLE_ID_Y);if(old_step == 1 && i == 4) {old_step = 2;};}
+					else if(svar.empty() && equalsIgnoreCase(svalue, "z")) {mvar = CALCULATOR->getVariableById(VARIABLE_ID_Z); if(old_step == 1 && i == 4) {old_step = 2;};}
+					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "lines") || equalsIgnoreCase(svalue, _c("plot style", "lines")))) {style = PLOT_STYLE_LINES;}
+					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "points") || equalsIgnoreCase(svalue, _c("plot style", "points")))) {style = PLOT_STYLE_POINTS;}
+					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "dots") || equalsIgnoreCase(svalue, _c("plot style", "dots")))) {style = PLOT_STYLE_DOTS;}
+					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "boxes") || equalsIgnoreCase(svalue, "bars") || equalsIgnoreCase(svalue, _c("plot style", "boxes")))) {style = PLOT_STYLE_BOXES;}
+					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "histogram") || equalsIgnoreCase(svalue, "histeps") || equalsIgnoreCase(svalue, _c("plot style", "histogram")))) {style = PLOT_STYLE_HISTOGRAM;}
+					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "candlesticks") || equalsIgnoreCase(svalue, _c("plot style", "candlesticks")))) {style = PLOT_STYLE_CANDLESTICKS;}
+					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "steps") || equalsIgnoreCase(svalue, _c("plot style", "steps")))) {style = PLOT_STYLE_STEPS;}
+					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "linespoints") || equalsIgnoreCase(svalue, _c("plot style", "linespoints")))) {style = PLOT_STYLE_POINTS_LINES;}
+					else if((i_prev == 4 || svar.empty()) && (equalsIgnoreCase(svalue, "polar") || equalsIgnoreCase(svalue, _c("plot", "polar")))) {style = PLOT_STYLE_POLAR;}
+					else if((i_prev == 3 || svar.empty()) && (equalsIgnoreCase(svalue, "none") || equalsIgnoreCase(svalue, _c("plot smoothing", "none")))) {smoothing = PLOT_SMOOTHING_CSPLINES;}
+					else if((i_prev == 3 || svar.empty()) && (equalsIgnoreCase(svalue, "splines") || equalsIgnoreCase(svalue, "csplines") || equalsIgnoreCase(svalue, _c("plot smoothing", "splines")))) {smoothing = PLOT_SMOOTHING_CSPLINES;}
+					else if((i_prev == 3 || svar.empty()) && (equalsIgnoreCase(svalue, "bezier") || equalsIgnoreCase(svalue, _c("plot smoothing", "bezier")))) {smoothing = PLOT_SMOOTHING_BEZIER;}
+					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "none") || equalsIgnoreCase(svalue, _c("plot legend", "none")))) {param.legend_placement = PLOT_LEGEND_NONE;}
+					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "top-left") || equalsIgnoreCase(svalue, "top left") || equalsIgnoreCase(svalue, "topleft") || equalsIgnoreCase(svalue, _c("plot legend", "top-left")))) {param.legend_placement = PLOT_LEGEND_TOP_LEFT;}
+					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "top-right") || equalsIgnoreCase(svalue, "top right") || equalsIgnoreCase(svalue, "topright") || equalsIgnoreCase(svalue, _c("plot legend", "top-right")))) {param.legend_placement = PLOT_LEGEND_TOP_RIGHT;}
+					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "bottom-left") || equalsIgnoreCase(svalue, "bottom left") || equalsIgnoreCase(svalue, "bottomleft") || equalsIgnoreCase(svalue, _c("plot legend", "bottom-left")))) {param.legend_placement = PLOT_LEGEND_BOTTOM_LEFT;}
+					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "bottom-right") || equalsIgnoreCase(svalue, "bottm right") || equalsIgnoreCase(svalue, "bottomright") || equalsIgnoreCase(svalue, _c("plot legend", "bottom-right")))) {param.legend_placement = PLOT_LEGEND_BOTTOM_RIGHT;}
+					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "below") || equalsIgnoreCase(svalue, _c("plot legend", "below")))) {param.legend_placement = PLOT_LEGEND_BELOW;}
+					else if((i_prev == 18 || svar.empty()) && (equalsIgnoreCase(svalue, "outside") || equalsIgnoreCase(svalue, _c("plot legend", "outside")))) {param.legend_placement = PLOT_LEGEND_OUTSIDE;}
+					else b_value = false;
+					if(b_value) {
+						i_prev = -1;
+						continue;
+					}
+				}
+				if(i_prev >= 0) {
+					MathStructure m;
+					CALCULATOR->beginTemporaryStopMessages();
+					CALCULATOR->beginTemporaryStopIntervalArithmetic();
+					CALCULATOR->parse(&m, svalue, eo.parse_options);
+					m.eval(eo);
+					CALCULATOR->endTemporaryStopIntervalArithmetic();
+					CALCULATOR->endTemporaryStopMessages();
+					if((i_prev == 7 || i_prev == 8) && m.isNumber() && m.number().isReal()) {
+						if(i_prev == 7) {param.y_min = m.number().floatValue(); param.auto_y_min = false;}
+						else if(i_prev == 8) {param.y_max = m.number().floatValue(); param.auto_y_max = false;}
+					} else if(m.isNumber() && m.number().isInteger()) {
+						int i_value = m.number().intValue();
+						switch(i_prev) {
+							case 0: {
+								if(i_value <= 10) mstep = m;
+								else i_rate = i_value;
+								if(vargs.size() == 6) old_step = 1;
+								break;
+							}
+							case 1: {i_rate = i_value; mstep.clear(); break;}
+							case 2: {mstep = m; break;}
+							case 3: {
+								if(i_value == 0) smoothing = PLOT_SMOOTHING_NONE;
+								else if(i_value == 1) smoothing = PLOT_SMOOTHING_CSPLINES;
+								else if(i_value == 2) smoothing = PLOT_SMOOTHING_BEZIER;
+								else CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), NULL);
+								break;
+							}
+							case 4: {
+								if(i_value >= 0 && i_value <= PLOT_STYLE_DOTS) style = (PlotStyle) i_value;
+								else CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), NULL);
+								break;
+							}
+							case 5: {b_persistent = i_value; break;}
+							case 9: {param.y_log_base = i_value; break;}
+							case 10: {param.x_log_base = i_value; break;}
+							case 19: {param.x_log_base = i_value; param.y_log_base = i_value; break;}
+							case 11: {param.color = i_value; break;}
+							case 12: {param.color = !i_value; break;}
+							case 13: {param.grid = i_value; break;}
+							case 14: {
+								if(i_value > 0 && i_value < 100) param.linewidth = i_value;
+								else CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), NULL);
+								break;
+							}
+							case 18: {
+								if(i_value >= 0 && i_value < PLOT_LEGEND_OUTSIDE) param.legend_placement = (PlotLegendPlacement) i_value;
+								else CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), NULL);
+								break;
+							}
+							case 20: {eo2.allow_complex = i_value; break;}
+							case 21: {eo2.allow_complex = !i_value; break;}
+						}
+					} else if((i_prev == 0 && (m.isNumber() || svalue.find_first_of(NUMBERS) != string::npos)) || i_prev == 2) {
+						mstep = m;
+					} else {
+						CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), NULL);
+					}
+				} else {
+					CALCULATOR->error(false, _("Unrecognized option: %s."), svalue.c_str(), NULL);
+				}
+			}
+			i_prev = -1;
+		}
+	}
 	mstruct = vargs[0];
 	CALCULATOR->beginTemporaryStopIntervalArithmetic();
-	if(!mstruct.contains(vargs[4], true) || (!mstruct.isVector() && (!mstruct.isFunction() || (mstruct.function()->id() != FUNCTION_ID_HORZCAT && mstruct.function()->id() != FUNCTION_ID_VERTCAT)) && !mstruct.representsScalar())) {
+	if(!mstruct.contains(mvar, true) || (!mstruct.isVector() && (!mstruct.isFunction() || (mstruct.function()->id() != FUNCTION_ID_HORZCAT && mstruct.function()->id() != FUNCTION_ID_VERTCAT)) && !mstruct.representsScalar())) {
 		CALCULATOR->beginTemporaryStopMessages();
 		mstruct.eval(eo2);
 		CALCULATOR->endTemporaryStopMessages();
 		if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_HORZCAT || mstruct.function()->id() == FUNCTION_ID_VERTCAT)) mstruct.setType(STRUCT_VECTOR);
-		if(!mstruct.isVector() && vargs[0].contains(vargs[4], true)) mstruct = vargs[0];
+		if(!mstruct.isVector() && vargs[0].contains(mvar, true)) mstruct = vargs[0];
 	} else {
 		eo2.calculate_functions = false;
 		eo2.expand = false;
@@ -1033,10 +1239,12 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		x_vectors.push_back(x_vector);
 		PlotDataParameters *dpd = new PlotDataParameters;
 		dpd->title = _("Matrix");
+		dpd->style = style;
+		dpd->smoothing = smoothing;
 		dpds.push_back(dpd);
 	} else if(mstruct.isVector()) {
 		int matrix_index = 1, vector_index = 1;
-		if(mstruct.size() > 0 && (mstruct[0].isVector() || mstruct[0].contains(vargs[4], false, true, true))) {
+		if(mstruct.size() > 0 && (mstruct[0].isVector() || mstruct[0].contains(mvar, false, true, true))) {
 			for(size_t i = 0; i < mstruct.size() && !CALCULATOR->aborted(); i++) {
 				MathStructure x_vector;
 				if(mstruct[i].isMatrix() && mstruct[i].columns() == 2) {
@@ -1051,6 +1259,8 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						dpd->title += " ";
 						dpd->title += i2s(matrix_index);
 					}
+					dpd->style = style;
+					dpd->smoothing = smoothing;
 					matrix_index++;
 					dpds.push_back(dpd);
 				} else if(mstruct[i].isVector()) {
@@ -1062,25 +1272,25 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						dpd->title += " ";
 						dpd->title += i2s(vector_index);
 					}
+					dpd->style = style;
+					dpd->smoothing = smoothing;
 					vector_index++;
 					dpds.push_back(dpd);
 				} else {
 					MathStructure y_vector;
-					if(use_step_size) {
+					if(!mstep.isZero()) {
 						CALCULATOR->beginTemporaryStopMessages();
 						CALCULATOR->beginTemporaryStopIntervalArithmetic();
-						y_vector.set(mstruct[i].generateVector(vargs[4], vargs[1], vargs[2], vargs[3], &x_vector, eo2));
+						generate_plotvector(mstruct[i], mvar, vargs[1], vargs[2], mstep, x_vector, y_vector, eo2);
 						CALCULATOR->endTemporaryStopIntervalArithmetic();
 						CALCULATOR->endTemporaryStopMessages();
 						if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
-					} else if(!vargs[3].isInteger() || !vargs[3].representsPositive()) {
+					} else if(i_rate < 1) {
 						CALCULATOR->error(true, _("Sampling rate must be a positive integer."), NULL);
 					} else {
-						bool overflow = false;
-						int steps = vargs[3].number().intValue(&overflow);
 						CALCULATOR->beginTemporaryStopMessages();
 						CALCULATOR->beginTemporaryStopIntervalArithmetic();
-						if(steps <= 1000000 && !overflow) generate_plotvector(mstruct[i], vargs[4], vargs[1], vargs[2], steps, x_vector, y_vector, eo2);
+						if(i_rate <= 1000000) generate_plotvector(mstruct[i], mvar, vargs[1], vargs[2], i_rate, x_vector, y_vector, eo2);
 						CALCULATOR->endTemporaryStopIntervalArithmetic();
 						CALCULATOR->endTemporaryStopMessages();
 						if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
@@ -1098,6 +1308,8 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						else mprint = mstruct[i];
 						dpd->title = format_and_print(mprint);
 						dpd->test_continuous = true;
+						dpd->style = style;
+						dpd->smoothing = smoothing;
 						dpds.push_back(dpd);
 					}
 				}
@@ -1108,25 +1320,25 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			x_vectors.push_back(x_vector);
 			PlotDataParameters *dpd = new PlotDataParameters;
 			dpd->title = _("Vector");
+			dpd->style = style;
+			dpd->smoothing = smoothing;
 			dpds.push_back(dpd);
 		}
 	} else {
 		MathStructure x_vector, y_vector;
-		if(use_step_size) {
+		if(!mstep.isZero()) {
 			CALCULATOR->beginTemporaryStopMessages();
 			CALCULATOR->beginTemporaryStopIntervalArithmetic();
-			y_vector.set(mstruct.generateVector(vargs[4], vargs[1], vargs[2], vargs[3], &x_vector, eo2));
+			generate_plotvector(mstruct, mvar, vargs[1], vargs[2], mstep, x_vector, y_vector, eo2);
 			CALCULATOR->endTemporaryStopIntervalArithmetic();
 			CALCULATOR->endTemporaryStopMessages();
 			if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
-		} else if(!vargs[3].isInteger() || !vargs[3].representsPositive()) {
+		} else if(i_rate < 1) {
 			CALCULATOR->error(true, _("Sampling rate must be a positive integer."), NULL);
 		} else {
-			bool overflow = false;
-			int steps = vargs[3].number().intValue(&overflow);
 			CALCULATOR->beginTemporaryStopMessages();
 			CALCULATOR->beginTemporaryStopIntervalArithmetic();
-			if(steps <= 1000000 && !overflow) generate_plotvector(mstruct, vargs[4], vargs[1], vargs[2], steps, x_vector, y_vector, eo2);
+			if(i_rate <= 1000000) generate_plotvector(mstruct, mvar, vargs[1], vargs[2], i_rate, x_vector, y_vector, eo2);
 			CALCULATOR->endTemporaryStopIntervalArithmetic();
 			CALCULATOR->endTemporaryStopMessages();
 			if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
@@ -1142,12 +1354,13 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			MathStructure mprint(vargs[0]);
 			dpd->title = format_and_print(mprint);
 			dpd->test_continuous = true;
+			dpd->style = style;
+			dpd->smoothing = smoothing;
 			dpds.push_back(dpd);
 		}
 	}
 	if(x_vectors.size() > 0 && !CALCULATOR->aborted()) {
-		PlotParameters param;
-		CALCULATOR->plotVectors(&param, y_vectors, x_vectors, dpds, vargs.size() >= 7 && vargs[6].number().getBoolean(), 0);
+		CALCULATOR->plotVectors(&param, y_vectors, x_vectors, dpds, b_persistent, 0);
 		for(size_t i = 0; i < dpds.size(); i++) {
 			if(dpds[i]) delete dpds[i];
 		}

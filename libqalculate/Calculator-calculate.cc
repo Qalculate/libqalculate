@@ -1476,6 +1476,8 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				printops.base = BASE_ROMAN_NUMERALS;
 			} else if(equalsIgnoreCase(to_str, "bijective") || equalsIgnoreCase(to_str, _("bijective"))) {
 				printops.base = BASE_BIJECTIVE_26;
+			} else if(equalsIgnoreCase(to_str, "bcd")) {
+				printops.base = BASE_BINARY_DECIMAL;
 			} else if(equalsIgnoreCase(to_str, "sexa") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "sexagesimal", _("sexagesimal"))) {
 				printops.base = BASE_SEXAGESIMAL;
 			} else if(equalsIgnoreCase(to_str, "sexa2") || EQUALS_IGNORECASE_AND_LOCAL_NR(to_str, "sexagesimal", _("sexagesimal"), "2")) {
@@ -1570,6 +1572,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				str_conv = "";
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str1, "base", _("base"))) {
 				if(to_str2 == "b26" || to_str2 == "B26") printops.base = BASE_BIJECTIVE_26;
+				else if(equalsIgnoreCase(to_str2, "bcd")) printops.base = BASE_BINARY_DECIMAL;
 				else if(equalsIgnoreCase(to_str2, "golden") || equalsIgnoreCase(to_str2, "golden ratio") || to_str2 == "φ") printops.base = BASE_GOLDEN_RATIO;
 				else if(equalsIgnoreCase(to_str2, "unicode")) printops.base = BASE_UNICODE;
 				else if(equalsIgnoreCase(to_str2, "supergolden") || equalsIgnoreCase(to_str2, "supergolden ratio") || to_str2 == "ψ") printops.base = BASE_SUPER_GOLDEN_RATIO;

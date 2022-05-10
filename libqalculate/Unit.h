@@ -91,6 +91,7 @@ class Unit : public ExpressionItem {
 	* Equivalent to preferredName() for Unit and AliasUnit, but closer to MathStructure::print() for CompositeUnit (prints out base expression).
 	*/
 	virtual std::string print(bool plural_, bool short_, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	virtual std::string print(const PrintOptions &po, bool format = false, int tagtype = 0, bool input = false, bool plural = true) const;
 	virtual const std::string &plural(bool return_singular_if_no_plural = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
 	virtual const std::string &singular(bool return_abbreviation_if_no_singular = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
 	virtual const std::string &abbreviation(bool return_singular_if_no_abbreviation = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
@@ -251,6 +252,7 @@ class AliasUnit_Composite : public AliasUnit {
 	virtual void set(const ExpressionItem *item);
 
 	virtual std::string print(bool plural_, bool short_, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	virtual std::string print(const PrintOptions &po, bool format = false, int tagtype = 0, bool input = false, bool plural = true) const;
 	virtual Prefix *prefix() const;
 	virtual int prefixExponent() const;
 	virtual void set(Unit *u, int exp = 1, Prefix *prefix_ = NULL);
@@ -311,6 +313,7 @@ class CompositeUnit : public Unit {
 		* This is the representation of the unit in expressions.
 		*/
 		virtual std::string print(bool plural_, bool short_, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+		virtual std::string print(const PrintOptions &po, bool format = false, int tagtype = 0, bool input = false, bool plural = true) const;
 		virtual int subtype() const;
 		/** If this unit contains a sub/base unit with a relation to the specified unit.
 		 */
