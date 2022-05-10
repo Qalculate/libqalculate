@@ -1567,15 +1567,15 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 	}
 	MathStructure mstruct;
 	bool b = false;
-	Unit *u = getUnit(str2);
+	Unit *u = getActiveUnit(str2);
 	if(!u) u = getCompositeUnit(str2);
 	Variable *v = NULL;
-	if(!u) v = getVariable(str2);
+	if(!u) v = getActiveVariable(str2);
 	if(!u && !v) {
 		for(size_t i = 0; i < signs.size(); i++) {
 			if(str2 == signs[i]) {
 				u = getUnit(real_signs[i]);
-				if(!u) v = getVariable(real_signs[i]);
+				if(!u) v = getActiveVariable(real_signs[i]);
 				break;
 			}
 		}

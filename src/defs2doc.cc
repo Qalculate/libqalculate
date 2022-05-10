@@ -315,6 +315,7 @@ void print_function(MathFunction *f) {
 		int iargs = f->maxargs();
 		if(iargs < 0) {
 			iargs = f->minargs() + 1;
+			if((int) f->lastArgumentDefinitionIndex() > iargs) iargs = (int) f->lastArgumentDefinitionIndex();
 		}
 		str += "(";
 		if(iargs != 0) {
@@ -331,8 +332,10 @@ void print_function(MathFunction *f) {
 					str2 = arg->name();
 				} else {
 					str2 = _("argument");
-					str2 += " ";
-					str2 += i2s(i2);
+					if(i2 > 1 || f->maxargs() != 1) {
+						str2 += " ";
+						str2 += i2s(i2);
+					}
 				}
 				str += str2;
 				if(i2 > f->minargs()) {

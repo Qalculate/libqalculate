@@ -1,3 +1,48 @@
+2022-04-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Polar plot style
+
+2022-04-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* plot() arguments for specification of plot options (in any order after the third argument)
+
+2022-04-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Binary-coded decimals (BCD) - input and output bases, and bcd() function
+
+2022-04-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use capitalized names with underscores removed in output (e.g. "FineStructure" instead of "fine_structure")
+	* ExpressionName::formattedName() for handling of underscores (capitalization, html suffixes, removal)
+	* Alternative CompositeUnit::print() with formatting options
+	* Include names with underscores removed when searching for active objects or checking for conflicts
+	* Deactivate support for names without underscores for completion only names
+	* Fix activation of objects after object that caused deactivation is deleted
+	* Respect require_translation property
+	* Mark l_N, oz_t, lb_t, and rad_radioactivity as using prefix
+
+2022-04-20 Jules Bertholet <jules.bertholet@gmail.com>
+
+	* Add additional information units (nat, trit, OctalDigit, hartley, nonet, declet, TiB, TB, EB, PB, petabit), and additional names to existing information units (shannon, o, etc.)
+
+2022-04-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Set normalized sinc() variant by changing default value of second (non-existing) argument to "pi", or using "set sinc 1" in qalc
+	* Ask the user for the desired sinc() variant (unnormalized or normalized)
+	* Show warning when log() is used with a single argument, and always show second argument of log()
+
+2022-04-19 Jules Bertholet <jules.bertholet@gmail.com>
+
+	* Add traditional numbers (locale specific): dozen, BakersDozen, score, LongHundred, gross, LongThousand, GreatGross
+
+2022-04-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Option to plot real and imaginary parts separately (determined by allow_complex in plot() function and on by default in other cases)
+	* Look for points where plot changes direction (derivative is zero) and include in data
+	* Avoid extremely slow calculation of gamma for negative intervals
+	* Do not return interval in newtonsolve() and secantsolve() if interval arithmetic is deactivated
+	* Remove Cyrillic c name from KGS
+
 2022-04-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Improve plot precision for real values before and after non-real values

@@ -3201,6 +3201,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 							case BASE_SQRT2: {str_base = "√2"; break;}
 							case BASE_UNICODE: {str_base = "Unicode"; break;}
 							case BASE_BIJECTIVE_26: {str_base = "b26"; break;}
+							case BASE_BINARY_DECIMAL: {str_base = "BCD"; break;}
 							case BASE_CUSTOM: {str_base = CALCULATOR->customOutputBase().print(CALCULATOR->messagePrintOptions()); break;}
 							default: {str_base = i2s(base);}
 						}
@@ -3806,25 +3807,16 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 		}
 		case STRUCT_UNIT: {
 			const ExpressionName *ename = &o_unit->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, b_plural, po.use_reference_names || (po.preserve_format && o_unit->isCurrency()), po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
-			if(o_prefix) print_str += o_prefix->preferredDisplayName(ename->abbreviation, po.use_unicode_signs, b_plural, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name;
-			print_str += ename->name;
-			if(ename->suffix) {
-				size_t i = string::npos;
-				if(!po.use_reference_names && !po.preserve_format) i = print_str.rfind('_');
-				if(i != string::npos && i + 5 <= print_str.length() && print_str.substr(print_str.length() - 4, 4) == "unit" && CALCULATOR->getActiveVariable(print_str.substr(0, i + 5 == print_str.length() ? i : print_str.length() - 4))) {
-					if(i + 5 == print_str.length()) {
-						print_str = print_str.substr(0, i);
-						if(po.hide_underscore_spaces) gsub("_", " ", print_str);
-					} else {
-						print_str = print_str.substr(0, print_str.length() - 4);
-						if(format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0) print_str = sub_suffix_html(print_str);
-					}
-				} else if(format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0) {
-					print_str = sub_suffix_html(print_str);
-				}
+			if(o_prefix) print_str += o_prefix->preferredDisplayName(ename->abbreviation, po.use_unicode_signs, b_plural, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).formattedName(-1, false, format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0, !po.use_reference_names && !po.preserve_format, po.hide_underscore_spaces);
+			bool b_nous = false;
+			if(ename->suffix && format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0) {
+				size_t i = ename->name.rfind('_');
+				b_nous = (i == string::npos || i == ename->name.length() - 1 || i == 0);
 			}
-			if(po.hide_underscore_spaces && !ename->suffix) {
-				gsub("_", " ", print_str);
+			print_str += ename->formattedName(TYPE_UNIT, !po.use_reference_names, format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0, !po.use_reference_names && !po.preserve_format, po.hide_underscore_spaces);
+			if(b_nous) {
+				size_t i = print_str.rfind("<sub>");
+				if(i != string::npos) print_str.insert(i + 4, " class=\"nous\"");
 			}
 			if(colorize && tagtype == TAG_TYPE_TERMINAL) {
 				print_str.insert(0, colorize == 2 ? "\033[0;92m" : "\033[0;32m");
@@ -3837,25 +3829,15 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 		}
 		case STRUCT_VARIABLE: {
 			const ExpressionName *ename = &o_variable->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
-			print_str += ename->name;
-			if(ename->suffix) {
-				size_t i = string::npos;
-				if(!po.use_reference_names && !po.preserve_format) i = print_str.rfind('_');
-				if(i != string::npos && i + 9 <= print_str.length() && print_str.substr(print_str.length() - 8, 8) == "constant" && CALCULATOR->getActiveUnit(print_str.substr(0, i + 9 == print_str.length() ? i : print_str.length() - 8))) {
-					if(i + 9 == print_str.length()) {
-						print_str = print_str.substr(0, i);
-						if(po.hide_underscore_spaces) gsub("_", " ", print_str);
-					} else {
-						print_str = print_str.substr(0, print_str.length() - 8);
-						if(format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0) print_str = sub_suffix_html(print_str);
-					}
-				} else if(format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0) {
-					print_str = sub_suffix_html(print_str);
-				}
+			bool b_nous = false;
+			if(b_nous) {
+				size_t i = print_str.rfind("<sub>");
+				if(i != string::npos) print_str.insert(i + 4, " class=\"nous\"");
 			}
-
-			if(po.hide_underscore_spaces && !ename->suffix) {
-				gsub("_", " ", print_str);
+			print_str += ename->formattedName(TYPE_VARIABLE, !po.use_reference_names, format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0, !po.use_reference_names && !po.preserve_format, po.hide_underscore_spaces);
+			if(b_nous) {
+				size_t i = print_str.rfind("<sub>");
+				if(i != string::npos) print_str.insert(i + 4, " class=\"nous\"");
 			}
 			if(tagtype == TAG_TYPE_TERMINAL) {
 				if(o_variable->isKnown()) {
@@ -3930,21 +3912,24 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					}
 				}
 				const ExpressionName *ename = &o_function->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
-				if(ename->suffix && format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0) {
-					print_str += sub_suffix_html(ename->name);
-				} else {
-					print_str += ename->name;
+				bool b_nous = false;
+				if(b_nous) {
+					size_t i = print_str.rfind("<sub>");
+					if(i != string::npos) print_str.insert(i + 4, " class=\"nous\"");
 				}
-				if(po.hide_underscore_spaces && !ename->suffix) {
-					gsub("_", " ", print_str);
+				print_str += ename->formattedName(TYPE_FUNCTION, !po.use_reference_names, format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0, !po.use_reference_names && !po.preserve_format, po.hide_underscore_spaces);
+				if(b_nous) {
+					size_t i = print_str.rfind("<sub>");
+					if(i != string::npos) print_str.insert(i + 4, " class=\"nous\"");
 				}
 				print_str += "(";
 				size_t argcount = SIZE;
 				if(o_function->id() == FUNCTION_ID_SIGNUM && argcount > 1) {
 					argcount = 1;
-				} else if(o_function->maxargs() > 0 && o_function->minargs() < o_function->maxargs() && SIZE > (size_t) o_function->minargs()) {
+				} else if((o_function->maxargs() < 0 || o_function->minargs() < o_function->maxargs()) && SIZE > (size_t) o_function->minargs() && o_function->id() != FUNCTION_ID_LOGN) {
 					while(true) {
 						string defstr = o_function->getDefaultValue(argcount);
+						if(defstr.empty() && o_function->maxargs() < 0) break;
 						Argument *arg = o_function->getArgumentDefinition(argcount);
 						remove_blank_ends(defstr);
 						if(defstr.empty()) break;
