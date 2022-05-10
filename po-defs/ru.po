@@ -10017,7 +10017,7 @@ msgstr "Свердруп"
 
 #: ../data/units.xml.in.h:364
 msgid "r:sverdrup"
-msgstr "Sv"
+msgstr "свердруп"
 
 #: ../data/units.xml.in.h:365
 msgid "Cubic Foot per Minute"
