@@ -5770,6 +5770,7 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &
 bool MathStructure::isolate_x(const EvaluationOptions &eo, const EvaluationOptions &feo, const MathStructure &x_varp, bool check_result) {
 	if(isProtected()) return false;
 	if(!isComparison()) {
+		if(m_type == STRUCT_FUNCTION && o_function->id() == FUNCTION_ID_D_SOLVE) return false;
 		bool b = false;
 		for(size_t i = 0; i < SIZE; i++) {
 			if(CHILD(i).isolate_x(eo, feo, x_varp, check_result)) {

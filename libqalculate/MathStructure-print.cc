@@ -3807,13 +3807,13 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 		}
 		case STRUCT_UNIT: {
 			const ExpressionName *ename = &o_unit->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, b_plural, po.use_reference_names || (po.preserve_format && o_unit->isCurrency()), po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
-			if(o_prefix) print_str += o_prefix->preferredDisplayName(ename->abbreviation, po.use_unicode_signs, b_plural, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).formattedName(-1, false, format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0, !po.use_reference_names && !po.preserve_format, po.hide_underscore_spaces);
+			if(o_prefix) print_str += o_prefix->preferredDisplayName(ename->abbreviation, po.use_unicode_signs, b_plural, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).formattedName(-1, false, format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0, format && tagtype == TAG_TYPE_TERMINAL && po.use_unicode_signs ? 1 : 0, !po.use_reference_names && !po.preserve_format, po.hide_underscore_spaces);
 			bool b_nous = false;
 			if(ename->suffix && format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0) {
 				size_t i = ename->name.rfind('_');
 				b_nous = (i == string::npos || i == ename->name.length() - 1 || i == 0);
 			}
-			print_str += ename->formattedName(TYPE_UNIT, !po.use_reference_names, format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0, !po.use_reference_names && !po.preserve_format, po.hide_underscore_spaces);
+			print_str += ename->formattedName(TYPE_UNIT, !po.use_reference_names, format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0, format && tagtype == TAG_TYPE_TERMINAL && po.use_unicode_signs ? 1 : 0, !po.use_reference_names && !po.preserve_format, po.hide_underscore_spaces);
 			if(b_nous) {
 				size_t i = print_str.rfind("<sub>");
 				if(i != string::npos) print_str.insert(i + 4, " class=\"nous\"");
@@ -3834,7 +3834,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				size_t i = print_str.rfind("<sub>");
 				if(i != string::npos) print_str.insert(i + 4, " class=\"nous\"");
 			}
-			print_str += ename->formattedName(TYPE_VARIABLE, !po.use_reference_names, format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0, !po.use_reference_names && !po.preserve_format, po.hide_underscore_spaces);
+			print_str += ename->formattedName(TYPE_VARIABLE, !po.use_reference_names, format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0, format && tagtype == TAG_TYPE_TERMINAL && po.use_unicode_signs ? 1 : 0, !po.use_reference_names && !po.preserve_format, po.hide_underscore_spaces);
 			if(b_nous) {
 				size_t i = print_str.rfind("<sub>");
 				if(i != string::npos) print_str.insert(i + 4, " class=\"nous\"");
@@ -3917,7 +3917,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					size_t i = print_str.rfind("<sub>");
 					if(i != string::npos) print_str.insert(i + 4, " class=\"nous\"");
 				}
-				print_str += ename->formattedName(TYPE_FUNCTION, !po.use_reference_names, format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0, !po.use_reference_names && !po.preserve_format, po.hide_underscore_spaces);
+				print_str += ename->formattedName(TYPE_FUNCTION, !po.use_reference_names, format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0, format && tagtype == TAG_TYPE_TERMINAL && po.use_unicode_signs ? 1 : 0, !po.use_reference_names && !po.preserve_format, po.hide_underscore_spaces);
 				if(b_nous) {
 					size_t i = print_str.rfind("<sub>");
 					if(i != string::npos) print_str.insert(i + 4, " class=\"nous\"");

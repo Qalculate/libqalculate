@@ -54,7 +54,7 @@ struct ExpressionName {
 	bool operator != (const ExpressionName &ename) const;
 
 	int underscoreRemovalAllowed() const;
-	std::string formattedName(int type, bool capitalize, bool html_suffix = false, bool remove_typename = false, bool hide_underscore = false, bool *was_formatted = NULL, bool *was_capitalized = NULL) const;
+	std::string formattedName(int type, bool capitalize, bool html_suffix = false, int unicode_suffix = 0, bool remove_typename = false, bool hide_underscore = false, bool *was_formatted = NULL, bool *was_capitalized = NULL) const;
 
 };
 

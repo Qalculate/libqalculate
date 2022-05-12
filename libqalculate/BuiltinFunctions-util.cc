@@ -843,7 +843,7 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			sarg_new[1] = carg;
 		}
 		if(CALCULATOR->functionNameTaken(vargs[1].symbol())) {
-			MathFunction *f = CALCULATOR->getActiveFunction(vargs[1].symbol());
+			MathFunction *f = CALCULATOR->getActiveFunction(vargs[1].symbol(), true);
 			if(f && f->isLocal() && f->subtype() == SUBTYPE_USER_FUNCTION) {
 				if(!vargs[2].symbol().empty()) f->setCategory(vargs[2].symbol());
 				if(!vargs[3].symbol().empty()) f->setTitle(vargs[3].symbol());
@@ -872,7 +872,7 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		return 0;
 	}
 	if(CALCULATOR->variableNameTaken(vargs[1].symbol())) {
-		Variable *v = CALCULATOR->getActiveVariable(vargs[1].symbol());
+		Variable *v = CALCULATOR->getActiveVariable(vargs[1].symbol(), true);
 		if(v && v->isLocal() && v->isKnown()) {
 			if(!vargs[2].symbol().empty()) v->setCategory(vargs[2].symbol());
 			if(!vargs[3].symbol().empty()) v->setTitle(vargs[3].symbol());

@@ -1,3 +1,8 @@
+2022-05-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Show single digit suffixes using Unicode subscript, in qalc
+	* Make names with a single character followed by digits case-sensitive with suffix by default
+
 2022-04-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Polar plot style

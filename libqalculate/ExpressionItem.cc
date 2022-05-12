@@ -29,7 +29,25 @@ ExpressionName::ExpressionName(string sname) : suffix(false), unicode(false), pl
 	}
 	if(sname.length() > 2) {
 		size_t i = sname.find('_', 1);
-		if(i != string::npos && i < sname.length() - 1 && sname.find('_', i + 1) == string::npos) suffix = true;
+		if(i != string::npos && i < sname.length() - 1 && sname.find('_', i + 1) == string::npos) {
+			suffix = true;
+			if(i == 1) {
+				abbreviation = true;
+				case_sensitive = true;
+			}
+		}
+	}
+	if(!case_sensitive && !suffix) {
+		for(size_t i = 1; i < sname.length(); i++) {
+			if((signed char) sname[i] > 0 || (unsigned char) sname[i] >= 0xC0) {
+				if(sname.find_first_not_of(NUMBERS, i) == string::npos) {
+					suffix = true;
+					abbreviation = true;
+					case_sensitive = true;
+				}
+				break;
+			}
+		}
 	}
 }
 ExpressionName::ExpressionName() : abbreviation(false), suffix(false), unicode(false), plural(false), reference(false), avoid_input(false), case_sensitive(false), completion_only(false) {
@@ -67,12 +85,38 @@ int ExpressionName::underscoreRemovalAllowed() const {
 	}
 	return i_us;
 }
-string ExpressionName::formattedName(int type, bool capitalize, bool html_suffix, bool remove_typename, bool hide_underscore, bool *was_formatted, bool *was_capitalized) const {
+bool sub_suffix_unicode(string &name, int n) {
+	if(n == 0) return false;
+	size_t i = name.rfind('_');
+	bool b = (i == string::npos || i == name.length() - 1 || i == 0);
+	size_t i2 = 0;
+	if(b) {
+		if(is_in(NUMBERS, name[name.length() - 1])) {
+			i2++;
+			while(name.length() > i2 + 1 && is_in(NUMBERS, name[name.length() - 1 - i2])) {
+				i2++;
+			}
+		}
+	} else {
+		if(name.find_first_not_of(NUMBERS, i + 1) != string::npos) return false;
+		i2 = name.length() - i - 1;
+	}
+	if(i2 == 0 || (n > 0 && i2 > (size_t) n)) return false;
+	if(!b) name.erase(i, 1);
+	string ssub = "\xe2\x82\x80";
+	while(i2 > 0) {
+		ssub[2] = '\x80' + (name[name.length() - i2] - '0');
+		name.replace(name.length() - i2, 1, ssub);
+		i2--;
+	}
+	return true;
+}
+string ExpressionName::formattedName(int type, bool capitalize, bool html_suffix, int unicode_suffix, bool remove_typename, bool hide_underscore, bool *was_formatted, bool *was_capitalized) const {
 	if(was_formatted) *was_formatted = false;
 	if(was_capitalized) *was_capitalized = false;
 	if(name.length() < 2) return name;
 	string str = name;
-	if(suffix && (html_suffix || remove_typename)) {
+	if(suffix && (unicode_suffix || html_suffix || remove_typename)) {
 		size_t i = string::npos;
 		if(remove_typename && (type == TYPE_VARIABLE || type == TYPE_UNIT)) i = name.rfind('_');
 		size_t l = 4;
@@ -82,8 +126,10 @@ string ExpressionName::formattedName(int type, bool capitalize, bool html_suffix
 				str = name.substr(0, i);
 			} else {
 				str = str.substr(0, name.length() - l);
-				if(html_suffix) str = sub_suffix_html(str);
-			}
+				if((!sub_suffix_unicode(str, unicode_suffix)) && html_suffix) str = sub_suffix_html(str);
+				}
+			if(was_formatted) *was_formatted = true;
+		} else if(sub_suffix_unicode(str, unicode_suffix)) {
 			if(was_formatted) *was_formatted = true;
 		} else if(html_suffix) {
 			str = sub_suffix_html(name);
@@ -156,17 +202,7 @@ ExpressionItem::ExpressionItem(string cat_, string name_, string title_, string 
 	remove_blank_ends(title_);
 
 	if(!name_.empty()) {
-		names.resize(1);
-		names[0].name = name_;
-		names[0].unicode = false;
-		names[0].abbreviation = false;
-		names[0].case_sensitive = text_length_is_one(name_);
-		size_t i = name_.find('_');
-		if(i != string::npos && i > 0 && i < name_.length() - 1 && name_.find('_', i + 1) == string::npos) names[0].suffix = true;
-		else names[0].suffix = false;
-		names[0].avoid_input = false;
-		names[0].reference = true;
-		names[0].plural = false;
+		names.push_back(ExpressionName(name_));
 	}
 
 	stitle = title_;
