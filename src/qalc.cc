@@ -2725,6 +2725,7 @@ int main(int argc, char *argv[]) {
 			}
 #endif
 		}
+		replace_subscripts(str);
 		bool explicit_command = (!str.empty() && str[0] == '/');
 		if(explicit_command) str.erase(0, 1);
 		if(!unittest || str.empty() || str[0] != '\t') remove_blank_ends(str);
@@ -2736,7 +2737,6 @@ int main(int argc, char *argv[]) {
 		} else {
 			scom = str.substr(0, ispace);
 		}
-		replace_subscripts(scom);
 		//The qalc command "set" as in "set precision 10". The original text string for commands is kept in addition to the translation.
 		if(EQUALS_IGNORECASE_AND_LOCAL(scom, "set", _("set"))) {
 			str = str.substr(ispace + 1, slen - (ispace + 1));
