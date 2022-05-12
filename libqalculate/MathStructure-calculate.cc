@@ -6837,7 +6837,7 @@ bool MathStructure::calculateSubtract(const MathStructure &msub, const Evaluatio
 
 bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursive, bool do_unformat) {
 
-	if(m_type == STRUCT_FUNCTION && o_function != eo.protected_function) {
+	if(m_type == STRUCT_FUNCTION && o_function != eo.protected_function && !b_protected) {
 
 		if(function_value) {
 			// clear stored function value (presently not used)
