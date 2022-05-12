@@ -1180,6 +1180,21 @@ bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructu
 	}
 	return false;
 }
+void protect_mdiff(MathStructure &m, const MathStructure &mdiff, const EvaluationOptions &eo, bool b_top = true) {
+	if(m == mdiff) {
+		m.setProtected(true);
+	} else {
+		for(size_t i = 0; i < m.size(); i++) {
+			protect_mdiff(m[i], mdiff, eo, false);
+		}
+	}
+	if(b_top && eo.isolate_x) {
+		EvaluationOptions eo2 = eo;
+		eo2.isolate_var = &mdiff;
+		m.eval(eo2);
+		m.setProtected(true);
+	}
+}
 
 DSolveFunction::DSolveFunction() : MathFunction("dsolve", 1, 3) {
 	setDefaultValue(2, "undefined");
@@ -1214,6 +1229,7 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	if(m_diff[2].number().intValue() != 1) {
 		CALCULATOR->error(true, _("Unable to solve differential equation."), NULL);
 		mstruct = m_eqn;
+		protect_mdiff(mstruct, m_diff, eo);
 		return -1;
 	}
 	m_eqn.isolate_x(eo2, m_diff);
@@ -1242,12 +1258,14 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	}
 	if(m_eqn.contains(m_diff)) {
 		CALCULATOR->error(true, _("Unable to solve differential equation."), NULL);
+		protect_mdiff(mstruct, m_diff, eo);
 		return -1;
 	}
 	m_eqn.calculatesub(eo2, eo2, true);
 	MathStructure msolve(m_eqn);
 	if(solve_equation(msolve, m_eqn, m_diff[0], eo, true, m_diff[1], MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_C)), vargs[2], vargs[1]) <= 0) {
 		CALCULATOR->error(true, _("Unable to solve differential equation."), NULL);
+		protect_mdiff(mstruct, m_diff, eo);
 		return -1;
 	}
 	mstruct = msolve;

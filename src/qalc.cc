@@ -323,6 +323,31 @@ void set_assumption(const string &str, bool last_of_two = false) {
 		return;
 	}
 }
+void replace_subscripts(string &str) {
+	if(str.find("\xe2\x82", 1) != string::npos) {
+		bool in_cit1 = false, in_cit2 = false;
+		for(size_t i = 1; i < str.length() - 2; i++) {
+			switch(str[i]) {
+				case '\"': {
+					if(in_cit1) in_cit1 = false;
+					else if(!in_cit2) in_cit1 = true;
+					break;
+				}
+				case '\'': {
+					if(in_cit2) in_cit2 = false;
+					else if(!in_cit1) in_cit1 = true;
+					break;
+				}
+				case '\xe2': {
+					if(is_not_in(NOT_IN_NAMES, str[i - 1]) && str[i + 1] == '\x82' && (unsigned char) str[i + 2] >= 0x80 && (unsigned char) str[i + 2] <= 0x89) {
+						str.replace(i, 3, 1, '0' + ((unsigned char) str[i + 2] - 0x80));
+					}
+					break;
+				}
+			}
+		}
+	}
+}
 
 vector<string> matches;
 
@@ -1654,7 +1679,7 @@ int key_save(int, int) {
 		}
 	}
 	Variable *v = NULL;
-	if(b) v = CALCULATOR->getActiveVariable(name);
+	if(b) v = CALCULATOR->getActiveVariable(name, true);
 	if(b && ((!v && CALCULATOR->variableNameTaken(name)) || (v && (!v->isKnown() || !v->isLocal() || v->category() != CALCULATOR->temporaryCategory())))) {
 		b = ask_question(_("A unit or variable with the same name already exists.\nDo you want to overwrite it (default: no)?"));
 	}
@@ -2510,6 +2535,7 @@ int main(int argc, char *argv[]) {
 
 	if(list_type != 'n') {
 		CALCULATOR->terminateThreads();
+		replace_subscripts(search_str);
 		list_defs(false, list_type, search_str);
 		return 0;
 	}
@@ -2710,6 +2736,7 @@ int main(int argc, char *argv[]) {
 		} else {
 			scom = str.substr(0, ispace);
 		}
+		replace_subscripts(scom);
 		//The qalc command "set" as in "set precision 10". The original text string for commands is kept in addition to the translation.
 		if(EQUALS_IGNORECASE_AND_LOCAL(scom, "set", _("set"))) {
 			str = str.substr(ispace + 1, slen - (ispace + 1));
@@ -2802,7 +2829,7 @@ int main(int argc, char *argv[]) {
 					}
 				}
 				Variable *v = NULL;
-				if(b) v = CALCULATOR->getActiveVariable(name);
+				if(b) v = CALCULATOR->getActiveVariable(name, true);
 				if(b && ((!v && CALCULATOR->variableNameTaken(name)) || (v && (!v->isKnown() || !v->isLocal() || v->category() != CALCULATOR->temporaryCategory())))) {
 					b = ask_question(_("A unit or variable with the same name already exists.\nDo you want to overwrite it (default: no)?"));
 				}
@@ -2869,7 +2896,7 @@ int main(int argc, char *argv[]) {
 				}
 			}
 			Variable *v = NULL;
-			if(b) v = CALCULATOR->getActiveVariable(name);
+			if(b) v = CALCULATOR->getActiveVariable(name, true);
 			if(b && ((!v && CALCULATOR->variableNameTaken(name)) || (v && (!v->isKnown() || !v->isLocal() || v->category() != CALCULATOR->temporaryCategory())))) {
 				b = ask_question(_("A unit or variable with the same name already exists.\nDo you want to overwrite it (default: no)?"));
 			}
@@ -2942,7 +2969,7 @@ int main(int argc, char *argv[]) {
 					gsub("y", "\\y", expr);
 					gsub("z", "\\z", expr);
 				}
-				MathFunction *f = CALCULATOR->getActiveFunction(name);
+				MathFunction *f = CALCULATOR->getActiveFunction(name, true);
 				if(f && f->isLocal() && f->subtype() == SUBTYPE_USER_FUNCTION) {
 					((UserFunction*) f)->setFormula(expr);
 					if(f->countNames() == 0) {
