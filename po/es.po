@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: Qalculate!\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-05 17:58+0200\n"
-"PO-Revision-Date: 2021-07-10 11:30-0300\n"
+"PO-Revision-Date: 2022-05-13 19:00-0300\n"
 "Last-Translator: VicSanRoPe\n"
 "Language-Team: none\n"
 "Language: es\n"
@@ -590,12 +590,12 @@ msgstr "redondear a par"
 
 #: ../src/qalc.cc:915 ../src/qalc.cc:3859 ../src/qalc.cc:4643
 msgid "rounding"
-msgstr ""
+msgstr "redondeo"
 
 #. rounding mode
 #: ../src/qalc.cc:917 ../src/qalc.cc:3862 ../src/qalc.cc:4643
 msgid "even"
-msgstr ""
+msgstr "par"
 
 #. digit grouping mode
 #. rounding mode
@@ -607,7 +607,7 @@ msgstr "estándar"
 #. rounding mode
 #: ../src/qalc.cc:919 ../src/qalc.cc:3864 ../src/qalc.cc:4643
 msgid "truncate"
-msgstr ""
+msgstr "truncar"
 
 #: ../src/qalc.cc:931
 msgid "rpn syntax"
@@ -622,9 +622,8 @@ msgid "rpn"
 msgstr ""
 
 #: ../src/qalc.cc:944 ../src/qalc.cc:3929 ../src/qalc.cc:4707
-#, fuzzy
 msgid "simplified percentage"
-msgstr "simplificado"
+msgstr "porcentaje simplificado"
 
 #: ../src/qalc.cc:945 ../src/qalc.cc:3747 ../src/qalc.cc:4572
 msgid "short multiplication"
@@ -698,9 +697,8 @@ msgid "spacious"
 msgstr "espacioso"
 
 #: ../src/qalc.cc:1032 ../src/qalc.cc:3751 ../src/qalc.cc:4576
-#, fuzzy
 msgid "vertical space"
-msgstr "Visualización numérica"
+msgstr "espacio vertical"
 
 #: ../src/qalc.cc:1033 ../src/qalc.cc:3750 ../src/qalc.cc:4575
 msgid "unicode"
@@ -835,7 +833,7 @@ msgstr "aproximación"
 #: ../src/qalc.cc:3819 ../src/qalc.cc:3997 ../src/qalc.cc:4545
 #: ../src/qalc.cc:4622 ../src/qalc.cc:4884 ../src/qalc.cc:4987
 msgid "exact"
-msgstr "exacta"
+msgstr "exacto"
 
 #. automatic
 #: ../src/qalc.cc:1138 ../src/qalc.cc:1272 ../src/qalc.cc:1367
@@ -1096,9 +1094,8 @@ msgid "when decimals"
 msgstr "con decimales"
 
 #: ../src/qalc.cc:1430 ../src/qalc.cc:3976 ../src/qalc.cc:4749
-#, fuzzy
 msgid "sigint action"
-msgstr "notación científica"
+msgstr "acción sigint"
 
 #: ../src/qalc.cc:1432 ../src/qalc.cc:3978 ../src/qalc.cc:4016
 #: ../src/qalc.cc:4749 ../src/qalc.cc:4945 ../src/qalc.cc:4979
@@ -1109,13 +1106,12 @@ msgstr "salir"
 #. kill process
 #: ../src/qalc.cc:1434 ../src/qalc.cc:3980 ../src/qalc.cc:4749
 msgid "kill"
-msgstr ""
+msgstr "matar"
 
 #. interupt process
-#: ../src/qalc.cc:1436 ../src/qalc.cc:3979 ../src/qalc.cc:4749
-#, fuzzy
+#: ../src/qalc.cc:1436 ../src/qalc.cc:3979 ../src/qalc.cc:474
 msgid "interrupt"
-msgstr "entero"
+msgstr "interrumpir"
 
 #: ../src/qalc.cc:1472
 msgid "Unrecognized option."
@@ -1273,9 +1269,8 @@ msgstr ""
 "usar colores para resaltar diferentes elementos de expresiones y resultados"
 
 #: ../src/qalc.cc:2187
-#, fuzzy
 msgid "load default settings"
-msgstr "suposiciones predeterminadas"
+msgstr "cargar configuración predeterminada"
 
 #: ../src/qalc.cc:2192
 msgid "FILE"
@@ -1596,7 +1591,7 @@ msgstr "sacar"
 #: ../src/qalc.cc:3222 ../src/qalc.cc:3223 ../src/qalc.cc:4014
 #: ../src/qalc.cc:4892 ../src/qalc.cc:4994
 msgid "convert"
-msgstr "convert"
+msgstr "convertir"
 
 # "a" is a unit I have never heard without a prefix, "ha" is used
 #. "to"-operator
@@ -1973,7 +1968,7 @@ msgstr "Mostrar caracteres Unicode"
 
 #: ../src/qalc.cc:4576
 msgid "Add empty lines before and after result."
-msgstr ""
+msgstr "Añadir líneas vacías antes y después del resultado"
 
 #: ../src/qalc.cc:4580 ../src/qalc.cc:4684
 msgid "bin"
@@ -2037,14 +2032,14 @@ msgstr ""
 "Si está activado 1/6 se muestra como \"0.1 666...\", sino como \"0.166667\"."
 
 #: ../src/qalc.cc:4643
-#, fuzzy
 msgid ""
 "Determines whether how approximate numbers are rounded (round halfway "
 "numbers away from zero or towards the nearest even digit, or round all "
 "numbers towards zero)."
 msgstr ""
-"Determina si los números medios se redondean hacia arriba o hacia el entero "
-"par más cercano."
+"Determina como números aproximados se redondean (redondear de la mitad "
+"hacia arriba o hacia el entero par más cercano, o siempre redondear hacia "
+"el cero)."
 
 #: ../src/qalc.cc:4645
 msgid "Determines how scientific notation is used (e.g. 5 543 000 = 5.543E6)."
@@ -2092,7 +2087,8 @@ msgstr ""
 msgid ""
 "Interpret addition/subtraction of percentage as percentage increase/decrease "
 "of the first term (100 + 10% = 110)."
-msgstr ""
+msgstr "Interpreta una adición/substracción de un porcentaje como un "
+"aumento/decremento del primer término (100 + 10% = 110)."
 
 #: ../src/qalc.cc:4710
 msgid "Enables automatic use of hecto, deca, deci, and centi."
@@ -2182,7 +2178,7 @@ msgstr "Guardar configuración al salir."
 
 #: ../src/qalc.cc:4749
 msgid "Determines how the SIGINT signal (Ctrl+C) is handled."
-msgstr ""
+msgstr "Determina como se maneja la señal SIGINT (Ctrl+C)."
 
 #: ../src/qalc.cc:4754
 msgid "Set default assumptions for unknown variables."
@@ -2462,10 +2458,9 @@ msgstr ""
 "flotante)"
 
 #: ../src/qalc.cc:4919
-#, fuzzy
 msgid "- bcd (show as binary-coded decimal)"
 msgstr ""
-"- bases (mostrar como un número binario, octal, decimal, y hexadecimal)"
+"- bcd (mostrar como decimal codificado en binario)"
 
 #: ../src/qalc.cc:4920
 msgid "- roman (show as roman numerals)"
@@ -2602,9 +2597,8 @@ msgstr ""
 
 #. qalc command
 #: ../src/qalc.cc:4972
-#, fuzzy
 msgid "clear"
-msgstr "limpiar pila"
+msgstr "limpiar"
 
 #: ../src/qalc.cc:4992
 #, c-format
@@ -2639,10 +2633,11 @@ msgid "approx."
 msgstr "aprox."
 
 #: ../src/qalc.cc:5228
-#, fuzzy
 msgid ""
 "Please select interpretation of expressions with implicit multiplication."
-msgstr "Por favor seleccione la interpretación de los puntos (\".\")."
+msgstr ""
+"Por favor seleccione la interpretación de expresiones con multiplicación "
+"implícita."
 
 #: ../src/qalc.cc:5232
 msgid "Adaptive"
@@ -2707,7 +2702,7 @@ msgstr "Calculando"
 
 #: ../src/qalc.cc:5865
 msgid "Please select desired variant of the sinc function."
-msgstr ""
+msgstr "Por favor seleccione la variante deseada de la función sinc."
 
 #: ../src/qalc.cc:5878 ../src/qalc.cc:5906
 msgid "Sinc function"
@@ -2929,11 +2924,11 @@ msgstr "Demasiados elementos (%s) para las dimensiones (%sx%s) de la matriz."
 
 #: ../libqalculate/BuiltinFunctions-matrixvector.cc:135
 msgid "Vertical concatenation requires equal number of columns."
-msgstr ""
+msgstr "La concatenación vertical requiere de un número igual de columnas."
 
 #: ../libqalculate/BuiltinFunctions-matrixvector.cc:165
 msgid "Horizontal concatenation requires equal number of rows."
-msgstr ""
+msgstr "La concatenación horizontal requiere de un número igual de filas."
 
 #: ../libqalculate/BuiltinFunctions-matrixvector.cc:196
 #: ../libqalculate/BuiltinFunctions-matrixvector.cc:278
@@ -3107,10 +3102,18 @@ msgid ""
 "numerical value, this is interpreted as either sampling rate (for integers > "
 "10) or step value."
 msgstr ""
+"Los argumentos adicionales especifican varias opciones de graficado. "
+"Ingrese el nombre de la opción y el valor deseado, separados por espacio o como argumentos separados. En la mayoría de opciones, se puede omitir el "
+"valor para habilitar un valor activo por defecto. En las opciones con "
+"valores nombrados, el nombre de la opción puede ser omitido (o en su "
+"lugar, se puede reemplazar el valor por un entero que represente el índice "
+"del valor, empezando por cero). Si la primera opción especificada es un "
+"valor numérico, se interpreta como la tasa de muestreo (para enteros > 10) "
+"o valor de paso."
 
 #: ../libqalculate/BuiltinFunctions-util.cc:1009
 msgid "List of options:"
-msgstr ""
+msgstr "Lista de opciones:"
 
 #: ../libqalculate/BuiltinFunctions-util.cc:1055
 msgctxt "plot"
@@ -3155,17 +3158,17 @@ msgstr "leyenda"
 #: ../libqalculate/BuiltinFunctions-util.cc:1063
 msgctxt "plot"
 msgid "ylabel"
-msgstr "etiqueta y"
+msgstr "etiquetay"
 
 #: ../libqalculate/BuiltinFunctions-util.cc:1064
 msgctxt "plot"
 msgid "xlabel"
-msgstr "etiqueta x"
+msgstr "etiquetax"
 
 #: ../libqalculate/BuiltinFunctions-util.cc:1065
 msgctxt "plot"
 msgid "linewidth"
-msgstr "ancho línea"
+msgstr "ancholínea"
 
 #: ../libqalculate/BuiltinFunctions-util.cc:1066
 msgctxt "plot"
@@ -3175,12 +3178,12 @@ msgstr "monocromo"
 #: ../libqalculate/BuiltinFunctions-util.cc:1067
 msgctxt "plot"
 msgid "ymin"
-msgstr "mínimo y"
+msgstr ""
 
 #: ../libqalculate/BuiltinFunctions-util.cc:1068
 msgctxt "plot"
 msgid "ymax"
-msgstr "máximo x"
+msgstr ""
 
 #: ../libqalculate/BuiltinFunctions-util.cc:1069
 msgctxt "plot"
@@ -3195,7 +3198,7 @@ msgstr ""
 #: ../libqalculate/BuiltinFunctions-util.cc:1071
 msgctxt "plot"
 msgid "logscale"
-msgstr ""
+msgstr "escalalog"
 
 #: ../libqalculate/BuiltinFunctions-util.cc:1072
 msgctxt "plot"
@@ -3280,22 +3283,22 @@ msgstr "ninguno"
 #: ../libqalculate/BuiltinFunctions-util.cc:1125
 msgctxt "plot legend"
 msgid "top-left"
-msgstr "superior izquierda"
+msgstr "superior-izquierda"
 
 #: ../libqalculate/BuiltinFunctions-util.cc:1126
 msgctxt "plot legend"
 msgid "top-right"
-msgstr "superior derecha"
+msgstr "superior-derecha"
 
 #: ../libqalculate/BuiltinFunctions-util.cc:1127
 msgctxt "plot legend"
 msgid "bottom-left"
-msgstr "inferior izquierda"
+msgstr "inferior-izquierda"
 
 #: ../libqalculate/BuiltinFunctions-util.cc:1128
 msgctxt "plot legend"
 msgid "bottom-right"
-msgstr "inferior derecha"
+msgstr "inferior-derecha"
 
 #: ../libqalculate/BuiltinFunctions-util.cc:1129
 msgctxt "plot legend"
@@ -3511,7 +3514,7 @@ msgstr "Fallo al descargar tasas de cambio de %s: %s."
 #: ../libqalculate/Calculator-definitions.cc:3880
 #, c-format
 msgid "Exchange rates were successfully downloaded from %s."
-msgstr ""
+msgstr "Se han descargado exitosamente las tasas de cambio de %s."
 
 #. ignore operators
 #: ../libqalculate/Calculator-parse.cc:2997
@@ -3881,6 +3884,8 @@ msgid ""
 "log() with a single argument is considered ambigious. Please use ln() or "
 "log10() instead."
 msgstr ""
+"log() con un solo argumento se considera ambiguo. Por favor use ln() o "
+"log10() en su lugar."
 
 #: ../libqalculate/Function.cc:512
 #, c-format
