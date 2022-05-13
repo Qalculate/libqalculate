@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: Qalculate!\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-04 08:03+0200\n"
-"PO-Revision-Date: 2021-07-11 18:00-0300\n"
+"PO-Revision-Date: 2022-05-13 18:30-0300\n"
 "Last-Translator: VicSanRoPe\n"
 "Language-Team: none\n"
 "Language: es\n"
@@ -3561,11 +3561,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:189
 msgid "Parallel Sum"
-msgstr "Suma paralelo"
+msgstr "Suma paralela"
 
 #: ../data/functions.xml.in.h:190
 msgid "r:parallel"
-msgstr ""
+msgstr "paralelo"
 
 #: ../data/functions.xml.in.h:191
 msgid "Integer Division"
@@ -4002,14 +4002,13 @@ msgid "r:bcd"
 msgstr ""
 
 #: ../data/functions.xml.in.h:280
-#, fuzzy
 msgid "Binary-coded decimal number"
-msgstr "Número hexadecimal"
+msgstr "Número decimal codificado en binario"
 
 #. Packed binary-coded decimal
 #: ../data/functions.xml.in.h:282
 msgid "Packed"
-msgstr ""
+msgstr "Empaquetado"
 
 #: ../data/functions.xml.in.h:283
 msgid "Integers"
@@ -4944,33 +4943,31 @@ msgstr "Número de discos"
 
 #: ../data/functions.xml.in.h:494
 msgid "Stripes"
-msgstr "Divisiones"
+msgstr "Franjas"
 
 #: ../data/functions.xml.in.h:495
 msgid "RAM Latency"
-msgstr ""
+msgstr "Latencia de RAM"
 
 #: ../data/functions.xml.in.h:496
-#, fuzzy
 msgid "r:ramlatency"
-msgstr "Divisas"
+msgstr ""
 
 #: ../data/functions.xml.in.h:497
-#, fuzzy
 msgid "Data Rate"
-msgstr "Conjuntos de datos"
+msgstr "Tasa de datos"
 
 #: ../data/functions.xml.in.h:498
 msgid "CAS Latency"
-msgstr ""
+msgstr "Latencia CAS"
 
 #: ../data/functions.xml.in.h:499
 msgid "Word"
-msgstr ""
+msgstr "Palabra"
 
 #: ../data/functions.xml.in.h:500
 msgid "Transfers per Clock Cycle"
-msgstr ""
+msgstr "Transferencias por ciclo de reloj"
 
 #: ../data/functions.xml.in.h:501
 msgid "Depth of Field"
@@ -5054,11 +5051,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:514
 msgid "Drill Bit Size"
-msgstr ""
+msgstr "Tamaño de broca"
 
 #: ../data/functions.xml.in.h:515
 msgid "r:drillbit"
-msgstr ""
+msgstr "broca"
 
 #: ../data/functions.xml.in.h:516
 msgid ""
@@ -5066,6 +5063,9 @@ msgid ""
 "diameter value with length unit, or drill bit diameter (with length unit), "
 "if argument is an integer or an upper-case character (quoted)"
 msgstr ""
+"Devuelve el número o letra de una broca si el argumento es una fracción "
+"o diámetro con unidad. O devuelve el diámetro con unidad de la broca si "
+"el argumento es un entero o una letra mayúscula entre comillas."
 
 #: ../data/functions.xml.in.h:517
 msgid "Statistics"
@@ -5455,12 +5455,11 @@ msgstr "Regresión"
 
 #: ../data/functions.xml.in.h:614
 msgid "Simple Linear Fit"
-msgstr ""
+msgstr "Coincidencia lineal simple"
 
 #: ../data/functions.xml.in.h:615
-#, fuzzy
 msgid "r:linearfit"
-msgstr "límites"
+msgstr ""
 
 #: ../data/functions.xml.in.h:616
 msgid ""
@@ -5471,26 +5470,28 @@ msgid ""
 "possible to pass both x and y values in a two column matrix as the first "
 "argument."
 msgstr ""
+"Devuelve la función linear, para un conjunto de valores x e y, estimada "
+"usando regresión lineal simple con una sola variable usando el método "
+"común de mínimos cuadrados. Si el vector de valores y está vacío, el "
+"primer argumento es usado para valores secuenciales de y (con valores de "
+"x 1, 2, ..., n). Es posible pasar los valores de x e y en una matriz de "
+"dos columnas como el primer argumento."
 
 #: ../data/functions.xml.in.h:617
-#, fuzzy
 msgid "X Values"
-msgstr "Valor"
+msgstr "Valores X"
 
 #: ../data/functions.xml.in.h:618
-#, fuzzy
 msgid "Y Values"
-msgstr "Valor"
+msgstr "Valores Y"
 
 #: ../data/functions.xml.in.h:619
-#, fuzzy
 msgid "Quadratic Fit"
-msgstr "Media cuadrática (RMS)"
+msgstr "Coincidencia cuadrática"
 
 #: ../data/functions.xml.in.h:620
-#, fuzzy
 msgid "r:quadraticfit"
-msgstr "billardo"
+msgstr ""
 
 #: ../data/functions.xml.in.h:621
 msgid ""
@@ -5499,11 +5500,14 @@ msgid ""
 "values (with x values 1, 2, ..., n). It is possible to pass both x and y "
 "values in a two column matrix as the first argument."
 msgstr ""
-
+"Coincide los datos a un polinomio de grado 2, usando el método de mínimos "
+"cuadrados. Si el vector de valores y está vacío, el primer argumento es "
+"usado para valores secuenciales de y (con valores de x 1, 2, ..., n). Es "
+"posible pasar los valores de x e y en una matriz de dos columnas como el "
+"primer argumento."
 #: ../data/functions.xml.in.h:622
-#, fuzzy
 msgid "Cubic Fit"
-msgstr "Metro cúbico"
+msgstr "Coincidencia cúbica"
 
 #: ../data/functions.xml.in.h:623
 msgid "r:cubicfit"
@@ -5516,6 +5520,11 @@ msgid ""
 "values (with x values 1, 2, ..., n). It is possible to pass both x and y "
 "values in a two column matrix as the first argument."
 msgstr ""
+"Coincide los datos a un polinomio de grado 3, usando el método de mínimos "
+"cuadrados. Si el vector de valores y está vacío, el primer argumento es "
+"usado para valores secuenciales de y (con valores de x 1, 2, ..., n). Es "
+"posible pasar los valores de x e y en una matriz de dos columnas como el "
+"primer argumento."
 
 #: ../data/functions.xml.in.h:625
 msgid "Correlation"
@@ -6487,7 +6496,7 @@ msgstr "Seleccionar elementos de vector"
 
 #: ../data/functions.xml.in.h:834
 msgid "r:select"
-msgstr ""
+msgstr "seleccionar"
 
 #: ../data/functions.xml.in.h:835
 msgid "Condition"
@@ -6499,7 +6508,7 @@ msgstr "Seleccionar primera coincidencia"
 
 #: ../data/functions.xml.in.h:837
 msgid "r:function"
-msgstr ""
+msgstr "función"
 
 #: ../data/functions.xml.in.h:838
 msgid "Arguments"
@@ -6561,6 +6570,15 @@ msgid ""
 "returned.&#10;&#10;The \":=\" operator (e.g. var1:=10) is a shortcut for "
 "this function."
 msgstr ""
+"Guarda un valor en una variable o guarda una expresión como una función."
+"&#10;&#10;Se crea una función si el nombre incluye paréntesis (ej. \"f() "
+"\"). Opcionalmente se pueden especificar los argumentos de la función en "
+"su nombre (ej. \"save(a+b,f(a,b))\"), de lo contrario, se espera que los "
+"argumentos de la función sean utilizados en la función usando \\x, \\y, "
+"\\z,\\a, \\b..., o solo x, y, z (e.g. \"save(x+y,f())\").&#10;&#10;Si una "
+"función fue creada, la expresión de función procesada es devuelta como "
+"una cadena de texto, de lo contrario se devuelve el valor.&#10;&#10;El "
+"operador \":=\" (e.g. var1:=10) es un atajo para esta función."
 
 #: ../data/functions.xml.in.h:852
 msgid "Category"
@@ -7573,7 +7591,7 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1090
 msgid "Volume of Square Pyramid (Equilateral)"
-msgstr "Volumen de una pirámide cuadrada (equilátero)"
+msgstr "Volumen de una pirámide cuadrada (equilátera)"
 
 #: ../data/functions.xml.in.h:1091
 msgid "r:sqpyramid"
@@ -7581,7 +7599,7 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1092
 msgid "Surface Area of Square Pyramid (Equilateral)"
-msgstr "Área de una pirámide cuadrada (equilátero)"
+msgstr "Área de una pirámide cuadrada (equilátera)"
 
 #: ../data/functions.xml.in.h:1093
 msgid "r:sqpyramid_sa"
@@ -7589,7 +7607,7 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1094
 msgid "Height of Square Pyramid (Equilateral)"
-msgstr "Altura de una pirámide cuadrada (equilátero)"
+msgstr "Altura de una pirámide cuadrada (equilátera)"
 
 #: ../data/functions.xml.in.h:1095
 msgid "r:sqpyramid_height"
@@ -7942,30 +7960,26 @@ msgid "Rate"
 msgstr "Tasa"
 
 #: ../data/functions.xml.in.h:1165
-#, fuzzy
 msgid "Rate of investment"
-msgstr "Períodos de una inversión"
+msgstr "Tasa de inversión"
 
 #: ../data/functions.xml.in.h:1166
-#, fuzzy
 msgid "r:rate"
-msgstr "rango"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1168
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "Calculates the rate of return. &#10;&#10;If type = 1 then the payment is "
 "made at the beginning of the period. If type = 0 (or omitted) it is made at "
 "the end of each period.&#10;&#10;Note that the optional guess is needed "
 "because there can be more than one valid result. It defaults to 10%."
 msgstr ""
-"Devuelve el valor actual de una inversión.&#10;&#10;Si tipo es verdadero, el "
-"pago es hecho al inicio del período, si tipo es falso (o omitido), es hecho "
-"al final de cada período."
+"Devuelve la tasa de inversión.&#10;&#10;Si tipo = 1, el pago es hecho al inicio del período, si tipo = 0 (u omitido), es hecho al final de cada período. Tenga en cuenta que el estimado es requerido porque puede haber más de un resultado válido, por defecto es de 10%."
 
 #: ../data/functions.xml.in.h:1169
 msgid "Guess"
-msgstr ""
+msgstr "Estimado"
 
 #: ../data/functions.xml.in.h:1170
 msgid "Periods of an investment"
@@ -8582,7 +8596,7 @@ msgstr "Milla náutica"
 
 #: ../data/units.xml.in.h:12
 msgid "r:nautical_mile,p:nautical_miles"
-msgstr "milla_náutica,p:millas_náutica"
+msgstr "milla_náutica,p:millas_náuticas"
 
 #: ../data/units.xml.in.h:13
 msgid "&#xC5;ngstr&#xF6;m"
@@ -8912,18 +8926,16 @@ msgid "Ounce (troy)"
 msgstr "Onza troy"
 
 #: ../data/units.xml.in.h:97
-#, fuzzy
 msgid "ars:oz_t,troy_ounce,p:troy_ounces"
-msgstr "a:oz,onza,p:onzas"
+msgstr ""
 
 #: ../data/units.xml.in.h:98
 msgid "Pound (troy)"
 msgstr "Libra troy"
 
 #: ../data/units.xml.in.h:99
-#, fuzzy
 msgid "ars:lb_t,troy_pound,p:troy_pounds"
-msgstr "a:lb,aou:&#x2114;,libra,p:libras"
+msgstr ""
 
 #: ../data/units.xml.in.h:100
 msgid "Dram"
@@ -9922,9 +9934,8 @@ msgid "ar:bbl,barrel,p:barrels"
 msgstr ""
 
 #: ../data/units.xml.in.h:357
-#, fuzzy
 msgid "Acre-Foot"
-msgstr "Pie"
+msgstr "Acre-pie"
 
 #: ../data/units.xml.in.h:358
 msgid "Specific Volume"
@@ -9980,7 +9991,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:371
 msgid "Gallons per Minute (U.S.)"
-msgstr ""
+msgstr "Galones por minuto (USA)"
 
 #: ../data/units.xml.in.h:372
 msgid "a-cr:gpm"
@@ -9988,7 +9999,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:373
 msgid "Gallons per Hour (U.S.)"
-msgstr ""
+msgstr "Galones por hora (USA)"
 
 #: ../data/units.xml.in.h:374
 msgid "a-cr:gph"
@@ -10655,9 +10666,8 @@ msgid "Rad"
 msgstr ""
 
 #: ../data/units.xml.in.h:540
-#, fuzzy
 msgid "rs:rad_radioactivity"
-msgstr "Radioactividad"
+msgstr ""
 
 #: ../data/units.xml.in.h:541
 msgid "Dose Equivalent"
@@ -10749,25 +10759,23 @@ msgstr "Información"
 
 #: ../data/units.xml.in.h:563
 msgid "Bit (Binary Digit)"
-msgstr ""
+msgstr "Bit (dígito binario)"
 
 #: ../data/units.xml.in.h:564
 msgid "r:bit,p:bits,shannon,p:shannons,c:Sh,binary_digit,p:binary_digits"
 msgstr ""
 
 #: ../data/units.xml.in.h:565
-#, fuzzy
 msgid "Nat"
-msgstr "Negar"
+msgstr ""
 
 #: ../data/units.xml.in.h:566
-#, fuzzy
 msgid "r:nat,p:nats"
-msgstr "vatio,p:vatios"
+msgstr ""
 
 #: ../data/units.xml.in.h:567
 msgid "Trit (Ternary Digit)"
-msgstr ""
+msgstr "Trit (dígito ternario)"
 
 #: ../data/units.xml.in.h:568
 msgid ""
@@ -10776,7 +10784,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:569
 msgid "Octal Digit"
-msgstr ""
+msgstr "Dígito octal"
 
 #: ../data/units.xml.in.h:570
 msgid "r:octal_digit,p:octal_digits"
@@ -10784,7 +10792,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:571
 msgid "Hartley (Decimal Digit)"
-msgstr ""
+msgstr "Hartley (dígito decimal)"
 
 #: ../data/units.xml.in.h:572
 msgid "r:hartley,p:hartleys,a:Hart,dit,p:dits,decimal_digit,p:decimal_digits"
@@ -10800,7 +10808,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:575
 msgid "Nibble (Hexadecimal Digit)"
-msgstr ""
+msgstr "Nibble (dígito hexadecimal)"
 
 #: ../data/units.xml.in.h:576
 msgid ""
@@ -10821,18 +10829,16 @@ msgid "Nonet"
 msgstr ""
 
 #: ../data/units.xml.in.h:580
-#, fuzzy
 msgid "r:nonet,p:nonets"
-msgstr "a:V,voltio,p:voltios,volt"
+msgstr ""
 
 #: ../data/units.xml.in.h:581
 msgid "Declet"
 msgstr ""
 
 #: ../data/units.xml.in.h:582
-#, fuzzy
 msgid "r:declet,p:declets"
-msgstr "a:dB,decibelio,p:decibelios"
+msgstr ""
 
 #: ../data/units.xml.in.h:583
 msgid "Word (16-bit)"
@@ -10952,7 +10958,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:612
 msgid "New Didot Point"
-msgstr "Punto de nuevo Didot"
+msgstr "Nuevo punto de Didot"
 
 #: ../data/units.xml.in.h:613
 msgid "r:new_didot"
@@ -11208,13 +11214,12 @@ msgid "-r:hundred"
 msgstr ""
 
 #: ../data/variables.xml.in.h:60
-#, fuzzy
 msgid "Traditional Numbers"
-msgstr "Números aleatorios"
+msgstr "Números tradicionales"
 
 #: ../data/variables.xml.in.h:61
 msgid "Dozen"
-msgstr ""
+msgstr "Docena"
 
 #: ../data/variables.xml.in.h:62
 msgid "-r:dozen,a:dz,a:doz"
@@ -11222,7 +11227,7 @@ msgstr ""
 
 #: ../data/variables.xml.in.h:63
 msgid "Baker's Dozen"
-msgstr ""
+msgstr "Docena del panadero"
 
 #: ../data/variables.xml.in.h:64
 msgid "-r:bakers_dozen"
@@ -11237,7 +11242,6 @@ msgid "-r:score"
 msgstr ""
 
 #: ../data/variables.xml.in.h:67
-#, fuzzy
 msgid "Long Hundred"
 msgstr "Centena larga"
 
@@ -11247,16 +11251,15 @@ msgstr ""
 
 #: ../data/variables.xml.in.h:69
 msgid "Gross"
-msgstr ""
+msgstr "Gruesa"
 
 #: ../data/variables.xml.in.h:70
 msgid "-r:gross,a:gro"
 msgstr ""
 
 #: ../data/variables.xml.in.h:71
-#, fuzzy
 msgid "Long Thousand"
-msgstr "Mil"
+msgstr "Millar largo"
 
 #: ../data/variables.xml.in.h:72
 msgid "-r:long_thousand"
@@ -11264,7 +11267,7 @@ msgstr ""
 
 #: ../data/variables.xml.in.h:73
 msgid "Great Gross"
-msgstr ""
+msgstr "Gran gruesa"
 
 #: ../data/variables.xml.in.h:74
 msgid "-r:great_gross"
