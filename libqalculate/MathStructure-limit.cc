@@ -995,6 +995,14 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 				mbak.setFunctionId(FUNCTION_ID_COS);
 				mstruct /= mbak;
 				return calculate_limit_sub(mstruct, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, keep_inf_x, reduce_addition);
+			} else if((mstruct.function()->id() == FUNCTION_ID_FLOOR && approach_direction <= 0) || (mstruct.function()->id() == FUNCTION_ID_CEIL && approach_direction >= 0) || mstruct.function()->id() == FUNCTION_ID_TRUNC) {
+				calculate_limit_sub(mstruct[0], x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, keep_inf_x, reduce_addition);
+				mstruct.childrenUpdated();
+				if(!mstruct[0].representsNonInteger()) {
+					if(approach_direction == 0 || !mstruct[0].isInteger()) return false;
+					if(mstruct.function()->id() == FUNCTION_ID_FLOOR || (mstruct.function()->id() == FUNCTION_ID_TRUNC && approach_direction < 0 && mstruct[0].number().isPositive())) mstruct[0].number()--;
+					else if(mstruct.function()->id() == FUNCTION_ID_CEIL || (mstruct.function()->id() == FUNCTION_ID_TRUNC && approach_direction > 0 && mstruct[0].number().isNegative())) mstruct[0].number()++;
+				}
 			} else {
 				for(size_t i = 0; i < mstruct.size(); i++) {
 					calculate_limit_sub(mstruct[i], x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, false);
@@ -1143,7 +1151,7 @@ bool MathStructure::calculateLimit(const MathStructure &x_var, const MathStructu
 	do_simplification(*this, eo, true, false, false, true, true);
 	eo.do_polynomial_division = true;
 	calculate_limit_sub(*this, var, nr_limit, eo, approach_direction);
-	if(CALCULATOR->aborted() || (containsInfinity(true) && !isInfinite(true)) || limit_contains_undefined(*this)) {
+	if(CALCULATOR->aborted() || (containsInfinity(true) && !isInfinite(true)) || limit_contains_undefined(*this) || containsFunctionId(FUNCTION_ID_FLOOR) || containsFunctionId(FUNCTION_ID_CEIL) || containsFunctionId(FUNCTION_ID_TRUNC)) {
 		set(mbak);
 		replace(var, x_var);
 		var->destroy();
