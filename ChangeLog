@@ -1,3 +1,7 @@
+2022-05-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix limit of floor(), ceil(), and trunc()
+
 2022-05-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Show single digit suffixes using Unicode subscript, in qalc
