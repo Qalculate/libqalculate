@@ -1,3 +1,7 @@
+2022-05-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix addition of unit to expression without unit (when trying to convert to a unit) in exact mode
+
 2022-05-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix limit of floor(), ceil(), and trunc()
