@@ -4799,7 +4799,7 @@ bool Number::floor() {
 			return true;
 		}
 		mpz_set_ui(mpq_denref(r_value), 1);
-		if(mpfr_cmpabs_ui(fl_value, INT_MAX) < 0) mpz_set_ui(mpq_numref(r_value), mpfr_get_ui(fl_value, MPFR_RNDN));
+		if(mpfr_sgn(fl_value) > 0 && mpfr_cmp_si(fl_value, INT_MAX) < 0) mpz_set_ui(mpq_numref(r_value), mpfr_get_ui(fl_value, MPFR_RNDN));
 		else mpfr_get_z(mpq_numref(r_value), fl_value, MPFR_RNDN);
 		n_type = NUMBER_TYPE_RATIONAL;
 		mpfr_clears(fl_value, fu_value, NULL);
