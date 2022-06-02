@@ -4014,12 +4014,11 @@ msgstr "Двоично-десятичный код (BCD)"
 
 #: ../data/functions.xml.in.h:279
 msgid "r:bcd"
-msgstr ""
+msgstr "ддк"
 
 #: ../data/functions.xml.in.h:280
-#, fuzzy
 msgid "Binary-coded decimal number"
-msgstr "Шестнадцатеричное число"
+msgstr "Число в двоично-десятичном коде"
 
 #. Packed binary-coded decimal
 #: ../data/functions.xml.in.h:282
