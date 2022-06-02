@@ -421,7 +421,9 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 	if(!b_ratio && to_unit->baseUnit() != getRadUnit() && !mstruct.containsType(STRUCT_UNIT, true)) {
 		if(transform_orig && (!parsed_struct || !parsed_struct->containsType(STRUCT_UNIT, false, true, true))) {
 			// multiply original value with base units
-			MathStructure munit(convertToOptimalUnit(to_unit, eo, true));
+			EvaluationOptions eo2 = eo;
+			if(eo.approximation == APPROXIMATION_EXACT) eo2.approximation = APPROXIMATION_TRY_EXACT;
+			MathStructure munit(convertToOptimalUnit(to_unit, eo2, true));
 			munit.unformat();
 			fix_to_struct(munit);
 			if(!munit.isZero()) {

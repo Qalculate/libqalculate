@@ -399,9 +399,9 @@ void completion_match_item(ExpressionItem *item, const char *text, size_t l) {
 	if(b_match && ename) {
 		if(ename->completion_only) {
 			ename = &item->preferredInputName(ename->abbreviation, printops.use_unicode_signs);
-			matches.push_back(ename->formattedName(item->type(), true));
+			matches.push_back(ename->formattedName(item->type(), true, false, printops.use_unicode_signs));
 		} else if(b_formatted) {
-			matches.push_back(strcmp);
+			matches.push_back(ename->formattedName(item->type(), true, false, printops.use_unicode_signs));
 		} else {
 			matches.push_back(ename->name);
 		}
@@ -1860,14 +1860,14 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 					if(!b_match && i2 == 2 && country_matches((Unit*) item, search_str, list_type == 'c' ? 0 : 3)) b_match = true;
 					if(b_match) {
 						const ExpressionName &ename1 = item->preferredInputName(false, false);
-						name_str = ename1.formattedName(item->type(), true);
+						name_str = ename1.formattedName(item->type(), true, false, printops.use_unicode_signs);
 						size_t name_i = 1;
 						while(true) {
 							const ExpressionName &ename = item->getName(name_i);
 							if(ename == empty_expression_name) break;
 							if(ename != ename1 && !ename.avoid_input && !ename.plural && (!ename.unicode || printops.use_unicode_signs) && !ename.completion_only) {
 								name_str += " / ";
-								name_str += ename.formattedName(item->type(), true);
+								name_str += ename.formattedName(item->type(), true, false, printops.use_unicode_signs);
 							}
 							name_i++;
 						}
@@ -1937,7 +1937,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 					PUTS_UNICODE(str.c_str());
 					if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 				}
-				STR_AND_TABS(v->preferredInputName(false, false).formattedName(TYPE_VARIABLE, true).c_str())
+				STR_AND_TABS(v->preferredInputName(false, false).formattedName(TYPE_VARIABLE, true, false, printops.use_unicode_signs).c_str())
 				FPUTS_UNICODE(str.c_str(), stdout);
 				string value;
 				if(v->isKnown()) {
@@ -2026,7 +2026,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 					b_functions = true;
 					PUTS_BOLD(_("Functions:"));
 				}
-				puts(f->preferredInputName(false, false).formattedName(TYPE_FUNCTION, true).c_str());
+				puts(f->preferredInputName(false, false).formattedName(TYPE_FUNCTION, true, false, printops.use_unicode_signs).c_str());
 				if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 			}
 		}
@@ -2040,7 +2040,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 					b_units = true;
 					PUTS_BOLD(_("Units:"));
 				}
-				puts(u->preferredInputName(false, false).formattedName(TYPE_UNIT, true).c_str());
+				puts(u->preferredInputName(false, false).formattedName(TYPE_UNIT, true, false, printops.use_unicode_signs).c_str());
 				if(in_interactive) {CHECK_IF_SCREEN_FILLED}
 			}
 		}
@@ -2087,14 +2087,14 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 				name_list.push_front(name_str);
 			} else if((!item->isHidden() || list_type == 'c') && item->isActive() && (list_type != 'u' || (item->subtype() != SUBTYPE_COMPOSITE_UNIT && ((Unit*) item)->baseUnit() != CALCULATOR->getUnitById(UNIT_ID_EURO))) && (list_type != 'c' || ((Unit*) item)->isCurrency())) {
 				const ExpressionName &ename1 = item->preferredInputName(false, false);
-				name_str = ename1.formattedName(item->type(), true);
+				name_str = ename1.formattedName(item->type(), true, false, printops.use_unicode_signs);
 				size_t name_i = 1;
 				while(true) {
 					const ExpressionName &ename = item->getName(name_i);
 					if(ename == empty_expression_name) break;
 					if(ename != ename1 && !ename.avoid_input && !ename.plural && (!ename.unicode || printops.use_unicode_signs) && !ename.completion_only) {
 						name_str += " / ";
-						name_str += ename.formattedName(item->type(), true);
+						name_str += ename.formattedName(item->type(), true, false, printops.use_unicode_signs);
 					}
 					name_i++;
 				}
@@ -4125,7 +4125,7 @@ int main(int argc, char *argv[]) {
 							CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 							CHECK_IF_SCREEN_FILLED_PUTS("");
 							const ExpressionName *ename = &f->preferredName(false, printops.use_unicode_signs);
-							str = ename->formattedName(TYPE_FUNCTION, true);
+							str = ename->formattedName(TYPE_FUNCTION, true, false, printops.use_unicode_signs);
 							int iargs = f->maxargs();
 							if(iargs < 0) {
 								iargs = f->minargs() + 1;
@@ -4165,7 +4165,7 @@ int main(int argc, char *argv[]) {
 							CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 							for(size_t i2 = 1; i2 <= f->countNames(); i2++) {
 								if(&f->getName(i2) != ename) {
-									CHECK_IF_SCREEN_FILLED_PUTS(f->getName(i2).formattedName(TYPE_FUNCTION, true).c_str());
+									CHECK_IF_SCREEN_FILLED_PUTS(f->getName(i2).formattedName(TYPE_FUNCTION, true, false, printops.use_unicode_signs).c_str());
 								}
 							}
 							if(f->subtype() == SUBTYPE_DATA_SET) {
@@ -4179,7 +4179,7 @@ int main(int argc, char *argv[]) {
 							}
 							if(!f->example(true).empty()) {
 								CHECK_IF_SCREEN_FILLED_PUTS("");
-								str = _("Example:"); str += " "; str += f->example(false, ename->formattedName(TYPE_FUNCTION, true));
+								str = _("Example:"); str += " "; str += f->example(false, ename->formattedName(TYPE_FUNCTION, true, false, printops.use_unicode_signs));
 								CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 							}
 							if(f->subtype() == SUBTYPE_DATA_SET && !((DataSet*) f)->copyright().empty()) {
@@ -4285,11 +4285,11 @@ int main(int argc, char *argv[]) {
 							PRINT_AND_COLON_TABS_INFO(_("Names"));
 							if(item->subtype() != SUBTYPE_COMPOSITE_UNIT) {
 								const ExpressionName *ename = &item->preferredName(true, printops.use_unicode_signs);
-								FPUTS_UNICODE(ename->formattedName(TYPE_UNIT, true).c_str(), stdout);
+								FPUTS_UNICODE(ename->formattedName(TYPE_UNIT, true, false, printops.use_unicode_signs).c_str(), stdout);
 								for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
 									if(&item->getName(i2) != ename && !item->getName(i2).completion_only) {
 										fputs(" / ", stdout);
-										FPUTS_UNICODE(item->getName(i2).formattedName(TYPE_UNIT, true).c_str(), stdout);
+										FPUTS_UNICODE(item->getName(i2).formattedName(TYPE_UNIT, true, false, printops.use_unicode_signs).c_str(), stdout);
 									}
 								}
 							}
@@ -4365,11 +4365,11 @@ int main(int argc, char *argv[]) {
 							CHECK_IF_SCREEN_FILLED_PUTS("");
 							PRINT_AND_COLON_TABS_INFO(_("Names"));
 							const ExpressionName *ename = &item->preferredName(false, printops.use_unicode_signs);
-							FPUTS_UNICODE(ename->formattedName(TYPE_VARIABLE, true).c_str(), stdout);
+							FPUTS_UNICODE(ename->formattedName(TYPE_VARIABLE, true, false, printops.use_unicode_signs).c_str(), stdout);
 							for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
 								if(&item->getName(i2) != ename && !item->getName(i2).completion_only) {
 									fputs(" / ", stdout);
-									FPUTS_UNICODE(item->getName(i2).formattedName(TYPE_VARIABLE, true).c_str(), stdout);
+									FPUTS_UNICODE(item->getName(i2).formattedName(TYPE_VARIABLE, true, false, printops.use_unicode_signs).c_str(), stdout);
 								}
 							}
 							Variable *v = (Variable*) item;
@@ -6977,7 +6977,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {4, 1, 1};
+	int version_numbers[] = {4, 2, 0};
 
 	if(file) {
 		char line[10000];
