@@ -995,14 +995,33 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 				mbak.setFunctionId(FUNCTION_ID_COS);
 				mstruct /= mbak;
 				return calculate_limit_sub(mstruct, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, keep_inf_x, reduce_addition);
-			} else if((mstruct.function()->id() == FUNCTION_ID_FLOOR && approach_direction <= 0) || (mstruct.function()->id() == FUNCTION_ID_CEIL && approach_direction >= 0) || mstruct.function()->id() == FUNCTION_ID_TRUNC) {
-				calculate_limit_sub(mstruct[0], x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, keep_inf_x, reduce_addition);
-				mstruct.childrenUpdated();
-				if(!mstruct[0].representsNonInteger()) {
-					if(approach_direction == 0 || !mstruct[0].isInteger()) return false;
-					if(mstruct.function()->id() == FUNCTION_ID_FLOOR || (mstruct.function()->id() == FUNCTION_ID_TRUNC && approach_direction < 0 && mstruct[0].number().isPositive())) mstruct[0].number()--;
-					else if(mstruct.function()->id() == FUNCTION_ID_CEIL || (mstruct.function()->id() == FUNCTION_ID_TRUNC && approach_direction > 0 && mstruct[0].number().isNegative())) mstruct[0].number()++;
+			} else if(mstruct.function()->id() == FUNCTION_ID_FLOOR || mstruct.function()->id() == FUNCTION_ID_CEIL || mstruct.function()->id() == FUNCTION_ID_TRUNC) {
+				MathStructure mlimit(mstruct[0]);
+				calculate_limit_sub(mlimit, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, keep_inf_x, reduce_addition);
+				mlimit.transformById(FUNCTION_ID_FRAC);
+				ComparisonResult cr = mlimit.compare(m_zero);
+				mlimit.setToChild(1);
+				if(!COMPARISON_IS_NOT_EQUAL(cr)) {
+					if(approach_direction == 0 || cr != COMPARISON_RESULT_EQUAL) return false;
+					if(mstruct.function()->id() == FUNCTION_ID_TRUNC) {
+						cr = mlimit.compare(m_zero);
+						if(cr != COMPARISON_RESULT_EQUAL && cr != COMPARISON_RESULT_GREATER && cr != COMPARISON_RESULT_LESS) return false;
+					}
+					MathStructure mdiff(mstruct[0]);
+					int i_sgn = 0;
+					if(mdiff.differentiate(x_var, eo) && !contains_diff_for(mdiff, x_var)) {
+						mdiff.replace(x_var, nr_limit);
+						ComparisonResult cr2 = mdiff.compare(m_zero);
+						if(cr2 == COMPARISON_RESULT_GREATER) i_sgn = -1;
+						else if(cr2 == COMPARISON_RESULT_LESS) i_sgn = 1;
+					}
+					if(i_sgn == 0) return false;
+					i_sgn *= approach_direction;
+					if(i_sgn < 0 && (mstruct.function()->id() == FUNCTION_ID_FLOOR || (mstruct.function()->id() == FUNCTION_ID_TRUNC && cr == COMPARISON_RESULT_LESS))) mlimit -= m_one;
+					else if(i_sgn > 0 && (mstruct.function()->id() == FUNCTION_ID_CEIL || (mstruct.function()->id() == FUNCTION_ID_TRUNC && cr == COMPARISON_RESULT_GREATER))) mlimit += m_one;
 				}
+				mstruct[0] = mlimit;
+				mstruct.childrenUpdated();
 			} else {
 				for(size_t i = 0; i < mstruct.size(); i++) {
 					calculate_limit_sub(mstruct[i], x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, false);
