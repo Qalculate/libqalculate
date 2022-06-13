@@ -180,7 +180,7 @@ QalculateDateTime nextLeapSecond(const QalculateDateTime &date) {
 }
 QalculateDateTime prevLeapSecond(const QalculateDateTime &date) {
 	if(date.year() < LS_FIRST_YEAR) return QalculateDateTime();
-	size_t halfyear = sizeof(has_leap_second);
+	size_t halfyear = sizeof(has_leap_second) - 1;
 	if(date.year() <= LS_LAST_YEAR) {
 		halfyear = (date.year() - LS_FIRST_YEAR) * 2;
 		if(date.month() <= 6) {
