@@ -56,7 +56,7 @@ MathStructure *mstruct, *parsed_mstruct, mstruct_exact, prepend_mstruct;
 KnownVariable *vans[5], *v_memory;
 string result_text, parsed_text, original_expression;
 vector<string> alt_results;
-bool load_global_defs, fetch_exchange_rates_at_startup, first_time, save_mode_on_exit, save_defs_on_exit, load_defaults = false;
+bool load_global_defs, fetch_exchange_rates_at_startup, first_time, save_mode_on_exit, save_defs_on_exit, clear_history_on_exit, load_defaults = false;
 int auto_update_exchange_rates;
 PrintOptions printops, saved_printops;
 bool complex_angle_form = false, saved_caf = false;
@@ -1280,6 +1280,16 @@ void set_option(string str) {
 			save_mode_on_exit = true;
 		} else {
 			save_mode_on_exit = false;
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "clear history", _("clear history")) || equalsIgnoreCase(svar, "save_history")) {
+		int v = s2b(svalue);
+		if(v >= 0 && equalsIgnoreCase(svar, "save_history")) v = !v;
+		if(v < 0) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else if(v > 0) {
+			clear_history_on_exit = true;
+		} else {
+			clear_history_on_exit = false;
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "save definitions", _("save definitions")) || svar == "save defs") {
 		int v = s2b(svalue);
@@ -2732,6 +2742,7 @@ int main(int argc, char *argv[]) {
 		if(rpn_mode && explicit_command && str.empty()) {str = "/"; explicit_command = false;}
 		slen = str.length();
 		ispace = str.find_first_of(SPACES);
+		bool history_was_cleared = false;
 		if(ispace == string::npos) {
 			scom = "";
 		} else {
@@ -3995,10 +4006,13 @@ int main(int argc, char *argv[]) {
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Other"));
 
+			PRINT_AND_COLON_TABS(_("clear history"), ""); str += b2yn(clear_history_on_exit, false);
+			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("ignore locale"), ""); str += b2yn(ignore_locale, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("rpn"), ""); str += b2oo(rpn_mode, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("save definitions"), ""); str += b2yn(save_defs_on_exit, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("save mode"), ""); str += b2yn(save_mode_on_exit, false);
+			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 #ifndef _WIN32
 			PRINT_AND_COLON_TABS(_("sigint action"), "sigint");
 			switch(sigint_action) {
@@ -4007,6 +4021,7 @@ int main(int argc, char *argv[]) {
 				default: {str += _("kill"); break;}
 			}
 #endif
+			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			puts("");
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "help", _("help")) || str == "?") {
@@ -4768,6 +4783,7 @@ int main(int argc, char *argv[]) {
 
 				CHECK_IF_SCREEN_FILLED_HEADING_S(_("Other"));
 
+				STR_AND_TABS_YESNO(_("clear history"), "", _("Do not save expression history on exit."), clear_history_on_exit);
 				STR_AND_TABS_YESNO(_("ignore locale"), "", _("Ignore system language and use English (requires restart)."), ignore_locale);
 				STR_AND_TABS_BOOL(_("rpn"), "", _("Activates the Reverse Polish Notation stack."), rpn_mode);
 				STR_AND_TABS_YESNO(_("save definitions"), "", _("Save functions, units, and variables on exit."), save_defs_on_exit);
@@ -4996,6 +5012,13 @@ int main(int argc, char *argv[]) {
 				goto show_info;
 			}
 		//qalc command
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear history", _("clear history"))) {
+			while(history_length > 0) {
+				HIST_ENTRY *hist = remove_history(0);
+				if(hist) free_history_entry(hist);
+			}
+			history_was_cleared = true;
+		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear", _("clear"))) {
 #ifdef _WIN32
 			system("cls");
@@ -5061,7 +5084,7 @@ int main(int argc, char *argv[]) {
 					break;
 				}
 			}
-			add_history(rlbuffer);
+			if(!history_was_cleared) add_history(rlbuffer);
 			free(rlbuffer);
 		}
 #endif
@@ -6927,6 +6950,7 @@ void load_preferences() {
 	rpn_mode = false;
 
 	save_mode_on_exit = true;
+	clear_history_on_exit = false;
 	save_defs_on_exit = true;
 	auto_update_exchange_rates = -1;
 	first_time = false;
@@ -6998,6 +7022,8 @@ void load_preferences() {
 					parse_qalculate_version(svalue, version_numbers);
 				} else if(svar == "save_mode_on_exit") {
 					save_mode_on_exit = v;
+				} else if(svar == "clear_history_on_exit") {
+					clear_history_on_exit = v;
 				} else if(svar == "save_definitions_on_exit") {
 					save_defs_on_exit = v;
 				} else if(svar == "sigint_action") {
@@ -7329,7 +7355,8 @@ bool save_preferences(bool mode) {
 	FILE *file = NULL;
 	makeDir(getLocalDir());
 #ifdef HAVE_LIBREADLINE
-	write_history(buildPath(getLocalDir(), "qalc.history").c_str());
+	if(clear_history_on_exit && fileExists(buildPath(getLocalDir(), "qalc.history"))) history_truncate_file(buildPath(getLocalDir(), "qalc.history").c_str(), 0);
+	else write_history(buildPath(getLocalDir(), "qalc.history").c_str());
 #endif
 	string filename = buildPath(getLocalDir(), "qalc.cfg");
 	file = fopen(filename.c_str(), "w+");
@@ -7341,6 +7368,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "version=%s\n", VERSION);
 	fprintf(file, "save_mode_on_exit=%i\n", save_mode_on_exit);
 	fprintf(file, "save_definitions_on_exit=%i\n", save_defs_on_exit);
+	fprintf(file, "clear_history_on_exit=%i\n", clear_history_on_exit);
 #ifndef _WIN32
 	if(sigint_action != 1) fprintf(file, "sigint_action=%i\n", sigint_action);
 #endif
