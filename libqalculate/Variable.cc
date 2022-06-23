@@ -531,9 +531,8 @@ bool KnownVariable::representsBoolean() {return get().representsBoolean();}
 bool KnownVariable::representsNonMatrix() {return get().representsNonMatrix();}
 bool KnownVariable::representsScalar() {return get().representsScalar();}
 
-DynamicVariable::DynamicVariable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active) : KnownVariable(cat_, name_, MathStructure(), title_, is_local, is_builtin, is_active) {
-	mstruct = NULL; mstruct_alt = NULL;
-	calculated_precision = -1;
+DynamicVariable::DynamicVariable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active) : KnownVariable(cat_, name_, "", title_, is_local, is_builtin, is_active) {
+	b_expression = false;
 	always_recalculate = false;
 	setApproximate();
 	setChanged(false);
