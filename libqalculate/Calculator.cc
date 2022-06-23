@@ -604,7 +604,11 @@ Calculator::~Calculator() {
 	for(size_t i = 0; i < units.size(); i++) delete units[i];
 	for(size_t i = 0; i < prefixes.size(); i++) delete prefixes[i];
 	for(size_t i = 0; i < data_sets.size(); i++) delete data_sets[i];
+	if(v_C) delete v_C;
+	if(decimal_null_prefix) delete decimal_null_prefix;
+	if(binary_null_prefix) delete binary_null_prefix;
 	if(default_assumptions) delete default_assumptions;
+	if(saved_locale) free(saved_locale);
 	delete priv;
 	delete calculate_thread;
 	calculator = NULL;
