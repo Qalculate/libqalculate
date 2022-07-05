@@ -2989,8 +2989,8 @@ msgstr ""
 
 #: ../libqalculate/BuiltinFunctions-util.cc:1007
 msgid ""
-"Additional arguments specifies various plot options. Enter the name of the "
-"option and the desried value, either separated by space or as separate "
+"Additional arguments specify various plot options. Enter the name of the "
+"option and the desired value, either separated by space or as separate "
 "arguments. For most options, the value can be omitted to enable a default "
 "active value. For options with named values, the option name can be omitted "
 "(otherwise the value can be replaced by an integer, representing the index "
@@ -3725,7 +3725,7 @@ msgstr[0] "已忽略函数%s的多余参数。它只需要%s个参数。"
 
 #: ../libqalculate/Function.cc:432
 msgid ""
-"log() with a single argument is considered ambigious. Please use ln() or "
+"log() with a single argument is considered ambiguous. Please use ln() or "
 "log10() instead."
 msgstr ""
 

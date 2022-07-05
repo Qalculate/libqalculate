@@ -1004,7 +1004,7 @@ PlotFunction::PlotFunction() : MathFunction("plot", 1, -1) {
 	setCondition("\\y < \\z");
 	string str = _("Plots one or more expressions or vectors. Use a vector for the first argument to plot multiple series. Only the first argument is used for vector series. It is also possible to plot a matrix where each row is a pair of x and y values.");
 	str += "\n\n";
-	str += _("Additional arguments specifies various plot options. Enter the name of the option and the desried value, either separated by space or as separate arguments. For most options, the value can be omitted to enable a default active value. For options with named values, the option name can be omitted (otherwise the value can be replaced by an integer, representing the index of the value starting from zero). If the first option specified is a numerical value, this is interpreted as either sampling rate (for integers > 10) or step value.");
+	str += _("Additional arguments specify various plot options. Enter the name of the option and the desired value, either separated by space or as separate arguments. For most options, the value can be omitted to enable a default active value. For options with named values, the option name can be omitted (otherwise the value can be replaced by an integer, representing the index of the value starting from zero). If the first option specified is a numerical value, this is interpreted as either sampling rate (for integers > 10) or step value.");
 	str += "\n\n";
 	str += _("List of options:");
 	str += "\n";
