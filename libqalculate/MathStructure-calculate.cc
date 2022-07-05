@@ -3609,7 +3609,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						negate();
 						return 1;
 					}
-				} else if(eo.expand != 0 && !mstruct.number().isZero() && (eo.expand > -2 || !containsInterval())) {
+				} else if(eo.expand != 0 && !mstruct.number().isZero() && (eo.reduce_divisions || !mstruct.number().isMinusOne()) && (eo.expand > -2 || !containsInterval())) {
 					// (a1+a2+a3...)^b
 					bool b = true;
 					bool neg = mstruct.number().isNegative();

@@ -596,8 +596,22 @@ Calculator::~Calculator() {
 	closeGnuplot();
 	abort();
 	terminateThreads();
+	clearRPNStack();
+	for(unordered_map<Unit*, MathStructure*>::iterator it = priv->composite_unit_base.begin(); it != priv->composite_unit_base.end(); ++it) it->second->unref();
+	for(unordered_map<size_t, MathStructure*>::iterator it = priv->id_structs.begin(); it != priv->id_structs.end(); ++it) it->second->unref();
+	for(size_t i = 0; i < functions.size(); i++) delete functions[i];
+	for(size_t i = 0; i < variables.size(); i++) delete variables[i];
+	for(size_t i = 0; i < units.size(); i++) delete units[i];
+	for(size_t i = 0; i < prefixes.size(); i++) delete prefixes[i];
+	for(size_t i = 0; i < data_sets.size(); i++) delete data_sets[i];
+	if(v_C) delete v_C;
+	if(decimal_null_prefix) delete decimal_null_prefix;
+	if(binary_null_prefix) delete binary_null_prefix;
+	if(default_assumptions) delete default_assumptions;
+	if(saved_locale) free(saved_locale);
 	delete priv;
 	delete calculate_thread;
+	calculator = NULL;
 	gmp_randclear(randstate);
 #ifdef HAVE_ICU
 	if(ucm) ucasemap_close(ucm);
