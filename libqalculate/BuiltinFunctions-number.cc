@@ -64,9 +64,13 @@ using std::vector;
 using std::endl;
 
 #define FR_FUNCTION(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
-#define FR_FUNCTION_2(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC(vargs[1].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !vargs[1].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
+#define FR_FUNCTION_2b(FUNC)	if(!nr.FUNC(vargs[1].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !vargs[1].number().includesInfinity()))
+#define FR_FUNCTION_2c0 	{return 0;} else {mstruct.set(nr); return 1;}
+#define FR_FUNCTION_2c1 	{return -1;} else {mstruct.set(nr); return 1;}
+#define FR_FUNCTION_2(FUNC)	Number nr(vargs[0].number()); FR_FUNCTION_2b(FUNC) FR_FUNCTION_2c0
 
 #define NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(i)			NumberArgument *arg_non_complex##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
+#define NON_COMPLEX_NUMBER_ARGUMENT_NO_TEST(i)			NumberArgument *arg_non_complex##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
 #define NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR_NONZERO(i)		NumberArgument *arg_non_complex##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
 #define RATIONAL_NUMBER_ARGUMENT_NO_ERROR(i)			NumberArgument *arg_rational##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false); arg_rational##i->setRationalNumber(true); setArgumentDefinition(i, arg_rational##i);
 #define RATIONAL_POLYNOMIAL_ARGUMENT(i)				Argument *arg_poly##i = new Argument(); arg_poly##i->setRationalPolynomial(true); setArgumentDefinition(i, arg_poly##i);
@@ -717,17 +721,159 @@ int DenominatorFunction::calculate(MathStructure &mstruct, const MathStructure &
 	return 1;
 }
 RemFunction::RemFunction() : MathFunction("rem", 2) {
-	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_TEST(1)
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR_NONZERO(2)
 }
+bool powmod(Number &nr, const Number &base, const Number &exp, const Number &div, bool b_rem) {
+	mpz_t i;
+	mpz_init(i);
+	mpz_powm(i, mpq_numref(base.internalRational()), mpq_numref(exp.internalRational()), mpq_numref(div.internalRational()));
+	nr.setInternal(i);
+	if(b_rem && base.isNegative() && exp.isOdd()) nr -= div;
+	mpz_clear(i);
+	return true;
+}
+void remove_overflow_message() {
+	vector<CalculatorMessage> message_vector;
+	CALCULATOR->endTemporaryStopMessages(false, &message_vector);
+	for(size_t i = 0; i < message_vector.size();) {
+		if(message_vector[i].message() == _("Floating point overflow")) message_vector.erase(message_vector.begin() + i);
+		else i++;
+	}
+	if(!message_vector.empty()) CALCULATOR->addMessages(&message_vector);
+}
 int RemFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(!vargs[1].isInteger()) {
+		if(!vargs[0].isNumber()) {
+			mstruct = vargs[0];
+			mstruct.eval(eo);
+			if(!mstruct.isNumber() || !mstruct.number().isReal()) return -1;
+			Number nr(mstruct.number());
+			FR_FUNCTION_2b(rem)
+			FR_FUNCTION_2c1
+		}
+	} else if(!vargs[0].isNumber()) {
+		if(vargs[0].isPower() && vargs[0][0].isInteger() && vargs[0][1].isInteger()) {
+			Number nr;
+			if(powmod(nr, vargs[0][0].number(), vargs[0][1].number(), vargs[1].number(), true)) {mstruct = nr; return 1;}
+		}
+		mstruct = vargs[0];
+		CALCULATOR->beginTemporaryStopMessages();
+		if(eo.approximation != APPROXIMATION_EXACT) {
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_EXACT;
+			mstruct.eval(eo2);
+		} else {
+			mstruct.eval(eo);
+		}
+		if(mstruct.isPower() && mstruct[0].isInteger() && mstruct[1].isInteger()) {
+			Number nr;
+			if(powmod(nr, mstruct[0].number(), mstruct[1].number(), vargs[1].number(), true)) {
+				remove_overflow_message();
+				mstruct = nr;
+				return 1;
+			}
+		}
+
+		if(mstruct.isMultiplication() && mstruct.size() > 0) {
+			bool b = true;
+			MathStructure mbak(mstruct);
+			for(size_t i = 0; i < mstruct.size(); i++) {
+				if(!mstruct[i].isInteger() && (!mstruct[i].isPower() || !mstruct[i][0].isInteger() || !mstruct[i][1].isInteger())) {b = false; break;}
+			}
+			if(b) {
+				remove_overflow_message();
+				for(size_t i = 0; i < mstruct.size(); i++) {
+					mstruct[i].transform(this);
+					mstruct[i].addChild(vargs[1]);
+				}
+				mstruct.transform(this);
+				mstruct.addChild(vargs[1]);
+				return 1;
+			} else {
+				mstruct = mbak;
+			}
+		}
+		CALCULATOR->endTemporaryStopMessages(eo.approximation == APPROXIMATION_EXACT || mstruct.isNumber());
+		if(eo.approximation != APPROXIMATION_EXACT && !mstruct.isNumber()) {
+			mstruct = vargs[0];
+			mstruct.eval(eo);
+		}
+		if(!mstruct.isNumber() || !mstruct.number().isReal()) return -1;
+		Number nr(mstruct.number());
+		FR_FUNCTION_2b(rem)
+		FR_FUNCTION_2c1
+	}
+	if(!vargs[0].number().isReal()) return 0;
 	FR_FUNCTION_2(rem)
 }
 ModFunction::ModFunction() : MathFunction("mod", 2) {
-	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(1)
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_TEST(1)
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR_NONZERO(2)
 }
 int ModFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(!vargs[1].isInteger()) {
+		if(!vargs[0].isNumber()) {
+			mstruct = vargs[0];
+			mstruct.eval(eo);
+			if(!mstruct.isNumber() || !mstruct.number().isReal()) return -1;
+			Number nr(mstruct.number());
+			FR_FUNCTION_2b(mod)
+			FR_FUNCTION_2c1
+		}
+	} else if(!vargs[0].isNumber()) {
+		if(vargs[0].isPower() && vargs[0][0].isInteger() && vargs[0][1].isInteger()) {
+			Number nr;
+			if(powmod(nr, vargs[0][0].number(), vargs[0][1].number(), vargs[1].number(), false)) {mstruct = nr; return 1;}
+		}
+		mstruct = vargs[0];
+		CALCULATOR->beginTemporaryStopMessages();
+		if(eo.approximation != APPROXIMATION_EXACT) {
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_EXACT;
+			mstruct.eval(eo2);
+		} else {
+			mstruct.eval(eo);
+		}
+		if(mstruct.isPower() && mstruct[0].isInteger() && mstruct[1].isInteger()) {
+			Number nr;
+			if(powmod(nr, mstruct[0].number(), mstruct[1].number(), vargs[1].number(), false)) {
+				remove_overflow_message();
+				mstruct = nr;
+				return 1;
+			}
+		}
+
+		if(mstruct.isMultiplication() && mstruct.size() > 0) {
+			bool b = true;
+			MathStructure mbak(mstruct);
+			for(size_t i = 0; i < mstruct.size(); i++) {
+				if(!mstruct[i].isInteger() && (!mstruct[i].isPower() || !mstruct[i][0].isInteger() || !mstruct[i][1].isInteger())) {b = false; break;}
+			}
+			if(b) {
+				remove_overflow_message();
+				for(size_t i = 0; i < mstruct.size(); i++) {
+					mstruct[i].transform(this);
+					mstruct[i].addChild(vargs[1]);
+				}
+				mstruct.transform(this);
+				mstruct.addChild(vargs[1]);
+				return 1;
+			} else {
+				mstruct = mbak;
+			}
+		}
+		CALCULATOR->endTemporaryStopMessages(eo.approximation == APPROXIMATION_EXACT || mstruct.isNumber());
+		if(eo.approximation != APPROXIMATION_EXACT && !mstruct.isNumber()) {
+			mstruct = vargs[0];
+			mstruct.eval(eo);
+		}
+		if(!mstruct.isNumber() || !mstruct.number().isReal()) return -1;
+		Number nr(mstruct.number());
+		FR_FUNCTION_2b(mod)
+		FR_FUNCTION_2c1
+	}
+	if(!vargs[0].number().isReal()) return 0;
 	FR_FUNCTION_2(mod)
 }
 
