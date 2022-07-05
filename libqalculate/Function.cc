@@ -429,7 +429,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 	// append default values
 	if((itmp < maxargs() && itmp >= minargs()) || (maxargs() < 0 && itmp >= minargs() && (size_t) itmp - minargs() < default_values.size() && !default_values[itmp - minargs()].empty())) {
 		int itmp2 = itmp;
-		if(id() == FUNCTION_ID_LOGN) CALCULATOR->error(false, _("log() with a single argument is considered ambigious. Please use ln() or log10() instead."), NULL);
+		if(id() == FUNCTION_ID_LOGN) CALCULATOR->error(false, _("log() with a single argument is considered ambiguous. Please use ln() or log10() instead."), NULL);
 		while((size_t) itmp2 - minargs() < default_values.size() && (maxargs() > 0 || !default_values[itmp2 - minargs()].empty())) {
 			arg = getArgumentDefinition(itmp2 + 1);
 			MathStructure *mstruct = new MathStructure();
