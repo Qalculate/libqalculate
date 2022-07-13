@@ -3251,6 +3251,9 @@ bool Number::multiply(const Number &o) {
 		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
+	if(!o.isFloatingPoint() && n_type == NUMBER_TYPE_RATIONAL && (mpz_sizeinbase(mpq_numref(r_value), 10) + mpz_sizeinbase(mpq_numref(o.internalRational()), 10) >= 1000000LL || mpz_sizeinbase(mpq_denref(r_value), 10) + mpz_sizeinbase(mpq_denref(o.internalRational()), 10) >= 1000000LL)) {
+		if(!setToFloatingPoint()) return false;
+	}
 	if(o.isFloatingPoint() || n_type == NUMBER_TYPE_FLOAT) {
 		Number nr_bak(*this);
 		if(hasImaginaryPart()) {
@@ -3863,7 +3866,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 			size_t length1 = mpz_sizeinbase(mpq_numref(r_value), 10);
 			size_t length2 = mpz_sizeinbase(mpq_denref(r_value), 10);
 			if(length2 > length1) length1 = length2;
-			if((i_root <= 2  || mpq_sgn(r_value) > 0) && ((!try_exact && i_root <= 3 && (long long int) labs(i_pow) * length1 < 1000) || (try_exact && (long long int) labs(i_pow) * length1 < 1000000LL && i_root < 1000000L))) {
+			if((i_root <= 2 || mpq_sgn(r_value) > 0) && ((!try_exact && i_root <= 3 && (long long int) labs(i_pow) * length1 < 1000) || (try_exact && (long long int) labs(i_pow) * length1 < 1000000LL && i_root < 1000000L))) {
 				bool complex_result = false;
 				if(i_root != 1) {
 					mpq_t r_test;
@@ -4586,6 +4589,9 @@ bool Number::square() {
 		}
 		Number nr(*this);
 		return multiply(nr);
+	}
+	if(n_type == NUMBER_TYPE_RATIONAL && (mpz_sizeinbase(mpq_numref(r_value), 10) >= 500000LL || mpz_sizeinbase(mpq_numref(r_value), 10) >= 500000LL)) {
+		if(!setToFloatingPoint()) return false;
 	}
 	if(n_type == NUMBER_TYPE_RATIONAL) {
 		mpq_mul(r_value, r_value, r_value);
