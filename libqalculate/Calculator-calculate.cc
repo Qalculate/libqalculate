@@ -292,6 +292,7 @@ bool Calculator::calculateRPN(MathFunction *f, int msecs, const EvaluationOption
 	int iregs = 0;
 	if(f->args() != 0) {
 		size_t i = f->minargs();
+		if(f == f_logn && rpn_stack.size() > 1) i = 2;
 		bool fill_vector = (i > 0 && f->getArgumentDefinition(i) && f->getArgumentDefinition(i)->type() == ARGUMENT_TYPE_VECTOR);
 		if(fill_vector && rpn_stack.size() < i) fill_vector = false;
 		if(fill_vector && rpn_stack.size() > 0 && rpn_stack.back()->isVector()) fill_vector = false;
