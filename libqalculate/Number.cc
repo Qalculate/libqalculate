@@ -3700,7 +3700,15 @@ bool Number::recip() {
 	return true;
 }
 bool Number::raise(const Number &o, bool try_exact) {
-	if(o.isTwo()) return square();
+	if(o.isTwo()) {
+		if(!try_exact && n_type == NUMBER_TYPE_RATIONAL && (mpz_sizeinbase(mpq_numref(r_value), 10) >= 1000 || mpz_sizeinbase(mpq_numref(r_value), 10) >= 1000)) {
+			if(!setToFloatingPoint()) return false;
+		}
+		if(!try_exact && hasImaginaryPart() && i_value->isRational() && (mpz_sizeinbase(mpq_numref(i_value->internalRational()), 10) >= 1000 || mpz_sizeinbase(mpq_numref(i_value->internalRational()), 10) >= 1000)) {
+			if(!i_value->setToFloatingPoint()) return false;
+		}
+		return square();
+	}
 	if(o.isMinusOne()) {
 		if(!recip()) return false;
 		setPrecisionAndApproximateFrom(o);

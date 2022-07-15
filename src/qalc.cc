@@ -1317,12 +1317,19 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal value."));
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "precision", _("precision")) || svar == "prec") {
-		int v = 0;
+		long int v = 0;
 		if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
 		if(v < 1) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
-			CALCULATOR->setPrecision(v);
+			CALCULATOR->setPrecision(v > INT_MAX ? INT_MAX : (int) v);
+			if(CALCULATOR->getPrecision() != v) {
+				size_t l = i2s(CALCULATOR->getPrecision()).length() + strlen(_("Maximum precision %i set."));
+				char *cstr = (char*) malloc(sizeof(char) * (l + 1));
+				snprintf(cstr, l, _("Maximum precision %i set."), CALCULATOR->getPrecision());
+				PUTS_UNICODE(cstr);
+				free(cstr);
+			}
 			expression_calculation_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "interval display", _("interval display")) || svar == "ivdisp") {
