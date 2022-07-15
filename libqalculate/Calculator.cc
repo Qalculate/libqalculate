@@ -1342,11 +1342,18 @@ void Calculator::prefixNameChanged(Prefix *p, bool new_item) {
 		}
 	}
 }
-#define PRECISION_TO_BITS(p) (((p) * 3.322) + 100)
+#define PRECISION_TO_BITS(p) (((p) * 3.3219281) + 100)
+#define BITS_TO_PRECISION(p) (::ceil(((p) - 100) / 3.3219281))
 void Calculator::setPrecision(int precision) {
 	if(precision <= 0) precision = DEFAULT_PRECISION;
-	i_precision = precision;
-	mpfr_set_default_prec(PRECISION_TO_BITS(i_precision));
+	if(PRECISION_TO_BITS(precision) > MPFR_PREC_MAX) {
+		if(BITS_TO_PRECISION(MPFR_PREC_MAX) > INT_MAX) i_precision = INT_MAX;
+		else i_precision = (int) BITS_TO_PRECISION(MPFR_PREC_MAX);
+		mpfr_set_default_prec(MPFR_PREC_MAX);
+	} else {
+		i_precision = precision;
+		mpfr_set_default_prec(PRECISION_TO_BITS(i_precision));
+	}
 }
 int Calculator::getPrecision() const {
 	return i_precision;
