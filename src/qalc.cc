@@ -1317,12 +1317,19 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal value."));
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "precision", _("precision")) || svar == "prec") {
-		int v = 0;
+		long int v = 0;
 		if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
 		if(v < 1) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
-			CALCULATOR->setPrecision(v);
+			CALCULATOR->setPrecision(v > INT_MAX ? INT_MAX : (int) v);
+			if(CALCULATOR->getPrecision() != v) {
+				size_t l = i2s(CALCULATOR->getPrecision()).length() + strlen(_("Maximum precision %i set."));
+				char *cstr = (char*) malloc(sizeof(char) * (l + 1));
+				snprintf(cstr, l, _("Maximum precision %i set."), CALCULATOR->getPrecision());
+				PUTS_UNICODE(cstr);
+				free(cstr);
+			}
 			expression_calculation_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "interval display", _("interval display")) || svar == "ivdisp") {
@@ -5520,6 +5527,11 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 				if(parsed_mstruct->isComparison() || parsed_mstruct->isLogicalAnd() || parsed_mstruct->isLogicalOr()) b_comparison += 2;
 				if(mstruct->isComparison() || mstruct->isLogicalAnd() || mstruct->isLogicalOr()) b_comparison += (alt_results.empty() ? 1 : 4);
 				if(b_comparison && !(b_comparison & 1)) strout += LEFT_PARENTHESIS;
+				if(parsed_approx) {
+					if(printops.use_unicode_signs) strout += SIGN_ALMOST_EQUAL;
+					else strout += _("approx.");
+					strout += " ";
+				}
 				strout += parsed_text;
 				if(b_comparison && !(b_comparison & 1)) strout += RIGHT_PARENTHESIS;
 				if(((evalops.parse_options.base <= 36 && evalops.parse_options.base >= 2 && evalops.parse_options.base != BASE_DECIMAL && evalops.parse_options.base != BASE_HEXADECIMAL && evalops.parse_options.base != BASE_OCTAL && evalops.parse_options.base != BASE_BINARY) || evalops.parse_options.base == BASE_CUSTOM || (evalops.parse_options.base <= BASE_GOLDEN_RATIO && evalops.parse_options.base >= BASE_SQRT2)) && (interactive_mode || saved_evalops.parse_options.base == evalops.parse_options.base)) {

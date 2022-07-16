@@ -1509,6 +1509,45 @@
       </argument>
     </builtin_function>
     <function>
+      <_title>Convert from Q Format (Fixed Point)</_title>
+      <_names>r:qFormat</_names>
+      <expression>if((\A{0}=0&amp;&amp;isInteger(\x)),if(\Z{0}=0,\x/2^\y,\x/2^\z),if([\Z{0}==0,abs(\x)&gt;2^\y],[round(\x*2^\y),sgn(\x)*2^(\y+\z)+warning("overflow")],round(\x*2^\z)))</expression>
+      <condition>\z=0||abs(\x)&lt;=2^(\y+\z)</condition>
+      <_description>Converts to or from fixed point number. Corresponds to Qm.n format where m is the second argument and n is the third argument. m does not include the sign bit. If the value is an integer, and the fourth argument is false, the value is converted from fixed point, otherwise to.</_description>
+      <argument type="number" index="1">
+        <_title>Value</_title>
+        <handle_vector>true</handle_vector>
+      </argument>
+      <argument type="integer" index="2">
+        <_title>Bits (integer part)</_title>
+        <min>0</min>
+      </argument>
+      <argument type="integer" index="3">
+        <_title>Bits (fraction part)</_title>
+        <min>0</min>
+      </argument>
+      <argument type="boolean" index="4">
+        <_title>Always convert to</_title>
+      </argument>
+    </function>
+    <function>
+      <_title>Q Format Error (Fixed Point)</_title>
+      <_names>r:qError</_names>
+      <expression>abs(\x-qFormat(qNum(\x,\y,\Z{0}),\y,\z))</expression>
+      <argument type="number" index="1">
+        <_title>Value</_title>
+        <handle_vector>true</handle_vector>
+      </argument>
+      <argument type="integer" index="2">
+        <_title>Bits (integer part)</_title>
+        <min>0</min>
+      </argument>
+      <argument type="integer" index="3">
+        <_title>Bits (fraction part)</_title>
+        <min>0</min>
+      </argument>
+    </function>
+    <function>
       <_title>Body Mass Index (BMI)</_title>
       <_names>-r:bmi</_names>
       <_description>Calculates the Body Mass Index. The resulting BMI-value is sometimes interpreted as follows (although varies with age, sex, etc.):&#10;&#10;Underweight &lt; 18.5&#10;Normal weight 18.5-25&#10;Overweight 25-30&#10;Obesity &gt; 30&#10;&#10;Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_description>

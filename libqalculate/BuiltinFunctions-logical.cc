@@ -259,6 +259,7 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	MathStructure mtest;
 	MathStructure mcount;
 	MathStructure mupdate;
+	bool b_eval = true;
 	while(true) {
 		mtest = vargs[2];
 		mtest.replace(vargs[1], mcounter);
@@ -271,13 +272,17 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		else mupdate = vargs[5];
 		mupdate.replace(vargs[1], mcounter, vargs[6], mstruct);
 		mstruct = mupdate;
-		mstruct.calculatesub(eo, eo, false);
-
+		if(b_eval) {
+			mstruct.eval(eo);
+			if(mstruct.containsType(STRUCT_ADDITION) || mstruct.containsType(STRUCT_FUNCTION)) b_eval = false;
+		} else {
+			mstruct.calculatesub(eo, eo, false);
+		}
 		if(vargs[3].isComparison() && vargs[3].comparisonType() == COMPARISON_EQUALS && vargs[3][0] == vargs[1]) mcount = vargs[3][1];
 		else mcount = vargs[3];
 		mcount.replace(vargs[1], mcounter);
 		mcounter = mcount;
-		mcounter.calculatesub(eo, eo, false);
+		mcounter.eval(eo);
 	}
 	return 1;
 
