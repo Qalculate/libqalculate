@@ -94,8 +94,14 @@ long int integer_log(const mpfr_t &v, int base) {
 		size_t i = mpz_sizeinbase(r, base);
 		while(true) {
 			if(i == 0) break;
-			mpz_ui_pow_ui(mpq_denref(q), base, i);
-			cmp = mpfr_cmp_q(v, q);
+			if(i < 1000000L) {
+				mpz_ui_pow_ui(mpq_denref(q), base, i);
+				cmp = mpfr_cmp_q(v, q);
+			} else {
+				mpfr_ui_pow_ui(v2, base, i, MPFR_RNDU);
+				mpfr_ui_div(v2, 1, v2, MPFR_RNDD);
+				cmp = mpfr_cmp(v, v2);
+			}
 			if(cmp == 0) break;
 			if(cmp < 0) {i++; break;}
 			i--;
@@ -113,8 +119,16 @@ long int integer_log(const mpfr_t &v, int base) {
 	size_t i = mpz_sizeinbase(r, base);
 	while(true) {
 		if(i == 0) break;
-		mpz_ui_pow_ui(r, base, i);
-		if(mpfr_cmp_z(v, r) >= 0) break;
+		if(i < 1000000L) {
+			mpz_ui_pow_ui(r, base, i);
+			if(mpfr_cmp_z(v, r) >= 0) break;
+		} else {
+			mpfr_t v2;
+			mpfr_init2(v2, mpfr_get_prec(v));
+			mpfr_ui_pow_ui(v2, base, i, MPFR_RNDU);
+			if(mpfr_cmp(v, v2) >= 0) break;
+			mpfr_clear(v2);
+		}
 		i--;
 	}
 	if(i > LONG_MAX) l = LONG_MAX;
@@ -11503,10 +11517,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					}
 				}
 				if(mpfr_sgn(fu_value) > 0) {
-					ilogl = -integer_log(fu_value, base);
+					ilogu = -integer_log(fu_value, base);
 					if(ilogu >= 0) {
-						mpfr_ui_pow_ui(f_logl, (unsigned long int) base, (unsigned long int) ilogu + 1, MPFR_RNDU);
-						mpfr_mul(vu, fu_value, f_logl, MPFR_RNDU);
+						mpfr_ui_pow_ui(f_logu, (unsigned long int) base, (unsigned long int) ilogu + 1, MPFR_RNDU);
+						mpfr_mul(vu, fu_value, f_logu, MPFR_RNDU);
 						if(mpfr_cmp_q(vu, base_half) <= 0) ilogu++;
 					}
 				}
@@ -11568,7 +11582,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 			long int expo = 0;
 			long int i_log = integer_log(vu, base) + i_log_mod;
-			//long int i_log = mpfr_get_si(f_logl, MPFR_RNDN);
 			if(!po.preserve_format && base == 10) {
 				expo = i_log;
 				precision = precision_base;
@@ -11892,8 +11905,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 
 		bool use_max_idp = false;
+		bool rerun2 = false;
 
 		float_rerun:
+
+		if(rerun) rerun2 = false;
 
 		string str_bexp;
 		bool neg_bexp = false;
@@ -11925,6 +11941,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		bool neg = (mpfr_sgn(v) < 0);
 		if(neg) mpfr_neg(v, v, MPFR_RNDN);
 		long int i_log = integer_log(v, base);
+		if(rerun2) i_log++;
 		if(po.preserve_precision && (po.interval_display == INTERVAL_DISPLAY_LOWER || po.interval_display == INTERVAL_DISPLAY_UPPER)) {
 			i_precision_base += 2;
 			precision_base += 2;
@@ -12005,7 +12022,12 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		mpfr_get_z(ivalue, v, MPFR_RNDN);
 
 		str = printMPZ(ivalue, base, false, po.lower_case_numbers);
-
+		if(!rerun && !rerun2 && expo != 0 && po.min_exp >= -1 && str.length() >= 2 && str.length() - l10 == 2 && str.substr(0, 2) == "10") {
+			rerun2 = true;
+			mpfr_clears(v, f_log, f_base, NULL);
+			mpz_clears(ivalue, z_log, NULL);
+			goto float_rerun;
+		}
 		bool show_ending_zeroes = po.show_ending_zeroes;
 
 		string str_unc;

@@ -1346,10 +1346,10 @@ void Calculator::prefixNameChanged(Prefix *p, bool new_item) {
 #define BITS_TO_PRECISION(p) (::ceil(((p) - 100) / 3.3219281))
 void Calculator::setPrecision(int precision) {
 	if(precision <= 0) precision = DEFAULT_PRECISION;
-	if(PRECISION_TO_BITS(precision) > MPFR_PREC_MAX) {
+	if(PRECISION_TO_BITS(precision) > MPFR_PREC_MAX - 1000L) {
 		if(BITS_TO_PRECISION(MPFR_PREC_MAX) > INT_MAX) i_precision = INT_MAX;
-		else i_precision = (int) BITS_TO_PRECISION(MPFR_PREC_MAX);
-		mpfr_set_default_prec(MPFR_PREC_MAX);
+		else i_precision = (int) BITS_TO_PRECISION(MPFR_PREC_MAX - 1000L);
+		mpfr_set_default_prec(MPFR_PREC_MAX - 1000L);
 	} else {
 		i_precision = precision;
 		mpfr_set_default_prec(PRECISION_TO_BITS(i_precision));
