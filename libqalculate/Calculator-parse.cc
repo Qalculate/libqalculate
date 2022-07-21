@@ -4406,12 +4406,12 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						size_t i4 = i2;
 						if(i2 > 2 && str[i2 - 1] == ID_WRAP_RIGHT_CH) {
 							b = true;
-						} else if(i2 > 4 && str[i2 - 3] == ID_WRAP_RIGHT_CH && str[i2 - 2] == POWER_CH && is_in(NUMBERS, str[i2 - 1])) {
+						} else if(i2 > 4 && str[i2 - 3] == ID_WRAP_RIGHT_CH && (str[i2 - 2] == POWER_CH || str[i2 - 2] == INTERNAL_UPOW_CH) && is_in(NUMBERS, str[i2 - 1])) {
 							b = true;
 							i4 -= 2;
 						}
 						if(!b) {
-							if((i2 > 1 && is_not_in(OPERATORS INTERNAL_OPERATORS MULTIPLICATION_2, str[i2 - 1])) || (i2 > 2 && str[i2 - 1] == MULTIPLICATION_2_CH && is_not_in(OPERATORS INTERNAL_OPERATORS, str[i2 - 2]))) had_nonunit = true;
+							if((i2 > 0 && is_not_in(OPERATORS INTERNAL_OPERATORS MULTIPLICATION_2, str[i2 - 1])) || (i2 > 1 && str[i2 - 1] == MULTIPLICATION_2_CH && is_not_in(OPERATORS INTERNAL_OPERATORS, str[i2 - 2]))) had_nonunit = true;
 							break;
 						}
 						i2 = str.rfind(ID_WRAP_LEFT_CH, i4 - 2);
@@ -4419,6 +4419,15 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						if(i2 != string::npos) {
 							int id = s2i(str.substr(i2 + 1, (i4 - 1) - (i2 + 1)));
 							if(priv->id_structs.find(id) != priv->id_structs.end()) m_temp = priv->id_structs[id];
+						}
+						if(m_temp && m_temp->isInteger() && i2 > 3 && (str[i2 - 1] == POWER_CH || str[i2 - 1] == INTERNAL_UPOW_CH) && str[i2 - 2] == ID_WRAP_RIGHT_CH) {
+							i4 = i2 - 1;
+							i2 = str.rfind(ID_WRAP_LEFT_CH, i4 - 2);
+							m_temp = NULL;
+							if(i2 != string::npos) {
+								int id = s2i(str.substr(i2 + 1, (i4 - 1) - (i2 + 1)));
+								if(priv->id_structs.find(id) != priv->id_structs.end()) m_temp = priv->id_structs[id];
+							}
 						}
 						if(!m_temp || !m_temp->isUnit()) {
 							had_nonunit = true;
@@ -4445,18 +4454,39 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						b = false;
 						if(i3 < str.length() - 3 && str[i3 + 1] == ID_WRAP_LEFT_CH) {
 							b = true;
-						} else if(i3 < str.length() - 5 && str[i3 + 3] == ID_WRAP_LEFT_CH && str[i3 + 1] == POWER_CH && is_in(NUMBERS, str[i3 + 2])) {
+						} else if(i3 < str.length() - 5 && str[i3 + 3] == ID_WRAP_LEFT_CH && (str[i3 + 1] == POWER_CH || str[i3 + 1] == INTERNAL_UPOW_CH) && is_in(NUMBERS, str[i3 + 2])) {
 							b = true;
 							i3 += 2;
+						} else if(i3 < str.length() - 7 && (str[i3 + 1] == POWER_CH || str[i3 + 1] == INTERNAL_UPOW_CH) && str[i3 + 2] == ID_WRAP_LEFT_CH) {
+							size_t i4 = str.find(ID_WRAP_RIGHT, i3 + 3);
+							m_temp2 = NULL;
+							if(i4 != string::npos && i4 < str.length() - 3 && str[i4 + 1] == ID_WRAP_LEFT_CH) {
+								int id = s2i(str.substr(i3 + 3, i4 - (i3 + 3)));
+								if(priv->id_structs.find(id) != priv->id_structs.end()) m_temp2 = priv->id_structs[id];
+							}
+							if(m_temp2 && m_temp2->isInteger()) {
+								b = true;
+								i3 = i4;
+							}
 						}
 					}
 					b = had_unit;
 					if(b) {
-						if(i3 < str.length() - 2 && str[i3 + 1] == POWER_CH && is_in(NUMBERS, str[i3 + 2])) {
+						if(i3 < str.length() - 2 && (str[i3 + 1] == POWER_CH || str[i3 + 1] == INTERNAL_UPOW_CH) && is_in(NUMBERS, str[i3 + 2])) {
 							i3 += 2;
 							while(i3 < str.length() - 1 && is_in(NUMBERS, str[i3 + 1])) i3++;
+						} else if(i3 < str.length() - 4 && (str[i3 + 1] == POWER_CH || str[i3 + 1] == INTERNAL_UPOW_CH) && str[i3 + 2] == ID_WRAP_LEFT_CH) {
+							size_t i4 = str.find(ID_WRAP_RIGHT, i3 + 3);
+							m_temp2 = NULL;
+							if(i4 != string::npos) {
+								int id = s2i(str.substr(i3 + 3, i4 - (i3 + 3)));
+								if(priv->id_structs.find(id) != priv->id_structs.end()) m_temp2 = priv->id_structs[id];
+							}
+							if(m_temp2 && m_temp2->isInteger()) {
+								i3 = i4;
+							}
 						}
-						if(i3 == str.length() - 1 || (str[i3 + 1] != POWER_CH && str[i3 + 1] != DIVISION_CH)) {
+						if(i3 == str.length() - 1 || (str[i3 + 1] != POWER_CH && str[i3 + 1] != INTERNAL_UPOW_CH && str[i3 + 1] != DIVISION_CH)) {
 							MathStructure *mstruct2 = new MathStructure();
 							str2 = str.substr(i2, i - i2);
 							parseAdd(str2, mstruct2, po);
@@ -4479,7 +4509,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					if(b) {
 						i3 = str.find_first_of(MULTIPLICATION_2 "%" MULTIPLICATION DIVISION, i + 1);
 						if(i3 == string::npos || i3 == i + 1 || str[i3] != MULTIPLICATION_2_CH) b = false;
-						if(i3 < str.length() + 1 && (str[i3 + 1] == '%' || str[i3 + 1] == DIVISION_CH || str[i3 + 1] == MULTIPLICATION_CH || str[i3 + 1] == POWER_CH)) b = false;
+						if(i3 < str.length() + 1 && (str[i3 + 1] == '%' || str[i3 + 1] == DIVISION_CH || str[i3 + 1] == MULTIPLICATION_CH || str[i3 + 1] == POWER_CH || str[i3 + 1] == INTERNAL_UPOW_CH)) b = false;
 					}
 					if(b) {
 						if(i3 != string::npos) str[i3] = MULTIPLICATION_CH;
