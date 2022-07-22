@@ -800,6 +800,28 @@
           <_title>Value</_title>
         </argument>
       </builtin_function>
+      <function>
+        <_title>Clip</_title>
+        <names>r:clip</names>
+        <description>Clips or limits the input value to be between the lower and upper bounds.</description>
+        <expression>min(max(\x, \Y{-infinity}), \Z{infinity})</expression>
+        <condition>\y &lt;= \z</condition>
+        <argument type="number" index="1">
+          <_title>Value</_title>
+          <complex_allowed>false</complex_allowed>
+          <test>false</test>
+        </argument>
+        <argument type="number" index="2">
+          <_title>Lower bound</_title>
+          <complex_allowed>false</complex_allowed>
+          <test>false</test>
+        </argument>
+        <argument type="number" index="3">
+          <_title>Upper bound</_title>
+          <complex_allowed>false</complex_allowed>
+          <test>false</test>
+        </argument>
+      </function>
     </category>
     <category>
       <_title>Number Bases</_title>
