@@ -809,17 +809,14 @@
         <argument type="free" index="1">
           <_title>Value</_title>
           <handle_vector>true</handle_vector>
-          <test>false</test>
         </argument>
         <argument type="free" index="2">
           <_title>Lower bound</_title>
           <handle_vector>true</handle_vector>
-          <test>false</test>
         </argument>
         <argument type="free" index="3">
           <_title>Upper bound</_title>
           <handle_vector>true</handle_vector>
-          <test>false</test>
         </argument>
       </function>
     </category>
