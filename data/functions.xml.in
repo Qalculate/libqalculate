@@ -810,13 +810,13 @@
           <_title>Value</_title>
           <handle_vector>true</handle_vector>
         </argument>
-        <argument type="free" index="2">
+        <argument type="number" index="2">
           <_title>Lower bound</_title>
-          <handle_vector>true</handle_vector>
+          <complex_allowed>false</complex_allowed>
         </argument>
-        <argument type="free" index="3">
+        <argument type="number" index="3">
           <_title>Upper bound</_title>
-          <handle_vector>true</handle_vector>
+          <complex_allowed>false</complex_allowed>
         </argument>
       </function>
     </category>
