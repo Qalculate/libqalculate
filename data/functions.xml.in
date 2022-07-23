@@ -802,11 +802,12 @@
       </builtin_function>
       <function>
         <_title>Clip</_title>
+        <handle_vector>true</handle_vector>
         <_names>r:clip</_names>
         <_description>Clips or limits the input value to be between the lower and upper bounds.</_description>
         <expression>min(max(\x, \Y{-infinity}), \Z{infinity})</expression>
         <condition>\y &lt;= \z</condition>
-        <argument type="number" index="1">
+        <argument type="free" index="1">
           <_title>Value</_title>
           <complex_allowed>false</complex_allowed>
           <test>false</test>
