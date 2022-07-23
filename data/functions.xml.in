@@ -804,22 +804,22 @@
         <_title>Clip</_title>
         <_names>r:clip</_names>
         <_description>Clips or limits the input value to be between the lower and upper bounds.</_description>
-        <expression>min(max(\x, \Y{-infinity}), \Z{infinity})</expression>
+        <expression>if([\x&lt;\Y{-infinity},\x&gt;\Z{infinity}],[\y,\z],\x)</expression>
         <condition>\y &lt;= \z</condition>
-        <argument type="number" index="1">
+        <argument type="free" index="1">
           <_title>Value</_title>
+          <handle_vector>true</handle_vector>
           <complex_allowed>false</complex_allowed>
-          <test>false</test>
         </argument>
-        <argument type="number" index="2">
+        <argument type="free" index="2">
           <_title>Lower bound</_title>
+          <handle_vector>true</handle_vector>
           <complex_allowed>false</complex_allowed>
-          <test>false</test>
         </argument>
-        <argument type="number" index="3">
+        <argument type="free" index="3">
           <_title>Upper bound</_title>
+          <handle_vector>true</handle_vector>
           <complex_allowed>false</complex_allowed>
-          <test>false</test>
         </argument>
       </function>
     </category>
