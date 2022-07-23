@@ -808,18 +808,18 @@
         <condition>\y &lt;= \z</condition>
         <argument type="number" index="1">
           <_title>Value</_title>
-          <complex_allowed>false</complex_allowed>
           <test>false</test>
+          <complex_allowed>false</complex_allowed>
         </argument>
         <argument type="number" index="2">
           <_title>Lower bound</_title>
-          <complex_allowed>false</complex_allowed>
           <test>false</test>
+          <complex_allowed>false</complex_allowed>
         </argument>
         <argument type="number" index="3">
           <_title>Upper bound</_title>
-          <complex_allowed>false</complex_allowed>
           <test>false</test>
+          <complex_allowed>false</complex_allowed>
         </argument>
       </function>
     </category>
