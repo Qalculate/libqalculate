@@ -1,0 +1,9 @@
+[Unit]
+Description="Refresh qalc exchange rates"
+
+[Timer]
+OnBootSec=3min
+OnCalendar=*-*-* 06:00:00
+
+[Install]
+WantedBy=timers.target
