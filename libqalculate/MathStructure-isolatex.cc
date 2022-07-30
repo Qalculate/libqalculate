@@ -1479,6 +1479,82 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						}
 					}
 				}
+				if(i_px == 0) {
+					// a^x+b^x+...
+					mvar = NULL;
+					size_t i_div = CHILD(0).size() - 1;
+					for(size_t i = 0; i < CHILD(0).size(); i++) {
+						if(CHILD(0)[i].isMultiplication()) {
+							for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
+								if(CHILD(0)[i][i2].isPower() && ((i == 0 && CHILD(0)[i][i2][1].contains(x_var)) || (i > 0 && CHILD(0)[i][i2][1] == *mvar)) && !CHILD(0)[i][i2][0].contains(x_var)) {
+									if(i == 0) mvar = &CHILD(0)[i][i2][1];
+								} else if(CHILD(0)[i][i2].contains(x_var)) {
+									mvar = NULL;
+									break;
+								}
+							}
+							if(!mvar) break;
+							if(i_div > i && (!CHILD(0)[i][0].isNumber() || CHILD(0)[i][0].number().isPositive())) {
+								i_div = i;
+							}
+						} else if(CHILD(0)[i].isPower() && ((i == 0 && CHILD(0)[i][1].contains(x_var)) || (i > 0 && CHILD(0)[i][1] == *mvar)) && !CHILD(0)[i][0].contains(x_var)) {
+							if(i == 0) mvar = &CHILD(0)[i][1];
+							if(i_div > i) i_div = i;
+						} else {
+							mvar = NULL;
+							break;
+						}
+						if(i == 0 && mvar && !mvar->representsReal()) {
+							mvar = NULL;
+							break;
+						}
+					}
+					if(mvar) {
+						if(CHILD(1).isZero() && !containsInterval()) {
+							MathStructure mtest(*this);
+							mtest[0].calculateDivide(CHILD(0)[i_div], eo);
+							mtest.childUpdated(1);
+							if(mtest.isolate_x_sub(eo, eo2, x_var, morig)) {
+								mtest.calculatesub(eo, eo2, true);
+								if(mtest.isComparison() && mtest[0] == x_var) {
+									set(mtest);
+									return true;
+								}
+							}
+						}
+						MathFunction *f = CALCULATOR->getFunctionById(FUNCTION_ID_NEWTON_RAPHSON);
+						if(f) {
+							MathStructure msolve(f, NULL);
+							msolve.addChild(*this);
+							msolve.addChild(nr_two);
+							UnknownVariable *var = NULL;
+							if(!mvar->equals(x_var)) {
+								var = new UnknownVariable("", string(LEFT_PARENTHESIS) + format_and_print(*mvar) + RIGHT_PARENTHESIS);
+								var->setInterval(*mvar);
+								msolve[0].replace(*mvar, var);
+								msolve.addChild(var);
+							} else {
+								msolve.addChild(x_var);
+							}
+							msolve.addChild(Number(-10, 1, 0));
+							msolve.addChild(Number(20, 1, 0));
+							msolve.calculateFunctions(eo, true);
+							if(msolve.isNumber()) {
+								CHILD(1) = msolve;
+								if(var) {
+									MathStructure mx(*mvar);
+									CHILD(0) = mx;
+									if(var) var->destroy();
+									CHILDREN_UPDATED;
+									isolate_x(eo, eo2, x_var);
+								} else {
+									CHILD(0) = x_var;
+								}
+								return true;
+							}
+						}
+					}
+				}
 				if(CHILD(0).containsFunctionId(FUNCTION_ID_LOG)) {
 					// x+ln(x)=lambertw(x)
 					MathStructure *mln = NULL;
