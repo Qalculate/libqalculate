@@ -1482,24 +1482,25 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				if(i_px == 0) {
 					// a^x+b^x+...
 					mvar = NULL;
-					size_t i_div = CHILD(0).size() - 1;
+					bool b_pos = false, b_neg = false;
 					for(size_t i = 0; i < CHILD(0).size(); i++) {
-						if(CHILD(0)[i].isMultiplication()) {
-							for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
-								if(CHILD(0)[i][i2].isPower() && ((i == 0 && CHILD(0)[i][i2][1].contains(x_var)) || (i > 0 && CHILD(0)[i][i2][1] == *mvar)) && !CHILD(0)[i][i2][0].contains(x_var)) {
-									if(i == 0) mvar = &CHILD(0)[i][i2][1];
-								} else if(CHILD(0)[i][i2].contains(x_var)) {
+						if(CHILD(0)[i].isMultiplication() && CHILD(0)[i].size() == 2 && CHILD(0)[i][0].isNumber() && CHILD(0)[i][0].number().isReal() && CHILD(0)[i][1].isPower() && ((i == 0 && CHILD(0)[i][1][1].contains(x_var)) || (i > 0 && CHILD(0)[i][1][1] == *mvar)) && CHILD(0)[i][1][0].isNumber() && CHILD(0)[i][1][0].number().isPositive()) {
+							if(CHILD(0)[i][0].number().isPositive()) {
+								if(!b_neg) break;
+								b_pos = true;
+							} else if(CHILD(0)[i][0].number().isNegative()) {
+								if(b_pos) {
 									mvar = NULL;
 									break;
 								}
+								b_neg = true;
+							} else {
+								mvar = NULL;
+								break;
 							}
-							if(!mvar) break;
-							if(i_div > i && (!CHILD(0)[i][0].isNumber() || CHILD(0)[i][0].number().isPositive())) {
-								i_div = i;
-							}
-						} else if(CHILD(0)[i].isPower() && ((i == 0 && CHILD(0)[i][1].contains(x_var)) || (i > 0 && CHILD(0)[i][1] == *mvar)) && !CHILD(0)[i][0].contains(x_var)) {
-							if(i == 0) mvar = &CHILD(0)[i][1];
-							if(i_div > i) i_div = i;
+							if(i == 0) mvar = &CHILD(0)[i][1][1];
+						} else if(b_neg && CHILD(0)[i].isPower() && CHILD(0)[i][1] == *mvar && CHILD(0)[i][0].isNumber() && CHILD(0)[i][0].number().isPositive()) {
+							b_pos = true;
 						} else {
 							mvar = NULL;
 							break;
@@ -1509,10 +1510,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							break;
 						}
 					}
-					if(mvar) {
+					if(mvar && b_pos && b_neg) {
 						if(CHILD(1).isZero() && !containsInterval()) {
 							MathStructure mtest(*this);
-							mtest[0].calculateDivide(CHILD(0)[i_div], eo);
+							mtest[0].calculateDivide(CHILD(0).last(), eo);
 							mtest.childUpdated(1);
 							if(mtest.isolate_x_sub(eo, eo2, x_var, morig)) {
 								mtest.calculatesub(eo, eo2, true);
@@ -1523,7 +1524,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							}
 						}
 						MathFunction *f = CALCULATOR->getFunctionById(FUNCTION_ID_NEWTON_RAPHSON);
-						if(f) {
+						if(f && eo.approximation != APPROXIMATION_EXACT) {
 							MathStructure msolve(f, NULL);
 							msolve.addChild(*this);
 							msolve.addChild(nr_two);
