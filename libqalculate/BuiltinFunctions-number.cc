@@ -486,6 +486,7 @@ int CeilFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 		}
 	}
+	if(mstruct.representsInteger(false)) return 1;
 	return -1;
 }
 bool CeilFunction::representsPositive(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsPositive();}
@@ -536,6 +537,7 @@ int FloorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			}
 		}
 	}
+	if(mstruct.representsInteger(false)) return 1;
 	return -1;
 }
 bool FloorFunction::representsPositive(const MathStructure&, bool) const {return false;}
@@ -586,6 +588,7 @@ int TruncFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			}
 		}
 	}
+	if(mstruct.representsInteger(false)) return 1;
 	return -1;
 }
 bool TruncFunction::representsPositive(const MathStructure&, bool) const {return false;}
@@ -651,6 +654,7 @@ int RoundFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			}
 		}
 	}
+	if(mstruct.representsInteger(false)) return 1;
 	return -1;
 }
 bool RoundFunction::representsPositive(const MathStructure&, bool) const {return false;}
