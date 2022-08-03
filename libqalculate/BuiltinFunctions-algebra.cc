@@ -56,6 +56,7 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 	CALCULATOR->beginTemporaryStopMessages();
 	m1.eval(eo2);
+	if(calculate_userfunctions(m1, vargs[3], eo)) m1.calculatesub(eo2, eo2, true);
 	int im = 0;
 	if(CALCULATOR->endTemporaryStopMessages(NULL, &im) > 0 || im > 0) m1 = vargs[0];
 	eo2.calculate_functions = eo.calculate_functions;
@@ -113,6 +114,7 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	}
 	CALCULATOR->beginTemporaryStopMessages();
 	m1.eval(eo2);
+	if(calculate_userfunctions(m1, vargs[3], eo)) m1.calculatesub(eo2, eo2, true);
 	int im = 0;
 	if(CALCULATOR->endTemporaryStopMessages(NULL, &im) || im > 0) m1 = vargs[0];
 	eo2.calculate_functions = eo.calculate_functions;
