@@ -1362,7 +1362,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 				}
 				if(i_px == 0) {
-					// a^(2x)+a^x, a^(-x)+a^x
+					// a^(2x)+a^x, a^(3x)+a^x, a^(3x)+a^(2x), a^(-x)+a^x
 					MathStructure *mvar1 = NULL, *mvar2 = NULL;
 					b = true;
 					for(size_t i = 0; i < CHILD(0).size() && b; i++) {
@@ -1412,9 +1412,6 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							m1m2.calculateMultiply(nr_two, eo2);
 							if(m1m2.equals((*mvar2)[1])) {
 								b_two = true;
-								MathStructure *mtmp = mvar2;
-								mvar2 = mvar1;
-								mvar1 = mtmp;
 							}
 							if(!b_two && !b_m_one) {
 								MathStructure m1mm1((*mvar1)[1]);
@@ -1431,6 +1428,9 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								m2m2.calculateMultiply(nr_two, eo2);
 								if(m2m2.equals((*mvar1)[1])) {
 									b_two = true;
+									MathStructure *mtmp = mvar2;
+									mvar2 = mvar1;
+									mvar1 = mtmp;
 								}
 							}
 							if(!b_two && !b_m_one) {
@@ -1438,6 +1438,42 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								m2mm1.calculateMultiply(nr_minus_one, eo2);
 								if(m2mm1.equals((*mvar1)[1])) {
 									b_m_one = true;
+								}
+							}
+							if(!b_two && !b_m_one && !b_three) {
+								MathStructure m1m3((*mvar1)[1]);
+								m1m3.calculateMultiply(nr_three, eo2);
+								if(m1m3.equals((*mvar2)[1])) {
+									b_three = true;
+								}
+							}
+							if(!b_two && !b_m_one && !b_three) {
+								MathStructure m2m3((*mvar2)[1]);
+								m2m3.calculateMultiply(nr_three, eo2);
+								if(m2m3.equals((*mvar1)[1])) {
+									b_three = true;
+									MathStructure *mtmp = mvar2;
+									mvar2 = mvar1;
+									mvar1 = mtmp;
+								}
+							}
+							if(!b_two && !b_m_one && !b_three) {
+								MathStructure m1m3((*mvar1)[1]);
+								m1m3.calculateMultiply(Number(3, 2), eo2);
+								if(m1m3.equals((*mvar2)[1])) {
+									b_three = true;
+									b_two = true;
+								}
+							}
+							if(!b_two && !b_m_one && !b_three) {
+								MathStructure m2m3((*mvar2)[1]);
+								m2m3.calculateMultiply(Number(3, 2), eo2);
+								if(m2m3.equals((*mvar1)[1])) {
+									b_three = true;
+									b_two = true;
+									MathStructure *mtmp = mvar2;
+									mvar2 = mvar1;
+									mvar1 = mtmp;
 								}
 							}
 						} else if(mvar1->base()->isNumber() && mvar2->base()->isNumber() && !mvar1->base()->number().isInterval() && !mvar2->base()->number().isInterval()) {
@@ -1479,7 +1515,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						}
 						if(b_two || b_three || b_m_one) {
 							MathStructure mv(*mvar1);
-							if(b_three && b_two) mv[0].number().sqrt();
+							if(b_three && b_two) {
+								if(mvar1->base()->equals(*mvar2->base())) mv[1].calculateMultiply(nr_half, eo2);
+								else mv[0].number().sqrt();
+							}
 							MathStructure mv2(*mvar2);
 							UnknownVariable *var = new UnknownVariable("", format_and_print(mv));
 							var->setInterval(mv);
@@ -1508,7 +1547,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					mvar = NULL;
 					int i_neg = 0, i_pos = 0;
 					bool neg_first = true, pos_first = true;
-					bool b_mul = false;
+					bool b_mul = false, b_mulnum = true;
 					Number mulsum, basesum;
 					for(size_t i = 0; i < CHILD(0).size(); i++) {
 						if(CHILD(0)[i].isMultiplication() && CHILD(0)[i].size() == 2 && CHILD(0)[i][0].isNumber() && CHILD(0)[i][0].number().isReal() && CHILD(0)[i][1].isPower() && ((i == 0 && CHILD(0)[i][1][1].contains(x_var)) || (i > 0 && CHILD(0)[i][1][1] == *mvar)) && CHILD(0)[i][1][0].isNumber() && CHILD(0)[i][1][0].number().isPositive()) {
@@ -1531,6 +1570,46 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							if(i == 0) {
 								if(!CHILD(0)[i][1][1].representsReal()) break;
 								mvar = &CHILD(0)[i][1][1];
+							}
+						} else if(CHILD(0)[i].isMultiplication() && CHILD(1).isZero()) {
+							b_mulnum = false;
+							bool b = false;
+							size_t i_x = 0;
+							for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
+								if(!b && CHILD(0)[i][i2].isPower() && ((i == 0 && CHILD(0)[i][i2][1].contains(x_var)) || (i > 0 && CHILD(0)[i][i2][1] == *mvar)) && CHILD(0)[i][i2][0].isNumber() && CHILD(0)[i][i2][0].number().isPositive()) {
+									i_x = i2;
+									b = true;
+								} else if(CHILD(0)[i][i2].contains(x_var)) {
+									b = false;
+									break;
+								}
+							}
+							if(b) {
+								MathStructure *m_i = &CHILD(0)[i][i_x];
+								m_i->ref();
+								CHILD(0)[i].delChild(i_x + 1);
+								if(CHILD(0)[i].representsPositive()) {
+									if(!i_neg) neg_first = false;
+									if(i_neg) pos_first = false;
+									i_pos++;
+									b_mul = true;
+								} else if(CHILD(0)[i].representsNegative()) {
+									if(i_pos) neg_first = false;
+									if(!i_pos) pos_first = false;
+									i_neg++;
+									b_mul = true;
+								} else {
+									b = false;
+								}
+								CHILD(0)[i].insertChild_nocopy(m_i, i_x + 1);
+							}
+							if(b && i == 0) {
+								if(!CHILD(0)[i][i_x][1].representsReal()) break;
+								mvar = &CHILD(0)[i][i_x][1];
+							}
+							if(!b) {
+								mvar = NULL;
+								break;
 							}
 						} else if(CHILD(0)[i].isPower() && ((i == 0 && CHILD(0)[i][1].contains(x_var)) || (i > 0 && CHILD(0)[i][1] == *mvar)) && CHILD(0)[i][0].isNumber() && CHILD(0)[i][0].number().isPositive()) {
 							if(!i_neg) neg_first = false;
@@ -1556,7 +1635,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							}
 							return true;
 						}
-						if((neg_first || pos_first) && CHILD(1) == mulsum && (CHILD(1).isZero() || ((pos_first && CHILD(1).representsNonNegative()) || (neg_first && CHILD(1).representsNonPositive())))) {
+						if((neg_first || pos_first) && b_mulnum && CHILD(1) == mulsum && (CHILD(1).isZero() || ((pos_first && CHILD(1).representsNonNegative()) || (neg_first && CHILD(1).representsNonPositive())))) {
 							CHILD(1).clear();
 							if(!mvar->equals(x_var)) {
 								MathStructure mx(*mvar);
@@ -1567,7 +1646,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							}
 							return true;
 						}
-						if((neg_first || pos_first) && CHILD(1) == basesum && ((CHILD(1).representsNonNegative() && pos_first) || (CHILD(1).representsNonPositive() && neg_first))) {
+						if((neg_first || pos_first) && b_mulnum && CHILD(1) == basesum && ((CHILD(1).representsNonNegative() && pos_first) || (CHILD(1).representsNonPositive() && neg_first))) {
 							CHILD(1).set(1, 1, 0);
 							if(!mvar->equals(x_var)) {
 								MathStructure mx(*mvar);
@@ -1590,7 +1669,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								}
 							}
 						}
-						if(eo.approximation != APPROXIMATION_EXACT && (neg_first || pos_first)) {
+						if(eo2.expand && eo.approximation != APPROXIMATION_EXACT && (neg_first || pos_first) && b_mulnum) {
 							MathFunction *f = CALCULATOR->getFunctionById(FUNCTION_ID_NEWTON_RAPHSON);
 							if(f) {
 								UnknownVariable *var = NULL;
