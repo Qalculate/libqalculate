@@ -7670,6 +7670,7 @@ bool Number::lambertW() {
 		mpfr_inits2(BIT_PRECISION, wPrec, wTimesExpW, wPlusOneTimesExpW, testXW, tmp1, tmp2, NULL);
 		mpfr_set_si(wPrec, -(BIT_PRECISION - 30), MPFR_RNDN);
 		mpfr_exp2(wPrec, wPrec, MPFR_RNDN);
+		bool prev_zero = false;
 		while(true) {
 			if(CALCULATOR->aborted() || testErrors()) {
 				mpfr_clears(x, m1_div_exp1, w, wPrec, wTimesExpW, wPlusOneTimesExpW, testXW, tmp1, tmp2, NULL);
@@ -7680,11 +7681,16 @@ bool Number::lambertW() {
 			mpfr_set(wPlusOneTimesExpW, wTimesExpW, MPFR_RNDN);
 			mpfr_mul(wTimesExpW, wTimesExpW, w, MPFR_RNDN);
 			mpfr_add(wPlusOneTimesExpW, wPlusOneTimesExpW, wTimesExpW, MPFR_RNDN);
-			mpfr_sub(testXW, x, wTimesExpW, MPFR_RNDN);
-			mpfr_div(testXW, testXW, wPlusOneTimesExpW, MPFR_RNDN);
-			mpfr_abs(testXW, testXW, MPFR_RNDN);
-			if(mpfr_cmp(wPrec, testXW) > 0) {
-				break;
+			if(mpfr_zero_p(w) && !prev_zero) {
+				prev_zero = true;
+			} else {
+				prev_zero = false;
+				mpfr_sub(testXW, x, wTimesExpW, MPFR_RNDN);
+				mpfr_div(testXW, testXW, wPlusOneTimesExpW, MPFR_RNDN);
+				mpfr_abs(testXW, testXW, MPFR_RNDN);
+				if(mpfr_cmp(wPrec, testXW) > 0) {
+					break;
+				}
 			}
 			mpfr_sub(wTimesExpW, wTimesExpW, x, MPFR_RNDN);
 			mpfr_add_ui(tmp1, w, 2, MPFR_RNDN);
@@ -7703,7 +7709,7 @@ bool Number::lambertW() {
 			mpq_set_ui(r_value, 0, 1);
 		}
 		if(CREATE_INTERVAL) {
-			mpfr_mul(wPrec, wPrec, w, MPFR_RNDA);
+			if(!mpfr_zero_p(w)) mpfr_mul(wPrec, wPrec, w, MPFR_RNDA);
 			mpfr_abs(wPrec, wPrec, MPFR_RNDU);
 			mpfr_sub(fl_value, w, wPrec, MPFR_RNDD);
 			mpfr_add(fu_value, w, wPrec, MPFR_RNDD);

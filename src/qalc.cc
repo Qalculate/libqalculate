@@ -1321,7 +1321,7 @@ void set_option(string str) {
 		if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
 		if(v < 1) {
 			PUTS_UNICODE(_("Illegal value."));
-		} else {
+		} else if(v != CALCULATOR->getPrecision()) {
 			CALCULATOR->setPrecision(v > INT_MAX ? INT_MAX : (int) v);
 			if(CALCULATOR->getPrecision() != v) {
 				size_t l = i2s(CALCULATOR->getPrecision()).length() + strlen(_("Maximum precision %i set."));
@@ -4042,6 +4042,8 @@ int main(int argc, char *argv[]) {
 			PUTS_UNICODE(_("approximate")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("assume"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("ASSUMPTIONS")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("base"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("BASE")); CHECK_IF_SCREEN_FILLED
+			PUTS_UNICODE(_("clear")); CHECK_IF_SCREEN_FILLED
+			PUTS_UNICODE(_("clear history")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("delete"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("NAME")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("exact")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("expand")); CHECK_IF_SCREEN_FILLED
@@ -4834,6 +4836,14 @@ int main(int argc, char *argv[]) {
 				PUTS_UNICODE(_("If name equals \"mode\" or \"definitions\", the current mode and definitions, respectively, will be saved."));
 				puts("");
 				PUTS_UNICODE(_("Example: store var1."));
+				puts("");
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear", _("clear"))) {
+				puts("");
+				PUTS_UNICODE(_("Clears the screen."));
+				puts("");
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear history", _("clear history"))) {
+				puts("");
+				PUTS_UNICODE(_("Clears the expression history."));
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "variable", _("variable"))) {
 				puts("");
