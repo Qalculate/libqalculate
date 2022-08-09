@@ -133,7 +133,11 @@ Sets the result number base (equivalent to set base).
 .PP
 .TP 8
 .B clear
-Clear the screen
+Clears the screen
+.PP
+.TP 8
+.B clear history
+Clears the expression history
 .PP
 .TP 8
 .B delete \fIname\fP
@@ -554,6 +558,10 @@ Determines how expressions with temperature units are calculated (hybrid acts as
 .B update exchange rates, upxrates \fI(-1 = ask*, 0 = never, > 0 = days)\fP
 .PP
 Other:
+.PP
+.TP 8
+.B clear history \fI(yes, no*)\fP
+Do not save expression history on exit.
 .PP
 .TP 8
 .B ignore locale \fI(yes, no*)\fP

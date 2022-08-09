@@ -4253,7 +4253,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			bool b = false, c = false, append = false, do_percent = !(po.parsing_mode & PARSE_PERCENT_AS_ORDINARY_CONSTANT);
 			bool min = false;
 			while(i != string::npos && i + 1 != str.length()) {
-				if(is_not_in(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS_TWO EXPS, str[i - 1])) {
+				if(is_not_in(BASE_2_10 ? MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS_TWO EXPS : MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS_TWO, str[i - 1])) {
 					str2 = str.substr(0, i);
 					if(!c && b) {
 						bool b_add;
@@ -4502,7 +4502,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					}
 				}
 				if(!b) {
-					i2 = str.find_last_not_of(NUMBERS INTERNAL_NUMBER_CHARS PLUS MINUS EXPS, i - 1);
+					i2 = str.find_last_not_of(BASE_2_10 ? NUMBERS INTERNAL_NUMBER_CHARS PLUS MINUS EXPS : NUMBERS INTERNAL_NUMBER_CHARS PLUS MINUS, i - 1);
 					if(i2 == string::npos || (i2 != i - 1 && str[i2] == MULTIPLICATION_2_CH)) b = true;
 					i2 = str.rfind(MULTIPLICATION_2_CH, i - 1);
 					if(i2 == string::npos) b = true;

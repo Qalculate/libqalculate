@@ -53,6 +53,7 @@ size_t MathStructure::refcount() const {
 inline void MathStructure::init() {
 	m_type = STRUCT_NUMBER;
 	b_approx = false;
+	b_plural = false;
 	i_precision = -1;
 	i_ref = 1;
 	ct_comp = COMPARISON_EQUALS;

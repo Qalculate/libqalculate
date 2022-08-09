@@ -1759,7 +1759,7 @@ void Calculator::addBuiltinFunctions() {
 	f_multisolve = addFunction(new SolveMultipleFunction());
 	f_dsolve = addFunction(new DSolveFunction());
 	f_limit = addFunction(new LimitFunction());
-	addFunction(new NewtonRaphsonFunction());
+	priv->f_newton = addFunction(new NewtonRaphsonFunction());
 	priv->f_secant = addFunction(new SecantMethodFunction());
 
 	f_li = addFunction(new liFunction());
@@ -2542,6 +2542,7 @@ MathFunction* Calculator::getFunctionById(int id) const {
 		case FUNCTION_ID_SAVE: {return f_save;}
 		case FUNCTION_ID_CONCATENATE: {return f_concatenate;}
 		case FUNCTION_ID_SECANT_METHOD: {return priv->f_secant;}
+		case FUNCTION_ID_NEWTON_RAPHSON: {return priv->f_newton;}
 	}
 	unordered_map<int, MathFunction*>::iterator it = priv->id_functions.find(id);
 	if(it == priv->id_functions.end()) return NULL;
