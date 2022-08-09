@@ -7,16 +7,16 @@ msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-23 09:24+0200\n"
-"PO-Revision-Date: 2022-02-19 14:54+0700\n"
+"PO-Revision-Date: 2022-06-23 18:28+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Lokalize 21.08.0\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<"
+"=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Lokalize 21.12.3\n"
 
 #: ../data/currencies.xml.in.h:1
 msgid "Currency"
@@ -4023,7 +4023,7 @@ msgstr "Число в двоично-десятичном коде"
 #. Packed binary-coded decimal
 #: ../data/functions.xml.in.h:282
 msgid "Packed"
-msgstr ""
+msgstr "Упаковано"
 
 #: ../data/functions.xml.in.h:283
 msgid "Integers"
@@ -6334,9 +6334,8 @@ msgid "Maximum x value"
 msgstr "Максимальное значение x"
 
 #: ../data/functions.xml.in.h:791
-#, fuzzy
 msgid "Options"
-msgstr "Действие"
+msgstr "Опции"
 
 #: ../data/functions.xml.in.h:792
 msgid "Unicode Value"
@@ -10813,48 +10812,46 @@ msgstr "Информация"
 
 #: ../data/units.xml.in.h:563
 msgid "Bit (Binary Digit)"
-msgstr ""
+msgstr "Бит (Двоичная цифра)"
 
 #: ../data/units.xml.in.h:564
 msgid "r:bit,p:bits,shannon,p:shannons,c:Sh,binary_digit,p:binary_digits"
-msgstr ""
+msgstr "бит,p:битов,шеннон,p:шеннонов,двоичная_цифра,p:двоичных_цифр"
 
 #: ../data/units.xml.in.h:565
-#, fuzzy
 msgid "Nat"
-msgstr "Отрицание"
+msgstr "Нат"
 
 #: ../data/units.xml.in.h:566
-#, fuzzy
 msgid "r:nat,p:nats"
-msgstr "узел,p:узлы"
+msgstr "нат,p:натов"
 
 #: ../data/units.xml.in.h:567
 msgid "Trit (Ternary Digit)"
-msgstr ""
+msgstr "Трит (Троичная цифра)"
 
 #: ../data/units.xml.in.h:568
 msgid ""
 "r:trit,p:trits,trinary_digit,p:trinary_digits,ternary_digit,p:ternary_digits"
-msgstr ""
+msgstr "трит,p:,тритов,троичная_цифра,p:троичных_цифр"
 
 #: ../data/units.xml.in.h:569
-#, fuzzy
 msgid "Octal Digit"
-msgstr "Восьмеричное"
+msgstr "Восьмеричная цифра"
 
 #: ../data/units.xml.in.h:570
-#, fuzzy
 msgid "r:octal_digit,p:octal_digits"
-msgstr "фортнайт"
+msgstr "восьмеричная_цифра,p:восьмеричных_цифр"
 
 #: ../data/units.xml.in.h:571
 msgid "Hartley (Decimal Digit)"
-msgstr ""
+msgstr "Хартли (Десятичная цифра)"
 
 #: ../data/units.xml.in.h:572
 msgid "r:hartley,p:hartleys,a:Hart,dit,p:dits,decimal_digit,p:decimal_digits"
 msgstr ""
+"хартли,a:Харт,дит,a:дитов,десятичная_цифра,p:десятичных_цифр,хартдит,p:"
+"хартдитов"
 
 #: ../data/units.xml.in.h:573
 msgid "Byte (8-bit)"
@@ -10862,18 +10859,20 @@ msgstr "Байт (8 бит)"
 
 #: ../data/units.xml.in.h:574
 msgid "r:byte,a:B,p:bytes,octet,p:octets,a:o"
-msgstr "байт,ac:Б,октет"
+msgstr "байт,ac:Б,октет,p:октетов,a:о"
 
 #: ../data/units.xml.in.h:575
 msgid "Nibble (Hexadecimal Digit)"
-msgstr ""
+msgstr "Ниббл (Шестнадцатеричная цифра)"
 
 #: ../data/units.xml.in.h:576
-#, fuzzy
 msgid ""
 "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets,hex_digit,p:"
 "hex_digits,hexadecimal_digit,p:hexadecimal_digits"
-msgstr "ниббл,полубайт"
+msgstr ""
+"ниббл,p:ниблов,полубайт,p:полубайтов,тетрада,p:тетрад,гексадецит,p:гексадецито"
+"в"
+",шестнадцатеричная_цифра,p:шестнадцатеричных_цифр"
 
 #: ../data/units.xml.in.h:577
 msgid "Tribble"
