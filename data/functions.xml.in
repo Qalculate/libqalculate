@@ -800,6 +800,25 @@
           <_title>Value</_title>
         </argument>
       </builtin_function>
+      <function>
+        <_title>Clip</_title>
+        <_names>r:clip</_names>
+        <_description>Clips or limits the input value to be between the lower and upper bounds.</_description>
+        <expression>min(max(\x, \Y{-infinity}), \Z{infinity})</expression>
+        <condition>\y&lt;=\z</condition>
+        <argument type="free" index="1">
+          <_title>Value</_title>
+          <handle_vector>true</handle_vector>
+        </argument>
+        <argument type="number" index="2">
+          <_title>Lower bound</_title>
+          <complex_allowed>false</complex_allowed>
+        </argument>
+        <argument type="number" index="3">
+          <_title>Upper bound</_title>
+          <complex_allowed>false</complex_allowed>
+        </argument>
+      </function>
     </category>
     <category>
       <_title>Number Bases</_title>
@@ -1509,7 +1528,7 @@
       </argument>
     </builtin_function>
     <function>
-      <_title>Convert from Q Format (Fixed Point)</_title>
+      <_title>Convert to/from Q Format (Fixed Point)</_title>
       <_names>r:qFormat</_names>
       <expression>if((\A{0}=0&amp;&amp;isInteger(\x)),if(\Z{0}=0,\x/2^\y,\x/2^\z),if([\Z{0}==0,abs(\x)&gt;2^\y],[round(\x*2^\y),sgn(\x)*2^(\y+\z)+warning("overflow")],round(\x*2^\z)))</expression>
       <condition>\z=0||abs(\x)&lt;=2^(\y+\z)</condition>

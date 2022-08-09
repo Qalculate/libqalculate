@@ -1967,7 +1967,7 @@ void separate_units(MathStructure &m, MathStructure *parent = NULL, size_t index
 				i++;
 			}
 		}
-		if(m.size() == 0) parent->delChild(index);
+		if(m.size() == 0) {parent->delChild(index); return;}
 		else if(m.size() == 1) m.setToChild(1, true);
 	} else if(m.isPower() && m[1].isNumber() && m[1].number().isReal() && m[0].isMultiplication() && m[0].containsType(STRUCT_UNIT, false, false, false)) {
 		MathStructure units;
@@ -1989,13 +1989,15 @@ void separate_units(MathStructure &m, MathStructure *parent = NULL, size_t index
 				else units.setType(STRUCT_MULTIPLICATION);
 				m.set_nocopy(units, true);
 			} else {
-				if(parent && parent->isMultiplication() && m[0].size() == 0) parent->delChild(index);
+				bool b_del = parent && parent->isMultiplication() && m[0].size() == 0;
+				if(b_del) parent->delChild(index);
 				else if(m[0].size() == 1) m[0].setToChild(1, true);
 				for(size_t i = 0; i < units.size(); i++) {
 					units[i].ref();
 					if(parent && parent->isMultiplication()) parent->addChild_nocopy(&units[i]);
 					else m.multiply_nocopy(&units[i], true);
 				}
+				if(b_del) return;
 			}
 		}
 	}
