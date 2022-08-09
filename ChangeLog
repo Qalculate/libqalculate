@@ -1,3 +1,73 @@
+2022-08-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix lambertw() for values very close to zero, e.g. 1e-40 (returned approximately zero instead of 1E-40)
+	* Fix "+" ignored after "E" in number bases where "E" is a digit
+	* Increase time beore forcibly aborting calculation if precision > 1000, and do not show report as bug message if precision > 10000
+
+2022-08-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault in some cases with sgn() function with zero arguments
+	* Fix segfault when formatting units in some unusual corner cases
+	* Initialize plural property in MathStructure class (caused wrongly displayed plural form of unit name in some cases)
+	* Fix and improve solving of a^x+b^x+...=c
+
+2022-08-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix aborting of plot data generation in some cases
+	* Return original value for argument representing integer in ceil() and floor(), trunc() and round() functions
+	* Improve efficiency of for(), sum() and product() functions in some case
+
+2022-07-31 Adrià Arrufat <1671644+arrufat@users.noreply.github.com>
+
+	* Add clip() function
+
+2022-07-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Solve a^x+b^x+...=c (exact or approximate, for real x) in more cases
+
+2022-07-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix handling of Unicode powers for adaptive parsing of units (e.g. parse 10m/s² the same as 10m/s^2)
+
+2022-07-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not set precision higher than allowed by MPFR_PREC_MAX or INT_MAX (show actual precision set in qalc)
+	* Increase speed (potentially very noticably when using very high precision) of calculation (determining precision from interval) and output (of floating point numbers), by using mpz_sizeinbase instead of mpfr_log or mpfr_log10
+
+2022-07-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Convert rational number to floating point in squaring and multiplication if the resulting numerator or denominator has more than 1 000 000 digits, as previously in exponentiation with powers other than two
+
+2022-07-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Truncate number in output of parsed expression and end with ellipsis if unable to display all decimals
+	* Always display all digits before decimal separator in output of rational number in parsed expression
+	* If parsed expression is approximately displayed, show approximately equal symbol before expression, in qalc
+
+2022-07-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Functions for fixed point (Q format) conversion
+
+2022-06-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve remainder/modulus for numerators with large exponents
+
+2022-06-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Free all memory when Calculator object is deleted, and avoid memory leak in DynamicVariable
+
+2022-06-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault with (a+b)^-1 in unit expression, after "to"
+
+2022-06-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* "clear history" command and option to clear (not save) history on exit
+
+2022-06-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix potential issues (e.g. with subtraction of seconds from date) when finding previous leap second (was reading bool beyond end of array, causing issues when not false)
+
 2022-05-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix addition of unit to expression without unit (when trying to convert to a unit) in exact mode

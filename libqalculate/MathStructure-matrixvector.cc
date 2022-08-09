@@ -1211,6 +1211,7 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 			x_value = x_vector[0];
 			x_value.number() += step.number() / 2;
 			for(int i = 1; i < (int) x_vector.size(); i += 2) {
+				if(CALCULATOR->aborted()) break;
 				x_vector.insertChild(x_value, i);
 				y_value = mthis;
 				y_value.replace(x_mstruct, x_value);
@@ -1221,6 +1222,7 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 		} else {
 			Number new_step_size;
 			for(int i = 1; i < (int) x_vector.size(); i++) {
+				if(CALCULATOR->aborted()) break;
 				int new_steps = 0;
 				if(!ydiff[i].number().isZero()) {
 					ydiff[i].number() /= ydiff_total;
@@ -1245,6 +1247,7 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 					new_step_size /= (new_steps + 1);
 					x_value = x_vector[i - 1].number();
 					for(int i2 = 0; i2 < new_steps; i2++) {
+						if(CALCULATOR->aborted()) break;
 						x_value.number() += new_step_size;
 						x_vector.insertChild(x_value, i + i2 + 1);
 						y_value = mthis;

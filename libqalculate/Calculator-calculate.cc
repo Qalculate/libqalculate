@@ -149,7 +149,7 @@ bool Calculator::abort() {
 		b_busy = false;
 	} else {
 		// wait 5 seconds for clean abortation
-		int msecs = 5000;
+		int msecs = i_precision > 1000 ? 10000 : 5000;
 		while(b_busy && msecs > 0) {
 			sleep_ms(10);
 			msecs -= 10;
@@ -170,7 +170,11 @@ bool Calculator::abort() {
 			tmp_rpn_mstruct = NULL;
 
 			// thread cancellation is not safe
-			error(true, _("The calculation has been forcibly terminated. Please restart the application and report this as a bug."), NULL);
+			if(i_precision > 10000) {
+				error(true, _("The calculation has been forcibly terminated. Please restart the application."), NULL);
+			} else {
+				error(true, _("The calculation has been forcibly terminated. Please restart the application and report this as a bug."), NULL);
+			}
 
 			b_busy = false;
 			calculate_thread->start();

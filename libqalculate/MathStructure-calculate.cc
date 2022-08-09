@@ -3867,7 +3867,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						calculateRaiseExponent(eo);
 						return 1;
 					}
-				} else if(o_function->id() == FUNCTION_ID_SIGNUM && CHILD(0).representsReal(true) && SIZE == 2 && ((CHILD(1).isZero() && mstruct.representsPositive()) || CHILD(1).isOne())) {
+				} else if(o_function->id() == FUNCTION_ID_SIGNUM && SIZE == 2 && CHILD(0).representsReal(true) && ((CHILD(1).isZero() && mstruct.representsPositive()) || CHILD(1).isOne())) {
 					if(mstruct.representsOdd()) {
 						// sgn(x)^3=sgn(x)
 						MERGE_APPROX_AND_PREC(mstruct)
