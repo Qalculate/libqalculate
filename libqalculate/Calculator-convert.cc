@@ -412,6 +412,14 @@ void fix_to_struct2(MathStructure &m) {
 MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo, bool always_convert, bool convert_to_mixed_units) {
 	return convert(mstruct, to_unit, eo, always_convert, convert_to_mixed_units, false, NULL);
 }
+Unit *find_ounce(const MathStructure &m) {
+	if(m.isUnit() && m.unit()->referenceName() == "oz") return m.unit();
+	for(size_t i = 0; i < m.size(); i++) {
+		Unit *u = find_ounce(m[i]);
+		if(u) return u;
+	}
+	return NULL;
+}
 MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo, bool always_convert, bool convert_to_mixed_units, bool transform_orig, MathStructure *parsed_struct) {
 	CompositeUnit *cu = NULL;
 	if(to_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) cu = (CompositeUnit*) to_unit;
@@ -511,8 +519,27 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 					} else if(cu2->countUnits() == 2 && cu2->referenceName() == "N_m") {
 						u1_type = 1;
 					}
+					if(u1_type == 0) {
+						for(size_t i = 1; i <= cu2->countUnits(); i++) {
+							bu = cu2->get(i, &exp);
+							if((exp == 1 || exp == -1) && to_unit == cu2 && bu->referenceName() == "oz" && !to_unit->isRegistered()) {
+								u1_type = 6;
+								break;
+							}
+							exp *= bu->baseExponent();
+							bu = bu->baseUnit();
+							if(u1_type == 0 && (exp == 3 || exp == -3) && bu->referenceName() == "m") {
+								u1_type = 5;
+							} else if(bu->referenceName() == "g") {
+								u1_type = 0;
+								break;
+							}
+						}
+					}
 				} else if(bu->referenceName() == "K") {
 					u1_type = 2;
+				} else if(bu->referenceName() == "oz") {
+					u1_type = 6;
 				}
 			} else if(exp == -1) {
 				if(bu->referenceName() == "m") {
@@ -520,8 +547,22 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 				} else if(bu->referenceName() == "s") {
 					u1_type = 4;
 				}
+			} else if(exp == 3) {
+				if(bu->referenceName() == "m") {
+					u1_type = 5;
+				}
 			}
-			if(u1_type > 0) {
+			if(u1_type == 5) {
+				Unit *u1 = find_ounce(mstruct_new);
+				if(u1 && (!parsed_struct || find_ounce(*parsed_struct))) {
+					Unit *u_gram = getActiveUnit("g");
+					if(!to_unit->containsRelativeTo(u_gram)) {
+						Unit *u2 = getActiveUnit("fl_oz");
+						if(parsed_struct) parsed_struct->replace(u1, u2);
+						mstruct_new.replace(u1, u2);
+					}
+				}
+			} else if(u1_type > 0) {
 				const MathStructure *mstruct_u = NULL;
 				if(mstruct_new.isUnit_exp()) {
 					mstruct_u = &mstruct_new;
@@ -550,6 +591,19 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 							} else if(u1_type != 1 && cu2->countUnits() == 2 && cu2->referenceName() == "N_m") {
 								u2_type = 1;
 							}
+							if(u2_type == 0 && u1_type == 6) {
+								for(size_t i = 1; i <= cu2->countUnits(); i++) {
+									bu = cu2->get(i, &exp);
+									exp *= bu->baseExponent();
+									bu = bu->baseUnit();
+									if(u2_type == 0 && (exp == 3 || exp == -3) && bu->referenceName() == "m") {
+										u2_type = 5;
+									} else if(bu->referenceName() == "g") {
+										u2_type = 0;
+										break;
+									}
+								}
+							}
 						} else if(u1_type == 1 && bu->referenceName() == "K") {
 							u2_type = 2;
 						}
@@ -559,6 +613,8 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 						} else if(bu->referenceName() == "s") {
 							u2_type = 4;
 						}
+					} else if(exp == 3 && u1_type == 6 && bu->referenceName() == "m") {
+						u2_type = 5;
 					}
 					Variable *v = NULL;
 					if(u1_type == 1) {
@@ -569,6 +625,23 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 						if(u1_type == 2) v = getActiveVariable("J_to_K");
 						else if(u1_type == 3) v = getActiveVariable("J_to_m");
 						else if(u1_type == 4) v = getActiveVariable("J_to_Hz");
+					} else if(u1_type == 6 && u2_type == 5) {
+						Unit *u = getActiveUnit("fl_oz");
+						if(u) {
+							if(to_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+								CompositeUnit *cu2 = (CompositeUnit*) to_unit;
+								for(size_t i = 1; i <= cu2->countUnits(); i++) {
+									bu = cu2->get(i, &exp);
+									if((exp == 1 || exp == -1) && bu->referenceName() == "oz") {
+										cu2->del(i);
+										cu2->add(u, exp);
+										break;
+									}
+								}
+							} else {
+								to_unit = u;
+							}
+						}
 					}
 					if(v) {
 						mstruct_new *= v;
