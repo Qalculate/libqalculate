@@ -6186,6 +6186,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		str = expression_str;
 		string to_str = CALCULATOR->parseComments(str, evalops.parse_options);
 		if(!to_str.empty() && str.empty()) return;
+		add_quotation_marks_for_equals_save(str, evalops.parse_options);
 		string from_str = str;
 		if(ask_questions && test_ask_dot(from_str)) ask_dot();
 		if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
