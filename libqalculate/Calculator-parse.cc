@@ -1311,13 +1311,13 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				} else {
 					name_length = i - str_index + 1;
 				}
-				if(str_index == 0) {
+				if(str_index == 0 && i < str.length() - 1) {
 					size_t i2 = str.find_first_not_of(SPACE, i + 1);
 					if(i2 != string::npos && str[i2] == '=' && str.find(str.substr(1, i - 1), i + 1) == string::npos) {
 						// Transform "var"=a to save(save, a, , , true)
 						string name = str.substr(0, i + 1);
-						string value = str.substr(i2 + 1, str.length() - (i2 + 1));
-						str = value;
+						if(i2 < str.length() - 1) str = str.substr(i2 + 1, str.length() - (i2 + 1));
+						else str = "";
 						str += COMMA;
 						str += name;
 						str += COMMA COMMA COMMA "1";

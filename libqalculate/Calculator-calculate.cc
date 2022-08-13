@@ -1417,6 +1417,75 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 	}
 }
 
+bool expression_contains_save_function(const string &str, const ParseOptions &po) {
+	if(po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && CALCULATOR->customInputBase() > 62)) return false;
+	size_t i = str.find(":=", 1);
+	if(i != std::string::npos && str.rfind("#", i - 1) == string::npos) return true;
+	MathFunction *f = CALCULATOR->getFunctionById(FUNCTION_ID_SAVE);
+	for(i = 1; f && i <= f->countNames(); i++) {
+		size_t i2 = str.find(f->getName(i).name);
+		if(i2 != std::string::npos && (i2 == 0 || str.rfind("#", i2 - 1) == string::npos)) return true;
+	}
+	i = str.find("=", 1);
+	if(i == string::npos) return false;
+	if(i < str.length() - 1) {
+		size_t i3 = str.find_first_not_of(SPACES, i + 1);
+		if(i3 != string::npos && (str[i3] == '!' || str[i3] == '<' || str[i3] == '>')) return false;
+	}
+	size_t i_name1 = str.find_first_not_of(SPACES);
+	if(i_name1 == i) return false;
+	size_t i_name2 = str.find_last_not_of(SPACES, i - 1);
+	if(i_name2 == string::npos || str[i_name2] == ':' || str[i_name2] == '!' || str[i_name2] == '<' || str[i_name2] == '>') return false;
+	if(i_name2 > 0 && (str[i_name2] == '\"' || str[i_name2] == '\'') && str.rfind(str[i_name2], i_name2 - 1) == i_name1) return true;
+	if(i_name2 > 2 && str[i_name2] == RIGHT_PARENTHESIS_CH) {
+		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
+		if(i_name2 == string::npos || i_name2 == 0 || str[i_name2] != LEFT_PARENTHESIS_CH) return false;
+		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
+		if(i_name2 == string::npos) return false;
+	}
+	if(!CALCULATOR->variableNameIsValid(str.substr(i_name1, i_name2 - i_name1 + 1))) return false;
+	string name = str.substr(i_name1, i_name2 - i_name1 + 1);
+	CALCULATOR->parseSigns(name);
+	if(!CALCULATOR->variableNameIsValid(name)) return false;
+	size_t i2 = str.find(name, i);
+	if(i2 != string::npos) {
+		if(str.rfind("#", i2 - 1) == string::npos) return false;
+	}
+	return true;
+}
+bool add_quotation_marks_for_equals_save(string &str, const ParseOptions &po) {
+	if(po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && CALCULATOR->customInputBase() > 62)) return false;
+	size_t i = str.find("=", 1);
+	if(i == string::npos) return false;
+	if(i < str.length() - 1) {
+		size_t i3 = str.find_first_not_of(SPACES, i + 1);
+		if(i3 != string::npos && (str[i3] == '!' || str[i3] == '<' || str[i3] == '>')) return false;
+	}
+	size_t i_name1 = str.find_first_not_of(SPACES);
+	if(i_name1 == i) return false;
+	size_t i_name2 = str.find_last_not_of(SPACES, i - 1);
+	if(i_name2 == string::npos || str[i_name2] == ':' || str[i_name2] == '!' || str[i_name2] == '<' || str[i_name2] == '>') return false;
+	if(i_name2 > 2 && str[i_name2] == RIGHT_PARENTHESIS_CH) {
+		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
+		if(i_name2 == string::npos || i_name2 == 0 || str[i_name2] != LEFT_PARENTHESIS_CH) return false;
+		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
+		if(i_name2 == string::npos) return false;
+	}
+	if(!CALCULATOR->variableNameIsValid(str.substr(i_name1, i_name2 - i_name1 + 1))) return false;
+	string name = str.substr(i_name1, i_name2 - i_name1 + 1);
+	CALCULATOR->parseSigns(name);
+	if(!CALCULATOR->variableNameIsValid(name)) return false;
+	size_t i2 = str.find(name, i);
+	if(i2 != string::npos) {
+		if(str.rfind("#", i2 - 1) == string::npos) return false;
+	}
+	str.erase(0, i);
+	str.insert(0, "\"");
+	str.insert(0, "\"");
+	str.insert(1, name);
+	return true;
+}
+
 #define EQUALS_IGNORECASE_AND_LOCAL(x,y,z)	(equalsIgnoreCase(x, y) || equalsIgnoreCase(x, z))
 #define EQUALS_IGNORECASE_AND_LOCAL_NR(x,y,z,a)	(equalsIgnoreCase(x, y a) || (x.length() == strlen(z) + strlen(a) && equalsIgnoreCase(x.substr(0, x.length() - strlen(a)), z) && equalsIgnoreCase(x.substr(x.length() - strlen(a)), a)))
 
@@ -1445,6 +1514,8 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 
 	string to_str = parseComments(str, evalops.parse_options);
 	if(!to_str.empty() && str.empty()) {stopControl(); if(parsed_expression) {*parsed_expression = "";} return "";}
+
+	add_quotation_marks_for_equals_save(str, evalops.parse_options);
 
 	// separate and handle string after "to"
 	string from_str = str, str_conv;
