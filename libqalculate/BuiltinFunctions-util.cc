@@ -842,8 +842,8 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			sarg2[1] = carg;
 			sarg_new[1] = carg;
 		}
-		if(CALCULATOR->functionNameTaken(vargs[1].symbol())) {
-			MathFunction *f = CALCULATOR->getActiveFunction(vargs[1].symbol(), true);
+		if(CALCULATOR->functionNameTaken(name)) {
+			MathFunction *f = CALCULATOR->getActiveFunction(name, true);
 			if(f && f->isLocal() && f->subtype() == SUBTYPE_USER_FUNCTION) {
 				if(!vargs[2].symbol().empty()) f->setCategory(vargs[2].symbol());
 				if(!vargs[3].symbol().empty()) f->setTitle(vargs[3].symbol());
