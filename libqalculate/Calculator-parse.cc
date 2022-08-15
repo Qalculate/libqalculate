@@ -1311,20 +1311,6 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				} else {
 					name_length = i - str_index + 1;
 				}
-				if(str_index == 0 && i < str.length() - 1) {
-					size_t i2 = str.find_first_not_of(SPACE, i + 1);
-					if(i2 != string::npos && str[i2] == '=' && str.find(str.substr(1, i - 1), i + 1) == string::npos) {
-						// Transform "var"=a to save(save, a, , , true)
-						string name = str.substr(0, i + 1);
-						if(i2 < str.length() - 1) str = str.substr(i2 + 1, str.length() - (i2 + 1));
-						else str = "";
-						str += COMMA;
-						str += name;
-						str += COMMA COMMA COMMA "1";
-						f_save->parse(*mstruct, str, po);
-						return;
-					}
-				}
 				stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 				MathStructure *mstruct = new MathStructure(str.substr(str_index + 1, i - str_index - 1));
 				stmp += i2s(addId(mstruct));
@@ -1335,7 +1321,6 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		}
 	}
 
-
 	if(po.brackets_as_parentheses) {
 		// replace [ and ] with ( and )
 		gsub(LEFT_VECTOR_WRAP, LEFT_PARENTHESIS, str);
@@ -1344,13 +1329,19 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 
 	// Transform var:=a to save(save, a)
 	size_t isave = 0;
-	if((isave = str.find(":=", 1)) != string::npos) {
+	if((isave = str.find(":=", 1)) != string::npos || (isave = str.find("=:", 1)) != string::npos) {
 		string name = str.substr(0, isave);
+		remove_blank_ends(name);
 		string value = str.substr(isave + 2, str.length() - (isave + 2));
-		str = value;
-		str += COMMA;
-		str += name;
-		f_save->parse(*mstruct, str, po);
+		remove_blank_ends(value);
+		MathStructure mvalue;
+		MathStructure mtmp(CALCULATOR->temporaryCategory(), true);
+		MathStructure mempty(string(""), true);
+		MathStructure mname;
+		po.unended_function = unended_function;
+		parse(&mvalue, value, po);
+		f_save->getArgumentDefinition(2)->parse(&mname, name, po);
+		mstruct->set(f_save, &mvalue, &mname, &mtmp, &mempty, str[isave] == '=' ? &m_one : &m_zero, NULL);
 		return;
 	}
 
