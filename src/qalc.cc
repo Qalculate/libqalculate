@@ -7376,7 +7376,7 @@ void load_preferences() {
 */
 bool save_preferences(bool mode) {
 	FILE *file = NULL;
-	makeDir(getLocalDir());
+	if(!dirExists(getLocalDir())) recursiveMakeDir(getLocalDir());
 #ifdef HAVE_LIBREADLINE
 	if(clear_history_on_exit && fileExists(buildPath(getLocalDir(), "qalc.history"))) history_truncate_file(buildPath(getLocalDir(), "qalc.history").c_str(), 0);
 	else write_history(buildPath(getLocalDir(), "qalc.history").c_str());
