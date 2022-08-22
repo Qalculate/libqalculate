@@ -1168,6 +1168,7 @@ MathStructure *last_is_function(MathStructure &m) {
 }
 
 #define PARSING_MODE (po.parsing_mode & ~PARSE_PERCENT_AS_ORDINARY_CONSTANT)
+#define BASE_2_10 ((po.base >= 2 && po.base <= 10) || (po.base < BASE_CUSTOM && po.base != BASE_UNICODE && po.base != BASE_BIJECTIVE_26) || (po.base == BASE_CUSTOM && priv->custom_input_base_i <= 10))
 
 void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &parseoptions) {
 
@@ -1332,6 +1333,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	if((isave = str.find(":=", 1)) != string::npos || (isave = str.find("=:", 1)) != string::npos) {
 		string name = str.substr(0, isave);
 		remove_blank_ends(name);
+		replace_internal_operators(name);
 		string value = str.substr(isave + 2, str.length() - (isave + 2));
 		remove_blank_ends(value);
 		MathStructure mvalue;
@@ -1340,7 +1342,8 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		MathStructure mname;
 		po.unended_function = unended_function;
 		parse(&mvalue, value, po);
-		f_save->getArgumentDefinition(2)->parse(&mname, name, po);
+		if(f_save->getArgumentDefinition(2)) f_save->getArgumentDefinition(2)->parse(&mname, name, po);
+		else mname.set(name, true);
 		mstruct->set(f_save, &mvalue, &mname, &mtmp, &mempty, str[isave] == '=' ? &m_one : &m_zero, NULL);
 		return;
 	}
@@ -2614,7 +2617,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 												if(arg_i >= f->args() && f->args() >= 0) b = true;
 												else icand = i6 + 1;
 											}
-										} else if(!b_comma_before && i5 == 2 && ((arg_i >= f->args() && f->args() >= 0) || arg_i >= f->minargs()) && is_in(OPERATORS INTERNAL_OPERATORS, c) && c != POWER_CH && c != INTERNAL_UPOW_CH && (!b_power_before || (c != MINUS_CH && c != PLUS_CH))) {
+										} else if(!b_comma_before && i5 == 2 && ((arg_i >= f->args() && f->args() >= 0) || arg_i >= f->minargs()) && is_in(OPERATORS INTERNAL_OPERATORS, c) && c != POWER_CH && c != INTERNAL_UPOW_CH && ((c != MINUS_CH && c != PLUS_CH) || (!b_power_before && (i6 < 3 || !BASE_2_10 || is_not_in(EXPS, str[str_index + name_length + i6 - 1]) || is_not_in(NUMBERS, str[str_index + name_length + i6 - 2]) || i6 + str_index + name_length == str.length() - 1 || is_not_in(NUMBERS, str[str_index + name_length + i6 + 1]))))) {
 											if(arg_i >= f->args() && f->args() >= 0) b = true;
 											else icand = i6 + 1;
 										} else if(c == COMMA_CH) {
@@ -2988,8 +2991,6 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	}
 
 }
-
-#define BASE_2_10 ((po.base >= 2 && po.base <= 10) || (po.base < BASE_CUSTOM && po.base != BASE_UNICODE && po.base != BASE_BIJECTIVE_26) || (po.base == BASE_CUSTOM && priv->custom_input_base_i <= 10))
 
 bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOptions &po) {
 

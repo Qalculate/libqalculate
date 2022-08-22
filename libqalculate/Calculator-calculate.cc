@@ -166,6 +166,8 @@ bool Calculator::abort() {
 			stopped_errors_count.clear();
 			stopped_messages.clear();
 			disable_errors_ref = 0;
+			i_stop_interval = 0;
+			i_start_interval = 0;
 			if(tmp_rpn_mstruct) tmp_rpn_mstruct->unref();
 			tmp_rpn_mstruct = NULL;
 
@@ -1418,7 +1420,7 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 }
 
 bool expression_contains_save_function(const string &str, const ParseOptions &po, bool only_equals) {
-	if(po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && CALCULATOR->customInputBase() > 62)) return false;
+	if(str.length() < 2 || po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && CALCULATOR->customInputBase() > 62)) return false;
 	size_t i = str.find("=", 1);
 	if(!only_equals) {
 		if(i != string::npos && ((i > 0 && str[i - 1] == ':') || (i < str.length() - 1 && str[i + 1] == ':'))) return true;
@@ -1436,19 +1438,19 @@ bool expression_contains_save_function(const string &str, const ParseOptions &po
 	if(i_name1 == i) return false;
 	size_t i_name2 = str.find_last_not_of(SPACES, i - 1);
 	if(i_name2 == string::npos) return false;
-	bool b_quote = ((str[i_name2] == '\'' || str[i_name2] == '\"') && str[i_name1] == str[i_name2]);
-	if(!b_quote && i_name2 - i_name1 >= 3 && (unsigned char) str[i_name1] >= 0xC0) {
-		if(i_name2 - i_name1 >= 5 && str[i_name1] == '\xe2' && str[i_name1 + 1] == '\x80' && str[i_name2 - 2] == '\xe2' && str[i_name2 - 1] == '\x80') {
-			if((signed char) str[i_name1 + 2] >= -104 && (signed char) str[i_name1 + 2] <= -101) b_quote = (signed char) str[i_name2] >= -104 && (signed char) str[i_name2] <= -101;
-			else if((signed char) str[i_name1 + 2] >= -100 && (signed char) str[i_name1 + 2] <= -97) b_quote = (signed char) str[i_name2] >= -100 && (signed char) str[i_name2] <= -97;
-			else if((signed char) str[i_name1 + 2] == -70 || (signed char) str[i_name1 + 2] == -71) b_quote = (signed char) str[i_name2] == -70 || (signed char) str[i_name2] == -71;
-		} else if((str[i_name1] == '\xc2' && (str[i_name1 + 1] == '\xab' || str[i_name1 + 1] == '\xbb')) && (str[i_name2 - 1] == '\xc2' && (str[i_name2] == '\xab' || str[i_name2] == '\xbb'))) {
-			b_quote = true;
+	bool b_quote = i_name2 - i_name1 >= 2 && ((str[i_name2] == '\'' || str[i_name2] == '\"') && str[i_name1] == str[i_name2] && str.rfind(str[i_name1], i_name2 - 1) == i_name1);
+	if(!b_quote) b_quote = (i_name2 - i_name1 >= 3 && ((str[i_name1] == '\xe2' && str[i_name1 + 1] == '\x80') || (str[i_name1] == '\xc2' && (str[i_name1 + 1] == '\xab' || str[i_name1 + 1] == '\xbb'))));
+	for(size_t i2 = i_name1; b_quote && i2 < i_name2; i2++) {
+		if(str[i2] == '\xe2' || str[i2] == '\xc2') {
+			string name = str.substr(i_name1, i_name2 - i_name1 + 1);
+			CALCULATOR->parseSigns(name);
+			b_quote = (name.length() >= 2 && (name[0] == '\'' || name[0] == '\"') && name[0] == name[name.length() - 1] && name.rfind(name[0], name.length() - 2) == 0);
+			break;
 		}
 	}
 	if(!b_quote && (str[i_name2] == ':' || str[i_name2] == '!' || str[i_name2] == '<' || str[i_name2] == '>')) return false;
 	bool b_func = false;
-	if(!b_quote && i_name2 > 2 && str[i_name2] == RIGHT_PARENTHESIS_CH) {
+	if(!b_quote && i_name2 - i_name1 >= 2 && str[i_name2] == RIGHT_PARENTHESIS_CH) {
 		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
 		if(i_name2 == string::npos || i_name2 == 0 || str[i_name2] != LEFT_PARENTHESIS_CH) return false;
 		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
@@ -1500,7 +1502,7 @@ bool expression_contains_save_function(const string &str, const ParseOptions &po
 	return true;
 }
 bool transform_expression_for_equals_save(string &str, const ParseOptions &po) {
-	if(po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && CALCULATOR->customInputBase() > 62)) return false;
+	if(str.length() < 2 || po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && CALCULATOR->customInputBase() > 62)) return false;
 	size_t i = str.find("=", 1);
 	if(i == string::npos) return false;
 	if(i < str.length() - 1) {
@@ -1511,19 +1513,19 @@ bool transform_expression_for_equals_save(string &str, const ParseOptions &po) {
 	if(i_name1 == i) return false;
 	size_t i_name2 = str.find_last_not_of(SPACES, i - 1);
 	if(i_name2 == string::npos) return false;
-	bool b_quote = ((str[i_name2] == '\'' || str[i_name2] == '\"') && str[i_name1] == str[i_name2]);
-	if(!b_quote && i_name2 - i_name1 >= 3 && (unsigned char) str[i_name1] >= 0xC0) {
-		if(i_name2 - i_name1 >= 5 && str[i_name1] == '\xe2' && str[i_name1 + 1] == '\x80' && str[i_name2 - 2] == '\xe2' && str[i_name2 - 1] == '\x80') {
-			if((signed char) str[i_name1 + 2] >= -104 && (signed char) str[i_name1 + 2] <= -101) b_quote = (signed char) str[i_name2] >= -104 && (signed char) str[i_name2] <= -101;
-			else if((signed char) str[i_name1 + 2] >= -100 && (signed char) str[i_name1 + 2] <= -97) b_quote = (signed char) str[i_name2] >= -100 && (signed char) str[i_name2] <= -97;
-			else if((signed char) str[i_name1 + 2] == -70 || (signed char) str[i_name1 + 2] == -71) b_quote = (signed char) str[i_name2] == -70 || (signed char) str[i_name2] == -71;
-		} else if((str[i_name1] == '\xc2' && (str[i_name1 + 1] == '\xab' || str[i_name1 + 1] == '\xbb')) && (str[i_name2 - 1] == '\xc2' && (str[i_name2] == '\xab' || str[i_name2] == '\xbb'))) {
-			b_quote = true;
+	bool b_quote = i_name2 - i_name1 >= 2 && ((str[i_name2] == '\'' || str[i_name2] == '\"') && str[i_name1] == str[i_name2] && str.rfind(str[i_name1], i_name2 - 1) == i_name1);
+	if(!b_quote) b_quote = (i_name2 - i_name1 >= 3 && ((str[i_name1] == '\xe2' && str[i_name1 + 1] == '\x80') || (str[i_name1] == '\xc2' && (str[i_name1 + 1] == '\xab' || str[i_name1 + 1] == '\xbb'))));
+	for(size_t i2 = i_name1; b_quote && i2 < i_name2; i2++) {
+		if(str[i2] == '\xe2' || str[i2] == '\xc2') {
+			string name = str.substr(i_name1, i_name2 - i_name1 + 1);
+			CALCULATOR->parseSigns(name);
+			b_quote = (name.length() >= 2 && (name[0] == '\'' || name[0] == '\"') && name[0] == name[name.length() - 1] && name.rfind(name[0], name.length() - 2) == 0);
+			break;
 		}
 	}
 	if(!b_quote && (str[i_name2] == ':' || str[i_name2] == '!' || str[i_name2] == '<' || str[i_name2] == '>')) return false;
 	bool b_func = false;
-	if(!b_quote && i_name2 > 2 && str[i_name2] == RIGHT_PARENTHESIS_CH) {
+	if(!b_quote && i_name2 - i_name1 >= 2 && str[i_name2] == RIGHT_PARENTHESIS_CH) {
 		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
 		if(i_name2 == string::npos || i_name2 == 0 || str[i_name2] != LEFT_PARENTHESIS_CH) return false;
 		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
@@ -1572,7 +1574,7 @@ bool transform_expression_for_equals_save(string &str, const ParseOptions &po) {
 			}
 		}
 	}
-	str.insert(str.find(LEFT_PARENTHESIS) == string::npos ? i + 1 : i, ":");
+	str.insert(str.rfind(LEFT_PARENTHESIS, i) == string::npos ? i + 1 : i, ":");
 	return true;
 }
 
@@ -1604,8 +1606,6 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 
 	string to_str = parseComments(str, evalops.parse_options);
 	if(!to_str.empty() && str.empty()) {stopControl(); if(parsed_expression) {*parsed_expression = "";} return "";}
-
-	transform_expression_for_equals_save(str, evalops.parse_options);
 
 	// separate and handle string after "to"
 	string from_str = str, str_conv;
@@ -1803,6 +1803,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			do_expand = true;
 		}
 	}
+	transform_expression_for_equals_save(str, evalops.parse_options);
 
 	MathStructure parsed_struct;
 
