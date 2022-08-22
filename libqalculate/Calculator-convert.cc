@@ -504,7 +504,9 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 			// 1 = J, 2 = K, 3 = 1/m, 4 = Hz
 			int u1_type = 0;
 			int exp = to_unit->baseExponent();
-			if(exp == 1) {
+			if(to_unit->referenceName() == "oz") {
+				u1_type = 6;
+			} else if(exp == 1) {
 				if(bu->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 					CompositeUnit *cu2 = (CompositeUnit*) bu;
 					if(cu2->countUnits() == 1) {
@@ -521,16 +523,18 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 					}
 					if(u1_type == 0) {
 						for(size_t i = 1; i <= cu2->countUnits(); i++) {
-							bu = cu2->get(i, &exp);
-							if((exp == 1 || exp == -1) && to_unit == cu2 && bu->referenceName() == "oz" && !to_unit->isRegistered()) {
+							if(to_unit == cu2 && cu2->get(i)->referenceName() == "oz" && !to_unit->isRegistered()) {
 								u1_type = 6;
 								break;
 							}
+						}
+						for(size_t i = 1; i <= cu2->countUnits(); i++) {
+							bu = cu2->get(i, &exp)->baseUnit();
 							exp *= bu->baseExponent();
-							bu = bu->baseUnit();
-							if(u1_type == 0 && (exp == 3 || exp == -3) && bu->referenceName() == "m") {
+							if((u1_type == 0 || u1_type == 6) && exp % 3 == 0 && bu->referenceName() == "m") {
+								if(u1_type == 6) {u1_type = 0; break;}
 								u1_type = 5;
-							} else if(bu->referenceName() == "g") {
+							} else if(u1_type != 6 && bu->referenceName() == "g") {
 								u1_type = 0;
 								break;
 							}
@@ -538,8 +542,6 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 					}
 				} else if(bu->referenceName() == "K") {
 					u1_type = 2;
-				} else if(bu->referenceName() == "oz") {
-					u1_type = 6;
 				}
 			} else if(exp == -1) {
 				if(bu->referenceName() == "m") {
@@ -547,7 +549,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 				} else if(bu->referenceName() == "s") {
 					u1_type = 4;
 				}
-			} else if(exp == 3) {
+			} else if(exp % 3 == 0) {
 				if(bu->referenceName() == "m") {
 					u1_type = 5;
 				}
@@ -558,8 +560,10 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 					Unit *u_gram = getActiveUnit("g");
 					if(!to_unit->containsRelativeTo(u_gram)) {
 						Unit *u2 = getActiveUnit("fl_oz");
-						if(parsed_struct) parsed_struct->replace(u1, u2);
-						mstruct_new.replace(u1, u2);
+						if(u2) {
+							if(parsed_struct) parsed_struct->replace(u1, u2);
+							mstruct_new.replace(u1, u2);
+						}
 					}
 				}
 			} else if(u1_type > 0) {
@@ -569,11 +573,14 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 				} else if(mstruct_new.isMultiplication() && mstruct_new.size() >= 2 && mstruct_new.last().isUnit_exp() && !mstruct_new[mstruct_new.size() - 2].isUnit_exp()) {
 					mstruct_u = &mstruct_new.last();
 				}
-				if(mstruct_u && (!mstruct_u->isPower() || (u1_type == 1 && (*mstruct_u)[1].isMinusOne()))) {
+				if(mstruct_u && (!mstruct_u->isPower() || (u1_type == 6 && (*mstruct_u)[1].isInteger()) || (u1_type == 1 && (*mstruct_u)[1].isMinusOne()))) {
 					if(mstruct_u->isPower()) bu = (*mstruct_u)[0].unit();
 					else bu = mstruct_u->unit();
 					exp = bu->baseExponent();
-					if(mstruct_u->isPower()) exp = -exp;
+					if(mstruct_u->isPower()) {
+						if(u1_type == 6) exp *= (*mstruct_u)[1].number().intValue();
+						else exp = -exp;
+					}
 					bu = bu->baseUnit();
 					int u2_type = 0;
 					if(exp == 1) {
@@ -596,7 +603,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 									bu = cu2->get(i, &exp);
 									exp *= bu->baseExponent();
 									bu = bu->baseUnit();
-									if(u2_type == 0 && (exp == 3 || exp == -3) && bu->referenceName() == "m") {
+									if(u2_type == 0 && exp % 3 == 0 && bu->referenceName() == "m") {
 										u2_type = 5;
 									} else if(bu->referenceName() == "g") {
 										u2_type = 0;
@@ -613,7 +620,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 						} else if(bu->referenceName() == "s") {
 							u2_type = 4;
 						}
-					} else if(exp == 3 && u1_type == 6 && bu->referenceName() == "m") {
+					} else if(exp % 3 == 0 && u1_type == 6 && bu->referenceName() == "m") {
 						u2_type = 5;
 					}
 					Variable *v = NULL;
@@ -632,7 +639,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 								CompositeUnit *cu2 = (CompositeUnit*) to_unit;
 								for(size_t i = 1; i <= cu2->countUnits(); i++) {
 									bu = cu2->get(i, &exp);
-									if((exp == 1 || exp == -1) && bu->referenceName() == "oz") {
+									if(bu->referenceName() == "oz") {
 										cu2->del(i);
 										cu2->add(u, exp);
 										break;

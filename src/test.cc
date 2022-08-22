@@ -1851,6 +1851,7 @@ bool test_float(const Number &nr) {
 	return true;
 }
 
+#include "libqalculate/MathStructure-support.h"
 int main(int argc, char *argv[]) {
 
 	new Calculator(false);
@@ -2066,19 +2067,35 @@ int main(int argc, char *argv[]) {
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
 
 	return 0;*/
-
+	size_t ni = 0;
 	for(size_t i2 = 0; i2 <= 100000; i2++) {
-		string str;
+		str = "";
 		size_t n = rand() % 10;
 		for(size_t i = 0; i <= n; i++) {
 			str += (char) (rand() % (126 - 32) + 32);
 			//if(str[i] == '{' || str[i] == '}') str[i] = '+';
 		}
-		str = "}!{1";
-		cout << str << endl;
+		gsub("!", " ", str);
+		gsub("{", " ", str);
+		gsub("}", " ", str);
+		n = rand() % (str.length() + 1);
+		if(n < str.length()) str.insert(n, "=");
+		for(size_t i3 = 0; i3 < 7; i3++) {
+			n = rand() % 3;
+			if(n == 0) {
+				size_t n2 = rand() % 4;
+				n = rand() % str.length();
+				while(n > 0 && n < str.length() - 1 && (signed char) str[n] < 0 && (signed char) str[n - 1] < 0) n--;
+				if(n2 == 0) str.insert(n, "\"");
+				if(n2 == 1) str.insert(n, "\'");
+				if(n2 == 2) str.insert(n, "«");
+				if(n2 == 3) str.insert(n, "›");
+			}
+		}
+		cerr << str << endl;
 		MathStructure mstruct;
 		/*CALCULATOR->parse(&mstruct, str, evalops.parse_options);
-		cout << "A" << endl;
+		cout << mstruct.print() << endl;
 		mstruct.eval(evalops);
 		cout << "B" << endl;
 		cout << "C" << endl;
@@ -2086,11 +2103,22 @@ int main(int argc, char *argv[]) {
 		cout << "D" << endl;
 		CALCULATOR->convertToOptimalUnit(mstruct, evalops, true);
 		cout << "E" << endl;*/
+		expression_contains_save_function(str, evalops.parse_options);
+		if(transform_expression_for_equals_save(str, evalops.parse_options)) {
+			ni++;
+			cout << "SAVE:" << str << endl;
+		}
 		CALCULATOR->calculate(&mstruct, str, 10000, evalops);
+		if(mstruct.isAborted()) {cerr << "aborted: " << i2 << endl; break;}
+		display_errors(true);
 		mstruct.format(po);
-		cout << mstruct.print() << endl;
+		cerr << mstruct.print() << endl;
 		if(mstruct.isAborted()) break;
+		for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
+			if(CALCULATOR->variables[i]->isLocal()) CALCULATOR->variables[i]->destroy();
+		}
 	}
+	cerr << ni<< endl;
 	return 0;
 
 }
