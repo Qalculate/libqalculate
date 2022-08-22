@@ -5140,7 +5140,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 			break;
 		}
 		case STRUCT_MULTIPLICATION: {
-			if(combine_powers(*this, x_var, eo2) && m_type != STRUCT_MULTIPLICATION) return integrate(x_var, eo, false, use_abs, definite_integral, try_abs, max_part_depth, parent_parts);
+			if(combine_powers(*this, x_var, eo2, eo2) && m_type != STRUCT_MULTIPLICATION) return integrate(x_var, eo, false, use_abs, definite_integral, try_abs, max_part_depth, parent_parts);
 			if(SIZE == 2) {
 				if(CHILD(0) != x_var && (CHILD(1) == x_var || (CHILD(1).isPower() && CHILD(1)[0] == x_var))) SWAP_CHILDREN(0, 1);
 				if(CHILD(1).isPower() && CHILD(1)[1].containsRepresentativeOf(x_var, true, true) == 0) {

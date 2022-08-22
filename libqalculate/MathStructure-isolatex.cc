@@ -24,11 +24,11 @@ using std::cout;
 using std::vector;
 using std::endl;
 
-bool combine_powers(MathStructure &m, const MathStructure &x_var, const EvaluationOptions &eo) {
+bool combine_powers(MathStructure &m, const MathStructure &x_var, const EvaluationOptions &eo, const EvaluationOptions &feo) {
 	bool b_ret = false;
 	if(!m.isMultiplication()) {
 		for(size_t i = 0; i < m.size(); i++) {
-			if(combine_powers(m[i], x_var, eo)) {
+			if(combine_powers(m[i], x_var, eo, feo)) {
 				m.childUpdated(i + 1);
 				b_ret = true;
 			}
@@ -44,13 +44,16 @@ bool combine_powers(MathStructure &m, const MathStructure &x_var, const Evaluati
 						if(!m[i2][0].isVariable() || m[i2][0].variable()->id() != VARIABLE_ID_E) {
 							MathStructure mln(m[i2][0]);
 							mln.transformById(FUNCTION_ID_LOG);
+							mln.calculateFunctions(feo);
 							m[i2][1].calculateMultiply(mln, eo);
 						}
 						if(!m[i][0].isVariable() || m[i][0].variable()->id() != VARIABLE_ID_E) {
 							MathStructure mln(m[i][0]);
 							mln.transformById(FUNCTION_ID_LOG);
+							mln.calculateFunctions(feo);
 							m[i][1].calculateMultiply(mln, eo);
 							m[i][0] = CALCULATOR->getVariableById(VARIABLE_ID_E);
+							m[i][0].calculatesub(eo, feo);
 							m[i].childrenUpdated();
 						}
 					}
@@ -1187,7 +1190,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			// a*b^(dx)+cx=0 => -lambertw(a*d*log(b)/c)/(d*log(b))
 			// a*b^(dx)+cx=y => (y*d*log(b)-c*lambertw(a*b^(y*d/c)*log(b)/c))/(c*d*log(b))
 			if((ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && CHILD(0).size() > 1) {
-				combine_powers(*this, x_var, eo2);
+				combine_powers(*this, x_var, eo2, eo);
 				size_t i_px = 0, i_mpx = 0;
 				MathStructure mbak(*this);
 				MathStructure *mvar = NULL, *m_b_p;
@@ -1242,7 +1245,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						}
 					}
 					MathStructure m_c;
-					if(mvar && get_multiplier(CHILD(0), *mvar, m_c, i_px) && m_c.representsNonZero() && m_c.contains(x_var) == 0) {
+					if(mvar && get_multiplier(CHILD(0), *mvar, m_c, i_px) && m_c.representsNonZero() && m_c.contains(x_var) == 0 && m_b.representsNonZero()) {
 						MathStructure mlogb(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &m_b, NULL);
 						if(mlogb.calculateFunctions(eo)) mlogb.calculatesub(eo2, eo, true);
 						MathStructure *marg = NULL;
@@ -1286,12 +1289,12 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								if(CHILD(1).isZero()) {
 									marg2->calculateDivide(mlogb, eo2);
 								} else {
-									if(!m_c.isOne()) marg->calculateMultiply(m_c, eo2);
+									if(!m_c.isOne()) marg2->calculateMultiply(m_c, eo2);
 									marg2->add(CHILD(1));
 									marg2->last().calculateMultiply(mlogb, eo);
 									marg2->calculateAddLast(eo2);
 									marg2->calculateDivide(mlogb, eo2);
-									if(!m_c.isOne()) marg->calculateDivide(m_c, eo2);
+									if(!m_c.isOne()) marg2->calculateDivide(m_c, eo2);
 								}
 								mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_E));
 								mreq1->last().calculateRaise(m_minus_one, eo2);
@@ -3507,7 +3510,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					b = true;
 				}
 			}
-			if(combine_powers(*this, x_var, eo2) && m_type != STRUCT_MULTIPLICATION) return isolate_x_sub(eo, eo2, x_var, morig);
+			if(combine_powers(*this, x_var, eo2, eo) && m_type != STRUCT_MULTIPLICATION) return isolate_x_sub(eo, eo2, x_var, morig);
 			if(!b && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && CHILD(0).size() >= 2) {
 				// (x+a)*b^(c*x)=d => x=(lambertw(b^(a*c)*c*d*ln(b))-a*c*ln(b)))/(c*ln(b))
 				if(CALCULATOR->aborted()) {
