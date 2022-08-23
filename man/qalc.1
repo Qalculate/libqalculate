@@ -671,9 +671,9 @@ Returns 1 if expression is true and 0 if false. The x variable is isolated if th
 .PP
 .B Element-wise operators (.*, ./, .^)
 .PP
-.B Save operator (:=)
+.B Save operator (:=, =)
 .br
-Saves the expression to the right of the operator as a variable or function (e.g. var1:=5, func1():=x+y).
+Saves the expression to the right of the operator as a variable or function (e.g. var1:=5, func1():=x+y, var1=ln(5)+2). If the colon is omitted the expression is calculated before it is assigned to the variable.
 .RE
 .PP
 .B Evaluation priority order:
