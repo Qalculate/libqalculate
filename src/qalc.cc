@@ -13,6 +13,7 @@
 #include <libqalculate/qalculate.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <limits.h>
 #include <time.h>
 #include <dirent.h>
 #include <stdlib.h>
@@ -5030,10 +5031,12 @@ int main(int argc, char *argv[]) {
 			}
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear history", _("clear history"))) {
+#ifdef HAVE_LIBREADLINE
 			while(history_length > 0) {
 				HIST_ENTRY *hist = remove_history(0);
 				if(hist) free_history_entry(hist);
 			}
+#endif
 			history_was_cleared = true;
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear", _("clear"))) {
@@ -6382,6 +6385,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				do_expand = true;
 			}
 		}
+		transform_expression_for_equals_save(str, evalops.parse_options);
 	}
 
 	if(caret_as_xor) gsub("^", "⊻", str);
@@ -7023,7 +7027,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {4, 2, 0};
+	int version_numbers[] = {4, 3, 0};
 
 	if(file) {
 		char line[10000];
@@ -7375,10 +7379,13 @@ void load_preferences() {
 */
 bool save_preferences(bool mode) {
 	FILE *file = NULL;
-	makeDir(getLocalDir());
+	if(!dirExists(getLocalDir())) recursiveMakeDir(getLocalDir());
 #ifdef HAVE_LIBREADLINE
-	if(clear_history_on_exit && fileExists(buildPath(getLocalDir(), "qalc.history"))) history_truncate_file(buildPath(getLocalDir(), "qalc.history").c_str(), 0);
-	else write_history(buildPath(getLocalDir(), "qalc.history").c_str());
+	if(clear_history_on_exit) {
+		if(fileExists(buildPath(getLocalDir(), "qalc.history"))) history_truncate_file(buildPath(getLocalDir(), "qalc.history").c_str(), 0);
+	} else {
+		write_history(buildPath(getLocalDir(), "qalc.history").c_str());
+	}
 #endif
 	string filename = buildPath(getLocalDir(), "qalc.cfg");
 	file = fopen(filename.c_str(), "w+");

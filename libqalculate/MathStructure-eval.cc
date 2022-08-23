@@ -1503,7 +1503,7 @@ bool simplify_ln(MathStructure &mstruct) {
 	if(mstruct.isAddition()) {
 		size_t i_ln = (size_t) -1, i_ln_m = (size_t) -1;
 		for(size_t i = 0; i < mstruct.size(); i++) {
-			if(mstruct[i].isFunction() && mstruct[i].function()->id() == FUNCTION_ID_LOG && mstruct[i].size() == 1 && mstruct[i][0].isNumber() && mstruct[i][0].number().isReal()) {
+			if(mstruct[i].isFunction() && mstruct[i].function()->id() == FUNCTION_ID_LOG && mstruct[i].size() == 1 && mstruct[i][0].isNumber() && mstruct[i][0].number().isReal() && mstruct[i][0].number().isNonZero()) {
 				if(i_ln == (size_t) -1) {
 					i_ln = i;
 				} else {
@@ -1512,13 +1512,13 @@ bool simplify_ln(MathStructure &mstruct) {
 						if(mstruct[i_ln][1][0].number().raise(mstruct[i_ln][0].number(), true)) {mstruct[i_ln].setToChild(2, true); b_ret = true;}
 						else b = false;
 					}
-					if(b && mstruct[i_ln][0].number().multiply(mstruct[i][0].number())) {
+					if(b && (!mstruct[i][0].number().isNegative() || !mstruct[i_ln][0].number().isNegative()) && mstruct[i_ln][0].number().multiply(mstruct[i][0].number())) {
 						mstruct.delChild(i + 1);
 						i--;
 						b_ret = true;
 					}
 				}
-			} else if(mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1].isFunction() && mstruct[i][1].function()->id() == FUNCTION_ID_LOG && mstruct[i][1].size() == 1 && mstruct[i][1][0].isNumber() && mstruct[i][1][0].number().isReal() && mstruct[i][0].isInteger() && mstruct[i][0].number().isLessThan(1000) && mstruct[i][0].number().isGreaterThan(-1000)) {
+			} else if(mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1].isFunction() && mstruct[i][1].function()->id() == FUNCTION_ID_LOG && mstruct[i][1].size() == 1 && mstruct[i][1][0].isNumber() && mstruct[i][1][0].number().isReal() && mstruct[i][1][0].number().isNonZero() && mstruct[i][0].isInteger() && mstruct[i][0].number().isLessThan(1000) && mstruct[i][0].number().isGreaterThan(-1000)) {
 				if(mstruct[i][0].number().isPositive()) {
 					if(i_ln == (size_t) -1) {
 						i_ln = i;
@@ -1529,7 +1529,7 @@ bool simplify_ln(MathStructure &mstruct) {
 							else b = false;
 						}
 						if(b && mstruct[i][1][0].number().raise(mstruct[i][0].number(), true)) {
-							if(mstruct[i_ln][0].number().multiply(mstruct[i][1][0].number())) {
+							if((!mstruct[i][1][0].number().isNegative() || !mstruct[i_ln][0].number().isNegative()) && mstruct[i_ln][0].number().multiply(mstruct[i][1][0].number())) {
 								mstruct.delChild(i + 1);
 								i--;
 							} else {
@@ -1546,7 +1546,7 @@ bool simplify_ln(MathStructure &mstruct) {
 						if(!b && mstruct[i_ln_m][1][0].number().raise(-mstruct[i_ln_m][0].number())) {mstruct[i_ln_m][0].set(m_minus_one, true); b_ret = true; b = true;}
 						bool b_m1 = b && mstruct[i][0].number().isMinusOne();
 						if(b && (b_m1 || mstruct[i][1][0].number().raise(-mstruct[i][0].number(), true))) {
-							if(mstruct[i_ln_m][1][0].number().multiply(mstruct[i][1][0].number())) {
+							if((!mstruct[i][1][0].number().isNegative() || !mstruct[i_ln_m][1][0].number().isNegative()) && mstruct[i_ln_m][1][0].number().multiply(mstruct[i][1][0].number())) {
 								mstruct.delChild(i + 1);
 								b_ret = true;
 								i--;

@@ -166,6 +166,8 @@ bool Calculator::abort() {
 			stopped_errors_count.clear();
 			stopped_messages.clear();
 			disable_errors_ref = 0;
+			i_stop_interval = 0;
+			i_start_interval = 0;
 			if(tmp_rpn_mstruct) tmp_rpn_mstruct->unref();
 			tmp_rpn_mstruct = NULL;
 
@@ -1417,6 +1419,165 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 	}
 }
 
+bool expression_contains_save_function(const string &str, const ParseOptions &po, bool only_equals) {
+	if(str.length() < 2 || po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && CALCULATOR->customInputBase() > 62)) return false;
+	size_t i = str.find("=", 1);
+	if(!only_equals) {
+		if(i != string::npos && ((i > 0 && str[i - 1] == ':') || (i < str.length() - 1 && str[i + 1] == ':'))) return true;
+		MathFunction *f = CALCULATOR->getFunctionById(FUNCTION_ID_SAVE);
+		for(size_t i2 = 1; f && i2 <= f->countNames(); i2++) {
+			if(str.find(f->getName(i2).name) != string::npos) return true;
+		}
+	}
+	if(i == string::npos) return false;
+	if(i < str.length() - 1) {
+		size_t i3 = str.find_first_not_of(SPACES, i + 1);
+		if(i3 != string::npos && (str[i3] == ':' || str[i3] == '!' || str[i3] == '<' || str[i3] == '>')) return false;
+	}
+	size_t i_name1 = str.find_first_not_of(SPACES);
+	if(i_name1 == i) return false;
+	size_t i_name2 = str.find_last_not_of(SPACES, i - 1);
+	if(i_name2 == string::npos) return false;
+	bool b_quote = i_name2 - i_name1 >= 2 && ((str[i_name2] == '\'' || str[i_name2] == '\"') && str[i_name1] == str[i_name2] && str.rfind(str[i_name1], i_name2 - 1) == i_name1);
+	if(!b_quote) b_quote = (i_name2 - i_name1 >= 3 && ((str[i_name1] == '\xe2' && str[i_name1 + 1] == '\x80') || (str[i_name1] == '\xc2' && (str[i_name1 + 1] == '\xab' || str[i_name1 + 1] == '\xbb'))));
+	for(size_t i2 = i_name1; b_quote && i2 < i_name2; i2++) {
+		if(str[i2] == '\xe2' || str[i2] == '\xc2') {
+			string name = str.substr(i_name1, i_name2 - i_name1 + 1);
+			CALCULATOR->parseSigns(name);
+			b_quote = (name.length() >= 2 && (name[0] == '\'' || name[0] == '\"') && name[0] == name[name.length() - 1] && name.rfind(name[0], name.length() - 2) == 0);
+			break;
+		}
+	}
+	if(!b_quote && (str[i_name2] == ':' || str[i_name2] == '!' || str[i_name2] == '<' || str[i_name2] == '>')) return false;
+	bool b_func = false;
+	if(!b_quote && i_name2 - i_name1 >= 2 && str[i_name2] == RIGHT_PARENTHESIS_CH) {
+		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
+		if(i_name2 == string::npos || i_name2 == 0 || str[i_name2] != LEFT_PARENTHESIS_CH) return false;
+		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
+		if(i_name2 == string::npos) return false;
+		b_func = true;
+	}
+	if(!b_quote && !CALCULATOR->variableNameIsValid(str.substr(i_name1, i_name2 - i_name1 + 1))) return false;
+	string name = str.substr(i_name1, i_name2 - i_name1 + 1);
+	if(!b_quote) {
+		if(name.find("#") != string::npos) return false;
+		CALCULATOR->parseSigns(name);
+		if(!CALCULATOR->variableNameIsValid(name)) return false;
+		name = str.substr(i_name1, i_name2 - i_name1 + 1);
+		if(!b_quote && name.length() > 1 && name[name.length() - 1] == 'x') {
+			MathFunction *f = CALCULATOR->getActiveFunction(name.substr(0, name.length() - 1));
+			if(f && f->minargs() <= 1 && f->maxargs() != 0) return false;
+			if(!f && CALCULATOR->getActiveVariable(name.substr(0, name.length() - 1))) return false;
+		}
+	}
+	size_t i2 = str.find(name, i);
+	if(i2 != string::npos && str.rfind("#", i2 - 1) == string::npos) {
+		if(b_quote) return false;
+		string value = str.substr(i + 1, str.length() - (i + 1));
+		CALCULATOR->parseComments(value);
+		string stmp;
+		EvaluationOptions eo;
+		eo.parse_options = po;
+		CALCULATOR->separateToExpression(value, stmp, eo);
+		CALCULATOR->separateWhereExpression(value, stmp, eo);
+		CALCULATOR->parseSigns(value);
+		size_t i2 = str.find(name, i);
+		if(i2 != string::npos) {
+			ExpressionItem *item1  = CALCULATOR->getActiveExpressionItem(name);
+			ExpressionItem *item2  = item1 ? CALCULATOR->getActiveExpressionItem(name, item1) : NULL;
+			if(item1) {
+				MathStructure mtest;
+				CALCULATOR->beginTemporaryStopMessages();
+				CALCULATOR->parse(&mtest, str.substr(i + 1, str.length() - (i + 1)), po);
+				CALCULATOR->endTemporaryStopMessages();
+				if(!b_func && item1->type() == TYPE_VARIABLE && mtest.contains((Variable*) item1, true, true, false)) return false;
+				else if(!b_func && item1->type() == TYPE_UNIT && mtest.contains((Unit*) item1, true, true, false)) return false;
+				else if(b_func && item1->type() == TYPE_FUNCTION && mtest.containsFunction((MathFunction*) item1, true, true, false)) return false;
+				if(!b_func && item2 && item2->type() == TYPE_VARIABLE && mtest.contains((Variable*) item2, true, true, false)) return false;
+				else if(!b_func && item2 && item2->type() == TYPE_UNIT && mtest.contains((Unit*) item2, true, true, false)) return false;
+				else if(b_func && item2->type() == TYPE_FUNCTION && mtest.containsFunction((MathFunction*) item2, true, true, false)) return false;
+			}
+		}
+	}
+	return true;
+}
+bool transform_expression_for_equals_save(string &str, const ParseOptions &po) {
+	if(str.length() < 2 || po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && CALCULATOR->customInputBase() > 62)) return false;
+	size_t i = str.find("=", 1);
+	if(i == string::npos) return false;
+	if(i < str.length() - 1) {
+		size_t i3 = str.find_first_not_of(SPACES, i + 1);
+		if(i3 != string::npos && (str[i3] == ':' || str[i3] == '!' || str[i3] == '<' || str[i3] == '>')) return false;
+	}
+	size_t i_name1 = str.find_first_not_of(SPACES);
+	if(i_name1 == i) return false;
+	size_t i_name2 = str.find_last_not_of(SPACES, i - 1);
+	if(i_name2 == string::npos) return false;
+	bool b_quote = i_name2 - i_name1 >= 2 && ((str[i_name2] == '\'' || str[i_name2] == '\"') && str[i_name1] == str[i_name2] && str.rfind(str[i_name1], i_name2 - 1) == i_name1);
+	if(!b_quote) b_quote = (i_name2 - i_name1 >= 3 && ((str[i_name1] == '\xe2' && str[i_name1 + 1] == '\x80') || (str[i_name1] == '\xc2' && (str[i_name1 + 1] == '\xab' || str[i_name1 + 1] == '\xbb'))));
+	for(size_t i2 = i_name1; b_quote && i2 < i_name2; i2++) {
+		if(str[i2] == '\xe2' || str[i2] == '\xc2') {
+			string name = str.substr(i_name1, i_name2 - i_name1 + 1);
+			CALCULATOR->parseSigns(name);
+			b_quote = (name.length() >= 2 && (name[0] == '\'' || name[0] == '\"') && name[0] == name[name.length() - 1] && name.rfind(name[0], name.length() - 2) == 0);
+			break;
+		}
+	}
+	if(!b_quote && (str[i_name2] == ':' || str[i_name2] == '!' || str[i_name2] == '<' || str[i_name2] == '>')) return false;
+	bool b_func = false;
+	if(!b_quote && i_name2 - i_name1 >= 2 && str[i_name2] == RIGHT_PARENTHESIS_CH) {
+		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
+		if(i_name2 == string::npos || i_name2 == 0 || str[i_name2] != LEFT_PARENTHESIS_CH) return false;
+		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
+		if(i_name2 == string::npos) return false;
+		b_func = true;
+	}
+	if(!b_quote && !CALCULATOR->variableNameIsValid(str.substr(i_name1, i_name2 - i_name1 + 1))) return false;
+	string name = str.substr(i_name1, i_name2 - i_name1 + 1);
+	if(!b_quote) {
+		if(name.find("#") != string::npos) return false;
+		CALCULATOR->parseSigns(name);
+		if(!CALCULATOR->variableNameIsValid(name)) return false;
+		name = str.substr(i_name1, i_name2 - i_name1 + 1);
+		if(!b_quote && name.length() > 1 && name[name.length() - 1] == 'x') {
+			MathFunction *f = CALCULATOR->getActiveFunction(name.substr(0, name.length() - 1));
+			if(f && f->minargs() <= 1 && f->maxargs() != 0) return false;
+			if(!f && CALCULATOR->getActiveVariable(name.substr(0, name.length() - 1))) return false;
+		}
+	}
+	size_t i2 = str.find(name, i);
+	if(i2 != string::npos && str.rfind("#", i2 - 1) == string::npos) {
+		if(b_quote) return false;
+		string value = str.substr(i + 1, str.length() - (i + 1));
+		CALCULATOR->parseComments(value);
+		string stmp;
+		EvaluationOptions eo;
+		eo.parse_options = po;
+		CALCULATOR->separateToExpression(value, stmp, eo);
+		CALCULATOR->separateWhereExpression(value, stmp, eo);
+		CALCULATOR->parseSigns(value);
+		size_t i2 = str.find(name, i);
+		if(i2 != string::npos) {
+			ExpressionItem *item1  = CALCULATOR->getActiveExpressionItem(name);
+			ExpressionItem *item2  = item1 ? CALCULATOR->getActiveExpressionItem(name, item1) : NULL;
+			if(item1) {
+				MathStructure mtest;
+				CALCULATOR->beginTemporaryStopMessages();
+				CALCULATOR->parse(&mtest, str.substr(i + 1, str.length() - (i + 1)), po);
+				CALCULATOR->endTemporaryStopMessages();
+				if(!b_func && item1->type() == TYPE_VARIABLE && mtest.contains((Variable*) item1, true, true, false)) return false;
+				else if(!b_func && item1->type() == TYPE_UNIT && mtest.contains((Unit*) item1, true, true, false)) return false;
+				else if(b_func && item1->type() == TYPE_FUNCTION && mtest.containsFunction((MathFunction*) item1, true, true, false)) return false;
+				if(!b_func && item2 && item2->type() == TYPE_VARIABLE && mtest.contains((Variable*) item2, true, true, false)) return false;
+				else if(!b_func && item2 && item2->type() == TYPE_UNIT && mtest.contains((Unit*) item2, true, true, false)) return false;
+				else if(b_func && item2->type() == TYPE_FUNCTION && mtest.containsFunction((MathFunction*) item2, true, true, false)) return false;
+			}
+		}
+	}
+	str.insert(str.rfind(LEFT_PARENTHESIS, i) == string::npos ? i + 1 : i, ":");
+	return true;
+}
+
 #define EQUALS_IGNORECASE_AND_LOCAL(x,y,z)	(equalsIgnoreCase(x, y) || equalsIgnoreCase(x, z))
 #define EQUALS_IGNORECASE_AND_LOCAL_NR(x,y,z,a)	(equalsIgnoreCase(x, y a) || (x.length() == strlen(z) + strlen(a) && equalsIgnoreCase(x.substr(0, x.length() - strlen(a)), z) && equalsIgnoreCase(x.substr(x.length() - strlen(a)), a)))
 
@@ -1642,6 +1803,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			do_expand = true;
 		}
 	}
+	transform_expression_for_equals_save(str, evalops.parse_options);
 
 	MathStructure parsed_struct;
 
@@ -2151,6 +2313,7 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
 	if(!to_str.empty()) {
 		remove_blank_ends(to_str);
 		str = str.substr(0, i);
+		remove_blank_ends(str);
 		parseSigns(str);
 		if(to_str.find("&&") == string::npos) {
 			int par = 0;

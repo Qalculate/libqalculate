@@ -1,3 +1,25 @@
+2022-08-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix a*b^x+cx=d when a and c have different signs and d is non-zero
+	* x+0^x=0 is not solvable
+	* Fix unevaluted ln() and wrong combination of addition of ln() with negative arguments in (-a)^x*(-b)^x=c
+	* Fix scientific E notation with sign in argument when function is used without parentheses
+	* Reset interval calculation status after forced abort;
+
+2022-08-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Recursively create qalc configuration directory
+
+2022-08-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support for var=a syntax (quotation marks required for now) for variable assignment with calculated value (as save(a, var,,,1))
+	* Use x value for variable assignment with precalculated equation
+	* Do not allow colon in names
+
+2022-08-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Replace ounce with fluid ounce during conversion from or to volume unit
+
 2022-08-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix lambertw() for values very close to zero, e.g. 1e-40 (returned approximately zero instead of 1E-40)
@@ -7,9 +29,8 @@
 2022-08-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault in some cases with sgn() function with zero arguments
-	* Fix segfault when formatting units in some unusual corner cases
+	* Fix segfault when formatting units in some corner cases
 	* Initialize plural property in MathStructure class (caused wrongly displayed plural form of unit name in some cases)
-	* Fix and improve solving of a^x+b^x+...=c
 
 2022-08-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
