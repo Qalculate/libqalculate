@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-08-06 10:13+0200\n"
-"PO-Revision-Date: 2022-07-05 18:40+0700\n"
+"PO-Revision-Date: 2022-08-23 17:44+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -989,7 +989,7 @@ msgstr "точность"
 #: ../src/qalc.cc:1328 ../src/qalc.cc:1330
 #, c-format
 msgid "Maximum precision %i set."
-msgstr ""
+msgstr "Установлена максимальная точность %i."
 
 #: ../src/qalc.cc:1336 ../src/qalc.cc:3873 ../src/qalc.cc:4677
 msgid "interval display"
@@ -2192,7 +2192,7 @@ msgstr "дней"
 
 #: ../src/qalc.cc:4796
 msgid "Do not save expression history on exit."
-msgstr ""
+msgstr "Не сохранять историю выражений при выходе."
 
 #: ../src/qalc.cc:4797
 msgid "Ignore system language and use English (requires restart)."
@@ -2240,14 +2240,12 @@ msgid "Example: store var1."
 msgstr "Например: store var1."
 
 #: ../src/qalc.cc:4843
-#, fuzzy
 msgid "Clears the screen."
-msgstr "Очищает весь стек ПОЛИЗ."
+msgstr "Очищает экран."
 
 #: ../src/qalc.cc:4847
-#, fuzzy
 msgid "Clears the expression history."
-msgstr "Очищает весь стек ПОЛИЗ."
+msgstr "Очищает историю выражений."
 
 #: ../src/qalc.cc:4851
 msgid "Create a variable with the specified name and expression."
@@ -2747,7 +2745,7 @@ msgstr "Расчёт"
 
 #: ../src/qalc.cc:5940
 msgid "Please select desired variant of the sinc function."
-msgstr "Пожалуйста, выберите нужный вариант функции sinc."
+msgstr "Выберите нужный вариант функции sinc."
 
 #: ../src/qalc.cc:5953 ../src/qalc.cc:5981
 msgid "Sinc function"
@@ -2804,7 +2802,7 @@ msgid ""
 "The calculation has been forcibly terminated. Please restart the application "
 "and report this as a bug."
 msgstr ""
-"Расчет прекращён принудительно. Пожалуйста, перезапустите приложение и "
+"Расчет прекращён принудительно. Перезапустите приложение и "
 "сообщите об этом как об ошибке."
 
 #: ../libqalculate/BuiltinFunctions-algebra.cc:361
@@ -3407,7 +3405,7 @@ msgstr ""
 #: ../libqalculate/Calculator-calculate.cc:176
 msgid ""
 "The calculation has been forcibly terminated. Please restart the application."
-msgstr "Расчет прекращён принудительно. Пожалуйста, перезапустите приложение."
+msgstr "Расчет прекращён принудительно.Перезапустите приложение."
 
 #: ../libqalculate/Calculator-calculate.cc:312
 #: ../libqalculate/Calculator-calculate.cc:437
