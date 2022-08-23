@@ -7,16 +7,16 @@ msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-08-06 09:53+0200\n"
-"PO-Revision-Date: 2022-06-23 18:28+0700\n"
+"PO-Revision-Date: 2022-08-23 18:22+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Lokalize 21.08.0\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<"
+"=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Lokalize 21.12.3\n"
 
 #: ../data/currencies.xml.in.h:1
 msgid "Currency"
@@ -1171,9 +1171,8 @@ msgid "Kyrgyzstani Som"
 msgstr "Киргизский сом"
 
 #: ../data/currencies.xml.in.h:284
-#, fuzzy
 msgid "acr:KGS"
-msgstr "a-c:KES"
+msgstr "a-c:KGS,au:&#x20c0;"
 
 #: ../data/currencies.xml.in.h:285
 msgid "Kyrgyzstan"
@@ -3847,27 +3846,25 @@ msgstr "дробная"
 
 #: ../data/functions.xml.in.h:252
 msgid "Clip"
-msgstr ""
+msgstr "Обрезать"
 
 #: ../data/functions.xml.in.h:253
-#, fuzzy
 msgid "r:clip"
-msgstr "class"
+msgstr "обрезать"
 
 #: ../data/functions.xml.in.h:254
 msgid ""
 "Clips or limits the input value to be between the lower and upper bounds."
 msgstr ""
+"Обрезает или ограничивает входное значение между нижней и верхней границами."
 
 #: ../data/functions.xml.in.h:255
-#, fuzzy
 msgid "Lower bound"
-msgstr "Нижний конец"
+msgstr "Нижняя граница"
 
 #: ../data/functions.xml.in.h:256
-#, fuzzy
 msgid "Upper bound"
-msgstr "Верхний конец"
+msgstr "Верхняя граница"
 
 #: ../data/functions.xml.in.h:257
 msgid "Number Bases"
@@ -4921,11 +4918,11 @@ msgstr "Долгота 2"
 
 #: ../data/functions.xml.in.h:488
 msgid "Convert to/from Q Format (Fixed Point)"
-msgstr ""
+msgstr "Преобразование в/из Q-формат (с фиксированной точкой)"
 
 #: ../data/functions.xml.in.h:489
 msgid "r:qFormat"
-msgstr ""
+msgstr "qФормат"
 
 #: ../data/functions.xml.in.h:490
 msgid ""
@@ -4934,29 +4931,31 @@ msgid ""
 "sign bit. If the value is an integer, and the fourth argument is false, the "
 "value is converted from fixed point, otherwise to."
 msgstr ""
+"Преобразует числа с фиксированной точкой в или из Q-формата. Соответствует"
+" формату Qm.n, где m — второй аргумент, а n — третий аргумент. m не включает"
+" бит знака. Если значение является целым числом, а четвертый аргумент имеет"
+" значение false, значение преобразуется из Q-формата с фиксированной точкой,"
+" в противном случае — в."
 
 #: ../data/functions.xml.in.h:491
-#, fuzzy
 msgid "Bits (integer part)"
-msgstr "n (целое)"
+msgstr "Биты (целая часть)"
 
 #: ../data/functions.xml.in.h:492
-#, fuzzy
 msgid "Bits (fraction part)"
-msgstr "Дробная часть"
+msgstr "Биты (дробная часть)"
 
 #: ../data/functions.xml.in.h:493
 msgid "Always convert to"
-msgstr ""
+msgstr "Всегда конвертировать в"
 
 #: ../data/functions.xml.in.h:494
 msgid "Q Format Error (Fixed Point)"
-msgstr ""
+msgstr "Ошибка Q-формата (с фиксированной точкой)"
 
 #: ../data/functions.xml.in.h:495
-#, fuzzy
 msgid "r:qError"
-msgstr "ошибка"
+msgstr "qОшибка"
 
 #: ../data/functions.xml.in.h:496
 msgid "Body Mass Index (BMI)"
@@ -10047,9 +10046,8 @@ msgid "ar:bbl,barrel,p:barrels"
 msgstr "баррель,p:барреля,p:баррелей"
 
 #: ../data/units.xml.in.h:357
-#, fuzzy
 msgid "Acre-Foot"
-msgstr "Фут"
+msgstr "Акр-фут"
 
 #: ../data/units.xml.in.h:358
 msgid "Specific Volume"
@@ -10947,21 +10945,19 @@ msgstr "триббл"
 
 #: ../data/units.xml.in.h:579
 msgid "Nonet"
-msgstr ""
+msgstr "Нонет"
 
 #: ../data/units.xml.in.h:580
-#, fuzzy
 msgid "r:nonet,p:nonets"
-msgstr "узел,p:узлы"
+msgstr "нонет,p:нонетов"
 
 #: ../data/units.xml.in.h:581
 msgid "Declet"
-msgstr ""
+msgstr "Деклет"
 
 #: ../data/units.xml.in.h:582
-#, fuzzy
 msgid "r:declet,p:declets"
-msgstr "евроцент,p:евроценты"
+msgstr "деклет,p:деклетов"
 
 #: ../data/units.xml.in.h:583
 msgid "Word (16-bit)"
@@ -11337,25 +11333,24 @@ msgid "-r:hundred"
 msgstr "сотня"
 
 #: ../data/variables.xml.in.h:60
-#, fuzzy
 msgid "Traditional Numbers"
-msgstr "Случайные числа"
+msgstr "Национальные числа"
 
 #: ../data/variables.xml.in.h:61
 msgid "Dozen"
-msgstr ""
+msgstr "Дюжина"
 
 #: ../data/variables.xml.in.h:62
 msgid "-r:dozen,a:dz,a:doz"
-msgstr ""
+msgstr "дюжина,p:дюжины,p:дюжин,"
 
 #: ../data/variables.xml.in.h:63
 msgid "Baker's Dozen"
-msgstr ""
+msgstr "Чёртова дюжина"
 
 #: ../data/variables.xml.in.h:64
 msgid "-r:bakers_dozen"
-msgstr ""
+msgstr "чёртова_дюжина,чертова_дюжина"
 
 #: ../data/variables.xml.in.h:65
 msgid "Score"
@@ -11366,43 +11361,36 @@ msgid "-r:score"
 msgstr ""
 
 #: ../data/variables.xml.in.h:67
-#, fuzzy
 msgid "Long Hundred"
-msgstr ""
-"Английский хандредвейт (длинный хандредвейт, длинный центнер, английский "
-"центнер, лондонский хандредвейт)"
+msgstr "Длинная сотня"
 
 #: ../data/variables.xml.in.h:68
-#, fuzzy
 msgid "-r:long_hundred,great_hundred,twelfty"
-msgstr "a:дхв,длинный_хандредвейт"
+msgstr "длинная_сотня"
 
 #: ../data/variables.xml.in.h:69
-#, fuzzy
 msgid "Gross"
-msgstr "векторноепроизведение"
+msgstr "Гросс"
 
 #: ../data/variables.xml.in.h:70
 msgid "-r:gross,a:gro"
-msgstr ""
+msgstr "гросс"
 
 #: ../data/variables.xml.in.h:71
-#, fuzzy
 msgid "Long Thousand"
-msgstr "Тысяча"
+msgstr "Длинная тысяча"
 
 #: ../data/variables.xml.in.h:72
-#, fuzzy
 msgid "-r:long_thousand"
-msgstr "тысяча"
+msgstr "длинная_тысяча"
 
 #: ../data/variables.xml.in.h:73
 msgid "Great Gross"
-msgstr ""
+msgstr "Большой гросс (Масса)"
 
 #: ../data/variables.xml.in.h:74
 msgid "-r:great_gross"
-msgstr ""
+msgstr "большой_гросс,масса"
 
 #: ../data/variables.xml.in.h:75
 msgid "Physical Constants"
