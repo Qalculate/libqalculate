@@ -842,8 +842,8 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			sarg2[1] = carg;
 			sarg_new[1] = carg;
 		}
-		if(CALCULATOR->functionNameTaken(vargs[1].symbol())) {
-			MathFunction *f = CALCULATOR->getActiveFunction(vargs[1].symbol(), true);
+		if(CALCULATOR->functionNameTaken(name)) {
+			MathFunction *f = CALCULATOR->getActiveFunction(name, true);
 			if(f && f->isLocal() && f->subtype() == SUBTYPE_USER_FUNCTION) {
 				if(!vargs[2].symbol().empty()) f->setCategory(vargs[2].symbol());
 				if(!vargs[3].symbol().empty()) f->setTitle(vargs[3].symbol());
@@ -865,6 +865,23 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		mstruct = expr;
 		CALCULATOR->saveFunctionCalled();
 		return 1;
+	}
+	if(vargs[4].number().getBoolean()) {
+		if(mstruct.isComparison() && mstruct.comparisonType() == COMPARISON_EQUALS && (mstruct[0].isSymbolic() || (mstruct[0].isVariable() && !mstruct[0].variable()->isKnown()))) {
+			mstruct.setToChild(2, true);
+		} else if(mstruct.isLogicalAnd() && mstruct.size() > 0 && mstruct[0].isComparison() && mstruct[0].comparisonType() == COMPARISON_EQUALS && (mstruct[0][0].isSymbolic() || (mstruct[0][0].isVariable() && !mstruct[0][0].variable()->isKnown()))) {
+			bool b = true;
+			for(size_t i = 1; i < mstruct.size(); i++) {
+				if(!mstruct[i].isComparison() || mstruct[i].comparisonType() == COMPARISON_EQUALS) {
+					b = false;
+					break;
+				}
+			}
+			if(b) {
+				mstruct.setToChild(1, true);
+				mstruct.setToChild(2, true);
+			}
+		}
 	}
 	if(!CALCULATOR->variableNameIsValid(vargs[1].symbol())) {
 		CALCULATOR->error(true, _("Invalid variable name (%s)."), vargs[1].symbol().c_str(), NULL);
