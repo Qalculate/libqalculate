@@ -280,9 +280,11 @@ bool calculate_userfunctions2(MathStructure &m, const MathStructure &x_mstruct, 
 		}
 	}
 	if(m.isFunction()) {
-		if(!m.contains(x_mstruct, true) && !m.contains(x_mstruct2, true)) {
-			m.calculateFunctions(eo);
-			b_ret = true;
+		if(!m.contains(x_mstruct, true) && !m.contains(x_mstruct2, true) && m.function()->id() != FUNCTION_ID_RAND && m.function()->id() != FUNCTION_ID_RANDN &&  m.function()->id() != FUNCTION_ID_RAND_POISSON) {
+			if(m.calculateFunctions(eo, false)) {
+				b_ret = true;
+				calculate_userfunctions2(m, x_mstruct, x_mstruct2, eo);
+			}
 		} else if(m.function()->subtype() == SUBTYPE_USER_FUNCTION && m.function()->condition().empty()) {
 			bool b = true;
 			for(size_t i = 0; i < ((UserFunction*) m.function())->countSubfunctions(); i++) {
