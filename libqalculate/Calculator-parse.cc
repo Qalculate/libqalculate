@@ -4620,7 +4620,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 										mden = &mstruct->last()[0];
 										mnum = &(*mstruct)[mstruct->size() - 2];
 									}
-									while(mnum && mnum->isMultiplication() && mnum->size() > 0) mnum = &mnum->last();
+									while(mnum && (mnum->isNegate() || mnum->isAddition() || mnum->isMultiplication()) && mnum->size() > 0) mnum = &mnum->last();
 									if(mden && mden->isMultiplication() && (mden->size() != 2 || !(*mden)[0].isNumber() || !(*mden)[1].isUnit_exp() || !mnum->isUnit_exp())) {
 										bool b_warn = str2[0] != ID_WRAP_LEFT_CH;
 										if(!b_warn && str2.length() > 2) {
@@ -4696,7 +4696,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 								mden = &mstruct->last()[0];
 								mnum = &(*mstruct)[mstruct->size() - 2];
 							}
-							while(mnum && mnum->isMultiplication() && mnum->size() > 0) mnum = &mnum->last();
+							while(mnum && (mnum->isNegate() || mnum->isAddition() || mnum->isMultiplication()) && mnum->size() > 0) mnum = &mnum->last();
 							if(mden && mden->isMultiplication() && (mden->size() != 2 || !(*mden)[0].isNumber() || !(*mden)[1].isUnit_exp() || !mnum->isUnit_exp())) {
 								bool b_warn = str[0] != ID_WRAP_LEFT_CH;
 								if(!b_warn && str.length() > 2) {
