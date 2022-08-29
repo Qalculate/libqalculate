@@ -1593,6 +1593,12 @@ void Calculator::addBuiltinFunctions() {
 	f_dirac = addFunction(new DiracFunction());
 	f_gcd = addFunction(new GcdFunction());
 	addFunction(new DivisorsFunction());
+	addFunction(new PrimeCountFunction());
+	addFunction(new PrimesFunction());
+	addFunction(new IsPrimeFunction());
+	addFunction(new PrevPrimeFunction());
+	addFunction(new NextPrimeFunction());
+	addFunction(new NthPrimeFunction());
 	f_lcm = addFunction(new LcmFunction());
 	f_round = addFunction(new RoundFunction());
 	f_floor = addFunction(new FloorFunction());
