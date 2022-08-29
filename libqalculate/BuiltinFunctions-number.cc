@@ -378,6 +378,196 @@ int DivisorsFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	return 1;
 }
 
+#include "primes.h"
+
+PrimesFunction::PrimesFunction() : MathFunction("primes", 1) {
+	IntegerArgument *iarg = new IntegerArgument();
+	iarg->setMin(&nr_one);
+	Number nmax(PRIMES_L[NR_OF_PRIMES_L - 1]);
+	iarg->setMax(&nmax);
+	iarg->setHandleVector(false);
+	setArgumentDefinition(1, iarg);
+}
+int PrimesFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct.clearVector();
+	long int v = vargs[0].number().intValue();
+	for(size_t i = 0; i < NR_OF_PRIMES_L; i++) {
+		if(PRIMES_L[i] > v) break;
+		mstruct.addChild_nocopy(new MathStructure(PRIMES_L[i], 1L, 0L));
+	}
+	return 1;
+}
+IsPrimeFunction::IsPrimeFunction() : MathFunction("isprime", 1) {
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
+}
+int IsPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	Number nr;
+	if(mpz_probab_prime_p(mpq_numref(vargs[0].number().internalRational()), 25)) mstruct = m_one;
+	else mstruct = m_zero;
+	return 1;
+}
+NthPrimeFunction::NthPrimeFunction() : MathFunction("nthprime", 1) {
+	IntegerArgument *iarg = new IntegerArgument();
+	iarg->setMin(&nr_one);
+	Number nmax(1, 1, 9);
+	iarg->setMax(&nmax);
+	setArgumentDefinition(1, iarg);
+}
+int NthPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].number() <= NR_OF_PRIMES_L) {
+		mstruct.set(PRIMES_L[vargs[0].number().lintValue() - 1], 1L, 0L);
+		return 1;
+	}
+	Number l10(vargs[0].number());
+	l10.divide(100000L);
+	l10.floor();
+	if(l10 <= PRIME_M_END) {
+		Number n(l10.lintValue(), 1, 5);
+		mpz_t i;
+		mpz_init(i);
+		mpz_set_si(i, PRIME_M[l10.lintValue() - PRIME_M_START]);
+		while(n < vargs[0].number()) {
+			if(CALCULATOR->aborted()) return 0;
+			n++;
+			mpz_nextprime(i, i);
+		}
+		Number nr;
+		nr.setInternal(i);
+		mstruct = nr;
+		mpz_clear(i);
+		return 1;
+	}
+	return 0;
+}
+
+NextPrimeFunction::NextPrimeFunction() : MathFunction("nextprime", 1) {
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
+}
+int NextPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].number() <= 2) {
+		mstruct = nr_two;
+		return 1;
+	}
+	if(vargs[0].number() <= PRIMES_L[NR_OF_PRIMES_L - 1]) {
+		for(size_t prime_i = 0; prime_i <= NR_OF_PRIMES_L; prime_i += 100) {
+			if(vargs[0].number() <= PRIMES_L[prime_i - 1]) {
+				while(true) {
+					if(vargs[0].number() >= PRIMES_L[prime_i - 1]) {
+						mstruct.set(PRIMES_L[prime_i - 1], 1L, 0L);
+						return 1;
+					}
+					prime_i--;
+				}
+			}
+		}
+	}
+	mpz_t i;
+	mpz_init(i);
+	mpz_sub_ui(i, mpq_numref(vargs[0].number().internalRational()), 1);
+	mpz_nextprime(i, i);
+	Number nr;
+	nr.setInternal(i);
+	mstruct = nr;
+	mpz_clear(i);
+	return 1;
+}
+PrevPrimeFunction::PrevPrimeFunction() : MathFunction("prevprime", 1) {
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
+}
+int PrevPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].number().isTwo()) {
+		mstruct = nr_two;
+		return 1;
+	}
+	if(vargs[0].number() <= PRIMES_L[NR_OF_PRIMES_L - 1]) {
+		for(size_t prime_i = 100; prime_i <= NR_OF_PRIMES_L; prime_i += 100) {
+			if(vargs[0].number() <= PRIMES_L[prime_i - 1]) {
+				for(; prime_i > 0; prime_i--) {
+					if(vargs[0].number() >= PRIMES_L[prime_i - 1]) {
+						mstruct.set(PRIMES_L[prime_i - 1], 1L, 0L);
+						return 1;
+					}
+				}
+			}
+		}
+	}
+	mpz_t i, p;
+	mpz_inits(i, p, NULL);
+	mpz_sub_ui(i, mpq_numref(vargs[0].number().internalRational()), 1);
+	mpz_nextprime(p, i);
+	while(mpz_cmp(p, mpq_numref(vargs[0].number().internalRational())) > 0) {
+		if(CALCULATOR->aborted()) {
+			mpz_clears(i, p);
+			return 0;
+		}
+		mpz_sub_ui(i, i, 1);
+		mpz_nextprime(p, i);
+	}
+	Number nr;
+	nr.setInternal(p);
+	mstruct = nr;
+	mpz_clears(i, p, NULL);
+	return 1;
+}
+
+PrimeCountFunction::PrimeCountFunction() : MathFunction("primeCount", 1) {
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
+}
+int PrimeCountFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].number() <= PRIMES_L[NR_OF_PRIMES_L - 1]) {
+		for(long int prime_i = 100; prime_i <= NR_OF_PRIMES_L; prime_i += 100) {
+			if(vargs[0].number() <= PRIMES_L[prime_i - 1]) {
+				while(prime_i > 0 && vargs[0].number() < PRIMES_L[prime_i - 1]) prime_i--;
+				mstruct.set(prime_i, 1L, 0L);
+				return 1;
+			}
+		}
+	}
+	Number l10(vargs[0].number());
+	l10.divide(1000000L);
+	l10.floor();
+	if(l10 <= PRIME_COUNT_M_END) {
+		long int n = l10.lintValue();
+		mstruct.set(PRIME_COUNT_M[n - PRIME_COUNT_M_START], 1L, 0L);
+		mpz_t i;
+		mpz_init(i);
+		mpz_set_si(i, 1);
+		mpz_set_si(i, 1000000L);
+		mpz_mul_si(i, i, n);
+		mpz_nextprime(i, i);
+		while(mpz_cmp(mpq_numref(vargs[0].number().internalRational()), i) >= 0) {
+			if(CALCULATOR->aborted()) {
+				mpz_clear(i);
+				return 0;
+			}
+			mstruct.number()++;
+			mpz_nextprime(i, i);
+		}
+		mpz_clear(i);
+		return 1;
+	}
+	if(eo.approximation == APPROXIMATION_EXACT) return 0;
+	// Approximation (lower endpoint requires x >= 88789)
+	Number nlog(vargs[0].number());
+	Number nr(vargs[0].number());
+	if(nlog.ln()) {
+		Number nlog2(nlog);
+		Number nlog3(nlog);
+		if(nlog2.square() && nlog3.raise(nr_three) && nlog.recip() && nlog2.recip() && nlog3.recip() && nlog2.multiply(2) && nlog3.multiply(Number(759, 100))) {
+			Number lower(1, 1);
+			if(lower.add(nlog) && lower.add(nlog2)) {
+				Number upper(lower);
+				if(upper.add(nlog3) && lower.multiply(nr) && upper.multiply(nr) && lower.multiply(nlog) && upper.multiply(nlog)) {
+					nr.setInterval(lower, upper, false);
+					mstruct = nr;
+					return 1;
+				}
+			}
+		}
+	}
+	return 1;
+}
+
 SignumFunction::SignumFunction() : MathFunction("sgn", 1, 2) {
 	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
 	arg->setHandleVector(true);
