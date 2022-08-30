@@ -4854,10 +4854,10 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	}
 
 	// Implicit multiplication
-	if((i = str.find(ID_WRAP_RIGHT_CH, 1)) != string::npos && i + 1 != str.length()) {
+	if((i = str.find_first_of(ID_WRAPS, 1)) != string::npos && i + 1 != str.length()) {
 		bool b = false, append = false;
 		while(i != string::npos && i + 1 != str.length()) {
-			if(str[i + 1] != POWER_CH && str[i + 1] != INTERNAL_UPOW_CH && str[i + 1] != '\x19' && str[i + 1] != '\x1a' && str[i + 1] != '\b') {
+			if(str[i] == ID_WRAP_RIGHT_CH && str[i + 1] != POWER_CH && str[i + 1] != INTERNAL_UPOW_CH && str[i + 1] != '\x19' && str[i + 1] != '\x1a' && str[i + 1] != '\b') {
 				str2 = str.substr(0, i + 1);
 				str = str.substr(i + 1, str.length() - (i + 1));
 				if(b) {
@@ -4867,10 +4867,20 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					parseAdd(str2, mstruct, po);
 					b = true;
 				}
-				i = str.find(ID_WRAP_RIGHT_CH, 1);
-			} else {
-				i = str.find(ID_WRAP_RIGHT_CH, i + 1);
+				i = 0;
+			} else if(str[i] == ID_WRAP_LEFT_CH && str[i - 1] != POWER_CH && str[i - 1] != INTERNAL_UPOW_CH && str[i - 1] != '\x19' && str[i - 1] != '\x1a' && (i < 2 || str[i - 1] != MINUS_CH || (str[i - 2] != POWER_CH && str[i - 2] != '\x19' && str[i - 2] != '\x1a')) && str[i - 1] != '\b') {
+				str2 = str.substr(0, i);
+				str = str.substr(i, str.length() - i);
+				if(b) {
+					parseAdd(str2, mstruct, po, OPERATION_MULTIPLY, append);
+					append = true;
+				} else {
+					parseAdd(str2, mstruct, po);
+					b = true;
+				}
+				i = 0;
 			}
+			i = str.find_first_of(ID_WRAPS, i + 1);
 		}
 		if(b) {
 			parseAdd(str, mstruct, po, OPERATION_MULTIPLY, append);
@@ -4878,12 +4888,12 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				Unit *u1 = NULL; Prefix *p1 = NULL;
 				bool b_plus = false;
 				// Parse 5m 2cm as 5m+2cm, 5ft 2in as 5ft+2in, and similar
-				if((*mstruct)[0].isMultiplication() && (*mstruct)[0].size() == 2 && (*mstruct)[0][0].isNumber() && (*mstruct)[0][1].isUnit()) {u1 = (*mstruct)[0][1].unit(); p1 = (*mstruct)[0][1].prefix();}
+				if(mstruct->isMultiplication() && mstruct->size() >= 4 && mstruct->size() % 2 == 0 && (*mstruct)[0].isNumber() && !(*mstruct)[0].inParentheses() && (*mstruct)[1].isUnit()) {u1 = (*mstruct)[1].unit(); p1 = (*mstruct)[1].prefix();}
 				if(u1 && u1->subtype() == SUBTYPE_BASE_UNIT && (u1->referenceName() == "m" || (!p1 && u1->referenceName() == "L")) && (!p1 || (p1->type() == PREFIX_DECIMAL && ((DecimalPrefix*) p1)->exponent() <= 3 && ((DecimalPrefix*) p1)->exponent() > -3))) {
 					b_plus = true;
-					for(size_t i2 = 1; i2 < mstruct->size(); i2++) {
-						if(!(*mstruct)[i2].inParentheses() && (*mstruct)[i2].isMultiplication() && (*mstruct)[i2].size() == 2 && (*mstruct)[i2][0].isNumber() && (*mstruct)[i2][1].isUnit() && (*mstruct)[i2][1].unit() == u1) {
-							Prefix *p2 = (*mstruct)[i2][1].prefix();
+					for(size_t i2 = 3; i2 < mstruct->size(); i2 += 2) {
+						if(!(*mstruct)[i2 - 1].inParentheses() && (*mstruct)[i2 - 1].isNumber() && (*mstruct)[i2].isUnit() && (*mstruct)[i2].unit() == u1) {
+							Prefix *p2 = (*mstruct)[i2].prefix();
 							if(p1 && p2) b_plus = p1->type() == PREFIX_DECIMAL && p2->type() == PREFIX_DECIMAL && ((DecimalPrefix*) p1)->exponent() > ((DecimalPrefix*) p2)->exponent() && ((DecimalPrefix*) p2)->exponent() >= -3;
 							else if(p2) b_plus = p2->type() == PREFIX_DECIMAL && ((DecimalPrefix*) p2)->exponent() < 0 && ((DecimalPrefix*) p2)->exponent() >= -3;
 							else if(p1) b_plus = p1->type() == PREFIX_DECIMAL && ((DecimalPrefix*) p1)->exponent() > 1;
@@ -4897,9 +4907,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					}
 				} else if(u1 && !p1 && u1->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u1)->mixWithBase()) {
 					b_plus = true;
-					for(size_t i2 = 1; i2 < mstruct->size(); i2++) {
-						if(!(*mstruct)[i2].inParentheses() && (*mstruct)[i2].isMultiplication() && (*mstruct)[i2].size() == 2 && (*mstruct)[i2][0].isNumber() && (*mstruct)[i2][1].isUnit() && u1->isChildOf((*mstruct)[i2][1].unit()) && !(*mstruct)[i2][1].prefix() && (i2 == mstruct->size() - 1 || ((*mstruct)[i2][1].unit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) (*mstruct)[i2][1].unit())->mixWithBase()))) {
-							while(((AliasUnit*) u1)->firstBaseUnit() != (*mstruct)[i2][1].unit()) {
+					for(size_t i2 = 3; i2 < mstruct->size(); i2 += 2) {
+						if(!(*mstruct)[i2 - 1].inParentheses() && (*mstruct)[i2 - 1].isNumber() && (*mstruct)[i2].isUnit() && u1->isChildOf((*mstruct)[i2].unit()) && !(*mstruct)[i2].prefix() && (i2 == mstruct->size() - 1 || ((*mstruct)[i2].unit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) (*mstruct)[i2].unit())->mixWithBase()))) {
+							while(((AliasUnit*) u1)->firstBaseUnit() != (*mstruct)[i2].unit()) {
 								u1 = ((AliasUnit*) u1)->firstBaseUnit();
 								if(u1->subtype() != SUBTYPE_ALIAS_UNIT || !((AliasUnit*) u1)->mixWithBase()) {
 									b_plus = false;
@@ -4907,47 +4917,22 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 								}
 							}
 							if(!b_plus) break;
-							u1 = (*mstruct)[i2][1].unit();
+							u1 = (*mstruct)[i2].unit();
 						} else {
 							b_plus = false;
 							break;
 						}
 					}
 				}
-				if(b_plus) mstruct->setType(STRUCT_ADDITION);
-			}
-			if(po.preserve_format) {
-				while(minus_count > 0) {
-					mstruct->transform(STRUCT_NEGATE);
-					minus_count--;
+				if(b_plus) {
+					for(size_t i = 1; i < mstruct->size(); i++) {
+						(*mstruct)[i].ref();
+						(*mstruct)[i - 1].transform_nocopy(STRUCT_MULTIPLICATION, &(*mstruct)[i]);
+						mstruct->delChild(i + 1);
+					}
+					mstruct->setType(STRUCT_ADDITION);
 				}
-			} else if(minus_count % 2 == 1) {
-				mstruct->negate();
 			}
-			return true;
-		}
-	}
-	// Implicit multiplication
-	if((i = str.find(ID_WRAP_LEFT_CH, 1)) != string::npos) {
-		bool b = false, append = false;
-		while(i != string::npos) {
-			if(str[i - 1] != POWER_CH && str[i - 1] != INTERNAL_UPOW_CH && str[i - 1] != '\x19' && str[i - 1] != '\x1a' && (i < 2 || str[i - 1] != MINUS_CH || (str[i - 2] != POWER_CH && str[i - 2] != '\x19' && str[i - 2] != '\x1a')) && str[i - 1] != '\b') {
-				str2 = str.substr(0, i);
-				str = str.substr(i, str.length() - i);
-				if(b) {
-					parseAdd(str2, mstruct, po, OPERATION_MULTIPLY, append);
-					append = true;
-				} else {
-					parseAdd(str2, mstruct, po);
-					b = true;
-				}
-				i = str.find(ID_WRAP_LEFT_CH, 1);
-			} else {
-				i = str.find(ID_WRAP_LEFT_CH, i + 1);
-			}
-		}
-		if(b) {
-			parseAdd(str, mstruct, po, OPERATION_MULTIPLY, append);
 			if(po.preserve_format) {
 				while(minus_count > 0) {
 					mstruct->transform(STRUCT_NEGATE);
