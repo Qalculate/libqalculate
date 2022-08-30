@@ -409,7 +409,7 @@ int IsPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 NthPrimeFunction::NthPrimeFunction() : MathFunction("nthprime", 1) {
 	IntegerArgument *iarg = new IntegerArgument();
 	iarg->setMin(&nr_one);
-	Number nmax(1, 1, 9);
+	Number nmax(PRIME_M_COUNT, 1, 5);
 	iarg->setMax(&nmax);
 	setArgumentDefinition(1, iarg);
 }
@@ -421,11 +421,17 @@ int NthPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	Number l10(vargs[0].number());
 	l10.divide(100000L);
 	l10.floor();
-	if(l10 <= PRIME_M_END) {
+	if(l10 <= PRIME_M_COUNT) {
 		Number n(l10.lintValue(), 1, 5);
 		mpz_t i;
 		mpz_init(i);
-		mpz_set_si(i, PRIME_M[l10.lintValue() - PRIME_M_START]);
+		if(PRIME_M[l10.lintValue() - 1] > LONG_MAX) {
+			mpz_set_si(i, (long int) (PRIME_M[l10.lintValue() - 1] / ULONG_MAX));
+			mpz_mul_si(i, i, LONG_MAX);
+			mpz_add_ui(i, i, (unsigned long int) (PRIME_M[l10.lintValue() - 1] % LONG_MAX));
+		} else {
+			mpz_set_si(i, (long int) PRIME_M[l10.lintValue() - 1]);
+		}
 		while(n < vargs[0].number()) {
 			if(CALCULATOR->aborted()) return 0;
 			n++;
@@ -510,40 +516,71 @@ int PrevPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	return 1;
 }
 
+unordered_map<long long int, unordered_map<long long int, long long int>> cache;
+
+long long int phi(long long int x, long long int a) {
+	unordered_map<long long int, unordered_map<long long int, long long int>>::iterator it = cache.find(x);
+	if(it != cache.end()) {
+		unordered_map<long long int, long long int>::iterator it2 = it->second.find(a);
+		if(it2 != it->second.end()) return it2->second;
+	}
+	if(a == 1) {
+		return (x + 1) / 2;
+	}
+	long long int v = phi(x, a - 1) - phi(x / PRIMES_L[a - 1], a - 1);
+	cache[x][a] = v;
+	return v;
+}
+
+long long int pi(long long int x) {
+	if(x == 2) return 1;
+	if(x < 2) return 0;
+	if(x <= PRIMES_L[NR_OF_PRIMES_L - 1]) {
+		long int prime_i = NR_OF_PRIMES_L;
+		long int step = prime_i / 2;
+		while(x != PRIMES_L[prime_i - 1]) {
+			if(x < PRIMES_L[prime_i - 1]) {
+				prime_i -= step;
+				if(step == 1 && x > PRIMES_L[prime_i - 1]) break;
+			} else {
+				prime_i += step;
+			}
+			if(step != 1) step /= 2;
+		}
+		return prime_i;
+	}
+	long long int a = pi(::sqrt(sqrt(x)));
+	long long int b = pi(::sqrt(x));
+	long long int c = pi(::cbrt(x));
+	long long int sum = phi(x, a) + ((b + a - 2) * (b - a + 1) / 2);
+	for(long int i = a + 1; i <= b; i++) {
+		long long int w = x / PRIMES_L[i - 1];
+		long long int lim = pi(::sqrt(w));
+		sum -= pi(w);
+		if(i <= c) {
+			for(long long int i2 = i; i2 <= lim; i2++) {
+				sum -= pi(w / PRIMES_L[i2 - 1]) - i2 + 1;
+			}
+		}
+	}
+	return sum;
+}
+
 PrimeCountFunction::PrimeCountFunction() : MathFunction("primeCount", 1) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
 }
 int PrimeCountFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[0].number() <= PRIMES_L[NR_OF_PRIMES_L - 1]) {
-		for(long int prime_i = 100; prime_i <= NR_OF_PRIMES_L; prime_i += 100) {
-			if(vargs[0].number() <= PRIMES_L[prime_i - 1]) {
-				while(prime_i > 0 && vargs[0].number() < PRIMES_L[prime_i - 1]) prime_i--;
-				mstruct.set(prime_i, 1L, 0L);
-				return 1;
-			}
+	if(vargs[0].number().integerLength() < 41) {
+		long long int v = pi(vargs[0].number().llintValue());
+		if(CALCULATOR->aborted()) return 0;
+		if(v > LONG_MAX) {
+			Number nr(v / LONG_MAX);
+			nr *= LONG_MAX;
+			nr += (v % LONG_MAX);
+			mstruct = nr;
+		} else {
+			mstruct = Number((long int) v, 1L, 0L);
 		}
-	}
-	Number l10(vargs[0].number());
-	l10.divide(1000000L);
-	l10.floor();
-	if(l10 <= PRIME_COUNT_M_END) {
-		long int n = l10.lintValue();
-		mstruct.set(PRIME_COUNT_M[n - PRIME_COUNT_M_START], 1L, 0L);
-		mpz_t i;
-		mpz_init(i);
-		mpz_set_si(i, 1);
-		mpz_set_si(i, 1000000L);
-		mpz_mul_si(i, i, n);
-		mpz_nextprime(i, i);
-		while(mpz_cmp(mpq_numref(vargs[0].number().internalRational()), i) >= 0) {
-			if(CALCULATOR->aborted()) {
-				mpz_clear(i);
-				return 0;
-			}
-			mstruct.number()++;
-			mpz_nextprime(i, i);
-		}
-		mpz_clear(i);
 		return 1;
 	}
 	if(eo.approximation == APPROXIMATION_EXACT) return 0;
