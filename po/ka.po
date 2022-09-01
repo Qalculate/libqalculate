@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-22 12:48+0200\n"
+"POT-Creation-Date: 2022-09-01 14:44+0200\n"
 "PO-Revision-Date: 2022-08-26 07:07+0200\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <(nothing)>\n"
@@ -18,12 +18,12 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.1.1\n"
 
-#: ../src/defs2doc.cc:334 ../src/qalc.cc:4173 ../libqalculate/Function.cc:227
+#: ../src/defs2doc.cc:334 ../src/qalc.cc:4161 ../libqalculate/Function.cc:227
 #: ../libqalculate/Function.cc:1471
 msgid "argument"
 msgstr "არგუმენტი"
 
-#: ../src/defs2doc.cc:359 ../src/qalc.cc:4198
+#: ../src/defs2doc.cc:359 ../src/qalc.cc:4186
 #, c-format
 msgid ""
 "Retrieves data from the %s data set for a given object and property. If "
@@ -33,37 +33,37 @@ msgstr ""
 "გამოთხოვა. თუ თვისებად შეყვანილია \"info\", ობიექტის ყველა თვისება "
 "გამოტანილი იქნება."
 
-#: ../src/defs2doc.cc:366 ../src/qalc.cc:4207
+#: ../src/defs2doc.cc:366 ../src/qalc.cc:4195
 msgid "Example:"
 msgstr "მაგალითი:"
 
-#: ../src/defs2doc.cc:374 ../src/qalc.cc:4216
+#: ../src/defs2doc.cc:374 ../src/qalc.cc:4204
 msgid "Arguments"
 msgstr "არგუმენტები"
 
 #. optional argument, in description
-#: ../src/defs2doc.cc:391 ../src/qalc.cc:4238
+#: ../src/defs2doc.cc:391 ../src/qalc.cc:4226
 msgid "optional"
 msgstr "არასავალდებულო"
 
 #. argument default, in description
-#: ../src/defs2doc.cc:394 ../src/qalc.cc:4242
+#: ../src/defs2doc.cc:394 ../src/qalc.cc:4230
 msgid "default: "
 msgstr "ნაგულისხმები: "
 
-#: ../src/defs2doc.cc:407 ../src/qalc.cc:4253
+#: ../src/defs2doc.cc:407 ../src/qalc.cc:4241
 msgid "Requirement"
 msgstr "მოთხოვნა"
 
-#: ../src/defs2doc.cc:416 ../src/qalc.cc:4266
+#: ../src/defs2doc.cc:416 ../src/qalc.cc:4254
 msgid "Properties"
 msgstr "პარამეტრები"
 
-#: ../src/defs2doc.cc:432 ../src/qalc.cc:4281
+#: ../src/defs2doc.cc:432 ../src/qalc.cc:4269
 msgid "key"
 msgstr "გასაღები"
 
-#: ../src/defs2doc.cc:464 ../src/qalc.cc:4403
+#: ../src/defs2doc.cc:464 ../src/qalc.cc:4391
 msgid "a previous result"
 msgstr "წინა შედეგი"
 
@@ -99,93 +99,93 @@ msgstr "მიმდინარე კომპიუტერის ჩარ�
 msgid "relative uncertainty"
 msgstr "ფარდობითი გაურკვევლობა"
 
-#: ../src/defs2doc.cc:498 ../src/qalc.cc:1988 ../src/qalc.cc:4410
+#: ../src/defs2doc.cc:498 ../src/qalc.cc:1988 ../src/qalc.cc:4398
 #: ../libqalculate/Function.cc:2273
 msgid "matrix"
 msgstr "მატრიცა"
 
-#: ../src/defs2doc.cc:500 ../src/qalc.cc:1990 ../src/qalc.cc:4412
+#: ../src/defs2doc.cc:500 ../src/qalc.cc:1990 ../src/qalc.cc:4400
 #: ../libqalculate/Function.cc:2200
 msgid "vector"
 msgstr "ვექტორი"
 
 #. positive number
 #: ../src/defs2doc.cc:508 ../src/qalc.cc:313 ../src/qalc.cc:836
-#: ../src/qalc.cc:2008 ../src/qalc.cc:3696 ../src/qalc.cc:4423
-#: ../src/qalc.cc:4570 ../src/qalc.cc:4813
+#: ../src/qalc.cc:2008 ../src/qalc.cc:3684 ../src/qalc.cc:4411
+#: ../src/qalc.cc:4558 ../src/qalc.cc:4801
 msgid "positive"
 msgstr "პოზიტიური"
 
 #: ../src/defs2doc.cc:509 ../src/qalc.cc:320 ../src/qalc.cc:837
-#: ../src/qalc.cc:2009 ../src/qalc.cc:3697 ../src/qalc.cc:4424
-#: ../src/qalc.cc:4574 ../src/qalc.cc:4817
+#: ../src/qalc.cc:2009 ../src/qalc.cc:3685 ../src/qalc.cc:4412
+#: ../src/qalc.cc:4562 ../src/qalc.cc:4805
 msgid "non-positive"
 msgstr "არა-დადებითი"
 
 #. negative number
 #: ../src/defs2doc.cc:510 ../src/qalc.cc:318 ../src/qalc.cc:838
-#: ../src/qalc.cc:2010 ../src/qalc.cc:3698 ../src/qalc.cc:4425
-#: ../src/qalc.cc:4572 ../src/qalc.cc:4815
+#: ../src/qalc.cc:2010 ../src/qalc.cc:3686 ../src/qalc.cc:4413
+#: ../src/qalc.cc:4560 ../src/qalc.cc:4803
 msgid "negative"
 msgstr "უარყოფითი"
 
 #: ../src/defs2doc.cc:511 ../src/qalc.cc:315 ../src/qalc.cc:839
-#: ../src/qalc.cc:2011 ../src/qalc.cc:3699 ../src/qalc.cc:4426
-#: ../src/qalc.cc:4576 ../src/qalc.cc:4819
+#: ../src/qalc.cc:2011 ../src/qalc.cc:3687 ../src/qalc.cc:4414
+#: ../src/qalc.cc:4564 ../src/qalc.cc:4807
 msgid "non-negative"
 msgstr "არა-უარყოფითი"
 
 #: ../src/defs2doc.cc:512 ../src/qalc.cc:310 ../src/qalc.cc:840
-#: ../src/qalc.cc:2012 ../src/qalc.cc:3700 ../src/qalc.cc:4427
-#: ../src/qalc.cc:4568 ../src/qalc.cc:4811
+#: ../src/qalc.cc:2012 ../src/qalc.cc:3688 ../src/qalc.cc:4415
+#: ../src/qalc.cc:4556 ../src/qalc.cc:4799
 msgid "non-zero"
 msgstr "არა-ნულოვანი"
 
 #: ../src/defs2doc.cc:517 ../src/qalc.cc:306 ../src/qalc.cc:846
-#: ../src/qalc.cc:2018 ../src/qalc.cc:3706 ../src/qalc.cc:4433
-#: ../src/qalc.cc:4584 ../src/qalc.cc:4827 ../libqalculate/Function.cc:2042
+#: ../src/qalc.cc:2018 ../src/qalc.cc:3694 ../src/qalc.cc:4421
+#: ../src/qalc.cc:4572 ../src/qalc.cc:4815 ../libqalculate/Function.cc:2042
 msgid "integer"
 msgstr "მთელი რიცხვი"
 
 #. rational number
 #: ../src/defs2doc.cc:518 ../src/qalc.cc:304 ../src/qalc.cc:848
-#: ../src/qalc.cc:2020 ../src/qalc.cc:3708 ../src/qalc.cc:4435
-#: ../src/qalc.cc:4582 ../src/qalc.cc:4825
+#: ../src/qalc.cc:2020 ../src/qalc.cc:3696 ../src/qalc.cc:4423
+#: ../src/qalc.cc:4570 ../src/qalc.cc:4813
 msgid "rational"
 msgstr "რაციონალური"
 
 #. real number
 #: ../src/defs2doc.cc:519 ../src/qalc.cc:296 ../src/qalc.cc:849
-#: ../src/qalc.cc:2021 ../src/qalc.cc:3709 ../src/qalc.cc:4436
-#: ../src/qalc.cc:4580 ../src/qalc.cc:4823
+#: ../src/qalc.cc:2021 ../src/qalc.cc:3697 ../src/qalc.cc:4424
+#: ../src/qalc.cc:4568 ../src/qalc.cc:4811
 msgid "real"
 msgstr "რეალი"
 
 #. complex number
 #: ../src/defs2doc.cc:520 ../src/qalc.cc:301 ../src/qalc.cc:851
-#: ../src/qalc.cc:2022 ../src/qalc.cc:3710 ../src/qalc.cc:4437
+#: ../src/qalc.cc:2022 ../src/qalc.cc:3698 ../src/qalc.cc:4425
 msgid "complex"
 msgstr "კომპლექსური"
 
 #: ../src/defs2doc.cc:521 ../src/qalc.cc:298 ../src/qalc.cc:852
-#: ../src/qalc.cc:2023 ../src/qalc.cc:3711 ../src/qalc.cc:4438
-#: ../src/qalc.cc:4578 ../src/qalc.cc:4821 ../libqalculate/Function.cc:1881
+#: ../src/qalc.cc:2023 ../src/qalc.cc:3699 ../src/qalc.cc:4426
+#: ../src/qalc.cc:4566 ../src/qalc.cc:4809 ../libqalculate/Function.cc:1881
 msgid "number"
 msgstr "ნომერი"
 
 #: ../src/defs2doc.cc:522 ../src/qalc.cc:853 ../src/qalc.cc:2024
-#: ../src/qalc.cc:3712 ../src/qalc.cc:4439
+#: ../src/qalc.cc:3700 ../src/qalc.cc:4427
 msgid "non-matrix"
 msgstr "არა-მატრიცა"
 
 #. assumptions
 #: ../src/defs2doc.cc:525 ../src/qalc.cc:289 ../src/qalc.cc:856
-#: ../src/qalc.cc:2027 ../src/qalc.cc:3715 ../src/qalc.cc:4442
-#: ../src/qalc.cc:4566 ../src/qalc.cc:4809
+#: ../src/qalc.cc:2027 ../src/qalc.cc:3703 ../src/qalc.cc:4430
+#: ../src/qalc.cc:4554 ../src/qalc.cc:4797
 msgid "unknown"
 msgstr "უცნობი"
 
-#: ../src/defs2doc.cc:527 ../src/qalc.cc:2029 ../src/qalc.cc:4444
+#: ../src/defs2doc.cc:527 ../src/qalc.cc:2029 ../src/qalc.cc:4432
 msgid "default assumptions"
 msgstr "ნაგულისხმები დაშვებები"
 
@@ -196,10 +196,10 @@ msgstr "ცვლადი სიზუსტე"
 #. approximation mode
 #. qalc command
 #: ../src/defs2doc.cc:537 ../src/defs2doc.cc:589 ../src/qalc.cc:1170
-#: ../src/qalc.cc:1982 ../src/qalc.cc:1999 ../src/qalc.cc:3260
-#: ../src/qalc.cc:3740 ../src/qalc.cc:4043 ../src/qalc.cc:4350
-#: ../src/qalc.cc:4360 ../src/qalc.cc:4470 ../src/qalc.cc:4597
-#: ../src/qalc.cc:4949 ../src/qalc.cc:5057
+#: ../src/qalc.cc:1982 ../src/qalc.cc:1999 ../src/qalc.cc:3248
+#: ../src/qalc.cc:3728 ../src/qalc.cc:4031 ../src/qalc.cc:4338
+#: ../src/qalc.cc:4348 ../src/qalc.cc:4458 ../src/qalc.cc:4585
+#: ../src/qalc.cc:4937 ../src/qalc.cc:5045
 msgid "approximate"
 msgstr "approximate"
 
@@ -255,12 +255,12 @@ msgstr "გლობალური აღწერების ჩატვი�
 msgid "Uncategorized"
 msgstr "დაულაგებელი"
 
-#: ../src/qalc.cc:198 ../src/qalc.cc:270 ../src/qalc.cc:4543
+#: ../src/qalc.cc:198 ../src/qalc.cc:270 ../src/qalc.cc:4531
 #: ../libqalculate/util.cc:179
 msgid "yes"
 msgstr "დიახ"
 
-#: ../src/qalc.cc:199 ../src/qalc.cc:272 ../src/qalc.cc:4543
+#: ../src/qalc.cc:199 ../src/qalc.cc:272 ../src/qalc.cc:4531
 #: ../libqalculate/util.cc:180
 msgid "no"
 msgstr "არა"
@@ -275,22 +275,22 @@ msgstr "მცდარი"
 
 #: ../src/qalc.cc:202 ../src/qalc.cc:1016 ../src/qalc.cc:1038
 #: ../src/qalc.cc:1413 ../src/qalc.cc:1462 ../src/qalc.cc:1643
-#: ../src/qalc.cc:3848 ../src/qalc.cc:3866 ../src/qalc.cc:3934
-#: ../src/qalc.cc:4542 ../src/qalc.cc:4665 ../src/qalc.cc:4674
-#: ../src/qalc.cc:4725 ../libqalculate/util.cc:195
+#: ../src/qalc.cc:3836 ../src/qalc.cc:3854 ../src/qalc.cc:3922
+#: ../src/qalc.cc:4530 ../src/qalc.cc:4653 ../src/qalc.cc:4662
+#: ../src/qalc.cc:4713 ../libqalculate/util.cc:195
 msgid "on"
 msgstr "ჩართული"
 
 #: ../src/qalc.cc:203 ../src/qalc.cc:1011 ../src/qalc.cc:1037
 #: ../src/qalc.cc:1307 ../src/qalc.cc:1384 ../src/qalc.cc:1396
 #: ../src/qalc.cc:1409 ../src/qalc.cc:1460 ../src/qalc.cc:1639
-#: ../src/qalc.cc:3771 ../src/qalc.cc:3847 ../src/qalc.cc:3852
-#: ../src/qalc.cc:3864 ../src/qalc.cc:3894 ../src/qalc.cc:3901
-#: ../src/qalc.cc:3917 ../src/qalc.cc:3933 ../src/qalc.cc:3970
-#: ../src/qalc.cc:4542 ../src/qalc.cc:4619 ../src/qalc.cc:4663
-#: ../src/qalc.cc:4669 ../src/qalc.cc:4674 ../src/qalc.cc:4682
-#: ../src/qalc.cc:4689 ../src/qalc.cc:4699 ../src/qalc.cc:4723
-#: ../src/qalc.cc:4758 ../libqalculate/util.cc:196
+#: ../src/qalc.cc:3759 ../src/qalc.cc:3835 ../src/qalc.cc:3840
+#: ../src/qalc.cc:3852 ../src/qalc.cc:3882 ../src/qalc.cc:3889
+#: ../src/qalc.cc:3905 ../src/qalc.cc:3921 ../src/qalc.cc:3958
+#: ../src/qalc.cc:4530 ../src/qalc.cc:4607 ../src/qalc.cc:4651
+#: ../src/qalc.cc:4657 ../src/qalc.cc:4662 ../src/qalc.cc:4670
+#: ../src/qalc.cc:4677 ../src/qalc.cc:4687 ../src/qalc.cc:4711
+#: ../src/qalc.cc:4746 ../libqalculate/util.cc:196
 msgid "off"
 msgstr "გამორთული"
 
@@ -306,15 +306,15 @@ msgstr "შეიყვანეთ \"დიახ\" ან \"არა\""
 #. algebra mode
 #: ../src/qalc.cc:285 ../src/qalc.cc:993 ../src/qalc.cc:1013
 #: ../src/qalc.cc:1083 ../src/qalc.cc:1206 ../src/qalc.cc:1238
-#: ../src/qalc.cc:3686 ../src/qalc.cc:3725 ../src/qalc.cc:3746
-#: ../src/qalc.cc:3834 ../src/qalc.cc:3985 ../src/qalc.cc:4593
-#: ../src/qalc.cc:4656 ../src/qalc.cc:4766
+#: ../src/qalc.cc:3674 ../src/qalc.cc:3713 ../src/qalc.cc:3734
+#: ../src/qalc.cc:3822 ../src/qalc.cc:3973 ../src/qalc.cc:4581
+#: ../src/qalc.cc:4644 ../src/qalc.cc:4754
 msgid "none"
 msgstr "არა"
 
 #: ../src/qalc.cc:308 ../src/qalc.cc:847 ../src/qalc.cc:2019
-#: ../src/qalc.cc:3707 ../src/qalc.cc:4434 ../src/qalc.cc:4586
-#: ../src/qalc.cc:4829 ../libqalculate/Function.cc:2363
+#: ../src/qalc.cc:3695 ../src/qalc.cc:4422 ../src/qalc.cc:4574
+#: ../src/qalc.cc:4817 ../libqalculate/Function.cc:2363
 msgid "boolean"
 msgstr "ლოგიკური"
 
@@ -324,10 +324,10 @@ msgstr "უცნობი დაშვება."
 
 #. logical operator
 #: ../src/qalc.cc:555 ../src/qalc.cc:589
-#: ../libqalculate/Calculator-calculate.cc:987
+#: ../libqalculate/Calculator-calculate.cc:994
 #: ../libqalculate/Calculator.cc:239 ../libqalculate/Calculator.cc:472
 #: ../libqalculate/Calculator.cc:621 ../libqalculate/DataSet.cc:1102
-#: ../libqalculate/DataSet.cc:1164 ../libqalculate/MathStructure-print.cc:3776
+#: ../libqalculate/DataSet.cc:1164 ../libqalculate/MathStructure-print.cc:3808
 #: ../libqalculate/Function.cc:2433 ../libqalculate/Function.cc:2449
 msgid "or"
 msgstr "ან"
@@ -362,21 +362,21 @@ msgstr ""
 #: ../src/qalc.cc:1289 ../src/qalc.cc:1298 ../src/qalc.cc:1318
 #: ../src/qalc.cc:1324 ../src/qalc.cc:1361 ../src/qalc.cc:1424
 #: ../src/qalc.cc:1451 ../src/qalc.cc:1467 ../src/qalc.cc:1484
-#: ../src/qalc.cc:3052 ../src/qalc.cc:3204
+#: ../src/qalc.cc:3040 ../src/qalc.cc:3192
 msgid "Illegal value."
 msgstr "არასწორი მნიშვნელობა."
 
 #. number base
 #. qalc command
-#: ../src/qalc.cc:742 ../src/qalc.cc:3029 ../src/qalc.cc:3588
-#: ../src/qalc.cc:3801 ../src/qalc.cc:4045 ../src/qalc.cc:4632
-#: ../src/qalc.cc:4941 ../src/qalc.cc:5064 ../src/qalc.cc:6321
-#: ../libqalculate/Calculator-calculate.cc:1739
+#: ../src/qalc.cc:742 ../src/qalc.cc:3017 ../src/qalc.cc:3576
+#: ../src/qalc.cc:3789 ../src/qalc.cc:4033 ../src/qalc.cc:4620
+#: ../src/qalc.cc:4929 ../src/qalc.cc:5052 ../src/qalc.cc:6303
+#: ../libqalculate/Calculator-calculate.cc:1746
 msgid "base"
 msgstr "base"
 
-#: ../src/qalc.cc:742 ../src/qalc.cc:744 ../src/qalc.cc:3943
-#: ../src/qalc.cc:4736
+#: ../src/qalc.cc:742 ../src/qalc.cc:744 ../src/qalc.cc:3931
+#: ../src/qalc.cc:4724
 msgid "input base"
 msgstr "შემოტანის ფუძე"
 
@@ -385,81 +385,81 @@ msgid "output base"
 msgstr "გამოტანის ფუძე"
 
 #. roman numerals
-#: ../src/qalc.cc:747 ../src/qalc.cc:3311 ../src/qalc.cc:3803
-#: ../src/qalc.cc:3945 ../src/qalc.cc:4644 ../src/qalc.cc:4744
-#: ../src/qalc.cc:6219 ../libqalculate/Calculator-calculate.cc:1641
+#: ../src/qalc.cc:747 ../src/qalc.cc:3299 ../src/qalc.cc:3791
+#: ../src/qalc.cc:3933 ../src/qalc.cc:4632 ../src/qalc.cc:4732
+#: ../src/qalc.cc:6201 ../libqalculate/Calculator-calculate.cc:1648
 msgid "roman"
 msgstr "რომანული"
 
 #. number base
-#: ../src/qalc.cc:749 ../src/qalc.cc:3316 ../src/qalc.cc:3804
-#: ../src/qalc.cc:3946 ../src/qalc.cc:6221
-#: ../libqalculate/Calculator-calculate.cc:1643
+#: ../src/qalc.cc:749 ../src/qalc.cc:3304 ../src/qalc.cc:3792
+#: ../src/qalc.cc:3934 ../src/qalc.cc:6203
+#: ../libqalculate/Calculator-calculate.cc:1650
 msgid "bijective"
 msgstr "ბიექტურობა"
 
-#: ../src/qalc.cc:756 ../src/qalc.cc:3386 ../src/qalc.cc:3818
-#: ../src/qalc.cc:4642 ../src/qalc.cc:6249
-#: ../libqalculate/Calculator-calculate.cc:1671
+#: ../src/qalc.cc:756 ../src/qalc.cc:3374 ../src/qalc.cc:3806
+#: ../src/qalc.cc:4630 ../src/qalc.cc:6231
+#: ../libqalculate/Calculator-calculate.cc:1678
 msgid "time"
 msgstr "დრო"
 
-#: ../src/qalc.cc:757 ../src/qalc.cc:3286 ../src/qalc.cc:6209
-#: ../libqalculate/Calculator-calculate.cc:1631
+#: ../src/qalc.cc:757 ../src/qalc.cc:3274 ../src/qalc.cc:6191
+#: ../libqalculate/Calculator-calculate.cc:1638
 msgid "hexadecimal"
 msgstr "თექვსმეტობითი"
 
-#: ../src/qalc.cc:764 ../src/qalc.cc:3306 ../src/qalc.cc:6217
-#: ../libqalculate/Calculator-calculate.cc:1639
+#: ../src/qalc.cc:764 ../src/qalc.cc:3294 ../src/qalc.cc:6199
+#: ../libqalculate/Calculator-calculate.cc:1646
 msgid "duodecimal"
 msgstr "თორმეტობითი"
 
 #. number base
-#: ../src/qalc.cc:766 ../src/qalc.cc:3291 ../src/qalc.cc:6211
-#: ../libqalculate/Calculator-calculate.cc:1633
+#: ../src/qalc.cc:766 ../src/qalc.cc:3279 ../src/qalc.cc:6193
+#: ../libqalculate/Calculator-calculate.cc:1640
 msgid "binary"
 msgstr "ბინარული"
 
-#: ../src/qalc.cc:767 ../src/qalc.cc:3301 ../src/qalc.cc:6215
-#: ../libqalculate/Calculator-calculate.cc:1637
+#: ../src/qalc.cc:767 ../src/qalc.cc:3289 ../src/qalc.cc:6197
+#: ../libqalculate/Calculator-calculate.cc:1644
 msgid "octal"
 msgstr "რვაობითი"
 
 #. number base
-#: ../src/qalc.cc:769 ../src/qalc.cc:3296 ../src/qalc.cc:6213
-#: ../libqalculate/Calculator-calculate.cc:1635
+#: ../src/qalc.cc:769 ../src/qalc.cc:3284 ../src/qalc.cc:6195
+#: ../libqalculate/Calculator-calculate.cc:1642
 msgid "decimal"
 msgstr "ათობითი"
 
-#: ../src/qalc.cc:770 ../src/qalc.cc:771 ../src/qalc.cc:772 ../src/qalc.cc:3326
-#: ../src/qalc.cc:3331 ../src/qalc.cc:3336 ../src/qalc.cc:3806
-#: ../src/qalc.cc:3807 ../src/qalc.cc:3808 ../src/qalc.cc:6225
-#: ../src/qalc.cc:6227 ../src/qalc.cc:6229
-#: ../libqalculate/Calculator-calculate.cc:1647
-#: ../libqalculate/Calculator-calculate.cc:1649
-#: ../libqalculate/Calculator-calculate.cc:1651
+#: ../src/qalc.cc:770 ../src/qalc.cc:771 ../src/qalc.cc:772 ../src/qalc.cc:3314
+#: ../src/qalc.cc:3319 ../src/qalc.cc:3324 ../src/qalc.cc:3794
+#: ../src/qalc.cc:3795 ../src/qalc.cc:3796 ../src/qalc.cc:6207
+#: ../src/qalc.cc:6209 ../src/qalc.cc:6211
+#: ../libqalculate/Calculator-calculate.cc:1654
+#: ../libqalculate/Calculator-calculate.cc:1656
+#: ../libqalculate/Calculator-calculate.cc:1658
 msgid "sexagesimal"
 msgstr "ექვსობითი"
 
-#: ../src/qalc.cc:773 ../src/qalc.cc:774 ../src/qalc.cc:3351
-#: ../src/qalc.cc:3356 ../src/qalc.cc:3809 ../src/qalc.cc:3810
-#: ../src/qalc.cc:6235 ../src/qalc.cc:6237
-#: ../libqalculate/Calculator-calculate.cc:1657
-#: ../libqalculate/Calculator-calculate.cc:1659
+#: ../src/qalc.cc:773 ../src/qalc.cc:774 ../src/qalc.cc:3339
+#: ../src/qalc.cc:3344 ../src/qalc.cc:3797 ../src/qalc.cc:3798
+#: ../src/qalc.cc:6217 ../src/qalc.cc:6219
+#: ../libqalculate/Calculator-calculate.cc:1664
+#: ../libqalculate/Calculator-calculate.cc:1666
 msgid "latitude"
 msgstr "განედი"
 
-#: ../src/qalc.cc:775 ../src/qalc.cc:776 ../src/qalc.cc:3341
-#: ../src/qalc.cc:3346 ../src/qalc.cc:3811 ../src/qalc.cc:3812
-#: ../src/qalc.cc:6231 ../src/qalc.cc:6233
-#: ../libqalculate/Calculator-calculate.cc:1653
-#: ../libqalculate/Calculator-calculate.cc:1655
+#: ../src/qalc.cc:775 ../src/qalc.cc:776 ../src/qalc.cc:3329
+#: ../src/qalc.cc:3334 ../src/qalc.cc:3799 ../src/qalc.cc:3800
+#: ../src/qalc.cc:6213 ../src/qalc.cc:6215
+#: ../libqalculate/Calculator-calculate.cc:1660
+#: ../libqalculate/Calculator-calculate.cc:1662
 msgid "longitude"
 msgstr "გრძედი"
 
 #. number bases
-#: ../src/qalc.cc:786 ../src/qalc.cc:990 ../src/qalc.cc:3830
-#: ../src/qalc.cc:4656
+#: ../src/qalc.cc:786 ../src/qalc.cc:990 ../src/qalc.cc:3818
+#: ../src/qalc.cc:4644
 msgid "base display"
 msgstr "ფუძის ჩვენება"
 
@@ -467,122 +467,122 @@ msgstr "ფუძის ჩვენება"
 msgid "Illegal base."
 msgstr "არასწორი ფუძე."
 
-#: ../src/qalc.cc:824 ../src/qalc.cc:857 ../src/qalc.cc:3716
-#: ../src/qalc.cc:4563
+#: ../src/qalc.cc:824 ../src/qalc.cc:857 ../src/qalc.cc:3704
+#: ../src/qalc.cc:4551
 msgid "assumptions"
 msgstr "დაშვებები"
 
-#: ../src/qalc.cc:861 ../src/qalc.cc:3980 ../src/qalc.cc:4762
+#: ../src/qalc.cc:861 ../src/qalc.cc:3968 ../src/qalc.cc:4750
 msgid "all prefixes"
 msgstr "ყველა პრეფიქსი"
 
-#: ../src/qalc.cc:862 ../src/qalc.cc:3769 ../src/qalc.cc:4619
+#: ../src/qalc.cc:862 ../src/qalc.cc:3757 ../src/qalc.cc:4607
 msgid "color"
 msgstr "ფერი"
 
 #. light color
-#: ../src/qalc.cc:865 ../src/qalc.cc:3772 ../src/qalc.cc:4619
+#: ../src/qalc.cc:865 ../src/qalc.cc:3760 ../src/qalc.cc:4607
 msgid "light"
 msgstr "ღია"
 
-#: ../src/qalc.cc:866 ../src/qalc.cc:3773 ../src/qalc.cc:4619
-#: ../src/qalc.cc:5944 ../src/qalc.cc:6021 ../src/qalc.cc:6099
-#: ../src/qalc.cc:6105
+#: ../src/qalc.cc:866 ../src/qalc.cc:3761 ../src/qalc.cc:4607
+#: ../src/qalc.cc:5926 ../src/qalc.cc:6003 ../src/qalc.cc:6081
+#: ../src/qalc.cc:6087
 msgid "default"
 msgstr "ნაგულისხმები"
 
-#: ../src/qalc.cc:874 ../src/qalc.cc:3758 ../src/qalc.cc:4608
+#: ../src/qalc.cc:874 ../src/qalc.cc:3746 ../src/qalc.cc:4596
 msgid "complex numbers"
 msgstr "კომპლექსური რიცხვები"
 
-#: ../src/qalc.cc:875 ../src/qalc.cc:3783 ../src/qalc.cc:4621
+#: ../src/qalc.cc:875 ../src/qalc.cc:3771 ../src/qalc.cc:4609
 msgid "excessive parentheses"
 msgstr "დამატებითი ფრჩხილები"
 
-#: ../src/qalc.cc:876 ../src/qalc.cc:3759 ../src/qalc.cc:4106
-#: ../src/qalc.cc:4112 ../src/qalc.cc:4609
+#: ../src/qalc.cc:876 ../src/qalc.cc:3747 ../src/qalc.cc:4094
+#: ../src/qalc.cc:4100 ../src/qalc.cc:4597
 msgid "functions"
 msgstr "ფუნქციები"
 
-#: ../src/qalc.cc:877 ../src/qalc.cc:3760 ../src/qalc.cc:4610
+#: ../src/qalc.cc:877 ../src/qalc.cc:3748 ../src/qalc.cc:4598
 msgid "infinite numbers"
 msgstr "უსასრულო რიცხვები"
 
-#: ../src/qalc.cc:878 ../src/qalc.cc:3998 ../src/qalc.cc:4783
+#: ../src/qalc.cc:878 ../src/qalc.cc:3986 ../src/qalc.cc:4771
 msgid "show negative exponents"
 msgstr "უარყოფითი ექსპონენტების ჩვენება"
 
-#: ../src/qalc.cc:879 ../src/qalc.cc:3784 ../src/qalc.cc:4622
+#: ../src/qalc.cc:879 ../src/qalc.cc:3772 ../src/qalc.cc:4610
 msgid "minus last"
 msgstr "მინუს ბოლო"
 
-#: ../src/qalc.cc:881 ../src/qalc.cc:3691 ../src/qalc.cc:4560
+#: ../src/qalc.cc:881 ../src/qalc.cc:3679 ../src/qalc.cc:4548
 msgid "assume nonzero denominators"
 msgstr "დაშვება, რომ მნიშვნელი ნულოვანი არაა"
 
-#: ../src/qalc.cc:882 ../src/qalc.cc:3692 ../src/qalc.cc:4561
+#: ../src/qalc.cc:882 ../src/qalc.cc:3680 ../src/qalc.cc:4549
 msgid "warn nonzero denominators"
 msgstr "არანულოვანი მნიშვნელების გაფრთხილება"
 
 #. unit prefixes
-#: ../src/qalc.cc:884 ../src/qalc.cc:3997 ../src/qalc.cc:4109
-#: ../src/qalc.cc:4115 ../src/qalc.cc:4782
+#: ../src/qalc.cc:884 ../src/qalc.cc:3985 ../src/qalc.cc:4097
+#: ../src/qalc.cc:4103 ../src/qalc.cc:4770
 msgid "prefixes"
 msgstr "პრეფიქსები"
 
-#: ../src/qalc.cc:885 ../src/qalc.cc:3993 ../src/qalc.cc:4778
+#: ../src/qalc.cc:885 ../src/qalc.cc:3981 ../src/qalc.cc:4766
 msgid "binary prefixes"
 msgstr "ბინარული პრეფიქსები"
 
-#: ../src/qalc.cc:892 ../src/qalc.cc:3995 ../src/qalc.cc:4780
+#: ../src/qalc.cc:892 ../src/qalc.cc:3983 ../src/qalc.cc:4768
 msgid "denominator prefixes"
 msgstr "მნიშვნელის პრეფიქსები"
 
-#: ../src/qalc.cc:893 ../src/qalc.cc:3996 ../src/qalc.cc:4781
+#: ../src/qalc.cc:893 ../src/qalc.cc:3984 ../src/qalc.cc:4769
 msgid "place units separately"
 msgstr "ერთებულების ცალკე დალაგება"
 
-#: ../src/qalc.cc:894 ../src/qalc.cc:3757 ../src/qalc.cc:4607
+#: ../src/qalc.cc:894 ../src/qalc.cc:3745 ../src/qalc.cc:4595
 msgid "calculate variables"
 msgstr "ცვლადების გამოთვლა"
 
-#: ../src/qalc.cc:895 ../src/qalc.cc:3756 ../src/qalc.cc:4606
+#: ../src/qalc.cc:895 ../src/qalc.cc:3744 ../src/qalc.cc:4594
 msgid "calculate functions"
 msgstr "ფუნქციების გამოთვლა"
 
-#: ../src/qalc.cc:896 ../src/qalc.cc:3999 ../src/qalc.cc:4784
+#: ../src/qalc.cc:896 ../src/qalc.cc:3987 ../src/qalc.cc:4772
 msgid "sync units"
 msgstr "ერთეულების სინქრონიზაცია"
 
-#: ../src/qalc.cc:897 ../src/qalc.cc:4000 ../src/qalc.cc:4785
+#: ../src/qalc.cc:897 ../src/qalc.cc:3988 ../src/qalc.cc:4773
 msgid "temperature calculation"
 msgstr "ტემპერატურის გამოთვლა"
 
 #. temperature calculation mode
-#: ../src/qalc.cc:900 ../src/qalc.cc:4002 ../src/qalc.cc:4785
-#: ../src/qalc.cc:6035 ../src/qalc.cc:6058
+#: ../src/qalc.cc:900 ../src/qalc.cc:3990 ../src/qalc.cc:4773
+#: ../src/qalc.cc:6017 ../src/qalc.cc:6040
 msgid "relative"
 msgstr "ფარდობითი"
 
 #. temperature calculation mode
-#: ../src/qalc.cc:902 ../src/qalc.cc:4004 ../src/qalc.cc:4785
-#: ../src/qalc.cc:6021 ../src/qalc.cc:6059
+#: ../src/qalc.cc:902 ../src/qalc.cc:3992 ../src/qalc.cc:4773
+#: ../src/qalc.cc:6003 ../src/qalc.cc:6041
 msgid "hybrid"
 msgstr "ჰიბრიდი"
 
 #. temperature calculation mode
-#: ../src/qalc.cc:904 ../src/qalc.cc:4003 ../src/qalc.cc:4785
-#: ../src/qalc.cc:6028 ../src/qalc.cc:6060
+#: ../src/qalc.cc:904 ../src/qalc.cc:3991 ../src/qalc.cc:4773
+#: ../src/qalc.cc:6010 ../src/qalc.cc:6042
 msgid "absolute"
 msgstr "აბსოლუტური"
 
 #. sinc function variant
-#: ../src/qalc.cc:918 ../src/qalc.cc:5944 ../src/qalc.cc:5970
+#: ../src/qalc.cc:918 ../src/qalc.cc:5926 ../src/qalc.cc:5952
 msgid "unnormalized"
 msgstr "დაუნორმალიზებელი"
 
 #. sinc function variant
-#: ../src/qalc.cc:920 ../src/qalc.cc:5948 ../src/qalc.cc:5969
+#: ../src/qalc.cc:920 ../src/qalc.cc:5930 ../src/qalc.cc:5951
 msgid "normalized"
 msgstr "ნორმალიზებული"
 
@@ -590,24 +590,24 @@ msgstr "ნორმალიზებული"
 msgid "round to even"
 msgstr "ლუწამდე დამრგვალება"
 
-#: ../src/qalc.cc:941 ../src/qalc.cc:3905 ../src/qalc.cc:4695
+#: ../src/qalc.cc:941 ../src/qalc.cc:3893 ../src/qalc.cc:4683
 msgid "rounding"
 msgstr "დამრგვალება"
 
 #. rounding mode
-#: ../src/qalc.cc:943 ../src/qalc.cc:3908 ../src/qalc.cc:4695
+#: ../src/qalc.cc:943 ../src/qalc.cc:3896 ../src/qalc.cc:4683
 msgid "even"
 msgstr "ლუწი"
 
 #. digit grouping mode
 #. rounding mode
-#: ../src/qalc.cc:944 ../src/qalc.cc:1015 ../src/qalc.cc:3853
-#: ../src/qalc.cc:3912 ../src/qalc.cc:4669 ../src/qalc.cc:4695
+#: ../src/qalc.cc:944 ../src/qalc.cc:1015 ../src/qalc.cc:3841
+#: ../src/qalc.cc:3900 ../src/qalc.cc:4657 ../src/qalc.cc:4683
 msgid "standard"
 msgstr "სტანდარტული"
 
 #. rounding mode
-#: ../src/qalc.cc:945 ../src/qalc.cc:3910 ../src/qalc.cc:4695
+#: ../src/qalc.cc:945 ../src/qalc.cc:3898 ../src/qalc.cc:4683
 msgid "truncate"
 msgstr "მოკვეთა"
 
@@ -616,133 +616,133 @@ msgid "rpn syntax"
 msgstr "rpn სინტაქსი"
 
 #. qalc command
-#: ../src/qalc.cc:969 ../src/qalc.cc:1106 ../src/qalc.cc:3032
-#: ../src/qalc.cc:3965 ../src/qalc.cc:4020 ../src/qalc.cc:4070
-#: ../src/qalc.cc:4757 ../src/qalc.cc:4798 ../src/qalc.cc:4891
-#: ../src/qalc.cc:5023 ../src/qalc.cc:5064
+#: ../src/qalc.cc:969 ../src/qalc.cc:1106 ../src/qalc.cc:3020
+#: ../src/qalc.cc:3953 ../src/qalc.cc:4008 ../src/qalc.cc:4058
+#: ../src/qalc.cc:4745 ../src/qalc.cc:4786 ../src/qalc.cc:4879
+#: ../src/qalc.cc:5011 ../src/qalc.cc:5052
 msgid "rpn"
 msgstr "rpn"
 
-#: ../src/qalc.cc:970 ../src/qalc.cc:3975 ../src/qalc.cc:4759
+#: ../src/qalc.cc:970 ../src/qalc.cc:3963 ../src/qalc.cc:4747
 msgid "simplified percentage"
 msgstr "გაადვილებული პროცენტულობა"
 
-#: ../src/qalc.cc:971 ../src/qalc.cc:3793 ../src/qalc.cc:4624
+#: ../src/qalc.cc:971 ../src/qalc.cc:3781 ../src/qalc.cc:4612
 msgid "short multiplication"
 msgstr "მოკლე გამრავლება"
 
-#: ../src/qalc.cc:972 ../src/qalc.cc:3888 ../src/qalc.cc:4678
+#: ../src/qalc.cc:972 ../src/qalc.cc:3876 ../src/qalc.cc:4666
 msgid "lowercase e"
 msgstr "პატარა ე"
 
-#: ../src/qalc.cc:973 ../src/qalc.cc:3889 ../src/qalc.cc:4679
+#: ../src/qalc.cc:973 ../src/qalc.cc:3877 ../src/qalc.cc:4667
 msgid "lowercase numbers"
 msgstr "პატარა სიმბოლოები"
 
-#: ../src/qalc.cc:974 ../src/qalc.cc:3872 ../src/qalc.cc:3942
-#: ../src/qalc.cc:4676 ../src/qalc.cc:4735
+#: ../src/qalc.cc:974 ../src/qalc.cc:3860 ../src/qalc.cc:3930
+#: ../src/qalc.cc:4664 ../src/qalc.cc:4723
 msgid "imaginary j"
 msgstr "წარმოსახვითი j"
 
 #. base display mode
-#: ../src/qalc.cc:995 ../src/qalc.cc:3832 ../src/qalc.cc:4656
+#: ../src/qalc.cc:995 ../src/qalc.cc:3820 ../src/qalc.cc:4644
 msgid "normal"
 msgstr "ნორმალური"
 
 #. base display mode
-#: ../src/qalc.cc:997 ../src/qalc.cc:3833 ../src/qalc.cc:4656
+#: ../src/qalc.cc:997 ../src/qalc.cc:3821 ../src/qalc.cc:4644
 msgid "alternative"
 msgstr "ალტერნატიული"
 
-#: ../src/qalc.cc:1007 ../src/qalc.cc:3926 ../src/qalc.cc:4713
+#: ../src/qalc.cc:1007 ../src/qalc.cc:3914 ../src/qalc.cc:4701
 msgid "two's complement"
 msgstr "დამატებითი კოდი"
 
-#: ../src/qalc.cc:1008 ../src/qalc.cc:3871 ../src/qalc.cc:4675
+#: ../src/qalc.cc:1008 ../src/qalc.cc:3859 ../src/qalc.cc:4663
 msgid "hexadecimal two's"
 msgstr "დამატებითი კოდი თექვსმეტობითი რიცხვებისთვის"
 
-#: ../src/qalc.cc:1009 ../src/qalc.cc:3850 ../src/qalc.cc:4669
+#: ../src/qalc.cc:1009 ../src/qalc.cc:3838 ../src/qalc.cc:4657
 msgid "digit grouping"
 msgstr "ციფრების დაჯგუფება"
 
-#: ../src/qalc.cc:1017 ../src/qalc.cc:1039 ../src/qalc.cc:3846
-#: ../src/qalc.cc:3854 ../src/qalc.cc:3932 ../src/qalc.cc:4661
-#: ../src/qalc.cc:4669 ../src/qalc.cc:4721
+#: ../src/qalc.cc:1017 ../src/qalc.cc:1039 ../src/qalc.cc:3834
+#: ../src/qalc.cc:3842 ../src/qalc.cc:3920 ../src/qalc.cc:4649
+#: ../src/qalc.cc:4657 ../src/qalc.cc:4709
 msgid "locale"
 msgstr "ენა"
 
-#: ../src/qalc.cc:1027 ../src/qalc.cc:3795 ../src/qalc.cc:4626
+#: ../src/qalc.cc:1027 ../src/qalc.cc:3783 ../src/qalc.cc:4614
 msgid "spell out logical"
 msgstr "ლოგიკურად გამოტანა"
 
-#: ../src/qalc.cc:1028 ../src/qalc.cc:3940 ../src/qalc.cc:4733
+#: ../src/qalc.cc:1028 ../src/qalc.cc:3928 ../src/qalc.cc:4721
 msgid "ignore dot"
 msgstr "წერტილის იგნორი"
 
-#: ../src/qalc.cc:1031 ../src/qalc.cc:3937 ../src/qalc.cc:4730
+#: ../src/qalc.cc:1031 ../src/qalc.cc:3925 ../src/qalc.cc:4718
 msgid "ignore comma"
 msgstr "მძიმის იგნორი"
 
-#: ../src/qalc.cc:1035 ../src/qalc.cc:3845 ../src/qalc.cc:3931
-#: ../src/qalc.cc:4658 ../src/qalc.cc:4718
+#: ../src/qalc.cc:1035 ../src/qalc.cc:3833 ../src/qalc.cc:3919
+#: ../src/qalc.cc:4646 ../src/qalc.cc:4706
 msgid "decimal comma"
 msgstr "ათობითი მძიმე"
 
-#: ../src/qalc.cc:1054 ../src/qalc.cc:3958 ../src/qalc.cc:4756
+#: ../src/qalc.cc:1054 ../src/qalc.cc:3946 ../src/qalc.cc:4744
 msgid "limit implicit multiplication"
 msgstr "არასწორი გამრავლების შეზღუდვა"
 
 #. extra space next to operators
-#: ../src/qalc.cc:1057 ../src/qalc.cc:3794 ../src/qalc.cc:4625
+#: ../src/qalc.cc:1057 ../src/qalc.cc:3782 ../src/qalc.cc:4613
 msgid "spacious"
 msgstr "ფართო"
 
-#: ../src/qalc.cc:1058 ../src/qalc.cc:3797 ../src/qalc.cc:4628
+#: ../src/qalc.cc:1058 ../src/qalc.cc:3785 ../src/qalc.cc:4616
 msgid "vertical space"
 msgstr "ვერტიკალური სივრცე"
 
-#: ../src/qalc.cc:1059 ../src/qalc.cc:3796 ../src/qalc.cc:4627
+#: ../src/qalc.cc:1059 ../src/qalc.cc:3784 ../src/qalc.cc:4615
 msgid "unicode"
 msgstr "უნიკოდი"
 
-#: ../src/qalc.cc:1067 ../src/qalc.cc:3761 ../src/qalc.cc:4108
-#: ../src/qalc.cc:4114 ../src/qalc.cc:4611
+#: ../src/qalc.cc:1067 ../src/qalc.cc:3749 ../src/qalc.cc:4096
+#: ../src/qalc.cc:4102 ../src/qalc.cc:4599
 msgid "units"
 msgstr "ერთეულები"
 
 #. automatic unknown variables
-#: ../src/qalc.cc:1069 ../src/qalc.cc:3762 ../src/qalc.cc:4612
+#: ../src/qalc.cc:1069 ../src/qalc.cc:3750 ../src/qalc.cc:4600
 msgid "unknowns"
 msgstr "უცნობები"
 
-#: ../src/qalc.cc:1070 ../src/qalc.cc:3763 ../src/qalc.cc:4107
-#: ../src/qalc.cc:4113 ../src/qalc.cc:4613
+#: ../src/qalc.cc:1070 ../src/qalc.cc:3751 ../src/qalc.cc:4095
+#: ../src/qalc.cc:4101 ../src/qalc.cc:4601
 msgid "variables"
 msgstr "ცვლადები"
 
-#: ../src/qalc.cc:1071 ../src/qalc.cc:3768 ../src/qalc.cc:4618
+#: ../src/qalc.cc:1071 ../src/qalc.cc:3756 ../src/qalc.cc:4606
 msgid "abbreviations"
 msgstr "აბრევიაურები"
 
-#: ../src/qalc.cc:1072 ../src/qalc.cc:3925 ../src/qalc.cc:4712
+#: ../src/qalc.cc:1072 ../src/qalc.cc:3913 ../src/qalc.cc:4700
 msgid "show ending zeroes"
 msgstr "დამაბოლოებელი ნულების ჩვენება"
 
-#: ../src/qalc.cc:1073 ../src/qalc.cc:3904 ../src/qalc.cc:4694
+#: ../src/qalc.cc:1073 ../src/qalc.cc:3892 ../src/qalc.cc:4682
 msgid "repeating decimals"
 msgstr "განმეორებადი ათეულების სიმბოლო"
 
-#: ../src/qalc.cc:1074 ../src/qalc.cc:3720 ../src/qalc.cc:4593
+#: ../src/qalc.cc:1074 ../src/qalc.cc:3708 ../src/qalc.cc:4581
 msgid "angle unit"
 msgstr "კუთხის ერთეული"
 
 #. angle unit
-#: ../src/qalc.cc:1077 ../src/qalc.cc:3722 ../src/qalc.cc:3723
+#: ../src/qalc.cc:1077 ../src/qalc.cc:3710 ../src/qalc.cc:3711
 msgid "rad"
 msgstr "რად"
 
-#: ../src/qalc.cc:1077 ../src/qalc.cc:4593
+#: ../src/qalc.cc:1077 ../src/qalc.cc:4581
 msgid "radians"
 msgstr "რადიანები"
 
@@ -751,79 +751,79 @@ msgstr "რადიანები"
 msgid "deg"
 msgstr "გრად"
 
-#: ../src/qalc.cc:1079 ../src/qalc.cc:4593
+#: ../src/qalc.cc:1079 ../src/qalc.cc:4581
 msgid "degrees"
 msgstr "გრადუსი"
 
 #. angle unit
-#: ../src/qalc.cc:1081 ../src/qalc.cc:3724
+#: ../src/qalc.cc:1081 ../src/qalc.cc:3712
 msgid "gra"
 msgstr "გრად"
 
-#: ../src/qalc.cc:1081 ../src/qalc.cc:4593
+#: ../src/qalc.cc:1081 ../src/qalc.cc:4581
 msgid "gradians"
 msgstr "გრადიანები"
 
-#: ../src/qalc.cc:1095 ../src/qalc.cc:3930 ../src/qalc.cc:4717
+#: ../src/qalc.cc:1095 ../src/qalc.cc:3918 ../src/qalc.cc:4705
 msgid "caret as xor"
 msgstr "კარეტა როგორც xor"
 
-#: ../src/qalc.cc:1096 ../src/qalc.cc:3959 ../src/qalc.cc:4757
-#: ../src/qalc.cc:5010
+#: ../src/qalc.cc:1096 ../src/qalc.cc:3947 ../src/qalc.cc:4745
+#: ../src/qalc.cc:4998
 msgid "parsing mode"
 msgstr "ანალიზის რეჟიმი"
 
 #. parsing mode
 #. interval display mode
-#: ../src/qalc.cc:1099 ../src/qalc.cc:1339 ../src/qalc.cc:3875
-#: ../src/qalc.cc:3961 ../src/qalc.cc:4677 ../src/qalc.cc:4757
-#: ../src/qalc.cc:5018
+#: ../src/qalc.cc:1099 ../src/qalc.cc:1339 ../src/qalc.cc:3863
+#: ../src/qalc.cc:3949 ../src/qalc.cc:4665 ../src/qalc.cc:4745
+#: ../src/qalc.cc:5006
 msgid "adaptive"
 msgstr "შეგუებადი"
 
 #. parsing mode
-#: ../src/qalc.cc:1101 ../src/qalc.cc:3962 ../src/qalc.cc:4757
-#: ../src/qalc.cc:5015
+#: ../src/qalc.cc:1101 ../src/qalc.cc:3950 ../src/qalc.cc:4745
+#: ../src/qalc.cc:5003
 msgid "implicit first"
 msgstr "არაცხადი პირველი"
 
 #. parsing mode
-#: ../src/qalc.cc:1103 ../src/qalc.cc:3963 ../src/qalc.cc:4757
-#: ../src/qalc.cc:5012
+#: ../src/qalc.cc:1103 ../src/qalc.cc:3951 ../src/qalc.cc:4745
+#: ../src/qalc.cc:5000
 msgid "conventional"
 msgstr "მიღებული"
 
 #. chain calculation mode (parsing mode)
-#: ../src/qalc.cc:1105 ../src/qalc.cc:3964 ../src/qalc.cc:4757
-#: ../src/qalc.cc:5026
+#: ../src/qalc.cc:1105 ../src/qalc.cc:3952 ../src/qalc.cc:4745
+#: ../src/qalc.cc:5014
 msgid "chain"
 msgstr "ჯაჭვი"
 
-#: ../src/qalc.cc:1117 ../src/qalc.cc:2233 ../src/qalc.cc:4007
-#: ../src/qalc.cc:4786
+#: ../src/qalc.cc:1117 ../src/qalc.cc:2233 ../src/qalc.cc:3995
+#: ../src/qalc.cc:4774
 msgid "update exchange rates"
 msgstr "მიმოცვლის კურსების განახლება"
 
 #. exchange rates updates
-#: ../src/qalc.cc:1119 ../src/qalc.cc:4010 ../src/qalc.cc:4788
+#: ../src/qalc.cc:1119 ../src/qalc.cc:3998 ../src/qalc.cc:4776
 msgid "never"
 msgstr "არასოდეს"
 
 #. exchange rates updates
-#: ../src/qalc.cc:1122 ../src/qalc.cc:4009 ../src/qalc.cc:4787
+#: ../src/qalc.cc:1122 ../src/qalc.cc:3997 ../src/qalc.cc:4775
 msgid "ask"
 msgstr "კითხვა"
 
-#: ../src/qalc.cc:1130 ../src/qalc.cc:3785 ../src/qalc.cc:4623
+#: ../src/qalc.cc:1130 ../src/qalc.cc:3773 ../src/qalc.cc:4611
 msgid "multiplication sign"
 msgstr "გამრავლების ნიშანი"
 
-#: ../src/qalc.cc:1145 ../src/qalc.cc:3776 ../src/qalc.cc:4620
+#: ../src/qalc.cc:1145 ../src/qalc.cc:3764 ../src/qalc.cc:4608
 msgid "division sign"
 msgstr "გაყოფის ნიშანი"
 
-#: ../src/qalc.cc:1159 ../src/qalc.cc:1605 ../src/qalc.cc:3728
-#: ../src/qalc.cc:4597
+#: ../src/qalc.cc:1159 ../src/qalc.cc:1605 ../src/qalc.cc:3716
+#: ../src/qalc.cc:4585
 msgid "approximation"
 msgstr "დაახლოება"
 
@@ -831,34 +831,34 @@ msgstr "დაახლოება"
 #. fraction mode
 #. qalc command
 #: ../src/qalc.cc:1162 ../src/qalc.cc:1253 ../src/qalc.cc:1412
-#: ../src/qalc.cc:1612 ../src/qalc.cc:3254 ../src/qalc.cc:3730
-#: ../src/qalc.cc:3865 ../src/qalc.cc:4049 ../src/qalc.cc:4597
-#: ../src/qalc.cc:4674 ../src/qalc.cc:4945 ../src/qalc.cc:5057
+#: ../src/qalc.cc:1612 ../src/qalc.cc:3242 ../src/qalc.cc:3718
+#: ../src/qalc.cc:3853 ../src/qalc.cc:4037 ../src/qalc.cc:4585
+#: ../src/qalc.cc:4662 ../src/qalc.cc:4933 ../src/qalc.cc:5045
 msgid "exact"
 msgstr "exact"
 
 #. automatic
 #: ../src/qalc.cc:1164 ../src/qalc.cc:1308 ../src/qalc.cc:1410
-#: ../src/qalc.cc:1616 ../src/qalc.cc:1647 ../src/qalc.cc:3733
-#: ../src/qalc.cc:3859 ../src/qalc.cc:3918 ../src/qalc.cc:4597
-#: ../src/qalc.cc:4674 ../src/qalc.cc:4701
+#: ../src/qalc.cc:1616 ../src/qalc.cc:1647 ../src/qalc.cc:3721
+#: ../src/qalc.cc:3847 ../src/qalc.cc:3906 ../src/qalc.cc:4585
+#: ../src/qalc.cc:4662 ../src/qalc.cc:4689
 msgid "auto"
 msgstr "ავტომატური"
 
 #. approximation mode
 #. fraction mode
-#: ../src/qalc.cc:1166 ../src/qalc.cc:1419 ../src/qalc.cc:3735
-#: ../src/qalc.cc:3861 ../src/qalc.cc:4597 ../src/qalc.cc:4674
+#: ../src/qalc.cc:1166 ../src/qalc.cc:1419 ../src/qalc.cc:3723
+#: ../src/qalc.cc:3849 ../src/qalc.cc:4585 ../src/qalc.cc:4662
 msgid "dual"
 msgstr "ორმაგი"
 
 #. approximation mode
-#: ../src/qalc.cc:1168 ../src/qalc.cc:1609 ../src/qalc.cc:3737
-#: ../src/qalc.cc:4597
+#: ../src/qalc.cc:1168 ../src/qalc.cc:1609 ../src/qalc.cc:3725
+#: ../src/qalc.cc:4585
 msgid "try exact"
 msgstr "ზუსტის ცდა"
 
-#: ../src/qalc.cc:1189 ../src/qalc.cc:3744 ../src/qalc.cc:4599
+#: ../src/qalc.cc:1189 ../src/qalc.cc:3732 ../src/qalc.cc:4587
 msgid "interval calculation"
 msgstr "ინტერვალის გამოთვლა"
 
@@ -866,7 +866,7 @@ msgstr "ინტერვალის გამოთვლა"
 msgid "uncertainty propagation"
 msgstr "გაფართოებული გაურკვევლობა"
 
-#: ../src/qalc.cc:1191 ../src/qalc.cc:3747 ../src/qalc.cc:4599
+#: ../src/qalc.cc:1191 ../src/qalc.cc:3735 ../src/qalc.cc:4587
 msgid "variance formula"
 msgstr "დისპერსიის ფორმულა"
 
@@ -874,110 +874,110 @@ msgstr "დისპერსიის ფორმულა"
 msgid "variance"
 msgstr "დისპერსია"
 
-#: ../src/qalc.cc:1192 ../src/qalc.cc:1368 ../src/qalc.cc:3743
-#: ../src/qalc.cc:3748 ../src/qalc.cc:4598 ../src/qalc.cc:4599
+#: ../src/qalc.cc:1192 ../src/qalc.cc:1368 ../src/qalc.cc:3731
+#: ../src/qalc.cc:3736 ../src/qalc.cc:4586 ../src/qalc.cc:4587
 msgid "interval arithmetic"
 msgstr "ინტერვალების არითმეტიკა"
 
-#: ../src/qalc.cc:1202 ../src/qalc.cc:3981 ../src/qalc.cc:4763
+#: ../src/qalc.cc:1202 ../src/qalc.cc:3969 ../src/qalc.cc:4751
 msgid "autoconversion"
 msgstr "ავტომატური გადაყვანა"
 
-#: ../src/qalc.cc:1207 ../src/qalc.cc:3575
+#: ../src/qalc.cc:1207 ../src/qalc.cc:3563
 msgid "best"
 msgstr "საუკეთესო"
 
-#: ../src/qalc.cc:1208 ../src/qalc.cc:3990 ../src/qalc.cc:4772
+#: ../src/qalc.cc:1208 ../src/qalc.cc:3978 ../src/qalc.cc:4760
 msgid "optimalsi"
 msgstr "ოპტიმალურისი"
 
 #. optimal units
-#: ../src/qalc.cc:1210 ../src/qalc.cc:3575 ../src/qalc.cc:3988
-#: ../src/qalc.cc:4768 ../src/qalc.cc:6313
-#: ../libqalculate/Calculator-calculate.cc:1731
+#: ../src/qalc.cc:1210 ../src/qalc.cc:3563 ../src/qalc.cc:3976
+#: ../src/qalc.cc:4756 ../src/qalc.cc:6295
+#: ../libqalculate/Calculator-calculate.cc:1738
 msgid "optimal"
 msgstr "ოპტიმალური"
 
 #. base units
-#: ../src/qalc.cc:1212 ../src/qalc.cc:3582 ../src/qalc.cc:3989
-#: ../src/qalc.cc:4770 ../src/qalc.cc:6317
-#: ../libqalculate/Calculator-calculate.cc:1735
+#: ../src/qalc.cc:1212 ../src/qalc.cc:3570 ../src/qalc.cc:3977
+#: ../src/qalc.cc:4758 ../src/qalc.cc:6299
+#: ../libqalculate/Calculator-calculate.cc:1742
 msgctxt "units"
 msgid "base"
 msgstr "ფუძე"
 
 #. mixed units
-#: ../src/qalc.cc:1214 ../src/qalc.cc:3984 ../src/qalc.cc:4774
-#: ../src/qalc.cc:6351 ../libqalculate/Calculator-calculate.cc:1761
+#: ../src/qalc.cc:1214 ../src/qalc.cc:3972 ../src/qalc.cc:4762
+#: ../src/qalc.cc:6333 ../libqalculate/Calculator-calculate.cc:1768
 msgctxt "units"
 msgid "mixed"
 msgstr "შერეული"
 
-#: ../src/qalc.cc:1234 ../src/qalc.cc:3994 ../src/qalc.cc:4779
+#: ../src/qalc.cc:1234 ../src/qalc.cc:3982 ../src/qalc.cc:4767
 msgid "currency conversion"
 msgstr "ვალუტის კონვერტაცია"
 
-#: ../src/qalc.cc:1235 ../src/qalc.cc:3684 ../src/qalc.cc:4559
+#: ../src/qalc.cc:1235 ../src/qalc.cc:3672 ../src/qalc.cc:4547
 msgid "algebra mode"
 msgstr "ალგებრის რეჟიმი"
 
 #. algebra mode
 #. qalc command
-#: ../src/qalc.cc:1240 ../src/qalc.cc:3672 ../src/qalc.cc:4534
-#: ../src/qalc.cc:5057
+#: ../src/qalc.cc:1240 ../src/qalc.cc:3660 ../src/qalc.cc:4522
+#: ../src/qalc.cc:5045
 msgid "simplify"
 msgstr "simplify"
 
-#: ../src/qalc.cc:1240 ../src/qalc.cc:3672 ../src/qalc.cc:3688
-#: ../src/qalc.cc:4050 ../src/qalc.cc:4534 ../src/qalc.cc:4559
-#: ../src/qalc.cc:5057 ../src/qalc.cc:6383
-#: ../libqalculate/Calculator-calculate.cc:1800
+#: ../src/qalc.cc:1240 ../src/qalc.cc:3660 ../src/qalc.cc:3676
+#: ../src/qalc.cc:4038 ../src/qalc.cc:4522 ../src/qalc.cc:4547
+#: ../src/qalc.cc:5045 ../src/qalc.cc:6365
+#: ../libqalculate/Calculator-calculate.cc:1807
 msgid "expand"
 msgstr "ამოკეცვა"
 
 #. algebra mode
-#: ../src/qalc.cc:1242 ../src/qalc.cc:3687 ../src/qalc.cc:4559
-#: ../src/qalc.cc:6380 ../libqalculate/Calculator-calculate.cc:1796
+#: ../src/qalc.cc:1242 ../src/qalc.cc:3675 ../src/qalc.cc:4547
+#: ../src/qalc.cc:6362 ../libqalculate/Calculator-calculate.cc:1803
 msgid "factorize"
 msgstr "მამრავლებად დაშლა"
 
-#: ../src/qalc.cc:1264 ../src/qalc.cc:4019 ../src/qalc.cc:4797
+#: ../src/qalc.cc:1264 ../src/qalc.cc:4007 ../src/qalc.cc:4785
 msgid "ignore locale"
 msgstr "ენის იგნორი"
 
-#: ../src/qalc.cc:1276 ../src/qalc.cc:4022 ../src/qalc.cc:4064
-#: ../src/qalc.cc:4800
+#: ../src/qalc.cc:1276 ../src/qalc.cc:4010 ../src/qalc.cc:4052
+#: ../src/qalc.cc:4788
 msgid "save mode"
 msgstr "რეჟიმის შენახვა"
 
 #. qalc command
-#: ../src/qalc.cc:1285 ../src/qalc.cc:4017 ../src/qalc.cc:4047
-#: ../src/qalc.cc:4796 ../src/qalc.cc:4845 ../src/qalc.cc:5033
+#: ../src/qalc.cc:1285 ../src/qalc.cc:4005 ../src/qalc.cc:4035
+#: ../src/qalc.cc:4784 ../src/qalc.cc:4833 ../src/qalc.cc:5021
 msgid "clear history"
 msgstr "clear history"
 
-#: ../src/qalc.cc:1295 ../src/qalc.cc:4021 ../src/qalc.cc:4063
-#: ../src/qalc.cc:4799
+#: ../src/qalc.cc:1295 ../src/qalc.cc:4009 ../src/qalc.cc:4051
+#: ../src/qalc.cc:4787
 msgid "save definitions"
 msgstr "აღწერების შენახვა"
 
-#: ../src/qalc.cc:1304 ../src/qalc.cc:3915 ../src/qalc.cc:4696
+#: ../src/qalc.cc:1304 ../src/qalc.cc:3903 ../src/qalc.cc:4684
 msgid "scientific notation"
 msgstr "სამეცნიერო ჩანაწერი"
 
-#: ../src/qalc.cc:1309 ../src/qalc.cc:3919 ../src/qalc.cc:4705
+#: ../src/qalc.cc:1309 ../src/qalc.cc:3907 ../src/qalc.cc:4693
 msgid "pure"
 msgstr "უბრალო"
 
-#: ../src/qalc.cc:1310 ../src/qalc.cc:3920 ../src/qalc.cc:4707
+#: ../src/qalc.cc:1310 ../src/qalc.cc:3908 ../src/qalc.cc:4695
 msgid "scientific"
 msgstr "სამეცნიერო"
 
-#: ../src/qalc.cc:1311 ../src/qalc.cc:3921 ../src/qalc.cc:4703
+#: ../src/qalc.cc:1311 ../src/qalc.cc:3909 ../src/qalc.cc:4691
 msgid "engineering"
 msgstr "საინჟინრო"
 
-#: ../src/qalc.cc:1320 ../src/qalc.cc:3752 ../src/qalc.cc:4600
+#: ../src/qalc.cc:1320 ../src/qalc.cc:3740 ../src/qalc.cc:4588
 msgid "precision"
 msgstr "სიზუსტე"
 
@@ -986,52 +986,52 @@ msgstr "სიზუსტე"
 msgid "Maximum precision %i set."
 msgstr "მაქსიმალური სიზუსტე %i დაყენებულია."
 
-#: ../src/qalc.cc:1336 ../src/qalc.cc:3873 ../src/qalc.cc:4677
+#: ../src/qalc.cc:1336 ../src/qalc.cc:3861 ../src/qalc.cc:4665
 msgid "interval display"
 msgstr "ინტერვალის ჩვენება"
 
 #. interval display mode
-#: ../src/qalc.cc:1341 ../src/qalc.cc:3878 ../src/qalc.cc:4677
+#: ../src/qalc.cc:1341 ../src/qalc.cc:3866 ../src/qalc.cc:4665
 msgid "significant"
 msgstr "მნიშვნელოვანი"
 
 #. interval display mode
-#: ../src/qalc.cc:1343 ../src/qalc.cc:3879 ../src/qalc.cc:4677
+#: ../src/qalc.cc:1343 ../src/qalc.cc:3867 ../src/qalc.cc:4665
 msgid "interval"
 msgstr "ინტერვალი"
 
-#: ../src/qalc.cc:1344 ../src/qalc.cc:3880 ../src/qalc.cc:4677
+#: ../src/qalc.cc:1344 ../src/qalc.cc:3868 ../src/qalc.cc:4665
 msgid "plusminus"
 msgstr "პლუს-მინუს"
 
 #. interval display mode: midpoint number in range
-#: ../src/qalc.cc:1346 ../src/qalc.cc:3881 ../src/qalc.cc:4677
+#: ../src/qalc.cc:1346 ../src/qalc.cc:3869 ../src/qalc.cc:4665
 msgid "midpoint"
 msgstr "შუა წერტილი"
 
 #. interval display mode: upper number in range
-#: ../src/qalc.cc:1348 ../src/qalc.cc:3883 ../src/qalc.cc:4677
+#: ../src/qalc.cc:1348 ../src/qalc.cc:3871 ../src/qalc.cc:4665
 msgid "upper"
 msgstr "ზემოთ"
 
 #. interval display mode: lower number in range
-#: ../src/qalc.cc:1350 ../src/qalc.cc:3882 ../src/qalc.cc:4677
+#: ../src/qalc.cc:1350 ../src/qalc.cc:3870 ../src/qalc.cc:4665
 msgid "lower"
 msgstr "ქვემოთ"
 
-#: ../src/qalc.cc:1375 ../src/qalc.cc:3764 ../src/qalc.cc:4614
+#: ../src/qalc.cc:1375 ../src/qalc.cc:3752 ../src/qalc.cc:4602
 msgid "variable units"
 msgstr "ცვლადის საზომი ერთეულები"
 
-#: ../src/qalc.cc:1382 ../src/qalc.cc:3890 ../src/qalc.cc:4680
+#: ../src/qalc.cc:1382 ../src/qalc.cc:3878 ../src/qalc.cc:4668
 msgid "max decimals"
 msgstr "მაქს. ათწილადები"
 
-#: ../src/qalc.cc:1394 ../src/qalc.cc:3897 ../src/qalc.cc:4687
+#: ../src/qalc.cc:1394 ../src/qalc.cc:3885 ../src/qalc.cc:4675
 msgid "min decimals"
 msgstr "მინ. ათწილადები"
 
-#: ../src/qalc.cc:1407 ../src/qalc.cc:3857 ../src/qalc.cc:4674
+#: ../src/qalc.cc:1407 ../src/qalc.cc:3845 ../src/qalc.cc:4662
 msgid "fractions"
 msgstr "ნაწილები"
 
@@ -1041,88 +1041,88 @@ msgid "combined"
 msgstr "შერეულები"
 
 #. fraction mode
-#: ../src/qalc.cc:1415 ../src/qalc.cc:1635 ../src/qalc.cc:3867
-#: ../src/qalc.cc:4674
+#: ../src/qalc.cc:1415 ../src/qalc.cc:1635 ../src/qalc.cc:3855
+#: ../src/qalc.cc:4662
 msgid "mixed"
 msgstr "შერეული"
 
 #. fraction mode
-#: ../src/qalc.cc:1417 ../src/qalc.cc:3866 ../src/qalc.cc:4674
+#: ../src/qalc.cc:1417 ../src/qalc.cc:3854 ../src/qalc.cc:4662
 msgid "long"
 msgstr "გრძელი"
 
-#: ../src/qalc.cc:1435 ../src/qalc.cc:3837 ../src/qalc.cc:4657
+#: ../src/qalc.cc:1435 ../src/qalc.cc:3825 ../src/qalc.cc:4645
 msgid "complex form"
 msgstr "კომპლექსური ფორმა"
 
 #. complex form
-#: ../src/qalc.cc:1438 ../src/qalc.cc:3446 ../src/qalc.cc:3839
-#: ../src/qalc.cc:4657 ../src/qalc.cc:6298
-#: ../libqalculate/Calculator-calculate.cc:1709
+#: ../src/qalc.cc:1438 ../src/qalc.cc:3434 ../src/qalc.cc:3827
+#: ../src/qalc.cc:4645 ../src/qalc.cc:6280
+#: ../libqalculate/Calculator-calculate.cc:1716
 msgid "rectangular"
 msgstr "მართკუთხედი"
 
-#: ../src/qalc.cc:1438 ../src/qalc.cc:3446 ../src/qalc.cc:6298
-#: ../libqalculate/Calculator-calculate.cc:1709
+#: ../src/qalc.cc:1438 ../src/qalc.cc:3434 ../src/qalc.cc:6280
+#: ../libqalculate/Calculator-calculate.cc:1716
 msgid "cartesian"
 msgstr "დეკარტის"
 
 #. complex form
-#: ../src/qalc.cc:1440 ../src/qalc.cc:3458 ../src/qalc.cc:3840
-#: ../src/qalc.cc:4657 ../src/qalc.cc:6301
-#: ../libqalculate/Calculator-calculate.cc:1711
+#: ../src/qalc.cc:1440 ../src/qalc.cc:3446 ../src/qalc.cc:3828
+#: ../src/qalc.cc:4645 ../src/qalc.cc:6283
+#: ../libqalculate/Calculator-calculate.cc:1718
 msgid "exponential"
 msgstr "ექსპოტენციალური"
 
 #. complex form
-#: ../src/qalc.cc:1442 ../src/qalc.cc:3470 ../src/qalc.cc:3841
-#: ../src/qalc.cc:4657 ../src/qalc.cc:6304
-#: ../libqalculate/Calculator-calculate.cc:1713
+#: ../src/qalc.cc:1442 ../src/qalc.cc:3458 ../src/qalc.cc:3829
+#: ../src/qalc.cc:4645 ../src/qalc.cc:6286
+#: ../libqalculate/Calculator-calculate.cc:1720
 msgid "polar"
 msgstr "პოლარული"
 
 #. complex form
-#: ../src/qalc.cc:1444 ../src/qalc.cc:3482 ../src/qalc.cc:3842
-#: ../src/qalc.cc:4657 ../src/qalc.cc:6307
-#: ../libqalculate/Calculator-calculate.cc:1715
+#: ../src/qalc.cc:1444 ../src/qalc.cc:3470 ../src/qalc.cc:3830
+#: ../src/qalc.cc:4645 ../src/qalc.cc:6289
+#: ../libqalculate/Calculator-calculate.cc:1722
 #: ../libqalculate/Function.cc:2374
 msgid "angle"
 msgstr "კუთხე"
 
-#: ../src/qalc.cc:1444 ../src/qalc.cc:3482 ../src/qalc.cc:6307
-#: ../libqalculate/Calculator-calculate.cc:1715
+#: ../src/qalc.cc:1444 ../src/qalc.cc:3470 ../src/qalc.cc:6289
+#: ../libqalculate/Calculator-calculate.cc:1722
 msgid "phasor"
 msgstr "ფაზური"
 
-#: ../src/qalc.cc:1458 ../src/qalc.cc:3968 ../src/qalc.cc:4758
+#: ../src/qalc.cc:1458 ../src/qalc.cc:3956 ../src/qalc.cc:4746
 msgid "read precision"
 msgstr "კითხვის სიზუსტე"
 
-#: ../src/qalc.cc:1461 ../src/qalc.cc:3971 ../src/qalc.cc:4758
+#: ../src/qalc.cc:1461 ../src/qalc.cc:3959 ../src/qalc.cc:4746
 msgid "always"
 msgstr "ყოველთვის"
 
-#: ../src/qalc.cc:1462 ../src/qalc.cc:3972 ../src/qalc.cc:4758
+#: ../src/qalc.cc:1462 ../src/qalc.cc:3960 ../src/qalc.cc:4746
 msgid "when decimals"
 msgstr "როცა ათწილადები"
 
-#: ../src/qalc.cc:1473 ../src/qalc.cc:4025 ../src/qalc.cc:4802
+#: ../src/qalc.cc:1473 ../src/qalc.cc:4013 ../src/qalc.cc:4790
 msgid "sigint action"
 msgstr "sigint ქმედება"
 
-#: ../src/qalc.cc:1475 ../src/qalc.cc:4027 ../src/qalc.cc:4068
-#: ../src/qalc.cc:4802 ../src/qalc.cc:5006 ../src/qalc.cc:5049
-#: ../src/qalc.cc:5057
+#: ../src/qalc.cc:1475 ../src/qalc.cc:4015 ../src/qalc.cc:4056
+#: ../src/qalc.cc:4790 ../src/qalc.cc:4994 ../src/qalc.cc:5037
+#: ../src/qalc.cc:5045
 msgid "exit"
 msgstr "გასვლა"
 
 #. kill process
-#: ../src/qalc.cc:1477 ../src/qalc.cc:4029 ../src/qalc.cc:4802
+#: ../src/qalc.cc:1477 ../src/qalc.cc:4017 ../src/qalc.cc:4790
 msgid "kill"
 msgstr "მოკვლა"
 
 #. interupt process
-#: ../src/qalc.cc:1479 ../src/qalc.cc:4028 ../src/qalc.cc:4802
+#: ../src/qalc.cc:1479 ../src/qalc.cc:4016 ../src/qalc.cc:4790
 msgid "interrupt"
 msgstr "წყვეტა"
 
@@ -1131,33 +1131,33 @@ msgid "Unrecognized option."
 msgstr "უცნობი პარამეტრი."
 
 #. The qalc command "set" as in "set precision 10". The original text string for commands is kept in addition to the translation.
-#: ../src/qalc.cc:1605 ../src/qalc.cc:1630 ../src/qalc.cc:2760
-#: ../src/qalc.cc:4065 ../src/qalc.cc:4538 ../src/qalc.cc:5064
+#: ../src/qalc.cc:1605 ../src/qalc.cc:1630 ../src/qalc.cc:2748
+#: ../src/qalc.cc:4053 ../src/qalc.cc:4526 ../src/qalc.cc:5052
 msgid "set"
 msgstr "set"
 
-#: ../src/qalc.cc:1630 ../src/qalc.cc:3563 ../src/qalc.cc:6287
-#: ../libqalculate/Calculator-calculate.cc:1720
+#: ../src/qalc.cc:1630 ../src/qalc.cc:3551 ../src/qalc.cc:6269
+#: ../libqalculate/Calculator-calculate.cc:1727
 msgid "fraction"
 msgstr "ნაწილი"
 
-#: ../src/qalc.cc:1671 ../src/qalc.cc:1953 ../src/qalc.cc:2766
+#: ../src/qalc.cc:1671 ../src/qalc.cc:1953 ../src/qalc.cc:2754
 msgid "Name"
 msgstr "სახელი"
 
-#: ../src/qalc.cc:1687 ../src/qalc.cc:2838 ../src/qalc.cc:2905
-#: ../src/qalc.cc:2968
+#: ../src/qalc.cc:1687 ../src/qalc.cc:2826 ../src/qalc.cc:2893
+#: ../src/qalc.cc:2956
 msgid "Illegal name."
 msgstr "არასწორი სახელი."
 
-#: ../src/qalc.cc:1690 ../src/qalc.cc:1692 ../src/qalc.cc:2841
-#: ../src/qalc.cc:2843 ../src/qalc.cc:2908 ../src/qalc.cc:2910
-#: ../src/qalc.cc:2971 ../src/qalc.cc:2973
+#: ../src/qalc.cc:1690 ../src/qalc.cc:1692 ../src/qalc.cc:2829
+#: ../src/qalc.cc:2831 ../src/qalc.cc:2896 ../src/qalc.cc:2898
+#: ../src/qalc.cc:2959 ../src/qalc.cc:2961
 #, c-format
 msgid "Illegal name. Save as %s instead (default: no)?"
 msgstr "არასწორი სახელი. შევინახო, როგორც %s (ნაგულისხმები:არა)?"
 
-#: ../src/qalc.cc:1702 ../src/qalc.cc:2853 ../src/qalc.cc:2920
+#: ../src/qalc.cc:1702 ../src/qalc.cc:2841 ../src/qalc.cc:2908
 msgid ""
 "A unit or variable with the same name already exists.\n"
 "Do you want to overwrite it (default: no)?"
@@ -1181,47 +1181,47 @@ msgstr "თვე"
 msgid "Year"
 msgstr "წელი"
 
-#: ../src/qalc.cc:1802 ../libqalculate/Calculator-calculate.cc:1909
+#: ../src/qalc.cc:1802 ../libqalculate/Calculator-calculate.cc:1916
 msgid "failed"
 msgstr "შეცდომით"
 
-#: ../src/qalc.cc:1803 ../libqalculate/Calculator-calculate.cc:1910
+#: ../src/qalc.cc:1803 ../libqalculate/Calculator-calculate.cc:1917
 msgid "Gregorian:"
 msgstr "გრეგორიანული:"
 
-#: ../src/qalc.cc:1804 ../libqalculate/Calculator-calculate.cc:1911
+#: ../src/qalc.cc:1804 ../libqalculate/Calculator-calculate.cc:1918
 msgid "Hebrew:"
 msgstr "ებრაული:"
 
-#: ../src/qalc.cc:1805 ../libqalculate/Calculator-calculate.cc:1912
+#: ../src/qalc.cc:1805 ../libqalculate/Calculator-calculate.cc:1919
 msgid "Islamic:"
 msgstr "ისლამური:"
 
-#: ../src/qalc.cc:1806 ../libqalculate/Calculator-calculate.cc:1913
+#: ../src/qalc.cc:1806 ../libqalculate/Calculator-calculate.cc:1920
 msgid "Persian:"
 msgstr "სპარსული:"
 
-#: ../src/qalc.cc:1807 ../libqalculate/Calculator-calculate.cc:1914
+#: ../src/qalc.cc:1807 ../libqalculate/Calculator-calculate.cc:1921
 msgid "Indian national:"
 msgstr "ინდური ნაციონალური:"
 
-#: ../src/qalc.cc:1808 ../libqalculate/Calculator-calculate.cc:1915
+#: ../src/qalc.cc:1808 ../libqalculate/Calculator-calculate.cc:1922
 msgid "Chinese:"
 msgstr "ჩინური:"
 
-#: ../src/qalc.cc:1813 ../libqalculate/Calculator-calculate.cc:1919
+#: ../src/qalc.cc:1813 ../libqalculate/Calculator-calculate.cc:1926
 msgid "Julian:"
 msgstr "იულიუსისეული:"
 
-#: ../src/qalc.cc:1814 ../libqalculate/Calculator-calculate.cc:1920
+#: ../src/qalc.cc:1814 ../libqalculate/Calculator-calculate.cc:1927
 msgid "Revised julian:"
 msgstr "იულიუსისეული ჩასწორებული:"
 
-#: ../src/qalc.cc:1815 ../libqalculate/Calculator-calculate.cc:1921
+#: ../src/qalc.cc:1815 ../libqalculate/Calculator-calculate.cc:1928
 msgid "Coptic:"
 msgstr "კოპტური:"
 
-#: ../src/qalc.cc:1816 ../libqalculate/Calculator-calculate.cc:1922
+#: ../src/qalc.cc:1816 ../libqalculate/Calculator-calculate.cc:1929
 msgid "Ethiopian:"
 msgstr "ეთიოპიური:"
 
@@ -1242,8 +1242,8 @@ msgstr ""
 msgid "Variables:"
 msgstr "ცვლადები:"
 
-#: ../src/qalc.cc:1954 ../src/qalc.cc:4450 ../src/qalc.cc:4457
-#: ../src/qalc.cc:4511
+#: ../src/qalc.cc:1954 ../src/qalc.cc:4438 ../src/qalc.cc:4445
+#: ../src/qalc.cc:4499
 msgid "Value"
 msgstr "მნიშვნელობა"
 
@@ -1268,7 +1268,7 @@ msgid "where options are:"
 msgstr "სადაც პარამეტრებია:"
 
 #. number base
-#: ../src/qalc.cc:2225 ../src/qalc.cc:2263 ../src/qalc.cc:4045
+#: ../src/qalc.cc:2225 ../src/qalc.cc:2263 ../src/qalc.cc:4033
 msgid "BASE"
 msgstr "ფუძე"
 
@@ -1369,11 +1369,11 @@ msgstr ""
 "პროგრამირების რეჟიმში გაშვება (იგივე, რაც -b \"BASE BASE\" -s \"xor^, ფუძის "
 "გადაყვანით)"
 
-#: ../src/qalc.cc:2265 ../src/qalc.cc:4065
+#: ../src/qalc.cc:2265 ../src/qalc.cc:4053
 msgid "OPTION"
 msgstr "ვარიანტი"
 
-#: ../src/qalc.cc:2265 ../src/qalc.cc:4065
+#: ../src/qalc.cc:2265 ../src/qalc.cc:4053
 msgid "VALUE"
 msgstr "მნიშვნელობა"
 
@@ -1406,7 +1406,7 @@ msgid "Type help in interactive mode for information about available commands."
 msgstr ""
 "ინტერაქტიურ რეჟიმში, ბრძანებების სიის გამოსატანად აკრიფეთ ბრძანება help ."
 
-#: ../src/qalc.cc:2277 ../src/qalc.cc:4084
+#: ../src/qalc.cc:2277 ../src/qalc.cc:4072
 msgid ""
 "For more information about mathematical expression and different options, "
 "and a complete list of functions, variables, and units, see the relevant "
@@ -1418,7 +1418,7 @@ msgstr ""
 "ინტერფეისის სახელმძღვანელოს შესაბამისი თავები (ხელმისაწვდომია მისამართზე "
 "https://qalculate.github.io/manual/index.html)."
 
-#: ../src/qalc.cc:2279 ../src/qalc.cc:4086
+#: ../src/qalc.cc:2279 ../src/qalc.cc:4074
 msgid ""
 "For more information about mathematical expression and different options, "
 "please consult the man page, or the relevant sections in the manual of the "
@@ -1448,53 +1448,48 @@ msgstr "გლობალური აღწერების ჩატვი�
 msgid "Could not open \"%s\".\n"
 msgstr "%s-ის გახსნის შეცდომა.\n"
 
-#: ../src/qalc.cc:2619 ../src/qalc.cc:2690 ../src/qalc.cc:5077
-#, c-format
-msgid "Illegal character, '%c', in expression."
-msgstr "გამოსახულებაში \"%c\" არასწორი სიმბოლო."
-
 #. qalc command
-#: ../src/qalc.cc:2764 ../src/qalc.cc:4062 ../src/qalc.cc:4834
-#: ../src/qalc.cc:5064
+#: ../src/qalc.cc:2752 ../src/qalc.cc:4050 ../src/qalc.cc:4822
+#: ../src/qalc.cc:5052
 msgid "save"
 msgstr "save"
 
-#: ../src/qalc.cc:2764 ../src/qalc.cc:4062 ../src/qalc.cc:4834
-#: ../src/qalc.cc:5064
+#: ../src/qalc.cc:2752 ../src/qalc.cc:4050 ../src/qalc.cc:4822
+#: ../src/qalc.cc:5052
 msgid "store"
 msgstr "დამახსოვრება"
 
 #. qalc command
-#: ../src/qalc.cc:2784 ../src/qalc.cc:3675 ../src/qalc.cc:4060
-#: ../src/qalc.cc:4868 ../src/qalc.cc:5057
+#: ../src/qalc.cc:2772 ../src/qalc.cc:3663 ../src/qalc.cc:4048
+#: ../src/qalc.cc:4856 ../src/qalc.cc:5045
 msgid "mode"
 msgstr "mode"
 
-#: ../src/qalc.cc:2786
+#: ../src/qalc.cc:2774
 msgid "mode saved"
 msgstr "რეჟიმი შენახულია"
 
-#: ../src/qalc.cc:2788
+#: ../src/qalc.cc:2776
 msgid "definitions"
 msgstr "აღწერები"
 
-#: ../src/qalc.cc:2790
+#: ../src/qalc.cc:2778
 msgid "definitions saved"
 msgstr "აღწერები შენახულია"
 
 #. qalc command
-#: ../src/qalc.cc:2876 ../src/qalc.cc:4067 ../src/qalc.cc:4849
-#: ../src/qalc.cc:5064 ../libqalculate/Function.cc:2335
+#: ../src/qalc.cc:2864 ../src/qalc.cc:4055 ../src/qalc.cc:4837
+#: ../src/qalc.cc:5052 ../libqalculate/Function.cc:2335
 msgid "variable"
 msgstr "variable"
 
 #. qalc command
-#: ../src/qalc.cc:2939 ../src/qalc.cc:4057 ../src/qalc.cc:4855
-#: ../src/qalc.cc:5064 ../libqalculate/Function.cc:2307
+#: ../src/qalc.cc:2927 ../src/qalc.cc:4045 ../src/qalc.cc:4843
+#: ../src/qalc.cc:5052 ../libqalculate/Function.cc:2307
 msgid "function"
 msgstr "function"
 
-#: ../src/qalc.cc:2981
+#: ../src/qalc.cc:2969
 msgid ""
 "A function with the same name already exists.\n"
 "Do you want to overwrite it (default: no)?"
@@ -1503,298 +1498,298 @@ msgstr ""
 "გნებავთ გადააწეროთ (ნაგულისხმები: არა) ?"
 
 #. qalc command
-#: ../src/qalc.cc:3008 ../src/qalc.cc:4048 ../src/qalc.cc:4862
-#: ../src/qalc.cc:5064
+#: ../src/qalc.cc:2996 ../src/qalc.cc:4036 ../src/qalc.cc:4850
+#: ../src/qalc.cc:5052
 msgid "delete"
 msgstr "delete"
 
-#: ../src/qalc.cc:3021
+#: ../src/qalc.cc:3009
 msgid "No user-defined variable or function with the specified name exist."
 msgstr ""
 "მითითებული სახელის მქონე მომხმარებლის მიერ აღწერილი ცვლადი ან ფუნქცია არ "
 "არსებობს."
 
 #. qalc command
-#: ../src/qalc.cc:3025 ../src/qalc.cc:4044 ../src/qalc.cc:4805
-#: ../src/qalc.cc:5064
+#: ../src/qalc.cc:3013 ../src/qalc.cc:4032 ../src/qalc.cc:4793
+#: ../src/qalc.cc:5052
 msgid "assume"
 msgstr "assume"
 
-#: ../src/qalc.cc:3035
+#: ../src/qalc.cc:3023
 msgid "syntax"
 msgstr "სინტაქსი"
 
 #. qalc command
-#: ../src/qalc.cc:3043 ../src/qalc.cc:3090 ../src/qalc.cc:4071
-#: ../src/qalc.cc:4907 ../src/qalc.cc:5057
+#: ../src/qalc.cc:3031 ../src/qalc.cc:3078 ../src/qalc.cc:4059
+#: ../src/qalc.cc:4895 ../src/qalc.cc:5045
 msgid "stack"
 msgstr "stack"
 
 #. qalc command
-#: ../src/qalc.cc:3068 ../src/qalc.cc:4052 ../src/qalc.cc:4887
-#: ../src/qalc.cc:5057
+#: ../src/qalc.cc:3056 ../src/qalc.cc:4040 ../src/qalc.cc:4875
+#: ../src/qalc.cc:5045
 msgid "exrates"
 msgstr "exrates"
 
-#: ../src/qalc.cc:3092 ../src/qalc.cc:3113 ../src/qalc.cc:3122
-#: ../src/qalc.cc:3155 ../src/qalc.cc:3184 ../src/qalc.cc:3193
-#: ../src/qalc.cc:3210 ../src/qalc.cc:3217 ../src/qalc.cc:3235
-#: ../src/qalc.cc:3242
+#: ../src/qalc.cc:3080 ../src/qalc.cc:3101 ../src/qalc.cc:3110
+#: ../src/qalc.cc:3143 ../src/qalc.cc:3172 ../src/qalc.cc:3181
+#: ../src/qalc.cc:3198 ../src/qalc.cc:3205 ../src/qalc.cc:3223
+#: ../src/qalc.cc:3230
 msgid "The RPN stack is empty."
 msgstr "RPN-ის სტეკი ცარიელია."
 
 #. qalc command
-#: ../src/qalc.cc:3111 ../src/qalc.cc:3120 ../src/qalc.cc:4077
-#: ../src/qalc.cc:4911
+#: ../src/qalc.cc:3099 ../src/qalc.cc:3108 ../src/qalc.cc:4065
+#: ../src/qalc.cc:4899
 msgid "swap"
 msgstr "swap"
 
-#: ../src/qalc.cc:3115 ../src/qalc.cc:3124 ../src/qalc.cc:3157
-#: ../src/qalc.cc:3186 ../src/qalc.cc:3195
+#: ../src/qalc.cc:3103 ../src/qalc.cc:3112 ../src/qalc.cc:3145
+#: ../src/qalc.cc:3174 ../src/qalc.cc:3183
 msgid "The RPN stack only contains one value."
 msgstr "RPN-ის სტეკი ერთ მნიშვნელობას შეიცავს."
 
-#: ../src/qalc.cc:3143 ../src/qalc.cc:3176 ../src/qalc.cc:3224
-#: ../src/qalc.cc:3248
+#: ../src/qalc.cc:3131 ../src/qalc.cc:3164 ../src/qalc.cc:3212
+#: ../src/qalc.cc:3236
 msgid "The specified RPN stack index does not exist."
 msgstr "RPN-ის მითითებული სტეკის ინდექსი არ არსებობს."
 
 #. qalc command
-#: ../src/qalc.cc:3153 ../src/qalc.cc:4074 ../src/qalc.cc:4933
-#: ../src/qalc.cc:5064
+#: ../src/qalc.cc:3141 ../src/qalc.cc:4062 ../src/qalc.cc:4921
+#: ../src/qalc.cc:5052
 msgid "move"
 msgstr "move"
 
 #. qalc command
-#: ../src/qalc.cc:3182 ../src/qalc.cc:3191 ../src/qalc.cc:4076
-#: ../src/qalc.cc:4929
+#: ../src/qalc.cc:3170 ../src/qalc.cc:3179 ../src/qalc.cc:4064
+#: ../src/qalc.cc:4917
 msgid "rotate"
 msgstr "rotate"
 
-#: ../src/qalc.cc:3199
+#: ../src/qalc.cc:3187
 msgid "up"
 msgstr "მაღლა"
 
-#: ../src/qalc.cc:3201
+#: ../src/qalc.cc:3189
 msgid "down"
 msgstr "დაბლა"
 
 #. qalc command
-#: ../src/qalc.cc:3208 ../src/qalc.cc:3215 ../src/qalc.cc:4073
-#: ../src/qalc.cc:4921
+#: ../src/qalc.cc:3196 ../src/qalc.cc:3203 ../src/qalc.cc:4061
+#: ../src/qalc.cc:4909
 msgid "copy"
 msgstr "copy"
 
 #. qalc command
-#: ../src/qalc.cc:3230 ../src/qalc.cc:4072 ../src/qalc.cc:4897
+#: ../src/qalc.cc:3218 ../src/qalc.cc:4060 ../src/qalc.cc:4885
 msgid "clear stack"
 msgstr "clear stack"
 
 #. qalc command
-#: ../src/qalc.cc:3233 ../src/qalc.cc:3240 ../src/qalc.cc:4075
-#: ../src/qalc.cc:4901
+#: ../src/qalc.cc:3221 ../src/qalc.cc:3228 ../src/qalc.cc:4063
+#: ../src/qalc.cc:4889
 msgid "pop"
 msgstr "pop"
 
 #. qalc command
-#: ../src/qalc.cc:3268 ../src/qalc.cc:3269 ../src/qalc.cc:4066
-#: ../src/qalc.cc:4953 ../src/qalc.cc:5064
+#: ../src/qalc.cc:3256 ../src/qalc.cc:3257 ../src/qalc.cc:4054
+#: ../src/qalc.cc:4941 ../src/qalc.cc:5052
 msgid "convert"
 msgstr "convert"
 
 #. "to"-operator
-#: ../src/qalc.cc:3268 ../src/qalc.cc:3269 ../src/qalc.cc:4066
-#: ../src/qalc.cc:4953 ../src/qalc.cc:5002 ../src/qalc.cc:5064
-#: ../libqalculate/Calculator-calculate.cc:2182
-#: ../libqalculate/Calculator-calculate.cc:2184
-#: ../libqalculate/Calculator-calculate.cc:2212
-#: ../libqalculate/Calculator-calculate.cc:2214
-#: ../libqalculate/Calculator-calculate.cc:2243
-#: ../libqalculate/Calculator-calculate.cc:2247
+#: ../src/qalc.cc:3256 ../src/qalc.cc:3257 ../src/qalc.cc:4054
+#: ../src/qalc.cc:4941 ../src/qalc.cc:4990 ../src/qalc.cc:5052
+#: ../libqalculate/Calculator-calculate.cc:2189
+#: ../libqalculate/Calculator-calculate.cc:2191
+#: ../libqalculate/Calculator-calculate.cc:2219
+#: ../libqalculate/Calculator-calculate.cc:2221
+#: ../libqalculate/Calculator-calculate.cc:2250
+#: ../libqalculate/Calculator-calculate.cc:2254
 #: ../libqalculate/Calculator.cc:290 ../libqalculate/Calculator.cc:523
 #: ../libqalculate/Calculator.cc:1396 ../libqalculate/Calculator.cc:1397
 msgid "to"
 msgstr "სადამდე"
 
-#: ../src/qalc.cc:3433 ../src/qalc.cc:6280
-#: ../libqalculate/Calculator-calculate.cc:1702
+#: ../src/qalc.cc:3421 ../src/qalc.cc:6262
+#: ../libqalculate/Calculator-calculate.cc:1709
 msgid "Time zone parsing failed."
 msgstr "დროის სარტყელის დამუშავების შეცდომა."
 
 #. number bases
-#: ../src/qalc.cc:3507 ../src/qalc.cc:6294
-#: ../libqalculate/Calculator-calculate.cc:1727
+#: ../src/qalc.cc:3495 ../src/qalc.cc:6276
+#: ../libqalculate/Calculator-calculate.cc:1734
 msgid "bases"
 msgstr "ფუძეები"
 
-#: ../src/qalc.cc:3553 ../src/qalc.cc:6296
-#: ../libqalculate/Calculator-calculate.cc:1729
+#: ../src/qalc.cc:3541 ../src/qalc.cc:6278
+#: ../libqalculate/Calculator-calculate.cc:1736
 msgid "calendars"
 msgstr "კალენდრები"
 
-#: ../src/qalc.cc:3571 ../src/qalc.cc:6290
-#: ../libqalculate/Calculator-calculate.cc:1722
+#: ../src/qalc.cc:3559 ../src/qalc.cc:6272
+#: ../libqalculate/Calculator-calculate.cc:1729
 msgid "factors"
 msgstr "factors"
 
 #. qalc command
-#: ../src/qalc.cc:3573 ../src/qalc.cc:3669 ../src/qalc.cc:4061
-#: ../src/qalc.cc:4530 ../src/qalc.cc:6292
-#: ../libqalculate/Calculator-calculate.cc:1725
+#: ../src/qalc.cc:3561 ../src/qalc.cc:3657 ../src/qalc.cc:4049
+#: ../src/qalc.cc:4518 ../src/qalc.cc:6274
+#: ../libqalculate/Calculator-calculate.cc:1732
 msgid "partial fraction"
 msgstr "partial fraction"
 
 #. qalc command
-#: ../src/qalc.cc:3666 ../src/qalc.cc:4055 ../src/qalc.cc:4526
-#: ../src/qalc.cc:5057
+#: ../src/qalc.cc:3654 ../src/qalc.cc:4043 ../src/qalc.cc:4514
+#: ../src/qalc.cc:5045
 msgid "factor"
 msgstr "factor"
 
-#: ../src/qalc.cc:3680 ../src/qalc.cc:4557
+#: ../src/qalc.cc:3668 ../src/qalc.cc:4545
 msgid "Algebraic Mode"
 msgstr "ალგებრული რეჟიმი"
 
-#: ../src/qalc.cc:3718 ../src/qalc.cc:4591
+#: ../src/qalc.cc:3706 ../src/qalc.cc:4579
 msgid "Calculation"
 msgstr "გამოთვლა"
 
-#: ../src/qalc.cc:3749
+#: ../src/qalc.cc:3737
 msgid "simplified"
 msgstr "გამარტივებული"
 
-#: ../src/qalc.cc:3754 ../src/qalc.cc:4604
+#: ../src/qalc.cc:3742 ../src/qalc.cc:4592
 msgid "Enabled Objects"
 msgstr "ჩართული ობიექტები"
 
-#: ../src/qalc.cc:3766 ../src/qalc.cc:4616
+#: ../src/qalc.cc:3754 ../src/qalc.cc:4604
 msgid "Generic Display Options"
 msgstr "ჩვენების ზოგადი პარამეტრები"
 
-#: ../src/qalc.cc:3799 ../src/qalc.cc:4630
+#: ../src/qalc.cc:3787 ../src/qalc.cc:4618
 msgid "Numerical Display"
 msgstr "რიცხვების გამოტანა"
 
-#: ../src/qalc.cc:3928 ../src/qalc.cc:4715
+#: ../src/qalc.cc:3916 ../src/qalc.cc:4703
 msgid "Parsing"
 msgstr "გრამატიკული დამუშავება"
 
-#: ../src/qalc.cc:3977 ../src/qalc.cc:4760
+#: ../src/qalc.cc:3965 ../src/qalc.cc:4748
 msgid "Units"
 msgstr "საზომი ერთეულები"
 
-#: ../src/qalc.cc:4015 ../src/qalc.cc:4794
+#: ../src/qalc.cc:4003 ../src/qalc.cc:4782
 msgid "Other"
 msgstr "სხვა"
 
 #. qalc command
-#: ../src/qalc.cc:4035 ../src/qalc.cc:4522
+#: ../src/qalc.cc:4023 ../src/qalc.cc:4510
 msgid "help"
 msgstr "help"
 
-#: ../src/qalc.cc:4038
+#: ../src/qalc.cc:4026
 msgid "Enter a mathematical expression or a command and press enter."
 msgstr "შეიყვანეთ მათემატიკური გამოსახულება ან ბრძანება და Enter-ს დააწექით."
 
-#: ../src/qalc.cc:4039
+#: ../src/qalc.cc:4027
 msgid "Complete functions, units and variables with the tabulator key."
 msgstr ""
 "ტაბულაციის ღილაკით შეგიძლიათ ფუნქციების, ერთეულებისა და ცვლადების სახელები "
 "ავტომატურად დაასრულოთ."
 
-#: ../src/qalc.cc:4041
+#: ../src/qalc.cc:4029
 msgid "Available commands are:"
 msgstr "ხელმისაწვდომი ბრძანებებია:"
 
-#: ../src/qalc.cc:4044
+#: ../src/qalc.cc:4032
 msgid "ASSUMPTIONS"
 msgstr "დაშვებები"
 
 #. qalc command
-#: ../src/qalc.cc:4046 ../src/qalc.cc:4841 ../src/qalc.cc:5042
+#: ../src/qalc.cc:4034 ../src/qalc.cc:4829 ../src/qalc.cc:5030
 msgid "clear"
 msgstr "clear"
 
-#: ../src/qalc.cc:4048 ../src/qalc.cc:4056 ../src/qalc.cc:4057
-#: ../src/qalc.cc:4058 ../src/qalc.cc:4062 ../src/qalc.cc:4067
+#: ../src/qalc.cc:4036 ../src/qalc.cc:4044 ../src/qalc.cc:4045
+#: ../src/qalc.cc:4046 ../src/qalc.cc:4050 ../src/qalc.cc:4055
 msgid "NAME"
 msgstr "სახელი"
 
-#: ../src/qalc.cc:4056 ../src/qalc.cc:4092 ../src/qalc.cc:4872
-#: ../src/qalc.cc:5064
+#: ../src/qalc.cc:4044 ../src/qalc.cc:4080 ../src/qalc.cc:4860
+#: ../src/qalc.cc:5052
 msgid "find"
 msgstr "ძებნა"
 
 #. qalc command
-#: ../src/qalc.cc:4056 ../src/qalc.cc:4090 ../src/qalc.cc:4092
-#: ../src/qalc.cc:4872
+#: ../src/qalc.cc:4044 ../src/qalc.cc:4078 ../src/qalc.cc:4080
+#: ../src/qalc.cc:4860
 msgid "list"
 msgstr "list"
 
-#: ../src/qalc.cc:4057 ../src/qalc.cc:4067
+#: ../src/qalc.cc:4045 ../src/qalc.cc:4055
 msgid "EXPRESSION"
 msgstr "გამოსახულება"
 
 #. qalc command
-#: ../src/qalc.cc:4058 ../src/qalc.cc:4120 ../src/qalc.cc:4881
-#: ../src/qalc.cc:5064 ../libqalculate/Calculator-definitions.cc:3035
+#: ../src/qalc.cc:4046 ../src/qalc.cc:4108 ../src/qalc.cc:4869
+#: ../src/qalc.cc:5052 ../libqalculate/Calculator-definitions.cc:3035
 #: ../libqalculate/DataSet.cc:372 ../libqalculate/DataSet.cc:399
 #: ../libqalculate/DataSet.cc:1068
 msgid "info"
 msgstr "info"
 
-#: ../src/qalc.cc:4059
+#: ../src/qalc.cc:4047
 msgid "MC/MS/M+/M- (memory operations)"
 msgstr "MC/MS/M+/M- (მეხსიერების ოპერაციები)"
 
-#: ../src/qalc.cc:4062
+#: ../src/qalc.cc:4050
 msgid "CATEGORY"
 msgstr "კატეგორია"
 
-#: ../src/qalc.cc:4062
+#: ../src/qalc.cc:4050
 msgid "TITLE"
 msgstr "სათაური"
 
-#: ../src/qalc.cc:4066
+#: ../src/qalc.cc:4054
 msgid "UNIT or \"TO\" COMMAND"
 msgstr "UNIT ან TO ბრძანება"
 
 #. qalc command
-#: ../src/qalc.cc:4068 ../src/qalc.cc:5006 ../src/qalc.cc:5049
-#: ../src/qalc.cc:5057
+#: ../src/qalc.cc:4056 ../src/qalc.cc:4994 ../src/qalc.cc:5037
+#: ../src/qalc.cc:5045
 msgid "quit"
 msgstr "quit"
 
-#: ../src/qalc.cc:4069
+#: ../src/qalc.cc:4057
 msgid "Commands for RPN mode:"
 msgstr "RPN რეჟიმის ბრძანებები:"
 
-#: ../src/qalc.cc:4070
+#: ../src/qalc.cc:4058
 msgid "STATE"
 msgstr "STATE"
 
-#: ../src/qalc.cc:4073 ../src/qalc.cc:4075
+#: ../src/qalc.cc:4061 ../src/qalc.cc:4063
 msgid "INDEX"
 msgstr "ინდექსი"
 
-#: ../src/qalc.cc:4074 ../src/qalc.cc:4077
+#: ../src/qalc.cc:4062 ../src/qalc.cc:4065
 msgid "INDEX 1"
 msgstr "INDEX 1"
 
-#: ../src/qalc.cc:4074 ../src/qalc.cc:4077
+#: ../src/qalc.cc:4062 ../src/qalc.cc:4065
 msgid "INDEX 2"
 msgstr "INDEX 2"
 
-#: ../src/qalc.cc:4076
+#: ../src/qalc.cc:4064
 msgid "DIRECTION"
 msgstr "DIRECTION"
 
-#: ../src/qalc.cc:4079
+#: ../src/qalc.cc:4067
 msgid "Type help COMMAND for more information (example: help save)."
 msgstr ""
 "ბრძანებების შესახებ მეტი ინფორმაციის მისაღებად გამოიყენეთ \"help "
 "ბრძანებისსახელი\" (მაგალითად: help save)."
 
-#: ../src/qalc.cc:4080
+#: ../src/qalc.cc:4068
 msgid ""
 "Type info NAME for information about a function, variable, unit, or prefix "
 "(example: info sin)."
@@ -1802,7 +1797,7 @@ msgstr ""
 "ფუნქციის, ცვლადის, ერთეულის ან პრეფიქსის შესახებ ინფორმაციის მისაღებად "
 "შეიყვანეთ \"info სახელი\" (მაგ: info sin)."
 
-#: ../src/qalc.cc:4081
+#: ../src/qalc.cc:4069
 msgid ""
 "When a line begins with '/', the following text is always interpreted as a "
 "command."
@@ -1810,85 +1805,85 @@ msgstr ""
 "როცა სტრიქონი \"/\"-ით იწყება, მის შემდეგ მომდევნო ტექსტი, როგორც ბრძანება, "
 "ყოველთვის ისე მიიღება."
 
-#: ../src/qalc.cc:4105 ../src/qalc.cc:4111
+#: ../src/qalc.cc:4093 ../src/qalc.cc:4099
 msgid "currencies"
 msgstr "ვალუტები"
 
-#: ../src/qalc.cc:4131
+#: ../src/qalc.cc:4119
 msgid "No function, variable, unit, or prefix with specified name exist."
 msgstr ""
 "მითითებული სახელის მქონე მომხმარებლის მიერ აღწერილი ფუნქცია, ცვლადი, ერთეული "
 "და პრეფიქსი არ არსებობს."
 
-#: ../src/qalc.cc:4145
+#: ../src/qalc.cc:4133
 msgid "Function"
 msgstr "ფუნქცია"
 
-#: ../src/qalc.cc:4296
+#: ../src/qalc.cc:4284
 msgid "Expression:"
 msgstr "გამოსახულება:"
 
-#: ../src/qalc.cc:4304 ../src/qalc.cc:4307 ../src/qalc.cc:4485
+#: ../src/qalc.cc:4292 ../src/qalc.cc:4295 ../src/qalc.cc:4473
 msgid "Unit"
 msgstr "საზომი ერთეულები"
 
-#: ../src/qalc.cc:4310 ../src/qalc.cc:4391 ../src/qalc.cc:4501
+#: ../src/qalc.cc:4298 ../src/qalc.cc:4379 ../src/qalc.cc:4489
 msgid "Names"
 msgstr "სახელები"
 
-#: ../src/qalc.cc:4328
+#: ../src/qalc.cc:4316
 msgid "Base Unit"
 msgstr "ძირითადი საზომი ერთეული"
 
-#: ../src/qalc.cc:4340
+#: ../src/qalc.cc:4328
 msgid "Relation"
 msgstr "ფარდობითობა"
 
-#: ../src/qalc.cc:4345 ../src/qalc.cc:4453
+#: ../src/qalc.cc:4333 ../src/qalc.cc:4441
 msgid "Relative uncertainty"
 msgstr "ფარდობითი გაურკვევლობა"
 
-#: ../src/qalc.cc:4346 ../src/qalc.cc:4454
+#: ../src/qalc.cc:4334 ../src/qalc.cc:4442
 msgid "Uncertainty"
 msgstr "გაურკვევლობა"
 
-#: ../src/qalc.cc:4356
+#: ../src/qalc.cc:4344
 msgid "Inverse Relation"
 msgstr "ინვერსიული ფარდობითობა"
 
-#: ../src/qalc.cc:4368
+#: ../src/qalc.cc:4356
 msgid "Base Units"
 msgstr "ძირითადი საზომი ერთეულები"
 
-#: ../src/qalc.cc:4385 ../src/qalc.cc:4388
+#: ../src/qalc.cc:4373 ../src/qalc.cc:4376
 msgid "Variable"
 msgstr "ცვლადი"
 
-#: ../src/qalc.cc:4499
+#: ../src/qalc.cc:4487
 msgid "Prefix"
 msgstr "პრეფიქსი"
 
-#: ../src/qalc.cc:4528
+#: ../src/qalc.cc:4516
 msgid "Factorizes the current result."
 msgstr "მიმდინარე შედეგის მამრავლებად დაშლა."
 
-#: ../src/qalc.cc:4532
+#: ../src/qalc.cc:4520
 msgid "Applies partial fraction decomposition to the current result."
 msgstr "მიმიდინარე შედეგის ნაწილობრივი დაშლა მამრავლებად."
 
-#: ../src/qalc.cc:4536
+#: ../src/qalc.cc:4524
 msgid "Expands the current result."
 msgstr "მიმდინარე შედეგის გაფართოება."
 
-#: ../src/qalc.cc:4552
+#: ../src/qalc.cc:4540
 msgid "Sets the value of an option."
 msgstr "პარამეტრის მნიშვნელობის დაყენება."
 
-#: ../src/qalc.cc:4553
+#: ../src/qalc.cc:4541
 msgid "Example: set base 16."
 msgstr "მაგალითად: set base 16."
 
-#: ../src/qalc.cc:4555
+#: ../src/qalc.cc:4543
 msgid ""
 "Available options and accepted values are (the current value is marked with "
 "'*'):"
@@ -1896,28 +1891,28 @@ msgstr ""
 "ხელმისაწვდომი პარამეტრები და დასაშვები მნიშვნელობებია (მიმდინარე "
 "მნიშვნელობები მონიშნულია \"*\" ნიშნით):"
 
-#: ../src/qalc.cc:4559
+#: ../src/qalc.cc:4547
 msgid "Determines if the expression is factorized or not after calculation."
 msgstr "განსაზღვრავს, გამოთვლის შემდეგ დაიშლება შედეგი მამრავლებად, თუ არა."
 
-#: ../src/qalc.cc:4560
+#: ../src/qalc.cc:4548
 msgid "Determines if unknown values will be assumed non-zero (x/x=1)."
 msgstr "განსაზღვრავს, ჩაითვლება თუ არა უცნობი ცვლადები ნულის არატოლად (x/x=1)."
 
-#: ../src/qalc.cc:4561
+#: ../src/qalc.cc:4549
 msgid "Display a message after a value has been assumed non-zero."
 msgstr ""
 "შეტყობინების გამოტანა მას შემდეგ, რაც ცვლადი ჩაითვლება, როგორც არა-ნულოვანი."
 
-#: ../src/qalc.cc:4564
+#: ../src/qalc.cc:4552
 msgid "Default assumptions for unknown variables."
 msgstr "ნაგულისხმები დაშვებები უცნობი ცვლადებისთვის."
 
-#: ../src/qalc.cc:4593
+#: ../src/qalc.cc:4581
 msgid "Default angle unit for trigonometric functions."
 msgstr "ტრიგონომეტრიული ფუნქციების კუთხის ნაგულისხმები ერთეული."
 
-#: ../src/qalc.cc:4597
+#: ../src/qalc.cc:4585
 msgid ""
 "How approximate variables and calculations are handled. In exact mode "
 "approximate values will not be calculated."
@@ -1925,7 +1920,7 @@ msgstr ""
 "როგორ მუშავდება დაახლოებითი ცვლადები და გამოთვლები. ზუსტ რეჟიმში დაახლოებითი "
 "მნიშვნელობები არ გამოითვლება."
 
-#: ../src/qalc.cc:4598
+#: ../src/qalc.cc:4586
 msgid ""
 "If activated, interval arithmetic determines the final precision of "
 "calculations (avoids wrong results after loss of significance) with "
@@ -1935,7 +1930,7 @@ msgstr ""
 "მნიშვნელოვნების დაკარგვის შემდეგ) დაახლოებითი ფუნქციებითა და ირაციონალური "
 "რიცხვებით, ინტერვალის არითმეტიკა განსაზღვრავს."
 
-#: ../src/qalc.cc:4599
+#: ../src/qalc.cc:4587
 msgid ""
 "Determines the method used for interval calculation / uncertainty "
 "propagation."
@@ -1943,7 +1938,7 @@ msgstr ""
 "ადგენს ინტერვალის გამოთვლის / გაურკვევლობის გავრცელებისთვის გამოყენებულ "
 "მეთოდს."
 
-#: ../src/qalc.cc:4601
+#: ../src/qalc.cc:4589
 msgid ""
 "Specifies the default number of significant digits displayed and determines "
 "the precision used for approximate calculations."
@@ -1951,68 +1946,68 @@ msgstr ""
 "მიუთითებს მნიშვნელოვანი ციფრების ნაჩვენებ რაოდენობას და დაახლოებითი "
 "გამოთვლების სიზუსტეს განსაზღვრავს."
 
-#: ../src/qalc.cc:4612
+#: ../src/qalc.cc:4600
 msgid "Interpret undefined symbols in expressions as unknown variables."
 msgstr "გამოსახულებებში აღუწერელი სიმბოლოების უცნობ ცვლადებად ჩათვლა."
 
-#: ../src/qalc.cc:4614
+#: ../src/qalc.cc:4602
 msgid ""
 "If activated physical constants include units (e.g. c = 299 792 458 m∕s)."
 msgstr ""
 "თუ ჩართულია, ფიზიკური კონსტანტები ერთეულებსაც შეიცავენ (მაგ: c = 299 792 458 "
 "მ/წმ)."
 
-#: ../src/qalc.cc:4618
+#: ../src/qalc.cc:4606
 msgid "Use abbreviated names for units and variables."
 msgstr "ერთეულებისა და ცვლადების აბრევიატურების გამოყენება."
 
-#: ../src/qalc.cc:4619
+#: ../src/qalc.cc:4607
 msgid "Use colors to highlight different elements of expressions and results."
 msgstr ""
 "გამოსახულებების სხვადასხვა ელემენტებისა და პასუხების გამოსაკვეთად ფერების "
 "გამოყენება."
 
-#: ../src/qalc.cc:4622
+#: ../src/qalc.cc:4610
 msgid "Always place negative values last."
 msgstr "უარყოფითი მნიშვნელობების ყოველთვის ბოლოში მოთავსება."
 
-#: ../src/qalc.cc:4625
+#: ../src/qalc.cc:4613
 msgid "Add extra space around operators."
 msgstr "ოპერატორების გარშემო დამატებითი გამოტოვებების დამატება."
 
-#: ../src/qalc.cc:4627
+#: ../src/qalc.cc:4615
 msgid "Display Unicode characters."
 msgstr "უნიკოდის სიმბოლოების ჩვენება."
 
-#: ../src/qalc.cc:4628
+#: ../src/qalc.cc:4616
 msgid "Add empty lines before and after result."
 msgstr "შედეგამდე და მის შემდეგ ცარიელი ხაზების დამატება."
 
-#: ../src/qalc.cc:4632 ../src/qalc.cc:4736
+#: ../src/qalc.cc:4620 ../src/qalc.cc:4724
 msgid "bin"
 msgstr "ორ"
 
-#: ../src/qalc.cc:4634 ../src/qalc.cc:4738
+#: ../src/qalc.cc:4622 ../src/qalc.cc:4726
 msgid "oct"
 msgstr "რვა"
 
-#: ../src/qalc.cc:4636 ../src/qalc.cc:4740
+#: ../src/qalc.cc:4624 ../src/qalc.cc:4728
 msgid "dec"
 msgstr "ათ"
 
-#: ../src/qalc.cc:4638 ../src/qalc.cc:4742
+#: ../src/qalc.cc:4626 ../src/qalc.cc:4730
 msgid "hex"
 msgstr "თქვსმ"
 
-#: ../src/qalc.cc:4640
+#: ../src/qalc.cc:4628
 msgid "sexa"
 msgstr "sexa"
 
-#: ../src/qalc.cc:4659 ../src/qalc.cc:4719
+#: ../src/qalc.cc:4647 ../src/qalc.cc:4707
 msgid "Determines the default decimal separator."
 msgstr "წილადების ნაგულისხმები გამყოფის დადგენა."
 
-#: ../src/qalc.cc:4674
+#: ../src/qalc.cc:4662
 msgid ""
 "Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). "
 "'long' removes limits on the size of the numerator and denominator."
@@ -2020,34 +2015,34 @@ msgstr ""
 "ადგენს, როგორ ხდება რაციონალური რიცხვების გამოტანა (მაგ: 5/4 = 1 + 1/4 = "
 "1.25). 'გრძელი' მნიშვნელისა და მრიცხველის ზომის ლიმიტს მოხსნის."
 
-#: ../src/qalc.cc:4675
+#: ../src/qalc.cc:4663
 msgid ""
 "Enables two's complement representation for display of negative hexadecimal "
 "numbers."
 msgstr ""
 "უარყოფითი თექვსმეტობითი რიცხვის გამოსატანად გამოტანის დამატებით კოდის ჩართვა."
 
-#: ../src/qalc.cc:4676 ../src/qalc.cc:4735
+#: ../src/qalc.cc:4664 ../src/qalc.cc:4723
 msgid "Use 'j' (instead of 'i') as default symbol for the imaginary unit."
 msgstr ""
 "წარმოსახვითი ერთეულის გამოსახატად \"j\"-ის (\"I\"-ის მაგიერ) გამოყენება."
 
-#: ../src/qalc.cc:4678
+#: ../src/qalc.cc:4666
 msgid "Use lowercase e for E-notation (5e2 = 5 * 10^2)."
 msgstr "ექსპოტენციალური ჩანაწერისთვის პატარა E-ს გამოყენება (5e2 = 5 * 10^2)."
 
-#: ../src/qalc.cc:4679
+#: ../src/qalc.cc:4667
 msgid "Use lowercase letters for number bases > 10."
 msgstr "რიცხვების, რომლის ფუძე > 10, პატარა ასოების გამოყენება."
 
-#: ../src/qalc.cc:4694
+#: ../src/qalc.cc:4682
 msgid ""
 "If activated, 1/6 is displayed as '0.1 666...', otherwise as '0.166667'."
 msgstr ""
 "თუ ჩართულია, 1/6 ნაჩვენები იქნება, როგორც '0.1 666....'. წინააღმდეგ "
 "შემთხვევაში კი '0.166667'."
 
-#: ../src/qalc.cc:4695
+#: ../src/qalc.cc:4683
 msgid ""
 "Determines whether how approximate numbers are rounded (round halfway "
 "numbers away from zero or towards the nearest even digit, or round all "
@@ -2056,40 +2051,40 @@ msgstr ""
 "განსაზღვრავს, როგორ მრგვალდება დაახლოებითი რიცხვები (ნახევარ რიცხვზე, ზემოთ "
 "ნულიდან, უახლოეს ლუწ რიცხვამდე თუ ნულისკენ დამრგვალება)."
 
-#: ../src/qalc.cc:4697
+#: ../src/qalc.cc:4685
 msgid "Determines how scientific notation is used (e.g. 5 543 000 = 5.543E6)."
 msgstr ""
 "განსაზღვრავს, როგორ გამოიყენება სამეცნიერო ჩანაწერი (მაგ: 5 543 000 = "
 "5.543E6)."
 
-#: ../src/qalc.cc:4712
+#: ../src/qalc.cc:4700
 msgid "If activated, zeroes are kept at the end of approximate numbers."
 msgstr "თუ ჩარტულია, დაახლოებითი რიცხვების ბოლოში ნულები შენარჩუნდება."
 
-#: ../src/qalc.cc:4713
+#: ../src/qalc.cc:4701
 msgid ""
 "Enables two's complement representation for display of negative binary "
 "numbers."
 msgstr ""
 "უარყოფითი ბინარული რიცხვის გამოსატანად გამოტანის დამატებით კოდის ჩართვა."
 
-#: ../src/qalc.cc:4717
+#: ../src/qalc.cc:4705
 msgid "Use ^ as bitwise exclusive OR operator."
 msgstr "^-ის, როგორც ბიტური ექსკლუზიური \"ან\" ოპერატორის გამოყენება."
 
-#: ../src/qalc.cc:4730
+#: ../src/qalc.cc:4718
 msgid "Allows use of ',' as thousands separator."
 msgstr "ათასების განცალკევებისთვის \",\"-ის გამოყენება."
 
-#: ../src/qalc.cc:4733
+#: ../src/qalc.cc:4721
 msgid "Allows use of '.' as thousands separator."
 msgstr "ათასების განცალკევებისთვის \".\"-ის გამოყენება."
 
-#: ../src/qalc.cc:4757
+#: ../src/qalc.cc:4745
 msgid "See 'help parsing mode'."
 msgstr "იხილეთ \"help parsing mode\"."
 
-#: ../src/qalc.cc:4758
+#: ../src/qalc.cc:4746
 msgid ""
 "If activated, numbers are interpreted as approximate with precision equal to "
 "the number of significant digits (3.20 = 3.20+/-0.005)."
@@ -2097,7 +2092,7 @@ msgstr ""
 "გააქტიურების შემთხვევაში, რიცხვები განიმარტება, როგორც სავარაუდო სიზუსტით, "
 "მნიშვნელოვანი ციფრების რაოდენობის ტოლი (3.20 = 3.20+/-0.005)."
 
-#: ../src/qalc.cc:4759
+#: ../src/qalc.cc:4747
 msgid ""
 "Interpret addition/subtraction of percentage as percentage increase/decrease "
 "of the first term (100 + 10% = 110)."
@@ -2105,11 +2100,11 @@ msgstr ""
 "პროცენტის დამატება/გამოკლების, როგორც პირველი პირობის პროცენტული ზრდა/"
 "შემცირების აღწერა(100 + 10% = 110)."
 
-#: ../src/qalc.cc:4762
+#: ../src/qalc.cc:4750
 msgid "Enables automatic use of hecto, deca, deci, and centi."
 msgstr "ჰექტო, დეკა, დეცი და ცენტს ავტომატური გამოყენების ჩართვა."
 
-#: ../src/qalc.cc:4764
+#: ../src/qalc.cc:4752
 msgid ""
 "Controls automatic unit conversion of the result. 'optimalsi' always "
 "converts non-SI units, while 'optimal' only converts to more optimal unit "
@@ -2119,12 +2114,12 @@ msgstr ""
 "გარდაქმნის არა-SI ერთეულში, ხოლო \"optimal\" გარდაქმნის უფრო ოპტიმალური "
 "ერთეულებში, ნაკლები ერთეულითა და ექსპონატებით."
 
-#: ../src/qalc.cc:4778
+#: ../src/qalc.cc:4766
 msgid ""
 "If activated, binary prefixes are used by default for information units."
 msgstr ""
 
-#: ../src/qalc.cc:4779
+#: ../src/qalc.cc:4767
 msgid ""
 "Enables automatic conversion to the local currency when optimal unit "
 "conversion is enabled."
@@ -2132,72 +2127,72 @@ msgstr ""
 "ლოკალურ ვალუტაზე ავტომატური გადაყვანის ჩართვა მაშინ, როცა ერთეულის "
 "ოპტიმალური გადაყვანა ჩართულია."
 
-#: ../src/qalc.cc:4780
+#: ../src/qalc.cc:4768
 msgid ""
 "Enables automatic use of prefixes in the denominator of unit expressions."
 msgstr ""
 
-#: ../src/qalc.cc:4781
+#: ../src/qalc.cc:4769
 msgid ""
 "If activated, units are separated from variables at the end of the result."
 msgstr "თუ ჩართულია, შედეგის ბოლოში ერთეულები გამოიყოფა ცვლადებისგან."
 
-#: ../src/qalc.cc:4782
+#: ../src/qalc.cc:4770
 msgid "Enables automatic use of prefixes in the result."
 msgstr "შედეგში პრეფიქსების ავტომატური გამოყენების ჩართვა."
 
-#: ../src/qalc.cc:4783
+#: ../src/qalc.cc:4771
 msgid ""
 "Use negative exponents instead of division for units in result (m/s = "
 "m*s^-1)."
 msgstr ""
 
-#: ../src/qalc.cc:4785
+#: ../src/qalc.cc:4773
 msgid ""
 "Determines how expressions with temperature units are calculated (hybrid "
 "acts as absolute if the expression contains different temperature units, "
 "otherwise as relative)."
 msgstr ""
 
-#: ../src/qalc.cc:4789
+#: ../src/qalc.cc:4777
 msgid "days"
 msgstr "დღე"
 
-#: ../src/qalc.cc:4796
+#: ../src/qalc.cc:4784
 msgid "Do not save expression history on exit."
 msgstr "გასვლისას გამოსახულებების ისტორია არ ჩაიწერება."
 
-#: ../src/qalc.cc:4797
+#: ../src/qalc.cc:4785
 msgid "Ignore system language and use English (requires restart)."
 msgstr "სისტემის ენის იგნორირება და ინგლისურის გამოყენება (საჭიროა რესტარტი)."
 
-#: ../src/qalc.cc:4798
+#: ../src/qalc.cc:4786
 msgid "Activates the Reverse Polish Notation stack."
 msgstr "RPN-ის სტეკის აქტივაცია."
 
-#: ../src/qalc.cc:4799
+#: ../src/qalc.cc:4787
 msgid "Save functions, units, and variables on exit."
 msgstr "გასვლისას ფუნქციების, ერთეულებისა და ცვლაების ჩაწერა."
 
-#: ../src/qalc.cc:4800
+#: ../src/qalc.cc:4788
 msgid "Save settings on exit."
 msgstr "გასვლისას პარამეტრების შენახვა."
 
-#: ../src/qalc.cc:4802
+#: ../src/qalc.cc:4790
 msgid "Determines how the SIGINT signal (Ctrl+C) is handled."
 msgstr "დადგენა, როგორ მოვექცეთ SIGINT სიგნალს (Ctrl+C)."
 
-#: ../src/qalc.cc:4807
+#: ../src/qalc.cc:4795
 msgid "Set default assumptions for unknown variables."
 msgstr "ნაგულისხმები დაშვებების დაყენება უცნობი ცვლადებისთვის."
 
-#: ../src/qalc.cc:4836
+#: ../src/qalc.cc:4824
 msgid ""
 "Saves the current result in a variable with the specified name. You may "
 "optionally also provide a category (default \"Temporary\") and a title."
 msgstr ""
 
-#: ../src/qalc.cc:4837
+#: ../src/qalc.cc:4825
 msgid ""
 "If name equals \"mode\" or \"definitions\", the current mode and "
 "definitions, respectively, will be saved."
@@ -2205,59 +2200,59 @@ msgstr ""
 "თუ სახელია \"mode\" ან \"definitions\", შენახული იქნება შესაბამისად - "
 "მიმდინარე რეჟიმი და აღწერები."
 
-#: ../src/qalc.cc:4839
+#: ../src/qalc.cc:4827
 msgid "Example: store var1."
 msgstr "მაგალითად: store var1."
 
-#: ../src/qalc.cc:4843
+#: ../src/qalc.cc:4831
 msgid "Clears the screen."
 msgstr "ეკრანის გასუფთავება."
 
-#: ../src/qalc.cc:4847
+#: ../src/qalc.cc:4835
 msgid "Clears the expression history."
 msgstr "გამოსახულებების ისტორიის გასუფთავება."
 
-#: ../src/qalc.cc:4851
+#: ../src/qalc.cc:4839
 msgid "Create a variable with the specified name and expression."
 msgstr "ცვლადის შექმნა მითითებული სახელითა და გამოსახულებით."
 
-#: ../src/qalc.cc:4853
+#: ../src/qalc.cc:4841
 msgid "Example: variable var1 pi / 2."
 msgstr "მაგალითად: variable var1 pi / 2."
 
-#: ../src/qalc.cc:4857
+#: ../src/qalc.cc:4845
 msgid "Creates a function with the specified name and expression."
 msgstr "ფუნქციის შექმნა მითითებული სახელითა და გამოსახულებით."
 
-#: ../src/qalc.cc:4858
+#: ../src/qalc.cc:4846
 msgid "Use '\\x', '\\y', '\\z', '\\a', etc. for arguments in the expression."
 msgstr ""
 "გამოსახულებაში არგუმენტებად '\\x', '\\y', '\\z', '\\a' და ა.შ. გამოყენება "
 "შეგიძლიათ."
 
-#: ../src/qalc.cc:4860
+#: ../src/qalc.cc:4848
 msgid "Example: function func1 5*\\x."
 msgstr "მაგალითად: function func1 5*\\x."
 
-#: ../src/qalc.cc:4864
+#: ../src/qalc.cc:4852
 msgid "Removes the user-defined variable or function with the specified name."
 msgstr ""
 "მითითებული სახელის მქონე არა-მომხარებლის მიერ აღწერილი ცვლადის ან ფუნქციის "
 "წაშლა."
 
-#: ../src/qalc.cc:4866
+#: ../src/qalc.cc:4854
 msgid "Example: delete var1."
 msgstr "მაგალითად: delete var1."
 
-#: ../src/qalc.cc:4870
+#: ../src/qalc.cc:4858
 msgid "Displays the current mode."
 msgstr "მიმდინარე რეჟიმის ჩვენება."
 
-#: ../src/qalc.cc:4874
+#: ../src/qalc.cc:4862
 msgid "Displays a list of variables, functions, units, and prefixes."
 msgstr "ცვლადების, ფუნქციების, ერთეულებისა და პრეფიქსების ჩვენება."
 
-#: ../src/qalc.cc:4875
+#: ../src/qalc.cc:4863
 msgid ""
 "Enter with argument 'currencies', 'functions', 'variables', 'units', or "
 "'prefixes' to show a list of all currencies, functions, variables, units, or "
@@ -2266,108 +2261,108 @@ msgid ""
 "objects are listed."
 msgstr ""
 
-#: ../src/qalc.cc:4877
+#: ../src/qalc.cc:4865
 msgid "Example: list functions."
 msgstr "მაგალითად: list functions."
 
-#: ../src/qalc.cc:4878
+#: ../src/qalc.cc:4866
 msgid "Example: find dinar."
 msgstr "მაგალითად: find dinar."
 
-#: ../src/qalc.cc:4879
+#: ../src/qalc.cc:4867
 msgid "Example: find variables planck."
 msgstr "მაგალითად: find variables planck."
 
-#: ../src/qalc.cc:4883
+#: ../src/qalc.cc:4871
 msgid "Displays information about a function, variable, unit, or prefix."
 msgstr ""
 "ფუნქციის, ცვლადის, ერთეულისა და პრეფიქსის შესახებ ინფორმაციის გამოტანა."
 
-#: ../src/qalc.cc:4885
+#: ../src/qalc.cc:4873
 msgid "Example: info sin."
 msgstr "მაგალითად: info sin."
 
-#: ../src/qalc.cc:4889
+#: ../src/qalc.cc:4877
 msgid "Downloads current exchange rates from the Internet."
 msgstr "ინტერნეტიდან ვალუტის მიმდინარე კურსების გადმოწერა."
 
-#: ../src/qalc.cc:4893
+#: ../src/qalc.cc:4881
 msgid "(De)activates the Reverse Polish Notation stack and syntax."
 msgstr "გათიშავს (ჩართავს) RPN-ის სტეკს და სინტაქსს."
 
-#: ../src/qalc.cc:4895
+#: ../src/qalc.cc:4883
 msgid ""
 "\"syntax\" activates only the RPN syntax and \"stack\" enables the RPN stack."
 msgstr ""
 "\"syntax\" ჩართავს RPN-ის მხოლოდ სინტაქსს და \"stack\" მის სტეკსაც ჩართავს."
 
-#: ../src/qalc.cc:4899
+#: ../src/qalc.cc:4887
 msgid "Clears the entire RPN stack."
 msgstr "RPN სტეკის მთლიანად გასუფთავება."
 
-#: ../src/qalc.cc:4903
+#: ../src/qalc.cc:4891
 msgid "Removes the top of the RPN stack or the value at the specified index."
 msgstr ""
 
-#: ../src/qalc.cc:4905 ../src/qalc.cc:4917 ../src/qalc.cc:4927
-#: ../src/qalc.cc:4937
+#: ../src/qalc.cc:4893 ../src/qalc.cc:4905 ../src/qalc.cc:4915
+#: ../src/qalc.cc:4925
 msgid ""
 "Index 1 is the top of stack and negative index values count from the bottom "
 "of the stack."
 msgstr ""
 
-#: ../src/qalc.cc:4909
+#: ../src/qalc.cc:4897
 msgid "Displays the RPN stack."
 msgstr "RPN-ის სტეკის ჩვენება."
 
-#: ../src/qalc.cc:4913
+#: ../src/qalc.cc:4901
 msgid "Swaps position of values on the RPN stack."
 msgstr "RPN სტეკზე მნიშვნელობების მდებარეობების მიმოცვლა."
 
-#: ../src/qalc.cc:4915
+#: ../src/qalc.cc:4903
 msgid ""
 "If no index is specified, the values on the top of the stack (index 1 and "
 "index 2) will be swapped and if only one index is specified, the value at "
 "this index will be swapped with the top value."
 msgstr ""
 
-#: ../src/qalc.cc:4919
+#: ../src/qalc.cc:4907
 msgid "Example: swap 2 4"
 msgstr "მაგალითად: swap 2 4"
 
-#: ../src/qalc.cc:4923
+#: ../src/qalc.cc:4911
 msgid "Duplicates a value on the RPN stack to the top of the stack."
 msgstr ""
 
-#: ../src/qalc.cc:4925
+#: ../src/qalc.cc:4913
 msgid "If no index is specified, the top of the stack is duplicated."
 msgstr ""
 
-#: ../src/qalc.cc:4931
+#: ../src/qalc.cc:4919
 msgid "Rotates the RPN stack up (default) or down."
 msgstr "RPN სტეკის მაღლა (ნაგულისხმები) ან დაბლა მობრუნება."
 
-#: ../src/qalc.cc:4935
+#: ../src/qalc.cc:4923
 msgid "Changes the position of a value on the RPN stack."
 msgstr "RPN სტეკზე მნიშვნელობის მდებარეობის შეცვლა."
 
-#: ../src/qalc.cc:4939
+#: ../src/qalc.cc:4927
 msgid "Example: move 2 4"
 msgstr "მაგალითად: move 2 4"
 
-#: ../src/qalc.cc:4943
+#: ../src/qalc.cc:4931
 msgid "Sets the result number base (equivalent to set base)."
 msgstr ""
 
-#: ../src/qalc.cc:4947
+#: ../src/qalc.cc:4935
 msgid "Equivalent to set approximation exact."
 msgstr "იგივეა, რაც \"set approximation exact\"."
 
-#: ../src/qalc.cc:4951
+#: ../src/qalc.cc:4939
 msgid "Equivalent to set approximation try exact."
 msgstr "იგივეა, რაც \"set approximation try exact\"."
 
-#: ../src/qalc.cc:4956
+#: ../src/qalc.cc:4944
 msgid ""
 "Converts the current result (equivalent to using \"to\" at the end of an "
 "expression)."
@@ -2375,178 +2370,178 @@ msgstr ""
 "მიმდინარე შედეგის გარდაქმნა (იგივე, რაც გამოსახულების ბოლოში \"to\"-ის "
 "გამოყენება)."
 
-#: ../src/qalc.cc:4958
+#: ../src/qalc.cc:4946
 msgid "Possible values:"
 msgstr "შესაძლო მნიშვნელობები:"
 
-#: ../src/qalc.cc:4960
+#: ../src/qalc.cc:4948
 msgid "- a unit or unit expression (e.g. meter or km/h)"
 msgstr "- ერთეული ან ერთეულის გამოსახულება (მაგ: მეტრი ან კმ/სთ)"
 
-#: ../src/qalc.cc:4961
+#: ../src/qalc.cc:4949
 msgid "prepend with ? to request the optimal prefix"
 msgstr "ოპტიმალური პრეფიქსის გამოსათხოვად \"?\"-ით დაიწყეთ"
 
-#: ../src/qalc.cc:4962
+#: ../src/qalc.cc:4950
 msgid "prepend with b? to request the optimal binary prefix"
 msgstr "ოპტიმალური ბინარული პრეფიქსის გამოსათხოვად მოთხოვნა \"b?\"-ით დაიწყეთ"
 
-#: ../src/qalc.cc:4963
+#: ../src/qalc.cc:4951
 msgid "prepend with + or - to force/disable use of mixed units"
 msgstr "შერეული ერთეულების გამოსაყენებლად დაიწყეთ + ან - -ით"
 
-#: ../src/qalc.cc:4964
+#: ../src/qalc.cc:4952
 msgid "- a variable or physical constant (e.g. c)"
 msgstr "- ცვლადი ან ფიზიკური კონსტანტა (მაგ: c)"
 
-#: ../src/qalc.cc:4965
+#: ../src/qalc.cc:4953
 msgid "- base (convert to base units)"
 msgstr "- ძირითადი (ძირითად საზომ ერთეულებში გადაყვანა)"
 
-#: ../src/qalc.cc:4966
+#: ../src/qalc.cc:4954
 msgid "- optimal (convert to optimal unit)"
 msgstr "- ოპტიმალური (ოპტიმალურ ერთეულში გადაყვანა)"
 
-#: ../src/qalc.cc:4967
+#: ../src/qalc.cc:4955
 msgid "- mixed (convert to mixed units, e.g. hours + minutes)"
 msgstr "- შერეული (შერეულ ერთეულებში გადაყვანა. მაგ: საათი + წუთები)"
 
-#: ../src/qalc.cc:4969
+#: ../src/qalc.cc:4957
 msgid "- bin / binary (show as binary number)"
 msgstr "- bin / binary (ორობით რიცხვად ჩვენება)"
 
-#: ../src/qalc.cc:4970
+#: ../src/qalc.cc:4958
 msgid "- bin# (show as binary number with specified number of bits)"
 msgstr ""
 
-#: ../src/qalc.cc:4971
+#: ../src/qalc.cc:4959
 msgid "- oct / octal (show as octal number)"
 msgstr "- oct / რვაობითი (რიცხვის რვაობით ფორმატში ჩვენება)"
 
-#: ../src/qalc.cc:4972
+#: ../src/qalc.cc:4960
 msgid "- duo / duodecimal (show as duodecimal number)"
 msgstr "- duo / duodecimal (რიცხვის თორმეთობით ფორმატში ჩვენება)"
 
-#: ../src/qalc.cc:4973
+#: ../src/qalc.cc:4961
 msgid "- hex / hexadecimal (show as hexadecimal number)"
 msgstr ""
 
-#: ../src/qalc.cc:4974
+#: ../src/qalc.cc:4962
 msgid "- hex# (show as hexadecimal number with specified number of bits)"
 msgstr ""
 
-#: ../src/qalc.cc:4975
+#: ../src/qalc.cc:4963
 msgid "- sexa / sexa2 / sexagesimal (show as sexagesimal number)"
 msgstr "- sexa / sexa2 / sexagesimal (სამოცობით რიცხვში ჩვენება)"
 
-#: ../src/qalc.cc:4976
+#: ../src/qalc.cc:4964
 msgid "- latitude / latitude2 (show as sexagesimal latitude)"
 msgstr "- latitude / latitude2 (სამოცობითი განედის ჩვენება)"
 
-#: ../src/qalc.cc:4977
+#: ../src/qalc.cc:4965
 msgid "- longitude / longitude2 (show as sexagesimal longitude)"
 msgstr "- longitude / longitude2 (სამოცობითი გრძედის ჩვენება)"
 
-#: ../src/qalc.cc:4978
+#: ../src/qalc.cc:4966
 msgid "- bijective (shown in bijective base-26)"
 msgstr ""
 
-#: ../src/qalc.cc:4979
+#: ../src/qalc.cc:4967
 msgid "- fp16, fp32, fp64, fp80, fp128 (show in binary floating-point format)"
 msgstr ""
 "- fp16, fp32, fp64, fp80, fp128 (ბინარულ მცურავ-მძიმიან ფორმატში ჩვენება)"
 
-#: ../src/qalc.cc:4980
+#: ../src/qalc.cc:4968
 msgid "- bcd (show as binary-coded decimal)"
 msgstr "- bcd (ბინარულად-კოდირებული წილადის ჩვენება)"
 
-#: ../src/qalc.cc:4981
+#: ../src/qalc.cc:4969
 msgid "- roman (show as roman numerals)"
 msgstr "- რომაული (რომაული ციფრებით ჩვენება)"
 
-#: ../src/qalc.cc:4982
+#: ../src/qalc.cc:4970
 msgid "- time (show in time format)"
 msgstr "- დრო (დროის ფორმატში ჩვენება)"
 
-#: ../src/qalc.cc:4983
+#: ../src/qalc.cc:4971
 msgid "- unicode"
 msgstr "- უნიკოდი"
 
-#: ../src/qalc.cc:4984
+#: ../src/qalc.cc:4972
 msgid "- base # (show in specified number base)"
 msgstr ""
 
-#: ../src/qalc.cc:4985
+#: ../src/qalc.cc:4973
 msgid "- bases (show as binary, octal, decimal and hexadecimal number)"
 msgstr ""
 
-#: ../src/qalc.cc:4987
+#: ../src/qalc.cc:4975
 msgid "- rectangular / cartesian (show complex numbers in rectangular form)"
 msgstr ""
 
-#: ../src/qalc.cc:4988
+#: ../src/qalc.cc:4976
 msgid "- exponential (show complex numbers in exponential form)"
 msgstr ""
 
-#: ../src/qalc.cc:4989
+#: ../src/qalc.cc:4977
 msgid "- polar (show complex numbers in polar form)"
 msgstr ""
 
-#: ../src/qalc.cc:4990
+#: ../src/qalc.cc:4978
 msgid "- cis (show complex numbers in cis form)"
 msgstr ""
 
-#: ../src/qalc.cc:4991
+#: ../src/qalc.cc:4979
 msgid "- angle / phasor (show complex numbers in angle/phasor notation)"
 msgstr ""
 
-#: ../src/qalc.cc:4993
+#: ../src/qalc.cc:4981
 msgid "- fraction (show result as mixed fraction)"
 msgstr ""
 
-#: ../src/qalc.cc:4994
+#: ../src/qalc.cc:4982
 msgid "- factors (factorize result)"
 msgstr "- მამრავლები (დაშლის შედეგი)"
 
-#: ../src/qalc.cc:4996
+#: ../src/qalc.cc:4984
 msgid "- UTC (show date and time in UTC time zone)"
 msgstr "- UTC (თარიღისა და დროის UTC დროის სარტყელში ჩვენება)"
 
-#: ../src/qalc.cc:4997
+#: ../src/qalc.cc:4985
 msgid "- UTC+/-hh[:mm] (show date and time in specified time zone)"
 msgstr ""
 
-#: ../src/qalc.cc:4998
+#: ../src/qalc.cc:4986
 msgid "- calendars"
 msgstr "- კალენდრები"
 
-#: ../src/qalc.cc:5000
+#: ../src/qalc.cc:4988
 msgid "Example: to ?g"
 msgstr "მაგალითად: to ?g"
 
-#: ../src/qalc.cc:5003
+#: ../src/qalc.cc:4991
 msgid ""
 "This command can also be typed directly at the end of the mathematical "
 "expression (e.g. 5 ft + 2 in to meter)."
 msgstr ""
 
-#: ../src/qalc.cc:5008
+#: ../src/qalc.cc:4996
 msgid "Terminates this program."
 msgstr "ამ პროგრამის შეწყვეტა."
 
-#: ../src/qalc.cc:5013
+#: ../src/qalc.cc:5001
 msgid ""
 "Implicit multiplication does not differ from explicit multiplication "
 "(\"12/2(1+2) = 12/2*3 = 18\", \"5x/5y = 5*x/5*y = xy\")."
 msgstr ""
 
-#: ../src/qalc.cc:5016
+#: ../src/qalc.cc:5004
 msgid ""
 "Implicit multiplication is parsed before explicit multiplication "
 "(\"12/2(1+2) = 12/(2*3) = 2\", \"5x/5y = (5*x)/(5*y) = x/y\")."
 msgstr ""
 
-#: ../src/qalc.cc:5019
+#: ../src/qalc.cc:5007
 msgid ""
 "The default adaptive mode works as the \"implicit first\" mode, unless "
 "spaces are found (\"1/5x = 1/(5*x)\", but \"1/5 x = (1/5)*x\"). In the "
@@ -2554,162 +2549,162 @@ msgid ""
 "(5*(m/s)) = 1 s\")."
 msgstr ""
 
-#: ../src/qalc.cc:5021
+#: ../src/qalc.cc:5009
 msgid ""
 "Function arguments without parentheses are an exception, where implicit "
 "multiplication in front of variables and units is parsed first regardless of "
 "mode (\"sqrt 2x = sqrt(2x)\")."
 msgstr ""
 
-#: ../src/qalc.cc:5024
+#: ../src/qalc.cc:5012
 msgid ""
 "Parse expressions using reverse Polish notation (\"1 2 3+* = 1*(2+3) = 5\")"
 msgstr ""
 
-#: ../src/qalc.cc:5027
+#: ../src/qalc.cc:5015
 msgid ""
 "Perform operations from left to right, like the immediate execution mode of "
 "a traditional calculator (\"1+2*3 = (1+2)*3 = 9\")"
 msgstr ""
 
-#: ../src/qalc.cc:5062
+#: ../src/qalc.cc:5050
 #, c-format
 msgid "%s does not accept any arguments."
 msgstr "%s არგუმენტებს არ იღებს."
 
-#: ../src/qalc.cc:5068
+#: ../src/qalc.cc:5056
 #, c-format
 msgid "%s requires at least one argument."
 msgstr "%s-ს ერთი არგუმენტი მაინც ესაჭიროება."
 
-#: ../src/qalc.cc:5071
+#: ../src/qalc.cc:5059
 msgid "Unknown command."
 msgstr "უცნობ ბრძანება."
 
-#: ../src/qalc.cc:5157
+#: ../src/qalc.cc:5139
 msgid "error"
 msgstr "შეცდომა"
 
-#: ../src/qalc.cc:5159
+#: ../src/qalc.cc:5141
 msgid "warning"
 msgstr "გაფრთხილება"
 
-#: ../src/qalc.cc:5289 ../src/qalc.cc:5545 ../src/qalc.cc:5586
-#: ../src/qalc.cc:5594 ../src/qalc.cc:5636 ../src/qalc.cc:5644
-#: ../src/qalc.cc:5648 ../src/qalc.cc:5649 ../src/qalc.cc:5651
-#: ../src/qalc.cc:5652 ../src/qalc.cc:6788
-#: ../libqalculate/Calculator-calculate.cc:734
-#: ../libqalculate/Calculator-calculate.cc:819
-#: ../libqalculate/Calculator-calculate.cc:1963
-#: ../libqalculate/Calculator-calculate.cc:1983
+#: ../src/qalc.cc:5271 ../src/qalc.cc:5527 ../src/qalc.cc:5568
+#: ../src/qalc.cc:5576 ../src/qalc.cc:5618 ../src/qalc.cc:5626
+#: ../src/qalc.cc:5630 ../src/qalc.cc:5631 ../src/qalc.cc:5633
+#: ../src/qalc.cc:5634 ../src/qalc.cc:6770
+#: ../libqalculate/Calculator-calculate.cc:741
+#: ../libqalculate/Calculator-calculate.cc:826
+#: ../libqalculate/Calculator-calculate.cc:1970
+#: ../libqalculate/Calculator-calculate.cc:1990
 msgid "approx."
 msgstr "დაახლ."
 
-#: ../src/qalc.cc:5298
+#: ../src/qalc.cc:5280
 msgid ""
 "Please select interpretation of expressions with implicit multiplication."
 msgstr ""
 
-#: ../src/qalc.cc:5302
+#: ../src/qalc.cc:5284
 msgid "Adaptive"
 msgstr "შეგუებადი"
 
-#: ../src/qalc.cc:5307
+#: ../src/qalc.cc:5289
 msgid "Implicit multiplication first"
 msgstr "ჯერ მოხდება არაცხადი გამრავლებების ანალიზი"
 
-#: ../src/qalc.cc:5312
+#: ../src/qalc.cc:5294
 msgid "Conventional"
 msgstr "სინტაქსის მიღებული ანალიზი"
 
-#: ../src/qalc.cc:5317 ../src/qalc.cc:5348
+#: ../src/qalc.cc:5299 ../src/qalc.cc:5330
 msgid "Parsing mode"
 msgstr "ანალიზის რეჟიმი"
 
-#: ../src/qalc.cc:5375 ../src/qalc.cc:5829 ../src/qalc.cc:6548
-#: ../libqalculate/Calculator-calculate.cc:1076
-#: ../libqalculate/Calculator-calculate.cc:2795
+#: ../src/qalc.cc:5357 ../src/qalc.cc:5811 ../src/qalc.cc:6530
+#: ../libqalculate/Calculator-calculate.cc:1083
+#: ../libqalculate/Calculator-calculate.cc:2802
 #: ../libqalculate/MathStructure.cc:455
 #, c-format
 msgid "aborted"
 msgstr "aborted"
 
-#: ../src/qalc.cc:5387
+#: ../src/qalc.cc:5369
 msgid "RPN Register Moved"
 msgstr "RPM რეგისტრი გადატანილია"
 
-#: ../src/qalc.cc:5408 ../src/qalc.cc:6742
+#: ../src/qalc.cc:5390 ../src/qalc.cc:6724
 msgid "RPN Operation"
 msgstr "RPN ოპერაცია"
 
-#: ../src/qalc.cc:5445
+#: ../src/qalc.cc:5427
 msgid "Processing"
 msgstr "დამუშავება"
 
-#: ../src/qalc.cc:5448 ../src/qalc.cc:5864 ../src/qalc.cc:6565
+#: ../src/qalc.cc:5430 ../src/qalc.cc:5846 ../src/qalc.cc:6547
 msgid "(press Enter to abort)"
 msgstr "(გასაუქმებლად დააწექით Enter-ს)"
 
 #. number base
-#: ../src/qalc.cc:5554 ../src/qalc.cc:5619
+#: ../src/qalc.cc:5536 ../src/qalc.cc:5601
 msgid "base: "
 msgstr "ფუძე: "
 
-#: ../src/qalc.cc:5846
+#: ../src/qalc.cc:5828
 msgid "Factorizing"
 msgstr "ფაქტორიზაცია"
 
-#: ../src/qalc.cc:5850
+#: ../src/qalc.cc:5832
 msgid "Expanding partial fractions"
 msgstr "წილადი რიცხვების გაფართოება"
 
-#: ../src/qalc.cc:5854
+#: ../src/qalc.cc:5836
 msgid "Expanding"
 msgstr "გაფართოება"
 
-#: ../src/qalc.cc:5858 ../src/qalc.cc:6562
+#: ../src/qalc.cc:5840 ../src/qalc.cc:6544
 msgid "Calculating"
 msgstr "გამოთვლა"
 
-#: ../src/qalc.cc:5940
+#: ../src/qalc.cc:5922
 msgid "Please select desired variant of the sinc function."
 msgstr "აირჩიეთ sinc ფუნქციის სასურველი ვარიანტი."
 
-#: ../src/qalc.cc:5953 ../src/qalc.cc:5981
+#: ../src/qalc.cc:5935 ../src/qalc.cc:5963
 msgid "Sinc function"
 msgstr "ფუნქცია sinc"
 
-#: ../src/qalc.cc:6017
+#: ../src/qalc.cc:5999
 msgid ""
 "The expression is ambiguous. Please select temperature calculation mode (the "
 "mode can later be changed using \"set temp\" command)."
 msgstr ""
 
-#: ../src/qalc.cc:6042 ../src/qalc.cc:6072
+#: ../src/qalc.cc:6024 ../src/qalc.cc:6054
 msgid "Temperature calculation mode"
 msgstr "ტემპერატურის გამოთვლის რეჟიმი"
 
-#: ../src/qalc.cc:6094
+#: ../src/qalc.cc:6076
 msgid "Please select interpretation of dots (\".\")."
 msgstr "აირჩიეთ წერტილის გამოყენება (\".\")."
 
-#: ../src/qalc.cc:6098
+#: ../src/qalc.cc:6080
 msgid "Both dot and comma as decimal separators"
 msgstr "ორივე, წერტილიც და მძიმეც, როგორც წილადის გამყოფი"
 
-#: ../src/qalc.cc:6104
+#: ../src/qalc.cc:6086
 msgid "Dot as thousands separator"
 msgstr "წერტილი, როგორც ათასების გამყოფი"
 
-#: ../src/qalc.cc:6110
+#: ../src/qalc.cc:6092
 msgid "Only dot as decimal separator"
 msgstr "წილადების გამყოფად მხოლოდ წერტილის გამოყენება"
 
-#: ../src/qalc.cc:6115 ../src/qalc.cc:6153
+#: ../src/qalc.cc:6097 ../src/qalc.cc:6135
 msgid "Dot interpretation"
 msgstr "წერტილის ინტერპრეტაცია"
 
-#: ../src/qalc.cc:7393
+#: ../src/qalc.cc:7375
 #, c-format
 msgid ""
 "Couldn't write preferences to\n"
@@ -2718,12 +2713,12 @@ msgstr ""
 "კონფიგურაციის ჩაწერის შეცდომა ფაილში\n"
 "%s"
 
-#: ../src/qalc.cc:7519
+#: ../src/qalc.cc:7501
 msgid "Couldn't write definitions"
 msgstr "აღწერების ჩაწერის შეცდომა"
 
 #: ../src/test.cc:13 ../src/test.cc:28
-#: ../libqalculate/Calculator-calculate.cc:178
+#: ../libqalculate/Calculator-calculate.cc:185
 msgid ""
 "The calculation has been forcibly terminated. Please restart the application "
 "and report this as a bug."
@@ -2946,18 +2941,29 @@ msgstr "ზღვრის პოვნა შეუძლებელია."
 msgid "Unable to integrate the expression."
 msgstr "გამოსახულების ინტეგრირება შეუძლებელია."
 
-#: ../libqalculate/BuiltinFunctions-number.cc:744
-#: ../libqalculate/BuiltinFunctions-number.cc:2106
+#: ../libqalculate/BuiltinFunctions-number.cc:409
+msgid "The value is probably a prime number, but it is not certain."
+msgstr ""
+
+#: ../libqalculate/BuiltinFunctions-number.cc:485
+#: ../libqalculate/BuiltinFunctions-number.cc:535
+msgid ""
+"The returned value is probably a prime number, but it is not completely "
+"certain."
+msgstr ""
+
+#: ../libqalculate/BuiltinFunctions-number.cc:1000
+#: ../libqalculate/BuiltinFunctions-number.cc:2362
 #: ../libqalculate/Number.cc:2183 ../libqalculate/Number.cc:2308
 msgid "Floating point overflow"
 msgstr "მცურავმძიმიანი რიცხვების გადავსება"
 
-#: ../libqalculate/BuiltinFunctions-number.cc:1133
+#: ../libqalculate/BuiltinFunctions-number.cc:1389
 msgid "phoneword"
 msgstr "სიტყვა-ტელეფონისნომერი"
 
-#: ../libqalculate/BuiltinFunctions-number.cc:1219
-#: ../libqalculate/BuiltinFunctions-number.cc:1294
+#: ../libqalculate/BuiltinFunctions-number.cc:1475
+#: ../libqalculate/BuiltinFunctions-number.cc:1550
 #: ../libqalculate/Number.cc:492 ../libqalculate/Number.cc:614
 #: ../libqalculate/Number.cc:1113
 #, c-format
@@ -2965,7 +2971,7 @@ msgid "Character '%s' was ignored in the number \"%s\" with base %s."
 msgstr ""
 
 #. test calculated floating point value and show mpfr errors (show as errors if error_level > 1, show as warnings if error_level = 1, do not generate message if error_level is zero)
-#: ../libqalculate/BuiltinFunctions-number.cc:2107
+#: ../libqalculate/BuiltinFunctions-number.cc:2363
 #: ../libqalculate/Number.cc:2182 ../libqalculate/Number.cc:2307
 msgid "Floating point underflow"
 msgstr "მცურავმძიმიანი რიცხვის ვერშევსება"
@@ -2978,11 +2984,11 @@ msgstr "მცურავმძიმიანი რიცხვის ვე�
 #: ../libqalculate/BuiltinFunctions-util.cc:502
 #: ../libqalculate/BuiltinFunctions-util.cc:504
 #: ../libqalculate/BuiltinFunctions-util.cc:520
-#: ../libqalculate/Calculator-calculate.cc:2391
-#: ../libqalculate/Calculator-calculate.cc:2403
-#: ../libqalculate/Calculator-calculate.cc:2405
-#: ../libqalculate/Calculator-calculate.cc:2408
-#: ../libqalculate/Calculator-calculate.cc:2479
+#: ../libqalculate/Calculator-calculate.cc:2398
+#: ../libqalculate/Calculator-calculate.cc:2410
+#: ../libqalculate/Calculator-calculate.cc:2412
+#: ../libqalculate/Calculator-calculate.cc:2415
+#: ../libqalculate/Calculator-calculate.cc:2486
 #, c-format
 msgid "Original value (%s) was not found."
 msgstr "საწყისი მნიშვნელობა (%s) ვერ ვიპოვე."
@@ -3041,8 +3047,8 @@ msgstr ""
 
 #: ../libqalculate/BuiltinFunctions-util.cc:1024
 msgid ""
-"Additional arguments specifies various plot options. Enter the name of the "
-"option and the desried value, either separated by space or as separate "
+"Additional arguments specify various plot options. Enter the name of the "
+"option and the desired value, either separated by space or as separate "
 "arguments. For most options, the value can be omitted to enable a default "
 "active value. For options with named values, the option name can be omitted "
 "(otherwise the value can be replaced by an integer, representing the index "
@@ -3291,47 +3297,47 @@ msgstr "დისკრეტიზაციის სიხშირე და�
 msgid "Unable to generate plot data with current min, max and sampling rate."
 msgstr ""
 
-#: ../libqalculate/Calculator-calculate.cc:176
+#: ../libqalculate/Calculator-calculate.cc:183
 msgid ""
 "The calculation has been forcibly terminated. Please restart the application."
 msgstr "კალკულატორი ძალით დასრულდა. საჭიროა აპლიკაციის რესტარტი."
 
-#: ../libqalculate/Calculator-calculate.cc:312
-#: ../libqalculate/Calculator-calculate.cc:437
+#: ../libqalculate/Calculator-calculate.cc:319
+#: ../libqalculate/Calculator-calculate.cc:444
 msgid "Stack is empty. Filling remaining function arguments with zeroes."
 msgstr "სტეკი ცარიელია. ფუნქციის დარჩენილი არგუმენტები ნულებით შეივსება."
 
 #. logical operator
-#: ../libqalculate/Calculator-calculate.cc:1001
-#: ../libqalculate/Calculator-calculate.cc:1039
+#: ../libqalculate/Calculator-calculate.cc:1008
+#: ../libqalculate/Calculator-calculate.cc:1046
 #: ../libqalculate/Calculator.cc:233 ../libqalculate/Calculator.cc:467
 #: ../libqalculate/Calculator.cc:622
-#: ../libqalculate/MathStructure-print.cc:3755 ../libqalculate/Function.cc:1457
+#: ../libqalculate/MathStructure-print.cc:3787 ../libqalculate/Function.cc:1457
 #: ../libqalculate/Function.cc:1465 ../libqalculate/Function.cc:1905
 #: ../libqalculate/Function.cc:2067 ../libqalculate/Function.cc:2075
 msgid "and"
 msgstr "და"
 
-#: ../libqalculate/Calculator-calculate.cc:2107
+#: ../libqalculate/Calculator-calculate.cc:2114
 msgid "calculating..."
 msgstr "გამოთვლა..."
 
 #. "where"-operator
-#: ../libqalculate/Calculator-calculate.cc:2281
-#: ../libqalculate/Calculator-calculate.cc:2283
-#: ../libqalculate/Calculator-calculate.cc:2302
-#: ../libqalculate/Calculator-calculate.cc:2304
+#: ../libqalculate/Calculator-calculate.cc:2288
+#: ../libqalculate/Calculator-calculate.cc:2290
+#: ../libqalculate/Calculator-calculate.cc:2309
+#: ../libqalculate/Calculator-calculate.cc:2311
 #: ../libqalculate/Calculator.cc:1400
 msgid "where"
 msgstr "სად"
 
-#: ../libqalculate/Calculator-calculate.cc:2501
+#: ../libqalculate/Calculator-calculate.cc:2508
 #, c-format
 msgid "Unhandled \"where\" expression: %s"
 msgstr "დაუმუშავებელი \"სად\" გამოსახულება: %s"
 
-#: ../libqalculate/Calculator-calculate.cc:2747
-#: ../libqalculate/Calculator-calculate.cc:2794
+#: ../libqalculate/Calculator-calculate.cc:2754
+#: ../libqalculate/Calculator-calculate.cc:2801
 msgid "timed out"
 msgstr "ვადა გავიდა"
 
@@ -3372,8 +3378,8 @@ msgstr "აკლია რადიანების ერთეული. �
 msgid "Degrees unit is missing. Creating one for this session."
 msgstr "აკლია გრადუსების ერთეული. ამ სესიისთვის ახალი შეიქმნება."
 
-#: ../libqalculate/Calculator.cc:1798 ../libqalculate/Calculator.cc:1799
-#: ../libqalculate/Calculator.cc:1803 ../libqalculate/Calculator.cc:1808
+#: ../libqalculate/Calculator.cc:1804 ../libqalculate/Calculator.cc:1805
+#: ../libqalculate/Calculator.cc:1809 ../libqalculate/Calculator.cc:1814
 #: ../libqalculate/Calculator-definitions.cc:3445
 #: ../libqalculate/Calculator-definitions.cc:3450
 #: ../libqalculate/Calculator-definitions.cc:3529
@@ -3382,28 +3388,28 @@ msgstr "აკლია გრადუსების ერთეული. �
 msgid "Currency"
 msgstr "ფული"
 
-#: ../libqalculate/Calculator.cc:2636
+#: ../libqalculate/Calculator.cc:2642
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name of \"%s\", or "
 "the variable will be lost."
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:2654
+#: ../libqalculate/Calculator.cc:2660
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
 "the function will be lost."
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:2671
+#: ../libqalculate/Calculator.cc:2677
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
 "the unit will be lost."
 msgstr ""
 
-#: ../libqalculate/Calculator.cc:2836
+#: ../libqalculate/Calculator.cc:2842
 #, c-format
 msgid "Name \"%s\" is in use. Replacing with \"%s\"."
 msgstr "სახელი \"%s\" უკვე გამოიყენება. ჩანაცვლდება \"%s\"-ით."
@@ -3521,7 +3527,7 @@ msgid ""
 "multiplication and division)."
 msgstr ""
 
-#: ../libqalculate/Calculator-parse.cc:5012
+#: ../libqalculate/Calculator-parse.cc:4997
 #, c-format
 msgid "%s interpreted as 10^%s (1%s)"
 msgstr "%s ინტერპრეტირებულია, როგორც 10^%s (1%s)"
@@ -3738,28 +3744,28 @@ msgstr ""
 msgid "Inverse of singular matrix."
 msgstr "სინგულარული მატრიცის ინვერსია."
 
-#: ../libqalculate/MathStructure-matrixvector.cc:952
-#: ../libqalculate/MathStructure-matrixvector.cc:1319
+#: ../libqalculate/MathStructure-matrixvector.cc:954
+#: ../libqalculate/MathStructure-matrixvector.cc:1321
 msgid ""
 "The selected min, max and step size do not result in a positive, finite "
 "number of data points"
 msgstr ""
 
-#: ../libqalculate/MathStructure-matrixvector.cc:955
-#: ../libqalculate/MathStructure-matrixvector.cc:1002
-#: ../libqalculate/MathStructure-matrixvector.cc:1274
-#: ../libqalculate/MathStructure-matrixvector.cc:1322
+#: ../libqalculate/MathStructure-matrixvector.cc:957
+#: ../libqalculate/MathStructure-matrixvector.cc:1004
+#: ../libqalculate/MathStructure-matrixvector.cc:1276
+#: ../libqalculate/MathStructure-matrixvector.cc:1324
 msgid "Too many data points"
 msgstr "წერტილის მეტისმეტად ბევრი მონაცემები"
 
-#: ../libqalculate/MathStructure-matrixvector.cc:1012
-#: ../libqalculate/MathStructure-matrixvector.cc:1282
+#: ../libqalculate/MathStructure-matrixvector.cc:1014
+#: ../libqalculate/MathStructure-matrixvector.cc:1284
 msgid ""
 "The selected min and max do not result in a positive, finite number of data "
 "points"
 msgstr ""
 
-#: ../libqalculate/MathStructure-print.cc:4096
+#: ../libqalculate/MathStructure-print.cc:4128
 msgid "undefined"
 msgstr "გაურკვეველი"
 
@@ -3786,7 +3792,7 @@ msgstr[1] ""
 
 #: ../libqalculate/Function.cc:432
 msgid ""
-"log() with a single argument is considered ambigious. Please use ln() or "
+"log() with a single argument is considered ambiguous. Please use ln() or "
 "log10() instead."
 msgstr ""
 
@@ -4459,3 +4465,7 @@ msgstr "ჩართული"
 #: ../libqalculate/util.cc:193
 msgid "Off"
 msgstr "გამორთული"
+
+#, c-format
+#~ msgid "Illegal character, '%c', in expression."
+#~ msgstr "გამოსახულებაში \"%c\" არასწორი სიმბოლო."
