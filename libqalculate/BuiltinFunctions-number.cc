@@ -22,6 +22,7 @@
 #include <sstream>
 #include <time.h>
 #include <limits>
+#include <math.h>
 #include <algorithm>
 
 #include "MathStructure-support.h"
@@ -381,7 +382,7 @@ int DivisorsFunction::calculate(MathStructure &mstruct, const MathStructure &var
 #include "primes.h"
 
 PrimesFunction::PrimesFunction() : MathFunction("primes", 1) {
-	IntegerArgument *iarg = new IntegerArgument();
+	NumberArgument *iarg = new NumberArgument();
 	iarg->setMin(&nr_one);
 	Number nmax(PRIMES_L[NR_OF_PRIMES_L - 1]);
 	iarg->setMax(&nmax);
@@ -389,8 +390,11 @@ PrimesFunction::PrimesFunction() : MathFunction("primes", 1) {
 	setArgumentDefinition(1, iarg);
 }
 int PrimesFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	Number nr(vargs[0].number());
+	nr.floor();
+	if(!nr.isInteger()) return 0;
 	mstruct.clearVector();
-	long int v = vargs[0].number().intValue();
+	long int v = nr.intValue();
 	for(size_t i = 0; i < NR_OF_PRIMES_L; i++) {
 		if(PRIMES_L[i] > v) break;
 		mstruct.addChild_nocopy(new MathStructure(PRIMES_L[i], 1L, 0L));
@@ -402,8 +406,10 @@ IsPrimeFunction::IsPrimeFunction() : MathFunction("isprime", 1) {
 }
 int IsPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	Number nr;
-	if(mpz_probab_prime_p(mpq_numref(vargs[0].number().internalRational()), 25)) mstruct = m_one;
+	int r = mpz_probab_prime_p(mpq_numref(vargs[0].number().internalRational()), 25);
+	if(r) mstruct = m_one;
 	else mstruct = m_zero;
+	if(r == 1) CALCULATOR->error(false, _("The value is probably a prime number, but it is not certain."), NULL);
 	return 1;
 }
 NthPrimeFunction::NthPrimeFunction() : MathFunction("nthprime", 1) {
@@ -447,61 +453,78 @@ int NthPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &var
 }
 
 NextPrimeFunction::NextPrimeFunction() : MathFunction("nextprime", 1) {
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
 }
 int NextPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[0].number() <= 2) {
+	Number nr(vargs[0].number());
+	nr.ceil();
+	if(!nr.isInteger()) return 0;
+	if(nr <= 2) {
 		mstruct = nr_two;
 		return 1;
 	}
-	if(vargs[0].number() <= PRIMES_L[NR_OF_PRIMES_L - 1]) {
-		for(size_t prime_i = 0; prime_i <= NR_OF_PRIMES_L; prime_i += 100) {
-			if(vargs[0].number() <= PRIMES_L[prime_i - 1]) {
-				while(true) {
-					if(vargs[0].number() >= PRIMES_L[prime_i - 1]) {
-						mstruct.set(PRIMES_L[prime_i - 1], 1L, 0L);
-						return 1;
-					}
-					prime_i--;
-				}
+	if(nr <= PRIMES_L[NR_OF_PRIMES_L - 1]) {
+		long int prime_i = NR_OF_PRIMES_L;
+		long int step = prime_i / 2;
+		while(nr != PRIMES_L[prime_i - 1]) {
+			if(nr < PRIMES_L[prime_i - 1]) {
+				prime_i -= step;
+			} else {
+				prime_i += step;
+				if(step == 1 && nr < PRIMES_L[prime_i - 1]) break;
 			}
+			if(step != 1) step /= 2;
 		}
+		mstruct.set(PRIMES_L[prime_i - 1], 1L, 0L);
+		return 1;
 	}
 	mpz_t i;
 	mpz_init(i);
-	mpz_sub_ui(i, mpq_numref(vargs[0].number().internalRational()), 1);
+	mpz_sub_ui(i, mpq_numref(nr.internalRational()), 1);
 	mpz_nextprime(i, i);
-	Number nr;
+	if(mpz_sizeinbase(i, 2) > 40) {
+		int r = mpz_probab_prime_p(i, 25);
+		while(!r) {mpz_nextprime(i, i); r = mpz_probab_prime_p(i, 25);}
+		if(r == 1) CALCULATOR->error(false, _("The returned value is probably a prime number, but it is not completely certain."), NULL);
+	}
 	nr.setInternal(i);
 	mstruct = nr;
 	mpz_clear(i);
 	return 1;
 }
 PrevPrimeFunction::PrevPrimeFunction() : MathFunction("prevprime", 1) {
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
+	NumberArgument *iarg = new NumberArgument();
+	iarg->setMin(&nr_two);
+	setArgumentDefinition(1, iarg);
 }
 int PrevPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[0].number().isTwo()) {
+	Number nr(vargs[0].number());
+	nr.floor();
+	if(!nr.isInteger()) return 0;
+	if(nr.isTwo()) {
 		mstruct = nr_two;
 		return 1;
 	}
-	if(vargs[0].number() <= PRIMES_L[NR_OF_PRIMES_L - 1]) {
-		for(size_t prime_i = 100; prime_i <= NR_OF_PRIMES_L; prime_i += 100) {
-			if(vargs[0].number() <= PRIMES_L[prime_i - 1]) {
-				for(; prime_i > 0; prime_i--) {
-					if(vargs[0].number() >= PRIMES_L[prime_i - 1]) {
-						mstruct.set(PRIMES_L[prime_i - 1], 1L, 0L);
-						return 1;
-					}
-				}
+	if(nr <= PRIMES_L[NR_OF_PRIMES_L - 1]) {
+		long int prime_i = NR_OF_PRIMES_L;
+		long int step = prime_i / 2;
+		while(nr != PRIMES_L[prime_i - 1]) {
+			if(nr < PRIMES_L[prime_i - 1]) {
+				prime_i -= step;
+				if(step == 1 && nr > PRIMES_L[prime_i - 1]) break;
+			} else {
+				prime_i += step;
 			}
+			if(step != 1) step /= 2;
 		}
+		mstruct.set(PRIMES_L[prime_i - 1], 1L, 0L);
+		return 1;
 	}
 	mpz_t i, p;
 	mpz_inits(i, p, NULL);
-	mpz_sub_ui(i, mpq_numref(vargs[0].number().internalRational()), 1);
+	mpz_sub_ui(i, mpq_numref(nr.internalRational()), 1);
 	mpz_nextprime(p, i);
-	while(mpz_cmp(p, mpq_numref(vargs[0].number().internalRational())) > 0) {
+	while(mpz_cmp(p, mpq_numref(nr.internalRational())) > 0) {
 		if(CALCULATOR->aborted()) {
 			mpz_clears(i, p);
 			return 0;
@@ -509,30 +532,34 @@ int PrevPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		mpz_sub_ui(i, i, 1);
 		mpz_nextprime(p, i);
 	}
-	Number nr;
+	if(mpz_sizeinbase(p, 2) > 40) {
+		int r = mpz_probab_prime_p(p, 25);
+		while(!r) {mpz_sub_ui(i, i, 1); mpz_nextprime(p, i); r = mpz_probab_prime_p(p, 25);}
+		if(r == 1) CALCULATOR->error(false, _("The returned value is probably a prime number, but it is not completely certain."), NULL);
+	}
 	nr.setInternal(p);
 	mstruct = nr;
 	mpz_clears(i, p, NULL);
 	return 1;
 }
 
-unordered_map<long long int, unordered_map<long long int, long long int>> cache;
+unordered_map<long long int, unordered_map<long long int, long long int>> primecount_cache;
 
-long long int phi(long long int x, long long int a) {
-	unordered_map<long long int, unordered_map<long long int, long long int>>::iterator it = cache.find(x);
-	if(it != cache.end()) {
+long long int primecount_phi(long long int x, long long int a) {
+	unordered_map<long long int, unordered_map<long long int, long long int>>::iterator it = primecount_cache.find(x);
+	if(it != primecount_cache.end()) {
 		unordered_map<long long int, long long int>::iterator it2 = it->second.find(a);
 		if(it2 != it->second.end()) return it2->second;
 	}
 	if(a == 1) {
 		return (x + 1) / 2;
 	}
-	long long int v = phi(x, a - 1) - phi(x / PRIMES_L[a - 1], a - 1);
-	cache[x][a] = v;
+	long long int v = primecount_phi(x, a - 1) - primecount_phi(x / PRIMES_L[a - 1], a - 1);
+	primecount_cache[x][a] = v;
 	return v;
 }
 
-long long int pi(long long int x) {
+long long int primecount(long long int x) {
 	if(x == 2) return 1;
 	if(x < 2) return 0;
 	if(x <= PRIMES_L[NR_OF_PRIMES_L - 1]) {
@@ -549,32 +576,38 @@ long long int pi(long long int x) {
 		}
 		return prime_i;
 	}
-	long long int a = pi(::sqrt(sqrt(x)));
-	long long int b = pi(::sqrt(x));
-	long long int c = pi(::cbrt(x));
-	long long int sum = phi(x, a) + ((b + a - 2) * (b - a + 1) / 2);
+	if(CALCULATOR->aborted()) return 0;
+	long long int a = primecount(::sqrt(sqrt(x)));
+	long long int b = primecount(::sqrt(x));
+	long long int c = primecount(::cbrt(x));
+	long long int sum = primecount_phi(x, a) + ((b + a - 2) * (b - a + 1) / 2);
 	for(long int i = a + 1; i <= b; i++) {
+		if(CALCULATOR->aborted()) return 0;
 		long long int w = x / PRIMES_L[i - 1];
-		long long int lim = pi(::sqrt(w));
-		sum -= pi(w);
+		long long int lim = primecount(::sqrt(w));
+		sum -= primecount(w);
 		if(i <= c) {
 			for(long long int i2 = i; i2 <= lim; i2++) {
-				sum -= pi(w / PRIMES_L[i2 - 1]) - i2 + 1;
+				if(CALCULATOR->aborted()) return 0;
+				sum -= primecount(w / PRIMES_L[i2 - 1]) - i2 + 1;
 			}
 		}
 	}
 	return sum;
 }
 
-PrimeCountFunction::PrimeCountFunction() : MathFunction("primeCount", 1) {
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
+PrimeCountFunction::PrimeCountFunction() : MathFunction("primePi", 1) {
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
 }
 int PrimeCountFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[0].number().integerLength() < 41) {
-		long long int v = pi(vargs[0].number().llintValue());
+	Number nr(vargs[0].number());
+	nr.floor();
+	if(!nr.isInteger()) return 0;
+	if(nr.integerLength() < 41) {
+		long long int v = primecount(nr.llintValue());
 		if(CALCULATOR->aborted()) return 0;
 		if(v > LONG_MAX) {
-			Number nr(v / LONG_MAX);
+			nr.set(v / LONG_MAX);
 			nr *= LONG_MAX;
 			nr += (v % LONG_MAX);
 			mstruct = nr;
@@ -585,8 +618,7 @@ int PrimeCountFunction::calculate(MathStructure &mstruct, const MathStructure &v
 	}
 	if(eo.approximation == APPROXIMATION_EXACT) return 0;
 	// Approximation (lower endpoint requires x >= 88789)
-	Number nlog(vargs[0].number());
-	Number nr(vargs[0].number());
+	Number nlog(nr);
 	if(nlog.ln()) {
 		Number nlog2(nlog);
 		Number nlog3(nlog);
