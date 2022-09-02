@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-09-01 14:45+0200\n"
-"PO-Revision-Date: 2022-08-23 18:22+0700\n"
+"PO-Revision-Date: 2022-09-02 11:27+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<"
+"=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Lokalize 21.12.3\n"
 
 #: ../data/currencies.xml.in.h:1
@@ -3682,99 +3682,88 @@ msgid "r:punit"
 msgstr "звк"
 
 #: ../data/functions.xml.in.h:216
-#, fuzzy
 msgid "Prime Numbers"
-msgstr "Большие числа"
+msgstr "Простые числа"
 
 #: ../data/functions.xml.in.h:217
-#, fuzzy
 msgid "Nth Prime Number"
-msgstr "Большие числа"
+msgstr "N-е простое число"
 
 #: ../data/functions.xml.in.h:218
-#, fuzzy
 msgid "r:nthprime"
-msgstr "прям_периметр,прямоугольник_периметр"
+msgstr "нпростое"
 
 #: ../data/functions.xml.in.h:219
 msgid "Index (n)"
 msgstr "Индекс (n)"
 
 #: ../data/functions.xml.in.h:220
-#, fuzzy
 msgid "Prime Counting Function"
-msgstr "Функция пробит"
+msgstr "Функция распределения простых чисел"
 
 #: ../data/functions.xml.in.h:221
-#, fuzzy
 msgid ""
 "Returns the number of prime numbers less than or equal to the specified "
 "number."
 msgstr ""
-"Возвращает количество периодов, необходимых для того, чтобы инвестиции "
-"достигли желаемой стоимости."
+"Возвращает количество простых чисел, меньших или равных указанному числу."
 
 #: ../data/functions.xml.in.h:222
 msgid "r:primePi,ou:prime&#x3C0;,o:prime_pi"
-msgstr ""
+msgstr "функцияПи,ou:&#x3C0функция,пифункция,Пифункция"
 
 #: ../data/functions.xml.in.h:223
-#, fuzzy
 msgid "Next Prime Number"
-msgstr "Большие числа"
+msgstr "Следующее простое число"
 
 #: ../data/functions.xml.in.h:224
-#, fuzzy
 msgid ""
 "Returns the next prime number greater than or equal to the specified number."
 msgstr ""
-"Возвращает единичную матрицу размерности указанной матрицы или с указанным "
-"количеством строк/столбцов."
+"Возвращает следующее простое число, большее или равное указанному числу."
 
 #: ../data/functions.xml.in.h:225
-#, fuzzy
 msgid "r:nextprime"
-msgstr "прпризма"
+msgstr "следпростое,слпрост"
 
 #: ../data/functions.xml.in.h:226
 msgid "Previous Prime Number"
-msgstr ""
+msgstr "Предыдущее простое число"
 
 #: ../data/functions.xml.in.h:227
 msgid ""
 "Returns the largest prime number smaller than or equal to the specified "
 "number."
 msgstr ""
+"Возвращает наибольшее простое число, меньшее или равное указанному числу."
 
 #: ../data/functions.xml.in.h:228
-#, fuzzy
 msgid "r:prevprime"
-msgstr "прям_периметр,прямоугольник_периметр"
+msgstr "пркдпростое,предпрост"
 
 #: ../data/functions.xml.in.h:229
-#, fuzzy
 msgid "Is Prime Number"
-msgstr "Это число?"
+msgstr "Это простое число?"
 
 #: ../data/functions.xml.in.h:230
-#, fuzzy
 msgid "r:isprime"
-msgstr "пуоп"
+msgstr "этоПростое"
 
 #: ../data/functions.xml.in.h:231
 msgid "Prime Numbers Less Than or Equal"
-msgstr ""
+msgstr "Простые числа меньше или равны"
 
 #: ../data/functions.xml.in.h:232
 msgid ""
 "Returns a vector containing all the prime numbers less than or equal to the "
 "specified number."
 msgstr ""
+"Возвращает вектор, содержащий все простые числа, меньшие или равные"
+" указанному числу."
 
 #: ../data/functions.xml.in.h:233
-#, fuzzy
 msgid "r:primes"
-msgstr "ценаскид"
+msgstr "простые"
 
 #: ../data/functions.xml.in.h:234
 msgid "Greatest Common Divisor"
