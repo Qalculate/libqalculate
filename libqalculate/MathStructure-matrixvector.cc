@@ -844,7 +844,7 @@ bool calculate_userfunctions(MathStructure &m, const MathStructure &x_mstruct, c
 		}
 	}
 	if(m.isFunction()) {
-		if(!m.contains(x_mstruct, true) && m.function()->id() != FUNCTION_ID_RAND && m.function()->id() != FUNCTION_ID_RANDN &&  m.function()->id() != FUNCTION_ID_RAND_POISSON) {
+		if(!m.contains(x_mstruct, true) && !m.containsFunctionId(FUNCTION_ID_RAND, true, true, true) && !m.containsFunctionId(FUNCTION_ID_RANDN, true, true, true) && !m.containsFunctionId(FUNCTION_ID_RAND_POISSON, true, true, true)) {
 			if(m.calculateFunctions(eo, false)) {
 				b_ret = true;
 				calculate_userfunctions(m, x_mstruct, eo, b_vector);
