@@ -77,7 +77,14 @@ void CalculateThread::run() {
 			mstruct->setAborted();
 			if(CALCULATOR->tmp_parsedstruct) CALCULATOR->tmp_parsedstruct->setAborted();
 			//if(CALCULATOR->tmp_tostruct) CALCULATOR->tmp_tostruct->setUndefined();
-			mstruct->set(CALCULATOR->calculate(CALCULATOR->expression_to_calculate, CALCULATOR->tmp_evaluationoptions, CALCULATOR->tmp_parsedstruct, CALCULATOR->tmp_tostruct, CALCULATOR->tmp_maketodivision));
+			if(CALCULATOR->expression_to_calculate.find_first_of(ID_WRAPS) != string::npos) {
+				string str = CALCULATOR->expression_to_calculate;
+				gsub(ID_WRAP_LEFT, LEFT_PARENTHESIS, str);
+				gsub(ID_WRAP_RIGHT, RIGHT_PARENTHESIS, str);
+				mstruct->set(CALCULATOR->calculate(str, CALCULATOR->tmp_evaluationoptions, CALCULATOR->tmp_parsedstruct, CALCULATOR->tmp_tostruct, CALCULATOR->tmp_maketodivision));
+			} else {
+				mstruct->set(CALCULATOR->calculate(CALCULATOR->expression_to_calculate, CALCULATOR->tmp_evaluationoptions, CALCULATOR->tmp_parsedstruct, CALCULATOR->tmp_tostruct, CALCULATOR->tmp_maketodivision));
+			}
 		} else {
 			MathStructure meval(*mstruct);
 			mstruct->setAborted();

@@ -280,7 +280,7 @@ bool calculate_userfunctions2(MathStructure &m, const MathStructure &x_mstruct, 
 		}
 	}
 	if(m.isFunction()) {
-		if(!m.contains(x_mstruct, true) && !m.contains(x_mstruct2, true) && m.function()->id() != FUNCTION_ID_RAND && m.function()->id() != FUNCTION_ID_RANDN &&  m.function()->id() != FUNCTION_ID_RAND_POISSON) {
+		if(!m.contains(x_mstruct, true) && !m.contains(x_mstruct2, true) && !m.containsFunctionId(FUNCTION_ID_RAND, true, true, true) && !m.containsFunctionId(FUNCTION_ID_RANDN, true, true, true) && !m.containsFunctionId(FUNCTION_ID_RAND_POISSON, true, true, true)) {
 			if(m.calculateFunctions(eo, false)) {
 				b_ret = true;
 				calculate_userfunctions2(m, x_mstruct, x_mstruct2, eo);

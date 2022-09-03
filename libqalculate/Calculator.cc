@@ -2192,9 +2192,18 @@ void Calculator::expressionItemDeactivated(ExpressionItem *item) {
 	delUFV(item);
 }
 void Calculator::expressionItemActivated(ExpressionItem *item) {
-	ExpressionItem *item2 = getActiveExpressionItem(item);
-	if(item2) {
-		item2->setActive(false);
+	if(item->type() == TYPE_FUNCTION) {
+		for(size_t i = 1; i <= item->countNames(); i++) {
+			ExpressionItem *item2 = getActiveFunction(item->getName(i).name, !item->getName(i).completion_only);
+			if(item2) item2->setActive(false);
+		}
+	} else {
+		for(size_t i = 1; i <= item->countNames(); i++) {
+			ExpressionItem *item2 = getActiveVariable(item->getName(i).name, !item->getName(i).completion_only);
+			if(item2) item2->setActive(false);
+			item2 = getActiveUnit(item->getName(i).name, !item->getName(i).completion_only);
+			if(item2) item2->setActive(false);
+		}
 	}
 	nameChanged(item);
 }
@@ -2240,17 +2249,45 @@ void Calculator::expressionItemDeleted(ExpressionItem *item) {
 		}
 	}
 	delUFV(item);
+
 	for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
 		if(item->type() == TYPE_VARIABLE || item->type() == TYPE_UNIT) {
 			for(size_t i = 0; i < variables.size(); i++) {
-				if(!variables[i]->isLocal() && !variables[i]->isActive() && variables[i]->hasName(item->getName(i2).name, item->getName(i2).case_sensitive) && !getActiveExpressionItem(variables[i])) {variables[i]->setActive(true);}
+				if(!variables[i]->isLocal() && !variables[i]->isActive() && variables[i]->hasName(item->getName(i2).name, item->getName(i2).case_sensitive)) {
+					bool b = true;
+					for(size_t i = 1; i <= variables[i]->countNames(); i++) {
+						if(getActiveVariable(variables[i]->getName(i).name, !variables[i]->getName(i).completion_only) || getActiveUnit(variables[i]->getName(i).name, !variables[i]->getName(i).completion_only)) {
+							b = false;
+							break;
+						}
+					}
+					if(b) units[i]->setActive(true);
+				}
 			}
 			for(size_t i = 0; i < units.size(); i++) {
-				if(!units[i]->isLocal() && !units[i]->isActive() && units[i]->hasName(item->getName(i2).name, item->getName(i2).case_sensitive) && !getActiveExpressionItem(units[i])) units[i]->setActive(true);
+				if(!units[i]->isLocal() && !units[i]->isActive() && units[i]->hasName(item->getName(i2).name, item->getName(i2).case_sensitive)) {
+					bool b = true;
+					for(size_t i = 1; i <= units[i]->countNames(); i++) {
+						if(getActiveVariable(units[i]->getName(i).name, !units[i]->getName(i).completion_only) || getActiveUnit(units[i]->getName(i).name, !units[i]->getName(i).completion_only)) {
+							b = false;
+							break;
+						}
+					}
+					if(b) units[i]->setActive(true);
+				}
 			}
 		} else {
 			for(size_t i = 0; i < functions.size(); i++) {
-				if(!functions[i]->isLocal() && !functions[i]->isActive() && functions[i]->hasName(item->getName(i2).name, item->getName(i2).case_sensitive) && !getActiveExpressionItem(functions[i])) functions[i]->setActive(true);
+				if(!functions[i]->isLocal() && !functions[i]->isActive() && functions[i]->hasName(item->getName(i2).name, item->getName(i2).case_sensitive)) {
+					bool b = true;
+					for(size_t i = 1; i <= functions[i]->countNames(); i++) {
+						if(getActiveFunction(functions[i]->getName(i).name, !functions[i]->getName(i).completion_only)) {
+							b = false;
+							break;
+						}
+					}
+					if(b) functions[i]->setActive(true);
+				}
 			}
 		}
 	}

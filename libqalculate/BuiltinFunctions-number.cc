@@ -252,7 +252,7 @@ int AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	MathStructure m_im(CALCULATOR->getFunctionById(FUNCTION_ID_IM), &mstruct, NULL);
 	CALCULATOR->beginTemporaryStopMessages();
 	m_im.eval(eo);
-	if(!m_im.containsFunctionId(FUNCTION_ID_IM)) {
+	if(!m_im.containsFunctionId(FUNCTION_ID_IM) && m_im.representsReal(true)) {
 		MathStructure m_re(CALCULATOR->getFunctionById(FUNCTION_ID_RE), &mstruct, NULL);
 		m_re.eval(eo);
 		if(!m_re.containsFunctionId(FUNCTION_ID_RE)) {
