@@ -1851,10 +1851,20 @@ bool test_float(const Number &nr) {
 	return true;
 }
 
+bool contains_abs_or_currency(const MathStructure &m) {
+	if(m.isUnit() && (m.unit()->isCurrency() || m.unit()->baseUnit()->referenceName() == "K")) return true;
+	if(m.isFunction() && (m.function()->id() == FUNCTION_ID_ABS || m.function()->id() == FUNCTION_ID_BIN || m.function()->id() == FUNCTION_ID_DEC || m.function()->id() == FUNCTION_ID_HEX || m.function()->id() == FUNCTION_ID_BASE || m.function()->id() == FUNCTION_ID_OCT)) return true;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_abs_or_currency(m[i])) return true;
+	}
+	return false;
+}
+
 #include "libqalculate/MathStructure-support.h"
 int main(int argc, char *argv[]) {
 
-	new Calculator(false);
+	new Calculator(true);
+	CALCULATOR->loadExchangeRates();
 	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
 	CALCULATOR->setPrecision(8);
@@ -1875,6 +1885,7 @@ int main(int argc, char *argv[]) {
 	CALCULATOR->setMessagePrintOptions(po);
 
 	EvaluationOptions evalops;
+	evalops.parse_options.unknowns_enabled = false;
 	/*evalops.sync_units = true;
 	evalops.parse_options.unknowns_enabled = false;
 	evalops.parse_options.read_precision = DONT_READ_PRECISION;*/
@@ -1934,9 +1945,9 @@ int main(int argc, char *argv[]) {
 	mstruct.eval(evalops);
 	cout << mstruct << endl;*/
 	//speed_test();
-	test_integration();
+	//test_integration();
 	//cout << successes << ":" << imaginary << endl;
-	return 0;
+	//return 0;
 	//test_intervals(true);
 
 	/*Number nr;
@@ -1960,7 +1971,7 @@ int main(int argc, char *argv[]) {
 	}*/
 	//return 0;
 
-	CALCULATOR->setVariableUnitsEnabled(false);
+	//CALCULATOR->setVariableUnitsEnabled(false);
 
 	MathStructure mp;
 	/*CALCULATOR->parse(&mp, "x + asin(x) + -1 * 2", evalops.parse_options);
@@ -2047,7 +2058,7 @@ int main(int argc, char *argv[]) {
 
 	return 0;*/
 
-	v = new KnownVariable("", "v", m_zero);
+	//v = new KnownVariable("", "v", m_zero);
 
 	//CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
 	//CALCULATOR->useIntervalArithmetic();
@@ -2068,17 +2079,35 @@ int main(int argc, char *argv[]) {
 
 	return 0;*/
 	size_t ni = 0;
-	for(size_t i2 = 0; i2 <= 100000; i2++) {
+	for(size_t i2 = 0; i2 <= 10000; i2++) {
 		str = "";
-		size_t n = rand() % 10;
+		size_t n = rand() % 20;
 		for(size_t i = 0; i <= n; i++) {
 			str += (char) (rand() % (126 - 32) + 32);
 			//if(str[i] == '{' || str[i] == '}') str[i] = '+';
 		}
+		while(true) {
+			n = rand() % 12;
+			if(n > 6) break;
+			size_t i = rand() % str.length();
+			if(n == 0) str.insert(i, "(");
+			if(n == 1) str.insert(i, ")");
+			if(n == 2) str.insert(i, "+");
+			if(n == 3) str.insert(i, "*");
+			if(n == 4) str.insert(i, "/");
+			if(n == 5) str.insert(i, "^");
+			if(n == 6) str.insert(i, "-");
+			//if(n == 7) str.insert(i, "~");
+		}
 		gsub("!", " ", str);
 		gsub("{", " ", str);
 		gsub("}", " ", str);
-		n = rand() % (str.length() + 1);
+		gsub("~", " ", str);
+		gsub(":=", "=", str);
+		gsub("=:", "=", str);
+		remove_blank_ends(str);
+		while(str[0] == '/') {str.erase(0, 1); remove_blank_ends(str);}
+		/*n = rand() % (str.length() + 1);
 		if(n < str.length()) str.insert(n, "=");
 		for(size_t i3 = 0; i3 < 7; i3++) {
 			n = rand() % 3;
@@ -2091,11 +2120,20 @@ int main(int argc, char *argv[]) {
 				if(n2 == 2) str.insert(n, "«");
 				if(n2 == 3) str.insert(n, "›");
 			}
-		}
-		cerr << str << endl;
+		}*/
 		MathStructure mstruct;
-		/*CALCULATOR->parse(&mstruct, str, evalops.parse_options);
-		cout << mstruct.print() << endl;
+		CALCULATOR->parse(&mstruct, str, evalops.parse_options);
+		bool b_out = true;
+		if(expression_contains_save_function(str, evalops.parse_options, false)) b_out = false;
+		if(contains_abs_or_currency(mstruct)) b_out = false;
+		while(CALCULATOR->message()) {
+			if(CALCULATOR->message()->message().find("is not a valid") != string::npos || CALCULATOR->message()->message().find("Trailing") != string::npos || CALCULATOR->message()->message().find("Misplaced") != string::npos || CALCULATOR->message()->message().find("ignored") != string::npos) {b_out = false; break;}
+			if(!CALCULATOR->nextMessage()) break;
+		}
+		CALCULATOR->clearMessages();
+		if(b_out && !str.empty()) cout << str << endl;
+		//else cerr << str << endl;
+		/*cout << mstruct.print() << endl;
 		mstruct.eval(evalops);
 		cout << "B" << endl;
 		cout << "C" << endl;
@@ -2103,7 +2141,7 @@ int main(int argc, char *argv[]) {
 		cout << "D" << endl;
 		CALCULATOR->convertToOptimalUnit(mstruct, evalops, true);
 		cout << "E" << endl;*/
-		expression_contains_save_function(str, evalops.parse_options);
+		/*expression_contains_save_function(str, evalops.parse_options);
 		if(transform_expression_for_equals_save(str, evalops.parse_options)) {
 			ni++;
 			cout << "SAVE:" << str << endl;
@@ -2116,9 +2154,9 @@ int main(int argc, char *argv[]) {
 		if(mstruct.isAborted()) break;
 		for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
 			if(CALCULATOR->variables[i]->isLocal()) CALCULATOR->variables[i]->destroy();
-		}
+		}*/
 	}
-	cerr << ni<< endl;
+	//cerr << ni<< endl;
 	return 0;
 
 }

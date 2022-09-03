@@ -2614,14 +2614,8 @@ int main(int argc, char *argv[]) {
 		} else {
 			expression_str = calc_arg;
 		}
-		size_t index = expression_str.find_first_of(ID_WRAPS);
-		if(index != string::npos) {
-			printf(_("Illegal character, \'%c\', in expression."), expression_str[index]);
-			puts("");
-		} else {
-			use_readline = false;
-			execute_expression(interactive_mode);
-		}
+		use_readline = false;
+		execute_expression(interactive_mode);
 		if(!interactive_mode) {
 			if(!view_thread->write(NULL)) view_thread->cancel();
 			CALCULATOR->terminateThreads();
@@ -2685,13 +2679,7 @@ int main(int argc, char *argv[]) {
 					} else {
 						expression_str = calc_arg;
 					}
-					size_t index = expression_str.find_first_of(ID_WRAPS);
-					if(index != string::npos) {
-						printf(_("Illegal character, \'%c\', in expression."), expression_str[index]);
-						puts("");
-					} else {
-						execute_expression(interactive_mode);
-					}
+					execute_expression(interactive_mode);
 				}
 				if(!interactive_mode) break;
 				i_maxtime = 0;
@@ -5072,26 +5060,20 @@ int main(int argc, char *argv[]) {
 			}
 			puts("");
 		} else {
-			size_t index = str.find_first_of(ID_WRAPS);
-			if(index != string::npos) {
-				printf(_("Illegal character, \'%c\', in expression."), str[index]);
-				puts("");
-			} else {
-				if(unittest && str[0] == '\t') {
+			if(unittest && str[0] == '\t') {
 #define RED   "\x1B[31m"
 #define GRN   "\x1B[32m"
 #define RESET "\x1B[0m"
-					remove_blank_ends(str);
-					if(str != result_text) {
-						printf(RED "\nMismatch detected at line %d\n%s\nexpected '%s'\nreceived '%s'\n\n" RESET, nline, expression_str.c_str(), str.c_str(), result_text.c_str());
-						retval = EXIT_FAILURE;
-						break;
-					}
-					ntests++;
-				} else {
-					expression_str = str;
-					execute_expression();
+				remove_blank_ends(str);
+				if(str != result_text) {
+					printf(RED "\nMismatch detected at line %d\n%s\nexpected '%s'\nreceived '%s'\n\n" RESET, nline, expression_str.c_str(), str.c_str(), result_text.c_str());
+					retval = EXIT_FAILURE;
+					break;
 				}
+				ntests++;
+			} else {
+				expression_str = str;
+				execute_expression();
 			}
 		}
 #ifdef HAVE_LIBREADLINE
@@ -5301,17 +5283,17 @@ bool ask_implicit() {
 	puts("");
 	str = ""; BEGIN_BOLD(str); str += "0 = "; str += _("Adaptive"); END_BOLD(str);
 	PUTS_UNICODE(str.c_str());
-	string s_eg = "1/2x = 1/(2x); 1/2 x = (1/2)x; 5 m/5 m/s = (5 m)/(5 m/s)";
+	string s_eg = "1/2x = 1/(2x); 1/2 x = (1/2)x; 5 m/2 s = (5 m)/(2 s)";
 	PUTS_ITALIC(s_eg);
 	puts("");
 	str = ""; BEGIN_BOLD(str); str += "1 = "; str += _("Implicit multiplication first"); END_BOLD(str);
 	PUTS_UNICODE(str.c_str());
-	s_eg = "1/2x = 1/(2x)";
+	s_eg = "1/2x = 1/(2x); 5 m/2 s = (5 m)/(2 s)";
 	PUTS_ITALIC(s_eg);
 	puts("");
 	str = ""; BEGIN_BOLD(str); str += "2 = "; str += _("Conventional"); END_BOLD(str);
 	PUTS_UNICODE(str.c_str());
-	s_eg = "1/2x = (1/2)x";
+	s_eg = "1/2x = (1/2)x; 5 m/2 s = (5 m/2)s";
 	PUTS_ITALIC(s_eg);
 	puts("");
 	FPUTS_UNICODE(_("Parsing mode"), stdout);

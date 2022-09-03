@@ -4034,17 +4034,17 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 bool Calculator::checkExchangeRatesDate(unsigned int n_days, bool force_check, bool send_warning, int n) {
 	if(n <= 0) n = 5;
 	time_t extime = exchange_rates_time[0];
-	for(int i = 1; i < (n > 5 ? 4 : n); i++) {
+	for(int i = 1; i < (n > 4 ? 4 : n); i++) {
 		if(i > 2 && priv->exchange_rates_time2[i - 3] < extime) extime = priv->exchange_rates_time2[i - 3];
 		else if(i <= 2 && (i != 2 || n != 4) && exchange_rates_time[i] < extime) extime = exchange_rates_time[i];
 	}
 	time_t cextime = exchange_rates_check_time[0];
-	for(int i = 1; i < (n > 5 ? 4 : n); i++) {
+	for(int i = 1; i < (n > 4 ? 4 : n); i++) {
 		if(i > 2 && priv->exchange_rates_check_time2[i - 3] < cextime) cextime = priv->exchange_rates_check_time2[i - 3];
 		else if(i <= 2 && (i != 2 || n != 4) && exchange_rates_check_time[i] < cextime) cextime = exchange_rates_check_time[i];
 	}
 	if(extime > 0 && ((!force_check && cextime > 0 && difftime(time(NULL), cextime) < 86400 * n_days) || difftime(time(NULL), extime) < (86400 * n_days) + 3600)) return true;
-	for(int i = 0; i < (n > 5 ? 4 : n); i++) {
+	for(int i = 0; i < (n > 4 ? 4 : n); i++) {
 		if(i <= 2 && (i != 2 || n != 4)) time(&exchange_rates_check_time[i]);
 		else if(i > 2) time(&priv->exchange_rates_check_time2[i - 3]);
 	}
@@ -4066,6 +4066,6 @@ void Calculator::resetExchangeRatesUsed() {
 }
 void Calculator::setExchangeRatesUsed(int index) {
 	if(index > b_exchange_rates_used) b_exchange_rates_used = index;
-	if(b_exchange_rates_warning_enabled) checkExchangeRatesDate(7, false, true);
+	if(b_exchange_rates_warning_enabled) checkExchangeRatesDate(7, false, true, index);
 }
 
