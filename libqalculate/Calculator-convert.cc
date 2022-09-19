@@ -478,12 +478,12 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 		if(mstruct_new.size() > 0) {
 			for(size_t i = 0; i < mstruct_new.size(); i++) {
 				if(aborted()) return mstruct;
-				if(!mstruct_new.isFunction() || !mstruct_new.function()->getArgumentDefinition(i + 1) || mstruct_new.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) {
+				if(!mstruct_new.isFunction() || !mstruct_new.function()->getArgumentDefinition(i + 1) || mstruct_new.function()->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_FREE || (!mstruct_new.function()->getArgumentDefinition(i + 1)->tests() && mstruct_new.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE)) {
 					mstruct_new[i] = convert(mstruct_new[i], to_unit, eo, false, convert_to_mixed_units, false, NULL);
 					if(!b_changed && !mstruct_new.equals(mstruct[i], true, true)) b_changed = true;
 				}
 			}
-			if(b_changed && !b_ratio) {
+			if(b_changed && !b_ratio && !mstruct.isFunction()) {
 				mstruct_new.childrenUpdated();
 				EvaluationOptions eo2 = eo;
 				//eo2.calculate_functions = false;
