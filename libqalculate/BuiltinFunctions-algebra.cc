@@ -54,11 +54,13 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		nr.subtract(i_nr);
 		if(nr.isGreaterThan(100)) eo2.approximation = APPROXIMATION_APPROXIMATE;
 	}
-	CALCULATOR->beginTemporaryStopMessages();
-	m1.eval(eo2);
-	if(calculate_userfunctions(m1, vargs[3], eo)) m1.calculatesub(eo2, eo2, true);
-	int im = 0;
-	if(CALCULATOR->endTemporaryStopMessages(NULL, &im) > 0 || im > 0) m1 = vargs[0];
+	if(eo.expand) {
+		CALCULATOR->beginTemporaryStopMessages();
+		m1.eval(eo2);
+		if(calculate_userfunctions(m1, vargs[3], eo)) m1.calculatesub(eo2, eo2, true);
+		int im = 0;
+		if(CALCULATOR->endTemporaryStopMessages(NULL, &im) > 0 || im > 0) m1 = vargs[0];
+	}
 	eo2.calculate_functions = eo.calculate_functions;
 	eo2.expand = eo.expand;
 	mstruct.clear();
@@ -76,13 +78,18 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 		mstruct_calc.set(m1);
 		mstruct_calc.replace(vargs[3], i_nr);
-		mstruct_calc.eval(eo2);
-		if(started) {
-			mstruct.calculateAdd(mstruct_calc, eo2);
+		if(!eo.expand) {
+			if(started) mstruct.add(mstruct_calc, true);
+			else {mstruct = mstruct_calc; started = true;}
 		} else {
-			mstruct = mstruct_calc;
-			mstruct.calculatesub(eo2, eo2);
-			started = true;
+			mstruct_calc.eval(eo2);
+			if(started) {
+				mstruct.calculateAdd(mstruct_calc, eo2);
+			} else {
+				mstruct = mstruct_calc;
+				mstruct.calculatesub(eo2, eo2);
+				started = true;
+			}
 		}
 		i_nr += 1;
 	}
@@ -112,11 +119,13 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		nr.subtract(i_nr);
 		if(nr.isGreaterThan(100)) eo2.approximation = APPROXIMATION_APPROXIMATE;
 	}
-	CALCULATOR->beginTemporaryStopMessages();
-	m1.eval(eo2);
-	if(calculate_userfunctions(m1, vargs[3], eo)) m1.calculatesub(eo2, eo2, true);
-	int im = 0;
-	if(CALCULATOR->endTemporaryStopMessages(NULL, &im) || im > 0) m1 = vargs[0];
+	if(eo.expand) {
+		CALCULATOR->beginTemporaryStopMessages();
+		m1.eval(eo2);
+		if(calculate_userfunctions(m1, vargs[3], eo)) m1.calculatesub(eo2, eo2, true);
+		int im = 0;
+		if(CALCULATOR->endTemporaryStopMessages(NULL, &im) || im > 0) m1 = vargs[0];
+	}
 	eo2.calculate_functions = eo.calculate_functions;
 	eo2.expand = eo.expand;
 	mstruct.clear();
@@ -134,13 +143,18 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		}
 		mstruct_calc.set(m1);
 		mstruct_calc.replace(vargs[3], i_nr);
-		mstruct_calc.eval(eo2);
-		if(started) {
-			mstruct.calculateMultiply(mstruct_calc, eo2);
+		if(!eo.expand) {
+			if(started) mstruct.multiply(mstruct_calc, true);
+			else {mstruct = mstruct_calc; started = true;}
 		} else {
-			mstruct = mstruct_calc;
-			mstruct.calculatesub(eo2, eo2);
-			started = true;
+			mstruct_calc.eval(eo2);
+			if(started) {
+				mstruct.calculateMultiply(mstruct_calc, eo2);
+			} else {
+				mstruct = mstruct_calc;
+				mstruct.calculatesub(eo2, eo2);
+				started = true;
+			}
 		}
 		i_nr += 1;
 	}
