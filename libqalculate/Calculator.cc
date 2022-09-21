@@ -1629,6 +1629,9 @@ void Calculator::addBuiltinFunctions() {
 
 	f_interval = addFunction(new IntervalFunction());
 	f_uncertainty = addFunction(new UncertaintyFunction());
+	addFunction(new LowerEndPointFunction());
+	addFunction(new UpperEndPointFunction());
+	addFunction(new MidPointFunction());
 
 	f_sqrt = addFunction(new SqrtFunction());
 	f_cbrt = addFunction(new CbrtFunction());

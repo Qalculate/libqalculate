@@ -2466,3 +2466,26 @@ int IEEE754FloatErrorFunction::calculate(MathStructure &mstruct, const MathStruc
 	return 1;
 }
 
+UpperEndPointFunction::UpperEndPointFunction() : MathFunction("upperValue", 1) {
+	setArgumentDefinition(1, new NumberArgument());
+}
+int UpperEndPointFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	mstruct = vargs[0].number().upperEndPoint();
+	return 1;
+}
+LowerEndPointFunction::LowerEndPointFunction() : MathFunction("lowerValue", 1) {
+	setArgumentDefinition(1, new NumberArgument());
+}
+int LowerEndPointFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	mstruct = vargs[0].number().lowerEndPoint();
+	return 1;
+}
+MidPointFunction::MidPointFunction() : MathFunction("midValue", 1) {
+	setArgumentDefinition(1, new NumberArgument());
+}
+int MidPointFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	Number nr(vargs[0].number());
+	nr.intervalToMidValue();
+	mstruct = nr;
+	return 1;
+}
