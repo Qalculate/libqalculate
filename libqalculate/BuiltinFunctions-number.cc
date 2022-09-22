@@ -2466,26 +2466,36 @@ int IEEE754FloatErrorFunction::calculate(MathStructure &mstruct, const MathStruc
 	return 1;
 }
 
-UpperEndPointFunction::UpperEndPointFunction() : MathFunction("upperValue", 1) {
+UpperEndPointFunction::UpperEndPointFunction() : MathFunction("upperEndpoint", 1) {
 	setArgumentDefinition(1, new NumberArgument());
 }
 int UpperEndPointFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	mstruct = vargs[0].number().upperEndPoint();
 	return 1;
 }
-LowerEndPointFunction::LowerEndPointFunction() : MathFunction("lowerValue", 1) {
+LowerEndPointFunction::LowerEndPointFunction() : MathFunction("lowerEndpoint", 1) {
 	setArgumentDefinition(1, new NumberArgument());
 }
 int LowerEndPointFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	mstruct = vargs[0].number().lowerEndPoint();
 	return 1;
 }
-MidPointFunction::MidPointFunction() : MathFunction("midValue", 1) {
+MidPointFunction::MidPointFunction() : MathFunction("midpoint", 1) {
 	setArgumentDefinition(1, new NumberArgument());
 }
 int MidPointFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	Number nr(vargs[0].number());
 	nr.intervalToMidValue();
 	mstruct = nr;
+	return 1;
+}
+GetUncertaintyFunction::GetUncertaintyFunction() : MathFunction("errorPart", 1, 2) {
+	setArgumentDefinition(1, new NumberArgument());
+	setArgumentDefinition(2, new BooleanArgument());
+	setDefaultValue(2, "0");
+}
+int GetUncertaintyFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	if(vargs[1].number().getBoolean()) mstruct = vargs[0].number().relativeUncertainty();
+	else mstruct = vargs[0].number().uncertainty();
 	return 1;
 }

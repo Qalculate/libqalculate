@@ -963,6 +963,63 @@
     </category>
   </category>
   <category>
+    <_title>Intervals &amp; Uncertainties</_title>
+    <builtin_function name="interval">
+      <_title>Interval</_title>
+      <_names>r:interval</_names>
+      <argument index="1">
+        <_title>Lower endpoint</_title>
+      </argument>
+      <argument index="2">
+        <_title>Upper endpoint</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="uncertainty">
+      <_title>Uncertainty</_title>
+      <_names>r:uncertainty</_names>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+      <argument index="2">
+        <_title>Uncertainty</_title>
+      </argument>
+      <argument index="3">
+        <_title>Uncertainty is relative</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="lowerEndpoint">
+      <_title>Lower Endpoint (interval)</_title>
+      <_names>r:lowerEndpoint</_names>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="upperEndpoint">
+      <_title>Upper Endpoint (interval)</_title>
+      <_names>r:upperEndpoint</_names>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="midpoint">
+      <_title>Midpoint (interval)</_title>
+      <_names>r:midpoint,valuePart</_names>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="errorPart">
+      <_title>Get Uncertainty</_title>
+      <_names>r:errorPart</_names>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+      <argument index="2">
+        <_title>Uncertainty is relative</_title>
+      </argument>
+    </builtin_function>
+  </category>
+  <category>
     <_title>Special Functions</_title>
     <builtin_function name="gamma">
       <_title>Gamma Function</_title>
@@ -3140,29 +3197,6 @@
       <_names>r:representsInteger</_names>
       <argument index="1">
         <_title>Value</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="interval">
-      <_title>Interval</_title>
-      <_names>r:interval</_names>
-      <argument index="1">
-        <_title>Lower endpoint</_title>
-      </argument>
-      <argument index="2">
-        <_title>Upper endpoint</_title>
-      </argument>
-    </builtin_function>
-    <builtin_function name="uncertainty">
-      <_title>Uncertainty</_title>
-      <_names>r:uncertainty</_names>
-      <argument index="1">
-        <_title>Value</_title>
-      </argument>
-      <argument index="2">
-        <_title>Uncertainty</_title>
-      </argument>
-      <argument index="3">
-        <_title>Uncertainty is relative</_title>
       </argument>
     </builtin_function>
     <builtin_function name="command">
