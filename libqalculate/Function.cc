@@ -1617,7 +1617,8 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 						if(i2 == string::npos) break;
 						id = s2i(str2.substr(i + 1, i2 - (i + 1)));
 						MathStructure *m_temp = CALCULATOR->getId((size_t) id);
-						str3 = "(";
+						bool do_par = (i == 0 || i2 + 1 == str2.length() || str2[i - 1] != LEFT_PARENTHESIS_CH || str2[i2 + 1] != RIGHT_PARENTHESIS_CH);
+						if(do_par) str3 = LEFT_PARENTHESIS_CH;
 						if(!m_temp) {
 							CALCULATOR->error(true, _("Internal id %s does not exist."), i2s(id).c_str(), NULL);
 							str3 += CALCULATOR->getVariableById(VARIABLE_ID_UNDEFINED)->preferredInputName(true, false, false, true).name;
@@ -1625,7 +1626,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 							str3 += m_temp->print(CALCULATOR->save_printoptions).c_str();
 							m_temp->unref();
 						}
-						str3 += ")";
+						if(do_par) str3 += RIGHT_PARENTHESIS_CH;
 						str2.replace(i, i2 - i + 1, str3);
 						i += str3.length();
 					}
@@ -1648,7 +1649,8 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 			if(i2 == string::npos) break;
 			id = s2i(str2.substr(i + 1, i2 - (i + 1)));
 			MathStructure *m_temp = CALCULATOR->getId((size_t) id);
-			str3 = "(";
+			bool do_par = (i == 0 || i2 + 1 == str2.length() || str2[i - 1] != LEFT_PARENTHESIS_CH || str2[i2 + 1] != RIGHT_PARENTHESIS_CH);
+			if(do_par) str3 = LEFT_PARENTHESIS_CH;
 			if(!m_temp) {
 				CALCULATOR->error(true, _("Internal id %s does not exist."), i2s(id).c_str(), NULL);
 				str3 += CALCULATOR->getVariableById(VARIABLE_ID_UNDEFINED)->preferredInputName(true, false, false, true).name;
@@ -1656,7 +1658,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 				str3 += m_temp->print(CALCULATOR->save_printoptions).c_str();
 				m_temp->unref();
 			}
-			str3 += ")";
+			if(do_par) str3 += RIGHT_PARENTHESIS_CH;
 			str2.replace(i, i2 - i + 1, str3);
 			i += str3.length();
 		}
@@ -2173,6 +2175,7 @@ bool VectorArgument::subtest(MathStructure &value, const EvaluationOptions &eo) 
 		value.eval(eo);
 	}
 	if(!value.isVector()) {
+		if((eo.approximation == APPROXIMATION_EXACT || eo.approximation == APPROXIMATION_EXACT_VARIABLES) && !value.representsScalar()) return false;
 		if(isLastArgument()) value.transform(STRUCT_VECTOR);
 		else if(value.representsScalar()) value.transform(STRUCT_VECTOR);
 		else return false;

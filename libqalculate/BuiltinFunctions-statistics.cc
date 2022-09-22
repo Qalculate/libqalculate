@@ -35,7 +35,9 @@ int TotalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	mstruct.clear();
 	for(size_t index = 0; index < vargs[0].size(); index++) {
 		if(CALCULATOR->aborted()) return 0;
-		mstruct.calculateAdd(vargs[0][index], eo);
+		if(index == 0) mstruct = vargs[0][index];
+		else if(eo.expand) mstruct.calculateAdd(vargs[0][index], eo);
+		else mstruct.add(vargs[0][index], true);
 	}
 	return 1;
 }
