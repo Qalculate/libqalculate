@@ -531,7 +531,14 @@ bool calculate_differentiable_functions(MathStructure &m, const EvaluationOption
 bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOptions &eo, bool recursive, bool do_unformat, int i_type) {
 	if(m.isFunction() && m.function() != eo.protected_function) {
 		if((i_type <= 0 && (!function_differentiable(m.function()) || (m.function()->id() == FUNCTION_ID_INCOMPLETE_BETA && (m.size() != 3 || m[1].containsInterval(true, false, false, 1, true) || m[2].containsInterval(true, false, false, 1, true))) || (m.function()->id() == FUNCTION_ID_I_GAMMA && (m.size() != 2 || m[1].containsInterval(true, false, false, 1, true))))) || (i_type >= 0 && !contains_interval_variable(m, i_type))) {
-			if(m.calculateFunctions(eo, false, do_unformat)) {
+			if((m.function()->id() == FUNCTION_ID_TOTAL || m.function()->id() == FUNCTION_ID_SUM || m.function()->id() == FUNCTION_ID_PRODUCT) && m.size() > 0 && m[0].containsInterval(true, true, false, 1, true)) {
+				EvaluationOptions eo2 = eo;
+				eo2.expand = false;
+				if(m.calculateFunctions(eo2, false, do_unformat)) {
+					if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type);
+					return true;
+				}
+			} else if(m.calculateFunctions(eo, false, do_unformat)) {
 				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type);
 				return true;
 			}
@@ -1908,7 +1915,11 @@ bool remove_add_zero_unit(MathStructure &m) {
 		}
 		return b;
 	}
-	return false;
+	bool b_ret = false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(remove_add_zero_unit(m[i])) b_ret = true;
+	}
+	return b_ret;
 }
 
 // Functions for handling log-based units
@@ -2254,6 +2265,155 @@ bool MathStructure::structure(StructuringMode structuring, const EvaluationOptio
 	}
 }
 
+bool merge_uncertainty(MathStructure &m, MathStructure &munc, const EvaluationOptions &eo3) {
+	bool b_failed = true;
+	if(munc.isVector() && m.isVector() && munc.size() == m.size()) {
+		b_failed = false;
+		for(size_t i = 0; i < m.size(); i++) {
+			if(!merge_uncertainty(m[i], munc[i], eo3)) b_failed = true;
+		}
+		m.childrenUpdated();
+		return !b_failed;
+	}
+	if(munc.isFunction() && munc.function()->id() == FUNCTION_ID_ABS && munc.size() == 1) {
+		munc.setToChild(1);
+	}
+	bool one_prepended = false;
+	test_munc:
+	if(munc.isNumber()) {
+		if(munc.isZero()) {
+			return true;
+		} else if(m.isNumber()) {
+			m.number().setUncertainty(munc.number());
+			m.numberUpdated();
+			return true;
+		} else if(m.isAddition()) {
+			for(size_t i = 0; i < m.size(); i++) {
+				if(m[i].isNumber()) {
+					b_failed = false;
+					m[i].number().setUncertainty(munc.number());
+					m[i].numberUpdated();
+					m.childUpdated(i + 1);
+					break;
+				}
+			}
+		} else if(m.isMultiplication() && m.size() == 2 && m[0].isNumber() && m.last().isUnit() && m.last().unit() == CALCULATOR->getRadUnit()) {
+			m[0].number().setUncertainty(munc.number());
+			m[0].numberUpdated();
+			m.childUpdated(1);
+			return true;
+		}
+	} else {
+		if(munc.isMultiplication()) {
+			if(!munc[0].isNumber()) {
+				munc.insertChild(m_one, 1);
+				one_prepended = true;
+			}
+		} else {
+			munc.transform(STRUCT_MULTIPLICATION);
+			munc.insertChild(m_one, 1);
+			one_prepended = true;
+		}
+		if(munc.isMultiplication()) {
+			if(munc.size() == 2) {
+				if(m.isMultiplication() && m[0].isNumber() && (munc[1] == m[1] || (munc[1].isFunction() && munc[1].function()->id() == FUNCTION_ID_ABS && munc[1].size() == 1 && m[1] == munc[1][0]))) {
+					m[0].number().setUncertainty(munc[0].number());
+					m[0].numberUpdated();
+					m.childUpdated(1);
+					b_failed = false;
+				} else if(m.equals(munc[1]) || (munc[1].isFunction() && munc[1].function()->id() == FUNCTION_ID_ABS && munc[1].size() == 1 && m.equals(munc[1][0]))) {
+					m.transform(STRUCT_MULTIPLICATION);
+					m.insertChild(m_one, 1);
+					m[0].number().setUncertainty(munc[0].number());
+					m[0].numberUpdated();
+					m.childUpdated(1);
+					b_failed = false;
+				}
+			} else if(m.isMultiplication()) {
+				size_t i2 = 0;
+				if(m[0].isNumber()) i2++;
+				if(m.size() + 1 - i2 != munc.size() && m.last().isUnit() && m.last().unit() == CALCULATOR->getRadUnit()) {
+					munc *= CALCULATOR->getRadUnit();
+				}
+				if(m.size() + 1 - i2 == munc.size()) {
+					bool b = true;
+					for(size_t i = 1; i < munc.size(); i++, i2++) {
+						if(!munc[i].equals(m[i2]) && !(munc[i].isFunction() && munc[i].function()->id() == FUNCTION_ID_ABS && munc[i].size() == 1 && m[i2] == munc[i][0])) {
+							b = false;
+							break;
+						}
+					}
+					if(b) {
+						if(!m[0].isNumber()) {
+							m.insertChild(m_one, 1);
+						}
+						m[0].number().setUncertainty(munc[0].number());
+						m[0].numberUpdated();
+						m.childUpdated(1);
+						b_failed = false;
+					}
+				}
+			}
+			if(b_failed) {
+				bool b = false;
+				for(size_t i = 0; i < munc.size(); i++) {
+					if(munc[i].isFunction() && munc[i].function()->id() == FUNCTION_ID_ABS && munc[i].size() == 1) {
+						munc[i].setToChild(1);
+						b = true;
+					}
+				}
+				if(b) {
+					munc.eval(eo3);
+					goto test_munc;
+				}
+			}
+		}
+	}
+	if(b_failed && one_prepended && munc.isMultiplication() && munc[0].isOne()) munc.delChild(1, true);
+	return !b_failed;
+}
+
+bool separate_vector_vars(MathStructure &m, const EvaluationOptions &eo, vector<KnownVariable*> &vars, vector<MathStructure> &values) {
+	if(m.isVariable() && m.variable()->isKnown() && (!m.variable()->isApproximate() || eo.approximation == APPROXIMATION_TRY_EXACT || eo.approximation == APPROXIMATION_APPROXIMATE)) {
+		const MathStructure &mvar = ((KnownVariable*) m.variable())->get();
+		if(mvar.isVector() && mvar.containsInterval(true, false, false, 1, true)) {
+			bool b = false;
+			for(size_t i = 0; i < vars.size(); i++) {
+				if(vars[i] == m.variable()) {
+					m = values[i];
+					b = true;
+					break;
+				}
+			}
+			if(!b) {
+				vars.push_back((KnownVariable*) m.variable());
+				m.clearVector();
+				for(size_t i = 0; i < mvar.size(); i++) {
+					if(mvar[i].containsInterval(true, false, false, 1, true)) {
+						KnownVariable *v = new KnownVariable("", string("(") + format_and_print(mvar[i]) + ")", mvar[i]);
+						m.addChild(v);
+						v->ref();
+						v->destroy();
+					} else {
+						m[i].addChild(mvar[i]);
+					}
+					separate_vector_vars(m[i], eo, vars, values);
+				}
+				values.push_back(m);
+			}
+			return true;
+		}
+	}
+	bool b_ret = false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(separate_vector_vars(m[i], eo, vars, values)) {
+			b_ret = true;
+			m.childUpdated(i + 1);
+		}
+	}
+	return b_ret;
+}
+
 #define FORMAT_COMPLEX_NUMBERS	if(eo.complex_number_form == COMPLEX_NUMBER_FORM_EXPONENTIAL) complexToExponentialForm(eo); \
 				else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) complexToPolarForm(eo); \
 				else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_CIS) complexToCisForm(eo);
@@ -2313,6 +2473,11 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		}
 		if(eo.calculate_functions) calculate_differentiable_functions(*this, feo);
 	} else if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA) {
+		if((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) && containsInterval(true, true, false, 1, true)) {
+			vector<KnownVariable*> vars;
+			vector<MathStructure> uncs;
+			separate_vector_vars(*this, feo, vars, uncs);
+		}
 		if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo, true, true, -1);
 		if(!isNumber() && (((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) && containsInterval(true, true, false, 1, true)) || containsInterval(true, false, false, 1, true) || (eo.sync_units && eo.approximation != APPROXIMATION_EXACT && sync_approximate_units(*this, eo)) || (eo.approximation == APPROXIMATION_EXACT && contains_function_interval(*this, true, true, false, 1, true)))) {
 
@@ -2330,7 +2495,9 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 				eo3.approximation = APPROXIMATION_EXACT;
 				vector<KnownVariable*> vars;
 				vector<MathStructure> uncs;
-				calculatesub(eo3, eo3);
+				separate_vector_vars(*this, feo, vars, uncs);
+				vars.clear();
+				uncs.clear();
 				// remove units from variables with uncertainties
 				while(eo.sync_units && (separate_unit_vars(*this, feo, true) || sync_approximate_units(*this, feo, &vars, &uncs, false))) {
 					calculatesub(eo3, eo3);
@@ -2387,7 +2554,15 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 				CALCULATOR->beginTemporaryStopMessages();
 
 				// calculate uncertainty
-				munc = calculate_uncertainty(*this, eo, b_failed);
+				if(m_type == STRUCT_VECTOR) {
+					munc.clearVector();
+					for(size_t i = 0; i < SIZE; i++) {
+						munc.addChild(calculate_uncertainty(CHILD(i), eo, b_failed));
+						if(b_failed) break;
+					}
+				} else {
+					munc = calculate_uncertainty(*this, eo, b_failed);
+				}
 
 				if(!b_failed && !munc.isZero()) {
 
@@ -2405,97 +2580,9 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 					// Add uncertainty to calculated value
 					if(eo.keep_zero_units) remove_add_zero_unit(*this);
-					b_failed = true;
-					if(munc.isFunction() && munc.function()->id() == FUNCTION_ID_ABS && munc.size() == 1) {
-						munc.setToChild(1);
-					}
-					bool one_prepended = false;
-					test_munc:
-					if(munc.isNumber()) {
-						if(munc.isZero()) {
-							CALCULATOR->endTemporaryStopMessages(true);
-							return *this;
-						} else if(isNumber()) {
-							o_number.setUncertainty(munc.number());
-							numberUpdated();
-							CALCULATOR->endTemporaryStopMessages(true);
-							return *this;
-						} else if(isAddition()) {
-							for(size_t i = 0; i < SIZE; i++) {
-								if(CHILD(i).isNumber()) {
-									b_failed = false;
-									CHILD(i).number().setUncertainty(munc.number());
-									CHILD(i).numberUpdated();
-									CHILD_UPDATED(i);
-									break;
-								}
-							}
-						}
-					} else {
-						if(munc.isMultiplication()) {
-							if(!munc[0].isNumber()) {
-								munc.insertChild(m_one, 1);
-								one_prepended = true;
-							}
-						} else {
-							munc.transform(STRUCT_MULTIPLICATION);
-							munc.insertChild(m_one, 1);
-							one_prepended = true;
-						}
-						if(munc.isMultiplication()) {
-							if(munc.size() == 2) {
-								if(isMultiplication() && CHILD(0).isNumber() && (munc[1] == CHILD(1) || (munc[1].isFunction() && munc[1].function()->id() == FUNCTION_ID_ABS && munc[1].size() == 1 && CHILD(1) == munc[1][0]))) {
-									CHILD(0).number().setUncertainty(munc[0].number());
-									CHILD(0).numberUpdated();
-									CHILD_UPDATED(0)
-									b_failed = false;
-								} else if(equals(munc[1]) || (munc[1].isFunction() && munc[1].function()->id() == FUNCTION_ID_ABS && munc[1].size() == 1 && equals(munc[1][0]))) {
-									transform(STRUCT_MULTIPLICATION);
-									PREPEND(m_one);
-									CHILD(0).number().setUncertainty(munc[0].number());
-									CHILD(0).numberUpdated();
-									CHILD_UPDATED(0)
-									b_failed = false;
-								}
-							} else if(isMultiplication()) {
-								size_t i2 = 0;
-								if(CHILD(0).isNumber()) i2++;
-								if(SIZE + 1 - i2 == munc.size()) {
-									bool b = true;
-									for(size_t i = 1; i < munc.size(); i++, i2++) {
-										if(!munc[i].equals(CHILD(i2)) && !(munc[i].isFunction() && munc[i].function()->id() == FUNCTION_ID_ABS && munc[i].size() == 1 && CHILD(i2) == munc[i][0])) {
-											b = false;
-											break;
-										}
-									}
-									if(b) {
-										if(!CHILD(0).isNumber()) {
-											PREPEND(m_one);
-										}
-										CHILD(0).number().setUncertainty(munc[0].number());
-										CHILD(0).numberUpdated();
-										CHILD_UPDATED(0)
-										b_failed = false;
-									}
-								}
-							}
-							if(b_failed) {
-								bool b = false;
-								for(size_t i = 0; i < munc.size(); i++) {
-									if(munc[i].isFunction() && munc[i].function()->id() == FUNCTION_ID_ABS && munc[i].size() == 1) {
-										munc[i].setToChild(1);
-										b = true;
-									}
-								}
-								if(b) {
-									munc.eval(eo3);
-									goto test_munc;
-								}
-							}
-						}
-					}
+					b_failed = !merge_uncertainty(*this, munc, eo3);
+
 					if(b_failed && munc.countTotalChildren(false) < 50) {
-						if(one_prepended && munc.isMultiplication() && munc[0].isOne()) munc.delChild(1, true);
 						if(eo.structuring != STRUCTURING_NONE) {simplify_ln(*this); simplify_ln(munc); simplify_roots(*this, eo); simplify_roots(munc, eo);}
 						structure(eo.structuring, eo2, false);
 						munc.structure(eo.structuring, eo2, false);
@@ -2510,6 +2597,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 					}
 					if(!b_failed) {
 						CALCULATOR->endTemporaryStopMessages(true);
+						if(m_type == STRUCT_NUMBER) return *this;
 						if(eo.structuring != STRUCTURING_NONE) {simplify_ln(*this); simplify_roots(*this, eo);}
 						structure(eo.structuring, eo2, false);
 						if(eo.structuring != STRUCTURING_NONE) {simplify_ln(*this); simplify_roots(*this, eo);}
