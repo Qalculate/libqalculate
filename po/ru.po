@@ -4594,7 +4594,7 @@ msgstr "високосный месяц"
 
 #: ../libqalculate/Unit.cc:1290
 msgid "Error(s) in unitexpression."
-msgstr "Ошибка (и) в выражении для единиц измерения."
+msgstr "Ошибка(и) в выражении для единиц измерения."
 
 #: ../libqalculate/Variable.cc:509
 #, c-format
