@@ -297,7 +297,7 @@ saves the current result in a temporary variable
 .B Ctrl+L
 clears the screen
 .SH "SETTINGS"
-These settings are changed using the \fIset\fP command (e.g. set base 16) or the \fI\-s, \-\-set\fP command line option (e.g. qalc -s "base 16"). Possible values are shown in parenthesis. 1 and 0 can be used instead of on and off. If the value is left out, a value of 1 is generally assumed. The default value is marked with '*'.
+These settings are changed using the \fIset\fP command (e.g. set base 16) or the \fI\-s, \-\-set\fP command line option (e.g. qalc -s "base 16"). Possible values are shown in parenthesis. 1 and 0 can be used instead of on and off, yes and no. If the value is left out, a value of 1 is generally assumed. The default value is marked with '*'.
 .PP
 Algebraic mode:
 .PP
@@ -454,10 +454,10 @@ Use lowercase e for E-notation (5e2 = 5 * 10^2).
 Use lowercase letters for number bases > 10.
 .PP
 .TP 8
-.B max decimals, maxdeci \fI(off*, >= 0)\fP
+.B max decimals, maxdeci \fI(-1 = off*, >= 0)\fP
 .PP
 .TP 8
-.B min decimals, mindeci \fI(off*, >= 0)\fP
+.B min decimals, mindeci \fI(-1 = off*, >= 0)\fP
 .PP
 .TP 8
 .B rounding \fI(0 = standard*, 1 = even, 2 = truncate)\fP
@@ -519,7 +519,7 @@ Units:
 Enables automatic use of hecto, deca, deci, and centi.
 .PP
 .TP 8
-.B autoconversion, conv \fI(none, optimal*, base, optimalsi, mixed)\fP
+.B autoconversion, conv \fI(0 = none, 1 = optimal*, 2 = base, 3 = optimalsi, 4 = mixed)\fP
 Controls automatic unit conversion of the result. 'optimalsi' always converts non-SI units, while 'optimal' only converts to more optimal unit
 expressions, with less units and exponents.
 .PP
@@ -551,7 +551,7 @@ Use negative exponents instead of division for units in result (m/s = m*s^-1).
 .B sync units, sync \fI(on*, off)\fP
 .PP
 .TP 8
-.B temperature units, temp \fI(hybrid*, absolute, relative)\fP
+.B temperature units, temp \fI(0 = hybrid*, 1 = absolute, 2 = relative)\fP
 Determines how expressions with temperature units are calculated (hybrid acts as absolute if the expression contains different temperature units, otherwise as relative).
 .PP
 .TP 8
