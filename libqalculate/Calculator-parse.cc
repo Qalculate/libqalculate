@@ -1444,15 +1444,28 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							str.insert(i_prev, LEFT_PARENTHESIS);
 							i_degree++;
 							i_op++;
-							str.replace(i_op, strlen("″"), "arcsec" RIGHT_PARENTHESIS);
-							str.replace(i_degree, strlen(SIGN_DEGREE), "deg" PLUS);
+							Unit *u = getActiveUnit("arcsec");
+							if(!u) break;
+							stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+							stmp += i2s(addId(new MathStructure(u)));
+							stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS RIGHT_PARENTHESIS;
+							str.replace(i_op, strlen("″"), stmp);
+							stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+							stmp += i2s(addId(new MathStructure(getDegUnit())));
+							stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS PLUS;
+							str.replace(i_degree, strlen(SIGN_DEGREE), stmp);
 							b = true;
 						}
 					}
 				}
 				if(!b) {
 					if(str.length() >= i_dquote + strlen("″") && is_in(NUMBERS, str[i_dquote + strlen("″")])) str.insert(i_dquote + strlen("″"), " ");
-					str.replace(i_dquote, strlen("″"), b_degree ? "arcsec" : "in");
+					Unit *u = getActiveUnit(b_degree ? "arcsec" : "in");
+					if(!u) break;
+					stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+					stmp += i2s(addId(new MathStructure(u)));
+					stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+					str.replace(i_dquote, strlen("″"), stmp);
 					i_op = i_dquote;
 				}
 			} else {
@@ -1490,12 +1503,27 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								if(i_op2 != string::npos && is_in(NUMBER_ELEMENTS, str[i_op2])) i_op2 = str.find_first_not_of(NUMBER_ELEMENTS SPACE, i_op2);
 								else i_op2 = 0;
 								if(i_op2 == i_dquote) {
-									str.replace(i_dquote, strlen("″"), "arcsec" RIGHT_PARENTHESIS);
+									Unit *u = getActiveUnit("arcsec");
+									if(!u) break;
+									stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+									stmp += i2s(addId(new MathStructure(u)));
+									stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS RIGHT_PARENTHESIS;
+									str.replace(i_dquote, strlen("″"), stmp);
 									i_op = i_op2;
 								}
 							}
-							str.replace(i_quote, strlen("′"), i_op == i_quote ? "arcmin" RIGHT_PARENTHESIS : "arcmin" PLUS);
-							str.replace(i_degree, strlen(SIGN_DEGREE), "deg" PLUS);
+							Unit *u = getActiveUnit("arcmin");
+							if(!u) break;
+							stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+							stmp += i2s(addId(new MathStructure(u)));
+							stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+							if(i_op == i_quote) str += RIGHT_PARENTHESIS;
+							else str += PLUS;
+							str.replace(i_quote, strlen("′"), stmp);
+							stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+							stmp += i2s(addId(new MathStructure(getDegUnit())));
+							stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS PLUS;
+							str.replace(i_degree, strlen(SIGN_DEGREE), stmp);
 							b = true;
 						}
 					}
@@ -1520,14 +1548,29 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					if(i_prev != string::npos) {
 						str.insert(i_prev, LEFT_PARENTHESIS);
 						i_quote++;
-						if(i_op == string::npos) str += b_degree ? "arcsec" RIGHT_PARENTHESIS : "in" RIGHT_PARENTHESIS;
-						else str.replace(i_op + 1, strlen("″"), b_degree ? "arcsec" RIGHT_PARENTHESIS : "in" RIGHT_PARENTHESIS);
-						str.replace(i_quote, strlen("′"), b_degree ? "arcmin" PLUS : "ft" PLUS);
+						Unit *u = getActiveUnit(b_degree ? "arcsec" : "in");
+						if(!u) break;
+						stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+						stmp += i2s(addId(new MathStructure(u)));
+						stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS RIGHT_PARENTHESIS;
+						if(i_op == string::npos) str += stmp;
+						else str.replace(i_op + 1, strlen("″"), stmp);
+						u = getActiveUnit(b_degree ? "arcmin" : "ft");
+						if(!u) break;
+						stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+						stmp += i2s(addId(new MathStructure(u)));
+						stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS PLUS;
+						str.replace(i_quote, strlen("′"), stmp);
 						if(i_op == string::npos) break;
 						i_op++;
 					} else {
 						if(str.length() >= i_quote + strlen("′") && is_in(NUMBERS, str[i_quote + strlen("′")])) str.insert(i_quote + strlen("′"), " ");
-						str.replace(i_quote, strlen("′"), b_degree ? "arcmin" : "ft");
+						Unit *u = getActiveUnit(b_degree ? "arcmin" : "ft");
+						if(!u) break;
+						stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+						stmp += i2s(addId(new MathStructure(u)));
+						stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+						str.replace(i_quote, strlen("′"), stmp);
 						i_op = i_quote;
 					}
 				}
@@ -1543,14 +1586,20 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	while(i_mod != string::npos) {
 		if(PARSING_MODE == PARSING_MODE_RPN) {
 			if(i_mod == 0 || is_not_in(OPERATORS "\\" INTERNAL_OPERATORS SPACE, str[i_mod - 1])) {
-				str.replace(i_mod, 1, v_percent->referenceName());
+				stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+				stmp += i2s(addId(new MathStructure(v_percent)));
+				stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+				str.replace(i_mod, 1, stmp);
 				i_mod += v_percent->referenceName().length() - 1;
 			}
 		} else {
 			size_t i_nonspace = string::npos;
 			if(i_mod < str.length() - 1) i_nonspace = str.find_first_not_of(SPACE, i_mod + 1);
 			if(i_mod == 0 || i_mod == str.length() - 1 || (str[i_mod - 1] != '%' && str[i_mod + 1] != '%' && ((i_nonspace != string::npos && is_in(RIGHT_PARENTHESIS RIGHT_VECTOR_WRAP COMMAS OPERATORS INTERNAL_OPERATORS, str[i_nonspace]) && str[i_nonspace] != BITWISE_NOT_CH && str[i_nonspace] != NOT_CH && str[i_nonspace] != '%') || is_in(LEFT_PARENTHESIS LEFT_VECTOR_WRAP COMMAS OPERATORS INTERNAL_OPERATORS, str[i_mod - 1])))) {
-				str.replace(i_mod, 1, v_percent->referenceName());
+				stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+				stmp += i2s(addId(new MathStructure(v_percent)));
+				stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+				str.replace(i_mod, 1, stmp);
 				i_mod += v_percent->referenceName().length() - 1;
 			}
 		}
@@ -2617,7 +2666,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 												if(arg_i >= f->args() && f->args() >= 0) b = true;
 												else icand = i6 + 1;
 											}
-										} else if(!b_comma_before && i5 == 2 && ((arg_i >= f->args() && f->args() >= 0) || arg_i >= f->minargs()) && is_in(OPERATORS INTERNAL_OPERATORS, c) && c != POWER_CH && c != INTERNAL_UPOW_CH && ((c != MINUS_CH && c != PLUS_CH) || (!b_power_before && (i6 < 3 || !BASE_2_10 || is_not_in(EXPS, str[str_index + name_length + i6 - 1]) || is_not_in(NUMBERS, str[str_index + name_length + i6 - 2]) || i6 + str_index + name_length == str.length() - 1 || is_not_in(NUMBERS, str[str_index + name_length + i6 + 1]))))) {
+										} else if(!b_comma_before && i5 == 2 && ((arg_i >= f->args() && f->args() >= 0) || arg_i >= f->minargs()) && is_in(OPERATORS INTERNAL_OPERATORS, c) && c != POWER_CH && c != '\b' && c != INTERNAL_UPOW_CH && ((c != MINUS_CH && c != PLUS_CH) || (!b_power_before && (i6 < 3 || !BASE_2_10 || is_not_in(EXPS, str[str_index + name_length + i6 - 1]) || is_not_in(NUMBERS, str[str_index + name_length + i6 - 2]) || i6 + str_index + name_length == str.length() - 1 || is_not_in(NUMBERS, str[str_index + name_length + i6 + 1]))))) {
 											if(arg_i >= f->args() && f->args() >= 0) b = true;
 											else icand = i6 + 1;
 										} else if(c == COMMA_CH) {
@@ -4934,12 +4983,23 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				}
 			}
 			if(po.preserve_format) {
-				while(minus_count > 0) {
-					mstruct->transform(STRUCT_NEGATE);
-					minus_count--;
+				if(minus_count > 0 && mstruct->isMultiplication() && !mstruct->inParentheses() && mstruct->size() > 0 && !(*mstruct)[0].isUnit_exp()) {
+					while(minus_count > 0) {
+						(*mstruct)[0].transform(STRUCT_NEGATE);
+						minus_count--;
+					}
+				} else {
+					while(minus_count > 0) {
+						mstruct->transform(STRUCT_NEGATE);
+						minus_count--;
+					}
 				}
 			} else if(minus_count % 2 == 1) {
-				mstruct->negate();
+				if(mstruct->isMultiplication() && !mstruct->inParentheses() && mstruct->size() > 0 && !(*mstruct)[0].isUnit_exp()) {
+					(*mstruct)[0].negate();
+				} else {
+					mstruct->negate();
+				}
 			}
 			return true;
 		}

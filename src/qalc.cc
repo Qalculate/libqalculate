@@ -1973,7 +1973,9 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 							value += ((KnownVariable*) v)->unit();
 						}
 						if(value.length() > 40) {
-							value = value.substr(0, 30);
+							size_t n = 30;
+							while(n > 0 && (signed char) value[n + 1] < 0 && (unsigned char) value[n + 1] < 0xC0) n--;
+							value = value.substr(0, n);
 							value += "...";
 						}
 						FPUTS_UNICODE(value.c_str(), stdout);
@@ -4527,8 +4529,8 @@ int main(int argc, char *argv[]) {
 				INIT_SCREEN_CHECK
 #define STR_AND_TABS_SET(x, s) str = "- "; BEGIN_BOLD(str); str += x; END_BOLD(str); if(strlen(s) > 0) {str += " ("; str += s; str += ")";} str += "\n";
 #define SET_DESCRIPTION(s) if(strlen(s) > 0) {BEGIN_ITALIC(str); str += s; END_ITALIC(str); str += "\n";}
-#define STR_AND_TABS_BOOL(s, sh, d, v) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "("; str += _("on"); if(v) {str += "*";} str += ", "; str += _("off"); if(!v) {str += "*";} str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-#define STR_AND_TABS_YESNO(s, sh, d, v) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "("; str += _("yes"); if(v) {str += "*";} str += ", "; str += _("no"); if(!v) {str += "*";} str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+#define STR_AND_TABS_BOOL(s, sh, d, v) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(1 = "; str += _("on"); if(v) {str += "*";} str += ", 0 = "; str += _("off"); if(!v) {str += "*";} str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+#define STR_AND_TABS_YESNO(s, sh, d, v) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(1 = "; str += _("yes"); if(v) {str += "*";} str += ", 0 = "; str += _("no"); if(!v) {str += "*";} str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_2(s, sh, d, v, s0, s1, s2) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_2b(s, sh, d, v, s0, s1) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(1"; if(v == 1) {str += "*";} str += " = "; str += s0; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s1; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_3(s, sh, d, v, s0, s1, s2, s3) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
@@ -4645,12 +4647,12 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_4(_("complex form"), "cplxform", "", evalops.complex_number_form + (complex_angle_form ? 1 : 0), _("rectangular"), _("exponential"), _("polar"), "cis", _("angle"));
 				STR_AND_TABS_SET(_("decimal comma"), "");
 				SET_DESCRIPTION(_("Determines the default decimal separator."));
-				str += "(";
+				str += "(-1 = ";
 				str += _("locale");
 				if(b_decimal_comma < 0) str += "*";
-				str += ", "; str += _("off");
+				str += ", 0 = "; str += _("off");
 				if(b_decimal_comma == 0) str += "*";
-				str += ", "; str += _("on");
+				str += ", 1 = "; str += _("on");
 				if(b_decimal_comma > 0) str += "*";
 				str += ")";
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
@@ -4666,14 +4668,14 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("lowercase e"), "lowe", _("Use lowercase e for E-notation (5e2 = 5 * 10^2)."), printops.lower_case_e);
 				STR_AND_TABS_BOOL(_("lowercase numbers"), "lownum", _("Use lowercase letters for number bases > 10."), printops.lower_case_numbers);
 				STR_AND_TABS_SET(_("max decimals"), "maxdeci");
-				str += "(";
+				str += "(-1 = ";
 				str += _("off");
 				if(printops.max_decimals < 0 || !printops.use_max_decimals) str += "*";
 				str += ", >= 0)";
 				if(printops.max_decimals >= 0 && printops.use_max_decimals) {str += " "; str += i2s(printops.max_decimals); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_SET(_("min decimals"), "mindeci");
-				str += "(";
+				str += "(-1 = ";
 				str += _("off");
 				if(printops.min_decimals < 0 || !printops.use_min_decimals) str += "*";
 				str += ", >= 0)";
@@ -4705,12 +4707,12 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("caret as xor"), "xor^", _("Use ^ as bitwise exclusive OR operator."), caret_as_xor);
 				STR_AND_TABS_SET(_("decimal comma"), "");
 				SET_DESCRIPTION(_("Determines the default decimal separator."));
-				str += "(";
+				str += "(-1 = ";
 				str += _("locale");
 				if(b_decimal_comma < 0) str += "*";
-				str += ", "; str += _("off");
+				str += ", 0 = "; str += _("off");
 				if(b_decimal_comma == 0) str += "*";
-				str += ", "; str += _("on");
+				str += ", 1 = "; str += _("on");
 				if(b_decimal_comma > 0) str += "*";
 				str += ")";
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
@@ -4750,16 +4752,16 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("all prefixes"), "allpref", _("Enables automatic use of hecto, deca, deci, and centi."), printops.use_all_prefixes);
 				STR_AND_TABS_SET(_("autoconversion"), "conv");
 				SET_DESCRIPTION(_("Controls automatic unit conversion of the result. 'optimalsi' always converts non-SI units, while 'optimal' only converts to more optimal unit expressions, with less units and exponents."));
-				str += "(";
+				str += "(0 = ";
 				str += (_("none"));
 				if(evalops.auto_post_conversion == POST_CONVERSION_NONE && evalops.mixed_units_conversion == MIXED_UNITS_CONVERSION_NONE) str += "*";
-				str += ", "; str +=  _("optimal");
+				str += ", 1 = "; str +=  _("optimal");
 				if(evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) str += "*";
-				str += ", "; str += _c("units", "base");
+				str += ", 2 = "; str += _c("units", "base");
 				if(evalops.auto_post_conversion == POST_CONVERSION_BASE) str += "*";
-				str += ", "; str += _("optimalsi");
+				str += ", 3 = "; str += _("optimalsi");
 				if(evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL_SI) str += "*";
-				str += ", "; str += _c("units", "mixed");
+				str += ", 4 = "; str += _c("units", "mixed");
 				if(evalops.auto_post_conversion == POST_CONVERSION_NONE && evalops.mixed_units_conversion > MIXED_UNITS_CONVERSION_NONE) str += "*";
 				str += ")";
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());

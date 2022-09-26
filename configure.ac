@@ -124,7 +124,7 @@ AS_IF([test "x$with_icu" = "xyes"], [
 	AC_SUBST(ICU_LIBS)
 ])
 
-AC_ARG_WITH([gnuplot-call], AS_HELP_STRING([--without-gnuplot-call], [disable support for invocation of external gnuplot binary (using popen)]), [], [with_gnuplot_call=yes])
+AC_ARG_WITH([gnuplot-call], AS_HELP_STRING([--without-gnuplot-call], [disable support for invocation of external commands, including gnuplot, using popen]), [], [with_gnuplot_call=yes])
 AS_IF([test "x$with_gnuplot_call" = "xyes"], [
 	AC_DEFINE([HAVE_GNUPLOT_CALL], [1], [Call to external gnuplot])
 ])
