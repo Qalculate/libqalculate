@@ -906,6 +906,24 @@ int idm3_test(bool &b_fail, const MathStructure &mnum, const Number &nr, bool ex
 	return 0;
 }
 
+bool is_unit_multiexp_strict(const MathStructure &m, bool in_div = false, bool in_mul = false) {
+	if(m.isUnit()) return true;
+	if(m.isPower() && m[0].isUnit() && (m[1].isInteger() || (m[1].isNegate() && m[1][0].isInteger() && m[1][0].number().isPositive()))) return true;
+	if(m.isMultiplication() && !in_mul) {
+		for(size_t i = 0; i < m.size(); i++) {
+			if(!is_unit_multiexp_strict(m[0], in_div, in_mul)) return false;
+		}
+		return true;
+	}
+	if(m.isInverse() && !in_div) {
+		return is_unit_multiexp_strict(m[0], false, true);
+	}
+	if(m.isDivision() && !in_div) {
+		return is_unit_multiexp_strict(m[0], in_mul, true) && is_unit_multiexp_strict(m[1], false, true);
+	}
+	return false;
+}
+
 bool is_unit_multiexp(const MathStructure &mstruct) {
 	if(mstruct.isUnit_exp()) return true;
 	if(mstruct.isMultiplication()) {
@@ -943,7 +961,7 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po, MathStr
 			bool dofrac = true;
 			for(size_t i2 = 0; i2 < SIZE; i2++) {
 				if(CHILD(i2).isPower() && CHILD(i2)[1].isMinusOne()) {
-					if(!po.place_units_separately || !is_unit_multiexp(CHILD(i2)[0])) {
+					if(!po.place_units_separately || !is_unit_multiexp_strict(CHILD(i2)[0])) {
 						if(iden == 0) index1 = i2;
 						iden++;
 						bdiv = true;
@@ -953,13 +971,13 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po, MathStr
 						}
 					}
 				} else if(!bdiv && CHILD(i2).isPower() && CHILD(i2)[1].hasNegativeSign()) {
-					if(!po.place_units_separately || !is_unit_multiexp(CHILD(i2)[0])) {
+					if(!po.place_units_separately || !is_unit_multiexp_strict(CHILD(i2)[0])) {
 						if(!bdiv) index1 = i2;
 						bdiv = true;
 						if(!CHILD(i2)[0].isUnit()) bnonunitdiv = true;
 					}
 				} else {
-					if(!po.place_units_separately || !is_unit_multiexp(CHILD(i2))) {
+					if(!po.place_units_separately || !is_unit_multiexp_strict(CHILD(i2))) {
 						if(inum == 0) index2 = i2;
 						inum++;
 					}
@@ -1135,6 +1153,7 @@ bool has_prefix(const MathStructure &mstruct) {
 }
 
 void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, size_t pindex) {
+	bool do_child_prefix = true;
 	switch(m_type) {
 		case STRUCT_MULTIPLICATION: {
 			bool b = false;
@@ -1144,7 +1163,8 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 				if(CHILD(i2).isUnit_exp()) {
 					if(CHILD(i2).unit_exp_prefix()) {
 						b = false;
-						return;
+						do_child_prefix = false;
+						break;
 					}
 					if(!b) {
 						if(use_prefix_with_unit(CHILD(i2), po)) {
@@ -1455,7 +1475,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 						}
 					}
 				}
-				return;
+				do_child_prefix = false;
 			}
 			break;
 		}
@@ -1480,11 +1500,10 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 		}
 		default: {}
 	}
-	if(po.prefix || !has_prefix(*this)) {
-		for(size_t i = 0; i < SIZE; i++) {
-			if(CALCULATOR->aborted()) break;
-			CHILD(i).setPrefixes(po, this, i + 1);
-		}
+	for(size_t i = 0; i < SIZE; i++) {
+		if(CALCULATOR->aborted()) break;
+		if(do_child_prefix || (!CHILD(i).isUnit() && !CHILD(i).isPower() && !CHILD(i).isMultiplication() && !CHILD(i).isDivision() && !CHILD(i).isInverse() && !CHILD(i).isNegate())) CHILD(i).setPrefixes(po, this, i + 1);
+		else if(CHILD(i).isPower()) CHILD(i)[1].setPrefixes(po, &CHILD(i), 2);
 	}
 }
 bool split_unit_powers(MathStructure &mstruct);
@@ -2009,9 +2028,9 @@ void separate_units(MathStructure &m, MathStructure *parent = NULL, size_t index
 void set_unit_plural(MathStructure &m) {
 	if(m.isMultiplication()) {
 		for(size_t i = 1; i < m.size(); i++) {
-			if(is_unit_multiexp(m[i]) && !m[i - 1].containsType(STRUCT_UNIT, false, false, false) && (!m[i - 1].isNumber() || m[i - 1].number() > 1 || m[i - 1].number() < -1)) {
+			if(is_unit_multiexp_strict(m[i], i < m.size() - 1) && !m[i - 1].containsType(STRUCT_UNIT, false, false, false) && (!m[i - 1].isNumber() || m[i - 1].number() > 1 || m[i - 1].number() < -1)) {
 				while(true) {
-					if(i < m.size() - 1 && is_unit_multiexp(m[i + 1])) {
+					if(i < m.size() - 1 && is_unit_multiexp_strict(m[i + 1], true)) {
 						i++;
 					} else {
 						if(m[i].isDivision()) {
@@ -2067,7 +2086,7 @@ void MathStructure::format(const PrintOptions &po) {
 
 bool is_unit_multiadd(const MathStructure &m) {
 	for(size_t i = 0; i < m.size(); i++) {
-		if(!is_unit_multiexp(m[i]) && (!m[i].isMultiplication() || m[i].size() <= 1 || !m[i][0].isNumber() || !is_unit_multiexp(m[i][1]))) return false;
+		if(!is_unit_multiexp_strict(m[i]) && (!m[i].isMultiplication() || m[i].size() <= 1 || !m[i][0].isNumber() || !is_unit_multiexp_strict(m[i][1]))) return false;
 	}
 	return true;
 }
@@ -2092,7 +2111,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				PrintOptions po2 = po;
 				po2.negative_exponents = true;
 				CHILD(i).formatsub(po2, this, i + 1, true, top_parent);
-			} else if(po.number_fraction_format == FRACTION_COMBINED && (m_type == STRUCT_FUNCTION || m_type == STRUCT_POWER || (m_type == STRUCT_ADDITION && (!po.place_units_separately || !is_unit_multiadd(*this))) || (m_type == STRUCT_MULTIPLICATION && SIZE > 1 && (!po.place_units_separately || !CHILD(0).isNumber() || !is_unit_multiexp(CHILD(1)))))) {
+			} else if(po.number_fraction_format == FRACTION_COMBINED && (m_type == STRUCT_FUNCTION || m_type == STRUCT_POWER || (m_type == STRUCT_ADDITION && (!po.place_units_separately || !is_unit_multiadd(*this))) || (m_type == STRUCT_MULTIPLICATION && SIZE > 1 && (!po.place_units_separately || !CHILD(0).isNumber() || !is_unit_multiexp_strict(CHILD(1)))))) {
 				PrintOptions po2 = po;
 				po2.number_fraction_format = FRACTION_FRACTIONAL;
 				CHILD(i).formatsub(po2, this, i + 1, true, top_parent);
@@ -2682,12 +2701,13 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 	switch(parent.type()) {
 		case STRUCT_MULTIPLICATION: {
 			switch(m_type) {
-				case STRUCT_MULTIPLICATION: {return ((index > 1 && SIZE > 0) || po.excessive_parenthesis) && (!po.place_units_separately || !is_unit_multiexp(*this));}
-				case STRUCT_DIVISION: {return flat_division && (index < parent.size() || (po.excessive_parenthesis && (!po.place_units_separately || !is_unit_multiexp(*this) || (index > 0 && is_unit_multiexp(parent[index - 2])))));}
+				case STRUCT_MULTIPLICATION: {return ((index > 1 && SIZE > 0) || po.excessive_parenthesis) && (!po.place_units_separately || !is_unit_multiexp_strict(*this));}
+				case STRUCT_DIVISION: {return flat_division && (index < parent.size() || (po.excessive_parenthesis && (!po.place_units_separately || !is_unit_multiexp_strict(*this) || (index > 0 && is_unit_multiexp_strict(parent[index - 2])))));}
 				case STRUCT_INVERSE: {return flat_division;}
 				case STRUCT_ADDITION: {return true;}
 				case STRUCT_POWER: {return po.excessive_parenthesis && flat_power && (!po.place_units_separately || !CHILD(0).isUnit());}
-				case STRUCT_NEGATE: {return po.excessive_parenthesis || index > 1 || CHILD(0).needsParenthesis(po, ips, parent, index, flat_division, flat_power);}
+				case STRUCT_NEGATE: {
+					return index > 1 || CHILD(0).needsParenthesis(po, ips, parent, index, flat_division, flat_power) || (po.excessive_parenthesis && !is_unit_multiexp_strict(parent[index]));}
 				case STRUCT_BITWISE_AND: {return true;}
 				case STRUCT_BITWISE_OR: {return true;}
 				case STRUCT_BITWISE_XOR: {return true;}
@@ -3020,14 +3040,14 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 	// do not display anything on front of the first factor (this function is normally not called in this case)
 	if(index <= 1) return MULTIPLICATION_SIGN_NONE;
 	// short multiplication is disabled or number base might use digits other than 0-9, alawys show multiplication symbol
-	if((!po.short_multiplication && (!po.place_units_separately || !is_unit_multiexp(*this))) || po.base > 10 || po.base < 2) {
+	if((!po.short_multiplication && (!po.place_units_separately || !is_unit_multiexp_strict(*this))) || po.base > 10 || po.base < 2) {
 		return MULTIPLICATION_SIGN_OPERATOR;
 	}
 	// no multiplication sign between factors in parentheses
 	if(par_prev && par) return MULTIPLICATION_SIGN_NONE;
 	if(par_prev) {
 		// (a)*u=(a) u
-		if(is_unit_multiexp(*this) && (po.short_multiplication || !parent[index - 2].containsType(STRUCT_UNIT, false, false, false))) return MULTIPLICATION_SIGN_SPACE;
+		if(is_unit_multiexp_strict(*this) && (po.short_multiplication || !parent[index - 2].containsType(STRUCT_UNIT, false, false, false))) return MULTIPLICATION_SIGN_SPACE;
 		if(isUnknown_exp()) {
 			// (a)*"xy"=(a) "xy", (a)*"xy"^b=(a) "xy"^b, (a)*x=(a)x, (a)*x^b=ax^b
 			return (namelen(isPower() ? CHILD(0) : *this, po, ips, NULL) > 1 ? MULTIPLICATION_SIGN_SPACE : MULTIPLICATION_SIGN_NONE);
@@ -3079,7 +3099,12 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 			}
 			break;
 		}
-		case STRUCT_NEGATE: {break;}
+		case STRUCT_NEGATE: {
+			if(parent[index - 2][0].isUnit()) {
+				return MULTIPLICATION_SIGN_OPERATOR;
+			}
+			break;
+		}
 		case STRUCT_BITWISE_AND: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_BITWISE_OR: {return MULTIPLICATION_SIGN_OPERATOR;}
 		case STRUCT_BITWISE_XOR: {return MULTIPLICATION_SIGN_OPERATOR;}
@@ -3392,7 +3417,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					}
 					switch(i_sign) {
 						case MULTIPLICATION_SIGN_SPACE: {
-							if(is_unit_multiexp(CHILD(i)) && ((po.digit_grouping == DIGIT_GROUPING_LOCALE && CALCULATOR->local_digit_group_separator == THIN_SPACE) || (po.use_unicode_signs && (po.digit_grouping == DIGIT_GROUPING_STANDARD || (po.digit_grouping == DIGIT_GROUPING_LOCALE && CALCULATOR->local_digit_group_separator.empty()))
+							if(is_unit_multiexp_strict(CHILD(i), true) && ((po.digit_grouping == DIGIT_GROUPING_LOCALE && CALCULATOR->local_digit_group_separator == THIN_SPACE) || (po.use_unicode_signs && (po.digit_grouping == DIGIT_GROUPING_STANDARD || (po.digit_grouping == DIGIT_GROUPING_LOCALE && CALCULATOR->local_digit_group_separator.empty()))
 #ifdef _WIN32
 							&& IsWindows10OrGreater()
 #endif

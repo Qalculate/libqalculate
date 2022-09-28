@@ -3891,7 +3891,6 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, string *sbuffer) {
 
 bool Calculator::fetchExchangeRates(int timeout, int n) {
 #ifdef HAVE_LIBCURL
-
 	recursiveMakeDir(getLocalDataDir());
 	string sbuffer;
 	char error_buffer[CURL_ERROR_SIZE];
@@ -4059,13 +4058,26 @@ bool Calculator::exchangeRatesWarningEnabled() const {
 	return b_exchange_rates_warning_enabled;
 }
 int Calculator::exchangeRatesUsed() const {
-	return b_exchange_rates_used;
+	if(b_exchange_rates_used > 100) return b_exchange_rates_used - 100;
+	if(b_exchange_rates_used & 0b1000) {
+		if(b_exchange_rates_used & 0b0100) return 5;
+		return 4;
+	} else if(b_exchange_rates_used & 0b0100) return 3;
+	else if(b_exchange_rates_used & 0b0010) return 2;
+	else if(b_exchange_rates_used & 0b0001) return 1;
+	return 0;
 }
 void Calculator::resetExchangeRatesUsed() {
 	b_exchange_rates_used = 0;
 }
 void Calculator::setExchangeRatesUsed(int index) {
-	if(index > b_exchange_rates_used) b_exchange_rates_used = index;
-	if(b_exchange_rates_warning_enabled) checkExchangeRatesDate(7, false, true, index);
+	if(index == -100) {
+		if(b_exchange_rates_used == 0) return;
+		if(b_exchange_rates_used > 100) b_exchange_rates_used -= 100;
+		else b_exchange_rates_used += 100;
+		return;
+	}
+	b_exchange_rates_used = b_exchange_rates_used | index;
+	if(b_exchange_rates_warning_enabled) checkExchangeRatesDate(7, false, true, exchangeRatesUsed());
 }
 
