@@ -2557,8 +2557,19 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 				if(m_type == STRUCT_VECTOR) {
 					munc.clearVector();
 					for(size_t i = 0; i < SIZE; i++) {
-						munc.addChild(calculate_uncertainty(CHILD(i), eo, b_failed));
-						if(b_failed) break;
+						if(CHILD(i).isVector()) {
+							for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
+								if(i2 == 0) {
+									munc.addChild(m_zero);
+									munc[i].clearVector();
+								}
+								munc[i].addChild(calculate_uncertainty(CHILD(i)[i2], eo, b_failed));
+								if(b_failed) break;
+							}
+						} else {
+							munc.addChild(calculate_uncertainty(CHILD(i), eo, b_failed));
+							if(b_failed) break;
+						}
 					}
 				} else {
 					munc = calculate_uncertainty(*this, eo, b_failed);
