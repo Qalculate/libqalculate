@@ -2175,8 +2175,7 @@ bool VectorArgument::subtest(MathStructure &value, const EvaluationOptions &eo) 
 		value.eval(eo);
 	}
 	if(!value.isVector()) {
-		if((eo.approximation == APPROXIMATION_EXACT || eo.approximation == APPROXIMATION_EXACT_VARIABLES) && !value.representsScalar()) return false;
-		if(isLastArgument()) value.transform(STRUCT_VECTOR);
+		if(isLastArgument() && eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES) value.transform(STRUCT_VECTOR);
 		else if(value.representsScalar()) value.transform(STRUCT_VECTOR);
 		else return false;
 	}
