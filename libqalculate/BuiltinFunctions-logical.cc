@@ -315,21 +315,51 @@ ForFunction::ForFunction() : MathFunction("for", 7) {
 }
 int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
+	vector<Variable*> vars;
 	mstruct = vargs[4];
+	if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
+		while(true) {
+			Variable *v = NULL;
+			Variable *uv = find_interval_replace_var_comp(mstruct, eo, &v);
+			if(!uv) break;
+			if(v) mstruct.replace(v, uv);
+			vars.push_back(uv);
+		}
+	}
 	mstruct.eval(eo);
 	MathStructure m5(vargs[5]);
 	if(vargs[5].isComparison() && vargs[5].comparisonType() == COMPARISON_EQUALS && vargs[5][0] == vargs[6]) m5 = vargs[5][1];
 	else m5 = vargs[5];
+	MathStructure mbak(m5);
+	if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
+		while(true) {
+			Variable *v = NULL;
+			Variable *uv = find_interval_replace_var_comp(m5, eo, &v);
+			if(!uv) break;
+			if(v) m5.replace(v, uv);
+			vars.push_back(uv);
+		}
+	}
 	EvaluationOptions eo2 = eo;
 	eo2.calculate_functions = false;
 	eo2.expand = false;
 	CALCULATOR->beginTemporaryStopMessages();
 	m5.eval(eo2);
-	if(calculate_userfunctions2(m5, vargs[6], vargs[1], eo)) m5.calculatesub(eo2, eo2, true);
+	if(calculate_userfunctions2(m5, vargs[6], vargs[1], eo)) {
+		if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
+			while(true) {
+				Variable *v = NULL;
+				Variable *uv = find_interval_replace_var_comp(m5, eo, &v);
+				if(!uv) break;
+				if(v) m5.replace(v, uv);
+				vars.push_back(uv);
+			}
+		}
+		m5.calculatesub(eo2, eo2, true);
+	}
 	int im = 0;
 	if(CALCULATOR->endTemporaryStopMessages(NULL, &im) > 0 || im > 0) {
-		if(vargs[5].isComparison() && vargs[5].comparisonType() == COMPARISON_EQUALS && vargs[5][0] == vargs[6]) m5 = vargs[5][1];
-		else m5 = vargs[5];
+		m5 = mbak;
 	}
 	MathStructure mcounter = vargs[0];
 	mcounter.eval(eo);
@@ -340,7 +370,10 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mtest = vargs[2];
 		mtest.replace(vargs[1], mcounter);
 		mtest.eval(eo);
-		if(!mtest.isNumber() || CALCULATOR->aborted()) return 0;
+		if(!mtest.isNumber() || CALCULATOR->aborted()) {
+			for(size_t i = 0; i < vars.size(); i++) vars[i]->destroy();
+			return 0;
+		}
 		if(!mtest.number().getBoolean()) {
 			break;
 		}
@@ -351,6 +384,11 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		else mcount = vargs[3];
 		mcount.calculateReplace(vargs[1], mcounter, eo, true);
 		mcounter = mcount;
+	}
+	for(size_t i = 0; i < vars.size(); i++) {
+		if(vars[i]->isKnown()) mstruct.replace(vars[i], ((KnownVariable*) vars[i])->get());
+		else mstruct.replace(vars[i], ((UnknownVariable*) vars[i])->interval());
+		vars[i]->destroy();
 	}
 	return 1;
 
