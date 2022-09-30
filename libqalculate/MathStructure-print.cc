@@ -911,15 +911,15 @@ bool is_unit_multiexp_strict(const MathStructure &m, bool in_div = false, bool i
 	if(m.isPower() && m[0].isUnit() && (m[1].isInteger() || (m[1].isNegate() && m[1][0].isInteger() && m[1][0].number().isPositive()))) return true;
 	if(m.isMultiplication() && !in_mul) {
 		for(size_t i = 0; i < m.size(); i++) {
-			if(!is_unit_multiexp_strict(m[0], in_div, in_mul)) return false;
+			if(!is_unit_multiexp_strict(m[0], in_div, true)) return false;
 		}
 		return true;
 	}
 	if(m.isInverse() && !in_div) {
-		return is_unit_multiexp_strict(m[0], false, true);
+		return is_unit_multiexp_strict(m[0], true, false);
 	}
 	if(m.isDivision() && !in_div) {
-		return is_unit_multiexp_strict(m[0], in_mul, true) && is_unit_multiexp_strict(m[1], false, true);
+		return is_unit_multiexp_strict(m[0], true, in_mul) && is_unit_multiexp_strict(m[1], true, false);
 	}
 	return false;
 }
@@ -2705,7 +2705,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_DIVISION: {return flat_division && (index < parent.size() || (po.excessive_parenthesis && (!po.place_units_separately || !is_unit_multiexp_strict(*this) || (index > 0 && is_unit_multiexp_strict(parent[index - 2])))));}
 				case STRUCT_INVERSE: {return flat_division;}
 				case STRUCT_ADDITION: {return true;}
-				case STRUCT_POWER: {return po.excessive_parenthesis && flat_power && (!po.place_units_separately || !CHILD(0).isUnit());}
+				case STRUCT_POWER: {return po.excessive_parenthesis && flat_power && (!po.place_units_separately || !CHILD(0).isUnit() || !CHILD(1).isInteger());}
 				case STRUCT_NEGATE: {
 					return index > 1 || CHILD(0).needsParenthesis(po, ips, parent, index, flat_division, flat_power) || (po.excessive_parenthesis && !is_unit_multiexp_strict(parent[index]));}
 				case STRUCT_BITWISE_AND: {return true;}
@@ -3040,7 +3040,7 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 	// do not display anything on front of the first factor (this function is normally not called in this case)
 	if(index <= 1) return MULTIPLICATION_SIGN_NONE;
 	// short multiplication is disabled or number base might use digits other than 0-9, alawys show multiplication symbol
-	if((!po.short_multiplication && (!po.place_units_separately || !is_unit_multiexp_strict(*this))) || po.base > 10 || po.base < 2) {
+	if((!po.short_multiplication && (!po.place_units_separately || !is_unit_multiexp_strict(*this, false, true))) || po.base > 10 || po.base < 2) {
 		return MULTIPLICATION_SIGN_OPERATOR;
 	}
 	// no multiplication sign between factors in parentheses

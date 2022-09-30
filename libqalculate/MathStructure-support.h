@@ -134,6 +134,7 @@ bool comparison_is_not_equal(ComparisonResult cr);
 bool comparison_is_equal_or_less(ComparisonResult cr);
 bool comparison_is_equal_or_greater(ComparisonResult cr);
 bool comparison_might_be_equal(ComparisonResult cr);
+Variable *find_interval_replace_var_comp(MathStructure &m, const EvaluationOptions &eo, Variable **v);
 
 void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, int steps, MathStructure &x_vector, MathStructure &y_vector, const EvaluationOptions &eo, bool adaptive = true);
 void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure &x_vector, MathStructure &y_vector, const EvaluationOptions &eo);
