@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-09-24 09:48+0200\n"
-"PO-Revision-Date: 2022-09-02 11:27+0700\n"
+"PO-Revision-Date: 2022-09-28 13:59+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<"
+"=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Lokalize 21.12.3\n"
 
 #: ../data/currencies.xml.in.h:1
@@ -6468,9 +6468,8 @@ msgid "r:interval"
 msgstr "интервал"
 
 #: ../data/functions.xml.in.h:819
-#, fuzzy
 msgid "Returns a closed interval with the specified endpoints."
-msgstr "Возвращает вектор с перечисленными компонентами."
+msgstr "Возвращает закрытый интервал с указанными концами."
 
 #: ../data/functions.xml.in.h:820
 msgid "Lower endpoint"
@@ -6486,69 +6485,65 @@ msgstr "Неопределённость"
 
 #: ../data/functions.xml.in.h:823
 msgid "r:uncertainty"
-msgstr "неопределённость"
+msgstr "неопределённость,неопределенность"
 
 #: ../data/functions.xml.in.h:824
 msgid ""
 "Specifies the absolute or relative (default) uncertainty/error of a value."
 msgstr ""
+"Определяет абсолютную или относительную (по умолчанию)"
+" неопределенность/ошибку значения."
 
 #: ../data/functions.xml.in.h:825
 msgid "Uncertainty is relative"
 msgstr "Неопределённость относительная"
 
 #: ../data/functions.xml.in.h:826
-#, fuzzy
 msgid "Lower Endpoint (interval)"
-msgstr "Нижний конец"
+msgstr "Нижний конец (интервал)"
 
 #: ../data/functions.xml.in.h:827
-#, fuzzy
 msgid "r:lowerEndpoint"
-msgstr "Нижний конец"
+msgstr "нижнийКонец"
 
 #: ../data/functions.xml.in.h:828
-#, fuzzy
 msgid "Returns the lower endpoint of a numerical interval."
-msgstr "Возвращает транспонированную матрицу."
+msgstr "Возвращает нижний конец числового интервала."
 
 #: ../data/functions.xml.in.h:829
-#, fuzzy
 msgid "Upper Endpoint (interval)"
-msgstr "Верхний конец"
+msgstr "Верхний конец (интервал)"
 
 #: ../data/functions.xml.in.h:830
-#, fuzzy
 msgid "r:upperEndpoint"
-msgstr "Верхний конец"
+msgstr "верхнийКонец"
 
 #: ../data/functions.xml.in.h:831
-#, fuzzy
 msgid "Returns the upper endpoint of a numerical interval."
-msgstr "Возвращает транспонированную матрицу."
+msgstr "Возвращает верхний конец числового интервала."
 
 #: ../data/functions.xml.in.h:832
-#, fuzzy
 msgid "Midpoint (interval)"
-msgstr "n (целое)"
+msgstr "Середина (интервал)"
 
 #: ../data/functions.xml.in.h:833
+#, fuzzy
 msgid "r:midpoint,valuePart"
-msgstr ""
+msgstr "середина,значение"
 
 #: ../data/functions.xml.in.h:834
 msgid ""
 "Returns the midpoint between the endpoints of a numerical interval, or the "
 "value part of a value with uncertainty/error."
 msgstr ""
+"Возвращает среднюю точку между концами числового интервала или значения с"
+" неопределенностью/ошибкой."
 
 #: ../data/functions.xml.in.h:835
-#, fuzzy
 msgid "Get Uncertainty"
-msgstr "Неопределённость"
+msgstr "Получить неопределённость"
 
 #: ../data/functions.xml.in.h:836
-#, fuzzy
 msgid "r:errorPart"
 msgstr "ошибка"
 
@@ -6557,6 +6552,8 @@ msgid ""
 "Returns the absolute (default) or relative uncertainty/error of a numerical "
 "value."
 msgstr ""
+"Возвращает абсолютную (по умолчанию) или относительную"
+" неопределённость/ошибку числового значения."
 
 #: ../data/functions.xml.in.h:838
 msgid "Plot Functions and Vectors"
