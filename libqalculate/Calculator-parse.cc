@@ -1225,18 +1225,33 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 
 	if(base != -1 && base <= BASE_HEXADECIMAL) {
 		// replace single ' and " with prime and double prime (for ft/in or minutes/seconds of arc)
-		bool b_prime_quote = true;
-		size_t i_quote = str.find('\'', 0);
+		size_t i_quote2 = str.find('\'', 0);
 		size_t i_dquote = str.find('\"', 0);
-		while(i_quote != string::npos) {
-			if(i_quote > 1 && str[i_quote - 1] == DOT_CH && is_not_number(str[i_quote - 2], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i_quote - 2])) {
-				str.replace(i_quote - 1, 2, "\x1a");
-			} else {
-				break;
+		size_t i_quote = string::npos;
+		bool b_prime_quote = true;
+		while(i_quote2 != string::npos) {
+			if(i_quote2 > 1 && str[i_quote2 - 1] == DOT_CH && is_not_number(str[i_quote2 - 2], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i_quote2 - 2])) {
+				if(i_degree == string::npos) b_prime_quote = false;
+				str.replace(i_quote2 - 1, 2, "\x1a");
+			} else if(b_prime_quote && i_degree == string::npos && i_quote2 > 0 && str[i_quote2 - 1] == '(') {
+				b_prime_quote = false;
+			} else if(i_quote == string::npos) {
+				i_quote = i_quote2;
 			}
-			i_quote = str.find('\'', i_quote + 1);
+			i_quote2 = str.find('\'', i_quote2 + 1);
 		}
-		if(i_degree == string::npos) {
+		if(b_prime_quote && i_degree == string::npos) {
+			i_quote2 = i_dquote;
+			while(i_quote2 != string::npos) {
+				if(i_quote2 > 0 && str[i_quote2 - 1] == '(') {
+					b_prime_quote = false;
+					break;
+				}
+				i_quote2 = str.find('\"', i_quote2 + 1);
+			}
+		}
+		b_prime_quote = b_prime_quote && po.units_enabled && (i_quote != string::npos || i_dquote != string::npos);
+		if(b_prime_quote && i_degree == string::npos) {
 			if(i_quote == 0 || i_dquote == 0) {
 				b_prime_quote = false;
 			} else if((i_quote != string::npos && i_quote < str.length() - 1 && str.find('\'', i_quote + 1) != string::npos) || (i_quote != string::npos && i_dquote == i_quote + 1) || (i_dquote != string::npos && i_dquote < str.length() - 1 && str.find('\"', i_dquote + 1) != string::npos)) {
@@ -1409,7 +1424,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		}
 	}
 
-	if(base != -1 && base <= BASE_HEXADECIMAL) {
+	if(base != -1 && base <= BASE_HEXADECIMAL && po.units_enabled) {
 		// replace prime and double prime with feet and inches, or arcminutes and arcseconds (if degree sign was previously found)
 		bool b_degree = (i_degree != string::npos);
 		size_t i_quote = str.find("′");
