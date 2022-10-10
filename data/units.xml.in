@@ -3263,7 +3263,7 @@
       </unit>
       <unit type="alias">
         <_title>Meter of Water</_title>
-        <_names>ar:mWC,a-s:m_wg,au:mH&#x2082;O</_names>
+        <_names>ar:mWC,a:mwg,au:mH&#x2082;O</_names>
         <base>
           <unit>Pa</unit>
           <relation>9806.65</relation>
@@ -3287,6 +3287,15 @@
           <prefix>-2</prefix>
           <exponent>1</exponent>
         </part>
+      </unit>
+      <unit type="alias">
+        <_title>Inch of Water</_title>
+        <_names>ar:inWC,a:iwg,au:inH&#x2082;O</_names>
+        <base>
+          <unit>mWC</unit>
+          <relation>0.0254</relation>
+          <exponent>1</exponent>
+        </base>
       </unit>
     </category>
     <category>
