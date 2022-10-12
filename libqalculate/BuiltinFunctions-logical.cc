@@ -217,10 +217,12 @@ int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 			}
 			int result = mstruct[i].number().getBoolean();
 			if(result > 0) {
-				if((m2.isVector() || (m2.isFunction() && (m2.function()->id() == FUNCTION_ID_HORZCAT || m2.function()->id() == FUNCTION_ID_VERTCAT))) && m2.size() == vargs[0].size()) {
-					mstruct = m2[i];
+				if(!m2.isVector() && (!m2.isFunction() || (m2.function()->id() != FUNCTION_ID_HORZCAT && m2.function()->id() != FUNCTION_ID_VERTCAT)) && !m2.representsScalar()) m2.eval(eo);
+				if((m2.isVector() || (m2.isFunction() && (m2.function()->id() == FUNCTION_ID_HORZCAT || m2.function()->id() == FUNCTION_ID_VERTCAT))) && m2.size() > 0) {
+					if(i >= m2.size()) mstruct = m2[i % m2.size()];
+					else mstruct = m2[i];
 				} else {
-					mstruct = m2[1];
+					mstruct = m2;
 				}
 				return 1;
 			} else if(result < 0 && vargs[3].isZero()) {

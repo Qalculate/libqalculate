@@ -1,3 +1,7 @@
+2022-10-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault when first argument in if() function is vector, but the second argument is not
+
 2022-10-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Replace new line with white space when saving history in qalc
