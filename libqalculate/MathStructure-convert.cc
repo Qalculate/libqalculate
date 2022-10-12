@@ -579,14 +579,23 @@ bool convert_approximate(MathStructure &m, Unit *u, const EvaluationOptions &feo
 				mstruct->unref();
 			}
 			if(v) {
-				if(v->refcount() == 1) v->unref();
-				else vars->push_back(v);
+				if(v->refcount() == 1) {
+					v->unref();
+					units->pop_back();
+					uncs->pop_back();
+				} else {
+					vars->push_back(v);
+				}
 			}
 			return true;
 		} else {
 			exp->unref();
 			mstruct->unref();
-			if(v) v->unref();
+			if(v) {
+				v->unref();
+				units->pop_back();
+				uncs->pop_back();
+			}
 			return false;
 		}
 	} else {

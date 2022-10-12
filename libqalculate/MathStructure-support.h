@@ -143,6 +143,7 @@ void print_dual(const MathStructure &mresult, const std::string &original_expres
 void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, const std::string &original_expression, const MathStructure *parsed_mstruct, EvaluationOptions &evalops, AutomaticApproximation auto_approx, int msecs = 0, int max_size = 10);
 bool transform_expression_for_equals_save(std::string&, const ParseOptions&);
 bool expression_contains_save_function(const std::string&, const ParseOptions&, bool = false);
+void replace_internal_operators(std::string &str);
 
 #endif
 
