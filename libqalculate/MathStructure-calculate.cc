@@ -3999,7 +3999,13 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						EvaluationOptions eo2 = eo;
 						eo2.split_squares = false;
 						// avoid abs(x)^(2a) loop
-						if(mthis.calculateRaiseExponent(eo2) && (!mthis.isPower() || ((!isFunction() || o_function->id() != FUNCTION_ID_ABS || SIZE != 1 || !CHILD(0).equals(mthis[0], true, true)) && (!is_negation(mthis[0], *this))))) {
+						if(mthis.calculateRaiseExponent(eo2)) {
+							if((mthis.isPower() && ((m_type == STRUCT_FUNCTION && o_function->id() == FUNCTION_ID_ABS && SIZE == 1 && CHILD(0).equals(mthis[0], true, true)) || (is_negation(mthis[0], *this))))) {
+								mthis = *this;
+								mthis.raise(m_zero);
+								continue;
+							}
+							bool b_calc = (m_type != STRUCT_NUMBER || !mstruct[i].isNumber() || mthis.isNumber());
 							set(mthis);
 							if(mstruct.size() == 2) {
 								if(i == 0) {
@@ -4014,7 +4020,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 								raise_nocopy(&mstruct);
 								CHILD(1).delChild(i + 1);
 							}
-							calculateRaiseExponent(eo);
+							if(b_calc) calculateRaiseExponent(eo);
 							MERGE_APPROX_AND_PREC(mstruct)
 							return 1;
 						}

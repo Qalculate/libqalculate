@@ -1581,6 +1581,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 			}
 			if(pars2 == 0) break;
 		}
+		size_t cits = 0;
 		if(str.length() >= 2 + pars * 2) {
 			if(str[pars] == ID_WRAP_LEFT_CH && str[str.length() - 1 - pars] == ID_WRAP_RIGHT_CH && str.find(ID_WRAP_RIGHT, pars + 1) == str.length() - 1 - pars) {
 				CALCULATOR->parse(mstruct, str.substr(pars, str.length() - pars * 2), po);
@@ -1602,68 +1603,39 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 					cits++;
 					i++;
 				}
-				if((cits / 2) % 2 == 0) {
-					i = str.find(ID_WRAP_LEFT, 1 + pars);
-					if(i == string::npos || i >= str.length() - (1 + pars)) {
-						mstruct->set(str.substr(1 + pars, str.length() - 2 - pars * 2));
-						return;
-					}
-					string str2 = str.substr(1 + pars, str.length() - 2 - pars * 2);
+			}
+		}
+		string str2;
+		if(pars == 0 || (cits / 2) % 2 != 0) str2 = str;
+		else str2 = str.substr(pars + (cits ? 1 : 0), str.length() - pars * 2 - (cits ? 2 : 0));
+		if(cits == 0) replace_internal_operators(str2);
+		if((cits / 2) % 2 == 0) {
+			size_t i = str2.find(ID_WRAP_LEFT);
+			if(i != string::npos && i < str2.length() - 2) {
+				i = 0;
+				size_t i2 = 0; int id = 0;
+				while((i = str2.find(ID_WRAP_LEFT, i)) != string::npos) {
+					i2 = str2.find(ID_WRAP_RIGHT, i + 1);
+					if(i2 == string::npos) break;
+					id = s2i(str2.substr(i + 1, i2 - (i + 1)));
+					MathStructure *m_temp = CALCULATOR->getId((size_t) id);
+					bool do_par = (i == 0 || i2 + 1 == str2.length() || str2[i - 1] != LEFT_PARENTHESIS_CH || str2[i2 + 1] != RIGHT_PARENTHESIS_CH);
 					string str3;
-					i = 0;
-					size_t i2 = 0; int id = 0;
-					while((i = str2.find(ID_WRAP_LEFT, i)) != string::npos) {
-						i2 = str2.find(ID_WRAP_RIGHT, i + 1);
-						if(i2 == string::npos) break;
-						id = s2i(str2.substr(i + 1, i2 - (i + 1)));
-						MathStructure *m_temp = CALCULATOR->getId((size_t) id);
-						bool do_par = (i == 0 || i2 + 1 == str2.length() || str2[i - 1] != LEFT_PARENTHESIS_CH || str2[i2 + 1] != RIGHT_PARENTHESIS_CH);
-						if(do_par) str3 = LEFT_PARENTHESIS_CH;
-						if(!m_temp) {
-							CALCULATOR->error(true, _("Internal id %s does not exist."), i2s(id).c_str(), NULL);
-							str3 += CALCULATOR->getVariableById(VARIABLE_ID_UNDEFINED)->preferredInputName(true, false, false, true).name;
-						} else {
-							str3 += m_temp->print(CALCULATOR->save_printoptions).c_str();
-							m_temp->unref();
-						}
-						if(do_par) str3 += RIGHT_PARENTHESIS_CH;
-						str2.replace(i, i2 - i + 1, str3);
-						i += str3.length();
+					if(do_par) str3 = LEFT_PARENTHESIS_CH;
+					if(!m_temp) {
+						CALCULATOR->error(true, _("Internal id %s does not exist."), i2s(id).c_str(), NULL);
+						str3 += CALCULATOR->getVariableById(VARIABLE_ID_UNDEFINED)->preferredInputName(true, false, false, true).name;
+					} else {
+						str3 += m_temp->print(CALCULATOR->save_printoptions).c_str();
+						m_temp->unref();
 					}
-					mstruct->set(str2, false, true);
-					return;
+					if(do_par) str3 += RIGHT_PARENTHESIS_CH;
+					str2.replace(i, i2 - i + 1, str3);
+					i += str3.length();
 				}
 			}
 		}
-		size_t i = str.find(ID_WRAP_LEFT, pars);
-		if(i == string::npos || i >= str.length() - pars) {
-			mstruct->set(pars == 0 ? str : str.substr(pars, str.length() - pars * 2), false, true);
-			return;
-		}
-		string str2 = str.substr(pars, str.length() - pars * 2);
-		string str3;
-		i = 0;
-		size_t i2 = 0; int id = 0;
-		while((i = str2.find(ID_WRAP_LEFT, i)) != string::npos) {
-			i2 = str2.find(ID_WRAP_RIGHT, i + 1);
-			if(i2 == string::npos) break;
-			id = s2i(str2.substr(i + 1, i2 - (i + 1)));
-			MathStructure *m_temp = CALCULATOR->getId((size_t) id);
-			bool do_par = (i == 0 || i2 + 1 == str2.length() || str2[i - 1] != LEFT_PARENTHESIS_CH || str2[i2 + 1] != RIGHT_PARENTHESIS_CH);
-			if(do_par) str3 = LEFT_PARENTHESIS_CH;
-			if(!m_temp) {
-				CALCULATOR->error(true, _("Internal id %s does not exist."), i2s(id).c_str(), NULL);
-				str3 += CALCULATOR->getVariableById(VARIABLE_ID_UNDEFINED)->preferredInputName(true, false, false, true).name;
-			} else {
-				str3 += m_temp->print(CALCULATOR->save_printoptions).c_str();
-				m_temp->unref();
-			}
-			if(do_par) str3 += RIGHT_PARENTHESIS_CH;
-			str2.replace(i, i2 - i + 1, str3);
-			i += str3.length();
-		}
 		mstruct->set(str2, false, true);
-		return;
 	} else {
 		CALCULATOR->parse(mstruct, str, po);
 	}
