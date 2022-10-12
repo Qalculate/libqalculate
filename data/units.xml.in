@@ -2517,7 +2517,7 @@
         </base>
       </unit>
       <unit type="composite">
-        <title>Gallons per Second (U.S.)</title>
+        <_title>Gallons per Second (U.S.)</_title>
         <system>US</system>
         <names>r:gal_p_h</names>
         <part>
@@ -3272,7 +3272,7 @@
       </unit>
       <unit type="composite">
         <_title>Millimeter of Water</_title>
-        <_names>mmH2O_c</_names>
+        <names>mmH2O_c</names>
         <part>
           <unit>mH2O</unit>
           <prefix>-3</prefix>
@@ -3281,7 +3281,7 @@
       </unit>
       <unit type="composite">
         <_title>Centimeter of Water</_title>
-        <_names>cmH2O_c</_names>
+        <names>cmH2O_c</names>
         <part>
           <unit>mH2O</unit>
           <prefix>-2</prefix>

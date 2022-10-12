@@ -364,14 +364,23 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 		if(quote_index == string::npos) {
 			break;
 		}
-		q_begin.push_back(quote_index);
-		quote_index = str.find(str[quote_index], quote_index + 1);
-		if(quote_index == string::npos) {
-			q_end.push_back(str.length() - 1);
-			break;
+		if(quote_index > 1 && str[quote_index] == '\'' && str[quote_index - 1] == '.' && is_not_in(INTERNAL_OPERATORS OPERATORS "\\" NUMBERS, str[quote_index - 2])) {
+			if(convert_to_internal_representation) {
+				str.replace(quote_index - 1, 2, "\x1a");
+			} else {
+				quote_index++;
+			}
+		} else {
+			q_begin.push_back(quote_index);
+			quote_index = str.find(str[quote_index], quote_index + 1);
+			if(quote_index == string::npos) {
+				q_end.push_back(str.length() - 1);
+				break;
+			} else {
+				q_end.push_back(quote_index);
+			}
+			quote_index++;
 		}
-		q_end.push_back(quote_index);
-		quote_index++;
 	}
 
 	// search and replace string alternatives
@@ -1223,18 +1232,19 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		i_degree = string::npos;
 	}
 
-	if(base != -1 && base <= BASE_HEXADECIMAL) {
+	if(base != -1 && base <= BASE_HEXADECIMAL && po.units_enabled) {
 		// replace single ' and " with prime and double prime (for ft/in or minutes/seconds of arc)
 		size_t i_quote2 = str.find('\'', 0);
 		size_t i_dquote = str.find('\"', 0);
 		size_t i_quote = string::npos;
 		bool b_prime_quote = true;
 		while(i_quote2 != string::npos) {
-			if(i_quote2 > 1 && str[i_quote2 - 1] == DOT_CH && is_not_number(str[i_quote2 - 2], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i_quote2 - 2])) {
-				if(i_degree == string::npos) b_prime_quote = false;
-				str.replace(i_quote2 - 1, 2, "\x1a");
+			if(i_quote2 > 1 && i_degree == string::npos && str[i_quote2 - 1] == DOT_CH && is_not_number(str[i_quote2 - 2], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i_quote2 - 2])) {
+				b_prime_quote = false;
+				break;
 			} else if(b_prime_quote && i_degree == string::npos && i_quote2 > 0 && str[i_quote2 - 1] == '(') {
 				b_prime_quote = false;
+				break;
 			} else if(i_quote == string::npos) {
 				i_quote = i_quote2;
 			}
@@ -1250,7 +1260,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				i_quote2 = str.find('\"', i_quote2 + 1);
 			}
 		}
-		b_prime_quote = b_prime_quote && po.units_enabled && (i_quote != string::npos || i_dquote != string::npos);
+		b_prime_quote = b_prime_quote && (i_quote != string::npos || i_dquote != string::npos);
 		if(b_prime_quote && i_degree == string::npos) {
 			if(i_quote == 0 || i_dquote == 0) {
 				b_prime_quote = false;

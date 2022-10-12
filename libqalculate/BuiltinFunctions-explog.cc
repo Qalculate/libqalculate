@@ -356,6 +356,11 @@ int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						break;
 					}
 				}
+				if(b && (mstruct.size() == 2 && mstruct[0].isPower() && mstruct[0][1].isNumber() && mstruct[0][1].number().isNegative())) {
+					mstruct[0][1].number().negate();
+					if(mstruct[1].contains(mstruct[0])) b = false;
+					mstruct[0][1].number().negate();
+				}
 				if(b) {
 					if(vargs[1].number().isOdd()) {
 						bool b_neg = false;
