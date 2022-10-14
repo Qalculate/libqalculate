@@ -633,7 +633,6 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 			for(size_t i = 0; i < mv.size(); i++) {
 				if(mv[i].isNumber() && mv[i].number().isInterval()) {
 					mmul = mv;
-					mmul.unformat(eo);
 					mmul.delChild(i + 1, true);
 					mvar.multiply(mmul);
 					nr_intval = mv[i].number();
@@ -647,6 +646,7 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 		}
 		MathStructure msolve(mstruct);
 		msolve.replace(v, mvar);
+		msolve.unformat(eo);
 		bool b = true;
 		CALCULATOR->beginTemporaryStopMessages();
 
