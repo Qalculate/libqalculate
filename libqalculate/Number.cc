@@ -3087,12 +3087,22 @@ bool Number::add(const Number &o) {
 					mpfr_add(fl_value, fl_value, o.internalLowerFloat(), MPFR_RNDD);
 				}
 			} else {
-				if(!CREATE_INTERVAL && !isInterval()) {
-					mpfr_add_q(fl_value, fl_value, o.internalRational(), MPFR_RNDN);
-					mpfr_set(fu_value, fl_value, MPFR_RNDN);
+				if(mpfr_get_exp(fu_value) > 1000000L && mpz_cmp_ui(mpq_denref(o.internalRational()), 1) != 0) {
+					Number nr_o(o);
+					nr_o.clearImaginary();
+					if(!nr_o.setToFloatingPoint() || !add(nr_o)) {
+						set(nr_bak);
+						return false;
+					}
+					return true;
 				} else {
-					mpfr_add_q(fu_value, fu_value, o.internalRational(), MPFR_RNDU);
-					mpfr_add_q(fl_value, fl_value, o.internalRational(), MPFR_RNDD);
+					if(!CREATE_INTERVAL && !isInterval()) {
+						mpfr_add_q(fl_value, fl_value, o.internalRational(), MPFR_RNDN);
+						mpfr_set(fu_value, fl_value, MPFR_RNDN);
+					} else {
+						mpfr_add_q(fu_value, fu_value, o.internalRational(), MPFR_RNDU);
+						mpfr_add_q(fl_value, fl_value, o.internalRational(), MPFR_RNDD);
+					}
 				}
 			}
 		}
@@ -3188,12 +3198,22 @@ bool Number::subtract(const Number &o) {
 					mpfr_sub(fl_value, fl_value, o.internalUpperFloat(), MPFR_RNDD);
 				}
 			} else {
-				if(!CREATE_INTERVAL && !isInterval()) {
-					mpfr_sub_q(fl_value, fl_value, o.internalRational(), MPFR_RNDN);
-					mpfr_set(fu_value, fl_value, MPFR_RNDN);
+				if(mpfr_get_exp(fu_value) > 1000000L && mpz_cmp_ui(mpq_denref(o.internalRational()), 1) != 0) {
+					Number nr_o(o);
+					nr_o.clearImaginary();
+					if(!nr_o.setToFloatingPoint() || !subtract(nr_o)) {
+						set(nr_bak);
+						return false;
+					}
+					return true;
 				} else {
-					mpfr_sub_q(fu_value, fu_value, o.internalRational(), MPFR_RNDU);
-					mpfr_sub_q(fl_value, fl_value, o.internalRational(), MPFR_RNDD);
+					if(!CREATE_INTERVAL && !isInterval()) {
+						mpfr_sub_q(fl_value, fl_value, o.internalRational(), MPFR_RNDN);
+						mpfr_set(fu_value, fl_value, MPFR_RNDN);
+					} else {
+						mpfr_sub_q(fu_value, fu_value, o.internalRational(), MPFR_RNDU);
+						mpfr_sub_q(fl_value, fl_value, o.internalRational(), MPFR_RNDD);
+					}
 				}
 			}
 		}
