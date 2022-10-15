@@ -531,14 +531,7 @@ bool calculate_differentiable_functions(MathStructure &m, const EvaluationOption
 bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOptions &eo, bool recursive, bool do_unformat, int i_type) {
 	if(m.isFunction() && m.function() != eo.protected_function) {
 		if((i_type <= 0 && (!function_differentiable(m.function()) || (m.function()->id() == FUNCTION_ID_INCOMPLETE_BETA && (m.size() != 3 || m[1].containsInterval(true, false, false, 1, true) || m[2].containsInterval(true, false, false, 1, true))) || (m.function()->id() == FUNCTION_ID_I_GAMMA && (m.size() != 2 || m[1].containsInterval(true, false, false, 1, true))))) || (i_type >= 0 && !contains_interval_variable(m, i_type))) {
-			if((m.function()->id() == FUNCTION_ID_TOTAL || m.function()->id() == FUNCTION_ID_SUM || m.function()->id() == FUNCTION_ID_PRODUCT) && m.size() > 0 && m[0].containsInterval(true, true, false, 1, true)) {
-				EvaluationOptions eo2 = eo;
-				eo2.expand = false;
-				if(m.calculateFunctions(eo2, false, do_unformat)) {
-					if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type);
-					return true;
-				}
-			} else if(m.calculateFunctions(eo, false, do_unformat)) {
+			if(m.calculateFunctions(eo, false, do_unformat)) {
 				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type);
 				return true;
 			}
@@ -640,7 +633,6 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 			for(size_t i = 0; i < mv.size(); i++) {
 				if(mv[i].isNumber() && mv[i].number().isInterval()) {
 					mmul = mv;
-					mmul.unformat(eo);
 					mmul.delChild(i + 1, true);
 					mvar.multiply(mmul);
 					nr_intval = mv[i].number();
@@ -654,6 +646,7 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 		}
 		MathStructure msolve(mstruct);
 		msolve.replace(v, mvar);
+		msolve.unformat(eo);
 		bool b = true;
 		CALCULATOR->beginTemporaryStopMessages();
 
@@ -2553,6 +2546,10 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 				CALCULATOR->beginTemporaryStopMessages();
 
+				MathStructure mtest(*this);
+
+				if(!representsScalar()) b_failed = true;
+
 				// calculate uncertainty
 				if(m_type == STRUCT_VECTOR) {
 					munc.clearVector();
@@ -2575,16 +2572,50 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 					munc = calculate_uncertainty(*this, eo, b_failed);
 				}
 
+				if(b_failed) {
+					CALCULATOR->endTemporaryStopMessages();
+					b_failed = false;
+					EvaluationOptions eo3 = eo2;
+					eo3.split_squares = false;
+					if(eo.expand && eo.expand >= -1) eo3.expand = -1;
+					eo3.assume_denominators_nonzero = eo.assume_denominators_nonzero;
+					eo3.approximation = APPROXIMATION_EXACT;
+					CALCULATOR->beginTemporaryStopMessages();
+					mtest.calculatesub(eo3, eo3);
+					if(mtest.isVector()) {
+						munc.clearVector();
+						for(size_t i = 0; i < mtest.size(); i++) {
+							if(mtest[i].isVector()) {
+								for(size_t i2 = 0; i2 < mtest[i].size(); i2++) {
+									if(i2 == 0) {
+										munc.addChild(m_zero);
+										munc[i].clearVector();
+									}
+									munc[i].addChild(calculate_uncertainty(mtest[i][i2], eo, b_failed));
+									if(b_failed) break;
+								}
+							} else {
+								munc.addChild(calculate_uncertainty(mtest[i], eo, b_failed));
+								if(b_failed) break;
+							}
+						}
+					} else {
+						munc = calculate_uncertainty(mtest, eo, b_failed);
+					}
+					if(!b_failed) {
+						set_nocopy(mtest);
+					}
+				}
+
 				if(!b_failed && !munc.isZero()) {
 
+					// evaluate uncertainty and expression without uncertainty
 					EvaluationOptions eo3 = eo;
 					eo3.keep_zero_units = false;
 					eo3.structuring = STRUCTURING_NONE;
 					eo3.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 					eo3.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
 					if(eo3.approximation == APPROXIMATION_TRY_EXACT) eo3.approximation = APPROXIMATION_APPROXIMATE;
-
-					// evaluate uncertainty and expression without uncertainty
 					munc.eval(eo3);
 					eo3.keep_zero_units = eo.keep_zero_units;
 					eval(eo3);

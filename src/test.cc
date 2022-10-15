@@ -1012,7 +1012,7 @@ string rnd_var() {
 	else return "pi";*/
 	while(true) {
 		int r = rand() % CALCULATOR->variables.size();
-		if(CALCULATOR->variables[r]->isKnown()) return CALCULATOR->variables[r]->name();
+		if(CALCULATOR->variables[r]->isKnown() && CALCULATOR->variables[r]->referenceName() != "uptime") return CALCULATOR->variables[r]->name();
 	}
 	return "";
 }
@@ -1187,6 +1187,16 @@ string rnd_expression(int allow_unknowns, bool allow_functions, int length_facto
 
 KnownVariable *v;
 
+bool contains_division_by_zero(const MathStructure &mstruct) {
+	if(mstruct.isPower() && mstruct[0].isNumber() && !mstruct[0].number().isNonZero() && mstruct[1].representsNegative()) return true;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(contains_division_by_zero(mstruct[i])) return true;
+	}
+	return false;
+}
+
+extern bool testComplex(Number *this_nr, Number *i_nr);
+
 int rt1 = 0, rt2 = 0, rt3 = 0, rt4 = 0, rt5 = 0, rt6 = 0, rt7 = 0, rt8 = 0, rt9 = 0;
 void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bool test_interval = true, bool test_equation = true, bool allow_unit = false, bool allow_variable = false, bool allow_interval = false) {
 	bool b_iv = CALCULATOR->usesIntervalArithmetic();
@@ -1286,7 +1296,9 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 			cout << str << " => " << mp << ":" << nr << endl;
 			cout << "UNEQUAL2a: " << m1.print(po) << ":" << m3.print(po) << endl;
 		}*/
-		if(COMPARISON_IS_NOT_EQUAL(m1.compare(m4))) {
+		if(m4.isNumber()) testComplex(&m4.number(), m4.number().internalImaginary());
+		if(m1.isNumber()) testComplex(&m1.number(), m1.number().internalImaginary());
+		if(COMPARISON_IS_NOT_EQUAL(m1.compare(m4)) && !m1.containsInfinity() && !m4.containsInfinity() && !contains_division_by_zero(m1) && !contains_division_by_zero(m4)) {
 			rt5++;
 			cout << str << " => " << mp << ":" << nr << endl;
 			cout << "UNEQUAL2b: " << m1.print(po) << ":" << m4.print(po) << endl;
@@ -1579,7 +1591,9 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 			cout << str << " => " << mp << ":" << nr << endl;
 			cout << "UNEQUAL2a: " << m1.print(po) << ":" << m3.print(po) << endl;
 		}*/
-		if(COMPARISON_IS_NOT_EQUAL(m1.compare(m4))) {
+		if(m4.isNumber()) testComplex(&m4.number(), m4.number().internalImaginary());
+		if(m1.isNumber()) testComplex(&m1.number(), m1.number().internalImaginary());
+		if(COMPARISON_IS_NOT_EQUAL(m1.compare(m4)) && !m1.containsInfinity() && !m4.containsInfinity() && !contains_division_by_zero(m1) && !contains_division_by_zero(m4)) {
 			rt5++;
 			cout << str << " => " << mp << ":" << nr << endl;
 			cout << "UNEQUAL2b: " << m1.print(po) << ":" << m4.print(po) << endl;
@@ -1863,8 +1877,8 @@ bool contains_abs_or_currency(const MathStructure &m) {
 #include "libqalculate/MathStructure-support.h"
 int main(int argc, char *argv[]) {
 
-	new Calculator(true);
-	CALCULATOR->loadExchangeRates();
+	new Calculator(false);
+	//CALCULATOR->loadExchangeRates();
 	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
 	CALCULATOR->setPrecision(8);
@@ -1885,7 +1899,7 @@ int main(int argc, char *argv[]) {
 	CALCULATOR->setMessagePrintOptions(po);
 
 	EvaluationOptions evalops;
-	evalops.parse_options.unknowns_enabled = false;
+	//evalops.parse_options.unknowns_enabled = false;
 	/*evalops.sync_units = true;
 	evalops.parse_options.unknowns_enabled = false;
 	evalops.parse_options.read_precision = DONT_READ_PRECISION;*/
@@ -1971,7 +1985,7 @@ int main(int argc, char *argv[]) {
 	}*/
 	//return 0;
 
-	//CALCULATOR->setVariableUnitsEnabled(false);
+	CALCULATOR->setVariableUnitsEnabled(false);
 
 	MathStructure mp;
 	/*CALCULATOR->parse(&mp, "x + asin(x) + -1 * 2", evalops.parse_options);
@@ -2058,12 +2072,12 @@ int main(int argc, char *argv[]) {
 
 	return 0;*/
 
-	//v = new KnownVariable("", "v", m_zero);
+	v = new KnownVariable("", "v", m_zero);
 
 	//CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
-	//CALCULATOR->useIntervalArithmetic();
+	CALCULATOR->useIntervalArithmetic();
 
-	//for(size_t i = 0; i <= 150000; i++) {
+	for(size_t i = 0; i <= 150000; i++) {
 		/*string str = rnd_expression(17, false, 20, 4, false, false, false, false, true);
 		cout << str << endl;
 		MathStructure mstruct;
@@ -2072,14 +2086,15 @@ int main(int argc, char *argv[]) {
 		cout << mstruct.print() << endl;
 		if(mstruct.isAborted()) break;*/
 		//if(mstruct.isPower() || (mstruct.isMultiplication() && !mstruct.containsType(STRUCT_DIVISION))) cout << str << "\n" << mstruct << endl;
-		/*rnd_test(evalops, 4, true, false, true, false, false, false);
+		rnd_test(evalops, 1, false, false, false, true, false, false);
 		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
 
-	return 0;*/
-	size_t ni = 0;
-	for(size_t i2 = 0; i2 <= 10000; i2++) {
+	return 0;
+	evalops.parse_options.units_enabled = false;
+	//size_t ni = 0;
+	for(size_t i2 = 0; i2 <= 1000000; i2++) {
 		str = "";
 		size_t n = rand() % 20;
 		for(size_t i = 0; i <= n; i++) {
@@ -2125,7 +2140,7 @@ int main(int argc, char *argv[]) {
 		CALCULATOR->parse(&mstruct, str, evalops.parse_options);
 		bool b_out = true;
 		if(expression_contains_save_function(str, evalops.parse_options, false)) b_out = false;
-		if(contains_abs_or_currency(mstruct)) b_out = false;
+		if(mstruct.isSymbolic() || contains_abs_or_currency(mstruct)) b_out = false;
 		while(CALCULATOR->message()) {
 			if(CALCULATOR->message()->message().find("is not a valid") != string::npos || CALCULATOR->message()->message().find("Trailing") != string::npos || CALCULATOR->message()->message().find("Misplaced") != string::npos || CALCULATOR->message()->message().find("ignored") != string::npos) {b_out = false; break;}
 			if(!CALCULATOR->nextMessage()) break;

@@ -31,7 +31,7 @@
 #include <stdint.h>
 
 #define QALCULATE_MAJOR_VERSION (4)
-#define QALCULATE_MINOR_VERSION (3)
+#define QALCULATE_MINOR_VERSION (4)
 #define QALCULATE_MICRO_VERSION (0)
 
 static std::string empty_string;

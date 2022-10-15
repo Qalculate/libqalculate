@@ -2338,6 +2338,34 @@
         </part>
       </unit>
       <unit type="composite">
+        <_title>Liter per Minute</_title>
+        <names>r:l_p_min</names>
+        <part>
+          <unit>L</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>min</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <_title>Liter per Hour</_title>
+        <names>r:l_p_h</names>
+        <part>
+          <unit>L</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>h</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
         <_title>Cubic Meter per Second</_title>
         <system>SI</system>
         <names>r:cum_p_s</names>
@@ -2348,6 +2376,21 @@
         </part>
         <part>
           <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <_title>Cubic Centimeter per Minute</_title>
+        <system>SI</system>
+        <names>r:cucm_p_min</names>
+        <part>
+          <unit>m</unit>
+          <prefix>-2</prefix>
+          <exponent>3</exponent>
+        </part>
+        <part>
+          <unit>min</unit>
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
@@ -2472,6 +2515,21 @@
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
+      </unit>
+      <unit type="composite">
+        <_title>Gallons per Second (U.S.)</_title>
+        <system>US</system>
+        <names>r:gal_p_h</names>
+        <part>
+          <unit>gal</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
       </unit>
       <unit type="composite">
         <title>Acre-Foot per Day</title>
@@ -3200,6 +3258,42 @@
         <base>
           <unit>dyn_p_sqcm</unit>
           <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>Meter of Water</_title>
+        <_names>ar:mWC,a:mwg,au:mH&#x2082;O</_names>
+        <base>
+          <unit>Pa</unit>
+          <relation>9806.65</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="composite">
+        <_title>Millimeter of Water</_title>
+        <names>mmH2O_c</names>
+        <part>
+          <unit>mH2O</unit>
+          <prefix>-3</prefix>
+          <exponent>1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <_title>Centimeter of Water</_title>
+        <names>cmH2O_c</names>
+        <part>
+          <unit>mH2O</unit>
+          <prefix>-2</prefix>
+          <exponent>1</exponent>
+        </part>
+      </unit>
+      <unit type="alias">
+        <_title>Inch of Water</_title>
+        <_names>ar:inWC,a:iwg,au:inH&#x2082;O</_names>
+        <base>
+          <unit>mWC</unit>
+          <relation>0.0254</relation>
           <exponent>1</exponent>
         </base>
       </unit>

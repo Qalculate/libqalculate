@@ -134,6 +134,7 @@ bool comparison_is_not_equal(ComparisonResult cr);
 bool comparison_is_equal_or_less(ComparisonResult cr);
 bool comparison_is_equal_or_greater(ComparisonResult cr);
 bool comparison_might_be_equal(ComparisonResult cr);
+Variable *find_interval_replace_var_comp(MathStructure &m, const EvaluationOptions &eo, Variable **v);
 
 void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, int steps, MathStructure &x_vector, MathStructure &y_vector, const EvaluationOptions &eo, bool adaptive = true);
 void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure &x_vector, MathStructure &y_vector, const EvaluationOptions &eo);
@@ -142,6 +143,7 @@ void print_dual(const MathStructure &mresult, const std::string &original_expres
 void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, const std::string &original_expression, const MathStructure *parsed_mstruct, EvaluationOptions &evalops, AutomaticApproximation auto_approx, int msecs = 0, int max_size = 10);
 bool transform_expression_for_equals_save(std::string&, const ParseOptions&);
 bool expression_contains_save_function(const std::string&, const ParseOptions&, bool = false);
+void replace_internal_operators(std::string &str);
 
 #endif
 
