@@ -2491,6 +2491,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 				separate_vector_vars(*this, feo, vars, uncs);
 				vars.clear();
 				uncs.clear();
+				calculatesub(eo3, eo3);
 				// remove units from variables with uncertainties
 				while(eo.sync_units && (separate_unit_vars(*this, feo, true) || sync_approximate_units(*this, feo, &vars, &uncs, false))) {
 					calculatesub(eo3, eo3);

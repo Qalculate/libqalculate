@@ -839,8 +839,16 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 }
 MathStructure Calculator::convertToBaseUnits(const MathStructure &mstruct, const EvaluationOptions &eo) {
 	if(!mstruct.containsType(STRUCT_UNIT, true)) return mstruct;
-	size_t n_messages = messages.size();
 	MathStructure mstruct_new(mstruct);
+	if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_UNCERTAINTY || mstruct.function()->id() == FUNCTION_ID_INTERVAL)) {
+		EvaluationOptions eo2 = eo;
+		if(eo.interval_calculation != INTERVAL_CALCULATION_NONE) eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
+		for(size_t i = 0; i < mstruct_new.size(); i++) {
+			mstruct_new[i] = convertToBaseUnits(mstruct[i], eo2);
+		}
+		return mstruct_new;
+	}
+	size_t n_messages = messages.size();
 	mstruct_new.convertToBaseUnits(true, NULL, true, eo);
 	if(!mstruct_new.equals(mstruct, true, true)) {
 		EvaluationOptions eo2 = eo;
@@ -1501,14 +1509,24 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 		case STRUCT_FUNCTION: {}
 		case STRUCT_VECTOR: {}
 		case STRUCT_ADDITION: {
-			if(!mstruct.containsType(STRUCT_UNIT, true)) return mstruct;
+			if((mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_STRIP_UNITS) || !mstruct.containsType(STRUCT_UNIT, true)) return mstruct;
 			MathStructure mstruct_new(mstruct);
 			bool b = false;
-			for(size_t i = 0; i < mstruct_new.size(); i++) {
-				if(aborted()) return mstruct;
-				if(!mstruct_new.isFunction() || !mstruct_new.function()->getArgumentDefinition(i + 1) || mstruct_new.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) {
-					mstruct_new[i] = convertToOptimalUnit(mstruct_new[i], eo, convert_to_si_units);
+			if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_UNCERTAINTY || mstruct.function()->id() == FUNCTION_ID_INTERVAL) && eo.interval_calculation != INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC && eo.interval_calculation != INTERVAL_CALCULATION_NONE) {
+				EvaluationOptions eo3 = eo;
+				eo3.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
+				for(size_t i = 0; i < mstruct_new.size(); i++) {
+					if(aborted()) return mstruct;
+					mstruct_new[i] = convertToOptimalUnit(mstruct_new[i], eo3, convert_to_si_units);
 					if(!b && !mstruct_new[i].equals(mstruct[i], true, true)) b = true;
+				}
+			} else {
+				for(size_t i = 0; i < mstruct_new.size(); i++) {
+					if(aborted()) return mstruct;
+					if(!mstruct_new.isFunction() || !mstruct_new.function()->getArgumentDefinition(i + 1) || mstruct_new.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) {
+						mstruct_new[i] = convertToOptimalUnit(mstruct_new[i], eo, convert_to_si_units);
+						if(!b && !mstruct_new[i].equals(mstruct[i], true, true)) b = true;
+					}
 				}
 			}
 			if(b) {

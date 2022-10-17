@@ -2721,7 +2721,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_COMPARISON: {return true;}
 				case STRUCT_FUNCTION: {return o_function->id() == FUNCTION_ID_UNCERTAINTY;}
 				case STRUCT_VECTOR: {return false;}
-				case STRUCT_NUMBER: {return o_number.isInfinite() || (o_number.hasImaginaryPart() && o_number.hasRealPart());}
+				case STRUCT_NUMBER: {return o_number.isInfinite() || (o_number.hasImaginaryPart() && o_number.hasRealPart()) || (o_number.isNegative() && (po.interval_display != INTERVAL_DISPLAY_INTERVAL || !o_number.isInterval()));}
 				case STRUCT_VARIABLE: {return false;}
 				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
@@ -2752,7 +2752,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_FUNCTION: {return o_function->id() == FUNCTION_ID_UNCERTAINTY;}
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {
-					return (flat_division || po.excessive_parenthesis) && (o_number.isInfinite() || o_number.hasImaginaryPart());
+					return (flat_division || po.excessive_parenthesis) && (o_number.isInfinite() || o_number.hasImaginaryPart() || (o_number.isNegative() && (po.interval_display != INTERVAL_DISPLAY_INTERVAL || !o_number.isInterval())));
 				}
 				case STRUCT_VARIABLE: {return false;}
 				case STRUCT_ABORTED: {return false;}
@@ -2782,7 +2782,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_COMPARISON: {return true;}
 				case STRUCT_FUNCTION: {return false;}
 				case STRUCT_VECTOR: {return false;}
-				case STRUCT_NUMBER: {return o_number.isInfinite();}
+				case STRUCT_NUMBER: {return o_number.isInfinite() || (o_number.hasImaginaryPart() && o_number.hasRealPart()) || (o_number.isNegative() && (index > 1 || po.excessive_parenthesis) && (po.interval_display != INTERVAL_DISPLAY_INTERVAL || !o_number.isInterval()));}
 				case STRUCT_VARIABLE: {return false;}
 				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
@@ -2811,7 +2811,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_COMPARISON: {return true;}
 				case STRUCT_FUNCTION: {return o_function->id() == FUNCTION_ID_UNCERTAINTY;}
 				case STRUCT_VECTOR: {return false;}
-				case STRUCT_NUMBER: {return o_number.isInfinite() || o_number.hasImaginaryPart();}
+				case STRUCT_NUMBER: {return o_number.isInfinite() || o_number.hasImaginaryPart() || (index == 1 && o_number.isNegative() && (po.interval_display != INTERVAL_DISPLAY_INTERVAL || !o_number.isInterval()));}
 				case STRUCT_VARIABLE: {return false;}
 				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
@@ -2839,7 +2839,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_COMPARISON: {return true;}
 				case STRUCT_FUNCTION: {return false;}
 				case STRUCT_VECTOR: {return false;}
-				case STRUCT_NUMBER: {return o_number.isInfinite() || (o_number.hasImaginaryPart() && o_number.hasRealPart());}
+				case STRUCT_NUMBER: {return o_number.isInfinite() || (o_number.hasImaginaryPart() && o_number.hasRealPart()) || (o_number.isNegative() && (po.interval_display != INTERVAL_DISPLAY_INTERVAL || !o_number.isInterval()));}
 				case STRUCT_VARIABLE: {return false;}
 				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
@@ -2869,7 +2869,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_COMPARISON: {return false;}
 				case STRUCT_FUNCTION: {return false;}
 				case STRUCT_VECTOR: {return false;}
-				case STRUCT_NUMBER: {return po.excessive_parenthesis && o_number.isInfinite();}
+				case STRUCT_NUMBER: {return (o_number.hasImaginaryPart() && o_number.hasRealPart()) || (po.excessive_parenthesis && (o_number.isInfinite() || (o_number.isNegative() && (po.interval_display != INTERVAL_DISPLAY_INTERVAL || !o_number.isInterval()))));}
 				case STRUCT_VARIABLE: {return false;}
 				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
@@ -2900,7 +2900,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_COMPARISON: {return true;}
 				case STRUCT_FUNCTION: {return false;}
 				case STRUCT_VECTOR: {return false;}
-				case STRUCT_NUMBER: {return po.excessive_parenthesis && o_number.isInfinite();}
+				case STRUCT_NUMBER: {return (o_number.hasImaginaryPart() && o_number.hasRealPart()) || (po.excessive_parenthesis && (o_number.isInfinite() || (o_number.isNegative() && (po.interval_display != INTERVAL_DISPLAY_INTERVAL || !o_number.isInterval()))));}
 				case STRUCT_VARIABLE: {return false;}
 				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
@@ -2928,7 +2928,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_COMPARISON: {return true;}
 				case STRUCT_FUNCTION: {return false;}
 				case STRUCT_VECTOR: {return false;}
-				case STRUCT_NUMBER: {return po.excessive_parenthesis && o_number.isInfinite();}
+				case STRUCT_NUMBER: {return po.excessive_parenthesis && (o_number.isInfinite() || (o_number.hasImaginaryPart() && o_number.hasRealPart()) || (o_number.isNegative() && (po.interval_display != INTERVAL_DISPLAY_INTERVAL || !o_number.isInterval())));}
 				case STRUCT_VARIABLE: {return false;}
 				case STRUCT_ABORTED: {return false;}
 				case STRUCT_SYMBOLIC: {return false;}
@@ -2958,7 +2958,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_COMPARISON: {return true;}
 				case STRUCT_FUNCTION: {return po.excessive_parenthesis;}
 				case STRUCT_VECTOR: {return po.excessive_parenthesis;}
-				case STRUCT_NUMBER: {return po.excessive_parenthesis;}
+				case STRUCT_NUMBER: {return po.excessive_parenthesis || (o_number.hasImaginaryPart() && o_number.hasRealPart());}
 				case STRUCT_VARIABLE: {return po.excessive_parenthesis;}
 				case STRUCT_ABORTED: {return po.excessive_parenthesis;}
 				case STRUCT_SYMBOLIC: {return po.excessive_parenthesis;}
@@ -2977,7 +2977,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 					case STRUCT_NEGATE: {return po.excessive_parenthesis;}
 					case STRUCT_FUNCTION: {return false;}
 					case STRUCT_VECTOR: {return false;}
-					case STRUCT_NUMBER: {return false;}
+					case STRUCT_NUMBER: {return po.excessive_parenthesis && (o_number.isNegative() && (po.interval_display != INTERVAL_DISPLAY_INTERVAL || !o_number.isInterval()));}
 					case STRUCT_VARIABLE: {return false;}
 					case STRUCT_ABORTED: {return false;}
 					case STRUCT_SYMBOLIC: {return false;}
@@ -3242,6 +3242,8 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 		case STRUCT_NUMBER: {
 			if(colorize && tagtype == TAG_TYPE_TERMINAL) print_str = (colorize == 2 ? "\033[0;96m" : "\033[0;36m");
 			else if(colorize && tagtype == TAG_TYPE_HTML) print_str = (colorize == 2 ? "<span style=\"color:#AAFFFF\">" : "<span style=\"color:#005858\">");
+			size_t i_number = print_str.length();
+			size_t i_number_end = 0;
 			if(format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0) {
 				string exp;
 				bool exp_minus = false;
@@ -3250,6 +3252,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					ips_n.exp_minus = &exp_minus;
 				}
 				print_str += o_number.print(po, ips_n);
+				i_number_end = print_str.length();
 				if(po.base != BASE_DECIMAL && po.base_display == BASE_DISPLAY_SUFFIX && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME) {
 					int base = po.base;
 					if(base <= BASE_FP16 && base >= BASE_FP80) base = BASE_BINARY;
@@ -3299,18 +3302,17 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				}
 			} else {
 				print_str += o_number.print(po, ips_n);
+				i_number_end = print_str.length();
 			}
 			if(colorize && tagtype == TAG_TYPE_TERMINAL) print_str += "\033[0m";
 			else if(colorize && tagtype == TAG_TYPE_HTML) print_str += "</span>";
-			if(!ips.wrap && ips.depth > 0 && po.base != BASE_CUSTOM && po.base != BASE_UNICODE) {
-				for(size_t i = 1; i + 1 < print_str.size(); i++) {
-					if(print_str[i] == PLUS_CH || print_str[i] == MINUS_CH || print_str[i] == DIVISION_CH || ((unsigned char) print_str[i] == 0xE2 && (unsigned char) print_str[i + 1] == 0x88 && i + 2 < print_str.size() && ((unsigned char) print_str[i + 2] == 0x92 || (unsigned char) print_str[i + 2] == 0x95)) || ((unsigned char) print_str[i] == 0xC3 && (unsigned char) print_str[i + 1] == 0xB7)) {
+			if(!ips.wrap && ips.depth > 0 && o_number.isRational() && !o_number.isInteger() && po.base != BASE_CUSTOM && po.base != BASE_UNICODE) {
+				for(size_t i = i_number + 1; i + 1 < i_number_end; i++) {
+					if(print_str[i] == DIVISION_CH || ((unsigned char) print_str[i] == 0xE2 && (unsigned char) print_str[i + 1] == 0x88 && i + 2 < print_str.size() && (unsigned char) print_str[i + 2] == 0x95) || ((unsigned char) print_str[i] == 0xC3 && (unsigned char) print_str[i + 1] == 0xB7)) {
 						print_str.insert(0, "(");
 						print_str += ")";
 						break;
-					} else if((print_str[i] == 'E' || print_str[i] == 'e') && po.base > 2 && po.base < 15) {
-						i++;
-					} else if(format && print_str[i] == '<') {
+					} else if(print_str[i] == DOT_CH || print_str[i] == COMMA_CH) {
 						break;
 					}
 				}
