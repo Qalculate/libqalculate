@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-12 09:23+0200\n"
+"POT-Creation-Date: 2022-10-17 08:38+0200\n"
 "PO-Revision-Date: 2021-06-06 21:41-0600\n"
 "Last-Translator: Alex Henrie <alexhenrie24@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -327,7 +327,7 @@ msgstr "La suposició no s'ha reconegut."
 #: ../libqalculate/Calculator-calculate.cc:994
 #: ../libqalculate/Calculator.cc:239 ../libqalculate/Calculator.cc:472
 #: ../libqalculate/Calculator.cc:620 ../libqalculate/DataSet.cc:1102
-#: ../libqalculate/DataSet.cc:1164 ../libqalculate/MathStructure-print.cc:3875
+#: ../libqalculate/DataSet.cc:1164 ../libqalculate/MathStructure-print.cc:3877
 #: ../libqalculate/Function.cc:2407 ../libqalculate/Function.cc:2423
 msgid "or"
 msgstr ""
@@ -3392,7 +3392,7 @@ msgstr ""
 #: ../libqalculate/Calculator-calculate.cc:1046
 #: ../libqalculate/Calculator.cc:233 ../libqalculate/Calculator.cc:467
 #: ../libqalculate/Calculator.cc:621
-#: ../libqalculate/MathStructure-print.cc:3854 ../libqalculate/Function.cc:1457
+#: ../libqalculate/MathStructure-print.cc:3856 ../libqalculate/Function.cc:1457
 #: ../libqalculate/Function.cc:1465 ../libqalculate/Function.cc:1879
 #: ../libqalculate/Function.cc:2041 ../libqalculate/Function.cc:2049
 msgid "and"
@@ -3753,7 +3753,14 @@ msgstr ""
 msgid "This is a bug. Please report it."
 msgstr "Això és un defecte. Si us plau, reporteu-ho."
 
-#: ../libqalculate/MathStructure-calculate.cc:6916
+#: ../libqalculate/MathStructure-calculate.cc:6874
+#: ../libqalculate/Function.cc:432
+msgid ""
+"log() with a single argument is considered ambiguous. Please use ln() or "
+"log10() instead."
+msgstr ""
+
+#: ../libqalculate/MathStructure-calculate.cc:6926
 #: ../libqalculate/Function.cc:573
 msgid "No unknown variable/symbol was found."
 msgstr "No s'ha trobat cap variable desconeguda o símbol desconegut."
@@ -3762,7 +3769,7 @@ msgstr "No s'ha trobat cap variable desconeguda o símbol desconegut."
 msgid "Interval potentially calculated wide."
 msgstr "L'interval potencialment s'ha calculat de manera àmplia."
 
-#: ../libqalculate/MathStructure-eval.cc:2538
+#: ../libqalculate/MathStructure-eval.cc:2539
 msgid ""
 "Calculation of uncertainty propagation partially failed (using interval "
 "arithmetic instead when necessary)."
@@ -3770,7 +3777,7 @@ msgstr ""
 "El càlcul de propagació d'incertesa ha fallat parcialment (usant "
 "l'aritmètica d'interval en compte quan és necessari)"
 
-#: ../libqalculate/MathStructure-eval.cc:2654
+#: ../libqalculate/MathStructure-eval.cc:2655
 msgid ""
 "Calculation of uncertainty propagation failed (using interval arithmetic "
 "instead)."
@@ -3877,7 +3884,7 @@ msgid ""
 msgstr ""
 "El mínim i màxim seleccionats no resulten en un nombre finit positiu de dades"
 
-#: ../libqalculate/MathStructure-print.cc:4195
+#: ../libqalculate/MathStructure-print.cc:4197
 msgid "undefined"
 msgstr ""
 
@@ -3901,12 +3908,6 @@ msgstr[0] ""
 msgstr[1] ""
 "S'han ignorat els arguments addicionals a la funció %s(). La funció només "
 "pot usar %s arguments."
-
-#: ../libqalculate/Function.cc:432
-msgid ""
-"log() with a single argument is considered ambiguous. Please use ln() or "
-"log10() instead."
-msgstr ""
 
 #: ../libqalculate/Function.cc:511
 #, c-format
