@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate 3.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-12 09:23+0200\n"
+"POT-Creation-Date: 2022-10-17 08:38+0200\n"
 "PO-Revision-Date: 2021-08-23 10:33+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
@@ -328,7 +328,7 @@ msgstr "无法识别的假设。"
 #: ../libqalculate/Calculator-calculate.cc:994
 #: ../libqalculate/Calculator.cc:239 ../libqalculate/Calculator.cc:472
 #: ../libqalculate/Calculator.cc:620 ../libqalculate/DataSet.cc:1102
-#: ../libqalculate/DataSet.cc:1164 ../libqalculate/MathStructure-print.cc:3875
+#: ../libqalculate/DataSet.cc:1164 ../libqalculate/MathStructure-print.cc:3877
 #: ../libqalculate/Function.cc:2407 ../libqalculate/Function.cc:2423
 msgid "or"
 msgstr "或"
@@ -3292,7 +3292,7 @@ msgstr "栈为空。用零填充其余的函数参数。"
 #: ../libqalculate/Calculator-calculate.cc:1046
 #: ../libqalculate/Calculator.cc:233 ../libqalculate/Calculator.cc:467
 #: ../libqalculate/Calculator.cc:621
-#: ../libqalculate/MathStructure-print.cc:3854 ../libqalculate/Function.cc:1457
+#: ../libqalculate/MathStructure-print.cc:3856 ../libqalculate/Function.cc:1457
 #: ../libqalculate/Function.cc:1465 ../libqalculate/Function.cc:1879
 #: ../libqalculate/Function.cc:2041 ../libqalculate/Function.cc:2049
 msgid "and"
@@ -3632,7 +3632,14 @@ msgstr "在矩阵乘法中，第二个矩阵的列数(%s)必须与第一个矩�
 msgid "This is a bug. Please report it."
 msgstr "这是个bug。请报告它。"
 
-#: ../libqalculate/MathStructure-calculate.cc:6916
+#: ../libqalculate/MathStructure-calculate.cc:6874
+#: ../libqalculate/Function.cc:432
+msgid ""
+"log() with a single argument is considered ambiguous. Please use ln() or "
+"log10() instead."
+msgstr ""
+
+#: ../libqalculate/MathStructure-calculate.cc:6926
 #: ../libqalculate/Function.cc:573
 msgid "No unknown variable/symbol was found."
 msgstr "未找到未知的变量/符号。"
@@ -3641,13 +3648,13 @@ msgstr "未找到未知的变量/符号。"
 msgid "Interval potentially calculated wide."
 msgstr "区间可能计算过宽。"
 
-#: ../libqalculate/MathStructure-eval.cc:2538
+#: ../libqalculate/MathStructure-eval.cc:2539
 msgid ""
 "Calculation of uncertainty propagation partially failed (using interval "
 "arithmetic instead when necessary)."
 msgstr "误差传递计算部分失败(必要时改用区间运算)。"
 
-#: ../libqalculate/MathStructure-eval.cc:2654
+#: ../libqalculate/MathStructure-eval.cc:2655
 msgid ""
 "Calculation of uncertainty propagation failed (using interval arithmetic "
 "instead)."
@@ -3744,7 +3751,7 @@ msgid ""
 "points"
 msgstr "所选的最小值和最大值得不到一个正的、有限的数据点数。"
 
-#: ../libqalculate/MathStructure-print.cc:4195
+#: ../libqalculate/MathStructure-print.cc:4197
 msgid "undefined"
 msgstr "未定义"
 
@@ -3763,12 +3770,6 @@ msgid_plural ""
 "Additional arguments for function %s() were ignored. Function can only use "
 "%s arguments."
 msgstr[0] "已忽略函数%s的多余参数。它只需要%s个参数。"
-
-#: ../libqalculate/Function.cc:432
-msgid ""
-"log() with a single argument is considered ambiguous. Please use ln() or "
-"log10() instead."
-msgstr ""
 
 #: ../libqalculate/Function.cc:511
 #, c-format
