@@ -3272,18 +3272,18 @@
       </unit>
       <unit type="composite">
         <_title>Millimeter of Water</_title>
-        <names>mmH2O_c</names>
+        <names>mmWC_c</names>
         <part>
-          <unit>mH2O</unit>
+          <unit>mWC</unit>
           <prefix>-3</prefix>
           <exponent>1</exponent>
         </part>
       </unit>
       <unit type="composite">
         <_title>Centimeter of Water</_title>
-        <names>cmH2O_c</names>
+        <names>cmWC_c</names>
         <part>
-          <unit>mH2O</unit>
+          <unit>mWC</unit>
           <prefix>-2</prefix>
           <exponent>1</exponent>
         </part>
