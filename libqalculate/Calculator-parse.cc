@@ -2534,6 +2534,26 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					}
 				}
 				if(name && name_length >= found_function_name_length && ((case_sensitive && (name_length = compare_name(*name, str, name_length, str_index, base, underscore))) || (!case_sensitive && (name_length = compare_name_no_case(*name, str, name_length, str_index, base, underscore))))) {
+					if(ufvt != 'p' && po.units_enabled && name_length < name_chars_left && name_chars_left > 2 && name_chars_left - 1 <= UFV_LENGTHS) {
+						for(size_t i7 = 0; i7 < ufv[0][0].size(); i7++) {
+							if(((Prefix*) ufv[0][0][i7])->getName(ufv_i[0][0][i7]).name[0] == str[str_index]) {
+								for(size_t i8 = 0; i8 < ufv[2][name_chars_left - 2].size(); i8++) {
+									const ExpressionName *name_u = &((ExpressionItem*) ufv[2][name_chars_left - 2][i8])->getName(ufv_i[2][name_chars_left - 2][i8]);
+									size_t name_length_u = name_u->name.length();
+									bool underscore_u = priv->ufv_us[2][name_chars_left - 2][i8];
+									name_length_u -= underscore_u;
+									if(((name_u->case_sensitive && (name_length_u = compare_name(name_u->name, str, name_length_u, str_index + 1, base, underscore_u))) || (!name_u->case_sensitive && (name_length_u = compare_name_no_case(name_u->name, str, name_length_u, str_index + 1, base, underscore_u)))) && name_length_u + 1 == name_chars_left) {
+										ufvt = 'u';
+										p = (Prefix*) ufv[0][0][i7];
+										object = (ExpressionItem*) ufv[2][name_chars_left - 2][i8];
+										name_length = name_length_u + 1;
+										break;
+									}
+								}
+								break;
+							}
+						}
+					}
 					moved_forward = false;
 					switch(ufvt) {
 						case 'v': {

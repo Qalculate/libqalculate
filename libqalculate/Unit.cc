@@ -1256,13 +1256,15 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	ParseOptions po;
 	po.variables_enabled = true;
 	po.functions_enabled = false;
-	po.unknowns_enabled = true;
+	po.units_enabled = true;
+	po.unknowns_enabled = eo.parse_options.units_enabled;
 	MathStructure mstruct;
 	bool had_errors = false;
 	CALCULATOR->beginTemporaryStopMessages();
 	CALCULATOR->parse(&mstruct, base_expression_, po);
 	replace_variables(mstruct);
 	if(mstruct.containsType(STRUCT_VARIABLE, true)) {
+		if(!eo.parse_options.units_enabled) return;
 		po.variables_enabled = false;
 		CALCULATOR->parse(&mstruct, base_expression_, po);
 	}

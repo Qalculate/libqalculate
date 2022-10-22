@@ -1750,14 +1750,13 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 	} else {
 		current_stage = MESSAGE_STAGE_CONVERSION_PARSING;
 		beginTemporaryStopMessages();
-		CompositeUnit cu("", "temporary_composite_convert", "", str2);
+		CompositeUnit cu("", "temporary_composite_convert_v", "", str2);
 		if(stopped_errors_count[disable_errors_ref - 1] > 0 || stopped_warnings_count[disable_errors_ref - 1] > 0) {
-			std::vector<CalculatorMessage> message_vector;
-			endTemporaryStopMessages(false, &message_vector);
+			endTemporaryStopMessages();
 			beginTemporaryStopMessages();
 			MathStructure munits;
 			parse(&munits, str2);
-			if(stopped_errors_count[disable_errors_ref - 1] == 0 && stopped_warnings_count[disable_errors_ref - 1] == 0) {
+			if(stopped_errors_count[disable_errors_ref - 1] == 0 && stopped_warnings_count[disable_errors_ref - 1] == 0 && !munits.containsUnknowns()) {
 				current_stage = MESSAGE_STAGE_CONVERSION;
 				mstruct = mstruct_to_convert;
 				mstruct.divide(munits);
@@ -1771,7 +1770,10 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 				}
 			}
 			endTemporaryStopMessages(b);
-			if(!b) addMessages(&message_vector);
+			if(!b) {
+				cu.setName("temporary_composite_convert", 1);
+				cu.setBaseExpression(str2);
+			}
 		} else {
 			endTemporaryStopMessages(true);
 		}
