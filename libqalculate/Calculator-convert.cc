@@ -1751,7 +1751,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 		current_stage = MESSAGE_STAGE_CONVERSION_PARSING;
 		beginTemporaryStopMessages();
 		CompositeUnit cu("", "temporary_composite_convert_v", "", str2);
-		if(stopped_errors_count[disable_errors_ref - 1] > 0 || stopped_warnings_count[disable_errors_ref - 1] > 0) {
+		if(stopped_errors_count[disable_errors_ref - 1] > 0 || stopped_warnings_count[disable_errors_ref - 1] > 0 || cu.countUnits() == 0) {
 			endTemporaryStopMessages();
 			beginTemporaryStopMessages();
 			MathStructure munits;
