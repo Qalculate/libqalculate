@@ -64,7 +64,7 @@
     </builtin_unit>
     <builtin_unit name="MYR">
       <_title>Malaysian Ringgit</_title>
-      <_names>a-cr:MYR</_names>
+      <_names>acr:MYR,ac:myr</_names>
       <_countries>Malaysia</_countries>
     </builtin_unit>
     <builtin_unit name="HRK">
