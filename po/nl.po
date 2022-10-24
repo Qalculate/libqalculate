@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-12 09:23+0200\n"
+"POT-Creation-Date: 2022-10-17 08:38+0200\n"
 "PO-Revision-Date: 2007-05-18 16:19+0200\n"
 "Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
 "Language-Team:  <kde-i18n-nl@kde.org>\n"
@@ -339,7 +339,7 @@ msgstr "Onbekende aanname."
 #: ../libqalculate/Calculator-calculate.cc:994
 #: ../libqalculate/Calculator.cc:239 ../libqalculate/Calculator.cc:472
 #: ../libqalculate/Calculator.cc:620 ../libqalculate/DataSet.cc:1102
-#: ../libqalculate/DataSet.cc:1164 ../libqalculate/MathStructure-print.cc:3875
+#: ../libqalculate/DataSet.cc:1164 ../libqalculate/MathStructure-print.cc:3877
 #: ../libqalculate/Function.cc:2407 ../libqalculate/Function.cc:2423
 msgid "or"
 msgstr "or"
@@ -3367,7 +3367,7 @@ msgstr ""
 #: ../libqalculate/Calculator-calculate.cc:1046
 #: ../libqalculate/Calculator.cc:233 ../libqalculate/Calculator.cc:467
 #: ../libqalculate/Calculator.cc:621
-#: ../libqalculate/MathStructure-print.cc:3854 ../libqalculate/Function.cc:1457
+#: ../libqalculate/MathStructure-print.cc:3856 ../libqalculate/Function.cc:1457
 #: ../libqalculate/Function.cc:1465 ../libqalculate/Function.cc:1879
 #: ../libqalculate/Function.cc:2041 ../libqalculate/Function.cc:2049
 msgid "and"
@@ -3730,7 +3730,14 @@ msgstr ""
 msgid "This is a bug. Please report it."
 msgstr "Dit is een bug (programmafout). Meld deze alstublieft."
 
-#: ../libqalculate/MathStructure-calculate.cc:6916
+#: ../libqalculate/MathStructure-calculate.cc:6874
+#: ../libqalculate/Function.cc:432
+msgid ""
+"log() with a single argument is considered ambiguous. Please use ln() or "
+"log10() instead."
+msgstr ""
+
+#: ../libqalculate/MathStructure-calculate.cc:6926
 #: ../libqalculate/Function.cc:573
 #, fuzzy
 msgid "No unknown variable/symbol was found."
@@ -3740,13 +3747,13 @@ msgstr "een onbekend(e) variabele/symbool"
 msgid "Interval potentially calculated wide."
 msgstr ""
 
-#: ../libqalculate/MathStructure-eval.cc:2538
+#: ../libqalculate/MathStructure-eval.cc:2539
 msgid ""
 "Calculation of uncertainty propagation partially failed (using interval "
 "arithmetic instead when necessary)."
 msgstr ""
 
-#: ../libqalculate/MathStructure-eval.cc:2654
+#: ../libqalculate/MathStructure-eval.cc:2655
 msgid ""
 "Calculation of uncertainty propagation failed (using interval arithmetic "
 "instead)."
@@ -3843,7 +3850,7 @@ msgid ""
 "points"
 msgstr ""
 
-#: ../libqalculate/MathStructure-print.cc:4195
+#: ../libqalculate/MathStructure-print.cc:4197
 msgid "undefined"
 msgstr "ongedefinieerd"
 
@@ -3867,12 +3874,6 @@ msgstr[0] ""
 msgstr[1] ""
 "Overtollige argumenten voor functie %s() werden genegeerd. Functie heeft "
 "slechts %s argumenten nodig."
-
-#: ../libqalculate/Function.cc:432
-msgid ""
-"log() with a single argument is considered ambiguous. Please use ln() or "
-"log10() instead."
-msgstr ""
 
 #: ../libqalculate/Function.cc:511
 #, c-format
