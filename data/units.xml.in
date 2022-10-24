@@ -838,7 +838,7 @@
     </unit>
     <unit type="alias">
       <_title>Hour</_title>
-      <_names>ar:h,hour,p:hours</_names>
+      <_names>ar:h,hour,p:hours,a:hr,a:hrs</_names>
       <base>
         <unit>min</unit>
         <relation>60</relation>
