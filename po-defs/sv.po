@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-10 16:42+0200\n"
+"POT-Creation-Date: 2022-10-26 08:55+0200\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -179,7 +179,7 @@ msgid "Malaysian Ringgit"
 msgstr "Malaysisk ringgit"
 
 #: ../data/currencies.xml.in.h:39
-msgid "a-cr:MYR"
+msgid "acr:MYR,ac:myr"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:40
@@ -9213,7 +9213,7 @@ msgid "ar:min,minute,p:minutes"
 msgstr "a:min,minut,minute,p:minuter,p:minutes"
 
 #: ../data/units.xml.in.h:144
-msgid "ar:h,hour,p:hours"
+msgid "ar:h,hour,p:hours,a:hr,a:hrs"
 msgstr "a:h,timme,hour,p:timmar,p:hours"
 
 #: ../data/units.xml.in.h:146
