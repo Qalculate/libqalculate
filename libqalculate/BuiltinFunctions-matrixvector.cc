@@ -1235,8 +1235,10 @@ int GenerateVectorFunction::calculate(MathStructure &mstruct, const MathStructur
 		mstruct = vargs[0].generateVector(vargs[4], vargs[1], vargs[2], vargs[3], NULL, eo);
 	} else {
 		bool overflow = false;
-		int steps = vargs[3].number().intValue(&overflow);
-		if(!vargs[3].isNumber() || overflow || steps < 1) {
+		MathStructure msteps(vargs[3]);
+		msteps.eval(eo);
+		int steps = msteps.number().intValue(&overflow);
+		if(!msteps.isNumber() || overflow || steps < 1) {
 			CALCULATOR->error(true, _("The number of requested elements in generate vector function must be a positive integer."), NULL);
 			return 0;
 		}

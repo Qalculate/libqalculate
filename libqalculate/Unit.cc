@@ -1263,6 +1263,10 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	CALCULATOR->parse(&mstruct, base_expression_, po);
 	replace_variables(mstruct);
 	if(mstruct.containsType(STRUCT_VARIABLE, true)) {
+		if(name() == "temporary_composite_convert_v") {
+			CALCULATOR->endTemporaryStopMessages();
+			return;
+		}
 		po.variables_enabled = false;
 		CALCULATOR->parse(&mstruct, base_expression_, po);
 	}

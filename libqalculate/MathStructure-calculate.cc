@@ -3975,7 +3975,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					}
 					return 1;
 				}
-			} else if(mstruct.isMultiplication() && mstruct.size() > 1) {
+			} else if(mstruct.isMultiplication() && mstruct.size() > 1 && !isMultiplication()) {
 				// x^(a*b*...)
 				bool b = representsNonNegative(true);
 				if(!b) {
@@ -6870,7 +6870,17 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 				CHILD(0).setFunction(o_function);
 				SET_CHILD_MAP(0)
 			}
+			if(SIZE >= (size_t) o_function->minargs()) {
+				if(o_function->id() == FUNCTION_ID_LOGN) CALCULATOR->error(false, _("log() with a single argument is considered ambiguous. Please use ln() or log10() instead."), NULL);
+				while((o_function->maxargs() > 0 && SIZE < (size_t) o_function->maxargs()) || (o_function->maxargs() < 0 && !o_function->getDefaultValue(SIZE + 1).empty())) {
+					Argument *arg = o_function->getArgumentDefinition(SIZE + 1);
+					APPEND(m_zero)
+					if(arg) arg->parse(&LAST, o_function->getDefaultValue(SIZE));
+					else CALCULATOR->parse(&LAST, o_function->getDefaultValue(SIZE));
+				}
+			}
 		}
+
 		if(!o_function->testArgumentCount(SIZE)) {
 			return false;
 		}
