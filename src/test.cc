@@ -2086,7 +2086,7 @@ int main(int argc, char *argv[]) {
 		cout << mstruct.print() << endl;
 		if(mstruct.isAborted()) break;*/
 		//if(mstruct.isPower() || (mstruct.isMultiplication() && !mstruct.containsType(STRUCT_DIVISION))) cout << str << "\n" << mstruct << endl;
-		rnd_test(evalops, 1, false, false, false, true, false, false);
+		rnd_test(evalops, 4, false, false, false, true, true, false);
 		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
@@ -2120,6 +2120,8 @@ int main(int argc, char *argv[]) {
 		gsub("~", " ", str);
 		gsub(":=", "=", str);
 		gsub("=:", "=", str);
+		gsub(">", " ", str);
+		gsub("<", " ", str);
 		remove_blank_ends(str);
 		while(str[0] == '/') {str.erase(0, 1); remove_blank_ends(str);}
 		/*n = rand() % (str.length() + 1);
@@ -2137,7 +2139,7 @@ int main(int argc, char *argv[]) {
 			}
 		}*/
 		MathStructure mstruct;
-		CALCULATOR->parse(&mstruct, str, evalops.parse_options);
+		/*CALCULATOR->parse(&mstruct, str, evalops.parse_options);
 		bool b_out = true;
 		if(expression_contains_save_function(str, evalops.parse_options, false)) b_out = false;
 		if(mstruct.isSymbolic() || contains_abs_or_currency(mstruct)) b_out = false;
@@ -2145,9 +2147,9 @@ int main(int argc, char *argv[]) {
 			if(CALCULATOR->message()->message().find("is not a valid") != string::npos || CALCULATOR->message()->message().find("Trailing") != string::npos || CALCULATOR->message()->message().find("Misplaced") != string::npos || CALCULATOR->message()->message().find("ignored") != string::npos) {b_out = false; break;}
 			if(!CALCULATOR->nextMessage()) break;
 		}
+		if(b_out && !str.empty()) cout << str << endl;*/
 		CALCULATOR->clearMessages();
-		if(b_out && !str.empty()) cout << str << endl;
-		//else cerr << str << endl;
+		cerr << str << endl;
 		/*cout << mstruct.print() << endl;
 		mstruct.eval(evalops);
 		cout << "B" << endl;
@@ -2160,7 +2162,7 @@ int main(int argc, char *argv[]) {
 		if(transform_expression_for_equals_save(str, evalops.parse_options)) {
 			ni++;
 			cout << "SAVE:" << str << endl;
-		}
+		}*/
 		CALCULATOR->calculate(&mstruct, str, 10000, evalops);
 		if(mstruct.isAborted()) {cerr << "aborted: " << i2 << endl; break;}
 		display_errors(true);
@@ -2169,7 +2171,7 @@ int main(int argc, char *argv[]) {
 		if(mstruct.isAborted()) break;
 		for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
 			if(CALCULATOR->variables[i]->isLocal()) CALCULATOR->variables[i]->destroy();
-		}*/
+		}
 	}
 	//cerr << ni<< endl;
 	return 0;

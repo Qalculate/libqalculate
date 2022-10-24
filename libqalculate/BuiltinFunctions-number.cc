@@ -1017,7 +1017,7 @@ int RemFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			FR_FUNCTION_2c1
 		}
 	} else if(!vargs[0].isNumber()) {
-		if(vargs[0].isPower() && vargs[0][0].isInteger() && vargs[0][1].isInteger()) {
+		if(vargs[0].isPower() && vargs[0][0].isInteger() && vargs[0][1].isInteger() && !vargs[0][0].number().isZero()) {
 			Number nr;
 			if(powmod(nr, vargs[0][0].number(), vargs[0][1].number(), vargs[1].number(), true)) {mstruct = nr; return 1;}
 		}
@@ -1030,7 +1030,7 @@ int RemFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		} else {
 			mstruct.eval(eo);
 		}
-		if(mstruct.isPower() && mstruct[0].isInteger() && mstruct[1].isInteger()) {
+		if(mstruct.isPower() && mstruct[0].isInteger() && mstruct[1].isInteger() && !mstruct[0].number().isZero()) {
 			Number nr;
 			if(powmod(nr, mstruct[0].number(), mstruct[1].number(), vargs[1].number(), true)) {
 				remove_overflow_message();
@@ -1043,7 +1043,7 @@ int RemFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			bool b = true;
 			MathStructure mbak(mstruct);
 			for(size_t i = 0; i < mstruct.size(); i++) {
-				if(!mstruct[i].isInteger() && (!mstruct[i].isPower() || !mstruct[i][0].isInteger() || !mstruct[i][1].isInteger())) {b = false; break;}
+				if(!mstruct[i].isInteger() && (!mstruct[i].isPower() || !mstruct[i][0].isInteger() || !mstruct[i][1].isInteger() || mstruct[i][0].number().isZero())) {b = false; break;}
 			}
 			if(b) {
 				remove_overflow_message();
@@ -1086,7 +1086,7 @@ int ModFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			FR_FUNCTION_2c1
 		}
 	} else if(!vargs[0].isNumber()) {
-		if(vargs[0].isPower() && vargs[0][0].isInteger() && vargs[0][1].isInteger()) {
+		if(vargs[0].isPower() && vargs[0][0].isInteger() && vargs[0][1].isInteger() && !vargs[0][0].number().isZero()) {
 			Number nr;
 			if(powmod(nr, vargs[0][0].number(), vargs[0][1].number(), vargs[1].number(), false)) {mstruct = nr; return 1;}
 		}
@@ -1099,7 +1099,7 @@ int ModFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		} else {
 			mstruct.eval(eo);
 		}
-		if(mstruct.isPower() && mstruct[0].isInteger() && mstruct[1].isInteger()) {
+		if(mstruct.isPower() && mstruct[0].isInteger() && mstruct[1].isInteger() && !mstruct[0].number().isZero()) {
 			Number nr;
 			if(powmod(nr, mstruct[0].number(), mstruct[1].number(), vargs[1].number(), false)) {
 				remove_overflow_message();
@@ -1112,7 +1112,7 @@ int ModFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			bool b = true;
 			MathStructure mbak(mstruct);
 			for(size_t i = 0; i < mstruct.size(); i++) {
-				if(!mstruct[i].isInteger() && (!mstruct[i].isPower() || !mstruct[i][0].isInteger() || !mstruct[i][1].isInteger())) {b = false; break;}
+				if(!mstruct[i].isInteger() && (!mstruct[i].isPower() || !mstruct[i][0].isInteger() || !mstruct[i][1].isInteger() || mstruct[i][0].number().isZero())) {b = false; break;}
 			}
 			if(b) {
 				remove_overflow_message();
