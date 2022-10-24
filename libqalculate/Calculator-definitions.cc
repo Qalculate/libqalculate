@@ -1769,11 +1769,10 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 							while(child2 != NULL) {
 								if(!xmlStrcmp(child2->name, (const xmlChar*) "unit")) {
 									XML_GET_STRING_FROM_TEXT(child2, base);
-									u = getUnit(base);
+									u = getActiveUnit(base);
+									if(!u) u = getCompositeUnit(base);
+									if(!u) getUnit(base);
 									b_currency = (!is_user_defs && u && u == u_euro);
-									if(!u) {
-										u = getCompositeUnit(base);
-									}
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "relation")) {
 									XML_GET_STRING_FROM_TEXT(child2, svalue);
 									XML_GET_APPROX_FROM_PROP(child2, b)
