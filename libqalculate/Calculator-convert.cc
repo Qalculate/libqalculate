@@ -431,7 +431,9 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 			// multiply original value with base units
 			EvaluationOptions eo2 = eo;
 			if(eo.approximation == APPROXIMATION_EXACT) eo2.approximation = APPROXIMATION_TRY_EXACT;
-			MathStructure munit(convertToOptimalUnit(to_unit, eo2, true));
+			MathStructure munit(to_unit);
+			munit.unformat();
+			munit = convertToOptimalUnit(munit, eo2, true);
 			munit.unformat();
 			fix_to_struct(munit);
 			if(!munit.isZero()) {
@@ -1689,6 +1691,14 @@ MathStructure Calculator::convertToCompositeUnit(const MathStructure &mstruct, C
 MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, string str2, const EvaluationOptions &eo, MathStructure *to_struct) {
 	return convert(mstruct_to_convert, str2, eo, to_struct, false, NULL);
 }
+
+void set_null_prefixes(MathStructure &m) {
+	if(m.isUnit() && !m.prefix()) m.setPrefix(CALCULATOR->decimal_null_prefix);
+	for(size_t i = 0; i < m.size(); i++) {
+		set_null_prefixes(m[i]);
+	}
+}
+
 MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, string str2, const EvaluationOptions &eo, MathStructure *to_struct, bool transform_orig, MathStructure *parsed_struct) {
 	if(to_struct) to_struct->setUndefined();
 	remove_blank_ends(str2);
@@ -1750,55 +1760,57 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 	} else {
 		current_stage = MESSAGE_STAGE_CONVERSION_PARSING;
 		beginTemporaryStopMessages();
-		CompositeUnit cu("", "temporary_composite_convert_v", "", str2);
-		if(stopped_errors_count[disable_errors_ref - 1] > 0 || stopped_warnings_count[disable_errors_ref - 1] > 0 || cu.countUnits() == 0) {
+		CompositeUnit cu("", eo.parse_options.limit_implicit_multiplication ? "01" : "00", "", str2);
+		MathStructure munits;
+		if(stopped_errors_count[disable_errors_ref - 1] > 0) {
 			endTemporaryStopMessages();
-			beginTemporaryStopMessages();
-			MathStructure munits;
-			parse(&munits, str2);
-			if(stopped_errors_count[disable_errors_ref - 1] == 0 && stopped_warnings_count[disable_errors_ref - 1] == 0 && !munits.containsUnknowns()) {
-				current_stage = MESSAGE_STAGE_CONVERSION;
-				mstruct = mstruct_to_convert;
-				mstruct.divide(munits);
-				eo2.sync_units = true;
-				eo2.sync_units = eo.sync_units;
-				mstruct.eval(eo2);
-				if(!mstruct.containsType(STRUCT_UNIT, false, false, false)) {
-					mstruct *= munits;
-					if(to_struct) to_struct->set(munits);
-					b = true;
-				}
-			}
-			endTemporaryStopMessages(b);
-			if(!b) {
-				cu.setName("temporary_composite_convert", 1);
-				cu.setBaseExpression(str2);
-			}
+			ParseOptions po = eo.parse_options;
+			po.units_enabled = true;
+			parse(&munits, str2, po);
+			eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_NONE;
 		} else {
+			munits.setUndefined();
 			endTemporaryStopMessages(true);
 		}
-		if(!b) {
-			if(cu.countUnits() == 2 && cu.get(1)->referenceName() == "g" && cu.get(2)->referenceName() == "m" && str2.substr(0, 2) == "kg") {
-				int exp = 1;
-				Prefix *p = NULL;
-				if(cu.get(1, &exp, &p) && exp == 1 && p && p->value() == 1000 && cu.get(2, &exp, &p) && exp == -2) {
-					Unit *u = getUnit("pond");
-					if(u) {
-						MathStructure mtest(convertToBaseUnits(mstruct_to_convert, eo));
-						mtest.sort();
-						if(mtest.isMultiplication() && mtest.size() >= 3 && mtest[mtest.size() - 3].isUnit() && mtest[mtest.size() - 3].unit()->referenceName() == "g" && mtest[mtest.size() - 2].isPower() && mtest[mtest.size() - 2][1].isMinusOne() && mtest[mtest.size() - 2][0].isUnit() && mtest[mtest.size() - 2][0].unit()->referenceName() == "m" && mtest[mtest.size() - 1].isPower() && mtest[mtest.size() - 1][1] == Number(-2, 1) && mtest[mtest.size() - 1][0].isUnit() && mtest[mtest.size() - 1][0].unit()->referenceName() == "s") {
-							str2.replace(1, 2, "pond");
-							cu.setBaseExpression(str2);
-						}
+		if(cu.countUnits() == 2 && cu.get(1)->referenceName() == "g" && cu.get(2)->referenceName() == "m" && str2.substr(0, 2) == "kg") {
+			int exp = 1;
+			Prefix *p = NULL;
+			if(cu.get(1, &exp, &p) && exp == 1 && p && p->value() == 1000 && cu.get(2, &exp, &p) && exp == -2) {
+				Unit *u = getUnit("pond");
+				if(u) {
+					MathStructure mtest(convertToBaseUnits(mstruct_to_convert, eo));
+					mtest.sort();
+					if(mtest.isMultiplication() && mtest.size() >= 3 && mtest[mtest.size() - 3].isUnit() && mtest[mtest.size() - 3].unit()->referenceName() == "g" && mtest[mtest.size() - 2].isPower() && mtest[mtest.size() - 2][1].isMinusOne() && mtest[mtest.size() - 2][0].isUnit() && mtest[mtest.size() - 2][0].unit()->referenceName() == "m" && mtest[mtest.size() - 1].isPower() && mtest[mtest.size() - 1][1] == Number(-2, 1) && mtest[mtest.size() - 1][0].isUnit() && mtest[mtest.size() - 1][0].unit()->referenceName() == "s") {
+						str2.replace(1, 2, "pond");
+						cu.setBaseExpression(str2);
 					}
 				}
 			}
-			current_stage = MESSAGE_STAGE_CONVERSION;
-			if(to_struct) to_struct->set(cu.generateMathStructure(true));
-			if(cu.countUnits() > 0) {
-				mstruct.set(convert(mstruct_to_convert, &cu, eo2, false, false, transform_orig, parsed_struct));
-				b = true;
+		}
+		current_stage = MESSAGE_STAGE_CONVERSION;
+		if(to_struct) {
+			if(!munits.isUndefined()) to_struct->set(munits);
+			else to_struct->set(cu.generateMathStructure(true));
+		}
+		if(cu.countUnits() > 0) {
+			if(cu.countUnits() == 1) {
+				Prefix *p = NULL; int exp = 0;
+				u = cu.get(1, &exp, &p);
+				if(!u || exp != 1 || p) u = &cu;
+			} else {
+				u = &cu;
 			}
+			mstruct.set(convert(mstruct_to_convert, u, eo2, false, false, transform_orig, parsed_struct));
+			b = true;
+		}
+		if(!munits.isUndefined()) {
+			mstruct.divide(munits);
+			eo2.sync_units = true;
+			eo2.keep_prefixes = false;
+			mstruct.eval(eo2);
+			set_null_prefixes(munits);
+			mstruct *= munits;
+			b = true;
 		}
 	}
 	if(!b) return mstruct_to_convert;

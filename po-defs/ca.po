@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate-defs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-24 09:39+0200\n"
+"POT-Creation-Date: 2022-10-26 08:57+0200\n"
 "PO-Revision-Date: 2021-06-06 21:44-0600\n"
 "Last-Translator: Alex Henrie <alexhenrie24@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -175,7 +175,7 @@ msgid "Malaysian Ringgit"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:39
-msgid "a-cr:MYR"
+msgid "acr:MYR,ac:myr"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:40
@@ -9248,7 +9248,7 @@ msgid "ar:min,minute,p:minutes"
 msgstr ""
 
 #: ../data/units.xml.in.h:144
-msgid "ar:h,hour,p:hours"
+msgid "ar:h,hour,p:hours,a:hr,a:hrs"
 msgstr ""
 
 #: ../data/units.xml.in.h:146
@@ -10110,1029 +10110,1069 @@ msgid "Liter per Second"
 msgstr ""
 
 #: ../data/units.xml.in.h:362
-msgid "Cubic Meter per Second"
+msgid "Liter per Minute"
 msgstr ""
 
 #: ../data/units.xml.in.h:363
-msgid "Sverdrup"
+msgid "Liter per Hour"
 msgstr ""
 
 #: ../data/units.xml.in.h:364
-msgid "r:sverdrup"
+msgid "Cubic Meter per Second"
 msgstr ""
 
 #: ../data/units.xml.in.h:365
-msgid "Cubic Foot per Minute"
+msgid "Cubic Centimeter per Minute"
 msgstr ""
 
 #: ../data/units.xml.in.h:366
-msgid "Cubic Foot per Minute (CFM)"
+msgid "Sverdrup"
 msgstr ""
 
 #: ../data/units.xml.in.h:367
-msgid "a-cr:cfm"
+msgid "r:sverdrup"
 msgstr ""
 
 #: ../data/units.xml.in.h:368
-msgid "Cubic Foot per Second"
+msgid "Cubic Foot per Minute"
 msgstr ""
 
 #: ../data/units.xml.in.h:369
-msgid "Cubic Foot per Second (CFS)"
+msgid "Cubic Foot per Minute (CFM)"
 msgstr ""
 
 #: ../data/units.xml.in.h:370
-msgid "a-cr:cfs"
+msgid "a-cr:cfm"
 msgstr ""
 
 #: ../data/units.xml.in.h:371
-msgid "Gallons per Minute (U.S.)"
+msgid "Cubic Foot per Second"
 msgstr ""
 
 #: ../data/units.xml.in.h:372
-msgid "a-cr:gpm"
+msgid "Cubic Foot per Second (CFS)"
 msgstr ""
 
 #: ../data/units.xml.in.h:373
-msgid "Gallons per Hour (U.S.)"
+msgid "a-cr:cfs"
 msgstr ""
 
 #: ../data/units.xml.in.h:374
-msgid "a-cr:gph"
+msgid "Gallons per Minute (U.S.)"
 msgstr ""
 
 #: ../data/units.xml.in.h:375
-msgid "Speed"
+msgid "a-cr:gpm"
 msgstr ""
 
 #: ../data/units.xml.in.h:376
-msgid "Meter per Second"
+msgid "Gallons per Hour (U.S.)"
 msgstr ""
 
 #: ../data/units.xml.in.h:377
-msgid "Kilometer per Hour"
+msgid "a-cr:gph"
 msgstr ""
 
 #: ../data/units.xml.in.h:378
-msgid "a-c-r:kph,a-c-r:kmph"
+msgid "Gallons per Second (U.S.)"
 msgstr ""
 
 #: ../data/units.xml.in.h:379
-msgid "Nautical Mile per Hour"
+msgid "Speed"
 msgstr ""
 
 #: ../data/units.xml.in.h:380
-msgid "Knot"
+msgid "Meter per Second"
 msgstr ""
 
 #: ../data/units.xml.in.h:381
-msgid "r:knot,p:knots"
+msgid "Kilometer per Hour"
 msgstr ""
 
 #: ../data/units.xml.in.h:382
-msgid "Miles per Hour"
+msgid "a-c-r:kph,a-c-r:kmph"
 msgstr ""
 
 #: ../data/units.xml.in.h:383
-msgid "a-cr:mph"
+msgid "Nautical Mile per Hour"
 msgstr ""
 
 #: ../data/units.xml.in.h:384
-msgid "Speed of Light (Natural Unit of Velocity)"
+msgid "Knot"
 msgstr ""
 
 #: ../data/units.xml.in.h:385
-msgid "Atomic Unit of Velocity"
+msgid "r:knot,p:knots"
 msgstr ""
 
 #: ../data/units.xml.in.h:386
-msgid "Acceleration"
+msgid "Miles per Hour"
 msgstr ""
 
 #: ../data/units.xml.in.h:387
-msgid "Meter per Second Squared"
+msgid "a-cr:mph"
 msgstr ""
 
 #: ../data/units.xml.in.h:388
-msgid "Galileo"
+msgid "Speed of Light (Natural Unit of Velocity)"
 msgstr ""
 
 #: ../data/units.xml.in.h:389
-msgid "ar:Gal,galileo,p:galileos"
+msgid "Atomic Unit of Velocity"
 msgstr ""
 
 #: ../data/units.xml.in.h:390
-msgid "Gee"
+msgid "Acceleration"
 msgstr ""
 
 #: ../data/units.xml.in.h:391
-msgid "r:gee,p:gees"
+msgid "Meter per Second Squared"
 msgstr ""
 
 #: ../data/units.xml.in.h:392
-msgid "Magnetism"
+msgid "Galileo"
 msgstr ""
 
 #: ../data/units.xml.in.h:393
-msgid "Wave Number"
+msgid "ar:Gal,galileo,p:galileos"
 msgstr ""
 
 #: ../data/units.xml.in.h:394
-msgid "Reciprocal Meter"
+msgid "Gee"
 msgstr ""
 
 #: ../data/units.xml.in.h:395
-msgid "Magnetic Field Strength"
+msgid "r:gee,p:gees"
 msgstr ""
 
 #: ../data/units.xml.in.h:396
-msgid "Ampere per Meter"
+msgid "Magnetism"
 msgstr ""
 
 #: ../data/units.xml.in.h:397
-msgid "Oersted"
+msgid "Wave Number"
 msgstr ""
 
 #: ../data/units.xml.in.h:398
-msgid "ar:Oe,oersted,p:oersteds"
+msgid "Reciprocal Meter"
 msgstr ""
 
 #: ../data/units.xml.in.h:399
-msgid "Magnetic Flux"
+msgid "Magnetic Field Strength"
 msgstr ""
 
 #: ../data/units.xml.in.h:400
-msgid "Weber"
+msgid "Ampere per Meter"
 msgstr ""
 
 #: ../data/units.xml.in.h:401
-msgid "ar:Wb,weber,p:webers"
+msgid "Oersted"
 msgstr ""
 
 #: ../data/units.xml.in.h:402
-msgid "Maxwell"
+msgid "ar:Oe,oersted,p:oersteds"
 msgstr ""
 
 #: ../data/units.xml.in.h:403
-msgid "ar:Mx,maxwell,p:maxwells"
+msgid "Magnetic Flux"
 msgstr ""
 
 #: ../data/units.xml.in.h:404
-msgid "Magnetic Flux Density"
+msgid "Weber"
 msgstr ""
 
 #: ../data/units.xml.in.h:405
-msgid "Tesla"
+msgid "ar:Wb,weber,p:webers"
 msgstr ""
 
 #: ../data/units.xml.in.h:406
-msgid "ar:T,tesla,p:teslas"
+msgid "Maxwell"
 msgstr ""
 
 #: ../data/units.xml.in.h:407
-msgid "Gauss"
+msgid "ar:Mx,maxwell,p:maxwells"
 msgstr ""
 
 #: ../data/units.xml.in.h:408
-msgid "r:gauss"
+msgid "Magnetic Flux Density"
 msgstr ""
 
 #: ../data/units.xml.in.h:409
-msgid "Atomic Unit of Magnetic Flux Density"
+msgid "Tesla"
 msgstr ""
 
 #: ../data/units.xml.in.h:410
-msgid "Magnetic Dipole Moment"
+msgid "ar:T,tesla,p:teslas"
 msgstr ""
 
 #: ../data/units.xml.in.h:411
-msgid "Ampere Square Meter"
+msgid "Gauss"
 msgstr ""
 
 #: ../data/units.xml.in.h:412
-msgid "Atomic Unit of Magnetic Dipole Moment"
+msgid "r:gauss"
 msgstr ""
 
 #: ../data/units.xml.in.h:413
-msgid "Force"
+msgid "Atomic Unit of Magnetic Flux Density"
 msgstr ""
 
 #: ../data/units.xml.in.h:414
-msgid "Newton"
+msgid "Magnetic Dipole Moment"
 msgstr ""
 
 #: ../data/units.xml.in.h:415
-msgid "ar:N,newton,p:newtons"
+msgid "Ampere Square Meter"
 msgstr ""
 
 #: ../data/units.xml.in.h:416
-msgid "Dyne"
+msgid "Atomic Unit of Magnetic Dipole Moment"
 msgstr ""
 
 #: ../data/units.xml.in.h:417
-msgid "ar:dyn,dyne,p:dynes"
+msgid "Force"
 msgstr ""
 
 #: ../data/units.xml.in.h:418
-msgid "Pound-force"
+msgid "Newton"
 msgstr ""
 
 #: ../data/units.xml.in.h:419
-msgid "ar:lbf,pound_force"
+msgid "ar:N,newton,p:newtons"
 msgstr ""
 
 #: ../data/units.xml.in.h:420
-msgid "Poundal"
+msgid "Dyne"
 msgstr ""
 
 #: ../data/units.xml.in.h:421
-msgid "r:poundal,p:poundals,a:pdl"
+msgid "ar:dyn,dyne,p:dynes"
 msgstr ""
 
 #: ../data/units.xml.in.h:422
-msgid "Pond (Gram-Force)"
+msgid "Pound-force"
 msgstr ""
 
 #: ../data/units.xml.in.h:423
-msgid "r:pond,p:ponds,a:gf"
+msgid "ar:lbf,pound_force"
 msgstr ""
 
 #: ../data/units.xml.in.h:424
-msgid "Kilopond (Kilogram-Force)"
+msgid "Poundal"
 msgstr ""
 
 #: ../data/units.xml.in.h:425
-msgid "Atomic Unit of Force"
+msgid "r:poundal,p:poundals,a:pdl"
 msgstr ""
 
 #: ../data/units.xml.in.h:426
-msgid "Moment of Force"
+msgid "Pond (Gram-Force)"
 msgstr ""
 
 #: ../data/units.xml.in.h:427
-msgid "Newton Meter"
+msgid "r:pond,p:ponds,a:gf"
 msgstr ""
 
 #: ../data/units.xml.in.h:428
-msgid "Momentum"
+msgid "Kilopond (Kilogram-Force)"
 msgstr ""
 
 #: ../data/units.xml.in.h:429
-msgid "Kilogram Meter per Second"
+msgid "Atomic Unit of Force"
 msgstr ""
 
 #: ../data/units.xml.in.h:430
-msgid "Electronvolt Momentum"
+msgid "Moment of Force"
 msgstr ""
 
 #: ../data/units.xml.in.h:431
-msgid "Natural Unit of Momentum"
+msgid "Newton Meter"
 msgstr ""
 
 #: ../data/units.xml.in.h:432
-msgid "Atomic Unit of Momentum"
+msgid "Momentum"
 msgstr ""
 
 #: ../data/units.xml.in.h:433
-msgid "Pressure"
+msgid "Kilogram Meter per Second"
 msgstr ""
 
 #: ../data/units.xml.in.h:434
-msgid "Pascal"
+msgid "Electronvolt Momentum"
 msgstr ""
 
 #: ../data/units.xml.in.h:435
-msgid "ar:Pa,pascal,p:pascals"
+msgid "Natural Unit of Momentum"
 msgstr ""
 
 #: ../data/units.xml.in.h:436
-msgid "Kilogram-force per Square Centimetre"
+msgid "Atomic Unit of Momentum"
 msgstr ""
 
 #: ../data/units.xml.in.h:437
-msgid "Pound-force per Square Inch (psi)"
+msgid "Pressure"
 msgstr ""
 
 #: ../data/units.xml.in.h:438
-msgid "a-cr:psi"
+msgid "Pascal"
 msgstr ""
 
 #: ../data/units.xml.in.h:439
-msgid "Kilopound-force per Square Inch (ksi)"
+msgid "ar:Pa,pascal,p:pascals"
 msgstr ""
 
 #: ../data/units.xml.in.h:440
-msgid "a-cr:ksi"
+msgid "Kilogram-force per Square Centimetre"
 msgstr ""
 
 #: ../data/units.xml.in.h:441
-msgid "Bar"
+msgid "Pound-force per Square Inch (psi)"
 msgstr ""
 
 #: ../data/units.xml.in.h:442
-msgid "r:bar,p:bars"
+msgid "a-cr:psi"
 msgstr ""
 
 #: ../data/units.xml.in.h:443
-msgid "Atmosphere"
+msgid "Kilopound-force per Square Inch (ksi)"
 msgstr ""
 
 #: ../data/units.xml.in.h:444
-msgid "ar:atm,atmosphere,p:atmospheres"
+msgid "a-cr:ksi"
 msgstr ""
 
 #: ../data/units.xml.in.h:445
-msgid "Torr"
+msgid "Bar"
 msgstr ""
 
 #: ../data/units.xml.in.h:446
-msgid "ar:Torr,torr,p:torrs"
+msgid "r:bar,p:bars"
 msgstr ""
 
 #: ../data/units.xml.in.h:447
-msgid "Meter of Mercury"
+msgid "Atmosphere"
 msgstr ""
 
 #: ../data/units.xml.in.h:448
-msgid "ar:mHg"
+msgid "ar:atm,atmosphere,p:atmospheres"
 msgstr ""
 
 #: ../data/units.xml.in.h:449
-msgid "Millimeter of Mercury"
+msgid "Torr"
 msgstr ""
 
 #: ../data/units.xml.in.h:450
-msgid "ar:mmHg"
+msgid "ar:Torr,torr,p:torrs"
 msgstr ""
 
 #: ../data/units.xml.in.h:451
-msgid "Inch of Mercury"
+msgid "Meter of Mercury"
 msgstr ""
 
 #: ../data/units.xml.in.h:452
-msgid "ar:inHg"
+msgid "ar:mHg"
 msgstr ""
 
 #: ../data/units.xml.in.h:453
-msgid "Millitorr"
+msgid "Millimeter of Mercury"
 msgstr ""
 
 #: ../data/units.xml.in.h:454
-msgid "Barye"
+msgid "ar:mmHg"
 msgstr ""
 
 #: ../data/units.xml.in.h:455
-msgid "ar:Ba,barye"
+msgid "Inch of Mercury"
 msgstr ""
 
 #: ../data/units.xml.in.h:456
-msgid "Dynamic Viscosity"
+msgid "ar:inHg"
 msgstr ""
 
 #: ../data/units.xml.in.h:457
-msgid "Pascal Second"
+msgid "Millitorr"
 msgstr ""
 
 #: ../data/units.xml.in.h:458
-msgid "Poise"
+msgid "Barye"
 msgstr ""
 
 #: ../data/units.xml.in.h:459
-msgid "ar:P,poise,p:poises"
+msgid "ar:Ba,barye"
 msgstr ""
 
 #: ../data/units.xml.in.h:460
-msgid "Centipoise"
+msgid "Meter of Water"
 msgstr ""
 
 #: ../data/units.xml.in.h:461
-msgid "Kinematic Viscosity"
+msgid "ar:mWC,a:mwg,au:mH&#x2082;O"
 msgstr ""
 
 #: ../data/units.xml.in.h:462
-msgid "Square Meter per Second"
+msgid "Millimeter of Water"
 msgstr ""
 
 #: ../data/units.xml.in.h:463
-msgid "Stokes"
+msgid "Centimeter of Water"
 msgstr ""
 
 #: ../data/units.xml.in.h:464
-msgid "ar:St,stokes"
+msgid "Inch of Water"
 msgstr ""
 
 #: ../data/units.xml.in.h:465
-msgid "Centistokes"
+msgid "ar:inWC,a:iwg,au:inH&#x2082;O"
 msgstr ""
 
 #: ../data/units.xml.in.h:466
-msgid "Surface Tension"
+msgid "Dynamic Viscosity"
 msgstr ""
 
 #: ../data/units.xml.in.h:467
-msgid "Newton per Meter"
+msgid "Pascal Second"
 msgstr ""
 
 #: ../data/units.xml.in.h:468
-msgid "Energy"
+msgid "Poise"
 msgstr ""
 
 #: ../data/units.xml.in.h:469
-msgid "Joule"
+msgid "ar:P,poise,p:poises"
 msgstr ""
 
 #: ../data/units.xml.in.h:470
-msgid "ar:J,joule,p:joules"
+msgid "Centipoise"
 msgstr ""
 
 #: ../data/units.xml.in.h:471
-msgid "Watt Hour"
+msgid "Kinematic Viscosity"
 msgstr ""
 
 #: ../data/units.xml.in.h:472
-msgid "Kilowatt Hour"
+msgid "Square Meter per Second"
 msgstr ""
 
 #: ../data/units.xml.in.h:473
-msgid "Calorie (international table)"
+msgid "Stokes"
 msgstr ""
 
 #: ../data/units.xml.in.h:474
-msgid "ais:cal_IT,ar:cal,c:calorie,cp:calories"
+msgid "ar:St,stokes"
 msgstr ""
 
 #: ../data/units.xml.in.h:475
-msgid "Calorie (capital C)"
+msgid "Centistokes"
 msgstr ""
 
 #: ../data/units.xml.in.h:476
-msgid "cr:Calorie,cp:Calories"
+msgid "Surface Tension"
 msgstr ""
 
 #: ../data/units.xml.in.h:477
-msgid "Calorie (thermochemical)"
+msgid "Newton per Meter"
 msgstr ""
 
 #: ../data/units.xml.in.h:478
-msgid "ars:cal_th"
+msgid "Energy"
 msgstr ""
 
 #: ../data/units.xml.in.h:479
-msgid "Gram of TNT"
+msgid "Joule"
 msgstr ""
 
 #: ../data/units.xml.in.h:480
-msgid "a-cr:gTNT,gramTNT"
+msgid "ar:J,joule,p:joules"
 msgstr ""
 
 #: ../data/units.xml.in.h:481
-msgid "Ton of TNT"
+msgid "Watt Hour"
 msgstr ""
 
 #: ../data/units.xml.in.h:482
-msgid "a-cr:tTNT,tonTNT"
+msgid "Kilowatt Hour"
 msgstr ""
 
 #: ../data/units.xml.in.h:483
-msgid "Calorie (15 degrees Celsius)"
+msgid "Calorie (international table)"
 msgstr ""
 
 #: ../data/units.xml.in.h:484
-msgid "ars:cal_fifteen"
+msgid "ais:cal_IT,ar:cal,c:calorie,cp:calories"
 msgstr ""
 
 #: ../data/units.xml.in.h:485
-msgid "Calorie (mean)"
+msgid "Calorie (capital C)"
 msgstr ""
 
 #: ../data/units.xml.in.h:486
-msgid "ars:cal_mean"
+msgid "cr:Calorie,cp:Calories"
 msgstr ""
 
 #: ../data/units.xml.in.h:487
-msgid "British Thermal Unit (IT)"
+msgid "Calorie (thermochemical)"
 msgstr ""
 
 #: ../data/units.xml.in.h:488
-msgid "ar:Btu"
+msgid "ars:cal_th"
 msgstr ""
 
 #: ../data/units.xml.in.h:489
-msgid "Electronvolt"
+msgid "Gram of TNT"
 msgstr ""
 
 #: ../data/units.xml.in.h:490
-msgid "ar:eV,electronvolt,p:electronvolts"
+msgid "a-cr:gTNT,gramTNT"
 msgstr ""
 
 #: ../data/units.xml.in.h:491
-msgid "Erg"
+msgid "Ton of TNT"
 msgstr ""
 
 #: ../data/units.xml.in.h:492
-msgid "r:erg,p:ergs"
+msgid "a-cr:tTNT,tonTNT"
 msgstr ""
 
 #: ../data/units.xml.in.h:493
-msgid "Foe"
+msgid "Calorie (15 degrees Celsius)"
 msgstr ""
 
 #: ../data/units.xml.in.h:494
-msgid "r:foe,p:foes"
+msgid "ars:cal_fifteen"
 msgstr ""
 
 #: ../data/units.xml.in.h:495
-msgid "Foot-Pound Force"
+msgid "Calorie (mean)"
 msgstr ""
 
 #: ../data/units.xml.in.h:496
-msgid "Hartree (Atomic Unit of Energy)"
+msgid "ars:cal_mean"
 msgstr ""
 
 #: ../data/units.xml.in.h:497
-msgid "Rydberg (unit)"
+msgid "British Thermal Unit (IT)"
 msgstr ""
 
 #: ../data/units.xml.in.h:498
-msgid "Natural Unit of Energy"
+msgid "ar:Btu"
 msgstr ""
 
 #: ../data/units.xml.in.h:499
-msgid "Specific Energy"
+msgid "Electronvolt"
 msgstr ""
 
 #: ../data/units.xml.in.h:500
-msgid "Joule per Kilogram"
+msgid "ar:eV,electronvolt,p:electronvolts"
 msgstr ""
 
 #: ../data/units.xml.in.h:501
-msgid "Power"
+msgid "Erg"
 msgstr ""
 
 #: ../data/units.xml.in.h:502
-msgid "Watt"
+msgid "r:erg,p:ergs"
 msgstr ""
 
 #: ../data/units.xml.in.h:503
-msgid "ar:W,watt,p:watts"
+msgid "Foe"
 msgstr ""
 
 #: ../data/units.xml.in.h:504
-msgid "Horse Power"
+msgid "r:foe,p:foes"
 msgstr ""
 
 #: ../data/units.xml.in.h:505
-msgid "ar:hp,horsepower,p:horsepowers"
+msgid "Foot-Pound Force"
 msgstr ""
 
 #: ../data/units.xml.in.h:506
-msgid "Pferdest&#xE4;rke"
+msgid "Hartree (Atomic Unit of Energy)"
 msgstr ""
 
 #: ../data/units.xml.in.h:507
-msgid "ar:PS,u:pferdest&#xE4;rke"
+msgid "Rydberg (unit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:508
-msgid "Decibel Milliwatt"
+msgid "Natural Unit of Energy"
 msgstr ""
 
 #: ../data/units.xml.in.h:509
-msgid "ar:dBm"
+msgid "Specific Energy"
 msgstr ""
 
 #: ../data/units.xml.in.h:510
-msgid "Decibel Watt"
+msgid "Joule per Kilogram"
 msgstr ""
 
 #: ../data/units.xml.in.h:511
-msgid "ar:dBW"
+msgid "Power"
 msgstr ""
 
 #: ../data/units.xml.in.h:512
-msgid "Erg per Second"
+msgid "Watt"
 msgstr ""
 
 #: ../data/units.xml.in.h:513
-msgid "Entropy"
+msgid "ar:W,watt,p:watts"
 msgstr ""
 
 #: ../data/units.xml.in.h:514
-msgid "Joule per Kelvin"
+msgid "Horse Power"
 msgstr ""
 
 #: ../data/units.xml.in.h:515
-msgid "Boltzmann (unit)"
+msgid "ar:hp,horsepower,p:horsepowers"
 msgstr ""
 
 #: ../data/units.xml.in.h:516
-msgid "Specific Entropy"
+msgid "Pferdest&#xE4;rke"
 msgstr ""
 
 #: ../data/units.xml.in.h:517
-msgid "Joule per Kilogram Kelvin"
+msgid "ar:PS,u:pferdest&#xE4;rke"
 msgstr ""
 
 #: ../data/units.xml.in.h:518
-msgid "Thermal Conductivity"
+msgid "Decibel Milliwatt"
 msgstr ""
 
 #: ../data/units.xml.in.h:519
-msgid "Watt per Meter Kelvin"
+msgid "ar:dBm"
 msgstr ""
 
 #: ../data/units.xml.in.h:520
-msgid "Energy Density"
+msgid "Decibel Watt"
 msgstr ""
 
 #: ../data/units.xml.in.h:521
-msgid "Joule per Cubic Meter"
+msgid "ar:dBW"
 msgstr ""
 
 #: ../data/units.xml.in.h:522
-msgid "Molar Energy"
+msgid "Erg per Second"
 msgstr ""
 
 #: ../data/units.xml.in.h:523
-msgid "Joule per Mole"
+msgid "Entropy"
 msgstr ""
 
 #: ../data/units.xml.in.h:524
-msgid "Molar Entropy"
+msgid "Joule per Kelvin"
 msgstr ""
 
 #: ../data/units.xml.in.h:525
-msgid "Joule per Mole Kelvin"
+msgid "Boltzmann (unit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:526
-msgid "Action"
+msgid "Specific Entropy"
 msgstr ""
 
 #: ../data/units.xml.in.h:527
-msgid "Joule Second"
+msgid "Joule per Kilogram Kelvin"
 msgstr ""
 
 #: ../data/units.xml.in.h:528
-msgid "Reduced Planck (Atomic/Natural Unit of Action)"
+msgid "Thermal Conductivity"
 msgstr ""
 
 #: ../data/units.xml.in.h:529
-msgid "Radioactivity"
+msgid "Watt per Meter Kelvin"
 msgstr ""
 
 #: ../data/units.xml.in.h:530
-msgid "Becquerel"
+msgid "Energy Density"
 msgstr ""
 
 #: ../data/units.xml.in.h:531
-msgid "ar:Bq,becquerel,p:becquerels"
+msgid "Joule per Cubic Meter"
 msgstr ""
 
 #: ../data/units.xml.in.h:532
-msgid "Curie"
+msgid "Molar Energy"
 msgstr ""
 
 #: ../data/units.xml.in.h:533
-msgid "ar:Ci,curie,p:curies"
+msgid "Joule per Mole"
 msgstr ""
 
 #: ../data/units.xml.in.h:534
-msgid "Rutherford"
+msgid "Molar Entropy"
 msgstr ""
 
 #: ../data/units.xml.in.h:535
-msgid "ar:Rd,rutherford,p:rutherfords"
+msgid "Joule per Mole Kelvin"
 msgstr ""
 
 #: ../data/units.xml.in.h:536
-msgid "Absorbed Dose"
+msgid "Action"
 msgstr ""
 
 #: ../data/units.xml.in.h:537
-msgid "Gray"
+msgid "Joule Second"
 msgstr ""
 
 #: ../data/units.xml.in.h:538
-msgid "ar:Gy,gray,p:grays"
+msgid "Reduced Planck (Atomic/Natural Unit of Action)"
 msgstr ""
 
 #: ../data/units.xml.in.h:539
-msgid "Rad"
+msgid "Radioactivity"
 msgstr ""
 
 #: ../data/units.xml.in.h:540
-msgid "rs:rad_radioactivity"
+msgid "Becquerel"
 msgstr ""
 
 #: ../data/units.xml.in.h:541
-msgid "Dose Equivalent"
+msgid "ar:Bq,becquerel,p:becquerels"
 msgstr ""
 
 #: ../data/units.xml.in.h:542
-msgid "Sievert"
+msgid "Curie"
 msgstr ""
 
 #: ../data/units.xml.in.h:543
-msgid "ar:Sv,sievert,p:sieverts"
+msgid "ar:Ci,curie,p:curies"
 msgstr ""
 
 #: ../data/units.xml.in.h:544
-msgid "Roentgen Equivalent Man (Rem)"
+msgid "Rutherford"
 msgstr ""
 
 #: ../data/units.xml.in.h:545
-msgid "ros:rem_radioactivity,a:rem"
+msgid "ar:Rd,rutherford,p:rutherfords"
 msgstr ""
 
 #: ../data/units.xml.in.h:546
-msgid "Millirem"
+msgid "Absorbed Dose"
 msgstr ""
 
 #: ../data/units.xml.in.h:547
-msgid "Erg per Gram"
+msgid "Gray"
 msgstr ""
 
 #: ../data/units.xml.in.h:548
-msgid "Exposure"
+msgid "ar:Gy,gray,p:grays"
 msgstr ""
 
 #: ../data/units.xml.in.h:549
-msgid "Coulomb per Kilogram"
+msgid "Rad"
 msgstr ""
 
 #: ../data/units.xml.in.h:550
-msgid "Roentgen"
+msgid "rs:rad_radioactivity"
 msgstr ""
 
 #: ../data/units.xml.in.h:551
-msgid "ar:R,roentgen,r&#x00f6;ntgen,p:roentgens,p:r&#x00f6;ntgens"
+msgid "Dose Equivalent"
 msgstr ""
 
 #: ../data/units.xml.in.h:552
-msgid "Absorbed Dose Rate"
+msgid "Sievert"
 msgstr ""
 
 #: ../data/units.xml.in.h:553
-msgid "Gray per Second"
+msgid "ar:Sv,sievert,p:sieverts"
 msgstr ""
 
 #: ../data/units.xml.in.h:554
-msgid "Millirem per Hour"
+msgid "Roentgen Equivalent Man (Rem)"
 msgstr ""
 
 #: ../data/units.xml.in.h:555
-msgid "Ratio"
+msgid "ros:rem_radioactivity,a:rem"
 msgstr ""
 
 #: ../data/units.xml.in.h:556
-msgid "Neper"
+msgid "Millirem"
 msgstr ""
 
 #: ../data/units.xml.in.h:557
-msgid "ar:Np,neper,p:nepers"
+msgid "Erg per Gram"
 msgstr ""
 
 #: ../data/units.xml.in.h:558
-msgid "Bel"
+msgid "Exposure"
 msgstr ""
 
 #: ../data/units.xml.in.h:559
-msgid "r:bel,p:bels"
+msgid "Coulomb per Kilogram"
 msgstr ""
 
 #: ../data/units.xml.in.h:560
-msgid "Decibel"
+msgid "Roentgen"
 msgstr ""
 
 #: ../data/units.xml.in.h:561
-msgid "ar:dB,decibel,p:decibels"
+msgid "ar:R,roentgen,r&#x00f6;ntgen,p:roentgens,p:r&#x00f6;ntgens"
 msgstr ""
 
 #: ../data/units.xml.in.h:562
-msgid "Information"
+msgid "Absorbed Dose Rate"
 msgstr ""
 
 #: ../data/units.xml.in.h:563
-msgid "Bit (Binary Digit)"
+msgid "Gray per Second"
 msgstr ""
 
 #: ../data/units.xml.in.h:564
-msgid "r:bit,p:bits,shannon,p:shannons,c:Sh,binary_digit,p:binary_digits"
+msgid "Millirem per Hour"
 msgstr ""
 
 #: ../data/units.xml.in.h:565
-msgid "Nat"
+msgid "Ratio"
 msgstr ""
 
 #: ../data/units.xml.in.h:566
-msgid "r:nat,p:nats"
+msgid "Neper"
 msgstr ""
 
 #: ../data/units.xml.in.h:567
-msgid "Trit (Ternary Digit)"
+msgid "ar:Np,neper,p:nepers"
 msgstr ""
 
 #: ../data/units.xml.in.h:568
+msgid "Bel"
+msgstr ""
+
+#: ../data/units.xml.in.h:569
+msgid "r:bel,p:bels"
+msgstr ""
+
+#: ../data/units.xml.in.h:570
+msgid "Decibel"
+msgstr ""
+
+#: ../data/units.xml.in.h:571
+msgid "ar:dB,decibel,p:decibels"
+msgstr ""
+
+#: ../data/units.xml.in.h:572
+msgid "Information"
+msgstr ""
+
+#: ../data/units.xml.in.h:573
+msgid "Bit (Binary Digit)"
+msgstr ""
+
+#: ../data/units.xml.in.h:574
+msgid "r:bit,p:bits,shannon,p:shannons,c:Sh,binary_digit,p:binary_digits"
+msgstr ""
+
+#: ../data/units.xml.in.h:575
+msgid "Nat"
+msgstr ""
+
+#: ../data/units.xml.in.h:576
+msgid "r:nat,p:nats"
+msgstr ""
+
+#: ../data/units.xml.in.h:577
+msgid "Trit (Ternary Digit)"
+msgstr ""
+
+#: ../data/units.xml.in.h:578
 msgid ""
 "r:trit,p:trits,trinary_digit,p:trinary_digits,ternary_digit,p:ternary_digits"
 msgstr ""
 
-#: ../data/units.xml.in.h:569
+#: ../data/units.xml.in.h:579
 msgid "Octal Digit"
 msgstr ""
 
-#: ../data/units.xml.in.h:570
+#: ../data/units.xml.in.h:580
 msgid "r:octal_digit,p:octal_digits"
 msgstr ""
 
-#: ../data/units.xml.in.h:571
+#: ../data/units.xml.in.h:581
 msgid "Hartley (Decimal Digit)"
 msgstr ""
 
-#: ../data/units.xml.in.h:572
+#: ../data/units.xml.in.h:582
 msgid "r:hartley,p:hartleys,a:Hart,dit,p:dits,decimal_digit,p:decimal_digits"
 msgstr ""
 
-#: ../data/units.xml.in.h:573
+#: ../data/units.xml.in.h:583
 msgid "Byte (8-bit)"
 msgstr ""
 
-#: ../data/units.xml.in.h:574
+#: ../data/units.xml.in.h:584
 msgid "r:byte,a:B,p:bytes,octet,p:octets,a:o"
 msgstr ""
 
-#: ../data/units.xml.in.h:575
+#: ../data/units.xml.in.h:585
 msgid "Nibble (Hexadecimal Digit)"
 msgstr ""
 
-#: ../data/units.xml.in.h:576
+#: ../data/units.xml.in.h:586
 msgid ""
 "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets,hex_digit,p:"
 "hex_digits,hexadecimal_digit,p:hexadecimal_digits"
 msgstr ""
 
-#: ../data/units.xml.in.h:577
+#: ../data/units.xml.in.h:587
 msgid "Tribble"
 msgstr ""
 
-#: ../data/units.xml.in.h:578
+#: ../data/units.xml.in.h:588
 msgid "r:tribble,p:tribbles"
 msgstr ""
 
-#: ../data/units.xml.in.h:579
+#: ../data/units.xml.in.h:589
 msgid "Nonet"
 msgstr ""
 
-#: ../data/units.xml.in.h:580
+#: ../data/units.xml.in.h:590
 msgid "r:nonet,p:nonets"
 msgstr ""
 
-#: ../data/units.xml.in.h:581
+#: ../data/units.xml.in.h:591
 msgid "Declet"
 msgstr ""
 
-#: ../data/units.xml.in.h:582
+#: ../data/units.xml.in.h:592
 msgid "r:declet,p:declets"
 msgstr ""
 
-#: ../data/units.xml.in.h:583
+#: ../data/units.xml.in.h:593
 msgid "Word (16-bit)"
 msgstr ""
 
-#: ../data/units.xml.in.h:584
+#: ../data/units.xml.in.h:594
 msgid "r:word,p:words"
 msgstr ""
 
-#: ../data/units.xml.in.h:585
+#: ../data/units.xml.in.h:595
 msgid "Kilobyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:586
+#: ../data/units.xml.in.h:596
 msgid "Megabyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:587
+#: ../data/units.xml.in.h:597
 msgid "Gigabyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:588
+#: ../data/units.xml.in.h:598
 msgid "Terabyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:589
+#: ../data/units.xml.in.h:599
 msgid "Petabyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:590
+#: ../data/units.xml.in.h:600
 msgid "Exabyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:591
+#: ../data/units.xml.in.h:601
 msgid "Kibibyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:592
+#: ../data/units.xml.in.h:602
 msgid "Mebibyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:593
+#: ../data/units.xml.in.h:603
 msgid "Gibibyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:594
+#: ../data/units.xml.in.h:604
 msgid "Tebibyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:595
+#: ../data/units.xml.in.h:605
 msgid "Kilobit"
 msgstr ""
 
-#: ../data/units.xml.in.h:596
+#: ../data/units.xml.in.h:606
 msgid "Megabit"
 msgstr ""
 
-#: ../data/units.xml.in.h:597
+#: ../data/units.xml.in.h:607
 msgid "Gigabit"
 msgstr ""
 
-#: ../data/units.xml.in.h:598
+#: ../data/units.xml.in.h:608
 msgid "Terabit"
 msgstr ""
 
-#: ../data/units.xml.in.h:599
+#: ../data/units.xml.in.h:609
 msgid "Petabit"
 msgstr ""
 
-#: ../data/units.xml.in.h:600
+#: ../data/units.xml.in.h:610
 msgid "Kibibit"
 msgstr ""
 
-#: ../data/units.xml.in.h:601
+#: ../data/units.xml.in.h:611
 msgid "Mebibit"
 msgstr ""
 
-#: ../data/units.xml.in.h:602
+#: ../data/units.xml.in.h:612
 msgid "Gibibit"
 msgstr ""
 
-#: ../data/units.xml.in.h:603
+#: ../data/units.xml.in.h:613
 msgid "Typography"
 msgstr ""
 
-#: ../data/units.xml.in.h:604
+#: ../data/units.xml.in.h:614
 msgid "PostScript Point"
 msgstr ""
 
-#: ../data/units.xml.in.h:605
+#: ../data/units.xml.in.h:615
 msgid "ar:pt,a:pts,point,p:points"
 msgstr ""
 
-#: ../data/units.xml.in.h:606
+#: ../data/units.xml.in.h:616
 msgid "PostScript Pica"
 msgstr ""
 
-#: ../data/units.xml.in.h:607
+#: ../data/units.xml.in.h:617
 msgid "r:pica,p:picas"
 msgstr ""
 
-#: ../data/units.xml.in.h:608
+#: ../data/units.xml.in.h:618
 msgid "ATA Pica"
 msgstr ""
 
-#: ../data/units.xml.in.h:609
+#: ../data/units.xml.in.h:619
 msgid "r:ata_pica,p:ata_picas"
 msgstr ""
 
-#: ../data/units.xml.in.h:610
+#: ../data/units.xml.in.h:620
 msgid "ATA Point"
 msgstr ""
 
-#: ../data/units.xml.in.h:611
+#: ../data/units.xml.in.h:621
 msgid "r:ata_point,a:ata_pt,p:ata_points"
 msgstr ""
 
-#: ../data/units.xml.in.h:612
+#: ../data/units.xml.in.h:622
 msgid "New Didot Point"
 msgstr ""
 
-#: ../data/units.xml.in.h:613
+#: ../data/units.xml.in.h:623
 msgid "r:new_didot"
 msgstr ""
 
-#: ../data/units.xml.in.h:614
+#: ../data/units.xml.in.h:624
 msgid "Didot Point"
 msgstr ""
 
-#: ../data/units.xml.in.h:615
+#: ../data/units.xml.in.h:625
 msgid "r:didot,a:dd"
 msgstr ""
 
-#: ../data/units.xml.in.h:616
+#: ../data/units.xml.in.h:626
 msgid "Cicero"
 msgstr ""
 
-#: ../data/units.xml.in.h:617
+#: ../data/units.xml.in.h:627
 msgid "r:cicero"
 msgstr ""
 
