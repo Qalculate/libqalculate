@@ -4949,7 +4949,6 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 
 	// Implicit multiplication
 	if((i = str.find_first_of(ID_WRAPS, 1)) != string::npos && i + 1 != str.length()) {
-		cout << str << endl;
 		bool b = false, append = false;
 		while(i != string::npos && i + 1 != str.length()) {
 			if(str[i] == ID_WRAP_RIGHT_CH && str[i + 1] != POWER_CH && str[i + 1] != INTERNAL_UPOW_CH && str[i + 1] != '\x19' && str[i + 1] != '\x1a' && str[i + 1] != '\b') {
