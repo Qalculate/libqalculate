@@ -10823,7 +10823,7 @@ msgstr "Ватт"
 
 #: ../data/units.xml.in.h:513
 msgid "ar:W,watt,p:watts"
-msgstr "ar:Вт,Ватт,p:Ватт"
+msgstr "a:Вт,Ватт,p:Ватт"
 
 #: ../data/units.xml.in.h:514
 msgid "Horse Power"
