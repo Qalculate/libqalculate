@@ -1254,19 +1254,17 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	eo.do_polynomial_division = false;
 	eo.isolate_x = false;
 	ParseOptions po;
+	bool conversion_variant = !name().empty() && name()[0] == '0';
 	po.variables_enabled = true;
-	po.functions_enabled = false;
-	po.unknowns_enabled = true;
+	po.functions_enabled = conversion_variant;
+	po.unknowns_enabled = !conversion_variant;
+	if(name().length() >= 2 && name()[1] == '1') po.limit_implicit_multiplication = true;
 	MathStructure mstruct;
 	bool had_errors = false;
 	CALCULATOR->beginTemporaryStopMessages();
 	CALCULATOR->parse(&mstruct, base_expression_, po);
 	replace_variables(mstruct);
-	if(mstruct.containsType(STRUCT_VARIABLE, true)) {
-		if(name() == "temporary_composite_convert_v") {
-			CALCULATOR->endTemporaryStopMessages();
-			return;
-		}
+	if(!conversion_variant && mstruct.containsType(STRUCT_VARIABLE, true)) {
 		po.variables_enabled = false;
 		CALCULATOR->parse(&mstruct, base_expression_, po);
 	}
@@ -1310,8 +1308,13 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 			break;
 		}
 	}
-	if(CALCULATOR->endTemporaryStopMessages() > 0) had_errors = true;
-	if(had_errors) CALCULATOR->error(false, _("Error(s) in unitexpression."), NULL);
+	if(conversion_variant && had_errors) {
+		CALCULATOR->endTemporaryStopMessages();
+		CALCULATOR->error(true, _("Error(s) in unitexpression."), NULL);
+	} else {
+		if(CALCULATOR->endTemporaryStopMessages() > 0) had_errors = true;
+		if(had_errors) CALCULATOR->error(false, _("Error(s) in unitexpression."), NULL);
+	}
 	setChanged(true);
 }
 void CompositeUnit::clear() {

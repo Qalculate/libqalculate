@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-12 09:06+0200\n"
+"POT-Creation-Date: 2022-10-26 08:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -175,7 +175,7 @@ msgid "Malaysian Ringgit"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:39
-msgid "a-cr:MYR"
+msgid "acr:MYR,ac:myr"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:40
@@ -8890,7 +8890,7 @@ msgid "ar:min,minute,p:minutes"
 msgstr ""
 
 #: ../data/units.xml.in.h:144
-msgid "ar:h,hour,p:hours"
+msgid "ar:h,hour,p:hours,a:hr,a:hrs"
 msgstr ""
 
 #: ../data/units.xml.in.h:146
