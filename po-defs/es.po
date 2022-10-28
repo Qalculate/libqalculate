@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Qalculate!\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-10 16:43+0200\n"
+"POT-Creation-Date: 2022-10-26 08:57+0200\n"
 "PO-Revision-Date: 2022-05-13 18:30-0300\n"
 "Last-Translator: VicSanRoPe\n"
 "Language-Team: none\n"
@@ -178,7 +178,7 @@ msgid "Malaysian Ringgit"
 msgstr "Ringgit malayo"
 
 #: ../data/currencies.xml.in.h:39
-msgid "a-cr:MYR"
+msgid "acr:MYR,ac:myr"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:40
@@ -9306,7 +9306,7 @@ msgid "ar:min,minute,p:minutes"
 msgstr "a:min,minuto,p:minutos"
 
 #: ../data/units.xml.in.h:144
-msgid "ar:h,hour,p:hours"
+msgid "ar:h,hour,p:hours,a:hr,a:hrs"
 msgstr "a:h,hora,p:horas"
 
 #: ../data/units.xml.in.h:146

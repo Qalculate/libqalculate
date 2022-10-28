@@ -4978,15 +4978,14 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 		if(b) {
 			parseAdd(str, mstruct, po, OPERATION_MULTIPLY, append);
-			if(mstruct->isMultiplication() && mstruct->size() >= 2 && !(*mstruct)[0].inParentheses()) {
-				Unit *u1 = NULL; Prefix *p1 = NULL;
+			if(mstruct->isMultiplication() && mstruct->size() >= 4 && mstruct->size() % 2 == 0 && !(*mstruct)[0].isUnit_exp() && (*mstruct)[1].isUnit()) {
 				bool b_plus = false;
 				// Parse 5m 2cm as 5m+2cm, 5ft 2in as 5ft+2in, and similar
-				if(mstruct->isMultiplication() && mstruct->size() >= 4 && mstruct->size() % 2 == 0 && (*mstruct)[0].isNumber() && !(*mstruct)[0].inParentheses() && (*mstruct)[1].isUnit()) {u1 = (*mstruct)[1].unit(); p1 = (*mstruct)[1].prefix();}
+				Unit *u1 = (*mstruct)[1].unit(); Prefix *p1 = (*mstruct)[1].prefix();
 				if(u1 && u1->subtype() == SUBTYPE_BASE_UNIT && (u1->referenceName() == "m" || (!p1 && u1->referenceName() == "L")) && (!p1 || (p1->type() == PREFIX_DECIMAL && ((DecimalPrefix*) p1)->exponent() <= 3 && ((DecimalPrefix*) p1)->exponent() > -3))) {
 					b_plus = true;
 					for(size_t i2 = 3; i2 < mstruct->size(); i2 += 2) {
-						if(!(*mstruct)[i2 - 1].inParentheses() && (*mstruct)[i2 - 1].isNumber() && (*mstruct)[i2].isUnit() && (*mstruct)[i2].unit() == u1) {
+						if(!(*mstruct)[i2 - 1].isUnit_exp() && (*mstruct)[i2].isUnit() && (*mstruct)[i2].unit() == u1) {
 							Prefix *p2 = (*mstruct)[i2].prefix();
 							if(p1 && p2) b_plus = p1->type() == PREFIX_DECIMAL && p2->type() == PREFIX_DECIMAL && ((DecimalPrefix*) p1)->exponent() > ((DecimalPrefix*) p2)->exponent() && ((DecimalPrefix*) p2)->exponent() >= -3;
 							else if(p2) b_plus = p2->type() == PREFIX_DECIMAL && ((DecimalPrefix*) p2)->exponent() < 0 && ((DecimalPrefix*) p2)->exponent() >= -3;
@@ -5002,7 +5001,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				} else if(u1 && !p1 && u1->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u1)->mixWithBase()) {
 					b_plus = true;
 					for(size_t i2 = 3; i2 < mstruct->size(); i2 += 2) {
-						if(!(*mstruct)[i2 - 1].inParentheses() && (*mstruct)[i2 - 1].isNumber() && (*mstruct)[i2].isUnit() && u1->isChildOf((*mstruct)[i2].unit()) && !(*mstruct)[i2].prefix() && (i2 == mstruct->size() - 1 || ((*mstruct)[i2].unit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) (*mstruct)[i2].unit())->mixWithBase()))) {
+						if(!(*mstruct)[i2 - 1].isUnit_exp() && (*mstruct)[i2].isUnit() && u1->isChildOf((*mstruct)[i2].unit()) && !(*mstruct)[i2].prefix() && (i2 == mstruct->size() - 1 || ((*mstruct)[i2].unit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) (*mstruct)[i2].unit())->mixWithBase()))) {
 							while(((AliasUnit*) u1)->firstBaseUnit() != (*mstruct)[i2].unit()) {
 								u1 = ((AliasUnit*) u1)->firstBaseUnit();
 								if(u1->subtype() != SUBTYPE_ALIAS_UNIT || !((AliasUnit*) u1)->mixWithBase()) {
@@ -5028,7 +5027,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				}
 			}
 			if(po.preserve_format) {
-				if(minus_count > 0 && mstruct->isMultiplication() && !mstruct->inParentheses() && mstruct->size() > 0 && !(*mstruct)[0].isUnit_exp()) {
+				if(minus_count > 0 && mstruct->isMultiplication() && mstruct->size() > 0 && !(*mstruct)[0].isUnit_exp()) {
 					while(minus_count > 0) {
 						(*mstruct)[0].transform(STRUCT_NEGATE);
 						minus_count--;
@@ -5040,7 +5039,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					}
 				}
 			} else if(minus_count % 2 == 1) {
-				if(mstruct->isMultiplication() && !mstruct->inParentheses() && mstruct->size() > 0 && !(*mstruct)[0].isUnit_exp()) {
+				if(mstruct->isMultiplication() && mstruct->size() > 0 && !(*mstruct)[0].isUnit_exp()) {
 					(*mstruct)[0].negate();
 				} else {
 					mstruct->negate();

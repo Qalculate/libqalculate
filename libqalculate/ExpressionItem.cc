@@ -523,6 +523,15 @@ bool ExpressionItem::setLocal(bool is_local, int will_be_active) {
 			}
 		}
 		b_local = is_local;
+		if(type() == TYPE_UNIT) {
+			for(vector<Unit*>::iterator it = CALCULATOR->units.begin(); it != CALCULATOR->units.end(); ++it) {
+				if(*it == (Unit*) this) {
+					CALCULATOR->units.erase(it);
+					CALCULATOR->units.push_back((Unit*) this);
+					break;
+				}
+			}
+		}
 	} else if(will_be_active >= 0) {
 		setActive(will_be_active);
 	}
