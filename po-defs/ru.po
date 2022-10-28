@@ -4438,7 +4438,7 @@ msgstr "aou:&#x221B;кбк"
 
 #: ../data/functions.xml.in.h:380
 msgid "Returns the third real root."
-msgstr "Возвращает действительный корень третей степени."
+msgstr "Возвращает действительный корень третьей степени."
 
 #: ../data/functions.xml.in.h:381
 msgid "Nth root"
