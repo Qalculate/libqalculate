@@ -4843,20 +4843,13 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			if(f) mstruct->transform(f);
 			else mstruct->transform(STRUCT_MULTIPLICATION);
 			mstruct->addChild_nocopy(mstruct2);
-		} else if(!mstruct->representsScalar() || !mstruct2->representsScalar()) {
-			if(op == '\x17') {
-				mstruct->transform_nocopy(STRUCT_VECTOR, mstruct2);
-				mstruct->transform(priv->f_times);
-			} else {
-				if(op == '\x18') mstruct->transform(priv->f_rdivide);
-				else mstruct->transform(priv->f_dot);
-				mstruct->addChild_nocopy(mstruct2);
-			}
-		} else if(op == '\x18') {
-			if(po.preserve_format) mstruct->transform_nocopy(STRUCT_DIVISION, mstruct2);
-			else mstruct->divide_nocopy(mstruct2);
+		} else if(op == '\x17') {
+			mstruct->transform_nocopy(STRUCT_VECTOR, mstruct2);
+			mstruct->transform(priv->f_times);
 		} else {
-			mstruct->multiply_nocopy(mstruct2);
+			if(op == '\x18') mstruct->transform(priv->f_rdivide);
+			else mstruct->transform(priv->f_dot);
+			mstruct->addChild_nocopy(mstruct2);
 		}
 		return true;
 	}
@@ -5062,12 +5055,8 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		parseAdd(str2, mstruct, po);
 		MathStructure *mstruct2 = new MathStructure();
 		parseAdd(str, mstruct2, po);
-		if(!mstruct->representsScalar() || !mstruct2->representsScalar()) {
-			mstruct->transform(priv->f_power);
-			mstruct->addChild_nocopy(mstruct2);
-		} else {
-			mstruct->raise_nocopy(mstruct2);
-		}
+		mstruct->transform(priv->f_power);
+		mstruct->addChild_nocopy(mstruct2);
 	} else if(!str.empty() && str[str.length() - 1] == '\x1a') {
 		str.erase(str.length() - 1, 1);
 		parseAdd(str, mstruct, po);
