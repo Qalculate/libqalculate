@@ -4438,7 +4438,7 @@ msgstr "aou:&#x221B;кбк"
 
 #: ../data/functions.xml.in.h:380
 msgid "Returns the third real root."
-msgstr "Возвращает действительный корень третей степени."
+msgstr "Возвращает действительный корень третьей степени."
 
 #: ../data/functions.xml.in.h:381
 msgid "Nth root"
@@ -10823,7 +10823,7 @@ msgstr "Ватт"
 
 #: ../data/units.xml.in.h:513
 msgid "ar:W,watt,p:watts"
-msgstr "ar:W,Ватт,p:Ватт"
+msgstr "a:Вт,Ватт,p:Ватт"
 
 #: ../data/units.xml.in.h:514
 msgid "Horse Power"
