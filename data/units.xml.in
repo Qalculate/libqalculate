@@ -366,6 +366,16 @@
         <exponent>1</exponent>
       </base>
     </unit>
+    <unit type="alias">
+      <_title>Rack Unit</_title>
+      <system>Imperial/US</system>
+      <_names>ar:U,RackUnit,p:RackUnits,ar:RU</_names>
+      <base>
+        <unit>in</unit>
+        <relation>1.75</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
   </category>
   <category>
     <!-- Unit category -->
@@ -2940,6 +2950,16 @@
       <base>
         <unit>N</unit>
         <relation>4.4482216152605</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <system>Imperial</system>
+      <_title>Ounce-force</_title>
+      <_names>ar:ozf,ounce_force</_names>
+      <base>
+        <unit>lbf</unit>
+        <relation>0.0625</relation>
         <exponent>1</exponent>
       </base>
     </unit>
