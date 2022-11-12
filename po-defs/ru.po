@@ -182,7 +182,7 @@ msgstr "Малайзийский ринггит"
 
 #: ../data/currencies.xml.in.h:39
 msgid "acr:MYR,ac:myr"
-msgstr "acr:MYR,ac:myr"
+msgstr "ac:MYR,ac:myr"
 
 #: ../data/currencies.xml.in.h:40
 msgid "Malaysia"
@@ -1268,7 +1268,7 @@ msgstr "Малагасийский ариари"
 
 #: ../data/currencies.xml.in.h:308
 msgid "a-cr:MGA"
-msgstr "a-cr:MGA"
+msgstr "a-c:MGA"
 
 #: ../data/currencies.xml.in.h:309
 msgid "Madagascar"
@@ -1420,7 +1420,7 @@ msgstr "Нигерийская найра"
 
 #: ../data/currencies.xml.in.h:346
 msgid "a-cr:NGN,au:&#x20A6;"
-msgstr "a-cr:NGN,au:&#x20A6;,найра,p:найр"
+msgstr "a-c:NGN,au:&#x20A6;,найра,p:найр"
 
 #: ../data/currencies.xml.in.h:347
 msgid "Nigeria"
@@ -1768,7 +1768,7 @@ msgstr "Украинская гривна"
 
 #: ../data/currencies.xml.in.h:433
 msgid "a-cr:UAH,au:&#x20B4;"
-msgstr "a-cr:UAH,au:&#x20B4;"
+msgstr "a-c:UAH,au:&#x20B4;"
 
 #: ../data/currencies.xml.in.h:434
 msgid "Ukraine"
@@ -1848,7 +1848,7 @@ msgstr "Йеменский риал"
 
 #: ../data/currencies.xml.in.h:453
 msgid "a-cr:YER"
-msgstr "a-cr:YER"
+msgstr "a-c:YER"
 
 #: ../data/currencies.xml.in.h:454
 msgid "Yemen"
@@ -1860,7 +1860,7 @@ msgstr "Замбийская квача (устар.)"
 
 #: ../data/currencies.xml.in.h:456
 msgid "a-cr:ZMK"
-msgstr "a-cr:ZMK"
+msgstr "a-c:ZMK"
 
 #: ../data/currencies.xml.in.h:457
 msgid "Euro Cent"
@@ -1876,7 +1876,7 @@ msgstr "Цент (Доллар США)"
 
 #: ../data/currencies.xml.in.h:460
 msgid "au:&#xA2;,r:cent,p:cents"
-msgstr "au:&#xA2;,r:цент,p:центы"
+msgstr "au:&#xA2;,цент,p:центы"
 
 #: ../data/currencies.xml.in.h:461
 msgid "Belgian Franc (obsolete)"
@@ -1884,7 +1884,7 @@ msgstr "Бельгийский франк (устар.)"
 
 #: ../data/currencies.xml.in.h:462
 msgid "a-cr:BEF"
-msgstr "a-cr:BEF"
+msgstr "a-c:BEF"
 
 #: ../data/currencies.xml.in.h:463
 msgid "Greek Drachma (obsolete)"
@@ -1892,7 +1892,7 @@ msgstr "Греческая драхма (устар.)"
 
 #: ../data/currencies.xml.in.h:464
 msgid "a-cr:GRD,au:&#x20AF;"
-msgstr "a-cr:GRD,au:&#x20AF;"
+msgstr "a-c:GRD,au:&#x20AF;"
 
 #: ../data/currencies.xml.in.h:465
 msgid "French Franc (obsolete)"
@@ -1900,7 +1900,7 @@ msgstr "Французский франк (устар.)"
 
 #: ../data/currencies.xml.in.h:466
 msgid "a-cr:FRF,au:&#x20A3;"
-msgstr "a-cr:FRF,au:&#x20A3;"
+msgstr "a-c:FRF,au:&#x20A3;"
 
 #: ../data/currencies.xml.in.h:467
 msgid "Italian Lira (obsolete)"
@@ -1908,7 +1908,7 @@ msgstr "Итальянская лира (устар.)"
 
 #: ../data/currencies.xml.in.h:468
 msgid "a-cr:ITL"
-msgstr "a-cr:ITL"
+msgstr "a-c:ITL"
 
 #: ../data/currencies.xml.in.h:469
 msgid "Dutch Guilder (obsolete)"
@@ -1916,7 +1916,7 @@ msgstr "Голландский гульден (устар.)"
 
 #: ../data/currencies.xml.in.h:470
 msgid "a-cr:NLG"
-msgstr "a-cr:NLG"
+msgstr "a-c:NLG"
 
 #: ../data/currencies.xml.in.h:471
 msgid "Portuguese Escudo (obsolete)"
@@ -1924,7 +1924,7 @@ msgstr "Португальский эскудо (устар.)"
 
 #: ../data/currencies.xml.in.h:472
 msgid "a-cr:PTE"
-msgstr "a-cr:PTE"
+msgstr "a-c:PTE"
 
 #: ../data/currencies.xml.in.h:473
 msgid "Deutsche Mark (obsolete)"
@@ -1932,7 +1932,7 @@ msgstr "Немецкая марка (устар.)"
 
 #: ../data/currencies.xml.in.h:474
 msgid "a-cr:DEM"
-msgstr "a-cr:DEM"
+msgstr "a-c:DEM"
 
 #: ../data/currencies.xml.in.h:475
 msgid "Spanish Peseta (obsolete)"
@@ -1940,7 +1940,7 @@ msgstr "Испанская песета (устар.)"
 
 #: ../data/currencies.xml.in.h:476
 msgid "a-cr:ESP,au:&#x20A7;"
-msgstr "a-cr:ESP,au:&#x20A7;"
+msgstr "a-c:ESP,au:&#x20A7;"
 
 #: ../data/currencies.xml.in.h:477
 msgid "Irish Pound (obsolete)"
@@ -1948,7 +1948,7 @@ msgstr "Ирландский фунт (устар.)"
 
 #: ../data/currencies.xml.in.h:478
 msgid "a-cr:IEP"
-msgstr "a-cr:IEP"
+msgstr "a-c:IEP"
 
 #: ../data/currencies.xml.in.h:479
 msgid "Luxembourg Franc (obsolete)"
@@ -1956,7 +1956,7 @@ msgstr "Люксембургский франк (устар.)"
 
 #: ../data/currencies.xml.in.h:480
 msgid "a-cr:LUF"
-msgstr "a-cr:LUF"
+msgstr "a-c:LUF"
 
 #: ../data/currencies.xml.in.h:481
 msgid "Austrian Schilling (obsolete)"
@@ -1964,7 +1964,7 @@ msgstr "Австрийский шиллинг (устар.)"
 
 #: ../data/currencies.xml.in.h:482
 msgid "a-cr:ATS"
-msgstr "a-cr:ATS"
+msgstr "a-c:ATS"
 
 #: ../data/currencies.xml.in.h:483
 msgid "Finnish Markka (obsolete)"
@@ -1972,7 +1972,7 @@ msgstr "Финляндская марка (устар.)"
 
 #: ../data/currencies.xml.in.h:484
 msgid "a-cr:FIM"
-msgstr "a-cr:FIM"
+msgstr "a-c:FIM"
 
 #: ../data/currencies.xml.in.h:485
 msgid "Slovenian Tolar (obsolete)"
@@ -1980,7 +1980,7 @@ msgstr "Словенский толар (устар.)"
 
 #: ../data/currencies.xml.in.h:486
 msgid "a-cr:SIT"
-msgstr "a-cr:SIT"
+msgstr "a-c:SIT"
 
 #: ../data/currencies.xml.in.h:487
 msgid "Cypriot Pound (obsolete)"
@@ -1988,7 +1988,7 @@ msgstr "Кипрский фунт (устар.)"
 
 #: ../data/currencies.xml.in.h:488
 msgid "a-cr:CYP"
-msgstr "a-cr:CYP"
+msgstr "a-c:CYP"
 
 #: ../data/currencies.xml.in.h:489
 msgid "Estonian Kroon (obsolete)"
@@ -1996,7 +1996,7 @@ msgstr "Эстонская крона (устар.)"
 
 #: ../data/currencies.xml.in.h:490
 msgid "a-cr:EEK"
-msgstr "a-cr:EEK"
+msgstr "a-c:EEK"
 
 #: ../data/currencies.xml.in.h:491
 msgid "Slovak Koruna (obsolete)"
@@ -2004,7 +2004,7 @@ msgstr "Словацкая крона (устар.)"
 
 #: ../data/currencies.xml.in.h:492
 msgid "a-cr:SKK"
-msgstr "a-cr:SKK"
+msgstr "a-c:SKK"
 
 #: ../data/currencies.xml.in.h:493
 msgid "Maltese Lira (obsolete)"
@@ -2012,7 +2012,7 @@ msgstr "Мальтийская лира (устар.)"
 
 #: ../data/currencies.xml.in.h:494
 msgid "a-cr:MTL"
-msgstr "a-cr:MTL"
+msgstr "a-c:MTL"
 
 #: ../data/currencies.xml.in.h:495
 msgid "Latvian Lats (obsolete)"
@@ -2020,7 +2020,7 @@ msgstr "Латвийский лат (устар.)"
 
 #: ../data/currencies.xml.in.h:496
 msgid "a-cr:LVL"
-msgstr "a-cr:LVL"
+msgstr "a-c:LVL"
 
 #: ../data/currencies.xml.in.h:497
 msgid "Lithuanian Litas (obsolete)"
@@ -2028,7 +2028,7 @@ msgstr "Литовский лит (устар.)"
 
 #: ../data/currencies.xml.in.h:498
 msgid "a-cr:LTL"
-msgstr "a-cr:LTL"
+msgstr "a-c:LTL"
 
 #: ../data/datasets.xml.in.h:1
 msgid "Data Sets"
@@ -3771,7 +3771,7 @@ msgstr "Наибольший общий делитель"
 
 #: ../data/functions.xml.in.h:235
 msgid "rc:gcd,c:GCD"
-msgstr "rc:нод,c:НОД"
+msgstr "c:нод,c:НОД"
 
 #: ../data/functions.xml.in.h:236
 msgid "Value 1"
@@ -4528,7 +4528,7 @@ msgstr "Логарифм по основанию 2"
 
 #: ../data/functions.xml.in.h:401
 msgid "rs:log2"
-msgstr "rs:log_2"
+msgstr "s:log_2"
 
 #: ../data/functions.xml.in.h:402
 msgid "Returns the base n logarithm."
@@ -9467,7 +9467,7 @@ msgstr "Cтаткулон (франклин, электростатическа�
 
 #: ../data/units.xml.in.h:177
 msgid "r:statcoulomb,p:statcoulombs,a:statC,franklin,a:Fr,p:franklins"
-msgstr "франклин,a:Фр,a:statC;a:Fr;a:esu"
+msgstr "франклин,a:Фр,a:statC,a:Fr,a:esu"
 
 #: ../data/units.xml.in.h:178
 msgid "Planck Charge"
@@ -9644,7 +9644,7 @@ msgstr "Градус Цельсия"
 #: ../data/units.xml.in.h:221
 msgid ""
 "ar:oC,au:&#xB0;C,au:&#x2103;,r:celsius,p:celsius,centigrade,p:centigrades"
-msgstr "au:&#xB0;C,au:&#x2103;,r:цельсия"
+msgstr "au:&#xB0;C,au:&#x2103;,цельсия"
 
 #: ../data/units.xml.in.h:222
 msgid "Degree Rankine"
@@ -10319,7 +10319,7 @@ msgstr "Миль в час"
 
 #: ../data/units.xml.in.h:387
 msgid "a-cr:mph"
-msgstr "a-cr:миль/ч"
+msgstr "a-c:миль/ч"
 
 #: ../data/units.xml.in.h:388
 msgid "Speed of Light (Natural Unit of Velocity)"
@@ -10739,7 +10739,7 @@ msgstr "Тонна ТНТ"
 
 #: ../data/units.xml.in.h:492
 msgid "a-cr:tTNT,tonTNT"
-msgstr "a-cr:тТНТ,тоннТНТ"
+msgstr "a-c:тТНТ,тоннТНТ"
 
 #: ../data/units.xml.in.h:493
 msgid "Calorie (15 degrees Celsius)"
@@ -10985,7 +10985,7 @@ msgstr "Зиверт"
 
 #: ../data/units.xml.in.h:553
 msgid "ar:Sv,sievert,p:sieverts"
-msgstr "ar:Зв,зиверт"
+msgstr "a:Зв,зиверт"
 
 #: ../data/units.xml.in.h:554
 msgid "Roentgen Equivalent Man (Rem)"
@@ -10993,7 +10993,7 @@ msgstr "Биологический эквивалент рентгена (Бэр
 
 #: ../data/units.xml.in.h:555
 msgid "ros:rem_radioactivity,a:rem"
-msgstr "ros:бэр_радиоактивность,a:бэр"
+msgstr "os:бэр_радиоактивность,a:бэр"
 
 #: ../data/units.xml.in.h:556
 msgid "Millirem"
@@ -12190,88 +12190,3 @@ msgstr "Сейчас (дата и время)"
 #: ../data/variables.xml.in.h:229
 msgid "r:now"
 msgstr "сейчас"
-
-#~ msgid "Number of samples / Step size"
-#~ msgstr "Объём выборки / размер шага"
-
-#~ msgid "X variable"
-#~ msgstr "Переменная X"
-
-#~ msgid "Persistent"
-#~ msgstr "Смена фокуса"
-
-#~ msgid ""
-#~ "Plots one or more expressions or vectors. Use a vector for the first "
-#~ "argument to plot multiple series. Only the first argument is used for "
-#~ "vector series. It is also possible to plot a matrix where each row is a "
-#~ "pair of x and y values."
-#~ msgstr ""
-#~ "Строит графики для одного или нескольких выражений или векторов. "
-#~ "Используйте вектор в качестве первого аргумента, чтобы построить группу "
-#~ "из нескольких графиков. Для группы векторов используется только первый "
-#~ "аргумент. Также можно построить график для матрицы, в которой каждая "
-#~ "строка представляет собой пару значений x и y."
-
-#~ msgid "acr:KGS,au:&#x0441;"
-#~ msgstr "ac:KGS,au:&#x0441;"
-
-#~ msgid "Bit"
-#~ msgstr "Бит"
-
-#~ msgid "r:bit,p:bits"
-#~ msgstr "ac:б,бит"
-
-#~ msgid "Nibble"
-#~ msgstr "Ниббл"
-
-#~ msgid "1st value"
-#~ msgstr "1-е значение"
-
-#~ msgid "2nd value"
-#~ msgstr "2-е значение"
-
-#~ msgid "Hadamard Product"
-#~ msgstr "Произведение Адамара"
-
-#~ msgid "r:hadamard"
-#~ msgstr "адамар"
-
-#~ msgid ""
-#~ "Mulitplies each separate element in matrix 1 with the corresponding "
-#~ "element in matrix 2."
-#~ msgstr ""
-#~ "Умножает каждый отдельный элемент в Матрице 1 на соответствующий элемент "
-#~ "в Матрице 2."
-
-#~ msgid "Reciprocal"
-#~ msgstr "Обратное число"
-
-#~ msgid "r:inv"
-#~ msgstr "обр"
-
-#~ msgid "Factor 3"
-#~ msgstr "Множитель 3"
-
-#~ msgid "Multiply"
-#~ msgstr "Умножение"
-
-#~ msgid "Add"
-#~ msgstr "Сложение"
-
-#~ msgid "r:add"
-#~ msgstr "сложить"
-
-#~ msgid "Divide"
-#~ msgstr "Деление"
-
-#~ msgid "Raise"
-#~ msgstr "Возведение в степень"
-
-#~ msgid "r:raise"
-#~ msgstr "степень"
-
-#~ msgid "X raised to the power Y"
-#~ msgstr "X в степени Y"
-
-#~ msgid "r:pow"
-#~ msgstr "pow"
