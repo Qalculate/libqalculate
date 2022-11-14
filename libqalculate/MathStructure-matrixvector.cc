@@ -1334,10 +1334,17 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 			if(x_vector) x_vector->resizeVector(steps, m_zero);
 		}
 	}
+	ComparisonResult cr = min.compare(max);
+	if(cr == COMPARISON_RESULT_EQUAL) {
+		y_vector.addChild(*this);
+		y_vector[0].replace(x_mstruct, x_value);
+		y_vector[0].eval(eo);
+		if(x_vector) x_vector->addChild(x_value);
+		return y_vector;
+	}
 	MathStructure mthis(*this);
 	mthis.unformat();
 	calculate_userfunctions(mthis, x_mstruct, eo, true);
-	ComparisonResult cr = min.compare(max);
 	bool b_neg = (cr == COMPARISON_RESULT_LESS);
 	cr = max.compare(x_value);
 	size_t i = 0;
