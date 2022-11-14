@@ -1802,6 +1802,8 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 			}
 			mstruct.set(convert(mstruct_to_convert, u, eo2, false, false, transform_orig, parsed_struct));
 			b = true;
+		} else {
+			mstruct = mstruct_to_convert;
 		}
 		if(!munits.isUndefined()) {
 			mstruct.divide(munits);
