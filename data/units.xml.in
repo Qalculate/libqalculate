@@ -369,7 +369,7 @@
     <unit type="alias">
       <_title>Rack Unit</_title>
       <system>Imperial/US</system>
-      <_names>ar:U,RackUnit,p:RackUnits,ar:RU</_names>
+      <_names>a:U,r:rack_unit,p:rack_units,a:RU</_names>
       <base>
         <unit>in</unit>
         <relation>1.75</relation>
