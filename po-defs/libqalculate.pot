@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-12 16:51+0700\n"
+"POT-Creation-Date: 2022-11-17 18:20+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -8595,7 +8595,7 @@ msgid "Rack Unit"
 msgstr ""
 
 #: ../data/units.xml.in.h:62
-msgid "ar:U,RackUnit,p:RackUnits,ar:RU"
+msgid "a:U,r:rack_unit,p:rack_units,a:RU"
 msgstr ""
 
 #. Unit category

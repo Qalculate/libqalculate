@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-12 16:51+0700\n"
+"POT-Creation-Date: 2022-11-17 18:20+0700\n"
 "PO-Revision-Date: 2022-09-28 13:59+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -8145,7 +8145,7 @@ msgstr "Возвращает эквивалент облигации для ка
 
 #: ../data/functions.xml.in.h:1200
 msgid "Interest paid on a given period of an investment (ISPMT)"
-msgstr "Проценты, уплаченные за определённый период инвестиций (ISPMT)"
+msgstr "Проценты, уплаченные за определённый период инвестиций (ПУОП)"
 
 #: ../data/functions.xml.in.h:1201
 msgid "r:ispmt"
@@ -9044,8 +9044,8 @@ msgid "Rack Unit"
 msgstr "Монтажная единица"
 
 #: ../data/units.xml.in.h:62
-msgid "ar:U,RackUnit,p:RackUnits,ar:RU"
-msgstr "юнит,p:юнита,МонтажнаяEдиница,p:МонтажныхEдиниц"
+msgid "a:U,r:rack_unit,p:rack_units,a:RU"
+msgstr "юнит,p:юнита,монтажная_единица,p:монтажных_единиц"
 
 #. Unit category
 #: ../data/units.xml.in.h:64
