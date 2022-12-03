@@ -1,6 +1,14 @@
 <?xml version="1.0"?>
 <QALCULATE version="3.19.0">
   <prefix type="decimal">
+    <_names>ar:q,r:quecto</_names>
+    <exponent>-30</exponent>
+  </prefix>
+  <prefix type="decimal">
+    <_names>ar:r,r:ronto</_names>
+    <exponent>-27</exponent>
+  </prefix>
+  <prefix type="decimal">
     <_names>ar:y,r:yocto</_names>
     <exponent>-24</exponent>
   </prefix>
@@ -79,6 +87,14 @@
   <prefix type="decimal">
     <_names>ar:Y,r:yotta</_names>
     <exponent>24</exponent>
+  </prefix>
+  <prefix type="decimal">
+    <_names>ar:R,r:ronna</_names>
+    <exponent>27</exponent>
+  </prefix>
+  <prefix type="decimal">
+    <_names>ar:Q,r:quetta</_names>
+    <exponent>30</exponent>
   </prefix>
   <prefix type="binary">
     <_names>ar:Ki,r:kibi</_names>

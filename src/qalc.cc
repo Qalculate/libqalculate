@@ -2464,6 +2464,7 @@ int main(int argc, char *argv[]) {
 			enable_unicode = -1;
 		} else {
 			printops.use_unicode_signs = enable_unicode;
+			result_display_updated();
 		}
 	}
 
