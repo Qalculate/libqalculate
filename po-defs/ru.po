@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-17 18:20+0700\n"
+"POT-Creation-Date: 2022-12-03 12:32+0700\n"
 "PO-Revision-Date: 2022-09-28 13:59+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -8689,114 +8689,130 @@ msgid "Uranus"
 msgstr "Уран"
 
 #: ../data/prefixes.xml.in.h:1
+msgid "ar:q,r:quecto"
+msgstr "aс:кв,квекто"
+
+#: ../data/prefixes.xml.in.h:2
+msgid "ar:r,r:ronto"
+msgstr "ac:р,ронто"
+
+#: ../data/prefixes.xml.in.h:3
 msgid "ar:y,r:yocto"
 msgstr "aс:и,иокто"
 
-#: ../data/prefixes.xml.in.h:2
+#: ../data/prefixes.xml.in.h:4
 msgid "ar:z,r:zepto"
 msgstr "aс:з,зепто"
 
-#: ../data/prefixes.xml.in.h:3
+#: ../data/prefixes.xml.in.h:5
 msgid "ar:a,r:atto"
 msgstr "aс:а,атто"
 
-#: ../data/prefixes.xml.in.h:4
+#: ../data/prefixes.xml.in.h:6
 msgid "ar:f,r:femto"
 msgstr "aс:ф,фемто"
 
-#: ../data/prefixes.xml.in.h:5
+#: ../data/prefixes.xml.in.h:7
 msgid "ar:p,r:pico"
 msgstr "aс:п,пико"
 
-#: ../data/prefixes.xml.in.h:6
+#: ../data/prefixes.xml.in.h:8
 msgid "ar:n,r:nano"
 msgstr "aс:н,нано"
 
-#: ../data/prefixes.xml.in.h:7
+#: ../data/prefixes.xml.in.h:9
 msgid "aur:&#x3BC;,auor:&#x0B5;,ar:u,r:micro"
 msgstr "aс:мк,микро"
 
-#: ../data/prefixes.xml.in.h:8
+#: ../data/prefixes.xml.in.h:10
 msgid "ar:m,r:milli"
 msgstr "aс:м,милли"
 
-#: ../data/prefixes.xml.in.h:9
+#: ../data/prefixes.xml.in.h:11
 msgid "ar:c,r:centi"
 msgstr "aс:с,санти"
 
-#: ../data/prefixes.xml.in.h:10
+#: ../data/prefixes.xml.in.h:12
 msgid "ar:d,r:deci"
 msgstr "aс:д,деци"
 
-#: ../data/prefixes.xml.in.h:11
+#: ../data/prefixes.xml.in.h:13
 msgid "ar:da,r:deca"
 msgstr "aс:да,дека"
 
-#: ../data/prefixes.xml.in.h:12
+#: ../data/prefixes.xml.in.h:14
 msgid "ar:h,r:hecto"
 msgstr "aс:г,гекто"
 
-#: ../data/prefixes.xml.in.h:13
+#: ../data/prefixes.xml.in.h:15
 msgid "ar:k,r:kilo"
 msgstr "aс:к,кило"
 
-#: ../data/prefixes.xml.in.h:14
+#: ../data/prefixes.xml.in.h:16
 msgid "ar:M,r:mega"
 msgstr "aс:М,мега"
 
-#: ../data/prefixes.xml.in.h:15
+#: ../data/prefixes.xml.in.h:17
 msgid "ar:G,r:giga"
 msgstr "aс:Г,гига"
 
-#: ../data/prefixes.xml.in.h:16
+#: ../data/prefixes.xml.in.h:18
 msgid "ar:T,r:tera"
 msgstr "aс:Т,тера"
 
-#: ../data/prefixes.xml.in.h:17
+#: ../data/prefixes.xml.in.h:19
 msgid "ar:P,r:peta"
 msgstr "aс:П,пета"
 
-#: ../data/prefixes.xml.in.h:18
+#: ../data/prefixes.xml.in.h:20
 msgid "ar:E,r:exa"
 msgstr "aс:Э,экса"
 
-#: ../data/prefixes.xml.in.h:19
+#: ../data/prefixes.xml.in.h:21
 msgid "ar:Z,r:zetta"
 msgstr "aс:З,зетта"
 
-#: ../data/prefixes.xml.in.h:20
+#: ../data/prefixes.xml.in.h:22
 msgid "ar:Y,r:yotta"
 msgstr "aс:И,иотта"
 
-#: ../data/prefixes.xml.in.h:21
+#: ../data/prefixes.xml.in.h:23
+msgid "ar:R,r:ronna"
+msgstr "ac:Р,ронна"
+
+#: ../data/prefixes.xml.in.h:24
+msgid "ar:Q,r:quetta"
+msgstr "aс:Кв,кветта"
+
+#: ../data/prefixes.xml.in.h:25
 msgid "ar:Ki,r:kibi"
 msgstr "aс:Ки,киби"
 
-#: ../data/prefixes.xml.in.h:22
+#: ../data/prefixes.xml.in.h:26
 msgid "ar:Mi,r:mebi"
 msgstr "aс:Ми,меби"
 
-#: ../data/prefixes.xml.in.h:23
+#: ../data/prefixes.xml.in.h:27
 msgid "ar:Gi,r:gibi"
 msgstr "aс:Ги,гиби"
 
-#: ../data/prefixes.xml.in.h:24
+#: ../data/prefixes.xml.in.h:28
 msgid "ar:Ti,r:tebi"
 msgstr "aс:Ти,теби"
 
-#: ../data/prefixes.xml.in.h:25
+#: ../data/prefixes.xml.in.h:29
 msgid "ar:Pi,r:pebi"
 msgstr "aс:Пи,пеби"
 
-#: ../data/prefixes.xml.in.h:26
+#: ../data/prefixes.xml.in.h:30
 msgid "ar:Ei,r:exbi"
 msgstr "ac:Эи,эксби"
 
-#: ../data/prefixes.xml.in.h:27
+#: ../data/prefixes.xml.in.h:31
 msgid "ar:Zi,r:zebi"
 msgstr "ac:Зи,зеби"
 
-#: ../data/prefixes.xml.in.h:28
+#: ../data/prefixes.xml.in.h:32
 msgid "ar:Yi,r:yobi"
 msgstr "ac:Йи,йоби"
 
