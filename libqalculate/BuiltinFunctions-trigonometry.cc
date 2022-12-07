@@ -31,8 +31,6 @@ using std::cout;
 using std::vector;
 using std::endl;
 
-#define FR_FUNCTION_2(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC(vargs[1].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !vargs[1].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
-
 bool is_real_angle_value(const MathStructure &mstruct) {
 	if(mstruct.isUnit()) {
 		return mstruct.unit()->baseUnit() == CALCULATOR->getRadUnit()->baseUnit();
@@ -1790,63 +1788,196 @@ int SincFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 }
 
 Atan2Function::Atan2Function() : MathFunction("atan2", 2) {
-	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, true);
+	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
 	arg->setComplexAllowed(false);
+	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
-	arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, true);
+	arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
 	arg->setComplexAllowed(false);
+	arg->setHandleVector(true);
 	setArgumentDefinition(2, arg);
 }
 bool Atan2Function::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 2 && vargs[0].representsNumber() && vargs[1].representsNumber();}
 int Atan2Function::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[0].number().isZero()) {
-		if(!vargs[1].number().isNonZero()) return 0;
-		if(vargs[1].number().isNegative()) {
+	if(vargs[0].isVector()) return 0;
+	mstruct = vargs[0];
+	mstruct.eval(eo);
+	if(mstruct.isVector()) return -1;
+	MathStructure m2(vargs[1]);
+	m2.eval(eo);
+	if(m2.isVector()) return -2;
+
+	MathStructure msave, msave2;
+	msave.setUndefined(); msave2.setUndefined();
+
+	arg_test_non_number:
+	if(!mstruct.isNumber() || !m2.isNumber()) {
+		if(mstruct.isZero()) {
+			if(m2.representsPositive(true)) {
+				mstruct.clear();
+				return 1;
+			}
+			if(m2.representsNegative(true)) {
+				switch(eo.parse_options.angle_unit) {
+					case ANGLE_UNIT_DEGREES: {mstruct.set(180, 1, 0); break;}
+					case ANGLE_UNIT_GRADIANS: {mstruct.set(200, 1, 0); break;}
+					case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
+					default: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
+				}
+				return 1;
+			}
+			if(!msave.isUndefined()) {
+				mstruct.setVector(&msave, &msave2, NULL);
+				return -3;
+			}
+		}
+		ComparisonResult cr_im = mstruct.compare(m_zero);
+		ComparisonResult cr_re = m2.compare(m_zero);
+		if(cr_im == COMPARISON_RESULT_EQUAL) {
+			if(cr_re == COMPARISON_RESULT_LESS) {
+				mstruct.clear();
+				return 1;
+			} else if(cr_re == COMPARISON_RESULT_GREATER) {
+				switch(eo.parse_options.angle_unit) {
+					case ANGLE_UNIT_DEGREES: {mstruct.set(180, 1, 0); break;}
+					case ANGLE_UNIT_GRADIANS: {mstruct.set(200, 1, 0); break;}
+					case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
+					default: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
+				}
+				return 1;
+			}
+		} else if(COMPARISON_IS_NOT_EQUAL(cr_im)) {
+			if(cr_re == COMPARISON_RESULT_EQUAL) {
+				int i_sgn = 0;
+				if(cr_im == COMPARISON_RESULT_LESS) i_sgn = 1;
+				else if(cr_im == COMPARISON_RESULT_GREATER) i_sgn = -1;
+				if(i_sgn != 0) {
+					switch(eo.parse_options.angle_unit) {
+						case ANGLE_UNIT_DEGREES: {mstruct.set(90, 1, 0); break;}
+						case ANGLE_UNIT_GRADIANS: {mstruct.set(100, 1, 0); break;}
+						case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); mstruct.multiply(nr_half); break;}
+						default: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); mstruct.multiply(nr_half); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
+					}
+					if(i_sgn < 0) mstruct.negate();
+					return 1;
+				}
+			} else if(cr_re == COMPARISON_RESULT_GREATER) {
+				if(cr_im == COMPARISON_RESULT_GREATER) {
+					mstruct.divide(m2);
+					mstruct.transformById(FUNCTION_ID_ATAN);
+					switch(eo.parse_options.angle_unit) {
+						case ANGLE_UNIT_DEGREES: {mstruct.add(-180); break;}
+						case ANGLE_UNIT_GRADIANS: {mstruct.add(-200); break;}
+						case ANGLE_UNIT_RADIANS: {mstruct.subtract(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
+						default: {MathStructure msub(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) msub *= CALCULATOR->getRadUnit(); mstruct.subtract(msub);}
+					}
+					return 1;
+				} else if(cr_im == COMPARISON_RESULT_LESS) {
+					mstruct.divide(m2);
+					mstruct.transformById(FUNCTION_ID_ATAN);
+					switch(eo.parse_options.angle_unit) {
+						case ANGLE_UNIT_DEGREES: {mstruct.add(180); break;}
+						case ANGLE_UNIT_GRADIANS: {mstruct.add(200); break;}
+						case ANGLE_UNIT_RADIANS: {mstruct.add(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
+						default: {MathStructure madd(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) madd *= CALCULATOR->getRadUnit(); mstruct.add(madd);}
+					}
+					return 1;
+				}
+			} else if(cr_re == COMPARISON_RESULT_LESS) {
+				mstruct.divide(m2);
+				mstruct.transformById(FUNCTION_ID_ATAN);
+				return 1;
+			}
+		}
+		if(eo.approximation == APPROXIMATION_EXACT) {
+			msave = mstruct;
+			msave2 = m2;
+			if(!test_eval(mstruct, eo) || !test_eval(m2, eo)) {
+				mstruct.setVector(&msave, &msave2, NULL);
+				return -3;
+			}
+		}
+	}
+	if(mstruct.isNumber() && m2.isNumber() && !mstruct.number().hasImaginaryPart() && !m2.number().hasImaginaryPart()) {
+		if(m2.number().hasImaginaryPart()) {
+			if(!mstruct.number().add(m2.number().imaginaryPart())) {
+				if(!msave.isUndefined()) mstruct.setVector(&msave, &msave2, NULL);
+				else mstruct.transform(STRUCT_VECTOR, m2);
+				return -3;
+			}
+			m2.number().clearImaginary();
+		}
+		if(mstruct.number().hasImaginaryPart()) {
+			if(!m2.number().add(mstruct.number().imaginaryPart())) {
+				if(!msave.isUndefined()) mstruct.setVector(&msave, &msave2, NULL);
+				else mstruct.transform(STRUCT_VECTOR, m2);
+				return -3;
+			}
+			mstruct.number().clearImaginary();
+		}
+		if(mstruct.number().isZero()) {
+			if(!m2.number().isNonZero()) return 0;
+			if(m2.number().isNegative()) {
+				switch(eo.parse_options.angle_unit) {
+					case ANGLE_UNIT_DEGREES: {mstruct.set(180, 1, 0); break;}
+					case ANGLE_UNIT_GRADIANS: {mstruct.set(200, 1, 0); break;}
+					case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
+					default: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
+				}
+			} else {
+				mstruct.clear();
+			}
+		} else if(m2.number().isZero() && mstruct.number().isNonZero()) {
 			switch(eo.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {mstruct.set(180, 1, 0); break;}
-				case ANGLE_UNIT_GRADIANS: {mstruct.set(200, 1, 0); break;}
-				case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
-				default: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
+				case ANGLE_UNIT_DEGREES: {mstruct.set(90, 1, 0); break;}
+				case ANGLE_UNIT_GRADIANS: {mstruct.set(100, 1, 0); break;}
+				case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); mstruct.multiply(nr_half); break;}
+				default: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); mstruct.multiply(nr_half); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
+			}
+			if(mstruct.number().hasNegativeSign()) mstruct.negate();
+		} else if(!msave.isUndefined()) {
+			mstruct.setVector(&msave, &msave2, NULL);
+			return -3;
+		} else if(!m2.number().isNonZero()) {
+			Number nr(mstruct.number());
+			if(!nr.atan2(m2.number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate() && !m2.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex() && !m2.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity() && !m2.number().includesInfinity())) {
+				return 0;
+			} else {
+				mstruct.set(nr);
+				return 1;
 			}
 		} else {
-			mstruct.clear();
-		}
-	} else if(vargs[1].number().isZero() && vargs[0].number().isNonZero()) {
-		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {mstruct.set(90, 1, 0); break;}
-			case ANGLE_UNIT_GRADIANS: {mstruct.set(100, 1, 0); break;}
-			case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); mstruct.multiply(nr_half); break;}
-			default: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); mstruct.multiply(nr_half); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
-		}
-		if(vargs[0].number().hasNegativeSign()) mstruct.negate();
-	} else if(!vargs[1].number().isNonZero()) {
-		FR_FUNCTION_2(atan2)
-	} else {
-		MathStructure new_nr(vargs[0]);
-		if(!new_nr.number().divide(vargs[1].number())) return 0;
-		if(vargs[1].number().isNegative() && vargs[0].number().isNonZero()) {
-			if(vargs[0].number().isNegative()) {
-				mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
-				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {mstruct.add(-180); break;}
-					case ANGLE_UNIT_GRADIANS: {mstruct.add(-200); break;}
-					case ANGLE_UNIT_RADIANS: {mstruct.subtract(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
-					default: {MathStructure msub(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) msub *= CALCULATOR->getRadUnit(); mstruct.subtract(msub);}
+			MathStructure new_nr(mstruct);
+			if(!new_nr.number().divide(m2.number())) return 0;
+			if(m2.number().isNegative() && mstruct.number().isNonZero()) {
+				if(mstruct.number().isNegative()) {
+					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
+					switch(eo.parse_options.angle_unit) {
+						case ANGLE_UNIT_DEGREES: {mstruct.add(-180); break;}
+						case ANGLE_UNIT_GRADIANS: {mstruct.add(-200); break;}
+						case ANGLE_UNIT_RADIANS: {mstruct.subtract(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
+						default: {MathStructure msub(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) msub *= CALCULATOR->getRadUnit(); mstruct.subtract(msub);}
+					}
+				} else {
+					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
+					switch(eo.parse_options.angle_unit) {
+						case ANGLE_UNIT_DEGREES: {mstruct.add(180); break;}
+						case ANGLE_UNIT_GRADIANS: {mstruct.add(200); break;}
+						case ANGLE_UNIT_RADIANS: {mstruct.add(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
+						default: {MathStructure madd(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) madd *= CALCULATOR->getRadUnit(); mstruct.add(madd);}
+					}
 				}
 			} else {
 				mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
-				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {mstruct.add(180); break;}
-					case ANGLE_UNIT_GRADIANS: {mstruct.add(200); break;}
-					case ANGLE_UNIT_RADIANS: {mstruct.add(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
-					default: {MathStructure madd(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) madd *= CALCULATOR->getRadUnit(); mstruct.add(madd);}
-				}
 			}
-		} else {
-			mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
 		}
+		return 1;
 	}
-	return 1;
+	if(!msave.isUndefined()) {
+		goto arg_test_non_number;
+	}
+	mstruct.transform(STRUCT_VECTOR, m2);
+	return -3;
 }
 RadiansToDefaultAngleUnitFunction::RadiansToDefaultAngleUnitFunction() : MathFunction("radtodef", 1) {
 }
