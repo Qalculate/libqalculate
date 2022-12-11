@@ -106,6 +106,26 @@ bool name_is_less(const string &str1, const string &str2) {
 	return false;
 }
 
+void get_total_degree(const MathStructure &m, Number &deg, bool top = true) {
+	if(m.isMultiplication() && top) {
+		for(size_t i = 0; i < m.size(); i++) {
+			get_total_degree(m[i], deg, false);
+		}
+	} else if(m.isPower()) {
+		if(m[0].isUnknown()) {
+			if(m[1].isNumber()) {
+				deg += m[1].number();
+			} else if(m[1].isVariable() && m[1].variable()->isKnown()) {
+				if(((KnownVariable*) m[1].variable())->get().isNumber()) {
+					deg += ((KnownVariable*) m[1].variable())->get().number();
+				}
+			}
+		}
+	} else if(m.isUnknown()) {
+		deg++;
+	}
+}
+
 int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, const MathStructure &parent, const PrintOptions &po);
 int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, const MathStructure &parent, const PrintOptions &po) {
 	// returns -1 if mstruct1 should be placed before mstruct2, 1 if mstruct1 should be placed after mstruct2, and 0 if current order should be preserved
@@ -178,6 +198,58 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 		}
 	}
 	if(parent.isAddition() && isdiv1 == isdiv2) {
+		// sort using degree
+		Number deg1, deg2;
+		get_total_degree(mstruct1, deg1);
+		get_total_degree(mstruct2, deg2);
+		if(deg1 > deg2) return -1;
+		if(deg2 > deg1) return 1;
+		if(!deg1.isZero()) {
+			size_t i1 = mstruct1.size(), i2 = mstruct2.size();
+			if(mstruct1.isMultiplication()) {
+				for(size_t i = 0; i < mstruct1.size(); i++) {
+					if(mstruct1[i].isUnknown() || (mstruct1[i].isPower() && mstruct1[i][0].isUnknown())) {
+						i1 = i;
+						break;
+					}
+				}
+			}
+			if(mstruct2.isMultiplication()) {
+				for(size_t i = 0; i < mstruct2.size(); i++) {
+					if(mstruct2[i].isUnknown() || (mstruct2[i].isPower() && mstruct2[i][0].isUnknown())) {
+						i2 = i;
+						break;
+					}
+				}
+			}
+			if(i1 < mstruct1.size()) {
+				if(i2 < mstruct2.size()) {
+					for(; ; i1++, i2++) {
+						if(i2 >= mstruct2.size()) {
+							if(i1 >= mstruct1.size()) break;
+							return -1;
+						}
+						if(i1 >= mstruct1.size()) return 1;
+						int c = sortCompare(mstruct1[i1].isPower() ? mstruct1[i1][0] : mstruct1[i1], mstruct2[i2].isPower() ? mstruct2[i2][0] : mstruct2[i2], parent, po);
+						if(c != 0) return c;
+						if(mstruct1[i1].isPower() || mstruct2[i2].isPower()) c = sortCompare(mstruct1[i1], mstruct2[i2], parent, po);
+						if(c != 0) return c;
+					}
+				} else {
+					int c = sortCompare(mstruct1[i1].isPower() ? mstruct1[i1][0] : mstruct1[i1], mstruct2.isPower() ? mstruct2[0] : mstruct2, parent, po);
+					if(c != 0) return c;
+					c = sortCompare(mstruct1[i1], mstruct2, parent, po);
+					if(c != 0) return c;
+					if(i1 < mstruct1.size() - 1) return -1;
+				}
+			} else if(i2 < mstruct2.size()) {
+				int c = sortCompare(mstruct1.isPower() ? mstruct1[0] : mstruct1, mstruct2[i2].isPower() ? mstruct2[i2][0] : mstruct2[i2], parent, po);
+				if(c != 0) return c;
+				c = sortCompare(mstruct1, mstruct2[i2], parent, po);
+				if(c != 0) return c;
+				if(i2 < mstruct2.size() - 1) return 1;
+			}
+		}
 		// sort using single factors from left to right
 		if(mstruct1.isMultiplication() && mstruct1.size() > 0) {
 			size_t start = 0;
@@ -259,6 +331,8 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 			// place unit factors last
 			if(mstruct2.isUnit()) return -1;
 			if(mstruct1.isUnit()) return 1;
+			if(mstruct2.isUnknown()) return -1;
+			if(mstruct1.isUnknown()) return 1;
 			if(mstruct1.isAddition() && !mstruct2.isAddition() && !mstruct1.containsUnknowns() && (mstruct2.isUnknown_exp() || (mstruct2.isMultiplication() && mstruct2.containsUnknowns()))) return -1;
 			if(mstruct2.isAddition() && !mstruct1.isAddition() && !mstruct2.containsUnknowns() && (mstruct1.isUnknown_exp() || (mstruct1.isMultiplication() && mstruct1.containsUnknowns()))) return 1;
 		}
