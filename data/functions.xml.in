@@ -1890,7 +1890,7 @@
       <function>
         <_title>Uniformly Distributed Random Number</_title>
         <_names>r:randuniform</_names>
-        <expression>\x*rand(0,\Z{1})+(\y-\x)</expression>
+        <expression>\x+rand(0,\Z{1})*(\y-\x)</expression>
         <condition>\x&lt;=\y</condition>
         <argument type="number" index="1">
           <_title>Lower limit</_title>
