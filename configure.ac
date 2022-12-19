@@ -6,7 +6,7 @@ dnl  ----------------------
 dnl | initialize autotools |---------------------------------------------------
 dnl  ----------------------
 
-AC_INIT([libqalculate],[4.4.0])
+AC_INIT([libqalculate],[4.5.0])
 AC_CONFIG_SRCDIR(libqalculate/Calculator.cc)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS(config.h)
@@ -73,7 +73,7 @@ QALCULATE_CURRENT=39
 
 dnl increment any time the source changes; set to 
 dnl  0 if you increment CURRENT
-QALCULATE_REVISION=2
+QALCULATE_REVISION=3
 
 dnl increment if any interfaces have been added; set to 0
 dnl  if any interfaces have been removed. removal has 
@@ -106,6 +106,12 @@ AS_IF([test "x$enable_compiled_definitions" = "xyes"], [
 	AC_DEFINE([COMPILED_DEFINITIONS], [1], [Compile definitions])
 ])
 AM_CONDITIONAL(COMPILED_DEFINITIONS, [test "x$enable_compiled_definitions" = "xyes"])
+
+AC_ARG_ENABLE([insecure], AS_HELP_STRING([--disbale-insecure], [disable insecure functions (command) and variables (uptime)]))
+AS_IF([test "x$enable_insecure" = "xno"], [
+	AC_DEFINE([DISABLE_INSECURE], [1], [Disable insecure functions and variables])
+])
+AM_CONDITIONAL(DISABLE_INSECURE, [test "x$enable_insecure" = "xno"])
 
 
 AC_ARG_WITH([libcurl], AS_HELP_STRING([--without-libcurl], [disable support for built-in retrieval of exchange rates]), [], [with_libcurl=yes])

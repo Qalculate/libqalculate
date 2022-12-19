@@ -940,7 +940,8 @@ CommandFunction::CommandFunction() : MathFunction("command", 1, -1) {
 	setArgumentDefinition(2, new Argument());
 }
 int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-#ifdef HAVE_GNUPLOT_CALL
+#ifndef DISABLE_INSECURE
+#	ifdef HAVE_GNUPLOT_CALL
 
 	FILE *pipe = NULL;
 	string commandline = vargs[0].symbol();
@@ -986,6 +987,9 @@ int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 
 	return 1;
 
+#	else
+	return 0;
+#	endif
 #else
 	return 0;
 #endif

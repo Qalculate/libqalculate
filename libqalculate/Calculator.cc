@@ -169,13 +169,13 @@ Calculator::Calculator() {
 	srand(time(NULL));
 
 	exchange_rates_time[0] = 0;
-	exchange_rates_time[1] = (time_t) 462624L * (time_t) 3600;
+	exchange_rates_time[1] = (time_t) 464160L * (time_t) 3600;
 	exchange_rates_time[2] = 0;
-	priv->exchange_rates_time2[0] = (time_t) 462624L * (time_t) 3600;
+	priv->exchange_rates_time2[0] = (time_t) 464160L * (time_t) 3600;
 	exchange_rates_check_time[0] = 0;
-	exchange_rates_check_time[1] = (time_t) 462624L * (time_t) 3600;
+	exchange_rates_check_time[1] = (time_t) 464160L * (time_t) 3600;
 	exchange_rates_check_time[2] = 0;
-	priv->exchange_rates_check_time2[0] = (time_t) 462624L * (time_t) 3600;
+	priv->exchange_rates_check_time2[0] = (time_t) 464160L * (time_t) 3600;
 	b_exchange_rates_warning_enabled = true;
 	b_exchange_rates_used = 0;
 
@@ -408,13 +408,13 @@ Calculator::Calculator(bool ignore_locale) {
 	srand(time(NULL));
 
 	exchange_rates_time[0] = 0;
-	exchange_rates_time[1] = (time_t) 462624L * (time_t) 3600;
+	exchange_rates_time[1] = (time_t) 464160L * (time_t) 3600;
 	exchange_rates_time[2] = 0;
-	priv->exchange_rates_time2[0] = (time_t) 462624L * (time_t) 3600;
+	priv->exchange_rates_time2[0] = (time_t) 464160L * (time_t) 3600;
 	exchange_rates_check_time[0] = 0;
-	exchange_rates_check_time[1] = (time_t) 462624L * (time_t) 3600;
+	exchange_rates_check_time[1] = (time_t) 464160L * (time_t) 3600;
 	exchange_rates_check_time[2] = 0;
-	priv->exchange_rates_check_time2[0] = (time_t) 462624L * (time_t) 3600;
+	priv->exchange_rates_check_time2[0] = (time_t) 464160L * (time_t) 3600;
 	b_exchange_rates_warning_enabled = true;
 	b_exchange_rates_used = 0;
 
@@ -1341,11 +1341,11 @@ void Calculator::prefixNameChanged(Prefix *p, bool new_item) {
 		}
 	}
 }
-#define PRECISION_TO_BITS(p) (((p) * 3.3219281) + 100)
-#define BITS_TO_PRECISION(p) (::ceil(((p) - 100) / 3.3219281))
+#define PRECISION_TO_BITS(p) ((((double) p) * 3.3219281) + 100)
+#define BITS_TO_PRECISION(p) (::ceil((((double) p) - 100) / 3.3219281))
 void Calculator::setPrecision(int precision) {
 	if(precision <= 0) precision = DEFAULT_PRECISION;
-	if(PRECISION_TO_BITS(precision) > MPFR_PREC_MAX - 1000L) {
+	if(PRECISION_TO_BITS(precision) > (double) MPFR_PREC_MAX - 1000L) {
 		if(BITS_TO_PRECISION(MPFR_PREC_MAX) > INT_MAX) i_precision = INT_MAX;
 		else i_precision = (int) BITS_TO_PRECISION(MPFR_PREC_MAX - 1000L);
 		mpfr_set_default_prec(MPFR_PREC_MAX - 1000L);
@@ -1529,8 +1529,10 @@ void Calculator::addBuiltinVariables() {
 	v_yesterday = (KnownVariable*) addVariable(new YesterdayVariable());
 	v_tomorrow = (KnownVariable*) addVariable(new TomorrowVariable());
 	v_now = (KnownVariable*) addVariable(new NowVariable());
-#if defined __linux__ || defined _WIN32
+#ifndef DISABLE_INSECURE
+#if 	defined __linux__ || defined _WIN32
 	addVariable(new UptimeVariable());
+#	endif
 #endif
 
 }
@@ -1758,7 +1760,9 @@ void Calculator::addBuiltinFunctions() {
 	f_register = addFunction(new RegisterFunction());
 	f_stack = addFunction(new StackFunction());
 
+#ifndef DISABLE_INSECURE
 	addFunction(new CommandFunction());
+#endif
 
 	f_diff = addFunction(new DeriveFunction());
 	f_integrate = addFunction(new IntegrateFunction());
@@ -1805,11 +1809,11 @@ void Calculator::addBuiltinFunctions() {
 }
 void Calculator::addBuiltinUnits() {
 	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, true));
-	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "19661.74", 1, "", false, true, true));
+	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "16741.28", 1, "", false, true, true));
 	u_btc->setApproximate();
 	u_btc->setPrecision(-2);
 	u_btc->setChanged(false);
-	priv->u_byn = addUnit(new AliasUnit(_("Currency"), "BYN", "", "", "Belarusian Ruble", u_euro, "1/2.45705", 1, "", false, true, true));
+	priv->u_byn = addUnit(new AliasUnit(_("Currency"), "BYN", "", "", "Belarusian Ruble", u_euro, "1/2.66180", 1, "", false, true, true));
 	priv->u_byn->setHidden(true);
 	priv->u_byn->setApproximate();
 	priv->u_byn->setPrecision(-2);

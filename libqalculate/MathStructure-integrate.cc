@@ -5564,7 +5564,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 						if(integrate_info(CHILD(1)[0], x_var, madd, mmul, mpow, false, false, true)) {
 							if(mpow.isPower() && mpow[0] == x_var) {
 								mpow.setToChild(2);
-								if(mpow.isNumber() && mpow.number().isRational() & !mpow.number().isOne()) {
+								if(mpow.isNumber() && mpow.number().isRational() && !mpow.number().isOne()) {
 									if(!nexp.isOne() && mpow.isInteger()) {
 										if(mexp.isMinusOne() && nexp.isMinusOne()) {
 											MathStructure mbak(*this);

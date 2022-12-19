@@ -2077,12 +2077,6 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				return 1;
 			}
 		}
-		if(mstruct.isPower() && mstruct[0].representsNonZero() && mstruct[1].representsInteger()) {
-			mstruct.setType(STRUCT_MULTIPLICATION);
-			mstruct[0].transform(STRUCT_FUNCTION);
-			mstruct[0].setFunction(this);
-			return 1;
-		}
 		if(mstruct.isPower() && mstruct[0].isVariable() && mstruct[0].variable()->id() == VARIABLE_ID_E && mstruct[1].isNumber() && mstruct[1].number().hasImaginaryPart() && !mstruct[1].number().hasRealPart()) {
 			CALCULATOR->beginTemporaryEnableIntervalArithmetic();
 			if(CALCULATOR->usesIntervalArithmetic()) {
@@ -2232,8 +2226,20 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		} else if(!msave.isZero()) {
 			mstruct = msave;
 			return -1;
-		} else if(!mstruct.number().realPartIsNonZero()) {
-			FR_FUNCTION(arg)
+		} else if(!mstruct.number().realPartIsNonZero() || (!mstruct.number().imaginaryPartIsNonZero() && mstruct.number().realPartIsNegative())) {
+			Number nr(mstruct.number());
+			if(!nr.arg() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
+				return -1;
+			} else {
+				mstruct.set(nr);
+				switch(eo.parse_options.angle_unit) {
+					case ANGLE_UNIT_DEGREES: {mstruct /= CALCULATOR->getVariableById(VARIABLE_ID_PI); mstruct *= 180; break;}
+					case ANGLE_UNIT_GRADIANS: {mstruct /= CALCULATOR->getVariableById(VARIABLE_ID_PI); mstruct *= 200; break;}
+					case ANGLE_UNIT_RADIANS: {break;}
+					default: {mstruct *= CALCULATOR->getRadUnit();}
+				}
+				return 1;
+			}
 		} else {
 			MathStructure new_nr(mstruct.number().imaginaryPart());
 			if(!new_nr.number().divide(mstruct.number().realPart())) return -1;
@@ -2246,7 +2252,7 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 						case ANGLE_UNIT_RADIANS: {mstruct.subtract(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
 						default: {MathStructure msub(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) msub *= CALCULATOR->getRadUnit(); mstruct.subtract(msub);}
 					}
-				} else if(mstruct.number().imaginaryPartIsNonNegative()) {
+				} else {
 					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
 					switch(eo.parse_options.angle_unit) {
 						case ANGLE_UNIT_DEGREES: {mstruct.add(180); break;}
@@ -2254,8 +2260,6 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 						case ANGLE_UNIT_RADIANS: {mstruct.add(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
 						default: {MathStructure madd(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) madd *= CALCULATOR->getRadUnit(); mstruct.add(madd);}
 					}
-				} else {
-					FR_FUNCTION(arg)
 				}
 			} else {
 				mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);

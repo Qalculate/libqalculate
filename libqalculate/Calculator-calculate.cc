@@ -1085,12 +1085,13 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 	}
 }
 
-bool test_simplified(const MathStructure &m) {
+bool test_simplified(const MathStructure &m, bool top = true) {
 	if(m.isFunction() || (m.isVariable() && m.variable()->isKnown()) || (m.isUnit() && (m.unit()->hasApproximateRelationToBase() || (m.unit()->isCurrency() && m.unit() != CALCULATOR->getLocalCurrency())))) return false;
 	for(size_t i = 0; i < m.size(); i++) {
-		if(!test_simplified(m[i])) return false;
+		if(!test_simplified(m[i], false)) return false;
 	}
 	if(m.isPower() && m[0].containsType(STRUCT_NUMBER)) return false;
+	if(!top && m.isNumber() && m.number().isFloatingPoint()) return false;
 	return true;
 }
 void flatten_addmulti(MathStructure &m) {
@@ -1326,7 +1327,7 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 	int dual_approximation = 0;
 	if(auto_approx == AUTOMATIC_APPROXIMATION_AUTO) dual_approximation = -1;
 	else if(auto_approx == AUTOMATIC_APPROXIMATION_DUAL) dual_approximation = 1;
-	if(dual_approximation != 0 && evalops.approximation == APPROXIMATION_TRY_EXACT && mstruct->isApproximate() && (dual_approximation > 0 || (!mstruct->containsType(STRUCT_UNIT, false, false, false) && !parsed_mstruct->containsType(STRUCT_UNIT, false, false, false) && original_expression.find(DOT) == string::npos)) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_SAVE) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_PLOT) && !parsed_mstruct->containsInterval(true, false, false, false, true)) {
+	if(dual_approximation != 0 && evalops.approximation == APPROXIMATION_TRY_EXACT && mstruct->isApproximate() && (dual_approximation > 0 || (!mstruct->containsType(STRUCT_UNIT, false, false, false) && !parsed_mstruct->containsType(STRUCT_UNIT, false, false, false) && original_expression.find(DOT) == string::npos)) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_SAVE) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_PLOT) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_RAND) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_RANDN) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_RAND_POISSON) && !parsed_mstruct->containsInterval(true, false, false, false, true)) {
 		evalops.approximation = APPROXIMATION_EXACT;
 		evalops.expand = -2;
 		CALCULATOR->beginTemporaryStopMessages();

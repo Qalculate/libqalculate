@@ -1,3 +1,61 @@
+2022-12-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix randuniform()
+	* Fix dual approximation with random number functions
+
+2022-12-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault in qalc when set command option and value contains more than three words
+	* Fix errornous calculation of arg(x^n) in some cases (when transformed to arg(x)*n without mod 2pi)
+
+2022-12-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use standard form (sorting) for polynomials
+
+2022-12-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Allow non-numerical arguments in atan2()
+
+2022-12-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Set message print options after unicode setting has been updated using u8 command line option (fixes signs in gnuplot legend)
+
+2022-11-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add new SI prefixes (R, r, Q, q)
+
+2022-11-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix automatic/dual fraction format after conversion (e.g. "8 to score")
+
+2022-10-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Always parse element-wise operator as element-wise function, even if arguments are scalars (fixes variable substitution when variable is vector)
+
+2022-10-27 ioio85 <ioio85@gmail.com>
+
+	* Add units ounce force (ozf) and rack unit (U)
+
+2022-10-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix order of user edited global units and look for activated units first for base unit (do not use deactivated global unit)
+	* Use current status of limit implicit multiplication setting during parsing of conversion expression
+	* Make unit added to original expression for unit conversion more consistent
+	* Do not use MathStructure in parentheses property during parsing (simplifies logic and fixes inconsistently displayed parsing of "7d 5h" and similar)
+	* Add hr and hrs names to hour unit
+
+2022-10-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix genvector() with negative step size or expression as step size, and allow variable in step size
+	* Fix genvector() with expression as number of steps
+	* If object name does not match full name string in expression, check for complete match with prefix plus unit (fixes Gyr)
+	* Make MYR currency case-sensitive to fix conflict with Myr (megayear)
+
+2022-10-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Conversion to any type of expression (if ordinary conversion fails, try simple division)
+	* Fix milli- and centimeter of water units
+
 2022-10-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix slow conversion to optimal or base units of uncertainty with units inside value and/or error
