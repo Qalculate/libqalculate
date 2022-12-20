@@ -2699,6 +2699,66 @@
           <exponent>-2</exponent>
         </part>
       </unit>
+      <unit type="composite">
+        <system>SI</system>
+        <_title>Meter per Second Cubed (Jerk)</_title>
+        <names>r:m_p_scu</names>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-3</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <system>SI</system>
+        <_title>Meter per Second to the Fourth (Snap)</_title>
+        <names>r:m_p_sfourth</names>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-4</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <system>SI</system>
+        <_title>Meter per Second to the Fifth (Crackle)</_title>
+        <names>r:m_p_sfifth</names>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-5</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <system>SI</system>
+        <_title>Meter per Second to the Sixth (Pop)</_title>
+        <names>r:m_p_ssixth</names>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-6</exponent>
+        </part>
+      </unit>
       <unit type="alias">
         <system>CGS</system>
         <_title>Galileo</_title>
