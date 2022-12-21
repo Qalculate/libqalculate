@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 08:33+0100\n"
+"POT-Creation-Date: 2022-12-21 17:27+0700\n"
 "PO-Revision-Date: 2022-09-28 13:59+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -6527,7 +6527,6 @@ msgid "Midpoint (interval)"
 msgstr "Середина (интервал)"
 
 #: ../data/functions.xml.in.h:833
-#, fuzzy
 msgid "r:midpoint,valuePart"
 msgstr "середина,значение"
 
@@ -10362,795 +10361,811 @@ msgid "Meter per Second Squared"
 msgstr "Метр на секунду в квадрате "
 
 #: ../data/units.xml.in.h:394
+msgid "Meter per Second Cubed (Jerk)"
+msgstr "Метр на секунду в кубе (рывок)"
+
+#: ../data/units.xml.in.h:395
+msgid "Meter per Second to the Fourth (Snap)"
+msgstr "Метр на секунду в четвёртой степени (щелчок / толчок)"
+
+#: ../data/units.xml.in.h:396
+msgid "Meter per Second to the Fifth (Crackle)"
+msgstr "Метр на секунду в пятой степени (треск)"
+
+#: ../data/units.xml.in.h:397
+msgid "Meter per Second to the Sixth (Pop)"
+msgstr "Метр на секунду в шестой степени (щелчок/удар)"
+
+#: ../data/units.xml.in.h:398
 msgid "Galileo"
 msgstr "Гал"
 
-#: ../data/units.xml.in.h:395
+#: ../data/units.xml.in.h:399
 msgid "ar:Gal,galileo,p:galileos"
 msgstr "a:гал,галилео,galileo"
 
-#: ../data/units.xml.in.h:396
+#: ../data/units.xml.in.h:400
 msgid "Gee"
 msgstr "Жэ (ускорение свободного падения на поверхности Земли)"
 
-#: ../data/units.xml.in.h:397
+#: ../data/units.xml.in.h:401
 msgid "r:gee,p:gees"
 msgstr "gee"
 
-#: ../data/units.xml.in.h:398
+#: ../data/units.xml.in.h:402
 msgid "Magnetism"
 msgstr "Магнетизм"
 
-#: ../data/units.xml.in.h:399
+#: ../data/units.xml.in.h:403
 msgid "Wave Number"
 msgstr "Волновое число"
 
-#: ../data/units.xml.in.h:400
+#: ../data/units.xml.in.h:404
 msgid "Reciprocal Meter"
 msgstr "Обратный метр"
 
-#: ../data/units.xml.in.h:401
+#: ../data/units.xml.in.h:405
 msgid "Magnetic Field Strength"
 msgstr "Напряжённость магнитного поля"
 
-#: ../data/units.xml.in.h:402
+#: ../data/units.xml.in.h:406
 msgid "Ampere per Meter"
 msgstr "Ампер на метр"
 
-#: ../data/units.xml.in.h:403
+#: ../data/units.xml.in.h:407
 msgid "Oersted"
 msgstr "Эрстед"
 
-#: ../data/units.xml.in.h:404
+#: ../data/units.xml.in.h:408
 msgid "ar:Oe,oersted,p:oersteds"
 msgstr "ac:Э,эрстед"
 
-#: ../data/units.xml.in.h:405
+#: ../data/units.xml.in.h:409
 msgid "Magnetic Flux"
 msgstr "Магнитный поток"
 
-#: ../data/units.xml.in.h:406
+#: ../data/units.xml.in.h:410
 msgid "Weber"
 msgstr "Вебер"
 
-#: ../data/units.xml.in.h:407
+#: ../data/units.xml.in.h:411
 msgid "ar:Wb,weber,p:webers"
 msgstr "ac:Вб,вебер"
 
-#: ../data/units.xml.in.h:408
+#: ../data/units.xml.in.h:412
 msgid "Maxwell"
 msgstr "Максвелл"
 
-#: ../data/units.xml.in.h:409
+#: ../data/units.xml.in.h:413
 msgid "ar:Mx,maxwell,p:maxwells"
 msgstr "ac:Мкс,максвелл"
 
-#: ../data/units.xml.in.h:410
+#: ../data/units.xml.in.h:414
 msgid "Magnetic Flux Density"
 msgstr "Плотность магнитного потока (магнитная индукция)"
 
-#: ../data/units.xml.in.h:411
+#: ../data/units.xml.in.h:415
 msgid "Tesla"
 msgstr "Тесла"
 
-#: ../data/units.xml.in.h:412
+#: ../data/units.xml.in.h:416
 msgid "ar:T,tesla,p:teslas"
 msgstr "ac:Тл,тесла"
 
-#: ../data/units.xml.in.h:413
+#: ../data/units.xml.in.h:417
 msgid "Gauss"
 msgstr "Гаусс"
 
-#: ../data/units.xml.in.h:414
+#: ../data/units.xml.in.h:418
 msgid "r:gauss"
 msgstr "ac:Гс,гаусс"
 
-#: ../data/units.xml.in.h:415
+#: ../data/units.xml.in.h:419
 msgid "Atomic Unit of Magnetic Flux Density"
 msgstr "Атомная единица плотности магнитного потока (магнитной индукции)"
 
-#: ../data/units.xml.in.h:416
+#: ../data/units.xml.in.h:420
 msgid "Magnetic Dipole Moment"
 msgstr "Магнитный [дипольный] момент"
 
-#: ../data/units.xml.in.h:417
+#: ../data/units.xml.in.h:421
 msgid "Ampere Square Meter"
 msgstr "Ампер-квадратный метр"
 
-#: ../data/units.xml.in.h:418
+#: ../data/units.xml.in.h:422
 msgid "Atomic Unit of Magnetic Dipole Moment"
 msgstr "Атомная единица магнитного [дипольного] момента "
 
-#: ../data/units.xml.in.h:419
+#: ../data/units.xml.in.h:423
 msgid "Force"
 msgstr "Сила"
 
-#: ../data/units.xml.in.h:420
+#: ../data/units.xml.in.h:424
 msgid "Newton"
 msgstr "Ньютон"
 
-#: ../data/units.xml.in.h:421
+#: ../data/units.xml.in.h:425
 msgid "ar:N,newton,p:newtons"
 msgstr "a:Н,ньютон"
 
-#: ../data/units.xml.in.h:422
+#: ../data/units.xml.in.h:426
 msgid "Dyne"
 msgstr "Дин"
 
-#: ../data/units.xml.in.h:423
+#: ../data/units.xml.in.h:427
 msgid "ar:dyn,dyne,p:dynes"
 msgstr "дин"
 
-#: ../data/units.xml.in.h:424
+#: ../data/units.xml.in.h:428
 msgid "Pound-force"
 msgstr "Фунт-сила"
 
-#: ../data/units.xml.in.h:425
+#: ../data/units.xml.in.h:429
 msgid "ar:lbf,pound_force"
 msgstr "a:lbf,фунт_сила"
 
-#: ../data/units.xml.in.h:426
+#: ../data/units.xml.in.h:430
 msgid "Ounce-force"
 msgstr "Унция-сила"
 
-#: ../data/units.xml.in.h:427
+#: ../data/units.xml.in.h:431
 msgid "ar:ozf,ounce_force"
 msgstr "унция_сила"
 
-#: ../data/units.xml.in.h:428
+#: ../data/units.xml.in.h:432
 msgid "Poundal"
 msgstr "Паундал"
 
-#: ../data/units.xml.in.h:429
+#: ../data/units.xml.in.h:433
 msgid "r:poundal,p:poundals,a:pdl"
 msgstr "паундал,a:pdl"
 
-#: ../data/units.xml.in.h:430
+#: ../data/units.xml.in.h:434
 msgid "Pond (Gram-Force)"
 msgstr "Понд (грамм-сила)"
 
-#: ../data/units.xml.in.h:431
+#: ../data/units.xml.in.h:435
 msgid "r:pond,p:ponds,a:gf"
 msgstr "понд,a:гс"
 
-#: ../data/units.xml.in.h:432
+#: ../data/units.xml.in.h:436
 msgid "Kilopond (Kilogram-Force)"
 msgstr "Килопонд (килограмм-сила)"
 
-#: ../data/units.xml.in.h:433
+#: ../data/units.xml.in.h:437
 msgid "Atomic Unit of Force"
 msgstr "Атомная единица силы"
 
-#: ../data/units.xml.in.h:434
+#: ../data/units.xml.in.h:438
 msgid "Moment of Force"
 msgstr "Момент силы"
 
-#: ../data/units.xml.in.h:435
+#: ../data/units.xml.in.h:439
 msgid "Newton Meter"
 msgstr "Ньютон-метр"
 
-#: ../data/units.xml.in.h:436
+#: ../data/units.xml.in.h:440
 msgid "Momentum"
 msgstr "Импульс"
 
-#: ../data/units.xml.in.h:437
+#: ../data/units.xml.in.h:441
 msgid "Kilogram Meter per Second"
 msgstr "Килограмм-метр в секунду"
 
-#: ../data/units.xml.in.h:438
+#: ../data/units.xml.in.h:442
 msgid "Electronvolt Momentum"
 msgstr "Электронвольтный эквивалент импульса"
 
-#: ../data/units.xml.in.h:439
+#: ../data/units.xml.in.h:443
 msgid "Natural Unit of Momentum"
 msgstr "Естественная единица импульса"
 
-#: ../data/units.xml.in.h:440
+#: ../data/units.xml.in.h:444
 msgid "Atomic Unit of Momentum"
 msgstr "Атомная единица импульса"
 
-#: ../data/units.xml.in.h:441
+#: ../data/units.xml.in.h:445
 msgid "Pressure"
 msgstr "Давление"
 
-#: ../data/units.xml.in.h:442
+#: ../data/units.xml.in.h:446
 msgid "Pascal"
 msgstr "Паскаль"
 
-#: ../data/units.xml.in.h:443
+#: ../data/units.xml.in.h:447
 msgid "ar:Pa,pascal,p:pascals"
 msgstr "ac:Па,паскаль"
 
-#: ../data/units.xml.in.h:444
+#: ../data/units.xml.in.h:448
 msgid "Kilogram-force per Square Centimetre"
 msgstr "Килограмм-сила на квадратный сантиметр"
 
-#: ../data/units.xml.in.h:445
+#: ../data/units.xml.in.h:449
 msgid "Pound-force per Square Inch (psi)"
 msgstr "Фунт-сила на квадратный дюйм (psi)"
 
-#: ../data/units.xml.in.h:446
+#: ../data/units.xml.in.h:450
 msgid "a-cr:psi"
 msgstr "a-c:psi"
 
-#: ../data/units.xml.in.h:447
+#: ../data/units.xml.in.h:451
 msgid "Kilopound-force per Square Inch (ksi)"
 msgstr "Килофунт-сила на квадратный дюйм (ksi)"
 
-#: ../data/units.xml.in.h:448
+#: ../data/units.xml.in.h:452
 msgid "a-cr:ksi"
 msgstr "a-c:ksi"
 
-#: ../data/units.xml.in.h:449
+#: ../data/units.xml.in.h:453
 msgid "Bar"
 msgstr "Бар"
 
-#: ../data/units.xml.in.h:450
+#: ../data/units.xml.in.h:454
 msgid "r:bar,p:bars"
 msgstr "бар"
 
-#: ../data/units.xml.in.h:451
+#: ../data/units.xml.in.h:455
 msgid "Atmosphere"
 msgstr "Атмосфера"
 
-#: ../data/units.xml.in.h:452
+#: ../data/units.xml.in.h:456
 msgid "ar:atm,atmosphere,p:atmospheres"
 msgstr "a:атм,атмосфера,p:атмосфер"
 
-#: ../data/units.xml.in.h:453
+#: ../data/units.xml.in.h:457
 msgid "Torr"
 msgstr "Торр"
 
-#: ../data/units.xml.in.h:454
+#: ../data/units.xml.in.h:458
 msgid "ar:Torr,torr,p:torrs"
 msgstr "торр"
 
-#: ../data/units.xml.in.h:455
+#: ../data/units.xml.in.h:459
 msgid "Meter of Mercury"
 msgstr "Метр ртутного столба"
 
-#: ../data/units.xml.in.h:456
+#: ../data/units.xml.in.h:460
 msgid "ar:mHg"
 msgstr "a:мртст"
 
-#: ../data/units.xml.in.h:457
+#: ../data/units.xml.in.h:461
 msgid "Millimeter of Mercury"
 msgstr "Миллиметр ртутного столба"
 
-#: ../data/units.xml.in.h:458
+#: ../data/units.xml.in.h:462
 msgid "ar:mmHg"
 msgstr "a:ммртст"
 
-#: ../data/units.xml.in.h:459
+#: ../data/units.xml.in.h:463
 msgid "Inch of Mercury"
 msgstr "Дюйм ртутного столба"
 
-#: ../data/units.xml.in.h:460
+#: ../data/units.xml.in.h:464
 msgid "ar:inHg"
 msgstr "дюйм_рт_ст"
 
-#: ../data/units.xml.in.h:461
+#: ../data/units.xml.in.h:465
 msgid "Millitorr"
 msgstr "Миллиторр"
 
-#: ../data/units.xml.in.h:462
+#: ../data/units.xml.in.h:466
 msgid "Barye"
 msgstr "Бария (барий)"
 
-#: ../data/units.xml.in.h:463
+#: ../data/units.xml.in.h:467
 msgid "ar:Ba,barye"
 msgstr "ac:Б,бария"
 
-#: ../data/units.xml.in.h:464
+#: ../data/units.xml.in.h:468
 msgid "Meter of Water"
 msgstr "Метр водяного столба"
 
-#: ../data/units.xml.in.h:465
+#: ../data/units.xml.in.h:469
 msgid "ar:mWC,a:mwg,au:mH&#x2082;O"
 msgstr "a:мвод,au:мH&#x2082;O"
 
-#: ../data/units.xml.in.h:466
+#: ../data/units.xml.in.h:470
 msgid "Millimeter of Water"
 msgstr "Миллиметр водяного столба"
 
-#: ../data/units.xml.in.h:467
+#: ../data/units.xml.in.h:471
 msgid "Centimeter of Water"
 msgstr "Сантиметр водяного столба"
 
-#: ../data/units.xml.in.h:468
+#: ../data/units.xml.in.h:472
 msgid "Inch of Water"
 msgstr "Дюйм водяного столба"
 
-#: ../data/units.xml.in.h:469
+#: ../data/units.xml.in.h:473
 msgid "ar:inWC,a:iwg,au:inH&#x2082;O"
 msgstr "a:дмвод,au:дмH&#x2082;O"
 
-#: ../data/units.xml.in.h:470
+#: ../data/units.xml.in.h:474
 msgid "Dynamic Viscosity"
 msgstr "Динамическая вязкость"
 
-#: ../data/units.xml.in.h:471
+#: ../data/units.xml.in.h:475
 msgid "Pascal Second"
 msgstr "Паскаль-секунда"
 
-#: ../data/units.xml.in.h:472
+#: ../data/units.xml.in.h:476
 msgid "Poise"
 msgstr "Пуаз"
 
-#: ../data/units.xml.in.h:473
+#: ../data/units.xml.in.h:477
 msgid "ar:P,poise,p:poises"
 msgstr "ac:П,пуаз"
 
-#: ../data/units.xml.in.h:474
+#: ../data/units.xml.in.h:478
 msgid "Centipoise"
 msgstr "Сантипуаз"
 
-#: ../data/units.xml.in.h:475
+#: ../data/units.xml.in.h:479
 msgid "Kinematic Viscosity"
 msgstr "Кинематическая вязкость"
 
-#: ../data/units.xml.in.h:476
+#: ../data/units.xml.in.h:480
 msgid "Square Meter per Second"
 msgstr "Квадратный метр в секунду"
 
-#: ../data/units.xml.in.h:477
+#: ../data/units.xml.in.h:481
 msgid "Stokes"
 msgstr "Стокс"
 
-#: ../data/units.xml.in.h:478
+#: ../data/units.xml.in.h:482
 msgid "ar:St,stokes"
 msgstr "ac:Ст,стокс"
 
-#: ../data/units.xml.in.h:479
+#: ../data/units.xml.in.h:483
 msgid "Centistokes"
 msgstr "Сантистокс"
 
-#: ../data/units.xml.in.h:480
+#: ../data/units.xml.in.h:484
 msgid "Surface Tension"
 msgstr "Поверхностное натяжение"
 
-#: ../data/units.xml.in.h:481
+#: ../data/units.xml.in.h:485
 msgid "Newton per Meter"
 msgstr "Ньютон на метр"
 
-#: ../data/units.xml.in.h:482
+#: ../data/units.xml.in.h:486
 msgid "Energy"
 msgstr "Энергия"
 
-#: ../data/units.xml.in.h:483
+#: ../data/units.xml.in.h:487
 msgid "Joule"
 msgstr "Джоуль"
 
-#: ../data/units.xml.in.h:484
+#: ../data/units.xml.in.h:488
 msgid "ar:J,joule,p:joules"
 msgstr "a:Дж,джоуль"
 
-#: ../data/units.xml.in.h:485
+#: ../data/units.xml.in.h:489
 msgid "Watt Hour"
 msgstr "Ватт-час"
 
-#: ../data/units.xml.in.h:486
+#: ../data/units.xml.in.h:490
 msgid "Kilowatt Hour"
 msgstr "Киловатт-час"
 
-#: ../data/units.xml.in.h:487
+#: ../data/units.xml.in.h:491
 msgid "Calorie (international table)"
 msgstr "Калория (международная)"
 
-#: ../data/units.xml.in.h:488
+#: ../data/units.xml.in.h:492
 msgid "ais:cal_IT,ar:cal,c:calorie,cp:calories"
 msgstr "a:кал,c:калория,cp:калорий"
 
-#: ../data/units.xml.in.h:489
+#: ../data/units.xml.in.h:493
 msgid "Calorie (capital C)"
 msgstr "Килокалория"
 
-#: ../data/units.xml.in.h:490
+#: ../data/units.xml.in.h:494
 msgid "cr:Calorie,cp:Calories"
 msgstr "a:ккал"
 
-#: ../data/units.xml.in.h:491
+#: ../data/units.xml.in.h:495
 msgid "Calorie (thermochemical)"
 msgstr "Калория (термохимическая)"
 
-#: ../data/units.xml.in.h:492
+#: ../data/units.xml.in.h:496
 msgid "ars:cal_th"
 msgstr "as:кал_ТХ"
 
-#: ../data/units.xml.in.h:493
+#: ../data/units.xml.in.h:497
 msgid "Gram of TNT"
 msgstr "Грамм ТНТ"
 
-#: ../data/units.xml.in.h:494
+#: ../data/units.xml.in.h:498
 msgid "a-cr:gTNT,gramTNT"
 msgstr "a-c:гТНТ,граммТНТ"
 
-#: ../data/units.xml.in.h:495
+#: ../data/units.xml.in.h:499
 msgid "Ton of TNT"
 msgstr "Тонна ТНТ"
 
-#: ../data/units.xml.in.h:496
+#: ../data/units.xml.in.h:500
 msgid "a-cr:tTNT,tonTNT"
 msgstr "a-c:тТНТ,тоннТНТ"
 
-#: ../data/units.xml.in.h:497
+#: ../data/units.xml.in.h:501
 msgid "Calorie (15 degrees Celsius)"
 msgstr "Калория (15 °C)"
 
-#: ../data/units.xml.in.h:498
+#: ../data/units.xml.in.h:502
 msgid "ars:cal_fifteen"
 msgstr "as:кал_15"
 
-#: ../data/units.xml.in.h:499
+#: ../data/units.xml.in.h:503
 msgid "Calorie (mean)"
 msgstr "Калория (средняя)"
 
-#: ../data/units.xml.in.h:500
+#: ../data/units.xml.in.h:504
 msgid "ars:cal_mean"
 msgstr "as:кал_ср"
 
-#: ../data/units.xml.in.h:501
+#: ../data/units.xml.in.h:505
 msgid "British Thermal Unit (IT)"
 msgstr "Британская тепловая (термическая) единица (BTU)"
 
-#: ../data/units.xml.in.h:502
+#: ../data/units.xml.in.h:506
 msgid "ar:Btu"
 msgstr "a:БТЕ"
 
-#: ../data/units.xml.in.h:503
+#: ../data/units.xml.in.h:507
 msgid "Electronvolt"
 msgstr "Электронвольт"
 
-#: ../data/units.xml.in.h:504
+#: ../data/units.xml.in.h:508
 msgid "ar:eV,electronvolt,p:electronvolts"
 msgstr "a:эВ,электронвольт"
 
-#: ../data/units.xml.in.h:505
+#: ../data/units.xml.in.h:509
 msgid "Erg"
 msgstr "Эрг"
 
-#: ../data/units.xml.in.h:506
+#: ../data/units.xml.in.h:510
 msgid "r:erg,p:ergs"
 msgstr "эрг"
 
-#: ../data/units.xml.in.h:507
+#: ../data/units.xml.in.h:511
 msgid "Foe"
 msgstr "Foe"
 
-#: ../data/units.xml.in.h:508
+#: ../data/units.xml.in.h:512
 msgid "r:foe,p:foes"
 msgstr "foe"
 
-#: ../data/units.xml.in.h:509
+#: ../data/units.xml.in.h:513
 msgid "Foot-Pound Force"
 msgstr "Фут-фунт-сила (энергия)"
 
-#: ../data/units.xml.in.h:510
+#: ../data/units.xml.in.h:514
 msgid "Hartree (Atomic Unit of Energy)"
 msgstr "Энергия Хартри (атомная единица энергии)"
 
-#: ../data/units.xml.in.h:511
+#: ../data/units.xml.in.h:515
 msgid "Rydberg (unit)"
 msgstr "Ридберг (единица измерения)"
 
-#: ../data/units.xml.in.h:512
+#: ../data/units.xml.in.h:516
 msgid "Natural Unit of Energy"
 msgstr "Естественная единица энергии"
 
-#: ../data/units.xml.in.h:513
+#: ../data/units.xml.in.h:517
 msgid "Specific Energy"
 msgstr "Удельная энергия"
 
-#: ../data/units.xml.in.h:514
+#: ../data/units.xml.in.h:518
 msgid "Joule per Kilogram"
 msgstr "джоуль на килограмм"
 
-#: ../data/units.xml.in.h:515
+#: ../data/units.xml.in.h:519
 msgid "Power"
 msgstr "Мощность"
 
-#: ../data/units.xml.in.h:516
+#: ../data/units.xml.in.h:520
 msgid "Watt"
 msgstr "Ватт"
 
-#: ../data/units.xml.in.h:517
+#: ../data/units.xml.in.h:521
 msgid "ar:W,watt,p:watts"
 msgstr "a:Вт,Ватт,p:Ватт"
 
-#: ../data/units.xml.in.h:518
+#: ../data/units.xml.in.h:522
 msgid "Horse Power"
 msgstr "Механическая лошадиная сила"
 
-#: ../data/units.xml.in.h:519
+#: ../data/units.xml.in.h:523
 msgid "ar:hp,horsepower,p:horsepowers"
 msgstr "a:лс"
 
-#: ../data/units.xml.in.h:520
+#: ../data/units.xml.in.h:524
 msgid "Pferdest&#xE4;rke"
 msgstr "Метрическая лошадиная сила"
 
-#: ../data/units.xml.in.h:521
+#: ../data/units.xml.in.h:525
 msgid "ar:PS,u:pferdest&#xE4;rke"
 msgstr "a:лс"
 
-#: ../data/units.xml.in.h:522
+#: ../data/units.xml.in.h:526
 msgid "Decibel Milliwatt"
 msgstr "Децибел-милливатт"
 
-#: ../data/units.xml.in.h:523
+#: ../data/units.xml.in.h:527
 msgid "ar:dBm"
 msgstr "a:дБм"
 
-#: ../data/units.xml.in.h:524
+#: ../data/units.xml.in.h:528
 msgid "Decibel Watt"
 msgstr "Децибел-ватт"
 
-#: ../data/units.xml.in.h:525
+#: ../data/units.xml.in.h:529
 msgid "ar:dBW"
 msgstr "a:дБВт"
 
-#: ../data/units.xml.in.h:526
+#: ../data/units.xml.in.h:530
 msgid "Erg per Second"
 msgstr "Эрг в секунду"
 
-#: ../data/units.xml.in.h:527
+#: ../data/units.xml.in.h:531
 msgid "Entropy"
 msgstr "Энтропия"
 
-#: ../data/units.xml.in.h:528
+#: ../data/units.xml.in.h:532
 msgid "Joule per Kelvin"
 msgstr "джоуль на кельвин"
 
-#: ../data/units.xml.in.h:529
+#: ../data/units.xml.in.h:533
 msgid "Boltzmann (unit)"
 msgstr "Постоянная Больцмана (Планковская единица)"
 
-#: ../data/units.xml.in.h:530
+#: ../data/units.xml.in.h:534
 msgid "Specific Entropy"
 msgstr "Удельная энтропия"
 
-#: ../data/units.xml.in.h:531
+#: ../data/units.xml.in.h:535
 msgid "Joule per Kilogram Kelvin"
 msgstr "джоуль на килограмм кельвин"
 
-#: ../data/units.xml.in.h:532
+#: ../data/units.xml.in.h:536
 msgid "Thermal Conductivity"
 msgstr "Теплопроводность"
 
-#: ../data/units.xml.in.h:533
+#: ../data/units.xml.in.h:537
 msgid "Watt per Meter Kelvin"
 msgstr "Ватт на метр кельвин"
 
-#: ../data/units.xml.in.h:534
+#: ../data/units.xml.in.h:538
 msgid "Energy Density"
 msgstr "Плотность энергии"
 
-#: ../data/units.xml.in.h:535
+#: ../data/units.xml.in.h:539
 msgid "Joule per Cubic Meter"
 msgstr "джоуль на кубический метр"
 
-#: ../data/units.xml.in.h:536
+#: ../data/units.xml.in.h:540
 msgid "Molar Energy"
 msgstr "Молярная энергия"
 
-#: ../data/units.xml.in.h:537
+#: ../data/units.xml.in.h:541
 msgid "Joule per Mole"
 msgstr "джоуль на моль"
 
-#: ../data/units.xml.in.h:538
+#: ../data/units.xml.in.h:542
 msgid "Molar Entropy"
 msgstr "Молярная энтропия"
 
-#: ../data/units.xml.in.h:539
+#: ../data/units.xml.in.h:543
 msgid "Joule per Mole Kelvin"
 msgstr "джоуль на моль кельвин"
 
-#: ../data/units.xml.in.h:540
+#: ../data/units.xml.in.h:544
 msgid "Action"
 msgstr "Действие"
 
-#: ../data/units.xml.in.h:541
+#: ../data/units.xml.in.h:545
 msgid "Joule Second"
 msgstr "джоуль-секунда"
 
-#: ../data/units.xml.in.h:542
+#: ../data/units.xml.in.h:546
 msgid "Reduced Planck (Atomic/Natural Unit of Action)"
 msgstr ""
 "Приведённая постоянная Планка (действие в атомной/естественной системе "
 "единиц)"
 
-#: ../data/units.xml.in.h:543
+#: ../data/units.xml.in.h:547
 msgid "Radioactivity"
 msgstr "Радиоактивность"
 
-#: ../data/units.xml.in.h:544
+#: ../data/units.xml.in.h:548
 msgid "Becquerel"
 msgstr "Беккерель"
 
-#: ../data/units.xml.in.h:545
+#: ../data/units.xml.in.h:549
 msgid "ar:Bq,becquerel,p:becquerels"
 msgstr "a:Бк,беккерель"
 
-#: ../data/units.xml.in.h:546
+#: ../data/units.xml.in.h:550
 msgid "Curie"
 msgstr "Кюри"
 
-#: ../data/units.xml.in.h:547
+#: ../data/units.xml.in.h:551
 msgid "ar:Ci,curie,p:curies"
 msgstr "a:Ки,кюри"
 
-#: ../data/units.xml.in.h:548
+#: ../data/units.xml.in.h:552
 msgid "Rutherford"
 msgstr "Резерфорд"
 
-#: ../data/units.xml.in.h:549
+#: ../data/units.xml.in.h:553
 msgid "ar:Rd,rutherford,p:rutherfords"
 msgstr "a:Рд,резерфорд"
 
-#: ../data/units.xml.in.h:550
+#: ../data/units.xml.in.h:554
 msgid "Absorbed Dose"
 msgstr "Поглощённая доза"
 
-#: ../data/units.xml.in.h:551
+#: ../data/units.xml.in.h:555
 msgid "Gray"
 msgstr "Грей"
 
-#: ../data/units.xml.in.h:552
+#: ../data/units.xml.in.h:556
 msgid "ar:Gy,gray,p:grays"
 msgstr "a:Гр,грей"
 
-#: ../data/units.xml.in.h:553
+#: ../data/units.xml.in.h:557
 msgid "Rad"
 msgstr "Рад"
 
-#: ../data/units.xml.in.h:554
+#: ../data/units.xml.in.h:558
 msgid "rs:rad_radioactivity"
 msgstr "s:рад_радиоактивность"
 
-#: ../data/units.xml.in.h:555
+#: ../data/units.xml.in.h:559
 msgid "Dose Equivalent"
 msgstr "Эквивалентная доза"
 
-#: ../data/units.xml.in.h:556
+#: ../data/units.xml.in.h:560
 msgid "Sievert"
 msgstr "Зиверт"
 
-#: ../data/units.xml.in.h:557
+#: ../data/units.xml.in.h:561
 msgid "ar:Sv,sievert,p:sieverts"
 msgstr "a:Зв,зиверт"
 
-#: ../data/units.xml.in.h:558
+#: ../data/units.xml.in.h:562
 msgid "Roentgen Equivalent Man (Rem)"
 msgstr "Биологический эквивалент рентгена (Бэр)"
 
-#: ../data/units.xml.in.h:559
+#: ../data/units.xml.in.h:563
 msgid "ros:rem_radioactivity,a:rem"
 msgstr "os:бэр_радиоактивность,a:бэр"
 
-#: ../data/units.xml.in.h:560
+#: ../data/units.xml.in.h:564
 msgid "Millirem"
 msgstr "Миллибэр"
 
-#: ../data/units.xml.in.h:561
+#: ../data/units.xml.in.h:565
 msgid "Erg per Gram"
 msgstr "эрг на грамм"
 
-#: ../data/units.xml.in.h:562
+#: ../data/units.xml.in.h:566
 msgid "Exposure"
 msgstr "Экспозиционная доза"
 
-#: ../data/units.xml.in.h:563
+#: ../data/units.xml.in.h:567
 msgid "Coulomb per Kilogram"
 msgstr "кулон на килограмм"
 
-#: ../data/units.xml.in.h:564
+#: ../data/units.xml.in.h:568
 msgid "Roentgen"
 msgstr "Рентген"
 
-#: ../data/units.xml.in.h:565
+#: ../data/units.xml.in.h:569
 msgid "ar:R,roentgen,r&#x00f6;ntgen,p:roentgens,p:r&#x00f6;ntgens"
 msgstr "a:Р,рентген"
 
-#: ../data/units.xml.in.h:566
+#: ../data/units.xml.in.h:570
 msgid "Absorbed Dose Rate"
 msgstr "Мощность поглощённой дозы"
 
-#: ../data/units.xml.in.h:567
+#: ../data/units.xml.in.h:571
 msgid "Gray per Second"
 msgstr "грей в секунду"
 
-#: ../data/units.xml.in.h:568
+#: ../data/units.xml.in.h:572
 msgid "Millirem per Hour"
 msgstr "Миллибэр в час"
 
-#: ../data/units.xml.in.h:569
+#: ../data/units.xml.in.h:573
 msgid "Ratio"
 msgstr "Отношение"
 
-#: ../data/units.xml.in.h:570
+#: ../data/units.xml.in.h:574
 msgid "Neper"
 msgstr "Непер"
 
-#: ../data/units.xml.in.h:571
+#: ../data/units.xml.in.h:575
 msgid "ar:Np,neper,p:nepers"
 msgstr "a:Нп,непер"
 
-#: ../data/units.xml.in.h:572
+#: ../data/units.xml.in.h:576
 msgid "Bel"
 msgstr "Бел"
 
-#: ../data/units.xml.in.h:573
+#: ../data/units.xml.in.h:577
 msgid "r:bel,p:bels"
 msgstr "бел"
 
-#: ../data/units.xml.in.h:574
+#: ../data/units.xml.in.h:578
 msgid "Decibel"
 msgstr "Децибел"
 
-#: ../data/units.xml.in.h:575
+#: ../data/units.xml.in.h:579
 msgid "ar:dB,decibel,p:decibels"
 msgstr "a:дБ,децибел"
 
-#: ../data/units.xml.in.h:576
+#: ../data/units.xml.in.h:580
 msgid "Information"
 msgstr "Информация"
 
-#: ../data/units.xml.in.h:577
+#: ../data/units.xml.in.h:581
 msgid "Bit (Binary Digit)"
 msgstr "Бит (Двоичная цифра)"
 
-#: ../data/units.xml.in.h:578
+#: ../data/units.xml.in.h:582
 msgid "r:bit,p:bits,shannon,p:shannons,c:Sh,binary_digit,p:binary_digits"
 msgstr "бит,p:битов,шеннон,p:шеннонов,двоичная_цифра,p:двоичных_цифр"
 
-#: ../data/units.xml.in.h:579
+#: ../data/units.xml.in.h:583
 msgid "Nat"
 msgstr "Нат"
 
-#: ../data/units.xml.in.h:580
+#: ../data/units.xml.in.h:584
 msgid "r:nat,p:nats"
 msgstr "нат,p:натов"
 
-#: ../data/units.xml.in.h:581
+#: ../data/units.xml.in.h:585
 msgid "Trit (Ternary Digit)"
 msgstr "Трит (Троичная цифра)"
 
-#: ../data/units.xml.in.h:582
+#: ../data/units.xml.in.h:586
 msgid ""
 "r:trit,p:trits,trinary_digit,p:trinary_digits,ternary_digit,p:ternary_digits"
 msgstr "трит,p:,тритов,троичная_цифра,p:троичных_цифр"
 
-#: ../data/units.xml.in.h:583
+#: ../data/units.xml.in.h:587
 msgid "Octal Digit"
 msgstr "Восьмеричная цифра"
 
-#: ../data/units.xml.in.h:584
+#: ../data/units.xml.in.h:588
 msgid "r:octal_digit,p:octal_digits"
 msgstr "восьмеричная_цифра,p:восьмеричных_цифр"
 
-#: ../data/units.xml.in.h:585
+#: ../data/units.xml.in.h:589
 msgid "Hartley (Decimal Digit)"
 msgstr "Хартли (Десятичная цифра)"
 
-#: ../data/units.xml.in.h:586
+#: ../data/units.xml.in.h:590
 msgid "r:hartley,p:hartleys,a:Hart,dit,p:dits,decimal_digit,p:decimal_digits"
 msgstr ""
 "хартли,a:Харт,дит,a:дитов,десятичная_цифра,p:десятичных_цифр,хартдит,p:"
 "хартдитов"
 
-#: ../data/units.xml.in.h:587
+#: ../data/units.xml.in.h:591
 msgid "Byte (8-bit)"
 msgstr "Байт (8 бит)"
 
-#: ../data/units.xml.in.h:588
+#: ../data/units.xml.in.h:592
 msgid "r:byte,a:B,p:bytes,octet,p:octets,a:o"
 msgstr "байт,ac:Б,октет,p:октетов,a:о"
 
-#: ../data/units.xml.in.h:589
+#: ../data/units.xml.in.h:593
 msgid "Nibble (Hexadecimal Digit)"
 msgstr "Ниббл (Шестнадцатеричная цифра)"
 
-#: ../data/units.xml.in.h:590
+#: ../data/units.xml.in.h:594
 msgid ""
 "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets,hex_digit,p:"
 "hex_digits,hexadecimal_digit,p:hexadecimal_digits"
@@ -11158,167 +11173,167 @@ msgstr ""
 "ниббл,p:ниблов,полубайт,p:полубайтов,тетрада,p:тетрад,гексадецит,p:"
 "гексадецитов,шестнадцатеричная_цифра,p:шестнадцатеричных_цифр"
 
-#: ../data/units.xml.in.h:591
+#: ../data/units.xml.in.h:595
 msgid "Tribble"
 msgstr "Триббл"
 
-#: ../data/units.xml.in.h:592
+#: ../data/units.xml.in.h:596
 msgid "r:tribble,p:tribbles"
 msgstr "триббл"
 
-#: ../data/units.xml.in.h:593
+#: ../data/units.xml.in.h:597
 msgid "Nonet"
 msgstr "Нонет"
 
-#: ../data/units.xml.in.h:594
+#: ../data/units.xml.in.h:598
 msgid "r:nonet,p:nonets"
 msgstr "нонет,p:нонетов"
 
-#: ../data/units.xml.in.h:595
+#: ../data/units.xml.in.h:599
 msgid "Declet"
 msgstr "Деклет"
 
-#: ../data/units.xml.in.h:596
+#: ../data/units.xml.in.h:600
 msgid "r:declet,p:declets"
 msgstr "деклет,p:деклетов"
 
-#: ../data/units.xml.in.h:597
+#: ../data/units.xml.in.h:601
 msgid "Word (16-bit)"
 msgstr "Слово (16 бит)"
 
-#: ../data/units.xml.in.h:598
+#: ../data/units.xml.in.h:602
 msgid "r:word,p:words"
 msgstr "слово,p:слова,p:слов"
 
-#: ../data/units.xml.in.h:599
+#: ../data/units.xml.in.h:603
 msgid "Kilobyte"
 msgstr "Килобайт"
 
-#: ../data/units.xml.in.h:600
+#: ../data/units.xml.in.h:604
 msgid "Megabyte"
 msgstr "Мегабайт"
 
-#: ../data/units.xml.in.h:601
+#: ../data/units.xml.in.h:605
 msgid "Gigabyte"
 msgstr "Гигабайт"
 
-#: ../data/units.xml.in.h:602
+#: ../data/units.xml.in.h:606
 msgid "Terabyte"
 msgstr "Терабайт"
 
-#: ../data/units.xml.in.h:603
+#: ../data/units.xml.in.h:607
 msgid "Petabyte"
 msgstr "Петабайт"
 
-#: ../data/units.xml.in.h:604
+#: ../data/units.xml.in.h:608
 msgid "Exabyte"
 msgstr "Эксабайт"
 
-#: ../data/units.xml.in.h:605
+#: ../data/units.xml.in.h:609
 msgid "Kibibyte"
 msgstr "Кибибайт"
 
-#: ../data/units.xml.in.h:606
+#: ../data/units.xml.in.h:610
 msgid "Mebibyte"
 msgstr "Мебибайт"
 
-#: ../data/units.xml.in.h:607
+#: ../data/units.xml.in.h:611
 msgid "Gibibyte"
 msgstr "Гибибайт"
 
-#: ../data/units.xml.in.h:608
+#: ../data/units.xml.in.h:612
 msgid "Tebibyte"
 msgstr "Тебибайт"
 
-#: ../data/units.xml.in.h:609
+#: ../data/units.xml.in.h:613
 msgid "Kilobit"
 msgstr "Килобит"
 
-#: ../data/units.xml.in.h:610
+#: ../data/units.xml.in.h:614
 msgid "Megabit"
 msgstr "Мегабит"
 
-#: ../data/units.xml.in.h:611
+#: ../data/units.xml.in.h:615
 msgid "Gigabit"
 msgstr "Гигабит"
 
-#: ../data/units.xml.in.h:612
+#: ../data/units.xml.in.h:616
 msgid "Terabit"
 msgstr "Терабит"
 
-#: ../data/units.xml.in.h:613
+#: ../data/units.xml.in.h:617
 msgid "Petabit"
 msgstr "Петабит"
 
-#: ../data/units.xml.in.h:614
+#: ../data/units.xml.in.h:618
 msgid "Kibibit"
 msgstr "Кибибит"
 
-#: ../data/units.xml.in.h:615
+#: ../data/units.xml.in.h:619
 msgid "Mebibit"
 msgstr "Мебибит"
 
-#: ../data/units.xml.in.h:616
+#: ../data/units.xml.in.h:620
 msgid "Gibibit"
 msgstr "Гигибит"
 
-#: ../data/units.xml.in.h:617
+#: ../data/units.xml.in.h:621
 msgid "Typography"
 msgstr "Книгопечатание"
 
-#: ../data/units.xml.in.h:618
+#: ../data/units.xml.in.h:622
 msgid "PostScript Point"
 msgstr "PostScript пункт (1/72 дюйма)"
 
-#: ../data/units.xml.in.h:619
+#: ../data/units.xml.in.h:623
 msgid "ar:pt,a:pts,point,p:points"
 msgstr "a:pt,a:pts,пункт,p:пункты"
 
-#: ../data/units.xml.in.h:620
+#: ../data/units.xml.in.h:624
 msgid "PostScript Pica"
 msgstr "PostScript пайка"
 
-#: ../data/units.xml.in.h:621
+#: ../data/units.xml.in.h:625
 msgid "r:pica,p:picas"
 msgstr "пайка,p:пайки"
 
-#: ../data/units.xml.in.h:622
+#: ../data/units.xml.in.h:626
 msgid "ATA Pica"
 msgstr "Пайка Хоукса"
 
-#: ../data/units.xml.in.h:623
+#: ../data/units.xml.in.h:627
 msgid "r:ata_pica,p:ata_picas"
 msgstr "пайка_хоукс,p:ata_picas"
 
-#: ../data/units.xml.in.h:624
+#: ../data/units.xml.in.h:628
 msgid "ATA Point"
 msgstr "Пункт Хоукса"
 
-#: ../data/units.xml.in.h:625
+#: ../data/units.xml.in.h:629
 msgid "r:ata_point,a:ata_pt,p:ata_points"
 msgstr "пункт_хоукс,a:ata_pt,p:ata_points"
 
-#: ../data/units.xml.in.h:626
+#: ../data/units.xml.in.h:630
 msgid "New Didot Point"
 msgstr "Новый пункт Дидо"
 
-#: ../data/units.xml.in.h:627
+#: ../data/units.xml.in.h:631
 msgid "r:new_didot"
 msgstr "новый_дидо"
 
-#: ../data/units.xml.in.h:628
+#: ../data/units.xml.in.h:632
 msgid "Didot Point"
 msgstr "Пункт Дидо"
 
-#: ../data/units.xml.in.h:629
+#: ../data/units.xml.in.h:633
 msgid "r:didot,a:dd"
 msgstr "дидо,a:dd"
 
-#: ../data/units.xml.in.h:630
+#: ../data/units.xml.in.h:634
 msgid "Cicero"
 msgstr "Цицеро"
 
-#: ../data/units.xml.in.h:631
+#: ../data/units.xml.in.h:635
 msgid "r:cicero"
 msgstr "цицеро"
 
