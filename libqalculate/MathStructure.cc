@@ -2337,7 +2337,7 @@ size_t MathStructure::countTotalChildren(bool count_function_as_one) const {
 	if((m_type == STRUCT_FUNCTION && count_function_as_one) || SIZE == 0) return 1;
 	size_t count = 0;
 	for(size_t i = 0; i < SIZE; i++) {
-		count += CHILD(i).countTotalChildren() + 1;
+		count += CHILD(i).countTotalChildren(count_function_as_one) + 1;
 	}
 	return count;
 }

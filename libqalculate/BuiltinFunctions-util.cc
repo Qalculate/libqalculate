@@ -983,7 +983,29 @@ int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	}
 
 	ParseOptions po;
+	CALCULATOR->beginTemporaryStopMessages();
 	CALCULATOR->parse(&mstruct, output, po);
+	vector<CalculatorMessage> blocked_messages;
+	CALCULATOR->endTemporaryStopMessages(false, &blocked_messages);
+	bool b_error = blocked_messages.size() > 5;
+	for(size_t i = 0; !b_error && i < blocked_messages.size(); i++) {
+		if(blocked_messages[i].type() == MESSAGE_ERROR) b_error = true;
+	}
+	if(!b_error) {
+		long long int n = mstruct.countTotalChildren(false);
+		if(n > 1000) {
+			if(mstruct.isMatrix()) b_error = n > ((long long int) mstruct.rows()) * ((long long int) mstruct.columns()) * 10;
+			else if(mstruct.isVector()) b_error = n > ((long long int) mstruct.size()) * 10;
+			else b_error = true;
+		}
+	}
+	if(b_error) {
+		size_t i = output.find("\n");
+		if(i != string::npos && i > 0 && i < output.length() - 1) output.insert(0, "\n");
+		CALCULATOR->error(true, "Parsing of command output failed: %s", output.c_str(), NULL);
+		return 0;
+	}
+	CALCULATOR->addMessages(&blocked_messages);
 
 	return 1;
 
