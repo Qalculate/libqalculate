@@ -595,7 +595,7 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 					}
 				}
 			}
-			if(!b_possible_zero && !b_fail && lhop_depth < 5 && !mzero.isOne() && !minfp.isOne() && mzero.countTotalChildren(false) + minfp.countTotalChildren(false) < 50) {
+			if(!b_possible_zero && !b_fail && lhop_depth < 5 && !mzero.isOne() && !minfp.isOne() && mzero.countTotalChildren(false) + minfp.countTotalChildren(false) < 250) {
 				//L'Hôpital's rule
 				MathStructure mden, mnum;
 				for(size_t i2 = 0; i2 < 2; i2++) {
