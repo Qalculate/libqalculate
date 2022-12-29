@@ -3904,6 +3904,7 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
 	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
+	curl_easy_setopt(curl, CURLOPT_USERAGENT, (string("libqalculate/") + VERSION).c_str());
 	error_buffer[0] = 0;
 	curl_easy_setopt(curl, CURLOPT_FILETIME, &file_time);
 #ifdef _WIN32
@@ -3925,7 +3926,7 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 		FETCH_FAIL_CLEANUP;
 		return false;
 	}
-	if(sbuffer.empty()) {FER_ERROR("ecb.europa.eu", "Document empty", "", ""); FETCH_FAIL_CLEANUP; return false;}
+	if(sbuffer.empty() || sbuffer.find("Internal Server Error") != string::npos || sbuffer.find("Bad Gateway") != string::npos) {FER_ERROR("ecb.europa.eu", "Document empty", "", ""); FETCH_FAIL_CLEANUP; return false;}
 	ofstream file(getExchangeRatesFileName(1).c_str(), ios::out | ios::trunc | ios::binary);
 	if(!file.is_open()) {
 		FER_ERROR("ecb.europa.eu", strerror(errno), "", "");
@@ -3963,7 +3964,7 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 		
 
 		if(res != CURLE_OK) {FER_ERROR("coinbase.com", error_buffer, "ecb.europa.eu", u_btc->title().c_str()); FETCH_FAIL_CLEANUP; return false;}
-		if(sbuffer.empty()) {FER_ERROR("coinbase.com", "Document empty", "ecb.europa.eu", u_btc->title().c_str()); FETCH_FAIL_CLEANUP; return false;}
+		if(sbuffer.empty() || sbuffer.find("Internal Server Error") != string::npos || sbuffer.find("Bad Gateway") != string::npos) {FER_ERROR("coinbase.com", "Document empty", "ecb.europa.eu", u_btc->title().c_str()); FETCH_FAIL_CLEANUP; return false;}
 		ofstream file3(getExchangeRatesFileName(2).c_str(), ios::out | ios::trunc | ios::binary);
 		if(!file3.is_open()) {
 			FER_ERROR("coinbase.com", strerror(errno), "ECB", u_btc->title().c_str());
@@ -3984,9 +3985,8 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
 		curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
 		res = curl_easy_perform(curl);
-
 		if(res != CURLE_OK) {FER_ERROR("mycurrency.net", error_buffer, "ecb.europa.eu, coinbase.com", ""); FETCH_FAIL_CLEANUP; return false;}
-		if(sbuffer.empty() || sbuffer.find("Internal Server Error") != string::npos) {FER_ERROR("mycurrency.net", "Document empty", "ecb.europa.eu, coinbase.com", ""); FETCH_FAIL_CLEANUP; return false;}
+		if(sbuffer.empty() || sbuffer.find("Internal Server Error") != string::npos || sbuffer.find("Bad Gateway") != string::npos) {FER_ERROR("mycurrency.net", "Document empty", "ecb.europa.eu, coinbase.com", ""); FETCH_FAIL_CLEANUP; return false;}
 		ofstream file2(getExchangeRatesFileName(3).c_str(), ios::out | ios::trunc | ios::binary);
 		if(!file2.is_open()) {
 			FER_ERROR("mycurrency.net", strerror(errno), "ecb.europa.eu, coinbase.com", "");
@@ -4010,7 +4010,7 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 		res = curl_easy_perform(curl);
 
 		if(res != CURLE_OK) {if(n > 0) {FER_ERROR("nbrb.by", error_buffer, n == 4 ? "ecb.europa.eu, coinbase.com" : "ecb.europa.eu, coinbase.com, mycurrency.net", priv->u_byn->title().c_str());} FETCH_FAIL_CLEANUP; return false;}
-		if(sbuffer.empty()) {FER_ERROR("nbrb.by", "Document empty", n == 4 ? "ecb.europa.eu, coinbase.com" : "ecb.europa.eu, coinbase.com, mycurrency.net", priv->u_byn->title().c_str()); FETCH_FAIL_CLEANUP; return false;}
+		if(sbuffer.empty() || sbuffer.find("Internal Server Error") != string::npos || sbuffer.find("Bad Gateway") != string::npos) {FER_ERROR("nbrb.by", "Document empty", n == 4 ? "ecb.europa.eu, coinbase.com" : "ecb.europa.eu, coinbase.com, mycurrency.net", priv->u_byn->title().c_str()); FETCH_FAIL_CLEANUP; return false;}
 		ofstream file4(getExchangeRatesFileName(4).c_str(), ios::out | ios::trunc | ios::binary);
 		if(!file4.is_open()) {
 			FER_ERROR("nbrb.by", strerror(errno), n == 4 ? "ecb.europa.eu, coinbase.com" : "ecb.europa.eu, coinbase.com, mycurrency.net", priv->u_byn->title().c_str());
