@@ -3687,6 +3687,8 @@ bool Calculator::loadExchangeRates() {
 		ssbuffer << file.rdbuf();
 		sbuffer = ssbuffer.str();
 #endif
+	}
+	if(sbuffer.find("\"currency_code\":") != string::npos) {
 		string sname;
 		size_t i = sbuffer.find("\"currency_code\":");
 		while(i != string::npos) {
@@ -3696,9 +3698,9 @@ bool Calculator::loadExchangeRates() {
 			size_t i3 = sbuffer.find("\"", i2 + 1);
 			if(i3 != string::npos && i3 - (i2 + 1) == 3) {
 				currency = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
-				if(currency.length() == 3 && currency[0] >= 'A' && currency[0] <= 'Z') {
+				if(currency.length() == 3 && currency[0] >= 'A' && currency[0] <= 'Z' && currency != "MRO" && currency != "VEF" && currency != "ZMK") {
 					u = getUnit(currency);
-					if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit() == u_usd)) {
+					if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->isHidden() && u->isBuiltin() && !u->isLocal())) {
 						i2 = sbuffer.find("\"rate\":", i3 + 1);
 						size_t i4 = sbuffer.find("}", i3 + 1);
 						if(i2 != string::npos && i2 < i4) {
@@ -3740,51 +3742,90 @@ bool Calculator::loadExchangeRates() {
 		if(file.is_open()) file.close();
 		exchange_rates_time[2] = ((time_t) 1527199L) * 1000;
 		if(exchange_rates_time[2] > exchange_rates_check_time[2]) exchange_rates_check_time[2] = exchange_rates_time[2];
-	} else {
+	} else if(sbuffer.find("\"alphaCode\":") != string::npos) {
 		string sname;
-		size_t i = sbuffer.find("class=\'country\'");
+		size_t i = sbuffer.find("\"alphaCode\":");
 		while(i != string::npos) {
-			currency = ""; sname = ""; rate = "";
-			i += 15;
-			size_t i2 = sbuffer.find("data-currency-code=\"", i);
-			if(i2 != string::npos) {
-				i2 += 19;
-				size_t i3 = sbuffer.find("\"", i2 + 1);
-				if(i3 != string::npos) {
-					currency = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
-					remove_blank_ends(currency);
+			i += 12;
+			size_t i2 = sbuffer.find("\"", i);
+			if(i2 == string::npos) break;
+			size_t i3 = sbuffer.find("\"", i2 + 1);
+			if(i3 != string::npos && i3 - (i2 + 1) == 3) {
+				currency = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
+				if(currency.length() == 3 && currency[0] >= 'A' && currency[0] <= 'Z' && currency != "WST" && currency != "SSP" && currency != "STN") {
+					u = getUnit(currency);
+					if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->isHidden() && u->isBuiltin() && !u->isLocal())) {
+						i2 = sbuffer.find("\"rate\":", i3 + 1);
+						size_t i4 = sbuffer.find("}", i3 + 1);
+						if(i2 != string::npos && i2 < i4) {
+							i3 = sbuffer.find(",", i2 + 7);
+							rate = sbuffer.substr(i2 + 7, i3 - (i2 + 7));
+							rate = "1/" + rate;
+							if(!u) {
+								i2 = sbuffer.find("\"name\":\"", i3 + 1);
+								if(i2 != string::npos && i2 < i4) {
+									i3 = sbuffer.find("\"", i2 + 8);
+									if(i3 != string::npos) {
+										sname = sbuffer.substr(i2 + 8, i3 - (i2 + 8));
+										remove_blank_ends(sname);
+									}
+								} else {
+									sname = "";
+								}
+								u = addUnit(new AliasUnit(_("Currency"), currency, "", "", sname, u_usd, rate, 1, "", false, true), false, true);
+								if(u) u->setHidden(true);
+							} else {
+								if(cunits.find(u) != cunits.end()) {
+									u = NULL;
+								} else {
+									((AliasUnit*) u)->setBaseUnit(u_usd);
+									((AliasUnit*) u)->setExpression(rate);
+								}
+							}
+							if(u) {
+								u->setApproximate();
+								u->setPrecision(-2);
+								u->setChanged(false);
+							}
+						}
+					}
 				}
 			}
-			i2 = sbuffer.find("data-currency-name=\'", i);
+			i = sbuffer.find("\"alphaCode\":", i);
+		}
+		if(file.is_open()) file.close();
+		exchange_rates_time[2] = ((time_t) 1527199L) * 1000;
+		if(exchange_rates_time[2] > exchange_rates_check_time[2]) exchange_rates_check_time[2] = exchange_rates_time[2];
+	} else if(!sbuffer.empty()) {
+		string sname;
+		size_t i = sbuffer.find("rates");
+		if(i != string::npos) i = sbuffer.find("{", i);
+		if(i != string::npos) i = sbuffer.find("\"", i);
+		while(i != string::npos) {
+			currency = ""; rate = "";
+			size_t i2 = sbuffer.find("\"", i + 1);
+			currency = sbuffer.substr(i + 1, i2 - i - 1);
+			remove_blank_ends(currency);
+			i = sbuffer.find("\"", i2 + 1);
+			i2 = sbuffer.find(":", i2 + 1);
 			if(i2 != string::npos) {
-				i2 += 19;
-				size_t i3 = sbuffer.find("|", i2 + 1);
-				if(i3 != string::npos) {
-					sname = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
-					remove_blank_ends(sname);
+				size_t i3 = sbuffer.find_first_not_of(NUMBERS ".", i2 + 1);
+				if(i3 != string::npos && i3 != i2 + 1) {
+					rate = sbuffer.substr(i2 + 1, i3 - i2 - 1);
 				}
 			}
-			i2 = sbuffer.find("data-rate=\'", i);
-			if(i2 != string::npos) {
-				i2 += 10;
-				size_t i3 = sbuffer.find("'", i2 + 1);
-				if(i3 != string::npos) {
-					rate = sbuffer.substr(i2 + 1, i3 - (i2 + 1));
-					remove_blank_ends(rate);
-				}
-			}
-			if(currency.length() == 3 && currency[0] >= 'A' && currency[0] <= 'Z' && !rate.empty()) {
+			if(currency.length() == 3 && currency[0] >= 'A' && currency[0] <= 'Z' && !rate.empty() && currency != "BTN" && currency != "CLF" && currency != "CNH" && currency != "CUC" && currency != "IMP" && currency != "JEP" && currency != "SHP" && currency != "SSP" && currency != "STN" && currency != "WST" && (currency[0] != 'X' || (currency != "XAG" && currency != "XAU" && currency != "XDR" && currency != "XPD" && currency != "XPT")) && currency != "ZWL") {
 				u = getUnit(currency);
-				if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit() == u_usd)) {
+				if(!u || ((u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->isHidden() && u->isBuiltin() && !u->isLocal()))) {
 					rate = "1/" + rate;
 					if(!u) {
-						u = addUnit(new AliasUnit(_("Currency"), currency, "", "", sname, u_usd, rate, 1, "", false, true), false, true);
+						u = addUnit(new AliasUnit(_("Currency"), currency, "", "", sname, u_euro, rate, 1, "", false, true), false, true);
 						if(u) u->setHidden(true);
 					} else {
 						if(cunits.find(u) != cunits.end()) {
 							u = NULL;
 						} else {
-							((AliasUnit*) u)->setBaseUnit(u_usd);
+							((AliasUnit*) u)->setBaseUnit(u_euro);
 							((AliasUnit*) u)->setExpression(rate);
 						}
 					}
@@ -3795,7 +3836,6 @@ bool Calculator::loadExchangeRates() {
 					}
 				}
 			}
-			i = sbuffer.find("class=\'country\'", i);
 		}
 		file.close();
 		struct stat stats;
@@ -3825,8 +3865,7 @@ string Calculator::getExchangeRatesFileName(int index) {
 	switch(index) {
 		case 1: {return buildPath(getLocalDataDir(), "eurofxref-daily.xml");}
 		case 2: {return buildPath(getLocalDataDir(), "btc.json");}
-		//case 3: {return buildPath(getLocalDataDir(), "rates.json");}
-		case 3: {return buildPath(getLocalDataDir(), "rates.html");}
+		case 3: {return buildPath(getLocalDataDir(), "rates.json");}
 		case 4: {return buildPath(getLocalDataDir(), "nrby.json");}
 		default: {}
 	}
@@ -3855,8 +3894,7 @@ string Calculator::getExchangeRatesUrl(int index) {
 	switch(index) {
 		case 1: {return "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";}
 		case 2: {return "https://api.coinbase.com/v2/prices/spot?currency=EUR";}
-		//case 2: {return "http://www.mycurrency.net/US.json";}
-		case 3: {return "https://www.mycurrency.net/=US";}
+		case 3: {return "https://api.exchangerate.host/latest";}
 		case 4: {return "https://www.nbrb.by/api/exrates/rates/eur?parammode=2";}
 		default: {}
 	}
@@ -3904,7 +3942,6 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
 	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
-	curl_easy_setopt(curl, CURLOPT_USERAGENT, (string("libqalculate/") + VERSION).c_str());
 	error_buffer[0] = 0;
 	curl_easy_setopt(curl, CURLOPT_FILETIME, &file_time);
 #ifdef _WIN32
@@ -3985,11 +4022,26 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
 		curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
 		res = curl_easy_perform(curl);
-		if(res != CURLE_OK) {FER_ERROR("mycurrency.net", error_buffer, "ecb.europa.eu, coinbase.com", ""); FETCH_FAIL_CLEANUP; return false;}
-		if(sbuffer.empty() || sbuffer.find("Internal Server Error") != string::npos || sbuffer.find("Bad Gateway") != string::npos) {FER_ERROR("mycurrency.net", "Document empty", "ecb.europa.eu, coinbase.com", ""); FETCH_FAIL_CLEANUP; return false;}
+		if(res != CURLE_OK || sbuffer.empty() || sbuffer.find("rates") == string::npos) {
+			curl_easy_setopt(curl, CURLOPT_URL, "https://www.mycurrency.net/US.json");
+			curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
+			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
+			curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
+			res = curl_easy_perform(curl);
+			if(res != CURLE_OK || sbuffer.empty() || sbuffer.find("\"currency_code\":") == string::npos) {
+				curl_easy_setopt(curl, CURLOPT_URL, "https://www.floatrates.com/daily/eur.json");
+				curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
+				curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+				curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
+				curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
+				res = curl_easy_perform(curl);
+				if(sbuffer.empty() || sbuffer.find("\"alphaCode\":") == string::npos) {FER_ERROR("exchangerate.host", "Document empty", "ecb.europa.eu, coinbase.com", res == CURLE_OK ? "Document empty" : ""); FETCH_FAIL_CLEANUP; return false;}
+			}
+		}
 		ofstream file2(getExchangeRatesFileName(3).c_str(), ios::out | ios::trunc | ios::binary);
 		if(!file2.is_open()) {
-			FER_ERROR("mycurrency.net", strerror(errno), "ecb.europa.eu, coinbase.com", "");
+			FER_ERROR("exchangerate.host", strerror(errno), "ecb.europa.eu, coinbase.com", "");
 			FETCH_FAIL_CLEANUP
 			return false;
 		}
@@ -4009,7 +4061,7 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 
 		res = curl_easy_perform(curl);
 
-		if(res != CURLE_OK) {if(n > 0) {FER_ERROR("nbrb.by", error_buffer, n == 4 ? "ecb.europa.eu, coinbase.com" : "ecb.europa.eu, coinbase.com, mycurrency.net", priv->u_byn->title().c_str());} FETCH_FAIL_CLEANUP; return false;}
+		if(res != CURLE_OK) {if(n > 0) {FER_ERROR("nbrb.by", error_buffer, n == 4 ? "ecb.europa.eu, coinbase.com" : "ecb.europa.eu, coinbase.com, exchangerate.host", priv->u_byn->title().c_str());} FETCH_FAIL_CLEANUP; return false;}
 		if(sbuffer.empty() || sbuffer.find("Internal Server Error") != string::npos || sbuffer.find("Bad Gateway") != string::npos) {FER_ERROR("nbrb.by", "Document empty", n == 4 ? "ecb.europa.eu, coinbase.com" : "ecb.europa.eu, coinbase.com, mycurrency.net", priv->u_byn->title().c_str()); FETCH_FAIL_CLEANUP; return false;}
 		ofstream file4(getExchangeRatesFileName(4).c_str(), ios::out | ios::trunc | ios::binary);
 		if(!file4.is_open()) {

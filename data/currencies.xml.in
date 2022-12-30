@@ -528,9 +528,10 @@
       <_names>a-cr:MVR</_names>
       <_countries>Maldives</_countries>
     </builtin_unit>
-    <builtin_unit name="MRO">
-      <_title>Mauritanian Ouguiya (obsolete)</_title>
-      <_names>a-cr:MRO</_names>
+    <builtin_unit name="MRU">
+      <_title>Mauritanian Ouguiya</_title>
+      <_names>a-cr:MRU</_names>
+      <_countries>Mauritania</_countries>
     </builtin_unit>
     <builtin_unit name="MUR">
       <_title>Mauritian Rupee</_title>
@@ -747,9 +748,9 @@
       <_names>a-cr:VUV</_names>
       <_countries>Vanuatu</_countries>
     </builtin_unit>
-    <builtin_unit name="VEF">
-      <_title>Venezuelan Bolívar (obsolete)</_title>
-      <_names>a-cr:VEF</_names>
+    <builtin_unit name="VES">
+      <_title>Venezuelan Bolívar</_title>
+      <_names>a-cr:VES</_names>
     </builtin_unit>
     <builtin_unit name="VND">
       <_title>Vietnamese Đồng</_title>
@@ -761,9 +762,10 @@
       <_names>a-cr:YER</_names>
       <_countries>Yemen</_countries>
     </builtin_unit>
-    <builtin_unit name="ZMK">
-      <_title>Zambian Kwacha (obsolete)</_title>
-      <_names>a-cr:ZMK</_names>
+    <builtin_unit name="ZMW">
+      <_title>Zambian Kwacha</_title>
+      <_names>a-cr:ZMW</_names>
+      <_countries>Zambia</_countries>
     </builtin_unit>
     <unit type="alias">
       <_title>Euro Cent</_title>
