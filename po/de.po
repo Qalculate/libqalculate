@@ -204,7 +204,7 @@ msgstr "ungefähre"
 
 #: ../src/defs2doc.cc:626 ../src/qalc.cc:2493
 msgid "ans"
-msgstr "und"
+msgstr "antw"
 
 #: ../src/defs2doc.cc:627 ../src/defs2doc.cc:630 ../src/defs2doc.cc:631
 #: ../src/defs2doc.cc:632 ../src/defs2doc.cc:633
@@ -221,7 +221,7 @@ msgstr "Letzte Antwort"
 
 #: ../src/defs2doc.cc:628 ../src/qalc.cc:2495
 msgid "answer"
-msgstr "antwort"
+msgstr "Antwort"
 
 #: ../src/defs2doc.cc:630 ../src/qalc.cc:2497
 msgid "Answer 2"
