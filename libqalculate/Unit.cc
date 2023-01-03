@@ -272,7 +272,7 @@ bool Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp) const {
 					if(u == CALCULATOR->getUnitById(UNIT_ID_BTC) || this != CALCULATOR->getUnitById(UNIT_ID_BTC)) i = i | 0b0010;
 				} else if(u == CALCULATOR->getUnitById(UNIT_ID_BYN) || u_parent == CALCULATOR->getUnitById(UNIT_ID_BYN)) {
 					if(u == CALCULATOR->getUnitById(UNIT_ID_BYN) || this != CALCULATOR->getUnitById(UNIT_ID_BYN)) i = i | 0b1000;
-				} else if(u_parent == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
+				} else if(u_parent == CALCULATOR->getUnitById(UNIT_ID_EURO) && !u->isHidden()) {
 					if(subtype() != SUBTYPE_ALIAS_UNIT || ((AliasUnit*) this)->firstBaseUnit() != u) i = i | 0b0001;
 				} else {
 					if(this == CALCULATOR->getUnitById(UNIT_ID_EURO)) i = i | 0b0001;
@@ -291,7 +291,7 @@ bool Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp) const {
 						if(i & 0b0100) i = i | 0b0001;
 						i = i | 0b1000;
 					}
-				} else if(u_parent == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
+				} else if(u_parent == CALCULATOR->getUnitById(UNIT_ID_EURO) && !isHidden()) {
 					if(u->subtype() != SUBTYPE_ALIAS_UNIT || ((AliasUnit*) u)->firstBaseUnit() != this) i = i | 0b0001;
 				} else {
 					if((i & 0b1000) || (i & 0b0010) || u == CALCULATOR->getUnitById(UNIT_ID_EURO)) i = i | 0b0001;

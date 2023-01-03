@@ -5,7 +5,7 @@
     <builtin_unit name="EUR">
       <_title>European Euro</_title>
       <_names>a-cr:EUR,au:&#x20AC;,euro,p:euros</_names>
-      <_countries>Andorra, Austria, Belgium, Cyprus, Estonia, Finland, France, Germany, Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City</_countries>
+      <_countries>Andorra, Austria, Belgium, Croatia, Cyprus, Estonia, Finland, France, Germany, Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City</_countries>
     </builtin_unit>
     <builtin_unit name="USD">
       <_title>U.S. Dollar</_title>
@@ -66,11 +66,6 @@
       <_title>Malaysian Ringgit</_title>
       <_names>acr:MYR,ac:myr</_names>
       <_countries>Malaysia</_countries>
-    </builtin_unit>
-    <builtin_unit name="HRK">
-      <_title>Croatian Kuna</_title>
-      <_names>a-cr:HRK</_names>
-      <_countries>Croatia</_countries>
     </builtin_unit>
     <builtin_unit name="CNY">
       <_title>Chinese Yuan Renminbi</_title>
@@ -792,6 +787,16 @@
       <base>
         <unit>EUR</unit>
         <relation>1/40.3399</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <hidden>true</hidden>
+      <_title>Croatian Kuna (obsolete)</_title>
+      <_names>a-cr:HRK</_names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/7.53450</relation>
         <exponent>1</exponent>
       </base>
     </unit>

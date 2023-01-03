@@ -967,7 +967,7 @@ int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 #endif
 
 	if(!pipe) {
-		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str());
+		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str(), NULL);
 		return 0;
 	}
 
@@ -978,7 +978,7 @@ int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	}
 
 	if(pclose(pipe) > 0 && output.empty()) {
-		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str());
+		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str(), NULL);
 		return 0;
 	}
 
@@ -1002,7 +1002,7 @@ int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	if(b_error) {
 		size_t i = output.find("\n");
 		if(i != string::npos && i > 0 && i < output.length() - 1) output.insert(0, "\n");
-		CALCULATOR->error(true, "Parsing of command output failed: %s", output.c_str(), NULL);
+		CALCULATOR->error(true, _("Parsing of command output failed: %s"), output.c_str(), NULL);
 		return 0;
 	}
 	CALCULATOR->addMessages(&blocked_messages);

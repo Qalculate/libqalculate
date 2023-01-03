@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate-defs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 08:33+0100\n"
+"POT-Creation-Date: 2023-01-04 07:06+0100\n"
 "PO-Revision-Date: 2021-06-06 21:44-0600\n"
 "Last-Translator: Alex Henrie <alexhenrie24@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -31,9 +31,9 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:4
 msgid ""
-"Andorra, Austria, Belgium, Cyprus, Estonia, Finland, France, Germany, "
-"Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, "
-"Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City"
+"Andorra, Austria, Belgium, Croatia, Cyprus, Estonia, Finland, France, "
+"Germany, Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, "
+"Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:5
@@ -183,1839 +183,1843 @@ msgid "Malaysia"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:41
-msgid "Croatian Kuna"
-msgstr ""
-
-#: ../data/currencies.xml.in.h:42
-msgid "a-cr:HRK"
-msgstr ""
-
-#: ../data/currencies.xml.in.h:43
-msgid "Croatia"
-msgstr ""
-
-#: ../data/currencies.xml.in.h:44
 msgid "Chinese Yuan Renminbi"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:45
+#: ../data/currencies.xml.in.h:42
 msgid "a-cr:CNY"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:46
+#: ../data/currencies.xml.in.h:43
 msgid "China"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:47
+#: ../data/currencies.xml.in.h:44
 msgid "Indonesian Rupiah"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:48
+#: ../data/currencies.xml.in.h:45
 msgid "a-cr:IDR,rupiah"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:49
+#: ../data/currencies.xml.in.h:46
 msgid "Indonesia"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:50
+#: ../data/currencies.xml.in.h:47
 msgid "Czech Koruna"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:51
+#: ../data/currencies.xml.in.h:48
 msgid "a-cr:CZK,au-c:K&#x10D;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:52
+#: ../data/currencies.xml.in.h:49
 msgid "Czech Republic"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:53
+#: ../data/currencies.xml.in.h:50
 msgid "Hungarian Forint"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:54
+#: ../data/currencies.xml.in.h:51
 msgid "forint,a-cr:HUF"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:55
+#: ../data/currencies.xml.in.h:52
 msgid "Hungary"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:56
+#: ../data/currencies.xml.in.h:53
 msgid "Polish Zloty"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:57
+#: ../data/currencies.xml.in.h:54
 msgid "a-cr:PLN,au:z&#x0142;,zloty"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:58
+#: ../data/currencies.xml.in.h:55
 msgid "Poland"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:59
+#: ../data/currencies.xml.in.h:56
 msgid "Romanian Leu"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:60
+#: ../data/currencies.xml.in.h:57
 msgid "a-cr:RON"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:61
+#: ../data/currencies.xml.in.h:58
 msgid "Romania"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:62
+#: ../data/currencies.xml.in.h:59
 msgid "Turkish New Lira"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:63
+#: ../data/currencies.xml.in.h:60
 msgid "a-cr:TRY,au:&#x20BA;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:64
+#: ../data/currencies.xml.in.h:61
 msgid "Turkey"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:65
+#: ../data/currencies.xml.in.h:62
 msgid "Australian Dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:66
+#: ../data/currencies.xml.in.h:63
 msgid "a-cr:AUD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:67
+#: ../data/currencies.xml.in.h:64
 msgid "Australia"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:68
+#: ../data/currencies.xml.in.h:65
 msgid "Canadian Dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:69
+#: ../data/currencies.xml.in.h:66
 msgid "a-cr:CAD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:70
+#: ../data/currencies.xml.in.h:67
 msgid "Canada"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:71
+#: ../data/currencies.xml.in.h:68
 msgid "Hong Kong Dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:72
+#: ../data/currencies.xml.in.h:69
 msgid "a-cr:HKD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:73
+#: ../data/currencies.xml.in.h:70
 msgid "New Zealand Dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:74
+#: ../data/currencies.xml.in.h:71
 msgid "a-cr:NZD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:75
+#: ../data/currencies.xml.in.h:72
 msgid "New Zealand"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:76
+#: ../data/currencies.xml.in.h:73
 msgid "Singapore Dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:77
+#: ../data/currencies.xml.in.h:74
 msgid "a-cr:SGD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:78
+#: ../data/currencies.xml.in.h:75
 msgid "Singapore"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:79
+#: ../data/currencies.xml.in.h:76
 msgid "South Korean Won"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:80
+#: ../data/currencies.xml.in.h:77
 msgid "a-cr:KRW,au:&#x20A9;,won"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:81
+#: ../data/currencies.xml.in.h:78
 msgid "South Korea"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:82
+#: ../data/currencies.xml.in.h:79
 msgid "South African Rand"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:83
+#: ../data/currencies.xml.in.h:80
 msgid "a-cr:ZAR"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:84
+#: ../data/currencies.xml.in.h:81
 msgid "South Africa"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:85
+#: ../data/currencies.xml.in.h:82
 msgid "Indian Rupee"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:86
+#: ../data/currencies.xml.in.h:83
 msgid "a-cr:INR,au:&#x20B9;,rupee"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:87
+#: ../data/currencies.xml.in.h:84
 msgid "India"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:88
+#: ../data/currencies.xml.in.h:85
 msgid "Israeli New Sheqel"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:89
+#: ../data/currencies.xml.in.h:86
 msgid "a-cr:ILS,au:&#x20AA;,sheqel"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:90
+#: ../data/currencies.xml.in.h:87
 msgid "Israel"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:91
+#: ../data/currencies.xml.in.h:88
 msgid "Mexican Peso"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:92
+#: ../data/currencies.xml.in.h:89
 msgid "a-cr:MXN"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:93
+#: ../data/currencies.xml.in.h:90
 msgid "Mexico"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:94
+#: ../data/currencies.xml.in.h:91
 msgid "Brazilian Real"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:95
+#: ../data/currencies.xml.in.h:92
 msgid "a-cr:BRL"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:96
+#: ../data/currencies.xml.in.h:93
 msgid "Brazil"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:97
+#: ../data/currencies.xml.in.h:94
 msgid "Icelandic Krónur"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:98
+#: ../data/currencies.xml.in.h:95
 msgid "a-cr:ISK"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:99
+#: ../data/currencies.xml.in.h:96
 msgid "Iceland"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:100
+#: ../data/currencies.xml.in.h:97
 msgid "Bitcoin"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:101
+#: ../data/currencies.xml.in.h:98
 msgid "a-cr:BTC,au:&#x20BF;,a:XBT,bitcoin,p:bitcoins"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:102
+#: ../data/currencies.xml.in.h:99
 msgid "Kenya Shilling"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:103
+#: ../data/currencies.xml.in.h:100
 msgid "a-cr:KES"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:104
+#: ../data/currencies.xml.in.h:101
 msgid "Kenya"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:105
+#: ../data/currencies.xml.in.h:102
 msgid "Afghan Afghani"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:106
+#: ../data/currencies.xml.in.h:103
 msgid "a-cr:AFN,aio:&#x060B;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:107
+#: ../data/currencies.xml.in.h:104
 msgid "Afghanistan"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:108
+#: ../data/currencies.xml.in.h:105
 msgid "Albanian Lek"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:109
+#: ../data/currencies.xml.in.h:106
 msgid "a-cr:ALL"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:110
+#: ../data/currencies.xml.in.h:107
 msgid "Albania"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:111
+#: ../data/currencies.xml.in.h:108
 msgid "Algerian Dinar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:112
+#: ../data/currencies.xml.in.h:109
 msgid "a-cr:DZD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:113
+#: ../data/currencies.xml.in.h:110
 msgid "Algeria"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:114
+#: ../data/currencies.xml.in.h:111
 msgid "Angolan Kwanza"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:115
+#: ../data/currencies.xml.in.h:112
 msgid "a-cr:AOA"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:116
+#: ../data/currencies.xml.in.h:113
 msgid "Angola"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:117
+#: ../data/currencies.xml.in.h:114
 msgid "Eastern Caribbean Dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:118
+#: ../data/currencies.xml.in.h:115
 msgid "a-cr:XCD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:119
+#: ../data/currencies.xml.in.h:116
 msgid ""
 "Antigua and Barbuda, Dominica, Grenada, Montserrat, Saint Kitts and Nevis, "
 "Saint Lucia, Saint Vincent and the Grenadines, Anguilla"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:120
+#: ../data/currencies.xml.in.h:117
 msgid "Argentine Peso"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:121
+#: ../data/currencies.xml.in.h:118
 msgid "a-cr:ARS"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:122
+#: ../data/currencies.xml.in.h:119
 msgid "Argentina"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:123
+#: ../data/currencies.xml.in.h:120
 msgid "Armenian Dram"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:124
+#: ../data/currencies.xml.in.h:121
 msgid "a-cr:AMD,au:&#x058F;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:125
+#: ../data/currencies.xml.in.h:122
 msgid "Armenia"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:126
+#: ../data/currencies.xml.in.h:123
 msgid "Aruban Florin"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:127
+#: ../data/currencies.xml.in.h:124
 msgid "a-cr:AWG"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:128
+#: ../data/currencies.xml.in.h:125
 msgid "Aruba"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:129
+#: ../data/currencies.xml.in.h:126
 msgid "Netherlands Antillean Guilder"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:130
+#: ../data/currencies.xml.in.h:127
 msgid "a-cr:ANG"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:131
+#: ../data/currencies.xml.in.h:128
 msgid "Curaçao, Sint Maarten"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:132
+#: ../data/currencies.xml.in.h:129
 msgid "Azerbaijani Manat"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:133
+#: ../data/currencies.xml.in.h:130
 msgid "a-cr:AZN,au:&#x20BC;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:134
+#: ../data/currencies.xml.in.h:131
 msgid "Azerbaijan"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:135
+#: ../data/currencies.xml.in.h:132
 msgid "Bahamian Dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:136
+#: ../data/currencies.xml.in.h:133
 msgid "a-cr:BSD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:137
+#: ../data/currencies.xml.in.h:134
 msgid "Bahamas"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:138
+#: ../data/currencies.xml.in.h:135
 msgid "Bahraini Dinar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:139
+#: ../data/currencies.xml.in.h:136
 msgid "a-cr:BHD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:140
+#: ../data/currencies.xml.in.h:137
 msgid "Bahrain"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:141
+#: ../data/currencies.xml.in.h:138
 msgid "Bangladeshi Taka"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:142
+#: ../data/currencies.xml.in.h:139
 msgid "a-cr:BDT,au:&#x09F3;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:143
+#: ../data/currencies.xml.in.h:140
 msgid "Bangladesh"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:144
+#: ../data/currencies.xml.in.h:141
 msgid "Barbadian Dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:145
+#: ../data/currencies.xml.in.h:142
 msgid "a-cr:BBD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:146
+#: ../data/currencies.xml.in.h:143
 msgid "Barbados"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:147
+#: ../data/currencies.xml.in.h:144
 msgid "Belarusian Ruble"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:148
+#: ../data/currencies.xml.in.h:145
 msgid "a-cr:BYN"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:149
+#: ../data/currencies.xml.in.h:146
 msgid "Belarus"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:150
+#: ../data/currencies.xml.in.h:147
 msgid "Belarusian Ruble p. (obsolete)"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:151
+#: ../data/currencies.xml.in.h:148
 msgid "a-cr:BYR"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:152
+#: ../data/currencies.xml.in.h:149
 msgid "Belize Dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:153
+#: ../data/currencies.xml.in.h:150
 msgid "a-cr:BZD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:154
+#: ../data/currencies.xml.in.h:151
 msgid "Belize"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:155
+#: ../data/currencies.xml.in.h:152
 msgid "West African CFA Franc"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:156
+#: ../data/currencies.xml.in.h:153
 msgid "a-cr:XOF,a:CFA"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:157
+#: ../data/currencies.xml.in.h:154
 msgid ""
 "Benin, Burkina Faso, Guinea-Bissau, Ivory Coast, Mali, Niger, Senegal, Togo"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:158
+#: ../data/currencies.xml.in.h:155
 msgid "Bermudian Dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:159
+#: ../data/currencies.xml.in.h:156
 msgid "a-cr:BMD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:160
+#: ../data/currencies.xml.in.h:157
 msgid "Bermuda"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:161
+#: ../data/currencies.xml.in.h:158
 msgid "Bolivian Boliviano Bs"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:162
+#: ../data/currencies.xml.in.h:159
 msgid "a-cr:BOB"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:163
+#: ../data/currencies.xml.in.h:160
 msgid "Bolivia"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:164
+#: ../data/currencies.xml.in.h:161
 msgid "Bosnia and Herzegovina Convertible Mark"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:165
+#: ../data/currencies.xml.in.h:162
 msgid "a-cr:BAM"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:166
+#: ../data/currencies.xml.in.h:163
 msgid "Bosnia and Herzegovina"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:167
+#: ../data/currencies.xml.in.h:164
 msgid "Botswana Pula"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:168
+#: ../data/currencies.xml.in.h:165
 msgid "a-cr:BWP"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:169
+#: ../data/currencies.xml.in.h:166
 msgid "Botswana"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:170
+#: ../data/currencies.xml.in.h:167
 msgid "Brunei Dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:171
+#: ../data/currencies.xml.in.h:168
 msgid "a-cr:BND"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:172
+#: ../data/currencies.xml.in.h:169
 msgid "Brunei"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:173
+#: ../data/currencies.xml.in.h:170
 msgid "Burundian Franc"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:174
+#: ../data/currencies.xml.in.h:171
 msgid "a-cr:BIF"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:175
+#: ../data/currencies.xml.in.h:172
 msgid "Burundi"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:176
+#: ../data/currencies.xml.in.h:173
 msgid "Cambodian Riel"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:177
+#: ../data/currencies.xml.in.h:174
 msgid "a-cr:KHR,aiu:&#x17DB;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:178
+#: ../data/currencies.xml.in.h:175
 msgid "Cambodia"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:179
+#: ../data/currencies.xml.in.h:176
 msgid "Central African CFA Franc"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:180
+#: ../data/currencies.xml.in.h:177
 msgid "a-cr:XAF,a:FCFA"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:181
+#: ../data/currencies.xml.in.h:178
 msgid ""
 "Cameroon, Central African Republic, Chad, Republic of the Congo, Equatorial "
 "Guinea, Gabon"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:182
+#: ../data/currencies.xml.in.h:179
 msgid "Cape Verdean Escudo"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:183
+#: ../data/currencies.xml.in.h:180
 msgid "a-cr:CVE"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:184
+#: ../data/currencies.xml.in.h:181
 msgid "Cape Verde"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:185
+#: ../data/currencies.xml.in.h:182
 msgid "Cayman Islands Dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:186
+#: ../data/currencies.xml.in.h:183
 msgid "a-cr:KYD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:187
+#: ../data/currencies.xml.in.h:184
 msgid "Cayman Islands"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:188
+#: ../data/currencies.xml.in.h:185
 msgid "Chilean Peso"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:189
+#: ../data/currencies.xml.in.h:186
 msgid "a-cr:CLP"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:190
+#: ../data/currencies.xml.in.h:187
 msgid "Chile"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:191
+#: ../data/currencies.xml.in.h:188
 msgid "Colombian Peso"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:192
+#: ../data/currencies.xml.in.h:189
 msgid "a-cr:COP"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:193
+#: ../data/currencies.xml.in.h:190
 msgid "Colombia"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:194
+#: ../data/currencies.xml.in.h:191
 msgid "Comorian Franc"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:195
+#: ../data/currencies.xml.in.h:192
 msgid "a-cr:KMF"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:196
+#: ../data/currencies.xml.in.h:193
 msgid "Comoros"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:197
+#: ../data/currencies.xml.in.h:194
 msgid "Democratic Republic of the Congo (Congolese Franc)"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:198
+#: ../data/currencies.xml.in.h:195
 msgid "a-cr:CDF"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:199
+#: ../data/currencies.xml.in.h:196
 msgid "Democratic Republic of the Congo"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:200
+#: ../data/currencies.xml.in.h:197
 msgid "Costa Rican colón"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:201
+#: ../data/currencies.xml.in.h:198
 msgid "a-cr:CRC"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:202
+#: ../data/currencies.xml.in.h:199
 msgid "Costa Rica"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:203
+#: ../data/currencies.xml.in.h:200
 msgid "Cuban Peso"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:204
+#: ../data/currencies.xml.in.h:201
 msgid "acr:CUP"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:205
+#: ../data/currencies.xml.in.h:202
 msgid "Cuba"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:206
+#: ../data/currencies.xml.in.h:203
 msgid "Djiboutian Franc"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:207
+#: ../data/currencies.xml.in.h:204
 msgid "a-cr:DJF"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:208
+#: ../data/currencies.xml.in.h:205
 msgid "Djibouti"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:209
+#: ../data/currencies.xml.in.h:206
 msgid "Dominican Peso"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:210
+#: ../data/currencies.xml.in.h:207
 msgid "a-cr:DOP"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:211
+#: ../data/currencies.xml.in.h:208
 msgid "Dominican Republic"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:212
+#: ../data/currencies.xml.in.h:209
 msgid "Egyptian Pound"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:213
+#: ../data/currencies.xml.in.h:210
 msgid "a-cr:EGP"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:214
+#: ../data/currencies.xml.in.h:211
 msgid "Egypt"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:215
+#: ../data/currencies.xml.in.h:212
 msgid "El Salvadoran Colon (obsolete)"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:216
+#: ../data/currencies.xml.in.h:213
 msgid "a-cr:SVC"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:217
+#: ../data/currencies.xml.in.h:214
 msgid "Eritrean Nafka"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:218
+#: ../data/currencies.xml.in.h:215
 msgid "a-cr:ERN"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:219
+#: ../data/currencies.xml.in.h:216
 msgid "Eritrea"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:220
+#: ../data/currencies.xml.in.h:217
 msgid "Ethiopian Birr"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:221
+#: ../data/currencies.xml.in.h:218
 msgid "a-cr:ETB"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:222
+#: ../data/currencies.xml.in.h:219
 msgid "Ethiopia"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:223
+#: ../data/currencies.xml.in.h:220
 msgid "Falkland Islands Pound"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:224
+#: ../data/currencies.xml.in.h:221
 msgid "a-cr:FKP"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:225
+#: ../data/currencies.xml.in.h:222
 msgid "Falkland Islands"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:226
+#: ../data/currencies.xml.in.h:223
 msgid "Fijian Dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:227
+#: ../data/currencies.xml.in.h:224
 msgid "a-cr:FJD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:228
+#: ../data/currencies.xml.in.h:225
 msgid "Fiji"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:229
+#: ../data/currencies.xml.in.h:226
 msgid "CFP franc"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:230
+#: ../data/currencies.xml.in.h:227
 msgid "a-cr:XPF"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:231
+#: ../data/currencies.xml.in.h:228
 msgid "French Polynesia, New Caledonia, Wallis and Futuna"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:232
+#: ../data/currencies.xml.in.h:229
 msgid "Gambian Dalasi"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:233
+#: ../data/currencies.xml.in.h:230
 msgid "a-cr:GMD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:234
+#: ../data/currencies.xml.in.h:231
 msgid "Gambia"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:235
+#: ../data/currencies.xml.in.h:232
 msgid "Georgian Lari"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:236
+#: ../data/currencies.xml.in.h:233
 msgid "a-cr:GEL,au:&#x20BE;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:237
+#: ../data/currencies.xml.in.h:234
 msgid "Georgia"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:238
+#: ../data/currencies.xml.in.h:235
 msgid "Ghanaian Cedi"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:239
+#: ../data/currencies.xml.in.h:236
 msgid "a-cr:GHS,au:&#x20B5;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:240
+#: ../data/currencies.xml.in.h:237
 msgid "Ghana"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:241
+#: ../data/currencies.xml.in.h:238
 msgid "Gibraltar Pound"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:242
+#: ../data/currencies.xml.in.h:239
 msgid "a-cr:GIP"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:243
+#: ../data/currencies.xml.in.h:240
 msgid "Gibraltar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:244
+#: ../data/currencies.xml.in.h:241
 msgid "Guatemalan Quetzal"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:245
+#: ../data/currencies.xml.in.h:242
 msgid "a-cr:GTQ"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:246
+#: ../data/currencies.xml.in.h:243
 msgid "Guatemala"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:247
+#: ../data/currencies.xml.in.h:244
 msgid "Guernsey Pound"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:248
+#: ../data/currencies.xml.in.h:245
 msgid "a-cr:GGP"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:249
+#: ../data/currencies.xml.in.h:246
 msgid "Guernsey"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:250
+#: ../data/currencies.xml.in.h:247
 msgid "Guinean Franc"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:251
+#: ../data/currencies.xml.in.h:248
 msgid "a-cr:GNF"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:252
+#: ../data/currencies.xml.in.h:249
 msgid "Guinea"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:253
+#: ../data/currencies.xml.in.h:250
 msgid "Guyanese Dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:254
+#: ../data/currencies.xml.in.h:251
 msgid "a-cr:GYD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:255
+#: ../data/currencies.xml.in.h:252
 msgid "Guyana"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:256
+#: ../data/currencies.xml.in.h:253
 msgid "Haitian Gourde"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:257
+#: ../data/currencies.xml.in.h:254
 msgid "a-cr:HTG"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:258
+#: ../data/currencies.xml.in.h:255
 msgid "Haiti"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:259
+#: ../data/currencies.xml.in.h:256
 msgid "Honduran Lempira"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:260
+#: ../data/currencies.xml.in.h:257
 msgid "a-cr:HNL"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:261
+#: ../data/currencies.xml.in.h:258
 msgid "Honduras"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:262
+#: ../data/currencies.xml.in.h:259
 msgid "Iranian Rial"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:263
+#: ../data/currencies.xml.in.h:260
 msgid "a-cr:IRR,aio:&#xFDFC;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:264
+#: ../data/currencies.xml.in.h:261
 msgid "Iran"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:265
+#: ../data/currencies.xml.in.h:262
 msgid "Iraqi Dinar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:266
+#: ../data/currencies.xml.in.h:263
 msgid "a-cr:IQD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:267
+#: ../data/currencies.xml.in.h:264
 msgid "Iraq"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:268
+#: ../data/currencies.xml.in.h:265
 msgid "Jamaican Dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:269
+#: ../data/currencies.xml.in.h:266
 msgid "a-cr:JMD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:270
+#: ../data/currencies.xml.in.h:267
 msgid "Jamaica"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:271
+#: ../data/currencies.xml.in.h:268
 msgid "Jordanian Dinar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:272
+#: ../data/currencies.xml.in.h:269
 msgid "a-cr:JOD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:273
+#: ../data/currencies.xml.in.h:270
 msgid "Jordan"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:274
+#: ../data/currencies.xml.in.h:271
 msgid "Kazakhstani Tenge"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:275
+#: ../data/currencies.xml.in.h:272
 msgid "a-cr:KZT,au:&#x20B8;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:276
+#: ../data/currencies.xml.in.h:273
 msgid "Kazakhstan"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:277
+#: ../data/currencies.xml.in.h:274
 msgid "North Korean Won"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:278
+#: ../data/currencies.xml.in.h:275
 msgid "a-cr:KPW"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:279
+#: ../data/currencies.xml.in.h:276
 msgid "North Korea"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:280
+#: ../data/currencies.xml.in.h:277
 msgid "Kuwaiti Dinar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:281
+#: ../data/currencies.xml.in.h:278
 msgid "a-cr:KWD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:282
+#: ../data/currencies.xml.in.h:279
 msgid "Kuwait"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:283
+#: ../data/currencies.xml.in.h:280
 msgid "Kyrgyzstani Som"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:284
+#: ../data/currencies.xml.in.h:281
 msgid "acr:KGS"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:285
+#: ../data/currencies.xml.in.h:282
 msgid "Kyrgyzstan"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:286
+#: ../data/currencies.xml.in.h:283
 msgid "Lao Kip"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:287
+#: ../data/currencies.xml.in.h:284
 msgid "a-cr:LAK,au:&#x20AD;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:288
+#: ../data/currencies.xml.in.h:285
 msgid "Laos"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:289
+#: ../data/currencies.xml.in.h:286
 msgid "Lebanese Pound"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:290
+#: ../data/currencies.xml.in.h:287
 msgid "a-cr:LBP"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:291
+#: ../data/currencies.xml.in.h:288
 msgid "Lebanon"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:292
+#: ../data/currencies.xml.in.h:289
 msgid "Lesotho Loti"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:293
+#: ../data/currencies.xml.in.h:290
 msgid "a-cr:LSL"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:294
+#: ../data/currencies.xml.in.h:291
 msgid "Lesotho"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:295
+#: ../data/currencies.xml.in.h:292
 msgid "Liberian Dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:296
+#: ../data/currencies.xml.in.h:293
 msgid "a-cr:LRD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:297
+#: ../data/currencies.xml.in.h:294
 msgid "Liberia"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:298
+#: ../data/currencies.xml.in.h:295
 msgid "Libyan Dinar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:299
+#: ../data/currencies.xml.in.h:296
 msgid "a-cr:LYD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:300
+#: ../data/currencies.xml.in.h:297
 msgid "Libya"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:301
+#: ../data/currencies.xml.in.h:298
 msgid "Macanese Pataca"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:302
+#: ../data/currencies.xml.in.h:299
 msgid "a-cr:MOP"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:303
+#: ../data/currencies.xml.in.h:300
 msgid "Macau"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:304
+#: ../data/currencies.xml.in.h:301
 msgid "Macedonian Denar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:305
+#: ../data/currencies.xml.in.h:302
 msgid "a-cr:MKD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:306
+#: ../data/currencies.xml.in.h:303
 msgid "Macedonia"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:307
+#: ../data/currencies.xml.in.h:304
 msgid "Malagasy Ariary"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:308
+#: ../data/currencies.xml.in.h:305
 msgid "a-cr:MGA"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:309
+#: ../data/currencies.xml.in.h:306
 msgid "Madagascar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:310
+#: ../data/currencies.xml.in.h:307
 msgid "Malawian Kwacha"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:311
+#: ../data/currencies.xml.in.h:308
 msgid "a-cr:MWK"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:312
+#: ../data/currencies.xml.in.h:309
 msgid "Malawi"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:313
+#: ../data/currencies.xml.in.h:310
 msgid "Maldivian Rufiyaa"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:314
+#: ../data/currencies.xml.in.h:311
 msgid "a-cr:MVR"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:315
+#: ../data/currencies.xml.in.h:312
 msgid "Maldives"
 msgstr ""
 
+#: ../data/currencies.xml.in.h:313
+msgid "Mauritanian Ouguiya"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:314
+msgid "a-cr:MRU"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:315
+msgid "Mauritania"
+msgstr ""
+
 #: ../data/currencies.xml.in.h:316
-msgid "Mauritanian Ouguiya (obsolete)"
-msgstr ""
-
-#: ../data/currencies.xml.in.h:317
-msgid "a-cr:MRO"
-msgstr ""
-
-#: ../data/currencies.xml.in.h:318
 msgid "Mauritian Rupee"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:319
+#: ../data/currencies.xml.in.h:317
 msgid "a-cr:MUR"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:320
+#: ../data/currencies.xml.in.h:318
 msgid "Mauritius"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:321
+#: ../data/currencies.xml.in.h:319
 msgid "Moldovan Leu"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:322
+#: ../data/currencies.xml.in.h:320
 msgid "a-cr:MDL"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:323
+#: ../data/currencies.xml.in.h:321
 msgid "Moldova"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:324
+#: ../data/currencies.xml.in.h:322
 msgid "Mongolian Tögrög"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:325
+#: ../data/currencies.xml.in.h:323
 msgid "a-cr:MNT,au:&#x20AE;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:326
+#: ../data/currencies.xml.in.h:324
 msgid "Mongolia"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:327
+#: ../data/currencies.xml.in.h:325
 msgid "Moroccan Dirham"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:328
+#: ../data/currencies.xml.in.h:326
 msgid "a-cr:MAD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:329
+#: ../data/currencies.xml.in.h:327
 msgid "Morocco"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:330
+#: ../data/currencies.xml.in.h:328
 msgid "Mozambican Metical"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:331
+#: ../data/currencies.xml.in.h:329
 msgid "a-cr:MZN"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:332
+#: ../data/currencies.xml.in.h:330
 msgid "Mozambique"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:333
+#: ../data/currencies.xml.in.h:331
 msgid "Myanmar (Burmese Kyat)"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:334
+#: ../data/currencies.xml.in.h:332
 msgid "a-cr:MMK"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:335
+#: ../data/currencies.xml.in.h:333
 msgid "Myanmar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:336
+#: ../data/currencies.xml.in.h:334
 msgid "Namibian Dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:337
+#: ../data/currencies.xml.in.h:335
 msgid "a-cr:NAD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:338
+#: ../data/currencies.xml.in.h:336
 msgid "Namibia"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:339
+#: ../data/currencies.xml.in.h:337
 msgid "Nepalese Rupee"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:340
+#: ../data/currencies.xml.in.h:338
 msgid "a-cr:NPR"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:341
+#: ../data/currencies.xml.in.h:339
 msgid "Nepal"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:342
+#: ../data/currencies.xml.in.h:340
 msgid "Nicaraguan Córdoba"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:343
+#: ../data/currencies.xml.in.h:341
 msgid "a-cr:NIO"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:344
+#: ../data/currencies.xml.in.h:342
 msgid "Nicaragua"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:345
+#: ../data/currencies.xml.in.h:343
 msgid "Nigerian Naira"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:346
+#: ../data/currencies.xml.in.h:344
 msgid "a-cr:NGN,au:&#x20A6;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:347
+#: ../data/currencies.xml.in.h:345
 msgid "Nigeria"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:348
+#: ../data/currencies.xml.in.h:346
 msgid "Omani Rial"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:349
+#: ../data/currencies.xml.in.h:347
 msgid "a-cr:OMR"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:350
+#: ../data/currencies.xml.in.h:348
 msgid "Oman"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:351
+#: ../data/currencies.xml.in.h:349
 msgid "Pakistani Rupee"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:352
+#: ../data/currencies.xml.in.h:350
 msgid "a-cr:PKR"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:353
+#: ../data/currencies.xml.in.h:351
 msgid "Pakistan"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:354
+#: ../data/currencies.xml.in.h:352
 msgid "Panamaian Balboa"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:355
+#: ../data/currencies.xml.in.h:353
 msgid "a-cr:PAB"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:356
+#: ../data/currencies.xml.in.h:354
 msgid "Panama"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:357
+#: ../data/currencies.xml.in.h:355
 msgid "Papua New Guinean Kina"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:358
+#: ../data/currencies.xml.in.h:356
 msgid "a-cr:PGK"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:359
+#: ../data/currencies.xml.in.h:357
 msgid "Papua New Guinea"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:360
+#: ../data/currencies.xml.in.h:358
 msgid "Paraguayan Guaraní"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:361
+#: ../data/currencies.xml.in.h:359
 msgid "a-cr:PYG,au:&#x20B2;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:362
+#: ../data/currencies.xml.in.h:360
 msgid "Paraguay"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:363
+#: ../data/currencies.xml.in.h:361
 msgid "Peruvian Sol"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:364
+#: ../data/currencies.xml.in.h:362
 msgid "a-cr:PEN"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:365
+#: ../data/currencies.xml.in.h:363
 msgid "Peru"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:366
+#: ../data/currencies.xml.in.h:364
 msgid "Qatari Riyal"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:367
+#: ../data/currencies.xml.in.h:365
 msgid "a-cr:QAR"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:368
+#: ../data/currencies.xml.in.h:366
 msgid "Qatar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:369
+#: ../data/currencies.xml.in.h:367
 msgid "Rwandan Franc"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:370
+#: ../data/currencies.xml.in.h:368
 msgid "a-cr:RWF"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:371
+#: ../data/currencies.xml.in.h:369
 msgid "Rwanda"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:372
+#: ../data/currencies.xml.in.h:370
 msgid "São Tomé and Príncipe Dobra"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:373
+#: ../data/currencies.xml.in.h:371
 msgid "a-cr:STD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:374
+#: ../data/currencies.xml.in.h:372
 msgid "Sao Tome and Principe"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:375
+#: ../data/currencies.xml.in.h:373
 msgid "Saudi Riyal"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:376
+#: ../data/currencies.xml.in.h:374
 msgid "a-cr:SAR"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:377
+#: ../data/currencies.xml.in.h:375
 msgid "Saudi Arabia"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:378
+#: ../data/currencies.xml.in.h:376
 msgid "Serbian Dinar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:379
+#: ../data/currencies.xml.in.h:377
 msgid "a-cr:RSD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:380
+#: ../data/currencies.xml.in.h:378
 msgid "Serbia"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:381
+#: ../data/currencies.xml.in.h:379
 msgid "Seychellois Rupee"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:382
+#: ../data/currencies.xml.in.h:380
 msgid "a-cr:SCR"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:383
+#: ../data/currencies.xml.in.h:381
 msgid "Seychelles"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:384
+#: ../data/currencies.xml.in.h:382
 msgid "Sierra Leonean Leone"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:385
+#: ../data/currencies.xml.in.h:383
 msgid "a-cr:SLL"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:386
+#: ../data/currencies.xml.in.h:384
 msgid "Sierra Leone"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:387
+#: ../data/currencies.xml.in.h:385
 msgid "Solomon Islands Dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:388
+#: ../data/currencies.xml.in.h:386
 msgid "a-cr:SBD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:389
+#: ../data/currencies.xml.in.h:387
 msgid "Solomon Islands"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:390
+#: ../data/currencies.xml.in.h:388
 msgid "Somali Shilling"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:391
+#: ../data/currencies.xml.in.h:389
 msgid "a-cr:SOS"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:392
+#: ../data/currencies.xml.in.h:390
 msgid "Somalia"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:393
+#: ../data/currencies.xml.in.h:391
 msgid "Sri Lankan Rupee"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:394
+#: ../data/currencies.xml.in.h:392
 msgid "a-cr:LKR,au:&#x0BF9;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:395
+#: ../data/currencies.xml.in.h:393
 msgid "Sri Lanka"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:396
+#: ../data/currencies.xml.in.h:394
 msgid "Sudanese Pound"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:397
+#: ../data/currencies.xml.in.h:395
 msgid "a-cr:SDG"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:398
+#: ../data/currencies.xml.in.h:396
 msgid "Sudan"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:399
+#: ../data/currencies.xml.in.h:397
 msgid "Surinamese Dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:400
+#: ../data/currencies.xml.in.h:398
 msgid "a-cr:SRD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:401
+#: ../data/currencies.xml.in.h:399
 msgid "Suriname"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:402
+#: ../data/currencies.xml.in.h:400
 msgid "Swazi Lilangeni"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:403
+#: ../data/currencies.xml.in.h:401
 msgid "a-cr:SZL"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:404
+#: ../data/currencies.xml.in.h:402
 msgid "Swaziland"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:405
+#: ../data/currencies.xml.in.h:403
 msgid "Syrian Pound"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:406
+#: ../data/currencies.xml.in.h:404
 msgid "a-cr:SYP"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:407
+#: ../data/currencies.xml.in.h:405
 msgid "Syria"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:408
+#: ../data/currencies.xml.in.h:406
 msgid "New Taiwan Dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:409
+#: ../data/currencies.xml.in.h:407
 msgid "a-cr:TWD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:410
+#: ../data/currencies.xml.in.h:408
 msgid "Taiwan"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:411
+#: ../data/currencies.xml.in.h:409
 msgid "Tajikistani Somoni"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:412
+#: ../data/currencies.xml.in.h:410
 msgid "a-cr:TJS"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:413
+#: ../data/currencies.xml.in.h:411
 msgid "Tajikistan"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:414
+#: ../data/currencies.xml.in.h:412
 msgid "Tanzanian Shilling"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:415
+#: ../data/currencies.xml.in.h:413
 msgid "a-cr:TZS"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:416
+#: ../data/currencies.xml.in.h:414
 msgid "Tanzania"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:417
+#: ../data/currencies.xml.in.h:415
 msgid "Tongan Paʻanga"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:418
+#: ../data/currencies.xml.in.h:416
 msgid "a-cr:TOP"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:419
+#: ../data/currencies.xml.in.h:417
 msgid "Tonga"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:420
+#: ../data/currencies.xml.in.h:418
 msgid "Trinidad and Tobago dollar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:421
+#: ../data/currencies.xml.in.h:419
 msgid "a-cr:TTD"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:422
+#: ../data/currencies.xml.in.h:420
 msgid "Trinidad and Tobago"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:423
+#: ../data/currencies.xml.in.h:421
 msgid "Tunisian Dinar"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:424
+#: ../data/currencies.xml.in.h:422
 msgid "a-cr:TND"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:425
+#: ../data/currencies.xml.in.h:423
 msgid "Tunisia"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:426
+#: ../data/currencies.xml.in.h:424
 msgid "Turkmenistan Manat"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:427
+#: ../data/currencies.xml.in.h:425
 msgid "a-cr:TMT"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:428
+#: ../data/currencies.xml.in.h:426
 msgid "Turkmenistan"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:429
+#: ../data/currencies.xml.in.h:427
 msgid "Ugandan Shilling"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:430
+#: ../data/currencies.xml.in.h:428
 msgid "a-cr:UGX"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:431
+#: ../data/currencies.xml.in.h:429
 msgid "Uganda"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:432
+#: ../data/currencies.xml.in.h:430
 msgid "Ukrainian Hryvnia"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:433
+#: ../data/currencies.xml.in.h:431
 msgid "a-cr:UAH,au:&#x20B4;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:434
+#: ../data/currencies.xml.in.h:432
 msgid "Ukraine"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:435
+#: ../data/currencies.xml.in.h:433
 msgid "United Arab Emirates Dirham"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:436
+#: ../data/currencies.xml.in.h:434
 msgid "a-cr:AED"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:437
+#: ../data/currencies.xml.in.h:435
 msgid "United Arab Emirates"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:438
+#: ../data/currencies.xml.in.h:436
 msgid "Uruguayan Peso"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:439
+#: ../data/currencies.xml.in.h:437
 msgid "a-cr:UYU"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:440
+#: ../data/currencies.xml.in.h:438
 msgid "Uruguay"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:441
+#: ../data/currencies.xml.in.h:439
 msgid "Uzbekistan Soʻm"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:442
+#: ../data/currencies.xml.in.h:440
 msgid "a-cr:UZS"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:443
+#: ../data/currencies.xml.in.h:441
 msgid "Uzbekistan"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:444
+#: ../data/currencies.xml.in.h:442
 msgid "Vanuatu Vatu"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:445
+#: ../data/currencies.xml.in.h:443
 msgid "a-cr:VUV"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:446
+#: ../data/currencies.xml.in.h:444
 msgid "Vanuatu"
 msgstr ""
 
+#: ../data/currencies.xml.in.h:445
+msgid "Venezuelan Bolívar"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:446
+msgid "a-cr:VES"
+msgstr ""
+
 #: ../data/currencies.xml.in.h:447
-msgid "Venezuelan Bolívar (obsolete)"
-msgstr ""
-
-#: ../data/currencies.xml.in.h:448
-msgid "a-cr:VEF"
-msgstr ""
-
-#: ../data/currencies.xml.in.h:449
 msgid "Vietnamese Đồng"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:450
+#: ../data/currencies.xml.in.h:448
 msgid "a-cr:VND,au:&#x20AB;"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:451
+#: ../data/currencies.xml.in.h:449
 msgid "Vietnam"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:452
+#: ../data/currencies.xml.in.h:450
 msgid "Yemeni Rial"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:453
+#: ../data/currencies.xml.in.h:451
 msgid "a-cr:YER"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:454
+#: ../data/currencies.xml.in.h:452
 msgid "Yemen"
 msgstr ""
 
+#: ../data/currencies.xml.in.h:453
+msgid "Zambian Kwacha"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:454
+msgid "a-cr:ZMW"
+msgstr ""
+
 #: ../data/currencies.xml.in.h:455
-msgid "Zambian Kwacha (obsolete)"
+msgid "Zambia"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:456
-msgid "a-cr:ZMK"
-msgstr ""
-
-#: ../data/currencies.xml.in.h:457
 msgid "Euro Cent"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:458
+#: ../data/currencies.xml.in.h:457
 msgid "r:eurocent,p:eurocents"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:459
+#: ../data/currencies.xml.in.h:458
 msgid "Cent (USD)"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:460
+#: ../data/currencies.xml.in.h:459
 msgid "au:&#xA2;,r:cent,p:cents"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:461
+#: ../data/currencies.xml.in.h:460
 msgid "Belgian Franc (obsolete)"
 msgstr ""
 
-#: ../data/currencies.xml.in.h:462
+#: ../data/currencies.xml.in.h:461
 msgid "a-cr:BEF"
 msgstr ""
 
+#: ../data/currencies.xml.in.h:462
+msgid "Croatian Kuna (obsolete)"
+msgstr ""
+
 #: ../data/currencies.xml.in.h:463
-msgid "Greek Drachma (obsolete)"
+msgid "a-cr:HRK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:464
-msgid "a-cr:GRD,au:&#x20AF;"
+msgid "Greek Drachma (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:465
-msgid "French Franc (obsolete)"
+msgid "a-cr:GRD,au:&#x20AF;"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:466
-msgid "a-cr:FRF,au:&#x20A3;"
+msgid "French Franc (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:467
-msgid "Italian Lira (obsolete)"
+msgid "a-cr:FRF,au:&#x20A3;"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:468
-msgid "a-cr:ITL"
+msgid "Italian Lira (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:469
-msgid "Dutch Guilder (obsolete)"
+msgid "a-cr:ITL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:470
-msgid "a-cr:NLG"
+msgid "Dutch Guilder (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:471
-msgid "Portuguese Escudo (obsolete)"
+msgid "a-cr:NLG"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:472
-msgid "a-cr:PTE"
+msgid "Portuguese Escudo (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:473
-msgid "Deutsche Mark (obsolete)"
+msgid "a-cr:PTE"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:474
-msgid "a-cr:DEM"
+msgid "Deutsche Mark (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:475
-msgid "Spanish Peseta (obsolete)"
+msgid "a-cr:DEM"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:476
-msgid "a-cr:ESP,au:&#x20A7;"
+msgid "Spanish Peseta (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:477
-msgid "Irish Pound (obsolete)"
+msgid "a-cr:ESP,au:&#x20A7;"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:478
-msgid "a-cr:IEP"
+msgid "Irish Pound (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:479
-msgid "Luxembourg Franc (obsolete)"
+msgid "a-cr:IEP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:480
-msgid "a-cr:LUF"
+msgid "Luxembourg Franc (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:481
-msgid "Austrian Schilling (obsolete)"
+msgid "a-cr:LUF"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:482
-msgid "a-cr:ATS"
+msgid "Austrian Schilling (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:483
-msgid "Finnish Markka (obsolete)"
+msgid "a-cr:ATS"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:484
-msgid "a-cr:FIM"
+msgid "Finnish Markka (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:485
-msgid "Slovenian Tolar (obsolete)"
+msgid "a-cr:FIM"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:486
-msgid "a-cr:SIT"
+msgid "Slovenian Tolar (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:487
-msgid "Cypriot Pound (obsolete)"
+msgid "a-cr:SIT"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:488
-msgid "a-cr:CYP"
+msgid "Cypriot Pound (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:489
-msgid "Estonian Kroon (obsolete)"
+msgid "a-cr:CYP"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:490
-msgid "a-cr:EEK"
+msgid "Estonian Kroon (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:491
-msgid "Slovak Koruna (obsolete)"
+msgid "a-cr:EEK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:492
-msgid "a-cr:SKK"
+msgid "Slovak Koruna (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:493
-msgid "Maltese Lira (obsolete)"
+msgid "a-cr:SKK"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:494
-msgid "a-cr:MTL"
+msgid "Maltese Lira (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:495
-msgid "Latvian Lats (obsolete)"
+msgid "a-cr:MTL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:496
-msgid "a-cr:LVL"
+msgid "Latvian Lats (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:497
-msgid "Lithuanian Litas (obsolete)"
+msgid "a-cr:LVL"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:498
+msgid "Lithuanian Litas (obsolete)"
+msgstr ""
+
+#: ../data/currencies.xml.in.h:499
 msgid "a-cr:LTL"
 msgstr ""
 
@@ -10254,957 +10258,973 @@ msgid "Meter per Second Squared"
 msgstr ""
 
 #: ../data/units.xml.in.h:394
-msgid "Galileo"
+msgid "Meter per Second Cubed (Jerk)"
 msgstr ""
 
 #: ../data/units.xml.in.h:395
-msgid "ar:Gal,galileo,p:galileos"
+msgid "Meter per Second to the Fourth (Snap)"
 msgstr ""
 
 #: ../data/units.xml.in.h:396
-msgid "Gee"
+msgid "Meter per Second to the Fifth (Crackle)"
 msgstr ""
 
 #: ../data/units.xml.in.h:397
-msgid "r:gee,p:gees"
+msgid "Meter per Second to the Sixth (Pop)"
 msgstr ""
 
 #: ../data/units.xml.in.h:398
-msgid "Magnetism"
+msgid "Galileo"
 msgstr ""
 
 #: ../data/units.xml.in.h:399
-msgid "Wave Number"
+msgid "ar:Gal,galileo,p:galileos"
 msgstr ""
 
 #: ../data/units.xml.in.h:400
-msgid "Reciprocal Meter"
+msgid "Gee"
 msgstr ""
 
 #: ../data/units.xml.in.h:401
-msgid "Magnetic Field Strength"
+msgid "r:gee,p:gees"
 msgstr ""
 
 #: ../data/units.xml.in.h:402
-msgid "Ampere per Meter"
+msgid "Magnetism"
 msgstr ""
 
 #: ../data/units.xml.in.h:403
-msgid "Oersted"
+msgid "Wave Number"
 msgstr ""
 
 #: ../data/units.xml.in.h:404
-msgid "ar:Oe,oersted,p:oersteds"
+msgid "Reciprocal Meter"
 msgstr ""
 
 #: ../data/units.xml.in.h:405
-msgid "Magnetic Flux"
+msgid "Magnetic Field Strength"
 msgstr ""
 
 #: ../data/units.xml.in.h:406
-msgid "Weber"
+msgid "Ampere per Meter"
 msgstr ""
 
 #: ../data/units.xml.in.h:407
-msgid "ar:Wb,weber,p:webers"
+msgid "Oersted"
 msgstr ""
 
 #: ../data/units.xml.in.h:408
-msgid "Maxwell"
+msgid "ar:Oe,oersted,p:oersteds"
 msgstr ""
 
 #: ../data/units.xml.in.h:409
-msgid "ar:Mx,maxwell,p:maxwells"
+msgid "Magnetic Flux"
 msgstr ""
 
 #: ../data/units.xml.in.h:410
-msgid "Magnetic Flux Density"
+msgid "Weber"
 msgstr ""
 
 #: ../data/units.xml.in.h:411
-msgid "Tesla"
+msgid "ar:Wb,weber,p:webers"
 msgstr ""
 
 #: ../data/units.xml.in.h:412
-msgid "ar:T,tesla,p:teslas"
+msgid "Maxwell"
 msgstr ""
 
 #: ../data/units.xml.in.h:413
-msgid "Gauss"
+msgid "ar:Mx,maxwell,p:maxwells"
 msgstr ""
 
 #: ../data/units.xml.in.h:414
-msgid "r:gauss"
+msgid "Magnetic Flux Density"
 msgstr ""
 
 #: ../data/units.xml.in.h:415
-msgid "Atomic Unit of Magnetic Flux Density"
+msgid "Tesla"
 msgstr ""
 
 #: ../data/units.xml.in.h:416
-msgid "Magnetic Dipole Moment"
+msgid "ar:T,tesla,p:teslas"
 msgstr ""
 
 #: ../data/units.xml.in.h:417
-msgid "Ampere Square Meter"
+msgid "Gauss"
 msgstr ""
 
 #: ../data/units.xml.in.h:418
-msgid "Atomic Unit of Magnetic Dipole Moment"
+msgid "r:gauss"
 msgstr ""
 
 #: ../data/units.xml.in.h:419
-msgid "Force"
+msgid "Atomic Unit of Magnetic Flux Density"
 msgstr ""
 
 #: ../data/units.xml.in.h:420
-msgid "Newton"
+msgid "Magnetic Dipole Moment"
 msgstr ""
 
 #: ../data/units.xml.in.h:421
-msgid "ar:N,newton,p:newtons"
+msgid "Ampere Square Meter"
 msgstr ""
 
 #: ../data/units.xml.in.h:422
-msgid "Dyne"
+msgid "Atomic Unit of Magnetic Dipole Moment"
 msgstr ""
 
 #: ../data/units.xml.in.h:423
-msgid "ar:dyn,dyne,p:dynes"
+msgid "Force"
 msgstr ""
 
 #: ../data/units.xml.in.h:424
-msgid "Pound-force"
+msgid "Newton"
 msgstr ""
 
 #: ../data/units.xml.in.h:425
-msgid "ar:lbf,pound_force"
+msgid "ar:N,newton,p:newtons"
 msgstr ""
 
 #: ../data/units.xml.in.h:426
-msgid "Ounce-force"
+msgid "Dyne"
 msgstr ""
 
 #: ../data/units.xml.in.h:427
-msgid "ar:ozf,ounce_force"
+msgid "ar:dyn,dyne,p:dynes"
 msgstr ""
 
 #: ../data/units.xml.in.h:428
-msgid "Poundal"
+msgid "Pound-force"
 msgstr ""
 
 #: ../data/units.xml.in.h:429
-msgid "r:poundal,p:poundals,a:pdl"
+msgid "ar:lbf,pound_force"
 msgstr ""
 
 #: ../data/units.xml.in.h:430
-msgid "Pond (Gram-Force)"
+msgid "Ounce-force"
 msgstr ""
 
 #: ../data/units.xml.in.h:431
-msgid "r:pond,p:ponds,a:gf"
+msgid "ar:ozf,ounce_force"
 msgstr ""
 
 #: ../data/units.xml.in.h:432
-msgid "Kilopond (Kilogram-Force)"
+msgid "Poundal"
 msgstr ""
 
 #: ../data/units.xml.in.h:433
-msgid "Atomic Unit of Force"
+msgid "r:poundal,p:poundals,a:pdl"
 msgstr ""
 
 #: ../data/units.xml.in.h:434
-msgid "Moment of Force"
+msgid "Pond (Gram-Force)"
 msgstr ""
 
 #: ../data/units.xml.in.h:435
-msgid "Newton Meter"
+msgid "r:pond,p:ponds,a:gf"
 msgstr ""
 
 #: ../data/units.xml.in.h:436
-msgid "Momentum"
+msgid "Kilopond (Kilogram-Force)"
 msgstr ""
 
 #: ../data/units.xml.in.h:437
-msgid "Kilogram Meter per Second"
+msgid "Atomic Unit of Force"
 msgstr ""
 
 #: ../data/units.xml.in.h:438
-msgid "Electronvolt Momentum"
+msgid "Moment of Force"
 msgstr ""
 
 #: ../data/units.xml.in.h:439
-msgid "Natural Unit of Momentum"
+msgid "Newton Meter"
 msgstr ""
 
 #: ../data/units.xml.in.h:440
-msgid "Atomic Unit of Momentum"
+msgid "Momentum"
 msgstr ""
 
 #: ../data/units.xml.in.h:441
-msgid "Pressure"
+msgid "Kilogram Meter per Second"
 msgstr ""
 
 #: ../data/units.xml.in.h:442
-msgid "Pascal"
+msgid "Electronvolt Momentum"
 msgstr ""
 
 #: ../data/units.xml.in.h:443
-msgid "ar:Pa,pascal,p:pascals"
+msgid "Natural Unit of Momentum"
 msgstr ""
 
 #: ../data/units.xml.in.h:444
-msgid "Kilogram-force per Square Centimetre"
+msgid "Atomic Unit of Momentum"
 msgstr ""
 
 #: ../data/units.xml.in.h:445
-msgid "Pound-force per Square Inch (psi)"
+msgid "Pressure"
 msgstr ""
 
 #: ../data/units.xml.in.h:446
-msgid "a-cr:psi"
+msgid "Pascal"
 msgstr ""
 
 #: ../data/units.xml.in.h:447
-msgid "Kilopound-force per Square Inch (ksi)"
+msgid "ar:Pa,pascal,p:pascals"
 msgstr ""
 
 #: ../data/units.xml.in.h:448
-msgid "a-cr:ksi"
+msgid "Kilogram-force per Square Centimetre"
 msgstr ""
 
 #: ../data/units.xml.in.h:449
-msgid "Bar"
+msgid "Pound-force per Square Inch (psi)"
 msgstr ""
 
 #: ../data/units.xml.in.h:450
-msgid "r:bar,p:bars"
+msgid "a-cr:psi"
 msgstr ""
 
 #: ../data/units.xml.in.h:451
-msgid "Atmosphere"
+msgid "Kilopound-force per Square Inch (ksi)"
 msgstr ""
 
 #: ../data/units.xml.in.h:452
-msgid "ar:atm,atmosphere,p:atmospheres"
+msgid "a-cr:ksi"
 msgstr ""
 
 #: ../data/units.xml.in.h:453
-msgid "Torr"
+msgid "Bar"
 msgstr ""
 
 #: ../data/units.xml.in.h:454
-msgid "ar:Torr,torr,p:torrs"
+msgid "r:bar,p:bars"
 msgstr ""
 
 #: ../data/units.xml.in.h:455
-msgid "Meter of Mercury"
+msgid "Atmosphere"
 msgstr ""
 
 #: ../data/units.xml.in.h:456
-msgid "ar:mHg"
+msgid "ar:atm,atmosphere,p:atmospheres"
 msgstr ""
 
 #: ../data/units.xml.in.h:457
-msgid "Millimeter of Mercury"
+msgid "Torr"
 msgstr ""
 
 #: ../data/units.xml.in.h:458
-msgid "ar:mmHg"
+msgid "ar:Torr,torr,p:torrs"
 msgstr ""
 
 #: ../data/units.xml.in.h:459
-msgid "Inch of Mercury"
+msgid "Meter of Mercury"
 msgstr ""
 
 #: ../data/units.xml.in.h:460
-msgid "ar:inHg"
+msgid "ar:mHg"
 msgstr ""
 
 #: ../data/units.xml.in.h:461
-msgid "Millitorr"
+msgid "Millimeter of Mercury"
 msgstr ""
 
 #: ../data/units.xml.in.h:462
-msgid "Barye"
+msgid "ar:mmHg"
 msgstr ""
 
 #: ../data/units.xml.in.h:463
-msgid "ar:Ba,barye"
+msgid "Inch of Mercury"
 msgstr ""
 
 #: ../data/units.xml.in.h:464
-msgid "Meter of Water"
+msgid "ar:inHg"
 msgstr ""
 
 #: ../data/units.xml.in.h:465
-msgid "ar:mWC,a:mwg,au:mH&#x2082;O"
+msgid "Millitorr"
 msgstr ""
 
 #: ../data/units.xml.in.h:466
-msgid "Millimeter of Water"
+msgid "Barye"
 msgstr ""
 
 #: ../data/units.xml.in.h:467
-msgid "Centimeter of Water"
+msgid "ar:Ba,barye"
 msgstr ""
 
 #: ../data/units.xml.in.h:468
-msgid "Inch of Water"
+msgid "Meter of Water"
 msgstr ""
 
 #: ../data/units.xml.in.h:469
-msgid "ar:inWC,a:iwg,au:inH&#x2082;O"
+msgid "ar:mWC,a:mwg,au:mH&#x2082;O"
 msgstr ""
 
 #: ../data/units.xml.in.h:470
-msgid "Dynamic Viscosity"
+msgid "Millimeter of Water"
 msgstr ""
 
 #: ../data/units.xml.in.h:471
-msgid "Pascal Second"
+msgid "Centimeter of Water"
 msgstr ""
 
 #: ../data/units.xml.in.h:472
-msgid "Poise"
+msgid "Inch of Water"
 msgstr ""
 
 #: ../data/units.xml.in.h:473
-msgid "ar:P,poise,p:poises"
+msgid "ar:inWC,a:iwg,au:inH&#x2082;O"
 msgstr ""
 
 #: ../data/units.xml.in.h:474
-msgid "Centipoise"
+msgid "Dynamic Viscosity"
 msgstr ""
 
 #: ../data/units.xml.in.h:475
-msgid "Kinematic Viscosity"
+msgid "Pascal Second"
 msgstr ""
 
 #: ../data/units.xml.in.h:476
-msgid "Square Meter per Second"
+msgid "Poise"
 msgstr ""
 
 #: ../data/units.xml.in.h:477
-msgid "Stokes"
+msgid "ar:P,poise,p:poises"
 msgstr ""
 
 #: ../data/units.xml.in.h:478
-msgid "ar:St,stokes"
+msgid "Centipoise"
 msgstr ""
 
 #: ../data/units.xml.in.h:479
-msgid "Centistokes"
+msgid "Kinematic Viscosity"
 msgstr ""
 
 #: ../data/units.xml.in.h:480
-msgid "Surface Tension"
+msgid "Square Meter per Second"
 msgstr ""
 
 #: ../data/units.xml.in.h:481
-msgid "Newton per Meter"
+msgid "Stokes"
 msgstr ""
 
 #: ../data/units.xml.in.h:482
-msgid "Energy"
+msgid "ar:St,stokes"
 msgstr ""
 
 #: ../data/units.xml.in.h:483
-msgid "Joule"
+msgid "Centistokes"
 msgstr ""
 
 #: ../data/units.xml.in.h:484
-msgid "ar:J,joule,p:joules"
+msgid "Surface Tension"
 msgstr ""
 
 #: ../data/units.xml.in.h:485
-msgid "Watt Hour"
+msgid "Newton per Meter"
 msgstr ""
 
 #: ../data/units.xml.in.h:486
-msgid "Kilowatt Hour"
+msgid "Energy"
 msgstr ""
 
 #: ../data/units.xml.in.h:487
-msgid "Calorie (international table)"
+msgid "Joule"
 msgstr ""
 
 #: ../data/units.xml.in.h:488
-msgid "ais:cal_IT,ar:cal,c:calorie,cp:calories"
+msgid "ar:J,joule,p:joules"
 msgstr ""
 
 #: ../data/units.xml.in.h:489
-msgid "Calorie (capital C)"
+msgid "Watt Hour"
 msgstr ""
 
 #: ../data/units.xml.in.h:490
-msgid "cr:Calorie,cp:Calories"
+msgid "Kilowatt Hour"
 msgstr ""
 
 #: ../data/units.xml.in.h:491
-msgid "Calorie (thermochemical)"
+msgid "Calorie (international table)"
 msgstr ""
 
 #: ../data/units.xml.in.h:492
-msgid "ars:cal_th"
+msgid "ais:cal_IT,ar:cal,c:calorie,cp:calories"
 msgstr ""
 
 #: ../data/units.xml.in.h:493
-msgid "Gram of TNT"
+msgid "Calorie (capital C)"
 msgstr ""
 
 #: ../data/units.xml.in.h:494
-msgid "a-cr:gTNT,gramTNT"
+msgid "cr:Calorie,cp:Calories"
 msgstr ""
 
 #: ../data/units.xml.in.h:495
-msgid "Ton of TNT"
+msgid "Calorie (thermochemical)"
 msgstr ""
 
 #: ../data/units.xml.in.h:496
-msgid "a-cr:tTNT,tonTNT"
+msgid "ars:cal_th"
 msgstr ""
 
 #: ../data/units.xml.in.h:497
-msgid "Calorie (15 degrees Celsius)"
+msgid "Gram of TNT"
 msgstr ""
 
 #: ../data/units.xml.in.h:498
-msgid "ars:cal_fifteen"
+msgid "a-cr:gTNT,gramTNT"
 msgstr ""
 
 #: ../data/units.xml.in.h:499
-msgid "Calorie (mean)"
+msgid "Ton of TNT"
 msgstr ""
 
 #: ../data/units.xml.in.h:500
-msgid "ars:cal_mean"
+msgid "a-cr:tTNT,tonTNT"
 msgstr ""
 
 #: ../data/units.xml.in.h:501
-msgid "British Thermal Unit (IT)"
+msgid "Calorie (15 degrees Celsius)"
 msgstr ""
 
 #: ../data/units.xml.in.h:502
-msgid "ar:Btu"
+msgid "ars:cal_fifteen"
 msgstr ""
 
 #: ../data/units.xml.in.h:503
-msgid "Electronvolt"
+msgid "Calorie (mean)"
 msgstr ""
 
 #: ../data/units.xml.in.h:504
-msgid "ar:eV,electronvolt,p:electronvolts"
+msgid "ars:cal_mean"
 msgstr ""
 
 #: ../data/units.xml.in.h:505
-msgid "Erg"
+msgid "British Thermal Unit (IT)"
 msgstr ""
 
 #: ../data/units.xml.in.h:506
-msgid "r:erg,p:ergs"
+msgid "ar:Btu"
 msgstr ""
 
 #: ../data/units.xml.in.h:507
-msgid "Foe"
+msgid "Electronvolt"
 msgstr ""
 
 #: ../data/units.xml.in.h:508
-msgid "r:foe,p:foes"
+msgid "ar:eV,electronvolt,p:electronvolts"
 msgstr ""
 
 #: ../data/units.xml.in.h:509
-msgid "Foot-Pound Force"
+msgid "Erg"
 msgstr ""
 
 #: ../data/units.xml.in.h:510
-msgid "Hartree (Atomic Unit of Energy)"
+msgid "r:erg,p:ergs"
 msgstr ""
 
 #: ../data/units.xml.in.h:511
-msgid "Rydberg (unit)"
+msgid "Foe"
 msgstr ""
 
 #: ../data/units.xml.in.h:512
-msgid "Natural Unit of Energy"
+msgid "r:foe,p:foes"
 msgstr ""
 
 #: ../data/units.xml.in.h:513
-msgid "Specific Energy"
+msgid "Foot-Pound Force"
 msgstr ""
 
 #: ../data/units.xml.in.h:514
-msgid "Joule per Kilogram"
+msgid "Hartree (Atomic Unit of Energy)"
 msgstr ""
 
 #: ../data/units.xml.in.h:515
-msgid "Power"
+msgid "Rydberg (unit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:516
-msgid "Watt"
+msgid "Natural Unit of Energy"
 msgstr ""
 
 #: ../data/units.xml.in.h:517
-msgid "ar:W,watt,p:watts"
+msgid "Specific Energy"
 msgstr ""
 
 #: ../data/units.xml.in.h:518
-msgid "Horse Power"
+msgid "Joule per Kilogram"
 msgstr ""
 
 #: ../data/units.xml.in.h:519
-msgid "ar:hp,horsepower,p:horsepowers"
+msgid "Power"
 msgstr ""
 
 #: ../data/units.xml.in.h:520
-msgid "Pferdest&#xE4;rke"
+msgid "Watt"
 msgstr ""
 
 #: ../data/units.xml.in.h:521
-msgid "ar:PS,u:pferdest&#xE4;rke"
+msgid "ar:W,watt,p:watts"
 msgstr ""
 
 #: ../data/units.xml.in.h:522
-msgid "Decibel Milliwatt"
+msgid "Horse Power"
 msgstr ""
 
 #: ../data/units.xml.in.h:523
-msgid "ar:dBm"
+msgid "ar:hp,horsepower,p:horsepowers"
 msgstr ""
 
 #: ../data/units.xml.in.h:524
-msgid "Decibel Watt"
+msgid "Pferdest&#xE4;rke"
 msgstr ""
 
 #: ../data/units.xml.in.h:525
-msgid "ar:dBW"
+msgid "ar:PS,u:pferdest&#xE4;rke"
 msgstr ""
 
 #: ../data/units.xml.in.h:526
-msgid "Erg per Second"
+msgid "Decibel Milliwatt"
 msgstr ""
 
 #: ../data/units.xml.in.h:527
-msgid "Entropy"
+msgid "ar:dBm"
 msgstr ""
 
 #: ../data/units.xml.in.h:528
-msgid "Joule per Kelvin"
+msgid "Decibel Watt"
 msgstr ""
 
 #: ../data/units.xml.in.h:529
-msgid "Boltzmann (unit)"
+msgid "ar:dBW"
 msgstr ""
 
 #: ../data/units.xml.in.h:530
-msgid "Specific Entropy"
+msgid "Erg per Second"
 msgstr ""
 
 #: ../data/units.xml.in.h:531
-msgid "Joule per Kilogram Kelvin"
+msgid "Entropy"
 msgstr ""
 
 #: ../data/units.xml.in.h:532
-msgid "Thermal Conductivity"
+msgid "Joule per Kelvin"
 msgstr ""
 
 #: ../data/units.xml.in.h:533
-msgid "Watt per Meter Kelvin"
+msgid "Boltzmann (unit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:534
-msgid "Energy Density"
+msgid "Specific Entropy"
 msgstr ""
 
 #: ../data/units.xml.in.h:535
-msgid "Joule per Cubic Meter"
+msgid "Joule per Kilogram Kelvin"
 msgstr ""
 
 #: ../data/units.xml.in.h:536
-msgid "Molar Energy"
+msgid "Thermal Conductivity"
 msgstr ""
 
 #: ../data/units.xml.in.h:537
-msgid "Joule per Mole"
+msgid "Watt per Meter Kelvin"
 msgstr ""
 
 #: ../data/units.xml.in.h:538
-msgid "Molar Entropy"
+msgid "Energy Density"
 msgstr ""
 
 #: ../data/units.xml.in.h:539
-msgid "Joule per Mole Kelvin"
+msgid "Joule per Cubic Meter"
 msgstr ""
 
 #: ../data/units.xml.in.h:540
-msgid "Action"
+msgid "Molar Energy"
 msgstr ""
 
 #: ../data/units.xml.in.h:541
-msgid "Joule Second"
+msgid "Joule per Mole"
 msgstr ""
 
 #: ../data/units.xml.in.h:542
-msgid "Reduced Planck (Atomic/Natural Unit of Action)"
+msgid "Molar Entropy"
 msgstr ""
 
 #: ../data/units.xml.in.h:543
-msgid "Radioactivity"
+msgid "Joule per Mole Kelvin"
 msgstr ""
 
 #: ../data/units.xml.in.h:544
-msgid "Becquerel"
+msgid "Action"
 msgstr ""
 
 #: ../data/units.xml.in.h:545
-msgid "ar:Bq,becquerel,p:becquerels"
+msgid "Joule Second"
 msgstr ""
 
 #: ../data/units.xml.in.h:546
-msgid "Curie"
+msgid "Reduced Planck (Atomic/Natural Unit of Action)"
 msgstr ""
 
 #: ../data/units.xml.in.h:547
-msgid "ar:Ci,curie,p:curies"
+msgid "Radioactivity"
 msgstr ""
 
 #: ../data/units.xml.in.h:548
-msgid "Rutherford"
+msgid "Becquerel"
 msgstr ""
 
 #: ../data/units.xml.in.h:549
-msgid "ar:Rd,rutherford,p:rutherfords"
+msgid "ar:Bq,becquerel,p:becquerels"
 msgstr ""
 
 #: ../data/units.xml.in.h:550
-msgid "Absorbed Dose"
+msgid "Curie"
 msgstr ""
 
 #: ../data/units.xml.in.h:551
-msgid "Gray"
+msgid "ar:Ci,curie,p:curies"
 msgstr ""
 
 #: ../data/units.xml.in.h:552
-msgid "ar:Gy,gray,p:grays"
+msgid "Rutherford"
 msgstr ""
 
 #: ../data/units.xml.in.h:553
-msgid "Rad"
+msgid "ar:Rd,rutherford,p:rutherfords"
 msgstr ""
 
 #: ../data/units.xml.in.h:554
-msgid "rs:rad_radioactivity"
+msgid "Absorbed Dose"
 msgstr ""
 
 #: ../data/units.xml.in.h:555
-msgid "Dose Equivalent"
+msgid "Gray"
 msgstr ""
 
 #: ../data/units.xml.in.h:556
-msgid "Sievert"
+msgid "ar:Gy,gray,p:grays"
 msgstr ""
 
 #: ../data/units.xml.in.h:557
-msgid "ar:Sv,sievert,p:sieverts"
+msgid "Rad"
 msgstr ""
 
 #: ../data/units.xml.in.h:558
-msgid "Roentgen Equivalent Man (Rem)"
+msgid "rs:rad_radioactivity"
 msgstr ""
 
 #: ../data/units.xml.in.h:559
-msgid "ros:rem_radioactivity,a:rem"
+msgid "Dose Equivalent"
 msgstr ""
 
 #: ../data/units.xml.in.h:560
-msgid "Millirem"
+msgid "Sievert"
 msgstr ""
 
 #: ../data/units.xml.in.h:561
-msgid "Erg per Gram"
+msgid "ar:Sv,sievert,p:sieverts"
 msgstr ""
 
 #: ../data/units.xml.in.h:562
-msgid "Exposure"
+msgid "Roentgen Equivalent Man (Rem)"
 msgstr ""
 
 #: ../data/units.xml.in.h:563
-msgid "Coulomb per Kilogram"
+msgid "ros:rem_radioactivity,a:rem"
 msgstr ""
 
 #: ../data/units.xml.in.h:564
-msgid "Roentgen"
+msgid "Millirem"
 msgstr ""
 
 #: ../data/units.xml.in.h:565
-msgid "ar:R,roentgen,r&#x00f6;ntgen,p:roentgens,p:r&#x00f6;ntgens"
+msgid "Erg per Gram"
 msgstr ""
 
 #: ../data/units.xml.in.h:566
-msgid "Absorbed Dose Rate"
+msgid "Exposure"
 msgstr ""
 
 #: ../data/units.xml.in.h:567
-msgid "Gray per Second"
+msgid "Coulomb per Kilogram"
 msgstr ""
 
 #: ../data/units.xml.in.h:568
-msgid "Millirem per Hour"
+msgid "Roentgen"
 msgstr ""
 
 #: ../data/units.xml.in.h:569
-msgid "Ratio"
+msgid "ar:R,roentgen,r&#x00f6;ntgen,p:roentgens,p:r&#x00f6;ntgens"
 msgstr ""
 
 #: ../data/units.xml.in.h:570
-msgid "Neper"
+msgid "Absorbed Dose Rate"
 msgstr ""
 
 #: ../data/units.xml.in.h:571
-msgid "ar:Np,neper,p:nepers"
+msgid "Gray per Second"
 msgstr ""
 
 #: ../data/units.xml.in.h:572
-msgid "Bel"
+msgid "Millirem per Hour"
 msgstr ""
 
 #: ../data/units.xml.in.h:573
-msgid "r:bel,p:bels"
+msgid "Ratio"
 msgstr ""
 
 #: ../data/units.xml.in.h:574
-msgid "Decibel"
+msgid "Neper"
 msgstr ""
 
 #: ../data/units.xml.in.h:575
-msgid "ar:dB,decibel,p:decibels"
+msgid "ar:Np,neper,p:nepers"
 msgstr ""
 
 #: ../data/units.xml.in.h:576
-msgid "Information"
+msgid "Bel"
 msgstr ""
 
 #: ../data/units.xml.in.h:577
-msgid "Bit (Binary Digit)"
+msgid "r:bel,p:bels"
 msgstr ""
 
 #: ../data/units.xml.in.h:578
-msgid "r:bit,p:bits,shannon,p:shannons,c:Sh,binary_digit,p:binary_digits"
+msgid "Decibel"
 msgstr ""
 
 #: ../data/units.xml.in.h:579
-msgid "Nat"
+msgid "ar:dB,decibel,p:decibels"
 msgstr ""
 
 #: ../data/units.xml.in.h:580
-msgid "r:nat,p:nats"
+msgid "Information"
 msgstr ""
 
 #: ../data/units.xml.in.h:581
-msgid "Trit (Ternary Digit)"
+msgid "Bit (Binary Digit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:582
+msgid "r:bit,p:bits,shannon,p:shannons,c:Sh,binary_digit,p:binary_digits"
+msgstr ""
+
+#: ../data/units.xml.in.h:583
+msgid "Nat"
+msgstr ""
+
+#: ../data/units.xml.in.h:584
+msgid "r:nat,p:nats"
+msgstr ""
+
+#: ../data/units.xml.in.h:585
+msgid "Trit (Ternary Digit)"
+msgstr ""
+
+#: ../data/units.xml.in.h:586
 msgid ""
 "r:trit,p:trits,trinary_digit,p:trinary_digits,ternary_digit,p:ternary_digits"
 msgstr ""
 
-#: ../data/units.xml.in.h:583
+#: ../data/units.xml.in.h:587
 msgid "Octal Digit"
 msgstr ""
 
-#: ../data/units.xml.in.h:584
+#: ../data/units.xml.in.h:588
 msgid "r:octal_digit,p:octal_digits"
 msgstr ""
 
-#: ../data/units.xml.in.h:585
+#: ../data/units.xml.in.h:589
 msgid "Hartley (Decimal Digit)"
 msgstr ""
 
-#: ../data/units.xml.in.h:586
+#: ../data/units.xml.in.h:590
 msgid "r:hartley,p:hartleys,a:Hart,dit,p:dits,decimal_digit,p:decimal_digits"
 msgstr ""
 
-#: ../data/units.xml.in.h:587
+#: ../data/units.xml.in.h:591
 msgid "Byte (8-bit)"
 msgstr ""
 
-#: ../data/units.xml.in.h:588
+#: ../data/units.xml.in.h:592
 msgid "r:byte,a:B,p:bytes,octet,p:octets,a:o"
 msgstr ""
 
-#: ../data/units.xml.in.h:589
+#: ../data/units.xml.in.h:593
 msgid "Nibble (Hexadecimal Digit)"
 msgstr ""
 
-#: ../data/units.xml.in.h:590
+#: ../data/units.xml.in.h:594
 msgid ""
 "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets,hex_digit,p:"
 "hex_digits,hexadecimal_digit,p:hexadecimal_digits"
 msgstr ""
 
-#: ../data/units.xml.in.h:591
+#: ../data/units.xml.in.h:595
 msgid "Tribble"
 msgstr ""
 
-#: ../data/units.xml.in.h:592
+#: ../data/units.xml.in.h:596
 msgid "r:tribble,p:tribbles"
 msgstr ""
 
-#: ../data/units.xml.in.h:593
+#: ../data/units.xml.in.h:597
 msgid "Nonet"
 msgstr ""
 
-#: ../data/units.xml.in.h:594
+#: ../data/units.xml.in.h:598
 msgid "r:nonet,p:nonets"
 msgstr ""
 
-#: ../data/units.xml.in.h:595
+#: ../data/units.xml.in.h:599
 msgid "Declet"
 msgstr ""
 
-#: ../data/units.xml.in.h:596
+#: ../data/units.xml.in.h:600
 msgid "r:declet,p:declets"
 msgstr ""
 
-#: ../data/units.xml.in.h:597
+#: ../data/units.xml.in.h:601
 msgid "Word (16-bit)"
 msgstr ""
 
-#: ../data/units.xml.in.h:598
+#: ../data/units.xml.in.h:602
 msgid "r:word,p:words"
 msgstr ""
 
-#: ../data/units.xml.in.h:599
+#: ../data/units.xml.in.h:603
 msgid "Kilobyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:600
+#: ../data/units.xml.in.h:604
 msgid "Megabyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:601
+#: ../data/units.xml.in.h:605
 msgid "Gigabyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:602
+#: ../data/units.xml.in.h:606
 msgid "Terabyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:603
+#: ../data/units.xml.in.h:607
 msgid "Petabyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:604
+#: ../data/units.xml.in.h:608
 msgid "Exabyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:605
+#: ../data/units.xml.in.h:609
 msgid "Kibibyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:606
+#: ../data/units.xml.in.h:610
 msgid "Mebibyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:607
+#: ../data/units.xml.in.h:611
 msgid "Gibibyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:608
+#: ../data/units.xml.in.h:612
 msgid "Tebibyte"
 msgstr ""
 
-#: ../data/units.xml.in.h:609
+#: ../data/units.xml.in.h:613
 msgid "Kilobit"
 msgstr ""
 
-#: ../data/units.xml.in.h:610
+#: ../data/units.xml.in.h:614
 msgid "Megabit"
 msgstr ""
 
-#: ../data/units.xml.in.h:611
+#: ../data/units.xml.in.h:615
 msgid "Gigabit"
 msgstr ""
 
-#: ../data/units.xml.in.h:612
+#: ../data/units.xml.in.h:616
 msgid "Terabit"
 msgstr ""
 
-#: ../data/units.xml.in.h:613
+#: ../data/units.xml.in.h:617
 msgid "Petabit"
 msgstr ""
 
-#: ../data/units.xml.in.h:614
+#: ../data/units.xml.in.h:618
 msgid "Kibibit"
 msgstr ""
 
-#: ../data/units.xml.in.h:615
+#: ../data/units.xml.in.h:619
 msgid "Mebibit"
 msgstr ""
 
-#: ../data/units.xml.in.h:616
+#: ../data/units.xml.in.h:620
 msgid "Gibibit"
 msgstr ""
 
-#: ../data/units.xml.in.h:617
+#: ../data/units.xml.in.h:621
 msgid "Typography"
 msgstr ""
 
-#: ../data/units.xml.in.h:618
+#: ../data/units.xml.in.h:622
 msgid "PostScript Point"
 msgstr ""
 
-#: ../data/units.xml.in.h:619
+#: ../data/units.xml.in.h:623
 msgid "ar:pt,a:pts,point,p:points"
 msgstr ""
 
-#: ../data/units.xml.in.h:620
+#: ../data/units.xml.in.h:624
 msgid "PostScript Pica"
 msgstr ""
 
-#: ../data/units.xml.in.h:621
+#: ../data/units.xml.in.h:625
 msgid "r:pica,p:picas"
 msgstr ""
 
-#: ../data/units.xml.in.h:622
+#: ../data/units.xml.in.h:626
 msgid "ATA Pica"
 msgstr ""
 
-#: ../data/units.xml.in.h:623
+#: ../data/units.xml.in.h:627
 msgid "r:ata_pica,p:ata_picas"
 msgstr ""
 
-#: ../data/units.xml.in.h:624
+#: ../data/units.xml.in.h:628
 msgid "ATA Point"
 msgstr ""
 
-#: ../data/units.xml.in.h:625
+#: ../data/units.xml.in.h:629
 msgid "r:ata_point,a:ata_pt,p:ata_points"
 msgstr ""
 
-#: ../data/units.xml.in.h:626
+#: ../data/units.xml.in.h:630
 msgid "New Didot Point"
 msgstr ""
 
-#: ../data/units.xml.in.h:627
+#: ../data/units.xml.in.h:631
 msgid "r:new_didot"
 msgstr ""
 
-#: ../data/units.xml.in.h:628
+#: ../data/units.xml.in.h:632
 msgid "Didot Point"
 msgstr ""
 
-#: ../data/units.xml.in.h:629
+#: ../data/units.xml.in.h:633
 msgid "r:didot,a:dd"
 msgstr ""
 
-#: ../data/units.xml.in.h:630
+#: ../data/units.xml.in.h:634
 msgid "Cicero"
 msgstr ""
 
-#: ../data/units.xml.in.h:631
+#: ../data/units.xml.in.h:635
 msgid "r:cicero"
 msgstr ""
 
