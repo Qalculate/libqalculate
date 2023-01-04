@@ -842,8 +842,8 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			sarg2[1] = carg;
 			sarg_new[1] = carg;
 		}
-		if(CALCULATOR->functionNameTaken(vargs[1].symbol())) {
-			MathFunction *f = CALCULATOR->getActiveFunction(vargs[1].symbol(), true);
+		if(CALCULATOR->functionNameTaken(name)) {
+			MathFunction *f = CALCULATOR->getActiveFunction(name, true);
 			if(f && f->isLocal() && f->subtype() == SUBTYPE_USER_FUNCTION) {
 				if(!vargs[2].symbol().empty()) f->setCategory(vargs[2].symbol());
 				if(!vargs[3].symbol().empty()) f->setTitle(vargs[3].symbol());
@@ -865,6 +865,23 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		mstruct = expr;
 		CALCULATOR->saveFunctionCalled();
 		return 1;
+	}
+	if(vargs[4].number().getBoolean()) {
+		if(mstruct.isComparison() && mstruct.comparisonType() == COMPARISON_EQUALS && (mstruct[0].isSymbolic() || (mstruct[0].isVariable() && !mstruct[0].variable()->isKnown()))) {
+			mstruct.setToChild(2, true);
+		} else if(mstruct.isLogicalAnd() && mstruct.size() > 0 && mstruct[0].isComparison() && mstruct[0].comparisonType() == COMPARISON_EQUALS && (mstruct[0][0].isSymbolic() || (mstruct[0][0].isVariable() && !mstruct[0][0].variable()->isKnown()))) {
+			bool b = true;
+			for(size_t i = 1; i < mstruct.size(); i++) {
+				if(!mstruct[i].isComparison() || mstruct[i].comparisonType() == COMPARISON_EQUALS) {
+					b = false;
+					break;
+				}
+			}
+			if(b) {
+				mstruct.setToChild(1, true);
+				mstruct.setToChild(2, true);
+			}
+		}
 	}
 	if(!CALCULATOR->variableNameIsValid(vargs[1].symbol())) {
 		CALCULATOR->error(true, _("Invalid variable name (%s)."), vargs[1].symbol().c_str(), NULL);
@@ -923,7 +940,8 @@ CommandFunction::CommandFunction() : MathFunction("command", 1, -1) {
 	setArgumentDefinition(2, new Argument());
 }
 int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-#ifdef HAVE_GNUPLOT_CALL
+#ifndef DISABLE_INSECURE
+#	ifdef HAVE_GNUPLOT_CALL
 
 	FILE *pipe = NULL;
 	string commandline = vargs[0].symbol();
@@ -949,7 +967,7 @@ int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 #endif
 
 	if(!pipe) {
-		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str());
+		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str(), NULL);
 		return 0;
 	}
 
@@ -960,15 +978,40 @@ int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	}
 
 	if(pclose(pipe) > 0 && output.empty()) {
-		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str());
+		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str(), NULL);
 		return 0;
 	}
 
 	ParseOptions po;
+	CALCULATOR->beginTemporaryStopMessages();
 	CALCULATOR->parse(&mstruct, output, po);
+	vector<CalculatorMessage> blocked_messages;
+	CALCULATOR->endTemporaryStopMessages(false, &blocked_messages);
+	bool b_error = blocked_messages.size() > 5;
+	for(size_t i = 0; !b_error && i < blocked_messages.size(); i++) {
+		if(blocked_messages[i].type() == MESSAGE_ERROR) b_error = true;
+	}
+	if(!b_error) {
+		long long int n = mstruct.countTotalChildren(false);
+		if(n > 1000) {
+			if(mstruct.isMatrix()) b_error = n > ((long long int) mstruct.rows()) * ((long long int) mstruct.columns()) * 10;
+			else if(mstruct.isVector()) b_error = n > ((long long int) mstruct.size()) * 10;
+			else b_error = true;
+		}
+	}
+	if(b_error) {
+		size_t i = output.find("\n");
+		if(i != string::npos && i > 0 && i < output.length() - 1) output.insert(0, "\n");
+		CALCULATOR->error(true, _("Parsing of command output failed: %s"), output.c_str(), NULL);
+		return 0;
+	}
+	CALCULATOR->addMessages(&blocked_messages);
 
 	return 1;
 
+#	else
+	return 0;
+#	endif
 #else
 	return 0;
 #endif
@@ -1004,7 +1047,7 @@ PlotFunction::PlotFunction() : MathFunction("plot", 1, -1) {
 	setCondition("\\y < \\z");
 	string str = _("Plots one or more expressions or vectors. Use a vector for the first argument to plot multiple series. Only the first argument is used for vector series. It is also possible to plot a matrix where each row is a pair of x and y values.");
 	str += "\n\n";
-	str += _("Additional arguments specifies various plot options. Enter the name of the option and the desried value, either separated by space or as separate arguments. For most options, the value can be omitted to enable a default active value. For options with named values, the option name can be omitted (otherwise the value can be replaced by an integer, representing the index of the value starting from zero). If the first option specified is a numerical value, this is interpreted as either sampling rate (for integers > 10) or step value.");
+	str += _("Additional arguments specify various plot options. Enter the name of the option and the desired value, either separated by space or as separate arguments. For most options, the value can be omitted to enable a default active value. For options with named values, the option name can be omitted (otherwise the value can be replaced by an integer, representing the index of the value starting from zero). If the first option specified is a numerical value, this is interpreted as either sampling rate (for integers > 10) or step value.");
 	str += "\n\n";
 	str += _("List of options:");
 	str += "\n";

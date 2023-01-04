@@ -107,7 +107,7 @@ bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo);
 bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *failed = NULL, long int min_precision = 2, bool function_middle = false);
 bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const EvaluationOptions &eo = default_evaluation_options, bool do_eval = false);
 bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
-bool combine_powers(MathStructure &m, const MathStructure &x_var, const EvaluationOptions &eo);
+bool combine_powers(MathStructure &m, const MathStructure &x_var, const EvaluationOptions &eo, const EvaluationOptions &feo);
 bool contains_angle_unit(const MathStructure &m, const ParseOptions &po);
 bool has_predominately_negative_sign(const MathStructure &mstruct);
 void negate_struct(MathStructure &mstruct);
@@ -134,12 +134,16 @@ bool comparison_is_not_equal(ComparisonResult cr);
 bool comparison_is_equal_or_less(ComparisonResult cr);
 bool comparison_is_equal_or_greater(ComparisonResult cr);
 bool comparison_might_be_equal(ComparisonResult cr);
+Variable *find_interval_replace_var_comp(MathStructure &m, const EvaluationOptions &eo, Variable **v);
 
 void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, int steps, MathStructure &x_vector, MathStructure &y_vector, const EvaluationOptions &eo, bool adaptive = true);
 void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure &x_vector, MathStructure &y_vector, const EvaluationOptions &eo);
 
 void print_dual(const MathStructure &mresult, const std::string &original_expression, const MathStructure &mparse, MathStructure &mexact, std::string &result_str, std::vector<std::string> &results_v, PrintOptions &po, const EvaluationOptions &evalops, AutomaticFractionFormat auto_frac, AutomaticApproximation auto_approx, bool cplx_angle = false, bool *exact_cmp = NULL, bool b_parsed = true, bool format = false, int colorize = 0, int tagtype = TAG_TYPE_HTML, int max_length = -1);
 void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, const std::string &original_expression, const MathStructure *parsed_mstruct, EvaluationOptions &evalops, AutomaticApproximation auto_approx, int msecs = 0, int max_size = 10);
+bool transform_expression_for_equals_save(std::string&, const ParseOptions&);
+bool expression_contains_save_function(const std::string&, const ParseOptions&, bool = false);
+void replace_internal_operators(std::string &str);
 
 #endif
 

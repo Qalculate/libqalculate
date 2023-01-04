@@ -6,7 +6,7 @@ dnl  ----------------------
 dnl | initialize autotools |---------------------------------------------------
 dnl  ----------------------
 
-AC_INIT([libqalculate],[4.2.0])
+AC_INIT([libqalculate],[4.5.1])
 AC_CONFIG_SRCDIR(libqalculate/Calculator.cc)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS(config.h)
@@ -73,7 +73,7 @@ QALCULATE_CURRENT=39
 
 dnl increment any time the source changes; set to 
 dnl  0 if you increment CURRENT
-QALCULATE_REVISION=0
+QALCULATE_REVISION=4
 
 dnl increment if any interfaces have been added; set to 0
 dnl  if any interfaces have been removed. removal has 
@@ -107,6 +107,12 @@ AS_IF([test "x$enable_compiled_definitions" = "xyes"], [
 ])
 AM_CONDITIONAL(COMPILED_DEFINITIONS, [test "x$enable_compiled_definitions" = "xyes"])
 
+AC_ARG_ENABLE([insecure], AS_HELP_STRING([--disbale-insecure], [disable insecure functions (command) and variables (uptime)]))
+AS_IF([test "x$enable_insecure" = "xno"], [
+	AC_DEFINE([DISABLE_INSECURE], [1], [Disable insecure functions and variables])
+])
+AM_CONDITIONAL(DISABLE_INSECURE, [test "x$enable_insecure" = "xno"])
+
 
 AC_ARG_WITH([libcurl], AS_HELP_STRING([--without-libcurl], [disable support for built-in retrieval of exchange rates]), [], [with_libcurl=yes])
 AS_IF([test "x$with_libcurl" = "xyes"], [
@@ -124,7 +130,7 @@ AS_IF([test "x$with_icu" = "xyes"], [
 	AC_SUBST(ICU_LIBS)
 ])
 
-AC_ARG_WITH([gnuplot-call], AS_HELP_STRING([--without-gnuplot-call], [disable support for invocation of external gnuplot binary (using popen)]), [], [with_gnuplot_call=yes])
+AC_ARG_WITH([gnuplot-call], AS_HELP_STRING([--without-gnuplot-call], [disable support for invocation of external commands, including gnuplot, using popen]), [], [with_gnuplot_call=yes])
 AS_IF([test "x$with_gnuplot_call" = "xyes"], [
 	AC_DEFINE([HAVE_GNUPLOT_CALL], [1], [Call to external gnuplot])
 ])
@@ -269,7 +275,7 @@ AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[The package name for gettext])
 
 dnl Please keep this in alphabetical order
-ALL_LINGUAS="ca de es fr nl ru sv zh_CN"
+ALL_LINGUAS="ca de es fr ka nl ru sv zh_CN"
 AM_GNU_GETTEXT(external)
 AM_GNU_GETTEXT_VERSION([0.19.8])
 

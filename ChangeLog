@@ -1,3 +1,272 @@
+2023-01-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* EUR has replaced HRK as currency of Croatia
+
+2022-12-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use json exchange rate data from exchangerate.host, mycurrency.net, or floatrates.com (try in mentioned order), as secondary exchange rates source
+
+2022-12-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix unit tests (ordering in output changed)
+
+2022-12-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Check that output of command, in command() function, is a reasonably sane expression
+	* Fix countTotalChildren() with count_function_as_one set to false
+
+2022-12-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add m/s^3, m/s^4, m/s^5, and m/s^6 as derived units (improves automatic unit conversion)
+
+2022-12-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix randuniform()
+	* Fix dual approximation with random number functions
+
+2022-12-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault in qalc when set command option and value contains more than three words
+	* Fix errornous calculation of arg(x^n) in some cases (when transformed to arg(x)*n without mod 2pi)
+
+2022-12-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use standard form (sorting) for polynomials
+
+2022-12-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Allow non-numerical arguments in atan2()
+
+2022-12-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Set message print options after unicode setting has been updated using u8 command line option (fixes signs in gnuplot legend)
+
+2022-11-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add new SI prefixes (R, r, Q, q)
+
+2022-11-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix automatic/dual fraction format after conversion (e.g. "8 to score")
+
+2022-10-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Always parse element-wise operator as element-wise function, even if arguments are scalars (fixes variable substitution when variable is vector)
+
+2022-10-27 ioio85 <ioio85@gmail.com>
+
+	* Add units ounce force (ozf) and rack unit (U)
+
+2022-10-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix order of user edited global units and look for activated units first for base unit (do not use deactivated global unit)
+	* Use current status of limit implicit multiplication setting during parsing of conversion expression
+	* Make unit added to original expression for unit conversion more consistent
+	* Do not use MathStructure in parentheses property during parsing (simplifies logic and fixes inconsistently displayed parsing of "7d 5h" and similar)
+	* Add hr and hrs names to hour unit
+
+2022-10-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix genvector() with negative step size or expression as step size, and allow variable in step size
+	* Fix genvector() with expression as number of steps
+	* If object name does not match full name string in expression, check for complete match with prefix plus unit (fixes Gyr)
+	* Make MYR currency case-sensitive to fix conflict with Myr (megayear)
+
+2022-10-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Conversion to any type of expression (if ordinary conversion fails, try simple division)
+	* Fix milli- and centimeter of water units
+
+2022-10-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix slow conversion to optimal or base units of uncertainty with units inside value and/or error
+
+2022-10-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix errornous calculation of expressions with physical constant with unit prefix, and unit with the same physical constant in relation to base unit, with interval calculation set to interval arithmetic
+
+2022-10-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault when function arguments are provided in a vector and the size of the vector is greater than or equal to the minimum number but less than the maximum number of arguments
+	* Fix segfault in mod/rem function with 1/0 as first argument
+	* Fix segfault when solving equation with signum() function
+
+2022-10-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault when first argument in if() function is vector, but the second argument is not
+	* Improve output of unformatted expressions with negative, rational (if output as fraction), and/or complex numbers
+
+2022-10-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Replace new line with white space when saving history in qalc
+
+2022-10-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add meter of water and related pressure units
+	* Add more derived flow rate units
+	* Fix slow non-abortable calculation of addition of rational to extremely large floating point number
+	* Fix segfault when calculating 2^((10094431424/18310546875)*y^3*z^-1*x^15)
+	* Fix segfault when calculating cbrt((cbrt(3)-1)^2 * cos(x)) and similar
+	* Fix exact calculation of re((a*i)^(n/2))
+
+2022-10-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault during calculation of uncertainty propagation for some expressions with approximate unit relations
+	* Replace internal operator characters in unquoted text argument
+
+2022-09-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Proper support for uncertainty propagation in total(), sum(), product(), and for() functions
+	* Support for vectors and matrices in uncertainty propagation calculation
+
+2022-09-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve parsing of quotation marks as feet/inch or arcmin/arcsec, and % as percent (avoid parse of s" as sin and similar)
+	* Include +/- statement in function argument without parentheses
+	* Set prefix for units in nested results in more cases
+	* Fix potential (but unlikely) segfault in parsing of unit expression (as CompositeUnit)
+	* Add additional numbers for set arguments in help output and man page
+	* Update internal exchange rates used tracking to use bit flags
+	* Avoid truncation of long values in the middle of a Unicode symbol, in definitions list in qalc
+
+2022-09-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault in Calculator destructor (data sets, which are a type of function, were deleted twice)
+
+2022-09-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* errorPart() function
+	* Consider empty vector as failure in genvector()
+	* Return values for approximate variables in exact mode in dimension() and elements()
+
+2022-09-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* upperEndpoint(), lowerEndpoint(), and midpoint() / valuePart() functions (for intervals and uncertainties)
+	* Fix exact calculation for arguments with approximate vector variables (fail instead of creating a vector with a single element)
+
+2022-09-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not convert function arguments which do not allow units and do not recalculate functions with converted arguments (fixes "arcsin(0.5+/-0.1) to deg" in exact mode)
+
+2022-09-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault in some corner cases when calculating absolute value of imaginary number
+	* Fix use of random numbers in iterative functions
+	* Replace curly brackets with parentheses
+	* Fix conversion to optimal unit of subexpression
+	* Fix prefix after conversion to optimal unit when the optimal unit includes a prefix
+	* Fix writing beyond end of array during exchange rates check in some cases (results in activation of old style matrices)
+	* Fix automatic reactivation of deactivated global object (e.g. after deletion of user variable), if a function with the same name exists (e.g. reactivation of day unit is blocked because of the days function)
+	* Add unit examples when asking user for interpretation of implicit multiplication
+
+2022-08-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use standard formatting for quantities with units in output of parsed expression (with PrintOptions::preserve_format)
+	* Avoid parsing of implicit multiplication as nested multiplication
+
+2022-08-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add primePi(), primes(), nthprime(), nextprime(), prevprime(), and isprime() functions
+
+2022-08-26 NorwayFun <72336380+NorwayFun@users.noreply.github.com>
+
+	* Georgian translation
+
+2022-08-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Avoid ambiguous implicit multiplication warning in more cases involving units
+
+2022-08-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix a*b^x+cx=d when a and c have different signs and d is non-zero
+	* x+0^x=0 is not solvable
+	* Fix unevaluted ln() and wrong combination of addition of ln() with negative arguments in (-a)^x*(-b)^x=c
+	* Fix scientific E notation with sign in argument when function is used without parentheses
+	* Reset interval calculation status after forced abort;
+
+2022-08-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Recursively create qalc configuration directory
+
+2022-08-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support for var=a syntax (quotation marks required for now) for variable assignment with calculated value (as save(a, var,,,1))
+	* Use x value for variable assignment with precalculated equation
+	* Do not allow colon in names
+
+2022-08-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Replace ounce with fluid ounce during conversion from or to volume unit
+
+2022-08-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix lambertw() for values very close to zero, e.g. 1e-40 (returned approximately zero instead of 1E-40)
+	* Fix "+" ignored after "E" in number bases where "E" is a digit
+	* Increase time beore forcibly aborting calculation if precision > 1000, and do not show report as bug message if precision > 10000
+
+2022-08-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault in some cases with sgn() function with zero arguments
+	* Fix segfault when formatting units in some corner cases
+	* Initialize plural property in MathStructure class (caused wrongly displayed plural form of unit name in some cases)
+
+2022-08-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix aborting of plot data generation in some cases
+	* Return original value for argument representing integer in ceil() and floor(), trunc() and round() functions
+	* Improve efficiency of for(), sum() and product() functions in some case
+
+2022-07-31 Adrià Arrufat <1671644+arrufat@users.noreply.github.com>
+
+	* Add clip() function
+
+2022-07-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Solve a^x+b^x+...=c (exact or approximate, for real x) in more cases
+
+2022-07-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix handling of Unicode powers for adaptive parsing of units (e.g. parse 10m/s² the same as 10m/s^2)
+
+2022-07-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not set precision higher than allowed by MPFR_PREC_MAX or INT_MAX (show actual precision set in qalc)
+	* Increase speed (potentially very noticably when using very high precision) of calculation (determining precision from interval) and output (of floating point numbers), by using mpz_sizeinbase instead of mpfr_log or mpfr_log10
+
+2022-07-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Convert rational number to floating point in squaring and multiplication if the resulting numerator or denominator has more than 1 000 000 digits, as previously in exponentiation with powers other than two
+
+2022-07-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Truncate number in output of parsed expression and end with ellipsis if unable to display all decimals
+	* Always display all digits before decimal separator in output of rational number in parsed expression
+	* If parsed expression is approximately displayed, show approximately equal symbol before expression, in qalc
+
+2022-07-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Functions for fixed point (Q format) conversion
+
+2022-06-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve remainder/modulus for numerators with large exponents
+
+2022-06-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Free all memory when Calculator object is deleted, and avoid memory leak in DynamicVariable
+
+2022-06-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault with (a+b)^-1 in unit expression, after "to"
+
+2022-06-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* "clear history" command and option to clear (not save) history on exit
+
+2022-06-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix potential issues (e.g. with subtraction of seconds from date) when finding previous leap second (was reading bool beyond end of array, causing issues when not false)
+
 2022-05-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix addition of unit to expression without unit (when trying to convert to a unit) in exact mode

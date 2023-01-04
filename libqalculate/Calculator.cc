@@ -169,15 +169,16 @@ Calculator::Calculator() {
 	srand(time(NULL));
 
 	exchange_rates_time[0] = 0;
-	exchange_rates_time[1] = (time_t) 459192L * (time_t) 3600;
+	exchange_rates_time[1] = (time_t) 464592L * (time_t) 3600;
 	exchange_rates_time[2] = 0;
-	priv->exchange_rates_time2[0] = (time_t) 459192L * (time_t) 3600;
+	priv->exchange_rates_time2[0] = (time_t) 464592L * (time_t) 3600;
 	exchange_rates_check_time[0] = 0;
-	exchange_rates_check_time[1] = (time_t) 459192L * (time_t) 3600;
+	exchange_rates_check_time[1] = (time_t) 464592L * (time_t) 3600;
 	exchange_rates_check_time[2] = 0;
-	priv->exchange_rates_check_time2[0] = (time_t) 459192L * (time_t) 3600;
+	priv->exchange_rates_check_time2[0] = (time_t) 464592L * (time_t) 3600;
 	b_exchange_rates_warning_enabled = true;
 	b_exchange_rates_used = 0;
+	priv->exchange_rates_url3 = 0;
 
 	i_aborted = 0;
 	b_controlled = false;
@@ -340,8 +341,8 @@ Calculator::Calculator() {
 
 	b_save_called = false;
 
-	ILLEGAL_IN_NAMES = "\a\b" + DOT_S + RESERVED OPERATORS SPACES PARENTHESISS VECTOR_WRAPS COMMAS;
-	ILLEGAL_IN_NAMES_MINUS_SPACE_STR = "\a\b" + DOT_S + RESERVED OPERATORS PARENTHESISS VECTOR_WRAPS COMMAS;
+	ILLEGAL_IN_NAMES = "\a\b" + DOT_S + RESERVED OPERATORS SEXADOT SPACES PARENTHESISS VECTOR_WRAPS COMMAS;
+	ILLEGAL_IN_NAMES_MINUS_SPACE_STR = "\a\b" + DOT_S + RESERVED OPERATORS SEXADOT PARENTHESISS VECTOR_WRAPS COMMAS;
 	ILLEGAL_IN_UNITNAMES = ILLEGAL_IN_NAMES + NUMBERS;
 	b_argument_errors = true;
 	current_stage = MESSAGE_STAGE_UNSET;
@@ -408,15 +409,16 @@ Calculator::Calculator(bool ignore_locale) {
 	srand(time(NULL));
 
 	exchange_rates_time[0] = 0;
-	exchange_rates_time[1] = (time_t) 459192L * (time_t) 3600;
+	exchange_rates_time[1] = (time_t) 464592L * (time_t) 3600;
 	exchange_rates_time[2] = 0;
-	priv->exchange_rates_time2[0] = (time_t) 459192L * (time_t) 3600;
+	priv->exchange_rates_time2[0] = (time_t) 464592L * (time_t) 3600;
 	exchange_rates_check_time[0] = 0;
-	exchange_rates_check_time[1] = (time_t) 459192L * (time_t) 3600;
+	exchange_rates_check_time[1] = (time_t) 464592L * (time_t) 3600;
 	exchange_rates_check_time[2] = 0;
-	priv->exchange_rates_check_time2[0] = (time_t) 459192L * (time_t) 3600;
+	priv->exchange_rates_check_time2[0] = (time_t) 464592L * (time_t) 3600;
 	b_exchange_rates_warning_enabled = true;
 	b_exchange_rates_used = 0;
+	priv->exchange_rates_url3 = 0;
 
 	i_aborted = 0;
 	b_controlled = false;
@@ -573,8 +575,8 @@ Calculator::Calculator(bool ignore_locale) {
 
 	b_save_called = false;
 
-	ILLEGAL_IN_NAMES = "\a\b" + DOT_S + RESERVED OPERATORS SPACES PARENTHESISS VECTOR_WRAPS COMMAS;
-	ILLEGAL_IN_NAMES_MINUS_SPACE_STR = "\a\b" + DOT_S + RESERVED OPERATORS PARENTHESISS VECTOR_WRAPS COMMAS;
+	ILLEGAL_IN_NAMES = "\a\b" + DOT_S + RESERVED OPERATORS SEXADOT SPACES PARENTHESISS VECTOR_WRAPS COMMAS;
+	ILLEGAL_IN_NAMES_MINUS_SPACE_STR = "\a\b" + DOT_S + RESERVED OPERATORS SEXADOT PARENTHESISS VECTOR_WRAPS COMMAS;
 	ILLEGAL_IN_UNITNAMES = ILLEGAL_IN_NAMES + NUMBERS;
 	b_argument_errors = true;
 	current_stage = MESSAGE_STAGE_UNSET;
@@ -603,7 +605,6 @@ Calculator::~Calculator() {
 	for(size_t i = 0; i < variables.size(); i++) delete variables[i];
 	for(size_t i = 0; i < units.size(); i++) delete units[i];
 	for(size_t i = 0; i < prefixes.size(); i++) delete prefixes[i];
-	for(size_t i = 0; i < data_sets.size(); i++) delete data_sets[i];
 	if(v_C) delete v_C;
 	if(decimal_null_prefix) delete decimal_null_prefix;
 	if(binary_null_prefix) delete binary_null_prefix;
@@ -1342,11 +1343,11 @@ void Calculator::prefixNameChanged(Prefix *p, bool new_item) {
 		}
 	}
 }
-#define PRECISION_TO_BITS(p) (((p) * 3.3219281) + 100)
-#define BITS_TO_PRECISION(p) (::ceil(((p) - 100) / 3.3219281))
+#define PRECISION_TO_BITS(p) ((((double) p) * 3.3219281) + 100)
+#define BITS_TO_PRECISION(p) (::ceil((((double) p) - 100) / 3.3219281))
 void Calculator::setPrecision(int precision) {
 	if(precision <= 0) precision = DEFAULT_PRECISION;
-	if(PRECISION_TO_BITS(precision) > MPFR_PREC_MAX - 1000L) {
+	if(PRECISION_TO_BITS(precision) > (double) MPFR_PREC_MAX - 1000L) {
 		if(BITS_TO_PRECISION(MPFR_PREC_MAX) > INT_MAX) i_precision = INT_MAX;
 		else i_precision = (int) BITS_TO_PRECISION(MPFR_PREC_MAX - 1000L);
 		mpfr_set_default_prec(MPFR_PREC_MAX - 1000L);
@@ -1530,8 +1531,10 @@ void Calculator::addBuiltinVariables() {
 	v_yesterday = (KnownVariable*) addVariable(new YesterdayVariable());
 	v_tomorrow = (KnownVariable*) addVariable(new TomorrowVariable());
 	v_now = (KnownVariable*) addVariable(new NowVariable());
-#if defined __linux__ || defined _WIN32
+#ifndef DISABLE_INSECURE
+#if 	defined __linux__ || defined _WIN32
 	addVariable(new UptimeVariable());
+#	endif
 #endif
 
 }
@@ -1593,6 +1596,12 @@ void Calculator::addBuiltinFunctions() {
 	f_dirac = addFunction(new DiracFunction());
 	f_gcd = addFunction(new GcdFunction());
 	addFunction(new DivisorsFunction());
+	addFunction(new PrimeCountFunction());
+	addFunction(new PrimesFunction());
+	addFunction(new IsPrimeFunction());
+	addFunction(new PrevPrimeFunction());
+	addFunction(new NextPrimeFunction());
+	addFunction(new NthPrimeFunction());
 	f_lcm = addFunction(new LcmFunction());
 	f_round = addFunction(new RoundFunction());
 	f_floor = addFunction(new FloorFunction());
@@ -1623,6 +1632,10 @@ void Calculator::addBuiltinFunctions() {
 
 	f_interval = addFunction(new IntervalFunction());
 	f_uncertainty = addFunction(new UncertaintyFunction());
+	addFunction(new LowerEndPointFunction());
+	addFunction(new UpperEndPointFunction());
+	addFunction(new MidPointFunction());
+	addFunction(new GetUncertaintyFunction());
 
 	f_sqrt = addFunction(new SqrtFunction());
 	f_cbrt = addFunction(new CbrtFunction());
@@ -1749,7 +1762,9 @@ void Calculator::addBuiltinFunctions() {
 	f_register = addFunction(new RegisterFunction());
 	f_stack = addFunction(new StackFunction());
 
+#ifndef DISABLE_INSECURE
 	addFunction(new CommandFunction());
+#endif
 
 	f_diff = addFunction(new DeriveFunction());
 	f_integrate = addFunction(new IntegrateFunction());
@@ -1759,7 +1774,7 @@ void Calculator::addBuiltinFunctions() {
 	f_multisolve = addFunction(new SolveMultipleFunction());
 	f_dsolve = addFunction(new DSolveFunction());
 	f_limit = addFunction(new LimitFunction());
-	addFunction(new NewtonRaphsonFunction());
+	priv->f_newton = addFunction(new NewtonRaphsonFunction());
 	priv->f_secant = addFunction(new SecantMethodFunction());
 
 	f_li = addFunction(new liFunction());
@@ -1796,11 +1811,11 @@ void Calculator::addBuiltinFunctions() {
 }
 void Calculator::addBuiltinUnits() {
 	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, true));
-	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "27825.81", 1, "", false, true, true));
+	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "15433.18", 1, "", false, true, true));
 	u_btc->setApproximate();
 	u_btc->setPrecision(-2);
 	u_btc->setChanged(false);
-	priv->u_byn = addUnit(new AliasUnit(_("Currency"), "BYN", "", "", "Belarusian Ruble", u_euro, "1/3.5628", 1, "", false, true, true));
+	priv->u_byn = addUnit(new AliasUnit(_("Currency"), "BYN", "", "", "Belarusian Ruble", u_euro, "1/2.70885", 1, "", false, true, true));
 	priv->u_byn->setHidden(true);
 	priv->u_byn->setApproximate();
 	priv->u_byn->setPrecision(-2);
@@ -2186,9 +2201,18 @@ void Calculator::expressionItemDeactivated(ExpressionItem *item) {
 	delUFV(item);
 }
 void Calculator::expressionItemActivated(ExpressionItem *item) {
-	ExpressionItem *item2 = getActiveExpressionItem(item);
-	if(item2) {
-		item2->setActive(false);
+	if(item->type() == TYPE_FUNCTION) {
+		for(size_t i = 1; i <= item->countNames(); i++) {
+			ExpressionItem *item2 = getActiveFunction(item->getName(i).name, !item->getName(i).completion_only);
+			if(item2) item2->setActive(false);
+		}
+	} else {
+		for(size_t i = 1; i <= item->countNames(); i++) {
+			ExpressionItem *item2 = getActiveVariable(item->getName(i).name, !item->getName(i).completion_only);
+			if(item2) item2->setActive(false);
+			item2 = getActiveUnit(item->getName(i).name, !item->getName(i).completion_only);
+			if(item2) item2->setActive(false);
+		}
 	}
 	nameChanged(item);
 }
@@ -2234,17 +2258,45 @@ void Calculator::expressionItemDeleted(ExpressionItem *item) {
 		}
 	}
 	delUFV(item);
+
 	for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
 		if(item->type() == TYPE_VARIABLE || item->type() == TYPE_UNIT) {
 			for(size_t i = 0; i < variables.size(); i++) {
-				if(!variables[i]->isLocal() && !variables[i]->isActive() && variables[i]->hasName(item->getName(i2).name, item->getName(i2).case_sensitive) && !getActiveExpressionItem(variables[i])) {variables[i]->setActive(true);}
+				if(!variables[i]->isLocal() && !variables[i]->isActive() && variables[i]->hasName(item->getName(i2).name, item->getName(i2).case_sensitive)) {
+					bool b = true;
+					for(size_t i = 1; i <= variables[i]->countNames(); i++) {
+						if(getActiveVariable(variables[i]->getName(i).name, !variables[i]->getName(i).completion_only) || getActiveUnit(variables[i]->getName(i).name, !variables[i]->getName(i).completion_only)) {
+							b = false;
+							break;
+						}
+					}
+					if(b) units[i]->setActive(true);
+				}
 			}
 			for(size_t i = 0; i < units.size(); i++) {
-				if(!units[i]->isLocal() && !units[i]->isActive() && units[i]->hasName(item->getName(i2).name, item->getName(i2).case_sensitive) && !getActiveExpressionItem(units[i])) units[i]->setActive(true);
+				if(!units[i]->isLocal() && !units[i]->isActive() && units[i]->hasName(item->getName(i2).name, item->getName(i2).case_sensitive)) {
+					bool b = true;
+					for(size_t i = 1; i <= units[i]->countNames(); i++) {
+						if(getActiveVariable(units[i]->getName(i).name, !units[i]->getName(i).completion_only) || getActiveUnit(units[i]->getName(i).name, !units[i]->getName(i).completion_only)) {
+							b = false;
+							break;
+						}
+					}
+					if(b) units[i]->setActive(true);
+				}
 			}
 		} else {
 			for(size_t i = 0; i < functions.size(); i++) {
-				if(!functions[i]->isLocal() && !functions[i]->isActive() && functions[i]->hasName(item->getName(i2).name, item->getName(i2).case_sensitive) && !getActiveExpressionItem(functions[i])) functions[i]->setActive(true);
+				if(!functions[i]->isLocal() && !functions[i]->isActive() && functions[i]->hasName(item->getName(i2).name, item->getName(i2).case_sensitive)) {
+					bool b = true;
+					for(size_t i = 1; i <= functions[i]->countNames(); i++) {
+						if(getActiveFunction(functions[i]->getName(i).name, !functions[i]->getName(i).completion_only)) {
+							b = false;
+							break;
+						}
+					}
+					if(b) functions[i]->setActive(true);
+				}
 			}
 		}
 	}
@@ -2542,6 +2594,7 @@ MathFunction* Calculator::getFunctionById(int id) const {
 		case FUNCTION_ID_SAVE: {return f_save;}
 		case FUNCTION_ID_CONCATENATE: {return f_concatenate;}
 		case FUNCTION_ID_SECANT_METHOD: {return priv->f_secant;}
+		case FUNCTION_ID_NEWTON_RAPHSON: {return priv->f_newton;}
 	}
 	unordered_map<int, MathFunction*>::iterator it = priv->id_functions.find(id);
 	if(it == priv->id_functions.end()) return NULL;

@@ -264,19 +264,39 @@ bool Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp) const {
 	} else if(u->baseUnit() == baseUnit()) {
 		u->convertToBaseUnit(mvalue, mexp);
 		convertFromBaseUnit(mvalue, mexp);
-		if(isCurrency() && u->isCurrency() && ((isBuiltin() && this != CALCULATOR->getUnitById(UNIT_ID_EURO)) || (u->isBuiltin() && u != CALCULATOR->getUnitById(UNIT_ID_EURO)))) {
-			int i = 1;
-			if(i < 4 && (u == CALCULATOR->getUnitById(UNIT_ID_BYN) || this == CALCULATOR->getUnitById(UNIT_ID_BYN))) i = (i == 3 ? 5 : 4);
-			if(i < 2 && (u == CALCULATOR->getUnitById(UNIT_ID_BTC) || this == CALCULATOR->getUnitById(UNIT_ID_BTC))) i = 2;
-			if(i < 5 && u->subtype() == SUBTYPE_ALIAS_UNIT) {
-				if(i < 2 && ((AliasUnit*) u)->firstBaseUnit() == CALCULATOR->getUnitById(UNIT_ID_BTC)) i = 2;
-				else if(i < 5 && ((AliasUnit*) u)->firstBaseUnit() != CALCULATOR->getUnitById(UNIT_ID_EURO)) i = (i == 4 ? 5 : 3);
-				else if(i < 4 && ((AliasUnit*) u)->firstBaseUnit() == CALCULATOR->getUnitById(UNIT_ID_BYN)) i = (i == 3 ? 5 : 4);
+		if(isCurrency() && u->isCurrency()) {
+			int i = 0;
+			if(u->subtype() == SUBTYPE_ALIAS_UNIT && u->isBuiltin()) {
+				Unit *u_parent = ((AliasUnit*) u)->firstBaseUnit();
+				if(u == CALCULATOR->getUnitById(UNIT_ID_BTC) || u_parent == CALCULATOR->getUnitById(UNIT_ID_BTC)) {
+					if(u == CALCULATOR->getUnitById(UNIT_ID_BTC) || this != CALCULATOR->getUnitById(UNIT_ID_BTC)) i = i | 0b0010;
+				} else if(u == CALCULATOR->getUnitById(UNIT_ID_BYN) || u_parent == CALCULATOR->getUnitById(UNIT_ID_BYN)) {
+					if(u == CALCULATOR->getUnitById(UNIT_ID_BYN) || this != CALCULATOR->getUnitById(UNIT_ID_BYN)) i = i | 0b1000;
+				} else if(u_parent == CALCULATOR->getUnitById(UNIT_ID_EURO) && !u->isHidden()) {
+					if(subtype() != SUBTYPE_ALIAS_UNIT || ((AliasUnit*) this)->firstBaseUnit() != u) i = i | 0b0001;
+				} else {
+					if(this == CALCULATOR->getUnitById(UNIT_ID_EURO)) i = i | 0b0001;
+					i = i | 0b0100;
+				}
 			}
-			if(i < 5 && subtype() == SUBTYPE_ALIAS_UNIT) {
-				if(i < 2 && ((AliasUnit*) this)->firstBaseUnit() == CALCULATOR->getUnitById(UNIT_ID_BTC)) i = 2;
-				else if(i < 5 && ((AliasUnit*) this)->firstBaseUnit() != CALCULATOR->getUnitById(UNIT_ID_EURO)) i = (i == 4 ? 5 : 3);
-				else if(i < 4 && ((AliasUnit*) this)->firstBaseUnit() == CALCULATOR->getUnitById(UNIT_ID_BYN)) i = (i == 3 ? 5 : 4);
+			if(subtype() == SUBTYPE_ALIAS_UNIT && isBuiltin()) {
+				Unit *u_parent = ((AliasUnit*) this)->firstBaseUnit();
+				if(this == CALCULATOR->getUnitById(UNIT_ID_BTC) || u_parent == CALCULATOR->getUnitById(UNIT_ID_BTC)) {
+					if(this == CALCULATOR->getUnitById(UNIT_ID_BTC) || u != CALCULATOR->getUnitById(UNIT_ID_BTC)) {
+						if(i & 0b0100) i = i | 0b0001;
+						i = i | 0b0010;
+					}
+				} else if(this == CALCULATOR->getUnitById(UNIT_ID_BYN) || u_parent == CALCULATOR->getUnitById(UNIT_ID_BYN)) {
+					if(this == CALCULATOR->getUnitById(UNIT_ID_BYN) || u != CALCULATOR->getUnitById(UNIT_ID_BYN)) {
+						if(i & 0b0100) i = i | 0b0001;
+						i = i | 0b1000;
+					}
+				} else if(u_parent == CALCULATOR->getUnitById(UNIT_ID_EURO) && !isHidden()) {
+					if(u->subtype() != SUBTYPE_ALIAS_UNIT || ((AliasUnit*) u)->firstBaseUnit() != this) i = i | 0b0001;
+				} else {
+					if((i & 0b1000) || (i & 0b0010) || u == CALCULATOR->getUnitById(UNIT_ID_EURO)) i = i | 0b0001;
+					i = i | 0b0100;
+				}
 			}
 			CALCULATOR->setExchangeRatesUsed(i);
 		}
@@ -1234,15 +1254,17 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	eo.do_polynomial_division = false;
 	eo.isolate_x = false;
 	ParseOptions po;
+	bool conversion_variant = !name().empty() && name()[0] == '0';
 	po.variables_enabled = true;
-	po.functions_enabled = false;
-	po.unknowns_enabled = true;
+	po.functions_enabled = conversion_variant;
+	po.unknowns_enabled = !conversion_variant;
+	if(name().length() >= 2 && name()[1] == '1') po.limit_implicit_multiplication = true;
 	MathStructure mstruct;
 	bool had_errors = false;
 	CALCULATOR->beginTemporaryStopMessages();
 	CALCULATOR->parse(&mstruct, base_expression_, po);
 	replace_variables(mstruct);
-	if(mstruct.containsType(STRUCT_VARIABLE, true)) {
+	if(!conversion_variant && mstruct.containsType(STRUCT_VARIABLE, true)) {
 		po.variables_enabled = false;
 		CALCULATOR->parse(&mstruct, base_expression_, po);
 	}
@@ -1262,7 +1284,7 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 				} else if(mstruct[i].isPower() && mstruct[i][0].isUnit() && mstruct[i][1].isInteger()) {
 					add(mstruct[i][0].unit(), mstruct[i][1].number().intValue(), mstruct[i][0].prefix());
 				} else if(mstruct[i].isMultiplication()) {
-					for(size_t i2 = 0; i2 < mstruct.size(); i2++) {
+					for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
 						if(mstruct[i][i2].isUnit()) {
 							add(mstruct[i][i2].unit(), 1, mstruct[i][i2].prefix());
 						} else if(mstruct[i][i2].isPower() && mstruct[i][i2][0].isUnit() && mstruct[i][i2][1].isInteger()) {
@@ -1286,8 +1308,13 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 			break;
 		}
 	}
-	if(CALCULATOR->endTemporaryStopMessages() > 0) had_errors = true;
-	if(had_errors) CALCULATOR->error(false, _("Error(s) in unitexpression."), NULL);
+	if(conversion_variant && had_errors) {
+		CALCULATOR->endTemporaryStopMessages();
+		CALCULATOR->error(true, _("Error(s) in unitexpression."), NULL);
+	} else {
+		if(CALCULATOR->endTemporaryStopMessages() > 0) had_errors = true;
+		if(had_errors) CALCULATOR->error(false, _("Error(s) in unitexpression."), NULL);
+	}
 	setChanged(true);
 }
 void CompositeUnit::clear() {

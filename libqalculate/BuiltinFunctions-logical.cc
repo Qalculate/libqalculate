@@ -217,10 +217,12 @@ int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 			}
 			int result = mstruct[i].number().getBoolean();
 			if(result > 0) {
-				if((m2.isVector() || (m2.isFunction() && (m2.function()->id() == FUNCTION_ID_HORZCAT || m2.function()->id() == FUNCTION_ID_VERTCAT))) && m2.size() == vargs[0].size()) {
-					mstruct = m2[i];
+				if(!m2.isVector() && (!m2.isFunction() || (m2.function()->id() != FUNCTION_ID_HORZCAT && m2.function()->id() != FUNCTION_ID_VERTCAT)) && !m2.representsScalar()) m2.eval(eo);
+				if((m2.isVector() || (m2.isFunction() && (m2.function()->id() == FUNCTION_ID_HORZCAT || m2.function()->id() == FUNCTION_ID_VERTCAT))) && m2.size() > 0) {
+					if(i >= m2.size()) mstruct = m2[i % m2.size()];
+					else mstruct = m2[i];
 				} else {
-					mstruct = m2[1];
+					mstruct = m2;
 				}
 				return 1;
 			} else if(result < 0 && vargs[3].isZero()) {
@@ -248,41 +250,147 @@ int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	}
 	return -1;
 }
+
+bool calculate_replace2(MathStructure &m, const MathStructure &mfrom1, const MathStructure &mto1, const MathStructure &mfrom2, const MathStructure &mto2, const EvaluationOptions &eo) {
+	if(m.equals(mfrom1, true, true)) {
+		m.set(mto1);
+		return true;
+	}
+	if(m.equals(mfrom2, true, true)) {
+		m.set(mto2);
+		return true;
+	}
+	bool b = false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(calculate_replace2(m[i], mfrom1, mto1, mfrom2, mto2, eo)) {
+			b = true;
+			m.childUpdated(i + 1);
+		}
+	}
+	if(b) {
+		m.calculatesub(eo, eo, false);
+		if(eo.calculate_functions && m.type() == STRUCT_FUNCTION) m.calculateFunctions(eo, false);
+	}
+	return b;
+}
+bool calculate_userfunctions2(MathStructure &m, const MathStructure &x_mstruct, const MathStructure &x_mstruct2, const EvaluationOptions &eo) {
+	bool b_ret = false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(calculate_userfunctions2(m[i], x_mstruct, x_mstruct2, eo)) {
+			m.childUpdated(i + 1);
+			b_ret = true;
+		}
+	}
+	if(m.isFunction()) {
+		if(!m.contains(x_mstruct, true) && !m.contains(x_mstruct2, true) && !m.containsFunctionId(FUNCTION_ID_RAND, true, true, true) && !m.containsFunctionId(FUNCTION_ID_RANDN, true, true, true) && !m.containsFunctionId(FUNCTION_ID_RAND_POISSON, true, true, true)) {
+			if(m.calculateFunctions(eo, false)) {
+				b_ret = true;
+				calculate_userfunctions2(m, x_mstruct, x_mstruct2, eo);
+			}
+		} else if(m.function()->subtype() == SUBTYPE_USER_FUNCTION && m.function()->condition().empty()) {
+			bool b = true;
+			for(size_t i = 0; i < ((UserFunction*) m.function())->countSubfunctions(); i++) {
+				if(((UserFunction*) m.function())->subfunctionPrecalculated(i + 1)) {
+					b = false;
+					break;
+				}
+			}
+			for(size_t i = 0; b && i < m.size(); i++) {
+				Argument *arg = m.function()->getArgumentDefinition(i + 1);
+				if(arg && arg->tests() && (arg->type() != ARGUMENT_TYPE_FREE || !arg->getCustomCondition().empty() || arg->rationalPolynomial() || arg->zeroForbidden() || (arg->handlesVector() && m[i].isVector())) && m[i].contains(x_mstruct, true)) {
+					b = false;
+					break;
+				}
+			}
+			if(b && m.calculateFunctions(eo, false)) {
+				calculate_userfunctions2(m, x_mstruct, x_mstruct2, eo);
+				b_ret = true;
+			}
+		}
+	}
+	return b_ret;
+}
+
 ForFunction::ForFunction() : MathFunction("for", 7) {
 	setArgumentDefinition(2, new SymbolicArgument());
 	setArgumentDefinition(7, new SymbolicArgument());
 }
 int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
+	vector<Variable*> vars;
 	mstruct = vargs[4];
+	if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
+		while(true) {
+			Variable *v = NULL;
+			Variable *uv = find_interval_replace_var_comp(mstruct, eo, &v);
+			if(!uv) break;
+			if(v) mstruct.replace(v, uv);
+			vars.push_back(uv);
+		}
+	}
+	mstruct.eval(eo);
+	MathStructure m5(vargs[5]);
+	if(vargs[5].isComparison() && vargs[5].comparisonType() == COMPARISON_EQUALS && vargs[5][0] == vargs[6]) m5 = vargs[5][1];
+	else m5 = vargs[5];
+	MathStructure mbak(m5);
+	if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
+		while(true) {
+			Variable *v = NULL;
+			Variable *uv = find_interval_replace_var_comp(m5, eo, &v);
+			if(!uv) break;
+			if(v) m5.replace(v, uv);
+			vars.push_back(uv);
+		}
+	}
+	EvaluationOptions eo2 = eo;
+	eo2.calculate_functions = false;
+	eo2.expand = false;
+	CALCULATOR->beginTemporaryStopMessages();
+	m5.eval(eo2);
+	if(calculate_userfunctions2(m5, vargs[6], vargs[1], eo)) {
+		if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
+			while(true) {
+				Variable *v = NULL;
+				Variable *uv = find_interval_replace_var_comp(m5, eo, &v);
+				if(!uv) break;
+				if(v) m5.replace(v, uv);
+				vars.push_back(uv);
+			}
+		}
+		m5.calculatesub(eo2, eo2, true);
+	}
+	int im = 0;
+	if(CALCULATOR->endTemporaryStopMessages(NULL, &im) > 0 || im > 0) {
+		m5 = mbak;
+	}
 	MathStructure mcounter = vargs[0];
+	mcounter.eval(eo);
 	MathStructure mtest;
 	MathStructure mcount;
 	MathStructure mupdate;
-	bool b_eval = true;
 	while(true) {
 		mtest = vargs[2];
 		mtest.replace(vargs[1], mcounter);
 		mtest.eval(eo);
-		if(!mtest.isNumber() || CALCULATOR->aborted()) return 0;
+		if(!mtest.isNumber() || CALCULATOR->aborted()) {
+			for(size_t i = 0; i < vars.size(); i++) vars[i]->destroy();
+			return 0;
+		}
 		if(!mtest.number().getBoolean()) {
 			break;
 		}
-		if(vargs[5].isComparison() && vargs[5].comparisonType() == COMPARISON_EQUALS && vargs[5][0] == vargs[6]) mupdate = vargs[5][1];
-		else mupdate = vargs[5];
-		mupdate.replace(vargs[1], mcounter, vargs[6], mstruct);
+		mupdate = m5;
+		calculate_replace2(mupdate, vargs[1], mcounter, vargs[6], mstruct, eo);
 		mstruct = mupdate;
-		if(b_eval) {
-			mstruct.eval(eo);
-			if(mstruct.containsType(STRUCT_ADDITION) || mstruct.containsType(STRUCT_FUNCTION)) b_eval = false;
-		} else {
-			mstruct.calculatesub(eo, eo, false);
-		}
 		if(vargs[3].isComparison() && vargs[3].comparisonType() == COMPARISON_EQUALS && vargs[3][0] == vargs[1]) mcount = vargs[3][1];
 		else mcount = vargs[3];
-		mcount.replace(vargs[1], mcounter);
+		mcount.calculateReplace(vargs[1], mcounter, eo, true);
 		mcounter = mcount;
-		mcounter.eval(eo);
+	}
+	for(size_t i = 0; i < vars.size(); i++) {
+		if(vars[i]->isKnown()) mstruct.replace(vars[i], ((KnownVariable*) vars[i])->get());
+		else mstruct.replace(vars[i], ((UnknownVariable*) vars[i])->interval());
+		vars[i]->destroy();
 	}
 	return 1;
 

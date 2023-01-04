@@ -3867,7 +3867,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						calculateRaiseExponent(eo);
 						return 1;
 					}
-				} else if(o_function->id() == FUNCTION_ID_SIGNUM && CHILD(0).representsReal(true) && SIZE == 2 && ((CHILD(1).isZero() && mstruct.representsPositive()) || CHILD(1).isOne())) {
+				} else if(o_function->id() == FUNCTION_ID_SIGNUM && SIZE == 2 && CHILD(0).representsReal(true) && ((CHILD(1).isZero() && mstruct.representsPositive()) || CHILD(1).isOne())) {
 					if(mstruct.representsOdd()) {
 						// sgn(x)^3=sgn(x)
 						MERGE_APPROX_AND_PREC(mstruct)
@@ -3975,7 +3975,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					}
 					return 1;
 				}
-			} else if(mstruct.isMultiplication() && mstruct.size() > 1) {
+			} else if(mstruct.isMultiplication() && mstruct.size() > 1 && !isMultiplication()) {
 				// x^(a*b*...)
 				bool b = representsNonNegative(true);
 				if(!b) {
@@ -3999,7 +3999,13 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 						EvaluationOptions eo2 = eo;
 						eo2.split_squares = false;
 						// avoid abs(x)^(2a) loop
-						if(mthis.calculateRaiseExponent(eo2) && (!mthis.isPower() || ((!isFunction() || o_function->id() != FUNCTION_ID_ABS || SIZE != 1 || !CHILD(0).equals(mthis[0], true, true)) && (!is_negation(mthis[0], *this))))) {
+						if(mthis.calculateRaiseExponent(eo2)) {
+							if((mthis.isPower() && ((m_type == STRUCT_FUNCTION && o_function->id() == FUNCTION_ID_ABS && SIZE == 1 && CHILD(0).equals(mthis[0], true, true)) || (is_negation(mthis[0], *this))))) {
+								mthis = *this;
+								mthis.raise(m_zero);
+								continue;
+							}
+							bool b_calc = (m_type != STRUCT_NUMBER || !mstruct[i].isNumber() || mthis.isNumber());
 							set(mthis);
 							if(mstruct.size() == 2) {
 								if(i == 0) {
@@ -4014,7 +4020,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 								raise_nocopy(&mstruct);
 								CHILD(1).delChild(i + 1);
 							}
-							calculateRaiseExponent(eo);
+							if(b_calc) calculateRaiseExponent(eo);
 							MERGE_APPROX_AND_PREC(mstruct)
 							return 1;
 						}
@@ -6864,7 +6870,17 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 				CHILD(0).setFunction(o_function);
 				SET_CHILD_MAP(0)
 			}
+			if(SIZE >= (size_t) o_function->minargs()) {
+				if(o_function->id() == FUNCTION_ID_LOGN) CALCULATOR->error(false, _("log() with a single argument is considered ambiguous. Please use ln() or log10() instead."), NULL);
+				while((o_function->maxargs() > 0 && SIZE < (size_t) o_function->maxargs()) || (o_function->maxargs() < 0 && !o_function->getDefaultValue(SIZE + 1).empty())) {
+					Argument *arg = o_function->getArgumentDefinition(SIZE + 1);
+					APPEND(m_zero)
+					if(arg) arg->parse(&LAST, o_function->getDefaultValue(SIZE));
+					else CALCULATOR->parse(&LAST, o_function->getDefaultValue(SIZE));
+				}
+			}
 		}
+
 		if(!o_function->testArgumentCount(SIZE)) {
 			return false;
 		}

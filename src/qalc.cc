@@ -13,6 +13,7 @@
 #include <libqalculate/qalculate.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <limits.h>
 #include <time.h>
 #include <dirent.h>
 #include <stdlib.h>
@@ -1321,7 +1322,7 @@ void set_option(string str) {
 		if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
 		if(v < 1) {
 			PUTS_UNICODE(_("Illegal value."));
-		} else {
+		} else if(v != CALCULATOR->getPrecision()) {
 			CALCULATOR->setPrecision(v > INT_MAX ? INT_MAX : (int) v);
 			if(CALCULATOR->getPrecision() != v) {
 				size_t l = i2s(CALCULATOR->getPrecision()).length() + strlen(_("Maximum precision %i set."));
@@ -1495,9 +1496,8 @@ void set_option(string str) {
 				if((index = svar.find_last_of(SPACES)) != string::npos) {
 					svar = svar.substr(0, index);
 					remove_blank_ends(svar);
-					str = str.substr(index + 1);
-					remove_blank_ends(str);
-					svalue = str;
+					svalue = str.substr(index + 1);
+					remove_blank_ends(svalue);
 					gsub("_", " ", svar);
 					gsub(SIGN_MINUS, "-", svalue);
 					goto set_option_place;
@@ -1972,7 +1972,9 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 							value += ((KnownVariable*) v)->unit();
 						}
 						if(value.length() > 40) {
-							value = value.substr(0, 30);
+							size_t n = 30;
+							while(n > 0 && (signed char) value[n + 1] < 0 && (unsigned char) value[n + 1] < 0xC0) n--;
+							value = value.substr(0, n);
 							value += "...";
 						}
 						FPUTS_UNICODE(value.c_str(), stdout);
@@ -2223,7 +2225,7 @@ int main(int argc, char *argv[]) {
 			//number base
 			fputs("\n\t-b, -base", stdout); fputs(" ", stdout); FPUTS_UNICODE(_("BASE"), stdout); fputs("\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("set the number base for results and, optionally, expressions"));
-			fputs("\n\t-c, -color\n", stdout);
+			fputs("\n\t-c, -color", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("COLOR"), stdout); fputs("]\n", stdout),
 			fputs("\t", stdout); PUTS_UNICODE(_("use colors to highlight different elements of expressions and results"));
 			fputs("\n\t-defaults\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("load default settings"));
@@ -2461,6 +2463,7 @@ int main(int argc, char *argv[]) {
 			enable_unicode = -1;
 		} else {
 			printops.use_unicode_signs = enable_unicode;
+			result_display_updated();
 		}
 	}
 
@@ -2613,14 +2616,8 @@ int main(int argc, char *argv[]) {
 		} else {
 			expression_str = calc_arg;
 		}
-		size_t index = expression_str.find_first_of(ID_WRAPS);
-		if(index != string::npos) {
-			printf(_("Illegal character, \'%c\', in expression."), expression_str[index]);
-			puts("");
-		} else {
-			use_readline = false;
-			execute_expression(interactive_mode);
-		}
+		use_readline = false;
+		execute_expression(interactive_mode);
 		if(!interactive_mode) {
 			if(!view_thread->write(NULL)) view_thread->cancel();
 			CALCULATOR->terminateThreads();
@@ -2684,13 +2681,7 @@ int main(int argc, char *argv[]) {
 					} else {
 						expression_str = calc_arg;
 					}
-					size_t index = expression_str.find_first_of(ID_WRAPS);
-					if(index != string::npos) {
-						printf(_("Illegal character, \'%c\', in expression."), expression_str[index]);
-						puts("");
-					} else {
-						execute_expression(interactive_mode);
-					}
+					execute_expression(interactive_mode);
 				}
 				if(!interactive_mode) break;
 				i_maxtime = 0;
@@ -4042,6 +4033,8 @@ int main(int argc, char *argv[]) {
 			PUTS_UNICODE(_("approximate")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("assume"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("ASSUMPTIONS")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("base"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("BASE")); CHECK_IF_SCREEN_FILLED
+			PUTS_UNICODE(_("clear")); CHECK_IF_SCREEN_FILLED
+			PUTS_UNICODE(_("clear history")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("delete"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("NAME")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("exact")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("expand")); CHECK_IF_SCREEN_FILLED
@@ -4536,8 +4529,8 @@ int main(int argc, char *argv[]) {
 				INIT_SCREEN_CHECK
 #define STR_AND_TABS_SET(x, s) str = "- "; BEGIN_BOLD(str); str += x; END_BOLD(str); if(strlen(s) > 0) {str += " ("; str += s; str += ")";} str += "\n";
 #define SET_DESCRIPTION(s) if(strlen(s) > 0) {BEGIN_ITALIC(str); str += s; END_ITALIC(str); str += "\n";}
-#define STR_AND_TABS_BOOL(s, sh, d, v) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "("; str += _("on"); if(v) {str += "*";} str += ", "; str += _("off"); if(!v) {str += "*";} str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-#define STR_AND_TABS_YESNO(s, sh, d, v) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "("; str += _("yes"); if(v) {str += "*";} str += ", "; str += _("no"); if(!v) {str += "*";} str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+#define STR_AND_TABS_BOOL(s, sh, d, v) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(!v) {str += "*";} str += " = "; str += _("off"); str += ", 1"; if(v) {str += "*";} str += " = "; str += _("on"); str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+#define STR_AND_TABS_YESNO(s, sh, d, v) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(!v) {str += "*";} str += " = "; str += _("no"); str += ", 1"; if(v) {str += "*";} str += " = "; str += _("yes"); str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_2(s, sh, d, v, s0, s1, s2) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_2b(s, sh, d, v, s0, s1) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(1"; if(v == 1) {str += "*";} str += " = "; str += s0; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s1; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 #define STR_AND_TABS_3(s, sh, d, v, s0, s1, s2, s3) STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
@@ -4654,13 +4647,15 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_4(_("complex form"), "cplxform", "", evalops.complex_number_form + (complex_angle_form ? 1 : 0), _("rectangular"), _("exponential"), _("polar"), "cis", _("angle"));
 				STR_AND_TABS_SET(_("decimal comma"), "");
 				SET_DESCRIPTION(_("Determines the default decimal separator."));
-				str += "(";
-				str += _("locale");
+				str += "(-1";
 				if(b_decimal_comma < 0) str += "*";
-				str += ", "; str += _("off");
+				str += " = "; str += _("locale");
+				str += ", 0";
 				if(b_decimal_comma == 0) str += "*";
-				str += ", "; str += _("on");
+				str += " = "; str += _("off");
+				str += ", 1";
 				if(b_decimal_comma > 0) str += "*";
+				str += " = "; str += _("on");
 				str += ")";
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_2(_("digit grouping"), "group", "", printops.digit_grouping, _("off"), _("standard"), _("locale"));
@@ -4675,16 +4670,16 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("lowercase e"), "lowe", _("Use lowercase e for E-notation (5e2 = 5 * 10^2)."), printops.lower_case_e);
 				STR_AND_TABS_BOOL(_("lowercase numbers"), "lownum", _("Use lowercase letters for number bases > 10."), printops.lower_case_numbers);
 				STR_AND_TABS_SET(_("max decimals"), "maxdeci");
-				str += "(";
-				str += _("off");
+				str += "(-1";
 				if(printops.max_decimals < 0 || !printops.use_max_decimals) str += "*";
+				str += " = "; str += _("off");
 				str += ", >= 0)";
 				if(printops.max_decimals >= 0 && printops.use_max_decimals) {str += " "; str += i2s(printops.max_decimals); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_SET(_("min decimals"), "mindeci");
-				str += "(";
-				str += _("off");
+				str += "(-1";
 				if(printops.min_decimals < 0 || !printops.use_min_decimals) str += "*";
+				str += " = "; str += _("off");
 				str += ", >= 0)";
 				if(printops.min_decimals >= 0 && printops.use_min_decimals) {str += " "; str += i2s(printops.min_decimals); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
@@ -4692,17 +4687,21 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_2(_("rounding"), "", _("Determines whether how approximate numbers are rounded (round halfway numbers away from zero or towards the nearest even digit, or round all numbers towards zero)."), rounding_mode, _("standard"), _("even"), _("truncate"));
 				STR_AND_TABS_SET(_("scientific notation"), "exp");
 				SET_DESCRIPTION(_("Determines how scientific notation is used (e.g. 5 543 000 = 5.543E6)."));
-				str += "(0 = ";
-				str += _("off");
+				str += "(0";
 				if(printops.min_exp == EXP_NONE) str += "*";
-				str += ", -1 = "; str += _("auto");
+				str += " = "; str += _("off");
+				str += ", -1";
 				if(printops.min_exp == EXP_PRECISION) str += "*";
-				str += ", -3 = "; str += _("engineering");
+				str += " = "; str += _("auto");
+				str += ", -3";
 				if(printops.min_exp == EXP_BASE_3) str += "*";
-				str += ", 1 = "; str += _("pure");
+				str += " = "; str += _("engineering");
+				str += ", 1";
 				if(printops.min_exp == EXP_PURE) str += "*";
-				str += ", 3 = "; str += _("scientific");
+				str += " = "; str += _("pure");
+				str += ", 3";
 				if(printops.min_exp == EXP_SCIENTIFIC) str += "*";
+				str += " = "; str += _("scientific");
 				str += ", >= 0)";
 				if(printops.min_exp != EXP_NONE && printops.min_exp != EXP_NONE && printops.min_exp != EXP_PRECISION && printops.min_exp != EXP_BASE_3 && printops.min_exp != EXP_PURE && printops.min_exp != EXP_SCIENTIFIC) {str += " "; str += i2s(printops.min_exp); str += "*";}
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
@@ -4714,13 +4713,15 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("caret as xor"), "xor^", _("Use ^ as bitwise exclusive OR operator."), caret_as_xor);
 				STR_AND_TABS_SET(_("decimal comma"), "");
 				SET_DESCRIPTION(_("Determines the default decimal separator."));
-				str += "(";
-				str += _("locale");
+				str += "(-1";
 				if(b_decimal_comma < 0) str += "*";
-				str += ", "; str += _("off");
+				str += " = "; str += _("locale");
+				str += ", 0";
 				if(b_decimal_comma == 0) str += "*";
-				str += ", "; str += _("on");
+				str += " = "; str += _("off");
+				str += ", 1";
 				if(b_decimal_comma > 0) str += "*";
+				str += " = "; str += _("on");
 				str += ")";
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				if(CALCULATOR->getDecimalPoint() != COMMA) {
@@ -4759,17 +4760,21 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("all prefixes"), "allpref", _("Enables automatic use of hecto, deca, deci, and centi."), printops.use_all_prefixes);
 				STR_AND_TABS_SET(_("autoconversion"), "conv");
 				SET_DESCRIPTION(_("Controls automatic unit conversion of the result. 'optimalsi' always converts non-SI units, while 'optimal' only converts to more optimal unit expressions, with less units and exponents."));
-				str += "(";
-				str += (_("none"));
+				str += "(0";
 				if(evalops.auto_post_conversion == POST_CONVERSION_NONE && evalops.mixed_units_conversion == MIXED_UNITS_CONVERSION_NONE) str += "*";
-				str += ", "; str +=  _("optimal");
+				str += " = "; str += (_("none"));
+				str += ", 1";
 				if(evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) str += "*";
-				str += ", "; str += _c("units", "base");
+				str += " = "; str +=  _("optimal");
+				str += ", 2";
 				if(evalops.auto_post_conversion == POST_CONVERSION_BASE) str += "*";
-				str += ", "; str += _("optimalsi");
+				str += " = "; str += _c("units", "base");
+				str += ", 3";
 				if(evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL_SI) str += "*";
-				str += ", "; str += _c("units", "mixed");
+				str += " = "; str += _("optimalsi");
+				str += ", 4";
 				if(evalops.auto_post_conversion == POST_CONVERSION_NONE && evalops.mixed_units_conversion > MIXED_UNITS_CONVERSION_NONE) str += "*";
+				str += " = "; str += _c("units", "mixed");
 				str += ")";
 				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				STR_AND_TABS_BOOL(_("binary prefixes"), "binpref", _("If activated, binary prefixes are used by default for information units."), (CALCULATOR->usesBinaryPrefixes() > 0));
@@ -4781,8 +4786,8 @@ int main(int argc, char *argv[]) {
 				STR_AND_TABS_BOOL(_("sync units"), "sync", "", evalops.sync_units);
 				STR_AND_TABS_2(_("temperature calculation"), "temp", _("Determines how expressions with temperature units are calculated (hybrid acts as absolute if the expression contains different temperature units, otherwise as relative)."), CALCULATOR->getTemperatureCalculationMode(), _("hybrid"), _("absolute"), _("relative"));
 				STR_AND_TABS_SET(_("update exchange rates"), "upxrates");
-				str += "(-1 = "; str += _("ask"); if(auto_update_exchange_rates < 0) str += "*";
-				str += ", 0 = "; str += _("never"); if(auto_update_exchange_rates == 0) str += "*";
+				str += "(-1"; if(auto_update_exchange_rates < 0) {str += "*";} str += " = "; str += _("ask");
+				str += ", 0"; if(auto_update_exchange_rates == 0) {str += "*";} str += " = "; str += _("never");
 				str += ", > 0 = "; str += _("days");
 				str += ")";
 				if(auto_update_exchange_rates > 0) {str += " "; str += i2s(auto_update_exchange_rates); str += "*";}
@@ -4834,6 +4839,14 @@ int main(int argc, char *argv[]) {
 				PUTS_UNICODE(_("If name equals \"mode\" or \"definitions\", the current mode and definitions, respectively, will be saved."));
 				puts("");
 				PUTS_UNICODE(_("Example: store var1."));
+				puts("");
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear", _("clear"))) {
+				puts("");
+				PUTS_UNICODE(_("Clears the screen."));
+				puts("");
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear history", _("clear history"))) {
+				puts("");
+				PUTS_UNICODE(_("Clears the expression history."));
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "variable", _("variable"))) {
 				puts("");
@@ -5020,10 +5033,12 @@ int main(int argc, char *argv[]) {
 			}
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear history", _("clear history"))) {
+#ifdef HAVE_LIBREADLINE
 			while(history_length > 0) {
 				HIST_ENTRY *hist = remove_history(0);
 				if(hist) free_history_entry(hist);
 			}
+#endif
 			history_was_cleared = true;
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear", _("clear"))) {
@@ -5059,26 +5074,20 @@ int main(int argc, char *argv[]) {
 			}
 			puts("");
 		} else {
-			size_t index = str.find_first_of(ID_WRAPS);
-			if(index != string::npos) {
-				printf(_("Illegal character, \'%c\', in expression."), str[index]);
-				puts("");
-			} else {
-				if(unittest && str[0] == '\t') {
+			if(unittest && str[0] == '\t') {
 #define RED   "\x1B[31m"
 #define GRN   "\x1B[32m"
 #define RESET "\x1B[0m"
-					remove_blank_ends(str);
-					if(str != result_text) {
-						printf(RED "\nMismatch detected at line %d\n%s\nexpected '%s'\nreceived '%s'\n\n" RESET, nline, expression_str.c_str(), str.c_str(), result_text.c_str());
-						retval = EXIT_FAILURE;
-						break;
-					}
-					ntests++;
-				} else {
-					expression_str = str;
-					execute_expression();
+				remove_blank_ends(str);
+				if(str != result_text) {
+					printf(RED "\nMismatch detected at line %d\n%s\nexpected '%s'\nreceived '%s'\n\n" RESET, nline, expression_str.c_str(), str.c_str(), result_text.c_str());
+					retval = EXIT_FAILURE;
+					break;
 				}
+				ntests++;
+			} else {
+				expression_str = str;
+				execute_expression();
 			}
 		}
 #ifdef HAVE_LIBREADLINE
@@ -5091,7 +5100,12 @@ int main(int argc, char *argv[]) {
 					break;
 				}
 			}
-			if(!history_was_cleared) add_history(rlbuffer);
+			if(!history_was_cleared) {
+				for(size_t i = 0; i < strlen(rlbuffer); i++) {
+					if(rlbuffer[i] == '\n') rlbuffer[i] = ' ';
+				}
+				add_history(rlbuffer);
+			}
 			free(rlbuffer);
 		}
 #endif
@@ -5288,17 +5302,17 @@ bool ask_implicit() {
 	puts("");
 	str = ""; BEGIN_BOLD(str); str += "0 = "; str += _("Adaptive"); END_BOLD(str);
 	PUTS_UNICODE(str.c_str());
-	string s_eg = "1/2x = 1/(2x); 1/2 x = (1/2)x";
+	string s_eg = "1/2x = 1/(2x); 1/2 x = (1/2)x; 5 m/2 s = (5 m)/(2 s)";
 	PUTS_ITALIC(s_eg);
 	puts("");
 	str = ""; BEGIN_BOLD(str); str += "1 = "; str += _("Implicit multiplication first"); END_BOLD(str);
 	PUTS_UNICODE(str.c_str());
-	s_eg = "1/2x = 1/(2x)";
+	s_eg = "1/2x = 1/(2x); 5 m/2 s = (5 m)/(2 s)";
 	PUTS_ITALIC(s_eg);
 	puts("");
 	str = ""; BEGIN_BOLD(str); str += "2 = "; str += _("Conventional"); END_BOLD(str);
 	PUTS_UNICODE(str.c_str());
-	s_eg = "1/2x = (1/2)x";
+	s_eg = "1/2x = (1/2)x; 5 m/2 s = (5 m/2)s";
 	PUTS_ITALIC(s_eg);
 	puts("");
 	FPUTS_UNICODE(_("Parsing mode"), stdout);
@@ -6372,6 +6386,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				do_expand = true;
 			}
 		}
+		transform_expression_for_equals_save(str, evalops.parse_options);
 	}
 
 	if(caret_as_xor) gsub("^", "⊻", str);
@@ -7013,7 +7028,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {4, 2, 0};
+	int version_numbers[] = {4, 5, 1};
 
 	if(file) {
 		char line[10000];
@@ -7365,10 +7380,13 @@ void load_preferences() {
 */
 bool save_preferences(bool mode) {
 	FILE *file = NULL;
-	makeDir(getLocalDir());
+	if(!dirExists(getLocalDir())) recursiveMakeDir(getLocalDir());
 #ifdef HAVE_LIBREADLINE
-	if(clear_history_on_exit && fileExists(buildPath(getLocalDir(), "qalc.history"))) history_truncate_file(buildPath(getLocalDir(), "qalc.history").c_str(), 0);
-	else write_history(buildPath(getLocalDir(), "qalc.history").c_str());
+	if(clear_history_on_exit) {
+		if(fileExists(buildPath(getLocalDir(), "qalc.history"))) history_truncate_file(buildPath(getLocalDir(), "qalc.history").c_str(), 0);
+	} else {
+		write_history(buildPath(getLocalDir(), "qalc.history").c_str());
+	}
 #endif
 	string filename = buildPath(getLocalDir(), "qalc.cfg");
 	file = fopen(filename.c_str(), "w+");

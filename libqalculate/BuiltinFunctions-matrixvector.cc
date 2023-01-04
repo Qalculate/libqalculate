@@ -216,21 +216,50 @@ RowsFunction::RowsFunction() : MathFunction("rows", 1) {
 	setArgumentDefinition(1, new MatrixArgument(""));
 }
 int RowsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	mstruct = (int) vargs[0].rows();
+	mstruct.set((long int) vargs[0].rows(), 1L, 0L);
 	return 1;
 }
 ColumnsFunction::ColumnsFunction() : MathFunction("columns", 1) {
 	setArgumentDefinition(1, new MatrixArgument(""));
 }
 int ColumnsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	mstruct = (int) vargs[0].columns();
+	mstruct.set((long int) vargs[0].columns(), 1L, 0L);
 	return 1;
 }
 ElementsFunction::ElementsFunction() : MathFunction("elements", 1) {
-	setArgumentDefinition(1, new MatrixArgument(""));
+	setArgumentDefinition(1, new MatrixArgument("", false));
 }
-int ElementsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	mstruct = (int) (vargs[0].rows() * vargs[0].columns());
+int ElementsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	mstruct.eval(eo);
+	if(!mstruct.isMatrix()) {
+		if(mstruct.isVector() && (mstruct.size() == 0 || mstruct[0].representsScalar())) {
+			mstruct.set((long int) mstruct.size(), 1L, 0L);
+			return 1;
+		} else if(mstruct.representsScalar()) {
+			mstruct = m_one;
+			return 1;
+		} else if(eo.approximation == APPROXIMATION_EXACT || eo.approximation == APPROXIMATION_EXACT_VARIABLES) {
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_APPROXIMATE;
+			MathStructure m2(vargs[0]);
+			CALCULATOR->beginTemporaryStopMessages();
+			m2.eval(eo2);
+			if(CALCULATOR->endTemporaryStopMessages()) return -1;
+			if(m2.isMatrix()) {
+				mstruct.set((long int) (m2.rows() * m2.columns()), 1L, 0L);
+				return 1;
+			} else if(m2.isVector() && (m2.size() == 0 || m2[0].representsScalar())) {
+				mstruct.set((long int) m2.size(), 1L, 0L);
+				return 1;
+			} else if(m2.representsScalar()) {
+				mstruct = m_one;
+				return 1;
+			}
+		}
+		return -1;
+	}
+	mstruct.set((long int) (mstruct.rows() * mstruct.columns()), 1L, 0L);
 	return 1;
 }
 ElementFunction::ElementFunction() : MathFunction("element", 2, 3) {
@@ -284,10 +313,44 @@ int ElementFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	return 1;
 }
 DimensionFunction::DimensionFunction() : MathFunction("dimension", 1) {
-	setArgumentDefinition(1, new VectorArgument(""));
+	setArgumentDefinition(1, new VectorArgument("", false));
 }
-int DimensionFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	mstruct = (int) vargs[0].countChildren();
+int DimensionFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isVector()) {
+		if(vargs[0].isMatrix() && vargs[0].columns() == 1 && vargs[0].rows() > 1) {
+			mstruct.set((long int) vargs[0].rows(), 1L, 0L);
+			return 1;
+		} else if(vargs[0].representsNonMatrix()) {
+			mstruct.set((long int) vargs[0].countChildren(), 1L, 0L);
+			return 1;
+		}
+	}
+	mstruct = vargs[0];
+	mstruct.eval(eo);
+	if(!mstruct.isVector()) {
+		if(mstruct.representsScalar()) {
+			mstruct = m_one;
+			return 1;
+		} else if(eo.approximation == APPROXIMATION_EXACT || eo.approximation == APPROXIMATION_EXACT_VARIABLES) {
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_APPROXIMATE;
+			MathStructure m2(vargs[0]);
+			CALCULATOR->beginTemporaryStopMessages();
+			m2.eval(eo2);
+			if(CALCULATOR->endTemporaryStopMessages()) return -1;
+			if(m2.isVector()) {
+				if(mstruct.isMatrix() && mstruct.columns() == 1 && mstruct.rows() > 1) mstruct.set((long int) m2.rows(), 1L, 0L);
+				else mstruct.set((long int) m2.countChildren(), 1L, 0L);
+				return 1;
+			} else if(m2.representsScalar()) {
+				mstruct = m_one;
+				return 1;
+			}
+		}
+		return -1;
+	}
+	if(mstruct.isMatrix() && mstruct.columns() == 1 && mstruct.rows() > 1) mstruct.set((long int) mstruct.rows(), 1L, 0L);
+	else mstruct.set((long int) mstruct.countChildren(), 1L, 0L);
 	return 1;
 }
 ComponentFunction::ComponentFunction() : MathFunction("component", 2) {
@@ -1172,14 +1235,16 @@ int GenerateVectorFunction::calculate(MathStructure &mstruct, const MathStructur
 		mstruct = vargs[0].generateVector(vargs[4], vargs[1], vargs[2], vargs[3], NULL, eo);
 	} else {
 		bool overflow = false;
-		int steps = vargs[3].number().intValue(&overflow);
-		if(!vargs[3].isNumber() || overflow || steps < 1) {
+		MathStructure msteps(vargs[3]);
+		msteps.eval(eo);
+		int steps = msteps.number().intValue(&overflow);
+		if(!msteps.isNumber() || overflow || steps < 1) {
 			CALCULATOR->error(true, _("The number of requested elements in generate vector function must be a positive integer."), NULL);
 			return 0;
 		}
 		mstruct = vargs[0].generateVector(vargs[4], vargs[1], vargs[2], steps, NULL, eo);
 	}
-	if(CALCULATOR->aborted()) return 0;
+	if(CALCULATOR->aborted() || mstruct.size() == 0) return 0;
 	return 1;
 }
 SelectFunction::SelectFunction() : MathFunction("select", 2, 4) {

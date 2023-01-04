@@ -33,9 +33,12 @@ TotalFunction::TotalFunction() : MathFunction("total", 1) {
 }
 int TotalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct.clear();
+	bool b_calc = (eo.interval_calculation != INTERVAL_CALCULATION_VARIANCE_FORMULA && eo.interval_calculation != INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) || !vargs[0].containsInterval(true, true, false, 1, true);
 	for(size_t index = 0; index < vargs[0].size(); index++) {
 		if(CALCULATOR->aborted()) return 0;
-		mstruct.calculateAdd(vargs[0][index], eo);
+		if(index == 0) mstruct = vargs[0][index];
+		else if(b_calc) mstruct.calculateAdd(vargs[0][index], eo);
+		else mstruct.add(vargs[0][index], true);
 	}
 	return 1;
 }

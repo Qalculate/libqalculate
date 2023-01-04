@@ -366,6 +366,16 @@
         <exponent>1</exponent>
       </base>
     </unit>
+    <unit type="alias">
+      <_title>Rack Unit</_title>
+      <system>Imperial/US</system>
+      <_names>a:U,r:rack_unit,p:rack_units,a:RU</_names>
+      <base>
+        <unit>in</unit>
+        <relation>1.75</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
   </category>
   <category>
     <!-- Unit category -->
@@ -838,7 +848,7 @@
     </unit>
     <unit type="alias">
       <_title>Hour</_title>
-      <_names>ar:h,hour,p:hours</_names>
+      <_names>ar:h,hour,p:hours,a:hr,a:hrs</_names>
       <base>
         <unit>min</unit>
         <relation>60</relation>
@@ -2338,6 +2348,34 @@
         </part>
       </unit>
       <unit type="composite">
+        <_title>Liter per Minute</_title>
+        <names>r:l_p_min</names>
+        <part>
+          <unit>L</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>min</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <_title>Liter per Hour</_title>
+        <names>r:l_p_h</names>
+        <part>
+          <unit>L</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>h</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
         <_title>Cubic Meter per Second</_title>
         <system>SI</system>
         <names>r:cum_p_s</names>
@@ -2348,6 +2386,21 @@
         </part>
         <part>
           <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <_title>Cubic Centimeter per Minute</_title>
+        <system>SI</system>
+        <names>r:cucm_p_min</names>
+        <part>
+          <unit>m</unit>
+          <prefix>-2</prefix>
+          <exponent>3</exponent>
+        </part>
+        <part>
+          <unit>min</unit>
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
@@ -2472,6 +2525,21 @@
           <relation>1</relation>
           <exponent>1</exponent>
         </base>
+      </unit>
+      <unit type="composite">
+        <_title>Gallons per Second (U.S.)</_title>
+        <system>US</system>
+        <names>r:gal_p_h</names>
+        <part>
+          <unit>gal</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
       </unit>
       <unit type="composite">
         <title>Acre-Foot per Day</title>
@@ -2629,6 +2697,66 @@
           <unit>s</unit>
           <prefix>0</prefix>
           <exponent>-2</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <system>SI</system>
+        <_title>Meter per Second Cubed (Jerk)</_title>
+        <names>r:m_p_scu</names>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-3</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <system>SI</system>
+        <_title>Meter per Second to the Fourth (Snap)</_title>
+        <names>r:m_p_sfourth</names>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-4</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <system>SI</system>
+        <_title>Meter per Second to the Fifth (Crackle)</_title>
+        <names>r:m_p_sfifth</names>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-5</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <system>SI</system>
+        <_title>Meter per Second to the Sixth (Pop)</_title>
+        <names>r:m_p_ssixth</names>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-6</exponent>
         </part>
       </unit>
       <unit type="alias">
@@ -2882,6 +3010,16 @@
       <base>
         <unit>N</unit>
         <relation>4.4482216152605</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <system>Imperial</system>
+      <_title>Ounce-force</_title>
+      <_names>ar:ozf,ounce_force</_names>
+      <base>
+        <unit>lbf</unit>
+        <relation>0.0625</relation>
         <exponent>1</exponent>
       </base>
     </unit>
@@ -3200,6 +3338,42 @@
         <base>
           <unit>dyn_p_sqcm</unit>
           <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>Meter of Water</_title>
+        <_names>ar:mWC,a:mwg,au:mH&#x2082;O</_names>
+        <base>
+          <unit>Pa</unit>
+          <relation>9806.65</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="composite">
+        <_title>Millimeter of Water</_title>
+        <names>mmWC_c</names>
+        <part>
+          <unit>mWC</unit>
+          <prefix>-3</prefix>
+          <exponent>1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <_title>Centimeter of Water</_title>
+        <names>cmWC_c</names>
+        <part>
+          <unit>mWC</unit>
+          <prefix>-2</prefix>
+          <exponent>1</exponent>
+        </part>
+      </unit>
+      <unit type="alias">
+        <_title>Inch of Water</_title>
+        <_names>ar:inWC,a:iwg,au:inH&#x2082;O</_names>
+        <base>
+          <unit>mWC</unit>
+          <relation>0.0254</relation>
           <exponent>1</exponent>
         </base>
       </unit>

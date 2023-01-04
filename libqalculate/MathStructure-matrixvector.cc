@@ -844,9 +844,11 @@ bool calculate_userfunctions(MathStructure &m, const MathStructure &x_mstruct, c
 		}
 	}
 	if(m.isFunction()) {
-		if(!m.contains(x_mstruct, true)) {
-			m.calculateFunctions(eo);
-			b_ret = true;
+		if(!m.contains(x_mstruct, true) && !m.containsFunctionId(FUNCTION_ID_RAND, true, true, true) && !m.containsFunctionId(FUNCTION_ID_RANDN, true, true, true) && !m.containsFunctionId(FUNCTION_ID_RAND_POISSON, true, true, true)) {
+			if(m.calculateFunctions(eo, false)) {
+				b_ret = true;
+				calculate_userfunctions(m, x_mstruct, eo, b_vector);
+			}
 		} else if(m.function()->subtype() == SUBTYPE_USER_FUNCTION && m.function()->condition().empty()) {
 			bool b = true;
 			for(size_t i = 0; i < ((UserFunction*) m.function())->countSubfunctions(); i++) {
@@ -1211,6 +1213,7 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 			x_value = x_vector[0];
 			x_value.number() += step.number() / 2;
 			for(int i = 1; i < (int) x_vector.size(); i += 2) {
+				if(CALCULATOR->aborted()) break;
 				x_vector.insertChild(x_value, i);
 				y_value = mthis;
 				y_value.replace(x_mstruct, x_value);
@@ -1221,6 +1224,7 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 		} else {
 			Number new_step_size;
 			for(int i = 1; i < (int) x_vector.size(); i++) {
+				if(CALCULATOR->aborted()) break;
 				int new_steps = 0;
 				if(!ydiff[i].number().isZero()) {
 					ydiff[i].number() /= ydiff_total;
@@ -1245,6 +1249,7 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 					new_step_size /= (new_steps + 1);
 					x_value = x_vector[i - 1].number();
 					for(int i2 = 0; i2 < new_steps; i2++) {
+						if(CALCULATOR->aborted()) break;
 						x_value.number() += new_step_size;
 						x_vector.insertChild(x_value, i + i2 + 1);
 						y_value = mthis;
@@ -1302,34 +1307,48 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 	}
 	return y_vector;
 }
-MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector, const EvaluationOptions &eo) const {
+MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, const MathStructure &step_pre, MathStructure *x_vector, const EvaluationOptions &eo) const {
 	MathStructure x_value(min);
 	MathStructure y_value;
 	MathStructure y_vector;
 	y_vector.clearVector();
-	if(min != max) {
-		MathStructure mtest(max);
-		mtest.calculateSubtract(min, eo);
-		if(!step.isZero()) mtest.calculateDivide(step, eo);
-		mtest.eval(eo);
-		if(step.isZero() || !mtest.isNumber() || mtest.number().isNegative()) {
-			CALCULATOR->error(true, _("The selected min, max and step size do not result in a positive, finite number of data points"), NULL);
-			return y_vector;
-		} else if(mtest.number().isGreaterThan(1000000)) {
-			CALCULATOR->error(true, _("Too many data points"), NULL);
-			return y_vector;
+	MathStructure step;
+	if(!step_pre.contains(x_mstruct) && !step_pre.containsFunctionId(FUNCTION_ID_RAND, true, true, true) && !step_pre.containsFunctionId(FUNCTION_ID_RANDN, true, true, true) && !step_pre.containsFunctionId(FUNCTION_ID_RAND_POISSON, true, true, true)) {
+		step = step_pre;
+		step.eval(eo);
+		if(min != max) {
+			MathStructure mtest(max);
+			mtest.calculateSubtract(min, eo);
+			if(!step.isZero()) mtest.calculateDivide(step, eo);
+			mtest.eval(eo);
+			if(step.isZero() || !mtest.isNumber() || mtest.number().isNegative()) {
+				CALCULATOR->error(true, _("The selected min, max and step size do not result in a positive, finite number of data points"), NULL);
+				return y_vector;
+			} else if(mtest.number().isGreaterThan(1000000)) {
+				CALCULATOR->error(true, _("Too many data points"), NULL);
+				return y_vector;
+			}
+			mtest.number().round();
+			unsigned int steps = mtest.number().uintValue();
+			y_vector.resizeVector(steps, m_zero);
+			if(x_vector) x_vector->resizeVector(steps, m_zero);
 		}
-		mtest.number().round();
-		unsigned int steps = mtest.number().uintValue();
-		y_vector.resizeVector(steps, m_zero);
-		if(x_vector) x_vector->resizeVector(steps, m_zero);
+	}
+	ComparisonResult cr = min.compare(max);
+	if(cr == COMPARISON_RESULT_EQUAL) {
+		y_vector.addChild(*this);
+		y_vector[0].replace(x_mstruct, x_value);
+		y_vector[0].eval(eo);
+		if(x_vector) x_vector->addChild(x_value);
+		return y_vector;
 	}
 	MathStructure mthis(*this);
 	mthis.unformat();
 	calculate_userfunctions(mthis, x_mstruct, eo, true);
-	ComparisonResult cr = max.compare(x_value);
+	bool b_neg = (cr == COMPARISON_RESULT_LESS);
+	cr = max.compare(x_value);
 	size_t i = 0;
-	while(COMPARISON_IS_EQUAL_OR_LESS(cr)) {
+	while((!b_neg && COMPARISON_IS_EQUAL_OR_LESS(cr)) || (b_neg && COMPARISON_IS_EQUAL_OR_GREATER(cr))) {
 		if(x_vector) {
 			if(i >= x_vector->size()) x_vector->addChild(x_value);
 			else (*x_vector)[i] = x_value;
@@ -1339,8 +1358,17 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 		y_value.eval(eo);
 		if(i >= y_vector.size()) y_vector.addChild(y_value);
 		else y_vector[i] = y_value;
-		if(x_value.isNumber()) x_value.number().add(step.number());
-		else x_value.calculateAdd(step, eo);
+		if(step.isZero()) {
+			step = step_pre;
+			step.replace(x_mstruct, x_value);
+			step.eval(eo);
+			x_value.calculateAdd(step, eo);
+			step.clear();
+		} else if(x_value.isNumber() && step.isNumber()) {
+			x_value.number().add(step.number());
+		} else {
+			x_value.calculateAdd(step, eo);
+		}
 		cr = max.compare(x_value);
 		if(CALCULATOR->aborted()) {
 			y_vector.resizeVector(i, m_zero);

@@ -657,6 +657,7 @@ void NowVariable::calculate(MathStructure &m) const {
 #include <fstream>
 
 void UptimeVariable:: calculate(MathStructure &m) const {
+#ifndef DISABLE_INSECURE
 	Number nr;
 #	ifdef __linux__
 	std::ifstream proc_uptime("/proc/uptime", std::ios::in);
@@ -676,6 +677,7 @@ void UptimeVariable:: calculate(MathStructure &m) const {
 	m = nr;
 	Unit *u = CALCULATOR->getUnit("s");
 	if(u) m *= u;
+#endif
 }
 UptimeVariable::UptimeVariable() : DynamicVariable("", "uptime") {
 	setApproximate(false);

@@ -77,7 +77,14 @@ void CalculateThread::run() {
 			mstruct->setAborted();
 			if(CALCULATOR->tmp_parsedstruct) CALCULATOR->tmp_parsedstruct->setAborted();
 			//if(CALCULATOR->tmp_tostruct) CALCULATOR->tmp_tostruct->setUndefined();
-			mstruct->set(CALCULATOR->calculate(CALCULATOR->expression_to_calculate, CALCULATOR->tmp_evaluationoptions, CALCULATOR->tmp_parsedstruct, CALCULATOR->tmp_tostruct, CALCULATOR->tmp_maketodivision));
+			if(CALCULATOR->expression_to_calculate.find_first_of(ID_WRAPS) != string::npos) {
+				string str = CALCULATOR->expression_to_calculate;
+				gsub(ID_WRAP_LEFT, LEFT_PARENTHESIS, str);
+				gsub(ID_WRAP_RIGHT, RIGHT_PARENTHESIS, str);
+				mstruct->set(CALCULATOR->calculate(str, CALCULATOR->tmp_evaluationoptions, CALCULATOR->tmp_parsedstruct, CALCULATOR->tmp_tostruct, CALCULATOR->tmp_maketodivision));
+			} else {
+				mstruct->set(CALCULATOR->calculate(CALCULATOR->expression_to_calculate, CALCULATOR->tmp_evaluationoptions, CALCULATOR->tmp_parsedstruct, CALCULATOR->tmp_tostruct, CALCULATOR->tmp_maketodivision));
+			}
 		} else {
 			MathStructure meval(*mstruct);
 			mstruct->setAborted();
@@ -149,7 +156,7 @@ bool Calculator::abort() {
 		b_busy = false;
 	} else {
 		// wait 5 seconds for clean abortation
-		int msecs = 5000;
+		int msecs = i_precision > 1000 ? 10000 : 5000;
 		while(b_busy && msecs > 0) {
 			sleep_ms(10);
 			msecs -= 10;
@@ -166,11 +173,17 @@ bool Calculator::abort() {
 			stopped_errors_count.clear();
 			stopped_messages.clear();
 			disable_errors_ref = 0;
+			i_stop_interval = 0;
+			i_start_interval = 0;
 			if(tmp_rpn_mstruct) tmp_rpn_mstruct->unref();
 			tmp_rpn_mstruct = NULL;
 
 			// thread cancellation is not safe
-			error(true, _("The calculation has been forcibly terminated. Please restart the application and report this as a bug."), NULL);
+			if(i_precision > 10000) {
+				error(true, _("The calculation has been forcibly terminated. Please restart the application."), NULL);
+			} else {
+				error(true, _("The calculation has been forcibly terminated. Please restart the application and report this as a bug."), NULL);
+			}
 
 			b_busy = false;
 			calculate_thread->start();
@@ -749,7 +762,7 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 		if(b_cmp3) {
 			do_frac = true;
 			mcmp = &m[2];
-		} else if(!mparse || ((dfrac > 0 || dappr > 0 || !contains_decimal(*mparse, &original_expression)) && !mparse->isNumber())) {
+		} else if(!mparse || ((dfrac > 0 || dappr > 0 || !contains_decimal(*mparse, &original_expression)) && (!mparse->isNumber() || !mresult->isNumber()))) {
 			if(contains_decimal(m)) {
 				if(m.isComparison() && m.comparisonType() == COMPARISON_EQUALS) {
 					mcmp = mresult->getChild(2);
@@ -1072,12 +1085,13 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 	}
 }
 
-bool test_simplified(const MathStructure &m) {
+bool test_simplified(const MathStructure &m, bool top = true) {
 	if(m.isFunction() || (m.isVariable() && m.variable()->isKnown()) || (m.isUnit() && (m.unit()->hasApproximateRelationToBase() || (m.unit()->isCurrency() && m.unit() != CALCULATOR->getLocalCurrency())))) return false;
 	for(size_t i = 0; i < m.size(); i++) {
-		if(!test_simplified(m[i])) return false;
+		if(!test_simplified(m[i], false)) return false;
 	}
 	if(m.isPower() && m[0].containsType(STRUCT_NUMBER)) return false;
+	if(!top && m.isNumber() && m.number().isFloatingPoint()) return false;
 	return true;
 }
 void flatten_addmulti(MathStructure &m) {
@@ -1313,13 +1327,13 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 	int dual_approximation = 0;
 	if(auto_approx == AUTOMATIC_APPROXIMATION_AUTO) dual_approximation = -1;
 	else if(auto_approx == AUTOMATIC_APPROXIMATION_DUAL) dual_approximation = 1;
-	if(dual_approximation != 0 && evalops.approximation == APPROXIMATION_TRY_EXACT && mstruct->isApproximate() && (dual_approximation > 0 || (!mstruct->containsType(STRUCT_UNIT, false, false, false) && !parsed_mstruct->containsType(STRUCT_UNIT, false, false, false) && original_expression.find(DOT) == string::npos)) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_SAVE) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_PLOT) && !parsed_mstruct->containsInterval(true, false, false, false, true)) {
+	if(dual_approximation != 0 && evalops.approximation == APPROXIMATION_TRY_EXACT && mstruct->isApproximate() && (dual_approximation > 0 || (!mstruct->containsType(STRUCT_UNIT, false, false, false) && !parsed_mstruct->containsType(STRUCT_UNIT, false, false, false) && original_expression.find(DOT) == string::npos)) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_SAVE) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_PLOT) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_RAND) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_RANDN) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_RAND_POISSON) && !parsed_mstruct->containsInterval(true, false, false, false, true)) {
 		evalops.approximation = APPROXIMATION_EXACT;
 		evalops.expand = -2;
 		CALCULATOR->beginTemporaryStopMessages();
 		if(msecs > 0) CALCULATOR->startControl(msecs);
 		mstruct_exact = CALCULATOR->calculate(original_expression, evalops);
-		if(CALCULATOR->aborted() || mstruct_exact.isApproximate() || (dual_approximation < 0 && max_size > 0 && (test_max_addition_size(mstruct_exact, (size_t) max_size) || mstruct_exact.countTotalChildren(false) > (size_t) max_size * 5))) {
+		if(CALCULATOR->aborted() || mstruct_exact.isApproximate() || (dual_approximation < 0 && max_size > 0 && (test_max_addition_size(mstruct_exact, (size_t) max_size) || mstruct_exact.countTotalChildren(false) > (size_t) max_size * 6))) {
 			mstruct_exact.setUndefined();
 		} else if(test_simplified(mstruct_exact)) {
 			mstruct->set(mstruct_exact);
@@ -1411,6 +1425,165 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 		if(msecs > 0) CALCULATOR->stopControl();
 		CALCULATOR->endTemporaryStopMessages();
 	}
+}
+
+bool expression_contains_save_function(const string &str, const ParseOptions &po, bool only_equals) {
+	if(str.length() < 2 || po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && CALCULATOR->customInputBase() > 62)) return false;
+	size_t i = str.find("=", 1);
+	if(!only_equals) {
+		if(i != string::npos && ((i > 0 && str[i - 1] == ':') || (i < str.length() - 1 && str[i + 1] == ':'))) return true;
+		MathFunction *f = CALCULATOR->getFunctionById(FUNCTION_ID_SAVE);
+		for(size_t i2 = 1; f && i2 <= f->countNames(); i2++) {
+			if(str.find(f->getName(i2).name) != string::npos) return true;
+		}
+	}
+	if(i == string::npos) return false;
+	if(i < str.length() - 1) {
+		size_t i3 = str.find_first_not_of(SPACES, i + 1);
+		if(i3 != string::npos && (str[i3] == ':' || str[i3] == '!' || str[i3] == '<' || str[i3] == '>')) return false;
+	}
+	size_t i_name1 = str.find_first_not_of(SPACES);
+	if(i_name1 == i) return false;
+	size_t i_name2 = str.find_last_not_of(SPACES, i - 1);
+	if(i_name2 == string::npos) return false;
+	bool b_quote = i_name2 - i_name1 >= 2 && ((str[i_name2] == '\'' || str[i_name2] == '\"') && str[i_name1] == str[i_name2] && str.rfind(str[i_name1], i_name2 - 1) == i_name1);
+	if(!b_quote) b_quote = (i_name2 - i_name1 >= 3 && ((str[i_name1] == '\xe2' && str[i_name1 + 1] == '\x80') || (str[i_name1] == '\xc2' && (str[i_name1 + 1] == '\xab' || str[i_name1 + 1] == '\xbb'))));
+	for(size_t i2 = i_name1; b_quote && i2 < i_name2; i2++) {
+		if(str[i2] == '\xe2' || str[i2] == '\xc2') {
+			string name = str.substr(i_name1, i_name2 - i_name1 + 1);
+			CALCULATOR->parseSigns(name);
+			b_quote = (name.length() >= 2 && (name[0] == '\'' || name[0] == '\"') && name[0] == name[name.length() - 1] && name.rfind(name[0], name.length() - 2) == 0);
+			break;
+		}
+	}
+	if(!b_quote && (str[i_name2] == ':' || str[i_name2] == '!' || str[i_name2] == '<' || str[i_name2] == '>')) return false;
+	bool b_func = false;
+	if(!b_quote && i_name2 - i_name1 >= 2 && str[i_name2] == RIGHT_PARENTHESIS_CH) {
+		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
+		if(i_name2 == string::npos || i_name2 == 0 || str[i_name2] != LEFT_PARENTHESIS_CH) return false;
+		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
+		if(i_name2 == string::npos) return false;
+		b_func = true;
+	}
+	if(!b_quote && !CALCULATOR->variableNameIsValid(str.substr(i_name1, i_name2 - i_name1 + 1))) return false;
+	string name = str.substr(i_name1, i_name2 - i_name1 + 1);
+	if(!b_quote) {
+		if(name.find("#") != string::npos) return false;
+		CALCULATOR->parseSigns(name);
+		if(!CALCULATOR->variableNameIsValid(name)) return false;
+		name = str.substr(i_name1, i_name2 - i_name1 + 1);
+		if(!b_quote && name.length() > 1 && name[name.length() - 1] == 'x') {
+			MathFunction *f = CALCULATOR->getActiveFunction(name.substr(0, name.length() - 1));
+			if(f && f->minargs() <= 1 && f->maxargs() != 0) return false;
+			if(!f && CALCULATOR->getActiveVariable(name.substr(0, name.length() - 1))) return false;
+		}
+	}
+	size_t i2 = str.find(name, i);
+	if(i2 != string::npos && str.rfind("#", i2 - 1) == string::npos) {
+		if(b_quote) return false;
+		string value = str.substr(i + 1, str.length() - (i + 1));
+		CALCULATOR->parseComments(value);
+		string stmp;
+		EvaluationOptions eo;
+		eo.parse_options = po;
+		CALCULATOR->separateToExpression(value, stmp, eo);
+		CALCULATOR->separateWhereExpression(value, stmp, eo);
+		CALCULATOR->parseSigns(value);
+		size_t i2 = str.find(name, i);
+		if(i2 != string::npos) {
+			ExpressionItem *item1  = CALCULATOR->getActiveExpressionItem(name);
+			ExpressionItem *item2  = item1 ? CALCULATOR->getActiveExpressionItem(name, item1) : NULL;
+			if(item1) {
+				MathStructure mtest;
+				CALCULATOR->beginTemporaryStopMessages();
+				CALCULATOR->parse(&mtest, str.substr(i + 1, str.length() - (i + 1)), po);
+				CALCULATOR->endTemporaryStopMessages();
+				if(!b_func && item1->type() == TYPE_VARIABLE && mtest.contains((Variable*) item1, true, true, false)) return false;
+				else if(!b_func && item1->type() == TYPE_UNIT && mtest.contains((Unit*) item1, true, true, false)) return false;
+				else if(b_func && item1->type() == TYPE_FUNCTION && mtest.containsFunction((MathFunction*) item1, true, true, false)) return false;
+				if(!b_func && item2 && item2->type() == TYPE_VARIABLE && mtest.contains((Variable*) item2, true, true, false)) return false;
+				else if(!b_func && item2 && item2->type() == TYPE_UNIT && mtest.contains((Unit*) item2, true, true, false)) return false;
+				else if(b_func && item2->type() == TYPE_FUNCTION && mtest.containsFunction((MathFunction*) item2, true, true, false)) return false;
+			}
+		}
+	}
+	return true;
+}
+bool transform_expression_for_equals_save(string &str, const ParseOptions &po) {
+	if(str.length() < 2 || po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && CALCULATOR->customInputBase() > 62)) return false;
+	size_t i = str.find("=", 1);
+	if(i == string::npos) return false;
+	if(i < str.length() - 1) {
+		size_t i3 = str.find_first_not_of(SPACES, i + 1);
+		if(i3 != string::npos && (str[i3] == ':' || str[i3] == '!' || str[i3] == '<' || str[i3] == '>')) return false;
+	}
+	size_t i_name1 = str.find_first_not_of(SPACES);
+	if(i_name1 == i) return false;
+	size_t i_name2 = str.find_last_not_of(SPACES, i - 1);
+	if(i_name2 == string::npos) return false;
+	bool b_quote = i_name2 - i_name1 >= 2 && ((str[i_name2] == '\'' || str[i_name2] == '\"') && str[i_name1] == str[i_name2] && str.rfind(str[i_name1], i_name2 - 1) == i_name1);
+	if(!b_quote) b_quote = (i_name2 - i_name1 >= 3 && ((str[i_name1] == '\xe2' && str[i_name1 + 1] == '\x80') || (str[i_name1] == '\xc2' && (str[i_name1 + 1] == '\xab' || str[i_name1 + 1] == '\xbb'))));
+	for(size_t i2 = i_name1; b_quote && i2 < i_name2; i2++) {
+		if(str[i2] == '\xe2' || str[i2] == '\xc2') {
+			string name = str.substr(i_name1, i_name2 - i_name1 + 1);
+			CALCULATOR->parseSigns(name);
+			b_quote = (name.length() >= 2 && (name[0] == '\'' || name[0] == '\"') && name[0] == name[name.length() - 1] && name.rfind(name[0], name.length() - 2) == 0);
+			break;
+		}
+	}
+	if(!b_quote && (str[i_name2] == ':' || str[i_name2] == '!' || str[i_name2] == '<' || str[i_name2] == '>')) return false;
+	bool b_func = false;
+	if(!b_quote && i_name2 - i_name1 >= 2 && str[i_name2] == RIGHT_PARENTHESIS_CH) {
+		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
+		if(i_name2 == string::npos || i_name2 == 0 || str[i_name2] != LEFT_PARENTHESIS_CH) return false;
+		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
+		if(i_name2 == string::npos) return false;
+		b_func = true;
+	}
+	if(!b_quote && !CALCULATOR->variableNameIsValid(str.substr(i_name1, i_name2 - i_name1 + 1))) return false;
+	string name = str.substr(i_name1, i_name2 - i_name1 + 1);
+	if(!b_quote) {
+		if(name.find("#") != string::npos) return false;
+		CALCULATOR->parseSigns(name);
+		if(!CALCULATOR->variableNameIsValid(name)) return false;
+		name = str.substr(i_name1, i_name2 - i_name1 + 1);
+		if(!b_quote && name.length() > 1 && name[name.length() - 1] == 'x') {
+			MathFunction *f = CALCULATOR->getActiveFunction(name.substr(0, name.length() - 1));
+			if(f && f->minargs() <= 1 && f->maxargs() != 0) return false;
+			if(!f && CALCULATOR->getActiveVariable(name.substr(0, name.length() - 1))) return false;
+		}
+	}
+	size_t i2 = str.find(name, i);
+	if(i2 != string::npos && str.rfind("#", i2 - 1) == string::npos) {
+		if(b_quote) return false;
+		string value = str.substr(i + 1, str.length() - (i + 1));
+		CALCULATOR->parseComments(value);
+		string stmp;
+		EvaluationOptions eo;
+		eo.parse_options = po;
+		CALCULATOR->separateToExpression(value, stmp, eo);
+		CALCULATOR->separateWhereExpression(value, stmp, eo);
+		CALCULATOR->parseSigns(value);
+		size_t i2 = str.find(name, i);
+		if(i2 != string::npos) {
+			ExpressionItem *item1  = CALCULATOR->getActiveExpressionItem(name);
+			ExpressionItem *item2  = item1 ? CALCULATOR->getActiveExpressionItem(name, item1) : NULL;
+			if(item1) {
+				MathStructure mtest;
+				CALCULATOR->beginTemporaryStopMessages();
+				CALCULATOR->parse(&mtest, str.substr(i + 1, str.length() - (i + 1)), po);
+				CALCULATOR->endTemporaryStopMessages();
+				if(!b_func && item1->type() == TYPE_VARIABLE && mtest.contains((Variable*) item1, true, true, false)) return false;
+				else if(!b_func && item1->type() == TYPE_UNIT && mtest.contains((Unit*) item1, true, true, false)) return false;
+				else if(b_func && item1->type() == TYPE_FUNCTION && mtest.containsFunction((MathFunction*) item1, true, true, false)) return false;
+				if(!b_func && item2 && item2->type() == TYPE_VARIABLE && mtest.contains((Variable*) item2, true, true, false)) return false;
+				else if(!b_func && item2 && item2->type() == TYPE_UNIT && mtest.contains((Unit*) item2, true, true, false)) return false;
+				else if(b_func && item2->type() == TYPE_FUNCTION && mtest.containsFunction((MathFunction*) item2, true, true, false)) return false;
+			}
+		}
+	}
+	str.insert(str.rfind(LEFT_PARENTHESIS, i) == string::npos ? i + 1 : i, ":");
+	return true;
 }
 
 #define EQUALS_IGNORECASE_AND_LOCAL(x,y,z)	(equalsIgnoreCase(x, y) || equalsIgnoreCase(x, z))
@@ -1638,6 +1811,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			do_expand = true;
 		}
 	}
+	transform_expression_for_equals_save(str, evalops.parse_options);
 
 	MathStructure parsed_struct;
 
@@ -2147,6 +2321,7 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
 	if(!to_str.empty()) {
 		remove_blank_ends(to_str);
 		str = str.substr(0, i);
+		remove_blank_ends(str);
 		parseSigns(str);
 		if(to_str.find("&&") == string::npos) {
 			int par = 0;

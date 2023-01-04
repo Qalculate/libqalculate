@@ -54,10 +54,33 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		nr.subtract(i_nr);
 		if(nr.isGreaterThan(100)) eo2.approximation = APPROXIMATION_APPROXIMATE;
 	}
+	MathStructure mbak(m1);
+	vector<Variable*> vars;
+	if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
+		while(true) {
+			Variable *v = NULL;
+			Variable *uv = find_interval_replace_var_comp(m1, eo, &v);
+			if(!uv) break;
+			if(v) m1.replace(v, uv);
+			vars.push_back(uv);
+		}
+	}
 	CALCULATOR->beginTemporaryStopMessages();
 	m1.eval(eo2);
+	if(calculate_userfunctions(m1, vargs[3], eo)) {
+		if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
+			while(true) {
+				Variable *v = NULL;
+				Variable *uv = find_interval_replace_var_comp(m1, eo, &v);
+				if(!uv) break;
+				if(v) m1.replace(v, uv);
+				vars.push_back(uv);
+			}
+		}
+		m1.calculatesub(eo2, eo2, true);
+	}
 	int im = 0;
-	if(CALCULATOR->endTemporaryStopMessages(NULL, &im) > 0 || im > 0) m1 = vargs[0];
+	if(CALCULATOR->endTemporaryStopMessages(NULL, &im) > 0 || im > 0) m1 = mbak;
 	eo2.calculate_functions = eo.calculate_functions;
 	eo2.expand = eo.expand;
 	mstruct.clear();
@@ -66,11 +89,12 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	while(i_nr.isLessThanOrEqualTo(vargs[2].number())) {
 		if(CALCULATOR->aborted()) {
 			if(!started) {
+				for(size_t i = 0; i < vars.size(); i++) vars[i]->destroy();
 				return 0;
 			} else if(i_nr != vargs[2].number()) {
 				MathStructure mmin(i_nr);
 				mstruct.add(MathStructure(this, &vargs[0], &mmin, &vargs[2], &vargs[3], NULL), true);
-				return 1;
+				break;
 			}
 		}
 		mstruct_calc.set(m1);
@@ -84,6 +108,11 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			started = true;
 		}
 		i_nr += 1;
+	}
+	for(size_t i = 0; i < vars.size(); i++) {
+		if(vars[i]->isKnown()) mstruct.replace(vars[i], ((KnownVariable*) vars[i])->get());
+		else mstruct.replace(vars[i], ((UnknownVariable*) vars[i])->interval());
+		vars[i]->destroy();
 	}
 	return 1;
 
@@ -111,10 +140,33 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		nr.subtract(i_nr);
 		if(nr.isGreaterThan(100)) eo2.approximation = APPROXIMATION_APPROXIMATE;
 	}
+	MathStructure mbak(m1);
+	vector<Variable*> vars;
+	if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
+		while(true) {
+			Variable *v = NULL;
+			Variable *uv = find_interval_replace_var_comp(m1, eo, &v);
+			if(!uv) break;
+			if(v) m1.replace(v, uv);
+			vars.push_back(uv);
+		}
+	}
 	CALCULATOR->beginTemporaryStopMessages();
 	m1.eval(eo2);
+	if(calculate_userfunctions(m1, vargs[3], eo)) {
+		if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
+			while(true) {
+				Variable *v = NULL;
+				Variable *uv = find_interval_replace_var_comp(m1, eo, &v);
+				if(!uv) break;
+				if(v) m1.replace(v, uv);
+				vars.push_back(uv);
+			}
+		}
+		m1.calculatesub(eo2, eo2, true);
+	}
 	int im = 0;
-	if(CALCULATOR->endTemporaryStopMessages(NULL, &im) || im > 0) m1 = vargs[0];
+	if(CALCULATOR->endTemporaryStopMessages(NULL, &im) || im > 0) m1 = mbak;
 	eo2.calculate_functions = eo.calculate_functions;
 	eo2.expand = eo.expand;
 	mstruct.clear();
@@ -123,11 +175,12 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	while(i_nr.isLessThanOrEqualTo(vargs[2].number())) {
 		if(CALCULATOR->aborted()) {
 			if(!started) {
+				for(size_t i = 0; i < vars.size(); i++) vars[i]->destroy();
 				return 0;
 			} else if(i_nr != vargs[2].number()) {
 				MathStructure mmin(i_nr);
 				mstruct.multiply(MathStructure(this, &vargs[0], &mmin, &vargs[2], &vargs[3], NULL), true);
-				return 1;
+				break;
 			}
 		}
 		mstruct_calc.set(m1);
@@ -141,6 +194,11 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 			started = true;
 		}
 		i_nr += 1;
+	}
+	for(size_t i = 0; i < vars.size(); i++) {
+		if(vars[i]->isKnown()) mstruct.replace(vars[i], ((KnownVariable*) vars[i])->get());
+		else mstruct.replace(vars[i], ((UnknownVariable*) vars[i])->interval());
+		vars[i]->destroy();
 	}
 	return 1;
 
