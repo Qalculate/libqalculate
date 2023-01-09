@@ -1,13 +1,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the libqalculate package.
 #
-# Damir Islamov <damir@secretlaboratory.ru>, 2021, 2022.
+# Damir Islamov <damir@secretlaboratory.ru>, 2021-2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-04 07:09+0100\n"
-"PO-Revision-Date: 2022-09-28 13:59+0700\n"
+"POT-Creation-Date: 2023-01-09 15:23+0700\n"
+"PO-Revision-Date: 2023-01-09 15:15+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -1291,9 +1291,8 @@ msgid "Mauritanian Ouguiya"
 msgstr "Мавританская угия"
 
 #: ../data/currencies.xml.in.h:314
-#, fuzzy
 msgid "a-cr:MRU"
-msgstr "a-c:MRO"
+msgstr "a-c:MRU"
 
 #: ../data/currencies.xml.in.h:315
 msgid "Mauritania"
@@ -1817,12 +1816,11 @@ msgstr "Вануату"
 
 #: ../data/currencies.xml.in.h:445
 msgid "Venezuelan Bolívar"
-msgstr "Венесуэльский боливар"
+msgstr "Суверенный (Венесуэльский) боливар"
 
 #: ../data/currencies.xml.in.h:446
-#, fuzzy
 msgid "a-cr:VES"
-msgstr "a-c:VEF"
+msgstr "a-c:VES"
 
 #: ../data/currencies.xml.in.h:447
 msgid "Vietnamese Đồng"
@@ -1853,9 +1851,8 @@ msgid "Zambian Kwacha"
 msgstr "Замбийская квача"
 
 #: ../data/currencies.xml.in.h:454
-#, fuzzy
 msgid "a-cr:ZMW"
-msgstr "a-c:ZMK"
+msgstr "a-c:ZMW"
 
 #: ../data/currencies.xml.in.h:455
 msgid "Zambia"
@@ -6534,7 +6531,6 @@ msgid "Midpoint (interval)"
 msgstr "Середина (интервал)"
 
 #: ../data/functions.xml.in.h:833
-#, fuzzy
 msgid "r:midpoint,valuePart"
 msgstr "середина,значение"
 
@@ -10369,24 +10365,20 @@ msgid "Meter per Second Squared"
 msgstr "Метр на секунду в квадрате "
 
 #: ../data/units.xml.in.h:394
-#, fuzzy
 msgid "Meter per Second Cubed (Jerk)"
-msgstr "Метр на секунду в квадрате "
+msgstr "Метр на секунду в кубе (рывок)"
 
 #: ../data/units.xml.in.h:395
-#, fuzzy
 msgid "Meter per Second to the Fourth (Snap)"
-msgstr "Метр на секунду в квадрате "
+msgstr "Метр на секунду в четвёртой степени (щелчок / толчок)"
 
 #: ../data/units.xml.in.h:396
-#, fuzzy
 msgid "Meter per Second to the Fifth (Crackle)"
-msgstr "Метр на секунду в квадрате "
+msgstr "Метр на секунду в пятой степени (треск)"
 
 #: ../data/units.xml.in.h:397
-#, fuzzy
 msgid "Meter per Second to the Sixth (Pop)"
-msgstr "Метр в секунду"
+msgstr "Метр на секунду в шестой степени (щелчок/удар)"
 
 #: ../data/units.xml.in.h:398
 msgid "Galileo"
@@ -11604,11 +11596,11 @@ msgstr "чёртова_дюжина,чертова_дюжина"
 
 #: ../data/variables.xml.in.h:65
 msgid "Score"
-msgstr ""
+msgstr "Двадцатка"
 
 #: ../data/variables.xml.in.h:66
 msgid "-r:score"
-msgstr ""
+msgstr "двадцатка"
 
 #: ../data/variables.xml.in.h:67
 msgid "Long Hundred"
