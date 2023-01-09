@@ -967,7 +967,7 @@ int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 #endif
 
 	if(!pipe) {
-		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str());
+		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str(), NULL);
 		return 0;
 	}
 
@@ -978,12 +978,34 @@ int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	}
 
 	if(pclose(pipe) > 0 && output.empty()) {
-		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str());
+		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str(), NULL);
 		return 0;
 	}
 
 	ParseOptions po;
+	CALCULATOR->beginTemporaryStopMessages();
 	CALCULATOR->parse(&mstruct, output, po);
+	vector<CalculatorMessage> blocked_messages;
+	CALCULATOR->endTemporaryStopMessages(false, &blocked_messages);
+	bool b_error = blocked_messages.size() > 5;
+	for(size_t i = 0; !b_error && i < blocked_messages.size(); i++) {
+		if(blocked_messages[i].type() == MESSAGE_ERROR) b_error = true;
+	}
+	if(!b_error) {
+		long long int n = mstruct.countTotalChildren(false);
+		if(n > 1000) {
+			if(mstruct.isMatrix()) b_error = n > ((long long int) mstruct.rows()) * ((long long int) mstruct.columns()) * 10;
+			else if(mstruct.isVector()) b_error = n > ((long long int) mstruct.size()) * 10;
+			else b_error = true;
+		}
+	}
+	if(b_error) {
+		size_t i = output.find("\n");
+		if(i != string::npos && i > 0 && i < output.length() - 1) output.insert(0, "\n");
+		CALCULATOR->error(true, _("Parsing of command output failed: %s"), output.c_str(), NULL);
+		return 0;
+	}
+	CALCULATOR->addMessages(&blocked_messages);
 
 	return 1;
 

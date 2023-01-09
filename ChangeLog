@@ -1,3 +1,24 @@
+2023-01-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* EUR has replaced HRK as currency of Croatia
+
+2022-12-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use json exchange rate data from exchangerate.host, mycurrency.net, or floatrates.com (try in mentioned order), as secondary exchange rates source
+
+2022-12-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix unit tests (ordering in output changed)
+
+2022-12-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Check that output of command, in command() function, is a reasonably sane expression
+	* Fix countTotalChildren() with count_function_as_one set to false
+
+2022-12-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add m/s^3, m/s^4, m/s^5, and m/s^6 as derived units (improves automatic unit conversion)
+
 2022-12-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix randuniform()

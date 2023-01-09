@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate 3.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-19 09:52+0100\n"
+"POT-Creation-Date: 2023-01-04 07:32+0100\n"
 "PO-Revision-Date: 2021-08-23 10:33+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
@@ -326,14 +326,14 @@ msgstr "无法识别的假设。"
 #. logical operator
 #: ../src/qalc.cc:555 ../src/qalc.cc:589
 #: ../libqalculate/Calculator-calculate.cc:994
-#: ../libqalculate/Calculator.cc:239 ../libqalculate/Calculator.cc:472
-#: ../libqalculate/Calculator.cc:620 ../libqalculate/DataSet.cc:1102
+#: ../libqalculate/Calculator.cc:240 ../libqalculate/Calculator.cc:474
+#: ../libqalculate/Calculator.cc:622 ../libqalculate/DataSet.cc:1102
 #: ../libqalculate/DataSet.cc:1164 ../libqalculate/MathStructure-print.cc:3951
 #: ../libqalculate/Function.cc:2407 ../libqalculate/Function.cc:2423
 msgid "or"
 msgstr "或"
 
-#: ../src/qalc.cc:671 ../libqalculate/Calculator-definitions.cc:4050
+#: ../src/qalc.cc:671 ../libqalculate/Calculator-definitions.cc:4087
 #, c-format
 msgid "It has been %s day since the exchange rates last were updated."
 msgid_plural "It has been %s days since the exchange rates last were updated."
@@ -1602,8 +1602,8 @@ msgstr "convert"
 #: ../libqalculate/Calculator-calculate.cc:2222
 #: ../libqalculate/Calculator-calculate.cc:2251
 #: ../libqalculate/Calculator-calculate.cc:2255
-#: ../libqalculate/Calculator.cc:290 ../libqalculate/Calculator.cc:523
-#: ../libqalculate/Calculator.cc:1395 ../libqalculate/Calculator.cc:1396
+#: ../libqalculate/Calculator.cc:291 ../libqalculate/Calculator.cc:525
+#: ../libqalculate/Calculator.cc:1397 ../libqalculate/Calculator.cc:1398
 msgid "to"
 msgstr "to"
 
@@ -3014,7 +3014,12 @@ msgstr "寄存器%s不存在。返回零。"
 msgid "Failed to run external command (%s)."
 msgstr "外部命令(%s)运行失败。"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1026
+#: ../libqalculate/BuiltinFunctions-util.cc:1005
+#, c-format
+msgid "Parsing of command output failed: %s"
+msgstr ""
+
+#: ../libqalculate/BuiltinFunctions-util.cc:1048
 msgid ""
 "Plots one or more expressions or vectors. Use a vector for the first "
 "argument to plot multiple series. Only the first argument is used for vector "
@@ -3024,7 +3029,7 @@ msgstr ""
 "绘制一个或多个表达式或向量。使用向量作为第一个参数来绘制多个序列。只有第一个"
 "参数可以用向量。也可以绘制一个矩阵，其中每行是一对x和y值。"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1028
+#: ../libqalculate/BuiltinFunctions-util.cc:1050
 msgid ""
 "Additional arguments specify various plot options. Enter the name of the "
 "option and the desired value, either separated by space or as separate "
@@ -3036,243 +3041,243 @@ msgid ""
 "10) or step value."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1030
+#: ../libqalculate/BuiltinFunctions-util.cc:1052
 msgid "List of options:"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1076
+#: ../libqalculate/BuiltinFunctions-util.cc:1098
 msgctxt "plot"
 msgid "smooth"
 msgstr "平滑"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1077
+#: ../libqalculate/BuiltinFunctions-util.cc:1099
 msgctxt "plot"
 msgid "style"
 msgstr "风格"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1078
+#: ../libqalculate/BuiltinFunctions-util.cc:1100
 msgctxt "plot"
 msgid "step"
 msgstr "步长"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1079
+#: ../libqalculate/BuiltinFunctions-util.cc:1101
 msgctxt "plot"
 msgid "samples"
 msgstr "采样率"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1080
+#: ../libqalculate/BuiltinFunctions-util.cc:1102
 msgctxt "plot"
 msgid "color"
 msgstr "颜色"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1081
+#: ../libqalculate/BuiltinFunctions-util.cc:1103
 msgctxt "plot"
 msgid "grid"
 msgstr "网格"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1082
+#: ../libqalculate/BuiltinFunctions-util.cc:1104
 msgctxt "plot"
 msgid "title"
 msgstr "标题"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1083
+#: ../libqalculate/BuiltinFunctions-util.cc:1105
 msgctxt "plot"
 msgid "legend"
 msgstr "图例"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1084
+#: ../libqalculate/BuiltinFunctions-util.cc:1106
 msgctxt "plot"
 msgid "ylabel"
 msgstr "Y轴标签"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1085
+#: ../libqalculate/BuiltinFunctions-util.cc:1107
 msgctxt "plot"
 msgid "xlabel"
 msgstr "X轴标签"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1086
+#: ../libqalculate/BuiltinFunctions-util.cc:1108
 msgctxt "plot"
 msgid "linewidth"
 msgstr "线宽"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1087
+#: ../libqalculate/BuiltinFunctions-util.cc:1109
 msgctxt "plot"
 msgid "monochrome"
 msgstr "单色"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1088
+#: ../libqalculate/BuiltinFunctions-util.cc:1110
 msgctxt "plot"
 msgid "ymin"
 msgstr "最小y值"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1089
+#: ../libqalculate/BuiltinFunctions-util.cc:1111
 msgctxt "plot"
 msgid "ymax"
 msgstr "最大y值"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1090
+#: ../libqalculate/BuiltinFunctions-util.cc:1112
 msgctxt "plot"
 msgid "ylog"
 msgstr "对数y"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1091
+#: ../libqalculate/BuiltinFunctions-util.cc:1113
 msgctxt "plot"
 msgid "xlog"
 msgstr "对数x"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1092
+#: ../libqalculate/BuiltinFunctions-util.cc:1114
 msgctxt "plot"
 msgid "logscale"
 msgstr "对数刻度"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1093
+#: ../libqalculate/BuiltinFunctions-util.cc:1115
 msgctxt "plot"
 msgid "variable"
 msgstr "变量"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1094
+#: ../libqalculate/BuiltinFunctions-util.cc:1116
 msgctxt "plot"
 msgid "complex"
 msgstr "复"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1095
+#: ../libqalculate/BuiltinFunctions-util.cc:1117
 #, fuzzy
 msgctxt "plot"
 msgid "real"
 msgstr "real"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1141
+#: ../libqalculate/BuiltinFunctions-util.cc:1163
 msgctxt "plot style"
 msgid "lines"
 msgstr "线"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1142
+#: ../libqalculate/BuiltinFunctions-util.cc:1164
 msgctxt "plot style"
 msgid "points"
 msgstr "点"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1143
+#: ../libqalculate/BuiltinFunctions-util.cc:1165
 msgctxt "plot style"
 msgid "dots"
 msgstr "小点"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1144
+#: ../libqalculate/BuiltinFunctions-util.cc:1166
 msgctxt "plot style"
 msgid "boxes"
 msgstr "框"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1145
+#: ../libqalculate/BuiltinFunctions-util.cc:1167
 msgctxt "plot style"
 msgid "histogram"
 msgstr "直方图"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1146
+#: ../libqalculate/BuiltinFunctions-util.cc:1168
 msgctxt "plot style"
 msgid "candlesticks"
 msgstr "K线图"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1147
+#: ../libqalculate/BuiltinFunctions-util.cc:1169
 msgctxt "plot style"
 msgid "steps"
 msgstr "步骤"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1148
+#: ../libqalculate/BuiltinFunctions-util.cc:1170
 msgctxt "plot style"
 msgid "linespoints"
 msgstr "点线"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1149
+#: ../libqalculate/BuiltinFunctions-util.cc:1171
 msgctxt "plot"
 msgid "polar"
 msgstr "极坐标"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1150
+#: ../libqalculate/BuiltinFunctions-util.cc:1172
 msgctxt "plot smoothing"
 msgid "none"
 msgstr "无"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1151
+#: ../libqalculate/BuiltinFunctions-util.cc:1173
 msgctxt "plot smoothing"
 msgid "splines"
 msgstr "自然三次样条"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1152
+#: ../libqalculate/BuiltinFunctions-util.cc:1174
 msgctxt "plot smoothing"
 msgid "bezier"
 msgstr "贝塞尔"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1153
+#: ../libqalculate/BuiltinFunctions-util.cc:1175
 msgctxt "plot legend"
 msgid "none"
 msgstr "无"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1154
+#: ../libqalculate/BuiltinFunctions-util.cc:1176
 msgctxt "plot legend"
 msgid "top-left"
 msgstr "左上"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1155
+#: ../libqalculate/BuiltinFunctions-util.cc:1177
 msgctxt "plot legend"
 msgid "top-right"
 msgstr "右上"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1156
+#: ../libqalculate/BuiltinFunctions-util.cc:1178
 msgctxt "plot legend"
 msgid "bottom-left"
 msgstr "左下"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1157
+#: ../libqalculate/BuiltinFunctions-util.cc:1179
 msgctxt "plot legend"
 msgid "bottom-right"
 msgstr "右下"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1158
+#: ../libqalculate/BuiltinFunctions-util.cc:1180
 msgctxt "plot legend"
 msgid "below"
 msgstr "下面"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1159
+#: ../libqalculate/BuiltinFunctions-util.cc:1181
 msgctxt "plot legend"
 msgid "outside"
 msgstr "外面"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1192
-#: ../libqalculate/BuiltinFunctions-util.cc:1197
-#: ../libqalculate/BuiltinFunctions-util.cc:1209
 #: ../libqalculate/BuiltinFunctions-util.cc:1214
-#: ../libqalculate/BuiltinFunctions-util.cc:1223
+#: ../libqalculate/BuiltinFunctions-util.cc:1219
+#: ../libqalculate/BuiltinFunctions-util.cc:1231
+#: ../libqalculate/BuiltinFunctions-util.cc:1236
+#: ../libqalculate/BuiltinFunctions-util.cc:1245
 #, c-format
 msgid "Illegal value: %s."
 msgstr "非法数值:%s。"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1226
+#: ../libqalculate/BuiltinFunctions-util.cc:1248
 #, c-format
 msgid "Unrecognized option: %s."
 msgstr "无法识别的选项:%s。"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1262
-#: ../libqalculate/BuiltinFunctions-util.cc:1278
+#: ../libqalculate/BuiltinFunctions-util.cc:1284
+#: ../libqalculate/BuiltinFunctions-util.cc:1300
 msgid "Matrix"
 msgstr "矩阵"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1291
-#: ../libqalculate/BuiltinFunctions-util.cc:1343
+#: ../libqalculate/BuiltinFunctions-util.cc:1313
+#: ../libqalculate/BuiltinFunctions-util.cc:1365
 msgid "Vector"
 msgstr "向量"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1308
-#: ../libqalculate/BuiltinFunctions-util.cc:1356
+#: ../libqalculate/BuiltinFunctions-util.cc:1330
+#: ../libqalculate/BuiltinFunctions-util.cc:1378
 #: ../libqalculate/Calculator-plot.cc:157
 msgid "Unable to generate plot data with current min, max and step size."
 msgstr "按照当前的最大、最小和步长，无法生成绘图数据。"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1310
-#: ../libqalculate/BuiltinFunctions-util.cc:1358
+#: ../libqalculate/BuiltinFunctions-util.cc:1332
+#: ../libqalculate/BuiltinFunctions-util.cc:1380
 msgid "Sampling rate must be a positive integer."
 msgstr "采样率必须为正整数。"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1317
-#: ../libqalculate/BuiltinFunctions-util.cc:1365
+#: ../libqalculate/BuiltinFunctions-util.cc:1339
+#: ../libqalculate/BuiltinFunctions-util.cc:1387
 #: ../libqalculate/Calculator-plot.cc:121
 msgid "Unable to generate plot data with current min, max and sampling rate."
 msgstr "按照当前的最大、最小和采样率，无法生成绘图数据。"
@@ -3290,8 +3295,8 @@ msgstr "栈为空。用零填充其余的函数参数。"
 #. logical operator
 #: ../libqalculate/Calculator-calculate.cc:1008
 #: ../libqalculate/Calculator-calculate.cc:1046
-#: ../libqalculate/Calculator.cc:233 ../libqalculate/Calculator.cc:467
-#: ../libqalculate/Calculator.cc:621
+#: ../libqalculate/Calculator.cc:234 ../libqalculate/Calculator.cc:469
+#: ../libqalculate/Calculator.cc:623
 #: ../libqalculate/MathStructure-print.cc:3930 ../libqalculate/Function.cc:1457
 #: ../libqalculate/Function.cc:1465 ../libqalculate/Function.cc:1879
 #: ../libqalculate/Function.cc:2041 ../libqalculate/Function.cc:2049
@@ -3307,7 +3312,7 @@ msgstr "正在计算..."
 #: ../libqalculate/Calculator-calculate.cc:2291
 #: ../libqalculate/Calculator-calculate.cc:2310
 #: ../libqalculate/Calculator-calculate.cc:2312
-#: ../libqalculate/Calculator.cc:1399
+#: ../libqalculate/Calculator.cc:1401
 msgid "where"
 msgstr "where"
 
@@ -3322,74 +3327,73 @@ msgid "timed out"
 msgstr "已超时"
 
 #. division operator
-#: ../libqalculate/Calculator.cc:221 ../libqalculate/Calculator.cc:459
+#: ../libqalculate/Calculator.cc:222 ../libqalculate/Calculator.cc:461
 msgid "per"
 msgstr "per"
 
 #. multiplication operator
-#: ../libqalculate/Calculator.cc:224 ../libqalculate/Calculator.cc:461
+#: ../libqalculate/Calculator.cc:225 ../libqalculate/Calculator.cc:463
 msgid "times"
 msgstr "times"
 
 #. addition operator
-#: ../libqalculate/Calculator.cc:227 ../libqalculate/Calculator.cc:463
+#: ../libqalculate/Calculator.cc:228 ../libqalculate/Calculator.cc:465
 msgid "plus"
 msgstr "plus"
 
 #. subtraction operator
-#: ../libqalculate/Calculator.cc:230 ../libqalculate/Calculator.cc:465
+#: ../libqalculate/Calculator.cc:231 ../libqalculate/Calculator.cc:467
 msgid "minus"
 msgstr "minus"
 
-#: ../libqalculate/Calculator.cc:626
+#: ../libqalculate/Calculator.cc:628
 msgid "Gradians unit is missing. Creating one for this session."
 msgstr "梯度单位丢失。自动为本会话创建了一个。"
 
-#: ../libqalculate/Calculator.cc:627 ../libqalculate/Calculator.cc:635
-#: ../libqalculate/Calculator.cc:643
+#: ../libqalculate/Calculator.cc:629 ../libqalculate/Calculator.cc:637
+#: ../libqalculate/Calculator.cc:645
 msgid "Angle/Plane Angle"
 msgstr "角/平面角"
 
-#: ../libqalculate/Calculator.cc:634
+#: ../libqalculate/Calculator.cc:636
 msgid "Radians unit is missing. Creating one for this session."
 msgstr "弧度单位丢失。自动为本会话创建了一个。"
 
-#: ../libqalculate/Calculator.cc:642
+#: ../libqalculate/Calculator.cc:644
 msgid "Degrees unit is missing. Creating one for this session."
 msgstr "角度单位丢失。自动为本会话创建了一个。"
 
-#: ../libqalculate/Calculator.cc:1811 ../libqalculate/Calculator.cc:1812
-#: ../libqalculate/Calculator.cc:1816 ../libqalculate/Calculator.cc:1821
+#: ../libqalculate/Calculator.cc:1813 ../libqalculate/Calculator.cc:1814
+#: ../libqalculate/Calculator.cc:1818 ../libqalculate/Calculator.cc:1823
 #: ../libqalculate/Calculator-definitions.cc:3444
 #: ../libqalculate/Calculator-definitions.cc:3449
 #: ../libqalculate/Calculator-definitions.cc:3528
-#: ../libqalculate/Calculator-definitions.cc:3719
-#: ../libqalculate/Calculator-definitions.cc:3781
+#: ../libqalculate/Calculator-definitions.cc:3730
 msgid "Currency"
 msgstr "货币"
 
-#: ../libqalculate/Calculator.cc:2686
+#: ../libqalculate/Calculator.cc:2688
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name of \"%s\", or "
 "the variable will be lost."
 msgstr "在名称中不再允许使用\"%s\"。请修改名称\"%s\"，否则此变量将被遗弃。"
 
-#: ../libqalculate/Calculator.cc:2704
+#: ../libqalculate/Calculator.cc:2706
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
 "the function will be lost."
 msgstr "在名称中不再允许使用\"%s\"。请修改名称\"%s\"，否则此函数将被遗弃。"
 
-#: ../libqalculate/Calculator.cc:2721
+#: ../libqalculate/Calculator.cc:2723
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
 "the unit will be lost."
 msgstr "在名称中不再允许使用\"%s\"。请修改名称\"%s\"，否则此单位将被遗弃。"
 
-#: ../libqalculate/Calculator.cc:2886
+#: ../libqalculate/Calculator.cc:2888
 #, c-format
 msgid "Name \"%s\" is in use. Replacing with \"%s\"."
 msgstr "名称\"%s\"已被使用。替换为\"%s\"。"
@@ -3417,19 +3421,19 @@ msgstr "列"
 msgid "Column "
 msgstr "列"
 
-#: ../libqalculate/Calculator-definitions.cc:3875
-#: ../libqalculate/Calculator-definitions.cc:3885
+#: ../libqalculate/Calculator-definitions.cc:3873
+#: ../libqalculate/Calculator-definitions.cc:3883
 #, c-format
 msgid "Failed to download exchange rates (%s) from %s: %s."
 msgstr "从%s下载汇率失败(%s):%s。"
 
-#: ../libqalculate/Calculator-definitions.cc:3876
-#: ../libqalculate/Calculator-definitions.cc:3886
+#: ../libqalculate/Calculator-definitions.cc:3874
+#: ../libqalculate/Calculator-definitions.cc:3884
 #, c-format
 msgid "Failed to download exchange rates from %s: %s."
 msgstr "从%s下载汇率失败:%s。"
 
-#: ../libqalculate/Calculator-definitions.cc:3879
+#: ../libqalculate/Calculator-definitions.cc:3877
 #, c-format
 msgid "Exchange rates were successfully downloaded from %s."
 msgstr ""

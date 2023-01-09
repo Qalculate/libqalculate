@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-19 09:52+0100\n"
+"POT-Creation-Date: 2023-01-04 07:32+0100\n"
 "PO-Revision-Date: 2006-05-04 12:29+0200\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -322,14 +322,14 @@ msgstr "Okänt antagande."
 #. logical operator
 #: ../src/qalc.cc:555 ../src/qalc.cc:589
 #: ../libqalculate/Calculator-calculate.cc:994
-#: ../libqalculate/Calculator.cc:239 ../libqalculate/Calculator.cc:472
-#: ../libqalculate/Calculator.cc:620 ../libqalculate/DataSet.cc:1102
+#: ../libqalculate/Calculator.cc:240 ../libqalculate/Calculator.cc:474
+#: ../libqalculate/Calculator.cc:622 ../libqalculate/DataSet.cc:1102
 #: ../libqalculate/DataSet.cc:1164 ../libqalculate/MathStructure-print.cc:3951
 #: ../libqalculate/Function.cc:2407 ../libqalculate/Function.cc:2423
 msgid "or"
 msgstr "eller"
 
-#: ../src/qalc.cc:671 ../libqalculate/Calculator-definitions.cc:4050
+#: ../src/qalc.cc:671 ../libqalculate/Calculator-definitions.cc:4087
 #, c-format
 msgid "It has been %s day since the exchange rates last were updated."
 msgid_plural "It has been %s days since the exchange rates last were updated."
@@ -1607,8 +1607,8 @@ msgstr "omvandla"
 #: ../libqalculate/Calculator-calculate.cc:2222
 #: ../libqalculate/Calculator-calculate.cc:2251
 #: ../libqalculate/Calculator-calculate.cc:2255
-#: ../libqalculate/Calculator.cc:290 ../libqalculate/Calculator.cc:523
-#: ../libqalculate/Calculator.cc:1395 ../libqalculate/Calculator.cc:1396
+#: ../libqalculate/Calculator.cc:291 ../libqalculate/Calculator.cc:525
+#: ../libqalculate/Calculator.cc:1397 ../libqalculate/Calculator.cc:1398
 msgid "to"
 msgstr "till"
 
@@ -3074,7 +3074,12 @@ msgstr "RPN-registret %s finns inte. Returnerar noll."
 msgid "Failed to run external command (%s)."
 msgstr "Misslyckade med att köra externt kommando (%s)."
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1026
+#: ../libqalculate/BuiltinFunctions-util.cc:1005
+#, c-format
+msgid "Parsing of command output failed: %s"
+msgstr "Tolkning of utdata från kommando misslyckades: %s"
+
+#: ../libqalculate/BuiltinFunctions-util.cc:1048
 msgid ""
 "Plots one or more expressions or vectors. Use a vector for the first "
 "argument to plot multiple series. Only the first argument is used for vector "
@@ -3086,7 +3091,7 @@ msgstr ""
 "första parametern används för vektorserier. Det är även möjligt att rita en "
 "matrix där varje rad utgör parvisa x och y värden."
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1028
+#: ../libqalculate/BuiltinFunctions-util.cc:1050
 msgid ""
 "Additional arguments specify various plot options. Enter the name of the "
 "option and the desired value, either separated by space or as separate "
@@ -3106,242 +3111,242 @@ msgstr ""
 "alternativet är ett numeriskt värde, tolkas detta antingen som antalet "
 "beräknade värden (för heltal > 10) eller stegvärde."
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1030
+#: ../libqalculate/BuiltinFunctions-util.cc:1052
 msgid "List of options:"
 msgstr "Lista över alternativ:"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1076
+#: ../libqalculate/BuiltinFunctions-util.cc:1098
 msgctxt "plot"
 msgid "smooth"
 msgstr "utjämna"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1077
+#: ../libqalculate/BuiltinFunctions-util.cc:1099
 msgctxt "plot"
 msgid "style"
 msgstr "stil"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1078
+#: ../libqalculate/BuiltinFunctions-util.cc:1100
 msgctxt "plot"
 msgid "step"
 msgstr "steg"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1079
+#: ../libqalculate/BuiltinFunctions-util.cc:1101
 msgctxt "plot"
 msgid "samples"
 msgstr "värden"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1080
+#: ../libqalculate/BuiltinFunctions-util.cc:1102
 msgctxt "plot"
 msgid "color"
 msgstr "färg"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1081
+#: ../libqalculate/BuiltinFunctions-util.cc:1103
 msgctxt "plot"
 msgid "grid"
 msgstr "rutnät"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1082
+#: ../libqalculate/BuiltinFunctions-util.cc:1104
 msgctxt "plot"
 msgid "title"
 msgstr "rubrik"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1083
+#: ../libqalculate/BuiltinFunctions-util.cc:1105
 msgctxt "plot"
 msgid "legend"
 msgstr "förklaring"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1084
+#: ../libqalculate/BuiltinFunctions-util.cc:1106
 msgctxt "plot"
 msgid "ylabel"
 msgstr "etikett y"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1085
+#: ../libqalculate/BuiltinFunctions-util.cc:1107
 msgctxt "plot"
 msgid "xlabel"
 msgstr "etikett x"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1086
+#: ../libqalculate/BuiltinFunctions-util.cc:1108
 msgctxt "plot"
 msgid "linewidth"
 msgstr "linjevidd"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1087
+#: ../libqalculate/BuiltinFunctions-util.cc:1109
 msgctxt "plot"
 msgid "monochrome"
 msgstr "monokrom"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1088
+#: ../libqalculate/BuiltinFunctions-util.cc:1110
 msgctxt "plot"
 msgid "ymin"
 msgstr "min y"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1089
+#: ../libqalculate/BuiltinFunctions-util.cc:1111
 msgctxt "plot"
 msgid "ymax"
 msgstr "max y"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1090
+#: ../libqalculate/BuiltinFunctions-util.cc:1112
 msgctxt "plot"
 msgid "ylog"
 msgstr "log y"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1091
+#: ../libqalculate/BuiltinFunctions-util.cc:1113
 msgctxt "plot"
 msgid "xlog"
 msgstr "log x"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1092
+#: ../libqalculate/BuiltinFunctions-util.cc:1114
 msgctxt "plot"
 msgid "logscale"
 msgstr "logskala"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1093
+#: ../libqalculate/BuiltinFunctions-util.cc:1115
 msgctxt "plot"
 msgid "variable"
 msgstr "variabel"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1094
+#: ../libqalculate/BuiltinFunctions-util.cc:1116
 msgctxt "plot"
 msgid "complex"
 msgstr "komplex"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1095
+#: ../libqalculate/BuiltinFunctions-util.cc:1117
 msgctxt "plot"
 msgid "real"
 msgstr "reell"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1141
+#: ../libqalculate/BuiltinFunctions-util.cc:1163
 msgctxt "plot style"
 msgid "lines"
 msgstr "graf"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1142
+#: ../libqalculate/BuiltinFunctions-util.cc:1164
 msgctxt "plot style"
 msgid "points"
 msgstr "punkter"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1143
+#: ../libqalculate/BuiltinFunctions-util.cc:1165
 msgctxt "plot style"
 msgid "dots"
 msgstr "prickar"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1144
+#: ../libqalculate/BuiltinFunctions-util.cc:1166
 msgctxt "plot style"
 msgid "boxes"
 msgstr "lådor"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1145
+#: ../libqalculate/BuiltinFunctions-util.cc:1167
 msgctxt "plot style"
 msgid "histogram"
 msgstr "histogram"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1146
+#: ../libqalculate/BuiltinFunctions-util.cc:1168
 msgctxt "plot style"
 msgid "candlesticks"
 msgstr "ljusstakar"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1147
+#: ../libqalculate/BuiltinFunctions-util.cc:1169
 msgctxt "plot style"
 msgid "steps"
 msgstr "steg"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1148
+#: ../libqalculate/BuiltinFunctions-util.cc:1170
 msgctxt "plot style"
 msgid "linespoints"
 msgstr "linjerpunkter"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1149
+#: ../libqalculate/BuiltinFunctions-util.cc:1171
 msgctxt "plot"
 msgid "polar"
 msgstr "polär"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1150
+#: ../libqalculate/BuiltinFunctions-util.cc:1172
 msgctxt "plot smoothing"
 msgid "none"
 msgstr "ingen"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1151
+#: ../libqalculate/BuiltinFunctions-util.cc:1173
 msgctxt "plot smoothing"
 msgid "splines"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1152
+#: ../libqalculate/BuiltinFunctions-util.cc:1174
 msgctxt "plot smoothing"
 msgid "bezier"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1153
+#: ../libqalculate/BuiltinFunctions-util.cc:1175
 msgctxt "plot legend"
 msgid "none"
 msgstr "ingen"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1154
+#: ../libqalculate/BuiltinFunctions-util.cc:1176
 msgctxt "plot legend"
 msgid "top-left"
 msgstr "uppe-höger"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1155
+#: ../libqalculate/BuiltinFunctions-util.cc:1177
 msgctxt "plot legend"
 msgid "top-right"
 msgstr "uppe-vänster"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1156
+#: ../libqalculate/BuiltinFunctions-util.cc:1178
 msgctxt "plot legend"
 msgid "bottom-left"
 msgstr "nere-vänster"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1157
+#: ../libqalculate/BuiltinFunctions-util.cc:1179
 msgctxt "plot legend"
 msgid "bottom-right"
 msgstr "nere-höger"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1158
+#: ../libqalculate/BuiltinFunctions-util.cc:1180
 msgctxt "plot legend"
 msgid "below"
 msgstr "under"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1159
+#: ../libqalculate/BuiltinFunctions-util.cc:1181
 msgctxt "plot legend"
 msgid "outside"
 msgstr "utanför"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1192
-#: ../libqalculate/BuiltinFunctions-util.cc:1197
-#: ../libqalculate/BuiltinFunctions-util.cc:1209
 #: ../libqalculate/BuiltinFunctions-util.cc:1214
-#: ../libqalculate/BuiltinFunctions-util.cc:1223
+#: ../libqalculate/BuiltinFunctions-util.cc:1219
+#: ../libqalculate/BuiltinFunctions-util.cc:1231
+#: ../libqalculate/BuiltinFunctions-util.cc:1236
+#: ../libqalculate/BuiltinFunctions-util.cc:1245
 #, c-format
 msgid "Illegal value: %s."
 msgstr "Otillåtet värde: %s"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1226
+#: ../libqalculate/BuiltinFunctions-util.cc:1248
 #, c-format
 msgid "Unrecognized option: %s."
 msgstr "Okänd inställning: %s."
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1262
-#: ../libqalculate/BuiltinFunctions-util.cc:1278
+#: ../libqalculate/BuiltinFunctions-util.cc:1284
+#: ../libqalculate/BuiltinFunctions-util.cc:1300
 msgid "Matrix"
 msgstr "Matris"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1291
-#: ../libqalculate/BuiltinFunctions-util.cc:1343
+#: ../libqalculate/BuiltinFunctions-util.cc:1313
+#: ../libqalculate/BuiltinFunctions-util.cc:1365
 msgid "Vector"
 msgstr "Vektor"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1308
-#: ../libqalculate/BuiltinFunctions-util.cc:1356
+#: ../libqalculate/BuiltinFunctions-util.cc:1330
+#: ../libqalculate/BuiltinFunctions-util.cc:1378
 #: ../libqalculate/Calculator-plot.cc:157
 msgid "Unable to generate plot data with current min, max and step size."
 msgstr "Kunde inte generera diagramdata med angivet min, max och stegstorlek."
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1310
-#: ../libqalculate/BuiltinFunctions-util.cc:1358
+#: ../libqalculate/BuiltinFunctions-util.cc:1332
+#: ../libqalculate/BuiltinFunctions-util.cc:1380
 msgid "Sampling rate must be a positive integer."
 msgstr "Frekvens måste vara ett positivt heltal."
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1317
-#: ../libqalculate/BuiltinFunctions-util.cc:1365
+#: ../libqalculate/BuiltinFunctions-util.cc:1339
+#: ../libqalculate/BuiltinFunctions-util.cc:1387
 #: ../libqalculate/Calculator-plot.cc:121
 msgid "Unable to generate plot data with current min, max and sampling rate."
 msgstr "Kunde inte generera diagramdata med angivet min, max och frekvens."
@@ -3359,8 +3364,8 @@ msgstr "RPN-stacken är tom. Fyller återstående funktionsparametrar med nollor
 #. logical operator
 #: ../libqalculate/Calculator-calculate.cc:1008
 #: ../libqalculate/Calculator-calculate.cc:1046
-#: ../libqalculate/Calculator.cc:233 ../libqalculate/Calculator.cc:467
-#: ../libqalculate/Calculator.cc:621
+#: ../libqalculate/Calculator.cc:234 ../libqalculate/Calculator.cc:469
+#: ../libqalculate/Calculator.cc:623
 #: ../libqalculate/MathStructure-print.cc:3930 ../libqalculate/Function.cc:1457
 #: ../libqalculate/Function.cc:1465 ../libqalculate/Function.cc:1879
 #: ../libqalculate/Function.cc:2041 ../libqalculate/Function.cc:2049
@@ -3376,7 +3381,7 @@ msgstr "beräknar..."
 #: ../libqalculate/Calculator-calculate.cc:2291
 #: ../libqalculate/Calculator-calculate.cc:2310
 #: ../libqalculate/Calculator-calculate.cc:2312
-#: ../libqalculate/Calculator.cc:1399
+#: ../libqalculate/Calculator.cc:1401
 msgid "where"
 msgstr "där"
 
@@ -3391,53 +3396,52 @@ msgid "timed out"
 msgstr "tiden rann ut"
 
 #. division operator
-#: ../libqalculate/Calculator.cc:221 ../libqalculate/Calculator.cc:459
+#: ../libqalculate/Calculator.cc:222 ../libqalculate/Calculator.cc:461
 msgid "per"
 msgstr "per"
 
 #. multiplication operator
-#: ../libqalculate/Calculator.cc:224 ../libqalculate/Calculator.cc:461
+#: ../libqalculate/Calculator.cc:225 ../libqalculate/Calculator.cc:463
 msgid "times"
 msgstr "gånger"
 
 #. addition operator
-#: ../libqalculate/Calculator.cc:227 ../libqalculate/Calculator.cc:463
+#: ../libqalculate/Calculator.cc:228 ../libqalculate/Calculator.cc:465
 msgid "plus"
 msgstr "plus"
 
 #. subtraction operator
-#: ../libqalculate/Calculator.cc:230 ../libqalculate/Calculator.cc:465
+#: ../libqalculate/Calculator.cc:231 ../libqalculate/Calculator.cc:467
 msgid "minus"
 msgstr "minus"
 
-#: ../libqalculate/Calculator.cc:626
+#: ../libqalculate/Calculator.cc:628
 msgid "Gradians unit is missing. Creating one for this session."
 msgstr "Gradientenheten saknas. Skapar en för nuvarande session."
 
-#: ../libqalculate/Calculator.cc:627 ../libqalculate/Calculator.cc:635
-#: ../libqalculate/Calculator.cc:643
+#: ../libqalculate/Calculator.cc:629 ../libqalculate/Calculator.cc:637
+#: ../libqalculate/Calculator.cc:645
 msgid "Angle/Plane Angle"
 msgstr "Vinkel/Planvinkel"
 
-#: ../libqalculate/Calculator.cc:634
+#: ../libqalculate/Calculator.cc:636
 msgid "Radians unit is missing. Creating one for this session."
 msgstr "Radianenheten saknas. Skapar en för nuvarande session."
 
-#: ../libqalculate/Calculator.cc:642
+#: ../libqalculate/Calculator.cc:644
 msgid "Degrees unit is missing. Creating one for this session."
 msgstr "Gradenheten saknas. Skapar en för nuvarande session."
 
-#: ../libqalculate/Calculator.cc:1811 ../libqalculate/Calculator.cc:1812
-#: ../libqalculate/Calculator.cc:1816 ../libqalculate/Calculator.cc:1821
+#: ../libqalculate/Calculator.cc:1813 ../libqalculate/Calculator.cc:1814
+#: ../libqalculate/Calculator.cc:1818 ../libqalculate/Calculator.cc:1823
 #: ../libqalculate/Calculator-definitions.cc:3444
 #: ../libqalculate/Calculator-definitions.cc:3449
 #: ../libqalculate/Calculator-definitions.cc:3528
-#: ../libqalculate/Calculator-definitions.cc:3719
-#: ../libqalculate/Calculator-definitions.cc:3781
+#: ../libqalculate/Calculator-definitions.cc:3730
 msgid "Currency"
 msgstr "Valuta"
 
-#: ../libqalculate/Calculator.cc:2686
+#: ../libqalculate/Calculator.cc:2688
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name of \"%s\", or "
@@ -3446,7 +3450,7 @@ msgstr ""
 "\"%s\" tillåts inte längre i namn. Vänligen ändra namnet på \"%s\". Annars "
 "kommer variabeln att gå förlorad."
 
-#: ../libqalculate/Calculator.cc:2704
+#: ../libqalculate/Calculator.cc:2706
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
@@ -3455,7 +3459,7 @@ msgstr ""
 "\"%s\" tillåts inte längre i namn. Vänligen ändra namnet på \"%s\". Annars "
 "kommer funktionen att gå förlorad."
 
-#: ../libqalculate/Calculator.cc:2721
+#: ../libqalculate/Calculator.cc:2723
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
@@ -3464,7 +3468,7 @@ msgstr ""
 "\"%s\" tillåts inte längre i namn. Vänligen ändra namnet på \"%s\". Annars "
 "kommer enheten att gå förlorad."
 
-#: ../libqalculate/Calculator.cc:2886
+#: ../libqalculate/Calculator.cc:2888
 #, c-format
 msgid "Name \"%s\" is in use. Replacing with \"%s\"."
 msgstr "Namnet \"%s\" är upptaget. Ändrar till \"%s\"."
@@ -3492,19 +3496,19 @@ msgstr "kolumn"
 msgid "Column "
 msgstr "Kolumn"
 
-#: ../libqalculate/Calculator-definitions.cc:3875
-#: ../libqalculate/Calculator-definitions.cc:3885
+#: ../libqalculate/Calculator-definitions.cc:3873
+#: ../libqalculate/Calculator-definitions.cc:3883
 #, c-format
 msgid "Failed to download exchange rates (%s) from %s: %s."
 msgstr "Misslyckades med att ladda ner växelkurser (%s) från %s: %s."
 
-#: ../libqalculate/Calculator-definitions.cc:3876
-#: ../libqalculate/Calculator-definitions.cc:3886
+#: ../libqalculate/Calculator-definitions.cc:3874
+#: ../libqalculate/Calculator-definitions.cc:3884
 #, c-format
 msgid "Failed to download exchange rates from %s: %s."
 msgstr "Misslyckades med att ladda ner växelkurser från %s: %s."
 
-#: ../libqalculate/Calculator-definitions.cc:3879
+#: ../libqalculate/Calculator-definitions.cc:3877
 #, c-format
 msgid "Exchange rates were successfully downloaded from %s."
 msgstr "Växelkurser laddades framgångsrikt ner från %s."
