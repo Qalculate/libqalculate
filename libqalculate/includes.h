@@ -406,6 +406,11 @@ typedef enum {
 	TIME_ZONE_CUSTOM
 } TimeZone;
 
+// temporary custom time zone value for truncation rounding in output
+#define TZ_TRUNCATE -21586
+// temporary custom time zone value for special duodecimal symbols in output
+#define TZ_DOZENAL -53172
+
 /// Options for formatting and display of mathematical structures/results.
 struct PrintOptions {
 	int min_exp;

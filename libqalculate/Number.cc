@@ -49,7 +49,8 @@ using std::endl;
 #define INTERVAL_FLOOR(x) x.floor(); if(x.isInterval()) {x = x.lowerEndPoint(); x.floor();}
 #define INTERVAL_CEIL(x) x.ceil(); if(x.isInterval()) {x = x.upperEndPoint(); x.ceil();}
 
-#define TRUNCATE (po.custom_time_zone == -21586)
+#define TRUNCATE (po.custom_time_zone == TZ_TRUNCATE || po.custom_time_zone == TZ_TRUNCATE + TZ_DOZENAL)
+#define DOZENAL (po.base == BASE_DUODECIMAL && (po.custom_time_zone == TZ_DOZENAL || po.custom_time_zone == TZ_TRUNCATE + TZ_DOZENAL))
 
 gmp_randstate_t randstate;
 
@@ -258,7 +259,7 @@ string format_number_string(string cl_str, int base, BaseDisplay base_display, b
 			str += "0b00";
 		}
 	}
-	if(base == BASE_DUODECIMAL) {
+	if(base == -12) {
 		// use X and E instead of A and B for duodecimal numbers
 		for(size_t i = 0; i < cl_str.length(); i++) {
 			if(cl_str[i] == 'A' || cl_str[i] == 'a' || cl_str[i] == 'X') {
@@ -11406,7 +11407,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 
 		if(ips.minus) *ips.minus = neg;
-		str = format_number_string(mpz_str, base, po.base_display, !ips.minus && neg, true, po);
+		str = format_number_string(mpz_str, DOZENAL ? -12 : base, po.base_display, !ips.minus && neg, true, po);
 
 		if(expo != 0) {
 			if(ips.iexp) *ips.iexp = expo;
@@ -11839,9 +11840,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(!str_bexp.empty()) {
 				PrintOptions po2 = po;
 				po2.binary_bits = 0;
-				str = format_number_string(str, base, po.base_display, !ips.minus && neg, true, po2);
+				str = format_number_string(str, DOZENAL ? -12 : base, po.base_display, !ips.minus && neg, true, po2);
 			} else {
-				str = format_number_string(str, base, po.base_display, !ips.minus && neg, true, po);
+				str = format_number_string(str, DOZENAL ? -12 : base, po.base_display, !ips.minus && neg, true, po);
 			}
 
 			if(expo != 0) {
@@ -12191,11 +12192,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(!str_bexp.empty()) {
 			PrintOptions po2 = po;
 			po2.binary_bits = 0;
-			str = format_number_string(str, base, po.base_display, !ips.minus && neg, true, po2);
-			if(!str_unc.empty()) str_unc = format_number_string(str_unc, base, po.base_display, false, true, po2);
+			str = format_number_string(str, DOZENAL ? -12 : base, po.base_display, !ips.minus && neg, true, po2);
+			if(!str_unc.empty()) str_unc = format_number_string(str_unc, DOZENAL ? -12 : base, po.base_display, false, true, po2);
 		} else {
-			str = format_number_string(str, base, po.base_display, !ips.minus && neg, true, po);
-			if(!str_unc.empty()) str_unc = format_number_string(str_unc, base, po.base_display, false, true, po);
+			str = format_number_string(str, DOZENAL ? -12 : base, po.base_display, !ips.minus && neg, true, po);
+			if(!str_unc.empty()) str_unc = format_number_string(str_unc, DOZENAL ? -12 : base, po.base_display, false, true, po);
 		}
 
 		if(expo != 0) {
@@ -12773,7 +12774,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			else str += "...";
 		}
 
-		str = format_number_string(str, base, po.base_display, !ips.minus && neg, true, po);
+		str = format_number_string(str, DOZENAL ? -12 : base, po.base_display, !ips.minus && neg, true, po);
 
 		if(expo != 0) {
 			if(ips.iexp) *ips.iexp = expo;

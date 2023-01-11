@@ -102,6 +102,7 @@ bool unittest = false;
 int rounding_mode = 0, saved_rounding = 0;
 bool simplified_percentage = true;
 int defs_edited = 0;
+bool use_duo_syms = false;
 
 static char buffer[100000];
 
@@ -130,6 +131,10 @@ enum {
 	COMMAND_EXPAND_PARTIAL_FRACTIONS,
 	COMMAND_EVAL
 };
+
+#define RESET_TZ 	printops.custom_time_zone = (rounding_mode == 2 ? TZ_TRUNCATE : 0);\
+			if(use_duo_syms) printops.custom_time_zone += TZ_DOZENAL;\
+			printops.time_zone = TIME_ZONE_LOCAL;
 
 #define EQUALS_IGNORECASE_AND_LOCAL(x,y,z)	(equalsIgnoreCase(x, y) || equalsIgnoreCase(x, z))
 #define EQUALS_IGNORECASE_AND_LOCAL_NR(x,y,z,a)	(equalsIgnoreCase(x, y a) || (x.length() == strlen(z) + strlen(a) && equalsIgnoreCase(x.substr(0, x.length() - strlen(a)), z) && equalsIgnoreCase(x.substr(x.length() - strlen(a)), a)))
@@ -934,7 +939,7 @@ void set_option(string str) {
 		SET_BOOL(b)
 		if(b != printops.round_halfway_to_even || rounding_mode == 2) {
 			rounding_mode = b ? 0 : 1;
-			printops.custom_time_zone = 0;
+			RESET_TZ
 			printops.round_halfway_to_even = b;
 			result_format_updated();
 		}
@@ -950,7 +955,7 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else if(v != rounding_mode) {
 			rounding_mode = v;
-			printops.custom_time_zone = (v == 2 ? -21586 : 0);
+			RESET_TZ
 			printops.round_halfway_to_even = (v == 1);
 			result_format_updated();
 		}
@@ -971,7 +976,14 @@ void set_option(string str) {
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "short multiplication", _("short multiplication")) || svar == "shortmul") SET_BOOL_D(printops.short_multiplication)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "lowercase e", _("lowercase e")) || svar == "lowe") SET_BOOL_D(printops.lower_case_e)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "lowercase numbers", _("lowercase numbers")) || svar == "lownum") SET_BOOL_D(printops.lower_case_numbers)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "imaginary j", _("imaginary j")) || svar == "imgj") {
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "duodecimal symbols", _("duodecimal symbols")) || svar == "duosyms") {
+		bool b = use_duo_syms;
+		SET_BOOL(use_duo_syms)
+		if(b != use_duo_syms) {
+			RESET_TZ
+			result_display_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "imaginary j", _("imaginary j")) || svar == "imgj") {
 		bool b = CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") > 0;
 		SET_BOOL(b)
 		if(b != (CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") > 0)) {
@@ -1742,6 +1754,7 @@ bool show_set_help(string set_option = "") {
 	}
 	STR_AND_TABS_BOOL("show ending zeroes", "zeroes", _("If activated, zeroes are kept at the end of approximate numbers."), printops.show_ending_zeroes);
 	STR_AND_TABS_BOOL("two's complement", "twos", _("Enables two's complement representation for display of negative binary numbers."), printops.twos_complement);
+	STR_AND_TABS_BOOL("duodecimal symbols", "duosyms", _("Use special symbols for digits 10 and 11 in numbers with base 12."), use_duo_syms);
 
 	CHECK_IF_SCREEN_FILLED_HEADING_S(_("Parsing"));
 
@@ -3622,6 +3635,17 @@ int main(int argc, char *argv[]) {
 				printops.base = BASE_DUODECIMAL;
 				setResult(NULL, false);
 				printops.base = save_base;
+			} else if(equalsIgnoreCase(str, "doz") || equalsIgnoreCase(str, "dozenal")) {
+				int save_base = printops.base;
+				printops.base = BASE_DUODECIMAL;
+				if(!use_duo_syms) {
+					use_duo_syms = true;
+					RESET_TZ
+					use_duo_syms = false;
+				}
+				setResult(NULL, false);
+				printops.base = save_base;
+				RESET_TZ
 			} else if(equalsIgnoreCase(str, "roman") || equalsIgnoreCase(str, _("roman"))) {
 				int save_base = printops.base;
 				printops.base = BASE_ROMAN_NUMERALS;
@@ -3749,14 +3773,12 @@ int main(int argc, char *argv[]) {
 				printops.time_zone = TIME_ZONE_CUSTOM;
 				printops.custom_time_zone = itz;
 				setResult(NULL, false);
-				printops.custom_time_zone = (rounding_mode == 2 ? -21586 : 0);
-				printops.time_zone = TIME_ZONE_LOCAL;
+				RESET_TZ
 			} else if(str == "CET") {
 				printops.time_zone = TIME_ZONE_CUSTOM;
 				printops.custom_time_zone = 60;
 				setResult(NULL, false);
-				printops.custom_time_zone = (rounding_mode == 2 ? -21586 : 0);
-				printops.time_zone = TIME_ZONE_LOCAL;
+				RESET_TZ
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(str, "cartesian", _("cartesian")) || str == "rect") {
 				avoid_recalculation = false;
 				ComplexNumberForm cnf_bak = evalops.complex_number_form;
@@ -4238,6 +4260,7 @@ int main(int argc, char *argv[]) {
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("show ending zeroes"), "zeroes"); str += b2oo(printops.show_ending_zeroes, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("two's complement"), "twos"); str += b2oo(printops.twos_complement, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("duodecimal symbols"), "duosyms"); str += b2oo(use_duo_syms, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Parsing"));
 
@@ -5248,6 +5271,8 @@ void ViewThread::run() {
 			po.lower_case_numbers = printops.lower_case_numbers;
 			po.base_display = printops.base_display;
 			po.twos_complement = printops.twos_complement;
+			po.custom_time_zone = printops.custom_time_zone;
+			po.round_halfway_to_even = printops.round_halfway_to_even;
 			po.hexadecimal_twos_complement = printops.hexadecimal_twos_complement;
 			po.base = evalops.parse_options.base;
 			po.allow_non_usable = DO_FORMAT;
@@ -6264,6 +6289,13 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					printops.base = BASE_OCTAL;
 				} else if(equalsIgnoreCase(to_str, "duo") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "duodecimal", _("duodecimal"))) {
 					printops.base = BASE_DUODECIMAL;
+				} else if(equalsIgnoreCase(to_str, "doz") || equalsIgnoreCase(to_str, "dozenal")) {
+					printops.base = BASE_DUODECIMAL;
+					if(printops.time_zone != TIME_ZONE_CUSTOM && !use_duo_syms) {
+						use_duo_syms = true;
+						RESET_TZ
+						use_duo_syms = false;
+					}
 				} else if(equalsIgnoreCase(to_str, "roman") || equalsIgnoreCase(to_str, _("roman"))) {
 					printops.base = BASE_ROMAN_NUMERALS;
 				} else if(equalsIgnoreCase(to_str, "bijective") || equalsIgnoreCase(to_str, _("bijective"))) {
@@ -6712,8 +6744,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		if(custom_base_set) CALCULATOR->setCustomOutputBase(save_cbase);
 		evalops.complex_number_form = save_complex_number_form;
 		complex_angle_form = caf_bak;
-		printops.custom_time_zone = (rounding_mode == 2 ? -21586 : 0);
-		printops.time_zone = TIME_ZONE_LOCAL;
+		RESET_TZ
 		printops.binary_bits = 0;
 		printops.base = save_base;
 		printops.use_unit_prefixes = save_pre;
@@ -6877,8 +6908,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	if(custom_base_set) CALCULATOR->setCustomOutputBase(save_cbase);
 	evalops.complex_number_form = save_complex_number_form;
 	complex_angle_form = caf_bak;
-	printops.custom_time_zone = (rounding_mode == 2 ? -21586 : 0);
-	printops.time_zone = TIME_ZONE_LOCAL;
+	RESET_TZ
 	printops.binary_bits = 0;
 	printops.base = save_base;
 	printops.use_unit_prefixes = save_pre;
@@ -6961,6 +6991,7 @@ void load_preferences() {
 	printops.excessive_parenthesis = false;
 	printops.allow_non_usable = DO_FORMAT;
 	printops.lower_case_numbers = false;
+	use_duo_syms = false;
 	printops.lower_case_e = false;
 	printops.base_display = BASE_DISPLAY_NORMAL;
 	printops.twos_complement = true;
@@ -7310,6 +7341,9 @@ void load_preferences() {
 #endif
 				} else if(svar == "lower_case_numbers") {
 					printops.lower_case_numbers = v;
+				} else if(svar == "duodecimal_symbols") {
+					use_duo_syms = v;
+					RESET_TZ
 				} else if(svar == "lower_case_e") {
 					printops.lower_case_e = v;
 				} else if(svar == "imaginary_j") {
@@ -7355,12 +7389,12 @@ void load_preferences() {
 					}
 				} else if(svar == "round_halfway_to_even") {
 					printops.round_halfway_to_even = v;
-					printops.custom_time_zone = 0;
 					rounding_mode = (v ? 1 : 0);
+					RESET_TZ
 				} else if(svar == "rounding_mode") {
 					if(v >= 0 && v <= 2) {
 						rounding_mode = v;
-						printops.custom_time_zone = (v == 2 ? -21586 : 0);
+						RESET_TZ
 						printops.round_halfway_to_even = (v == 1);
 					}
 				} else if(svar == "approximation") {
@@ -7458,6 +7492,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "short_multiplication=%i\n", printops.short_multiplication);
 	fprintf(file, "use_unicode_signs=%i\n", printops.use_unicode_signs);
 	fprintf(file, "lower_case_numbers=%i\n", printops.lower_case_numbers);
+	fprintf(file, "duodecimal_symbols=%i\n", use_duo_syms);
 	fprintf(file, "lower_case_e=%i\n", printops.lower_case_e);
 	fprintf(file, "imaginary_j=%i\n", CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") > 0);
 	fprintf(file, "base_display=%i\n", printops.base_display);
