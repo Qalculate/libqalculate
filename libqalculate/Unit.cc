@@ -112,10 +112,42 @@ const string &Unit::system() const {
 	return ssystem;
 }
 bool Unit::useWithPrefixesByDefault() const {
-	return b_use_with_prefixes;
+	return b_use_with_prefixes % 2;
+}
+int Unit::maxPreferredPrefix() const {
+	int exp = (b_use_with_prefixes % 200) / 2;
+	if(exp == 0) return INT_MAX;
+	if(exp > 50) return -exp;
+	exp--;
+	return exp;
+}
+int Unit::minPreferredPrefix() const {
+	int exp = b_use_with_prefixes / 200;
+	if(exp == 0) return INT_MIN;
+	if(exp > 50) return -exp;
+	exp--;
+	return exp;
 }
 void Unit::setUseWithPrefixesByDefault(bool use_with_prefixes) {
-	b_use_with_prefixes = use_with_prefixes;
+	b_use_with_prefixes = (use_with_prefixes ? 1 : 0) + (((b_use_with_prefixes % 200) / 2) * 2) + ((b_use_with_prefixes / 200) * 200);
+}
+void Unit::setMaxPreferredPrefix(int exp) {
+	if(exp == INT_MAX) {
+		exp = 0;
+	} else {
+		if(exp < 0) exp = -exp + 50;
+		else exp++;
+	}
+	b_use_with_prefixes = b_use_with_prefixes % 2 + (exp * 2) + ((b_use_with_prefixes / 200) * 200);
+}
+void Unit::setMinPreferredPrefix(int exp) {
+	if(exp == INT_MIN) {
+		exp = 0;
+	} else {
+		if(exp < 0) exp = -exp + 50;
+		else exp++;
+	}
+	b_use_with_prefixes = b_use_with_prefixes % 2 + (((b_use_with_prefixes % 200) / 2) * 2) + (exp * 200);
 }
 bool Unit::isCurrency() const {
 	return baseUnit() == CALCULATOR->getUnitById(UNIT_ID_EURO);

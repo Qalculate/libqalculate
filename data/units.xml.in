@@ -7,6 +7,7 @@
       <system>SI</system>
       <_title>Meter</_title>
       <_names>ar:m,meter,p:meters,metre,p:metres</_names>
+      <use_with_prefixes max="3">true</use_with_prefixes>
     </unit>
     <unit type="composite">
       <_title>Kilometer</_title>
@@ -503,6 +504,7 @@
       <system>SI</system>
       <_title>Gram</_title>
       <_names>ar:g,gram,p:grams</_names>
+      <use_with_prefixes max="3">true</use_with_prefixes>
     </unit>
     <unit type="composite">
       <system>SI</system>
@@ -4113,7 +4115,7 @@
     <unit type="base">
       <_title>Bit (Binary Digit)</_title>
       <_names>r:bit,p:bits,shannon,p:shannons,c:Sh,binary_digit,p:binary_digits</_names>
-      <use_with_prefixes>true</use_with_prefixes>
+      <use_with_prefixes min="0">true</use_with_prefixes>
     </unit>
     <unit type="alias">
       <_title>Nat</_title>
@@ -4154,7 +4156,7 @@
     <unit type="alias">
       <_title>Byte (8-bit)</_title>
       <_names>r:byte,a:B,p:bytes,octet,p:octets,a:o</_names>
-      <use_with_prefixes>true</use_with_prefixes>
+      <use_with_prefixes min="0">true</use_with_prefixes>
       <base>
         <unit>bit</unit>
         <relation>8</relation>
