@@ -1,3 +1,15 @@
+2023-01-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add option to change symbols used for output of digit 10 and 11 in duodecimal numbers. Default digits are now A and B, instead of ↊ and ↋ (or X and E).
+
+2023-01-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix reactivation of global object after deletion of conflicting object
+
+2023-01-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use "help [OPTION]" to display description for a single set option, in qalc
+
 2023-01-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* EUR has replaced HRK as currency of Croatia

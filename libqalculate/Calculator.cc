@@ -2264,20 +2264,20 @@ void Calculator::expressionItemDeleted(ExpressionItem *item) {
 			for(size_t i = 0; i < variables.size(); i++) {
 				if(!variables[i]->isLocal() && !variables[i]->isActive() && variables[i]->hasName(item->getName(i2).name, item->getName(i2).case_sensitive)) {
 					bool b = true;
-					for(size_t i = 1; i <= variables[i]->countNames(); i++) {
-						if(getActiveVariable(variables[i]->getName(i).name, !variables[i]->getName(i).completion_only) || getActiveUnit(variables[i]->getName(i).name, !variables[i]->getName(i).completion_only)) {
+					for(size_t i3 = 1; i3 <= variables[i]->countNames(); i3++) {
+						if(getActiveVariable(variables[i]->getName(i3).name, !variables[i]->getName(i3).completion_only) || getActiveUnit(variables[i]->getName(i3).name, !variables[i]->getName(i3).completion_only)) {
 							b = false;
 							break;
 						}
 					}
-					if(b) units[i]->setActive(true);
+					if(b) variables[i]->setActive(true);
 				}
 			}
 			for(size_t i = 0; i < units.size(); i++) {
 				if(!units[i]->isLocal() && !units[i]->isActive() && units[i]->hasName(item->getName(i2).name, item->getName(i2).case_sensitive)) {
 					bool b = true;
-					for(size_t i = 1; i <= units[i]->countNames(); i++) {
-						if(getActiveVariable(units[i]->getName(i).name, !units[i]->getName(i).completion_only) || getActiveUnit(units[i]->getName(i).name, !units[i]->getName(i).completion_only)) {
+					for(size_t i3 = 1; i3 <= units[i]->countNames(); i3++) {
+						if(getActiveVariable(units[i]->getName(i3).name, !units[i]->getName(i3).completion_only) || getActiveUnit(units[i]->getName(i3).name, !units[i]->getName(i3).completion_only)) {
 							b = false;
 							break;
 						}
@@ -2289,8 +2289,8 @@ void Calculator::expressionItemDeleted(ExpressionItem *item) {
 			for(size_t i = 0; i < functions.size(); i++) {
 				if(!functions[i]->isLocal() && !functions[i]->isActive() && functions[i]->hasName(item->getName(i2).name, item->getName(i2).case_sensitive)) {
 					bool b = true;
-					for(size_t i = 1; i <= functions[i]->countNames(); i++) {
-						if(getActiveFunction(functions[i]->getName(i).name, !functions[i]->getName(i).completion_only)) {
+					for(size_t i3 = 1; i3 <= functions[i]->countNames(); i3++) {
+						if(getActiveFunction(functions[i]->getName(i3).name, !functions[i]->getName(i3).completion_only)) {
 							b = false;
 							break;
 						}

@@ -41,7 +41,7 @@ class Unit : public ExpressionItem {
 
 	std::string ssystem, scountries;
 	bool b_si;
-	bool b_use_with_prefixes;
+	short b_use_with_prefixes;
 
   public:
 
@@ -76,9 +76,13 @@ class Unit : public ExpressionItem {
 	* @returns true if the prefixes is appropriate for this unit.
 	*/
 	bool useWithPrefixesByDefault() const;
+	int maxPreferredPrefix() const;
+	int minPreferredPrefix() const;
 	/** Sets whether prefixes are appropriate with this unit or not.
 	*/
 	void setUseWithPrefixesByDefault(bool use_with_prefixes);
+	void setMaxPreferredPrefix(int exp);
+	void setMinPreferredPrefix(int exp);
 	/** Returns if the unit is a currency (Euro is base unit).
 	*
 	* @returns true if the unit is a currency.
