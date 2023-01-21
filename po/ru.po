@@ -642,9 +642,8 @@ msgid "lowercase numbers"
 msgstr "строчные числа"
 
 #: ../src/qalc.cc:979 ../src/qalc.cc:4263
-#, fuzzy
 msgid "duodecimal symbols"
-msgstr "двенадцатеричное"
+msgstr "двенадцатеричные символы"
 
 #: ../src/qalc.cc:986 ../src/qalc.cc:4208 ../src/qalc.cc:4279
 msgid "imaginary j"
