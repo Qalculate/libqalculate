@@ -1086,7 +1086,7 @@ DecimalPrefix *Calculator::getOptimalDecimalPrefix(int exp10, int exp, bool all_
 				if(p == decimal_null_prefix) return NULL;
 				return p;
 			} else if(p->exponent(exp) > exp10) {
-				if(i == 0) {
+				if((exp >= 0 && i == 0) || (exp < 0 && i == (int) decimal_prefixes.size())) {
 					if(p == decimal_null_prefix) return NULL;
 					return p;
 				}
@@ -1140,7 +1140,7 @@ DecimalPrefix *Calculator::getOptimalDecimalPrefix(const Number &exp10, const Nu
 				if(p == decimal_null_prefix) return NULL;
 				return p;
 			} else if(c == COMPARISON_RESULT_GREATER) {
-				if(i == 0) {
+				if((exp.isNegative() && i == (int) decimal_prefixes.size() - 1) || (!exp.isNegative() && i == 0)) {
 					if(p == decimal_null_prefix) return NULL;
 					return p;
 				}
@@ -1230,6 +1230,10 @@ BinaryPrefix *Calculator::getOptimalBinaryPrefix(int exp2, int exp) const {
 			if(p == binary_null_prefix) return NULL;
 			return p;
 		} else if(p->exponent(exp) > exp2) {
+			if((exp >= 0 && i == 0) || (exp < 0 && i == (int) binary_prefixes.size())) {
+				if(p == binary_null_prefix) return NULL;
+				return p;
+			}
 			exp2_1 = exp2;
 			if(p_prev) {
 				exp2_1 -= p_prev->exponent(exp);
@@ -1270,6 +1274,10 @@ BinaryPrefix *Calculator::getOptimalBinaryPrefix(const Number &exp2, const Numbe
 			if(p == binary_null_prefix) return NULL;
 			return p;
 		} else if(c == COMPARISON_RESULT_GREATER) {
+			if((exp.isNegative() && i == (int) binary_prefixes.size() - 1) || (!exp.isNegative() && i == 0)) {
+				if(p == binary_null_prefix) return NULL;
+				return p;
+			}
 			exp2_1 = exp2;
 			if(p_prev) {
 				exp2_1 -= p_prev->exponent(exp);
@@ -1295,9 +1303,21 @@ BinaryPrefix *Calculator::getOptimalBinaryPrefix(const Number &exp2, const Numbe
 }
 Prefix *Calculator::addPrefix(Prefix *p) {
 	if(p->type() == PREFIX_DECIMAL) {
-		decimal_prefixes.push_back((DecimalPrefix*) p);
+		if(decimal_prefixes.empty() || ((DecimalPrefix*) p)->exponent() > decimal_prefixes[decimal_prefixes.size() - 1]->exponent()) {
+			decimal_prefixes.push_back((DecimalPrefix*) p);
+		} else {
+			size_t i = decimal_prefixes.size() - 1;
+			while(i > 0 && ((DecimalPrefix*) p)->exponent() < decimal_prefixes[i - 1]->exponent()) i--;
+			decimal_prefixes.insert(decimal_prefixes.begin() + i, (DecimalPrefix*) p);
+		}
 	} else if(p->type() == PREFIX_BINARY) {
-		binary_prefixes.push_back((BinaryPrefix*) p);
+		if(binary_prefixes.empty() || ((BinaryPrefix*) p)->exponent() > binary_prefixes[binary_prefixes.size() - 1]->exponent()) {
+			binary_prefixes.push_back((BinaryPrefix*) p);
+		} else {
+			size_t i = binary_prefixes.size() - 1;
+			while(i > 0 && ((BinaryPrefix*) p)->exponent() < binary_prefixes[i - 1]->exponent()) i--;
+			binary_prefixes.insert(binary_prefixes.begin() + i, (BinaryPrefix*) p);
+		}
 	}
 	prefixes.push_back(p);
 	prefixNameChanged(p, true);

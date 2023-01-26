@@ -1,6 +1,17 @@
+2023-01-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Don't show anything on empty input in qalc
+	* Set zero as max prefix for litre
+	* Fix prefix selection in denominator when multiplier is higher than the value of the largest prefix
+	* Make sure that prefixes are stored in correct order
+
+2023-01-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add min and max preferred prefix properties to units, and use kilo as max for meter, gram, and zero as min for byte, and bit)
+
 2023-01-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Add option to change symbols used for output of digit 10 and 11 in duodecimal numbers. Default digits are now A and B, instead of ↊ and ↋ (or X and E).
+	* Add option to change symbols used for output of digits 10 and 11 in duodecimal numbers. Default digits are now A and B, instead of ↊ and ↋ (or X and E).
 
 2023-01-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

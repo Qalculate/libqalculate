@@ -117,14 +117,14 @@ bool Unit::useWithPrefixesByDefault() const {
 int Unit::maxPreferredPrefix() const {
 	int exp = (b_use_with_prefixes % 200) / 2;
 	if(exp == 0) return INT_MAX;
-	if(exp > 50) return -exp;
+	if(exp > 50) return -exp + 50;
 	exp--;
 	return exp;
 }
 int Unit::minPreferredPrefix() const {
 	int exp = b_use_with_prefixes / 200;
 	if(exp == 0) return INT_MIN;
-	if(exp > 50) return -exp;
+	if(exp > 50) return -exp + 50;
 	exp--;
 	return exp;
 }

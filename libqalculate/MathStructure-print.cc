@@ -1441,11 +1441,13 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 						exp10.intervalToMidValue();
 						if(exp10.isLessThanOrEqualTo(Number(1, 1, 1000)) && exp10.isGreaterThanOrEqualTo(Number(1, 1, -1000))) {
 							Unit *u = (munit->isUnit() ? munit->unit() : (*munit)[0].unit());
+							Unit *u2 = NULL;
+							if(b2) u2 = (munit2->isUnit() ? munit2->unit() : (*munit2)[0].unit());
 							bool use_binary_prefix = (CALCULATOR->usesBinaryPrefixes() > 1 || (CALCULATOR->usesBinaryPrefixes() == 1 && u->baseUnit()->referenceName() == "bit"));
 							exp10.log(use_binary_prefix ? 2 : 10);
 							exp10.intervalToMidValue();
 							exp10.floor();
-							if(b2 && exp10.isPositive() && (CALCULATOR->usesBinaryPrefixes() > 1 || (CALCULATOR->usesBinaryPrefixes() == 1 && ((munit2->isUnit() && munit2->unit()->baseUnit()->referenceName() == "bit") || (munit2->isPower() && (*munit2)[0].unit()->baseUnit()->referenceName() == "bit"))))) b2 = false;
+							if(b2 && exp10.isPositive() && (CALCULATOR->usesBinaryPrefixes() > 1 || (CALCULATOR->usesBinaryPrefixes() == 1 && u2->baseUnit()->referenceName() == "bit"))) b2 = false;
 							if(b2 && use_binary_prefix && CALCULATOR->usesBinaryPrefixes() == 1 && exp10.isNegative()) {
 								exp10.clear();
 							} else if(b2) {
@@ -1469,16 +1471,68 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 									}
 									if(!exp10.isNegative())	i4++;
 								}
+								if(exp10.isNegative()) {
+									if(u2->maxPreferredPrefix() < i4 * 3) {
+										i4 = u2->maxPreferredPrefix() / 3;
+										if(i4 < 0) i4 = 0;
+									}
+								} else {
+									if(u2->minPreferredPrefix() > -(i4 * 3)) {
+										i4 = -(u2->minPreferredPrefix() / 3);
+										if(i4 < 0) i4 = 0;
+									}
+								}
 								e2.setNegative(exp10.isNegative());
 								e2 *= i4;
 								exp10 -= e2;
+								if(exp10.isNegative() != exp.isNegative()) {
+									if(exp10 / exp < u->minPreferredPrefix()) {
+										Number exp10_bak(exp10);
+										if(u->minPreferredPrefix() > -3) exp10 = 0;
+										else exp10 = exp * ((u->minPreferredPrefix() / 3) * 3);
+										e2 /= i4;
+										i4 -= ((exp10_bak - exp10) / exp).intValue();
+										e2 *= i4;
+									}
+								} else {
+									if(exp10 / exp > u->maxPreferredPrefix()) {
+										Number exp10_bak(exp10);
+										if(u->maxPreferredPrefix() < 3) exp10 = 0;
+										else exp10 = exp * (u->maxPreferredPrefix() - u->maxPreferredPrefix() % 3);
+										e2 /= i4;
+										i4 += ((exp10_bak - exp10) / exp).intValue();
+										e2 *= i4;
+									}
+								}
 							}
 							Prefix *p = (use_binary_prefix > 0 ? (Prefix*) CALCULATOR->getOptimalBinaryPrefix(exp10, exp) : (Prefix*) CALCULATOR->getOptimalDecimalPrefix(exp10, exp, po.use_all_prefixes));
-							if(!po.use_all_prefixes && p && p->type() == PREFIX_DECIMAL) {
+							if(!po.use_all_prefixes && !po.use_prefixes_for_all_units && p && p->type() == PREFIX_DECIMAL) {
 								if(((DecimalPrefix*) p)->exponent() > u->maxPreferredPrefix()) {
-									p = CALCULATOR->getOptimalDecimalPrefix(u->maxPreferredPrefix(), 1, po.use_all_prefixes);
+									p = NULL;
+									int mexp = u->maxPreferredPrefix();
+									if(mexp < 0) {
+										if(mexp % 3 != 0) mexp = ((mexp / 3) - 1) * 3;
+										p = CALCULATOR->getExactDecimalPrefix(mexp);
+									} else if(mexp >= 3) {
+										mexp -= mexp % 3;
+										do {
+											p = CALCULATOR->getExactDecimalPrefix(mexp);
+											mexp -= 3;
+										} while(!p && mexp >= 0);
+									}
 								} else if(((DecimalPrefix*) p)->exponent() < u->minPreferredPrefix()) {
-									p = CALCULATOR->getOptimalDecimalPrefix(u->minPreferredPrefix(), 1, po.use_all_prefixes);
+									p = NULL;
+									int mexp = u->minPreferredPrefix();
+									if(mexp < 0) {
+										if(mexp % 3 != 0) mexp = (mexp / 3) * 3;
+										do {
+											p = CALCULATOR->getExactDecimalPrefix(mexp);
+											mexp += 3;
+										} while(!p && mexp <= 0);
+									} else if(mexp >= 3) {
+										if(mexp % 3 != 0) mexp += (3 - mexp % 3);
+										p = CALCULATOR->getExactDecimalPrefix(mexp);
+									}
 								}
 							}
 							if(p && p->type() == PREFIX_DECIMAL && ((DecimalPrefix*) p)->exponent() < 0 && u->referenceName() == "t") {
@@ -1534,11 +1588,33 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 							exp10.intervalToMidValue();
 							exp10.floor();
 							Prefix *p = (use_binary_prefix > 0 ? (Prefix*) CALCULATOR->getOptimalBinaryPrefix(exp10, exp2) : (Prefix*) CALCULATOR->getOptimalDecimalPrefix(exp10, exp2, po.use_all_prefixes));
-							if(!po.use_all_prefixes && p && p->type() == PREFIX_DECIMAL) {
+							if(!po.use_all_prefixes && !po.use_prefixes_for_all_units && p && p->type() == PREFIX_DECIMAL) {
 								if(((DecimalPrefix*) p)->exponent() > u->maxPreferredPrefix()) {
-									p = CALCULATOR->getOptimalDecimalPrefix(u->maxPreferredPrefix(), 1, po.use_all_prefixes);
+									p = NULL;
+									int mexp = u->maxPreferredPrefix();
+									if(mexp < 0) {
+										if(mexp % 3 != 0) mexp = ((mexp / 3) - 1) * 3;
+										p = CALCULATOR->getExactDecimalPrefix(mexp);
+									} else if(mexp >= 3) {
+										mexp -= mexp % 3;
+										do {
+											p = CALCULATOR->getExactDecimalPrefix(mexp);
+											mexp -= 3;
+										} while(!p && mexp >= 0);
+									}
 								} else if(((DecimalPrefix*) p)->exponent() < u->minPreferredPrefix()) {
-									p = CALCULATOR->getOptimalDecimalPrefix(u->minPreferredPrefix(), 1, po.use_all_prefixes);
+									p = NULL;
+									int mexp = u->minPreferredPrefix();
+									if(mexp < 0) {
+										if(mexp % 3 != 0) mexp = (mexp / 3) * 3;
+										do {
+											p = CALCULATOR->getExactDecimalPrefix(mexp);
+											mexp += 3;
+										} while(!p && mexp <= 0);
+									} else if(mexp >= 3) {
+										if(mexp % 3 != 0) mexp += (3 - mexp % 3);
+										p = CALCULATOR->getExactDecimalPrefix(mexp);
+									}
 								}
 							}
 							if(p && p->type() == PREFIX_DECIMAL && ((DecimalPrefix*) p)->exponent() < 0 && u->referenceName() == "t") {
