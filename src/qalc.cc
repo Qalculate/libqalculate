@@ -5155,7 +5155,7 @@ int main(int argc, char *argv[]) {
 					break;
 				}
 				ntests++;
-			} else {
+			} else if(!str.empty()) {
 				expression_str = str;
 				execute_expression();
 			}
