@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-04 07:09+0100\n"
+"POT-Creation-Date: 2023-01-27 08:12+0100\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -9318,8 +9318,8 @@ msgid "Ampere"
 msgstr ""
 
 #: ../data/units.xml.in.h:168
-msgid "ar:A,ampere,p:amperes"
-msgstr "a:A,ampere"
+msgid "ar:A,ampere,p:amperes,a-c:amp"
+msgstr "a:A,ampere,a-c:amp"
 
 #: ../data/units.xml.in.h:169
 msgid "Abampere"

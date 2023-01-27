@@ -987,7 +987,7 @@
       <unit type="base">
         <system>SI</system>
         <_title>Ampere</_title>
-        <_names>ar:A,ampere,p:amperes</_names>
+        <_names>ar:A,ampere,p:amperes,a-c:amp</_names>
       </unit>
       <unit type="alias">
         <system>CGS</system>

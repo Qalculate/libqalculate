@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Qalculate!\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-04 07:06+0100\n"
+"POT-Creation-Date: 2023-01-27 08:12+0100\n"
 "PO-Revision-Date: 2022-05-13 18:30-0300\n"
 "Last-Translator: VicSanRoPe\n"
 "Language-Team: none\n"
@@ -33,9 +33,10 @@ msgid ""
 "Germany, Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, "
 "Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City"
 msgstr ""
-"Andorra, Austria, Bélgica, Chipre, Croacia, Estonia, Finlandia, Francia, Alemania, "
-"Grecia, Irlanda, Italia, Letonia, Lituania, Luxemburgo, Malta, Países Bajos, "
-"Portugal, San Marino, Eslovaquia, Eslovenia, España, Ciudad del Vaticano"
+"Andorra, Austria, Bélgica, Chipre, Croacia, Estonia, Finlandia, Francia, "
+"Alemania, Grecia, Irlanda, Italia, Letonia, Lituania, Luxemburgo, Malta, "
+"Países Bajos, Portugal, San Marino, Eslovaquia, Eslovenia, España, Ciudad "
+"del Vaticano"
 
 #: ../data/currencies.xml.in.h:5
 msgid "U.S. Dollar"
@@ -9414,8 +9415,8 @@ msgid "Ampere"
 msgstr "Amperio"
 
 #: ../data/units.xml.in.h:168
-msgid "ar:A,ampere,p:amperes"
-msgstr "a:A,amperio,p:amperios,ampere"
+msgid "ar:A,ampere,p:amperes,a-c:amp"
+msgstr "a:A,amperio,p:amperios,ampere,a-c:amp"
 
 #: ../data/units.xml.in.h:169
 msgid "Abampere"

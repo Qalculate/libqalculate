@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate-defs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-04 07:08+0100\n"
+"POT-Creation-Date: 2023-01-27 08:12+0100\n"
 "PO-Revision-Date: 2007-05-18 15:47+0200\n"
 "Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
 "Language-Team:  <kde-i18n-nl@kde.org>\n"
@@ -9499,7 +9499,7 @@ msgid "Ampere"
 msgstr ""
 
 #: ../data/units.xml.in.h:168
-msgid "ar:A,ampere,p:amperes"
+msgid "ar:A,ampere,p:amperes,a-c:amp"
 msgstr ""
 
 #: ../data/units.xml.in.h:169

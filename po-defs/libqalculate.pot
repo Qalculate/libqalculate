@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-09 15:23+0700\n"
+"POT-Creation-Date: 2023-01-27 08:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -8995,7 +8995,7 @@ msgid "Ampere"
 msgstr ""
 
 #: ../data/units.xml.in.h:168
-msgid "ar:A,ampere,p:amperes"
+msgid "ar:A,ampere,p:amperes,a-c:amp"
 msgstr ""
 
 #: ../data/units.xml.in.h:169

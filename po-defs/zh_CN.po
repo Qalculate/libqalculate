@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-04 07:09+0100\n"
+"POT-Creation-Date: 2023-01-27 08:12+0100\n"
 "PO-Revision-Date: 2021-08-23 09:54+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
@@ -38,9 +38,9 @@ msgid ""
 "Germany, Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, "
 "Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City"
 msgstr ""
-"安道尔、奥地利、比利时、克罗地亚、塞浦路斯、爱沙尼亚、芬兰、法国、德国、希腊、爱尔兰、"
-"意大利、拉脱维亚、立陶宛、卢森堡、马耳他、荷兰、葡萄牙、圣马力诺、斯洛伐克、"
-"斯洛文尼亚、西班牙、梵蒂冈城。"
+"安道尔、奥地利、比利时、克罗地亚、塞浦路斯、爱沙尼亚、芬兰、法国、德国、希"
+"腊、爱尔兰、意大利、拉脱维亚、立陶宛、卢森堡、马耳他、荷兰、葡萄牙、圣马力"
+"诺、斯洛伐克、斯洛文尼亚、西班牙、梵蒂冈城。"
 
 #: ../data/currencies.xml.in.h:5
 msgid "U.S. Dollar"
@@ -9218,7 +9218,7 @@ msgid "Ampere"
 msgstr "安培"
 
 #: ../data/units.xml.in.h:168
-msgid "ar:A,ampere,p:amperes"
+msgid "ar:A,ampere,p:amperes,a-c:amp"
 msgstr "ar:A,安,ampere"
 
 #: ../data/units.xml.in.h:169

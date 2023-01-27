@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-04 07:07+0100\n"
+"POT-Creation-Date: 2023-01-27 08:12+0100\n"
 "PO-Revision-Date: 2020-12-02 13:25+0100\n"
 "Last-Translator: Polakrity\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -30,15 +30,15 @@ msgid "a-cr:EUR,au:&#x20AC;,euro,p:euros"
 msgstr "a-cr:EUR,au:&#x20AC;,euro,p:euros"
 
 #: ../data/currencies.xml.in.h:4
-#, fuzzy
 msgid ""
 "Andorra, Austria, Belgium, Croatia, Cyprus, Estonia, Finland, France, "
 "Germany, Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, "
 "Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City"
 msgstr ""
-"Allemagne, Andorre, Autriche, Belgique, Chypre, Cité du Vatican, Croatie, Espagne, "
-"Estonie, Finlande, France, Grèce, Irlande, Italie, Lettonie, Lituanie, "
-"Luxembourg, Malte, Pays-Bas, Portugal, Saint-Marin, Slovaquie, Slovénie"
+"Allemagne, Andorre, Autriche, Belgique, Chypre, Cité du Vatican, Croatie, "
+"Espagne, Estonie, Finlande, France, Grèce, Irlande, Italie, Lettonie, "
+"Lituanie, Luxembourg, Malte, Pays-Bas, Portugal, Saint-Marin, Slovaquie, "
+"Slovénie"
 
 #: ../data/currencies.xml.in.h:5
 msgid "U.S. Dollar"
@@ -9245,8 +9245,8 @@ msgid "Ampere"
 msgstr "Ampère"
 
 #: ../data/units.xml.in.h:168
-msgid "ar:A,ampere,p:amperes"
-msgstr "ar:A,ampère,p:ampères"
+msgid "ar:A,ampere,p:amperes,a-c:amp"
+msgstr "ar:A,ampère,p:ampères,a-c:amp"
 
 #: ../data/units.xml.in.h:169
 msgid "Abampere"

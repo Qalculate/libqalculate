@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-09 15:23+0700\n"
+"POT-Creation-Date: 2023-01-27 08:12+0100\n"
 "PO-Revision-Date: 2023-01-09 15:15+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -9449,7 +9449,7 @@ msgid "Ampere"
 msgstr "Ампер"
 
 #: ../data/units.xml.in.h:168
-msgid "ar:A,ampere,p:amperes"
+msgid "ar:A,ampere,p:amperes,a-c:amp"
 msgstr "a:А,ампер,p:ампера"
 
 #: ../data/units.xml.in.h:169
