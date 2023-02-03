@@ -444,6 +444,10 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 			p2 = mstruct2.unit()->useWithPrefixesByDefault() || (po.use_prefixes_for_currencies && mstruct2.unit()->isCurrency());
 			if(p1 && !p2) return -1;
 			if(p2 && !p1) return 1;
+			if(mstruct1.unit()->referenceName() == "m" && mstruct2.unit()->referenceName() == "N") return 1;
+			if(mstruct2.unit()->referenceName() == "m" && mstruct1.unit()->referenceName() == "N") return -1;
+			if(mstruct1.unit()->referenceName() == "W" && mstruct2.unit()->baseUnit()->referenceName() == "s") return -1;
+			if(mstruct2.unit()->referenceName() == "W" && mstruct1.unit()->baseUnit()->referenceName() == "s") return 1;
 			// sort units in alphabetical order
 			if(name_is_less(mstruct1.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, mstruct1.isPlural(), po.use_reference_names).name, mstruct2.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, mstruct2.isPlural(), po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name)) return -1;
 			return 1;

@@ -1533,7 +1533,33 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 			}
 			if(b) {
 				mstruct_new.childrenUpdated();
-				if(mstruct.isAddition()) mstruct_new.eval(eo2);
+				if(mstruct.isAddition()) {
+					mstruct_new.eval(eo2);
+				} else if(mstruct_new.isVector() && mstruct_new.size() == 3) {
+					bool b_torque = true;
+					Unit *u_joule = NULL;
+					for(size_t i = 0; i < 3 && b_torque; i++) {
+						if(mstruct_new[i].isMultiplication()) {
+							bool b_torque = false;
+							for(size_t i2 = 0; i2 < mstruct_new[i].size(); i2++) {
+								if(!b_torque && mstruct_new[i][i2].isUnit() && ((u_joule && mstruct_new[i][i2].unit() == u_joule) || (!u_joule && mstruct_new[i][i2].unit()->referenceName() == "J"))) {
+									b_torque = true;
+									if(!u_joule) u_joule = mstruct_new[i][i2].unit();
+								} else if(mstruct_new[i][i2].containsType(STRUCT_UNIT, true)) {
+									b_torque = false;
+									break;
+								}
+							}
+						} else if(mstruct_new[i].isUnit() && ((u_joule && mstruct_new[i].unit() == u_joule) || (!u_joule && mstruct_new[i].unit()->referenceName() == "J"))) {
+							if(!u_joule) u_joule = mstruct_new[i].unit();
+						} else {
+							b_torque = false;
+						}
+					}
+					if(b_torque && u_joule) {
+						mstruct_new = convert(mstruct_new, u_joule->baseUnit(), eo);
+					}
+				}
 			}
 			return mstruct_new;
 		}
