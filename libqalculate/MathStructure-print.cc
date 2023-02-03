@@ -3411,14 +3411,32 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			if(format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0) {
 				string exp;
 				bool exp_minus = false;
-				if(!po.lower_case_e) {
+				bool base10 = (po.base == BASE_DECIMAL);
+				bool base_without_exp = (po.base != BASE_DECIMAL && po.base_display == BASE_DISPLAY_SUFFIX && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME && ((po.base < BASE_CUSTOM && po.base != BASE_BIJECTIVE_26) || (po.base == BASE_CUSTOM && (!CALCULATOR->customOutputBase().isInteger() || CALCULATOR->customOutputBase() > 62 || CALCULATOR->customOutputBase() < 2))));
+				if(!po.lower_case_e || base_without_exp || (po.base != BASE_DECIMAL && po.base >= 2 && po.base <= 36)) {
 					ips_n.exp = &exp;
 					ips_n.exp_minus = &exp_minus;
+					if(po.lower_case_e && base_without_exp) {
+						o_number.print(po, ips_n);
+						base10 = !exp.empty();
+						exp = "";
+						exp_minus = false;
+						ips_n.exp = NULL;
+						ips_n.exp_minus = NULL;
+					}
+				} else {
+					ips_n.exp = NULL;
+					ips_n.exp_minus = NULL;
 				}
+
 				print_str += o_number.print(po, ips_n);
+
+				if(base_without_exp && !exp.empty()) base10 = true;
+
 				i_number_end = print_str.length();
 				if(po.base != BASE_DECIMAL && po.base_display == BASE_DISPLAY_SUFFIX && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME) {
 					int base = po.base;
+					if(base10) base = 10;
 					if(base <= BASE_FP16 && base >= BASE_FP80) base = BASE_BINARY;
 					bool twos = (((po.base == BASE_BINARY && po.twos_complement) || (po.base == BASE_HEXADECIMAL && po.hexadecimal_twos_complement)) && o_number.isNegative() && print_str.find(SIGN_MINUS) == string::npos && print_str.find("-") == string::npos);
 					if((twos || po.base_display != BASE_DISPLAY_ALTERNATIVE || (base != BASE_HEXADECIMAL && base != BASE_BINARY && base != BASE_OCTAL)) && (base > 0 || base <= BASE_CUSTOM) && base <= 36) {
@@ -3442,15 +3460,29 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					}
 				}
 				if(!exp.empty()) {
-					gsub(" ", "&nbsp;", exp);
-					if(po.spacious) print_str += " ";
-					if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) print_str += SIGN_MULTIDOT;
-					else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) print_str += SIGN_MIDDLEDOT;
-					else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) print_str += SIGN_MULTIPLICATION;
-					else print_str += "*";
-					if(po.spacious) print_str += " ";
-					if(po.base == BASE_DECIMAL) print_str += "10";
-					else if(po.base >= 2 && po.base <= 36) print_str += i2s(po.base);
+					if(print_str.length() - i_number == 1 && print_str[i_number] == '1') {
+						print_str.erase(i_number, 1);
+					} else {
+						gsub(" ", "&nbsp;", exp);
+						if(po.spacious) print_str += " ";
+						if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) print_str += SIGN_MULTIDOT;
+						else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) print_str += SIGN_MIDDLEDOT;
+						else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) print_str += SIGN_MULTIPLICATION;
+						else print_str += "*";
+						if(po.spacious) print_str += " ";
+					}
+					if(po.base == BASE_DECIMAL || po.base < 2 || po.base > 36) {
+						print_str += "10";
+					} else {
+						MathStructure nrbase(po.base, 1, 0);
+						PrintOptions po2 = po;
+						po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
+						po2.min_exp = EXP_NONE;
+						po2.twos_complement = false;
+						po2.hexadecimal_twos_complement = false;
+						po2.binary_bits = 0;
+						print_str += nrbase.print(po2, true, false, TAG_TYPE_HTML);
+					}
 					print_str += "<sup>";
 					if(exp_minus) {
 						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) print_str += SIGN_MINUS;

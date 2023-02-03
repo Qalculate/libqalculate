@@ -10247,6 +10247,92 @@ string to_float(Number nr_pre, unsigned int bits, unsigned int expbits, bool *ap
 	return sbin;
 }
 
+void add_base_exponent(string &str, long int expo, int base, const PrintOptions &po, const InternalPrintStruct &ips, int type = 0, string str_bexp = "", bool neg_bexp = false) {
+	if(expo == 0 && str_bexp.empty()) return;
+	if(ips.iexp && type != 1) *ips.iexp = expo;
+	if(ips.exp) {
+		if(type == 1) return;
+		if(!str_bexp.empty()) {
+			if(ips.exp_minus) {
+				*ips.exp_minus = neg_bexp;
+			}
+			if(neg_bexp) {
+				if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
+					*ips.exp = SIGN_MINUS;
+				} else {
+					*ips.exp = "-";
+				}
+				*ips.exp += str_bexp;
+			} else {
+				*ips.exp = str_bexp;
+			}
+		} else {
+			if(ips.exp_minus) {
+				*ips.exp_minus = expo < 0;
+				if(expo < 0) expo = -expo;
+			}
+			if(base == 10) {
+				if(expo < 0 && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
+					*ips.exp = SIGN_MINUS;
+					*ips.exp += i2s(-expo);
+				} else {
+					*ips.exp = i2s(expo);
+				}
+			} else {
+				PrintOptions po2 = po;
+				po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
+				po2.min_exp = EXP_NONE;
+				po2.twos_complement = false;
+				po2.hexadecimal_twos_complement = false;
+				po2.binary_bits = 0;
+				Number nrexpo(expo);
+				*ips.exp = nrexpo.print(po2);
+			}
+		}
+	} else if(type != 2) {
+		if(base == 10) {
+			if(po.lower_case_e) str += "e";
+			else str += "E";
+			if(expo < 0 && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
+				str += SIGN_MINUS;
+				str += i2s(-expo);
+			} else {
+				str += i2s(expo);
+			}
+		} else {
+			if(po.spacious) str += " ";
+			if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) str += SIGN_MULTIDOT;
+			else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) str += SIGN_MIDDLEDOT;
+			else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) str += SIGN_MULTIPLICATION;
+			else str += "*";
+			if(po.spacious) str += " ";
+			Number nrbase(base);
+			PrintOptions po2 = po;
+			po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
+			po2.min_exp = EXP_NONE;
+			po2.twos_complement = false;
+			po2.hexadecimal_twos_complement = false;
+			po2.binary_bits = 0;
+			str += nrbase.print(po2);
+			str += "^";
+			if(str_bexp.empty()) {
+				Number nrexpo(expo);
+				str += nrexpo.print(po2);
+			} else {
+				if(neg_bexp) {
+					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) str += SIGN_MINUS;
+					else str = "-";
+				}
+				str += str_bexp;
+			}
+			if(ips.depth > 0) {
+				str.insert(0, "(");
+				str += ")";
+			}
+		}
+	}
+}
+
 string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
 	if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 	// reset InternalPrintStruct (used for separate handling sign, scientific notation, numerator/denominator, imaginary/real parts, etc)
@@ -11062,41 +11148,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(nr.divide(nrexp)) {
 					CALCULATOR->endTemporaryStopMessages();
 					str = nr.print(po2, ips);
-					if(base == 10) {
-						if(ips.iexp) *ips.iexp = length;
-						if(ips.exp) {
-							if(ips.exp_minus) *ips.exp_minus = false;
-							*ips.exp = i2s(length);
-						} else {
-							if(po.lower_case_e) str += "e";
-							else str += "E";
-							str += i2s(length);
-						}
-					} else {
-						Number nrl(length);
-						po2.twos_complement = false;
-						po2.hexadecimal_twos_complement = false;
-						po2.binary_bits = 0;
-						string str_bexp = nrl.print(po2);
-						if(ips.exp) {
-							if(ips.exp_minus) *ips.exp_minus = false;
-							*ips.exp = str_bexp;
-						} else {
-							if(po.spacious) str += " ";
-							if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) str += SIGN_MULTIDOT;
-							else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) str += SIGN_MIDDLEDOT;
-							else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) str += SIGN_MULTIPLICATION;
-							else str += "*";
-							if(po.spacious) str += " ";
-							str += i2s(base);
-							str += "^";
-							str += str_bexp;
-							if(ips.depth > 0) {
-								str.insert(0, "(");
-								str += ")";
-							}
-						}
-					}
+					add_base_exponent(str, length, base, po, ips);
 					return str;
 				}
 				// division failed: unable to display number
@@ -11394,31 +11446,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 		if(ips.minus) *ips.minus = neg;
 		str = format_number_string(mpz_str, DOZENAL ? -12 : base, po.base_display, !ips.minus && neg, true, po);
-
-		if(expo != 0) {
-			if(ips.iexp) *ips.iexp = expo;
-			if(ips.exp) {
-				if(ips.exp_minus) {
-					*ips.exp_minus = expo < 0;
-					if(expo < 0) expo = -expo;
-				}
-				if(expo < 0 && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
-					*ips.exp += SIGN_MINUS;
-					*ips.exp = i2s(-expo);
-				} else {
-					*ips.exp = i2s(expo);
-				}
-			} else {
-				if(po.lower_case_e) str += "e";
-				else str += "E";
-				if(expo < 0 && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
-					str += SIGN_MINUS;
-					str += i2s(-expo);
-				} else {
-					str += i2s(expo);
-				}
-			}
-		}
+		add_base_exponent(str, expo, base, po, ips);
 		if(ips.num) *ips.num = str;
 
 	} else if(isPlusInfinity()) {
@@ -11841,76 +11869,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				str = format_number_string(str, DOZENAL ? -12 : base, po.base_display, !ips.minus && neg, true, po);
 			}
 
-			if(expo != 0) {
-				if(ips.iexp) *ips.iexp = expo;
-				if(ips.exp) {
-					if(ips.exp_minus) {
-						*ips.exp_minus = expo < 0;
-						if(expo < 0) expo = -expo;
-					}
-					if(expo < 0 && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
-						*ips.exp += SIGN_MINUS;
-						*ips.exp = i2s(-expo);
-					} else {
-						*ips.exp = i2s(expo);
-					}
-				} else {
-					if(base == 10) {
-						if(po.lower_case_e) str += "e";
-						else str += "E";
-						if(expo < 0 && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
-							str += SIGN_MINUS;
-							str += i2s(-expo);
-						} else {
-							str += i2s(expo);
-						}
-					} else {
-						if(po.spacious) str += " ";
-						if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) str += SIGN_MULTIDOT;
-						else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) str += SIGN_MIDDLEDOT;
-						else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) str += SIGN_MULTIPLICATION;
-						else str += "*";
-						if(po.spacious) str += " ";
-						str += i2s(base);
-						str += "^";
-						if(expo < 0 && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
-							str += SIGN_MINUS;
-							str += i2s(-expo);
-						} else {
-							str += i2s(expo);
-						}
-						if(ips.depth > 0) {
-							str.insert(0, "(");
-							str += ")";
-						}
-					}
-				}
-			}
-
+			add_base_exponent(str, expo, base, po, ips);
 			if(!str_bexp.empty()) {
-				if(ips.exp) {
-					if(ips.exp_minus) *ips.exp_minus = neg_bexp;
-					else if(neg_bexp) str_bexp.insert(0, "-");
-					*ips.exp = str_bexp;
-				} else {
-					if(po.spacious) str += " ";
-					if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) str += SIGN_MULTIDOT;
-					else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) str += SIGN_MIDDLEDOT;
-					else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) str += SIGN_MULTIPLICATION;
-					else str += "*";
-					if(po.spacious) str += " ";
-					str += i2s(base);
-					str += "^";
-					if(neg_bexp) {
-						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) str += SIGN_MINUS;
-						else str = "-";
-					}
-					str += str_bexp;
-					if(ips.depth > 0) {
-						str.insert(0, "(");
-						str += ")";
-					}
-				}
+				add_base_exponent(str, 0, base, po, ips, 0, str_bexp, neg_bexp);
 			}
 			if(ips.minus) *ips.minus = neg;
 			if(ips.num) *ips.num = str;
@@ -12210,112 +12171,16 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(!str_unc.empty()) str_unc = format_number_string(str_unc, DOZENAL ? -12 : base, po.base_display, false, true, po);
 		}
 
-		if(expo != 0) {
-			if(ips.iexp) *ips.iexp = expo;
-			if(ips.exp) {
-				if(ips.exp_minus) {
-					*ips.exp_minus = expo < 0;
-					if(expo < 0) expo = -expo;
-				}
-				if(expo < 0 && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
-					*ips.exp += SIGN_MINUS;
-					*ips.exp = i2s(-expo);
-				} else {
-					*ips.exp = i2s(expo);
-				}
-			} else {
-
-				if(!b_pm_zero) {
-					if(base == 10) {
-						if(po.lower_case_e) str += "e";
-						else str += "E";
-						if(expo < 0 && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
-							str += SIGN_MINUS;
-							str += i2s(-expo);
-						} else {
-							str += i2s(expo);
-						}
-					} else {
-						if(po.spacious) str += " ";
-						if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) str += SIGN_MULTIDOT;
-						else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) str += SIGN_MIDDLEDOT;
-						else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) str += SIGN_MULTIPLICATION;
-						else str += "*";
-						if(po.spacious) str += " ";
-						str += i2s(base);
-						str += "^";
-						if(expo < 0 && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
-							str += SIGN_MINUS;
-							str += i2s(-expo);
-						} else {
-							str += i2s(expo);
-						}
-						if(ips.depth > 0) {
-							str.insert(0, "(");
-							str += ")";
-						}
-					}
-				}
-				if(!str_unc.empty()) {
-					if(base == 10) {
-						if(po.lower_case_e) str_unc += "e";
-						else str_unc += "E";
-						if(expo < 0 && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
-							str_unc += SIGN_MINUS;
-							str_unc += i2s(-expo);
-						} else {
-							str_unc += i2s(expo);
-						}
-					} else {
-						if(po.spacious) str_unc += " ";
-						if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) str_unc += SIGN_MULTIDOT;
-						else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) str_unc += SIGN_MIDDLEDOT;
-						else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) str_unc += SIGN_MULTIPLICATION;
-						else str_unc += "*";
-						if(po.spacious) str_unc += " ";
-						str_unc += i2s(base);
-						str_unc += "^";
-						if(expo < 0 && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
-							str_unc += SIGN_MINUS;
-							str_unc += i2s(-expo);
-						} else {
-							str_unc += i2s(expo);
-						}
-						if(ips.depth > 0) {
-							str_unc.insert(0, "(");
-							str_unc += ")";
-						}
-					}
-				}
-			}
+		add_base_exponent(str, expo, base, po, ips, b_pm_zero ? 2 : 0);
+		if(!str_unc.empty()) {
+			add_base_exponent(str_unc, expo, base, po, ips, 1);
 		}
 
 		if(!str_unc.empty()) {
 			str += SIGN_PLUSMINUS;
 			str += str_unc;
 		}
-		if(!str_bexp.empty()) {
-			if(ips.exp) {
-				if(ips.exp_minus) *ips.exp_minus = neg_bexp;
-				else if(neg_bexp) str_bexp.insert(0, "-");
-				*ips.exp = str_bexp;
-			} else {
-				if(po.spacious) str += " ";
-				if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) str += SIGN_MULTIDOT;
-				else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) str += SIGN_MIDDLEDOT;
-				else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) str += SIGN_MULTIPLICATION;
-				else str += "*";
-				if(po.spacious) str += " ";
-				str += i2s(base);
-				str += "^";
-				if(neg_bexp) str += "-";
-				str += str_bexp;
-				if(ips.depth > 0) {
-					str.insert(0, "(");
-					str += ")";
-				}
-			}
-		}
+		add_base_exponent(str, 0, base, po, ips, 0, str_bexp, neg_bexp);
 		if(ips.minus) *ips.minus = neg;
 		if(ips.num) *ips.num = str;
 		mpfr_clears(f_mid, v, f_log, f_base, NULL);
@@ -12345,41 +12210,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(nr.divide(nrexp)) {
 					CALCULATOR->endTemporaryStopMessages();
 					str = nr.print(po2, ips);
-					if(base == 10) {
-						if(ips.iexp) *ips.iexp = length;
-						if(ips.exp) {
-							if(ips.exp_minus) *ips.exp_minus = false;
-							*ips.exp = i2s(length);
-						} else {
-							if(po.lower_case_e) str += "e";
-							else str += "E";
-							str += i2s(length);
-						}
-					} else {
-						Number nrl(length);
-						po2.twos_complement = false;
-						po2.hexadecimal_twos_complement = false;
-						po2.binary_bits = 0;
-						string str_bexp = nrl.print(po2);
-						if(ips.exp) {
-							if(ips.exp_minus) *ips.exp_minus = false;
-							*ips.exp = str_bexp;
-						} else {
-							if(po.spacious) str += " ";
-							if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) str += SIGN_MULTIDOT;
-							else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) str += SIGN_MIDDLEDOT;
-							else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) str += SIGN_MULTIPLICATION;
-							else str += "*";
-							if(po.spacious) str += " ";
-							str += i2s(base);
-							str += "^";
-							str += str_bexp;
-							if(ips.depth > 0) {
-								str.insert(0, "(");
-								str += ")";
-							}
-						}
-					}
+					add_base_exponent(str, length, base, po, ips);
 					return str;
 				}
 				CALCULATOR->endTemporaryStopMessages(true);
@@ -12811,31 +12642,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 
 		str = format_number_string(str, DOZENAL ? -12 : base, po.base_display, !ips.minus && neg, true, po);
-
-		if(expo != 0) {
-			if(ips.iexp) *ips.iexp = expo;
-			if(ips.exp) {
-				if(ips.exp_minus) {
-					*ips.exp_minus = expo < 0;
-					if(expo < 0) expo = -expo;
-				}
-				if(expo < 0 && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
-					*ips.exp += SIGN_MINUS;
-					*ips.exp = i2s(-expo);
-				} else {
-					*ips.exp = i2s(expo);
-				}
-			} else {
-				if(po.lower_case_e) str += "e";
-				else str += "E";
-				if(expo < 0 && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
-					str += SIGN_MINUS;
-					str += i2s(-expo);
-				} else {
-					str += i2s(expo);
-				}
-			}
-		}
+		add_base_exponent(str, expo, base, po, ips);
 		if(ips.minus) *ips.minus = neg;
 		if(ips.num) *ips.num = str;
 	} else {
