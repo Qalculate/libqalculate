@@ -1008,7 +1008,7 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 	if(adaptive) steps = steps / 2 + steps % 2;
 	MathStructure step(max);
 	step.calculateSubtract(min, eo);
-	step.calculateDivide(steps - 1, eo);
+	if(steps != 1) step.calculateDivide(steps - 1, eo);
 	step.eval(eo);
 	if(!step.isNumber() || step.number().isNegative()) {
 		CALCULATOR->error(true, _("The selected min and max do not result in a positive, finite number of data points"), NULL);
@@ -1278,7 +1278,7 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 	}
 	MathStructure step(max);
 	step.calculateSubtract(min, eo);
-	step.calculateDivide(steps - 1, eo);
+	if(steps != 1) step.calculateDivide(steps - 1, eo);
 	step.eval(eo);
 	if(!step.isNumber() || step.number().isNegative()) {
 		CALCULATOR->error(true, _("The selected min and max do not result in a positive, finite number of data points"), NULL);

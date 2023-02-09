@@ -1,3 +1,25 @@
+2023-02-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use value of fourth argument in genvector() as step size by default if 1 (default), negative, or non-integer, and value of sixth argument is -1 (default)
+
+2023-02-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Prefer Nm (torque) over J when the result is a vector with three components
+	* Fix unit order for Nm and Ws
+	* Always use output using current number base in both base and exponent in scientific notation
+	* Indicate correct number base in subscript (in html formatted output) when output in original base fails
+	* Do not show multiplier if exactly 1, in html output of scientific notation
+	* Fix parsing of scientific e notation when the number is extremely large and exponentiation fails because of floating point overflow
+
+2023-02-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use Unicode symbol for minus in scientific e notation
+	* Allow the same variable left and right of the equals sign (e.g. var=var+2), in variable assignment without colon, if the variable exists and the previous value is known
+
+2023-01-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add "amp" abbreaviation to ampere unit
+
 2023-01-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Don't show anything on empty input in qalc

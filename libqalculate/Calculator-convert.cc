@@ -1540,7 +1540,7 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 					Unit *u_joule = NULL;
 					for(size_t i = 0; i < 3 && b_torque; i++) {
 						if(mstruct_new[i].isMultiplication()) {
-							bool b_torque = false;
+							b_torque = false;
 							for(size_t i2 = 0; i2 < mstruct_new[i].size(); i2++) {
 								if(!b_torque && mstruct_new[i][i2].isUnit() && ((u_joule && mstruct_new[i][i2].unit() == u_joule) || (!u_joule && mstruct_new[i][i2].unit()->referenceName() == "J"))) {
 									b_torque = true;

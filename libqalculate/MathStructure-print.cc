@@ -444,8 +444,8 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 			p2 = mstruct2.unit()->useWithPrefixesByDefault() || (po.use_prefixes_for_currencies && mstruct2.unit()->isCurrency());
 			if(p1 && !p2) return -1;
 			if(p2 && !p1) return 1;
-			if(mstruct1.unit()->referenceName() == "m" && mstruct2.unit()->referenceName() == "N") return 1;
-			if(mstruct2.unit()->referenceName() == "m" && mstruct1.unit()->referenceName() == "N") return -1;
+			if(mstruct1.unit()->baseUnit()->referenceName() == "m" && mstruct2.unit()->referenceName() == "N") return 1;
+			if(mstruct2.unit()->baseUnit()->referenceName() == "m" && mstruct1.unit()->referenceName() == "N") return -1;
 			if(mstruct1.unit()->referenceName() == "W" && mstruct2.unit()->baseUnit()->referenceName() == "s") return -1;
 			if(mstruct2.unit()->referenceName() == "W" && mstruct1.unit()->baseUnit()->referenceName() == "s") return 1;
 			// sort units in alphabetical order
@@ -3417,7 +3417,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				bool exp_minus = false;
 				bool base10 = (po.base == BASE_DECIMAL);
 				bool base_without_exp = (po.base != BASE_DECIMAL && po.base_display == BASE_DISPLAY_SUFFIX && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME && ((po.base < BASE_CUSTOM && po.base != BASE_BIJECTIVE_26) || (po.base == BASE_CUSTOM && (!CALCULATOR->customOutputBase().isInteger() || CALCULATOR->customOutputBase() > 62 || CALCULATOR->customOutputBase() < 2))));
-				if(!po.lower_case_e || base_without_exp || (po.base != BASE_DECIMAL && po.base >= 2 && po.base <= 36)) {
+				if(!po.lower_case_e || (base_without_exp && po.base_display == BASE_DISPLAY_SUFFIX) || (po.base != BASE_DECIMAL && po.base >= 2 && po.base <= 36)) {
 					ips_n.exp = &exp;
 					ips_n.exp_minus = &exp_minus;
 					if(po.lower_case_e && base_without_exp) {
@@ -3435,10 +3435,10 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 
 				print_str += o_number.print(po, ips_n);
 
-				if(base_without_exp && !exp.empty()) base10 = true;
+				if(!exp.empty() && (base_without_exp || (po.base != BASE_CUSTOM && (po.base < 2 || po.base > 36)) || (po.base == BASE_CUSTOM && (!CALCULATOR->customOutputBase().isInteger() || CALCULATOR->customOutputBase() > 62 || CALCULATOR->customOutputBase() < 2)))) base10 = true;
 
 				i_number_end = print_str.length();
-				if(po.base != BASE_DECIMAL && po.base_display == BASE_DISPLAY_SUFFIX && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME) {
+				if(po.base != BASE_DECIMAL && po.base_display == BASE_DISPLAY_SUFFIX && (base10 || (!BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME))) {
 					int base = po.base;
 					if(base10) base = 10;
 					if(base <= BASE_FP16 && base >= BASE_FP80) base = BASE_BINARY;
@@ -3464,10 +3464,10 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					}
 				}
 				if(!exp.empty()) {
+					gsub(" ", "&nbsp;", exp);
 					if(print_str.length() - i_number == 1 && print_str[i_number] == '1') {
 						print_str.erase(i_number, 1);
 					} else {
-						gsub(" ", "&nbsp;", exp);
 						if(po.spacious) print_str += " ";
 						if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) print_str += SIGN_MULTIDOT;
 						else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) print_str += SIGN_MIDDLEDOT;
@@ -3475,10 +3475,12 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 						else print_str += "*";
 						if(po.spacious) print_str += " ";
 					}
-					if(po.base == BASE_DECIMAL || po.base < 2 || po.base > 36) {
+					if(base10) {
 						print_str += "10";
 					} else {
-						MathStructure nrbase(po.base, 1, 0);
+						MathStructure nrbase;
+						if(po.base == BASE_CUSTOM) nrbase = CALCULATOR->customOutputBase();
+						else nrbase = po.base;
 						PrintOptions po2 = po;
 						po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
 						po2.min_exp = EXP_NONE;

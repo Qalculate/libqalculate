@@ -14,7 +14,8 @@
     <builtin_function name="genvector">
       <_title>Generate Vector</_title>
       <_names>r:genvector</_names>
-      <_description>Returns a vector generated from a function with a variable (default x) running from min to max. The fourth argument is either the requested number of elements if the sixth argument is false (default) or the step between each value of the variable.</_description>
+      <example>$name(x^2, 1, 5) = [1  4  9  16  25]</example>
+      <_description>Returns a vector generated from a function with a variable (default x) running from min to max. The fourth argument is either the step between each value of the variable, if the sixth argument is 1 or if the value is 1 (default), negative, or not an integer and the sixth argument is -1 (default), or the number of elements.</_description>
       <argument index="1">
         <_title>Function</_title>
       </argument>

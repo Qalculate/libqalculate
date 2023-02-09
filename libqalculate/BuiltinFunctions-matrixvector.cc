@@ -1223,20 +1223,32 @@ int ProcessMatrixFunction::calculate(MathStructure &mstruct, const MathStructure
 	return 1;
 
 }
-GenerateVectorFunction::GenerateVectorFunction() : MathFunction("genvector", 4, 6) {
+GenerateVectorFunction::GenerateVectorFunction() : MathFunction("genvector", 3, 6) {
+	setDefaultValue(4, "1");
 	setArgumentDefinition(5, new SymbolicArgument());
 	setDefaultValue(5, "undefined");
-	setArgumentDefinition(6, new BooleanArgument());
-	setDefaultValue(6, "0");
+	IntegerArgument *iarg = new IntegerArgument("");
+	iarg->setMax(&nr_one);
+	iarg->setMin(&nr_minus_one);
+	setArgumentDefinition(6, iarg);
+	setDefaultValue(6, "-1");
 }
 int GenerateVectorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(CALCULATOR->aborted()) return 0;
-	if(vargs[5].number().getBoolean()) {
+	bool b_step = vargs[5].number().isPositive();
+	MathStructure msteps(vargs[3]);
+	if(!b_step) {
+		CALCULATOR->beginTemporaryStopMessages();
+		msteps.eval(eo);
+		if(vargs[5].number().isNegative()) {
+			b_step = !msteps.isInteger() || msteps.number().isNegative() || msteps.number().isOne();
+		}
+		CALCULATOR->endTemporaryStopMessages(!b_step);
+	}
+	if(b_step) {
 		mstruct = vargs[0].generateVector(vargs[4], vargs[1], vargs[2], vargs[3], NULL, eo);
 	} else {
 		bool overflow = false;
-		MathStructure msteps(vargs[3]);
-		msteps.eval(eo);
 		int steps = msteps.number().intValue(&overflow);
 		if(!msteps.isNumber() || overflow || steps < 1) {
 			CALCULATOR->error(true, _("The number of requested elements in generate vector function must be a positive integer."), NULL);
