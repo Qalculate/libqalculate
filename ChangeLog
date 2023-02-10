@@ -1,3 +1,10 @@
+2023-02-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not set automatic prefix if resulting multiplier is < 1 or >= 1000, with some exceptions (units which specifies max or min preferred prefix, e.g. km)
+	* Default prefix unit property (use for gram, and few other units, instead of hardcoded value)
+	* Do not use recently introduced SI prefixes automatically by default
+	* Set zero max preferred prefix for second
+
 2023-02-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Use value of fourth argument in genvector() as step size by default if 1 (default), negative, or non-integer, and value of sixth argument is -1 (default)

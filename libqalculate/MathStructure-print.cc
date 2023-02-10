@@ -1212,7 +1212,7 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po, MathStr
 }
 
 bool use_prefix_with_unit(Unit *u, const PrintOptions &po) {
-	if(!po.prefix && !po.use_unit_prefixes) {return u->referenceName() == "g" || u->referenceName() == "a" || u->referenceName() == "mHg";}
+	if(!po.prefix && !po.use_unit_prefixes) {return u->defaultPrefix() != 0;}
 	if(po.prefix) return true;
 	if(u->isCurrency()) return po.use_prefixes_for_currencies;
 	if(po.use_prefixes_for_all_units) return true;
@@ -1553,7 +1553,10 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 								if(use_binary_prefix) test_exp -= ((BinaryPrefix*) p)->exponent(exp);
 								else test_exp -= ((DecimalPrefix*) p)->exponent(exp);
 								if(test_exp.isInteger()) {
-									if((exp10.isPositive() && exp10.compare(test_exp) == COMPARISON_RESULT_LESS) || (exp10.isNegative() && exp10.compare(test_exp) == COMPARISON_RESULT_GREATER)) {
+									if((!use_binary_prefix && !b2 && ((test_exp.isNegative() && ((DecimalPrefix*) p)->exponent() < -9) || (((DecimalPrefix*) p)->exponent() > 9 && test_exp > 3))) || ((exp10.isPositive() && exp10 <= test_exp) || (exp10.isNegative() && exp10 >= test_exp))) {
+										p = (u->defaultPrefix() != 0) ? CALCULATOR->getExactDecimalPrefix(u->defaultPrefix()) : NULL;
+									}
+									if(p) {
 										CHILD(0).number() /= p->value(exp);
 										if(munit->isUnit()) munit->setPrefix(p);
 										else (*munit)[0].setPrefix(p);
@@ -1563,12 +1566,10 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 						}
 					} else if(!po.use_unit_prefixes) {
 						Prefix *p = NULL;
-						if((munit->isUnit() && munit->unit()->referenceName() == "g") || (munit->isPower() && (*munit)[0].unit()->referenceName() == "g")) {
-							p = CALCULATOR->getExactDecimalPrefix(3);
-						} else if((munit->isUnit() && munit->unit()->referenceName() == "a") || (munit->isPower() && (*munit)[0].unit()->referenceName() == "a")) {
-							p = CALCULATOR->getExactDecimalPrefix(2);
-						} else if((munit->isUnit() && munit->unit()->referenceName() == "mHg") || (munit->isPower() && (*munit)[0].unit()->referenceName() == "mHg")) {
-							p = CALCULATOR->getExactDecimalPrefix(-3);
+						if(munit->isUnit() && munit->unit()->defaultPrefix() != 0) {
+							p = CALCULATOR->getExactDecimalPrefix(munit->unit()->defaultPrefix());
+						} else if(munit->isPower() && (*munit)[0].isUnit() && (*munit)[0].unit()->defaultPrefix() != 0) {
+							p = CALCULATOR->getExactDecimalPrefix((*munit)[0].unit()->defaultPrefix());
 						}
 						if(p) {
 							if(munit->isUnit()) munit->setPrefix(p);
@@ -1635,7 +1636,42 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 								if(use_binary_prefix) test_exp -= ((BinaryPrefix*) p)->exponent(exp2);
 								else test_exp -= ((DecimalPrefix*) p)->exponent(exp2);
 								if(test_exp.isInteger()) {
-									if((exp10.isPositive() && exp10.compare(test_exp) == COMPARISON_RESULT_LESS) || (exp10.isNegative() && exp10.compare(test_exp) == COMPARISON_RESULT_GREATER)) {
+									bool b_error = (exp10.isPositive() && exp10 <= test_exp) || (exp10.isNegative() && exp10 >= test_exp);
+									if(b_error || (!use_binary_prefix && (test_exp.isNegative() || test_exp > 3))) {
+										if(b_error || ((DecimalPrefix*) p)->exponent() > 9 || ((DecimalPrefix*) p)->exponent() < -9) {
+											p = (u->defaultPrefix() != 0) ? CALCULATOR->getExactDecimalPrefix(u->defaultPrefix()) : NULL;
+										}
+										Unit *u1 = NULL;
+										Prefix *p1 = NULL;
+										if(munit->isUnit()) {
+											u1 = munit->unit();
+											p1 = munit->prefix();
+										} else if(munit->isPower() && (*munit)[0].isUnit()) {
+											u1 = (*munit)[0].unit();
+											p1 = (*munit)[0].prefix();
+										}
+										if(b_error || (p1 && p1->type() == PREFIX_DECIMAL && (((DecimalPrefix*) p1)->exponent() > 9 || ((DecimalPrefix*) p1)->exponent() < -9))) {
+											if(u1) {
+												if(p1 && p1->type() == PREFIX_DECIMAL) {
+													if(((DecimalPrefix*) p1)->exponent() != u1->defaultPrefix()) {
+														CHILD(0).number() *= p1->value(exp);
+														if(munit->isUnit()) munit->setPrefix(NULL);
+														else (*munit)[0].setPrefix(NULL);
+														p1 = NULL;
+													}
+												}
+											}
+										}
+										if(u1 && !p1 && u1->defaultPrefix() != 0) {
+											p1 = CALCULATOR->getExactDecimalPrefix(u1->defaultPrefix());
+											if(p1) {
+												CHILD(0).number() /= p1->value(exp);
+												if(munit->isUnit()) munit->setPrefix(p1);
+												else (*munit)[0].setPrefix(p1);
+											}
+										}
+									}
+									if(p) {
 										CHILD(0).number() /= p->value(exp2);
 										if(munit2->isUnit()) munit2->setPrefix(p);
 										else (*munit2)[0].setPrefix(p);

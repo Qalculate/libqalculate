@@ -349,15 +349,15 @@ long int count_unit_powers(const MathStructure &m) {
 }
 void fix_to_struct(MathStructure &m) {
 	if(m.isPower() && m[0].isUnit()) {
-		if(m[0].prefix() == NULL && m[0].unit()->referenceName() == "g") {
-			m[0].setPrefix(CALCULATOR->getOptimalDecimalPrefix(3));
+		if(m[0].prefix() == NULL && m[0].unit()->defaultPrefix() != 0) {
+			m[0].setPrefix(CALCULATOR->getOptimalDecimalPrefix(m[0].unit()->defaultPrefix()));
 		} else if(m[0].unit() == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
 			Unit *u = CALCULATOR->getLocalCurrency();
 			if(u) m[0].setUnit(u);
 		}
 	} else if(m.isUnit()) {
-		if(m.prefix() == NULL && m.unit()->referenceName() == "g") {
-			m.setPrefix(CALCULATOR->getOptimalDecimalPrefix(3));
+		if(m.prefix() == NULL && m.unit()->defaultPrefix() != 0) {
+			m.setPrefix(CALCULATOR->getOptimalDecimalPrefix(m.unit()->defaultPrefix()));
 		} else if(m.unit() == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
 			Unit *u = CALCULATOR->getLocalCurrency();
 			if(u) m.setUnit(u);
@@ -365,16 +365,16 @@ void fix_to_struct(MathStructure &m) {
 	} else {
 		for(size_t i = 0; i < m.size();) {
 			if(m[i].isUnit()) {
-				if(m[i].prefix() == NULL && m[i].unit()->referenceName() == "g") {
-					m[i].setPrefix(CALCULATOR->getOptimalDecimalPrefix(3));
+				if(m[i].prefix() == NULL && m[i].unit()->defaultPrefix() != 0) {
+					m[i].setPrefix(CALCULATOR->getOptimalDecimalPrefix(m[i].unit()->defaultPrefix()));
 				} else if(m[i].unit() == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
 					Unit *u = CALCULATOR->getLocalCurrency();
 					if(u) m[i].setUnit(u);
 				}
 				i++;
 			} else if(m[i].isPower() && m[i][0].isUnit()) {
-				if(m[i][0].prefix() == NULL && m[i][0].unit()->referenceName() == "g") {
-					m[i][0].setPrefix(CALCULATOR->getOptimalDecimalPrefix(3));
+				if(m[i][0].prefix() == NULL && m[i][0].unit()->defaultPrefix() != 0) {
+					m[i][0].setPrefix(CALCULATOR->getOptimalDecimalPrefix(m[i][0].unit()->defaultPrefix()));
 				} else if(m[i][0].unit() == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
 					Unit *u = CALCULATOR->getLocalCurrency();
 					if(u) m[i][0].setUnit(u);

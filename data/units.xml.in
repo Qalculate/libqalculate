@@ -504,7 +504,7 @@
       <system>SI</system>
       <_title>Gram</_title>
       <_names>ar:g,gram,p:grams</_names>
-      <use_with_prefixes max="3">true</use_with_prefixes>
+      <use_with_prefixes max="3" default="3">true</use_with_prefixes>
     </unit>
     <unit type="composite">
       <system>SI</system>
@@ -837,6 +837,7 @@
       <system>SI</system>
       <_title>Second</_title>
       <_names>ar:s,second,p:seconds</_names>
+      <use_with_prefixes max="0">true</use_with_prefixes>
     </unit>
     <unit type="alias">
       <_title>Minute</_title>
@@ -1799,7 +1800,7 @@
         <relation>100</relation>
         <exponent>2</exponent>
       </base>
-      <use_with_prefixes>true</use_with_prefixes>
+      <use_with_prefixes default="2">true</use_with_prefixes>
     </unit>
     <unit type="alias">
       <_title>Circular Mil</_title>
@@ -3288,7 +3289,7 @@
           <relation>1000/760</relation>
           <exponent>1</exponent>
         </base>
-        <use_with_prefixes>true</use_with_prefixes>
+        <use_with_prefixes default="-3">true</use_with_prefixes>
       </unit>
       <unit type="alias">
         <_title>Millimeter of Mercury</_title>
