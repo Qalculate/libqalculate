@@ -531,8 +531,9 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 							}
 						}
 						for(size_t i = 1; i <= cu2->countUnits(); i++) {
-							bu = cu2->get(i, &exp)->baseUnit();
+							bu = cu2->get(i, &exp);
 							exp *= bu->baseExponent();
+							bu = bu->baseUnit();
 							if((u1_type == 0 || u1_type == 6) && exp % 3 == 0 && bu->referenceName() == "m") {
 								if(u1_type == 6) {u1_type = 0; break;}
 								u1_type = 5;

@@ -10255,6 +10255,7 @@ void add_base_exponent(string &str, long int expo, int base, const PrintOptions 
 		if(!str_bexp.empty()) {
 			if(ips.exp_minus) {
 				*ips.exp_minus = neg_bexp;
+				neg_bexp = false;
 			}
 			if(neg_bexp) {
 				if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
@@ -10290,7 +10291,7 @@ void add_base_exponent(string &str, long int expo, int base, const PrintOptions 
 			}
 		}
 	} else if(type != 2) {
-		if(base == 10) {
+		if(base == 10 && str_bexp.empty()) {
 			if(po.lower_case_e) str += "e";
 			else str += "E";
 			if(expo < 0 && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
@@ -10306,14 +10307,18 @@ void add_base_exponent(string &str, long int expo, int base, const PrintOptions 
 			else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) str += SIGN_MULTIPLICATION;
 			else str += "*";
 			if(po.spacious) str += " ";
-			Number nrbase(base);
 			PrintOptions po2 = po;
 			po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
 			po2.min_exp = EXP_NONE;
 			po2.twos_complement = false;
 			po2.hexadecimal_twos_complement = false;
 			po2.binary_bits = 0;
-			str += nrbase.print(po2);
+			if(base == 10) {
+				str += "10";
+			} else {
+				Number nrbase(base);
+				str += nrbase.print(po2);
+			}
 			str += "^";
 			if(str_bexp.empty()) {
 				Number nrexpo(expo);
