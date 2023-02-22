@@ -263,7 +263,7 @@
     </unit>
     <unit type="alias">
       <_title>Pied du roi (French Royal Foot)</_title>
-      <_names>r:pied_du_roi</_names>
+      <_names>r:pied_du_roi,p:pieds_du_roi</_names>
       <base>
         <unit>m</unit>
         <relation>9000/27706</relation>
@@ -272,7 +272,7 @@
     </unit>
     <unit type="alias">
       <_title>Pouce (French Royal Inch)</_title>
-      <_names>r:pouce</_names>
+      <_names>r:pouce,p:pouces</_names>
       <base>
         <unit>pied_du_roi</unit>
         <relation>1/12</relation>
@@ -281,7 +281,7 @@
     </unit>
     <unit type="alias">
       <_title>Ligne</_title>
-      <_names>r:ligne</_names>
+      <_names>r:ligne,p:lignes</_names>
       <base>
         <unit>pouce</unit>
         <relation>1/12</relation>
@@ -290,7 +290,7 @@
     </unit>
     <unit type="alias">
       <_title>Toise</_title>
-      <_names>r:toise</_names>
+      <_names>r:toise,p:toises</_names>
       <base>
         <unit>pied_du_roi</unit>
         <relation>6</relation>
