@@ -993,7 +993,7 @@
       <unit type="alias">
         <system>CGS</system>
         <_title>Abampere</_title>
-        <_names>r:abampere,a:abA,a:aA,p:abamperes,a:Bi,biot</_names>
+        <_names>r:abampere,a:abA,p:abamperes,a:Bi,biot</_names>
         <base>
           <unit>A</unit>
           <relation>10</relation>

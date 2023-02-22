@@ -15,7 +15,7 @@
       <_title>Generate Vector</_title>
       <_names>r:genvector</_names>
       <example>$name(x^2, 1, 5) = [1  4  9  16  25]</example>
-      <_description>Returns a vector generated from a function with a variable (default x) running from min to max. The fourth argument is either the step between each value of the variable, if the sixth argument is 1 or if the value is 1 (default), negative, or not an integer and the sixth argument is -1 (default), or the number of elements.</_description>
+      <_description>Returns a vector generated from a function with a variable (default x) running from min to max. The 4th argument is either the step between each value of the variable, if the 6th argument is 1 or if the value is 1 (default), negative, or not an integer and the 6th argument is -1 (default), or the number of elements.</_description>
       <argument index="1">
         <_title>Function</_title>
       </argument>
@@ -296,7 +296,7 @@
     </builtin_function>
     <builtin_function name="rk">
       <_title>Matrix Rank</_title>
-      <_names>r:rk</_names>
+      <_names>ra:rk</_names>
       <argument index="1">
         <_title>Matrix</_title>
       </argument>
@@ -4056,7 +4056,7 @@
     </function>
     <function>
       <_title>Present Value</_title>
-      <_names>r:pv</_names>
+      <_names>ra:pv</_names>
       <_description>Returns the present value of an investment.&#10;&#10;If type = 1 then the payment is made at the beginning of the period. If type = 0 (or omitted) it is made at the end of each period.</_description>
       <expression>(-\A{0}-\z*(1+\x*\B{0})*(((1+\x)^\y-1)/\x))/((1+\x)^\y)</expression>
       <argument type="free" index="1">
@@ -4292,7 +4292,7 @@
     </function>
     <function>
       <_title>Future Value</_title>
-      <_names>r:fv</_names>
+      <_names>ra:fv,a:FV</_names>
       <_description>Computes the future value of an investment. This is based on periodic, constant payments and a constant interest rate.&#10;&#10;If type = 1 then the payment is made at the beginning of the period. If type = 0 (or omitted) it is made at the end of each period.</_description>
       <expression>-(\A{0}*((1+\x)^\y)+\z*(1+\x*\B{0})*(((1+\x)^\y-1)/\x))</expression>
       <argument type="free" index="1">

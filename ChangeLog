@@ -1,3 +1,12 @@
+2023-02-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Make language for definitions message more consistent on Windows
+
+2023-02-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Make pv(), fv(), and rk() case sensitive, and remove aA abbreviation from Abampere, to avoid conflicts with prefix + unit
+	* Allow "prefix" (unlocalized) as alternative for pref/prefixes qalc command
+
 2023-02-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix conversion from ounce (interpreted as fluid ounce) to litre with prefix

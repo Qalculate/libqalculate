@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Qalculate!\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-27 08:12+0100\n"
+"POT-Creation-Date: 2023-02-20 09:47+0100\n"
 "PO-Revision-Date: 2022-05-13 18:30-0300\n"
 "Last-Translator: VicSanRoPe\n"
 "Language-Team: none\n"
@@ -2753,11 +2753,13 @@ msgid "r:genvector"
 msgstr ""
 
 #: ../data/functions.xml.in.h:9
+#, fuzzy
 msgid ""
 "Returns a vector generated from a function with a variable (default x) "
-"running from min to max. The fourth argument is either the requested number "
-"of elements if the sixth argument is false (default) or the step between "
-"each value of the variable."
+"running from min to max. The 4th argument is either the step between each "
+"value of the variable, if the 6th argument is 1 or if the value is 1 "
+"(default), negative, or not an integer and the 6th argument is -1 (default), "
+"or the number of elements."
 msgstr ""
 "Devuelve un vector generado a partir de una función con una variable (por "
 "defecto x) que se ejecuta de mínimo a máximo. El cuarto argumento es el "
@@ -3192,7 +3194,7 @@ msgid "Matrix Rank"
 msgstr "Rango de matriz"
 
 #: ../data/functions.xml.in.h:111
-msgid "r:rk"
+msgid "ra:rk"
 msgstr ""
 
 #: ../data/functions.xml.in.h:112
@@ -7994,7 +7996,7 @@ msgid "Present Value"
 msgstr "Valor actual"
 
 #: ../data/functions.xml.in.h:1171
-msgid "r:pv"
+msgid "ra:pv"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1172
@@ -8282,7 +8284,7 @@ msgid "Future Value"
 msgstr "Valor futuro"
 
 #: ../data/functions.xml.in.h:1230
-msgid "r:fv"
+msgid "ra:fv,a:FV"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1231
@@ -9423,8 +9425,9 @@ msgid "Abampere"
 msgstr "Abamperio"
 
 #: ../data/units.xml.in.h:170
-msgid "r:abampere,a:abA,a:aA,p:abamperes,a:Bi,biot"
-msgstr ""
+#, fuzzy
+msgid "r:abampere,a:abA,p:abamperes,a:Bi,biot"
+msgstr "a:A,amperio,p:amperios,ampere,a-c:amp"
 
 #: ../data/units.xml.in.h:171
 msgid "Current Density"

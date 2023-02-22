@@ -20,6 +20,8 @@
 #include "Variable.h"
 #include "BuiltinFunctions.h"
 
+#include <limits.h>
+
 using std::string;
 using std::vector;
 using std::cout;

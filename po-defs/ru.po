@@ -1,4 +1,4 @@
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# Copyright (Cтс) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the libqalculate package.
 #
 # Damir Islamov <damir@secretlaboratory.ru>, 2021-2023.
@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-27 08:12+0100\n"
+"POT-Creation-Date: 2023-02-20 09:40+0100\n"
 "PO-Revision-Date: 2023-01-09 15:15+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -2754,11 +2754,13 @@ msgid "r:genvector"
 msgstr "генвектор"
 
 #: ../data/functions.xml.in.h:9
+#, fuzzy
 msgid ""
 "Returns a vector generated from a function with a variable (default x) "
-"running from min to max. The fourth argument is either the requested number "
-"of elements if the sixth argument is false (default) or the step between "
-"each value of the variable."
+"running from min to max. The 4th argument is either the step between each "
+"value of the variable, if the 6th argument is 1 or if the value is 1 "
+"(default), negative, or not an integer and the 6th argument is -1 (default), "
+"or the number of elements."
 msgstr ""
 "Возвращает вектор, генерированный функцией с переменной (по умолчанию x), "
 "пробегающей от минимального до максимального значения. Четвертый аргумент - "
@@ -3195,7 +3197,7 @@ msgid "Matrix Rank"
 msgstr "Ранг матрицы"
 
 #: ../data/functions.xml.in.h:111
-msgid "r:rk"
+msgid "ra:rk"
 msgstr "рнг"
 
 #: ../data/functions.xml.in.h:112
@@ -8021,8 +8023,8 @@ msgid "Present Value"
 msgstr "Текущая стоимость"
 
 #: ../data/functions.xml.in.h:1171
-msgid "r:pv"
-msgstr "тс"
+msgid "ra:pv"
+msgstr "a:тс"
 
 #: ../data/functions.xml.in.h:1172
 msgid ""
@@ -8311,7 +8313,7 @@ msgid "Future Value"
 msgstr "Будущая стоимость"
 
 #: ../data/functions.xml.in.h:1230
-msgid "r:fv"
+msgid "ra:fv,a:FV"
 msgstr "a:БС,a:ПС"
 
 #: ../data/functions.xml.in.h:1231
@@ -9457,8 +9459,8 @@ msgid "Abampere"
 msgstr "Абампер (СГС)"
 
 #: ../data/units.xml.in.h:170
-msgid "r:abampere,a:abA,a:aA,p:abamperes,a:Bi,biot"
-msgstr "абампер,a:абА,био,a:abA,a:aA,a:Bi,biot"
+msgid "r:abampere,a:abA,p:abamperes,a:Bi,biot"
+msgstr "абампер,a:абА,био,a:abA,a:Bi,biot"
 
 #: ../data/units.xml.in.h:171
 msgid "Current Density"
@@ -12241,6 +12243,15 @@ msgstr "Сейчас (дата и время)"
 #: ../data/variables.xml.in.h:229
 msgid "r:now"
 msgstr "сейчас"
+
+#~ msgid "r:rk"
+#~ msgstr "рнг"
+
+#~ msgid "r:pv"
+#~ msgstr "тс"
+
+#~ msgid "r:fv"
+#~ msgstr "a:БС,a:ПС"
 
 #~ msgid "Croatian Kuna"
 #~ msgstr "Хорватская куна"

@@ -142,6 +142,19 @@ extern gmp_randstate_t randstate;
 Calculator::Calculator() {
 	b_ignore_locale = false;
 
+#ifdef _WIN32
+	size_t n = 0;
+	getenv_s(&n, NULL, 0, "LANG");
+	if(n == 0) {
+		string lang;
+		WCHAR wlocale[LOCALE_NAME_MAX_LENGTH];
+		if(LCIDToLocaleName(LOCALE_CUSTOM_UI_DEFAULT, wlocale, LOCALE_NAME_MAX_LENGTH, 0) != 0) lang = utf8_encode(wlocale);
+		gsub("-", "_", lang);
+		if(lang.length() > 5) lang = lang.substr(0, 5);
+		if(!lang.empty()) _putenv_s("LANG", lang.c_str());
+	}
+#endif
+
 #ifdef ENABLE_NLS
 	bindtextdomain(GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
@@ -381,6 +394,18 @@ Calculator::Calculator(bool ignore_locale) {
 			saved_locale = NULL;
 		}
 	} else {
+#ifdef _WIN32
+		size_t n = 0;
+		getenv_s(&n, NULL, 0, "LANG");
+		if(n == 0) {
+			string lang;
+			WCHAR wlocale[LOCALE_NAME_MAX_LENGTH];
+			if(LCIDToLocaleName(LOCALE_CUSTOM_UI_DEFAULT, wlocale, LOCALE_NAME_MAX_LENGTH, 0) != 0) lang = utf8_encode(wlocale);
+			gsub("-", "_", lang);
+			if(lang.length() > 5) lang = lang.substr(0, 5);
+			if(!lang.empty()) _putenv_s("LANG", lang.c_str());
+		}
+#endif
 #ifdef ENABLE_NLS
 		bindtextdomain(GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
 		bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
