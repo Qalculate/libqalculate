@@ -224,9 +224,9 @@
       </base>
     </unit>
     <unit type="alias">
-      <_title>Mil (1/1000 in)</_title>
+      <_title>Thou (1/1000 in)</_title>
       <system>Imperial/US</system>
-      <_names>r:mil,p:mils</_names>
+      <_names>r:thou,mil,p:mils</_names>
       <base>
         <unit>in</unit>
         <relation>0.001</relation>
