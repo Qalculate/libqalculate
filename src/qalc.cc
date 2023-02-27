@@ -886,7 +886,7 @@ void set_option(string str) {
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "assume nonzero denominators", _("assume nonzero denominators")) || svar == "nzd") SET_BOOL_E(evalops.assume_denominators_nonzero)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "warn nonzero denominators", _("warn nonzero denominators")) || svar == "warnnzd") SET_BOOL_E(evalops.warn_about_denominators_assumed_nonzero)
 	//unit prefixes
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "prefixes", _("prefixes")) || svar == "pref") SET_BOOL_D(printops.use_unit_prefixes)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "prefixes", _("prefixes")) || svar == "prefix" || svar == "pref") SET_BOOL_D(printops.use_unit_prefixes)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "binary prefixes", _("binary prefixes")) || svar == "binpref") {
 		bool b = CALCULATOR->usesBinaryPrefixes() > 0;
 		SET_BOOL(b)
@@ -1864,8 +1864,408 @@ bool show_set_help(string set_option = "") {
 #ifndef _WIN32
 	STR_AND_TABS_2("sigint action", "sigint", _("Determines how the SIGINT signal (Ctrl+C) is handled."), sigint_action, _("kill"), _("exit"), _("interrupt"));
 #endif
-	puts("");
+	if(set_option.empty()) puts("");
 	return set_option.empty();
+}
+
+#define PRINT_AND_COLON_TABS_INFO(x) FPUTS_UNICODE(x, stdout); pctl = unicode_length_check(x); if(pctl >= 23) fputs(":\t", stdout); else if(pctl >= 15) fputs(":\t\t", stdout); else if(pctl >= 7) fputs(":\t\t\t", stdout); else fputs(":\t\t\t\t", stdout);
+#define STR_AND_COLON_TABS_INFO(x) pctl = unicode_length(x); if(pctl >= 23) x += ":\t"; else if(pctl >= 15) x += ":\t\t"; else if(pctl >= 7) x += ":\t\t\t"; else x += ":\t\t\t\t";
+
+bool show_object_info(string name) {
+	int pctl;
+	string str;
+	ExpressionItem *item = CALCULATOR->getActiveExpressionItem(name);
+	Prefix *prefix = CALCULATOR->getPrefix(name);
+	if(!item && !prefix) return false;
+	INIT_SCREEN_CHECK
+	CHECK_IF_SCREEN_FILLED_PUTS("");
+	ParseOptions pa = evalops.parse_options; pa.base = 10;
+	for(size_t i = 0; i < 2; i++) {
+		if(i == 1) item = CALCULATOR->getActiveExpressionItem(name, item);
+		if(!item) break;
+		switch(item->type()) {
+			case TYPE_FUNCTION: {
+				MathFunction *f = (MathFunction*) item;
+				Argument *arg;
+				Argument default_arg;
+				string str2;
+				str = _("Function");
+				if(!f->title(false).empty()) {
+					str += ": ";
+					str += f->title();
+				}
+				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+				CHECK_IF_SCREEN_FILLED_PUTS("");
+				const ExpressionName *ename = &f->preferredName(false, printops.use_unicode_signs);
+				str = ename->formattedName(TYPE_FUNCTION, true, false, printops.use_unicode_signs);
+				int iargs = f->maxargs();
+				if(iargs < 0) {
+					iargs = f->minargs() + 1;
+					if((int) f->lastArgumentDefinitionIndex() > iargs) iargs = (int) f->lastArgumentDefinitionIndex();
+				}
+				str += "(";
+				if(iargs != 0) {
+					for(int i2 = 1; i2 <= iargs; i2++) {
+						if(i2 > f->minargs()) {
+							str += "[";
+						}
+						if(i2 > 1) {
+							str += CALCULATOR->getComma();
+							str += " ";
+						}
+						arg = f->getArgumentDefinition(i2);
+						if(arg && !arg->name().empty()) {
+							str2 = arg->name();
+						} else {
+							str2 = _("argument");
+							if(i2 > 1 || f->maxargs() != 1) {
+								str2 += " ";
+								str2 += i2s(i2);
+							}
+						}
+						str += str2;
+						if(i2 > f->minargs()) {
+							str += "]";
+						}
+					}
+					if(f->maxargs() < 0) {
+						str += CALCULATOR->getComma();
+						str += " ...";
+					}
+				}
+				str += ")";
+				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+				for(size_t i2 = 1; i2 <= f->countNames(); i2++) {
+					if(&f->getName(i2) != ename) {
+						CHECK_IF_SCREEN_FILLED_PUTS(f->getName(i2).formattedName(TYPE_FUNCTION, true, false, printops.use_unicode_signs).c_str());
+					}
+				}
+				if(f->subtype() == SUBTYPE_DATA_SET) {
+					CHECK_IF_SCREEN_FILLED_PUTS("");
+					snprintf(buffer, 1000, _("Retrieves data from the %s data set for a given object and property. If \"info\" is typed as property, all properties of the object will be listed."), f->title().c_str());
+					CHECK_IF_SCREEN_FILLED_PUTS(buffer);
+				}
+				if(!f->description().empty()) {
+					CHECK_IF_SCREEN_FILLED_PUTS("");
+					CHECK_IF_SCREEN_FILLED_PUTS(f->description().c_str());
+				}
+				if(!f->example(true).empty()) {
+					CHECK_IF_SCREEN_FILLED_PUTS("");
+					str = _("Example:"); str += " "; str += f->example(false, ename->formattedName(TYPE_FUNCTION, true, false, printops.use_unicode_signs));
+					CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+				}
+				if(f->subtype() == SUBTYPE_DATA_SET && !((DataSet*) f)->copyright().empty()) {
+					CHECK_IF_SCREEN_FILLED_PUTS("");
+					CHECK_IF_SCREEN_FILLED_PUTS(((DataSet*) f)->copyright().c_str());
+				}
+				if(iargs) {
+					CHECK_IF_SCREEN_FILLED_PUTS("");
+					CHECK_IF_SCREEN_FILLED_PUTS(_("Arguments"));
+					for(int i2 = 1; i2 <= iargs; i2++) {
+						arg = f->getArgumentDefinition(i2);
+						if(arg && !arg->name().empty()) {
+							str = arg->name();
+						} else {
+							str = i2s(i2);
+						}
+						str += ": ";
+						if(arg) {
+							str2 = arg->printlong();
+						} else {
+							str2 = default_arg.printlong();
+						}
+						if(printops.use_unicode_signs) {
+							gsub(">=", SIGN_GREATER_OR_EQUAL, str2);
+							gsub("<=", SIGN_LESS_OR_EQUAL, str2);
+							gsub("!=", SIGN_NOT_EQUAL, str2);
+						}
+						if(i2 > f->minargs()) {
+							str2 += " (";
+							//optional argument, in description
+							str2 += _("optional");
+							if(!f->getDefaultValue(i2).empty() && f->getDefaultValue(i2) != "\"\"") {
+								str2 += ", ";
+								//argument default, in description
+								str2 += _("default: ");
+								str2 += f->getDefaultValue(i2);
+							}
+							str2 += ")";
+						}
+						str += str2;
+						CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+					}
+				}
+				if(!f->condition().empty()) {
+					CHECK_IF_SCREEN_FILLED_PUTS("");
+					str = _("Requirement");
+					str += ": ";
+					str += f->printCondition();
+					if(printops.use_unicode_signs) {
+						gsub(">=", SIGN_GREATER_OR_EQUAL, str);
+						gsub("<=", SIGN_LESS_OR_EQUAL, str);
+						gsub("!=", SIGN_NOT_EQUAL, str);
+					}
+					CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+				}
+				if(f->subtype() == SUBTYPE_DATA_SET) {
+					DataSet *ds = (DataSet*) f;
+					CHECK_IF_SCREEN_FILLED_PUTS("");
+					CHECK_IF_SCREEN_FILLED_PUTS(_("Properties"));
+					DataPropertyIter it;
+					DataProperty *dp = ds->getFirstProperty(&it);
+					while(dp) {
+						if(!dp->isHidden()) {
+							if(!dp->title(false).empty()) {
+								str = dp->title();
+								str += ": ";
+							}
+							for(size_t i = 1; i <= dp->countNames(); i++) {
+								if(i > 1) str += ", ";
+								str += dp->getName(i);
+							}
+							if(dp->isKey()) {
+								str += " (";
+								str += _("key");
+								str += ")";
+							}
+							if(!dp->description().empty()) {
+								str += "\n";
+								str += dp->description();
+							}
+							CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+						}
+						dp = ds->getNextProperty(&it);
+					}
+				}
+				if(f->subtype() == SUBTYPE_USER_FUNCTION) {
+					CHECK_IF_SCREEN_FILLED_PUTS("");
+					ParseOptions pa = evalops.parse_options; pa.base = 10;
+					str = _("Expression:"); str += " "; str += CALCULATOR->unlocalizeExpression(((UserFunction*) f)->formula(), pa);
+					CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+				}
+				CHECK_IF_SCREEN_FILLED_PUTS("");
+				break;
+			}
+			case TYPE_UNIT: {
+				if(!item->title(false).empty()) {
+					PRINT_AND_COLON_TABS_INFO(_("Unit"));
+					FPUTS_UNICODE(item->title().c_str(), stdout);
+				} else {
+					FPUTS_UNICODE(_("Unit"), stdout);
+				}
+				CHECK_IF_SCREEN_FILLED_PUTS("");
+				PRINT_AND_COLON_TABS_INFO(_("Names"));
+				if(item->subtype() != SUBTYPE_COMPOSITE_UNIT) {
+					const ExpressionName *ename = &item->preferredName(true, printops.use_unicode_signs);
+					FPUTS_UNICODE(ename->formattedName(TYPE_UNIT, true, false, printops.use_unicode_signs).c_str(), stdout);
+					for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
+						if(&item->getName(i2) != ename && !item->getName(i2).completion_only) {
+							fputs(" / ", stdout);
+							FPUTS_UNICODE(item->getName(i2).formattedName(TYPE_UNIT, true, false, printops.use_unicode_signs).c_str(), stdout);
+						}
+					}
+				}
+				CHECK_IF_SCREEN_FILLED_PUTS("");
+				switch(item->subtype()) {
+					case SUBTYPE_BASE_UNIT: {
+						break;
+					}
+					case SUBTYPE_ALIAS_UNIT: {
+						AliasUnit *au = (AliasUnit*) item;
+						PRINT_AND_COLON_TABS_INFO(_("Base Unit"));
+						string base_unit = au->firstBaseUnit()->print(false, printops.abbreviate_names, printops.use_unicode_signs);
+						if(au->firstBaseExponent() != 1) {
+							if(au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {base_unit.insert(0, 1, '('); base_unit += ")";}
+							if(printops.use_unicode_signs && au->firstBaseExponent() == 2) base_unit += SIGN_POWER_2;
+							else if(printops.use_unicode_signs && au->firstBaseExponent() == 3) base_unit += SIGN_POWER_3;
+							else {
+								base_unit += POWER;
+								base_unit += i2s(au->firstBaseExponent());
+							}
+						}
+						CHECK_IF_SCREEN_FILLED_PUTS(base_unit.c_str());
+						PRINT_AND_COLON_TABS_INFO(_("Relation"));
+						FPUTS_UNICODE(CALCULATOR->localizeExpression(au->expression(), pa).c_str(), stdout);
+						bool is_relative = false;
+						if(!au->uncertainty(&is_relative).empty()) {
+							CHECK_IF_SCREEN_FILLED_PUTS("");
+							if(is_relative) {PRINT_AND_COLON_TABS_INFO(_("Relative uncertainty"));}
+							else {PRINT_AND_COLON_TABS_INFO(_("Uncertainty"));}
+							CHECK_IF_SCREEN_FILLED_PUTS(CALCULATOR->localizeExpression(au->uncertainty(), pa).c_str())
+						} else if(item->isApproximate()) {
+							fputs(" (", stdout);
+							FPUTS_UNICODE(_("approximate"), stdout);
+							fputs(")", stdout);
+
+						}
+						if(!au->inverseExpression().empty()) {
+							CHECK_IF_SCREEN_FILLED_PUTS("");
+							PRINT_AND_COLON_TABS_INFO(_("Inverse Relation"));
+							FPUTS_UNICODE(CALCULATOR->localizeExpression(au->inverseExpression(), pa).c_str(), stdout);
+							if(au->uncertainty().empty() && item->isApproximate()) {
+								fputs(" (", stdout);
+								FPUTS_UNICODE(_("approximate"), stdout);
+								fputs(")", stdout);
+							}
+						}
+						CHECK_IF_SCREEN_FILLED_PUTS("");
+						break;
+					}
+					case SUBTYPE_COMPOSITE_UNIT: {
+						PRINT_AND_COLON_TABS_INFO(_("Base Units"));
+						PrintOptions po = printops;
+						po.is_approximate = NULL;
+						po.abbreviate_names = true;
+						CHECK_IF_SCREEN_FILLED_PUTS(((CompositeUnit*) item)->print(po, false, TAG_TYPE_TERMINAL, false, false).c_str());
+						break;
+					}
+				}
+				if(!item->description().empty()) {
+					CHECK_IF_SCREEN_FILLED_PUTS("");
+					CHECK_IF_SCREEN_FILLED_PUTS(item->description().c_str());
+				}
+				CHECK_IF_SCREEN_FILLED_PUTS("");
+				break;
+			}
+			case TYPE_VARIABLE: {
+				if(!item->title(false).empty()) {
+					PRINT_AND_COLON_TABS_INFO(_("Variable"));
+					FPUTS_UNICODE(item->title().c_str(), stdout);
+				} else {
+					FPUTS_UNICODE(_("Variable"), stdout);
+				}
+				CHECK_IF_SCREEN_FILLED_PUTS("");
+				PRINT_AND_COLON_TABS_INFO(_("Names"));
+				const ExpressionName *ename = &item->preferredName(false, printops.use_unicode_signs);
+				FPUTS_UNICODE(ename->formattedName(TYPE_VARIABLE, true, false, printops.use_unicode_signs).c_str(), stdout);
+				for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
+					if(&item->getName(i2) != ename && !item->getName(i2).completion_only) {
+						fputs(" / ", stdout);
+						FPUTS_UNICODE(item->getName(i2).formattedName(TYPE_VARIABLE, true, false, printops.use_unicode_signs).c_str(), stdout);
+					}
+				}
+				Variable *v = (Variable*) item;
+				string value;
+				if(is_answer_variable(v)) {
+					value = _("a previous result");
+				} else if(v->isKnown()) {
+					if(((KnownVariable*) v)->isExpression()) {
+						ParseOptions pa = evalops.parse_options; pa.base = 10;
+						value = CALCULATOR->localizeExpression(((KnownVariable*) v)->expression(), pa);
+					} else {
+						if(((KnownVariable*) v)->get().isMatrix()) {
+							value = _("matrix");
+						} else if(((KnownVariable*) v)->get().isVector()) {
+							value = _("vector");
+						} else {
+							PrintOptions po;
+							po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+							value = CALCULATOR->print(((KnownVariable*) v)->get(), 30, po);
+						}
+					}
+				} else {
+					if(((UnknownVariable*) v)->assumptions()) {
+						if(((UnknownVariable*) v)->assumptions()->type() != ASSUMPTION_TYPE_BOOLEAN) {
+							switch(((UnknownVariable*) v)->assumptions()->sign()) {
+								case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
+								case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
+								case ASSUMPTION_SIGN_NEGATIVE: {value = _("negative"); break;}
+								case ASSUMPTION_SIGN_NONNEGATIVE: {value = _("non-negative"); break;}
+								case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
+								default: {}
+							}
+						}
+						if(!value.empty() && ((UnknownVariable*) v)->assumptions()->type() != ASSUMPTION_TYPE_NONE) value += " ";
+						switch(((UnknownVariable*) v)->assumptions()->type()) {
+							case ASSUMPTION_TYPE_INTEGER: {value += _("integer"); break;}
+							case ASSUMPTION_TYPE_BOOLEAN: {value += _("boolean"); break;}
+							case ASSUMPTION_TYPE_RATIONAL: {value += _("rational"); break;}
+							case ASSUMPTION_TYPE_REAL: {value += _("real"); break;}
+							case ASSUMPTION_TYPE_COMPLEX: {value += _("complex"); break;}
+							case ASSUMPTION_TYPE_NUMBER: {value += _("number"); break;}
+							case ASSUMPTION_TYPE_NONMATRIX: {value += _("non-matrix"); break;}
+							default: {}
+						}
+						if(value.empty()) value = _("unknown");
+					} else {
+						value = _("default assumptions");
+					}
+				}
+				CHECK_IF_SCREEN_FILLED_PUTS("");
+				bool is_relative = false;
+				if(v->isKnown() && ((KnownVariable*) v)->isExpression() && !((KnownVariable*) v)->uncertainty(&is_relative).empty()) {
+					PRINT_AND_COLON_TABS_INFO(_("Value"));
+					FPUTS_UNICODE(value.c_str(), stdout);
+					CHECK_IF_SCREEN_FILLED_PUTS("");
+					if(is_relative) {PRINT_AND_COLON_TABS_INFO(_("Relative uncertainty"));}
+					else {PRINT_AND_COLON_TABS_INFO(_("Uncertainty"));}
+					CHECK_IF_SCREEN_FILLED_PUTS(CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty(), pa).c_str())
+				} else {
+					string value_pre = _("Value");
+					STR_AND_COLON_TABS_INFO(value_pre);
+					value.insert(0, value_pre);
+					bool b_approx = item->isApproximate();
+					if(b_approx && v->isKnown()) {
+						if(((KnownVariable*) v)->isExpression()) {
+							b_approx = ((KnownVariable*) v)->expression().find(SIGN_PLUSMINUS) == string::npos && ((KnownVariable*) v)->expression().find(CALCULATOR->getFunctionById(FUNCTION_ID_INTERVAL)->referenceName()) == string::npos;
+						} else {
+							b_approx = ((KnownVariable*) v)->get().containsInterval(true, false, false, 0, true) <= 0;
+						}
+					}
+					if(b_approx) {
+						value += " (";
+						value += _("approximate");
+						value += ")";
+					}
+					int tabs = 0;
+					for(size_t i = 0; i < value_pre.length(); i++) {
+						if(value_pre[i] == '\t') {
+							if(tabs == 0) tabs += (7 - ((i - 1) % 8));
+							else tabs += 7;
+						}
+					}
+					INIT_COLS
+					addLineBreaks(value, cols, true, unicode_length(value_pre) + tabs, unicode_length(value_pre) + tabs);
+					CHECK_IF_SCREEN_FILLED_PUTS(value.c_str());
+				}
+				if(v->isKnown() && ((KnownVariable*) v)->isExpression() && !((KnownVariable*) v)->unit().empty() && ((KnownVariable*) v)->unit() != "auto") {
+					PRINT_AND_COLON_TABS_INFO(_("Unit"));
+					CHECK_IF_SCREEN_FILLED_PUTS(((KnownVariable*) v)->unit().c_str())
+				}
+				if(!item->description().empty()) {
+					fputs("\n", stdout);
+					FPUTS_UNICODE(item->description().c_str(), stdout);
+					fputs("\n", stdout);
+				}
+				CHECK_IF_SCREEN_FILLED_PUTS("");
+				break;
+			}
+		}
+	}
+	if(prefix) {
+		FPUTS_UNICODE(_("Prefix"), stdout);
+		CHECK_IF_SCREEN_FILLED_PUTS("");
+		PRINT_AND_COLON_TABS_INFO(_("Names"));
+		const ExpressionName *ename = &prefix->preferredName(true, printops.use_unicode_signs);
+		FPUTS_UNICODE(ename->name.c_str(), stdout);
+		for(size_t i2 = 1; i2 <= prefix->countNames(); i2++) {
+			if(&prefix->getName(i2) != ename && !prefix->getName(i2).completion_only) {
+				fputs(" / ", stdout);
+				FPUTS_UNICODE(prefix->getName(i2).name.c_str(), stdout);
+			}
+		}
+		CHECK_IF_SCREEN_FILLED_PUTS("");
+		PRINT_AND_COLON_TABS_INFO(_("Value"));
+		fputs(prefix->value().print().c_str(), stdout);
+		if(prefix->type() == PREFIX_BINARY) {
+			fputs(" (2^", stdout);
+			fputs(i2s(((BinaryPrefix*) prefix)->exponent()).c_str(), stdout);
+			fputs(")", stdout);
+		}
+		CHECK_IF_SCREEN_FILLED_PUTS("");
+		CHECK_IF_SCREEN_FILLED_PUTS("");
+	}
+	return true;
 }
 
 bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t i2_end, size_t minlength) {
@@ -4455,406 +4855,10 @@ int main(int argc, char *argv[]) {
 			list_defs(true, list_type, str2);
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "info", _("info"))) {
-			int pctl;
-#define PRINT_AND_COLON_TABS_INFO(x) FPUTS_UNICODE(x, stdout); pctl = unicode_length_check(x); if(pctl >= 23) fputs(":\t", stdout); else if(pctl >= 15) fputs(":\t\t", stdout); else if(pctl >= 7) fputs(":\t\t\t", stdout); else fputs(":\t\t\t\t", stdout);
-#define STR_AND_COLON_TABS_INFO(x) pctl = unicode_length(x); if(pctl >= 23) x += ":\t"; else if(pctl >= 15) x += ":\t\t"; else if(pctl >= 7) x += ":\t\t\t"; else x += ":\t\t\t\t";
 			str = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(str);
-			show_info:
-			string name = str;
-			ExpressionItem *item = CALCULATOR->getActiveExpressionItem(name);
-			Prefix *prefix = CALCULATOR->getPrefix(name);
-			if(!item && !prefix) {
+			if(!show_object_info(str)) {
 				PUTS_UNICODE(_("No function, variable, unit, or prefix with specified name exist."));
-			} else {
-				INIT_SCREEN_CHECK
-				CHECK_IF_SCREEN_FILLED_PUTS("");
-				ParseOptions pa = evalops.parse_options; pa.base = 10;
-				for(size_t i = 0; i < 2; i++) {
-					if(i == 1) item = CALCULATOR->getActiveExpressionItem(name, item);
-					if(!item) break;
-					switch(item->type()) {
-						case TYPE_FUNCTION: {
-							MathFunction *f = (MathFunction*) item;
-							Argument *arg;
-							Argument default_arg;
-							string str2;
-							str = _("Function");
-							if(!f->title(false).empty()) {
-								str += ": ";
-								str += f->title();
-							}
-							CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-							CHECK_IF_SCREEN_FILLED_PUTS("");
-							const ExpressionName *ename = &f->preferredName(false, printops.use_unicode_signs);
-							str = ename->formattedName(TYPE_FUNCTION, true, false, printops.use_unicode_signs);
-							int iargs = f->maxargs();
-							if(iargs < 0) {
-								iargs = f->minargs() + 1;
-								if((int) f->lastArgumentDefinitionIndex() > iargs) iargs = (int) f->lastArgumentDefinitionIndex();
-							}
-							str += "(";
-							if(iargs != 0) {
-								for(int i2 = 1; i2 <= iargs; i2++) {
-									if(i2 > f->minargs()) {
-										str += "[";
-									}
-									if(i2 > 1) {
-										str += CALCULATOR->getComma();
-										str += " ";
-									}
-									arg = f->getArgumentDefinition(i2);
-									if(arg && !arg->name().empty()) {
-										str2 = arg->name();
-									} else {
-										str2 = _("argument");
-										if(i2 > 1 || f->maxargs() != 1) {
-											str2 += " ";
-											str2 += i2s(i2);
-										}
-									}
-									str += str2;
-									if(i2 > f->minargs()) {
-										str += "]";
-									}
-								}
-								if(f->maxargs() < 0) {
-									str += CALCULATOR->getComma();
-									str += " ...";
-								}
-							}
-							str += ")";
-							CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-							for(size_t i2 = 1; i2 <= f->countNames(); i2++) {
-								if(&f->getName(i2) != ename) {
-									CHECK_IF_SCREEN_FILLED_PUTS(f->getName(i2).formattedName(TYPE_FUNCTION, true, false, printops.use_unicode_signs).c_str());
-								}
-							}
-							if(f->subtype() == SUBTYPE_DATA_SET) {
-								CHECK_IF_SCREEN_FILLED_PUTS("");
-								snprintf(buffer, 1000, _("Retrieves data from the %s data set for a given object and property. If \"info\" is typed as property, all properties of the object will be listed."), f->title().c_str());
-								CHECK_IF_SCREEN_FILLED_PUTS(buffer);
-							}
-							if(!f->description().empty()) {
-								CHECK_IF_SCREEN_FILLED_PUTS("");
-								CHECK_IF_SCREEN_FILLED_PUTS(f->description().c_str());
-							}
-							if(!f->example(true).empty()) {
-								CHECK_IF_SCREEN_FILLED_PUTS("");
-								str = _("Example:"); str += " "; str += f->example(false, ename->formattedName(TYPE_FUNCTION, true, false, printops.use_unicode_signs));
-								CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-							}
-							if(f->subtype() == SUBTYPE_DATA_SET && !((DataSet*) f)->copyright().empty()) {
-								CHECK_IF_SCREEN_FILLED_PUTS("");
-								CHECK_IF_SCREEN_FILLED_PUTS(((DataSet*) f)->copyright().c_str());
-							}
-							if(iargs) {
-								CHECK_IF_SCREEN_FILLED_PUTS("");
-								CHECK_IF_SCREEN_FILLED_PUTS(_("Arguments"));
-								for(int i2 = 1; i2 <= iargs; i2++) {
-									arg = f->getArgumentDefinition(i2);
-									if(arg && !arg->name().empty()) {
-										str = arg->name();
-									} else {
-										str = i2s(i2);
-									}
-									str += ": ";
-									if(arg) {
-										str2 = arg->printlong();
-									} else {
-										str2 = default_arg.printlong();
-									}
-									if(printops.use_unicode_signs) {
-										gsub(">=", SIGN_GREATER_OR_EQUAL, str2);
-										gsub("<=", SIGN_LESS_OR_EQUAL, str2);
-										gsub("!=", SIGN_NOT_EQUAL, str2);
-									}
-									if(i2 > f->minargs()) {
-										str2 += " (";
-										//optional argument, in description
-										str2 += _("optional");
-										if(!f->getDefaultValue(i2).empty() && f->getDefaultValue(i2) != "\"\"") {
-											str2 += ", ";
-											//argument default, in description
-											str2 += _("default: ");
-											str2 += f->getDefaultValue(i2);
-										}
-										str2 += ")";
-									}
-									str += str2;
-									CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-								}
-							}
-							if(!f->condition().empty()) {
-								CHECK_IF_SCREEN_FILLED_PUTS("");
-								str = _("Requirement");
-								str += ": ";
-								str += f->printCondition();
-								if(printops.use_unicode_signs) {
-									gsub(">=", SIGN_GREATER_OR_EQUAL, str);
-									gsub("<=", SIGN_LESS_OR_EQUAL, str);
-									gsub("!=", SIGN_NOT_EQUAL, str);
-								}
-								CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-							}
-							if(f->subtype() == SUBTYPE_DATA_SET) {
-								DataSet *ds = (DataSet*) f;
-								CHECK_IF_SCREEN_FILLED_PUTS("");
-								CHECK_IF_SCREEN_FILLED_PUTS(_("Properties"));
-								DataPropertyIter it;
-								DataProperty *dp = ds->getFirstProperty(&it);
-								while(dp) {
-									if(!dp->isHidden()) {
-										if(!dp->title(false).empty()) {
-											str = dp->title();
-											str += ": ";
-										}
-										for(size_t i = 1; i <= dp->countNames(); i++) {
-											if(i > 1) str += ", ";
-											str += dp->getName(i);
-										}
-										if(dp->isKey()) {
-											str += " (";
-											str += _("key");
-											str += ")";
-										}
-										if(!dp->description().empty()) {
-											str += "\n";
-											str += dp->description();
-										}
-										CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-									}
-									dp = ds->getNextProperty(&it);
-								}
-							}
-							if(f->subtype() == SUBTYPE_USER_FUNCTION) {
-								CHECK_IF_SCREEN_FILLED_PUTS("");
-								ParseOptions pa = evalops.parse_options; pa.base = 10;
-								str = _("Expression:"); str += " "; str += CALCULATOR->unlocalizeExpression(((UserFunction*) f)->formula(), pa);
-								CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-							}
-							CHECK_IF_SCREEN_FILLED_PUTS("");
-							break;
-						}
-						case TYPE_UNIT: {
-							if(!item->title(false).empty()) {
-								PRINT_AND_COLON_TABS_INFO(_("Unit"));
-								FPUTS_UNICODE(item->title().c_str(), stdout);
-							} else {
-								FPUTS_UNICODE(_("Unit"), stdout);
-							}
-							CHECK_IF_SCREEN_FILLED_PUTS("");
-							PRINT_AND_COLON_TABS_INFO(_("Names"));
-							if(item->subtype() != SUBTYPE_COMPOSITE_UNIT) {
-								const ExpressionName *ename = &item->preferredName(true, printops.use_unicode_signs);
-								FPUTS_UNICODE(ename->formattedName(TYPE_UNIT, true, false, printops.use_unicode_signs).c_str(), stdout);
-								for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
-									if(&item->getName(i2) != ename && !item->getName(i2).completion_only) {
-										fputs(" / ", stdout);
-										FPUTS_UNICODE(item->getName(i2).formattedName(TYPE_UNIT, true, false, printops.use_unicode_signs).c_str(), stdout);
-									}
-								}
-							}
-							CHECK_IF_SCREEN_FILLED_PUTS("");
-							switch(item->subtype()) {
-								case SUBTYPE_BASE_UNIT: {
-									break;
-								}
-								case SUBTYPE_ALIAS_UNIT: {
-									AliasUnit *au = (AliasUnit*) item;
-									PRINT_AND_COLON_TABS_INFO(_("Base Unit"));
-									string base_unit = au->firstBaseUnit()->print(false, printops.abbreviate_names, printops.use_unicode_signs);
-									if(au->firstBaseExponent() != 1) {
-										if(au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {base_unit.insert(0, 1, '('); base_unit += ")";}
-										if(printops.use_unicode_signs && au->firstBaseExponent() == 2) base_unit += SIGN_POWER_2;
-										else if(printops.use_unicode_signs && au->firstBaseExponent() == 3) base_unit += SIGN_POWER_3;
-										else {
-											base_unit += POWER;
-											base_unit += i2s(au->firstBaseExponent());
-										}
-									}
-									CHECK_IF_SCREEN_FILLED_PUTS(base_unit.c_str());
-									PRINT_AND_COLON_TABS_INFO(_("Relation"));
-									FPUTS_UNICODE(CALCULATOR->localizeExpression(au->expression(), pa).c_str(), stdout);
-									bool is_relative = false;
-									if(!au->uncertainty(&is_relative).empty()) {
-										CHECK_IF_SCREEN_FILLED_PUTS("");
-										if(is_relative) {PRINT_AND_COLON_TABS_INFO(_("Relative uncertainty"));}
-										else {PRINT_AND_COLON_TABS_INFO(_("Uncertainty"));}
-										CHECK_IF_SCREEN_FILLED_PUTS(CALCULATOR->localizeExpression(au->uncertainty(), pa).c_str())
-									} else if(item->isApproximate()) {
-										fputs(" (", stdout);
-										FPUTS_UNICODE(_("approximate"), stdout);
-										fputs(")", stdout);
-
-									}
-									if(!au->inverseExpression().empty()) {
-										CHECK_IF_SCREEN_FILLED_PUTS("");
-										PRINT_AND_COLON_TABS_INFO(_("Inverse Relation"));
-										FPUTS_UNICODE(CALCULATOR->localizeExpression(au->inverseExpression(), pa).c_str(), stdout);
-										if(au->uncertainty().empty() && item->isApproximate()) {
-											fputs(" (", stdout);
-											FPUTS_UNICODE(_("approximate"), stdout);
-											fputs(")", stdout);
-										}
-									}
-									CHECK_IF_SCREEN_FILLED_PUTS("");
-									break;
-								}
-								case SUBTYPE_COMPOSITE_UNIT: {
-									PRINT_AND_COLON_TABS_INFO(_("Base Units"));
-									PrintOptions po = printops;
-									po.is_approximate = NULL;
-									po.abbreviate_names = true;
-									CHECK_IF_SCREEN_FILLED_PUTS(((CompositeUnit*) item)->print(po, false, TAG_TYPE_TERMINAL, false, false).c_str());
-									break;
-								}
-							}
-							if(!item->description().empty()) {
-								CHECK_IF_SCREEN_FILLED_PUTS("");
-								CHECK_IF_SCREEN_FILLED_PUTS(item->description().c_str());
-							}
-							CHECK_IF_SCREEN_FILLED_PUTS("");
-							break;
-						}
-						case TYPE_VARIABLE: {
-							if(!item->title(false).empty()) {
-								PRINT_AND_COLON_TABS_INFO(_("Variable"));
-								FPUTS_UNICODE(item->title().c_str(), stdout);
-							} else {
-								FPUTS_UNICODE(_("Variable"), stdout);
-							}
-							CHECK_IF_SCREEN_FILLED_PUTS("");
-							PRINT_AND_COLON_TABS_INFO(_("Names"));
-							const ExpressionName *ename = &item->preferredName(false, printops.use_unicode_signs);
-							FPUTS_UNICODE(ename->formattedName(TYPE_VARIABLE, true, false, printops.use_unicode_signs).c_str(), stdout);
-							for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
-								if(&item->getName(i2) != ename && !item->getName(i2).completion_only) {
-									fputs(" / ", stdout);
-									FPUTS_UNICODE(item->getName(i2).formattedName(TYPE_VARIABLE, true, false, printops.use_unicode_signs).c_str(), stdout);
-								}
-							}
-							Variable *v = (Variable*) item;
-							string value;
-							if(is_answer_variable(v)) {
-								value = _("a previous result");
-							} else if(v->isKnown()) {
-								if(((KnownVariable*) v)->isExpression()) {
-									ParseOptions pa = evalops.parse_options; pa.base = 10;
-									value = CALCULATOR->localizeExpression(((KnownVariable*) v)->expression(), pa);
-								} else {
-									if(((KnownVariable*) v)->get().isMatrix()) {
-										value = _("matrix");
-									} else if(((KnownVariable*) v)->get().isVector()) {
-										value = _("vector");
-									} else {
-										PrintOptions po;
-										po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
-										value = CALCULATOR->print(((KnownVariable*) v)->get(), 30, po);
-									}
-								}
-							} else {
-								if(((UnknownVariable*) v)->assumptions()) {
-									if(((UnknownVariable*) v)->assumptions()->type() != ASSUMPTION_TYPE_BOOLEAN) {
-										switch(((UnknownVariable*) v)->assumptions()->sign()) {
-											case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
-											case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
-											case ASSUMPTION_SIGN_NEGATIVE: {value = _("negative"); break;}
-											case ASSUMPTION_SIGN_NONNEGATIVE: {value = _("non-negative"); break;}
-											case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
-											default: {}
-										}
-									}
-									if(!value.empty() && ((UnknownVariable*) v)->assumptions()->type() != ASSUMPTION_TYPE_NONE) value += " ";
-									switch(((UnknownVariable*) v)->assumptions()->type()) {
-										case ASSUMPTION_TYPE_INTEGER: {value += _("integer"); break;}
-										case ASSUMPTION_TYPE_BOOLEAN: {value += _("boolean"); break;}
-										case ASSUMPTION_TYPE_RATIONAL: {value += _("rational"); break;}
-										case ASSUMPTION_TYPE_REAL: {value += _("real"); break;}
-										case ASSUMPTION_TYPE_COMPLEX: {value += _("complex"); break;}
-										case ASSUMPTION_TYPE_NUMBER: {value += _("number"); break;}
-										case ASSUMPTION_TYPE_NONMATRIX: {value += _("non-matrix"); break;}
-										default: {}
-									}
-									if(value.empty()) value = _("unknown");
-								} else {
-									value = _("default assumptions");
-								}
-							}
-							CHECK_IF_SCREEN_FILLED_PUTS("");
-							bool is_relative = false;
-							if(v->isKnown() && ((KnownVariable*) v)->isExpression() && !((KnownVariable*) v)->uncertainty(&is_relative).empty()) {
-								PRINT_AND_COLON_TABS_INFO(_("Value"));
-								FPUTS_UNICODE(value.c_str(), stdout);
-								CHECK_IF_SCREEN_FILLED_PUTS("");
-								if(is_relative) {PRINT_AND_COLON_TABS_INFO(_("Relative uncertainty"));}
-								else {PRINT_AND_COLON_TABS_INFO(_("Uncertainty"));}
-								CHECK_IF_SCREEN_FILLED_PUTS(CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty(), pa).c_str())
-							} else {
-								string value_pre = _("Value");
-								STR_AND_COLON_TABS_INFO(value_pre);
-								value.insert(0, value_pre);
-								bool b_approx = item->isApproximate();
-								if(b_approx && v->isKnown()) {
-									if(((KnownVariable*) v)->isExpression()) {
-										b_approx = ((KnownVariable*) v)->expression().find(SIGN_PLUSMINUS) == string::npos && ((KnownVariable*) v)->expression().find(CALCULATOR->getFunctionById(FUNCTION_ID_INTERVAL)->referenceName()) == string::npos;
-									} else {
-										b_approx = ((KnownVariable*) v)->get().containsInterval(true, false, false, 0, true) <= 0;
-									}
-								}
-								if(b_approx) {
-									value += " (";
-									value += _("approximate");
-									value += ")";
-								}
-								int tabs = 0;
-								for(size_t i = 0; i < value_pre.length(); i++) {
-									if(value_pre[i] == '\t') {
-										if(tabs == 0) tabs += (7 - ((i - 1) % 8));
-										else tabs += 7;
-									}
-								}
-								INIT_COLS
-								addLineBreaks(value, cols, true, unicode_length(value_pre) + tabs, unicode_length(value_pre) + tabs);
-								CHECK_IF_SCREEN_FILLED_PUTS(value.c_str());
-							}
-							if(v->isKnown() && ((KnownVariable*) v)->isExpression() && !((KnownVariable*) v)->unit().empty() && ((KnownVariable*) v)->unit() != "auto") {
-								PRINT_AND_COLON_TABS_INFO(_("Unit"));
-								CHECK_IF_SCREEN_FILLED_PUTS(((KnownVariable*) v)->unit().c_str())
-							}
-							if(!item->description().empty()) {
-								fputs("\n", stdout);
-								FPUTS_UNICODE(item->description().c_str(), stdout);
-								fputs("\n", stdout);
-							}
-							CHECK_IF_SCREEN_FILLED_PUTS("");
-							break;
-						}
-					}
-				}
-				if(prefix) {
-					FPUTS_UNICODE(_("Prefix"), stdout);
-					CHECK_IF_SCREEN_FILLED_PUTS("");
-					PRINT_AND_COLON_TABS_INFO(_("Names"));
-					const ExpressionName *ename = &prefix->preferredName(true, printops.use_unicode_signs);
-					FPUTS_UNICODE(ename->name.c_str(), stdout);
-					for(size_t i2 = 1; i2 <= prefix->countNames(); i2++) {
-						if(&prefix->getName(i2) != ename && !prefix->getName(i2).completion_only) {
-							fputs(" / ", stdout);
-							FPUTS_UNICODE(prefix->getName(i2).name.c_str(), stdout);
-						}
-					}
-					CHECK_IF_SCREEN_FILLED_PUTS("");
-					PRINT_AND_COLON_TABS_INFO(_("Value"));
-					fputs(prefix->value().print().c_str(), stdout);
-					if(prefix->type() == PREFIX_BINARY) {
-						fputs(" (2^", stdout);
-						fputs(i2s(((BinaryPrefix*) prefix)->exponent()).c_str(), stdout);
-						fputs(")", stdout);
-					}
-					CHECK_IF_SCREEN_FILLED_PUTS("");
-					CHECK_IF_SCREEN_FILLED_PUTS("");
-				}
 			}
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "help", _("help"))) {
 			str = str.substr(ispace + 1, slen - (ispace + 1));
@@ -5099,7 +5103,14 @@ int main(int argc, char *argv[]) {
 				PUTS_UNICODE(_("Perform operations from left to right, like the immediate execution mode of a traditional calculator (\"1+2*3 = (1+2)*3 = 9\")"));
 				puts("");
 			} else if(!show_set_help(str)) {
-				goto show_info;
+				size_t i = str.find_first_of(SPACES);
+				if(i != string::npos && EQUALS_IGNORECASE_AND_LOCAL(str.substr(0, i), "set", _("set"))) {
+					if(!show_set_help(str.substr(i + 1))) {
+						PUTS_UNICODE(_("Unrecognized option."));
+					}
+				} else if(!show_object_info(str)) {
+					PUTS_UNICODE(_("Unrecognized option."));
+				}
 			}
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear history", _("clear history"))) {
@@ -5155,7 +5166,7 @@ int main(int argc, char *argv[]) {
 					break;
 				}
 				ntests++;
-			} else {
+			} else if(!str.empty()) {
 				expression_str = str;
 				execute_expression();
 			}

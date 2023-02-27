@@ -349,35 +349,39 @@ long int count_unit_powers(const MathStructure &m) {
 }
 void fix_to_struct(MathStructure &m) {
 	if(m.isPower() && m[0].isUnit()) {
-		if(m[0].prefix() == NULL && m[0].unit()->referenceName() == "g") {
-			m[0].setPrefix(CALCULATOR->getOptimalDecimalPrefix(3));
-		} else if(m[0].unit() == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
+		if(m[0].unit() == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
 			Unit *u = CALCULATOR->getLocalCurrency();
 			if(u) m[0].setUnit(u);
 		}
+		if(m[0].prefix() == NULL && m[0].unit()->defaultPrefix() != 0) {
+			m[0].setPrefix(CALCULATOR->getOptimalDecimalPrefix(m[0].unit()->defaultPrefix()));
+		}
 	} else if(m.isUnit()) {
-		if(m.prefix() == NULL && m.unit()->referenceName() == "g") {
-			m.setPrefix(CALCULATOR->getOptimalDecimalPrefix(3));
-		} else if(m.unit() == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
+		if(m.unit() == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
 			Unit *u = CALCULATOR->getLocalCurrency();
 			if(u) m.setUnit(u);
+		}
+		if(m.prefix() == NULL && m.unit()->defaultPrefix() != 0) {
+			m.setPrefix(CALCULATOR->getOptimalDecimalPrefix(m.unit()->defaultPrefix()));
 		}
 	} else {
 		for(size_t i = 0; i < m.size();) {
 			if(m[i].isUnit()) {
-				if(m[i].prefix() == NULL && m[i].unit()->referenceName() == "g") {
-					m[i].setPrefix(CALCULATOR->getOptimalDecimalPrefix(3));
-				} else if(m[i].unit() == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
+				if(m[i].unit() == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
 					Unit *u = CALCULATOR->getLocalCurrency();
 					if(u) m[i].setUnit(u);
 				}
+				if(m[i].prefix() == NULL && m[i].unit()->defaultPrefix() != 0) {
+					m[i].setPrefix(CALCULATOR->getOptimalDecimalPrefix(m[i].unit()->defaultPrefix()));
+				}
 				i++;
 			} else if(m[i].isPower() && m[i][0].isUnit()) {
-				if(m[i][0].prefix() == NULL && m[i][0].unit()->referenceName() == "g") {
-					m[i][0].setPrefix(CALCULATOR->getOptimalDecimalPrefix(3));
-				} else if(m[i][0].unit() == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
+				if(m[i][0].unit() == CALCULATOR->getUnitById(UNIT_ID_EURO)) {
 					Unit *u = CALCULATOR->getLocalCurrency();
 					if(u) m[i][0].setUnit(u);
+				}
+				if(m[i][0].prefix() == NULL && m[i][0].unit()->defaultPrefix() != 0) {
+					m[i][0].setPrefix(CALCULATOR->getOptimalDecimalPrefix(m[i][0].unit()->defaultPrefix()));
 				}
 				i++;
 			} else {
@@ -531,8 +535,9 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 							}
 						}
 						for(size_t i = 1; i <= cu2->countUnits(); i++) {
-							bu = cu2->get(i, &exp)->baseUnit();
+							bu = cu2->get(i, &exp);
 							exp *= bu->baseExponent();
+							bu = bu->baseUnit();
 							if((u1_type == 0 || u1_type == 6) && exp % 3 == 0 && bu->referenceName() == "m") {
 								if(u1_type == 6) {u1_type = 0; break;}
 								u1_type = 5;
@@ -1533,7 +1538,33 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 			}
 			if(b) {
 				mstruct_new.childrenUpdated();
-				if(mstruct.isAddition()) mstruct_new.eval(eo2);
+				if(mstruct.isAddition()) {
+					mstruct_new.eval(eo2);
+				} else if(mstruct_new.isVector() && mstruct_new.size() == 3) {
+					bool b_torque = true;
+					Unit *u_joule = NULL;
+					for(size_t i = 0; i < 3 && b_torque; i++) {
+						if(mstruct_new[i].isMultiplication()) {
+							b_torque = false;
+							for(size_t i2 = 0; i2 < mstruct_new[i].size(); i2++) {
+								if(!b_torque && mstruct_new[i][i2].isUnit() && ((u_joule && mstruct_new[i][i2].unit() == u_joule) || (!u_joule && mstruct_new[i][i2].unit()->referenceName() == "J"))) {
+									b_torque = true;
+									if(!u_joule) u_joule = mstruct_new[i][i2].unit();
+								} else if(mstruct_new[i][i2].containsType(STRUCT_UNIT, true)) {
+									b_torque = false;
+									break;
+								}
+							}
+						} else if(mstruct_new[i].isUnit() && ((u_joule && mstruct_new[i].unit() == u_joule) || (!u_joule && mstruct_new[i].unit()->referenceName() == "J"))) {
+							if(!u_joule) u_joule = mstruct_new[i].unit();
+						} else {
+							b_torque = false;
+						}
+					}
+					if(b_torque && u_joule) {
+						mstruct_new = convert(mstruct_new, u_joule->baseUnit(), eo);
+					}
+				}
 			}
 			return mstruct_new;
 		}

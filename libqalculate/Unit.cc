@@ -20,6 +20,8 @@
 #include "Variable.h"
 #include "BuiltinFunctions.h"
 
+#include <limits.h>
+
 using std::string;
 using std::vector;
 using std::cout;
@@ -115,39 +117,48 @@ bool Unit::useWithPrefixesByDefault() const {
 	return b_use_with_prefixes % 2;
 }
 int Unit::maxPreferredPrefix() const {
-	int exp = (b_use_with_prefixes % 200) / 2;
+	int exp = (b_use_with_prefixes % 62) / 2;
 	if(exp == 0) return INT_MAX;
-	if(exp > 50) return -exp;
+	if(exp > 16) return -exp + 16;
 	exp--;
 	return exp;
 }
 int Unit::minPreferredPrefix() const {
-	int exp = b_use_with_prefixes / 200;
+	int exp = (b_use_with_prefixes % 1922) / 62;
 	if(exp == 0) return INT_MIN;
-	if(exp > 50) return -exp;
+	if(exp > 16) return -exp + 16;
 	exp--;
 	return exp;
 }
+int Unit::defaultPrefix() const {
+	int exp = b_use_with_prefixes / 1922;
+	if(exp > 15) return -exp + 15;
+	return exp;
+}
 void Unit::setUseWithPrefixesByDefault(bool use_with_prefixes) {
-	b_use_with_prefixes = (use_with_prefixes ? 1 : 0) + (((b_use_with_prefixes % 200) / 2) * 2) + ((b_use_with_prefixes / 200) * 200);
+	b_use_with_prefixes = (use_with_prefixes ? 1 : 0) + (b_use_with_prefixes - (b_use_with_prefixes % 2));
 }
 void Unit::setMaxPreferredPrefix(int exp) {
 	if(exp == INT_MAX) {
 		exp = 0;
 	} else {
-		if(exp < 0) exp = -exp + 50;
+		if(exp < 0) exp = -exp + 16;
 		else exp++;
 	}
-	b_use_with_prefixes = b_use_with_prefixes % 2 + (exp * 2) + ((b_use_with_prefixes / 200) * 200);
+	b_use_with_prefixes = (b_use_with_prefixes % 2) + (exp * 2) + (b_use_with_prefixes - (b_use_with_prefixes % 62));
 }
 void Unit::setMinPreferredPrefix(int exp) {
 	if(exp == INT_MIN) {
 		exp = 0;
 	} else {
-		if(exp < 0) exp = -exp + 50;
+		if(exp < 0) exp = -exp + 16;
 		else exp++;
 	}
-	b_use_with_prefixes = b_use_with_prefixes % 2 + (((b_use_with_prefixes % 200) / 2) * 2) + (exp * 200);
+	b_use_with_prefixes = (b_use_with_prefixes % 62) + (exp * 62) + (b_use_with_prefixes - (b_use_with_prefixes % 1922));
+}
+void Unit::setDefaultPrefix(int exp) {
+	if(exp < 0) exp = -exp + 15;
+	b_use_with_prefixes = b_use_with_prefixes % 1922 + (exp * 1922);
 }
 bool Unit::isCurrency() const {
 	return baseUnit() == CALCULATOR->getUnitById(UNIT_ID_EURO);

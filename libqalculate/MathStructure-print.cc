@@ -444,6 +444,12 @@ int sortCompare(const MathStructure &mstruct1, const MathStructure &mstruct2, co
 			p2 = mstruct2.unit()->useWithPrefixesByDefault() || (po.use_prefixes_for_currencies && mstruct2.unit()->isCurrency());
 			if(p1 && !p2) return -1;
 			if(p2 && !p1) return 1;
+			if(p1 && p2) {
+				if(mstruct1.unit()->maxPreferredPrefix() < mstruct2.unit()->maxPreferredPrefix()) return 1;
+				if(mstruct2.unit()->maxPreferredPrefix() < mstruct1.unit()->maxPreferredPrefix()) return -1;
+				if(mstruct1.unit()->minPreferredPrefix() > mstruct2.unit()->minPreferredPrefix()) return 1;
+				if(mstruct2.unit()->minPreferredPrefix() > mstruct1.unit()->minPreferredPrefix()) return -1;
+			}
 			// sort units in alphabetical order
 			if(name_is_less(mstruct1.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, mstruct1.isPlural(), po.use_reference_names).name, mstruct2.unit()->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, mstruct2.isPlural(), po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name)) return -1;
 			return 1;
@@ -1208,7 +1214,7 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po, MathStr
 }
 
 bool use_prefix_with_unit(Unit *u, const PrintOptions &po) {
-	if(!po.prefix && !po.use_unit_prefixes) {return u->referenceName() == "g" || u->referenceName() == "a" || u->referenceName() == "mHg";}
+	if(!po.prefix && !po.use_unit_prefixes) {return u->defaultPrefix() != 0;}
 	if(po.prefix) return true;
 	if(u->isCurrency()) return po.use_prefixes_for_currencies;
 	if(po.use_prefixes_for_all_units) return true;
@@ -1441,11 +1447,13 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 						exp10.intervalToMidValue();
 						if(exp10.isLessThanOrEqualTo(Number(1, 1, 1000)) && exp10.isGreaterThanOrEqualTo(Number(1, 1, -1000))) {
 							Unit *u = (munit->isUnit() ? munit->unit() : (*munit)[0].unit());
+							Unit *u2 = NULL;
+							if(b2) u2 = (munit2->isUnit() ? munit2->unit() : (*munit2)[0].unit());
 							bool use_binary_prefix = (CALCULATOR->usesBinaryPrefixes() > 1 || (CALCULATOR->usesBinaryPrefixes() == 1 && u->baseUnit()->referenceName() == "bit"));
 							exp10.log(use_binary_prefix ? 2 : 10);
 							exp10.intervalToMidValue();
 							exp10.floor();
-							if(b2 && exp10.isPositive() && (CALCULATOR->usesBinaryPrefixes() > 1 || (CALCULATOR->usesBinaryPrefixes() == 1 && ((munit2->isUnit() && munit2->unit()->baseUnit()->referenceName() == "bit") || (munit2->isPower() && (*munit2)[0].unit()->baseUnit()->referenceName() == "bit"))))) b2 = false;
+							if(b2 && exp10.isPositive() && (CALCULATOR->usesBinaryPrefixes() > 1 || (CALCULATOR->usesBinaryPrefixes() == 1 && u2->baseUnit()->referenceName() == "bit"))) b2 = false;
 							if(b2 && use_binary_prefix && CALCULATOR->usesBinaryPrefixes() == 1 && exp10.isNegative()) {
 								exp10.clear();
 							} else if(b2) {
@@ -1469,16 +1477,68 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 									}
 									if(!exp10.isNegative())	i4++;
 								}
+								if(exp10.isNegative()) {
+									if(u2->maxPreferredPrefix() < i4 * 3) {
+										i4 = u2->maxPreferredPrefix() / 3;
+										if(i4 < 0) i4 = 0;
+									}
+								} else {
+									if(u2->minPreferredPrefix() > -(i4 * 3)) {
+										i4 = -(u2->minPreferredPrefix() / 3);
+										if(i4 < 0) i4 = 0;
+									}
+								}
 								e2.setNegative(exp10.isNegative());
 								e2 *= i4;
 								exp10 -= e2;
+								if(exp10.isNegative() != exp.isNegative()) {
+									if(exp10 / exp < u->minPreferredPrefix()) {
+										Number exp10_bak(exp10);
+										if(u->minPreferredPrefix() > -3) exp10 = 0;
+										else exp10 = exp * ((u->minPreferredPrefix() / 3) * 3);
+										e2 /= i4;
+										i4 -= ((exp10_bak - exp10) / exp).intValue();
+										e2 *= i4;
+									}
+								} else {
+									if(exp10 / exp > u->maxPreferredPrefix()) {
+										Number exp10_bak(exp10);
+										if(u->maxPreferredPrefix() < 3) exp10 = 0;
+										else exp10 = exp * (u->maxPreferredPrefix() - u->maxPreferredPrefix() % 3);
+										e2 /= i4;
+										i4 += ((exp10_bak - exp10) / exp).intValue();
+										e2 *= i4;
+									}
+								}
 							}
 							Prefix *p = (use_binary_prefix > 0 ? (Prefix*) CALCULATOR->getOptimalBinaryPrefix(exp10, exp) : (Prefix*) CALCULATOR->getOptimalDecimalPrefix(exp10, exp, po.use_all_prefixes));
-							if(!po.use_all_prefixes && p && p->type() == PREFIX_DECIMAL) {
+							if(!po.use_all_prefixes && !po.use_prefixes_for_all_units && p && p->type() == PREFIX_DECIMAL) {
 								if(((DecimalPrefix*) p)->exponent() > u->maxPreferredPrefix()) {
-									p = CALCULATOR->getOptimalDecimalPrefix(u->maxPreferredPrefix(), 1, po.use_all_prefixes);
+									p = NULL;
+									int mexp = u->maxPreferredPrefix();
+									if(mexp < 0) {
+										if(mexp % 3 != 0) mexp = ((mexp / 3) - 1) * 3;
+										p = CALCULATOR->getExactDecimalPrefix(mexp);
+									} else if(mexp >= 3) {
+										mexp -= mexp % 3;
+										do {
+											p = CALCULATOR->getExactDecimalPrefix(mexp);
+											mexp -= 3;
+										} while(!p && mexp >= 0);
+									}
 								} else if(((DecimalPrefix*) p)->exponent() < u->minPreferredPrefix()) {
-									p = CALCULATOR->getOptimalDecimalPrefix(u->minPreferredPrefix(), 1, po.use_all_prefixes);
+									p = NULL;
+									int mexp = u->minPreferredPrefix();
+									if(mexp < 0) {
+										if(mexp % 3 != 0) mexp = (mexp / 3) * 3;
+										do {
+											p = CALCULATOR->getExactDecimalPrefix(mexp);
+											mexp += 3;
+										} while(!p && mexp <= 0);
+									} else if(mexp >= 3) {
+										if(mexp % 3 != 0) mexp += (3 - mexp % 3);
+										p = CALCULATOR->getExactDecimalPrefix(mexp);
+									}
 								}
 							}
 							if(p && p->type() == PREFIX_DECIMAL && ((DecimalPrefix*) p)->exponent() < 0 && u->referenceName() == "t") {
@@ -1495,7 +1555,10 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 								if(use_binary_prefix) test_exp -= ((BinaryPrefix*) p)->exponent(exp);
 								else test_exp -= ((DecimalPrefix*) p)->exponent(exp);
 								if(test_exp.isInteger()) {
-									if((exp10.isPositive() && exp10.compare(test_exp) == COMPARISON_RESULT_LESS) || (exp10.isNegative() && exp10.compare(test_exp) == COMPARISON_RESULT_GREATER)) {
+									if((!use_binary_prefix && !b2 && ((test_exp.isNegative() && ((DecimalPrefix*) p)->exponent() < -9) || (((DecimalPrefix*) p)->exponent() > 9 && test_exp > 3))) || ((exp10.isPositive() && exp10 <= test_exp) || (exp10.isNegative() && exp10 >= test_exp))) {
+										p = (u->defaultPrefix() != 0) ? CALCULATOR->getExactDecimalPrefix(u->defaultPrefix()) : NULL;
+									}
+									if(p) {
 										CHILD(0).number() /= p->value(exp);
 										if(munit->isUnit()) munit->setPrefix(p);
 										else (*munit)[0].setPrefix(p);
@@ -1505,12 +1568,10 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 						}
 					} else if(!po.use_unit_prefixes) {
 						Prefix *p = NULL;
-						if((munit->isUnit() && munit->unit()->referenceName() == "g") || (munit->isPower() && (*munit)[0].unit()->referenceName() == "g")) {
-							p = CALCULATOR->getExactDecimalPrefix(3);
-						} else if((munit->isUnit() && munit->unit()->referenceName() == "a") || (munit->isPower() && (*munit)[0].unit()->referenceName() == "a")) {
-							p = CALCULATOR->getExactDecimalPrefix(2);
-						} else if((munit->isUnit() && munit->unit()->referenceName() == "mHg") || (munit->isPower() && (*munit)[0].unit()->referenceName() == "mHg")) {
-							p = CALCULATOR->getExactDecimalPrefix(-3);
+						if(munit->isUnit() && munit->unit()->defaultPrefix() != 0) {
+							p = CALCULATOR->getExactDecimalPrefix(munit->unit()->defaultPrefix());
+						} else if(munit->isPower() && (*munit)[0].isUnit() && (*munit)[0].unit()->defaultPrefix() != 0) {
+							p = CALCULATOR->getExactDecimalPrefix((*munit)[0].unit()->defaultPrefix());
 						}
 						if(p) {
 							if(munit->isUnit()) munit->setPrefix(p);
@@ -1534,11 +1595,33 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 							exp10.intervalToMidValue();
 							exp10.floor();
 							Prefix *p = (use_binary_prefix > 0 ? (Prefix*) CALCULATOR->getOptimalBinaryPrefix(exp10, exp2) : (Prefix*) CALCULATOR->getOptimalDecimalPrefix(exp10, exp2, po.use_all_prefixes));
-							if(!po.use_all_prefixes && p && p->type() == PREFIX_DECIMAL) {
+							if(!po.use_all_prefixes && !po.use_prefixes_for_all_units && p && p->type() == PREFIX_DECIMAL) {
 								if(((DecimalPrefix*) p)->exponent() > u->maxPreferredPrefix()) {
-									p = CALCULATOR->getOptimalDecimalPrefix(u->maxPreferredPrefix(), 1, po.use_all_prefixes);
+									p = NULL;
+									int mexp = u->maxPreferredPrefix();
+									if(mexp < 0) {
+										if(mexp % 3 != 0) mexp = ((mexp / 3) - 1) * 3;
+										p = CALCULATOR->getExactDecimalPrefix(mexp);
+									} else if(mexp >= 3) {
+										mexp -= mexp % 3;
+										do {
+											p = CALCULATOR->getExactDecimalPrefix(mexp);
+											mexp -= 3;
+										} while(!p && mexp >= 0);
+									}
 								} else if(((DecimalPrefix*) p)->exponent() < u->minPreferredPrefix()) {
-									p = CALCULATOR->getOptimalDecimalPrefix(u->minPreferredPrefix(), 1, po.use_all_prefixes);
+									p = NULL;
+									int mexp = u->minPreferredPrefix();
+									if(mexp < 0) {
+										if(mexp % 3 != 0) mexp = (mexp / 3) * 3;
+										do {
+											p = CALCULATOR->getExactDecimalPrefix(mexp);
+											mexp += 3;
+										} while(!p && mexp <= 0);
+									} else if(mexp >= 3) {
+										if(mexp % 3 != 0) mexp += (3 - mexp % 3);
+										p = CALCULATOR->getExactDecimalPrefix(mexp);
+									}
 								}
 							}
 							if(p && p->type() == PREFIX_DECIMAL && ((DecimalPrefix*) p)->exponent() < 0 && u->referenceName() == "t") {
@@ -1555,7 +1638,42 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 								if(use_binary_prefix) test_exp -= ((BinaryPrefix*) p)->exponent(exp2);
 								else test_exp -= ((DecimalPrefix*) p)->exponent(exp2);
 								if(test_exp.isInteger()) {
-									if((exp10.isPositive() && exp10.compare(test_exp) == COMPARISON_RESULT_LESS) || (exp10.isNegative() && exp10.compare(test_exp) == COMPARISON_RESULT_GREATER)) {
+									bool b_error = (exp10.isPositive() && exp10 <= test_exp) || (exp10.isNegative() && exp10 >= test_exp);
+									if(b_error || (!use_binary_prefix && (test_exp.isNegative() || test_exp > 3))) {
+										if(b_error || ((DecimalPrefix*) p)->exponent() > 9 || ((DecimalPrefix*) p)->exponent() < -9) {
+											p = (u->defaultPrefix() != 0) ? CALCULATOR->getExactDecimalPrefix(u->defaultPrefix()) : NULL;
+										}
+										Unit *u1 = NULL;
+										Prefix *p1 = NULL;
+										if(munit->isUnit()) {
+											u1 = munit->unit();
+											p1 = munit->prefix();
+										} else if(munit->isPower() && (*munit)[0].isUnit()) {
+											u1 = (*munit)[0].unit();
+											p1 = (*munit)[0].prefix();
+										}
+										if(b_error || (p1 && p1->type() == PREFIX_DECIMAL && (((DecimalPrefix*) p1)->exponent() > 9 || ((DecimalPrefix*) p1)->exponent() < -9))) {
+											if(u1) {
+												if(p1 && p1->type() == PREFIX_DECIMAL) {
+													if(((DecimalPrefix*) p1)->exponent() != u1->defaultPrefix()) {
+														CHILD(0).number() *= p1->value(exp);
+														if(munit->isUnit()) munit->setPrefix(NULL);
+														else (*munit)[0].setPrefix(NULL);
+														p1 = NULL;
+													}
+												}
+											}
+										}
+										if(u1 && !p1 && u1->defaultPrefix() != 0) {
+											p1 = CALCULATOR->getExactDecimalPrefix(u1->defaultPrefix());
+											if(p1) {
+												CHILD(0).number() /= p1->value(exp);
+												if(munit->isUnit()) munit->setPrefix(p1);
+												else (*munit)[0].setPrefix(p1);
+											}
+										}
+									}
+									if(p) {
 										CHILD(0).number() /= p->value(exp2);
 										if(munit2->isUnit()) munit2->setPrefix(p);
 										else (*munit2)[0].setPrefix(p);
@@ -3335,14 +3453,32 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			if(format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0) {
 				string exp;
 				bool exp_minus = false;
-				if(!po.lower_case_e) {
+				bool base10 = (po.base == BASE_DECIMAL);
+				bool base_without_exp = (po.base != BASE_DECIMAL && po.base_display == BASE_DISPLAY_SUFFIX && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME && ((po.base < BASE_CUSTOM && po.base != BASE_BIJECTIVE_26) || (po.base == BASE_CUSTOM && (!CALCULATOR->customOutputBase().isInteger() || CALCULATOR->customOutputBase() > 62 || CALCULATOR->customOutputBase() < 2))));
+				if(!po.lower_case_e || (base_without_exp && po.base_display == BASE_DISPLAY_SUFFIX) || (po.base != BASE_DECIMAL && po.base >= 2 && po.base <= 36)) {
 					ips_n.exp = &exp;
 					ips_n.exp_minus = &exp_minus;
+					if(po.lower_case_e && base_without_exp) {
+						o_number.print(po, ips_n);
+						base10 = !exp.empty();
+						exp = "";
+						exp_minus = false;
+						ips_n.exp = NULL;
+						ips_n.exp_minus = NULL;
+					}
+				} else {
+					ips_n.exp = NULL;
+					ips_n.exp_minus = NULL;
 				}
+
 				print_str += o_number.print(po, ips_n);
+
+				if(!exp.empty() && (base_without_exp || (po.base != BASE_CUSTOM && (po.base < 2 || po.base > 36)) || (po.base == BASE_CUSTOM && (!CALCULATOR->customOutputBase().isInteger() || CALCULATOR->customOutputBase() > 62 || CALCULATOR->customOutputBase() < 2)))) base10 = true;
+
 				i_number_end = print_str.length();
-				if(po.base != BASE_DECIMAL && po.base_display == BASE_DISPLAY_SUFFIX && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME) {
+				if(po.base != BASE_DECIMAL && po.base_display == BASE_DISPLAY_SUFFIX && (base10 || (!BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME))) {
 					int base = po.base;
+					if(base10) base = 10;
 					if(base <= BASE_FP16 && base >= BASE_FP80) base = BASE_BINARY;
 					bool twos = (((po.base == BASE_BINARY && po.twos_complement) || (po.base == BASE_HEXADECIMAL && po.hexadecimal_twos_complement)) && o_number.isNegative() && print_str.find(SIGN_MINUS) == string::npos && print_str.find("-") == string::npos);
 					if((twos || po.base_display != BASE_DISPLAY_ALTERNATIVE || (base != BASE_HEXADECIMAL && base != BASE_BINARY && base != BASE_OCTAL)) && (base > 0 || base <= BASE_CUSTOM) && base <= 36) {
@@ -3367,14 +3503,30 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				}
 				if(!exp.empty()) {
 					gsub(" ", "&nbsp;", exp);
-					if(po.spacious) print_str += " ";
-					if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) print_str += SIGN_MULTIDOT;
-					else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) print_str += SIGN_MIDDLEDOT;
-					else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) print_str += SIGN_MULTIPLICATION;
-					else print_str += "*";
-					if(po.spacious) print_str += " ";
-					if(po.base == BASE_DECIMAL) print_str += "10";
-					else if(po.base >= 2 && po.base <= 36) print_str += i2s(po.base);
+					if(print_str.length() - i_number == 1 && print_str[i_number] == '1') {
+						print_str.erase(i_number, 1);
+					} else {
+						if(po.spacious) print_str += " ";
+						if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) print_str += SIGN_MULTIDOT;
+						else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) print_str += SIGN_MIDDLEDOT;
+						else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) print_str += SIGN_MULTIPLICATION;
+						else print_str += "*";
+						if(po.spacious) print_str += " ";
+					}
+					if(base10) {
+						print_str += "10";
+					} else {
+						MathStructure nrbase;
+						if(po.base == BASE_CUSTOM) nrbase = CALCULATOR->customOutputBase();
+						else nrbase = po.base;
+						PrintOptions po2 = po;
+						po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
+						po2.min_exp = EXP_NONE;
+						po2.twos_complement = false;
+						po2.hexadecimal_twos_complement = false;
+						po2.binary_bits = 0;
+						print_str += nrbase.print(po2, true, false, TAG_TYPE_HTML);
+					}
 					print_str += "<sup>";
 					if(exp_minus) {
 						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) print_str += SIGN_MINUS;

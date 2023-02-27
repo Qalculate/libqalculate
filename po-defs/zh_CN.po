@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-04 07:09+0100\n"
+"POT-Creation-Date: 2023-02-20 09:43+0100\n"
 "PO-Revision-Date: 2021-08-23 09:54+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
@@ -38,9 +38,9 @@ msgid ""
 "Germany, Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, "
 "Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City"
 msgstr ""
-"安道尔、奥地利、比利时、克罗地亚、塞浦路斯、爱沙尼亚、芬兰、法国、德国、希腊、爱尔兰、"
-"意大利、拉脱维亚、立陶宛、卢森堡、马耳他、荷兰、葡萄牙、圣马力诺、斯洛伐克、"
-"斯洛文尼亚、西班牙、梵蒂冈城。"
+"安道尔、奥地利、比利时、克罗地亚、塞浦路斯、爱沙尼亚、芬兰、法国、德国、希"
+"腊、爱尔兰、意大利、拉脱维亚、立陶宛、卢森堡、马耳他、荷兰、葡萄牙、圣马力"
+"诺、斯洛伐克、斯洛文尼亚、西班牙、梵蒂冈城。"
 
 #: ../data/currencies.xml.in.h:5
 msgid "U.S. Dollar"
@@ -2752,11 +2752,13 @@ msgid "r:genvector"
 msgstr "-"
 
 #: ../data/functions.xml.in.h:9
+#, fuzzy
 msgid ""
 "Returns a vector generated from a function with a variable (default x) "
-"running from min to max. The fourth argument is either the requested number "
-"of elements if the sixth argument is false (default) or the step between "
-"each value of the variable."
+"running from min to max. The 4th argument is either the step between each "
+"value of the variable, if the 6th argument is 1 or if the value is 1 "
+"(default), negative, or not an integer and the 6th argument is -1 (default), "
+"or the number of elements."
 msgstr ""
 "根据给定的自变量(默认为x)和数据范围，用给定函数计算生成一个向量并返回。如果第"
 "六个参数为假(默认值)，则第四个参数表示生成的元素个数，否则表示变量的迭代步"
@@ -3178,7 +3180,7 @@ msgid "Matrix Rank"
 msgstr "求矩阵秩"
 
 #: ../data/functions.xml.in.h:111
-msgid "r:rk"
+msgid "ra:rk"
 msgstr "-"
 
 #: ../data/functions.xml.in.h:112
@@ -7839,7 +7841,7 @@ msgid "Present Value"
 msgstr "现值"
 
 #: ../data/functions.xml.in.h:1171
-msgid "r:pv"
+msgid "ra:pv"
 msgstr "-"
 
 #: ../data/functions.xml.in.h:1172
@@ -8113,7 +8115,7 @@ msgid "Future Value"
 msgstr "未来值"
 
 #: ../data/functions.xml.in.h:1230
-msgid "r:fv"
+msgid "ra:fv,a:FV"
 msgstr "-"
 
 #: ../data/functions.xml.in.h:1231
@@ -9218,7 +9220,7 @@ msgid "Ampere"
 msgstr "安培"
 
 #: ../data/units.xml.in.h:168
-msgid "ar:A,ampere,p:amperes"
+msgid "ar:A,ampere,p:amperes,a-c:amp"
 msgstr "ar:A,安,ampere"
 
 #: ../data/units.xml.in.h:169
@@ -9226,8 +9228,8 @@ msgid "Abampere"
 msgstr "绝对安培"
 
 #: ../data/units.xml.in.h:170
-msgid "r:abampere,a:abA,a:aA,p:abamperes,a:Bi,biot"
-msgstr "绝对安培,abampere,a:abA,a:aA,a:Bi,biot"
+msgid "r:abampere,a:abA,p:abamperes,a:Bi,biot"
+msgstr "绝对安培,abampere,a:abA,a:Bi,biot"
 
 #: ../data/units.xml.in.h:171
 msgid "Current Density"
@@ -12011,6 +12013,15 @@ msgstr "现在"
 #: ../data/variables.xml.in.h:229
 msgid "r:now"
 msgstr "现在"
+
+#~ msgid "r:rk"
+#~ msgstr "-"
+
+#~ msgid "r:pv"
+#~ msgstr "-"
+
+#~ msgid "r:fv"
+#~ msgstr "-"
 
 #~ msgid "Croatian Kuna"
 #~ msgstr "克罗地亚库纳"

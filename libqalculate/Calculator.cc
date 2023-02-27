@@ -142,6 +142,19 @@ extern gmp_randstate_t randstate;
 Calculator::Calculator() {
 	b_ignore_locale = false;
 
+#ifdef _WIN32
+	size_t n = 0;
+	getenv_s(&n, NULL, 0, "LANG");
+	if(n == 0) {
+		string lang;
+		WCHAR wlocale[LOCALE_NAME_MAX_LENGTH];
+		if(LCIDToLocaleName(LOCALE_CUSTOM_UI_DEFAULT, wlocale, LOCALE_NAME_MAX_LENGTH, 0) != 0) lang = utf8_encode(wlocale);
+		gsub("-", "_", lang);
+		if(lang.length() > 5) lang = lang.substr(0, 5);
+		if(!lang.empty()) _putenv_s("LANG", lang.c_str());
+	}
+#endif
+
 #ifdef ENABLE_NLS
 	bindtextdomain(GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
@@ -381,6 +394,18 @@ Calculator::Calculator(bool ignore_locale) {
 			saved_locale = NULL;
 		}
 	} else {
+#ifdef _WIN32
+		size_t n = 0;
+		getenv_s(&n, NULL, 0, "LANG");
+		if(n == 0) {
+			string lang;
+			WCHAR wlocale[LOCALE_NAME_MAX_LENGTH];
+			if(LCIDToLocaleName(LOCALE_CUSTOM_UI_DEFAULT, wlocale, LOCALE_NAME_MAX_LENGTH, 0) != 0) lang = utf8_encode(wlocale);
+			gsub("-", "_", lang);
+			if(lang.length() > 5) lang = lang.substr(0, 5);
+			if(!lang.empty()) _putenv_s("LANG", lang.c_str());
+		}
+#endif
 #ifdef ENABLE_NLS
 		bindtextdomain(GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
 		bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
@@ -1072,8 +1097,8 @@ DecimalPrefix *Calculator::getOptimalDecimalPrefix(int exp10, int exp, bool all_
 	DecimalPrefix *p = NULL, *p_prev = NULL;
 	int exp10_1, exp10_2;
 	while((exp < 0 && i >= 0) || (exp >= 0 && i < (int) decimal_prefixes.size())) {
-		if(all_prefixes || decimal_prefixes[i]->exponent() % 3 == 0) {
-			p = decimal_prefixes[i];
+		p = decimal_prefixes[i];
+		if(all_prefixes || (p->exponent() % 3 == 0 && p->exponent() >= -24 && p->exponent() <= 24)) {
 			if(p_prev && (p_prev->exponent() >= 0) != (p->exponent() >= 0) && p_prev->exponent() != 0) {
 				if(exp < 0) {
 					i++;
@@ -1086,7 +1111,7 @@ DecimalPrefix *Calculator::getOptimalDecimalPrefix(int exp10, int exp, bool all_
 				if(p == decimal_null_prefix) return NULL;
 				return p;
 			} else if(p->exponent(exp) > exp10) {
-				if(i == 0) {
+				if((exp < 0 && (i == (int) decimal_prefixes.size() - 1 || (!all_prefixes && p->exponent() == 24))) || (exp >= 0 && (i == 0 || (!all_prefixes && p->exponent() == -24)))) {
 					if(p == decimal_null_prefix) return NULL;
 					return p;
 				}
@@ -1125,8 +1150,8 @@ DecimalPrefix *Calculator::getOptimalDecimalPrefix(const Number &exp10, const Nu
 	DecimalPrefix *p = NULL, *p_prev = NULL;
 	Number exp10_1, exp10_2;
 	while((exp.isNegative() && i >= 0) || (!exp.isNegative() && i < (int) decimal_prefixes.size())) {
-		if(all_prefixes || decimal_prefixes[i]->exponent() % 3 == 0) {
-			p = decimal_prefixes[i];
+		p = decimal_prefixes[i];
+		if(all_prefixes || (p->exponent() % 3 == 0 && p->exponent() >= -24 && p->exponent() <= 24)) {
 			if(p_prev && (p_prev->exponent() >= 0) != (p->exponent() >= 0) && p_prev->exponent() != 0) {
 				if(exp.isNegative()) {
 					i++;
@@ -1140,7 +1165,7 @@ DecimalPrefix *Calculator::getOptimalDecimalPrefix(const Number &exp10, const Nu
 				if(p == decimal_null_prefix) return NULL;
 				return p;
 			} else if(c == COMPARISON_RESULT_GREATER) {
-				if(i == 0) {
+				if((exp.isNegative() && (i == (int) decimal_prefixes.size() - 1 || (!all_prefixes && p->exponent() == 24))) || (!exp.isNegative() && (i == 0 || (!all_prefixes && p->exponent() == -24)))) {
 					if(p == decimal_null_prefix) return NULL;
 					return p;
 				}
@@ -1230,6 +1255,10 @@ BinaryPrefix *Calculator::getOptimalBinaryPrefix(int exp2, int exp) const {
 			if(p == binary_null_prefix) return NULL;
 			return p;
 		} else if(p->exponent(exp) > exp2) {
+			if((exp >= 0 && i == 0) || (exp < 0 && i == (int) binary_prefixes.size())) {
+				if(p == binary_null_prefix) return NULL;
+				return p;
+			}
 			exp2_1 = exp2;
 			if(p_prev) {
 				exp2_1 -= p_prev->exponent(exp);
@@ -1270,6 +1299,10 @@ BinaryPrefix *Calculator::getOptimalBinaryPrefix(const Number &exp2, const Numbe
 			if(p == binary_null_prefix) return NULL;
 			return p;
 		} else if(c == COMPARISON_RESULT_GREATER) {
+			if((exp.isNegative() && i == (int) binary_prefixes.size() - 1) || (!exp.isNegative() && i == 0)) {
+				if(p == binary_null_prefix) return NULL;
+				return p;
+			}
 			exp2_1 = exp2;
 			if(p_prev) {
 				exp2_1 -= p_prev->exponent(exp);
@@ -1295,9 +1328,21 @@ BinaryPrefix *Calculator::getOptimalBinaryPrefix(const Number &exp2, const Numbe
 }
 Prefix *Calculator::addPrefix(Prefix *p) {
 	if(p->type() == PREFIX_DECIMAL) {
-		decimal_prefixes.push_back((DecimalPrefix*) p);
+		if(decimal_prefixes.empty() || ((DecimalPrefix*) p)->exponent() > decimal_prefixes[decimal_prefixes.size() - 1]->exponent()) {
+			decimal_prefixes.push_back((DecimalPrefix*) p);
+		} else {
+			size_t i = decimal_prefixes.size() - 1;
+			while(i > 0 && ((DecimalPrefix*) p)->exponent() < decimal_prefixes[i - 1]->exponent()) i--;
+			decimal_prefixes.insert(decimal_prefixes.begin() + i, (DecimalPrefix*) p);
+		}
 	} else if(p->type() == PREFIX_BINARY) {
-		binary_prefixes.push_back((BinaryPrefix*) p);
+		if(binary_prefixes.empty() || ((BinaryPrefix*) p)->exponent() > binary_prefixes[binary_prefixes.size() - 1]->exponent()) {
+			binary_prefixes.push_back((BinaryPrefix*) p);
+		} else {
+			size_t i = binary_prefixes.size() - 1;
+			while(i > 0 && ((BinaryPrefix*) p)->exponent() < binary_prefixes[i - 1]->exponent()) i--;
+			binary_prefixes.insert(binary_prefixes.begin() + i, (BinaryPrefix*) p);
+		}
 	}
 	prefixes.push_back(p);
 	prefixNameChanged(p, true);

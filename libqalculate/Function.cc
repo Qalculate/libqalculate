@@ -1594,7 +1594,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 				return;
 			}
 			if((str[pars] == '\"' && str[str.length() - 1 - pars] == '\"') || (str[pars] == '\'' && str[str.length() - 1 - pars] == '\'')) {
-				size_t i = pars + 1, cits = 0;
+				size_t i = pars + 1;
 				while(i < str.length() - 1 - pars) {
 					i = str.find(str[pars], i);
 					if(i >= str.length() - 1 - pars) {

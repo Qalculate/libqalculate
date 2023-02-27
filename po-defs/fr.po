@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-04 07:07+0100\n"
+"POT-Creation-Date: 2023-02-20 09:45+0100\n"
 "PO-Revision-Date: 2020-12-02 13:25+0100\n"
 "Last-Translator: Polakrity\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -30,15 +30,15 @@ msgid "a-cr:EUR,au:&#x20AC;,euro,p:euros"
 msgstr "a-cr:EUR,au:&#x20AC;,euro,p:euros"
 
 #: ../data/currencies.xml.in.h:4
-#, fuzzy
 msgid ""
 "Andorra, Austria, Belgium, Croatia, Cyprus, Estonia, Finland, France, "
 "Germany, Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, "
 "Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City"
 msgstr ""
-"Allemagne, Andorre, Autriche, Belgique, Chypre, Cité du Vatican, Croatie, Espagne, "
-"Estonie, Finlande, France, Grèce, Irlande, Italie, Lettonie, Lituanie, "
-"Luxembourg, Malte, Pays-Bas, Portugal, Saint-Marin, Slovaquie, Slovénie"
+"Allemagne, Andorre, Autriche, Belgique, Chypre, Cité du Vatican, Croatie, "
+"Espagne, Estonie, Finlande, France, Grèce, Irlande, Italie, Lettonie, "
+"Lituanie, Luxembourg, Malte, Pays-Bas, Portugal, Saint-Marin, Slovaquie, "
+"Slovénie"
 
 #: ../data/currencies.xml.in.h:5
 msgid "U.S. Dollar"
@@ -2757,11 +2757,13 @@ msgid "r:genvector"
 msgstr "r:genvector"
 
 #: ../data/functions.xml.in.h:9
+#, fuzzy
 msgid ""
 "Returns a vector generated from a function with a variable (default x) "
-"running from min to max. The fourth argument is either the requested number "
-"of elements if the sixth argument is false (default) or the step between "
-"each value of the variable."
+"running from min to max. The 4th argument is either the step between each "
+"value of the variable, if the 6th argument is 1 or if the value is 1 "
+"(default), negative, or not an integer and the 6th argument is -1 (default), "
+"or the number of elements."
 msgstr ""
 "Retourne un vecteur généré par une fonction avec une variable (par défaut : "
 "x) parcourant des valeurs entre min et max. Le quatrième argument est soit "
@@ -3197,8 +3199,8 @@ msgid "Matrix Rank"
 msgstr "Rang de la matrice"
 
 #: ../data/functions.xml.in.h:111
-msgid "r:rk"
-msgstr "r:rk"
+msgid "ra:rk"
+msgstr ""
 
 #: ../data/functions.xml.in.h:112
 msgid "Reduced Row Echelon Form"
@@ -7837,8 +7839,8 @@ msgid "Present Value"
 msgstr "Valeur actuelle"
 
 #: ../data/functions.xml.in.h:1171
-msgid "r:pv"
-msgstr "r:pv"
+msgid "ra:pv"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1172
 msgid ""
@@ -8121,8 +8123,8 @@ msgid "Future Value"
 msgstr "Valeur Future"
 
 #: ../data/functions.xml.in.h:1230
-msgid "r:fv"
-msgstr "r:fv"
+msgid "ra:fv,a:FV"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1231
 msgid ""
@@ -9245,16 +9247,17 @@ msgid "Ampere"
 msgstr "Ampère"
 
 #: ../data/units.xml.in.h:168
-msgid "ar:A,ampere,p:amperes"
-msgstr "ar:A,ampère,p:ampères"
+msgid "ar:A,ampere,p:amperes,a-c:amp"
+msgstr "ar:A,ampère,p:ampères,a-c:amp"
 
 #: ../data/units.xml.in.h:169
 msgid "Abampere"
 msgstr "Abampère"
 
 #: ../data/units.xml.in.h:170
-msgid "r:abampere,a:abA,a:aA,p:abamperes,a:Bi,biot"
-msgstr ""
+#, fuzzy
+msgid "r:abampere,a:abA,p:abamperes,a:Bi,biot"
+msgstr "ar:A,ampère,p:ampères,a-c:amp"
 
 #: ../data/units.xml.in.h:171
 msgid "Current Density"
@@ -12039,6 +12042,15 @@ msgstr "Actuellement (date et heure)"
 #: ../data/variables.xml.in.h:229
 msgid "r:now"
 msgstr "r:actuel"
+
+#~ msgid "r:rk"
+#~ msgstr "r:rk"
+
+#~ msgid "r:pv"
+#~ msgstr "r:pv"
+
+#~ msgid "r:fv"
+#~ msgstr "r:fv"
 
 #~ msgid "Croatian Kuna"
 #~ msgstr "Kuna croate"

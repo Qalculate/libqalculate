@@ -737,8 +737,17 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 
 	string locale;
 #ifdef _WIN32
-	WCHAR wlocale[LOCALE_NAME_MAX_LENGTH];
-	if(LCIDToLocaleName(LOCALE_CUSTOM_UI_DEFAULT, wlocale, LOCALE_NAME_MAX_LENGTH, 0) != 0) locale = utf8_encode(wlocale);
+	size_t n = 0;
+	getenv_s(&n, NULL, 0, "LANG");
+	if(n > 0) {
+		char *c_lang = (char*) malloc(n * sizeof(char));
+		getenv_s(&n, c_lang, n, "LANG");
+		locale = c_lang;
+		free(c_lang);
+	} else {
+		WCHAR wlocale[LOCALE_NAME_MAX_LENGTH];
+		if(LCIDToLocaleName(LOCALE_CUSTOM_UI_DEFAULT, wlocale, LOCALE_NAME_MAX_LENGTH, 0) != 0) locale = utf8_encode(wlocale);
+	}
 	gsub("-", "_", locale);
 #else
 	char *clocale = setlocale(LC_MESSAGES, NULL);
@@ -775,7 +784,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 	int exponent = 1, litmp = 0, mix_priority = 0, mix_min = 0;
 	bool active = false, b = false, require_translation = false, use_with_prefixes = false, use_with_prefixes_set = false;
 	bool b_currency = false;
-	int max_prefix = INT_MAX, min_prefix = INT_MIN;
+	int max_prefix = INT_MAX, min_prefix = INT_MIN, default_prefix = 0;
 	int hidden = -1;
 	Number nr;
 	ExpressionItem *item;
@@ -1682,7 +1691,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					plural = ""; best_plural = false; next_best_plural = false;
 					countries = "", best_countries = false, next_best_countries = false;
 					use_with_prefixes_set = false;
-					max_prefix = INT_MAX, min_prefix = INT_MIN;
+					max_prefix = INT_MAX, min_prefix = INT_MIN, default_prefix = 0;
 					ITEM_INIT_DTH
 					ITEM_INIT_NAME
 					while(child != NULL) {
@@ -1692,6 +1701,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 							XML_GET_TRUE_FROM_TEXT(child, use_with_prefixes)
 							XML_GET_INT_FROM_PROP(child, "max", max_prefix)
 							XML_GET_INT_FROM_PROP(child, "min", min_prefix)
+							XML_GET_INT_FROM_PROP(child, "default", default_prefix)
 							use_with_prefixes_set = true;
 						} else if(old_names && !xmlStrcmp(child->name, (const xmlChar*) "singular")) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, singular, best_singular, next_best_singular)
@@ -1728,6 +1738,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 						u->setUseWithPrefixesByDefault(use_with_prefixes);
 						u->setMaxPreferredPrefix(max_prefix);
 						u->setMinPreferredPrefix(min_prefix);
+						u->setDefaultPrefix(default_prefix);
 					}
 					if(check_duplicates && !is_user_defs) {
 						for(size_t i = 1; i <= u->countNames();) {
@@ -1759,7 +1770,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					countries = "", best_countries = false, next_best_countries = false;
 					b_currency = false;
 					use_with_prefixes_set = false;
-					max_prefix = INT_MAX, min_prefix = INT_MIN;
+					max_prefix = INT_MAX, min_prefix = INT_MIN, default_prefix = 0;
 					usystem = "";
 					prec = -1;
 					ITEM_INIT_DTH
@@ -1817,6 +1828,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 							XML_GET_TRUE_FROM_TEXT(child, use_with_prefixes)
 							XML_GET_INT_FROM_PROP(child, "max", max_prefix)
 							XML_GET_INT_FROM_PROP(child, "min", min_prefix)
+							XML_GET_INT_FROM_PROP(child, "default", default_prefix)
 							use_with_prefixes_set = true;
 						} else if(old_names && !xmlStrcmp(child->name, (const xmlChar*) "singular")) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, singular, best_singular, next_best_singular)
@@ -1860,6 +1872,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 							au->setUseWithPrefixesByDefault(use_with_prefixes);
 							au->setMaxPreferredPrefix(max_prefix);
 							au->setMinPreferredPrefix(min_prefix);
+							au->setDefaultPrefix(default_prefix);
 						}
 						item = au;
 						if(new_names) {
@@ -1909,7 +1922,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					child = cur->xmlChildrenNode;
 					usystem = "";
 					use_with_prefixes_set = false;
-					max_prefix = INT_MAX, min_prefix = INT_MIN;
+					max_prefix = INT_MAX, min_prefix = INT_MIN, default_prefix = 0;
 					cu = NULL;
 					ITEM_INIT_DTH
 					ITEM_INIT_NAME
@@ -1988,6 +2001,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 							XML_GET_TRUE_FROM_TEXT(child, use_with_prefixes)
 							XML_GET_INT_FROM_PROP(child, "max", max_prefix)
 							XML_GET_INT_FROM_PROP(child, "min", min_prefix)
+							XML_GET_INT_FROM_PROP(child, "default", default_prefix)
 							use_with_prefixes_set = true;
 						} else ITEM_READ_NAME(unitNameIsValid)
 						 else ITEM_READ_DTH
@@ -2004,6 +2018,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 							cu->setUseWithPrefixesByDefault(use_with_prefixes);
 							cu->setMaxPreferredPrefix(max_prefix);
 							cu->setMinPreferredPrefix(min_prefix);
+							cu->setDefaultPrefix(default_prefix);
 						}
 						if(new_names) {
 							ITEM_SET_BEST_NAMES(unitNameIsValid)
@@ -2648,10 +2663,11 @@ void Calculator::saveUnits(void *xmldoc, bool save_global, bool save_only_temp) 
 				if(!u->system().empty()) {
 					xmlNewTextChild(newnode, NULL, (xmlChar*) "system", (xmlChar*) u->system().c_str());
 				}
-				if((u->isSIUnit() && (!u->useWithPrefixesByDefault() || u->maxPreferredPrefix() != INT_MAX || u->minPreferredPrefix() != INT_MIN)) || (u->useWithPrefixesByDefault() && !u->isSIUnit())) {
+				if((u->isSIUnit() && (!u->useWithPrefixesByDefault() || u->maxPreferredPrefix() != INT_MAX || u->minPreferredPrefix() != INT_MIN)) || (u->useWithPrefixesByDefault() && !u->isSIUnit()) || u->defaultPrefix() != 0) {
 					newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "use_with_prefixes", u->useWithPrefixesByDefault() ? (xmlChar*) "true" : (xmlChar*) "false");
 					if(u->minPreferredPrefix() != INT_MIN) xmlNewProp(newnode2, (xmlChar*) "min", (xmlChar*) i2s(u->minPreferredPrefix()).c_str());
 					if(u->maxPreferredPrefix() != INT_MAX) xmlNewProp(newnode2, (xmlChar*) "max", (xmlChar*) i2s(u->maxPreferredPrefix()).c_str());
+					if(u->defaultPrefix() != 0) xmlNewProp(newnode2, (xmlChar*) "default", (xmlChar*) i2s(u->defaultPrefix()).c_str());
 				}
 				if(!u->title(false).empty()) {
 					if(save_global) {

@@ -224,9 +224,9 @@
       </base>
     </unit>
     <unit type="alias">
-      <_title>Mil (1/1000 in)</_title>
+      <_title>Thou (1/1000 in)</_title>
       <system>Imperial/US</system>
-      <_names>r:mil,p:mils</_names>
+      <_names>r:thou,mil,p:mils</_names>
       <base>
         <unit>in</unit>
         <relation>0.001</relation>
@@ -263,7 +263,7 @@
     </unit>
     <unit type="alias">
       <_title>Pied du roi (French Royal Foot)</_title>
-      <_names>r:pied_du_roi</_names>
+      <_names>r:pied_du_roi,p:pieds_du_roi</_names>
       <base>
         <unit>m</unit>
         <relation>9000/27706</relation>
@@ -272,7 +272,7 @@
     </unit>
     <unit type="alias">
       <_title>Pouce (French Royal Inch)</_title>
-      <_names>r:pouce</_names>
+      <_names>r:pouce,p:pouces</_names>
       <base>
         <unit>pied_du_roi</unit>
         <relation>1/12</relation>
@@ -281,7 +281,7 @@
     </unit>
     <unit type="alias">
       <_title>Ligne</_title>
-      <_names>r:ligne</_names>
+      <_names>r:ligne,p:lignes</_names>
       <base>
         <unit>pouce</unit>
         <relation>1/12</relation>
@@ -290,7 +290,7 @@
     </unit>
     <unit type="alias">
       <_title>Toise</_title>
-      <_names>r:toise</_names>
+      <_names>r:toise,p:toises</_names>
       <base>
         <unit>pied_du_roi</unit>
         <relation>6</relation>
@@ -504,7 +504,7 @@
       <system>SI</system>
       <_title>Gram</_title>
       <_names>ar:g,gram,p:grams</_names>
-      <use_with_prefixes max="3">true</use_with_prefixes>
+      <use_with_prefixes max="3" default="3">true</use_with_prefixes>
     </unit>
     <unit type="composite">
       <system>SI</system>
@@ -837,6 +837,7 @@
       <system>SI</system>
       <_title>Second</_title>
       <_names>ar:s,second,p:seconds</_names>
+      <use_with_prefixes max="0">true</use_with_prefixes>
     </unit>
     <unit type="alias">
       <_title>Minute</_title>
@@ -987,12 +988,12 @@
       <unit type="base">
         <system>SI</system>
         <_title>Ampere</_title>
-        <_names>ar:A,ampere,p:amperes</_names>
+        <_names>ar:A,ampere,p:amperes,a-c:amp</_names>
       </unit>
       <unit type="alias">
         <system>CGS</system>
         <_title>Abampere</_title>
-        <_names>r:abampere,a:abA,a:aA,p:abamperes,a:Bi,biot</_names>
+        <_names>r:abampere,a:abA,p:abamperes,a:Bi,biot</_names>
         <base>
           <unit>A</unit>
           <relation>10</relation>
@@ -1799,7 +1800,7 @@
         <relation>100</relation>
         <exponent>2</exponent>
       </base>
-      <use_with_prefixes>true</use_with_prefixes>
+      <use_with_prefixes default="2">true</use_with_prefixes>
     </unit>
     <unit type="alias">
       <_title>Circular Mil</_title>
@@ -1935,7 +1936,7 @@
     <unit type="alias">
       <_title>Liter</_title>
       <_names>ar:L,a:l,aou:&#x2113;,liter,p:liters,litre,p:litres</_names>
-      <use_with_prefixes>true</use_with_prefixes>
+      <use_with_prefixes max="0">true</use_with_prefixes>
       <base>
         <unit>m</unit>
         <relation>0.001</relation>
@@ -3288,7 +3289,7 @@
           <relation>1000/760</relation>
           <exponent>1</exponent>
         </base>
-        <use_with_prefixes>true</use_with_prefixes>
+        <use_with_prefixes default="-3">true</use_with_prefixes>
       </unit>
       <unit type="alias">
         <_title>Millimeter of Mercury</_title>

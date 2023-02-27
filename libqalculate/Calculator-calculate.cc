@@ -1491,17 +1491,17 @@ bool expression_contains_save_function(const string &str, const ParseOptions &po
 		CALCULATOR->parseSigns(value);
 		size_t i2 = str.find(name, i);
 		if(i2 != string::npos) {
-			ExpressionItem *item1  = CALCULATOR->getActiveExpressionItem(name);
-			ExpressionItem *item2  = item1 ? CALCULATOR->getActiveExpressionItem(name, item1) : NULL;
+			ExpressionItem *item1 = CALCULATOR->getActiveExpressionItem(name);
+			ExpressionItem *item2 = item1 ? CALCULATOR->getActiveExpressionItem(name, item1) : NULL;
 			if(item1) {
 				MathStructure mtest;
 				CALCULATOR->beginTemporaryStopMessages();
 				CALCULATOR->parse(&mtest, str.substr(i + 1, str.length() - (i + 1)), po);
 				CALCULATOR->endTemporaryStopMessages();
-				if(!b_func && item1->type() == TYPE_VARIABLE && mtest.contains((Variable*) item1, true, true, false)) return false;
+				if(!b_func && item1->type() == TYPE_VARIABLE && !((Variable*) item1)->isKnown() && mtest.contains((Variable*) item1, true, true, false)) return false;
 				else if(!b_func && item1->type() == TYPE_UNIT && mtest.contains((Unit*) item1, true, true, false)) return false;
 				else if(b_func && item1->type() == TYPE_FUNCTION && mtest.containsFunction((MathFunction*) item1, true, true, false)) return false;
-				if(!b_func && item2 && item2->type() == TYPE_VARIABLE && mtest.contains((Variable*) item2, true, true, false)) return false;
+				if(!b_func && item2 && item2->type() == TYPE_VARIABLE && !((Variable*) item2)->isKnown() && mtest.contains((Variable*) item2, true, true, false)) return false;
 				else if(!b_func && item2 && item2->type() == TYPE_UNIT && mtest.contains((Unit*) item2, true, true, false)) return false;
 				else if(b_func && item2->type() == TYPE_FUNCTION && mtest.containsFunction((MathFunction*) item2, true, true, false)) return false;
 			}
@@ -1573,10 +1573,10 @@ bool transform_expression_for_equals_save(string &str, const ParseOptions &po) {
 				CALCULATOR->beginTemporaryStopMessages();
 				CALCULATOR->parse(&mtest, str.substr(i + 1, str.length() - (i + 1)), po);
 				CALCULATOR->endTemporaryStopMessages();
-				if(!b_func && item1->type() == TYPE_VARIABLE && mtest.contains((Variable*) item1, true, true, false)) return false;
+				if(!b_func && item1->type() == TYPE_VARIABLE && !((Variable*) item1)->isKnown() && mtest.contains((Variable*) item1, true, true, false)) return false;
 				else if(!b_func && item1->type() == TYPE_UNIT && mtest.contains((Unit*) item1, true, true, false)) return false;
 				else if(b_func && item1->type() == TYPE_FUNCTION && mtest.containsFunction((MathFunction*) item1, true, true, false)) return false;
-				if(!b_func && item2 && item2->type() == TYPE_VARIABLE && mtest.contains((Variable*) item2, true, true, false)) return false;
+				if(!b_func && item2 && item2->type() == TYPE_VARIABLE && !((Variable*) item2)->isKnown() && mtest.contains((Variable*) item2, true, true, false)) return false;
 				else if(!b_func && item2 && item2->type() == TYPE_UNIT && mtest.contains((Unit*) item2, true, true, false)) return false;
 				else if(b_func && item2->type() == TYPE_FUNCTION && mtest.containsFunction((MathFunction*) item2, true, true, false)) return false;
 			}

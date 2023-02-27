@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-04 07:09+0100\n"
+"POT-Creation-Date: 2023-02-20 09:39+0100\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -2751,14 +2751,16 @@ msgstr ""
 #: ../data/functions.xml.in.h:9
 msgid ""
 "Returns a vector generated from a function with a variable (default x) "
-"running from min to max. The fourth argument is either the requested number "
-"of elements if the sixth argument is false (default) or the step between "
-"each value of the variable."
+"running from min to max. The 4th argument is either the step between each "
+"value of the variable, if the 6th argument is 1 or if the value is 1 "
+"(default), negative, or not an integer and the 6th argument is -1 (default), "
+"or the number of elements."
 msgstr ""
 "Returnerar en vektor skapad från en funktion med en variabel (förvald: x) "
-"som går från min till max. Den fjärde parametern är antingen det "
-"efterfrågade antalet element, om det sjätte argumentet är falskt (förvalt), "
-"eller steget mellan varje värde för variabeln."
+"som går från min till max. Den 4:e parametern är antingen steget mellan "
+"varje värde för variabeln, om den sjätte parametern är 1 eller om värdet är "
+"1 (förvalt), negativt eller inte ett heltal och 6:e parametern är -1 "
+"(förvalt) eller antalet element."
 
 #: ../data/functions.xml.in.h:10
 msgid "Function"
@@ -3187,7 +3189,7 @@ msgid "Matrix Rank"
 msgstr "Matrisrang"
 
 #: ../data/functions.xml.in.h:111
-msgid "r:rk"
+msgid "ra:rk"
 msgstr ""
 
 #: ../data/functions.xml.in.h:112
@@ -7944,7 +7946,7 @@ msgid "Present Value"
 msgstr "Nuvärde"
 
 #: ../data/functions.xml.in.h:1171
-msgid "r:pv"
+msgid "ra:pv"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1172
@@ -8229,7 +8231,7 @@ msgid "Future Value"
 msgstr "Framtida värde"
 
 #: ../data/functions.xml.in.h:1230
-msgid "r:fv"
+msgid "ra:fv,a:FV"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1231
@@ -9318,15 +9320,15 @@ msgid "Ampere"
 msgstr ""
 
 #: ../data/units.xml.in.h:168
-msgid "ar:A,ampere,p:amperes"
-msgstr "a:A,ampere"
+msgid "ar:A,ampere,p:amperes,a-c:amp"
+msgstr "a:A,ampere,a-c:amp"
 
 #: ../data/units.xml.in.h:169
 msgid "Abampere"
 msgstr ""
 
 #: ../data/units.xml.in.h:170
-msgid "r:abampere,a:abA,a:aA,p:abamperes,a:Bi,biot"
+msgid "r:abampere,a:abA,p:abamperes,a:Bi,biot"
 msgstr ""
 
 #: ../data/units.xml.in.h:171

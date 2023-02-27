@@ -1035,10 +1035,13 @@ string rnd_number(bool use_par = true, bool only_integers = false, bool only_pos
 		if(!started) r = r % (only_positive ? 9 + 1 : 10 + 1);
 		else if(str.back() == '.') r = r % 10;
 		else r = r % ((dot ? 19 : 20) + str.length() * 10);
-		if(r > (dot ? 9 : 15)) break;
-		if((r >= 10 && r <= 15) || (!dot && !started && r == 0)) {if(!started) str += '0'; str += '.'; dot = true;}
-		else str += char('0' + r);
-		started = true;
+		if(r > (dot ? 9 : 15)) {
+			if(started) break;
+		} else {
+			if((r >= 10 && r <= 15) || (!dot && !started && r == 0)) {if(!started) str += '0'; str += '.'; dot = true;}
+			else str += char('0' + r);
+			started = true;
+		}
 	}
 	if(allow_complex && !only_integers && rand() % 10 == 0) {str += 'i'; par = true;}
 	else if(allow_interval && rand() % 2 == 0 && str.find(".") == string::npos) {str += "+/-4E-8"; /*str += rnd_number(false, true, true, false, false);*/}

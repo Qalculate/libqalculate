@@ -468,6 +468,18 @@ class Calculator {
 	std::string calculateAndPrint(std::string str, int msecs = 10000, const EvaluationOptions &eo = default_user_evaluation_options, const PrintOptions &po = default_print_options);
 	std::string calculateAndPrint(std::string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, std::string *parsed_expression);
 	std::string calculateAndPrint(std::string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, AutomaticFractionFormat auto_fraction, AutomaticApproximation auto_approx = AUTOMATIC_APPROXIMATION_OFF, std::string *parsed_expression = NULL, int max_length = -1, bool *result_is_comparison = NULL);
+	/** Calculates an expression.and outputs the result to a text string. The expression should be unlocalized first with unlocalizeExpression().
+	*
+	* Unlike other functions for expression evaluation this function handles ending "to"-commands, in addition to unit conversion, such "to hexadecimal" or to "fractions", similar to the qalc application.
+	*
+	*
+	* @param str Expression.
+	* @param msecs The maximum time for the calculation in milliseconds. If msecs <= 0 the time will be unlimited.
+	* @param eo Options for the evaluation and parsing of the expression.
+	* @param po Result formatting options.
+	* @returns The result of the calculation.
+	* \since 4.0.0
+	*/
 	std::string calculateAndPrint(std::string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, AutomaticFractionFormat auto_fraction, AutomaticApproximation auto_approx, std::string *parsed_expression, int max_length, bool *result_is_comparison, bool format, int colorize = 0, int tagtype = TAG_TYPE_HTML);
 	int testCondition(std::string expression);
 	//@}
@@ -477,6 +489,11 @@ class Calculator {
 	/** Calls MathStructure::format(po) and MathStructure::print(po). The process is aborted after msecs milliseconds.
 	*/
 	std::string print(const MathStructure &mstruct, int milliseconds = 100000, const PrintOptions &po = default_print_options);
+	/** @name Functions for printing expressions with the option to set maximum time or abort. */
+	//@{
+	/** Calls MathStructure::format(po) and MathStructure::print(po). The process is aborted after msecs milliseconds.
+	 * \since 4.0.0
+	*/
 	std::string print(const MathStructure &mstruct, int milliseconds, const PrintOptions &po, bool format, int colorize = 0, int tagtype = TAG_TYPE_HTML);
 	///Deprecated: use print() instead
 	std::string printMathStructureTimeOut(const MathStructure &mstruct, int milliseconds = 100000, const PrintOptions &op = default_print_options);

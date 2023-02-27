@@ -1,6 +1,61 @@
+2023-02-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Make language for definitions message more consistent on Windows
+
+2023-02-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Make pv(), fv(), and rk() case sensitive, and remove aA abbreviation from Abampere, to avoid conflicts with prefix + unit
+	* Allow "prefix" (unlocalized) as alternative for pref/prefixes qalc command
+
+2023-02-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix conversion from ounce (interpreted as fluid ounce) to litre with prefix
+	* Use max/min preferred for unit ordering (replaces explicit ordering of N*m and W*s)
+	* Support "help set [OPTION]" syntax and show "unrecognized option" message on help command failure, in qalc
+
+2023-02-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not set automatic prefix if resulting multiplier is < 1 or >= 1000, with some exceptions (units which specifies max or min preferred prefix, e.g. km)
+	* Default prefix unit property (use for gram, and few other units, instead of hardcoded value)
+	* Do not use recently introduced SI prefixes (R, Q, r, q) automatically by default
+	* Set zero max preferred prefix for second
+
+2023-02-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use value of fourth argument in genvector() as step size by default if 1 (default), negative, or non-integer, and value of sixth argument is -1 (default)
+
+2023-02-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Prefer Nm (torque) over J when the result is a vector with three components
+	* Fix unit order for Nm and Ws
+	* Always use current number base in both base and exponent in output of scientific notation
+	* Indicate correct number base in subscript (in html formatted output) when output in original base fails
+	* Do not show multiplier if exactly 1, in html output of scientific notation
+	* Fix parsing of scientific e notation when the number is extremely large and exponentiation fails because of floating point overflow
+
+2023-02-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use Unicode symbol for minus in scientific e notation
+	* Allow the same variable left and right of the equals sign (e.g. var=var+2), in variable assignment without colon, if the variable exists and the previous value is known
+
+2023-01-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add "amp" abbreaviation to ampere unit
+
+2023-01-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Don't show anything on empty input in qalc
+	* Set zero as max prefix for litre
+	* Fix prefix selection in denominator when multiplier is higher than the value of the largest prefix
+	* Make sure that prefixes are stored in correct order
+
+2023-01-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add min and max preferred prefix properties to units, and use kilo as max for meter, gram, and zero as min for byte, and bit)
+
 2023-01-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Add option to change symbols used for output of digit 10 and 11 in duodecimal numbers. Default digits are now A and B, instead of ↊ and ↋ (or X and E).
+	* Add option to change symbols used for output of digits 10 and 11 in duodecimal numbers. Default digits are now A and B, instead of ↊ and ↋ (or X and E)
 
 2023-01-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
