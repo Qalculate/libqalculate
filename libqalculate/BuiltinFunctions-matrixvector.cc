@@ -581,6 +581,39 @@ int NormFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 bool matrix_to_rref(MathStructure &m, const EvaluationOptions &eo) {
 	size_t rows = m.rows();
 	size_t cols = m.columns();
+	if(cols > 0 && m[0][0].containsType(STRUCT_UNIT, false, false, false)) {
+		m[0][0].factorizeUnits();
+		MathStructure munit;
+		if(is_unit_multiexp(m[0][0])) {
+			munit = m[0][0];
+		} else if(m[0][0].isMultiplication()) {
+			munit = m[0][0];
+			for(size_t i = 0; i < munit.size();) {
+				if(!munit[i].containsType(STRUCT_UNIT, false, false, false)) {
+					munit.delChild(i + 1);
+				} else if(is_unit_multiexp(munit[i])) {
+					i++;
+				} else {
+					return false;
+				}
+			}
+			if(munit.size() == 1) munit.setToChild(1);
+			else if(munit.size() == 0) return false;
+		} else {
+			return false;
+		}
+		if(munit.isUnit_exp()) {
+			if(munit.isUnit() && munit.unit()->hasNonlinearRelationToBase()) return false;
+			else if(munit.isPower() && munit[0].unit()->hasNonlinearRelationToBase()) return false;
+		} else if(munit.isMultiplication()) {
+			for(size_t i = 0; i < munit.size(); i++) {
+				if(munit[i].isUnit() && munit[i].unit()->hasNonlinearRelationToBase()) return false;
+				else if(munit[i].isPower() && munit[i][0].unit()->hasNonlinearRelationToBase()) return false;
+			}
+		}
+		m.calculateDivide(munit, eo);
+		if(m.containsType(STRUCT_UNIT, false, false, false)) return false;
+	}
 	size_t cur_row = 0;
 	for(size_t c = 0; c < cols; ) {
 		bool b = false;
@@ -594,7 +627,7 @@ bool matrix_to_rref(MathStructure &m, const EvaluationOptions &eo) {
 				}
 				for(r = 0; r < rows; r++) {
 					if(r != cur_row) {
-						if(m[r][c].representsNonZero()) {
+						if(m[r][c].representsNonZero(true)) {
 							MathStructure mmul(m[r][c]);
 							mmul.calculateDivide(m[cur_row][c], eo);
 							mmul.calculateNegate(eo);
@@ -607,7 +640,7 @@ bool matrix_to_rref(MathStructure &m, const EvaluationOptions &eo) {
 									m[r][c2].calculateAdd(madd, eo);
 								}
 							}
-						} else if(!m[r][c].isZero()) {
+						} else if(!m[r][c].representsZero(true)) {
 							return false;
 						}
 					}
