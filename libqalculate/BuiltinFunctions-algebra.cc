@@ -909,13 +909,16 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		if(mstruct[i].isVector()) {
+			vector<bool> b_eval;
+			b_eval.resize(mstruct[i].size(), false);
 			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
 				for(size_t i3 = 0; i3 < mand[i].size(); i3++) {
-					mand[i][i3][0] = mstruct[i][i2];
+					MathStructure mtest = mand[i][i3];
+					mtest[0] = mstruct[i][i2];
 					CALCULATOR->beginTemporaryStopMessages();
-					mand[i][i3].eval(eo);
+					mtest.eval(eo);
 					CALCULATOR->endTemporaryStopMessages();
-					if(!mand[i][i3].isOne()) {
+					if(!mtest.isOne()) {
 						CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), NULL);
 						return 0;
 					}
@@ -924,7 +927,20 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 					ComparisonResult cr = mstruct[i][i2].compare(mstruct[i][i3]);
 					if(cr == COMPARISON_RESULT_EQUAL || cr == COMPARISON_RESULT_EQUAL_LIMITS) {
 						mstruct[i].delChild(i3 + 1);
+						b_eval.erase(b_eval.begin() + i3);
 					} else {
+						if(cr == COMPARISON_RESULT_UNKNOWN && (!b_eval[i2] || !b_eval[i3])) {
+							if(!b_eval[i2]) mstruct[i][i2].eval(eo);
+							if(!b_eval[i3]) mstruct[i][i3].eval(eo);
+							b_eval[i2] = true;
+							b_eval[i3] = true;
+							ComparisonResult cr = mstruct[i][i2].compare(mstruct[i][i3]);
+							if(cr == COMPARISON_RESULT_EQUAL || cr == COMPARISON_RESULT_EQUAL_LIMITS) {
+								mstruct[i].delChild(i3 + 1);
+								b_eval.erase(b_eval.begin() + i3);
+								continue;
+							}
+						}
 						i3++;
 					}
 				}
