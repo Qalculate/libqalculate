@@ -745,8 +745,14 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		locale = c_lang;
 		free(c_lang);
 	} else {
-		WCHAR wlocale[LOCALE_NAME_MAX_LENGTH];
-		if(LCIDToLocaleName(LOCALE_CUSTOM_UI_DEFAULT, wlocale, LOCALE_NAME_MAX_LENGTH, 0) != 0) locale = utf8_encode(wlocale);
+		ULONG nlang = 0;
+		DWORD n = 0;
+		if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
+			WCHAR wlocale[n];
+			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
+				locale = utf8_encode(wlocale);
+			}
+		}
 	}
 	gsub("-", "_", locale);
 #else

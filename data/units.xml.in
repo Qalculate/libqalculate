@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<QALCULATE version="3.0.0">
+<QALCULATE version="4.6.0">
   <category>
     <!-- Unit category -->
     <_title>!units!Length</_title>
@@ -224,9 +224,9 @@
       </base>
     </unit>
     <unit type="alias">
-      <_title>Thou (1/1000 in)</_title>
+      <_title>Thou/mil (1/1000 in)</_title>
       <system>Imperial/US</system>
-      <_names>r:thou,mil,p:mils</_names>
+      <_names>r:thou,mil,po:mils</_names>
       <base>
         <unit>in</unit>
         <relation>0.001</relation>

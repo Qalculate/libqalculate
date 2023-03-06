@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-20 09:40+0100\n"
+"POT-Creation-Date: 2023-03-01 11:35+0100\n"
 "PO-Revision-Date: 2023-01-09 15:15+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -8979,12 +8979,12 @@ msgid "ar:US_mi,US_mile,p:US_miles"
 msgstr "ст_миля,p:ст_мили,p:ст_миль"
 
 #: ../data/units.xml.in.h:41
-msgid "Mil (1/1000 in)"
+msgid "Thou/mil (1/1000 in)"
 msgstr "Мил (1/1000 дюйма)"
 
 #: ../data/units.xml.in.h:42
-msgid "r:mil,p:mils"
-msgstr "мил"
+msgid "r:thou,mil,po:mils"
+msgstr "мил,thou,mil"
 
 #: ../data/units.xml.in.h:43
 msgid "Astronomical Unit"
@@ -9017,7 +9017,7 @@ msgid "Pied du roi (French Royal Foot)"
 msgstr "Pied du roi (Французский королевский фут)"
 
 #: ../data/units.xml.in.h:50
-msgid "r:pied_du_roi"
+msgid "r:pied_du_roi,p:pieds_du_roi"
 msgstr "фркорфут"
 
 #: ../data/units.xml.in.h:51
@@ -9025,7 +9025,7 @@ msgid "Pouce (French Royal Inch)"
 msgstr "Французский королевский дюйм"
 
 #: ../data/units.xml.in.h:52
-msgid "r:pouce"
+msgid "r:pouce,p:pouces"
 msgstr "фркордюйм"
 
 #: ../data/units.xml.in.h:53
@@ -9033,7 +9033,7 @@ msgid "Ligne"
 msgstr "«Французская» линия"
 
 #: ../data/units.xml.in.h:54
-msgid "r:ligne"
+msgid "r:ligne,p:lignes"
 msgstr "линия"
 
 #: ../data/units.xml.in.h:55
@@ -9041,7 +9041,7 @@ msgid "Toise"
 msgstr "Туаз"
 
 #: ../data/units.xml.in.h:56
-msgid "r:toise"
+msgid "r:toise,p:toises"
 msgstr "туаз"
 
 #: ../data/units.xml.in.h:57
@@ -12243,6 +12243,15 @@ msgstr "Сейчас (дата и время)"
 #: ../data/variables.xml.in.h:229
 msgid "r:now"
 msgstr "сейчас"
+
+#~ msgid "r:pouce"
+#~ msgstr "фркордюйм"
+
+#~ msgid "r:ligne"
+#~ msgstr "линия"
+
+#~ msgid "r:toise"
+#~ msgstr "туаз"
 
 #~ msgid "r:rk"
 #~ msgstr "рнг"

@@ -1484,12 +1484,10 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						transform(STRUCT_MULTIPLICATION);
 						PREPEND_REF(&mstruct);
 					}
-					size_t i_erased = 0;
 					if(b_pow) {
 						reduce(CHILD(0)[i_reducable][0], CHILD(1)[0], nr, eo);
 						if(nr == CHILD(0)[i_reducable][1].number()) {
 							CHILD(0).delChild(i_reducable + 1);
-							i_erased++;
 						} else {
 							CHILD(0)[i_reducable][1].number() -= nr;
 							if(CHILD(0)[i_reducable][1].number().isOne()) {

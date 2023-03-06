@@ -913,7 +913,7 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 			b_eval.resize(mstruct[i].size(), false);
 			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
 				for(size_t i3 = 0; i3 < mand[i].size(); i3++) {
-					MathStructure mtest = mand[i][i3];
+					MathStructure mtest(mand[i][i3]);
 					mtest[0] = mstruct[i][i2];
 					CALCULATOR->beginTemporaryStopMessages();
 					mtest.eval(eo);

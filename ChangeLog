@@ -1,6 +1,23 @@
+2023-03-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault in multisolve() and improve removal of equal solutions
+
+2023-03-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support elements with units in rref() and rk()
+
+2023-02-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Always show value of local variables using current output options, in qalc
+
+2023-02-23 Jules Bertholet <julesbertholet@quoi.xyz>
+
+	* Add "thou" name to mil unit and make it default and reference
+	* Add plurals to old French units
+
 2023-02-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Make language for definitions message more consistent on Windows
+	* Improve detection of default language on Windows
 
 2023-02-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
@@ -40,7 +57,7 @@
 
 2023-01-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Add "amp" abbreaviation to ampere unit
+	* Add "amp" abbreviation to ampere unit
 
 2023-01-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

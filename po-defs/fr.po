@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-20 09:45+0100\n"
+"POT-Creation-Date: 2023-03-01 11:35+0100\n"
 "PO-Revision-Date: 2020-12-02 13:25+0100\n"
 "Last-Translator: Polakrity\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -8783,11 +8783,11 @@ msgid "ar:US_mi,US_mile,p:US_miles"
 msgstr ""
 
 #: ../data/units.xml.in.h:41
-msgid "Mil (1/1000 in)"
+msgid "Thou/mil (1/1000 in)"
 msgstr ""
 
 #: ../data/units.xml.in.h:42
-msgid "r:mil,p:mils"
+msgid "r:thou,mil,po:mils"
 msgstr ""
 
 #: ../data/units.xml.in.h:43
@@ -8819,7 +8819,8 @@ msgid "Pied du roi (French Royal Foot)"
 msgstr "Pied de roi"
 
 #: ../data/units.xml.in.h:50
-msgid "r:pied_du_roi"
+#, fuzzy
+msgid "r:pied_du_roi,p:pieds_du_roi"
 msgstr "r:pied_de_roi"
 
 #: ../data/units.xml.in.h:51
@@ -8827,15 +8828,16 @@ msgid "Pouce (French Royal Inch)"
 msgstr ""
 
 #: ../data/units.xml.in.h:52
-msgid "r:pouce"
-msgstr ""
+#, fuzzy
+msgid "r:pouce,p:pouces"
+msgstr "ar:J,joule,p:joules"
 
 #: ../data/units.xml.in.h:53
 msgid "Ligne"
 msgstr ""
 
 #: ../data/units.xml.in.h:54
-msgid "r:ligne"
+msgid "r:ligne,p:lignes"
 msgstr ""
 
 #: ../data/units.xml.in.h:55
@@ -8843,7 +8845,7 @@ msgid "Toise"
 msgstr ""
 
 #: ../data/units.xml.in.h:56
-msgid "r:toise"
+msgid "r:toise,p:toises"
 msgstr ""
 
 #: ../data/units.xml.in.h:57

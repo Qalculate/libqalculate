@@ -6968,7 +6968,7 @@ int numerical_integration_part(const MathStructure &minteg, const MathStructure 
 				Number max_error(1, 1, -(PRECISION + 1 - (i_run * 2)));
 				max_error *= mabs;
 				if(nr_prec_abs >= max_error) {
-					for(int i = 0; ; i++) {
+					while(true) {
 						if(type == 0 || type == 2) {
 							nr_samples = nr_range;
 							nr_samples ^= 5;

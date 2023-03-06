@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate-defs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-20 09:44+0100\n"
+"POT-Creation-Date: 2023-03-01 11:35+0100\n"
 "PO-Revision-Date: 2007-05-18 15:47+0200\n"
 "Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
 "Language-Team:  <kde-i18n-nl@kde.org>\n"
@@ -9032,12 +9032,13 @@ msgid "ar:US_mi,US_mile,p:US_miles"
 msgstr ""
 
 #: ../data/units.xml.in.h:41
-msgid "Mil (1/1000 in)"
+msgid "Thou/mil (1/1000 in)"
 msgstr ""
 
 #: ../data/units.xml.in.h:42
-msgid "r:mil,p:mils"
-msgstr ""
+#, fuzzy
+msgid "r:thou,mil,po:mils"
+msgstr "a:mi,mijl,p:mijlen"
 
 #: ../data/units.xml.in.h:43
 msgid "Astronomical Unit"
@@ -9068,7 +9069,7 @@ msgid "Pied du roi (French Royal Foot)"
 msgstr "Pied du roi (Franse koninklijke voet)"
 
 #: ../data/units.xml.in.h:50
-msgid "r:pied_du_roi"
+msgid "r:pied_du_roi,p:pieds_du_roi"
 msgstr ""
 
 #: ../data/units.xml.in.h:51
@@ -9076,7 +9077,7 @@ msgid "Pouce (French Royal Inch)"
 msgstr "Pouce (Franse koninklijke duim)"
 
 #: ../data/units.xml.in.h:52
-msgid "r:pouce"
+msgid "r:pouce,p:pouces"
 msgstr ""
 
 #: ../data/units.xml.in.h:53
@@ -9084,15 +9085,16 @@ msgid "Ligne"
 msgstr "Ligne (1/40 inch)"
 
 #: ../data/units.xml.in.h:54
-msgid "r:ligne"
-msgstr ""
+#, fuzzy
+msgid "r:ligne,p:lignes"
+msgstr "a:lj,lichtjaar,p:lichtjaren"
 
 #: ../data/units.xml.in.h:55
 msgid "Toise"
 msgstr ""
 
 #: ../data/units.xml.in.h:56
-msgid "r:toise"
+msgid "r:toise,p:toises"
 msgstr ""
 
 #: ../data/units.xml.in.h:57

@@ -497,8 +497,23 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 
 	string locale, lang_tmp;
 #ifdef _WIN32
-	WCHAR wlocale[LOCALE_NAME_MAX_LENGTH];
-	if(LCIDToLocaleName(LOCALE_CUSTOM_UI_DEFAULT, wlocale, LOCALE_NAME_MAX_LENGTH, 0) != 0) locale = utf8_encode(wlocale);
+	size_t n = 0;
+	getenv_s(&n, NULL, 0, "LANG");
+	if(n > 0) {
+		char *c_lang = (char*) malloc(n * sizeof(char));
+		getenv_s(&n, c_lang, n, "LANG");
+		locale = c_lang;
+		free(c_lang);
+	} else {
+		ULONG nlang = 0;
+		DWORD n = 0;
+		if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
+			WCHAR wlocale[n];
+			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
+				locale = utf8_encode(wlocale);
+			}
+		}
+	}
 	gsub("-", "_", locale);
 #else
 	char *clocale = setlocale(LC_MESSAGES, NULL);
