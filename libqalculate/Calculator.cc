@@ -1666,6 +1666,7 @@ void Calculator::addBuiltinFunctions() {
 	f_frac = addFunction(new FracFunction());
 	f_rem = addFunction(new RemFunction());
 	f_mod = addFunction(new ModFunction());
+	addFunction(new PowerModFunction());
 	addFunction(new BernoulliFunction());
 	addFunction(new TotientFunction());
 	priv->f_parallel = addFunction(new ParallelFunction());

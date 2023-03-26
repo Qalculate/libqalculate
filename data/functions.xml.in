@@ -566,6 +566,20 @@
           <_title>Denominator</_title>
         </argument>
       </builtin_function>
+      <builtin_function name="pwmod">
+        <_title>Modular Exponentiation</_title>
+	<_description>Returns the modular inverse for negative exponents, and is otherwise equivalent to mod(a^b, c). For negative exponents the greatest common divisor of the numerator and the denominator must be 1.</_description>
+        <_names>r:powmod,power_mod</_names>
+        <argument index="1">
+          <_title>Numerator</_title>
+        </argument>
+	<argument index="3">
+          <_title>Exponent</_title>
+        </argument>
+        <argument index="3">
+          <_title>Denominator</_title>
+        </argument>
+      </builtin_function>
       <builtin_function name="parallel">
         <_title>Parallel Sum</_title>
         <_names>r:parallel</_names>

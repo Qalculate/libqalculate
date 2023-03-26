@@ -991,11 +991,28 @@ RemFunction::RemFunction() : MathFunction("rem", 2) {
 bool powmod(Number &nr, const Number &base, const Number &exp, const Number &div, bool b_rem) {
 	mpz_t i;
 	mpz_init(i);
+	if(exp.isNegative()) {
+		mpz_gcd(i, mpq_numref(base.internalRational()), mpq_numref(div.internalRational()));
+		if(mpz_cmp_ui(i, 1) != 0) {
+			mpz_clear(i);
+			return false;
+		}
+	}
 	mpz_powm(i, mpq_numref(base.internalRational()), mpq_numref(exp.internalRational()), mpq_numref(div.internalRational()));
 	nr.setInternal(i);
 	if(b_rem && base.isNegative() && exp.isOdd()) nr -= div;
 	mpz_clear(i);
 	return true;
+}
+PowerModFunction::PowerModFunction() : MathFunction("powmod", 3) {
+	setArgumentDefinition(1, new IntegerArgument(""));
+	setArgumentDefinition(2, new IntegerArgument(""));
+	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_NONZERO));
+}
+int PowerModFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct.clear();
+	if(!powmod(mstruct.number(), vargs[0].number(), vargs[1].number(), vargs[2].number(), false)) return 0;
+	return 1;
 }
 void remove_overflow_message() {
 	vector<CalculatorMessage> message_vector;
