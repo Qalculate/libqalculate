@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-20 09:39+0100\n"
+"POT-Creation-Date: 2023-03-01 11:36+0100\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -8856,11 +8856,11 @@ msgid "ar:US_mi,US_mile,p:US_miles"
 msgstr ""
 
 #: ../data/units.xml.in.h:41
-msgid "Mil (1/1000 in)"
+msgid "Thou/mil (1/1000 in)"
 msgstr ""
 
 #: ../data/units.xml.in.h:42
-msgid "r:mil,p:mils"
+msgid "r:thou,mil,po:mils"
 msgstr ""
 
 #: ../data/units.xml.in.h:43
@@ -8892,7 +8892,7 @@ msgid "Pied du roi (French Royal Foot)"
 msgstr ""
 
 #: ../data/units.xml.in.h:50
-msgid "r:pied_du_roi"
+msgid "r:pied_du_roi,p:pieds_du_roi"
 msgstr ""
 
 #: ../data/units.xml.in.h:51
@@ -8900,7 +8900,7 @@ msgid "Pouce (French Royal Inch)"
 msgstr ""
 
 #: ../data/units.xml.in.h:52
-msgid "r:pouce"
+msgid "r:pouce,p:pouces"
 msgstr ""
 
 #: ../data/units.xml.in.h:53
@@ -8908,7 +8908,7 @@ msgid "Ligne"
 msgstr ""
 
 #: ../data/units.xml.in.h:54
-msgid "r:ligne"
+msgid "r:ligne,p:lignes"
 msgstr ""
 
 #: ../data/units.xml.in.h:55
@@ -8916,7 +8916,7 @@ msgid "Toise"
 msgstr ""
 
 #: ../data/units.xml.in.h:56
-msgid "r:toise"
+msgid "r:toise,p:toises"
 msgstr ""
 
 #: ../data/units.xml.in.h:57

@@ -991,11 +991,28 @@ RemFunction::RemFunction() : MathFunction("rem", 2) {
 bool powmod(Number &nr, const Number &base, const Number &exp, const Number &div, bool b_rem) {
 	mpz_t i;
 	mpz_init(i);
+	if(exp.isNegative()) {
+		mpz_gcd(i, mpq_numref(base.internalRational()), mpq_numref(div.internalRational()));
+		if(mpz_cmp_ui(i, 1) != 0) {
+			mpz_clear(i);
+			return false;
+		}
+	}
 	mpz_powm(i, mpq_numref(base.internalRational()), mpq_numref(exp.internalRational()), mpq_numref(div.internalRational()));
 	nr.setInternal(i);
 	if(b_rem && base.isNegative() && exp.isOdd()) nr -= div;
 	mpz_clear(i);
 	return true;
+}
+PowerModFunction::PowerModFunction() : MathFunction("powmod", 3) {
+	setArgumentDefinition(1, new IntegerArgument(""));
+	setArgumentDefinition(2, new IntegerArgument(""));
+	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_NONZERO));
+}
+int PowerModFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct.clear();
+	if(!powmod(mstruct.number(), vargs[0].number(), vargs[1].number(), vargs[2].number(), false)) return 0;
+	return 1;
 }
 void remove_overflow_message() {
 	vector<CalculatorMessage> message_vector;
@@ -1017,7 +1034,7 @@ int RemFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			FR_FUNCTION_2c1
 		}
 	} else if(!vargs[0].isNumber()) {
-		if(vargs[0].isPower() && vargs[0][0].isInteger() && vargs[0][1].isInteger() && !vargs[0][0].number().isZero()) {
+		if(vargs[0].isPower() && vargs[0][0].isInteger() && vargs[0][1].isInteger() && vargs[0][1].number().isPositive() && !vargs[0][0].number().isZero()) {
 			Number nr;
 			if(powmod(nr, vargs[0][0].number(), vargs[0][1].number(), vargs[1].number(), true)) {mstruct = nr; return 1;}
 		}
@@ -1030,7 +1047,7 @@ int RemFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		} else {
 			mstruct.eval(eo);
 		}
-		if(mstruct.isPower() && mstruct[0].isInteger() && mstruct[1].isInteger() && !mstruct[0].number().isZero()) {
+		if(mstruct.isPower() && mstruct[0].isInteger() && mstruct[1].isInteger() && mstruct[1].number().isPositive()&& !mstruct[0].number().isZero()) {
 			Number nr;
 			if(powmod(nr, mstruct[0].number(), mstruct[1].number(), vargs[1].number(), true)) {
 				remove_overflow_message();
@@ -1086,7 +1103,7 @@ int ModFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			FR_FUNCTION_2c1
 		}
 	} else if(!vargs[0].isNumber()) {
-		if(vargs[0].isPower() && vargs[0][0].isInteger() && vargs[0][1].isInteger() && !vargs[0][0].number().isZero()) {
+		if(vargs[0].isPower() && vargs[0][0].isInteger() && vargs[0][1].isInteger() && vargs[0][1].number().isPositive() && !vargs[0][0].number().isZero()) {
 			Number nr;
 			if(powmod(nr, vargs[0][0].number(), vargs[0][1].number(), vargs[1].number(), false)) {mstruct = nr; return 1;}
 		}
@@ -1099,7 +1116,7 @@ int ModFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		} else {
 			mstruct.eval(eo);
 		}
-		if(mstruct.isPower() && mstruct[0].isInteger() && mstruct[1].isInteger() && !mstruct[0].number().isZero()) {
+		if(mstruct.isPower() && mstruct[0].isInteger() && mstruct[1].isInteger() && mstruct[1].number().isPositive() && !mstruct[0].number().isZero()) {
 			Number nr;
 			if(powmod(nr, mstruct[0].number(), mstruct[1].number(), vargs[1].number(), false)) {
 				remove_overflow_message();

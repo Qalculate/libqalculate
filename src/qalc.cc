@@ -2149,7 +2149,7 @@ bool show_object_info(string name) {
 				if(is_answer_variable(v)) {
 					value = _("a previous result");
 				} else if(v->isKnown()) {
-					if(((KnownVariable*) v)->isExpression()) {
+					if(((KnownVariable*) v)->isExpression() && !v->isLocal()) {
 						ParseOptions pa = evalops.parse_options; pa.base = 10;
 						value = CALCULATOR->localizeExpression(((KnownVariable*) v)->expression(), pa);
 					} else {
@@ -2158,8 +2158,12 @@ bool show_object_info(string name) {
 						} else if(((KnownVariable*) v)->get().isVector()) {
 							value = _("vector");
 						} else {
-							PrintOptions po;
+							PrintOptions po = printops;
 							po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+							po.base = 10;
+							po.number_fraction_format = FRACTION_DECIMAL_EXACT;
+							po.is_approximate = NULL;
+							po.allow_non_usable = false;
 							value = CALCULATOR->print(((KnownVariable*) v)->get(), 30, po);
 						}
 					}
@@ -2696,7 +2700,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 				string value;
 				if(v->isKnown()) {
 					bool is_relative = false;
-					if(((KnownVariable*) v)->isExpression()) {
+					if(((KnownVariable*) v)->isExpression() && !v->isLocal()) {
 						value = CALCULATOR->localizeExpression(((KnownVariable*) v)->expression(), pa);
 						if(!((KnownVariable*) v)->uncertainty(&is_relative).empty()) {
 							if(is_relative) {value += " ("; value += _("relative uncertainty"); value += ": ";}
@@ -2727,8 +2731,12 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 						} else if(((KnownVariable*) v)->get().isVector()) {
 							value = _("vector");
 						} else {
-							PrintOptions po;
+							PrintOptions po = printops;
 							po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+							po.base = 10;
+							po.number_fraction_format = FRACTION_DECIMAL_EXACT;
+							po.is_approximate = NULL;
+							po.allow_non_usable = false;
 							value = CALCULATOR->print(((KnownVariable*) v)->get(), 30, po);
 						}
 						FPUTS_UNICODE(value.c_str(), stdout);
@@ -7117,7 +7125,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {4, 5, 1};
+	int version_numbers[] = {4, 6, 0};
 
 	if(file) {
 		char line[10000];

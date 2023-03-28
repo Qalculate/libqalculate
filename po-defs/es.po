@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Qalculate!\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-20 09:47+0100\n"
+"POT-Creation-Date: 2023-03-01 11:35+0100\n"
 "PO-Revision-Date: 2022-05-13 18:30-0300\n"
 "Last-Translator: VicSanRoPe\n"
 "Language-Team: none\n"
@@ -8951,12 +8951,13 @@ msgid "ar:US_mi,US_mile,p:US_miles"
 msgstr ""
 
 #: ../data/units.xml.in.h:41
-msgid "Mil (1/1000 in)"
+msgid "Thou/mil (1/1000 in)"
 msgstr ""
 
 #: ../data/units.xml.in.h:42
-msgid "r:mil,p:mils"
-msgstr ""
+#, fuzzy
+msgid "r:thou,mil,po:mils"
+msgstr "milla,p:millas"
 
 #: ../data/units.xml.in.h:43
 msgid "Astronomical Unit"
@@ -8987,7 +8988,7 @@ msgid "Pied du roi (French Royal Foot)"
 msgstr "Pie francés"
 
 #: ../data/units.xml.in.h:50
-msgid "r:pied_du_roi"
+msgid "r:pied_du_roi,p:pieds_du_roi"
 msgstr ""
 
 #: ../data/units.xml.in.h:51
@@ -8995,23 +8996,25 @@ msgid "Pouce (French Royal Inch)"
 msgstr "Pulgada francesa"
 
 #: ../data/units.xml.in.h:52
-msgid "r:pouce"
-msgstr ""
+#, fuzzy
+msgid "r:pouce,p:pouces"
+msgstr "a:oz,onza,p:onzas"
 
 #: ../data/units.xml.in.h:53
 msgid "Ligne"
 msgstr "Línea francesa"
 
 #: ../data/units.xml.in.h:54
-msgid "r:ligne"
-msgstr ""
+#, fuzzy
+msgid "r:ligne,p:lignes"
+msgstr "a:min,minuto,p:minutos"
 
 #: ../data/units.xml.in.h:55
 msgid "Toise"
 msgstr "Altura francesa"
 
 #: ../data/units.xml.in.h:56
-msgid "r:toise"
+msgid "r:toise,p:toises"
 msgstr ""
 
 #: ../data/units.xml.in.h:57

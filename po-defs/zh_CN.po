@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-20 09:43+0100\n"
+"POT-Creation-Date: 2023-03-01 11:36+0100\n"
 "PO-Revision-Date: 2021-08-23 09:54+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
@@ -8756,12 +8756,12 @@ msgid "ar:US_mi,US_mile,p:US_miles"
 msgstr "ar:US_mi,美制英里,US_mile"
 
 #: ../data/units.xml.in.h:41
-msgid "Mil (1/1000 in)"
-msgstr "毫英寸(0.001英寸)"
+msgid "Thou/mil (1/1000 in)"
+msgstr "密耳(0.001英寸)"
 
 #: ../data/units.xml.in.h:42
-msgid "r:mil,p:mils"
-msgstr "毫英寸"
+msgid "r:thou,mil,po:mils"
+msgstr "密耳,thou,mil"
 
 #: ../data/units.xml.in.h:43
 msgid "Astronomical Unit"
@@ -8792,7 +8792,7 @@ msgid "Pied du roi (French Royal Foot)"
 msgstr "蹄(French Royal Foot)"
 
 #: ../data/units.xml.in.h:50
-msgid "r:pied_du_roi"
+msgid "r:pied_du_roi,p:pieds_du_roi"
 msgstr "蹄"
 
 #: ../data/units.xml.in.h:51
@@ -8800,7 +8800,7 @@ msgid "Pouce (French Royal Inch)"
 msgstr "法寸"
 
 #: ../data/units.xml.in.h:52
-msgid "r:pouce"
+msgid "r:pouce,p:pouces"
 msgstr "法寸"
 
 #: ../data/units.xml.in.h:53
@@ -8808,7 +8808,7 @@ msgid "Ligne"
 msgstr "法分"
 
 #: ../data/units.xml.in.h:54
-msgid "r:ligne"
+msgid "r:ligne,p:lignes"
 msgstr "法分"
 
 #: ../data/units.xml.in.h:55
@@ -8816,7 +8816,7 @@ msgid "Toise"
 msgstr "突阿斯"
 
 #: ../data/units.xml.in.h:56
-msgid "r:toise"
+msgid "r:toise,p:toises"
 msgstr "突阿斯"
 
 #: ../data/units.xml.in.h:57
@@ -12013,6 +12013,15 @@ msgstr "现在"
 #: ../data/variables.xml.in.h:229
 msgid "r:now"
 msgstr "现在"
+
+#~ msgid "r:pouce"
+#~ msgstr "法寸"
+
+#~ msgid "r:ligne"
+#~ msgstr "法分"
+
+#~ msgid "r:toise"
+#~ msgstr "突阿斯"
 
 #~ msgid "r:rk"
 #~ msgstr "-"

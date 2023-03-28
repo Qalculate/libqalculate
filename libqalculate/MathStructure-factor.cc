@@ -188,7 +188,6 @@ bool sqrfree_yun(const MathStructure &a, const MathStructure &xvar, MathStructur
 
 bool sqrfree_simple(const MathStructure &a, const MathStructure &xvar, MathStructure &factors, const EvaluationOptions &eo) {
 	MathStructure w(a);
-	size_t i = 0;
 	while(true) {
 		MathStructure z, zmod;
 		if(!sqrfree_differentiate(w, xvar, z, eo)) return false;
@@ -206,7 +205,6 @@ bool sqrfree_simple(const MathStructure &a, const MathStructure &xvar, MathStruc
 		MathStructure tmp(w);
 		if(!MathStructure::polynomialQuotient(tmp, mgcd, xvar, w, eo)) return false;
 		if(!sqrfree_simple(mgcd, xvar, factors, eo)) return false;
-		i++;
 	}
 	return true;
 }
@@ -2178,7 +2176,6 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 									vector<Number> vquo;
 									long int *vc = (long int*) malloc(sizeof(long int) * (i_d + 1));
 									vden.resize(i_d + 1, nr_zero);
-									int in = 0;
 									for(size_t i = 0; i < factors0.size() * 2; i++) {
 										vc[0] = factors0[i / 2] * (i % 2 == 1 ? -1 : 1);
 										for(size_t i2 = 0; i2 < factorsl.size(); i2++) {
@@ -2228,7 +2225,6 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 															break;
 														}
 													}
-													in++;
 													if(b) {
 														if(CALCULATOR->aborted()) return false;
 														for(size_t iden = 0; iden < vden.size(); iden++) {

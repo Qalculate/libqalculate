@@ -146,12 +146,17 @@ Calculator::Calculator() {
 	size_t n = 0;
 	getenv_s(&n, NULL, 0, "LANG");
 	if(n == 0) {
-		string lang;
-		WCHAR wlocale[LOCALE_NAME_MAX_LENGTH];
-		if(LCIDToLocaleName(LOCALE_CUSTOM_UI_DEFAULT, wlocale, LOCALE_NAME_MAX_LENGTH, 0) != 0) lang = utf8_encode(wlocale);
-		gsub("-", "_", lang);
-		if(lang.length() > 5) lang = lang.substr(0, 5);
-		if(!lang.empty()) _putenv_s("LANG", lang.c_str());
+		ULONG nlang = 0;
+		DWORD n = 0;
+		if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
+			WCHAR wlocale[n];
+			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
+				string lang = utf8_encode(wlocale);
+				gsub("-", "_", lang);
+				if(lang.length() > 5) lang = lang.substr(0, 5);
+				if(!lang.empty()) _putenv_s("LANG", lang.c_str());
+			}
+		}
 	}
 #endif
 
@@ -182,13 +187,13 @@ Calculator::Calculator() {
 	srand(time(NULL));
 
 	exchange_rates_time[0] = 0;
-	exchange_rates_time[1] = (time_t) 464592L * (time_t) 3600;
+	exchange_rates_time[1] = (time_t) 465984L * (time_t) 3600;
 	exchange_rates_time[2] = 0;
-	priv->exchange_rates_time2[0] = (time_t) 464592L * (time_t) 3600;
+	priv->exchange_rates_time2[0] = (time_t) 465984L * (time_t) 3600;
 	exchange_rates_check_time[0] = 0;
-	exchange_rates_check_time[1] = (time_t) 464592L * (time_t) 3600;
+	exchange_rates_check_time[1] = (time_t) 465984L * (time_t) 3600;
 	exchange_rates_check_time[2] = 0;
-	priv->exchange_rates_check_time2[0] = (time_t) 464592L * (time_t) 3600;
+	priv->exchange_rates_check_time2[0] = (time_t) 465984L * (time_t) 3600;
 	b_exchange_rates_warning_enabled = true;
 	b_exchange_rates_used = 0;
 	priv->exchange_rates_url3 = 0;
@@ -398,12 +403,17 @@ Calculator::Calculator(bool ignore_locale) {
 		size_t n = 0;
 		getenv_s(&n, NULL, 0, "LANG");
 		if(n == 0) {
-			string lang;
-			WCHAR wlocale[LOCALE_NAME_MAX_LENGTH];
-			if(LCIDToLocaleName(LOCALE_CUSTOM_UI_DEFAULT, wlocale, LOCALE_NAME_MAX_LENGTH, 0) != 0) lang = utf8_encode(wlocale);
-			gsub("-", "_", lang);
-			if(lang.length() > 5) lang = lang.substr(0, 5);
-			if(!lang.empty()) _putenv_s("LANG", lang.c_str());
+			ULONG nlang = 0;
+			DWORD n = 0;
+			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
+				WCHAR wlocale[n];
+				if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
+					string lang = utf8_encode(wlocale);
+					gsub("-", "_", lang);
+					if(lang.length() > 5) lang = lang.substr(0, 5);
+					if(!lang.empty()) _putenv_s("LANG", lang.c_str());
+				}
+			}
 		}
 #endif
 #ifdef ENABLE_NLS
@@ -434,13 +444,13 @@ Calculator::Calculator(bool ignore_locale) {
 	srand(time(NULL));
 
 	exchange_rates_time[0] = 0;
-	exchange_rates_time[1] = (time_t) 464592L * (time_t) 3600;
+	exchange_rates_time[1] = (time_t) 465984L * (time_t) 3600;
 	exchange_rates_time[2] = 0;
-	priv->exchange_rates_time2[0] = (time_t) 464592L * (time_t) 3600;
+	priv->exchange_rates_time2[0] = (time_t) 465984L * (time_t) 3600;
 	exchange_rates_check_time[0] = 0;
-	exchange_rates_check_time[1] = (time_t) 464592L * (time_t) 3600;
+	exchange_rates_check_time[1] = (time_t) 465984L * (time_t) 3600;
 	exchange_rates_check_time[2] = 0;
-	priv->exchange_rates_check_time2[0] = (time_t) 464592L * (time_t) 3600;
+	priv->exchange_rates_check_time2[0] = (time_t) 465984L * (time_t) 3600;
 	b_exchange_rates_warning_enabled = true;
 	b_exchange_rates_used = 0;
 	priv->exchange_rates_url3 = 0;
@@ -1656,6 +1666,7 @@ void Calculator::addBuiltinFunctions() {
 	f_frac = addFunction(new FracFunction());
 	f_rem = addFunction(new RemFunction());
 	f_mod = addFunction(new ModFunction());
+	addFunction(new PowerModFunction());
 	addFunction(new BernoulliFunction());
 	addFunction(new TotientFunction());
 	priv->f_parallel = addFunction(new ParallelFunction());
@@ -1856,11 +1867,11 @@ void Calculator::addBuiltinFunctions() {
 }
 void Calculator::addBuiltinUnits() {
 	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, true));
-	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "15433.18", 1, "", false, true, true));
+	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "22106.01", 1, "", false, true, true));
 	u_btc->setApproximate();
 	u_btc->setPrecision(-2);
 	u_btc->setChanged(false);
-	priv->u_byn = addUnit(new AliasUnit(_("Currency"), "BYN", "", "", "Belarusian Ruble", u_euro, "1/2.70885", 1, "", false, true, true));
+	priv->u_byn = addUnit(new AliasUnit(_("Currency"), "BYN", "", "", "Belarusian Ruble", u_euro, "1/2.6587", 1, "", false, true, true));
 	priv->u_byn->setHidden(true);
 	priv->u_byn->setApproximate();
 	priv->u_byn->setPrecision(-2);
