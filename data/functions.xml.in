@@ -3062,10 +3062,10 @@
         <_title>Function</_title>
       </argument>
       <argument index="5">
-        <_title>Value variable</_title>
+        <_title>Element variable</_title>
       </argument>
       <argument index="6">
-        <_title>Element variable</_title>
+        <_title>Value variable</_title>
       </argument>
       <argument index="7">
         <_title>Vector</_title>
