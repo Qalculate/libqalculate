@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-06 14:08+0100\n"
+"POT-Creation-Date: 2023-03-30 18:57+0700\n"
 "PO-Revision-Date: 2023-01-21 18:09+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -3048,18 +3048,18 @@ msgstr ""
 "Возвращаемое значение, вероятно, является простым числом, но это не совсем "
 "точно."
 
-#: ../libqalculate/BuiltinFunctions-number.cc:1004
-#: ../libqalculate/BuiltinFunctions-number.cc:2368
+#: ../libqalculate/BuiltinFunctions-number.cc:1021
+#: ../libqalculate/BuiltinFunctions-number.cc:2385
 #: ../libqalculate/Number.cc:2170 ../libqalculate/Number.cc:2295
 msgid "Floating point overflow"
 msgstr "Переполнение числа с плавающей запятой"
 
-#: ../libqalculate/BuiltinFunctions-number.cc:1393
+#: ../libqalculate/BuiltinFunctions-number.cc:1410
 msgid "phoneword"
 msgstr "слово-номер"
 
-#: ../libqalculate/BuiltinFunctions-number.cc:1479
-#: ../libqalculate/BuiltinFunctions-number.cc:1554
+#: ../libqalculate/BuiltinFunctions-number.cc:1496
+#: ../libqalculate/BuiltinFunctions-number.cc:1571
 #: ../libqalculate/Number.cc:493 ../libqalculate/Number.cc:615
 #: ../libqalculate/Number.cc:1100
 #, c-format
@@ -3067,7 +3067,7 @@ msgid "Character '%s' was ignored in the number \"%s\" with base %s."
 msgstr "Символ «%s» был проигнорирован в числе «%s» с основанием %s."
 
 #. test calculated floating point value and show mpfr errors (show as errors if error_level > 1, show as warnings if error_level = 1, do not generate message if error_level is zero)
-#: ../libqalculate/BuiltinFunctions-number.cc:2369
+#: ../libqalculate/BuiltinFunctions-number.cc:2386
 #: ../libqalculate/Number.cc:2169 ../libqalculate/Number.cc:2294
 msgid "Floating point underflow"
 msgstr "Исчезновение числа с плавающей запятой"
@@ -3503,8 +3503,8 @@ msgid "Degrees unit is missing. Creating one for this session."
 msgstr ""
 "Единица измерения для Градусов отсутствует. Создаю её для текущего сеанса."
 
-#: ../libqalculate/Calculator.cc:1868 ../libqalculate/Calculator.cc:1869
-#: ../libqalculate/Calculator.cc:1873 ../libqalculate/Calculator.cc:1878
+#: ../libqalculate/Calculator.cc:1869 ../libqalculate/Calculator.cc:1870
+#: ../libqalculate/Calculator.cc:1874 ../libqalculate/Calculator.cc:1879
 #: ../libqalculate/Calculator-definitions.cc:3487
 #: ../libqalculate/Calculator-definitions.cc:3492
 #: ../libqalculate/Calculator-definitions.cc:3571
@@ -3512,7 +3512,7 @@ msgstr ""
 msgid "Currency"
 msgstr "Валюта"
 
-#: ../libqalculate/Calculator.cc:2743
+#: ../libqalculate/Calculator.cc:2744
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name of \"%s\", or "
@@ -3521,7 +3521,7 @@ msgstr ""
 "«%s» больше не допускается в именах. Измените имя «%s», иначе переменная "
 "будет потеряна."
 
-#: ../libqalculate/Calculator.cc:2761
+#: ../libqalculate/Calculator.cc:2762
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
@@ -3530,7 +3530,7 @@ msgstr ""
 "«%s» больше не допускается в именах. Измените имя \"%s\", иначе функция "
 "будет потеряна."
 
-#: ../libqalculate/Calculator.cc:2778
+#: ../libqalculate/Calculator.cc:2779
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
@@ -3539,7 +3539,7 @@ msgstr ""
 "«%s» больше не допускается в именах. Измените имя «%s», иначе единица "
 "измерения будет потеряна."
 
-#: ../libqalculate/Calculator.cc:2943
+#: ../libqalculate/Calculator.cc:2944
 #, c-format
 msgid "Name \"%s\" is in use. Replacing with \"%s\"."
 msgstr "Имя «%s» уже используется. Замена на «%s»."
