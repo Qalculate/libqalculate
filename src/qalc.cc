@@ -1633,7 +1633,7 @@ bool show_set_help(string set_option = "") {
 	STR_AND_TABS_BOOL("units", "", "", evalops.parse_options.units_enabled);
 	STR_AND_TABS_BOOL("unknowns", "", _("Interpret undefined symbols in expressions as unknown variables."), evalops.parse_options.unknowns_enabled);
 	STR_AND_TABS_BOOL("variables", "var", "", evalops.parse_options.variables_enabled);
-	STR_AND_TABS_BOOL("variable units", "varunit", _("If activated physical constants include units (e.g. c = 299 792 458 m∕s)."), CALCULATOR->variableUnitsEnabled());
+	STR_AND_TABS_BOOL("variable units", "varunits", _("If activated physical constants include units (e.g. c = 299 792 458 m∕s)."), CALCULATOR->variableUnitsEnabled());
 
 	CHECK_IF_SCREEN_FILLED_HEADING_S(_("Generic Display Options"));
 
@@ -4505,7 +4505,7 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("units"), ""); str += b2oo(evalops.parse_options.units_enabled, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("unknowns"), ""); str += b2oo(evalops.parse_options.unknowns_enabled, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("variables"), "var"); str += b2oo(evalops.parse_options.variables_enabled, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
-			PRINT_AND_COLON_TABS(_("variable units"), "varunit"); str += b2oo(CALCULATOR->variableUnitsEnabled(), false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("variable units"), "varunits"); str += b2oo(CALCULATOR->variableUnitsEnabled(), false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Generic Display Options"));
 
