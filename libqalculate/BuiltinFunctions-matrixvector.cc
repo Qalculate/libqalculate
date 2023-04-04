@@ -313,44 +313,10 @@ int ElementFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	return 1;
 }
 DimensionFunction::DimensionFunction() : MathFunction("dimension", 1) {
-	setArgumentDefinition(1, new VectorArgument("", false));
+	setArgumentDefinition(1, new VectorArgument(""));
 }
 int DimensionFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[0].isVector()) {
-		if(vargs[0].isMatrix() && vargs[0].columns() == 1 && vargs[0].rows() > 1) {
-			mstruct.set((long int) vargs[0].rows(), 1L, 0L);
-			return 1;
-		} else if(vargs[0].representsNonMatrix()) {
-			mstruct.set((long int) vargs[0].countChildren(), 1L, 0L);
-			return 1;
-		}
-	}
-	mstruct = vargs[0];
-	mstruct.eval(eo);
-	if(!mstruct.isVector()) {
-		if(mstruct.representsScalar()) {
-			mstruct = m_one;
-			return 1;
-		} else if(eo.approximation == APPROXIMATION_EXACT || eo.approximation == APPROXIMATION_EXACT_VARIABLES) {
-			EvaluationOptions eo2 = eo;
-			eo2.approximation = APPROXIMATION_APPROXIMATE;
-			MathStructure m2(vargs[0]);
-			CALCULATOR->beginTemporaryStopMessages();
-			m2.eval(eo2);
-			if(CALCULATOR->endTemporaryStopMessages()) return -1;
-			if(m2.isVector()) {
-				if(mstruct.isMatrix() && mstruct.columns() == 1 && mstruct.rows() > 1) mstruct.set((long int) m2.rows(), 1L, 0L);
-				else mstruct.set((long int) m2.countChildren(), 1L, 0L);
-				return 1;
-			} else if(m2.representsScalar()) {
-				mstruct = m_one;
-				return 1;
-			}
-		}
-		return -1;
-	}
-	if(mstruct.isMatrix() && mstruct.columns() == 1 && mstruct.rows() > 1) mstruct.set((long int) mstruct.rows(), 1L, 0L);
-	else mstruct.set((long int) mstruct.countChildren(), 1L, 0L);
+	mstruct.set((long int) vargs[0].countChildren(), 1L, 0L);
 	return 1;
 }
 ComponentFunction::ComponentFunction() : MathFunction("component", 2) {
@@ -502,11 +468,14 @@ int InverseFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	return mstruct.invertMatrix(eo);
 }
 MagnitudeFunction::MagnitudeFunction() : MathFunction("magnitude", 1) {
-	setArgumentDefinition(1, new VectorArgument("", false, false));
+	setArgumentDefinition(1, new VectorArgument(""));
 }
 int MagnitudeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
-	if(mstruct.isVector()) {
+	if(mstruct.size() == 1) {
+		mstruct.setType(STRUCT_FUNCTION);
+		mstruct.setFunctionId(FUNCTION_ID_ABS);
+	} else {
 		for(size_t i = 0; i < mstruct.size(); i++) {
 			if(!mstruct[i].representsReal(true)) mstruct[i].transformById(FUNCTION_ID_ABS);
 			mstruct[i] ^= 2;
@@ -515,35 +484,20 @@ int MagnitudeFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		else if(mstruct.size() == 1) mstruct.setToChild(1, true);
 		else mstruct.setType(STRUCT_ADDITION);
 		mstruct ^= nr_half;
-		return 1;
-	} else if(mstruct.representsScalar()) {
-		mstruct.transformById(FUNCTION_ID_ABS);
-		return 1;
 	}
-	mstruct.eval(eo);
-	if(mstruct.isVector()) {
-		for(size_t i = 0; i < mstruct.size(); i++) {
-			if(!mstruct[i].representsReal(true)) mstruct[i].transformById(FUNCTION_ID_ABS);
-			mstruct[i] ^= 2;
-		}
-		if(mstruct.size() == 0) mstruct.clear(true);
-		else if(mstruct.size() == 1) mstruct.setToChild(1, true);
-		else mstruct.setType(STRUCT_ADDITION);
-		mstruct ^= nr_half;
-		return 1;
-	}
-	mstruct = vargs[0];
-	mstruct.transformById(FUNCTION_ID_ABS);
 	return 1;
 }
 NormFunction::NormFunction() : MathFunction("norm", 1, 2) {
-	setArgumentDefinition(1, new VectorArgument("", false, false));
+	setArgumentDefinition(1, new VectorArgument(""));
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
 	setDefaultValue(2, "2");
 }
 int NormFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
-	if(mstruct.isVector()) {
+	if(mstruct.size() == 1) {
+		mstruct.setType(STRUCT_FUNCTION);
+		mstruct.setFunctionId(FUNCTION_ID_ABS);
+	} else {
 		bool b_even = vargs[1].representsEven();
 		for(size_t i = 0; i < mstruct.size(); i++) {
 			if(!b_even || !mstruct[i].representsReal(true)) mstruct[i].transformById(FUNCTION_ID_ABS);
@@ -554,29 +508,8 @@ int NormFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		else mstruct.setType(STRUCT_ADDITION);
 		mstruct ^= vargs[1];
 		mstruct.last().inverse();
-		return 1;
-	} else if(mstruct.representsScalar()) {
-		mstruct.transformById(FUNCTION_ID_ABS);
-		return 1;
 	}
-	mstruct.eval(eo);
-	if(mstruct.isVector()) {
-		bool b_even = vargs[1].representsEven();
-		for(size_t i = 0; i < mstruct.size(); i++) {
-			if(!b_even || !mstruct[i].representsReal(true)) mstruct[i].transformById(FUNCTION_ID_ABS);
-			mstruct[i] ^= vargs[1];
-		}
-		if(mstruct.size() == 0) mstruct.clear(true);
-		else if(mstruct.size() == 1) mstruct.setToChild(1, true);
-		else mstruct.setType(STRUCT_ADDITION);
-		mstruct ^= vargs[1];
-		mstruct.last().inverse();
-		return 1;
-	} else if(mstruct.representsScalar()) {
-		mstruct.transformById(FUNCTION_ID_ABS);
-		return 1;
-	}
-	return -1;
+	return 1;
 }
 bool matrix_to_rref(MathStructure &m, const EvaluationOptions &eo) {
 	size_t rows = m.rows();
@@ -747,31 +680,21 @@ int EntrywiseFunction::calculate(MathStructure &mstruct, const MathStructure &va
 }
 
 DotProductFunction::DotProductFunction() : MathFunction("dot", 2) {
-	setArgumentDefinition(1, new VectorArgument("", false));
-	setArgumentDefinition(2, new VectorArgument("", false));
+	setArgumentDefinition(1, new VectorArgument(""));
+	setArgumentDefinition(2, new VectorArgument(""));
 }
 int DotProductFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	MathStructure m2(vargs[1]);
-	bool b_eval = false;
-	if(!mstruct.isVector() && !mstruct.representsScalar()) {mstruct.eval(eo); b_eval = true;}
-	if(!m2.isVector() && !m2.representsScalar()) {m2.eval(eo); b_eval = true;}
-	if(mstruct.representsScalar() || m2.representsScalar()) {
-		mstruct *= m2;
+	if(mstruct.size() == m2.size()) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			mstruct[i] *= m2[i];
+		}
+		if(mstruct.size() == 1) mstruct.setToChild(1);
+		else mstruct.setType(STRUCT_ADDITION);
 		return 1;
 	}
-	if(mstruct.isVector() && m2.isVector()) {
-		if(mstruct.size() == m2.size()) {
-			for(size_t i = 0; i < mstruct.size(); i++) {
-				mstruct[i] *= m2[i];
-			}
-			mstruct.setType(STRUCT_ADDITION);
-			return 1;
-		}
-	}
-	if(!b_eval) return 0;
-	mstruct.transform(STRUCT_VECTOR, m2);
-	return -3;
+	return 0;
 }
 
 EntrywiseMultiplicationFunction::EntrywiseMultiplicationFunction() : MathFunction("times", 1, -1) {}
