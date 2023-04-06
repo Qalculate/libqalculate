@@ -6636,6 +6636,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		clock_gettime(CLOCK_MONOTONIC, &tv);
 		long int i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_nsec / 1000) / 1000;
 #endif
+		if(i_timeleft <= 0 && CALCULATOR->busy()) sleep_ms(10);
 		while(CALCULATOR->busy() && i_timeleft > 0) {
 			sleep_ms(10);
 			i_timeleft -= 10;

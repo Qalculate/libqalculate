@@ -1407,6 +1407,8 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 		}
 	}
 
+	if(CALCULATOR->aborted(true)) return -1;
+
 	if(representsUndefined() || mstruct.representsUndefined()) return -1;
 
 	// check if factors are numerator and denominator, and denominator is polynomial
@@ -3379,6 +3381,8 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 1;
 	}
+
+	if(CALCULATOR->aborted(true)) return -1;
 
 	switch(m_type) {
 		case STRUCT_VECTOR: {

@@ -160,6 +160,7 @@ bool Calculator::abort() {
 		while(b_busy && msecs > 0) {
 			sleep_ms(10);
 			msecs -= 10;
+			if(i_aborted == 1 && msecs < 4000) i_aborted = 3;
 		}
 		if(b_busy) {
 
@@ -2801,8 +2802,28 @@ bool Calculator::aborted() {
 	}
 	return false;
 }
+bool Calculator::aborted(bool overdue) {
+	if(!b_controlled) return false;
+	if((!overdue && i_aborted > 0) || (overdue && i_aborted > 2)) return true;
+	if(i_timeout > 0) {
+#ifndef CLOCK_MONOTONIC
+		struct timeval tv;
+		gettimeofday(&tv, NULL);
+		if(tv.tv_sec > t_end.tv_sec + (overdue ? 1 : 0) || (tv.tv_sec == t_end.tv_sec + (overdue ? 1 : 0) && tv.tv_usec > t_end.tv_usec)) {
+#else
+		struct timespec tv;
+		clock_gettime(CLOCK_MONOTONIC, &tv);
+		if(tv.tv_sec > t_end.tv_sec + (overdue ? 1 : 0) || (tv.tv_sec == t_end.tv_sec + (overdue ? 1 : 0) && tv.tv_nsec / 1000 > t_end.tv_usec)) {
+#endif
+			if(overdue) i_aborted = 4;
+			else i_aborted = 2;
+			return true;
+		}
+	}
+	return false;
+}
 string Calculator::abortedMessage() const {
-	if(i_aborted == 2) return _("timed out");
+	if(i_aborted % 2 == 0) return _("timed out");
 	return _("aborted");
 }
 bool Calculator::isControlled() const {

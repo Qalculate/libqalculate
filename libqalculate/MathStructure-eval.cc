@@ -2379,7 +2379,7 @@ bool separate_vector_vars(MathStructure &m, const EvaluationOptions &eo, vector<
 				}
 			}
 			if(!b) {
-				vars.push_back((KnownVariable*) m.variable());
+				KnownVariable *mv = (KnownVariable*) m.variable();
 				m.clearVector();
 				for(size_t i = 0; i < mvar.size(); i++) {
 					if(mvar[i].containsInterval(true, false, false, 1, true)) {
@@ -2388,10 +2388,11 @@ bool separate_vector_vars(MathStructure &m, const EvaluationOptions &eo, vector<
 						v->ref();
 						v->destroy();
 					} else {
-						m[i].addChild(mvar[i]);
+						m.addChild(mvar[i]);
 					}
 					separate_vector_vars(m[i], eo, vars, values);
 				}
+				vars.push_back(mv);
 				values.push_back(m);
 			}
 			return true;
