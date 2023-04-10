@@ -4440,7 +4440,8 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			break;
 		}
 	}
-	if(CALCULATOR->aborted()) {
+	if(CALCULATOR->aborted() && print_str.find(CALCULATOR->abortedMessage()) != string::npos) {
+		print_str = "";
 		if(colorize && tagtype == TAG_TYPE_TERMINAL) print_str += (colorize == 2 ? "\033[0;91m" : "\033[0;31m");
 		else if(colorize && tagtype == TAG_TYPE_HTML) print_str += (colorize == 2 ? "<span style=\"color:#FFAAAA\">" : "<span style=\"color:#800000\">");
 		print_str += CALCULATOR->abortedMessage();

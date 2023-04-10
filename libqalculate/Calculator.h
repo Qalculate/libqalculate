@@ -513,7 +513,6 @@ class Calculator {
 	*/
 	bool abort();
 	bool aborted(void);
-	bool aborted(bool overdue);
 	bool isControlled(void) const;
 	std::string abortedMessage(void) const;
 	std::string timedOutString(void) const;
@@ -1330,6 +1329,7 @@ class Calculator {
 	* @param id Storage id.
 	*/
 	void delId(size_t id);
+	size_t idCount() const;
 	//@}
 
 };

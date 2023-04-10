@@ -300,7 +300,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 				if(pars == 0 && !in_cit1 && !in_cit2) {
 					itmp++;
 					// read one argument
-					if(itmp <= maxargs() || args() < 0) {
+					if(itmp <= maxargs() || args() < 0 || !last_is_vctr) {
 						// index is <= max number of arguments
 						stmp = str.substr(start_pos, str_index - start_pos);
 						remove_blank_ends(stmp);
@@ -310,27 +310,37 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 						if(!arg && itmp > argc && args() < 0 && itmp > (int) last_argdef_index && (int) last_argdef_index > argc) {
 							 arg = priv->argdefs[last_argdef_index];
 						}
+						bool ignored = (itmp > maxargs() && args() >= 0);
+						if(ignored) CALCULATOR->beginTemporaryStopMessages();
 						if(stmp.empty()) {
 							if(arg) {
 								// if index has argument definition, use for parsing
 								MathStructure *mstruct = new MathStructure();
 								arg->parse(mstruct, getDefaultValue(itmp), po);
-								vargs.addChild_nocopy(mstruct);
+								if(ignored) mstruct->unref();
+								else vargs.addChild_nocopy(mstruct);
 							} else {
 								MathStructure *mstruct = new MathStructure();
 								CALCULATOR->parse(mstruct, getDefaultValue(itmp));
-								vargs.addChild_nocopy(mstruct);
+								if(ignored) mstruct->unref();
+								else vargs.addChild_nocopy(mstruct);
 							}
 						} else {
 							if(arg) {
 								MathStructure *mstruct = new MathStructure();
 								arg->parse(mstruct, stmp, po);
-								vargs.addChild_nocopy(mstruct);
+								if(ignored) mstruct->unref();
+								else vargs.addChild_nocopy(mstruct);
 							} else {
 								MathStructure *mstruct = new MathStructure();
 								CALCULATOR->parse(mstruct, stmp, po);
-								vargs.addChild_nocopy(mstruct);
+								if(ignored) mstruct->unref();
+								else vargs.addChild_nocopy(mstruct);
 							}
+						}
+						if(ignored) {
+							CALCULATOR->endTemporaryStopMessages();
+							CALCULATOR->error(false, _n("Additional arguments for function %s() were ignored. Function can only use %s argument.", "Additional arguments for function %s() were ignored. Function can only use %s arguments.", maxargs()), name().c_str(), i2s(maxargs()).c_str(), NULL);
 						}
 					} else if(last_is_vctr) {
 						// if last argument is a vector, use additional arguments to fill the vector
@@ -352,8 +362,6 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 							vargs[vargs.size() - 1].addChild_nocopy(mstruct);
 						}
 						vargs.childUpdated(vargs.size());
-					} else {
-						CALCULATOR->error(false, _n("Additional arguments for function %s() were ignored. Function can only use %s argument.", "Additional arguments for function %s() were ignored. Function can only use %s arguments.", maxargs()), name().c_str(), i2s(maxargs()).c_str(), NULL);
 					}
 					start_pos = str_index + 1;
 				}
@@ -367,33 +375,43 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 	if(!str.empty()) {
 		itmp++;
 		po.unended_function = unended_function;
-		if(itmp <= maxargs() || args() < 0) {
+		if(itmp <= maxargs() || args() < 0 || !last_is_vctr) {
 			stmp = str.substr(start_pos, str.length() - start_pos);
 			remove_blank_ends(stmp);
 			arg = getArgumentDefinition(itmp);
 			if(!arg && itmp > argc && args() < 0 && itmp > (int) last_argdef_index && (int) last_argdef_index > argc) {
 				 arg = priv->argdefs[last_argdef_index];
 			}
+			bool ignored = (itmp > maxargs() && args() >= 0);
+			if(ignored) CALCULATOR->beginTemporaryStopMessages();
 			if(stmp.empty()) {
 				if(arg) {
 					MathStructure *mstruct = new MathStructure();
 					arg->parse(mstruct, getDefaultValue(itmp));
-					vargs.addChild_nocopy(mstruct);
+					if(ignored) mstruct->unref();
+					else vargs.addChild_nocopy(mstruct);
 				} else {
 					MathStructure *mstruct = new MathStructure();
 					CALCULATOR->parse(mstruct, getDefaultValue(itmp));
-					vargs.addChild_nocopy(mstruct);
+					if(ignored) mstruct->unref();
+					else vargs.addChild_nocopy(mstruct);
 				}
 			} else {
 				if(arg) {
 					MathStructure *mstruct = new MathStructure();
 					arg->parse(mstruct, stmp, po);
-					vargs.addChild_nocopy(mstruct);
+					if(ignored) mstruct->unref();
+					else vargs.addChild_nocopy(mstruct);
 				} else {
 					MathStructure *mstruct = new MathStructure();
 					CALCULATOR->parse(mstruct, stmp, po);
-					vargs.addChild_nocopy(mstruct);
+					if(ignored) mstruct->unref();
+					else vargs.addChild_nocopy(mstruct);
 				}
+			}
+			if(ignored) {
+				CALCULATOR->endTemporaryStopMessages();
+				CALCULATOR->error(false, _n("Additional arguments for function %s() were ignored. Function can only use %s argument.", "Additional arguments for function %s() were ignored. Function can only use %s arguments.", maxargs()), name().c_str(), i2s(maxargs()).c_str(), NULL);
 			}
 		} else if(last_is_vctr) {
 			if(!vctr_started) {
@@ -414,8 +432,6 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 				vargs[vargs.size() - 1].addChild_nocopy(mstruct);
 			}
 			vargs.childUpdated(vargs.size());
-		} else {
-			CALCULATOR->error(false, _n("Additional arguments for function %s() were ignored. Function can only use %s argument.", "Additional arguments for function %s() were ignored. Function can only use %s arguments.", maxargs()), name().c_str(), i2s(maxargs()).c_str(), NULL);
 		}
 	}
 	if(unended_function && !unended_function->isFunction()) {

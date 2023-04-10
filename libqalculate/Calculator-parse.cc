@@ -60,7 +60,7 @@ bool is_not_number(char c, int base) {
 
 size_t Calculator::addId(MathStructure *mstruct, bool persistent) {
 	size_t id = 0;
-	if(priv->freed_ids.size() > 0) {
+	if(!priv->freed_ids.empty()) {
 		id = priv->freed_ids.back();
 		priv->freed_ids.pop_back();
 	} else {
@@ -74,7 +74,7 @@ size_t Calculator::addId(MathStructure *mstruct, bool persistent) {
 }
 size_t Calculator::parseAddId(MathFunction *f, const string &str, const ParseOptions &po, bool persistent) {
 	size_t id = 0;
-	if(priv->freed_ids.size() > 0) {
+	if(!priv->freed_ids.empty()) {
 		id = priv->freed_ids.back();
 		priv->freed_ids.pop_back();
 	} else {
@@ -89,7 +89,7 @@ size_t Calculator::parseAddId(MathFunction *f, const string &str, const ParseOpt
 }
 size_t Calculator::parseAddIdAppend(MathFunction *f, const MathStructure &append_mstruct, const string &str, const ParseOptions &po, bool persistent) {
 	size_t id = 0;
-	if(priv->freed_ids.size() > 0) {
+	if(!priv->freed_ids.empty()) {
 		id = priv->freed_ids.back();
 		priv->freed_ids.pop_back();
 	} else {
@@ -125,27 +125,41 @@ MathStructure *Calculator::getId(size_t id) {
 			return new MathStructure(*priv->id_structs[id]);
 		} else {
 			MathStructure *mstruct = priv->id_structs[id];
-			priv->freed_ids.push_back(id);
 			priv->id_structs.erase(id);
 			priv->ids_p.erase(id);
 			priv->ids_ref.erase(id);
+			if(priv->id_structs.empty()) {
+				priv->ids_i = 0;
+				priv->freed_ids.clear();
+			} else if(id == priv->ids_i) {
+				priv->ids_i--;
+			} else {
+				priv->freed_ids.push_back(id);
+			}
 			return mstruct;
 		}
 	}
 	return NULL;
 }
-
+size_t Calculator::idCount() const {return priv->id_structs.size();}
 void Calculator::delId(size_t id) {
 	unordered_map<size_t, size_t>::iterator it = priv->ids_ref.find(id);
 	if(it != priv->ids_ref.end()) {
 		if(it->second > 1) {
 			it->second--;
 		} else {
-			priv->freed_ids.push_back(id);
 			priv->id_structs[id]->unref();
 			priv->id_structs.erase(id);
 			priv->ids_p.erase(id);
 			priv->ids_ref.erase(it);
+			if(priv->id_structs.empty()) {
+				priv->ids_i = 0;
+				priv->freed_ids.clear();
+			} else if(id == priv->ids_i) {
+				priv->ids_i--;
+			} else {
+				priv->freed_ids.push_back(id);
+			}
 		}
 	}
 }
@@ -1615,7 +1629,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				stmp += i2s(addId(new MathStructure(v_percent)));
 				stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 				str.replace(i_mod, 1, stmp);
-				i_mod += v_percent->referenceName().length() - 1;
+				i_mod += stmp.length() - 1;
 			}
 		} else {
 			size_t i_nonspace = string::npos;
@@ -1625,7 +1639,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				stmp += i2s(addId(new MathStructure(v_percent)));
 				stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 				str.replace(i_mod, 1, stmp);
-				i_mod += v_percent->referenceName().length() - 1;
+				i_mod += stmp.length() - 1;
 			}
 		}
 		i_mod = str.find("%", i_mod + 1);
@@ -1764,6 +1778,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				int brackets = 1;
 				size_t i = str_index + 1;
 				size_t col_index = i;
+				vector<size_t> saved_ids;
 				for(; i < str.length() && brackets > 0; i++) {
 					bool b_row = false, b_col = false;
 					switch(str[i]) {
@@ -1836,8 +1851,29 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							if(!b_comma && !prev_func.empty()) {
 								prev_func += stmp2;
 								prev_func += SPACE_CH;
+								saved_ids.clear();
 								parse(mrow ? &mrow->last() : &mstruct2->last(), prev_func, po);
+								prev_func = "";
 							} else {
+								for(size_t i_id = 0; i_id < saved_ids.size(); i_id++) {
+									size_t id = saved_ids[i_id];
+									if(priv->id_structs.find(id) != priv->id_structs.end() && !priv->ids_p[id]) {
+										if(priv->ids_ref[id] <= 1) delId(id);
+										else priv->ids_ref[id]--;
+									}
+								}
+								saved_ids.clear();
+								for(size_t i_id = 0; i_id < stmp2.length(); i_id++) {
+									if(stmp2[i_id] == ID_WRAP_LEFT_CH) {
+										size_t i_id2 = stmp2.find(ID_WRAP_RIGHT_CH, i_id + 1);
+										if(i_id2 == string::npos) break;
+										int id = s2i(stmp2.substr(i_id + 1, i_id2 - (i_id + 1)));
+										if(priv->id_structs.find(id) != priv->id_structs.end() && !priv->ids_p[id]) {
+											priv->ids_ref[id]++;
+											saved_ids.push_back(id);
+										}
+									}
+								}
 								mcol = new MathStructure();
 								parse(mcol, stmp2, po);
 								b_unit = !b_comma && first_is_unit(*mcol) && stmp2.size() > 0 && is_not_in(ILLEGAL_IN_UNITNAMES, stmp2[0]) && is_unit_multiexp(*mcol);
@@ -1874,6 +1910,14 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								mrow = new MathStructure();
 								mrow->clearVector();
 								first_not_unit = false;
+								for(size_t i_id = 0; i_id < saved_ids.size(); i_id++) {
+									size_t id = saved_ids[i_id];
+									if(priv->id_structs.find(id) != priv->id_structs.end() && !priv->ids_p[id]) {
+										if(priv->ids_ref[id] <= 1) delId(id);
+										else priv->ids_ref[id]--;
+									}
+								}
+								saved_ids.clear();
 								prev_func = "";
 							} else if(mcol && !b_comma) {
 								if(last_is_function(*mcol) && is_not_in(ILLEGAL_IN_NAMES, stmp2[stmp2.size() - 1])) {
@@ -1887,6 +1931,14 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						}
 					}
 				}
+				for(size_t i_id = 0; i_id < saved_ids.size(); i_id++) {
+					size_t id = saved_ids[i_id];
+					if(priv->id_structs.find(id) != priv->id_structs.end() && !priv->ids_p[id]) {
+						if(priv->ids_ref[id] <= 1) delId(id);
+						else priv->ids_ref[id]--;
+					}
+				}
+				saved_ids.clear();
 				i--;
 				if(brackets != 0 && unended_function && !unended_test.isZero()) {
 					unended_function->set(unended_test);

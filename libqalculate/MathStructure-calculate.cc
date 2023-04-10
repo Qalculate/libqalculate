@@ -1407,8 +1407,6 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 		}
 	}
 
-	if(CALCULATOR->aborted(true)) return -1;
-
 	if(representsUndefined() || mstruct.representsUndefined()) return -1;
 
 	// check if factors are numerator and denominator, and denominator is polynomial
@@ -2069,6 +2067,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						return 1;
 					} else {
 						for(size_t i = 0; i < SIZE; i++) {
+							if(CALCULATOR->aborted()) break;
 							int ret = CHILD(i).merge_multiplication(mstruct, eo, NULL, 0, 0, false, false);
 							if(ret == 0) {
 								ret = mstruct.merge_multiplication(CHILD(i), eo, NULL, 0, 0, true, false);
@@ -3278,7 +3277,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 1;
 	}
-	if(m_type == STRUCT_NUMBER && o_number.isInfinite(false)) {
+	if(m_type == STRUCT_NUMBER && o_number.isInfinite(false) && !CALCULATOR->aborted()) {
 		if(mstruct.representsNegative(false)) {
 			// infinity^(-a)=0
 			o_number.clear();
@@ -3337,7 +3336,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 				return 1;
 			}
 		}
-	} else if(mstruct.isNumber() && mstruct.number().isInfinite(false)) {
+	} else if(mstruct.isNumber() && mstruct.number().isInfinite(false) && !CALCULATOR->aborted()) {
 		// test calculation of base when exponent is infinite
 		MathStructure mtest(*this);
 		CALCULATOR->beginTemporaryEnableIntervalArithmetic();
@@ -3381,8 +3380,6 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		MERGE_APPROX_AND_PREC(mstruct)
 		return 1;
 	}
-
-	if(CALCULATOR->aborted(true)) return -1;
 
 	switch(m_type) {
 		case STRUCT_VECTOR: {
@@ -5418,7 +5415,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				if(CHILD(0).unit() == CALCULATOR->getUnitById(UNIT_ID_CELSIUS) && CALCULATOR->getUnitById(UNIT_ID_KELVIN)) CHILD(0).setUnit(CALCULATOR->getUnitById(UNIT_ID_KELVIN));
 				else if(CHILD(0).unit() == CALCULATOR->getUnitById(UNIT_ID_FAHRENHEIT) && CALCULATOR->getUnitById(UNIT_ID_RANKINE)) CHILD(0).setUnit(CALCULATOR->getUnitById(UNIT_ID_RANKINE));
 			}
-			if(CHILD(0).merge_power(CHILD(1), eo) >= 1) {
+			if(!CALCULATOR->aborted() && CHILD(0).merge_power(CHILD(1), eo) >= 1) {
 				b = true;
 				setToChild(1, false, mparent, index_this + 1);
 			}
@@ -5515,6 +5512,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					bool b_matrix = !CHILD(i).representsNonMatrix();
 					if(i2 < i) {
 						for(; ; i2--) {
+							if(CALCULATOR->aborted()) break;
 							int r = CHILD(i2).merge_multiplication(CHILD(i), eo, this, i2, i);
 							if(r == 0) {
 								SWAP_CHILDREN(i2, i);
@@ -5537,6 +5535,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					}
 					bool had_matrix = false;
 					for(i2 = i + 1; i2 < SIZE; i2++) {
+						if(CALCULATOR->aborted()) break;
 						if(had_matrix && !CHILD(i2).representsNonMatrix()) continue;
 						int r = CHILD(i).merge_multiplication(CHILD(i2), eo, this, i, i2);
 						if(r == 0) {
@@ -6616,6 +6615,7 @@ bool MathStructure::calculateRaiseExponent(const EvaluationOptions &eo, MathStru
 		CALCULATOR->error(true, "calculateRaiseExponent() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), NULL);
 		return false;
 	}
+	if(CALCULATOR->aborted()) return false;
 	if(CHILD(0).merge_power(CHILD(1), eo, this, 0, 1) >= 1) {
 		setToChild(1, false, mparent, index_this + 1);
 		return true;
@@ -6845,7 +6845,7 @@ bool MathStructure::calculateSubtract(const MathStructure &msub, const Evaluatio
 
 bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursive, bool do_unformat) {
 
-	if(m_type == STRUCT_FUNCTION && o_function != eo.protected_function && !b_protected) {
+	if(m_type == STRUCT_FUNCTION && o_function != eo.protected_function && !b_protected && !CALCULATOR->aborted()) {
 
 		if(function_value) {
 			// clear stored function value (presently not used)
