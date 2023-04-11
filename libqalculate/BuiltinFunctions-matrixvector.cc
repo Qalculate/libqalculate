@@ -824,13 +824,12 @@ int EntrywiseDivisionFunction::calculate(MathStructure &mstruct, const MathStruc
 	mstruct = vargs[0];
 	MathStructure m2(vargs[1]);
 	bool b_eval = false;
-	if(mstruct.representsScalar() || m2.representsScalar()) {
+	if(m2.representsScalar()) {
 		mstruct /= m2;
 		return 1;
 	}
 	if(!mstruct.isVector() || (!mstruct.isMatrix() && !mstruct.representsNonMatrix())) {
 		mstruct.eval(eo);
-		if(mstruct.representsScalar()) {mstruct /= m2; return 1;}
 		b_eval = true;
 	}
 	if(!m2.isVector() || (!m2.isMatrix() && !m2.representsNonMatrix())) {
