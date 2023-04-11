@@ -1540,6 +1540,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							b = isolate_x_sub(eo, eo2, u_var);
 							calculateReplace(u_var, mv, eo2);
 							var->destroy();
+							if(b && contains(mbak)) {
+								set(mbak);
+								return false;
+							}
 							if(b) isolate_x(eo, eo2, x_var);
 							return b;
 						}
@@ -2389,9 +2393,14 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					b = isolate_x_sub(eo, eo2, u_var);
 					calculateReplace(u_var, mvar, eo2);
 					var->destroy();
+					if(b && contains(mbak)) {
+						set(mbak);
+						return false;
+					}
 					if(b) isolate_x(eo, eo2, x_var);
 					return b;
 				} else if(mvar != x_var) {
+					MathStructure mbak(*this);
 					MathStructure u_var(var);
 					replace(mvar, u_var);
 					CHILD(0).calculatesub(eo2, eo2, true);
@@ -2399,6 +2408,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					b = isolate_x_sub(eo, eo2, u_var);
 					calculateReplace(u_var, mvar, eo2);
 					var->destroy();
+					if(b && contains(mbak)) {
+						set(mbak);
+						return false;
+					}
 					if(b) isolate_x(eo, eo2, x_var);
 					return b;
 				}

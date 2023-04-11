@@ -423,7 +423,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 								} else if(mstruct.size() == SIZE - 2 && CHILD(0).isMinusOne()) {
 									b = true;
 									for(size_t i = 0; i < mstruct.size(); i++) {
-										if(!mstruct[i].equals(CHILD(i2 - 1 >= i ? i + 1 : i + 2))) {b = false; break;}
+										if(!mstruct[i].equals(CHILD(i2 > i + 1 ? i + 1 : i + 2))) {b = false; break;}
 									}
 								}
 								if(b) {
@@ -488,7 +488,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 									} else if(mstruct.size() == SIZE - 2 && CHILD(0).isMinusOne()) {
 										b = true;
 										for(size_t i = 1; i < mstruct.size(); i++) {
-											if(!mstruct[i].equals(CHILD(i2 - 1 >= i ? i + 1 : i + 2))) {b = false; break;}
+											if(!mstruct[i].equals(CHILD(i2 > i + 1 ? i + 1 : i + 2))) {b = false; break;}
 										}
 									}
 									if(b) {
@@ -573,7 +573,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 									} else if(mstruct.size() - 2 == SIZE && mstruct[0].isMinusOne()) {
 										b = true;
 										for(size_t i = 0; i < SIZE; i++) {
-											if(!CHILD(i).equals(mstruct[i2 - 1 >= i ? i + 1 : i + 2])) {b = false; break;}
+											if(!CHILD(i).equals(mstruct[i2 > i + 1 ? i + 1 : i + 2])) {b = false; break;}
 										}
 									}
 									if(b) {
@@ -617,7 +617,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 										} else if(mstruct.size() - 2 == SIZE && mstruct[0].isMinusOne()) {
 											b = true;
 											for(size_t i = 1; i < SIZE; i++) {
-												if(!CHILD(i).equals(mstruct[i2 - 1 >= i ? i + 1 : i + 2])) {b = false; break;}
+												if(!CHILD(i).equals(mstruct[i2 > i + 1 ? i + 1 : i + 2])) {b = false; break;}
 											}
 										}
 										if(b) {
