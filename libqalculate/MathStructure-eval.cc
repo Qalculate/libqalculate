@@ -2486,7 +2486,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 			// calculate non-differentiable functions (not handled by variance formula) and functions without uncertainties
 			if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo, true, true, (eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) ? 2 : 1);
-
+			if(CALCULATOR->aborted()) return *this;
 			MathStructure munc, mbak(*this);
 			if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) {
 				// replace intervals with variables and calculate exact

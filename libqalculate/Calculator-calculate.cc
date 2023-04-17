@@ -160,7 +160,6 @@ bool Calculator::abort() {
 		while(b_busy && msecs > 0) {
 			sleep_ms(10);
 			msecs -= 10;
-			if(i_aborted == 1 && msecs < 4000) i_aborted = 3;
 		}
 		if(b_busy) {
 

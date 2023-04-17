@@ -263,26 +263,31 @@ int ElementsFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	return 1;
 }
 ElementFunction::ElementFunction() : MathFunction("element", 2, 3) {
-	setArgumentDefinition(1, new VectorArgument(""));
+	setArgumentDefinition(1, new MatrixArgument(""));
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
 	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SIZE));
 	setDefaultValue(3, "0");
 }
 bool ElementFunction::representsScalar(const MathStructure &vargs) const {
-	if(vargs.size() >= 2 && vargs[0].isVector() && vargs[1].isInteger() && vargs[1].number().isPositive()) {
+	if(vargs.size() >= 2 && vargs[0].isMatrix() && vargs[1].isInteger() && vargs[1].number().isPositive()) {
 		if(vargs.size() == 2 || vargs[2].isZero()) {
-			if(vargs[1].number() <= vargs[0].size()) return vargs[0][vargs[1].number().uintValue() - 1].representsScalar();
-		} else if(vargs[0].isMatrix() && vargs[1].number() <= vargs[0].size() && vargs[2].isInteger() && vargs[2].number().isPositive() && vargs[2].number() <= vargs[0][0].size()) {
+			if(vargs[0].size() == 1 && vargs[1].number() <= vargs[0][0].size()) return vargs[0][0][vargs[1].number().uintValue() - 1].representsScalar();
+			if(vargs[1].number() <= vargs[0].size() && vargs[0][0].size() == 1) return vargs[0][vargs[1].number().uintValue() - 1][0].representsScalar();
+		} else if(vargs[1].number() <= vargs[0].size() && vargs[2].isInteger() && vargs[2].number().isPositive() && vargs[2].number() <= vargs[0][0].size()) {
 			return vargs[0][vargs[1].number().uintValue() - 1][vargs[2].number().uintValue() - 1].representsScalar();
 		}
 	}
 	return false;
 }
 bool ElementFunction::representsNonMatrix(const MathStructure &vargs) const {
-	if(vargs.size() >= 2 && vargs[0].isVector() && vargs[1].isInteger() && vargs[1].number().isPositive()) {
+	if(vargs.size() >= 2 && vargs[0].isMatrix() && vargs[1].isInteger() && vargs[1].number().isPositive()) {
 		if(vargs.size() == 2 || vargs[2].isZero()) {
-			if(vargs[1].number() <= vargs[0].size()) return vargs[0][vargs[1].number().uintValue() - 1].representsNonMatrix();
-		} else if(vargs[0].isMatrix() && vargs[1].number() <= vargs[0].size() && vargs[2].isInteger() && vargs[2].number().isPositive() && vargs[2].number() <= vargs[0][0].size()) {
+			if(vargs[0].size() == 1 && vargs[1].number() <= vargs[0][0].size()) return vargs[0][0][vargs[1].number().uintValue() - 1].representsNonMatrix();
+			if(vargs[1].number() <= vargs[0].size()) {
+				if(vargs[0][0].size() == 1) return vargs[0][vargs[1].number().uintValue() - 1][0].representsNonMatrix();
+				else return vargs[0][vargs[1].number().uintValue() - 1].representsNonMatrix();
+			}
+		} else if(vargs[1].number() <= vargs[0].size() && vargs[2].isInteger() && vargs[2].number().isPositive() && vargs[2].number() <= vargs[0][0].size()) {
 			return vargs[0][vargs[1].number().uintValue() - 1][vargs[2].number().uintValue() - 1].representsNonMatrix();
 		}
 	}
@@ -292,19 +297,24 @@ int ElementFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	size_t row = (size_t) vargs[1].number().uintValue();
 	size_t col = (size_t) vargs[2].number().uintValue();
 	if(col == 0) {
-		if(row > vargs[0].size()) {
-			CALCULATOR->error(true, _("Element %s does not exist in vector."), format_and_print(vargs[0]).c_str(), NULL);
-			return 0;
+		if(vargs[0].size() == 1 && vargs[0][0].size() >= row) {
+			mstruct = vargs[0][0][row - 1];
+			return 1;
 		}
-		mstruct = vargs[0][row - 1];
-		return 1;
+		if(vargs[0].size() >= row) {
+			if(vargs[0][0].size() == 1) mstruct = vargs[0][row - 1][0];
+			else mstruct = vargs[0][row - 1];
+			return 1;
+		}
+		CALCULATOR->error(true, _("Element %s does not exist in vector."), format_and_print(vargs[1]).c_str(), NULL);
+		return 0;
 	}
 	if(col > vargs[0].columns()) {
-		CALCULATOR->error(true, _("Column %s does not exist in matrix."), format_and_print(vargs[1]).c_str(), NULL);
+		CALCULATOR->error(true, _("Column %s does not exist in matrix."), format_and_print(vargs[2]).c_str(), NULL);
 		return 0;
 	}
 	if(row > vargs[0].rows()) {
-		CALCULATOR->error(true, _("Row %s does not exist in matrix."), format_and_print(vargs[0]).c_str(), NULL);
+		CALCULATOR->error(true, _("Row %s does not exist in matrix."), format_and_print(vargs[1]).c_str(), NULL);
 		return 0;
 	}
 	const MathStructure *em = vargs[0].getElement(row, col);
@@ -471,7 +481,15 @@ MagnitudeFunction::MagnitudeFunction() : MathFunction("magnitude", 1) {
 	setArgumentDefinition(1, new VectorArgument(""));
 }
 int MagnitudeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isMatrix()) return 0;
 	mstruct = vargs[0];
+	if(!mstruct.representsNonMatrix()) {
+		CALCULATOR->beginTemporaryStopMessages();
+		mstruct.eval(eo);
+		CALCULATOR->endTemporaryStopMessages();
+		if(mstruct.isMatrix()) return 0;
+		mstruct = vargs[0];
+	}
 	if(mstruct.size() == 1) {
 		mstruct.setType(STRUCT_FUNCTION);
 		mstruct.setFunctionId(FUNCTION_ID_ABS);
@@ -493,7 +511,15 @@ NormFunction::NormFunction() : MathFunction("norm", 1, 2) {
 	setDefaultValue(2, "2");
 }
 int NormFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isMatrix()) return 0;
 	mstruct = vargs[0];
+	if(!mstruct.representsNonMatrix()) {
+		CALCULATOR->beginTemporaryStopMessages();
+		mstruct.eval(eo);
+		CALCULATOR->endTemporaryStopMessages();
+		if(mstruct.isMatrix()) return 0;
+		mstruct = vargs[0];
+	}
 	if(mstruct.size() == 1) {
 		mstruct.setType(STRUCT_FUNCTION);
 		mstruct.setFunctionId(FUNCTION_ID_ABS);

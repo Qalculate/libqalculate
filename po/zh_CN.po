@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate 3.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-06 14:08+0100\n"
+"POT-Creation-Date: 2023-04-17 10:20+0200\n"
 "PO-Revision-Date: 2021-08-23 10:33+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "X-Generator: Gtranslator 40.0\n"
 
 #: ../src/defs2doc.cc:334 ../src/qalc.cc:1920 ../libqalculate/Function.cc:227
-#: ../libqalculate/Function.cc:1471
+#: ../libqalculate/Function.cc:1487
 msgid "argument"
 msgstr "参数"
 
@@ -101,12 +101,12 @@ msgid "relative uncertainty"
 msgstr "相对不确定度"
 
 #: ../src/defs2doc.cc:498 ../src/qalc.cc:2157 ../src/qalc.cc:2730
-#: ../libqalculate/Function.cc:2247
+#: ../libqalculate/Function.cc:2263
 msgid "matrix"
 msgstr "matrix"
 
 #: ../src/defs2doc.cc:500 ../src/qalc.cc:2159 ../src/qalc.cc:2732
-#: ../libqalculate/Function.cc:2174
+#: ../libqalculate/Function.cc:2190
 msgid "vector"
 msgstr "vector"
 
@@ -144,7 +144,7 @@ msgstr "non-zero"
 
 #: ../src/defs2doc.cc:517 ../src/qalc.cc:311 ../src/qalc.cc:851
 #: ../src/qalc.cc:1601 ../src/qalc.cc:2184 ../src/qalc.cc:2764
-#: ../src/qalc.cc:4450 ../src/qalc.cc:4911 ../libqalculate/Function.cc:2016
+#: ../src/qalc.cc:4450 ../src/qalc.cc:4911 ../libqalculate/Function.cc:2032
 msgid "integer"
 msgstr "integer"
 
@@ -170,7 +170,7 @@ msgstr "complex"
 
 #: ../src/defs2doc.cc:521 ../src/qalc.cc:303 ../src/qalc.cc:857
 #: ../src/qalc.cc:1595 ../src/qalc.cc:2189 ../src/qalc.cc:2769
-#: ../src/qalc.cc:4455 ../src/qalc.cc:4905 ../libqalculate/Function.cc:1855
+#: ../src/qalc.cc:4455 ../src/qalc.cc:4905 ../libqalculate/Function.cc:1871
 msgid "number"
 msgstr "number"
 
@@ -315,7 +315,7 @@ msgstr "none"
 
 #: ../src/qalc.cc:313 ../src/qalc.cc:852 ../src/qalc.cc:1603
 #: ../src/qalc.cc:2185 ../src/qalc.cc:2765 ../src/qalc.cc:4451
-#: ../src/qalc.cc:4913 ../libqalculate/Function.cc:2337
+#: ../src/qalc.cc:4913 ../libqalculate/Function.cc:2353
 msgid "boolean"
 msgstr "布尔值"
 
@@ -329,7 +329,7 @@ msgstr "无法识别的假设。"
 #: ../libqalculate/Calculator.cc:258 ../libqalculate/Calculator.cc:509
 #: ../libqalculate/Calculator.cc:657 ../libqalculate/DataSet.cc:1117
 #: ../libqalculate/DataSet.cc:1179 ../libqalculate/MathStructure-print.cc:4117
-#: ../libqalculate/Function.cc:2407 ../libqalculate/Function.cc:2423
+#: ../libqalculate/Function.cc:2423 ../libqalculate/Function.cc:2439
 msgid "or"
 msgstr "或"
 
@@ -371,7 +371,7 @@ msgstr "非法数值。"
 #: ../src/qalc.cc:747 ../src/qalc.cc:3764 ../src/qalc.cc:4332
 #: ../src/qalc.cc:4545 ../src/qalc.cc:4790 ../src/qalc.cc:5025
 #: ../src/qalc.cc:5155 ../src/qalc.cc:6420
-#: ../libqalculate/Calculator-calculate.cc:1750
+#: ../libqalculate/Calculator-calculate.cc:1753
 msgid "base"
 msgstr "base"
 
@@ -386,47 +386,47 @@ msgstr "输出进制"
 #. roman numerals
 #: ../src/qalc.cc:752 ../src/qalc.cc:1667 ../src/qalc.cc:1795
 #: ../src/qalc.cc:4057 ../src/qalc.cc:4547 ../src/qalc.cc:4690
-#: ../src/qalc.cc:6318 ../libqalculate/Calculator-calculate.cc:1652
+#: ../src/qalc.cc:6318 ../libqalculate/Calculator-calculate.cc:1655
 msgid "roman"
 msgstr "roman"
 
 #. number base
 #: ../src/qalc.cc:754 ../src/qalc.cc:4062 ../src/qalc.cc:4548
 #: ../src/qalc.cc:4691 ../src/qalc.cc:6320
-#: ../libqalculate/Calculator-calculate.cc:1654
+#: ../libqalculate/Calculator-calculate.cc:1657
 msgid "bijective"
 msgstr "bijective"
 
 #: ../src/qalc.cc:761 ../src/qalc.cc:1665 ../src/qalc.cc:4132
 #: ../src/qalc.cc:4562 ../src/qalc.cc:6348
-#: ../libqalculate/Calculator-calculate.cc:1682
+#: ../libqalculate/Calculator-calculate.cc:1685
 msgid "time"
 msgstr "time"
 
 #: ../src/qalc.cc:762 ../src/qalc.cc:4021 ../src/qalc.cc:6301
-#: ../libqalculate/Calculator-calculate.cc:1639
+#: ../libqalculate/Calculator-calculate.cc:1642
 msgid "hexadecimal"
 msgstr "hexadecimal"
 
 #: ../src/qalc.cc:769 ../src/qalc.cc:4041 ../src/qalc.cc:6309
-#: ../libqalculate/Calculator-calculate.cc:1647
+#: ../libqalculate/Calculator-calculate.cc:1650
 msgid "duodecimal"
 msgstr "duodecimal"
 
 #. number base
 #: ../src/qalc.cc:771 ../src/qalc.cc:4026 ../src/qalc.cc:6303
-#: ../libqalculate/Calculator-calculate.cc:1641
+#: ../libqalculate/Calculator-calculate.cc:1644
 msgid "binary"
 msgstr "binary"
 
 #: ../src/qalc.cc:772 ../src/qalc.cc:4036 ../src/qalc.cc:6307
-#: ../libqalculate/Calculator-calculate.cc:1645
+#: ../libqalculate/Calculator-calculate.cc:1648
 msgid "octal"
 msgstr "octal"
 
 #. number base
 #: ../src/qalc.cc:774 ../src/qalc.cc:4031 ../src/qalc.cc:6305
-#: ../libqalculate/Calculator-calculate.cc:1643
+#: ../libqalculate/Calculator-calculate.cc:1646
 msgid "decimal"
 msgstr "decimal"
 
@@ -434,25 +434,25 @@ msgstr "decimal"
 #: ../src/qalc.cc:4077 ../src/qalc.cc:4082 ../src/qalc.cc:4550
 #: ../src/qalc.cc:4551 ../src/qalc.cc:4552 ../src/qalc.cc:6324
 #: ../src/qalc.cc:6326 ../src/qalc.cc:6328
-#: ../libqalculate/Calculator-calculate.cc:1658
-#: ../libqalculate/Calculator-calculate.cc:1660
-#: ../libqalculate/Calculator-calculate.cc:1662
+#: ../libqalculate/Calculator-calculate.cc:1661
+#: ../libqalculate/Calculator-calculate.cc:1663
+#: ../libqalculate/Calculator-calculate.cc:1665
 msgid "sexagesimal"
 msgstr "sexagesimal"
 
 #: ../src/qalc.cc:778 ../src/qalc.cc:779 ../src/qalc.cc:4097
 #: ../src/qalc.cc:4102 ../src/qalc.cc:4553 ../src/qalc.cc:4554
 #: ../src/qalc.cc:6334 ../src/qalc.cc:6336
-#: ../libqalculate/Calculator-calculate.cc:1668
-#: ../libqalculate/Calculator-calculate.cc:1670
+#: ../libqalculate/Calculator-calculate.cc:1671
+#: ../libqalculate/Calculator-calculate.cc:1673
 msgid "latitude"
 msgstr "纬度"
 
 #: ../src/qalc.cc:780 ../src/qalc.cc:781 ../src/qalc.cc:4087
 #: ../src/qalc.cc:4092 ../src/qalc.cc:4555 ../src/qalc.cc:4556
 #: ../src/qalc.cc:6330 ../src/qalc.cc:6332
-#: ../libqalculate/Calculator-calculate.cc:1664
-#: ../libqalculate/Calculator-calculate.cc:1666
+#: ../libqalculate/Calculator-calculate.cc:1667
+#: ../libqalculate/Calculator-calculate.cc:1669
 msgid "longitude"
 msgstr "经度"
 
@@ -895,21 +895,21 @@ msgstr "optimalsi"
 #. optimal units
 #: ../src/qalc.cc:1222 ../src/qalc.cc:1824 ../src/qalc.cc:4319
 #: ../src/qalc.cc:4733 ../src/qalc.cc:6412
-#: ../libqalculate/Calculator-calculate.cc:1742
+#: ../libqalculate/Calculator-calculate.cc:1745
 msgid "optimal"
 msgstr "optimal"
 
 #. base units
 #: ../src/qalc.cc:1224 ../src/qalc.cc:1827 ../src/qalc.cc:4326
 #: ../src/qalc.cc:4734 ../src/qalc.cc:6416
-#: ../libqalculate/Calculator-calculate.cc:1746
+#: ../libqalculate/Calculator-calculate.cc:1749
 msgctxt "units"
 msgid "base"
 msgstr "base"
 
 #. mixed units
 #: ../src/qalc.cc:1226 ../src/qalc.cc:1833 ../src/qalc.cc:4729
-#: ../src/qalc.cc:6450 ../libqalculate/Calculator-calculate.cc:1772
+#: ../src/qalc.cc:6450 ../libqalculate/Calculator-calculate.cc:1775
 msgctxt "units"
 msgid "mixed"
 msgstr "mixed"
@@ -932,13 +932,13 @@ msgstr "simplify"
 #: ../src/qalc.cc:1252 ../src/qalc.cc:1575 ../src/qalc.cc:4416
 #: ../src/qalc.cc:4432 ../src/qalc.cc:4795 ../src/qalc.cc:4883
 #: ../src/qalc.cc:5148 ../src/qalc.cc:6482
-#: ../libqalculate/Calculator-calculate.cc:1811
+#: ../libqalculate/Calculator-calculate.cc:1814
 msgid "expand"
 msgstr "expand"
 
 #. algebra mode
 #: ../src/qalc.cc:1254 ../src/qalc.cc:1575 ../src/qalc.cc:4431
-#: ../src/qalc.cc:6479 ../libqalculate/Calculator-calculate.cc:1807
+#: ../src/qalc.cc:6479 ../libqalculate/Calculator-calculate.cc:1810
 msgid "factorize"
 msgstr "factorize"
 
@@ -1058,39 +1058,39 @@ msgstr "复数形式"
 #. complex form
 #: ../src/qalc.cc:1450 ../src/qalc.cc:1682 ../src/qalc.cc:4190
 #: ../src/qalc.cc:4583 ../src/qalc.cc:6397
-#: ../libqalculate/Calculator-calculate.cc:1720
+#: ../libqalculate/Calculator-calculate.cc:1723
 msgid "rectangular"
 msgstr "rectangular"
 
 #: ../src/qalc.cc:1450 ../src/qalc.cc:4190 ../src/qalc.cc:6397
-#: ../libqalculate/Calculator-calculate.cc:1720
+#: ../libqalculate/Calculator-calculate.cc:1723
 msgid "cartesian"
 msgstr "cartesian"
 
 #. complex form
 #: ../src/qalc.cc:1452 ../src/qalc.cc:1682 ../src/qalc.cc:4202
 #: ../src/qalc.cc:4584 ../src/qalc.cc:6400
-#: ../libqalculate/Calculator-calculate.cc:1722
+#: ../libqalculate/Calculator-calculate.cc:1725
 msgid "exponential"
 msgstr "exponential"
 
 #. complex form
 #: ../src/qalc.cc:1454 ../src/qalc.cc:1682 ../src/qalc.cc:4214
 #: ../src/qalc.cc:4585 ../src/qalc.cc:6403
-#: ../libqalculate/Calculator-calculate.cc:1724
+#: ../libqalculate/Calculator-calculate.cc:1727
 msgid "polar"
 msgstr "polar"
 
 #. complex form
 #: ../src/qalc.cc:1456 ../src/qalc.cc:1682 ../src/qalc.cc:4226
 #: ../src/qalc.cc:4586 ../src/qalc.cc:6406
-#: ../libqalculate/Calculator-calculate.cc:1726
-#: ../libqalculate/Function.cc:2348
+#: ../libqalculate/Calculator-calculate.cc:1729
+#: ../libqalculate/Function.cc:2364
 msgid "angle"
 msgstr "angle"
 
 #: ../src/qalc.cc:1456 ../src/qalc.cc:4226 ../src/qalc.cc:6406
-#: ../libqalculate/Calculator-calculate.cc:1726
+#: ../libqalculate/Calculator-calculate.cc:1729
 msgid "phasor"
 msgstr "phasor"
 
@@ -1511,7 +1511,7 @@ msgid "set"
 msgstr "set"
 
 #: ../src/qalc.cc:2370 ../src/qalc.cc:4307 ../src/qalc.cc:6386
-#: ../libqalculate/Calculator-calculate.cc:1731
+#: ../libqalculate/Calculator-calculate.cc:1734
 msgid "fraction"
 msgstr "分数"
 
@@ -1555,51 +1555,51 @@ msgstr "月"
 msgid "Year"
 msgstr "年"
 
-#: ../src/qalc.cc:2542 ../libqalculate/Calculator-calculate.cc:1920
+#: ../src/qalc.cc:2542 ../libqalculate/Calculator-calculate.cc:1923
 msgid "failed"
 msgstr "失败了"
 
-#: ../src/qalc.cc:2543 ../libqalculate/Calculator-calculate.cc:1921
+#: ../src/qalc.cc:2543 ../libqalculate/Calculator-calculate.cc:1924
 msgid "Gregorian:"
 msgstr "格里高利历(公历/阳历):"
 
-#: ../src/qalc.cc:2544 ../libqalculate/Calculator-calculate.cc:1922
+#: ../src/qalc.cc:2544 ../libqalculate/Calculator-calculate.cc:1925
 msgid "Hebrew:"
 msgstr "希伯来历(犹太历):"
 
-#: ../src/qalc.cc:2545 ../libqalculate/Calculator-calculate.cc:1923
+#: ../src/qalc.cc:2545 ../libqalculate/Calculator-calculate.cc:1926
 msgid "Islamic:"
 msgstr "伊斯兰历(回历/Hijri):"
 
-#: ../src/qalc.cc:2546 ../libqalculate/Calculator-calculate.cc:1924
+#: ../src/qalc.cc:2546 ../libqalculate/Calculator-calculate.cc:1927
 msgid "Persian:"
 msgstr "波斯历(Solar Hijri):"
 
-#: ../src/qalc.cc:2547 ../libqalculate/Calculator-calculate.cc:1925
+#: ../src/qalc.cc:2547 ../libqalculate/Calculator-calculate.cc:1928
 msgid "Indian national:"
 msgstr "印度国历:"
 
-#: ../src/qalc.cc:2548 ../libqalculate/Calculator-calculate.cc:1926
+#: ../src/qalc.cc:2548 ../libqalculate/Calculator-calculate.cc:1929
 msgid "Chinese:"
 msgstr "中国历(农历/阴历):"
 
-#: ../src/qalc.cc:2553 ../libqalculate/Calculator-calculate.cc:1930
+#: ../src/qalc.cc:2553 ../libqalculate/Calculator-calculate.cc:1933
 msgid "Julian:"
 msgstr "儒略历:"
 
-#: ../src/qalc.cc:2554 ../libqalculate/Calculator-calculate.cc:1931
+#: ../src/qalc.cc:2554 ../libqalculate/Calculator-calculate.cc:1934
 msgid "Revised julian:"
 msgstr "修订儒略历:"
 
-#: ../src/qalc.cc:2555 ../libqalculate/Calculator-calculate.cc:1932
+#: ../src/qalc.cc:2555 ../libqalculate/Calculator-calculate.cc:1935
 msgid "Coptic:"
 msgstr "科普特历(Coptic):"
 
-#: ../src/qalc.cc:2556 ../libqalculate/Calculator-calculate.cc:1933
+#: ../src/qalc.cc:2556 ../libqalculate/Calculator-calculate.cc:1936
 msgid "Ethiopian:"
 msgstr "埃塞俄比亚历:"
 
-#: ../src/qalc.cc:2645 ../libqalculate/BuiltinFunctions-matrixvector.cc:1328
+#: ../src/qalc.cc:2645 ../libqalculate/BuiltinFunctions-matrixvector.cc:1249
 msgid "No matching item found."
 msgstr "未找到匹配项。"
 
@@ -1839,13 +1839,13 @@ msgstr "定义已保存"
 
 #. qalc command
 #: ../src/qalc.cc:3611 ../src/qalc.cc:4812 ../src/qalc.cc:4933
-#: ../src/qalc.cc:5155 ../libqalculate/Function.cc:2309
+#: ../src/qalc.cc:5155 ../libqalculate/Function.cc:2325
 msgid "variable"
 msgstr "variable"
 
 #. qalc command
 #: ../src/qalc.cc:3674 ../src/qalc.cc:4802 ../src/qalc.cc:4939
-#: ../src/qalc.cc:5155 ../libqalculate/Function.cc:2281
+#: ../src/qalc.cc:5155 ../libqalculate/Function.cc:2297
 msgid "function"
 msgstr "function"
 
@@ -1958,42 +1958,42 @@ msgstr "convert"
 #. "to"-operator
 #: ../src/qalc.cc:4003 ../src/qalc.cc:4004 ../src/qalc.cc:4811
 #: ../src/qalc.cc:5037 ../src/qalc.cc:5086 ../src/qalc.cc:5155
-#: ../libqalculate/Calculator-calculate.cc:2193
-#: ../libqalculate/Calculator-calculate.cc:2195
-#: ../libqalculate/Calculator-calculate.cc:2223
-#: ../libqalculate/Calculator-calculate.cc:2225
-#: ../libqalculate/Calculator-calculate.cc:2254
-#: ../libqalculate/Calculator-calculate.cc:2258
+#: ../libqalculate/Calculator-calculate.cc:2199
+#: ../libqalculate/Calculator-calculate.cc:2201
+#: ../libqalculate/Calculator-calculate.cc:2229
+#: ../libqalculate/Calculator-calculate.cc:2231
+#: ../libqalculate/Calculator-calculate.cc:2260
+#: ../libqalculate/Calculator-calculate.cc:2264
 #: ../libqalculate/Calculator.cc:309 ../libqalculate/Calculator.cc:560
 #: ../libqalculate/Calculator.cc:1452 ../libqalculate/Calculator.cc:1453
 msgid "to"
 msgstr "to"
 
 #: ../src/qalc.cc:4179 ../src/qalc.cc:6379
-#: ../libqalculate/Calculator-calculate.cc:1713
+#: ../libqalculate/Calculator-calculate.cc:1716
 msgid "Time zone parsing failed."
 msgstr "时区解析失败。"
 
 #. number bases
 #: ../src/qalc.cc:4251 ../src/qalc.cc:6393
-#: ../libqalculate/Calculator-calculate.cc:1738
+#: ../libqalculate/Calculator-calculate.cc:1741
 msgid "bases"
 msgstr "进制"
 
 #: ../src/qalc.cc:4297 ../src/qalc.cc:6395
-#: ../libqalculate/Calculator-calculate.cc:1740
+#: ../libqalculate/Calculator-calculate.cc:1743
 msgid "calendars"
 msgstr "日历"
 
 #: ../src/qalc.cc:4315 ../src/qalc.cc:6389
-#: ../libqalculate/Calculator-calculate.cc:1733
+#: ../libqalculate/Calculator-calculate.cc:1736
 msgid "factors"
 msgstr "因子"
 
 #. qalc command
 #: ../src/qalc.cc:4317 ../src/qalc.cc:4413 ../src/qalc.cc:4806
 #: ../src/qalc.cc:4879 ../src/qalc.cc:6391
-#: ../libqalculate/Calculator-calculate.cc:1736
+#: ../libqalculate/Calculator-calculate.cc:1739
 msgid "partial fraction"
 msgstr "partial fraction"
 
@@ -2563,11 +2563,11 @@ msgstr "警告"
 #: ../src/qalc.cc:5381 ../src/qalc.cc:5637 ../src/qalc.cc:5678
 #: ../src/qalc.cc:5686 ../src/qalc.cc:5728 ../src/qalc.cc:5736
 #: ../src/qalc.cc:5740 ../src/qalc.cc:5741 ../src/qalc.cc:5743
-#: ../src/qalc.cc:5744 ../src/qalc.cc:6886
+#: ../src/qalc.cc:5744 ../src/qalc.cc:6887
 #: ../libqalculate/Calculator-calculate.cc:741
 #: ../libqalculate/Calculator-calculate.cc:826
-#: ../libqalculate/Calculator-calculate.cc:1974
-#: ../libqalculate/Calculator-calculate.cc:1994
+#: ../libqalculate/Calculator-calculate.cc:1977
+#: ../libqalculate/Calculator-calculate.cc:1997
 msgid "approx."
 msgstr "约"
 
@@ -2593,9 +2593,9 @@ msgstr "常规"
 msgid "Parsing mode"
 msgstr "解析模式"
 
-#: ../src/qalc.cc:5467 ../src/qalc.cc:5921 ../src/qalc.cc:6647
+#: ../src/qalc.cc:5467 ../src/qalc.cc:5921 ../src/qalc.cc:6648
 #: ../libqalculate/Calculator-calculate.cc:1083
-#: ../libqalculate/Calculator-calculate.cc:2806
+#: ../libqalculate/Calculator-calculate.cc:2823
 #: ../libqalculate/MathStructure.cc:455
 #, c-format
 msgid "aborted"
@@ -2605,7 +2605,7 @@ msgstr "已中止"
 msgid "RPN Register Moved"
 msgstr "RPN寄存器已移动"
 
-#: ../src/qalc.cc:5500 ../src/qalc.cc:6840
+#: ../src/qalc.cc:5500 ../src/qalc.cc:6841
 msgid "RPN Operation"
 msgstr "RPN操作"
 
@@ -2613,7 +2613,7 @@ msgstr "RPN操作"
 msgid "Processing"
 msgstr "正在处理"
 
-#: ../src/qalc.cc:5540 ../src/qalc.cc:5956 ../src/qalc.cc:6664
+#: ../src/qalc.cc:5540 ../src/qalc.cc:5956 ../src/qalc.cc:6665
 msgid "(press Enter to abort)"
 msgstr "(按回车键中止)"
 
@@ -2635,7 +2635,7 @@ msgstr "展开部分分式"
 msgid "Expanding"
 msgstr "展开中"
 
-#: ../src/qalc.cc:5950 ../src/qalc.cc:6661
+#: ../src/qalc.cc:5950 ../src/qalc.cc:6662
 msgid "Calculating"
 msgstr "计算中"
 
@@ -2679,7 +2679,7 @@ msgstr "仅将点号作为小数分隔符"
 msgid "Dot interpretation"
 msgstr "点号解释"
 
-#: ../src/qalc.cc:7494
+#: ../src/qalc.cc:7495
 #, c-format
 msgid ""
 "Couldn't write preferences to\n"
@@ -2688,7 +2688,7 @@ msgstr ""
 "无法将偏好设置写入\n"
 "%s"
 
-#: ../src/qalc.cc:7621
+#: ../src/qalc.cc:7622
 msgid "Couldn't write definitions"
 msgstr "无法写定义"
 
@@ -2861,36 +2861,36 @@ msgid "Horizontal concatenation requires equal number of rows."
 msgstr ""
 
 #: ../libqalculate/BuiltinFunctions-matrixvector.cc:196
-#: ../libqalculate/BuiltinFunctions-matrixvector.cc:307
+#: ../libqalculate/BuiltinFunctions-matrixvector.cc:313
 #, c-format
 msgid "Row %s does not exist in matrix."
 msgstr "矩阵中不存在行%s。"
 
 #: ../libqalculate/BuiltinFunctions-matrixvector.cc:209
-#: ../libqalculate/BuiltinFunctions-matrixvector.cc:303
+#: ../libqalculate/BuiltinFunctions-matrixvector.cc:309
 #, c-format
 msgid "Column %s does not exist in matrix."
 msgstr "矩阵中不存在列%s。"
 
-#: ../libqalculate/BuiltinFunctions-matrixvector.cc:296
-#: ../libqalculate/BuiltinFunctions-matrixvector.cc:375
+#: ../libqalculate/BuiltinFunctions-matrixvector.cc:305
+#: ../libqalculate/BuiltinFunctions-matrixvector.cc:347
 #, c-format
 msgid "Element %s does not exist in vector."
 msgstr "在向量中不存在元素%s。"
 
-#: ../libqalculate/BuiltinFunctions-matrixvector.cc:718
-#: ../libqalculate/BuiltinFunctions-matrixvector.cc:722
+#: ../libqalculate/BuiltinFunctions-matrixvector.cc:650
+#: ../libqalculate/BuiltinFunctions-matrixvector.cc:654
 #, c-format
 msgid "%s() requires that all matrices/vectors have the same dimensions."
 msgstr "%s()要求所有矩阵/向量都具有相同的维数。"
 
-#: ../libqalculate/BuiltinFunctions-matrixvector.cc:1287
+#: ../libqalculate/BuiltinFunctions-matrixvector.cc:1208
 msgid ""
 "The number of requested elements in generate vector function must be a "
 "positive integer."
 msgstr "在常规向量函数中，需求的元素个数必须为正整数。"
 
-#: ../libqalculate/BuiltinFunctions-matrixvector.cc:1311
+#: ../libqalculate/BuiltinFunctions-matrixvector.cc:1232
 msgid "Comparison failed."
 msgstr "比较失败。"
 
@@ -2929,18 +2929,18 @@ msgid ""
 "certain."
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-number.cc:1004
-#: ../libqalculate/BuiltinFunctions-number.cc:2368
+#: ../libqalculate/BuiltinFunctions-number.cc:1021
+#: ../libqalculate/BuiltinFunctions-number.cc:2385
 #: ../libqalculate/Number.cc:2170 ../libqalculate/Number.cc:2295
 msgid "Floating point overflow"
 msgstr "浮点溢出"
 
-#: ../libqalculate/BuiltinFunctions-number.cc:1393
+#: ../libqalculate/BuiltinFunctions-number.cc:1410
 msgid "phoneword"
 msgstr "电话词"
 
-#: ../libqalculate/BuiltinFunctions-number.cc:1479
-#: ../libqalculate/BuiltinFunctions-number.cc:1554
+#: ../libqalculate/BuiltinFunctions-number.cc:1496
+#: ../libqalculate/BuiltinFunctions-number.cc:1571
 #: ../libqalculate/Number.cc:493 ../libqalculate/Number.cc:615
 #: ../libqalculate/Number.cc:1100
 #, c-format
@@ -2948,7 +2948,7 @@ msgid "Character '%s' was ignored in the number \"%s\" with base %s."
 msgstr "字符\"%s\"被忽略，在数字\"%s\"中，其base为\"%s\"。"
 
 #. test calculated floating point value and show mpfr errors (show as errors if error_level > 1, show as warnings if error_level = 1, do not generate message if error_level is zero)
-#: ../libqalculate/BuiltinFunctions-number.cc:2369
+#: ../libqalculate/BuiltinFunctions-number.cc:2386
 #: ../libqalculate/Number.cc:2169 ../libqalculate/Number.cc:2294
 msgid "Floating point underflow"
 msgstr "浮点下溢"
@@ -2961,11 +2961,11 @@ msgstr "浮点下溢"
 #: ../libqalculate/BuiltinFunctions-util.cc:502
 #: ../libqalculate/BuiltinFunctions-util.cc:504
 #: ../libqalculate/BuiltinFunctions-util.cc:520
-#: ../libqalculate/Calculator-calculate.cc:2402
-#: ../libqalculate/Calculator-calculate.cc:2414
-#: ../libqalculate/Calculator-calculate.cc:2416
-#: ../libqalculate/Calculator-calculate.cc:2419
-#: ../libqalculate/Calculator-calculate.cc:2490
+#: ../libqalculate/Calculator-calculate.cc:2408
+#: ../libqalculate/Calculator-calculate.cc:2420
+#: ../libqalculate/Calculator-calculate.cc:2422
+#: ../libqalculate/Calculator-calculate.cc:2425
+#: ../libqalculate/Calculator-calculate.cc:2496
 #, c-format
 msgid "Original value (%s) was not found."
 msgstr "未找到原始值(%s)。"
@@ -3297,32 +3297,32 @@ msgstr "栈为空。用零填充其余的函数参数。"
 #: ../libqalculate/Calculator-calculate.cc:1046
 #: ../libqalculate/Calculator.cc:252 ../libqalculate/Calculator.cc:504
 #: ../libqalculate/Calculator.cc:658
-#: ../libqalculate/MathStructure-print.cc:4096 ../libqalculate/Function.cc:1457
-#: ../libqalculate/Function.cc:1465 ../libqalculate/Function.cc:1879
-#: ../libqalculate/Function.cc:2041 ../libqalculate/Function.cc:2049
+#: ../libqalculate/MathStructure-print.cc:4096 ../libqalculate/Function.cc:1473
+#: ../libqalculate/Function.cc:1481 ../libqalculate/Function.cc:1895
+#: ../libqalculate/Function.cc:2057 ../libqalculate/Function.cc:2065
 msgid "and"
 msgstr "且"
 
-#: ../libqalculate/Calculator-calculate.cc:2118
+#: ../libqalculate/Calculator-calculate.cc:2124
 msgid "calculating..."
 msgstr "正在计算..."
 
 #. "where"-operator
-#: ../libqalculate/Calculator-calculate.cc:2292
-#: ../libqalculate/Calculator-calculate.cc:2294
-#: ../libqalculate/Calculator-calculate.cc:2313
-#: ../libqalculate/Calculator-calculate.cc:2315
+#: ../libqalculate/Calculator-calculate.cc:2298
+#: ../libqalculate/Calculator-calculate.cc:2300
+#: ../libqalculate/Calculator-calculate.cc:2319
+#: ../libqalculate/Calculator-calculate.cc:2321
 #: ../libqalculate/Calculator.cc:1456
 msgid "where"
 msgstr "where"
 
-#: ../libqalculate/Calculator-calculate.cc:2512
+#: ../libqalculate/Calculator-calculate.cc:2518
 #, c-format
 msgid "Unhandled \"where\" expression: %s"
 msgstr "未处理的“where”表达式: %s"
 
-#: ../libqalculate/Calculator-calculate.cc:2758
-#: ../libqalculate/Calculator-calculate.cc:2805
+#: ../libqalculate/Calculator-calculate.cc:2775
+#: ../libqalculate/Calculator-calculate.cc:2822
 msgid "timed out"
 msgstr "已超时"
 
@@ -3363,8 +3363,8 @@ msgstr "弧度单位丢失。自动为本会话创建了一个。"
 msgid "Degrees unit is missing. Creating one for this session."
 msgstr "角度单位丢失。自动为本会话创建了一个。"
 
-#: ../libqalculate/Calculator.cc:1868 ../libqalculate/Calculator.cc:1869
-#: ../libqalculate/Calculator.cc:1873 ../libqalculate/Calculator.cc:1878
+#: ../libqalculate/Calculator.cc:1869 ../libqalculate/Calculator.cc:1870
+#: ../libqalculate/Calculator.cc:1874 ../libqalculate/Calculator.cc:1879
 #: ../libqalculate/Calculator-definitions.cc:3487
 #: ../libqalculate/Calculator-definitions.cc:3492
 #: ../libqalculate/Calculator-definitions.cc:3571
@@ -3372,28 +3372,28 @@ msgstr "角度单位丢失。自动为本会话创建了一个。"
 msgid "Currency"
 msgstr "货币"
 
-#: ../libqalculate/Calculator.cc:2743
+#: ../libqalculate/Calculator.cc:2744
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name of \"%s\", or "
 "the variable will be lost."
 msgstr "在名称中不再允许使用\"%s\"。请修改名称\"%s\"，否则此变量将被遗弃。"
 
-#: ../libqalculate/Calculator.cc:2761
+#: ../libqalculate/Calculator.cc:2762
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
 "the function will be lost."
 msgstr "在名称中不再允许使用\"%s\"。请修改名称\"%s\"，否则此函数将被遗弃。"
 
-#: ../libqalculate/Calculator.cc:2778
+#: ../libqalculate/Calculator.cc:2779
 #, c-format
 msgid ""
 "\"%s\" is not allowed in names anymore. Please change the name \"%s\", or "
 "the unit will be lost."
 msgstr "在名称中不再允许使用\"%s\"。请修改名称\"%s\"，否则此单位将被遗弃。"
 
-#: ../libqalculate/Calculator.cc:2943
+#: ../libqalculate/Calculator.cc:2944
 #, c-format
 msgid "Name \"%s\" is in use. Replacing with \"%s\"."
 msgstr "名称\"%s\"已被使用。替换为\"%s\"。"
@@ -3439,78 +3439,78 @@ msgid "Exchange rates were successfully downloaded from %s."
 msgstr ""
 
 #. ignore operators
-#: ../libqalculate/Calculator-parse.cc:3097
-#: ../libqalculate/Calculator-parse.cc:3146
-#: ../libqalculate/Calculator-parse.cc:3150
-#: ../libqalculate/Calculator-parse.cc:4689
-#: ../libqalculate/Calculator-parse.cc:4698
-#: ../libqalculate/Calculator-parse.cc:4772
-#: ../libqalculate/Calculator-parse.cc:4880
-#: ../libqalculate/Calculator-parse.cc:4902
+#: ../libqalculate/Calculator-parse.cc:3160
+#: ../libqalculate/Calculator-parse.cc:3209
+#: ../libqalculate/Calculator-parse.cc:3213
+#: ../libqalculate/Calculator-parse.cc:4752
+#: ../libqalculate/Calculator-parse.cc:4761
+#: ../libqalculate/Calculator-parse.cc:4835
+#: ../libqalculate/Calculator-parse.cc:4943
+#: ../libqalculate/Calculator-parse.cc:4965
 #, c-format
 msgid "Misplaced operator(s) \"%s\" ignored"
 msgstr "已忽略错置的运算符\"%s\"。"
 
-#: ../libqalculate/Calculator-parse.cc:3184 ../libqalculate/Function.cc:1626
+#: ../libqalculate/Calculator-parse.cc:3247 ../libqalculate/Function.cc:1642
 #, c-format
 msgid "Internal id %s does not exist."
 msgstr "内部id %s不存在。"
 
-#: ../libqalculate/Calculator-parse.cc:3205
+#: ../libqalculate/Calculator-parse.cc:3268
 #, c-format
 msgid "\"%s\" is not a valid variable/function/unit."
 msgstr "\"%s\"不是合法的变量/函数/单位。"
 
-#: ../libqalculate/Calculator-parse.cc:3226
+#: ../libqalculate/Calculator-parse.cc:3289
 #, c-format
 msgid ""
 "Trailing characters \"%s\" (not a valid variable/function/unit) in number "
 "\"%s\" were ignored."
 msgstr "尾部字符\"%s\"不是合法的变量/函数/单位(在数字\"%s\"中)，已被忽略。"
 
-#: ../libqalculate/Calculator-parse.cc:3317
-#: ../libqalculate/Calculator-parse.cc:3333
+#: ../libqalculate/Calculator-parse.cc:3380
+#: ../libqalculate/Calculator-parse.cc:3396
 #: ../libqalculate/MathStructure-calculate.cc:1811
 msgid ""
 "Please use the cross(), dot(), and hadamard() functions for vector "
 "multiplication."
 msgstr "请使用 cross()，dot() 和 hadamard() 作向量乘法。"
 
-#: ../libqalculate/Calculator-parse.cc:3416
+#: ../libqalculate/Calculator-parse.cc:3479
 msgid "Empty expression in parentheses interpreted as zero."
 msgstr "括号中的空表达式解释为零。"
 
-#: ../libqalculate/Calculator-parse.cc:3507
+#: ../libqalculate/Calculator-parse.cc:3570
 msgid "RPN syntax error. Values left at the end of the RPN expression."
 msgstr "RPN语法错误。在逆波兰式末尾有多余值。"
 
-#: ../libqalculate/Calculator-parse.cc:3510
-#: ../libqalculate/Calculator-parse.cc:3601
+#: ../libqalculate/Calculator-parse.cc:3573
+#: ../libqalculate/Calculator-parse.cc:3664
 msgid "Unused stack values."
 msgstr "栈内还有值未被使用。"
 
-#: ../libqalculate/Calculator-parse.cc:3666
-#: ../libqalculate/Calculator-parse.cc:3897
+#: ../libqalculate/Calculator-parse.cc:3729
+#: ../libqalculate/Calculator-parse.cc:3960
 #, c-format
 msgid "RPN syntax error. Operator '%c' not supported."
 msgstr "RPN语法错误。不支持运算符'%c'。"
 
-#: ../libqalculate/Calculator-parse.cc:3712
+#: ../libqalculate/Calculator-parse.cc:3775
 msgid "RPN syntax error. Stack is empty."
 msgstr "RPN语法错误。栈内是空的。"
 
-#: ../libqalculate/Calculator-parse.cc:3733
+#: ../libqalculate/Calculator-parse.cc:3796
 msgid "RPN syntax error. Operator ignored as there was only one stack value."
 msgstr "RPN语法错误。栈内只有一个值，因此运算符已被忽略。"
 
-#: ../libqalculate/Calculator-parse.cc:4723
-#: ../libqalculate/Calculator-parse.cc:4799
+#: ../libqalculate/Calculator-parse.cc:4786
+#: ../libqalculate/Calculator-parse.cc:4862
 msgid ""
 "The expression is ambiguous (be careful when combining implicit "
 "multiplication and division)."
 msgstr "表达式有歧义(将隐式乘法和除法结合使用时要仔细)。"
 
-#: ../libqalculate/Calculator-parse.cc:5089
+#: ../libqalculate/Calculator-parse.cc:5152
 #, c-format
 msgid "%s interpreted as 10^%s (1%s)"
 msgstr "%s被解释为10^%s(1%s)"
@@ -3622,29 +3622,29 @@ msgid ""
 "(was %s) for matrix multiplication."
 msgstr "在矩阵乘法中，第二个矩阵的列数(%s)必须与第一个矩阵的行数(%s)相同。"
 
-#: ../libqalculate/MathStructure-calculate.cc:6476
-#: ../libqalculate/MathStructure-calculate.cc:6515
-#: ../libqalculate/MathStructure-calculate.cc:6547
-#: ../libqalculate/MathStructure-calculate.cc:6612
-#: ../libqalculate/MathStructure-calculate.cc:6640
-#: ../libqalculate/MathStructure-calculate.cc:6659
-#: ../libqalculate/MathStructure-calculate.cc:6678
-#: ../libqalculate/MathStructure-calculate.cc:6697
-#: ../libqalculate/MathStructure-calculate.cc:6805
+#: ../libqalculate/MathStructure-calculate.cc:6479
+#: ../libqalculate/MathStructure-calculate.cc:6518
+#: ../libqalculate/MathStructure-calculate.cc:6550
+#: ../libqalculate/MathStructure-calculate.cc:6615
+#: ../libqalculate/MathStructure-calculate.cc:6644
+#: ../libqalculate/MathStructure-calculate.cc:6663
+#: ../libqalculate/MathStructure-calculate.cc:6682
+#: ../libqalculate/MathStructure-calculate.cc:6701
+#: ../libqalculate/MathStructure-calculate.cc:6809
 #: ../libqalculate/MathStructure-factor.cc:411
-#: ../libqalculate/MathStructure-factor.cc:1302
+#: ../libqalculate/MathStructure-factor.cc:1319
 msgid "This is a bug. Please report it."
 msgstr "这是个bug。请报告它。"
 
-#: ../libqalculate/MathStructure-calculate.cc:6872
-#: ../libqalculate/Function.cc:432
+#: ../libqalculate/MathStructure-calculate.cc:6876
+#: ../libqalculate/Function.cc:448
 msgid ""
 "log() with a single argument is considered ambiguous. Please use ln() or "
 "log10() instead."
 msgstr ""
 
-#: ../libqalculate/MathStructure-calculate.cc:6924
-#: ../libqalculate/Function.cc:573
+#: ../libqalculate/MathStructure-calculate.cc:6928
+#: ../libqalculate/Function.cc:589
 msgid "No unknown variable/symbol was found."
 msgstr "未找到未知的变量/符号。"
 
@@ -3652,19 +3652,19 @@ msgstr "未找到未知的变量/符号。"
 msgid "Interval potentially calculated wide."
 msgstr "区间可能计算过宽。"
 
-#: ../libqalculate/MathStructure-eval.cc:2539
+#: ../libqalculate/MathStructure-eval.cc:2551
 msgid ""
 "Calculation of uncertainty propagation partially failed (using interval "
 "arithmetic instead when necessary)."
 msgstr "误差传递计算部分失败(必要时改用区间运算)。"
 
-#: ../libqalculate/MathStructure-eval.cc:2655
+#: ../libqalculate/MathStructure-eval.cc:2663
 msgid ""
 "Calculation of uncertainty propagation failed (using interval arithmetic "
 "instead)."
 msgstr "误差传递计算失败(改为使用区间运算)。"
 
-#: ../libqalculate/MathStructure-factor.cc:3156
+#: ../libqalculate/MathStructure-factor.cc:3173
 msgid ""
 "Because of time constraints only a limited number of combinations of terms "
 "were tried during factorization. Repeat factorization to try other random "
@@ -3684,24 +3684,24 @@ msgstr "定积分是近似计算的。"
 
 #: ../libqalculate/MathStructure-isolatex.cc:1002
 #: ../libqalculate/MathStructure-isolatex.cc:1179
-#: ../libqalculate/MathStructure-isolatex.cc:2132
-#: ../libqalculate/MathStructure-isolatex.cc:2652
-#: ../libqalculate/MathStructure-isolatex.cc:2718
-#: ../libqalculate/MathStructure-isolatex.cc:2768
-#: ../libqalculate/MathStructure-isolatex.cc:2789
-#: ../libqalculate/MathStructure-isolatex.cc:2847
-#: ../libqalculate/MathStructure-isolatex.cc:2973
-#: ../libqalculate/MathStructure-isolatex.cc:3118
+#: ../libqalculate/MathStructure-isolatex.cc:2136
+#: ../libqalculate/MathStructure-isolatex.cc:2665
+#: ../libqalculate/MathStructure-isolatex.cc:2731
+#: ../libqalculate/MathStructure-isolatex.cc:2781
+#: ../libqalculate/MathStructure-isolatex.cc:2802
+#: ../libqalculate/MathStructure-isolatex.cc:2860
+#: ../libqalculate/MathStructure-isolatex.cc:2986
+#: ../libqalculate/MathStructure-isolatex.cc:3131
 #, c-format
 msgid "Interval arithmetic was disabled during calculation of %s."
 msgstr "计算%s时禁用了区间运算。"
 
-#: ../libqalculate/MathStructure-isolatex.cc:3117
+#: ../libqalculate/MathStructure-isolatex.cc:3130
 #, c-format
 msgid "Not all complex roots were calculated for %s."
 msgstr "并非所有复根都针对%s计算。"
 
-#: ../libqalculate/MathStructure-isolatex.cc:4714
+#: ../libqalculate/MathStructure-isolatex.cc:4727
 #, c-format
 msgid "Only one or two of the roots were calculated for %s."
 msgstr "计算%s只有一两个根。"
@@ -3764,8 +3764,8 @@ msgstr "未定义"
 msgid "%s() requires that %s"
 msgstr "%s()需要%s。"
 
-#: ../libqalculate/Function.cc:356 ../libqalculate/Function.cc:418
-#: ../libqalculate/Function.cc:490
+#: ../libqalculate/Function.cc:343 ../libqalculate/Function.cc:414
+#: ../libqalculate/Function.cc:506
 #, c-format
 msgid ""
 "Additional arguments for function %s() were ignored. Function can only use "
@@ -3775,137 +3775,137 @@ msgid_plural ""
 "%s arguments."
 msgstr[0] "已忽略函数%s的多余参数。它只需要%s个参数。"
 
-#: ../libqalculate/Function.cc:511
+#: ../libqalculate/Function.cc:527
 #, c-format
 msgid "You need at least %s argument (%s) in function %s()."
 msgid_plural "You need at least %s arguments (%s) in function %s()."
 msgstr[0] "你需要提供至少%s个参数(%s)给函数%s()"
 
-#: ../libqalculate/Function.cc:513
+#: ../libqalculate/Function.cc:529
 #, c-format
 msgid "You need at least %s argument in function %s()."
 msgid_plural "You need at least %s arguments in function %s()."
 msgstr[0] "你需要提供至少%s个参数给函数%s()"
 
-#: ../libqalculate/Function.cc:1447
+#: ../libqalculate/Function.cc:1463
 msgid "a free value"
 msgstr "一个任意值"
 
-#: ../libqalculate/Function.cc:1452
+#: ../libqalculate/Function.cc:1468
 msgid "that is nonzero"
 msgstr "非零"
 
-#: ../libqalculate/Function.cc:1460
+#: ../libqalculate/Function.cc:1476
 msgid "that is rational (polynomial)"
 msgstr "有理(多项式的)"
 
-#: ../libqalculate/Function.cc:1468
+#: ../libqalculate/Function.cc:1484
 msgid "that fulfills the condition:"
 msgstr "满足下列条件:"
 
-#: ../libqalculate/Function.cc:1535
+#: ../libqalculate/Function.cc:1551
 #, c-format
 msgid "Argument %s in %s() must be %s."
 msgstr "参数%s, 在%s()中必须为%s。"
 
-#: ../libqalculate/Function.cc:1537
+#: ../libqalculate/Function.cc:1553
 #, c-format
 msgid "Argument %s, %s, in %s() must be %s."
 msgstr "参数%s,%s, 在%s()中必须为%s。"
 
-#: ../libqalculate/Function.cc:1860
+#: ../libqalculate/Function.cc:1876
 msgid "a rational number"
 msgstr "一个有理数"
 
-#: ../libqalculate/Function.cc:1862
+#: ../libqalculate/Function.cc:1878
 msgid "a number"
 msgstr "一个数"
 
-#: ../libqalculate/Function.cc:1864
+#: ../libqalculate/Function.cc:1880
 msgid "a real number"
 msgstr "一个实数"
 
-#: ../libqalculate/Function.cc:2019
+#: ../libqalculate/Function.cc:2035
 msgid "an integer"
 msgstr "一个整数"
 
-#: ../libqalculate/Function.cc:2076
+#: ../libqalculate/Function.cc:2092
 msgid "symbol"
 msgstr "符号"
 
-#: ../libqalculate/Function.cc:2077
+#: ../libqalculate/Function.cc:2093
 msgid "an unknown variable/symbol"
 msgstr "一个未知变量或符号"
 
-#: ../libqalculate/Function.cc:2090
+#: ../libqalculate/Function.cc:2106
 msgid "text"
 msgstr "文本"
 
-#: ../libqalculate/Function.cc:2091
+#: ../libqalculate/Function.cc:2107
 msgid "a text string"
 msgstr "一段文字"
 
-#: ../libqalculate/Function.cc:2113
+#: ../libqalculate/Function.cc:2129
 msgid "date"
 msgstr "日期"
 
-#: ../libqalculate/Function.cc:2114
+#: ../libqalculate/Function.cc:2130
 msgid "a date"
 msgstr "一个日期"
 
-#: ../libqalculate/Function.cc:2177
+#: ../libqalculate/Function.cc:2193
 msgid "a vector with "
 msgstr "向量具有"
 
-#: ../libqalculate/Function.cc:2189
+#: ../libqalculate/Function.cc:2205
 msgid "a vector"
 msgstr "一个向量"
 
-#: ../libqalculate/Function.cc:2250
+#: ../libqalculate/Function.cc:2266
 msgid "a square matrix"
 msgstr "一个方阵"
 
-#: ../libqalculate/Function.cc:2252
+#: ../libqalculate/Function.cc:2268
 msgid "a matrix"
 msgstr "一个矩阵"
 
-#: ../libqalculate/Function.cc:2267
+#: ../libqalculate/Function.cc:2283
 msgid "object"
 msgstr "对象"
 
-#: ../libqalculate/Function.cc:2268
+#: ../libqalculate/Function.cc:2284
 msgid "a valid function, unit or variable name"
 msgstr "一个合法的函数、单位或函数名"
 
-#: ../libqalculate/Function.cc:2282
+#: ../libqalculate/Function.cc:2298
 msgid "a valid function name"
 msgstr "一个合法的函数名"
 
-#: ../libqalculate/Function.cc:2295
+#: ../libqalculate/Function.cc:2311
 msgid "unit"
 msgstr "单位"
 
-#: ../libqalculate/Function.cc:2296
+#: ../libqalculate/Function.cc:2312
 msgid "a valid unit name"
 msgstr "一个合法的单位名"
 
-#: ../libqalculate/Function.cc:2310
+#: ../libqalculate/Function.cc:2326
 msgid "a valid variable name"
 msgstr "一个合法的变量名"
 
-#: ../libqalculate/Function.cc:2323
+#: ../libqalculate/Function.cc:2339
 msgid "file"
 msgstr "文件"
 
-#: ../libqalculate/Function.cc:2324
+#: ../libqalculate/Function.cc:2340
 msgid "a valid file name"
 msgstr "一个合法的文件名"
 
-#: ../libqalculate/Function.cc:2338
+#: ../libqalculate/Function.cc:2354
 msgid "a boolean (0 or 1)"
 msgstr "一个布尔值(0或1)"
 
-#: ../libqalculate/Function.cc:2349
+#: ../libqalculate/Function.cc:2365
 msgid "an angle or a number (using the default angle unit)"
 msgstr "一个角度或数字(使用默认角度单位)"
 
@@ -4408,7 +4408,7 @@ msgstr "昨天"
 msgid "leap month"
 msgstr "闰月"
 
-#: ../libqalculate/Unit.cc:1356 ../libqalculate/Unit.cc:1359
+#: ../libqalculate/Unit.cc:1364 ../libqalculate/Unit.cc:1367
 msgid "Error(s) in unitexpression."
 msgstr "单位表达式里有错误。"
 

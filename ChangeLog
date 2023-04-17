@@ -1,3 +1,63 @@
+2023-04-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix element() function for vector when column number is specified (non-zero)
+
+2023-04-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve parsing of element-wise operators with comma as decimal separator
+	* Fix segfault in some cases with curly brackets in expression
+
+2023-04-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix some memory leaks
+
+2023-04-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault when conversion to base units fails because of aborted calculations
+	* Do not try to calculate norm() and magnitude() for matrices
+
+2023-04-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix rref() with different units for different elements
+	* Fix segfault trying to solve cbrt(x)^(1/3)-x=0 (and similar)
+	* Fix erroneous simplification of sin(x)^2*y-cos(x)*sin(x)^2*y (and similar)
+	* Fix division and exponentiation of scalar by matrix/vector, e.g. 4./[8 4.5]
+
+2023-04-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault in function assignment with equals sign (e.g. F()=...), when an object with the same name already exists
+	* Improve abortion of calculations
+	* Replace temporary variables created during calculation after abortion
+	* Fix segfault with empty vector in uncertainty calculation
+	* Fix segfaults in some corner cases
+	* Fix some memory leaks
+	* Fix internal id does not exist error (primarily in some cases with functions without parentheses in matrices)
+
+2023-04-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault in handling of vector variable with uncertainty
+	* Fix abortion with low max calculation time in qalc
+
+2023-04-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not make any difference between row and column vectors in magnitude(), norm(), and dot() functions
+
+2023-04-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix abbreviation for variable units (varunits) command in information (within qalc and in man page)
+
+2023-04-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix order of argument titles in csum() function
+
+2023-03-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add modular exponentiation function, powmod(), with support for calculation of modular inverse
+
+2023-03-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix a^n mod b when n is negative
+
 2023-03-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault in multisolve() and improve removal of equal solutions

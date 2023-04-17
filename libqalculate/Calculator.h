@@ -1329,7 +1329,6 @@ class Calculator {
 	* @param id Storage id.
 	*/
 	void delId(size_t id);
-	size_t idCount() const;
 	//@}
 
 };

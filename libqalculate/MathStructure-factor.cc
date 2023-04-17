@@ -884,18 +884,17 @@ bool factorize_find_multiplier(const MathStructure &mstruct, MathStructure &mnew
 										}
 									}
 								}
+								if(mnew[i2].size() == 1) {
+									MathStructure mstruct2(mnew[i2][0]);
+									mnew[i2] = mstruct2;
+								}
 								if(b) {
 									if(b_mul > 0 && nfac == 1 && &mstruct != &mnew) {
 										b_mul = -1;
 										mnew.set(mstruct);
-										break;
 									} else {
 										return false;
 									}
-								}
-								if(mnew[i2].size() == 1) {
-									MathStructure mstruct2(mnew[i2][0]);
-									mnew[i2] = mstruct2;
 								}
 								break;
 							}
@@ -1270,6 +1269,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 			if(isAddition()) index = SIZE;
 			if(index == 0) {
 				set_nocopy(*mdiv);
+				mdiv->unref();
 			} else if(mdiv->isAddition()) {
 				for(size_t i = 0; i < mdiv->size(); i++) {
 					(*mdiv)[i].ref();

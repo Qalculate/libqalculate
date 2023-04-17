@@ -141,7 +141,6 @@ MathStructure *Calculator::getId(size_t id) {
 	}
 	return NULL;
 }
-size_t Calculator::idCount() const {return priv->id_structs.size();}
 void Calculator::delId(size_t id) {
 	unordered_map<size_t, size_t>::iterator it = priv->ids_ref.find(id);
 	if(it != priv->ids_ref.end()) {
@@ -952,7 +951,9 @@ string Calculator::localizeExpression(string str, const ParseOptions &po) const 
 			}
 			case DOT_CH: {
 				if(!in_cit1 && !in_cit2 && dot_type != 0) {
-					if(po.rpn || i == 0 || i == str.length() - 1 || is_not_number(str[i - 1], base) || is_not_number(str[i + 1], base) || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i - 1]) || (str[i + 1] != '\'' && str[i + 1] != POWER_CH && str[i + 1] != MULTIPLICATION_CH && str[i + 1] != DIVISION_CH && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i + 1]))) {
+					size_t i2 = (i == 0 ? string::npos : str.find_last_not_of(SPACES, i - 1));
+					size_t i3 = (i == str.length() - 1 ? string::npos : str.find_first_not_of(SPACES, i + 1));
+					if(po.rpn || i2 == string::npos || (i3 != string::npos && !is_not_number(str[i3], base)) || (!is_not_number(str[i2], base) && (i3 == string::npos || i3 != i + 1 || (str[i + 1] != POWER_CH && str[i + 1] != DIVISION_CH && str[i + 1] != MULTIPLICATION_CH && str[i + 1] != '\'')))) {
 						if(dot_type == 1) {
 							str[i] = COMMA_CH;
 						} else {
@@ -1121,8 +1122,16 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
 			}
 			case COMMA_CH: {
 				if(!in_cit1 && !in_cit2 && (dot_type == 1 || po.comma_as_separator) && (!b_matrix_comma || brackets == 0 || pars[brackets - 1] > 0)) {
-					if(dot_type == 1) str[i] = DOT_CH;
-					else {str.erase(i, 1); continue;}
+					if(dot_type == 1) {
+						size_t i2 = (i == 0 ? string::npos : str.find_last_not_of(SPACES, i - 1));
+						size_t i3 = (i == str.length() - 1 ? string::npos : str.find_first_not_of(SPACES, i + 1));
+						if(po.rpn || i2 == string::npos || i3 == string::npos || !is_not_number(str[i3], base) || (!is_not_number(str[i2], base) && (i3 == string::npos || i3 != i + 1 || (str[i + 1] != POWER_CH && str[i + 1] != DIVISION_CH && str[i + 1] != MULTIPLICATION_CH && str[i + 1] != '\'')))) {
+							str[i] = DOT_CH;
+							break;
+						}
+					}
+					str.erase(i, 1);
+					continue;
 				}
 				break;
 			}
@@ -1134,7 +1143,9 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
 			}
 			case DOT_CH: {
 				if((dot_type != 0 && po.dot_as_separator) && !in_cit1 && !in_cit2) {
-					if(po.rpn || i == 0 || i == str.length() - 1 || is_not_number(str[i - 1], base) || is_not_number(str[i + 1], base) || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i - 1]) || (str[i + 1] != '\'' && str[i + 1] != POWER_CH && str[i + 1] != MULTIPLICATION_CH && str[i + 1] != DIVISION_CH && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i + 1]))) {
+					size_t i2 = (i == 0 ? string::npos : str.find_last_not_of(SPACES, i - 1));
+					size_t i3 = (i == str.length() - 1 ? string::npos : str.find_first_not_of(SPACES, i + 1));
+					if(po.rpn || i2 == string::npos || (i3 != string::npos && !is_not_number(str[i3], base)) || (!is_not_number(str[i2], base) && (i3 == string::npos || i3 != i + 1 || (str[i + 1] != POWER_CH && str[i + 1] != DIVISION_CH && str[i + 1] != MULTIPLICATION_CH && str[i + 1] != '\'')))) {
 						str.erase(i, 1);
 						continue;
 					}
@@ -2332,7 +2343,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str_index += stmp.length() - 1;
 				}
 			}
-		} else if(str[str_index] == DOT_CH && !po.rpn && str_index > 0 && str_index < str.length() - 1 && (is_not_number(str[str_index - 1], base) || str.find(LEFT_VECTOR_WRAP, str_index + 2) != string::npos) && is_not_number(str[str_index + 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[str_index - 1]) && (str[str_index + 1] == POWER_CH || str[str_index + 1] == MULTIPLICATION_CH || str[str_index + 1] == DIVISION_CH || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[str_index + 1])) && (str[str_index - 1] != DOT_CH || str[str_index + 1] != DOT_CH)) {
+		} else if(str[str_index] == DOT_CH && !po.rpn && str_index > 0 && str_index < str.length() - 1 && (is_not_number(str[str_index - 1], base) || str.find(LEFT_VECTOR_WRAP, str_index + 2) != string::npos) && is_not_number(str[str_index + 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[str_index - 1]) && (((str[str_index + 1] == POWER_CH || str[str_index + 1] == MULTIPLICATION_CH || str[str_index + 1] == DIVISION_CH) && str_index + 1 < str.length() - 1 && str[str_index + 2] != str[str_index + 1]) || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[str_index + 1])) && (str[str_index - 1] != DOT_CH || str[str_index + 1] != DOT_CH)) {
 			if(str[str_index + 1] == MULTIPLICATION_CH) str.replace(str_index, 2, "\x17");
 			else if(str[str_index + 1] == DIVISION_CH) str.replace(str_index, 2, "\x18");
 			else if(str[str_index + 1] == POWER_CH) str.replace(str_index, 2, "\x19");
@@ -4621,7 +4632,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 							}
 						}
 					}
-					b = had_unit;
+					b = had_unit && i2 != string::npos;
 					if(b) {
 						if(i3 < str.length() - 2 && (str[i3 + 1] == POWER_CH || str[i3 + 1] == INTERNAL_UPOW_CH) && is_in(NUMBERS, str[i3 + 2])) {
 							i3 += 2;

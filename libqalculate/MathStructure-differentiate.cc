@@ -615,11 +615,11 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				CHILD(2) += m_one;
 			} else if(o_function->id() == FUNCTION_ID_DIFFERENTIATE && SIZE == 2 && CHILD(1) == x_var) {
 				// diff(f,x)'=diff(f,x,2)
-				APPEND(MathStructure(2, 1, 0));
+				addChild(MathStructure(2, 1, 0));
 			} else if(o_function->id() == FUNCTION_ID_DIFFERENTIATE && SIZE == 1 && x_var == CALCULATOR->getVariableById(VARIABLE_ID_X)) {
 				// diff(f)'=diff(f,x,2)
-				APPEND(x_var);
-				APPEND(MathStructure(2, 1, 0));
+				addChild(x_var);
+				addChild(MathStructure(2, 1, 0));
 			} else {
 				// calculate non-differentiable function and try again
 				if(!eo.calculate_functions || !calculateFunctions(eo, false)) {
