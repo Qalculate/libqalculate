@@ -2106,9 +2106,19 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						i3++;
 						i4 = i3;
 					}
-					if(ifac == 2) stmp += i2s(parseAddId(f_factorial2, stmp2, po));
-					else if(ifac == 1) stmp += i2s(parseAddId(f_factorial, stmp2, po));
-					else stmp += i2s(parseAddIdAppend(f_multifactorial, MathStructure(ifac, 1, 0), stmp2, po));
+					MathFunction *f = NULL;
+					if(ifac == 2) f = f_factorial2;
+					else if(ifac == 1) f = f_factorial;
+					else f = f_multifactorial;
+					if(!f->isActive()) {
+						MathFunction *f2 = NULL;
+						if(ifac == 2) f2 = getActiveFunction("factorial2");
+						else if(ifac == 1) f2 = getActiveFunction("factorial");
+						else f2 = getActiveFunction("multifactorial");
+						if(f2) f = f2;
+					}
+					if(ifac > 2) stmp += i2s(parseAddIdAppend(f, MathStructure(ifac, 1, 0), stmp2, po));
+					else stmp += i2s(parseAddId(f, stmp2, po));
 					stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 					str.replace(i5 - stmp2.length() + 1, stmp2.length() + i4 - i5 - 1, stmp);
 					str_index = stmp.length() + i5 - stmp2.length();
