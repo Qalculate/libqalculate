@@ -430,15 +430,24 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 	if(cu && cu->countUnits() == 0) return mstruct;
 	int exp1, exp2;
 	bool b_ratio = cu && cu->countUnits() == 2 && cu->get(1, &exp1)->baseUnit() == cu->get(2, &exp2)->baseUnit() && exp1 == -exp2;
-	if(!b_ratio && to_unit->baseUnit() != getRadUnit() && !mstruct.containsType(STRUCT_UNIT, true)) {
-		if(transform_orig && (!parsed_struct || !parsed_struct->containsType(STRUCT_UNIT, false, true, true))) {
+	if(!b_ratio && !mstruct.containsType(STRUCT_UNIT, true)) {
+		if(transform_orig && (!parsed_struct || !parsed_struct->containsType(STRUCT_UNIT, false, true, true) || (to_unit->baseUnit() == getRadUnit() && to_unit->baseExponent() == 1))) {
 			// multiply original value with base units
 			EvaluationOptions eo2 = eo;
 			if(eo.approximation == APPROXIMATION_EXACT) eo2.approximation = APPROXIMATION_TRY_EXACT;
 			MathStructure munit(to_unit);
 			munit.unformat();
-			munit = convertToOptimalUnit(munit, eo2, true);
-			munit.unformat();
+			if(to_unit->baseUnit() == getRadUnit() && to_unit->baseExponent() == 1) {
+				switch(eo.parse_options.angle_unit) {
+					case ANGLE_UNIT_DEGREES: {munit = getDegUnit(); break;}
+					case ANGLE_UNIT_GRADIANS: {munit = getGraUnit(); break;}
+					case ANGLE_UNIT_CUSTOM: {munit = customAngleUnit(); break;}
+					default: {munit = getRadUnit();}
+				}
+			} else {
+				munit = convertToOptimalUnit(munit, eo2, true);
+				munit.unformat();
+			}
 			fix_to_struct(munit);
 			if(!munit.isZero()) {
 				MathStructure mstruct_new(mstruct);
@@ -679,8 +688,17 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 			}
 			b = true;
 		} else if(to_unit->baseUnit() == getRadUnit() && mstruct_new.contains(to_unit, true) < 1) {
-			mstruct_new.multiply(getRadUnit(), true);
-			if(to_unit->baseExponent() != 1) mstruct_new.last().raise(to_unit->baseExponent());
+			if(to_unit->baseExponent() == 1) {
+				switch(eo.parse_options.angle_unit) {
+					case ANGLE_UNIT_DEGREES: {mstruct_new.multiply(getDegUnit()); break;}
+					case ANGLE_UNIT_GRADIANS: {mstruct_new.multiply(getGraUnit()); break;}
+					case ANGLE_UNIT_CUSTOM: {mstruct_new.multiply(customAngleUnit()); break;}
+					default: {mstruct_new.multiply(getRadUnit(), true); break;}
+				}
+			} else {
+				mstruct_new.multiply(getRadUnit(), true);
+				mstruct_new.last().raise(to_unit->baseExponent());
+			}
 			b = mstruct_new.convert(to_unit, true, NULL, false, eo2, eo.keep_prefixes ? decimal_null_prefix : NULL) || always_convert;
 		} else if(always_convert) {
 			b = true;

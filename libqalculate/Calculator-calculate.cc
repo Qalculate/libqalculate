@@ -1340,7 +1340,8 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 		evalops.expand = -2;
 		CALCULATOR->beginTemporaryStopMessages();
 		if(msecs > 0) CALCULATOR->startControl(msecs);
-		mstruct_exact = CALCULATOR->calculate(original_expression, evalops);
+		MathStructure tmp_parse;
+		mstruct_exact = CALCULATOR->calculate(original_expression, evalops, &tmp_parse);
 		if(CALCULATOR->aborted() || mstruct_exact.isApproximate() || (dual_approximation < 0 && max_size > 0 && (test_max_addition_size(mstruct_exact, (size_t) max_size) || mstruct_exact.countTotalChildren(false) > (size_t) max_size * 6))) {
 			mstruct_exact.setUndefined();
 		} else if(test_simplified(mstruct_exact)) {
