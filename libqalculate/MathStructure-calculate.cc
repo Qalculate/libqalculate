@@ -520,11 +520,12 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 								if(equals(mstruct) && !FUNCTION_PROTECTED(eo, FUNCTION_ID_ASIN) && !FUNCTION_PROTECTED(eo, FUNCTION_ID_ACOS)) {
 									// asin(x)+acos(x)=pi/2
 									delChild(i2 + 1, true);
-									switch(eo.parse_options.angle_unit) {
-										case ANGLE_UNIT_DEGREES: {calculateMultiply(Number(90, 1, 0), eo); break;}
-										case ANGLE_UNIT_GRADIANS: {calculateMultiply(Number(100, 1, 0), eo); break;}
-										case ANGLE_UNIT_RADIANS: {calculateMultiply(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo); calculateMultiply(nr_half, eo); break;}
-										default: {calculateMultiply(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo); calculateMultiply(nr_half, eo); if(CALCULATOR->getRadUnit()) {calculateMultiply(CALCULATOR->getRadUnit(), eo);} break;}
+									if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE || eo.parse_options.angle_unit == ANGLE_UNIT_RADIANS) {
+										calculateMultiply(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo);
+										calculateMultiply(nr_half, eo);
+										if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) calculateMultiply(CALCULATOR->getRadUnit(), eo);
+									} else {
+										calculateMultiply(angle_units_in_turn(eo, 1, 4), eo);
 									}
 									MERGE_APPROX_AND_PREC(mstruct)
 									return 1;
@@ -947,12 +948,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 				}
 			} else if(mstruct.isFunction() && ((o_function->id() == FUNCTION_ID_ASIN && mstruct.function()->id() == FUNCTION_ID_ACOS) || (o_function->id() == FUNCTION_ID_ACOS && mstruct.function()->id() == FUNCTION_ID_ASIN)) && !FUNCTION_PROTECTED(eo, FUNCTION_ID_ACOS) && !FUNCTION_PROTECTED(eo, FUNCTION_ID_ASIN) && SIZE == 1 && mstruct.size() == 1 && CHILD(0) == mstruct[0]) {
 				// asin(x)+acos(x)=pi/2
-				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {set(90, 1, 0, true); break;}
-					case ANGLE_UNIT_GRADIANS: {set(100, 1, 0, true); break;}
-					case ANGLE_UNIT_RADIANS: {set(CALCULATOR->getVariableById(VARIABLE_ID_PI), true); multiply(nr_half); calculatesub(eo, eo, true); break;}
-					default: {set(CALCULATOR->getVariableById(VARIABLE_ID_PI), true); multiply(nr_half); if(CALCULATOR->getRadUnit()) {multiply(CALCULATOR->getRadUnit(), true);} calculatesub(eo, eo, true); break;}
-				}
+				set_fraction_of_turn(*this, eo, 1, 4);
 				MERGE_APPROX_AND_PREC(mstruct)
 				return 1;
 			} else if(mstruct.isFunction() && ((o_function->id() == FUNCTION_ID_SINH && mstruct.function()->id() == FUNCTION_ID_COSH) || (o_function->id() == FUNCTION_ID_COSH && mstruct.function()->id() == FUNCTION_ID_SINH)) && !FUNCTION_PROTECTED(eo, FUNCTION_ID_COSH) && !FUNCTION_PROTECTED(eo, FUNCTION_ID_SINH) && SIZE == 1 && mstruct.size() == 1 && CHILD(0) == mstruct[0]) {

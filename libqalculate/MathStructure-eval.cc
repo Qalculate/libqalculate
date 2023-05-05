@@ -1679,9 +1679,10 @@ bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 		mabs.eval(eo2);
 		marg.eval(eo2);
 		switch(eo2.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg.multiply(CALCULATOR->getDegUnit(), true);} break;}
-			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg.multiply(CALCULATOR->getGraUnit(), true);} break;}
-			case ANGLE_UNIT_RADIANS: {if(CALCULATOR->getRadUnit()) {marg.multiply(CALCULATOR->getRadUnit(), true);} break;}
+			case ANGLE_UNIT_DEGREES: {marg.multiply(CALCULATOR->getDegUnit(), true); break;}
+			case ANGLE_UNIT_GRADIANS: {marg.multiply(CALCULATOR->getGraUnit(), true); break;}
+			case ANGLE_UNIT_RADIANS: {marg.multiply(CALCULATOR->getRadUnit(), true); break;}
+			case ANGLE_UNIT_CUSTOM: {marg.multiply(CALCULATOR->customAngleUnit(), true); break;}
 			default: {break;}
 		}
 		set(marg, true);
@@ -1696,9 +1697,10 @@ bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 		EvaluationOptions eo2 = eo;
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		switch(eo2.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg.calculateMultiply(Number(180, 1), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->getDegUnit(), true);} break;}
-			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg.calculateMultiply(Number(200, 1), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->getGraUnit(), true);} break;}
-			case ANGLE_UNIT_RADIANS: {if(CALCULATOR->getRadUnit()) {marg.multiply(CALCULATOR->getRadUnit(), true);} break;}
+			case ANGLE_UNIT_DEGREES: {marg.calculateMultiply(Number(180, 1), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->getDegUnit(), true); break;}
+			case ANGLE_UNIT_GRADIANS: {marg.calculateMultiply(Number(200, 1), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->getGraUnit(), true); break;}
+			case ANGLE_UNIT_RADIANS: {marg.multiply(CALCULATOR->getRadUnit(), true); break;}
+			case ANGLE_UNIT_CUSTOM: {marg.calculateMultiply(angle_units_in_turn(eo2, 1, 2), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->customAngleUnit(), true); break;}
 			default: {break;}
 		}
 		set(marg, true);
@@ -1712,9 +1714,10 @@ bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 		EvaluationOptions eo2 = eo;
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		switch(eo2.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg.calculateMultiply(Number(180, 1), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->getDegUnit(), true);} break;}
-			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg.calculateMultiply(Number(200, 1), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->getGraUnit(), true);} break;}
-			case ANGLE_UNIT_RADIANS: {if(CALCULATOR->getRadUnit()) {marg.multiply(CALCULATOR->getRadUnit(), true);} break;}
+			case ANGLE_UNIT_DEGREES: {marg.calculateMultiply(Number(180, 1), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->getDegUnit(), true); break;}
+			case ANGLE_UNIT_GRADIANS: {marg.calculateMultiply(Number(200, 1), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->getGraUnit(), true); break;}
+			case ANGLE_UNIT_RADIANS: {marg.multiply(CALCULATOR->getRadUnit(), true); break;}
+			case ANGLE_UNIT_CUSTOM: {marg.calculateMultiply(angle_units_in_turn(eo2, 1, 2), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->customAngleUnit(), true); break;}
 			default: {break;}
 		}
 		CHILD(1).set(marg, true);
@@ -1737,9 +1740,10 @@ bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 			MathStructure mabs(CALCULATOR->getFunctionById(FUNCTION_ID_ABS), this, NULL);
 			mabs.eval(eo2);
 			switch(eo2.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg.multiply(CALCULATOR->getDegUnit(), true);} break;}
-				case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg.multiply(CALCULATOR->getGraUnit(), true);} break;}
-				case ANGLE_UNIT_RADIANS: {if(CALCULATOR->getRadUnit()) {marg.multiply(CALCULATOR->getRadUnit(), true);} break;}
+				case ANGLE_UNIT_DEGREES: {marg.multiply(CALCULATOR->getDegUnit(), true); break;}
+				case ANGLE_UNIT_GRADIANS: {marg.multiply(CALCULATOR->getGraUnit(), true); break;}
+				case ANGLE_UNIT_RADIANS: {marg.multiply(CALCULATOR->getRadUnit(), true); break;}
+				case ANGLE_UNIT_CUSTOM: {marg.multiply(CALCULATOR->customAngleUnit(), true); break;}
 				default: {break;}
 			}
 			set(marg, true);
@@ -1768,8 +1772,9 @@ bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
 		mabs.eval(eo2);
 		marg.eval(eo2);
 		switch(eo2.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg.multiply(CALCULATOR->getDegUnit(), true);} break;}
-			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg.multiply(CALCULATOR->getGraUnit(), true);} break;}
+			case ANGLE_UNIT_DEGREES: {marg.multiply(CALCULATOR->getDegUnit(), true); break;}
+			case ANGLE_UNIT_GRADIANS: {marg.multiply(CALCULATOR->getGraUnit(), true); break;}
+			case ANGLE_UNIT_CUSTOM: {marg.multiply(CALCULATOR->customAngleUnit(), true); break;}
 			default: {break;}
 		}
 		set(marg, true);
@@ -1782,8 +1787,9 @@ bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
 		EvaluationOptions eo2 = eo;
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		switch(eo2.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {calculateMultiply(Number(180, 1), eo2); calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); multiply(CALCULATOR->getDegUnit(), true);} break;}
-			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {calculateMultiply(Number(200, 1), eo2); calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); multiply(CALCULATOR->getGraUnit(), true);} break;}
+			case ANGLE_UNIT_DEGREES: {calculateMultiply(Number(180, 1), eo2); calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); multiply(CALCULATOR->getDegUnit(), true); break;}
+			case ANGLE_UNIT_GRADIANS: {calculateMultiply(Number(200, 1), eo2); calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); multiply(CALCULATOR->getGraUnit(), true); break;}
+			case ANGLE_UNIT_CUSTOM: {calculateMultiply(angle_units_in_turn(eo2, 1, 2), eo2); calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); multiply(CALCULATOR->customAngleUnit(), true); break;}
 			default: {break;}
 		}
 		transformById(FUNCTION_ID_CIS);
@@ -1795,8 +1801,9 @@ bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
 		EvaluationOptions eo2 = eo;
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		switch(eo2.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {CHILD(1).calculateMultiply(Number(180, 1), eo2); CHILD(1).calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); CHILD(1).multiply(CALCULATOR->getDegUnit(), true);} break;}
-			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {CHILD(1).calculateMultiply(Number(200, 1), eo2); CHILD(1).calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); CHILD(1).multiply(CALCULATOR->getGraUnit(), true);} break;}
+			case ANGLE_UNIT_DEGREES: {CHILD(1).calculateMultiply(Number(180, 1), eo2); CHILD(1).calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); CHILD(1).multiply(CALCULATOR->getDegUnit(), true); break;}
+			case ANGLE_UNIT_GRADIANS: {CHILD(1).calculateMultiply(Number(200, 1), eo2); CHILD(1).calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); CHILD(1).multiply(CALCULATOR->getGraUnit(), true); break;}
+			case ANGLE_UNIT_CUSTOM: {CHILD(1).calculateMultiply(angle_units_in_turn(eo2, 1, 2), eo2); CHILD(1).calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); CHILD(1).multiply(CALCULATOR->customAngleUnit(), true); break;}
 			default: {break;}
 		}
 		CHILD(1).transformById(FUNCTION_ID_CIS);
@@ -1815,8 +1822,9 @@ bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
 			MathStructure mabs(CALCULATOR->getFunctionById(FUNCTION_ID_ABS), this, NULL);
 			mabs.eval(eo2);
 			switch(eo2.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg.multiply(CALCULATOR->getDegUnit(), true);} break;}
-				case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg.multiply(CALCULATOR->getGraUnit(), true);} break;}
+				case ANGLE_UNIT_DEGREES: {marg.multiply(CALCULATOR->getDegUnit(), true); break;}
+				case ANGLE_UNIT_GRADIANS: {marg.multiply(CALCULATOR->getGraUnit(), true); break;}
+				case ANGLE_UNIT_CUSTOM: {marg.multiply(CALCULATOR->customAngleUnit(), true); break;}
 				default: {break;}
 			}
 			set(marg, true);
@@ -1856,6 +1864,7 @@ bool convert_to_default_angle_unit(MathStructure &m, const EvaluationOptions &eo
 			Unit *u = NULL;
 			if(eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES) u = CALCULATOR->getDegUnit();
 			else if(eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS) u = CALCULATOR->getGraUnit();
+			else if(eo.parse_options.angle_unit == ANGLE_UNIT_CUSTOM) u = CALCULATOR->customAngleUnit();
 			if(u && m[i].contains(CALCULATOR->getRadUnit(), false, false, false)) {
 				m[i].divide(u);
 				m[i].multiply(u);
@@ -2782,7 +2791,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	if(eo.structuring != STRUCTURING_NONE) {
 
-		if(eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS || eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES) convert_to_default_angle_unit(*this, eo);
+		if(eo.parse_options.angle_unit != ANGLE_UNIT_RADIANS && eo.parse_options.angle_unit != ANGLE_UNIT_NONE) convert_to_default_angle_unit(*this, eo);
 		simplify_ln(*this);
 		simplify_roots(*this, eo);
 

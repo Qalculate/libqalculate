@@ -356,6 +356,7 @@ Calculator::Calculator() {
 	default_assumptions->setSign(ASSUMPTION_SIGN_UNKNOWN);
 
 	u_rad = NULL; u_gra = NULL; u_deg = NULL;
+	priv->custom_angle_unit = NULL;
 
 	b_save_called = false;
 
@@ -607,6 +608,7 @@ Calculator::Calculator(bool ignore_locale) {
 	default_assumptions->setSign(ASSUMPTION_SIGN_UNKNOWN);
 
 	u_rad = NULL; u_gra = NULL; u_deg = NULL;
+	priv->custom_angle_unit = NULL;
 
 	b_save_called = false;
 
@@ -1431,6 +1433,14 @@ void Calculator::endTemporaryEnableIntervalArithmetic() {
 
 bool Calculator::usesMatlabStyleMatrices() const {return priv->matlab_matrices;}
 void Calculator::useMatlabStyleMatrices(bool use_matlab_style_matrices) {priv->matlab_matrices = use_matlab_style_matrices;}
+
+void Calculator::setCustomAngleUnit(Unit *u) {
+	priv->custom_angle_unit = u;
+}
+Unit *Calculator::customAngleUnit() {
+	if(!priv->custom_angle_unit) return getRadUnit();
+	return priv->custom_angle_unit;
+}
 
 void Calculator::setCustomInputBase(Number nr) {
 	priv->custom_input_base = nr;

@@ -2369,6 +2369,7 @@ void AngleArgument::parse(MathStructure *mstruct, const string &str, const Parse
 		if(mstruct->contains(CALCULATOR->getRadUnit(), false, true, true) > 0) return;
 		if(mstruct->contains(CALCULATOR->getDegUnit(), false, true, true) > 0) return;
 		if(mstruct->contains(CALCULATOR->getGraUnit(), false, true, true) > 0) return;
+		if(mstruct->contains(CALCULATOR->customAngleUnit(), false, true, true) > 0) return;
 		if(contains_angle_unit(*mstruct, po)) return;
 	}
 	switch(po.angle_unit) {
@@ -2382,6 +2383,10 @@ void AngleArgument::parse(MathStructure *mstruct, const string &str, const Parse
 		}
 		case ANGLE_UNIT_RADIANS: {
 			mstruct->multiply(CALCULATOR->getRadUnit());
+			break;
+		}
+		case ANGLE_UNIT_CUSTOM: {
+			mstruct->multiply(CALCULATOR->customAngleUnit());
 			break;
 		}
 		default: {}

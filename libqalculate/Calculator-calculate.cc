@@ -338,6 +338,10 @@ bool Calculator::calculateRPN(MathFunction *f, int msecs, const EvaluationOption
 						(*mstruct)[i - 1].multiply(getRadUnit());
 						break;
 					}
+					case ANGLE_UNIT_CUSTOM: {
+						(*mstruct)[i - 1].multiply(customAngleUnit());
+						break;
+					}
 					default: {}
 				}
 			}
@@ -461,6 +465,10 @@ MathStructure *Calculator::calculateRPN(MathFunction *f, const EvaluationOptions
 					}
 					case ANGLE_UNIT_RADIANS: {
 						(*mstruct)[i - 1].multiply(getRadUnit());
+						break;
+					}
+					case ANGLE_UNIT_CUSTOM: {
+						(*mstruct)[i - 1].multiply(customAngleUnit());
 						break;
 					}
 					default: {}

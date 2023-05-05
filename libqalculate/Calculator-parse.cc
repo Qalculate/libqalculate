@@ -2110,18 +2110,20 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					if(ifac == 2) f = f_factorial2;
 					else if(ifac == 1) f = f_factorial;
 					else f = f_multifactorial;
-					if(!f->isActive()) {
-						MathFunction *f2 = NULL;
-						if(ifac == 2) f2 = getActiveFunction("factorial2");
-						else if(ifac == 1) f2 = getActiveFunction("factorial");
-						else f2 = getActiveFunction("multifactorial");
-						if(f2) f = f2;
+					if(f) {
+						if(!f->isActive()) {
+							MathFunction *f2 = NULL;
+							if(ifac == 2) f2 = getActiveFunction("factorial2");
+							else if(ifac == 1) f2 = getActiveFunction("factorial");
+							else f2 = getActiveFunction("multifactorial");
+							if(f2) f = f2;
+						}
+						if(ifac > 2) stmp += i2s(parseAddIdAppend(f, MathStructure(ifac, 1, 0), stmp2, po));
+						else stmp += i2s(parseAddId(f, stmp2, po));
+						stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+						str.replace(i5 - stmp2.length() + 1, stmp2.length() + i4 - i5 - 1, stmp);
+						str_index = stmp.length() + i5 - stmp2.length();
 					}
-					if(ifac > 2) stmp += i2s(parseAddIdAppend(f, MathStructure(ifac, 1, 0), stmp2, po));
-					else stmp += i2s(parseAddId(f, stmp2, po));
-					stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
-					str.replace(i5 - stmp2.length() + 1, stmp2.length() + i4 - i5 - 1, stmp);
-					str_index = stmp.length() + i5 - stmp2.length();
 				}
 			}
 		} else if(PARSING_MODE != PARSING_MODE_RPN && (str[str_index] == 'c' || str[str_index] == 'C') && str.length() > str_index + 6 && str[str_index + 5] == SPACE_CH && (str_index == 0 || is_in(OPERATORS INTERNAL_OPERATORS PARENTHESISS, str[str_index - 1])) && compare_name_no_case("compl", str, 5, str_index, base)) {
@@ -3675,10 +3677,11 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 									break;
 								}
 								case '\x1c': {
-									if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstack.back()->contains(getRadUnit(), false, true, true) <= 0 && mstack.back()->contains(getGraUnit(), false, true, true) <= 0 && mstack.back()->contains(getDegUnit(), false, true, true) <= 0) {
+									if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstack.back()->contains(getRadUnit(), false, true, true) <= 0 && mstack.back()->contains(getGraUnit(), false, true, true) <= 0 && mstack.back()->contains(getDegUnit(), false, true, true) <= 0 && mstack.back()->contains(customAngleUnit(), false, true, true) <= 0) {
 										switch(po.angle_unit) {
 											case ANGLE_UNIT_DEGREES: {mstack.back()->multiply(getDegUnit()); break;}
 											case ANGLE_UNIT_GRADIANS: {mstack.back()->multiply(getGraUnit()); break;}
+											case ANGLE_UNIT_CUSTOM: {mstack.back()->multiply(customAngleUnit()); break;}
 											default: {}
 										}
 									}
@@ -3792,10 +3795,11 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					} else if(str[i] == BITWISE_NOT_CH) {
 						mstack.back()->transform(STRUCT_BITWISE_NOT);
 					} else if(str[i] == '\x1c') {
-						if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstack.back()->contains(getRadUnit(), false, true, true) <= 0 && mstack.back()->contains(getGraUnit(), false, true, true) <= 0 && mstack.back()->contains(getDegUnit(), false, true, true) <= 0) {
+						if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstack.back()->contains(getRadUnit(), false, true, true) <= 0 && mstack.back()->contains(getGraUnit(), false, true, true) <= 0 && mstack.back()->contains(getDegUnit(), false, true, true) <= 0 && mstack.back()->contains(customAngleUnit(), false, true, true) <= 0) {
 							switch(po.angle_unit) {
 								case ANGLE_UNIT_DEGREES: {mstack.back()->multiply(getDegUnit()); break;}
 								case ANGLE_UNIT_GRADIANS: {mstack.back()->multiply(getGraUnit()); break;}
+								case ANGLE_UNIT_CUSTOM: {mstack.back()->multiply(customAngleUnit()); break;}
 								default: {}
 							}
 						}
@@ -3906,10 +3910,11 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 							break;
 						}
 						case '\x1c': {
-							if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstack.back()->contains(getRadUnit(), false, true, true) <= 0 && mstack.back()->contains(getGraUnit(), false, true, true) <= 0 && mstack.back()->contains(getDegUnit(), false, true, true) <= 0) {
+							if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstack.back()->contains(getRadUnit(), false, true, true) <= 0 && mstack.back()->contains(getGraUnit(), false, true, true) <= 0 && mstack.back()->contains(getDegUnit(), false, true, true) <= 0 && mstack.back()->contains(customAngleUnit(), false, true, true) <= 0) {
 								switch(po.angle_unit) {
 									case ANGLE_UNIT_DEGREES: {mstack.back()->multiply(getDegUnit()); break;}
 									case ANGLE_UNIT_GRADIANS: {mstack.back()->multiply(getGraUnit()); break;}
+									case ANGLE_UNIT_CUSTOM: {mstack.back()->multiply(customAngleUnit()); break;}
 									default: {}
 								}
 							}
@@ -4357,10 +4362,11 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					}
 					case '\x1c': {
 						if(parseAdd(str2, mstruct, po, OPERATION_MULTIPLY)) {
-							if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstruct->last().contains(getRadUnit(), false, true, true) <= 0 && mstruct->last().contains(getGraUnit(), false, true, true) <= 0 && mstruct->last().contains(getDegUnit(), false, true, true) <= 0) {
+							if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstruct->last().contains(getRadUnit(), false, true, true) <= 0 && mstruct->last().contains(getGraUnit(), false, true, true) <= 0 && mstruct->last().contains(getDegUnit(), false, true, true) <= 0 && mstruct->last().contains(customAngleUnit(), false, true, true) <= 0) {
 								switch(po.angle_unit) {
 									case ANGLE_UNIT_DEGREES: {mstruct->last().multiply(getDegUnit()); break;}
 									case ANGLE_UNIT_GRADIANS: {mstruct->last().multiply(getGraUnit()); break;}
+									case ANGLE_UNIT_CUSTOM: {mstruct->last().multiply(customAngleUnit()); break;}
 									default: {}
 								}
 							}
@@ -4933,10 +4939,11 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		if(i != 0) parseAdd(str2, mstruct, po);
 		else mstruct->set(1, 1, 0);
 		if(parseAdd(str, mstruct, po, OPERATION_MULTIPLY)) {
-			if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstruct->last().contains(getRadUnit(), false, true, true) <= 0 && mstruct->last().contains(getGraUnit(), false, true, true) <= 0 && mstruct->last().contains(getDegUnit(), false, true, true) <= 0) {
+			if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstruct->last().contains(getRadUnit(), false, true, true) <= 0 && mstruct->last().contains(getGraUnit(), false, true, true) <= 0 && mstruct->last().contains(getDegUnit(), false, true, true) <= 0 && mstruct->last().contains(customAngleUnit(), false, true, true) <= 0) {
 				switch(po.angle_unit) {
 					case ANGLE_UNIT_DEGREES: {mstruct->last().multiply(getDegUnit()); break;}
 					case ANGLE_UNIT_GRADIANS: {mstruct->last().multiply(getGraUnit()); break;}
+					case ANGLE_UNIT_CUSTOM: {mstruct->last().multiply(customAngleUnit()); break;}
 					default: {}
 				}
 			}

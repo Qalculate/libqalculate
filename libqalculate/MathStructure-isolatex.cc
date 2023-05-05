@@ -4583,11 +4583,11 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								} else {
 									marg.set(CALCULATOR->getFunctionById(FUNCTION_ID_ARG), &CHILD(1), NULL);
 									marg.calculateFunctions(eo);
-									switch(eo2.parse_options.angle_unit) {
-										case ANGLE_UNIT_DEGREES: {marg.multiply(Number(1, 180, 0)); marg.multiply(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
-										case ANGLE_UNIT_GRADIANS: {marg.multiply(Number(1, 200, 0)); marg.multiply(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
-										case ANGLE_UNIT_RADIANS: {break;}
-										default: {if(CALCULATOR->getRadUnit()) marg /= CALCULATOR->getRadUnit();}
+									if(eo2.parse_options.angle_unit == ANGLE_UNIT_NONE || eo.parse_options.angle_unit == ANGLE_UNIT_RADIANS) {
+										if(eo2.parse_options.angle_unit == ANGLE_UNIT_NONE) marg /= CALCULATOR->getRadUnit();
+									} else {
+										marg.multiply(angle_units_in_turn(eo2, 2, 1, true));
+										marg.multiply(CALCULATOR->getVariableById(VARIABLE_ID_PI));
 									}
 									marg.calculatesub(eo2, eo, true);
 								}
@@ -5334,6 +5334,14 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						CHILD(1) += Number(200, 1);
 						break;
 					}
+					case ANGLE_UNIT_CUSTOM: {
+						EvaluationOptions eo3 = eo2;
+						eo3.sync_units = true;
+						CHILD(0) /= CALCULATOR->customAngleUnit();
+						CHILD(0).calculatesub(eo3, eo, true);
+						CHILD(1) += angle_units_in_turn(eo3, 1, 2);
+						break;
+					}
 					case ANGLE_UNIT_RADIANS: {
 						CHILD(0).calculateDivide(CALCULATOR->getRadUnit(), eo2);
 						CHILD(1) += CALCULATOR->getVariableById(VARIABLE_ID_PI);
@@ -5346,22 +5354,12 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				}
 				CHILD(1)[1] *= CALCULATOR->getVariableById(VARIABLE_ID_N);
 				if(b_zero && f->id() == FUNCTION_ID_COS) {
-					switch(eo.parse_options.angle_unit) {
-						case ANGLE_UNIT_DEGREES: {CHILD(1).add(Number(-90, 1), true); break;}
-						case ANGLE_UNIT_GRADIANS: {CHILD(1).add(Number(-100, 1), true); break;}
-						case ANGLE_UNIT_RADIANS: {CHILD(1).add(CALCULATOR->getVariableById(VARIABLE_ID_PI), true); CHILD(1).last() *= nr_minus_half; break;}
-						default: {CHILD(1).add(CALCULATOR->getVariableById(VARIABLE_ID_PI), true); CHILD(1).last() *= nr_minus_half; CHILD(1).last() *= CALCULATOR->getRadUnit();}
-					}
+					add_fraction_of_turn(CHILD(1), eo2, -1, 4, true);
 				}
 				if(b_one) {
 					CHILD(1)[1] *= 2;
 					if(f->id() == FUNCTION_ID_SIN) {
-						switch(eo.parse_options.angle_unit) {
-							case ANGLE_UNIT_DEGREES: {CHILD(1).add(Number(90, 1), true); break;}
-							case ANGLE_UNIT_GRADIANS: {CHILD(1).add(Number(100, 1), true); break;}
-							case ANGLE_UNIT_RADIANS: {CHILD(1).add(CALCULATOR->getVariableById(VARIABLE_ID_PI), true); CHILD(1).last() *= nr_half; break;}
-							default: {CHILD(1).add(CALCULATOR->getVariableById(VARIABLE_ID_PI), true); CHILD(1).last() *= nr_half; CHILD(1).last() *= CALCULATOR->getRadUnit();}
-						}
+						add_fraction_of_turn(CHILD(1), eo2, 1, 4, true);
 					}
 				}
 				if(!b_one && !b_zero && (f->id() == FUNCTION_ID_SIN || f->id() == FUNCTION_ID_COS)) {
@@ -5369,12 +5367,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					MathStructure *malt = new MathStructure(*this);
 					(*malt)[1][0].negate();
 					if(f->id() == FUNCTION_ID_SIN) {
-						switch(eo.parse_options.angle_unit) {
-							case ANGLE_UNIT_DEGREES: {(*malt)[1].add(Number(180, 1), true); break;}
-							case ANGLE_UNIT_GRADIANS: {(*malt)[1].add(Number(200, 1), true); break;}
-							case ANGLE_UNIT_RADIANS: {(*malt)[1].add(CALCULATOR->getVariableById(VARIABLE_ID_PI), true); break;}
-							default: {(*malt)[1].add(CALCULATOR->getVariableById(VARIABLE_ID_PI), true); (*malt)[1].last() *= CALCULATOR->getRadUnit();}
-						}
+						add_fraction_of_turn((*malt)[1], eo2, 1, 2, true);
 					}
 					CHILD(1).calculatesub(eo2, eo, true);
 					(*malt)[1].calculatesub(eo2, eo, true);
@@ -5479,6 +5472,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					case ANGLE_UNIT_DEGREES: {CHILD(1) *= CALCULATOR->getDegUnit(); break;}
 					case ANGLE_UNIT_GRADIANS: {CHILD(1) *= CALCULATOR->getGraUnit(); break;}
 					case ANGLE_UNIT_RADIANS: {CHILD(1) *= CALCULATOR->getRadUnit(); break;}
+					case ANGLE_UNIT_CUSTOM: {CHILD(1) *= CALCULATOR->customAngleUnit(); break;}
 					default: {}
 				}
 				CHILD(1).transformById(FUNCTION_ID_SIN);
@@ -5506,35 +5500,24 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						mreq6 = new MathStructure(m2);
 					}
 				}
-				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {
-						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, Number(90, 1));
-						mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, Number(-90, 1));
-						if(mreq3) mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, Number(-90, 1));
-						if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, Number(90, 1));
-						break;
+				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE || eo.parse_options.angle_unit == ANGLE_UNIT_RADIANS) {
+					mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq1->last() *= nr_half;
+					mreq2->last() *= nr_minus_half;
+					if(mreq3) {
+						mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+						mreq3->last() *= nr_minus_half;
 					}
-					case ANGLE_UNIT_GRADIANS: {
-						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, Number(100, 1));
-						mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, Number(-100, 1));
-						if(mreq3) mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, Number(-100, 1));
-						if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, Number(100, 1));
-						break;
+					if(mreq5) {
+						mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+						mreq5->last() *= nr_half;
 					}
-					default: {
-						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-						mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-						mreq1->last() *= nr_half;
-						mreq2->last() *= nr_minus_half;
-						if(mreq3) {
-							mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-							mreq3->last() *= nr_minus_half;
-						}
-						if(mreq5) {
-							mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-							mreq5->last() *= nr_half;
-						}
-					}
+				} else {
+					mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, angle_units_in_turn(eo2, 1, 4));
+					mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, angle_units_in_turn(eo2, -1, 4));
+					if(mreq3) mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, angle_units_in_turn(eo2, -1, 4));
+					if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, angle_units_in_turn(eo2, 1, 4));
 				}
 				if(mreq4) mreq4->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
 				if(mreq6) mreq6->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, m_zero);
@@ -5566,6 +5549,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					case ANGLE_UNIT_DEGREES: {CHILD(1) *= CALCULATOR->getDegUnit(); break;}
 					case ANGLE_UNIT_GRADIANS: {CHILD(1) *= CALCULATOR->getGraUnit(); break;}
 					case ANGLE_UNIT_RADIANS: {CHILD(1) *= CALCULATOR->getRadUnit();}
+					case ANGLE_UNIT_CUSTOM: {CHILD(1) *= CALCULATOR->customAngleUnit(); break;}
 					default: {}
 				}
 				CHILD(1).transformById(FUNCTION_ID_COS);
@@ -5595,21 +5579,12 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						mreq6 = new MathStructure(m2);
 					}
 				}
-				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {
-						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, Number(180, 1));
-						if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, Number(180, 1));
-						break;
-					}
-					case ANGLE_UNIT_GRADIANS: {
-						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, Number(200, 1));
-						if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, Number(200, 1));
-						break;
-					}
-					default: {
-						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-						if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-					}
+				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE || eo.parse_options.angle_unit == ANGLE_UNIT_RADIANS) {
+					mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+				} else {
+					mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, angle_units_in_turn(eo2, 1, 2));
+					if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, angle_units_in_turn(eo2, 1, 2));
 				}
 				if(mreq3) mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, m_zero);
 				if(mreq4) mreq4->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
@@ -5643,6 +5618,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					case ANGLE_UNIT_DEGREES: {CHILD(1) *= CALCULATOR->getDegUnit(); break;}
 					case ANGLE_UNIT_GRADIANS: {CHILD(1) *= CALCULATOR->getGraUnit(); break;}
 					case ANGLE_UNIT_RADIANS: {CHILD(1) *= CALCULATOR->getRadUnit();}
+					case ANGLE_UNIT_CUSTOM: {CHILD(1) *= CALCULATOR->customAngleUnit(); break;}
 					default: {}
 				}
 				CHILD(1).transformById(FUNCTION_ID_TAN);
@@ -5670,35 +5646,24 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						mreq6 = new MathStructure(m2);
 					}
 				}
-				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {
-						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, Number(90, 1));
-						mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, Number(-90, 1));
-						if(mreq3) mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, Number(-90, 1));
-						if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, Number(90, 1));
-						break;
+				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE || eo.parse_options.angle_unit == ANGLE_UNIT_RADIANS) {
+					mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq1->last() *= nr_half;
+					mreq2->last() *= nr_minus_half;
+					if(mreq3) {
+						mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+						mreq3->last() *= nr_minus_half;
 					}
-					case ANGLE_UNIT_GRADIANS: {
-						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, Number(100, 1));
-						mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, Number(-100, 1));
-						if(mreq3) mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, Number(-100, 1));
-						if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, Number(100, 1));
-						break;
+					if(mreq5) {
+						mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+						mreq5->last() *= nr_half;
 					}
-					default: {
-						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-						mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-						mreq1->last() *= nr_half;
-						mreq2->last() *= nr_minus_half;
-						if(mreq3) {
-							mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-							mreq3->last() *= nr_minus_half;
-						}
-						if(mreq5) {
-							mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-							mreq5->last() *= nr_half;
-						}
-					}
+				} else {
+					mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, angle_units_in_turn(eo2, 1, 4));
+					mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, angle_units_in_turn(eo2, -1, 4));
+					if(mreq3) mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, angle_units_in_turn(eo2, -1, 4));
+					if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, angle_units_in_turn(eo2, 1, 4));
 				}
 				if(mreq4) mreq4->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_GREATER : COMPARISON_LESS, m_zero);
 				if(mreq6) mreq6->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_LESS : COMPARISON_GREATER, m_zero);

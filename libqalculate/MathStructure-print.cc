@@ -2113,6 +2113,7 @@ Unit *default_angle_unit(const EvaluationOptions &eo) {
 		case ANGLE_UNIT_DEGREES: {return CALCULATOR->getDegUnit();}
 		case ANGLE_UNIT_GRADIANS: {return CALCULATOR->getGraUnit();}
 		case ANGLE_UNIT_RADIANS: {return CALCULATOR->getRadUnit();}
+		case ANGLE_UNIT_CUSTOM: {return CALCULATOR->customAngleUnit();}
 		default: {}
 	}
 	return NULL;
