@@ -1099,7 +1099,7 @@ void set_option(string str) {
 			v = s2i(svalue);
 		} else {
 			Unit *u = CALCULATOR->getActiveUnit(svalue);
-			if(u && u->baseUnit() == CALCULATOR->getRadUnit()) {
+			if(u && u->baseUnit() == CALCULATOR->getRadUnit() && u->baseExponent() == 1) {
 				if(u == CALCULATOR->getRadUnit()) v = ANGLE_UNIT_RADIANS;
 				else if(u == CALCULATOR->getGraUnit()) v = ANGLE_UNIT_GRADIANS;
 				else if(u == CALCULATOR->getDegUnit()) v = ANGLE_UNIT_DEGREES;
@@ -1108,7 +1108,7 @@ void set_option(string str) {
 		}
 		if(v < 0 || v > 4) {
 			PUTS_UNICODE(_("Illegal value."));
-		} else if(v == ANGLE_UNIT_CUSTOM && CALCULATOR->customAngleUnit() == CALCULATOR->getRadUnit()) {
+		} else if(v == ANGLE_UNIT_CUSTOM && !CALCULATOR->customAngleUnit()) {
 			PUTS_UNICODE(_("Please specify a custom angle unit as argument (e.g. set angle arcsec)."));
 		} else {
 			evalops.parse_options.angle_unit = (AngleUnit) v;
@@ -1621,7 +1621,7 @@ bool show_set_help(string set_option = "") {
 
 	CHECK_IF_SCREEN_FILLED_HEADING_S(_("Calculation"));
 
-	STR_AND_TABS_4("angle unit", "angle", _("Default angle unit for trigonometric functions."), evalops.parse_options.angle_unit, _("none"), _("radians"), _("degrees"), _("gradians"), evalops.parse_options.angle_unit == ANGLE_UNIT_CUSTOM ? CALCULATOR->customAngleUnit()->referenceName() : _("custom"));
+	STR_AND_TABS_4("angle unit", "angle", _("Default angle unit for trigonometric functions."), evalops.parse_options.angle_unit, _("none"), _("radians"), _("degrees"), _("gradians"), evalops.parse_options.angle_unit == ANGLE_UNIT_CUSTOM && CALCULATOR->customAngleUnit() ? CALCULATOR->customAngleUnit()->referenceName() : _("custom"));
 	int appr = evalops.approximation;
 	if(dual_approximation < 0) appr = -1;
 	else if(dual_approximation > 0) appr = 3;
@@ -3291,7 +3291,7 @@ int main(int argc, char *argv[]) {
 
 	if(!custom_angle_unit.empty()) {
 		CALCULATOR->setCustomAngleUnit(CALCULATOR->getActiveUnit(custom_angle_unit));
-		if(!first_time) saved_custom_angle_unit = CALCULATOR->customAngleUnit()->referenceName();
+		if(!first_time && CALCULATOR->customAngleUnit()) saved_custom_angle_unit = CALCULATOR->customAngleUnit()->referenceName();
 	}
 
 	if(do_imaginary_j && CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") == 0) {
@@ -4483,7 +4483,7 @@ int main(int argc, char *argv[]) {
 				case ANGLE_UNIT_RADIANS: {str += _("rad"); break;}
 				case ANGLE_UNIT_DEGREES: {str += _("rad"); break;}
 				case ANGLE_UNIT_GRADIANS: {str += _("gra"); break;}
-				case ANGLE_UNIT_CUSTOM: {str += CALCULATOR->customAngleUnit()->referenceName(); break;}
+				case ANGLE_UNIT_CUSTOM: {if(CALCULATOR->customAngleUnit()) {str += CALCULATOR->customAngleUnit()->referenceName();} else {str += _("none");} break;}
 				default: {str += _("none"); break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
@@ -7560,7 +7560,8 @@ bool save_preferences(bool mode) {
 			saved_caret_as_xor = saved_caret;
 		} else {
 			set_saved_mode();
-			saved_custom_angle_unit = CALCULATOR->customAngleUnit()->referenceName();
+			if(CALCULATOR->customAngleUnit()) saved_custom_angle_unit = CALCULATOR->customAngleUnit()->referenceName();
+			else saved_custom_angle_unit = "";
 		}
 		if(saved_df != 0) saved_dual_fraction = saved_df;
 		if(saved_da != 0) saved_dual_approximation = saved_da;

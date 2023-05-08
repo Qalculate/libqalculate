@@ -2365,11 +2365,7 @@ string AngleArgument::print() const {return _("angle");}
 string AngleArgument::subprintlong() const {return _("an angle or a number (using the default angle unit)");}
 void AngleArgument::parse(MathStructure *mstruct, const string &str, const ParseOptions &po) const {
 	CALCULATOR->parse(mstruct, str, po);
-	if(po.angle_unit != ANGLE_UNIT_NONE) {
-		if(mstruct->contains(CALCULATOR->getRadUnit(), false, true, true) > 0) return;
-		if(mstruct->contains(CALCULATOR->getDegUnit(), false, true, true) > 0) return;
-		if(mstruct->contains(CALCULATOR->getGraUnit(), false, true, true) > 0) return;
-		if(mstruct->contains(CALCULATOR->customAngleUnit(), false, true, true) > 0) return;
+	if(HAS_DEFAULT_ANGLE_UNIT(po.angle_unit)) {
 		if(contains_angle_unit(*mstruct, po)) return;
 	}
 	switch(po.angle_unit) {
@@ -2386,7 +2382,7 @@ void AngleArgument::parse(MathStructure *mstruct, const string &str, const Parse
 			break;
 		}
 		case ANGLE_UNIT_CUSTOM: {
-			mstruct->multiply(CALCULATOR->customAngleUnit());
+			if(CALCULATOR->customAngleUnit()) mstruct->multiply(CALCULATOR->customAngleUnit());
 			break;
 		}
 		default: {}

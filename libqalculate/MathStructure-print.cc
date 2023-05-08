@@ -2108,14 +2108,18 @@ bool unnegate_multiplier(MathStructure &mstruct, const PrintOptions &po) {
 	}
 	return false;
 }
-Unit *default_angle_unit(const EvaluationOptions &eo) {
+Unit *default_angle_unit(const EvaluationOptions &eo, bool return_rad_if_none) {
 	switch(eo.parse_options.angle_unit) {
 		case ANGLE_UNIT_DEGREES: {return CALCULATOR->getDegUnit();}
 		case ANGLE_UNIT_GRADIANS: {return CALCULATOR->getGraUnit();}
 		case ANGLE_UNIT_RADIANS: {return CALCULATOR->getRadUnit();}
-		case ANGLE_UNIT_CUSTOM: {return CALCULATOR->customAngleUnit();}
+		case ANGLE_UNIT_CUSTOM: {
+			if(CALCULATOR->customAngleUnit()) return CALCULATOR->customAngleUnit();
+			break;
+		}
 		default: {}
 	}
+	if(return_rad_if_none) return CALCULATOR->getRadUnit();
 	return NULL;
 }
 

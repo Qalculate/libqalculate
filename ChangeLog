@@ -1,3 +1,8 @@
+2023-05-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support for custom default angle unit, e.g. turn, arcsec, arcmin
+	* Append default angle unit (instead of always radians) when converting value without unit to angle unit
+
 2023-04-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix element() function for vector when column number is specified (non-zero)

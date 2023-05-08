@@ -104,7 +104,7 @@ bool calculate_arg(MathStructure &mstruct, const EvaluationOptions &eo) {
 			if(mstruct.number().realPartIsNegative()) {
 				if(mstruct.number().imaginaryPartIsNegative()) {
 					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
-					if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) {
+					if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) {
 						mstruct /= CALCULATOR->getRadUnit();
 					} else if(eo.parse_options.angle_unit != ANGLE_UNIT_RADIANS) {
 						mstruct.divide(angle_units_in_turn(eo, 1, 2));
@@ -113,7 +113,7 @@ bool calculate_arg(MathStructure &mstruct, const EvaluationOptions &eo) {
 					mstruct.subtract(CALCULATOR->getVariableById(VARIABLE_ID_PI));
 				} else if(mstruct.number().imaginaryPartIsNonNegative()) {
 					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
-					if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) {
+					if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) {
 						mstruct /= CALCULATOR->getRadUnit();
 					} else if(eo.parse_options.angle_unit != ANGLE_UNIT_RADIANS) {
 						mstruct.divide(angle_units_in_turn(eo, 1, 2));
@@ -125,7 +125,7 @@ bool calculate_arg(MathStructure &mstruct, const EvaluationOptions &eo) {
 				}
 			} else {
 				mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
-				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) {
+				if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) {
 					mstruct /= CALCULATOR->getRadUnit();
 				} else if(eo.parse_options.angle_unit != ANGLE_UNIT_RADIANS) {
 					mstruct.divide(angle_units_in_turn(eo, 1, 2));

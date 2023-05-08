@@ -157,12 +157,13 @@ SinFunction::SinFunction() : MathFunction("sin", 1) {
 }
 
 MathStructure angle_units_in_turn(const EvaluationOptions &eo, long int num, long int den, bool recip) {
-	switch(eo.parse_options.angle_unit) {
+	AngleUnit au = eo.parse_options.angle_unit;
+	if(au == ANGLE_UNIT_CUSTOM && !CALCULATOR->customAngleUnit()) au = ANGLE_UNIT_NONE;
+	switch(au) {
 		case ANGLE_UNIT_DEGREES: {return Number(recip ? num : 360 * num, recip ? 360 * den : den, 0);}
 		case ANGLE_UNIT_GRADIANS: {return Number(recip ? num : 400 * num, recip ? 400 * den : den, 0);}
 		case ANGLE_UNIT_CUSTOM: {
 			Unit *u = CALCULATOR->customAngleUnit();
-			if(!u) u = CALCULATOR->getRadUnit();
 			if(!u->isLocal()) {
 				if(u->referenceName() == "arcmin") {
 					return Number(recip ? num : 360 * 60 * num, recip ? 360 * 60 * den : den, 0);
@@ -256,7 +257,7 @@ void convert_to_radians(const MathStructure &mpre, MathStructure &mstruct, const
 	if(!b) {
 		mstruct = mpre;
 		mstruct.convert(CALCULATOR->getRadUnit());
-		if(eo.parse_options.angle_unit != ANGLE_UNIT_NONE || mstruct.contains(CALCULATOR->getRadUnit())) mstruct /= CALCULATOR->getRadUnit();
+		if(HAS_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit) || mstruct.contains(CALCULATOR->getRadUnit())) mstruct /= CALCULATOR->getRadUnit();
 	}
 }
 
@@ -264,7 +265,7 @@ void convert_to_radians(const MathStructure &mpre, MathStructure &mstruct, const
 	convert_to_radians(vargs[0], mstruct, eo); \
 \
 	MathFunction *f = NULL;\
-	if(!f && eo.approximation == APPROXIMATION_APPROXIMATE && eo.parse_options.angle_unit != ANGLE_UNIT_RADIANS && eo.parse_options.angle_unit != ANGLE_UNIT_NONE) {\
+	if(!f && eo.approximation == APPROXIMATION_APPROXIMATE && !DEFAULT_RADIANS(eo.parse_options.angle_unit)) {\
 		if(mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[0].isFunction() && mstruct[0].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI && mstruct[2].isNumber() && !mstruct[2].number().isZero() && mstruct[2].equals(angle_units_in_turn(eo, 2, 1, true))) {\
 			f = mstruct[0].function();\
 		}\
@@ -289,7 +290,7 @@ void convert_to_radians(const MathStructure &mpre, MathStructure &mstruct, const
 \
 	bool b = false, b_recalc = true;\
 \
-	if(eo.parse_options.angle_unit != ANGLE_UNIT_RADIANS && eo.parse_options.angle_unit != ANGLE_UNIT_NONE) {\
+	if(!DEFAULT_RADIANS(eo.parse_options.angle_unit)) {\
 		if(!f && mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[2].isFunction() && mstruct[2].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI && mstruct[0].equals(angle_units_in_turn(eo, 2, 1, true))) {\
 			f = mstruct[2].function();\
 		}\
@@ -944,33 +945,33 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 }
 
 void set_fraction_of_turn(MathStructure &mstruct, const EvaluationOptions &eo, long int num, long int den) {
-	if(eo.parse_options.angle_unit == ANGLE_UNIT_RADIANS || eo.parse_options.angle_unit == ANGLE_UNIT_NONE) {
+	if(DEFAULT_RADIANS(eo.parse_options.angle_unit)) {
 		if(num == 1 && den == 2) {
 			mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI));
 		} else {
 			mstruct.set(num * 2, den, 0L);
 			mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 		}
-		if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) mstruct *= CALCULATOR->getRadUnit();
+		if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) mstruct *= CALCULATOR->getRadUnit();
 	} else {
 		mstruct = angle_units_in_turn(eo, num, den);
 	}
 }
 void add_fraction_of_turn(MathStructure &mstruct, const EvaluationOptions &eo, long int num, long int den, bool append) {
-	if(eo.parse_options.angle_unit == ANGLE_UNIT_RADIANS || eo.parse_options.angle_unit == ANGLE_UNIT_NONE) {
+	if(DEFAULT_RADIANS(eo.parse_options.angle_unit)) {
 		mstruct.add(CALCULATOR->getVariableById(VARIABLE_ID_PI), append);
 		if(num != 1 || den != 2) mstruct.last() *= Number(num * 2, den);
-		if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) mstruct.last() *= CALCULATOR->getRadUnit();
+		if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) mstruct *= CALCULATOR->getRadUnit();
 	} else {
 		mstruct.add(angle_units_in_turn(eo, num, den), append);
 	}
 }
 void multiply_by_fraction_of_radian(MathStructure &mstruct, const EvaluationOptions &eo, long int num, long int den) {
-	if(eo.parse_options.angle_unit == ANGLE_UNIT_RADIANS || eo.parse_options.angle_unit == ANGLE_UNIT_NONE) {
+	if(DEFAULT_RADIANS(eo.parse_options.angle_unit)) {
 		if(num != 1 && den != 1) {
 			mstruct.multiply(Number(num, den, 0L));
 		}
-		if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) mstruct *= CALCULATOR->getRadUnit();
+		if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) mstruct *= CALCULATOR->getRadUnit();
 	} else {
 		mstruct *= angle_units_in_turn(eo, num, den * 2);
 		mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));

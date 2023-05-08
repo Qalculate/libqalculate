@@ -145,11 +145,16 @@ bool transform_expression_for_equals_save(std::string&, const ParseOptions&);
 bool expression_contains_save_function(const std::string&, const ParseOptions&, bool = false);
 void replace_internal_operators(std::string &str);
 
+#define HAS_DEFAULT_ANGLE_UNIT(x) (x != ANGLE_UNIT_NONE && (x != ANGLE_UNIT_CUSTOM || CALCULATOR->customAngleUnit()))
+#define NO_DEFAULT_ANGLE_UNIT(x) (x == ANGLE_UNIT_NONE || (x == ANGLE_UNIT_CUSTOM && !CALCULATOR->customAngleUnit()))
+#define DEFAULT_RADIANS(x) (x == ANGLE_UNIT_RADIANS || x == ANGLE_UNIT_NONE || (x == ANGLE_UNIT_CUSTOM && (!CALCULATOR->customAngleUnit() || CALCULATOR->customAngleUnit() == CALCULATOR->getRadUnit())))
+
 MathStructure angle_units_in_turn(const EvaluationOptions &eo, long int num = 1, long int den = 2, bool recip = false);
 void convert_to_radians(const MathStructure &mpre, MathStructure &mstruct, const EvaluationOptions &eo);
 void set_fraction_of_turn(MathStructure &mstruct, const EvaluationOptions &eo, long int num, long int den);
 void add_fraction_of_turn(MathStructure &mstruct, const EvaluationOptions &eo, long int num, long int den, bool append = false);
 void multiply_by_fraction_of_radian(MathStructure &mstruct, const EvaluationOptions &eo, long int num, long int den);
+Unit *default_angle_unit(const EvaluationOptions &eo, bool return_rad_if_none = false);
 
 #endif
 

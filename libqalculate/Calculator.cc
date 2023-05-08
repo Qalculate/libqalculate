@@ -1435,10 +1435,11 @@ bool Calculator::usesMatlabStyleMatrices() const {return priv->matlab_matrices;}
 void Calculator::useMatlabStyleMatrices(bool use_matlab_style_matrices) {priv->matlab_matrices = use_matlab_style_matrices;}
 
 void Calculator::setCustomAngleUnit(Unit *u) {
+	if(u) u->ref();
+	if(priv->custom_angle_unit) priv->custom_angle_unit->unref();
 	priv->custom_angle_unit = u;
 }
 Unit *Calculator::customAngleUnit() {
-	if(!priv->custom_angle_unit) return getRadUnit();
 	return priv->custom_angle_unit;
 }
 

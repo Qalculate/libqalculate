@@ -520,10 +520,10 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 								if(equals(mstruct) && !FUNCTION_PROTECTED(eo, FUNCTION_ID_ASIN) && !FUNCTION_PROTECTED(eo, FUNCTION_ID_ACOS)) {
 									// asin(x)+acos(x)=pi/2
 									delChild(i2 + 1, true);
-									if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE || eo.parse_options.angle_unit == ANGLE_UNIT_RADIANS) {
+									if(DEFAULT_RADIANS(eo.parse_options.angle_unit)) {
 										calculateMultiply(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo);
 										calculateMultiply(nr_half, eo);
-										if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) calculateMultiply(CALCULATOR->getRadUnit(), eo);
+										if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) calculateMultiply(CALCULATOR->getRadUnit(), eo);
 									} else {
 										calculateMultiply(angle_units_in_turn(eo, 1, 4), eo);
 									}

@@ -325,25 +325,8 @@ bool Calculator::calculateRPN(MathFunction *f, int msecs, const EvaluationOption
 				iregs++;
 			}
 			if(!fill_vector && f->getArgumentDefinition(i) && f->getArgumentDefinition(i)->type() == ARGUMENT_TYPE_ANGLE) {
-				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {
-						(*mstruct)[i - 1].multiply(getDegUnit());
-						break;
-					}
-					case ANGLE_UNIT_GRADIANS: {
-						(*mstruct)[i - 1].multiply(getGraUnit());
-						break;
-					}
-					case ANGLE_UNIT_RADIANS: {
-						(*mstruct)[i - 1].multiply(getRadUnit());
-						break;
-					}
-					case ANGLE_UNIT_CUSTOM: {
-						(*mstruct)[i - 1].multiply(customAngleUnit());
-						break;
-					}
-					default: {}
-				}
+				Unit *u = default_angle_unit(eo);
+				if(u) (*mstruct)[i - 1].multiply(u);
 			}
 		}
 		if(fill_vector) mstruct->childrenUpdated();
@@ -454,25 +437,8 @@ MathStructure *Calculator::calculateRPN(MathFunction *f, const EvaluationOptions
 				iregs++;
 			}
 			if(!fill_vector && f->getArgumentDefinition(i) && f->getArgumentDefinition(i)->type() == ARGUMENT_TYPE_ANGLE) {
-				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {
-						(*mstruct)[i - 1].multiply(getDegUnit());
-						break;
-					}
-					case ANGLE_UNIT_GRADIANS: {
-						(*mstruct)[i - 1].multiply(getGraUnit());
-						break;
-					}
-					case ANGLE_UNIT_RADIANS: {
-						(*mstruct)[i - 1].multiply(getRadUnit());
-						break;
-					}
-					case ANGLE_UNIT_CUSTOM: {
-						(*mstruct)[i - 1].multiply(customAngleUnit());
-						break;
-					}
-					default: {}
-				}
+				Unit *u = default_angle_unit(eo);
+				if(u) (*mstruct)[i - 1].multiply(u);
 			}
 		}
 		if(fill_vector) mstruct->childrenUpdated();

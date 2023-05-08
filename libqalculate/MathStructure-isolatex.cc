@@ -4583,8 +4583,8 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								} else {
 									marg.set(CALCULATOR->getFunctionById(FUNCTION_ID_ARG), &CHILD(1), NULL);
 									marg.calculateFunctions(eo);
-									if(eo2.parse_options.angle_unit == ANGLE_UNIT_NONE || eo.parse_options.angle_unit == ANGLE_UNIT_RADIANS) {
-										if(eo2.parse_options.angle_unit == ANGLE_UNIT_NONE) marg /= CALCULATOR->getRadUnit();
+									if(DEFAULT_RADIANS(eo.parse_options.angle_unit)) {
+										if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) marg /= CALCULATOR->getRadUnit();
 									} else {
 										marg.multiply(angle_units_in_turn(eo2, 2, 1, true));
 										marg.multiply(CALCULATOR->getVariableById(VARIABLE_ID_PI));
@@ -5335,11 +5335,16 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						break;
 					}
 					case ANGLE_UNIT_CUSTOM: {
-						EvaluationOptions eo3 = eo2;
-						eo3.sync_units = true;
-						CHILD(0) /= CALCULATOR->customAngleUnit();
-						CHILD(0).calculatesub(eo3, eo, true);
-						CHILD(1) += angle_units_in_turn(eo3, 1, 2);
+						if(CALCULATOR->customAngleUnit()) {
+							EvaluationOptions eo3 = eo2;
+							eo3.sync_units = true;
+							CHILD(0) /= CALCULATOR->customAngleUnit();
+							CHILD(0).calculatesub(eo3, eo, true);
+							CHILD(1) += angle_units_in_turn(eo3, 1, 2);
+						} else {
+							CHILD(1) += CALCULATOR->getVariableById(VARIABLE_ID_PI);
+							CHILD(1)[1] *= CALCULATOR->getRadUnit();
+						}
 						break;
 					}
 					case ANGLE_UNIT_RADIANS: {
@@ -5468,18 +5473,13 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			} else if(CHILD(0).function()->id() == FUNCTION_ID_ASIN && (ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_EQUALS)) {
 				MathStructure m1(CHILD(1)), m2(CHILD(1));
 				CHILD(0).setToChild(1, true);
-				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {CHILD(1) *= CALCULATOR->getDegUnit(); break;}
-					case ANGLE_UNIT_GRADIANS: {CHILD(1) *= CALCULATOR->getGraUnit(); break;}
-					case ANGLE_UNIT_RADIANS: {CHILD(1) *= CALCULATOR->getRadUnit(); break;}
-					case ANGLE_UNIT_CUSTOM: {CHILD(1) *= CALCULATOR->customAngleUnit(); break;}
-					default: {}
-				}
+				Unit *u = default_angle_unit(eo, false);
+				if(u) CHILD(1) *= u;
 				CHILD(1).transformById(FUNCTION_ID_SIN);
 				if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
 				CHILDREN_UPDATED;
 				isolate_x_sub(eo, eo2, x_var, morig);
-				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) {
+				if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) {
 					m1 /= CALCULATOR->getRadUnit();
 					m1.convert(CALCULATOR->getRadUnit());
 				}
@@ -5500,7 +5500,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						mreq6 = new MathStructure(m2);
 					}
 				}
-				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE || eo.parse_options.angle_unit == ANGLE_UNIT_RADIANS) {
+				if(DEFAULT_RADIANS(eo.parse_options.angle_unit)) {
 					mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 					mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 					mreq1->last() *= nr_half;
@@ -5539,24 +5539,19 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					mreq5->calculatesub(eo2, eo, false);
 					add_nocopy(mreq5, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 				}
-				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) convert(CALCULATOR->getRadUnit());
+				if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) convert(CALCULATOR->getRadUnit());
 				calculatesub(eo2, eo, false);
 				return true;
 			} else if(CHILD(0).function()->id() == FUNCTION_ID_ACOS && (ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_EQUALS)) {
 				MathStructure m1(CHILD(1)), m2(CHILD(1));
 				CHILD(0).setToChild(1, true);
-				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {CHILD(1) *= CALCULATOR->getDegUnit(); break;}
-					case ANGLE_UNIT_GRADIANS: {CHILD(1) *= CALCULATOR->getGraUnit(); break;}
-					case ANGLE_UNIT_RADIANS: {CHILD(1) *= CALCULATOR->getRadUnit();}
-					case ANGLE_UNIT_CUSTOM: {CHILD(1) *= CALCULATOR->customAngleUnit(); break;}
-					default: {}
-				}
+				Unit *u = default_angle_unit(eo, false);
+				if(u) CHILD(1) *= u;
 				CHILD(1).transformById(FUNCTION_ID_COS);
 				if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
 				CHILDREN_UPDATED;
 				isolate_x_sub(eo, eo2, x_var, morig);
-				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) {
+				if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) {
 					m1 /= CALCULATOR->getRadUnit();
 					m1.convert(CALCULATOR->getRadUnit());
 					m2 /= CALCULATOR->getRadUnit();
@@ -5579,7 +5574,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						mreq6 = new MathStructure(m2);
 					}
 				}
-				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE || eo.parse_options.angle_unit == ANGLE_UNIT_RADIANS) {
+				if(DEFAULT_RADIANS(eo.parse_options.angle_unit)) {
 					mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 					if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 				} else {
@@ -5608,24 +5603,19 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					mreq5->calculatesub(eo2, eo, false);
 					add_nocopy(mreq5, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 				}
-				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) convert(CALCULATOR->getRadUnit());
+				if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) convert(CALCULATOR->getRadUnit());
 				calculatesub(eo2, eo, false);
 				return true;
 			} else if(CHILD(0).function()->id() == FUNCTION_ID_ATAN && (ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_EQUALS)) {
 				MathStructure m1(CHILD(1)), m2(CHILD(1));
 				CHILD(0).setToChild(1, true);
-				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {CHILD(1) *= CALCULATOR->getDegUnit(); break;}
-					case ANGLE_UNIT_GRADIANS: {CHILD(1) *= CALCULATOR->getGraUnit(); break;}
-					case ANGLE_UNIT_RADIANS: {CHILD(1) *= CALCULATOR->getRadUnit();}
-					case ANGLE_UNIT_CUSTOM: {CHILD(1) *= CALCULATOR->customAngleUnit(); break;}
-					default: {}
-				}
+				Unit *u = default_angle_unit(eo, false);
+				if(u) CHILD(1) *= u;
 				CHILD(1).transformById(FUNCTION_ID_TAN);
 				if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
 				CHILDREN_UPDATED;
 				isolate_x_sub(eo, eo2, x_var, morig);
-				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) {
+				if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) {
 					m1 /= CALCULATOR->getRadUnit();
 					m1.convert(CALCULATOR->getRadUnit());
 				}
@@ -5646,7 +5636,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						mreq6 = new MathStructure(m2);
 					}
 				}
-				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE || eo.parse_options.angle_unit == ANGLE_UNIT_RADIANS) {
+				if(DEFAULT_RADIANS(eo.parse_options.angle_unit)) {
 					mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 					mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 					mreq1->last() *= nr_half;
@@ -5685,7 +5675,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					mreq5->calculatesub(eo2, eo, false);
 					add_nocopy(mreq5, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 				}
-				if(eo.parse_options.angle_unit == ANGLE_UNIT_NONE) convert(CALCULATOR->getRadUnit());
+				if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) convert(CALCULATOR->getRadUnit());
 				calculatesub(eo2, eo, false);
 				return true;
 			} else if(CHILD(0).function()->id() == FUNCTION_ID_ASINH && (ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_EQUALS)) {
