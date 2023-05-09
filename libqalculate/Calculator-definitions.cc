@@ -1714,7 +1714,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 							if(!unitNameIsValid(singular, version_numbers, is_user_defs)) {
 								singular = "";
 							}
-						} else if(old_names && !xmlStrcmp(child->name, (const xmlChar*) "plural") && !xmlGetProp(child, (xmlChar*) "index")) {
+						} else if(old_names && !xmlStrcmp(child->name, (const xmlChar*) "plural") && !xmlHasProp(child, (xmlChar*) "index")) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, plural, best_plural, next_best_plural)
 							if(!unitNameIsValid(plural, version_numbers, is_user_defs)) {
 								plural = "";
@@ -1841,7 +1841,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 							if(!unitNameIsValid(singular, version_numbers, is_user_defs)) {
 								singular = "";
 							}
-						} else if(old_names && !xmlStrcmp(child->name, (const xmlChar*) "plural") && !xmlGetProp(child, (xmlChar*) "index")) {
+						} else if(old_names && !xmlStrcmp(child->name, (const xmlChar*) "plural") && !xmlHasProp(child, (xmlChar*) "index")) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, plural, best_plural, next_best_plural)
 							if(!unitNameIsValid(plural, version_numbers, is_user_defs)) {
 								plural = "";
@@ -2077,7 +2077,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 							if(!unitNameIsValid(singular, version_numbers, is_user_defs)) {
 								singular = "";
 							}
-						} else if(!xmlStrcmp(child->name, (const xmlChar*) "plural") && !xmlGetProp(child, (xmlChar*) "index")) {
+						} else if(!xmlStrcmp(child->name, (const xmlChar*) "plural") && !xmlHasProp(child, (xmlChar*) "index")) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, plural, best_plural, next_best_plural)
 							if(!unitNameIsValid(plural, version_numbers, is_user_defs)) {
 								plural = "";
