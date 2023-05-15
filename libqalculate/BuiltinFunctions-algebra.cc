@@ -1365,6 +1365,8 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 		mstruct = mfunc;
 		ret = -1;
 	}
+	EvaluationOptions eo2 = eo;
+	eo2.expand = false;
 	bool compare_with_1 = false;
 	calculate_userfunctions(mfunc, vargs[2], eo);
 	MathStructure mdiff(mfunc);
@@ -1373,6 +1375,10 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 	mfunc /= mdiff;
 	Number nr_prec(1, 1, vargs[3].number() <= 0 ? -(PRECISION - vargs[3].number().intValue()) : -vargs[3].number().intValue());
 	int precbak = PRECISION;
+	KnownVariable *v = new KnownVariable("", "", m_zero);
+	v->setTitle("\b");
+	mfunc.replace(vargs[2], v);
+	v->destroy();
 	nrf_begin:
 	CALCULATOR->beginTemporaryStopMessages();
 	Number x_i(vargs[1].number()), x_itest;
@@ -1383,8 +1389,9 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 	while(true) {
 		if(CALCULATOR->aborted()) break;
 		x_if = mfunc;
-		x_if.replace(vargs[2], x_i);
-		x_if.eval(eo);
+		v->set(x_i);
+		v->setName(format_and_print(x_i));
+		x_if.eval(eo2);
 		if(!x_if.isNumber()) break;
 		if(x_if.isZero() && x_i.isZero()) {ret = 1; break;}
 		if(iter > 0) x_itest = x_if.number();
@@ -1400,7 +1407,7 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 					compare_with_1 = true;
 				}
 				int prec = x_i.precision(true);
-				if(!x_i.isNonZero() || (prec >= 0 && prec < precbak && PRECISION * 5 < 1000)) {
+				if((!x_i.isNonZero() || (prec >= 0 && prec < precbak)) && PRECISION * 5 < 1000) {
 					if(!compare_with_1 && x_i.realPart().isFraction() && x_i.imaginaryPart().isFraction() && (x_itest.realPart() > Number(9, 10) || x_itest.imaginaryPart() > Number(9, 10))) {
 						compare_with_1 = true;
 					}
@@ -1418,7 +1425,7 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 					compare_with_1 = true;
 				}
 				int prec = x_i.precision(true);
-				if(!x_i.isNonZero() || (prec >= 0 && prec < precbak && PRECISION * 5 < 1000)) {
+				if((!x_i.isNonZero() || (prec >= 0 && prec < precbak)) && PRECISION * 5 < 1000) {
 					if(!compare_with_1 && x_i.isFraction() && x_itest > Number(9, 10)) {
 						compare_with_1 = true;
 					}
@@ -1462,17 +1469,24 @@ int SecantMethodFunction::calculate(MathStructure &mstruct, const MathStructure 
 		mstruct = mfunc;
 		ret = -1;
 	}
+	EvaluationOptions eo2 = eo;
+	eo2.expand = false;
 	bool compare_with_1 = false;
 	calculate_userfunctions(mfunc, vargs[3], eo);
 	Number nr_prec(1, 1, vargs[4].number() <= 0 ? -(PRECISION - vargs[4].number().intValue()) : -vargs[4].number().intValue());
 	int precbak = PRECISION;
+	KnownVariable *v = new KnownVariable("", "", m_zero);
+	v->setTitle("\b");
+	mfunc.replace(vargs[3], v);
+	v->destroy();
 	secm_begin:
 	CALCULATOR->beginTemporaryStopMessages();
 	Number x0(vargs[1].number());
 	x0.setToFloatingPoint();
 	MathStructure m_if(mfunc);
-	m_if.replace(vargs[3], x0);
-	m_if.eval(eo);
+	v->set(x0);
+	v->setName(format_and_print(x0));
+	m_if.eval(eo2);
 	Number x_i(vargs[2].number()), x_itest, x_fi;
 	if(m_if.isNumber()) {
 		Number f0(m_if.number());
@@ -1482,8 +1496,9 @@ int SecantMethodFunction::calculate(MathStructure &mstruct, const MathStructure 
 		while(true) {
 			if(CALCULATOR->aborted()) break;
 			m_if = mfunc;
-			m_if.replace(vargs[3], x_i);
-			m_if.eval(eo);
+			v->set(x_i);
+			v->setName(format_and_print(x_i));
+			m_if.eval(eo2);
 			if(!m_if.isNumber() || !x0.negate() || !x0.add(x_i) || !f0.negate() || !f0.add(m_if.number()) || !x0.divide(f0) || !x0.multiply(m_if.number())) break;
 			x_fi = x0;
 			x0 = x_i;
@@ -1502,7 +1517,7 @@ int SecantMethodFunction::calculate(MathStructure &mstruct, const MathStructure 
 						compare_with_1 = true;
 					}
 					int prec = x_i.precision(true);
-					if(!x_i.isNonZero() || (prec >= 0 && prec < precbak && PRECISION * 5 < 1000)) {
+					if((!x_i.isNonZero() || (prec >= 0 && prec < precbak)) && PRECISION * 5 < 1000) {
 						if(!compare_with_1 && x_i.realPart().isFraction() && x_i.imaginaryPart().isFraction() && (x_itest.realPart() > Number(9, 10) || x_itest.imaginaryPart() > Number(9, 10))) {
 							compare_with_1 = true;
 						}
@@ -1520,7 +1535,7 @@ int SecantMethodFunction::calculate(MathStructure &mstruct, const MathStructure 
 						compare_with_1 = true;
 					}
 					int prec = x_i.precision(true);
-					if(!x_i.isNonZero() || (prec >= 0 && prec < precbak && PRECISION * 5 < 1000)) {
+					if((!x_i.isNonZero() || (prec >= 0 && prec < precbak)) && PRECISION * 5 < 1000) {
 						if(!compare_with_1 && x_i.isFraction() && x_itest > Number(9, 10)) {
 							compare_with_1 = true;
 						}
