@@ -1162,6 +1162,9 @@ bool MathStructure::representsZero(bool allow_units) const {
 		case STRUCT_MULTIPLICATION: {
 			for(size_t i = 0; i < SIZE; i++) {
 				if(CHILD(i).representsZero(allow_units)) {
+					for(size_t i2 = 0; i2 < SIZE; i2++) {
+						if(i2 != i && CHILD(i2).representsUndefined(true, true, true)) return false;
+					}
 					return true;
 				}
 			}
