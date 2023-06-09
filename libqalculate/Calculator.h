@@ -1266,6 +1266,9 @@ class Calculator {
 	const Number &customInputBase() const;
 	const Number &customOutputBase() const;
 
+	Unit *customAngleUnit();
+	void setCustomAngleUnit(Unit *u);
+
 	/** @name Functions for localization */
 	//@{
 	/** Returns the preferred decimal point character.

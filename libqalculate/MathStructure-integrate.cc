@@ -1322,7 +1322,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 						if(!mexp.isOne()) mstruct ^= mexp;
 						if(!mmul.isOne()) mstruct *= mmul;
 						mstruct.transformById(FUNCTION_ID_SININT);
-						if(CALCULATOR->getRadUnit()) madd *= CALCULATOR->getRadUnit();
+						madd *= CALCULATOR->getRadUnit();
 						mstruct *= MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_COS), &madd, NULL);
 						mterm2 = x_var;
 						if(!mexp.isOne()) mterm2 ^= mexp;
@@ -1643,7 +1643,7 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 						if(!mexp.isOne()) mstruct ^= mexp;
 						if(!mmul.isOne()) mstruct *= mmul;
 						mstruct.transformById(FUNCTION_ID_COSINT);
-						if(CALCULATOR->getRadUnit()) madd *= CALCULATOR->getRadUnit();
+						madd *= CALCULATOR->getRadUnit();
 						mstruct *= MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_COS), &madd, NULL);
 						mterm2 = x_var;
 						if(!mexp.isOne()) mterm2 ^= mexp;
@@ -3800,12 +3800,12 @@ int integrate_function(MathStructure &mstruct, const MathStructure &x_var, const
 					mtest *= m_epow;
 				} else if(m_func->function()->id() == FUNCTION_ID_ASIN) {
 					MathStructure m_cos(var);
-					if(CALCULATOR->getRadUnit()) m_cos *= CALCULATOR->getRadUnit();
+					m_cos *= CALCULATOR->getRadUnit();
 					m_cos.transformById(FUNCTION_ID_COS);
 					mtest *= m_cos;
 				} else if(m_func->function()->id() == FUNCTION_ID_ACOS) {
 					MathStructure m_sin(var);
-					if(CALCULATOR->getRadUnit()) m_sin *= CALCULATOR->getRadUnit();
+					m_sin *= CALCULATOR->getRadUnit();
 					m_sin.transformById(FUNCTION_ID_SIN);
 					mtest *= m_sin;
 					mmul.negate();

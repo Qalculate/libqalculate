@@ -644,6 +644,7 @@ bool factorize_find_multiplier(const MathStructure &mstruct, MathStructure &mnew
 					}
 				}
 			}
+			size_t nfac = 0;
 			if(mstruct.size() > 0) {
 				size_t i = 0;
 				const MathStructure *cur_mstruct;
@@ -707,18 +708,19 @@ bool factorize_find_multiplier(const MathStructure &mstruct, MathStructure &mnew
 						if(b) {
 							b = !factor_mstruct.isOne();
 							if(exp) {
-								MathStructure *mstruct = new MathStructure(*bas);
-								mstruct->raise(*exp);
+								MathStructure *mpow = new MathStructure(*bas);
+								mpow->raise(*exp);
 								if(factor_mstruct.isOne()) {
-									factor_mstruct.set_nocopy(*mstruct);
-									mstruct->unref();
+									factor_mstruct.set_nocopy(*mpow);
+									mpow->unref();
 								} else {
-									factor_mstruct.multiply_nocopy(mstruct, true);
+									factor_mstruct.multiply_nocopy(mpow, true);
 								}
 							} else {
 								if(factor_mstruct.isOne()) factor_mstruct.set(*bas);
 								else factor_mstruct.multiply(*bas, true);
 							}
+							nfac++;
 							if(b) {
 								size_t i3 = 0;
 								const MathStructure *cmp_mstruct;
@@ -748,7 +750,10 @@ bool factorize_find_multiplier(const MathStructure &mstruct, MathStructure &mnew
 									}
 									i3++;
 								}
-								if(b) factor_mstruct.delChild(factor_mstruct.size(), true);
+								if(b) {
+									factor_mstruct.delChild(factor_mstruct.size(), true);
+									nfac--;
+								}
 							}
 						}
 					}
@@ -762,8 +767,9 @@ bool factorize_find_multiplier(const MathStructure &mstruct, MathStructure &mnew
 				if(&mstruct != &mnew) mnew.set(mstruct);
 				MathStructure *mfactor;
 				size_t i = 0;
+				int b_mul = factor_mstruct.isMultiplication();
 				while(true) {
-					if(factor_mstruct.isMultiplication()) {
+					if(b_mul > 0) {
 						if(i >= factor_mstruct.size()) break;
 						mfactor = &factor_mstruct[i];
 					} else {
@@ -882,6 +888,14 @@ bool factorize_find_multiplier(const MathStructure &mstruct, MathStructure &mnew
 									MathStructure mstruct2(mnew[i2][0]);
 									mnew[i2] = mstruct2;
 								}
+								if(b) {
+									if(b_mul > 0 && nfac == 1 && &mstruct != &mnew) {
+										b_mul = -1;
+										mnew.set(mstruct);
+									} else {
+										return false;
+									}
+								}
 								break;
 							}
 							default: {
@@ -895,8 +909,10 @@ bool factorize_find_multiplier(const MathStructure &mstruct, MathStructure &mnew
 							}
 						}
 					}
-					if(factor_mstruct.isMultiplication()) {
+					if(b_mul > 0) {
 						i++;
+					} else if(b_mul < 0) {
+						b_mul = 0;
 					} else {
 						break;
 					}
@@ -1253,6 +1269,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 			if(isAddition()) index = SIZE;
 			if(index == 0) {
 				set_nocopy(*mdiv);
+				mdiv->unref();
 			} else if(mdiv->isAddition()) {
 				for(size_t i = 0; i < mdiv->size(); i++) {
 					(*mdiv)[i].ref();

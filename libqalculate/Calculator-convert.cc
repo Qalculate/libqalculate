@@ -424,21 +424,111 @@ Unit *find_ounce(const MathStructure &m) {
 	}
 	return NULL;
 }
+
+bool contains_angle_returning_function(const MathStructure &m) {
+	if(m.isFunction() && (m.function()->id() == FUNCTION_ID_ATAN || m.function()->id() == FUNCTION_ID_ACOS || m.function()->id() == FUNCTION_ID_ASIN || m.function()->id() == FUNCTION_ID_ARG || m.function()->id() == FUNCTION_ID_RADIANS_TO_DEFAULT_ANGLE_UNIT)) return true;
+	if(m.isFunction() && m.function()->subtype() == SUBTYPE_USER_FUNCTION) {
+		UserFunction *f = (UserFunction*) m.function();
+		if(f->formula().find("arctan") != string::npos || f->formula().find("arccos") != string::npos || f->formula().find("arcsin") != string::npos || f->formula().find("atan(") != string::npos || f->formula().find("acos(") != string::npos || f->formula().find("asin(") != string::npos) return true;
+	}
+	if(m.isVariable() && m.variable()->isKnown()) return contains_angle_returning_function(((KnownVariable*) m.variable())->get());
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_angle_returning_function(m[i])) return true;
+	}
+	return false;
+}
+
+void contains_angle_ratio_b(const MathStructure &m, bool &num, bool &den, bool in_den) {
+	if(m.isUnit() && m.unit()->baseUnit()->referenceName() == "m") {
+		if(in_den) den = true;
+		else num = true;
+	}
+	if(num && den) return;
+	if(m.isPower()) {
+		if(m[1].representsNegative()) in_den = !in_den;
+		contains_angle_ratio_b(m[0], num, den, in_den);
+	} else {
+		for(size_t i = 0; i < m.size(); i++) {
+			if((i == 0 && m.isInverse()) || (i == 1 && m.isDivision())) in_den = !in_den;
+			contains_angle_ratio_b(m[i], num, den, in_den);
+			if(num && den) return;
+		}
+	}
+}
+bool contains_angle_ratio(const MathStructure &m) {
+	if(m.isAddition()) {
+		for(size_t i = 0; i < m.size(); i++) {
+			bool num = false, den = false;
+			contains_angle_ratio_b(m[i], num, den, false);
+			if(num && den) return true;
+		}
+		return false;
+	}
+	bool num = false, den = false;
+	contains_angle_ratio_b(m, num, den, false);
+	return num && den;
+}
+
+MathStructure get_units_for_parsed_expression(const MathStructure *parsed_struct, Unit *to_unit, const EvaluationOptions &eo, const MathStructure *mstruct = NULL) {
+	CompositeUnit *cu = NULL;
+	if(to_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) cu = (CompositeUnit*) to_unit;
+	if(cu && cu->countUnits() == 0) return m_zero;
+	if((mstruct && mstruct->containsType(STRUCT_UNIT, true)) || (!mstruct && parsed_struct->containsType(STRUCT_UNIT, false, true, true))) return m_zero;
+	int exp1, exp2;
+	bool b_ratio = cu && cu->countUnits() == 2 && cu->get(1, &exp1)->baseUnit() == cu->get(2, &exp2)->baseUnit() && exp1 == -exp2;
+	bool b_angle = to_unit->baseUnit() == CALCULATOR->getRadUnit() || (b_ratio && cu->get(1)->baseUnit()->referenceName() == "m" && (exp1 == 1 || exp2 == 1));
+	for(size_t i = 1; !b_angle && cu && i <= cu->countUnits(); i++) {
+		 if(cu->get(i)->baseUnit() == CALCULATOR->getRadUnit()) b_angle = true;
+	}
+	if(!b_ratio || b_angle) {
+		if(mstruct) {
+			int ct = 0;
+			ct = parsed_struct->containsType(STRUCT_UNIT, false, true, true);
+			if(!(ct == 0 || (b_angle && (ct < 0 || (parsed_struct && !contains_angle_ratio(*parsed_struct)))))) return m_zero;
+		}
+		EvaluationOptions eo2 = eo;
+		if(eo.approximation == APPROXIMATION_EXACT) eo2.approximation = APPROXIMATION_TRY_EXACT;
+		MathStructure munit(to_unit);
+		munit.unformat();
+		if(b_angle && (b_ratio || (!cu && to_unit->baseExponent() == 1) || (cu && cu->get(1, &exp1) && exp1 == 1))) {
+			munit = default_angle_unit(eo, true);
+		} else {
+			munit = CALCULATOR->convertToOptimalUnit(munit, eo2, true);
+			if(b_angle && !DEFAULT_RADIANS(eo.parse_options.angle_unit)) munit.replace(CALCULATOR->getRadUnit(), default_angle_unit(eo, true));
+			munit.unformat();
+		}
+		fix_to_struct(munit);
+		return munit;
+	}
+	return m_zero;
+}
+
 MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo, bool always_convert, bool convert_to_mixed_units, bool transform_orig, MathStructure *parsed_struct) {
 	CompositeUnit *cu = NULL;
 	if(to_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) cu = (CompositeUnit*) to_unit;
 	if(cu && cu->countUnits() == 0) return mstruct;
 	int exp1, exp2;
 	bool b_ratio = cu && cu->countUnits() == 2 && cu->get(1, &exp1)->baseUnit() == cu->get(2, &exp2)->baseUnit() && exp1 == -exp2;
-	if(!b_ratio && to_unit->baseUnit() != getRadUnit() && !mstruct.containsType(STRUCT_UNIT, true)) {
-		if(transform_orig && (!parsed_struct || !parsed_struct->containsType(STRUCT_UNIT, false, true, true))) {
+	bool b_angle = to_unit->baseUnit() == getRadUnit() || (b_ratio && cu->get(1)->baseUnit()->referenceName() == "m" && (exp1 == 1 || exp2 == 1));
+	for(size_t i = 1; !b_angle && cu && i <= cu->countUnits(); i++) {
+		 if(cu->get(i)->baseUnit() == getRadUnit()) b_angle = true;
+	}
+	if((!b_ratio || b_angle) && !mstruct.containsType(STRUCT_UNIT, true)) {
+		int ct = 0;
+		if(parsed_struct) ct = parsed_struct->containsType(STRUCT_UNIT, false, true, true);
+		if(transform_orig && (ct == 0 || (b_angle && (ct < 0 || (parsed_struct && !contains_angle_ratio(*parsed_struct)))))) {
 			// multiply original value with base units
 			EvaluationOptions eo2 = eo;
 			if(eo.approximation == APPROXIMATION_EXACT) eo2.approximation = APPROXIMATION_TRY_EXACT;
 			MathStructure munit(to_unit);
 			munit.unformat();
-			munit = convertToOptimalUnit(munit, eo2, true);
-			munit.unformat();
+			if(b_angle && (b_ratio || (!cu && to_unit->baseExponent() == 1) || (cu && cu->get(1, &exp1) && exp1 == 1))) {
+				munit = default_angle_unit(eo, true);
+			} else {
+				munit = convertToOptimalUnit(munit, eo2, true);
+				if(b_angle && !DEFAULT_RADIANS(eo.parse_options.angle_unit)) munit.replace(getRadUnit(), default_angle_unit(eo, true));
+				munit.unformat();
+			}
 			fix_to_struct(munit);
 			if(!munit.isZero()) {
 				MathStructure mstruct_new(mstruct);
@@ -454,7 +544,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 				return convert(mstruct_new, to_unit, eo, always_convert, convert_to_mixed_units, false, NULL);
 			}
 		}
-		return mstruct;
+		if(!b_angle) return mstruct;
 	}
 	MathStructure mstruct_new(mstruct);
 	size_t n_messages = messages.size();

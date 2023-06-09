@@ -60,7 +60,7 @@ bool is_not_number(char c, int base) {
 
 size_t Calculator::addId(MathStructure *mstruct, bool persistent) {
 	size_t id = 0;
-	if(priv->freed_ids.size() > 0) {
+	if(!priv->freed_ids.empty()) {
 		id = priv->freed_ids.back();
 		priv->freed_ids.pop_back();
 	} else {
@@ -74,7 +74,7 @@ size_t Calculator::addId(MathStructure *mstruct, bool persistent) {
 }
 size_t Calculator::parseAddId(MathFunction *f, const string &str, const ParseOptions &po, bool persistent) {
 	size_t id = 0;
-	if(priv->freed_ids.size() > 0) {
+	if(!priv->freed_ids.empty()) {
 		id = priv->freed_ids.back();
 		priv->freed_ids.pop_back();
 	} else {
@@ -89,7 +89,7 @@ size_t Calculator::parseAddId(MathFunction *f, const string &str, const ParseOpt
 }
 size_t Calculator::parseAddIdAppend(MathFunction *f, const MathStructure &append_mstruct, const string &str, const ParseOptions &po, bool persistent) {
 	size_t id = 0;
-	if(priv->freed_ids.size() > 0) {
+	if(!priv->freed_ids.empty()) {
 		id = priv->freed_ids.back();
 		priv->freed_ids.pop_back();
 	} else {
@@ -125,27 +125,40 @@ MathStructure *Calculator::getId(size_t id) {
 			return new MathStructure(*priv->id_structs[id]);
 		} else {
 			MathStructure *mstruct = priv->id_structs[id];
-			priv->freed_ids.push_back(id);
 			priv->id_structs.erase(id);
 			priv->ids_p.erase(id);
 			priv->ids_ref.erase(id);
+			if(priv->id_structs.empty()) {
+				priv->ids_i = 0;
+				priv->freed_ids.clear();
+			} else if(id == priv->ids_i) {
+				priv->ids_i--;
+			} else {
+				priv->freed_ids.push_back(id);
+			}
 			return mstruct;
 		}
 	}
 	return NULL;
 }
-
 void Calculator::delId(size_t id) {
 	unordered_map<size_t, size_t>::iterator it = priv->ids_ref.find(id);
 	if(it != priv->ids_ref.end()) {
 		if(it->second > 1) {
 			it->second--;
 		} else {
-			priv->freed_ids.push_back(id);
 			priv->id_structs[id]->unref();
 			priv->id_structs.erase(id);
 			priv->ids_p.erase(id);
 			priv->ids_ref.erase(it);
+			if(priv->id_structs.empty()) {
+				priv->ids_i = 0;
+				priv->freed_ids.clear();
+			} else if(id == priv->ids_i) {
+				priv->ids_i--;
+			} else {
+				priv->freed_ids.push_back(id);
+			}
 		}
 	}
 }
@@ -938,7 +951,9 @@ string Calculator::localizeExpression(string str, const ParseOptions &po) const 
 			}
 			case DOT_CH: {
 				if(!in_cit1 && !in_cit2 && dot_type != 0) {
-					if(po.rpn || i == 0 || i == str.length() - 1 || is_not_number(str[i - 1], base) || is_not_number(str[i + 1], base) || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i - 1]) || (str[i + 1] != '\'' && str[i + 1] != POWER_CH && str[i + 1] != MULTIPLICATION_CH && str[i + 1] != DIVISION_CH && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i + 1]))) {
+					size_t i2 = (i == 0 ? string::npos : str.find_last_not_of(SPACES, i - 1));
+					size_t i3 = (i == str.length() - 1 ? string::npos : str.find_first_not_of(SPACES, i + 1));
+					if(po.rpn || i2 == string::npos || (i3 != string::npos && !is_not_number(str[i3], base)) || (!is_not_number(str[i2], base) && (i3 == string::npos || i3 != i + 1 || (str[i + 1] != POWER_CH && str[i + 1] != DIVISION_CH && str[i + 1] != MULTIPLICATION_CH && str[i + 1] != '\'')))) {
 						if(dot_type == 1) {
 							str[i] = COMMA_CH;
 						} else {
@@ -1107,8 +1122,16 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
 			}
 			case COMMA_CH: {
 				if(!in_cit1 && !in_cit2 && (dot_type == 1 || po.comma_as_separator) && (!b_matrix_comma || brackets == 0 || pars[brackets - 1] > 0)) {
-					if(dot_type == 1) str[i] = DOT_CH;
-					else {str.erase(i, 1); continue;}
+					if(dot_type == 1) {
+						size_t i2 = (i == 0 ? string::npos : str.find_last_not_of(SPACES, i - 1));
+						size_t i3 = (i == str.length() - 1 ? string::npos : str.find_first_not_of(SPACES, i + 1));
+						if(po.rpn || i2 == string::npos || i3 == string::npos || !is_not_number(str[i3], base) || (!is_not_number(str[i2], base) && (i3 == string::npos || i3 != i + 1 || (str[i + 1] != POWER_CH && str[i + 1] != DIVISION_CH && str[i + 1] != MULTIPLICATION_CH && str[i + 1] != '\'')))) {
+							str[i] = DOT_CH;
+							break;
+						}
+					}
+					str.erase(i, 1);
+					continue;
 				}
 				break;
 			}
@@ -1120,7 +1143,9 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
 			}
 			case DOT_CH: {
 				if((dot_type != 0 && po.dot_as_separator) && !in_cit1 && !in_cit2) {
-					if(po.rpn || i == 0 || i == str.length() - 1 || is_not_number(str[i - 1], base) || is_not_number(str[i + 1], base) || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i - 1]) || (str[i + 1] != '\'' && str[i + 1] != POWER_CH && str[i + 1] != MULTIPLICATION_CH && str[i + 1] != DIVISION_CH && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i + 1]))) {
+					size_t i2 = (i == 0 ? string::npos : str.find_last_not_of(SPACES, i - 1));
+					size_t i3 = (i == str.length() - 1 ? string::npos : str.find_first_not_of(SPACES, i + 1));
+					if(po.rpn || i2 == string::npos || (i3 != string::npos && !is_not_number(str[i3], base)) || (!is_not_number(str[i2], base) && (i3 == string::npos || i3 != i + 1 || (str[i + 1] != POWER_CH && str[i + 1] != DIVISION_CH && str[i + 1] != MULTIPLICATION_CH && str[i + 1] != '\'')))) {
 						str.erase(i, 1);
 						continue;
 					}
@@ -1615,7 +1640,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				stmp += i2s(addId(new MathStructure(v_percent)));
 				stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 				str.replace(i_mod, 1, stmp);
-				i_mod += v_percent->referenceName().length() - 1;
+				i_mod += stmp.length() - 1;
 			}
 		} else {
 			size_t i_nonspace = string::npos;
@@ -1625,7 +1650,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				stmp += i2s(addId(new MathStructure(v_percent)));
 				stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 				str.replace(i_mod, 1, stmp);
-				i_mod += v_percent->referenceName().length() - 1;
+				i_mod += stmp.length() - 1;
 			}
 		}
 		i_mod = str.find("%", i_mod + 1);
@@ -1764,6 +1789,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				int brackets = 1;
 				size_t i = str_index + 1;
 				size_t col_index = i;
+				vector<size_t> saved_ids;
 				for(; i < str.length() && brackets > 0; i++) {
 					bool b_row = false, b_col = false;
 					switch(str[i]) {
@@ -1836,8 +1862,29 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							if(!b_comma && !prev_func.empty()) {
 								prev_func += stmp2;
 								prev_func += SPACE_CH;
+								saved_ids.clear();
 								parse(mrow ? &mrow->last() : &mstruct2->last(), prev_func, po);
+								prev_func = "";
 							} else {
+								for(size_t i_id = 0; i_id < saved_ids.size(); i_id++) {
+									size_t id = saved_ids[i_id];
+									if(priv->id_structs.find(id) != priv->id_structs.end() && !priv->ids_p[id]) {
+										if(priv->ids_ref[id] <= 1) delId(id);
+										else priv->ids_ref[id]--;
+									}
+								}
+								saved_ids.clear();
+								for(size_t i_id = 0; i_id < stmp2.length(); i_id++) {
+									if(stmp2[i_id] == ID_WRAP_LEFT_CH) {
+										size_t i_id2 = stmp2.find(ID_WRAP_RIGHT_CH, i_id + 1);
+										if(i_id2 == string::npos) break;
+										int id = s2i(stmp2.substr(i_id + 1, i_id2 - (i_id + 1)));
+										if(priv->id_structs.find(id) != priv->id_structs.end() && !priv->ids_p[id]) {
+											priv->ids_ref[id]++;
+											saved_ids.push_back(id);
+										}
+									}
+								}
 								mcol = new MathStructure();
 								parse(mcol, stmp2, po);
 								b_unit = !b_comma && first_is_unit(*mcol) && stmp2.size() > 0 && is_not_in(ILLEGAL_IN_UNITNAMES, stmp2[0]) && is_unit_multiexp(*mcol);
@@ -1874,6 +1921,14 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								mrow = new MathStructure();
 								mrow->clearVector();
 								first_not_unit = false;
+								for(size_t i_id = 0; i_id < saved_ids.size(); i_id++) {
+									size_t id = saved_ids[i_id];
+									if(priv->id_structs.find(id) != priv->id_structs.end() && !priv->ids_p[id]) {
+										if(priv->ids_ref[id] <= 1) delId(id);
+										else priv->ids_ref[id]--;
+									}
+								}
+								saved_ids.clear();
 								prev_func = "";
 							} else if(mcol && !b_comma) {
 								if(last_is_function(*mcol) && is_not_in(ILLEGAL_IN_NAMES, stmp2[stmp2.size() - 1])) {
@@ -1887,6 +1942,14 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						}
 					}
 				}
+				for(size_t i_id = 0; i_id < saved_ids.size(); i_id++) {
+					size_t id = saved_ids[i_id];
+					if(priv->id_structs.find(id) != priv->id_structs.end() && !priv->ids_p[id]) {
+						if(priv->ids_ref[id] <= 1) delId(id);
+						else priv->ids_ref[id]--;
+					}
+				}
+				saved_ids.clear();
 				i--;
 				if(brackets != 0 && unended_function && !unended_test.isZero()) {
 					unended_function->set(unended_test);
@@ -2043,12 +2106,24 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						i3++;
 						i4 = i3;
 					}
-					if(ifac == 2) stmp += i2s(parseAddId(f_factorial2, stmp2, po));
-					else if(ifac == 1) stmp += i2s(parseAddId(f_factorial, stmp2, po));
-					else stmp += i2s(parseAddIdAppend(f_multifactorial, MathStructure(ifac, 1, 0), stmp2, po));
-					stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
-					str.replace(i5 - stmp2.length() + 1, stmp2.length() + i4 - i5 - 1, stmp);
-					str_index = stmp.length() + i5 - stmp2.length();
+					MathFunction *f = NULL;
+					if(ifac == 2) f = f_factorial2;
+					else if(ifac == 1) f = f_factorial;
+					else f = f_multifactorial;
+					if(f) {
+						if(!f->isActive()) {
+							MathFunction *f2 = NULL;
+							if(ifac == 2) f2 = getActiveFunction("factorial2");
+							else if(ifac == 1) f2 = getActiveFunction("factorial");
+							else f2 = getActiveFunction("multifactorial");
+							if(f2) f = f2;
+						}
+						if(ifac > 2) stmp += i2s(parseAddIdAppend(f, MathStructure(ifac, 1, 0), stmp2, po));
+						else stmp += i2s(parseAddId(f, stmp2, po));
+						stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+						str.replace(i5 - stmp2.length() + 1, stmp2.length() + i4 - i5 - 1, stmp);
+						str_index = stmp.length() + i5 - stmp2.length();
+					}
 				}
 			}
 		} else if(PARSING_MODE != PARSING_MODE_RPN && (str[str_index] == 'c' || str[str_index] == 'C') && str.length() > str_index + 6 && str[str_index + 5] == SPACE_CH && (str_index == 0 || is_in(OPERATORS INTERNAL_OPERATORS PARENTHESISS, str[str_index - 1])) && compare_name_no_case("compl", str, 5, str_index, base)) {
@@ -2280,7 +2355,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str_index += stmp.length() - 1;
 				}
 			}
-		} else if(str[str_index] == DOT_CH && !po.rpn && str_index > 0 && str_index < str.length() - 1 && is_not_number(str[str_index - 1], base) && is_not_number(str[str_index + 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[str_index - 1]) && (str[str_index + 1] == POWER_CH || str[str_index + 1] == MULTIPLICATION_CH || str[str_index + 1] == DIVISION_CH || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[str_index + 1])) && (str[str_index - 1] != DOT_CH || str[str_index + 1] != DOT_CH)) {
+		} else if(str[str_index] == DOT_CH && !po.rpn && str_index > 0 && str_index < str.length() - 1 && (is_not_number(str[str_index - 1], base) || str.find(LEFT_VECTOR_WRAP, str_index + 2) != string::npos) && is_not_number(str[str_index + 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[str_index - 1]) && (((str[str_index + 1] == POWER_CH || str[str_index + 1] == MULTIPLICATION_CH || str[str_index + 1] == DIVISION_CH) && str_index + 1 < str.length() - 1 && str[str_index + 2] != str[str_index + 1]) || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[str_index + 1])) && (str[str_index - 1] != DOT_CH || str[str_index + 1] != DOT_CH)) {
 			if(str[str_index + 1] == MULTIPLICATION_CH) str.replace(str_index, 2, "\x17");
 			else if(str[str_index + 1] == DIVISION_CH) str.replace(str_index, 2, "\x18");
 			else if(str[str_index + 1] == POWER_CH) str.replace(str_index, 2, "\x19");
@@ -3602,10 +3677,11 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 									break;
 								}
 								case '\x1c': {
-									if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstack.back()->contains(getRadUnit(), false, true, true) <= 0 && mstack.back()->contains(getGraUnit(), false, true, true) <= 0 && mstack.back()->contains(getDegUnit(), false, true, true) <= 0) {
+									if(!DEFAULT_RADIANS(po.angle_unit) && !contains_angle_unit(mstack.back(), po)) {
 										switch(po.angle_unit) {
 											case ANGLE_UNIT_DEGREES: {mstack.back()->multiply(getDegUnit()); break;}
 											case ANGLE_UNIT_GRADIANS: {mstack.back()->multiply(getGraUnit()); break;}
+											case ANGLE_UNIT_CUSTOM: {if(customAngleUnit()) {mstack.back()->multiply(customAngleUnit());} break;}
 											default: {}
 										}
 									}
@@ -3719,10 +3795,11 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					} else if(str[i] == BITWISE_NOT_CH) {
 						mstack.back()->transform(STRUCT_BITWISE_NOT);
 					} else if(str[i] == '\x1c') {
-						if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstack.back()->contains(getRadUnit(), false, true, true) <= 0 && mstack.back()->contains(getGraUnit(), false, true, true) <= 0 && mstack.back()->contains(getDegUnit(), false, true, true) <= 0) {
+						if(!DEFAULT_RADIANS(po.angle_unit) && !contains_angle_unit(mstack.back(), po)) {
 							switch(po.angle_unit) {
 								case ANGLE_UNIT_DEGREES: {mstack.back()->multiply(getDegUnit()); break;}
 								case ANGLE_UNIT_GRADIANS: {mstack.back()->multiply(getGraUnit()); break;}
+								case ANGLE_UNIT_CUSTOM: {if(customAngleUnit()) {mstack.back()->multiply(customAngleUnit());} break;}
 								default: {}
 							}
 						}
@@ -3833,10 +3910,11 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 							break;
 						}
 						case '\x1c': {
-							if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstack.back()->contains(getRadUnit(), false, true, true) <= 0 && mstack.back()->contains(getGraUnit(), false, true, true) <= 0 && mstack.back()->contains(getDegUnit(), false, true, true) <= 0) {
+							if(!DEFAULT_RADIANS(po.angle_unit) && !contains_angle_unit(mstack.back(), po)) {
 								switch(po.angle_unit) {
 									case ANGLE_UNIT_DEGREES: {mstack.back()->multiply(getDegUnit()); break;}
 									case ANGLE_UNIT_GRADIANS: {mstack.back()->multiply(getGraUnit()); break;}
+									case ANGLE_UNIT_CUSTOM: {if(customAngleUnit()) {mstack.back()->multiply(customAngleUnit());} break;}
 									default: {}
 								}
 							}
@@ -4284,10 +4362,11 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					}
 					case '\x1c': {
 						if(parseAdd(str2, mstruct, po, OPERATION_MULTIPLY)) {
-							if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstruct->last().contains(getRadUnit(), false, true, true) <= 0 && mstruct->last().contains(getGraUnit(), false, true, true) <= 0 && mstruct->last().contains(getDegUnit(), false, true, true) <= 0) {
+							if(!DEFAULT_RADIANS(po.angle_unit) && !contains_angle_unit(mstruct->last(), po)) {
 								switch(po.angle_unit) {
 									case ANGLE_UNIT_DEGREES: {mstruct->last().multiply(getDegUnit()); break;}
 									case ANGLE_UNIT_GRADIANS: {mstruct->last().multiply(getGraUnit()); break;}
+									case ANGLE_UNIT_CUSTOM: {if(customAngleUnit()) {mstruct->last().multiply(customAngleUnit());} break;}
 									default: {}
 								}
 							}
@@ -4569,7 +4648,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 							}
 						}
 					}
-					b = had_unit;
+					b = had_unit && i2 != string::npos;
 					if(b) {
 						if(i3 < str.length() - 2 && (str[i3 + 1] == POWER_CH || str[i3 + 1] == INTERNAL_UPOW_CH) && is_in(NUMBERS, str[i3 + 2])) {
 							i3 += 2;
@@ -4860,10 +4939,11 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		if(i != 0) parseAdd(str2, mstruct, po);
 		else mstruct->set(1, 1, 0);
 		if(parseAdd(str, mstruct, po, OPERATION_MULTIPLY)) {
-			if(po.angle_unit != ANGLE_UNIT_NONE && po.angle_unit != ANGLE_UNIT_RADIANS && mstruct->last().contains(getRadUnit(), false, true, true) <= 0 && mstruct->last().contains(getGraUnit(), false, true, true) <= 0 && mstruct->last().contains(getDegUnit(), false, true, true) <= 0) {
+			if(!DEFAULT_RADIANS(po.angle_unit) && !contains_angle_unit(mstruct->last(), po)) {
 				switch(po.angle_unit) {
 					case ANGLE_UNIT_DEGREES: {mstruct->last().multiply(getDegUnit()); break;}
 					case ANGLE_UNIT_GRADIANS: {mstruct->last().multiply(getGraUnit()); break;}
+					case ANGLE_UNIT_CUSTOM: {if(customAngleUnit()) {mstruct->last().multiply(customAngleUnit());} break;}
 					default: {}
 				}
 			}

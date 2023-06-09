@@ -1042,7 +1042,7 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po, MathStr
 			size_t index1 = 0, index2 = 0;
 			bool dofrac = true;
 			for(size_t i2 = 0; i2 < SIZE; i2++) {
-				if(CHILD(i2).isPower() && CHILD(i2)[1].isMinusOne()) {
+				if(CHILD(i2).isPower() && CHILD(i2)[1].isMinusOne() && !CHILD(i2)[0].isZero()) {
 					if(!po.place_units_separately || !is_unit_multiexp(CHILD(i2)[0])) {
 						if(iden == 0) index1 = i2;
 						iden++;
@@ -1052,7 +1052,7 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po, MathStr
 							dofrac = true;
 						}
 					}
-				} else if(!bdiv && CHILD(i2).isPower() && CHILD(i2)[1].hasNegativeSign()) {
+				} else if(!bdiv && CHILD(i2).isPower() && CHILD(i2)[1].hasNegativeSign() && !CHILD(i2)[0].isZero()) {
 					if(!po.place_units_separately || !is_unit_multiexp(CHILD(i2)[0])) {
 						if(!bdiv) index1 = i2;
 						bdiv = true;
@@ -1069,7 +1069,7 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po, MathStr
 			if(iden > 1) {
 				size_t i2 = index1 + 1;
 				while(i2 < SIZE) {
-					if(CHILD(i2).isPower() && CHILD(i2)[1].isMinusOne()) {
+					if(CHILD(i2).isPower() && CHILD(i2)[1].isMinusOne() && !CHILD(i2)[0].isZero()) {
 						CHILD(index1)[0].multiply(CHILD(i2)[0], true);
 						ERASE(i2);
 						if(index2 > i2) index2--;
@@ -2108,13 +2108,18 @@ bool unnegate_multiplier(MathStructure &mstruct, const PrintOptions &po) {
 	}
 	return false;
 }
-Unit *default_angle_unit(const EvaluationOptions &eo) {
+Unit *default_angle_unit(const EvaluationOptions &eo, bool return_rad_if_none) {
 	switch(eo.parse_options.angle_unit) {
 		case ANGLE_UNIT_DEGREES: {return CALCULATOR->getDegUnit();}
 		case ANGLE_UNIT_GRADIANS: {return CALCULATOR->getGraUnit();}
 		case ANGLE_UNIT_RADIANS: {return CALCULATOR->getRadUnit();}
+		case ANGLE_UNIT_CUSTOM: {
+			if(CALCULATOR->customAngleUnit()) return CALCULATOR->customAngleUnit();
+			break;
+		}
 		default: {}
 	}
+	if(return_rad_if_none) return CALCULATOR->getRadUnit();
 	return NULL;
 }
 
@@ -3752,7 +3757,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			ips_n.depth++;
 			ips_n.division_depth++;
 			ips_n.wrap = false;
-			bool b_num = !po.preserve_format && CHILD(0).isInteger();
+			bool b_num = !po.preserve_format && CHILD(0).isInteger() && !CHILD(0).isZero();
 			bool b_num2 = b_num && (po.division_sign == DIVISION_SIGN_SLASH || (tagtype != TAG_TYPE_TERMINAL && po.division_sign == DIVISION_SIGN_DIVISION_SLASH));
 			if(b_num2 && colorize && tagtype == TAG_TYPE_TERMINAL) print_str += (colorize == 2 ? "\033[0;96m" : "\033[0;36m");
 			else if(b_num2 && colorize && tagtype == TAG_TYPE_HTML) print_str += (colorize == 2 ? "<span style=\"color:#AAFFFF\">" : "<span style=\"color:#005858\">");
@@ -3789,7 +3794,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 		case STRUCT_DIVISION: {
 			ips_n.depth++;
 			ips_n.division_depth++;
-			bool b_num = !po.preserve_format && CHILD(0).isInteger() && CHILD(1).isInteger();
+			bool b_num = !po.preserve_format && CHILD(0).isInteger() && CHILD(1).isInteger() && !CHILD(1).isZero();
 			bool b_num2 = b_num && (po.division_sign == DIVISION_SIGN_SLASH || (tagtype != TAG_TYPE_TERMINAL && po.division_sign == DIVISION_SIGN_DIVISION_SLASH));
 			bool b_units = false;
 			if(!b_num && po.place_units_separately) {
@@ -4440,7 +4445,8 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			break;
 		}
 	}
-	if(CALCULATOR->aborted()) {
+	if(CALCULATOR->aborted() && print_str.find(CALCULATOR->abortedMessage()) != string::npos) {
+		print_str = "";
 		if(colorize && tagtype == TAG_TYPE_TERMINAL) print_str += (colorize == 2 ? "\033[0;91m" : "\033[0;31m");
 		else if(colorize && tagtype == TAG_TYPE_HTML) print_str += (colorize == 2 ? "<span style=\"color:#FFAAAA\">" : "<span style=\"color:#800000\">");
 		print_str += CALCULATOR->abortedMessage();

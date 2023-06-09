@@ -1474,7 +1474,7 @@ bool simplify_functions(MathStructure &mstruct, const EvaluationOptions &eo, con
 					m_b.calculateDivide(m_a, eo);
 					MathStructure *m_atan = new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &m_b, NULL);
 					if(m_atan->calculateFunctions(feo)) m_atan->calculatesub(eo, feo, true);
-					if(eo.parse_options.angle_unit != ANGLE_UNIT_NONE) m_atan->calculateMultiply(CALCULATOR->getRadUnit(), eo);
+					if(HAS_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) m_atan->calculateMultiply(CALCULATOR->getRadUnit(), eo);
 					(*m_sin)[0].add_nocopy(m_atan);
 					(*m_sin)[0].calculateAddLast(eo);
 					m_sin->childUpdated(1);
@@ -1678,12 +1678,8 @@ bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		mabs.eval(eo2);
 		marg.eval(eo2);
-		switch(eo2.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg.multiply(CALCULATOR->getDegUnit(), true);} break;}
-			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg.multiply(CALCULATOR->getGraUnit(), true);} break;}
-			case ANGLE_UNIT_RADIANS: {if(CALCULATOR->getRadUnit()) {marg.multiply(CALCULATOR->getRadUnit(), true);} break;}
-			default: {break;}
-		}
+		Unit *u = default_angle_unit(eo);
+		if(u) marg.multiply(u, true);
 		set(marg, true);
 		transformById(FUNCTION_ID_SIN);
 		multiply(nr_one_i);
@@ -1696,9 +1692,10 @@ bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 		EvaluationOptions eo2 = eo;
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		switch(eo2.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg.calculateMultiply(Number(180, 1), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->getDegUnit(), true);} break;}
-			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg.calculateMultiply(Number(200, 1), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->getGraUnit(), true);} break;}
-			case ANGLE_UNIT_RADIANS: {if(CALCULATOR->getRadUnit()) {marg.multiply(CALCULATOR->getRadUnit(), true);} break;}
+			case ANGLE_UNIT_DEGREES: {marg.calculateMultiply(Number(180, 1), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->getDegUnit(), true); break;}
+			case ANGLE_UNIT_GRADIANS: {marg.calculateMultiply(Number(200, 1), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->getGraUnit(), true); break;}
+			case ANGLE_UNIT_RADIANS: {marg.multiply(CALCULATOR->getRadUnit(), true); break;}
+			case ANGLE_UNIT_CUSTOM: {if(CALCULATOR->customAngleUnit()) {marg.calculateMultiply(angle_units_in_turn(eo2, 1, 2), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->customAngleUnit(), true);} break;}
 			default: {break;}
 		}
 		set(marg, true);
@@ -1712,9 +1709,10 @@ bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 		EvaluationOptions eo2 = eo;
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		switch(eo2.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg.calculateMultiply(Number(180, 1), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->getDegUnit(), true);} break;}
-			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg.calculateMultiply(Number(200, 1), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->getGraUnit(), true);} break;}
-			case ANGLE_UNIT_RADIANS: {if(CALCULATOR->getRadUnit()) {marg.multiply(CALCULATOR->getRadUnit(), true);} break;}
+			case ANGLE_UNIT_DEGREES: {marg.calculateMultiply(Number(180, 1), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->getDegUnit(), true); break;}
+			case ANGLE_UNIT_GRADIANS: {marg.calculateMultiply(Number(200, 1), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->getGraUnit(), true); break;}
+			case ANGLE_UNIT_RADIANS: {marg.multiply(CALCULATOR->getRadUnit(), true); break;}
+			case ANGLE_UNIT_CUSTOM: {if(CALCULATOR->customAngleUnit()) {marg.calculateMultiply(angle_units_in_turn(eo2, 1, 2), eo2); marg.calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); marg.multiply(CALCULATOR->customAngleUnit(), true);} break;}
 			default: {break;}
 		}
 		CHILD(1).set(marg, true);
@@ -1736,12 +1734,8 @@ bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 			CALCULATOR->endTemporaryStopMessages(true);
 			MathStructure mabs(CALCULATOR->getFunctionById(FUNCTION_ID_ABS), this, NULL);
 			mabs.eval(eo2);
-			switch(eo2.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg.multiply(CALCULATOR->getDegUnit(), true);} break;}
-				case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg.multiply(CALCULATOR->getGraUnit(), true);} break;}
-				case ANGLE_UNIT_RADIANS: {if(CALCULATOR->getRadUnit()) {marg.multiply(CALCULATOR->getRadUnit(), true);} break;}
-				default: {break;}
-			}
+			Unit *u = default_angle_unit(eo);
+			if(u) marg.multiply(u);
 			set(marg, true);
 			transformById(FUNCTION_ID_SIN);
 			multiply(nr_one_i);
@@ -1768,8 +1762,9 @@ bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
 		mabs.eval(eo2);
 		marg.eval(eo2);
 		switch(eo2.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg.multiply(CALCULATOR->getDegUnit(), true);} break;}
-			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg.multiply(CALCULATOR->getGraUnit(), true);} break;}
+			case ANGLE_UNIT_DEGREES: {marg.multiply(CALCULATOR->getDegUnit(), true); break;}
+			case ANGLE_UNIT_GRADIANS: {marg.multiply(CALCULATOR->getGraUnit(), true); break;}
+			case ANGLE_UNIT_CUSTOM: {if(CALCULATOR->customAngleUnit()) {marg.multiply(CALCULATOR->customAngleUnit(), true);} break;}
 			default: {break;}
 		}
 		set(marg, true);
@@ -1782,8 +1777,9 @@ bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
 		EvaluationOptions eo2 = eo;
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		switch(eo2.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {calculateMultiply(Number(180, 1), eo2); calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); multiply(CALCULATOR->getDegUnit(), true);} break;}
-			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {calculateMultiply(Number(200, 1), eo2); calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); multiply(CALCULATOR->getGraUnit(), true);} break;}
+			case ANGLE_UNIT_DEGREES: {calculateMultiply(Number(180, 1), eo2); calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); multiply(CALCULATOR->getDegUnit(), true); break;}
+			case ANGLE_UNIT_GRADIANS: {calculateMultiply(Number(200, 1), eo2); calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); multiply(CALCULATOR->getGraUnit(), true); break;}
+			case ANGLE_UNIT_CUSTOM: {if(CALCULATOR->customAngleUnit()) {calculateMultiply(angle_units_in_turn(eo2, 1, 2), eo2); calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); multiply(CALCULATOR->customAngleUnit(), true);} break;}
 			default: {break;}
 		}
 		transformById(FUNCTION_ID_CIS);
@@ -1795,8 +1791,9 @@ bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
 		EvaluationOptions eo2 = eo;
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		switch(eo2.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {CHILD(1).calculateMultiply(Number(180, 1), eo2); CHILD(1).calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); CHILD(1).multiply(CALCULATOR->getDegUnit(), true);} break;}
-			case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {CHILD(1).calculateMultiply(Number(200, 1), eo2); CHILD(1).calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); CHILD(1).multiply(CALCULATOR->getGraUnit(), true);} break;}
+			case ANGLE_UNIT_DEGREES: {CHILD(1).calculateMultiply(Number(180, 1), eo2); CHILD(1).calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); CHILD(1).multiply(CALCULATOR->getDegUnit(), true); break;}
+			case ANGLE_UNIT_GRADIANS: {CHILD(1).calculateMultiply(Number(200, 1), eo2); CHILD(1).calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); CHILD(1).multiply(CALCULATOR->getGraUnit(), true); break;}
+			case ANGLE_UNIT_CUSTOM: {if(CALCULATOR->customAngleUnit()) {CHILD(1).calculateMultiply(angle_units_in_turn(eo2, 1, 2), eo2); CHILD(1).calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); CHILD(1).multiply(CALCULATOR->customAngleUnit(), true);} break;}
 			default: {break;}
 		}
 		CHILD(1).transformById(FUNCTION_ID_CIS);
@@ -1815,8 +1812,9 @@ bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
 			MathStructure mabs(CALCULATOR->getFunctionById(FUNCTION_ID_ABS), this, NULL);
 			mabs.eval(eo2);
 			switch(eo2.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {if(CALCULATOR->getDegUnit()) {marg.multiply(CALCULATOR->getDegUnit(), true);} break;}
-				case ANGLE_UNIT_GRADIANS: {if(CALCULATOR->getGraUnit()) {marg.multiply(CALCULATOR->getGraUnit(), true);} break;}
+				case ANGLE_UNIT_DEGREES: {marg.multiply(CALCULATOR->getDegUnit(), true); break;}
+				case ANGLE_UNIT_GRADIANS: {marg.multiply(CALCULATOR->getGraUnit(), true); break;}
+				case ANGLE_UNIT_CUSTOM: {if(CALCULATOR->customAngleUnit()) {marg.multiply(CALCULATOR->customAngleUnit(), true);} break;}
 				default: {break;}
 			}
 			set(marg, true);
@@ -1856,6 +1854,7 @@ bool convert_to_default_angle_unit(MathStructure &m, const EvaluationOptions &eo
 			Unit *u = NULL;
 			if(eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES) u = CALCULATOR->getDegUnit();
 			else if(eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS) u = CALCULATOR->getGraUnit();
+			else if(eo.parse_options.angle_unit == ANGLE_UNIT_CUSTOM) u = CALCULATOR->customAngleUnit();
 			if(u && m[i].contains(CALCULATOR->getRadUnit(), false, false, false)) {
 				m[i].divide(u);
 				m[i].multiply(u);
@@ -2379,7 +2378,7 @@ bool separate_vector_vars(MathStructure &m, const EvaluationOptions &eo, vector<
 				}
 			}
 			if(!b) {
-				vars.push_back((KnownVariable*) m.variable());
+				KnownVariable *mv = (KnownVariable*) m.variable();
 				m.clearVector();
 				for(size_t i = 0; i < mvar.size(); i++) {
 					if(mvar[i].containsInterval(true, false, false, 1, true)) {
@@ -2388,10 +2387,11 @@ bool separate_vector_vars(MathStructure &m, const EvaluationOptions &eo, vector<
 						v->ref();
 						v->destroy();
 					} else {
-						m[i].addChild(mvar[i]);
+						m.addChild(mvar[i]);
 					}
 					separate_vector_vars(m[i], eo, vars, values);
 				}
+				vars.push_back(mv);
 				values.push_back(m);
 			}
 			return true;
@@ -2411,6 +2411,15 @@ bool separate_vector_vars(MathStructure &m, const EvaluationOptions &eo, vector<
 				else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) complexToPolarForm(eo); \
 				else if(eo.complex_number_form == COMPLEX_NUMBER_FORM_CIS) complexToCisForm(eo);
 
+void replace_aborted_variables(MathStructure &m) {
+	if(m.isVariable() && m.variable()->isKnown() && !m.variable()->isRegistered() && m.variable()->referenceName().find(CALCULATOR->abortedMessage())) {
+		m.set(((KnownVariable*) m.variable())->get());
+	}
+	for(size_t i = 0; i < m.size(); i++) {
+		replace_aborted_variables(m[i]);
+	}
+}
+
 MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	if(m_type == STRUCT_NUMBER) {FORMAT_COMPLEX_NUMBERS; return *this;}
@@ -2419,7 +2428,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	unformat(eo);
 
-	if(m_type == STRUCT_UNDEFINED || m_type == STRUCT_ABORTED || m_type == STRUCT_DATETIME || m_type == STRUCT_UNIT || m_type == STRUCT_SYMBOLIC || (m_type == STRUCT_VARIABLE && !o_variable->isKnown())) return *this;
+	if(CALCULATOR->aborted() || m_type == STRUCT_UNDEFINED || m_type == STRUCT_ABORTED || m_type == STRUCT_DATETIME || m_type == STRUCT_UNIT || m_type == STRUCT_SYMBOLIC || (m_type == STRUCT_VARIABLE && !o_variable->isKnown())) return *this;
 
 	if(eo.structuring != STRUCTURING_NONE && eo.sync_units) {
 		convert_log_units(*this, eo);
@@ -2476,7 +2485,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 			// calculate non-differentiable functions (not handled by variance formula) and functions without uncertainties
 			if(eo.calculate_functions) calculate_nondifferentiable_functions(*this, feo, true, true, (eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) ? 2 : 1);
-
+			if(CALCULATOR->aborted()) return *this;
 			MathStructure munc, mbak(*this);
 			if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) {
 				// replace intervals with variables and calculate exact
@@ -2527,7 +2536,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 					vars[i]->destroy();
 				}
 
-				if(CALCULATOR->aborted()) return *this;
+				if(CALCULATOR->aborted()) {replace_aborted_variables(*this); return *this;}
 
 				// calculate each side of comparisons separately
 				if(eval_comparison_sides(*this, feo)) {
@@ -2535,7 +2544,9 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 					structure(eo.structuring, eo2, false);
 					if(eo.structuring != STRUCTURING_NONE) {simplify_ln(*this); simplify_roots(*this, eo);}
 					clean_multiplications(*this);
-				} else if(!CALCULATOR->aborted()) {
+				} else if(CALCULATOR->aborted()) {
+					replace_aborted_variables(*this);
+				} else {
 					CALCULATOR->error(false, _("Calculation of uncertainty propagation partially failed (using interval arithmetic instead when necessary)."), NULL);
 					EvaluationOptions eo4 = eo;
 					eo4.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
@@ -2556,11 +2567,9 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 					munc.clearVector();
 					for(size_t i = 0; i < SIZE; i++) {
 						if(CHILD(i).isVector()) {
+							munc.addChild(m_zero);
+							if(CHILD(i).size() > 0) munc[i].clearVector();
 							for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
-								if(i2 == 0) {
-									munc.addChild(m_zero);
-									munc[i].clearVector();
-								}
 								munc[i].addChild(calculate_uncertainty(CHILD(i)[i2], eo, b_failed));
 								if(b_failed) break;
 							}
@@ -2587,11 +2596,9 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 						munc.clearVector();
 						for(size_t i = 0; i < mtest.size(); i++) {
 							if(mtest[i].isVector()) {
+								munc.addChild(m_zero);
+								if(mtest[i].size() > 0) munc[i].clearVector();
 								for(size_t i2 = 0; i2 < mtest[i].size(); i2++) {
-									if(i2 == 0) {
-										munc.addChild(m_zero);
-										munc[i].clearVector();
-									}
 									munc[i].addChild(calculate_uncertainty(mtest[i][i2], eo, b_failed));
 									if(b_failed) break;
 								}
@@ -2651,7 +2658,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 				CALCULATOR->endTemporaryStopMessages(!b_failed);
 				if(b_failed) {
 					set(mbak);
-					if(CALCULATOR->aborted()) return *this;
+					if(CALCULATOR->aborted()) {replace_aborted_variables(*this); return *this;}
 					CALCULATOR->error(false, _("Calculation of uncertainty propagation failed (using interval arithmetic instead)."), NULL);
 					EvaluationOptions eo3 = eo;
 					eo3.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
@@ -2774,7 +2781,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	if(eo.structuring != STRUCTURING_NONE) {
 
-		if(eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS || eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES) convert_to_default_angle_unit(*this, eo);
+		if(!DEFAULT_RADIANS(eo.parse_options.angle_unit)) convert_to_default_angle_unit(*this, eo);
 		simplify_ln(*this);
 		simplify_roots(*this, eo);
 

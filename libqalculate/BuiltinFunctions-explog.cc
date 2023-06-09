@@ -104,20 +104,20 @@ bool calculate_arg(MathStructure &mstruct, const EvaluationOptions &eo) {
 			if(mstruct.number().realPartIsNegative()) {
 				if(mstruct.number().imaginaryPartIsNegative()) {
 					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
-					switch(eo.parse_options.angle_unit) {
-						case ANGLE_UNIT_DEGREES: {mstruct.divide_nocopy(new MathStructure(180, 1, 0)); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-						case ANGLE_UNIT_GRADIANS: {mstruct.divide_nocopy(new MathStructure(200, 1, 0)); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-						case ANGLE_UNIT_RADIANS: {break;}
-						default: {if(CALCULATOR->getRadUnit()) {mstruct /= CALCULATOR->getRadUnit();} break;}
+					if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) {
+						mstruct /= CALCULATOR->getRadUnit();
+					} else if(eo.parse_options.angle_unit != ANGLE_UNIT_RADIANS) {
+						mstruct.divide(angle_units_in_turn(eo, 1, 2));
+						mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 					}
 					mstruct.subtract(CALCULATOR->getVariableById(VARIABLE_ID_PI));
 				} else if(mstruct.number().imaginaryPartIsNonNegative()) {
 					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
-					switch(eo.parse_options.angle_unit) {
-						case ANGLE_UNIT_DEGREES: {mstruct.divide_nocopy(new MathStructure(180, 1, 0)); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-						case ANGLE_UNIT_GRADIANS: {mstruct.divide_nocopy(new MathStructure(200, 1, 0)); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-						case ANGLE_UNIT_RADIANS: {break;}
-						default: {if(CALCULATOR->getRadUnit()) {mstruct /= CALCULATOR->getRadUnit();} break;}
+					if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) {
+						mstruct /= CALCULATOR->getRadUnit();
+					} else if(eo.parse_options.angle_unit != ANGLE_UNIT_RADIANS) {
+						mstruct.divide(angle_units_in_turn(eo, 1, 2));
+						mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 					}
 					mstruct.add(CALCULATOR->getVariableById(VARIABLE_ID_PI));
 				} else {
@@ -125,11 +125,11 @@ bool calculate_arg(MathStructure &mstruct, const EvaluationOptions &eo) {
 				}
 			} else {
 				mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
-				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {mstruct.divide_nocopy(new MathStructure(180, 1, 0)); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-					case ANGLE_UNIT_GRADIANS: {mstruct.divide_nocopy(new MathStructure(200, 1, 0)); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-					case ANGLE_UNIT_RADIANS: {break;}
-					default: {if(CALCULATOR->getRadUnit()) {mstruct /= CALCULATOR->getRadUnit();} break;}
+				if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) {
+					mstruct /= CALCULATOR->getRadUnit();
+				} else if(eo.parse_options.angle_unit != ANGLE_UNIT_RADIANS) {
+					mstruct.divide(angle_units_in_turn(eo, 1, 2));
+					mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 				}
 			}
 		}
@@ -757,35 +757,8 @@ CisFunction::CisFunction() : MathFunction("cis", 1) {
 int CisFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	if(vargs[0].isVector()) return 0;
-	if(contains_angle_unit(vargs[0], eo.parse_options)) {
-		if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getRadUnit()) {
-			mstruct = vargs[0][0];
-		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getRadUnit()) {
-			mstruct = vargs[0][1];
-		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getDegUnit()) {
-			mstruct = vargs[0][0];
-			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-			mstruct.multiply(Number(1, 180), true);
-		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getDegUnit()) {
-			mstruct = vargs[0][1];
-			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-			mstruct.multiply(Number(1, 180), true);
-		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getGraUnit()) {
-			mstruct = vargs[0][0];
-			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-			mstruct.multiply(Number(1, 200), true);
-		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getGraUnit()) {
-			mstruct = vargs[0][1];
-			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-			mstruct.multiply(Number(1, 200), true);
-		} else {
-			mstruct = vargs[0];
-			mstruct.convert(CALCULATOR->getRadUnit());
-			mstruct /= CALCULATOR->getRadUnit();
-		}
-	} else {
-		mstruct = vargs[0];
-	}
+	if(contains_angle_unit(vargs[0], eo.parse_options)) convert_to_radians(vargs[0], mstruct, eo);
+	else mstruct = vargs[0];
 
 	if(mstruct.isVariable() && mstruct.variable()->id() == VARIABLE_ID_PI) {
 		mstruct.set(-1, 1, 0, true);

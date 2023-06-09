@@ -878,7 +878,7 @@ bool MathStructure::convert(Unit *u, bool convert_nonlinear_relations, bool *fou
 					if(CHILD(b_c).isPower()) {
 						if(CHILD(b_c)[0].unit()->baseUnit() != u->baseUnit()) {
 							if(CHILD(b_c)[0].unit()->subtype() != SUBTYPE_BASE_UNIT && (CHILD(b_c)[0].unit()->subtype() != SUBTYPE_ALIAS_UNIT || ((AliasUnit*) CHILD(b_c)[0].unit())->firstBaseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT)) {
-								convertToBaseUnits(convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo);
+								if(!convertToBaseUnits(convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo)) return false;
 							} else {
 								return false;
 							}
@@ -891,7 +891,7 @@ bool MathStructure::convert(Unit *u, bool convert_nonlinear_relations, bool *fou
 					} else {
 						if(CHILD(b_c).unit()->baseUnit() != u->baseUnit()) {
 							if(CHILD(b_c).unit()->subtype() != SUBTYPE_BASE_UNIT && (CHILD(b_c).unit()->subtype() != SUBTYPE_ALIAS_UNIT || ((AliasUnit*) CHILD(b_c).unit())->firstBaseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT)) {
-								convertToBaseUnits(convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo);
+								if(!convertToBaseUnits(convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo)) return false;
 							} else {
 								return false;
 							}
@@ -944,7 +944,7 @@ bool MathStructure::convert(Unit *u, bool convert_nonlinear_relations, bool *fou
 					if(convert_nonlinear_relations) {
 						if(CHILD(0).unit()->baseUnit() != u->baseUnit()) {
 							if(CHILD(0).unit()->subtype() != SUBTYPE_BASE_UNIT && (CHILD(0).unit()->subtype() != SUBTYPE_ALIAS_UNIT || ((AliasUnit*) CHILD(0).unit())->firstBaseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT)) {
-								convertToBaseUnits(convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo);
+								if(!convertToBaseUnits(convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo)) return false;
 							} else {
 								return false;
 							}

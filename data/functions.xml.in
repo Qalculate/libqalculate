@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<QALCULATE version="4.6.0">
+<QALCULATE version="4.6.1">
   <category>
     <_title>Matrices &amp; Vectors</_title>
     <builtin_function name="vector">
@@ -566,14 +566,14 @@
           <_title>Denominator</_title>
         </argument>
       </builtin_function>
-      <builtin_function name="pwmod">
+      <builtin_function name="powmod">
         <_title>Modular Exponentiation</_title>
-	<_description>Returns the modular inverse for negative exponents, and is otherwise equivalent to mod(a^b, c). For negative exponents the greatest common divisor of the numerator and the denominator must be 1.</_description>
+	<_description>Finds the modular inverse for negative exponents, and is otherwise equivalent to mod(a^b, c). For negative exponents the greatest common divisor of the numerator and the denominator must be 1.</_description>
         <_names>r:powmod,power_mod</_names>
         <argument index="1">
           <_title>Numerator</_title>
         </argument>
-	<argument index="3">
+	<argument index="2">
           <_title>Exponent</_title>
         </argument>
         <argument index="3">
@@ -3062,10 +3062,10 @@
         <_title>Function</_title>
       </argument>
       <argument index="5">
-        <_title>Value variable</_title>
+        <_title>Element variable</_title>
       </argument>
       <argument index="6">
-        <_title>Element variable</_title>
+        <_title>Value variable</_title>
       </argument>
       <argument index="7">
         <_title>Vector</_title>

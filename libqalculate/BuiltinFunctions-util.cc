@@ -445,13 +445,10 @@ bool replace_function(MathStructure &m, MathFunction *f1, MathFunction *f2, cons
 				if(m[0].contains(CALCULATOR->getRadUnit(), false, true, true) > 0) m[0] /= CALCULATOR->getRadUnit();
 				else if(m[0].contains(CALCULATOR->getDegUnit(), false, true, true) > 0) m[0] /= CALCULATOR->getDegUnit();
 				else if(m[0].contains(CALCULATOR->getGraUnit(), false, true, true) > 0) m[0] /= CALCULATOR->getGraUnit();
+				else if(CALCULATOR->customAngleUnit() && m[0].contains(CALCULATOR->customAngleUnit(), false, true, true) > 0) m[0] /= CALCULATOR->customAngleUnit();
 			} else if((f2->getArgumentDefinition(1) && f2->getArgumentDefinition(1)->type() == ARGUMENT_TYPE_ANGLE) && (!f1->getArgumentDefinition(1) || f1->getArgumentDefinition(1)->type() != ARGUMENT_TYPE_ANGLE)) {
-				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {m[0] *= CALCULATOR->getDegUnit(); break;}
-					case ANGLE_UNIT_GRADIANS: {m[0] *= CALCULATOR->getGraUnit(); break;}
-					case ANGLE_UNIT_RADIANS: {m[0] *= CALCULATOR->getRadUnit(); break;}
-					default: {}
-				}
+				Unit *u = default_angle_unit(eo);
+				if(u) m[0] *= u;
 			}
 		}
 		ret = true;

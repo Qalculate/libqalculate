@@ -32,7 +32,7 @@
 
 #define QALCULATE_MAJOR_VERSION (4)
 #define QALCULATE_MINOR_VERSION (6)
-#define QALCULATE_MICRO_VERSION (0)
+#define QALCULATE_MICRO_VERSION (1)
 
 static std::string empty_string;
 
@@ -601,7 +601,8 @@ typedef enum {
 	ANGLE_UNIT_NONE,
 	ANGLE_UNIT_RADIANS,
 	ANGLE_UNIT_DEGREES,
-	ANGLE_UNIT_GRADIANS
+	ANGLE_UNIT_GRADIANS,
+	ANGLE_UNIT_CUSTOM,
 } AngleUnit;
 
 typedef enum {

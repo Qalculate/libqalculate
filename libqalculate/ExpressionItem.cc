@@ -248,7 +248,7 @@ void ExpressionItem::set(const ExpressionItem *item) {
 	b_hidden = item->isHidden();
 }
 bool ExpressionItem::destroy() {
-	CALCULATOR->expressionItemDeleted(this);
+	if(b_registered) CALCULATOR->expressionItemDeleted(this);
 	if(v_refs.size() > 0) {
 		return false;
 	} else if(i_ref > 0) {

@@ -1884,7 +1884,7 @@ int main(int argc, char *argv[]) {
 	//CALCULATOR->loadExchangeRates();
 	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
-	CALCULATOR->setPrecision(8);
+	CALCULATOR->setPrecision(10);
 
 	CALCULATOR->useIntervalArithmetic();
 	PrintOptions po = CALCULATOR->messagePrintOptions();
@@ -1962,9 +1962,9 @@ int main(int argc, char *argv[]) {
 	mstruct.eval(evalops);
 	cout << mstruct << endl;*/
 	//speed_test();
-	//test_integration();
-	//cout << successes << ":" << imaginary << endl;
-	//return 0;
+	test_integration();
+	cout << successes << ":" << imaginary << endl;
+	return 0;
 	//test_intervals(true);
 
 	/*Number nr;
@@ -2078,9 +2078,9 @@ int main(int argc, char *argv[]) {
 	v = new KnownVariable("", "v", m_zero);
 
 	//CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
-	CALCULATOR->useIntervalArithmetic();
+	//CALCULATOR->useIntervalArithmetic();
 
-	for(size_t i = 0; i <= 150000; i++) {
+	//for(size_t i = 0; i <= 150000; i++) {
 		/*string str = rnd_expression(17, false, 20, 4, false, false, false, false, true);
 		cout << str << endl;
 		MathStructure mstruct;
@@ -2089,17 +2089,18 @@ int main(int argc, char *argv[]) {
 		cout << mstruct.print() << endl;
 		if(mstruct.isAborted()) break;*/
 		//if(mstruct.isPower() || (mstruct.isMultiplication() && !mstruct.containsType(STRUCT_DIVISION))) cout << str << "\n" << mstruct << endl;
-		rnd_test(evalops, 4, false, false, false, true, true, false);
+	/*	rnd_test(evalops, 4, true, false, true, false, true, false);
 		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
 
-	return 0;
-	evalops.parse_options.units_enabled = false;
-	//size_t ni = 0;
-	for(size_t i2 = 0; i2 <= 1000000; i2++) {
+	return 0;*/
+	evalops.parse_options.units_enabled = true;
+	evalops.parse_options.unknowns_enabled = false;
+	size_t ni = 0;
+	for(size_t i2 = 0; i2 <= 10000000L; i2++) {
 		str = "";
-		size_t n = rand() % 20;
+		size_t n = rand() % 20000;
 		for(size_t i = 0; i <= n; i++) {
 			str += (char) (rand() % (126 - 32) + 32);
 			//if(str[i] == '{' || str[i] == '}') str[i] = '+';
@@ -2118,15 +2119,38 @@ int main(int argc, char *argv[]) {
 			//if(n == 7) str.insert(i, "~");
 		}
 		gsub("!", " ", str);
-		gsub("{", " ", str);
-		gsub("}", " ", str);
+		/*gsub("{", " ", str);
+		gsub("}", " ", str);*/
 		gsub("~", " ", str);
 		gsub(":=", "=", str);
 		gsub("=:", "=", str);
 		gsub(">", " ", str);
 		gsub("<", " ", str);
+		gsub(":", " ", str);
+		gsub("=", " ", str);
 		remove_blank_ends(str);
 		while(str[0] == '/') {str.erase(0, 1); remove_blank_ends(str);}
+		cout << "\n\n\n\n\n" << str << endl;
+		int max_length = 100 - unicode_length(str);
+		if(max_length < 50) max_length = 50;
+		string parsed;
+		MathStructure mstruct;
+		//CALCULATOR->parse(&mstruct, str, evalops.parse_options);
+		//mstruct.eval(evalops);
+		//if(CALCULATOR->idCount() > 0) break;
+		//cout << mstruct.print() << endl;
+		str = CALCULATOR->calculateAndPrint(str, 100, evalops, default_print_options, AUTOMATIC_FRACTION_AUTO, AUTOMATIC_APPROXIMATION_AUTO, &parsed, max_length);
+		/*CALCULATOR->startControl(1000);
+		CALCULATOR->calculate(str, evalops);
+		CALCULATOR->stopControl();*/
+		if(str.find("tiden rann ut") != string::npos) {
+			if(str != "tiden rann ut") {
+				cout << str << endl;
+				break;
+			}
+			ni++;
+		}
+		//cout << parsed << endl;
 		/*n = rand() % (str.length() + 1);
 		if(n < str.length()) str.insert(n, "=");
 		for(size_t i3 = 0; i3 < 7; i3++) {
@@ -2141,7 +2165,6 @@ int main(int argc, char *argv[]) {
 				if(n2 == 3) str.insert(n, "›");
 			}
 		}*/
-		MathStructure mstruct;
 		/*CALCULATOR->parse(&mstruct, str, evalops.parse_options);
 		bool b_out = true;
 		if(expression_contains_save_function(str, evalops.parse_options, false)) b_out = false;
@@ -2152,7 +2175,7 @@ int main(int argc, char *argv[]) {
 		}
 		if(b_out && !str.empty()) cout << str << endl;*/
 		CALCULATOR->clearMessages();
-		cerr << str << endl;
+		//cerr << str << endl;
 		/*cout << mstruct.print() << endl;
 		mstruct.eval(evalops);
 		cout << "B" << endl;
@@ -2166,17 +2189,21 @@ int main(int argc, char *argv[]) {
 			ni++;
 			cout << "SAVE:" << str << endl;
 		}*/
-		CALCULATOR->calculate(&mstruct, str, 10000, evalops);
+		/*CALCULATOR->calculate(&mstruct, str, 10000, evalops);
 		if(mstruct.isAborted()) {cerr << "aborted: " << i2 << endl; break;}
 		display_errors(true);
 		mstruct.format(po);
 		cerr << mstruct.print() << endl;
-		if(mstruct.isAborted()) break;
-		for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
-			if(CALCULATOR->variables[i]->isLocal()) CALCULATOR->variables[i]->destroy();
-		}
+		if(mstruct.isAborted()) break;*/
+		/*for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
+			if(CALCULATOR->variables[i]->isLocal()) {
+				cout << "G" << endl;
+				CALCULATOR->variables[i]->destroy();
+			}
+		}*/
+		cout << i2 << endl;
 	}
-	//cerr << ni<< endl;
+	cerr << ni<< endl;
 	return 0;
 
 }

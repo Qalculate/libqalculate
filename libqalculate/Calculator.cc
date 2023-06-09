@@ -187,13 +187,13 @@ Calculator::Calculator() {
 	srand(time(NULL));
 
 	exchange_rates_time[0] = 0;
-	exchange_rates_time[1] = (time_t) 465984L * (time_t) 3600;
+	exchange_rates_time[1] = (time_t) 467016L * (time_t) 3600;
 	exchange_rates_time[2] = 0;
-	priv->exchange_rates_time2[0] = (time_t) 465984L * (time_t) 3600;
+	priv->exchange_rates_time2[0] = (time_t) 467016L * (time_t) 3600;
 	exchange_rates_check_time[0] = 0;
-	exchange_rates_check_time[1] = (time_t) 465984L * (time_t) 3600;
+	exchange_rates_check_time[1] = (time_t) 467016L * (time_t) 3600;
 	exchange_rates_check_time[2] = 0;
-	priv->exchange_rates_check_time2[0] = (time_t) 465984L * (time_t) 3600;
+	priv->exchange_rates_check_time2[0] = (time_t) 467016L * (time_t) 3600;
 	b_exchange_rates_warning_enabled = true;
 	b_exchange_rates_used = 0;
 	priv->exchange_rates_url3 = 0;
@@ -356,6 +356,7 @@ Calculator::Calculator() {
 	default_assumptions->setSign(ASSUMPTION_SIGN_UNKNOWN);
 
 	u_rad = NULL; u_gra = NULL; u_deg = NULL;
+	priv->custom_angle_unit = NULL;
 
 	b_save_called = false;
 
@@ -444,13 +445,13 @@ Calculator::Calculator(bool ignore_locale) {
 	srand(time(NULL));
 
 	exchange_rates_time[0] = 0;
-	exchange_rates_time[1] = (time_t) 465984L * (time_t) 3600;
+	exchange_rates_time[1] = (time_t) 467016L * (time_t) 3600;
 	exchange_rates_time[2] = 0;
-	priv->exchange_rates_time2[0] = (time_t) 465984L * (time_t) 3600;
+	priv->exchange_rates_time2[0] = (time_t) 467016L * (time_t) 3600;
 	exchange_rates_check_time[0] = 0;
-	exchange_rates_check_time[1] = (time_t) 465984L * (time_t) 3600;
+	exchange_rates_check_time[1] = (time_t) 467016L * (time_t) 3600;
 	exchange_rates_check_time[2] = 0;
-	priv->exchange_rates_check_time2[0] = (time_t) 465984L * (time_t) 3600;
+	priv->exchange_rates_check_time2[0] = (time_t) 467016L * (time_t) 3600;
 	b_exchange_rates_warning_enabled = true;
 	b_exchange_rates_used = 0;
 	priv->exchange_rates_url3 = 0;
@@ -607,6 +608,7 @@ Calculator::Calculator(bool ignore_locale) {
 	default_assumptions->setSign(ASSUMPTION_SIGN_UNKNOWN);
 
 	u_rad = NULL; u_gra = NULL; u_deg = NULL;
+	priv->custom_angle_unit = NULL;
 
 	b_save_called = false;
 
@@ -1432,6 +1434,15 @@ void Calculator::endTemporaryEnableIntervalArithmetic() {
 bool Calculator::usesMatlabStyleMatrices() const {return priv->matlab_matrices;}
 void Calculator::useMatlabStyleMatrices(bool use_matlab_style_matrices) {priv->matlab_matrices = use_matlab_style_matrices;}
 
+void Calculator::setCustomAngleUnit(Unit *u) {
+	if(u) u->ref();
+	if(priv->custom_angle_unit) priv->custom_angle_unit->unref();
+	priv->custom_angle_unit = u;
+}
+Unit *Calculator::customAngleUnit() {
+	return priv->custom_angle_unit;
+}
+
 void Calculator::setCustomInputBase(Number nr) {
 	priv->custom_input_base = nr;
 	if(!nr.isReal()) {
@@ -1867,11 +1878,11 @@ void Calculator::addBuiltinFunctions() {
 }
 void Calculator::addBuiltinUnits() {
 	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, true));
-	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "22106.01", 1, "", false, true, true));
+	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "27488.51", 1, "", false, true, true));
 	u_btc->setApproximate();
 	u_btc->setPrecision(-2);
 	u_btc->setChanged(false);
-	priv->u_byn = addUnit(new AliasUnit(_("Currency"), "BYN", "", "", "Belarusian Ruble", u_euro, "1/2.6587", 1, "", false, true, true));
+	priv->u_byn = addUnit(new AliasUnit(_("Currency"), "BYN", "", "", "Belarusian Ruble", u_euro, "1/2.7350", 1, "", false, true, true));
 	priv->u_byn->setHidden(true);
 	priv->u_byn->setApproximate();
 	priv->u_byn->setPrecision(-2);

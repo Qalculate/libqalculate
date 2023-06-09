@@ -155,77 +155,179 @@ SinFunction::SinFunction() : MathFunction("sin", 1) {
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
 }
+
+MathStructure angle_units_in_turn(const EvaluationOptions &eo, long int num, long int den, bool recip) {
+	AngleUnit au = eo.parse_options.angle_unit;
+	if(au == ANGLE_UNIT_CUSTOM && !CALCULATOR->customAngleUnit()) au = ANGLE_UNIT_NONE;
+	switch(au) {
+		case ANGLE_UNIT_DEGREES: {return Number(recip ? num : 360 * num, recip ? 360 * den : den, 0);}
+		case ANGLE_UNIT_GRADIANS: {return Number(recip ? num : 400 * num, recip ? 400 * den : den, 0);}
+		case ANGLE_UNIT_CUSTOM: {
+			Unit *u = CALCULATOR->customAngleUnit();
+			if(!u->isLocal()) {
+				if(u->referenceName() == "arcmin") {
+					return Number(recip ? num : 360 * 60 * num, recip ? 360 * 60 * den : den, 0);
+				} else if(u->referenceName() == "arcsec") {
+					return Number(recip ? num : 360 * 3600 * num, recip ? 360 * 3600 * den : den, 0);
+				} else if(u->referenceName() == "turn") {
+					return Number(num, den, 0);
+				}
+			}
+			MathStructure m(recip ? num : 360 * num, recip ? 360 * den : den);
+			if(recip) CALCULATOR->getDegUnit()->convert(u, m);
+			else u->convert(CALCULATOR->getDegUnit(), m);
+			EvaluationOptions eo2 = eo;
+			eo2.calculate_functions = false;
+			eo2.approximation = APPROXIMATION_EXACT;
+			m.calculatesub(eo2, eo2, true);
+			return m;
+		}
+		case ANGLE_UNIT_RADIANS: {
+			if(num == 1 && den == 2) return CALCULATOR->getVariableById(VARIABLE_ID_PI);
+			MathStructure m(recip ? num : num * 2, recip ? den * 2 : den, 0L);
+			if(recip) m /= CALCULATOR->getVariableById(VARIABLE_ID_PI);
+			else m *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
+			return m;
+		}
+		default: {
+			if(num == 1 && den == 2) return CALCULATOR->getVariableById(VARIABLE_ID_PI);
+			MathStructure m(recip ? num : num * 2, recip ? den * 2 : den, 0L);
+			if(recip) m /= CALCULATOR->getVariableById(VARIABLE_ID_PI);
+			else m *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
+			if(recip) m /= CALCULATOR->getRadUnit();
+			else m *= CALCULATOR->getRadUnit();
+			return m;
+		}
+	}
+	return nr_zero;
+}
+
+void convert_to_radians(const MathStructure &mpre, MathStructure &mstruct, const EvaluationOptions &eo) {
+	bool b = false;
+	if(mpre.isMultiplication() && mpre.size() == 2) {
+		for(size_t i = 1; ; i--) {
+			if(mpre[i].isUnit()) {
+				if(mpre[i].unit() == CALCULATOR->getRadUnit()) {
+					if(i == 1) mstruct = mpre[0];
+					else mstruct = mpre[1];
+					b = true;
+				} else if(mpre[i].unit() == CALCULATOR->getDegUnit()) {
+					if(i == 1) mstruct = mpre[0];
+					else mstruct = mpre[1];
+					mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
+					mstruct.multiply(Number(1, 180), true);
+					b = true;
+				} else if(mpre[i].unit() == CALCULATOR->getGraUnit()) {
+					if(i == 1) mstruct = mpre[0];
+					else mstruct = mpre[1];
+					mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
+					mstruct.multiply(Number(1, 200), true);
+					b = true;
+				} else if(mpre[i].unit()->isChildOf(CALCULATOR->getRadUnit()) && !mpre[i].unit()->hasNonlinearRelationToBase()) {
+					if(i == 1) mstruct = mpre[0];
+					else mstruct = mpre[1];
+					if(!mpre[i].unit()->isLocal()) {
+						if(mpre[i].unit()->referenceName() == "arcmin") {
+							mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
+							mstruct.multiply(Number(1, 180 * 60));
+							b = true;
+						} else if(mpre[i].unit()->referenceName() == "arcsec") {
+							mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
+							mstruct.multiply(Number(1, 180 * 3600));
+							b = true;
+						} else if(mpre[i].unit()->referenceName() == "turn") {
+							mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
+							mstruct.multiply(nr_two);
+							b = true;
+						}
+					}
+					if(!b) {
+						CALCULATOR->getRadUnit()->convert(mpre[i].unit(), mstruct);
+						EvaluationOptions eo2 = eo;
+						eo2.calculate_functions = false;
+						eo2.approximation = APPROXIMATION_EXACT;
+						mstruct.calculatesub(eo2, eo2, true);
+						b = true;
+					}
+				}
+			}
+			if(b || i == 0) break;
+		}
+	}
+	if(!b) {
+		mstruct = mpre;
+		mstruct.convert(CALCULATOR->getRadUnit());
+		if(HAS_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit) || mstruct.contains(CALCULATOR->getRadUnit())) mstruct /= CALCULATOR->getRadUnit();
+	}
+}
+
+#define TRIGONOMETRIC_FUNCTION_PREPARATIONS \
+	convert_to_radians(vargs[0], mstruct, eo); \
+\
+	MathFunction *f = NULL;\
+	if(!f && eo.approximation == APPROXIMATION_APPROXIMATE && !DEFAULT_RADIANS(eo.parse_options.angle_unit)) {\
+		if(mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[0].isFunction() && mstruct[0].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI && mstruct[2].isNumber() && !mstruct[2].number().isZero() && mstruct[2].equals(angle_units_in_turn(eo, 2, 1, true))) {\
+			f = mstruct[0].function();\
+		}\
+	}\
+\
+	if(eo.approximation == APPROXIMATION_TRY_EXACT) {\
+		EvaluationOptions eo2 = eo;\
+		eo2.approximation = APPROXIMATION_EXACT;\
+		CALCULATOR->beginTemporaryStopMessages();\
+		mstruct.eval(eo2);\
+	} else if(!f) {\
+		mstruct.eval(eo);\
+	}\
+\
+	if(mstruct.isVector()) {\
+		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);\
+		for(size_t i = 0; i < mstruct.size(); i++) {\
+			mstruct[i] *= CALCULATOR->getRadUnit();\
+		}\
+		return -1;\
+	}\
+\
+	bool b = false, b_recalc = true;\
+\
+	if(!DEFAULT_RADIANS(eo.parse_options.angle_unit)) {\
+		if(!f && mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[2].isFunction() && mstruct[2].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI && mstruct[0].equals(angle_units_in_turn(eo, 2, 1, true))) {\
+			f = mstruct[2].function();\
+		}\
+	} else if(mstruct.isFunction() && mstruct.size() == 1) {\
+		f = mstruct.function();\
+	}
+
 bool SinFunction::representsNumber(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && ((allow_units && (vargs[0].representsNumber(true) || vargs[0].representsNonComplex(true))) || (!allow_units && is_number_angle_value(vargs[0], true)));}
 bool SinFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && (is_real_angle_value(vargs[0]) || is_infinite_angle_value(vargs[0]));}
 bool SinFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex(true);}
 int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	if(vargs[0].isVector()) return 0;
-	if(CALCULATOR->getRadUnit()) {
-		if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getRadUnit()) {
-			mstruct = vargs[0][0];
-		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getRadUnit()) {
-			mstruct = vargs[0][1];
-		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getDegUnit()) {
-			mstruct = vargs[0][0];
-			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-			mstruct.multiply(Number(1, 180), true);
-		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getDegUnit()) {
-			mstruct = vargs[0][1];
-			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-			mstruct.multiply(Number(1, 180), true);
-		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getGraUnit()) {
-			mstruct = vargs[0][0];
-			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-			mstruct.multiply(Number(1, 200), true);
-		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getGraUnit()) {
-			mstruct = vargs[0][1];
-			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-			mstruct.multiply(Number(1, 200), true);
-		} else {
-			mstruct = vargs[0];
-			mstruct.convert(CALCULATOR->getRadUnit());
-			mstruct /= CALCULATOR->getRadUnit();
-		}
-	} else {
-		mstruct = vargs[0];
-	}
 
-	MathFunction *f = NULL;
-	if(eo.approximation == APPROXIMATION_APPROXIMATE && (eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES || eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS)) {
-		if(mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[0].isFunction() && mstruct[0].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI && mstruct[2].isNumber() && mstruct[2].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
-			f = mstruct[0].function();
+	if(eo.parse_options.angle_unit == ANGLE_UNIT_CUSTOM && vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0].isFunction() && vargs[0][0].size() == 1 && vargs[0][1].isUnit() && vargs[0][1].unit() == CALCULATOR->customAngleUnit()) {
+		if(vargs[0][0].function()->id() == FUNCTION_ID_ASIN) {
+			mstruct = vargs[0][0][0];
+			return 1;
+		} else if(vargs[0][0].function()->id() == FUNCTION_ID_ACOS) {
+			mstruct = vargs[0][0][0];
+			mstruct ^= nr_two;
+			mstruct.negate();
+			mstruct += nr_one;
+			mstruct ^= nr_half;
+			return 1;
+		} else if(vargs[0][0].function()->id() == FUNCTION_ID_ATAN && !vargs[0][0][0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)) {
+			mstruct = vargs[0][0][0];
+			MathStructure *mmul = new MathStructure(mstruct);
+			mstruct ^= nr_two;
+			mstruct += nr_one;
+			mstruct ^= nr_minus_half;
+			mstruct.multiply_nocopy(mmul);
+			return 1;
 		}
 	}
 
-	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
-		EvaluationOptions eo2 = eo;
-		eo2.approximation = APPROXIMATION_EXACT;
-		CALCULATOR->beginTemporaryStopMessages();
-		mstruct.eval(eo2);
-	} else if(!f) {
-		mstruct.eval(eo);
-	}
-
-	if(mstruct.isVector()) {
-		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
-		if(CALCULATOR->getRadUnit()) {
-			for(size_t i = 0; i < mstruct.size(); i++) {
-				mstruct[i] *= CALCULATOR->getRadUnit();
-			}
-		}
-		return -1;
-	}
-
-	bool b = false, b_recalc = true;
-
-	if(eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES || eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS) {
-		if(!f && mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[2].isFunction() && mstruct[2].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI && mstruct[0].isNumber() && mstruct[0].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
-			f = mstruct[2].function();
-		}
-	} else if(mstruct.isFunction() && mstruct.size() == 1) {
-		f = mstruct.function();
-	}
+	TRIGONOMETRIC_FUNCTION_PREPARATIONS
 
 	if(mstruct.isVariable() && mstruct.variable()->id() == VARIABLE_ID_PI) {
 		mstruct.clear();
@@ -297,7 +399,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 					mstruct[0].number() = nr_frac;
 				}
 				if(nr_int.isOdd()) {
-					if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
+					mstruct *= CALCULATOR->getRadUnit();
 					mstruct.transform(this);
 					mstruct.negate();
 					b = true;
@@ -341,7 +443,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 		b = b_negate;
 		if(b_negate) {
-			if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
+			mstruct *= CALCULATOR->getRadUnit();
 			mstruct.transform(this);
 			mstruct.negate();
 		}
@@ -353,10 +455,8 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
 		if(b_recalc) {
 			mstruct = vargs[0];
-			if(CALCULATOR->getRadUnit()) {
-				mstruct.convert(CALCULATOR->getRadUnit());
-				mstruct /= CALCULATOR->getRadUnit();
-			}
+			mstruct.convert(CALCULATOR->getRadUnit());
+			mstruct /= CALCULATOR->getRadUnit();
 		}
 		mstruct.eval(eo2);
 	}
@@ -377,21 +477,19 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 
 	if(has_predominately_negative_sign(mstruct)) {
 		negate_struct(mstruct);
-		if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
+		mstruct *= CALCULATOR->getRadUnit();
 		mstruct.transform(this);
 		mstruct.negate();
 		return 1;
 	}
 
 
-	if(CALCULATOR->getRadUnit()) {
-		if(mstruct.isVector()) {
-			for(size_t i = 0; i < mstruct.size(); i++) {
-				mstruct[i] *= CALCULATOR->getRadUnit();
-			}
-		} else {
-			mstruct *= CALCULATOR->getRadUnit();
+	if(mstruct.isVector()) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			mstruct[i] *= CALCULATOR->getRadUnit();
 		}
+	} else {
+		mstruct *= CALCULATOR->getRadUnit();
 	}
 	return -1;
 }
@@ -407,71 +505,28 @@ bool CosFunction::representsNonComplex(const MathStructure &vargs, bool) const {
 int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	if(vargs[0].isVector()) return 0;
-	if(CALCULATOR->getRadUnit()) {
-		if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getRadUnit()) {
-			mstruct = vargs[0][0];
-		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getRadUnit()) {
-			mstruct = vargs[0][1];
-		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getDegUnit()) {
-			mstruct = vargs[0][0];
-			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-			mstruct.multiply(Number(1, 180), true);
-		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getDegUnit()) {
-			mstruct = vargs[0][1];
-			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-			mstruct.multiply(Number(1, 180), true);
-		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getGraUnit()) {
-			mstruct = vargs[0][0];
-			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-			mstruct.multiply(Number(1, 200), true);
-		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getGraUnit()) {
-			mstruct = vargs[0][1];
-			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-			mstruct.multiply(Number(1, 200), true);
-		} else {
-			mstruct = vargs[0];
-			mstruct.convert(CALCULATOR->getRadUnit());
-			mstruct /= CALCULATOR->getRadUnit();
-		}
-	} else {
-		mstruct = vargs[0];
-	}
 
-	MathFunction *f = NULL;
-	if(eo.approximation == APPROXIMATION_APPROXIMATE && (eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES || eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS)) {
-		if(mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[0].isFunction() && mstruct[0].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI && mstruct[2].isNumber() && mstruct[2].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
-			f = mstruct[0].function();
+	if(eo.parse_options.angle_unit == ANGLE_UNIT_CUSTOM && vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0].isFunction() && vargs[0][0].size() == 1 && vargs[0][1].isUnit() && vargs[0][1].unit() == CALCULATOR->customAngleUnit()) {
+		if(vargs[0][0].function()->id() == FUNCTION_ID_ACOS) {
+			mstruct = vargs[0][0][0];
+			return 1;
+		} else if(vargs[0][0].function()->id() == FUNCTION_ID_ASIN) {
+			mstruct = vargs[0][0][0];
+			mstruct ^= nr_two;
+			mstruct.negate();
+			mstruct += nr_one;
+			mstruct ^= nr_half;
+			return 1;
+		} else if(vargs[0][0].function()->id() == FUNCTION_ID_ATAN) {
+			mstruct = vargs[0][0][0];
+			mstruct ^= nr_two;
+			mstruct += nr_one;
+			mstruct ^= nr_minus_half;
+			return 1;
 		}
 	}
 
-	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
-		EvaluationOptions eo2 = eo;
-		eo2.approximation = APPROXIMATION_EXACT;
-		CALCULATOR->beginTemporaryStopMessages();
-		mstruct.eval(eo2);
-	} else if(!f) {
-		mstruct.eval(eo);
-	}
-
-	if(mstruct.isVector()) {
-		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
-		if(CALCULATOR->getRadUnit()) {
-			for(size_t i = 0; i < mstruct.size(); i++) {
-				mstruct[i] *= CALCULATOR->getRadUnit();
-			}
-		}
-		return -1;
-	}
-
-	bool b = false, b_recalc = true;
-
-	if(eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES || eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS) {
-		if(!f && mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[2].isFunction() && mstruct[2].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI && mstruct[0].isNumber() && mstruct[0].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
-			f = mstruct[2].function();
-		}
-	} else if(mstruct.isFunction() && mstruct.size() == 1) {
-		f = mstruct.function();
-	}
+	TRIGONOMETRIC_FUNCTION_PREPARATIONS
 
 	if(mstruct.isVariable() && mstruct.variable()->id() == VARIABLE_ID_PI) {
 		mstruct = -1;
@@ -561,7 +616,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 					mstruct[0].number() = nr_frac;
 				}
 				if(nr_int.isOdd()) {
-					if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
+					mstruct *= CALCULATOR->getRadUnit();
 					mstruct.transform(this);
 					mstruct.negate();
 					b = true;
@@ -590,7 +645,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 		b = b_negate;
 		if(b_negate) {
-			if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
+			mstruct *= CALCULATOR->getRadUnit();
 			mstruct.transform(this);
 			mstruct.negate();
 		}
@@ -602,10 +657,8 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
 		if(b_recalc) {
 			mstruct = vargs[0];
-			if(CALCULATOR->getRadUnit()) {
-				mstruct.convert(CALCULATOR->getRadUnit());
-				mstruct /= CALCULATOR->getRadUnit();
-			}
+			mstruct.convert(CALCULATOR->getRadUnit());
+			mstruct /= CALCULATOR->getRadUnit();
 		}
 		mstruct.eval(eo2);
 	}
@@ -623,14 +676,12 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	if(has_predominately_negative_sign(mstruct)) {
 		negate_struct(mstruct);
 	}
-	if(CALCULATOR->getRadUnit()) {
-		if(mstruct.isVector()) {
-			for(size_t i = 0; i < mstruct.size(); i++) {
-				mstruct[i] *= CALCULATOR->getRadUnit();
-			}
-		} else {
-			mstruct *= CALCULATOR->getRadUnit();
+	if(mstruct.isVector()) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			mstruct[i] *= CALCULATOR->getRadUnit();
 		}
+	} else {
+		mstruct *= CALCULATOR->getRadUnit();
 	}
 	return -1;
 }
@@ -646,71 +697,31 @@ bool TanFunction::representsNonComplex(const MathStructure &vargs, bool) const {
 int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	if(vargs[0].isVector()) return 0;
-	if(CALCULATOR->getRadUnit()) {
-		if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getRadUnit()) {
-			mstruct = vargs[0][0];
-		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getRadUnit()) {
-			mstruct = vargs[0][1];
-		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getDegUnit()) {
-			mstruct = vargs[0][0];
-			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-			mstruct.multiply(Number(1, 180), true);
-		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getDegUnit()) {
-			mstruct = vargs[0][1];
-			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-			mstruct.multiply(Number(1, 180), true);
-		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][1] == CALCULATOR->getGraUnit()) {
-			mstruct = vargs[0][0];
-			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-			mstruct.multiply(Number(1, 200), true);
-		} else if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0] == CALCULATOR->getGraUnit()) {
-			mstruct = vargs[0][1];
-			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-			mstruct.multiply(Number(1, 200), true);
-		} else {
-			mstruct = vargs[0];
-			mstruct.convert(CALCULATOR->getRadUnit());
-			mstruct /= CALCULATOR->getRadUnit();
-		}
-	} else {
-		mstruct = vargs[0];
-	}
 
-	MathFunction *f = NULL;
-	if(eo.approximation == APPROXIMATION_APPROXIMATE && (eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES || eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS)) {
-		if(mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[0].isFunction() && mstruct[0].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI && mstruct[2].isNumber() && mstruct[2].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
-			f = mstruct[0].function();
+	if(eo.parse_options.angle_unit == ANGLE_UNIT_CUSTOM && vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0].isFunction() && vargs[0][0].size() == 1 && vargs[0][1].isUnit() && vargs[0][1].unit() == CALCULATOR->customAngleUnit()) {
+		if(vargs[0][0].function()->id() == FUNCTION_ID_ATAN) {
+			mstruct = vargs[0][0][0];
+			return 1;
+		} else if(vargs[0][0].function()->id() == FUNCTION_ID_ASIN && !vargs[0][0][0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)) {
+			MathStructure *mmul = new MathStructure(mstruct);
+			mstruct ^= nr_two;
+			mstruct.negate();
+			mstruct += nr_one;
+			mstruct ^= nr_minus_half;
+			mstruct.multiply_nocopy(mmul);
+			return 1;
+		} else if(vargs[0][0].function()->id() == FUNCTION_ID_ACOS && !vargs[0][0][0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)) {
+			MathStructure *mmul = new MathStructure(mstruct);
+			mstruct ^= nr_two;
+			mstruct.negate();
+			mstruct += nr_one;
+			mstruct ^= nr_half;
+			mstruct.divide_nocopy(mmul);
+			return 1;
 		}
 	}
 
-	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
-		EvaluationOptions eo2 = eo;
-		eo2.approximation = APPROXIMATION_EXACT;
-		CALCULATOR->beginTemporaryStopMessages();
-		mstruct.eval(eo2);
-	} else if(!f) {
-		mstruct.eval(eo);
-	}
-
-	if(mstruct.isVector()) {
-		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
-		if(CALCULATOR->getRadUnit()) {
-			for(size_t i = 0; i < mstruct.size(); i++) {
-				mstruct[i] *= CALCULATOR->getRadUnit();
-			}
-		}
-		return -1;
-	}
-
-	bool b = false, b_recalc = true;
-
-	if(eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES || eo.parse_options.angle_unit == ANGLE_UNIT_GRADIANS) {
-		if(!f && mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[2].isFunction() && mstruct[2].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI && mstruct[0].isNumber() && mstruct[0].number().equals(Number(1, eo.parse_options.angle_unit == ANGLE_UNIT_DEGREES ? 180 : 200))) {
-			f = mstruct[2].function();
-		}
-	} else if(mstruct.isFunction() && mstruct.size() == 1) {
-		f = mstruct.function();
-	}
+	TRIGONOMETRIC_FUNCTION_PREPARATIONS
 
 	if(mstruct.isVariable() && mstruct.variable()->id() == VARIABLE_ID_PI) {
 		mstruct.clear();
@@ -760,7 +771,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 					else mstruct[0].set(Number(3, 2), true);
 					mstruct.childUpdated(1);
 				}
-				if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
+				mstruct *= CALCULATOR->getRadUnit();
 				return -1;
 			} else if(nr.equals(Number(1, 4, 0))) {
 				if(b_neg) mstruct.set(-1, 1, 0);
@@ -845,7 +856,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 					nr_frac -= nr_half;
 					mstruct[0].number() = nr_half;
 					mstruct[0].number() -= nr_frac;
-					if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
+					mstruct *= CALCULATOR->getRadUnit();
 					mstruct.transform(this);
 					mstruct.negate();
 					b = true;
@@ -894,10 +905,8 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
 		if(b_recalc) {
 			mstruct = vargs[0];
-			if(CALCULATOR->getRadUnit()) {
-				mstruct.convert(CALCULATOR->getRadUnit());
-				mstruct /= CALCULATOR->getRadUnit();
-			}
+			mstruct.convert(CALCULATOR->getRadUnit());
+			mstruct /= CALCULATOR->getRadUnit();
 			mstruct.eval(eo2);
 		}
 	}
@@ -918,25 +927,56 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 
 	if(has_predominately_negative_sign(mstruct)) {
 		negate_struct(mstruct);
-		if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();
+		mstruct *= CALCULATOR->getRadUnit();
 		mstruct.transform(this);
 		mstruct.negate();
 		return 1;
 	}
 
-	if(CALCULATOR->getRadUnit()) {
-		if(mstruct.isVector()) {
-			for(size_t i = 0; i < mstruct.size(); i++) {
-				mstruct[i] *= CALCULATOR->getRadUnit();
-			}
-		} else {
-			mstruct *= CALCULATOR->getRadUnit();
+	if(mstruct.isVector()) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			mstruct[i] *= CALCULATOR->getRadUnit();
 		}
+	} else {
+		mstruct *= CALCULATOR->getRadUnit();
 	}
 
 	return -1;
 }
 
+void set_fraction_of_turn(MathStructure &mstruct, const EvaluationOptions &eo, long int num, long int den) {
+	if(DEFAULT_RADIANS(eo.parse_options.angle_unit)) {
+		if(num == 1 && den == 2) {
+			mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI));
+		} else {
+			mstruct.set(num * 2, den, 0L);
+			mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
+		}
+		if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) mstruct *= CALCULATOR->getRadUnit();
+	} else {
+		mstruct = angle_units_in_turn(eo, num, den);
+	}
+}
+void add_fraction_of_turn(MathStructure &mstruct, const EvaluationOptions &eo, long int num, long int den, bool append) {
+	if(DEFAULT_RADIANS(eo.parse_options.angle_unit)) {
+		mstruct.add(CALCULATOR->getVariableById(VARIABLE_ID_PI), append);
+		if(num != 1 || den != 2) mstruct.last() *= Number(num * 2, den);
+		if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) mstruct *= CALCULATOR->getRadUnit();
+	} else {
+		mstruct.add(angle_units_in_turn(eo, num, den), append);
+	}
+}
+void multiply_by_fraction_of_radian(MathStructure &mstruct, const EvaluationOptions &eo, long int num, long int den) {
+	if(DEFAULT_RADIANS(eo.parse_options.angle_unit)) {
+		if(num != 1 && den != 1) {
+			mstruct.multiply(Number(num, den, 0L));
+		}
+		if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) mstruct *= CALCULATOR->getRadUnit();
+	} else {
+		mstruct *= angle_units_in_turn(eo, num, den * 2);
+		mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
+	}
+}
 AsinFunction::AsinFunction() : MathFunction("asin", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
 }
@@ -958,31 +998,16 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0] == nr_half && mstruct[1].isPower() && mstruct[1][1] == nr_half) {
 		if(mstruct[1][0] == nr_two) {
-			switch(eo.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {mstruct.set(45, 1, 0); break;}
-				case ANGLE_UNIT_GRADIANS: {mstruct.set(50, 1, 0); break;}
-				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 4, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-				default: {mstruct.set(1, 4, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
-			}
+			set_fraction_of_turn(mstruct, eo, 1, 8);
 			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 			return 1;
 		} else if(mstruct[1][0] == nr_three) {
-			switch(eo.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {mstruct.set(60, 1, 0); break;}
-				case ANGLE_UNIT_GRADIANS: {mstruct.set(200, 3, 0); break;}
-				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 3, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-				default: {mstruct.set(1, 3, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
-			}
+			set_fraction_of_turn(mstruct, eo, 1, 6);
 			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 			return 1;
 		}
 	} else if(mstruct.isPower() && mstruct[1] == nr_minus_half && mstruct[0] == nr_two) {
-		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {mstruct.set(45, 1, 0); break;}
-			case ANGLE_UNIT_GRADIANS: {mstruct.set(50, 1, 0); break;}
-			case ANGLE_UNIT_RADIANS: {mstruct.set(1, 4, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-			default: {mstruct.set(1, 4, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
-		}
+		set_fraction_of_turn(mstruct, eo, 1, 8);
 		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 		return 1;
 	}
@@ -1001,12 +1026,7 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(trig_remove_i(mstruct)) {
 			mstruct.transformById(FUNCTION_ID_ASINH);
 			mstruct *= nr_one_i;
-			switch(eo.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-				case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-				case ANGLE_UNIT_RADIANS: {break;}
-				default: {if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();} break;}
-			}
+			multiply_by_fraction_of_radian(mstruct, eo, 1, 1);
 			return 1;
 		}
 		if(has_predominately_negative_sign(mstruct)) {negate_struct(mstruct); mstruct.transform(this); mstruct.negate(); return 1;}
@@ -1015,98 +1035,25 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	if(mstruct.number().isZero()) {
 		mstruct.clear();
 	} else if(mstruct.number().isOne()) {
-		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {
-				mstruct.set(90, 1, 0);
-				break;
-			}
-			case ANGLE_UNIT_GRADIANS: {
-				mstruct.set(100, 1, 0);
-				break;
-			}
-			case ANGLE_UNIT_RADIANS: {
-				mstruct.set(1, 2, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
-				break;
-			}
-			default: {
-				mstruct.set(1, 2, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
-				if(CALCULATOR->getRadUnit()) {
-					mstruct *= CALCULATOR->getRadUnit();
-				}
-			}
-		}
+		set_fraction_of_turn(mstruct, eo, 1, 4);
 	} else if(mstruct.number().isMinusOne()) {
-		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {
-				mstruct.set(-90, 1, 0);
-				break;
-			}
-			case ANGLE_UNIT_GRADIANS: {
-				mstruct.set(-100, 1, 0);
-				break;
-			}
-			case ANGLE_UNIT_RADIANS: {
-				mstruct.set(-1, 2, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
-				break;
-			}
-			default: {
-				mstruct.set(-1, 2, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
-				if(CALCULATOR->getRadUnit()) {
-					mstruct *= CALCULATOR->getRadUnit();
-				}
-			}
-		}
+		set_fraction_of_turn(mstruct, eo, -1, 4);
 	} else if(mstruct.number().equals(nr_half)) {
-		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {
-				mstruct.set(30, 1, 0);
-				break;
-			}
-			case ANGLE_UNIT_GRADIANS: {
-				mstruct.set(100, 3, 0);
-				break;
-			}
-			case ANGLE_UNIT_RADIANS: {
-				mstruct.set(1, 6, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
-				break;
-			}
-			default: {
-				mstruct.set(1, 6, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
-				if(CALCULATOR->getRadUnit()) {
-					mstruct *= CALCULATOR->getRadUnit();
-				}
-			}
-		}
+		set_fraction_of_turn(mstruct, eo, 1, 12);
 	} else {
 		Number nr = mstruct.number();
 		if(!nr.asin() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
 			if(trig_remove_i(mstruct)) {
 				mstruct.transformById(FUNCTION_ID_ASINH);
 				mstruct *= nr_one_i;
-				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-					case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-					case ANGLE_UNIT_RADIANS: {break;}
-					default: {if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();} break;}
-				}
+				multiply_by_fraction_of_radian(mstruct, eo, 1, 1);
 				return 1;
 			}
 			if(has_predominately_negative_sign(mstruct)) {mstruct.number().negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 			return -1;
 		}
 		mstruct = nr;
-		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-			case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-			case ANGLE_UNIT_RADIANS: {break;}
-			default: {if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();} break;}
-		}
+		multiply_by_fraction_of_radian(mstruct, eo, 1, 1);
 	}
 	return 1;
 
@@ -1133,31 +1080,16 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0] == nr_half && mstruct[1].isPower() && mstruct[1][1] == nr_half) {
 		if(mstruct[1][0] == nr_two) {
-			switch(eo.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {mstruct.set(45, 1, 0); break;}
-				case ANGLE_UNIT_GRADIANS: {mstruct.set(50, 1, 0); break;}
-				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 4, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-				default: {mstruct.set(1, 4, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
-			}
+			set_fraction_of_turn(mstruct, eo, 1, 8);
 			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 			return 1;
 		} else if(mstruct[1][0] == nr_three) {
-			switch(eo.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {mstruct.set(30, 1, 0); break;}
-				case ANGLE_UNIT_GRADIANS: {mstruct.set(100, 3, 0); break;}
-				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 6, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-				default: {mstruct.set(1, 6, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
-			}
+			set_fraction_of_turn(mstruct, eo, 1, 12);
 			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 			return 1;
 		}
 	} else if(mstruct.isPower() && mstruct[1] == nr_minus_half && mstruct[0] == nr_two) {
-		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {mstruct.set(45, 1, 0); break;}
-			case ANGLE_UNIT_GRADIANS: {mstruct.set(50, 1, 0); break;}
-			case ANGLE_UNIT_RADIANS: {mstruct.set(1, 4, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-			default: {mstruct.set(1, 4, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
-		}
+		set_fraction_of_turn(mstruct, eo, 1, 8);
 		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 		return 1;
 	}
@@ -1175,108 +1107,32 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	if(!mstruct.isNumber()) {
 		if(has_predominately_negative_sign(mstruct)) {
 			negate_struct(mstruct); mstruct.transformById(FUNCTION_ID_ASIN);
-			switch(eo.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {mstruct += Number(90, 1, 0); break;}
-				case ANGLE_UNIT_GRADIANS: {mstruct += Number(100, 1, 0); break;}
-				case ANGLE_UNIT_RADIANS: {mstruct += CALCULATOR->getVariableById(VARIABLE_ID_PI); mstruct.last() *= nr_half; break;}
-				default: {mstruct += CALCULATOR->getVariableById(VARIABLE_ID_PI); mstruct.last() *= nr_half; if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();} break;}
-			}
+			add_fraction_of_turn(mstruct, eo, 1, 4);
 			return 1;
 		}
 		return -1;
 	}
 	if(mstruct.number().isZero()) {
-		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {
-				mstruct.set(90, 1, 0);
-				break;
-			}
-			case ANGLE_UNIT_GRADIANS: {
-				mstruct.set(100, 1, 0);
-				break;
-			}
-			case ANGLE_UNIT_RADIANS: {
-				mstruct.set(1, 2, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
-				break;
-			}
-			default: {
-				mstruct.set(1, 2, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
-				if(CALCULATOR->getRadUnit()) {
-					mstruct *= CALCULATOR->getRadUnit();
-				}
-			}
-		}
+		set_fraction_of_turn(mstruct, eo, 1, 4);
 	} else if(mstruct.number().isOne()) {
 		mstruct.clear();
 	} else if(mstruct.number().isMinusOne()) {
-		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {
-				mstruct.set(180, 1, 0);
-				break;
-			}
-			case ANGLE_UNIT_GRADIANS: {
-				mstruct.set(200, 1, 0);
-				break;
-			}
-			case ANGLE_UNIT_RADIANS: {
-				mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI));
-				break;
-			}
-			default: {
-				mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI));
-				if(CALCULATOR->getRadUnit()) {
-					mstruct *= CALCULATOR->getRadUnit();
-				}
-			}
-		}
+		set_fraction_of_turn(mstruct, eo, 1, 2);
 	} else if(mstruct.number().equals(nr_half)) {
-		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {
-				mstruct.set(60, 1, 0);
-				break;
-			}
-			case ANGLE_UNIT_GRADIANS: {
-				mstruct.set(200, 3, 0);
-				break;
-			}
-			case ANGLE_UNIT_RADIANS: {
-				mstruct.set(1, 3, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
-				break;
-			}
-			default: {
-				mstruct.set(1, 3, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
-				if(CALCULATOR->getRadUnit()) {
-					mstruct *= CALCULATOR->getRadUnit();
-				}
-			}
-		}
+		set_fraction_of_turn(mstruct, eo, 1, 6);
 	} else {
 		Number nr = mstruct.number();
 		if(!nr.acos() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
 			if(has_predominately_negative_sign(mstruct)) {
 				mstruct.number().negate();
 				mstruct.transformById(FUNCTION_ID_ASIN);
-				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {mstruct += Number(90, 1, 0); break;}
-					case ANGLE_UNIT_GRADIANS: {mstruct += Number(100, 1, 0); break;}
-					case ANGLE_UNIT_RADIANS: {mstruct += CALCULATOR->getVariableById(VARIABLE_ID_PI); mstruct.last() *= nr_half; break;}
-					default: {mstruct += CALCULATOR->getVariableById(VARIABLE_ID_PI); mstruct.last() *= nr_half; if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();} break;}
-				}
+				add_fraction_of_turn(mstruct, eo, 1, 4);
 				return 1;
 			}
 			return -1;
 		}
 		mstruct = nr;
-		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-			case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-			case ANGLE_UNIT_RADIANS: {break;}
-			default: {if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();} break;}
-		}
+		multiply_by_fraction_of_radian(mstruct, eo, 1, 1);
 	}
 	return 1;
 
@@ -1304,60 +1160,30 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		return -1;
 	}
 	if(mstruct.isAddition() && mstruct.size() == 2 && ((mstruct[0].isPower() && mstruct[0][1].isMinusOne() && mstruct[0][0].isAddition() && mstruct[0][0].size() == 2 && mstruct[0][0][1].isOne() && mstruct[0][0][0].isPower() && mstruct[0][0][0][0] == nr_three && mstruct[0][0][0][1] == nr_half && mstruct[1].isMultiplication() && mstruct[1].size() == 3 && mstruct[1][0].isMinusOne() && mstruct[1][2] == mstruct[0] && mstruct[1][1] == mstruct[0][0][0]) || (mstruct[0].isPower() && mstruct[0][0] == nr_three && mstruct[0][1] == nr_half && mstruct[1].isNumber() && mstruct[1].number() == -2))) {
-		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {mstruct.set(-15, 1, 0); break;}
-			case ANGLE_UNIT_GRADIANS: {mstruct.set(-50, 3, 0); break;}
-			case ANGLE_UNIT_RADIANS: {mstruct.set(-1, 12, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-			default: {mstruct.set(-1, 12, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
-		}
+		set_fraction_of_turn(mstruct, eo, -1, 24);
 		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 		return 1;
 	} else if(mstruct.isAddition() && mstruct.size() == 2 && ((mstruct[0].isPower() && mstruct[0][1].isMinusOne() && mstruct[0][0].isAddition() && mstruct[0][0].size() == 2 && mstruct[0][0][1].isMinusOne() && mstruct[0][0][0].isPower() && mstruct[0][0][0][0] == nr_three && mstruct[0][0][0][1] == nr_half && mstruct[1].isMultiplication() && mstruct[1].size() == 2 && mstruct[1][1] == mstruct[0] && mstruct[1][0] == mstruct[0][0][0]) || (mstruct[0].isPower() && mstruct[0][0] == nr_three && mstruct[0][1] == nr_half && mstruct[1].isNumber() && mstruct[1].number() == 2))) {
-		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {mstruct.set(75, 1, 0); break;}
-			case ANGLE_UNIT_GRADIANS: {mstruct.set(250, 3, 0); break;}
-			case ANGLE_UNIT_RADIANS: {mstruct.set(5, 12, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-			default: {mstruct.set(5, 12, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
-		}
+		set_fraction_of_turn(mstruct, eo, 5, 24);
 		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 		return 1;
 	} else if(mstruct.isAddition() && mstruct.size() == 2 && mstruct[1].isMinusOne() && mstruct[0].isPower() && mstruct[0][1] == nr_half && mstruct[0][0] == nr_two) {
-		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {mstruct.set(45, 2, 0); break;}
-			case ANGLE_UNIT_GRADIANS: {mstruct.set(25, 1, 0); break;}
-			case ANGLE_UNIT_RADIANS: {mstruct.set(1, 8, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-			default: {mstruct.set(1, 8, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
-		}
+		set_fraction_of_turn(mstruct, eo, 1, 16);
 		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 		return 1;
 	} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isPower() && mstruct[1][1] == nr_half && mstruct[1][0] == nr_three && mstruct[0].number() == Number(1, 3)) {
 		if(mstruct[1][0] == nr_three) {
-			switch(eo.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {mstruct.set(30, 1, 0); break;}
-				case ANGLE_UNIT_GRADIANS: {mstruct.set(100, 3, 0); break;}
-				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 6, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-				default: {mstruct.set(1, 6, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
-			}
+			set_fraction_of_turn(mstruct, eo, 1, 12);
 			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 			return 1;
 		}
 	} else if(mstruct.isPower() && mstruct[1] == nr_half) {
 		if(mstruct[0] == nr_three) {
-			switch(eo.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {mstruct.set(60, 1, 0); break;}
-				case ANGLE_UNIT_GRADIANS: {mstruct.set(200, 3, 0); break;}
-				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 3, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-				default: {mstruct.set(1, 3, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
-			}
+			set_fraction_of_turn(mstruct, eo, 1, 6);
 			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 			return 1;
 		} else if(mstruct[0].isAddition() && mstruct[0].size() == 2 && mstruct[0][0].isMultiplication() && mstruct[0][0].size() == 2 && mstruct[0][0][0].isNumber() && mstruct[0][0][0].number() == -2 && mstruct[0][0][1].isPower() && mstruct[0][0][1][1] == nr_half && mstruct[0][0][1][0].isNumber() && mstruct[0][0][1][0].number() == 5 && mstruct[0][1].isNumber() && mstruct[0][1].number() == 5) {
-			switch(eo.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {mstruct.set(36, 1, 0); break;}
-				case ANGLE_UNIT_GRADIANS: {mstruct.set(40, 1, 0); break;}
-				case ANGLE_UNIT_RADIANS: {mstruct.set(1, 5, 0); mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-				default: {mstruct.set(1, 5, 0);	mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();}}
-			}
+			set_fraction_of_turn(mstruct, eo, 1, 10);
 			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 			return 1;
 		}
@@ -1377,12 +1203,7 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(trig_remove_i(mstruct)) {
 			mstruct.transformById(FUNCTION_ID_ATANH);
 			mstruct *= nr_one_i;
-			switch(eo.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-				case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-				case ANGLE_UNIT_RADIANS: {break;}
-				default: {if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();} break;}
-			}
+			multiply_by_fraction_of_radian(mstruct, eo, 1, 1);
 			return 1;
 		}
 		if(has_predominately_negative_sign(mstruct)) {negate_struct(mstruct); mstruct.transform(this); mstruct.negate(); return 1;}
@@ -1397,121 +1218,28 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		Number nr; nr.setImaginaryPart(nr_minus_inf);
 		mstruct = nr;
 	} else if(mstruct.number().isPlusInfinity()) {
-		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {
-				mstruct.set(90, 1, 0);
-				break;
-			}
-			case ANGLE_UNIT_GRADIANS: {
-				mstruct.set(100, 1, 0);
-				break;
-			}
-			case ANGLE_UNIT_RADIANS: {
-				mstruct.set(1, 2, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
-				break;
-			}
-			default: {
-				mstruct.set(1, 2, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
-				if(CALCULATOR->getRadUnit()) {
-					mstruct *= CALCULATOR->getRadUnit();
-				}
-			}
-		}
+		set_fraction_of_turn(mstruct, eo, 1, 4);
 	} else if(mstruct.number().isMinusInfinity()) {
-		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {
-				mstruct.set(-90, 1, 0);
-				break;
-			}
-			case ANGLE_UNIT_GRADIANS: {
-				mstruct.set(-100, 1, 0);
-				break;
-			}
-			case ANGLE_UNIT_RADIANS: {
-				mstruct.set(-1, 2, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
-				break;
-			}
-			default: {
-				mstruct.set(-1, 2, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
-				if(CALCULATOR->getRadUnit()) {
-					mstruct *= CALCULATOR->getRadUnit();
-				}
-			}
-		}
+		set_fraction_of_turn(mstruct, eo, -1, 4);
 	} else if(mstruct.number().isOne()) {
-		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {
-				mstruct.set(45, 1, 0);
-				break;
-			}
-			case ANGLE_UNIT_GRADIANS: {
-				mstruct.set(50, 1, 0);
-				break;
-			}
-			case ANGLE_UNIT_RADIANS: {
-				mstruct.set(1, 4, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
-				break;
-			}
-			default: {
-				mstruct.set(1, 4, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
-				if(CALCULATOR->getRadUnit()) {
-					mstruct *= CALCULATOR->getRadUnit();
-				}
-			}
-		}
+		set_fraction_of_turn(mstruct, eo, 1, 8);
 	} else if(mstruct.number().isMinusOne()) {
-		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {
-				mstruct.set(-45, 1, 0);
-				break;
-			}
-			case ANGLE_UNIT_GRADIANS: {
-				mstruct.set(-50, 1, 0);
-				break;
-			}
-			case ANGLE_UNIT_RADIANS: {
-				mstruct.set(-1, 4, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
-				break;
-			}
-			default: {
-				mstruct.set(-1, 4, 0);
-				mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
-				if(CALCULATOR->getRadUnit()) {
-					mstruct *= CALCULATOR->getRadUnit();
-				}
-			}
-		}
+		set_fraction_of_turn(mstruct, eo, -1, 8);
 	} else {
 		Number nr = mstruct.number();
 		if(!nr.atan() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
 			if(trig_remove_i(mstruct)) {
 				mstruct.transformById(FUNCTION_ID_ATANH);
 				mstruct *= nr_one_i;
-				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-					case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-					case ANGLE_UNIT_RADIANS: {break;}
-					default: {if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();} break;}
-				}
+				multiply_by_fraction_of_radian(mstruct, eo, 1, 1);
 				return 1;
 			}
 			if(has_predominately_negative_sign(mstruct)) {mstruct.number().negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 			return -1;
 		}
 		mstruct = nr;
-		switch(eo.parse_options.angle_unit) {
-			case ANGLE_UNIT_DEGREES: {mstruct.multiply_nocopy(new MathStructure(180, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-			case ANGLE_UNIT_GRADIANS: {mstruct.multiply_nocopy(new MathStructure(200, 1, 0)); mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI))); break;}
-			case ANGLE_UNIT_RADIANS: {break;}
-			default: {if(CALCULATOR->getRadUnit()) {mstruct *= CALCULATOR->getRadUnit();} break;}
-		}
+		multiply_by_fraction_of_radian(mstruct, eo, 1, 1);
+
 	}
 	return 1;
 
@@ -1778,7 +1506,7 @@ int SincFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		bool b = replace_f_interval(mstruct, eo);
 		b = replace_intervals_f(mstruct) || b;
 		MathStructure *m_sin = new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_SIN), &mstruct, NULL);
-		if(CALCULATOR->getRadUnit()) (*m_sin)[0].multiply(CALCULATOR->getRadUnit());
+		(*m_sin)[0].multiply(CALCULATOR->getRadUnit());
 		mstruct.inverse();
 		mstruct.multiply_nocopy(m_sin);
 		if(b) mstruct.eval(eo);
@@ -1818,12 +1546,7 @@ int Atan2Function::calculate(MathStructure &mstruct, const MathStructure &vargs,
 				mstruct.clear();
 				return 1;
 			} else if(cr_re == COMPARISON_RESULT_GREATER) {
-				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {mstruct.set(180, 1, 0); break;}
-					case ANGLE_UNIT_GRADIANS: {mstruct.set(200, 1, 0); break;}
-					case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
-					default: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
-				}
+				set_fraction_of_turn(mstruct, eo, 1, 2);
 				return 1;
 			}
 		} else if(cr_im == COMPARISON_RESULT_LESS || cr_im == COMPARISON_RESULT_GREATER) {
@@ -1832,12 +1555,7 @@ int Atan2Function::calculate(MathStructure &mstruct, const MathStructure &vargs,
 				if(cr_im == COMPARISON_RESULT_LESS) i_sgn = 1;
 				else if(cr_im == COMPARISON_RESULT_GREATER) i_sgn = -1;
 				if(i_sgn != 0) {
-					switch(eo.parse_options.angle_unit) {
-						case ANGLE_UNIT_DEGREES: {mstruct.set(90, 1, 0); break;}
-						case ANGLE_UNIT_GRADIANS: {mstruct.set(100, 1, 0); break;}
-						case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); mstruct.multiply(nr_half); break;}
-						default: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); mstruct.multiply(nr_half); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
-					}
+					set_fraction_of_turn(mstruct, eo, 1, 4);
 					if(i_sgn < 0) mstruct.negate();
 					return 1;
 				}
@@ -1845,22 +1563,12 @@ int Atan2Function::calculate(MathStructure &mstruct, const MathStructure &vargs,
 				if(cr_im == COMPARISON_RESULT_GREATER) {
 					mstruct.divide(m2);
 					mstruct.transformById(FUNCTION_ID_ATAN);
-					switch(eo.parse_options.angle_unit) {
-						case ANGLE_UNIT_DEGREES: {mstruct.add(-180); break;}
-						case ANGLE_UNIT_GRADIANS: {mstruct.add(-200); break;}
-						case ANGLE_UNIT_RADIANS: {mstruct.subtract(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
-						default: {MathStructure msub(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) msub *= CALCULATOR->getRadUnit(); mstruct.subtract(msub);}
-					}
+					add_fraction_of_turn(mstruct, eo, -1, 2);
 					return 1;
 				} else if(cr_im == COMPARISON_RESULT_LESS) {
 					mstruct.divide(m2);
 					mstruct.transformById(FUNCTION_ID_ATAN);
-					switch(eo.parse_options.angle_unit) {
-						case ANGLE_UNIT_DEGREES: {mstruct.add(180); break;}
-						case ANGLE_UNIT_GRADIANS: {mstruct.add(200); break;}
-						case ANGLE_UNIT_RADIANS: {mstruct.add(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
-						default: {MathStructure madd(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) madd *= CALCULATOR->getRadUnit(); mstruct.add(madd);}
-					}
+					add_fraction_of_turn(mstruct, eo, 1, 2);
 					return 1;
 				}
 			} else if(cr_re == COMPARISON_RESULT_LESS) {
@@ -1888,23 +1596,13 @@ int Atan2Function::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		if(mstruct.number().isZero()) {
 			if(!m2.number().isNonZero()) return 0;
 			if(m2.number().isNegative()) {
-				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {mstruct.set(180, 1, 0); break;}
-					case ANGLE_UNIT_GRADIANS: {mstruct.set(200, 1, 0); break;}
-					case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
-					default: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
-				}
+				set_fraction_of_turn(mstruct, eo, 1, 2);
 			} else {
 				mstruct.clear();
 			}
 		} else if(m2.number().isZero() && mstruct.number().isNonZero()) {
 			bool b_neg = mstruct.number().hasNegativeSign();
-			switch(eo.parse_options.angle_unit) {
-				case ANGLE_UNIT_DEGREES: {mstruct.set(90, 1, 0); break;}
-				case ANGLE_UNIT_GRADIANS: {mstruct.set(100, 1, 0); break;}
-				case ANGLE_UNIT_RADIANS: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); mstruct.multiply(nr_half); break;}
-				default: {mstruct.set(CALCULATOR->getVariableById(VARIABLE_ID_PI)); mstruct.multiply(nr_half); if(CALCULATOR->getRadUnit()) mstruct *= CALCULATOR->getRadUnit();}
-			}
+			set_fraction_of_turn(mstruct, eo, 1, 4);
 			if(b_neg) mstruct.negate();
 		} else if(!m2.number().isNonZero() || (!mstruct.number().isNonZero() && m2.number().isNegative())) {
 			Number nr(mstruct.number());
@@ -1913,12 +1611,7 @@ int Atan2Function::calculate(MathStructure &mstruct, const MathStructure &vargs,
 				return -3;
 			} else {
 				mstruct.set(nr);
-				switch(eo.parse_options.angle_unit) {
-					case ANGLE_UNIT_DEGREES: {mstruct /= CALCULATOR->getVariableById(VARIABLE_ID_PI); mstruct *= 180; break;}
-					case ANGLE_UNIT_GRADIANS: {mstruct /= CALCULATOR->getVariableById(VARIABLE_ID_PI); mstruct *= 200; break;}
-					case ANGLE_UNIT_RADIANS: {break;}
-					default: {mstruct *= CALCULATOR->getRadUnit();}
-				}
+				multiply_by_fraction_of_radian(mstruct, eo, 1, 1);
 				return 1;
 			}
 		} else {
@@ -1930,20 +1623,10 @@ int Atan2Function::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			if(m2.number().isNegative()) {
 				if(mstruct.number().isNegative()) {
 					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
-					switch(eo.parse_options.angle_unit) {
-						case ANGLE_UNIT_DEGREES: {mstruct.add(-180); break;}
-						case ANGLE_UNIT_GRADIANS: {mstruct.add(-200); break;}
-						case ANGLE_UNIT_RADIANS: {mstruct.subtract(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
-						default: {MathStructure msub(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) msub *= CALCULATOR->getRadUnit(); mstruct.subtract(msub);}
-					}
+					add_fraction_of_turn(mstruct, eo, -1, 2);
 				} else {
 					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
-					switch(eo.parse_options.angle_unit) {
-						case ANGLE_UNIT_DEGREES: {mstruct.add(180); break;}
-						case ANGLE_UNIT_GRADIANS: {mstruct.add(200); break;}
-						case ANGLE_UNIT_RADIANS: {mstruct.add(CALCULATOR->getVariableById(VARIABLE_ID_PI)); break;}
-						default: {MathStructure madd(CALCULATOR->getVariableById(VARIABLE_ID_PI)); if(CALCULATOR->getRadUnit()) madd *= CALCULATOR->getRadUnit(); mstruct.add(madd);}
-					}
+					add_fraction_of_turn(mstruct, eo, 1, 2);
 				}
 			} else {
 				mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
@@ -1958,26 +1641,7 @@ RadiansToDefaultAngleUnitFunction::RadiansToDefaultAngleUnitFunction() : MathFun
 }
 int RadiansToDefaultAngleUnitFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
-	switch(eo.parse_options.angle_unit) {
-		case ANGLE_UNIT_DEGREES: {
-			mstruct *= 180;
-			mstruct /= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-			break;
-		}
-		case ANGLE_UNIT_GRADIANS: {
-			mstruct *= 200;
-			mstruct /= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-			break;
-		}
-		case ANGLE_UNIT_RADIANS: {
-			break;
-		}
-		default: {
-			if(CALCULATOR->getRadUnit()) {
-				mstruct *= CALCULATOR->getRadUnit();
-			}
-		}
-	}
+	multiply_by_fraction_of_radian(mstruct, eo, 1, 1);
 	return 1;
 }
 
