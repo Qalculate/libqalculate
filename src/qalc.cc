@@ -475,7 +475,7 @@ void handle_exit() {
 			}
 		}
 	}
-	if(interactive_mode) {
+	if(interactive_mode && !load_defaults) {
 		if(save_mode_on_exit) {
 			save_mode();
 		} else {
@@ -1575,6 +1575,8 @@ bool show_set_help(string set_option = "") {
 
 	string str;
 
+	if(set_option == "parse") set_option = "syntax";
+
 	if(set_option.empty()) {
 		CHECK_IF_SCREEN_FILLED_PUTS(_("Sets the value of an option."));
 		CHECK_IF_SCREEN_FILLED_PUTS(_("Example: set base 16."));
@@ -2053,6 +2055,9 @@ bool show_object_info(string name) {
 					CHECK_IF_SCREEN_FILLED_PUTS("");
 					ParseOptions pa = evalops.parse_options; pa.base = 10;
 					str = _("Expression:"); str += " "; str += CALCULATOR->unlocalizeExpression(((UserFunction*) f)->formula(), pa);
+					for(size_t i2 = 1; i2 <= ((UserFunction*) f)->countSubfunctions(); i2++) {
+						gsub(string("\\") + i2s(i2), ((UserFunction*) f)->getSubfunction(i2), str);
+					}
 					CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				}
 				CHECK_IF_SCREEN_FILLED_PUTS("");
@@ -3292,6 +3297,7 @@ int main(int argc, char *argv[]) {
 	if(!custom_angle_unit.empty()) {
 		CALCULATOR->setCustomAngleUnit(CALCULATOR->getActiveUnit(custom_angle_unit));
 		if(!first_time && CALCULATOR->customAngleUnit()) saved_custom_angle_unit = CALCULATOR->customAngleUnit()->referenceName();
+		if(evalops.parse_options.angle_unit == ANGLE_UNIT_CUSTOM && !CALCULATOR->customAngleUnit()) evalops.parse_options.angle_unit = ANGLE_UNIT_NONE;
 	}
 
 	if(do_imaginary_j && CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") == 0) {
@@ -4739,7 +4745,6 @@ int main(int argc, char *argv[]) {
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Units"));
 
-			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("all prefixes"), "allpref"); str += b2oo(printops.use_all_prefixes, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("autoconversion"), "conv");
 			switch(evalops.auto_post_conversion) {
