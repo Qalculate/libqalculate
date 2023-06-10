@@ -2269,7 +2269,9 @@ void MathStructure::format(const PrintOptions &po) {
 	if(!po.preserve_format) {
 		if(po.place_units_separately) {
 			// a*u+b*u=(a+b)*u
-			factorizeUnits();
+			if(factorizeUnits()) {
+				flattenMultiplication(*this);
+			}
 			separate_units(*this);
 		}
 		sort(po);
@@ -3909,6 +3911,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				b_sup = false;
 				if(ips_n.power_depth < 0) ips_n.power_depth = 1;
 				else ips_n.power_depth++;
+				if(po2.base == BASE_TIME) po2.base = 10;
 				print_str += CHILD(1).print(po2, format, 0, tagtype, ips_n);
 				print_str += "</sup>";
 			} else if(!b_sup) {
