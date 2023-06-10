@@ -534,6 +534,8 @@ bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOpt
 			if(m.calculateFunctions(eo, false, do_unformat)) {
 				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type);
 				return true;
+			} else {
+				return false;
 			}
 		} else if(m.function()->id() == FUNCTION_ID_ABS && m.size() == 1) {
 			EvaluationOptions eo3 = eo;
