@@ -2355,7 +2355,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str_index += stmp.length() - 1;
 				}
 			}
-		} else if(str[str_index] == DOT_CH && !po.rpn && str_index > 0 && str_index < str.length() - 1 && is_not_number(str[str_index + 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[str_index - 1]) && (((str[str_index + 1] == POWER_CH || str[str_index + 1] == MULTIPLICATION_CH || str[str_index + 1] == DIVISION_CH) && str_index + 1 < str.length() - 1 && str[str_index + 2] != str[str_index + 1] && (is_not_number(str[str_index - 1], base) || str[str_index + 2] == LEFT_VECTOR_WRAP_CH)) || (is_not_number(str[str_index - 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[str_index + 1]))) && (str[str_index - 1] != DOT_CH || str[str_index + 1] != DOT_CH)) {
+		} else if(str[str_index] == DOT_CH && !po.rpn && str_index > 0 && str_index < str.length() - 1 && is_not_number(str[str_index + 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[str_index - 1]) && (((str[str_index + 1] == POWER_CH || str[str_index + 1] == MULTIPLICATION_CH || str[str_index + 1] == DIVISION_CH) && str_index + 1 < str.length() - 1 && str[str_index + 2] != str[str_index + 1]) || (is_not_number(str[str_index - 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[str_index + 1]))) && (str[str_index - 1] != DOT_CH || str[str_index + 1] != DOT_CH)) {
 			if(str[str_index + 1] == MULTIPLICATION_CH) str.replace(str_index, 2, "\x17");
 			else if(str[str_index + 1] == DIVISION_CH) str.replace(str_index, 2, "\x18");
 			else if(str[str_index + 1] == POWER_CH) str.replace(str_index, 2, "\x19");
@@ -4571,7 +4571,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 
 		// In adaptive parsing mode division might be handled differently depending on usage of whitespace characters, e.g. 5/2 m = (5/2)*m, 5/2m=5/(2m)
-		if(PARSING_MODE == PARSING_MODE_ADAPTIVE && (i = str.find(DIVISION_CH, 1)) != string::npos && i + 1 != str.length()) {
+		if(PARSING_MODE == PARSING_MODE_ADAPTIVE && (i = str.find_first_of(DIVISION "\x18", 1)) != string::npos && i + 1 != str.length()) {
 			while(i != string::npos && i + 1 != str.length()) {
 				bool b = false;
 				if(i > 2 && i < str.length() - 3 && str[i + 1] == ID_WRAP_LEFT_CH) {
@@ -4664,12 +4664,19 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 								i3 = i4;
 							}
 						}
-						if(i3 == str.length() - 1 || (str[i3 + 1] != POWER_CH && str[i3 + 1] != INTERNAL_UPOW_CH && str[i3 + 1] != DIVISION_CH)) {
+						if(i3 == str.length() - 1 || (str[i3 + 1] != POWER_CH && str[i3 + 1] != INTERNAL_UPOW_CH && str[i3 + 1] != DIVISION_CH && str[i3 + 1] != '\x18')) {
 							MathStructure *mstruct2 = new MathStructure();
 							str2 = str.substr(i2, i - i2);
 							parseAdd(str2, mstruct2, po);
 							str2 = str.substr(i + 1, i3 - i);
-							parseAdd(str2, mstruct2, po, OPERATION_DIVIDE);
+							if(str[i3] == '\x18') {
+								mstruct2->transform(priv->f_rdivide);
+								MathStructure *mstruct3 = new MathStructure();
+								parseAdd(str2, mstruct3, po);
+								mstruct2->addChild_nocopy(mstruct3);
+							} else {
+								parseAdd(str2, mstruct2, po, OPERATION_DIVIDE);
+							}
 							str2 = ID_WRAP_LEFT;
 							str2 += i2s(addId(mstruct2));
 							str2 += ID_WRAP_RIGHT;
@@ -4685,9 +4692,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					i2 = str.rfind(MULTIPLICATION_2_CH, i - 1);
 					if(i2 == string::npos) b = true;
 					if(b) {
-						i3 = str.find_first_of(MULTIPLICATION_2 "%" MULTIPLICATION DIVISION, i + 1);
+						i3 = str.find_first_of(MULTIPLICATION_2 "%" MULTIPLICATION DIVISION "\x17\x18", i + 1);
 						if(i3 == string::npos || i3 == i + 1 || str[i3] != MULTIPLICATION_2_CH) b = false;
-						if(i3 < str.length() + 1 && (str[i3 + 1] == '%' || str[i3 + 1] == DIVISION_CH || str[i3 + 1] == MULTIPLICATION_CH || str[i3 + 1] == POWER_CH || str[i3 + 1] == INTERNAL_UPOW_CH)) b = false;
+						if(i3 < str.length() + 1 && (str[i3 + 1] == '%' || str[i3 + 1] == DIVISION_CH || str[i3 + 1] == MULTIPLICATION_CH || str[i3 + 1] == POWER_CH || str[i3 + 1] == INTERNAL_UPOW_CH || str[i3 + 1] == '\x17' || str[i3 + 1] == '\x18')) b = false;
 					}
 					if(b) {
 						if(i3 != string::npos) str[i3] = MULTIPLICATION_CH;
@@ -4702,7 +4709,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						}
 					}
 				}
-				i = str.find(DIVISION_CH, i + 1);
+				i = str.find_first_of(DIVISION "\x18", i + 1);
 			}
 		}
 		if(PARSING_MODE == PARSING_MODE_ADAPTIVE) remove_blanks(str);
@@ -4758,7 +4765,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 
 		// Parse explicit multiplication, division, and mod
-		if((i = str.find_first_of(MULTIPLICATION DIVISION "%", 0)) != string::npos && i + 1 != str.length()) {
+		if((i = str.find_first_of(MULTIPLICATION DIVISION "%" "\x17\x18", 0)) != string::npos && i + 1 != str.length()) {
 			bool b = false, append = false;
 			int type = 0;
 			while(i != string::npos && i + 1 != str.length()) {
@@ -4769,14 +4776,14 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						return b;
 					}
 					i = 1;
-					while(i < str.length() && is_in(MULTIPLICATION DIVISION "%", str[i])) {
+					while(i < str.length() && is_in(MULTIPLICATION DIVISION "%" "\x17\x18", str[i])) {
 						i++;
 					}
 					string errstr = str.substr(0, i);
 					replace_internal_operators(errstr);
 					error(false, _("Misplaced operator(s) \"%s\" ignored"), errstr.c_str(), NULL);
 					str = str.substr(i, str.length() - i);
-					i = str.find_first_of(MULTIPLICATION DIVISION "%", 0);
+					i = str.find_first_of(MULTIPLICATION DIVISION "%" "\x17\x18", 0);
 				} else {
 					str2 = str.substr(0, i);
 					if(b) {
@@ -4823,6 +4830,36 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 								mstruct->addChild_nocopy(mstruct2);
 								break;
 							}
+							case 5: {
+								MathStructure *mstruct2 = new MathStructure();
+								parseAdd(str2, mstruct2, po);
+								MathFunction *f = getActiveFunction("cross");
+								if(f) mstruct->transform(f);
+								else mstruct->transform(STRUCT_MULTIPLICATION);
+								mstruct->addChild_nocopy(mstruct2);
+								break;
+							}
+							case 6: {
+								MathStructure *mstruct2 = new MathStructure();
+								parseAdd(str2, mstruct2, po);
+								mstruct->transform(priv->f_dot);
+								mstruct->addChild_nocopy(mstruct2);
+								break;
+							}
+							case 7: {
+								MathStructure *mstruct2 = new MathStructure();
+								parseAdd(str2, mstruct2, po);
+								mstruct->transform_nocopy(STRUCT_VECTOR, mstruct2);
+								mstruct->transform(priv->f_times);
+								break;
+							}
+							case 8: {
+								MathStructure *mstruct2 = new MathStructure();
+								parseAdd(str2, mstruct2, po);
+								mstruct->transform(priv->f_rdivide);
+								mstruct->addChild_nocopy(mstruct2);
+								break;
+							}
 							default: {
 								parseAdd(str2, mstruct, po, OPERATION_MULTIPLY, append);
 							}
@@ -4838,10 +4875,18 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					} else if(str[i] == '%') {
 						if(str[i + 1] == '%') {type = 4; i++;}
 						else type = 2;
+					} else if(str[i] == '\x15') {
+						type = 5;
+					} else if(str[i] == '\x16') {
+						type = 6;
+					} else if(str[i] == '\x17') {
+						type = 7;
+					} else if(str[i] == '\x18') {
+						type = 8;
 					} else {
 						type = 0;
 					}
-					if(is_in(MULTIPLICATION DIVISION "%", str[i + 1])) {
+					if(is_in(MULTIPLICATION DIVISION "%" "\x17\x18", str[i + 1])) {
 						i2 = 1;
 						while(i2 + i + 1 != str.length() && is_in(MULTIPLICATION DIVISION "%", str[i2 + i + 1])) {
 							i2++;
@@ -4852,7 +4897,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						i += i2;
 					}
 					str = str.substr(i + 1, str.length() - (i + 1));
-					i = str.find_first_of(MULTIPLICATION DIVISION "%", 0);
+					i = str.find_first_of(MULTIPLICATION DIVISION "%" "\x17\x18", 0);
 				}
 			}
 			if(b) {
@@ -4899,6 +4944,36 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						mstruct->addChild_nocopy(mstruct2);
 						break;
 					}
+					case 5: {
+						MathStructure *mstruct2 = new MathStructure();
+						parseAdd(str, mstruct2, po);
+						MathFunction *f = getActiveFunction("cross");
+						if(f) mstruct->transform(f);
+						else mstruct->transform(STRUCT_MULTIPLICATION);
+						mstruct->addChild_nocopy(mstruct2);
+						break;
+					}
+					case 6: {
+						MathStructure *mstruct2 = new MathStructure();
+						parseAdd(str, mstruct2, po);
+						mstruct->transform(priv->f_dot);
+						mstruct->addChild_nocopy(mstruct2);
+						break;
+					}
+					case 7: {
+						MathStructure *mstruct2 = new MathStructure();
+						parseAdd(str, mstruct2, po);
+						mstruct->transform_nocopy(STRUCT_VECTOR, mstruct2);
+						mstruct->transform(priv->f_times);
+						break;
+					}
+					case 8: {
+						MathStructure *mstruct2 = new MathStructure();
+						parseAdd(str, mstruct2, po);
+						mstruct->transform(priv->f_rdivide);
+						mstruct->addChild_nocopy(mstruct2);
+						break;
+					}
 					default: {
 						parseAdd(str, mstruct, po, OPERATION_MULTIPLY, append);
 					}
@@ -4909,7 +4984,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	}
 
 	// Parse internal operators dot product and element-wise functions
-	if((i = str.find_first_of("\x15\x16\x17\x18", 1)) != string::npos && i + 1 != str.length()) {
+	if((i = str.find_first_of("\x15\x16", 1)) != string::npos && i + 1 != str.length()) {
 		str2 = str.substr(0, i);
 		char op = str[i];
 		str = str.substr(i + 1, str.length() - (i + 1));
@@ -4921,12 +4996,8 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			if(f) mstruct->transform(f);
 			else mstruct->transform(STRUCT_MULTIPLICATION);
 			mstruct->addChild_nocopy(mstruct2);
-		} else if(op == '\x17') {
-			mstruct->transform_nocopy(STRUCT_VECTOR, mstruct2);
-			mstruct->transform(priv->f_times);
-		} else {
-			if(op == '\x18') mstruct->transform(priv->f_rdivide);
-			else mstruct->transform(priv->f_dot);
+		} else if(op == '\x16') {
+			mstruct->transform(priv->f_dot);
 			mstruct->addChild_nocopy(mstruct2);
 		}
 		return true;
@@ -5121,21 +5192,23 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 	}
 
-	if((i = str.find(POWER_CH, 1)) != string::npos && i + 1 != str.length()) {
-		// Parse exponentiation (^)
-		str2 = str.substr(0, i);
-		str = str.substr(i + 1, str.length() - (i + 1));
-		parseAdd(str2, mstruct, po);
-		parseAdd(str, mstruct, po, OPERATION_RAISE);
-	} else if((i = str.find('\x19', 1)) != string::npos && i + 1 != str.length()) {
-		// Parse element-wise exponentiation
-		str2 = str.substr(0, i);
-		str = str.substr(i + 1, str.length() - (i + 1));
-		parseAdd(str2, mstruct, po);
-		MathStructure *mstruct2 = new MathStructure();
-		parseAdd(str, mstruct2, po);
-		mstruct->transform(priv->f_power);
-		mstruct->addChild_nocopy(mstruct2);
+	if((i = str.find_first_of(POWER "\x19", 1)) != string::npos && i + 1 != str.length()) {
+		if(str[i] == '\x19') {
+			// Parse element-wise exponentiation
+			str2 = str.substr(0, i);
+			str = str.substr(i + 1, str.length() - (i + 1));
+			parseAdd(str2, mstruct, po);
+			MathStructure *mstruct2 = new MathStructure();
+			parseAdd(str, mstruct2, po);
+			mstruct->transform(priv->f_power);
+			mstruct->addChild_nocopy(mstruct2);
+		} else {
+			// Parse exponentiation (^)
+			str2 = str.substr(0, i);
+			str = str.substr(i + 1, str.length() - (i + 1));
+			parseAdd(str2, mstruct, po);
+			parseAdd(str, mstruct, po, OPERATION_RAISE);
+		}
 	} else if(!str.empty() && str[str.length() - 1] == '\x1a') {
 		str.erase(str.length() - 1, 1);
 		parseAdd(str, mstruct, po);
