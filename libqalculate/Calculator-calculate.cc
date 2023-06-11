@@ -2529,12 +2529,24 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 			}
 			provided_to = true;
 		}
-		to_struct->setUndefined();
+	}
+
+	bool test_entrywise = false;
+	size_t i = 0;
+	while(true) {
+		i = str.find(".", i + 1);
+		if(i == string::npos || i >= str.length() - 2) break;
+		if(str[i + 1] == '/' || str[i + 1] == '^' || (str[i + 1] == '*' && str[i + 2] == '*' && i < str.length() - 3) || ((unsigned char) str[i + 1] == 195 && (unsigned char) str[i + 2] == 183 && i < str.length() - 3) || ((unsigned char) str[i + 1] == 226 && (unsigned char) str[i + 2] == 136 && i < str.length() - 4 && (unsigned char) str[i + 2] == 149)) {
+			test_entrywise = true;
+			break;
+		}
 	}
 
 	MathStructure mstruct;
 	current_stage = MESSAGE_STAGE_PARSING;
 	size_t n_messages = messages.size();
+
+	if(test_entrywise) beginTemporaryStopMessages();
 
 	// perform expression parsing
 	parse(&mstruct, str, eo.parse_options);
@@ -2597,6 +2609,45 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	mstruct.eval(eo);
 
 	current_stage = MESSAGE_STAGE_UNSET;
+
+	if(test_entrywise && !aborted()) {
+		if(!mstruct.isVector() && mstruct.containsType(STRUCT_VECTOR)) {
+			string str_test = str;
+			gsub("./", "\x18", str_test);
+			gsub(".∕", "\x18", str_test);
+			gsub(".÷", "\x18", str_test);
+			gsub(".^", "\x19", str_test);
+			gsub(".**", "\x19", str_test);
+			MathStructure parsed_struct_bak;
+			MathStructure mtest;
+			if(!provided_to && !str2.empty()) {
+				str_test += "->"; str_test += str2;
+			}
+			if(!str_where.empty()) {
+				str_test += "/."; str_test += str_where;
+			}
+			if(parsed_struct) parsed_struct_bak.set(*parsed_struct);
+			vector<CalculatorMessage> prev_messages;
+			endTemporaryStopMessages(false, &prev_messages);
+			beginTemporaryStopMessages();
+			mtest = calculate(str_test, eo, parsed_struct, to_struct, make_to_division);
+			if(aborted() || (!mtest.isVector() && mtest.containsType(STRUCT_VECTOR))) {
+				endTemporaryStopMessages();
+				if(parsed_struct) parsed_struct->set(parsed_struct_bak);
+				addMessages(&prev_messages);
+			} else {
+				endTemporaryStopMessages(true);
+				for(size_t i = 0; i < vars.size(); i++) {
+					vars[i]->destroy();
+				}
+				return mtest;
+			}
+		} else {
+			endTemporaryStopMessages(true);
+		}
+	}
+
+	if(to_struct) to_struct->setUndefined();
 
 	if(!aborted()) {
 		// do unit conversion
