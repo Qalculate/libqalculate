@@ -212,7 +212,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 					bool b2 = mstruct.isMatrix();
 					if(!b1 && !representsNonMatrix()) return -1;
 					if(!b2 && !mstruct.representsNonMatrix()) return -1;
-					if(b2 && mstruct.columns() == 1 && (!b1 || SIZE == mstruct.size())) {
+					if(b2 && mstruct.columns() == 1 && ((!b1 && SIZE > 0) || (b1 && SIZE == mstruct.size()))) {
 						if(!b1) {
 							// row vector + column vector = matrix
 							transform(STRUCT_VECTOR);
@@ -232,7 +232,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 							}
 						}
 						return 1;
-					} else if(b1 && columns() == 1 && (!b2 || SIZE == mstruct.size())) {
+					} else if(b1 && columns() == 1 && ((!b2 && mstruct.size() > 0) || (b2 && SIZE == mstruct.size()))) {
 						if(!b2) {
 							for(size_t i = 0; i < SIZE; i++) {
 								for(size_t i2 = 1; i2 < mstruct.size(); i2++) {
