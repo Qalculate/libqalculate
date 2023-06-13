@@ -4790,25 +4790,6 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						switch(type) {
 							case 1: {
 								parseAdd(str2, mstruct, po, OPERATION_DIVIDE, append);
-								if(PARSING_MODE == PARSING_MODE_ADAPTIVE && !str2.empty() && str2[0] != LEFT_PARENTHESIS_CH) {
-									MathStructure *mden = NULL, *mnum = NULL;
-									if(po.preserve_format && mstruct->isDivision()) {
-										mden = &(*mstruct)[1];
-										mnum = &(*mstruct)[0];
-									} else if(!po.preserve_format && mstruct->isMultiplication() && mstruct->size() >= 2 && mstruct->last().isPower()) {
-										mden = &mstruct->last()[0];
-										mnum = &(*mstruct)[mstruct->size() - 2];
-									}
-									while(mnum && (mnum->isNegate() || mnum->isAddition() || mnum->isMultiplication()) && mnum->size() > 0) mnum = &mnum->last();
-									if(mden && mden->isMultiplication() && (mden->size() != 2 || !(*mden)[0].isNumber() || !(*mden)[1].isUnit_exp() || !mnum->isUnit_exp())) {
-										bool b_warn = str2[0] != ID_WRAP_LEFT_CH;
-										if(!b_warn && str2.length() > 2) {
-											size_t i3 = str2.find_first_not_of(NUMBERS, 1);
-											b_warn = (i3 != string::npos && i3 != str2.length() - 1);
-										}
-										if(b_warn) error(false, MESSAGE_CATEGORY_IMPLICIT_MULTIPLICATION, _("The expression is ambiguous (be careful when combining implicit multiplication and division)."), NULL);
-									}
-								}
 								break;
 							}
 							case 2: {
@@ -4830,38 +4811,59 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 								mstruct->addChild_nocopy(mstruct2);
 								break;
 							}
-							case 5: {
-								MathStructure *mstruct2 = new MathStructure();
-								parseAdd(str2, mstruct2, po);
-								MathFunction *f = getActiveFunction("cross");
-								if(f) mstruct->transform(f);
-								else mstruct->transform(STRUCT_MULTIPLICATION);
-								mstruct->addChild_nocopy(mstruct2);
-								break;
-							}
-							case 6: {
-								MathStructure *mstruct2 = new MathStructure();
-								parseAdd(str2, mstruct2, po);
-								mstruct->transform(priv->f_dot);
-								mstruct->addChild_nocopy(mstruct2);
-								break;
-							}
+#define USE_ENTRYWISE_OPERATION (((mstruct->isNumber() && !mstruct->inParentheses()) || (append && mstruct->isMultiplication() && mstruct->last().isNumber() && !mstruct->last().inParentheses() && mstruct->representsNumber() && !mstruct->containsUnknowns())) && mstruct2->representsNumber(true) && !mstruct2->containsUnknowns())
 							case 7: {
 								MathStructure *mstruct2 = new MathStructure();
 								parseAdd(str2, mstruct2, po);
-								mstruct->transform_nocopy(STRUCT_VECTOR, mstruct2);
-								mstruct->transform(priv->f_times);
+								if(USE_ENTRYWISE_OPERATION) {
+									mstruct->multiply_nocopy(mstruct2, append);
+								} else if(append && mstruct->isFunction() && mstruct->function()->id() == FUNCTION_ID_ENTRYWISE_MULTIPLICATION && mstruct->size() == 1 && (*mstruct)[0].isVector()) {
+									(*mstruct)[0].addChild_nocopy(mstruct2);
+								} else {
+									mstruct->transform_nocopy(STRUCT_VECTOR, mstruct2);
+									mstruct->transform(priv->f_times);
+								}
 								break;
 							}
 							case 8: {
 								MathStructure *mstruct2 = new MathStructure();
 								parseAdd(str2, mstruct2, po);
-								mstruct->transform(priv->f_rdivide);
-								mstruct->addChild_nocopy(mstruct2);
+								if(USE_ENTRYWISE_OPERATION) {
+									if(po.preserve_format) {
+										mstruct->transform_nocopy(STRUCT_DIVISION, mstruct2);
+									} else {
+										mstruct->divide_nocopy(mstruct2);
+									}
+								} else {
+									mstruct->transform(priv->f_rdivide);
+									mstruct->addChild_nocopy(mstruct2);
+								}
 								break;
 							}
 							default: {
 								parseAdd(str2, mstruct, po, OPERATION_MULTIPLY, append);
+							}
+						}
+						if((type == 1 || type == 8) && PARSING_MODE == PARSING_MODE_ADAPTIVE && !str2.empty() && str2[0] != LEFT_PARENTHESIS_CH) {
+							MathStructure *mden = NULL, *mnum = NULL;
+							if(po.preserve_format && mstruct->isDivision()) {
+								mden = &(*mstruct)[1];
+								mnum = &(*mstruct)[0];
+							} else if(!po.preserve_format && mstruct->isMultiplication() && mstruct->size() >= 2 && mstruct->last().isPower()) {
+								mden = &mstruct->last()[0];
+								mnum = &(*mstruct)[mstruct->size() - 2];
+							} else if(type == 8 && mstruct->isFunction() && mstruct->size() == 2 && mstruct->function()->id() == FUNCTION_ID_ENTRYWISE_DIVISION) {
+								mden = &(*mstruct)[1];
+								mnum = &(*mstruct)[0];
+							}
+							while(mnum && (mnum->isNegate() || mnum->isAddition() || mnum->isMultiplication()) && mnum->size() > 0) mnum = &mnum->last();
+							if(mden && mden->isMultiplication() && (mden->size() != 2 || !(*mden)[0].isNumber() || !(*mden)[1].isUnit_exp() || !mnum->isUnit_exp())) {
+								bool b_warn = str2[0] != ID_WRAP_LEFT_CH;
+								if(!b_warn && str2.length() > 2) {
+									size_t i3 = str2.find_first_not_of(NUMBERS, 1);
+									b_warn = (i3 != string::npos && i3 != str2.length() - 1);
+								}
+								if(b_warn) error(false, MESSAGE_CATEGORY_IMPLICIT_MULTIPLICATION, _("The expression is ambiguous (be careful when combining implicit multiplication and division)."), NULL);
 							}
 						}
 						append = true;
@@ -4875,10 +4877,6 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					} else if(str[i] == '%') {
 						if(str[i + 1] == '%') {type = 4; i++;}
 						else type = 2;
-					} else if(str[i] == '\x15') {
-						type = 5;
-					} else if(str[i] == '\x16') {
-						type = 6;
 					} else if(str[i] == '\x17') {
 						type = 7;
 					} else if(str[i] == '\x18') {
@@ -4904,25 +4902,6 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				switch(type) {
 					case 1: {
 						parseAdd(str, mstruct, po, OPERATION_DIVIDE, append);
-						if(PARSING_MODE == PARSING_MODE_ADAPTIVE && !str.empty() && str[0] != LEFT_PARENTHESIS_CH) {
-							MathStructure *mden = NULL, *mnum = NULL;
-							if(po.preserve_format && mstruct->isDivision()) {
-								mden = &(*mstruct)[1];
-								mnum = &(*mstruct)[0];
-							} else if(!po.preserve_format && mstruct->isMultiplication() && mstruct->size() >= 2 && mstruct->last().isPower()) {
-								mden = &mstruct->last()[0];
-								mnum = &(*mstruct)[mstruct->size() - 2];
-							}
-							while(mnum && (mnum->isNegate() || mnum->isAddition() || mnum->isMultiplication()) && mnum->size() > 0) mnum = &mnum->last();
-							if(mden && mden->isMultiplication() && (mden->size() != 2 || !(*mden)[0].isNumber() || !(*mden)[1].isUnit_exp() || !mnum->isUnit_exp())) {
-								bool b_warn = str[0] != ID_WRAP_LEFT_CH;
-								if(!b_warn && str.length() > 2) {
-									size_t i3 = str.find_first_not_of(NUMBERS, 1);
-									b_warn = (i3 != string::npos && i3 != str.length() - 1);
-								}
-								if(b_warn) error(false, MESSAGE_CATEGORY_IMPLICIT_MULTIPLICATION, _("The expression is ambiguous (be careful when combining implicit multiplication and division)."), NULL);
-							}
-						}
 						break;
 					}
 					case 2: {
@@ -4944,38 +4923,58 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						mstruct->addChild_nocopy(mstruct2);
 						break;
 					}
-					case 5: {
-						MathStructure *mstruct2 = new MathStructure();
-						parseAdd(str, mstruct2, po);
-						MathFunction *f = getActiveFunction("cross");
-						if(f) mstruct->transform(f);
-						else mstruct->transform(STRUCT_MULTIPLICATION);
-						mstruct->addChild_nocopy(mstruct2);
-						break;
-					}
-					case 6: {
-						MathStructure *mstruct2 = new MathStructure();
-						parseAdd(str, mstruct2, po);
-						mstruct->transform(priv->f_dot);
-						mstruct->addChild_nocopy(mstruct2);
-						break;
-					}
 					case 7: {
 						MathStructure *mstruct2 = new MathStructure();
 						parseAdd(str, mstruct2, po);
-						mstruct->transform_nocopy(STRUCT_VECTOR, mstruct2);
-						mstruct->transform(priv->f_times);
+						if(USE_ENTRYWISE_OPERATION) {
+							mstruct->multiply_nocopy(mstruct2, append);
+						} else if(append && mstruct->isFunction() && mstruct->function()->id() == FUNCTION_ID_ENTRYWISE_MULTIPLICATION && mstruct->size() == 1 && (*mstruct)[0].isVector()) {
+							(*mstruct)[0].addChild_nocopy(mstruct2);
+						} else {
+							mstruct->transform_nocopy(STRUCT_VECTOR, mstruct2);
+							mstruct->transform(priv->f_times);
+						}
 						break;
 					}
 					case 8: {
 						MathStructure *mstruct2 = new MathStructure();
 						parseAdd(str, mstruct2, po);
-						mstruct->transform(priv->f_rdivide);
-						mstruct->addChild_nocopy(mstruct2);
+						if(USE_ENTRYWISE_OPERATION) {
+							if(po.preserve_format) {
+								mstruct->transform_nocopy(STRUCT_DIVISION, mstruct2);
+							} else {
+								mstruct->divide_nocopy(mstruct2);
+							}
+						} else {
+							mstruct->transform(priv->f_rdivide);
+							mstruct->addChild_nocopy(mstruct2);
+						}
 						break;
 					}
 					default: {
 						parseAdd(str, mstruct, po, OPERATION_MULTIPLY, append);
+					}
+				}
+				if((type == 1 || type == 8) && PARSING_MODE == PARSING_MODE_ADAPTIVE && !str.empty() && str[0] != LEFT_PARENTHESIS_CH) {
+					MathStructure *mden = NULL, *mnum = NULL;
+					if(po.preserve_format && mstruct->isDivision()) {
+						mden = &(*mstruct)[1];
+						mnum = &(*mstruct)[0];
+					} else if(!po.preserve_format && mstruct->isMultiplication() && mstruct->size() >= 2 && mstruct->last().isPower()) {
+						mden = &mstruct->last()[0];
+						mnum = &(*mstruct)[mstruct->size() - 2];
+					} else if(type == 8 && mstruct->isFunction() && mstruct->size() == 2 && mstruct->function()->id() == FUNCTION_ID_ENTRYWISE_DIVISION) {
+						mden = &(*mstruct)[1];
+						mnum = &(*mstruct)[0];
+					}
+					while(mnum && (mnum->isNegate() || mnum->isAddition() || mnum->isMultiplication()) && mnum->size() > 0) mnum = &mnum->last();
+					if(mden && mden->isMultiplication() && (mden->size() != 2 || !(*mden)[0].isNumber() || !(*mden)[1].isUnit_exp() || !mnum->isUnit_exp())) {
+						bool b_warn = str[0] != ID_WRAP_LEFT_CH;
+						if(!b_warn && str.length() > 2) {
+							size_t i3 = str.find_first_not_of(NUMBERS, 1);
+							b_warn = (i3 != string::npos && i3 != str.length() - 1);
+						}
+						if(b_warn) error(false, MESSAGE_CATEGORY_IMPLICIT_MULTIPLICATION, _("The expression is ambiguous (be careful when combining implicit multiplication and division)."), NULL);
 					}
 				}
 				return true;
@@ -5200,8 +5199,12 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			parseAdd(str2, mstruct, po);
 			MathStructure *mstruct2 = new MathStructure();
 			parseAdd(str, mstruct2, po);
-			mstruct->transform(priv->f_power);
-			mstruct->addChild_nocopy(mstruct2);
+			if(!mstruct->inParentheses() && mstruct->isNumber() && mstruct2->representsNumber(true) && !mstruct2->containsUnknowns()) {
+				mstruct->raise_nocopy(mstruct2);
+			} else {
+				mstruct->transform(priv->f_power);
+				mstruct->addChild_nocopy(mstruct2);
+			}
 		} else {
 			// Parse exponentiation (^)
 			str2 = str.substr(0, i);

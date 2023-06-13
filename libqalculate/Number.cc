@@ -6039,7 +6039,10 @@ bool Number::airy() {
 }
 bool Number::besselj(const Number &o) {
 	if(hasImaginaryPart() || !o.isInteger()) return false;
-	if(isZero()) return true;
+	if(isZero()) {
+		set(1, 1, 0, true);
+		return true;
+	}
 	if(isInfinite()) {
 		clear(true);
 		return true;

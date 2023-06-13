@@ -655,7 +655,7 @@
     </builtin_unit>
     <builtin_unit name="LKR">
       <_title>Sri Lankan Rupee</_title>
-      <_names>a-cr:LKR,au:&#x0BF9;</_names>
+      <_names>a-cr:LKR,aou:&#x0BF9;</_names>
       <_countries>Sri Lanka</_countries>
     </builtin_unit>
     <builtin_unit name="SDG">
