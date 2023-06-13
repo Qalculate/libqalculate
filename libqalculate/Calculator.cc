@@ -638,11 +638,12 @@ Calculator::~Calculator() {
 	clearRPNStack();
 	for(unordered_map<Unit*, MathStructure*>::iterator it = priv->composite_unit_base.begin(); it != priv->composite_unit_base.end(); ++it) it->second->unref();
 	for(unordered_map<size_t, MathStructure*>::iterator it = priv->id_structs.begin(); it != priv->id_structs.end(); ++it) it->second->unref();
-	for(size_t i = 0; i < functions.size(); i++) delete functions[i];
-	for(size_t i = 0; i < variables.size(); i++) delete variables[i];
-	for(size_t i = 0; i < units.size(); i++) delete units[i];
+#define REMOVE_EXPRESSION_ITEM(o) o->setRegistered(false); o->destroy();
+	for(size_t i = 0; i < functions.size(); i++) {REMOVE_EXPRESSION_ITEM(functions[i])}
+	for(size_t i = 0; i < variables.size(); i++) {REMOVE_EXPRESSION_ITEM(variables[i])}
+	for(size_t i = 0; i < units.size(); i++) {REMOVE_EXPRESSION_ITEM(units[i])}
 	for(size_t i = 0; i < prefixes.size(); i++) delete prefixes[i];
-	if(v_C) delete v_C;
+	if(v_C) {REMOVE_EXPRESSION_ITEM(v_C)}
 	if(decimal_null_prefix) delete decimal_null_prefix;
 	if(binary_null_prefix) delete binary_null_prefix;
 	if(default_assumptions) delete default_assumptions;

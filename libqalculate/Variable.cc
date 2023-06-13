@@ -538,23 +538,18 @@ DynamicVariable::DynamicVariable(string cat_, string name_, string title_, bool 
 	setChanged(false);
 }
 DynamicVariable::DynamicVariable(const DynamicVariable *variable) {
-	mstruct = NULL; mstruct_alt = NULL;
 	set(variable);
 	setApproximate();
 	setChanged(false);
 	always_recalculate = false;
 }
 DynamicVariable::DynamicVariable() : KnownVariable() {
-	mstruct = NULL; mstruct_alt = NULL;
 	calculated_precision = -1;
 	setApproximate();
 	setChanged(false);
 	always_recalculate = false;
 }
-DynamicVariable::~DynamicVariable() {
-	if(mstruct) delete mstruct;
-	if(mstruct_alt) delete mstruct_alt;
-}
+DynamicVariable::~DynamicVariable() {}
 void DynamicVariable::set(const ExpressionItem *item) {
 	ExpressionItem::set(item);
 }
