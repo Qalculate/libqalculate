@@ -426,7 +426,7 @@ Unit *find_ounce(const MathStructure &m) {
 }
 
 bool contains_angle_returning_function(const MathStructure &m) {
-	if(m.isFunction() && (m.function()->id() == FUNCTION_ID_ATAN || m.function()->id() == FUNCTION_ID_ACOS || m.function()->id() == FUNCTION_ID_ASIN || m.function()->id() == FUNCTION_ID_ARG || m.function()->id() == FUNCTION_ID_RADIANS_TO_DEFAULT_ANGLE_UNIT)) return true;
+	if(m.isFunction() && (m.function()->id() == FUNCTION_ID_ATAN || m.function()->id() == FUNCTION_ID_ACOS || m.function()->id() == FUNCTION_ID_ASIN || m.function()->id() == FUNCTION_ID_ARG || m.function()->id() == FUNCTION_ID_ATAN2 || m.function()->id() == FUNCTION_ID_RADIANS_TO_DEFAULT_ANGLE_UNIT)) return true;
 	if(m.isFunction() && m.function()->subtype() == SUBTYPE_USER_FUNCTION) {
 		UserFunction *f = (UserFunction*) m.function();
 		if(f->formula().find("arctan") != string::npos || f->formula().find("arccos") != string::npos || f->formula().find("arcsin") != string::npos || f->formula().find("atan(") != string::npos || f->formula().find("acos(") != string::npos || f->formula().find("asin(") != string::npos) return true;

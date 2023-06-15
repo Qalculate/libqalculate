@@ -150,12 +150,6 @@ bool trig_remove_i(MathStructure &mstruct) {
 	return false;
 }
 
-SinFunction::SinFunction() : MathFunction("sin", 1) {
-	Argument *arg = new AngleArgument();
-	arg->setHandleVector(true);
-	setArgumentDefinition(1, arg);
-}
-
 MathStructure angle_units_in_turn(const EvaluationOptions &eo, long int num, long int den, bool recip) {
 	AngleUnit au = eo.parse_options.angle_unit;
 	if(au == ANGLE_UNIT_CUSTOM && !CALCULATOR->customAngleUnit()) au = ANGLE_UNIT_NONE;
@@ -256,8 +250,23 @@ void convert_to_radians(const MathStructure &mpre, MathStructure &mstruct, const
 	}
 	if(!b) {
 		mstruct = mpre;
-		mstruct.convert(CALCULATOR->getRadUnit());
-		if(HAS_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit) || mstruct.contains(CALCULATOR->getRadUnit())) mstruct /= CALCULATOR->getRadUnit();
+		if(HAS_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit) || contains_angle_unit(mstruct, eo.parse_options, 2) != 0) {
+			mstruct.convert(CALCULATOR->getRadUnit());
+			mstruct /= CALCULATOR->getRadUnit();
+		}
+	}
+}
+
+void fix_leftover_angle_unit(MathStructure &mstruct, const EvaluationOptions &eo) {
+	if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && ((mstruct[1].isUnit() && mstruct[1].unit()->baseUnit() == CALCULATOR->getRadUnit() && mstruct[1].unit()->baseExponent() == 1) || (mstruct[1].isPower() && mstruct[1][0].isUnit() && mstruct[1][0].unit()->baseUnit() == CALCULATOR->getRadUnit() && mstruct[1][0].unit()->baseExponent() == 1 && mstruct[1][1].isMinusOne()))) {
+		if((mstruct[1].isPower() && mstruct[1][0].unit() == CALCULATOR->getRadUnit()) || (mstruct[1].isUnit() && mstruct[1].unit() == CALCULATOR->getRadUnit())) {
+			mstruct.setToChild(1, true);
+		} else {
+			mstruct.convert(CALCULATOR->getRadUnit());
+			if(mstruct[1].isPower()) mstruct *= CALCULATOR->getRadUnit();
+			else mstruct /= CALCULATOR->getRadUnit();
+			mstruct.eval(eo);
+		}
 	}
 }
 
@@ -298,6 +307,11 @@ void convert_to_radians(const MathStructure &mpre, MathStructure &mstruct, const
 		f = mstruct.function();\
 	}
 
+SinFunction::SinFunction() : MathFunction("sin", 1) {
+	Argument *arg = new AngleArgument();
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
+}
 bool SinFunction::representsNumber(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && ((allow_units && (vargs[0].representsNumber(true) || vargs[0].representsNonComplex(true))) || (!allow_units && is_number_angle_value(vargs[0], true)));}
 bool SinFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && (is_real_angle_value(vargs[0]) || is_infinite_angle_value(vargs[0]));}
 bool SinFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex(true);}
@@ -461,6 +475,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mstruct.eval(eo2);
 	}
 
+	fix_leftover_angle_unit(mstruct, eo);
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number());
 		if(nr.sin() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
@@ -482,7 +497,6 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		mstruct.negate();
 		return 1;
 	}
-
 
 	if(mstruct.isVector()) {
 		for(size_t i = 0; i < mstruct.size(); i++) {
@@ -662,6 +676,8 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 		mstruct.eval(eo2);
 	}
+
+	fix_leftover_angle_unit(mstruct, eo);
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number());
 		if(nr.cos() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
@@ -703,6 +719,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct = vargs[0][0][0];
 			return 1;
 		} else if(vargs[0][0].function()->id() == FUNCTION_ID_ASIN && !vargs[0][0][0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)) {
+			mstruct = vargs[0][0][0];
 			MathStructure *mmul = new MathStructure(mstruct);
 			mstruct ^= nr_two;
 			mstruct.negate();
@@ -711,6 +728,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct.multiply_nocopy(mmul);
 			return 1;
 		} else if(vargs[0][0].function()->id() == FUNCTION_ID_ACOS && !vargs[0][0][0].containsInterval(eo.approximation == APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation != APPROXIMATION_EXACT, eo.approximation == APPROXIMATION_EXACT ? 1 : 0, true)) {
+			mstruct = vargs[0][0][0];
 			MathStructure *mmul = new MathStructure(mstruct);
 			mstruct ^= nr_two;
 			mstruct.negate();
@@ -911,6 +929,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 	}
 
+	fix_leftover_angle_unit(mstruct, eo);
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number());
 		if(nr.tan() && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
@@ -1034,6 +1053,7 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	if(mstruct.number().isZero()) {
 		mstruct.clear();
+		if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) mstruct *= CALCULATOR->getRadUnit();
 	} else if(mstruct.number().isOne()) {
 		set_fraction_of_turn(mstruct, eo, 1, 4);
 	} else if(mstruct.number().isMinusOne()) {
@@ -1116,6 +1136,7 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		set_fraction_of_turn(mstruct, eo, 1, 4);
 	} else if(mstruct.number().isOne()) {
 		mstruct.clear();
+		if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) mstruct *= CALCULATOR->getRadUnit();
 	} else if(mstruct.number().isMinusOne()) {
 		set_fraction_of_turn(mstruct, eo, 1, 2);
 	} else if(mstruct.number().equals(nr_half)) {
@@ -1211,12 +1232,15 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	if(mstruct.number().isZero()) {
 		mstruct.clear();
+		if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) mstruct *= CALCULATOR->getRadUnit();
 	} else if(eo.allow_infinite && mstruct.number().isI()) {
 		Number nr; nr.setImaginaryPart(nr_plus_inf);
 		mstruct = nr;
+		if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) mstruct *= CALCULATOR->getRadUnit();
 	} else if(eo.allow_infinite && mstruct.number().isMinusI()) {
 		Number nr; nr.setImaginaryPart(nr_minus_inf);
 		mstruct = nr;
+		if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) mstruct *= CALCULATOR->getRadUnit();
 	} else if(mstruct.number().isPlusInfinity()) {
 		set_fraction_of_turn(mstruct, eo, 1, 4);
 	} else if(mstruct.number().isMinusInfinity()) {
@@ -1544,6 +1568,7 @@ int Atan2Function::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		if(cr_im == COMPARISON_RESULT_EQUAL) {
 			if(cr_re == COMPARISON_RESULT_LESS) {
 				mstruct.clear();
+				if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) mstruct *= CALCULATOR->getRadUnit();
 				return 1;
 			} else if(cr_re == COMPARISON_RESULT_GREATER) {
 				set_fraction_of_turn(mstruct, eo, 1, 2);
@@ -1599,6 +1624,7 @@ int Atan2Function::calculate(MathStructure &mstruct, const MathStructure &vargs,
 				set_fraction_of_turn(mstruct, eo, 1, 2);
 			} else {
 				mstruct.clear();
+				if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) mstruct *= CALCULATOR->getRadUnit();
 			}
 		} else if(m2.number().isZero() && mstruct.number().isNonZero()) {
 			bool b_neg = mstruct.number().hasNegativeSign();

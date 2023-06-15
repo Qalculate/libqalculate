@@ -3989,7 +3989,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					for(size_t i = 0; i < mstruct.size(); i++) {
 						if(i == 0) mthis.raise(mstruct[i]);
 						// exponent factor must be real and, if base is zero, positive
-						if(!mstruct[i].representsReal(true) || (isZero() && !mstruct[i].representsPositive(true))) continue;
+						if(!mstruct[i].representsReal() || (isZero() && !mstruct[i].representsPositive())) continue;
 						if(i > 0) mthis[1] = mstruct[i];
 						EvaluationOptions eo2 = eo;
 						eo2.split_squares = false;

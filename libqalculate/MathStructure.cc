@@ -2453,14 +2453,27 @@ StructureType MathStructure::type() const {
 	return m_type;
 }
 
-bool contains_angle_unit(const MathStructure &m, const ParseOptions &po) {
-	if(m.isUnit() && m.unit()->baseUnit() == CALCULATOR->getRadUnit()->baseUnit() && m.unit()->baseExponent() == 1) return true;
-	if(m.isVariable() && m.variable()->isKnown()) return contains_angle_unit(((KnownVariable*) m.variable())->get(), po);
-	if(m.isFunction()) return NO_DEFAULT_ANGLE_UNIT(po.angle_unit) && (m.function()->id() == FUNCTION_ID_ASIN || m.function()->id() == FUNCTION_ID_ACOS || m.function()->id() == FUNCTION_ID_ATAN);
-	for(size_t i = 0; i < m.size(); i++) {
-		if(contains_angle_unit(m[i], po)) return true;
+int contains_angle_unit(const MathStructure &m, const ParseOptions &po, int check_functions) {
+	if(m.isUnit() && m.unit()->baseUnit() == CALCULATOR->getRadUnit()->baseUnit() && m.unit()->baseExponent() == 1) return 1;
+	if(m.isVariable() && m.variable()->isKnown()) return contains_angle_unit(((KnownVariable*) m.variable())->get(), po, check_functions);
+	if(m.isFunction()) {
+		if(m.function()->id() == FUNCTION_ID_ASIN || m.function()->id() == FUNCTION_ID_ACOS || m.function()->id() == FUNCTION_ID_ATAN || m.function()->id() == FUNCTION_ID_ATAN2 || m.function()->id() == FUNCTION_ID_ARG) {
+			if(NO_DEFAULT_ANGLE_UNIT(po.angle_unit)) return 1;
+			return 0;
+		}
+		if(!check_functions) return 0;
+		if(m.containsType(STRUCT_UNIT, false, true, true) == 0) return 0;
+		if(check_functions > 1 && m.size() == 0) return -1;
 	}
-	return false;
+	int ret = 0;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(!m.isFunction() || !m.function()->getArgumentDefinition(i + 1) || m.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) {
+			int ret_i = contains_angle_unit(m[i], po, check_functions);
+			if(ret_i != 0) ret = ret_i;
+			if(ret_i > 0) break;
+		}
+	}
+	return ret;
 }
 
 int MathStructure::contains(const MathStructure &mstruct, bool structural_only, bool check_variables, bool check_functions, bool loose_equals) const {
@@ -2782,8 +2795,8 @@ int MathStructure::containsType(StructureType mtype, bool structural_only, bool 
 			if(mtype == STRUCT_UNIT) {
 				if(o_function->id() == FUNCTION_ID_STRIP_UNITS) return 0;
 				if(o_function->subtype() == SUBTYPE_USER_FUNCTION || o_function->subtype() == SUBTYPE_DATA_SET || o_function->id() == FUNCTION_ID_REGISTER || o_function->id() == FUNCTION_ID_STACK || o_function->id() == FUNCTION_ID_LOAD) return -1;
-				// (NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit) && (o_function->id() == FUNCTION_ID_ASIN || o_function->id() == FUNCTION_ID_ACOS || o_function->id() == FUNCTION_ID_ATAN || o_function->id() == FUNCTION_ID_RADIANS_TO_DEFAULT_ANGLE_UNIT))
-				if(o_function->id() == FUNCTION_ID_LOG || o_function->id() == FUNCTION_ID_LOGN || o_function->id() == FUNCTION_ID_ARG || o_function->id() == FUNCTION_ID_GAMMA || o_function->id() == FUNCTION_ID_BETA || o_function->id() == FUNCTION_ID_FACTORIAL || o_function->id() == FUNCTION_ID_BESSELJ || o_function->id() == FUNCTION_ID_BESSELY || o_function->id() == FUNCTION_ID_ERF || o_function->id() == FUNCTION_ID_ERFI || o_function->id() == FUNCTION_ID_ERFC || o_function->id() == FUNCTION_ID_LOGINT || o_function->id() == FUNCTION_ID_POLYLOG || o_function->id() == FUNCTION_ID_EXPINT || o_function->id() == FUNCTION_ID_SININT || o_function->id() == FUNCTION_ID_COSINT || o_function->id() == FUNCTION_ID_SINHINT || o_function->id() == FUNCTION_ID_COSHINT || o_function->id() == FUNCTION_ID_FRESNEL_C || o_function->id() == FUNCTION_ID_FRESNEL_S || o_function->id() == FUNCTION_ID_SIGNUM || o_function->id() == FUNCTION_ID_HEAVISIDE || o_function->id() == FUNCTION_ID_LAMBERT_W || o_function->id() == FUNCTION_ID_SINC || o_function->id() == FUNCTION_ID_SIN || o_function->id() == FUNCTION_ID_COS || o_function->id() == FUNCTION_ID_TAN || o_function->id() == FUNCTION_ID_SINH || o_function->id() == FUNCTION_ID_COSH || o_function->id() == FUNCTION_ID_TANH || o_function->id() == FUNCTION_ID_ASINH || o_function->id() == FUNCTION_ID_ACOSH || o_function->id() == FUNCTION_ID_ATANH || o_function->id() == FUNCTION_ID_ASIN || o_function->id() == FUNCTION_ID_ACOS || o_function->id() == FUNCTION_ID_ATAN) return 0;
+				// (NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit) && (o_function->id() == FUNCTION_ID_ASIN || o_function->id() == FUNCTION_ID_ACOS || o_function->id() == FUNCTION_ID_ATAN || o_function->id() == FUNCTION_ID_RADIANS_TO_DEFAULT_ANGLE_UNIT || o_function->id() == FUNCTION_ID_ARG || o_function->id() == FUNCTION_ID_ATAN2))
+				if(o_function->id() == FUNCTION_ID_LOG || o_function->id() == FUNCTION_ID_LOGN || o_function->id() == FUNCTION_ID_GAMMA || o_function->id() == FUNCTION_ID_BETA || o_function->id() == FUNCTION_ID_FACTORIAL || o_function->id() == FUNCTION_ID_BESSELJ || o_function->id() == FUNCTION_ID_BESSELY || o_function->id() == FUNCTION_ID_ERF || o_function->id() == FUNCTION_ID_ERFI || o_function->id() == FUNCTION_ID_ERFC || o_function->id() == FUNCTION_ID_LOGINT || o_function->id() == FUNCTION_ID_POLYLOG || o_function->id() == FUNCTION_ID_EXPINT || o_function->id() == FUNCTION_ID_SININT || o_function->id() == FUNCTION_ID_COSINT || o_function->id() == FUNCTION_ID_SINHINT || o_function->id() == FUNCTION_ID_COSHINT || o_function->id() == FUNCTION_ID_FRESNEL_C || o_function->id() == FUNCTION_ID_FRESNEL_S || o_function->id() == FUNCTION_ID_SIGNUM || o_function->id() == FUNCTION_ID_HEAVISIDE || o_function->id() == FUNCTION_ID_LAMBERT_W || o_function->id() == FUNCTION_ID_SINC || o_function->id() == FUNCTION_ID_SIN || o_function->id() == FUNCTION_ID_COS || o_function->id() == FUNCTION_ID_TAN || o_function->id() == FUNCTION_ID_SINH || o_function->id() == FUNCTION_ID_COSH || o_function->id() == FUNCTION_ID_TANH || o_function->id() == FUNCTION_ID_ASINH || o_function->id() == FUNCTION_ID_ACOSH || o_function->id() == FUNCTION_ID_ATANH || o_function->id() == FUNCTION_ID_ASIN || o_function->id() == FUNCTION_ID_ACOS || o_function->id() == FUNCTION_ID_ATAN) return 0;
 				int ret = 0;
 				for(size_t i = 0; i < SIZE; i++) {
 					int ret_i = CHILD(i).containsType(mtype, false, check_variables, check_functions);
