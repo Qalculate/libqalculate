@@ -440,6 +440,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		bool b_negate = false;
 		for(; i < mstruct.size(); i++) {
 			if((mstruct[i].isVariable() && mstruct[i].variable()->id() == VARIABLE_ID_PI) || (mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1].isVariable() && mstruct[i][1].variable()->id() == VARIABLE_ID_PI && mstruct[i][0].isNumber())) {
+				if(contains_angle_unit(mstruct, eo.parse_options, 0)) break;
 				if(mstruct[i].isVariable() || mstruct[i][0].number().isInteger()) {
 					b_negate = mstruct[i].isVariable() || mstruct[i][0].number().isOdd();
 					mstruct.delChild(i + 1);
@@ -467,11 +468,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
-		if(b_recalc) {
-			mstruct = vargs[0];
-			mstruct.convert(CALCULATOR->getRadUnit());
-			mstruct /= CALCULATOR->getRadUnit();
-		}
+		if(b_recalc) convert_to_radians(vargs[0], mstruct, eo2);
 		mstruct.eval(eo2);
 	}
 
@@ -642,6 +639,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		bool b_negate = false;
 		for(; i < mstruct.size(); i++) {
 			if((mstruct[i].isVariable() && mstruct[i].variable()->id() == VARIABLE_ID_PI) || (mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1].isVariable() && mstruct[i][1].variable()->id() == VARIABLE_ID_PI && mstruct[i][0].isNumber())) {
+				if(contains_angle_unit(mstruct, eo.parse_options, 0)) break;
 				if(mstruct[i].isVariable() || mstruct[i][0].number().isInteger()) {
 					b_negate = mstruct[i].isVariable() || mstruct[i][0].number().isOdd();
 					mstruct.delChild(i + 1);
@@ -669,11 +667,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
-		if(b_recalc) {
-			mstruct = vargs[0];
-			mstruct.convert(CALCULATOR->getRadUnit());
-			mstruct /= CALCULATOR->getRadUnit();
-		}
+		if(b_recalc) convert_to_radians(vargs[0], mstruct, eo2);
 		mstruct.eval(eo2);
 	}
 
@@ -902,6 +896,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		size_t i = 0;
 		for(; i < mstruct.size(); i++) {
 			if((mstruct[i].isVariable() && mstruct[i].variable()->id() == VARIABLE_ID_PI) || (mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][1].isVariable() && mstruct[i][1].variable()->id() == VARIABLE_ID_PI && mstruct[i][0].isNumber())) {
+				if(contains_angle_unit(mstruct, eo.parse_options, 0)) break;
 				if(mstruct[i].isVariable() || mstruct[i][0].number().isInteger()) {
 					mstruct.delChild(i + 1);
 					b_recalc = false;
@@ -921,12 +916,8 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
-		if(b_recalc) {
-			mstruct = vargs[0];
-			mstruct.convert(CALCULATOR->getRadUnit());
-			mstruct /= CALCULATOR->getRadUnit();
-			mstruct.eval(eo2);
-		}
+		if(b_recalc) convert_to_radians(vargs[0], mstruct, eo2);
+		mstruct.eval(eo2);
 	}
 
 	fix_leftover_angle_unit(mstruct, eo);

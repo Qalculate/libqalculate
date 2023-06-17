@@ -1956,6 +1956,7 @@ bool remove_rad_unit(MathStructure &m, const EvaluationOptions &eo, bool top) {
 			return true;
 		} else if(m.unit()->containsRelativeTo(CALCULATOR->getRadUnit())) {
 			if(m.convert(CALCULATOR->getRadUnit())) {
+				m.calculatesub(eo, eo, true);
 				return remove_rad_unit(m, eo, false);
 			}
 		}
@@ -3088,18 +3089,25 @@ const MathStructure &MathStructure::find_x_var() const {
 bool MathStructure::inParentheses() const {return b_parentheses;}
 void MathStructure::setInParentheses(bool b) {b_parentheses = b;}
 
-bool flattenMultiplication(MathStructure &mstruct) {
+bool flattenMultiplication(MathStructure &mstruct, bool recursive) {
 	bool retval = false;
-	for(size_t i = 0; i < mstruct.size();) {
-		if(mstruct[i].isMultiplication()) {
-			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
-				mstruct[i][i2].ref();
-				mstruct.insertChild_nocopy(&mstruct[i][i2], i + i2 + 2);
+	if(recursive) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(flattenMultiplication(mstruct[i], true)) retval = true;
+		}
+	}
+	if(mstruct.isMultiplication()) {
+		for(size_t i = 0; i < mstruct.size();) {
+			if(mstruct[i].isMultiplication()) {
+				for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+					mstruct[i][i2].ref();
+					mstruct.insertChild_nocopy(&mstruct[i][i2], i + i2 + 2);
+				}
+				mstruct.delChild(i + 1);
+				retval = true;
+			} else {
+				i++;
 			}
-			mstruct.delChild(i + 1);
-			retval = true;
-		} else {
-			i++;
 		}
 	}
 	return retval;

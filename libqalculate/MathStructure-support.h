@@ -113,7 +113,7 @@ bool has_predominately_negative_sign(const MathStructure &mstruct);
 void negate_struct(MathStructure &mstruct);
 bool test_eval(MathStructure &mtest, const EvaluationOptions &eo);
 bool has_interval_unknowns(MathStructure &m);
-bool flattenMultiplication(MathStructure &mstruct);
+bool flattenMultiplication(MathStructure &mstruct, bool recursive = false);
 void idm1(const MathStructure &mnum, bool &bfrac, bool &bint);
 void idm2(const MathStructure &mnum, bool &bfrac, bool &bint, Number &nr);
 int idm3(MathStructure &mnum, Number &nr, bool expand);
