@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<QALCULATE version="3.0.0">
+<QALCULATE version="4.0.0">
   <category>
     <_title>Small Numbers</_title>
     <builtin_variable name="permille">
@@ -819,6 +819,29 @@
       <_title>True</_title>
       <_names>r:true,r:yes</_names>
       <value>1</value>
+    </variable>
+  </category>
+  <category>
+    <_title>Matrices</_title>
+    <variable>
+      <_title>Pauli Matrix 0</_title>
+      <_names>rs:pauli_0,aus:&#x03C3;_0</_names>
+      <value>[1 0; 0 1]</value>
+    </variable>
+    <variable>
+      <_title>Pauli Matrix 1</_title>
+      <_names>rs:pauli_1,aus:&#x03C3;_1</_names>
+      <value>[0 1; 1 0]</value>
+    </variable>
+    <variable>
+      <_title>Pauli Matrix 2</_title>
+      <_names>rs:pauli_2,aus:&#x03C3;_2</_names>
+      <value>[0 -i; i 0]</value>
+    </variable>
+    <variable>
+      <_title>Pauli Matrix 3</_title>
+      <_names>rs:pauli_3,aus:&#x03C3;_3</_names>
+      <value>[1 0; 0 -1]</value>
     </variable>
   </category>
   <category>

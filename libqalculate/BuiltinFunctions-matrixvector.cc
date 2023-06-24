@@ -1292,4 +1292,27 @@ int ExportFunction::calculate(MathStructure&, const MathStructure &vargs, const 
 	}
 	return 1;
 }
-
+KroneckerProductFunction::KroneckerProductFunction() : MathFunction("kron", 2) {
+	setArgumentDefinition(1, new MatrixArgument());
+	setArgumentDefinition(2, new MatrixArgument());
+}
+int KroneckerProductFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	size_t r1 = vargs[0].rows(), r2 = vargs[1].rows(), c1 = vargs[0].columns(), c2 = vargs[1].columns();
+	if(r2 > ((size_t) -1) / r1 || c2 > ((size_t) -1) / c1) return 0;
+	mstruct.clearMatrix();
+	mstruct.resizeMatrix(r1 * r2, c1 * c2, m_zero);
+	size_t r, c;
+	for(size_t ra = 0; ra < r1; ra++) {
+		for(size_t ca = 0; ca < c1; ca++) {
+			for(size_t rb = 0; rb < r2; rb++) {
+				for(size_t cb = 0; cb < c2; cb++) {
+					r = ra * r2 + rb;
+					c = ca * c2 + cb;
+					mstruct[r][c] = vargs[0][ra][ca];
+					mstruct[r][c] *= vargs[1][rb][cb];
+				}
+			}
+		}
+	}
+	return 1;
+}

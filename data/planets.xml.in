@@ -3,34 +3,36 @@
   <object>
     <_name>Earth</_name>
     <year>365.256363004</year>
-    <speed>29.78</speed>
+    <speed>29.7827</speed>
     <eccentricity>0.0167086</eccentricity>
     <inclination>0.00005</inclination>
     <satellites>1</satellites>
-    <mass>5.97237E24</mass>
-    <density>5.514</density>
+    <mass>5.972168E24</mass>
+    <density>5.5134</density>
     <area>510.072E6</area>
-    <gravity>9.807</gravity>
-    <temperature>288</temperature>
+    <gravity>9.80665</gravity>
+    <temperature>287.91</temperature>
+    <radius>6371.0</radius>
   </object>
   <object>
     <_name>Mars</_name>
     <year>686.971</year>
-    <speed>24.007</speed>
+    <speed>24.07</speed>
     <eccentricity>0.0934</eccentricity>
     <inclination>1.850</inclination>
     <satellites>2</satellites>
     <mass>6.4171E23</mass>
     <density>3.9335</density>
-    <area>1.44798500E8</area>
+    <area>1.4437E8</area>
     <gravity>3.72076</gravity>
-    <temperature>210</temperature>
+    <temperature>213</temperature>
+    <radius>3389.5+/-0.2</radius>
   </object>
   <object>
     <!-- Planet -->
     <_name>!planets!Mercury</_name>
-    <year>87.969</year>
-    <speed>47.362</speed>
+    <year>87.9691</year>
+    <speed>47.36</speed>
     <eccentricity>0.205630</eccentricity>
     <inclination>7.005</inclination>
     <satellites>0</satellites>
@@ -39,6 +41,7 @@
     <area>7.48E7</area>
     <gravity>3.7</gravity>
     <temperature>340</temperature>
+    <radius>2439.7+/-1.0</radius>
   </object>
   <object>
     <_name>Venus</_name>
@@ -52,6 +55,7 @@
     <area>4.6023E8</area>
     <gravity>8.87</gravity>
     <temperature>737</temperature>
+    <radius>6051.8+/-1.0</radius>
   </object>
   <object>
     <_name>Jupiter</_name>
@@ -59,12 +63,13 @@
     <speed>13.07</speed>
     <eccentricity>0.0489</eccentricity>
     <inclination>1.303</inclination>
-    <satellites>79</satellites>
+    <satellites>95</satellites>
     <mass>1.8982E27</mass>
     <density>1.326</density>
-    <area>6.1419E10</area>
+    <area>6.1469E10</area>
     <gravity>24.79</gravity>
     <temperature>165</temperature>
+    <radius>69911</radius>
   </object>
   <object>
     <_name>Saturn</_name>
@@ -72,44 +77,47 @@
     <speed>9.68</speed>
     <eccentricity>0.0565</eccentricity>
     <inclination>2.485</inclination>
-    <satellites>62</satellites>
+    <satellites>146</satellites>
     <mass>5.6834E26</mass>
     <density>0.687</density>
     <area>4.27E10</area>
     <gravity>10.44</gravity>
     <temperature>134</temperature>
+    <radius>58232</radius>
   </object>
   <object>
     <_name>Neptune</_name>
-    <year>60182</year>
+    <year>60195</year>
     <speed>5.43</speed>
-    <eccentricity>0.009456</eccentricity>
-    <inclination>1.767975</inclination>
+    <eccentricity>0.008678</eccentricity>
+    <inclination>1.770</inclination>
     <satellites>14</satellites>
     <mass>1.02413E26</mass>
     <density>1.638</density>
-    <area>7.6183E9</area>
+    <area>7.6187E9</area>
     <gravity>11.15</gravity>
     <temperature>72</temperature>
+    <radius>24622+/-19</radius>
   </object>
   <object>
     <_name>Pluto</_name>
     <year>90560</year>
-    <speed>4.67</speed>
+    <speed>4.743</speed>
     <eccentricity>0.2488</eccentricity>
     <inclination>17.16</inclination>
     <satellites>5</satellites>
-    <mass>1.303E22</mass>
+    <mass>1.303E22+/-0.003E22</mass>
     <density>1.854+/-0.006</density>
-    <area>1.779E7</area>
+    <area>1.774443E7</area>
     <gravity>0.620</gravity>
     <temperature>44</temperature>
+    <radius>1188.3+/-0.8</radius>
   </object>
   <object>
     <_name>Uranus</_name>
     <year>30688.5</year>
     <speed>6.80</speed>
-    <eccentricity>0.046381</eccentricity>
+    <eccentricity>0.04717</eccentricity>
     <inclination>0.773</inclination>
     <satellites>27</satellites>
     <mass>8.6810E25+/-0.0013E25</mass>
@@ -117,6 +125,7 @@
     <area>8.1156E9</area>
     <gravity>8.69</gravity>
     <temperature>76</temperature>
+    <radius>25362+/-7</radius>
   </object>
 </QALCULATE>
 <!-- 

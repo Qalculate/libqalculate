@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<QALCULATE version="4.6.1">
+<QALCULATE version="4.7.0">
   <category>
     <_title>Matrices &amp; Vectors</_title>
     <builtin_function name="vector">
@@ -406,6 +406,16 @@
         <condition>dimension(\x)==3</condition>
       </argument>
     </function>
+    <builtin_function name="kron">
+      <_title>Kronecker Tensor Product</_title>
+      <_names>r:kron</_names>
+      <argument index="1">
+        <_title>Matrix 1</_title>
+      </argument>
+      <argument index="2">
+        <_title>Matrix 2</_title>
+      </argument>
+    </builtin_function>
   </category>
   <category>
     <_title>Combinatorics</_title>
@@ -1054,7 +1064,7 @@
     </builtin_function>
     <function>
       <_title>Kronecker Delta</_title>
-      <_names>r:kronecker</_names>
+      <_names>r:kronecker,kronecker_delta</_names>
       <_description>Returns 0 if i != j and 1 if i = j.</_description>
       <expression>\x=\Y{0}</expression>
       <argument type="number" index="1">

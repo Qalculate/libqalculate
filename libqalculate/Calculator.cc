@@ -1643,6 +1643,7 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new NormFunction());
 	priv->f_vertcat = addFunction(new VertCatFunction());
 	priv->f_horzcat = addFunction(new HorzCatFunction());
+	addFunction(new KroneckerProductFunction());
 
 	f_factorial = addFunction(new FactorialFunction());
 	f_factorial2 = addFunction(new DoubleFactorialFunction());
