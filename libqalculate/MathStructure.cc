@@ -1973,7 +1973,15 @@ bool remove_rad_unit(MathStructure &m, const EvaluationOptions &eo, bool top) {
 	return false;
 }
 
+bool contains_unknown_possibly_with_unit(MathStructure &m) {
+	if(m.isUnknown()) return m.containsRepresentativeOfType(STRUCT_UNIT, true, true) != 0;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_unknown_possibly_with_unit(m[i])) return true;
+	}
+	return false;
+}
 int compare_check_incompability(MathStructure *mtest) {
+	if(contains_unknown_possibly_with_unit(*mtest)) return -1;
 	int incomp = 0;
 	int unit_term_count = 0;
 	int not_unit_term_count = 0;
