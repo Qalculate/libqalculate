@@ -822,7 +822,7 @@
     </variable>
   </category>
   <category>
-    <_title>Matrices</_title>
+    <_title>Matrices &amp; Vectors</_title>
     <variable>
       <_title>Pauli Matrix 0</_title>
       <_names>rs:pauli_0,aus:&#x03C3;_0</_names>

@@ -1578,13 +1578,20 @@ bool show_set_help(string set_option = "") {
 
 	string str;
 
-	if(set_option == "parse") set_option = "syntax";
-
 	if(set_option.empty()) {
 		CHECK_IF_SCREEN_FILLED_PUTS(_("Sets the value of an option."));
 		CHECK_IF_SCREEN_FILLED_PUTS(_("Example: set base 16."));
 		CHECK_IF_SCREEN_FILLED_PUTS("");
 		CHECK_IF_SCREEN_FILLED_PUTS(_("Available options and accepted values are (the current value is marked with '*'):"));
+	} else {
+		if(set_option == "parse") set_option = "syntax";
+		else if(set_option == "ass") set_option = "asm";
+		else if(set_option == "abbrev") set_option = "abbr";
+		else if(set_option == "approx") set_option = "appr";
+		else if(set_option == "uncertainty propagation" || set_option == _("uncertainty propagation") || set_option == "up") set_option = "ic";
+		else if(set_option == "save history") set_option = "clear history";
+		else if(set_option == "exp mode") set_option = "exp";
+		else if(set_option == "interval") set_option = "ia";
 	}
 
 	CHECK_IF_SCREEN_FILLED_HEADING_S(_("Algebraic Mode"));
@@ -1668,7 +1675,7 @@ bool show_set_help(string set_option = "") {
 
 	CHECK_IF_SCREEN_FILLED_HEADING_S(_("Numerical Display"));
 
-	if(SET_OPTION_MATCHES("base", "")) {
+	if(SET_OPTION_MATCHES("base", "") || SET_OPTION_MATCHES("output base", "outbase")) {
 		STR_AND_TABS_SET("base", ""); str += "(-1114112 - 1114112"; str += ", "; str += _("bin");
 		if(printops.base == BASE_BINARY) str += "*";
 		str += ", "; str += _("oct");
@@ -7150,7 +7157,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {4, 6, 1};
+	int version_numbers[] = {4, 7, 0};
 
 	if(file) {
 		char line[10000];

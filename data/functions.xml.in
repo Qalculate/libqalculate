@@ -407,7 +407,7 @@
       </argument>
     </function>
     <builtin_function name="kron">
-      <_title>Kronecker Tensor Product</_title>
+      <_title>Kronecker Product</_title>
       <_names>r:kron</_names>
       <argument index="1">
         <_title>Matrix 1</_title>

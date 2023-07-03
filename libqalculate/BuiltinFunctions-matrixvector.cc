@@ -1230,7 +1230,7 @@ int SelectFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	for(size_t i = 0; i < mstruct.size();) {
 		if(CALCULATOR->aborted()) return 0;
 		mtest = vargs[1];
-		mtest.replace(vargs[2], mstruct[i]);
+		mtest.replace(vargs[2], mstruct[i], false, false, true);
 		mtest.eval(eo);
 		if(!mtest.isNumber() || mtest.number().getBoolean() < 0) {
 			CALCULATOR->error(true, _("Comparison failed."), NULL);

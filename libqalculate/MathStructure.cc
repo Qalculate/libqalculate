@@ -2915,7 +2915,14 @@ bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto
 	if(replace_in_variables && m_type == STRUCT_VARIABLE && o_variable->isKnown()) {
 		if(((KnownVariable*) o_variable)->get().contains(mfrom, !exclude_function_arguments, true, false, true) > 0) {
 			MathStructure m(((KnownVariable*) o_variable)->get());
-			if(m.replace(mfrom, mto, once_only, exclude_function_arguments, true)) {
+			if(!m.isAborted() && m.replace(mfrom, mto, once_only, exclude_function_arguments, true)) {
+				if(!o_variable->isRegistered()) {
+					Variable *v = CALCULATOR->getActiveVariable(o_variable->referenceName());
+					if(v->isKnown() && ((KnownVariable*) v)->get().equals(m, true, true)) {
+						set(v);
+						return true;
+					}
+				}
 				KnownVariable *var = new KnownVariable("", o_variable->referenceName(), m);
 				set(var);
 				var->destroy();

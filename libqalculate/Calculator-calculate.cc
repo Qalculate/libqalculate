@@ -1208,6 +1208,8 @@ void replace_zero_symbol(MathStructure &m) {
 				if(m[i].isUndefined()) m[i].set(CALCULATOR->getVariableById(VARIABLE_ID_X), true);
 			}
 		}
+	} else if(m.isVariable() && m.variable() == CALCULATOR->getVariableById(VARIABLE_ID_UNDEFINED)) {
+		m.setUndefined();
 	}
 	for(size_t i = 0; i < m.size(); i++) {
 		replace_zero_symbol(m[i]);

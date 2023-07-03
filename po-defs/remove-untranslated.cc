@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <string.h>
 #include <queue>
 #include <iostream>
 #include <sstream>
@@ -30,17 +31,18 @@ string& remove_blank_ends(string &str) {
 int main(int argc, char *argv[]) {
 	if(argc < 2) return 1;
 	string sfile = argv[1];
+	if(sfile.empty()) return 1;
 	ifstream cfile(sfile.c_str());
 	if(argc > 2) sfile = argv[2];
 	else sfile += ".fixed";
+	if(sfile.empty()) return 1;
 	ofstream ofile(sfile.c_str());
 	int variant = 0;
-	if(argc > 3) {
+	if(argc > 3 && strlen(argv[3]) > 0) {
 		variant = argv[3][0] - '0';
 		if(variant < 0 || variant > 5) return 1;
 	}
-	if(cfile.is_open()) {
-		char linebuffer[1000];
+	if(cfile.is_open() && ofile.is_open()) {
 		string sbuffer, sbuffer2, msgid, msgstr, sout;
 		while(!sbuffer2.empty() || (cfile.rdstate() & std::ifstream::eofbit) == 0) {
 			if(!sbuffer2.empty()) {
@@ -48,8 +50,7 @@ int main(int argc, char *argv[]) {
 				sbuffer2 = "";
 				sout = sbuffer;
 			} else {
-				cfile.getline(linebuffer, 1000);
-				sbuffer = linebuffer;
+				std::getline(cfile, sbuffer);
 				sout = sbuffer;
 				remove_blank_ends(sbuffer);
 			}
@@ -58,11 +59,10 @@ int main(int argc, char *argv[]) {
 					msgid = "";
 					sout = sbuffer;
 					while(true) {
-						cfile.getline(linebuffer, 1000);
-						sbuffer = linebuffer;
+						std::getline(cfile, sbuffer);
 						sbuffer2 = sbuffer;
 						remove_blank_ends(sbuffer2);
-						if(sbuffer2.empty() || sbuffer2[0] != '\"') break;
+						if(sbuffer2.length() < 2 || sbuffer2[0] != '\"') break;
 						sout += "\n";
 						sout += sbuffer;
 						msgid += sbuffer2.substr(1, sbuffer2.length() - 2);
@@ -74,12 +74,11 @@ int main(int argc, char *argv[]) {
 				if(sbuffer[8] == '\"') {
 					msgstr = "";
 					while(true) {
-						cfile.getline(linebuffer, 1000);
-						sbuffer = linebuffer;
+						std::getline(cfile, sbuffer);
 						sout += "\n";
 						sout += sbuffer;
 						remove_blank_ends(sbuffer);
-						if(sbuffer.empty() || sbuffer[0] != '\"') break;
+						if(sbuffer.length() < 2 || sbuffer[0] != '\"') break;
 						msgstr += sbuffer.substr(1, sbuffer.length() - 2);
 					}
 				} else {
@@ -88,7 +87,7 @@ int main(int argc, char *argv[]) {
 				if(!msgid.empty() && (msgstr == msgid || msgstr == "-")) {
 					if(variant == 3 || variant == 4) cout << msgstr << endl;
 					sout = "msgstr \"\"";
-				} else if(sout.find("\n", 10) == string::npos && variant != 1 && variant != 4) {
+				} else if(variant != 1 && variant != 4 && sout.length() >= 10 && sout.find("\n", 10) == string::npos) {
 					size_t i = 0, i2 = 0;
 					while(true) {
 						i = msgstr.find(":", i);
@@ -120,6 +119,7 @@ int main(int argc, char *argv[]) {
 			if(variant <= 2) ofile << sout << endl;
 		}
 		cfile.close();
+		ofile.close();
 	}
 	return 0;
 }

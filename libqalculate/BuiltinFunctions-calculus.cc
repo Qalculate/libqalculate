@@ -814,7 +814,7 @@ int RombergFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	UnknownVariable *var = new UnknownVariable("", format_and_print(vargs[5]));
 	var->setInterval(nr_interval);
 	MathStructure x_var(var);
-	minteg.replace(vargs[5], x_var);
+	minteg.replace(vargs[5], x_var, false, false, true);
 	var->destroy();
 	minteg.eval(eo2);
 	Number nr;
@@ -850,7 +850,7 @@ int MonteCarloFunction::calculate(MathStructure &mstruct, const MathStructure &v
 	UnknownVariable *var = new UnknownVariable("", format_and_print(vargs[4]));
 	var->setInterval(nr_interval);
 	MathStructure x_var(var);
-	minteg.replace(vargs[4], x_var);
+	minteg.replace(vargs[4], x_var, false, false, true);
 	var->destroy();
 	minteg.eval(eo2);
 	Number nr;
