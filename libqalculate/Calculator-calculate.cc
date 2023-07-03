@@ -2382,7 +2382,7 @@ bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const Eva
 				// if left value is a function without any arguments, do function replacement
 				if(!replace_function(mstruct, m[0].function(), m[1].function(), eo)) CALCULATOR->error(false, _("Original value (%s) was not found."), (m[0].function()->name() + "()").c_str(), NULL);
 			} else {
-				if(mstruct.countOccurrences(m[0]) > 1) {
+				if(mstruct.countOccurrences(m[0], true) > 1) {
 
 					// make sure that only a single random value is used
 					calculate_rand(m[1], eo);
@@ -2392,12 +2392,12 @@ bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const Eva
 						MathStructure mv(m[1]);
 						replace_f_interval(mv, eo);
 						replace_intervals_f(mv);
-						if(!mstruct.replace(m[0], mv)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(m[0]).c_str(), NULL);
+						if(!mstruct.replace(m[0], mv, false, false, true)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(m[0]).c_str(), NULL);
 					} else {
-						if(!mstruct.replace(m[0], m[1])) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(m[0]).c_str(), NULL);
+						if(!mstruct.replace(m[0], m[1], false, false, true)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(m[0]).c_str(), NULL);
 					}
 				} else {
-					if(!mstruct.replace(m[0], m[1])) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(m[0]).c_str(), NULL);
+					if(!mstruct.replace(m[0], m[1], false, false, true)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(m[0]).c_str(), NULL);
 				}
 			}
 			return true;
@@ -2468,7 +2468,7 @@ bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const Eva
 						vars.push_back(var);
 						varms.push_back(m[0]);
 						MathStructure u_var(var);
-						if(!mstruct.replace(m[0], u_var)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(m[0]).c_str(), NULL);
+						if(!mstruct.replace(m[0], u_var, false, false, true)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(m[0]).c_str(), NULL);
 						return true;
 					}
 				}

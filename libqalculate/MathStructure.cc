@@ -2523,11 +2523,15 @@ int MathStructure::contains(const MathStructure &mstruct, bool structural_only, 
 	return 0;
 }
 size_t MathStructure::countOccurrences(const MathStructure &mstruct) const {
+	return countOccurrences(mstruct, false);
+}
+size_t MathStructure::countOccurrences(const MathStructure &mstruct, bool check_variables) const {
 	if(mstruct.isUnit() && mstruct.prefix() == NULL && m_type == STRUCT_UNIT && mstruct.unit() == o_unit) return 1;
 	if(equals(mstruct, true, true)) return 1;
+	if(check_variables && m_type == STRUCT_VARIABLE && o_variable->isKnown()) return ((KnownVariable*) o_variable)->get().countOccurrences(mstruct, true);
 	size_t i_occ = 0;
 	for(size_t i = 0; i < SIZE; i++) {
-		i_occ += CHILD(i).countOccurrences(mstruct);
+		i_occ += CHILD(i).countOccurrences(mstruct, check_variables);
 	}
 	return i_occ;
 }
@@ -2900,10 +2904,24 @@ void MathStructure::findAllUnknowns(MathStructure &unknowns_vector) {
 	}
 }
 bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto, bool once_only, bool exclude_function_arguments) {
+	return replace(mfrom, mto, once_only, exclude_function_arguments, false);
+}
+bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto, bool once_only, bool exclude_function_arguments, bool replace_in_variables) {
 	if(b_protected) b_protected = false;
 	if(equals(mfrom, true, true)) {
 		set(mto);
 		return true;
+	}
+	if(replace_in_variables && m_type == STRUCT_VARIABLE && o_variable->isKnown()) {
+		if(((KnownVariable*) o_variable)->get().contains(mfrom, !exclude_function_arguments, true, false, true) > 0) {
+			MathStructure m(((KnownVariable*) o_variable)->get());
+			if(m.replace(mfrom, mto, once_only, exclude_function_arguments, true)) {
+				KnownVariable *var = new KnownVariable("", o_variable->referenceName(), m);
+				set(var);
+				var->destroy();
+				return true;
+			}
+		}
 	}
 	if(mfrom.size() > 0 && mfrom.type() == m_type && SIZE > mfrom.size() && (mfrom.isAddition() || mfrom.isMultiplication() || mfrom.isLogicalAnd() || mfrom.isLogicalOr())) {
 		bool b = true;
@@ -2924,7 +2942,7 @@ bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto
 			}
 			if(SIZE == 1) setToChild(1);
 			else if(SIZE == 0) clear();
-			else if(!once_only) replace(mfrom, mto, once_only, exclude_function_arguments);
+			else if(!once_only) replace(mfrom, mto, once_only, exclude_function_arguments, replace_in_variables);
 			if(mfrom.isAddition()) add(mto);
 			else if(mfrom.isMultiplication()) multiply(mto);
 			else if(mfrom.isLogicalAnd()) transform(STRUCT_LOGICAL_AND, mto);
@@ -2935,7 +2953,7 @@ bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto
 	if(exclude_function_arguments && m_type == STRUCT_FUNCTION) return false;
 	bool b = false;
 	for(size_t i = 0; i < SIZE; i++) {
-		if(CHILD(i).replace(mfrom, mto, once_only, exclude_function_arguments)) {
+		if(CHILD(i).replace(mfrom, mto, once_only, exclude_function_arguments, replace_in_variables)) {
 			b = true;
 			CHILD_UPDATED(i);
 			if(once_only) return true;
