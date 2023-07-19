@@ -503,6 +503,27 @@ MathStructure get_units_for_parsed_expression(const MathStructure *parsed_struct
 	return m_zero;
 }
 
+bool contains_part_of_unit(const MathStructure &m, Unit *u) {
+	if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+		for(size_t i = 1; i <= ((CompositeUnit*) u)->countUnits(); i++) {
+			if(contains_part_of_unit(m, ((CompositeUnit*) u)->get(i))) return true;
+		}
+		return false;
+	}
+	if(m.isUnit()) {
+		if(m.unit() == u) return true;
+		if(m.unit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+			for(size_t i = 1; i <= ((CompositeUnit*) m.unit())->countUnits(); i++) {
+				if(((CompositeUnit*) m.unit())->get(i) == u) return true;
+			}
+		}
+	}
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_part_of_unit(m[i], u)) return true;
+	}
+	return false;
+}
+
 MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo, bool always_convert, bool convert_to_mixed_units, bool transform_orig, MathStructure *parsed_struct) {
 	CompositeUnit *cu = NULL;
 	if(to_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) cu = (CompositeUnit*) to_unit;
@@ -827,13 +848,32 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 
 			bool b_eval = true;
 			if(to_unit != priv->u_celsius && to_unit != priv->u_fahrenheit) {
+				int exp = 1;
 				MathStructure mbak(mstruct_new);
 				mstruct_new.divide_nocopy(new MathStructure(to_unit, NULL));
 				mstruct_new.eval(eo2);
-				size_t n = count_unit_powers(mstruct_new);
-				int exp = 1;
-				if(n > 0) {
+				eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_NONE;
+				if(count_unit_powers(mstruct_new) > 0) {
+					MathStructure mtest;
+					autoConvert(mstruct_new, mtest, eo2);
+					if(!contains_part_of_unit(mtest, to_unit)) mstruct_new = mtest;
+				}
+				long int n = count_unit_powers(mstruct_new);
+				if(n == 2 || (cu && n > 1)) {
+					MathStructure mtest(mstruct_new);
+					mtest.inverse();
+					mtest.eval(eo2);
+					autoConvert(mtest, mtest, eo2);
+					if(!contains_part_of_unit(mtest, to_unit) && ((!cu && count_unit_powers(mtest) == 1) || (cu && count_unit_powers(mtest) < n))) {
+						mtest.inverse();
+						mtest.eval(eo2);
+						mstruct_new = mtest;
+						n = 1;
+					}
+				}
+				if(!cu && n > 0) {
 					MathStructure mtest(mbak);
+					MathStructure mtest2;
 					bool b_pos = false, b_neg = false;
 					if(cu || to_unit->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 						CompositeUnit *cu2 = cu;
@@ -853,6 +893,9 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 						if(!mtest.containsType(STRUCT_UNIT)) {
 							mstruct_new = mtest;
 							n = 0;
+						} else {
+							autoConvert(mtest, mtest2, eo2);
+							if(!contains_part_of_unit(mtest2, to_unit)) mtest = mtest2;
 						}
 					}
 					if(n > 0 && (!cu || (cu->countUnits() == 1 && (cu->get(1, &exp) && exp == 1)))) {
@@ -860,7 +903,9 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 						while(exp > -10) {
 							mtest.multiply_nocopy(new MathStructure(to_unit, NULL));
 							mtest.eval(eo2);
-							size_t ntest = count_unit_powers(mtest);
+							autoConvert(mtest, mtest2, eo2);
+							if(!contains_part_of_unit(mtest2, to_unit)) mtest = mtest2;
+							long int ntest = count_unit_powers(mtest);
 							if(ntest >= n) break;
 							n = ntest;
 							if(exp == 1) exp = -1;
@@ -872,7 +917,9 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 							while(exp < 10) {
 								mtest.divide_nocopy(new MathStructure(to_unit, NULL));
 								mtest.eval(eo2);
-								size_t ntest = count_unit_powers(mtest);
+								autoConvert(mtest, mtest2, eo2);
+								if(!contains_part_of_unit(mtest2, to_unit)) mtest = mtest2;
+								long int ntest = count_unit_powers(mtest);
 								if(ntest >= n) break;
 								n = ntest;
 								exp++;
@@ -915,7 +962,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 					if(exp != 1) mstruct_new.last().raise(exp);
 				}
 			}
-
+			eo2.mixed_units_conversion = eo.mixed_units_conversion;
 			eo2.sync_units = false;
 			eo2.keep_prefixes = true;
 			if(b_eval) mstruct_new.eval(eo2);
