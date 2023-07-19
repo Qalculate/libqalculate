@@ -1106,6 +1106,50 @@
       </unit>
     </category>
     <category>
+      <_title>Electric Dipole Moment</_title>
+      <unit type="composite">
+        <system>SI</system>
+        <_title>Coulomb Meter</_title>
+        <names>r:C_m</names>
+        <part>
+          <unit>C</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <system>CGS</system>
+        <title>Statcoulomb Centimeter</title>
+	<hidden>true</hidden>
+        <names>r:statcoulomb_cm</names>
+        <part>
+          <unit>statcoulomb</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>-2</prefix>
+          <exponent>1</exponent>
+        </part>
+      </unit>
+      <unit type="alias">
+        <system>CGS</system>
+        <_title>Debye</_title>
+        <_names>ar:D,debye,p:debyes</_names>
+        <base>
+          <unit>statcoulomb_cm</unit>
+          <relation>1E-18</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+    </category>
+    <category>
       <_title>Electric Flux Density</_title>
       <unit type="composite">
         <system>SI</system>

@@ -87,6 +87,6 @@ class CalculateThread : public Thread {
 };
 
 bool is_not_number(char c, int base);
-void autoConvert(const MathStructure &morig, MathStructure &mconv, const EvaluationOptions &eo);
+void autoConvert(const MathStructure &morig, MathStructure &mconv, const EvaluationOptions &eo, bool avoid_loop = false);
 
 #endif
