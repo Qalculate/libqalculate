@@ -853,6 +853,18 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 				mstruct_new.divide_nocopy(new MathStructure(to_unit, NULL));
 				mstruct_new.eval(eo2);
 				eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_NONE;
+				bool b_pos = false, b_neg = false;
+				if(cu || to_unit->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+					CompositeUnit *cu2 = cu;
+					if(cu2) b_pos = true;
+					else cu2 = (CompositeUnit*) to_unit->baseUnit();
+					int exp2 = 1;
+					for(size_t i = 1; i <= cu2->countUnits(); i++) {
+						cu2->get(i, &exp2);
+						if(exp2 < 0) b_neg = true;
+						else b_pos = true;
+					}
+				}
 				if(count_unit_powers(mstruct_new) > 0) {
 					MathStructure mtest;
 					autoConvert(mstruct_new, mtest, eo2, true);
@@ -864,28 +876,17 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 					mtest.inverse();
 					mtest.eval(eo2);
 					autoConvert(mtest, mtest, eo2, true);
-					if(!contains_part_of_unit(mtest, to_unit) && ((!cu && count_unit_powers(mtest) == 1) || (cu && count_unit_powers(mtest) < n))) {
+					long int ntest = count_unit_powers(mtest);
+					if(!contains_part_of_unit(mtest, to_unit) && ((!cu && ntest == 1) || (cu && ntest < n))) {
 						mtest.inverse();
 						mtest.eval(eo2);
 						mstruct_new = mtest;
-						n = 1;
+						n = ntest;
 					}
 				}
-				if(!cu && n > 0) {
+				if(n > 0) {
 					MathStructure mtest(mbak);
 					MathStructure mtest2;
-					bool b_pos = false, b_neg = false;
-					if(cu || to_unit->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
-						CompositeUnit *cu2 = cu;
-						if(cu2) b_pos = true;
-						else cu2 = (CompositeUnit*) to_unit->baseUnit();
-						int exp2 = 1;
-						for(size_t i = 1; i <= cu2->countUnits(); i++) {
-							cu2->get(i, &exp2);
-							if(exp2 < 0) b_neg = true;
-							else b_pos = true;
-						}
-					}
 					if(b_pos && b_neg) {
 						mtest.inverse();
 						mtest.divide_nocopy(new MathStructure(to_unit, NULL));

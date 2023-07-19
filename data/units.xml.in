@@ -1259,6 +1259,42 @@
       </unit>
     </category>
     <category>
+      <_title>Electrical Elastance</_title>
+      <unit type="composite">
+        <_title>Volt per Coulomb</_title>
+        <names>r:V_p_C</names>
+        <part>
+          <unit>V</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>C</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+	<system>SI</system>
+        <_title>Reciprocal Farad</_title>
+        <names>r:recF</names>
+        <part>
+          <unit>F</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+      <unit type="alias">
+        <_title>Daraf</_title>
+        <_names>r:daraf,p:darafs</_names>
+        <base>
+          <unit>recF</unit>
+          <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+    </category>
+    <category>
       <_title>Electric Resistance</_title>
       <unit type="composite">
         <hidden>true</hidden>
@@ -1347,6 +1383,20 @@
         </part>
         <part>
           <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <_title>Newton per Coulomb</_title>
+        <names>r:N_p_C</names>
+        <part>
+          <unit>N</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>C</unit>
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
