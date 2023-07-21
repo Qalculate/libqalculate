@@ -1,3 +1,64 @@
+2023-07-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Replace occurrences in variable values in replace() function, when original expression contains unknown symbol/variable, and for "where" replacement
+	* Fix numerical integration when variable is present within other variable values
+
+2023-06-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix errornous determination of unit compatibility for equalities with unknown variables
+	* Fine-tune detection of approximate units when deciding to calculate uncertainty propagation or not
+
+2023-06-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add function, kron(), for Kronecker product
+	* Add constants for Pauli matrices
+	* Add radius to planets dataset and update other properties
+
+2023-06-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix "help set OPTION" when OPTION is an option name supported in addition to the standard name and abbreviation (e.g. "help set parse")
+
+2023-06-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix incomplete calculation in tan() with try exact approximation
+
+2023-06-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* More consistent addition and removal of angle unit from function arguments
+	* Always append radians to return value (even if zero) in relevant functions when default angle is none
+	* Do not apply x^(ab)=(x^a)^b rule if ab has unit
+
+2023-06-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault in some cases when multiplying single column matrix with empty vector
+	* Fix segfault when MathStructure is deleted after Calculator, and in destructor of calculated DynamicVariable
+	* Fix besselj(0, 0)
+	* Do not use Tamil symbol by default for Sri Lankan rupees
+
+2023-06-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Change order of operations to place entrywise and ordinary operators on the same precedence level
+	* Always interpret ./, .*, and .^ as entrywise operators if user intention is unclear
+
+2023-06-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not calculate functions in arguments of functions that are not differentiable, after function calculation fails, before uncertainty calculation (improves efficiency)
+	* Do not save mode on exit if "-defaults" command line switch where used
+	* Show expression of subfunction (instead of index) in function info
+	* Remove duplicated "Units" heading in mode list
+
+2023-05-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix 0/0=0 (do not return true) and output of 2/0 (and similar)
+
+2023-05-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix newtonsolve() and secantsolve() not returning when no solution can be found (fixes rate() function), and improve speed in some cases
+
+2023-05-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix potential memory leak when loading unit data saved with version < 0.6.3
+
 2023-05-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Support for custom default angle unit, e.g. turn, arcsec, arcmin

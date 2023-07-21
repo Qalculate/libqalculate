@@ -2030,6 +2030,7 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	if(!mstruct.isNumber()) {
 		if(mstruct.representsPositive(true)) {
 			mstruct.clear();
+			if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) mstruct *= CALCULATOR->getRadUnit();
 			return 1;
 		}
 		if(mstruct.representsNegative(true)) {
@@ -2140,6 +2141,7 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				if(cr_im == COMPARISON_RESULT_EQUAL) {
 					if(cr_re == COMPARISON_RESULT_LESS) {
 						mstruct.clear();
+						if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) mstruct *= CALCULATOR->getRadUnit();
 						CALCULATOR->endTemporaryStopMessages(true);
 						return 1;
 					} else if(cr_re == COMPARISON_RESULT_GREATER) {
@@ -2200,6 +2202,7 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				set_fraction_of_turn(mstruct, eo, 1, 2);
 			} else {
 				mstruct.clear();
+				if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) mstruct *= CALCULATOR->getRadUnit();
 			}
 		} else if(!mstruct.number().hasRealPart() && mstruct.number().imaginaryPartIsNonZero()) {
 			bool b_neg = mstruct.number().imaginaryPartIsNegative();

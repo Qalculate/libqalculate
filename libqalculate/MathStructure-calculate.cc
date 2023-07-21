@@ -212,7 +212,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 					bool b2 = mstruct.isMatrix();
 					if(!b1 && !representsNonMatrix()) return -1;
 					if(!b2 && !mstruct.representsNonMatrix()) return -1;
-					if(b2 && mstruct.columns() == 1 && (!b1 || SIZE == mstruct.size())) {
+					if(b2 && mstruct.columns() == 1 && ((!b1 && SIZE > 0) || (b1 && SIZE == mstruct.size()))) {
 						if(!b1) {
 							// row vector + column vector = matrix
 							transform(STRUCT_VECTOR);
@@ -232,7 +232,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 							}
 						}
 						return 1;
-					} else if(b1 && columns() == 1 && (!b2 || SIZE == mstruct.size())) {
+					} else if(b1 && columns() == 1 && ((!b2 && mstruct.size() > 0) || (b2 && SIZE == mstruct.size()))) {
 						if(!b2) {
 							for(size_t i = 0; i < SIZE; i++) {
 								for(size_t i2 = 1; i2 < mstruct.size(); i2++) {
@@ -3989,7 +3989,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					for(size_t i = 0; i < mstruct.size(); i++) {
 						if(i == 0) mthis.raise(mstruct[i]);
 						// exponent factor must be real and, if base is zero, positive
-						if(!mstruct[i].representsReal(true) || (isZero() && !mstruct[i].representsPositive(true))) continue;
+						if(!mstruct[i].representsReal() || (isZero() && !mstruct[i].representsPositive())) continue;
 						if(i > 0) mthis[1] = mstruct[i];
 						EvaluationOptions eo2 = eo;
 						eo2.split_squares = false;

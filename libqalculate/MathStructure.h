@@ -820,6 +820,7 @@ class MathStructure {
 		//@{
 		int contains(const MathStructure &mstruct, bool structural_only = true, bool check_variables = false, bool check_functions = false, bool loose_equals = false) const;
 		size_t countOccurrences(const MathStructure &mstruct) const;
+		size_t countOccurrences(const MathStructure &mstruct, bool check_variables) const;
 		int containsRepresentativeOf(const MathStructure &mstruct, bool check_variables = false, bool check_functions = false) const;
 		int containsType(StructureType mtype, bool structural_only = true, bool check_variables = false, bool check_functions = false) const;
 		int containsRepresentativeOfType(StructureType mtype, bool check_variables = false, bool check_functions = false) const;
@@ -834,6 +835,7 @@ class MathStructure {
 		size_t countFunctions(bool count_subfunctions = true) const;
 		void findAllUnknowns(MathStructure &unknowns_vector);
 		bool replace(const MathStructure &mfrom, const MathStructure &mto, bool once_only = false, bool exclude_function_arguments = false);
+		bool replace(const MathStructure &mfrom, const MathStructure &mto, bool once_only, bool exclude_function_arguments, bool replace_in_variables);
 		bool replace(Variable *v, const MathStructure &mto);
 		bool calculateReplace(const MathStructure &mfrom, const MathStructure &mto, const EvaluationOptions &eo, bool exclude_function_arguments = false);
 		bool replace(const MathStructure &mfrom1, const MathStructure &mto1, const MathStructure &mfrom2, const MathStructure &mto2);

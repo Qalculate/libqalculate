@@ -108,12 +108,12 @@ bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *fa
 bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const EvaluationOptions &eo = default_evaluation_options, bool do_eval = false);
 bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
 bool combine_powers(MathStructure &m, const MathStructure &x_var, const EvaluationOptions &eo, const EvaluationOptions &feo);
-bool contains_angle_unit(const MathStructure &m, const ParseOptions &po);
+int contains_angle_unit(const MathStructure &m, const ParseOptions &po, int check_functions = 1);
 bool has_predominately_negative_sign(const MathStructure &mstruct);
 void negate_struct(MathStructure &mstruct);
 bool test_eval(MathStructure &mtest, const EvaluationOptions &eo);
 bool has_interval_unknowns(MathStructure &m);
-bool flattenMultiplication(MathStructure &mstruct);
+bool flattenMultiplication(MathStructure &mstruct, bool recursive = false);
 void idm1(const MathStructure &mnum, bool &bfrac, bool &bint);
 void idm2(const MathStructure &mnum, bool &bfrac, bool &bint, Number &nr);
 int idm3(MathStructure &mnum, Number &nr, bool expand);

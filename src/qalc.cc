@@ -111,6 +111,7 @@ void setResult(Prefix *prefix = NULL, bool update_parse = false, bool goto_input
 void execute_expression(bool goto_input = true, bool do_mathoperation = false, MathOperation op = OPERATION_ADD, MathFunction *f = NULL, bool do_stack = false, size_t stack_index = 0, bool check_exrates = true);
 void execute_command(int command_type, bool show_result = true);
 void load_preferences();
+void save_history();
 bool save_preferences(bool mode = false);
 bool save_mode();
 void set_saved_mode();
@@ -475,8 +476,10 @@ void handle_exit() {
 			}
 		}
 	}
-	if(interactive_mode && !load_defaults) {
-		if(save_mode_on_exit) {
+	if(interactive_mode) {
+		if(load_defaults) {
+			save_history();
+		} else if(save_mode_on_exit) {
 			save_mode();
 		} else {
 			save_preferences();
@@ -1575,13 +1578,20 @@ bool show_set_help(string set_option = "") {
 
 	string str;
 
-	if(set_option == "parse") set_option = "syntax";
-
 	if(set_option.empty()) {
 		CHECK_IF_SCREEN_FILLED_PUTS(_("Sets the value of an option."));
 		CHECK_IF_SCREEN_FILLED_PUTS(_("Example: set base 16."));
 		CHECK_IF_SCREEN_FILLED_PUTS("");
 		CHECK_IF_SCREEN_FILLED_PUTS(_("Available options and accepted values are (the current value is marked with '*'):"));
+	} else {
+		if(set_option == "parse") set_option = "syntax";
+		else if(set_option == "ass") set_option = "asm";
+		else if(set_option == "abbrev") set_option = "abbr";
+		else if(set_option == "approx") set_option = "appr";
+		else if(set_option == "uncertainty propagation" || set_option == _("uncertainty propagation") || set_option == "up") set_option = "ic";
+		else if(set_option == "save history") set_option = "clear history";
+		else if(set_option == "exp mode") set_option = "exp";
+		else if(set_option == "interval") set_option = "ia";
 	}
 
 	CHECK_IF_SCREEN_FILLED_HEADING_S(_("Algebraic Mode"));
@@ -1665,7 +1675,7 @@ bool show_set_help(string set_option = "") {
 
 	CHECK_IF_SCREEN_FILLED_HEADING_S(_("Numerical Display"));
 
-	if(SET_OPTION_MATCHES("base", "")) {
+	if(SET_OPTION_MATCHES("base", "") || SET_OPTION_MATCHES("output base", "outbase")) {
 		STR_AND_TABS_SET("base", ""); str += "(-1114112 - 1114112"; str += ", "; str += _("bin");
 		if(printops.base == BASE_BINARY) str += "*";
 		str += ", "; str += _("oct");
@@ -7109,8 +7119,6 @@ void load_preferences() {
 	colorize = 1;
 #endif
 
-	if(load_defaults && !interactive_mode) return;
-
 	FILE *file = NULL;
 #ifdef HAVE_LIBREADLINE
 	string historyfile = buildPath(getLocalDir(), "qalc.history");
@@ -7149,7 +7157,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {4, 6, 1};
+	int version_numbers[] = {4, 7, 0};
 
 	if(file) {
 		char line[10000];
@@ -7500,12 +7508,7 @@ void load_preferences() {
 	set_saved_mode();
 }
 
-/*
-	save preferences to ~/.config/qalculate/qalc.cfg
-	set mode to true to save current calculator mode
-*/
-bool save_preferences(bool mode) {
-	FILE *file = NULL;
+void save_history() {
 	if(!dirExists(getLocalDir())) recursiveMakeDir(getLocalDir());
 #ifdef HAVE_LIBREADLINE
 	if(clear_history_on_exit) {
@@ -7514,6 +7517,15 @@ bool save_preferences(bool mode) {
 		write_history(buildPath(getLocalDir(), "qalc.history").c_str());
 	}
 #endif
+}
+
+/*
+	save preferences to ~/.config/qalculate/qalc.cfg
+	set mode to true to save current calculator mode
+*/
+bool save_preferences(bool mode) {
+	FILE *file = NULL;
+	save_history();
 	string filename = buildPath(getLocalDir(), "qalc.cfg");
 	file = fopen(filename.c_str(), "w+");
 	if(file == NULL) {

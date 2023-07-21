@@ -2270,7 +2270,7 @@ void MathStructure::format(const PrintOptions &po) {
 		if(po.place_units_separately) {
 			// a*u+b*u=(a+b)*u
 			if(factorizeUnits()) {
-				flattenMultiplication(*this);
+				flattenMultiplication(*this, true);
 			}
 			separate_units(*this);
 		}

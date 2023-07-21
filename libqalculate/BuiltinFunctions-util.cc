@@ -465,6 +465,7 @@ ReplaceFunction::ReplaceFunction() : MathFunction("replace", 3, 4) {
 int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	bool b_evaled = false;
+	bool replace_in_variables = vargs[1].containsUnknowns();
 	if(vargs[3].number().getBoolean()) {mstruct.eval(eo); b_evaled = true;}
 	if(vargs[1].isVector() && !vargs[2].isVector() && !vargs[2].representsScalar()) {
 		MathStructure meval(vargs[2]);
@@ -479,9 +480,9 @@ int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 					MathStructure mv(meval[i]);
 					replace_f_interval(mv, eo);
 					replace_intervals_f(mv);
-					if(!mstruct.replace(vargs[1][i], mv)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1][i]).c_str(), NULL);
+					if(!mstruct.replace(vargs[1][i], mv, false, false, replace_in_variables)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1][i]).c_str(), NULL);
 				} else {
-					if(!mstruct.replace(vargs[1][i], meval[i])) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1][i]).c_str(), NULL);
+					if(!mstruct.replace(vargs[1][i], meval[i], false, false, replace_in_variables)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1][i]).c_str(), NULL);
 				}
 			}
 			return 1;
@@ -496,9 +497,9 @@ int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 				MathStructure mv(vargs[2][i]);
 				replace_f_interval(mv, eo);
 				replace_intervals_f(mv);
-				if(!mstruct.replace(vargs[1][i], mv)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1][i]).c_str(), NULL);
+				if(!mstruct.replace(vargs[1][i], mv, false, false, replace_in_variables)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1][i]).c_str(), NULL);
 			} else {
-				if(!mstruct.replace(vargs[1][i], vargs[2][i])) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1][i]).c_str(), NULL);
+				if(!mstruct.replace(vargs[1][i], vargs[2][i], false, false, replace_in_variables)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1][i]).c_str(), NULL);
 			}
 		}
 	} else {
@@ -509,9 +510,9 @@ int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 				MathStructure mv(vargs[2]);
 				replace_f_interval(mv, eo);
 				replace_intervals_f(mv);
-				if(mstruct.replace(vargs[1], mv)) break;
+				if(mstruct.replace(vargs[1], mv, false, false, replace_in_variables)) break;
 			} else {
-				if(mstruct.replace(vargs[1], vargs[2])) break;
+				if(mstruct.replace(vargs[1], vargs[2], false, false, replace_in_variables)) break;
 			}
 			if(b_evaled) {
 				CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1]).c_str(), NULL);

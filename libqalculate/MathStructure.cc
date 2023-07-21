@@ -1956,6 +1956,7 @@ bool remove_rad_unit(MathStructure &m, const EvaluationOptions &eo, bool top) {
 			return true;
 		} else if(m.unit()->containsRelativeTo(CALCULATOR->getRadUnit())) {
 			if(m.convert(CALCULATOR->getRadUnit())) {
+				m.calculatesub(eo, eo, true);
 				return remove_rad_unit(m, eo, false);
 			}
 		}
@@ -1972,7 +1973,15 @@ bool remove_rad_unit(MathStructure &m, const EvaluationOptions &eo, bool top) {
 	return false;
 }
 
+bool contains_unknown_possibly_with_unit(MathStructure &m) {
+	if(m.isUnknown()) return m.containsRepresentativeOfType(STRUCT_UNIT, true, true) != 0;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_unknown_possibly_with_unit(m[i])) return true;
+	}
+	return false;
+}
 int compare_check_incompability(MathStructure *mtest) {
+	if(contains_unknown_possibly_with_unit(*mtest)) return -1;
 	int incomp = 0;
 	int unit_term_count = 0;
 	int not_unit_term_count = 0;
@@ -2453,14 +2462,27 @@ StructureType MathStructure::type() const {
 	return m_type;
 }
 
-bool contains_angle_unit(const MathStructure &m, const ParseOptions &po) {
-	if(m.isUnit() && m.unit()->baseUnit() == CALCULATOR->getRadUnit()->baseUnit() && m.unit()->baseExponent() == 1) return true;
-	if(m.isVariable() && m.variable()->isKnown()) return contains_angle_unit(((KnownVariable*) m.variable())->get(), po);
-	if(m.isFunction()) return NO_DEFAULT_ANGLE_UNIT(po.angle_unit) && (m.function()->id() == FUNCTION_ID_ASIN || m.function()->id() == FUNCTION_ID_ACOS || m.function()->id() == FUNCTION_ID_ATAN);
-	for(size_t i = 0; i < m.size(); i++) {
-		if(contains_angle_unit(m[i], po)) return true;
+int contains_angle_unit(const MathStructure &m, const ParseOptions &po, int check_functions) {
+	if(m.isUnit() && m.unit()->baseUnit() == CALCULATOR->getRadUnit()->baseUnit() && m.unit()->baseExponent() == 1) return 1;
+	if(m.isVariable() && m.variable()->isKnown()) return contains_angle_unit(((KnownVariable*) m.variable())->get(), po, check_functions);
+	if(m.isFunction()) {
+		if(m.function()->id() == FUNCTION_ID_ASIN || m.function()->id() == FUNCTION_ID_ACOS || m.function()->id() == FUNCTION_ID_ATAN || m.function()->id() == FUNCTION_ID_ATAN2 || m.function()->id() == FUNCTION_ID_ARG) {
+			if(NO_DEFAULT_ANGLE_UNIT(po.angle_unit)) return 1;
+			return 0;
+		}
+		if(!check_functions) return 0;
+		if(m.containsType(STRUCT_UNIT, false, true, true) == 0) return 0;
+		if(check_functions > 1 && m.size() == 0) return -1;
 	}
-	return false;
+	int ret = 0;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(!m.isFunction() || !m.function()->getArgumentDefinition(i + 1) || m.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) {
+			int ret_i = contains_angle_unit(m[i], po, check_functions);
+			if(ret_i != 0) ret = ret_i;
+			if(ret_i > 0) break;
+		}
+	}
+	return ret;
 }
 
 int MathStructure::contains(const MathStructure &mstruct, bool structural_only, bool check_variables, bool check_functions, bool loose_equals) const {
@@ -2501,11 +2523,15 @@ int MathStructure::contains(const MathStructure &mstruct, bool structural_only, 
 	return 0;
 }
 size_t MathStructure::countOccurrences(const MathStructure &mstruct) const {
+	return countOccurrences(mstruct, false);
+}
+size_t MathStructure::countOccurrences(const MathStructure &mstruct, bool check_variables) const {
 	if(mstruct.isUnit() && mstruct.prefix() == NULL && m_type == STRUCT_UNIT && mstruct.unit() == o_unit) return 1;
 	if(equals(mstruct, true, true)) return 1;
+	if(check_variables && m_type == STRUCT_VARIABLE && o_variable->isKnown()) return ((KnownVariable*) o_variable)->get().countOccurrences(mstruct, true);
 	size_t i_occ = 0;
 	for(size_t i = 0; i < SIZE; i++) {
-		i_occ += CHILD(i).countOccurrences(mstruct);
+		i_occ += CHILD(i).countOccurrences(mstruct, check_variables);
 	}
 	return i_occ;
 }
@@ -2782,8 +2808,8 @@ int MathStructure::containsType(StructureType mtype, bool structural_only, bool 
 			if(mtype == STRUCT_UNIT) {
 				if(o_function->id() == FUNCTION_ID_STRIP_UNITS) return 0;
 				if(o_function->subtype() == SUBTYPE_USER_FUNCTION || o_function->subtype() == SUBTYPE_DATA_SET || o_function->id() == FUNCTION_ID_REGISTER || o_function->id() == FUNCTION_ID_STACK || o_function->id() == FUNCTION_ID_LOAD) return -1;
-				// (NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit) && (o_function->id() == FUNCTION_ID_ASIN || o_function->id() == FUNCTION_ID_ACOS || o_function->id() == FUNCTION_ID_ATAN || o_function->id() == FUNCTION_ID_RADIANS_TO_DEFAULT_ANGLE_UNIT))
-				if(o_function->id() == FUNCTION_ID_LOG || o_function->id() == FUNCTION_ID_LOGN || o_function->id() == FUNCTION_ID_ARG || o_function->id() == FUNCTION_ID_GAMMA || o_function->id() == FUNCTION_ID_BETA || o_function->id() == FUNCTION_ID_FACTORIAL || o_function->id() == FUNCTION_ID_BESSELJ || o_function->id() == FUNCTION_ID_BESSELY || o_function->id() == FUNCTION_ID_ERF || o_function->id() == FUNCTION_ID_ERFI || o_function->id() == FUNCTION_ID_ERFC || o_function->id() == FUNCTION_ID_LOGINT || o_function->id() == FUNCTION_ID_POLYLOG || o_function->id() == FUNCTION_ID_EXPINT || o_function->id() == FUNCTION_ID_SININT || o_function->id() == FUNCTION_ID_COSINT || o_function->id() == FUNCTION_ID_SINHINT || o_function->id() == FUNCTION_ID_COSHINT || o_function->id() == FUNCTION_ID_FRESNEL_C || o_function->id() == FUNCTION_ID_FRESNEL_S || o_function->id() == FUNCTION_ID_SIGNUM || o_function->id() == FUNCTION_ID_HEAVISIDE || o_function->id() == FUNCTION_ID_LAMBERT_W || o_function->id() == FUNCTION_ID_SINC || o_function->id() == FUNCTION_ID_SIN || o_function->id() == FUNCTION_ID_COS || o_function->id() == FUNCTION_ID_TAN || o_function->id() == FUNCTION_ID_SINH || o_function->id() == FUNCTION_ID_COSH || o_function->id() == FUNCTION_ID_TANH || o_function->id() == FUNCTION_ID_ASINH || o_function->id() == FUNCTION_ID_ACOSH || o_function->id() == FUNCTION_ID_ATANH || o_function->id() == FUNCTION_ID_ASIN || o_function->id() == FUNCTION_ID_ACOS || o_function->id() == FUNCTION_ID_ATAN) return 0;
+				// (NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit) && (o_function->id() == FUNCTION_ID_ASIN || o_function->id() == FUNCTION_ID_ACOS || o_function->id() == FUNCTION_ID_ATAN || o_function->id() == FUNCTION_ID_RADIANS_TO_DEFAULT_ANGLE_UNIT || o_function->id() == FUNCTION_ID_ARG || o_function->id() == FUNCTION_ID_ATAN2))
+				if(o_function->id() == FUNCTION_ID_LOG || o_function->id() == FUNCTION_ID_LOGN || o_function->id() == FUNCTION_ID_GAMMA || o_function->id() == FUNCTION_ID_BETA || o_function->id() == FUNCTION_ID_FACTORIAL || o_function->id() == FUNCTION_ID_BESSELJ || o_function->id() == FUNCTION_ID_BESSELY || o_function->id() == FUNCTION_ID_ERF || o_function->id() == FUNCTION_ID_ERFI || o_function->id() == FUNCTION_ID_ERFC || o_function->id() == FUNCTION_ID_LOGINT || o_function->id() == FUNCTION_ID_POLYLOG || o_function->id() == FUNCTION_ID_EXPINT || o_function->id() == FUNCTION_ID_SININT || o_function->id() == FUNCTION_ID_COSINT || o_function->id() == FUNCTION_ID_SINHINT || o_function->id() == FUNCTION_ID_COSHINT || o_function->id() == FUNCTION_ID_FRESNEL_C || o_function->id() == FUNCTION_ID_FRESNEL_S || o_function->id() == FUNCTION_ID_SIGNUM || o_function->id() == FUNCTION_ID_HEAVISIDE || o_function->id() == FUNCTION_ID_LAMBERT_W || o_function->id() == FUNCTION_ID_SINC || o_function->id() == FUNCTION_ID_SIN || o_function->id() == FUNCTION_ID_COS || o_function->id() == FUNCTION_ID_TAN || o_function->id() == FUNCTION_ID_SINH || o_function->id() == FUNCTION_ID_COSH || o_function->id() == FUNCTION_ID_TANH || o_function->id() == FUNCTION_ID_ASINH || o_function->id() == FUNCTION_ID_ACOSH || o_function->id() == FUNCTION_ID_ATANH || o_function->id() == FUNCTION_ID_ASIN || o_function->id() == FUNCTION_ID_ACOS || o_function->id() == FUNCTION_ID_ATAN) return 0;
 				int ret = 0;
 				for(size_t i = 0; i < SIZE; i++) {
 					int ret_i = CHILD(i).containsType(mtype, false, check_variables, check_functions);
@@ -2878,10 +2904,31 @@ void MathStructure::findAllUnknowns(MathStructure &unknowns_vector) {
 	}
 }
 bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto, bool once_only, bool exclude_function_arguments) {
+	return replace(mfrom, mto, once_only, exclude_function_arguments, false);
+}
+bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto, bool once_only, bool exclude_function_arguments, bool replace_in_variables) {
 	if(b_protected) b_protected = false;
 	if(equals(mfrom, true, true)) {
 		set(mto);
 		return true;
+	}
+	if(replace_in_variables && m_type == STRUCT_VARIABLE && o_variable->isKnown()) {
+		if(((KnownVariable*) o_variable)->get().contains(mfrom, !exclude_function_arguments, true, false, true) > 0) {
+			MathStructure m(((KnownVariable*) o_variable)->get());
+			if(!m.isAborted() && m.replace(mfrom, mto, once_only, exclude_function_arguments, true)) {
+				if(!o_variable->isRegistered()) {
+					Variable *v = CALCULATOR->getActiveVariable(o_variable->referenceName());
+					if(v->isKnown() && ((KnownVariable*) v)->get().equals(m, true, true)) {
+						set(v);
+						return true;
+					}
+				}
+				KnownVariable *var = new KnownVariable("", o_variable->referenceName(), m);
+				set(var);
+				var->destroy();
+				return true;
+			}
+		}
 	}
 	if(mfrom.size() > 0 && mfrom.type() == m_type && SIZE > mfrom.size() && (mfrom.isAddition() || mfrom.isMultiplication() || mfrom.isLogicalAnd() || mfrom.isLogicalOr())) {
 		bool b = true;
@@ -2902,7 +2949,7 @@ bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto
 			}
 			if(SIZE == 1) setToChild(1);
 			else if(SIZE == 0) clear();
-			else if(!once_only) replace(mfrom, mto, once_only, exclude_function_arguments);
+			else if(!once_only) replace(mfrom, mto, once_only, exclude_function_arguments, replace_in_variables);
 			if(mfrom.isAddition()) add(mto);
 			else if(mfrom.isMultiplication()) multiply(mto);
 			else if(mfrom.isLogicalAnd()) transform(STRUCT_LOGICAL_AND, mto);
@@ -2913,7 +2960,7 @@ bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto
 	if(exclude_function_arguments && m_type == STRUCT_FUNCTION) return false;
 	bool b = false;
 	for(size_t i = 0; i < SIZE; i++) {
-		if(CHILD(i).replace(mfrom, mto, once_only, exclude_function_arguments)) {
+		if(CHILD(i).replace(mfrom, mto, once_only, exclude_function_arguments, replace_in_variables)) {
 			b = true;
 			CHILD_UPDATED(i);
 			if(once_only) return true;
@@ -3075,18 +3122,25 @@ const MathStructure &MathStructure::find_x_var() const {
 bool MathStructure::inParentheses() const {return b_parentheses;}
 void MathStructure::setInParentheses(bool b) {b_parentheses = b;}
 
-bool flattenMultiplication(MathStructure &mstruct) {
+bool flattenMultiplication(MathStructure &mstruct, bool recursive) {
 	bool retval = false;
-	for(size_t i = 0; i < mstruct.size();) {
-		if(mstruct[i].isMultiplication()) {
-			for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
-				mstruct[i][i2].ref();
-				mstruct.insertChild_nocopy(&mstruct[i][i2], i + i2 + 2);
+	if(recursive) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(flattenMultiplication(mstruct[i], true)) retval = true;
+		}
+	}
+	if(mstruct.isMultiplication()) {
+		for(size_t i = 0; i < mstruct.size();) {
+			if(mstruct[i].isMultiplication()) {
+				for(size_t i2 = 0; i2 < mstruct[i].size(); i2++) {
+					mstruct[i][i2].ref();
+					mstruct.insertChild_nocopy(&mstruct[i][i2], i + i2 + 2);
+				}
+				mstruct.delChild(i + 1);
+				retval = true;
+			} else {
+				i++;
 			}
-			mstruct.delChild(i + 1);
-			retval = true;
-		} else {
-			i++;
 		}
 	}
 	return retval;

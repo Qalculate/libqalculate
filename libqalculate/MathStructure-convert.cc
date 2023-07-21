@@ -267,7 +267,7 @@ bool MathStructure::syncUnits(bool sync_nonlinear_relations, bool *found_nonline
 bool has_approximate_relation_to_base(Unit *u, bool do_intervals) {
 	if(u->subtype() == SUBTYPE_ALIAS_UNIT) {
 		if(((AliasUnit*) u)->isApproximate()) return do_intervals;
-		if(((AliasUnit*) u)->expression().find_first_not_of(NUMBER_ELEMENTS EXPS) != string::npos && !((AliasUnit*) u)->hasNonlinearExpression()) return true;
+		if((((AliasUnit*) u)->expression().find_first_not_of(NUMBER_ELEMENTS EXPS MINUS PLUS DIVISION MULTIPLICATION) != string::npos || ((AliasUnit*) u)->expression().find("+/-") != string::npos) && !((AliasUnit*) u)->hasNonlinearExpression()) return true;
 		return has_approximate_relation_to_base(((AliasUnit*) u)->firstBaseUnit());
 	} else if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 		for(size_t i = 1; i <= ((CompositeUnit*) u)->countUnits(); i++) {

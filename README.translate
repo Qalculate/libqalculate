@@ -32,7 +32,7 @@ All names of a object are contained in one text string. The names are separated 
 - 'c': the name is case-sensitive,
 - 'i': the name should not be presented to the user for input (but looks good for display),
 - 'o': the name is appropriate for completion, but should never be presented to the user,
-- 'p':the name is in plural form,
+- 'p': the name is in plural form,
 - 'r': the name is used as reference,
 - 's': the name ends with a suffix (the text after the last '_' will displayed as subscript with the '_' removed, often used in combination with 'i'), and
 - 'u': the name contains a unicode sign.

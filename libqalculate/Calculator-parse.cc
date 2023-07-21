@@ -3421,6 +3421,15 @@ MathStructure *get_out_of_negate(MathStructure &mstruct, int *i_neg) {
 	return &mstruct;
 }
 
+bool contains_unknowns_var(const MathStructure &m) {
+	if(m.isUnknown()) return true;
+	if(m.isVariable() && m.variable()->isKnown()) return contains_unknowns_var(((KnownVariable*) m.variable())->get());
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_unknowns_var(m[i])) return true;
+	}
+	return false;
+}
+
 bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseOptions &po) {
 	string save_str = str;
 	mstruct->clear();
@@ -4811,11 +4820,11 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 								mstruct->addChild_nocopy(mstruct2);
 								break;
 							}
-#define USE_ENTRYWISE_OPERATION (((mstruct->isNumber() && !mstruct->inParentheses()) || (append && mstruct->isMultiplication() && mstruct->last().isNumber() && !mstruct->last().inParentheses() && mstruct->representsNumber() && !mstruct->containsUnknowns())) && mstruct2->representsNumber(true) && !mstruct2->containsUnknowns())
+#define AVOID_ENTRYWISE_OPERATION (((mstruct->isNumber() && !mstruct->inParentheses()) || (append && mstruct->isMultiplication() && mstruct->last().isNumber() && !mstruct->last().inParentheses() && mstruct->representsNumber() && !contains_unknowns_var(*mstruct))) && mstruct2->representsNumber(true) && !contains_unknowns_var(*mstruct2))
 							case 7: {
 								MathStructure *mstruct2 = new MathStructure();
 								parseAdd(str2, mstruct2, po);
-								if(USE_ENTRYWISE_OPERATION) {
+								if(AVOID_ENTRYWISE_OPERATION) {
 									mstruct->multiply_nocopy(mstruct2, append);
 								} else if(append && mstruct->isFunction() && mstruct->function()->id() == FUNCTION_ID_ENTRYWISE_MULTIPLICATION && mstruct->size() == 1 && (*mstruct)[0].isVector()) {
 									(*mstruct)[0].addChild_nocopy(mstruct2);
@@ -4828,7 +4837,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 							case 8: {
 								MathStructure *mstruct2 = new MathStructure();
 								parseAdd(str2, mstruct2, po);
-								if(USE_ENTRYWISE_OPERATION) {
+								if(AVOID_ENTRYWISE_OPERATION) {
 									if(po.preserve_format) {
 										mstruct->transform_nocopy(STRUCT_DIVISION, mstruct2);
 									} else {
@@ -4926,7 +4935,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					case 7: {
 						MathStructure *mstruct2 = new MathStructure();
 						parseAdd(str, mstruct2, po);
-						if(USE_ENTRYWISE_OPERATION) {
+						if(AVOID_ENTRYWISE_OPERATION) {
 							mstruct->multiply_nocopy(mstruct2, append);
 						} else if(append && mstruct->isFunction() && mstruct->function()->id() == FUNCTION_ID_ENTRYWISE_MULTIPLICATION && mstruct->size() == 1 && (*mstruct)[0].isVector()) {
 							(*mstruct)[0].addChild_nocopy(mstruct2);
@@ -4939,7 +4948,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					case 8: {
 						MathStructure *mstruct2 = new MathStructure();
 						parseAdd(str, mstruct2, po);
-						if(USE_ENTRYWISE_OPERATION) {
+						if(AVOID_ENTRYWISE_OPERATION) {
 							if(po.preserve_format) {
 								mstruct->transform_nocopy(STRUCT_DIVISION, mstruct2);
 							} else {

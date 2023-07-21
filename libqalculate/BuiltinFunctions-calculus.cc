@@ -81,10 +81,35 @@ bool FresnelSFunction::representsNonZero(const MathStructure &vargs, bool) const
 bool FresnelSFunction::representsEven(const MathStructure&, bool) const {return false;}
 bool FresnelSFunction::representsOdd(const MathStructure&, bool) const {return false;}
 bool FresnelSFunction::representsUndefined(const MathStructure&) const {return false;}
+#define HANDLE_ANGLE_UNIT \
+	if(contains_angle_unit(mstruct, eo.parse_options)) {\
+		CALCULATOR->beginTemporaryStopMessages();\
+		MathStructure mtest;\
+		mtest /= CALCULATOR->getRadUnit(); mtest.eval(eo);\
+		if(contains_angle_unit(mtest, eo.parse_options, 2) == 0) {\
+			CALCULATOR->endTemporaryStopMessages(true);\
+			mstruct = mtest;\
+		} else if(eo.approximation == APPROXIMATION_EXACT) {\
+			CALCULATOR->beginTemporaryStopMessages();\
+			MathStructure mtest2(mtest);\
+			EvaluationOptions eo2 = eo;\
+			eo2.approximation = APPROXIMATION_APPROXIMATE;\
+			mtest2.eval(eo2);\
+			CALCULATOR->endTemporaryStopMessages();\
+			if(contains_angle_unit(mtest2, eo.parse_options, 2) == 0) {\
+				CALCULATOR->endTemporaryStopMessages(true);\
+				mstruct = mtest;\
+			} else {\
+				CALCULATOR->endTemporaryStopMessages();\
+			}\
+		} else {\
+			CALCULATOR->endTemporaryStopMessages();\
+		}\
+	}
 int FresnelSFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	mstruct.eval(eo);
-	if(contains_angle_unit(mstruct, eo.parse_options)) {mstruct /= CALCULATOR->getRadUnit(); mstruct.eval(eo);}
+	HANDLE_ANGLE_UNIT
 	if(!mstruct.isNumber()) return -1;
 	Number nr(mstruct.number()); if(!nr.fresnels() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {
 		return -1;
@@ -117,7 +142,7 @@ bool FresnelCFunction::representsUndefined(const MathStructure&) const {return f
 int FresnelCFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	mstruct.eval(eo);
-	if(contains_angle_unit(mstruct, eo.parse_options)) {mstruct /= CALCULATOR->getRadUnit(); mstruct.eval(eo);}
+	HANDLE_ANGLE_UNIT
 	if(!mstruct.isNumber()) return -1;
 	Number nr(mstruct.number()); if(!nr.fresnelc() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {
 		return -1;
@@ -136,7 +161,7 @@ int SiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	mstruct = vargs[0];
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
-	if(contains_angle_unit(mstruct, eo.parse_options)) {mstruct /= CALCULATOR->getRadUnit(); mstruct.eval(eo);}
+	HANDLE_ANGLE_UNIT
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number());
 		if(nr.isPlusInfinity()) {
@@ -180,7 +205,7 @@ int CiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	mstruct = vargs[0];
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
-	if(contains_angle_unit(mstruct, eo.parse_options)) {mstruct /= CALCULATOR->getRadUnit(); mstruct.eval(eo);}
+	HANDLE_ANGLE_UNIT
 	if(mstruct.isNumber()) {
 		if(mstruct.number().isNegative()) {
 			if(!eo.allow_complex) return -1;
@@ -789,7 +814,7 @@ int RombergFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	UnknownVariable *var = new UnknownVariable("", format_and_print(vargs[5]));
 	var->setInterval(nr_interval);
 	MathStructure x_var(var);
-	minteg.replace(vargs[5], x_var);
+	minteg.replace(vargs[5], x_var, false, false, true);
 	var->destroy();
 	minteg.eval(eo2);
 	Number nr;
@@ -825,7 +850,7 @@ int MonteCarloFunction::calculate(MathStructure &mstruct, const MathStructure &v
 	UnknownVariable *var = new UnknownVariable("", format_and_print(vargs[4]));
 	var->setInterval(nr_interval);
 	MathStructure x_var(var);
-	minteg.replace(vargs[4], x_var);
+	minteg.replace(vargs[4], x_var, false, false, true);
 	var->destroy();
 	minteg.eval(eo2);
 	Number nr;

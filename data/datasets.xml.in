@@ -164,6 +164,13 @@
 	<approximate>true</approximate>
         <_names>r:temperature</_names>
       </property>
+      <property>
+        <_title>Mean Radius</_title>
+	<type>number</type>
+	<unit>km</unit>
+	<approximate>true</approximate>
+        <_names>r:radius</_names>
+      </property>
     </dataset>
   </category>
 </QALCULATE>

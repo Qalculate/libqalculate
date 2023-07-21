@@ -757,8 +757,22 @@ CisFunction::CisFunction() : MathFunction("cis", 1) {
 int CisFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	if(vargs[0].isVector()) return 0;
-	if(contains_angle_unit(vargs[0], eo.parse_options)) convert_to_radians(vargs[0], mstruct, eo);
-	else mstruct = vargs[0];
+	if(contains_angle_unit(vargs[0], eo.parse_options)) {
+		convert_to_radians(vargs[0], mstruct, eo);
+		if(contains_angle_unit(mstruct, eo.parse_options, 2) != 0) {
+			CALCULATOR->beginTemporaryStopMessages();
+			MathStructure mtest(mstruct);
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_APPROXIMATE;
+			mtest.eval(eo2);
+			CALCULATOR->endTemporaryStopMessages();
+			if(contains_angle_unit(mtest, eo.parse_options, 2) != 0) {
+				mstruct = vargs[0];
+			}
+		}
+	} else {
+		mstruct = vargs[0];
+	}
 
 	if(mstruct.isVariable() && mstruct.variable()->id() == VARIABLE_ID_PI) {
 		mstruct.set(-1, 1, 0, true);
