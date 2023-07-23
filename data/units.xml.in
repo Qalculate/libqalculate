@@ -159,8 +159,19 @@
     </unit>
     <unit type="alias">
       <_title>Rod (pole/perch)</_title>
-      <system>US Survey</system>
+      <system>Imperial/US</system>
       <_names>ar:rd,rod,p:rods</_names>
+      <base>
+        <unit>ft</unit>
+        <relation>16.5</relation>
+        <exponent>1</exponent>
+        <mix>2</mix>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>U.S. Survey Rod</_title>
+      <system>US Survey</system>
+      <_names>ar:US_rd,US_rod,p:rUS_ods</_names>
       <base>
         <unit>US_ft</unit>
         <relation>16.5</relation>
