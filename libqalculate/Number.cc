@@ -10103,13 +10103,19 @@ unsigned int standard_expbits(unsigned int bits) {
 	if(nr < 2) return 2;
 	return nr.uintValue();
 }
-int from_float(Number &nr, string sbin, unsigned int bits, unsigned int expbits) {
+int from_float(Number &nr, string sbin, unsigned int bits, unsigned int expbits) {return from_float(nr, sbin, bits, expbits, 0);}
+int from_float(Number &nr, string sbin, unsigned int bits, unsigned int expbits, unsigned int sgnpos) {
 	if(expbits == 0) expbits = standard_expbits(bits);
 	else if(expbits > bits - 2) return 0;
+	if(sgnpos >= bits) return 0;
 	if(sbin.length() < bits) sbin.insert(0, bits - sbin.length(), '0');
 	if(sbin.length() > bits) {
 		CALCULATOR->error(true, _("The value is too high for the number of floating point bits (%s)."), i2s(bits).c_str(), NULL);
 		return 0;
+	}
+	if(sgnpos > 0) {
+		sbin.insert(0, 1, sbin[sgnpos]);
+		sbin.erase(sgnpos + 1, 1);
 	}
 	bool b_neg = (sbin[0] == '1');
 	Number exp;
@@ -10147,9 +10153,11 @@ int from_float(Number &nr, string sbin, unsigned int bits, unsigned int expbits)
 	if(b_neg) nr.negate();
 	return 1;
 }
-string to_float(Number nr_pre, unsigned int bits, unsigned int expbits, bool *approx) {
+string to_float(Number nr_pre, unsigned int bits, unsigned int expbits, bool *approx) {return to_float(nr_pre, bits, expbits, 0, approx);}
+string to_float(Number nr_pre, unsigned int bits, unsigned int expbits, unsigned int sgnpos, bool *approx) {
 	if(expbits == 0) expbits = standard_expbits(bits);
 	else if(expbits > bits - 2) return "";
+	if(sgnpos >= bits) return "";
 	Number expbias(2);
 	expbias ^= (expbits - 1);
 	expbias--;
@@ -10183,69 +10191,73 @@ string to_float(Number nr_pre, unsigned int bits, unsigned int expbits, bool *ap
 			if(bits == 80) sbin += '1';
 			else sbin += '0';
 			for(size_t i = expbits + 2; i < bits; i++) sbin += '0';
-			return sbin;
-		}
-		Number nrpow(nrexp);
-		nrexp += expbias;
-		bool subnormal = false;
-		if(!nrexp.isPositive()) {
-			nrpow -= nrexp;
-			nrpow++;
-			nrexp.clear();
-			subnormal = true;
-		}
-		nrpow.exp2();
-		Number nrfrac(nr);
-		if(rerun) {
-			nrfrac = 1;
 		} else {
-			nrfrac /= nrpow;
-			nrfrac.intervalToMidValue();
+			Number nrpow(nrexp);
+			nrexp += expbias;
+			bool subnormal = false;
+			if(!nrexp.isPositive()) {
+				nrpow -= nrexp;
+				nrpow++;
+				nrexp.clear();
+				subnormal = true;
+			}
+			nrpow.exp2();
+			Number nrfrac(nr);
+			if(rerun) {
+				nrfrac = 1;
+			} else {
+				nrfrac /= nrpow;
+				nrfrac.intervalToMidValue();
+			}
+			PrintOptions po;
+			po.base = BASE_BINARY;
+			po.min_decimals = bits - expbits - (bits == 80 ? 2 : 1);
+			po.max_decimals = bits - expbits - (bits == 80 ? 2 : 1);
+			po.use_max_decimals = true;
+			po.show_ending_zeroes = true;
+			po.round_halfway_to_even = true;
+			po.binary_bits = 1;
+			po.base_display = BASE_DISPLAY_NONE;
+			bool b_approx = false;
+			po.is_approximate = &b_approx;
+			string sfrac = nrfrac.print(po);
+			remove_blanks(sfrac);
+			if(subnormal && sfrac[0] == '1') {
+				sfrac = "";
+				nrexp = 1;
+				for(size_t i = expbits + 1; i < bits; i++) sfrac += "1";
+			} else if(!subnormal && sfrac[0] == '0') {
+				if(rerun) return "";
+				nrexp--;
+				nrexp -= expbias;
+				rerun = true;
+				goto tofloat_afterexp;
+			} else if(sfrac[1] == '0') {
+				if(rerun) return "";
+				nrexp++;
+				nrexp -= expbias;
+				rerun = true;
+				goto tofloat_afterexp;
+			}
+			if(approx && b_approx) *approx = true;
+			PrintOptions po2;
+			po2.base = BASE_BINARY;
+			po2.twos_complement = false;
+			po2.min_exp = 0;
+			po2.base_display = BASE_DISPLAY_NONE;
+			po2.binary_bits = expbits;
+			po2.show_ending_zeroes = false;
+			sbin += nrexp.print(po2);
+			remove_blanks(sbin);
+			if(sbin.length() < expbits + 1) sbin.insert(1, expbits + 1 - sbin.length(), '0');
+			if(bits == 80) sbin += sfrac[0];
+			sbin += sfrac.substr(2);
+			if(sbin.length() < bits) sbin.append(bits - sbin.length(), '0');
 		}
-		PrintOptions po;
-		po.base = BASE_BINARY;
-		po.min_decimals = bits - expbits - (bits == 80 ? 2 : 1);
-		po.max_decimals = bits - expbits - (bits == 80 ? 2 : 1);
-		po.use_max_decimals = true;
-		po.show_ending_zeroes = true;
-		po.round_halfway_to_even = true;
-		po.binary_bits = 1;
-		po.base_display = BASE_DISPLAY_NONE;
-		bool b_approx = false;
-		po.is_approximate = &b_approx;
-		string sfrac = nrfrac.print(po);
-		remove_blanks(sfrac);
-		if(subnormal && sfrac[0] == '1') {
-			sfrac = "";
-			nrexp = 1;
-			for(size_t i = expbits + 1; i < bits; i++) sfrac += "1";
-		} else if(!subnormal && sfrac[0] == '0') {
-			if(rerun) return "";
-			nrexp--;
-			nrexp -= expbias;
-			rerun = true;
-			goto tofloat_afterexp;
-		} else if(sfrac[1] == '0') {
-			if(rerun) return "";
-			nrexp++;
-			nrexp -= expbias;
-			rerun = true;
-			goto tofloat_afterexp;
-		}
-		if(approx && b_approx) *approx = true;
-		PrintOptions po2;
-		po2.base = BASE_BINARY;
-		po2.twos_complement = false;
-		po2.min_exp = 0;
-		po2.base_display = BASE_DISPLAY_NONE;
-		po2.binary_bits = expbits;
-		po2.show_ending_zeroes = false;
-		sbin += nrexp.print(po2);
-		remove_blanks(sbin);
-		if(sbin.length() < expbits + 1) sbin.insert(1, expbits + 1 - sbin.length(), '0');
-		if(bits == 80) sbin += sfrac[0];
-		sbin += sfrac.substr(2);
-		if(sbin.length() < bits) sbin.append(bits - sbin.length(), '0');
+	}
+	if(sgnpos > 0) {
+		sbin.insert(sgnpos + 1, 1, sbin[0]);
+		sbin.erase(0, 1);
 	}
 	return sbin;
 }

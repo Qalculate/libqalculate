@@ -2274,7 +2274,7 @@ IS_NUMBER_FUNCTION(IsIntegerFunction, isInteger)
 IS_NUMBER_FUNCTION(IsRealFunction, isReal)
 IS_NUMBER_FUNCTION(IsRationalFunction, isRational)
 
-IEEE754FloatFunction::IEEE754FloatFunction() : MathFunction("float", 1, 3) {
+IEEE754FloatFunction::IEEE754FloatFunction() : MathFunction("float", 1, 4) {
 	Argument *arg = new TextArgument();
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
@@ -2285,12 +2285,15 @@ IEEE754FloatFunction::IEEE754FloatFunction() : MathFunction("float", 1, 3) {
 	setDefaultValue(2, "32");
 	setArgumentDefinition(3,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
 	setDefaultValue(3, "0");
-	setCondition("\\z<\\y-1");
+	setArgumentDefinition(4,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
+	setDefaultValue(4, "0");
+	setCondition("\\z<\\y-1 && \\a<\\y");
 }
 int IEEE754FloatFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	string sbin = vargs[0].symbol();
 	unsigned int bits = vargs[1].number().uintValue();
 	unsigned int expbits = vargs[2].number().uintValue();
+	unsigned int sgnpos = vargs[3].number().uintValue();
 	remove_blanks(sbin);
 	if(sbin.find_first_not_of("01") != string::npos) {
 		MathStructure m;
@@ -2307,13 +2310,13 @@ int IEEE754FloatFunction::calculate(MathStructure &mstruct, const MathStructure 
 		remove_blanks(sbin);
 	}
 	Number nr;
-	int ret = from_float(nr, sbin, bits, expbits);
+	int ret = from_float(nr, sbin, bits, expbits, sgnpos);
 	if(ret == 0) return 0;
 	if(ret < 0) mstruct.setUndefined();
 	else mstruct = nr;
 	return 1;
 }
-IEEE754FloatBitsFunction::IEEE754FloatBitsFunction() : MathFunction("floatBits", 1, 3) {
+IEEE754FloatBitsFunction::IEEE754FloatBitsFunction() : MathFunction("floatBits", 1, 4) {
 	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, true);
 	arg->setComplexAllowed(false);
 	arg->setHandleVector(true);
@@ -2325,12 +2328,15 @@ IEEE754FloatBitsFunction::IEEE754FloatBitsFunction() : MathFunction("floatBits",
 	setDefaultValue(2, "32");
 	setArgumentDefinition(3,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
 	setDefaultValue(3, "0");
-	setCondition("\\z<\\y-1");
+	setArgumentDefinition(4,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
+	setDefaultValue(4, "0");
+	setCondition("\\z<\\y-1 && \\a<\\y");
 }
 int IEEE754FloatBitsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	unsigned int bits = vargs[1].number().uintValue();
 	unsigned int expbits = vargs[2].number().uintValue();
-	string sbin = to_float(vargs[0].number(), bits, expbits);
+	unsigned int sgnpos = vargs[3].number().uintValue();
+	string sbin = to_float(vargs[0].number(), bits, expbits, sgnpos);
 	if(sbin.empty()) return 0;
 	ParseOptions pa;
 	pa.base = BASE_BINARY;
@@ -2340,7 +2346,7 @@ int IEEE754FloatBitsFunction::calculate(MathStructure &mstruct, const MathStruct
 	mstruct = nr;
 	return 1;
 }
-IEEE754FloatComponentsFunction::IEEE754FloatComponentsFunction() : MathFunction("floatParts", 1, 3) {
+IEEE754FloatComponentsFunction::IEEE754FloatComponentsFunction() : MathFunction("floatParts", 1, 4) {
 	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, true);
 	arg->setComplexAllowed(false);
 	arg->setHandleVector(true);
@@ -2352,13 +2358,16 @@ IEEE754FloatComponentsFunction::IEEE754FloatComponentsFunction() : MathFunction(
 	setDefaultValue(2, "32");
 	setArgumentDefinition(3,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
 	setDefaultValue(3, "0");
-	setCondition("\\z<\\y-1");
+	setArgumentDefinition(4,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
+	setDefaultValue(4, "0");
+	setCondition("\\z<\\y-1 && \\a<\\y");
 }
 int IEEE754FloatComponentsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	unsigned int bits = vargs[1].number().uintValue();
 	unsigned int expbits = vargs[2].number().uintValue();
+	unsigned int sgnpos = vargs[3].number().uintValue();
 	if(expbits == 0) expbits = standard_expbits(bits);
-	string sbin = to_float(vargs[0].number(), bits, expbits);
+	string sbin = to_float(vargs[0].number(), bits, expbits, sgnpos);
 	if(sbin.empty()) return 0;
 	Number sign, exponent, significand;
 	if(sbin[0] == '0') sign = 1;
@@ -2382,7 +2391,7 @@ int IEEE754FloatComponentsFunction::calculate(MathStructure &mstruct, const Math
 	mstruct.addChild(significand);
 	return 1;
 }
-IEEE754FloatValueFunction::IEEE754FloatValueFunction() : MathFunction("floatValue", 1, 3) {
+IEEE754FloatValueFunction::IEEE754FloatValueFunction() : MathFunction("floatValue", 1, 4) {
 	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, true);
 	arg->setComplexAllowed(false);
 	arg->setHandleVector(true);
@@ -2394,20 +2403,23 @@ IEEE754FloatValueFunction::IEEE754FloatValueFunction() : MathFunction("floatValu
 	setDefaultValue(2, "32");
 	setArgumentDefinition(3,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
 	setDefaultValue(3, "0");
-	setCondition("\\z<\\y-1");
+	setArgumentDefinition(4,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
+	setDefaultValue(4, "0");
+	setCondition("\\z<\\y-1 && \\a<\\y");
 }
 int IEEE754FloatValueFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	unsigned int bits = vargs[1].number().uintValue();
 	unsigned int expbits = vargs[2].number().uintValue();
-	string sbin = to_float(vargs[0].number(), bits, expbits);
+	unsigned int sgnpos = vargs[3].number().uintValue();
+	string sbin = to_float(vargs[0].number(), bits, expbits, sgnpos);
 	if(sbin.empty()) return 0;
 	Number nr;
-	int ret = from_float(nr, sbin, bits, expbits);
+	int ret = from_float(nr, sbin, bits, expbits, sgnpos);
 	if(ret == 0) mstruct.setUndefined();
 	else mstruct = nr;
 	return 1;
 }
-IEEE754FloatErrorFunction::IEEE754FloatErrorFunction() : MathFunction("floatError", 1, 3) {
+IEEE754FloatErrorFunction::IEEE754FloatErrorFunction() : MathFunction("floatError", 1, 4) {
 	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, true);
 	arg->setComplexAllowed(false);
 	arg->setHandleVector(true);
@@ -2419,15 +2431,18 @@ IEEE754FloatErrorFunction::IEEE754FloatErrorFunction() : MathFunction("floatErro
 	setDefaultValue(2, "32");
 	setArgumentDefinition(3,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
 	setDefaultValue(3, "0");
-	setCondition("\\z<\\y-1");
+	setArgumentDefinition(4,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
+	setDefaultValue(4, "0");
+	setCondition("\\z<\\y-1 && \\a<\\y");
 }
 int IEEE754FloatErrorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	unsigned int bits = vargs[1].number().uintValue();
 	unsigned int expbits = vargs[2].number().uintValue();
-	string sbin = to_float(vargs[0].number(), bits, expbits);
+	unsigned int sgnpos = vargs[3].number().uintValue();
+	string sbin = to_float(vargs[0].number(), bits, expbits, sgnpos);
 	if(sbin.empty()) return 0;
 	Number nr;
-	int ret = from_float(nr, sbin, bits, expbits);
+	int ret = from_float(nr, sbin, bits, expbits, sgnpos);
 	if(ret == 0) return 0;
 	if(ret < 0 || (vargs[0].number().isInfinite() && nr.isInfinite())) {
 		mstruct.clear();

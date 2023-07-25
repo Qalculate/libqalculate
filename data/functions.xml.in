@@ -1520,6 +1520,9 @@
       <argument index="3">
         <_title>Number of exponent bits</_title>
       </argument>
+      <argument index="4">
+        <_title>Position of sign bit</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="floatBits">
       <_title>IEEE 754 Floating-Point Bits</_title>
@@ -1533,6 +1536,9 @@
       </argument>
       <argument index="3">
         <_title>Number of exponent bits</_title>
+      </argument>
+      <argument index="4">
+        <_title>Position of sign bit</_title>
       </argument>
     </builtin_function>
     <builtin_function name="floatError">
@@ -1548,6 +1554,9 @@
       <argument index="3">
         <_title>Number of exponent bits</_title>
       </argument>
+      <argument index="4">
+        <_title>Position of sign bit</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="floatParts">
       <_title>IEEE 754 Floating-Point Components</_title>
@@ -1562,6 +1571,9 @@
       <argument index="3">
         <_title>Number of exponent bits</_title>
       </argument>
+      <argument index="4">
+        <_title>Position of sign bit</_title>
+      </argument>
     </builtin_function>
     <builtin_function name="floatValue">
       <_title>IEEE 754 Floating-Point Value</_title>
@@ -1575,6 +1587,9 @@
       </argument>
       <argument index="3">
         <_title>Number of exponent bits</_title>
+      </argument>
+      <argument index="4">
+        <_title>Position of sign bit</_title>
       </argument>
     </builtin_function>
     <builtin_function name="roman">
