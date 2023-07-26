@@ -3259,7 +3259,9 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		if(o_number.isRational() && !o_number.isInteger() && !o_number.isZero() && ((o_number.isNegative() && o_number.isGreaterThan(nr_minus_one) && mstruct.number().isInteger()) || (o_number.isPositive() && o_number.isLessThan(nr_one)))) {
 			mstruct.number().negate();
 			o_number.recip();
-			return 0;
+			mstruct.ref();
+			raise_nocopy(&mstruct);
+			return 1;
 		}
 		return -1;
 	}
