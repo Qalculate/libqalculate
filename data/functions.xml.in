@@ -817,10 +817,9 @@
       <_title>Fibonacci Number</_title>
       <_names>r:fibonacci</_names>
       <_description>Returns the n-th term of the Fibonacci sequence.</_description>
-      <expression>(golden^\x−(1−golden)^\x)/sqrt(5)</expression>
-      <argument type="integer" index="1">
+      <expression>if(isInteger(\x),(golden^\x−(1−golden)^\x)/sqrt(5),(golden^\x-cos(\x*pi)*golden^(-\x))/sqrt(5))</expression>
+      <argument type="number" index="1">
         <_title>Index (n)</_title>
-        <min>0</min>
         <test>false</test>
       </argument>
     </function>
