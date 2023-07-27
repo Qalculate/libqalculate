@@ -39,24 +39,22 @@ using std::endl;
 
 #include "Calculator_p.h"
 
-void autoConvert(const MathStructure &morig, MathStructure &mconv, const EvaluationOptions &eo, bool avoid_loop) {
+void autoConvert(const MathStructure &morig, MathStructure &mconv, const EvaluationOptions &eo) {
 	if(!morig.containsType(STRUCT_UNIT, true)) {
 		if(&mconv != &morig) mconv.set(morig);
 		return;
 	}
-	EvaluationOptions eo2 = eo;
-	if(avoid_loop) eo2.auto_post_conversion = POST_CONVERSION_NONE;
 	switch(eo.auto_post_conversion) {
 		case POST_CONVERSION_OPTIMAL: {
-			mconv.set(CALCULATOR->convertToOptimalUnit(morig, eo2, false));
+			mconv.set(CALCULATOR->convertToOptimalUnit(morig, eo, false));
 			break;
 		}
 		case POST_CONVERSION_BASE: {
-			mconv.set(CALCULATOR->convertToBaseUnits(morig, eo2));
+			mconv.set(CALCULATOR->convertToBaseUnits(morig, eo));
 			break;
 		}
 		case POST_CONVERSION_OPTIMAL_SI: {
-			mconv.set(CALCULATOR->convertToOptimalUnit(morig, eo2, true));
+			mconv.set(CALCULATOR->convertToOptimalUnit(morig, eo, true));
 			break;
 		}
 		default: {

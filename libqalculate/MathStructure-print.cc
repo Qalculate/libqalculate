@@ -606,7 +606,7 @@ void MathStructure::sort(const PrintOptions &po, bool recursive) {
 }
 
 void MathStructure::unformat(const EvaluationOptions &eo) {
-	if(m_type == STRUCT_FUNCTION && o_function->id() == FUNCTION_ID_STRIP_UNITS) {
+	if(m_type == STRUCT_FUNCTION && (o_function->id() == FUNCTION_ID_STRIP_UNITS || o_function->id() == FUNCTION_ID_SAVE)) {
 		EvaluationOptions eo2 = eo;
 		eo2.keep_prefixes = true;
 		for(size_t i = 0; i < SIZE; i++) {

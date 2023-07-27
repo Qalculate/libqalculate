@@ -27,6 +27,12 @@ ExpressionName::ExpressionName(string sname) : suffix(false), unicode(false), pl
 		abbreviation = false;
 		case_sensitive = false;
 	}
+	for(size_t i = 0; i < sname.length(); i++) {
+		if((unsigned char) sname[i] >= 0xC0) {
+			unicode = true;
+			break;
+		}
+	}
 	if(sname.length() > 2) {
 		size_t i = sname.find('_', 1);
 		if(i != string::npos && i < sname.length() - 1 && sname.find('_', i + 1) == string::npos) {
