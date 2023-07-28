@@ -1640,6 +1640,21 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				stmp += i2s(addId(new MathStructure(v_percent)));
 				stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 				str.replace(i_mod, 1, stmp);
+				if(i_mod > 1) {
+					size_t i = str.rfind("\b", i_mod - 2);
+					if(i != string::npos) {
+						for(size_t i2 = i_mod - 1; ; i2--) {
+							if(i2 == i) {
+								str.insert(i + 1, LEFT_PARENTHESIS);
+								str.insert(i_mod + stmp.length() + 1, RIGHT_PARENTHESIS);
+								i_mod += 2;
+								break;
+							} else if(is_not_number(str[i2], base) && str[i2] != DOT_CH && (i2 == i_mod - 1 || str[i2] != SPACE_CH)) {
+								break;
+							}
+						}
+					}
+				}
 				i_mod += stmp.length() - 1;
 			}
 		} else {
@@ -1650,10 +1665,59 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				stmp += i2s(addId(new MathStructure(v_percent)));
 				stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 				str.replace(i_mod, 1, stmp);
+				if(i_mod > 1) {
+					size_t i = str.rfind("\b", i_mod - 2);
+					if(i != string::npos) {
+						for(size_t i2 = i_mod - 1; ; i2--) {
+							if(i2 == i) {
+								str.insert(i + 1, LEFT_PARENTHESIS);
+								str.insert(i_mod + stmp.length() + 1, RIGHT_PARENTHESIS);
+								i_mod += 2;
+								break;
+							} else if(is_not_number(str[i2], base) && str[i2] != DOT_CH && (i2 == i_mod - 1 || str[i2] != SPACE_CH)) {
+								break;
+							}
+						}
+					}
+				}
 				i_mod += stmp.length() - 1;
 			}
 		}
 		i_mod = str.find("%", i_mod + 1);
+	}
+	i_mod = str.find("‰", 2);
+	while(i_mod != string::npos) {
+		size_t i = str.rfind("\b", i_mod - 2);
+		if(i != string::npos) {
+			for(size_t i2 = i_mod - 1; ; i2--) {
+				if(i2 == i) {
+					str.insert(i + 1, LEFT_PARENTHESIS);
+					str.insert(i_mod + strlen("‰") + 1, RIGHT_PARENTHESIS);
+					i_mod += 2;
+					break;
+				} else if(is_not_number(str[i2], base) && str[i2] != DOT_CH && (i2 == i_mod - 1 || str[i2] != SPACE_CH)) {
+					break;
+				}
+			}
+		}
+		i_mod = str.find("‰", i_mod + 1);
+	}
+	i_mod = str.find("‱", 2);
+	while(i_mod != string::npos) {
+		size_t i = str.rfind("\b", i_mod - 2);
+		if(i != string::npos) {
+			for(size_t i2 = i_mod - 1; ; i2--) {
+				if(i2 == i) {
+					str.insert(i + 1, LEFT_PARENTHESIS);
+					str.insert(i_mod + strlen("‱") + 1, RIGHT_PARENTHESIS);
+					i_mod += 2;
+					break;
+				} else if(is_not_number(str[i2], base) && str[i2] != DOT_CH && (i2 == i_mod - 1 || str[i2] != SPACE_CH)) {
+					break;
+				}
+			}
+		}
+		i_mod = str.find("‱", i_mod + 1);
 	}
 
 	size_t i_dx = str.find("dx", 4);
@@ -5246,7 +5310,8 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 		mstruct->transform(f_uncertainty);
 		mstruct->addChild_nocopy(mstruct2);
-		mstruct->addChild(m_zero);
+		if(mstruct2->isMultiplication() && mstruct2->last().isVariable() && (mstruct2->last().variable() == v_percent || mstruct2->last().variable() == v_permille || mstruct2->last().variable() == v_permyriad)) mstruct->addChild(m_one);
+		else mstruct->addChild(m_zero);
 	} else if(BASE_2_10 && (i = str.find_first_of(EXPS, 0)) != string::npos && i + 1 != str.length() && str.find("\b") == string::npos) {
 		// Parse scientific e-notation
 		if(i == 0) {

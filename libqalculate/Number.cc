@@ -10877,7 +10877,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		nr2.frac();
 		nr2.intervalToPrecision();
 		if(nr2.isInterval()) {
-			if(po2.interval_display < INTERVAL_DISPLAY_INTERVAL || po2.interval_display < INTERVAL_DISPLAY_PLUSMINUS) po2.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+			po2.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 			po2.max_decimals = 0;
 			po2.use_max_decimals = true;
 			return print(po2, ips);
@@ -11499,7 +11499,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(ips.minus) *ips.minus = false;
 			if(ips.num) *ips.num = str;
 			return str;
-		} else if(po.interval_display == INTERVAL_DISPLAY_PLUSMINUS) {
+		} else if(po.interval_display == INTERVAL_DISPLAY_PLUSMINUS || po.interval_display == INTERVAL_DISPLAY_CONCISE || po.interval_display == INTERVAL_DISPLAY_RELATIVE) {
 			if(mpfr_inf_p(fl_value) || mpfr_inf_p(fu_value)) {
 				PrintOptions po2 = po;
 				po2.interval_display = INTERVAL_DISPLAY_INTERVAL;
@@ -11860,7 +11860,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		bool b_pm_zero = false;
 
 		if(mpfr_zero_p(f_mid)) {
-			if(po.interval_display == INTERVAL_DISPLAY_PLUSMINUS && is_interval) {
+			if((po.interval_display == INTERVAL_DISPLAY_PLUSMINUS || po.interval_display == INTERVAL_DISPLAY_CONCISE || po.interval_display == INTERVAL_DISPLAY_RELATIVE) && is_interval) {
 				mpfr_t f_lunc, f_unc;
 				mpfr_inits2(mpfr_get_prec(f_mid), f_lunc, f_unc, NULL);
 				mpfr_sub(f_lunc, f_mid, fl_value, MPFR_RNDU);
@@ -11911,7 +11911,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			precision += 2;
 		}
 
-		if((base == 10 || (isInterval() && po.interval_display == INTERVAL_DISPLAY_MIDPOINT && i_log > 0 && i_log > precision) || (i_log > 10000L || i_log < -10000L)) && (!po.preserve_format || (is_interval && po.interval_display == INTERVAL_DISPLAY_PLUSMINUS))) {
+		if((base == 10 || (isInterval() && po.interval_display == INTERVAL_DISPLAY_MIDPOINT && i_log > 0 && i_log > precision) || (i_log > 10000L || i_log < -10000L)) && (!po.preserve_format || (is_interval && (po.interval_display == INTERVAL_DISPLAY_PLUSMINUS || po.interval_display == INTERVAL_DISPLAY_CONCISE || po.interval_display == INTERVAL_DISPLAY_RELATIVE)))) {
 			expo = i_log;
 			if(po.min_exp == EXP_PRECISION || (po.min_exp == EXP_NONE && (expo > 100000L || expo < -100000L)) || (base != 10 && (expo > 10000L || expo < -10000L))) {
 				long int precexp = i_precision_base;
@@ -11941,7 +11941,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				expo = 0;
 			}
 		}
-		if(!rerun && i_precision_base > precision_base && min_decimals > 0 && (po.interval_display != INTERVAL_DISPLAY_PLUSMINUS || !is_interval)) {
+		if(!rerun && i_precision_base > precision_base && min_decimals > 0 && ((po.interval_display != INTERVAL_DISPLAY_PLUSMINUS && po.interval_display != INTERVAL_DISPLAY_CONCISE && po.interval_display != INTERVAL_DISPLAY_RELATIVE) || !is_interval)) {
 			if(min_decimals > precision - 1 - (i_log - expo)) {
 				precision = min_decimals + 1 + (i_log - expo);
 				if(precision > i_precision_base) precision = i_precision_base;
@@ -11953,7 +11953,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(expo == 0 && i_log > precision) {
 			precision = (i_precision_base > i_log + 1) ? i_log + 1 : i_precision_base;
 		}
-		i_log -= ((use_max_idp || po.interval_display != INTERVAL_DISPLAY_PLUSMINUS || !is_interval) && po.use_max_decimals && po.max_decimals >= 0 && precision > po.max_decimals + i_log - expo) ? po.max_decimals + i_log - expo : precision - 1;
+		i_log -= ((use_max_idp || (po.interval_display != INTERVAL_DISPLAY_PLUSMINUS && po.interval_display != INTERVAL_DISPLAY_CONCISE && po.interval_display != INTERVAL_DISPLAY_RELATIVE) || !is_interval) && po.use_max_decimals && po.max_decimals >= 0 && precision > po.max_decimals + i_log - expo) ? po.max_decimals + i_log - expo : precision - 1;
 		l10 = expo - i_log;
 		mpz_t z_log;
 		mpz_init(z_log);
@@ -11993,7 +11993,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		bool show_ending_zeroes = po.show_ending_zeroes;
 
-		string str_unc;
+		string str_unc, str_runc;
 
 		if(b_pm_zero) {
 			if(!rerun && !po.preserve_precision && l10 > 0 && str.length() > 2) {
@@ -12007,8 +12007,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(!po.preserve_precision) show_ending_zeroes = l10 > 0;
 			str_unc = str;
 			str = "0";
-		} else if(po.interval_display == INTERVAL_DISPLAY_PLUSMINUS && is_interval) {
-			mpfr_t f_lunc, f_unc;
+		} else if((po.interval_display == INTERVAL_DISPLAY_PLUSMINUS || po.interval_display == INTERVAL_DISPLAY_CONCISE || po.interval_display == INTERVAL_DISPLAY_RELATIVE) && is_interval) {
+			mpfr_t f_lunc, f_unc, f_runc;
 			mpfr_inits2(mpfr_get_prec(f_mid), f_lunc, f_unc, NULL);
 			if(i_log < 0) {
 				mpfr_mul_z(f_lunc, fl_value, z_log, MPFR_RNDD);
@@ -12021,6 +12021,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			mpfr_sub(f_lunc, v, f_lunc, MPFR_RNDU);
 			mpfr_sub(f_unc, f_unc, v, MPFR_RNDU);
 			if(mpfr_cmp(f_lunc, f_unc) > 0) mpfr_swap(f_lunc, f_unc);
+			if(po.interval_display == INTERVAL_DISPLAY_RELATIVE) {
+				mpfr_inits2(mpfr_get_prec(f_mid), f_runc, NULL);
+				mpfr_set(f_runc, f_unc, MPFR_RNDN);
+			}
 			if(!po.preserve_precision) {
 				if(TRUNCATE) mpfr_trunc(f_unc, f_unc);
 				else if(po.round_halfway_to_even) mpfr_rint(f_unc, f_unc, MPFR_RNDN);
@@ -12031,17 +12035,22 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				str_unc = printMPZ(ivalue, base, false, po.lower_case_numbers);
 				if(!po.preserve_precision) show_ending_zeroes = str.length() > str_unc.length() || precision == 2;
 			}
+			mpfr_clears(f_lunc, f_unc, NULL);
 			if(!rerun) {
 				if(str_unc.empty() && po.use_max_decimals && po.max_decimals >= 0) {
 					use_max_idp = true;
 					rerun = true;
+					mpfr_clears(v, f_base, NULL);
+					if(po.interval_display == INTERVAL_DISPLAY_RELATIVE) mpfr_clear(f_runc);
 					goto float_rerun;
 				} else if(str_unc.length() > str.length()) {
 					precision -= str_unc.length() - str.length();
+					mpfr_clears(v, f_base, NULL);
+					if(po.interval_display == INTERVAL_DISPLAY_RELATIVE) mpfr_clear(f_runc);
 					if(precision <= 0) {
 						PrintOptions po2 = po;
 						po2.interval_display = INTERVAL_DISPLAY_INTERVAL;
-						mpfr_clears(f_mid, f_lunc, f_unc, v, f_base, NULL);
+						mpfr_clears(f_mid, NULL);
 						mpz_clears(ivalue, z_log, NULL);
 						return print(po2, ips);
 					}
@@ -12051,16 +12060,46 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				} else if(!po.preserve_precision && l10 > 0 && str_unc.length() > 2) {
 					precision = str.length() - l10;
 					if(precision < (long int) str.length() - (long int) str_unc.length() + 2) precision = str.length() - str_unc.length() + 2;
-					mpfr_clears(f_lunc, f_unc, v, f_base, NULL);
+					mpfr_clears(v, f_base, NULL);
 					mpz_clears(ivalue, z_log, NULL);
+					if(po.interval_display == INTERVAL_DISPLAY_RELATIVE) mpfr_clear(f_runc);
 					rerun = true;
 					goto float_rerun;
 				}
 			}
+			if(po.interval_display == INTERVAL_DISPLAY_RELATIVE) {
+				mpfr_div(f_runc, f_runc, v, MPFR_RNDU);
+				mpfr_mul_ui(f_runc, f_runc, 100, MPFR_RNDU);
+				int i_runclog = integer_log(f_runc, base);
+				if(i_runclog < 5) {
+					if(i_runclog < 1) {
+						mpz_t z_log;
+						mpz_init(z_log);
+						mpz_ui_pow_ui(z_log, base, 1 - i_runclog);
+						mpfr_mul_z(f_runc, f_runc, z_log, MPFR_RNDN);
+						mpz_clear(z_log);
+					}
+					if(!po.preserve_precision) {
+						if(TRUNCATE) mpfr_trunc(f_runc, f_runc);
+						else if(po.round_halfway_to_even) mpfr_rint(f_runc, f_runc, MPFR_RNDN);
+						else mpfr_round(f_runc, f_runc);
+					}
+					if(!mpfr_zero_p(f_runc)) {
+						mpfr_get_z(ivalue, f_runc, po.preserve_precision ? MPFR_RNDU : MPFR_RNDN);
+						str_runc = printMPZ(ivalue, base, false, po.lower_case_numbers);
+						if(i_runclog < 1) {
+							if(i_runclog < 0) str_runc.insert(0, -i_runclog, '0');
+							str_runc.insert(1, po.decimalpoint());
+						}
+					}
+				}
+				mpfr_clears(f_runc, NULL);
+			}
 		}
 
+		bool b_concise = po.interval_display == INTERVAL_DISPLAY_CONCISE && str_unc.length() == 2 && str_unc.length() <= str.length();
 		if(l10 > 0) {
-			if(!str_unc.empty()) {
+			if(!str_unc.empty() && !b_concise) {
 				long int l10unc = str_unc.length() - l10;
 				if(l10unc < 1) {
 					str_unc.insert(str_unc.begin(), 1 - l10unc, '0');
@@ -12121,13 +12160,27 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			PrintOptions po2 = po;
 			po2.binary_bits = 0;
 			str = format_number_string(str, DOZENAL ? -12 : base, po.base_display, !ips.minus && neg, true, po2);
-			if(!str_unc.empty()) str_unc = format_number_string(str_unc, DOZENAL ? -12 : base, po.base_display, false, true, po2);
+			if(!str_unc.empty() && !b_concise) str_unc = format_number_string(str_unc, DOZENAL ? -12 : base, po.base_display, false, true, po2);
 		} else {
 			str = format_number_string(str, DOZENAL ? -12 : base, po.base_display, !ips.minus && neg, true, po);
-			if(!str_unc.empty()) str_unc = format_number_string(str_unc, DOZENAL ? -12 : base, po.base_display, false, true, po);
+			if(!str_unc.empty() && !b_concise) str_unc = format_number_string(str_unc, DOZENAL ? -12 : base, po.base_display, false, true, po);
 		}
 
 		if(str_unc.empty()) {
+			add_base_exponent(str, expo, base, po, ips);
+		} else if(!str_runc.empty()) {
+			if(base == 10) {
+				add_base_exponent(str, expo, base, po, ips, b_pm_zero ? 2 : 0);
+				add_base_exponent(str_unc, expo, base, po, ips, 1);
+			}
+			str += SIGN_PLUSMINUS;
+			str += str_runc;
+			str += "%";
+			if(base != 10) add_base_exponent(str, expo, base, po, ips);
+		} else if(b_concise) {
+			str += "(";
+			str += str_unc;
+			str += ")";
 			add_base_exponent(str, expo, base, po, ips);
 		} else {
 			if(base == 10) {
