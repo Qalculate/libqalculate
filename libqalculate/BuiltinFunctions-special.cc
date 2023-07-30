@@ -33,7 +33,7 @@ using std::endl;
 
 #define FR_FUNCTION(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
 #define FR_FUNCTION_2(FUNC)	Number nr(vargs[0].number()); if(!nr.FUNC(vargs[1].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !vargs[1].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
-#define FR_FUNCTION_2R(FUNC)	Number nr(vargs[1].number()); if(!nr.FUNC(vargs[0].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !vargs[1].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !vargs[1].number().includesInfinity())) {return 0;} else {mstruct.set(nr); return 1;}
+#define FR_FUNCTION_2Rm(FUNC)	Number nr(mstruct.number()); if(!nr.FUNC(vargs[0].number()) || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity() && !mstruct.number().includesInfinity())) {return ret;} else {mstruct.set(nr); return 1;}
 #define NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(i)			NumberArgument *arg_non_complex##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
 
 bool has_interval_unknowns(MathStructure &m) {
@@ -261,21 +261,63 @@ int AiryFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	FR_FUNCTION(airy)
 }
 BesseljFunction::BesseljFunction() : MathFunction("besselj", 2) {
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG));
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, false, true, INTEGER_TYPE_SLONG));
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(2);
 }
 int BesseljFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	FR_FUNCTION_2R(besselj)
+	mstruct = vargs[0];
+	int ret = 0;
+	if(!mstruct.isNumber()) {
+		mstruct.eval(eo);
+		if(!mstruct.equals(vargs[0], true, true)) ret = -1;
+	}
+	Argument *arg = getArgumentDefinition(1);
+	if(arg) {
+		arg->setTests(true);
+		bool b = true;
+		if(!mstruct.isNumber()) {
+			MathStructure m; m.setUndefined();
+			b = getArgumentDefinition(1)->test(m, 1, this, eo);
+		} else {
+			b = getArgumentDefinition(1)->test(mstruct, 1, this, eo);
+		}
+		arg->setTests(false);
+		if(!b) return ret;
+	} else if(!mstruct.isNumber()) {
+		return ret;
+	}
+	FR_FUNCTION_2Rm(besselj)
 }
 BesselyFunction::BesselyFunction() : MathFunction("bessely", 2) {
-	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG);
+	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, false, true, INTEGER_TYPE_SLONG);
 	Number nmax(1000);
 	iarg->setMax(&nmax);
 	setArgumentDefinition(1, iarg);
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(2);
 }
 int BesselyFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	FR_FUNCTION_2R(bessely)
+	mstruct = vargs[0];
+	int ret = 0;
+	if(!mstruct.isNumber()) {
+		mstruct.eval(eo);
+		if(!mstruct.equals(vargs[0], true, true)) ret = -1;
+	}
+	Argument *arg = getArgumentDefinition(1);
+	if(arg) {
+		arg->setTests(true);
+		bool b = true;
+		if(!mstruct.isNumber()) {
+			MathStructure m; m.setUndefined();
+			b = getArgumentDefinition(1)->test(m, 1, this, eo);
+		} else {
+			b = getArgumentDefinition(1)->test(mstruct, 1, this, eo);
+		}
+		arg->setTests(false);
+		if(!b) return ret;
+	} else if(!mstruct.isNumber()) {
+		return ret;
+	}
+	FR_FUNCTION_2Rm(bessely)
 }
 ErfFunction::ErfFunction() : MathFunction("erf", 1) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));

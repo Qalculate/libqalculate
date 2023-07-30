@@ -1984,7 +1984,12 @@ bool IntegerArgument::subtest(MathStructure &value, const EvaluationOptions &eo)
 	if(!value.isNumber()) {
 		value.eval(eo);
 	}
-	if(!value.isNumber() || !value.number().isInteger(i_inttype)) {
+	if(!value.isNumber()) return false;
+	if(!value.number().isInteger() && value.number().isInterval() && value.number().precision(true) > PRECISION + 10) {
+		Number nr;
+		if(value.number().getCentralInteger(nr)) value.set(nr, true);
+	}
+	if(!value.number().isInteger(i_inttype)) {
 		return false;
 	}
 	if(imin) {
