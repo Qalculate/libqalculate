@@ -60,6 +60,7 @@ vector<string> alt_results;
 bool load_global_defs, fetch_exchange_rates_at_startup, first_time, save_mode_on_exit, save_defs_on_exit, clear_history_on_exit, load_defaults = false;
 int auto_update_exchange_rates;
 PrintOptions printops, saved_printops;
+bool saved_concise_uncertainty_input = false;
 bool complex_angle_form = false, saved_caf = false;
 EvaluationOptions evalops, saved_evalops;
 bool dot_question_asked = false, implicit_question_asked = false;
@@ -1120,7 +1121,14 @@ void set_option(string str) {
 			hide_parse_errors = false;
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "caret as xor", _("caret as xor")) || equalsIgnoreCase(svar, "xor^")) SET_BOOL_PT(caret_as_xor)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "parsing mode", _("parsing mode")) || svar == "parse" || svar == "syntax") {
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "concise uncertainty", _("concise uncertainty")) || equalsIgnoreCase(svar, "concise")) {
+		bool b = CALCULATOR->conciseUncertaintyInputEnabled();
+		SET_BOOL(b)
+		if(b != CALCULATOR->conciseUncertaintyInputEnabled()) {
+			CALCULATOR->setConciseUncertaintyInputEnabled(b);
+			expression_format_updated(false);
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "parsing mode", _("parsing mode")) || svar == "parse" || svar == "syntax") {
 		int v = -1;
 		//parsing mode
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "adaptive", _("adaptive"))) v = PARSING_MODE_ADAPTIVE;
@@ -1787,6 +1795,7 @@ bool show_set_help(string set_option = "") {
 	CHECK_IF_SCREEN_FILLED_HEADING_S(_("Parsing"));
 
 	STR_AND_TABS_BOOL("caret as xor", "xor^", _("Use ^ as bitwise exclusive OR operator."), caret_as_xor);
+	STR_AND_TABS_BOOL("concise uncertainty", "concise", _("Allow input of uncertainty using concise notation."), CALCULATOR->conciseUncertaintyInputEnabled());
 	if(SET_OPTION_MATCHES("decimal comma", "")) {
 		STR_AND_TABS_SET("decimal comma", "");
 		SET_DESCRIPTION(_("Determines the default decimal separator."));
@@ -4713,6 +4722,7 @@ int main(int argc, char *argv[]) {
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Parsing"));
 
 			PRINT_AND_COLON_TABS(_("caret as xor"), "xor^"); str += b2oo(caret_as_xor, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("concise uncertainty"), "concise"); str += b2oo(CALCULATOR->conciseUncertaintyInputEnabled(), false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("decimal comma"), "");
 			if(b_decimal_comma < 0) {str += _("locale");}
 			else if(b_decimal_comma == 0) {str += _("off");}
@@ -7027,6 +7037,7 @@ void set_saved_mode() {
 	saved_percent = simplified_percentage;
 	saved_rpn_mode = rpn_mode;
 	saved_caret_as_xor = caret_as_xor;
+	saved_concise_uncertainty_input = CALCULATOR->conciseUncertaintyInputEnabled();
 	saved_dual_fraction = dual_fraction;
 	saved_dual_approximation = dual_approximation;
 	saved_assumption_type = CALCULATOR->defaultAssumptions()->type();
@@ -7357,6 +7368,8 @@ void load_preferences() {
 					custom_angle_unit = svalue;
 				} else if(svar == "caret_as_xor") {
 					caret_as_xor = v;
+				} else if(svar == "concise_uncertainty_input") {
+					CALCULATOR->setConciseUncertaintyInputEnabled(v);
 				} else if(svar == "functions_enabled") {
 					evalops.parse_options.functions_enabled = v;
 				} else if(svar == "variables_enabled") {
@@ -7647,6 +7660,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "angle_unit=%i\n", saved_evalops.parse_options.angle_unit);
 	if(!saved_custom_angle_unit.empty() && saved_custom_angle_unit != "rad") fprintf(file, "custom_angle_unit=%s\n", saved_custom_angle_unit.c_str());
 	fprintf(file, "caret_as_xor=%i\n", saved_caret_as_xor);
+	fprintf(file, "concise_uncertainty_input=%i\n", saved_concise_uncertainty_input);
 	fprintf(file, "functions_enabled=%i\n", saved_evalops.parse_options.functions_enabled);
 	fprintf(file, "variables_enabled=%i\n", saved_evalops.parse_options.variables_enabled);
 	fprintf(file, "calculate_variables=%i\n", saved_evalops.calculate_variables);

@@ -78,6 +78,7 @@ class Calculator_p {
 		TemperatureCalculationMode temperature_calculation;
 		bool matlab_matrices;
 		bool persistent_plot;
+		bool concise_uncertainty_input;
 		int exchange_rates_url3;
 };
 
@@ -87,6 +88,5 @@ class CalculateThread : public Thread {
 };
 
 bool is_not_number(char c, int base);
-void autoConvert(const MathStructure &morig, MathStructure &mconv, const EvaluationOptions &eo);
 
 #endif

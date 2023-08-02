@@ -3288,7 +3288,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			// ignore operators
 			error(false, _("Misplaced operator(s) \"%s\" ignored"), internal_operator_replacement(str[i]).c_str(), NULL);
 			str.erase(i, 1);
-		} else if(str[i] == '\b') {
+		} else if(str[i] == '\b' || str[i] == LEFT_PARENTHESIS_CH || str[i] == RIGHT_PARENTHESIS_CH) {
 			// +/-
 			b_exp = false;
 			had_non_sign = false;
@@ -3339,7 +3339,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 	// handle non-digits if number base is 2-10 or duodecimal
 	size_t itmp;
 	long int mulexp = 0;
-	if((BASE_2_10 || po.base == BASE_DUODECIMAL) && (itmp = str.find_first_not_of(po.base == BASE_DUODECIMAL ? NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS MINUS DUODECIMAL_CHARS : NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS EXPS MINUS, 0)) != string::npos) {
+	if((BASE_2_10 || po.base == BASE_DUODECIMAL) && (itmp = str.find_first_not_of(po.base == BASE_DUODECIMAL ? PARENTHESISS NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS MINUS DUODECIMAL_CHARS : PARENTHESISS NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS EXPS MINUS, 0)) != string::npos) {
 		if(itmp == 0) {
 			error(true, _("\"%s\" is not a valid variable/function/unit."), str.c_str(), NULL);
 			if(minus_count % 2 == 1 && !po.preserve_format) {
@@ -3499,6 +3499,22 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	mstruct->clear();
 	size_t i = 0, i2 = 0, i3 = 0;
 	string str2, str3;
+	int base = po.base;
+	if(base == BASE_CUSTOM) {
+		base = (int) priv->custom_input_base_i;
+	} else if(base == BASE_BIJECTIVE_26) {
+		base = 36;
+	} else if(base == BASE_GOLDEN_RATIO || base == BASE_SUPER_GOLDEN_RATIO || base == BASE_SQRT2 || base == BASE_BINARY_DECIMAL) {
+		base = 2;
+	} else if(base == BASE_PI) {
+		base = 4;
+	} else if(base == BASE_E) {
+		base = 3;
+	} else if(base == BASE_DUODECIMAL) {
+		base = -12;
+	} else if(base < 2 || base > 36) {
+		base = -1;
+	}
 	bool extended_roman = (po.base == BASE_ROMAN_NUMERALS && (i = str.find("|")) != string::npos && i + 1 < str.length() && str[i + 1] == RIGHT_PARENTHESIS_CH);
 	while(!extended_roman) {
 		//find first right parenthesis and then the last left parenthesis before
@@ -3524,6 +3540,29 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				str.insert(str.begin(), 1, LEFT_PARENTHESIS_CH);
 				i = 0;
 				i2++;
+			}
+			if(priv->concise_uncertainty_input && i > 0 && i2 > i + 1 && !is_not_number(str[i - 1], base) && !is_not_number(str[i + 1], base) && (i2 == str.length() - 1 || is_not_number(str[i2 + 1], base))) {
+				for(i3 = i + 2; i < i2; i3++) {
+					if(is_not_number(str[i3], base)) break;
+				}
+				if(i3 == i2) {
+					i3 = i - 1;
+					size_t n = 1;
+					while(i3 > 0) {
+						if(!is_not_number(str[i3 - 1], base)) n++;
+						else if(str[i3 - 1] != DOT_CH) break;
+						i3--;
+					}
+					if(i2 - i - 1 <= n) {
+						MathStructure *mstruct2 = new MathStructure();
+						parseNumber(mstruct2, str.substr(i3, i2 - i3 + 1), po);
+						str2 = ID_WRAP_LEFT;
+						str2 += i2s(addId(mstruct2));
+						str2 += ID_WRAP_RIGHT;
+						str.replace(i3, i2 - i3 + 1, str2);
+						continue;
+					}
+				}
 			}
 		}
 		while(true) {

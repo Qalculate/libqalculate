@@ -469,7 +469,13 @@ const MathStructure &KnownVariable::get() {
 			m->numberUpdated();
 		} else {
 			m->setAborted();
-			CALCULATOR->parse(m, sexpression, po);
+			if(b_local && !CALCULATOR->conciseUncertaintyInputEnabled()) {
+				CALCULATOR->setConciseUncertaintyInputEnabled(true);
+				CALCULATOR->parse(m, sexpression, po);
+				CALCULATOR->setConciseUncertaintyInputEnabled(false);
+			} else {
+				CALCULATOR->parse(m, sexpression, po);
+			}
 		}
 		if(!sunit.empty() && (!CALCULATOR->variableUnitsEnabled() || sunit != "auto")) {
 			m->removeType(STRUCT_UNIT);

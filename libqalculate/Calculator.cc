@@ -178,6 +178,7 @@ Calculator::Calculator() {
 	priv->temperature_calculation = TEMPERATURE_CALCULATION_HYBRID;
 	priv->matlab_matrices = true;
 	priv->persistent_plot = false;
+	priv->concise_uncertainty_input = false;
 
 #ifdef HAVE_ICU
 	UErrorCode err = U_ZERO_ERROR;
@@ -436,6 +437,7 @@ Calculator::Calculator(bool ignore_locale) {
 	priv->temperature_calculation = TEMPERATURE_CALCULATION_HYBRID;
 	priv->matlab_matrices = true;
 	priv->persistent_plot = false;
+	priv->concise_uncertainty_input = false;
 
 #ifdef HAVE_ICU
 	UErrorCode err = U_ZERO_ERROR;
@@ -1434,6 +1436,9 @@ void Calculator::endTemporaryEnableIntervalArithmetic() {
 
 bool Calculator::usesMatlabStyleMatrices() const {return priv->matlab_matrices;}
 void Calculator::useMatlabStyleMatrices(bool use_matlab_style_matrices) {priv->matlab_matrices = use_matlab_style_matrices;}
+
+bool Calculator::conciseUncertaintyInputEnabled() const {return priv->concise_uncertainty_input;}
+void Calculator::setConciseUncertaintyInputEnabled(bool enable_concise_uncertainty_input) {priv->concise_uncertainty_input = enable_concise_uncertainty_input;}
 
 void Calculator::setCustomAngleUnit(Unit *u) {
 	if(u) u->ref();
