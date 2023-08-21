@@ -31,7 +31,7 @@
 #include <stdint.h>
 
 #define QALCULATE_MAJOR_VERSION (4)
-#define QALCULATE_MINOR_VERSION (7)
+#define QALCULATE_MINOR_VERSION (8)
 #define QALCULATE_MICRO_VERSION (0)
 
 static std::string empty_string;
@@ -301,6 +301,7 @@ typedef enum {
 	SORT_SCIENTIFIC				= 1 << 1
 } SortFlags;
 
+/// Special values for PrintOptions::base and ParseOptions::base
 #define BASE_ROMAN_NUMERALS	-1
 #define BASE_TIME		-2
 #define BASE_BINARY		2
@@ -315,6 +316,7 @@ typedef enum {
 #define BASE_LATITUDE_2		71
 #define BASE_LONGITUDE		72
 #define BASE_LONGITUDE_2	73
+/// Use Calculate::setCustomOutputBase() or Calculate::setCustomInputBase() to specify a number base which greater than 36, negative, or a non-integer
 #define BASE_CUSTOM		-3
 #define BASE_UNICODE		-4
 #define BASE_GOLDEN_RATIO	-5
@@ -332,6 +334,7 @@ typedef enum {
 
 #define BASE_IS_SEXAGESIMAL(x) ((x >= BASE_SEXAGESIMAL && x <= BASE_SEXAGESIMAL_3) || (x >= BASE_LATITUDE && x <= BASE_LONGITUDE_2))
 
+/// Primary values for PrintOptions::min_exp
 #define EXP_BASE_3		-3
 #define EXP_PRECISION		-1
 #define EXP_NONE		0
@@ -415,8 +418,9 @@ typedef enum {
 
 /// Options for formatting and display of mathematical structures/results.
 struct PrintOptions {
+	/// Determines the minimum exponent with scientific notation. Values < -1 restricts the exponent to multiples of -min_exp, e.g. 20 000 is output as 20e3 (engineering notation) if min_exp is -3. The special value EXP_PRECISION (-1) uses the current precision to determine the minimum exponent. Default: EXP_PRECISION
 	int min_exp;
-	/// Number base for displaying numbers. Default: 10
+	/// Number base for displaying numbers. Specify a value between 2 and 36 or use one of the special values defined in includes.h (BASE_*). Default: 10
 	int base;
 	/// How prefixes for numbers in non-decimal bases will be displayed. Default: BASE_DISPLAY_NONE
 	BaseDisplay base_display;
@@ -649,7 +653,7 @@ struct ParseOptions {
 	bool units_enabled;
 	/// If Reverse Polish Notation syntax will be used. Default: false (deprecated, use parsing_mode = PARSING_MODE_RPN instead)
 	bool rpn;
-	/// Base of parsed numbers. Default: 10
+	/// Base of parsed numbers. Specify a value between 2 and 36 or use one of the special values defined in includes.h (BASE_*). Default: 10
 	int base;
 	/// When implicit multiplication is limited variables, functions and units must be separated by a space, operator or parenthesis ("xy" does not equal "x * y").  Default: false
 	/**

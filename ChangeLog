@@ -1,3 +1,55 @@
+2023-08-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix and improve to Calculator::findMatchUnit() (fixes matching unit for m/s)
+
+2023-08-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault with curly brackets in expression
+	* Apply automatic unit conversion after conversion to variable
+
+2023-08-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix "E" at end of longitude replaced with "e"
+	* Add derived units for kJ, kcal, and kcal/g
+
+2023-08-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Concise uncertainty input (disabled by default)
+
+2023-07-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Round high precision intervals enclosing integers for integer arguments (excluding order argument of besselj() and bessely())
+
+2023-07-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add support for input of relative uncertainty using percentage (e.g. "5+/-2%") and output of interval using relative or concise (e.g. "1.2345(67)") notation
+
+2023-07-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Set unicode property of object name automatically (does not affect usage in definitions file)
+	* Keep prefixes for variable value in save() function
+	* Fix numerical value of lower and upper options in help text for interval display setting
+
+2023-07-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix fibonacci() for non-integers
+	* Fix erroneous simplication of exponentiation when power is multiplication and base is a rational number < 1 in some case (e.g. "fibonacci(fibonacci(2))")
+
+2023-07-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add support for specifying position of sign bit in floating point functions
+
+2023-07-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use international foot as base unit for rod, and add U.S. survey rod unit
+
+2023-07-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add units for Electric Dipole Moment (C*m and Debye)
+	* Add units for electrical elastance (F^-1, Daraf, and V/C)
+	* Add and N/C as alternative unit for electric field strength
+	* Optimize rest of unit expression when converting to partial (insufficient) expression (e.g. 18MA×100ns to J)
+
 2023-07-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Replace occurrences in variable values in replace() function, when original expression contains unknown symbol/variable, and for "where" replacement

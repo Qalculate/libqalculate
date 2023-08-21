@@ -12040,30 +12040,27 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(str_unc.empty() && po.use_max_decimals && po.max_decimals >= 0) {
 					use_max_idp = true;
 					rerun = true;
-					mpfr_clears(v, f_base, NULL);
-					if(po.interval_display == INTERVAL_DISPLAY_RELATIVE) mpfr_clear(f_runc);
-					goto float_rerun;
 				} else if(str_unc.length() > str.length()) {
 					precision -= str_unc.length() - str.length();
-					mpfr_clears(v, f_base, NULL);
-					if(po.interval_display == INTERVAL_DISPLAY_RELATIVE) mpfr_clear(f_runc);
 					if(precision <= 0) {
 						PrintOptions po2 = po;
 						po2.interval_display = INTERVAL_DISPLAY_INTERVAL;
-						mpfr_clears(f_mid, NULL);
+						mpfr_clears(v, f_base, f_mid, NULL);
 						mpz_clears(ivalue, z_log, NULL);
+						if(po.interval_display == INTERVAL_DISPLAY_RELATIVE) mpfr_clear(f_runc);
 						return print(po2, ips);
 					}
 					use_max_idp = true;
 					rerun = true;
-					goto float_rerun;
 				} else if(!po.preserve_precision && l10 > 0 && str_unc.length() > 2) {
 					precision = str.length() - l10;
 					if(precision < (long int) str.length() - (long int) str_unc.length() + 2) precision = str.length() - str_unc.length() + 2;
+					rerun = true;
+				}
+				if(rerun) {
 					mpfr_clears(v, f_base, NULL);
 					mpz_clears(ivalue, z_log, NULL);
 					if(po.interval_display == INTERVAL_DISPLAY_RELATIVE) mpfr_clear(f_runc);
-					rerun = true;
 					goto float_rerun;
 				}
 			}
@@ -12097,7 +12094,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 		}
 
-		bool b_concise = po.interval_display == INTERVAL_DISPLAY_CONCISE && str_unc.length() == 2 && str_unc.length() <= str.length();
+		bool b_concise = po.interval_display == INTERVAL_DISPLAY_CONCISE && str_unc.length() <= 2 && str_unc.length() <= str.length();
 		if(l10 > 0) {
 			if(!str_unc.empty() && !b_concise) {
 				long int l10unc = str_unc.length() - l10;
@@ -12179,6 +12176,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(base != 10) add_base_exponent(str, expo, base, po, ips);
 		} else if(b_concise) {
 			str += "(";
+			if(str_unc.length() == 1) str += "0";
 			str += str_unc;
 			str += ")";
 			add_base_exponent(str, expo, base, po, ips);

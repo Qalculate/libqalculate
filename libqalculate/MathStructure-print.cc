@@ -3543,7 +3543,14 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					print_str += "</sup>";
 				} else if(BASE_IS_SEXAGESIMAL(po.base) || po.base == BASE_TIME) {
 					if(!po.lower_case_e) {
-						gsub("E", "e", print_str);
+						size_t i = 0;
+						while(true) {
+							i = print_str.find("E", i + 1);
+							if(i == string::npos || i == print_str.length() - 1) break;
+							if(print_str[i - 1] >= '0' && print_str[i - 1] <= '9' && print_str[i + 1] >= '0' && print_str[i + 1] <= '9') {
+								print_str.replace(i, 1, "e");
+							}
+						}
 					}
 					if(po.use_unicode_signs && (!po.can_display_unicode_string_function ||(*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) gsub("-", SIGN_MINUS, print_str);
 				}

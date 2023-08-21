@@ -2100,7 +2100,7 @@ int main(int argc, char *argv[]) {
 	size_t ni = 0;
 	for(size_t i2 = 0; i2 <= 10000000L; i2++) {
 		str = "";
-		size_t n = rand() % 20000;
+		size_t n = rand() % 200;
 		for(size_t i = 0; i <= n; i++) {
 			str += (char) (rand() % (126 - 32) + 32);
 			//if(str[i] == '{' || str[i] == '}') str[i] = '+';

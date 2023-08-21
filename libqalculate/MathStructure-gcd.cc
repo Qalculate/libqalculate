@@ -766,6 +766,8 @@ bool restore_fracpow(MathStructure &mstruct, UnknownVariable *uv, const Evaluati
 		if(mstruct[0][1].number().numeratorIsOne()) {
 			mstruct[0][1].number() *= mstruct[1].number();
 			mstruct.setToChild(1, true);
+			if(mstruct[1].number().isOne()) mstruct.setToChild(1, true);
+			else if(mstruct[0].isNumber()) mstruct.calculateRaiseExponent(eo);
 		}
 		return true;
 	} else if(mstruct.isVariable() && mstruct.variable() == uv) {

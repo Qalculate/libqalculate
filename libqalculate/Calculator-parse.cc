@@ -3280,7 +3280,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			str.erase(i, 1);
 			after_sign_e = false;
 			had_non_sign = true;
-		} else if(is_in(OPERATORS, str[i]) && (po.base != BASE_ROMAN_NUMERALS || (str[i] != '(' && str[i] != ')' && str[i] != '|'))) {
+		} else if(is_in(OPERATORS, str[i]) && (po.base != BASE_ROMAN_NUMERALS || str[i] != '|')) {
 			// ignore operators
 			error(false, _("Misplaced operator(s) \"%s\" ignored"), internal_operator_replacement(str[i]).c_str(), NULL);
 			str.erase(i, 1);
@@ -4760,7 +4760,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 							}
 						}
 					}
-					b = had_unit && i2 != string::npos;
+					b = had_unit && i2 != string::npos && i3 != string::npos;
 					if(b) {
 						if(i3 < str.length() - 2 && (str[i3 + 1] == POWER_CH || str[i3 + 1] == INTERNAL_UPOW_CH) && is_in(NUMBERS, str[i3 + 2])) {
 							i3 += 2;
@@ -5349,7 +5349,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 		mstruct->transform(f_uncertainty);
 		mstruct->addChild_nocopy(mstruct2);
-		if(mstruct2->isMultiplication() && mstruct2->last().isVariable() && (mstruct2->last().variable() == v_percent || mstruct2->last().variable() == v_permille || mstruct2->last().variable() == v_permyriad)) mstruct->addChild(m_one);
+		if(mstruct2->isMultiplication() && mstruct2->size() >= 2 && mstruct2->last().isVariable() && (mstruct2->last().variable() == v_percent || mstruct2->last().variable() == v_permille || mstruct2->last().variable() == v_permyriad)) mstruct->addChild(m_one);
 		else mstruct->addChild(m_zero);
 	} else if(BASE_2_10 && (i = str.find_first_of(EXPS, 0)) != string::npos && i + 1 != str.length() && str.find("\b") == string::npos) {
 		// Parse scientific e-notation

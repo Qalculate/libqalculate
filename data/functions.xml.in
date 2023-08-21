@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<QALCULATE version="4.7.0">
+<QALCULATE version="4.8.0">
   <category>
     <_title>Matrices &amp; Vectors</_title>
     <builtin_function name="vector">
@@ -817,7 +817,8 @@
       <_title>Fibonacci Number</_title>
       <_names>r:fibonacci</_names>
       <_description>Returns the n-th term of the Fibonacci sequence.</_description>
-      <expression>if(isInteger(\x),(golden^\x−(1−golden)^\x)/sqrt(5),(golden^\x-cos(\x*pi)*golden^(-\x))/sqrt(5))</expression>
+      <subfunction precalculate="true">\x</subfunction>
+      <expression>if(isInteger(\1),(golden^\1−(1−golden)^\1)/sqrt(5),(golden^\x-cos(\x*pi*rad)*golden^(-\x))/sqrt(5))</expression>
       <argument type="number" index="1">
         <_title>Index (n)</_title>
         <test>false</test>

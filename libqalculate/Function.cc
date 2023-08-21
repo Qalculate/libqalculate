@@ -1887,7 +1887,9 @@ string NumberArgument::subprintlong() const {
 			str += ">";
 		}
 		str += " ";
-		str += fmin->print();
+		PrintOptions po;
+		po.show_ending_zeroes = false;
+		str += fmin->print(po);
 	}
 	if(fmax) {
 		if(fmin) {
@@ -1901,7 +1903,9 @@ string NumberArgument::subprintlong() const {
 			str += "<";
 		}
 		str += " ";
-		str += fmax->print();
+		PrintOptions po;
+		po.show_ending_zeroes = false;
+		str += fmax->print(po);
 	}
 	return str;
 }

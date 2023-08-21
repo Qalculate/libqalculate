@@ -1136,7 +1136,7 @@
       <unit type="composite">
         <system>CGS</system>
         <title>Statcoulomb Centimeter</title>
-	<hidden>true</hidden>
+        <hidden>true</hidden>
         <names>r:statcoulomb_cm</names>
         <part>
           <unit>statcoulomb</unit>
@@ -3594,6 +3594,15 @@
       </base>
     </unit>
     <unit type="composite">
+      <_title>Kilojoule</_title>
+      <names>r:kJ_c</names>
+      <part>
+        <unit>J</unit>
+        <prefix>3</prefix>
+        <exponent>1</exponent>
+      </part>
+    </unit>
+    <unit type="composite">
       <_title>Watt Hour</_title>
       <names>r:W_h</names>
       <part>
@@ -3629,6 +3638,15 @@
         <relation>4.1868</relation>
         <exponent>1</exponent>
       </base>
+    </unit>
+    <unit type="composite">
+      <_title>Kilocalorie</_title>
+      <names>r:kcal_c</names>
+      <part>
+        <unit>cal</unit>
+        <prefix>3</prefix>
+        <exponent>1</exponent>
+      </part>
     </unit>
     <unit type="alias">
       <_title>Calorie (capital C)</_title>
@@ -3785,6 +3803,20 @@
         <part>
           <unit>g</unit>
           <prefix>3</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <_title>Kilocalerie per Gram</_title>
+        <names>r:kcal_p_g</names>
+        <part>
+          <unit>cal</unit>
+          <prefix>3</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>g</unit>
+          <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
       </unit>

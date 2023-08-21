@@ -720,7 +720,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 	xmlNodePtr cur, child, child2, child3;
 	string version, stmp, name, uname, type, svalue, sexp, plural, countries, singular, category_title, category, description, title, inverse, suncertainty, base, argname, usystem;
 	bool unc_rel;
-	bool best_title, next_best_title, best_category_title, next_best_category_title, best_description, next_best_description;
+	bool best_title = false, next_best_title = false, best_category_title, next_best_category_title, best_description, next_best_description;
 	bool best_plural, next_best_plural, best_singular, next_best_singular, best_argname, next_best_argname, best_countries, next_best_countries;
 	bool best_proptitle, next_best_proptitle, best_propdescr, next_best_propdescr;
 	string proptitle, propdescr;

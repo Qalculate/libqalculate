@@ -275,7 +275,7 @@ int BesseljFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	if(arg) {
 		arg->setTests(true);
 		bool b = true;
-		if(!mstruct.isNumber()) {
+		if(!mstruct.isInteger()) {
 			MathStructure m; m.setUndefined();
 			b = getArgumentDefinition(1)->test(m, 1, this, eo);
 		} else {
@@ -306,7 +306,7 @@ int BesselyFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	if(arg) {
 		arg->setTests(true);
 		bool b = true;
-		if(!mstruct.isNumber()) {
+		if(!mstruct.isInteger()) {
 			MathStructure m; m.setUndefined();
 			b = getArgumentDefinition(1)->test(m, 1, this, eo);
 		} else {
