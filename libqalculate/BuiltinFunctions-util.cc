@@ -1113,19 +1113,22 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			else if(equalsIgnoreCase(svar, "variable") || equalsIgnoreCase(svar, "var") || equalsIgnoreCase(svar, _c("plot", "variable"))) i_prev = 6;
 			else if(equalsIgnoreCase(svar, "complex") || equalsIgnoreCase(svar, _c("plot", "complex"))) {i_prev = 20; eo2.allow_complex = true;}
 			else if(equalsIgnoreCase(svar, "real") || equalsIgnoreCase(svar, _c("plot", "real"))) {i_prev = 21; eo2.allow_complex = false;}
+			else if(i_prev == 15 || i_prev == 16 || i_prev == 17) {svalue = svar; svar = ""; break;}
 			else {
 				size_t i2 = svar.rfind(SPACE);
 				if(i2 == string::npos) {
-					svalue = svar;
+					svalue.insert(0, svar);
 					svar = "";
 					break;
 				}
-				svalue += svar.substr(i2);
+				svalue.insert(0, svar.substr(i2));
 				svar = svar.substr(0, i2);
+				cout << svar << ":" << svalue << endl;
 				remove_blank_ends(svar);
 				b_option = false;
 			}
 		}
+		cout << svar << ":" << svalue << endl;
 		remove_blank_ends(svalue);
 		if(!svalue.empty()) {
 			if(i_prev == 15) {
