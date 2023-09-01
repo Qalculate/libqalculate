@@ -1090,6 +1090,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		gsub(SIGN_MINUS, MINUS, svar);
 		string svalue;
 		bool b_option = false;
+		bool b_option_and_value = false;
 		while(!b_option) {
 			b_option = true;
 			if(equalsIgnoreCase(svar, "persistent")) {b_persistent = true; i_prev = 5; break;}
@@ -1113,23 +1114,27 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			else if(equalsIgnoreCase(svar, "variable") || equalsIgnoreCase(svar, "var") || equalsIgnoreCase(svar, _c("plot", "variable"))) i_prev = 6;
 			else if(equalsIgnoreCase(svar, "complex") || equalsIgnoreCase(svar, _c("plot", "complex"))) {i_prev = 20; eo2.allow_complex = true;}
 			else if(equalsIgnoreCase(svar, "real") || equalsIgnoreCase(svar, _c("plot", "real"))) {i_prev = 21; eo2.allow_complex = false;}
-			else if(i_prev == 15 || i_prev == 16 || i_prev == 17) {svalue = svar; svar = ""; break;}
-			else {
+			else if(i_prev == 15 || i_prev == 16 || i_prev == 17) {
+				svalue = svar;
+				svar = "";
+				break;
+			} else {
 				size_t i2 = svar.rfind(SPACE);
 				if(i2 == string::npos) {
 					svalue.insert(0, svar);
 					svar = "";
+					b_option_and_value = false;
 					break;
 				}
 				svalue.insert(0, svar.substr(i2));
+				b_option_and_value = true;
 				svar = svar.substr(0, i2);
-				cout << svar << ":" << svalue << endl;
 				remove_blank_ends(svar);
 				b_option = false;
 			}
 		}
-		cout << svar << ":" << svalue << endl;
 		remove_blank_ends(svalue);
+		if(b_option_and_value && svalue.length() > 4 && svalue[0] == LEFT_PARENTHESIS_CH && svalue[1] == '\"' && svalue[svalue.length() - 1] == RIGHT_PARENTHESIS_CH && svalue[svalue.length() - 2] == '\"') svalue = svalue.substr(2, svalue.length() - 4);
 		if(!svalue.empty()) {
 			if(i_prev == 15) {
 				param.title = svalue;
