@@ -6040,7 +6040,8 @@ bool Number::airy() {
 bool Number::besselj(const Number &o) {
 	if(hasImaginaryPart() || !o.isInteger()) return false;
 	if(isZero()) {
-		set(1, 1, 0, true);
+		if(o.isZero()) set(1, 1, 0, true);
+		else clear(true);
 		return true;
 	}
 	if(isInfinite()) {
