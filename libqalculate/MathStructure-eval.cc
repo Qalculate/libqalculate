@@ -1645,7 +1645,7 @@ bool MathStructure::complexToExponentialForm(const EvaluationOptions &eo) {
 		return true;
 	} else if(representsReal(true)) {
 		return false;
-	} else {
+	} else if(!isVector()) {
 		MathStructure marg(CALCULATOR->getFunctionById(FUNCTION_ID_ARG), this, NULL);
 		marg *= nr_one_i;
 		CALCULATOR->beginTemporaryStopMessages();
@@ -1653,7 +1653,7 @@ bool MathStructure::complexToExponentialForm(const EvaluationOptions &eo) {
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		eo2.parse_options.angle_unit = ANGLE_UNIT_RADIANS;
 		marg.eval(eo2);
-		if(!marg.isFunction() || marg.function()->id() != FUNCTION_ID_ARG) {
+		if((!marg.isFunction() || marg.function()->id() != FUNCTION_ID_ARG) && marg.representsScalar()) {
 			CALCULATOR->endTemporaryStopMessages(true);
 			MathStructure mabs(CALCULATOR->getFunctionById(FUNCTION_ID_ABS), this, NULL);
 			set(CALCULATOR->getVariableById(VARIABLE_ID_E), true);
@@ -1726,13 +1726,13 @@ bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 		return true;
 	} else if(representsReal(true)) {
 		return false;
-	} else {
+	} else if(!isVector()) {
 		MathStructure marg(CALCULATOR->getFunctionById(FUNCTION_ID_ARG), this, NULL);
 		CALCULATOR->beginTemporaryStopMessages();
 		EvaluationOptions eo2 = eo;
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		marg.eval(eo2);
-		if(!marg.isFunction() || marg.function()->id() != FUNCTION_ID_ARG) {
+		if((!marg.isFunction() || marg.function()->id() != FUNCTION_ID_ARG) && marg.representsScalar()) {
 			CALCULATOR->endTemporaryStopMessages(true);
 			MathStructure mabs(CALCULATOR->getFunctionById(FUNCTION_ID_ABS), this, NULL);
 			mabs.eval(eo2);
@@ -1803,13 +1803,13 @@ bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
 		return true;
 	} else if(representsReal(true)) {
 		return false;
-	} else {
+	} else if(!isVector()) {
 		MathStructure marg(CALCULATOR->getFunctionById(FUNCTION_ID_ARG), this, NULL);
 		CALCULATOR->beginTemporaryStopMessages();
 		EvaluationOptions eo2 = eo;
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		marg.eval(eo2);
-		if(!marg.isFunction() || marg.function()->id() != FUNCTION_ID_ARG) {
+		if((!marg.isFunction() || marg.function()->id() != FUNCTION_ID_ARG) && marg.representsScalar()) {
 			CALCULATOR->endTemporaryStopMessages(true);
 			MathStructure mabs(CALCULATOR->getFunctionById(FUNCTION_ID_ABS), this, NULL);
 			mabs.eval(eo2);
