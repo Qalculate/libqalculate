@@ -691,7 +691,7 @@ The evaluation of \fIshort/implicit multiplication\fP without any multiplication
 .PP
 In \fIchain mode\fP, expressions are calculated from left to right, ignoring standard order of operations, like the immediate execution mode of a traditional calculator (1+2*3 = (1+2)*3 = 9).
 .PP
-The \fI"to"-operator\fP is used for unit conversion and manipulation of how the result is presented. Place " to " or a right arrow (e.g. "->") followed by one of expressions/commands the below, at the end of an expression.
+The \fI"to"-operator\fP is used for unit conversion and manipulation of how the result is presented. Place " to " or a right arrow (e.g. "->") followed by one of expressions/commands listed below, at the end of an expression.
 .PP
 .TP 8
 .B Unit conversion
@@ -773,6 +773,8 @@ prepend with + or - to force/disable use of mixed units
 - factors (factorize result)
 .PP
 Similarly \fIwhere\fP (or alternatively "/.") can be used at the end (but before "to"), for variable assignments, function replacements, etc. (e.g. "x+y where x=1 and y=2", "x^2=4 where x>0", and "sin(5) where sin()=cos()").
+.PP
+Note that \fIto\fP and \fIwhere\fP can only be applied to the whole expression. Everything before the operator is always treated as the expression to convert (or apply replacement to), and everything after as the conversion/replacement expression, regardless of any parentheses.
 .SH EXAMPLES
 Note that semicolon can be replaced with comma, if comma is not used as decimal or thousands separator.
 .PP

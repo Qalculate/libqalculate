@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-21 10:59+0200\n"
+"POT-Creation-Date: 2023-09-18 08:26+0200\n"
 "PO-Revision-Date: 2021-06-06 21:41-0600\n"
 "Last-Translator: Alex Henrie <alexhenrie24@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -3162,241 +3162,241 @@ msgstr ""
 msgid "List of options:"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1096
+#: ../libqalculate/BuiltinFunctions-util.cc:1097
 msgctxt "plot"
 msgid "smooth"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1097
+#: ../libqalculate/BuiltinFunctions-util.cc:1098
 msgctxt "plot"
 msgid "style"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1098
+#: ../libqalculate/BuiltinFunctions-util.cc:1099
 msgctxt "plot"
 msgid "step"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1099
+#: ../libqalculate/BuiltinFunctions-util.cc:1100
 #, fuzzy
 msgctxt "plot"
 msgid "samples"
 msgstr "Exemple:"
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1100
+#: ../libqalculate/BuiltinFunctions-util.cc:1101
 msgctxt "plot"
 msgid "color"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1101
+#: ../libqalculate/BuiltinFunctions-util.cc:1102
 msgctxt "plot"
 msgid "grid"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1102
+#: ../libqalculate/BuiltinFunctions-util.cc:1103
 msgctxt "plot"
 msgid "title"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1103
+#: ../libqalculate/BuiltinFunctions-util.cc:1104
 msgctxt "plot"
 msgid "legend"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1104
+#: ../libqalculate/BuiltinFunctions-util.cc:1105
 msgctxt "plot"
 msgid "ylabel"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1105
+#: ../libqalculate/BuiltinFunctions-util.cc:1106
 msgctxt "plot"
 msgid "xlabel"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1106
+#: ../libqalculate/BuiltinFunctions-util.cc:1107
 msgctxt "plot"
 msgid "linewidth"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1107
+#: ../libqalculate/BuiltinFunctions-util.cc:1108
 msgctxt "plot"
 msgid "monochrome"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1108
+#: ../libqalculate/BuiltinFunctions-util.cc:1109
 msgctxt "plot"
 msgid "ymin"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1109
+#: ../libqalculate/BuiltinFunctions-util.cc:1110
 msgctxt "plot"
 msgid "ymax"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1110
+#: ../libqalculate/BuiltinFunctions-util.cc:1111
 msgctxt "plot"
 msgid "ylog"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1111
+#: ../libqalculate/BuiltinFunctions-util.cc:1112
 msgctxt "plot"
 msgid "xlog"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1112
+#: ../libqalculate/BuiltinFunctions-util.cc:1113
 msgctxt "plot"
 msgid "logscale"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1113
+#: ../libqalculate/BuiltinFunctions-util.cc:1114
 msgctxt "plot"
 msgid "variable"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1114
+#: ../libqalculate/BuiltinFunctions-util.cc:1115
 msgctxt "plot"
 msgid "complex"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1115
+#: ../libqalculate/BuiltinFunctions-util.cc:1116
 msgctxt "plot"
 msgid "real"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1161
+#: ../libqalculate/BuiltinFunctions-util.cc:1169
 msgctxt "plot style"
 msgid "lines"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1162
+#: ../libqalculate/BuiltinFunctions-util.cc:1170
 msgctxt "plot style"
 msgid "points"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1163
+#: ../libqalculate/BuiltinFunctions-util.cc:1171
 msgctxt "plot style"
 msgid "dots"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1164
+#: ../libqalculate/BuiltinFunctions-util.cc:1172
 msgctxt "plot style"
 msgid "boxes"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1165
+#: ../libqalculate/BuiltinFunctions-util.cc:1173
 msgctxt "plot style"
 msgid "histogram"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1166
+#: ../libqalculate/BuiltinFunctions-util.cc:1174
 msgctxt "plot style"
 msgid "candlesticks"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1167
+#: ../libqalculate/BuiltinFunctions-util.cc:1175
 msgctxt "plot style"
 msgid "steps"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1168
+#: ../libqalculate/BuiltinFunctions-util.cc:1176
 msgctxt "plot style"
 msgid "linespoints"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1169
+#: ../libqalculate/BuiltinFunctions-util.cc:1177
 msgctxt "plot"
 msgid "polar"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1170
+#: ../libqalculate/BuiltinFunctions-util.cc:1178
 msgctxt "plot smoothing"
 msgid "none"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1171
+#: ../libqalculate/BuiltinFunctions-util.cc:1179
 msgctxt "plot smoothing"
 msgid "splines"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1172
+#: ../libqalculate/BuiltinFunctions-util.cc:1180
 msgctxt "plot smoothing"
 msgid "bezier"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1173
+#: ../libqalculate/BuiltinFunctions-util.cc:1181
 msgctxt "plot legend"
 msgid "none"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1174
+#: ../libqalculate/BuiltinFunctions-util.cc:1182
 msgctxt "plot legend"
 msgid "top-left"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1175
+#: ../libqalculate/BuiltinFunctions-util.cc:1183
 msgctxt "plot legend"
 msgid "top-right"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1176
+#: ../libqalculate/BuiltinFunctions-util.cc:1184
 msgctxt "plot legend"
 msgid "bottom-left"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1177
+#: ../libqalculate/BuiltinFunctions-util.cc:1185
 msgctxt "plot legend"
 msgid "bottom-right"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1178
+#: ../libqalculate/BuiltinFunctions-util.cc:1186
 msgctxt "plot legend"
 msgid "below"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1179
+#: ../libqalculate/BuiltinFunctions-util.cc:1187
 msgctxt "plot legend"
 msgid "outside"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1212
-#: ../libqalculate/BuiltinFunctions-util.cc:1217
-#: ../libqalculate/BuiltinFunctions-util.cc:1229
-#: ../libqalculate/BuiltinFunctions-util.cc:1234
-#: ../libqalculate/BuiltinFunctions-util.cc:1243
+#: ../libqalculate/BuiltinFunctions-util.cc:1220
+#: ../libqalculate/BuiltinFunctions-util.cc:1225
+#: ../libqalculate/BuiltinFunctions-util.cc:1237
+#: ../libqalculate/BuiltinFunctions-util.cc:1242
+#: ../libqalculate/BuiltinFunctions-util.cc:1251
 #, c-format
 msgid "Illegal value: %s."
 msgstr "El valor és il·legal: %s."
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1246
+#: ../libqalculate/BuiltinFunctions-util.cc:1254
 #, c-format
 msgid "Unrecognized option: %s."
 msgstr "L'opció no és reconeguda: %s."
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1282
-#: ../libqalculate/BuiltinFunctions-util.cc:1298
+#: ../libqalculate/BuiltinFunctions-util.cc:1290
+#: ../libqalculate/BuiltinFunctions-util.cc:1306
 msgid "Matrix"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1311
-#: ../libqalculate/BuiltinFunctions-util.cc:1363
+#: ../libqalculate/BuiltinFunctions-util.cc:1319
+#: ../libqalculate/BuiltinFunctions-util.cc:1371
 msgid "Vector"
 msgstr ""
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1328
-#: ../libqalculate/BuiltinFunctions-util.cc:1376
+#: ../libqalculate/BuiltinFunctions-util.cc:1336
+#: ../libqalculate/BuiltinFunctions-util.cc:1384
 #: ../libqalculate/Calculator-plot.cc:157
 msgid "Unable to generate plot data with current min, max and step size."
 msgstr ""
 "No s'ha pogut generar les dades a dibuixar amb amb el mínim, el màxim i la "
 "mida de pas actuals."
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1330
-#: ../libqalculate/BuiltinFunctions-util.cc:1378
+#: ../libqalculate/BuiltinFunctions-util.cc:1338
+#: ../libqalculate/BuiltinFunctions-util.cc:1386
 msgid "Sampling rate must be a positive integer."
 msgstr "La taxa de mostratge ha de ser un enter positiu."
 
-#: ../libqalculate/BuiltinFunctions-util.cc:1337
-#: ../libqalculate/BuiltinFunctions-util.cc:1385
+#: ../libqalculate/BuiltinFunctions-util.cc:1345
+#: ../libqalculate/BuiltinFunctions-util.cc:1393
 #: ../libqalculate/Calculator-plot.cc:121
 msgid "Unable to generate plot data with current min, max and sampling rate."
 msgstr ""
@@ -3795,6 +3795,12 @@ msgstr "No s'ha trobat cap variable desconeguda o símbol desconegut."
 msgid "Interval potentially calculated wide."
 msgstr "L'interval potencialment s'ha calculat de manera àmplia."
 
+#: ../libqalculate/MathStructure-eval.cc:2150
+msgid ""
+"Logarithmic ratio units are treated as other units and the result might not "
+"be as expected."
+msgstr ""
+
 #: ../libqalculate/MathStructure-eval.cc:2552
 msgid ""
 "Calculation of uncertainty propagation partially failed (using interval "
@@ -4071,7 +4077,7 @@ msgstr ""
 msgid "an angle or a number (using the default angle unit)"
 msgstr ""
 
-#: ../libqalculate/Number.cc:368 ../libqalculate/Number.cc:11012
+#: ../libqalculate/Number.cc:368 ../libqalculate/Number.cc:11013
 msgid ""
 "Cannot display numbers greater than 9999 or less than -9999 as roman "
 "numerals."
@@ -4157,40 +4163,40 @@ msgstr "Es pot considerar 0^0 com a no definit"
 msgid "The result of 0^i is possibly undefined"
 msgstr "El resultat de 0^i possiblement no és definit"
 
-#: ../libqalculate/Number.cc:3876 ../libqalculate/Number.cc:6415
-#: ../libqalculate/Number.cc:6526 ../libqalculate/Number.cc:6850
-#: ../libqalculate/Number.cc:6858 ../libqalculate/Number.cc:6891
-#: ../libqalculate/Number.cc:6988 ../libqalculate/Number.cc:7137
-#: ../libqalculate/Number.cc:7249
+#: ../libqalculate/Number.cc:3876 ../libqalculate/Number.cc:6416
+#: ../libqalculate/Number.cc:6527 ../libqalculate/Number.cc:6851
+#: ../libqalculate/Number.cc:6859 ../libqalculate/Number.cc:6892
+#: ../libqalculate/Number.cc:6989 ../libqalculate/Number.cc:7138
+#: ../libqalculate/Number.cc:7250
 msgid "Interval calculated wide."
 msgstr "L'interval s'ha calculat de manera àmplia."
 
 #: ../libqalculate/Number.cc:5331 ../libqalculate/Number.cc:5560
 #: ../libqalculate/Number.cc:5647 ../libqalculate/Number.cc:6032
-#: ../libqalculate/Number.cc:6121 ../libqalculate/Number.cc:6207
-#: ../libqalculate/Number.cc:7454 ../libqalculate/Number.cc:7472
-#: ../libqalculate/Number.cc:7492 ../libqalculate/Number.cc:7834
-#: ../libqalculate/Number.cc:7881 ../libqalculate/Number.cc:8026
-#: ../libqalculate/Number.cc:8530 ../libqalculate/Number.cc:8686
-#: ../libqalculate/Number.cc:9115 ../libqalculate/Number.cc:9507
+#: ../libqalculate/Number.cc:6122 ../libqalculate/Number.cc:6208
+#: ../libqalculate/Number.cc:7455 ../libqalculate/Number.cc:7473
+#: ../libqalculate/Number.cc:7493 ../libqalculate/Number.cc:7835
+#: ../libqalculate/Number.cc:7882 ../libqalculate/Number.cc:8027
+#: ../libqalculate/Number.cc:8531 ../libqalculate/Number.cc:8687
+#: ../libqalculate/Number.cc:9116 ../libqalculate/Number.cc:9508
 #, c-format
 msgid "%s() lacks proper support interval arithmetic."
 msgstr "A %s() li manca suport per a aritmètica d'interval adequat."
 
-#: ../libqalculate/Number.cc:10113
+#: ../libqalculate/Number.cc:10114
 #, c-format
 msgid "The value is too high for the number of floating point bits (%s)."
 msgstr "El valor és massa alt per al nombre de bits de punt flotant (%s)."
 
-#: ../libqalculate/Number.cc:10490
+#: ../libqalculate/Number.cc:10491
 msgid "Unsupported base"
 msgstr "Base no compatible"
 
-#: ../libqalculate/Number.cc:11009
+#: ../libqalculate/Number.cc:11010
 msgid "Can only display rational numbers as roman numerals."
 msgstr "Només els nombres racionals es poden mostrar com a numerals romans."
 
-#: ../libqalculate/Number.cc:11452 ../libqalculate/Number.cc:11460
+#: ../libqalculate/Number.cc:11453 ../libqalculate/Number.cc:11461
 msgid "infinity"
 msgstr ""
 

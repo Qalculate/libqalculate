@@ -2376,7 +2376,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str.replace(str_index, name_length, stmp);
 					str_index += stmp.length() - 1;
 				}
-			} else if(base <= 14 && str_index + 2 < str.length() && (str[str_index + 1] == 'd' || str[str_index + 1] == 'D') && (is_in(NUMBERS, str[str_index + 2]) || (is_in(DUODECIMAL_CHARS, str[str_index + 2]) && str_index + 3 < str.length() && is_in(NUMBERS DUODECIMAL_CHARS, str[str_index + 3])))) {
+			} else if(base <= 14 && str_index + 3 < str.length() && (str[str_index + 1] == 'd' || str[str_index + 1] == 'D') && is_in(NUMBERS DUODECIMAL_CHARS, str[str_index + 2]) && is_in(NUMBERS DUODECIMAL_CHARS, str[str_index + 3])) {
 				//duodecimal number 0d...
 				if(po.base == BASE_DUODECIMAL) {
 					str.erase(str_index, 2);

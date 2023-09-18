@@ -2147,7 +2147,7 @@ void convert_temperature_units(MathStructure &m, const EvaluationOptions &eo) {
 
 bool warn_ratio_units(MathStructure &m, bool top_level = true) {
 	if(!top_level && m.isUnit() && ((m.unit()->subtype() == SUBTYPE_BASE_UNIT && m.unit()->referenceName() == "Np") || (m.unit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) m.unit())->baseUnit()->referenceName() == "Np"))) {
-		CALCULATOR->error(true, "Logarithmic ratio units is treated as other units and the result might not be as expected.", NULL);
+		CALCULATOR->error(true, _("Logarithmic ratio units are treated as other units and the result might not be as expected."), NULL);
 		return true;
 	}
 	if(m.isMultiplication() && top_level && m.last().isUnit()) {

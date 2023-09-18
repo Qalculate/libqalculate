@@ -11064,7 +11064,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:594
 msgid "ar:dB,decibel,p:decibels"
-msgstr "dB,decibel"
+msgstr "a:dB,decibel"
 
 #: ../data/units.xml.in.h:595
 msgid "Information"

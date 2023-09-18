@@ -1,3 +1,19 @@
+2023-09-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix display of matrices and vectors with complex number form other than rectangular
+
+2023-09-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix besselj() and bessely()
+
+2023-09-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Require that duodecimal number, entered using 0d... syntax, contains at least two digits, to avoid conflict with decibel units (e.g. 0dB)
+
+2023-08-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix for title, ylabel, and xlabel options with whitespace in value, in plot() function
+
 2023-08-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix and improve to Calculator::findMatchUnit() (fixes matching unit for m/s)
