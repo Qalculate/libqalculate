@@ -294,11 +294,23 @@ GcdFunction::GcdFunction() : MathFunction("gcd", 2, -1) {
 }
 int GcdFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
-	MathStructure m1;
-	for(size_t i = 1; i < vargs.size(); i++) {
-		m1 = mstruct;
-		if(!MathStructure::gcd(m1, vargs[i], mstruct, eo)) {
-			return 0;
+	bool b_number = true;
+	for(size_t i = 0; i < vargs.size(); i++) {
+		if(!vargs[i].isNumber()) {
+			b_number = false;
+			break;
+		}
+	}
+	if(b_number) {
+		for(size_t i = 1; i < vargs.size(); i++) {
+			if(!mstruct.number().gcd(vargs[i].number())) return 0;
+		}
+		mstruct.numberUpdated();
+	} else {
+		MathStructure m1;
+		for(size_t i = 1; i < vargs.size(); i++) {
+			m1 = mstruct;
+			if(!MathStructure::gcd(m1, vargs[i], mstruct, eo)) return 0;
 		}
 	}
 	return 1;
@@ -310,11 +322,23 @@ LcmFunction::LcmFunction() : MathFunction("lcm", 2, -1) {
 }
 int LcmFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
-	MathStructure m1;
-	for(size_t i = 1; i < vargs.size(); i++) {
-		m1 = mstruct;
-		if(!MathStructure::lcm(m1, vargs[i], mstruct, eo)) {
-			return 0;
+	bool b_number = true;
+	for(size_t i = 0; i < vargs.size(); i++) {
+		if(!vargs[i].isNumber()) {
+			b_number = false;
+			break;
+		}
+	}
+	if(b_number) {
+		for(size_t i = 1; i < vargs.size(); i++) {
+			if(!mstruct.number().lcm(vargs[i].number())) return 0;
+		}
+		mstruct.numberUpdated();
+	} else {
+		MathStructure m1;
+		for(size_t i = 1; i < vargs.size(); i++) {
+			m1 = mstruct;
+			if(!MathStructure::lcm(m1, vargs[i], mstruct, eo)) return 0;
 		}
 	}
 	return 1;

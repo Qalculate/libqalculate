@@ -7740,8 +7740,15 @@ bool Number::lambertW() {
 
 }
 bool Number::gcd(const Number &o) {
-	if(!isInteger() || !o.isInteger()) {
+	if(!isRational() || !o.isRational()) {
 		return false;
+	}
+	if(!isInteger() || !o.isInteger()) {
+		Number nr_num(numerator());
+		Number nr_den(denominator());
+		if(!nr_num.gcd(o.numerator()) || !nr_den.lcm(o.denominator()) || !nr_num.divide(nr_den)) return false;
+		set(nr_num);
+		return true;
 	}
 	if(isZero() && o.isZero()) {
 		clear();
@@ -7752,11 +7759,19 @@ bool Number::gcd(const Number &o) {
 	return true;
 }
 bool Number::lcm(const Number &o) {
-	if(isInteger() && o.isInteger()) {
-		mpz_lcm(mpq_numref(r_value), mpq_numref(r_value), mpq_numref(o.internalRational()));
+	if(!isRational() || !o.isRational()) {
+		return false;
+	}
+	if(!isInteger() || !o.isInteger()) {
+		Number nr_num(numerator());
+		Number nr_den(denominator());
+		if(!nr_num.lcm(o.numerator()) || !nr_den.gcd(o.denominator()) || !nr_num.divide(nr_den)) return false;
+		set(nr_num);
 		return true;
 	}
-	return multiply(o);
+	mpz_lcm(mpq_numref(r_value), mpq_numref(r_value), mpq_numref(o.internalRational()));
+	setPrecisionAndApproximateFrom(o);
+	return true;
 }
 
 bool Number::polylog(const Number &o) {
