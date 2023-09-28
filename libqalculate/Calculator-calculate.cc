@@ -2275,7 +2275,7 @@ bool Calculator::hasWhereExpression(const string &str, const EvaluationOptions &
 		i2 = str.rfind(_("where"), i - 1);
 		i = str.rfind("where", i - 1);
 		if(i2 != string::npos && (i == string::npos || i < i2)) {l = strlen(_("where")); i = i2;}
-		else l = 2;
+		else l = 5;
 		if(i == string::npos) break;
 		if(i > 0 && is_in(SPACES, str[i - 1]) && i + l < str.length() && is_in(SPACES, str[i + l])) return true;
 	}
