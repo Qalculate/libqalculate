@@ -5471,18 +5471,21 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				}
 				return true;
 			} else if(CHILD(0).function()->id() == FUNCTION_ID_ASIN && (ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_EQUALS)) {
-				MathStructure m1(CHILD(1)), m2(CHILD(1));
+				MathStructure m1(CHILD(1));
 				CHILD(0).setToChild(1, true);
 				Unit *u = default_angle_unit(eo, false);
-				if(u) CHILD(1) *= u;
+				if(u && !contains_angle_unit(CHILD(1), eo.parse_options)) {
+					CHILD(1) *= u;
+				} else {
+					if(!u) u = CALCULATOR->getRadUnit();
+					m1 /= u;
+					m1.convert(u);
+				}
+				MathStructure m2(m1);
 				CHILD(1).transformById(FUNCTION_ID_SIN);
 				if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
 				CHILDREN_UPDATED;
 				isolate_x_sub(eo, eo2, x_var, morig);
-				if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) {
-					m1 /= CALCULATOR->getRadUnit();
-					m1.convert(CALCULATOR->getRadUnit());
-				}
 				m1.transformById(FUNCTION_ID_RE);
 				if(m1.calculateFunctions(eo)) m1.calculatesub(eo2, eo, true);
 				m2.transformById(FUNCTION_ID_IM);
@@ -5543,20 +5546,21 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				calculatesub(eo2, eo, false);
 				return true;
 			} else if(CHILD(0).function()->id() == FUNCTION_ID_ACOS && (ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_EQUALS)) {
-				MathStructure m1(CHILD(1)), m2(CHILD(1));
+				MathStructure m1(CHILD(1));
 				CHILD(0).setToChild(1, true);
 				Unit *u = default_angle_unit(eo, false);
-				if(u) CHILD(1) *= u;
+				if(u && !contains_angle_unit(CHILD(1), eo.parse_options)) {
+					CHILD(1) *= u;
+				} else {
+					if(!u) u = CALCULATOR->getRadUnit();
+					m1 /= u;
+					m1.convert(u);
+				}
+				MathStructure m2(m1);
 				CHILD(1).transformById(FUNCTION_ID_COS);
 				if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
 				CHILDREN_UPDATED;
 				isolate_x_sub(eo, eo2, x_var, morig);
-				if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) {
-					m1 /= CALCULATOR->getRadUnit();
-					m1.convert(CALCULATOR->getRadUnit());
-					m2 /= CALCULATOR->getRadUnit();
-					m2.convert(CALCULATOR->getRadUnit());
-				}
 				m2.transformById(FUNCTION_ID_IM);
 				m1.transformById(FUNCTION_ID_RE);
 				if(m1.calculateFunctions(eo)) m1.calculatesub(eo2, eo, true);
@@ -5607,18 +5611,21 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				calculatesub(eo2, eo, false);
 				return true;
 			} else if(CHILD(0).function()->id() == FUNCTION_ID_ATAN && (ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_EQUALS)) {
-				MathStructure m1(CHILD(1)), m2(CHILD(1));
+				MathStructure m1(CHILD(1));
 				CHILD(0).setToChild(1, true);
 				Unit *u = default_angle_unit(eo, false);
-				if(u) CHILD(1) *= u;
+				if(u && !contains_angle_unit(CHILD(1), eo.parse_options)) {
+					CHILD(1) *= u;
+				} else {
+					if(!u) u = CALCULATOR->getRadUnit();
+					m1 /= u;
+					m1.convert(u);
+				}
+				MathStructure m2(m1);
 				CHILD(1).transformById(FUNCTION_ID_TAN);
 				if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
 				CHILDREN_UPDATED;
 				isolate_x_sub(eo, eo2, x_var, morig);
-				if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) {
-					m1 /= CALCULATOR->getRadUnit();
-					m1.convert(CALCULATOR->getRadUnit());
-				}
 				m2.transformById(FUNCTION_ID_IM);
 				m1.transformById(FUNCTION_ID_RE);
 				if(m1.calculateFunctions(eo)) m1.calculatesub(eo2, eo, true);
