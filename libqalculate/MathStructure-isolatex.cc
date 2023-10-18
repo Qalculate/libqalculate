@@ -2086,7 +2086,17 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					mtest[1].calculateSubtract(msub, eo2);
 					if(mtest[0].calculateRaise(i_root, eo2) && mtest[1].calculateRaise(i_root, eo2)) {
 						mtest.childrenUpdated();
-						if(mtest.isolate_x(eo2, eo, x_var)) {
+						MathStructure mtest2(mtest[0]);
+						mtest2.calculateSubtract(mtest[1], eo2);
+						if(mtest2.factorize(eo2, false, false, 0, false, false, NULL, m_undefined, false, false, 3) && mtest2.isMultiplication()) {
+							for(size_t i = 0; i < mtest2.size(); i++) {
+								if(mtest2[i].equals(CHILD(0), true, true)) {
+									i_root = 0;
+									break;
+								}
+							}
+						}
+						if(i_root && mtest.isolate_x(eo2, eo, x_var)) {
 							if((mtest.isLogicalAnd() || mtest.isLogicalOr() || mtest.isComparison()) && test_comparisons(*this, mtest, x_var, eo, false, eo2.expand ? 1 : 2) < 0) {
 								if(eo2.expand) {
 									add(mtest, ct_comp == COMPARISON_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
