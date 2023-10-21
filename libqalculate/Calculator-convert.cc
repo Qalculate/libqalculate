@@ -1901,7 +1901,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 }
 
 void set_null_prefixes(MathStructure &m) {
-	if(m.isUnit() && !m.prefix()) m.setPrefix(CALCULATOR->decimal_null_prefix);
+	if(!m.isUnit() || !m.prefix()) m.setPrefix(CALCULATOR->decimal_null_prefix);
 	for(size_t i = 0; i < m.size(); i++) {
 		set_null_prefixes(m[i]);
 	}

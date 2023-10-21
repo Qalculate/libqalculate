@@ -99,7 +99,6 @@ MathStructure::MathStructure(const MathStructure &o) {
 		}
 		case STRUCT_UNIT: {
 			o_unit = o.unit();
-			o_prefix = o.prefix();
 			if(o_unit) o_unit->ref();
 			b_plural = o.isPlural();
 			break;
@@ -110,6 +109,7 @@ MathStructure::MathStructure(const MathStructure &o) {
 		}
 		default: {}
 	}
+	o_prefix = o.prefix();
 	b_protected = o.isProtected();
 	for(size_t i = 0; i < o.size(); i++) {
 		APPEND_COPY((&o[i]))
@@ -304,7 +304,6 @@ void MathStructure::set_nocopy(MathStructure &o, bool merge_precision) {
 		}
 		case STRUCT_UNIT: {
 			o_unit = o.unit();
-			o_prefix = o.prefix();
 			if(o_unit) o_unit->ref();
 			b_plural = o.isPlural();
 			break;
@@ -315,6 +314,7 @@ void MathStructure::set_nocopy(MathStructure &o, bool merge_precision) {
 		}
 		default: {}
 	}
+	o_prefix = o.prefix();
 	b_protected = o.isProtected();
 	for(size_t i = 0; i < o.size(); i++) {
 		APPEND_REF((&o[i]))
@@ -668,9 +668,7 @@ Prefix *MathStructure::unit_exp_prefix() const {
 	return NULL;
 }
 void MathStructure::setPrefix(Prefix *p) {
-	if(isUnit()) {
-		o_prefix = p;
-	}
+	o_prefix = p;
 }
 bool MathStructure::isPlural() const {
 	return b_plural;

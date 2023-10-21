@@ -617,6 +617,7 @@ void MathStructure::unformat(const EvaluationOptions &eo) {
 			CHILD(i).unformat(eo);
 		}
 	}
+	if(m_type != STRUCT_UNIT && o_prefix) o_prefix = NULL;
 	switch(m_type) {
 		case STRUCT_INVERSE: {
 			APPEND(m_minus_one);
@@ -1035,6 +1036,7 @@ bool is_unit_multiexp(const MathStructure &mstruct) {
 
 bool MathStructure::improve_division_multipliers(const PrintOptions &po, MathStructure *top_parent) {
 	if(!top_parent) top_parent = this;
+	if(o_prefix) return false;
 	switch(m_type) {
 		case STRUCT_MULTIPLICATION: {
 			size_t inum = 0, iden = 0;
@@ -1042,7 +1044,8 @@ bool MathStructure::improve_division_multipliers(const PrintOptions &po, MathStr
 			size_t index1 = 0, index2 = 0;
 			bool dofrac = true;
 			for(size_t i2 = 0; i2 < SIZE; i2++) {
-				if(CHILD(i2).isPower() && CHILD(i2)[1].isMinusOne() && !CHILD(i2)[0].isZero()) {
+				if(CHILD(i2).prefix()) {
+				} else if(CHILD(i2).isPower() && CHILD(i2)[1].isMinusOne() && !CHILD(i2)[0].isZero()) {
 					if(!po.place_units_separately || !is_unit_multiexp(CHILD(i2)[0])) {
 						if(iden == 0) index1 = i2;
 						iden++;
@@ -1743,12 +1746,12 @@ bool split_unit_powers(MathStructure &mstruct) {
 void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure *parent, size_t) {
 	switch(m_type) {
 		case STRUCT_DIVISION: {
-			if(po.place_units_separately) {
+			if(po.place_units_separately && !o_prefix) {
 				vector<size_t> nums;
 				bool b1 = false, b2 = false;
 				if(CHILD(0).isMultiplication()) {
 					for(size_t i = 0; i < CHILD(0).size(); i++) {
-						if(CHILD(0)[i].isUnit_exp()) {
+						if(CHILD(0)[i].isUnit_exp() || CHILD(0)[i].prefix()) {
 							nums.push_back(i);
 						} else {
 							b1 = true;
@@ -1761,15 +1764,15 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure *paren
 				vector<size_t> dens;
 				if(CHILD(1).isMultiplication()) {
 					for(size_t i = 0; i < CHILD(1).size(); i++) {
-						if(CHILD(1)[i].isUnit_exp()) {
+						if(CHILD(1)[i].isUnit_exp() || CHILD(1)[i].prefix()) {
 							dens.push_back(i);
 						} else {
 							b2 = true;
 						}
 					}
 					b2 = b2 && !dens.empty();
-				} else if(CHILD(1).isUnit_exp()) {
-					if(CHILD(0).isUnit_exp()) {
+				} else if(CHILD(1).isUnit_exp() || CHILD(1).prefix()) {
+					if(CHILD(0).isUnit_exp() || CHILD(0).prefix()) {
 						b1 = false;
 					} else {
 						b2 = true;
@@ -1778,7 +1781,7 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure *paren
 				if(b2 && !b1) b1 = true;
 				if(b1) {
 					MathStructure num = m_undefined;
-					if(CHILD(0).isUnit_exp()) {
+					if(CHILD(0).isUnit_exp() || CHILD(0).prefix()) {
 						num = CHILD(0);
 						CHILD(0).set(m_one);
 					} else if(nums.size() > 0) {
@@ -1794,7 +1797,7 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure *paren
 						}
 					}
 					MathStructure den = m_undefined;
-					if(CHILD(1).isUnit_exp()) {
+					if(CHILD(1).isUnit_exp() || CHILD(1).prefix()) {
 						den = CHILD(1);
 						setToChild(1, true);
 					} else if(dens.size() > 0) {
@@ -2191,7 +2194,7 @@ bool MathStructure::removeDefaultAngleUnit(const EvaluationOptions &eo) {
 void separate_units(MathStructure &m, MathStructure *parent = NULL, size_t index = 0) {
 	if(m.isMultiplication() && parent && parent->isMultiplication() && m.containsType(STRUCT_UNIT, false, false, false)) {
 		for(size_t i = 0; i < m.size();) {
-			if(m[i].isUnit_exp()) {
+			if(m[i].isUnit_exp() || m[i].prefix()) {
 				m[i].ref();
 				parent->addChild_nocopy(&m[i]);
 				m.delChild(i + 1);
@@ -2201,10 +2204,10 @@ void separate_units(MathStructure &m, MathStructure *parent = NULL, size_t index
 		}
 		if(m.size() == 0) {parent->delChild(index); return;}
 		else if(m.size() == 1) m.setToChild(1, true);
-	} else if(m.isPower() && m[1].isNumber() && m[1].number().isReal() && m[0].isMultiplication() && m[0].containsType(STRUCT_UNIT, false, false, false)) {
+	} else if(m.isPower() && m[1].isNumber() && m[1].number().isReal() && m[0].isMultiplication() && m[0].containsType(STRUCT_UNIT, false, false, false) && !m.prefix()) {
 		MathStructure units;
 		for(size_t i = 0; i < m[0].size();) {
-			if(m[0][i].isUnit() || (m[0][i].isPower() && m[0][i][0].isUnit() && m[0][i][1].isNumber() && m[0][i][1].number().isReal())) {
+			if(m[0][i].isUnit() || m[0][i].prefix() || (m[0][i].isPower() && (m[0][i][0].isUnit() || m[0][i][0].prefix()) && m[0][i][1].isNumber() && m[0][i][1].number().isReal())) {
 				if(!m[0][i].isPower() || !m[0][i][1].number().multiply(m[1].number())) {
 					m[0][i].raise(m[1]);
 				}
@@ -2264,7 +2267,6 @@ void set_unit_plural(MathStructure &m) {
 		set_unit_plural(m[i]);
 	}
 }
-
 void MathStructure::format(const PrintOptions &po) {
 	if(!po.preserve_format) {
 		if(po.place_units_separately) {
