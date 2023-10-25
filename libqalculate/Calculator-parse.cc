@@ -197,17 +197,24 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 		if(((signed char) name[i + ip] < 0 && i + 1 < name_length) || ((signed char) str[is] < 0 && is + 1 < str.length())) {
 			// assumed Unicode character found
 			size_t i2 = 1, is2 = 1;
+			size_t n1 = 1, n2 = 1;;
 			// determine length of Unicode character(s)
 			if((signed char) name[i + ip] < 0) {
 				while(i2 + i < name_length && (signed char) name[i2 + i + ip] < 0) {
+					if((unsigned char) name[i2 + i + ip] >= 0xC0) n1++;
 					i2++;
 				}
 			}
 			if((signed char) str[is] < 0) {
 				while(is2 + is < str.length() && (signed char) str[is2 + is] < 0) {
+					if((unsigned char) str[is2 + is] >= 0xC0) {
+						if(n2 == n1) break;
+						n2++;
+					}
 					is2++;
 				}
 			}
+			if(n1 != n2) return 0;
 			// compare characters
 			bool isequal = (i2 == is2);
 			if(isequal) {
