@@ -2328,9 +2328,10 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				PrintOptions po2 = po;
 				po2.negative_exponents = true;
 				CHILD(i).formatsub(po2, this, i + 1, true, top_parent);
-			} else if(po.number_fraction_format == FRACTION_COMBINED && (m_type == STRUCT_FUNCTION || m_type == STRUCT_POWER || (m_type == STRUCT_ADDITION && (!po.place_units_separately || !is_unit_multiadd(*this))) || (m_type == STRUCT_MULTIPLICATION && SIZE > 1 && (!po.place_units_separately || !CHILD(0).isNumber() || !is_unit_multiexp(CHILD(1)))))) {
+			} else if((po.number_fraction_format == FRACTION_COMBINED || po.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR) && (m_type == STRUCT_FUNCTION || m_type == STRUCT_POWER || (m_type == STRUCT_ADDITION && (!po.place_units_separately || !is_unit_multiadd(*this))) || (m_type == STRUCT_MULTIPLICATION && SIZE > 1 && (!po.place_units_separately || !CHILD(0).isNumber() || !is_unit_multiexp(CHILD(1)))))) {
 				PrintOptions po2 = po;
-				po2.number_fraction_format = FRACTION_FRACTIONAL;
+				if(po.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR) po2.number_fraction_format = FRACTION_FRACTIONAL_FIXED_DENOMINATOR;
+				else po2.number_fraction_format = FRACTION_FRACTIONAL;
 				CHILD(i).formatsub(po2, this, i + 1, true, top_parent);
 			} else if(!po.preserve_format && i == 1 && m_type == STRUCT_POWER && po.number_fraction_format < FRACTION_FRACTIONAL && CHILD(1).isNumber() && CHILD(1).number().isRational() && !CHILD(1).number().isInteger() && CHILD(1).number().numeratorIsLessThan(10) && CHILD(1).number().numeratorIsGreaterThan(-10) && CHILD(1).number().denominatorIsLessThan(10)) {
 				// always display rational number exponents with small numerator and denominator as fraction (e.g. 5^(2/3) instead of 5^0.666...)
@@ -2790,36 +2791,49 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				}
 
 				// test if numerator and denominator is displayed exact using current mode
-				Number num(o_number.numerator());
-				if(po.number_fraction_format == FRACTION_COMBINED) {
-					num.mod(o_number.denominator());
+				Number num, den;
+				if(po.number_fraction_format == FRACTION_FRACTIONAL_FIXED_DENOMINATOR || po.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR) {
+					den.set(CALCULATOR->fixedDenominator(), 1, 0);
+					num.set(o_number);
+					num *= den;
+					if(!num.isInteger()) {
+						num.round();
+						setApproximate();
+					}
+				} else {
+					num.set(o_number.numerator());
+					den.set(o_number.denominator());
 				}
-				Number den(o_number.denominator());
+				if(po.number_fraction_format == FRACTION_COMBINED || po.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR) {
+					num.mod(den);
+				}
 				if(isApproximate()) {
 					num.setApproximate();
 					den.setApproximate();
 				}
-				num.print(po2, ips_n);
-				if(!approximately_displayed || po.base == BASE_ROMAN_NUMERALS || po.base == BASE_BIJECTIVE_26) {
-					den.print(po2, ips_n);
-					if(!approximately_displayed || po.base == BASE_ROMAN_NUMERALS || po.base == BASE_BIJECTIVE_26) {
-						if(po.number_fraction_format == FRACTION_COMBINED && !o_number.isFraction()) {
+				if(po.base != BASE_ROMAN_NUMERALS && po.base != BASE_BIJECTIVE_26 && po.number_fraction_format != FRACTION_FRACTIONAL_FIXED_DENOMINATOR && po.number_fraction_format != FRACTION_COMBINED_FIXED_DENOMINATOR) num.print(po2, ips_n);
+				if(!approximately_displayed && (!num.isZero() || !o_number.isFraction())) {
+					if(po.base != BASE_ROMAN_NUMERALS && po.base != BASE_BIJECTIVE_26 && po.number_fraction_format != FRACTION_FRACTIONAL_FIXED_DENOMINATOR && po.number_fraction_format != FRACTION_COMBINED_FIXED_DENOMINATOR) den.print(po2, ips_n);
+					if(!approximately_displayed) {
+						if((po.number_fraction_format == FRACTION_COMBINED || po.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR) && !o_number.isFraction()) {
 							// mixed fraction format (e.g. 5/3=1+2/3)
 							Number nr_int(o_number);
 							nr_int.trunc();
 							if(isApproximate()) nr_int.setApproximate();
-							nr_int.print(po2, ips_n);
-							if(!approximately_displayed || po.base == BASE_ROMAN_NUMERALS || po.base == BASE_BIJECTIVE_26) {
+							if(po.base != BASE_ROMAN_NUMERALS && po.base != BASE_BIJECTIVE_26 && po.number_fraction_format != FRACTION_FRACTIONAL_FIXED_DENOMINATOR && po.number_fraction_format != FRACTION_COMBINED_FIXED_DENOMINATOR) nr_int.print(po2, ips_n);
+							if(!approximately_displayed) {
 								set(nr_int);
-								MathStructure *mterm;
-								if(num.isOne()) {
-									mterm = new MathStructure(den);
-									mterm->transform(STRUCT_INVERSE);
-								} else {
-									mterm = new MathStructure(num);
-									mterm->transform(STRUCT_DIVISION, den);
+								if(!num.isZero()) {
+									MathStructure *mterm;
+									if(num.isOne()) {
+										mterm = new MathStructure(den);
+										mterm->transform(STRUCT_INVERSE);
+									} else {
+										mterm = new MathStructure(num);
+										mterm->transform(STRUCT_DIVISION, den);
+									}
+									add_nocopy(mterm);
 								}
-								add_nocopy(mterm);
 								break;
 							} else {
 								approximately_displayed = false;
@@ -3455,6 +3469,11 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 	if(precision() >= 0 && (ips_n.parent_precision < 0 || precision() < ips_n.parent_precision)) ips_n.parent_precision = precision();
 	switch(m_type) {
 		case STRUCT_NUMBER: {
+			if(po.show_ending_zeroes && (po.number_fraction_format == FRACTION_FRACTIONAL_FIXED_DENOMINATOR || po.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR) && o_number.isInteger()) {
+				PrintOptions po2 = po;
+				po2.show_ending_zeroes = false;
+				return print(po2, format, colorize, tagtype, ips);
+			}
 			if(colorize && tagtype == TAG_TYPE_TERMINAL) print_str = (colorize == 2 ? "\033[0;96m" : "\033[0;36m");
 			else if(colorize && tagtype == TAG_TYPE_HTML) print_str = (colorize == 2 ? "<span style=\"color:#AAFFFF\">" : "<span style=\"color:#005858\">");
 			size_t i_number = print_str.length();

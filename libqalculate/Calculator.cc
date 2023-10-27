@@ -179,6 +179,7 @@ Calculator::Calculator() {
 	priv->matlab_matrices = true;
 	priv->persistent_plot = false;
 	priv->concise_uncertainty_input = false;
+	priv->fixed_denominator = 2;
 
 #ifdef HAVE_ICU
 	UErrorCode err = U_ZERO_ERROR;
@@ -438,6 +439,7 @@ Calculator::Calculator(bool ignore_locale) {
 	priv->matlab_matrices = true;
 	priv->persistent_plot = false;
 	priv->concise_uncertainty_input = false;
+	priv->fixed_denominator = 2;
 
 #ifdef HAVE_ICU
 	UErrorCode err = U_ZERO_ERROR;
@@ -1439,6 +1441,11 @@ void Calculator::useMatlabStyleMatrices(bool use_matlab_style_matrices) {priv->m
 
 bool Calculator::conciseUncertaintyInputEnabled() const {return priv->concise_uncertainty_input;}
 void Calculator::setConciseUncertaintyInputEnabled(bool enable_concise_uncertainty_input) {priv->concise_uncertainty_input = enable_concise_uncertainty_input;}
+
+long int Calculator::fixedDenominator() const {return priv->fixed_denominator;}
+void Calculator::setFixedDenominator(long int fixed_denominator) {
+	if(fixed_denominator > 1) priv->fixed_denominator = fixed_denominator;
+}
 
 void Calculator::setCustomAngleUnit(Unit *u) {
 	if(u) u->ref();

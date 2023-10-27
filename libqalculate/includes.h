@@ -349,7 +349,11 @@ typedef enum {
 	/// Display as fraction (ex. 4/3)
 	FRACTION_FRACTIONAL,
 	/// Display as an integer and a fraction (ex. 3 + 1/2)
-	FRACTION_COMBINED
+	FRACTION_COMBINED,
+	/// Display as fraction with denominator specified using Calculator::setFixedDenominator()
+	FRACTION_FRACTIONAL_FIXED_DENOMINATOR,
+	/// Display as an integer and a fraction with denominator specified using Calculator::setFixedDenominator()
+	FRACTION_COMBINED_FIXED_DENOMINATOR
 } NumberFractionFormat;
 
 /// Options for ordering the parts of a mathematical expression/result before display

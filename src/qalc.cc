@@ -224,12 +224,12 @@ bool equalsIgnoreCaseFirst(const string &str1, const char *str2) {
 	if(((signed char) str1[0] < 0 && str1.length() > 1) || ((signed char) str2[0] < 0 && strlen(str2) > 1)) {
 		size_t iu1 = 1, iu2 = 1;
 		if((signed char) str1[0] < 0) {
-			while(iu1 < str1.length() && (signed char) str1[iu1] < 0) {
+			while(iu1 < str1.length() && (signed char) str1[iu1] < 0 && (unsigned char) str1[iu1] < 0xC0) {
 				iu1++;
 			}
 		}
 		if((signed char) str2[0] < 0) {
-			while(iu2 < strlen(str2) && (signed char) str2[iu2] < 0) {
+			while(iu2 < strlen(str2) && (signed char) str2[iu2] < 0 && (unsigned char) str1[iu2] < 0xC0) {
 				iu2++;
 			}
 		}
@@ -1453,21 +1453,24 @@ void set_option(string str) {
 		//fraction mode
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "combined", _("combined")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "mixed", _("mixed"))) v = FRACTION_COMBINED;
 		//fraction mode
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "long", _("long"))) v = FRACTION_COMBINED + 1;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "long", _("long"))) v = FRACTION_COMBINED_FIXED_DENOMINATOR + 1;
 		//fraction mode
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "dual", _("dual"))) v = FRACTION_COMBINED + 2;
-		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "dual", _("dual"))) v = FRACTION_COMBINED_FIXED_DENOMINATOR + 2;
+		else if(svalue.length() > 2 && svalue.substr(0, 2) == "1/") {
+			v = FRACTION_COMBINED_FIXED_DENOMINATOR;
+			CALCULATOR->setFixedDenominator(s2i(svalue.substr(2, svalue.length() - 1)));
+		} else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
-		if(v > FRACTION_COMBINED + 2) {
+		if(v > FRACTION_COMBINED_FIXED_DENOMINATOR + 2) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
-			printops.restrict_fraction_length = (v == FRACTION_FRACTIONAL || v == FRACTION_COMBINED);
+			printops.restrict_fraction_length = (v >= FRACTION_FRACTIONAL && v <= FRACTION_COMBINED_FIXED_DENOMINATOR);
 			if(v < 0) dual_fraction = -1;
-			else if(v == FRACTION_COMBINED + 2) dual_fraction = 1;
+			else if(v == FRACTION_COMBINED_FIXED_DENOMINATOR + 2) dual_fraction = 1;
 			else dual_fraction = 0;
-			if(v == FRACTION_COMBINED + 1) v = FRACTION_FRACTIONAL;
-			else if(v < 0 || v == FRACTION_COMBINED + 2) v = FRACTION_DECIMAL;
+			if(v == FRACTION_COMBINED_FIXED_DENOMINATOR + 1) v = FRACTION_FRACTIONAL;
+			else if(v < 0 || v == FRACTION_COMBINED_FIXED_DENOMINATOR + 2) v = FRACTION_DECIMAL;
 			printops.number_fraction_format = (NumberFractionFormat) v;
 			result_format_updated();
 		}
@@ -1581,7 +1584,7 @@ void set_option(string str) {
 #define STR_AND_TABS_3(s, sh, d, v, s0, s1, s2, s3) if(SET_OPTION_MATCHES(s, sh)) {STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str()); SET_OPTION_FOUND}
 #define STR_AND_TABS_4(s, sh, d, v, s0, s1, s2, s3, s4) if(SET_OPTION_MATCHES(s, sh)) {STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ", 4"; if(v == 4) {str += "*";} str += " = "; str += s4; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str()); SET_OPTION_FOUND}
 #define STR_AND_TABS_4M(s, sh, d, v, sm, s0, s1, s2, s3) if(SET_OPTION_MATCHES(s, sh)) {STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(-1"; if(v == -1) {str += "*";} str += " = "; str += sm; str += ", 0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; if(v == 3) {str += "*";} str += " = "; str += s3; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str()); SET_OPTION_FOUND}
-#define STR_AND_TABS_6M(s, sh, d, v, sm, s0, s1, s2, s3, s4, s5) if(SET_OPTION_MATCHES(s, sh)) {STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(-1"; if(v == -1) {str += "*";} str += " = "; str += sm; str += ", 0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ", 4"; if(v == 4) {str += "*";} str += " = "; str += s4; str += ", 4"; if(v == 5) {str += "*";} str += " = "; str += s5; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str()); SET_OPTION_FOUND}
+#define STR_AND_TABS_FR(s, sh, d, v, sm, s0, s1, s2, s3, s4, s5, s6) if(SET_OPTION_MATCHES(s, sh)) {STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(-1"; if(v == -1) {str += "*";} str += " = "; str += sm; str += ", 0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ", 4"; if(v == 4) {str += "*";} str += " = "; str += s4; str += ", 5"; if(v == 5) {str += "*";} str += " = "; str += s5; str += ", "; str += s6; str += ")"; if(v == 6) {str += " 1/"; str += i2s(CALCULATOR->fixedDenominator()); str += "*";} CHECK_IF_SCREEN_FILLED_PUTS(str.c_str()); SET_OPTION_FOUND}
 #define STR_AND_TABS_9(s, sh, d, v, s0, s1, s2, s3, s4, s5, s6, s7, s8) if(SET_OPTION_MATCHES(s, sh)) {STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ", 4"; if(v == 4) {str += "*";} str += " = "; str += s4; str += ", 5"; if(v == 5) {str += "*";} str += " = "; str += s5; str += ", 6"; if(v == 6) {str += "*";} str += " = "; str += s6; str += ", 7"; if(v == 7) {str += "*";} str += " = "; str += s7; str += ", 8"; if(v == 8) {str += "*";} str += " = "; str += s8; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str()); SET_OPTION_FOUND}
 
 bool show_set_help(string set_option = "") {
@@ -1737,7 +1740,8 @@ bool show_set_help(string set_option = "") {
 	if(dual_fraction < 0) nff = -1;
 	else if(dual_fraction > 0) nff = 5;
 	else if(!printops.restrict_fraction_length && printops.number_fraction_format == FRACTION_FRACTIONAL) nff = 4;
-	STR_AND_TABS_6M("fractions", "fr", _("Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). 'long' removes limits on the size of the numerator and denominator."), nff, _("auto"), _("off"), _("exact"), _("on"), _("mixed"), _("long"), _("dual"));
+	else if(printops.number_fraction_format == FRACTION_FRACTIONAL_FIXED_DENOMINATOR || printops.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR) nff = 6;
+	STR_AND_TABS_FR("fractions", "fr", _("Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). 'long' removes limits on the size of the numerator and denominator."), nff, _("auto"), _("off"), _("exact"), _("on"), _("mixed"), _("long"), _("dual"), "1/n");
 	STR_AND_TABS_BOOL("hexadecimal two's", "hextwos", _("Enables two's complement representation for display of negative hexadecimal numbers."), printops.twos_complement);
 	STR_AND_TABS_BOOL("imaginary j", "imgj", _("Use 'j' (instead of 'i') as default symbol for the imaginary unit."), (CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") > 0));
 	STR_AND_TABS_9("interval display", "ivdisp", "", (adaptive_interval_display ? 0 : printops.interval_display + 1), _("adaptive"), _("significant"), _("interval"), _("plusminus"), _("midpoint"), _("lower"), _("upper"), _("concise"), _("relative"))
@@ -2323,16 +2327,23 @@ bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t 
 		if(i1 >= str1.length()) break;
 		if(((signed char) str1[i1] < 0 && i1 + 1 < str1.length()) || ((signed char) str2[i2] < 0 && i2 + 1 < str2.length())) {
 			size_t iu1 = 1, iu2 = 1;
+			size_t n1 = 1, n2 = 1;
 			if((signed char) str1[i1] < 0) {
 				while(iu1 + i1 < str1.length() && (signed char) str1[i1 + iu1] < 0) {
+					if((unsigned char) str1[i1 + iu1] >= 0xC0) n1++;
 					iu1++;
 				}
 			}
 			if((signed char) str2[i2] < 0) {
 				while(iu2 + i2 < str2.length() && (signed char) str2[i2 + iu2] < 0) {
+					if((unsigned char) str2[i2 + iu2] >= 0xC0) {
+						if(n1 == n2) break;
+						n2++;
+					}
 					iu2++;
 				}
 			}
+			if(n1 != n2) return false;
 			bool isequal = (iu1 == iu2);
 			if(isequal) {
 				for(size_t i = 0; i < iu1; i++) {
@@ -4353,11 +4364,30 @@ int main(int argc, char *argv[]) {
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "fraction", _("fraction")) || str == "frac") {
 				NumberFractionFormat save_format = printops.number_fraction_format;
 				bool save_rfl = printops.restrict_fraction_length;
+				int save_dual = dual_fraction;
+				dual_fraction = 0;
 				printops.restrict_fraction_length = false;
 				printops.number_fraction_format = FRACTION_COMBINED;
 				setResult(NULL, false);
 				printops.restrict_fraction_length = save_rfl;
 				printops.number_fraction_format = save_format;
+				dual_fraction = save_dual;
+			} else if((str.length() > 2 && str.substr(0, 2) == "1/" && str.find_first_not_of(NUMBERS, 2) == string::npos) || str == "3rds" || (str.length() > 3 && str.find("ths", str.length() - 3) != string::npos && str.find_first_not_of(NUMBERS) == str.length() - 3)) {
+				NumberFractionFormat save_format = printops.number_fraction_format;
+				bool save_rfl = printops.restrict_fraction_length;
+				long int save_fden = CALCULATOR->fixedDenominator();
+				int save_dual = dual_fraction;
+				dual_fraction = 0;
+				printops.restrict_fraction_length = false;
+				printops.number_fraction_format = FRACTION_COMBINED_FIXED_DENOMINATOR;
+				if(str == "3rds") CALCULATOR->setFixedDenominator(3);
+				else if(str.substr(0, 2) == "1/") CALCULATOR->setFixedDenominator(s2i(str.substr(2, str.length() - 2)));
+				else CALCULATOR->setFixedDenominator(s2i(str.substr(0, str.length() - 3)));
+				setResult(NULL, false);
+				printops.restrict_fraction_length = save_rfl;
+				printops.number_fraction_format = save_format;
+				CALCULATOR->setFixedDenominator(save_fden);
+				dual_fraction = save_dual;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "factors", _("factors")) || str == "factor") {
 				execute_command(COMMAND_FACTORIZE);
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "partial fraction", _("partial fraction")) || str == "partial") {
@@ -4656,6 +4686,8 @@ int main(int argc, char *argv[]) {
 					case FRACTION_DECIMAL_EXACT: {str += _("exact"); break;}
 					case FRACTION_FRACTIONAL: {if(printops.restrict_fraction_length) {str += _("on");} else {str += _("long");} break;}
 					case FRACTION_COMBINED: {str += _("mixed"); break;}
+					case FRACTION_FRACTIONAL_FIXED_DENOMINATOR: {str += _("on"); str += " (1/"; str += i2s(CALCULATOR->fixedDenominator()); str += ")"; break;}
+					case FRACTION_COMBINED_FIXED_DENOMINATOR: {str += _("mixed"); str += " (1/"; str += i2s(CALCULATOR->fixedDenominator()); str += ")"; break;}
 				}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
@@ -6334,6 +6366,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	bool save_allu = printops.use_prefixes_for_all_units;
 	bool save_all = printops.use_all_prefixes;
 	int save_bin = CALCULATOR->usesBinaryPrefixes();
+	long int save_fden = CALCULATOR->fixedDenominator();
+	int save_dual = dual_fraction;
 	ComplexNumberForm save_complex_number_form = evalops.complex_number_form;
 	bool caf_bak = complex_angle_form;
 	bool b_units_saved = evalops.parse_options.units_enabled;
@@ -6453,8 +6487,24 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					printops.time_zone = TIME_ZONE_CUSTOM;
 					printops.custom_time_zone = 60;
 				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "fraction", _("fraction")) || to_str == "frac") {
+					dual_fraction = 0;
 					printops.restrict_fraction_length = false;
 					printops.number_fraction_format = FRACTION_COMBINED;
+				} else if(to_str.length() > 2 && to_str.substr(0, 2) == "1/" && to_str.find_first_not_of(NUMBERS, 2) == string::npos) {
+					dual_fraction = 0;
+					printops.restrict_fraction_length = false;
+					printops.number_fraction_format = FRACTION_COMBINED_FIXED_DENOMINATOR;
+					CALCULATOR->setFixedDenominator(s2i(to_str.substr(2, to_str.length() - 2)));
+				} else if(to_str == "3rds") {
+					dual_fraction = 0;
+					printops.restrict_fraction_length = false;
+					printops.number_fraction_format = FRACTION_COMBINED_FIXED_DENOMINATOR;
+					CALCULATOR->setFixedDenominator(3);
+				} else if(to_str.length() > 3 && to_str.find("ths", to_str.length() - 3) != string::npos && to_str.find_first_not_of(NUMBERS) == to_str.length() - 3) {
+					dual_fraction = 0;
+					printops.restrict_fraction_length = false;
+					printops.number_fraction_format = FRACTION_COMBINED_FIXED_DENOMINATOR;
+					CALCULATOR->setFixedDenominator(s2i(to_str.substr(0, to_str.length() - 3)));
 				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "factors", _("factors")) || to_str == "factor") {
 					do_factors = true;
 				}  else if(equalsIgnoreCase(to_str, "partial fraction") || equalsIgnoreCase(to_str, _("partial fraction")) || to_str == "partial") {
@@ -6844,6 +6894,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		printops.restrict_fraction_length = save_rfl;
 		printops.number_fraction_format = save_format;
 		CALCULATOR->useBinaryPrefixes(save_bin);
+		CALCULATOR->setFixedDenominator(save_fden);
+		dual_fraction = save_dual;
 		if(!simplified_percentage) evalops.parse_options.parsing_mode = (ParsingMode) (evalops.parse_options.parsing_mode & ~PARSE_PERCENT_AS_ORDINARY_CONSTANT);
 		return;
 	}
@@ -7008,6 +7060,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	printops.restrict_fraction_length = save_rfl;
 	printops.number_fraction_format = save_format;
 	CALCULATOR->useBinaryPrefixes(save_bin);
+	CALCULATOR->setFixedDenominator(save_fden);
+	dual_fraction = save_dual;
 	if(!simplified_percentage) evalops.parse_options.parsing_mode = (ParsingMode) (evalops.parse_options.parsing_mode & ~PARSE_PERCENT_AS_ORDINARY_CONSTANT);
 
 }
@@ -7312,11 +7366,21 @@ void load_preferences() {
 						} else if(v == FRACTION_COMBINED + 2) {
 							printops.number_fraction_format = FRACTION_DECIMAL;
 							dual_fraction = 1;
+						} else if(v == FRACTION_COMBINED + 3) {
+							printops.number_fraction_format = FRACTION_FRACTIONAL_FIXED_DENOMINATOR;
+							printops.restrict_fraction_length = true;
+							dual_fraction = 0;
+						} else if(v == FRACTION_COMBINED + 4) {
+							printops.number_fraction_format = FRACTION_COMBINED_FIXED_DENOMINATOR;
+							printops.restrict_fraction_length = true;
+							dual_fraction = 0;
 						} else if(v < 0) {
 							printops.number_fraction_format = FRACTION_DECIMAL;
 							dual_fraction = -1;
 						}
 					}
+				} else if(svar == "number_fraction_denominator") {
+					CALCULATOR->setFixedDenominator(v);
 				} else if(svar == "complex_number_form") {
 					if(v == COMPLEX_NUMBER_FORM_CIS + 1) {
 						evalops.complex_number_form = COMPLEX_NUMBER_FORM_CIS;
@@ -7634,9 +7698,14 @@ bool save_preferences(bool mode) {
 	fprintf(file, "min_exp=%i\n", saved_printops.min_exp);
 	fprintf(file, "negative_exponents=%i\n", saved_printops.negative_exponents);
 	fprintf(file, "sort_minus_last=%i\n", saved_printops.sort_options.minus_last);
-	if(saved_dual_fraction < 0) fprintf(file, "number_fraction_format=%i\n", -1);
-	else if(saved_dual_fraction > 0) fprintf(file, "number_fraction_format=%i\n", FRACTION_COMBINED + 2);
-	else fprintf(file, "number_fraction_format=%i\n", !saved_printops.restrict_fraction_length && saved_printops.number_fraction_format == FRACTION_FRACTIONAL ? FRACTION_COMBINED + 1 : saved_printops.number_fraction_format);
+	int v = saved_printops.number_fraction_format;
+	if(saved_dual_fraction < 0) v = -1;
+	else if(saved_dual_fraction > 0) v = FRACTION_COMBINED + 2;
+	else if(!saved_printops.restrict_fraction_length && saved_printops.number_fraction_format == FRACTION_FRACTIONAL) v = FRACTION_COMBINED + 1;
+	else if(saved_printops.number_fraction_format == FRACTION_FRACTIONAL_FIXED_DENOMINATOR) v = FRACTION_COMBINED + 3;
+	else if(saved_printops.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR) v = FRACTION_COMBINED + 4;
+	fprintf(file, "number_fraction_format=%i\n", v);
+	if(v > FRACTION_COMBINED + 2) fprintf(file, "number_fraction_denominator=%li\n", CALCULATOR->fixedDenominator());
 	fprintf(file, "complex_number_form=%i\n", (saved_caf && saved_evalops.complex_number_form == COMPLEX_NUMBER_FORM_CIS) ? saved_evalops.complex_number_form + 1 : saved_evalops.complex_number_form);
 	fprintf(file, "use_prefixes=%i\n", saved_printops.use_unit_prefixes);
 	fprintf(file, "use_prefixes_for_all_units=%i\n", saved_printops.use_prefixes_for_all_units);

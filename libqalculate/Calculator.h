@@ -1264,6 +1264,9 @@ class Calculator {
 	bool conciseUncertaintyInputEnabled() const;
 	void setConciseUncertaintyInputEnabled(bool enable_concise_uncertainty_input);
 
+	long int fixedDenominator() const;
+	void setFixedDenominator(long int fixed_denominator);
+
 	void setCustomInputBase(Number nr);
 	void setCustomOutputBase(Number nr);
 	const Number &customInputBase() const;

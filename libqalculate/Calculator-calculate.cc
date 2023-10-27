@@ -1600,6 +1600,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	Number base_save;
 	bool custom_base_set = false;
 	int save_bin = priv->use_binary_prefixes;
+	long int save_fden = priv->fixed_denominator;
 	bool had_to_expression = false;
 	if(separateToExpression(from_str, to_str, evalops, true)) {
 		remove_duplicate_blanks(to_str);
@@ -1710,6 +1711,21 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				evalops.complex_number_form = COMPLEX_NUMBER_FORM_CIS;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "fraction", _("fraction"))) {
 				printops.number_fraction_format = FRACTION_COMBINED;
+				auto_fraction = AUTOMATIC_FRACTION_OFF;
+			} else if(to_str.length() > 2 && to_str.substr(0, 2) == "1/" && to_str.find_first_not_of(NUMBERS, 2) == string::npos) {
+				printops.number_fraction_format = FRACTION_COMBINED_FIXED_DENOMINATOR;
+				priv->fixed_denominator = s2i(to_str.substr(2, to_str.length() - 2));
+				auto_fraction = AUTOMATIC_FRACTION_OFF;
+			} else if(to_str == "3rds") {
+				auto_fraction = AUTOMATIC_FRACTION_OFF;
+				printops.restrict_fraction_length = false;
+				printops.number_fraction_format = FRACTION_COMBINED_FIXED_DENOMINATOR;
+				priv->fixed_denominator = 3;
+			} else if(to_str.length() > 3 && to_str.find("ths", to_str.length() - 3) != string::npos && to_str.find_first_not_of(NUMBERS) == to_str.length() - 3) {
+				auto_fraction = AUTOMATIC_FRACTION_OFF;
+				printops.restrict_fraction_length = false;
+				printops.number_fraction_format = FRACTION_COMBINED_FIXED_DENOMINATOR;
+				priv->fixed_denominator = s2i(to_str.substr(0, to_str.length() - 3));
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "factors", _("factors")) || equalsIgnoreCase(to_str, "factor")) {
 				evalops.structuring = STRUCTURING_FACTORIZE;
 				do_factors = true;
@@ -2044,6 +2060,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	// restore options
 	if(custom_base_set) setCustomOutputBase(base_save);
 	priv->use_binary_prefixes = save_bin;
+	priv->fixed_denominator = save_fden;
 
 	// output parsed value
 	if(parsed_expression) {
