@@ -350,10 +350,16 @@ typedef enum {
 	FRACTION_FRACTIONAL,
 	/// Display as an integer and a fraction (ex. 3 + 1/2)
 	FRACTION_COMBINED,
-	/// Display as fraction with denominator specified using Calculator::setFixedDenominator()
+	/// Display as fraction with denominator specified using Calculator::setFixedDenominator(). Both rational and non-rational numbers are rounded to match the selected denominator.
 	FRACTION_FRACTIONAL_FIXED_DENOMINATOR,
-	/// Display as an integer and a fraction with denominator specified using Calculator::setFixedDenominator()
-	FRACTION_COMBINED_FIXED_DENOMINATOR
+	/// Display as an integer and a fraction with denominator specified using Calculator::setFixedDenominator(). Both rational and non-rational numbers are rounded to match the selected denominator.
+	FRACTION_COMBINED_FIXED_DENOMINATOR,
+	/// Display numbers in decimal format multiplied by percent
+	FRACTION_PERCENT,
+	/// Display numbers in decimal format multiplied by permille
+	FRACTION_PERMILLE,
+	/// Display numbers in decimal format multiplied by permyriad
+	FRACTION_PERMYRIAD
 } NumberFractionFormat;
 
 /// Options for ordering the parts of a mathematical expression/result before display

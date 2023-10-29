@@ -210,7 +210,7 @@ bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &m
 
 	if(m1.isNumber() && m2.isNumber()) {
 		mgcd = m1;
-		if(!mgcd.number().gcd(m2.number())) mgcd.set(1, 1, 0);
+		if(!m1.isInteger() || !m2.isInteger() || !mgcd.number().gcd(m2.number())) mgcd.set(1, 1, 0);
 		if(ca) {
 			*ca = m1;
 			ca->number() /= mgcd.number();
@@ -335,7 +335,7 @@ bool MathStructure::gcd(const MathStructure &m1, const MathStructure &m2, MathSt
 	}
 	if(m1.isNumber() && m2.isNumber()) {
 		mresult = m1;
-		if(!mresult.number().gcd(m2.number())) mresult.set(1, 1, 0);
+		if(!m1.isInteger() || !m2.isInteger() || !mresult.number().gcd(m2.number())) mresult.set(1, 1, 0);
 		if(ca || cb) {
 			if(mresult.isZero()) {
 				if(ca) ca->clear();
@@ -801,7 +801,10 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 				uv[i]->destroy();
 			}
 			mstruct.evalSort(true);
-			if(b) b_ret = true;
+			if(b) {
+				b_ret = true;
+				if(mstruct.calculatesub(eo, eo)) do_simplification(mstruct, eo, combine_divisions, only_gcd, combine_only, recursive, limit_size, -1);
+			}
 		}
 		return b_ret;
 	}

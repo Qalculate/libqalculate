@@ -10356,6 +10356,51 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if(ips.im) *ips.im = "";
 	if(ips.iexp) *ips.iexp = 0;
 	if(po.is_approximate && isApproximate()) *po.is_approximate = true;
+	if(po.number_fraction_format >= FRACTION_FRACTIONAL_FIXED_DENOMINATOR && (((po.number_fraction_format == FRACTION_FRACTIONAL_FIXED_DENOMINATOR || po.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR) && !isInteger()) || po.number_fraction_format == FRACTION_PERCENT || po.number_fraction_format == FRACTION_PERMILLE || po.number_fraction_format == FRACTION_PERMYRIAD) && !hasImaginaryPart() && po.base > BASE_FP16 && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME) {
+		PrintOptions po2 = po;
+		if(po.number_fraction_format >= FRACTION_PERCENT) po2.number_fraction_format = FRACTION_DECIMAL;
+		else po2.number_fraction_format = FRACTION_FRACTIONAL;
+		Number num(*this);
+		if(po.number_fraction_format == FRACTION_PERCENT) {
+			if(!num.multiply(100)) return print(po2, ips);
+			return num.print(po2, ips) + "%";
+		} else if(po.number_fraction_format == FRACTION_PERMILLE) {
+			if(!num.multiply(1000)) return print(po2, ips);
+			return num.print(po2, ips) + "‰";
+		} else if(po.number_fraction_format == FRACTION_PERMYRIAD) {
+			if(!num.multiply(10000)) return print(po2, ips);
+			return num.print(po2, ips) + "‱";
+		}
+		if(!num.multiply(CALCULATOR->fixedDenominator())) return print(po2, ips);
+		if(!num.isInteger()) {
+			if(TRUNCATE) num.trunc();
+			else num.round(po.round_halfway_to_even);
+			if(!num.isInteger()) {
+				num.set(*this);
+				num.multiply(CALCULATOR->fixedDenominator());
+			}
+			if(po.is_approximate) *po.is_approximate = true;
+		}
+		po2.show_ending_zeroes = false;
+		Number den(CALCULATOR->fixedDenominator(), 1L, 0L);
+		string str = num.print(po2, ips);
+		if(ips.num) *ips.num = str;
+		if(num.isZero()) return str;
+		if(po.spacious) str += " ";
+		if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION, po.can_display_unicode_string_arg))) {
+			str += SIGN_DIVISION;
+		} else if(po.use_unicode_signs && po.division_sign == DIVISION_SIGN_DIVISION_SLASH && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DIVISION_SLASH, po.can_display_unicode_string_arg))) {
+			str += SIGN_DIVISION_SLASH;
+		} else {
+			str += "/";
+		}
+		if(po.spacious) str += " ";
+		InternalPrintStruct ips_n = ips;
+		ips_n.minus = NULL;
+		string str2 = den.print(po2, ips_n);
+		if(ips.den) *ips.den = str2;
+		return str += str2;
+	}
 	if(po.base == BASE_FP16 || po.base == BASE_FP128 || po.base == BASE_FP32 || po.base == BASE_FP64 || po.base == BASE_FP80) {
 		unsigned int bits = 0;
 		switch(po.base) {

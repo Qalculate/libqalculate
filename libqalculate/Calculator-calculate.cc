@@ -1576,6 +1576,37 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	return calculateAndPrint(str, msecs, eo, po, AUTOMATIC_FRACTION_OFF, AUTOMATIC_APPROXIMATION_OFF, parsed_expression, max_length, result_is_comparison, false, 0, TAG_TYPE_HTML);
 }
 
+long int get_fixed_denominator2(const std::string &str, NumberFractionFormat &nff, bool b_minus, int frac) {
+	long int fden = 0;
+	if((frac > 0 && EQUALS_IGNORECASE_AND_LOCAL(str, "fraction", _("fraction"))) || (frac == 2 && str == "frac")) {
+		fden = -1;
+		if(b_minus) nff = FRACTION_FRACTIONAL;
+		else nff = FRACTION_COMBINED;
+	} else {
+		if(str.length() > 2 && str[0] == '1' && str[1] == '/' && str.find_first_not_of(NUMBERS, 2) == string::npos) {
+			fden = s2i(str.substr(2, str.length() - 2));
+		} else if(str == "3rds") {
+			fden = 3;
+		} else if(str == "halves") {
+			fden = 2;
+		} else if(str.length() > 3 && str.find("ths", str.length() - 3) != string::npos && str.find_first_not_of(NUMBERS) == str.length() - 3) {
+			fden = s2i(str.substr(0, str.length() - 3));
+		}
+		if(fden > 1) {
+			if(b_minus) nff = FRACTION_FRACTIONAL_FIXED_DENOMINATOR;
+			else nff = FRACTION_COMBINED_FIXED_DENOMINATOR;
+		}
+	}
+	return fden;
+}
+long int get_fixed_denominator(const std::string &str, NumberFractionFormat &nff, int frac) {
+	size_t n = 0;
+	if(str.rfind(SIGN_MINUS, 2) == 0) n = strlen(SIGN_MINUS);
+	else if(str[0] == '-' || str[0] == '+') n = 1;
+	if(n > 0) return get_fixed_denominator2(str.substr(n, str.length() - n), nff, n > 1 || str[0] == '-', frac);
+	return get_fixed_denominator2(str, nff, false, frac);
+}
+
 string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, AutomaticFractionFormat auto_fraction, AutomaticApproximation auto_approx, std::string *parsed_expression, int max_length, bool *result_is_comparison, bool format, int colorize, int tagtype) {
 
 	if(msecs > 0) startControl(msecs);
@@ -1709,23 +1740,6 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				complex_angle_form = true;
 			} else if(to_str == "cis") {
 				evalops.complex_number_form = COMPLEX_NUMBER_FORM_CIS;
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "fraction", _("fraction"))) {
-				printops.number_fraction_format = FRACTION_COMBINED;
-				auto_fraction = AUTOMATIC_FRACTION_OFF;
-			} else if(to_str.length() > 2 && to_str.substr(0, 2) == "1/" && to_str.find_first_not_of(NUMBERS, 2) == string::npos) {
-				printops.number_fraction_format = FRACTION_COMBINED_FIXED_DENOMINATOR;
-				priv->fixed_denominator = s2i(to_str.substr(2, to_str.length() - 2));
-				auto_fraction = AUTOMATIC_FRACTION_OFF;
-			} else if(to_str == "3rds") {
-				auto_fraction = AUTOMATIC_FRACTION_OFF;
-				printops.restrict_fraction_length = false;
-				printops.number_fraction_format = FRACTION_COMBINED_FIXED_DENOMINATOR;
-				priv->fixed_denominator = 3;
-			} else if(to_str.length() > 3 && to_str.find("ths", to_str.length() - 3) != string::npos && to_str.find_first_not_of(NUMBERS) == to_str.length() - 3) {
-				auto_fraction = AUTOMATIC_FRACTION_OFF;
-				printops.restrict_fraction_length = false;
-				printops.number_fraction_format = FRACTION_COMBINED_FIXED_DENOMINATOR;
-				priv->fixed_denominator = s2i(to_str.substr(0, to_str.length() - 3));
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "factors", _("factors")) || equalsIgnoreCase(to_str, "factor")) {
 				evalops.structuring = STRUCTURING_FACTORIZE;
 				do_factors = true;
@@ -1770,21 +1784,30 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				evalops.auto_post_conversion = POST_CONVERSION_NONE;
 				evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
 			} else {
-				// ? in front of unit expression is interpreted as a request for the optimal prefix.
-				evalops.parse_options.units_enabled = true;
-				if(to_str[0] == '?' || (to_str.length() > 1 && to_str[1] == '?' && (to_str[0] == 'a' || to_str[0] == 'd'))) {
-					printops.use_unit_prefixes = true;
-					printops.use_prefixes_for_currencies = true;
-					printops.use_prefixes_for_all_units = true;
-					if(to_str[0] == 'a') printops.use_all_prefixes = true;
-					else if(to_str[0] == 'd') priv->use_binary_prefixes = 0;
-				} else if(to_str.length() > 1 && to_str[1] == '?' && to_str[0] == 'b') {
-					// b? in front of unit expression: use binary prefixes
-					do_binary_prefixes = true;
+				NumberFractionFormat nff = FRACTION_DECIMAL;
+				long int fden = get_fixed_denominator(to_str, nff, 1);
+				if(fden != 0) {
+					auto_fraction = AUTOMATIC_FRACTION_OFF;
+					printops.restrict_fraction_length = false;
+					printops.number_fraction_format = nff;
+					if(fden > 1) priv->fixed_denominator = fden;
+				} else {
+					// ? in front of unit expression is interpreted as a request for the optimal prefix.
+					evalops.parse_options.units_enabled = true;
+					if(to_str[0] == '?' || (to_str.length() > 1 && to_str[1] == '?' && (to_str[0] == 'a' || to_str[0] == 'd'))) {
+						printops.use_unit_prefixes = true;
+						printops.use_prefixes_for_currencies = true;
+						printops.use_prefixes_for_all_units = true;
+						if(to_str[0] == 'a') printops.use_all_prefixes = true;
+						else if(to_str[0] == 'd') priv->use_binary_prefixes = 0;
+					} else if(to_str.length() > 1 && to_str[1] == '?' && to_str[0] == 'b') {
+						// b? in front of unit expression: use binary prefixes
+						do_binary_prefixes = true;
+					}
+					// expression after "to" is by default interpreted as unit expression
+					if(!str_conv.empty()) str_conv += " to ";
+					str_conv += to_str;
 				}
-				// expression after "to" is by default interpreted as unit expression
-				if(!str_conv.empty()) str_conv += " to ";
-				str_conv += to_str;
 			}
 			if(str_left.empty()) break;
 			to_str = str_left;

@@ -2074,6 +2074,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 				}
 				if(i_root) {
+					CALCULATOR->beginTemporaryStopMessages();
 					MathStructure mtest(*this);
 					MathStructure msub;
 					if(mtest[0].size() == 2) {
@@ -2086,28 +2087,33 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					mtest[1].calculateSubtract(msub, eo2);
 					if(mtest[0].calculateRaise(i_root, eo2) && mtest[1].calculateRaise(i_root, eo2)) {
 						mtest.childrenUpdated();
-						MathStructure mtest2(mtest[0]);
-						mtest2.calculateSubtract(mtest[1], eo2);
-						if(mtest2.factorize(eo2, false, false, 0, false, false, NULL, m_undefined, false, false, 3) && mtest2.isMultiplication()) {
-							for(size_t i = 0; i < mtest2.size(); i++) {
-								if(mtest2[i].equals(CHILD(0), true, true)) {
-									i_root = 0;
-									break;
+						if(eo2.expand && morig) {
+							MathStructure mtest2(mtest[0]);
+							mtest2.calculateSubtract(mtest[1], eo2);
+							if(mtest2.factorize(eo2, false, false, 0, false, false, NULL, m_undefined, false, false, 3) && mtest2.isMultiplication()) {
+								for(size_t i = 0; i < mtest2.size(); i++) {
+									if(mtest2[i].equals(CHILD(0), true, true)) {
+										i_root = 0;
+										break;
+									}
 								}
 							}
 						}
 						if(i_root && mtest.isolate_x(eo2, eo, x_var)) {
 							if((mtest.isLogicalAnd() || mtest.isLogicalOr() || mtest.isComparison()) && test_comparisons(*this, mtest, x_var, eo, false, eo2.expand ? 1 : 2) < 0) {
 								if(eo2.expand) {
+									CALCULATOR->endTemporaryStopMessages(true);
 									add(mtest, ct_comp == COMPARISON_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 									calculatesub(eo2, eo, false);
 									return true;
 								}
 							} else {
+								CALCULATOR->endTemporaryStopMessages(true);
 								set(mtest);
 								return true;
 							}
 						}
+						CALCULATOR->endTemporaryStopMessages();
 					}
 
 				}
@@ -2159,6 +2165,8 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				EvaluationOptions eo3 = eo2;
 				eo3.expand = true;
 				bool b2 = false;
+				MathStructure mbak(*this);
+				bool strict_check = false;
 				for(size_t i3 = 0; i3 < CHILD(0).size(); i3++) {
 					bool b = false;
 					if(!b2 || !mdiv.containsInterval()) {
@@ -2179,6 +2187,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 					if(!b) {
 						CHILD(0)[i3].calculateMultiply(mdiv_inv, eo3);
+						strict_check = true;
 					} else {
 						b2 = true;
 					}
@@ -2190,14 +2199,18 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				CHILDREN_UPDATED
 				if(ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) {
 					bool not_equals = ct_comp == COMPARISON_NOT_EQUALS;
-					isolate_x(eo, eo2, x_var, morig);
-					if(!mdiv[0].representsNonZero(true)) {
-						MathStructure *mtest = new MathStructure(mdiv[0]);
-						mtest->add(m_zero, not_equals ? OPERATION_EQUALS : OPERATION_NOT_EQUALS);
-						mtest->isolate_x_sub(eo, eo2, x_var);
-						add_nocopy(mtest, not_equals ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
-						calculatesub(eo2, eo, false);
+					isolate_x(eo, eo2, x_var);
+					if(!strict_check || eo2.expand || ((m_type != STRUCT_COMPARISON || CHILD(0) == x_var || !CHILD(0).isAddition() || CHILD(0).size() < 3) && ((m_type != STRUCT_LOGICAL_AND && m_type != STRUCT_LOGICAL_OR) || SIZE == 0 || !CHILD(0).isComparison() || CHILD(0)[0] == x_var || !CHILD(0)[0].isAddition() || CHILD(0)[0].size() < 3))) {
+						if(!mdiv[0].representsNonZero(true)) {
+							MathStructure *mtest = new MathStructure(mdiv[0]);
+							mtest->add(m_zero, not_equals ? OPERATION_EQUALS : OPERATION_NOT_EQUALS);
+							mtest->isolate_x_sub(eo, eo2, x_var);
+							add_nocopy(mtest, not_equals ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+							calculatesub(eo2, eo, false);
+						}
+						return true;
 					}
+					set(mbak);
 				} else {
 					MathStructure *malt = new MathStructure(*this);
 					if(ct_comp == COMPARISON_EQUALS_GREATER) {
@@ -2209,7 +2222,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					} else if(ct_comp == COMPARISON_LESS) {
 						ct_comp = COMPARISON_GREATER;
 					}
-					isolate_x(eo, eo2, x_var, morig);
+					isolate_x(eo, eo2, x_var);
 					MathStructure *mtest = new MathStructure(mdiv);
 					mtest->add(m_zero, OPERATION_LESS);
 					MathStructure *mtest_alt = new MathStructure(*mtest);
@@ -2217,7 +2230,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					mtest->isolate_x_sub(eo, eo2, x_var);
 					add_nocopy(mtest, OPERATION_LOGICAL_AND);
 					calculatesub(eo2, eo, false);
-					malt->isolate_x(eo, eo2, x_var, morig);
+					malt->isolate_x(eo, eo2, x_var);
 					mtest_alt->isolate_x_sub(eo, eo2, x_var);
 					malt->add_nocopy(mtest_alt, OPERATION_LOGICAL_AND);
 					malt->calculatesub(eo2, eo, false);
@@ -2225,7 +2238,6 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					calculatesub(eo2, eo, false);
 					return true;
 				}
-				return true;
 			}
 
 			// x^a+x^(b/c)=d => x^(1/c)^(a*c)+x^(1/c)^b=d; f(x)^a+f(x)^b=c => u^a+u^b=c
@@ -3224,7 +3236,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						} else {
 							CHILD(i).transform(STRUCT_COMPARISON, m_zero);
 							CHILD(i).setComparisonType(ct);
-							CHILD(i).isolate_x_sub(eo, eo2, x_var);
+							CHILD(i).isolate_x_sub(eo, eo2, x_var, morig);
 							CHILD_UPDATED(i)
 							i++;
 						}

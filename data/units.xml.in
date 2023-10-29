@@ -901,12 +901,39 @@
     </unit>
     <unit type="alias">
       <_title>Julian Year</_title>
-      <_names>r:year,p:years,a:yr,annus</_names>
+      <_names>r:year,p:years,as:a_j,a:yr,annus</_names>
       <base>
         <unit>d</unit>
         <relation>365.25</relation>
         <exponent>1</exponent>
         <mix>2</mix>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Mean Gregorian Year</_title>
+      <_names>ars:a_g, gregorian_year</_names>
+      <base>
+        <unit>d</unit>
+        <relation>365.2425</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Mean Tropical Year</_title>
+      <_names>ars:a_t, tropical_year</_names>
+      <base>
+        <unit>d</unit>
+        <relation>365.24219</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Tropical Year in Year 2000</_title>
+      <_names>ars:a_2000, tropical_year_2000</_names>
+      <base>
+        <unit>s</unit>
+        <relation>1556925.445</relation>
+        <exponent>1</exponent>
       </base>
     </unit>
     <unit type="alias">

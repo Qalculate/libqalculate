@@ -144,6 +144,7 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 bool transform_expression_for_equals_save(std::string&, const ParseOptions&);
 bool expression_contains_save_function(const std::string&, const ParseOptions&, bool = false);
 void replace_internal_operators(std::string &str);
+long int get_fixed_denominator(const std::string &str, NumberFractionFormat &nff, int frac);
 
 #define HAS_DEFAULT_ANGLE_UNIT(x) (x != ANGLE_UNIT_NONE && (x != ANGLE_UNIT_CUSTOM || CALCULATOR->customAngleUnit()))
 #define NO_DEFAULT_ANGLE_UNIT(x) (x == ANGLE_UNIT_NONE || (x == ANGLE_UNIT_CUSTOM && !CALCULATOR->customAngleUnit()))
