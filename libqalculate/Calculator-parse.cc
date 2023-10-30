@@ -3287,6 +3287,10 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			str.erase(i, 1);
 			after_sign_e = false;
 			had_non_sign = true;
+		} else if(str[i] == '_' && had_non_sign) {
+			str.erase(i, 1);
+			after_sign_e = false;
+			had_non_sign = true;
 		} else if(is_in(OPERATORS, str[i]) && (po.base != BASE_ROMAN_NUMERALS || str[i] != '|')) {
 			// ignore operators
 			error(false, _("Misplaced operator(s) \"%s\" ignored"), internal_operator_replacement(str[i]).c_str(), NULL);
