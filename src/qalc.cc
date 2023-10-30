@@ -1317,9 +1317,9 @@ void set_option(string str) {
 		} else {
 			save_mode_on_exit = false;
 		}
-	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "clear history", _("clear history")) || equalsIgnoreCase(svar, "save_history")) {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "clear history", _("clear history")) || equalsIgnoreCase(svar, "save history")) {
 		int v = s2b(svalue);
-		if(v >= 0 && equalsIgnoreCase(svar, "save_history")) v = !v;
+		if(v >= 0 && equalsIgnoreCase(svar, "save history")) v = !v;
 		if(v < 0) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else if(v > 0) {
@@ -4866,7 +4866,9 @@ int main(int argc, char *argv[]) {
 			FPUTS_UNICODE(_("assume"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("ASSUMPTIONS")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("base"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("BASE")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("clear")); CHECK_IF_SCREEN_FILLED
+#ifdef HAVE_LIBREADLINE
 			PUTS_UNICODE(_("clear history")); CHECK_IF_SCREEN_FILLED
+#endif
 			FPUTS_UNICODE(_("delete"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("NAME")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("exact")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("expand")); CHECK_IF_SCREEN_FILLED
@@ -4877,6 +4879,9 @@ int main(int argc, char *argv[]) {
 			PUTS_UNICODE(_("factor")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("find"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("list"), stdout);  fputs(" [", stdout); FPUTS_UNICODE(_("NAME"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED;
 			FPUTS_UNICODE(_("function"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("EXPRESSION")); CHECK_IF_SCREEN_FILLED
+#ifdef HAVE_LIBREADLINE
+			PUTS_UNICODE(_("history")); CHECK_IF_SCREEN_FILLED
+#endif
 			FPUTS_UNICODE(_("info"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("NAME")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("MC/MS/M+/M- (memory operations)")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("mode")); CHECK_IF_SCREEN_FILLED
@@ -5003,10 +5008,16 @@ int main(int argc, char *argv[]) {
 				puts("");
 				PUTS_UNICODE(_("Clears the screen."));
 				puts("");
+#ifdef HAVE_LIBREADLINE
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "history", _("history"))) {
+				puts("");
+				PUTS_UNICODE(_("lists the expression history."));
+				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear history", _("clear history"))) {
 				puts("");
 				PUTS_UNICODE(_("Clears the expression history."));
 				puts("");
+#endif
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "variable", _("variable"))) {
 				puts("");
 				PUTS_UNICODE(_("Create a variable with the specified name and expression."));
@@ -5197,15 +5208,21 @@ int main(int argc, char *argv[]) {
 					PUTS_UNICODE(_("Unrecognized option."));
 				}
 			}
+#ifdef HAVE_LIBREADLINE
+		//qalc command
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "history", _("history"))) {
+			for(int i = 0; i < history_length; i++) {
+				PUTS_UNICODE(history_get(i + history_base)->line);
+			}
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear history", _("clear history"))) {
-#ifdef HAVE_LIBREADLINE
 			while(history_length > 0) {
 				HIST_ENTRY *hist = remove_history(0);
 				if(hist) free_history_entry(hist);
 			}
-#endif
+
 			history_was_cleared = true;
+#endif
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear", _("clear"))) {
 #ifdef _WIN32
