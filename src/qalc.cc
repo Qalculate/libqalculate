@@ -105,6 +105,7 @@ int rounding_mode = 0, saved_rounding = 0;
 bool simplified_percentage = true;
 int defs_edited = 0;
 bool use_duo_syms = false;
+bool unicode_exponents = true;
 
 static char buffer[100000];
 
@@ -150,6 +151,7 @@ enum {
 #	define DO_FORMAT (force_color > 0 || (force_color != 0 && !cfile && interactive_mode))
 #endif
 #define DO_COLOR (force_color >= 0 ? force_color : (!cfile && colorize && interactive_mode ? colorize : 0))
+#define PRINT_COLOR (unicode_exponents ? DO_COLOR : -DO_COLOR)
 
 bool contains_unicode_char(const char *str) {
 	for(int i = strlen(str) - 1; i >= 0; i--) {
@@ -1081,6 +1083,13 @@ void set_option(string str) {
 			printops.use_unicode_signs = v; result_display_updated();
 		}
 		enable_unicode = -1;
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unicode exponents", _("unicode exponents")) || svar == "uniexp") {
+		int v = s2b(svalue);
+		if(v < 0) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			unicode_exponents = v; result_display_updated();
+		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "units", _("units")) || svar == "unit") SET_BOOL_PV(evalops.parse_options.units_enabled)
 	//automatic unknown variables
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unknowns", _("unknowns")) || svar == "unknown") SET_BOOL_PV(evalops.parse_options.unknowns_enabled)
@@ -1690,6 +1699,7 @@ bool show_set_help(string set_option = "") {
 	STR_AND_TABS_BOOL("spacious", "space", _("Add extra space around operators."), printops.spacious);
 	STR_AND_TABS_BOOL("spell out logical", "spellout", "", printops.spell_out_logical_operators);
 	STR_AND_TABS_BOOL("unicode", "uni", _("Display Unicode characters."), printops.use_unicode_signs);
+	STR_AND_TABS_BOOL("unicode exponents", "uniexp", _("Display exponents 0-9 using Unicode superscript characters."), unicode_exponents);
 	STR_AND_TABS_BOOL("vertical space", "vspace", _("Add empty lines before and after result."), vertical_space);
 
 	CHECK_IF_SCREEN_FILLED_HEADING_S(_("Numerical Display"));
@@ -3893,7 +3903,7 @@ int main(int argc, char *argv[]) {
 					m = *CALCULATOR->getRPNRegister(i);
 					m.removeDefaultAngleUnit(evalops);
 					m.format(printops);
-					string regstr = m.print(printops, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
+					string regstr = m.print(printops, DO_FORMAT, PRINT_COLOR, TAG_TYPE_TERMINAL);
 					if(complex_angle_form) replace_result_cis(regstr);
 					if(printops.digit_grouping != DIGIT_GROUPING_NONE) {
 						gsub(THIN_SPACE, " ", regstr);
@@ -4610,6 +4620,7 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("spacious"), "space"); str += b2oo(printops.spacious, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("spell out logical"), "spellout"); str += b2oo(printops.spell_out_logical_operators, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("unicode"), "uni"); str += b2oo(printops.use_unicode_signs, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("unicode exponents"), "uniexp"); str += b2oo(unicode_exponents, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("vertical space"), "vspace"); str += b2oo(vertical_space, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Numerical Display"));
@@ -5163,6 +5174,8 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- angle / phasor (show complex numbers in angle/phasor notation)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- fraction (show result as mixed fraction)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- 1/# (show as mixed fraction with specified denominator)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- -1/# (show as simple fraction with specified denominator)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- factors (factorize result)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- UTC (show date and time in UTC time zone)"));
@@ -5413,7 +5426,7 @@ void ViewThread::run() {
 			po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 			MathStructure mp(*mparse);
 			mp.format(po);
-			parsed_text = mp.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
+			parsed_text = mp.print(po, DO_FORMAT, PRINT_COLOR, TAG_TYPE_TERMINAL);
 			if(po.base == BASE_CUSTOM) {
 				CALCULATOR->setCustomOutputBase(nr_base);
 			}
@@ -5423,12 +5436,12 @@ void ViewThread::run() {
 
 		po.allow_non_usable = DO_FORMAT;
 
-		print_dual(*mresult, original_expression, mparse ? *mparse : *parsed_mstruct, mstruct_exact, result_text, alt_results, po, evalops, dual_fraction < 0 ? AUTOMATIC_FRACTION_AUTO : (dual_fraction > 0 ? AUTOMATIC_FRACTION_DUAL : AUTOMATIC_FRACTION_OFF), dual_approximation < 0 ? AUTOMATIC_APPROXIMATION_AUTO : (dual_fraction > 0 ? AUTOMATIC_APPROXIMATION_DUAL : AUTOMATIC_APPROXIMATION_OFF), complex_angle_form, &exact_comparison, mparse != NULL, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
+		print_dual(*mresult, original_expression, mparse ? *mparse : *parsed_mstruct, mstruct_exact, result_text, alt_results, po, evalops, dual_fraction < 0 ? AUTOMATIC_FRACTION_AUTO : (dual_fraction > 0 ? AUTOMATIC_FRACTION_DUAL : AUTOMATIC_FRACTION_OFF), dual_approximation < 0 ? AUTOMATIC_APPROXIMATION_AUTO : (dual_fraction > 0 ? AUTOMATIC_APPROXIMATION_DUAL : AUTOMATIC_APPROXIMATION_OFF), complex_angle_form, &exact_comparison, mparse != NULL, DO_FORMAT, PRINT_COLOR, TAG_TYPE_TERMINAL);
 
 		if(!prepend_mstruct.isUndefined() && !CALCULATOR->aborted()) {
 			prepend_mstruct.format(po);
 			po.min_exp = 0;
-			alt_results.insert(alt_results.begin(), prepend_mstruct.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL));
+			alt_results.insert(alt_results.begin(), prepend_mstruct.print(po, DO_FORMAT, PRINT_COLOR, TAG_TYPE_TERMINAL));
 		}
 
 		b_busy = false;
@@ -7129,6 +7142,7 @@ void load_preferences() {
 #else
 	printops.use_unicode_signs = true;
 #endif
+	unicode_exponents = true;
 	printops.use_unit_prefixes = true;
 	printops.spacious = true;
 	printops.short_multiplication = true;
@@ -7498,6 +7512,8 @@ void load_preferences() {
 						printops.use_unicode_signs = v;
 					}
 #endif
+				} else if(svar == "use_unicode_exponents") {
+					unicode_exponents = v;
 				} else if(svar == "lower_case_numbers") {
 					printops.lower_case_numbers = v;
 				} else if(svar == "duodecimal_symbols") {
@@ -7654,6 +7670,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "excessive_parenthesis=%i\n", printops.excessive_parenthesis);
 	fprintf(file, "short_multiplication=%i\n", printops.short_multiplication);
 	fprintf(file, "use_unicode_signs=%i\n", printops.use_unicode_signs);
+	fprintf(file, "use_unicode_exponents=%i\n", unicode_exponents);
 	fprintf(file, "lower_case_numbers=%i\n", printops.lower_case_numbers);
 	fprintf(file, "duodecimal_symbols=%i\n", use_duo_syms);
 	fprintf(file, "lower_case_e=%i\n", printops.lower_case_e);

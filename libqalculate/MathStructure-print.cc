@@ -3472,6 +3472,31 @@ bool has_power_in_power(const MathStructure &m) {
 	return false;
 }
 
+bool has_nonunicode_power(const MathStructure &m, const PrintOptions &po) {
+	if(m.isPower()) {
+		if(!m[1].isInteger() || m[1].number().isNegative() || m[1].number() > 9) return true;
+		if(has_nonunicode_power(m[0], po)) return true;
+		if(!po.can_display_unicode_string_function) return false;
+		switch(m[1].number().intValue()) {
+			case 2: {return !(*po.can_display_unicode_string_function) (SIGN_POWER_2, po.can_display_unicode_string_arg);}
+			case 3: {return !(*po.can_display_unicode_string_function) (SIGN_POWER_3, po.can_display_unicode_string_arg);}
+			case 4: {return !(*po.can_display_unicode_string_function) (SIGN_POWER_4, po.can_display_unicode_string_arg);}
+			case 5: {return !(*po.can_display_unicode_string_function) (SIGN_POWER_5, po.can_display_unicode_string_arg);}
+			case 6: {return !(*po.can_display_unicode_string_function) (SIGN_POWER_6, po.can_display_unicode_string_arg);}
+			case 7: {return !(*po.can_display_unicode_string_function) (SIGN_POWER_7, po.can_display_unicode_string_arg);}
+			case 8: {return !(*po.can_display_unicode_string_function) (SIGN_POWER_8, po.can_display_unicode_string_arg);}
+			case 9: {return !(*po.can_display_unicode_string_function) (SIGN_POWER_9, po.can_display_unicode_string_arg);}
+			case 0: {return !(*po.can_display_unicode_string_function) (SIGN_POWER_0, po.can_display_unicode_string_arg);}
+			case 1: {return !(*po.can_display_unicode_string_function) (SIGN_POWER_1, po.can_display_unicode_string_arg);}
+		}
+		return true;
+	}
+	for(size_t i = 0; i < m.size(); i++) {
+		if(has_nonunicode_power(m[i], po)) return true;
+	}
+	return false;
+}
+
 size_t unformatted_unicode_length(const string &str) {
 	size_t l = str.length(), l2 = 0;
 	for(size_t i = 0; i < l; i++) {
@@ -3494,10 +3519,11 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 		ips_n.parent_approximate = true;
 		if(po.is_approximate) *po.is_approximate = true;
 	}
-	if(ips.depth == 0 && format && tagtype == TAG_TYPE_HTML && has_power_in_power(*this)) {
+	if(ips.depth == 0 && ((format && tagtype == TAG_TYPE_HTML && has_power_in_power(*this)) || (tagtype == TAG_TYPE_TERMINAL && po.use_unicode_signs && (colorize < 0 || has_nonunicode_power(*this, po))))) {
 		ips_n.power_depth = -1;
 	}
-	bool flat_power = !format || tagtype != TAG_TYPE_HTML || ips_n.power_depth != 0;
+	if(ips.depth == 0 && tagtype == TAG_TYPE_TERMINAL && colorize < 0) colorize = -colorize;
+	bool flat_power = ips_n.power_depth != 0 || (tagtype != TAG_TYPE_TERMINAL && (!format || tagtype != TAG_TYPE_HTML));
 	if(precision() >= 0 && (ips_n.parent_precision < 0 || precision() < ips_n.parent_precision)) ips_n.parent_precision = precision();
 	switch(m_type) {
 		case STRUCT_NUMBER: {
@@ -3936,31 +3962,6 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 		}
 		case STRUCT_POWER: {
 			ips_n.depth++;
-			if(!po.negative_exponents && tagtype == TAG_TYPE_TERMINAL && po.use_unicode_signs && po.place_units_separately && CHILD(0).isUnit() && CHILD(1).isInteger() && CHILD(1).number() >= 2 && CHILD(1).number() <= 9) {
-				string s_super;
-				if(CHILD(1).number() == 2) s_super = SIGN_POWER_2;
-				else if(CHILD(1).number() == 3) s_super = SIGN_POWER_3;
-				else if(CHILD(1).number() == 4) s_super = SIGN_POWER_4;
-				else if(CHILD(1).number() == 5) s_super = SIGN_POWER_5;
-				else if(CHILD(1).number() == 6) s_super = SIGN_POWER_6;
-				else if(CHILD(1).number() == 7) s_super = SIGN_POWER_7;
-				else if(CHILD(1).number() == 8) s_super = SIGN_POWER_8;
-				else if(CHILD(1).number() == 9) s_super = SIGN_POWER_9;
-				if(!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (s_super.c_str(), po.can_display_unicode_string_arg)) {
-					if(colorize) print_str = (colorize == 2 ? "\033[0;92m" : "\033[0;32m");
-					ips_n.wrap = false;
-					if(CHILD(0).isUnit() && po.use_unicode_signs && po.abbreviate_names && CHILD(0).unit() == CALCULATOR->getDegUnit()) {
-						PrintOptions po2 = po;
-						po2.use_unicode_signs = false;
-						print_str += CHILD(0).print(po2, format, false, tagtype, ips_n);
-					} else {
-						print_str += CHILD(0).print(po, format, false, tagtype, ips_n);
-					}
-					print_str += s_super;
-					if(colorize) print_str += "\033[0m";
-					break;
-				}
-			}
 			ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, true);
 			bool b_units = po.place_units_separately && (tagtype == TAG_TYPE_TERMINAL || tagtype == TAG_TYPE_HTML) && COLORIZE_AS_UNIT((*this));
 			if(b_units && colorize && tagtype == TAG_TYPE_TERMINAL) print_str = colorize == 2 ? "\033[0;92m" : "\033[0;32m";
@@ -3968,33 +3969,50 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			PrintOptions po2 = po;
 			if(CHILD(0).isUnit() && po.use_unicode_signs && po.abbreviate_names && CHILD(0).unit() == CALCULATOR->getDegUnit()) po2.use_unicode_signs = false;
 			print_str += CHILD(0).print(po2, format, b_units ? 0 : colorize, tagtype, ips_n);
-			po2.use_unicode_signs = po.use_unicode_signs;
-			po2.show_ending_zeroes = false;
-			bool b_sup = ips_n.power_depth == 0 && format && tagtype == TAG_TYPE_HTML;
-			if(b_sup && b_units) {
-				print_str += "<sup>";
-				b_sup = false;
-				if(ips_n.power_depth < 0) ips_n.power_depth = 1;
-				else ips_n.power_depth++;
-				if(po2.base == BASE_TIME) po2.base = 10;
-				print_str += CHILD(1).print(po2, format, 0, tagtype, ips_n);
-				print_str += "</sup>";
-			} else if(!b_sup) {
-				print_str += "^";
-				if(ips_n.power_depth < 0) ips_n.power_depth = 1;
-				else ips_n.power_depth++;
-				ips_n.wrap = CHILD(1).needsParenthesis(po, ips_n, *this, 2, true, true);
-				print_str += CHILD(1).print(po2, format, b_units ? 0 : colorize, tagtype, ips_n);
-			}
-			if(b_units && colorize && tagtype == TAG_TYPE_TERMINAL) print_str += "\033[0m";
-			else if(b_units && colorize && tagtype == TAG_TYPE_HTML) print_str += "</span>";
-			if(b_sup) {
-				ips_n.wrap = false;
-				print_str += "<sup>";
-				if(ips_n.power_depth < 0) ips_n.power_depth = 1;
-				else ips_n.power_depth++;
-				print_str += CHILD(1).print(po2, format, b_units ? 0 : colorize, tagtype, ips_n);
-				print_str += "</sup>";
+			if(!flat_power && tagtype == TAG_TYPE_TERMINAL && po.use_unicode_signs && CHILD(1).isInteger() && CHILD(1).number().isNonNegative() && CHILD(1).number() <= 9) {
+				if(!b_units && colorize && tagtype == TAG_TYPE_TERMINAL) print_str += (colorize == 2 ? "\033[0;96m" : "\033[0;36m");
+				switch(CHILD(1).number().intValue()) {
+					case 2: {print_str += SIGN_POWER_2; break;}
+					case 3: {print_str += SIGN_POWER_3; break;}
+					case 4: {print_str += SIGN_POWER_4; break;}
+					case 5: {print_str += SIGN_POWER_5; break;}
+					case 6: {print_str += SIGN_POWER_6; break;}
+					case 7: {print_str += SIGN_POWER_7; break;}
+					case 8: {print_str += SIGN_POWER_8; break;}
+					case 9: {print_str += SIGN_POWER_9; break;}
+					case 0: {print_str += SIGN_POWER_0; break;}
+					case 1: {print_str += SIGN_POWER_1; break;}
+				}
+				if(colorize && tagtype == TAG_TYPE_TERMINAL) print_str += "\033[0m";
+			} else {
+				po2.use_unicode_signs = po.use_unicode_signs;
+				po2.show_ending_zeroes = false;
+				bool b_sup = ips_n.power_depth == 0 && format && tagtype == TAG_TYPE_HTML;
+				if(b_sup && b_units) {
+					print_str += "<sup>";
+					b_sup = false;
+					if(ips_n.power_depth < 0) ips_n.power_depth = 1;
+					else ips_n.power_depth++;
+					if(po2.base == BASE_TIME) po2.base = 10;
+					print_str += CHILD(1).print(po2, format, 0, tagtype, ips_n);
+					print_str += "</sup>";
+				} else if(!b_sup) {
+					print_str += "^";
+					if(ips_n.power_depth < 0) ips_n.power_depth = 1;
+					else ips_n.power_depth++;
+					ips_n.wrap = CHILD(1).needsParenthesis(po, ips_n, *this, 2, true, true);
+					print_str += CHILD(1).print(po2, format, b_units ? 0 : colorize, tagtype, ips_n);
+				}
+				if(b_units && colorize && tagtype == TAG_TYPE_TERMINAL) print_str += "\033[0m";
+				else if(b_units && colorize && tagtype == TAG_TYPE_HTML) print_str += "</span>";
+				if(b_sup) {
+					ips_n.wrap = false;
+					print_str += "<sup>";
+					if(ips_n.power_depth < 0) ips_n.power_depth = 1;
+					else ips_n.power_depth++;
+					print_str += CHILD(1).print(po2, format, b_units ? 0 : colorize, tagtype, ips_n);
+					print_str += "</sup>";
+				}
 			}
 			break;
 		}
