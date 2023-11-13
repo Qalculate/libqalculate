@@ -176,9 +176,9 @@ bool Unit::isUsedByOtherUnits() const {
 }
 string Unit::print(const PrintOptions &po, bool format, int tagtype, bool input, bool plural) const {
 	if(input) {
-		preferredInputName(po.abbreviate_names, po.use_unicode_signs, plural, po.use_reference_names || (po.preserve_format && isCurrency()), po.can_display_unicode_string_function, po.can_display_unicode_string_arg).formattedName(TYPE_UNIT, !po.use_reference_names && tagtype != TAG_TYPE_TERMINAL, format && tagtype == TAG_TYPE_HTML, !po.use_reference_names && !po.preserve_format, po.hide_underscore_spaces);
+		preferredInputName(po.abbreviate_names, po.use_unicode_signs, plural, po.use_reference_names || (po.preserve_format && isCurrency()), po.can_display_unicode_string_function, po.can_display_unicode_string_arg).formattedName(TYPE_UNIT, !po.use_reference_names && tagtype != TAG_TYPE_TERMINAL, format && tagtype == TAG_TYPE_HTML, format && tagtype == TAG_TYPE_TERMINAL && po.use_unicode_signs ? 1 : 0, !po.use_reference_names && !po.preserve_format, po.hide_underscore_spaces);
 	}
-	return preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, plural, po.use_reference_names || (po.preserve_format && isCurrency()), po.can_display_unicode_string_function, po.can_display_unicode_string_arg).formattedName(TYPE_UNIT, !po.use_reference_names && tagtype != TAG_TYPE_TERMINAL, format && tagtype == TAG_TYPE_HTML, !po.use_reference_names && !po.preserve_format, po.hide_underscore_spaces);
+	return preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, plural, po.use_reference_names || (po.preserve_format && isCurrency()), po.can_display_unicode_string_function, po.can_display_unicode_string_arg).formattedName(TYPE_UNIT, !po.use_reference_names && tagtype != TAG_TYPE_TERMINAL, format && tagtype == TAG_TYPE_HTML, format && tagtype == TAG_TYPE_TERMINAL && po.use_unicode_signs ? 1 : 0, !po.use_reference_names && !po.preserve_format, po.hide_underscore_spaces);
 }
 string Unit::print(bool plural_, bool short_, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {
 	return preferredName(short_, use_unicode, plural_, false, can_display_unicode_string_function, can_display_unicode_string_arg).name;
@@ -885,7 +885,7 @@ string AliasUnit_Composite::print(const PrintOptions &po, bool format, int tagty
 		ename = &o_unit->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, plural, po.use_reference_names || (po.preserve_format && o_unit->isCurrency()), po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
 		if(prefixv) str = prefixv->preferredDisplayName(ename->abbreviation, po.use_unicode_signs, plural, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg).name;
 	}
-	str += ename->formattedName(TYPE_UNIT, !po.use_reference_names && tagtype != TAG_TYPE_TERMINAL, format && tagtype == TAG_TYPE_HTML, !po.use_reference_names && !po.preserve_format, po.hide_underscore_spaces);
+	str += ename->formattedName(TYPE_UNIT, !po.use_reference_names && tagtype != TAG_TYPE_TERMINAL, format && tagtype == TAG_TYPE_HTML, format && tagtype == TAG_TYPE_TERMINAL && po.use_unicode_signs ? 1 : 0, !po.use_reference_names && !po.preserve_format, po.hide_underscore_spaces);
 	return str;
 }
 string AliasUnit_Composite::print(bool plural_, bool short_, bool use_unicode, bool (*can_display_unicode_string_function) (const char*, void*), void *can_display_unicode_string_arg) const {

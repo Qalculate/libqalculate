@@ -1576,20 +1576,20 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	return calculateAndPrint(str, msecs, eo, po, AUTOMATIC_FRACTION_OFF, AUTOMATIC_APPROXIMATION_OFF, parsed_expression, max_length, result_is_comparison, false, 0, TAG_TYPE_HTML);
 }
 
-long int get_fixed_denominator2(const std::string &str, NumberFractionFormat &nff, bool b_minus, int frac) {
+long int get_fixed_denominator2(const string &str, NumberFractionFormat &nff, bool b_minus, int frac) {
 	long int fden = 0;
 	if((frac > 0 && EQUALS_IGNORECASE_AND_LOCAL(str, "fraction", _("fraction"))) || (frac == 2 && str == "frac")) {
 		fden = -1;
 		if(b_minus) nff = FRACTION_FRACTIONAL;
 		else nff = FRACTION_COMBINED;
 	} else {
-		if(str.length() > 2 && str[0] == '1' && str[1] == '/' && str.find_first_not_of(NUMBERS, 2) == string::npos) {
+		if(str.length() > 2 && str[0] == '1' && str[1] == '/' && str.find_first_not_of(NUMBERS SPACES, 2) == string::npos) {
 			fden = s2i(str.substr(2, str.length() - 2));
 		} else if(str == "3rds") {
 			fden = 3;
 		} else if(str == "halves") {
 			fden = 2;
-		} else if(str.length() > 3 && str.find("ths", str.length() - 3) != string::npos && str.find_first_not_of(NUMBERS) == str.length() - 3) {
+		} else if(str.length() > 3 && str.find("ths", str.length() - 3) != string::npos && str.find_first_not_of(NUMBERS SPACES) == str.length() - 3) {
 			fden = s2i(str.substr(0, str.length() - 3));
 		}
 		if(fden > 1) {
@@ -1599,11 +1599,10 @@ long int get_fixed_denominator2(const std::string &str, NumberFractionFormat &nf
 	}
 	return fden;
 }
-long int get_fixed_denominator(const std::string &str, NumberFractionFormat &nff, int frac) {
+long int get_fixed_denominator(const string &str, NumberFractionFormat &nff, int frac) {
 	size_t n = 0;
-	if(str.rfind(SIGN_MINUS, 2) == 0) n = strlen(SIGN_MINUS);
-	else if(str[0] == '-' || str[0] == '+') n = 1;
-	if(n > 0) return get_fixed_denominator2(str.substr(n, str.length() - n), nff, n > 1 || str[0] == '-', frac);
+	if(str[0] == '-' || str[0] == '+') n = 1;
+	if(n > 0) return get_fixed_denominator2(str.substr(n, str.length() - n), nff, str[0] == '-', frac);
 	return get_fixed_denominator2(str, nff, false, frac);
 }
 
@@ -1785,7 +1784,9 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
 			} else {
 				NumberFractionFormat nff = FRACTION_DECIMAL;
-				long int fden = get_fixed_denominator(to_str, nff, 1);
+				string to_str2 = to_str;
+				CALCULATOR->parseSigns(to_str2);
+				long int fden = get_fixed_denominator(to_str2, nff, 1);
 				if(fden != 0) {
 					auto_fraction = AUTOMATIC_FRACTION_OFF;
 					printops.restrict_fraction_length = false;

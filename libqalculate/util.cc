@@ -196,9 +196,21 @@ const char *b2oo(bool b, bool capital) {
 	return _("off");
 }
 long int s2i(const string& str) {
+	if(str.find(' ') != string::npos) {
+		string str2 = str;
+		remove_blanks(str2);
+		return strtol(str2.c_str(), NULL, 10);
+	}
 	return strtol(str.c_str(), NULL, 10);
 }
 long int s2i(const char *str) {
+	for(size_t i = 0; i < strlen(str); i++) {
+		if(str[i] == ' ') {
+			string str2 = str;
+			remove_blanks(str2);
+			return strtol(str2.c_str(), NULL, 10);
+		}
+	}
 	return strtol(str, NULL, 10);
 }
 void *s2p(const string& str) {

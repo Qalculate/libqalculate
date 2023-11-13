@@ -604,7 +604,7 @@ void Number::set(string number, const ParseOptions &po) {
 				} else if(number[i] == '-' && digits.empty()) {
 					// number starts with minus
 					b_minus = !b_minus;
-				} else {
+				} else if(number[i] != '_' || digits.empty()) {
 					// unrecognized character
 					string str_char = number.substr(i, 1);
 					// include whole Unicode character in error message
@@ -1090,7 +1090,7 @@ void Number::set(string number, const ParseOptions &po) {
 				mpz_set(mpq_denref(unc), den);
 				mpz_set_ui(mpq_numref(unc), i_unc);
 			}
-		} else if(number[index] != ' ') {
+		} else if(number[index] != ' ' && (number[index] != '_' || !numbers_started)) {
 			string str_char = number.substr(index, 1);
 			// unrecognized digit: read whole Unicode character and show error
 			while(index + 1 < number.length() && (signed char) number[index + 1] < 0 && (unsigned char) number[index + 1] < 0xC0) {
@@ -10356,7 +10356,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	if(ips.im) *ips.im = "";
 	if(ips.iexp) *ips.iexp = 0;
 	if(po.is_approximate && isApproximate()) *po.is_approximate = true;
-	if(po.number_fraction_format >= FRACTION_FRACTIONAL_FIXED_DENOMINATOR && (((po.number_fraction_format == FRACTION_FRACTIONAL_FIXED_DENOMINATOR || po.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR) && !isInteger()) || po.number_fraction_format == FRACTION_PERCENT || po.number_fraction_format == FRACTION_PERMILLE || po.number_fraction_format == FRACTION_PERMYRIAD) && !hasImaginaryPart() && po.base > BASE_FP16 && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME) {
+	if(po.number_fraction_format >= FRACTION_FRACTIONAL_FIXED_DENOMINATOR && ((po.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR && !isInteger()) || po.number_fraction_format == FRACTION_FRACTIONAL_FIXED_DENOMINATOR || po.number_fraction_format == FRACTION_PERCENT || po.number_fraction_format == FRACTION_PERMILLE || po.number_fraction_format == FRACTION_PERMYRIAD) && !hasImaginaryPart() && po.base > BASE_FP16 && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME) {
 		PrintOptions po2 = po;
 		if(po.number_fraction_format >= FRACTION_PERCENT) po2.number_fraction_format = FRACTION_DECIMAL;
 		else po2.number_fraction_format = FRACTION_FRACTIONAL;

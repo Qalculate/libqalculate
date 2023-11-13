@@ -197,7 +197,7 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 		if(((signed char) name[i + ip] < 0 && i + 1 < name_length) || ((signed char) str[is] < 0 && is + 1 < str.length())) {
 			// assumed Unicode character found
 			size_t i2 = 1, is2 = 1;
-			size_t n1 = 1, n2 = 1;;
+			size_t n1 = 1, n2 = 1;
 			// determine length of Unicode character(s)
 			if((signed char) name[i + ip] < 0) {
 				while(i2 + i < name_length && (signed char) name[i2 + i + ip] < 0) {
@@ -3287,10 +3287,6 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			str.erase(i, 1);
 			after_sign_e = false;
 			had_non_sign = true;
-		} else if(str[i] == '_' && had_non_sign) {
-			str.erase(i, 1);
-			after_sign_e = false;
-			had_non_sign = true;
 		} else if(is_in(OPERATORS, str[i]) && (po.base != BASE_ROMAN_NUMERALS || str[i] != '|')) {
 			// ignore operators
 			error(false, _("Misplaced operator(s) \"%s\" ignored"), internal_operator_replacement(str[i]).c_str(), NULL);
@@ -3350,7 +3346,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 	// handle non-digits if number base is 2-10 or duodecimal
 	size_t itmp;
 	long int mulexp = 0;
-	if((BASE_2_10 || po.base == BASE_DUODECIMAL) && (itmp = str.find_first_not_of(po.base == BASE_DUODECIMAL ? PARENTHESISS NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS MINUS DUODECIMAL_CHARS : PARENTHESISS NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS EXPS MINUS, 0)) != string::npos) {
+	if((BASE_2_10 || po.base == BASE_DUODECIMAL) && (itmp = str.find_first_not_of(po.base == BASE_DUODECIMAL ? PARENTHESISS NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS MINUS DUODECIMAL_CHARS "_" : PARENTHESISS NUMBER_ELEMENTS INTERNAL_NUMBER_CHARS EXPS MINUS "_", 0)) != string::npos) {
 		if(itmp == 0) {
 			error(true, _("\"%s\" is not a valid variable/function/unit."), str.c_str(), NULL);
 			if(minus_count % 2 == 1 && !po.preserve_format) {

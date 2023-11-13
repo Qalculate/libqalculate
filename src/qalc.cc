@@ -105,7 +105,7 @@ int rounding_mode = 0, saved_rounding = 0;
 bool simplified_percentage = true;
 int defs_edited = 0;
 bool use_duo_syms = false;
-bool unicode_exponents = true;
+int unicode_exponents = 1;
 
 static char buffer[100000];
 
@@ -151,7 +151,7 @@ enum {
 #	define DO_FORMAT (force_color > 0 || (force_color != 0 && !cfile && interactive_mode))
 #endif
 #define DO_COLOR (force_color >= 0 ? force_color : (!cfile && colorize && interactive_mode ? colorize : 0))
-#define PRINT_COLOR (unicode_exponents ? DO_COLOR : -DO_COLOR)
+#define PRINT_COLOR (DO_COLOR * (unicode_exponents == 2 ? -1 : (unicode_exponents > 0 ? 1 : -10)))
 
 bool contains_unicode_char(const char *str) {
 	for(int i = strlen(str) - 1; i >= 0; i--) {
@@ -1084,7 +1084,13 @@ void set_option(string str) {
 		}
 		enable_unicode = -1;
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unicode exponents", _("unicode exponents")) || svar == "uniexp") {
-		int v = s2b(svalue);
+		int v = -1;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = 0;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = 1;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "units", _("units"))) v = 2;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
 		if(v < 0) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
@@ -1467,8 +1473,15 @@ void set_option(string str) {
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "dual", _("dual"))) v = FRACTION_COMBINED_FIXED_DENOMINATOR + 2;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
+			if(v == FRACTION_COMBINED + 1) v = FRACTION_COMBINED_FIXED_DENOMINATOR + 1;
+			else if(v == FRACTION_COMBINED + 2) v = FRACTION_COMBINED_FIXED_DENOMINATOR + 2;
+			else if(v == FRACTION_COMBINED_FIXED_DENOMINATOR + 1) v = FRACTION_FRACTIONAL_FIXED_DENOMINATOR;
+			else if(v == FRACTION_COMBINED_FIXED_DENOMINATOR + 2) v = FRACTION_COMBINED_FIXED_DENOMINATOR;
 		} else {
 			NumberFractionFormat nff = FRACTION_DECIMAL;
+			ParseOptions pa = evalops.parse_options; pa.base = 10;
+			svalue = CALCULATOR->unlocalizeExpression(svalue, pa);
+			CALCULATOR->parseSigns(svalue);
 			long int fden = get_fixed_denominator(svalue, nff, 0);
 			if(fden != 0) {
 				v = nff;
@@ -1478,7 +1491,7 @@ void set_option(string str) {
 		if(v > FRACTION_COMBINED_FIXED_DENOMINATOR + 2) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
-			printops.restrict_fraction_length = (v >= FRACTION_FRACTIONAL && v <= FRACTION_COMBINED_FIXED_DENOMINATOR);
+			printops.restrict_fraction_length = (v == FRACTION_FRACTIONAL || v == FRACTION_COMBINED);
 			if(v < 0) dual_fraction = -1;
 			else if(v == FRACTION_COMBINED_FIXED_DENOMINATOR + 2) dual_fraction = 1;
 			else dual_fraction = 0;
@@ -1699,7 +1712,7 @@ bool show_set_help(string set_option = "") {
 	STR_AND_TABS_BOOL("spacious", "space", _("Add extra space around operators."), printops.spacious);
 	STR_AND_TABS_BOOL("spell out logical", "spellout", "", printops.spell_out_logical_operators);
 	STR_AND_TABS_BOOL("unicode", "uni", _("Display Unicode characters."), printops.use_unicode_signs);
-	STR_AND_TABS_BOOL("unicode exponents", "uniexp", _("Display exponents 0-9 using Unicode superscript characters."), unicode_exponents);
+	STR_AND_TABS_2("unicode exponents", "uniexp", _("Display exponents 0-9 using Unicode superscript characters."), unicode_exponents, _("off"), _("on"), _("units"));
 	STR_AND_TABS_BOOL("vertical space", "vspace", _("Add empty lines before and after result."), vertical_space);
 
 	CHECK_IF_SCREEN_FILLED_HEADING_S(_("Numerical Display"));
@@ -4620,7 +4633,10 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("spacious"), "space"); str += b2oo(printops.spacious, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("spell out logical"), "spellout"); str += b2oo(printops.spell_out_logical_operators, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("unicode"), "uni"); str += b2oo(printops.use_unicode_signs, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
-			PRINT_AND_COLON_TABS(_("unicode exponents"), "uniexp"); str += b2oo(unicode_exponents, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("unicode exponents"), "uniexp");
+			if(unicode_exponents == 2) str += _("units");
+			else str += b2oo(unicode_exponents, false);
+			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("vertical space"), "vspace"); str += b2oo(vertical_space, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Numerical Display"));
@@ -5022,7 +5038,7 @@ int main(int argc, char *argv[]) {
 #ifdef HAVE_LIBREADLINE
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "history", _("history"))) {
 				puts("");
-				PUTS_UNICODE(_("lists the expression history."));
+				PUTS_UNICODE(_("Lists the expression history."));
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear history", _("clear history"))) {
 				puts("");
@@ -5175,7 +5191,8 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- fraction (show result as mixed fraction)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- 1/# (show as mixed fraction with specified denominator)"));
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- -1/# (show as simple fraction with specified denominator)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("prepend with - to show as simple fraction"));
+				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- factors (factorize result)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- UTC (show date and time in UTC time zone)"));
@@ -6578,7 +6595,10 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
 				} else {
 					NumberFractionFormat nff = FRACTION_DECIMAL;
-					long int fden = get_fixed_denominator(to_str, nff, 2);
+					ParseOptions pa = evalops.parse_options; pa.base = 10;
+					to_str2 = CALCULATOR->unlocalizeExpression(to_str, pa);
+					CALCULATOR->parseSigns(to_str2);
+					long int fden = get_fixed_denominator(CALCULATOR->unlocalizeExpression(to_str2, evalops.parse_options), nff, 2);
 					if(fden != 0) {
 						dual_fraction = 0;
 						printops.restrict_fraction_length = false;
@@ -7374,7 +7394,7 @@ void load_preferences() {
 					if(version_numbers[0] > 3 || (version_numbers[0] == 3 && (version_numbers[1] > 14 || (version_numbers[1] == 14 && version_numbers[2] > 0)))) {
 						if(v >= FRACTION_DECIMAL && v <= FRACTION_COMBINED) {
 							printops.number_fraction_format = (NumberFractionFormat) v;
-							printops.restrict_fraction_length = (v >= FRACTION_FRACTIONAL);
+							printops.restrict_fraction_length = (v == FRACTION_FRACTIONAL || v == FRACTION_COMBINED);
 							dual_fraction = 0;
 						} else if(v == FRACTION_COMBINED + 1) {
 							printops.number_fraction_format = FRACTION_FRACTIONAL;
@@ -7385,11 +7405,9 @@ void load_preferences() {
 							dual_fraction = 1;
 						} else if(v == FRACTION_COMBINED + 3) {
 							printops.number_fraction_format = FRACTION_FRACTIONAL_FIXED_DENOMINATOR;
-							printops.restrict_fraction_length = true;
 							dual_fraction = 0;
 						} else if(v == FRACTION_COMBINED + 4) {
 							printops.number_fraction_format = FRACTION_COMBINED_FIXED_DENOMINATOR;
-							printops.restrict_fraction_length = true;
 							dual_fraction = 0;
 						} else if(v < 0) {
 							printops.number_fraction_format = FRACTION_DECIMAL;
