@@ -2823,7 +2823,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				if(!force_fraction && (isApproximate() || (top_parent && top_parent->isApproximate()))) ips_n.parent_approximate = true;
 
 				// if current mode and parent precision dictates showing of ending zeroes, number is not shown as fraction
-				if(po.show_ending_zeroes && po.restrict_to_parent_precision && ips_n.parent_approximate && po.base != BASE_ROMAN_NUMERALS && po.base != BASE_BIJECTIVE_26 && (o_number.numeratorIsGreaterThan(9) || o_number.numeratorIsLessThan(-9) || o_number.denominatorIsGreaterThan(9))) {
+				if(po.show_ending_zeroes && po.restrict_to_parent_precision && ips_n.parent_approximate && po.base != BASE_ROMAN_NUMERALS && po.base != BASE_BIJECTIVE_26 && po.number_fraction_format != FRACTION_FRACTIONAL_FIXED_DENOMINATOR && po.number_fraction_format != FRACTION_COMBINED_FIXED_DENOMINATOR && (o_number.numeratorIsGreaterThan(9) || o_number.numeratorIsLessThan(-9) || o_number.denominatorIsGreaterThan(9))) {
 					break;
 				}
 				ips_n.parent_precision = precision();
