@@ -298,6 +298,7 @@ bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &m
 bool MathStructure::lcm(const MathStructure &m1, const MathStructure &m2, MathStructure &mlcm, const EvaluationOptions &eo, bool check_args) {
 	if(m1.isNumber() && m2.isNumber()) {
 		mlcm = m1;
+		if(!mlcm.isInteger() || !m2.isInteger()) return mlcm.number().multiply(m2.number());
 		return mlcm.number().lcm(m2.number());
 	}
 	if(check_args && (!m1.isRationalPolynomial() || !m2.isRationalPolynomial())) {
@@ -382,7 +383,8 @@ bool MathStructure::gcd(const MathStructure &m1, const MathStructure &m2, MathSt
 		lcm_of_coefficients_denominators(m1, nlcm1);
 		Number nlcm2;
 		lcm_of_coefficients_denominators(m2, nlcm2);
-		nlcm1.lcm(nlcm2);
+		if(!nlcm1.isInteger() || !nlcm2.isInteger()) nlcm1.multiply(nlcm2);
+		else nlcm1.lcm(nlcm2);
 		if(!nlcm1.isOne()) {
 			MathStructure mtmp1, mtmp2;
 			multiply_lcm(m1, nlcm1, mtmp1, eo);

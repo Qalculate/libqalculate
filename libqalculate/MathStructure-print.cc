@@ -2814,7 +2814,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					transform(STRUCT_NEGATE);
 					formatsub(po, parent, pindex, true, top_parent);
 				}
-			} else if((((force_fraction || po.number_fraction_format == FRACTION_FRACTIONAL || po.number_fraction_format == FRACTION_COMBINED || po.number_fraction_format == FRACTION_DECIMAL_EXACT || po.base == BASE_ROMAN_NUMERALS) && o_number.isRational() && (force_fraction || !o_number.isApproximate())) || (po.number_fraction_format == FRACTION_FRACTIONAL_FIXED_DENOMINATOR || po.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR)) && po.base > BASE_FP16 && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME && (po.number_fraction_format == FRACTION_FRACTIONAL_FIXED_DENOMINATOR || !o_number.isInteger())) {
+			} else if((((force_fraction || po.number_fraction_format == FRACTION_FRACTIONAL || po.number_fraction_format == FRACTION_COMBINED || po.number_fraction_format == FRACTION_DECIMAL_EXACT || po.base == BASE_ROMAN_NUMERALS) && o_number.isRational() && (force_fraction || !o_number.isApproximate())) || (po.number_fraction_format == FRACTION_FRACTIONAL_FIXED_DENOMINATOR || po.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR)) && po.base > BASE_FP16 && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME && ((po.number_fraction_format == FRACTION_FRACTIONAL_FIXED_DENOMINATOR && (!top_parent || !top_parent->containsType(STRUCT_ADDITION))) || !o_number.isInteger())) {
 				// split rational number in numerator and denominator, if display of fractions is requested for rational numbers and number base is not sexagesimal and number is not approximate
 
 				InternalPrintStruct ips_n;
@@ -2852,6 +2852,11 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 						if(po.custom_time_zone == TZ_TRUNCATE || po.custom_time_zone == TZ_TRUNCATE + TZ_DOZENAL) num.trunc();
 						else num.round(po.round_halfway_to_even);
 						if(!num.isInteger()) {
+							if(po.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR) {
+								Number nr_int(o_number);
+								nr_int.trunc();
+								if(!nr_int.isInteger())	break;
+							}
 							num.set(o_number);
 							num.multiply(den);
 						}

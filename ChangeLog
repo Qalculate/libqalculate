@@ -1,3 +1,62 @@
+2023-11-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix BTC exchange rate (data now seem to always use USD)
+	* Replace exchangerate.host (now requires API key) with currency-api (https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/eur.json)
+
+2023-11-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve formatting of base unit(s) in unit information in qalc
+	* Fix plural name of U.S. survey rods
+	* Improve output of defs2doc
+
+2023-11-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Ignore spaces when converting text string to integer
+
+2023-10-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Display all exponents 0-9 using Unicode superscript characters (not, as before, only for units), in qalc (using TAG_TYPE_TERMINAL), if these are the only exponents in the expression (behaviour can be altered using uniexp option)
+
+2023-10-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add history command, listing expression history
+	* Ignore underscore in number
+
+2023-10-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add fraction formats for output using percent, permille, and permyriad
+	* Add additional year definitions as units
+	* Improve handling of (x*sqrt(x)-y*sqrt(y))/(sqrt(x)-sqrt(y))=x+sqrt(x*y)+y
+
+2023-10-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support for specifying a fixed denominator for display of fractions
+	* Fix case insensitive comparison for strings with more than two or more consecutive Unicode characters in qalc
+
+2023-10-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix parsing of case insensitive object name ending with Unicode character when followed by another Unicode character in expression, e.g. микрометр
+
+2023-10-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix output of value converted to unit expression with numerical multiplier in denominator, e.g. L/(100 km)
+
+2023-10-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault (infinite loop) when trying to solve (x*sqrt(x)-y*sqrt(y))/(sqrt(x)-sqrt(y))=x+sqrt(x*y)+y
+
+2023-10-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix asin(x)=a, acos(x)=a, and atan(x)=a, when a contains an angle unit and default angle unit is set
+
+2023-09-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix Calculator::hasWhereExpression()
+
+2023-09-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Return gcd of numerators divided by lcm of denominators in gcd() with non-integer rational numbers, and vice versa for lcm()
+
 2023-09-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix display of matrices and vectors with complex number form other than rectangular

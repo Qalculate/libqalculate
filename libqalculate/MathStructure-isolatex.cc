@@ -2113,9 +2113,8 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								return true;
 							}
 						}
-						CALCULATOR->endTemporaryStopMessages();
 					}
-
+					CALCULATOR->endTemporaryStopMessages();
 				}
 			}
 
@@ -2199,6 +2198,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				CHILDREN_UPDATED
 				if(ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) {
 					bool not_equals = ct_comp == COMPARISON_NOT_EQUALS;
+					CALCULATOR->beginTemporaryStopMessages();
 					isolate_x(eo, eo2, x_var);
 					if(!strict_check || eo2.expand || ((m_type != STRUCT_COMPARISON || CHILD(0) == x_var || !CHILD(0).isAddition() || CHILD(0).size() < 3) && ((m_type != STRUCT_LOGICAL_AND && m_type != STRUCT_LOGICAL_OR) || SIZE == 0 || !CHILD(0).isComparison() || CHILD(0)[0] == x_var || !CHILD(0)[0].isAddition() || CHILD(0)[0].size() < 3))) {
 						if(!mdiv[0].representsNonZero(true)) {
@@ -2208,9 +2208,11 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							add_nocopy(mtest, not_equals ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 							calculatesub(eo2, eo, false);
 						}
+						CALCULATOR->endTemporaryStopMessages(true);
 						return true;
 					}
 					set(mbak);
+					CALCULATOR->endTemporaryStopMessages();
 				} else {
 					MathStructure *malt = new MathStructure(*this);
 					if(ct_comp == COMPARISON_EQUALS_GREATER) {

@@ -10399,7 +10399,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		ips_n.minus = NULL;
 		string str2 = den.print(po2, ips_n);
 		if(ips.den) *ips.den = str2;
-		return str += str2;
+		return str + str2;
 	}
 	if(po.base == BASE_FP16 || po.base == BASE_FP128 || po.base == BASE_FP32 || po.base == BASE_FP64 || po.base == BASE_FP80) {
 		unsigned int bits = 0;

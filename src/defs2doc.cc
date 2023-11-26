@@ -301,6 +301,18 @@ void generate_functions_tree_struct() {
 
 }
 
+string formatted_name(const ExpressionName *ename, int type) {
+	return ename->formattedName(type, true);
+}
+
+string fix_supsub(string str) {
+	gsub("<sup>", "<superscript>", str);
+	gsub("<sub>", "<subscript>", str);
+	gsub("</sup>", "</superscript>", str);
+	gsub("</sub>", "</subscript>", str);
+	return str;
+}
+
 void print_function(MathFunction *f) {
 
 		string str;
@@ -311,7 +323,7 @@ void print_function(MathFunction *f) {
 		Argument default_arg;
 		string str2;
 		const ExpressionName *ename = &f->preferredName(false, printops.use_unicode_signs);
-		str = ename->name;
+		str = formatted_name(ename, TYPE_FUNCTION);
 		int iargs = f->maxargs();
 		if(iargs < 0) {
 			iargs = f->minargs() + 1;
@@ -351,7 +363,7 @@ void print_function(MathFunction *f) {
 		fprintf(ffile, "<para><command>%s</command></para>\n", str.c_str());
 		for(size_t i2 = 1; i2 <= f->countNames(); i2++) {
 			if(&f->getName(i2) != ename) {
-				fprintf(ffile, "<para><command>%s</command></para>", f->getName(i2).name.c_str());
+				fprintf(ffile, "<para><command>%s</command></para>", formatted_name(&f->getName(i2), TYPE_FUNCTION).c_str());
 			}
 		}
 		if(f->subtype() == SUBTYPE_DATA_SET) {
@@ -363,7 +375,7 @@ void print_function(MathFunction *f) {
 			fprintf(ffile, "<para>%s</para>\n", fix(f->description()).c_str());
 		}
 		if(!f->example(true).empty()) {
-			str = _("Example:"); str += " "; str += fix(f->example(false, ename->name), printops.use_unicode_signs);
+			str = _("Example:"); str += " "; str += fix(f->example(false, formatted_name(ename, TYPE_FUNCTION)), printops.use_unicode_signs);
 			fprintf(ffile, "<para>%s</para>\n", str.c_str());
 		}
 		if(f->subtype() == SUBTYPE_DATA_SET && !((DataSet*) f)->copyright().empty()) {
@@ -455,7 +467,7 @@ void print_variable(Variable *v) {
 		for(size_t i2 = 1; i2 <= v->countNames(); i2++) {
 			if(!b_first) str += " / ";
 			b_first = false;
-			str += v->getName(i2).name;
+			str += formatted_name(&v->getName(i2), STRUCT_VARIABLE);
 		}
 		fprintf(vfile, "<entry><para>%s</para></entry>\n", str.c_str());
 		value = "";
@@ -551,7 +563,7 @@ void print_unit(Unit *u) {
 		for(size_t i2 = 1; i2 <= u->countNames(); i2++) {
 			if(!b_first) str += " / ";
 			b_first = false;
-			str += u->getName(i2).name;
+			str += formatted_name(&u->getName(i2), STRUCT_UNIT);
 		}
 		if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 			fprintf(ufile, "<entry><para>(%s)</para></entry>\n", str.c_str());
@@ -566,7 +578,7 @@ void print_unit(Unit *u) {
 			}
 			case SUBTYPE_ALIAS_UNIT: {
 				AliasUnit *au = (AliasUnit*) u;
-				base_unit = fix(au->firstBaseUnit()->print(false, printops.abbreviate_names, printops.use_unicode_signs), printops.use_unicode_signs);
+				base_unit = fix_supsub(au->firstBaseUnit()->print(printops, true, TAG_TYPE_HTML, false, false));
 				if(au->firstBaseExponent() != 1) {
 					if(au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {base_unit.insert(0, 1, '('); base_unit += ")";}
 					base_unit += "<superscript>";
@@ -593,7 +605,7 @@ void print_unit(Unit *u) {
 				break;
 			}
 			case SUBTYPE_COMPOSITE_UNIT: {
-				base_unit = fix(((CompositeUnit*) u)->print(false, true, printops.use_unicode_signs), printops.use_unicode_signs);
+				base_unit = fix_supsub(((CompositeUnit*) u)->print(printops, true, TAG_TYPE_HTML, false, false));
 				relation = "";
 				break;
 			}

@@ -409,6 +409,10 @@ Add extra space around operators.
 Display Unicode characters.
 .PP
 .TP 8
+.B unicode exponents, uniexp \fI(0 = off, 1= on*, 2 = units)\fP
+Display exponents 0-9 using Unicode superscript characters.
+.PP
+.TP 8
 .B vertical space, vspace \fI(on*, off)\fP
 Add empty lines before and after result.
 .PP
@@ -431,7 +435,7 @@ Determines the default decimal separator.
 .B digit grouping, group \fI(0* = off, 1 = standard, 2 = locale)\fP
 .PP
 .TP 8
-.B fractions, fr \fI(-1* = auto, 0 = off, 1 = exact, 2 = on, 3 = mixed, 4 = long, 5 = dual)\fP
+.B fractions, fr \fI(-1* = auto, 0 = off, 1 = exact, 2 = on, 3 = mixed, 4 = long, 5 = dual, 1/n)\fP
 Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). 'long' removes limits on the size of the numerator and denonimator.
 .PP
 .TP 8
@@ -767,9 +771,16 @@ prepend with + or - to force/disable use of mixed units
 - calendars
 .PP
 .TP 8
-.B Other conversion commands
-- fraction (show result as mixed fraction)
+.B Fractions
+- fraction (show result as mixed, or simple if prepended with '-', fraction)
+show as mixed fraction with specified denominator
 .br
+- 1/# (show as mixed, or simple if prepended with '-', fraction with specified denominator)
+.br
+prepend with - to show as simple fraction
+.PP
+.TP 8
+.B Other conversion commands
 - factors (factorize result)
 .PP
 Similarly \fIwhere\fP (or alternatively "/.") can be used at the end (but before "to"), for variable assignments, function replacements, etc. (e.g. "x+y where x=1 and y=2", "x^2=4 where x>0", and "sin(5) where sin()=cos()").

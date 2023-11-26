@@ -213,14 +213,16 @@ void lcmcoeff(const MathStructure &e, const Number &l, Number &nlcm);
 void lcmcoeff(const MathStructure &e, const Number &l, Number &nlcm) {
 	if(e.isNumber() && e.number().isRational()) {
 		nlcm = e.number().denominator();
-		nlcm.lcm(l);
+		if(l.isInteger()) nlcm.lcm(l);
+		else nlcm.multiply(l);
 	} else if(e.isAddition()) {
 		nlcm.set(1, 1, 0);
 		for(size_t i = 0; i < e.size(); i++) {
 			Number c(nlcm);
 			lcmcoeff(e[i], c, nlcm);
 		}
-		nlcm.lcm(l);
+		if(l.isInteger()) nlcm.lcm(l);
+		else nlcm.multiply(l);
 	} else if(e.isMultiplication()) {
 		nlcm.set(1, 1, 0);
 		for(size_t i = 0; i < e.size(); i++) {
@@ -228,7 +230,8 @@ void lcmcoeff(const MathStructure &e, const Number &l, Number &nlcm) {
 			lcmcoeff(e[i], nr_one, c);
 			nlcm *= c;
 		}
-		nlcm.lcm(l);
+		if(l.isInteger()) nlcm.lcm(l);
+		else nlcm.multiply(l);
 	} else if(e.isPower()) {
 		if(IS_A_SYMBOL(e[0]) || e[0].isUnit()) {
 			nlcm = l;

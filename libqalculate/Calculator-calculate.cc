@@ -1585,6 +1585,8 @@ long int get_fixed_denominator2(const string &str, NumberFractionFormat &nff, bo
 	} else {
 		if(str.length() > 2 && str[0] == '1' && str[1] == '/' && str.find_first_not_of(NUMBERS SPACES, 2) == string::npos) {
 			fden = s2i(str.substr(2, str.length() - 2));
+		} else if(str.length() > 1 && str[0] == '/' && str.find_first_not_of(NUMBERS SPACES, 1) == string::npos) {
+			fden = s2i(str.substr(1, str.length() - 1));
 		} else if(str == "3rds") {
 			fden = 3;
 		} else if(str == "halves") {

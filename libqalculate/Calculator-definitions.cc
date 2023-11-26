@@ -834,7 +834,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {4, 2, 0};
+	int version_numbers[] = {4, 9, 0};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);
@@ -3720,10 +3720,18 @@ bool Calculator::loadExchangeRates() {
 		i = sbuffer.find("\"alphaCode\":");
 		if(i != string::npos) {
 			json_variant = 2;
+		} else if(sbuffer.find("exchangerate.host") != string::npos) {
+			i = sbuffer.find("rates");
 		} else {
-			i = sbuffer.find("\": {");
-			if(i == string::npos) i = sbuffer.find("\":{");
-			if(i != string::npos) i = sbuffer.find("\"", i + 1);
+			i = sbuffer.find("\"eur\": {");
+			if(i == string::npos) i = sbuffer.find("\"eur\":{");
+			if(i == string::npos) {
+				i = sbuffer.find("\": {");
+				if(i == string::npos) i = sbuffer.find("\":{");
+				if(i != string::npos) i = sbuffer.find("\"", i + 1);
+			} else {
+				i = sbuffer.find("\"", i + 5);
+			}
 		}
 
 	}
@@ -3768,7 +3776,7 @@ bool Calculator::loadExchangeRates() {
 			}
 			i = sbuffer.find("\"", i2 + 1);
 		}
-		if(currency.length() == 3 && currency_defs.find(builtin_str + currency) != string::npos && currency != "BYR") {
+		if(currency.length() == 3 && (currency_defs.empty() || currency_defs.find(builtin_str + currency) != string::npos) && currency != "BYR") {
 			if(!byn_found && currency == "BYN") byn_found = true;
 			u = getUnit(currency);
 			if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->isHidden() && u->isBuiltin() && !u->isLocal())) {
@@ -3791,8 +3799,8 @@ bool Calculator::loadExchangeRates() {
 					}
 				} else {
 					i2 = sbuffer.find(":", i2 + 1);
+					if(i2 != string::npos) i2 = sbuffer.find_first_not_of(SPACES, i2 + 1);
 					if(i2 != string::npos) {
-						i2 = sbuffer.find_first_not_of(SPACES, i2 + 1);
 						size_t i3 = sbuffer.find_first_not_of(NUMBERS ".", i2);
 						if(i3 != string::npos && i3 != i2 + 1) {
 							rate = "1/" + sbuffer.substr(i2, i3 - i2);

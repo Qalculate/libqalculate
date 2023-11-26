@@ -2144,7 +2144,7 @@ bool show_object_info(string name) {
 					case SUBTYPE_ALIAS_UNIT: {
 						AliasUnit *au = (AliasUnit*) item;
 						PRINT_AND_COLON_TABS_INFO(_("Base Unit"));
-						string base_unit = au->firstBaseUnit()->print(false, printops.abbreviate_names, printops.use_unicode_signs);
+						string base_unit = au->firstBaseUnit()->print(printops, true, TAG_TYPE_TERMINAL, false, false);
 						if(au->firstBaseExponent() != 1) {
 							if(au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {base_unit.insert(0, 1, '('); base_unit += ")";}
 							if(printops.use_unicode_signs && au->firstBaseExponent() == 2) base_unit += SIGN_POWER_2;
@@ -2187,7 +2187,7 @@ bool show_object_info(string name) {
 						PrintOptions po = printops;
 						po.is_approximate = NULL;
 						po.abbreviate_names = true;
-						CHECK_IF_SCREEN_FILLED_PUTS(((CompositeUnit*) item)->print(po, false, TAG_TYPE_TERMINAL, false, false).c_str());
+						CHECK_IF_SCREEN_FILLED_PUTS(((CompositeUnit*) item)->print(po, true, TAG_TYPE_TERMINAL, false, false).c_str());
 						break;
 					}
 				}
@@ -7285,7 +7285,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {4, 8, 1};
+	int version_numbers[] = {4, 9, 0};
 
 	if(file) {
 		char line[10000];
