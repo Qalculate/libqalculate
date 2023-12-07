@@ -140,13 +140,16 @@ void Calculator::saveState() {
 void Calculator::restoreState() {
 }
 void Calculator::clearBuffers() {
-	for(unordered_map<size_t, bool>::iterator it = priv->ids_p.begin(); it != priv->ids_p.end(); ++it) {
+    unordered_map<size_t, bool>::iterator it = priv->ids_p.begin();
+    while(it != priv->ids_p.end()) {
 		if(!it->second) {
 			priv->freed_ids.push_back(it->first);
 			priv->id_structs.erase(it->first);
 			priv->ids_ref.erase(it->first);
-			priv->ids_p.erase(it);
-		}
+            priv->ids_p.erase(it);
+        } else {
+            ++it;
+        }
 	}
 }
 bool Calculator::abort() {

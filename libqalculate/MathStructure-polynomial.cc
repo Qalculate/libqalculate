@@ -472,6 +472,7 @@ void add_symbol(const MathStructure &mpoly, sym_desc_vec &v) {
 	}
 	sym_desc d;
 	d.sym = mpoly;
+    d.max_lcnops = 0;
 	v.push_back(d);
 }
 
