@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-23 08:39+0100\n"
-"PO-Revision-Date: 2023-12-07 19:57+0700\n"
+"PO-Revision-Date: 2023-12-07 20:18+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -1044,7 +1044,7 @@ msgstr "ниже"
 #. interval display mode
 #: ../src/qalc.cc:1402 ../src/qalc.cc:1774 ../src/qalc.cc:4730
 msgid "concise"
-msgstr "краткий"
+msgstr "краткая"
 
 #: ../src/qalc.cc:1429 ../src/qalc.cc:4603
 msgid "variable units"
