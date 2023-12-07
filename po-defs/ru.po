@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-23 08:39+0100\n"
-"PO-Revision-Date: 2023-03-30 19:12+0700\n"
+"PO-Revision-Date: 2023-12-07 20:11+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<"
+"=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Lokalize 22.12.3\n"
 
 #: ../data/currencies.xml.in.h:1
@@ -4905,9 +4905,8 @@ msgid "Number of exponent bits"
 msgstr "Количество битов показателя"
 
 #: ../data/functions.xml.in.h:487
-#, fuzzy
 msgid "Position of sign bit"
-msgstr "Положительная бесконечность"
+msgstr "Позиция знакового бита"
 
 #: ../data/functions.xml.in.h:488
 msgid "IEEE 754 Floating-Point Bits"
@@ -8980,14 +8979,12 @@ msgid "ar:rd,rod,p:rods"
 msgstr "род"
 
 #: ../data/units.xml.in.h:31
-#, fuzzy
 msgid "U.S. Survey Rod"
-msgstr "Геодезический фут"
+msgstr "Геодезический род"
 
 #: ../data/units.xml.in.h:32
-#, fuzzy
 msgid "ar:US_rd,US_rod,p:US_rods"
-msgstr "род"
+msgstr "геодезический_род,p:геодезических_рода,p:геодезических_родов"
 
 #: ../data/units.xml.in.h:33
 msgid "Fathom"
@@ -9453,7 +9450,6 @@ msgid "Julian Year"
 msgstr "Юлианский год"
 
 #: ../data/units.xml.in.h:156
-#, fuzzy
 msgid "r:year,p:years,as:a_j,a:yr,annus"
 msgstr "год,p:года,p:лет,аннал,p:анналы"
 
@@ -9464,24 +9460,26 @@ msgid ""
 "function, instead of subtraction, to calculate the exact number of calendar "
 "years between two dates."
 msgstr ""
+"Действует как календарный год при добавлении или вычитании дат, но как ровно"
+" 365,25 дней при преобразовании в другие единицы. Используйте функцию"
+" yearfrac()/летдробь() вместо вычитания, чтобы вычислить точное количество"
+" календарных лет между двумя датами."
 
 #: ../data/units.xml.in.h:158
-#, fuzzy
 msgid "Mean Gregorian Year"
-msgstr "Македонский динар"
+msgstr "Средний григорианский год"
 
 #: ../data/units.xml.in.h:159
 msgid "ars:a_g,gregorian_year,p:gregorian_years"
-msgstr ""
+msgstr "григорианский_год,p:григорианские_года,p:григорианских_лет"
 
 #: ../data/units.xml.in.h:160
 msgid "Mean Tropical Year"
-msgstr ""
+msgstr "Средний тропический год"
 
 #: ../data/units.xml.in.h:161
-#, fuzzy
 msgid "ars:a_t,tropical_year,p:tropical_years"
-msgstr "морская_миля,p:морских_миль"
+msgstr "тропический_год,p:тропические_года,p:тропических_лет"
 
 #: ../data/units.xml.in.h:163
 msgid "r:month,p:months"
