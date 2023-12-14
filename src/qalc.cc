@@ -1025,6 +1025,8 @@ void set_option(string str) {
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "two's complement", _("two's complement")) || svar == "twos") SET_BOOL_D(printops.twos_complement)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "hexadecimal two's", _("hexadecimal two's")) || svar == "hextwos") SET_BOOL_D(printops.hexadecimal_twos_complement)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "two's complement input", _("two's complement input")) || svar == "twosin") SET_BOOL_PF(evalops.parse_options.twos_complement)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "hexadecimal two's input", _("hexadecimal two's input")) || svar == "hextwosin") SET_BOOL_PF(evalops.parse_options.hexadecimal_twos_complement)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "digit grouping", _("digit grouping")) || svar =="group") {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = DIGIT_GROUPING_NONE;
@@ -1769,7 +1771,7 @@ bool show_set_help(string set_option = "") {
 	else if(!printops.restrict_fraction_length && printops.number_fraction_format == FRACTION_FRACTIONAL) nff = 4;
 	else if(printops.number_fraction_format == FRACTION_FRACTIONAL_FIXED_DENOMINATOR || printops.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR) nff = 6;
 	STR_AND_TABS_FR("fractions", "fr", _("Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). 'long' removes limits on the size of the numerator and denominator."), nff, _("auto"), _("off"), _("exact"), _("on"), _("mixed"), _("long"), _("dual"), "1/n");
-	STR_AND_TABS_BOOL("hexadecimal two's", "hextwos", _("Enables two's complement representation for display of negative hexadecimal numbers."), printops.twos_complement);
+	STR_AND_TABS_BOOL("hexadecimal two's", "hextwos", _("Enables two's complement representation for display of negative hexadecimal numbers."), printops.hexadecimal_twos_complement);
 	STR_AND_TABS_BOOL("imaginary j", "imgj", _("Use 'j' (instead of 'i') as default symbol for the imaginary unit."), (CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") > 0));
 	STR_AND_TABS_9("interval display", "ivdisp", "", (adaptive_interval_display ? 0 : printops.interval_display + 1), _("adaptive"), _("significant"), _("interval"), _("plusminus"), _("midpoint"), _("lower"), _("upper"), _("concise"), _("relative"))
 	STR_AND_TABS_BOOL("lowercase e", "lowe", _("Use lowercase e for E-notation (5e2 = 5 * 10^2)."), printops.lower_case_e);
@@ -1843,6 +1845,7 @@ bool show_set_help(string set_option = "") {
 		CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 		SET_OPTION_FOUND
 	}
+	STR_AND_TABS_BOOL("hexadecimal two's input", "hextwosin", _("Enables two's complement representation for input of negative hexadecimal numbers. All hexadecimal numbers starting with 8 or higher are negative."), evalops.parse_options.hexadecimal_twos_complement);
 	if(CALCULATOR->getDecimalPoint() != COMMA) {
 		STR_AND_TABS_BOOL("ignore comma", "", _("Allows use of ',' as thousands separator."), evalops.parse_options.comma_as_separator);
 	}
@@ -1878,6 +1881,8 @@ bool show_set_help(string set_option = "") {
 	STR_AND_TABS_4("parsing mode", "syntax", _("See 'help parsing mode'."), evalops.parse_options.parsing_mode, _("adaptive"), _("implicit first"), _("conventional"), _("chain"), _("rpn"));
 	STR_AND_TABS_2("read precision", "readprec", _("If activated, numbers are interpreted as approximate with precision equal to the number of significant digits (3.20 = 3.20+/-0.005)."), evalops.parse_options.read_precision, _("off"), _("always"), _("when decimals"))
 	STR_AND_TABS_BOOL("simplified percentage", "percent", _("Interpret addition/subtraction of percentage as percentage increase/decrease of the first term (100 + 10% = 110)."), simplified_percentage);
+	STR_AND_TABS_BOOL("two's complement input", "twosin", _("Enables two's complement representation for input of negative binary numbers. All binary numbers starting with 1 are assumed negative."), evalops.parse_options.twos_complement);
+
 	CHECK_IF_SCREEN_FILLED_HEADING_S(_("Units"));
 
 	STR_AND_TABS_BOOL("all prefixes", "allpref", _("Enables automatic use of hecto, deca, deci, and centi."), printops.use_all_prefixes);
@@ -4783,6 +4788,7 @@ int main(int argc, char *argv[]) {
 			else if(b_decimal_comma == 0) {str += _("off");}
 			else {str += _("on");}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("hexadecimal two's input"), "hextwosin"); str += b2oo(evalops.parse_options.hexadecimal_twos_complement, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			if(CALCULATOR->getDecimalPoint() != COMMA) {
 				PRINT_AND_COLON_TABS(_("ignore comma"), ""); str += b2oo(evalops.parse_options.comma_as_separator, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			}
@@ -4823,6 +4829,7 @@ int main(int argc, char *argv[]) {
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("simplified percentage"), "percent"); str += b2oo(simplified_percentage, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("two's complement input"), "twosin"); str += b2oo(evalops.parse_options.twos_complement, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Units"));
 
@@ -7204,6 +7211,8 @@ void load_preferences() {
 	evalops.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 	evalops.local_currency_conversion = true;
 	evalops.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
+	evalops.parse_options.twos_complement = false;
+	evalops.parse_options.hexadecimal_twos_complement = false;
 	simplified_percentage = true;
 	b_decimal_comma = -1;
 
@@ -7547,6 +7556,10 @@ void load_preferences() {
 					printops.twos_complement = v;
 				} else if(svar == "hexadecimal_twos_complement") {
 					printops.hexadecimal_twos_complement = v;
+				} else if(svar == "twos_complement_input") {
+					evalops.parse_options.twos_complement = v;
+				} else if(svar == "hexadecimal_twos_complement_input") {
+					evalops.parse_options.hexadecimal_twos_complement = v;
 				} else if(svar == "spell_out_logical_operators") {
 						printops.spell_out_logical_operators = v;
 				} else if(svar == "decimal_comma") {
@@ -7696,6 +7709,8 @@ bool save_preferences(bool mode) {
 	fprintf(file, "base_display=%i\n", printops.base_display);
 	fprintf(file, "twos_complement=%i\n", printops.twos_complement);
 	fprintf(file, "hexadecimal_twos_complement=%i\n", printops.hexadecimal_twos_complement);
+	fprintf(file, "twos_complement_input=%i\n", evalops.parse_options.twos_complement);
+	fprintf(file, "hexadecimal_twos_complement_input=%i\n", evalops.parse_options.hexadecimal_twos_complement);
 	fprintf(file, "spell_out_logical_operators=%i\n", printops.spell_out_logical_operators);
 	fprintf(file, "digit_grouping=%i\n", printops.digit_grouping);
 	fprintf(file, "decimal_comma=%i\n", b_decimal_comma);
