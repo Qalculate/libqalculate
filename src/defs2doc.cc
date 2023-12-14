@@ -141,6 +141,7 @@ void generate_units_tree_struct() {
 					}
 					if(!b) {
 						tree_struct cat;
+                        cat.parent = NULL;
 						item->items.push_back(cat);
 						it = item->items.end();
 						--it;
@@ -205,6 +206,7 @@ void generate_variables_tree_struct() {
 					}
 					if(!b) {
 						tree_struct cat;
+                        cat.parent = NULL;
 						item->items.push_back(cat);
 						it = item->items.end();
 						--it;
@@ -270,6 +272,7 @@ void generate_functions_tree_struct() {
 					}
 					if(!b) {
 						tree_struct cat;
+                        cat.parent = NULL;
 						item->items.push_back(cat);
 						it = item->items.end();
 						--it;
