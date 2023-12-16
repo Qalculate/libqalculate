@@ -1377,7 +1377,10 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 	int precbak = PRECISION;
 	KnownVariable *v = new KnownVariable("", "", m_zero);
 	v->setTitle("\b");
-	mfunc.replace(vargs[2], v);
+	if(!mfunc.replace(vargs[2], v)) {
+		v->destroy();
+		return ret;
+	}
 	v->destroy();
 	nrf_begin:
 	CALCULATOR->beginTemporaryStopMessages();
@@ -1477,7 +1480,10 @@ int SecantMethodFunction::calculate(MathStructure &mstruct, const MathStructure 
 	int precbak = PRECISION;
 	KnownVariable *v = new KnownVariable("", "", m_zero);
 	v->setTitle("\b");
-	mfunc.replace(vargs[3], v);
+	if(!mfunc.replace(vargs[3], v)) {
+		v->destroy();
+		return ret;
+	}
 	v->destroy();
 	secm_begin:
 	CALCULATOR->beginTemporaryStopMessages();
