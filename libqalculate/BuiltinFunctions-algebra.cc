@@ -740,7 +740,27 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 
 }
 
+bool test_functions_comparison(const MathStructure &m, const EvaluationOptions &eo) {
+	for(size_t i = 0; i < m.size(); i++) {
+		if(test_functions_comparison(m[i], eo)) return true;
+	}
+	if(m.isFunction() && m.function()->subtype() == SUBTYPE_USER_FUNCTION) {
+		CALCULATOR->beginTemporaryStopMessages();
+		MathStructure mtest;
+		mtest.eval(eo);
+		CALCULATOR->endTemporaryStopMessages();
+		if(mtest.containsType(STRUCT_COMPARISON, false, true, true) > 0) return true;
+	} else if(m.isVariable() && m.variable()->isKnown()) {
+		return test_functions_comparison(((KnownVariable*) m.variable())->get(), eo);
+	}
+	return false;
+}
 int SolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].containsType(STRUCT_COMPARISON, false, true, true) <= 0 && !test_functions_comparison(vargs[0], eo)) {
+		MathStructure m(vargs[0]);
+		m.transform(COMPARISON_EQUALS, m_zero);
+		return solve_equation(mstruct, m, vargs[1], eo);
+	}
 	return solve_equation(mstruct, vargs[0], vargs[1], eo);
 }
 

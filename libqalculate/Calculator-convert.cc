@@ -1907,6 +1907,18 @@ void set_null_prefixes(MathStructure &m) {
 	}
 }
 
+Unit *get_first_unit(const MathStructure &m) {
+	if(m.isUnit()) return m.unit();
+	if(m.isPower() && m[0].isUnit()) return m[0].unit();
+	if(m.isMultiplication()) {
+		for(size_t i = 0; i < m.size(); i++) {
+			Unit *u = get_first_unit(m[i]);
+			if(u) return u;
+		}
+	}
+	return NULL;
+}
+
 MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, string str2, const EvaluationOptions &eo, MathStructure *to_struct, bool transform_orig, MathStructure *parsed_struct) {
 	if(to_struct) to_struct->setUndefined();
 	remove_blank_ends(str2);
@@ -1931,6 +1943,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 			current_stage = MESSAGE_STAGE_UNSET;
 			return convertToMixedUnits(mstruct_to_convert, eo2);
 		}
+		do_prefix = 1;
 	}
 	MathStructure mstruct;
 	bool b = false;
@@ -1956,6 +1969,25 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 			else if(v->referenceName() == "electron_mass") u = CALCULATOR->getActiveUnit("electron_unit");
 		}
 		if(u) v = NULL;
+	}
+	if(!u && !v && !do_prefix && unitNameIsValid(str2)) {
+		Prefix *p = getPrefix(str2);
+		if(p) {
+			u = get_first_unit(mstruct_to_convert);
+			if(u) {
+				str2 += u->referenceName();
+				u = NULL;
+			} else {
+				mstruct = mstruct_to_convert;
+				mstruct.divide(p->value());
+				mstruct.eval(eo);
+				KnownVariable *v = new KnownVariable("", str2, p->value());
+				mstruct.multiply(v);
+				v->destroy();
+				current_stage = MESSAGE_STAGE_UNSET;
+				return mstruct;
+			}
+		}
 	}
 	if(u) {
 		if(to_struct) to_struct->set(u);

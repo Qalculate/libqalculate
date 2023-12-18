@@ -264,10 +264,8 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 	string commandline_extra;
 	string title;
 
-    PlotParameters pp;
-	if(!param) {
-      param = &pp;
-	}
+	PlotParameters pp;
+	if(!param) param = &pp;
 
 	vector<MathStructure> yim_vectors;
 	for(size_t i = 0; i < y_vectors.size(); i++) {

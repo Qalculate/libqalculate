@@ -141,11 +141,10 @@ void generate_units_tree_struct() {
 					}
 					if(!b) {
 						tree_struct cat;
-                        cat.parent = NULL;
+						cat.parent = item;
 						item->items.push_back(cat);
 						it = item->items.end();
 						--it;
-						it->parent = item;
 						item = &*it;
 						item->item = cat_sub;
 					}
@@ -206,11 +205,10 @@ void generate_variables_tree_struct() {
 					}
 					if(!b) {
 						tree_struct cat;
-                        cat.parent = NULL;
+						cat.parent = item;
 						item->items.push_back(cat);
 						it = item->items.end();
 						--it;
-						it->parent = item;
 						item = &*it;
 						item->item = cat_sub;
 					}
@@ -272,11 +270,10 @@ void generate_functions_tree_struct() {
 					}
 					if(!b) {
 						tree_struct cat;
-                        cat.parent = NULL;
+						cat.parent = item;
 						item->items.push_back(cat);
 						it = item->items.end();
 						--it;
-						it->parent = item;
 						item = &*it;
 						item->item = cat_sub;
 					}

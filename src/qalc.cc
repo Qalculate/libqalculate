@@ -106,6 +106,7 @@ bool simplified_percentage = true;
 int defs_edited = 0;
 bool use_duo_syms = false;
 int unicode_exponents = 1;
+bool had_to_expression = false;
 
 static char buffer[100000];
 
@@ -4441,7 +4442,8 @@ int main(int argc, char *argv[]) {
 				printops.base = save_base;
 			} else {
 				NumberFractionFormat nff = FRACTION_DECIMAL;
-				long int fden = get_fixed_denominator(str, nff, 2);
+				bool fixed_fraction_has_sign = true;
+				long int fden = get_fixed_denominator(str, nff, 2, &fixed_fraction_has_sign);
 				if(fden != 0) {
 					NumberFractionFormat save_format = printops.number_fraction_format;
 					bool save_rfl = printops.restrict_fraction_length;
@@ -4450,7 +4452,10 @@ int main(int argc, char *argv[]) {
 					dual_fraction = 0;
 					printops.restrict_fraction_length = false;
 					printops.number_fraction_format = nff;
-					if(fden > 0) CALCULATOR->setFixedDenominator(fden);
+					if(fden > 0) {
+						CALCULATOR->setFixedDenominator(fden);
+						if(!fixed_fraction_has_sign && !contains_fraction_q(*mstruct)) printops.number_fraction_format = FRACTION_FRACTIONAL_FIXED_DENOMINATOR;
+					}
 					setResult(NULL, false);
 					printops.restrict_fraction_length = save_rfl;
 					printops.number_fraction_format = save_format;
@@ -5460,7 +5465,7 @@ void ViewThread::run() {
 
 		po.allow_non_usable = DO_FORMAT;
 
-		print_dual(*mresult, original_expression, mparse ? *mparse : *parsed_mstruct, mstruct_exact, result_text, alt_results, po, evalops, dual_fraction < 0 ? AUTOMATIC_FRACTION_AUTO : (dual_fraction > 0 ? AUTOMATIC_FRACTION_DUAL : AUTOMATIC_FRACTION_OFF), dual_approximation < 0 ? AUTOMATIC_APPROXIMATION_AUTO : (dual_fraction > 0 ? AUTOMATIC_APPROXIMATION_DUAL : AUTOMATIC_APPROXIMATION_OFF), complex_angle_form, &exact_comparison, mparse != NULL, DO_FORMAT, PRINT_COLOR, TAG_TYPE_TERMINAL);
+		print_dual(*mresult, original_expression, mparse ? *mparse : *parsed_mstruct, mstruct_exact, result_text, alt_results, po, evalops, dual_fraction < 0 ? AUTOMATIC_FRACTION_AUTO : (dual_fraction > 0 ? AUTOMATIC_FRACTION_DUAL : AUTOMATIC_FRACTION_OFF), dual_approximation < 0 ? AUTOMATIC_APPROXIMATION_AUTO : (dual_fraction > 0 ? AUTOMATIC_APPROXIMATION_DUAL : AUTOMATIC_APPROXIMATION_OFF), complex_angle_form, &exact_comparison, mparse != NULL, DO_FORMAT, PRINT_COLOR, TAG_TYPE_TERMINAL, -1, had_to_expression);
 
 		if(!prepend_mstruct.isUndefined() && !CALCULATOR->aborted()) {
 			prepend_mstruct.format(po);
@@ -6427,7 +6432,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	bool save_rfl = printops.restrict_fraction_length;
 	Number save_cbase;
 	bool custom_base_set = false;
-	bool had_to_expression = false;
+	had_to_expression = false;
+	bool fixed_fraction_has_sign = true;
 
 	if(do_stack) {
 	} else {
@@ -6563,6 +6569,11 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					evalops.parse_options.units_enabled = true;
 					evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL_SI;
 					str_conv = "";
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "prefix", _("prefix"))) {
+					evalops.parse_options.units_enabled = true;
+					printops.use_unit_prefixes = true;
+					printops.use_prefixes_for_currencies = true;
+					printops.use_prefixes_for_all_units = true;
 				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "base", _c("units", "base"))) {
 					evalops.parse_options.units_enabled = true;
 					evalops.auto_post_conversion = POST_CONVERSION_BASE;
@@ -6605,7 +6616,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					ParseOptions pa = evalops.parse_options; pa.base = 10;
 					to_str2 = CALCULATOR->unlocalizeExpression(to_str, pa);
 					CALCULATOR->parseSigns(to_str2);
-					long int fden = get_fixed_denominator(CALCULATOR->unlocalizeExpression(to_str2, evalops.parse_options), nff, 2);
+					long int fden = get_fixed_denominator(CALCULATOR->unlocalizeExpression(to_str2, evalops.parse_options), nff, 2, &fixed_fraction_has_sign);
 					if(fden != 0) {
 						dual_fraction = 0;
 						printops.restrict_fraction_length = false;
@@ -6981,6 +6992,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			if(!prepend_mstruct.isUndefined() && mstruct->isInteger()) prepend_mstruct.setUndefined();
 		}
 	}
+
+	if(!fixed_fraction_has_sign && printops.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR && !contains_fraction_q(*mstruct)) printops.number_fraction_format = FRACTION_FRACTIONAL_FIXED_DENOMINATOR;
 
 	//update "ans" variables
 	if(!do_stack || stack_index == 0) {

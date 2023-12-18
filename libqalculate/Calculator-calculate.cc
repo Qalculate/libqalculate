@@ -140,16 +140,20 @@ void Calculator::saveState() {
 void Calculator::restoreState() {
 }
 void Calculator::clearBuffers() {
-    unordered_map<size_t, bool>::iterator it = priv->ids_p.begin();
-    while(it != priv->ids_p.end()) {
+	unordered_map<size_t, bool>::iterator it = priv->ids_p.begin();
+	while(it != priv->ids_p.end()) {
 		if(!it->second) {
 			priv->freed_ids.push_back(it->first);
 			priv->id_structs.erase(it->first);
 			priv->ids_ref.erase(it->first);
-            priv->ids_p.erase(it);
-        } else {
-            ++it;
-        }
+			priv->ids_p.erase(it);
+		} else {
+			++it;
+		}
+	}
+	if(priv->id_structs.empty()) {
+		priv->ids_i = 0;
+		priv->freed_ids.clear();
 	}
 }
 bool Calculator::abort() {
@@ -857,6 +861,9 @@ bool test_parsed_comparison(const MathStructure &m) {
 	return false;
 }
 void print_dual(const MathStructure &mresult, const string &original_expression, const MathStructure &mparse, MathStructure &mexact, string &result_str, vector<string> &results_v, PrintOptions &po, const EvaluationOptions &evalops, AutomaticFractionFormat auto_frac, AutomaticApproximation auto_approx, bool cplx_angle, bool *exact_cmp, bool b_parsed, bool format, int colorize, int tagtype, int max_length) {
+	print_dual(mresult, original_expression, mparse, mexact, result_str, results_v, po, evalops, auto_frac, auto_approx, cplx_angle, exact_cmp, b_parsed, format, colorize, tagtype, max_length, false);
+}
+void print_dual(const MathStructure &mresult, const string &original_expression, const MathStructure &mparse, MathStructure &mexact, string &result_str, vector<string> &results_v, PrintOptions &po, const EvaluationOptions &evalops, AutomaticFractionFormat auto_frac, AutomaticApproximation auto_approx, bool cplx_angle, bool *exact_cmp, bool b_parsed, bool format, int colorize, int tagtype, int max_length, bool converted) {
 
 	MathStructure m(mresult);
 
@@ -905,7 +912,7 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 	bool do_exact = !mexact.isUndefined() && m.isApproximate();
 
 	// If parsed value is number (simple fractions are parsed as division) only show result as combined fraction
-	if(auto_frac != AUTOMATIC_FRACTION_OFF && po.base == 10 && po.base == evalops.parse_options.base && !m.isApproximate() && b_parsed && mparse.isNumber() && !mparse.isInteger()) {
+	if(auto_frac != AUTOMATIC_FRACTION_OFF && po.base == 10 && po.base == evalops.parse_options.base && !m.isApproximate() && b_parsed && mparse.isNumber() && !mparse.isInteger() && !converted) {
 		po.number_fraction_format = FRACTION_COMBINED;
 	// with auto fractions show expressions with unknown variables/symbols only using simple fractions (if not parsed value contains decimals)
 	} else if((auto_frac == AUTOMATIC_FRACTION_AUTO || auto_frac == AUTOMATIC_FRACTION_SINGLE) && !m.isApproximate() && (test_fr_unknowns(m) || (m.containsType(STRUCT_ADDITION) && test_power_func(m))) && test_frac(m, false, -1) && (!b_parsed || !contains_decimal(mparse, &original_expression))) {
@@ -1103,6 +1110,19 @@ void replace_negdiv(MathStructure &m) {
 			m.insertChild_nocopy(m0, 1);
 		}
 		return replace_negdiv(m);
+	}
+	if(m.isMultiplication()) {
+		for(size_t i = 0; i < m.size(); i++) {
+			if(m[i].isMinusOne()) {
+				for(size_t i2 = 0; i2 < m.size(); i2++) {
+					if(i2 != i && m[i2].isNumber()) {
+						m[i2].number().negate();
+						m.delChild(i + 1, true);
+						return replace_negdiv(m);
+					}
+				}
+			}
+		}
 	}
 	if(m.isDivision() && m[1].isPower()) {
 		if(m[1][1].isNegate()) {
@@ -1604,11 +1624,20 @@ long int get_fixed_denominator2(const string &str, NumberFractionFormat &nff, bo
 	}
 	return fden;
 }
-long int get_fixed_denominator(const string &str, NumberFractionFormat &nff, int frac) {
+long int get_fixed_denominator(const string &str, NumberFractionFormat &nff, int frac, bool *has_sign) {
 	size_t n = 0;
 	if(str[0] == '-' || str[0] == '+') n = 1;
+	if(has_sign) *has_sign = (n > 0);
 	if(n > 0) return get_fixed_denominator2(str.substr(n, str.length() - n), nff, str[0] == '-', frac);
 	return get_fixed_denominator2(str, nff, false, frac);
+}
+
+bool contains_fraction_q(const MathStructure &m) {
+	if(m.isNumber()) return !m.number().isInteger();
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_fraction_q(m[i])) return true;
+	}
+	return false;
 }
 
 string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, AutomaticFractionFormat auto_fraction, AutomaticApproximation auto_approx, std::string *parsed_expression, int max_length, bool *result_is_comparison, bool format, int colorize, int tagtype) {
@@ -1634,6 +1663,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	string from_str = str, str_conv;
 	Number base_save;
 	bool custom_base_set = false;
+	bool fixed_fraction_has_sign = true;
 	int save_bin = priv->use_binary_prefixes;
 	long int save_fden = priv->fixed_denominator;
 	bool had_to_expression = false;
@@ -1757,6 +1787,11 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				evalops.parse_options.units_enabled = true;
 				evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL_SI;
 				str_conv = "";
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "prefix", _("prefix"))) {
+				evalops.parse_options.units_enabled = true;
+				printops.use_prefixes_for_currencies = true;
+				printops.use_prefixes_for_all_units = true;
+				printops.use_unit_prefixes = true;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "base", _c("units", "base"))) {
 				evalops.parse_options.units_enabled = true;
 				evalops.auto_post_conversion = POST_CONVERSION_BASE;
@@ -1791,7 +1826,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				NumberFractionFormat nff = FRACTION_DECIMAL;
 				string to_str2 = to_str;
 				CALCULATOR->parseSigns(to_str2);
-				long int fden = get_fixed_denominator(to_str2, nff, 1);
+				long int fden = get_fixed_denominator(to_str2, nff, 1, &fixed_fraction_has_sign);
 				if(fden != 0) {
 					auto_fraction = AUTOMATIC_FRACTION_OFF;
 					printops.restrict_fraction_length = false;
@@ -1929,6 +1964,8 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		mstruct_exact.expandPartialFractions(evalops);
 	}
 
+	if(!fixed_fraction_has_sign && printops.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR && !contains_fraction_q(mstruct)) printops.number_fraction_format = FRACTION_FRACTIONAL_FIXED_DENOMINATOR;
+
 	printops.allow_factorization = printops.allow_factorization || evalops.structuring == STRUCTURING_FACTORIZE || do_factors;
 
 	bool exact_comparison = false;
@@ -1991,7 +2028,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	if(result_is_comparison) *result_is_comparison = false;
 
 	if(auto_fraction != AUTOMATIC_FRACTION_OFF || auto_approx != AUTOMATIC_APPROXIMATION_OFF) {
-		print_dual(mstruct, str, parsed_struct, mstruct_exact, result, alt_results, printops, evalops, auto_fraction, auto_approx, complex_angle_form, &exact_comparison, true, format, colorize, tagtype, max_length);
+		print_dual(mstruct, str, parsed_struct, mstruct_exact, result, alt_results, printops, evalops, auto_fraction, auto_approx, complex_angle_form, &exact_comparison, true, format, colorize, tagtype, max_length, had_to_expression);
 		if(!alt_results.empty()) {
 			bool use_par = mstruct.isComparison() || mstruct.isLogicalAnd() || mstruct.isLogicalOr();
 			str = result; result = "";
@@ -2296,10 +2333,10 @@ bool Calculator::separateToExpression(string &str, string &to_str, const Evaluat
 					to_str.replace(0, strlen(SIGN_MINUS), MINUS);
 				}
 				if(!keep_modifiers && (to_str[0] == '0' || to_str[0] == '?' || to_str[0] == '+' || to_str[0] == '-')) {
-					to_str = to_str.substr(1, str.length() - 1);
+					to_str = to_str.substr(1, to_str.length() - 1);
 					remove_blank_ends(to_str);
 				} else if(!keep_modifiers && to_str.length() > 1 && to_str[1] == '?' && (to_str[0] == 'b' || to_str[0] == 'a' || to_str[0] == 'd')) {
-					to_str = to_str.substr(2, str.length() - 2);
+					to_str = to_str.substr(2, to_str.length() - 2);
 					remove_blank_ends(to_str);
 				}
 			}

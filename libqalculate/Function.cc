@@ -316,7 +316,8 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 							if(arg) {
 								// if index has argument definition, use for parsing
 								MathStructure *mstruct = new MathStructure();
-								arg->parse(mstruct, getDefaultValue(itmp), po);
+								if(arg->type() == ARGUMENT_TYPE_TEXT && getDefaultValue(itmp) == "\"\"") arg->parse(mstruct, "", po);
+								else arg->parse(mstruct, getDefaultValue(itmp));
 								if(ignored) mstruct->unref();
 								else vargs.addChild_nocopy(mstruct);
 							} else {
@@ -354,7 +355,8 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 						remove_blank_ends(stmp);
 						if(stmp.empty()) {
 							MathStructure *mstruct = new MathStructure();
-							getArgumentDefinition(maxargs())->parse(mstruct, getDefaultValue(itmp));
+							if(getArgumentDefinition(maxargs())->type() == ARGUMENT_TYPE_TEXT && getDefaultValue(itmp) == "\"\"") getArgumentDefinition(maxargs())->parse(mstruct, "");
+							else getArgumentDefinition(maxargs())->parse(mstruct, getDefaultValue(itmp));
 							vargs[vargs.size() - 1].addChild_nocopy(mstruct);
 						} else {
 							MathStructure *mstruct = new MathStructure();
@@ -387,7 +389,8 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 			if(stmp.empty()) {
 				if(arg) {
 					MathStructure *mstruct = new MathStructure();
-					arg->parse(mstruct, getDefaultValue(itmp));
+					if(arg->type() == ARGUMENT_TYPE_TEXT && getDefaultValue(itmp) == "\"\"") arg->parse(mstruct, "");
+					else arg->parse(mstruct, getDefaultValue(itmp));
 					if(ignored) mstruct->unref();
 					else vargs.addChild_nocopy(mstruct);
 				} else {
@@ -424,7 +427,8 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 			remove_blank_ends(stmp);
 			if(stmp.empty()) {
 				MathStructure *mstruct = new MathStructure();
-				getArgumentDefinition(maxargs())->parse(mstruct, getDefaultValue(itmp));
+				if(getArgumentDefinition(maxargs())->type() == ARGUMENT_TYPE_TEXT && getDefaultValue(itmp) == "\"\"") getArgumentDefinition(maxargs())->parse(mstruct, "");
+				else getArgumentDefinition(maxargs())->parse(mstruct, getDefaultValue(itmp));
 				vargs[vargs.size() - 1].addChild_nocopy(mstruct);
 			} else {
 				MathStructure *mstruct = new MathStructure();
@@ -449,7 +453,8 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 		while((size_t) itmp2 - minargs() < default_values.size() && (maxargs() > 0 || !default_values[itmp2 - minargs()].empty())) {
 			arg = getArgumentDefinition(itmp2 + 1);
 			MathStructure *mstruct = new MathStructure();
-			if(arg) arg->parse(mstruct, default_values[itmp2 - minargs()]);
+			if(arg->type() == ARGUMENT_TYPE_TEXT && default_values[itmp2 - minargs()] == "\"\"") arg->parse(mstruct, "");
+			else if(arg) arg->parse(mstruct, default_values[itmp2 - minargs()]);
 			else CALCULATOR->parse(mstruct, default_values[itmp2 - minargs()]);
 			vargs.addChild_nocopy(mstruct);
 			itmp2++;
