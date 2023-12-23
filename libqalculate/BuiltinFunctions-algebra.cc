@@ -1387,13 +1387,14 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 	}
 	EvaluationOptions eo2 = eo;
 	eo2.expand = false;
-	bool compare_with_1 = false;
+	bool compare_with_1 = false, zero_tested = false;
 	calculate_userfunctions(mfunc, vargs[2], eo);
 	MathStructure mdiff(mfunc);
 	mdiff.differentiate(vargs[2], eo);
 	if(mdiff.containsFunction(CALCULATOR->getFunctionById(FUNCTION_ID_DIFFERENTIATE))) return ret;
 	mfunc /= mdiff;
 	Number nr_prec(1, 1, vargs[3].number() <= 0 ? -(PRECISION - vargs[3].number().intValue()) : -vargs[3].number().intValue());
+	Number nr_mprec(nr_prec); nr_mprec.negate();
 	int precbak = PRECISION;
 	KnownVariable *v = new KnownVariable("", "", m_zero);
 	v->setTitle("\b");
@@ -1409,6 +1410,65 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 	MathStructure x_if;
 	unsigned int iter = 0;
 	unsigned int max_iter = vargs[4].number().uintValue();
+
+	if(x_i.isZero()) {
+		MathStructure mztest;
+		CALCULATOR->beginTemporaryStopMessages();
+		if(PRECISION == precbak) {
+			if(ret < 0) mztest = mstruct;
+			else mztest = vargs[0];
+			mztest.replace(vargs[2], m_zero);
+			mztest.eval(eo2);
+			if(mztest.isZero()) {
+				mstruct.clear();
+				CALCULATOR->endTemporaryStopMessages(true);
+				CALCULATOR->endTemporaryStopMessages(true);
+				return 1;
+			}
+		}
+		mztest = mdiff;
+		mztest.replace(vargs[2], m_zero);
+		mztest.eval(eo2);
+		if(mztest.isZero()) x_i = nr_prec;
+		CALCULATOR->endTemporaryStopMessages();
+	}
+
+#define TEST_ZERO \
+	MathStructure mztest; \
+	if(ret < 0) mztest = mstruct; \
+	else mztest = vargs[0]; \
+	mztest.replace(vargs[2], m_zero); \
+	CALCULATOR->beginTemporaryEnableIntervalArithmetic(); \
+	CALCULATOR->beginTemporaryStopMessages(); \
+	mztest.eval(eo2); \
+	if(mztest.isZero()) { \
+		CALCULATOR->endTemporaryStopMessages(true); \
+		CALCULATOR->endTemporaryEnableIntervalArithmetic(); \
+		x_i.clear(); \
+		ret = 1; \
+		break; \
+	} \
+	CALCULATOR->endTemporaryStopMessages(); \
+	CALCULATOR->endTemporaryEnableIntervalArithmetic(); \
+	if(mztest.isNumber() && !mztest.number().isNonZero()) compare_with_1 = true; \
+	zero_tested = true;
+
+#define TEST_VALUE(unc) \
+	Number ntest(x_i); \
+	ntest.setUncertainty(unc); \
+	CALCULATOR->beginTemporaryEnableIntervalArithmetic(); \
+	MathStructure mtest; \
+	if(ret < 0) mtest = mstruct; \
+	else mtest = vargs[0]; \
+	mtest.replace(vargs[2], x_i); \
+	if(eo2.interval_calculation != INTERVAL_CALCULATION_VARIANCE_FORMULA || !vargs[0].containsInterval(true, true, false, 1, true)) eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC; \
+	CALCULATOR->beginTemporaryStopMessages(); \
+	mtest.eval(eo2); \
+	CALCULATOR->endTemporaryStopMessages(); \
+	eo2.interval_calculation = eo.interval_calculation; \
+	CALCULATOR->endTemporaryEnableIntervalArithmetic(); \
+	bool b = !mtest.representsNonZero();
+
 	while(true) {
 		if(CALCULATOR->aborted()) break;
 		x_if = mfunc;
@@ -1422,36 +1482,36 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 		if(iter > 0) {
 			if(x_i.hasImaginaryPart()) {
 				if((x_itest.realPart() < nr_prec && x_itest.imaginaryPart() < nr_prec) || (!x_i.isNonZero() && (x_i.realPart() < nr_prec && x_i.imaginaryPart() < nr_prec && x_if.number().realPart() < nr_prec && x_if.number().imaginaryPart() < nr_prec))) {
-					x_i.setUncertainty(x_if.number(), !CALCULATOR->usesIntervalArithmetic());
-					ret = 1;
-					break;
+					TEST_VALUE(x_if.number());
+					if(b) {
+						x_i.setUncertainty(x_if.number(), !CALCULATOR->usesIntervalArithmetic());
+						ret = 1;
+						break;
+					}
 				}
-				if(!compare_with_1 && iter > 10 && x_i.realPart().isFraction() && x_i.imaginaryPart().isFraction() && (x_itest.realPart() > Number(9, 10) || x_itest.imaginaryPart() > Number(9, 10))) {
-					compare_with_1 = true;
+				if(!zero_tested && ((iter >= max_iter - 1 && x_i.realPart().isFraction() && x_i.imaginaryPart().isFraction()) || (iter > 10 && x_i.realPart() < nr_prec && x_i.realPart() > nr_mprec && x_if.number().realPart() < nr_prec && x_if.number().realPart() > nr_mprec && x_i.imaginaryPart() < nr_prec && x_i.imaginaryPart() > nr_mprec && x_if.number().imaginaryPart() < nr_prec && x_if.number().imaginaryPart() > nr_mprec))) {
+					TEST_ZERO
 				}
 				int prec = x_i.precision(true);
 				if((!x_i.isNonZero() || (prec >= 0 && prec < precbak)) && PRECISION * 5 < 1000) {
-					if(!compare_with_1 && x_i.realPart().isFraction() && x_i.imaginaryPart().isFraction() && (x_itest.realPart() > Number(9, 10) || x_itest.imaginaryPart() > Number(9, 10))) {
-						compare_with_1 = true;
-					}
 					CALCULATOR->setPrecision(PRECISION * 10 > 1000 ? 1000 : PRECISION * 10);
 					CALCULATOR->endTemporaryStopMessages();
 					goto nrf_begin;
 				}
 			} else {
 				if(x_itest < nr_prec || (!x_i.isNonZero() && x_i < nr_prec && x_if.number() < nr_prec)) {
-					x_i.setUncertainty(x_if.number(), !CALCULATOR->usesIntervalArithmetic());
-					ret = 1;
-					break;
+					TEST_VALUE(x_if.number());
+					if(b) {
+						x_i.setUncertainty(x_if.number(), !CALCULATOR->usesIntervalArithmetic());
+						ret = 1;
+						break;
+					}
 				}
-				if(!compare_with_1 && iter > 10 && x_i.isFraction() && x_itest > Number(9, 10)) {
-					compare_with_1 = true;
+				if(!zero_tested && ((iter >= max_iter - 1 && x_i.isFraction()) || (iter > 10 && x_i < nr_prec && x_i > nr_mprec && x_if.number() < nr_prec && x_if.number() > nr_mprec))) {
+					TEST_ZERO
 				}
 				int prec = x_i.precision(true);
 				if((!x_i.isNonZero() || (prec >= 0 && prec < precbak)) && PRECISION * 5 < 1000) {
-					if(!compare_with_1 && x_i.isFraction() && x_itest > Number(9, 10)) {
-						compare_with_1 = true;
-					}
 					CALCULATOR->setPrecision(PRECISION * 10 > 1000 ? 1000 : PRECISION * 10);
 					CALCULATOR->endTemporaryStopMessages();
 					goto nrf_begin;
@@ -1460,10 +1520,13 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 		}
 		iter++;
 		if(iter > max_iter) {
-			x_i.setUncertainty(x_if.number(), !CALCULATOR->usesIntervalArithmetic());
-			int prec = x_i.precision(true);
-			if(prec < 5) break;
-			ret = 1;
+			TEST_VALUE(x_if.number());
+			if(b) {
+				x_i.setUncertainty(x_if.number(), !CALCULATOR->usesIntervalArithmetic());
+				int prec = x_i.precision(true);
+				if(prec < 5) break;
+				ret = 1;
+			}
 			break;
 		}
 	}
@@ -1494,9 +1557,10 @@ int SecantMethodFunction::calculate(MathStructure &mstruct, const MathStructure 
 	}
 	EvaluationOptions eo2 = eo;
 	eo2.expand = false;
-	bool compare_with_1 = false;
+	bool compare_with_1 = false, zero_tested = false;
 	calculate_userfunctions(mfunc, vargs[3], eo);
 	Number nr_prec(1, 1, vargs[4].number() <= 0 ? -(PRECISION - vargs[4].number().intValue()) : -vargs[4].number().intValue());
+	Number nr_mprec(nr_prec); nr_mprec.negate();
 	int precbak = PRECISION;
 	KnownVariable *v = new KnownVariable("", "", m_zero);
 	v->setTitle("\b");
@@ -1535,36 +1599,36 @@ int SecantMethodFunction::calculate(MathStructure &mstruct, const MathStructure 
 			if(iter > 0) {
 				if(x_i.hasImaginaryPart()) {
 					if((x_itest.realPart() < nr_prec && x_itest.imaginaryPart() < nr_prec) || (!x_i.isNonZero() && (x_i.realPart() < nr_prec && x_i.imaginaryPart() < nr_prec && x_fi.realPart() < nr_prec && x_fi.imaginaryPart() < nr_prec))) {
-						x_i.setUncertainty(x_fi, !CALCULATOR->usesIntervalArithmetic());
-						ret = 1;
-						break;
+						TEST_VALUE(x_fi);
+						if(b) {
+							x_i.setUncertainty(x_fi, !CALCULATOR->usesIntervalArithmetic());
+							ret = 1;
+							break;
+						}
 					}
-					if(!compare_with_1 && iter > 10 && x_i.realPart().isFraction() && x_i.imaginaryPart().isFraction() && (x_itest.realPart() > Number(9, 10) || x_itest.imaginaryPart() > Number(9, 10))) {
-						compare_with_1 = true;
+					if(!zero_tested && ((iter >= max_iter - 1 && x_i.realPart().isFraction() && x_i.imaginaryPart().isFraction()) || (iter > 10 && x_i.realPart() < nr_prec && x_i.realPart() > nr_mprec && x_fi.realPart() < nr_prec && x_fi.realPart() > nr_mprec && x_i.imaginaryPart() < nr_prec && x_i.imaginaryPart() > nr_mprec && x_fi.imaginaryPart() < nr_prec && x_fi.imaginaryPart() > nr_mprec))) {
+						TEST_ZERO
 					}
 					int prec = x_i.precision(true);
 					if((!x_i.isNonZero() || (prec >= 0 && prec < precbak)) && PRECISION * 5 < 1000) {
-						if(!compare_with_1 && x_i.realPart().isFraction() && x_i.imaginaryPart().isFraction() && (x_itest.realPart() > Number(9, 10) || x_itest.imaginaryPart() > Number(9, 10))) {
-							compare_with_1 = true;
-						}
 						CALCULATOR->setPrecision(PRECISION * 10 > 1000 ? 1000 : PRECISION * 10);
 						CALCULATOR->endTemporaryStopMessages();
 						goto secm_begin;
 					}
 				} else {
 					if(x_itest < nr_prec || (!x_i.isNonZero() && x_i < nr_prec && x_fi < nr_prec)) {
-						x_i.setUncertainty(x_fi, !CALCULATOR->usesIntervalArithmetic());
-						ret = 1;
-						break;
+						TEST_VALUE(x_fi);
+						if(b) {
+							x_i.setUncertainty(x_fi, !CALCULATOR->usesIntervalArithmetic());
+							ret = 1;
+							break;
+						}
 					}
-					if(!compare_with_1 && iter > 10 && x_i.isFraction() && x_itest > Number(9, 10)) {
-						compare_with_1 = true;
+					if(!zero_tested && ((iter >= max_iter - 1 && x_i.isFraction()) || (iter > 10 && x_i < nr_prec && x_i > nr_mprec && x_fi < nr_prec && x_fi > nr_mprec))) {
+						TEST_ZERO
 					}
 					int prec = x_i.precision(true);
 					if((!x_i.isNonZero() || (prec >= 0 && prec < precbak)) && PRECISION * 5 < 1000) {
-						if(!compare_with_1 && x_i.isFraction() && x_itest > Number(9, 10)) {
-							compare_with_1 = true;
-						}
 						CALCULATOR->setPrecision(PRECISION * 10 > 1000 ? 1000 : PRECISION * 10);
 						CALCULATOR->endTemporaryStopMessages();
 						goto secm_begin;
@@ -1573,10 +1637,13 @@ int SecantMethodFunction::calculate(MathStructure &mstruct, const MathStructure 
 			}
 			iter++;
 			if(iter > max_iter) {
-				x_i.setUncertainty(x_fi, !CALCULATOR->usesIntervalArithmetic());
-				int prec = x_i.precision(true);
-				if(prec < 5) break;
-				ret = 1;
+				TEST_VALUE(x_fi);
+				if(b) {
+					x_i.setUncertainty(x_fi, !CALCULATOR->usesIntervalArithmetic());
+					int prec = x_i.precision(true);
+					if(prec < 5) break;
+					ret = 1;
+				}
 				break;
 			}
 		}
