@@ -1460,7 +1460,7 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 	MathStructure mtest; \
 	if(ret < 0) mtest = mstruct; \
 	else mtest = vargs[0]; \
-	mtest.replace(vargs[2], x_i); \
+	mtest.replace(vargs[2], ntest); \
 	if(eo2.interval_calculation != INTERVAL_CALCULATION_VARIANCE_FORMULA || !vargs[0].containsInterval(true, true, false, 1, true)) eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC; \
 	CALCULATOR->beginTemporaryStopMessages(); \
 	mtest.eval(eo2); \
