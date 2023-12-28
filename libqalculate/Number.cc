@@ -7349,7 +7349,7 @@ bool Number::ln() {
 	return true;
 }
 bool Number::log(const Number &o) {
-	if(isOne() && (o.isGreaterThan(1) || o.isLessThan(1))) {
+	if(isOne() && (o.isGreaterThan(1) || o.isLessThan(1) || o.imaginaryPartIsNonZero())) {
 		clear(true);
 		setPrecisionAndApproximateFrom(o);
 		return true;

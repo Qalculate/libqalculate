@@ -4440,6 +4440,17 @@ int main(int argc, char *argv[]) {
 				setResult(NULL, false);
 				CALCULATOR->setCustomOutputBase(save_nr);
 				printops.base = save_base;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "decimals", _("decimals"))) {
+				NumberFractionFormat save_format = printops.number_fraction_format;
+				bool save_rfl = printops.restrict_fraction_length;
+				int save_dual = dual_fraction;
+				dual_fraction = 0;
+				printops.restrict_fraction_length = false;
+				printops.number_fraction_format = FRACTION_DECIMAL;
+				setResult(NULL, false);
+				printops.restrict_fraction_length = save_rfl;
+				printops.number_fraction_format = save_format;
+				dual_fraction = save_dual;
 			} else {
 				NumberFractionFormat nff = FRACTION_DECIMAL;
 				bool fixed_fraction_has_sign = true;
@@ -6611,6 +6622,11 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "mixed", _c("units", "mixed"))) {
 					evalops.auto_post_conversion = POST_CONVERSION_NONE;
 					evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
+				//decimal fraction
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "decimals", _("decimals"))) {
+					dual_fraction = 0;
+					printops.restrict_fraction_length = false;
+					printops.number_fraction_format = FRACTION_DECIMAL;
 				} else {
 					NumberFractionFormat nff = FRACTION_DECIMAL;
 					ParseOptions pa = evalops.parse_options; pa.base = 10;

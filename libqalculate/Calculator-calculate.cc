@@ -1822,6 +1822,11 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				evalops.parse_options.units_enabled = true;
 				evalops.auto_post_conversion = POST_CONVERSION_NONE;
 				evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
+			//decimal fraction
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "decimals", _("decimals"))) {
+				printops.restrict_fraction_length = false;
+				printops.number_fraction_format = FRACTION_DECIMAL;
+				auto_fraction = AUTOMATIC_FRACTION_OFF;
 			} else {
 				NumberFractionFormat nff = FRACTION_DECIMAL;
 				string to_str2 = to_str;

@@ -1943,7 +1943,6 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 			current_stage = MESSAGE_STAGE_UNSET;
 			return convertToMixedUnits(mstruct_to_convert, eo2);
 		}
-		do_prefix = 1;
 	}
 	MathStructure mstruct;
 	bool b = false;
@@ -1970,7 +1969,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 		}
 		if(u) v = NULL;
 	}
-	if(!u && !v && !do_prefix && unitNameIsValid(str2)) {
+	if(!u && !v && unitNameIsValid(str2)) {
 		Prefix *p = getPrefix(str2);
 		if(p) {
 			u = get_first_unit(mstruct_to_convert);

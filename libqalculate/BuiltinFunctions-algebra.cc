@@ -1453,21 +1453,50 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 	if(mztest.isNumber() && !mztest.number().isNonZero()) compare_with_1 = true; \
 	zero_tested = true;
 
-#define TEST_VALUE(unc) \
-	Number ntest(x_i); \
-	ntest.setUncertainty(unc); \
+#define TEST_VALUE_B \
+	CALCULATOR->beginTemporaryStopMessages(); \
 	CALCULATOR->beginTemporaryEnableIntervalArithmetic(); \
 	MathStructure mtest; \
 	if(ret < 0) mtest = mstruct; \
 	else mtest = vargs[0]; \
 	mtest.replace(vargs[2], ntest); \
-	if(eo2.interval_calculation != INTERVAL_CALCULATION_VARIANCE_FORMULA || !vargs[0].containsInterval(true, true, false, 1, true)) eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC; \
-	CALCULATOR->beginTemporaryStopMessages(); \
+	eo2.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC; \
 	mtest.eval(eo2); \
-	CALCULATOR->endTemporaryStopMessages(); \
 	eo2.interval_calculation = eo.interval_calculation; \
-	CALCULATOR->endTemporaryEnableIntervalArithmetic(); \
-	bool b = !mtest.representsNonZero();
+	CALCULATOR->endTemporaryEnableIntervalArithmetic();
+
+#define TEST_VALUE \
+	bool b = false; \
+	if(eo2.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA && vargs[0].containsInterval(true, true, false, 1, true)) { \
+		b = true; \
+	} else { \
+		TEST_VALUE_B \
+		std::vector<CalculatorMessage> blocked_messages; \
+		CALCULATOR->endTemporaryStopMessages(false, &blocked_messages); \
+		for(size_t i = 0; i < blocked_messages.size(); i++) {\
+			if(blocked_messages[i].category() == MESSAGE_CATEGORY_NO_PROPER_INTERVAL_SUPPORT) { \
+				b = true; \
+				break; \
+			} \
+		} \
+		if(!b && !mtest.representsNonZero()) b = true; \
+	}
+
+#define TEST_VALUE_XIF \
+	Number ntest(x_i); \
+	ntest.setUncertainty(x_if.number()); \
+	TEST_VALUE
+
+#define TEST_VALUE_XFI \
+	Number ntest(x_i); \
+	ntest.setUncertainty(x_fi); \
+	TEST_VALUE
+
+#define TEST_VALUE_STRICT \
+	bool b = false; \
+	TEST_VALUE_B \
+	CALCULATOR->endTemporaryStopMessages(); \
+	if(mtest.isNumber() && !mtest.number().isNonZero()) b = true;
 
 	while(true) {
 		if(CALCULATOR->aborted()) break;
@@ -1482,7 +1511,7 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 		if(iter > 0) {
 			if(x_i.hasImaginaryPart()) {
 				if((x_itest.realPart() < nr_prec && x_itest.imaginaryPart() < nr_prec) || (!x_i.isNonZero() && (x_i.realPart() < nr_prec && x_i.imaginaryPart() < nr_prec && x_if.number().realPart() < nr_prec && x_if.number().imaginaryPart() < nr_prec))) {
-					TEST_VALUE(x_if.number());
+					TEST_VALUE_XIF
 					if(b) {
 						x_i.setUncertainty(x_if.number(), !CALCULATOR->usesIntervalArithmetic());
 						ret = 1;
@@ -1500,7 +1529,7 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 				}
 			} else {
 				if(x_itest < nr_prec || (!x_i.isNonZero() && x_i < nr_prec && x_if.number() < nr_prec)) {
-					TEST_VALUE(x_if.number());
+					TEST_VALUE_XIF
 					if(b) {
 						x_i.setUncertainty(x_if.number(), !CALCULATOR->usesIntervalArithmetic());
 						ret = 1;
@@ -1520,13 +1549,19 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 		}
 		iter++;
 		if(iter > max_iter) {
-			TEST_VALUE(x_if.number());
-			if(b) {
-				x_i.setUncertainty(x_if.number(), !CALCULATOR->usesIntervalArithmetic());
-				int prec = x_i.precision(true);
-				if(prec < 5) break;
-				ret = 1;
+			Number ntest(x_i);
+			ntest.setUncertainty(x_if.number());
+			x_i.setUncertainty(x_if.number(), !CALCULATOR->usesIntervalArithmetic());
+			int prec = x_i.precision(true);
+			if(prec < 3) break;
+			if(prec < 8) {
+				TEST_VALUE_STRICT
+				if(!b) break;
+			} else {
+				TEST_VALUE
+				if(!b) break;
 			}
+			ret = 1;
 			break;
 		}
 	}
@@ -1599,7 +1634,7 @@ int SecantMethodFunction::calculate(MathStructure &mstruct, const MathStructure 
 			if(iter > 0) {
 				if(x_i.hasImaginaryPart()) {
 					if((x_itest.realPart() < nr_prec && x_itest.imaginaryPart() < nr_prec) || (!x_i.isNonZero() && (x_i.realPart() < nr_prec && x_i.imaginaryPart() < nr_prec && x_fi.realPart() < nr_prec && x_fi.imaginaryPart() < nr_prec))) {
-						TEST_VALUE(x_fi);
+						TEST_VALUE_XFI
 						if(b) {
 							x_i.setUncertainty(x_fi, !CALCULATOR->usesIntervalArithmetic());
 							ret = 1;
@@ -1617,7 +1652,7 @@ int SecantMethodFunction::calculate(MathStructure &mstruct, const MathStructure 
 					}
 				} else {
 					if(x_itest < nr_prec || (!x_i.isNonZero() && x_i < nr_prec && x_fi < nr_prec)) {
-						TEST_VALUE(x_fi);
+						TEST_VALUE_XFI
 						if(b) {
 							x_i.setUncertainty(x_fi, !CALCULATOR->usesIntervalArithmetic());
 							ret = 1;
@@ -1637,13 +1672,19 @@ int SecantMethodFunction::calculate(MathStructure &mstruct, const MathStructure 
 			}
 			iter++;
 			if(iter > max_iter) {
-				TEST_VALUE(x_fi);
-				if(b) {
-					x_i.setUncertainty(x_fi, !CALCULATOR->usesIntervalArithmetic());
-					int prec = x_i.precision(true);
-					if(prec < 5) break;
-					ret = 1;
+				Number ntest(x_i);
+				ntest.setUncertainty(x_fi);
+				x_i.setUncertainty(x_fi, !CALCULATOR->usesIntervalArithmetic());
+				int prec = x_i.precision(true);
+				if(prec < 3) break;
+				if(prec < 8) {
+					TEST_VALUE_STRICT
+					if(!b) break;
+				} else {
+					TEST_VALUE
+					if(!b) break;
 				}
+				ret = 1;
 				break;
 			}
 		}
