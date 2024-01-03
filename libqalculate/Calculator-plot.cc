@@ -460,8 +460,13 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 		}
 	}
 	if(param->grid) {
-		if(b_polar) plot += "set grid polar\n";
-		else plot += "set grid\n";
+		if(b_polar) plot += "set grid polar";
+		else plot += "set grid";
+		if(param->grid > 1) {
+			plot += " lw ";
+			plot += i2s(param->grid);
+		}
+		plot += "\n";
 	}
 	if(!param->auto_y_min || !param->auto_y_max) {
 		plot += "set yrange [";

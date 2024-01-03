@@ -1059,7 +1059,7 @@ PlotFunction::PlotFunction() : MathFunction("plot", 1, -1) {
 	LIST_PLOT_OPTION("xlog");
 	LIST_PLOT_OPTION("ylog");
 	LIST_PLOT_OPTION_VALUES("complex", "0, 1");
-	LIST_PLOT_OPTION_VALUES("grid", "0, 1");
+	LIST_PLOT_OPTION("grid");
 	LIST_PLOT_OPTION_ALT("linewidth", "lw");
 	LIST_PLOT_OPTION_ALT_WV("legend", "key"); LIST_PLOT_VALUE_FIRST("plot legend", "none"); LIST_PLOT_VALUE("plot legend", "top-left"); LIST_PLOT_VALUE("plot legend", "top-right"); LIST_PLOT_VALUE("plot legend", "bottom-left"); LIST_PLOT_VALUE("plot legend", "bottom-right"); LIST_PLOT_VALUE("plot legend", "below"); LIST_PLOT_VALUE_LAST("plot legend", "outside");
 	LIST_PLOT_OPTION("title");

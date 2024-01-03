@@ -111,7 +111,7 @@ struct PlotParameters {
 	/// Logarithmic base for the x-axis. Default: 10
 	int x_log_base;
 	/// If  a grid shall be shown in the plot. Default: false
-	bool grid;
+	unsigned short grid;
 	/// Width of lines. Default: 2
 	int linewidth;
 	/// If the plot shall be surrounded by borders on all sides (not just axis). Default: false
