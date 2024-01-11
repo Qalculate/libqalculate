@@ -107,6 +107,7 @@ int defs_edited = 0;
 bool use_duo_syms = false;
 int unicode_exponents = 1;
 bool had_to_expression = false;
+bool had_errors = false;
 
 static char buffer[100000];
 
@@ -3212,17 +3213,17 @@ int main(int argc, char *argv[]) {
 			}
 		} else if(!calc_arg_begun && (svar == "-defaults" || svar == "--defaults")) {
 			load_defaults = true;
-		} else if(!calc_arg_begun && strcmp(argv[i], "-nounits") == 0) {
+		} else if(!calc_arg_begun && (strcmp(argv[i], "-nounits") == 0 || strcmp(argv[i], "--nounits") == 0)) {
 			load_units = false;
-		} else if(!calc_arg_begun && strcmp(argv[i], "-nocurrencies") == 0) {
+		} else if(!calc_arg_begun && (strcmp(argv[i], "-nocurrencies") == 0 || strcmp(argv[i], "--nocurrencies") == 0)) {
 			load_currencies = false;
-		} else if(!calc_arg_begun && strcmp(argv[i], "-nofunctions") == 0) {
+		} else if(!calc_arg_begun && (strcmp(argv[i], "-nofunctions") == 0 || strcmp(argv[i], "--nofunctions") == 0)) {
 			load_functions = false;
-		} else if(!calc_arg_begun && strcmp(argv[i], "-novariables") == 0) {
+		} else if(!calc_arg_begun && (strcmp(argv[i], "-novariables") == 0 || strcmp(argv[i], "--novariables") == 0)) {
 			load_variables = false;
-		} else if(!calc_arg_begun && strcmp(argv[i], "-nodatasets") == 0) {
+		} else if(!calc_arg_begun && (strcmp(argv[i], "-nodatasets") == 0 || strcmp(argv[i], "--nodatasets") == 0)) {
 			load_datasets = false;
-		} else if(!calc_arg_begun && (strcmp(argv[i], "-nodefs") == 0 || strcmp(argv[i], "-n") == 0)) {
+		} else if(!calc_arg_begun && (strcmp(argv[i], "-nodefs") == 0 || strcmp(argv[i], "--nodefs") == 0 || strcmp(argv[i], "-n") == 0)) {
 			load_global_defs = false;
 		} else if(!calc_arg_begun && (svar == "-time" || svar == "--time" || svar == "-m")) {
 			if(!svalue.empty()) {
@@ -3352,6 +3353,14 @@ int main(int argc, char *argv[]) {
 		if(load_units && !CALCULATOR->loadGlobalPrefixes()) b = false;
 		if(load_units && !CALCULATOR->loadGlobalUnits()) b = false;
 		else if(!load_units && load_currencies && !CALCULATOR->loadGlobalCurrencies()) b = false;
+		if(!load_units) {
+			//avoid radian unit missing error message
+			CALCULATOR->beginTemporaryStopMessages();
+			CALCULATOR->getGraUnit();
+			CALCULATOR->getRadUnit();
+			CALCULATOR->getDegUnit();
+			CALCULATOR->endTemporaryStopMessages();
+		}
 		if(load_functions && !CALCULATOR->loadGlobalFunctions()) b = false;
 		if(load_datasets && !CALCULATOR->loadGlobalDataSets()) b = false;
 		if(load_variables && !CALCULATOR->loadGlobalVariables()) b = false;
@@ -3454,8 +3463,18 @@ int main(int argc, char *argv[]) {
 		use_readline = false;
 		execute_expression(interactive_mode);
 		if(!interactive_mode) {
+			if(!had_errors) {
+				while(CALCULATOR->message()) {
+					if(CALCULATOR->message()->type() == MESSAGE_ERROR) {
+						had_errors = true;
+						break;
+					}
+					CALCULATOR->nextMessage();
+				}
+			}
 			if(!view_thread->write(NULL)) view_thread->cancel();
 			CALCULATOR->terminateThreads();
+			if(had_errors) return EXIT_FAILURE;
 			return 0;
 		}
 		i_maxtime = 0;
@@ -5392,6 +5411,7 @@ bool display_errors(bool goto_input, int cols, bool *implicit_warning) {
 				if(DO_COLOR && mtype == MESSAGE_WARNING) str += (DO_COLOR == 2 ? "\033[0;94m" : "\033[0;34m");
 				if(mtype == MESSAGE_ERROR) {
 					str += _("error"); str += ": ";
+					had_errors = true;
 				} else if(mtype == MESSAGE_WARNING) {
 					str += _("warning"); str += ": ";
 				}
