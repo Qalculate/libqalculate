@@ -157,7 +157,7 @@ plot(x^2; −5; 5) _(plots the function y=x^2 from -5 to 5)_
 
 ### Units
 
-5 dm3 to L _= 25 dm^3 to L = 5 L_
+5 dm3 to L _= 5 dm^3 to L = 5 L_
 
 20 miles / 2h to km/h _= 16.09344 km/h_
 
