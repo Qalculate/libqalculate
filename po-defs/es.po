@@ -4529,10 +4529,10 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:401
 msgid ""
-"Returns the inverse function for mx*e^x as ln() does for e^x. Only the "
+"Returns the inverse function for x*e^x as ln() does for e^x. Only the "
 "principal branch and real valued results are currently supported."
 msgstr ""
-"Devuelve la función inversa de mx*e^x como ln() es para e^x. Solo la rama "
+"Devuelve la función inversa de x*e^x como ln() es para e^x. Solo la rama "
 "principal y resultados reales están soportados actualmente."
 
 #: ../data/functions.xml.in.h:402

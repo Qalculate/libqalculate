@@ -1246,7 +1246,7 @@
     <builtin_function name="lambertw">
       <_title>Lambert W Function (Omega Function, Product Log)</_title>
       <_names>r:lambertw,productlog</_names>
-      <_description>Returns the inverse function for mx*e^x as ln() does for e^x. Only the principal branch and real valued results are currently supported.</_description>
+      <_description>Returns the inverse function for x*e^x as ln() does for e^x. Only the principal branch and real valued results are currently supported.</_description>
       <argument index="1">
         <_title>Value</_title>
       </argument>

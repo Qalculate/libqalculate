@@ -824,27 +824,43 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	}
 
 	bool b = false;
-	if(!vargs[1].isZero()) {
-		if(mstruct.isZero()) {
-			mstruct.set(nr_minus_inf, true);
-			b = true;
-		} else if(vargs[1].isMinusOne()) {
-			if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isPower() && mstruct[1][0].isVariable() && mstruct[1][0].variable()->id() == VARIABLE_ID_E && mstruct[0].number() <= nr_minus_one && mstruct[1][1] == mstruct[0]) {
-				mstruct.setToChild(1, true);
-				b = true;
+#define LAMBERTW_TEST_X(x) ((vargs[1].isZero() && (x.representsNonNegative() || COMPARISON_IS_EQUAL_OR_LESS(x.compare(m_minus_one)))) || (!vargs[1].isZero() && COMPARISON_IS_EQUAL_OR_GREATER(x.compare(m_minus_one))))
+	if(mstruct.isMultiplication() && mstruct.size() >= 2 && (vargs[1].isZero() || vargs[1].isMinusOne())) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(mstruct[i].isPower() && mstruct[i][0].isVariable() && mstruct[i][0].variable()->id() == VARIABLE_ID_E) {
+				if(mstruct.size() == 2) {
+					if(i == 1 && mstruct[1][1] == mstruct[0] && LAMBERTW_TEST_X(mstruct[0])) {
+						mstruct.setToChild(1, true);
+						b = true;
+					} else if(i == 0 && mstruct[0][1] == mstruct[1] && LAMBERTW_TEST_X(mstruct[1])) {
+						mstruct.setToChild(2, true);
+						b = true;
+					}
+				} else if(mstruct[i][1].isMultiplication() && mstruct[i][1].size() == mstruct.size() - 1) {
+					MathStructure *mpow = &mstruct[i];
+					mpow->ref();
+					mstruct.delChild(i + 1);
+					if(mstruct == (*mpow)[1] && LAMBERTW_TEST_X(mstruct)) {
+						mpow->unref();
+						b = true;
+					} else {
+						mstruct.insertChild_nocopy(mpow, i + 1);
+					}
+				}
+				break;
 			}
 		}
-
-	} else {
+	}
+	if(vargs[1].isZero()) {
 		if(mstruct.isZero()) {
 			b = true;
 		} else if(mstruct.isVariable() && mstruct.variable()->id() == VARIABLE_ID_E) {
 			mstruct.set(1, 1, 0, true);
 			b = true;
-		} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isMinusOne() && mstruct[1].isPower() && mstruct[1][0].isVariable() && mstruct[1][0].variable()->id() == VARIABLE_ID_E && mstruct[1][1].isMinusOne()) {
-			mstruct.set(-1, 1, 0, true);
-			b = true;
 		}
+	} else if(mstruct.isZero()) {
+		mstruct.set(nr_minus_inf, true);
+		b = true;
 	}
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(b);
 	if(b) return 1;

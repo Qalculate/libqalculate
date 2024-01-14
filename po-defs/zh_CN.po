@@ -4485,9 +4485,9 @@ msgstr "-"
 
 #: ../data/functions.xml.in.h:401
 msgid ""
-"Returns the inverse function for mx*e^x as ln() does for e^x. Only the "
+"Returns the inverse function for x*e^x as ln() does for e^x. Only the "
 "principal branch and real valued results are currently supported."
-msgstr "返回mx*e^x的反函数，就像ln()对于e^x一样。目前只支持主枝和实值结果。"
+msgstr "返回x*e^x的反函数，就像ln()对于e^x一样。目前只支持主枝和实值结果。"
 
 #: ../data/functions.xml.in.h:402
 msgid "Branch"

@@ -4545,10 +4545,10 @@ msgstr "LambertW"
 
 #: ../data/functions.xml.in.h:401
 msgid ""
-"Returns the inverse function for mx*e^x as ln() does for e^x. Only the "
+"Returns the inverse function for x*e^x as ln() does for e^x. Only the "
 "principal branch and real valued results are currently supported."
 msgstr ""
-"Возвращает обратную функцию для mx*e^x, как ln() для e^x. В настоящее время "
+"Возвращает обратную функцию для x*e^x, как ln() для e^x. В настоящее время "
 "поддерживаются только асимптотики основной ветви и результаты с "
 "действительной оценкой."
 

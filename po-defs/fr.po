@@ -4499,7 +4499,7 @@ msgstr "r:lambertw,productlog"
 
 #: ../data/functions.xml.in.h:401
 msgid ""
-"Returns the inverse function for mx*e^x as ln() does for e^x. Only the "
+"Returns the inverse function for x*e^x as ln() does for e^x. Only the "
 "principal branch and real valued results are currently supported."
 msgstr ""
 

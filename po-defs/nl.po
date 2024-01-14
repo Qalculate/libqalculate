@@ -4606,10 +4606,10 @@ msgstr ""
 #: ../data/functions.xml.in.h:401
 #, fuzzy
 msgid ""
-"Returns the inverse function for mx*e^x as ln() does for e^x. Only the "
+"Returns the inverse function for x*e^x as ln() does for e^x. Only the "
 "principal branch and real valued results are currently supported."
 msgstr ""
-"Retourneert de inverse functie van mx*e^x (zoals ln(x) de inverse functie is "
+"Retourneert de inverse functie van x*e^x (zoals ln(x) de inverse functie is "
 "van e^x)."
 
 #: ../data/functions.xml.in.h:402
