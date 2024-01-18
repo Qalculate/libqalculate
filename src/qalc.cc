@@ -3235,11 +3235,24 @@ int main(int argc, char *argv[]) {
 				if(i_maxtime < 0) i_maxtime = 0;
 			}
 		} else if(!calc_arg_begun && (svar == "-set" || svar == "--set" || svar == "-s")) {
+			if(svalue.empty()) {
+				if(i + 1 < argc) {
+					i++;
+					svalue = argv[i];
+				}
+			}
 			if(!svalue.empty()) {
-				set_option_strings.push_back(svalue);
-			} else if(i + 1 < argc) {
-				i++;
-				set_option_strings.push_back(argv[i]);
+				while(true) {
+					size_t i2 = svalue.find(";");
+					if(i2 == string::npos) {
+						set_option_strings.push_back(svalue);
+						break;
+					} else {
+						set_option_strings.push_back(svalue.substr(0, i2));
+						if(i2 + 1 == svalue.length()) break;
+						svalue = svalue.substr(i2 + 1, svalue.length() - (i2 + 1));
+					}
+				}
 			} else {
 				PUTS_UNICODE(_("No option and value specified for set command."));
 			}
