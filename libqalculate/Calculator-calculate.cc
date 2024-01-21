@@ -1069,6 +1069,17 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 	}
 }
 
+bool test_simplified2(const MathStructure &m1, const MathStructure &m2) {
+	if(m1.type() != m2.type() || m1.size() != m2.size()) return false;
+	if(m1.isNumber()) {
+		return comparison_might_be_equal(m1.number().compare(m2.number()));
+	}
+	if(m1.size() == 0) return m1.equals(m2, true, true);
+	for(size_t i = 0; i < m1.size(); i++) {
+		if(!test_simplified2(m1[i], m2[i])) return false;
+	}
+	return true;
+}
 bool test_simplified(const MathStructure &m, bool top = true) {
 	if(m.isFunction() || (m.isVariable() && m.variable()->isKnown()) || (m.isUnit() && (m.unit()->hasApproximateRelationToBase() || (m.unit()->isCurrency() && m.unit() != CALCULATOR->getLocalCurrency())))) return false;
 	for(size_t i = 0; i < m.size(); i++) {
@@ -1333,9 +1344,9 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 		if(msecs > 0) CALCULATOR->startControl(msecs);
 		MathStructure tmp_parse;
 		mstruct_exact = CALCULATOR->calculate(original_expression, evalops, &tmp_parse);
-		if(CALCULATOR->aborted() || mstruct_exact.isApproximate() || (dual_approximation < 0 && max_size > 0 && (test_max_addition_size(mstruct_exact, (size_t) max_size) || mstruct_exact.countTotalChildren(false) > (size_t) max_size * 6))) {
+		if(CALCULATOR->aborted() || mstruct_exact.isApproximate() || (parsed_mstruct && !tmp_parse.equals(*parsed_mstruct, true, true)) || (dual_approximation < 0 && max_size > 0 && (test_max_addition_size(mstruct_exact, (size_t) max_size) || mstruct_exact.countTotalChildren(false) > (size_t) max_size * 6))) {
 			mstruct_exact.setUndefined();
-		} else if(test_simplified(mstruct_exact)) {
+		} else if(test_simplified(mstruct_exact) || test_simplified2(mstruct_exact, *mstruct)) {
 			mstruct->set(mstruct_exact);
 			mstruct_exact.setUndefined();
 		}
@@ -1666,6 +1677,8 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	bool fixed_fraction_has_sign = true;
 	int save_bin = priv->use_binary_prefixes;
 	long int save_fden = priv->fixed_denominator;
+	ComplexNumberForm cnf = evalops.complex_number_form;
+	bool delay_complex = false;
 	bool had_to_expression = false;
 	if(separateToExpression(from_str, to_str, evalops, true)) {
 		remove_duplicate_blanks(to_str);
@@ -1764,13 +1777,13 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				printops.time_zone = TIME_ZONE_CUSTOM;
 				printops.custom_time_zone = 60;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(to_str, "cartesian", _("cartesian")) || str == "rect") {
-				evalops.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
+				cnf = COMPLEX_NUMBER_FORM_RECTANGULAR;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "exponential", _("exponential")) || to_str == "exp") {
-				evalops.complex_number_form = COMPLEX_NUMBER_FORM_EXPONENTIAL;
+				cnf = COMPLEX_NUMBER_FORM_EXPONENTIAL;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "polar", _("polar"))) {
-				evalops.complex_number_form = COMPLEX_NUMBER_FORM_POLAR;
+				cnf = COMPLEX_NUMBER_FORM_POLAR;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "angle", _("angle")) || EQUALS_IGNORECASE_AND_LOCAL(to_str, "phasor", _("phasor"))) {
-				evalops.complex_number_form = COMPLEX_NUMBER_FORM_CIS;
+				cnf = COMPLEX_NUMBER_FORM_CIS;
 				complex_angle_form = true;
 			} else if(to_str == "cis") {
 				evalops.complex_number_form = COMPLEX_NUMBER_FORM_CIS;
@@ -1850,6 +1863,8 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 						// b? in front of unit expression: use binary prefixes
 						do_binary_prefixes = true;
 					}
+					Unit *u = getActiveUnit(to_str);
+					if(delay_complex != (cnf != COMPLEX_NUMBER_FORM_POLAR && cnf != COMPLEX_NUMBER_FORM_CIS) && u && u->baseUnit() == getRadUnit() && u->baseExponent() == 1) delay_complex = !delay_complex;
 					// expression after "to" is by default interpreted as unit expression
 					if(!str_conv.empty()) str_conv += " to ";
 					str_conv += to_str;
@@ -1863,6 +1878,13 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			str += " to ";
 			str += str_conv;
 		}
+	}
+
+	if(!delay_complex || (cnf != COMPLEX_NUMBER_FORM_POLAR && cnf != COMPLEX_NUMBER_FORM_CIS)) {
+		evalops.complex_number_form = cnf;
+		delay_complex = false;
+	} else {
+		evalops.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 	}
 
 	// check for factor or expand instruction at front a expression
@@ -1887,6 +1909,12 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 
 	// perform calculation
 	mstruct = calculate(str, evalops, &parsed_struct);
+
+	if(delay_complex) {
+		evalops.complex_number_form = cnf;
+		if(evalops.complex_number_form == COMPLEX_NUMBER_FORM_CIS) mstruct.complexToCisForm(evalops);
+		else if(evalops.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) mstruct.complexToPolarForm(evalops);
+	}
 
 	// Always perform conversion to optimal (SI) unit when the expression is a number multiplied by a unit and input equals output
 	if(!had_to_expression && ((evalops.approximation == APPROXIMATION_EXACT && evalops.auto_post_conversion != POST_CONVERSION_NONE) || evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) && ((parsed_struct.isMultiplication() && parsed_struct.size() == 2 && parsed_struct[0].isNumber() && parsed_struct[1].isUnit_exp() && parsed_struct.equals(mstruct)) || (parsed_struct.isNegate() && parsed_struct[0].isMultiplication() && parsed_struct[0].size() == 2 && parsed_struct[0][0].isNumber() && parsed_struct[0][1].isUnit_exp() && mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[1] == parsed_struct[0][1] && mstruct[0].isNumber() && parsed_struct[0][0].number() == -mstruct[0].number()) || (parsed_struct.isUnit_exp() && parsed_struct.equals(mstruct)))) {
@@ -1946,8 +1974,14 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			}
 		}
 		if(b) {
+			if(delay_complex) evalops.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 			calculate_dual_exact(mstruct_exact, &mstruct, str, &parsed_struct, evalops, auto_approx, 0, max_length);
 			if(aborted()) mstruct_exact.setUndefined();
+			if(delay_complex && !mstruct_exact.isUndefined()) {
+				evalops.complex_number_form = cnf;
+				if(evalops.complex_number_form == COMPLEX_NUMBER_FORM_CIS) mstruct_exact.complexToCisForm(evalops);
+				else if(evalops.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) mstruct_exact.complexToPolarForm(evalops);
+			}
 		}
 	}
 	if(aborted()) {

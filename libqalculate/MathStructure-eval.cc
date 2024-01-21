@@ -1764,6 +1764,7 @@ bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
 		mabs.eval(eo2);
 		marg.eval(eo2);
 		switch(eo2.parse_options.angle_unit) {
+			case ANGLE_UNIT_RADIANS: {marg.multiply(CALCULATOR->getRadUnit(), true); break;}
 			case ANGLE_UNIT_DEGREES: {marg.multiply(CALCULATOR->getDegUnit(), true); break;}
 			case ANGLE_UNIT_GRADIANS: {marg.multiply(CALCULATOR->getGraUnit(), true); break;}
 			case ANGLE_UNIT_CUSTOM: {if(CALCULATOR->customAngleUnit()) {marg.multiply(CALCULATOR->customAngleUnit(), true);} break;}
@@ -1779,6 +1780,7 @@ bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
 		EvaluationOptions eo2 = eo;
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		switch(eo2.parse_options.angle_unit) {
+			case ANGLE_UNIT_RADIANS: {multiply(CALCULATOR->getRadUnit(), true); break;}
 			case ANGLE_UNIT_DEGREES: {calculateMultiply(Number(180, 1), eo2); calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); multiply(CALCULATOR->getDegUnit(), true); break;}
 			case ANGLE_UNIT_GRADIANS: {calculateMultiply(Number(200, 1), eo2); calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); multiply(CALCULATOR->getGraUnit(), true); break;}
 			case ANGLE_UNIT_CUSTOM: {if(CALCULATOR->customAngleUnit()) {calculateMultiply(angle_units_in_turn(eo2, 1, 2), eo2); calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); multiply(CALCULATOR->customAngleUnit(), true);} break;}
@@ -1793,6 +1795,7 @@ bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
 		EvaluationOptions eo2 = eo;
 		eo2.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 		switch(eo2.parse_options.angle_unit) {
+			case ANGLE_UNIT_RADIANS: {multiply(CALCULATOR->getRadUnit(), true); break;}
 			case ANGLE_UNIT_DEGREES: {CHILD(1).calculateMultiply(Number(180, 1), eo2); CHILD(1).calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); CHILD(1).multiply(CALCULATOR->getDegUnit(), true); break;}
 			case ANGLE_UNIT_GRADIANS: {CHILD(1).calculateMultiply(Number(200, 1), eo2); CHILD(1).calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); CHILD(1).multiply(CALCULATOR->getGraUnit(), true); break;}
 			case ANGLE_UNIT_CUSTOM: {if(CALCULATOR->customAngleUnit()) {CHILD(1).calculateMultiply(angle_units_in_turn(eo2, 1, 2), eo2); CHILD(1).calculateDivide(CALCULATOR->getVariableById(VARIABLE_ID_PI), eo2); CHILD(1).multiply(CALCULATOR->customAngleUnit(), true);} break;}
@@ -1814,6 +1817,7 @@ bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
 			MathStructure mabs(CALCULATOR->getFunctionById(FUNCTION_ID_ABS), this, NULL);
 			mabs.eval(eo2);
 			switch(eo2.parse_options.angle_unit) {
+				case ANGLE_UNIT_RADIANS: {marg.multiply(CALCULATOR->getRadUnit(), true); break;}
 				case ANGLE_UNIT_DEGREES: {marg.multiply(CALCULATOR->getDegUnit(), true); break;}
 				case ANGLE_UNIT_GRADIANS: {marg.multiply(CALCULATOR->getGraUnit(), true); break;}
 				case ANGLE_UNIT_CUSTOM: {if(CALCULATOR->customAngleUnit()) {marg.multiply(CALCULATOR->customAngleUnit(), true);} break;}

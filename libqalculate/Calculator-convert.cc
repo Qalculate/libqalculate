@@ -566,6 +566,18 @@ void test_convert(MathStructure &mstruct_new, Unit *to_unit, long int &n, bool b
 	}
 	eo2.auto_post_conversion = pc;
 }
+bool angle_convert(MathStructure &m, Unit *u, const EvaluationOptions &eo) {
+	if(m.isFunction() && ((m.function()->getArgumentDefinition(1) && m.function()->getArgumentDefinition(1)->type() == ARGUMENT_TYPE_ANGLE) || m.function()->id() == FUNCTION_ID_CIS) && m.size() >= 1) {
+		m[0] = CALCULATOR->convert(m[0], u, eo);
+		return true;
+	}
+	bool b = false;
+	for(size_t i = 0; i < m.size(); i++) {
+		angle_convert(m[i], u, eo);
+		b = true;
+	}
+	return b;
+}
 
 MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo, bool always_convert, bool convert_to_mixed_units, bool transform_orig, MathStructure *parsed_struct) {
 	CompositeUnit *cu = NULL;
@@ -650,6 +662,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 				eo2.sync_units = false;
 				eo2.keep_prefixes = true;
 				mstruct_new.eval(eo2);
+				if(b_angle) angle_convert(mstruct_new, to_unit, eo);
 				cleanMessages(mstruct, n_messages + 1);
 			}
 			return mstruct_new;
@@ -832,6 +845,8 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 				}
 			}
 			b = true;
+		} else if(b_angle && angle_convert(mstruct_new, to_unit, eo)) {
+			return mstruct_new;
 		} else if(to_unit->baseUnit() == getRadUnit() && mstruct_new.contains(to_unit, true) < 1) {
 			mstruct_new.multiply(getRadUnit(), true);
 			if(to_unit->baseExponent() != 1) mstruct_new.last().raise(to_unit->baseExponent());
@@ -1000,7 +1015,10 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 			}
 			eo2.sync_units = false;
 			eo2.keep_prefixes = true;
-			if(b_eval) mstruct_new.eval(eo2);
+			if(b_eval) {
+				mstruct_new.eval(eo2);
+				if(b_angle) angle_convert(mstruct_new, to_unit, eo);
+			}
 
 			cleanMessages(mstruct, n_messages + 1);
 

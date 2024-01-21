@@ -2139,7 +2139,7 @@ bool remove_angle_unit(MathStructure &m, Unit *u) {
 	bool b_ret = false;
 	for(size_t i = 0; i < m.size(); i++) {
 		if(remove_angle_unit(m[i], u)) b_ret = true;
-		if(m.isFunction() && m.function()->getArgumentDefinition(i + 1) && m.function()->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_ANGLE) {
+		if(m.isFunction() && ((m.function()->getArgumentDefinition(i + 1) && m.function()->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_ANGLE) || (i == 0 && m.function()->id() == FUNCTION_ID_CIS && u == CALCULATOR->getRadUnit()))) {
 			if(m[i].isUnit() && !m[i].prefix() && m[i].unit() == u) {
 				m[i].set(1, 1, 0, true);
 			} else if(m[i].isMultiplication()) {
@@ -2482,6 +2482,20 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 		}
 		case STRUCT_MULTIPLICATION: {
 			if(po.preserve_format) break;
+
+			for(size_t i = 1; i + 1 < SIZE; i++) {
+				if(CHILD(i).isFunction() && CHILD(i).function()->id() == FUNCTION_ID_CIS && CHILD(i).size() == 1) {
+					transform(STRUCT_MULTIPLICATION);
+					i++;
+					while(i < CHILD(0).size()) {
+						MathStructure *mfactor = &CHILD(0)[i];
+						APPEND_REF(mfactor);
+						CHILD(0).delChild(i + 1);
+					}
+					formatsub(po, parent, pindex, false, top_parent);
+					break;
+				}
+			}
 
 			if(CHILD(0).isNegate()) {
 				if(CHILD(0)[0].isOne()) {
@@ -2966,7 +2980,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 	switch(parent.type()) {
 		case STRUCT_MULTIPLICATION: {
 			switch(m_type) {
-				case STRUCT_MULTIPLICATION: {return ((index > 1 && SIZE > 0) || po.excessive_parenthesis) && (!po.place_units_separately || !is_unit_multiexp_strict(*this));}
+				case STRUCT_MULTIPLICATION: {return (((index > 1 && SIZE > 0) || po.excessive_parenthesis) && (!po.place_units_separately || !is_unit_multiexp_strict(*this))) || (SIZE == 2 && CHILD(1).isFunction() && CHILD(1).size() == 1 && CHILD(1).function()->id() == FUNCTION_ID_CIS && CHILD(1).function()->referenceName() == "cis");}
 				case STRUCT_DIVISION: {return flat_division && (index < parent.size() || (po.excessive_parenthesis && (!po.place_units_separately || !is_unit_multiexp_strict(*this) || (index > 0 && is_unit_multiexp_strict(parent[index - 2])))));}
 				case STRUCT_INVERSE: {return flat_division;}
 				case STRUCT_ADDITION: {return true;}

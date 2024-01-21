@@ -6469,6 +6469,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	int save_dual = dual_fraction;
 	ComplexNumberForm save_complex_number_form = evalops.complex_number_form;
 	bool caf_bak = complex_angle_form;
+	ComplexNumberForm cnf = evalops.complex_number_form;
 	bool b_units_saved = evalops.parse_options.units_enabled;
 	AutoPostConversion save_auto_post_conversion = evalops.auto_post_conversion;
 	MixedUnitsConversion save_mixed_units_conversion = evalops.mixed_units_conversion;
@@ -6478,6 +6479,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	bool custom_base_set = false;
 	had_to_expression = false;
 	bool fixed_fraction_has_sign = true;
+	bool delay_complex = false;
 
 	if(do_stack) {
 	} else {
@@ -6596,19 +6598,19 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					do_calendars = true;
 				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(to_str, "cartesian", _("cartesian")) || to_str == "rect") {
 					complex_angle_form = false;
-					evalops.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
+					cnf = COMPLEX_NUMBER_FORM_RECTANGULAR;
 				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "exponential", _("exponential")) || to_str == "exp") {
 					complex_angle_form = false;
-					evalops.complex_number_form = COMPLEX_NUMBER_FORM_EXPONENTIAL;
+					cnf = COMPLEX_NUMBER_FORM_EXPONENTIAL;
 				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "polar", _("polar"))) {
 					complex_angle_form = false;
-					evalops.complex_number_form = COMPLEX_NUMBER_FORM_POLAR;
+					cnf = COMPLEX_NUMBER_FORM_POLAR;
 				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "angle", _("angle")) || EQUALS_IGNORECASE_AND_LOCAL(to_str, "phasor", _("phasor"))) {
 					complex_angle_form = true;
-					evalops.complex_number_form = COMPLEX_NUMBER_FORM_CIS;
+					cnf = COMPLEX_NUMBER_FORM_CIS;
 				} else if(to_str == "cis") {
 					complex_angle_form = false;
-					evalops.complex_number_form = COMPLEX_NUMBER_FORM_CIS;
+					cnf = COMPLEX_NUMBER_FORM_CIS;
 				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "optimal", _("optimal"))) {
 					evalops.parse_options.units_enabled = true;
 					evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL_SI;
@@ -6682,6 +6684,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 						} else if(to_str.length() > 1 && to_str[1] == '?' && to_str[0] == 'b') {
 							do_binary_prefixes = true;
 						}
+						Unit *u = CALCULATOR->getActiveUnit(to_str);
+						if(delay_complex != (cnf != COMPLEX_NUMBER_FORM_POLAR && cnf != COMPLEX_NUMBER_FORM_CIS) && u && u->baseUnit() == CALCULATOR->getRadUnit() && u->baseExponent() == 1) delay_complex = !delay_complex;
 						if(!str_conv.empty()) str_conv += " to ";
 						str_conv += to_str;
 					}
@@ -6709,6 +6713,13 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		transform_expression_for_equals_save(str, evalops.parse_options);
 	}
 
+	if(!delay_complex || (cnf != COMPLEX_NUMBER_FORM_POLAR && cnf != COMPLEX_NUMBER_FORM_CIS)) {
+		evalops.complex_number_form = cnf;
+		delay_complex = false;
+	} else {
+		evalops.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
+	}
+
 	if(caret_as_xor) gsub("^", "⊻", str);
 
 	expression_executed = true;
@@ -6720,6 +6731,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	CALCULATOR->resetExchangeRatesUsed();
 
 	MathStructure to_struct;
+
 
 	if(!simplified_percentage) evalops.parse_options.parsing_mode = (ParsingMode) (evalops.parse_options.parsing_mode |PARSE_PERCENT_AS_ORDINARY_CONSTANT);
 	if(do_stack) {
@@ -6932,6 +6944,22 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		i = 0;
 	}
 
+	if(delay_complex) {
+		evalops.complex_number_form = cnf;
+		CALCULATOR->startControl(100);
+		if(!rpn_mode) {
+			if(evalops.complex_number_form == COMPLEX_NUMBER_FORM_CIS) mstruct->complexToCisForm(evalops);
+			else if(evalops.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) mstruct->complexToPolarForm(evalops);
+		} else if(!do_stack) {
+			MathStructure *mreg = CALCULATOR->getRPNRegister(do_stack ? stack_index + 1 : 1);
+			if(mreg) {
+				if(evalops.complex_number_form == COMPLEX_NUMBER_FORM_CIS) mreg->complexToCisForm(evalops);
+				else if(evalops.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) mreg->complexToPolarForm(evalops);
+			}
+		}
+		CALCULATOR->stopControl();
+	}
+
 	// Always perform conversion to optimal (SI) unit when the expression is a number multiplied by a unit and input equals output
 	if(!rpn_mode && !avoid_recalculation && !had_to_expression && ((evalops.approximation == APPROXIMATION_EXACT && evalops.auto_post_conversion != POST_CONVERSION_NONE) || evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) && parsed_mstruct && mstruct && ((parsed_mstruct->isMultiplication() && parsed_mstruct->size() == 2 && (*parsed_mstruct)[0].isNumber() && (*parsed_mstruct)[1].isUnit_exp() && parsed_mstruct->equals(*mstruct)) || (parsed_mstruct->isNegate() && (*parsed_mstruct)[0].isMultiplication() && (*parsed_mstruct)[0].size() == 2 && (*parsed_mstruct)[0][0].isNumber() && (*parsed_mstruct)[0][1].isUnit_exp() && mstruct->isMultiplication() && mstruct->size() == 2 && (*mstruct)[1] == (*parsed_mstruct)[0][1] && (*mstruct)[0].isNumber() && (*parsed_mstruct)[0][0].number() == -(*mstruct)[0].number()) || (parsed_mstruct->isUnit_exp() && parsed_mstruct->equals(*mstruct)))) {
 		Unit *u = NULL;
@@ -7021,7 +7049,15 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			else i_timeleft = mstruct->containsType(STRUCT_COMPARISON) ? 2000 : 1000;
 		}
 		if(i_timeleft > 0) {
+			if(delay_complex) evalops.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 			calculate_dual_exact(mstruct_exact, mstruct, original_expression, parsed_mstruct, evalops, dual_approximation < 0 ? AUTOMATIC_APPROXIMATION_AUTO : (dual_approximation > 0 ? AUTOMATIC_APPROXIMATION_DUAL : AUTOMATIC_APPROXIMATION_OFF), i_timeleft, 5);
+			if(delay_complex && !mstruct_exact.isUndefined()) {
+				evalops.complex_number_form = cnf;
+				CALCULATOR->startControl(100);
+				if(evalops.complex_number_form == COMPLEX_NUMBER_FORM_CIS) mstruct_exact.complexToCisForm(evalops);
+				else if(evalops.complex_number_form == COMPLEX_NUMBER_FORM_POLAR) mstruct_exact.complexToPolarForm(evalops);
+				CALCULATOR->stopControl();
+			}
 		}
 		if(i_maxtime) {struct timespec tv; clock_gettime(CLOCK_MONOTONIC, &tv); i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_nsec / 1000) / 1000;}
 	}
