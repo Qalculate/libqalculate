@@ -1515,7 +1515,7 @@ void set_option(string str) {
 		//complex form
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "angle", _("angle")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "phasor", _("phasor"))) v = COMPLEX_NUMBER_FORM_CIS + 1;
 		//complex form
-		else if(svar == "cis") v = COMPLEX_NUMBER_FORM_CIS;
+		else if(svalue == "cis") v = COMPLEX_NUMBER_FORM_CIS;
 		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
