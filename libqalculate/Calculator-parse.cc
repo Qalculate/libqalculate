@@ -187,21 +187,89 @@ size_t compare_name(const string &name, const string &str, const size_t &name_le
 }
 
 // case insensitive string comparison; compares whole name with str from str_index to str_index + name_length
-size_t compare_name_no_case(const string &name, const string &str, const size_t &name_length, const size_t &str_index, int base, size_t ignore_us = 0, int errors_allowed = 0, bool case_sensitive = false) {
+size_t compare_name_no_case(const string &name, const string &str, const size_t &name_length, const size_t &str_index, int base, size_t ignore_us = 0) {
 	if(name_length == 0) return 0;
-	int error_move = 0;
-	if(errors_allowed > 0 && str.length() != name_length - ignore_us) {
-		error_move = (unicode_length(str) - (unicode_length(name) - ignore_us));
-		if(error_move > errors_allowed) error_move = errors_allowed;
-		else if(-error_move > errors_allowed) error_move = -((int) errors_allowed);
-	}
 	size_t is = str_index;
 	size_t ip = 0;
 	for(size_t i = 0; i < name_length; i++, is++) {
 		if(ignore_us > 0 && name[i + ip] == '_') {ip++; ignore_us--;}
-		if(is >= str.length()) {
-			if(i - error_move >= name_length) break;
+		if(is >= str.length()) return 0;
+		if(((signed char) name[i + ip] < 0 && i + 1 < name_length) || ((signed char) str[is] < 0 && is + 1 < str.length())) {
+			// assumed Unicode character found
+			size_t i2 = 1, is2 = 1;
+			size_t n1 = 1, n2 = 1;
+			// determine length of Unicode character(s)
+			if((signed char) name[i + ip] < 0) {
+				while(i2 + i < name_length && (signed char) name[i2 + i + ip] < 0) {
+					if((unsigned char) name[i2 + i + ip] >= 0xC0) n1++;
+					i2++;
+				}
+			}
+			if((signed char) str[is] < 0) {
+				while(is2 + is < str.length() && (signed char) str[is2 + is] < 0) {
+					if((unsigned char) str[is2 + is] >= 0xC0) {
+						if(n2 == n1) break;
+						n2++;
+					}
+					is2++;
+				}
+			}
+			if(n1 != n2) return 0;
+			// compare characters
+			bool isequal = (i2 == is2);
+			if(isequal) {
+				for(size_t i3 = 0; i3 < i2; i3++) {
+					if(str[is + i3] != name[i + i3 + ip]) {
+						isequal = false;
+						break;
+					}
+				}
+			}
+			// get lower case character and compare again
+			if(!isequal) {
+				char *gstr1 = utf8_strdown(name.c_str() + (sizeof(char) * (i + ip)), i2);
+				char *gstr2 = utf8_strdown(str.c_str() + (sizeof(char) * (is)), is2);
+				if(!gstr1 || !gstr2) return 0;
+				if(strcmp(gstr1, gstr2) != 0) {free(gstr1); free(gstr2); return 0;}
+				free(gstr1); free(gstr2);
+			}
+			i += i2 - 1;
+			is += is2 - 1;
+		} else if(name[i + ip] != str[is] && !((name[i + ip] >= 'a' && name[i + ip] <= 'z') && name[i + ip] - 32 == str[is]) && !((name[i + ip] <= 'Z' && name[i + ip] >= 'A') && name[i + ip] + 32 == str[is])) {
 			return 0;
+		}
+	}
+	// number base uses digits other than 0-9, check that at least one non-digit is used
+	if(base < 2 || base > 10) {
+		for(size_t i = str_index; i < is; i++) {
+			if(is_not_number(str[i], base)) return is - str_index;
+		}
+		return 0;
+	}
+	return is - str_index;
+}
+
+// string comparison for detection of spelling mistakes
+bool compare_name_with_error(const string &name, const string &str, const size_t &name_length, int base, size_t ignore_us, int errors_allowed, bool case_sensitive) {
+	if(name_length == 0) return false;
+	int error_move = 0;
+	if(str.length() != name_length - ignore_us) {
+		error_move = (unicode_length(str) - (unicode_length(name) - ignore_us));
+		if(error_move > errors_allowed) error_move = errors_allowed;
+		else if(-error_move > errors_allowed) error_move = -((int) errors_allowed);
+	}
+	size_t is = 0;
+	size_t ip = 0;
+	size_t i = 0;
+	while(true) {
+		if(i >= name_length) {
+			if(is < str.length() && error_move >= 0 && error_move < (int) unicode_length(str.c_str() + (sizeof(char) * is))) return false;
+			break;
+		}
+		if(ignore_us > 0 && name[i + ip] == '_') {ip++; ignore_us--;}
+		if(is >= str.length()) {
+			if(error_move <= 0 && -error_move >= (int) unicode_length(name.c_str() + (sizeof(char) * i))) break;
+			return false;
 		}
 		if(((signed char) name[i + ip] < 0 && i + 1 < name_length) || ((signed char) str[is] < 0 && is + 1 < str.length())) {
 			// assumed Unicode character found
@@ -227,7 +295,7 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 				}
 			}
 			if(n1 != n2) {
-				return 0;
+				return false;
 			} else {
 				// compare characters
 				bool isequal = (i2 == is2);
@@ -249,45 +317,60 @@ size_t compare_name_no_case(const string &name, const string &str, const size_t 
 					}
 				}
 				if(!isequal) {
-					if(errors_allowed == 0)	return 0;
+					if(errors_allowed == 0)	return false;
 					errors_allowed--;
-					if(error_move < 0 && is > 0) {
+					if(error_move < 0) {
 						is--;
 						error_move++;
-						i += i2 - 1;
+						i += i2;
 						continue;
-					} else if(error_move > 0 && i > 0) {
+					} else if(error_move > 0) {
 						i--;
 						error_move--;
-						is += is2 - 1;
+						is += is2;
 						continue;
 					}
+					if(error_move < 0) error_move++;
+					else if(error_move > 0) error_move--;
 				}
 			}
-			i += i2 - 1;
-			is += is2 - 1;
+			i += i2;
+			is += is2;
 		} else if(name[i + ip] != str[is] && (case_sensitive || (!((name[i + ip] >= 'a' && name[i + ip] <= 'z') && name[i + ip] - 32 == str[is]) && !((name[i + ip] <= 'Z' && name[i + ip] >= 'A') && name[i + ip] + 32 == str[is])))) {
-			if(errors_allowed == 0)	return 0;
+			if(errors_allowed == 0)	return false;
 			errors_allowed--;
-			if(error_move < 0 && is > 0) {
-				is--;
-				error_move++;
-			} else if(error_move > 0 && i > 0) {
-				i--;
-				error_move--;
-			} else if(error_move == 0 && is + 1 < str.length() && i + 1 < name_length && (str[is + 1] == name[i + ip] || (!case_sensitive && (((str[is + 1] >= 'a' || str[is + 1] <= 'z') && (str[is + 1] - 32 == name[i + ip])) || ((str[is + 1] <= 'Z' || str[is + 1] >= 'A') && str[is + 1] + 32 == name[i + ip])))) && (str[is] == name[i + ip + 1] || (!case_sensitive && (((name[i + ip + 1] >= 'a' || name[i + ip + 1] <= 'z') && (name[i + ip + 1] - 32 == str[is])) || ((name[i + ip + 1] <= 'Z' || name[i + ip + 1] >= 'A') && name[i + ip + 1] + 32 == str[is]))))) {
+			if((error_move == 0 || (errors_allowed > 0 && -error_move <= errors_allowed && error_move <= errors_allowed)) && is + 1 < str.length() && i + 1 < name_length && str[is + 1] > 0 && name[i + ip + 1] > 0 && (str[is + 1] == name[i + ip] || (!case_sensitive && (((str[is + 1] >= 'a' || str[is + 1] <= 'z') && (str[is + 1] - 32 == name[i + ip])) || ((str[is + 1] <= 'Z' || str[is + 1] >= 'A') && str[is + 1] + 32 == name[i + ip])))) && (str[is] == name[i + ip + 1] || (!case_sensitive && (((name[i + ip + 1] >= 'a' || name[i + ip + 1] <= 'z') && (name[i + ip + 1] - 32 == str[is])) || ((name[i + ip + 1] <= 'Z' || name[i + ip + 1] >= 'A') && name[i + ip + 1] + 32 == str[is]))))) {
+				i += 2;
+				is += 2;
+			} else if(error_move != 0 && errors_allowed > 0 && -error_move <= errors_allowed && error_move <= errors_allowed && is + 1 < str.length() && i + 1 < name_length && str[is + 1] > 0 && name[i + ip + 1] > 0 && (str[is + 1] == name[i + ip + 1] || (!case_sensitive && (((str[is + 1] >= 'a' || str[is + 1] <= 'z') && (str[is + 1] - 32 == name[i + ip + 1])) || ((str[is + 1] <= 'Z' || str[is + 1] >= 'A') && str[is + 1] + 32 == name[i + ip + 1]))))) {
 				i++;
+				is++;
+			} else if(error_move < 0) {
+				i++;
+				if(error_move < 0) error_move++;
+				else if(error_move > 0) error_move--;
+			} else if(error_move > 0) {
+				is++;
+				if(error_move < 0) error_move++;
+				else if(error_move > 0) error_move--;
+			} else {
+				i++;
+				is++;
 			}
+		} else {
+			i++;
+			is++;
 		}
 	}
+
 	// number base uses digits other than 0-9, check that at least one non-digit is used
 	if(base < 2 || base > 10) {
-		for(size_t i = str_index; i < is; i++) {
-			if(is_not_number(str[i], base)) return is - str_index;
+		for(i = 0; i < is; i++) {
+			if(is_not_number(str[i], base)) return true;
 		}
-		return 0;
+		return false;
 	}
-	return is - str_index;
+	return true;
 }
 
 const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", "∠", "\x1c", "⊼", "\x1d", "⊽", "\x1e", "⊕", "\x1f", "⨯", "\x15", "∥", "\x14"};
@@ -1812,7 +1895,11 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	}
 
 	size_t consecutive_objects = 0;
+	bool suspect_object_order = false;
+	bool objects_finished = false;
+	char prev_object = 0;
 	string full_name;
+	char character_after_object = 0;
 	for(size_t str_index = 0; str_index < str.length(); str_index++) {
 		if(str[str_index] == LEFT_VECTOR_WRAP_CH) {
 			consecutive_objects = 0;
@@ -2555,10 +2642,17 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			size_t last_unit_char = str.find_last_not_of(NUMBERS, last_name_char);
 			size_t name_chars_left = last_name_char - str_index + 1;
 			size_t unit_chars_left = last_unit_char - str_index + 1;
-			if(consecutive_objects == 0 && !po.limit_implicit_multiplication) {
-				if(unit_chars_left >= 5) {
+			if(consecutive_objects == 0) {
+				prev_object = 0;
+				suspect_object_order = false;
+				objects_finished = false;
+				if(unit_chars_left >= 4) {
 					full_name = str.substr(str_index, unit_chars_left);
-					if(unicode_length(full_name) < 5) full_name = "";
+					if(unicode_length(full_name) < 4) {
+						full_name = "";
+					} else if(str.length() > str_index + unit_chars_left) {
+						character_after_object = str[str_index + unit_chars_left];
+					}
 				} else {
 					full_name = "";
 				}
@@ -2767,6 +2861,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 							stmp += i2s(addId(new MathStructure((Variable*) object)));
 							stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+							if(name_length >= unit_chars_left) objects_finished = true;
 							str.replace(str_index, name_length, stmp);
 							str_index += stmp.length();
 							moved_forward = true;
@@ -2940,6 +3035,38 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								if(icand > 0) i6 = icand;
 								if(b && i5 >= 2) {
 									stmp2 = str.substr(str_index + name_length, i6 - 1);
+									if(name_length < unit_chars_left) {
+										objects_finished = true;
+										if(is_not_in(NUMBER_ELEMENTS, stmp2[0])) {
+											consecutive_objects++;
+											if(character_after_object == LEFT_PARENTHESIS_CH && f->maxargs() != 0) {
+												suspect_object_order = true;
+											} else if(f->maxargs() != 0 && (!f->getArgumentDefinition(1) || !f->getArgumentDefinition(1)->suggestsQuotes()) && stmp2.find(COMMA_CH) == string::npos) {
+												if(f->minargs() > 1) {
+													suspect_object_order = true;
+												} else {
+													MathStructure mtest;
+													beginTemporaryStopMessages();
+													parse(&mtest, str.substr(str_index + name_length, unit_chars_left - name_length), po);
+													if(endTemporaryStopMessages()) {
+														suspect_object_order = true;
+													} else if(mtest.isUnit()) {
+														suspect_object_order = true;
+													} else if(mtest.isMultiplication() && mtest.size() > 0) {
+														for(size_t i = 0; i < mtest.size(); i++) {
+															if(mtest[i].isUnit()) {
+																if(i == 0) {
+																	suspect_object_order = true;
+																}
+															} else if(i > 0 && mtest[i - 1].isUnit()) {
+																suspect_object_order = true;
+															}
+														}
+													}
+												}
+											}
+										}
+									}
 									stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 									if(b_unended_function && unended_function) {
 										po.unended_function = unended_function;
@@ -2986,6 +3113,10 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								}
 								if(b) {
 									stmp2 = str.substr(str_index + name_length + i9, i6 - (str_index + name_length + i9));
+									if(name_length < unit_chars_left && is_not_in(NUMBER_ELEMENTS, stmp2[0])) {
+										objects_finished = true;
+										consecutive_objects++;
+									}
 									stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 									if(b_unended_function && unended_function) {
 										po.unended_function = unended_function;
@@ -3009,6 +3140,10 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								str_index += stmp.length();
 								moved_forward = true;
 							}
+							if(moved_forward && name_length >= unit_chars_left) {
+								objects_finished = true;
+								if(f->maxargs() != 0 && is_in(MULTIPLICATION DIVISION POWER RIGHT_PARENTHESIS, character_after_object)) suspect_object_order = true;
+							}
 							break;
 						}
 						case 'u': {
@@ -3026,6 +3161,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								}
 							}
 							str_index += stmp.length();
+							if(name_length >= unit_chars_left) objects_finished = true;
 							moved_forward = true;
 							p = NULL;
 							break;
@@ -3056,6 +3192,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 									str.replace(str_index, name_length, stmp);
 									str_index += stmp.length();
+									if(name_length >= unit_chars_left) objects_finished = true;
 									moved_forward = true;
 								}
 								break;
@@ -3096,6 +3233,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 											str.erase(str_index - name_length_old, name_length_old);
 											str_index -= name_length_old;
 											object = ufvl[ufv_index2];
+											ufvt = 'u';
 											goto replace_text_by_unit_place;
 										}
 									}
@@ -3130,6 +3268,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 												str.erase(str_index - name_length_old, name_length_old);
 												str_index -= name_length_old;
 												object = ufv[2][index][ufv_index2];
+												ufvt = 'u';
 												goto replace_text_by_unit_place;
 											}
 										}
@@ -3156,146 +3295,14 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				p = best_p;
 				str.erase(str_index, best_pnl);
 				name_length = best_pl - best_pnl;
+				ufvt = 'u';
 				goto replace_text_by_unit_place;
 			} else if(!moved_forward && found_function) {
 				object = found_function;
 				name = found_function_name;
 				name_length = found_function_name_length;
+				ufvt = 'f';
 				goto set_function;
-			}
-			consecutive_objects++;
-			if(!full_name.empty() && (consecutive_objects > 2 || (consecutive_objects == 2 && !moved_forward && !po.unknowns_enabled && is_not_number(str[str_index], base)))) {
-				size_t l = full_name.length();
-				size_t ul = unicode_length(full_name);
-				size_t nl = 0;
-				size_t errors_allowed = 1;
-				size_t unicode_diff = l - ul;
-				if(unicode_diff > errors_allowed * 2) unicode_diff = errors_allowed * 2;
-				//if(ul > 8 || (!moved_forward && !po.unknowns_enabled && is_not_number(str[str_index], base))) errors_allowed = 2;
-				// check for potential spelling errors
-				vt3 = 0;
-				if(l + errors_allowed * 3 <= UFV_LENGTHS) {
-					ufv_index = l - 1 + errors_allowed * 3;
-					vt2 = 1;
-					if(!po.functions_enabled) {
-						if(!po.units_enabled) {
-							if(!po.variables_enabled) vt2 = 4;
-							else vt2 = 3;
-						} else {
-							vt2 = 2;
-						}
-					}
-				} else {
-					vt2 = -1;
-					ufv_index = 0;
-				}
-				p = NULL;
-				while(vt2 < 4) {
-					name = NULL;
-					if(vt2 == -1) {
-						if(ufv_index < ufvl.size()) {
-							if((ufvl_t[ufv_index] == 'v' && po.variables_enabled) || (ufvl_t[ufv_index] == 'f' && po.functions_enabled) || (ufvl_t[ufv_index] == 'u' && po.units_enabled)) {
-								object = ufvl[ufv_index];
-								name = &((ExpressionItem*) object)->getName(ufvl_i[ufv_index]).name;
-								case_sensitive = ((ExpressionItem*) object)->getName(ufvl_i[ufv_index]).case_sensitive;
-								name_length = name->length();
-								underscore = priv->ufvl_us[ufv_index]; name_length -= underscore;
-								nl = unicode_length(*name);
-								if(nl > ul + errors_allowed || nl < ul - errors_allowed || nl < 4 || nl - underscore < 4) name = NULL;
-							}
-							ufv_index++;
-						} else {
-							if(l - errors_allowed - unicode_diff > UFV_LENGTHS) break;
-							ufv_index = UFV_LENGTHS - 1;
-							vt2 = 1;
-							vt3 = 0;
-						}
-					} else if(vt2 == 0 && vt3 < ufv[vt2][ufv_index].size()) {
-						object = ufv[vt2][ufv_index][vt3];
-						name = &((Prefix*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
-						name_length = name->length();
-						underscore = priv->ufv_us[vt2][ufv_index][vt3]; name_length -= underscore;
-						case_sensitive = ((Prefix*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
-						if(name && ((case_sensitive && compare_name(*name, full_name, name_length, 0, base, underscore)) || (!case_sensitive && compare_name_no_case(*name, full_name, name_length, 0, base, underscore)))) {
-							full_name = full_name.substr(name_length, full_name.length() - name_length);
-							p = (Prefix*) object;
-							l = full_name.length();
-							ul = unicode_length(full_name);
-							errors_allowed = 1;
-							//if(ul > 8 || (!moved_forward && !po.unknowns_enabled && is_not_number(str[str_index], base))) errors_allowed = 2;
-							unicode_diff = l - ul;
-							if(unicode_diff > errors_allowed * 2) unicode_diff = errors_allowed * 2;
-							vt3 = 0;
-							if(l + errors_allowed <= UFV_LENGTHS) {
-								ufv_index = l - 1 + errors_allowed;
-								vt2 = 2;
-							} else {
-								vt2 = -1;
-								ufv_index = 0;
-							}
-							continue;
-						} else {
-							vt3++;
-						}
-					} else if(vt2 > 0 && vt3 < ufv[vt2][ufv_index].size()) {
-						object = ufv[vt2][ufv_index][vt3];
-						name = &((ExpressionItem*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
-						name_length = name->length();
-						underscore = priv->ufv_us[vt2][ufv_index][vt3]; name_length -= underscore;
-						case_sensitive = ((ExpressionItem*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
-						nl = unicode_length(*name);
-						if(nl > ul + errors_allowed || nl < ul - errors_allowed || nl < 4 || nl - underscore < 4) name = NULL;
-						vt3++;
-					} else if(vt2 == 0) {
-						if(ufv_index == 0) break;
-						ufv_index--;
-					} else {
-						if(!p) {
-							vt2++;
-							if(vt2 == 2 && !po.units_enabled) vt2++;
-							if(vt2 == 3 && !po.variables_enabled) vt2++;
-						}
-						vt3 = 0;
-						if((vt2 == 4 || p) && (ufv_index <= 4 || ufv_index < l - errors_allowed - unicode_diff)) {
-							if(p) break;
-							if(po.units_enabled) {
-								size_t nchar = 0;
-								for(size_t i_f = full_name.length() - 1; i_f > 0; i_f--) {
-									if(full_name[i_f] > 0 || (unsigned char) full_name[i_f] >= 0xC0) {
-										nchar++;
-										if(nchar == 5) {
-											vt2 = 0;
-											if(i_f >= UFV_LENGTHS) ufv_index = UFV_LENGTHS - 1;
-											else ufv_index = i_f - 1;
-											break;
-										}
-									}
-								}
-							}
-							if(vt2 == 4) break;
-						}
-						if(vt2 == 4 || p) {
-							ufv_index--;
-							if(!p) {
-								vt2 = 1;
-								if(!po.functions_enabled) {
-									if(!po.units_enabled) {
-										if(!po.variables_enabled) vt2 = 4;
-										else vt2 = 3;
-									} else {
-										vt2 = 2;
-									}
-								}
-							}
-						}
-						continue;
-					}
-					if(vt2 != 0 && name && ((case_sensitive && compare_name_no_case(*name, full_name, name_length, 0, base, underscore, errors_allowed, true)) || (!case_sensitive && compare_name_no_case(*name, full_name, name_length, 0, base, underscore, errors_allowed)))) {
-						CALCULATOR->error(false, _("Did you mean \"%s\"?"), vt2 == -1 ? ((ExpressionItem*) object)->getName(ufvl_i[ufv_index - 1]).formattedName(((ExpressionItem*) object)->type(), underscore).c_str() : ((ExpressionItem*) object)->getName(ufv_i[vt2][ufv_index][vt3 - 1]).formattedName(((ExpressionItem*) object)->type(), underscore).c_str(), NULL);
-						break;
-					}
-				}
-				full_name = "";
 			}
 			if(!moved_forward) {
 				bool b = po.unknowns_enabled && is_not_number(str[str_index], base) && !(str_index > 0 && is_in(EXPS, str[str_index]) && str_index + 1 < str.length() && (is_in(NUMBER_ELEMENTS, str[str_index + 1]) || (is_in(PLUS MINUS, str[str_index + 1]) && str_index + 2 < str.length() && is_in(NUMBER_ELEMENTS, str[str_index + 2]))) && is_in(NUMBER_ELEMENTS, str[str_index - 1]));
@@ -3309,11 +3316,12 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					} else {
 						str_index += unit_chars_left - 1;
 					}
+					objects_finished = true;
+					ufvt = 'v';
 				} else if(b) {
 					size_t i = 1;
-					if((signed char) str[str_index + 1] < 0) {
-						i++;
-						while(i <= unit_chars_left && (unsigned char) str[str_index + i] >= 0x80 && (unsigned char) str[str_index + i] <= 0xBF) {
+					if((signed char) str[str_index] < 0) {
+						while(i <= unit_chars_left && (signed char) str[str_index + i] < 0 && (unsigned char) str[str_index + i] < 0xC0) {
 							i++;
 						}
 					}
@@ -3322,7 +3330,167 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 					str.replace(str_index, i, stmp);
 					str_index += stmp.length() - 1;
+					if(i == unit_chars_left) objects_finished = true;
+					ufvt = 'v';
+				} else {
+					size_t i = 1;
+					if(is_not_number(str[str_index], base)) suspect_object_order = true;
+					if((signed char) str[str_index] < 0) {
+						while(i <= unit_chars_left && (signed char) str[str_index + i] < 0 && (unsigned char) str[str_index + i] < 0xC0) {
+							i++;
+						}
+						str_index += i - 1;
+					}
+					if(i == unit_chars_left) objects_finished = true;
 				}
+			}
+			if(moved_forward) {
+				if((ufvt == 'f' && (prev_object == 'u' || prev_object == 'f')) || (ufvt == 'v' && (prev_object == 'u' || prev_object == 'f'))) suspect_object_order = true;
+				prev_object = ufvt;
+			}
+			consecutive_objects++;
+			if(objects_finished && !full_name.empty() && (suspect_object_order || (consecutive_objects > 2 && unicode_length(full_name) >= 5))) {
+				string full_name_bak;
+				bool object_test_function = is_in(NUMBERS LEFT_PARENTHESIS, character_after_object);
+				size_t errors_allowed = 1;
+				size_t nl = 0;
+				bool abbrev = false;
+				while(true) {
+					size_t l = full_name.length();
+					size_t ul = unicode_length(full_name);
+					p = NULL;
+					size_t unicode_diff = l - ul;
+					if(unicode_diff > errors_allowed * 2) unicode_diff = errors_allowed * 2;
+					// check for potential spelling errors
+					vt3 = 0;
+					if(l + errors_allowed * 3 <= UFV_LENGTHS) {
+						ufv_index = l - 1 + errors_allowed * 3;
+						vt2 = 1;
+						if(!po.functions_enabled || !object_test_function) {
+							if(!po.units_enabled) {
+								if(!po.variables_enabled) vt2 = 4;
+								else vt2 = 3;
+							} else {
+								vt2 = 2;
+							}
+						}
+					} else {
+						vt2 = -1;
+						ufv_index = 0;
+					}
+					while(vt2 < 4) {
+						name = NULL;
+						if(vt2 == -1) {
+							if(ufv_index < ufvl.size()) {
+								if((ufvl_t[ufv_index] == 'v' && po.variables_enabled) || (ufvl_t[ufv_index] == 'f' && po.functions_enabled && object_test_function) || (ufvl_t[ufv_index] == 'u' && po.units_enabled)) {
+									object = ufvl[ufv_index];
+									name = &((ExpressionItem*) object)->getName(ufvl_i[ufv_index]).name;
+									case_sensitive = ((ExpressionItem*) object)->getName(ufvl_i[ufv_index]).case_sensitive;
+									name_length = name->length();
+									underscore = priv->ufvl_us[ufv_index]; name_length -= underscore;
+									nl = unicode_length(*name);
+									if(nl > ul + errors_allowed || nl < ul - errors_allowed || nl < 4 || nl - underscore < 4) name = NULL;
+								}
+								ufv_index++;
+							} else {
+								if(l - errors_allowed - unicode_diff > UFV_LENGTHS) break;
+								ufv_index = UFV_LENGTHS - 1;
+								vt2 = 1;
+								vt3 = 0;
+							}
+						} else if(vt2 == 0 && vt3 < ufv[vt2][ufv_index].size()) {
+							object = ufv[vt2][ufv_index][vt3];
+							name = &((Prefix*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
+							name_length = name->length();
+							underscore = priv->ufv_us[vt2][ufv_index][vt3]; name_length -= underscore;
+							case_sensitive = ((Prefix*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
+							abbrev = ((Prefix*) object)->getName(ufv_i[vt2][ufv_index][vt3]).abbreviation;
+							if((errors_allowed > 1 || !abbrev) && ((case_sensitive && compare_name(*name, full_name, name_length, 0, base, underscore)) || (!case_sensitive && compare_name_no_case(*name, full_name, name_length, 0, base, underscore)))) {
+								if(errors_allowed == 1) full_name_bak = full_name;
+								full_name = full_name.substr(name_length, full_name.length() - name_length);
+								p = (Prefix*) object;
+								l = full_name.length();
+								ul = unicode_length(full_name);
+								if(ul <= 4 && errors_allowed > 1) break;
+								if(abbrev) errors_allowed = 1;
+								unicode_diff = l - ul;
+								if(unicode_diff > errors_allowed * 2) unicode_diff = errors_allowed * 2;
+								vt3 = 0;
+								if(l + errors_allowed <= UFV_LENGTHS) {
+									ufv_index = l - 1 + errors_allowed * 3;
+									vt2 = 2;
+								} else {
+									vt2 = -1;
+									ufv_index = 0;
+								}
+								continue;
+							} else {
+								vt3++;
+							}
+						} else if(vt2 > 0 && vt3 < ufv[vt2][ufv_index].size()) {
+							object = ufv[vt2][ufv_index][vt3];
+							name = &((ExpressionItem*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
+							name_length = name->length();
+							underscore = priv->ufv_us[vt2][ufv_index][vt3]; name_length -= underscore;
+							case_sensitive = ((ExpressionItem*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
+							nl = unicode_length(*name);
+							if(nl > ul + errors_allowed || nl < ul - errors_allowed || nl < 4 || nl - underscore < 4) name = NULL;
+							vt3++;
+						} else if(vt2 == 0) {
+							if((errors_allowed == 1 && ufv_index == 1) || ufv_index == 0) break;
+							ufv_index--;
+						} else {
+							if(!p) {
+								vt2++;
+								if(vt2 == 2 && !po.units_enabled) vt2++;
+								if(vt2 == 3 && !po.variables_enabled) vt2++;
+							}
+							vt3 = 0;
+							if((vt2 == 4 || p) && (ufv_index < 4 || ufv_index < l - errors_allowed - unicode_diff)) {
+								if(p) break;
+								if(po.units_enabled && ul >= 6) {
+									size_t nchar = 0;
+									for(size_t i_f = full_name.length() - 1; i_f > 0; i_f--) {
+										if(full_name[i_f] > 0 || (unsigned char) full_name[i_f] >= 0xC0) {
+											nchar++;
+											if(nchar == 3 + errors_allowed) {
+												vt2 = 0;
+												if(i_f >= UFV_LENGTHS) ufv_index = UFV_LENGTHS - 1;
+												else ufv_index = i_f - 1;
+												break;
+											}
+										}
+									}
+								}
+								if(vt2 == 4) break;
+							}
+							if(vt2 == 4 || p) {
+								ufv_index--;
+								if(!p) {
+									vt2 = 1;
+									if(!po.functions_enabled || !object_test_function) {
+										if(!po.units_enabled) {
+											if(!po.variables_enabled) vt2 = 4;
+											else vt2 = 3;
+										} else {
+											vt2 = 2;
+										}
+									}
+								}
+							}
+							continue;
+						}
+						if(vt2 != 0 && name && compare_name_with_error(*name, full_name, name_length, base, underscore, errors_allowed, case_sensitive)) {
+							CALCULATOR->error(false, _("Did you mean \"%s\" (instead of \"%s\")?"), vt2 == -1 ? ((ExpressionItem*) object)->getName(ufvl_i[ufv_index - 1]).formattedName(((ExpressionItem*) object)->type(), underscore).c_str() : ((ExpressionItem*) object)->getName(ufv_i[vt2][ufv_index][vt3 - 1]).formattedName(((ExpressionItem*) object)->type(), underscore).c_str(), full_name.c_str(), NULL);
+							full_name = "";
+							break;
+						}
+					}
+					if(!suspect_object_order || full_name.empty() || errors_allowed == 2 || ul <= 4 || (p && abbrev)) break;
+					errors_allowed++;
+					if(!full_name_bak.empty()) full_name = full_name_bak;
+				}
+				full_name = "";
 			}
 		} else {
 			consecutive_objects = 0;
