@@ -954,11 +954,34 @@ void Number::set(string number, const ParseOptions &po) {
 	}
 
 	// determine if value is negative for numbers using binary or hexadecimal complement representation (number that begins with 1 or 8 is negative)
-	bool b_twos = (po.twos_complement && po.base == 2 && number.length() > 1 && number[0] == '1') || (po.hexadecimal_twos_complement && po.base == 16 && number.length() > 0 && (number[0] == '8' || number[0] == '9' || (number[0] >= 'a' && number[0] <= 'f') || (number[0] >= 'A' && number[0] <= 'F')));
+	bool b_twos = false;
+#define TEST_TWOS \
+	b_twos = (po.twos_complement && po.base == 2 && number[index] == '1') || (po.hexadecimal_twos_complement && po.base == 16 && (number[index] == '8' || number[index] == '9' || (number[index] >= 'a' && number[index] <= 'f') || (number[index] >= 'A' && number[index] <= 'F'))); \
+	if(b_twos && po.base == 2 && po.twos_complement > 1) {\
+		size_t n = 1;\
+		for(size_t i = index + 1; i < number.size(); i++) {\
+			if(number[i] == '0' || number[i] == '1') n++;\
+			else if(number[i] == 'E' || number[i] == 'e' || number[i] == '.') break;\
+		}\
+		size_t bits = (size_t) po.twos_complement;\
+		while(n > bits) bits *= 2;\
+		if(n != bits) b_twos = false;\
+	}\
+	if(b_twos && po.base == 16 && po.hexadecimal_twos_complement >= 4) {\
+		size_t n = 1;\
+		for(size_t i = index + 1; i < number.size(); i++) {\
+			if((number[i] >= '0' && number[i] <= '9') || (number[i] >= 'a' && number[i] <= 'z') || (number[i] >= 'A' && number[i] <= 'Z')) n++;\
+			else if(number[i] == '.') break;\
+		}\
+		size_t bits = (size_t) po.hexadecimal_twos_complement;\
+		while(n * 4 > bits) bits *= 2;\
+		if(n * 4 != bits) b_twos = false;\
+	}\
 
 	bool numbers_started = false, minus = false, in_decimals = false, b_cplx = false;
 	for(size_t index = 0; index < number.size(); index++) {
 		if(number[index] >= '0' && ((base >= 10 && number[index] <= '9') || (base < 10 && number[index] < '0' + base))) {
+			if(!numbers_started && !in_decimals) {TEST_TWOS}
 			// multiply previous value with base
 			mpz_mul_si(num, num, base);
 			if(number[index] != (b_twos ? '0' + (base - 1) : '0')) {
@@ -979,6 +1002,7 @@ void Number::set(string number, const ParseOptions &po) {
 			}
 			numbers_started = true;
 		} else if(base > 10 && number[index] >= 'a' && number[index] < 'a' + base - (base > 36 ? 36 : 10)) {
+			if(!numbers_started && !in_decimals) {TEST_TWOS}
 			mpz_mul_si(num, num, base);
 			if(!b_twos || (number[index] != 'a' + (base - (base > 36 ? 37 : 11)))) {
 				// for negative numbers using complement representation, digit value = base - digit - 1 (e.g. F=0, 0=15 (F) in hexadecimal base)
@@ -990,6 +1014,7 @@ void Number::set(string number, const ParseOptions &po) {
 			}
 			numbers_started = true;
 		} else if(base > 10 && number[index] >= 'A' && number[index] < 'A' + base - 10) {
+			if(!numbers_started && !in_decimals) {TEST_TWOS}
 			mpz_mul_si(num, num, base);
 			if(!b_twos || (number[index] != 'A' + (base - 11))) {
 				mpz_add_ui(num, num, b_twos ? (unsigned long int) (base - 1) - (number[index] - 'A' + 10) : (unsigned long int) number[index] - 'A' + 10);
@@ -11218,11 +11243,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				// show negative number using two's complement
 				Number nr;
 				unsigned int bits = po.binary_bits;
-				if(bits == 0) {
-					// determine appropriate number of bits
-					nr = *this;
-					INTERVAL_FLOOR(nr);
-					nr++;
+				// determine appropriate number of bits
+				nr = *this;
+				INTERVAL_FLOOR(nr);
+				nr++;
+				if(bits == 0 || bits < (unsigned int) nr.integerLength() + 1) {
 					bits = nr.integerLength() + 1;
 					if(bits <= 8) bits = 8;
 					else if(bits <= 16) bits = 16;
@@ -11233,6 +11258,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						bits = (unsigned int) ::ceil(::log2(bits));
 						bits = ::pow(2, bits);
 					}
+					//if(po.binary_bits != 0) CALCULATOR->error(false, _("Insufficient number of binary bits specified (increasing to %s)."), i2s(bits).c_str(), NULL);
 				}
 				nr = bits;
 				nr.exp2();
@@ -11255,23 +11281,26 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				}
 				po2.binary_bits = bits;
 				return nr.print(po2, ips);
-			} else if(po.binary_bits == 0) {
+			} else {
 				// determine appropriate number of bits for binary (and hexadecimal, when using hexadecimal two's complement) numbers
 				Number nr(*this);
 				INTERVAL_CEIL(nr);
-				unsigned int bits = nr.integerLength() + 1;
-				if(bits <= 8) bits = 8;
-				else if(bits <= 16) bits = 16;
-				else if(bits <= 32) bits = 32;
-				else if(bits <= 64) bits = 64;
-				else if(bits <= 128) bits = 128;
-				else {
-					bits = (unsigned int) ::ceil(::log2(bits));
-					bits = ::pow(2, bits);
+				if(po.binary_bits == 0 || po.binary_bits < (unsigned int) nr.integerLength()) {
+					unsigned int bits = nr.integerLength() + 1;
+					if(bits <= 8) bits = 8;
+					else if(bits <= 16) bits = 16;
+					else if(bits <= 32) bits = 32;
+					else if(bits <= 64) bits = 64;
+					else if(bits <= 128) bits = 128;
+					else {
+						bits = (unsigned int) ::ceil(::log2(bits));
+						bits = ::pow(2, bits);
+					}
+					//if(po.binary_bits != 0) CALCULATOR->error(false, _("Insufficient number of binary bits specified (increasing to %s)."), i2s(bits).c_str(), NULL);
+					PrintOptions po2 = po;
+					po2.binary_bits = bits;
+					return print(po2, ips);
 				}
-				PrintOptions po2 = po;
-				po2.binary_bits = bits;
-				return print(po2, ips);
 			}
 		}
 

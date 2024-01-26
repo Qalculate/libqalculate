@@ -688,10 +688,10 @@ struct ParseOptions {
 	DataSet *default_dataset;
 	/// Parsing mode. Default: PARSING_MODE_ADAPTIVE
 	ParsingMode parsing_mode;
-	/// Negative binary numbers uses two's complement representation. All binary numbers starting with 1 are assumed to be negative. Default: false
-	bool twos_complement;
-	/// Negative hexadecimal numbers uses two's complement representation. All hexadecimal numbers starting with 8 or higher are assumed to be negative. Default: false
-	bool hexadecimal_twos_complement;
+	/// Negative binary numbers uses two's complement representation. All binary numbers starting with 1 are assumed to be negative, unless set to a value higher than 1, specififying the number of bits. Default: false
+	short twos_complement;
+	/// Negative hexadecimal numbers uses two's complement representation. All hexadecimal numbers starting with 8 or higher are assumed to be negative, unless set to a value higher than 1, specififying the number of bits. Default: false
+	short hexadecimal_twos_complement;
 
 	ParseOptions();
 
