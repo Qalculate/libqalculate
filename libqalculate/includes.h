@@ -341,6 +341,9 @@ typedef enum {
 #define EXP_PURE		1
 #define EXP_SCIENTIFIC		3
 
+#define EXP_POWER_OF_10		10000
+#define EXP_NO_POWER_OF_10	-10000
+
 typedef enum {
 	/// Display numbers in decimal, not fractional, format (ex. 0.333333)
 	FRACTION_DECIMAL,

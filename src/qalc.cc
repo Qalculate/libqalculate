@@ -177,13 +177,16 @@ LPWSTR utf8wchar(const char *str) {
 #	define FPUTS_UNICODE(x, y)	if(printops.use_unicode_signs || !contains_unicode_char(x)) {fputs(x, y);} else {char *gstr = locale_from_utf8(x); if(gstr) {fputs(gstr, y); free(gstr);} else {fputs(x, y);}}
 #endif
 
+#define MIN_EXP(x) ((x.min_exp < EXP_NO_POWER_OF_10 / 2) ? x.min_exp - EXP_NO_POWER_OF_10 : ((x.min_exp > EXP_POWER_OF_10 / 2) ? x.min_exp - EXP_POWER_OF_10 : x.min_exp))
+
 void update_message_print_options() {
 	PrintOptions message_printoptions = printops;
 	message_printoptions.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 	message_printoptions.show_ending_zeroes = false;
 	message_printoptions.base = 10;
-	if(printops.min_exp < -10 || printops.min_exp > 10 || ((printops.min_exp == EXP_PRECISION || printops.min_exp == EXP_NONE) && PRECISION > 10)) message_printoptions.min_exp = 10;
-	else if(printops.min_exp == EXP_NONE) message_printoptions.min_exp = EXP_PRECISION;
+	int min_exp = MIN_EXP(printops);
+	if(min_exp < -10 || min_exp > 10 || ((min_exp == EXP_PRECISION || min_exp == EXP_NONE) && PRECISION > 10)) message_printoptions.min_exp = (printops.min_exp > EXP_POWER_OF_10 / 2 ? EXP_POWER_OF_10 + 10 : 10);
+	else if(min_exp == EXP_NONE) message_printoptions.min_exp = (printops.min_exp > EXP_POWER_OF_10 / 2 ? EXP_POWER_OF_10 + EXP_PRECISION : EXP_PRECISION);
 	if(PRECISION > 10) {
 		message_printoptions.use_max_decimals = true;
 		message_printoptions.max_decimals = 10;
@@ -1355,6 +1358,17 @@ void set_option(string str) {
 		} else {
 			save_defs_on_exit = false;
 		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "e notation", _("e notation"))) {
+		int v = s2b(svalue);
+		if(v < 0) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else if(v == 0 && printops.min_exp <= EXP_POWER_OF_10 / 2) {
+			printops.min_exp += EXP_POWER_OF_10;
+			result_format_updated();
+		} else if(v > 0 && printops.min_exp > EXP_POWER_OF_10 / 2) {
+			printops.min_exp -= EXP_POWER_OF_10;
+			result_format_updated();
+		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "scientific notation", _("scientific notation")) || svar == "exp mode" || svar == "exp") {
 		int v = -1;
 		bool valid = true;
@@ -1365,8 +1379,9 @@ void set_option(string str) {
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "engineering", _("engineering"))) v = EXP_BASE_3;
 		else if(svalue.find_first_not_of(SPACES NUMBERS MINUS) == string::npos) v = s2i(svalue);
 		else valid = false;
-		if(valid) {
-			printops.min_exp = v;
+		if(valid && v <= EXP_POWER_OF_10 / 2 && v >= EXP_NO_POWER_OF_10 / 2) {
+			if(printops.min_exp > EXP_POWER_OF_10 / 2) printops.min_exp = v + EXP_POWER_OF_10;
+			else printops.min_exp = v;
 			result_format_updated();
 		} else {
 			PUTS_UNICODE(_("Illegal value."));
@@ -1767,6 +1782,7 @@ bool show_set_help(string set_option = "") {
 		SET_OPTION_FOUND
 	}
 	STR_AND_TABS_2("digit grouping", "group", "", printops.digit_grouping, _("off"), _("standard"), _("locale"));
+	STR_AND_TABS_BOOL("e notation", "", _("Use scientific E-notation, instead of power of 10."), (printops.min_exp <= EXP_POWER_OF_10 / 2));
 	int nff = printops.number_fraction_format;
 	if(dual_fraction < 0) nff = -1;
 	else if(dual_fraction > 0) nff = 5;
@@ -1804,22 +1820,23 @@ bool show_set_help(string set_option = "") {
 		STR_AND_TABS_SET("scientific notation", "exp");
 		SET_DESCRIPTION(_("Determines how scientific notation is used (e.g. 5 543 000 = 5.543E6)."));
 		str += "(0";
-		if(printops.min_exp == EXP_NONE) str += "*";
+		int min_exp = MIN_EXP(printops);
+		if(min_exp == EXP_NONE) str += "*";
 		str += " = "; str += _("off");
 		str += ", -1";
-		if(printops.min_exp == EXP_PRECISION) str += "*";
+		if(min_exp == EXP_PRECISION) str += "*";
 		str += " = "; str += _("auto");
 		str += ", -3";
-		if(printops.min_exp == EXP_BASE_3) str += "*";
+		if(min_exp == EXP_BASE_3) str += "*";
 		str += " = "; str += _("engineering");
 		str += ", 1";
-		if(printops.min_exp == EXP_PURE) str += "*";
+		if(min_exp == EXP_PURE) str += "*";
 		str += " = "; str += _("pure");
 		str += ", 3";
-		if(printops.min_exp == EXP_SCIENTIFIC) str += "*";
+		if(min_exp == EXP_SCIENTIFIC) str += "*";
 		str += " = "; str += _("scientific");
 		str += ", >= 0)";
-		if(printops.min_exp != EXP_NONE && printops.min_exp != EXP_NONE && printops.min_exp != EXP_PRECISION && printops.min_exp != EXP_BASE_3 && printops.min_exp != EXP_PURE && printops.min_exp != EXP_SCIENTIFIC) {str += " "; str += i2s(printops.min_exp); str += "*";}
+		if(min_exp != EXP_NONE && min_exp != EXP_NONE && min_exp != EXP_PRECISION && min_exp != EXP_BASE_3 && min_exp != EXP_PURE && min_exp != EXP_SCIENTIFIC) {str += " "; str += i2s(min_exp); str += "*";}
 		CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 		SET_OPTION_FOUND
 	}
@@ -4750,6 +4767,7 @@ int main(int argc, char *argv[]) {
 				case DIGIT_GROUPING_LOCALE: {str += _("locale"); break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("e notation"), ""); str += b2oo(printops.min_exp <= EXP_POWER_OF_10 / 2, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("fractions"), "fr");
 			if(dual_fraction < 0) {
 				str += _("auto");
@@ -4814,13 +4832,13 @@ int main(int argc, char *argv[]) {
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("scientific notation"), "exp");
-			switch(printops.min_exp) {
+			switch(MIN_EXP(printops)) {
 				case EXP_NONE: {str += _("off"); break;}
 				case EXP_PRECISION: {str += _("auto"); break;}
 				case EXP_PURE: {str += _("pure"); break;}
 				case EXP_SCIENTIFIC: {str += _("scientific"); break;}
 				case EXP_BASE_3: {str += _("engineering"); break;}
-				default: {str += i2s(printops.min_exp); break;}
+				default: {str += i2s(MIN_EXP(printops)); break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("show ending zeroes"), "zeroes"); str += b2oo(printops.show_ending_zeroes, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
@@ -5481,7 +5499,7 @@ void ViewThread::run() {
 				CALCULATOR->setCustomOutputBase(CALCULATOR->customInputBase());
 			} else if(po.base == BASE_CUSTOM || (po.base < BASE_CUSTOM && !CALCULATOR->usesIntervalArithmetic() && po.base != BASE_UNICODE)) {
 				po.base = 10;
-				po.min_exp = 6;
+				po.min_exp = (printops.min_exp >= EXP_POWER_OF_10 / 2 ? EXP_POWER_OF_10 + 6 : 6);
 				po.use_max_decimals = true;
 				po.max_decimals = 5;
 				po.preserve_format = false;
@@ -7252,6 +7270,7 @@ void load_preferences() {
 	printops.use_max_decimals = false;
 	printops.max_decimals = 2;
 	printops.base = 10;
+	bool e_notation = true;
 	printops.min_exp = EXP_PRECISION;
 	printops.negative_exponents = false;
 	printops.sort_options.minus_last = true;
@@ -7644,6 +7663,8 @@ void load_preferences() {
 				} else if(svar == "duodecimal_symbols") {
 					use_duo_syms = v;
 					RESET_TZ
+				} else if(svar == "e_notation") {
+					e_notation = v;
 				} else if(svar == "lower_case_e") {
 					printops.lower_case_e = v;
 				} else if(svar == "imaginary_j") {
@@ -7744,6 +7765,7 @@ void load_preferences() {
 				}
 			}
 		}
+		if(!e_notation) printops.min_exp += EXP_POWER_OF_10;
 		fclose(file);
 		if(!oldfilename.empty()) {
 			move_file(oldfilename.c_str(), filename.c_str());
@@ -7802,6 +7824,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "use_unicode_exponents=%i\n", unicode_exponents);
 	fprintf(file, "lower_case_numbers=%i\n", printops.lower_case_numbers);
 	fprintf(file, "duodecimal_symbols=%i\n", use_duo_syms);
+	fprintf(file, "e_notation=%i\n", printops.min_exp <= EXP_POWER_OF_10 / 2);
 	fprintf(file, "lower_case_e=%i\n", printops.lower_case_e);
 	fprintf(file, "imaginary_j=%i\n", CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") > 0);
 	fprintf(file, "base_display=%i\n", printops.base_display);
@@ -7846,7 +7869,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "interval_arithmetic=%i\n", saved_interval);
 	if(saved_adaptive_interval_display) fprintf(file, "interval_display=%i\n", 0);
 	else fprintf(file, "interval_display=%i\n", saved_printops.interval_display + 1);
-	fprintf(file, "min_exp=%i\n", saved_printops.min_exp);
+	fprintf(file, "min_exp=%i\n", MIN_EXP(saved_printops));
 	fprintf(file, "negative_exponents=%i\n", saved_printops.negative_exponents);
 	fprintf(file, "sort_minus_last=%i\n", saved_printops.sort_options.minus_last);
 	int v = saved_printops.number_fraction_format;

@@ -10371,6 +10371,12 @@ void add_base_exponent(string &str, long int expo, int base, const PrintOptions 
 
 string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
 	if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
+	if(po.min_exp > EXP_POWER_OF_10 / 2 || po.min_exp < EXP_NO_POWER_OF_10 / 2) {
+		PrintOptions po2 = po;
+		if(po2.min_exp > EXP_POWER_OF_10 / 2) po2.min_exp -= EXP_POWER_OF_10;
+		else if(po2.min_exp < EXP_NO_POWER_OF_10 / 2) po2.min_exp -= EXP_NO_POWER_OF_10;
+		return print(po2, ips);
+	}
 	// reset InternalPrintStruct (used for separate handling sign, scientific notation, numerator/denominator, imaginary/real parts, etc)
 	if(ips.minus) *ips.minus = false;
 	if(ips.exp_minus) *ips.exp_minus = false;
