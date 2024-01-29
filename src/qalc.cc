@@ -2786,7 +2786,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 		ParseOptions pa = evalops.parse_options; pa.base = 10;
 		for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
 			Variable *v = CALCULATOR->variables[i];
-			if((v->isLocal() || v->hasChanged()) && v->isActive() && (!is_answer_variable(v) || !v->representsUndefined())) {
+			if((v->isLocal() || ((is_answer_variable(v) || v == v_memory) && !((KnownVariable*) v)->get().isUndefined() && v->hasChanged())) && v->isActive()) {
 				int pctl;
 				if(!b_variables) {
 					b_variables = true;
@@ -2884,7 +2884,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 		}
 		for(size_t i = 0; i < CALCULATOR->functions.size(); i++) {
 			MathFunction *f = CALCULATOR->functions[i];
-			if((f->isLocal() || f->hasChanged()) && f->isActive()) {
+			if(f->isLocal() && f->isActive()) {
 				if(!b_functions) {
 					if(b_variables) puts("");
 					if(in_interactive) {CHECK_IF_SCREEN_FILLED}
@@ -2898,7 +2898,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 		}
 		for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
 			Unit *u = CALCULATOR->units[i];
-			if((u->isLocal() || u->hasChanged()) && u->isActive()) {
+			if(u->isLocal() && u->isActive()) {
 				if(!b_units) {
 					if(b_variables || b_functions) puts("");
 					if(in_interactive) {CHECK_IF_SCREEN_FILLED}
@@ -3887,6 +3887,7 @@ int main(int argc, char *argv[]) {
 				if(defs_edited <= 0 && v->category() != CALCULATOR->temporaryCategory()) defs_edited = 1;
 				v->destroy();
 			} else {
+				if(str.length() > 2 && str[str.length() - 2] == '(' && str[str.length() - 1] == ')') str = str.substr(0, str.length() - 2);
 				MathFunction *f = CALCULATOR->getActiveFunction(str);
 				if(f && f->isLocal()) {
 					if(defs_edited <= 0 && f->category() != CALCULATOR->temporaryCategory()) defs_edited = 1;
