@@ -185,6 +185,89 @@ int BitCmpFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	return 0;
 }
 
+BitSetFunction::BitSetFunction() : MathFunction("bitset", 2, 5) {
+	setArgumentDefinition(1, new IntegerArgument());
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, false, false, INTEGER_TYPE_ULONG));
+	setArgumentDefinition(3, new BooleanArgument());
+	setDefaultValue(3, "1");
+	setArgumentDefinition(4, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_UINT));
+	setDefaultValue(4, "0");
+	setArgumentDefinition(5, new BooleanArgument());
+	setDefaultValue(5, "0");
+}
+int BitSetFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	Number nr(vargs[0].number());
+	bool b_set = vargs[2].number().getBoolean();
+	unsigned int bits = vargs[3].number().uintValue();
+	bool b_signed = vargs[4].number().getBoolean();
+	MathStructure mindex(vargs[1]);
+	mindex.eval(eo);
+	unsigned long int max_index = 0;
+	if(mindex.isVector()) {
+		unsigned long int index = 0;
+		for(size_t i = 0; i < mindex.size(); i++) {
+			if(!mindex[i].isInteger()) return 0;
+			index = mindex[i].number().ulintValue();
+			if(index > max_index) max_index = index;
+			nr.bitSet(index, b_set);
+		}
+	} else if(mindex.isInteger()) {
+		while(bits > 0 && mindex.number().ulintValue() > bits && bits < SHRT_MAX) bits *= 2;
+		max_index = mindex.number().ulintValue();
+		nr.bitSet(max_index, b_set);
+	} else {
+		return 0;
+	}
+	if(bits > 0 && max_index > bits) {
+		Number nrbits = max_index;
+		nrbits.log(nr_two);
+		nrbits.ceil();
+		nrbits.exp2();
+		bits = nrbits.uintValue();
+	}
+	if(bits > 0 && bits <= SHRT_MAX && max_index == bits && (b_signed || vargs[0].number().isNegative()) && (b_set != vargs[0].number().isNegative())) {
+		PrintOptions po;
+		po.base = BASE_BINARY;
+		po.base_display = BASE_DISPLAY_NONE;
+		po.binary_bits = bits;
+		po.twos_complement = true;
+		po.min_exp = 0;
+		string str = nr.print(po);
+		if(str.length() > bits) str = str.substr(str.length() - bits, bits);
+		ParseOptions pa;
+		pa.base = BASE_BINARY;
+		pa.twos_complement = bits;
+		nr.set(str, pa);
+	}
+	mstruct = nr;
+	return 1;
+}
+
+BitGetFunction::BitGetFunction() : MathFunction("bitget", 2, 3) {
+	setArgumentDefinition(1, new IntegerArgument());
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_ULONG));
+	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
+	setDefaultValue(3, "0");
+}
+int BitGetFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	Number nr(vargs[0].number());
+	unsigned long int first_pos = vargs[1].number().ulintValue();
+	unsigned long int last_pos = vargs[2].number().ulintValue();
+	if(last_pos <= first_pos) {
+		mstruct.set(nr.bitGet(first_pos), 1, 0);
+	} else {
+		Number nr_new;
+		Number pos_value(1, 1, 0);
+		while(first_pos <= last_pos) {
+			if(nr.bitGet(first_pos)) nr_new += pos_value;
+			first_pos++;
+			pos_value *= 2;
+		}
+		mstruct = nr_new;
+	}
+	return 1;
+}
+
 IFFunction::IFFunction() : MathFunction("if", 3, 4) {
 	setArgumentDefinition(4, new BooleanArgument());
 	setDefaultValue(4, "0");

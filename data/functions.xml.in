@@ -3366,6 +3366,42 @@
         <_title>Signed Integer</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="bitset">
+      <_title>Set Bit</_title>
+      <_description>Set binary bit at specified position. The index of the least significant bit is 1. Multiple bits get be set using a vector. Specify bit width and signedness to allow sign changes when the most significant bit is set.</_description>
+      <example>$name(8, 3) = 12; $name(0b11111111, 2...8, 0) = 1</example>
+      <_names>r:bitset</_names>
+      <argument index="1">
+        <_title>Number</_title>
+      </argument>
+      <argument index="2">
+        <_title>Index</_title>
+      </argument>
+      <argument index="3">
+        <_title>Value</_title>
+      </argument>
+      <argument index="4">
+        <_title>Bit Width</_title>
+      </argument>
+      <argument index="5">
+        <_title>Signed Integer</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="bitget">
+      <_title>Get Bit</_title>
+      <_description>Returns the binary bit at the specified position. The index of the least significant bit is 1. If last index (third argument) is higher then (first) index, the bits from index to, and including, last index is returned as new binary number.</_description>
+      <example>$name(12, 3) = 1; $name(0b1100, 2; 4) = 0b00000110 = 6</example>
+      <_names>r:bitget</_names>
+      <argument index="1">
+        <_title>Number</_title>
+      </argument>
+      <argument index="2">
+        <_title>Index</_title>
+      </argument>
+      <argument index="3">
+        <_title>Last Index</_title>
+      </argument>
+    </builtin_function>
   </category>
   <category>
     <_title>Algebra</_title>

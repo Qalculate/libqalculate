@@ -1668,6 +1668,8 @@ void Calculator::addBuiltinFunctions() {
 	f_odd = addFunction(new OddFunction());
 	f_shift = addFunction(new ShiftFunction());
 	f_bitcmp = addFunction(new BitCmpFunction());
+	addFunction(new BitSetFunction());
+	addFunction(new BitGetFunction());
 	addFunction(new CircularShiftFunction());
 
 	f_abs = addFunction(new AbsFunction());

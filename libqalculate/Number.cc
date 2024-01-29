@@ -2146,6 +2146,16 @@ bool Number::bitCmp(unsigned int bits) {
 	}
 	return true;
 }
+bool Number::bitSet(unsigned long bit, bool set) {
+	if(!isInteger() || bit == 0) return false;
+	if(set) mpz_setbit(mpq_numref(r_value), bit - 1);
+	else mpz_clrbit(mpq_numref(r_value), bit - 1);
+	return true;
+}
+int Number::bitGet(unsigned long bit) {
+	if(!isInteger() || bit == 0) return -1;
+	return mpz_tstbit(mpq_numref(r_value), bit - 1);
+}
 bool Number::bitEqv(const Number &o) {
 	if(!o.isInteger() || !isInteger()) return false;
 	bitXor(o);
