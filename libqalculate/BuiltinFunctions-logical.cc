@@ -187,7 +187,12 @@ int BitCmpFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 
 BitSetFunction::BitSetFunction() : MathFunction("bitset", 2, 5) {
 	setArgumentDefinition(1, new IntegerArgument());
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, false, false, INTEGER_TYPE_ULONG));
+	ArgumentSet *set = new ArgumentSet();
+	set->addArgument(new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_ULONG));
+	VectorArgument *arg = new VectorArgument();
+	arg->addArgument(new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_ULONG));
+	set->addArgument(arg);
+	setArgumentDefinition(2, set);
 	setArgumentDefinition(3, new BooleanArgument());
 	setDefaultValue(3, "1");
 	setArgumentDefinition(4, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_UINT));
@@ -200,23 +205,18 @@ int BitSetFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	bool b_set = vargs[2].number().getBoolean();
 	unsigned int bits = vargs[3].number().uintValue();
 	bool b_signed = vargs[4].number().getBoolean();
-	MathStructure mindex(vargs[1]);
-	mindex.eval(eo);
 	unsigned long int max_index = 0;
-	if(mindex.isVector()) {
+	if(vargs[1].isVector()) {
 		unsigned long int index = 0;
-		for(size_t i = 0; i < mindex.size(); i++) {
-			if(!mindex[i].isInteger()) return 0;
-			index = mindex[i].number().ulintValue();
+		for(size_t i = 0; i < vargs[1].size(); i++) {
+			if(CALCULATOR->aborted()) return 0;
+			index = vargs[1][i].number().ulintValue();
 			if(index > max_index) max_index = index;
 			nr.bitSet(index, b_set);
 		}
-	} else if(mindex.isInteger()) {
-		while(bits > 0 && mindex.number().ulintValue() > bits && bits < SHRT_MAX) bits *= 2;
-		max_index = mindex.number().ulintValue();
-		nr.bitSet(max_index, b_set);
 	} else {
-		return 0;
+		max_index = vargs[1].number().ulintValue();
+		nr.bitSet(max_index, b_set);
 	}
 	if(bits > 0 && max_index > bits) {
 		Number nrbits = max_index;
@@ -253,15 +253,25 @@ int BitGetFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	Number nr(vargs[0].number());
 	unsigned long int first_pos = vargs[1].number().ulintValue();
 	unsigned long int last_pos = vargs[2].number().ulintValue();
-	if(last_pos <= first_pos) {
+	if(last_pos == 0 || last_pos == first_pos) {
 		mstruct.set(nr.bitGet(first_pos), 1, 0);
 	} else {
 		Number nr_new;
 		Number pos_value(1, 1, 0);
-		while(first_pos <= last_pos) {
-			if(nr.bitGet(first_pos)) nr_new += pos_value;
-			first_pos++;
-			pos_value *= 2;
+		if(last_pos < first_pos) {
+			while(first_pos >= last_pos) {
+				if(CALCULATOR->aborted()) return 0;
+				if(nr.bitGet(first_pos)) nr_new += pos_value;
+				first_pos--;
+				pos_value *= 2;
+			}
+		} else {
+			while(first_pos <= last_pos) {
+				if(CALCULATOR->aborted()) return 0;
+				if(nr.bitGet(first_pos)) nr_new += pos_value;
+				first_pos++;
+				pos_value *= 2;
+			}
 		}
 		mstruct = nr_new;
 	}

@@ -453,7 +453,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 		while((size_t) itmp2 - minargs() < default_values.size() && (maxargs() > 0 || !default_values[itmp2 - minargs()].empty())) {
 			arg = getArgumentDefinition(itmp2 + 1);
 			MathStructure *mstruct = new MathStructure();
-			if(arg->type() == ARGUMENT_TYPE_TEXT && default_values[itmp2 - minargs()] == "\"\"") arg->parse(mstruct, "");
+			if(arg && arg->type() == ARGUMENT_TYPE_TEXT && default_values[itmp2 - minargs()] == "\"\"") arg->parse(mstruct, "");
 			else if(arg) arg->parse(mstruct, default_values[itmp2 - minargs()]);
 			else CALCULATOR->parse(mstruct, default_values[itmp2 - minargs()]);
 			vargs.addChild_nocopy(mstruct);
@@ -1658,6 +1658,13 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 		}
 		mstruct->set(str2, false, true);
 	} else {
+		size_t i = string::npos;
+		if((b_handle_vector && type() == ARGUMENT_TYPE_INTEGER) || type() == ARGUMENT_TYPE_VECTOR || (type() == ARGUMENT_TYPE_SET && ((ArgumentSet*) this)->countArguments() == 2 && ((ArgumentSet*) this)->getArgument(1)->type() == ARGUMENT_TYPE_INTEGER && ((ArgumentSet*) this)->getArgument(2)->type() == ARGUMENT_TYPE_VECTOR)) i = str.find(":", 1);
+		if(i != string::npos && i < str.length() - 1 && str.find_first_not_of(NUMBERS ":", str[0] == MINUS_CH ? 1 : 0) == string::npos) {
+			string str2 = "["; str2 += str; str2 += "]";
+			CALCULATOR->parse(mstruct, str2, po);
+			return;
+		}
 		CALCULATOR->parse(mstruct, str, po);
 	}
 }

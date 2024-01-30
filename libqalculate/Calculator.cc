@@ -237,6 +237,7 @@ Calculator::Calculator() {
 	addStringAlternative("∧", BITWISE_AND);
 	addStringAlternative("∨", BITWISE_OR);
 	addStringAlternative("¬", BITWISE_NOT);
+	addStringAlternative("…", "...");
 
 	//division operator
 	per_str = _("per");
@@ -497,6 +498,7 @@ Calculator::Calculator(bool ignore_locale) {
 	addStringAlternative("∧", BITWISE_AND);
 	addStringAlternative("∨", BITWISE_OR);
 	addStringAlternative("¬", BITWISE_NOT);
+	addStringAlternative("…", "...");
 
 	per_str = _("per");
 	per_str_len = per_str.length();
@@ -1816,6 +1818,7 @@ void Calculator::addBuiltinFunctions() {
 	f_stripunits = addFunction(new StripUnitsFunction());
 
 	f_genvector = addFunction(new GenerateVectorFunction());
+	priv->f_colon = addFunction(new ColonFunction());
 	f_for = addFunction(new ForFunction());
 	f_sum = addFunction(new SumFunction());
 	f_product = addFunction(new ProductFunction());

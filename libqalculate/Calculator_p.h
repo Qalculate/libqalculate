@@ -66,7 +66,7 @@ class Calculator_p {
 		long int custom_input_base_i;
 		Unit *local_currency;
 		int use_binary_prefixes;
-		MathFunction *f_cis, *f_erfi, *f_fresnels, *f_fresnelc, *f_dot, *f_times, *f_rdivide, *f_power, *f_parallel, *f_vertcat, *f_horzcat, *f_secant, *f_newton;
+		MathFunction *f_cis, *f_erfi, *f_fresnels, *f_fresnelc, *f_dot, *f_times, *f_rdivide, *f_power, *f_parallel, *f_vertcat, *f_horzcat, *f_secant, *f_newton, *f_colon;
 		Unit *u_byn;
 		Unit *u_kelvin, *u_rankine, *u_celsius, *u_fahrenheit;
 		Unit *custom_angle_unit;

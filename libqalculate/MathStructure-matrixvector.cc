@@ -1276,10 +1276,12 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 		CALCULATOR->error(true, _("Too many data points"), NULL);
 		return y_vector;
 	}
+	CALCULATOR->beginTemporaryStopMessages();
 	MathStructure step(max);
 	step.calculateSubtract(min, eo);
 	if(steps != 1) step.calculateDivide(steps - 1, eo);
 	step.eval(eo);
+	CALCULATOR->endTemporaryStopMessages();
 	if(!step.isNumber() || step.number().isNegative()) {
 		CALCULATOR->error(true, _("The selected min and max do not result in a positive, finite number of data points"), NULL);
 		return y_vector;
@@ -1317,10 +1319,19 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 		step = step_pre;
 		step.eval(eo);
 		if(min != max) {
+			CALCULATOR->beginTemporaryStopMessages();
 			MathStructure mtest(max);
 			mtest.calculateSubtract(min, eo);
 			if(!step.isZero()) mtest.calculateDivide(step, eo);
 			mtest.eval(eo);
+			if(!step.isZero() && mtest.isNumber() && mtest.number().isNegative()) {
+				step.negate();
+				mtest = max;
+				mtest.calculateSubtract(min, eo);
+				if(!step.isZero()) mtest.calculateDivide(step, eo);
+				mtest.eval(eo);
+			}
+			CALCULATOR->endTemporaryStopMessages();
 			if(step.isZero() || !mtest.isNumber() || mtest.number().isNegative()) {
 				CALCULATOR->error(true, _("The selected min, max and step size do not result in a positive, finite number of data points"), NULL);
 				return y_vector;

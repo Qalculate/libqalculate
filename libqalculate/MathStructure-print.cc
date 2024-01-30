@@ -3548,7 +3548,6 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 	}
 	bool flat_power = ips_n.power_depth != 0 || (tagtype != TAG_TYPE_TERMINAL && (!format || tagtype != TAG_TYPE_HTML));
 	if(precision() >= 0 && (ips_n.parent_precision < 0 || precision() < ips_n.parent_precision)) ips_n.parent_precision = precision();
-	bool b_wrap = false;
 	switch(m_type) {
 		case STRUCT_NUMBER: {
 			if(po.number_fraction_format == FRACTION_FRACTIONAL_FIXED_DENOMINATOR || po.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR) {
@@ -3624,7 +3623,6 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					}
 				}
 				if(!exp.empty()) {
-					if(!ips.wrap && ips.depth != 0) b_wrap = true;
 					gsub(" ", "&nbsp;", exp);
 					if(print_str.length() - i_number == 1 && print_str[i_number] == '1') {
 						print_str.erase(i_number, 1);
@@ -3685,7 +3683,6 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					print_str += o_number.print(po2, ips_n);
 					i_number_end = print_str.length();
 					if(!exp.empty()) {
-						if(!ips.wrap && ips.depth != 0) b_wrap = true;
 						if(print_str.length() - i_number == 1 && print_str[i_number] == '1') {
 							print_str.erase(i_number, 1);
 						} else {
@@ -3724,19 +3721,16 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			}
 			if(colorize && tagtype == TAG_TYPE_TERMINAL) print_str += "\033[0m";
 			else if(colorize && tagtype == TAG_TYPE_HTML) print_str += "</span>";
-			if(!ips.wrap && !b_wrap && ips.depth > 0 && o_number.isRational() && !o_number.isInteger() && po.base != BASE_CUSTOM && po.base != BASE_UNICODE) {
+			if(!ips.wrap && ips.depth > 0 && o_number.isRational() && !o_number.isInteger() && po.base != BASE_CUSTOM && po.base != BASE_UNICODE) {
 				for(size_t i = i_number + 1; i + 1 < i_number_end; i++) {
 					if(print_str[i] == DIVISION_CH || ((unsigned char) print_str[i] == 0xE2 && (unsigned char) print_str[i + 1] == 0x88 && i + 2 < print_str.size() && (unsigned char) print_str[i + 2] == 0x95) || ((unsigned char) print_str[i] == 0xC3 && (unsigned char) print_str[i + 1] == 0xB7)) {
-						b_wrap = true;
+						print_str.insert(0, "(");
+						print_str += ")";
 						break;
 					} else if(print_str[i] == DOT_CH || print_str[i] == COMMA_CH) {
 						break;
 					}
 				}
-			}
-			if(b_wrap) {
-				print_str.insert(0, "(");
-				print_str += ")";
 			}
 			break;
 		}
@@ -3846,6 +3840,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			bool avoid_sign = (!po.short_multiplication && ips.power_depth > 0 && format && tagtype == TAG_TYPE_HTML && po.base >= 2 && po.base <= 10 && po.multiplication_sign == MULTIPLICATION_SIGN_X);
 			int i_sign = 0;
 			bool wrap_next = false;
+			size_t prev_index = 0;
 			for(size_t i = 0; i < SIZE; i++) {
 				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i == 0) ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);
@@ -3924,6 +3919,11 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					i--;
 				}
 				print_str += CHILD(i).print(po, format, b_units ? 0 : colorize, tagtype, ips_n);
+				if(i_sign == MULTIPLICATION_SIGN_NONE && CHILD(i).isNumber() && print_str.find("^", prev_index) != string::npos) {
+					print_str.insert(prev_index, "(");
+					print_str += ")";
+				}
+				prev_index = print_str.length();
 			}
 			if(b_units && tagtype == TAG_TYPE_TERMINAL) print_str += "\033[0m";
 			else if(b_units && tagtype == TAG_TYPE_HTML) print_str += "</span>";
@@ -3959,7 +3959,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, flat_power);
 				print_str += CHILD(0).print(po, format, b_num2 ? 0 : colorize, tagtype, ips_n);
 			}
-			if(!ips_n.wrap && format && tagtype == TAG_TYPE_HTML && !po.lower_case_e && CHILD(0).isNumber() && print_str.find("<sup>", l) != string::npos) {
+			if(!ips_n.wrap && CHILD(0).isNumber() && (print_str.find("<sup>", l) != string::npos || print_str.find("^", l) != string::npos)) {
 				print_str.insert(l, LEFT_PARENTHESIS);
 				print_str += RIGHT_PARENTHESIS;
 			}
@@ -4035,7 +4035,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				ips_n.wrap = CHILD(1).needsParenthesis(po, ips_n, *this, 2, true, flat_power);
 				print_str += CHILD(1).print(po, format, (b_units || b_num2) ? 0 : colorize, tagtype, ips_n);
 			}
-			if(!ips_n.wrap && format && tagtype == TAG_TYPE_HTML && !po.lower_case_e && CHILD(1).isNumber() && print_str.find("<sup>", l) != string::npos) {
+			if(!ips_n.wrap && CHILD(1).isNumber() && (print_str.find("<sup>", l) != string::npos || print_str.find("^", l) != string::npos)) {
 				print_str.insert(l, LEFT_PARENTHESIS);
 				print_str += RIGHT_PARENTHESIS;
 			}
@@ -4051,7 +4051,12 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			else if(b_units && colorize && tagtype == TAG_TYPE_HTML) print_str = (colorize == 2 ? "<span style=\"color:#BBFFBB\">" : "<span style=\"color:#008000\">");
 			PrintOptions po2 = po;
 			if(CHILD(0).isUnit() && po.use_unicode_signs && po.abbreviate_names && CHILD(0).unit() == CALCULATOR->getDegUnit()) po2.use_unicode_signs = false;
+			size_t l = print_str.length();
 			print_str += CHILD(0).print(po2, format, b_units ? 0 : colorize, tagtype, ips_n);
+			if(!ips_n.wrap && CHILD(0).isNumber() && (print_str.find("<sup>", l) != string::npos || print_str.find("^", l) != string::npos)) {
+				print_str.insert(l, LEFT_PARENTHESIS);
+				print_str += RIGHT_PARENTHESIS;
+			}
 			if((!flat_power || (ips.power_depth == -1 && po.place_units_separately && CHILD(0).isUnit())) && tagtype == TAG_TYPE_TERMINAL && po.use_unicode_signs && CHILD(1).isInteger() && CHILD(1).number().isNonNegative() && CHILD(1).number() <= 9) {
 				if(!b_units && colorize && tagtype == TAG_TYPE_TERMINAL) print_str += (colorize == 2 ? "\033[0;96m" : "\033[0;36m");
 				switch(CHILD(1).number().intValue()) {

@@ -1217,6 +1217,17 @@ int GenerateVectorFunction::calculate(MathStructure &mstruct, const MathStructur
 	if(CALCULATOR->aborted() || mstruct.size() == 0) return 0;
 	return 1;
 }
+ColonFunction::ColonFunction() : MathFunction("colon", 2, 3) {
+	setDefaultValue(3, "undefined");
+}
+int ColonFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(CALCULATOR->aborted()) return 0;
+	mstruct.set("x", true);
+	if(vargs[2].isUndefined()) mstruct = mstruct.generateVector(mstruct, vargs[0], vargs[1], m_one, NULL, eo);
+	else mstruct = mstruct.generateVector(mstruct, vargs[0], vargs[2], vargs[1], NULL, eo);
+	if(CALCULATOR->aborted() || mstruct.size() == 0) return 0;
+	return 1;
+}
 SelectFunction::SelectFunction() : MathFunction("select", 2, 4) {
 	setArgumentDefinition(1, new VectorArgument());
 	setArgumentDefinition(3, new SymbolicArgument());
