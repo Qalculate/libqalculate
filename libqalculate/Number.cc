@@ -971,7 +971,7 @@ void Number::set(string number, const ParseOptions &po) {
 		size_t n = 1;\
 		for(size_t i = index + 1; i < number.size(); i++) {\
 			if((number[i] >= '0' && number[i] <= '9') || (number[i] >= 'a' && number[i] <= 'z') || (number[i] >= 'A' && number[i] <= 'Z')) n++;\
-			else if(number[i] == '.') break;\
+			else if(number[i] == '.' || number[i] == 'p') break;\
 		}\
 		size_t bits = (size_t) po.hexadecimal_twos_complement;\
 		while(n * 4 > bits) bits *= 2;\
@@ -1023,7 +1023,7 @@ void Number::set(string number, const ParseOptions &po) {
 				mpz_mul_si(den, den, base);
 			}
 			numbers_started = true;
-		} else if(numbers_started && (number[index] == 'E' || number[index] == 'e') && base <= 10 && index + 1 < number.length()) {
+		} else if(numbers_started && (((number[index] == 'E' || number[index] == 'e') && base <= 10 && index + 1 < number.length()) || (base == 16 && number[index] == 'p'))) {
 			index++;
 			numbers_started = false;
 			bool exp_minus = false;
@@ -1048,7 +1048,7 @@ void Number::set(string number, const ParseOptions &po) {
 				// if negative exponent multiply denominator
 				mpz_t e_den;
 				mpz_init(e_den);
-				mpz_ui_pow_ui(e_den, 10, exp);
+				mpz_ui_pow_ui(e_den, base == 16 ? 2 : 10, exp);
 				mpz_mul(den, den, e_den);
 				if(i_unc > 0) mpz_mul(mpq_denref(unc), mpq_denref(unc), e_den);
 				mpz_clear(e_den);
@@ -1056,7 +1056,7 @@ void Number::set(string number, const ParseOptions &po) {
 				// if positive exponent multiply numerator
 				mpz_t e_num;
 				mpz_init(e_num);
-				mpz_ui_pow_ui(e_num, 10, exp);
+				mpz_ui_pow_ui(e_num, base == 16 ? 2 : 10, exp);
 				mpz_mul(num, num, e_num);
 				if(i_unc > 0) mpz_mul(mpq_numref(unc), mpq_numref(unc), e_num);
 				mpz_clear(e_num);

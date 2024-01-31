@@ -2533,6 +2533,18 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					po_hex.base = BASE_HEXADECIMAL;
 					stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 					MathStructure *mstruct = new MathStructure(Number(str.substr(str_index, i - str_index), po_hex));
+					if(i != string::npos && i + 1 < str.length() && str[i] == 'p' && (is_in(NUMBERS, str[i + 1]) || ((str[i + 1] == '+' || str[i + 1] == '-') && i + 2 < str.length() && is_in(NUMBERS, str[i + 2])))) {
+						size_t i2 = str.find_first_not_of(NUMBERS, str[i + 1] == '+' || str[i + 1] == '-' ? i + 2 : i + 1);
+						if(i2 == string::npos) i2 = str.length();
+						i++;
+						bool b_neg = str[i] == '-';
+						if(str[i] == '+' || b_neg) i++;
+						po_hex.base = 10;
+						mstruct->multiply(nr_two);
+						mstruct->last() ^= Number(str.substr(i, i2 - i), po_hex);
+						if(b_neg) mstruct->last().last().negate();
+						name_length = i2 - str_index;
+					}
 					stmp += i2s(addId(mstruct));
 					stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 					str.replace(str_index, name_length, stmp);
