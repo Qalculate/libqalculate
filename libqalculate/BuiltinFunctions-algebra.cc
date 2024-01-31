@@ -482,6 +482,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 				}
 			}
 			mstruct = msave;
+			if(dsolve) return -2;
 			return -1;
 		}
 
@@ -1357,7 +1358,22 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	}
 	m_eqn.calculatesub(eo2, eo2, true);
 	MathStructure msolve(m_eqn);
-	if(solve_equation(msolve, m_eqn, m_diff[0], eo, true, m_diff[1], MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_C)), vargs[2], vargs[1]) <= 0) {
+	bool c_real_set = false;
+	if(m_diff[0].isVariable() && m_diff[0].variable()->subtype() == SUBTYPE_UNKNOWN_VARIABLE && ((UnknownVariable*) CALCULATOR->getVariableById(VARIABLE_ID_C))->assumptions() && ((UnknownVariable*) CALCULATOR->getVariableById(VARIABLE_ID_C))->assumptions()->type() == ASSUMPTION_TYPE_NUMBER) {
+		Assumptions *ass = ((UnknownVariable*) m_diff[0].variable())->assumptions();
+		if(!ass) ass = CALCULATOR->defaultAssumptions();
+		if(ass && ass->type() >= ASSUMPTION_TYPE_REAL) {
+			((UnknownVariable*) CALCULATOR->getVariableById(VARIABLE_ID_C))->assumptions()->setType(ASSUMPTION_TYPE_REAL);
+			c_real_set = true;
+		}
+	}
+	int ret = solve_equation(msolve, m_eqn, m_diff[0], eo, true, m_diff[1], MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_C)), vargs[2], vargs[1]);
+	if(c_real_set) ((UnknownVariable*) CALCULATOR->getVariableById(VARIABLE_ID_C))->assumptions()->setType(ASSUMPTION_TYPE_NUMBER);
+	if(ret == -2 && !msolve.contains(m_diff)) {
+		msolve.setProtected(true);
+		msolve.transformById(FUNCTION_ID_SOLVE);
+		msolve.addChild(m_diff[0]);
+	} else if(ret < 0) {
 		CALCULATOR->error(true, _("Unable to solve differential equation."), NULL);
 		protect_mdiff(mstruct, m_diff, eo);
 		return -1;
