@@ -36,7 +36,7 @@
       </argument>
     </builtin_function>
     <builtin_function name="colon">
-      <_title>Colon Function</_title>
+      <_title>Colon Function (number sequence vector)</_title>
       <_names>r:colon</_names>
       <example>$name(1, 0.5, 3) = [1  1.5  2  2.5  3]</example>
       <_description>Returns a sequence of numbers as a vector.</_description>
@@ -3383,7 +3383,7 @@
     </builtin_function>
     <builtin_function name="bitset">
       <_title>Set Bit</_title>
-      <_description>Set binary bit at specified position. The index of the least significant bit is 1. Multiple bits can be set using a vector. Specify bit width and signedness to allow sign changes when the most significant bit is set.</_description>
+      <_description>Set binary bit at specified position. The index of the least significant bit is 1. Multiple bits can be set using a vector. Specify bit width and signedness (use 1 for signed and 0 for unsigned) to allow sign changes when the most significant bit is set.</_description>
       <example>$name(8, 3) = 12; $name(0b11111111, 2...8, 0) = 1</example>
       <_names>r:bitset</_names>
       <argument index="1">
@@ -3404,7 +3404,7 @@
     </builtin_function>
     <builtin_function name="bitget">
       <_title>Get Bit</_title>
-      <_description>Returns the binary bit at the specified position. The index of the least significant bit is 1. If last index is non-zero the bits from index to, and including, last index are returned as a new binary number.</_description>
+      <_description>Returns the binary bit at the specified position. The index of the least significant bit is 1. If last index is non-zero the bits from (first) position to, and including, last position are returned as a new binary number.</_description>
       <example>$name(12, 3) = 1; $name(0b01011100, 2; 4) = 0b00000110 = 6</example>
       <_names>r:bitget</_names>
       <argument index="1">

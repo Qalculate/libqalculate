@@ -108,6 +108,8 @@ bool use_duo_syms = false;
 int unicode_exponents = 1;
 bool had_to_expression = false;
 bool had_errors = false;
+vector<string> command_list;
+vector<int> command_arg;
 
 static char buffer[100000];
 
@@ -1030,9 +1032,27 @@ void set_option(string str) {
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "two's complement", _("two's complement")) || svar == "twos") SET_BOOL_D(printops.twos_complement)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "hexadecimal two's", _("hexadecimal two's")) || svar == "hextwos") SET_BOOL_D(printops.hexadecimal_twos_complement)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "two's complement input", _("two's complement input")) || svar == "twosin") SET_BOOL_PF(evalops.parse_options.twos_complement)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "hexadecimal two's input", _("hexadecimal two's input")) || svar == "hextwosin") SET_BOOL_PF(evalops.parse_options.hexadecimal_twos_complement)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "digit grouping", _("digit grouping")) || svar =="group") {
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "two's complement input", _("two's complement input")) || svar == "twosin") {
+		int v = -1;
+		if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
+		else v = s2b(svalue);
+		if(v < 0 || v > SHRT_MAX) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else if(v != evalops.parse_options.twos_complement) {
+			evalops.parse_options.twos_complement = v;
+			expression_format_updated(false);
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "hexadecimal two's input", _("hexadecimal two's input")) || svar == "hextwosin") {
+		int v = -1;
+		if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
+		else v = s2b(svalue);
+		if(v < 0 || v > SHRT_MAX) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else if(v != evalops.parse_options.hexadecimal_twos_complement) {
+			evalops.parse_options.hexadecimal_twos_complement = v;
+			expression_format_updated(false);
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "digit grouping", _("digit grouping")) || svar =="group") {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = DIGIT_GROUPING_NONE;
 		//digit grouping mode
@@ -1864,7 +1884,20 @@ bool show_set_help(string set_option = "") {
 		CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 		SET_OPTION_FOUND
 	}
-	STR_AND_TABS_BOOL("hexadecimal two's input", "hextwosin", _("Enables two's complement representation for input of negative hexadecimal numbers. All hexadecimal numbers starting with 8 or higher are negative."), evalops.parse_options.hexadecimal_twos_complement);
+	if(SET_OPTION_MATCHES("hexadecimal two's input", "hextwosin")) {
+		STR_AND_TABS_SET("hexadecimal two's input", "hextwosin");
+		SET_DESCRIPTION(_("Enables two's complement representation for input of negative hexadecimal numbers. A value >= 4 specifies the bit width (otherwise all hexadecimal numbers starting with 8 or higher are negative)."));
+		str += "(0";
+		if(evalops.parse_options.hexadecimal_twos_complement == 0) str += "*";
+		str += " = "; str += _("off");
+		str += ", 1";
+		if(evalops.parse_options.hexadecimal_twos_complement != 0 && evalops.parse_options.hexadecimal_twos_complement < 4) str += "*";
+		str += " = "; str += _("on");
+		str += ", >= 4)";
+		if(evalops.parse_options.hexadecimal_twos_complement >= 4) {str += " "; str += i2s(evalops.parse_options.hexadecimal_twos_complement); str += "*";}
+		CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+		SET_OPTION_FOUND
+	}
 	if(CALCULATOR->getDecimalPoint() != COMMA) {
 		STR_AND_TABS_BOOL("ignore comma", "", _("Allows use of ',' as thousands separator."), evalops.parse_options.comma_as_separator);
 	}
@@ -1900,7 +1933,20 @@ bool show_set_help(string set_option = "") {
 	STR_AND_TABS_4("parsing mode", "syntax", _("See 'help parsing mode'."), evalops.parse_options.parsing_mode, _("adaptive"), _("implicit first"), _("conventional"), _("chain"), _("rpn"));
 	STR_AND_TABS_2("read precision", "readprec", _("If activated, numbers are interpreted as approximate with precision equal to the number of significant digits (3.20 = 3.20+/-0.005)."), evalops.parse_options.read_precision, _("off"), _("always"), _("when decimals"))
 	STR_AND_TABS_BOOL("simplified percentage", "percent", _("Interpret addition/subtraction of percentage as percentage increase/decrease of the first term (100 + 10% = 110)."), simplified_percentage);
-	STR_AND_TABS_BOOL("two's complement input", "twosin", _("Enables two's complement representation for input of negative binary numbers. All binary numbers starting with 1 are assumed negative."), evalops.parse_options.twos_complement);
+	if(SET_OPTION_MATCHES("two's input", "twosin")) {
+		STR_AND_TABS_SET("two's input", "twosin");
+		SET_DESCRIPTION(_("Enables two's complement representation for input of negative binary numbers. A value >= 2 specifies the bit width (otherwise all binary numbers starting with 1 are negative)."));
+		str += "(0";
+		if(evalops.parse_options.twos_complement == 0) str += "*";
+		str += " = "; str += _("off");
+		str += ", 1";
+		if(evalops.parse_options.twos_complement != 0 && evalops.parse_options.twos_complement < 2) str += "*";
+		str += " = "; str += _("on");
+		str += ", >= 4)";
+		if(evalops.parse_options.twos_complement >= 2) {str += " "; str += i2s(evalops.parse_options.twos_complement); str += "*";}
+		CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+		SET_OPTION_FOUND
+	}
 
 	CHECK_IF_SCREEN_FILLED_HEADING_S(_("Units"));
 
@@ -4454,6 +4500,17 @@ int main(int argc, char *argv[]) {
 				if(check_exchange_rates()) mstruct->set(CALCULATOR->convertToOptimalUnit(*mstruct, evalops, true));
 				else mstruct->set(mstruct_new);
 				result_action_executed();
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "prefix", _("prefix"))) {
+				bool save_pre = printops.use_unit_prefixes;
+				bool save_cur = printops.use_prefixes_for_currencies;
+				bool save_allu = printops.use_prefixes_for_all_units;
+				printops.use_unit_prefixes = true;
+				printops.use_prefixes_for_currencies = true;
+				printops.use_prefixes_for_all_units = true;
+				setResult(NULL, false);
+				printops.use_unit_prefixes = save_pre;
+				printops.use_prefixes_for_currencies = save_cur;
+				printops.use_prefixes_for_all_units = save_allu;
 			//base units
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "base", _c("units", "base"))) {
 				CALCULATOR->resetExchangeRatesUsed();
@@ -4855,7 +4912,10 @@ int main(int argc, char *argv[]) {
 			else if(b_decimal_comma == 0) {str += _("off");}
 			else {str += _("on");}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
-			PRINT_AND_COLON_TABS(_("hexadecimal two's input"), "hextwosin"); str += b2oo(evalops.parse_options.hexadecimal_twos_complement, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("hexadecimal two's input"), "hextwosin");
+			if(evalops.parse_options.hexadecimal_twos_complement < 4) str += b2oo(evalops.parse_options.hexadecimal_twos_complement, false);
+			else str += i2s(evalops.parse_options.hexadecimal_twos_complement);
+			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			if(CALCULATOR->getDecimalPoint() != COMMA) {
 				PRINT_AND_COLON_TABS(_("ignore comma"), ""); str += b2oo(evalops.parse_options.comma_as_separator, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			}
@@ -4896,7 +4956,10 @@ int main(int argc, char *argv[]) {
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("simplified percentage"), "percent"); str += b2oo(simplified_percentage, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
-			PRINT_AND_COLON_TABS(_("two's complement input"), "twosin"); str += b2oo(evalops.parse_options.twos_complement, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("two's complement input"), "twosin");
+			if(evalops.parse_options.twos_complement < 2) str += b2oo(evalops.parse_options.twos_complement, false);
+			else str += i2s(evalops.parse_options.twos_complement);
+			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Units"));
 
@@ -5237,6 +5300,7 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- a variable or physical constant (e.g. c)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- base (convert to base units)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- optimal (convert to optimal unit)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- prefix (convert to optimal prefix)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- mixed (convert to mixed units, e.g. hours + minutes)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- bin / binary (show as binary number)"));
@@ -5342,25 +5406,93 @@ int main(int argc, char *argv[]) {
 			}
 #endif
 			break;
-		} else if(explicit_command) {
-			if(!scom.empty() && ((canfetch && EQUALS_IGNORECASE_AND_LOCAL(scom, "exrates", _("exrates"))) || EQUALS_IGNORECASE_AND_LOCAL(scom, "stack", _("stack")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "exact", _("exact")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "approximate", _("approximate")) || str == "approx" || EQUALS_IGNORECASE_AND_LOCAL(scom, "factor", _("factor")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "simplify", _("simplify")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "expand", _("expand")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "mode", _("mode")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "quit", _("quit")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "exit", _("exit")))) {
+		} else {
+			if(explicit_command && !scom.empty() && ((canfetch && EQUALS_IGNORECASE_AND_LOCAL(scom, "exrates", _("exrates"))) || EQUALS_IGNORECASE_AND_LOCAL(scom, "stack", _("stack")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "exact", _("exact")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "approximate", _("approximate")) || str == "approx" || EQUALS_IGNORECASE_AND_LOCAL(scom, "factor", _("factor")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "simplify", _("simplify")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "expand", _("expand")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "mode", _("mode")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "quit", _("quit")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "exit", _("exit")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "history", _("history")))) {
 				str = "";
 				BEGIN_BOLD(str)
 				str += scom;
 				END_BOLD(str)
 				snprintf(buffer, 1000, _("%s does not accept any arguments."), str.c_str());
 				PUTS_UNICODE(buffer)
-			} else if(scom.empty() && (EQUALS_IGNORECASE_AND_LOCAL(str, "set", _("set")) || EQUALS_IGNORECASE_AND_LOCAL(str, "save", _("save")) || EQUALS_IGNORECASE_AND_LOCAL(str, "store", _("store")) || EQUALS_IGNORECASE_AND_LOCAL(str, "variable", _("variable")) || EQUALS_IGNORECASE_AND_LOCAL(str, "function", _("function")) || EQUALS_IGNORECASE_AND_LOCAL(str, "delete", _("delete")) || EQUALS_IGNORECASE_AND_LOCAL(str, "assume", _("assume")) || EQUALS_IGNORECASE_AND_LOCAL(str, "base", _("base")) || EQUALS_IGNORECASE_AND_LOCAL(str, "rpn", _("rpn")) || EQUALS_IGNORECASE_AND_LOCAL(str, "move", _("move")) || EQUALS_IGNORECASE_AND_LOCAL(str, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(str, "to", _("to")) || EQUALS_IGNORECASE_AND_LOCAL(str, "find", _("find")) || EQUALS_IGNORECASE_AND_LOCAL(str, "info", _("info")))) {
-				BEGIN_BOLD(scom)
-				scom += str;
-				END_BOLD(scom)
-				snprintf(buffer, 1000, _("%s requires at least one argument."), scom.c_str());
-				PUTS_UNICODE(buffer)
-			} else {
+				str = "";
+			} else if(scom.empty() && (explicit_command || str.find_first_of(NOT_IN_NAMES) == string::npos) && (EQUALS_IGNORECASE_AND_LOCAL(str, "set", _("set")) || EQUALS_IGNORECASE_AND_LOCAL(str, "save", _("save")) || EQUALS_IGNORECASE_AND_LOCAL(str, "store", _("store")) || EQUALS_IGNORECASE_AND_LOCAL(str, "variable", _("variable")) || EQUALS_IGNORECASE_AND_LOCAL(str, "function", _("function")) || EQUALS_IGNORECASE_AND_LOCAL(str, "delete", _("delete")) || EQUALS_IGNORECASE_AND_LOCAL(str, "assume", _("assume")) || EQUALS_IGNORECASE_AND_LOCAL(str, "base", _("base")) || EQUALS_IGNORECASE_AND_LOCAL(str, "rpn", _("rpn")) || EQUALS_IGNORECASE_AND_LOCAL(str, "move", _("move")) || EQUALS_IGNORECASE_AND_LOCAL(str, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(str, "to", _("to")) || EQUALS_IGNORECASE_AND_LOCAL(str, "find", _("find")) || EQUALS_IGNORECASE_AND_LOCAL(str, "info", _("info")))) {
+				bool b = explicit_command;
+				if(!b) {
+					CALCULATOR->beginTemporaryStopMessages();
+					MathStructure m;
+					CALCULATOR->parse(&m, str, evalops.parse_options);
+					if(CALCULATOR->endTemporaryStopMessages()) b = true;
+					if(!b && m.isFunction() && m.function()->minargs() > 0) b = true;
+					if(!b && m.isMultiplication()) {
+						if(m.size() > 3) b = true;
+						for(size_t i = 0; !b && i < m.size(); i++) {
+							if(m[i].type() == STRUCT_FUNCTION && m[i].function()->minargs() > 0) b = true;
+							else if(i > 0 && (m[i].type() == STRUCT_VARIABLE || m[i].type() == STRUCT_FUNCTION || m[i].type() == STRUCT_SYMBOLIC) && m[i - 1].type() == STRUCT_UNIT) b = true;
+						}
+					}
+				}
+				if(b) {
+					BEGIN_BOLD(scom)
+					scom += str;
+					END_BOLD(scom)
+					snprintf(buffer, 1000, _("%s requires at least one argument."), scom.c_str());
+					PUTS_UNICODE(buffer)
+					str = "";
+				}
+			} else if(explicit_command) {
 				PUTS_UNICODE(_("Unknown command."));
+#define ADD_TO_COMMANDS(x, y) command_list.push_back(x); command_arg.push_back(y); command_list.push_back(_(x)); command_arg.push_back(y);
+				if(command_list.empty()) {
+					ADD_TO_COMMANDS("exrates", 0);
+					ADD_TO_COMMANDS("stack", 0);
+					ADD_TO_COMMANDS("exact", 0);
+					ADD_TO_COMMANDS("approximate", 0);
+					ADD_TO_COMMANDS("approx", 0);
+					ADD_TO_COMMANDS("factor", 0);
+					ADD_TO_COMMANDS("simplify", 0);
+					ADD_TO_COMMANDS("expand", 0);
+					ADD_TO_COMMANDS("mode", 0);
+					ADD_TO_COMMANDS("exit", 0);
+					ADD_TO_COMMANDS("quit", 0);
+					ADD_TO_COMMANDS("history", 0);
+
+					ADD_TO_COMMANDS("set", 1);
+					ADD_TO_COMMANDS("save", 1);
+					ADD_TO_COMMANDS("variable", 1);
+					ADD_TO_COMMANDS("function", 1);
+					ADD_TO_COMMANDS("delete", 1);
+					ADD_TO_COMMANDS("assume", 1);
+					ADD_TO_COMMANDS("base", 1);
+					ADD_TO_COMMANDS("rpn", 1);
+					ADD_TO_COMMANDS("move", 1);
+					ADD_TO_COMMANDS("convert", 1);
+					ADD_TO_COMMANDS("to", 1);
+					ADD_TO_COMMANDS("find", 1);
+					ADD_TO_COMMANDS("info", 1);
+
+					ADD_TO_COMMANDS("store", -1);
+					ADD_TO_COMMANDS("clear", -1);
+					ADD_TO_COMMANDS("swap", -1);
+					ADD_TO_COMMANDS("copy", -1);
+					ADD_TO_COMMANDS("rotate", -1);
+					ADD_TO_COMMANDS("pop", -1);
+					ADD_TO_COMMANDS("list", -1);
+					ADD_TO_COMMANDS("help", -1);
+				}
+				bool b = false;
+				for(int n = 1; n <= 2 && !b; n++) {
+					for(size_t i = 0; i < command_list.size(); i++) {
+						if(((scom.empty() && command_arg[i] <= 0) || (!scom.empty() && command_arg[i] != 0)) && compare_name_with_error(command_list[i], scom.empty() ? str : scom, command_list[i].length(), 10, 0, n, false)) {
+							snprintf(buffer, 1000, _("Did you mean \"%s\"?"), command_list[i].c_str());
+							PUTS_UNICODE(buffer)
+							b = true;
+							if(i % 2 == 0) i++;
+						}
+					}
+				}
+				puts("");
+				str = "";
 			}
-			puts("");
-		} else {
 			if(unittest && str[0] == '\t') {
 #define RED   "\x1B[31m"
 #define GRN   "\x1B[32m"
