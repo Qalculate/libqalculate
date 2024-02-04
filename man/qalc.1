@@ -388,7 +388,7 @@ Use colors to highlight different elements of expressions and results.
 .B excessive parentheses, expar \fI(on, off*)\fP
 .PP
 .TP 8
-.B minus last, minlast \fI(on, off*)\fP
+.B minus last, minlast \fI(on*, off)\fP
 Always place negative values last.
 .PP
 .TP 8
@@ -409,7 +409,7 @@ Add extra space around operators.
 Display Unicode characters.
 .PP
 .TP 8
-.B unicode exponents, uniexp \fI(0 = off, 1= on*, 2 = units)\fP
+.B unicode exponents, uniexp \fI(0 = off, 1* = on, 2 = units)\fP
 Display exponents 0-9 using Unicode superscript characters.
 .PP
 .TP 8
@@ -462,18 +462,22 @@ Use lowercase e for E-notation (5e2 = 5 * 10^2).
 Use lowercase letters for number bases > 10.
 .PP
 .TP 8
-.B max decimals, maxdeci \fI(-1 = off*, >= 0)\fP
+.B max decimals, maxdeci \fI(-1* = off, >= 0)\fP
 .PP
 .TP 8
-.B min decimals, mindeci \fI(-1 = off*, >= 0)\fP
+.B min decimals, mindeci \fI(-1* = off, >= 0)\fP
 .PP
 .TP 8
-.B rounding \fI(0 = standard*, 1 = even, 2 = truncate)\fP
+.B repeating decimals, repdeci \fI(on, off*)\fP
+If activated, 1/6 is displayed as '0.1 666...', otherwise as '0.166667'.
+.PP
+.TP 8
+.B rounding \fI(0* = standard, 1 = even, 2 = truncate)\fP
 Determines whether how approximate numbers are rounded (round halfway numbers away from zero or towards the nearest even digit, or round all numbers
 towards zero).
 .PP
 .TP 8
-.B scientific notation, exp \fI(0 = off, -1 = auto*, -3 = engineering, 1 = pure, 3 = scientific, >= 0)\fP
+.B scientific notation, exp \fI(0 = off, -1* = auto, -3 = engineering, 1 = pure, 3 = scientific, >= 0)\fP
 Determines how scientific notation is used (e.g. 5 543 000 = 5.543E6).
 .PP
 .TP 8
@@ -533,6 +537,10 @@ See syntax section.
 If activated, numbers are interpreted as approximate with precision equal to the number of significant digits (3.20 = 3.20+/-0.005).
 .PP
 .TP 8
+.B simplified percentage, percent \fI(on*, off)\fP
+Interpret addition/subtraction of percentage as percentage increase/decrease of the first term (100 + 10% = 110).
+.PP
+.TP 8
 .B two's input, twosin \fI(on, off*, >= 2)\fP
 Enables two's complement representation for input of negative binary numbers. A value >= 2 specifies the bit width (otherwise all binary numbers starting with 1 are negative).
 .PP
@@ -543,7 +551,7 @@ Units:
 Enables automatic use of hecto, deca, deci, and centi.
 .PP
 .TP 8
-.B autoconversion, conv \fI(0 = none, 1 = optimal*, 2 = base, 3 = optimalsi, 4 = mixed)\fP
+.B autoconversion, conv \fI(0 = none, 1* = optimal, 2 = base, 3 = optimalsi, 4 = mixed)\fP
 Controls automatic unit conversion of the result. 'optimalsi' always converts non-SI units, while 'optimal' only converts to more optimal unit
 expressions, with less units and exponents.
 .PP
@@ -575,11 +583,11 @@ Use negative exponents instead of division for units in result (m/s = m*s^-1).
 .B sync units, sync \fI(on*, off)\fP
 .PP
 .TP 8
-.B temperature units, temp \fI(0 = hybrid*, 1 = absolute, 2 = relative)\fP
+.B temperature units, temp \fI(0* = hybrid, 1 = absolute, 2 = relative)\fP
 Determines how expressions with temperature units are calculated (hybrid acts as absolute if the expression contains different temperature units, otherwise as relative).
 .PP
 .TP 8
-.B update exchange rates, upxrates \fI(-1 = ask*, 0 = never, > 0 = days)\fP
+.B update exchange rates, upxrates \fI(-1* = ask, 0 = never, > 0 = days)\fP
 .PP
 Other:
 .PP
@@ -604,7 +612,7 @@ Save functions, units, and variables on exit.
 Save settings on exit.
 .PP
 .TP 8
-.B sigint action, sigint \fI(0 = kill*, 1 = exit, 2 = interrupt)\fP
+.B sigint action, sigint \fI(0 = kill, 1* = exit, 2 = interrupt)\fP
 Determines how the SIGINT signal (Ctrl+C) is handled.
 .SH "SYNTAX"
 Mathematical entities:
