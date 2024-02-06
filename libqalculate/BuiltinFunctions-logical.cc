@@ -193,7 +193,12 @@ BitSetFunction::BitSetFunction() : MathFunction("bitset", 2, 5) {
 	arg->addArgument(new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_ULONG));
 	set->addArgument(arg);
 	setArgumentDefinition(2, set);
-	setArgumentDefinition(3, new BooleanArgument());
+	set = new ArgumentSet();
+	set->addArgument(new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
+	arg = new VectorArgument();
+	arg->addArgument(new BooleanArgument());
+	set->addArgument(arg);
+	setArgumentDefinition(3, set);
 	setDefaultValue(3, "1");
 	setArgumentDefinition(4, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_UINT));
 	setDefaultValue(4, "0");
@@ -202,19 +207,62 @@ BitSetFunction::BitSetFunction() : MathFunction("bitset", 2, 5) {
 }
 int BitSetFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	Number nr(vargs[0].number());
-	bool b_set = vargs[2].number().getBoolean();
+	bool b_set = false;
 	unsigned int bits = vargs[3].number().uintValue();
 	bool b_signed = vargs[4].number().getBoolean();
 	unsigned long int max_index = 0;
 	if(vargs[1].isVector()) {
+		if((vargs[2].isVector() && vargs[1].size() != vargs[2].size()) || vargs[2].number() > 1) {
+			mstruct.setType(STRUCT_VECTOR);
+			for(size_t i = 0; i < vargs[1].size(); i++) {
+				mstruct.addChild_nocopy(new MathStructure(this, &vargs[0], &vargs[1][i], &vargs[2], &vargs[3], &vargs[4], NULL));
+			}
+			return 1;
+		}
 		unsigned long int index = 0;
+		if(!vargs[2].isVector()) b_set = vargs[2].number().getBoolean();
 		for(size_t i = 0; i < vargs[1].size(); i++) {
 			if(CALCULATOR->aborted()) return 0;
 			index = vargs[1][i].number().ulintValue();
-			if(index > max_index) max_index = index;
-			nr.bitSet(index, b_set);
+			if(index > max_index) {
+				max_index = index;
+				if(vargs[2].isVector()) b_set = vargs[2][i].number().getBoolean();
+			}
+			if(vargs[2].isVector()) nr.bitSet(index, vargs[2][i].number().getBoolean());
+			else nr.bitSet(index, b_set);
+		}
+	} else if(vargs[2].isVector()) {
+		unsigned long int index = vargs[1].number().ulintValue();
+		if(vargs[2].size() > 0) {
+			max_index = index + vargs[2].size() - 1;
+			b_set = vargs[2].last().number().getBoolean();
+		}
+		for(size_t i = 0; i < vargs[2].size(); i++) {
+			if(CALCULATOR->aborted()) return 0;
+			nr.bitSet(index, vargs[2][i].number().getBoolean());
+			index++;
+		}
+	} else if(vargs[2].number() > 1) {
+		PrintOptions po;
+		po.base = BASE_BINARY;
+		po.base_display = BASE_DISPLAY_NONE;
+		po.binary_bits = bits;
+		po.min_exp = 0;
+		string str = vargs[2].number().print(po);
+		unsigned long int index = vargs[1].number().ulintValue();
+		if(str.length() > 0) {
+			max_index = index + str.length() - 1;
+			b_set = str[0] == '1';
+		}
+		for(size_t i = str.length(); i > 0; i--) {
+			if(CALCULATOR->aborted()) return 0;
+			if(str[i - 1] == '0') nr.bitSet(index, 0);
+			else if(str[i - 1] == '1') nr.bitSet(index, 1);
+			else return 0;
+			index++;
 		}
 	} else {
+		b_set = vargs[2].number().getBoolean();
 		max_index = vargs[1].number().ulintValue();
 		nr.bitSet(max_index, b_set);
 	}
@@ -225,7 +273,7 @@ int BitSetFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		nrbits.exp2();
 		bits = nrbits.uintValue();
 	}
-	if(bits > 0 && bits <= SHRT_MAX && max_index == bits && (b_signed || vargs[0].number().isNegative()) && (b_set != vargs[0].number().isNegative())) {
+	if(bits > 0 && max_index == bits && (b_signed || vargs[0].number().isNegative()) && (b_set != vargs[0].number().isNegative())) {
 		PrintOptions po;
 		po.base = BASE_BINARY;
 		po.base_display = BASE_DISPLAY_NONE;
@@ -236,7 +284,8 @@ int BitSetFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		if(str.length() > bits) str = str.substr(str.length() - bits, bits);
 		ParseOptions pa;
 		pa.base = BASE_BINARY;
-		pa.twos_complement = bits;
+		pa.twos_complement = true;
+		pa.binary_bits = bits;
 		nr.set(str, pa);
 	}
 	mstruct = nr;

@@ -3383,8 +3383,8 @@
     </builtin_function>
     <builtin_function name="bitset">
       <_title>Set Bit</_title>
-      <_description>Set binary bit at specified position. The index of the least significant bit is 1. Multiple bits can be set using a vector. Specify bit width and signedness (use 1 for signed and 0 for unsigned) to allow sign changes when the most significant bit is set.</_description>
-      <example>$name(8, 3) = 12; $name(0b11111111, 2...8, 0) = 1</example>
+      <_description>Set binary bit at specified position. The index of the least significant bit is 1. Multiple bits can be set by using a vector for argument 2 and/or 3, or a value higher than 1. Specify bit width and signedness (use 1 for signed and 0 for unsigned) to allow sign changes when the most significant bit is set.</_description>
+      <example>$name(8, 3) = 12; $name(0b00000110, 5...7, 1) = $name(0b00000110, 5, [1 1 1]) = $name(0b00000110, 5, 0b111) = $name(0b00000110, 5, 7) = 0b01110110 = 118</example>
       <_names>r:bitset</_names>
       <argument index="1">
         <_title>Number</_title>
