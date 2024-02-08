@@ -263,6 +263,33 @@
       </base>
     </unit>
     <unit type="alias">
+      <_title>Light Second</_title>
+      <_names>ar:light_second,p:light_seconds</_names>
+      <base>
+        <unit>ly</unit>
+        <relation>1/31557600</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Light Minute</_title>
+      <_names>ar:light_minute,p:light_minutes</_names>
+      <base>
+        <unit>light_second</unit>
+        <relation>60</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Light Hour</_title>
+      <_names>ar:light_hour,p:light_hours</_names>
+      <base>
+        <unit>light_minute</unit>
+        <relation>60</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
       <_title>Parsec</_title>
       <_names>ar:pc,parsec,p:parsecs</_names>
       <use_with_prefixes>true</use_with_prefixes>
