@@ -2821,7 +2821,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					}
 				}
 			}
-			if((o_number.isNegative() || ((parent || po.interval_display != INTERVAL_DISPLAY_SIGNIFICANT_DIGITS) && o_number.isInterval() && o_number.isNonPositive())) && (po.base != BASE_CUSTOM || !CALCULATOR->customOutputBase().isNegative()) && (po.base > BASE_FP16 || po.base < BASE_FP80) && (po.base < BASE_LATITUDE || po.base > BASE_LONGITUDE_2)) {
+			if((o_number.isNegative() || ((parent || po.interval_display != INTERVAL_DISPLAY_SIGNIFICANT_DIGITS) && o_number.isInterval() && o_number.isNonPositive())) && (po.base != BASE_CUSTOM || !CALCULATOR->customOutputBase().isNegative()) && (po.base > BASE_FP16 || po.base < BASE_FP80) && (po.base < BASE_LATITUDE || po.base > BASE_LONGITUDE_2) && po.rounding != ROUNDING_UP && po.rounding != ROUNDING_DOWN && po.rounding != ROUNDING_HALF_UP && po.rounding != ROUNDING_HALF_DOWN) {
 				if((((po.base != 2 || !po.twos_complement) && (po.base != 16 || !po.hexadecimal_twos_complement)) || !o_number.isInteger()) && (!o_number.isMinusInfinity() || (parent && parent->isAddition()))) {
 					// a=-(-a), if a is a negative number (or a is interval from negative value to 0), and not using two's complement and not using negative number base
 					o_number.negate();
@@ -2863,8 +2863,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					num.set(o_number);
 					if(!num.multiply(den)) break;
 					if(!num.isInteger()) {
-						if(po.custom_time_zone == TZ_TRUNCATE || po.custom_time_zone == TZ_TRUNCATE + TZ_DOZENAL) num.trunc();
-						else num.round(po.round_halfway_to_even);
+						num.round(get_rounding_mode(po));
 						if(!num.isInteger()) {
 							if(po.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR) {
 								Number nr_int(o_number);
@@ -3531,6 +3530,8 @@ size_t unformatted_unicode_length(const string &str) {
 	return l2;
 }
 
+#define EXP_MODE_10 (po.exp_display == EXP_BASE10 || (po.exp_display == EXP_DEFAULT && !po.lower_case_e))
+
 string MathStructure::print(const PrintOptions &po, bool format, int colorize, int tagtype, const InternalPrintStruct &ips) const {
 	if(ips.depth == 0 && po.is_approximate) *po.is_approximate = false;
 	string print_str;
@@ -3569,10 +3570,10 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				bool exp_minus = false;
 				bool base10 = (po.base == BASE_DECIMAL);
 				bool base_without_exp = (po.base != BASE_DECIMAL && po.base_display == BASE_DISPLAY_SUFFIX && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME && ((po.base < BASE_CUSTOM && po.base != BASE_BIJECTIVE_26) || (po.base == BASE_CUSTOM && (!CALCULATOR->customOutputBase().isInteger() || CALCULATOR->customOutputBase() > 62 || CALCULATOR->customOutputBase() < 2))));
-				if(po.min_exp > EXP_POWER_OF_10 / 2 || (!po.lower_case_e && po.min_exp >= EXP_NO_POWER_OF_10 / 2) || (base_without_exp && po.base_display == BASE_DISPLAY_SUFFIX) || (po.base != BASE_DECIMAL && po.base >= 2 && po.base <= 36)) {
+				if(EXP_MODE_10 || (base_without_exp && po.base_display == BASE_DISPLAY_SUFFIX) || (po.base != BASE_DECIMAL && po.base >= 2 && po.base <= 36)) {
 					ips_n.exp = &exp;
 					ips_n.exp_minus = &exp_minus;
-					if((po.lower_case_e || po.min_exp < EXP_NO_POWER_OF_10 / 2) && po.min_exp <= EXP_POWER_OF_10 / 2 && base_without_exp) {
+					if(!EXP_MODE_10 && base_without_exp) {
 						o_number.print(po, ips_n);
 						base10 = !exp.empty();
 						exp = "";
@@ -3585,14 +3586,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					ips_n.exp_minus = NULL;
 				}
 
-				if(po.min_exp > EXP_POWER_OF_10 / 2 || po.min_exp < EXP_NO_POWER_OF_10 / 2) {
-					PrintOptions po2 = po;
-					if(po2.min_exp > EXP_POWER_OF_10 / 2) po2.min_exp -= EXP_POWER_OF_10;
-					else if(po2.min_exp < EXP_NO_POWER_OF_10 / 2) po2.min_exp -= EXP_NO_POWER_OF_10;
-					print_str += o_number.print(po2, ips_n);
-				} else {
-					print_str += o_number.print(po, ips_n);
-				}
+				print_str += o_number.print(po, ips_n);
 
 				if(!exp.empty() && (base_without_exp || (po.base != BASE_CUSTOM && (po.base < 2 || po.base > 36)) || (po.base == BASE_CUSTOM && (!CALCULATOR->customOutputBase().isInteger() || CALCULATOR->customOutputBase() > 62 || CALCULATOR->customOutputBase() < 2)))) base10 = true;
 
@@ -3655,31 +3649,14 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					}
 					print_str += exp;
 					print_str += "</sup>";
-				} else if(BASE_IS_SEXAGESIMAL(po.base) || po.base == BASE_TIME) {
-					if(!po.lower_case_e && po.base >= EXP_NO_POWER_OF_10 / 2) {
-						size_t i = 0;
-						while(true) {
-							i = print_str.find("E", i + 1);
-							if(i == string::npos || i == print_str.length() - 1) break;
-							if(print_str[i - 1] >= '0' && print_str[i - 1] <= '9' && print_str[i + 1] >= '0' && print_str[i + 1] <= '9') {
-								print_str.replace(i, 1, "e");
-							}
-						}
-					}
-					if(po.use_unicode_signs && (!po.can_display_unicode_string_function ||(*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) gsub("-", SIGN_MINUS, print_str);
 				}
 			} else {
-				if(po.min_exp > EXP_POWER_OF_10 / 2 || po.min_exp < EXP_NO_POWER_OF_10 / 2) {
+				if(po.exp_display == EXP_BASE10) {
 					PrintOptions po2 = po;
 					string exp;
 					bool exp_minus = false;
-					if(po2.min_exp > EXP_POWER_OF_10 / 2) {
-						po2.min_exp -= EXP_POWER_OF_10;
-						ips_n.exp = &exp;
-						ips_n.exp_minus = &exp_minus;
-					} else if(po2.min_exp < EXP_NO_POWER_OF_10 / 2) {
-						po2.min_exp -= EXP_NO_POWER_OF_10;
-					}
+					ips_n.exp = &exp;
+					ips_n.exp_minus = &exp_minus;
 					print_str += o_number.print(po2, ips_n);
 					i_number_end = print_str.length();
 					if(!exp.empty()) {

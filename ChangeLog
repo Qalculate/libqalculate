@@ -1,3 +1,13 @@
+2023-02-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add LightSecond, LightMinute, and LightHour units
+	* Add integerDigits(), digitGet(), and digitSet() functions
+	* Add more rounding methods and replace PrintOptions::round_halfway_to_even (and truncate time zone value hack) with PrintOptions::rounding
+	* Add PrintOptions::duodecimal_symbols (replace time zone value hack)
+	* Replace PrintOptions::lower_case_e with PrintOptions::exp_display and add option for scientific notation without E (10^x)
+	* Add ParseOptions::binary_bits (replaces non-boolean values for twos_complement and hexadecimal_twos_complement)
+	* Add keep command, which makes variable or function non-temporary, in qalc
+
 2023-02-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Check for potential spelling mistakes in unrecognized qalc commands

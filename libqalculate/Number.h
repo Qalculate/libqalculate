@@ -428,6 +428,7 @@ class Number {
 		bool isqrt();
 		bool isPerfectSquare() const;
 		bool round(bool halfway_to_even = true);
+		bool round(RoundingMode mode);
 		bool floor();
 		bool ceil();
 		bool trunc();

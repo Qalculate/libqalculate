@@ -40,6 +40,8 @@ struct ExpressionName {
 	/// The name.
 	std::string name;
 
+	class ExpressionItem_p *priv;
+
 	/** Create an empty expression name. All properties are set to false.
 	*/
 	ExpressionName();

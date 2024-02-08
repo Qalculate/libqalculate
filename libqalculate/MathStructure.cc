@@ -28,6 +28,8 @@ using std::cout;
 using std::vector;
 using std::endl;
 
+#include "MathStructure_p.h"
+
 void MathStructure::mergePrecision(const MathStructure &o) {MERGE_APPROX_AND_PREC(o)}
 void MathStructure::mergePrecision(bool approx, int prec) {
 	if(!b_approx && approx) setApproximate();

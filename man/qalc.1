@@ -188,6 +188,12 @@ Displays information about a function, variable, unit, or prefix.
 Example: info sin.
 .PP
 .TP 8
+.B keep \fIname\fP
+Make the temporary user-defined variable or function with the specified name non-temporary.
+.br
+Example: keep var1.
+.PP
+.TP 8
 .B MC/MS/M+/M-
 Memory operations (memory clear, memory store, memory plus, memory minus). Recall the memory using the MR/MRC variable.
 .PP
@@ -435,8 +441,8 @@ Determines the default decimal separator.
 .B digit grouping, group \fI(0* = off, 1 = standard, 2 = locale)\fP
 .PP
 .TP 8
-.B e notation \fI(on*, off)\fP
-Use scientific E-notation, instead of power of 10.
+.B exp display, exp \fI(E*, e, 10)\fP
+Determines how scientific notation are displayed (e.g. 3 000 000 = 3E6 = 3e6, or 3 * 10^6).
 .PP
 .TP 8
 .B fractions, fr \fI(-1* = auto, 0 = off, 1 = exact, 2 = on, 3 = mixed, 4 = long, 5 = dual, 1/n)\fP
@@ -454,10 +460,6 @@ Use 'j' (instead of 'i') as default symbol for the imaginary unit.
 .B interval display, ivdisp \fI(0* = adaptive, 1 = significant, 2 = interval, 3 = plusminus, 4 = midpoint, 5 = lower, 6 = upper, 7 = concise, 8 = relative)\fP
 .PP
 .TP 8
-.B lowercase e, lowe \fI(on, off*)\fP
-Use lowercase e for E-notation (5e2 = 5 * 10^2).
-.PP
-.TP 8
 .B lowercase numbers, lownum \fI(on, off*)\fP
 Use lowercase letters for number bases > 10.
 .PP
@@ -472,7 +474,7 @@ Use lowercase letters for number bases > 10.
 If activated, 1/6 is displayed as '0.1 666...', otherwise as '0.166667'.
 .PP
 .TP 8
-.B rounding \fI(0* = standard, 1 = even, 2 = truncate)\fP
+.B rounding \fI(0* = standard, 1 = even, 2 = truncate, 3 = odd, 4 = half truncate, 5 = half up, 6 = half down, 7 = half random, 8 = away from zero, 9 = up, 10 = down)\fP
 Determines whether how approximate numbers are rounded (round halfway numbers away from zero or towards the nearest even digit, or round all numbers
 towards zero).
 .PP
@@ -508,7 +510,7 @@ Determines the default decimal separator.
 .PP
 .TP 8
 .B hexadecimal two's input, hextwosin\fI(on, off*, >= 4)\fP
-Enables two's complement representation for input of negative hexadecimal numbers. A value >= 4 specifies the bit width (otherwise all hexadecimal numbers starting with 8 or higher are negative)
+Enables two's complement representation for input of negative hexadecimal numbers. All hexadecimal numbers starting with 8 or higher are negative.
 .PP
 .TP 8
 .B ignore comma \fI(on, off*)\fP
@@ -542,7 +544,7 @@ Interpret addition/subtraction of percentage as percentage increase/decrease of 
 .PP
 .TP 8
 .B two's input, twosin \fI(on, off*, >= 2)\fP
-Enables two's complement representation for input of negative binary numbers. A value >= 2 specifies the bit width (otherwise all binary numbers starting with 1 are negative).
+Enables two's complement representation for input of negative binary numbers. All binary numbers starting with 1 are negative.
 .PP
 Units:
 .PP

@@ -1600,14 +1600,8 @@ bool transform_expression_for_equals_save(string &str, const ParseOptions &po) {
 #define EQUALS_IGNORECASE_AND_LOCAL(x,y,z)	(equalsIgnoreCase(x, y) || equalsIgnoreCase(x, z))
 #define EQUALS_IGNORECASE_AND_LOCAL_NR(x,y,z,a)	(equalsIgnoreCase(x, y a) || (x.length() == strlen(z) + strlen(a) && equalsIgnoreCase(x.substr(0, x.length() - strlen(a)), z) && equalsIgnoreCase(x.substr(x.length() - strlen(a)), a)))
 
-string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po) {
-	return calculateAndPrint(str, msecs, eo, po, AUTOMATIC_FRACTION_OFF, AUTOMATIC_APPROXIMATION_OFF, NULL, -1, NULL, false, 0, TAG_TYPE_HTML);
-}
 string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, std::string *parsed_expression) {
 	return calculateAndPrint(str, msecs, eo, po, AUTOMATIC_FRACTION_OFF, AUTOMATIC_APPROXIMATION_OFF, parsed_expression, -1, NULL, false, 0, TAG_TYPE_HTML);
-}
-string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, AutomaticFractionFormat auto_fraction, AutomaticApproximation auto_approx, std::string *parsed_expression, int max_length, bool *result_is_comparison) {
-	return calculateAndPrint(str, msecs, eo, po, AUTOMATIC_FRACTION_OFF, AUTOMATIC_APPROXIMATION_OFF, parsed_expression, max_length, result_is_comparison, false, 0, TAG_TYPE_HTML);
 }
 
 long int get_fixed_denominator2(const string &str, NumberFractionFormat &nff, bool b_minus, int frac) {

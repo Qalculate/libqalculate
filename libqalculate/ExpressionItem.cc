@@ -18,6 +18,8 @@
 using std::string;
 using std::vector;
 
+#include "ExpressionItem_p.h"
+
 ExpressionName::ExpressionName(string sname) : suffix(false), unicode(false), plural(false), reference(false), avoid_input(false), completion_only(false) {
 	name = sname;
 	if(text_length_is_one(sname)) {

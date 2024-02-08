@@ -373,16 +373,16 @@ bool compare_name_with_error(const string &name, const string &str, const size_t
 	return true;
 }
 
-const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", "∠", "\x1c", "⊼", "\x1d", "⊽", "\x1e", "⊕", "\x1f", "⨯", "\x15", "∥", "\x14"};
+const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", "∠", "\x1c", "⊼", "\x1d", "⊽", "\x1e", "⊕", "\x1f", "⨯", "\x15", "∥", "\x14", "...", "\x12"};
 #define INTERNAL_UPOW "\x13"
 #define INTERNAL_UPOW_CH '\x13'
-#define INTERNAL_SIGNS_COUNT 18
+#define INTERNAL_SIGNS_COUNT 20
 #define INTERNAL_NUMBER_CHARS "\b"
-#define INTERNAL_OPERATORS "\a\b%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a\x13"
-#define INTERNAL_OPERATORS_TWO "\a\b%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x13"
-#define INTERNAL_OPERATORS_NOPM "\a%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a\x13"
-#define INTERNAL_OPERATORS_RPN "\a%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a"
-#define INTERNAL_OPERATORS_NOMOD "\a\b\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a\x13"
+#define INTERNAL_OPERATORS "\a\b%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a\x13\x12"
+#define INTERNAL_OPERATORS_TWO "\a\b%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x13\x12"
+#define INTERNAL_OPERATORS_NOPM "\a%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a\x13\x12"
+#define INTERNAL_OPERATORS_RPN "\a%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a\x12"
+#define INTERNAL_OPERATORS_NOMOD "\a\b\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a\x13\x12"
 #define DUODECIMAL_CHARS "EXABab"
 
 string Calculator::parseComments(string &str, const ParseOptions &po, bool *double_tag) {
@@ -861,6 +861,7 @@ string internal_operator_replacement(char c) {
 		case '\x1d': return "nand";
 		case '\x1e': return "nor";
 		case '\x1f': return "xor";
+		case '\x12': return "...";
 		case '\x13': return POWER;
 		case '\x14': return "∥";
 		case '\x15': return "cross";
@@ -896,7 +897,7 @@ void replace_internal_operators(string &str) {
 			else if(i + 1 == str.length()) str.replace(i, 1, string(SPACE) + internal_operator_replacement(str[i]));
 			else str.replace(i, 1, string(SPACE) + internal_operator_replacement(str[i]) + SPACE);
 			prev_s = true;
-		} else if(str[i] == '\b' || str[i] == '\x13' || str[i] == '\x14' || str[i] == '\x1c' || str[i] >= '\x16' || str[i] <= '\x1a' || str[i] == MULTIPLICATION_CH || str[i] == MINUS_CH || str[i] == DIVISION_CH) {
+		} else if(str[i] == '\b' || str[i] == '\x12' || str[i] == '\x13' || str[i] == '\x14' || str[i] == '\x1c' || str[i] >= '\x16' || str[i] <= '\x1a' || str[i] == MULTIPLICATION_CH || str[i] == MINUS_CH || str[i] == DIVISION_CH) {
 			str.replace(i, 1, internal_operator_replacement(str[i]));
 			prev_s = false;
 		} else {
@@ -1085,7 +1086,9 @@ string Calculator::localizeExpression(string str, const ParseOptions &po) const 
 					size_t i2 = (i == 0 ? string::npos : str.find_last_not_of(SPACES, i - 1));
 					size_t i3 = (i == str.length() - 1 ? string::npos : str.find_first_not_of(SPACES, i + 1));
 					if(po.rpn || i2 == string::npos || (i3 != string::npos && !is_not_number(str[i3], base)) || (!is_not_number(str[i2], base) && (i3 == string::npos || i3 != i + 1 || (str[i + 1] != POWER_CH && str[i + 1] != DIVISION_CH && str[i + 1] != MULTIPLICATION_CH && str[i + 1] != '\'')))) {
-						if(dot_type == 1) {
+						if(str.length() > i + 2 && str[i + 1] == DOT_CH && str[i + 2] == DOT_CH) {
+							i += 2;
+						} else if(dot_type == 1) {
 							str[i] = COMMA_CH;
 						} else {
 							str.replace(i, 1, DOT_STR);
@@ -1206,8 +1209,8 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
 			case DOT_CH: {
 				if(!po.dot_as_separator && brackets > 0 && !b_matrix_comma) {
 					if(po.rpn || i == 0 || i == str.length() - 1 || is_not_number(str[i - 1], base) || is_not_number(str[i + 1], base) || is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i - 1]) || (str[i + 1] != '\'' && str[i + 1] != POWER_CH && str[i + 1] != MULTIPLICATION_CH && str[i + 1] != DIVISION_CH && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[i + 1]))) {
-						b_matrix_comma = true;
-						break;
+						if(str.length() > i + 2 && str[i + 1] == DOT_CH && str[i + 2] == DOT_CH) i += 2;
+						else b_matrix_comma = true;
 					}
 				}
 				break;
@@ -1277,7 +1280,8 @@ string Calculator::unlocalizeExpression(string str, const ParseOptions &po) cons
 					size_t i2 = (i == 0 ? string::npos : str.find_last_not_of(SPACES, i - 1));
 					size_t i3 = (i == str.length() - 1 ? string::npos : str.find_first_not_of(SPACES, i + 1));
 					if(po.rpn || i2 == string::npos || (i3 != string::npos && !is_not_number(str[i3], base)) || (!is_not_number(str[i2], base) && (i3 == string::npos || i3 != i + 1 || (str[i + 1] != POWER_CH && str[i + 1] != DIVISION_CH && str[i + 1] != MULTIPLICATION_CH && str[i + 1] != '\'')))) {
-						str.erase(i, 1);
+						if(str.length() > i + 2 && str[i + 1] == DOT_CH && str[i + 2] == DOT_CH) i += 3;
+						else str.erase(i, 1);
 						continue;
 					}
 				}
@@ -2620,13 +2624,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			if(str[str_index + 1] == MULTIPLICATION_CH) str.replace(str_index, 2, "\x17");
 			else if(str[str_index + 1] == DIVISION_CH) str.replace(str_index, 2, "\x18");
 			else if(str[str_index + 1] == POWER_CH) str.replace(str_index, 2, "\x19");
-			else {
-				if(str[str_index + 1] == DOT_CH && str_index + 2 < str.length() && str[str_index + 2] == DOT_CH) {
-					str_index += 2;
-					continue;
-				}
-				str[str_index] = '\x16';
-			}
+			else str[str_index] = '\x16';
 		} else if(is_not_in(NUMBERS INTERNAL_OPERATORS NOT_IN_NAMES, str[str_index])) {
 			// dx/dy derivative notation
 			if((str[str_index] == 'd' && is_not_number('d', base)) || ((signed char) str[str_index] == -50 && str_index + 1 < str.length() && (signed char) str[str_index + 1] == -108) || ((signed char) str[str_index] == -16 && str_index + 3 < str.length() && (signed char) str[str_index + 1] == -99 && (signed char) str[str_index + 2] == -102 && (signed char) str[str_index + 3] == -85)) {
@@ -3843,7 +3841,6 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 		} else {
 			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS ID_WRAP_LEFT, 1);
 		}
-		if(i == string::npos) i = str.find("...");
 		if(i == string::npos && str[0] != LOGICAL_NOT_CH && str[0] != BITWISE_NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1) && (!BASE_2_10 || (str[0] != EXP_CH && str[0] != EXP2_CH))) {
 			return parseNumber(mstruct, str, po);
 		} else {
@@ -3860,7 +3857,6 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 		} else {
 			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS ID_WRAP_LEFT, 1);
 		}
-		if(i == string::npos) i = str.find("...");
 		if(i == string::npos && str[0] != LOGICAL_NOT_CH && str[0] != BITWISE_NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1) && (!BASE_2_10 || (str[0] != EXP_CH && str[0] != EXP2_CH))) {
 			if(s == OPERATION_EXP10 && po.read_precision == ALWAYS_READ_PRECISION) {
 				ParseOptions po2 = po;
@@ -5680,7 +5676,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	if((i = str.find_first_of(ID_WRAPS, 1)) != string::npos && i + 1 != str.length()) {
 		bool b = false, append = false;
 		while(i != string::npos && i + 1 != str.length()) {
-			if(str[i] == ID_WRAP_RIGHT_CH && str[i + 1] != ':' && str[i + 1] != POWER_CH && str[i + 1] != INTERNAL_UPOW_CH && str[i + 1] != '\x19' && str[i + 1] != '\x1a' && str[i + 1] != '\b' && (i + 4 >= str.length() || str[i + 1] != DOT_CH || str[i + 2] != DOT_CH || str[i + 3] != DOT_CH)) {
+			if(str[i] == ID_WRAP_RIGHT_CH && str[i + 1] != ':' && str[i + 1] != POWER_CH && str[i + 1] != INTERNAL_UPOW_CH && str[i + 1] != '\x19' && str[i + 1] != '\x1a' && str[i + 1] != '\b' && str[i + 1] != '\x12') {
 				str2 = str.substr(0, i + 1);
 				str = str.substr(i + 1, str.length() - (i + 1));
 				if(b) {
@@ -5691,7 +5687,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					b = true;
 				}
 				i = 0;
-			} else if(str[i] == ID_WRAP_LEFT_CH && str[i - 1] != ':' && str[i - 1] != POWER_CH && str[i - 1] != INTERNAL_UPOW_CH && str[i - 1] != '\x19' && str[i - 1] != '\x1a' && (i < 2 || str[i - 1] != MINUS_CH || (str[i - 2] != POWER_CH && str[i - 2] != '\x19' && str[i - 2] != '\x1a')) && str[i - 1] != '\b' && (i < 4 || str[i - 1] != DOT_CH || str[i - 2] != DOT_CH || str[i - 3] != DOT_CH)) {
+			} else if(str[i] == ID_WRAP_LEFT_CH && str[i - 1] != ':' && str[i - 1] != POWER_CH && str[i - 1] != INTERNAL_UPOW_CH && str[i - 1] != '\x19' && str[i - 1] != '\x1a' && (i < 2 || str[i - 1] != MINUS_CH || (str[i - 2] != POWER_CH && str[i - 2] != '\x19' && str[i - 2] != '\x1a')) && str[i - 1] != '\b' && str[i - 1] != '\x12') {
 				str2 = str.substr(0, i);
 				str = str.substr(i, str.length() - i);
 				if(b) {
@@ -5803,9 +5799,9 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		str.erase(str.length() - 1, 1);
 		parseAdd(str, mstruct, po);
 		mstruct->transform(f_transpose);
-	} else if(str.length() > 4 && (i = str.find("...", 1)) != string::npos && i + 3 < str.length()) {
+	} else if((i = str.find("\x12", 1)) != string::npos && i + 1 != str.length()) {
 		str2 = str.substr(0, i);
-		str = str.substr(i + 3, str.length() - (i + 3));
+		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str2, mstruct, po);
 		if(po.preserve_format) {
 			while(minus_count > 0) {

@@ -341,9 +341,6 @@ typedef enum {
 #define EXP_PURE		1
 #define EXP_SCIENTIFIC		3
 
-#define EXP_POWER_OF_10		10000
-#define EXP_NO_POWER_OF_10	-10000
-
 typedef enum {
 	/// Display numbers in decimal, not fractional, format (ex. 0.333333)
 	FRACTION_DECIMAL,
@@ -424,6 +421,27 @@ typedef enum {
 	TIME_ZONE_CUSTOM
 } TimeZone;
 
+typedef enum {
+	EXP_DEFAULT,
+	EXP_UPPERCASE_E,
+	EXP_LOWERCASE_E,
+	EXP_BASE10
+} ExpDisplay;
+
+typedef enum {
+	ROUNDING_HALF_AWAY_FROM_ZERO,
+	ROUNDING_HALF_TO_EVEN,
+	ROUNDING_HALF_TO_ODD,
+	ROUNDING_HALF_TOWARD_ZERO,
+	ROUNDING_HALF_UP,
+	ROUNDING_HALF_DOWN,
+	ROUNDING_HALF_RANDOM,
+	ROUNDING_TOWARD_ZERO,
+	ROUNDING_AWAY_FROM_ZERO,
+	ROUNDING_UP,
+	ROUNDING_DOWN
+} RoundingMode;
+
 // temporary custom time zone value for truncation rounding in output
 #define TZ_TRUNCATE -21586
 // temporary custom time zone value for special duodecimal symbols in output
@@ -439,7 +457,7 @@ struct PrintOptions {
 	BaseDisplay base_display;
 	/// Use lower case for non-numeric characters for bases > 10. Default: false
 	bool lower_case_numbers;
-	/// Use lower case e for base-10 exponent (ex. 1.2e8 instead of 1.2E8). Default: false
+	/// Deprecated: use exp_mode instead
 	bool lower_case_e;
 	/// If rational numbers will be displayed with decimals, as a fraction, or something in between. Default: FRACTION_DECIMAL
 	NumberFractionFormat number_fraction_format;
@@ -491,7 +509,7 @@ struct PrintOptions {
 	bool use_min_decimals;
 	/// Enable use of max_decimals. False is equivalent to a negative max_decimals value. Default: true
 	bool use_max_decimals;
-	/// If true round halfway numbers to nearest even number, otherwise round upwards. Default: false
+	/// Deprecated: use rounding
 	bool round_halfway_to_even;
 	/// Multiply numerator and denominator to get integers (ex. (6x+y)/2z instead of (3x+0.5y)/z). Default: true
 	bool improve_division_multipliers;
@@ -539,8 +557,15 @@ struct PrintOptions {
 	bool twos_complement;
 	/// Negative hexadecimal numbers uses two's complement representation. All hexadecimal numbers starting with 8 or higher are negative. Default: false
 	bool hexadecimal_twos_complement;
-	/// Number of bits used for binary numbers. Set to 0 for automatic. Default: 0
+	/// Number of bits used for binary and hexadecimal numbers. Set to 0 for automatic. Default: 0
 	unsigned int binary_bits;
+	/// Specifies how numbers using scientific notation are displayed. Default: EXP_DEFAULT
+	ExpDisplay exp_display;
+	/// Show special duodecimal symbols in output, instead of A and B. Default: false
+	bool duodecimal_symbols;
+	/// Specifies rounding method used in output. Default: ROUNDING_HALF_AWAY_FROM_ZERO
+	RoundingMode rounding;
+
 	PrintOptions();
 	/// Returns the comma sign used (default sign or comma_sign)
 	const std::string &comma() const;
@@ -691,10 +716,12 @@ struct ParseOptions {
 	DataSet *default_dataset;
 	/// Parsing mode. Default: PARSING_MODE_ADAPTIVE
 	ParsingMode parsing_mode;
-	/// Negative binary numbers uses two's complement representation. All binary numbers starting with 1 are assumed to be negative, unless set to a value higher than 1, specififying the number of bits. Default: false
-	short twos_complement;
-	/// Negative hexadecimal numbers uses two's complement representation. All hexadecimal numbers starting with 8 or higher are assumed to be negative, unless set to a value higher than 1, specififying the number of bits. Default: false
-	short hexadecimal_twos_complement;
+	/// Negative binary numbers uses two's complement representation. All binary numbers starting with 1 are assumed to be negative, unless binary_bits is set. Default: false
+	bool twos_complement;
+	/// Negative hexadecimal numbers uses two's complement representation. All hexadecimal numbers starting with 8 or higher are assumed to be negative, unless binary_bits is set. Default: false
+	bool hexadecimal_twos_complement;
+	/// Number of bits used for binary and hexadecimal numbers. Set to 0 for automatic. Default: 0
+	unsigned int binary_bits;
 
 	ParseOptions();
 

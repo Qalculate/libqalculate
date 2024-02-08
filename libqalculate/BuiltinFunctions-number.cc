@@ -897,7 +897,12 @@ RoundFunction::RoundFunction() : MathFunction("round", 1, 3) {
 	setArgumentDefinition(1, arg);
 	setArgumentDefinition(2, new IntegerArgument());
 	setDefaultValue(2, "0");
-	setArgumentDefinition(3, new BooleanArgument());
+	IntegerArgument *iarg = new IntegerArgument();
+	Number nr(ROUNDING_HALF_AWAY_FROM_ZERO, 1, 0);
+	iarg->setMin(&nr);
+	nr.set(ROUNDING_DOWN, 1, 0);
+	iarg->setMax(&nr);
+	setArgumentDefinition(3, iarg);
 	setDefaultValue(3, "0");
 }
 int RoundFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
@@ -905,7 +910,7 @@ int RoundFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	if(vargs[0].isNumber()) {
 		Number nr(vargs[0].number());
 		if(vargs.size() >= 2 && !vargs[1].isZero()) nr.exp10(vargs[1].number());
-		if(nr.round(vargs.size() >= 3 ? vargs[2].number().getBoolean() : true) && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || vargs[0].isApproximate())) {
+		if(nr.round(vargs.size() >= 3 ? (RoundingMode) vargs[2].number().intValue() : ROUNDING_HALF_TO_EVEN) && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || vargs[0].isApproximate())) {
 			if(vargs.size() >= 2 && !vargs[1].isZero()) nr.exp10(-vargs[1].number());
 			mstruct.set(nr);
 			return 1;
@@ -918,7 +923,7 @@ int RoundFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	if(mstruct.isNumber()) {
 		Number nr(mstruct.number());
 		if(vargs.size() >= 2 && !vargs[1].isZero()) nr.exp10(vargs[1].number());
-		if(nr.round(vargs.size() >= 3 ? vargs[2].number().getBoolean() : true) && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || vargs[0].isApproximate())) {
+		if(nr.round(vargs.size() >= 3 ? (RoundingMode) vargs[2].number().intValue() : ROUNDING_HALF_TO_EVEN) && (eo.approximation != APPROXIMATION_EXACT || !nr.isApproximate() || vargs[0].isApproximate())) {
 			if(vargs.size() >= 2 && !vargs[1].isZero()) nr.exp10(-vargs[1].number());
 			mstruct.set(nr);
 			return 1;
@@ -931,7 +936,7 @@ int RoundFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		if(mstruct2.isNumber()) {
 			Number nr(mstruct2.number());
 			if(vargs.size() >= 2 && !vargs[1].isZero()) nr.exp10(vargs[1].number());
-			if(nr.round(vargs.size() >= 3 ? vargs[2].number().getBoolean() : true) && !nr.isApproximate()) {
+			if(nr.round(vargs.size() >= 3 ? (RoundingMode) vargs[2].number().intValue() : ROUNDING_HALF_TO_EVEN) && !nr.isApproximate()) {
 				if(vargs.size() >= 2 && !vargs[1].isZero()) nr.exp10(-vargs[1].number());
 				mstruct.set(nr);
 				return 1;
@@ -2509,5 +2514,167 @@ GetUncertaintyFunction::GetUncertaintyFunction() : MathFunction("errorPart", 1, 
 int GetUncertaintyFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	if(vargs[1].number().getBoolean()) mstruct = vargs[0].number().relativeUncertainty();
 	else mstruct = vargs[0].number().uncertainty();
+	return 1;
+}
+
+
+IntegerDigitsFunction::IntegerDigitsFunction() : MathFunction("integerDigits", 1, 3) {
+	setArgumentDefinition(1, new IntegerArgument());
+	IntegerArgument *iarg = new IntegerArgument();
+	iarg->setMin(&nr_two);
+	setArgumentDefinition(2, iarg);
+	setDefaultValue(2, "10");
+	iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG);
+	iarg->setMin(&nr_minus_one);
+	setArgumentDefinition(3, iarg);
+	setDefaultValue(3, "-1");
+}
+int IntegerDigitsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	Number nr_rem;
+	Number nr(vargs[0].number());
+	nr.abs();
+	size_t l = 0;
+	if(vargs[2].number().isPositive()) {
+		l = vargs[2].number().ulintValue();
+	} else if(!nr.isZero()) {
+		Number nr_log(nr);
+		nr_log.log(vargs[1].number());
+		nr_log.ceil();
+		l = nr_log.ulintValue();
+	}
+	mstruct.clearVector();
+	mstruct.resizeVector(l, m_zero);
+	while(l > 0 && !nr.isZero()) {
+		if(CALCULATOR->aborted() || !nr.iquo(vargs[1].number(), nr_rem)) return 0;
+		mstruct[l - 1] = nr_rem;
+		l--;
+	}
+	return 1;
+}
+
+bool contains_unrecalculable_interval(const MathStructure &m) {
+	if(m.isNumber() && (m.number().isInterval() || m.isApproximate())) return true;
+	if(m.isFunction() && (m.function()->id() == FUNCTION_ID_UNCERTAINTY || m.function()->id() == FUNCTION_ID_INTERVAL)) return true;
+	if(m.isVariable() && m.variable()->isKnown()) {
+		if(m.variable()->id() == VARIABLE_ID_E || m.variable()->id() == VARIABLE_ID_PI || m.variable()->id() == VARIABLE_ID_CATALAN || m.variable()->id() == VARIABLE_ID_EULER) return false;
+		return contains_unrecalculable_interval(((KnownVariable*) m.variable())->get());
+	}
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_unrecalculable_interval(m[i])) return true;
+	}
+	return false;
+}
+
+DigitGetFunction::DigitGetFunction() : MathFunction("digitGet", 2, 3) {
+	NumberArgument *narg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	narg->setComplexAllowed(false);
+	narg->setHandleVector(true);
+	setArgumentDefinition(1, narg);
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE));
+	IntegerArgument *iarg = new IntegerArgument();
+	iarg->setMin(&nr_two);
+	setArgumentDefinition(3, iarg);
+	setDefaultValue(3, "10");
+}
+int DigitGetFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	int precbak = PRECISION;
+	bool recalculable = false;
+	while(true) {
+		CALCULATOR->beginTemporaryStopMessages();
+		mstruct = vargs[0];
+		mstruct.eval(eo);
+		if(!mstruct.isNumber()) break;
+		Number nr(mstruct.number());
+		Number nr_exp(vargs[2].number());
+		if(!nr_exp.raise(vargs[1].number()) || !nr.divide(nr_exp) || !nr.trunc() || !nr.rem(vargs[2].number())) break;
+		if(nr.isInteger()) {
+			CALCULATOR->endTemporaryStopMessages(true);
+			if(precbak != PRECISION) CALCULATOR->setPrecision(precbak);
+			mstruct = nr;
+			return 1;
+		} else {
+			if(!recalculable) recalculable = !contains_unrecalculable_interval(vargs[0]);
+			if(recalculable && !CALCULATOR->aborted() && PRECISION < 2000) {
+				CALCULATOR->endTemporaryStopMessages(false);
+				CALCULATOR->setPrecision(PRECISION * 5);
+			} else {
+				CALCULATOR->error(true, _("Insufficient precision."), NULL);
+				break;
+			}
+		}
+	}
+	CALCULATOR->endTemporaryStopMessages(true);
+	if(precbak != PRECISION) CALCULATOR->setPrecision(precbak);
+	return -1;
+}
+
+DigitSetFunction::DigitSetFunction() : MathFunction("digitSet", 3, 4) {
+	NumberArgument *narg = new NumberArgument();
+	narg->setComplexAllowed(false);
+	narg->setHandleVector(true);
+	setArgumentDefinition(1, narg);
+	ArgumentSet *set = new ArgumentSet();
+	set->addArgument(new IntegerArgument("", ARGUMENT_MIN_MAX_NONE));
+	VectorArgument *arg = new VectorArgument();
+	arg->addArgument(new IntegerArgument("", ARGUMENT_MIN_MAX_NONE));
+	set->addArgument(arg);
+	setArgumentDefinition(2, set);
+	set = new ArgumentSet();
+	set->addArgument(new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
+	arg = new VectorArgument();
+	arg->addArgument(new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
+	set->addArgument(arg);
+	setArgumentDefinition(3, set);
+	IntegerArgument *iarg = new IntegerArgument();
+	iarg->setMin(&nr_two);
+	setArgumentDefinition(4, iarg);
+	setDefaultValue(4, "10");
+}
+bool set_digit(Number &nr, const Number &nr_pos, Number nr_value, const Number &nr_base) {
+	Number nr_low(nr);
+	Number nr_exp(nr_base);
+	if(!nr_exp.raise(nr_pos) || !nr.divide(nr_exp) || !nr.trunc()) return false;
+	if(!nr.isInteger()) {
+		CALCULATOR->error(true, _("Insufficient precision."), NULL);
+		return false;
+	}
+	if(!nr_low.rem(nr_exp) || !nr.iquo(nr_base) || !nr_value.multiply(nr_exp) || !nr_exp.multiply(nr_base) || !nr.multiply(nr_exp) || !nr.add(nr_low)) return false;
+	if(nr.isNegative()) {
+		if(!nr.subtract(nr_value)) return false;
+	} else {
+		if(!nr.add(nr_value)) return false;
+	}
+	return true;
+}
+int DigitSetFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	Number nr(vargs[0].number());
+	if(vargs[1].isVector()) {
+		if(vargs[2].isVector() && vargs[1].size() != vargs[2].size()) {
+			mstruct.setType(STRUCT_VECTOR);
+			for(size_t i = 0; i < vargs[1].size(); i++) {
+				mstruct.addChild_nocopy(new MathStructure(this, &vargs[0], &vargs[1][i], &vargs[2], &vargs[3], NULL));
+			}
+			return 1;
+		}
+		for(size_t i = 0; i < vargs[1].size(); i++) {
+			if(CALCULATOR->aborted()) return 0;
+			if(vargs[2].isVector()) {
+				if(!set_digit(nr, vargs[1][i].number(), vargs[2][i].number(), vargs[3].number())) return 0;
+			} else {
+				if(!set_digit(nr, vargs[1][i].number(), vargs[2].number(), vargs[3].number())) return 0;
+			}
+		}
+	} else if(vargs[2].isVector()) {
+		Number index = vargs[1].number();
+		for(size_t i = 0; i < vargs[2].size(); i++) {
+			if(CALCULATOR->aborted()) return 0;
+			if(!set_digit(nr, index, vargs[2][i].number(), vargs[3].number())) return 0;
+			index++;
+			if(index.isZero()) index++;
+		}
+	} else {
+		if(!set_digit(nr, vargs[1].number(), vargs[2].number(), vargs[3].number())) return 0;
+	}
+	mstruct = nr;
 	return 1;
 }

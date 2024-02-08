@@ -841,10 +841,11 @@
     </function>
     <category>
       <_title>Rounding</_title>
+      <_title>Rounding</_title>
       <builtin_function name="round">
         <_title>Round</_title>
         <_names>r:round</_names>
-        <_description>Round to nearest integer or decimal. If the second argument is zero, the value is rounded towards the nearest integer, otherwise the value is rounded to the corresponding number of digits to the right (if positive) or left (if negative) of the decimal point. If the third argument is true, halfway numbers are rounded toward the nearest even integer/digit, otherwise away from zero.</_description>
+        <_description>Round to nearest integer or decimal. If the second argument is zero, the value is rounded towards the nearest integer, otherwise the value is rounded to the corresponding number of digits to the right (if positive) or left (if negative) of the decimal point.&#10;&#10;Available rounding methods (3rd argument): half away from zero (0), half to even (1), half to odd (2), half toward zero (3), half up (4), half down (5), half random (6), toward zero (7), away from zero (8), up (9), down (10)</_description>
         <argument index="1">
           <_title>Value</_title>
         </argument>
@@ -852,7 +853,7 @@
           <_title>Number of decimals</_title>
         </argument>
         <argument index="3">
-          <_title>Round halfway to even</_title>
+          <_title>Rounding method</_title>
         </argument>
       </builtin_function>
       <builtin_function name="floor">
@@ -888,6 +889,50 @@
         <_names>r:frac</_names>
         <argument index="1">
           <_title>Value</_title>
+        </argument>
+      </builtin_function>
+      <builtin_function name="integerDigits">
+        <_title>Integer Digits</_title>
+        <_names>r:integerDigits</_names>
+        <argument index="1">
+          <_title>Number</_title>
+        </argument>
+	<argument index="2">
+          <_title>Base</_title>
+        </argument>
+	<argument index="3">
+          <_title>Length</_title>
+        </argument>
+      </builtin_function>
+      <builtin_function name="digitGet">
+        <_title>Get Digit</_title>
+        <_names>r:digitGet,numberDigit</_names>
+	<_description>Returns digit at specified position (index of first digit left of decimal sign is zero).</_description>
+        <argument index="1">
+          <_title>Number</_title>
+        </argument>
+	<argument index="2">
+          <_title>Position</_title>
+        </argument>
+	<argument index="3">
+          <_title>Base</_title>
+        </argument>
+      </builtin_function>
+      <builtin_function name="digitSet">
+        <_title>Set Digit</_title>
+        <_names>r:digitSet</_names>
+	<_description>Sets the digit at specified position (index of first digit left of decimal sign is zero). Multiple bits can be set by using a vector for argument 2 and/or 3.</_description>
+        <argument index="1">
+          <_title>Number</_title>
+        </argument>
+	<argument index="2">
+          <_title>Position</_title>
+        </argument>
+	<argument index="3">
+          <_title>Value</_title>
+        </argument>
+	<argument index="4">
+          <_title>Base</_title>
         </argument>
       </builtin_function>
       <function>

@@ -49,8 +49,16 @@ using std::endl;
 #define INTERVAL_FLOOR(x) x.floor(); if(x.isInterval()) {x = x.lowerEndPoint(); x.floor();}
 #define INTERVAL_CEIL(x) x.ceil(); if(x.isInterval()) {x = x.upperEndPoint(); x.ceil();}
 
-#define TRUNCATE (po.custom_time_zone == TZ_TRUNCATE || po.custom_time_zone == TZ_TRUNCATE + TZ_DOZENAL)
-#define DOZENAL (po.base == BASE_DUODECIMAL && (po.custom_time_zone == TZ_DOZENAL || po.custom_time_zone == TZ_TRUNCATE + TZ_DOZENAL))
+#define DOZENAL (po.base == BASE_DUODECIMAL && (po.duodecimal_symbols || po.custom_time_zone == TZ_DOZENAL || po.custom_time_zone == TZ_TRUNCATE + TZ_DOZENAL))
+
+RoundingMode get_rounding_mode(const PrintOptions &po) {
+	if(po.rounding == ROUNDING_HALF_AWAY_FROM_ZERO) {
+		if(po.custom_time_zone == TZ_TRUNCATE || po.custom_time_zone == TZ_TRUNCATE + TZ_DOZENAL) return ROUNDING_TOWARD_ZERO;
+		if(po.round_halfway_to_even) return ROUNDING_HALF_TO_EVEN;
+	}
+	return po.rounding;
+}
+
 
 gmp_randstate_t randstate;
 
@@ -957,23 +965,23 @@ void Number::set(string number, const ParseOptions &po) {
 	bool b_twos = false;
 #define TEST_TWOS \
 	b_twos = (po.twos_complement && po.base == 2 && number[index] == '1') || (po.hexadecimal_twos_complement && po.base == 16 && (number[index] == '8' || number[index] == '9' || (number[index] >= 'a' && number[index] <= 'f') || (number[index] >= 'A' && number[index] <= 'F'))); \
-	if(b_twos && po.base == 2 && po.twos_complement > 1) {\
+	if(b_twos && po.base == 2 && po.binary_bits > 1) {\
 		size_t n = 1;\
 		for(size_t i = index + 1; i < number.size(); i++) {\
 			if(number[i] == '0' || number[i] == '1') n++;\
 			else if(number[i] == 'E' || number[i] == 'e' || number[i] == '.') break;\
 		}\
-		size_t bits = (size_t) po.twos_complement;\
+		size_t bits = (size_t) po.binary_bits;\
 		while(n > bits) bits *= 2;\
 		if(n != bits) b_twos = false;\
 	}\
-	if(b_twos && po.base == 16 && po.hexadecimal_twos_complement >= 4) {\
+	if(b_twos && po.base == 16 && po.binary_bits >= 4) {\
 		size_t n = 1;\
 		for(size_t i = index + 1; i < number.size(); i++) {\
 			if((number[i] >= '0' && number[i] <= '9') || (number[i] >= 'a' && number[i] <= 'z') || (number[i] >= 'A' && number[i] <= 'Z')) n++;\
 			else if(number[i] == '.' || number[i] == 'p') break;\
 		}\
-		size_t bits = (size_t) po.hexadecimal_twos_complement;\
+		size_t bits = (size_t) po.binary_bits;\
 		while(n * 4 > bits) bits *= 2;\
 		if(n * 4 != bits) b_twos = false;\
 	}\
@@ -4878,8 +4886,178 @@ bool Number::signum() {
 	if(isNegative()) {set(-1, 1); return true;}
 	return false;
 }
+
+#if MPFR_VERSION_MAJOR < 4
+#	define MPFR_ROUND_EVEN(x) mpfr_rint(x, x, MPFR_RNDN);
+#else
+#	define MPFR_ROUND_EVEN(x) mpfr_roundeven(x, x);
+#endif
+
+#define MPFR_ROUND_HALF_TOWARD_ZERO(x) \
+	mpfr_t ftest;\
+	mpfr_init2(ftest, mpfr_get_prec(x));\
+	mpfr_mul_ui(ftest, x, 2, MPFR_RNDN);\
+	mpfr_frac(ftest, ftest, MPFR_RNDN);\
+	if(mpfr_zero_p(ftest)) mpfr_trunc(x, x);\
+	else mpfr_round(x, x);\
+	mpfr_clear(ftest);
+
+#define MPFR_ROUND(x, y) \
+	switch(y) {\
+		case ROUNDING_HALF_TO_EVEN: {\
+			MPFR_ROUND_EVEN(x)\
+			break;\
+		}\
+		case ROUNDING_HALF_TO_ODD: {\
+			mpfr_t ftest;\
+			mpfr_init2(ftest, mpfr_get_prec(x));\
+			mpfr_mul_ui(ftest, x, 2, MPFR_RNDN);\
+			mpfr_frac(ftest, ftest, MPFR_RNDN);\
+			if(mpfr_zero_p(ftest)) {\
+				mpz_t ztest;\
+				mpz_init(ztest);\
+				mpfr_get_z(ztest, x, MPFR_RNDD);\
+				if(mpz_odd_p(ztest)) mpfr_floor(x, x);\
+				else mpfr_ceil(x, x);\
+				mpz_clear(ztest);\
+			} else mpfr_round(x, x);\
+			mpfr_clear(ftest);\
+			break;\
+		}\
+		case ROUNDING_HALF_RANDOM: {\
+			mpfr_t ftest;\
+			mpfr_init2(ftest, mpfr_get_prec(x));\
+			mpfr_mul_ui(ftest, x, 2, MPFR_RNDN);\
+			mpfr_frac(ftest, ftest, MPFR_RNDN);\
+			if(mpfr_zero_p(ftest)) {\
+				if(::rand() % 2 == 1) mpfr_floor(x, x);\
+				else mpfr_ceil(x, x);\
+			} else mpfr_round(x, x);\
+			mpfr_clear(ftest);\
+			break;\
+		}\
+		case ROUNDING_HALF_AWAY_FROM_ZERO: {\
+			mpfr_round(x, x);\
+			break;\
+		}\
+		case ROUNDING_HALF_TOWARD_ZERO: {\
+			MPFR_ROUND_HALF_TOWARD_ZERO(x)\
+			break;\
+		}\
+		case ROUNDING_HALF_UP: {\
+			if(mpfr_sgn(x) > 0) mpfr_round(x, x);\
+			else {MPFR_ROUND_HALF_TOWARD_ZERO(x)}\
+			break;\
+		}\
+		case ROUNDING_HALF_DOWN: {\
+			if(mpfr_sgn(x) < 0) mpfr_round(x, x);\
+			else {MPFR_ROUND_HALF_TOWARD_ZERO(x)}\
+			break;\
+		}\
+		case ROUNDING_TOWARD_ZERO: {\
+			mpfr_trunc(x, x);\
+			break;\
+		}\
+		case ROUNDING_AWAY_FROM_ZERO: {\
+			if(mpfr_sgn(x) < 0) mpfr_floor(x, x);\
+			else mpfr_ceil(x, x);\
+			break;\
+		}\
+		case ROUNDING_UP: {\
+			mpfr_ceil(x, x);\
+			break;\
+		}\
+		case ROUNDING_DOWN: {\
+			mpfr_floor(x, x);\
+			break;\
+		}\
+	}
+
+#define MPFR_ROUND_PO(x) \
+	switch(get_rounding_mode(po)) {\
+		case ROUNDING_HALF_TO_EVEN: {\
+			MPFR_ROUND_EVEN(x)\
+			break;\
+		}\
+		case ROUNDING_HALF_TO_ODD: {\
+			mpfr_t ftest;\
+			mpfr_init2(ftest, mpfr_get_prec(x));\
+			mpfr_mul_ui(ftest, x, 2, MPFR_RNDN);\
+			mpfr_frac(ftest, ftest, MPFR_RNDN);\
+			if(mpfr_zero_p(ftest)) {\
+				mpz_t ztest;\
+				mpz_init(ztest);\
+				mpfr_get_z(ztest, x, MPFR_RNDD);\
+				if(mpz_odd_p(ztest)) mpfr_floor(x, x);\
+				else mpfr_ceil(x, x);\
+				mpz_clear(ztest);\
+			} else mpfr_round(x, x);\
+			mpfr_clear(ftest);\
+			break;\
+		}\
+		case ROUNDING_HALF_RANDOM: {\
+			mpfr_t ftest;\
+			mpfr_init2(ftest, mpfr_get_prec(x));\
+			mpfr_mul_ui(ftest, x, 2, MPFR_RNDN);\
+			mpfr_frac(ftest, ftest, MPFR_RNDN);\
+			if(mpfr_zero_p(ftest)) {\
+				if(::rand() % 2 == 1) mpfr_floor(x, x);\
+				else mpfr_ceil(x, x);\
+			} else mpfr_round(x, x);\
+			mpfr_clear(ftest);\
+			break;\
+		}\
+		case ROUNDING_HALF_AWAY_FROM_ZERO: {\
+			mpfr_round(x, x);\
+			break;\
+		}\
+		case ROUNDING_HALF_TOWARD_ZERO: {\
+			MPFR_ROUND_HALF_TOWARD_ZERO(x)\
+			break;\
+		}\
+		case ROUNDING_HALF_UP: {\
+			if(!neg) mpfr_round(x, x);\
+			else {MPFR_ROUND_HALF_TOWARD_ZERO(x)}\
+			break;\
+		}\
+		case ROUNDING_HALF_DOWN: {\
+			if(neg) mpfr_round(x, x);\
+			else {MPFR_ROUND_HALF_TOWARD_ZERO(x)}\
+			break;\
+		}\
+		case ROUNDING_TOWARD_ZERO: {\
+			mpfr_trunc(x, x);\
+			break;\
+		}\
+		case ROUNDING_AWAY_FROM_ZERO: {\
+			mpfr_ceil(x, x);\
+			break;\
+		}\
+		case ROUNDING_UP: {\
+			if(neg) mpfr_floor(x, x);\
+			else mpfr_ceil(x, x);\
+			break;\
+		}\
+		case ROUNDING_DOWN: {\
+			if(neg) mpfr_ceil(x, x);\
+			else mpfr_floor(x, x);\
+			break;\
+		}\
+	}
+
 bool Number::round(bool halfway_to_even) {
+	return round(halfway_to_even ? ROUNDING_HALF_TO_EVEN : ROUNDING_HALF_AWAY_FROM_ZERO);
+}
+bool Number::round(RoundingMode mode) {
 	if(includesInfinity() || hasImaginaryPart()) return false;
+	if(mode == ROUNDING_UP) return ceil();
+	else if(mode == ROUNDING_DOWN) return floor();
+	else if(mode == ROUNDING_TOWARD_ZERO) return trunc();
+	else if(mode == ROUNDING_AWAY_FROM_ZERO) {
+		if(isNonNegative()) return ceil();
+		else if(isNonPositive()) return floor();
+		return false;
+	}
 	if(n_type == NUMBER_TYPE_RATIONAL) {
 		if(!isInteger()) {
 			mpz_t i_rem;
@@ -4889,21 +5067,41 @@ bool Number::round(bool halfway_to_even) {
 			mpz_mul_ui(mpq_denref(r_value), mpq_denref(r_value), 2);
 			mpz_fdiv_qr(mpq_numref(r_value), i_rem, mpq_numref(r_value), mpq_denref(r_value));
 			mpz_set_ui(mpq_denref(r_value), 1);
-			if(mpz_sgn(i_rem) == 0 && (!halfway_to_even || mpz_odd_p(mpq_numref(r_value)))) {
-				if(halfway_to_even) mpz_sub(mpq_numref(r_value), mpq_numref(r_value), mpq_denref(r_value));
-				else if(mpz_sgn(mpq_numref(r_value)) <= 0) mpz_sub(mpq_numref(r_value), mpq_numref(r_value), mpq_denref(r_value));
+			if(mpz_sgn(i_rem) == 0) {
+				switch(mode) {
+					case ROUNDING_HALF_TO_EVEN: {
+						if(mpz_odd_p(mpq_numref(r_value))) mpz_sub(mpq_numref(r_value), mpq_numref(r_value), mpq_denref(r_value));
+						break;
+					}
+					case ROUNDING_HALF_TO_ODD: {
+						if(mpz_even_p(mpq_numref(r_value))) mpz_sub(mpq_numref(r_value), mpq_numref(r_value), mpq_denref(r_value));
+						break;
+					}
+					case ROUNDING_HALF_RANDOM: {
+						if(::rand() % 2 == 1) mpz_sub(mpq_numref(r_value), mpq_numref(r_value), mpq_denref(r_value));
+						break;
+					}
+					case ROUNDING_HALF_AWAY_FROM_ZERO: {
+						if(mpz_sgn(mpq_numref(r_value)) <= 0) mpz_sub(mpq_numref(r_value), mpq_numref(r_value), mpq_denref(r_value));
+						break;
+					}
+					case ROUNDING_HALF_TOWARD_ZERO: {
+						if(mpz_sgn(mpq_numref(r_value)) >= 0) mpz_sub(mpq_numref(r_value), mpq_numref(r_value), mpq_denref(r_value));
+						break;
+					}
+					case ROUNDING_HALF_DOWN: {
+						mpz_sub(mpq_numref(r_value), mpq_numref(r_value), mpq_denref(r_value));
+						break;
+					}
+					default: {break;}
+				}
 			}
 			mpz_clear(i_rem);
 		}
 	} else {
 		mpz_set_ui(mpq_denref(r_value), 1);
-		if(halfway_to_even) {
-			mpfr_rint_round(fl_value, fl_value, MPFR_RNDN);
-			mpfr_rint_round(fu_value, fu_value, MPFR_RNDN);
-		} else {
-			mpfr_round(fl_value, fl_value);
-			mpfr_round(fu_value, fu_value);
-		}
+		MPFR_ROUND(fl_value, mode)
+		MPFR_ROUND(fu_value, mode)
 		if(!mpfr_equal_p(fl_value, fu_value)) {
 			return true;
 		}
@@ -10266,7 +10464,7 @@ string to_float(Number nr_pre, unsigned int bits, unsigned int expbits, unsigned
 			po.max_decimals = bits - expbits - (bits == 80 ? 2 : 1);
 			po.use_max_decimals = true;
 			po.show_ending_zeroes = true;
-			po.round_halfway_to_even = true;
+			po.rounding = ROUNDING_HALF_TO_EVEN;
 			po.binary_bits = 1;
 			po.base_display = BASE_DISPLAY_NONE;
 			bool b_approx = false;
@@ -10340,8 +10538,8 @@ void add_base_exponent(string &str, long int expo, int base, const PrintOptions 
 			*ips.exp = nrexpo.print(po2);
 		}
 	} else if(type != 2) {
-		if(base == 10) {
-			if(po.lower_case_e) str += "e";
+		if(base == 10 && po.exp_display != EXP_BASE10) {
+			if(po.exp_display == EXP_LOWERCASE_E || (po.exp_display == EXP_DEFAULT && po.lower_case_e)) str += "e";
 			else str += "E";
 			if(expo < 0 && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
 				str += SIGN_MINUS;
@@ -10381,12 +10579,6 @@ void add_base_exponent(string &str, long int expo, int base, const PrintOptions 
 
 string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
 	if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
-	if(po.min_exp > EXP_POWER_OF_10 / 2 || po.min_exp < EXP_NO_POWER_OF_10 / 2) {
-		PrintOptions po2 = po;
-		if(po2.min_exp > EXP_POWER_OF_10 / 2) po2.min_exp -= EXP_POWER_OF_10;
-		else if(po2.min_exp < EXP_NO_POWER_OF_10 / 2) po2.min_exp -= EXP_NO_POWER_OF_10;
-		return print(po2, ips);
-	}
 	// reset InternalPrintStruct (used for separate handling sign, scientific notation, numerator/denominator, imaginary/real parts, etc)
 	if(ips.minus) *ips.minus = false;
 	if(ips.exp_minus) *ips.exp_minus = false;
@@ -10414,8 +10606,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		if(!num.multiply(CALCULATOR->fixedDenominator())) return print(po2, ips);
 		if(!num.isInteger()) {
-			if(TRUNCATE) num.trunc();
-			else num.round(po.round_halfway_to_even);
+			num.round(get_rounding_mode(po));
 			if(!num.isInteger()) {
 				num.set(*this);
 				num.multiply(CALCULATOR->fixedDenominator());
@@ -10512,8 +10703,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(!nr.isInteger()) {
  			if(po.is_approximate) *po.is_approximate = true;
 			nr.intervalToMidValue();
-			if(TRUNCATE) nr.trunc();
-			else nr.round(po.round_halfway_to_even);
+			nr.round(get_rounding_mode(po));
 		}
 		// return empty string if number is zero
 		if(nr.isZero()) return "";
@@ -10523,6 +10713,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		Number nri, nra;
 		string str;
 		do {
+			if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 			// value at position nra = nr - (ceil(nr / 26) - 1) * 26
 			nri = nr;
 			nri /= 26;
@@ -10698,6 +10889,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 			Number nr_frac;
 			while(true) {
+				if(CALCULATOR->aborted()) {
+					CALCULATOR->abortedMessage();
+					CALCULATOR->endTemporaryStopIntervalArithmetic();
+				}
 				nr_digit = nr;
 				nr.divide(base);
 				nr_digit.mod(base);
@@ -10717,9 +10912,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						exact = true;
 						break;
 					}
-					if(TRUNCATE) break;
 					nr_frac *= 2;
-					if(nr_frac.isGreaterThan(1) || (nr_frac.isOne() && (!po.round_halfway_to_even || digits[digits.size() - 1] % 2 == 1))) {
+					RoundingMode rounding = get_rounding_mode(po);
+					if(rounding == ROUNDING_UP || rounding == ROUNDING_AWAY_FROM_ZERO || nr_frac.isGreaterThan(1) || (nr_frac.isOne() && (rounding == ROUNDING_HALF_AWAY_FROM_ZERO || (rounding == ROUNDING_HALF_TO_EVEN && digits[digits.size() - 1] % 2 == 1) || (rounding == ROUNDING_HALF_TO_ODD && digits[digits.size() - 1] % 2 == 0) || (rounding == ROUNDING_HALF_RANDOM && ::rand() % 2 == 1) || rounding == ROUNDING_HALF_UP))) {
 						size_t i = digits.size();
 						while(i > 0) {
 							i--;
@@ -10780,12 +10975,13 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					if(i_dp == (long int) digits.size()) b_dp = false;
 				}
 				if(do_break) {
-					if(TRUNCATE) break;
+					RoundingMode rounding = get_rounding_mode(po);
+					if(rounding == ROUNDING_TOWARD_ZERO || (rounding == ROUNDING_DOWN && !neg) || (rounding == ROUNDING_UP && neg)) break;
 					nr.divide(base);
 					nr.multiply(2);
 					nr.intervalToMidValue();
 					base_pow.intervalToMidValue();
-					if(nr.isGreaterThan(base_pow) || (nr == base_pow && (!po.round_halfway_to_even || digits[digits.size() - 1] % 2 == 1))) {
+					if(((rounding == ROUNDING_DOWN || rounding == ROUNDING_UP || rounding == ROUNDING_AWAY_FROM_ZERO) && !nr.isZero()) || nr.isGreaterThan(base_pow) || (nr == base_pow && (rounding == ROUNDING_HALF_AWAY_FROM_ZERO || (rounding == ROUNDING_HALF_TO_EVEN && digits[digits.size() - 1] % 2 == 1) || (rounding == ROUNDING_HALF_TO_ODD && digits[digits.size() - 1] % 2 == 0) || (rounding == ROUNDING_HALF_RANDOM && ::rand() % 2 == 1) || (rounding == ROUNDING_HALF_UP && !neg) || (rounding == ROUNDING_HALF_DOWN && neg)))) {
 						size_t i = digits.size();
 						while(i > 0) {
 							i--;
@@ -11001,8 +11197,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(!nr3.isInterval()) {
 				nr3 *= 60;
 				if(po.base == BASE_SEXAGESIMAL_3 && !nr3.isInteger()) {
-					if(TRUNCATE) nr3.trunc();
-					else nr3.round(po.round_halfway_to_even);
+					nr3.round(get_rounding_mode(po));
 					if(po.is_approximate) *po.is_approximate = true;
 				}
 			} else if(!nr2.isInterval()) {
@@ -11011,8 +11206,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				nr2.intervalToPrecision();
 				nr2.setApproximate(false);
 				nr2 *= 60;
-				if(TRUNCATE) nr2.trunc();
-				else nr2.round(po.round_halfway_to_even);
+				nr2.round(get_rounding_mode(po));
 			}
 
 			po2.min_exp = 0;
@@ -11031,6 +11225,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 		po2.min_exp = po.min_exp;
 		string str = nr1.print(po2);
+		if(po2.exp_display == EXP_BASE10 && str.find("^")) {
+			str.insert(0, "(");
+			str += ")";
+		}
 		po2.min_exp = 0;
 		if(po.base != BASE_TIME) {
 			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DEGREE, po.can_display_unicode_string_arg))) {
@@ -11323,6 +11521,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		mpz_t ivalue;
 		mpz_init_set(ivalue, mpq_numref(r_value));
 		bool neg = (mpz_sgn(ivalue) < 0);
+		if(neg) mpz_neg(ivalue, ivalue);
 		bool rerun = false;
 		bool exact = true;
 
@@ -11403,7 +11602,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				mpz_fdiv_qr(i_quo, i_rem, ivalue, i_div);
 				if(mpz_sgn(i_rem) != 0) {
 					mpz_set(ivalue, i_quo);
-					if(!TRUNCATE) {
+					RoundingMode rounding = get_rounding_mode(po);
+					if(rounding == ROUNDING_HALF_AWAY_FROM_ZERO || rounding == ROUNDING_HALF_TO_EVEN || rounding == ROUNDING_HALF_TO_ODD || rounding == ROUNDING_HALF_TOWARD_ZERO || rounding == ROUNDING_HALF_UP || rounding == ROUNDING_HALF_DOWN || rounding == ROUNDING_HALF_RANDOM) {
 						mpq_t q_rem, q_base_half;
 						mpq_inits(q_rem, q_base_half, NULL);
 						mpz_set(mpq_numref(q_rem), i_rem);
@@ -11412,12 +11612,12 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						mpq_mul(q_rem, q_rem, q_base_half);
 						mpz_set_ui(mpq_denref(q_base_half), 2);
 						int i_sign = mpq_cmp(q_rem, q_base_half);
-						if(po.round_halfway_to_even && mpz_even_p(ivalue)) {
-							if(i_sign > 0) mpz_add_ui(ivalue, ivalue, 1);
-						} else {
-							if(i_sign >= 0) mpz_add_ui(ivalue, ivalue, 1);
+						if(i_sign > 0 || (i_sign == 0 && (rounding == ROUNDING_HALF_AWAY_FROM_ZERO || (rounding == ROUNDING_HALF_TO_EVEN && mpz_odd_p(ivalue)) || (rounding == ROUNDING_HALF_TO_ODD && mpz_even_p(ivalue)) || (!neg && rounding == ROUNDING_HALF_UP) || (neg && rounding == ROUNDING_HALF_DOWN) || (rounding == ROUNDING_HALF_RANDOM && ::rand() % 2 == 1)))) {
+							mpz_add_ui(ivalue, ivalue, 1);
 						}
 						mpq_clears(q_base_half, q_rem, NULL);
+					} else if((!neg && rounding == ROUNDING_UP) || (neg && rounding == ROUNDING_DOWN) || rounding == ROUNDING_AWAY_FROM_ZERO) {
+						mpz_add_ui(ivalue, ivalue, 1);
 					}
 					mpz_mul(ivalue, ivalue, i_div);
 					exact = false;
@@ -11460,7 +11660,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				mpz_fdiv_qr(i_quo, i_rem, mpq_numref(qvalue), mpq_denref(qvalue));
 				if(mpz_sgn(i_rem) != 0) {
 					mpz_set(ivalue, i_quo);
-					if(!TRUNCATE) {
+					RoundingMode rounding = get_rounding_mode(po);
+					if(rounding == ROUNDING_HALF_AWAY_FROM_ZERO || rounding == ROUNDING_HALF_TO_EVEN || rounding == ROUNDING_HALF_TO_ODD || rounding == ROUNDING_HALF_TOWARD_ZERO || rounding == ROUNDING_HALF_UP || rounding == ROUNDING_HALF_DOWN || rounding == ROUNDING_HALF_RANDOM) {
 						mpq_t q_rem, q_base_half;
 						mpq_inits(q_rem, q_base_half, NULL);
 						mpz_set(mpq_numref(q_rem), i_rem);
@@ -11469,12 +11670,12 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						mpq_mul(q_rem, q_rem, q_base_half);
 						mpz_set_ui(mpq_denref(q_base_half), 2);
 						int i_sign = mpq_cmp(q_rem, q_base_half);
-						if(po.round_halfway_to_even && mpz_even_p(ivalue)) {
-							if(i_sign > 0) mpz_add_ui(ivalue, ivalue, 1);
-						} else {
-							if(i_sign >= 0) mpz_add_ui(ivalue, ivalue, 1);
+						if(i_sign > 0 || (i_sign == 0 && (rounding == ROUNDING_HALF_AWAY_FROM_ZERO || (rounding == ROUNDING_HALF_TO_EVEN && mpz_odd_p(ivalue)) || (rounding == ROUNDING_HALF_TO_ODD && mpz_even_p(ivalue)) || (!neg && rounding == ROUNDING_HALF_UP) || (neg && rounding == ROUNDING_HALF_DOWN) || (rounding == ROUNDING_HALF_RANDOM && ::rand() % 2 == 1)))) {
+							mpz_add_ui(ivalue, ivalue, 1);
 						}
 						mpq_clears(q_base_half, q_rem, NULL);
+					} else if((!neg && rounding == ROUNDING_UP) || (neg && rounding == ROUNDING_DOWN) || rounding == ROUNDING_AWAY_FROM_ZERO) {
+						mpz_add_ui(ivalue, ivalue, 1);
 					}
 					mpz_ui_pow_ui(i_quo, (unsigned long int) base, (unsigned long int) precision2);
 					mpz_mul(ivalue, ivalue, i_quo);
@@ -11773,16 +11974,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			mpfr_div(vl, vl, f_logu, MPFR_RNDD);
 			mpfr_div(vu, vu, f_logl, MPFR_RNDU);
 			if(mpfr_cmp(vl, vu) > 0) mpfr_swap(vl, vu);
-			if(TRUNCATE) {
-				mpfr_trunc(vl, vl);
-				mpfr_trunc(vu, vu);
-			} else if(po.round_halfway_to_even) {
-				mpfr_rint(vl, vl, MPFR_RNDN);
-				mpfr_rint(vu, vu, MPFR_RNDN);
-			} else {
-				mpfr_round(vl, vl);
-				mpfr_round(vu, vu);
-			}
+			MPFR_ROUND_PO(vl)
+			MPFR_ROUND_PO(vu)
 			mpz_t ivalue;
 			mpz_init(ivalue);
 			mpfr_get_z(ivalue, vu, MPFR_RNDN);
@@ -12073,18 +12266,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(i_log < 0) mpfr_mul_z(v, v, z_log, po.preserve_precision ? MPFR_RNDU : MPFR_RNDD);
 			else mpfr_div_z(v, v, z_log, po.preserve_precision ? MPFR_RNDU : MPFR_RNDD);
 			mpfr_ceil(v, v);
-		} else if(TRUNCATE) {
-			if(i_log < 0) mpfr_mul_z(v, v, z_log, MPFR_RNDN);
-			else mpfr_div_z(v, v, z_log, MPFR_RNDN);
-			mpfr_trunc(v, v);
-		} else if(po.round_halfway_to_even) {
-			if(i_log < 0) mpfr_mul_z(v, v, z_log, MPFR_RNDN);
-			else mpfr_div_z(v, v, z_log, MPFR_RNDN);
-			mpfr_rint(v, v, MPFR_RNDN);
 		} else {
 			if(i_log < 0) mpfr_mul_z(v, v, z_log, MPFR_RNDN);
 			else mpfr_div_z(v, v, z_log, MPFR_RNDN);
-			mpfr_round(v, v);
+			MPFR_ROUND_PO(v)
 		}
 		mpz_t ivalue;
 		mpz_init(ivalue);
@@ -12132,9 +12317,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				mpfr_set(f_runc, f_unc, MPFR_RNDN);
 			}
 			if(!po.preserve_precision) {
-				if(TRUNCATE) mpfr_trunc(f_unc, f_unc);
-				else if(po.round_halfway_to_even) mpfr_rint(f_unc, f_unc, MPFR_RNDN);
-				else mpfr_round(f_unc, f_unc);
+				MPFR_ROUND_PO(f_unc)
 			}
 			if(!mpfr_zero_p(f_unc)) {
 				mpfr_get_z(ivalue, f_unc, po.preserve_precision ? MPFR_RNDU : MPFR_RNDN);
@@ -12183,9 +12366,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						mpz_clear(z_log);
 					}
 					if(!po.preserve_precision) {
-						if(TRUNCATE) mpfr_trunc(f_runc, f_runc);
-						else if(po.round_halfway_to_even) mpfr_rint(f_runc, f_runc, MPFR_RNDN);
-						else mpfr_round(f_runc, f_runc);
+						MPFR_ROUND_PO(f_runc)
 					}
 					if(!mpfr_zero_p(f_runc)) {
 						mpfr_get_z(ivalue, f_runc, po.preserve_precision ? MPFR_RNDU : MPFR_RNDN);
@@ -12437,7 +12618,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				mpz_fdiv_qr(i_quo, i_rem, mpq_numref(r_value), i_div);
 				if(mpz_sgn(i_rem) != 0) {
 					mpz_set(num, i_quo);
-					if(!TRUNCATE) {
+					RoundingMode rounding = get_rounding_mode(po);
+					if(rounding == ROUNDING_HALF_AWAY_FROM_ZERO || rounding == ROUNDING_HALF_TO_EVEN || rounding == ROUNDING_HALF_TO_ODD || rounding == ROUNDING_HALF_TOWARD_ZERO || rounding == ROUNDING_HALF_UP || rounding == ROUNDING_HALF_DOWN || rounding == ROUNDING_HALF_RANDOM) {
 						mpq_t q_rem, q_base_half;
 						mpq_inits(q_rem, q_base_half, NULL);
 						mpz_set(mpq_numref(q_rem), i_rem);
@@ -12446,12 +12628,12 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						mpq_mul(q_rem, q_rem, q_base_half);
 						mpz_set_ui(mpq_denref(q_base_half), 2);
 						int i_sign = mpq_cmp(q_rem, q_base_half);
-						if(po.round_halfway_to_even && mpz_even_p(num)) {
-							if(i_sign > 0) mpz_add_ui(num, num, 1);
-						} else {
-							if(i_sign >= 0) mpz_add_ui(num, num, 1);
+						if(i_sign > 0 || (i_sign == 0 && (rounding == ROUNDING_HALF_AWAY_FROM_ZERO || (rounding == ROUNDING_HALF_TO_EVEN && mpz_odd_p(num)) || (rounding == ROUNDING_HALF_TO_ODD && mpz_even_p(num)) || (!neg && rounding == ROUNDING_HALF_UP) || (neg && rounding == ROUNDING_HALF_DOWN) || (rounding == ROUNDING_HALF_RANDOM && ::rand() % 2 == 1)))) {
+							mpz_add_ui(num, num, 1);
 						}
 						mpq_clears(q_base_half, q_rem, NULL);
+					} else if((!neg && rounding == ROUNDING_UP) || (neg && rounding == ROUNDING_DOWN) || rounding == ROUNDING_AWAY_FROM_ZERO) {
+						mpz_add_ui(num, num, 1);
 					}
 					mpz_mul(num, num, i_div_pre);
 					exact = false;
@@ -12571,23 +12753,26 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			free(remainders[i]);
 		}
 		remainders.clear();
-		if(!exact && !infinite_series && !po.preserve_format && !TRUNCATE) {
-			mpz_mul_si(remainder, remainder, base);
-			mpz_tdiv_qr(remainder, remainder2, remainder, d);
-			mpq_t q_rem, q_base_half;
-			mpq_inits(q_rem, q_base_half, NULL);
-			mpz_set(mpq_numref(q_rem), remainder);
-			mpz_set_ui(mpq_denref(q_rem), 1);
-			mpz_set_si(mpq_numref(q_base_half), base);
-			mpz_set_ui(mpq_denref(q_base_half), 2);
-			mpq_canonicalize(q_base_half);
-			int i_sign = mpq_cmp(q_rem, q_base_half);
-			if(po.round_halfway_to_even && mpz_sgn(remainder2) == 0 && mpz_even_p(num)) {
-				if(i_sign > 0) mpz_add_ui(num, num, 1);
-			} else {
-				if(i_sign >= 0) mpz_add_ui(num, num, 1);
+		if(!exact && !infinite_series && !po.preserve_format) {
+			RoundingMode rounding = get_rounding_mode(po);
+			if(rounding == ROUNDING_HALF_AWAY_FROM_ZERO || rounding == ROUNDING_HALF_TO_EVEN || rounding == ROUNDING_HALF_TO_ODD || rounding == ROUNDING_HALF_TOWARD_ZERO || rounding == ROUNDING_HALF_UP || rounding == ROUNDING_HALF_DOWN || rounding == ROUNDING_HALF_RANDOM) {
+				mpz_mul_si(remainder, remainder, base);
+				mpz_tdiv_qr(remainder, remainder2, remainder, d);
+				mpq_t q_rem, q_base_half;
+				mpq_inits(q_rem, q_base_half, NULL);
+				mpz_set(mpq_numref(q_rem), remainder);
+				mpz_set_ui(mpq_denref(q_rem), 1);
+				mpz_set_si(mpq_numref(q_base_half), base);
+				mpz_set_ui(mpq_denref(q_base_half), 2);
+				mpq_canonicalize(q_base_half);
+				int i_sign = mpq_cmp(q_rem, q_base_half);
+				if(i_sign > 0 || (i_sign == 0 && (rounding == ROUNDING_HALF_AWAY_FROM_ZERO || (rounding == ROUNDING_HALF_TO_EVEN && mpz_odd_p(num)) || (rounding == ROUNDING_HALF_TO_ODD && mpz_even_p(num)) || (!neg && rounding == ROUNDING_HALF_UP) || (neg && rounding == ROUNDING_HALF_DOWN) || (rounding == ROUNDING_HALF_RANDOM && ::rand() % 2 == 1)))) {
+					mpz_add_ui(num, num, 1);
+				}
+				mpq_clears(q_base_half, q_rem, NULL);
+			} else if((!neg && rounding == ROUNDING_UP) || (neg && rounding == ROUNDING_DOWN) || rounding == ROUNDING_AWAY_FROM_ZERO) {
+				mpz_add_ui(num, num, 1);
 			}
-			mpq_clears(q_base_half, q_rem, NULL);
 		}
 		if(!exact && !infinite_series && po.number_fraction_format == FRACTION_DECIMAL_EXACT && !approx) {
 			PrintOptions po2 = po;

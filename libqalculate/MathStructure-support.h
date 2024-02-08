@@ -147,6 +147,7 @@ void replace_internal_operators(std::string &str);
 long int get_fixed_denominator(const std::string &str, NumberFractionFormat &nff, int frac, bool *has_sign = NULL);
 bool contains_fraction_q(const MathStructure&);
 bool compare_name_with_error(const std::string &name, const std::string &str, const size_t &name_length, int base, size_t ignore_us, int errors_allowed, bool case_sensitive);
+RoundingMode get_rounding_mode(const PrintOptions &po);
 
 #define HAS_DEFAULT_ANGLE_UNIT(x) (x != ANGLE_UNIT_NONE && (x != ANGLE_UNIT_CUSTOM || CALCULATOR->customAngleUnit()))
 #define NO_DEFAULT_ANGLE_UNIT(x) (x == ANGLE_UNIT_NONE || (x == ANGLE_UNIT_CUSTOM && !CALCULATOR->customAngleUnit()))

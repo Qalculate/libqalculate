@@ -1370,9 +1370,9 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	int ret = solve_equation(msolve, m_eqn, m_diff[0], eo, true, m_diff[1], MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_C)), vargs[2], vargs[1]);
 	if(c_real_set) ((UnknownVariable*) CALCULATOR->getVariableById(VARIABLE_ID_C))->assumptions()->setType(ASSUMPTION_TYPE_NUMBER);
 	if(ret == -2 && !msolve.contains(m_diff)) {
-		msolve.setProtected(true);
 		msolve.transformById(FUNCTION_ID_SOLVE);
 		msolve.addChild(m_diff[0]);
+		msolve.setProtected(true);
 	} else if(ret < 0) {
 		CALCULATOR->error(true, _("Unable to solve differential equation."), NULL);
 		protect_mdiff(mstruct, m_diff, eo);
