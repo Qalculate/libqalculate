@@ -969,6 +969,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 							arg = new DataPropertyArgument(NULL, "");
 						} else {
 							arg = new Argument();
+							if(!is_user_defs) arg->setHandleVector(true);
 						}
 						child2 = child->xmlChildrenNode;
 						argname = ""; best_argname = false; next_best_argname = false;

@@ -1,3 +1,13 @@
+2023-02-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Change handling a vectors in multiple function arguments (of non-vector type) - return vector instead of matrix, require equal number of elements, and use the same vector index for all argument for each function instance (e.g. atan2([1  2], [3  4]) = [atan2(1, 3)  atan(2 4)]
+	* Set handle vector property by default, for text, date, and boolean arguments, and for arguments, in global non-builtin functions, without specified type
+	* Enable parsing of vectors for text arguments
+	* Add foreach() function (simplified for function, using vector instead of counter)
+	* Add setbits() function
+	* Add flip() function (changes order of elements in vectors and matrices)
+	* Add "binary bits" option in qalc
+
 2023-02-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add LightSecond, LightMinute, and LightHour units

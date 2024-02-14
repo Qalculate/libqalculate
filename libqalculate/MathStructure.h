@@ -766,6 +766,7 @@ class MathStructure {
 
 		bool rankVector(bool ascending = true);
 		bool sortVector(bool ascending = true);
+		void flipVector();
 
 		MathStructure &getRange(int start, int end, MathStructure &mstruct) const;
 

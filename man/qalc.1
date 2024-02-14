@@ -441,8 +441,8 @@ Determines the default decimal separator.
 .B digit grouping, group \fI(0* = off, 1 = standard, 2 = locale)\fP
 .PP
 .TP 8
-.B exp display, exp \fI(E*, e, 10)\fP
-Determines how scientific notation are displayed (e.g. 3 000 000 = 3E6 = 3e6, or 3 * 10^6).
+.B exp display, edisp \fI(E*, e, 10)\fP
+Determines how scientific notation are displayed (e.g. 3E6, 3e6, or 3 * 10^6).
 .PP
 .TP 8
 .B fractions, fr \fI(-1* = auto, 0 = off, 1 = exact, 2 = on, 3 = mixed, 4 = long, 5 = dual, 1/n)\fP
@@ -509,8 +509,8 @@ Allow input of uncertainty using concise notation.
 Determines the default decimal separator.
 .PP
 .TP 8
-.B hexadecimal two's input, hextwosin\fI(on, off*, >= 4)\fP
-Enables two's complement representation for input of negative hexadecimal numbers. All hexadecimal numbers starting with 8 or higher are negative.
+.B hexadecimal two's input, hextwosin\fI(on, off*)\fP
+Enables two's complement representation for input of negative hexadecimal numbers. All hexadecimal numbers starting with 8 or higher are negative, unless binary bits is set.
 .PP
 .TP 8
 .B ignore comma \fI(on, off*)\fP
@@ -543,8 +543,8 @@ If activated, numbers are interpreted as approximate with precision equal to the
 Interpret addition/subtraction of percentage as percentage increase/decrease of the first term (100 + 10% = 110).
 .PP
 .TP 8
-.B two's input, twosin \fI(on, off*, >= 2)\fP
-Enables two's complement representation for input of negative binary numbers. All binary numbers starting with 1 are negative.
+.B two's input, twosin \fI(on, off*)\fP
+Enables two's complement representation for input of negative binary numbers. All binary numbers starting with 1 are negative, unless binary bits is set.
 .PP
 Units:
 .PP

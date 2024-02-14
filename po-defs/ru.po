@@ -7124,11 +7124,11 @@ msgid "r:bitcmp"
 msgstr "битдоп,не"
 
 #: ../data/functions.xml.in.h:963
-msgid "Bit Width"
+msgid "Bit width"
 msgstr "Разрядность"
 
 #: ../data/functions.xml.in.h:964
-msgid "Signed Integer"
+msgid "Signed integer"
 msgstr "Знаковое целое"
 
 #: ../data/functions.xml.in.h:965

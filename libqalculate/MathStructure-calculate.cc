@@ -6905,6 +6905,8 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 		int last_i = 0;
 
 		bool b_valid = true;
+		size_t n_vector = 0;
+		size_t vector_size = (size_t) -1;
 		for(size_t i = 0; i < SIZE; i++) {
 			arg = o_function->getArgumentDefinition(i + 1);
 			if(arg) {
@@ -6930,49 +6932,34 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 				// test if argument/child can be used by function
 				if(!arg->test(CHILD(i), i + 1, o_function, eo)) {
 					if(arg->handlesVector() && arg->type() != ARGUMENT_TYPE_VECTOR && CHILD(i).isVector()) {
-						// calculate the function separately for each child of vector
-						bool b = false;
-						for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
-							CHILD(i)[i2].transform(o_function);
-							for(size_t i3 = 0; i3 < SIZE; i3++) {
-								if(i3 < i) CHILD(i)[i2].insertChild(CHILD(i3), i3 + 1);
-								else if(i3 > i) CHILD(i)[i2].addChild(CHILD(i3));
-							}
-							if(CHILD(i)[i2].calculateFunctions(eo, recursive, do_unformat)) b = true;
-							CHILD(i).childUpdated(i2 + 1);
+						if(vector_size == (size_t) -1) {
+							vector_size = CHILD(i).size();
+						} else if(vector_size != CHILD(i).size()) {
+							b_valid = false;
+							CALCULATOR->error(true, _("Vector size mismatch"), NULL);
 						}
-						SET_CHILD_MAP(i);
-						return b;
+						n_vector++;
+					} else {
+						// argument/child did not fulfil criteria
+						b_valid = false;
 					}
-					// argument/child did not fulfil criteria
-					CHILD_UPDATED(i);
-					b_valid = false;
-				} else {
-					CHILD_UPDATED(i);
-				}
-				if(arg->handlesVector() && (arg->type() != ARGUMENT_TYPE_VECTOR || CHILD(i).isMatrix())) {
+				} else if(arg->handlesVector() && (arg->type() != ARGUMENT_TYPE_VECTOR || CHILD(i).isMatrix())) {
 					if(arg->type() == ARGUMENT_TYPE_VECTOR) {
 						CHILD(i).transposeMatrix();
-					} else if((arg->tests() || (o_function->subtype() == SUBTYPE_USER_FUNCTION && CHILD(i).containsType(STRUCT_VECTOR, false, true, false) > 0)) && !CHILD(i).isVector() && !CHILD(i).representsScalar()) {
+					} else if((arg->tests() || (o_function->subtype() == SUBTYPE_USER_FUNCTION && CHILD(i).containsType(STRUCT_VECTOR, false, true, true) > 0)) && !CHILD(i).isVector() && !CHILD(i).representsScalar()) {
 						CHILD(i).eval(eo);
-						CHILD_UPDATED(i);
 					}
 					if(CHILD(i).isVector()) {
-						bool b = false;
-						// calculate the function separately for each child of vector
-						for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
-							CHILD(i)[i2].transform(o_function);
-							for(size_t i3 = 0; i3 < SIZE; i3++) {
-								if(i3 < i) CHILD(i)[i2].insertChild(CHILD(i3), i3 + 1);
-								else if(i3 > i) CHILD(i)[i2].addChild(CHILD(i3));
-							}
-							if(CHILD(i)[i2].calculateFunctions(eo, recursive, do_unformat)) b = true;
-							CHILD(i).childUpdated(i2 + 1);
+						if(vector_size == (size_t) -1) {
+							vector_size = CHILD(i).size();
+						} else if(vector_size != CHILD(i).size()) {
+							b_valid = false;
+							CALCULATOR->error(true, _("Vector size mismatch"), NULL);
 						}
-						SET_CHILD_MAP(i);
-						return b;
+						n_vector++;
 					}
 				}
+				CHILD_UPDATED(i);
 			}
 		}
 
@@ -6988,82 +6975,114 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 			return false;
 		}
 
-		if(!o_function->testCondition(*this)) {
-			m_type = STRUCT_FUNCTION;
-			return false;
-		}
-		MathStructure *mstruct = new MathStructure();
-		int ret = o_function->calculate(*mstruct, *this, eo);
-		if(ret > 0) {
-			// function calculation was successful
-			while(mstruct->isVector() && mstruct->size() == 1) mstruct->setToChild(1, true);
-			set_nocopy(*mstruct, true);
-			if(recursive) calculateFunctions(eo);
-			mstruct->unref();
-			if(do_unformat) unformat(eo);
-			return true;
-		} else {
-			// function calculation failed
-			if(ret < 0) {
-				// updated argument/child was returned
-				ret = -ret;
-				if(o_function->maxargs() > 0 && ret > o_function->maxargs()) {
-					if(mstruct->isVector()) {
-						if(do_unformat) mstruct->unformat(eo);
-						for(size_t arg_i = 1; arg_i <= SIZE && arg_i <= mstruct->size(); arg_i++) {
-							mstruct->getChild(arg_i)->ref();
-							setChild_nocopy(mstruct->getChild(arg_i), arg_i);
-						}
-					}
-				} else if(ret <= (long int) SIZE) {
-					if(do_unformat) mstruct->unformat(eo);
-					mstruct->ref();
-					setChild_nocopy(mstruct, ret);
-				}
+		if(n_vector == 0) {
+			if(!o_function->testCondition(*this)) {
+				m_type = STRUCT_FUNCTION;
+				return false;
 			}
-			/*if(eo.approximation == APPROXIMATION_EXACT) {
-				mstruct->clear();
-				EvaluationOptions eo2 = eo;
-				eo2.approximation = APPROXIMATION_APPROXIMATE;
-				CALCULATOR->beginTemporaryStopMessages();
-				if(o_function->calculate(*mstruct, *this, eo2) > 0) {
-					function_value = mstruct;
-					function_value->ref();
-					function_value->calculateFunctions(eo2);
-				}
-				if(CALCULATOR->endTemporaryStopMessages() > 0 && function_value) {
-					function_value->unref();
-					function_value = NULL;
-				}
-			}*/
-			m_type = STRUCT_FUNCTION;
-			mstruct->unref();
-			for(size_t i = 0; i < SIZE; i++) {
-				arg = o_function->getArgumentDefinition(i + 1);
-				if(arg && arg->handlesVector() && arg->type() != ARGUMENT_TYPE_VECTOR) {
-					if(!CHILD(i).isVector() && !CHILD(i).representsScalar()) {
-						CHILD(i).calculatesub(eo, eo, false);
-						CHILD_UPDATED(i);
-					}
-					if(CHILD(i).isVector()) {
-						// calculate the function separately for each child of vector
-						bool b = false;
-						for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
-							CHILD(i)[i2].transform(o_function);
-							for(size_t i3 = 0; i3 < SIZE; i3++) {
-								if(i3 < i) CHILD(i)[i2].insertChild(CHILD(i3), i3 + 1);
-								else if(i3 > i) CHILD(i)[i2].addChild(CHILD(i3));
+			MathStructure *mstruct = new MathStructure();
+			int ret = o_function->calculate(*mstruct, *this, eo);
+			if(ret > 0) {
+				// function calculation was successful
+				while(mstruct->isVector() && mstruct->size() == 1) mstruct->setToChild(1, true);
+				set_nocopy(*mstruct, true);
+				if(recursive) calculateFunctions(eo);
+				mstruct->unref();
+				if(do_unformat) unformat(eo);
+				return true;
+			} else {
+				// function calculation failed
+				if(ret < 0) {
+					// updated argument/child was returned
+					ret = -ret;
+					if(o_function->maxargs() > 0 && ret > o_function->maxargs()) {
+						if(mstruct->isVector()) {
+							if(do_unformat) mstruct->unformat(eo);
+							for(size_t arg_i = 1; arg_i <= SIZE && arg_i <= mstruct->size(); arg_i++) {
+								mstruct->getChild(arg_i)->ref();
+								setChild_nocopy(mstruct->getChild(arg_i), arg_i);
 							}
-							if(CHILD(i)[i2].calculateFunctions(eo, recursive, do_unformat)) b = true;
-							CHILD(i).childUpdated(i2 + 1);
 						}
-						SET_CHILD_MAP(i);
-						return b;
+					} else if(ret <= (long int) SIZE) {
+						if(do_unformat) mstruct->unformat(eo);
+						mstruct->ref();
+						setChild_nocopy(mstruct, ret);
+					}
+				}
+				/*if(eo.approximation == APPROXIMATION_EXACT) {
+					mstruct->clear();
+					EvaluationOptions eo2 = eo;
+					eo2.approximation = APPROXIMATION_APPROXIMATE;
+					CALCULATOR->beginTemporaryStopMessages();
+					if(o_function->calculate(*mstruct, *this, eo2) > 0) {
+						function_value = mstruct;
+						function_value->ref();
+						function_value->calculateFunctions(eo2);
+					}
+					if(CALCULATOR->endTemporaryStopMessages() > 0 && function_value) {
+						function_value->unref();
+						function_value = NULL;
+					}
+				}*/
+				m_type = STRUCT_FUNCTION;
+				mstruct->unref();
+			}
+		}
+		// calculate the function separately for each child of vector
+		n_vector = 0;
+		for(size_t i = 0; i < SIZE; i++) {
+			arg = o_function->getArgumentDefinition(i + 1);
+			if(arg && arg->handlesVector() && (arg->type() != ARGUMENT_TYPE_VECTOR || CHILD(i).isMatrix())) {
+				if(arg->type() != ARGUMENT_TYPE_VECTOR && !CHILD(i).isVector() && !CHILD(i).representsScalar()) {
+					CHILD(i).calculatesub(eo, eo, false);
+					CHILD_UPDATED(i);
+					if(!CHILD(i).isVector() && !CHILD(i).representsScalar()) {
+						MathStructure mtest(CHILD(i));
+						CALCULATOR->beginTemporaryStopMessages();
+						mtest.eval(eo);
+						if(mtest.isVector()) {
+							CALCULATOR->endTemporaryStopMessages(true);
+							CHILD(i).set_nocopy(mtest);
+						} else {
+							CALCULATOR->endTemporaryStopMessages();
+						}
+					}
+				}
+				if(CHILD(i).isVector()) {
+					n_vector++;
+					if(vector_size == (size_t) -1) {
+						vector_size = CHILD(i).size();
+					} else if(vector_size != CHILD(i).size()) {
+						b_valid = false;
+						CALCULATOR->error(true, _("Vector size mismatch"), NULL);
 					}
 				}
 			}
-			return false;
 		}
+		bool b = false;
+		if(b_valid && n_vector > 0) {
+			MathStructure *mstruct = new MathStructure();
+			mstruct->clearVector();
+			for(size_t i = 0; i < vector_size; i++) {
+				MathStructure *mi = new MathStructure(o_function, NULL);
+				for(size_t i2 = 0; i2 < SIZE; i2++) {
+					if(SIZE == n_vector) {
+						mi->addChild(CHILD(i2)[i]);
+					} else if(CHILD(i2).isVector()) {
+						arg = o_function->getArgumentDefinition(i2 + 1);
+						if(arg && arg->handlesVector() && (arg->type() != ARGUMENT_TYPE_VECTOR || CHILD(i2).isMatrix())) mi->addChild(CHILD(i2)[i]);
+						else mi->addChild(CHILD(i2));
+					} else {
+						mi->addChild(CHILD(i2));
+					}
+				}
+				if(mi->calculateFunctions(eo, recursive, do_unformat)) b = true;
+				mstruct->addChild_nocopy(mi);
+			}
+			set_nocopy(*mstruct);
+			mstruct->unref();
+		}
+		return b;
 	}
 	bool b = false;
 	if(recursive) {

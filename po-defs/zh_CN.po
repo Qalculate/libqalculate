@@ -6968,11 +6968,11 @@ msgid "r:bitcmp"
 msgstr "-"
 
 #: ../data/functions.xml.in.h:963
-msgid "Bit Width"
+msgid "Bit width"
 msgstr "位宽"
 
 #: ../data/functions.xml.in.h:964
-msgid "Signed Integer"
+msgid "Signed integer"
 msgstr "有符号整数"
 
 #: ../data/functions.xml.in.h:965

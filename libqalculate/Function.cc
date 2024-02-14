@@ -1567,6 +1567,19 @@ MathStructure Argument::parse(const string &str, const ParseOptions &po) const {
 	parse(&mstruct, str, po);
 	return mstruct;
 }
+
+void fix_date_time_string(MathStructure *mstruct) {
+	if(mstruct->isDateTime() && !mstruct->datetime()->parsed_string.empty()) mstruct->set(mstruct->datetime()->parsed_string, false, true);
+}
+void vector_fix_date_time_string(MathStructure *mstruct) {
+	fix_date_time_string(mstruct);
+	if(mstruct->isVector()) {
+		for(size_t i = 0; i < mstruct->size(); i++) {
+			vector_fix_date_time_string(mstruct->getChild(i + 1));
+		}
+	}
+}
+
 void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptions &po) const {
 	if(b_text) {
 		MathFunction *f_cat = CALCULATOR->getFunctionById(FUNCTION_ID_CONCATENATE);
@@ -1606,12 +1619,12 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 		if(str.length() >= 2 + pars * 2) {
 			if(str[pars] == ID_WRAP_LEFT_CH && str[str.length() - 1 - pars] == ID_WRAP_RIGHT_CH && str.find(ID_WRAP_RIGHT, pars + 1) == str.length() - 1 - pars) {
 				CALCULATOR->parse(mstruct, str.substr(pars, str.length() - pars * 2), po);
-				if(mstruct->isDateTime() && !mstruct->datetime()->parsed_string.empty()) mstruct->set(mstruct->datetime()->parsed_string, false, true);
+				fix_date_time_string(mstruct);
 				return;
 			}
 			if(str[pars] == '\\' && str[str.length() - 1 - pars] == '\\') {
 				CALCULATOR->parse(mstruct, str.substr(1 + pars, str.length() - 2 - pars * 2), po);
-				if(mstruct->isDateTime() && !mstruct->datetime()->parsed_string.empty()) mstruct->set(mstruct->datetime()->parsed_string, false, true);
+				fix_date_time_string(mstruct);
 				return;
 			}
 			if((str[pars] == '\"' && str[str.length() - 1 - pars] == '\"') || (str[pars] == '\'' && str[str.length() - 1 - pars] == '\'')) {
@@ -1624,6 +1637,11 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 					cits++;
 					i++;
 				}
+			}
+			if(b_handle_vector && str[pars] == LEFT_VECTOR_WRAP_CH && str[str.length() - 1 - pars] == RIGHT_VECTOR_WRAP_CH && (str.find_first_of("\"\'", pars + 1) != string::npos || (str.find(LEFT_PARENTHESIS ID_WRAP_LEFT) != string::npos && str.find(ID_WRAP_RIGHT RIGHT_PARENTHESIS) != string::npos))) {
+				CALCULATOR->parse(mstruct, str.substr(1 + pars, str.length() - 2 - pars * 2), po);
+				vector_fix_date_time_string(mstruct);
+				return;
 			}
 		}
 		string str2;
@@ -2113,7 +2131,10 @@ Argument *SymbolicArgument::copy() const {return new SymbolicArgument(this);}
 string SymbolicArgument::print() const {return _("symbol");}
 string SymbolicArgument::subprintlong() const {return _("an unknown variable/symbol");}
 
-TextArgument::TextArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {b_text = true;}
+TextArgument::TextArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
+	b_text = true;
+	b_handle_vector = does_test;
+}
 TextArgument::TextArgument(const TextArgument *arg) {set(arg); b_text = true;}
 TextArgument::~TextArgument() {}
 bool TextArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
@@ -2128,7 +2149,9 @@ string TextArgument::print() const {return _("text");}
 string TextArgument::subprintlong() const {return _("a text string");}
 bool TextArgument::suggestsQuotes() const {return b_text;}
 
-DateArgument::DateArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
+DateArgument::DateArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
+	b_handle_vector = does_test;
+}
 DateArgument::DateArgument(const DateArgument *arg) {set(arg);}
 DateArgument::~DateArgument() {}
 void DateArgument::parse(MathStructure *mstruct, const string &str, const ParseOptions &po) const {
@@ -2360,7 +2383,9 @@ Argument *FileArgument::copy() const {return new FileArgument(this);}
 string FileArgument::print() const {return _("file");}
 string FileArgument::subprintlong() const {return _("a valid file name");}
 
-BooleanArgument::BooleanArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {}
+BooleanArgument::BooleanArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
+	b_handle_vector = does_test;
+}
 BooleanArgument::BooleanArgument(const BooleanArgument *arg) {set(arg);}
 BooleanArgument::~BooleanArgument() {}
 bool BooleanArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {

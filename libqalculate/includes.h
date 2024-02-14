@@ -425,7 +425,7 @@ typedef enum {
 	EXP_DEFAULT,
 	EXP_UPPERCASE_E,
 	EXP_LOWERCASE_E,
-	EXP_BASE10
+	EXP_POWER_OF_10
 } ExpDisplay;
 
 typedef enum {

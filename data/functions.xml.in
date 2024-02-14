@@ -74,6 +74,18 @@
         <_title>Ascending</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="flip">
+      <_title>Flip</_title>
+      <_names>r:flip</_names>
+      <_description>Reverses the order of elements in a matrix or vector. If dimension is 1, the order of rows is reversed, if 2 column order is changed, and if 0 (default) both are changed.</_description>
+      <example>$name([1  2  3]) = [3  2  1]</example>
+      <argument index="1">
+        <_title>Matrix/vector</_title>
+      </argument>
+      <argument index="2">
+        <_title>Dimension</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="limits">
       <_title>Vector Limits</_title>
       <_names>r:limits</_names>
@@ -193,7 +205,7 @@
       <_names>r:elements</_names>
       <_description>Returns the number of elements in a matrix or vector.</_description>
       <argument index="1">
-        <_title>Matrix or vector</_title>
+        <_title>Matrix/vector</_title>
       </argument>
     </builtin_function>
     <builtin_function name="element">
@@ -615,11 +627,9 @@
         <expression>trunc(\x/\y)</expression>
         <argument type="free" index="1">
           <_title>Numerator</_title>
-          <handle_vector>true</handle_vector>
         </argument>
         <argument type="free" index="2">
           <_title>Denominator</_title>
-          <handle_vector>true</handle_vector>
         </argument>
       </function>
       <function>
@@ -628,6 +638,7 @@
         <expression>-\x</expression>
         <argument type="free" index="1">
           <_title>Value</_title>
+	  <handle_vector>false</handle_vector>
         </argument>
       </function>
       <function>
@@ -921,7 +932,7 @@
       <builtin_function name="digitSet">
         <_title>Set Digit</_title>
         <_names>r:digitSet</_names>
-	<_description>Sets the digit at specified position (index of first digit left of decimal sign is zero). Multiple bits can be set by using a vector for argument 2 and/or 3.</_description>
+	<_description>Sets the digit at specified position (index of first digit left of decimal sign is zero).</_description>
         <argument index="1">
           <_title>Number</_title>
         </argument>
@@ -943,7 +954,6 @@
         <condition>\y&lt;=\z</condition>
         <argument type="free" index="1">
           <_title>Value</_title>
-          <handle_vector>true</handle_vector>
         </argument>
         <argument type="number" index="2">
           <_title>Lower bound</_title>
@@ -1256,7 +1266,7 @@
       <_title>Cube Root</_title>
       <_names>r:cbrt,aou:&#x221B;</_names>
       <_description>Returns the third real root.</_description>
-      <argument type="free" index="1">
+      <argument index="1">
         <_title>Value</_title>
       </argument>
     </builtin_function>
@@ -1264,10 +1274,10 @@
       <_title>Nth root</_title>
       <_names>r:root</_names>
       <_description>Returns the real root. For negative values the degree must be odd. Complex values are not allowed.</_description>
-      <argument type="free" index="1">
+      <argument index="1">
         <_title>Value</_title>
       </argument>
-      <argument type="free" index="2">
+      <argument index="2">
         <!--nth root argument-->
         <_title>Degree (n)</_title>
       </argument>
@@ -1349,7 +1359,6 @@
       <expression>2^\x</expression>
       <argument type="free" index="1">
         <_title>Exponent</_title>
-        <handle_vector>true</handle_vector>
       </argument>
     </function>
     <function>
@@ -1358,7 +1367,6 @@
       <expression>10^\x</expression>
       <argument type="free" index="1">
         <_title>Exponent</_title>
-        <handle_vector>true</handle_vector>
       </argument>
     </function>
     <function>
@@ -1724,11 +1732,9 @@
       <expression>(\x/(1000g))/(\y/m)^2</expression>
       <argument type="free" index="1">
         <_title>Weight</_title>
-        <handle_vector>true</handle_vector>
       </argument>
       <argument type="free" index="2">
         <_title>Length</_title>
-        <handle_vector>true</handle_vector>
       </argument>
     </function>
     <function>
@@ -2087,7 +2093,6 @@
         </argument>
         <argument type="free" index="2">
           <_title>Trimmed percentage (at each end)</_title>
-          <handle_vector>true</handle_vector>
         </argument>
       </function>
       <function>
@@ -2103,7 +2108,6 @@
         </argument>
         <argument type="free" index="2">
           <_title>Winsorized percentage (at each end)</_title>
-          <handle_vector>true</handle_vector>
         </argument>
       </function>
       <function>
@@ -3344,6 +3348,26 @@
         <_title>Value variable</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="foreach">
+      <_title>For Each Element...Do</_title>
+      <_names>r:foreach</_names>
+      <example>$name(1...5, 0, y + x) = 15</example>
+      <argument index="1">
+        <_title>Matrix/vector</_title>
+      </argument>
+      <argument index="2">
+        <_title>Initial value</_title>
+      </argument>
+      <argument index="3">
+        <_title>Do function</_title>
+      </argument>
+      <argument index="4">
+        <_title>Value variable</_title>
+      </argument>
+      <argument index="5">
+        <_title>Element variable</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="if">
       <_title>If...Then...Else</_title>
       <_names>r:if</_names>
@@ -3403,10 +3427,10 @@
         <_title>Number</_title>
       </argument>
       <argument index="2">
-        <_title>Bit Width</_title>
+        <_title>Bit width</_title>
       </argument>
       <argument index="3">
-        <_title>Signed Integer</_title>
+        <_title>Signed integer</_title>
       </argument>
     </builtin_function>
     <builtin_function name="bitrot">
@@ -3420,16 +3444,16 @@
         <_title>Steps</_title>
       </argument>
       <argument index="3">
-        <_title>Bit Width</_title>
+        <_title>Bit width</_title>
       </argument>
       <argument index="4">
-        <_title>Signed Integer</_title>
+        <_title>Signed integer</_title>
       </argument>
     </builtin_function>
     <builtin_function name="bitset">
       <_title>Set Bit</_title>
-      <_description>Set binary bit at specified position. The index of the least significant bit is 1. Multiple bits can be set by using a vector for argument 2 and/or 3. Specify bit width and signedness (use 1 for signed and 0 for unsigned) to allow sign changes when the most significant bit is set.</_description>
-      <example>$name(8, 3) = 12; $name(0b00000110, 5...7, 1) = $name(0b00000110, 5, [1  1  1]) = 0b01110110 = 118</example>
+      <_description>Set binary bit at specified position. The index of the least significant bit is 1. Specify bit width and signedness (use 1 for signed and 0 for unsigned) to allow sign changes when the most significant bit is set.</_description>
+      <example>$name(8, 3) = 12</example>
       <_names>r:bitset</_names>
       <argument index="1">
         <_title>Number</_title>
@@ -3441,10 +3465,34 @@
         <_title>Value</_title>
       </argument>
       <argument index="4">
-        <_title>Bit Width</_title>
+        <_title>Bit width</_title>
       </argument>
       <argument index="5">
-        <_title>Signed Integer</_title>
+        <_title>Signed integer</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="setbits">
+      <_title>Set Multiple Bits</_title>
+      <_description>Set binary bits at specified range with binary bits from an integer (index 1 to length of range). The index of the least significant bit is 1. Specify bit width and signedness (use 1 for signed and 0 for unsigned) to allow sign changes when the most significant bit is set.</_description>
+      <example>$name(0xFFFF, 9, 12, 0xA) = 0xFAFF</example>
+      <_names>r:bitset</_names>
+      <argument index="1">
+        <_title>Number</_title>
+      </argument>
+      <argument index="2">
+        <_title>First position</_title>
+      </argument>
+      <argument index="3">
+        <_title>Last position</_title>
+      </argument>
+      <argument index="4">
+        <_title>Value</_title>
+      </argument>
+      <argument index="5">
+        <_title>Bit width</_title>
+      </argument>
+      <argument index="6">
+        <_title>Signed integer</_title>
       </argument>
     </builtin_function>
     <builtin_function name="bitget">
@@ -3459,7 +3507,7 @@
         <_title>Position</_title>
       </argument>
       <argument index="3">
-        <_title>Last Position</_title>
+        <_title>Last position</_title>
       </argument>
     </builtin_function>
   </category>

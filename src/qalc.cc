@@ -982,7 +982,8 @@ void set_option(string str) {
 		bool b = (printops.exp_display == EXP_LOWERCASE_E);
 		SET_BOOL(b)
 		if(b != (printops.exp_display == EXP_LOWERCASE_E)) {
-			printops.exp_display = EXP_LOWERCASE_E;
+			if(b) printops.exp_display = EXP_LOWERCASE_E;
+			else printops.exp_display = EXP_UPPERCASE_E;
 			result_display_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "lowercase numbers", _("lowercase numbers")) || svar == "lownum") SET_BOOL_D(printops.lower_case_numbers)
@@ -1024,7 +1025,23 @@ void set_option(string str) {
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "hexadecimal two's", _("hexadecimal two's")) || svar == "hextwos") SET_BOOL_D(printops.hexadecimal_twos_complement)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "two's complement input", _("two's complement input")) || svar == "twosin") SET_BOOL_PF(evalops.parse_options.twos_complement)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "hexadecimal two's input", _("hexadecimal two's input")) || svar == "hextwosin") SET_BOOL_PF(evalops.parse_options.hexadecimal_twos_complement)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "digit grouping", _("digit grouping")) || svar =="group") {
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "binary bits", _("binary bits")) || svar == "bits") {
+		int v = -1;
+		if(empty_value) {
+			v = 0;
+		} else if(svalue.find_first_not_of(SPACES MINUS NUMBERS) == string::npos) {
+			v = s2i(svalue);
+			if(v < 0) v = 0;
+		}
+		if(v < 0 || v == 1) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			printops.binary_bits = v;
+			evalops.parse_options.binary_bits = v;
+			if(evalops.parse_options.twos_complement || evalops.parse_options.hexadecimal_twos_complement) expression_format_updated(true);
+			else result_display_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "digit grouping", _("digit grouping")) || svar == "group") {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = DIGIT_GROUPING_NONE;
 		//digit grouping mode
@@ -1350,23 +1367,28 @@ void set_option(string str) {
 		} else {
 			save_defs_on_exit = false;
 		}
-	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "scientific notation", _("scientific notation")) || svar == "exp mode" || svar == "exp" || EQUALS_IGNORECASE_AND_LOCAL(svar, "exp display", _("exp display"))) {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "scientific notation", _("scientific notation")) || svar == "exp mode" || svar == "exp" || EQUALS_IGNORECASE_AND_LOCAL(svar, "exp display", _("exp display")) || svar == "edisp") {
 		int v = -1;
-		bool display = EQUALS_IGNORECASE_AND_LOCAL(svar, "exp display", _("exp display"));
+		bool display = (svar == "edisp" || EQUALS_IGNORECASE_AND_LOCAL(svar, "exp display", _("exp display")));
 		bool valid = true;
 		if(!display && EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = EXP_NONE;
 		else if(!display && EQUALS_IGNORECASE_AND_LOCAL(svalue, "auto", _("auto"))) v = EXP_PRECISION;
 		else if(!display && EQUALS_IGNORECASE_AND_LOCAL(svalue, "pure", _("pure"))) v = EXP_PURE;
 		else if(!display && (empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "scientific", _("scientific")))) v = EXP_SCIENTIFIC;
 		else if(!display && EQUALS_IGNORECASE_AND_LOCAL(svalue, "engineering", _("engineering"))) v = EXP_BASE_3;
-		else if(svalue == "E") {v = EXP_UPPERCASE_E; display = 1;}
-		else if(svalue == "e") {v = EXP_LOWERCASE_E; display = 1;}
-		else if(empty_value || svalue == "10") {v = EXP_BASE10; display = 1;}
-		else if(svalue.find_first_not_of(SPACES NUMBERS MINUS) == string::npos) {
+		else if(svalue == "E" || (display && empty_value && printops.exp_display == EXP_POWER_OF_10)) {v = EXP_UPPERCASE_E; display = true;}
+		else if(svalue == "e") {v = EXP_LOWERCASE_E; display = true;}
+		//scientific notation
+		else if((display && svalue == "10") || (display && empty_value && printops.exp_display != EXP_POWER_OF_10) || svalue == "pow" || svalue == "pow10" || EQUALS_IGNORECASE_AND_LOCAL(svalue, "power", _("power")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "power of 10", _("power of 10"))) {
+			v = EXP_POWER_OF_10;
+			display = true;
+		} else if(svalue.find_first_not_of(SPACES NUMBERS MINUS) == string::npos) {
 			v = s2i(svalue);
-			if(display) v--;
-		} else valid = false;
-		if(display && valid && (v >= EXP_UPPERCASE_E && v <= EXP_BASE10)) {
+			if(display) v++;
+		} else {
+			valid = false;
+		}
+		if(display && valid && (v >= EXP_UPPERCASE_E && v <= EXP_POWER_OF_10)) {
 			printops.exp_display = (ExpDisplay) v;
 			result_display_updated();
 		} else if(!display && valid) {
@@ -1756,6 +1778,16 @@ bool show_set_help(string set_option = "") {
 		SET_OPTION_FOUND
 	}
 	STR_AND_TABS_2("base display", "basedisp", "", printops.base_display, _("none"), _("normal"), _("alternative"));
+	if(SET_OPTION_MATCHES("binary bits", "bits")) {
+		STR_AND_TABS_SET("binary bits", "bits");
+		str += "(0";
+		if(printops.binary_bits == 0) str += "*";
+		str += " = "; str += _("auto");
+		str += ", >= 2)";
+		if(printops.binary_bits >= 2) {str += " "; str += i2s(printops.binary_bits); str += "*";}
+		CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+		SET_OPTION_FOUND
+	}
 	STR_AND_TABS_4("complex form", "cplxform", "", evalops.complex_number_form + (complex_angle_form ? 1 : 0), _("rectangular"), _("exponential"), _("polar"), "cis", _("angle"));
 	if(SET_OPTION_MATCHES("decimal comma", "")) {
 		STR_AND_TABS_SET("decimal comma", "");
@@ -1774,7 +1806,7 @@ bool show_set_help(string set_option = "") {
 		SET_OPTION_FOUND
 	}
 	STR_AND_TABS_2("digit grouping", "group", "", printops.digit_grouping, _("off"), _("standard"), _("locale"));
-	STR_AND_TABS_2("exp display", "exp", _("Determines how scientific notation are displayed (e.g. 3 000 000 = 3E6 = 3e6, or 3 * 10^6)."), printops.exp_display - 1, "E", "e", "10");
+	STR_AND_TABS_2("exp display", "edisp", _("Determines how scientific notation are displayed (e.g. 3E6, 3e6, or 3 * 10^6)."), printops.exp_display - 1, "E", "e", "10");
 	int nff = printops.number_fraction_format;
 	if(dual_fraction < 0) nff = -1;
 	else if(dual_fraction > 0) nff = 5;
@@ -1857,7 +1889,7 @@ bool show_set_help(string set_option = "") {
 		CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 		SET_OPTION_FOUND
 	}
-	STR_AND_TABS_BOOL("hexadecimal two's input", "hextwosin", _("Enables two's complement representation for input of negative hexadecimal numbers. All hexadecimal numbers starting with 8 or higher are negative."), evalops.parse_options.hexadecimal_twos_complement);
+	STR_AND_TABS_BOOL("hexadecimal two's input", "hextwosin", _("Enables two's complement representation for input of negative hexadecimal numbers. All hexadecimal numbers starting with 8 or higher are negative, unless binary bits is set."), evalops.parse_options.hexadecimal_twos_complement);
 	if(CALCULATOR->getDecimalPoint() != COMMA) {
 		STR_AND_TABS_BOOL("ignore comma", "", _("Allows use of ',' as thousands separator."), evalops.parse_options.comma_as_separator);
 	}
@@ -1893,7 +1925,7 @@ bool show_set_help(string set_option = "") {
 	STR_AND_TABS_4("parsing mode", "syntax", _("See 'help parsing mode'."), evalops.parse_options.parsing_mode, _("adaptive"), _("implicit first"), _("conventional"), _("chain"), _("rpn"));
 	STR_AND_TABS_2("read precision", "readprec", _("If activated, numbers are interpreted as approximate with precision equal to the number of significant digits (3.20 = 3.20+/-0.005)."), evalops.parse_options.read_precision, _("off"), _("always"), _("when decimals"))
 	STR_AND_TABS_BOOL("simplified percentage", "percent", _("Interpret addition/subtraction of percentage as percentage increase/decrease of the first term (100 + 10% = 110)."), simplified_percentage);
-	STR_AND_TABS_BOOL("two's input", "twosin", _("Enables two's complement representation for input of negative binary numbers. All binary numbers starting with 1 are negative."), evalops.parse_options.twos_complement);
+	STR_AND_TABS_BOOL("two's input", "twosin", _("Enables two's complement representation for input of negative binary numbers. All binary numbers starting with 1 are negative, unless binary bits is set."), evalops.parse_options.twos_complement);
 
 	CHECK_IF_SCREEN_FILLED_HEADING_S(_("Units"));
 
@@ -4296,18 +4328,20 @@ int main(int argc, char *argv[]) {
 				printops.time_zone = TIME_ZONE_LOCAL;
 			} else if(str.length() > 3 && equalsIgnoreCase(str.substr(0, 3), "bin") && is_in(NUMBERS, str[3])) {
 				int save_base = printops.base;
+				unsigned int save_bits = printops.binary_bits;
 				printops.base = BASE_BINARY;
 				printops.binary_bits = s2i(str.substr(3));
 				setResult(NULL, false);
 				printops.base = save_base;
-				printops.binary_bits = 0;
+				printops.binary_bits = save_bits;
 			} else if(str.length() > 3 && equalsIgnoreCase(str.substr(0, 3), "hex") && is_in(NUMBERS, str[3])) {
 				int save_base = printops.base;
+				unsigned int save_bits = printops.binary_bits;
 				printops.base = BASE_HEXADECIMAL;
 				printops.binary_bits = s2i(str.substr(3));
 				setResult(NULL, false);
 				printops.base = save_base;
-				printops.binary_bits = 0;
+				printops.binary_bits = save_bits;
 			} else if(str.length() > 3 && (equalsIgnoreCase(str.substr(0, 3), "utc") || equalsIgnoreCase(str.substr(0, 3), "gmt"))) {
 				string to_str = str.substr(3);
 				remove_blanks(to_str);
@@ -4770,6 +4804,10 @@ int main(int argc, char *argv[]) {
 				default: {str += _("none"); break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("binary bits"), "bits");
+			if(printops.binary_bits >= 2) str += i2s(printops.binary_bits);
+			else str += _("auto");
+			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("complex form"), "cplxform");
 			switch(evalops.complex_number_form) {
 				case COMPLEX_NUMBER_FORM_RECTANGULAR: {str += _("rectangular"); break;}
@@ -4790,9 +4828,9 @@ int main(int argc, char *argv[]) {
 				case DIGIT_GROUPING_LOCALE: {str += _("locale"); break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
-			PRINT_AND_COLON_TABS(_("exp display"), "exp");
+			PRINT_AND_COLON_TABS(_("exp display"), "edisp");
 			switch(printops.exp_display) {
-				case EXP_BASE10: {str += "10";}
+				case EXP_POWER_OF_10: {str += "10";}
 				case EXP_LOWERCASE_E: {str += "e";}
 				default: {str += "E";}
 			}
@@ -6597,6 +6635,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	if(!interactive_mode) goto_input = false;
 
 	save_base = printops.base;
+	unsigned int save_bits = printops.binary_bits;
 	bool save_pre = printops.use_unit_prefixes;
 	bool save_cur = printops.use_prefixes_for_currencies;
 	bool save_den = printops.use_denominator_prefix;
@@ -7150,7 +7189,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		evalops.complex_number_form = save_complex_number_form;
 		complex_angle_form = caf_bak;
 		printops.time_zone = TIME_ZONE_LOCAL;
-		printops.binary_bits = 0;
+		printops.binary_bits = save_bits;
 		printops.base = save_base;
 		printops.duodecimal_symbols = save_duosyms;
 		printops.use_unit_prefixes = save_pre;
@@ -7327,7 +7366,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	evalops.complex_number_form = save_complex_number_form;
 	complex_angle_form = caf_bak;
 	printops.time_zone = TIME_ZONE_LOCAL;
-	printops.binary_bits = 0;
+	printops.binary_bits = save_bits;
 	printops.base = save_base;
 	printops.duodecimal_symbols = save_duosyms;
 	printops.use_unit_prefixes = save_pre;
@@ -7778,13 +7817,16 @@ void load_preferences() {
 				} else if(svar == "duodecimal_symbols") {
 					printops.duodecimal_symbols = v;
 				} else if(svar == "exp_display") {
-					if(v >= EXP_UPPERCASE_E && v <= EXP_BASE10) printops.exp_display = (ExpDisplay) v;
+					if(v >= EXP_UPPERCASE_E && v <= EXP_POWER_OF_10) printops.exp_display = (ExpDisplay) v;
 				} else if(svar == "lower_case_e") {
 					if(v) printops.exp_display = EXP_LOWERCASE_E;
 				} else if(svar == "imaginary_j") {
 					do_imaginary_j = v;
 				} else if(svar == "base_display") {
 					if(v >= BASE_DISPLAY_NONE && v <= BASE_DISPLAY_ALTERNATIVE) printops.base_display = (BaseDisplay) v;
+				} else if(svar == "binary_bits") {
+					printops.binary_bits = v;
+					evalops.parse_options.binary_bits = v;
 				} else if(svar == "twos_complement") {
 					printops.twos_complement = v;
 				} else if(svar == "hexadecimal_twos_complement") {
@@ -7937,6 +7979,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "exp_display=%i\n", printops.exp_display);
 	fprintf(file, "imaginary_j=%i\n", CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") > 0);
 	fprintf(file, "base_display=%i\n", printops.base_display);
+	fprintf(file, "binary_bits=%i\n", printops.binary_bits);
 	fprintf(file, "twos_complement=%i\n", printops.twos_complement);
 	fprintf(file, "hexadecimal_twos_complement=%i\n", printops.hexadecimal_twos_complement);
 	fprintf(file, "twos_complement_input=%i\n", evalops.parse_options.twos_complement);

@@ -125,6 +125,12 @@ bool MathStructure::sortVector(bool ascending) {
 	v_order = ranked_mstructs;
 	return true;
 }
+void MathStructure::flipVector() {
+	if(SIZE <= 1) return;
+	for(size_t i = 0; i < SIZE / 2; i++) {
+		SWAP_CHILDREN(i, SIZE - i - 1);
+	}
+}
 MathStructure &MathStructure::getRange(int start, int end, MathStructure &mstruct) const {
 	if(!isVector()) {
 		if(start > 1) {

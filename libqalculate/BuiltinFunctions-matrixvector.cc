@@ -124,6 +124,27 @@ int MergeVectorsFunction::calculate(MathStructure &mstruct, const MathStructure 
 	}
 	return 1;
 }
+FlipFunction::FlipFunction() : MathFunction("flip", 1, 2) {
+	setArgumentDefinition(1, new MatrixArgument());
+	IntegerArgument *iarg = new IntegerArgument();
+	iarg->setMin(&nr_zero);
+	iarg->setMax(&nr_two);
+	setArgumentDefinition(2, iarg);
+	setDefaultValue(2, "0");
+}
+int FlipFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	mstruct = vargs[0];
+	int dimension = vargs[1].number().intValue();
+	if(dimension == 0 || dimension == 1) {
+		mstruct.flipVector();
+	}
+	if(dimension == 0 || dimension == 2) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			mstruct[i].flipVector();
+		}
+	}
+	return 1;
+}
 VertCatFunction::VertCatFunction() : MathFunction("vertcat", 1, -1) {
 	setArgumentDefinition(1, new MatrixArgument(""));
 	setArgumentDefinition(2, new MatrixArgument(""));

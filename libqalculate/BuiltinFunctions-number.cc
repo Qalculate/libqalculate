@@ -943,7 +943,7 @@ int RoundFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			}
 		}
 	}
-	if(mstruct.representsInteger(false)) return 1;
+	if(mstruct.representsInteger(false) && (vargs.size() < 2 || vargs[1].number().isNonNegative())) return 1;
 	return -1;
 }
 bool RoundFunction::representsPositive(const MathStructure&, bool) const {return false;}
@@ -2613,67 +2613,28 @@ DigitSetFunction::DigitSetFunction() : MathFunction("digitSet", 3, 4) {
 	narg->setComplexAllowed(false);
 	narg->setHandleVector(true);
 	setArgumentDefinition(1, narg);
-	ArgumentSet *set = new ArgumentSet();
-	set->addArgument(new IntegerArgument("", ARGUMENT_MIN_MAX_NONE));
-	VectorArgument *arg = new VectorArgument();
-	arg->addArgument(new IntegerArgument("", ARGUMENT_MIN_MAX_NONE));
-	set->addArgument(arg);
-	setArgumentDefinition(2, set);
-	set = new ArgumentSet();
-	set->addArgument(new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
-	arg = new VectorArgument();
-	arg->addArgument(new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
-	set->addArgument(arg);
-	setArgumentDefinition(3, set);
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE));
+	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
 	IntegerArgument *iarg = new IntegerArgument();
 	iarg->setMin(&nr_two);
 	setArgumentDefinition(4, iarg);
 	setDefaultValue(4, "10");
 }
-bool set_digit(Number &nr, const Number &nr_pos, Number nr_value, const Number &nr_base) {
-	Number nr_low(nr);
-	Number nr_exp(nr_base);
-	if(!nr_exp.raise(nr_pos) || !nr.divide(nr_exp) || !nr.trunc()) return false;
-	if(!nr.isInteger()) {
-		CALCULATOR->error(true, _("Insufficient precision."), NULL);
-		return false;
-	}
-	if(!nr_low.rem(nr_exp) || !nr.iquo(nr_base) || !nr_value.multiply(nr_exp) || !nr_exp.multiply(nr_base) || !nr.multiply(nr_exp) || !nr.add(nr_low)) return false;
-	if(nr.isNegative()) {
-		if(!nr.subtract(nr_value)) return false;
-	} else {
-		if(!nr.add(nr_value)) return false;
-	}
-	return true;
-}
 int DigitSetFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	Number nr(vargs[0].number());
-	if(vargs[1].isVector()) {
-		if(vargs[2].isVector() && vargs[1].size() != vargs[2].size()) {
-			mstruct.setType(STRUCT_VECTOR);
-			for(size_t i = 0; i < vargs[1].size(); i++) {
-				mstruct.addChild_nocopy(new MathStructure(this, &vargs[0], &vargs[1][i], &vargs[2], &vargs[3], NULL));
-			}
-			return 1;
-		}
-		for(size_t i = 0; i < vargs[1].size(); i++) {
-			if(CALCULATOR->aborted()) return 0;
-			if(vargs[2].isVector()) {
-				if(!set_digit(nr, vargs[1][i].number(), vargs[2][i].number(), vargs[3].number())) return 0;
-			} else {
-				if(!set_digit(nr, vargs[1][i].number(), vargs[2].number(), vargs[3].number())) return 0;
-			}
-		}
-	} else if(vargs[2].isVector()) {
-		Number index = vargs[1].number();
-		for(size_t i = 0; i < vargs[2].size(); i++) {
-			if(CALCULATOR->aborted()) return 0;
-			if(!set_digit(nr, index, vargs[2][i].number(), vargs[3].number())) return 0;
-			index++;
-			if(index.isZero()) index++;
-		}
+	Number nr_low(nr);
+	Number nr_exp(vargs[3].number());
+	Number nr_value(vargs[2].number());
+	if(!nr_exp.raise(vargs[1].number()) || !nr.divide(nr_exp) || !nr.trunc()) return 0;
+	if(!nr.isInteger()) {
+		CALCULATOR->error(true, _("Insufficient precision."), NULL);
+		return 0;
+	}
+	if(!nr_low.rem(nr_exp) || !nr.iquo(vargs[3].number()) || !nr_value.multiply(nr_exp) || !nr_exp.multiply(vargs[3].number()) || !nr.multiply(nr_exp) || !nr.add(nr_low)) return 0;
+	if(nr.isNegative()) {
+		if(!nr.subtract(nr_value)) return 0;
 	} else {
-		if(!set_digit(nr, vargs[1].number(), vargs[2].number(), vargs[3].number())) return 0;
+		if(!nr.add(nr_value)) return 0;
 	}
 	mstruct = nr;
 	return 1;

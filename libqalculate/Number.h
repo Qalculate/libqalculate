@@ -264,7 +264,7 @@ class Number {
 		bool bitNot();
 		bool bitCmp(unsigned int bits);
 		bool bitSet(unsigned long bit, bool set = true);
-		int bitGet(unsigned long bit);
+		int bitGet(unsigned long bit) const;
 		bool bitEqv(const Number &o);
 		bool shiftLeft(const Number &o);
 		bool shiftRight(const Number &o);

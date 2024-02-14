@@ -1658,6 +1658,7 @@ void Calculator::addBuiltinFunctions() {
 	priv->f_vertcat = addFunction(new VertCatFunction());
 	priv->f_horzcat = addFunction(new HorzCatFunction());
 	addFunction(new KroneckerProductFunction());
+	addFunction(new FlipFunction());
 
 	f_factorial = addFunction(new FactorialFunction());
 	f_factorial2 = addFunction(new DoubleFactorialFunction());
@@ -1672,6 +1673,7 @@ void Calculator::addBuiltinFunctions() {
 	f_bitcmp = addFunction(new BitCmpFunction());
 	addFunction(new BitSetFunction());
 	addFunction(new BitGetFunction());
+	addFunction(new SetBitsFunction());
 	addFunction(new CircularShiftFunction());
 
 	f_abs = addFunction(new AbsFunction());
@@ -1844,6 +1846,7 @@ void Calculator::addBuiltinFunctions() {
 	f_error = addFunction(new ErrorFunction());
 	f_warning = addFunction(new WarningFunction());
 	f_message = addFunction(new MessageFunction());
+	addFunction(new ForEachFunction());
 
 	f_save = addFunction(new SaveFunction());
 	f_load = addFunction(new LoadFunction());

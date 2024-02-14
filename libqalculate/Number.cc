@@ -2160,7 +2160,7 @@ bool Number::bitSet(unsigned long bit, bool set) {
 	else mpz_clrbit(mpq_numref(r_value), bit - 1);
 	return true;
 }
-int Number::bitGet(unsigned long bit) {
+int Number::bitGet(unsigned long bit) const {
 	if(!isInteger() || bit == 0) return -1;
 	return mpz_tstbit(mpq_numref(r_value), bit - 1);
 }
@@ -10538,7 +10538,7 @@ void add_base_exponent(string &str, long int expo, int base, const PrintOptions 
 			*ips.exp = nrexpo.print(po2);
 		}
 	} else if(type != 2) {
-		if(base == 10 && po.exp_display != EXP_BASE10) {
+		if(base == 10 && po.exp_display != EXP_POWER_OF_10) {
 			if(po.exp_display == EXP_LOWERCASE_E || (po.exp_display == EXP_DEFAULT && po.lower_case_e)) str += "e";
 			else str += "E";
 			if(expo < 0 && po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) {
@@ -10548,12 +10548,16 @@ void add_base_exponent(string &str, long int expo, int base, const PrintOptions 
 				str += i2s(expo);
 			}
 		} else {
-			if(po.spacious) str += " ";
-			if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) str += SIGN_MULTIDOT;
-			else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) str += SIGN_MIDDLEDOT;
-			else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) str += SIGN_MULTIPLICATION;
-			else str += "*";
-			if(po.spacious) str += " ";
+			if(str == "1") {
+				str = "";
+			} else {
+				if(po.spacious) str += " ";
+				if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIDOT, po.can_display_unicode_string_arg))) str += SIGN_MULTIDOT;
+				else if(po.use_unicode_signs && (po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MIDDLEDOT, po.can_display_unicode_string_arg))) str += SIGN_MIDDLEDOT;
+				else if(po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MULTIPLICATION, po.can_display_unicode_string_arg))) str += SIGN_MULTIPLICATION;
+				else str += "*";
+				if(po.spacious) str += " ";
+			}
 			PrintOptions po2 = po;
 			po2.interval_display = INTERVAL_DISPLAY_MIDPOINT;
 			po2.min_exp = EXP_NONE;
@@ -11180,6 +11184,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			po2.use_max_decimals = true;
 			return print(po2, ips);
 		}
+		if((po2.min_exp > 0 && po2.min_exp < PRECISION) || (po2.min_exp < 0 && (-po2.min_exp) < PRECISION)) po2.min_exp = EXP_PRECISION;
+		else po2.min_exp = po.min_exp;
 		string str3;
 		if(po.base == BASE_SEXAGESIMAL_2 || po.base == BASE_LATITUDE_2 || po.base == BASE_LONGITUDE_2) {
 			nr2 *= 60;
@@ -11209,7 +11215,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				nr2.round(get_rounding_mode(po));
 			}
 
-			po2.min_exp = 0;
 			// do not show zero seconds in time format
 			if(!nr3.isInterval() && (!nr3.isZero() || BASE_IS_SEXAGESIMAL(po.base))) {
 				str3 = nr3.print(po2);
@@ -11223,13 +11228,21 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 		}
 
-		po2.min_exp = po.min_exp;
 		string str = nr1.print(po2);
-		if(po2.exp_display == EXP_BASE10 && str.find("^")) {
+		if(po2.exp_display == EXP_POWER_OF_10 && str.find("^") != string::npos) {
 			str.insert(0, "(");
 			str += ")";
 		}
-		po2.min_exp = 0;
+		if(po2.exp_display == EXP_POWER_OF_10 && str3.find("^") != string::npos) {
+			if((po.base == BASE_TIME || po.base == BASE_LATITUDE || po.base == BASE_LONGITUDE) && str != "0") {
+				if(po.is_approximate) *po.is_approximate = true;
+				str3 = "00";
+			} else {
+				str3.insert(0, "(");
+				str3 += ")";
+			}
+		}
+		if(!str3.empty()) po2.min_exp = 0;
 		if(po.base != BASE_TIME) {
 			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DEGREE, po.can_display_unicode_string_arg))) {
 				str += SIGN_DEGREE;
@@ -11243,8 +11256,19 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			// always use two digits for second and third sections of time output
 			str += "0";
 		}
-		if(po.base == BASE_SEXAGESIMAL_2 || po.base == BASE_LATITUDE_2 || po.base == BASE_LONGITUDE_2) str += nr2.print(po2);
-		else str += nr2.printNumerator(10, false);
+		if(po.base == BASE_SEXAGESIMAL_2 || po.base == BASE_LATITUDE_2 || po.base == BASE_LONGITUDE_2) {
+			string str2 = nr2.print(po2);
+			if(str != "0") {
+				if(po.is_approximate) *po.is_approximate = true;
+				str2 = "0";
+			} else if(po2.exp_display == EXP_POWER_OF_10 && str2.find("^") != string::npos) {
+				str2.insert(0, "(");
+				str2 += ")";
+			}
+			str += str2;
+		} else {
+			str += nr2.printNumerator(10, false);
+		}
 		if(po.base != BASE_TIME) {
 			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("′", po.can_display_unicode_string_arg))) {
 				str += "′";

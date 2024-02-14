@@ -2805,7 +2805,9 @@ int MathStructure::containsType(StructureType mtype, bool structural_only, bool 
 			if(function_value) {
 				return function_value->containsType(mtype, false, check_variables, check_functions);
 			}
-			if(mtype == STRUCT_UNIT) {
+			if(mtype == STRUCT_VECTOR) {
+				if(o_function->id() == FUNCTION_ID_COLON || o_function->id() == FUNCTION_ID_GENERATE_VECTOR || o_function->id() == FUNCTION_ID_VERTCAT || o_function->id() == FUNCTION_ID_HORZCAT || o_function->id() == FUNCTION_ID_MATRIX || o_function->id() == FUNCTION_ID_VECTOR) return 1;
+			} else if(mtype == STRUCT_UNIT) {
 				if(o_function->id() == FUNCTION_ID_STRIP_UNITS) return 0;
 				if(o_function->subtype() == SUBTYPE_USER_FUNCTION || o_function->subtype() == SUBTYPE_DATA_SET || o_function->id() == FUNCTION_ID_REGISTER || o_function->id() == FUNCTION_ID_STACK || o_function->id() == FUNCTION_ID_LOAD) return -1;
 				// (NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit) && (o_function->id() == FUNCTION_ID_ASIN || o_function->id() == FUNCTION_ID_ACOS || o_function->id() == FUNCTION_ID_ATAN || o_function->id() == FUNCTION_ID_RADIANS_TO_DEFAULT_ANGLE_UNIT || o_function->id() == FUNCTION_ID_ARG || o_function->id() == FUNCTION_ID_ATAN2))

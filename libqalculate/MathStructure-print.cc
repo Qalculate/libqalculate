@@ -3530,7 +3530,7 @@ size_t unformatted_unicode_length(const string &str) {
 	return l2;
 }
 
-#define EXP_MODE_10 (po.exp_display == EXP_BASE10 || (po.exp_display == EXP_DEFAULT && !po.lower_case_e))
+#define EXP_MODE_10 (po.exp_display == EXP_POWER_OF_10 || (po.exp_display == EXP_DEFAULT && !po.lower_case_e))
 
 string MathStructure::print(const PrintOptions &po, bool format, int colorize, int tagtype, const InternalPrintStruct &ips) const {
 	if(ips.depth == 0 && po.is_approximate) *po.is_approximate = false;
@@ -3565,33 +3565,20 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			else if(colorize && tagtype == TAG_TYPE_HTML) print_str = (colorize == 2 ? "<span style=\"color:#AAFFFF\">" : "<span style=\"color:#005858\">");
 			size_t i_number = print_str.length();
 			size_t i_number_end = 0;
-			if(format && tagtype == TAG_TYPE_HTML && ips.power_depth <= 0) {
+			if(format && tagtype == TAG_TYPE_HTML) {
 				string exp;
 				bool exp_minus = false;
 				bool base10 = (po.base == BASE_DECIMAL);
-				bool base_without_exp = (po.base != BASE_DECIMAL && po.base_display == BASE_DISPLAY_SUFFIX && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME && ((po.base < BASE_CUSTOM && po.base != BASE_BIJECTIVE_26) || (po.base == BASE_CUSTOM && (!CALCULATOR->customOutputBase().isInteger() || CALCULATOR->customOutputBase() > 62 || CALCULATOR->customOutputBase() < 2))));
-				if(EXP_MODE_10 || (base_without_exp && po.base_display == BASE_DISPLAY_SUFFIX) || (po.base != BASE_DECIMAL && po.base >= 2 && po.base <= 36)) {
-					ips_n.exp = &exp;
-					ips_n.exp_minus = &exp_minus;
-					if(!EXP_MODE_10 && base_without_exp) {
-						o_number.print(po, ips_n);
-						base10 = !exp.empty();
-						exp = "";
-						exp_minus = false;
-						ips_n.exp = NULL;
-						ips_n.exp_minus = NULL;
-					}
-				} else {
-					ips_n.exp = NULL;
-					ips_n.exp_minus = NULL;
-				}
+
+				ips_n.exp = &exp;
+				ips_n.exp_minus = &exp_minus;
 
 				print_str += o_number.print(po, ips_n);
 
-				if(!exp.empty() && (base_without_exp || (po.base != BASE_CUSTOM && (po.base < 2 || po.base > 36)) || (po.base == BASE_CUSTOM && (!CALCULATOR->customOutputBase().isInteger() || CALCULATOR->customOutputBase() > 62 || CALCULATOR->customOutputBase() < 2)))) base10 = true;
+				if(!exp.empty() && ((po.base != BASE_CUSTOM && (po.base < 2 || po.base > 36)) || (po.base == BASE_CUSTOM && (!CALCULATOR->customOutputBase().isInteger() || CALCULATOR->customOutputBase() > 62 || CALCULATOR->customOutputBase() < 2)))) base10 = true;
 
 				i_number_end = print_str.length();
-				if(po.base != BASE_DECIMAL && po.base_display == BASE_DISPLAY_SUFFIX && (base10 || (!BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME))) {
+				if(ips.power_depth <= 0 && po.base != BASE_DECIMAL && po.base_display == BASE_DISPLAY_SUFFIX && (base10 || (!BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME))) {
 					int base = po.base;
 					if(base10) base = 10;
 					if(base <= BASE_FP16 && base >= BASE_FP80) base = BASE_BINARY;
@@ -3616,7 +3603,15 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 						print_str += "</small></sub>";
 					}
 				}
-				if(!exp.empty()) {
+				if(!exp.empty() && !EXP_MODE_10 && po.base == 10) {
+					if(po.exp_display == EXP_UPPERCASE_E) print_str += "<small>E</small>";
+					else print_str += "e";
+					if(exp_minus) {
+						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) print_str += SIGN_MINUS;
+						else print_str += "-";
+					}
+					print_str += exp;
+				} else if(!exp.empty()) {
 					gsub(" ", "&nbsp;", exp);
 					if(print_str.length() - i_number == 1 && print_str[i_number] == '1') {
 						print_str.erase(i_number, 1);
@@ -3642,16 +3637,31 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 						po2.binary_bits = 0;
 						print_str += nrbase.print(po2, true, false, TAG_TYPE_HTML);
 					}
-					print_str += "<sup>";
+					if(ips.power_depth <= 0) print_str += "<sup>";
+					else print_str += "^";
 					if(exp_minus) {
 						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) print_str += SIGN_MINUS;
 						else print_str += "-";
 					}
 					print_str += exp;
-					print_str += "</sup>";
+					if(ips.power_depth <= 0) print_str += "</sup>";
+				} else if(BASE_IS_SEXAGESIMAL(po.base) || po.base == BASE_TIME) {
+					if(po.exp_display == EXP_UPPERCASE_E) {
+						gsub("E", "<small>E</small>", print_str);
+					} else if(po.exp_display == EXP_POWER_OF_10 && ips.power_depth <= 0) {
+						size_t i = print_str.find("10^");
+						if(i != string::npos) {
+							i += 2;
+							size_t i2 = print_str.find(")", i);
+							if(i2 != string::npos) {
+								print_str.insert(i2, "</sup>");
+								print_str.replace(i, 1, "<sup>");
+							}
+						}
+					}
 				}
 			} else {
-				if(po.exp_display == EXP_BASE10) {
+				if(po.exp_display == EXP_POWER_OF_10) {
 					PrintOptions po2 = po;
 					string exp;
 					bool exp_minus = false;
@@ -4484,6 +4494,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				b_matrix = true;
 				size_t cols = 0;
 				for(size_t i = 0; i < SIZE; i++) {
+					if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 					if(CHILD(i).isVector() || (CHILD(i).isFunction() && CHILD(i).function()->id() == FUNCTION_ID_HORZCAT)) {
 						if(cols == 0) {
 							cols = CHILD(i).size();
@@ -4531,12 +4542,14 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					}
 					for(size_t i = 0; i < vstr.size(); i++) {
 						for(size_t i2 = 0; i2 < vstr[i].size(); i2++) {
+							if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 							vstr[i][i2].insert(0, lengths[i2] - unformatted_unicode_length(vstr[i][i2]) + (i2 == 0 ? 0 : 2), ' ');
 						}
 					}
 					for(size_t i = 0; i < vstr.size(); i++) {
 						if(i > 0) print_str += "\n\n";
 						for(size_t i2 = 0; i2 < vstr[i].size(); i2++) {
+							if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 							print_str += vstr[i][i2];
 						}
 						if(!b_matrix) break;
