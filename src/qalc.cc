@@ -1,7 +1,7 @@
 /*
     Qalculate (CLI)
 
-    Copyright (C) 2003-2007, 2008, 2016-2021  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2003-2007, 2008, 2016-2024  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -108,6 +108,11 @@ bool had_to_expression = false;
 bool had_errors = false;
 vector<string> command_list;
 vector<int> command_arg;
+struct OptionNames {
+	string long_name, local_name, short_name, alt_short_name;
+	bool found;
+};
+vector<OptionNames> option_list;
 
 static char buffer[100000];
 
@@ -724,6 +729,7 @@ bool check_exchange_rates() {
 void set_option(string str) {
 	remove_blank_ends(str);
 	string svalue, svar;
+	string svars[4];
 	bool empty_value = false;
 	size_t i_underscore = str.find("_");
 	size_t index;
@@ -747,6 +753,7 @@ void set_option(string str) {
 	} else {
 		gsub(SIGN_MINUS, "-", svalue);
 	}
+	svars[0] = svar;
 
 	set_option_place:
 	//number base
@@ -947,7 +954,7 @@ void set_option(string str) {
 			printops.rounding = b ? ROUNDING_HALF_TO_EVEN : ROUNDING_HALF_AWAY_FROM_ZERO;
 			result_format_updated();
 		}
-	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rounding", _("rounding"))) {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rounding", _("rounding")) || svar == "round") {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "even", _("even")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "round to even", _("round to even"))) v = ROUNDING_HALF_TO_EVEN;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "standard", _("standard"))) v = ROUNDING_HALF_AWAY_FROM_ZERO;
@@ -1597,6 +1604,8 @@ void set_option(string str) {
 					svalue = str.substr(index + 1);
 					remove_blank_ends(svalue);
 					gsub("_", " ", svar);
+					if(svars[2].empty()) svars[2] = svar;
+					else if(svars[3].empty()) svars[3] = svar;
 					gsub(SIGN_MINUS, "-", svalue);
 					goto set_option_place;
 				}
@@ -1604,12 +1613,143 @@ void set_option(string str) {
 			if(!empty_value && !svalue.empty()) {
 				svar += " ";
 				svar += svalue;
+				gsub("_", " ", svar);
+				svars[1] = svar;
 				svalue = "1";
 				empty_value = true;
 				goto set_option_place;
 			}
 		}
+
 		PUTS_UNICODE(_("Unrecognized option."));
+
+#define ADD_OPTION_TO_LIST3(x, y, z) \
+	{OptionNames opt; \
+	opt.long_name = x; \
+	if(opt.long_name != _(x)) opt.local_name = _(x); \
+	opt.short_name = y; \
+	opt.alt_short_name = z; \
+	option_list.push_back(opt);}
+#define ADD_OPTION_TO_LIST1(x) ADD_OPTION_TO_LIST3(x, "", "")
+#define ADD_OPTION_TO_LIST(x, y) ADD_OPTION_TO_LIST3(x, y, "")
+
+		if(option_list.empty()) {
+			ADD_OPTION_TO_LIST1("base")
+			ADD_OPTION_TO_LIST("input base", "inbase")
+			ADD_OPTION_TO_LIST("output base", "outbase")
+			ADD_OPTION_TO_LIST3("assumptions", "asm", "ass")
+			ADD_OPTION_TO_LIST("all prefixes", "allpref")
+			ADD_OPTION_TO_LIST1("color")
+			ADD_OPTION_TO_LIST("complex numbers", "cplx")
+			ADD_OPTION_TO_LIST("excessive parentheses", "expar")
+			ADD_OPTION_TO_LIST1("functions")
+			ADD_OPTION_TO_LIST("infinite numbers", "inf")
+			ADD_OPTION_TO_LIST("show negative exponents", "negexp")
+			ADD_OPTION_TO_LIST("minus last", "minlast")
+			ADD_OPTION_TO_LIST("assume nonzero denominators", "nzd")
+			ADD_OPTION_TO_LIST("warn nonzero denominators", "warnnzd")
+			ADD_OPTION_TO_LIST3("prefixes", "pref", "prefix")
+			ADD_OPTION_TO_LIST("binary prefixes", "binpref")
+			ADD_OPTION_TO_LIST("denominator prefixes", "denpref")
+			ADD_OPTION_TO_LIST("place units separately", "unitsep")
+			ADD_OPTION_TO_LIST("calculate variables", "calcvar")
+			ADD_OPTION_TO_LIST("calculate functions", "calcfunc")
+			ADD_OPTION_TO_LIST("sync units", "sync")
+			ADD_OPTION_TO_LIST("temperature calculation", "temp")
+			ADD_OPTION_TO_LIST1("sinc")
+			ADD_OPTION_TO_LIST("round to even", "rndeven")
+			ADD_OPTION_TO_LIST("rounding", "round")
+			ADD_OPTION_TO_LIST("rpn syntax", "rpnsyn")
+			ADD_OPTION_TO_LIST1("rpn")
+			ADD_OPTION_TO_LIST("simplified percentage", "percent")
+			ADD_OPTION_TO_LIST("short multiplication", "shortmul")
+			ADD_OPTION_TO_LIST("lowercase e", "lowe")
+			ADD_OPTION_TO_LIST("lowercase numbers", "lownum")
+			ADD_OPTION_TO_LIST("duodecimal symbols", "duosyms")
+			ADD_OPTION_TO_LIST("imaginary j", "imgj")
+			ADD_OPTION_TO_LIST("base display", "basedisp")
+			ADD_OPTION_TO_LIST("two's complement", "twos")
+			ADD_OPTION_TO_LIST("hexadecimal two's", "hextwos")
+			ADD_OPTION_TO_LIST("two's complement input", "twosin")
+			ADD_OPTION_TO_LIST("hexadecimal two's input", "hextwosin")
+			ADD_OPTION_TO_LIST("binary bits", "bits")
+			ADD_OPTION_TO_LIST("digit grouping", "group")
+			ADD_OPTION_TO_LIST("spell out logical", "spellout")
+			ADD_OPTION_TO_LIST("ignore dot", "nodot")
+			ADD_OPTION_TO_LIST("ignore comma", "nocomma")
+			ADD_OPTION_TO_LIST1("decimal comma")
+			ADD_OPTION_TO_LIST("limit implicit multiplication", "limimpl")
+			ADD_OPTION_TO_LIST("spacious", "space")
+			ADD_OPTION_TO_LIST("vertical space", "vspace")
+			ADD_OPTION_TO_LIST("unicode", "uni")
+			ADD_OPTION_TO_LIST("unicode exponents", "uniexp")
+			ADD_OPTION_TO_LIST("units", "unit")
+			ADD_OPTION_TO_LIST("unknowns", "unknown")
+			ADD_OPTION_TO_LIST("variables", "var")
+			ADD_OPTION_TO_LIST3("abbreviations", "abbr", "abbrev")
+			ADD_OPTION_TO_LIST("show ending zeroes", "zeroes")
+			ADD_OPTION_TO_LIST("repeating decimal", "repdeci")
+			ADD_OPTION_TO_LIST("angle unit", "angle")
+			ADD_OPTION_TO_LIST("caret as xor", "xor^")
+			ADD_OPTION_TO_LIST("concise uncertainty", "concise")
+			ADD_OPTION_TO_LIST3("parsing mode", "syntax", "parse")
+			ADD_OPTION_TO_LIST("update exchange rates", "upxrates")
+			ADD_OPTION_TO_LIST("multiplication sign", "mulsign")
+			ADD_OPTION_TO_LIST("division sign", "divsign")
+			ADD_OPTION_TO_LIST3("approximation", "appr", "approx")
+			ADD_OPTION_TO_LIST("interval calculation", "ic")
+			ADD_OPTION_TO_LIST("uncertainty propagation", "up")
+			ADD_OPTION_TO_LIST("autoconversion", "conv")
+			ADD_OPTION_TO_LIST("currency conversion", "curconv")
+			ADD_OPTION_TO_LIST1("exact")
+			ADD_OPTION_TO_LIST1("ignore locale")
+			ADD_OPTION_TO_LIST1("save mode")
+			ADD_OPTION_TO_LIST1("clear history")
+			ADD_OPTION_TO_LIST1("save history")
+			ADD_OPTION_TO_LIST("save definitions", "save defs")
+			ADD_OPTION_TO_LIST3("scientific notation", "exp", "exp mode")
+			ADD_OPTION_TO_LIST("exp display", "edisp")
+			ADD_OPTION_TO_LIST("precision", "prec")
+			ADD_OPTION_TO_LIST("interval display", "ivdisp")
+			ADD_OPTION_TO_LIST3("interval arithmetic", "ia", "interval")
+			ADD_OPTION_TO_LIST("variable units", "varunits")
+			ADD_OPTION_TO_LIST("max decimals", "maxdeci")
+			ADD_OPTION_TO_LIST("min decimal", "mindeci")
+			ADD_OPTION_TO_LIST("fractions", "fr")
+			ADD_OPTION_TO_LIST("complex form", "cplxform")
+			ADD_OPTION_TO_LIST("read precision", "readprec")
+#ifndef _WIN32
+			ADD_OPTION_TO_LIST("sigint action", "sigint")
+#endif
+		}
+
+		string name;
+		bool b = false;
+		for(size_t i = 0; i < option_list.size(); i++) option_list[i].found = false;
+		for(int n = 1; n <= 2 && !b; n++) {
+			for(size_t i2 = 0; i2 < 4; i2++) {
+				if(svars[i2].empty()) continue;
+				for(size_t i = 0; i < option_list.size(); i++) {
+					if(option_list[i].found) continue;
+					for(size_t i3 = 0; i3 < 4; i3++) {
+						if(i3 == 0) name = option_list[i].long_name;
+						else if(i3 == 1) name = option_list[i].local_name;
+						else if(i3 == 2) name = option_list[i].short_name;
+						else if(i3 == 3) name = option_list[i].alt_short_name;
+						if(name.empty()) continue;
+						if(compare_name_with_error(name, svars[i2], name.length(), 10, 0, n, i >= 2)) {
+							if(i3 < 2) snprintf(buffer, 1000, _("Did you mean \"%s\"?"), name.c_str());
+							else snprintf(buffer, 1000, _("Did you mean \"%s\" (%s)?"), name.c_str(), option_list[i].local_name.empty() ? option_list[i].long_name.c_str() : option_list[i].local_name.c_str());
+							option_list[i].found = true;
+							PUTS_UNICODE(buffer);
+							b = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+		puts("");
 	}
 }
 

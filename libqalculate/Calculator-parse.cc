@@ -1,7 +1,7 @@
 /*
     Qalculate
 
-    Copyright (C) 2003-2007, 2008, 2016-2021  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2003-2007, 2008, 2016-2024  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -3412,6 +3412,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				size_t errors_allowed = 1;
 				size_t nl = 0;
 				bool abbrev = false;
+				const ExpressionName *ename;
 				while(true) {
 					size_t l = full_name.length();
 					size_t ul = unicode_length(full_name);
@@ -3422,27 +3423,25 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					vt3 = 0;
 					if(l + errors_allowed * 3 <= UFV_LENGTHS) {
 						ufv_index = l - 1 + errors_allowed * 3;
-						vt2 = 1;
-						if(!po.functions_enabled || !object_test_function) {
-							if(!po.units_enabled || !object_test_unit) {
-								if(!po.variables_enabled) vt2 = 4;
-								else vt2 = 3;
-							} else {
-								vt2 = 2;
-							}
-						}
+						vt2 = 0;
+						if(!po.units_enabled) vt2++;
+						if(vt2 == 1 && (!po.functions_enabled || !object_test_function)) vt2++;
+						if(vt2 == 2 && (!po.units_enabled || !object_test_unit)) vt2++;
+						if(vt2 == 3 && !po.variables_enabled) vt2++;
 					} else {
 						vt2 = -1;
 						ufv_index = 0;
 					}
 					while(vt2 < 4) {
-						name = NULL;
+						ename = NULL;
 						if(vt2 == -1) {
 							if(ufv_index < ufvl.size()) {
-								if((ufvl_t[ufv_index] == 'v' && po.variables_enabled) || (ufvl_t[ufv_index] == 'f' && po.functions_enabled && object_test_function) || (ufvl_t[ufv_index] == 'u' && po.units_enabled && object_test_unit)) {
+								if((ufvl_t[ufv_index] == 'v' && po.variables_enabled && !p) || (ufvl_t[ufv_index] == 'f' && po.functions_enabled && object_test_function && !p) || (ufvl_t[ufv_index] == 'u' && po.units_enabled && object_test_unit) || (ufvl_t[ufv_index] == 'P' && po.units_enabled && !p)) {
 									object = ufvl[ufv_index];
-									name = &((ExpressionItem*) object)->getName(ufvl_i[ufv_index]).name;
-									case_sensitive = ((ExpressionItem*) object)->getName(ufvl_i[ufv_index]).case_sensitive;
+									if(ufvl_t[ufv_index] == 'P') ename = &((Prefix*) object)->getName(ufvl_i[ufv_index]);
+									else ename = &((ExpressionItem*) object)->getName(ufvl_i[ufv_index]);
+									name = &ename->name;
+									case_sensitive = ename->case_sensitive;
 									name_length = name->length();
 									underscore = priv->ufvl_us[ufv_index]; name_length -= underscore;
 									nl = unicode_length(*name);
@@ -3450,18 +3449,30 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								}
 								ufv_index++;
 							} else {
-								if(l - errors_allowed - unicode_diff > UFV_LENGTHS) break;
-								ufv_index = UFV_LENGTHS - 1;
-								vt2 = 1;
-								vt3 = 0;
+								if(l - errors_allowed - unicode_diff > UFV_LENGTHS) {
+									vt2 = 3;
+									ufv_index = 0;
+									vt3 = (size_t) -1;
+								} else {
+									ufv_index = UFV_LENGTHS - 1;
+									if(p) {
+										vt2 = 2;
+									} else {
+										vt2++;
+										if(vt2 == 1 && !po.functions_enabled) vt2++;
+										if(vt2 == 2 && (!po.units_enabled || !object_test_unit)) vt2++;
+										if(vt2 == 3 && !po.variables_enabled) vt2++;
+									}
+									vt3 = 0;
+								}
 							}
-						} else if(vt2 == 0 && vt3 < ufv[vt2][ufv_index].size()) {
-							object = ufv[vt2][ufv_index][vt3];
-							name = &((Prefix*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
+						} else if(vt2 == -2 && vt3 < ufv[0][ufv_index].size()) {
+							object = ufv[0][ufv_index][vt3];
+							name = &((Prefix*) object)->getName(ufv_i[0][ufv_index][vt3]).name;
 							name_length = name->length();
-							underscore = priv->ufv_us[vt2][ufv_index][vt3]; name_length -= underscore;
-							case_sensitive = ((Prefix*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
-							abbrev = ((Prefix*) object)->getName(ufv_i[vt2][ufv_index][vt3]).abbreviation;
+							underscore = priv->ufv_us[0][ufv_index][vt3]; name_length -= underscore;
+							case_sensitive = ((Prefix*) object)->getName(ufv_i[0][ufv_index][vt3]).case_sensitive;
+							abbrev = ((Prefix*) object)->getName(ufv_i[0][ufv_index][vt3]).abbreviation;
 							if((errors_allowed > 1 || !abbrev) && ((case_sensitive && compare_name(*name, full_name, name_length, 0, base, underscore)) || (!case_sensitive && compare_name_no_case(*name, full_name, name_length, 0, base, underscore)))) {
 								if(errors_allowed == 1) full_name_bak = full_name;
 								full_name = full_name.substr(name_length, full_name.length() - name_length);
@@ -3484,21 +3495,26 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							} else {
 								vt3++;
 							}
-						} else if(vt2 > 0 && vt3 < ufv[vt2][ufv_index].size()) {
+						} else if(vt2 >= 0 && vt3 < ufv[vt2][ufv_index].size()) {
 							object = ufv[vt2][ufv_index][vt3];
-							name = &((ExpressionItem*) object)->getName(ufv_i[vt2][ufv_index][vt3]).name;
+							if(vt2 == 0) ename = &((Prefix*) object)->getName(ufv_i[vt2][ufv_index][vt3]);
+							else ename = &((ExpressionItem*) object)->getName(ufv_i[vt2][ufv_index][vt3]);
+							if(vt2 == 0 && ename->abbreviation) continue;
+							name = &ename->name;
 							name_length = name->length();
 							underscore = priv->ufv_us[vt2][ufv_index][vt3]; name_length -= underscore;
-							case_sensitive = ((ExpressionItem*) object)->getName(ufv_i[vt2][ufv_index][vt3]).case_sensitive;
+							case_sensitive = ename->case_sensitive;
 							nl = unicode_length(*name);
 							if(nl > ul + errors_allowed || nl < ul - errors_allowed || nl < 4 || nl - underscore < 4) name = NULL;
 							vt3++;
-						} else if(vt2 == 0) {
+						} else if(vt2 == -2) {
 							if((errors_allowed == 1 && ufv_index == 1) || ufv_index == 0) break;
 							ufv_index--;
+							vt3 = 0;
 						} else {
-							if(!p) {
+							if(!p && vt2 != 4) {
 								vt2++;
+								if(vt2 == 1 && !po.functions_enabled) vt2++;
 								if(vt2 == 2 && (!po.units_enabled || !object_test_unit)) vt2++;
 								if(vt2 == 3 && !po.variables_enabled) vt2++;
 							}
@@ -3511,7 +3527,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 										if(full_name[i_f] > 0 || (unsigned char) full_name[i_f] >= 0xC0) {
 											nchar++;
 											if(nchar == 3 + errors_allowed) {
-												vt2 = 0;
+												vt2 = -2;
 												if(i_f >= UFV_LENGTHS) ufv_index = UFV_LENGTHS - 1;
 												else ufv_index = i_f - 1;
 												break;
@@ -3524,21 +3540,17 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							if(vt2 == 4 || p) {
 								ufv_index--;
 								if(!p) {
-									vt2 = 1;
-									if(!po.functions_enabled || !object_test_function) {
-										if(!po.units_enabled || !object_test_unit) {
-											if(!po.variables_enabled) vt2 = 4;
-											else vt2 = 3;
-										} else {
-											vt2 = 2;
-										}
-									}
+									vt2 = 0;
+									if(!po.units_enabled) vt2++;
+									if(vt2 == 1 && (!po.functions_enabled || !object_test_function)) vt2++;
+									if(vt2 == 2 && (!po.units_enabled || !object_test_unit)) vt2++;
+									if(vt2 == 3 && !po.variables_enabled) vt2++;
 								}
 							}
 							continue;
 						}
-						if(vt2 != 0 && name && compare_name_with_error(*name, full_name, name_length, base, underscore, errors_allowed, case_sensitive)) {
-							CALCULATOR->error(false, _("Did you mean \"%s\" (instead of \"%s\")?"), vt2 == -1 ? ((ExpressionItem*) object)->getName(ufvl_i[ufv_index - 1]).formattedName(((ExpressionItem*) object)->type(), underscore).c_str() : ((ExpressionItem*) object)->getName(ufv_i[vt2][ufv_index][vt3 - 1]).formattedName(((ExpressionItem*) object)->type(), underscore).c_str(), full_name.c_str(), NULL);
+						if(vt2 >= -1 && name && compare_name_with_error(*name, full_name, name_length, base, underscore, errors_allowed, case_sensitive)) {
+							CALCULATOR->error(false, _("Did you mean \"%s\" (instead of \"%s\")?"), ename->formattedName(vt2 == 0 ? -1 : ((ExpressionItem*) object)->type(), underscore).c_str(), full_name.c_str(), NULL);
 							full_name = "";
 							break;
 						}
