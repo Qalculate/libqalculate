@@ -1,7 +1,7 @@
 /*
     Qalculate
 
-    Copyright (C) 2003-2007, 2008, 2016-2019  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2003-2007, 2008, 2016-2024  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -859,9 +859,6 @@ bool test_parsed_comparison(const MathStructure &m) {
 		return true;
 	}
 	return false;
-}
-void print_dual(const MathStructure &mresult, const string &original_expression, const MathStructure &mparse, MathStructure &mexact, string &result_str, vector<string> &results_v, PrintOptions &po, const EvaluationOptions &evalops, AutomaticFractionFormat auto_frac, AutomaticApproximation auto_approx, bool cplx_angle, bool *exact_cmp, bool b_parsed, bool format, int colorize, int tagtype, int max_length) {
-	print_dual(mresult, original_expression, mparse, mexact, result_str, results_v, po, evalops, auto_frac, auto_approx, cplx_angle, exact_cmp, b_parsed, format, colorize, tagtype, max_length, false);
 }
 void print_dual(const MathStructure &mresult, const string &original_expression, const MathStructure &mparse, MathStructure &mexact, string &result_str, vector<string> &results_v, PrintOptions &po, const EvaluationOptions &evalops, AutomaticFractionFormat auto_frac, AutomaticApproximation auto_approx, bool cplx_angle, bool *exact_cmp, bool b_parsed, bool format, int colorize, int tagtype, int max_length, bool converted) {
 
@@ -2482,7 +2479,7 @@ bool calculate_ans(MathStructure &mstruct, const EvaluationOptions &eo) {
 	}
 	return ret;
 }
-bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const EvaluationOptions &eo, vector<UnknownVariable*>& vars, vector<MathStructure>& varms, bool empty_func, bool do_eval = true) {
+bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const EvaluationOptions &eo, vector<Variable*>& vars, vector<MathStructure>& varms, bool empty_func, bool do_eval = true) {
 	if(m.isComparison()) {
 		if(m.comparisonType() == COMPARISON_EQUALS) {
 			// x=y
@@ -2529,7 +2526,7 @@ bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const Eva
 				// search for assumptions from previous "where" replacements
 				for(size_t i = 0; i < varms.size(); i++) {
 					if(varms[i] == m[0]) {
-						ass = vars[0]->assumptions();
+						ass = ((UnknownVariable*) vars[0])->assumptions();
 						break;
 					}
 				}
@@ -2620,6 +2617,221 @@ void replace_unregistered_variables(MathStructure &m) {
 	}
 }
 
+
+void Calculator::parseExpressionAndWhere(MathStructure *mstruct, MathStructure *mwhere, string str, string str_where, const ParseOptions &po) {
+	vector<Variable*> where_vars;
+	vector<bool> repeat;
+	vector<vector<size_t>::iterator> where_its;
+	vector<string> wheres;
+	mwhere->clear();
+	if(!str_where.empty()) {
+		parseSigns(str_where, false);
+		remove_duplicate_blanks(str_where);
+		int par = 0, bra = 0;
+		bool quo1 = false, quo2 = false;
+		size_t i = 0;
+		for(size_t i3 = 0; i3 < str_where.length() - 1; i3++) {
+			switch(str_where[i3]) {
+				case '(': {if(!quo1 && !quo2) par++; break;}
+				case ')': {if(par > 0 && !quo1 && !quo2) par--; break;}
+				case '[': {if(!quo1 && !quo2) bra++; break;}
+				case ']': {if(bra > 0 && !quo1 && !quo2) bra--; break;}
+				case '\"': {if(!quo2) quo1 = !quo1; break;}
+				case '\'': {if(!quo1) quo2 = !quo2; break;}
+				case AND_CH: {
+					if(str_where[i3 + 1] == AND_CH && par == 0 && bra == 0 && !quo1 && !quo2) {
+						wheres.push_back(str_where.substr(i, i3 - i));
+						remove_blank_ends(wheres[wheres.size() - 1]);
+						i3++;
+						i = i3 + 1;
+					}
+					break;
+				}
+				case SPACE_CH: {
+					if(par == 0 && bra == 0 && !quo1 && !quo2) {
+						size_t i2 = str_where.find(SPACE, i3 + 1);
+						if(i2 != string::npos) i2 -= i3 + 1;
+						if((and_str_len > 0 && i2 == and_str_len && equalsIgnoreCase(and_str, str_where.substr(i3 + 1, and_str_len))) || (i2 == AND_str_len && equalsIgnoreCase(AND_str, str_where.substr(i3 + 1, AND_str_len)))) {
+							wheres.push_back(str_where.substr(i, i3 - i));
+							remove_blank_ends(wheres[wheres.size() - 1]);
+							i3 = i3 + i2 + 1;
+							i = i3 + 1;
+
+						}
+					}
+					break;
+				}
+				default: {}
+			}
+		}
+		str_where = str_where.substr(i, str_where.length() - i);
+		remove_blank_ends(str_where);
+		if(!str_where.empty()) wheres.push_back(str_where);
+		for(size_t i2 = 0; i2 < wheres.size(); i2++) {
+			size_t index = wheres[i2].find_first_of("=<>!", 1);
+			if(index != string::npos && (wheres[i2][index] != '!' || (index < wheres[i2].length() - 1 && wheres[i2][index + 1] == '='))) {
+				string sname = wheres[i2].substr(0, index);
+				if(index < wheres[i2].length() - 1 && wheres[i2][index] == '=' && (wheres[i2][index + 1] == '>' || wheres[i2][index + 1] == '<' || wheres[i2][index + 1] == '!')) {
+					wheres[i2][index] = wheres[i2][index + 1];
+					wheres[i2][index + 1] = '=';
+				}
+				remove_blank_ends(sname);
+				if(!variableNameIsValid(sname)) {
+					if(!where_vars.empty()) {
+						for(size_t i = where_vars.size() - 1; ; i--) {
+							size_t l = where_vars[i]->name().length() - 1;
+							if(l > UFV_LENGTHS) {
+								for(size_t i2 = 0; i2 < ufvl.size(); i2++) {
+									if(ufvl_t[i2] == 'v' && ((ExpressionItem*) ufvl[i2])->name() == where_vars[i]->name() && ((ExpressionItem*) ufvl[i2])->category() == "\x14") {
+										ufvl.erase(ufvl.begin() + i2);
+										ufvl.erase(ufvl.begin() + i2);
+										ufvl_t.erase(ufvl_t.begin() + i2);
+										priv->ufvl_us.erase(priv->ufvl_us.begin() + i2);
+										ufvl_i.erase(ufvl_i.begin() + i2);
+										break;
+									}
+								}
+							} else {
+								for(size_t i2 = 0; i2 < ufv[3][i].size(); i2++) {
+									if(((ExpressionItem*) ufv[3][l][i2])->name() == where_vars[i]->name() && ((ExpressionItem*) ufv[3][l][i2])->category() == "\x14") {
+										ufv[3][l].erase(ufv[3][l].begin() + i2);
+										ufv_i[3][l].erase(ufv_i[3][l].begin() + i2);
+										priv->ufv_us[3][l].erase(priv->ufv_us[3][l].begin() + i2);
+										break;
+									}
+								}
+							}
+							where_vars[i]->destroy();
+							if(i == 0) break;
+						}
+						for(size_t i = 0; i < where_its.size(); i++) {
+							*where_its[i] = ((size_t) -1) - *where_its[i];
+						}
+						where_vars.clear();
+						where_its.clear();
+					}
+					parse(mwhere, str_where, po);
+					break;
+				} else {
+					string svalue = wheres[i2].substr(index + 1, wheres[i2].length() - (index + 1));
+					bool b_equals = !svalue.empty() && wheres[i2][index] != '=' && svalue[0] == '=';
+					if(b_equals) svalue.erase(0, 1);
+					remove_blank_ends(svalue);
+					Variable *v = NULL;
+					if(wheres[i2][index] == '=')	{
+						v = new KnownVariable("\x14", sname, svalue);
+					} else {
+						wheres[i2] = wheres[i2].substr(index, wheres[i2].length() - 1);
+						bool b = false;
+						for(size_t i = 0; i < where_vars.size(); i++) {
+							if(!where_vars[i]->isKnown() && where_vars[i]->name() == sname) {
+								where_vars.push_back(where_vars[i]);
+								repeat.push_back(true);
+								b = true;
+								break;
+							}
+						}
+						if(!b) v = new UnknownVariable("\x14", sname);
+					}
+					if(v) {
+						repeat.push_back(false);
+						size_t l = sname.length() - 1;
+						if(l > UFV_LENGTHS) {
+							ufvl.insert(ufvl.begin(), (void*) v);
+							ufvl_t.insert(ufvl_t.begin(), 'v');
+							priv->ufvl_us.insert(priv->ufvl_us.begin(), 0);
+							ufvl_i.insert(ufvl_i.begin(), 1);
+						} else {
+							ufv[3][l].insert(ufv[3][l].begin(), (void*) v);
+							ufv_i[3][l].insert(ufv_i[3][l].begin(), 1);
+							priv->ufv_us[3][l].insert(priv->ufv_us[3][l].begin(), 0);
+							for(size_t i = 0; i < ufv[2][l].size(); i++) {
+								const ExpressionName *ename = &((ExpressionItem*) ufv[2][l][i])->getName(ufv_i[2][l][i]);
+								if(priv->ufv_us[2][l][i] == 0 && ((ename->case_sensitive && ename->name == sname) || (!ename->case_sensitive && equalsIgnoreCase(ename->name, sname)))) {
+									ufv_i[2][l][i] = ((size_t) -1) - ufv_i[2][l][i];
+									where_its.push_back(ufv_i[2][l].begin() + i);
+									break;
+								}
+							}
+						}
+						where_vars.push_back(v);
+					}
+				}
+			}
+		}
+	}
+
+	if(!where_vars.empty()) {
+		if(where_vars.size() > 1) {
+			mwhere->setType(STRUCT_LOGICAL_AND);
+		}
+		for(size_t i = 0; i < where_vars.size(); i++) {
+			MathStructure *m = new MathStructure;
+			ComparisonType ct = COMPARISON_EQUALS;
+			if(where_vars[i]->isKnown()) {
+				parse(m, ((KnownVariable*) where_vars[i])->expression(), po);
+			} else {
+				bool b_equals = wheres[i].size() > 1 && wheres[i][1] == '=';
+				if(wheres[i][0] == '>') {
+					if(b_equals) ct = COMPARISON_EQUALS_GREATER;
+					else ct = COMPARISON_GREATER;
+				}if(wheres[i][0] == '<') {
+					if(b_equals) ct = COMPARISON_EQUALS_LESS;
+					else ct = COMPARISON_LESS;
+				} else {
+					ct = COMPARISON_NOT_EQUALS;
+				}
+				wheres[i].erase(0, b_equals ? 2 : 1);
+				parse(m, wheres[i], po);
+			}
+			if(mwhere->isZero()) {
+				mwhere->set(where_vars[i]);
+				mwhere->transform_nocopy(STRUCT_COMPARISON, m);
+				mwhere->setComparisonType(ct);
+			} else {
+				mwhere->addChild(where_vars[i]);
+				mwhere->last().transform_nocopy(STRUCT_COMPARISON, m);
+				mwhere->last().setComparisonType(ct);
+			}
+		}
+	}
+
+	parse(mstruct, str, po);
+
+	if(!where_vars.empty()) {
+		for(size_t i = where_vars.size() - 1; ; i--) {
+			if(repeat[i]) continue;
+			size_t l = where_vars[i]->name().length() - 1;
+			if(l > UFV_LENGTHS) {
+				for(size_t i2 = 0; i2 < ufvl.size(); i2++) {
+					if(ufvl_t[i2] == 'v' && ((ExpressionItem*) ufvl[i2])->name() == where_vars[i]->name() && ((ExpressionItem*) ufvl[i2])->category() == "\x14") {
+						ufvl.erase(ufvl.begin() + i2);
+						ufvl.erase(ufvl.begin() + i2);
+						ufvl_t.erase(ufvl_t.begin() + i2);
+						priv->ufvl_us.erase(priv->ufvl_us.begin() + i2);
+						ufvl_i.erase(ufvl_i.begin() + i2);
+						break;
+					}
+				}
+			} else {
+				for(size_t i2 = 0; i2 < ufv[3][i].size(); i2++) {
+					if(((ExpressionItem*) ufv[3][l][i2])->name() == where_vars[i]->name() && ((ExpressionItem*) ufv[3][l][i2])->category() == "\x14") {
+						ufv[3][l].erase(ufv[3][l].begin() + i2);
+						ufv_i[3][l].erase(ufv_i[3][l].begin() + i2);
+						priv->ufv_us[3][l].erase(priv->ufv_us[3][l].begin() + i2);
+						break;
+					}
+				}
+			}
+			where_vars[i]->destroy();
+			if(i == 0) break;
+		}
+		for(size_t i = 0; i < where_its.size(); i++) {
+			*where_its[i] = ((size_t) -1) - *where_its[i];
+		}
+	}
+}
+
 MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
 
 	string str2, str_where;
@@ -2654,8 +2866,222 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	current_stage = MESSAGE_STAGE_PARSING;
 	size_t n_messages = messages.size();
 
+	vector<Variable*> where_vars;
+	vector<vector<size_t>::iterator> where_its;
+	if(!str_where.empty()) {
+		parseSigns(str_where, false);
+		remove_duplicate_blanks(str_where);
+		int par = 0, bra = 0;
+		bool quo1 = false, quo2 = false;
+		vector<string> wheres;
+		size_t i = 0;
+		for(size_t i3 = 0; i3 < str_where.length() - 1; i3++) {
+			switch(str_where[i3]) {
+				case '(': {if(!quo1 && !quo2) par++; break;}
+				case ')': {if(par > 0 && !quo1 && !quo2) par--; break;}
+				case '[': {if(!quo1 && !quo2) bra++; break;}
+				case ']': {if(bra > 0 && !quo1 && !quo2) bra--; break;}
+				case '\"': {if(!quo2) quo1 = !quo1; break;}
+				case '\'': {if(!quo1) quo2 = !quo2; break;}
+				case AND_CH: {
+					if(str_where[i3 + 1] == AND_CH && par == 0 && bra == 0 && !quo1 && !quo2) {
+						wheres.push_back(str_where.substr(i, i3 - i));
+						remove_blank_ends(wheres[wheres.size() - 1]);
+						i3++;
+						i = i3 + 1;
+					}
+					break;
+				}
+				case SPACE_CH: {
+					if(par == 0 && bra == 0 && !quo1 && !quo2) {
+						size_t i2 = str_where.find(SPACE, i3 + 1);
+						if(i2 != string::npos) i2 -= i3 + 1;
+						if((and_str_len > 0 && i2 == and_str_len && equalsIgnoreCase(and_str, str_where.substr(i3 + 1, and_str_len))) || (i2 == AND_str_len && equalsIgnoreCase(AND_str, str_where.substr(i3 + 1, AND_str_len)))) {
+							wheres.push_back(str_where.substr(i, i3 - i));
+							remove_blank_ends(wheres[wheres.size() - 1]);
+							i3 = i3 + i2 + 1;
+							i = i3 + 1;
+
+						}
+					}
+					break;
+				}
+				default: {}
+			}
+		}
+		str_where = str_where.substr(i, str_where.length() - i);
+		remove_blank_ends(str_where);
+		if(!str_where.empty()) wheres.push_back(str_where);
+		for(size_t i2 = 0; i2 < wheres.size(); i2++) {
+			size_t index = wheres[i2].find_first_of("=<>!", 1);
+			if(index != string::npos && (wheres[i2][index] != '!' || (index < wheres[i2].length() - 1 && wheres[i2][index + 1] == '='))) {
+				string sname = wheres[i2].substr(0, index);
+				if(index < wheres[i2].length() - 1 && wheres[i2][index] == '=' && (wheres[i2][index + 1] == '>' || wheres[i2][index + 1] == '<' || wheres[i2][index + 1] == '!')) {
+					wheres[i2][index] = wheres[i2][index + 1];
+					wheres[i2][index + 1] = '=';
+				}
+				remove_blank_ends(sname);
+				if(!variableNameIsValid(sname)) {
+					if(!where_vars.empty()) {
+						for(size_t i = where_vars.size() - 1; ; i--) {
+							size_t l = where_vars[i]->name().length() - 1;
+							if(l > UFV_LENGTHS) {
+								for(size_t i2 = 0; i2 < ufvl.size(); i2++) {
+									if(ufvl_t[i2] == 'v' && ((ExpressionItem*) ufvl[i2])->name() == where_vars[i]->name() && ((ExpressionItem*) ufvl[i2])->category() == "\x14") {
+										ufvl.erase(ufvl.begin() + i2);
+										ufvl.erase(ufvl.begin() + i2);
+										ufvl_t.erase(ufvl_t.begin() + i2);
+										priv->ufvl_us.erase(priv->ufvl_us.begin() + i2);
+										ufvl_i.erase(ufvl_i.begin() + i2);
+										break;
+									}
+								}
+							} else {
+								for(size_t i2 = 0; i2 < ufv[3][i].size(); i2++) {
+									if(((ExpressionItem*) ufv[3][l][i2])->name() == where_vars[i]->name() && ((ExpressionItem*) ufv[3][l][i2])->category() == "\x14") {
+										ufv[3][l].erase(ufv[3][l].begin() + i2);
+										ufv_i[3][l].erase(ufv_i[3][l].begin() + i2);
+										priv->ufv_us[3][l].erase(priv->ufv_us[3][l].begin() + i2);
+										break;
+									}
+								}
+							}
+							where_vars[i]->destroy();
+							if(i == 0) break;
+						}
+						for(size_t i = 0; i < where_its.size(); i++) {
+							*where_its[i] = ((size_t) -1) - *where_its[i];
+						}
+						where_vars.clear();
+						where_its.clear();
+					}
+					break;
+				} else {
+					string svalue = wheres[i2].substr(index + 1, wheres[i2].length() - (index + 1));
+					bool b_equals = !svalue.empty() && wheres[i2][index] != '=' && svalue[0] == '=';
+					if(b_equals) svalue.erase(0, 1);
+					remove_blank_ends(svalue);
+					Variable *v = NULL;
+					if(wheres[i2][index] == '=')	{
+						v = new KnownVariable("\x14", sname, svalue);
+					} else {
+						MathStructure m;
+						parse(&m, svalue, eo.parse_options);
+						if(!m.isNumber()) m.eval(eo);
+						ComparisonType ct;
+						if(wheres[i2][index] == '>') {
+							if(b_equals) ct = COMPARISON_EQUALS_GREATER;
+							else ct = COMPARISON_GREATER;
+						}if(wheres[i2][index] == '<') {
+							if(b_equals) ct = COMPARISON_EQUALS_LESS;
+							else ct = COMPARISON_LESS;
+						} else {
+							ct = COMPARISON_NOT_EQUALS;
+						}
+						if(m.isNumber() && !m.number().hasImaginaryPart()) {
+							Assumptions *ass = NULL;
+							for(size_t i = 0; i < where_vars.size(); i++) {
+								if(!where_vars[i]->isKnown() && where_vars[i]->name() == sname) {
+									ass = ((UnknownVariable*) where_vars[i])->assumptions();
+									break;
+								}
+							}
+							// can only handle not equals if value is zero
+							if((ct != COMPARISON_NOT_EQUALS || (!ass && m.isZero()))) {
+								if(ass) {
+									// change existing assumptions
+									if(ct == COMPARISON_EQUALS_GREATER) {
+										if(!ass->min() || (*ass->min() < m.number())) {
+											ass->setMin(&m.number()); ass->setIncludeEqualsMin(true);
+											return true;
+										} else if(*ass->min() >= m.number()) {
+											return true;
+										}
+									} else if(ct == COMPARISON_EQUALS_LESS) {
+										if(!ass->max() || (*ass->max() > m.number())) {
+											ass->setMax(&m.number()); ass->setIncludeEqualsMax(true);
+											return true;
+										} else if(*ass->max() <= m.number()) {
+											return true;
+										}
+									} else if(ct == COMPARISON_GREATER) {
+										if(!ass->min() || (ass->includeEqualsMin() && *ass->min() <= m.number()) || (!ass->includeEqualsMin() && *ass->min() < m.number())) {
+											ass->setMin(&m.number()); ass->setIncludeEqualsMin(false);
+											return true;
+										} else if((ass->includeEqualsMin() && *ass->min() > m.number()) || (!ass->includeEqualsMin() && *ass->min() >= m.number())) {
+											return true;
+										}
+									} else if(ct == COMPARISON_LESS) {
+										if(!ass->max() || (ass->includeEqualsMax() && *ass->max() >= m.number()) || (!ass->includeEqualsMax() && *ass->max() > m.number())) {
+											ass->setMax(&m.number()); ass->setIncludeEqualsMax(false);
+											return true;
+										} else if((ass->includeEqualsMax() && *ass->max() < m.number()) || (!ass->includeEqualsMax() && *ass->max() <= m.number())) {
+											return true;
+										}
+									}
+								} else {
+									// create a new unknown variable and modify the assumptions
+									v = new UnknownVariable("\x14", sname);
+									ass = new Assumptions();
+									if(m.isZero()) {
+										if(ct == COMPARISON_EQUALS_GREATER) ass->setSign(ASSUMPTION_SIGN_NONNEGATIVE);
+										else if(ct == COMPARISON_EQUALS_LESS) ass->setSign(ASSUMPTION_SIGN_NONPOSITIVE);
+										else if(ct == COMPARISON_GREATER) ass->setSign(ASSUMPTION_SIGN_POSITIVE);
+										else if(ct == COMPARISON_LESS) ass->setSign(ASSUMPTION_SIGN_NEGATIVE);
+										else if(ct == COMPARISON_NOT_EQUALS) ass->setSign(ASSUMPTION_SIGN_NONZERO);
+									} else {
+										if(ct == COMPARISON_EQUALS_GREATER) {ass->setMin(&m.number()); ass->setIncludeEqualsMin(true);}
+										else if(ct == COMPARISON_EQUALS_LESS) {ass->setMax(&m.number()); ass->setIncludeEqualsMax(true);}
+										else if(ct == COMPARISON_GREATER) {ass->setMin(&m.number()); ass->setIncludeEqualsMin(false);}
+										else if(ct == COMPARISON_LESS) {ass->setMax(&m.number()); ass->setIncludeEqualsMax(false);}
+									}
+									((UnknownVariable*) v)->setAssumptions(ass);
+								}
+							}
+						}
+					}
+					if(v) {
+						size_t l = sname.length() - 1;
+						if(l > UFV_LENGTHS) {
+							ufvl.insert(ufvl.begin(), (void*) v);
+							ufvl_t.insert(ufvl_t.begin(), 'v');
+							priv->ufvl_us.insert(priv->ufvl_us.begin(), 0);
+							ufvl_i.insert(ufvl_i.begin(), 1);
+						} else {
+							ufv[3][l].insert(ufv[3][l].begin(), (void*) v);
+							ufv_i[3][l].insert(ufv_i[3][l].begin(), 1);
+							priv->ufv_us[3][l].insert(priv->ufv_us[3][l].begin(), 0);
+							for(size_t i = 0; i < ufv[2][l].size(); i++) {
+								const ExpressionName *ename = &((ExpressionItem*) ufv[2][l][i])->getName(ufv_i[2][l][i]);
+								if(priv->ufv_us[2][l][i] == 0 && ((ename->case_sensitive && ename->name == sname) || (!ename->case_sensitive && equalsIgnoreCase(ename->name, sname)))) {
+									ufv_i[2][l][i] = ((size_t) -1) - ufv_i[2][l][i];
+									where_its.push_back(ufv_i[2][l].begin() + i);
+									break;
+								}
+							}
+						}
+						where_vars.push_back(v);
+					}
+				}
+			}
+		}
+	}
+
+	if(!where_vars.empty()) {
+		str_where = "";
+		for(size_t i = 0; i < where_vars.size(); i++) {
+			if(where_vars[i]->isKnown()) {
+				MathStructure m;
+				parse(&m, ((KnownVariable*) where_vars[i])->expression(), eo.parse_options);
+				calculate_rand(m, eo);
+				((KnownVariable*) where_vars[i])->set(m);
+			}
+		}
+	}
+
 	// perform expression parsing
 	parse(&mstruct, str, eo.parse_options);
+
 	if(parsed_struct) {
 		// set parsed_struct to parsed expression with preserved formatting
 		beginTemporaryStopMessages();
@@ -2666,7 +3092,6 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	}
 
 	// handle "where" expression
-	vector<UnknownVariable*> vars;
 	vector<MathStructure> varms;
 	if(!str_where.empty()) {
 
@@ -2688,7 +3113,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 		if(mstruct.isComparison() || (mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_SOLVE && mstruct.size() >= 1 && mstruct[0].isComparison())) {
 			beginTemporaryStopMessages();
 			MathStructure mbak(mstruct);
-			if(handle_where_expression(where_struct, mstruct, eo, vars, varms, empty_func)) {
+			if(handle_where_expression(where_struct, mstruct, eo, where_vars, varms, empty_func)) {
 				endTemporaryStopMessages(true);
 			} else {
 				endTemporaryStopMessages();
@@ -2702,9 +3127,9 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 			if(eo.approximation == APPROXIMATION_EXACT) {
 				EvaluationOptions eo2 = eo;
 				eo2.approximation = APPROXIMATION_TRY_EXACT;
-				handle_where_expression(where_struct, mstruct, eo2, vars, varms, empty_func);
+				handle_where_expression(where_struct, mstruct, eo2, where_vars, varms, empty_func);
 			} else {
-				handle_where_expression(where_struct, mstruct, eo, vars, varms, empty_func);
+				handle_where_expression(where_struct, mstruct, eo, where_vars, varms, empty_func);
 			}
 		}
 	}
@@ -2775,9 +3200,41 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	current_stage = MESSAGE_STAGE_UNSET;
 
 	// replace variables generated from "where" expression
-	for(size_t i = 0; i < vars.size(); i++) {
-		mstruct.replace(vars[i], varms[i]);
-		vars[i]->destroy();
+	if(!str_where.empty()) {
+		for(size_t i = 0; i < where_vars.size(); i++) {
+			mstruct.replace(where_vars[i], varms[i]);
+			where_vars[i]->destroy();
+		}
+	} else if(!where_vars.empty()) {
+		for(size_t i = where_vars.size() - 1; ; i--) {
+			size_t l = where_vars[i]->name().length() - 1;
+			if(l > UFV_LENGTHS) {
+				for(size_t i2 = 0; i2 < ufvl.size(); i2++) {
+					if(ufvl_t[i2] == 'v' && ((ExpressionItem*) ufvl[i2])->name() == where_vars[i]->name() && ((ExpressionItem*) ufvl[i2])->category() == "\x14") {
+						ufvl.erase(ufvl.begin() + i2);
+						ufvl.erase(ufvl.begin() + i2);
+						ufvl_t.erase(ufvl_t.begin() + i2);
+						priv->ufvl_us.erase(priv->ufvl_us.begin() + i2);
+						ufvl_i.erase(ufvl_i.begin() + i2);
+						break;
+					}
+				}
+			} else {
+				for(size_t i2 = 0; i2 < ufv[3][i].size(); i2++) {
+					if(((ExpressionItem*) ufv[3][l][i2])->name() == where_vars[i]->name() && ((ExpressionItem*) ufv[3][l][i2])->category() == "\x14") {
+						ufv[3][l].erase(ufv[3][l].begin() + i2);
+						ufv_i[3][l].erase(ufv_i[3][l].begin() + i2);
+						priv->ufv_us[3][l].erase(priv->ufv_us[3][l].begin() + i2);
+						break;
+					}
+				}
+			}
+			where_vars[i]->destroy();
+			if(i == 0) break;
+		}
+		for(size_t i = 0; i < where_its.size(); i++) {
+			*where_its[i] = ((size_t) -1) - *where_its[i];
+		}
 	}
 
 	if(aborted()) replace_unregistered_variables(mstruct);

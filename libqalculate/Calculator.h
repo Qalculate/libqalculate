@@ -1,7 +1,7 @@
 /*
     Qalculate
 
-    Copyright (C) 2003-2007, 2008, 2016-2018  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2003-2007, 2008, 2016-2024  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -735,6 +735,7 @@ class Calculator {
 	bool parseOperators(MathStructure *mstruct, std::string str, const ParseOptions &po = default_parse_options);
 	bool parseAdd(std::string &str, MathStructure *mstruct, const ParseOptions &po, MathOperation s, bool append = true);
 	bool parseAdd(std::string &str, MathStructure *mstruct, const ParseOptions &po);
+	void parseExpressionAndWhere(MathStructure *mstruct, MathStructure *mwhere, std::string str, std::string str_where, const ParseOptions &po);
 	//@}
 
 	/** @name Functions converting expressions between units. */
@@ -759,8 +760,7 @@ class Calculator {
 	* @param always_convert ...
 	* @returns Converted value.
 	*/
-	MathStructure convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo, bool always_convert, bool convert_to_mixed_units, bool transform_orig, MathStructure *parsed_struct = NULL);
-	MathStructure convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo = default_user_evaluation_options, bool always_convert = true, bool convert_to_mixed_units = true);
+	MathStructure convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo = default_user_evaluation_options, bool always_convert = true, bool convert_to_mixed_units = true, bool transform_orig = false, MathStructure *parsed_struct = NULL);
 	MathStructure convert(const MathStructure &mstruct, KnownVariable *to_var, const EvaluationOptions &eo = default_user_evaluation_options);
 	MathStructure convert(double value, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo = default_user_evaluation_options);
 	MathStructure convert(std::string str, Unit *from_unit, Unit *to_unit, int milliseconds, const EvaluationOptions &eo = default_user_evaluation_options);
