@@ -3433,7 +3433,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						ufv_index = 0;
 					}
 					while(vt2 < 4) {
-						ename = NULL;
+						name = NULL;
 						if(vt2 == -1) {
 							if(ufv_index < ufvl.size()) {
 								if((ufvl_t[ufv_index] == 'v' && po.variables_enabled && !p) || (ufvl_t[ufv_index] == 'f' && po.functions_enabled && object_test_function && !p) || (ufvl_t[ufv_index] == 'u' && po.units_enabled && object_test_unit) || (ufvl_t[ufv_index] == 'P' && po.units_enabled && !p)) {
@@ -3448,23 +3448,21 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									if(nl > ul + errors_allowed || nl < ul - errors_allowed || nl < 4 || nl - underscore < 4) name = NULL;
 								}
 								ufv_index++;
+							} else if(l - errors_allowed - unicode_diff > UFV_LENGTHS) {
+								vt2 = 3;
+								ufv_index = 0;
+								vt3 = (size_t) -1;
 							} else {
-								if(l - errors_allowed - unicode_diff > UFV_LENGTHS) {
-									vt2 = 3;
-									ufv_index = 0;
-									vt3 = (size_t) -1;
+								ufv_index = UFV_LENGTHS - 1;
+								if(p) {
+									vt2 = 2;
 								} else {
-									ufv_index = UFV_LENGTHS - 1;
-									if(p) {
-										vt2 = 2;
-									} else {
-										vt2++;
-										if(vt2 == 1 && !po.functions_enabled) vt2++;
-										if(vt2 == 2 && (!po.units_enabled || !object_test_unit)) vt2++;
-										if(vt2 == 3 && !po.variables_enabled) vt2++;
-									}
-									vt3 = 0;
+									vt2++;
+									if(vt2 == 1 && !po.functions_enabled) vt2++;
+									if(vt2 == 2 && (!po.units_enabled || !object_test_unit)) vt2++;
+									if(vt2 == 3 && !po.variables_enabled) vt2++;
 								}
+								vt3 = 0;
 							}
 						} else if(vt2 == -2 && vt3 < ufv[0][ufv_index].size()) {
 							object = ufv[0][ufv_index][vt3];
@@ -3491,21 +3489,22 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									vt2 = -1;
 									ufv_index = 0;
 								}
-								continue;
 							} else {
 								vt3++;
 							}
+							name = NULL;
 						} else if(vt2 >= 0 && vt3 < ufv[vt2][ufv_index].size()) {
 							object = ufv[vt2][ufv_index][vt3];
 							if(vt2 == 0) ename = &((Prefix*) object)->getName(ufv_i[vt2][ufv_index][vt3]);
 							else ename = &((ExpressionItem*) object)->getName(ufv_i[vt2][ufv_index][vt3]);
-							if(vt2 == 0 && ename->abbreviation) continue;
-							name = &ename->name;
-							name_length = name->length();
-							underscore = priv->ufv_us[vt2][ufv_index][vt3]; name_length -= underscore;
-							case_sensitive = ename->case_sensitive;
-							nl = unicode_length(*name);
-							if(nl > ul + errors_allowed || nl < ul - errors_allowed || nl < 4 || nl - underscore < 4) name = NULL;
+							if(vt2 > 0 || !ename->abbreviation) {
+								name = &ename->name;
+								name_length = name->length();
+								underscore = priv->ufv_us[vt2][ufv_index][vt3]; name_length -= underscore;
+								case_sensitive = ename->case_sensitive;
+								nl = unicode_length(*name);
+								if(nl > ul + errors_allowed || nl < ul - errors_allowed || nl < 4 || nl - underscore < 4) name = NULL;
+							}
 							vt3++;
 						} else if(vt2 == -2) {
 							if((errors_allowed == 1 && ufv_index == 1) || ufv_index == 0) break;
@@ -3547,7 +3546,6 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									if(vt2 == 3 && !po.variables_enabled) vt2++;
 								}
 							}
-							continue;
 						}
 						if(vt2 >= -1 && name && compare_name_with_error(*name, full_name, name_length, base, underscore, errors_allowed, case_sensitive)) {
 							CALCULATOR->error(false, _("Did you mean \"%s\" (instead of \"%s\")?"), ename->formattedName(vt2 == 0 ? -1 : ((ExpressionItem*) object)->type(), underscore).c_str(), full_name.c_str(), NULL);

@@ -1737,7 +1737,7 @@ void set_option(string str) {
 						else if(i3 == 2) name = option_list[i].short_name;
 						else if(i3 == 3) name = option_list[i].alt_short_name;
 						if(name.empty()) continue;
-						if(compare_name_with_error(name, svars[i2], name.length(), 10, 0, n, i >= 2)) {
+						if(compare_name_with_error(name, svars[i2], name.length(), 10, 0, n, i3 >= 2)) {
 							if(i3 < 2) snprintf(buffer, 1000, _("Did you mean \"%s\"?"), name.c_str());
 							else snprintf(buffer, 1000, _("Did you mean \"%s\" (%s)?"), name.c_str(), option_list[i].local_name.empty() ? option_list[i].long_name.c_str() : option_list[i].local_name.c_str());
 							option_list[i].found = true;
@@ -7024,7 +7024,6 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				do_expand = true;
 			}
 		}
-		transform_expression_for_equals_save(str, evalops.parse_options);
 	}
 
 	if(!delay_complex || (cnf != COMPLEX_NUMBER_FORM_POLAR && cnf != COMPLEX_NUMBER_FORM_CIS)) {
@@ -7050,7 +7049,9 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	if(!simplified_percentage) evalops.parse_options.parsing_mode = (ParsingMode) (evalops.parse_options.parsing_mode |PARSE_PERCENT_AS_ORDINARY_CONSTANT);
 	if(do_stack) {
 		stack_size = CALCULATOR->RPNStackSize();
-		CALCULATOR->setRPNRegister(stack_index + 1, CALCULATOR->unlocalizeExpression(str, evalops.parse_options), 0, evalops, parsed_mstruct, NULL);
+		string str2 = CALCULATOR->unlocalizeExpression(str, evalops.parse_options);
+		transform_expression_for_equals_save(str2, evalops.parse_options);
+		CALCULATOR->setRPNRegister(stack_index + 1, str2, 0, evalops, parsed_mstruct, NULL);
 	} else if(rpn_mode) {
 		stack_size = CALCULATOR->RPNStackSize();
 		if(do_mathoperation) {
@@ -7058,6 +7059,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			else CALCULATOR->calculateRPN(op, 0, evalops, parsed_mstruct);
 		} else {
 			string str2 = CALCULATOR->unlocalizeExpression(str, evalops.parse_options);
+			transform_expression_for_equals_save(str2, evalops.parse_options);
 			CALCULATOR->parseSigns(str2);
 			remove_blank_ends(str2);
 			if(str2.length() == 1) {
@@ -7169,6 +7171,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		}
 	} else {
 		original_expression = CALCULATOR->unlocalizeExpression(str, evalops.parse_options);
+		transform_expression_for_equals_save(original_expression, evalops.parse_options);
 		CALCULATOR->calculate(mstruct, original_expression, 0, evalops, parsed_mstruct, &to_struct);
 	}
 
