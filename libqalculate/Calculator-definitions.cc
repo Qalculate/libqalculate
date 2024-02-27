@@ -2139,7 +2139,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 							}
 						}
 					}
-					if(u_usd && u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit() == u_usd) u->setHidden(true);
+					if(u != u_btc && u_usd && u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit() == u_usd) u->setHidden(true);
 					u->setChanged(false);
 					done_something = true;
 				}
