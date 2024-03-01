@@ -3935,7 +3935,7 @@ string Calculator::getExchangeRatesUrl(int index) {
 			} else if(priv->exchange_rates_url3 == 2) {
 				return "https://www.floatrates.com/daily/eur.json";
 			} else {
-				return "https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/eur.json";
+				return "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/eur.json";
                         }
 
 		}
@@ -4068,7 +4068,7 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 		string first_error;
 		for(size_t i = 0; i <= 2 || (bad_gateway && i == 3); i++) {
 			sbuffer = "";
-			if(i == 0) curl_easy_setopt(curl, CURLOPT_URL, "https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/eur.json");
+			if(i == 0) curl_easy_setopt(curl, CURLOPT_URL, "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/eur.json");
 			else if(i == 2) curl_easy_setopt(curl, CURLOPT_URL, "https://www.floatrates.com/daily/eur.json");
 			else curl_easy_setopt(curl, CURLOPT_URL, "https://www.mycurrency.net/FR.json");
 			curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
