@@ -1,7 +1,7 @@
 /*
     Qalculate
 
-    Copyright (C) 2003-2007, 2008, 2016-2021  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2003-2007, 2008, 2016-2024  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -834,7 +834,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {4, 9, 0};
+	int version_numbers[] = {5, 0, 0};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);

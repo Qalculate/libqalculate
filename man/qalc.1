@@ -474,9 +474,8 @@ Use lowercase letters for number bases > 10.
 If activated, 1/6 is displayed as '0.1 666...', otherwise as '0.166667'.
 .PP
 .TP 8
-.B rounding \fI(0* = standard, 1 = even, 2 = truncate, 3 = odd, 4 = half truncate, 5 = half up, 6 = half down, 7 = half random, 8 = away from zero, 9 = up, 10 = down)\fP
-Determines whether how approximate numbers are rounded (round halfway numbers away from zero or towards the nearest even digit, or round all numbers
-towards zero).
+.B rounding \fI(0* = half away from zero, 1 = half to even, 2 = toward zero, 3 = half to odd, 4 = half toward zero, 5 = half up, 6 = half down, 7 = half random, 8 = away from zero, 9 = up, 10 = down)\fP
+Determines how approximate numbers are rounded.
 .PP
 .TP 8
 .B scientific notation, exp \fI(0 = off, -1* = auto, -3 = engineering, 1 = pure, 3 = scientific, >= 0)\fP
@@ -807,7 +806,7 @@ prepend with - to show as simple fraction
 .B Other conversion commands
 - factors (factorize result)
 .PP
-Similarly \fIwhere\fP (or alternatively "/.") can be used at the end (but before "to"), for variable assignments, function replacements, etc. (e.g. "x+y where x=1 and y=2", "x^2=4 where x>0", and "sin(5) where sin()=cos()").
+Similarly \fIwhere\fP (or alternatively "/.") can be used at the end (but before "to"), for variable assignments, function replacements, etc. (e.g. "x+y where x=1 and y=2", "x^2=4 where x>0", and "sin(5) where sin()=cos()"). Variables assignments can also be placed before the expression, separated by comma, e.g. <quote>x=1, y=2, x+y</quote>, but this syntax is more strict.
 .PP
 Note that \fIto\fP and \fIwhere\fP can only be applied to the whole expression. Everything before the operator is always treated as the expression to convert (or apply replacement to), and everything after as the conversion/replacement expression, regardless of any parentheses.
 .SH EXAMPLES

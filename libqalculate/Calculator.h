@@ -1008,27 +1008,27 @@ class Calculator {
 	* @param name_ Variable name.
 	* @returns true if the name is valid for a variable.
 	*/
-	bool variableNameIsValid(const std::string &name_);
+	bool variableNameIsValid(const std::string &name_) const;
 	/** Tests if a name is valid for a variable.
 	*
 	* @param name_ Variable name.
 	* @returns true if the name is valid for a variable.
 	*/
-	bool variableNameIsValid(const char *name_);
+	bool variableNameIsValid(const char *name_) const;
 	bool variableNameIsValid(const char *name_, int version_numbers[3], bool is_user_defs);
 	bool variableNameIsValid(const std::string &name_, int version_numbers[3], bool is_user_defs);
-	std::string convertToValidVariableName(std::string name_);
-	bool functionNameIsValid(const std::string &name_);
-	bool functionNameIsValid(const char *name_);
+	std::string convertToValidVariableName(std::string name_) const;
+	bool functionNameIsValid(const std::string &name_) const;
+	bool functionNameIsValid(const char *name_) const;
 	bool functionNameIsValid(const char *name_, int version_numbers[3], bool is_user_defs);
 	bool functionNameIsValid(const std::string &name_, int version_numbers[3], bool is_user_defs);
-	std::string convertToValidFunctionName(std::string name_);
-	bool unitNameIsValid(const std::string &name_);
-	bool unitNameIsValid(const char *name_);
+	std::string convertToValidFunctionName(std::string name_) const;
+	bool unitNameIsValid(const std::string &name_) const;
+	bool unitNameIsValid(const char *name_) const;
 	bool unitNameIsValid(const char *name_, int version_numbers[3], bool is_user_defs);
 	bool unitNameIsValid(const std::string &name_, int version_numbers[3], bool is_user_defs);
-	bool utf8_pos_is_valid_in_name(char *pos);
-	std::string convertToValidUnitName(std::string name_);
+	bool utf8_pos_is_valid_in_name(char *pos) const;
+	std::string convertToValidUnitName(std::string name_) const;
 	/** Checks if a name is used by another object which is not allowed to have the same name.
 	*
 	* @param name Name.
@@ -1340,5 +1340,11 @@ class Calculator {
 	//@}
 
 };
+
+void print_dual(const MathStructure &mresult, const std::string &original_expression, const MathStructure &mparse, MathStructure &mexact, std::string &result_str, std::vector<std::string> &results_v, PrintOptions &po, const EvaluationOptions &evalops, AutomaticFractionFormat auto_frac, AutomaticApproximation auto_approx, bool cplx_angle = false, bool *exact_cmp = NULL, bool b_parsed = true, bool format = false, int colorize = 0, int tagtype = TAG_TYPE_HTML, int max_length = -1, bool converted = false);
+void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, const std::string &original_expression, const MathStructure *parsed_mstruct, EvaluationOptions &evalops, AutomaticApproximation auto_approx, int msecs = 0, int max_size = 10);
+bool transform_expression_for_equals_save(std::string&, const ParseOptions&);
+MathStructure get_units_for_parsed_expression(const MathStructure *parsed_struct, Unit *to_unit, const EvaluationOptions &eo, const MathStructure *mstruct = NULL);
+bool expression_contains_save_function(const std::string&, const ParseOptions&, bool = false);
 
 #endif

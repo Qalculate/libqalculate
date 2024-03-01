@@ -1239,6 +1239,15 @@ int GenerateVectorFunction::calculate(MathStructure &mstruct, const MathStructur
 	return 1;
 }
 ColonFunction::ColonFunction() : MathFunction("colon", 2, 3) {
+	Argument *arg = new Argument();
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
+	arg = new Argument();
+	arg->setHandleVector(true);
+	setArgumentDefinition(2, arg);
+	arg = new Argument();
+	arg->setHandleVector(true);
+	setArgumentDefinition(3, arg);
 	setDefaultValue(3, "undefined");
 }
 int ColonFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {

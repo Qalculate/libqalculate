@@ -1,7 +1,7 @@
 /*
     Qalculate (library)
 
-    Copyright (C) 2003-2007, 2008, 2016-2019  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2003-2007, 2008, 2016-2024  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -3319,7 +3319,7 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 	if(index <= 1) return MULTIPLICATION_SIGN_NONE;
 	// short multiplication is disabled or number base might use digits other than 0-9, alawys show multiplication symbol
 
-	if((!po.short_multiplication && (!po.place_units_separately || !is_unit_multiexp_strict(*this))) || po.base > 10 || po.base < 2) {
+	if((!po.short_multiplication && (!po.place_units_separately || !is_unit_multiexp_strict(*this))) || ((po.base > 10 || po.base < 2) && po.base != BASE_TIME)) {
 		return MULTIPLICATION_SIGN_OPERATOR;
 	}
 	if(!po.short_multiplication && parent[index - 2].containsType(STRUCT_UNIT, false, false, false) && (!is_unit_multiexp_strict(parent[index - 2], false, true) || !is_unit_multiexp_strict(*this, false, true))) {
@@ -3576,6 +3576,8 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				print_str += o_number.print(po, ips_n);
 
 				if(!exp.empty() && ((po.base != BASE_CUSTOM && (po.base < 2 || po.base > 36)) || (po.base == BASE_CUSTOM && (!CALCULATOR->customOutputBase().isInteger() || CALCULATOR->customOutputBase() > 62 || CALCULATOR->customOutputBase() < 2)))) base10 = true;
+
+				if(!base10 && (BASE_IS_SEXAGESIMAL(po.base) || po.base == BASE_TIME) && print_str.find(po.decimalpoint(), i_number) && (print_str.find("+/-", i_number) != string::npos || print_str.find(SIGN_PLUSMINUS, i_number) != string::npos) && ((po.base == BASE_TIME && print_str.find(":", i_number) == string::npos) || (po.base != BASE_TIME && print_str.find("″", i_number) == string::npos && print_str.find("′", i_number) == string::npos && print_str.find(SIGN_DEGREE, i_number) == string::npos && print_str.find_first_of("\'\"o", i_number) == string::npos))) base10 = true;
 
 				i_number_end = print_str.length();
 				if(ips.power_depth <= 0 && po.base != BASE_DECIMAL && po.base_display == BASE_DISPLAY_SUFFIX && (base10 || (!BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME))) {

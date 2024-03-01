@@ -1,4 +1,26 @@
-2023-02-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2024-03-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve parsing of text arguments - fix quotation mark replaced by feet or inches and % replaced by percent variable, remove quotation marks when parts of argument are quoted separately (a "b" "c" = "a b c"), and do not replace quoted curly brackets in expression unless necessary
+	* Do not use sexagesimal output format for very large numbers (when scientific notation is necessary for integer part) and reduce maximal number of decimals (for last position when previous positions is non-zero)
+	* Handle case when initial guess results in division by zero, and avoid unnecessary error messages, in newtonsolve()
+
+2024-02-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix BTC exchange rate from coinbase, if available from other source, not used before restart after exchange rates update, and do not mark BTC as hidden (places the unit in submenu in GUIs)
+
+2024-02-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support "where" statements, without "where", before main expression, e.g. "a=2, b=3; a^b"
+
+2024-02-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Change handling of "where" expression (create temporary variables) to allow previously undefined variable names and to avoid confusing output of parsed expression (e.g. redefined "c" was displayed as SpeedOfLight)
+
+2024-02-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Detect spelling errors in qalc options (when using set command)
+
+2024-02-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Change handling a vectors in multiple function arguments (of non-vector type) - return vector instead of matrix, require equal number of elements, and use the same vector index for all argument for each function instance (e.g. atan2([1  2], [3  4]) = [atan2(1, 3)  atan(2 4)]
 	* Set handle vector property by default, for text, date, and boolean arguments, and for arguments, in global non-builtin functions, without specified type
@@ -8,7 +30,7 @@
 	* Add flip() function (changes order of elements in vectors and matrices)
 	* Add "binary bits" option in qalc
 
-2023-02-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2024-02-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add LightSecond, LightMinute, and LightHour units
 	* Add integerDigits(), digitGet(), and digitSet() functions
@@ -18,65 +40,64 @@
 	* Add ParseOptions::binary_bits (replaces non-boolean values for twos_complement and hexadecimal_twos_complement)
 	* Add keep command, which makes variable or function non-temporary, in qalc
 
-2023-02-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2024-02-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Check for potential spelling mistakes in unrecognized qalc commands
 	* Show error messages for command without argument, if not a reasonable expression, even if "/" is not used
 
-2023-01-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2024-01-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add support for hexadecimal floating-point literals using 0x...p... notation (0x1.4p3 = 0x1.4 * 2^3 = 10)
 	* In dsolve(), assume that C is real if y is (fixes dsolve(diff(y, x) = y)), and, if y cannot be isolated completely, return resulting equation in solve() function (e.g. dsolve(diff(y , x) = y)= solve(ln(y) = x + C, y))
 
-2023-01-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2024-01-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add support for a...b syntax for sequence (vector) of integers
 	* Add support for j:k (for sequence of numbers with increment 1), and j:i:k (with increment i) syntax
 	* Add colon() function (used by new syntax)
 	* Use parentheses for number with scientific notation in more cases
 
-2023-01-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2024-01-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Do not list reactivated global objects when using "list" command (without argument)
 	* Recognize function name with parentheses appended in argument of "delete" command (useful for deletion of function with same name as variable or unit)
 	* Add bitset() and bitget() functions
 
-2023-01-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2024-01-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Support scientific notation using 10^x instead of e notation for non-html output and in qalc ("set e notation 0")
-	* Always put number using 10^x notation in parenthesis of not top object
+	* Support scientific notation using 10^x instead of e notation for non-html output and in qalc
 
-2023-01-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2024-01-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Allow specification of numbers of bits for two's complement input
 	* If number of bits are not enough for output of binary or hexadecimal number, use default, instead of minimal, number of bits
 
-2023-01-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2024-01-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Detect potential spelling errors in suspicious expressions
 
-2023-01-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2024-01-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix "set cplxform cis"
 	* Fix conversion to angle unit for complex angle, cis and polar forms
 	* Improve output of complex angle form in some cases
 	* Do not display exact result for dual approximation if parsed expression differs (can occur in some cases with conversion to angle unit), and in some cases where the only differences is how exact numbers in function arguments are
 
-2023-01-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2024-01-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Allow multiple options, separated by semicolon, with a single --set (-s) command line argument
 
-2023-01-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2024-01-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* lambertw(x*e^x, 0)=x if x>=-1
 
-2023-01-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2024-01-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix -no... command line options when using double dash, e.g. "--nocurrencies"
 	* Avoid radian unit missing error message with --nounits command line option
 	* Exit with error status code if command line expression generates error
 
-2023-01-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2024-01-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Allow values higher than 1 (true) to specify line width of plot grid
 
@@ -103,7 +124,7 @@
 
 2023-12-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Fix segfault in newtonsolve() and secantsolve() when equation does not contains variable
+	* Fix segfault in newtonsolve() and secantsolve() when equation does not contain variable
 	* Algebra and calculus functions represents scalars if all arguments do
 
 2023-12-14 Hanna Knutsson <hanna.knutsson@protonmail.com>

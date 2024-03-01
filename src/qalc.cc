@@ -956,9 +956,17 @@ void set_option(string str) {
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rounding", _("rounding")) || svar == "round") {
 		int v = -1;
-		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "even", _("even")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "round to even", _("round to even"))) v = ROUNDING_HALF_TO_EVEN;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "standard", _("standard"))) v = ROUNDING_HALF_AWAY_FROM_ZERO;
-		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "truncate", _("truncate"))) v = ROUNDING_TOWARD_ZERO;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "even", _("even")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "round to even", _("round to even")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "half to even", _("half to even"))) v = ROUNDING_HALF_TO_EVEN;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "standard", _("standard")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "half away from zero", _("half away from zero"))) v = ROUNDING_HALF_AWAY_FROM_ZERO;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "truncate", _("truncate")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "toward zero", _("toward zero"))) v = ROUNDING_TOWARD_ZERO;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "half to odd", _("half to odd"))) v = ROUNDING_HALF_TO_ODD;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "half toward zero", _("half toward zero"))) v = ROUNDING_HALF_TOWARD_ZERO;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "half random", _("half random"))) v = ROUNDING_HALF_RANDOM;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "half up", _("half up"))) v = ROUNDING_HALF_UP;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "half down", _("half down"))) v = ROUNDING_HALF_DOWN;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "up", _("up"))) v = ROUNDING_UP;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "down", _("down"))) v = ROUNDING_DOWN;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "away from zero", _("away from zero"))) v = ROUNDING_AWAY_FROM_ZERO;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 			if(v == 2) v = ROUNDING_TOWARD_ZERO;
@@ -1981,7 +1989,7 @@ bool show_set_help(string set_option = "") {
 	int v = printops.rounding;
 	if(v == ROUNDING_TOWARD_ZERO) v = 2;
 	else if(v >= 2 && v < ROUNDING_TOWARD_ZERO) v++;
-	STR_AND_TABS_11("rounding", "", _("Determines whether how approximate numbers are rounded (round halfway numbers away from zero or towards the nearest even digit, or round all numbers towards zero)."), v, _("standard"), _("even"), _("truncate"), _("odd"), _("half truncate"), _("half up"), _("half down"), _("half random"), _("away from zero"), _("up"), _("down"));
+	STR_AND_TABS_11("rounding", "", _("Determines how approximate numbers are rounded."), v, _("half away from zero"), _("half to even"), _("toward zero"), _("half to odd"), _("half toward zero"), _("half up"), _("half down"), _("half random"), _("away from zero"), _("up"), _("down"));
 	if(SET_OPTION_MATCHES("scientific notation", "exp")) {
 		STR_AND_TABS_SET("scientific notation", "exp");
 		SET_DESCRIPTION(_("Determines how scientific notation is used (e.g. 5 543 000 = 5.543E6)."));
@@ -5030,15 +5038,15 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("rounding"), "");
 			switch(printops.rounding) {
 				// rounding mode
-				case ROUNDING_HALF_TO_EVEN: {str += _("even"); break;}
+				case ROUNDING_HALF_TO_EVEN: {str += _("half to even"); break;}
 				// rounding mode
-				case ROUNDING_TOWARD_ZERO: {str += _("truncate"); break;}
+				case ROUNDING_TOWARD_ZERO: {str += _("toward zero"); break;}
 				// rounding mode
-				case ROUNDING_HALF_AWAY_FROM_ZERO: {str += _("standard"); break;}
+				case ROUNDING_HALF_AWAY_FROM_ZERO: {str += _("half away from zero"); break;}
 				// rounding mode
-				case ROUNDING_HALF_TOWARD_ZERO: {str += _("half truncate"); break;}
+				case ROUNDING_HALF_TOWARD_ZERO: {str += _("half toward zero"); break;}
 				// rounding mode
-				case ROUNDING_HALF_TO_ODD: {str += _("odd"); break;}
+				case ROUNDING_HALF_TO_ODD: {str += _("half to odd"); break;}
 				// rounding mode
 				case ROUNDING_HALF_UP: {str += _("half up"); break;}
 				// rounding mode
@@ -6972,7 +6980,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					evalops.auto_post_conversion = POST_CONVERSION_NONE;
 					evalops.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
 				//decimal fraction
-				} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "decimals", _("decimals"))) {
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "decimals", _("decimals"))) {
 					dual_fraction = 0;
 					printops.restrict_fraction_length = false;
 					printops.number_fraction_format = FRACTION_DECIMAL;
@@ -7708,7 +7716,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {4, 9, 1};
+	int version_numbers[] = {5, 0, 0};
 
 	if(file) {
 		char line[10000];
@@ -8101,7 +8109,7 @@ bool save_preferences(bool mode) {
 		return false;
 	}
 	fprintf(file, "\n[General]\n");
-	fprintf(file, "version=%s\n", "4.9.1");
+	fprintf(file, "version=%s\n", VERSION);
 	fprintf(file, "save_mode_on_exit=%i\n", save_mode_on_exit);
 	fprintf(file, "save_definitions_on_exit=%i\n", save_defs_on_exit);
 	fprintf(file, "clear_history_on_exit=%i\n", clear_history_on_exit);

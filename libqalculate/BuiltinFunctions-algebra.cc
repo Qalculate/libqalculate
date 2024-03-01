@@ -1,7 +1,7 @@
 /*
     Qalculate (library)
 
-    Copyright (C) 2003-2007, 2008, 2016, 2018  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2003-2007, 2008, 2016, 2018, 2024  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1373,7 +1373,7 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		msolve.transformById(FUNCTION_ID_SOLVE);
 		msolve.addChild(m_diff[0]);
 		msolve.setProtected(true);
-	} else if(ret < 0) {
+	} else if(ret <= 0) {
 		CALCULATOR->error(true, _("Unable to solve differential equation."), NULL);
 		protect_mdiff(mstruct, m_diff, eo);
 		return -1;
@@ -1520,7 +1520,18 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 		v->set(x_i);
 		v->setName(format_and_print(x_i));
 		x_if.eval(eo2);
-		if(!x_if.isNumber()) break;
+		if(!x_if.isNumber()) {
+			if(iter == 0 && x_if.representsUndefined(true)) {
+				x_i += nr_prec;
+				x_if = mfunc;
+				v->set(x_i);
+				v->setName(format_and_print(x_i));
+				x_if.eval(eo2);
+				if(!x_if.isNumber()) break;
+			} else {
+				break;
+			}
+		}
 		if(x_if.isZero() && x_i.isZero()) {ret = 1; break;}
 		if(iter > 0) x_itest = x_if.number();
 		if((iter > 0 && !compare_with_1 && !x_itest.divide(x_i)) || !x_itest.abs() || !x_i.subtract(x_if.number())) break;
@@ -1581,7 +1592,7 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 			break;
 		}
 	}
-	CALCULATOR->endTemporaryStopMessages(true);
+	CALCULATOR->endTemporaryStopMessages();
 	if(precbak != PRECISION) CALCULATOR->setPrecision(precbak);
 	if(ret == 1) mstruct = x_i;
 	return ret;
@@ -1705,7 +1716,7 @@ int SecantMethodFunction::calculate(MathStructure &mstruct, const MathStructure 
 			}
 		}
 	}
-	CALCULATOR->endTemporaryStopMessages(true);
+	CALCULATOR->endTemporaryStopMessages();
 	if(precbak != PRECISION) CALCULATOR->setPrecision(precbak);
 	if(ret == 1) mstruct = x_i;
 	return ret;

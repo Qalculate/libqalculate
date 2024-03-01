@@ -1,7 +1,7 @@
 /*
     Qalculate (library)
 
-    Copyright (C) 2003-2007, 2008, 2016-2019  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2003-2007, 2008, 2016-2024  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -10894,8 +10894,8 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			Number nr_frac;
 			while(true) {
 				if(CALCULATOR->aborted()) {
-					CALCULATOR->abortedMessage();
 					CALCULATOR->endTemporaryStopIntervalArithmetic();
+					return CALCULATOR->abortedMessage();
 				}
 				nr_digit = nr;
 				nr.divide(base);
@@ -10916,8 +10916,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 						exact = true;
 						break;
 					}
-					nr_frac *= 2;
 					RoundingMode rounding = get_rounding_mode(po);
+					if(rounding == ROUNDING_TOWARD_ZERO || rounding == ROUNDING_DOWN) break;
+					nr_frac *= 2;
 					if(rounding == ROUNDING_UP || rounding == ROUNDING_AWAY_FROM_ZERO || nr_frac.isGreaterThan(1) || (nr_frac.isOne() && (rounding == ROUNDING_HALF_AWAY_FROM_ZERO || (rounding == ROUNDING_HALF_TO_EVEN && digits[digits.size() - 1] % 2 == 1) || (rounding == ROUNDING_HALF_TO_ODD && digits[digits.size() - 1] % 2 == 0) || (rounding == ROUNDING_HALF_RANDOM && ::rand() % 2 == 1) || rounding == ROUNDING_HALF_UP))) {
 						size_t i = digits.size();
 						while(i > 0) {
@@ -11179,13 +11180,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		nr2.frac();
 		nr2.intervalToPrecision();
 		if(nr2.isInterval()) {
+			po2.show_ending_zeroes = po.show_ending_zeroes;
 			po2.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
-			po2.max_decimals = 0;
-			po2.use_max_decimals = true;
 			return print(po2, ips);
 		}
-		if((po2.min_exp > 0 && po2.min_exp < PRECISION) || (po2.min_exp < 0 && (-po2.min_exp) < PRECISION)) po2.min_exp = EXP_PRECISION;
-		else po2.min_exp = po.min_exp;
+
 		string str3;
 		if(po.base == BASE_SEXAGESIMAL_2 || po.base == BASE_LATITUDE_2 || po.base == BASE_LONGITUDE_2) {
 			nr2 *= 60;
@@ -11214,35 +11213,44 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				nr2 *= 60;
 				nr2.round(get_rounding_mode(po));
 			}
-
 			// do not show zero seconds in time format
 			if(!nr3.isInterval() && (!nr3.isZero() || BASE_IS_SEXAGESIMAL(po.base))) {
+				if(nr1.isZero() && nr2.isZero()) {
+					po2.min_exp = PRECISION;
+				} else {
+					po2.min_exp = EXP_NONE;
+					if(po2.max_decimals < 0 || !po2.max_decimals) {
+						po2.max_decimals = PRECISION;
+						po2.use_max_decimals = true;
+					}
+				}
 				str3 = nr3.print(po2);
-				// if 3rd section is rounded to 60, set to zero and increment 2nd section
 				if(str3.length() >= 2 && str3.substr(0, 2) == "60") {
+					// if 3rd section is rounded to 60, set to zero and increment 2nd section
 					str3[1] = '0';
 					str3.erase(0, 1);
 					nr2++;
 					if(nr2 == 60) {nr2.clear(); nr1++;}
 				}
+				if(po2.exp_display == EXP_POWER_OF_10 && str3.find("^") != string::npos) {
+					str3.insert(0, "(");
+					str3 += ")";
+				}
 			}
 		}
 
-		string str = nr1.print(po2);
-		if(po2.exp_display == EXP_POWER_OF_10 && str.find("^") != string::npos) {
-			str.insert(0, "(");
-			str += ")";
+		if((po.min_exp > 0 && po.min_exp < PRECISION) || (po.min_exp < 0 && (-po.min_exp) < PRECISION)) po2.min_exp = EXP_PRECISION;
+		else po2.min_exp = po.min_exp;
+		InternalPrintStruct ips2;
+		string exp;
+		ips2.exp = &exp;
+		string str = nr1.print(po2, ips2);
+		if(!exp.empty()) {
+			po2 = po;
+			po2.base = 10;
+			po2.number_fraction_format = FRACTION_DECIMAL;
+			return print(po2, ips);
 		}
-		if(po2.exp_display == EXP_POWER_OF_10 && str3.find("^") != string::npos) {
-			if((po.base == BASE_TIME || po.base == BASE_LATITUDE || po.base == BASE_LONGITUDE) && str != "0") {
-				if(po.is_approximate) *po.is_approximate = true;
-				str3 = "00";
-			} else {
-				str3.insert(0, "(");
-				str3 += ")";
-			}
-		}
-		if(!str3.empty()) po2.min_exp = 0;
 		if(po.base != BASE_TIME) {
 			if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_DEGREE, po.can_display_unicode_string_arg))) {
 				str += SIGN_DEGREE;
@@ -11257,16 +11265,23 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			str += "0";
 		}
 		if(po.base == BASE_SEXAGESIMAL_2 || po.base == BASE_LATITUDE_2 || po.base == BASE_LONGITUDE_2) {
+			if(nr1.isZero()) {
+				po2.min_exp = PRECISION;
+			} else {
+				po2.min_exp = EXP_NONE;
+				if(po2.max_decimals < 0 || !po2.max_decimals) {
+					po2.max_decimals = PRECISION;
+					po2.use_max_decimals = true;
+				}
+			}
 			string str2 = nr2.print(po2);
-			if(str != "0") {
-				if(po.is_approximate) *po.is_approximate = true;
-				str2 = "0";
-			} else if(po2.exp_display == EXP_POWER_OF_10 && str2.find("^") != string::npos) {
+			if(po2.exp_display == EXP_POWER_OF_10 && str2.find("^") != string::npos) {
 				str2.insert(0, "(");
 				str2 += ")";
 			}
 			str += str2;
 		} else {
+			po2.min_exp = EXP_NONE;
 			str += nr2.printNumerator(10, false);
 		}
 		if(po.base != BASE_TIME) {
@@ -11627,7 +11642,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(mpz_sgn(i_rem) != 0) {
 					mpz_set(ivalue, i_quo);
 					RoundingMode rounding = get_rounding_mode(po);
-					if(rounding == ROUNDING_HALF_AWAY_FROM_ZERO || rounding == ROUNDING_HALF_TO_EVEN || rounding == ROUNDING_HALF_TO_ODD || rounding == ROUNDING_HALF_TOWARD_ZERO || rounding == ROUNDING_HALF_UP || rounding == ROUNDING_HALF_DOWN || rounding == ROUNDING_HALF_RANDOM) {
+					if(rounding <= ROUNDING_HALF_RANDOM) {
 						mpq_t q_rem, q_base_half;
 						mpq_inits(q_rem, q_base_half, NULL);
 						mpz_set(mpq_numref(q_rem), i_rem);
@@ -11685,7 +11700,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(mpz_sgn(i_rem) != 0) {
 					mpz_set(ivalue, i_quo);
 					RoundingMode rounding = get_rounding_mode(po);
-					if(rounding == ROUNDING_HALF_AWAY_FROM_ZERO || rounding == ROUNDING_HALF_TO_EVEN || rounding == ROUNDING_HALF_TO_ODD || rounding == ROUNDING_HALF_TOWARD_ZERO || rounding == ROUNDING_HALF_UP || rounding == ROUNDING_HALF_DOWN || rounding == ROUNDING_HALF_RANDOM) {
+					if(rounding <= ROUNDING_HALF_RANDOM) {
 						mpq_t q_rem, q_base_half;
 						mpq_inits(q_rem, q_base_half, NULL);
 						mpz_set(mpq_numref(q_rem), i_rem);
@@ -12643,7 +12658,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(mpz_sgn(i_rem) != 0) {
 					mpz_set(num, i_quo);
 					RoundingMode rounding = get_rounding_mode(po);
-					if(rounding == ROUNDING_HALF_AWAY_FROM_ZERO || rounding == ROUNDING_HALF_TO_EVEN || rounding == ROUNDING_HALF_TO_ODD || rounding == ROUNDING_HALF_TOWARD_ZERO || rounding == ROUNDING_HALF_UP || rounding == ROUNDING_HALF_DOWN || rounding == ROUNDING_HALF_RANDOM) {
+					if(rounding <= ROUNDING_HALF_RANDOM) {
 						mpq_t q_rem, q_base_half;
 						mpq_inits(q_rem, q_base_half, NULL);
 						mpz_set(mpq_numref(q_rem), i_rem);
@@ -12779,7 +12794,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		remainders.clear();
 		if(!exact && !infinite_series && !po.preserve_format) {
 			RoundingMode rounding = get_rounding_mode(po);
-			if(rounding == ROUNDING_HALF_AWAY_FROM_ZERO || rounding == ROUNDING_HALF_TO_EVEN || rounding == ROUNDING_HALF_TO_ODD || rounding == ROUNDING_HALF_TOWARD_ZERO || rounding == ROUNDING_HALF_UP || rounding == ROUNDING_HALF_DOWN || rounding == ROUNDING_HALF_RANDOM) {
+			if(rounding <= ROUNDING_HALF_RANDOM) {
 				mpz_mul_si(remainder, remainder, base);
 				mpz_tdiv_qr(remainder, remainder2, remainder, d);
 				mpq_t q_rem, q_base_half;

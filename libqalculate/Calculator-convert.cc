@@ -1,7 +1,7 @@
 /*
     Qalculate
 
-    Copyright (C) 2003-2007, 2008, 2016-2019  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2003-2007, 2008, 2016-2024  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -416,9 +416,7 @@ void fix_to_struct2(MathStructure &m) {
 		if(m.size() == 1) m.setToChild(1);
 	}
 }
-MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo, bool always_convert, bool convert_to_mixed_units) {
-	return convert(mstruct, to_unit, eo, always_convert, convert_to_mixed_units, false, NULL);
-}
+
 Unit *find_ounce(const MathStructure &m) {
 	if(m.isUnit() && m.unit()->referenceName() == "oz") return m.unit();
 	for(size_t i = 0; i < m.size(); i++) {
@@ -472,7 +470,7 @@ bool contains_angle_ratio(const MathStructure &m) {
 	return num && den;
 }
 
-MathStructure get_units_for_parsed_expression(const MathStructure *parsed_struct, Unit *to_unit, const EvaluationOptions &eo, const MathStructure *mstruct = NULL) {
+MathStructure get_units_for_parsed_expression(const MathStructure *parsed_struct, Unit *to_unit, const EvaluationOptions &eo, const MathStructure *mstruct) {
 	CompositeUnit *cu = NULL;
 	if(to_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) cu = (CompositeUnit*) to_unit;
 	if(cu && cu->countUnits() == 0) return m_zero;

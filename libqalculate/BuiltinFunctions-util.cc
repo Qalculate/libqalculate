@@ -1,7 +1,7 @@
 /*
     Qalculate (library)
 
-    Copyright (C) 2003-2007, 2008, 2016, 2018  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2003-2007, 2008, 2016, 2018, 2024  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -429,7 +429,7 @@ LengthFunction::LengthFunction() : MathFunction("len", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
 int LengthFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	mstruct = (int) vargs[0].symbol().length();
+	mstruct = (int) unicode_length(vargs[0].symbol());
 	return 1;
 }
 
@@ -1090,7 +1090,6 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		gsub(SIGN_MINUS, MINUS, svar);
 		string svalue;
 		bool b_option = false;
-		bool b_option_and_value = false;
 		while(!b_option) {
 			b_option = true;
 			if(equalsIgnoreCase(svar, "persistent")) {b_persistent = true; i_prev = 5; break;}
@@ -1123,18 +1122,15 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				if(i2 == string::npos) {
 					svalue.insert(0, svar);
 					svar = "";
-					b_option_and_value = false;
 					break;
 				}
 				svalue.insert(0, svar.substr(i2));
-				b_option_and_value = true;
 				svar = svar.substr(0, i2);
 				remove_blank_ends(svar);
 				b_option = false;
 			}
 		}
 		remove_blank_ends(svalue);
-		if(b_option_and_value && svalue.length() > 4 && svalue[0] == LEFT_PARENTHESIS_CH && svalue[1] == '\"' && svalue[svalue.length() - 1] == RIGHT_PARENTHESIS_CH && svalue[svalue.length() - 2] == '\"') svalue = svalue.substr(2, svalue.length() - 4);
 		if(!svalue.empty()) {
 			if(i_prev == 15) {
 				param.title = svalue;

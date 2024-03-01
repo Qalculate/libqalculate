@@ -2546,7 +2546,10 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						po_hex.base = 10;
 						mstruct->multiply(nr_two);
 						mstruct->last() ^= Number(str.substr(i, i2 - i), po_hex);
-						if(b_neg) mstruct->last().last().negate();
+						if(b_neg) {
+							if(po.preserve_format) mstruct->last().last().transform(STRUCT_NEGATE);
+							else mstruct->last().last().number().negate();
+						}
 						name_length = i2 - str_index;
 					}
 					stmp += i2s(addId(mstruct));
@@ -3847,9 +3850,9 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 	if(str.length() > 0) {
 		size_t i;
 		if(BASE_2_10) {
-			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS EXPS ID_WRAP_LEFT, 1);
+			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS EXPS ID_WRAP_LEFT ":", 1);
 		} else {
-			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS ID_WRAP_LEFT, 1);
+			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS ID_WRAP_LEFT ":", 1);
 		}
 		if(i == string::npos && str[0] != LOGICAL_NOT_CH && str[0] != BITWISE_NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1) && (!BASE_2_10 || (str[0] != EXP_CH && str[0] != EXP2_CH))) {
 			return parseNumber(mstruct, str, po);
@@ -3863,9 +3866,9 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 	if(str.length() > 0) {
 		size_t i;
 		if(BASE_2_10) {
-			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS EXPS ID_WRAP_LEFT, 1);
+			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS EXPS ID_WRAP_LEFT ":", 1);
 		} else {
-			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS ID_WRAP_LEFT, 1);
+			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS ID_WRAP_LEFT ":", 1);
 		}
 		if(i == string::npos && str[0] != LOGICAL_NOT_CH && str[0] != BITWISE_NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1) && (!BASE_2_10 || (str[0] != EXP_CH && str[0] != EXP2_CH))) {
 			if(s == OPERATION_EXP10 && po.read_precision == ALWAYS_READ_PRECISION) {

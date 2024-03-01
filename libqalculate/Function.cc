@@ -1,7 +1,7 @@
 /*
     Qalculate
 
-    Copyright (C) 2008  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2008, 2024  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1582,6 +1582,10 @@ void vector_fix_date_time_string(MathStructure *mstruct) {
 
 void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptions &po) const {
 	if(b_text) {
+		if(str.empty()) {
+			mstruct->set("", false, true);
+			return;
+		}
 		MathFunction *f_cat = CALCULATOR->getFunctionById(FUNCTION_ID_CONCATENATE);
 		for(size_t i = 1; i <= f_cat->countNames(); i++) {
 			if(str.find(f_cat->getName(i).name) != string::npos) {
@@ -1617,14 +1621,37 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 		}
 		size_t cits = 0;
 		if(str.length() >= 2 + pars * 2) {
-			if(str[pars] == ID_WRAP_LEFT_CH && str[str.length() - 1 - pars] == ID_WRAP_RIGHT_CH && str.find(ID_WRAP_RIGHT, pars + 1) == str.length() - 1 - pars) {
-				CALCULATOR->parse(mstruct, str.substr(pars, str.length() - pars * 2), po);
-				fix_date_time_string(mstruct);
+			if(str[pars] == ID_WRAP_LEFT_CH && str[str.length() - 1 - pars] == ID_WRAP_RIGHT_CH && str.find(ID_WRAP_RIGHT, pars + 1) == str.length() - 1 - pars && str.find_first_not_of(NUMBERS, pars + 1) == str.length() - 1 - pars) {
+				MathStructure *m_temp = CALCULATOR->getId((size_t) s2i(str.substr(pars + 1, str.length() - pars * 2 - 2)));
+				if(m_temp) {
+					fix_date_time_string(m_temp);
+					if(m_temp->isUnit() && m_temp->unit()->referenceName() == "in") m_temp->set("\"", false, true);
+					else if(m_temp->isUnit() && m_temp->unit()->referenceName() == "ft") m_temp->set("\'", false, true);
+					else if(m_temp->isVariable() && m_temp->variable() == CALCULATOR->getVariableById(VARIABLE_ID_PERCENT)) m_temp->set("%", false, true);
+				}
+				if(m_temp && m_temp->isSymbolic()) {
+					mstruct->set(*m_temp);
+					m_temp->unref();
+				} else {
+					string str3;
+					if(!m_temp) {
+						CALCULATOR->error(true, _("Internal id %s does not exist."), str.substr(pars + 1, str.length() - pars * 2 - 2).c_str(), NULL);
+						mstruct->set(CALCULATOR->getVariableById(VARIABLE_ID_UNDEFINED)->preferredInputName(true, false, false, true).name, false, true);
+					} else {
+						mstruct->set(m_temp->print(CALCULATOR->save_printoptions), false, true);
+						m_temp->unref();
+					}
+				}
 				return;
 			}
 			if(str[pars] == '\\' && str[str.length() - 1 - pars] == '\\') {
 				CALCULATOR->parse(mstruct, str.substr(1 + pars, str.length() - 2 - pars * 2), po);
 				fix_date_time_string(mstruct);
+				return;
+			}
+			if(b_handle_vector && str[pars] == LEFT_VECTOR_WRAP_CH && str[str.length() - 1 - pars] == RIGHT_VECTOR_WRAP_CH && (str.find_first_of("\"\'", pars + 1) != string::npos || (str.find(LEFT_PARENTHESIS ID_WRAP_LEFT) != string::npos && str.find(ID_WRAP_RIGHT RIGHT_PARENTHESIS) != string::npos))) {
+				CALCULATOR->parse(mstruct, str.substr(1 + pars, str.length() - 2 - pars * 2), po);
+				vector_fix_date_time_string(mstruct);
 				return;
 			}
 			if((str[pars] == '\"' && str[str.length() - 1 - pars] == '\"') || (str[pars] == '\'' && str[str.length() - 1 - pars] == '\'')) {
@@ -1637,40 +1664,65 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 					cits++;
 					i++;
 				}
-			}
-			if(b_handle_vector && str[pars] == LEFT_VECTOR_WRAP_CH && str[str.length() - 1 - pars] == RIGHT_VECTOR_WRAP_CH && (str.find_first_of("\"\'", pars + 1) != string::npos || (str.find(LEFT_PARENTHESIS ID_WRAP_LEFT) != string::npos && str.find(ID_WRAP_RIGHT RIGHT_PARENTHESIS) != string::npos))) {
-				CALCULATOR->parse(mstruct, str.substr(1 + pars, str.length() - 2 - pars * 2), po);
-				vector_fix_date_time_string(mstruct);
-				return;
+				if((cits / 2) % 2 != 0) {
+					mstruct->set(str, false, true);
+					return;
+				}
 			}
 		}
+		if(pars == 0 && cits == 0 && str.find(ID_WRAP_LEFT) == string::npos) {
+			mstruct->set(str, false, true);
+			return;
+		}
 		string str2;
-		if(pars == 0 || (cits / 2) % 2 != 0) str2 = str;
-		else str2 = str.substr(pars + (cits ? 1 : 0), str.length() - pars * 2 - (cits ? 2 : 0));
+		if(pars == 0) {
+			str2 = str;
+		} else {
+			str2 = str.substr(pars + (cits ? 1 : 0), str.length() - pars * 2 - (cits ? 2 : 0));
+			remove_blank_ends(str2);
+		}
 		if(cits == 0) replace_internal_operators(str2);
-		if((cits / 2) % 2 == 0) {
-			size_t i = str2.find(ID_WRAP_LEFT);
-			if(i != string::npos && i < str2.length() - 2) {
-				i = 0;
-				size_t i2 = 0; int id = 0;
-				while((i = str2.find(ID_WRAP_LEFT, i)) != string::npos) {
-					i2 = str2.find(ID_WRAP_RIGHT, i + 1);
-					if(i2 == string::npos) break;
+		size_t i = str2.find(ID_WRAP_LEFT);
+		if(i != string::npos && i < str2.length() - 2) {
+			i = 0;
+			size_t i2 = 0; int id = 0;
+			while((i = str2.find(ID_WRAP_LEFT, i)) != string::npos) {
+				i2 = str2.find_first_not_of(NUMBERS, i + 1);
+				if(i2 == string::npos) break;
+				if(i2 > i + 1 && str2[i2] == ID_WRAP_RIGHT_CH) {
 					id = s2i(str2.substr(i + 1, i2 - (i + 1)));
 					MathStructure *m_temp = CALCULATOR->getId((size_t) id);
 					bool do_par = (i == 0 || i2 + 1 == str2.length() || str2[i - 1] != LEFT_PARENTHESIS_CH || str2[i2 + 1] != RIGHT_PARENTHESIS_CH);
-					string str3;
-					if(do_par) str3 = LEFT_PARENTHESIS_CH;
-					if(!m_temp) {
-						CALCULATOR->error(true, _("Internal id %s does not exist."), i2s(id).c_str(), NULL);
-						str3 += CALCULATOR->getVariableById(VARIABLE_ID_UNDEFINED)->preferredInputName(true, false, false, true).name;
-					} else {
-						str3 += m_temp->print(CALCULATOR->save_printoptions).c_str();
-						m_temp->unref();
+					if(m_temp) {
+						fix_date_time_string(m_temp);
+						if(m_temp->isUnit() && m_temp->unit()->referenceName() == "in") m_temp->set("\"", false, true);
+						else if(m_temp->isUnit() && m_temp->unit()->referenceName() == "ft") m_temp->set("\'", false, true);
+						else if(m_temp->isVariable() && m_temp->variable() == CALCULATOR->getVariableById(VARIABLE_ID_PERCENT)) m_temp->set("%", false, true);
 					}
-					if(do_par) str3 += RIGHT_PARENTHESIS_CH;
-					str2.replace(i, i2 - i + 1, str3);
-					i += str3.length();
+					if(m_temp && m_temp->isSymbolic()) {
+						if(!do_par) {
+							i--;
+							i2++;
+						}
+						str2.replace(i, i2 - i + 1, m_temp->symbol());
+						i += m_temp->symbol().length();
+						m_temp->unref();
+					} else {
+						string str3;
+						if(do_par) str3 = LEFT_PARENTHESIS_CH;
+						if(!m_temp) {
+							CALCULATOR->error(true, _("Internal id %s does not exist."), i2s(id).c_str(), NULL);
+							str3 += CALCULATOR->getVariableById(VARIABLE_ID_UNDEFINED)->preferredInputName(true, false, false, true).name;
+						} else {
+							str3 += m_temp->print(CALCULATOR->save_printoptions);
+							m_temp->unref();
+						}
+						if(do_par) str3 += RIGHT_PARENTHESIS_CH;
+						str2.replace(i, i2 - i + 1, str3);
+						i += str3.length();
+					}
+				} else {
+					i = i2;
 				}
 			}
 		}

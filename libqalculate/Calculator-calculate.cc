@@ -79,8 +79,30 @@ void CalculateThread::run() {
 			//if(CALCULATOR->tmp_tostruct) CALCULATOR->tmp_tostruct->setUndefined();
 			if(CALCULATOR->expression_to_calculate.find_first_of(ID_WRAPS) != string::npos) {
 				string str = CALCULATOR->expression_to_calculate;
-				gsub(ID_WRAP_LEFT, LEFT_PARENTHESIS, str);
-				gsub(ID_WRAP_RIGHT, RIGHT_PARENTHESIS, str);
+				bool quote1 = false, quote2 = false;
+				size_t id_li = string::npos;
+				for(size_t i = 0; i < str.size(); i++) {
+					if(!quote1 && str[i] == '\'') {
+						quote2 = !quote2;
+						id_li = string::npos;
+					} else if(!quote2 && str[i] == '\"') {
+						quote1 = !quote1;
+						id_li = string::npos;
+					} else if(str[i] == ID_WRAP_LEFT_CH) {
+						if(!quote2 && !quote1) str[i] = LEFT_PARENTHESIS_CH;
+						else id_li = i;
+					} else if(str[i] == ID_WRAP_RIGHT_CH) {
+						if(!quote2 && !quote1) {
+							str[i] = RIGHT_PARENTHESIS_CH;
+						} else if(id_li != string::npos) {
+							if(id_li < i - 1 && str.find_first_not_of(NUMBERS SPACES, id_li + 1) == i) {
+								str[i] = RIGHT_PARENTHESIS_CH;
+								str[id_li] = LEFT_PARENTHESIS_CH;
+							}
+							id_li = string::npos;
+						}
+					}
+				}
 				mstruct->set(CALCULATOR->calculate(str, CALCULATOR->tmp_evaluationoptions, CALCULATOR->tmp_parsedstruct, CALCULATOR->tmp_tostruct, CALCULATOR->tmp_maketodivision));
 			} else {
 				mstruct->set(CALCULATOR->calculate(CALCULATOR->expression_to_calculate, CALCULATOR->tmp_evaluationoptions, CALCULATOR->tmp_parsedstruct, CALCULATOR->tmp_tostruct, CALCULATOR->tmp_maketodivision));
@@ -2443,52 +2465,65 @@ bool Calculator::hasWhereExpression(const string &str, const EvaluationOptions &
 	i = 0;
 	i2 = 0;
 	bool var_found = false;
-	while(i2 < i4) {
+	while(true) {
 		i2 = str.find_first_not_of(SPACES, i2);
 		if(i2 == string::npos) return false;
-		i = str.find_first_of("<>=", i2 + 1);
-		if(i == string::npos || i == i2 || (str[i] == '=' && (str[i - 1] == ':' || i == str.length() - 1 || str[i + 1] == ':' || str[i + 1] == '='))) return false;
+		i = str.find_first_of("<>=\xe2", i2 + 1);
+		if(i == string::npos || i > i4) return false;
+		while(str[i] == '\xe2') {
+			if(str[i + 1] == '\x89' && (str[i + 2] == '\xa4' || str[i + 2] == '\xa5' || str[i + 2] == '\xa0')) break;
+			i = str.find_first_of("<>=\xe2", i + 1);
+			if(i == string::npos || i > i4) return false;
+		}
+		if(str[i] == '=') {
+			if(str[i - 1] == '!') i--;
+			else if(str[i - 1] == ':' || str[i + 1] == ':' || str[i + 1] == '=') return false;
+		}
+		if(i == i2) return false;
 		i = str.find_last_not_of(SPACES, i - 1);
 		size_t i5 = i2;
-		if(i < i4) {
-			i2 = find_outside_enclosures(str, COMMA_CH, i + 1);
-			if(i2 == string::npos || i2 == str.length() - 1) return false;
-		}
-		if(i < 3 || ((str[i5] != '\"' && str[i5] != '\'') || str[i - 1] != str[i5])) {
-			if(i >= 2 && str[i5] == '\\') {
-				if((unsigned char) str[i5] >= 0xC0) {
-					for(size_t i3 = i5 + 1; i3 < i; i3++) {
-						if((unsigned char) str[i5] >= 0xC0 || (signed char) str[i5] > 0) return false;
+		i2 = find_outside_enclosures(str, COMMA_CH, i + 1);
+		if(i2 == string::npos || i2 == str.length() - 1) return false;
+		string sname = str.substr(i5, i - i5 + 1);
+		parseSigns(sname);
+		if(sname.length() < 3 || ((sname[0] != '\"' && sname[0] != '\'') || sname[sname.length() - 1] != sname[0])) {
+			if(sname.length() >= 2 && sname[0] == '\\') {
+				if((unsigned char) sname[1] >= 0xC0) {
+					for(size_t i3 = 2; i3 < sname.length(); i3++) {
+						if((unsigned char) sname[i3] >= 0xC0 || (signed char) sname[i3] > 0) return false;
 					}
-				} else if(i != 2 || str[i5 + 1] > 'z' || str[i5 + 1] < 'A' || (str[i5 + 1] > 'Z' && str[i5 + 1] < 'a')) {
+				} else if(i != 2 || sname[1] > 'z' || sname[1] < 'A' || (sname[1] > 'Z' && sname[1] < 'a')) {
 					return false;
 				}
-			} else {
-				for(size_t i3 = i5; i3 < i; i3++) {
-					if(is_in(i3 == i5 ? NOT_IN_NAMES NUMBERS : NOT_IN_NAMES, str[i3])) return false;
-				}
+			} else if(!variableNameIsValid(sname)) {
+				return false;
 			}
 		}
 		if(!var_found) {
-			size_t i3 = str.find(str.substr(i5, i - i5 + 1), i4 + 1);
-			if(i3 != string::npos) {
-				if(str[i5] == '\"' || str[i5] == '\'' || str[i5] == '\\') var_found = true;
+			if(sname[0] == '\"' || sname[0] == '\'' || sname[0] == '\\') {
+				if(str.find(str.substr(i5, i - i5 + 1), i4 + 1) != string::npos) var_found = true;
+			} else {
+				string svalue = str.substr(i4 + 1, str.length() - (i4 + 1));
+				parseSigns(svalue);
+				size_t i7 = 0;
 				while(!var_found) {
-					size_t i6 = i3, i7 = i3 + i - i5;
-					while(i6 - 1 > i5 && is_not_in(NOT_IN_NAMES NUMBERS, str[i6 - 1])) i6--;
-					while(i7 < str.length() - 1 && is_not_in(NOT_IN_NAMES NUMBERS, str[i7 + 1])) i7++;
-					if((i6 == i3 && i7 == i3 + i - i5) || !CALCULATOR->getActiveExpressionItem(str.substr(i6, i7 - i6 + 1))) {
-						var_found = true;
-						break;
-					}
-					i3 = str.find(str.substr(i5, i - i5 + 1), i3 + 1);
+					size_t i3 = svalue.find(sname, i7);
 					if(i3 == string::npos) break;
+					size_t i6 = i3;
+					i7 = i6 + sname.length() - 1;
+					while(i6 > 0 && is_not_in(NOT_IN_NAMES NUMBERS, svalue[i6 - 1])) i6--;
+					while(i7 < svalue.length() - 1 && is_not_in(NOT_IN_NAMES NUMBERS, svalue[i7 + 1])) i7++;
+					if((i6 == i3 && i7 == i6 + sname.length() - 1) || !CALCULATOR->getActiveExpressionItem(svalue.substr(i6, i7 - i6 + 1))) {
+						var_found = true;
+					}
+					i7++;
 				}
 			}
 		}
-		if(i >= i4) break;
+		if(i2 >= i4) break;
 		i2++;
 	}
+	if(i2 != i4 || !var_found) return false;
 	return var_found;
 }
 bool Calculator::separateWhereExpression(string &str, string &to_str, const EvaluationOptions &eo) const {
@@ -2516,65 +2551,6 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
 	if(!to_str.empty()) {
 		str = str.substr(0, i);
 		remove_blank_ends(str);
-	} else {
-		size_t i4 = rfind_outside_enclosures(str, COMMA_CH);
-		if(i4 == string::npos || i4 < 3) return false;
-		i = 0;
-		size_t i2 = 0;
-		bool var_found = false;
-		while(i2 < i4) {
-			i2 = str.find_first_not_of(SPACES, i2);
-			if(i2 == string::npos) return false;
-			i = str.find_first_of("<>=", i2 + 1);
-			if(i == string::npos || i == i2 || (str[i] == '=' && (str[i - 1] == ':' || i == str.length() - 1 || str[i + 1] == ':' || str[i + 1] == '='))) return false;
-			i = str.find_last_not_of(SPACES, i - 1);
-			size_t i5 = i2;
-			if(i < i4) {
-				i2 = find_outside_enclosures(str, COMMA_CH, i + 1);
-				if(i2 == string::npos || i2 == str.length() - 1) return false;
-			}
-			if(i < 3 || ((str[i5] != '\"' && str[i5] != '\'') || str[i - 1] != str[i5])) {
-				if(i >= 2 && str[i5] == '\\') {
-					if((unsigned char) str[i5] >= 0xC0) {
-						for(size_t i3 = i5 + 1; i3 < i; i3++) {
-							if((unsigned char) str[i5] >= 0xC0 || (signed char) str[i5] > 0) return false;
-						}
-					} else if(i != 2 || str[i5 + 1] > 'z' || str[i5 + 1] < 'A' || (str[i5 + 1] > 'Z' && str[i5 + 1] < 'a')) {
-						return false;
-					}
-				} else {
-					for(size_t i3 = i5; i3 < i; i3++) {
-						if(is_in(i3 == i5 ? NOT_IN_NAMES NUMBERS : NOT_IN_NAMES, str[i3])) return false;
-					}
-				}
-			}
-			if(!var_found) {
-				size_t i3 = str.find(str.substr(i5, i - i5 + 1), i4 + 1);
-				if(i3 != string::npos) {
-					if(str[i5] == '\"' || str[i5] == '\'' || str[i5] == '\\') var_found = true;
-					while(!var_found) {
-						size_t i6 = i3, i7 = i3 + i - i5;
-						while(i6 - 1 > i5 && is_not_in(NOT_IN_NAMES NUMBERS, str[i6 - 1])) i6--;
-						while(i7 < str.length() - 1 && is_not_in(NOT_IN_NAMES NUMBERS, str[i7 + 1])) i7++;
-						if((i6 == i3 && i7 == i3 + i - i5) || !CALCULATOR->getActiveExpressionItem(str.substr(i6, i7 - i6 + 1))) {
-							var_found = true;
-							break;
-						}
-						i3 = str.find(str.substr(i5, i - i5 + 1), i3 + 1);
-						if(i3 == string::npos) break;
-					}
-				}
-			}
-			if(i >= i4) break;
-			i2++;
-		}
-		if(!var_found) return false;
-		to_str = str.substr(0, i4);
-		if(i4 == str.length() - 1) str = "";
-		else str = str.substr(i4 + 1, str.length() - i4 + 1);
-		remove_blank_ends(str);
-	}
-	if(!to_str.empty()) {
 		remove_blank_ends(to_str);
 		parseSigns(to_str);
 		if(to_str.find("&&") == string::npos) {
@@ -2588,7 +2564,85 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
 		}
 		return true;
 	}
-	return false;
+
+	size_t i4 = rfind_outside_enclosures(str, COMMA_CH);
+	if(i4 == string::npos || i4 < 3) return false;
+	i = 0;
+	size_t i2 = 0;
+	bool var_found = false;
+	while(true) {
+		i2 = str.find_first_not_of(SPACES, i2);
+		if(i2 == string::npos) return false;
+		i = str.find_first_of("<>=\xe2", i2 + 1);
+		if(i == string::npos || i > i4) return false;
+		while(str[i] == '\xe2') {
+			if(str[i + 1] == '\x89' && (str[i + 2] == '\xa4' || str[i + 2] == '\xa5' || str[i + 2] == '\xa0')) break;
+			i = str.find_first_of("<>=\xe2", i + 1);
+			if(i == string::npos || i > i4) return false;
+		}
+		if(str[i] == '=') {
+			if(str[i - 1] == '!') i--;
+			else if(str[i - 1] == ':' || str[i + 1] == ':' || str[i + 1] == '=') return false;
+		}
+		if(i == i2) return false;
+		i = str.find_last_not_of(SPACES, i - 1);
+		size_t i5 = i2;
+		i2 = find_outside_enclosures(str, COMMA_CH, i + 1);
+		if(i2 == string::npos || i2 == str.length() - 1) return false;
+		string sname = str.substr(i5, i - i5 + 1);
+		parseSigns(sname);
+		if(sname.length() < 3 || ((sname[0] != '\"' && sname[0] != '\'') || sname[sname.length() - 1] != sname[0])) {
+			if(sname.length() >= 2 && sname[0] == '\\') {
+				if((unsigned char) sname[1] >= 0xC0) {
+					for(size_t i3 = 2; i3 < sname.length(); i3++) {
+						if((unsigned char) sname[i3] >= 0xC0 || (signed char) sname[i3] > 0) return false;
+					}
+				} else if(i != 2 || sname[1] > 'z' || sname[1] < 'A' || (sname[1] > 'Z' && sname[1] < 'a')) {
+					return false;
+				}
+			} else if(!variableNameIsValid(sname)) {
+				return false;
+			}
+		}
+		if(!var_found) {
+			if(sname[0] == '\"' || sname[0] == '\'' || sname[0] == '\\') {
+				if(str.find(str.substr(i5, i - i5 + 1), i4 + 1) != string::npos) var_found = true;
+			} else {
+				string svalue = str.substr(i4 + 1, str.length() - (i4 + 1));
+				parseSigns(svalue);
+				size_t i7 = 0;
+				while(!var_found) {
+					size_t i3 = svalue.find(sname, i7);
+					if(i3 == string::npos) break;
+					size_t i6 = i3;
+					i7 = i6 + sname.length() - 1;
+					while(i6 > 0 && is_not_in(NOT_IN_NAMES NUMBERS, svalue[i6 - 1])) i6--;
+					while(i7 < svalue.length() - 1 && is_not_in(NOT_IN_NAMES NUMBERS, svalue[i7 + 1])) i7++;
+					if((i6 == i3 && i7 == i6 + sname.length() - 1) || !CALCULATOR->getActiveExpressionItem(svalue.substr(i6, i7 - i6 + 1))) {
+						var_found = true;
+					}
+					i7++;
+				}
+			}
+		}
+		if(i2 >= i4) break;
+		i2++;
+	}
+	if(i2 != i4 || !var_found) return false;
+	to_str = str.substr(0, i4);
+	if(i4 == str.length() - 1) str = "";
+	else str = str.substr(i4 + 1, str.length() - i4 + 1);
+	remove_blank_ends(str);
+	remove_blank_ends(to_str);
+	parseSigns(to_str);
+	i = 0;
+	while(true) {
+		i = find_outside_enclosures(to_str, COMMA_CH, i);
+		if(i == string::npos) break;
+		to_str.replace(i, 1, LOGICAL_AND);
+		i++;
+	}
+	return true;
 }
 bool calculate_rand(MathStructure &mstruct, const EvaluationOptions &eo) {
 	if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_RAND || mstruct.function()->id() == FUNCTION_ID_RANDN || mstruct.function()->id() == FUNCTION_ID_RAND_POISSON)) {

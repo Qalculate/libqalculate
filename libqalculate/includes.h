@@ -1,7 +1,7 @@
 /*
     Qalculate (library)
 
-    Copyright (C) 2003-2007, 2008, 2016-2021  Hanna Knutsson (hanna.knutsson@protonmail.com)
+    Copyright (C) 2003-2007, 2008, 2016-2024  Hanna Knutsson (hanna.knutsson@protonmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,8 +30,8 @@
 #include <unistd.h>
 #include <stdint.h>
 
-#define QALCULATE_MAJOR_VERSION (4)
-#define QALCULATE_MINOR_VERSION (9)
+#define QALCULATE_MAJOR_VERSION (5)
+#define QALCULATE_MINOR_VERSION (0)
 #define QALCULATE_MICRO_VERSION (0)
 
 static std::string empty_string;
