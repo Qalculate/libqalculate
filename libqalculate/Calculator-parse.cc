@@ -3406,6 +3406,8 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			if(moved_forward) {
 				if((ufvt == 'f' && (prev_object == 'u' || prev_object == 'f')) || (ufvt == 'v' && (prev_object == 'u' || prev_object == 'f'))) suspect_object_order = true;
 				prev_object = ufvt;
+			} else if(po.limit_implicit_multiplication) {
+				suspect_object_order = true;
 			}
 			consecutive_objects++;
 			if(objects_finished && !full_name.empty() && (suspect_object_order || (consecutive_objects > 2 && unicode_length(full_name) >= 5))) {
@@ -3940,7 +3942,7 @@ bool test_colon(const string &str, size_t i, bool strict_time = false) {
 	if(i == str.length() - 1) return false;
 	size_t i_dot = str.find_first_not_of(NUMBERS ":");
 	if(i_dot != string::npos) {
-		if(str[i_dot] != '.' || i_dot < i) return true;
+		if((str[i_dot] != '.' && str.find_first_of(NUMBERS, i_dot + 1) != string::npos) || i_dot < i) return true;
 	}
 	size_t i2 = str.find(":", i + 1);
 	if(i2 == str.length() - 1) return false;

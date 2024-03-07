@@ -12805,7 +12805,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				mpz_set_ui(mpq_denref(q_base_half), 2);
 				mpq_canonicalize(q_base_half);
 				int i_sign = mpq_cmp(q_rem, q_base_half);
-				if(i_sign > 0 || (i_sign == 0 && (rounding == ROUNDING_HALF_AWAY_FROM_ZERO || (rounding == ROUNDING_HALF_TO_EVEN && mpz_odd_p(num)) || (rounding == ROUNDING_HALF_TO_ODD && mpz_even_p(num)) || (!neg && rounding == ROUNDING_HALF_UP) || (neg && rounding == ROUNDING_HALF_DOWN) || (rounding == ROUNDING_HALF_RANDOM && ::rand() % 2 == 1)))) {
+				if(i_sign > 0 || (i_sign == 0 && (rounding == ROUNDING_HALF_AWAY_FROM_ZERO || mpz_sgn(remainder2) != 0 || (rounding == ROUNDING_HALF_TO_EVEN && mpz_odd_p(num)) || (rounding == ROUNDING_HALF_TO_ODD && mpz_even_p(num)) || (!neg && rounding == ROUNDING_HALF_UP) || (neg && rounding == ROUNDING_HALF_DOWN) || (rounding == ROUNDING_HALF_RANDOM && ::rand() % 2 == 1)))) {
 					mpz_add_ui(num, num, 1);
 				}
 				mpq_clears(q_base_half, q_rem, NULL);
