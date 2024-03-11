@@ -442,6 +442,13 @@ typedef enum {
 	ROUNDING_DOWN
 } RoundingMode;
 
+enum {
+	UNICODE_SIGNS_OFF,
+	UNICODE_SIGNS_ON,
+	UNICODE_SIGNS_ONLY_UNIT_EXPONENTS,
+	UNICODE_SIGNS_WITHOUT_EXPONENTS
+};
+
 // temporary custom time zone value for truncation rounding in output
 #define TZ_TRUNCATE -21586
 // temporary custom time zone value for special duodecimal symbols in output
@@ -490,7 +497,7 @@ struct PrintOptions {
 	/// If it is not necessary that the displayed expression can be parsed correctly. Default: false
 	bool allow_non_usable;
 	/// If unicode signs can be displayed. Default: false
-	bool use_unicode_signs;
+	int use_unicode_signs;
 	/// Sign used for display of multiplication. Default: MULTIPLICATION_SIGN_DOT
 	MultiplicationSign multiplication_sign;
 	/// Sign used for display of division. Default: DIVISION_SIGN_DIVISION_SLASH

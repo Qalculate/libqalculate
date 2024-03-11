@@ -154,7 +154,13 @@ enum {
 #	define DO_FORMAT (force_color > 0 || (force_color != 0 && !cfile && interactive_mode))
 #endif
 #define DO_COLOR (force_color >= 0 ? force_color : (!cfile && colorize && interactive_mode ? colorize : 0))
-#define PRINT_COLOR (DO_COLOR * (unicode_exponents == 2 ? -1 : (unicode_exponents > 0 ? 1 : -10)))
+
+#define SET_UNICODE_EXPONENTS \
+	if(printops.use_unicode_signs) {\
+		if(unicode_exponents == 0) printops.use_unicode_signs = UNICODE_SIGNS_WITHOUT_EXPONENTS;\
+		else if(unicode_exponents == 1) printops.use_unicode_signs = UNICODE_SIGNS_ON;\
+		else if(unicode_exponents == 2) printops.use_unicode_signs = UNICODE_SIGNS_ONLY_UNIT_EXPONENTS;\
+	}
 
 bool contains_unicode_char(const char *str) {
 	for(int i = strlen(str) - 1; i >= 0; i--) {
@@ -1111,7 +1117,9 @@ void set_option(string str) {
 		if(v < 0) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
-			printops.use_unicode_signs = v; result_display_updated();
+			printops.use_unicode_signs = v;
+			SET_UNICODE_EXPONENTS
+			result_display_updated();
 		}
 		enable_unicode = -1;
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unicode exponents", _("unicode exponents")) || svar == "uniexp") {
@@ -1122,10 +1130,12 @@ void set_option(string str) {
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
-		if(v < 0) {
+		if(v < 0 || v > 2) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
-			unicode_exponents = v; result_display_updated();
+			unicode_exponents = v;
+			SET_UNICODE_EXPONENTS
+			result_display_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "units", _("units")) || svar == "unit") SET_BOOL_PV(evalops.parse_options.units_enabled)
 	//automatic unknown variables
@@ -3492,10 +3502,11 @@ int main(int argc, char *argv[]) {
 	}
 
 	if(enable_unicode >= 0) {
-		if(printops.use_unicode_signs == enable_unicode) {
+		if((printops.use_unicode_signs > 0) == (enable_unicode > 0)) {
 			enable_unicode = -1;
 		} else {
 			printops.use_unicode_signs = enable_unicode;
+			SET_UNICODE_EXPONENTS
 			result_display_updated();
 		}
 	}
@@ -4166,7 +4177,7 @@ int main(int argc, char *argv[]) {
 					m = *CALCULATOR->getRPNRegister(i);
 					m.removeDefaultAngleUnit(evalops);
 					m.format(printops);
-					string regstr = m.print(printops, DO_FORMAT, PRINT_COLOR, TAG_TYPE_TERMINAL);
+					string regstr = m.print(printops, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
 					if(complex_angle_form) replace_result_cis(regstr);
 					if(printops.digit_grouping != DIGIT_GROUPING_NONE) {
 						gsub(THIN_SPACE, " ", regstr);
@@ -5823,7 +5834,7 @@ void ViewThread::run() {
 			po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 			MathStructure mp(*mparse);
 			mp.format(po);
-			parsed_text = mp.print(po, DO_FORMAT, PRINT_COLOR, TAG_TYPE_TERMINAL);
+			parsed_text = mp.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
 			if(po.base == BASE_CUSTOM) {
 				CALCULATOR->setCustomOutputBase(nr_base);
 			}
@@ -5833,12 +5844,12 @@ void ViewThread::run() {
 
 		po.allow_non_usable = DO_FORMAT;
 
-		print_dual(*mresult, original_expression, mparse ? *mparse : *parsed_mstruct, mstruct_exact, result_text, alt_results, po, evalops, dual_fraction < 0 ? AUTOMATIC_FRACTION_AUTO : (dual_fraction > 0 ? AUTOMATIC_FRACTION_DUAL : AUTOMATIC_FRACTION_OFF), dual_approximation < 0 ? AUTOMATIC_APPROXIMATION_AUTO : (dual_fraction > 0 ? AUTOMATIC_APPROXIMATION_DUAL : AUTOMATIC_APPROXIMATION_OFF), complex_angle_form, &exact_comparison, mparse != NULL, DO_FORMAT, PRINT_COLOR, TAG_TYPE_TERMINAL, -1, had_to_expression);
+		print_dual(*mresult, original_expression, mparse ? *mparse : *parsed_mstruct, mstruct_exact, result_text, alt_results, po, evalops, dual_fraction < 0 ? AUTOMATIC_FRACTION_AUTO : (dual_fraction > 0 ? AUTOMATIC_FRACTION_DUAL : AUTOMATIC_FRACTION_OFF), dual_approximation < 0 ? AUTOMATIC_APPROXIMATION_AUTO : (dual_fraction > 0 ? AUTOMATIC_APPROXIMATION_DUAL : AUTOMATIC_APPROXIMATION_OFF), complex_angle_form, &exact_comparison, mparse != NULL, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL, -1, had_to_expression);
 
 		if(!prepend_mstruct.isUndefined() && !CALCULATOR->aborted()) {
 			prepend_mstruct.format(po);
 			po.min_exp = 0;
-			alt_results.insert(alt_results.begin(), prepend_mstruct.print(po, DO_FORMAT, PRINT_COLOR, TAG_TYPE_TERMINAL));
+			alt_results.insert(alt_results.begin(), prepend_mstruct.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL));
 		}
 
 		b_busy = false;
@@ -7640,6 +7651,8 @@ void load_preferences() {
 	simplified_percentage = true;
 	b_decimal_comma = -1;
 
+	SET_UNICODE_EXPONENTS
+
 	dual_fraction = -1;
 	dual_approximation = -1;
 
@@ -7961,8 +7974,10 @@ void load_preferences() {
 						printops.use_unicode_signs = v;
 					}
 #endif
+					SET_UNICODE_EXPONENTS
 				} else if(svar == "use_unicode_exponents") {
 					unicode_exponents = v;
+					SET_UNICODE_EXPONENTS
 				} else if(svar == "lower_case_numbers") {
 					printops.lower_case_numbers = v;
 				} else if(svar == "duodecimal_symbols") {

@@ -12306,9 +12306,18 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			else mpfr_div_z(v, v, z_log, po.preserve_precision ? MPFR_RNDU : MPFR_RNDD);
 			mpfr_ceil(v, v);
 		} else {
+			if(po.interval_display == INTERVAL_DISPLAY_PLUSMINUS && !po.preserve_precision) {
+				RoundingMode r = get_rounding_mode(po);
+				if(r == ROUNDING_DOWN || (neg && r == ROUNDING_AWAY_FROM_ZERO) || (!neg && r == ROUNDING_TOWARD_ZERO)) {
+					for(size_t i = 0; i < 100; i++) mpfr_nextabove(v);
+				} else if(r >= ROUNDING_TOWARD_ZERO) {
+					for(size_t i = 0; i < 100; i++) mpfr_nextbelow(v);
+				}
+			}
 			if(i_log < 0) mpfr_mul_z(v, v, z_log, MPFR_RNDN);
 			else mpfr_div_z(v, v, z_log, MPFR_RNDN);
 			MPFR_ROUND_PO(v)
+
 		}
 		mpz_t ivalue;
 		mpz_init(ivalue);

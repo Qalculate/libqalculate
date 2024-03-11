@@ -1,3 +1,14 @@
+2024-03-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not apply "read precision" setting to integer exponents for values with units
+	* Change from line to point (or dot) plot style for data with many discontinuous points
+
+2024-03-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Replace special colorize values, for selection of Unicode exponents, with different use_unicode_signs values
+	* Use Unicode exponents, in MathStructure::print(), if format is false, even if tagtype is not TAG_TYPE_TERMINAL
+	* Fix Unicode exponents with number bases < 10
+
 2024-03-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Improve parsing of text arguments - fix quotation mark replaced by feet or inches and % replaced by percent variable, remove quotation marks when parts of argument are quoted separately (a "b" "c" = "a b c"), and do not replace quoted curly brackets in expression unless necessary

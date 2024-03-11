@@ -3493,7 +3493,7 @@ bool has_power_in_power(const MathStructure &m) {
 bool has_nonunicode_power(const MathStructure &m, const PrintOptions &po, bool only_units = false) {
 	if(m.isPower()) {
 		if(only_units && !m[0].isUnit()) return false;
-		if(!m[1].isInteger() || m[1].number().isNegative() || m[1].number() > 9) return true;
+		if(po.base <= 2 || !m[1].isInteger() || m[1].number().isNegative() || m[1].number() > (po.base >= 10 ? 9 : po.base - 1)) return true;
 		if(!only_units && has_nonunicode_power(m[0], po)) return true;
 		if(!po.can_display_unicode_string_function) return false;
 		switch(m[1].number().intValue()) {
@@ -3534,20 +3534,31 @@ size_t unformatted_unicode_length(const string &str) {
 
 string MathStructure::print(const PrintOptions &po, bool format, int colorize, int tagtype, const InternalPrintStruct &ips) const {
 	if(ips.depth == 0 && po.is_approximate) *po.is_approximate = false;
+	if(ips.depth == 0 && tagtype == TAG_TYPE_TERMINAL && colorize < 0) {
+		colorize = -colorize;
+		if(colorize >= 10) {
+			colorize /= 10;
+			if(po.use_unicode_signs) {
+				PrintOptions po2 = po;
+				po2.use_unicode_signs = UNICODE_SIGNS_WITHOUT_EXPONENTS;
+				return print(po2, format, colorize, tagtype, ips);
+			}
+		} else if(po.use_unicode_signs) {
+			PrintOptions po2 = po;
+			po2.use_unicode_signs = UNICODE_SIGNS_ONLY_UNIT_EXPONENTS;
+			return print(po2, format, colorize, tagtype, ips);
+		}
+	}
 	string print_str;
 	InternalPrintStruct ips_n = ips;
 	if(isApproximate()) {
 		ips_n.parent_approximate = true;
 		if(po.is_approximate) *po.is_approximate = true;
 	}
-	if(ips.depth == 0 && ((format && tagtype == TAG_TYPE_HTML && has_power_in_power(*this)) || (tagtype == TAG_TYPE_TERMINAL && po.use_unicode_signs && (colorize < 0 || has_nonunicode_power(*this, po))))) {
-		ips_n.power_depth = (colorize <= -10 || has_nonunicode_power(*this, po, true) ? -2 : -1);
+	if(ips.depth == 0 && ((format && tagtype == TAG_TYPE_HTML && has_power_in_power(*this)) || ((tagtype == TAG_TYPE_TERMINAL || !format) && po.use_unicode_signs && (po.use_unicode_signs > UNICODE_SIGNS_ON || has_nonunicode_power(*this, po))))) {
+		ips_n.power_depth = (po.use_unicode_signs == UNICODE_SIGNS_WITHOUT_EXPONENTS || has_nonunicode_power(*this, po, true) ? -2 : -1);
 	}
-	if(ips.depth == 0 && tagtype == TAG_TYPE_TERMINAL && colorize < 0) {
-		colorize = -colorize;
-		if(colorize >= 10) colorize /= 10;
-	}
-	bool flat_power = ips_n.power_depth != 0 || (tagtype != TAG_TYPE_TERMINAL && (!format || tagtype != TAG_TYPE_HTML));
+	bool flat_power = ips_n.power_depth != 0;
 	if(precision() >= 0 && (ips_n.parent_precision < 0 || precision() < ips_n.parent_precision)) ips_n.parent_precision = precision();
 	switch(m_type) {
 		case STRUCT_NUMBER: {
@@ -3694,14 +3705,30 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 							po2.twos_complement = false;
 							po2.hexadecimal_twos_complement = false;
 							po2.binary_bits = 0;
-							print_str += nrbase.print(po2, true, false, TAG_TYPE_HTML);
+							if(po2.use_unicode_signs) po2.use_unicode_signs = UNICODE_SIGNS_WITHOUT_EXPONENTS;
+							print_str += nrbase.print(po2, format, false, tagtype);
 						}
-						print_str += "^";
-						if(exp_minus) {
-							if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) print_str += SIGN_MINUS;
-							else print_str += "-";
+						if(po.base > 2 && !exp_minus && !flat_power && (tagtype == TAG_TYPE_TERMINAL || !format) && po.use_unicode_signs == UNICODE_SIGNS_ON && exp.length() == 1 && exp[0] >= '0' && exp[0] <= '9') {
+							switch(exp[0] - '0') {
+								case 2: {print_str += SIGN_POWER_2; break;}
+								case 3: {print_str += SIGN_POWER_3; break;}
+								case 4: {print_str += SIGN_POWER_4; break;}
+								case 5: {print_str += SIGN_POWER_5; break;}
+								case 6: {print_str += SIGN_POWER_6; break;}
+								case 7: {print_str += SIGN_POWER_7; break;}
+								case 8: {print_str += SIGN_POWER_8; break;}
+								case 9: {print_str += SIGN_POWER_9; break;}
+								case 0: {print_str += SIGN_POWER_0; break;}
+								case 1: {print_str += SIGN_POWER_1; break;}
+							}
+						} else {
+							print_str += "^";
+							if(exp_minus) {
+								if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) print_str += SIGN_MINUS;
+								else print_str += "-";
+							}
+							print_str += exp;
 						}
-						print_str += exp;
 					}
 				} else {
 					print_str += o_number.print(po, ips_n);
@@ -3908,7 +3935,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					i--;
 				}
 				print_str += CHILD(i).print(po, format, b_units ? 0 : colorize, tagtype, ips_n);
-				if(i_sign == MULTIPLICATION_SIGN_NONE && CHILD(i).isNumber() && print_str.find("^", prev_index) != string::npos) {
+				if(i_sign == MULTIPLICATION_SIGN_NONE && CHILD(i).isNumber() && (print_str.find_first_of("*^", prev_index) != string::npos || (po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && print_str.find(SIGN_MULTIDOT, prev_index) != string::npos) || ((po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && print_str.find(SIGN_MIDDLEDOT, prev_index) != string::npos) || (po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && print_str.find(SIGN_MULTIPLICATION, prev_index) != string::npos))) {
 					print_str.insert(prev_index, "(");
 					print_str += ")";
 				}
@@ -3948,7 +3975,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, flat_power);
 				print_str += CHILD(0).print(po, format, b_num2 ? 0 : colorize, tagtype, ips_n);
 			}
-			if(!ips_n.wrap && CHILD(0).isNumber() && (print_str.find("<sup>", l) != string::npos || print_str.find("^", l) != string::npos)) {
+			if(!ips_n.wrap && CHILD(0).isNumber() && (print_str.find("*", l) != string::npos || (po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && print_str.find(SIGN_MULTIDOT, l) != string::npos) || ((po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && print_str.find(SIGN_MIDDLEDOT, l) != string::npos) || (po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && print_str.find(SIGN_MULTIPLICATION, l) != string::npos))) {
 				print_str.insert(l, LEFT_PARENTHESIS);
 				print_str += RIGHT_PARENTHESIS;
 			}
@@ -4024,7 +4051,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				ips_n.wrap = CHILD(1).needsParenthesis(po, ips_n, *this, 2, true, flat_power);
 				print_str += CHILD(1).print(po, format, (b_units || b_num2) ? 0 : colorize, tagtype, ips_n);
 			}
-			if(!ips_n.wrap && CHILD(1).isNumber() && (print_str.find("<sup>", l) != string::npos || print_str.find("^", l) != string::npos)) {
+			if(!ips_n.wrap && CHILD(1).isNumber() && (print_str.find("*", l) != string::npos || (po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && print_str.find(SIGN_MULTIDOT, l) != string::npos) || ((po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && print_str.find(SIGN_MIDDLEDOT, l) != string::npos) || (po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && print_str.find(SIGN_MULTIPLICATION, l) != string::npos))) {
 				print_str.insert(l, LEFT_PARENTHESIS);
 				print_str += RIGHT_PARENTHESIS;
 			}
@@ -4042,11 +4069,11 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			if(CHILD(0).isUnit() && po.use_unicode_signs && po.abbreviate_names && CHILD(0).unit() == CALCULATOR->getDegUnit()) po2.use_unicode_signs = false;
 			size_t l = print_str.length();
 			print_str += CHILD(0).print(po2, format, b_units ? 0 : colorize, tagtype, ips_n);
-			if(!ips_n.wrap && CHILD(0).isNumber() && (print_str.find("<sup>", l) != string::npos || print_str.find("^", l) != string::npos)) {
+			if(!ips_n.wrap && CHILD(0).isNumber() && (print_str.find("<sup>", l) != string::npos || print_str.find("^", l) != string::npos || print_str.find("*", l) != string::npos || (po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && print_str.find(SIGN_MULTIDOT, l) != string::npos) || ((po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && print_str.find(SIGN_MIDDLEDOT, l) != string::npos) || (po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && print_str.find(SIGN_MULTIPLICATION, l) != string::npos))) {
 				print_str.insert(l, LEFT_PARENTHESIS);
 				print_str += RIGHT_PARENTHESIS;
 			}
-			if((!flat_power || (ips.power_depth == -1 && po.place_units_separately && CHILD(0).isUnit())) && tagtype == TAG_TYPE_TERMINAL && po.use_unicode_signs && CHILD(1).isInteger() && CHILD(1).number().isNonNegative() && CHILD(1).number() <= 9) {
+			if(po.base > 2 && (tagtype == TAG_TYPE_TERMINAL || !format) && ((!flat_power && po.use_unicode_signs == UNICODE_SIGNS_ON) || (po.use_unicode_signs != UNICODE_SIGNS_WITHOUT_EXPONENTS && po.use_unicode_signs != UNICODE_SIGNS_OFF && ips.power_depth == -1 && po.place_units_separately && CHILD(0).isUnit())) && CHILD(1).isInteger() && CHILD(1).number().isNonNegative() && CHILD(1).number() <= (po.base >= 10 ? 9 : po.base - 1)) {
 				if(!b_units && colorize && tagtype == TAG_TYPE_TERMINAL) print_str += (colorize == 2 ? "\033[0;96m" : "\033[0;36m");
 				switch(CHILD(1).number().intValue()) {
 					case 2: {print_str += SIGN_POWER_2; break;}

@@ -5796,7 +5796,13 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			str = str.substr(i + 1, str.length() - (i + 1));
 			parseAdd(str2, mstruct, po);
 			MathStructure *mstruct2 = new MathStructure();
-			parseAdd(str, mstruct2, po);
+			if(po.read_precision == ALWAYS_READ_PRECISION && mstruct->containsType(STRUCT_UNIT, false, true, true) > 0 && ((str.length() == 1 && str[0] >= '0' && str[0] <= '9') || (str.length() == 2 && str[0] == '-' && str[1] >= '0' && str[1] <= '9'))) {
+				ParseOptions po2 = po;
+				po2.read_precision = READ_PRECISION_WHEN_DECIMALS;
+				parseAdd(str, mstruct2, po2);
+			} else {
+				parseAdd(str, mstruct2, po);
+			}
 			if(!mstruct->inParentheses() && mstruct->isNumber() && mstruct2->representsNumber(true) && !mstruct2->containsUnknowns()) {
 				mstruct->raise_nocopy(mstruct2);
 			} else {
@@ -5808,7 +5814,13 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			str2 = str.substr(0, i);
 			str = str.substr(i + 1, str.length() - (i + 1));
 			parseAdd(str2, mstruct, po);
-			parseAdd(str, mstruct, po, OPERATION_RAISE);
+			if(po.read_precision == ALWAYS_READ_PRECISION && mstruct->containsType(STRUCT_UNIT, false, true, true) > 0 && ((str.length() == 1 && str[0] >= '0' && str[0] <= '9') || (str.length() == 2 && str[0] == '-' && str[1] >= '0' && str[1] <= '9'))) {
+				ParseOptions po2 = po;
+				po2.read_precision = READ_PRECISION_WHEN_DECIMALS;
+				parseAdd(str, mstruct, po2, OPERATION_RAISE);
+			} else {
+				parseAdd(str, mstruct, po, OPERATION_RAISE);
+			}
 		}
 	} else if(!str.empty() && str[str.length() - 1] == '\x1a') {
 		str.erase(str.length() - 1, 1);
