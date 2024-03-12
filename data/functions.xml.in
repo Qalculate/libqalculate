@@ -3475,7 +3475,7 @@
       <_title>Set Multiple Bits</_title>
       <_description>Set binary bits at specified range with binary bits from an integer (index 1 to length of range). The index of the least significant bit is 1. Specify bit width and signedness (use 1 for signed and 0 for unsigned) to allow sign changes when the most significant bit is set.</_description>
       <example>$name(0xFFFF, 9, 12, 0xA) = 0xFAFF</example>
-      <_names>r:bitset</_names>
+      <_names>r:setbits</_names>
       <argument index="1">
         <_title>Number</_title>
       </argument>
