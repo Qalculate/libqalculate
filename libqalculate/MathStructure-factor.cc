@@ -446,7 +446,32 @@ bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const E
 }
 
 bool MathStructure::integerFactorize() {
-	if(!isNumber()) return false;
+	if(isVector()) {
+		for(size_t i = 0; i < SIZE; i++) {
+			if(CHILD(i).isVector()) {
+				for(size_t i2 = 0; i2 < CHILD(i).size(); i2++) {
+					if(!CHILD(i)[i2].isNumber()) return false;
+				}
+			} else if(!CHILD(i).isNumber()) {
+				return false;
+			}
+		}
+		bool b = false;
+		for(size_t i = 0; i < SIZE; i++) {
+			if(CHILD(i).integerFactorize()) b = true;
+		}
+		return b;
+	}
+	if(!isNumber() || !o_number.isRational()) return false;
+	if(!o_number.isInteger()) {
+		MathStructure mnum(o_number.numerator()), mden(o_number.denominator());
+		if(mnum.integerFactorize() && mden.integerFactorize() && (mnum.isMultiplication() || mden.isMultiplication())) {
+			set(mnum);
+			divide(mden);
+			return true;
+		}
+		return false;
+	}
 	vector<Number> factors;
 	if(!o_number.factorize(factors)) return false;
 	if(factors.size() <= 1) return true;
