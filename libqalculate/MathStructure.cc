@@ -3099,6 +3099,7 @@ const MathStructure &MathStructure::find_x_var() const {
 	const MathStructure *mstruct;
 	const MathStructure *x_mstruct = &m_undefined;
 	for(size_t i = 0; i < SIZE; i++) {
+		if(isFunction() && o_function->getArgumentDefinition(i + 1) && o_function->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_TEXT) continue;
 		mstruct = &CHILD(i).find_x_var();
 		if(mstruct->isVariable()) {
 			if(!((UnknownVariable*) mstruct->variable())->interval().isUndefined()) {

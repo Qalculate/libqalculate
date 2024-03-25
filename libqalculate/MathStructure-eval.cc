@@ -2441,6 +2441,22 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 		convert_temperature_units(*this, eo);
 	}
 
+	if(isComparison() && SIZE == 2 && CHILD(0).isFunction() && CHILD(0).function()->subtype() == SUBTYPE_USER_FUNCTION && CHILD(0).size() == 1 && CHILD(0).function()->getArgumentDefinition(1) && CHILD(0).function()->getArgumentDefinition(1)->type() == ARGUMENT_TYPE_TEXT && (CHILD(0).function()->referenceName() == "awg" || CHILD(0).function()->referenceName() == "awgd") && CALCULATOR->defaultAssumptions()->type() < ASSUMPTION_TYPE_REAL && CHILD(0)[0].symbol().find_first_not_of(NUMBERS SPACE) != string::npos) {
+		MathStructure mtest;
+		ParseOptions pa = eo.parse_options;
+		pa.base = BASE_DECIMAL;
+		CALCULATOR->beginTemporaryStopMessages();
+		CALCULATOR->parse(&mtest, CHILD(0)[0].symbol(), pa);
+		CALCULATOR->endTemporaryStopMessages();
+		if(!mtest.representsReal(true)) {
+			AssumptionType t = CALCULATOR->defaultAssumptions()->type();
+			CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_REAL);
+			eval(eo);
+			CALCULATOR->defaultAssumptions()->setType(t);
+			return *this;
+		}
+	}
+
 	EvaluationOptions feo = eo;
 	feo.structuring = STRUCTURING_NONE;
 	feo.do_polynomial_division = false;
