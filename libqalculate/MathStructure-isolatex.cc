@@ -6079,6 +6079,32 @@ bool sync_trigonometric_functions(MathStructure &mstruct, const EvaluationOption
 	return b_ret;
 }
 
+bool replace_if_with_and(MathStructure &m, MathStructure *m_top = NULL, bool do_not = false) {
+	if(!m_top) return replace_if_with_and(m[0], &m, do_not);
+	if(m.isFunction() && m.function()->id() == FUNCTION_ID_IF && m.size() == 4 && m[3].isInteger() && !m[3].number().getBoolean() && m[0].representsScalar()) {
+		if(do_not) {
+			MathStructure *mand = new MathStructure(m[0]);
+			mand->transform(STRUCT_LOGICAL_NOT);
+			m.set_nocopy(m[2]);
+			m_top->transform_nocopy(STRUCT_LOGICAL_AND, mand);
+			m_top->swapChildren(1, 2);
+		} else {
+			MathStructure *mnot = new MathStructure(*m_top);
+			replace_if_with_and((*mnot)[0], mnot, true);
+			MathStructure *mand = new MathStructure(m[0]);
+			m.set_nocopy(m[1]);
+			m_top->transform_nocopy(STRUCT_LOGICAL_AND, mand);
+			m_top->swapChildren(1, 2);
+			m_top->transform_nocopy(STRUCT_LOGICAL_OR, mnot);
+		}
+		return true;
+	}
+	for(size_t i = 0; i < m.size(); i++) {
+		if(replace_if_with_and(m[i], m_top, do_not)) return true;
+	}
+	return false;
+}
+
 bool MathStructure::isolate_x(const EvaluationOptions &eo, const MathStructure &x_varp, bool check_result) {
 	return isolate_x(eo, eo, x_varp, check_result);
 }
@@ -6095,6 +6121,7 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const EvaluationOptio
 		}
 		return b;
 	}
+
 	MathStructure x_var(x_varp);
 	if(x_var.isUndefined()) {
 		const MathStructure *x_var2;
@@ -6109,6 +6136,10 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const EvaluationOptio
 		CHILD(0).calculateSubtract(CHILD(1), eo);
 		CHILD(1).clear(true);
 		CHILDREN_UPDATED
+	}
+
+	if(replace_if_with_and(*this)) {
+		return isolate_x(eo, feo, x_varp, check_result);
 	}
 
 	if(eo.expand > 0) simplify_functions(*this, eo, feo, x_var);
