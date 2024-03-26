@@ -6079,28 +6079,59 @@ bool sync_trigonometric_functions(MathStructure &mstruct, const EvaluationOption
 	return b_ret;
 }
 
-bool replace_if_with_and(MathStructure &m, MathStructure *m_top = NULL, bool do_not = false) {
-	if(!m_top) return replace_if_with_and(m[0], &m, do_not);
-	if(m.isFunction() && m.function()->id() == FUNCTION_ID_IF && m.size() == 4 && m[3].isInteger() && !m[3].number().getBoolean() && m[0].representsScalar()) {
-		if(do_not) {
-			MathStructure *mand = new MathStructure(m[0]);
-			mand->transform(STRUCT_LOGICAL_NOT);
-			m.set_nocopy(m[2]);
+bool replace_if_with_and(MathStructure &m, MathStructure *m_top = NULL, size_t index = 0) {
+	if(!m_top) return replace_if_with_and(m[0], &m, index);
+	if(m.isFunction() && m.function()->id() == FUNCTION_ID_IF && m.size() == 4 && m[3].isInteger() && !m[3].number().getBoolean() && (m[0].representsScalar() || (m[0].isVector() && (m[1].isVector() || m[1].representsScalar())))) {
+		if(index > 0) {
+			MathStructure *mand = NULL;
+			if(m[0].isVector()) {
+				index--;
+				for(size_t i = 0; i <= index && i < m[0].size(); i++) {
+					MathStructure *mand_i = new MathStructure(m[0][i]);
+					if(i < index) mand_i->transform(STRUCT_LOGICAL_NOT);
+					if(!mand) mand = mand_i;
+					else mand->transform_nocopy(STRUCT_LOGICAL_AND, mand_i);
+				}
+				if(index == m[0].size()) {
+					m.set_nocopy(m[2]);
+				} else if(m[1].isVector()) {
+					if(index >= m[1].size()) m.set_nocopy(m[1][index % m[1].size()]);
+					else m.set_nocopy(m[1][index]);
+				} else {
+					m.set_nocopy(m[1]);
+				}
+			} else {
+				mand = new MathStructure(m[0]);
+				if(!m[0].isVector() || index == m[0].size()) mand->transform(STRUCT_LOGICAL_NOT);
+				m.set_nocopy(m[2]);
+			}
 			m_top->transform_nocopy(STRUCT_LOGICAL_AND, mand);
 			m_top->swapChildren(1, 2);
 		} else {
-			MathStructure *mnot = new MathStructure(*m_top);
-			replace_if_with_and((*mnot)[0], mnot, true);
-			MathStructure *mand = new MathStructure(m[0]);
-			m.set_nocopy(m[1]);
-			m_top->transform_nocopy(STRUCT_LOGICAL_AND, mand);
-			m_top->swapChildren(1, 2);
-			m_top->transform_nocopy(STRUCT_LOGICAL_OR, mnot);
+			if(m[0].isVector()) {
+				MathStructure m_or;
+				m_or.setType(STRUCT_LOGICAL_OR);
+				for(size_t i = 0; i <= m[0].size(); i++) {
+					MathStructure *m_i = new MathStructure(*m_top);
+					replace_if_with_and((*m_i)[0], m_i, i + 1);
+					m_or.addChild_nocopy(m_i);
+				}
+				if(m_or.size() == 1) m_or.setToChild(1);
+				m_top->set_nocopy(m_or);
+			} else {
+				MathStructure *mnot = new MathStructure(*m_top);
+				replace_if_with_and((*mnot)[0], mnot, 1);
+				MathStructure *mand = new MathStructure(m[0]);
+				m.set_nocopy(m[1]);
+				m_top->transform_nocopy(STRUCT_LOGICAL_AND, mand);
+				m_top->swapChildren(1, 2);
+				m_top->transform_nocopy(STRUCT_LOGICAL_OR, mnot);
+			}
 		}
 		return true;
 	}
 	for(size_t i = 0; i < m.size(); i++) {
-		if(replace_if_with_and(m[i], m_top, do_not)) return true;
+		if(replace_if_with_and(m[i], m_top, index)) return true;
 	}
 	return false;
 }
