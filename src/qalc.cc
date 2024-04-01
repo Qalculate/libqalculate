@@ -1797,7 +1797,7 @@ void set_option(string str) {
 #define STR_AND_TABS_2b(s, sh, d, v, s0, s1) if(SET_OPTION_MATCHES(s, sh)) {STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(1"; if(v == 1) {str += "*";} str += " = "; str += s0; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s1; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str()); SET_OPTION_FOUND}
 #define STR_AND_TABS_3(s, sh, d, v, s0, s1, s2, s3) if(SET_OPTION_MATCHES(s, sh)) {STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str()); SET_OPTION_FOUND}
 #define STR_AND_TABS_4(s, sh, d, v, s0, s1, s2, s3, s4) if(SET_OPTION_MATCHES(s, sh)) {STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ", 4"; if(v == 4) {str += "*";} str += " = "; str += s4; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str()); SET_OPTION_FOUND}
-#define STR_AND_TABS_4M(s, sh, d, v, sm, s0, s1, s2, s3) if(SET_OPTION_MATCHES(s, sh)) {STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(-1"; if(v == -1) {str += "*";} str += " = "; str += sm; str += ", 0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; if(v == 3) {str += "*";} str += " = "; str += s3; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str()); SET_OPTION_FOUND}
+#define STR_AND_TABS_4M(s, sh, d, v, sm, s0, s1, s2, s3) if(SET_OPTION_MATCHES(s, sh)) {STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(-1"; if(v == -1) {str += "*";} str += " = "; str += sm; str += ", 0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str()); SET_OPTION_FOUND}
 #define STR_AND_TABS_FR(s, sh, d, v, sm, s0, s1, s2, s3, s4, s5, s6) if(SET_OPTION_MATCHES(s, sh)) {STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(-1"; if(v == -1) {str += "*";} str += " = "; str += sm; str += ", 0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ", 4"; if(v == 4) {str += "*";} str += " = "; str += s4; str += ", 5"; if(v == 5) {str += "*";} str += " = "; str += s5; str += ", "; str += s6; str += ")"; if(v == 6) {str += " 1/"; str += i2s(CALCULATOR->fixedDenominator()); str += "*";} CHECK_IF_SCREEN_FILLED_PUTS(str.c_str()); SET_OPTION_FOUND}
 #define STR_AND_TABS_9(s, sh, d, v, s0, s1, s2, s3, s4, s5, s6, s7, s8) if(SET_OPTION_MATCHES(s, sh)) {STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ", 4"; if(v == 4) {str += "*";} str += " = "; str += s4; str += ", 5"; if(v == 5) {str += "*";} str += " = "; str += s5; str += ", 6"; if(v == 6) {str += "*";} str += " = "; str += s6; str += ", 7"; if(v == 7) {str += "*";} str += " = "; str += s7; str += ", 8"; if(v == 8) {str += "*";} str += " = "; str += s8; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str()); SET_OPTION_FOUND}
 #define STR_AND_TABS_11(s, sh, d, v, s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10) if(SET_OPTION_MATCHES(s, sh)) {STR_AND_TABS_SET(s, sh); SET_DESCRIPTION(d); str += "(0"; if(v == 0) {str += "*";} str += " = "; str += s0; str += ", 1"; if(v == 1) {str += "*";} str += " = "; str += s1; str += ", 2"; if(v == 2) {str += "*";} str += " = "; str += s2; str += ", 3"; if(v == 3) {str += "*";} str += " = "; str += s3; str += ", 4"; if(v == 4) {str += "*";} str += " = "; str += s4; str += ", 5"; if(v == 5) {str += "*";} str += " = "; str += s5; str += ", 6"; if(v == 6) {str += "*";} str += " = "; str += s6; str += ", 7"; if(v == 7) {str += "*";} str += " = "; str += s7; str += ", 8"; if(v == 8) {str += "*";} str += " = "; str += s8; str += ", 9"; if(v == 9) {str += "*";} str += " = "; str += s9; str += ", 10"; if(v == 10) {str += "*";} str += " = "; str += s10; str += ")"; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str()); SET_OPTION_FOUND}
@@ -3265,6 +3265,8 @@ int main(int argc, char *argv[]) {
 #endif
 			fputs("\n\t-f, -file", stdout); fputs(" ", stdout); FPUTS_UNICODE(_("FILE"), stdout); fputs("\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("execute commands from a file first"));
+			fputs("\n\t-h, -help\n", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("display this help and exit"));
 			fputs("\n\t-i, -interactive\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("start in interactive mode"));
 			fputs("\n\t-l, -list", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("SEARCH TERM"), stdout); fputs("]\n", stdout);
@@ -5220,6 +5222,7 @@ int main(int argc, char *argv[]) {
 			PUTS_UNICODE(_("factor")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("find"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("list"), stdout);  fputs(" [", stdout); FPUTS_UNICODE(_("NAME"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED;
 			FPUTS_UNICODE(_("function"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("EXPRESSION")); CHECK_IF_SCREEN_FILLED
+			FPUTS_UNICODE(_("help"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("COMMAND"), stdout);puts("]");  CHECK_IF_SCREEN_FILLED
 #ifdef HAVE_LIBREADLINE
 			PUTS_UNICODE(_("history")); CHECK_IF_SCREEN_FILLED
 #endif
@@ -5240,7 +5243,7 @@ int main(int argc, char *argv[]) {
 			PUTS_UNICODE(_("stack")); CHECK_IF_SCREEN_FILLED
 			PUTS_UNICODE(_("clear stack")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("copy"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("INDEX"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED
-			FPUTS_UNICODE(_("move"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("INDEX 1"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("INDEX 2")); CHECK_IF_SCREEN_FILLED
+			FPUTS_UNICODE(_("move"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("INDEX 1"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("INDEX 2"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("pop"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("INDEX"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("rotate"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("DIRECTION"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("swap"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("INDEX 1"), stdout); fputs("] [", stdout); FPUTS_UNICODE(_("INDEX 2"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED
@@ -5512,6 +5515,7 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- angle / phasor (show complex numbers in angle/phasor notation)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- fraction (show result as mixed fraction)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- decimals (show result as decimal fraction)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- 1/# (show as mixed fraction with specified denominator)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("prepend with - to show as simple fraction"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");

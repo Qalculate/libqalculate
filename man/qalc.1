@@ -39,7 +39,7 @@ execute commands from a file first
 .PP
 .TP 8
 .B \-h, \-\-help
-display this help and exits
+display a list of command line options and exit
 .PP
 .TP 8
 .B \-i, \-\-interactive
@@ -47,23 +47,23 @@ start in interactive mode
 .PP
 .TP 8
 .B \-l, \-\-list \fI[search term]\fP
-displays a list of all user-defined or matching variables, functions, units, and prefixes.
+display a list of all user-defined or matching variables, functions, units, and prefixes, and exit
 .PP
 .TP 8
 .B \-\-list\-functions \fI[search term]\fP
-displays a list of all or matching functions.
+display a list of all or matching functions and exit
 .PP
 .TP 8
 .B \-\-list\-prefixes \fI[search term]\fP
-displays a list of all or matching prefixes.
+display a list of all or matching prefixes and exit
 .PP
 .TP 8
 .B \-\-list\-units \fI[search term]\fP
-displays a list of all or matching units.
+display a list of all or matching units and exit
 .PP
 .TP 8
 .B \-\-list\-variables \fI[search term]\fP
-displays a list of all or matching variables.
+display a list of all or matching variables and exit
 .PP
 .TP 8
 .B \-m, \-\-time \fImilliseconds\fP
@@ -182,7 +182,7 @@ Example: function func1 5*\\x.
 .B help \fI[command]\fP
 .PP
 .TP 8
-.B info
+.B info \fIname\fP
 Displays information about a function, variable, unit, or prefix.
 .br
 Example: info sin.
@@ -257,7 +257,7 @@ Clears the entire RPN stack.
 Duplicates a value on the RPN stack to the top of the stack. If no index is specified, the top of the stack is duplicated. Index 1 is the top of stack and negative index values count from the bottom of the stack.
 .PP
 .TP 8
-.B move \fIindex 1 index 2\fP
+.B move \fIindex 1 [index 2]\fP
 Changes the position of a value on the RPN stack. Index 1 is the top of stack and negative index values count from the bottom of the stack.
 .br
 Example: move 2 4
@@ -326,7 +326,7 @@ Default assumptions for unknown variables.
 Calculation:
 .PP
 .TP 8
-.B angle unit, angle \fI(0 = none, 1* = radians, 2 = degrees, 3 = gradians)\fP
+.B angle unit, angle \fI(0 = none, 1* = radians, 2 = degrees, 3 = gradians, 4 = custom)\fP
 Default angle unit for trigonometric functions.
 .PP
 .TP 8
@@ -429,6 +429,9 @@ Numerical display:
 .PP
 .TP 8
 .B base display, basedisp \fI(0 = none, 1* = normal, 2 = alternative)\fP
+.PP
+.TP 8
+.B binary bits, bits \fI(0* = auto, >= 2)\fP
 .PP
 .TP 8
 .B complex form, cplxform \fI(0* = rectangular, 1 = exponential, 2 = polar, 3 = cis, 4 = angle)\fP
@@ -584,7 +587,7 @@ Use negative exponents instead of division for units in result (m/s = m*s^-1).
 .B sync units, sync \fI(on*, off)\fP
 .PP
 .TP 8
-.B temperature units, temp \fI(0* = hybrid, 1 = absolute, 2 = relative)\fP
+.B temperature calculation, temp \fI(0* = hybrid, 1 = absolute, 2 = relative)\fP
 Determines how expressions with temperature units are calculated (hybrid acts as absolute if the expression contains different temperature units, otherwise as relative).
 .PP
 .TP 8
@@ -795,10 +798,11 @@ prepend with + or - to force/disable use of mixed units
 .PP
 .TP 8
 .B Fractions
-- fraction (show result as mixed, or simple if prepended with '-', fraction)
-show as mixed fraction with specified denominator
+- fraction (show result as mixed fraction)
 .br
-- 1/# (show as mixed, or simple if prepended with '-', fraction with specified denominator)
+- decimals (show result as decimal fraction)
+.br
+- 1/# (show as mixed fraction with specified denominator)
 .br
 prepend with - to show as simple fraction
 .PP
