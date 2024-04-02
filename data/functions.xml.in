@@ -1331,6 +1331,17 @@
         <_title>Exponent</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="powertower">
+      <_title>Power Tower</_title>
+      <_names>r:powertower</_names>
+      <example>$name(2, 4) = 2^(2^(2^2)) = 65 536</example>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+      <argument index="2">
+        <_title>Order</_title>
+      </argument>
+    </builtin_function>
     <function>
       <_title>Base-2 Logarithm</_title>
       <_names>rs:log2</_names>

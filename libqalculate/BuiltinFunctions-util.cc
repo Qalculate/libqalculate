@@ -728,6 +728,7 @@ int CustomSumFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		mprocess.eval(eo2);
 		mstruct = mprocess;
 	}
+	if(!check_recursive_depth(mstruct)) return 0;
 	return 1;
 
 }

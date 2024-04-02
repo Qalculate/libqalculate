@@ -881,3 +881,55 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	return -1;
 }
 
+bool check_recursive_depth(const MathStructure &m, size_t max_depth, bool show_error) {
+	if(max_depth == 0) {
+		if(show_error) CALCULATOR->error(true, _("Maximum recursive depth reached."), NULL);
+		return false;
+	}
+	for(size_t i = 0; i < m.size(); i++) {
+		if(!check_recursive_depth(m[i], max_depth - 1, show_error)) return false;
+	}
+	return true;
+}
+
+PowerTowerFunction::PowerTowerFunction() : MathFunction("powertower", 2) {
+	Argument *arg = new Argument("", false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
+}
+bool PowerTowerFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 2 && vargs[0].representsNumber() && vargs[1].representsInteger() && vargs[1].representsPositive();}
+bool PowerTowerFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 2 && vargs[0].representsNonNegative() && vargs[1].representsInteger() && vargs[1].representsPositive();}
+bool PowerTowerFunction::representsNonComplex(const MathStructure &vargs, bool b) const {return representsReal(vargs, b);}
+bool PowerTowerFunction::representsComplex(const MathStructure &vargs, bool) const {return false;}
+bool PowerTowerFunction::representsNonZero(const MathStructure &vargs, bool) const {return vargs.size() == 2 && vargs[0].representsNonZero() && vargs[1].representsInteger() && vargs[1].representsPositive();}
+int PowerTowerFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[1].isVector()) return 0;
+	mstruct = vargs[0];
+	mstruct.eval(eo);
+	if(mstruct.isVector()) return -1;
+	if(mstruct.isOne()) return 1;
+	MathStructure mbak(mstruct);
+	for(long int i = 1; vargs[1].number() > i; i++) {
+		if(CALCULATOR->aborted()) return false;
+		if(mstruct.isNumber()) {
+			Number nr(mbak.number());
+			if(nr.raise(mstruct.number()) && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
+				mstruct.set(nr, true);
+				continue;
+			}
+		}
+		if(mstruct.isNumber() || i == 1) {
+			Number nr(vargs[1].number());
+			nr -= i;
+			if(nr > 1000) {
+				CALCULATOR->error(true, _("Maximum recursive depth reached."), NULL);
+				return 0;
+			}
+		}
+		mstruct.raise(mbak);
+		mstruct.swapChildren(1, 2);
+	}
+	if(!check_recursive_depth(mstruct)) return 0;
+	return 1;
+}

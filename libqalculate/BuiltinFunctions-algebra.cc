@@ -200,6 +200,7 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		else mstruct.replace(vars[i], ((UnknownVariable*) vars[i])->interval());
 		vars[i]->destroy();
 	}
+	if(!check_recursive_depth(mstruct)) return 0;
 	return 1;
 
 }

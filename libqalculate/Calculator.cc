@@ -1028,6 +1028,11 @@ MathFunction *Calculator::getFunction(size_t index) const {
 void Calculator::setDefaultAssumptions(Assumptions *ass) {
 	if(default_assumptions) delete default_assumptions;
 	default_assumptions = ass;
+	if(!default_assumptions) {
+		default_assumptions = new Assumptions;
+		default_assumptions->setType(ASSUMPTION_TYPE_REAL);
+		default_assumptions->setSign(ASSUMPTION_SIGN_UNKNOWN);
+	}
 }
 Assumptions *Calculator::defaultAssumptions() {
 	return default_assumptions;
@@ -1737,6 +1742,8 @@ void Calculator::addBuiltinFunctions() {
 
 	f_ln = addFunction(new LogFunction());
 	f_logn = addFunction(new LognFunction());
+
+	addFunction(new PowerTowerFunction());
 
 	f_lambert_w = addFunction(new LambertWFunction());
 

@@ -154,5 +154,7 @@ void add_fraction_of_turn(MathStructure &mstruct, const EvaluationOptions &eo, l
 void multiply_by_fraction_of_radian(MathStructure &mstruct, const EvaluationOptions &eo, long int num, long int den);
 Unit *default_angle_unit(const EvaluationOptions &eo, bool return_rad_if_none = false);
 
+bool check_recursive_depth(const MathStructure &m, size_t max_depth = 1000, bool show_error = true);
+
 #endif
 
