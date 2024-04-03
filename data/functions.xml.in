@@ -850,6 +850,25 @@
         <test>false</test>
       </argument>
     </function>
+    <function>
+      <_title>Multiples</_title>
+      <_names>r:multiples</_names>
+      <_description>Returns all multiples of a value in the specified range.</_description>
+      <expression>if(ceil(\y/abs(\x))&gt;floor(\z/abs(\x)),[],genvector("i"*abs(\x),ceil(\y/abs(\x)),floor(\z/abs(\x)),1,"i",1))</expression>
+      <condition>\y&lt;=\z</condition>
+      <argument type="number" index="1">
+        <_title>Value</_title>
+        <zero_forbidden>true</zero_forbidden>
+      </argument>
+      <argument type="number" index="2">
+        <_title>Min</_title>
+        <test>false</test>
+      </argument>
+      <argument type="number" index="3">
+        <_title>Max</_title>
+        <test>false</test>
+      </argument>
+    </function>
     <category>
       <_title>Rounding</_title>
       <_title>Rounding</_title>
