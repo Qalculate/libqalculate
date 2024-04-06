@@ -4105,6 +4105,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					if(ips_n.power_depth < 0) ips_n.power_depth = 1;
 					else ips_n.power_depth++;
 					ips_n.wrap = CHILD(1).needsParenthesis(po, ips_n, *this, 2, true, true);
+					l = print_str.length();
 					print_str += CHILD(1).print(po2, format, b_units ? 0 : colorize, tagtype, ips_n);
 				}
 				if(b_units && colorize && tagtype == TAG_TYPE_TERMINAL) print_str += "\033[0m";
@@ -4116,6 +4117,9 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					else ips_n.power_depth++;
 					print_str += CHILD(1).print(po2, format, b_units ? 0 : colorize, tagtype, ips_n);
 					print_str += "</sup>";
+				} else if(!ips_n.wrap && CHILD(1).isNumber() && (print_str.find("<sup>", l) != string::npos || print_str.find("^", l) != string::npos || print_str.find("*", l) != string::npos || (po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && print_str.find(SIGN_MULTIDOT, l) != string::npos) || ((po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && print_str.find(SIGN_MIDDLEDOT, l) != string::npos) || (po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && print_str.find(SIGN_MULTIPLICATION, l) != string::npos))) {
+					print_str.insert(l, LEFT_PARENTHESIS);
+					print_str += RIGHT_PARENTHESIS;
 				}
 			}
 			break;

@@ -1,3 +1,30 @@
+
+	* Add support for solving root(a, x)=b (requires rational value for ln(a)/ln(b))
+	* Use parentheses for exponent using scientific notation (with power of 10)
+	* Add checkAvailableVersion() variant returning package URL
+
+2024-04-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add multiples() function (returns multiples of a number within specified range)
+
+2024-04-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add powertower() function
+	* Add recursive depth limit to avoid running out of stack memory (causing segfault)
+
+2024-03-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Solve equations containing if() function
+	* Fix awg(x)=... and awgd(x)=... when default assumption type is not real and fix solve() with these equations
+
+2024-03-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support integer factorization of integers in matrix/vector, and of numerator and denominator in rational number
+
+2024-03-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix setbits()
+
 2024-03-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Do not apply "read precision" setting to integer exponents for values with units

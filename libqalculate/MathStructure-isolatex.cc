@@ -5083,8 +5083,8 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			break;
 		}
 		case STRUCT_FUNCTION: {
-			if(CHILD(0).function()->id() == FUNCTION_ID_ROOT && VALID_ROOT(CHILD(0))) {
-				if(CHILD(0)[0].contains(x_var)) {
+			if(CHILD(0).function()->id() == FUNCTION_ID_ROOT && SIZE == 2) {
+				if(CHILD(0)[0].contains(x_var) && VALID_ROOT(CHILD(0))) {
 					MathStructure *mposcheck = NULL;
 					bool b_test = false;
 					if(CHILD(0)[1].number().numeratorIsEven() && !CHILD(1).representsNonNegative(true)) {
@@ -5137,6 +5137,31 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						add_nocopy(mposcheck, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 						calculatesub(eo2, eo, false);
 					}
+					return true;
+				} else if(CHILD(0)[1].contains(x_var) && !CHILD(0)[0].contains(x_var) && CHILD(1).representsReal(true) && CHILD(0)[0].representsReal(true)) {
+					bool b_neg = (CHILD(0)[0].representsNegative(true) && CHILD(1).representsNegative(true));
+					MathStructure mbak(*this);
+					EvaluationOptions eo3 = eo;
+					eo3.approximation = APPROXIMATION_EXACT;
+					CALCULATOR->beginTemporaryStopMessages();
+					if(b_neg) CHILD(1).calculateNegate(eo2);
+					CHILD(1).transformById(FUNCTION_ID_LOG);
+					CHILD(1).calculateFunctions(eo3);
+					if(b_neg) CHILD(0)[0].calculateNegate(eo2);
+					CHILD(0)[0].transformById(FUNCTION_ID_LOG);
+					CHILD(0)[0].calculateFunctions(eo3);
+					CHILD(0).childUpdated(1);
+					CHILD(1).calculateDivide(CHILD(0)[0], eo2);
+					CHILD(0).setToChild(2, true);
+					CHILD(0).calculateInverse(eo2);
+					CHILDREN_UPDATED
+					isolate_x_sub(eo, eo2, x_var, morig);
+					if(!isZero() && test_comparisons(mbak, *this, x_var, eo) < 0) {
+						CALCULATOR->endTemporaryStopMessages();
+						set(mbak);
+						return false;
+					}
+					CALCULATOR->endTemporaryStopMessages(true);
 					return true;
 				}
 			} else if(CHILD(0).function()->id() == FUNCTION_ID_LOG && CHILD(0).size() == 1) {

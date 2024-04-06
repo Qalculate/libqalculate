@@ -927,6 +927,9 @@ char *utf8_strup(const char *str, int l) {
 
 extern size_t write_data(void *ptr, size_t size, size_t nmemb, string *sbuffer);
 int checkAvailableVersion(const char *version_id, const char *current_version, string *available_version, int timeout) {
+	return checkAvailableVersion(version_id, current_version, available_version, NULL, timeout);
+}
+int checkAvailableVersion(const char *version_id, const char *current_version, string *available_version, string *url, int timeout) {
 #ifdef HAVE_LIBCURL
 	string sbuffer;
 	char error_buffer[CURL_ERROR_SIZE];
@@ -966,6 +969,31 @@ int checkAvailableVersion(const char *version_id, const char *current_version, s
 	remove_blank_ends(s_version);
 	if(s_version.empty()) return -1;
 	if(available_version) *available_version = s_version;
+	if(url) {
+#ifdef _WIN32
+#	ifdef _WIN64
+#		ifdef WIN_PORTABLE
+		i = sbuffer.find("windows-x64-portable");
+#		else
+		i = sbuffer.find("windows-x64-installer");
+#		endif
+#	else
+#		ifdef WIN_PORTABLE
+		i = sbuffer.find("windows-i386-portable");
+#		else
+		i = sbuffer.find("windows-i386-installer");
+#		endif
+#	endif
+#else
+		i = sbuffer.find("linux-x86_64-selfcontained");
+#endif
+		if(i != string::npos) i = sbuffer.find(":", i);
+		if(i != string::npos) {
+			i2 = sbuffer.find('\n', i);
+			if(i2 == string::npos) *url = sbuffer.substr(i + 1, sbuffer.length() - (i + 1));
+			else *url = sbuffer.substr(i + 1, i2 - (i + 1));
+		}
+	}
 	if(s_version != current_version) {
 		std::vector<int> version_parts_old, version_parts_new;
 
