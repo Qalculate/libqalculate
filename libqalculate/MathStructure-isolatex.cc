@@ -2892,7 +2892,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 									CALCULATOR->endTemporaryStopMessages(true);
 									return true;
 								}
-							} else if(eo3.allow_complex) {
+							} else {
 
 								if(mC.representsNegative(true)) {
 									mC.calculateNegate(eo3);

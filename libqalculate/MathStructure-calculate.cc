@@ -1227,13 +1227,6 @@ void reduce(const MathStructure &mnum, MathStructure &mden, Number &nr, const Ev
 	}
 }
 
-bool addablePower(const MathStructure &mstruct, const EvaluationOptions &eo) {
-	if(mstruct[0].representsNonNegative(true)) return true;
-	if(mstruct[1].representsInteger()) return true;
-	//return eo.allow_complex && mstruct[0].representsNegative(true) && mstruct[1].isNumber() && mstruct[1].number().isRational() && mstruct[1].number().denominatorIsEven();
-	return eo.allow_complex && mstruct[1].isNumber() && mstruct[1].number().isRational() && mstruct[1].number().denominatorIsEven();
-}
-
 int cmp_num_abs_2_to_den(const Number &nr) {
 	mpz_t z_num;
 	mpz_init(z_num);
@@ -2115,11 +2108,8 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							if(CHILD(0).isMultiplication()) CHILD(0)[0].setPrefix(mstruct[0].prefix());
 							else CHILD(0).setPrefix(mstruct[0].prefix());
 						}
-						bool b = eo.allow_complex || CHILD(0).representsNonNegative(true), b2 = true, b_warn = false;
-						if(!b) {
-							// if complex not allowed and base might be negative, exponents must be integers
-							b = CHILD(1).representsInteger() && mstruct[1].representsInteger();
-						}
+						bool b = true;
+						bool b2 = true, b_warn = false;
 						bool b_neg = mstruct[1].representsOdd() && !(mstruct[0] == CHILD(0));
 						if(b) {
 							b = false;
@@ -3750,7 +3740,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		}
 		case STRUCT_POWER: {
 			// (x^y)^z
-			if((eo.allow_complex && CHILD(1).representsFraction()) || (mstruct.representsInteger() && (eo.allow_complex || CHILD(0).representsInteger())) || representsNonNegative(true)) {
+			if(CHILD(1).representsFraction() || mstruct.representsInteger() || representsNonNegative(true)) {
 				// (x^a)^b=x^(a*b) if x>=0 or -1<a<1 or b is integer
 				if((((!eo.assume_denominators_nonzero || eo.warn_about_denominators_assumed_nonzero) && !CHILD(0).representsNonZero(true)) || CHILD(0).isZero()) && CHILD(1).representsNegative(true)) {
 					// check that a is positive or x is non-zero
@@ -3944,7 +3934,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 					b = true;
 					bool bneg = representsNegative(true);
 					for(size_t i = 0; i < mstruct.size(); i++) {
-						if(!mstruct[i].representsInteger() && (!bneg || !eo.allow_complex || !mstruct[i].isNumber() || !mstruct[i].number().isRational() || !mstruct[i].number().denominatorIsEven())) {
+						if(!mstruct[i].representsInteger() && (!bneg || !mstruct[i].isNumber() || !mstruct[i].number().isRational() || !mstruct[i].number().denominatorIsEven())) {
 							b = false;
 							break;
 						}
