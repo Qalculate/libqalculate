@@ -73,7 +73,7 @@
   </object>
   <object>
     <_name>Saturn</_name>
-    <year>10759.22</year>
+    <year>10755.70</year>
     <speed>9.68</speed>
     <eccentricity>0.0565</eccentricity>
     <inclination>2.485</inclination>
@@ -91,8 +91,8 @@
     <speed>5.43</speed>
     <eccentricity>0.008678</eccentricity>
     <inclination>1.770</inclination>
-    <satellites>14</satellites>
-    <mass>1.02413E26</mass>
+    <satellites>16</satellites>
+    <mass>1.02409E26</mass>
     <density>1.638</density>
     <area>7.6187E9</area>
     <gravity>11.15</gravity>
@@ -106,7 +106,7 @@
     <eccentricity>0.2488</eccentricity>
     <inclination>17.16</inclination>
     <satellites>5</satellites>
-    <mass>1.303E22+/-0.003E22</mass>
+    <mass>1.3030(30)E22</mass>
     <density>1.854+/-0.006</density>
     <area>1.774443E7</area>
     <gravity>0.620</gravity>
@@ -119,13 +119,21 @@
     <speed>6.80</speed>
     <eccentricity>0.04717</eccentricity>
     <inclination>0.773</inclination>
-    <satellites>27</satellites>
-    <mass>8.6810E25+/-0.0013E25</mass>
+    <satellites>28</satellites>
+    <mass>8.6810(13)E25</mass>
     <density>1.27</density>
     <area>8.1156E9</area>
     <gravity>8.69</gravity>
     <temperature>76</temperature>
     <radius>25362+/-7</radius>
+  </object>
+  <object>
+    <_name>Sun</_name>
+    <mass>1.988470(70)E30</mass>
+    <density>1.408</density>
+    <area>6.09E12</area>
+    <gravity>274</gravity>
+    <radius>695660+/-140</radius>
   </object>
 </QALCULATE>
 <!-- 
@@ -140,4 +148,5 @@ It uses material from the Wikipedia articles
 "Saturn" (http://www.wikipedia.org/wiki/Saturn)
 "Uranus" (http://www.wikipedia.org/wiki/Uranus)
 "Venus" (http://www.wikipedia.org/wiki/Venus)
+"Sun" (http://www.wikipedia.org/wiki/Sun)
 -->

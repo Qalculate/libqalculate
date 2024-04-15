@@ -300,6 +300,15 @@
       </base>
     </unit>
     <unit type="alias">
+      <_title>Solar Radius (nominal)</_title>
+      <_names>r:solar_radius,au:R_&#x2609;</_names>
+      <base>
+        <unit>m</unit>
+        <relation>695700000</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
       <_title>Pied du roi (French Royal Foot)</_title>
       <_names>r:pied_du_roi,p:pieds_du_roi</_names>
       <base>
@@ -786,6 +795,15 @@
         <prefix>3</prefix>
         <exponent>1</exponent>
       </part>
+    </unit>
+    <unit type="alias">
+      <_title>Solar Mass</_title>
+      <_names>r:solar_mass,au:M_&#x2609;</_names>
+      <base>
+        <unit>g</unit>
+        <relation>1.988470(70)E33</relation>
+        <exponent>1</exponent>
+      </base>
     </unit>
     <category>
       <_title>Density</_title>
@@ -3946,6 +3964,15 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
+      </unit>
+      <unit type="alias">
+        <_title>Solar Luminosity (nominal)</_title>
+        <_names>r:solar_luminosity,au:L_&#x2609;</_names>
+        <base>
+          <unit>W</unit>
+          <relation>3.828E26</relation>
+          <exponent>1</exponent>
+        </base>
       </unit>
     </category>
     <category>
