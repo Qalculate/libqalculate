@@ -964,7 +964,7 @@ void Number::set(string number, const ParseOptions &po) {
 	// determine if value is negative for numbers using binary or hexadecimal complement representation (number that begins with 1 or 8 is negative)
 	bool b_twos = false;
 #define TEST_TWOS \
-	b_twos = (po.twos_complement && po.base == 2 && number[index] == '1') || (po.hexadecimal_twos_complement && po.base == 16 && (number[index] == '8' || number[index] == '9' || (number[index] >= 'a' && number[index] <= 'f') || (number[index] >= 'A' && number[index] <= 'F'))); \
+	b_twos = (po.twos_complement && po.base == 2 && number[index] == '1') || (po.hexadecimal_twos_complement && po.base == 16 && (number[index] == '8' || number[index] == '9' || (number[index] >= 'a' && number[index] <= 'f') || (number[index] >= 'A' && number[index] <= 'F')) && number.find("p") == string::npos); \
 	if(b_twos && po.base == 2 && po.binary_bits > 1) {\
 		size_t n = 1;\
 		for(size_t i = index + 1; i < number.size(); i++) {\
@@ -986,7 +986,8 @@ void Number::set(string number, const ParseOptions &po) {
 		if(n * 4 != bits) b_twos = false;\
 	}\
 
-	bool numbers_started = false, minus = false, in_decimals = false, b_cplx = false;
+	bool numbers_started = false, minus = false, in_decimals = false, b_cplx = false, exp_minus = false;
+	unsigned long int exp = 0;
 	for(size_t index = 0; index < number.size(); index++) {
 		if(number[index] >= '0' && ((base >= 10 && number[index] <= '9') || (base < 10 && number[index] < '0' + base))) {
 			if(!numbers_started && !in_decimals) {TEST_TWOS}
@@ -1034,8 +1035,6 @@ void Number::set(string number, const ParseOptions &po) {
 		} else if(numbers_started && (((number[index] == 'E' || number[index] == 'e') && base <= 10 && index + 1 < number.length()) || (base == 16 && number[index] == 'p'))) {
 			index++;
 			numbers_started = false;
-			bool exp_minus = false;
-			unsigned long int exp = 0;
 			unsigned long int max_exp = ULONG_MAX / 10;
 			// scientific e-notation: read base-10 exponent after E
 			while(index < number.size()) {
@@ -1051,23 +1050,6 @@ void Number::set(string number, const ParseOptions &po) {
 					exp_minus = !exp_minus;
 				}
 				index++;
-			}
-			if(exp_minus) {
-				// if negative exponent multiply denominator
-				mpz_t e_den;
-				mpz_init(e_den);
-				mpz_ui_pow_ui(e_den, base == 16 ? 2 : 10, exp);
-				mpz_mul(den, den, e_den);
-				if(i_unc > 0) mpz_mul(mpq_denref(unc), mpq_denref(unc), e_den);
-				mpz_clear(e_den);
-			} else {
-				// if positive exponent multiply numerator
-				mpz_t e_num;
-				mpz_init(e_num);
-				mpz_ui_pow_ui(e_num, base == 16 ? 2 : 10, exp);
-				mpz_mul(num, num, e_num);
-				if(i_unc > 0) mpz_mul(mpq_numref(unc), mpq_numref(unc), e_num);
-				mpz_clear(e_num);
 			}
 			break;
 		} else if(number[index] == '.') {
@@ -1138,6 +1120,15 @@ void Number::set(string number, const ParseOptions &po) {
 		minus = !minus;
 	}
 	clear();
+	if(exp_minus && exp > 0) {
+		// if negative exponent multiply denominator
+		mpz_t e_den;
+		mpz_init(e_den);
+		mpz_ui_pow_ui(e_den, base == 16 ? 2 : 10, exp);
+		mpz_mul(den, den, e_den);
+		if(i_unc > 0) mpz_mul(mpq_denref(unc), mpq_denref(unc), e_den);
+		mpz_clear(e_den);
+	}
 	if(i_unc <= 0 && (po.read_precision == ALWAYS_READ_PRECISION || (in_decimals && po.read_precision == READ_PRECISION_WHEN_DECIMALS))) {
 
 		// read precision: uncertainty = value of last digit / 2 (e.g. 22.0=22.0+/-0.05)
@@ -1161,6 +1152,16 @@ void Number::set(string number, const ParseOptions &po) {
 		else mpz_set(mpq_numref(rv2), num);
 		mpz_set(mpq_denref(rv2), den);
 		mpq_canonicalize(rv2);
+
+		if(!exp_minus && exp > 0) {
+			// if positive exponent multiply numerator
+			mpz_t e_num;
+			mpz_init(e_num);
+			mpz_ui_pow_ui(e_num, base == 16 ? 2 : 10, exp);
+			mpz_mul(mpq_numref(rv1), mpq_numref(rv1), e_num);
+			mpz_mul(mpq_numref(rv2), mpq_numref(rv2), e_num);
+			mpz_clear(e_num);
+		}
 
 		mpfr_init2(fu_value, BIT_PRECISION);
 		mpfr_init2(fl_value, BIT_PRECISION);
@@ -1190,6 +1191,15 @@ void Number::set(string number, const ParseOptions &po) {
 
 		mpq_clears(rv1, rv2, NULL);
 	} else {
+		if(!exp_minus && exp > 0) {
+			// if positive exponent multiply numerator
+			mpz_t e_num;
+			mpz_init(e_num);
+			mpz_ui_pow_ui(e_num, base == 16 ? 2 : 10, exp);
+			mpz_mul(num, num, e_num);
+			if(i_unc > 0) mpz_mul(mpq_numref(unc), mpq_numref(unc), e_num);
+			mpz_clear(e_num);
+		}
 		if(minus) mpz_neg(num, num);
 		if(b_cplx) {
 			// i was found: this is an imaginary number

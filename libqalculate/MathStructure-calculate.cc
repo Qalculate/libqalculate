@@ -2108,8 +2108,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							if(CHILD(0).isMultiplication()) CHILD(0)[0].setPrefix(mstruct[0].prefix());
 							else CHILD(0).setPrefix(mstruct[0].prefix());
 						}
-						bool b = true;
-						bool b2 = true, b_warn = false;
+						bool b = true, b2 = true, b_warn = false;
 						bool b_neg = mstruct[1].representsOdd() && !(mstruct[0] == CHILD(0));
 						if(b) {
 							b = false;

@@ -1551,7 +1551,7 @@ bool Argument::test(MathStructure &value, int index, MathFunction *f, const Eval
 		if(value.isVector()) return false;
 	}
 	if(!b) {
-		if(b_error && (type() != ARGUMENT_TYPE_SYMBOLIC || !value.isUndefined())) {
+		if((b_error || (index == 2 && f->id() == FUNCTION_ID_ROOT && value.isNumber())) && (type() != ARGUMENT_TYPE_SYMBOLIC || !value.isUndefined())) {
 			if(sname.empty()) {
 				CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
 			} else {

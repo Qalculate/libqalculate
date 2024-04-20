@@ -2239,7 +2239,7 @@ msgstr "UTTRYCK"
 
 #: ../src/qalc.cc:5225
 msgid "COMMAND"
-msgstr ""
+msgstr "KOMMANDO"
 
 #. qalc command
 #: ../src/qalc.cc:5227 ../src/qalc.cc:5357 ../src/qalc.cc:5569

@@ -3099,7 +3099,6 @@ const MathStructure &MathStructure::find_x_var() const {
 	const MathStructure *mstruct;
 	const MathStructure *x_mstruct = &m_undefined;
 	for(size_t i = 0; i < SIZE; i++) {
-		if(isFunction() && o_function->getArgumentDefinition(i + 1) && o_function->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_TEXT) continue;
 		mstruct = &CHILD(i).find_x_var();
 		if(mstruct->isVariable()) {
 			if(!((UnknownVariable*) mstruct->variable())->interval().isUndefined()) {
@@ -3114,7 +3113,7 @@ const MathStructure &MathStructure::find_x_var() const {
 				x_mstruct = mstruct;
 			}
 		} else if(mstruct->isSymbolic()) {
-			if(!x_mstruct->isVariable() && (!x_mstruct->isSymbolic() || x_mstruct->symbol() > mstruct->symbol())) {
+			if(!x_mstruct->isVariable() && (m_type != STRUCT_FUNCTION || mstruct != &CHILD(i) || !o_function->getArgumentDefinition(i + 1) || o_function->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_TEXT) && (!x_mstruct->isSymbolic() || x_mstruct->symbol() > mstruct->symbol())) {
 				x_mstruct = mstruct;
 			}
 		}

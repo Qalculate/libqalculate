@@ -197,7 +197,7 @@ RootFunction::RootFunction() : MathFunction("root", 2) {
 	arg->setComplexAllowed(false);
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
-	NumberArgument *arg2 = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, true);
+	NumberArgument *arg2 = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false);
 	arg2->setComplexAllowed(false);
 	arg2->setRationalNumber(true);
 	arg2->setHandleVector(true);

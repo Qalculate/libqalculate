@@ -1,3 +1,12 @@
+2024-04-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add support for column vector in if() function
+
+2024-04-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Relax conditions for (x^a)^b=x^(a*b) and x^a*x^b=x^(a+b) when complex numbers are deactivated (fixes segfaults)
+
+2024-04-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add support for solving root(a, x)=b (requires rational value for ln(a)/ln(b))
 	* Use parentheses for exponent using scientific notation (with power of 10)
