@@ -361,6 +361,7 @@ Calculator::Calculator() {
 	u_rad = NULL; u_gra = NULL; u_deg = NULL;
 	priv->custom_angle_unit = NULL;
 
+	priv->simplified_percentage_used = false;
 	b_save_called = false;
 
 	ILLEGAL_IN_NAMES = "\a\b" + DOT_S + RESERVED OPERATORS SEXADOT SPACES PARENTHESISS VECTOR_WRAPS COMMAS;
@@ -616,6 +617,7 @@ Calculator::Calculator(bool ignore_locale) {
 	u_rad = NULL; u_gra = NULL; u_deg = NULL;
 	priv->custom_angle_unit = NULL;
 
+	priv->simplified_percentage_used = false;
 	b_save_called = false;
 
 	ILLEGAL_IN_NAMES = "\a\b" + DOT_S + RESERVED OPERATORS SEXADOT SPACES PARENTHESISS VECTOR_WRAPS COMMAS;
@@ -1461,6 +1463,13 @@ void Calculator::setCustomAngleUnit(Unit *u) {
 }
 Unit *Calculator::customAngleUnit() {
 	return priv->custom_angle_unit;
+}
+
+bool Calculator::simplifiedPercentageUsed() const {
+	return priv->simplified_percentage_used;
+}
+void Calculator::setSimplifiedPercentageUsed(bool percentage_used) {
+	priv->simplified_percentage_used = percentage_used;
 }
 
 void Calculator::setCustomInputBase(Number nr) {

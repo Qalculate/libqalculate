@@ -1274,6 +1274,9 @@ class Calculator {
 	Unit *customAngleUnit();
 	void setCustomAngleUnit(Unit *u);
 
+	bool simplifiedPercentageUsed() const;
+	void setSimplifiedPercentageUsed(bool percentage_used = true);
+
 	/** @name Functions for localization */
 	//@{
 	/** Returns the preferred decimal point character.

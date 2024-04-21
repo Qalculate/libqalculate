@@ -79,7 +79,7 @@ bool expression_executed = false;
 bool avoid_recalculation = false;
 bool hide_parse_errors = false;
 ParsingMode nonrpn_parsing_mode = PARSING_MODE_ADAPTIVE, saved_parsing_mode;
-bool saved_percent;
+int saved_percent;
 bool rpn_mode = false, saved_rpn_mode = false;
 bool caret_as_xor = false, saved_caret_as_xor = false;
 string custom_angle_unit, saved_custom_angle_unit;
@@ -101,7 +101,7 @@ bool result_only = false, vertical_space = true;
 bool do_imaginary_j = false;
 int sigint_action = 1;
 bool unittest = false;
-bool simplified_percentage = true;
+int simplified_percentage = -1;
 int defs_edited = 0;
 int unicode_exponents = 1;
 bool had_to_expression = false;
@@ -6759,10 +6759,10 @@ bool ask_dot() {
 #endif
 		remove_blank_ends(svalue);
 		int v = -1;
-		if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
-			v = s2i(svalue);
-		} else if(svalue.empty()) {
+		if(svalue.empty()) {
 			v = 0;
+		} else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
 		}
 		bool das = evalops.parse_options.dot_as_separator;
 		if(v == 2) {
@@ -6782,6 +6782,80 @@ bool ask_dot() {
 			break;
 		} else {
 			FPUTS_UNICODE(_("Dot interpretation"), stdout);
+		}
+	}
+	if(!interactive_mode && !load_defaults) save_preferences(false);
+	return b_ret;
+}
+
+bool test_ask_percent() {
+	return simplified_percentage < 0 && CALCULATOR->simplifiedPercentageUsed();
+}
+
+bool ask_percent() {
+	INIT_COLS
+	string str = _("Please select interpretation of percentage addition.");
+	addLineBreaks(str, cols, true);
+	PUTS_UNICODE(str.c_str());
+	puts("");
+	str = ""; BEGIN_BOLD(str); str += "0 = "; str += _("Add percentage multiplied by 1/100"); END_BOLD(str);
+	PUTS_UNICODE(str.c_str());
+	string s_eg = "(100 + 10% = 100 + (10 * 0.01) = 100.1)";
+	CALCULATOR->localizeExpression(s_eg, evalops.parse_options);
+	if(printops.use_unicode_signs) {
+		switch(printops.multiplication_sign) {
+			case MULTIPLICATION_SIGN_X: {gsub("*", SIGN_MULTIPLICATION, s_eg); break;}
+			case MULTIPLICATION_SIGN_DOT: {gsub("*", SIGN_MULTIDOT, s_eg); break;}
+			case MULTIPLICATION_SIGN_ALTDOT: {gsub("*", SIGN_MIDDLEDOT, s_eg); break;}
+			default: {break;}
+		}
+	}
+	PUTS_ITALIC(s_eg);
+	puts("");
+	str = ""; BEGIN_BOLD(str); str += "1 = "; str += _("Add percentage of original value"); END_BOLD(str);
+	str += " ("; str += _("default"); str += ")";
+	PUTS_UNICODE(str.c_str());
+	s_eg = "(100 + 10% = 100 * 110% = 110)";
+	if(printops.use_unicode_signs) {
+		switch(printops.multiplication_sign) {
+			case MULTIPLICATION_SIGN_X: {gsub("*", SIGN_MULTIPLICATION, s_eg); break;}
+			case MULTIPLICATION_SIGN_DOT: {gsub("*", SIGN_MULTIDOT, s_eg); break;}
+			case MULTIPLICATION_SIGN_ALTDOT: {gsub("*", SIGN_MIDDLEDOT, s_eg); break;}
+			default: {break;}
+		}
+	}
+	PUTS_ITALIC(s_eg);
+	puts("");
+	FPUTS_UNICODE(_("Percentage interpretation"), stdout);
+	dot_question_asked = true;
+	bool b_ret = false;
+	while(true) {
+#ifdef HAVE_LIBREADLINE
+		char *rlbuffer = readline(": ");
+		if(!rlbuffer) {b_ret = false; break;}
+		string svalue = rlbuffer;
+		free(rlbuffer);
+#else
+		fputs(": ", stdout);
+		if(!fgets(buffer, 1000, stdin)) {b_ret = false; break;}
+		string svalue = buffer;
+#endif
+		remove_blank_ends(svalue);
+		int v = -1;
+		if(svalue.empty()) {
+			v = 1;
+		} else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		if(v == 1) {
+			simplified_percentage = 1;
+			break;
+		} else if(v == 0) {
+			simplified_percentage = 0;
+			b_ret = true;
+			break;
+		} else {
+			FPUTS_UNICODE(_("Percentage interpretation"), stdout);
 		}
 	}
 	if(!interactive_mode && !load_defaults) save_preferences(false);
@@ -7068,6 +7142,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 
 	MathStructure to_struct;
 
+	CALCULATOR->setSimplifiedPercentageUsed(false);
 
 	if(!simplified_percentage) evalops.parse_options.parsing_mode = (ParsingMode) (evalops.parse_options.parsing_mode |PARSE_PERCENT_AS_ORDINARY_CONSTANT);
 	if(do_stack) {
@@ -7344,7 +7419,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		else mstruct->ref();
 	}
 
-	if(!avoid_recalculation && !do_mathoperation && ((ask_questions && test_ask_tc(*parsed_mstruct) && ask_tc()) || (ask_questions && (test_ask_sinc(*parsed_mstruct) || test_ask_sinc(*mstruct)) && ask_sinc()) || (check_exrates && check_exchange_rates()))) {
+	if(!avoid_recalculation && !do_mathoperation && ((ask_questions && test_ask_tc(*parsed_mstruct) && ask_tc()) || (ask_questions && (test_ask_sinc(*parsed_mstruct) || test_ask_sinc(*mstruct)) && ask_sinc()) || (ask_questions && test_ask_percent() && ask_percent()) || (check_exrates && check_exchange_rates()))) {
 		if(has_printed) printf("\n");
 		b_busy = false;
 		execute_expression(goto_input, do_mathoperation, op, f, rpn_mode, do_stack ? stack_index : 0, false);
@@ -7652,7 +7727,7 @@ void load_preferences() {
 	evalops.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
 	evalops.parse_options.twos_complement = false;
 	evalops.parse_options.hexadecimal_twos_complement = false;
-	simplified_percentage = true;
+	simplified_percentage = -1;
 	b_decimal_comma = -1;
 
 	SET_UNICODE_EXPONENTS
@@ -7825,7 +7900,8 @@ void load_preferences() {
 						if(v == PARSING_MODE_CONVENTIONAL || v == PARSING_MODE_IMPLICIT_MULTIPLICATION_FIRST) implicit_question_asked = true;
 					}
 				} else if(svar == "simplified_percentage") {
-					simplified_percentage = v;
+					if(v > 0 && (version_numbers[0] < 5 || (version_numbers[0] == 5 && (version_numbers[1] < 1 )))) simplified_percentage = -1;
+					else simplified_percentage = v;
 				} else if(svar == "implicit_question_asked") {
 					implicit_question_asked = true;
 				} else if(svar == "place_units_separately") {

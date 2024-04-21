@@ -4876,6 +4876,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 									mstruct->delChild(mstruct->size());
 									mstruct->multiply_nocopy(mpercent);
 								}
+								CALCULATOR->setSimplifiedPercentageUsed(true);
 							}
 						}
 						break;
@@ -5080,6 +5081,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 									mstruct->delChild(mstruct->size());
 									mstruct->multiply_nocopy(mpercent);
 								}
+								CALCULATOR->setSimplifiedPercentageUsed(true);
 							}
 						}
 					} else {
@@ -5161,6 +5163,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 								mstruct->delChild(mstruct->size());
 								mstruct->multiply_nocopy(mpercent);
 							}
+							CALCULATOR->setSimplifiedPercentageUsed(true);
 						}
 					}
 				}

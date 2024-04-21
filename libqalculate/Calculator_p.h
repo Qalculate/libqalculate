@@ -79,6 +79,7 @@ class Calculator_p {
 		bool matlab_matrices;
 		bool persistent_plot;
 		bool concise_uncertainty_input;
+		bool simplified_percentage_used;
 		int exchange_rates_url3;
 		long int fixed_denominator;
 };
