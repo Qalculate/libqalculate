@@ -251,7 +251,7 @@ class UserFunction : public MathFunction {
 	/** Sets the formula of the mathematical function.
 	*
 	* @param new_formula Formula/expression.
-	* @param arc_ Minimum number of arguments or -1 to read from formula.
+	* @param argc_ Minimum number of arguments or -1 to read from formula.
 	* @param max_argc_ Maximum number of arguments (ignored if argc_ < 0)
 	*/
 	void setFormula(std::string new_formula, int argc_ = -1, int max_argc_ = 0);
@@ -300,7 +300,7 @@ class Argument {
 
 	/** Creates a new argument definition.
 	*
-	* @param name Name/title of the argument definition.
+	* @param name_ Name/title of the argument definition.
 	* @param does_test If argument values will be tested.
 	* @param does_error If an error will issued if the value tests false.
 	*/

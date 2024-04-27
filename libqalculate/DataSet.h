@@ -49,14 +49,14 @@ class DataObject {
 	/** Set value for a property.
 	*
 	* @param property Property to set (must belong to parent data set).
-	* @param s_vale Value for the property.
+	* @param s_value Value for the property.
 	* @param is_approximate If the value is approximate. 1 for approximate, 0 for exact, -1 for property default.
 	*/
 	void setProperty(DataProperty *property, std::string s_value, int is_approximate = -1);
 	/** Set an untranslated value for a key property. Used when a text value is translated, but the original value still is needed as a reference key.
 	*
 	* @param property Property to set (must belong to parent data set).
-	* @param s_vale Value for the property.
+	* @param s_value Value for the property.
 	*/
 	void setNonlocalizedKeyProperty(DataProperty *property, std::string s_value);
 

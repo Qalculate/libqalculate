@@ -206,12 +206,12 @@ class MathStructure {
 		MathStructure(std::string sym, bool force_symbol = false);
 		/** Create a new date and time structure.
 		*
-		* @param sym Date and time value.
+		* @param o_dt Date and time value.
 		*/
 		MathStructure(const QalculateDateTime &o_dt);
 		/** Create a new numeric structure with floating point value. Uses Number::setFloat().
 		*
-		* @param o Numeric value.
+		* @param float_value Numeric value.
 		*/
 		MathStructure(double float_value);
 		/** Create a new vector.
@@ -270,20 +270,20 @@ class MathStructure {
 		void set(long int num, long int den, long int exp10 = 0L, bool preserve_precision = false);
 		/** Set the structure to a symbolic/text value.
 		*
-		* @param o The new symolic/text value.
+		* @param sym The new symolic/text value.
 		* @param preserve_precision Preserve the current precision.
 		* @param force_symbol Do not check for undefined or date value.
 		*/
 		void set(std::string sym, bool preserve_precision = false, bool force_symbol = false);
 		/** Set the structure to a date and time value.
 		*
-		* @param o The new data and time value.
+		* @param o_dt The new data and time value.
 		* @param preserve_precision Preserve the current precision.
 		*/
 		void set(const QalculateDateTime &o_dt, bool preserve_precision = false);
 		/** Set the structure to a number with a floating point value. Uses Number::setFloat().
 		*
-		* @param o The new numeric value.
+		* @param float_value The new numeric value.
 		* @param preserve_precision Preserve the current precision (unless the new value has a lower precision).
 		*/
 		void set(double float_value, bool preserve_precision = false);

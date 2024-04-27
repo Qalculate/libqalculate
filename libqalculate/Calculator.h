@@ -755,7 +755,7 @@ class Calculator {
 	* The converted value is evaluated.
 	*
 	* @param mstruct The value to convert.
-	* @param composite_ Unit to convert to.
+	* @param to_unit Unit to convert to.
 	* @param eo Evaluation options.
 	* @param always_convert ...
 	* @returns Converted value.
@@ -855,21 +855,21 @@ class Calculator {
 	DecimalPrefix *getOptimalDecimalPrefix(const Number &exp10, const Number &exp, bool all_prefixes = true) const;
 	/** Returns the nearest binary prefix for a value.
 	*
-	* @param exp10 Base-2 exponent of the value.
+	* @param exp2 Base-2 exponent of the value.
 	* @param exp The exponent of the unit.
 	* @returns A prefix or NULL if no binary prefix is available.
 	*/
 	BinaryPrefix *getNearestBinaryPrefix(int exp2, int exp = 1) const;
 	/** Returns the best suited binary prefix for a value.
 	*
-	* @param exp10 Base-2 exponent of the value.
+	* @param exp2 Base-2 exponent of the value.
 	* @param exp The exponent of the unit.
 	* @returns A prefix or NULL if the unit should be left without prefix.
 	*/
 	BinaryPrefix *getOptimalBinaryPrefix(int exp2, int exp = 1) const;
 	/** Returns the best suited binary prefix for a value.
 	*
-	* @param exp10 Base-2 exponent of the value.
+	* @param exp2 Base-2 exponent of the value.
 	* @param exp The exponent of the unit.
 	* @returns A prefix or NULL if the unit should be left without prefix.
 	*/
