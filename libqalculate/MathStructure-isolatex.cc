@@ -4718,8 +4718,9 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								else if(ct_comp == COMPARISON_EQUALS_LESS) mneg->setComparisonType(COMPARISON_EQUALS_GREATER);
 								else if(ct_comp == COMPARISON_EQUALS_GREATER) mneg->setComparisonType(COMPARISON_EQUALS_LESS);
 								mneg->isolate_x_sub(eo, eo2, x_var, morig);
+								MathOperation op = (ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_LESS || ct_comp == COMPARISON_EQUALS_LESS) ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR;
 								isolate_x_sub(eo, eo2, x_var, morig);
-								add_nocopy(mneg, ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_LESS || ct_comp == COMPARISON_EQUALS_LESS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+								add_nocopy(mneg, op);
 								calculatesub(eo2, eo, false);
 							} else {
 								CHILD(0).setToChild(1);
