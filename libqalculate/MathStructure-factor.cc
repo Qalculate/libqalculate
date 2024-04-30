@@ -465,7 +465,8 @@ bool MathStructure::integerFactorize() {
 	if(!isNumber() || !o_number.isRational()) return false;
 	if(!o_number.isInteger()) {
 		MathStructure mnum(o_number.numerator()), mden(o_number.denominator());
-		if(mnum.integerFactorize() && mden.integerFactorize() && (mnum.isMultiplication() || mden.isMultiplication())) {
+		if(mnum.integerFactorize() && mden.integerFactorize()) {
+			if(!mnum.isMultiplication() && !mden.isMultiplication()) return true;
 			set(mnum);
 			divide(mden);
 			return true;

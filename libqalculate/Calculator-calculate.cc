@@ -1681,7 +1681,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	if(auto_approx != AUTOMATIC_APPROXIMATION_OFF) evalops.approximation = APPROXIMATION_TRY_EXACT;
 
 	MathStructure mstruct;
-	bool do_bases = false, do_factors = false, do_pfe = false, do_calendars = false, do_expand = false, do_binary_prefixes = false, complex_angle_form = false;
+	bool do_bases = false, do_factors = false, do_pfe = false, do_calendars = false, do_expand = false, do_binary_prefixes = false, complex_angle_form = false, fraction_changed = false;
 
 	gsub(ID_WRAP_LEFT, LEFT_PARENTHESIS, str);
 	gsub(ID_WRAP_RIGHT, RIGHT_PARENTHESIS, str);
@@ -1859,6 +1859,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				printops.restrict_fraction_length = false;
 				printops.number_fraction_format = FRACTION_DECIMAL;
 				auto_fraction = AUTOMATIC_FRACTION_OFF;
+				fraction_changed = true;
 			} else {
 				NumberFractionFormat nff = FRACTION_DECIMAL;
 				string to_str2 = to_str;
@@ -1866,6 +1867,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				long int fden = get_fixed_denominator(to_str2, nff, 1, &fixed_fraction_has_sign);
 				if(fden != 0) {
 					auto_fraction = AUTOMATIC_FRACTION_OFF;
+					fraction_changed = true;
 					printops.restrict_fraction_length = false;
 					printops.number_fraction_format = nff;
 					if(fden > 1) priv->fixed_denominator = fden;
@@ -2010,6 +2012,11 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 
 	// handle "to factors", and "factor" or "expand" in front of the expression
 	if(do_factors) {
+		if((mstruct.isNumber() || mstruct.isVector()) && !fraction_changed) {
+			auto_fraction = AUTOMATIC_FRACTION_OFF;
+			printops.restrict_fraction_length = false;
+			printops.number_fraction_format = FRACTION_FRACTIONAL;
+		}
 		mstruct.integerFactorize();
 		mstruct_exact.integerFactorize();
 	} else if(do_expand) {

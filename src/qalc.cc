@@ -4651,7 +4651,18 @@ int main(int argc, char *argv[]) {
 				show_calendars(date);
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "factors", _("factors")) || str == "factor") {
+				int save_dual = dual_fraction;
+				NumberFractionFormat save_frac = printops.number_fraction_format;
+				bool save_fraclen = printops.restrict_fraction_length;
+				if(mstruct && (mstruct->isNumber() || mstruct->isVector())) {
+					dual_fraction = 0;
+					if(printops.number_fraction_format != FRACTION_FRACTIONAL && printops.number_fraction_format != FRACTION_COMBINED) printops.restrict_fraction_length = true;
+					printops.number_fraction_format = FRACTION_FRACTIONAL;
+				}
 				execute_command(COMMAND_FACTORIZE);
+				dual_fraction = save_dual;
+				printops.restrict_fraction_length = save_fraclen;
+				printops.number_fraction_format = save_frac;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "partial fraction", _("partial fraction")) || str == "partial") {
 				execute_command(COMMAND_EXPAND_PARTIAL_FRACTIONS);
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "best", _("best")) || EQUALS_IGNORECASE_AND_LOCAL(str, "optimal", _("optimal"))) {
@@ -4790,7 +4801,18 @@ int main(int argc, char *argv[]) {
 			}
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "factor", _("factor"))) {
+			int save_dual = dual_fraction;
+			NumberFractionFormat save_frac = printops.number_fraction_format;
+			bool save_fraclen = printops.restrict_fraction_length;
+			if(mstruct && (mstruct->isNumber() || mstruct->isVector())) {
+				dual_fraction = 0;
+				if(printops.number_fraction_format != FRACTION_FRACTIONAL && printops.number_fraction_format != FRACTION_COMBINED) printops.restrict_fraction_length = true;
+				printops.number_fraction_format = FRACTION_FRACTIONAL;
+			}
 			execute_command(COMMAND_FACTORIZE);
+			dual_fraction = save_dual;
+			printops.restrict_fraction_length = save_fraclen;
+			printops.number_fraction_format = save_frac;
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "partial fraction", _("partial fraction"))) {
 			execute_command(COMMAND_EXPAND_PARTIAL_FRACTIONS);
@@ -5222,7 +5244,7 @@ int main(int argc, char *argv[]) {
 			PUTS_UNICODE(_("factor")); CHECK_IF_SCREEN_FILLED
 			FPUTS_UNICODE(_("find"), stdout); fputs("/", stdout); FPUTS_UNICODE(_("list"), stdout);  fputs(" [", stdout); FPUTS_UNICODE(_("NAME"), stdout); puts("]"); CHECK_IF_SCREEN_FILLED;
 			FPUTS_UNICODE(_("function"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("NAME"), stdout); fputs(" ", stdout); PUTS_UNICODE(_("EXPRESSION")); CHECK_IF_SCREEN_FILLED
-			FPUTS_UNICODE(_("help"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("COMMAND"), stdout);puts("]");  CHECK_IF_SCREEN_FILLED
+			FPUTS_UNICODE(_("help"), stdout); fputs(" [", stdout); FPUTS_UNICODE(_("COMMAND"), stdout); puts("]");  CHECK_IF_SCREEN_FILLED
 #ifdef HAVE_LIBREADLINE
 			PUTS_UNICODE(_("history")); CHECK_IF_SCREEN_FILLED
 #endif
@@ -6801,7 +6823,7 @@ bool ask_percent() {
 	str = ""; BEGIN_BOLD(str); str += "0 = "; str += _("Add percentage multiplied by 1/100"); END_BOLD(str);
 	PUTS_UNICODE(str.c_str());
 	string s_eg = "(100 + 10% = 100 + (10 * 0.01) = 100.1)";
-	CALCULATOR->localizeExpression(s_eg, evalops.parse_options);
+	s_eg = CALCULATOR->localizeExpression(s_eg, evalops.parse_options);
 	if(printops.use_unicode_signs) {
 		switch(printops.multiplication_sign) {
 			case MULTIPLICATION_SIGN_X: {gsub("*", SIGN_MULTIPLICATION, s_eg); break;}
@@ -6867,7 +6889,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	if(i_maxtime < 0) return;
 
 	string str, str_conv;
-	bool do_bases = programmers_mode, do_factors = false, do_expand = false, do_pfe = false, do_calendars = false, do_binary_prefixes = false;
+	bool do_bases = programmers_mode, do_factors = false, do_expand = false, do_pfe = false, do_calendars = false, do_binary_prefixes = false, fraction_changed = false;
 	avoid_recalculation = false;
 	if(!interactive_mode) goto_input = false;
 
@@ -7073,6 +7095,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 					dual_fraction = 0;
 					printops.restrict_fraction_length = false;
 					printops.number_fraction_format = FRACTION_DECIMAL;
+					fraction_changed = true;
 				} else {
 					NumberFractionFormat nff = FRACTION_DECIMAL;
 					ParseOptions pa = evalops.parse_options; pa.base = 10;
@@ -7084,6 +7107,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 						printops.restrict_fraction_length = false;
 						printops.number_fraction_format = nff;
 						if(fden > 0) CALCULATOR->setFixedDenominator(fden);
+						fraction_changed = true;
 					} else {
 						evalops.parse_options.units_enabled = true;
 						if((to_str[0] == '?' && (!printops.use_unit_prefixes || !printops.use_prefixes_for_currencies || !printops.use_prefixes_for_all_units)) || (to_str.length() > 1 && to_str[1] == '?' && to_str[0] == 'a' && (!printops.use_unit_prefixes || !printops.use_prefixes_for_currencies || !printops.use_all_prefixes || !printops.use_prefixes_for_all_units)) || (to_str.length() > 1 && to_str[1] == '?' && to_str[0] == 'd' && (!printops.use_unit_prefixes || !printops.use_prefixes_for_currencies || !printops.use_prefixes_for_all_units || CALCULATOR->usesBinaryPrefixes() > 0))) {
@@ -7485,10 +7509,20 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		if(do_stack && stack_index != 0) {
 			MathStructure *save_mstruct = mstruct;
 			mstruct = CALCULATOR->getRPNRegister(stack_index + 1);
+			if(do_factors && (mstruct->isNumber() || mstruct->isVector()) && !fraction_changed) {
+				dual_fraction = 0;
+				if(printops.number_fraction_format != FRACTION_FRACTIONAL && printops.number_fraction_format != FRACTION_COMBINED) printops.restrict_fraction_length = true;
+				printops.number_fraction_format = FRACTION_FRACTIONAL;
+			}
 			execute_command(do_pfe ? COMMAND_EXPAND_PARTIAL_FRACTIONS : (do_expand ? COMMAND_EXPAND : COMMAND_FACTORIZE), false);
 			mstruct = save_mstruct;
 		} else {
 			if(do_factors && mstruct->isInteger() && !parsed_mstruct->isNumber()) prepend_mstruct = *mstruct;
+			if(do_factors && (mstruct->isNumber() || mstruct->isVector()) && !fraction_changed) {
+				dual_fraction = 0;
+				if(printops.number_fraction_format != FRACTION_FRACTIONAL && printops.number_fraction_format != FRACTION_COMBINED) printops.restrict_fraction_length = true;
+				printops.number_fraction_format = FRACTION_FRACTIONAL;
+			}
 			execute_command(do_pfe ? COMMAND_EXPAND_PARTIAL_FRACTIONS : (do_expand ? COMMAND_EXPAND : COMMAND_FACTORIZE), false);
 			if(!prepend_mstruct.isUndefined() && mstruct->isInteger()) prepend_mstruct.setUndefined();
 		}
@@ -7808,7 +7842,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {5, 0, 0};
+	int version_numbers[] = {5, 1, 0};
 
 	if(file) {
 		char line[10000];

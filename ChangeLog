@@ -1,3 +1,22 @@
+2024-04-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Ask for the desired interpretation the first time percent addition is used (e.g. 100 + 10% equals 110 or 100.1)
+
+2024-04-21 Fishhh <hubert.gluchowski19@gmail.com>
+
+	* Fix Number::equals(0, ..., true) when number is infinite (also affects MathStructure::equals(), MathStructure::replace(), and MathStructure::calculateReplace() and replace() function)
+
+2024-04-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not show error for 2nd argument with unknown variable in root() function
+	* Fix precision for approximate data set number values, without uncertainty explicitely specified, with positive scientific e-notation exponent
+	* Ignore two's input setting for hexadecimal floating-point literals using 0x...p... notation
+
+2024-04-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add Sun to planets data set
+	* Add solar radius, mass, and luminosity as units
+
 2024-04-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add support for column vector in if() function

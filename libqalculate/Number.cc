@@ -2574,8 +2574,9 @@ bool Number::equals(const Number &o, bool allow_interval, bool allow_infinite) c
 	} else if(hasImaginaryPart()) {
 		return false;
 	}
-	if(allow_infinite && (isInfinite() || o.isInfinite()))
-		return isInfinite() == o.isInfinite() && hasNegativeSign() == o.hasNegativeSign();
+	if(allow_infinite && (isInfinite(true) || o.isInfinite(true))){
+		return n_type == o.internalType();
+	}
 	if(o.isFloatingPoint() && n_type != NUMBER_TYPE_FLOAT) {
 		return mpfr_cmp_q(o.internalLowerFloat(), r_value) == 0 && mpfr_cmp_q(o.internalUpperFloat(), r_value) == 0;
 	} else if(n_type == NUMBER_TYPE_FLOAT) {
