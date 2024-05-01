@@ -928,11 +928,12 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								} else {
 									CHILD(1) = mstruct_1;
 									MathStructure *mchild2 = new MathStructure(CHILD(0));
+									ComparisonType ct_comp_bak = ct_comp;
 									isolate_x_sub(eo, eo2, x_var, morig);
 									mchild2->transform(STRUCT_COMPARISON, mstruct_2);
-									mchild2->setComparisonType(ct_comp);
+									mchild2->setComparisonType(ct_comp_bak);
 									mchild2->isolate_x_sub(eo, eo2, x_var, morig);
-									if(ct_comp == COMPARISON_NOT_EQUALS) {
+									if(ct_comp_bak == COMPARISON_NOT_EQUALS) {
 										transform_nocopy(STRUCT_LOGICAL_AND, mchild2);
 									} else {
 										transform_nocopy(STRUCT_LOGICAL_OR, mchild2);
@@ -985,11 +986,12 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							} else {
 								CHILD(1) = mstruct_1;
 								MathStructure *mchild2 = new MathStructure(CHILD(0));
+								ComparisonType ct_comp_bak = ct_comp;
 								isolate_x_sub(eo, eo3, x_var, morig);
 								mchild2->transform(STRUCT_COMPARISON, mstruct_2);
-								mchild2->setComparisonType(ct_comp);
+								mchild2->setComparisonType(ct_comp_bak);
 								mchild2->isolate_x_sub(eo, eo3, x_var, morig);
-								if(ct_comp == COMPARISON_NOT_EQUALS) {
+								if(ct_comp_bak == COMPARISON_NOT_EQUALS) {
 									transform_nocopy(STRUCT_LOGICAL_AND, mchild2);
 								} else {
 									transform_nocopy(STRUCT_LOGICAL_OR, mchild2);
@@ -1006,7 +1008,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						}
 					} else if(CHILD(1).isZero()) {
 						// x=0 || x=-a/b || (a=0 && b=0)
-						ComparisonType ct = ct_comp;
+						ComparisonType ct_comp_bak = ct_comp;
 						CHILD(0) = x_var;
 						if(!mpow_b.isOne()) {CHILD(0) ^= mpow_b; CHILD_UPDATED(0);}
 						MathStructure *mchild2 = new MathStructure(CHILD(0));
@@ -1016,22 +1018,22 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						isolate_x_sub(eo, eo2, x_var, morig);
 						if(!mstruct_a.representsNonZero()) {
 							MathStructure *mtest = new MathStructure(mstruct_a);
-							mtest->transform(ct == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, m_zero);
+							mtest->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, m_zero);
 							mtest->calculatesub(eo2, eo, false);
-							transform_nocopy(ct == COMPARISON_NOT_EQUALS ? STRUCT_LOGICAL_OR : STRUCT_LOGICAL_AND, mtest);
+							transform_nocopy(ct_comp_bak == COMPARISON_NOT_EQUALS ? STRUCT_LOGICAL_OR : STRUCT_LOGICAL_AND, mtest);
 							calculatesub(eo2, eo, false);
 						}
-						mchild2->transform(ct, m_zero);
+						mchild2->transform(ct_comp_bak, m_zero);
 						mchild2->isolate_x_sub(eo, eo2, x_var, morig);
-						transform_nocopy(ct == COMPARISON_NOT_EQUALS ? STRUCT_LOGICAL_AND : STRUCT_LOGICAL_OR, mchild2);
+						transform_nocopy(ct_comp_bak == COMPARISON_NOT_EQUALS ? STRUCT_LOGICAL_AND : STRUCT_LOGICAL_OR, mchild2);
 						if(!mstruct_b.representsNonZero() && !mstruct_a.representsNonZero()) {
 							MathStructure *mchild3a = new MathStructure(mstruct_a);
-							mchild3a->transform(ct, m_zero);
+							mchild3a->transform(ct_comp_bak, m_zero);
 							MathStructure *mchild3b = new MathStructure(mstruct_b);
-							mchild3b->transform(ct, m_zero);
-							mchild3a->transform_nocopy(ct == COMPARISON_NOT_EQUALS ? STRUCT_LOGICAL_OR : STRUCT_LOGICAL_AND, mchild3b);
+							mchild3b->transform(ct_comp_bak, m_zero);
+							mchild3a->transform_nocopy(ct_comp_bak == COMPARISON_NOT_EQUALS ? STRUCT_LOGICAL_OR : STRUCT_LOGICAL_AND, mchild3b);
 							mchild3a->calculatesub(eo2, eo, false);
-							add_nocopy(mchild3a, ct == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
+							add_nocopy(mchild3a, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
 						}
 						calculatesub(eo2, eo, false);
 						return true;
@@ -1110,11 +1112,12 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								} else {
 									CHILD(1) = mstruct_1;
 									MathStructure *mchild2 = new MathStructure(CHILD(0));
+									ComparisonType ct_comp_bak = ct_comp;
 									isolate_x_sub(eo, eo2, x_var, morig);
 									mchild2->transform(STRUCT_COMPARISON, mstruct_2);
-									mchild2->setComparisonType(ct_comp);
+									mchild2->setComparisonType(ct_comp_bak);
 									mchild2->isolate_x_sub(eo, eo2, x_var, morig);
-									if(ct_comp == COMPARISON_NOT_EQUALS) {
+									if(ct_comp_bak == COMPARISON_NOT_EQUALS) {
 										transform_nocopy(STRUCT_LOGICAL_AND, mchild2);
 									} else {
 										transform_nocopy(STRUCT_LOGICAL_OR, mchild2);
@@ -1162,11 +1165,12 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							} else {
 								CHILD(1) = mstruct_1;
 								MathStructure *mchild2 = new MathStructure(CHILD(0));
+								ComparisonType ct_comp_bak = ct_comp;
 								isolate_x_sub(eo, eo3, x_var, morig);
 								mchild2->transform(STRUCT_COMPARISON, mstruct_2);
-								mchild2->setComparisonType(ct_comp);
+								mchild2->setComparisonType(ct_comp_bak);
 								mchild2->isolate_x_sub(eo, eo3, x_var, morig);
-								if(ct_comp == COMPARISON_NOT_EQUALS) {
+								if(ct_comp_bak == COMPARISON_NOT_EQUALS) {
 									transform_nocopy(STRUCT_LOGICAL_AND, mchild2);
 								} else {
 									transform_nocopy(STRUCT_LOGICAL_OR, mchild2);
@@ -1329,13 +1333,14 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							CHILD(0).clear(true);
 							setChild_nocopy(mvar, 1, true);
 							CHILDREN_UPDATED
+							ComparisonType ct_comp_bak = ct_comp;
 							isolate_x_sub(eo, eo2, x_var, morig);
 							if(mreq1) {
-								add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+								add_nocopy(mreq1, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 								calculatesub(eo2, eo, false);
 							}
 							if(marg2) {
-								add_nocopy(marg2, ct_comp == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+								add_nocopy(marg2, ct_comp_bak == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 								calculatesub(eo2, eo, false);
 							}
 							return true;
@@ -1742,7 +1747,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 												if(msolve2.isNumber() && msolve2.number() < msolve1.number()) {
 													CALCULATOR->endTemporaryStopMessages(true);
 													CHILD(1) = msolve1;
-													ComparisonType cmp_type = ct_comp;
+													ComparisonType ct_comp_bak = ct_comp;
 													if(var) {
 														mx = *mvar;
 														CHILD(0) = mx;
@@ -1752,13 +1757,13 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 														CHILD(0) = x_var;
 													}
 													MathStructure *malt = new MathStructure(x_var);
-													malt->transform(cmp_type, msolve2);
+													malt->transform(ct_comp_bak, msolve2);
 													if(var) {
 														(*malt)[0] = mx;
 														malt->childUpdated(1);
 														malt->isolate_x(eo, eo2, x_var);
 													}
-													add_nocopy(malt, ct_comp == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+													add_nocopy(malt, ct_comp_bak == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 													calculatesub(eo2, eo, false);
 													if(var) var->destroy();
 													return true;
@@ -1922,9 +1927,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								setChild_nocopy(marg, 2);
 								if(!mmul1.isOne()) CHILD(1).calculateDivide(mmul1, eo2);
 								CHILDREN_UPDATED
+								ComparisonType ct_comp_bak = ct_comp;
 								isolate_x_sub(eo, eo2, x_var, morig);
 								if(mreq1) {
-									add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+									add_nocopy(mreq1, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 									calculatesub(eo2, eo, false);
 								}
 								return true;
@@ -2100,10 +2106,11 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							}
 						}
 						if(i_root && mtest.isolate_x(eo2, eo, x_var)) {
+							ComparisonType ct_comp_bak = ct_comp;
 							if((mtest.isLogicalAnd() || mtest.isLogicalOr() || mtest.isComparison()) && test_comparisons(*this, mtest, x_var, eo, false, eo2.expand ? 1 : 2) < 0) {
 								if(eo2.expand) {
 									CALCULATOR->endTemporaryStopMessages(true);
-									add(mtest, ct_comp == COMPARISON_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+									add(mtest, ct_comp_bak == COMPARISON_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 									calculatesub(eo2, eo, false);
 									return true;
 								}
@@ -3034,7 +3041,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 
 					MathStructure mabs(*m);
 
-					ComparisonType cmp_type = ct_comp;
+					ComparisonType ct_comp_bak = ct_comp;
 					MathStructure *malt = new MathStructure(*this);
 					MathStructure mabs_minus(mabs[0]);
 					mabs_minus.calculateNegate(eo2);
@@ -3042,38 +3049,38 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					(*malt)[0].calculatesub(eo2, eo, true);
 					malt->childUpdated(1);
 					MathStructure *mcheck = new MathStructure(mabs[0]);
-					mcheck->add(m_zero, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_EQUALS_GREATER : OPERATION_LESS);
+					mcheck->add(m_zero, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_EQUALS_GREATER : OPERATION_LESS);
 					mcheck->isolate_x_sub(eo, eo2, x_var);
 					malt->isolate_x_sub(eo, eo2, x_var);
-					malt->add_nocopy(mcheck, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+					malt->add_nocopy(mcheck, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 					malt->calculatesub(eo2, eo, false);
 
 					mcheck = new MathStructure(mabs[0]);
 					CHILD(0).replace(mabs, mabs[0], mabs.containsInterval());
 					CHILD(0).calculatesub(eo2, eo, true);
 					CHILD_UPDATED(0)
-					mcheck->add(m_zero, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_LESS : OPERATION_EQUALS_GREATER);
+					mcheck->add(m_zero, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LESS : OPERATION_EQUALS_GREATER);
 					mcheck->isolate_x_sub(eo, eo2, x_var);
 					isolate_x_sub(eo, eo2, x_var);
-					add_nocopy(mcheck, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+					add_nocopy(mcheck, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 					calculatesub(eo2, eo, false);
-					add_nocopy(malt, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
+					add_nocopy(malt, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
 					calculatesub(eo2, eo, false);
 
 					return true;
 				} else if(m && m->function()->id() == FUNCTION_ID_SIGNUM) {
 					MathStructure mabs(*m);
 
-					ComparisonType cmp_type = ct_comp;
+					ComparisonType ct_comp_bak = ct_comp;
 					MathStructure *malt = new MathStructure(*this);
 					(*malt)[0].replace(mabs, m_minus_one, mabs.containsInterval());
 					(*malt)[0].calculatesub(eo2, eo, true);
 					malt->childUpdated(1);
 					MathStructure *mcheck = new MathStructure(mabs[0]);
-					mcheck->add(m_zero, cmp_type == COMPARISON_NOT_EQUALS ? (mabs[1].isMinusOne() ? OPERATION_GREATER : OPERATION_EQUALS_GREATER) : (mabs[1].isMinusOne() ? OPERATION_EQUALS_LESS : OPERATION_LESS));
+					mcheck->add(m_zero, ct_comp_bak == COMPARISON_NOT_EQUALS ? (mabs[1].isMinusOne() ? OPERATION_GREATER : OPERATION_EQUALS_GREATER) : (mabs[1].isMinusOne() ? OPERATION_EQUALS_LESS : OPERATION_LESS));
 					mcheck->isolate_x_sub(eo, eo2, x_var);
 					malt->isolate_x_sub(eo, eo2, x_var);
-					malt->add_nocopy(mcheck, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+					malt->add_nocopy(mcheck, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 					malt->calculatesub(eo2, eo, false);
 
 					MathStructure *malt0 = NULL;
@@ -3083,10 +3090,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						(*malt0)[0].calculatesub(eo2, eo, true);
 						malt0->childUpdated(1);
 						mcheck = new MathStructure(mabs[0]);
-						mcheck->add(m_zero, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_NOT_EQUALS : OPERATION_EQUALS);
+						mcheck->add(m_zero, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_NOT_EQUALS : OPERATION_EQUALS);
 						mcheck->isolate_x_sub(eo, eo2, x_var);
 						malt0->isolate_x_sub(eo, eo2, x_var);
-						malt0->add_nocopy(mcheck, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+						malt0->add_nocopy(mcheck, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 						malt0->calculatesub(eo2, eo, false);
 					}
 
@@ -3094,13 +3101,13 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					CHILD(0).replace(mabs, m_one, mabs.containsInterval());
 					CHILD(0).calculatesub(eo2, eo, true);
 					CHILD_UPDATED(0)
-					mcheck->add(m_zero, cmp_type == COMPARISON_NOT_EQUALS ? (mabs[1].isOne() ? OPERATION_LESS : OPERATION_EQUALS_LESS) : (mabs[1].isOne() ? OPERATION_EQUALS_GREATER : OPERATION_GREATER));
+					mcheck->add(m_zero, ct_comp_bak == COMPARISON_NOT_EQUALS ? (mabs[1].isOne() ? OPERATION_LESS : OPERATION_EQUALS_LESS) : (mabs[1].isOne() ? OPERATION_EQUALS_GREATER : OPERATION_GREATER));
 					mcheck->isolate_x_sub(eo, eo2, x_var);
 					isolate_x_sub(eo, eo2, x_var);
-					add_nocopy(mcheck, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+					add_nocopy(mcheck, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 					calculatesub(eo2, eo, false);
-					add_nocopy(malt, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
-					if(malt0) add_nocopy(malt0, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
+					add_nocopy(malt, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
+					if(malt0) add_nocopy(malt0, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
 					calculatesub(eo2, eo, false);
 					return true;
 				}
@@ -3196,9 +3203,9 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 					if(!bdoit) break;
 					MathStructure *mcheckpowers = NULL;
-					ComparisonType ct = ct_comp;
+					ComparisonType ct_comp_bak = ct_comp;
 					setToChild(1);
-					if(ct == COMPARISON_NOT_EQUALS) {
+					if(ct_comp_bak == COMPARISON_NOT_EQUALS) {
 						setType(STRUCT_LOGICAL_AND);
 					} else {
 						setType(STRUCT_LOGICAL_OR);
@@ -3212,21 +3219,21 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						}
 						if(checktype[i] > 0) {
 							MathStructure *mcheck = new MathStructure(CHILD(i)[0]);
-							if(ct_comp == COMPARISON_NOT_EQUALS) mcheck->add(m_zero, OPERATION_EQUALS);
+							if(ct_comp_bak == COMPARISON_NOT_EQUALS) mcheck->add(m_zero, OPERATION_EQUALS);
 							else mcheck->add(m_zero, OPERATION_NOT_EQUALS);
 							mcheck->isolate_x_sub(eo, eo2, x_var);
 							if(checktype[i] == 2) {
 								MathStructure *mexpcheck = new MathStructure(CHILD(i)[1]);
-								if(ct_comp == COMPARISON_NOT_EQUALS) mexpcheck->add(m_zero, OPERATION_LESS);
+								if(ct_comp_bak == COMPARISON_NOT_EQUALS) mexpcheck->add(m_zero, OPERATION_LESS);
 								else mexpcheck->add(m_zero, OPERATION_EQUALS_GREATER);
 								mexpcheck->isolate_x_sub(eo, eo2, x_var);
-								if(ct_comp == COMPARISON_NOT_EQUALS) mexpcheck->add_nocopy(mcheck, OPERATION_LOGICAL_AND, true);
+								if(ct_comp_bak == COMPARISON_NOT_EQUALS) mexpcheck->add_nocopy(mcheck, OPERATION_LOGICAL_AND, true);
 								else mexpcheck->add_nocopy(mcheck, OPERATION_LOGICAL_OR, true);
 								mexpcheck->calculatesub(eo2, eo, false);
 								mcheck = mexpcheck;
 							}
 							if(mcheckpowers) {
-								if(ct_comp == COMPARISON_NOT_EQUALS) mcheckpowers->add_nocopy(mcheck, OPERATION_LOGICAL_OR, true);
+								if(ct_comp_bak == COMPARISON_NOT_EQUALS) mcheckpowers->add_nocopy(mcheck, OPERATION_LOGICAL_OR, true);
 								else mcheckpowers->add_nocopy(mcheck, OPERATION_LOGICAL_AND, true);
 							} else {
 								mcheckpowers = mcheck;
@@ -3237,7 +3244,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							checktype.erase(checktype.begin() + i);
 						} else {
 							CHILD(i).transform(STRUCT_COMPARISON, m_zero);
-							CHILD(i).setComparisonType(ct);
+							CHILD(i).setComparisonType(ct_comp_bak);
 							CHILD(i).isolate_x_sub(eo, eo2, x_var, morig);
 							CHILD_UPDATED(i)
 							i++;
@@ -3248,7 +3255,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					else calculatesub(eo2, eo, false);
 					if(mcheckpowers) {
 						mcheckpowers->calculatesub(eo2, eo, false);
-						if(ct_comp == COMPARISON_NOT_EQUALS) add_nocopy(mcheckpowers, OPERATION_LOGICAL_OR, true);
+						if(ct_comp_bak == COMPARISON_NOT_EQUALS) add_nocopy(mcheckpowers, OPERATION_LOGICAL_OR, true);
 						else add_nocopy(mcheckpowers, OPERATION_LOGICAL_AND, true);
 						SWAP_CHILDREN(0, SIZE - 1)
 						calculatesub(eo2, eo, false);
@@ -3334,9 +3341,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						mgreater2.setComparisonType(COMPARISON_GREATER);
 					}
 					mgreater2.isolate_x_sub(eo, eo2, x_var);
+					ComparisonType ct_comp_bak = ct_comp;
 					clear();
 
-					if(ct_comp == COMPARISON_LESS || ct_comp == COMPARISON_EQUALS_LESS) {
+					if(ct_comp_bak == COMPARISON_LESS || ct_comp_bak == COMPARISON_EQUALS_LESS) {
 						set(mless1);
 						transform(STRUCT_LOGICAL_AND, mgreater2);
 						calculatesub(eo2, eo, false);
@@ -3383,14 +3391,14 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					CHILD(0).delChild(i + 1);
 					if(CHILD(0).size() == 1) CHILD(0).setToChild(1);
 					CHILD(0).calculateSubtract(CHILD(1), eo);
-					ComparisonType cmp_type = ct_comp;
 					CHILD(1).clear();
 					CHILDREN_UPDATED
 					if(ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) {
+						ComparisonType ct_comp_bak = ct_comp;
 						isolate_x_sub(eo, eo2, x_var, morig);
-						mtest->add(m_zero, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_EQUALS : OPERATION_NOT_EQUALS);
+						mtest->add(m_zero, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_EQUALS : OPERATION_NOT_EQUALS);
 						mtest->isolate_x_sub(eo, eo2, x_var);
-						add_nocopy(mtest, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+						add_nocopy(mtest, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 						calculatesub(eo2, eo, false);
 						return true;
 					} else {
@@ -3704,13 +3712,14 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							CHILD(0).clear(true);
 							setChild_nocopy(mvar, 1, true);
 							CHILDREN_UPDATED
+							ComparisonType ct_comp_bak = ct_comp;
 							isolate_x_sub(eo, eo2, x_var, morig);
 							if(mreq1) {
-								add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+								add_nocopy(mreq1, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 								calculatesub(eo2, eo, false);
 							}
 							if(marg2) {
-								add_nocopy(marg2, ct_comp == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+								add_nocopy(marg2, ct_comp_bak == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 								calculatesub(eo2, eo, false);
 							}
 							return true;
@@ -3820,13 +3829,14 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								CHILD(1).calculateRaiseExponent(eo2);
 								if(!mmul.isOne()) CHILD(1).calculateDivide(mmul, eo2);
 								CHILDREN_UPDATED
+								ComparisonType ct_comp_bak = ct_comp;
 								isolate_x_sub(eo, eo2, x_var, morig);
 								if(mreq1) {
-									add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+									add_nocopy(mreq1, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 									calculatesub(eo2, eo, false);
 								}
 								if(marg2) {
-									add_nocopy(marg2, ct_comp == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+									add_nocopy(marg2, ct_comp_bak == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 									calculatesub(eo2, eo, false);
 								}
 							} else {
@@ -3869,9 +3879,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								CHILD(1).calculateRaiseExponent(eo2);
 								if(!mmul.isOne()) CHILD(1).calculateDivide(mmul, eo2);
 								CHILDREN_UPDATED
+								ComparisonType ct_comp_bak = ct_comp;
 								isolate_x_sub(eo, eo2, x_var, morig);
-								add_nocopy(marg2, ct_comp == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
-								add_nocopy(marg3, ct_comp == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+								add_nocopy(marg2, ct_comp_bak == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+								add_nocopy(marg3, ct_comp_bak == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 								calculatesub(eo2, eo, false);
 							}
 							return true;
@@ -3888,6 +3899,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					CHILD(0).calculateSubtract(CHILD(1), eo2);
 					CHILD(1).clear();
 				}
+				ComparisonType ct_comp_bak = ct_comp;
 				if(mchecknegative) {
 					MathStructure *mneg = new MathStructure(*this);
 					switch(ct_comp) {
@@ -3915,7 +3927,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				}
 				if(mcheckmulti) {
 					mcheckmulti->calculatesub(eo2, eo, false);
-					if(ct_comp == COMPARISON_NOT_EQUALS) {
+					if(ct_comp_bak == COMPARISON_NOT_EQUALS) {
 						add_nocopy(mcheckmulti, OPERATION_LOGICAL_OR, true);
 					} else {
 						add_nocopy(mcheckmulti, OPERATION_LOGICAL_AND, true);
@@ -3925,7 +3937,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				}
 				if(mchecknonzeropow) {
 					mchecknonzeropow->calculatesub(eo2, eo, false);
-					if(ct_comp == COMPARISON_NOT_EQUALS) {
+					if(ct_comp_bak == COMPARISON_NOT_EQUALS) {
 						add_nocopy(mchecknonzeropow, OPERATION_LOGICAL_OR, true);
 					} else {
 						add_nocopy(mchecknonzeropow, OPERATION_LOGICAL_AND, true);
@@ -3935,7 +3947,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				}
 				if(mtryzero) {
 					mtryzero->calculatesub(eo2, eo, false);
-					if(ct_comp == COMPARISON_NOT_EQUALS) {
+					if(ct_comp_bak == COMPARISON_NOT_EQUALS) {
 						add_nocopy(mtryzero, OPERATION_LOGICAL_AND, true);
 						SWAP_CHILDREN(0, SIZE - 1)
 					} else {
@@ -3970,9 +3982,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						mtest[1].calculateRaise(nrexp, eo2);
 						mtest.childrenUpdated();
 						if(mtest.isolate_x(eo2, eo, x_var)) {
+							ComparisonType ct_comp_bak = ct_comp;
 							if((mtest.isLogicalAnd() || mtest.isLogicalOr() || mtest.isComparison()) && test_comparisons(*this, mtest, x_var, eo, false, eo.expand ? 1 : 2) < 0) {
 								if(eo.expand) {
-									add(mtest, ct_comp == COMPARISON_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+									add(mtest, ct_comp_bak == COMPARISON_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 									calculatesub(eo2, eo, false);
 									return true;
 								}
@@ -3992,43 +4005,43 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 
 					MathStructure mabs(*m);
 
-					ComparisonType cmp_type = ct_comp;
+					ComparisonType ct_comp_bak = ct_comp;
 					MathStructure *malt = new MathStructure(*this);
 					MathStructure mabs_minus(mabs[0]);
 					mabs_minus.calculateNegate(eo2);
 					(*malt)[0].replace(mabs, mabs_minus, mabs.containsInterval());
 					(*malt)[0].calculatesub(eo2, eo, true);
 					MathStructure *mcheck = new MathStructure(mabs[0]);
-					mcheck->add(m_zero, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_EQUALS_GREATER : OPERATION_LESS);
+					mcheck->add(m_zero, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_EQUALS_GREATER : OPERATION_LESS);
 					mcheck->isolate_x_sub(eo, eo2, x_var);
 					malt->isolate_x_sub(eo, eo2, x_var);
-					malt->add_nocopy(mcheck, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+					malt->add_nocopy(mcheck, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 					malt->calculatesub(eo2, eo, false);
 
 					mcheck = new MathStructure(mabs[0]);
 					CHILD(0).replace(mabs, mabs[0], mabs.containsInterval());
 					CHILD(0).calculatesub(eo2, eo, true);
-					mcheck->add(m_zero, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_LESS : OPERATION_EQUALS_GREATER);
+					mcheck->add(m_zero, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LESS : OPERATION_EQUALS_GREATER);
 					mcheck->isolate_x_sub(eo, eo2, x_var);
 					isolate_x_sub(eo, eo2, x_var);
-					add_nocopy(mcheck, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+					add_nocopy(mcheck, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 					calculatesub(eo2, eo, false);
-					add_nocopy(malt, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
+					add_nocopy(malt, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
 					calculatesub(eo2, eo, false);
 					return true;
 				} else if(m && m->function()->id() == FUNCTION_ID_SIGNUM) {
 					MathStructure mabs(*m);
 
-					ComparisonType cmp_type = ct_comp;
+					ComparisonType ct_comp_bak = ct_comp;
 					MathStructure *malt = new MathStructure(*this);
 					(*malt)[0].replace(mabs, m_minus_one, mabs.containsInterval());
 					(*malt)[0].calculatesub(eo2, eo, true);
 					MathStructure *mcheck = new MathStructure(mabs[0]);
-					mcheck->add(m_zero, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_EQUALS_GREATER : OPERATION_LESS);
-					mcheck->add(m_zero, cmp_type == COMPARISON_NOT_EQUALS ? (mabs[1].isMinusOne() ? OPERATION_GREATER : OPERATION_EQUALS_GREATER) : (mabs[1].isMinusOne() ? OPERATION_EQUALS_LESS : OPERATION_LESS));
+					mcheck->add(m_zero, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_EQUALS_GREATER : OPERATION_LESS);
+					mcheck->add(m_zero, ct_comp_bak == COMPARISON_NOT_EQUALS ? (mabs[1].isMinusOne() ? OPERATION_GREATER : OPERATION_EQUALS_GREATER) : (mabs[1].isMinusOne() ? OPERATION_EQUALS_LESS : OPERATION_LESS));
 					mcheck->isolate_x_sub(eo, eo2, x_var);
 					malt->isolate_x_sub(eo, eo2, x_var);
-					malt->add_nocopy(mcheck, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+					malt->add_nocopy(mcheck, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 					malt->calculatesub(eo2, eo, false);
 
 					MathStructure *malt0 = NULL;
@@ -4037,23 +4050,23 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						(*malt0)[0].replace(mabs, mabs[1], mabs.containsInterval());
 						(*malt0)[0].calculatesub(eo2, eo, true);
 						mcheck = new MathStructure(mabs[0]);
-						mcheck->add(mabs[1], cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_NOT_EQUALS : OPERATION_EQUALS);
+						mcheck->add(mabs[1], ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_NOT_EQUALS : OPERATION_EQUALS);
 						mcheck->isolate_x_sub(eo, eo2, x_var);
 						malt0->isolate_x_sub(eo, eo2, x_var);
-						malt0->add_nocopy(mcheck, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+						malt0->add_nocopy(mcheck, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 						malt0->calculatesub(eo2, eo, false);
 					}
 
 					mcheck = new MathStructure(mabs[0]);
 					CHILD(0).replace(mabs, m_one, mabs.containsInterval());
 					CHILD(0).calculatesub(eo2, eo, true);
-					mcheck->add(m_zero, cmp_type == COMPARISON_NOT_EQUALS ? (mabs[1].isOne() ? OPERATION_LESS : OPERATION_EQUALS_LESS) : (mabs[1].isOne() ? OPERATION_EQUALS_GREATER : OPERATION_GREATER));
+					mcheck->add(m_zero, ct_comp_bak == COMPARISON_NOT_EQUALS ? (mabs[1].isOne() ? OPERATION_LESS : OPERATION_EQUALS_LESS) : (mabs[1].isOne() ? OPERATION_EQUALS_GREATER : OPERATION_GREATER));
 					mcheck->isolate_x_sub(eo, eo2, x_var);
 					isolate_x_sub(eo, eo2, x_var);
-					add_nocopy(mcheck, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+					add_nocopy(mcheck, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 					calculatesub(eo2, eo, false);
-					add_nocopy(malt, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
-					if(malt0) add_nocopy(malt0, cmp_type == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
+					add_nocopy(malt, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
+					if(malt0) add_nocopy(malt0, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
 					calculatesub(eo2, eo, false);
 					return true;
 				}
@@ -4279,13 +4292,14 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							CHILD(1).raise_nocopy(marg);
 							CHILD(1).calculateRaiseExponent(eo2);
 							CHILDREN_UPDATED
+							ComparisonType ct_comp_bak = ct_comp;
 							isolate_x_sub(eo, eo2, x_var, morig);
 							if(mreq1) {
-								add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+								add_nocopy(mreq1, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 								calculatesub(eo2, eo, false);
 							}
 							if(marg2) {
-								add_nocopy(marg2, ct_comp == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+								add_nocopy(marg2, ct_comp_bak == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 								calculatesub(eo2, eo, false);
 							}
 						} else {
@@ -4374,12 +4388,13 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							CHILD(1).raise_nocopy(marg);
 							CHILD(1).calculateRaiseExponent(eo2);
 							CHILDREN_UPDATED
+							ComparisonType ct_comp_bak = ct_comp;
 							isolate_x_sub(eo, eo2, x_var, morig);
-							if(mreq1) add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
-							if(mreq2) add_nocopy(mreq2, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+							if(mreq1) add_nocopy(mreq1, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+							if(mreq2) add_nocopy(mreq2, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 							if(mreq1 || mreq2) calculatesub(eo2, eo, false);
-							add_nocopy(marg2, ct_comp == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
-							add_nocopy(marg3, ct_comp == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+							add_nocopy(marg2, ct_comp_bak == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+							add_nocopy(marg3, ct_comp_bak == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 							calculatesub(eo2, eo, false);
 						}
 						return true;
@@ -4399,9 +4414,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						mtest.transform(ct_comp, CHILD(1));
 						if(mtest.isolate_x_sub(eo, eo2, mu)) {
 							mtest.replace(mu, mvar);
+							ComparisonType ct_comp_bak = ct_comp;
 							if((mtest.isLogicalAnd() || mtest.isLogicalOr() || mtest.isComparison()) && test_comparisons(*this, mtest, x_var, eo, false, eo.expand ? 1 : 2) < 0) {
 								if(eo.expand) {
-									add(mtest, ct_comp == COMPARISON_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+									add(mtest, ct_comp_bak == COMPARISON_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 									calculatesub(eo2, eo, false);
 									var->destroy();
 									return true;
@@ -4424,9 +4440,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							CHILDREN_UPDATED
 							MathStructure *malt = new MathStructure(*this);
 							(*malt)[1] = nr_minus_inf;
+							ComparisonType ct_comp_bak = ct_comp;
 							isolate_x_sub(eo, eo2, x_var, morig);
 							malt->isolate_x_sub(eo, eo2, x_var, morig);
-							add_nocopy(malt, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+							add_nocopy(malt, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 							calculatesub(eo, eo2, false);
 							return true;
 						}
@@ -4473,6 +4490,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							MathStructure *mneg = new MathStructure(*this);
 							if(ct_comp == COMPARISON_GREATER) mneg->setComparisonType(COMPARISON_LESS);
 							mneg->isolate_x_sub(eo, eo2, x_var, morig);
+							isolate_x_sub(eo, eo2, x_var, morig);
 							add_nocopy(mneg, OPERATION_LOGICAL_OR);
 							calculatesub(eo2, eo, false);
 						} else {
@@ -4587,10 +4605,11 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							malt1->isolate_x_sub(eo, eo2, x_var, morig);
 							malt2->isolate_x_sub(eo, eo2, x_var, morig);
 							malt3->isolate_x_sub(eo, eo2, x_var, morig);
+							ComparisonType ct_comp_bak = ct_comp;
 							isolate_x_sub(eo, eo2, x_var, morig);
-							add_nocopy(malt1, ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_LESS || ct_comp == COMPARISON_EQUALS_LESS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
-							add_nocopy(malt2, ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_LESS || ct_comp == COMPARISON_EQUALS_LESS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
-							add_nocopy(malt3, ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_LESS || ct_comp == COMPARISON_EQUALS_LESS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
+							add_nocopy(malt1, ct_comp_bak == COMPARISON_NOT_EQUALS || ct_comp_bak == COMPARISON_LESS || ct_comp_bak == COMPARISON_EQUALS_LESS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+							add_nocopy(malt2, ct_comp_bak == COMPARISON_NOT_EQUALS || ct_comp_bak == COMPARISON_LESS || ct_comp_bak == COMPARISON_EQUALS_LESS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
+							add_nocopy(malt3, ct_comp_bak == COMPARISON_NOT_EQUALS || ct_comp_bak == COMPARISON_LESS || ct_comp_bak == COMPARISON_EQUALS_LESS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
 							calculatesub(eo2, eo, false);
 							b_set = true;
 						} else if(!b_real && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS)) {
@@ -4718,9 +4737,9 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								else if(ct_comp == COMPARISON_EQUALS_LESS) mneg->setComparisonType(COMPARISON_EQUALS_GREATER);
 								else if(ct_comp == COMPARISON_EQUALS_GREATER) mneg->setComparisonType(COMPARISON_EQUALS_LESS);
 								mneg->isolate_x_sub(eo, eo2, x_var, morig);
-								MathOperation op = (ct_comp == COMPARISON_NOT_EQUALS || ct_comp == COMPARISON_LESS || ct_comp == COMPARISON_EQUALS_LESS) ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR;
+								ComparisonType ct_comp_bak = ct_comp;
 								isolate_x_sub(eo, eo2, x_var, morig);
-								add_nocopy(mneg, op);
+								add_nocopy(mneg, (ct_comp_bak == COMPARISON_NOT_EQUALS || ct_comp_bak == COMPARISON_LESS || ct_comp_bak == COMPARISON_EQUALS_LESS) ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 								calculatesub(eo2, eo, false);
 							} else {
 								CHILD(0).setToChild(1);
@@ -4793,6 +4812,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						CHILD(1).calculateRaise(CHILD(0)[1], eo);
 						CHILD(0).setToChild(1);
 						CHILDREN_UPDATED
+						ComparisonType ct_comp_bak = ct_comp;
 						isolate_x_sub(eo, eo2, x_var, morig);
 						if(b_test) {
 							if(test_comparisons(*mposcheck, *this, x_var, eo) < 0) {
@@ -4801,7 +4821,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							}
 							mposcheck->unref();
 						} else if(mposcheck) {
-							add_nocopy(mposcheck, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+							add_nocopy(mposcheck, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 							calculatesub(eo2, eo, false);
 						}
 					}
@@ -4816,7 +4836,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							if(mbak[0][1].representsInteger() && mbak[0][1].representsEven()) {
 								malt->add(m_zero, OPERATION_NOT_EQUALS);
 							} else {
-								malt->add(m_zero, (ct_comp == COMPARISON_EQUALS_GREATER || ct_comp == COMPARISON_GREATER) ? OPERATION_LESS : OPERATION_GREATER);
+								malt->add(m_zero, (mbak.comparisonType() == COMPARISON_EQUALS_GREATER || mbak.comparisonType() == COMPARISON_GREATER) ? OPERATION_LESS : OPERATION_GREATER);
 							}
 							malt->isolate_x_sub(eo, eo2, x_var, morig);
 							MathStructure *mtest2 = new MathStructure(mbak[1]);
@@ -4919,7 +4939,6 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						}
 					}
 				}
-				ComparisonType ct = ct_comp;
 
 				if((ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS)) {
 					if(CHILD(0)[0].isMinusOne()) {
@@ -4938,13 +4957,14 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					} else if(CHILD(1).isOne() && CHILD(0)[1].representsNonComplex()) {
 						CHILD(0).setToChild(2, true);
 						CHILD(1).clear(true);
+						ComparisonType ct_comp_bak = ct_comp;
 						isolate_x_sub(eo, eo2, x_var, morig);
 						if(m1) {
-							add_nocopy(m1, ct == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+							add_nocopy(m1, ct_comp_bak == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 							calculatesub(eo2, eo, false);
 						}
 						if(mtest) {
-							add_nocopy(mtest, ct == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+							add_nocopy(mtest, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 							calculatesub(eo2, eo, false);
 						}
 						return true;
@@ -5038,27 +5058,28 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				if(COMPARISON_MIGHT_BE_EQUAL(cr1)) {
 					mn1 = new MathStructure();
 					mn1->setType(STRUCT_COMPARISON);
-					mn1->setComparisonType(ct == COMPARISON_EQUALS ? COMPARISON_NOT_EQUALS : COMPARISON_EQUALS);
+					mn1->setComparisonType(ct_comp == COMPARISON_EQUALS ? COMPARISON_NOT_EQUALS : COMPARISON_EQUALS);
 					mn1->addChild(CHILD(0)[0]);
 					mn1->addChild(m_one);
 					mn1->isolate_x(eo2, eo);
 				}
 				CHILD(0).setToChild(2, true);
 				CHILDREN_UPDATED;
+				ComparisonType ct_comp_bak = ct_comp;
 				isolate_x_sub(eo, eo2, x_var, morig);
 				if(mn1) {
-					add_nocopy(mn1, ct == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+					add_nocopy(mn1, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 					calculatesub(eo2, eo, false);
 				}
 				if(m1) {
-					add_nocopy(m1, ct == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+					add_nocopy(m1, ct_comp_bak == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 					calculatesub(eo2, eo, false);
 				}
 				if(mtest) {
-					add_nocopy(mtest, ct == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+					add_nocopy(mtest, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 					calculatesub(eo2, eo, false);
 					if(m0) {
-						add_nocopy(m0, ct == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+						add_nocopy(m0, ct_comp_bak == COMPARISON_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 						calculatesub(eo2, eo, false);
 					}
 				}
@@ -5127,6 +5148,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					CHILD(1).calculateRaise(CHILD(0)[1], eo);
 					CHILD(0).setToChild(1);
 					CHILDREN_UPDATED
+					ComparisonType ct_comp_bak = ct_comp;
 					isolate_x_sub(eo, eo2, x_var, morig);
 					if(b_test) {
 						if(test_comparisons(*mposcheck, *this, x_var, eo) < 0) {
@@ -5135,7 +5157,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						}
 						mposcheck->unref();
 					} else if(mposcheck) {
-						add_nocopy(mposcheck, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+						add_nocopy(mposcheck, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 						calculatesub(eo2, eo, false);
 					}
 					return true;
@@ -5428,10 +5450,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					(*malt)[1].calculatesub(eo2, eo, true);
 					CHILDREN_UPDATED;
 					malt->childrenUpdated();
+					ComparisonType ct_comp_bak = ct_comp;
 					isolate_x_sub(eo, eo2, x_var, morig);
 					malt->isolate_x_sub(eo, eo2, x_var, morig);
-					if(ct_comp == COMPARISON_NOT_EQUALS) add_nocopy(malt, OPERATION_LOGICAL_AND);
-					else add_nocopy(malt, OPERATION_LOGICAL_OR);
+					add_nocopy(malt, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 					calculatesub(eo2, eo, false);
 				} else {
 					CHILDREN_UPDATED;
@@ -5461,10 +5483,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					(*malt)[1].calculatesub(eo2, eo, true);
 					CHILDREN_UPDATED;
 					malt->childrenUpdated();
+					ComparisonType ct_comp_bak = ct_comp;
 					isolate_x_sub(eo, eo2, x_var, morig);
 					malt->isolate_x_sub(eo, eo2, x_var, morig);
-					if(ct_comp == COMPARISON_NOT_EQUALS) add_nocopy(malt, OPERATION_LOGICAL_AND);
-					else add_nocopy(malt, OPERATION_LOGICAL_OR);
+					add_nocopy(malt, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 					calculatesub(eo2, eo, false);
 					fix_n_multiple(*this, eo2, eo, x_var);
 				}
@@ -5478,10 +5500,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					(*malt)[1].calculateNegate(eo2);
 					CHILDREN_UPDATED;
 					malt->childrenUpdated();
+					ComparisonType ct_comp_bak = ct_comp;
 					isolate_x_sub(eo, eo2, x_var, morig);
 					malt->isolate_x_sub(eo, eo2, x_var, morig);
-					if(ct_comp == COMPARISON_NOT_EQUALS) add_nocopy(malt, OPERATION_LOGICAL_AND);
-					else add_nocopy(malt, OPERATION_LOGICAL_OR);
+					add_nocopy(malt, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 					calculatesub(eo2, eo, false);
 				} else {
 					MathStructure *malt = new MathStructure(*this);
@@ -5495,10 +5517,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					(*malt)[1].calculatesub(eo2, eo, true);
 					CHILDREN_UPDATED;
 					malt->childrenUpdated();
+					ComparisonType ct_comp_bak = ct_comp;
 					isolate_x_sub(eo, eo2, x_var, morig);
 					malt->isolate_x_sub(eo, eo2, x_var, morig);
-					if(ct_comp == COMPARISON_NOT_EQUALS) add_nocopy(malt, OPERATION_LOGICAL_AND);
-					else add_nocopy(malt, OPERATION_LOGICAL_OR);
+					add_nocopy(malt, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 					calculatesub(eo2, eo, false);
 					fix_n_multiple(*this, eo2, eo, x_var);
 				}
@@ -5535,6 +5557,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				CHILD(1).transformById(FUNCTION_ID_SIN);
 				if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
 				CHILDREN_UPDATED;
+				ComparisonType ct_comp_bak = ct_comp;
 				isolate_x_sub(eo, eo2, x_var, morig);
 				m1.transformById(FUNCTION_ID_RE);
 				if(m1.calculateFunctions(eo)) m1.calculatesub(eo2, eo, true);
@@ -5554,43 +5577,43 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 				}
 				if(DEFAULT_RADIANS(eo.parse_options.angle_unit)) {
-					mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-					mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq1->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq2->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 					mreq1->last() *= nr_half;
 					mreq2->last() *= nr_minus_half;
 					if(mreq3) {
-						mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+						mreq3->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 						mreq3->last() *= nr_minus_half;
 					}
 					if(mreq5) {
-						mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+						mreq5->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 						mreq5->last() *= nr_half;
 					}
 				} else {
-					mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, angle_units_in_turn(eo2, 1, 4));
-					mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, angle_units_in_turn(eo2, -1, 4));
-					if(mreq3) mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, angle_units_in_turn(eo2, -1, 4));
-					if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, angle_units_in_turn(eo2, 1, 4));
+					mreq1->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, angle_units_in_turn(eo2, 1, 4));
+					mreq2->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, angle_units_in_turn(eo2, -1, 4));
+					if(mreq3) mreq3->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, angle_units_in_turn(eo2, -1, 4));
+					if(mreq5) mreq5->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, angle_units_in_turn(eo2, 1, 4));
 				}
-				if(mreq4) mreq4->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
-				if(mreq6) mreq6->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, m_zero);
+				if(mreq4) mreq4->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
+				if(mreq6) mreq6->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, m_zero);
 				mreq1->isolate_x(eo2, eo);
 				mreq2->isolate_x(eo2, eo);
-				add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
-				add_nocopy(mreq2, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				add_nocopy(mreq1, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+				add_nocopy(mreq2, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 				if(mreq3) {
 					mreq3->isolate_x(eo2, eo);
 					mreq4->isolate_x(eo2, eo);
-					mreq3->add_nocopy(mreq4, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+					mreq3->add_nocopy(mreq4, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 					mreq3->calculatesub(eo2, eo, false);
-					add_nocopy(mreq3, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+					add_nocopy(mreq3, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 				}
 				if(mreq5) {
 					mreq5->isolate_x(eo2, eo);
 					mreq6->isolate_x(eo2, eo);
-					mreq5->add_nocopy(mreq6, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+					mreq5->add_nocopy(mreq6, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 					mreq5->calculatesub(eo2, eo, false);
-					add_nocopy(mreq5, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+					add_nocopy(mreq5, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 				}
 				if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) convert(CALCULATOR->getRadUnit());
 				calculatesub(eo2, eo, false);
@@ -5610,6 +5633,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				CHILD(1).transformById(FUNCTION_ID_COS);
 				if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
 				CHILDREN_UPDATED;
+				ComparisonType ct_comp_bak = ct_comp;
 				isolate_x_sub(eo, eo2, x_var, morig);
 				m2.transformById(FUNCTION_ID_IM);
 				m1.transformById(FUNCTION_ID_RE);
@@ -5629,33 +5653,33 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 				}
 				if(DEFAULT_RADIANS(eo.parse_options.angle_unit)) {
-					mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-					if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq1->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					if(mreq5) mreq5->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 				} else {
-					mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, angle_units_in_turn(eo2, 1, 2));
-					if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, angle_units_in_turn(eo2, 1, 2));
+					mreq1->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, angle_units_in_turn(eo2, 1, 2));
+					if(mreq5) mreq5->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, angle_units_in_turn(eo2, 1, 2));
 				}
-				if(mreq3) mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, m_zero);
-				if(mreq4) mreq4->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
-				if(mreq6) mreq6->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, m_zero);
-				mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
+				if(mreq3) mreq3->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, m_zero);
+				if(mreq4) mreq4->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
+				if(mreq6) mreq6->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, m_zero);
+				mreq2->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
 				mreq1->isolate_x(eo2, eo);
 				mreq2->isolate_x(eo2, eo);
-				add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
-				add_nocopy(mreq2, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				add_nocopy(mreq1, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+				add_nocopy(mreq2, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 				if(mreq3) {
 					mreq3->isolate_x(eo2, eo);
 					mreq4->isolate_x(eo2, eo);
-					mreq3->add_nocopy(mreq4, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+					mreq3->add_nocopy(mreq4, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 					mreq3->calculatesub(eo2, eo, false);
-					add_nocopy(mreq3, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+					add_nocopy(mreq3, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 				}
 				if(mreq5) {
 					mreq5->isolate_x(eo2, eo);
 					mreq6->isolate_x(eo2, eo);
-					mreq5->add_nocopy(mreq6, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+					mreq5->add_nocopy(mreq6, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 					mreq5->calculatesub(eo2, eo, false);
-					add_nocopy(mreq5, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+					add_nocopy(mreq5, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 				}
 				if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) convert(CALCULATOR->getRadUnit());
 				calculatesub(eo2, eo, false);
@@ -5675,6 +5699,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				CHILD(1).transformById(FUNCTION_ID_TAN);
 				if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
 				CHILDREN_UPDATED;
+				ComparisonType ct_comp_bak = ct_comp;
 				isolate_x_sub(eo, eo2, x_var, morig);
 				m2.transformById(FUNCTION_ID_IM);
 				m1.transformById(FUNCTION_ID_RE);
@@ -5694,43 +5719,43 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 				}
 				if(DEFAULT_RADIANS(eo.parse_options.angle_unit)) {
-					mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-					mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq1->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq2->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 					mreq1->last() *= nr_half;
 					mreq2->last() *= nr_minus_half;
 					if(mreq3) {
-						mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+						mreq3->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 						mreq3->last() *= nr_minus_half;
 					}
 					if(mreq5) {
-						mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+						mreq5->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 						mreq5->last() *= nr_half;
 					}
 				} else {
-					mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, angle_units_in_turn(eo2, 1, 4));
-					mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, angle_units_in_turn(eo2, -1, 4));
-					if(mreq3) mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, angle_units_in_turn(eo2, -1, 4));
-					if(mreq5) mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, angle_units_in_turn(eo2, 1, 4));
+					mreq1->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, angle_units_in_turn(eo2, 1, 4));
+					mreq2->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, angle_units_in_turn(eo2, -1, 4));
+					if(mreq3) mreq3->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, angle_units_in_turn(eo2, -1, 4));
+					if(mreq5) mreq5->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS : COMPARISON_NOT_EQUALS, angle_units_in_turn(eo2, 1, 4));
 				}
-				if(mreq4) mreq4->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_GREATER : COMPARISON_LESS, m_zero);
-				if(mreq6) mreq6->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_LESS : COMPARISON_GREATER, m_zero);
+				if(mreq4) mreq4->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_GREATER : COMPARISON_LESS, m_zero);
+				if(mreq6) mreq6->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_LESS : COMPARISON_GREATER, m_zero);
 				mreq1->isolate_x(eo2, eo);
 				mreq2->isolate_x(eo2, eo);
-				add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
-				add_nocopy(mreq2, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				add_nocopy(mreq1, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+				add_nocopy(mreq2, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 				if(mreq3) {
 					mreq3->isolate_x(eo2, eo);
 					mreq4->isolate_x(eo2, eo);
-					mreq3->add_nocopy(mreq4, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+					mreq3->add_nocopy(mreq4, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 					mreq3->calculatesub(eo2, eo, false);
-					add_nocopy(mreq3, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+					add_nocopy(mreq3, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 				}
 				if(mreq5) {
 					mreq5->isolate_x(eo2, eo);
 					mreq6->isolate_x(eo2, eo);
-					mreq5->add_nocopy(mreq6, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+					mreq5->add_nocopy(mreq6, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 					mreq5->calculatesub(eo2, eo, false);
-					add_nocopy(mreq5, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+					add_nocopy(mreq5, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 				}
 				if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) convert(CALCULATOR->getRadUnit());
 				calculatesub(eo2, eo, false);
@@ -5741,6 +5766,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				CHILD(1).transformById(FUNCTION_ID_SINH);
 				if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
 				CHILDREN_UPDATED;
+				ComparisonType ct_comp_bak = ct_comp;
 				isolate_x_sub(eo, eo2, x_var, morig);
 				m2.transformById(FUNCTION_ID_IM);
 				if(m2.calculateFunctions(eo)) m2.calculatesub(eo2, eo, true);
@@ -5751,21 +5777,21 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					mreq1 = new MathStructure(m2);
 					mreq2 = new MathStructure(m2);
 					if(m1.isZero()) {
-						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-						mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+						mreq1->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+						mreq2->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 					} else {
-						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_GREATER : COMPARISON_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-						mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_LESS : COMPARISON_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+						mreq1->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_GREATER : COMPARISON_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+						mreq2->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_LESS : COMPARISON_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 						mreq3 = new MathStructure(m2);
 						mreq4 = new MathStructure(m2);
 						mreq5 = new MathStructure(m1);
 						mreq6 = new MathStructure(m1);
-						mreq3->transform(ct_comp, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-						mreq4->transform(ct_comp, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+						mreq3->transform(ct_comp_bak, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+						mreq4->transform(ct_comp_bak, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 						mreq3->last() *= nr_half;
 						mreq4->last() *= nr_minus_half;
-						mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
-						mreq6->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, m_zero);
+						mreq5->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
+						mreq6->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, m_zero);
 					}
 					mreq1->last() *= nr_half;
 					mreq2->last() *= nr_minus_half;
@@ -5776,17 +5802,17 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						mreq4->isolate_x(eo2, eo);
 						mreq5->isolate_x(eo2, eo);
 						mreq6->isolate_x(eo2, eo);
-						mreq3->add_nocopy(mreq5, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+						mreq3->add_nocopy(mreq5, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 						mreq3->calculatesub(eo2, eo, false);
-						mreq4->add_nocopy(mreq6, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+						mreq4->add_nocopy(mreq6, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 						mreq4->calculatesub(eo2, eo, false);
-						mreq1->add_nocopy(mreq3, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+						mreq1->add_nocopy(mreq3, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 						mreq1->calculatesub(eo2, eo, false);
-						mreq2->add_nocopy(mreq4, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+						mreq2->add_nocopy(mreq4, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 						mreq2->calculatesub(eo2, eo, false);
 					}
-					add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
-					add_nocopy(mreq2, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+					add_nocopy(mreq1, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+					add_nocopy(mreq2, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 				}
 				calculatesub(eo2, eo, false);
 				return true;
@@ -5796,6 +5822,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				CHILD(1).transformById(FUNCTION_ID_COSH);
 				if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
 				CHILDREN_UPDATED;
+				ComparisonType ct_comp_bak = ct_comp;
 				isolate_x_sub(eo, eo2, x_var, morig);
 				MathStructure m1im(m1);
 				m1.transformById(FUNCTION_ID_RE);
@@ -5803,47 +5830,47 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				if(m1.calculateFunctions(eo)) m1.calculatesub(eo2, eo, true);
 				if(m2.calculateFunctions(eo)) m2.calculatesub(eo2, eo, true);
 				if(m1.representsNegative() || (m1.isZero() && m2.representsNegative())) {
-					if(ct_comp == COMPARISON_NOT_EQUALS) set(1, 1, 0, true);
+					if(ct_comp_bak == COMPARISON_NOT_EQUALS) set(1, 1, 0, true);
 					else clear(true);
 					return true;
 				}
 				if(m2.isZero()) {
 					if(!m1.representsNonNegative()) {
 						MathStructure *mreq1 = new MathStructure(m1);
-						mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
+						mreq1->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
 						mreq1->isolate_x(eo2, eo);
-						add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+						add_nocopy(mreq1, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 						calculatesub(eo2, eo, false);
 					}
 				} else {
 					MathStructure *mreq1 = new MathStructure(m1);
-					mreq1->transform(ct_comp, m_zero);
+					mreq1->transform(ct_comp_bak, m_zero);
 					mreq1->isolate_x(eo2, eo);
 					MathStructure *mreq2 = new MathStructure(m1);
-					mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_LESS : COMPARISON_GREATER, m_zero);
+					mreq2->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_LESS : COMPARISON_GREATER, m_zero);
 					mreq2->isolate_x(eo2, eo);
 					MathStructure *mreq3 = new MathStructure(m2);
-					mreq3->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
+					mreq3->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, m_zero);
 					mreq3->isolate_x(eo2, eo);
 					MathStructure *mreq4 = new MathStructure(m2);
-					mreq4->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq4->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 					mreq4->isolate_x(eo2, eo);
 					MathStructure *mreq5 = new MathStructure(m2);
-					mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq5->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_LESS : COMPARISON_EQUALS_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 					mreq5->last().negate();
 					mreq5->isolate_x(eo2, eo);
 					MathStructure *mreq6 = new MathStructure(m2);
-					mreq6->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq6->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_GREATER : COMPARISON_EQUALS_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 					mreq6->isolate_x(eo2, eo);
-					mreq1->add_nocopy(mreq3, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
-					mreq1->add_nocopy(mreq4, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+					mreq1->add_nocopy(mreq3, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+					mreq1->add_nocopy(mreq4, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 					mreq1->calculatesub(eo2, eo, false);
-					mreq2->add_nocopy(mreq5, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
-					mreq2->add_nocopy(mreq6, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+					mreq2->add_nocopy(mreq5, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+					mreq2->add_nocopy(mreq6, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 					mreq2->calculatesub(eo2, eo, false);
-					mreq1->add_nocopy(mreq2, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+					mreq1->add_nocopy(mreq2, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 					mreq1->calculatesub(eo2, eo, false);
-					add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+					add_nocopy(mreq1, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 					calculatesub(eo2, eo, false);
 				}
 				return true;
@@ -5853,6 +5880,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				CHILD(1).transformById(FUNCTION_ID_TANH);
 				if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
 				CHILDREN_UPDATED;
+				ComparisonType ct_comp_bak = ct_comp;
 				isolate_x_sub(eo, eo2, x_var, morig);
 				m2.transformById(FUNCTION_ID_IM);
 				if(m2.calculateFunctions(eo)) m2.calculatesub(eo2, eo, true);
@@ -5862,18 +5890,18 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					if(m1.calculateFunctions(eo)) m1.calculatesub(eo2, eo, true);
 					mreq1 = new MathStructure(m2);
 					mreq2 = new MathStructure(m2);
-					mreq1->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_GREATER : COMPARISON_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-					mreq2->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_LESS : COMPARISON_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq1->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_GREATER : COMPARISON_LESS, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq2->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_LESS : COMPARISON_GREATER, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 					mreq3 = new MathStructure(m2);
 					mreq4 = new MathStructure(m2);
 					mreq5 = new MathStructure(m1);
 					mreq6 = new MathStructure(m1);
-					mreq3->transform(ct_comp, CALCULATOR->getVariableById(VARIABLE_ID_PI));
-					mreq4->transform(ct_comp, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq3->transform(ct_comp_bak, CALCULATOR->getVariableById(VARIABLE_ID_PI));
+					mreq4->transform(ct_comp_bak, CALCULATOR->getVariableById(VARIABLE_ID_PI));
 					mreq3->last() *= nr_half;
 					mreq4->last() *= nr_minus_half;
-					mreq5->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_GREATER : COMPARISON_LESS, m_zero);
-					mreq6->transform(ct_comp == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_LESS : COMPARISON_GREATER, m_zero);
+					mreq5->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_GREATER : COMPARISON_LESS, m_zero);
+					mreq6->transform(ct_comp_bak == COMPARISON_NOT_EQUALS ? COMPARISON_EQUALS_LESS : COMPARISON_GREATER, m_zero);
 					mreq1->last() *= nr_half;
 					mreq2->last() *= nr_minus_half;
 					mreq1->isolate_x(eo2, eo);
@@ -5882,16 +5910,16 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					mreq4->isolate_x(eo2, eo);
 					mreq5->isolate_x(eo2, eo);
 					mreq6->isolate_x(eo2, eo);
-					mreq3->add_nocopy(mreq5, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+					mreq3->add_nocopy(mreq5, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 					mreq3->calculatesub(eo2, eo, false);
-					mreq4->add_nocopy(mreq6, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+					mreq4->add_nocopy(mreq6, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 					mreq4->calculatesub(eo2, eo, false);
-					mreq1->add_nocopy(mreq3, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+					mreq1->add_nocopy(mreq3, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 					mreq1->calculatesub(eo2, eo, false);
-					mreq2->add_nocopy(mreq4, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+					mreq2->add_nocopy(mreq4, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 					mreq2->calculatesub(eo2, eo, false);
-					add_nocopy(mreq1, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
-					add_nocopy(mreq2, ct_comp == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+					add_nocopy(mreq1, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
+					add_nocopy(mreq2, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
 				}
 				return true;
 			} else if(CHILD(0).function()->id() == FUNCTION_ID_ABS && CHILD(0).size() == 1) {

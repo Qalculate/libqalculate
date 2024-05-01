@@ -3558,8 +3558,8 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 		ips_n.parent_approximate = true;
 		if(po.is_approximate) *po.is_approximate = true;
 	}
-	if(ips.depth == 0 && ((format && tagtype == TAG_TYPE_HTML && has_power_in_power(*this)) || ((tagtype == TAG_TYPE_TERMINAL || !format) && po.use_unicode_signs && (po.use_unicode_signs > UNICODE_SIGNS_ON || has_nonunicode_power(*this, po))))) {
-		ips_n.power_depth = (po.use_unicode_signs == UNICODE_SIGNS_WITHOUT_EXPONENTS || has_nonunicode_power(*this, po, true) ? -2 : -1);
+	if(ips.depth == 0 && ((format && tagtype == TAG_TYPE_HTML && has_power_in_power(*this)) || ((tagtype == TAG_TYPE_TERMINAL || !format) && (po.use_unicode_signs != UNICODE_SIGNS_ON || has_nonunicode_power(*this, po))))) {
+		ips_n.power_depth = (po.use_unicode_signs != UNICODE_SIGNS_ONLY_UNIT_EXPONENTS || has_nonunicode_power(*this, po, true) ? -2 : -1);
 	}
 	bool flat_power = ips_n.power_depth != 0;
 	if(precision() >= 0 && (ips_n.parent_precision < 0 || precision() < ips_n.parent_precision)) ips_n.parent_precision = precision();
