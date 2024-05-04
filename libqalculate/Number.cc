@@ -4555,15 +4555,20 @@ bool Number::allroots(const Number &o, vector<Number> &roots) {
 	Number o_inv(o);
 	if(!o_inv.recip()) return false;
 	Number nr_arg;
-	nr_arg.set(*this, false, true);
-	if(!nr_arg.atan2(*i_value)) return false;
+	if(hasImaginaryPart()) {
+		nr_arg.set(*i_value, false, true);
+		if(!nr_arg.atan2(realPart())) return false;
+	} else {
+		if(!nr_arg.atan2(*this)) return false;
+	}
 	Number nr_pi2;
 	nr_pi2.pi();
 	nr_pi2 *= 2;
 	Number nr_i;
 	Number nr_re;
 	nr_re.set(*this, false, true);
-	Number nr_im(*i_value);
+	Number nr_im;
+	if(hasImaginaryPart()) nr_im.set(*i_value, false, true);
 	if(!nr_re.square() || !nr_im.square() || !nr_re.add(nr_im) || !nr_re.sqrt() || !nr_re.raise(o_inv)) return false;
 	while(nr_i.isLessThan(o)) {
 		if(CALCULATOR->aborted()) return false;
