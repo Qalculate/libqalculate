@@ -1,21 +1,21 @@
 # Copyright (Cтс) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the libqalculate package.
 #
-# Damir Islamov <damir@secretlaboratory.ru>, 2021-2023.
+# Damir Islamov <damir@secretlaboratory.ru>, 2021-2023, 2024.
 msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-30 09:11+0200\n"
-"PO-Revision-Date: 2023-12-07 20:11+0700\n"
+"POT-Creation-Date: 2024-05-03 18:53+0700\n"
+"PO-Revision-Date: 2024-05-04 10:02+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<"
+"=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Lokalize 22.12.3\n"
 
 #: ../data/currencies.xml.in.h:1
@@ -2802,31 +2802,27 @@ msgstr "В 4-й переменной шаг?"
 
 #: ../data/functions.xml.in.h:16
 msgid "Colon Function (number sequence vector)"
-msgstr ""
+msgstr "Функция двоеточия (вектор числовой последовательности)"
 
 #: ../data/functions.xml.in.h:17
-#, fuzzy
 msgid "r:colon"
-msgstr "столбец"
+msgstr "двоеточие"
 
 #: ../data/functions.xml.in.h:18
-#, fuzzy
 msgid "Returns a sequence of numbers as a vector."
-msgstr "Возвращает строку в матрице как вектор."
+msgstr "Возвращает последовательность чисел в виде вектора."
 
 #: ../data/functions.xml.in.h:19
-#, fuzzy
 msgid "Starting value"
-msgstr "Номинальная стоимость"
+msgstr "Начальное значение"
 
 #: ../data/functions.xml.in.h:20
 msgid "Increment or Ending value"
-msgstr ""
+msgstr "Инкремент или конечное значение"
 
 #: ../data/functions.xml.in.h:21
-#, fuzzy
 msgid "Ending value"
-msgstr "Начальное значение"
+msgstr "Конечное значение"
 
 #: ../data/functions.xml.in.h:22
 msgid "Sort"
@@ -2838,7 +2834,7 @@ msgstr "сортировка"
 
 #: ../data/functions.xml.in.h:24
 msgid "Returns a sorted vector."
-msgstr "Возвращает отсортированный вектор."
+msgstr "Возвращает вектор отсортированных значений."
 
 #: ../data/functions.xml.in.h:25
 msgid "Vector"
@@ -2865,12 +2861,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:30
 msgid "Flip"
-msgstr ""
+msgstr "Переворот"
 
 #: ../data/functions.xml.in.h:31
-#, fuzzy
 msgid "r:flip"
-msgstr "пол"
+msgstr "переворот,флип"
 
 #: ../data/functions.xml.in.h:32
 msgid ""
@@ -2878,6 +2873,9 @@ msgid ""
 "order of rows is reversed, if 2 column order is changed, and if 0 (default) "
 "both are changed."
 msgstr ""
+"Меняет порядок элементов в матрице или векторе на обратный. Если размерность"
+" равна 1, порядок строк меняется на обратный, если 2 – порядок столбцов, а"
+" если 0 (по умолчанию), изменяются оба."
 
 #: ../data/functions.xml.in.h:33
 msgid "Matrix/vector"
@@ -3908,7 +3906,7 @@ msgid ""
 "prime to n."
 msgstr ""
 "Показывает, сколько натуральнз отрезка [1,n-1] взаимно просты с n (имеют с n "
-"только один общий делитель — единицу)."
+"только один общий делитель – единицу)."
 
 #: ../data/functions.xml.in.h:261
 msgid "r:totient,au:&#x3C6;,phi"
@@ -3932,17 +3930,16 @@ msgstr "Возвращает n-й член последовательности 
 
 #: ../data/functions.xml.in.h:266
 msgid "Multiples"
-msgstr ""
+msgstr "Кратные"
 
 #: ../data/functions.xml.in.h:267
-#, fuzzy
 msgid "r:multiples"
-msgstr "систуравн"
+msgstr "кратный,кратные"
 
 #: ../data/functions.xml.in.h:268
-#, fuzzy
 msgid "Returns all multiples of a value in the specified range."
-msgstr "Возвращает закрытый интервал с указанными концами."
+msgstr ""
+"Возвращает все значения, кратные ненулевому числу в указанном диапазоне."
 
 #: ../data/functions.xml.in.h:269
 msgid "Rounding"
@@ -3957,7 +3954,6 @@ msgid "r:round"
 msgstr "округлить"
 
 #: ../data/functions.xml.in.h:272
-#, fuzzy
 msgid ""
 "Round to nearest integer or decimal. If the second argument is zero, the "
 "value is rounded towards the nearest integer, otherwise the value is rounded "
@@ -3971,17 +3967,18 @@ msgstr ""
 "равен нулю, значение округляется до ближайшего целого числа, в противном "
 "случае значение округляется до соответствующего количества цифр справа (если "
 "положительное значение) или слева (если отрицательное значение) от "
-"десятичной точки. Если третий аргумент истинен, половинные числа округляются "
-"до ближайшего чётного целого числа/цифры, в противном случае - от нуля."
+"десятичной точки.&#10;&#10;Доступные методы округления (3-й аргумент):"
+" половина от нуля (0), половина до чётного (1), половина до нечётного (2),"
+" половина к нулю (3), половина вверх (4), половина вниз (5), половина"
+" случайно (6), к нулю (7), от нуля (8), вверх (9), вниз (10)"
 
 #: ../data/functions.xml.in.h:273
 msgid "Number of decimals"
 msgstr "Количество знаков после запятой"
 
 #: ../data/functions.xml.in.h:274
-#, fuzzy
 msgid "Rounding method"
-msgstr "Округление"
+msgstr "Метод округления"
 
 #: ../data/functions.xml.in.h:275
 msgid "Round Downwards"
@@ -4024,53 +4021,52 @@ msgid "r:frac"
 msgstr "дробная"
 
 #: ../data/functions.xml.in.h:285
-#, fuzzy
 msgid "Integer Digits"
-msgstr "Целочисленное деление"
+msgstr "Цифры целого числа"
 
 #: ../data/functions.xml.in.h:286
-#, fuzzy
 msgid "r:integerDigits"
-msgstr "этоЦелое"
+msgstr "цифрыЦелого"
 
 #: ../data/functions.xml.in.h:287
 msgid "Length"
 msgstr "Длина/Рост"
 
 #: ../data/functions.xml.in.h:288
-#, fuzzy
 msgid "Get Digit"
-msgstr "Восьмеричная цифра"
+msgstr "Получить цифру"
 
 #: ../data/functions.xml.in.h:289
 msgid "r:digitGet,numberDigit"
-msgstr ""
+msgstr "цифраВпозиции,цифраПоНомеру"
 
 #: ../data/functions.xml.in.h:290
 msgid ""
 "Returns digit at specified position (index of first digit left of decimal "
 "sign is zero)."
 msgstr ""
+"Возвращает цифру в указанной позиции (индекс первой цифры слева от"
+" десятичного разделителя равен нулю)."
 
 #: ../data/functions.xml.in.h:291
-#, fuzzy
 msgid "Position"
-msgstr "Позиция X"
+msgstr "Позиция"
 
 #: ../data/functions.xml.in.h:292
-#, fuzzy
 msgid "Set Digit"
-msgstr "Набор цифр"
+msgstr "Установить цифру в позицию"
 
 #: ../data/functions.xml.in.h:293
 msgid "r:digitSet"
-msgstr ""
+msgstr "цифраВпозицию"
 
 #: ../data/functions.xml.in.h:294
 msgid ""
 "Sets the digit at specified position (index of first digit left of decimal "
 "sign is zero)."
 msgstr ""
+"Устанавливает цифру в указанную позицию (индекс первой цифры слева от"
+" десятичного знака равен нулю)."
 
 #: ../data/functions.xml.in.h:295
 msgid "Clip"
@@ -4143,7 +4139,7 @@ msgstr ""
 "соответствующие положительные основания, а цифры, используемые для "
 "нецелочисленных оснований, определяются путём округления основания от нуля. "
 "Основания, которые не являются действительными числами, по умолчанию "
-"используют цифры 0-9 и A–Z.&#10;&#10;Набор используемых цифр можно выбрать с "
+"используют цифры 0-9 и A-Z.&#10;&#10;Набор используемых цифр можно выбрать с "
 "помощью третьего аргумента (по умолчанию 0 для автоматического выбора). "
 "Установите 1 для цифр 0-9 и A-Z, 2 для 0-9, A-Z и a-z, 3 для цифр Юникода и "
 "4 для слово-номеров (например, ABC = 2, CDE = 3 и т. д.) или введите "
@@ -4671,14 +4667,12 @@ msgid "r:cis"
 msgstr "cis"
 
 #: ../data/functions.xml.in.h:426
-#, fuzzy
 msgid "Power Tower"
-msgstr "Механическая лошадиная сила"
+msgstr "Тетрация"
 
 #: ../data/functions.xml.in.h:427
-#, fuzzy
 msgid "r:powertower"
-msgstr "степень"
+msgstr "тетрация"
 
 #: ../data/functions.xml.in.h:428
 msgid "Base-2 Logarithm"
@@ -5174,10 +5168,10 @@ msgid ""
 "value is converted from fixed point, otherwise to."
 msgstr ""
 "Преобразует числа с фиксированной точкой в или из Q-формата. Соответствует "
-"формату Qm.n, где m — второй аргумент, а n — третий аргумент. m не включает "
+"формату Qm.n, где m – второй аргумент, а n – третий аргумент. m не включает "
 "бит знака. Если значение является целым числом, а четвертый аргумент имеет "
 "значение false, значение преобразуется из Q-формата с фиксированной точкой, "
-"в противном случае — в."
+"в противном случае – в него."
 
 #: ../data/functions.xml.in.h:537
 msgid "Bits (integer part)"
@@ -7147,12 +7141,11 @@ msgstr "Функция «Делать»"
 
 #: ../data/functions.xml.in.h:967
 msgid "For Each Element...Do"
-msgstr ""
+msgstr "Для каждого элемента... Делать"
 
 #: ../data/functions.xml.in.h:968
-#, fuzzy
 msgid "r:foreach"
-msgstr "для"
+msgstr "длякаждого"
 
 #: ../data/functions.xml.in.h:969
 msgid "If...Then...Else"
@@ -7275,9 +7268,8 @@ msgid "r:bitrot"
 msgstr "битрот"
 
 #: ../data/functions.xml.in.h:992
-#, fuzzy
 msgid "Set Bit"
-msgstr "Набор цифр"
+msgstr "Установить бит в позицию"
 
 #: ../data/functions.xml.in.h:993
 msgid ""
@@ -7285,15 +7277,21 @@ msgid ""
 "is 1. Specify bit width and signedness (use 1 for signed and 0 for unsigned) "
 "to allow sign changes when the most significant bit is set."
 msgstr ""
+"Установить двоичный бит в указанную позицию числа. Индекс младшего бита равен"
+" 1. Укажите разрядность и знак (используйте 1 для Установите двоичные биты в"
+" указанном диапазоне с помощью двоичных битов целого числа (индекс 1 до длины"
+" диапазона). Индекс младшего бита равен 1. Укажите разрядность и знак"
+" (используйте 1 для знака и 0 для беззнака), чтобы разрешить изменение знака,"
+" когда установлен старший бит.), чтобы разрешить изменение знака, когда"
+" установлен старший бит."
 
 #: ../data/functions.xml.in.h:994
-#, fuzzy
 msgid "r:bitset"
-msgstr "битрот"
+msgstr "битВпозицию"
 
 #: ../data/functions.xml.in.h:995
 msgid "Set Multiple Bits"
-msgstr ""
+msgstr "Установить несколько битов в позиции"
 
 #: ../data/functions.xml.in.h:996
 msgid ""
@@ -7302,24 +7300,26 @@ msgid ""
 "bit width and signedness (use 1 for signed and 0 for unsigned) to allow sign "
 "changes when the most significant bit is set."
 msgstr ""
+"Установить двоичные биты в указанном диапазоне с помощью двоичных битов"
+" целого числа (индекс 1 до длины диапазона). Индекс младшего бита равен 1."
+" Укажите разрядность и знак (используйте 1 для знакогого и 0 для беззнакогого"
+" числа), чтобы разрешить изменение знака, когда установлен старший бит."
 
 #: ../data/functions.xml.in.h:997
 msgid "r:setbits"
-msgstr ""
+msgstr "битыВпозиции"
 
 #: ../data/functions.xml.in.h:998
-#, fuzzy
 msgid "First position"
-msgstr "Позиция X"
+msgstr "Первая позиция"
 
 #: ../data/functions.xml.in.h:999
-#, fuzzy
 msgid "Last position"
-msgstr "Позиция X"
+msgstr "Последняя позиция"
 
 #: ../data/functions.xml.in.h:1000
 msgid "Get Bit"
-msgstr ""
+msgstr "Получить бит"
 
 #: ../data/functions.xml.in.h:1001
 msgid ""
@@ -7328,11 +7328,13 @@ msgid ""
 "position to, and including, last position are returned as a new binary "
 "number."
 msgstr ""
+"Возвращает двоичный бит в указанной позиции. Индекс младшего бита равен 1."
+" Если последний индекс не равен нулю, биты от (первой) позиции до последней"
+" позиции включительно возвращаются как новое двоичное число."
 
 #: ../data/functions.xml.in.h:1002
-#, fuzzy
 msgid "r:bitget"
-msgstr "битрот"
+msgstr "битВпозиции"
 
 #: ../data/functions.xml.in.h:1003
 msgid "Algebra"
@@ -8796,7 +8798,7 @@ msgid ""
 "European 30/360."
 msgstr ""
 "Возвращает количество купонов, подлежащих выплате между расчётом и сроком "
-"погашения. &#10;&#10;Система подсчёта дней - это тип подсчёта дней, который "
+"погашения.&#10;&#10;Система подсчёта дней – это тип подсчёта дней, который "
 "вы хотите использовать: 0: 30/360 для США, 1: реальные дни (по умолчанию), "
 "2: реальные дни/360, 3: реальные дни/365 или 4: 30/360 для Европы."
 
@@ -8818,7 +8820,7 @@ msgid ""
 msgstr ""
 "Рассчитывает и возвращает цену за 100 долларов США номинальной стоимости "
 "ценных бумаг со скидкой. При наступлении срока погашения по ценной бумаге "
-"проценты не выплачиваются. &#10;&#10;Система подсчёта дней - это тип "
+"проценты не выплачиваются.&#10;&#10;Система подсчёта дней - это тип "
 "подсчёта дней, который вы хотите использовать: 0: 30/360 для США, 1: "
 "реальные дни (по умолчанию), 2: реальные дни/360, 3: реальные дни/365 или 4: "
 "30/360 для Европы."
@@ -8844,7 +8846,7 @@ msgid ""
 msgstr ""
 "Рассчитывает и возвращает цену за 100 долларов США номинальной стоимости "
 "ценной бумаги. По ценной бумаге проценты выплачиваются при наступлении срока "
-"погашения. &#10;&#10;Система подсчёта дней - это тип подсчёта дней, который "
+"погашения.&#10;&#10;Система подсчёта дней – это тип подсчёта дней, который "
 "вы хотите использовать: 0: 30/360 для США, 1: реальные дни (по умолчанию), "
 "2: реальные дни/360, 3: реальные дни/365 или 4: 30/360 для Европы."
 
@@ -8914,9 +8916,8 @@ msgid "Uranus"
 msgstr "Уран"
 
 #: ../data/planets.xml.in.h:11
-#, fuzzy
 msgid "Sun"
-msgstr "Судан"
+msgstr "Солнце"
 
 #: ../data/prefixes.xml.in.h:1
 msgid "ar:q,r:quecto"
@@ -9238,34 +9239,28 @@ msgid "ar:ly,lightyear,p:lightyears"
 msgstr "a:св_год,световой_год,p:световых_года,p:световых_лет"
 
 #: ../data/units.xml.in.h:49
-#, fuzzy
 msgid "Light Second"
-msgstr "Литр в секунду"
+msgstr "Световая секунда"
 
 #: ../data/units.xml.in.h:50
-#, fuzzy
 msgid "r:light_second,p:light_seconds"
-msgstr "a:с,секунда,p:секунды,p:секунд"
+msgstr "a:св_сек,световая_секунда, p:световых_секунд"
 
 #: ../data/units.xml.in.h:51
-#, fuzzy
 msgid "Light Minute"
-msgstr "Литр в минуту"
+msgstr "Световая минута"
 
 #: ../data/units.xml.in.h:52
-#, fuzzy
 msgid "r:light_minute,p:light_minutes"
-msgstr "a:мин,минута,p:минуты,p:минут"
+msgstr "a:св_мин,световая_минута,p:световых_минут"
 
 #: ../data/units.xml.in.h:53
-#, fuzzy
 msgid "Light Hour"
-msgstr "Световой год"
+msgstr "Световой час"
 
 #: ../data/units.xml.in.h:54
-#, fuzzy
 msgid "r:light_hour,p:light_hours"
-msgstr "a:св_год,световой_год,p:световых_года,p:световых_лет"
+msgstr "a:св_час,световой _час,p:световых_часа"
 
 #: ../data/units.xml.in.h:55
 msgid "Parsec"
@@ -9277,12 +9272,11 @@ msgstr "a:пк,парсек"
 
 #: ../data/units.xml.in.h:57
 msgid "Solar Radius (nominal)"
-msgstr ""
+msgstr "Солнечный радиус (номинальный)"
 
 #: ../data/units.xml.in.h:58
-#, fuzzy
 msgid "r:solar_radius,au:R_&#x2609;"
-msgstr "баз.пункт,au:&#x2031;"
+msgstr "радиус_солнце,радиус_солнца"
 
 #: ../data/units.xml.in.h:59
 msgid "Pied du roi (French Royal Foot)"
@@ -9614,14 +9608,12 @@ msgid "Kilodalton"
 msgstr "Килодальтон"
 
 #: ../data/units.xml.in.h:142
-#, fuzzy
 msgid "Solar Mass"
-msgstr "Планковская масса (максима, масса Планка)"
+msgstr "Масса солнца"
 
 #: ../data/units.xml.in.h:143
-#, fuzzy
 msgid "r:solar_mass,au:M_&#x2609;"
-msgstr "баз.пункт,au:&#x2031;"
+msgstr "масса_солнце"
 
 #: ../data/units.xml.in.h:145
 msgid "Kilogram per Cubic Meter"
@@ -11280,11 +11272,11 @@ msgstr "Эрг в секунду"
 
 #: ../data/units.xml.in.h:561
 msgid "Solar Luminosity (nominal)"
-msgstr ""
+msgstr "Солнечная светимость (номинальная)"
 
 #: ../data/units.xml.in.h:562
 msgid "r:solar_luminosity,au:L_&#x2609;"
-msgstr ""
+msgstr "солнечная_светимость"
 
 #: ../data/units.xml.in.h:563
 msgid "Entropy"
@@ -12602,7 +12594,7 @@ msgstr "точность"
 
 #: ../data/variables.xml.in.h:226
 msgid "System Uptime"
-msgstr "Аптайм — время непрерывной работы вычислительной системы"
+msgstr "Аптайм – время непрерывной работы вычислительной системы"
 
 #: ../data/variables.xml.in.h:227
 msgid "r:uptime"
