@@ -4558,6 +4558,8 @@ bool Number::allroots(const Number &o, vector<Number> &roots) {
 	if(hasImaginaryPart()) {
 		nr_arg.set(*i_value, false, true);
 		if(!nr_arg.atan2(realPart())) return false;
+	} else {
+		if(!nr_arg.atan2(*this)) return false;
 	}
 	Number nr_pi2;
 	nr_pi2.pi();
