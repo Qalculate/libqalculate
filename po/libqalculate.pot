@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-24 15:04+0200\n"
+"POT-Creation-Date: 2024-05-03 18:53+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3847,26 +3847,26 @@ msgstr ""
 msgid "Definite integral was approximated."
 msgstr ""
 
-#: ../libqalculate/MathStructure-isolatex.cc:1002
-#: ../libqalculate/MathStructure-isolatex.cc:1179
-#: ../libqalculate/MathStructure-isolatex.cc:2151
-#: ../libqalculate/MathStructure-isolatex.cc:2689
-#: ../libqalculate/MathStructure-isolatex.cc:2755
-#: ../libqalculate/MathStructure-isolatex.cc:2805
-#: ../libqalculate/MathStructure-isolatex.cc:2826
-#: ../libqalculate/MathStructure-isolatex.cc:2884
-#: ../libqalculate/MathStructure-isolatex.cc:3010
-#: ../libqalculate/MathStructure-isolatex.cc:3155
+#: ../libqalculate/MathStructure-isolatex.cc:1004
+#: ../libqalculate/MathStructure-isolatex.cc:1183
+#: ../libqalculate/MathStructure-isolatex.cc:2158
+#: ../libqalculate/MathStructure-isolatex.cc:2696
+#: ../libqalculate/MathStructure-isolatex.cc:2762
+#: ../libqalculate/MathStructure-isolatex.cc:2812
+#: ../libqalculate/MathStructure-isolatex.cc:2833
+#: ../libqalculate/MathStructure-isolatex.cc:2891
+#: ../libqalculate/MathStructure-isolatex.cc:3017
+#: ../libqalculate/MathStructure-isolatex.cc:3162
 #, c-format
 msgid "Interval arithmetic was disabled during calculation of %s."
 msgstr ""
 
-#: ../libqalculate/MathStructure-isolatex.cc:3154
+#: ../libqalculate/MathStructure-isolatex.cc:3161
 #, c-format
 msgid "Not all complex roots were calculated for %s."
 msgstr ""
 
-#: ../libqalculate/MathStructure-isolatex.cc:4751
+#: ../libqalculate/MathStructure-isolatex.cc:4771
 #, c-format
 msgid "Only one or two of the roots were calculated for %s."
 msgstr ""

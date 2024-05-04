@@ -1,21 +1,21 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the libqalculate package.
 #
-# Damir Islamov <damir@secretlaboratory.ru>, 2021, 2022, 2023.
+# Damir Islamov <damir@secretlaboratory.ru>, 2021, 2022, 2023, 2024.
 msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-24 15:04+0200\n"
-"PO-Revision-Date: 2023-12-07 20:18+0700\n"
+"POT-Creation-Date: 2024-05-03 18:53+0700\n"
+"PO-Revision-Date: 2024-05-04 10:28+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : "
-"n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n"
+"%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Lokalize 22.12.3\n"
 
 #: ../src/defs2doc.cc:346 ../src/qalc.cc:2195 ../libqalculate/Function.cc:227
@@ -607,9 +607,8 @@ msgstr "чётное"
 
 #. rounding mode
 #: ../src/qalc.cc:965 ../src/qalc.cc:2002 ../src/qalc.cc:5076
-#, fuzzy
 msgid "half to even"
-msgstr "вниз"
+msgstr "половина до чётного"
 
 #. digit grouping mode
 #: ../src/qalc.cc:966 ../src/qalc.cc:1071 ../src/qalc.cc:1966
@@ -620,7 +619,7 @@ msgstr "стандарт"
 #. rounding mode
 #: ../src/qalc.cc:966 ../src/qalc.cc:2002 ../src/qalc.cc:5080
 msgid "half away from zero"
-msgstr ""
+msgstr "половина от нуля"
 
 #: ../src/qalc.cc:967
 msgid "truncate"
@@ -629,34 +628,32 @@ msgstr "обрезать"
 #. rounding mode
 #: ../src/qalc.cc:967 ../src/qalc.cc:2002 ../src/qalc.cc:5078
 msgid "toward zero"
-msgstr ""
+msgstr "к нулю"
 
 #. rounding mode
 #: ../src/qalc.cc:968 ../src/qalc.cc:2002 ../src/qalc.cc:5084
-#, fuzzy
 msgid "half to odd"
-msgstr "вниз"
+msgstr "половина до нечётного"
 
 #. rounding mode
 #: ../src/qalc.cc:969 ../src/qalc.cc:2002 ../src/qalc.cc:5082
 msgid "half toward zero"
-msgstr ""
+msgstr "половина к нулю"
 
 #. rounding mode
 #: ../src/qalc.cc:970 ../src/qalc.cc:2002 ../src/qalc.cc:5090
 msgid "half random"
-msgstr ""
+msgstr "половина случайно"
 
 #. rounding mode
 #: ../src/qalc.cc:971 ../src/qalc.cc:2002 ../src/qalc.cc:5086
 msgid "half up"
-msgstr ""
+msgstr "половина вверх"
 
 #. rounding mode
 #: ../src/qalc.cc:972 ../src/qalc.cc:2002 ../src/qalc.cc:5088
-#, fuzzy
 msgid "half down"
-msgstr "вниз"
+msgstr "половина вниз"
 
 #. rounding mode
 #: ../src/qalc.cc:973 ../src/qalc.cc:2002 ../src/qalc.cc:4281
@@ -673,7 +670,7 @@ msgstr "вниз"
 #. rounding mode
 #: ../src/qalc.cc:975 ../src/qalc.cc:2002 ../src/qalc.cc:5092
 msgid "away from zero"
-msgstr ""
+msgstr "от нуля"
 
 #: ../src/qalc.cc:987
 msgid "rpn syntax"
@@ -730,19 +727,16 @@ msgid "hexadecimal two's"
 msgstr "дополнительный код для шестнадцатеричных чисел"
 
 #: ../src/qalc.cc:1047 ../src/qalc.cc:5163
-#, fuzzy
 msgid "two's complement input"
-msgstr "дополнительный код"
+msgstr "ввод с дополнительным кодом"
 
 #: ../src/qalc.cc:1048 ../src/qalc.cc:5122
-#, fuzzy
 msgid "hexadecimal two's input"
-msgstr "дополнительный код для шестнадцатеричных чисел"
+msgstr "ввод с дополнительным кодом для шестнадцатеричных чисел"
 
 #: ../src/qalc.cc:1049 ../src/qalc.cc:4990
-#, fuzzy
 msgid "binary bits"
-msgstr "двоичное"
+msgstr "двоичные биты"
 
 #: ../src/qalc.cc:1065 ../src/qalc.cc:5007
 msgid "digit grouping"
@@ -1062,9 +1056,8 @@ msgid "scientific notation"
 msgstr "научная запись"
 
 #: ../src/qalc.cc:1395 ../src/qalc.cc:1397 ../src/qalc.cc:5014
-#, fuzzy
 msgid "exp display"
-msgstr "показать основание"
+msgstr "показать экспоненту"
 
 #: ../src/qalc.cc:1401 ../src/qalc.cc:2017 ../src/qalc.cc:5103
 msgid "pure"
@@ -1080,13 +1073,12 @@ msgstr "инженерная"
 
 #. scientific notation
 #: ../src/qalc.cc:1407
-#, fuzzy
 msgid "power"
-msgstr "ниже"
+msgstr "степень"
 
 #: ../src/qalc.cc:1407
 msgid "power of 10"
-msgstr ""
+msgstr "степень 10"
 
 #: ../src/qalc.cc:1425 ../src/qalc.cc:4901
 msgid "precision"
@@ -1249,12 +1241,12 @@ msgstr "Неизвестный параметр."
 #: ../src/qalc.cc:1759 ../src/qalc.cc:5697
 #, c-format
 msgid "Did you mean \"%s\"?"
-msgstr ""
+msgstr "Вы имели в виду «%s»?"
 
 #: ../src/qalc.cc:1760
 #, c-format
 msgid "Did you mean \"%s\" (%s)?"
-msgstr ""
+msgstr "Вы имели в виду «%s» (%s)?"
 
 #: ../src/qalc.cc:1814
 msgid "Sets the value of an option."
@@ -1415,12 +1407,12 @@ msgid "Determines the default decimal separator."
 msgstr "Определяет десятичный разделитель по умолчанию."
 
 #: ../src/qalc.cc:1967
-#, fuzzy
 msgid ""
 "Determines how scientific notation are displayed (e.g. 3E6, 3e6, or 3 * "
 "10^6)."
 msgstr ""
-"Определяет, как используется научная запись (например, 5 543 000 = 5,543E6)."
+"Определяет способ отображения научной записи (например, 3E6, 3e6 или 3 *"
+" 10^6)."
 
 #: ../src/qalc.cc:1973
 msgid ""
@@ -1496,14 +1488,14 @@ msgid "Allow input of uncertainty using concise notation."
 msgstr "Разрешить ввод неопределенности, используя краткие обозначения."
 
 #: ../src/qalc.cc:2050
-#, fuzzy
 msgid ""
 "Enables two's complement representation for input of negative hexadecimal "
 "numbers. All hexadecimal numbers starting with 8 or higher are negative, "
 "unless binary bits is set."
 msgstr ""
-"Включает представление с дополнительным кодом для отображения отрицательных "
-"шестнадцатеричных чисел."
+"Включает представление с дополнительным кодом для ввода отрицательных"
+" шестнадцатеричных чисел. Все шестнадцатеричные числа, начинающиеся с 8 или"
+" выше, являются отрицательными, если не установлены двоичные биты."
 
 #: ../src/qalc.cc:2052
 msgid "Allows use of ',' as thousands separator."
@@ -1534,14 +1526,14 @@ msgstr ""
 "уменьшение первого члена (100 + 10% = 110)."
 
 #: ../src/qalc.cc:2086
-#, fuzzy
 msgid ""
 "Enables two's complement representation for input of negative binary "
 "numbers. All binary numbers starting with 1 are negative, unless binary bits "
 "is set."
 msgstr ""
-"Включает представление с дополнительным кодом для отображения отрицательных "
-"двоичных чисел."
+"Включает представление с дополнительным кодом для ввода отрицательных"
+" двоичных чисел. Все двоичные числа, начинающиеся с 1, отрицательны, если не"
+" установлены двоичные биты."
 
 #: ../src/qalc.cc:2088 ../src/qalc.cc:5165
 msgid "Units"
@@ -1865,7 +1857,7 @@ msgstr "вначале выполнить команды из файла"
 
 #: ../src/qalc.cc:3269
 msgid "display this help and exit"
-msgstr ""
+msgstr "отобразить эту справку и выйти"
 
 #: ../src/qalc.cc:3271
 msgid "start in interactive mode"
@@ -2033,7 +2025,7 @@ msgstr "сохранить"
 #: ../src/qalc.cc:3824 ../src/qalc.cc:5256 ../src/qalc.cc:5367
 #: ../src/qalc.cc:5628
 msgid "store"
-msgstr "store"
+msgstr "хранить/store"
 
 #. qalc command
 #: ../src/qalc.cc:3844 ../src/qalc.cc:4823 ../src/qalc.cc:5254
@@ -2088,7 +2080,7 @@ msgstr ""
 #: ../src/qalc.cc:4086 ../src/qalc.cc:5252 ../src/qalc.cc:5407
 #: ../src/qalc.cc:5628
 msgid "keep"
-msgstr ""
+msgstr "сохранить/keep"
 
 #. qalc command
 #: ../src/qalc.cc:4107 ../src/qalc.cc:5231 ../src/qalc.cc:5338
@@ -2214,16 +2206,14 @@ msgstr "частичная дробь"
 
 #: ../src/qalc.cc:4674 ../src/qalc.cc:7051
 #: ../libqalculate/Calculator-calculate.cc:1822
-#, fuzzy
 msgid "prefix"
-msgstr "префиксы"
+msgstr "префикс"
 
 #. decimal fraction
 #: ../src/qalc.cc:4721 ../src/qalc.cc:7094
 #: ../libqalculate/Calculator-calculate.cc:1858
-#, fuzzy
 msgid "decimals"
-msgstr "десятеричное"
+msgstr "десятеричные"
 
 #. qalc command
 #: ../src/qalc.cc:4803 ../src/qalc.cc:5244 ../src/qalc.cc:5324
@@ -2287,7 +2277,7 @@ msgstr "ВЫРАЖЕНИЕ"
 
 #: ../src/qalc.cc:5247
 msgid "COMMAND"
-msgstr ""
+msgstr "КОМАНДА"
 
 #. qalc command
 #: ../src/qalc.cc:5249 ../src/qalc.cc:5379 ../src/qalc.cc:5591
@@ -2415,7 +2405,9 @@ msgstr ""
 
 #: ../src/qalc.cc:5372
 msgid "Example: store var1."
-msgstr "Например: store var1."
+msgstr ""
+"Например: хранить var1.\n"
+"Например: store var1."
 
 #: ../src/qalc.cc:5376
 msgid "Clears the screen."
@@ -2460,16 +2452,19 @@ msgid "Example: delete var1."
 msgstr "Пример: удалить var1."
 
 #: ../src/qalc.cc:5409
-#, fuzzy
 msgid ""
 "Make the temporary user-defined variable or function with the specified name "
 "non-temporary."
-msgstr "Удаляет пользовательскую переменную или функцию с указанным именем."
+msgstr ""
+"Удаляет пользовательскую переменную или функцию с указанным именем. "
+"Сохраняет временную пользовательскую переменную или функцию с указанным"
+" именем как постоянную."
 
 #: ../src/qalc.cc:5411
-#, fuzzy
 msgid "Example: keep var1."
-msgstr "Пример: удалить var1."
+msgstr ""
+"Пример: сохранить var1.\n"
+"Пример: keep var1."
 
 #: ../src/qalc.cc:5415
 msgid "Displays the current mode."
@@ -2646,9 +2641,8 @@ msgid "- optimal (convert to optimal unit)"
 msgstr "- оптимально (преобразовать в оптимальную единицу измерения)"
 
 #: ../src/qalc.cc:5512
-#, fuzzy
 msgid "- prefix (convert to optimal prefix)"
-msgstr "- оптимально (преобразовать в оптимальную единицу измерения)"
+msgstr "- префикс (преобразовать в оптимальный префикс)"
 
 #: ../src/qalc.cc:5513
 msgid "- mixed (convert to mixed units, e.g. hours + minutes)"
@@ -2759,9 +2753,8 @@ msgid "- fraction (show result as mixed fraction)"
 msgstr "- дробь (показывать результат как смешанную дробь)"
 
 #: ../src/qalc.cc:5540
-#, fuzzy
 msgid "- decimals (show result as decimal fraction)"
-msgstr "- дробь (показывать результат как смешанную дробь)"
+msgstr "- десятичные (показать результат в виде десятичной дроби)"
 
 #: ../src/qalc.cc:5541
 msgid "- 1/# (show as mixed fraction with specified denominator)"
@@ -2996,22 +2989,20 @@ msgid "Dot interpretation"
 msgstr "Использование точки"
 
 #: ../src/qalc.cc:6819
-#, fuzzy
 msgid "Please select interpretation of percentage addition."
-msgstr "Выберите использование точки («.»)."
+msgstr "Пожалуйста, выберите интерпретацию процентного сложения."
 
 #: ../src/qalc.cc:6823
 msgid "Add percentage multiplied by 1/100"
-msgstr ""
+msgstr "Добавить процент, умноженный на 1/100."
 
 #: ../src/qalc.cc:6837
 msgid "Add percentage of original value"
-msgstr ""
+msgstr "Добавить процент от первоначального значения"
 
 #: ../src/qalc.cc:6851 ../src/qalc.cc:6880
-#, fuzzy
 msgid "Percentage interpretation"
-msgstr "Использование точки"
+msgstr "Процентная интерпретация"
 
 #: ../src/qalc.cc:8237
 #, c-format
@@ -3269,7 +3260,7 @@ msgstr "Невозможно интегрировать выражение."
 #: ../libqalculate/BuiltinFunctions-explog.cc:886
 #: ../libqalculate/BuiltinFunctions-explog.cc:923
 msgid "Maximum recursive depth reached."
-msgstr ""
+msgstr "Достигнута максимальная глубина рекурсии."
 
 #: ../libqalculate/BuiltinFunctions-number.cc:437
 msgid "The value is probably a prime number, but it is not certain."
@@ -3310,9 +3301,8 @@ msgstr "Исчезновение числа с плавающей запятой
 
 #: ../libqalculate/BuiltinFunctions-number.cc:2601
 #: ../libqalculate/BuiltinFunctions-number.cc:2630
-#, fuzzy
 msgid "Insufficient precision."
-msgstr "текущая точность"
+msgstr "Недостаточная точность."
 
 #. if left value is a function without any arguments, do function replacement
 #: ../libqalculate/BuiltinFunctions-util.cc:478
@@ -3831,7 +3821,7 @@ msgstr "Курсы обмена валют были успешно загруж�
 #: ../libqalculate/Calculator-parse.cc:3556
 #, c-format
 msgid "Did you mean \"%s\" (instead of \"%s\")?"
-msgstr ""
+msgstr "Вы имели в виду «%s» (вместо «%s»)?"
 
 #. ignore operators
 #: ../libqalculate/Calculator-parse.cc:3680
@@ -4064,7 +4054,7 @@ msgstr "Неизвестных переменных/символов не най
 #: ../libqalculate/MathStructure-calculate.cc:6946
 #: ../libqalculate/MathStructure-calculate.cc:7046
 msgid "Vector size mismatch"
-msgstr ""
+msgstr "Несоответствие размера вектора"
 
 #: ../libqalculate/MathStructure-eval.cc:756
 msgid "Interval potentially calculated wide."
@@ -4113,26 +4103,26 @@ msgstr "Невозможно точно интегрировать выраже�
 msgid "Definite integral was approximated."
 msgstr "Был аппроксимирован определённый интеграл."
 
-#: ../libqalculate/MathStructure-isolatex.cc:1002
-#: ../libqalculate/MathStructure-isolatex.cc:1179
-#: ../libqalculate/MathStructure-isolatex.cc:2151
-#: ../libqalculate/MathStructure-isolatex.cc:2689
-#: ../libqalculate/MathStructure-isolatex.cc:2755
-#: ../libqalculate/MathStructure-isolatex.cc:2805
-#: ../libqalculate/MathStructure-isolatex.cc:2826
-#: ../libqalculate/MathStructure-isolatex.cc:2884
-#: ../libqalculate/MathStructure-isolatex.cc:3010
-#: ../libqalculate/MathStructure-isolatex.cc:3155
+#: ../libqalculate/MathStructure-isolatex.cc:1004
+#: ../libqalculate/MathStructure-isolatex.cc:1183
+#: ../libqalculate/MathStructure-isolatex.cc:2158
+#: ../libqalculate/MathStructure-isolatex.cc:2696
+#: ../libqalculate/MathStructure-isolatex.cc:2762
+#: ../libqalculate/MathStructure-isolatex.cc:2812
+#: ../libqalculate/MathStructure-isolatex.cc:2833
+#: ../libqalculate/MathStructure-isolatex.cc:2891
+#: ../libqalculate/MathStructure-isolatex.cc:3017
+#: ../libqalculate/MathStructure-isolatex.cc:3162
 #, c-format
 msgid "Interval arithmetic was disabled during calculation of %s."
 msgstr "Во время вычисления %s интервальная арифметика была отключена."
 
-#: ../libqalculate/MathStructure-isolatex.cc:3154
+#: ../libqalculate/MathStructure-isolatex.cc:3161
 #, c-format
 msgid "Not all complex roots were calculated for %s."
 msgstr "Не все комплексные корни вычислены для %s."
 
-#: ../libqalculate/MathStructure-isolatex.cc:4751
+#: ../libqalculate/MathStructure-isolatex.cc:4771
 #, c-format
 msgid "Only one or two of the roots were calculated for %s."
 msgstr "Только один или два корня вычислены для %s."

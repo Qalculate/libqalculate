@@ -1765,7 +1765,7 @@
         <_title>Weight</_title>
       </argument>
       <argument type="free" index="2">
-        <_title>Length</_title>
+        <_title>Length (human)</_title>
       </argument>
     </function>
     <function>
