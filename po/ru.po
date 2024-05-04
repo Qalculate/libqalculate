@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-03 18:53+0700\n"
-"PO-Revision-Date: 2024-05-04 10:28+0700\n"
+"PO-Revision-Date: 2024-05-04 11:57+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: ru\n"
@@ -2213,7 +2213,7 @@ msgstr "префикс"
 #: ../src/qalc.cc:4721 ../src/qalc.cc:7094
 #: ../libqalculate/Calculator-calculate.cc:1858
 msgid "decimals"
-msgstr "десятеричные"
+msgstr "десятеричные дроби"
 
 #. qalc command
 #: ../src/qalc.cc:4803 ../src/qalc.cc:5244 ../src/qalc.cc:5324
