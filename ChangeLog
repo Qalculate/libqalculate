@@ -1,3 +1,16 @@
+2024-05-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Avoid potential issues with equations and inequalities caused possibly modified comparison type property (primarily potentially resulting in AND instead of OR and vice versa)
+	* Fix multiplication sign after exponentiation factor for unformatted output without unicode exponents
+
+2024-04-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix "(ax+1)^n > 1" and "(ax+1)^n >= 1", where n is even and a is not 1, returning false
+
+2024-04-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix -Wdocumentation warnings
+
 2024-04-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Ask for the desired interpretation the first time percent addition is used (e.g. 100 + 10% equals 110 or 100.1)

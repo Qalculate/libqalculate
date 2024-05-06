@@ -1765,7 +1765,8 @@
         <_title>Weight</_title>
       </argument>
       <argument type="free" index="2">
-        <_title>Length (human)</_title>
+	<!-- Length of human (omit "!human!" from translated string) -->
+        <_title>!human!Height</_title>
       </argument>
     </function>
     <function>
