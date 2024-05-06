@@ -1484,7 +1484,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 									mvar1 = mtmp;
 								}
 							}
-						} else if(mvar1->base()->isNumber() && mvar2->base()->isNumber() && !mvar1->base()->number().isInterval() && !mvar2->base()->number().isInterval()) {
+						} else if(mvar1->base()->isNumber() && mvar2->base()->isNumber() && !mvar1->base()->number().isInterval() && !mvar2->base()->number().isInterval() && mvar1->exponent() == mvar2->exponent()) {
 							if(mvar1->base()->number() < mvar2->base()->number()) {
 								if(mvar2->base()->number() == (mvar1->base()->number() ^ 2)) {
 									b_two = true;
