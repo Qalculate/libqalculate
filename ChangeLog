@@ -1,3 +1,7 @@
+2024-05-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix a^(f(x))=a^(b*g(x)) where b=2 or b=3
+
 2024-05-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Avoid potential issues with equations and inequalities caused possibly modified comparison type property (primarily potentially resulting in AND instead of OR and vice versa)
