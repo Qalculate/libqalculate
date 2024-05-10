@@ -3636,6 +3636,7 @@ int main(int argc, char *argv[]) {
 				printf(_("Could not open \"%s\".\n"), command_file.c_str());
 				if(!interactive_mode) {
 					if(!view_thread->write(NULL)) view_thread->cancel();
+					if(command_thread->running && (!command_thread->write((int) 0) || !command_thread->write(NULL))) command_thread->cancel();
 					CALCULATOR->terminateThreads();
 					return EXIT_FAILURE;
 				}
@@ -3689,6 +3690,7 @@ int main(int argc, char *argv[]) {
 				}
 			}
 			if(!view_thread->write(NULL)) view_thread->cancel();
+			if(command_thread->running && (!command_thread->write((int) 0) || !command_thread->write(NULL))) command_thread->cancel();
 			CALCULATOR->terminateThreads();
 			if(had_errors) return EXIT_FAILURE;
 			return 0;
