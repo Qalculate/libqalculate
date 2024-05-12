@@ -477,7 +477,7 @@
       </unit>
       <unit type="alias">
         <_title>Turn</_title>
-        <_names>r:turn,p:turns</_names>
+        <_names>a:tr,r:turn,p:turns,a:pla,a:rev,revolution,p:revolutions,a:cyc,cycle,p:cycles</_names>
         <base>
           <unit>deg</unit>
           <relation>360</relation>
@@ -541,6 +541,30 @@
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
+      </unit>
+      <unit type="composite">
+        <hidden>true</hidden>
+        <_title>Revolutions per Minute</_title>
+        <names>r:turn_p_min</names>
+        <part>
+          <unit>turn</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>min</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+      <unit type="alias">
+        <_title>Revolutions per Minute (RPM)</_title>
+        <_names>ar:rpm</_names>
+        <base>
+          <unit>turn_p_min</unit>
+          <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
       </unit>
     </category>
   </category>
