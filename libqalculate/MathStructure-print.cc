@@ -4097,7 +4097,6 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				bool b_sup = ips_n.power_depth == 0 && format && tagtype == TAG_TYPE_HTML;
 				if(b_sup && b_units) {
 					print_str += "<sup>";
-					b_sup = false;
 					if(ips_n.power_depth < 0) ips_n.power_depth = 1;
 					else ips_n.power_depth++;
 					if(po2.base == BASE_TIME) po2.base = 10;
@@ -4113,14 +4112,14 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				}
 				if(b_units && colorize && tagtype == TAG_TYPE_TERMINAL) print_str += "\033[0m";
 				else if(b_units && colorize && tagtype == TAG_TYPE_HTML) print_str += "</span>";
-				if(b_sup) {
+				if(b_sup && !b_units) {
 					ips_n.wrap = false;
 					print_str += "<sup>";
 					if(ips_n.power_depth < 0) ips_n.power_depth = 1;
 					else ips_n.power_depth++;
 					print_str += CHILD(1).print(po2, format, b_units ? 0 : colorize, tagtype, ips_n);
 					print_str += "</sup>";
-				} else if(!ips_n.wrap && CHILD(1).isNumber() && (print_str.find("<sup>", l) != string::npos || print_str.find("^", l) != string::npos || CONTAINS_MULTIPLICATION_SIGN(print_str, l))) {
+				} else if(!ips_n.wrap && !b_sup && CHILD(1).isNumber() && (print_str.find("<sup>", l) != string::npos || print_str.find("^", l) != string::npos || CONTAINS_MULTIPLICATION_SIGN(print_str, l))) {
 					print_str.insert(l, LEFT_PARENTHESIS);
 					print_str += RIGHT_PARENTHESIS;
 				}
