@@ -3948,7 +3948,7 @@ bool fix_abs_x(MathStructure &mstruct, const MathStructure &x_var, const Evaluat
 			} else {
 				MathStructure mtest(mstruct[0][0]);
 				transform_absln(mtest, -1, false, x_var, eo);
-				b = !mtest.isFunction() || mtest.function()->id() != FUNCTION_ID_LOG || (mtest.size() >= 0 && mtest[0].isFunction() && mtest[0].function()->id() == FUNCTION_ID_ABS);
+				b = !mtest.isFunction() || mtest.function()->id() != FUNCTION_ID_LOG || (mtest.size() > 0 && mtest[0].isFunction() && mtest[0].function()->id() == FUNCTION_ID_ABS);
 			}
 			if(b) {
 				mstruct[0].setToChild(1, true);

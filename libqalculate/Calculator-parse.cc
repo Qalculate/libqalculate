@@ -1895,7 +1895,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		// add space between double operators in rpn mode in order to ensure that they are interpreted as two single operators
 		gsub("&&", "& &", str);
 		gsub("||", "| |", str);
-		gsub("\%\%", "\% \%", str);
+		gsub("%%", "% %", str);
 	}
 
 	size_t consecutive_objects = 0;
@@ -2488,7 +2488,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					ascii_bitwise = 1;
 					str_index++;
 				} else if(i == 3 && (il = compare_name_no_case("mod", str, 3, str_index + 1, base))) {
-					str.replace(str_index + 1, il, "\%\%");
+					str.replace(str_index + 1, il, "%%");
 					str_index += 2;
 				} else if(i == 3 && (il = compare_name_no_case("rem", str, 3, str_index + 1, base))) {
 					str.replace(str_index + 1, il, "%");
