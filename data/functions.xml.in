@@ -1302,6 +1302,17 @@
         <_title>Degree (n)</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="allroots">
+      <_title>All Roots</_title>
+      <_names>r:allroots</_names>
+      <example>$name(4, 2) = [2  -2]</example>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+      <argument index="2">
+        <_title>Degree (n)</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="sq">
       <_title>Square</_title>
       <_names>r:sq</_names>

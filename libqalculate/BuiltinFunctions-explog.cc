@@ -442,6 +442,29 @@ bool RootFunction::representsEven(const MathStructure&, bool) const {return fals
 bool RootFunction::representsOdd(const MathStructure&, bool) const {return false;}
 bool RootFunction::representsUndefined(const MathStructure&) const {return false;}
 
+AllRootsFunction::AllRootsFunction() : MathFunction("allroots", 2) {
+	setArgumentDefinition(1, new NumberArgument(""));
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
+}
+int AllRootsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	Number nr = vargs[0].number();
+	vector<Number> roots;
+	if(!nr.allroots(vargs[1].number(), roots)) return 0;
+	for(size_t i = 0; i < roots.size(); i++) {
+		if((eo.approximation == APPROXIMATION_EXACT && roots[i].isApproximate() && !vargs[0].isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && roots[i].isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && roots[i].includesInfinity() && !vargs[0].number().includesInfinity())) {
+			return 0;
+		}
+	}
+	if(roots.size() == 1) {
+		mstruct = roots[0];
+	} else {
+		mstruct.clearVector();
+		for(size_t i = 0; i < roots.size(); i++) mstruct.addChild(roots[i]);
+	}
+	return 1;
+}
+
+
 SquareFunction::SquareFunction() : MathFunction("sq", 1) {
 	Argument *arg = new Argument("", false, false);
 	arg->setHandleVector(true);

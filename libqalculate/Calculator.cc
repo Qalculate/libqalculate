@@ -1745,6 +1745,7 @@ void Calculator::addBuiltinFunctions() {
 	f_sqrt = addFunction(new SqrtFunction());
 	f_cbrt = addFunction(new CbrtFunction());
 	f_root = addFunction(new RootFunction());
+	addFunction(new AllRootsFunction());
 	f_sq = addFunction(new SquareFunction());
 
 	f_exp = addFunction(new ExpFunction());
