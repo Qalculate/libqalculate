@@ -1598,7 +1598,16 @@ void Number::splitInterval(unsigned int nr_of_parts, vector<Number> &v) const {
 }
 bool Number::getCentralInteger(Number &nr_int, bool *b_multiple, vector<Number> *v) const {
 	if(!isInterval() || !isReal()) {
-		if(b_multiple) *b_multiple = false;
+		if(b_multiple) {
+			if(imaginaryPartIsNonZero()) {
+				*b_multiple = false;
+			} else if(includesInfinity()) {
+				*b_multiple = true;
+			} else {
+				Number nr;
+				realPart().getCentralInteger(nr, b_multiple);
+			}
+		}
 		return false;
 	}
 	mpfr_t fintl, fintu;
@@ -1607,35 +1616,39 @@ bool Number::getCentralInteger(Number &nr_int, bool *b_multiple, vector<Number> 
 	mpfr_floor(fintu, fu_value);
 	mpfr_ceil(fintl, fl_value);
 	int cmp = mpfr_cmp(fintl, fintu);
+	bool b_ret = false;
 	if(cmp == 0) {
 		mpz_t z_int;
 		mpz_init(z_int);
-		mpfr_get_z(z_int, fl_value, MPFR_RNDN);
+		mpfr_get_z(z_int, fintl, MPFR_RNDN);
 		nr_int.setInternal(z_int);
+		mpz_clear(z_int);
 		if(b_multiple) *b_multiple = false;
-		if(v) {
-			mpfr_t f_prec;
-			mpfr_init2(f_prec, mpfr_get_prec(fl_value));
-			mpfr_ui_pow_ui(f_prec, 10, PRECISION + 10, MPFR_RNDN);
-			mpfr_div(f_prec, fintl, f_prec, MPFR_RNDN);
-			if(mpfr_cmp(fintl, fl_value) > 0) {
-				mpfr_sub(fintl, fintl, f_prec, MPFR_RNDD);
-				v->push_back(*this);
-				mpfr_set(v->back().internalUpperFloat(), fintl, MPFR_RNDD);
-			}
-			if(mpfr_cmp(fintu, fu_value) < 0) {
-				mpfr_add(fintu, fintu, f_prec, MPFR_RNDU);
-				v->push_back(*this);
-				mpfr_set(v->back().internalLowerFloat(), fintu, MPFR_RNDU);
-			}
-		}
-		return true;
+		if(v) v->push_back(nr_int);
+		b_ret = true;
 	} else if(cmp > 0) {
 		if(b_multiple) *b_multiple = false;
 	} else {
 		if(b_multiple) *b_multiple = true;
+		if(v) {
+			mpz_t z_int;
+			mpz_init(z_int);
+			Number nr_i;
+			while(mpfr_cmp(fintl, fintu) <= 0) {
+				if(CALCULATOR->aborted()) {
+					v->clear();
+					break;
+				}
+				mpfr_get_z(z_int, fintl, MPFR_RNDN);
+				nr_i.setInternal(z_int);
+				v->push_back(nr_i);
+				mpfr_add_ui(fintl, fintl, 1, MPFR_RNDN);
+			}
+			mpz_clear(z_int);
+		}
 	}
-	return false;
+	mpfr_clears(fintu, fintl, NULL);
+	return b_ret;
 }
 bool Number::mergeInterval(const Number &o, bool set_to_overlap) {
 	if(equals(o)) return true;

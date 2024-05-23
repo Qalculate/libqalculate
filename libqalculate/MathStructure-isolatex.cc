@@ -562,9 +562,23 @@ bool is_units_with_multiplier(const MathStructure &mstruct) {
 bool fix_n_multiple(MathStructure &mstruct, const EvaluationOptions &eo, const EvaluationOptions &feo, const MathStructure &x_var) {
 	bool b_ret = false;
 	if(mstruct.isComparison()) {
-		if(mstruct.comparisonType() == COMPARISON_EQUALS && x_var.isVariable() && !x_var.variable()->isKnown() && !((UnknownVariable*) x_var.variable())->interval().isUndefined() && mstruct[1].contains(CALCULATOR->getVariableById(VARIABLE_ID_N))) {
+		if(mstruct.comparisonType() == COMPARISON_EQUALS && x_var.isVariable() && !x_var.variable()->isKnown() && (!((UnknownVariable*) x_var.variable())->interval().isUndefined() || (((UnknownVariable*) x_var.variable())->assumptions() && ((((UnknownVariable*) x_var.variable())->assumptions()->min() || x_var.representsNonNegative()) && (((UnknownVariable*) x_var.variable())->assumptions()->max() || x_var.representsNonPositive())))) && mstruct[1].contains(CALCULATOR->getVariableById(VARIABLE_ID_N))) {
 			MathStructure mtest(mstruct);
-			mtest.replace(x_var, ((UnknownVariable*) x_var.variable())->interval());
+			if(((UnknownVariable*) x_var.variable())->interval().isUndefined()) {
+				Assumptions *ass = ((UnknownVariable*) x_var.variable())->assumptions();
+				Number nr_intval;
+				if(ass->min()) {
+					if(ass->max()) nr_intval.setInterval(*ass->min(), *ass->max());
+					else nr_intval.setInterval(*ass->min(), nr_zero);
+				} else if(ass->max()) {
+					nr_intval.setInterval(nr_zero, *ass->max());
+				} else {
+					return false;
+				}
+				mtest.replace(x_var, nr_intval);
+			} else {
+				mtest.replace(x_var, ((UnknownVariable*) x_var.variable())->interval());
+			}
 			EvaluationOptions eo2 = eo;
 			EvaluationOptions feo2 = feo;
 			if(eo.approximation == APPROXIMATION_EXACT) {

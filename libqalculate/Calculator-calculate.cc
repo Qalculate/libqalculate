@@ -1352,6 +1352,21 @@ bool test_max_addition_size(const MathStructure &m, size_t n) {
 	return false;
 }
 
+bool equals_with_vname(const MathStructure &m1, const MathStructure &m2) {
+	if(m1.size() != m2.size() || m1.type() != m2.type()) return false;
+	if(m1.isVariable() && m2.isVariable()) {
+		if(m1.variable() == m2.variable() || m2.variable()->name() == m2.variable()->name()) return true;
+		return false;
+	}
+	if(m1.size() == 0) return m1.equals(m2, true, true);
+	if(m1.isComparison() && m1.comparisonType() != m2.comparisonType()) return false;
+	if(m1.isFunction() && m1.function() != m2.function()) return false;
+	for(size_t i = 0; i < m1.size(); i++) {
+		if(!equals_with_vname(m1[i], m2[i])) return false;
+	}
+	return true;
+}
+
 void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, const string &original_expression, const MathStructure *parsed_mstruct, EvaluationOptions &evalops, AutomaticApproximation auto_approx, int msecs, int max_size) {
 	int dual_approximation = 0;
 	if(auto_approx == AUTOMATIC_APPROXIMATION_AUTO) dual_approximation = -1;
@@ -1363,7 +1378,7 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 		if(msecs > 0) CALCULATOR->startControl(msecs);
 		MathStructure tmp_parse;
 		mstruct_exact = CALCULATOR->calculate(original_expression, evalops, &tmp_parse);
-		if(CALCULATOR->aborted() || mstruct_exact.isApproximate() || (parsed_mstruct && !tmp_parse.equals(*parsed_mstruct, true, true)) || (dual_approximation < 0 && max_size > 0 && (test_max_addition_size(mstruct_exact, (size_t) max_size) || mstruct_exact.countTotalChildren(false) > (size_t) max_size * 6))) {
+		if(CALCULATOR->aborted() || mstruct_exact.isApproximate() || (parsed_mstruct && !equals_with_vname(tmp_parse, *parsed_mstruct)) || (dual_approximation < 0 && max_size > 0 && (test_max_addition_size(mstruct_exact, (size_t) max_size) || mstruct_exact.countTotalChildren(false) > (size_t) max_size * 6))) {
 			mstruct_exact.setUndefined();
 		} else if(test_simplified(mstruct_exact) || test_simplified2(mstruct_exact, *mstruct)) {
 			mstruct->set(mstruct_exact);
