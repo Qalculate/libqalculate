@@ -6055,6 +6055,41 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				}
 			}
 			if(b) break;
+			if(!CHILD(0).isNumber() && CHILD(1).isNumber() && CHILD(0).representsInteger() && CHILD(1).number().isReal() && CHILD(1).number().isNonInteger()) {
+				switch(ct_comp) {
+					case COMPARISON_EQUALS: {
+						clear(true);
+						b = true;
+						break;
+					}
+					case COMPARISON_NOT_EQUALS: {
+						set(1, 1, 0, true);
+						b = true;
+						break;
+					}
+					case COMPARISON_LESS: {}
+					case COMPARISON_EQUALS_LESS: {
+						if(CHILD(1).number().floor()) {
+							CHILD(1).numberUpdated();
+							b = true;
+							ct_comp = COMPARISON_EQUALS_LESS;
+							calculatesub(eo, feo, false, mparent, index_this);
+						}
+						break;
+					}
+					case COMPARISON_GREATER: {}
+					case COMPARISON_EQUALS_GREATER: {
+						if(CHILD(1).number().ceil()) {
+							CHILD(1).numberUpdated();
+							b = true;
+							ct_comp = COMPARISON_EQUALS_GREATER;
+							calculatesub(eo, feo, false, mparent, index_this);
+						}
+						break;
+					}
+				}
+				if(b) break;
+			}
 			if(CHILD(1).isNumber() && CHILD(0).isVariable() && !CHILD(0).variable()->isKnown()) {
 				Assumptions *ass = ((UnknownVariable*) CHILD(0).variable())->assumptions();
 				if(ass && ass->min()) {
