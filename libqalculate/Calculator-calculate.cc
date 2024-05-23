@@ -3141,7 +3141,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 					if(b_equals) svalue.erase(0, 1);
 					remove_blank_ends(svalue);
 					Variable *v = NULL;
-					if(wheres[i2][index] == '=')	{
+					if(wheres[i2][index] == '=') {
 						v = new KnownVariable("\x14", sname, svalue);
 					} else {
 						MathStructure m;
@@ -3168,35 +3168,40 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 							// can only handle not equals if value is zero
 							if((ct != COMPARISON_NOT_EQUALS || (!ass && m.isZero()))) {
 								if(ass) {
+									bool b = false;
 									// change existing assumptions
 									if(ct == COMPARISON_EQUALS_GREATER) {
 										if(!ass->min() || (*ass->min() < m.number())) {
 											ass->setMin(&m.number()); ass->setIncludeEqualsMin(true);
-											return true;
+											b = true;
 										} else if(*ass->min() >= m.number()) {
-											return true;
+											b = true;
 										}
 									} else if(ct == COMPARISON_EQUALS_LESS) {
 										if(!ass->max() || (*ass->max() > m.number())) {
 											ass->setMax(&m.number()); ass->setIncludeEqualsMax(true);
-											return true;
+											b = true;
 										} else if(*ass->max() <= m.number()) {
-											return true;
+											b = true;
 										}
 									} else if(ct == COMPARISON_GREATER) {
 										if(!ass->min() || (ass->includeEqualsMin() && *ass->min() <= m.number()) || (!ass->includeEqualsMin() && *ass->min() < m.number())) {
 											ass->setMin(&m.number()); ass->setIncludeEqualsMin(false);
-											return true;
+											b = true;
 										} else if((ass->includeEqualsMin() && *ass->min() > m.number()) || (!ass->includeEqualsMin() && *ass->min() >= m.number())) {
-											return true;
+											b = true;
 										}
 									} else if(ct == COMPARISON_LESS) {
 										if(!ass->max() || (ass->includeEqualsMax() && *ass->max() >= m.number()) || (!ass->includeEqualsMax() && *ass->max() > m.number())) {
 											ass->setMax(&m.number()); ass->setIncludeEqualsMax(false);
-											return true;
+											b = true;
 										} else if((ass->includeEqualsMax() && *ass->max() < m.number()) || (!ass->includeEqualsMax() && *ass->max() <= m.number())) {
-											return true;
+											b = true;
 										}
+									}
+									if(!b) {
+										if(!str_where.empty()) str_where += LOGICAL_AND;
+										str_where += wheres[i2];
 									}
 								} else {
 									// create a new unknown variable and modify the assumptions
