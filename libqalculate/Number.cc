@@ -7634,6 +7634,14 @@ bool Number::log(const Number &o) {
 		return true;
 	} else if(o.isRational() && o == 10 && isReal() && isPositive()) {
 		Number nr_bak(*this);
+		if(mpz_cmp_si(mpq_numref(r_value), 1) == 0) {
+			if(!recip() || !log(o) || !negate()) {
+				set(nr_bak);
+				return false;
+			} else {
+				return true;
+			}
+		}
 		if(!setToFloatingPoint()) return false;
 		mpfr_clear_flags();
 		if(!CREATE_INTERVAL && !isInterval()) {

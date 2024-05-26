@@ -1645,7 +1645,7 @@ bool MathStructure::complexToExponentialForm(const EvaluationOptions &eo) {
 		return true;
 	} else if(representsReal(true)) {
 		return false;
-	} else if(!isVector()) {
+	} else if(!isVector() && !isComparison() && !isLogicalOr() && !isLogicalAnd()) {
 		MathStructure marg(CALCULATOR->getFunctionById(FUNCTION_ID_ARG), this, NULL);
 		marg *= nr_one_i;
 		CALCULATOR->beginTemporaryStopMessages();
@@ -1726,7 +1726,7 @@ bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 		return true;
 	} else if(representsReal(true)) {
 		return false;
-	} else if(!isVector()) {
+	} else if(!isVector() && !isComparison() && !isLogicalOr() && !isLogicalAnd()) {
 		MathStructure marg(CALCULATOR->getFunctionById(FUNCTION_ID_ARG), this, NULL);
 		CALCULATOR->beginTemporaryStopMessages();
 		EvaluationOptions eo2 = eo;
@@ -1806,7 +1806,7 @@ bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
 		return true;
 	} else if(representsReal(true)) {
 		return false;
-	} else if(!isVector()) {
+	} else if(!isVector() && !isComparison() && !isLogicalOr() && !isLogicalAnd()) {
 		MathStructure marg(CALCULATOR->getFunctionById(FUNCTION_ID_ARG), this, NULL);
 		CALCULATOR->beginTemporaryStopMessages();
 		EvaluationOptions eo2 = eo;

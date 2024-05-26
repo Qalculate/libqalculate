@@ -3299,6 +3299,7 @@
     <builtin_function name="isNumber">
       <_title>Is Number</_title>
       <_names>r:isNumber</_names>
+      <description>Returns true if evaluated argument value is explicitely a real, complex, or infinite number (has number type).</description>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -3306,6 +3307,7 @@
     <builtin_function name="isReal">
       <_title>Is Real</_title>
       <_names>r:isReal</_names>
+      <description>Returns true if evaluated argument value is explicitely a real number (has number type with zero complex part).</description>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -3313,6 +3315,7 @@
     <builtin_function name="isRational">
       <_title>Is Rational</_title>
       <_names>r:isRational</_names>
+      <description>Returns true if evaluated argument value is explicitely a rational number (has rational type).</description>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -3320,6 +3323,8 @@
     <builtin_function name="isInteger">
       <_title>Is Integer</_title>
       <_names>r:isInteger</_names>
+      <description>Returns true if evaluated argument value is explicitely an integer (has integer type).</description>
+      <example>$name(5 + 2) = 1; $name(x) = 0; $name(log(0.2, 5)) = 0</example>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -3327,6 +3332,7 @@
     <builtin_function name="representsNumber">
       <_title>Represents Number</_title>
       <_names>r:representsNumber</_names>
+      <description>Returns true if value is or represents a number (scalar without unit). False negatives are allowed.</description>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -3334,6 +3340,7 @@
     <builtin_function name="representsReal">
       <_title>Represents Real</_title>
       <_names>r:representsReal</_names>
+      <description>Returns true if value is or represents a real number. False negatives are allowed.</description>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -3341,6 +3348,7 @@
     <builtin_function name="representsRational">
       <_title>Represents Rational</_title>
       <_names>r:representsRational</_names>
+      <description>Returns true if value is or represents a rational number. False negatives are allowed.</description>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -3348,6 +3356,8 @@
     <builtin_function name="representsInteger">
       <_title>Represents Integer</_title>
       <_names>r:representsInteger</_names>
+      <description>Returns true if value is or represents an integer. False negatives are allowed.</description>
+      <example>$name(2n) = 1; $name(log(0.2, 5)) = 0</example>
       <argument index="1">
         <_title>Value</_title>
       </argument>

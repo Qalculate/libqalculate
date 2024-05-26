@@ -32,7 +32,36 @@ using std::vector;
 using std::ostream;
 using std::endl;
 
-#define REPRESENTS_FUNCTION(x, y) x::x() : MathFunction(#y, 1) {} int x::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {mstruct = vargs[0]; mstruct.eval(eo); if(mstruct.y()) {mstruct.clear(); mstruct.number().setTrue();} else {mstruct.clear(); mstruct.number().setFalse();} return 1;}
+#define REPRESENTS_FUNCTION(x, y) \
+	x::x() : MathFunction(#y, 1) {}\
+	int x::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {\
+		if(vargs[0].y()) {\
+			mstruct.clear();\
+			mstruct.number().setTrue();\
+			return 1;\
+		}\
+		mstruct = vargs[0];\
+		mstruct.eval(eo);\
+		if(mstruct.y()) {\
+			mstruct.clear();\
+			mstruct.number().setTrue();\
+			return 1;\
+		}\
+		if(eo.approximation != APPROXIMATION_EXACT) {\
+			mstruct = vargs[0];\
+			EvaluationOptions eo2 = eo;\
+			eo2.approximation = APPROXIMATION_EXACT;\
+			mstruct.eval(eo2);\
+			if(mstruct.y()) {\
+				mstruct.clear();\
+				mstruct.number().setTrue();\
+				return 1;\
+			}\
+		}\
+		mstruct.clear();\
+		mstruct.number().setFalse();\
+		return 1;\
+	}
 
 bool replace_infinity_v(MathStructure &m) {
 	if(m.isVariable() && m.variable()->isKnown() && ((KnownVariable*) m.variable())->get().isNumber() && ((KnownVariable*) m.variable())->get().number().isInfinite(false)) {
