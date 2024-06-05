@@ -3012,7 +3012,6 @@ void Calculator::parseExpressionAndWhere(MathStructure *mstruct, MathStructure *
 					for(size_t i2 = 0; i2 < ufvl.size(); i2++) {
 						if(ufvl_t[i2] == 'v' && ((ExpressionItem*) ufvl[i2])->name() == where_vars[i]->name() && ((ExpressionItem*) ufvl[i2])->category() == "\x14") {
 							ufvl.erase(ufvl.begin() + i2);
-							ufvl.erase(ufvl.begin() + i2);
 							ufvl_t.erase(ufvl_t.begin() + i2);
 							priv->ufvl_us.erase(priv->ufvl_us.begin() + i2);
 							ufvl_i.erase(ufvl_i.begin() + i2);
@@ -3348,7 +3347,6 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 				if(l > UFV_LENGTHS) {
 					for(size_t i2 = 0; i2 < ufvl.size(); i2++) {
 						if(ufvl_t[i2] == 'v' && ((ExpressionItem*) ufvl[i2])->name() == where_vars[i]->name() && ((ExpressionItem*) ufvl[i2])->category() == "\x14") {
-							ufvl.erase(ufvl.begin() + i2);
 							ufvl.erase(ufvl.begin() + i2);
 							ufvl_t.erase(ufvl_t.begin() + i2);
 							priv->ufvl_us.erase(priv->ufvl_us.begin() + i2);
