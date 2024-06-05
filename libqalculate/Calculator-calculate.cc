@@ -1372,12 +1372,16 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 	if(auto_approx == AUTOMATIC_APPROXIMATION_AUTO || auto_approx == AUTOMATIC_APPROXIMATION_SINGLE) dual_approximation = -1;
 	else if(auto_approx == AUTOMATIC_APPROXIMATION_DUAL) dual_approximation = 1;
 	if(dual_approximation != 0 && evalops.approximation == APPROXIMATION_TRY_EXACT && mstruct->isApproximate() && (dual_approximation > 0 || (!mstruct->containsType(STRUCT_UNIT, false, false, false) && !parsed_mstruct->containsType(STRUCT_UNIT, false, false, false) && original_expression.find(DOT) == string::npos)) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_SAVE) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_PLOT) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_RAND) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_RANDN) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_RAND_POISSON) && !parsed_mstruct->containsInterval(true, false, false, false, true)) {
+		ApproximationMode approx_bak = evalops.approximation;
+		int expand_bak = evalops.expand;
 		evalops.approximation = APPROXIMATION_EXACT;
 		evalops.expand = -2;
 		CALCULATOR->beginTemporaryStopMessages();
 		if(msecs > 0) CALCULATOR->startControl(msecs);
 		MathStructure tmp_parse;
 		mstruct_exact = CALCULATOR->calculate(original_expression, evalops, &tmp_parse);
+		evalops.approximation = approx_bak;
+		evalops.expand = expand_bak;
 		if(CALCULATOR->aborted() || mstruct_exact.isApproximate() || (parsed_mstruct && !equals_with_vname(tmp_parse, *parsed_mstruct)) || (dual_approximation < 0 && max_size > 0 && (test_max_addition_size(mstruct_exact, (size_t) max_size) || mstruct_exact.countTotalChildren(false) > (size_t) max_size * 6))) {
 			mstruct_exact.setUndefined();
 		} else if(test_simplified(mstruct_exact) || test_simplified2(mstruct_exact, *mstruct)) {
@@ -1389,8 +1393,6 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 			CALCULATOR->endTemporaryStopMessages();
 			return;
 		}
-		evalops.approximation = APPROXIMATION_TRY_EXACT;
-		evalops.expand = true;
 		if(mstruct_exact.containsType(STRUCT_COMPARISON)) {
 			bool b = false;
 			MathStructure mbak(*mstruct);
