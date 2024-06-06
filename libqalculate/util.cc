@@ -366,7 +366,7 @@ bool text_length_is_one(const string &str) {
 }
 
 bool equalsIgnoreCase(const string &str1, const string &str2) {
-	if(str1.empty() || str2.empty()) return false;
+	if(str1.empty() || str2.empty()) return str1.empty() && str2.empty();
 	for(size_t i1 = 0, i2 = 0; i1 < str1.length() || i2 < str2.length(); i1++, i2++) {
 		if(i1 >= str1.length() || i2 >= str2.length()) return false;
 		if(((signed char) str1[i1] < 0 && i1 + 1 < str1.length()) || ((signed char) str2[i2] < 0 && i2 + 1 < str2.length())) {
@@ -412,7 +412,7 @@ bool equalsIgnoreCase(const string &str1, const string &str2) {
 	return true;
 }
 bool equalsIgnoreCase(const string &str1, const char *str2) {
-	if(str1.empty() || strlen(str2) == 0) return false;
+	if(str1.empty() || strlen(str2) == 0) return str1.empty() && strlen(str2) == 0;
 	for(size_t i1 = 0, i2 = 0; i1 < str1.length() || i2 < strlen(str2); i1++, i2++) {
 		if(i1 >= str1.length() || i2 >= strlen(str2)) return false;
 		if(((signed char) str1[i1] < 0 && i1 + 1 < str1.length()) || ((signed char) str2[i2] < 0 && i2 + 1 < strlen(str2))) {

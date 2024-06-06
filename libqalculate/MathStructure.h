@@ -175,6 +175,9 @@ class MathStructure {
 		bool b_parentheses;
 
 		bool isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions &eo2, const MathStructure &x_var, MathStructure *morig = NULL);
+		bool isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions &eo2, const MathStructure &x_var, MathStructure *morig, size_t depth);
+		bool isolate_x(const EvaluationOptions &eo, const EvaluationOptions &feo, const MathStructure &x_var, bool check_result, size_t depth);
+
 		void init();
 
 		class MathStructure_p *priv;

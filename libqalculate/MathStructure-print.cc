@@ -3857,7 +3857,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				else b_colorize_units = -1;
 			}
 			bool avoid_sign = (!po.short_multiplication && ips.power_depth > 0 && format && tagtype == TAG_TYPE_HTML && po.base >= 2 && po.base <= 10 && po.multiplication_sign == MULTIPLICATION_SIGN_X);
-			int i_sign = 0;
+			int i_sign = 0, i_sign_prev = 0;
 			bool wrap_next = false;
 			size_t prev_index = 0;
 			for(size_t i = 0; i < SIZE; i++) {
@@ -3896,6 +3896,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 						}
 					}
 				}
+				i_sign_prev = i_sign;
 				if(i < SIZE - 1) {
 					i++;
 					wrap_next = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);
@@ -3938,7 +3939,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					i--;
 				}
 				print_str += CHILD(i).print(po, format, b_units ? 0 : colorize, tagtype, ips_n);
-				if(i_sign == MULTIPLICATION_SIGN_NONE && CHILD(i).isNumber() && (print_str.find_first_of("*^", prev_index) != string::npos || (po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && print_str.find(SIGN_MULTIDOT, prev_index) != string::npos) || ((po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && print_str.find(SIGN_MIDDLEDOT, prev_index) != string::npos) || (po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && print_str.find(SIGN_MULTIPLICATION, prev_index) != string::npos))) {
+				if(i_sign_prev == MULTIPLICATION_SIGN_NONE && CHILD(i).isNumber() && (print_str.find_first_of("*^", prev_index) != string::npos || (po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && print_str.find(SIGN_MULTIDOT, prev_index) != string::npos) || ((po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && print_str.find(SIGN_MIDDLEDOT, prev_index) != string::npos) || (po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && print_str.find(SIGN_MULTIPLICATION, prev_index) != string::npos))) {
 					print_str.insert(prev_index, "(");
 					print_str += ")";
 				}

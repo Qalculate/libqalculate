@@ -1245,6 +1245,9 @@ bool MathStructure::representsUndefined(bool include_childs, bool include_infini
 				}
 			}
 		}
+		case STRUCT_MULTIPLICATION: {
+			if(SIZE > 1 && CHILD(0).isZero() && CHILD(1).isInfinity()) return true;
+		}
 		default: {
 			if(include_childs) {
 				for(size_t i = 0; i < SIZE; i++) {
@@ -1888,13 +1891,13 @@ bool MathStructure::equals(const MathStructure &o, bool allow_interval, bool all
 		case STRUCT_LOGICAL_AND: {
 			if(SIZE < 1) return false;
 			if(SIZE == 2) {
-				return (CHILD(0) == o[0] && CHILD(1) == o[1]) || (CHILD(0) == o[1] && CHILD(1) == o[0]);
+				return (CHILD(0).equals(o[0], allow_interval, allow_infinite) && CHILD(1).equals(o[1], allow_interval, allow_infinite)) || (CHILD(0).equals(o[1], allow_interval, allow_infinite) && CHILD(1).equals(o[0], allow_interval, allow_infinite));
 			}
 			vector<size_t> i2taken;
 			for(size_t i = 0; i < SIZE; i++) {
 				bool b = false, b2 = false;
 				for(size_t i2 = 0; i2 < o.size(); i2++) {
-					if(CHILD(i).equals(o[i2], allow_interval)) {
+					if(CHILD(i).equals(o[i2], allow_interval, allow_infinite)) {
 						b2 = true;
 						for(size_t i3 = 0; i3 < i2taken.size(); i3++) {
 							if(i2taken[i3] == i2) {
@@ -1916,7 +1919,7 @@ bool MathStructure::equals(const MathStructure &o, bool allow_interval, bool all
 	}
 	if(SIZE < 1) return true;
 	for(size_t i = 0; i < SIZE; i++) {
-		if(!CHILD(i).equals(o[i], allow_interval)) return false;
+		if(!CHILD(i).equals(o[i], allow_interval, allow_infinite)) return false;
 	}
 	return true;
 }
