@@ -527,6 +527,7 @@ bool KnownVariable::representsFraction(bool allow_units) {return get().represent
 bool KnownVariable::representsNumber(bool allow_units) {return get().representsNumber(allow_units);}
 bool KnownVariable::representsRational(bool allow_units) {return get().representsRational(allow_units);}
 bool KnownVariable::representsReal(bool allow_units) {return get().representsReal(allow_units);}
+bool KnownVariable::representsFinite(bool allow_units) {return get().representsFinite(allow_units);}
 bool KnownVariable::representsNonComplex(bool allow_units) {return get().representsNonComplex(allow_units);}
 bool KnownVariable::representsComplex(bool allow_units) {return get().representsComplex(allow_units);}
 bool KnownVariable::representsNonZero(bool allow_units) {return get().representsNonZero(allow_units);}

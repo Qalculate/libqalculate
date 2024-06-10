@@ -1042,6 +1042,37 @@ bool MathStructure::representsReal(bool allow_units) const {
 		default: {return false;}
 	}
 }
+bool MathStructure::representsFinite(bool allow_units) const {
+	switch(m_type) {
+		case STRUCT_NUMBER: {return !o_number.includesInfinity();}
+		case STRUCT_VARIABLE: {return o_variable->representsFinite(allow_units);}
+		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isReal();}
+		case STRUCT_FUNCTION: {
+			if(o_function->id() == FUNCTION_ID_STRIP_UNITS && SIZE == 1) return CHILD(0).representsFinite(true);
+			return (function_value && function_value->representsFinite(allow_units)) || o_function->representsFinite(*this, allow_units);
+		}
+		case STRUCT_UNIT: {return allow_units;}
+		case STRUCT_DATETIME: {return allow_units;}
+		case STRUCT_ADDITION: {
+			for(size_t i = 0; i < SIZE; i++) {
+				if(!CHILD(i).representsFinite(allow_units)) return false;
+			}
+			return true;
+		}
+		case STRUCT_MULTIPLICATION: {
+			for(size_t i = 0; i < SIZE; i++) {
+				if(!CHILD(i).representsFinite(allow_units)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		case STRUCT_POWER: {
+			return (CHILD(0).representsFinite(allow_units) && (CHILD(1).representsFinite(false) || (CHILD(1).isNumber() && CHILD(1).number().isMinusInfinity() && CHILD(0).representsNonZero())));
+		}
+		default: {return false;}
+	}
+}
 bool MathStructure::representsNonComplex(bool allow_units) const {
 	switch(m_type) {
 		case STRUCT_NUMBER: {return !o_number.hasImaginaryPart();}

@@ -156,6 +156,7 @@ class Variable : public ExpressionItem {
 	virtual bool representsNumber(bool = false) {return false;}
 	virtual bool representsRational(bool = false) {return false;}
 	virtual bool representsReal(bool = false) {return false;}
+	virtual bool representsFinite(bool b = false) {return representsReal(b);}
 	virtual bool representsNonComplex(bool b = false) {return representsReal(b);}
 	virtual bool representsComplex(bool = false) {return false;}
 	virtual bool representsNonZero(bool = false) {return false;}
@@ -336,6 +337,7 @@ class KnownVariable : public Variable {
 	virtual bool representsNumber(bool = false);
 	virtual bool representsRational(bool = false);
 	virtual bool representsReal(bool = false);
+	virtual bool representsFinite(bool = false);
 	virtual bool representsNonComplex(bool = false);
 	virtual bool representsComplex(bool = false);
 	virtual bool representsNonZero(bool = false);
@@ -390,6 +392,7 @@ class DynamicVariable : public KnownVariable {
 	virtual bool representsNumber(bool = false) {return true;}
 	virtual bool representsRational(bool = false) {return false;}
 	virtual bool representsReal(bool = false) {return true;}
+	virtual bool representsFinite(bool b = false) {return representsReal(b);}
 	virtual bool representsComplex(bool = false) {return false;}
 	virtual bool representsNonZero(bool = false) {return true;}
 	virtual bool representsEven(bool = false) {return false;}

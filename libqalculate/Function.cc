@@ -788,6 +788,7 @@ bool MathFunction::representsNumber(const MathStructure &vargs, bool allow_units
 bool MathFunction::representsRational(const MathStructure &vargs, bool allow_units) const {return representsInteger(vargs, allow_units);}
 bool MathFunction::representsNonComplex(const MathStructure &vargs, bool allow_units) const {return representsReal(vargs, allow_units);}
 bool MathFunction::representsReal(const MathStructure &vargs, bool allow_units) const {return representsRational(vargs, allow_units);}
+bool MathFunction::representsFinite(const MathStructure &vargs, bool allow_units) const {return representsReal(vargs, allow_units);}
 bool MathFunction::representsComplex(const MathStructure&, bool) const {return false;}
 bool MathFunction::representsNonZero(const MathStructure &vargs, bool allow_units) const {return representsPositive(vargs, allow_units) || representsNegative(vargs, allow_units);}
 bool MathFunction::representsEven(const MathStructure&, bool) const {return false;}

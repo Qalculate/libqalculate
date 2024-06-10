@@ -6052,6 +6052,10 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					if(ct_comp == COMPARISON_EQUALS) clear(true);
 					else set(1, 1, 0, true);
 					b = true;
+				} else if((CHILD(1).isInfinite() && CHILD(0).representsFinite()) || (CHILD(0).isInfinite() && CHILD(1).representsFinite())) {
+					if(ct_comp == COMPARISON_EQUALS) clear(true);
+					else set(1, 1, 0, true);
+					b = true;
 				}
 			}
 			if(b) break;

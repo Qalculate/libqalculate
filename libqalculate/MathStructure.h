@@ -526,6 +526,7 @@ class MathStructure {
 		bool representsReal(bool allow_units = false) const;
 		bool representsNonComplex(bool allow_units = false) const;
 		bool representsComplex(bool allow_units = false) const;
+		bool representsFinite(bool allow_units = false) const;
 		bool representsNonZero(bool allow_units = false) const;
 		bool representsZero(bool allow_units = false) const;
 		bool representsApproximatelyZero(bool allow_units = false) const;

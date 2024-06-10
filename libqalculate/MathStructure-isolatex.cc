@@ -4456,6 +4456,11 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					bool b_nonzero = !CHILD(1).isZero() && CHILD(1).representsNonZero(true);
 					if(b_neg && CHILD(1).isZero()) {
 						if(ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) {
+							if(CHILD(0)[0].representsFinite()) {
+								if(ct_comp == COMPARISON_EQUALS) clear(true);
+								else set(1, 1, 0, true);
+								return true;
+							}
 							CHILD(0).setToChild(1);
 							CHILD(1) = nr_plus_inf;
 							CHILDREN_UPDATED
