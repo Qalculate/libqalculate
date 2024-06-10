@@ -267,7 +267,7 @@ int SetBitsFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		nrbits.exp2();
 		bits = nrbits.uintValue();
 	}
-	if(bits > 0 && max_index == bits && (b_signed || vargs[0].number().isNegative()) && (vargs[3].number().bitGet(max_index) != vargs[0].number().isNegative())) {
+	if(bits > 0 && max_index == bits && (b_signed || vargs[0].number().isNegative()) && (vargs[3].number().bitGet(last_pos - first_pos) != vargs[0].number().isNegative())) {
 		PrintOptions po;
 		po.base = BASE_BINARY;
 		po.base_display = BASE_DISPLAY_NONE;
