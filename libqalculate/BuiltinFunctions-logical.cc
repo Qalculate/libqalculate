@@ -235,7 +235,7 @@ SetBitsFunction::SetBitsFunction() : MathFunction("setbits", 4, 6) {
 	setArgumentDefinition(4, new IntegerArgument());
 	setArgumentDefinition(5, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_UINT));
 	setDefaultValue(5, "0");
-	setArgumentDefinition(5, new BooleanArgument());
+	setArgumentDefinition(6, new BooleanArgument());
 	setDefaultValue(6, "0");
 }
 int SetBitsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
