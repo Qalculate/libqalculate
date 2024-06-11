@@ -1081,13 +1081,29 @@ void set_option(string str) {
 			result_display_updated();
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "spell out logical", _("spell out logical")) || svar == "spellout") SET_BOOL_D(printops.spell_out_logical_operators)
-	else if((EQUALS_IGNORECASE_AND_LOCAL(svar, "ignore dot", _("ignore dot")) || svar == "nodot") && CALCULATOR->getDecimalPoint() != DOT) {
-		dot_question_asked = true;
-		SET_BOOL_PF(evalops.parse_options.dot_as_separator)
-	} else if((EQUALS_IGNORECASE_AND_LOCAL(svar, "ignore comma", _("ignore comma")) || svar == "nocomma") && CALCULATOR->getDecimalPoint() != COMMA) {
-		SET_BOOL(evalops.parse_options.comma_as_separator)
-		CALCULATOR->useDecimalPoint(evalops.parse_options.comma_as_separator);
-		expression_format_updated(false);
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "ignore dot", _("ignore dot")) || svar == "nodot") {
+		bool b = evalops.parse_options.dot_as_separator;
+		SET_BOOL(b)
+		if(b != evalops.parse_options.dot_as_separator) {
+			if(b && CALCULATOR->getDecimalPoint() == DOT) {
+				PUTS_UNICODE(_("Illegal value (with current decimal separator)."));
+			} else {
+				if(b) b_decimal_comma = 1;
+				dot_question_asked = true;
+				evalops.parse_options.dot_as_separator = b;
+				expression_format_updated(false);
+			}
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "ignore comma", _("ignore comma")) || svar == "nocomma") {
+		bool b = evalops.parse_options.comma_as_separator;
+		SET_BOOL(b)
+		if(b != evalops.parse_options.comma_as_separator) {
+			if(b) b_decimal_comma = 0;
+			evalops.parse_options.comma_as_separator = b;
+			if(b) evalops.parse_options.dot_as_separator = false;
+			if(b || CALCULATOR->getDecimalPoint() == DOT) CALCULATOR->useDecimalPoint(evalops.parse_options.comma_as_separator);
+			expression_format_updated(false);
+		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "decimal comma", _("decimal comma"))) {
 		int v = -2;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = 0;
@@ -1693,8 +1709,8 @@ void set_option(string str) {
 			ADD_OPTION_TO_LIST("binary bits", "bits")
 			ADD_OPTION_TO_LIST("digit grouping", "group")
 			ADD_OPTION_TO_LIST("spell out logical", "spellout")
-			if(CALCULATOR->getDecimalPoint() != DOT) ADD_OPTION_TO_LIST("ignore dot", "nodot")
-			if(CALCULATOR->getDecimalPoint() != COMMA) ADD_OPTION_TO_LIST("ignore comma", "nocomma")
+			ADD_OPTION_TO_LIST("ignore dot", "nodot")
+			ADD_OPTION_TO_LIST("ignore comma", "nocomma")
 			ADD_OPTION_TO_LIST1("decimal comma")
 			ADD_OPTION_TO_LIST("limit implicit multiplication", "limimpl")
 			ADD_OPTION_TO_LIST("spacious", "space")
@@ -6851,7 +6867,6 @@ bool ask_percent() {
 	PUTS_ITALIC(s_eg);
 	puts("");
 	FPUTS_UNICODE(_("Percentage interpretation"), stdout);
-	dot_question_asked = true;
 	bool b_ret = false;
 	while(true) {
 #ifdef HAVE_LIBREADLINE
