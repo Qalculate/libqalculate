@@ -2509,7 +2509,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					}
 				}
 			}
-		} else if(str_index > 0 && base >= 2 && base <= 10 && is_in(EXPS, str[str_index]) && str_index + 1 < str.length() && (is_in(NUMBER_ELEMENTS, str[str_index + 1]) || (is_in(PLUS MINUS, str[str_index + 1]) && str_index + 2 < str.length() && is_in(NUMBER_ELEMENTS, str[str_index + 2]))) && is_in(NUMBER_ELEMENTS, str[str_index - 1])) {
+		} else if(str_index > 0 && base >= 2 && base <= 10 && is_in(EXPS, str[str_index]) && str_index + 1 < str.length() && (is_in(NUMBER_ELEMENTS, str[str_index + 1]) || (is_in(PLUS MINUS, str[str_index + 1]) && str_index + 2 < str.length() && is_in(NUMBER_ELEMENTS, str[str_index + 2]))) && (is_in(NUMBER_ELEMENTS, str[str_index - 1]) || (str_index > 3 && priv->concise_uncertainty_input && str[str_index - 1] == RIGHT_PARENTHESIS_CH && (i_dx = str.rfind(LEFT_PARENTHESIS_CH, str_index - 3)) != string::npos && i_dx > 0 && str.find_last_not_of(NUMBER_ELEMENTS, str_index - 2) == i_dx && is_in(NUMBER_ELEMENTS, str[i_dx - 1])))) {
 			consecutive_objects = 0;
 			//don't do anything when e is used instead of E for EXP
 		} else if(base <= 33 && str[str_index] == '0' && (str_index == 0 || is_in(NOT_IN_NAMES INTERNAL_OPERATORS, str[str_index - 1]))) {
@@ -4020,6 +4020,13 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					if(i2 - i - 1 <= n) {
 						MathStructure *mstruct2 = new MathStructure();
 						parseNumber(mstruct2, str.substr(i3, i2 - i3 + 1), po);
+						if(i2 < str.length() - 2 && is_in(EXPS, str[i2 + 1]) && (!is_not_number(str[i2 + 2], base) || (i2 < str.length() - 3 && (str[i2 + 2] == MINUS_CH || str[i2 + 2] == PLUS_CH) && !is_not_number(str[i2 + 3], base)))) {
+							size_t i4 = i2;
+							i2 += 2;
+							while(i2 < str.length() - 1 && !is_not_number(str[i2 + 1], base)) i2++;
+							str2 = str.substr(i4 + 2, i2 - (i4 + 1));
+							parseAdd(str2, mstruct2, po, OPERATION_EXP10);
+						}
 						str2 = ID_WRAP_LEFT;
 						str2 += i2s(addId(mstruct2));
 						str2 += ID_WRAP_RIGHT;
