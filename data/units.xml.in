@@ -3720,10 +3720,19 @@
     </unit>
     <unit type="alias">
       <_title>Calorie (international table)</_title>
-      <_names>ais:cal_IT,ar:cal,c:calorie,cp:calories</_names>
+      <_names>ais:cal_IT</_names>
       <base>
         <unit>J</unit>
         <relation>4.1868</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Calorie (thermochemical)</_title>
+      <_names>ars:cal_th,ar:cal,c:calorie,cp:calories</_names>
+      <base>
+        <unit>J</unit>
+        <relation>4.184</relation>
         <exponent>1</exponent>
       </base>
     </unit>
@@ -3742,15 +3751,6 @@
       <base>
         <unit>cal</unit>
         <relation>1000</relation>
-        <exponent>1</exponent>
-      </base>
-    </unit>
-    <unit type="alias">
-      <_title>Calorie (thermochemical)</_title>
-      <_names>ars:cal_th</_names>
-      <base>
-        <unit>J</unit>
-        <relation>4.184</relation>
         <exponent>1</exponent>
       </base>
     </unit>
@@ -3791,11 +3791,56 @@
       </base>
     </unit>
     <unit type="alias">
+      <_title>Calorie (IUNS)</_title>
+      <_names>ars:cal_IUNS</_names>
+      <base>
+        <unit>J</unit>
+        <relation>4.182</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
       <_title>British Thermal Unit (IT)</_title>
       <_names>ar:Btu</_names>
       <base>
+        <unit>cal_IT</unit>
+        <relation>45359237/180000</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Therm (IT)</_title>
+      <_names>r:therm,p:therms,a:thm</_names>
+      <base>
+        <unit>Btu</unit>
+        <relation>100000</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Therm (ISO)</_title>
+      <_names>r:therm_ISO,p:therms_ISO,a:thm_ISO</_names>
+      <base>
         <unit>J</unit>
-        <relation>1055.056</relation>
+        <relation>105506000</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Therm (U.S.)</_title>
+      <_names>r:therm_US,p:therms_US,a:thm_US</_names>
+      <base>
+        <unit>J</unit>
+        <relation>105480400</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Thermie</_title>
+      <_names>r:thermie,p:thermies,a:th</_names>
+      <base>
+        <unit>cal_IT</unit>
+        <relation>1E6</relation>
         <exponent>1</exponent>
       </base>
     </unit>
