@@ -2768,6 +2768,7 @@ int MathStructure::containsInfinity(bool structural_only, bool check_variables, 
 			if(function_value) {
 				return function_value->containsInfinity(structural_only, check_variables, check_functions);
 			}
+			if(representsFinite(true)) return 0;
 			return -1;
 		} else if(isAborted()) {
 			return -1;

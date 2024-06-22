@@ -544,7 +544,7 @@
       </unit>
       <unit type="composite">
         <hidden>true</hidden>
-        <_title>Revolutions per Minute</_title>
+        <title>Revolutions per Minute</title>
         <names>r:turn_p_min</names>
         <part>
           <unit>turn</unit>
@@ -3720,7 +3720,7 @@
     </unit>
     <unit type="alias">
       <_title>Calorie (international table)</_title>
-      <_names>ais:cal_IT</_names>
+      <_names>ars:cal_IT</_names>
       <base>
         <unit>J</unit>
         <relation>4.1868</relation>
@@ -3729,7 +3729,7 @@
     </unit>
     <unit type="alias">
       <_title>Calorie (thermochemical)</_title>
-      <_names>ars:cal_th,ar:cal,c:calorie,cp:calories</_names>
+      <_names>airs:cal_th,a:cal,c:calorie,cp:calories</_names>
       <base>
         <unit>J</unit>
         <relation>4.184</relation>

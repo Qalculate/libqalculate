@@ -4456,21 +4456,8 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					bool b_nonzero = !CHILD(1).isZero() && CHILD(1).representsNonZero(true);
 					if(b_neg && CHILD(1).isZero()) {
 						if(ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) {
-							if(CHILD(0)[0].representsFinite()) {
-								if(ct_comp == COMPARISON_EQUALS) clear(true);
-								else set(1, 1, 0, true);
-								return true;
-							}
-							CHILD(0).setToChild(1);
-							CHILD(1) = nr_plus_inf;
-							CHILDREN_UPDATED
-							MathStructure *malt = new MathStructure(*this);
-							(*malt)[1] = nr_minus_inf;
-							ComparisonType ct_comp_bak = ct_comp;
-							isolate_x_sub(eo, eo2, x_var, morig, depth + 1);
-							malt->isolate_x_sub(eo, eo2, x_var, morig, depth + 1);
-							add_nocopy(malt, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
-							calculatesub(eo, eo2, false);
+							if(ct_comp == COMPARISON_EQUALS) clear(true);
+							else set(1, 1, 0, true);
 							return true;
 						}
 						if(CHILD(0)[1].number().isInteger() && CHILD(0)[1].number().isEven()) {
@@ -5215,6 +5202,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				}
 			} else if(CHILD(0).function()->id() == FUNCTION_ID_LOG && CHILD(0).size() == 1) {
 				if(CHILD(0)[0].contains(x_var)) {
+					if(CHILD(1).isNumber() && CHILD(1).number().isMinusInfinity()) return false;
 					if(!CHILD(1).representsNonComplex()) {
 						if(ct_comp != COMPARISON_EQUALS && ct_comp != COMPARISON_NOT_EQUALS) return false;
 						MathStructure mtest(CALCULATOR->getVariableById(VARIABLE_ID_E));

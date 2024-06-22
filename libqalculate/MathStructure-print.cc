@@ -3859,7 +3859,6 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			bool avoid_sign = (!po.short_multiplication && ips.power_depth > 0 && format && tagtype == TAG_TYPE_HTML && po.base >= 2 && po.base <= 10 && po.multiplication_sign == MULTIPLICATION_SIGN_X);
 			int i_sign = 0, i_sign_prev = 0;
 			bool wrap_next = false;
-			size_t prev_index = 0;
 			for(size_t i = 0; i < SIZE; i++) {
 				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i == 0) ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, *this, i + 1, true, flat_power);
@@ -3938,12 +3937,12 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					}
 					i--;
 				}
+				size_t l = print_str.length();
 				print_str += CHILD(i).print(po, format, b_units ? 0 : colorize, tagtype, ips_n);
-				if(i_sign_prev == MULTIPLICATION_SIGN_NONE && CHILD(i).isNumber() && (print_str.find_first_of("*^", prev_index) != string::npos || (po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && print_str.find(SIGN_MULTIDOT, prev_index) != string::npos) || ((po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && print_str.find(SIGN_MIDDLEDOT, prev_index) != string::npos) || (po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && print_str.find(SIGN_MULTIPLICATION, prev_index) != string::npos))) {
-					print_str.insert(prev_index, "(");
+				if(((i > 0 && i_sign_prev == MULTIPLICATION_SIGN_NONE) || (i < SIZE - 1 && i_sign == MULTIPLICATION_SIGN_NONE)) && CHILD(i).isNumber() && (print_str.find_first_of("*^", l) != string::npos || (po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && print_str.find(SIGN_MULTIDOT, l) != string::npos) || ((po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && print_str.find(SIGN_MIDDLEDOT, l) != string::npos) || (po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && print_str.find(SIGN_MULTIPLICATION, l) != string::npos))) {
+					print_str.insert(l, "(");
 					print_str += ")";
 				}
-				prev_index = print_str.length();
 			}
 			if(b_units && tagtype == TAG_TYPE_TERMINAL) print_str += "\033[0m";
 			else if(b_units && tagtype == TAG_TYPE_HTML) print_str += "</span>";

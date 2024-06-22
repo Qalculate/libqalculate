@@ -1355,7 +1355,7 @@ bool test_max_addition_size(const MathStructure &m, size_t n) {
 bool equals_with_vname(const MathStructure &m1, const MathStructure &m2) {
 	if(m1.size() != m2.size() || m1.type() != m2.type()) return false;
 	if(m1.isVariable() && m2.isVariable()) {
-		if(m1.variable() == m2.variable() || m2.variable()->name() == m2.variable()->name()) return true;
+		if(m1.variable() == m2.variable() || m1.variable()->name() == m2.variable()->name()) return true;
 		return false;
 	}
 	if(m1.size() == 0) return m1.equals(m2, true, true);
@@ -1389,9 +1389,6 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 			mstruct_exact.setUndefined();
 		} else if(auto_approx == AUTOMATIC_APPROXIMATION_SINGLE) {
 			mstruct_exact.setUndefined();
-			if(msecs > 0) CALCULATOR->stopControl();
-			CALCULATOR->endTemporaryStopMessages();
-			return;
 		}
 		if(mstruct_exact.containsType(STRUCT_COMPARISON)) {
 			bool b = false;

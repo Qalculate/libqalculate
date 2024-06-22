@@ -1,3 +1,76 @@
+2024-06-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Always return false for 1/f(x)=0 (not f(x)=infinity)
+	* Do not solve ln(f(x))=-infinity
+
+2024-06-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add therm and thermie units (IT, ISO, and U.S.)
+	* Use exact Btu relation
+	* Use symbol "cal" for thermochemical (instead of international table) calorie
+	* Add IUNS calorie
+	* Fix input of scientific E-notation using lowercase e in numbers using concise interval notation, in expressions
+
+2024-06-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Always allow "ignore comma" option (will change default decimal separator if not dot), and show more informative error message for "ignore dot" if decimals separator is dot
+	* Do not mark decimal separator question as asked after percentage calculation has been asked
+
+2024-06-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add MathStructure::representsFinite() to improve handling when unknown if value is real or complex
+	* Fix "bit width" and "signed integer" arguments in setbits()
+
+2024-06-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Preserve allow_infinite parameter for recursive comparison in MathStructure::equals()
+	* Return true for infinity multiplied by zero in MathStructure::representsUndefined()
+	* Add recursion counter to MathStructure::isolate_x() and MathStructure::isolate_x_sub() (variable isolation) to avoid stack overflow
+	* Return true both text strings are empty in equalsIgnoreCase()
+	* Fix parenthesis added in front of multiplication sign in some cases
+	* Use less strict rules when comparing with previous expression (to avoid infinite loop) when isolating variable, in MathStructure::isolate_x_sub(); * Do not apply x+x^(1/a)=b => x=(b-x)^a if (part of) x represents undefined
+
+2024-06-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix negative-size-param (crash) when a variable name/symbol with more than 20 characters is used in "where" expression
+	* Fix approximation mode changed with AUTOMATIC_APPROXIMATION_SINGLE in calculate_dual_exact (affects calculate-as-you-type in qalculate-qt)
+
+2024-05-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Update values of physical constants with CODATA 2022 values; Change title and names/symbols of weak mixing angle (prepend "sin2" to theta variants and change order)
+
+2024-05-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Return exact negative integers in log10()
+	* Decrease (potentially) number of false negatives for represents... functions
+	* Add descriptions for is... and represents... functions
+	* Fix RoundFunction::represents...
+	* Check for exact solution equaly simplified as approximation value in calculate_dual_exact when approximation is AUTOMATIC_APPROXIMATION_SINGLE
+	* Fix confusing behaviour of complex forms other than rectangular in some case with equalities and inequalities
+
+2024-05-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Remove n from equation solution if possible using assumptions of x
+	* Fix auto/dual approximation with "where" expression
+	* Fix Number::getCentralInteger()
+	* "n > a" equals "n >= floor(a)", if a is not an integer, and equivalent for other inequality operators
+	* Fix handling of where expressions with multiple inequality statements for a single variable, e.g. "where x>0 and x<10" (parsed expression were as aborted, and calculated value always 1)
+
+2024-05-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix potential (but unlikely) segfault when integrating expression with abs() and empty ln()
+	* Add allroots() function
+	* Fix unnecessary parenthesis (with wrong color for closing bracket) around unit with exponent for colorized HTML output (affects qalculate-qt)
+
+2024-05-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add additional names/symbols (tr,pla,rev,revolution,revolutions,cyc,cycle,cycles) to turn unit
+	* Add rpm unit (= turns/min)
+
+2024-05-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix qalc not exiting after factorization in non-interactive mode
+
 2024-05-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix a^(f(x))=a^(b*g(x)) where b=2 or b=3
