@@ -1053,22 +1053,15 @@ bool MathStructure::representsFinite(bool allow_units) const {
 		}
 		case STRUCT_UNIT: {return allow_units;}
 		case STRUCT_DATETIME: {return allow_units;}
-		case STRUCT_ADDITION: {
+		case STRUCT_ADDITION: {}
+		case STRUCT_MULTIPLICATION: {
 			for(size_t i = 0; i < SIZE; i++) {
 				if(!CHILD(i).representsFinite(allow_units)) return false;
 			}
 			return true;
 		}
-		case STRUCT_MULTIPLICATION: {
-			for(size_t i = 0; i < SIZE; i++) {
-				if(!CHILD(i).representsFinite(allow_units)) {
-					return false;
-				}
-			}
-			return true;
-		}
 		case STRUCT_POWER: {
-			return (CHILD(0).representsFinite(allow_units) && (CHILD(1).representsFinite(false) || (CHILD(1).isNumber() && CHILD(1).number().isMinusInfinity() && CHILD(0).representsNonZero())));
+			return CHILD(0).representsFinite(allow_units) && CHILD(1).representsFinite(false) && (CHILD(1).representsPositive(false) || CHILD(0).representsNonZero(allow_units));
 		}
 		default: {return false;}
 	}

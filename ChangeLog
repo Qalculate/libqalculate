@@ -1,3 +1,7 @@
+2024-06-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Return n >= a + 1 for n > a, and n <= a - 1 for n < a, if a is an integer (and n represents an integer)
+
 2024-06-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Always return false for 1/f(x)=0 (not f(x)=infinity)
@@ -26,7 +30,7 @@
 	* Preserve allow_infinite parameter for recursive comparison in MathStructure::equals()
 	* Return true for infinity multiplied by zero in MathStructure::representsUndefined()
 	* Add recursion counter to MathStructure::isolate_x() and MathStructure::isolate_x_sub() (variable isolation) to avoid stack overflow
-	* Return true both text strings are empty in equalsIgnoreCase()
+	* Return true if both text strings are empty in equalsIgnoreCase()
 	* Fix parenthesis added in front of multiplication sign in some cases
 	* Use less strict rules when comparing with previous expression (to avoid infinite loop) when isolating variable, in MathStructure::isolate_x_sub(); * Do not apply x+x^(1/a)=b => x=(b-x)^a if (part of) x represents undefined
 

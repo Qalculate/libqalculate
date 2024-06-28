@@ -6059,37 +6059,53 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				}
 			}
 			if(b) break;
-			if(!CHILD(0).isNumber() && CHILD(1).isNumber() && CHILD(0).representsInteger() && CHILD(1).number().isReal() && CHILD(1).number().isNonInteger()) {
-				switch(ct_comp) {
-					case COMPARISON_EQUALS: {
-						clear(true);
-						b = true;
-						break;
-					}
-					case COMPARISON_NOT_EQUALS: {
-						set(1, 1, 0, true);
-						b = true;
-						break;
-					}
-					case COMPARISON_LESS: {}
-					case COMPARISON_EQUALS_LESS: {
-						if(CHILD(1).number().floor()) {
-							CHILD(1).numberUpdated();
+			if(!CHILD(0).isNumber() && CHILD(1).isNumber() && CHILD(0).representsInteger() && CHILD(1).number().isReal()) {
+				if(CHILD(1).number().isInteger()) {
+					if(ct_comp == COMPARISON_LESS) {
+						if(CHILD(1).number().subtract(1)) {
 							b = true;
 							ct_comp = COMPARISON_EQUALS_LESS;
 							calculatesub(eo, feo, false, mparent, index_this);
 						}
-						break;
-					}
-					case COMPARISON_GREATER: {}
-					case COMPARISON_EQUALS_GREATER: {
-						if(CHILD(1).number().ceil()) {
-							CHILD(1).numberUpdated();
+					} else if(ct_comp == COMPARISON_GREATER) {
+						if(CHILD(1).number().add(1)) {
 							b = true;
 							ct_comp = COMPARISON_EQUALS_GREATER;
 							calculatesub(eo, feo, false, mparent, index_this);
 						}
-						break;
+					}
+				} else if(CHILD(1).number().isNonInteger()) {
+					switch(ct_comp) {
+						case COMPARISON_EQUALS: {
+							clear(true);
+							b = true;
+							break;
+						}
+						case COMPARISON_NOT_EQUALS: {
+							set(1, 1, 0, true);
+							b = true;
+							break;
+						}
+						case COMPARISON_LESS: {}
+						case COMPARISON_EQUALS_LESS: {
+							if(CHILD(1).number().floor()) {
+								CHILD(1).numberUpdated();
+								b = true;
+								ct_comp = COMPARISON_EQUALS_LESS;
+								calculatesub(eo, feo, false, mparent, index_this);
+							}
+							break;
+						}
+						case COMPARISON_GREATER: {}
+						case COMPARISON_EQUALS_GREATER: {
+							if(CHILD(1).number().ceil()) {
+								CHILD(1).numberUpdated();
+								b = true;
+								ct_comp = COMPARISON_EQUALS_GREATER;
+								calculatesub(eo, feo, false, mparent, index_this);
+							}
+							break;
+						}
 					}
 				}
 				if(b) break;

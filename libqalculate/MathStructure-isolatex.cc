@@ -4002,7 +4002,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					if(mtest[0].calculateRaise(nrexp, eo2)) {
 						mtest[1].calculateRaise(nrexp, eo2);
 						mtest.childrenUpdated();
-						if(mtest.isolate_x(eo2, eo, x_var, NULL, depth + 1)) {
+						if(mtest.isolate_x(eo2, eo, x_var, false, depth + 1)) {
 							ComparisonType ct_comp_bak = ct_comp;
 							if((mtest.isLogicalAnd() || mtest.isLogicalOr() || mtest.isComparison()) && test_comparisons(*this, mtest, x_var, eo, false, eo.expand ? 1 : 2) < 0) {
 								if(eo.expand) {
