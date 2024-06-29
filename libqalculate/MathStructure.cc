@@ -1045,11 +1045,14 @@ bool MathStructure::representsReal(bool allow_units) const {
 bool MathStructure::representsFinite(bool allow_units) const {
 	switch(m_type) {
 		case STRUCT_NUMBER: {return !o_number.includesInfinity();}
-		case STRUCT_VARIABLE: {return o_variable->representsFinite(allow_units);}
+		case STRUCT_VARIABLE: {
+			if(o_variable->isKnown()) return ((KnownVariable*) o_variable)->get().representsFinite(allow_units);
+			return o_variable->representsReal(allow_units);
+		}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isReal();}
 		case STRUCT_FUNCTION: {
 			if(o_function->id() == FUNCTION_ID_STRIP_UNITS && SIZE == 1) return CHILD(0).representsFinite(true);
-			return (function_value && function_value->representsFinite(allow_units)) || o_function->representsFinite(*this, allow_units);
+			return (function_value && function_value->representsFinite(allow_units)) || o_function->representsReal(*this, allow_units);
 		}
 		case STRUCT_UNIT: {return allow_units;}
 		case STRUCT_DATETIME: {return allow_units;}
