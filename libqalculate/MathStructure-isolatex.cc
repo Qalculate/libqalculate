@@ -582,13 +582,14 @@ bool fix_n_multiple(MathStructure &mstruct, const EvaluationOptions &eo, const E
 			EvaluationOptions eo2 = eo;
 			EvaluationOptions feo2 = feo;
 			if(eo.approximation == APPROXIMATION_EXACT) {
-				eo2.approximation = APPROXIMATION_TRY_EXACT;
+				eo2.approximation = APPROXIMATION_APPROXIMATE;
 				feo2.approximation = APPROXIMATION_TRY_EXACT;
 			}
 			CALCULATOR->beginTemporaryEnableIntervalArithmetic();
 			if(CALCULATOR->usesIntervalArithmetic()) {
 				CALCULATOR->beginTemporaryStopMessages();
 				mtest.calculateFunctions(feo2);
+				if(eo.approximation == APPROXIMATION_EXACT) mtest.calculatesub(eo2, feo2, true);
 				if(mtest.isolate_x(eo2, feo2, CALCULATOR->getVariableById(VARIABLE_ID_N))) {
 					if(CALCULATOR->endTemporaryStopMessages() == 0) {
 						if(mtest.isZero()) {

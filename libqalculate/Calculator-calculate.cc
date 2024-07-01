@@ -3150,27 +3150,60 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 					wheres[i2][index + 1] = '=';
 				}
 				remove_blank_ends(sname);
+				string svalue = wheres[i2].substr(index + 1, wheres[i2].length() - (index + 1));
+				bool b_equals = !svalue.empty() && wheres[i2][index] != '=' && svalue[0] == '=';
+				if(b_equals) svalue.erase(0, 1);
+				remove_blank_ends(svalue);
+				bool b_reversed = false;
+				if(wheres[i2][index] != '=' && !variableNameIsValid(sname) && variableNameIsValid(svalue)) {
+					string sbak = svalue;
+					svalue = sname;
+					sname = sbak;
+					b_reversed = true;
+				}
 				if(!variableNameIsValid(sname)) {
 					if(!str_where.empty()) str_where += LOGICAL_AND;
 					str_where += wheres[i2];
 				} else {
-					string svalue = wheres[i2].substr(index + 1, wheres[i2].length() - (index + 1));
-					bool b_equals = !svalue.empty() && wheres[i2][index] != '=' && svalue[0] == '=';
-					if(b_equals) svalue.erase(0, 1);
-					remove_blank_ends(svalue);
 					Variable *v = NULL;
 					if(wheres[i2][index] == '=') {
 						v = new KnownVariable("\x14", sname, svalue);
 					} else {
 						MathStructure m;
+						beginTemporaryStopMessages();
 						parse(&m, svalue, eo.parse_options);
-						if(!m.isNumber()) m.eval(eo);
+						if(!m.isNumber()) {
+							m.eval(eo);
+							if(!m.isNumber() && eo.approximation == APPROXIMATION_EXACT) {
+								EvaluationOptions eo2 = eo;
+								eo2.approximation = APPROXIMATION_APPROXIMATE;
+								m.eval(eo2);
+							}
+						}
+						if(!m.isNumber() && variableNameIsValid(svalue)) {
+							endTemporaryStopMessages();
+							beginTemporaryStopMessages();
+							string sbak = svalue;
+							svalue = sname;
+							sname = sbak;
+							b_reversed = true;
+							parse(&m, svalue, eo.parse_options);
+							if(!m.isNumber()) {
+								m.eval(eo);
+								if(!m.isNumber() && eo.approximation == APPROXIMATION_EXACT) {
+									EvaluationOptions eo2 = eo;
+									eo2.approximation = APPROXIMATION_APPROXIMATE;
+									m.eval(eo2);
+								}
+							}
+						}
 						if(m.isNumber() && !m.number().hasImaginaryPart()) {
 							ComparisonType ct;
-							if(wheres[i2][index] == '>') {
+							if(b_reversed) b_equals = !b_equals;
+							if((!b_reversed && wheres[i2][index] == '>') || (b_reversed && wheres[i2][index] == '<')) {
 								if(b_equals) ct = COMPARISON_EQUALS_GREATER;
 								else ct = COMPARISON_GREATER;
-							} else if(wheres[i2][index] == '<') {
+							} else if((!b_reversed && wheres[i2][index] == '<') || (b_reversed && wheres[i2][index] == '>')) {
 								if(b_equals) ct = COMPARISON_EQUALS_LESS;
 								else ct = COMPARISON_LESS;
 							} else {
@@ -3217,6 +3250,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 											b = true;
 										}
 									}
+									endTemporaryStopMessages(b);
 									if(!b) {
 										if(!str_where.empty()) str_where += LOGICAL_AND;
 										str_where += wheres[i2];
@@ -3238,9 +3272,11 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 										else if(ct == COMPARISON_LESS) {ass->setMax(&m.number()); ass->setIncludeEqualsMax(false);}
 									}
 									((UnknownVariable*) v)->setAssumptions(ass);
+									endTemporaryStopMessages(true);
 								}
 							}
 						} else {
+							endTemporaryStopMessages();
 							if(!str_where.empty()) str_where += LOGICAL_AND;
 							str_where += wheres[i2];
 						}
