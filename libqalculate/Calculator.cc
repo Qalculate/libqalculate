@@ -1576,14 +1576,21 @@ void Calculator::unsetLocale() {
 }
 
 void Calculator::resetVariables() {
+	for(size_t i = 0; i < variables.size(); i++) variables[i]->destroy();
 	variables.clear();
 	addBuiltinVariables();
 }
 void Calculator::resetFunctions() {
+	for(size_t i = 0; i < functions.size(); i++) functions[i]->destroy();
 	functions.clear();
 	addBuiltinFunctions();
 }
 void Calculator::resetUnits() {
+	for(unordered_map<Unit*, MathStructure*>::iterator it = priv->composite_unit_base.begin(); it != priv->composite_unit_base.end(); ++it) it->second->unref();
+	for(size_t i = 0; i < units.size(); i++) units[i]->destroy();
+	for(size_t i = 0; i < prefixes.size(); i++) delete prefixes[i];
+	priv->composite_unit_base.clear();
+	prefixes.clear();
 	units.clear();
 	addBuiltinUnits();
 }
