@@ -1576,22 +1576,34 @@ void Calculator::unsetLocale() {
 }
 
 void Calculator::resetVariables() {
-	for(size_t i = 0; i < variables.size(); i++) variables[i]->destroy();
-	variables.clear();
+	for(size_t i = 0; i < variables.size();) {
+		size_t n = variables.size();
+		variables[i]->destroy();
+		if(n == variables.size()) i++;
+	}
 	addBuiltinVariables();
 }
 void Calculator::resetFunctions() {
-	for(size_t i = 0; i < functions.size(); i++) functions[i]->destroy();
-	functions.clear();
+	for(size_t i = 0; i < functions.size();) {
+		size_t n = functions.size();
+		functions[i]->destroy();
+		if(n == functions.size()) i++;
+	}
 	addBuiltinFunctions();
 }
 void Calculator::resetUnits() {
 	for(unordered_map<Unit*, MathStructure*>::iterator it = priv->composite_unit_base.begin(); it != priv->composite_unit_base.end(); ++it) it->second->unref();
-	for(size_t i = 0; i < units.size(); i++) units[i]->destroy();
-	for(size_t i = 0; i < prefixes.size(); i++) delete prefixes[i];
+	for(size_t i = 0; i < units.size();) {
+		size_t n = units.size();
+		units[i]->destroy();
+		if(n == units.size()) i++;
+	}
+	for(size_t i = 0; i < prefixes.size(); i++) {
+		delPrefixUFV(prefixes[i]);
+		delete prefixes[i];
+	}
 	priv->composite_unit_base.clear();
 	prefixes.clear();
-	units.clear();
 	addBuiltinUnits();
 }
 void Calculator::reset() {
