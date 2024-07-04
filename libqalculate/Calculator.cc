@@ -1581,6 +1581,7 @@ void Calculator::resetVariables() {
 		variables[i]->destroy();
 		if(n == variables.size()) i++;
 	}
+	if(v_C) v_C->destroy();
 	addBuiltinVariables();
 }
 void Calculator::resetFunctions() {

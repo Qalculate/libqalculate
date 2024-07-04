@@ -40,6 +40,9 @@ DataObject::DataObject(DataSet *parent_set) {
 	parent = parent_set;
 	b_uchanged = false;
 }
+DataObject::~DataObject() {
+	for(size_t i = 0; i < m_properties.size(); i++) m_properties[i]->unref();
+}
 
 void DataObject::eraseProperty(DataProperty *property) {
 	for(size_t i = 0; i < properties.size(); i++) {
@@ -162,6 +165,9 @@ DataProperty::DataProperty(DataSet *parent_set, string s_name, string s_title, s
 DataProperty::DataProperty(const DataProperty &dp) {
 	m_unit = NULL;
 	set(dp);
+}
+DataProperty::~DataProperty() {
+	if(m_unit) m_unit->unref();
 }
 
 void DataProperty::set(const DataProperty &dp) {
@@ -375,6 +381,10 @@ DataSet::DataSet(string s_category, string s_name, string s_default_file, string
 DataSet::DataSet(const DataSet *o) {
 	b_loaded = false;
 	set(o);
+}
+DataSet::~DataSet() {
+	for(size_t i = 0; i < properties.size(); i++) delete properties[i];
+	for(size_t i = 0; i < objects.size(); i++) delete objects[i];
 }
 
 ExpressionItem *DataSet::copy() const {return new DataSet(this);}

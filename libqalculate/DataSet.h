@@ -40,6 +40,7 @@ class DataObject {
 	* @param parent_set Data set that the object will belong to.
 	*/
 	DataObject(DataSet *parent_set);
+	~DataObject();
 
 	/** Unset (erase value) a property.
 	*
@@ -142,6 +143,7 @@ class DataProperty {
 	*/
 	DataProperty(DataSet *parent_set, std::string s_name = "", std::string s_title = "", std::string s_description = "");
 	DataProperty(const DataProperty &dp);
+	~DataProperty();
 
 	void set(const DataProperty &dp);
 	void setName(std::string s_name, bool is_ref = false);
@@ -207,6 +209,7 @@ class DataSet : public MathFunction {
 
   	DataSet(std::string s_category = "", std::string s_name = "", std::string s_default_file = "", std::string s_title = "", std::string s_description = "", bool is_local = true);
 	DataSet(const DataSet *o);
+	~DataSet();
 
 	ExpressionItem *copy() const;
 	void set(const ExpressionItem *item);
