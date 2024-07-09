@@ -3247,6 +3247,14 @@ int main(int argc, char *argv[]) {
 
 	if(!ignore_locale) setlocale(LC_ALL, "");
 
+	int expression_after_argc = -1;
+	for(int i = 1; i < argc; i++) {
+		if(strlen(argv[i]) == 2 && argv[i][0] == '-' && argv[i][1] == '-') {
+			expression_after_argc = i;
+			break;
+		}
+	}
+
 	for(int i = 1; i < argc; i++) {
 		string svalue, svar;
 		if(calc_arg_begun) {
@@ -3491,6 +3499,9 @@ int main(int argc, char *argv[]) {
 			}
 		} else if(!calc_arg_begun && svar == "--") {
 			calc_arg_begun = true;
+		} else if(!calc_arg_begun && expression_after_argc > 0 && i < expression_after_argc && svar.size() > 1 && (svar[0] == '-' || svar[0] == '+') && is_not_in(NUMBER_ELEMENTS, svar[1])) {
+			snprintf(buffer, 10000, _("Unrecognized option: \"%s\"."), svar.c_str());
+			PUTS_UNICODE(buffer)
 		} else {
 			calc_arg += argv[i];
 			calc_arg_begun = true;
