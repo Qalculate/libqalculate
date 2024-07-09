@@ -1,10 +1,13 @@
-#include <unistd.h>
+#ifdef _MSC_VER
+#	include <sys/utime.h>
+#else
+#	include <unistd.h>
+#	include <utime.h>
+#endif
 #include <time.h>
-#include <utime.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <dirent.h>
 #include <string.h>
 #include <queue>
 #include <iostream>

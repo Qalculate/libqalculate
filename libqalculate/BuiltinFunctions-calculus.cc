@@ -372,6 +372,7 @@ int IGammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	FR_FUNCTION_2(igamma)
 }
 
+#define CLEANUP_BETAINC delete[] R1; delete[] R2;
 
 bool betainc(Number &nvalue, const Number &nr_x, const Number &nr_a, const Number &nr_b) {
 
@@ -379,7 +380,8 @@ bool betainc(Number &nvalue, const Number &nr_x, const Number &nr_a, const Numbe
 	long int min_steps = 6;
 	bool safety_measures = true;
 
-	Number R1[max_steps], R2[max_steps];
+	Number *R1 = new Number[max_steps];
+	Number *R2 = new Number[max_steps];
 	Number *Rp = &R1[0], *Rc = &R2[0];
 	Number h(nr_x);
 	Number acc, acc_i, c, ntmp, prevunc, prevunc_i, nunc, nunc_i;
@@ -391,20 +393,20 @@ bool betainc(Number &nvalue, const Number &nr_x, const Number &nr_a, const Numbe
 	Number nrtmp;
 
 	Number mf(1, 1, 0);
-	if((!nrtmp.isZero() && !nrtmp.raise(nr_am1)) || !mf.multiply(nrtmp) || mf.includesInfinity()) return false;
+	if((!nrtmp.isZero() && !nrtmp.raise(nr_am1)) || !mf.multiply(nrtmp) || mf.includesInfinity()) {CLEANUP_BETAINC; return false;}
 	Rp[0] = mf;
 
 	mf.set(1, 1, 0);
 	nrtmp = nr_x;
-	if(!mf.subtract(nr_x) || (!mf.isZero() && !mf.raise(nr_bm1)) || !nrtmp.raise(nr_am1) || !mf.multiply(nrtmp) || mf.includesInfinity()) return false;
+	if(!mf.subtract(nr_x) || (!mf.isZero() && !mf.raise(nr_bm1)) || !nrtmp.raise(nr_am1) || !mf.multiply(nrtmp) || mf.includesInfinity()) {CLEANUP_BETAINC; return false;}
 
-	if(!Rp[0].add(mf) || !Rp[0].multiply(nr_half) || !Rp[0].multiply(h)) return false;
+	if(!Rp[0].add(mf) || !Rp[0].multiply(nr_half) || !Rp[0].multiply(h)) {CLEANUP_BETAINC; return false;}
 
 	for(long int i = 1; i < max_steps; i++) {
 
 		if(CALCULATOR->aborted()) break;
 
-		if(!h.multiply(nr_half)) return false;
+		if(!h.multiply(nr_half)) {CLEANUP_BETAINC; return false;}
 
 		c.clear();
 
@@ -414,16 +416,16 @@ bool betainc(Number &nvalue, const Number &nr_x, const Number &nr_a, const Numbe
 			if(CALCULATOR->aborted()) break;
 			mf.set(1, 1, 0);
 			nrtmp = ntmp;
-			if(!mf.subtract(ntmp) || (!mf.isZero() && !mf.raise(nr_bm1)) || (!nrtmp.isZero() && !nrtmp.raise(nr_am1)) || !mf.multiply(nrtmp) || mf.includesInfinity()) return false;
+			if(!mf.subtract(ntmp) || (!mf.isZero() && !mf.raise(nr_bm1)) || (!nrtmp.isZero() && !nrtmp.raise(nr_am1)) || !mf.multiply(nrtmp) || mf.includesInfinity()) {CLEANUP_BETAINC; return false;}
 			if(CALCULATOR->aborted()) break;
-			if(!c.add(mf)) return false;
+			if(!c.add(mf)) {CLEANUP_BETAINC; return false;}
 			ntmp += h; ntmp += h;
 		}
 		if(CALCULATOR->aborted()) break;
 
 		Rc[0] = h;
 		ntmp = Rp[0];
-		if(!ntmp.multiply(nr_half) || !Rc[0].multiply(c) || !Rc[0].add(ntmp)) return false;
+		if(!ntmp.multiply(nr_half) || !Rc[0].multiply(c) || !Rc[0].add(ntmp)) {CLEANUP_BETAINC; return false;}
 
 		for(long int j = 1; j <= i; ++j){
 			if(CALCULATOR->aborted()) break;
@@ -431,7 +433,7 @@ bool betainc(Number &nvalue, const Number &nr_x, const Number &nr_a, const Numbe
 			ntmp ^= j;
 			Rc[j] = ntmp;
 			ntmp--; ntmp.recip();
-			if(!Rc[j].multiply(Rc[j - 1]) || !Rc[j].subtract(Rp[j - 1]) || !Rc[j].multiply(ntmp)) return false;
+			if(!Rc[j].multiply(Rc[j - 1]) || !Rc[j].subtract(Rp[j - 1]) || !Rc[j].multiply(ntmp)) {CLEANUP_BETAINC; return false;}
 		}
 		if(CALCULATOR->aborted()) break;
 
@@ -474,6 +476,7 @@ bool betainc(Number &nvalue, const Number &nr_x, const Number &nr_a, const Numbe
 						if(!safety_measures) {
 							nunc.setImaginaryPart(nunc_i);
 							nvalue.setUncertainty(nunc);
+							CLEANUP_BETAINC
 							return true;
 						}
 						if(!prevunc.isZero() || !prevunc_i.isZero() || (nunc.isZero() && nunc_i.isZero())) {
@@ -486,6 +489,7 @@ bool betainc(Number &nvalue, const Number &nr_x, const Number &nr_a, const Numbe
 								acc.setImaginaryPart(acc_i);
 								nvalue.setUncertainty(acc);
 							}
+							CLEANUP_BETAINC
 							return true;
 						}
 						prevunc = nunc;
@@ -497,12 +501,14 @@ bool betainc(Number &nvalue, const Number &nr_x, const Number &nr_a, const Numbe
 				} else {
 					if(!safety_measures) {
 						nvalue.setUncertainty(nunc);
+						CLEANUP_BETAINC
 						return true;
 					}
 					if(!prevunc.isZero() || nunc.isZero()) {
 						if(!prevunc_i.isZero()) nunc.setImaginaryPart(prevunc_i);
 						if(!ntmp.isZero() && nunc <= prevunc) nvalue.setUncertainty(prevunc);
 						else nvalue.setUncertainty(acc);
+						CLEANUP_BETAINC
 						return true;
 					}
 					prevunc = nunc;
@@ -518,6 +524,7 @@ bool betainc(Number &nvalue, const Number &nr_x, const Number &nr_a, const Numbe
 		Rp = Rc;
 		Rc = rt;
 	}
+	CLEANUP_BETAINC
 	if(!nunc.isZero() || !nunc_i.isZero()) {
 		acc.set(1, 1, -2);
 		ntmp = nvalue;

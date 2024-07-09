@@ -12,10 +12,11 @@
 #include "support.h"
 #include <libqalculate/qalculate.h>
 #include <sys/stat.h>
-#include <unistd.h>
+#ifndef _MSC_VER
+#	include <unistd.h>
+#endif
 #include <time.h>
 #include <pthread.h>
-#include <dirent.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <vector>

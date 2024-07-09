@@ -6641,13 +6641,16 @@ bool has_wide_trig_interval(const MathStructure &m, const MathStructure &x_var, 
 	}
 	return false;
 }
+
+#define CLEANUP_ROMBERG delete[] R1; delete[] R2;
 bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x_var, const EvaluationOptions &eo, Number a, Number b, long int max_steps, long int min_steps, bool safety_measures) {
 
 	bool auto_max = max_steps <= 0;
 	if(auto_max) max_steps = 22;
 	if(min_steps > max_steps) max_steps = min_steps;
 
-	Number R1[max_steps], R2[max_steps];
+	Number *R1 = new Number[max_steps];
+	Number *R2 = new Number[max_steps];
 	Number *Rp = &R1[0], *Rc = &R2[0];
 	Number h(b); h -= a;
 	Number acc, acc_i, c, ntmp, prevunc, prevunc_i, nunc, nunc_i;
@@ -6658,30 +6661,30 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 	mf.replace(x_var, a, false, false, true);
 	mf.eval(eo);
 	if(!mf.isNumber() || mf.number().includesInfinity()) {
-		if(!a.setToFloatingPoint()) return false;
+		if(!a.setToFloatingPoint()) {CLEANUP_ROMBERG; return false;}
 		mpfr_nextabove(a.internalLowerFloat());
 		mpfr_nextabove(a.internalUpperFloat());
 		mf = minteg;
 		mf.replace(x_var, a, false, false, true);
 		mf.eval(eo);
 	}
-	if(!mf.isNumber()) return false;
+	if(!mf.isNumber()) {CLEANUP_ROMBERG; return false;}
 	Rp[0] = mf.number();
 
 	mf = minteg;
 	mf.replace(x_var, b, false, false, true);
 	mf.eval(eo);
 	if(!mf.isNumber() || mf.number().includesInfinity()) {
-		if(!b.setToFloatingPoint()) return false;
+		if(!b.setToFloatingPoint()) {CLEANUP_ROMBERG; return false;}
 		mpfr_nextbelow(b.internalLowerFloat());
 		mpfr_nextbelow(b.internalUpperFloat());
 		mf = minteg;
 		mf.replace(x_var, a, false, false, true);
 		mf.eval(eo);
 	}
-	if(!mf.isNumber()) return false;
+	if(!mf.isNumber()) {CLEANUP_ROMBERG; return false;}
 
-	if(!Rp[0].add(mf.number()) || !Rp[0].multiply(nr_half) || !Rp[0].multiply(h)) return false;
+	if(!Rp[0].add(mf.number()) || !Rp[0].multiply(nr_half) || !Rp[0].multiply(h)) {CLEANUP_ROMBERG; return false;}
 
 	if(safety_measures && min_steps < 15 && has_wide_trig_interval(minteg, x_var, eo, a, b)) min_steps = (max_steps < 15 ? max_steps : 15);
 
@@ -6689,7 +6692,7 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 
 		if(CALCULATOR->aborted()) break;
 
-		if(!h.multiply(nr_half)) return false;
+		if(!h.multiply(nr_half)) {CLEANUP_ROMBERG; return false;}
 
 		c.clear();
 
@@ -6703,7 +6706,7 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 			if(CALCULATOR->aborted()) break;
 			if(!mf.isNumber() || mf.number().includesInfinity()) {
 				Number ntmp2(ntmp);
-				if(ntmp2.setToFloatingPoint()) return false;
+				if(ntmp2.setToFloatingPoint()) {CLEANUP_ROMBERG; return false;}
 				if(j % 2 == 0) {mpfr_nextabove(ntmp2.internalLowerFloat()); mpfr_nextabove(ntmp2.internalUpperFloat());}
 				else {mpfr_nextbelow(ntmp2.internalLowerFloat()); mpfr_nextbelow(ntmp2.internalUpperFloat());}
 				mf = minteg;
@@ -6711,14 +6714,14 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 				mf.eval(eo);
 				if(CALCULATOR->aborted()) break;
 			}
-			if(!mf.isNumber() || !c.add(mf.number())) return false;
+			if(!mf.isNumber() || !c.add(mf.number())) {CLEANUP_ROMBERG; return false;}
 			ntmp += h; ntmp += h;
 		}
 		if(CALCULATOR->aborted()) break;
 
 		Rc[0] = h;
 		ntmp = Rp[0];
-		if(!ntmp.multiply(nr_half) || !Rc[0].multiply(c) || !Rc[0].add(ntmp)) return false;
+		if(!ntmp.multiply(nr_half) || !Rc[0].multiply(c) || !Rc[0].add(ntmp)) {CLEANUP_ROMBERG; return false;}
 
 		for(long int j = 1; j <= i; ++j){
 			if(CALCULATOR->aborted()) break;
@@ -6726,7 +6729,7 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 			ntmp ^= j;
 			Rc[j] = ntmp;
 			ntmp--; ntmp.recip();
-			if(!Rc[j].multiply(Rc[j - 1]) || !Rc[j].subtract(Rp[j - 1]) || !Rc[j].multiply(ntmp)) return false;
+			if(!Rc[j].multiply(Rc[j - 1]) || !Rc[j].subtract(Rp[j - 1]) || !Rc[j].multiply(ntmp)) {CLEANUP_ROMBERG; return false;}
 		}
 		if(CALCULATOR->aborted()) break;
 
@@ -6773,6 +6776,7 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 						if(!safety_measures) {
 							nunc.setImaginaryPart(nunc_i);
 							nvalue.setUncertainty(nunc);
+							CLEANUP_ROMBERG
 							return true;
 						}
 						if(!prevunc.isZero() || !prevunc_i.isZero() || (nunc.isZero() && nunc_i.isZero())) {
@@ -6785,6 +6789,7 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 								acc.setImaginaryPart(acc_i);
 								nvalue.setUncertainty(acc);
 							}
+							CLEANUP_ROMBERG
 							return true;
 						}
 						prevunc = nunc;
@@ -6796,12 +6801,14 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 				} else {
 					if(!safety_measures) {
 						nvalue.setUncertainty(nunc);
+						CLEANUP_ROMBERG
 						return true;
 					}
 					if(!prevunc.isZero() || nunc.isZero()) {
 						if(!prevunc_i.isZero()) nunc.setImaginaryPart(prevunc_i);
 						if(!ntmp.isZero() && nunc <= prevunc) nvalue.setUncertainty(prevunc);
 						else nvalue.setUncertainty(acc);
+						CLEANUP_ROMBERG
 						return true;
 					}
 					prevunc = nunc;
@@ -6817,6 +6824,7 @@ bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x
 		Rp = Rc;
 		Rc = rt;
 	}
+	CLEANUP_ROMBERG
 	if(!nunc.isZero() || !nunc_i.isZero()) {
 		acc.set(1, 1, auto_max ? -3 : -2);
 		ntmp = nvalue;

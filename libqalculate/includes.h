@@ -27,7 +27,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <iostream>
-#include <unistd.h>
+#ifndef _MSC_VER
+#	include <unistd.h>
+#endif
 #include <stdint.h>
 
 #define QALCULATE_MAJOR_VERSION (5)

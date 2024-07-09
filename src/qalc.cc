@@ -12,10 +12,11 @@
 #include "support.h"
 #include <libqalculate/qalculate.h>
 #include <sys/stat.h>
-#include <unistd.h>
+#ifndef _MSC_VER
+#	include <unistd.h>
+#endif
 #include <limits.h>
 #include <time.h>
-#include <dirent.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <vector>
@@ -690,8 +691,8 @@ bool check_exchange_rates() {
 	if(auto_update_exchange_rates < 0) {
 		string ask_str;
 		int days = (int) floor(difftime(time(NULL), CALCULATOR->getExchangeRatesTime(i)) / 86400);
-		int cx = snprintf(buffer, 1000, _n("It has been %s day since the exchange rates last were updated.", "It has been %s days since the exchange rates last were updated.", days), i2s(days).c_str());
-		if(cx >= 0 && cx < 1000) {
+		int cx = snprintf(buffer, 10000, _n("It has been %s day since the exchange rates last were updated.", "It has been %s days since the exchange rates last were updated.", days), i2s(days).c_str());
+		if(cx >= 0 && cx < 10000) {
 			ask_str = buffer;
 			ask_str += "\n";
 		}
@@ -1446,11 +1447,8 @@ void set_option(string str) {
 		} else if(v != CALCULATOR->getPrecision()) {
 			CALCULATOR->setPrecision(v > INT_MAX ? INT_MAX : (int) v);
 			if(CALCULATOR->getPrecision() != v) {
-				size_t l = i2s(CALCULATOR->getPrecision()).length() + strlen(_("Maximum precision %i set."));
-				char *cstr = (char*) malloc(sizeof(char) * (l + 1));
-				snprintf(cstr, l, _("Maximum precision %i set."), CALCULATOR->getPrecision());
-				PUTS_UNICODE(cstr);
-				free(cstr);
+				snprintf(buffer, 10000, _("Maximum precision %i set."), CALCULATOR->getPrecision());
+				PUTS_UNICODE(buffer);
 			}
 			expression_calculation_updated();
 		}
@@ -1772,8 +1770,8 @@ void set_option(string str) {
 						else if(i3 == 3) name = option_list[i].alt_short_name;
 						if(name.empty()) continue;
 						if(compare_name_with_error(name, svars[i2], name.length(), 10, 0, n, i3 >= 2)) {
-							if(i3 < 2) snprintf(buffer, 1000, _("Did you mean \"%s\"?"), name.c_str());
-							else snprintf(buffer, 1000, _("Did you mean \"%s\" (%s)?"), name.c_str(), option_list[i].local_name.empty() ? option_list[i].long_name.c_str() : option_list[i].local_name.c_str());
+							if(i3 < 2) snprintf(buffer, 10000, _("Did you mean \"%s\"?"), name.c_str());
+							else snprintf(buffer, 10000, _("Did you mean \"%s\" (%s)?"), name.c_str(), option_list[i].local_name.empty() ? option_list[i].long_name.c_str() : option_list[i].local_name.c_str());
 							option_list[i].found = true;
 							PUTS_UNICODE(buffer);
 							b = true;
@@ -2233,7 +2231,7 @@ bool show_object_info(string name) {
 				}
 				if(f->subtype() == SUBTYPE_DATA_SET) {
 					CHECK_IF_SCREEN_FILLED_PUTS("");
-					snprintf(buffer, 1000, _("Retrieves data from the %s data set for a given object and property. If \"info\" is typed as property, all properties of the object will be listed."), f->title().c_str());
+					snprintf(buffer, 10000, _("Retrieves data from the %s data set for a given object and property. If \"info\" is typed as property, all properties of the object will be listed."), f->title().c_str());
 					CHECK_IF_SCREEN_FILLED_PUTS(buffer);
 				}
 				if(!f->description().empty()) {
@@ -2728,13 +2726,10 @@ int key_save(int, int) {
 			PUTS_UNICODE(_("Illegal name."));
 			b = false;
 		} else {
-			size_t l = name.length() + strlen(_("Illegal name. Save as %s instead (default: no)?"));
-			char *cstr = (char*) malloc(sizeof(char) * (l + 1));
-			snprintf(cstr, l, _("Illegal name. Save as %s instead (default: no)?"), name.c_str());
-			if(!ask_question(cstr)) {
+			snprintf(buffer, 10000, _("Illegal name. Save as %s instead (default: no)?"), name.c_str());
+			if(!ask_question(buffer)) {
 				b = false;
 			}
-			free(cstr);
 		}
 	}
 	Variable *v = NULL;
@@ -3649,7 +3644,8 @@ int main(int argc, char *argv[]) {
 		} else {
 			cfile = fopen(command_file.c_str(), "r");
 			if(!cfile) {
-				printf(_("Could not open \"%s\".\n"), command_file.c_str());
+				snprintf(buffer, 10000, _("Could not open \"%s\"."), command_file.c_str());
+				PUTS_UNICODE(buffer)
 				if(!interactive_mode) {
 					if(!view_thread->write(NULL)) view_thread->cancel();
 					if(command_thread->running && (!command_thread->write((int) 0) || !command_thread->write(NULL))) command_thread->cancel();
@@ -3916,13 +3912,10 @@ int main(int argc, char *argv[]) {
 						PUTS_UNICODE(_("Illegal name."));
 						b = false;
 					} else {
-						size_t l = name.length() + strlen(_("Illegal name. Save as %s instead (default: no)?"));
-						char *cstr = (char*) malloc(sizeof(char) * (l + 1));
-						snprintf(cstr, l, _("Illegal name. Save as %s instead (default: no)?"), name.c_str());
-						if(!ask_question(cstr)) {
+						snprintf(buffer, 10000, _("Illegal name. Save as %s instead (default: no)?"), name.c_str());
+						if(!ask_question(buffer)) {
 							b = false;
 						}
-						free(cstr);
 					}
 				}
 				Variable *v = NULL;
@@ -3983,13 +3976,10 @@ int main(int argc, char *argv[]) {
 					PUTS_UNICODE(_("Illegal name."));
 					b = false;
 				} else {
-					size_t l = name.length() + strlen(_("Illegal name. Save as %s instead (default: no)?"));
-					char *cstr = (char*) malloc(sizeof(char) * (l + 1));
-					snprintf(cstr, l, _("Illegal name. Save as %s instead (default: no)?"), name.c_str());
-					if(!ask_question(cstr)) {
+					snprintf(buffer, 10000, _("Illegal name. Save as %s instead (default: no)?"), name.c_str());
+					if(!ask_question(buffer)) {
 						b = false;
 					}
-					free(cstr);
 				}
 			}
 			Variable *v = NULL;
@@ -4046,13 +4036,10 @@ int main(int argc, char *argv[]) {
 					PUTS_UNICODE(_("Illegal name."));
 					b = false;
 				} else {
-					size_t l = name.length() + strlen(_("Illegal name. Save as %s instead (default: no)?"));
-					char *cstr = (char*) malloc(sizeof(char) * (l + 1));
-					snprintf(cstr, l, _("Illegal name. Save as %s instead (default: no)?"), name.c_str());
-					if(!ask_question(cstr)) {
+					snprintf(buffer, 10000, _("Illegal name. Save as %s instead (default: no)?"), name.c_str());
+					if(!ask_question(buffer)) {
 						b = false;
 					}
-					free(cstr);
 				}
 			}
 			if(b && CALCULATOR->functionNameTaken(name)) {
@@ -5640,7 +5627,7 @@ int main(int argc, char *argv[]) {
 				BEGIN_BOLD(str)
 				str += scom;
 				END_BOLD(str)
-				snprintf(buffer, 1000, _("%s does not accept any arguments."), str.c_str());
+				snprintf(buffer, 10000, _("%s does not accept any arguments."), str.c_str());
 				PUTS_UNICODE(buffer)
 				str = "";
 			} else if(scom.empty() && (explicit_command || str.find_first_of(NOT_IN_NAMES) == string::npos) && (EQUALS_IGNORECASE_AND_LOCAL(str, "set", _("set")) || EQUALS_IGNORECASE_AND_LOCAL(str, "save", _("save")) || EQUALS_IGNORECASE_AND_LOCAL(str, "store", _("store")) || EQUALS_IGNORECASE_AND_LOCAL(str, "variable", _("variable")) || EQUALS_IGNORECASE_AND_LOCAL(str, "function", _("function")) || EQUALS_IGNORECASE_AND_LOCAL(str, "delete", _("delete"))  || EQUALS_IGNORECASE_AND_LOCAL(str, "keep", _("keep")) || EQUALS_IGNORECASE_AND_LOCAL(str, "assume", _("assume")) || EQUALS_IGNORECASE_AND_LOCAL(str, "base", _("base")) || EQUALS_IGNORECASE_AND_LOCAL(str, "rpn", _("rpn")) || EQUALS_IGNORECASE_AND_LOCAL(str, "move", _("move")) || EQUALS_IGNORECASE_AND_LOCAL(str, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(str, "to", _("to")) || EQUALS_IGNORECASE_AND_LOCAL(str, "find", _("find")) || EQUALS_IGNORECASE_AND_LOCAL(str, "info", _("info")))) {
@@ -5663,7 +5650,7 @@ int main(int argc, char *argv[]) {
 					BEGIN_BOLD(scom)
 					scom += str;
 					END_BOLD(scom)
-					snprintf(buffer, 1000, _("%s requires at least one argument."), scom.c_str());
+					snprintf(buffer, 10000, _("%s requires at least one argument."), scom.c_str());
 					PUTS_UNICODE(buffer)
 					str = "";
 				}
@@ -5712,7 +5699,7 @@ int main(int argc, char *argv[]) {
 				for(int n = 1; n <= 2 && !b; n++) {
 					for(size_t i = 0; i < command_list.size(); i++) {
 						if(((scom.empty() && command_arg[i] <= 0) || (!scom.empty() && command_arg[i] != 0)) && compare_name_with_error(command_list[i], scom.empty() ? str : scom, command_list[i].length(), 10, 0, n, false)) {
-							snprintf(buffer, 1000, _("Did you mean \"%s\"?"), command_list[i].c_str());
+							snprintf(buffer, 10000, _("Did you mean \"%s\"?"), command_list[i].c_str());
 							PUTS_UNICODE(buffer)
 							b = true;
 							if(i % 2 == 0) i++;
@@ -6497,8 +6484,7 @@ void execute_command(int command_type, bool show_result) {
 		if(b_busy && command_thread->running) {
 			on_abort_command();
 			i_maxtime = -1;
-			printf(_("aborted"));
-			printf("\n");
+			PUTS_UNICODE(_("aborted"));
 		}
 	} else {
 
@@ -7335,8 +7321,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			CALCULATOR->abort();
 			avoid_recalculation = true;
 			i_maxtime = -1;
-			printf(_("aborted"));
-			printf("\n");
+			PUTS_UNICODE(_("aborted"));
 		}
 	} else {
 

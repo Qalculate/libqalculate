@@ -15,7 +15,9 @@
 #include <libqalculate/includes.h>
 #include <libqalculate/Number.h>
 #include <libqalculate/QalculateDateTime.h>
-#include <sys/time.h>
+#ifndef _MSC_VER
+#	include <sys/time.h>
+#endif
 
 class QalculateDate;
 

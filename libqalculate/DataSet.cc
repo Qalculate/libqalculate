@@ -518,10 +518,11 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 		ULONG nlang = 0;
 		DWORD n = 0;
 		if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
-			WCHAR wlocale[n];
+			WCHAR* wlocale = new WCHAR[n];
 			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
 				locale = utf8_encode(wlocale);
 			}
+			delete[] wlocale;
 		}
 	}
 	gsub("-", "_", locale);

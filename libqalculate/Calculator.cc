@@ -25,9 +25,13 @@
 #include "QalculateDateTime.h"
 
 #include <locale.h>
-#include <unistd.h>
+#ifdef _MSC_VER
+#	include <sys/utime.h>
+#else
+#	include <unistd.h>
+#	include <utime.h>
+#endif
 #include <time.h>
-#include <utime.h>
 #include <limits.h>
 #include <sys/types.h>
 
@@ -139,6 +143,10 @@ extern gmp_randstate_t randstate;
 
 #define BITWISE_XOR "⊻"
 
+#ifdef _MSC_VER
+#	define strdup _strdup
+#endif
+
 Calculator::Calculator() {
 	b_ignore_locale = false;
 
@@ -149,13 +157,14 @@ Calculator::Calculator() {
 		ULONG nlang = 0;
 		DWORD n = 0;
 		if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
-			WCHAR wlocale[n];
+			WCHAR* wlocale = new WCHAR[n];
 			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
 				string lang = utf8_encode(wlocale);
 				gsub("-", "_", lang);
 				if(lang.length() > 5) lang = lang.substr(0, 5);
 				if(!lang.empty()) _putenv_s("LANG", lang.c_str());
 			}
+			delete[] wlocale;
 		}
 	}
 #endif
@@ -411,13 +420,14 @@ Calculator::Calculator(bool ignore_locale) {
 			ULONG nlang = 0;
 			DWORD n = 0;
 			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
-				WCHAR wlocale[n];
+				WCHAR* wlocale = new WCHAR[n];
 				if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
 					string lang = utf8_encode(wlocale);
 					gsub("-", "_", lang);
 					if(lang.length() > 5) lang = lang.substr(0, 5);
 					if(!lang.empty()) _putenv_s("LANG", lang.c_str());
 				}
+				delete[] wlocale;
 			}
 		}
 #endif

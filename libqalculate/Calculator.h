@@ -14,7 +14,10 @@
 
 #include <libqalculate/includes.h>
 #include <libqalculate/util.h>
-#include <sys/time.h>
+
+#ifndef _MSC_VER
+#	include <sys/time.h>
+#endif
 
 /** @file */
 

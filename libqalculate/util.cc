@@ -146,9 +146,10 @@ string& remove_parenthesis(string &str) {
 
 string d2s(double value, int precision) {
 	// qgcvt(value, precision, buffer);
-	char buffer[precision + 21];
+	char *buffer = (char*) malloc((precision + 21) * sizeof(char));
 	snprintf(buffer, precision + 21, "%.*G", precision, value);
 	string stmp = buffer;
+	free(buffer);
 	// gsub("e", "E", stmp);
 	return stmp;
 }
@@ -820,6 +821,9 @@ bool removeDir(string dirpath) {
 #endif
 }
 
+#ifdef _MSC_VER
+#	define ICONV_CONST const
+#endif
 char *locale_from_utf8(const char *str) {
 #ifdef HAVE_ICONV
 	iconv_t conv = iconv_open("", "UTF-8");
