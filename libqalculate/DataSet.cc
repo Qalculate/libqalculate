@@ -41,7 +41,11 @@ DataObject::DataObject(DataSet *parent_set) {
 	b_uchanged = false;
 }
 DataObject::~DataObject() {
-	for(size_t i = 0; i < m_properties.size(); i++) m_properties[i]->unref();
+	for(size_t i = 0; i < m_properties.size(); i++) {
+		if(m_properties[i]) {
+			m_properties[i]->unref();
+		}
+	}
 }
 
 void DataObject::eraseProperty(DataProperty *property) {
