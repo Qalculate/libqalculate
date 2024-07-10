@@ -3893,6 +3893,7 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 				if(s == OPERATION_EXP10 && !po.preserve_format && mstruct->isNumber() && mstruct2->isNumber() && mstruct->number().exp10(mstruct2->number())) {
 					mstruct->numberUpdated();
 					mstruct->mergePrecision(*mstruct2);
+					mstruct2->unref();
 				} else if(s == OPERATION_DIVIDE && po.preserve_format) {
 					mstruct->transform_nocopy(STRUCT_DIVISION, mstruct2);
 				} else if(s == OPERATION_SUBTRACT && po.preserve_format) {

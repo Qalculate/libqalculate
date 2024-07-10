@@ -670,6 +670,7 @@ Calculator::~Calculator() {
 	delete calculate_thread;
 	calculator = NULL;
 	gmp_randclear(randstate);
+	mpfr_free_cache();
 #ifdef HAVE_ICU
 	if(ucm) ucasemap_close(ucm);
 #endif

@@ -1058,6 +1058,7 @@ DWORD WINAPI Thread::doRun(void *data) {
 	Thread *thread = (Thread *) data;
 	SetEvent(thread->m_threadReadyEvent);
 	thread->run();
+	mpfr_free_cache2(MPFR_FREE_LOCAL_CACHE)
 	thread->running = false;
 	return 0;
 }
@@ -1107,6 +1108,7 @@ Thread::~Thread() {
 void Thread::doCleanup(void *data) {
 	Thread *thread = (Thread *) data;
 	thread->running = false;
+	mpfr_free_cache2(MPFR_FREE_LOCAL_CACHE);
 }
 
 void Thread::enableAsynchronousCancel() {

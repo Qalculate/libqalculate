@@ -121,6 +121,7 @@ long int integer_log(const mpfr_t &v, int base, bool roundup = false) {
 		if(i > LONG_MAX) l = LONG_MAX;
 		else l = i;
 		mpz_clear(r);
+		mpq_clear(q);
 		mpfr_clear(v2);
 		return -l;
 	}
@@ -1381,6 +1382,8 @@ void Number::set(const Number &o, bool merge_precision, bool keep_imag) {
 			mpfr_set(fl_value, o.internalLowerFloat(), MPFR_RNDN);
 			mpfr_set(fu_value, fl_value, MPFR_RNDN);
 		}
+	} else if(n_type == NUMBER_TYPE_FLOAT) {
+		mpfr_clears(fu_value, fl_value, NULL);
 	}
 	n_type = o.internalType();
 	if(!merge_precision) {
@@ -11513,6 +11516,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				mpz_ui_pow_ui(ivalue, base, length);
 				Number nrexp;
 				nrexp.setInternal(ivalue);
+				mpz_clear(ivalue);
 				// divide by base^(output length - 1)
 				if(nr.divide(nrexp)) {
 					CALCULATOR->endTemporaryStopMessages();
@@ -11604,7 +11608,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		// full integer string (without sign; roman numerals never use lower case)
 		string mpz_str = printMPZ(ivalue, base, false, base != BASE_ROMAN_NUMERALS && po.lower_case_numbers);
 
-		if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
+		if(CALCULATOR->aborted()) {mpz_clear(ivalue); return CALCULATOR->abortedMessage();}
 
 		// determine exponent for scientific notation
 		length = mpz_str.length();
@@ -11984,7 +11988,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 			float_interval_prec_rerun:
 
-			if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
+			if(CALCULATOR->aborted()) {mpfr_clears(vu, vl, f_logl, f_logu, f_base, NULL); mpq_clear(base_half); return CALCULATOR->abortedMessage();}
 
 			mpfr_set(vl, fl_value, MPFR_RNDN);
 			mpfr_set(vu, fu_value, MPFR_RNDN);
@@ -12565,6 +12569,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		mpfr_clears(f_mid, v, f_base, NULL);
 		mpz_clears(ivalue, z_log, NULL);
 		if(po.is_approximate && mpfr_inexflag_p()) *po.is_approximate = true;
+
 		testErrors(2);
 
 	} else if(base != BASE_ROMAN_NUMERALS && (po.number_fraction_format == FRACTION_DECIMAL || po.number_fraction_format == FRACTION_DECIMAL_EXACT)) {
@@ -12586,6 +12591,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				mpz_ui_pow_ui(ivalue, base, length);
 				Number nrexp;
 				nrexp.setInternal(ivalue);
+				mpz_clear(ivalue);
 				if(nr.divide(nrexp)) {
 					CALCULATOR->endTemporaryStopMessages();
 					str = nr.print(po2, ips);
