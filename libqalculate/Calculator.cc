@@ -1896,8 +1896,13 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new ForEachFunction());
 
 	f_save = addFunction(new SaveFunction());
+#ifndef DISABLE_INSECURE
 	f_load = addFunction(new LoadFunction());
 	f_export = addFunction(new ExportFunction());
+#else
+	f_load = NULL;
+	f_export = NULL;
+#endif
 
 	f_register = addFunction(new RegisterFunction());
 	f_stack = addFunction(new StackFunction());
