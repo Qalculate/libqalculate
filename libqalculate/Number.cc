@@ -456,6 +456,8 @@ Number::~Number() {
 	mpq_clear(r_value);
 	if(n_type == NUMBER_TYPE_FLOAT) mpfr_clears(fu_value, fl_value, NULL);
 	if(i_value) delete i_value;
+	mpfr_free_cache();
+	mpfr_free_cache2(MPFR_FREE_LOCAL_CACHE);
 }
 
 void Number::set(string number, const ParseOptions &po) {
