@@ -4010,6 +4010,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 				} else {
 					i_value->set(-1, 1, 0);
 				}
+				mpz_clear(zrem);
 			}
 			setPrecisionAndApproximateFrom(o);
 			return true;
@@ -4228,6 +4229,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 						mpz_init(zrem);
 						mpz_tdiv_r_ui(zrem, mpq_numref(o.internalRational()), 4);
 						if(mpz_cmp_ui(zrem, 1) != 0 && mpz_cmp_si(zrem, -3) != 0) i_value->negate();
+						mpz_clear(zrem);
 					}
 					clearReal();
 					setPrecisionAndApproximateFrom(*i_value);

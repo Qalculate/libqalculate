@@ -1158,13 +1158,14 @@ MathStructure calculate_uncertainty(MathStructure &m, const EvaluationOptions &e
 	MathStructure *munc_i = NULL;
 	for(size_t i = 0; i < vars.size(); i++) {
 		if(!vars[i]->get().representsNonComplex(true)) {
-			b_failed = true; return m_zero;
+			uv->destroy(); b_failed = true; return m_zero;
 		}
 		MathStructure *mdiff = new MathStructure(m);
 		uv->setInterval(vars[i]->get());
 		mdiff->replace(vars[i], muv);
 		if(!mdiff->differentiate(muv, eo) || contains_diff_for(*mdiff, muv) || CALCULATOR->aborted()) {
 			b_failed = true;
+			uv->destroy();
 			return m_zero;
 		}
 		mdiff->replace(muv, vars[i]);
