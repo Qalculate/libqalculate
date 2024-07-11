@@ -1581,6 +1581,7 @@ void Number::splitInterval(unsigned int nr_of_parts, vector<Number> &v) const {
 			v.push_back(*this);
 			//mpfr_nextabove(f_mid);
 			mpfr_set(v.back().internalLowerFloat(), f_mid, MPFR_RNDD);
+			mpfr_clear(f_mid);
 		} else {
 			mpfr_t value_diff, lower_value, upper_value, value_add;
 			mpfr_inits2(mpfr_get_prec(fl_value), value_diff, lower_value, upper_value, value_add, NULL);
@@ -1596,6 +1597,7 @@ void Number::splitInterval(unsigned int nr_of_parts, vector<Number> &v) const {
 				mpfr_set(v.back().internalUpperFloat(), upper_value, MPFR_RNDU);
 				mpfr_set(lower_value, upper_value, MPFR_RNDD);
 			}
+			mpfr_clears(value_diff, lower_value, upper_value, value_add, NULL);
 		}
 	}
 }

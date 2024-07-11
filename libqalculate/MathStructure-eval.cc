@@ -1158,7 +1158,10 @@ MathStructure calculate_uncertainty(MathStructure &m, const EvaluationOptions &e
 	MathStructure *munc_i = NULL;
 	for(size_t i = 0; i < vars.size(); i++) {
 		if(!vars[i]->get().representsNonComplex(true)) {
-			uv->destroy(); b_failed = true; return m_zero;
+			b_failed = true;
+			uv->destroy();
+			if(munc_i) munc_i->unref();
+			return m_zero;
 		}
 		MathStructure *mdiff = new MathStructure(m);
 		uv->setInterval(vars[i]->get());
@@ -1166,6 +1169,8 @@ MathStructure calculate_uncertainty(MathStructure &m, const EvaluationOptions &e
 		if(!mdiff->differentiate(muv, eo) || contains_diff_for(*mdiff, muv) || CALCULATOR->aborted()) {
 			b_failed = true;
 			uv->destroy();
+			if(munc_i) munc_i->unref();
+			mdiff->unref();
 			return m_zero;
 		}
 		mdiff->replace(muv, vars[i]);
@@ -2583,8 +2588,6 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 				MathStructure mtest(*this);
 
-				if(!representsScalar()) b_failed = true;
-
 				// calculate uncertainty
 				if(m_type == STRUCT_VECTOR) {
 					munc.clearVector();
@@ -2601,6 +2604,8 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 							if(b_failed) break;
 						}
 					}
+				} else if(!representsScalar()) {
+					b_failed = true;
 				} else {
 					munc = calculate_uncertainty(*this, eo, b_failed);
 				}
