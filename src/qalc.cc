@@ -6894,7 +6894,10 @@ bool ask_percent() {
 			FPUTS_UNICODE(_("Percentage interpretation"), stdout);
 		}
 	}
-	if(!interactive_mode && !load_defaults) save_preferences(false);
+	if(!interactive_mode && !load_defaults) {
+		saved_percent = simplified_percentage;
+		save_preferences(false);
+	}
 	return b_ret;
 }
 
@@ -8372,7 +8375,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "rpn_syntax=%i\n", saved_evalops.parse_options.parsing_mode == PARSING_MODE_RPN);
 	fprintf(file, "limit_implicit_multiplication=%i\n", saved_evalops.parse_options.limit_implicit_multiplication);
 	fprintf(file, "parsing_mode=%i\n", saved_parsing_mode);
-	if(!saved_percent) fprintf(file, "simplified_percentage=%i\n", saved_percent);
+	fprintf(file, "simplified_percentage=%i\n", saved_percent);
 	fprintf(file, "default_assumption_type=%i\n", saved_assumption_type);
 	if(saved_assumption_type != ASSUMPTION_TYPE_BOOLEAN) fprintf(file, "default_assumption_sign=%i\n", saved_assumption_sign);
 
