@@ -361,7 +361,7 @@ void replace_subscripts(string &str) {
 					break;
 				}
 				case '\xe2': {
-					if(is_not_in(NOT_IN_NAMES, str[i - 1]) && str[i + 1] == '\x82' && (unsigned char) str[i + 2] >= 0x80 && (unsigned char) str[i + 2] <= 0x89) {
+					if(is_not_in(NOT_IN_NAMES, str[i - 1]) && str[i + 1] == '\x82' && (unsigned char) str[i + 2] >= 0x80 && (unsigned char) str[i + 2] <= 0x89 && ((unsigned char) str[i + 2] != 0x82 || i + 3 >= str.length() || str[i - 1] != 'H' || str[i + 3] != 'O')) {
 						str.replace(i, 3, 1, '0' + ((unsigned char) str[i + 2] - 0x80));
 					}
 					break;
