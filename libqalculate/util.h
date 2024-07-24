@@ -109,6 +109,8 @@ bool recursiveMakeDir(std::string dirpath);
 bool removeDir(std::string dirpath);
 bool move_file(const char *from_file, const char *to_file);
 
+void free_thread_caches();
+
 int checkAvailableVersion(const char *version_id, const char *current_version, std::string *available_version = NULL, int timeout = 5);
 int checkAvailableVersion(const char *version_id, const char *current_version, std::string *available_version, std::string *url, int timeout = 5);
 

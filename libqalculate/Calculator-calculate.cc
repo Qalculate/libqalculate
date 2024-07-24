@@ -3176,6 +3176,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 						MathStructure m;
 						beginTemporaryStopMessages();
 						parse(&m, svalue, eo.parse_options);
+						bool b_evaled = false;
 						if(!m.isNumber()) {
 							m.eval(eo);
 							if(!m.isNumber() && eo.approximation == APPROXIMATION_EXACT) {
@@ -3183,6 +3184,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 								eo2.approximation = APPROXIMATION_APPROXIMATE;
 								m.eval(eo2);
 							}
+							b_evaled = true;
 						}
 						if(!m.isNumber() && variableNameIsValid(svalue)) {
 							endTemporaryStopMessages();
@@ -3191,6 +3193,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 							svalue = sname;
 							sname = sbak;
 							b_reversed = true;
+							b_evaled = false;
 							parse(&m, svalue, eo.parse_options);
 							if(!m.isNumber()) {
 								m.eval(eo);
@@ -3199,6 +3202,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 									eo2.approximation = APPROXIMATION_APPROXIMATE;
 									m.eval(eo2);
 								}
+								b_evaled = true;
 							}
 						}
 						if(m.isNumber() && !m.number().hasImaginaryPart()) {
@@ -3212,6 +3216,10 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 								else ct = COMPARISON_LESS;
 							} else {
 								ct = COMPARISON_NOT_EQUALS;
+							}
+							if(b_evaled && (ct == COMPARISON_LESS || ct == COMPARISON_GREATER) && m.number().isInterval() && m.number().precision(true) > PRECISION + 10) {
+								if(ct == COMPARISON_LESS) m.number() = m.number().lowerEndPoint();
+								else m.number() = m.number().upperEndPoint();
 							}
 							Assumptions *ass = NULL;
 							for(size_t i = 0; i < where_vars.size(); i++) {

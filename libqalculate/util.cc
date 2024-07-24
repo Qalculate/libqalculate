@@ -1037,6 +1037,10 @@ int checkAvailableVersion(const char *version_id, const char *current_version, s
 #endif
 }
 
+void free_thread_caches() {
+	mpfr_free_cache2(MPFR_FREE_LOCAL_CACHE);
+}
+
 #ifdef _WIN32
 
 Thread::Thread() : running(false), m_thread(NULL), m_threadReadyEvent(NULL), m_threadID(0) {
@@ -1058,7 +1062,7 @@ DWORD WINAPI Thread::doRun(void *data) {
 	Thread *thread = (Thread *) data;
 	SetEvent(thread->m_threadReadyEvent);
 	thread->run();
-	mpfr_free_cache2(MPFR_FREE_LOCAL_CACHE)
+	mpfr_free_cache2(MPFR_FREE_LOCAL_CACHE);
 	thread->running = false;
 	return 0;
 }
