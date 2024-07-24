@@ -3136,7 +3136,7 @@ const MathStructure &MathStructure::find_x_var() const {
 				if(x_mstruct->isUndefined()) x_mstruct = mstruct;
 			} else if(mstruct->variable() == CALCULATOR->getVariableById(VARIABLE_ID_X)) {
 				return *mstruct;
-			} else if(!x_mstruct->isVariable()) {
+			} else if(!x_mstruct->isVariable() && (x_mstruct->isUndefined() || (mstruct->variable() != CALCULATOR->getVariableById(VARIABLE_ID_N) && mstruct->variable() != CALCULATOR->getVariableById(VARIABLE_ID_C)))) {
 				x_mstruct = mstruct;
 			} else if(mstruct->variable() == CALCULATOR->getVariableById(VARIABLE_ID_Y)) {
 				x_mstruct = mstruct;
@@ -3144,7 +3144,7 @@ const MathStructure &MathStructure::find_x_var() const {
 				x_mstruct = mstruct;
 			}
 		} else if(mstruct->isSymbolic()) {
-			if(!x_mstruct->isVariable() && (m_type != STRUCT_FUNCTION || mstruct != &CHILD(i) || !o_function->getArgumentDefinition(i + 1) || o_function->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_TEXT) && (!x_mstruct->isSymbolic() || x_mstruct->symbol() > mstruct->symbol())) {
+			if((!x_mstruct->isVariable() || x_mstruct->variable() == CALCULATOR->getVariableById(VARIABLE_ID_N) || x_mstruct->variable() == CALCULATOR->getVariableById(VARIABLE_ID_C)) && (m_type != STRUCT_FUNCTION || mstruct != &CHILD(i) || !o_function->getArgumentDefinition(i + 1) || o_function->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_TEXT) && (!x_mstruct->isSymbolic() || x_mstruct->symbol() > mstruct->symbol())) {
 				x_mstruct = mstruct;
 			}
 		}
