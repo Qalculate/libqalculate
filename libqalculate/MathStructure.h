@@ -15,7 +15,9 @@
 #include <libqalculate/includes.h>
 #include <libqalculate/Number.h>
 #include <libqalculate/QalculateDateTime.h>
-#include <sys/time.h>
+#ifndef _MSC_VER
+#	include <sys/time.h>
+#endif
 
 class QalculateDate;
 
@@ -175,6 +177,9 @@ class MathStructure {
 		bool b_parentheses;
 
 		bool isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions &eo2, const MathStructure &x_var, MathStructure *morig = NULL);
+		bool isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions &eo2, const MathStructure &x_var, MathStructure *morig, size_t depth);
+		bool isolate_x(const EvaluationOptions &eo, const EvaluationOptions &feo, const MathStructure &x_var, bool check_result, size_t depth);
+
 		void init();
 
 		class MathStructure_p *priv;
@@ -523,6 +528,7 @@ class MathStructure {
 		bool representsReal(bool allow_units = false) const;
 		bool representsNonComplex(bool allow_units = false) const;
 		bool representsComplex(bool allow_units = false) const;
+		bool representsFinite(bool allow_units = false) const;
 		bool representsNonZero(bool allow_units = false) const;
 		bool representsZero(bool allow_units = false) const;
 		bool representsApproximatelyZero(bool allow_units = false) const;

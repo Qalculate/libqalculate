@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<QALCULATE version="5.1.0">
+<QALCULATE version="5.2.0">
   <category>
     <_title>Matrices &amp; Vectors</_title>
     <builtin_function name="vector">
@@ -1302,6 +1302,17 @@
         <_title>Degree (n)</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="allroots">
+      <_title>All Roots</_title>
+      <_names>r:allroots</_names>
+      <example>$name(4, 2) = [2  -2]</example>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+      <argument index="2">
+        <_title>Degree (n)</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="sq">
       <_title>Square</_title>
       <_names>r:sq</_names>
@@ -1765,7 +1776,8 @@
         <_title>Weight</_title>
       </argument>
       <argument type="free" index="2">
-        <_title>Length (human)</_title>
+	<!-- Length of human (omit "!human!" from translated string) -->
+        <_title>!human!Height</_title>
       </argument>
     </function>
     <function>
@@ -3287,6 +3299,7 @@
     <builtin_function name="isNumber">
       <_title>Is Number</_title>
       <_names>r:isNumber</_names>
+      <_description>Returns true if evaluated argument value is explicitely a real, complex, or infinite number (has number type).</_description>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -3294,6 +3307,7 @@
     <builtin_function name="isReal">
       <_title>Is Real</_title>
       <_names>r:isReal</_names>
+      <_description>Returns true if evaluated argument value is explicitely a real number (has number type with zero complex part).</_description>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -3301,6 +3315,7 @@
     <builtin_function name="isRational">
       <_title>Is Rational</_title>
       <_names>r:isRational</_names>
+      <_description>Returns true if evaluated argument value is explicitely a rational number (has rational type).</_description>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -3308,6 +3323,8 @@
     <builtin_function name="isInteger">
       <_title>Is Integer</_title>
       <_names>r:isInteger</_names>
+      <_description>Returns true if evaluated argument value is explicitely an integer (has integer type).</_description>
+      <example>$name(5 + 2) = 1; $name(x) = 0; $name(log(0.2, 5)) = 0</example>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -3315,6 +3332,7 @@
     <builtin_function name="representsNumber">
       <_title>Represents Number</_title>
       <_names>r:representsNumber</_names>
+      <_description>Returns true if value is or represents a number (scalar without unit). False negatives are allowed.</_description>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -3322,6 +3340,7 @@
     <builtin_function name="representsReal">
       <_title>Represents Real</_title>
       <_names>r:representsReal</_names>
+      <_description>Returns true if value is or represents a real number. False negatives are allowed.</_description>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -3329,6 +3348,7 @@
     <builtin_function name="representsRational">
       <_title>Represents Rational</_title>
       <_names>r:representsRational</_names>
+      <_description>Returns true if value is or represents a rational number. False negatives are allowed.</_description>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -3336,6 +3356,8 @@
     <builtin_function name="representsInteger">
       <_title>Represents Integer</_title>
       <_names>r:representsInteger</_names>
+      <_description>Returns true if value is or represents an integer. False negatives are allowed.</_description>
+      <example>$name(2n) = 1; $name(log(0.2, 5)) = 0</example>
       <argument index="1">
         <_title>Value</_title>
       </argument>

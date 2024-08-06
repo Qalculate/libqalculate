@@ -1158,13 +1158,19 @@ MathStructure calculate_uncertainty(MathStructure &m, const EvaluationOptions &e
 	MathStructure *munc_i = NULL;
 	for(size_t i = 0; i < vars.size(); i++) {
 		if(!vars[i]->get().representsNonComplex(true)) {
-			b_failed = true; return m_zero;
+			b_failed = true;
+			uv->destroy();
+			if(munc_i) munc_i->unref();
+			return m_zero;
 		}
 		MathStructure *mdiff = new MathStructure(m);
 		uv->setInterval(vars[i]->get());
 		mdiff->replace(vars[i], muv);
 		if(!mdiff->differentiate(muv, eo) || contains_diff_for(*mdiff, muv) || CALCULATOR->aborted()) {
 			b_failed = true;
+			uv->destroy();
+			if(munc_i) munc_i->unref();
+			mdiff->unref();
 			return m_zero;
 		}
 		mdiff->replace(muv, vars[i]);
@@ -1645,7 +1651,7 @@ bool MathStructure::complexToExponentialForm(const EvaluationOptions &eo) {
 		return true;
 	} else if(representsReal(true)) {
 		return false;
-	} else if(!isVector()) {
+	} else if(!isVector() && !isComparison() && !isLogicalOr() && !isLogicalAnd()) {
 		MathStructure marg(CALCULATOR->getFunctionById(FUNCTION_ID_ARG), this, NULL);
 		marg *= nr_one_i;
 		CALCULATOR->beginTemporaryStopMessages();
@@ -1726,7 +1732,7 @@ bool MathStructure::complexToPolarForm(const EvaluationOptions &eo) {
 		return true;
 	} else if(representsReal(true)) {
 		return false;
-	} else if(!isVector()) {
+	} else if(!isVector() && !isComparison() && !isLogicalOr() && !isLogicalAnd()) {
 		MathStructure marg(CALCULATOR->getFunctionById(FUNCTION_ID_ARG), this, NULL);
 		CALCULATOR->beginTemporaryStopMessages();
 		EvaluationOptions eo2 = eo;
@@ -1806,7 +1812,7 @@ bool MathStructure::complexToCisForm(const EvaluationOptions &eo) {
 		return true;
 	} else if(representsReal(true)) {
 		return false;
-	} else if(!isVector()) {
+	} else if(!isVector() && !isComparison() && !isLogicalOr() && !isLogicalAnd()) {
 		MathStructure marg(CALCULATOR->getFunctionById(FUNCTION_ID_ARG), this, NULL);
 		CALCULATOR->beginTemporaryStopMessages();
 		EvaluationOptions eo2 = eo;
@@ -2582,8 +2588,6 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 				MathStructure mtest(*this);
 
-				if(!representsScalar()) b_failed = true;
-
 				// calculate uncertainty
 				if(m_type == STRUCT_VECTOR) {
 					munc.clearVector();
@@ -2600,6 +2604,8 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 							if(b_failed) break;
 						}
 					}
+				} else if(!representsScalar()) {
+					b_failed = true;
 				} else {
 					munc = calculate_uncertainty(*this, eo, b_failed);
 				}

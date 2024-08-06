@@ -235,7 +235,7 @@ SetBitsFunction::SetBitsFunction() : MathFunction("setbits", 4, 6) {
 	setArgumentDefinition(4, new IntegerArgument());
 	setArgumentDefinition(5, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_UINT));
 	setDefaultValue(5, "0");
-	setArgumentDefinition(5, new BooleanArgument());
+	setArgumentDefinition(6, new BooleanArgument());
 	setDefaultValue(6, "0");
 }
 int SetBitsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
@@ -267,7 +267,7 @@ int SetBitsFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		nrbits.exp2();
 		bits = nrbits.uintValue();
 	}
-	if(bits > 0 && max_index == bits && (b_signed || vargs[0].number().isNegative()) && (vargs[3].number().bitGet(max_index) != vargs[0].number().isNegative())) {
+	if(bits > 0 && max_index == bits && (b_signed || vargs[0].number().isNegative()) && (vargs[3].number().bitGet(last_pos - first_pos) != vargs[0].number().isNegative())) {
 		PrintOptions po;
 		po.base = BASE_BINARY;
 		po.base_display = BASE_DISPLAY_NONE;

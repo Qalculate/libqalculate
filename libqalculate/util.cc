@@ -146,9 +146,10 @@ string& remove_parenthesis(string &str) {
 
 string d2s(double value, int precision) {
 	// qgcvt(value, precision, buffer);
-	char buffer[precision + 21];
+	char *buffer = (char*) malloc((precision + 21) * sizeof(char));
 	snprintf(buffer, precision + 21, "%.*G", precision, value);
 	string stmp = buffer;
+	free(buffer);
 	// gsub("e", "E", stmp);
 	return stmp;
 }
@@ -366,7 +367,7 @@ bool text_length_is_one(const string &str) {
 }
 
 bool equalsIgnoreCase(const string &str1, const string &str2) {
-	if(str1.empty() || str2.empty()) return false;
+	if(str1.empty() || str2.empty()) return str1.empty() && str2.empty();
 	for(size_t i1 = 0, i2 = 0; i1 < str1.length() || i2 < str2.length(); i1++, i2++) {
 		if(i1 >= str1.length() || i2 >= str2.length()) return false;
 		if(((signed char) str1[i1] < 0 && i1 + 1 < str1.length()) || ((signed char) str2[i2] < 0 && i2 + 1 < str2.length())) {
@@ -412,7 +413,7 @@ bool equalsIgnoreCase(const string &str1, const string &str2) {
 	return true;
 }
 bool equalsIgnoreCase(const string &str1, const char *str2) {
-	if(str1.empty() || strlen(str2) == 0) return false;
+	if(str1.empty() || strlen(str2) == 0) return str1.empty() && strlen(str2) == 0;
 	for(size_t i1 = 0, i2 = 0; i1 < str1.length() || i2 < strlen(str2); i1++, i2++) {
 		if(i1 >= str1.length() || i2 >= strlen(str2)) return false;
 		if(((signed char) str1[i1] < 0 && i1 + 1 < str1.length()) || ((signed char) str2[i2] < 0 && i2 + 1 < strlen(str2))) {
@@ -820,6 +821,9 @@ bool removeDir(string dirpath) {
 #endif
 }
 
+#ifdef _MSC_VER
+#	define ICONV_CONST const
+#endif
 char *locale_from_utf8(const char *str) {
 #ifdef HAVE_ICONV
 	iconv_t conv = iconv_open("", "UTF-8");
@@ -1033,6 +1037,10 @@ int checkAvailableVersion(const char *version_id, const char *current_version, s
 #endif
 }
 
+void free_thread_caches() {
+	mpfr_free_cache2(MPFR_FREE_LOCAL_CACHE);
+}
+
 #ifdef _WIN32
 
 Thread::Thread() : running(false), m_thread(NULL), m_threadReadyEvent(NULL), m_threadID(0) {
@@ -1054,6 +1062,7 @@ DWORD WINAPI Thread::doRun(void *data) {
 	Thread *thread = (Thread *) data;
 	SetEvent(thread->m_threadReadyEvent);
 	thread->run();
+	mpfr_free_cache2(MPFR_FREE_LOCAL_CACHE);
 	thread->running = false;
 	return 0;
 }
@@ -1103,6 +1112,7 @@ Thread::~Thread() {
 void Thread::doCleanup(void *data) {
 	Thread *thread = (Thread *) data;
 	thread->running = false;
+	mpfr_free_cache2(MPFR_FREE_LOCAL_CACHE);
 }
 
 void Thread::enableAsynchronousCancel() {

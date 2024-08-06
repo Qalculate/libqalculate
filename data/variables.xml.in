@@ -289,27 +289,27 @@
       <variable>
         <_title>Deuteron Mass (in u)</_title>
         <names>rs:deuteron_u</names>
-        <value unit="u" uncertainty="4.0E-11">2.013553212745</value>
+        <value unit="u" uncertainty="1.5E-11">2.013553212544</value>
       </variable>
       <variable>
         <_title>Electron Mass (in u)</_title>
         <names>rs:electron_u</names>
-        <value unit="u" uncertainty="1.6E-14">5.48579909065E-4</value>
+        <value unit="u" uncertainty="9.7E-15">5.485799090441E-4</value>
       </variable>
       <variable>
         <_title>Helion Mass (in u)</_title>
         <names>rs:helion_u</names>
-        <value unit="u" uncertainty="9.7E-11">3.014932247175</value>
+        <value unit="u" uncertainty="7.4E-11">3.014932246932</value>
       </variable>
       <variable>
         <_title>Neutron Mass (in u)</_title>
         <names>rs:neutron_u</names>
-        <value unit="u" uncertainty="4.9E-10">1.00866491595</value>
+        <value unit="u" uncertainty="4.0E-10">1.00866491606</value>
       </variable>
       <variable>
         <_title>Proton Mass (in u)</_title>
         <names>rs:proton_u</names>
-        <value unit="u" uncertainty="5.3E-11">1.007276466621</value>
+        <value unit="u" uncertainty="8.3E-12">1.0072764665789</value>
       </variable>
       <variable>
         <_title>Tau Mass (in u)</_title>
@@ -319,17 +319,17 @@
       <variable>
         <_title>Muon Mass (in u)</_title>
         <names>rs:muon_u</names>
-        <value unit="u" uncertainty="2.5E-9">0.1134289259</value>
+        <value unit="u" uncertainty="2.5E-9">0.1134289257</value>
       </variable>
       <variable>
         <_title>Triton Mass (in u)</_title>
         <names>rs:triton_u</names>
-        <value unit="u" uncertainty="1.2E-10">3.01550071621</value>
+        <value unit="u" uncertainty="1.0E-10">3.01550071597</value>
       </variable>
       <variable>
         <_title>Alpha Particle Mass (in u)</_title>
         <names>rs:alpha_particle_u</names>
-        <value unit="u" uncertainty="6.3E-11">4.001506179127</value>
+        <value unit="u" uncertainty="6.2E-11">4.001506179129</value>
       </variable>
     </category>
     <category>
@@ -478,7 +478,7 @@
       <variable>
         <_title>Fine-Structure Constant</_title>
         <names>r:fine_structure,au:&#x03B1;,ao:alpha</names>
-        <value uncertainty="1.1E-12">7.2973525693E-3</value>
+        <value uncertainty="1.1E-12">7.2973525643E-3</value>
       </variable>
       <variable>
         <_title>Hartree Energy (constant)</_title>
@@ -498,7 +498,7 @@
       <variable>
         <_title>Rydberg Constant</_title>
         <names>r:rydberg,asu:R_&#x221E;</names>
-        <value uncertainty="0.000021" unit="m^(-1)">10973731.568160</value>
+        <value uncertainty="0.000012" unit="m^(-1)">10973731.568157</value>
       </variable>
       <variable>
         <_title>Thomson cross section</_title>
@@ -506,14 +506,14 @@
         <value>(8*pi/3)*classical_electron_radius^2</value>
       </variable>
       <variable>
-        <_title>Weak Mixing Angle (Weinberg Angle)</_title>
-        <names>r:weinberg,weak_mixing_angle,asu:&#x03B8;_W,aos:theta_W</names>
-        <value uncertainty="0.00030">0.22290</value>
+        <_title>Weak Mixing Angle (sin²&#x03B8;w)</_title>
+        <names>weak_mixing_angle,asu:sin2&#x03B8;_W,r:weinberg,aos:sin2_theta_W</names>
+        <value>1-w_z_ratio^2</value>
       </variable>
       <variable>
         <_title>W to Z Mass Ratio</_title>
         <names>r:w_z_ratio</names>
-        <value uncertainty="0.00017">0.88153</value>
+        <value uncertainty="0.00013">0.88145</value>
       </variable>
     </category>
     <category>
@@ -611,12 +611,12 @@
       <variable>
         <_title>Sackur-Tetrode constant (1 K, 100 kPa)</_title>
         <names>r:sackur_tetrode</names>
-        <value uncertainty="4.5E-10">-1.15170753706</value>
+        <value uncertainty="4.7E-10">-1.15170753496</value>
       </variable>
       <variable>
         <_title>Sackur-Tetrode constant (1 K, 101.325 kPa)</_title>
         <names>rs:sackur_tetrode_101</names>
-        <value uncertainty="4.5E-10">-1.16487052358</value>
+        <value uncertainty="4.7E-10">-1.16487052149</value>
       </variable>
       <variable>
         <_title>Second Radiation Constant</_title>

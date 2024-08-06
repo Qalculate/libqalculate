@@ -25,9 +25,13 @@
 #include "QalculateDateTime.h"
 
 #include <locale.h>
-#include <unistd.h>
+#ifdef _MSC_VER
+#	include <sys/utime.h>
+#else
+#	include <unistd.h>
+#	include <utime.h>
+#endif
 #include <time.h>
-#include <utime.h>
 #include <limits.h>
 #include <sys/types.h>
 
@@ -139,6 +143,10 @@ extern gmp_randstate_t randstate;
 
 #define BITWISE_XOR "⊻"
 
+#ifdef _MSC_VER
+#	define strdup _strdup
+#endif
+
 Calculator::Calculator() {
 	b_ignore_locale = false;
 
@@ -149,13 +157,14 @@ Calculator::Calculator() {
 		ULONG nlang = 0;
 		DWORD n = 0;
 		if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
-			WCHAR wlocale[n];
+			WCHAR* wlocale = new WCHAR[n];
 			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
 				string lang = utf8_encode(wlocale);
 				gsub("-", "_", lang);
 				if(lang.length() > 5) lang = lang.substr(0, 5);
 				if(!lang.empty()) _putenv_s("LANG", lang.c_str());
 			}
+			delete[] wlocale;
 		}
 	}
 #endif
@@ -189,13 +198,13 @@ Calculator::Calculator() {
 	srand(time(NULL));
 
 	exchange_rates_time[0] = 0;
-	exchange_rates_time[1] = (time_t) 476232L * (time_t) 3600;
+	exchange_rates_time[1] = (time_t) 477576L * (time_t) 3600;
 	exchange_rates_time[2] = 0;
-	priv->exchange_rates_time2[0] = (time_t) 476232L * (time_t) 3600;
+	priv->exchange_rates_time2[0] = (time_t) 477576L * (time_t) 3600;
 	exchange_rates_check_time[0] = 0;
-	exchange_rates_check_time[1] = (time_t) 476232L * (time_t) 3600;
+	exchange_rates_check_time[1] = (time_t) 477576L * (time_t) 3600;
 	exchange_rates_check_time[2] = 0;
-	priv->exchange_rates_check_time2[0] = (time_t) 476232L * (time_t) 3600;
+	priv->exchange_rates_check_time2[0] = (time_t) 477576L * (time_t) 3600;
 	b_exchange_rates_warning_enabled = true;
 	b_exchange_rates_used = 0;
 	priv->exchange_rates_url3 = 0;
@@ -411,13 +420,14 @@ Calculator::Calculator(bool ignore_locale) {
 			ULONG nlang = 0;
 			DWORD n = 0;
 			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
-				WCHAR wlocale[n];
+				WCHAR* wlocale = new WCHAR[n];
 				if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
 					string lang = utf8_encode(wlocale);
 					gsub("-", "_", lang);
 					if(lang.length() > 5) lang = lang.substr(0, 5);
 					if(!lang.empty()) _putenv_s("LANG", lang.c_str());
 				}
+				delete[] wlocale;
 			}
 		}
 #endif
@@ -451,13 +461,13 @@ Calculator::Calculator(bool ignore_locale) {
 	srand(time(NULL));
 
 	exchange_rates_time[0] = 0;
-	exchange_rates_time[1] = (time_t) 476232L * (time_t) 3600;
+	exchange_rates_time[1] = (time_t) 477576L * (time_t) 3600;
 	exchange_rates_time[2] = 0;
-	priv->exchange_rates_time2[0] = (time_t) 476232L * (time_t) 3600;
+	priv->exchange_rates_time2[0] = (time_t) 477576L * (time_t) 3600;
 	exchange_rates_check_time[0] = 0;
-	exchange_rates_check_time[1] = (time_t) 476232L * (time_t) 3600;
+	exchange_rates_check_time[1] = (time_t) 477576L * (time_t) 3600;
 	exchange_rates_check_time[2] = 0;
-	priv->exchange_rates_check_time2[0] = (time_t) 476232L * (time_t) 3600;
+	priv->exchange_rates_check_time2[0] = (time_t) 477576L * (time_t) 3600;
 	b_exchange_rates_warning_enabled = true;
 	b_exchange_rates_used = 0;
 	priv->exchange_rates_url3 = 0;
@@ -660,6 +670,7 @@ Calculator::~Calculator() {
 	delete calculate_thread;
 	calculator = NULL;
 	gmp_randclear(randstate);
+	mpfr_free_cache();
 #ifdef HAVE_ICU
 	if(ucm) ucasemap_close(ucm);
 #endif
@@ -1576,15 +1587,35 @@ void Calculator::unsetLocale() {
 }
 
 void Calculator::resetVariables() {
-	variables.clear();
+	for(size_t i = 0; i < variables.size();) {
+		size_t n = variables.size();
+		variables[i]->destroy();
+		if(n == variables.size()) i++;
+	}
+	if(v_C) v_C->destroy();
 	addBuiltinVariables();
 }
 void Calculator::resetFunctions() {
-	functions.clear();
+	for(size_t i = 0; i < functions.size();) {
+		size_t n = functions.size();
+		functions[i]->destroy();
+		if(n == functions.size()) i++;
+	}
 	addBuiltinFunctions();
 }
 void Calculator::resetUnits() {
-	units.clear();
+	for(unordered_map<Unit*, MathStructure*>::iterator it = priv->composite_unit_base.begin(); it != priv->composite_unit_base.end(); ++it) it->second->unref();
+	for(size_t i = 0; i < units.size();) {
+		size_t n = units.size();
+		units[i]->destroy();
+		if(n == units.size()) i++;
+	}
+	for(size_t i = 0; i < prefixes.size(); i++) {
+		delPrefixUFV(prefixes[i]);
+		delete prefixes[i];
+	}
+	priv->composite_unit_base.clear();
+	prefixes.clear();
 	addBuiltinUnits();
 }
 void Calculator::reset() {
@@ -1745,6 +1776,7 @@ void Calculator::addBuiltinFunctions() {
 	f_sqrt = addFunction(new SqrtFunction());
 	f_cbrt = addFunction(new CbrtFunction());
 	f_root = addFunction(new RootFunction());
+	addFunction(new AllRootsFunction());
 	f_sq = addFunction(new SquareFunction());
 
 	f_exp = addFunction(new ExpFunction());
@@ -1865,8 +1897,13 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new ForEachFunction());
 
 	f_save = addFunction(new SaveFunction());
+#ifndef DISABLE_INSECURE
 	f_load = addFunction(new LoadFunction());
 	f_export = addFunction(new ExportFunction());
+#else
+	f_load = NULL;
+	f_export = NULL;
+#endif
 
 	f_register = addFunction(new RegisterFunction());
 	f_stack = addFunction(new StackFunction());
@@ -1920,11 +1957,11 @@ void Calculator::addBuiltinFunctions() {
 }
 void Calculator::addBuiltinUnits() {
 	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, true));
-	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "59616.0", 1, "", false, true, true));
+	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "56208.6", 1, "", false, true, true));
 	u_btc->setApproximate();
 	u_btc->setPrecision(-2);
 	u_btc->setChanged(false);
-	priv->u_byn = addUnit(new AliasUnit(_("Currency"), "BYN", "", "", "Belarusian Ruble", u_euro, "1/3.50451", 1, "", false, true, true));
+	priv->u_byn = addUnit(new AliasUnit(_("Currency"), "BYN", "", "", "Belarusian Ruble", u_euro, "1/3.50960", 1, "", false, true, true));
 	priv->u_byn->setHidden(true);
 	priv->u_byn->setApproximate();
 	priv->u_byn->setPrecision(-2);

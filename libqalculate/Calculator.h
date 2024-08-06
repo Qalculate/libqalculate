@@ -14,7 +14,10 @@
 
 #include <libqalculate/includes.h>
 #include <libqalculate/util.h>
-#include <sys/time.h>
+
+#ifndef _MSC_VER
+#	include <sys/time.h>
+#endif
 
 /** @file */
 
@@ -716,6 +719,22 @@ class Calculator {
 	bool separateToExpression(std::string &str, std::string &to_str, const EvaluationOptions &eo, bool keep_modifiers = false, bool allow_empty_from = false) const;
 	bool hasToExpression(const std::string &str, bool allow_empty_from = false) const;
 	bool hasToExpression(const std::string &str, bool allow_empty_from, const EvaluationOptions &eo) const;
+
+	/** Parses a "to"-expression (separated from expression using separateToExpression).
+	 *
+	 * @param to_str The "to"-expression
+	 * @param[out] evalops Updated with directives from the expression
+	 * @param[out] printops Updated with directives from the expression
+	 * @param[out] custom_base Set to non-zero if conversion to custom number base (with Calculator::setCustomOutputBase()) is requested
+	 * @param[out] binary_prefixes Set to 2 if temporary activation of binary prefixes (using Calculator::useBinaryPrefixes()) is requested, 0 for requested deactivation, and -1 otherwise
+	 * @param[out] complex_angle_form Set to true (and evalops.complex_number_form to COMPLEX_FORM_CIS) if complex angle form is requested
+	 * @param[out] do_factors Set to true (and evalops.structuring to STRUCTURING_FACTORIZE) if factorization is requested
+	 * @param[out] do_pfe Set to true if partial fraction expansion is requested
+	 * @param[out] do_calendars Set to true if calendar conversion is requested
+	 * @param[out] do_bases Set to true if expression includes "to bases"
+	 * @returns the remaining unit expression
+	 */
+	std::string parseToExpression(std::string to_str, EvaluationOptions &evalops, PrintOptions &printops, Number *custom_base = NULL, int *binary_prefixes = NULL, bool *complex_angle_form = NULL, bool *do_factors = NULL, bool *do_pfe = NULL, bool *do_calendars = NULL, bool *do_bases = NULL) const;
 
 	/// Split an expression string after and before " where ".
 	bool separateWhereExpression(std::string &str, std::string &where_str, const EvaluationOptions &eo) const;

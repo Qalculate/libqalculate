@@ -110,5 +110,9 @@ int chineseStemBranchToCycleYear(long int stem, long int branch);
 std::string chineseStemName(long int stem);
 std::string chineseBranchName(long int branch);
 
+#ifdef _MSC_VER
+int gettimeofday(struct timeval* tv, struct timezone* tz);
+#endif
+
 #endif
 

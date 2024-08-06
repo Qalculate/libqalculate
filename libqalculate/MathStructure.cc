@@ -1042,6 +1042,33 @@ bool MathStructure::representsReal(bool allow_units) const {
 		default: {return false;}
 	}
 }
+bool MathStructure::representsFinite(bool allow_units) const {
+	switch(m_type) {
+		case STRUCT_NUMBER: {return !o_number.includesInfinity();}
+		case STRUCT_VARIABLE: {
+			if(o_variable->isKnown()) return ((KnownVariable*) o_variable)->get().representsFinite(allow_units);
+			return o_variable->representsReal(allow_units);
+		}
+		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isReal();}
+		case STRUCT_FUNCTION: {
+			if(o_function->id() == FUNCTION_ID_STRIP_UNITS && SIZE == 1) return CHILD(0).representsFinite(true);
+			return (function_value && function_value->representsFinite(allow_units)) || o_function->representsReal(*this, allow_units);
+		}
+		case STRUCT_UNIT: {return allow_units;}
+		case STRUCT_DATETIME: {return allow_units;}
+		case STRUCT_ADDITION: {}
+		case STRUCT_MULTIPLICATION: {
+			for(size_t i = 0; i < SIZE; i++) {
+				if(!CHILD(i).representsFinite(allow_units)) return false;
+			}
+			return true;
+		}
+		case STRUCT_POWER: {
+			return CHILD(0).representsFinite(allow_units) && CHILD(1).representsFinite(false) && (CHILD(1).representsPositive(false) || CHILD(0).representsNonZero(allow_units));
+		}
+		default: {return false;}
+	}
+}
 bool MathStructure::representsNonComplex(bool allow_units) const {
 	switch(m_type) {
 		case STRUCT_NUMBER: {return !o_number.hasImaginaryPart();}
@@ -1244,6 +1271,9 @@ bool MathStructure::representsUndefined(bool include_childs, bool include_infini
 					return true;
 				}
 			}
+		}
+		case STRUCT_MULTIPLICATION: {
+			if(SIZE > 1 && CHILD(0).isZero() && CHILD(1).isInfinity()) return true;
 		}
 		default: {
 			if(include_childs) {
@@ -1888,13 +1918,13 @@ bool MathStructure::equals(const MathStructure &o, bool allow_interval, bool all
 		case STRUCT_LOGICAL_AND: {
 			if(SIZE < 1) return false;
 			if(SIZE == 2) {
-				return (CHILD(0) == o[0] && CHILD(1) == o[1]) || (CHILD(0) == o[1] && CHILD(1) == o[0]);
+				return (CHILD(0).equals(o[0], allow_interval, allow_infinite) && CHILD(1).equals(o[1], allow_interval, allow_infinite)) || (CHILD(0).equals(o[1], allow_interval, allow_infinite) && CHILD(1).equals(o[0], allow_interval, allow_infinite));
 			}
 			vector<size_t> i2taken;
 			for(size_t i = 0; i < SIZE; i++) {
 				bool b = false, b2 = false;
 				for(size_t i2 = 0; i2 < o.size(); i2++) {
-					if(CHILD(i).equals(o[i2], allow_interval)) {
+					if(CHILD(i).equals(o[i2], allow_interval, allow_infinite)) {
 						b2 = true;
 						for(size_t i3 = 0; i3 < i2taken.size(); i3++) {
 							if(i2taken[i3] == i2) {
@@ -1916,7 +1946,7 @@ bool MathStructure::equals(const MathStructure &o, bool allow_interval, bool all
 	}
 	if(SIZE < 1) return true;
 	for(size_t i = 0; i < SIZE; i++) {
-		if(!CHILD(i).equals(o[i], allow_interval)) return false;
+		if(!CHILD(i).equals(o[i], allow_interval, allow_infinite)) return false;
 	}
 	return true;
 }
@@ -2734,6 +2764,7 @@ int MathStructure::containsInfinity(bool structural_only, bool check_variables, 
 			if(function_value) {
 				return function_value->containsInfinity(structural_only, check_variables, check_functions);
 			}
+			if(representsFinite(true)) return 0;
 			return -1;
 		} else if(isAborted()) {
 			return -1;
@@ -3105,7 +3136,7 @@ const MathStructure &MathStructure::find_x_var() const {
 				if(x_mstruct->isUndefined()) x_mstruct = mstruct;
 			} else if(mstruct->variable() == CALCULATOR->getVariableById(VARIABLE_ID_X)) {
 				return *mstruct;
-			} else if(!x_mstruct->isVariable()) {
+			} else if(!x_mstruct->isVariable() && (x_mstruct->isUndefined() || (mstruct->variable() != CALCULATOR->getVariableById(VARIABLE_ID_N) && mstruct->variable() != CALCULATOR->getVariableById(VARIABLE_ID_C)))) {
 				x_mstruct = mstruct;
 			} else if(mstruct->variable() == CALCULATOR->getVariableById(VARIABLE_ID_Y)) {
 				x_mstruct = mstruct;
@@ -3113,7 +3144,7 @@ const MathStructure &MathStructure::find_x_var() const {
 				x_mstruct = mstruct;
 			}
 		} else if(mstruct->isSymbolic()) {
-			if(!x_mstruct->isVariable() && (m_type != STRUCT_FUNCTION || mstruct != &CHILD(i) || !o_function->getArgumentDefinition(i + 1) || o_function->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_TEXT) && (!x_mstruct->isSymbolic() || x_mstruct->symbol() > mstruct->symbol())) {
+			if((!x_mstruct->isVariable() || x_mstruct->variable() == CALCULATOR->getVariableById(VARIABLE_ID_N) || x_mstruct->variable() == CALCULATOR->getVariableById(VARIABLE_ID_C)) && (m_type != STRUCT_FUNCTION || mstruct != &CHILD(i) || !o_function->getArgumentDefinition(i + 1) || o_function->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_TEXT) && (!x_mstruct->isSymbolic() || x_mstruct->symbol() > mstruct->symbol())) {
 				x_mstruct = mstruct;
 			}
 		}

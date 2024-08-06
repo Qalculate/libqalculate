@@ -25,7 +25,9 @@
 #include "Number.h"
 
 #include <locale.h>
-#include <unistd.h>
+#ifndef _MSC_VER
+#	include <unistd.h>
+#endif
 
 using std::string;
 using std::cout;
@@ -1895,7 +1897,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		// add space between double operators in rpn mode in order to ensure that they are interpreted as two single operators
 		gsub("&&", "& &", str);
 		gsub("||", "| |", str);
-		gsub("\%\%", "\% \%", str);
+		gsub("%%", "% %", str);
 	}
 
 	size_t consecutive_objects = 0;
@@ -2488,7 +2490,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					ascii_bitwise = 1;
 					str_index++;
 				} else if(i == 3 && (il = compare_name_no_case("mod", str, 3, str_index + 1, base))) {
-					str.replace(str_index + 1, il, "\%\%");
+					str.replace(str_index + 1, il, "%%");
 					str_index += 2;
 				} else if(i == 3 && (il = compare_name_no_case("rem", str, 3, str_index + 1, base))) {
 					str.replace(str_index + 1, il, "%");
@@ -2509,7 +2511,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					}
 				}
 			}
-		} else if(str_index > 0 && base >= 2 && base <= 10 && is_in(EXPS, str[str_index]) && str_index + 1 < str.length() && (is_in(NUMBER_ELEMENTS, str[str_index + 1]) || (is_in(PLUS MINUS, str[str_index + 1]) && str_index + 2 < str.length() && is_in(NUMBER_ELEMENTS, str[str_index + 2]))) && is_in(NUMBER_ELEMENTS, str[str_index - 1])) {
+		} else if(str_index > 0 && base >= 2 && base <= 10 && is_in(EXPS, str[str_index]) && str_index + 1 < str.length() && (is_in(NUMBER_ELEMENTS, str[str_index + 1]) || (is_in(PLUS MINUS, str[str_index + 1]) && str_index + 2 < str.length() && is_in(NUMBER_ELEMENTS, str[str_index + 2]))) && (is_in(NUMBER_ELEMENTS, str[str_index - 1]) || (str_index > 3 && priv->concise_uncertainty_input && str[str_index - 1] == RIGHT_PARENTHESIS_CH && (i_dx = str.rfind(LEFT_PARENTHESIS_CH, str_index - 3)) != string::npos && i_dx > 0 && str.find_last_not_of(NUMBER_ELEMENTS, str_index - 2) == i_dx && is_in(NUMBER_ELEMENTS, str[i_dx - 1])))) {
 			consecutive_objects = 0;
 			//don't do anything when e is used instead of E for EXP
 		} else if(base <= 33 && str[str_index] == '0' && (str_index == 0 || is_in(NOT_IN_NAMES INTERNAL_OPERATORS, str[str_index - 1]))) {
@@ -3891,6 +3893,7 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 				if(s == OPERATION_EXP10 && !po.preserve_format && mstruct->isNumber() && mstruct2->isNumber() && mstruct->number().exp10(mstruct2->number())) {
 					mstruct->numberUpdated();
 					mstruct->mergePrecision(*mstruct2);
+					mstruct2->unref();
 				} else if(s == OPERATION_DIVIDE && po.preserve_format) {
 					mstruct->transform_nocopy(STRUCT_DIVISION, mstruct2);
 				} else if(s == OPERATION_SUBTRACT && po.preserve_format) {
@@ -4020,6 +4023,13 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					if(i2 - i - 1 <= n) {
 						MathStructure *mstruct2 = new MathStructure();
 						parseNumber(mstruct2, str.substr(i3, i2 - i3 + 1), po);
+						if(i2 < str.length() - 2 && is_in(EXPS, str[i2 + 1]) && (!is_not_number(str[i2 + 2], base) || (i2 < str.length() - 3 && (str[i2 + 2] == MINUS_CH || str[i2 + 2] == PLUS_CH) && !is_not_number(str[i2 + 3], base)))) {
+							size_t i4 = i2;
+							i2 += 2;
+							while(i2 < str.length() - 1 && !is_not_number(str[i2 + 1], base)) i2++;
+							str2 = str.substr(i4 + 2, i2 - (i4 + 1));
+							parseAdd(str2, mstruct2, po, OPERATION_EXP10);
+						}
 						str2 = ID_WRAP_LEFT;
 						str2 += i2s(addId(mstruct2));
 						str2 += ID_WRAP_RIGHT;

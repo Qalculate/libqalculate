@@ -30,13 +30,19 @@
 #ifdef COMPILED_DEFINITIONS
 #	include "definitions.h"
 #endif
-#include <unistd.h>
+#ifdef _MSC_VER
+#	include <sys/utime.h>
+#else
+#	include <unistd.h>
+#	include <utime.h>
+#endif
 #include <time.h>
-#include <utime.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <dirent.h>
+#ifndef _MSC_VER
+#	include <dirent.h>
+#endif
 #include <queue>
 #include <iostream>
 #include <sstream>
@@ -159,20 +165,21 @@ bool Calculator::loadLocalDefinitions() {
 				recursiveMakeDir(getLocalDataDir());
 			}
 			if(makeDir(homedir)) {
+#ifndef _MSC_VER
 				list<string> eps_old;
 				struct dirent *ep_old;
 				DIR *dp_old = opendir(homedir_old.c_str());
 				if(dp_old) {
 					while((ep_old = readdir(dp_old))) {
-#ifdef _DIRENT_HAVE_D_TYPE
+#	ifdef _DIRENT_HAVE_D_TYPE
 						if(ep_old->d_type != DT_DIR) {
-#endif
+#	endif
 							if(strcmp(ep_old->d_name, "..") != 0 && strcmp(ep_old->d_name, ".") != 0 && strcmp(ep_old->d_name, "datasets") != 0) {
 								eps_old.push_back(ep_old->d_name);
 							}
-#ifdef _DIRENT_HAVE_D_TYPE
+#	ifdef _DIRENT_HAVE_D_TYPE
 						}
-#endif
+#	endif
 					}
 					closedir(dp_old);
 				}
@@ -182,26 +189,38 @@ bool Calculator::loadLocalDefinitions() {
 				if(removeDir(homedir_old)) {
 					removeDir(getOldLocalDir());
 				}
+#endif
 			}
 		}
 	}
 	list<string> eps;
+#ifdef _MSC_VER
+	HANDLE hFind;
+	WIN32_FIND_DATA FindFileData;
+	if((hFind = FindFirstFile(buildPath(homedir, "*").c_str(), &FindFileData)) != INVALID_HANDLE_VALUE) {
+		do {
+			if(!(FineFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) eps.push_back(FindFileData.cFileName);
+		} while(FindNextFile(hFind, &FindFileData));
+		FindClose(hFind);
+	}
+#else
 	struct dirent *ep;
 	DIR *dp = opendir(homedir.c_str());
 	if(dp) {
 		while((ep = readdir(dp))) {
-#ifdef _DIRENT_HAVE_D_TYPE
+#	ifdef _DIRENT_HAVE_D_TYPE
 			if(ep->d_type != DT_DIR) {
-#endif
+#	endif
 				if(strcmp(ep->d_name, "..") != 0 && strcmp(ep->d_name, ".") != 0 && strcmp(ep->d_name, "datasets") != 0) {
 					eps.push_back(ep->d_name);
 				}
-#ifdef _DIRENT_HAVE_D_TYPE
+#	ifdef _DIRENT_HAVE_D_TYPE
 			}
-#endif
+#	endif
 		}
 		closedir(dp);
 	}
+#endif
 	eps.sort();
 	for(list<string>::iterator it = eps.begin(); it != eps.end(); ++it) {
 		loadDefinitions(buildPath(homedir, *it).c_str(), (*it) == "functions.xml" || (*it) == "variables.xml" || (*it) == "units.xml" || (*it) == "datasets.xml", true);
@@ -748,10 +767,11 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		ULONG nlang = 0;
 		DWORD n = 0;
 		if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
-			WCHAR wlocale[n];
+			WCHAR* wlocale = new WCHAR[n];
 			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
 				locale = utf8_encode(wlocale);
 			}
+			delete[] wlocale;
 		}
 	}
 	gsub("-", "_", locale);
@@ -834,7 +854,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {5, 1, 0};
+	int version_numbers[] = {5, 2, 0};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);

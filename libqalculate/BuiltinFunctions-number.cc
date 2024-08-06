@@ -948,17 +948,17 @@ int RoundFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 }
 bool RoundFunction::representsPositive(const MathStructure&, bool) const {return false;}
 bool RoundFunction::representsNegative(const MathStructure&, bool) const {return false;}
-bool RoundFunction::representsNonNegative(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNonNegative();}
-bool RoundFunction::representsNonPositive(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal() && vargs[0].representsNonPositive();}
-bool RoundFunction::representsInteger(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal() && (vargs.size() < 2 || vargs[1].representsNonPositive());}
-bool RoundFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
-bool RoundFunction::representsRational(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
-bool RoundFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
+bool RoundFunction::representsNonNegative(const MathStructure &vargs, bool) const {return vargs.size() >= 1 && vargs[0].representsReal() && vargs[0].representsNonNegative();}
+bool RoundFunction::representsNonPositive(const MathStructure &vargs, bool) const {return vargs.size() >= 1 && vargs[0].representsReal() && vargs[0].representsNonPositive();}
+bool RoundFunction::representsInteger(const MathStructure &vargs, bool) const {return vargs.size() >= 1 && vargs[0].representsReal() && (vargs.size() < 2 || vargs[1].representsNonPositive());}
+bool RoundFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() >= 1 && vargs[0].representsReal();}
+bool RoundFunction::representsRational(const MathStructure &vargs, bool) const {return vargs.size() >= 1 && vargs[0].representsReal();}
+bool RoundFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() >= 1 && vargs[0].representsReal();}
 bool RoundFunction::representsNonComplex(const MathStructure &vargs, bool) const {return true;}
 bool RoundFunction::representsComplex(const MathStructure&, bool) const {return false;}
 bool RoundFunction::representsNonZero(const MathStructure&, bool) const {return false;}
-bool RoundFunction::representsEven(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsEven() && (vargs.size() < 2 || vargs[1].representsNonPositive());}
-bool RoundFunction::representsOdd(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsOdd() && (vargs.size() < 2 || vargs[1].representsNonPositive());}
+bool RoundFunction::representsEven(const MathStructure &vargs, bool) const {return vargs.size() >= 1 && vargs[0].representsEven() && (vargs.size() < 2 || vargs[1].representsNonPositive());}
+bool RoundFunction::representsOdd(const MathStructure &vargs, bool) const {return vargs.size() >= 1 && vargs[0].representsOdd() && (vargs.size() < 2 || vargs[1].representsNonPositive());}
 bool RoundFunction::representsUndefined(const MathStructure&) const {return false;}
 
 FracFunction::FracFunction() : MathFunction("frac", 1) {
