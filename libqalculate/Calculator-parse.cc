@@ -1704,8 +1704,8 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 							stmp += i2s(addId(new MathStructure(u)));
 							stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
-							if(i_op == i_quote) str += RIGHT_PARENTHESIS;
-							else str += PLUS;
+							if(i_op == i_quote) stmp += RIGHT_PARENTHESIS;
+							else stmp += PLUS;
 							str.replace(i_quote, strlen("′"), stmp);
 							stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 							stmp += i2s(addId(new MathStructure(getDegUnit())));

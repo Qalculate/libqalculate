@@ -3132,7 +3132,7 @@
     <builtin_function name="nounit">
       <_title>Strip Units</_title>
       <_names>r:nounit,strip_units</_names>
-      <_description>Removes all units from an expression. The expression is calculated before the removal.</_description>
+      <_description>Removes all units from an expression. No unit conversion or prefix changes are performed before the removal.</_description>
       <argument index="1">
         <_title>Expression</_title>
       </argument>
