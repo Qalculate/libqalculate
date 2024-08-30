@@ -2702,7 +2702,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			size_t last_unit_char = str.find_last_not_of(NUMBERS, last_name_char);
 			size_t name_chars_left = last_name_char - str_index + 1;
 			size_t unit_chars_left = last_unit_char - str_index + 1;
-			if(consecutive_objects == 0) {
+			if(consecutive_objects == 0 || objects_finished) {
 				prev_object = 0;
 				suspect_object_order = false;
 				objects_finished = false;

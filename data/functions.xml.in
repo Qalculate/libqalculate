@@ -3133,6 +3133,7 @@
       <_title>Strip Units</_title>
       <_names>r:nounit,strip_units</_names>
       <_description>Removes all units from an expression. No unit conversion or prefix changes are performed before the removal.</_description>
+      <example>$name(5 km) = 5; $name(5 m + 2 ft) = 7</example>
       <argument index="1">
         <_title>Expression</_title>
       </argument>

@@ -5534,7 +5534,7 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- duo / duodecimal (show as duodecimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- hex / hexadecimal (show as hexadecimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- hex# (show as hexadecimal number with specified number of bits)"));
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- sexa / sexa2 / sexagesimal (show as sexagesimal number)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- sexa / sexa2 / sexa3 / sexagesimal (show as sexagesimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- latitude / latitude2 (show as sexagesimal latitude)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- longitude / longitude2 (show as sexagesimal longitude)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- bijective (shown in bijective base-26)"));
@@ -8250,7 +8250,9 @@ bool save_preferences(bool mode) {
 	string filename = buildPath(getLocalDir(), "qalc.cfg");
 	file = fopen(filename.c_str(), "w+");
 	if(file == NULL) {
-		fprintf(stderr, _("Couldn't write preferences to\n%s"), filename.c_str());
+		snprintf(buffer, 10000, _("Couldn't write preferences to\n%s"), filename.c_str());
+		FPUTS_UNICODE(buffer, stderr);
+		FPUTS_UNICODE("\n", stderr);
 		return false;
 	}
 	fprintf(file, "\n[General]\n");
