@@ -1416,8 +1416,8 @@ void set_option(string str) {
 		if(!display && EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = EXP_NONE;
 		else if(!display && EQUALS_IGNORECASE_AND_LOCAL(svalue, "auto", _("auto"))) v = EXP_PRECISION;
 		else if(!display && EQUALS_IGNORECASE_AND_LOCAL(svalue, "pure", _("pure"))) v = EXP_PURE;
-		else if(!display && (empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "scientific", _("scientific")))) v = EXP_SCIENTIFIC;
-		else if(!display && EQUALS_IGNORECASE_AND_LOCAL(svalue, "engineering", _("engineering"))) v = EXP_BASE_3;
+		else if(!display && (empty_value || svalue == "sci" || EQUALS_IGNORECASE_AND_LOCAL(svalue, "scientific", _("scientific")))) v = EXP_SCIENTIFIC;
+		else if(!display && (svalue == "eng" || EQUALS_IGNORECASE_AND_LOCAL(svalue, "engineering", _("engineering")))) v = EXP_BASE_3;
 		else if(svalue == "E" || (display && empty_value && printops.exp_display == EXP_POWER_OF_10)) {v = EXP_UPPERCASE_E; display = true;}
 		else if(svalue == "e") {v = EXP_LOWERCASE_E; display = true;}
 		//scientific notation
