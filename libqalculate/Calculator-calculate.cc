@@ -886,6 +886,20 @@ bool test_parsed_comparison(const MathStructure &m) {
 	}
 	return false;
 }
+
+bool shown_with_scientific_notation(const Number &nr, const PrintOptions &po) {
+	if(po.min_exp == EXP_NONE || po.base != 10) return false;
+	CALCULATOR->beginTemporaryStopMessages();
+	Number nr_exp(nr);
+	nr_exp.abs();
+	nr_exp.log(10);
+	nr_exp.abs();
+	nr_exp.ceil();
+	CALCULATOR->endTemporaryStopMessages();
+	if(po.min_exp == EXP_PRECISION) return nr_exp >= (nr.isFraction() ? PRECISION : PRECISION + 4);
+	return nr_exp >= (po.min_exp < 0 ? -po.min_exp : po.min_exp);
+}
+
 void print_dual(const MathStructure &mresult, const string &original_expression, const MathStructure &mparse, MathStructure &mexact, string &result_str, vector<string> &results_v, PrintOptions &po, const EvaluationOptions &evalops, AutomaticFractionFormat auto_frac, AutomaticApproximation auto_approx, bool cplx_angle, bool *exact_cmp, bool b_parsed, bool format, int colorize, int tagtype, int max_length, bool converted) {
 
 	MathStructure m(mresult);
@@ -935,7 +949,7 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 	bool do_exact = !mexact.isUndefined() && m.isApproximate();
 
 	// If parsed value is number (simple fractions are parsed as division) only show result as combined fraction
-	if(auto_frac != AUTOMATIC_FRACTION_OFF && po.base == 10 && po.base == evalops.parse_options.base && !m.isApproximate() && b_parsed && mparse.isNumber() && !mparse.isInteger() && !converted) {
+	if(auto_frac != AUTOMATIC_FRACTION_OFF && po.base == 10 && po.base == evalops.parse_options.base && !m.isApproximate() && b_parsed && mparse.isNumber() && !mparse.isInteger() && !converted && !shown_with_scientific_notation(mparse.number(), po)) {
 		po.number_fraction_format = FRACTION_COMBINED;
 	// with auto fractions show expressions with unknown variables/symbols only using simple fractions (if not parsed value contains decimals)
 	} else if((auto_frac == AUTOMATIC_FRACTION_AUTO || auto_frac == AUTOMATIC_FRACTION_SINGLE) && !m.isApproximate() && (test_fr_unknowns(m) || (m.containsType(STRUCT_ADDITION) && test_power_func(m))) && test_frac(m, false, -1) && (!b_parsed || !contains_decimal(mparse, &original_expression))) {
