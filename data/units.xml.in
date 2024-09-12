@@ -65,7 +65,7 @@
     </unit>
     <unit type="alias">
       <_title>Nautical Mile</_title>
-      <_names>r:nautical_mile,p:nautical_miles</_names>
+      <_names>r:nautical_mile,p:nautical_miles,a:nmi</_names>
       <base>
         <unit>m</unit>
         <relation>1852</relation>
