@@ -11465,9 +11465,12 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	// adjust output precision to precision of parent MathStructure
 	if(po.restrict_to_parent_precision && ips.parent_precision >= 0 && ips.parent_precision < precision) precision = ips.parent_precision;
 
+	// number or parent is approximate
+	bool approx = isApproximate() || (ips.parent_approximate && po.restrict_to_parent_precision);
+
 	// calculate number of digits allowed for the number base with the current precision: floor(log(10^precision-1, abs(base)))
 	long int precision_base = precision;
-	if(base != 10 && ((base >= 2 && base <= 36) || po.base == BASE_CUSTOM)) {
+	if(base != 10 && ((base >= 2 && base <= 36) || po.base == BASE_CUSTOM) && (!isInteger() || min_decimals > 0 || approx || mpz_sizeinbase(mpq_numref(r_value), base) > 10000L)) {
 		Number precmax(10);
 		precmax.raise(precision_base);
 		precmax--;
@@ -11482,7 +11485,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		if(i_precision < 0) i_precision_base = FROM_BIT_PRECISION(NUMBER_BIT_PRECISION);
 		else i_precision_base = i_precision;
 		if(po.restrict_to_parent_precision && ips.parent_precision >= 0 && ips.parent_precision < i_precision_base) i_precision_base = ips.parent_precision;
-		if(base != 10 && ((base >= 2 && base <= 36) || po.base == BASE_CUSTOM)) {
+		if(base != 10 && ((base >= 2 && base <= 36) || po.base == BASE_CUSTOM) && (!isInteger() || min_decimals > 0 || approx || mpz_sizeinbase(mpq_numref(r_value), base) > 10000L)) {
 			Number precmax(10);
 			precmax.raise(i_precision_base);
 			precmax--;
@@ -11491,9 +11494,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			i_precision_base = precmax.lintValue();
 		}
 	}
-
-	// number or parent is approximate
-	bool approx = isApproximate() || (ips.parent_approximate && po.restrict_to_parent_precision);
 
 	if(isInteger()) {
 
