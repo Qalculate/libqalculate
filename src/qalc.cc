@@ -472,7 +472,7 @@ void handle_exit() {
 	if(enable_unicode >= 0) {
 		printops.use_unicode_signs = !enable_unicode;
 	}
-	bool b_savedefs = defs_edited > 0;
+	bool b_savedefs = save_defs_on_exit && defs_edited > 0;
 	if(save_defs_on_exit && (CALCULATOR->checkSaveFunctionCalled() || defs_edited < 0)) {
 		for(size_t i = 0; !b_savedefs && i < CALCULATOR->variables.size(); i++) {
 			if(CALCULATOR->variables[i]->hasChanged() && CALCULATOR->variables[i]->category() != CALCULATOR->temporaryCategory() && CALCULATOR->variables[i]->category() != "Temporary") {
@@ -2032,7 +2032,7 @@ bool show_set_help(string set_option = "") {
 		str += ", 3";
 		if(printops.min_exp == EXP_SCIENTIFIC) str += "*";
 		str += " = "; str += _("scientific");
-		str += ", >= 0)";
+		str += ", >= 0, <= -2)";
 		if(printops.min_exp != EXP_NONE && printops.min_exp != EXP_PRECISION && printops.min_exp != EXP_BASE_3 && printops.min_exp != EXP_PURE && printops.min_exp != EXP_SCIENTIFIC) {str += " "; str += i2s(printops.min_exp); str += "*";}
 		CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 		SET_OPTION_FOUND
@@ -3500,7 +3500,7 @@ int main(int argc, char *argv[]) {
 		} else if(!calc_arg_begun && svar == "--") {
 			calc_arg_begun = true;
 		} else if(!calc_arg_begun && expression_after_argc > 0 && i < expression_after_argc && svar.size() > 1 && (svar[0] == '-' || svar[0] == '+') && is_not_in(NUMBER_ELEMENTS, svar[1])) {
-			snprintf(buffer, 10000, _("Unrecognized option: \"%s\"."), svar.c_str());
+			snprintf(buffer, 10000, _("Unrecognized option: %s."), svar.c_str());
 			PUTS_UNICODE(buffer)
 		} else {
 			calc_arg += argv[i];
@@ -3547,7 +3547,7 @@ int main(int argc, char *argv[]) {
 	static char* rlbuffer;
 #endif
 
-	ask_questions = (command_file.empty() || interactive_mode) && !result_only;
+	ask_questions = command_file.empty() && !result_only;
 
 	//exchange rates
 	if(fetch_exchange_rates_at_startup && canfetch) {
@@ -3663,6 +3663,7 @@ int main(int argc, char *argv[]) {
 					CALCULATOR->terminateThreads();
 					return EXIT_FAILURE;
 				}
+				ask_questions = !result_only;
 			}
 		}
 	}
@@ -3686,6 +3687,9 @@ int main(int argc, char *argv[]) {
 	}
 
 	if(!cfile && !calc_arg.empty()) {
+#ifdef HAVE_LIBREADLINE
+		if(interactive_mode) rl_initialize();
+#endif
 		if(calc_arg.length() > 2 && ((calc_arg[0] == '\"' && calc_arg.find('\"', 1) == calc_arg.length() - 1) || (calc_arg[0] == '\'' && calc_arg.find('\'', 1) == calc_arg.length() - 1))) {
 			calc_arg = calc_arg.substr(1, calc_arg.length() - 2);
 		}
@@ -3721,7 +3725,6 @@ int main(int argc, char *argv[]) {
 		i_maxtime = 0;
 		use_readline = true;
 	} else if(!cfile) {
-		ask_questions = !result_only;
 		interactive_mode = true;
 		i_maxtime = 0;
 	}
@@ -3759,11 +3762,15 @@ int main(int argc, char *argv[]) {
 
 	while(true) {
 		if(cfile) {
+#ifdef HAVE_LIBREADLINE
+			if(interactive_mode) rl_initialize();
+#endif
 			if(i_maxtime < 0 || !fgets(buffer, 100000, cfile)) {
 				if(cfile != stdin) {
 					fclose(cfile);
 				}
 				cfile = NULL;
+				ask_questions = !result_only;
 				if(!calc_arg.empty()) {
 					if(!printops.use_unicode_signs && contains_unicode_char(calc_arg.c_str())) {
 						char *gstr = locale_to_utf8(calc_arg.c_str());
@@ -3919,7 +3926,7 @@ int main(int argc, char *argv[]) {
 				bool b = true;
 				if(!CALCULATOR->variableNameIsValid(name)) {
 					name = CALCULATOR->convertToValidVariableName(name);
-					if(!CALCULATOR->variableNameIsValid(name)) {
+					if(!ask_questions || !CALCULATOR->variableNameIsValid(name)) {
 						PUTS_UNICODE(_("Illegal name."));
 						b = false;
 					} else {
@@ -3931,11 +3938,11 @@ int main(int argc, char *argv[]) {
 				}
 				Variable *v = NULL;
 				if(b) v = CALCULATOR->getActiveVariable(name, true);
-				if(b && ((!v && CALCULATOR->variableNameTaken(name)) || (v && (!v->isKnown() || !v->isLocal() || v->category() != CALCULATOR->temporaryCategory())))) {
+				if(b && ask_questions && ((!v && CALCULATOR->variableNameTaken(name)) || (v && (!v->isKnown() || !v->isLocal() || v->category() != CALCULATOR->temporaryCategory())))) {
 					b = ask_question(_("A unit or variable with the same name already exists.\nDo you want to overwrite it (default: no)?"));
 				}
 				if(b) {
-					if(v && v->isLocal() && v->isKnown()) {
+					if(v && v->isLocal() && v->isKnown() && (ask_questions || v->category() == CALCULATOR->temporaryCategory())) {
 						if(defs_edited <= 0 && v->category() != CALCULATOR->temporaryCategory()) defs_edited = 1;
 						if(catset) v->setCategory(cat);
 						if(!title.empty()) v->setTitle(title);
@@ -3995,11 +4002,13 @@ int main(int argc, char *argv[]) {
 			}
 			Variable *v = NULL;
 			if(b) v = CALCULATOR->getActiveVariable(name, true);
+			bool b_temp = false;
 			if(b && ((!v && CALCULATOR->variableNameTaken(name)) || (v && (!v->isKnown() || !v->isLocal() || v->category() != CALCULATOR->temporaryCategory())))) {
-				b = ask_question(_("A unit or variable with the same name already exists.\nDo you want to overwrite it (default: no)?"));
+				if(!ask_questions) b_temp = true;
+				b = !ask_questions || ask_question(_("A unit or variable with the same name already exists.\nDo you want to overwrite it (default: no)?"));
 			}
 			if(b) {
-				if(v && v->isLocal() && v->isKnown()) {
+				if(v && v->isLocal() && v->isKnown() && (!b_temp || v->category() == CALCULATOR->temporaryCategory())) {
 					((KnownVariable*) v)->set(expr);
 					if(v->countNames() == 0) {
 						ExpressionName ename(name);
@@ -4010,8 +4019,8 @@ int main(int argc, char *argv[]) {
 					}
 					if(defs_edited <= 0 && v->category() != CALCULATOR->temporaryCategory()) defs_edited = 1;
 				} else {
-					CALCULATOR->addVariable(new KnownVariable("", name, expr))->setChanged(true);
-					defs_edited = 1;
+					CALCULATOR->addVariable(new KnownVariable(b_temp ? CALCULATOR->temporaryCategory() : "", name, expr))->setChanged(true);
+					if(!b_temp) defs_edited = 1;
 				}
 			}
 		//qalc command
@@ -4043,7 +4052,7 @@ int main(int argc, char *argv[]) {
 			bool b = true;
 			if(!CALCULATOR->functionNameIsValid(name)) {
 				name = CALCULATOR->convertToValidFunctionName(name);
-				if(!CALCULATOR->functionNameIsValid(name)) {
+				if(!ask_questions || !CALCULATOR->functionNameIsValid(name)) {
 					PUTS_UNICODE(_("Illegal name."));
 					b = false;
 				} else {
@@ -4053,10 +4062,10 @@ int main(int argc, char *argv[]) {
 					}
 				}
 			}
+			bool b_temp = false;
 			if(b && CALCULATOR->functionNameTaken(name)) {
-				if(!ask_question(_("A function with the same name already exists.\nDo you want to overwrite it (default: no)?"))) {
-					b = false;
-				}
+				if(!ask_questions) b_temp = true;
+				b = !ask_questions || ask_question(_("A function with the same name already exists.\nDo you want to overwrite it (default: no)?"));
 			}
 			if(b) {
 				if(expr.find("\\") == string::npos) {
@@ -4065,7 +4074,7 @@ int main(int argc, char *argv[]) {
 					gsub("z", "\\z", expr);
 				}
 				MathFunction *f = CALCULATOR->getActiveFunction(name, true);
-				if(f && f->isLocal() && f->subtype() == SUBTYPE_USER_FUNCTION) {
+				if(f && f->isLocal() && f->subtype() == SUBTYPE_USER_FUNCTION && (!b_temp || f->category() == CALCULATOR->temporaryCategory())) {
 					((UserFunction*) f)->setFormula(expr);
 					if(f->countNames() == 0) {
 						ExpressionName ename(name);
@@ -4076,8 +4085,8 @@ int main(int argc, char *argv[]) {
 					}
 					if(defs_edited <= 0 && f->category() != CALCULATOR->temporaryCategory()) defs_edited = 1;
 				} else {
-					CALCULATOR->addFunction(new UserFunction("", name, expr))->setChanged(true);
-					defs_edited = 1;
+					CALCULATOR->addFunction(new UserFunction(b_temp ? CALCULATOR->temporaryCategory() : "", name, expr))->setChanged(true);
+					if(!b_temp) defs_edited = 1;
 				}
 			}
 		//qalc command
@@ -4099,20 +4108,23 @@ int main(int argc, char *argv[]) {
 				}
 			}
 		//qalc command
-		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "keep", _("keep"))) {
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "keep", _("keep")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "unkeep", _("unkeep"))) {
+			bool unkeep = EQUALS_IGNORECASE_AND_LOCAL(scom, "unkeep", _("unkeep"));
 			str = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(str);
 			Variable *v = CALCULATOR->getActiveVariable(str);
 			bool b = v && v->isLocal();
-			if(b && v->category() == CALCULATOR->temporaryCategory()) {
-				v->setCategory("");
+			if(b && (v->category() == CALCULATOR->temporaryCategory()) == !unkeep) {
+				if(unkeep) v->setCategory(CALCULATOR->temporaryCategory());
+				else v->setCategory("");
 				defs_edited = 1;
 			} else {
 				if(str.length() > 2 && str[str.length() - 2] == '(' && str[str.length() - 1] == ')') str = str.substr(0, str.length() - 2);
 				MathFunction *f = CALCULATOR->getActiveFunction(str);
 				if(f && f->isLocal()) {
-					if(f->category() == CALCULATOR->temporaryCategory()) {
-						f->setCategory("");
+					if((f->category() == CALCULATOR->temporaryCategory()) == !unkeep) {
+						if(unkeep) f->setCategory(CALCULATOR->temporaryCategory());
+						else f->setCategory("");
 						defs_edited = 1;
 					}
 				} else if(!b) {
@@ -5420,7 +5432,7 @@ int main(int argc, char *argv[]) {
 				puts("");
 				PUTS_UNICODE(_("Example: delete var1."));
 				puts("");
-			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "keep", _("keep"))) {
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "keep", _("keep")) || EQUALS_IGNORECASE_AND_LOCAL(str, "unkeep", _("unkeep"))) {
 				puts("");
 				PUTS_UNICODE(_("Make the temporary user-defined variable or function with the specified name non-temporary."));
 				puts("");
@@ -5641,7 +5653,7 @@ int main(int argc, char *argv[]) {
 				snprintf(buffer, 10000, _("%s does not accept any arguments."), str.c_str());
 				PUTS_UNICODE(buffer)
 				str = "";
-			} else if(scom.empty() && (explicit_command || str.find_first_of(NOT_IN_NAMES) == string::npos) && (EQUALS_IGNORECASE_AND_LOCAL(str, "set", _("set")) || EQUALS_IGNORECASE_AND_LOCAL(str, "save", _("save")) || EQUALS_IGNORECASE_AND_LOCAL(str, "store", _("store")) || EQUALS_IGNORECASE_AND_LOCAL(str, "variable", _("variable")) || EQUALS_IGNORECASE_AND_LOCAL(str, "function", _("function")) || EQUALS_IGNORECASE_AND_LOCAL(str, "delete", _("delete"))  || EQUALS_IGNORECASE_AND_LOCAL(str, "keep", _("keep")) || EQUALS_IGNORECASE_AND_LOCAL(str, "assume", _("assume")) || EQUALS_IGNORECASE_AND_LOCAL(str, "base", _("base")) || EQUALS_IGNORECASE_AND_LOCAL(str, "rpn", _("rpn")) || EQUALS_IGNORECASE_AND_LOCAL(str, "move", _("move")) || EQUALS_IGNORECASE_AND_LOCAL(str, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(str, "to", _("to")) || EQUALS_IGNORECASE_AND_LOCAL(str, "find", _("find")) || EQUALS_IGNORECASE_AND_LOCAL(str, "info", _("info")))) {
+			} else if(scom.empty() && (explicit_command || str.find_first_of(NOT_IN_NAMES) == string::npos) && (EQUALS_IGNORECASE_AND_LOCAL(str, "set", _("set")) || EQUALS_IGNORECASE_AND_LOCAL(str, "save", _("save")) || EQUALS_IGNORECASE_AND_LOCAL(str, "store", _("store")) || EQUALS_IGNORECASE_AND_LOCAL(str, "variable", _("variable")) || EQUALS_IGNORECASE_AND_LOCAL(str, "function", _("function")) || EQUALS_IGNORECASE_AND_LOCAL(str, "delete", _("delete")) || EQUALS_IGNORECASE_AND_LOCAL(str, "keep", _("keep")) || EQUALS_IGNORECASE_AND_LOCAL(str, "unkeep", _("unkeep")) || EQUALS_IGNORECASE_AND_LOCAL(str, "assume", _("assume")) || EQUALS_IGNORECASE_AND_LOCAL(str, "base", _("base")) || EQUALS_IGNORECASE_AND_LOCAL(str, "rpn", _("rpn")) || EQUALS_IGNORECASE_AND_LOCAL(str, "move", _("move")) || EQUALS_IGNORECASE_AND_LOCAL(str, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(str, "to", _("to")) || EQUALS_IGNORECASE_AND_LOCAL(str, "find", _("find")) || EQUALS_IGNORECASE_AND_LOCAL(str, "info", _("info")))) {
 				bool b = explicit_command;
 				if(!b) {
 					CALCULATOR->beginTemporaryStopMessages();
@@ -5688,6 +5700,7 @@ int main(int argc, char *argv[]) {
 					ADD_TO_COMMANDS("function", 1);
 					ADD_TO_COMMANDS("delete", 1);
 					ADD_TO_COMMANDS("keep", 1);
+					ADD_TO_COMMANDS("unkeep", 1);
 					ADD_TO_COMMANDS("assume", 1);
 					ADD_TO_COMMANDS("base", 1);
 					ADD_TO_COMMANDS("rpn", 1);
@@ -6259,7 +6272,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 				}
 				strout += "\n\n";
 				i_result_u = 0;
-			} else if(!result_only && ((b_comparison & 1) || (goto_input && i_result_u > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols))) {
+			} else if(!result_only && ((b_comparison & 1) || (goto_input && cols > 0 && i_result_u > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols))) {
 				if(!printops.use_unicode_signs && strout.find(_("approx."), i_result) == i_result) i_result += strlen(_("approx.")) + 1;
 				strout[i_result - 1] = '\n';
 				if(goto_input) {
@@ -6313,7 +6326,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 					if(!printops.use_unicode_signs && strout.find(_("approx."), i_result2) == i_result2) i_result2 += strlen(_("approx.")) + 1;
 					strout[i_result2 - 1] = '\n';
 					strout.insert(i_result2, "  ");
-				} else if((b_comparison & 1) || (i_result_u2 > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols)) {
+				} else if((b_comparison & 1) || (cols > 0 && i_result_u2 > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols)) {
 					if(!printops.use_unicode_signs && strout.find(_("approx."), i_result) == i_result) {
 						i_result += strlen(_("approx.")) + 1;
 					}
