@@ -6886,6 +6886,18 @@ bool MathStructure::calculateSubtract(const MathStructure &msub, const Evaluatio
 }
 
 bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursive, bool do_unformat) {
+	return calculateFunctions(eo, recursive, do_unformat, 1);
+}
+
+bool check_recursive_function_depth(size_t depth, bool show_error) {
+	if(depth > 3000) {
+		if(show_error) CALCULATOR->error(true, _("Maximum recursive depth reached."), NULL);
+		return false;
+	}
+	return true;
+}
+
+bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursive, bool do_unformat, size_t depth) {
 
 	if(m_type == STRUCT_FUNCTION && o_function != eo.protected_function && !b_protected && !CALCULATOR->aborted()) {
 
@@ -6935,7 +6947,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 				bool b = false;
 				for(size_t i2 = 0; i2 < CHILD(0).size(); i2++) {
 					CHILD(0)[i2].transform(o_function);
-					if(CHILD(0)[i2].calculateFunctions(eo, recursive, do_unformat)) b = true;
+					if(CHILD(0)[i2].calculateFunctions(eo, recursive, do_unformat, depth)) b = true;
 					CHILD(0).childUpdated(i2 + 1);
 				}
 				SET_CHILD_MAP(0)
@@ -7030,7 +7042,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 				// function calculation was successful
 				while(mstruct->isVector() && mstruct->size() == 1) mstruct->setToChild(1, true);
 				set_nocopy(*mstruct, true);
-				if(recursive) calculateFunctions(eo);
+				if(recursive && check_recursive_function_depth(depth)) calculateFunctions(eo, true, true, depth + 1);
 				mstruct->unref();
 				if(do_unformat) unformat(eo);
 				return true;
@@ -7120,7 +7132,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 						mi->addChild(CHILD(i2));
 					}
 				}
-				if(mi->calculateFunctions(eo, recursive, do_unformat)) b = true;
+				if(mi->calculateFunctions(eo, recursive, do_unformat, depth)) b = true;
 				mstruct->addChild_nocopy(mi);
 			}
 			set_nocopy(*mstruct);
@@ -7132,7 +7144,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 	if(recursive) {
 		for(size_t i = 0; i < SIZE; i++) {
 			if(CALCULATOR->aborted()) break;
-			if(CHILD(i).calculateFunctions(eo, recursive, do_unformat)) {
+			if(CHILD(i).calculateFunctions(eo, recursive, do_unformat, depth)) {
 				CHILD_UPDATED(i);
 				b = true;
 			}

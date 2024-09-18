@@ -180,6 +180,8 @@ class MathStructure {
 		bool isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions &eo2, const MathStructure &x_var, MathStructure *morig, size_t depth);
 		bool isolate_x(const EvaluationOptions &eo, const EvaluationOptions &feo, const MathStructure &x_var, bool check_result, size_t depth);
 
+		bool calculateFunctions(const EvaluationOptions &eo, bool recursive, bool do_unformat, size_t depth);
+
 		void init();
 
 		class MathStructure_p *priv;

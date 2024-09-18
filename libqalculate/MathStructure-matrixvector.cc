@@ -841,10 +841,10 @@ MathStructure &MathStructure::cofactor(size_t r, size_t c, MathStructure &mstruc
 	return mstruct;
 }
 
-bool calculate_userfunctions(MathStructure &m, const MathStructure &x_mstruct, const EvaluationOptions &eo, bool b_vector) {
+bool calculate_userfunctions(MathStructure &m, const MathStructure &x_mstruct, const EvaluationOptions &eo, bool b_vector, size_t depth) {
 	bool b_ret = false;
 	for(size_t i = 0; i < m.size(); i++) {
-		if(calculate_userfunctions(m[i], x_mstruct, eo, b_vector)) {
+		if(calculate_userfunctions(m[i], x_mstruct, eo, b_vector, depth)) {
 			m.childUpdated(i + 1);
 			b_ret = true;
 		}
@@ -853,7 +853,7 @@ bool calculate_userfunctions(MathStructure &m, const MathStructure &x_mstruct, c
 		if(!m.contains(x_mstruct, true) && !m.containsFunctionId(FUNCTION_ID_RAND, true, true, true) && !m.containsFunctionId(FUNCTION_ID_RANDN, true, true, true) && !m.containsFunctionId(FUNCTION_ID_RAND_POISSON, true, true, true)) {
 			if(m.calculateFunctions(eo, false)) {
 				b_ret = true;
-				calculate_userfunctions(m, x_mstruct, eo, b_vector);
+				if(check_recursive_function_depth(depth)) calculate_userfunctions(m, x_mstruct, eo, b_vector, depth + 1);
 			}
 		} else if(m.function()->subtype() == SUBTYPE_USER_FUNCTION && m.function()->condition().empty()) {
 			bool b = true;
@@ -871,7 +871,7 @@ bool calculate_userfunctions(MathStructure &m, const MathStructure &x_mstruct, c
 				}
 			}
 			if(b && m.calculateFunctions(eo, false)) {
-				calculate_userfunctions(m, x_mstruct, eo, false);
+				if(check_recursive_function_depth(depth)) calculate_userfunctions(m, x_mstruct, eo, false, depth + 1);
 				b_ret = true;
 			}
 		} else if(b_vector && ((m.function()->id() == FUNCTION_ID_DIFFERENTIATE && (m.size() < 3 || m[3].isUndefined())) || (m.function()->id() == FUNCTION_ID_INTEGRATE && (m.size() < 3 || (m[1].isUndefined() && m[2].isUndefined()))))) {
