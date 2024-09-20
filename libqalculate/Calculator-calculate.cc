@@ -769,7 +769,7 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 		if(b_cmp3) {
 			do_frac = true;
 			mcmp = &m[2];
-		} else if(!mparse || ((dfrac > 0 || dappr > 0 || !contains_decimal(*mparse, &original_expression)) && (!mparse->isNumber() || !mresult->isNumber()))) {
+		} else if(!mparse || dfrac > 0 || ((dappr > 0 || !contains_decimal(*mparse, &original_expression)) && (!mparse->isNumber() || !mresult->isNumber()))) {
 			if(contains_decimal(m)) {
 				if(m.isComparison() && m.comparisonType() == COMPARISON_EQUALS) {
 					mcmp = mresult->getChild(2);
@@ -804,6 +804,10 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 				results_v.pop_back();
 			} else {
 				if(cplx_angle) replace_result_cis(results_v.back());
+				if(!b_cmp3 && dfrac > 0 && mparse && mparse->isNumber() && mresult->isNumber() && str == original_expression) {
+					str = results_v.back();
+					results_v.pop_back();
+				}
 			}
 		}
 		if(do_mixed) {
@@ -897,7 +901,8 @@ bool shown_with_scientific_notation(const Number &nr, const PrintOptions &po) {
 	nr_exp.ceil();
 	CALCULATOR->endTemporaryStopMessages();
 	if(po.min_exp == EXP_PRECISION) return nr_exp >= (nr.isFraction() ? PRECISION : PRECISION + 4);
-	return nr_exp >= (po.min_exp < 0 ? -po.min_exp : po.min_exp);
+	if(po.min_exp < 0) return nr.isFraction() || nr_exp >= -po.min_exp;
+	return nr_exp >= po.min_exp;
 }
 
 void print_dual(const MathStructure &mresult, const string &original_expression, const MathStructure &mparse, MathStructure &mexact, string &result_str, vector<string> &results_v, PrintOptions &po, const EvaluationOptions &evalops, AutomaticFractionFormat auto_frac, AutomaticApproximation auto_approx, bool cplx_angle, bool *exact_cmp, bool b_parsed, bool format, int colorize, int tagtype, int max_length, bool converted) {
@@ -949,7 +954,7 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 	bool do_exact = !mexact.isUndefined() && m.isApproximate();
 
 	// If parsed value is number (simple fractions are parsed as division) only show result as combined fraction
-	if(auto_frac != AUTOMATIC_FRACTION_OFF && po.base == 10 && po.base == evalops.parse_options.base && !m.isApproximate() && b_parsed && mparse.isNumber() && !mparse.isInteger() && !converted && !shown_with_scientific_notation(mparse.number(), po)) {
+	if((auto_frac == AUTOMATIC_FRACTION_AUTO || auto_frac == AUTOMATIC_FRACTION_SINGLE) && po.base == 10 && po.base == evalops.parse_options.base && !m.isApproximate() && b_parsed && mparse.isNumber() && !mparse.isInteger() && !converted && !shown_with_scientific_notation(mparse.number(), po)) {
 		po.number_fraction_format = FRACTION_COMBINED;
 	// with auto fractions show expressions with unknown variables/symbols only using simple fractions (if not parsed value contains decimals)
 	} else if((auto_frac == AUTOMATIC_FRACTION_AUTO || auto_frac == AUTOMATIC_FRACTION_SINGLE) && !m.isApproximate() && (test_fr_unknowns(m) || (m.containsType(STRUCT_ADDITION) && test_power_func(m))) && test_frac(m, false, -1) && (!b_parsed || !contains_decimal(mparse, &original_expression))) {
@@ -3447,7 +3452,6 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 						}
 						if(m.isNumber() && !m.number().hasImaginaryPart()) {
 							ComparisonType ct;
-							if(b_reversed) b_equals = !b_equals;
 							if((!b_reversed && wheres[i2][index] == '>') || (b_reversed && wheres[i2][index] == '<')) {
 								if(b_equals) ct = COMPARISON_EQUALS_GREATER;
 								else ct = COMPARISON_GREATER;

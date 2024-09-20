@@ -1,3 +1,85 @@
+2024-09-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not show single input decimal number as only combined fraction if fraction format is set to dual
+	* Apply fraction format also for integers if set to percent, permille, or permyriad
+	* Add (hidden) support for percent, permille, and permyriad fraction formats in qalc
+
+2024-09-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault with recursive (self-referencing) function
+
+2024-09-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix save definitions option
+	* When questions are avoided (when reading commands/expression from file or in result only mode), create temporary objects for "variable" and "function" commands, do not ask before replacing object, and fail without question for illegal names
+	* Avoid asking questions when reading commands/expressions from file before interactive mode
+	* Fix line brea for output from command line expression or file, before interactive mode
+	* Update "exp" option documentation to reflect that custom negative values are allowed
+	* "unkeep" command (reverse of "keep")
+
+2024-09-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Remove unnecessary calculation for output of integers with non-decimal number base (fixes delay with very high precision)
+	* Fix input of negative exponent in scientific e notation with rpn syntax
+
+2024-09-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add nmi symbol for nautical mile
+
+2024-09-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not show single input decimal number as fraction by default if small or large enough to be displayed using scientific notation
+
+2024-08-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support abbreviations for scientific (sci) and engineering (eng) as options for scientific notation (exp)
+
+2024-08-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix superfluous "did you mean..." warning for two functions with parenthesis without separator (e.g. "atan2(a,b)atan2(c,d)")
+	* Fix definite integral for 1/sqrt(1-x^2), with lower limit <= -1 and/or upper limit >= 1, and similar (temporary workaround)
+
+2024-08-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix parsing of 1°2'3" as 1°+2'+3" (and similar)
+	* Update nounit() function description
+
+2024-08-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add Calculator::parseToExpression()
+	* Minor fixes for "to" conversion in Calculator::calculateAndPrint()
+
+2024-07-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add free_thread_caches() function
+	* Place n and C last in variable isolation priority order
+	* Fix interpretation of mH₂O, and related units with Unicode subscript, in qalc
+	* Fix memory leaks
+
+2024-07-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix saving of percentage interpretation in qalc
+
+2024-07-09 Marko Zajc <marko@zajc.eu.org>
+
+	* Disable load() and export() functions when --disable-insecure compile option is enabled
+	* Fix a potential segfault when freeing DataObject
+
+2024-07-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve compatibility with MSVC (including replacement of variable length arrays)
+	* Show error for unrecognized command line options when expression is separated from options by "--"
+
+2024-07-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix Calculator::reset()
+
+2024-07-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve handling of "where" expression when variable name is placed after inequality symbol
+	* Improve handling of "where" expression in exact mode
+	* Improve removal of n in exact mod
+
 2024-06-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Return n >= a + 1 for n > a, and n <= a - 1 for n < a, if a is an integer (and n represents an integer)

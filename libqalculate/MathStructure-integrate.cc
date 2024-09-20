@@ -7490,7 +7490,7 @@ bool MathStructure::integrate(const MathStructure &lower_limit, const MathStruct
 		}
 		eo2.approximation = eo.approximation;
 		if(b) {
-			if(definite_integral && mstruct.containsFunctionId(FUNCTION_ID_INTEGRATE, true) <= 0 && ((den_check < 0 && count_ln(mstruct) <= -den_check) || test_definite_ln(mstruct, m_interval, x_var, eo))) {
+			if(definite_integral && mstruct.containsFunctionId(FUNCTION_ID_INTEGRATE, true) <= 0 && ((den_check < 0 && count_ln(mstruct) <= (size_t) -den_check) || test_definite_ln(mstruct, m_interval, x_var, eo))) {
 				CALCULATOR->endTemporaryStopMessages(true);
 				MathStructure mstruct_lower(mstruct);
 				if(m1.isInfinite() || m2.isInfinite()) {

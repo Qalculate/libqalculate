@@ -7041,11 +7041,13 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 			if(ret > 0) {
 				// function calculation was successful
 				while(mstruct->isVector() && mstruct->size() == 1) mstruct->setToChild(1, true);
+				m_type = STRUCT_FUNCTION;
+				if(mstruct->equals(*this, true, true) && mstruct->isApproximate() == b_approx && mstruct->precision() == i_precision && !mstruct->isProtected()) ret = 0;
 				set_nocopy(*mstruct, true);
-				if(recursive && check_recursive_function_depth(depth)) calculateFunctions(eo, true, true, depth + 1);
+				if(ret && recursive && check_recursive_function_depth(depth)) calculateFunctions(eo, true, true, depth + 1);
 				mstruct->unref();
 				if(do_unformat) unformat(eo);
-				return true;
+				return ret;
 			} else {
 				// function calculation failed
 				if(ret < 0) {

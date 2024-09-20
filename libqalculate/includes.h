@@ -498,7 +498,7 @@ struct PrintOptions {
 	bool limit_implicit_multiplication;
 	/// If it is not necessary that the displayed expression can be parsed correctly. Default: false
 	bool allow_non_usable;
-	/// If unicode signs can be displayed. Allowed values are true (UNICODE_SIGNS_OFF), false (UNICODE_SIGNS_OFF), or one of the options which limits use of Unicode exponents for non-HTML output (UNICODE_SIGNS_ONLY_UNIT_EXPONENTS and UNICODE_SIGNS_WITHOUT_EXPONENTS). Default: UNICODE_SIGNS_OFF
+	/// If unicode signs can be displayed. Allowed values are true (UNICODE_SIGNS_ON), false (UNICODE_SIGNS_OFF), or one of the options which limits use of Unicode exponents for non-HTML output (UNICODE_SIGNS_ONLY_UNIT_EXPONENTS and UNICODE_SIGNS_WITHOUT_EXPONENTS). Default: UNICODE_SIGNS_OFF
 	int use_unicode_signs;
 	/// Sign used for display of multiplication. Default: MULTIPLICATION_SIGN_DOT
 	MultiplicationSign multiplication_sign;

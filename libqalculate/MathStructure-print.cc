@@ -2798,15 +2798,15 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				}
 				break;
 			}
-			if(po.number_fraction_format == FRACTION_PERCENT && po.base > BASE_FP16 && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME && !o_number.isInteger()) {
+			if(po.number_fraction_format == FRACTION_PERCENT && po.base > BASE_FP16 && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME) {
 				if(!o_number.multiply(100)) break;
 				multiply(CALCULATOR->getVariableById(VARIABLE_ID_PERCENT));
 				break;
-			} else if(po.number_fraction_format == FRACTION_PERMILLE && po.base > BASE_FP16 && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME && !o_number.isInteger()) {
+			} else if(po.number_fraction_format == FRACTION_PERMILLE && po.base > BASE_FP16 && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME) {
 				if(!o_number.multiply(1000)) break;
 				multiply(CALCULATOR->getVariableById(VARIABLE_ID_PERMILLE));
 				break;
-			} else if(po.number_fraction_format == FRACTION_PERMYRIAD && po.base > BASE_FP16 && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME && !o_number.isInteger()) {
+			} else if(po.number_fraction_format == FRACTION_PERMYRIAD && po.base > BASE_FP16 && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME) {
 				if(!o_number.multiply(10000)) break;
 				multiply(CALCULATOR->getVariableById(VARIABLE_ID_PERMYRIAD));
 				break;
