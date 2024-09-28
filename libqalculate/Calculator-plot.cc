@@ -274,7 +274,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 	for(size_t i = 0; i < y_vectors.size(); i++) {
 		yim_vectors.push_back(m_undefined);
 		if(!y_vectors[i].isUndefined()) {
-			for(size_t i2 = 0; i2 < y_vectors[i].size() - 1; i2++) {
+			for(size_t i2 = 0; i2 + 1 < y_vectors[i].size(); i2++) {
 				if(y_vectors[i][i2].isNumber() && y_vectors[i][i2].number().hasImaginaryPart()) {
 					if(y_vectors[i][i2 + 1].isNumber() && y_vectors[i][i2 + 1].number().hasImaginaryPart()) {
 						yim_vectors[i].clearVector();
