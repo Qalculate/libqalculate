@@ -342,8 +342,8 @@ int RandnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 #if MPFR_VERSION_MAJOR < 4
 	Number nr_u, nr_v, nr_r2;
 	for(size_t i = 0; i < n; i++) {
-		if(n > 1 && CALCULATOR->aborted()) return 0;
 		do {
+			if(CALCULATOR->aborted()) return 0;
 			nr_u.rand(); nr_u *= 2; nr_u -= 1;
 			nr_v.rand(); nr_v *= 2; nr_v -= 1;
 			nr_r2 = (nr_u ^ 2) + (nr_v ^ 2);
@@ -398,9 +398,9 @@ int RandPoissonFunction::calculate(MathStructure &mstruct, const MathStructure &
 	nr_L.exp();
 	Number nr_k, nr_p, nr_u;
 	for(size_t i = 0; i < n; i++) {
-		if(n > 1 && CALCULATOR->aborted()) return 0;
 		nr_k.clear(); nr_p = 1;
 		do {
+			if(CALCULATOR->aborted()) return 0;
 			nr_k++;
 			nr_u.rand();
 			nr_p *= nr_u;

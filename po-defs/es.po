@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Qalculate!\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-19 09:40+0200\n"
+"POT-Creation-Date: 2024-10-01 07:13+0200\n"
 "PO-Revision-Date: 2022-05-13 18:30-0300\n"
 "Last-Translator: VicSanRoPe\n"
 "Language-Team: none\n"
@@ -6826,9 +6826,10 @@ msgid "r:nounit,strip_units"
 msgstr ""
 
 #: ../data/functions.xml.in.h:900
+#, fuzzy
 msgid ""
-"Removes all units from an expression. The expression is calculated before "
-"the removal."
+"Removes all units from an expression. No unit conversion or prefix changes "
+"are performed before the removal."
 msgstr ""
 "Elimina todas las unidades de una expresión. La expresión es calculada antes "
 "de la eliminación."
@@ -9112,8 +9113,8 @@ msgid "Nautical Mile"
 msgstr "Milla náutica"
 
 #: ../data/units.xml.in.h:12
-msgid "r:nautical_mile,p:nautical_miles"
-msgstr "milla_náutica,p:millas_náuticas"
+msgid "r:nautical_mile,p:nautical_miles,a:nmi"
+msgstr "milla_náutica,p:millas_náuticas,ao:nmi"
 
 #: ../data/units.xml.in.h:13
 msgid "&#xC5;ngstr&#xF6;m"

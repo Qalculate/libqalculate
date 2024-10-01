@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-19 09:39+0200\n"
+"POT-Creation-Date: 2024-10-01 07:13+0200\n"
 "PO-Revision-Date: 2024-05-04 10:02+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -6852,9 +6852,10 @@ msgid "r:nounit,strip_units"
 msgstr "безединиц,удалитьединицы"
 
 #: ../data/functions.xml.in.h:900
+#, fuzzy
 msgid ""
-"Removes all units from an expression. The expression is calculated before "
-"the removal."
+"Removes all units from an expression. No unit conversion or prefix changes "
+"are performed before the removal."
 msgstr ""
 "Удаляет все единицы измерения из выражения. Выражение вычисляется перед "
 "удалением."
@@ -9151,8 +9152,8 @@ msgid "Nautical Mile"
 msgstr "Морская миля"
 
 #: ../data/units.xml.in.h:12
-msgid "r:nautical_mile,p:nautical_miles"
-msgstr "морская_миля,p:морских_миль"
+msgid "r:nautical_mile,p:nautical_miles,a:nmi"
+msgstr "морская_миля,p:морских_миль,ao:nmi"
 
 #: ../data/units.xml.in.h:13
 msgid "&#xC5;ngstr&#xF6;m"

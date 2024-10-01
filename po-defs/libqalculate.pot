@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-19 09:41+0200\n"
+"POT-Creation-Date: 2024-10-01 07:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -6539,8 +6539,8 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:900
 msgid ""
-"Removes all units from an expression. The expression is calculated before "
-"the removal."
+"Removes all units from an expression. No unit conversion or prefix changes "
+"are performed before the removal."
 msgstr ""
 
 #: ../data/functions.xml.in.h:901
@@ -8674,7 +8674,7 @@ msgid "Nautical Mile"
 msgstr ""
 
 #: ../data/units.xml.in.h:12
-msgid "r:nautical_mile,p:nautical_miles"
+msgid "r:nautical_mile,p:nautical_miles,a:nmi"
 msgstr ""
 
 #: ../data/units.xml.in.h:13

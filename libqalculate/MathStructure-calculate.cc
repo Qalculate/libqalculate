@@ -6899,6 +6899,8 @@ bool check_recursive_function_depth(size_t depth, bool show_error) {
 
 bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursive, bool do_unformat, size_t depth) {
 
+	if(recursive && !check_recursive_function_depth(depth)) return false;
+
 	if(m_type == STRUCT_FUNCTION && o_function != eo.protected_function && !b_protected && !CALCULATOR->aborted()) {
 
 		if(function_value) {
@@ -6947,7 +6949,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 				bool b = false;
 				for(size_t i2 = 0; i2 < CHILD(0).size(); i2++) {
 					CHILD(0)[i2].transform(o_function);
-					if(CHILD(0)[i2].calculateFunctions(eo, recursive, do_unformat, depth)) b = true;
+					if(CHILD(0)[i2].calculateFunctions(eo, recursive, do_unformat, depth + 1)) b = true;
 					CHILD(0).childUpdated(i2 + 1);
 				}
 				SET_CHILD_MAP(0)
@@ -7044,7 +7046,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 				m_type = STRUCT_FUNCTION;
 				if(mstruct->equals(*this, true, true) && mstruct->isApproximate() == b_approx && mstruct->precision() == i_precision && !mstruct->isProtected()) ret = 0;
 				set_nocopy(*mstruct, true);
-				if(ret && recursive && check_recursive_function_depth(depth)) calculateFunctions(eo, true, true, depth + 1);
+				if(ret && recursive) calculateFunctions(eo, recursive, do_unformat, depth + 1);
 				mstruct->unref();
 				if(do_unformat) unformat(eo);
 				return ret;
@@ -7134,7 +7136,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 						mi->addChild(CHILD(i2));
 					}
 				}
-				if(mi->calculateFunctions(eo, recursive, do_unformat, depth)) b = true;
+				if(mi->calculateFunctions(eo, recursive, do_unformat, depth + 1)) b = true;
 				mstruct->addChild_nocopy(mi);
 			}
 			set_nocopy(*mstruct);
@@ -7146,7 +7148,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 	if(recursive) {
 		for(size_t i = 0; i < SIZE; i++) {
 			if(CALCULATOR->aborted()) break;
-			if(CHILD(i).calculateFunctions(eo, recursive, do_unformat, depth)) {
+			if(CHILD(i).calculateFunctions(eo, recursive, do_unformat, depth + 1)) {
 				CHILD_UPDATED(i);
 				b = true;
 			}

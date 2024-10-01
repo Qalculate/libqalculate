@@ -1,3 +1,11 @@
+2024-09-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix inability to abort randpoisson() with very high rate value
+
+2024-09-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix crash with empty vector in plot function, e.g. plot([])
+
 2024-09-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Do not show single input decimal number as only combined fraction if fraction format is set to dual
@@ -13,7 +21,7 @@
 	* Fix save definitions option
 	* When questions are avoided (when reading commands/expression from file or in result only mode), create temporary objects for "variable" and "function" commands, do not ask before replacing object, and fail without question for illegal names
 	* Avoid asking questions when reading commands/expressions from file before interactive mode
-	* Fix line brea for output from command line expression or file, before interactive mode
+	* Fix line break for output from command line expression or file, before interactive mode
 	* Update "exp" option documentation to reflect that custom negative values are allowed
 	* "unkeep" command (reverse of "keep")
 
@@ -78,7 +86,7 @@
 
 	* Improve handling of "where" expression when variable name is placed after inequality symbol
 	* Improve handling of "where" expression in exact mode
-	* Improve removal of n in exact mod
+	* Improve removal of n in exact mode
 
 2024-06-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

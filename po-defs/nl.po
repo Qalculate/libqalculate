@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate-defs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-19 09:41+0200\n"
+"POT-Creation-Date: 2024-10-01 07:13+0200\n"
 "PO-Revision-Date: 2007-05-18 15:47+0200\n"
 "Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
 "Language-Team:  <kde-i18n-nl@kde.org>\n"
@@ -6899,9 +6899,10 @@ msgid "r:nounit,strip_units"
 msgstr "geeneenheid,eenheden_weg"
 
 #: ../data/functions.xml.in.h:900
+#, fuzzy
 msgid ""
-"Removes all units from an expression. The expression is calculated before "
-"the removal."
+"Removes all units from an expression. No unit conversion or prefix changes "
+"are performed before the removal."
 msgstr ""
 "Verwijdert alle eenheden uit een expressie. De expressie wordt hierbij eerst "
 "berekend."
@@ -9194,8 +9195,8 @@ msgid "Nautical Mile"
 msgstr "Nautische mijl"
 
 #: ../data/units.xml.in.h:12
-msgid "r:nautical_mile,p:nautical_miles"
-msgstr "nautische_mijl,p:nautische_mijlen"
+msgid "r:nautical_mile,p:nautical_miles,a:nmi"
+msgstr "nautische_mijl,p:nautische_mijlen,ao:nmi"
 
 #: ../data/units.xml.in.h:13
 msgid "&#xC5;ngstr&#xF6;m"

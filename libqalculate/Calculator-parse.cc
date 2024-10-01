@@ -4175,7 +4175,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		char last_operator2 = 0;
 		while(true) {
 			i = str.find_first_of(OPERATORS INTERNAL_OPERATORS_RPN SPACE "\\", i3 + 1);
-			if(i != string::npos && i > 1 && (str[i] == MINUS_CH || str[i] == PLUS_CH) && BASE_2_10 && i + 1 < str.length() && is_in(EXPS, str[i - 1]) && is_in(NUMBER_ELEMENTS, str[i - 2]) && is_in(NUMBER_ELEMENTS, str[i + 1])) i = str.find_first_of(OPERATORS INTERNAL_OPERATORS_RPN SPACE "\\", i + 1);
+			while(i != string::npos && i > 1 && (str[i] == MINUS_CH || str[i] == PLUS_CH) && BASE_2_10 && i + 1 < str.length() && is_in(EXPS, str[i - 1]) && is_in(NUMBER_ELEMENTS, str[i - 2]) && is_in(NUMBER_ELEMENTS, str[i + 1])) i = str.find_first_of(OPERATORS INTERNAL_OPERATORS_RPN SPACE "\\", i + 1);
 			if(i == string::npos) {
 				if(!b) {
 					parseAdd(str, mstruct, po2);

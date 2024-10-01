@@ -32,7 +32,7 @@ m4_define([_LT_COPYING], [dnl
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ])
 
-# serial 61 LT_INIT
+# serial 62 LT_INIT
 
 
 # LT_PREREQ(VERSION)
@@ -60,7 +60,7 @@ esac
 # LT_INIT([OPTIONS])
 # ------------------
 AC_DEFUN([LT_INIT],
-[AC_PREREQ([2.62])dnl We use AC_PATH_PROGS_FEATURE_CHECK
+[AC_PREREQ([2.64])dnl We use AC_PATH_PROGS_FEATURE_CHECK
 AC_REQUIRE([AC_CONFIG_AUX_DIR_DEFAULT])dnl
 AC_BEFORE([$0], [LT_LANG])dnl
 AC_BEFORE([$0], [LT_OUTPUT])dnl
@@ -974,6 +974,7 @@ _lt_linker_boilerplate=`cat conftest.err`
 $RM -r conftest*
 ])# _LT_LINKER_BOILERPLATE
 
+
 # _LT_REQUIRED_DARWIN_CHECKS
 # -------------------------
 m4_defun_once([_LT_REQUIRED_DARWIN_CHECKS],[
@@ -1024,6 +1025,21 @@ m4_defun_once([_LT_REQUIRED_DARWIN_CHECKS],[
 	rm -f conftest.*
       fi])
 
+    # Feature test to disable chained fixups since it is not
+    # compatible with '-undefined dynamic_lookup'
+    AC_CACHE_CHECK([for -no_fixup_chains linker flag],
+      [lt_cv_support_no_fixup_chains],
+      [ save_LDFLAGS=$LDFLAGS
+        LDFLAGS="$LDFLAGS -Wl,-no_fixup_chains"
+        AC_LINK_IFELSE(
+          [AC_LANG_PROGRAM([],[])],
+          lt_cv_support_no_fixup_chains=yes,
+          lt_cv_support_no_fixup_chains=no
+        )
+        LDFLAGS=$save_LDFLAGS
+      ]
+    )
+
     AC_CACHE_CHECK([for -exported_symbols_list linker flag],
       [lt_cv_ld_exported_symbols_list],
       [lt_cv_ld_exported_symbols_list=no
@@ -1048,7 +1064,7 @@ _LT_EOF
       echo "$RANLIB libconftest.a" >&AS_MESSAGE_LOG_FD
       $RANLIB libconftest.a 2>&AS_MESSAGE_LOG_FD
       cat > conftest.c << _LT_EOF
-int main() { return 0;}
+int main(void) { return 0;}
 _LT_EOF
       echo "$LTCC $LTCFLAGS $LDFLAGS -o conftest conftest.c -Wl,-force_load,./libconftest.a" >&AS_MESSAGE_LOG_FD
       $LTCC $LTCFLAGS $LDFLAGS -o conftest conftest.c -Wl,-force_load,./libconftest.a 2>conftest.err
@@ -1073,7 +1089,11 @@ _LT_EOF
         10.[[012]],*|,*powerpc*-darwin[[5-8]]*)
           _lt_dar_allow_undefined='$wl-flat_namespace $wl-undefined ${wl}suppress' ;;
         *)
-          _lt_dar_allow_undefined='$wl-undefined ${wl}dynamic_lookup' ;;
+          _lt_dar_allow_undefined='$wl-undefined ${wl}dynamic_lookup'
+          if test yes = "$lt_cv_support_no_fixup_chains"; then
+            AS_VAR_APPEND([_lt_dar_allow_undefined], [' $wl-no_fixup_chains'])
+          fi
+        ;;
       esac
     ;;
   esac
@@ -1879,11 +1899,11 @@ else
 /* When -fvisibility=hidden is used, assume the code has been annotated
    correspondingly for the symbols needed.  */
 #if defined __GNUC__ && (((__GNUC__ == 3) && (__GNUC_MINOR__ >= 3)) || (__GNUC__ > 3))
-int fnord () __attribute__((visibility("default")));
+int fnord (void) __attribute__((visibility("default")));
 #endif
 
-int fnord () { return 42; }
-int main ()
+int fnord (void) { return 42; }
+int main (void)
 {
   void *self = dlopen (0, LT_DLGLOBAL|LT_DLLAZY_OR_NOW);
   int status = $lt_dlunknown;
@@ -2546,6 +2566,19 @@ cygwin* | mingw* | windows* | pw32* | cegcc*)
     # gcc
     library_names_spec='$libname.dll.a'
     # DLL is installed to $(libdir)/../bin by postinstall_cmds
+    # If user builds GCC with mulitlibs enabled,
+    # it should just install on $(libdir)
+    # not on $(libdir)/../bin or 32 bits dlls would override 64 bit ones.
+    if test yes = $multilib; then
+    postinstall_cmds='base_file=`basename \$file`~
+      dlpath=`$SHELL 2>&1 -c '\''. $dir/'\''\$base_file'\''i; echo \$dlname'\''`~
+      dldir=$destdir/`dirname \$dlpath`~
+      $install_prog $dir/$dlname $destdir/$dlname~
+      chmod a+x $destdir/$dlname~
+      if test -n '\''$stripme'\'' && test -n '\''$striplib'\''; then
+        eval '\''$striplib $destdir/$dlname'\'' || exit \$?;
+      fi'
+    else
     postinstall_cmds='base_file=`basename \$file`~
       dlpath=`$SHELL 2>&1 -c '\''. $dir/'\''\$base_file'\''i; echo \$dlname'\''`~
       dldir=$destdir/`dirname \$dlpath`~
@@ -2555,6 +2588,7 @@ cygwin* | mingw* | windows* | pw32* | cegcc*)
       if test -n '\''$stripme'\'' && test -n '\''$striplib'\''; then
         eval '\''$striplib \$dldir/$dlname'\'' || exit \$?;
       fi'
+    fi
     postuninstall_cmds='dldll=`$SHELL 2>&1 -c '\''. $file; echo \$dlname'\''`~
       dlpath=$dir/\$dldll~
        $RM \$dlpath'
@@ -2693,7 +2727,21 @@ freebsd* | dragonfly* | midnightbsd*)
       need_version=yes
       ;;
   esac
-  shlibpath_var=LD_LIBRARY_PATH
+  case $host_cpu in
+    powerpc64)
+      # On FreeBSD bi-arch platforms, a different variable is used for 32-bit
+      # binaries.  See <https://man.freebsd.org/cgi/man.cgi?query=ld.so>.
+      AC_COMPILE_IFELSE(
+        [AC_LANG_SOURCE(
+           [[int test_pointer_size[sizeof (void *) - 5];
+           ]])],
+        [shlibpath_var=LD_LIBRARY_PATH],
+        [shlibpath_var=LD_32_LIBRARY_PATH])
+      ;;
+    *)
+      shlibpath_var=LD_LIBRARY_PATH
+      ;;
+  esac
   case $host_os in
   freebsd2.*)
     shlibpath_overrides_runpath=yes
@@ -4060,7 +4108,7 @@ void nm_test_func(void){}
 #ifdef __cplusplus
 }
 #endif
-int main(){nm_test_var='a';nm_test_func();return(0);}
+int main(void){nm_test_var='a';nm_test_func();return(0);}
 _LT_EOF
 
   if AC_TRY_EVAL(ac_compile); then
@@ -4706,7 +4754,7 @@ m4_if([$1], [CXX], [
 	_LT_TAGVAR(lt_prog_compiler_pic, $1)='-KPIC'
 	_LT_TAGVAR(lt_prog_compiler_static, $1)='-static'
         ;;
-      *flang)
+      *flang* | ftn)
         # Flang compiler.
 	_LT_TAGVAR(lt_prog_compiler_wl, $1)='-Wl,'
 	_LT_TAGVAR(lt_prog_compiler_pic, $1)='-fPIC'
@@ -6232,7 +6280,7 @@ _LT_TAGVAR(objext, $1)=$objext
 lt_simple_compile_test_code="int some_variable = 0;"
 
 # Code to be used in simple link tests
-lt_simple_link_test_code='int main(){return(0);}'
+lt_simple_link_test_code='int main(void){return(0);}'
 
 _LT_TAG_COMPILER
 # Save the default compiler, since it gets overwritten when the other
@@ -8216,7 +8264,7 @@ AC_SUBST([DLLTOOL])
 # ----------------
 # Check for a file(cmd) program that can be used to detect file type and magic
 m4_defun([_LT_DECL_FILECMD],
-[AC_CHECK_PROG([FILECMD], [file], [:])
+[AC_CHECK_PROG([FILECMD], [file], [file], [:])
 _LT_DECL([], [FILECMD], [1], [A file(cmd) program that detects file types])
 ])# _LD_DECL_FILECMD
 

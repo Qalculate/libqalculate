@@ -3955,7 +3955,7 @@ int main(int argc, char *argv[]) {
 					b = ask_question(_("A unit or variable with the same name already exists.\nDo you want to overwrite it (default: no)?"));
 				}
 				if(b) {
-					if(v && v->isLocal() && v->isKnown() && (ask_questions || v->category() == CALCULATOR->temporaryCategory())) {
+					if(v && v->isLocal() && v->isKnown() && (ask_questions || cat != CALCULATOR->temporaryCategory() || v->category() == CALCULATOR->temporaryCategory())) {
 						if(defs_edited <= 0 && v->category() != CALCULATOR->temporaryCategory()) defs_edited = 1;
 						if(catset) v->setCategory(cat);
 						if(!title.empty()) v->setTitle(title);
@@ -4003,7 +4003,7 @@ int main(int argc, char *argv[]) {
 			bool b = true;
 			if(!CALCULATOR->variableNameIsValid(name)) {
 				name = CALCULATOR->convertToValidVariableName(name);
-				if(!CALCULATOR->variableNameIsValid(name)) {
+				if(!ask_questions || !CALCULATOR->variableNameIsValid(name)) {
 					PUTS_UNICODE(_("Illegal name."));
 					b = false;
 				} else {
@@ -7899,7 +7899,7 @@ void load_preferences() {
 #endif
 
 
-	int version_numbers[] = {5, 2, 0};
+	int version_numbers[] = {5, 3, 0};
 
 	if(file) {
 		char line[10000];

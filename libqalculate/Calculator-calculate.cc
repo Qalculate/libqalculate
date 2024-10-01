@@ -804,7 +804,7 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 				results_v.pop_back();
 			} else {
 				if(cplx_angle) replace_result_cis(results_v.back());
-				if(!b_cmp3 && dfrac > 0 && mparse && mparse->isNumber() && mresult->isNumber() && str == original_expression) {
+				if(!b_cmp3 && dfrac > 0 && mparse && mparse->isNumber() && mresult->isNumber() && evalops.parse_options.base == po.base) {
 					str = results_v.back();
 					results_v.pop_back();
 				}
@@ -894,15 +894,14 @@ bool test_parsed_comparison(const MathStructure &m) {
 bool shown_with_scientific_notation(const Number &nr, const PrintOptions &po) {
 	if(po.min_exp == EXP_NONE || po.base != 10) return false;
 	CALCULATOR->beginTemporaryStopMessages();
-	Number nr_exp(nr);
-	nr_exp.abs();
-	nr_exp.log(10);
-	nr_exp.abs();
-	nr_exp.ceil();
+	string exp;
+	InternalPrintStruct ips;
+	PrintOptions po2 = po;
+	po2.is_approximate = NULL;
+	ips.exp = &exp;
+	nr.print(po2, ips);
 	CALCULATOR->endTemporaryStopMessages();
-	if(po.min_exp == EXP_PRECISION) return nr_exp >= (nr.isFraction() ? PRECISION : PRECISION + 4);
-	if(po.min_exp < 0) return nr.isFraction() || nr_exp >= -po.min_exp;
-	return nr_exp >= po.min_exp;
+	return !exp.empty();
 }
 
 void print_dual(const MathStructure &mresult, const string &original_expression, const MathStructure &mparse, MathStructure &mexact, string &result_str, vector<string> &results_v, PrintOptions &po, const EvaluationOptions &evalops, AutomaticFractionFormat auto_frac, AutomaticApproximation auto_approx, bool cplx_angle, bool *exact_cmp, bool b_parsed, bool format, int colorize, int tagtype, int max_length, bool converted) {

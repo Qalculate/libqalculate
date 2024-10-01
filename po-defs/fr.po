@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-19 09:40+0200\n"
+"POT-Creation-Date: 2024-10-01 07:13+0200\n"
 "PO-Revision-Date: 2020-12-02 13:25+0100\n"
 "Last-Translator: Polakrity\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -6696,9 +6696,10 @@ msgid "r:nounit,strip_units"
 msgstr "r:nounit,strip_units"
 
 #: ../data/functions.xml.in.h:900
+#, fuzzy
 msgid ""
-"Removes all units from an expression. The expression is calculated before "
-"the removal."
+"Removes all units from an expression. No unit conversion or prefix changes "
+"are performed before the removal."
 msgstr ""
 "Enlève toutes les unités de l'expression. L'expression est calculée avant la "
 "suppression."
@@ -8953,7 +8954,7 @@ msgid "Nautical Mile"
 msgstr "Mille marin"
 
 #: ../data/units.xml.in.h:12
-msgid "r:nautical_mile,p:nautical_miles"
+msgid "r:nautical_mile,p:nautical_miles,a:nmi"
 msgstr ""
 
 #: ../data/units.xml.in.h:13

@@ -412,9 +412,10 @@ bool calculate_replace2(MathStructure &m, const MathStructure &mfrom1, const Mat
 	return b;
 }
 bool calculate_userfunctions2(MathStructure &m, const MathStructure &x_mstruct, const MathStructure &x_mstruct2, const EvaluationOptions &eo, size_t depth = 1) {
+	if(!check_recursive_function_depth(depth)) return false;
 	bool b_ret = false;
 	for(size_t i = 0; i < m.size(); i++) {
-		if(calculate_userfunctions2(m[i], x_mstruct, x_mstruct2, eo, depth)) {
+		if(calculate_userfunctions2(m[i], x_mstruct, x_mstruct2, eo, depth + 1)) {
 			m.childUpdated(i + 1);
 			b_ret = true;
 		}
@@ -423,7 +424,7 @@ bool calculate_userfunctions2(MathStructure &m, const MathStructure &x_mstruct, 
 		if(!m.contains(x_mstruct, true) && !m.contains(x_mstruct2, true) && !m.containsFunctionId(FUNCTION_ID_RAND, true, true, true) && !m.containsFunctionId(FUNCTION_ID_RANDN, true, true, true) && !m.containsFunctionId(FUNCTION_ID_RAND_POISSON, true, true, true)) {
 			if(m.calculateFunctions(eo, false)) {
 				b_ret = true;
-				if(check_recursive_function_depth(depth)) calculate_userfunctions2(m, x_mstruct, x_mstruct2, eo, depth + 1);
+				calculate_userfunctions2(m, x_mstruct, x_mstruct2, eo, depth + 1);
 			}
 		} else if(m.function()->subtype() == SUBTYPE_USER_FUNCTION && m.function()->condition().empty()) {
 			bool b = true;
@@ -441,7 +442,7 @@ bool calculate_userfunctions2(MathStructure &m, const MathStructure &x_mstruct, 
 				}
 			}
 			if(b && m.calculateFunctions(eo, false)) {
-				if(check_recursive_function_depth(depth)) calculate_userfunctions2(m, x_mstruct, x_mstruct2, eo, depth + 1);
+				calculate_userfunctions2(m, x_mstruct, x_mstruct2, eo, depth + 1);
 				b_ret = true;
 			}
 		}
