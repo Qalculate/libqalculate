@@ -1765,7 +1765,6 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				printops.base = BASE_OCTAL;
 			} else if(equalsIgnoreCase(to_str, "duo") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "duodecimal", _("duodecimal"))) {
 				printops.base = BASE_DUODECIMAL;
-				printops.duodecimal_symbols = false;
 			} else if(equalsIgnoreCase(to_str, "doz") || equalsIgnoreCase(to_str, "dozenal")) {
 				printops.base = BASE_DUODECIMAL;
 				printops.duodecimal_symbols = true;
@@ -2491,7 +2490,6 @@ string Calculator::parseToExpression(string to_str, EvaluationOptions &evalops, 
 			if(custom_base) custom_base->clear();
 		} else if(equalsIgnoreCase(to_str, "duo") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "duodecimal", _("duodecimal"))) {
 			printops.base = BASE_DUODECIMAL;
-			printops.duodecimal_symbols = false;
 			if(custom_base) custom_base->clear();
 		} else if(equalsIgnoreCase(to_str, "doz") || equalsIgnoreCase(to_str, "dozenal")) {
 			printops.base = BASE_DUODECIMAL;
