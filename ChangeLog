@@ -1,3 +1,7 @@
+2024-10-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not show warning for logarithmic ratio unit, with quantity, as function argument
+
 2024-09-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix inability to abort randpoisson() with very high rate value

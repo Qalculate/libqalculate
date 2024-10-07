@@ -2168,7 +2168,7 @@ bool warn_ratio_units(MathStructure &m, bool top_level = true) {
 		}
 	} else {
 		for(size_t i = 0; i < m.size(); i++) {
-			if(warn_ratio_units(m[i], false)) return true;
+			if(warn_ratio_units(m[i], m.isFunction())) return true;
 		}
 	}
 	return false;
