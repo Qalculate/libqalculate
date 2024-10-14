@@ -7003,7 +7003,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 					}
 				} else if(arg->handlesVector() && (arg->type() != ARGUMENT_TYPE_VECTOR || CHILD(i).isMatrix())) {
 					if(arg->type() == ARGUMENT_TYPE_VECTOR) {
-						CHILD(i).transposeMatrix();
+						if(!CHILD(i).transposeMatrix()) return false;
 					} else if((arg->tests() || (o_function->subtype() == SUBTYPE_USER_FUNCTION && CHILD(i).containsType(STRUCT_VECTOR, false, true, true) > 0)) && !CHILD(i).isVector() && !CHILD(i).representsScalar()) {
 						CHILD(i).eval(eo);
 					}

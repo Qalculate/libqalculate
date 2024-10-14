@@ -217,6 +217,7 @@ MathStructure &MathStructure::getArea(size_t r1, size_t c1, size_t r2, size_t c2
 	if(c2 < 1 || c2 > c) c2 = c;
 	else if(c2 < c1) c2 = c1;
 	mstruct.clearMatrix(); mstruct.resizeMatrix(r2 - r1 + 1, c2 - c1 + 1, m_undefined);
+	if(mstruct.rows() < r2 - r1 + 1 || mstruct.columns() < c2 - c1 + 1)  {mstruct = m_undefined; return mstruct;}
 	for(size_t index_r = r1; index_r <= r2; index_r++) {
 		for(size_t index_c = c1; index_c <= c2; index_c++) {
 			mstruct[index_r - r1][index_c - c1] = CHILD(index_r - 1)[index_c - 1];
@@ -271,17 +272,23 @@ void MathStructure::setElement(const MathStructure &mstruct, size_t row, size_t 
 void MathStructure::addRows(size_t r, const MathStructure &mfill) {
 	if(r == 0) return;
 	size_t cols = columns();
+	bool test_abort = (r > 1000 || cols > 1000 || (r > 100 && cols > 100));
 	for(size_t i = 0; i < r; i++) {
 		APPEND(m_zero)
 		LAST.clearVector();
-		for(size_t i2 = 0; i2 < cols; i2++) LAST.addChild(mfill);
+		for(size_t i2 = 0; i2 < cols; i2++) {
+			if(test_abort && CALCULATOR->aborted()) {setUndefined(); break;}
+			LAST.addChild(mfill);
+		}
 	}
 }
 void MathStructure::addColumns(size_t c, const MathStructure &mfill) {
 	if(c == 0) return;
+	bool test_abort = (c > 1000 || SIZE > 1000 || (c > 100 && SIZE > 100));
 	for(size_t i = 0; i < SIZE; i++) {
 		if(CHILD(i).isVector()) {
 			for(size_t i2 = 0; i2 < c; i2++) {
+				if(test_abort && CALCULATOR->aborted()) {setUndefined(); break;}
 				CHILD(i).addChild(mfill);
 			}
 		}
@@ -304,7 +311,9 @@ void MathStructure::resizeMatrix(size_t r, size_t c, const MathStructure &mfill)
 	if(c > cols) {
 		addColumns(c - cols, mfill);
 	} else if(c != cols) {
+		bool test_abort = (c > 1000 || SIZE > 1000 || (c > 100 && SIZE > 100));
 		for(size_t i = 0; i < SIZE; i++) {
+			if(test_abort && CALCULATOR->aborted()) {setUndefined(); break;}
 			CHILD(i).resizeVector(c, mfill);
 		}
 	}
@@ -603,6 +612,7 @@ MathStructure &MathStructure::determinant(MathStructure &mstruct, const Evaluati
 		MathStructure result;
 		result.clearMatrix();
 		result.resizeMatrix(SIZE, CHILD(0).size(), m_zero);
+		if(result.rows() < SIZE || result.columns() < CHILD(0).size()) {mstruct = m_undefined; return mstruct;}
 
 		size_t c = 0;
 		for(std::vector<size_t>::const_iterator i = pre_sort.begin(); i != pre_sort.end(); ++i,++c) {
@@ -653,6 +663,7 @@ MathStructure &MathStructure::permanent(MathStructure &mstruct, const Evaluation
 		MathStructure mtrx;
 		mtrx.clearMatrix();
 		mtrx.resizeMatrix(SIZE - 1, CHILD(0).size() - 1, m_undefined);
+		if(mtrx.rows() < SIZE - 1 || mtrx.columns() < CHILD(0).size() - 1) {mstruct = m_undefined; return mstruct;}
 		for(size_t index_c = 0; index_c < CHILD(0).size(); index_c++) {
 			for(size_t index_r2 = 1; index_r2 < SIZE; index_r2++) {
 				for(size_t index_c2 = 0; index_c2 < CHILD(index_r2).size(); index_c2++) {
@@ -665,6 +676,7 @@ MathStructure &MathStructure::permanent(MathStructure &mstruct, const Evaluation
 			}
 			MathStructure mdet;
 			mtrx.permanent(mdet, eo);
+			if(mdet.isUndefined()) {mstruct = m_undefined; return mstruct;}
 			if(IS_REAL(mdet) && IS_REAL(CHILD(0)[index_c])) {
 				mdet.number() *= CHILD(0)[index_c].number();
 			} else {
@@ -682,6 +694,7 @@ MathStructure &MathStructure::permanent(MathStructure &mstruct, const Evaluation
 void MathStructure::setToIdentityMatrix(size_t n) {
 	clearMatrix();
 	resizeMatrix(n, n, m_zero);
+	if(rows() < n || columns() < n) {setUndefined(); return;}
 	for(size_t i = 0; i < n; i++) {
 		CHILD(i)[i] = m_one;
 	}
@@ -766,8 +779,9 @@ bool MathStructure::invertMatrix(const EvaluationOptions &eo) {
 	} else {
 		MathStructure *mstruct = new MathStructure();
 		determinant(*mstruct, eo);
+		if(mstruct->isUndefined()) return false;
 		mstruct->calculateInverse(eo);
-		adjointMatrix(eo);
+		if(!adjointMatrix(eo)) return false;
 		multiply_nocopy(mstruct, true);
 		calculateMultiplyLast(eo);
 	}
@@ -784,7 +798,7 @@ bool MathStructure::adjointMatrix(const EvaluationOptions &eo) {
 			msave.cofactor(index_r + 1, index_c + 1, CHILD(index_r)[index_c], eo);
 		}
 	}
-	transposeMatrix();
+	if(!transposeMatrix()) return false;
 	return true;
 }
 bool MathStructure::transposeMatrix() {
@@ -796,9 +810,9 @@ bool MathStructure::transposeMatrix() {
 	}
 	MathStructure msave(*this);
 	resizeMatrix(CHILD(0).size(), SIZE, m_undefined);
+	if(rows() < msave[0].size() || columns() < msave.size()) {set(msave); return false;}
 	for(size_t index_r = 0; index_r < SIZE; index_r++) {
 		for(size_t index_c = 0; index_c < CHILD(0).size(); index_c++) {
-			if(CALCULATOR->aborted()) return false;
 			CHILD(index_r)[index_c] = msave[index_c][index_r];
 		}
 	}
@@ -814,6 +828,7 @@ MathStructure &MathStructure::cofactor(size_t r, size_t c, MathStructure &mstruc
 	r--; c--;
 	mstruct.clearMatrix();
 	mstruct.resizeMatrix(SIZE - 1, CHILD(0).size() - 1, m_undefined);
+	if(mstruct.rows() < SIZE - 1 || mstruct.columns() < CHILD(0).size() - 1) {mstruct = m_undefined; return mstruct;}
 	for(size_t index_r = 0; index_r < SIZE; index_r++) {
 		if(index_r != r) {
 			for(size_t index_c = 0; index_c < CHILD(0).size(); index_c++) {

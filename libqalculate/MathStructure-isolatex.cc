@@ -6178,9 +6178,13 @@ bool replace_if_with_and(MathStructure &m, MathStructure *m_top = NULL, size_t i
 			m_top->swapChildren(1, 2);
 		} else {
 			if(m[0].isVector() || (m[0].isFunction() && (m[0].function()->id() == FUNCTION_ID_HORZCAT || m[0].function()->id() == FUNCTION_ID_VERTCAT))) {
-				if(m[0].isMatrix() && m[0].columns() == 1 && m[0].rows() > 1) m[0].transposeMatrix();
+				if(m[0].isMatrix() && m[0].columns() == 1 && m[0].rows() > 1) {
+					if(!m[0].transposeMatrix()) return false;
+				}
 				if(m[0].isFunction()) m[0].setType(STRUCT_VECTOR);
-				if(m[1].isMatrix() && m[1].columns() == 1 && m[1].rows() > 1) m[1].transposeMatrix();
+				if(m[1].isMatrix() && m[1].columns() == 1 && m[1].rows() > 1) {
+					if(!m[1].transposeMatrix()) return false;
+				}
 				if(m[1].isFunction() && (m[1].function()->id() == FUNCTION_ID_HORZCAT || m[1].function()->id() == FUNCTION_ID_VERTCAT)) m[1].setType(STRUCT_VECTOR);
 				MathStructure m_or;
 				m_or.setType(STRUCT_LOGICAL_OR);

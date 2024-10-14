@@ -3229,6 +3229,7 @@ bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int fi
 						headers->push_back(str1);
 					}
 					mstruct.resizeMatrix(1, columns, m_undefined);
+					if(mstruct.rows() < 1 || mstruct.columns() < (size_t) columns) return false;
 				}
 			}
 			if((!headers || row > first_row) && !stmp.empty()) {
@@ -3321,6 +3322,7 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
 					}
 					if(to_matrix) {
 						mstruct.resizeMatrix(1, columns, m_undefined);
+						if(mstruct.rows() < 1 || mstruct.columns() < (size_t) columns) return false;
 					} else {
 						vectors.push_back(m_empty_vector);
 					}

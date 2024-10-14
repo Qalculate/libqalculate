@@ -1302,7 +1302,9 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		eo2.expand = eo.expand;
 	}
 	if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_HORZCAT || mstruct.function()->id() == FUNCTION_ID_VERTCAT)) mstruct.setType(STRUCT_VECTOR);
-	if(mstruct.isMatrix() && mstruct.columns() == 1 && mstruct.rows() > 1) mstruct.transposeMatrix();
+	if(mstruct.isMatrix() && mstruct.columns() == 1 && mstruct.rows() > 1) {
+		if(!mstruct.transposeMatrix()) return 0;
+	}
 	CALCULATOR->endTemporaryStopIntervalArithmetic();
 	vector<MathStructure> x_vectors, y_vectors;
 	vector<PlotDataParameters*> dpds;

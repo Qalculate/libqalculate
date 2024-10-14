@@ -81,6 +81,7 @@ int RankFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		size_t rows = vargs[0].size(), cols = vargs[0][0].size();
 		for(size_t i = 0; i < rows; i++) {
 			for(size_t i2 = 0; i2 < cols; i2++) {
+				if(CALCULATOR->aborted()) return 0;
 				mvector.addChild(vargs[0][i][i2]);
 			}
 		}
@@ -89,6 +90,7 @@ int RankFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		mstruct.resizeMatrix(rows, cols, m_zero);
 		if(mstruct.rows() < rows || mstruct.columns() < cols) return 0;
 		for(size_t i = 0; i < mvector.size(); i++) {
+			if(CALCULATOR->aborted()) return 0;
 			mstruct[i / cols][i % cols] = mvector[i];
 		}
 		return 1;
@@ -405,6 +407,7 @@ AreaFunction::AreaFunction() : MathFunction("area", 5) {
 }
 int AreaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	vargs[0].getArea(vargs[1].number().uintValue(), vargs[2].number().uintValue(), vargs[3].number().uintValue(), vargs[4].number().uintValue(), mstruct);
+	if(vargs[0].isUndefined()) return 0;
 	return 1;
 }
 TransposeFunction::TransposeFunction() : MathFunction("transpose", 1) {
@@ -434,6 +437,7 @@ int IdentityMatrixFunction::calculate(MathStructure &mstruct, const MathStructur
 	} else {
 		mstruct.setToIdentityMatrix((size_t) vargs[0].number().uintValue());
 	}
+	if(mstruct.isUndefined()) return 0;
 	return 1;
 }
 DeterminantFunction::DeterminantFunction() : MathFunction("det", 1) {
@@ -1347,6 +1351,7 @@ int KroneckerProductFunction::calculate(MathStructure &mstruct, const MathStruct
 		for(size_t ca = 0; ca < c1; ca++) {
 			for(size_t rb = 0; rb < r2; rb++) {
 				for(size_t cb = 0; cb < c2; cb++) {
+					if(CALCULATOR->aborted()) return 0;
 					r = ra * r2 + rb;
 					c = ca * c2 + cb;
 					mstruct[r][c] = vargs[0][ra][ca];

@@ -2264,7 +2264,7 @@ bool VectorArgument::subtest(MathStructure &value, const EvaluationOptions &eo) 
 		else return false;
 	}
 	if(value.isMatrix() && value.columns() == 1 && value.rows() > 1) {
-		value.transposeMatrix();
+		if(!value.transposeMatrix()) return false;
 	}
 	if(b_argloop && subargs.size() > 0) {
 		for(size_t i = 0; i < value.countChildren(); i++) {

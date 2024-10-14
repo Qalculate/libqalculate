@@ -345,7 +345,9 @@ int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	}
 	mstruct = vargs[0];
 	if(mstruct.isVector() || (mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_HORZCAT || mstruct.function()->id() == FUNCTION_ID_VERTCAT))) {
-		if(mstruct.isMatrix() && mstruct.columns() == 1 && mstruct.rows() > 1) mstruct.transposeMatrix();
+		if(mstruct.isMatrix() && mstruct.columns() == 1 && mstruct.rows() > 1) {
+			if(!mstruct.transposeMatrix()) return 0;
+		}
 		for(size_t i = 0; i < mstruct.size(); i++) {
 			mstruct[i].eval(eo);
 			if(!mstruct[i].isNumber() && vargs[3].isZero()) {
@@ -354,7 +356,9 @@ int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 			int result = mstruct[i].number().getBoolean();
 			if(result > 0) {
 				MathStructure m2(vargs[1]);
-				if(m2.isMatrix() && m2.columns() == 1 && m2.rows() > 1) m2.transposeMatrix();
+				if(m2.isMatrix() && m2.columns() == 1 && m2.rows() > 1) {
+					if(!m2.transposeMatrix()) return 0;
+				}
 				if(!m2.isVector() && (!m2.isFunction() || (m2.function()->id() != FUNCTION_ID_HORZCAT && m2.function()->id() != FUNCTION_ID_VERTCAT)) && !m2.representsScalar()) m2.eval(eo);
 				if((m2.isVector() || (m2.isFunction() && (m2.function()->id() == FUNCTION_ID_HORZCAT || m2.function()->id() == FUNCTION_ID_VERTCAT))) && m2.size() > 0) {
 					if(i >= m2.size()) mstruct = m2[i % m2.size()];
