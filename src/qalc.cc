@@ -82,6 +82,7 @@ bool hide_parse_errors = false;
 ParsingMode nonrpn_parsing_mode = PARSING_MODE_ADAPTIVE, saved_parsing_mode;
 int saved_percent;
 bool rpn_mode = false, saved_rpn_mode = false;
+bool autocalc = false, saved_autocalc = false;
 bool caret_as_xor = false, saved_caret_as_xor = false;
 string custom_angle_unit, saved_custom_angle_unit;
 bool use_readline = true;
@@ -117,8 +118,8 @@ vector<OptionNames> option_list;
 
 static char buffer[100000];
 
-void setResult(Prefix *prefix = NULL, bool update_parse = false, bool goto_input = true, size_t stack_index = 0, bool register_moved = false, bool noprint = false);
-void execute_expression(bool goto_input = true, bool do_mathoperation = false, MathOperation op = OPERATION_ADD, MathFunction *f = NULL, bool do_stack = false, size_t stack_index = 0, bool check_exrates = true);
+void setResult(Prefix *prefix = NULL, bool update_parse = false, bool goto_input = true, size_t stack_index = 0, bool register_moved = false, bool noprint = false, bool auto_calculate = false);
+void execute_expression(bool goto_input = true, bool do_mathoperation = false, MathOperation op = OPERATION_ADD, MathFunction *f = NULL, bool do_stack = false, size_t stack_index = 0, bool check_exrates = true, bool auto_calculate = false);
 void execute_command(int command_type, bool show_result = true);
 void load_preferences();
 void save_history();
@@ -170,6 +171,22 @@ bool contains_unicode_char(const char *str) {
 	return false;
 }
 
+size_t unformatted_length(const string &str) {
+	size_t l = 0;
+	bool inform = false;
+	for(size_t i = 0; i < str.length(); i++) {
+		if(!inform && str[i] == '\033') {
+			inform = true;
+		} else if(!inform && ((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0)) {
+			l++;
+		} else if(inform && str[i] == 'm') {
+			inform = false;
+		}
+
+	}
+	return l;
+}
+
 #ifdef _WIN32
 LPWSTR utf8wchar(const char *str) {
 	size_t len = strlen(str) + 1;
@@ -184,6 +201,49 @@ LPWSTR utf8wchar(const char *str) {
 #	define PUTS_UNICODE(x)		if(printops.use_unicode_signs || !contains_unicode_char(x)) {puts(x);} else {char *gstr = locale_from_utf8(x); if(gstr) {puts(gstr); free(gstr);} else {puts(x);}}
 #	define FPUTS_UNICODE(x, y)	if(printops.use_unicode_signs || !contains_unicode_char(x)) {fputs(x, y);} else {char *gstr = locale_from_utf8(x); if(gstr) {fputs(gstr, y); free(gstr);} else {fputs(x, y);}}
 #endif
+
+#define ADD_TO_COMMANDS(x, y) command_list.push_back(x); command_arg.push_back(y); command_list.push_back(_(x)); command_arg.push_back(y);
+void update_command_list() {
+	if(command_list.empty()) {
+		ADD_TO_COMMANDS("exrates", 0);
+		ADD_TO_COMMANDS("stack", 0);
+		ADD_TO_COMMANDS("exact", 0);
+		ADD_TO_COMMANDS("approximate", 0);
+		ADD_TO_COMMANDS("approx", 0);
+		ADD_TO_COMMANDS("factor", 0);
+		ADD_TO_COMMANDS("simplify", 0);
+		ADD_TO_COMMANDS("expand", 0);
+		ADD_TO_COMMANDS("mode", 0);
+		ADD_TO_COMMANDS("exit", 0);
+		ADD_TO_COMMANDS("quit", 0);
+		ADD_TO_COMMANDS("history", 0);
+
+		ADD_TO_COMMANDS("set", 1);
+		ADD_TO_COMMANDS("save", 1);
+		ADD_TO_COMMANDS("variable", 1);
+		ADD_TO_COMMANDS("function", 1);
+		ADD_TO_COMMANDS("delete", 1);
+		ADD_TO_COMMANDS("keep", 1);
+		ADD_TO_COMMANDS("unkeep", 1);
+		ADD_TO_COMMANDS("assume", 1);
+		ADD_TO_COMMANDS("base", 1);
+		ADD_TO_COMMANDS("rpn", 1);
+		ADD_TO_COMMANDS("move", 1);
+		ADD_TO_COMMANDS("convert", 1);
+		ADD_TO_COMMANDS("to", 1);
+		ADD_TO_COMMANDS("find", 1);
+		ADD_TO_COMMANDS("info", 1);
+
+		ADD_TO_COMMANDS("store", -1);
+		ADD_TO_COMMANDS("clear", -1);
+		ADD_TO_COMMANDS("swap", -1);
+		ADD_TO_COMMANDS("copy", -1);
+		ADD_TO_COMMANDS("rotate", -1);
+		ADD_TO_COMMANDS("pop", -1);
+		ADD_TO_COMMANDS("list", -1);
+		ADD_TO_COMMANDS("help", -1);
+	}
+}
 
 void update_message_print_options() {
 	PrintOptions message_printoptions = printops;
@@ -467,7 +527,13 @@ char *qalc_completion(const char *text, int index) {
 
 int enable_unicode = -1;
 
+bool result_autocalculated = false;
+int autocalc_lines = 1;
+
 void handle_exit() {
+	if(result_autocalculated) {
+		printf("\n\n\e[2K\e[2A");
+	}
 	CALCULATOR->abort();
 	if(enable_unicode >= 0) {
 		printops.use_unicode_signs = !enable_unicode;
@@ -998,6 +1064,7 @@ void set_option(string str) {
 			expression_format_updated(false);
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn", _("rpn")) && svalue.find(" ") == string::npos) {SET_BOOL(rpn_mode) if(!rpn_mode) CALCULATOR->clearRPNStack();}
+	else if(svar == "autocalc" || EQUALS_IGNORECASE_AND_LOCAL(svar, "calculate as you type", _("calculate as you type"))) SET_BOOL(autocalc)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "simplified percentage", _("simplified percentage")) || svar == "percent") SET_BOOL_PT(simplified_percentage)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "short multiplication", _("short multiplication")) || svar == "shortmul") SET_BOOL_D(printops.short_multiplication)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "lowercase e", _("lowercase e")) || svar == "lowe") {
@@ -1701,6 +1768,7 @@ void set_option(string str) {
 			ADD_OPTION_TO_LIST("rounding", "round")
 			ADD_OPTION_TO_LIST("rpn syntax", "rpnsyn")
 			ADD_OPTION_TO_LIST1("rpn")
+			ADD_OPTION_TO_LIST("calculate as you type", "autocalc")
 			ADD_OPTION_TO_LIST("simplified percentage", "percent")
 			ADD_OPTION_TO_LIST("short multiplication", "shortmul")
 			ADD_OPTION_TO_LIST("lowercase e", "lowe")
@@ -2158,6 +2226,7 @@ bool show_set_help(string set_option = "") {
 
 	CHECK_IF_SCREEN_FILLED_HEADING_S(_("Other"));
 
+	STR_AND_TABS_BOOL("calculate as you type", "autocalc", _("Activates continuous calculation of the currently edited expression."), autocalc);
 	STR_AND_TABS_YESNO("clear history", "", _("Do not save expression history on exit."), clear_history_on_exit);
 	STR_AND_TABS_YESNO("ignore locale", "", _("Ignore system language and use English (requires restart)."), ignore_locale);
 	STR_AND_TABS_BOOL("rpn", "", _("Activates the Reverse Polish Notation stack."), rpn_mode);
@@ -2636,6 +2705,65 @@ bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t 
 	}
 	return l >= minlength;
 }
+
+#ifdef HAVE_LIBREADLINE
+string autocalc_expression, autocalc_result, prev_autocalc_result;
+int event_callback() {
+	if(autocalc && !rpn_mode && !unittest && autocalc_expression != rl_line_buffer) {
+		string str = rl_line_buffer;
+		remove_blank_ends(str);
+		if(!str.empty()) {
+			update_command_list();
+			if(str[0] == '/' || str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS) == string::npos || str.find_first_not_of(OPERATORS PARENTHESISS SPACES) == string::npos) str = "";
+			for(size_t i = 0; !str.empty() && i < command_list.size(); i++) {
+				if(str.rfind(command_list[i], command_list[i].length() - 1) == 0) str = "";
+			}
+			if(!str.empty() && ((size_t) rl_point != strlen(rl_line_buffer) || strlen(rl_line_buffer) != autocalc_expression.length() + 1 || is_not_in(OPERATORS RIGHT_PARENTHESIS, str[str.length() - 1]) || str[str.length() - 1] == '!')) {
+				expression_str = str;
+				execute_expression(true, false, OPERATION_ADD, NULL, false, 0, false, true);
+				if(!result_autocalculated || prev_autocalc_result != autocalc_result) {
+					if(result_autocalculated) {
+						for(int i = 0; i < autocalc_lines; i++) {
+							puts("");
+							printf("\e[2K");
+						}
+						printf("\e[%iA\e[%iC", autocalc_lines, rl_point + 2);
+					}
+					result_autocalculated = true;
+					autocalc_lines = 1;
+					if(vertical_space) autocalc_lines++;
+					size_t i = 0;
+					while(true) {
+						i = autocalc_result.find("\n", i);
+						if(i == string::npos) break;
+						i++;
+						autocalc_lines++;
+					}
+					puts("");
+					if(vertical_space) puts("");
+					PUTS_UNICODE(autocalc_result.c_str());
+					printf("\e[%iA\e[%iC", autocalc_lines + 1, (int) unicode_length(rl_line_buffer, rl_point) + 2);
+					fflush(stdout);
+					prev_autocalc_result = autocalc_result;
+				}
+			}
+		}
+		if(str.empty() && result_autocalculated) {
+			if(result_autocalculated) {
+				for(int i = 0; i < autocalc_lines; i++) {
+					puts("");
+					printf("\e[2K");
+				}
+				printf("\e[%iA\e[%iC", autocalc_lines, (int) unicode_length(rl_line_buffer, rl_point) + 2);
+			}
+			fflush(stdout);
+			prev_autocalc_result = "";
+		}
+		autocalc_expression = rl_line_buffer;
+	}
+	return 0;
+}
+#endif
 
 int key_clear(int, int) {
 #ifdef _WIN32
@@ -3762,6 +3890,7 @@ int main(int argc, char *argv[]) {
 		rl_bind_keyseq("\\C-f", key_fraction);
 		rl_bind_keyseq("\\C-a", key_save);
 		rl_bind_keyseq("\\C-l", key_clear);
+		rl_event_hook = &event_callback;
 	}
 #endif
 
@@ -3820,6 +3949,7 @@ int main(int argc, char *argv[]) {
 #ifdef HAVE_LIBREADLINE
 			rlbuffer = readline("> ");
 			if(rlbuffer == NULL) break;
+			result_autocalculated = false;
 			if(!printops.use_unicode_signs && contains_unicode_char(rlbuffer)) {
 				char *gstr = locale_to_utf8(rlbuffer);
 				if(gstr) {
@@ -5257,6 +5387,7 @@ int main(int argc, char *argv[]) {
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Other"));
 
+			PRINT_AND_COLON_TABS(_("calculate as you type"), "autocalc"); str += b2yn(autocalc, false);
 			PRINT_AND_COLON_TABS(_("clear history"), ""); str += b2yn(clear_history_on_exit, false);
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("ignore locale"), ""); str += b2yn(ignore_locale, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
@@ -5707,46 +5838,7 @@ int main(int argc, char *argv[]) {
 				}
 			} else if(explicit_command) {
 				PUTS_UNICODE(_("Unknown command."));
-#define ADD_TO_COMMANDS(x, y) command_list.push_back(x); command_arg.push_back(y); command_list.push_back(_(x)); command_arg.push_back(y);
-				if(command_list.empty()) {
-					ADD_TO_COMMANDS("exrates", 0);
-					ADD_TO_COMMANDS("stack", 0);
-					ADD_TO_COMMANDS("exact", 0);
-					ADD_TO_COMMANDS("approximate", 0);
-					ADD_TO_COMMANDS("approx", 0);
-					ADD_TO_COMMANDS("factor", 0);
-					ADD_TO_COMMANDS("simplify", 0);
-					ADD_TO_COMMANDS("expand", 0);
-					ADD_TO_COMMANDS("mode", 0);
-					ADD_TO_COMMANDS("exit", 0);
-					ADD_TO_COMMANDS("quit", 0);
-					ADD_TO_COMMANDS("history", 0);
-
-					ADD_TO_COMMANDS("set", 1);
-					ADD_TO_COMMANDS("save", 1);
-					ADD_TO_COMMANDS("variable", 1);
-					ADD_TO_COMMANDS("function", 1);
-					ADD_TO_COMMANDS("delete", 1);
-					ADD_TO_COMMANDS("keep", 1);
-					ADD_TO_COMMANDS("unkeep", 1);
-					ADD_TO_COMMANDS("assume", 1);
-					ADD_TO_COMMANDS("base", 1);
-					ADD_TO_COMMANDS("rpn", 1);
-					ADD_TO_COMMANDS("move", 1);
-					ADD_TO_COMMANDS("convert", 1);
-					ADD_TO_COMMANDS("to", 1);
-					ADD_TO_COMMANDS("find", 1);
-					ADD_TO_COMMANDS("info", 1);
-
-					ADD_TO_COMMANDS("store", -1);
-					ADD_TO_COMMANDS("clear", -1);
-					ADD_TO_COMMANDS("swap", -1);
-					ADD_TO_COMMANDS("copy", -1);
-					ADD_TO_COMMANDS("rotate", -1);
-					ADD_TO_COMMANDS("pop", -1);
-					ADD_TO_COMMANDS("list", -1);
-					ADD_TO_COMMANDS("help", -1);
-				}
+				update_command_list();
 				bool b = false;
 				for(int n = 1; n <= 2 && !b; n++) {
 					for(size_t i = 0; i < command_list.size(); i++) {
@@ -6065,7 +6157,7 @@ int intervals_are_relative(MathStructure &m) {
 
 int save_base = 10;
 
-void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_index, bool register_moved, bool noprint) {
+void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_index, bool register_moved, bool noprint, bool auto_calculate) {
 
 	if(i_maxtime < 0) return;
 
@@ -6210,7 +6302,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 	b_busy = true;
 
 	if(has_printed) printf("\n");
-	if(goto_input && vertical_space) printf("\n");
+	if(!auto_calculate && goto_input && vertical_space) printf("\n");
 
 	if(register_moved) {
 		update_parse = true;
@@ -6228,8 +6320,19 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 #endif
 	}
 
+	bool autocalc_error = false, autocalc_warning = false, autocalc_info = false;
+
 	bool implicit_warning = false;
-	if(!result_only) display_errors(goto_input, cols, ask_questions && evalops.parse_options.parsing_mode <= PARSING_MODE_CONVENTIONAL && update_parse && stack_index == 0 && !noprint ? &implicit_warning : NULL);
+	if(auto_calculate) {
+		while(CALCULATOR->message()) {
+			if(CALCULATOR->message()->type() == MESSAGE_ERROR) autocalc_error = true;
+			else if(CALCULATOR->message()->type() == MESSAGE_WARNING) autocalc_warning = true;
+			else autocalc_info = true;
+			CALCULATOR->nextMessage();
+		}
+	} else if(!result_only) {
+		display_errors(goto_input, cols, ask_questions && evalops.parse_options.parsing_mode <= PARSING_MODE_CONVENTIONAL && update_parse && stack_index == 0 && !noprint ? &implicit_warning : NULL);
+	}
 
 	if(implicit_warning && ask_implicit()) {
 		b_busy = false;
@@ -6281,111 +6384,155 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 				if(b_comparison && !(b_comparison & 1)) strout += RIGHT_PARENTHESIS;
 			}
 		}
-		if(!exact_comparison && (b_comparison & 1)) exact_comparison = (update_parse || !prev_approximate) && !(*printops.is_approximate) && !mstruct->isApproximate();
+
 		bool b_matrix = mstruct->isMatrix() && DO_FORMAT && result_text.find('\n') != string::npos;
-		if(!result_only && b_matrix && goto_input) addLineBreaks(strout, cols, true, 2);
-		for(size_t i = 0; i < alt_results.size(); i++) {
-			if(i != 0) add_equals(strout, true);
-			else if(!result_only) add_equals(strout, update_parse || !prev_approximate, &i_result_u, &i_result);
-			if(b_comparison & 4) strout += LEFT_PARENTHESIS;
-			strout += alt_results[i];
-			if(b_comparison & 4) strout += RIGHT_PARENTHESIS;
-		}
-		if(!alt_results.empty()) {
-			if(b_matrix) {
-				if(!printops.use_unicode_signs && strout.find(_("approx."), i_result) == i_result) i_result += strlen(_("approx.")) + 1;
-				if(!result_only) {
-					strout[i_result - 1] = '\n';
-					strout.insert(i_result, 1, '\n');
-				}
-				strout += "\n\n";
-				i_result_u = 0;
-			} else if(!result_only && ((b_comparison & 1) || (goto_input && cols > 0 && i_result_u > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols))) {
-				if(!printops.use_unicode_signs && strout.find(_("approx."), i_result) == i_result) i_result += strlen(_("approx.")) + 1;
-				strout[i_result - 1] = '\n';
-				if(goto_input) {
-					strout.insert(i_result, "  ");
-					i_result_u = 2;
-				} else {
-					i_result_u = 0;
-				}
-			}
-			add_equals(strout, !(*printops.is_approximate) && !mstruct->isApproximate(), &i_result_u2, &i_result2, !b_matrix);
-			if(b_matrix && result_only) strout += "\n\n";
-		} else if(!result_only) {
-			if(exact_comparison) {i_result_u = unicode_length_check(strout.c_str()); i_result = strout.length();}
-			else add_equals(strout, (update_parse || !prev_approximate) && (exact_comparison || (!(*printops.is_approximate) && !mstruct->isApproximate())), &i_result_u, &i_result);
-			i_result_u2 = i_result_u;
-			i_result2 = i_result;
-		}
-		if(b_comparison & 4) strout += LEFT_PARENTHESIS;
-		strout += result_text;
-		if(b_comparison & 4) strout += RIGHT_PARENTHESIS;
-		if(!result_only && save_base == printops.base && (interactive_mode || saved_printops.base == printops.base)) {
-			if((printops.base <= 36 && printops.base >= 2 && printops.base != BASE_DECIMAL && printops.base != BASE_HEXADECIMAL && printops.base != BASE_OCTAL && printops.base != BASE_BINARY) || printops.base == BASE_CUSTOM || (printops.base <= BASE_GOLDEN_RATIO && printops.base >= BASE_SQRT2)) {
-				BEGIN_ITALIC(strout)
-				strout += " (";
-				//number base
-				strout += _("base: ");
-				switch(printops.base) {
-					case BASE_GOLDEN_RATIO: {strout += "golden"; break;}
-					case BASE_SUPER_GOLDEN_RATIO: {strout += "supergolden"; break;}
-					case BASE_E: {strout += "e"; break;}
-					case BASE_PI: {strout += "pi"; break;}
-					case BASE_SQRT2: {strout += "sqrt(2)"; break;}
-					case BASE_CUSTOM: {strout += CALCULATOR->customOutputBase().print(CALCULATOR->messagePrintOptions()); break;}
-					default: {strout += i2s(printops.base);}
-				}
-				strout += ")";
-				END_ITALIC(strout)
+
+		bool show_result = true;
+		if(auto_calculate && mstruct->countTotalChildren(false) >= 10) {
+			show_result = !autocalc_error && unformatted_length(result_text) < (size_t) cols && (!b_matrix || mstruct->rows() <= 3);
+			for(size_t i = 0; show_result && i < alt_results.size(); i++) {
+				if(unformatted_length(alt_results[i]) >= (size_t) cols) show_result = false;
 			}
 		}
-		if(goto_input || b_matrix || (b_comparison & 1)) {
-			if(!result_only) {
+
+		if(show_result) {
+			if(!exact_comparison && (b_comparison & 1)) exact_comparison = (update_parse || !prev_approximate) && !(*printops.is_approximate) && !mstruct->isApproximate();
+			if(!result_only && b_matrix && goto_input) addLineBreaks(strout, cols, true, 2);
+			for(size_t i = 0; i < alt_results.size(); i++) {
+				if(i != 0) add_equals(strout, true);
+				else if(!result_only) add_equals(strout, update_parse || !prev_approximate, &i_result_u, &i_result);
+				if(b_comparison & 4) strout += LEFT_PARENTHESIS;
+				strout += alt_results[i];
+				if(b_comparison & 4) strout += RIGHT_PARENTHESIS;
+			}
+			if(!alt_results.empty()) {
 				if(b_matrix) {
-					if(!printops.use_unicode_signs && strout.find(_("approx."), i_result2) == i_result2) i_result2 += strlen(_("approx.")) + 1;
-					strout[i_result2 - 1] = '\n';
-					strout.insert(i_result2, 1, '\n');
-					gsub("\n\n", "\n\n  ", strout);
-				} else if(!goto_input && (b_comparison & 1)) {
-					if(exact_comparison) strout.insert(i_result2, 1, '\n');
-					else strout[i_result2 - 1] = '\n';
-				} else if(i_result_u == 2 && i_result_u != i_result_u2) {
-					if(!printops.use_unicode_signs && strout.find(_("approx."), i_result2) == i_result2) i_result2 += strlen(_("approx.")) + 1;
-					strout[i_result2 - 1] = '\n';
-					strout.insert(i_result2, "  ");
-				} else if((b_comparison & 1) || (cols > 0 && i_result_u2 > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols)) {
-					if(!printops.use_unicode_signs && strout.find(_("approx."), i_result) == i_result) {
-						i_result += strlen(_("approx.")) + 1;
+					if(!printops.use_unicode_signs && strout.find(_("approx."), i_result) == i_result) i_result += strlen(_("approx.")) + 1;
+					if(!result_only) {
+						strout[i_result - 1] = '\n';
+						strout.insert(i_result, 1, '\n');
 					}
-					if(!printops.use_unicode_signs && strout.find(_("approx."), i_result2) == i_result2) {
-						i_result2 += strlen(_("approx.")) + 1;
+					strout += "\n\n";
+					i_result_u = 0;
+				} else if(!result_only && ((b_comparison & 1) || (goto_input && cols > 0 && i_result_u > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols))) {
+					if(!printops.use_unicode_signs && strout.find(_("approx."), i_result) == i_result) i_result += strlen(_("approx.")) + 1;
+					strout[i_result - 1] = '\n';
+					if(goto_input) {
+						strout.insert(i_result, "  ");
+						i_result_u = 2;
+					} else {
+						i_result_u = 0;
 					}
-					if(i_result != i_result2) {
+				}
+				add_equals(strout, !(*printops.is_approximate) && !mstruct->isApproximate(), &i_result_u2, &i_result2, !b_matrix);
+				if(b_matrix && result_only) strout += "\n\n";
+			} else if(!result_only) {
+				if(exact_comparison) {i_result_u = unicode_length_check(strout.c_str()); i_result = strout.length();}
+				else add_equals(strout, (update_parse || !prev_approximate) && (exact_comparison || (!(*printops.is_approximate) && !mstruct->isApproximate())), &i_result_u, &i_result);
+				i_result_u2 = i_result_u;
+				i_result2 = i_result;
+			}
+			if(b_comparison & 4) strout += LEFT_PARENTHESIS;
+			strout += result_text;
+			if(b_comparison & 4) strout += RIGHT_PARENTHESIS;
+			if(!result_only && save_base == printops.base && (interactive_mode || saved_printops.base == printops.base)) {
+				if((printops.base <= 36 && printops.base >= 2 && printops.base != BASE_DECIMAL && printops.base != BASE_HEXADECIMAL && printops.base != BASE_OCTAL && printops.base != BASE_BINARY) || printops.base == BASE_CUSTOM || (printops.base <= BASE_GOLDEN_RATIO && printops.base >= BASE_SQRT2)) {
+					BEGIN_ITALIC(strout)
+					strout += " (";
+					//number base
+					strout += _("base: ");
+					switch(printops.base) {
+						case BASE_GOLDEN_RATIO: {strout += "golden"; break;}
+						case BASE_SUPER_GOLDEN_RATIO: {strout += "supergolden"; break;}
+						case BASE_E: {strout += "e"; break;}
+						case BASE_PI: {strout += "pi"; break;}
+						case BASE_SQRT2: {strout += "sqrt(2)"; break;}
+						case BASE_CUSTOM: {strout += CALCULATOR->customOutputBase().print(CALCULATOR->messagePrintOptions()); break;}
+						default: {strout += i2s(printops.base);}
+					}
+					strout += ")";
+					END_ITALIC(strout)
+				}
+			}
+			if(goto_input || b_matrix || (b_comparison & 1)) {
+				if(!result_only) {
+					if(b_matrix) {
+						if(!printops.use_unicode_signs && strout.find(_("approx."), i_result2) == i_result2) i_result2 += strlen(_("approx.")) + 1;
+						strout[i_result2 - 1] = '\n';
+						strout.insert(i_result2, 1, '\n');
+						gsub("\n\n", "\n\n  ", strout);
+					} else if(!goto_input && (b_comparison & 1)) {
+						if(exact_comparison) strout.insert(i_result2, 1, '\n');
+						else strout[i_result2 - 1] = '\n';
+					} else if(i_result_u == 2 && i_result_u != i_result_u2) {
+						if(!printops.use_unicode_signs && strout.find(_("approx."), i_result2) == i_result2) i_result2 += strlen(_("approx.")) + 1;
 						strout[i_result2 - 1] = '\n';
 						strout.insert(i_result2, "  ");
+					} else if((b_comparison & 1) || (cols > 0 && i_result_u2 > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols)) {
+						if(!printops.use_unicode_signs && strout.find(_("approx."), i_result) == i_result) {
+							i_result += strlen(_("approx.")) + 1;
+						}
+						if(!printops.use_unicode_signs && strout.find(_("approx."), i_result2) == i_result2) {
+							i_result2 += strlen(_("approx.")) + 1;
+						}
+						if(i_result != i_result2) {
+							strout[i_result2 - 1] = '\n';
+							strout.insert(i_result2, "  ");
+						}
+						if(exact_comparison && i_result == i_result2) {
+							strout.insert(i_result, "\n\n  ");
+						} else {
+							strout[i_result - 1] = '\n';
+							if((b_comparison & 1) && i_result == i_result2) strout.insert(i_result, "\n  ");
+							else strout.insert(i_result, "  ");
+						}
+						i_result_u = 2;
 					}
-					if(exact_comparison && i_result == i_result2) {
-						strout.insert(i_result, "\n\n  ");
-					} else {
-						strout[i_result - 1] = '\n';
-						if((b_comparison & 1) && i_result == i_result2) strout.insert(i_result, "\n  ");
-						else strout.insert(i_result, "  ");
-					}
-					i_result_u = 2;
+				} else if(b_matrix) {
+					if(!goto_input) strout.insert(0, 1, '\n');
+					gsub("\n", "\n  ", strout);
 				}
-			} else if(b_matrix) {
-				if(!goto_input) strout.insert(0, 1, '\n');
-				gsub("\n", "\n  ", strout);
+				if(autocalc_error) {
+					strout += " ";
+					if(DO_COLOR) strout += "\033[0;91m";
+					strout += "(!)";
+					if(DO_COLOR) strout += "\033[0m";
+				} else if(autocalc_warning) {
+					strout += " ";
+					if(DO_COLOR) strout += "\033[0;94m";
+					strout += "(!)";
+					if(DO_COLOR) strout += "\033[0m";
+				} else if(autocalc_info) {
+					strout += " (!)";
+				}
+				if(!b_matrix && goto_input) addLineBreaks(strout, cols, true, result_only ? 2 : i_result_u, i_result);
+				if(vertical_space && (b_matrix || goto_input) && !auto_calculate) strout += "\n";
 			}
-			if(!b_matrix && goto_input) addLineBreaks(strout, cols, true, result_only ? 2 : i_result_u, i_result);
-			if(vertical_space && (b_matrix || goto_input)) strout += "\n";
+			if(b_matrix && goto_input && printops.digit_grouping != DIGIT_GROUPING_NONE) {
+				gsub(THIN_SPACE, " ", strout);
+				gsub(NNBSP, " ", strout);
+			}
+		} else {
+			if(autocalc_error) {
+				strout += " ";
+				if(DO_COLOR) strout += "\033[0;91m";
+				strout += "(!)";
+				if(DO_COLOR) strout += "\033[0m";
+			} else if(autocalc_warning) {
+				strout += " ";
+				if(DO_COLOR) strout += "\033[0;94m";
+				strout += "(!)";
+				if(DO_COLOR) strout += "\033[0m";
+			} else if(autocalc_info) {
+				strout += " (!)";
+			}
+			addLineBreaks(strout, cols, true, 2);
 		}
-		if(b_matrix && goto_input && printops.digit_grouping != DIGIT_GROUPING_NONE) {
-			gsub(THIN_SPACE, " ", strout);
-			gsub(NNBSP, " ", strout);
+		if(auto_calculate) {
+			autocalc_result = strout;
+		} else {
+			PUTS_UNICODE(strout.c_str());
 		}
-		PUTS_UNICODE(strout.c_str());
 	}
 
 	b_busy = false;
@@ -6942,7 +7089,7 @@ bool ask_percent() {
 	return b_ret;
 }
 
-void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op, MathFunction *f, bool do_stack, size_t stack_index, bool check_exrates) {
+void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op, MathFunction *f, bool do_stack, size_t stack_index, bool check_exrates, bool auto_calculate) {
 
 	if(i_maxtime < 0) return;
 
@@ -7352,12 +7499,13 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	} else {
 		original_expression = CALCULATOR->unlocalizeExpression(str, evalops.parse_options);
 		transform_expression_for_equals_save(original_expression, evalops.parse_options);
-		CALCULATOR->calculate(mstruct, original_expression, 0, evalops, parsed_mstruct, &to_struct);
+		CALCULATOR->calculate(mstruct, original_expression, auto_calculate ? 100 : 0, evalops, parsed_mstruct, &to_struct);
 	}
 
 	int has_printed = 0;
 
-	if(i_maxtime != 0) {
+	if(auto_calculate) {
+	} else if(i_maxtime != 0) {
 #ifndef CLOCK_MONOTONIC
 		struct timeval tv;
 		gettimeofday(&tv, NULL);
@@ -7500,7 +7648,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		else mstruct->ref();
 	}
 
-	if(!avoid_recalculation && !do_mathoperation && ((ask_questions && test_ask_tc(*parsed_mstruct) && ask_tc()) || (ask_questions && (test_ask_sinc(*parsed_mstruct) || test_ask_sinc(*mstruct)) && ask_sinc()) || (ask_questions && test_ask_percent() && ask_percent()) || (check_exrates && check_exchange_rates()))) {
+	if(!auto_calculate && !avoid_recalculation && !do_mathoperation && ((ask_questions && test_ask_tc(*parsed_mstruct) && ask_tc()) || (ask_questions && (test_ask_sinc(*parsed_mstruct) || test_ask_sinc(*mstruct)) && ask_sinc()) || (ask_questions && test_ask_percent() && ask_percent()) || (check_exrates && check_exchange_rates()))) {
 		if(has_printed) printf("\n");
 		b_busy = false;
 		execute_expression(goto_input, do_mathoperation, op, f, rpn_mode, do_stack ? stack_index : 0, false);
@@ -7541,7 +7689,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 			if(i_timeleft < i_maxtime / 2) i_timeleft = -1;
 			else i_timeleft -= 10;
 		} else {
-			if(has_printed > 10) i_timeleft = -1;
+			if(auto_calculate) i_timeleft = 50;
+			else if(has_printed > 10) i_timeleft = -1;
 			else if(has_printed) i_timeleft = 500;
 			else i_timeleft = mstruct->containsType(STRUCT_COMPARISON) ? 2000 : 1000;
 		}
@@ -7687,7 +7836,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 				printops.use_prefixes_for_all_units = true;
 			}
 		}
-		setResult(NULL, (!do_stack || stack_index == 0), goto_input, do_stack ? stack_index : 0);
+		setResult(NULL, (!do_stack || stack_index == 0), goto_input, do_stack ? stack_index : 0, false, false, auto_calculate);
 	}
 	prepend_mstruct.setUndefined();
 
@@ -7738,6 +7887,7 @@ void set_saved_mode() {
 	saved_parsing_mode = (evalops.parse_options.parsing_mode == PARSING_MODE_RPN ? nonrpn_parsing_mode : evalops.parse_options.parsing_mode);
 	saved_percent = simplified_percentage;
 	saved_rpn_mode = rpn_mode;
+	saved_autocalc = autocalc;
 	saved_caret_as_xor = caret_as_xor;
 	saved_concise_uncertainty_input = CALCULATOR->conciseUncertaintyInputEnabled();
 	saved_dual_fraction = dual_fraction;
@@ -8227,6 +8377,8 @@ void load_preferences() {
 					if(v >= INTERVAL_CALCULATION_NONE && v <= INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC) {
 						evalops.interval_calculation = (IntervalCalculation) v;
 					}
+				} else if(svar == "calculate_as_you_type") {
+					autocalc = v;
 				} else if(svar == "in_rpn_mode") {
 					rpn_mode = v;
 				} else if(svar == "rpn_syntax") {
@@ -8410,6 +8562,7 @@ bool save_preferences(bool mode) {
 	else if(saved_dual_approximation > 0) fprintf(file, "approximation=%i\n", APPROXIMATION_APPROXIMATE + 1);
 	else fprintf(file, "approximation=%i\n", saved_evalops.approximation);
 	fprintf(file, "interval_calculation=%i\n", saved_evalops.interval_calculation);
+	fprintf(file, "calculate_as_you_type=%i\n", saved_autocalc);
 	fprintf(file, "in_rpn_mode=%i\n", saved_rpn_mode);
 	fprintf(file, "rpn_syntax=%i\n", saved_evalops.parse_options.parsing_mode == PARSING_MODE_RPN);
 	fprintf(file, "limit_implicit_multiplication=%i\n", saved_evalops.parse_options.limit_implicit_multiplication);
