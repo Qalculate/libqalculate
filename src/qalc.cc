@@ -808,8 +808,8 @@ bool check_exchange_rates() {
 
 
 #ifdef HAVE_LIBREADLINE
-#	define CHECK_IF_SCREEN_FILLED if(check_sf) {rcount++; if(rcount + 2 >= rows) {FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); sf_c = rl_read_key(); if(sf_c != '\n' && sf_c != '\r') {check_sf = false;} else {puts(""); if(sf_c == '\r') {puts("");} rcount = 1;}}}
-#	define CHECK_IF_SCREEN_FILLED_PUTS_RP(x, rplus) {str_lb = x; int cr = 0; if(!cfile) {cr = addLineBreaks(str_lb, cols);} if(check_sf) {if(rcount + cr + 1 + rplus >= rows) {rcount += 2; while(rcount < rows) {puts(""); rcount++;} FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); sf_c = rl_read_key(); if(sf_c != '\n' && sf_c != '\r') {check_sf = false;} else {rcount = 0; if(str_lb.empty() || str_lb[0] != '\n') {puts(""); if(sf_c == '\r') {puts("");} rcount++;}}} if(check_sf) {rcount += cr;}} PUTS_UNICODE(str_lb.c_str());}
+#	define CHECK_IF_SCREEN_FILLED if(check_sf) {rcount++; if(rcount + 2 >= rows) {if(autocalc) {rl_event_hook = NULL;} FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); sf_c = rl_read_key(); if(sf_c != '\n' && sf_c != '\r') {check_sf = false;} else {puts(""); if(sf_c == '\r') {puts("");} rcount = 1;} if(autocalc) {rl_event_hook = &event_callback;}}}
+#	define CHECK_IF_SCREEN_FILLED_PUTS_RP(x, rplus) {str_lb = x; int cr = 0; if(!cfile) {cr = addLineBreaks(str_lb, cols);} if(check_sf) {if(rcount + cr + 1 + rplus >= rows) {if(autocalc) {rl_event_hook = NULL;} rcount += 2; while(rcount < rows) {puts(""); rcount++;} FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); sf_c = rl_read_key(); if(sf_c != '\n' && sf_c != '\r') {check_sf = false;} else {rcount = 0; if(str_lb.empty() || str_lb[0] != '\n') {puts(""); if(sf_c == '\r') {puts("");} rcount++;}} if(autocalc) {rl_event_hook = &event_callback;}} if(check_sf) {rcount += cr;}} PUTS_UNICODE(str_lb.c_str());}
 #	define CHECK_IF_SCREEN_FILLED_PUTS(x) CHECK_IF_SCREEN_FILLED_PUTS_RP(x, 0)
 #	define INIT_SCREEN_CHECK int rows = 0, cols = 0, rcount = 0; bool check_sf = (cfile == NULL); char sf_c; string str_lb; if(!cfile) rl_get_screen_size(&rows, &cols);
 #	define INIT_COLS int rows = 0, cols = 0; if(!cfile) rl_get_screen_size(&rows, &cols);
@@ -2762,8 +2762,8 @@ void clear_autocalc() {
 		fflush(stdout);
 	}
 }
-void do_autocalc() {
-	if(!autocalc || rpn_mode || unittest || autocalc_expression == rl_line_buffer) return;
+void do_autocalc(const char *action_text = NULL) {
+	if(!autocalc || rpn_mode || unittest || (action_text == NULL && autocalc_expression == rl_line_buffer)) return;
 	string str;
 	if(test_convert_to_local(rl_line_buffer)) {
 		char *gstr = locale_to_utf8(rl_line_buffer);
@@ -2786,7 +2786,7 @@ void do_autocalc() {
 		if(!str.empty() && ((size_t) rl_point != strlen(rl_line_buffer) || strlen(rl_line_buffer) != autocalc_expression.length() + 1 || is_not_in(OPERATORS RIGHT_PARENTHESIS, str[str.length() - 1]) || str[str.length() - 1] == '!')) {
 			expression_str = str;
 			execute_expression(true, false, OPERATION_ADD, NULL, false, 0, false, true);
-			if(!result_autocalculated || prev_autocalc_result != autocalc_result) {
+			if(!result_autocalculated || prev_autocalc_result != autocalc_result || action_text != NULL) {
 				clear_autocalc();
 				result_autocalculated = true;
 				autocalc_lines = 1;
@@ -2801,6 +2801,11 @@ void do_autocalc() {
 				puts("");
 				if(vertical_space) puts("");
 				PUTS_UNICODE(autocalc_result.c_str());
+				if(action_text) {
+					fputs("  ", stdout);
+					PUTS_ITALIC(action_text);
+					autocalc_lines++;
+				}
 				printf("\e[%iA\e[%iC", autocalc_lines + 1, convert_to_local > 0 ? rl_point + 2 : (int) unicode_length(rl_line_buffer, rl_point) + 2);
 				fflush(stdout);
 				prev_autocalc_result = autocalc_result;
@@ -2828,64 +2833,91 @@ int key_clear(int, int) {
 #else
 	printf("\e[1;1H\e[2J");
 #endif
+#ifdef HAVE_LIBREADLINE
+	rl_initialize();
+#else
 	fputs("> ", stdout);
+#endif
 	return 0;
 }
 
 int key_exact(int i1, int i2) {
+	bool silent = false;
 #ifdef HAVE_LIBREADLINE
 	if(rl_end > 0) {
-		rl_point = rl_end;
-		return 0;
+		if(!autocalc || !result_autocalculated || rl_point < rl_end) {
+			rl_point = rl_end;
+			return 0;
+		}
+		silent = true;
 	}
 #endif
-	FPUTS_UNICODE(_("set"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("approximation"), stdout); fputs(" ", stdout);
+	string text = _("set"); text += " "; text += _("approximation"); text += " ";
 	if(evalops.approximation == APPROXIMATION_EXACT) {
 		evalops.approximation = APPROXIMATION_TRY_EXACT;
 		dual_approximation = 0;
-		PUTS_UNICODE(_("try exact"));
+		text += _("try exact");
 	} else if(dual_approximation) {
 		evalops.approximation = APPROXIMATION_EXACT;
-		PUTS_UNICODE(_("exact"));
+		text += _("exact");
 	} else {
 		evalops.approximation = APPROXIMATION_TRY_EXACT;
 		dual_approximation = -1;
-		PUTS_UNICODE(_("auto"));
+		text += _("auto");
 	}
-	expression_calculation_updated();
-	fputs("> ", stdout);
+	if(silent) {
+#ifdef HAVE_LIBREADLINE
+		do_autocalc(text.c_str());
+#endif
+	} else {
+		PUTS_UNICODE(text.c_str());
+		expression_calculation_updated();
+		fputs("> ", stdout);
+	}
 	return 0;
 }
 
 int key_fraction(int, int) {
+	bool silent = false;
 #ifdef HAVE_LIBREADLINE
 	if(rl_end > 0) {
-		if(rl_point < rl_end) rl_point++;
-		return 0;
+		if(!autocalc || !result_autocalculated || rl_point < rl_end) {
+			if(rl_point < rl_end) rl_point++;
+			return 0;
+		}
+		silent = true;
 	}
 #endif
-	FPUTS_UNICODE(_("set"), stdout); fputs(" ", stdout); FPUTS_UNICODE(_("fraction"), stdout); fputs(" ", stdout);
+	string text = _("set"); text += " "; text += _("fraction"); text += " ";
 	if(dual_fraction) {
 		dual_fraction = 0;
 		printops.number_fraction_format = FRACTION_COMBINED;
 		//fraction mode
-		PUTS_UNICODE(_("mixed"));
+		text += _("mixed");
 	} else if(printops.number_fraction_format == FRACTION_FRACTIONAL) {
 		dual_fraction = 0;
 		printops.number_fraction_format = FRACTION_DECIMAL;
-		PUTS_UNICODE(_("off"));
+		text += _("off");
 	} else if(printops.number_fraction_format == FRACTION_COMBINED) {
 		dual_fraction = 0;
 		printops.number_fraction_format = FRACTION_FRACTIONAL;
-		PUTS_UNICODE(_("on"));
+		text += _("on");
 	} else {
 		dual_fraction = -1;
 		printops.number_fraction_format = FRACTION_DECIMAL;
-		PUTS_UNICODE(_("auto"));
+		text += _("auto");
 	}
 	printops.restrict_fraction_length = (printops.number_fraction_format == FRACTION_FRACTIONAL || printops.number_fraction_format == FRACTION_COMBINED);
-	result_format_updated();
-	fputs("> ", stdout);
+	if(silent) {
+		update_message_print_options();
+#ifdef HAVE_LIBREADLINE
+		do_autocalc(text.c_str());
+#endif
+	} else {
+		PUTS_UNICODE(text.c_str());
+		result_format_updated();
+		fputs("> ", stdout);
+	}
 	return 0;
 }
 
@@ -4007,6 +4039,10 @@ int main(int argc, char *argv[]) {
 #ifdef HAVE_LIBREADLINE
 			rlbuffer = readline("> ");
 			if(rlbuffer == NULL) break;
+			if(autocalc && result_autocalculated) {
+				rl_point = 0;
+				clear_autocalc();
+			}
 			result_autocalculated = false;
 			if(test_convert_to_local(rlbuffer)) {
 				char *gstr = locale_to_utf8(rlbuffer);
@@ -6449,9 +6485,9 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 
 		bool b_matrix = mstruct->isMatrix() && DO_FORMAT && result_text.find('\n') != string::npos;
 
-		bool show_result = !auto_calculate || result_only || !alt_results.empty() || result_text != parsed_text;
+		bool show_result = !auto_calculate || result_only || (!autocalc_error && (!alt_results.empty() || result_text != parsed_text));
 		if(show_result && auto_calculate && mstruct->countTotalChildren(false) >= 10) {
-			show_result = !autocalc_error && unformatted_length(result_text) < (size_t) cols && (!b_matrix || mstruct->rows() <= 3);
+			show_result = unformatted_length(result_text) < (size_t) cols && (!b_matrix || mstruct->rows() <= 3);
 			for(size_t i = 0; show_result && i < alt_results.size(); i++) {
 				if(unformatted_length(alt_results[i]) >= (size_t) cols) show_result = false;
 			}
