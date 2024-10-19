@@ -164,9 +164,36 @@ enum {
 		else if(unicode_exponents == 2) printops.use_unicode_signs = UNICODE_SIGNS_ONLY_UNIT_EXPONENTS;\
 	}
 
+int convert_to_local = -1;
+
 bool contains_unicode_char(const char *str) {
 	for(int i = strlen(str) - 1; i >= 0; i--) {
 		if((signed char) str[i] < 0) return true;
+	}
+	return false;
+}
+bool test_convert_to_local(const char *str) {
+	if(convert_to_local == 0) return false;
+	size_t n = 0;
+	for(size_t i = 0; i < strlen(str); i++) {
+		if(convert_to_local > 0) {
+			if((signed char) str[i] <= 0) return true;
+		} else {
+			if(str[i] == 0) {
+				convert_to_local = 1;
+			} else if(n > 0) {
+				if((unsigned char) str[i] >= 0xC0 || (signed char) str[i] > 0) convert_to_local = 1;
+				n--;
+			} else if((unsigned char) str[i] >= 0xC0) {
+				n = 1;
+				if((unsigned char) str[i] >= 0xE0) n++;
+				if((unsigned char) str[i] >= 0xF0) n++;
+				if(i + n >= strlen(str)) convert_to_local = 1;
+			} else if((signed char) str[i] < 0) {
+				convert_to_local = 1;
+			}
+			if(convert_to_local > 0) return true;
+		}
 	}
 	return false;
 }
@@ -602,7 +629,12 @@ void sigint_handler(int) {
 #endif
 
 #ifdef HAVE_LIBREADLINE
+
+int event_callback();
+void clear_autocalc();
+
 int rlcom_tab(int, int) {
+	clear_autocalc();
 	rl_complete_internal('!');
 	return 0;
 }
@@ -1063,9 +1095,15 @@ void set_option(string str) {
 			}
 			expression_format_updated(false);
 		}
-	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn", _("rpn")) && svalue.find(" ") == string::npos) {SET_BOOL(rpn_mode) if(!rpn_mode) CALCULATOR->clearRPNStack();}
-	else if(svar == "autocalc" || EQUALS_IGNORECASE_AND_LOCAL(svar, "calculate as you type", _("calculate as you type"))) SET_BOOL(autocalc)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "simplified percentage", _("simplified percentage")) || svar == "percent") SET_BOOL_PT(simplified_percentage)
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "rpn", _("rpn")) && svalue.find(" ") == string::npos) {
+		SET_BOOL(rpn_mode) if(!rpn_mode) CALCULATOR->clearRPNStack();
+#ifdef HAVE_LIBREADLINE
+	} else if(svar == "autocalc" || EQUALS_IGNORECASE_AND_LOCAL(svar, "calculate as you type", _("calculate as you type"))) {
+		SET_BOOL(autocalc);
+		if(autocalc) rl_event_hook = &event_callback;
+		else rl_event_hook = NULL;
+#endif
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "simplified percentage", _("simplified percentage")) || svar == "percent") SET_BOOL_PT(simplified_percentage)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "short multiplication", _("short multiplication")) || svar == "shortmul") SET_BOOL_D(printops.short_multiplication)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "lowercase e", _("lowercase e")) || svar == "lowe") {
 		bool b = (printops.exp_display == EXP_LOWERCASE_E);
@@ -1768,7 +1806,9 @@ void set_option(string str) {
 			ADD_OPTION_TO_LIST("rounding", "round")
 			ADD_OPTION_TO_LIST("rpn syntax", "rpnsyn")
 			ADD_OPTION_TO_LIST1("rpn")
+#ifdef HAVE_LIBREADLINE
 			ADD_OPTION_TO_LIST("calculate as you type", "autocalc")
+#endif
 			ADD_OPTION_TO_LIST("simplified percentage", "percent")
 			ADD_OPTION_TO_LIST("short multiplication", "shortmul")
 			ADD_OPTION_TO_LIST("lowercase e", "lowe")
@@ -2226,7 +2266,9 @@ bool show_set_help(string set_option = "") {
 
 	CHECK_IF_SCREEN_FILLED_HEADING_S(_("Other"));
 
+#ifdef HAVE_LIBREADLINE
 	STR_AND_TABS_BOOL("calculate as you type", "autocalc", _("Activates continuous calculation of the currently edited expression."), autocalc);
+#endif
 	STR_AND_TABS_YESNO("clear history", "", _("Do not save expression history on exit."), clear_history_on_exit);
 	STR_AND_TABS_YESNO("ignore locale", "", _("Ignore system language and use English (requires restart)."), ignore_locale);
 	STR_AND_TABS_BOOL("rpn", "", _("Activates the Reverse Polish Notation stack."), rpn_mode);
@@ -2706,61 +2748,76 @@ bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t 
 	return l >= minlength;
 }
 
+string autocalc_result;
 #ifdef HAVE_LIBREADLINE
-string autocalc_expression, autocalc_result, prev_autocalc_result;
-int event_callback() {
-	if(autocalc && !rpn_mode && !unittest && autocalc_expression != rl_line_buffer) {
-		string str = rl_line_buffer;
-		remove_blank_ends(str);
-		if(!str.empty()) {
-			update_command_list();
-			if(str[0] == '/' || str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS) == string::npos || str.find_first_not_of(OPERATORS PARENTHESISS SPACES) == string::npos) str = "";
-			for(size_t i = 0; !str.empty() && i < command_list.size(); i++) {
-				if(str.rfind(command_list[i], command_list[i].length() - 1) == 0) str = "";
-			}
-			if(!str.empty() && ((size_t) rl_point != strlen(rl_line_buffer) || strlen(rl_line_buffer) != autocalc_expression.length() + 1 || is_not_in(OPERATORS RIGHT_PARENTHESIS, str[str.length() - 1]) || str[str.length() - 1] == '!')) {
-				expression_str = str;
-				execute_expression(true, false, OPERATION_ADD, NULL, false, 0, false, true);
-				if(!result_autocalculated || prev_autocalc_result != autocalc_result) {
-					if(result_autocalculated) {
-						for(int i = 0; i < autocalc_lines; i++) {
-							puts("");
-							printf("\e[2K");
-						}
-						printf("\e[%iA\e[%iC", autocalc_lines, rl_point + 2);
-					}
-					result_autocalculated = true;
-					autocalc_lines = 1;
-					if(vertical_space) autocalc_lines++;
-					size_t i = 0;
-					while(true) {
-						i = autocalc_result.find("\n", i);
-						if(i == string::npos) break;
-						i++;
-						autocalc_lines++;
-					}
-					puts("");
-					if(vertical_space) puts("");
-					PUTS_UNICODE(autocalc_result.c_str());
-					printf("\e[%iA\e[%iC", autocalc_lines + 1, (int) unicode_length(rl_line_buffer, rl_point) + 2);
-					fflush(stdout);
-					prev_autocalc_result = autocalc_result;
-				}
-			}
+string autocalc_expression, prev_autocalc_result;
+void clear_autocalc() {
+	if(result_autocalculated) {
+		for(int i = 0; i < autocalc_lines; i++) {
+			puts("");
+			printf("\e[2K");
 		}
-		if(str.empty() && result_autocalculated) {
-			if(result_autocalculated) {
-				for(int i = 0; i < autocalc_lines; i++) {
-					puts("");
-					printf("\e[2K");
-				}
-				printf("\e[%iA\e[%iC", autocalc_lines, (int) unicode_length(rl_line_buffer, rl_point) + 2);
-			}
-			fflush(stdout);
-			prev_autocalc_result = "";
-		}
-		autocalc_expression = rl_line_buffer;
+		printf("\e[%iA\e[%iC", autocalc_lines, convert_to_local > 0 ? rl_point + 2 : (int) unicode_length(rl_line_buffer, rl_point) + 2);
+		result_autocalculated = false;
+		fflush(stdout);
 	}
+}
+void do_autocalc() {
+	if(!autocalc || rpn_mode || unittest || autocalc_expression == rl_line_buffer) return;
+	string str;
+	if(test_convert_to_local(rl_line_buffer)) {
+		char *gstr = locale_to_utf8(rl_line_buffer);
+		if(gstr) {
+			str = gstr;
+			free(gstr);
+		} else {
+			str = "";
+		}
+	} else {
+		str = rl_line_buffer;
+	}
+	remove_blank_ends(str);
+	if(!str.empty()) {
+		update_command_list();
+		if(str[0] == '/' || str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS) == string::npos || str.find_first_not_of(OPERATORS PARENTHESISS SPACES) == string::npos) str = "";
+		for(size_t i = 0; !str.empty() && i < command_list.size(); i++) {
+			if(str.rfind(command_list[i], command_list[i].length() - 1) == 0) str = "";
+		}
+		if(!str.empty() && ((size_t) rl_point != strlen(rl_line_buffer) || strlen(rl_line_buffer) != autocalc_expression.length() + 1 || is_not_in(OPERATORS RIGHT_PARENTHESIS, str[str.length() - 1]) || str[str.length() - 1] == '!')) {
+			expression_str = str;
+			execute_expression(true, false, OPERATION_ADD, NULL, false, 0, false, true);
+			if(!result_autocalculated || prev_autocalc_result != autocalc_result) {
+				clear_autocalc();
+				result_autocalculated = true;
+				autocalc_lines = 1;
+				if(vertical_space) autocalc_lines++;
+				size_t i = 0;
+				while(true) {
+					i = autocalc_result.find("\n", i);
+					if(i == string::npos) break;
+					i++;
+					autocalc_lines++;
+				}
+				puts("");
+				if(vertical_space) puts("");
+				PUTS_UNICODE(autocalc_result.c_str());
+				printf("\e[%iA\e[%iC", autocalc_lines + 1, convert_to_local > 0 ? rl_point + 2 : (int) unicode_length(rl_line_buffer, rl_point) + 2);
+				fflush(stdout);
+				prev_autocalc_result = autocalc_result;
+			}
+		}
+	}
+	if(str.empty() && result_autocalculated) {
+		clear_autocalc();
+		prev_autocalc_result = "";
+	} else if(str.empty() && convert_to_local <= 0 && contains_unicode_char(rl_line_buffer)) {
+		rl_clear_visible_line();
+		rl_forced_update_display();
+	}
+	autocalc_expression = rl_line_buffer;
+}
+int event_callback() {
+	do_autocalc();
 	return 0;
 }
 #endif
@@ -3834,7 +3891,7 @@ int main(int argc, char *argv[]) {
 		if(calc_arg.length() > 2 && ((calc_arg[0] == '\"' && calc_arg.find('\"', 1) == calc_arg.length() - 1) || (calc_arg[0] == '\'' && calc_arg.find('\'', 1) == calc_arg.length() - 1))) {
 			calc_arg = calc_arg.substr(1, calc_arg.length() - 2);
 		}
-		if(!printops.use_unicode_signs && contains_unicode_char(calc_arg.c_str())) {
+		if(test_convert_to_local(calc_arg.c_str())) {
 			char *gstr = locale_to_utf8(calc_arg.c_str());
 			if(gstr) {
 				expression_str = gstr;
@@ -3890,7 +3947,7 @@ int main(int argc, char *argv[]) {
 		rl_bind_keyseq("\\C-f", key_fraction);
 		rl_bind_keyseq("\\C-a", key_save);
 		rl_bind_keyseq("\\C-l", key_clear);
-		rl_event_hook = &event_callback;
+		if(autocalc) rl_event_hook = &event_callback;
 	}
 #endif
 
@@ -3912,9 +3969,10 @@ int main(int argc, char *argv[]) {
 					fclose(cfile);
 				}
 				cfile = NULL;
+				convert_to_local = -1;
 				ask_questions = !result_only;
 				if(!calc_arg.empty()) {
-					if(!printops.use_unicode_signs && contains_unicode_char(calc_arg.c_str())) {
+					if(test_convert_to_local(calc_arg.c_str())) {
 						char *gstr = locale_to_utf8(calc_arg.c_str());
 						if(gstr) {
 							expression_str = gstr;
@@ -3932,7 +3990,7 @@ int main(int argc, char *argv[]) {
 				continue;
 			}
 			nline++;
-			if(!unittest && !printops.use_unicode_signs && contains_unicode_char(buffer)) {
+			if(!unittest && test_convert_to_local(buffer)) {
 				char *gstr = locale_to_utf8(buffer);
 				if(gstr) {
 					str = gstr;
@@ -3950,7 +4008,7 @@ int main(int argc, char *argv[]) {
 			rlbuffer = readline("> ");
 			if(rlbuffer == NULL) break;
 			result_autocalculated = false;
-			if(!printops.use_unicode_signs && contains_unicode_char(rlbuffer)) {
+			if(test_convert_to_local(rlbuffer)) {
 				char *gstr = locale_to_utf8(rlbuffer);
 				if(gstr) {
 					str = gstr;
@@ -3965,7 +4023,7 @@ int main(int argc, char *argv[]) {
 			fputs("> ", stdout);
 			if(!fgets(buffer, 100000, stdin)) {
 				break;
-			} else if(!printops.use_unicode_signs && contains_unicode_char(buffer)) {
+			} else if(test_convert_to_local(buffer)) {
 				char *gstr = locale_to_utf8(buffer);
 				if(gstr) {
 					str = gstr;
@@ -3985,7 +4043,9 @@ int main(int argc, char *argv[]) {
 		if(rpn_mode && explicit_command && str.empty()) {str = "/"; explicit_command = false;}
 		slen = str.length();
 		ispace = str.find_first_of(SPACES);
+#ifdef HAVE_LIBREADLINE
 		bool history_was_cleared = false;
+#endif
 		if(ispace == string::npos) {
 			scom = "";
 		} else {
@@ -5387,7 +5447,9 @@ int main(int argc, char *argv[]) {
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Other"));
 
+#ifdef HAVE_LIBREADLINE
 			PRINT_AND_COLON_TABS(_("calculate as you type"), "autocalc"); str += b2yn(autocalc, false);
+#endif
 			PRINT_AND_COLON_TABS(_("clear history"), ""); str += b2yn(clear_history_on_exit, false);
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("ignore locale"), ""); str += b2yn(ignore_locale, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
@@ -6387,8 +6449,8 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 
 		bool b_matrix = mstruct->isMatrix() && DO_FORMAT && result_text.find('\n') != string::npos;
 
-		bool show_result = true;
-		if(auto_calculate && mstruct->countTotalChildren(false) >= 10) {
+		bool show_result = !auto_calculate || result_only || !alt_results.empty() || result_text != parsed_text;
+		if(show_result && auto_calculate && mstruct->countTotalChildren(false) >= 10) {
 			show_result = !autocalc_error && unformatted_length(result_text) < (size_t) cols && (!b_matrix || mstruct->rows() <= 3);
 			for(size_t i = 0; show_result && i < alt_results.size(); i++) {
 				if(unformatted_length(alt_results[i]) >= (size_t) cols) show_result = false;
