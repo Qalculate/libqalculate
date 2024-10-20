@@ -632,10 +632,14 @@ void sigint_handler(int) {
 
 int event_callback();
 void clear_autocalc();
+void do_autocalc(bool force = false, const char *action_text = NULL);
 
 int rlcom_tab(int, int) {
-	clear_autocalc();
+	bool b_clear = result_autocalculated;
+	int pos = rl_point;
+	if(b_clear) clear_autocalc();
 	rl_complete_internal('!');
+	if(b_clear && pos == rl_point) do_autocalc(true);
 	return 0;
 }
 #endif
@@ -1915,6 +1919,7 @@ void set_option(string str) {
 #define END_ITALIC(x) if(DO_FORMAT) {x += "\033[23m";}
 #define PUTS_BOLD(x) if(!DO_FORMAT) {str = x;} else {str = "\033[1m"; str += x; str += "\033[0m";} PUTS_UNICODE(str.c_str());
 #define PUTS_ITALIC(x) if(!DO_FORMAT) {str = x;} else {str = "\033[3m"; str += x; str += "\033[23m";} PUTS_UNICODE(str.c_str());
+#define FPUTS_ITALIC(x, y) if(!DO_FORMAT) {str = x;} else {str = "\033[3m"; str += x; str += "\033[23m";} FPUTS_UNICODE(str.c_str(), y);
 #define PUTS_UNDERLINED(x) if(!DO_FORMAT) {str = x;} else {str = "\033[4m"; str += x; str += "\033[0m";} PUTS_UNICODE(str.c_str());
 
 #define SET_OPTION_MATCHES(s, sh) set_option.empty() || set_option == s || set_option == _(s) || set_option == sh
@@ -2752,18 +2757,21 @@ string autocalc_result;
 #ifdef HAVE_LIBREADLINE
 string autocalc_expression, prev_autocalc_result;
 void clear_autocalc() {
-	if(result_autocalculated) {
-		for(int i = 0; i < autocalc_lines; i++) {
-			puts("");
-			printf("\e[2K");
-		}
-		printf("\e[%iA\e[%iC", autocalc_lines, convert_to_local > 0 ? rl_point + 2 : (int) unicode_length(rl_line_buffer, rl_point) + 2);
-		result_autocalculated = false;
-		fflush(stdout);
+	int p_bak = rl_point;
+	if(rl_point != rl_end) {
+		rl_point = rl_end;
+		rl_clear_visible_line();
+		rl_forced_update_display();
+	}
+	printf("\e[0J");
+	if(rl_point != p_bak) {
+		rl_point = p_bak;
+		rl_clear_visible_line();
+		rl_forced_update_display();
 	}
 }
-void do_autocalc(const char *action_text = NULL) {
-	if(!autocalc || rpn_mode || unittest || (action_text == NULL && autocalc_expression == rl_line_buffer)) return;
+void do_autocalc(bool force, const char *action_text) {
+	if(!autocalc || rpn_mode || unittest || (!force && autocalc_expression == rl_line_buffer)) return;
 	string str;
 	if(test_convert_to_local(rl_line_buffer)) {
 		char *gstr = locale_to_utf8(rl_line_buffer);
@@ -2787,7 +2795,6 @@ void do_autocalc(const char *action_text = NULL) {
 			expression_str = str;
 			execute_expression(true, false, OPERATION_ADD, NULL, false, 0, false, true);
 			if(!result_autocalculated || prev_autocalc_result != autocalc_result || action_text != NULL) {
-				clear_autocalc();
 				result_autocalculated = true;
 				autocalc_lines = 1;
 				if(vertical_space) autocalc_lines++;
@@ -2798,16 +2805,25 @@ void do_autocalc(const char *action_text = NULL) {
 					i++;
 					autocalc_lines++;
 				}
+				int p_bak = rl_point;
+				if(rl_point != rl_end) {
+					rl_point = rl_end;
+					rl_clear_visible_line();
+					rl_forced_update_display();
+				}
+				printf("\e[0J");
 				puts("");
 				if(vertical_space) puts("");
-				PUTS_UNICODE(autocalc_result.c_str());
+				FPUTS_UNICODE(autocalc_result.c_str(), stdout);
 				if(action_text) {
-					fputs("  ", stdout);
-					PUTS_ITALIC(action_text);
+					fputs("\n  ", stdout);
+					FPUTS_ITALIC(action_text, stdout);
 					autocalc_lines++;
 				}
-				printf("\e[%iA\e[%iC", autocalc_lines + 1, convert_to_local > 0 ? rl_point + 2 : (int) unicode_length(rl_line_buffer, rl_point) + 2);
-				fflush(stdout);
+				printf("\e[%iA", autocalc_lines);
+				rl_point = p_bak;
+				rl_clear_visible_line();
+				rl_forced_update_display();
 				prev_autocalc_result = autocalc_result;
 			}
 		}
@@ -2819,6 +2835,7 @@ void do_autocalc(const char *action_text = NULL) {
 		rl_clear_visible_line();
 		rl_forced_update_display();
 	}
+	fflush(stdout);
 	autocalc_expression = rl_line_buffer;
 }
 int event_callback() {
@@ -2867,7 +2884,7 @@ int key_exact(int i1, int i2) {
 	}
 	if(silent) {
 #ifdef HAVE_LIBREADLINE
-		do_autocalc(text.c_str());
+		do_autocalc(true, text.c_str());
 #endif
 	} else {
 		PUTS_UNICODE(text.c_str());
@@ -2911,7 +2928,7 @@ int key_fraction(int, int) {
 	if(silent) {
 		update_message_print_options();
 #ifdef HAVE_LIBREADLINE
-		do_autocalc(text.c_str());
+		do_autocalc(true, text.c_str());
 #endif
 	} else {
 		PUTS_UNICODE(text.c_str());
@@ -4040,8 +4057,7 @@ int main(int argc, char *argv[]) {
 			rlbuffer = readline("> ");
 			if(rlbuffer == NULL) break;
 			if(autocalc && result_autocalculated) {
-				rl_point = 0;
-				clear_autocalc();
+				printf("\e[0J");
 			}
 			result_autocalculated = false;
 			if(test_convert_to_local(rlbuffer)) {
@@ -7227,7 +7243,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		string to_str = CALCULATOR->parseComments(str, evalops.parse_options);
 		if(!to_str.empty() && str.empty()) return;
 		string from_str = str;
-		if(ask_questions && test_ask_dot(from_str)) ask_dot();
+		if(ask_questions && !auto_calculate && test_ask_dot(from_str)) ask_dot();
 		if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
 			had_to_expression = true;
 			remove_duplicate_blanks(to_str);
