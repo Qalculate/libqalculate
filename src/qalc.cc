@@ -54,6 +54,11 @@ protected:
 	virtual void run();
 };
 
+class AutoCalcThread : public Thread {
+protected:
+	virtual void run();
+};
+
 MathStructure *mstruct, *parsed_mstruct, mstruct_exact, prepend_mstruct;
 KnownVariable *vans[5], *v_memory;
 string result_text, parsed_text, original_expression;
@@ -72,7 +77,7 @@ int saved_precision;
 int saved_binary_prefixes;
 bool saved_interval, saved_adaptive_interval_display, saved_variable_units_enabled;
 bool adaptive_interval_display;
-Thread *view_thread, *command_thread;
+Thread *view_thread, *command_thread, *autocalc_thread;
 bool command_aborted = false;
 volatile bool b_busy = false;
 string expression_str;
@@ -181,7 +186,7 @@ bool test_convert_from_local(const char *str) {
 			if((signed char) str[i] <= 0) return true;
 		} else {
 			if(str[i] == 0) {
-				convert_from_local = 1;
+				convert_from_local = 2;
 			} else if(n > 0) {
 				if((unsigned char) str[i] >= 0xC0 || (signed char) str[i] > 0) convert_from_local = 1;
 				n--;
@@ -596,6 +601,7 @@ void handle_exit() {
 	}
 	if(b_savedefs) save_defs();
 	if(!view_thread->write(NULL)) view_thread->cancel();
+	if(autocalc_thread && !autocalc_thread->write((int) 0)) autocalc_thread->cancel();
 	if(command_thread->running && (!command_thread->write((int) 0) || !command_thread->write(NULL))) command_thread->cancel();
 	CALCULATOR->terminateThreads();
 }
@@ -614,6 +620,7 @@ void sigint_handler(int) {
 #endif
 	if(b_interrupt) {
 #	ifdef HAVE_LIBREADLINE
+		printf("\033[0J");
 		puts("> ");
 		rl_on_new_line();
 		rl_replace_line("", 0);
@@ -638,10 +645,9 @@ void do_autocalc(bool force = false, const char *action_text = NULL);
 
 int rlcom_tab(int, int) {
 	bool b_clear = result_autocalculated;
-	int pos = rl_point;
 	if(b_clear) clear_autocalc();
 	rl_complete_internal('!');
-	if(b_clear && pos == rl_point) do_autocalc(true);
+	if(b_clear) do_autocalc(true);
 	return 0;
 }
 #endif
@@ -1921,7 +1927,6 @@ void set_option(string str) {
 #define END_ITALIC(x) if(DO_FORMAT) {x += "\033[23m";}
 #define PUTS_BOLD(x) if(!DO_FORMAT) {str = x;} else {str = "\033[1m"; str += x; str += "\033[0m";} PUTS_UNICODE(str.c_str());
 #define PUTS_ITALIC(x) if(!DO_FORMAT) {str = x;} else {str = "\033[3m"; str += x; str += "\033[23m";} PUTS_UNICODE(str.c_str());
-#define FPUTS_ITALIC(x, y) if(!DO_FORMAT) {str = x;} else {str = "\033[3m"; str += x; str += "\033[23m";} FPUTS_UNICODE(str.c_str(), y);
 #define PUTS_UNDERLINED(x) if(!DO_FORMAT) {str = x;} else {str = "\033[4m"; str += x; str += "\033[0m";} PUTS_UNICODE(str.c_str());
 
 #define SET_OPTION_MATCHES(s, sh) set_option.empty() || set_option == s || set_option == _(s) || set_option == sh
@@ -2755,9 +2760,18 @@ bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t 
 	return l >= minlength;
 }
 
+void AutoCalcThread::run() {
+	while(true) {
+		int i = 0;
+		if(!read(&i) || i == 0) break;
+		do_autocalc();
+	}
+}
+
 string autocalc_result;
 #ifdef HAVE_LIBREADLINE
 string autocalc_expression, prev_autocalc_result;
+bool prev_action_text = false;
 void clear_autocalc() {
 	int p_bak = rl_point;
 	if(rl_point != rl_end) {
@@ -2771,30 +2785,46 @@ void clear_autocalc() {
 		rl_clear_visible_line();
 		rl_forced_update_display();
 	}
+	prev_autocalc_result = "";
+	prev_action_text = false;
 }
 
-bool last_is_operator(string str, bool allow_exp = false) {
+int last_is_operator(string str, bool allow_exp = false) {
 	if((signed char) str[str.length() - 1] > 0) {
-		if(is_in(OPERATORS "\\" LEFT_PARENTHESIS LEFT_VECTOR_WRAP, str[str.length() - 1]) && (str[str.length() - 1] != '!' || str.length() == 1)) return true;
-		if(allow_exp && is_in(EXP, str[str.length() - 1])) return true;
-		if(str.length() >= 3 && str[str.length() - 1] == 'r' && str[str.length() - 2] == 'o' && str[str.length() - 3] == 'x') return true;
+		if((is_in(OPERATORS "\\" LEFT_PARENTHESIS LEFT_VECTOR_WRAP, str[str.length() - 1]) && (str[str.length() - 1] != '!' || str.length() == 1)) || (allow_exp && is_in(EXP, str[str.length() - 1])) ||
+		(str.length() >= 3 && str[str.length() - 1] == 'r' && str[str.length() - 2] == 'o' && str[str.length() - 3] == 'x')) {
+			return 1;
+		}
 	} else {
 		if(str.length() >= 3 && (signed char) str[str.length() - 2] < 0) {
 			str = str.substr(str.length() - 3);
 			if(str == "∧" || str == "∨" || str == "⊻" || str == "≤" || str == "≥" || str == "≠" || str == "∠" || str == SIGN_MULTIDOT || str == SIGN_DIVISION_SLASH) {
-				return true;
+				return 3;
 			}
 		}
 		if(str.length() >= 2) {
 			str = str.substr(str.length() - 2);
-			if(str == "¬" || str == SIGN_MULTIPLICATION || str == SIGN_MIDDLEDOT || str == SIGN_DIVISION || str == SIGN_MINUS) return true;
+			if(str == "¬" || str == SIGN_MULTIPLICATION || str == SIGN_MIDDLEDOT || str == SIGN_DIVISION || str == SIGN_MINUS) {
+				return 2;
+			}
 		}
+	}
+	return 0;
+}
+bool contains_wide_character(const char *str) {
+	for(size_t i = 0; i < strlen(str); i++) {
+		if(str[i] == '\t' || str[i] == '\n') return true;
 	}
 	return false;
 }
 
+bool autocalc_busy = false, autocalc_input_available = false, autocalc_aborted = false, autocalc_was_aborted;
+string current_action_text;
 void do_autocalc(bool force, const char *action_text) {
-	if(block_autocalc || !autocalc || rpn_mode || unittest || (!force && autocalc_expression == rl_line_buffer)) return;
+	if(block_autocalc || !autocalc || rpn_mode || unittest || (!autocalc_was_aborted && !force && autocalc_expression == rl_line_buffer)) return;
+	autocalc_busy = true;
+	if(force) prev_autocalc_result = "";
+	if(action_text) current_action_text = action_text;
 	string str;
 	if(test_convert_from_local(rl_line_buffer)) {
 		char *gstr = locale_to_utf8(rl_line_buffer);
@@ -2808,16 +2838,20 @@ void do_autocalc(bool force, const char *action_text) {
 		str = rl_line_buffer;
 	}
 	remove_blank_ends(str);
-	if(!str.empty()) {
+	if(!str.empty() && !autocalc_aborted) {
 		update_command_list();
 		if(str[0] == '/' || str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS) == string::npos || str.find_first_not_of(OPERATORS PARENTHESISS SPACES) == string::npos) str = "";
 		for(size_t i = 0; !str.empty() && i < command_list.size(); i++) {
 			if(str.rfind(command_list[i], command_list[i].length() - 1) == 0) str = "";
 		}
-		if(!str.empty() && ((size_t) rl_point != strlen(rl_line_buffer) || unicode_length(rl_line_buffer) != unicode_length(autocalc_expression) + 1 || !last_is_operator(str))) {
+		if(!str.empty() && (autocalc_was_aborted || prev_action_text || (size_t) rl_point != strlen(rl_line_buffer) || unicode_length(rl_line_buffer) != unicode_length(autocalc_expression) + 1 || !last_is_operator(str))) {
 			expression_str = str;
+			if((autocalc_was_aborted || prev_action_text) && (size_t) rl_point == strlen(rl_line_buffer) && unicode_length(rl_line_buffer) == unicode_length(autocalc_expression) + 1) {
+				int l = last_is_operator(expression_str);
+				if(l > 0) expression_str.erase(expression_str.length() - l, l);
+			}
 			execute_expression(true, false, OPERATION_ADD, NULL, false, 0, false, true);
-			if(!result_autocalculated || prev_autocalc_result != autocalc_result || action_text != NULL) {
+			if(!autocalc_input_available && (!result_autocalculated || force || prev_autocalc_result != autocalc_result || !current_action_text.empty() || prev_action_text)) {
 				result_autocalculated = true;
 				int autocalc_lines = vertical_space ? 3 : 1;
 				size_t i = 0;
@@ -2828,39 +2862,71 @@ void do_autocalc(bool force, const char *action_text) {
 					autocalc_lines++;
 				}
 				int p_bak = rl_point;
+				INIT_COLS
+				bool move_pos = convert_from_local < 2 && (convert_from_local > 0 ? strlen(rl_line_buffer) : unicode_length(rl_line_buffer)) + 3 < (size_t) cols && (convert_from_local > 0 ? autocalc_expression.length() : unicode_length(autocalc_expression)) + 3 < (size_t) cols && !contains_wide_character(rl_line_buffer) && !contains_wide_character(autocalc_expression.c_str());
+				string sout;
 				if(rl_point != rl_end) {
-					rl_point = rl_end;
+					if(move_pos) {
+						sout += "\n\033[0J";
+					} else {
+						sout += "\033[0J\n";
+						rl_point = rl_end;
+						rl_clear_visible_line();
+						rl_forced_update_display();
+					}
+				} else {
+					sout += "\033[0J\n";
+				}
+				if(vertical_space) sout += "\n";
+				sout += autocalc_result;
+				if(!current_action_text.empty()) {
+					sout += "\n  ";
+					BEGIN_ITALIC(sout);
+					sout += current_action_text;
+					END_ITALIC(sout);
+					autocalc_lines++;
+					current_action_text = "";
+					prev_action_text = true;
+				} else {
+					prev_action_text = false;
+				}
+				if(vertical_space) sout += "\n";
+				sout += "\033["; sout += i2s(autocalc_lines); sout += "A";
+				if(move_pos) {
+					sout += "\033["; sout += i2s((convert_from_local > 0 ? rl_point : unicode_length(rl_line_buffer, rl_point)) + 3); sout += "G";
+				}
+				fputs(sout.c_str(), stdout);
+				fflush(stdout);
+				if(!move_pos) {
+					rl_point = p_bak;
 					rl_clear_visible_line();
 					rl_forced_update_display();
 				}
-				printf("\033[0J");
-				puts("");
-				if(vertical_space) puts("");
-				FPUTS_UNICODE(autocalc_result.c_str(), stdout);
-				if(action_text) {
-					fputs("\n  ", stdout);
-					FPUTS_ITALIC(action_text, stdout);
-					autocalc_lines++;
-				}
-				if(vertical_space) puts("");
-				printf("\033[%iA", autocalc_lines);
-				rl_point = p_bak;
-				rl_clear_visible_line();
-				rl_forced_update_display();
 				prev_autocalc_result = autocalc_result;
 			}
 		}
 	}
-	if(str.empty() && result_autocalculated) {
+	if(str.empty() && result_autocalculated && !autocalc_aborted) {
 		clear_autocalc();
-		prev_autocalc_result = "";
+		fflush(stdout);
 	}
-	fflush(stdout);
 	autocalc_expression = rl_line_buffer;
+	autocalc_was_aborted = autocalc_aborted;
+	autocalc_busy = false;
 }
 int rl_getc_wrapper(FILE *file) {
-	do_autocalc();
-	return rl_getc(file);
+	autocalc_aborted = false;
+	autocalc_input_available = false;
+	if(!autocalc_thread) autocalc_thread = new AutoCalcThread;
+	if(autocalc_thread->running || autocalc_thread->start()) autocalc_thread->write(1);
+	int c = rl_getc(file);
+	autocalc_input_available = true;
+	CALCULATOR->abort();
+	autocalc_aborted = true;
+	while(autocalc_busy) {
+		sleep_ms(1);
+	}
+	return c;
 }
 #endif
 
@@ -3929,6 +3995,7 @@ int main(int argc, char *argv[]) {
 
 	view_thread = new ViewThread;
 	command_thread = new CommandThread;
+	autocalc_thread = NULL;
 
 	if(!command_file.empty()) {
 		if(command_file == "-") {
@@ -6367,7 +6434,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		if(!view_thread->write((void *) NULL)) {b_busy = false; view_thread->cancel(); return;}
 	}
 
-	bool has_printed = false;
+	bool has_printed = false, was_aborted = false;
 
 	if(i_maxtime != 0) {
 #ifndef CLOCK_MONOTONIC
@@ -6391,12 +6458,16 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 
 		int i = 0;
 		while(b_busy && view_thread->running && i < 75) {
+			if(auto_calculate && i == 50) {
+				CALCULATOR->abort();
+				was_aborted = true;
+			}
 			sleep_ms(10);
 			i++;
 		}
 		i = 0;
 
-		if(b_busy && view_thread->running && !cfile) {
+		if(b_busy && view_thread->running && !cfile && !auto_calculate) {
 			if(!result_only) {
 				FPUTS_UNICODE(_("Processing"), stdout);
 #ifndef _WIN32
@@ -6541,7 +6612,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 
 		bool b_matrix = mstruct->isMatrix() && DO_FORMAT && result_text.find('\n') != string::npos;
 
-		bool show_result = !auto_calculate || result_only || (!autocalc_error && (!alt_results.empty() || result_text != parsed_text));
+		bool show_result = !auto_calculate || (!was_aborted && !mstruct->isAborted() && (result_only || (!autocalc_error && (!alt_results.empty() || result_text != parsed_text))));
 		if(show_result && auto_calculate && mstruct->countTotalChildren(false) >= 10) {
 			show_result = unformatted_length(result_text) < (size_t) cols && (!b_matrix || mstruct->rows() <= 3);
 			for(size_t i = 0; show_result && i < alt_results.size(); i++) {
@@ -7661,13 +7732,13 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	} else {
 		original_expression = CALCULATOR->unlocalizeExpression(str, evalops.parse_options);
 		transform_expression_for_equals_save(original_expression, evalops.parse_options);
-		CALCULATOR->calculate(mstruct, original_expression, auto_calculate ? 100 : 0, evalops, parsed_mstruct, &to_struct);
+		CALCULATOR->calculate(mstruct, original_expression, 0, evalops, parsed_mstruct, &to_struct);
 	}
 
 	int has_printed = 0;
+	bool was_aborted = false;
 
-	if(auto_calculate) {
-	} else if(i_maxtime != 0) {
+	if(i_maxtime != 0) {
 #ifndef CLOCK_MONOTONIC
 		struct timeval tv;
 		gettimeofday(&tv, NULL);
@@ -7692,12 +7763,16 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 
 		int i = 0;
 		while(CALCULATOR->busy() && i < 75) {
+			if(auto_calculate && i == 10) {
+				CALCULATOR->abort();
+				was_aborted = true;
+			}
 			sleep_ms(10);
 			i++;
 		}
 		i = 0;
 
-		if(CALCULATOR->busy() && !cfile) {
+		if(CALCULATOR->busy() && !cfile && !auto_calculate) {
 			if(!result_only) {
 				FPUTS_UNICODE(_("Calculating"), stdout);
 #ifndef _WIN32
@@ -7715,7 +7790,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		char c = 0;
 #endif
 		while(CALCULATOR->busy()) {
-			if(cfile) {
+			if(cfile || auto_calculate) {
 				sleep_ms(100);
 			} else {
 				if(wait_for_key_press(100)) {
@@ -7749,6 +7824,8 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 		}
 		i = 0;
 	}
+
+	if(auto_calculate && was_aborted) mstruct->setAborted();
 
 	if(delay_complex) {
 		evalops.complex_number_form = cnf;
