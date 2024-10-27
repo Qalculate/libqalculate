@@ -433,6 +433,24 @@
         <condition>dimension(\x)==3</condition>
       </argument>
     </function>
+    <function>
+      <_title>Scalar Triple Product</_title>
+      <_names>r:triple_product,triple</_names>
+      <_description>Calculates the scalar-valued triple product of three 3-dimensional vectors.</_description>
+      <expression>det([\x; \y; \z])</expression>
+      <argument type="vector" index="1">
+        <_title>Vector 1</_title>
+        <condition>dimension(\x)==3</condition>
+      </argument>
+      <argument type="vector" index="2">
+        <_title>Vector 2</_title>
+        <condition>dimension(\x)==3</condition>
+      </argument>
+      <argument type="vector" index="3">
+        <_title>Vector 3</_title>
+        <condition>dimension(\x)==3</condition>
+      </argument>
+    </function>
     <builtin_function name="kron">
       <_title>Kronecker Product</_title>
       <_names>r:kron</_names>
