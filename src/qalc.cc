@@ -87,7 +87,7 @@ bool hide_parse_errors = false;
 ParsingMode nonrpn_parsing_mode = PARSING_MODE_ADAPTIVE, saved_parsing_mode;
 int saved_percent;
 bool rpn_mode = false, saved_rpn_mode = false;
-bool autocalc = false, saved_autocalc = false;
+int autocalc = -1, saved_autocalc = -1;
 int block_autocalc = 0;
 bool caret_as_xor = false, saved_caret_as_xor = false;
 string custom_angle_unit, saved_custom_angle_unit;
@@ -125,7 +125,7 @@ vector<OptionNames> option_list;
 static char buffer[100000];
 
 void setResult(Prefix *prefix = NULL, bool update_parse = false, bool goto_input = true, size_t stack_index = 0, bool register_moved = false, bool noprint = false, bool auto_calculate = false);
-void execute_expression(bool goto_input = true, bool do_mathoperation = false, MathOperation op = OPERATION_ADD, MathFunction *f = NULL, bool do_stack = false, size_t stack_index = 0, bool check_exrates = true, bool auto_calculate = false);
+void execute_expression(bool do_mathoperation = false, MathOperation op = OPERATION_ADD, MathFunction *f = NULL, bool do_stack = false, size_t stack_index = 0, bool check_exrates = true, bool auto_calculate = false);
 void execute_command(int command_type, bool show_result = true, bool auto_calculate = false);
 void load_preferences();
 void save_history();
@@ -157,11 +157,11 @@ enum {
 #define DO_WIN_FORMAT IsWindows10OrGreater()
 
 #ifdef _WIN32
-#	define DO_FORMAT (force_color > 0 || (force_color != 0 && !cfile && colorize && interactive_mode))
+#	define DO_FORMAT (force_color > 0 || (force_color != 0 && colorize && interactive_mode))
 #else
-#	define DO_FORMAT (force_color > 0 || (force_color != 0 && !cfile && interactive_mode))
+#	define DO_FORMAT (force_color > 0 || (force_color != 0 && interactive_mode))
 #endif
-#define DO_COLOR (force_color >= 0 ? force_color : (!cfile && colorize && interactive_mode ? colorize : 0))
+#define DO_COLOR (force_color >= 0 ? force_color : (colorize && interactive_mode ? colorize : 0))
 
 #define SET_UNICODE_EXPONENTS \
 	if(printops.use_unicode_signs) {\
@@ -823,15 +823,15 @@ bool check_exchange_rates() {
 #	define CHECK_IF_SCREEN_FILLED if(check_sf) {rcount++; if(rcount + 2 >= rows) {FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); sf_c = rl_read_key(); if(sf_c != '\n' && sf_c != '\r') {check_sf = false;} else {puts(""); if(sf_c == '\r') {puts("");} rcount = 1;}}}
 #	define CHECK_IF_SCREEN_FILLED_PUTS_RP(x, rplus) {str_lb = x; int cr = 0; if(!cfile) {cr = addLineBreaks(str_lb, cols);} if(check_sf) {if(rcount + cr + 1 + rplus >= rows) {rcount += 2; while(rcount < rows) {puts(""); rcount++;} FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); sf_c = rl_read_key(); if(sf_c != '\n' && sf_c != '\r') {check_sf = false;} else {rcount = 0; if(str_lb.empty() || str_lb[0] != '\n') {puts(""); if(sf_c == '\r') {puts("");} rcount++;}}} if(check_sf) {rcount += cr;}} PUTS_UNICODE(str_lb.c_str());}
 #	define CHECK_IF_SCREEN_FILLED_PUTS(x) CHECK_IF_SCREEN_FILLED_PUTS_RP(x, 0)
-#	define INIT_SCREEN_CHECK int rows = 0, cols = 0, rcount = 0; bool check_sf = (cfile == NULL); char sf_c; string str_lb; if(!cfile) rl_get_screen_size(&rows, &cols);
-#	define INIT_COLS int rows = 0, cols = 0; if(!cfile) rl_get_screen_size(&rows, &cols);
+#	define INIT_SCREEN_CHECK int rows = 0, cols = 0, rcount = 0; bool check_sf = (cfile == NULL); char sf_c; string str_lb; if(!cfile || interactive_mode) rl_get_screen_size(&rows, &cols);
+#	define INIT_COLS int rows = 0, cols = 0; if(!cfile || interactive_mode) rl_get_screen_size(&rows, &cols);
 #	define CHECK_IF_SCREEN_FILLED_HEADING_S(x) if(set_option.empty()) {str = "\n"; BEGIN_UNDERLINED(str); str += x; END_UNDERLINED(str); CHECK_IF_SCREEN_FILLED_PUTS_RP(str.c_str(), 1);}
 #	define CHECK_IF_SCREEN_FILLED_HEADING(x) str = "\n"; BEGIN_UNDERLINED(str); BEGIN_BOLD(str); str += x; END_UNDERLINED(str); END_BOLD(str); CHECK_IF_SCREEN_FILLED_PUTS_RP(str.c_str(), 1);
 #else
 #	define CHECK_IF_SCREEN_FILLED
 #	define CHECK_IF_SCREEN_FILLED_PUTS(x) str_lb = x; if(!cfile) {addLineBreaks(str_lb, cols);} PUTS_UNICODE(str_lb.c_str());
 #	define INIT_SCREEN_CHECK string str_lb; int cols = 80;
-#	define INIT_COLS int cols = (cfile ? 0 : 80);
+#	define INIT_COLS int cols = ((cfile && !interactive_mode) ? 0 : 80);
 #	define CHECK_IF_SCREEN_FILLED_HEADING_S(x) if(set_option.empty()) {str = "\n"; BEGIN_UNDERLINED(str); str += x; END_UNDERLINED(str); PUTS_UNICODE(str.c_str());}
 #	define CHECK_IF_SCREEN_FILLED_HEADING(x) puts(""); str = "\n"; BEGIN_UNDERLINED(str); BEGIN_BOLD(str); str += x; END_UNDERLINED(str); END_BOLD(str); PUTS_UNICODE(str.c_str());
 #endif
@@ -1112,7 +1112,7 @@ void set_option(string str) {
 #ifdef HAVE_LIBREADLINE
 	} else if(svar == "autocalc" || EQUALS_IGNORECASE_AND_LOCAL(svar, "calculate as you type", _("calculate as you type"))) {
 		SET_BOOL(autocalc);
-		if(autocalc) rl_getc_function = &rl_getc_wrapper;
+		if(autocalc > 0) rl_getc_function = &rl_getc_wrapper;
 		else rl_getc_function = &rl_getc;
 #endif
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "simplified percentage", _("simplified percentage")) || svar == "percent") SET_BOOL_PT(simplified_percentage)
@@ -2279,7 +2279,7 @@ bool show_set_help(string set_option = "") {
 	CHECK_IF_SCREEN_FILLED_HEADING_S(_("Other"));
 
 #ifdef HAVE_LIBREADLINE
-	STR_AND_TABS_BOOL("calculate as you type", "autocalc", _("Activates continuous calculation of the currently edited expression."), autocalc);
+	STR_AND_TABS_BOOL("calculate as you type", "autocalc", _("Activates continuous calculation of the currently edited expression."), (autocalc > 0));
 #endif
 	STR_AND_TABS_YESNO("clear history", "", _("Do not save expression history on exit."), clear_history_on_exit);
 	STR_AND_TABS_YESNO("ignore locale", "", _("Ignore system language and use English (requires restart)."), ignore_locale);
@@ -2821,7 +2821,7 @@ bool contains_wide_character(const char *str) {
 bool autocalc_busy = false, autocalc_input_available = false, autocalc_aborted = false, autocalc_was_aborted;
 string current_action_text;
 void do_autocalc(bool force, const char *action_text) {
-	if(block_autocalc || !autocalc || rpn_mode || unittest || (!autocalc_was_aborted && !force && prev_line == rl_line_buffer)) return;
+	if(block_autocalc || autocalc <= 0 || rpn_mode || unittest || (!autocalc_was_aborted && !force && prev_line == rl_line_buffer)) return;
 	autocalc_busy = true;
 	if(force) prev_autocalc_result = "";
 	if(action_text) current_action_text = action_text;
@@ -2851,7 +2851,7 @@ void do_autocalc(bool force, const char *action_text) {
 				int l = last_is_operator(expression_str);
 				if(l > 0) expression_str.erase(expression_str.length() - l, l);
 			}
-			execute_expression(true, false, OPERATION_ADD, NULL, false, 0, false, true);
+			execute_expression(false, OPERATION_ADD, NULL, false, 0, false, true);
 			if(!autocalc_input_available && (!result_autocalculated || force || prev_autocalc_result != autocalc_result || !current_action_text.empty() || prev_action_text)) {
 				result_autocalculated = true;
 				int autocalc_lines = vertical_space ? 3 : 1;
@@ -2960,7 +2960,7 @@ int key_exact(int, int) {
 	bool silent = false;
 #ifdef HAVE_LIBREADLINE
 	if(rl_end > 0) {
-		if(!autocalc || !result_autocalculated || rl_point < rl_end) {
+		if(autocalc <= 0 || !result_autocalculated || rl_point < rl_end) {
 			rl_point = rl_end;
 			return 0;
 		}
@@ -2996,7 +2996,7 @@ int key_fraction(int, int) {
 	bool silent = false;
 #ifdef HAVE_LIBREADLINE
 	if(rl_end > 0) {
-		if(!autocalc || !result_autocalculated || rl_point < rl_end) {
+		if(autocalc <= 0 || !result_autocalculated || rl_point < rl_end) {
 			if(rl_point < rl_end) rl_point++;
 			return 0;
 		}
@@ -3551,6 +3551,41 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 	}
 }
 
+#ifdef HAVE_LIBREADLINE
+void ask_autocalc() {
+	if(autocalc >= 0) return;
+	INIT_COLS
+	snprintf(buffer, 10000, _("%s now includes an option (controlled using \"%s\") to continuously display the result of the current expression as you type."), "Qalc", (string(_("set")) + " autocalc").c_str());
+	string str = buffer;
+	addLineBreaks(str, cols, true);
+	PUTS_UNICODE(str.c_str());
+	snprintf(buffer, 10000, _("Do you wish to activate this options (default: %s)?"), _("no"));
+	FPUTS_UNICODE(buffer, stdout);
+	while(true) {
+		autocalc = 0;
+		block_autocalc++;
+		char *rlbuffer = readline(" ");
+		block_autocalc--;
+		if(!rlbuffer) {autocalc = -1; break;}
+		string svalue = rlbuffer;
+		free(rlbuffer);
+		remove_blank_ends(svalue);
+		if(svalue.empty()) break;
+		autocalc = s2b(svalue);
+		if(autocalc >= 0) break;
+		FPUTS_UNICODE(_("Please answer yes or no"), stdout);
+		FPUTS_UNICODE(":", stdout);
+	}
+	if(autocalc > 0) rl_getc_function = &rl_getc_wrapper;
+#	ifdef _WIN32
+	if(autocalc >= 0 && !load_defaults) {
+		saved_autocalc = autocalc;
+		save_preferences(false);
+	}
+#	endif
+}
+#endif
+
 int main(int argc, char *argv[]) {
 
 	string calc_arg;
@@ -3974,9 +4009,10 @@ int main(int argc, char *argv[]) {
 
 	if(!result_only) {
 		int cols = 0;
-		if(!command_file.empty()) {
+		if((interactive_mode || (!cfile && calc_arg.empty())) && CALCULATOR->message()) {
 #ifdef HAVE_LIBREADLINE
 			int rows = 0;
+			rl_initialize();
 			rl_get_screen_size(&rows, &cols);
 #else
 			cols = 80;
@@ -4056,7 +4092,7 @@ int main(int argc, char *argv[]) {
 			expression_str = calc_arg;
 		}
 		use_readline = false;
-		execute_expression(interactive_mode);
+		execute_expression();
 		if(!interactive_mode) {
 			if(!had_errors) {
 				while(CALCULATOR->message()) {
@@ -4101,8 +4137,7 @@ int main(int argc, char *argv[]) {
 		rl_bind_keyseq("\\C-f", key_fraction);
 		rl_bind_keyseq("\\C-a", key_save);
 		rl_bind_keyseq("\\C-l", key_clear);
-		//if(autocalc) rl_event_hook = &event_callback;
-		if(autocalc) rl_getc_function = &rl_getc_wrapper;
+		if(autocalc > 0) rl_getc_function = &rl_getc_wrapper;
 	}
 #endif
 
@@ -4114,11 +4149,18 @@ int main(int argc, char *argv[]) {
 	size_t slen, ispace;
 	int nline = 0, ntests = 0, retval = EXIT_SUCCESS;
 
+#ifdef HAVE_LIBREADLINE
+	if(interactive_mode) {
+		if(cfile) {
+			rl_initialize();
+		} else if(autocalc < 0 && ask_questions) {
+			ask_autocalc();
+		}
+	}
+#endif
+
 	while(true) {
 		if(cfile) {
-#ifdef HAVE_LIBREADLINE
-			if(interactive_mode) rl_initialize();
-#endif
 			if(i_maxtime < 0 || !fgets(buffer, 100000, cfile)) {
 				if(cfile != stdin) {
 					fclose(cfile);
@@ -4138,10 +4180,16 @@ int main(int argc, char *argv[]) {
 					} else {
 						expression_str = calc_arg;
 					}
-					execute_expression(interactive_mode);
+					execute_expression();
 				}
 				if(!interactive_mode) break;
 				i_maxtime = 0;
+#ifdef HAVE_LIBREADLINE
+				if(autocalc < 0 && ask_questions) {
+					puts("");
+					ask_autocalc();
+				}
+#endif
 				continue;
 			}
 			nline++;
@@ -4162,7 +4210,7 @@ int main(int argc, char *argv[]) {
 #ifdef HAVE_LIBREADLINE
 			rlbuffer = readline("> ");
 			if(rlbuffer == NULL) break;
-			if(autocalc && result_autocalculated) {
+			if(autocalc > 0 && result_autocalculated) {
 				printf("\033[0J");
 			}
 			result_autocalculated = false;
@@ -5608,7 +5656,7 @@ int main(int argc, char *argv[]) {
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Other"));
 
 #ifdef HAVE_LIBREADLINE
-			PRINT_AND_COLON_TABS(_("calculate as you type"), "autocalc"); str += b2yn(autocalc, false);
+			PRINT_AND_COLON_TABS(_("calculate as you type"), "autocalc"); str += b2yn(autocalc > 0, false);
 #endif
 			PRINT_AND_COLON_TABS(_("clear history"), ""); str += b2yn(clear_history_on_exit, false);
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
@@ -6389,6 +6437,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 
 	if(!view_thread->running && !view_thread->start()) {b_busy = false; return;}
 
+	bool line_breaks = goto_input && interactive_mode;
 	if(!interactive_mode || cfile) goto_input = false;
 
 	string prev_result_text = result_text;
@@ -6539,7 +6588,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 
 	int cols = 0;
 
-	if(goto_input) {
+	if(line_breaks) {
 #ifdef HAVE_LIBREADLINE
 		int rows = 0;
 		rl_get_screen_size(&rows, &cols);
@@ -6553,20 +6602,23 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 	bool implicit_warning = false;
 	if(auto_calculate) {
 		while(CALCULATOR->message()) {
-			if(CALCULATOR->message()->type() == MESSAGE_ERROR) autocalc_error = true;
-			else if(CALCULATOR->message()->type() == MESSAGE_WARNING) autocalc_warning = true;
-			else autocalc_info = true;
+			if(!mstruct->isAborted() || CALCULATOR->message()->stage() != MESSAGE_STAGE_CALCULATION) {
+				if(CALCULATOR->message()->type() == MESSAGE_ERROR) autocalc_error = true;
+				else if(CALCULATOR->message()->type() == MESSAGE_WARNING) autocalc_warning = true;
+				else autocalc_info = true;
+			}
 			CALCULATOR->nextMessage();
 		}
 	} else if(!result_only) {
 		display_errors(goto_input, cols, ask_questions && evalops.parse_options.parsing_mode <= PARSING_MODE_CONVENTIONAL && update_parse && stack_index == 0 && !noprint ? &implicit_warning : NULL);
 	}
 
-	if(implicit_warning && ask_implicit()) {
-		b_busy = false;
-		printf("\n");
-		execute_expression();
-		return;
+	if(implicit_warning) {
+		if(ask_implicit()) {
+			execute_expression();
+			return;
+		}
+		puts("");
 	}
 
 	if(stack_index != 0) {
@@ -6625,7 +6677,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 
 		if(show_result) {
 			if(!exact_comparison && (b_comparison & 1)) exact_comparison = (update_parse || !prev_approximate) && !(*printops.is_approximate) && !mstruct->isApproximate();
-			if(!result_only && b_matrix && goto_input) addLineBreaks(strout, cols, true, 2);
+			if(!result_only && b_matrix && line_breaks) addLineBreaks(strout, cols, true, goto_input ? 2 : 0);
 			for(size_t i = 0; i < alt_results.size(); i++) {
 				if(i != 0) add_equals(strout, true);
 				else if(!result_only) add_equals(strout, update_parse || !prev_approximate, &i_result_u, &i_result);
@@ -6642,7 +6694,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 					}
 					strout += "\n\n";
 					i_result_u = 0;
-				} else if(!result_only && ((b_comparison & 1) || (goto_input && cols > 0 && i_result_u > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols))) {
+				} else if(!result_only && ((b_comparison & 1) || (line_breaks && cols > 0 && i_result_u > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols))) {
 					if(!printops.use_unicode_signs && strout.find(_("approx."), i_result) == i_result) i_result += strlen(_("approx.")) + 1;
 					strout[i_result - 1] = '\n';
 					if(goto_input) {
@@ -6682,20 +6734,20 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 					END_ITALIC(strout)
 				}
 			}
-			if(goto_input || b_matrix || (b_comparison & 1)) {
+			if(line_breaks || b_matrix || (b_comparison & 1)) {
 				if(!result_only) {
 					if(b_matrix) {
 						if(!printops.use_unicode_signs && strout.find(_("approx."), i_result2) == i_result2) i_result2 += strlen(_("approx.")) + 1;
 						strout[i_result2 - 1] = '\n';
 						strout.insert(i_result2, 1, '\n');
 						gsub("\n\n", "\n\n  ", strout);
-					} else if(!goto_input && (b_comparison & 1)) {
+					} else if(!line_breaks && (b_comparison & 1)) {
 						if(exact_comparison) strout.insert(i_result2, 1, '\n');
 						else strout[i_result2 - 1] = '\n';
 					} else if(i_result_u == 2 && i_result_u != i_result_u2) {
 						if(!printops.use_unicode_signs && strout.find(_("approx."), i_result2) == i_result2) i_result2 += strlen(_("approx.")) + 1;
 						strout[i_result2 - 1] = '\n';
-						strout.insert(i_result2, "  ");
+						if(goto_input) strout.insert(i_result2, "  ");
 					} else if((b_comparison & 1) || (cols > 0 && i_result_u2 > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols)) {
 						if(!printops.use_unicode_signs && strout.find(_("approx."), i_result) == i_result) {
 							i_result += strlen(_("approx.")) + 1;
@@ -6705,16 +6757,22 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 						}
 						if(i_result != i_result2) {
 							strout[i_result2 - 1] = '\n';
-							strout.insert(i_result2, "  ");
+							if(goto_input) strout.insert(i_result2, "  ");
 						}
 						if(exact_comparison && i_result == i_result2) {
-							strout.insert(i_result, "\n\n  ");
+							if(goto_input) strout.insert(i_result, "\n\n  ");
+							else strout.insert(i_result, "\n");
 						} else {
 							strout[i_result - 1] = '\n';
-							if((b_comparison & 1) && i_result == i_result2) strout.insert(i_result, "\n  ");
-							else strout.insert(i_result, "  ");
+							if((b_comparison & 1) && i_result == i_result2) {
+								if(goto_input) strout.insert(i_result, "\n  ");
+								else strout.insert(i_result, "\n");
+							} else if(goto_input) {
+								strout.insert(i_result, "  ");
+							}
 						}
-						i_result_u = 2;
+						if(goto_input) i_result_u = 2;
+						else i_result_u = 0;
 					}
 				} else if(b_matrix) {
 					if(!goto_input) strout.insert(0, 1, '\n');
@@ -6733,7 +6791,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 				} else if(autocalc_info) {
 					strout += " (!)";
 				}
-				if(!b_matrix && goto_input) addLineBreaks(strout, cols, true, result_only ? 2 : i_result_u, i_result);
+				if(!b_matrix && line_breaks) addLineBreaks(strout, cols, true, result_only ? (goto_input ? 2 : 0) : i_result_u, i_result);
 				if(vertical_space && (b_matrix || goto_input) && !auto_calculate) strout += "\n";
 			}
 			if(b_matrix && goto_input && printops.digit_grouping != DIGIT_GROUPING_NONE) {
@@ -7340,14 +7398,14 @@ bool contains_plot_or_save(const string &str) {
 	return false;
 }
 
-void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op, MathFunction *f, bool do_stack, size_t stack_index, bool check_exrates, bool auto_calculate) {
+void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f, bool do_stack, size_t stack_index, bool check_exrates, bool auto_calculate) {
 
 	if(i_maxtime < 0) return;
 
 	string str, str_conv;
 	bool do_bases = programmers_mode, do_factors = false, do_expand = false, do_pfe = false, do_calendars = false, do_binary_prefixes = false, fraction_changed = false;
 	avoid_recalculation = false;
-	if(!interactive_mode) goto_input = false;
+	bool goto_input = interactive_mode;
 
 	save_base = printops.base;
 	unsigned int save_bits = printops.binary_bits;
@@ -7913,7 +7971,7 @@ void execute_expression(bool goto_input, bool do_mathoperation, MathOperation op
 	if(!auto_calculate && !avoid_recalculation && !do_mathoperation && ((ask_questions && test_ask_tc(*parsed_mstruct) && ask_tc()) || (ask_questions && (test_ask_sinc(*parsed_mstruct) || test_ask_sinc(*mstruct)) && ask_sinc()) || (ask_questions && test_ask_percent() && ask_percent()) || (check_exrates && check_exchange_rates()))) {
 		if(has_printed) printf("\n");
 		b_busy = false;
-		execute_expression(goto_input, do_mathoperation, op, f, rpn_mode, do_stack ? stack_index : 0, false);
+		execute_expression(do_mathoperation, op, f, rpn_mode, do_stack ? stack_index : 0, false);
 		evalops.auto_post_conversion = save_auto_post_conversion;
 		evalops.mixed_units_conversion = save_mixed_units_conversion;
 		evalops.parse_options.units_enabled = b_units_saved;
@@ -8318,7 +8376,6 @@ void load_preferences() {
 		read_history(historyfile.c_str());
 	}
 #endif
-
 
 	int version_numbers[] = {5, 3, 0};
 
@@ -8833,7 +8890,7 @@ bool save_preferences(bool mode) {
 	else if(saved_dual_approximation > 0) fprintf(file, "approximation=%i\n", APPROXIMATION_APPROXIMATE + 1);
 	else fprintf(file, "approximation=%i\n", saved_evalops.approximation);
 	fprintf(file, "interval_calculation=%i\n", saved_evalops.interval_calculation);
-	fprintf(file, "calculate_as_you_type=%i\n", saved_autocalc);
+	if(autocalc >= 0) fprintf(file, "calculate_as_you_type=%i\n", saved_autocalc);
 	fprintf(file, "in_rpn_mode=%i\n", saved_rpn_mode);
 	fprintf(file, "rpn_syntax=%i\n", saved_evalops.parse_options.parsing_mode == PARSING_MODE_RPN);
 	fprintf(file, "limit_implicit_multiplication=%i\n", saved_evalops.parse_options.limit_implicit_multiplication);
