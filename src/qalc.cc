@@ -29,6 +29,7 @@
 #define WIN32_LEAN_AND_MEAN
 #	include <windows.h>
 #	include <VersionHelpers.h>
+#	include <io.h>
 #endif
 #ifndef _WIN32
 #	include <signal.h>
@@ -6544,10 +6545,18 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 					if(use_readline) {
 						c = rl_read_key();
 					} else {
+#ifdef _WIN32
+						if(_read(0, &c, 1) == -1) c = 0;
+#else
 						if(read(STDIN_FILENO, &c, 1) == -1) c = 0;
+#endif
 					}
 #else
+#ifdef _WIN32
+					if(_read(0, &c, 1) == -1) c = 0;
+#else
 					if(read(STDIN_FILENO, &c, 1) == -1) c = 0;
+#endif
 #endif
 					if(c == '\n' || c == '\r') {
 						on_abort_display();
@@ -7879,10 +7888,18 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 					if(use_readline) {
 						c = rl_read_key();
 					} else {
+#ifdef _WIN32
+						if(_read(0, &c, 1) == -1) c = 0;
+#else
 						if(read(STDIN_FILENO, &c, 1) == -1) c = 0;
+#endif
 					}
 #else
+#ifdef _WIN32
+					if(_read(0, &c, 1) == -1) c = 0;
+#else
 					if(read(STDIN_FILENO, &c, 1) == -1) c = 0;
+#endif
 #endif
 					if(c == '\n' || c == '\r') {
 						CALCULATOR->abort();
@@ -8025,7 +8042,11 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 				CALCULATOR->stopControl();
 			}
 		}
+#ifndef CLOCK_MONOTONIC
+		if(i_maxtime) {struct timeval tv; gettimeofday(&tv, NULL); i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_usec) / 1000;}
+#else
 		if(i_maxtime) {struct timespec tv; clock_gettime(CLOCK_MONOTONIC, &tv); i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_nsec / 1000) / 1000;}
+#endif
 	}
 	if(has_printed) printf("\n");
 

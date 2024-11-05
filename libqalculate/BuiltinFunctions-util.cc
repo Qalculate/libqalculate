@@ -1005,7 +1005,11 @@ int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		output += buffer;
 	}
 
+#ifdef _WIN32
+	if(_pclose(pipe) > 0 && output.empty()) {
+#else
 	if(pclose(pipe) > 0 && output.empty()) {
+#endif
 		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str(), NULL);
 		return 0;
 	}
