@@ -3831,6 +3831,26 @@
       </argument>
     </builtin_function>
     <function>
+      <_title>Limit with Multiple Variables</_title>
+      <_names>r:multilimit</_names>
+      <_description>Returns limit of a function for multiple variables. The limit is calculated recursively, for one variable in each iteration, with the result of each iteration used as function in the next.</_description>
+      <example>$name(x^2/(x+y)*y, [x y], [-2 1]) = -4</example>
+      <condition>dimension(\y)=dimension(\z)</condition>
+      <expression>foreach(1...dimension(\y),\x,limit("$mlvalue",element(\z,"$mlindex"),element(\y,"$mlindex"),element(\A{0},if(dimension(\A)&lt;"$mlindex",dimension(\A),"$mlindex"))),"$mlvalue","$mlindex")</expression>
+      <argument type="free" index="1">
+        <_title>Function</_title>
+      </argument>
+      <argument type="vector" index="2">
+        <_title>Variable vector</_title>
+      </argument>
+      <argument type="vector" index="3">
+        <_title>Value vector</_title>
+      </argument>
+      <argument type="vector" index="4">
+        <_title>Direction vector</_title>
+      </argument>
+    </function>
+    <function>
       <_title>Extreme Values</_title>
       <_names>r:extremum</_names>
       <expression>solve(diff(\x, \Y{x})=0, \Y)</expression>
