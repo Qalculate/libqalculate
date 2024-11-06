@@ -199,7 +199,7 @@ bool Calculator::loadLocalDefinitions() {
 	WIN32_FIND_DATA FindFileData;
 	if((hFind = FindFirstFile(buildPath(homedir, "*").c_str(), &FindFileData)) != INVALID_HANDLE_VALUE) {
 		do {
-			if(!(FineFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) eps.push_back(FindFileData.cFileName);
+			if(!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) eps.push_back(FindFileData.cFileName);
 		} while(FindNextFile(hFind, &FindFileData));
 		FindClose(hFind);
 	}

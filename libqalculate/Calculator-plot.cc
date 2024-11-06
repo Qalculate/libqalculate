@@ -231,7 +231,11 @@ bool Calculator::invokeGnuplot(string commands, string commandline_extra, bool p
 	fputs(commands.c_str(), pipe);
 	fflush(pipe);
 	if(persistent) {
+#ifdef _WIN32
+		return _pclose(pipe) == 0;
+#else
 		return pclose(pipe) == 0;
+#endif
 	}
 	return true;
 }
