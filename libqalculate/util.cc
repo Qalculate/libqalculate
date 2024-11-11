@@ -862,7 +862,7 @@ char *locale_to_utf8(const char *str) {
 	return NULL;
 #endif
 }
-char *utf8_strdown(const char *str, int l) {
+char *utf8_strdown(const char *str, int l, bool remove_accents) {
 #ifdef HAVE_ICU
 	if(!ucm) return NULL;
 	UErrorCode err = U_ZERO_ERROR;
@@ -872,6 +872,7 @@ char *utf8_strdown(const char *str, int l) {
 	if(!buffer) return NULL;
 	int32_t length = ucasemap_utf8ToLower(ucm, buffer, outlength, str, inlength, &err);
 	if(U_SUCCESS(err)) {
+		if(!remove_accents) return buffer;
 		//basic accent removal
 		if(strcmp(buffer, "á") == 0 || strcmp(buffer, "à") == 0) {buffer[0] = 'a'; buffer[1] = '\0';}
 		else if(strcmp(buffer, "é") == 0 || strcmp(buffer, "è") == 0) {buffer[0] = 'e'; buffer[1] = '\0';}
@@ -898,6 +899,9 @@ char *utf8_strdown(const char *str, int l) {
 	return NULL;
 #endif
 }
+char *utf8_strdown(const char *str, int l) {
+	return utf8_strdown(str, l, true);
+}
 
 char *utf8_strup(const char *str, int l) {
 #ifdef HAVE_ICU
@@ -909,6 +913,17 @@ char *utf8_strup(const char *str, int l) {
 	if(!buffer) return NULL;
 	int32_t length = ucasemap_utf8ToUpper(ucm, buffer, outlength, str, inlength, &err);
 	if(U_SUCCESS(err)) {
+		if((l <= 0 && strcmp(buffer, str) != 0) || (l > 0 && strncmp(buffer, str, l) != 0)) {
+			char *buffer2 = utf8_strdown(str, -1, false);
+			if(buffer2) {
+				if(strcmp(buffer, buffer2) != 0) {
+					free(buffer2);
+					free(buffer);
+					return NULL;
+				}
+				free(buffer2);
+			}
+		}
 		return buffer;
 	} else if(err == U_BUFFER_OVERFLOW_ERROR) {
 		outlength = length + 4;
@@ -918,6 +933,15 @@ char *utf8_strup(const char *str, int l) {
 		err = U_ZERO_ERROR;
 		ucasemap_utf8ToUpper(ucm, buffer, outlength, str, inlength, &err);
 		if(U_SUCCESS(err)) {
+			char *buffer2 = utf8_strdown(str, -1, false);
+			if(buffer2) {
+				if(strcmp(buffer, buffer2) != 0) {
+					free(buffer2);
+					free(buffer);
+					return NULL;
+				}
+				free(buffer2);
+			}
 			return buffer;
 		} else {
 			free(buffer);
