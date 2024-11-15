@@ -4027,7 +4027,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 			size_t length1 = mpz_sizeinbase(mpq_numref(r_value), 10);
 			size_t length2 = mpz_sizeinbase(mpq_denref(r_value), 10);
 			if(length2 > length1) length1 = length2;
-			if((i_root <= 2 || mpq_sgn(r_value) > 0) && ((!try_exact && i_root <= 3 && (long long int) labs(i_pow) * length1 < 1000) || (try_exact && (long long int) labs(i_pow) * length1 < 1000000LL && i_root < 1000000L))) {
+			if((i_root <= 2 || mpq_sgn(r_value) > 0) && ((!try_exact && i_root <= 3 && i_pow < 1000 && i_pow > -1000 && length1 < 1000 && labs(i_pow) * length1 < 1000) || (try_exact && i_root < 1000000L && i_pow < 1000000L && i_pow > -1000000L && length1 < 1000000L && (long long int) labs(i_pow) * length1 < 1000000LL))) {
 				bool complex_result = false;
 				if(i_root != 1) {
 					mpq_t r_test;

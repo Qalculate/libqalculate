@@ -4154,7 +4154,7 @@ int main(int argc, char *argv[]) {
 	if(interactive_mode) {
 		if(cfile) {
 			rl_initialize();
-		} else if(autocalc < 0 && ask_questions) {
+		} else if(autocalc < 0 && ask_questions && !load_defaults) {
 			ask_autocalc();
 		}
 	}
@@ -4186,7 +4186,7 @@ int main(int argc, char *argv[]) {
 				if(!interactive_mode) break;
 				i_maxtime = 0;
 #ifdef HAVE_LIBREADLINE
-				if(autocalc < 0 && ask_questions) {
+				if(autocalc < 0 && ask_questions && !load_defaults) {
 					puts("");
 					ask_autocalc();
 				}
@@ -6298,7 +6298,21 @@ void ViewThread::run() {
 			alt_results.insert(alt_results.begin(), prepend_mstruct.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL));
 		}
 
+		if(CALCULATOR->aborted() || avoid_recalculation) {
+			bool set_aborted = result_text.length() > 10000;
+			for(size_t i = 0; !set_aborted && i < alt_results.size(); i++) {
+				if(alt_results[i].length() > 10000) set_aborted = true;
+			}
+			if(set_aborted) {
+				alt_results.clear();
+				MathStructure m;
+				m.setAborted();
+				result_text = m.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
+			}
+		}
+
 		b_busy = false;
+
 		CALCULATOR->stopControl();
 
 	}
@@ -6704,7 +6718,6 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 					strout += "\n\n";
 					i_result_u = 0;
 				} else if(!result_only && ((b_comparison & 1) || (line_breaks && cols > 0 && i_result_u > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols))) {
-					if(!printops.use_unicode_signs && strout.find(_("approx."), i_result) == i_result) i_result += strlen(_("approx.")) + 1;
 					strout[i_result - 1] = '\n';
 					if(goto_input) {
 						strout.insert(i_result, "  ");
@@ -6754,16 +6767,9 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 						if(exact_comparison) strout.insert(i_result2, 1, '\n');
 						else strout[i_result2 - 1] = '\n';
 					} else if(i_result_u == 2 && i_result_u != i_result_u2) {
-						if(!printops.use_unicode_signs && strout.find(_("approx."), i_result2) == i_result2) i_result2 += strlen(_("approx.")) + 1;
 						strout[i_result2 - 1] = '\n';
 						if(goto_input) strout.insert(i_result2, "  ");
 					} else if((b_comparison & 1) || (cols > 0 && i_result_u2 > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols)) {
-						if(!printops.use_unicode_signs && strout.find(_("approx."), i_result) == i_result) {
-							i_result += strlen(_("approx.")) + 1;
-						}
-						if(!printops.use_unicode_signs && strout.find(_("approx."), i_result2) == i_result2) {
-							i_result2 += strlen(_("approx.")) + 1;
-						}
 						if(i_result != i_result2) {
 							strout[i_result2 - 1] = '\n';
 							if(goto_input) strout.insert(i_result2, "  ");
@@ -7942,40 +7948,8 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 	}
 
 	// Always perform conversion to optimal (SI) unit when the expression is a number multiplied by a unit and input equals output
-	if(!rpn_mode && !avoid_recalculation && !had_to_expression && ((evalops.approximation == APPROXIMATION_EXACT && evalops.auto_post_conversion != POST_CONVERSION_NONE) || evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) && parsed_mstruct && mstruct && ((parsed_mstruct->isMultiplication() && parsed_mstruct->size() == 2 && (*parsed_mstruct)[0].isNumber() && (*parsed_mstruct)[1].isUnit_exp() && parsed_mstruct->equals(*mstruct)) || (parsed_mstruct->isNegate() && (*parsed_mstruct)[0].isMultiplication() && (*parsed_mstruct)[0].size() == 2 && (*parsed_mstruct)[0][0].isNumber() && (*parsed_mstruct)[0][1].isUnit_exp() && mstruct->isMultiplication() && mstruct->size() == 2 && (*mstruct)[1] == (*parsed_mstruct)[0][1] && (*mstruct)[0].isNumber() && (*parsed_mstruct)[0][0].number() == -(*mstruct)[0].number()) || (parsed_mstruct->isUnit_exp() && parsed_mstruct->equals(*mstruct)))) {
-		Unit *u = NULL;
-		MathStructure *munit = NULL;
-		if(mstruct->isMultiplication()) munit = &(*mstruct)[1];
-		else munit = mstruct;
-		if(munit->isUnit()) u = munit->unit();
-		else u = (*munit)[0].unit();
-		if(u && u->isCurrency()) {
-			if(evalops.local_currency_conversion && CALCULATOR->getLocalCurrency() && u != CALCULATOR->getLocalCurrency()) {
-				ApproximationMode abak = evalops.approximation;
-				if(evalops.approximation == APPROXIMATION_EXACT) evalops.approximation = APPROXIMATION_TRY_EXACT;
-				mstruct->set(CALCULATOR->convertToOptimalUnit(*mstruct, evalops, true));
-				evalops.approximation = abak;
-			}
-		} else if(u && u->subtype() != SUBTYPE_BASE_UNIT && !u->isSIUnit()) {
-			MathStructure mbak(*mstruct);
-			if(evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) {
-				if(munit->isUnit() && u->referenceName() == "oF") {
-					u = CALCULATOR->getActiveUnit("oC");
-					if(u) mstruct->set(CALCULATOR->convert(*mstruct, u, evalops, true, false, false));
-				} else if(munit->isUnit() && u->referenceName() == "oC") {
-					u = CALCULATOR->getActiveUnit("oF");
-					if(u) mstruct->set(CALCULATOR->convert(*mstruct, u, evalops, true, false, false));
-				} else {
-					mstruct->set(CALCULATOR->convertToOptimalUnit(*mstruct, evalops, true));
-				}
-				}
-			if(evalops.approximation == APPROXIMATION_EXACT && (evalops.auto_post_conversion != POST_CONVERSION_OPTIMAL || mstruct->equals(mbak))) {
-				evalops.approximation = APPROXIMATION_TRY_EXACT;
-				if(evalops.auto_post_conversion == POST_CONVERSION_BASE) mstruct->set(CALCULATOR->convertToBaseUnits(*mstruct, evalops));
-				else mstruct->set(CALCULATOR->convertToOptimalUnit(*mstruct, evalops, true));
-				evalops.approximation = APPROXIMATION_EXACT;
-			}
-		}
+	if(!rpn_mode && !avoid_recalculation && !had_to_expression && ((evalops.approximation == APPROXIMATION_EXACT && evalops.auto_post_conversion != POST_CONVERSION_NONE) || evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) && parsed_mstruct && mstruct) {
+		convert_unchanged_quantity_with_unit(*parsed_mstruct, *mstruct, evalops);
 	}
 
 	if(rpn_mode && (!do_stack || stack_index == 0)) {

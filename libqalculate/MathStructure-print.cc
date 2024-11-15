@@ -1989,12 +1989,6 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure *paren
 			}
 			break;
 		}
-		case STRUCT_POWER: {
-			if(CHILD(0).isUnit()) {
-				CHILD(0).setPlural(false);
-				break;
-			}
-		}
 		case STRUCT_NEGATE: {
 			if(po.place_units_separately && (!parent || !parent->isAddition())) {
 				CHILD(0).postFormatUnits(po, this, 1);
@@ -2007,6 +2001,10 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure *paren
 			}
 		}
 		default: {
+			if(m_type == STRUCT_POWER && CHILD(0).isUnit()) {
+				CHILD(0).setPlural(false);
+				break;
+			}
 			for(size_t i = 0; i < SIZE; i++) {
 				if(CALCULATOR->aborted()) break;
 				CHILD(i).postFormatUnits(po, this, i + 1);

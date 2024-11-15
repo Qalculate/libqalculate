@@ -220,6 +220,7 @@ MathStructure &MathStructure::getArea(size_t r1, size_t c1, size_t r2, size_t c2
 	if(mstruct.rows() < r2 - r1 + 1 || mstruct.columns() < c2 - c1 + 1)  {mstruct = m_undefined; return mstruct;}
 	for(size_t index_r = r1; index_r <= r2; index_r++) {
 		for(size_t index_c = c1; index_c <= c2; index_c++) {
+			if(CALCULATOR->aborted()) {mstruct = m_undefined; return mstruct;}
 			mstruct[index_r - r1][index_c - c1] = CHILD(index_r - 1)[index_c - 1];
 		}
 	}
@@ -369,11 +370,11 @@ int MathStructure::pivot(size_t ro, size_t co, bool symbolic) {
 
 
 //from GiNaC
-void determinant_minor(const MathStructure &mtrx, MathStructure &mdet, const EvaluationOptions &eo) {
+bool determinant_minor(const MathStructure &mtrx, MathStructure &mdet, const EvaluationOptions &eo) {
 	size_t n = mtrx.size();
 	if(n == 1) {
 		mdet = mtrx[0][0];
-		return;
+		return true;
 	}
 	if(n == 2) {
 		mdet = mtrx[0][0];
@@ -382,7 +383,7 @@ void determinant_minor(const MathStructure &mtrx, MathStructure &mdet, const Eva
 		mdet[mdet.size() - 1].calculateMultiply(mtrx[0][1], eo);
 		mdet[mdet.size() - 1].calculateNegate(eo);
 		mdet.calculateAddLast(eo);
-		return;
+		return true;
 	}
 	if(n == 3) {
 		mdet = mtrx[0][0];
@@ -411,7 +412,7 @@ void determinant_minor(const MathStructure &mtrx, MathStructure &mdet, const Eva
 		mdet[mdet.size() - 1].calculateMultiply(mtrx[2][0], eo);
 		mdet[mdet.size() - 1].calculateNegate(eo);
 		mdet.calculateAddLast(eo);
-		return;
+		return true;
 	}
 
 	std::vector<size_t> Pkey;
@@ -423,6 +424,7 @@ void determinant_minor(const MathStructure &mtrx, MathStructure &mdet, const Eva
 	Rmap A;
 	Rmap B;
 	for(size_t r = 0; r < n; ++r) {
+		if(CALCULATOR->aborted()) return false;
 		Pkey.erase(Pkey.begin(), Pkey.end());
 		Pkey.push_back(r);
 		A.insert(Rmap_value(Pkey, mtrx[r][n - 1]));
@@ -435,9 +437,10 @@ void determinant_minor(const MathStructure &mtrx, MathStructure &mdet, const Eva
 		do {
 			mdet.clear();
 			for(size_t r = 0; r < n - c; ++r) {
-				if (mtrx[Pkey[r]][c].isZero()) continue;
+				if(mtrx[Pkey[r]][c].isZero()) continue;
 				Mkey.erase(Mkey.begin(), Mkey.end());
 				for(size_t i = 0; i < n - c; ++i) {
+					if(CALCULATOR->aborted()) return false;
 					if(i != r) Mkey.push_back(Pkey[i]);
 				}
 				mdet.add(mtrx[Pkey[r]][c], true);
@@ -457,7 +460,7 @@ void determinant_minor(const MathStructure &mtrx, MathStructure &mdet, const Eva
 		A = B;
 		B.clear();
 	}
-	return;
+	return true;
 }
 
 //from GiNaC
@@ -620,7 +623,7 @@ MathStructure &MathStructure::determinant(MathStructure &mstruct, const Evaluati
 		}
 		mstruct.clear();
 
-		determinant_minor(result, mstruct, eo);
+		if(!determinant_minor(result, mstruct, eo)) {mstruct = m_undefined; return mstruct;}
 
 		if(sign != 1) {
 			mstruct.calculateMultiply(sign, eo);
@@ -667,6 +670,7 @@ MathStructure &MathStructure::permanent(MathStructure &mstruct, const Evaluation
 		for(size_t index_c = 0; index_c < CHILD(0).size(); index_c++) {
 			for(size_t index_r2 = 1; index_r2 < SIZE; index_r2++) {
 				for(size_t index_c2 = 0; index_c2 < CHILD(index_r2).size(); index_c2++) {
+					if(CALCULATOR->aborted()) {mstruct = m_undefined; return mstruct;}
 					if(index_c2 > index_c) {
 						mtrx.setElement(CHILD(index_r2)[index_c2], index_r2, index_c2);
 					} else if(index_c2 < index_c) {
@@ -794,8 +798,8 @@ bool MathStructure::adjointMatrix(const EvaluationOptions &eo) {
 	MathStructure msave(*this);
 	for(size_t index_r = 0; index_r < SIZE; index_r++) {
 		for(size_t index_c = 0; index_c < CHILD(0).size(); index_c++) {
-			if(CALCULATOR->aborted()) return false;
 			msave.cofactor(index_r + 1, index_c + 1, CHILD(index_r)[index_c], eo);
+			if(CALCULATOR->aborted() || CHILD(index_r)[index_c].isUndefined()) return false;
 		}
 	}
 	if(!transposeMatrix()) return false;
@@ -813,6 +817,7 @@ bool MathStructure::transposeMatrix() {
 	if(rows() < msave[0].size() || columns() < msave.size()) {set(msave); return false;}
 	for(size_t index_r = 0; index_r < SIZE; index_r++) {
 		for(size_t index_c = 0; index_c < CHILD(0).size(); index_c++) {
+			if(CALCULATOR->aborted()) {set(msave); return false;}
 			CHILD(index_r)[index_c] = msave[index_c][index_r];
 		}
 	}
@@ -832,6 +837,7 @@ MathStructure &MathStructure::cofactor(size_t r, size_t c, MathStructure &mstruc
 	for(size_t index_r = 0; index_r < SIZE; index_r++) {
 		if(index_r != r) {
 			for(size_t index_c = 0; index_c < CHILD(0).size(); index_c++) {
+				if(CALCULATOR->aborted()) {mstruct = m_undefined; return mstruct;}
 				if(index_c > c) {
 					if(index_r > r) {
 						mstruct[index_r - 1][index_c - 1] = CHILD(index_r)[index_c];
@@ -850,7 +856,7 @@ MathStructure &MathStructure::cofactor(size_t r, size_t c, MathStructure &mstruc
 	}
 	MathStructure mstruct2;
 	mstruct = mstruct.determinant(mstruct2, eo);
-	if((r + c) % 2 == 1) {
+	if((r + c) % 2 == 1 && !mstruct.isUndefined()) {
 		mstruct.calculateNegate(eo);
 	}
 	return mstruct;

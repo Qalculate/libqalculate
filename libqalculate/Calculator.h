@@ -1368,5 +1368,6 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 bool transform_expression_for_equals_save(std::string&, const ParseOptions&);
 MathStructure get_units_for_parsed_expression(const MathStructure *parsed_struct, Unit *to_unit, const EvaluationOptions &eo, const MathStructure *mstruct = NULL);
 bool expression_contains_save_function(const std::string&, const ParseOptions&, bool = false);
+void convert_unchanged_quantity_with_unit(const MathStructure &mp, MathStructure &mr, EvaluationOptions &eo);
 
 #endif
