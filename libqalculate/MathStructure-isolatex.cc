@@ -308,9 +308,9 @@ int test_comparisons(const MathStructure &msave, MathStructure &mthis, const Mat
 				if(mtest.number().getBoolean() == 1) {
 					return 1;
 				} else if(mtest.number().getBoolean() == 0) {
-					if(mtest.isApproximate() && mtest.comparisonType() != COMPARISON_EQUALS && mtest.comparisonType() != COMPARISON_NOT_EQUALS) return -1;
-					if(mtest.comparisonType() == COMPARISON_EQUALS) mthis.clear();
-					else if(mtest.comparisonType() == COMPARISON_NOT_EQUALS) mthis = m_one;
+					if(mtest.isApproximate() && mthis.comparisonType() != COMPARISON_EQUALS && mthis.comparisonType() != COMPARISON_NOT_EQUALS) return -1;
+					if(mthis.comparisonType() == COMPARISON_EQUALS) mthis.clear();
+					else if(mthis.comparisonType() == COMPARISON_NOT_EQUALS) mthis = m_one;
 					return 0;
 				}
 			}
