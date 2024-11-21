@@ -1,3 +1,55 @@
+2024-11-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix test of equation solution in some cases (fixes "sqrt(x-1/x)+sqrt(1-1/x)-x=0" when approximation is not exact)
+
+2024-11-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Option to specify number of displayed significant digits, instead of using precision (if PrintOptions::max_decimals < -1, digits = -max_decimals)
+
+2024-11-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve decision to automatically convert unchanged quantity with unit
+	* Fix segfault with very large integer raised by very large integer (integer length multiplied by exponent overflows long long int), e.g. "fs^EiK"
+	* Fix wrong output of converted unit with non-numerical exponent in some cases (e.g. ft^x converted to m without expansion)
+	* Improve calculation of formatted string length (for filtering of multiple results in Calculator::calculateAndPrint())
+	* Remove "timed out" alternative results in Calculator::calculateAndPrint()
+	* Place "approx." on same line as value (instead of as equals sign) in qalc
+	* Display "aborted" for long aborted result in qalc
+
+2024-11-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix case conversion of µ to M and similar (compare initial text string when converted back to lower case)
+
+2024-11-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add multilimit() function
+
+2024-11-06 Stefan Gerlach <stefan.gerlach@uni-konstanz.de>
+
+	* Fix issues building with MSVC
+
+2024-11-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix spacing after implicit mulitplication interpretation question in qalc
+	* Fix formatting when commands/expression is read from file before interactive mode
+
+2024-10-27 Marko Zajc <marko@zajc.tel>
+
+	* Add triple() function
+
+2024-10-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix clear using Ctrl+L when input line is not empty
+	* Improved detection of charsets other than UTF-8
+
+2024-10-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add calculate as you type (disabled by default) to qalc
+
+2024-10-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve ability to abort matrix functions (e.g. identity() with large argument)
+
 2024-10-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Do not show warning for logarithmic ratio unit, with quantity, as function argument

@@ -1566,7 +1566,7 @@ AC_CHECK_TOOL(STRIP, strip, :)
 test -z "$STRIP" && STRIP=:
 _LT_DECL([], [STRIP], [1], [A symbol stripping program])
 
-AC_CHECK_TOOL(RANLIB, ranlib, :)
+AC_REQUIRE([AC_PROG_RANLIB])
 test -z "$RANLIB" && RANLIB=:
 _LT_DECL([], [RANLIB], [1],
     [Commands used to install an old-style archive])
@@ -2461,7 +2461,7 @@ aix[[4-9]]*)
     # Unfortunately, runtime linking may impact performance, so we do
     # not want this to be the default eventually. Also, we use the
     # versioned .so libs for executables only if there is the -brtl
-    # linker flag in LDFLAGS as well, or --with-aix-soname=svr4 only.
+    # linker flag in LDFLAGS as well, or --enable-aix-soname=svr4 only.
     # To allow for filename-based versioning support, we need to create
     # libNAME.so.V as an archive file, containing:
     # *) an Import File, referring to the versioned filename of the
@@ -3535,7 +3535,7 @@ mingw* | windows* | pw32*)
     lt_cv_file_magic_cmd='func_win32_libid'
   else
     # Keep this pattern in sync with the one in func_win32_libid.
-    lt_cv_deplibs_check_method='file_magic file format (pei*-i386(.*architecture: i386)?|pe-arm-wince|pe-x86-64)'
+    lt_cv_deplibs_check_method='file_magic file format (pei*-i386(.*architecture: i386)?|pe-arm-wince|pe-x86-64|pe-aarch64)'
     lt_cv_file_magic_cmd='$OBJDUMP -f'
   fi
   ;;

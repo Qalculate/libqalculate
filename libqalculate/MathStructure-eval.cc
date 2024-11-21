@@ -2208,7 +2208,7 @@ bool try_isolate_x(MathStructure &mstruct, EvaluationOptions &eo3, const Evaluat
 		else x_var2 = &mstruct.find_x_var();
 		if(x_var2->isUndefined() || (mtest[0] == *x_var2 && !mtest[1].contains(*x_var2))) {
 			CALCULATOR->endTemporaryStopMessages();
-			 return false;
+			return false;
 		}
 		if(mtest.isolate_x(eo3, eo, *x_var2, false)) {
 			if(test_comparisons(mstruct, mtest, *x_var2, eo3) >= 0) {

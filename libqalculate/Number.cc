@@ -10623,6 +10623,8 @@ void add_base_exponent(string &str, long int expo, int base, const PrintOptions 
 	}
 }
 
+#define PRECISION_DIGITS ((po.use_max_decimals && po.max_decimals < -1 && po.max_decimals < PRECISION) ? -po.max_decimals : PRECISION)
+
 string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) const {
 	if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 	// reset InternalPrintStruct (used for separate handling sign, scientific notation, numerator/denominator, imaginary/real parts, etc)
@@ -10856,7 +10858,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 		// if base is approximate, output is approximate
 		if(po.is_approximate && base.isApproximate()) *po.is_approximate = true;
-		long int precision = PRECISION;
+		long int precision = PRECISION_DIGITS;
 		// adjust output precision if precision of number or base is lower than global precision
 		if(b_approx && i_precision >= 0 && i_precision < precision) precision = i_precision;
 		if(base.isApproximate() && base.precision() >= 0 && base.precision() < precision) precision = base.precision();
@@ -11258,11 +11260,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			// do not show zero seconds in time format
 			if(!nr3.isInterval() && (!nr3.isZero() || BASE_IS_SEXAGESIMAL(po.base))) {
 				if(nr1.isZero() && nr2.isZero()) {
-					po2.min_exp = PRECISION;
+					po2.min_exp = PRECISION_DIGITS;
 				} else {
 					po2.min_exp = EXP_NONE;
-					if(po2.max_decimals < 0 || !po2.max_decimals) {
-						po2.max_decimals = PRECISION;
+					if(po2.max_decimals < 0 || !po2.use_max_decimals) {
+						po2.max_decimals = PRECISION_DIGITS;
 						po2.use_max_decimals = true;
 					}
 				}
@@ -11281,7 +11283,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			}
 		}
 
-		if((po.min_exp > 0 && po.min_exp < PRECISION) || (po.min_exp < 0 && (-po.min_exp) < PRECISION)) po2.min_exp = EXP_PRECISION;
+		if((po.min_exp > 0 && po.min_exp < PRECISION_DIGITS) || (po.min_exp < 0 && (-po.min_exp) < PRECISION_DIGITS)) po2.min_exp = EXP_PRECISION;
 		else po2.min_exp = po.min_exp;
 		InternalPrintStruct ips2;
 		string exp;
@@ -11308,11 +11310,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		if(po.base == BASE_SEXAGESIMAL_2 || po.base == BASE_LATITUDE_2 || po.base == BASE_LONGITUDE_2) {
 			if(nr1.isZero()) {
-				po2.min_exp = PRECISION;
+				po2.min_exp = PRECISION_DIGITS;
 			} else {
 				po2.min_exp = EXP_NONE;
-				if(po2.max_decimals < 0 || !po2.max_decimals) {
-					po2.max_decimals = PRECISION;
+				if(po2.max_decimals < 0 || !po2.use_max_decimals) {
+					po2.max_decimals = PRECISION_DIGITS;
 					po2.use_max_decimals = true;
 				}
 			}
@@ -11453,10 +11455,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		return str;
 	}
 
-	long int precision = PRECISION;
+	long int precision = PRECISION_DIGITS;
 
 	// adjust output precision if precision of the number is lower than global precision
-	if(b_approx && i_precision >= 0 && (po.preserve_precision || po.preserve_format || i_precision < PRECISION)) precision = i_precision;
+	if(b_approx && i_precision >= 0 && (po.preserve_precision || po.preserve_format || i_precision < precision)) precision = i_precision;
 	// if preserve_precision is true, use full precision
 	else if(b_approx && i_precision < 0 && po.preserve_precision && FROM_BIT_PRECISION(NUMBER_BIT_PRECISION) > precision) precision = FROM_BIT_PRECISION(NUMBER_BIT_PRECISION);
 	// if preserve_format is true, use full precision - 1 (avoids confusing output)
@@ -11625,8 +11627,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				if(po.number_fraction_format >= FRACTION_FRACTIONAL) {
 					// restricted fraction format: exponent = length - 1 if exponent >= precision; increase precision if possible to avoid lengthening of the output
 					long int precexp = i_precision_base;
-					if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
-					else if(precexp > precision + 3) precexp = precision + 3;
+					int prec_add = precision < 8 ? 2 : 3;
+					if(po.use_max_decimals && po.max_decimals < -1) prec_add = 0;
+					if(precexp > precision + prec_add) precexp = precision + prec_add;
 					if(exact && ((expo >= 0 && length - 1 < precexp) || (expo < 0 && expo > -PRECISION))) expo = 0;
 					else expo = length - 1;
 				} else {
@@ -11645,9 +11648,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			if(po.min_exp == EXP_PRECISION || (po.min_exp == EXP_NONE && (expo > 100000L || expo < -100000L))) {
 				// use scientific notation if exponent >= precision; increase precision if possible to avoid lengthening of the output
 				long int precexp = i_precision_base;
-				if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
-				else if(precexp > precision + 3) precexp = precision + 3;
-				if(exact && ((expo >= 0 && length - 1 < precexp) || (expo < 0 && expo > -PRECISION))) {
+				int prec_add = precision < 8 ? 2 : 3;
+				if(po.use_max_decimals && po.max_decimals < -1) prec_add = 0;
+				if(precexp > precision + prec_add) precexp = precision + prec_add;
+				if(exact && ((expo >= 0 && length - 1 < precexp) || (expo < 0 && expo > -PRECISION_DIGITS))) {
 					if(precision_base < length) precision_base = length;
 					expo = 0;
 				}
@@ -12012,9 +12016,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				precision = precision_base;
 				if(base != 10 || po.min_exp == EXP_PRECISION || (po.min_exp == EXP_NONE && (expo > 100000L || expo < -100000L))) {
 					long int precexp = i_precision_base;
-					if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
-					else if(precexp > precision + 3) precexp = precision + 3;
-					if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION)) {
+					int prec_add = precision < 8 ? 2 : 3;
+					if(po.use_max_decimals && po.max_decimals < -1) prec_add = 0;
+					if(precexp > precision + prec_add) precexp = precision + prec_add;
+					if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION_DIGITS)) {
 						if(expo >= i_precision_base) i_precision_base = expo + 1;
 						if(expo >= precision_base) precision_base = expo + 1;
 						if(expo >= precision) precision = expo + 1;
@@ -12296,9 +12301,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			expo = i_log;
 			if(po.min_exp == EXP_PRECISION || (po.min_exp == EXP_NONE && (expo > 100000L || expo < -100000L)) || (base != 10 && (expo > 10000L || expo < -10000L))) {
 				long int precexp = i_precision_base;
-				if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
-				else if(precexp > precision + 3) precexp = precision + 3;
-				if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION)) {
+				int prec_add = precision < 8 ? 2 : 3;
+				if(po.use_max_decimals && po.max_decimals < -1) prec_add = 0;
+				if(precexp > precision + prec_add) precexp = precision + prec_add;
+				if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION_DIGITS)) {
 					if(expo >= i_precision_base) i_precision_base = expo + 1;
 					if(expo >= precision_base) precision_base = expo + 1;
 					if(expo >= precision) precision = expo + 1;
@@ -12639,9 +12645,10 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				expo = length - 1;
 				if(po.min_exp == EXP_PRECISION) {
 					long int precexp = i_precision_base;
-					if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
-					else if(precexp > precision + 3) precexp = precision + 3;
-					if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION)) {
+					int prec_add = precision < 8 ? 2 : 3;
+					if(po.use_max_decimals && po.max_decimals < -1) prec_add = 0;
+					if(precexp > precision + prec_add) precexp = precision + prec_add;
+					if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION_DIGITS)) {
 						if(expo >= precision) precision = expo + 1;
 						if(expo >= precision_base) precision_base = expo + 1;
 						if(expo >= precision2) precision2 = expo + 1;
@@ -12883,7 +12890,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				long int precexp = i_precision_base;
 				if(precision < 8 && precexp > precision + 2) precexp = precision + 2;
 				else if(precexp > precision + 3) precexp = precision + 3;
-				if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION)) {
+				if((expo > 0 && expo < precexp) || (expo < 0 && expo > -PRECISION_DIGITS)) {
 					if(expo >= precision) precision = expo + 1;
 					if(expo >= precision2) precision2 = expo + 1;
 					expo = 0;

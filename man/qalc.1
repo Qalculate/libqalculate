@@ -448,6 +448,10 @@ Determines the default decimal separator.
 .B digit grouping, group \fI(0* = off, 1 = standard, 2 = locale)\fP
 .PP
 .TP 8
+.B digits \fI(-1* = auto, >= 2)\fP
+Specifies the number of displayed significant digits (by default determined by precision).
+.PP
+.TP 8
 .B exp display, edisp \fI(E*, e, 10)\fP
 Determines how scientific notation are displayed (e.g. 3E6, 3e6, or 3 * 10^6).
 .PP
@@ -598,6 +602,10 @@ Determines how expressions with temperature units are calculated (hybrid acts as
 .B update exchange rates, upxrates \fI(-1* = ask, 0 = never, > 0 = days)\fP
 .PP
 Other:
+.PP
+.TP 8
+.B calculate as you type, autocalc \fI(on, off*)\fP
+Activates continuous calculation of the currently edited expression.
 .PP
 .TP 8
 .B clear history \fI(yes, no*)\fP

@@ -33,7 +33,7 @@
 #include <stdint.h>
 
 #define QALCULATE_MAJOR_VERSION (5)
-#define QALCULATE_MINOR_VERSION (3)
+#define QALCULATE_MINOR_VERSION (4)
 #define QALCULATE_MICRO_VERSION (0)
 
 static std::string empty_string;
@@ -512,11 +512,11 @@ struct PrintOptions {
 	bool halfexp_to_sqrt;
 	/// Minimum number of decimals to display for numbers. Default: 0
 	int min_decimals;
-	/// Maximum number of decimals to display for numbers. A negative value disables the limit. Default: -1
+	/// Maximum number of decimals to display for numbers. Disables the limit of set to -1. Default: -1
 	int max_decimals;
 	/// Enable use of min_decimals. False is equivalent to a min_decimals value of zero. Default: true
 	bool use_min_decimals;
-	/// Enable use of max_decimals. False is equivalent to a negative max_decimals value. Default: true
+	/// Enable use of max_decimals. False is equivalent to a max_decimals value of -1. Default: true
 	bool use_max_decimals;
 	/// Deprecated: use rounding
 	bool round_halfway_to_even;

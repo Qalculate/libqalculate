@@ -1645,6 +1645,21 @@ void set_option(string str) {
 			printops.use_min_decimals = true;
 			result_format_updated();
 		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "digits", _("digits"))) {
+		int v = -1;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "auto", _("auto")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "precision", _("precision"))) v = -1;
+		else if(!empty_value && svalue.find_first_not_of(SPACES NUMBERS) == string::npos) v = s2i(svalue);
+		if(v <= 0 || v == PRECISION) {
+			printops.max_decimals = -1;
+			printops.use_max_decimals = false;
+			result_format_updated();
+		} else if(v >= 2 && v < PRECISION) {
+			printops.max_decimals = -v;
+			printops.use_max_decimals = true;
+			result_format_updated();
+		} else {
+			CALCULATOR->error(true, "Illegal value: %s.", svalue.c_str(), NULL);
+		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "fractions", _("fractions")) || svar == "fr") {
 		int v = -1;
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = FRACTION_DECIMAL;
@@ -1876,6 +1891,7 @@ void set_option(string str) {
 			ADD_OPTION_TO_LIST("variable units", "varunits")
 			ADD_OPTION_TO_LIST("max decimals", "maxdeci")
 			ADD_OPTION_TO_LIST("min decimal", "mindeci")
+			ADD_OPTION_TO_LIST1("digits")
 			ADD_OPTION_TO_LIST("fractions", "fr")
 			ADD_OPTION_TO_LIST("complex form", "cplxform")
 			ADD_OPTION_TO_LIST("read precision", "readprec")
@@ -2010,8 +2026,8 @@ bool show_set_help(string set_option = "") {
 
 	STR_AND_TABS_4("angle unit", "angle", _("Default angle unit for trigonometric functions."), evalops.parse_options.angle_unit, _("none"), _("radians"), _("degrees"), _("gradians"), evalops.parse_options.angle_unit == ANGLE_UNIT_CUSTOM && CALCULATOR->customAngleUnit() ? CALCULATOR->customAngleUnit()->referenceName() : _("custom"));
 	int appr = evalops.approximation;
-	if(dual_approximation < 0) appr = -1;
-	else if(dual_approximation > 0) appr = 3;
+	if(dual_approximation < 0 && appr != APPROXIMATION_EXACT) appr = -1;
+	else if(dual_approximation > 0 && appr != APPROXIMATION_EXACT) appr = 3;
 	STR_AND_TABS_4M("approximation", "appr", _("How approximate variables and calculations are handled. In exact mode approximate values will not be calculated."), appr, _("auto"), _("exact"), _("try exact"), _("approximate"), _("dual"));
 	STR_AND_TABS_BOOL("interval arithmetic", "ia", _("If activated, interval arithmetic determines the final precision of calculations (avoids wrong results after loss of significance) with approximate functions and/or irrational numbers."), CALCULATOR->usesIntervalArithmetic());
 	STR_AND_TABS_2b("interval calculation", "ic", _("Determines the method used for interval calculation / uncertainty propagation."), evalops.interval_calculation, _("variance formula"), _("interval arithmetic"));
@@ -2107,6 +2123,17 @@ bool show_set_help(string set_option = "") {
 		SET_OPTION_FOUND
 	}
 	STR_AND_TABS_2("digit grouping", "group", "", printops.digit_grouping, _("off"), _("standard"), _("locale"));
+	if(SET_OPTION_MATCHES("digits", "")) {
+		STR_AND_TABS_SET("digits", "");
+		SET_DESCRIPTION(_("Specifies the number of displayed significant digits (by default determined by precision)."));
+		str += "(-1";
+		if(printops.max_decimals >= -1 || !printops.use_max_decimals) str += "*";
+		str += " = "; str += _("auto");
+		str += ", >= 2)";
+		if(printops.max_decimals < -1 && printops.use_max_decimals) {str += " "; str += i2s(-printops.max_decimals); str += "*";}
+		CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+		SET_OPTION_FOUND
+	}
 	STR_AND_TABS_2("exp display", "edisp", _("Determines how scientific notation are displayed (e.g. 3E6, 3e6, or 3 * 10^6)."), printops.exp_display - 1, "E", "e", "10");
 	int nff = printops.number_fraction_format;
 	Variable *var = NULL;
@@ -2853,7 +2880,7 @@ void do_autocalc(bool force, const char *action_text) {
 				if(l > 0) expression_str.erase(expression_str.length() - l, l);
 			}
 			execute_expression(false, OPERATION_ADD, NULL, false, 0, false, true);
-			if(!autocalc_input_available && (!result_autocalculated || force || prev_autocalc_result != autocalc_result || !current_action_text.empty() || prev_action_text)) {
+			if(!autocalc_input_available && ((!result_autocalculated && !autocalc_result.empty()) || force || prev_autocalc_result != autocalc_result || !current_action_text.empty() || prev_action_text)) {
 				result_autocalculated = true;
 				int autocalc_lines = vertical_space ? 3 : 1;
 				size_t i = 0;
@@ -3560,7 +3587,7 @@ void ask_autocalc() {
 	string str = buffer;
 	addLineBreaks(str, cols, true);
 	PUTS_UNICODE(str.c_str());
-	snprintf(buffer, 10000, _("Do you wish to activate this options (default: %s)?"), _("no"));
+	snprintf(buffer, 10000, _("Do you wish to activate this option (default: %s)?"), _("no"));
 	FPUTS_UNICODE(buffer, stdout);
 	while(true) {
 		autocalc = 0;
@@ -5449,6 +5476,13 @@ int main(int argc, char *argv[]) {
 				case DIGIT_GROUPING_NONE: {str += _("off"); break;}
 				case DIGIT_GROUPING_STANDARD: {str += _("standard"); break;}
 				case DIGIT_GROUPING_LOCALE: {str += _("locale"); break;}
+			}
+			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("digits"), "");
+			if(printops.use_max_decimals && printops.max_decimals < -1) {
+				str += i2s(-printops.max_decimals);
+			} else {
+				str += _("auto");
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("exp display"), "edisp");
@@ -7451,7 +7485,10 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 	} else {
 		str = expression_str;
 		string to_str = CALCULATOR->parseComments(str, evalops.parse_options);
-		if(!to_str.empty() && str.empty()) return;
+		if(!to_str.empty() && str.empty()) {
+			if(auto_calculate) autocalc_result = "";
+			return;
+		}
 		string from_str = str;
 		if(ask_questions && !auto_calculate && test_ask_dot(from_str)) ask_dot();
 		if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
@@ -8372,7 +8409,7 @@ void load_preferences() {
 	}
 #endif
 
-	int version_numbers[] = {5, 3, 0};
+	int version_numbers[] = {5, 4, 0};
 
 	if(file) {
 		char line[10000];
