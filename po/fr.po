@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-11-18 13:00+0100\n"
-"PO-Revision-Date: 2024-11-08 08:01+0100\n"
+"PO-Revision-Date: 2024-11-25 09:16+0100\n"
 "Last-Translator: Polakrity\n"
 "Language-Team: Français <fr@li.org>\n"
 "Language: fr\n"
@@ -702,9 +702,8 @@ msgid "rpn"
 msgstr "rpn"
 
 #: ../src/qalc.cc:1114 ../src/qalc.cc:5694
-#, fuzzy
 msgid "calculate as you type"
-msgstr "calculer les variables"
+msgstr "calculer pendant que vous tapez"
 
 #: ../src/qalc.cc:1119 ../src/qalc.cc:5651
 msgid "simplified percentage"
@@ -1446,13 +1445,12 @@ msgid "Determines the default decimal separator."
 msgstr "Détermine le séparateur décimal par défaut."
 
 #: ../src/qalc.cc:2128
-#, fuzzy
 msgid ""
 "Specifies the number of displayed significant digits (by default determined "
 "by precision)."
 msgstr ""
-"Spécifie le nombre par défaut de chiffres significatifs affichés et "
-"détermine la précision utilisée pour les calculs approximatifs."
+"Spécifie le nombre de chiffres significatifs affichés (déterminé par défaut "
+"par la précision)."
 
 #: ../src/qalc.cc:2137
 msgid ""
