@@ -1,6 +1,11 @@
+2024-11-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add plot() function example, and support expression in y=f(x) format
+
 2024-11-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix test of equation solution in some cases (fixes "sqrt(x-1/x)+sqrt(1-1/x)-x=0" when approximation is not exact)
+	* Fix current value for "help set approximation" when approximation is exact but auto/dual approximation is not reset (after "exact" command)
 
 2024-11-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

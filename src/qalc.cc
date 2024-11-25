@@ -2924,7 +2924,7 @@ void do_autocalc(bool force, const char *action_text) {
 				if(move_pos) {
 					sout += "\033["; sout += i2s(unicode_length(orig_str, rl_point) + 3); sout += "G";
 				}
-				fputs(sout.c_str(), stdout);
+				FPUTS_UNICODE(sout.c_str(), stdout);
 				fflush(stdout);
 				if(!move_pos) {
 					rl_point = p_bak;
@@ -3581,6 +3581,9 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 
 #ifdef HAVE_LIBREADLINE
 void ask_autocalc() {
+#	ifdef _WIN32
+	if(!DO_WIN_FORMAT) return;
+#	endif
 	if(autocalc >= 0) return;
 	INIT_COLS
 	snprintf(buffer, 10000, _("%s now includes an option (controlled using \"%s\") to continuously display the result of the current expression as you type."), "Qalc", (string(_("set")) + " autocalc").c_str());

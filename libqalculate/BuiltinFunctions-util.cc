@@ -1102,6 +1102,14 @@ PlotFunction::PlotFunction() : MathFunction("plot", 1, -1) {
 	setDescription(str);
 }
 
+int PlotFunction::parse(MathStructure &mstruct, const std::string &eq, const ParseOptions &po) {
+	int ret = MathFunction::parse(mstruct, eq, po);
+	if(mstruct.size() > 0 && mstruct[0].isComparison() && mstruct[0].comparisonType() == COMPARISON_EQUALS && mstruct[0][0].isVariable() && mstruct[0][0].variable() == CALCULATOR->getVariableById(VARIABLE_ID_Y) && mstruct[0][1].contains(CALCULATOR->getVariableById(VARIABLE_ID_X))) {
+		mstruct[0].setToChild(2, true);
+	}
+	return ret;
+}
+
 int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	EvaluationOptions eo2;

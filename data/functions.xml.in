@@ -623,12 +623,12 @@
       </builtin_function>
       <builtin_function name="powmod">
         <_title>Modular Exponentiation</_title>
-	<_description>Finds the modular inverse for negative exponents, and is otherwise equivalent to mod(a^b, c). For negative exponents the greatest common divisor of the numerator and the denominator must be 1.</_description>
+        <_description>Finds the modular inverse for negative exponents, and is otherwise equivalent to mod(a^b, c). For negative exponents the greatest common divisor of the numerator and the denominator must be 1.</_description>
         <_names>r:powmod,power_mod</_names>
         <argument index="1">
           <_title>Numerator</_title>
         </argument>
-	<argument index="2">
+        <argument index="2">
           <_title>Exponent</_title>
         </argument>
         <argument index="3">
@@ -656,7 +656,7 @@
         <expression>-\x</expression>
         <argument type="free" index="1">
           <_title>Value</_title>
-	  <handle_vector>false</handle_vector>
+          <handle_vector>false</handle_vector>
         </argument>
       </function>
       <function>
@@ -766,7 +766,7 @@
       </builtin_function>
       <builtin_function name="primePi">
         <_title>Prime Counting Function</_title>
-	<_description>Returns the number of prime numbers less than or equal to the specified number.</_description>
+        <_description>Returns the number of prime numbers less than or equal to the specified number.</_description>
         <_names>r:primePi,ou:prime&#x3C0;,o:prime_pi</_names>
         <argument index="1">
           <_title>Value</_title>
@@ -774,7 +774,7 @@
       </builtin_function>
       <builtin_function name="nextprime">
         <_title>Next Prime Number</_title>
-	<_description>Returns the next prime number greater than or equal to the specified number.</_description>
+        <_description>Returns the next prime number greater than or equal to the specified number.</_description>
         <_names>r:nextprime</_names>
         <argument index="1">
           <_title>Value</_title>
@@ -782,8 +782,8 @@
       </builtin_function>
       <builtin_function name="prevprime">
         <_title>Previous Prime Number</_title>
-	<_description>Returns the largest prime number smaller than or equal to the specified number.</_description>
-	<_description></_description>
+        <_description>Returns the largest prime number smaller than or equal to the specified number.</_description>
+        <_description></_description>
         <_names>r:prevprime</_names>
         <argument index="1">
           <_title>Value</_title>
@@ -798,7 +798,7 @@
       </builtin_function>
       <builtin_function name="primes">
         <_title>Prime Numbers Less Than or Equal</_title>
-	<_description>Returns a vector containing all the prime numbers less than or equal to the specified number.</_description>
+        <_description>Returns a vector containing all the prime numbers less than or equal to the specified number.</_description>
         <_names>r:primes</_names>
         <argument index="1">
           <_title>Value</_title>
@@ -946,41 +946,41 @@
         <argument index="1">
           <_title>Number</_title>
         </argument>
-	<argument index="2">
+        <argument index="2">
           <_title>Base</_title>
         </argument>
-	<argument index="3">
+        <argument index="3">
           <_title>Length</_title>
         </argument>
       </builtin_function>
       <builtin_function name="digitGet">
         <_title>Get Digit</_title>
         <_names>r:digitGet,numberDigit</_names>
-	<_description>Returns digit at specified position (index of first digit left of decimal sign is zero).</_description>
+        <_description>Returns digit at specified position (index of first digit left of decimal sign is zero).</_description>
         <argument index="1">
           <_title>Number</_title>
         </argument>
-	<argument index="2">
+        <argument index="2">
           <_title>Position</_title>
         </argument>
-	<argument index="3">
+        <argument index="3">
           <_title>Base</_title>
         </argument>
       </builtin_function>
       <builtin_function name="digitSet">
         <_title>Set Digit</_title>
         <_names>r:digitSet</_names>
-	<_description>Sets the digit at specified position (index of first digit left of decimal sign is zero).</_description>
+        <_description>Sets the digit at specified position (index of first digit left of decimal sign is zero).</_description>
         <argument index="1">
           <_title>Number</_title>
         </argument>
-	<argument index="2">
+        <argument index="2">
           <_title>Position</_title>
         </argument>
-	<argument index="3">
+        <argument index="3">
           <_title>Value</_title>
         </argument>
-	<argument index="4">
+        <argument index="4">
           <_title>Base</_title>
         </argument>
       </builtin_function>
@@ -1071,8 +1071,8 @@
         <argument index="1">
           <_title>Binary-coded decimal number</_title>
         </argument>
-	<argument index="2">
-	  <!-- Packed binary-coded decimal -->
+        <argument index="2">
+          <!-- Packed binary-coded decimal -->
           <_title>Packed</_title>
         </argument>
       </builtin_function>
@@ -1794,7 +1794,7 @@
         <_title>Weight</_title>
       </argument>
       <argument type="free" index="2">
-	<!-- Length of human (omit "!human!" from translated string) -->
+        <!-- Length of human (omit "!human!" from translated string) -->
         <_title>!human!Height</_title>
       </argument>
     </function>
@@ -2047,7 +2047,7 @@
       <builtin_function name="randpoisson">
         <_title>Poisson Distributed Random Number</_title>
         <_names>r:randpoisson</_names>
-	<argument index="1">
+        <argument index="1">
           <_title>Rate (λ)</_title>
         </argument>
         <argument index="2">
@@ -3018,7 +3018,7 @@
       <builtin_function name="interval">
         <_title>Interval</_title>
         <_names>r:interval</_names>
-	<_description>Returns a closed interval with the specified endpoints.</_description>
+        <_description>Returns a closed interval with the specified endpoints.</_description>
         <argument index="1">
           <_title>Lower endpoint</_title>
         </argument>
@@ -3029,7 +3029,7 @@
       <builtin_function name="uncertainty">
         <_title>Uncertainty</_title>
         <_names>r:uncertainty</_names>
-	<_description>Specifies the absolute or relative (default) uncertainty/error of a value.</_description>
+        <_description>Specifies the absolute or relative (default) uncertainty/error of a value.</_description>
         <argument index="1">
           <_title>Value</_title>
         </argument>
@@ -3043,7 +3043,7 @@
       <builtin_function name="lowerEndpoint">
         <_title>Lower Endpoint (interval)</_title>
         <_names>r:lowerEndpoint</_names>
-	<_description>Returns the lower endpoint of a numerical interval.</_description>
+        <_description>Returns the lower endpoint of a numerical interval.</_description>
         <argument index="1">
           <_title>Value</_title>
         </argument>
@@ -3051,7 +3051,7 @@
       <builtin_function name="upperEndpoint">
         <_title>Upper Endpoint (interval)</_title>
         <_names>r:upperEndpoint</_names>
-	<_description>Returns the upper endpoint of a numerical interval.</_description>
+        <_description>Returns the upper endpoint of a numerical interval.</_description>
         <argument index="1">
           <_title>Value</_title>
         </argument>
@@ -3059,7 +3059,7 @@
       <builtin_function name="midpoint">
         <_title>Midpoint (interval)</_title>
         <_names>r:midpoint,valuePart</_names>
-	<_description>Returns the midpoint between the endpoints of a numerical interval, or the value part of a value with uncertainty/error.</_description>
+        <_description>Returns the midpoint between the endpoints of a numerical interval, or the value part of a value with uncertainty/error.</_description>
         <argument index="1">
           <_title>Value</_title>
         </argument>
@@ -3067,7 +3067,7 @@
       <builtin_function name="errorPart">
         <_title>Get Uncertainty</_title>
         <_names>r:errorPart</_names>
-	<_description>Returns the absolute (default) or relative uncertainty/error of a numerical value.</_description>
+        <_description>Returns the absolute (default) or relative uncertainty/error of a numerical value.</_description>
         <argument index="1">
           <_title>Value</_title>
         </argument>
@@ -3079,6 +3079,7 @@
     <builtin_function name="plot">
       <_title>Plot Functions and Vectors</_title>
       <_names>r:plot</_names>
+      <example>$name(5x + 2, -10, 10)</example>
       <argument index="1">
         <_title>Expression or vector</_title>
       </argument>

@@ -44,6 +44,15 @@
 							ExpressionItem *copy() const {return new x(this);} \
 							int id() const {return i;}\
 						};
+#define DECLARE_BUILTIN_FUNCTION_P(x, i)	class x : public MathFunction { \
+						  public: \
+							int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+							x(); \
+							x(const x *function) {set(function);} \
+							ExpressionItem *copy() const {return new x(this);} \
+							int id() const {return i;}\
+							int parse(MathStructure &mstruct, const std::string &eq, const ParseOptions &po = default_parse_options);\
+						};
 
 #define DECLARE_BUILTIN_FUNCTION_M(x, i)	class x : public MathFunction { \
 						  public: \
@@ -651,7 +660,7 @@ DECLARE_BUILTIN_FUNCTION(SaveFunction, FUNCTION_ID_SAVE)
 DECLARE_BUILTIN_FUNCTION(RegisterFunction, FUNCTION_ID_REGISTER)
 DECLARE_BUILTIN_FUNCTION(StackFunction, FUNCTION_ID_STACK)
 DECLARE_BUILTIN_FUNCTION(CommandFunction, FUNCTION_ID_COMMAND)
-DECLARE_BUILTIN_FUNCTION(PlotFunction, FUNCTION_ID_PLOT)
+DECLARE_BUILTIN_FUNCTION_P(PlotFunction, FUNCTION_ID_PLOT)
 DECLARE_BUILTIN_FUNCTION_R(IntervalFunction, FUNCTION_ID_INTERVAL)
 DECLARE_BUILTIN_FUNCTION(UncertaintyFunction, FUNCTION_ID_UNCERTAINTY)
 DECLARE_BUILTIN_FUNCTION(GeographicDistanceFunction, FUNCTION_ID_GEO_DISTANCE)
