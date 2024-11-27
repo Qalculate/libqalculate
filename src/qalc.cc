@@ -8092,7 +8092,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 	if(!fixed_fraction_has_sign && printops.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR && !contains_fraction_q(*mstruct)) printops.number_fraction_format = FRACTION_FRACTIONAL_FIXED_DENOMINATOR;
 
 	//update "ans" variables
-	if(!do_stack || stack_index == 0) {
+	if(!auto_calculate && (!do_stack || stack_index == 0)) {
 		MathStructure m4(vans[3]->get());
 		m4.replace(vans[4], vans[4]->get());
 		vans[4]->set(m4);
