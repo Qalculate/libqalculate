@@ -2788,6 +2788,9 @@ bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t 
 	return l >= minlength;
 }
 
+string autocalc_result;
+
+#ifdef HAVE_LIBREADLINE
 void AutoCalcThread::run() {
 	while(true) {
 		int i = 0;
@@ -2796,8 +2799,6 @@ void AutoCalcThread::run() {
 	}
 }
 
-string autocalc_result;
-#ifdef HAVE_LIBREADLINE
 string prev_line, prev_autocalc_result, autocalc_str;
 bool prev_action_text = false;
 void clear_autocalc() {
