@@ -7451,6 +7451,35 @@ bool contains_plot_or_save(const string &str) {
 	return false;
 }
 
+bool is_equation_solutions(const MathStructure &m) {
+	if(m.isComparison()) {
+		return m.comparisonType() == COMPARISON_EQUALS && m[0].isUnknown();
+	} else if(m.isLogicalAnd() && m.size() >= 1 && m[0].isComparison() && m[0].comparisonType() == COMPARISON_EQUALS && m[0][0].isUnknown()) {
+		for(size_t i = 1; i < m.size(); i++) {
+			if(!m[i].isComparison() || m[i].comparisonType() == COMPARISON_EQUALS) {
+				return false;
+			}
+		}
+		return true;
+	} else if(m.isLogicalOr()) {
+		for(size_t i = 0; i < m.size(); i++) {
+			if(m[i].isComparison()) {
+				if(m[i].comparisonType() != COMPARISON_EQUALS || !m[i][0].isUnknown()) return false;
+			} else if(m[i].isLogicalAnd() && m[i].size() >= 1 && m[i][0].isComparison() && m[i][0].comparisonType() == COMPARISON_EQUALS && m[i][0][0].isUnknown()) {
+				for(size_t i2 = 1; i2 < m[i].size(); i2++) {
+					if(!m[i][i2].isComparison() || m[i][i2].comparisonType() == COMPARISON_EQUALS) {
+						return false;
+					}
+				}
+			} else {
+				return false;
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
 void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f, bool do_stack, size_t stack_index, bool check_exrates, bool auto_calculate) {
 
 	if(i_maxtime < 0) return;
@@ -8107,7 +8136,27 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		m1.replace(vans[1], vans[2]);
 		vans[1]->set(m1);
 		mstruct->replace(vans[0], vans[1]);
-		vans[0]->set(*mstruct);
+		if(is_equation_solutions(*mstruct)) {
+			if(mstruct->isLogicalAnd()) {
+				vans[0]->set((*mstruct)[0][1]);
+			} else if(mstruct->isLogicalOr()) {
+				MathStructure m(*mstruct);
+				m.setType(STRUCT_VECTOR);
+				for(size_t i = 0; i < m.size(); i++) {
+					if(m[i].isLogicalAnd()) {
+						m[i].setToChild(1);
+						m[i].setToChild(2);
+					} else {
+						m[i].setToChild(2);
+					}
+				}
+				vans[0]->set(m);
+			} else {
+				vans[0]->set((*mstruct)[1]);
+			}
+		} else {
+			vans[0]->set(*mstruct);
+		}
 	}
 
 	if(do_stack && stack_index > 0) {

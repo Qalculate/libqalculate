@@ -2742,6 +2742,7 @@ MathFunction* Calculator::getFunctionById(int id) const {
 		case FUNCTION_ID_SECANT_METHOD: {return priv->f_secant;}
 		case FUNCTION_ID_NEWTON_RAPHSON: {return priv->f_newton;}
 		case FUNCTION_ID_RAND: {return f_rand;}
+		case FUNCTION_ID_ELEMENT: {return f_element;}
 	}
 	unordered_map<int, MathFunction*>::iterator it = priv->id_functions.find(id);
 	if(it == priv->id_functions.end()) return NULL;
