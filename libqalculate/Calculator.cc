@@ -1727,6 +1727,7 @@ void Calculator::addBuiltinFunctions() {
 	f_dirac = addFunction(new DiracFunction());
 	f_gcd = addFunction(new GcdFunction());
 	addFunction(new DivisorsFunction());
+	addFunction(new FactorsFunction());
 	addFunction(new PrimeCountFunction());
 	addFunction(new PrimesFunction());
 	addFunction(new IsPrimeFunction());

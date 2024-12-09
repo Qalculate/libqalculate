@@ -568,6 +568,60 @@ int PrevPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	return 1;
 }
 
+FactorsFunction::FactorsFunction() : MathFunction("factor", 1, 2) {
+	Argument *arg = new Argument();
+	arg->setRationalPolynomial(true);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
+	IntegerArgument *iarg = new IntegerArgument();
+	iarg->setMin(&nr_zero);
+	iarg->setMax(&nr_three);
+	setArgumentDefinition(2, iarg);
+	setDefaultValue(2, "0");
+}
+int FactorsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	if(mstruct.isNumber() && mstruct.number().isRational()) {
+		vector<Number> factors;
+		vector<Number> factors_den;
+		if(mstruct.number().isInteger()) {
+			if(!mstruct.number().factorize(factors)) return 0;
+		} else {
+			if(!mstruct.number().numerator().factorize(factors)) return 0;
+			if(!mstruct.number().denominator().factorize(factors_den)) return 0;
+		}
+		mstruct.clearVector();
+		int mode = vargs[1].number().intValue();
+		for(size_t i = 0; i < factors.size(); i++) {
+			if(mode == 0 || i == 0 || factors[i] != factors[i - 1]) {
+				mstruct.addChild(factors[i]);
+				if(mode == 2) mstruct.last().transform(STRUCT_VECTOR, m_one);
+				if(mode == 3) mstruct.addChild(m_one);
+			} else if(mode == 2) {
+				mstruct.last().last().number()++;
+			} else if(mode == 3) {
+				mstruct.last().number()++;
+			}
+		}
+		for(size_t i = 0; i < factors_den.size(); i++) {
+			if(mode == 0 || i == 0 || factors_den[i] != factors_den[i - 1]) {
+				mstruct.addChild(factors_den[i]);
+				mstruct.last().number().recip();
+				if(mode == 2) mstruct.last().transform(STRUCT_VECTOR, m_one);
+				if(mode == 3) mstruct.addChild(m_one);
+			} else if(mode == 2) {
+				mstruct.last().last().number()++;
+			} else if(mode == 3) {
+				mstruct.last().number()++;
+			}
+		}
+	} else {
+		mstruct.factorize(eo, false, 0, 0, false, 2, NULL, m_undefined, true, false, -1);
+		if(mstruct.isMultiplication()) mstruct.setType(STRUCT_VECTOR);
+	}
+	return 1;
+}
+
 unordered_map<long long int, unordered_map<long long int, long long int>> primecount_cache;
 
 long long int primecount_phi(long long int x, long long int a) {

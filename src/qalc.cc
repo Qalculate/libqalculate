@@ -7733,7 +7733,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 				str += str_conv;
 			}
 		}
-		size_t i = str.find_first_of(SPACES LEFT_PARENTHESIS);
+		size_t i = str.find_first_of(SPACES);
 		if(i != string::npos) {
 			to_str = str.substr(0, i);
 			if(to_str == "factor" || EQUALS_IGNORECASE_AND_LOCAL(to_str, "factorize", _("factorize"))) {

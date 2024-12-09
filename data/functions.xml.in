@@ -838,6 +838,17 @@
         <_title>Value</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="factor">
+      <_title>Factors</_title>
+      <_names>r:factor</_names>
+      <_description>Performs integer or polynomial factorization, and returns the factors in a vector.&#10;&#10;Mode determines the return value for integer factorization as follows.&#10;0: all prime factors&#10;1: factors without duplicates&#10;2: factors and exponents in a matrix with two columns&#10;3: the exponent after each factor in vector</_description>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+      <argument index="2">
+        <_title>Mode</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="bernoulli">
       <_title>Bernoulli Number/Polynomial</_title>
       <_description>Returns the nth Bernoulli number or polynomial (if the second argument is non-zero).</_description>
@@ -1932,7 +1943,8 @@
         </argument>
       </builtin_function>
       <builtin_function name="mode">
-        <_title>Mode</_title>
+        <!-- Statistical function ("!statistics!" is removed from title) -->
+        <_title>!statistics!Mode</_title>
         <_names>r:mode</_names>
         <_description>Returns the most frequently occurring value.</_description>
         <argument index="1">

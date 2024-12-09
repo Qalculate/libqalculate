@@ -1981,7 +1981,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	}
 
 	// check for factor or expand instruction at front a expression
-	size_t i = str.find_first_of(SPACES LEFT_PARENTHESIS);
+	size_t i = str.find_first_of(SPACES);
 	if(i != string::npos) {
 		to_str = str.substr(0, i);
 		if(to_str == "factor" || EQUALS_IGNORECASE_AND_LOCAL(to_str, "factorize", _("factorize"))) {
