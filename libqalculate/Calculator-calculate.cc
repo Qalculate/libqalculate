@@ -1154,6 +1154,7 @@ bool test_simplified2(const MathStructure &m1, const MathStructure &m2) {
 }
 bool test_simplified(const MathStructure &m, bool top = true) {
 	if(m.isFunction() || (m.isVariable() && m.variable()->isKnown()) || (m.isUnit() && (m.unit()->hasApproximateRelationToBase() || (m.unit()->isCurrency() && m.unit() != CALCULATOR->getLocalCurrency())))) return false;
+	if(m.isComparison() && m[0].size() > 0) return false;
 	for(size_t i = 0; i < m.size(); i++) {
 		if(!test_simplified(m[i], false)) return false;
 	}

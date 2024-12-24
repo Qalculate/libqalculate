@@ -446,6 +446,8 @@ int newton_raphson(const MathStructure &mstruct, MathStructure &x_value, const M
 		nr = mguess.number();
 	}
 
+	int ret = 0;
+
 	for(int i = 0; i < 100 + PRECISION + ideg * 2; i++) {
 
 		mguess.number().setToFloatingPoint();
@@ -459,7 +461,8 @@ int newton_raphson(const MathStructure &mstruct, MathStructure &x_value, const M
 
 		Number nrdiv(mguess.number());
 		if(!mtest.isNumber() || !nrdiv.divide(mtest.number())) {
-			return -1;
+			ret = -1;
+			break;
 		}
 
 		if(nrdiv.isLessThan(nr_target_high) && nrdiv.isGreaterThan(nr_target_low)) {
@@ -490,7 +493,8 @@ int newton_raphson(const MathStructure &mstruct, MathStructure &x_value, const M
 
 		Number nrdiv(mguess.number());
 		if(!mtest.isNumber() || !nrdiv.divide(mtest.number())) {
-			return -1;
+			ret = -1;
+			break;
 		}
 		if(nrdiv.isLessThan(nr_target_high) && nrdiv.isGreaterThan(nr_target_low)) {
 			if(CALCULATOR->usesIntervalArithmetic()) {
@@ -505,7 +509,7 @@ int newton_raphson(const MathStructure &mstruct, MathStructure &x_value, const M
 		mguess = mtest;
 	}
 
-	return 0;
+	return ret;
 
 }
 
