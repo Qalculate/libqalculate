@@ -699,7 +699,7 @@ bool contains_angle_ratio(const MathStructure &m) {
 	return num && den;
 }
 
-MathStructure get_units_for_parsed_expression(const MathStructure *parsed_struct, Unit *to_unit, const EvaluationOptions &eo, const MathStructure *mstruct) {
+MathStructure get_units_for_parsed_expression(const MathStructure *parsed_struct, Unit *to_unit, const EvaluationOptions &eo, const MathStructure *mstruct, string parsed_text) {
 	CompositeUnit *cu = NULL;
 	if(to_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) cu = (CompositeUnit*) to_unit;
 	if(cu && cu->countUnits() == 0) return m_zero;
@@ -718,6 +718,13 @@ MathStructure get_units_for_parsed_expression(const MathStructure *parsed_struct
 		}
 		EvaluationOptions eo2 = eo;
 		if(eo.approximation == APPROXIMATION_EXACT) eo2.approximation = APPROXIMATION_TRY_EXACT;
+		if(parsed_text.length() > 2 && to_unit->baseUnit()->referenceName() == "s") {
+			size_t i = parsed_text.rfind(":");
+			if(i != string::npos && i > 0) {
+				Unit *hour = CALCULATOR->getActiveUnit(parsed_text.rfind(":", i - 1) != string::npos ? "h" : "min");
+				if(hour) return hour;
+			}
+		}
 		MathStructure munit(to_unit);
 		munit.unformat();
 		if(b_angle && (b_ratio || (!cu && to_unit->baseExponent() == 1) || (cu && cu->get(1, &exp1) && exp1 == 1))) {
@@ -731,6 +738,9 @@ MathStructure get_units_for_parsed_expression(const MathStructure *parsed_struct
 		return munit;
 	}
 	return m_zero;
+}
+MathStructure get_units_for_parsed_expression(const MathStructure *parsed_struct, Unit *to_unit, const EvaluationOptions &eo, const MathStructure *mstruct) {
+	return get_units_for_parsed_expression(parsed_struct, to_unit, eo, mstruct, "");
 }
 
 bool contains_part_of_unit(const MathStructure &m, Unit *u) {

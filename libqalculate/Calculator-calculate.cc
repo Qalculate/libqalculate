@@ -3692,6 +3692,19 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 			if(provided_to) {
 				mstruct.set(convert(mstruct, str2, eo, to_struct, false, parsed_struct));
 			} else {
+				if(!b_units && str.length() > 2) {
+					size_t i = str.rfind(":");
+					if(i != string::npos && i > 0) {
+						Unit *u = getActiveUnit(str2);
+						if(u && u->baseUnit()->referenceName() == "s" && parsed_struct->containsType(STRUCT_UNIT, false, true, true) == 0) {
+							Unit *hour = getActiveUnit(str.rfind(":", i - 1) != string::npos ? "h" : "min");
+							if(hour) {
+								parsed_struct->multiply(hour);
+								mstruct.multiply(hour);
+							}
+						}
+					}
+				}
 				string str2b;
 				while(true) {
 					separateToExpression(str2, str2b, eo, true);
