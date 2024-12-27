@@ -3203,7 +3203,33 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 				}
 			}
-
+			if((!morig || !equals(*morig, true, true)) && CHILD(0).isRationalPolynomial()) {
+				Number ndeg = CHILD(0).degree(x_var);
+				if(ndeg == 6 || ndeg == 4) {
+					MathStructure coeff;
+					CHILD(0).coefficient(x_var, 1, coeff);
+					Number nr(coeff.number());
+					if(!nr.isZero()) {
+						CHILD(0).coefficient(x_var, ndeg - 1, coeff);
+						if(coeff.number().isZero()) nr.clear();
+						else nr /= coeff.number();
+					}
+					if(!nr.isZero()) {
+						MathStructure mtest(*this);
+						nr ^= 2;
+						mtest[0].add(nr, true);
+						mtest[1].calculateAdd(nr, eo2);
+						mtest.childrenUpdated();
+						if(mtest[0].factorize(eo2, false, false, 0, false, false, NULL, m_undefined, false, true, 3) && !(mtest[0].isMultiplication() && mtest[0].size() == 2 && (mtest[0][0].isNumber() || mtest[0][0] == CHILD(1) || mtest[0][1] == CHILD(1)))) {
+							mtest.childUpdated(1);
+							if(mtest.isolate_x_sub(eo, eo2, x_var, this, depth + 1)) {
+								set_nocopy(mtest);
+								return true;
+							}
+						}
+					}
+				}
+			}
 			break;
 		}
 		case STRUCT_MULTIPLICATION: {
