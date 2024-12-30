@@ -3611,10 +3611,12 @@ void ask_autocalc() {
 	if(autocalc > 0) rl_getc_function = &rl_getc_wrapper;
 #	ifdef _WIN32
 	if(autocalc >= 0 && !load_defaults) {
+#	else
+	if(!save_mode_on_exit && autocalc >= 0 && !load_defaults) {
+#	endif
 		saved_autocalc = autocalc;
 		save_preferences(false);
 	}
-#	endif
 }
 #endif
 
@@ -6454,7 +6456,11 @@ bool ask_implicit() {
 			FPUTS_UNICODE(_("Parsing mode"), stdout);
 		}
 	}
-	if(!interactive_mode && !load_defaults) {
+#ifdef _WIN32
+	if(!load_defaults) {
+#else
+	if((!interactive_mode || !save_mode_on_exit) && !load_defaults) {
+#endif
 		saved_evalops.parse_options.parsing_mode = evalops.parse_options.parsing_mode;
 		save_preferences(false);
 	}
@@ -7183,7 +7189,13 @@ bool ask_sinc() {
 			FPUTS_UNICODE(_("Sinc function"), stdout);
 		}
 	}
-	if(!interactive_mode && !load_defaults) save_preferences(false);
+#ifdef _WIN32
+	if(!load_defaults) {
+#else
+	if(!interactive_mode && !load_defaults) {
+#endif
+		save_preferences(false);
+	}
 	return b_ret;
 }
 bool contains_temperature_unit_q(const MathStructure &m) {
@@ -7276,7 +7288,13 @@ bool ask_tc() {
 			FPUTS_UNICODE(_("Temperature calculation mode"), stdout);
 		}
 	}
-	if(!interactive_mode && !load_defaults) save_preferences(false);
+#ifdef _WIN32
+	if(!load_defaults) {
+#else
+	if(!interactive_mode && !load_defaults) {
+#endif
+		save_preferences(false);
+	}
 	return b_ret;
 }
 
@@ -7359,7 +7377,13 @@ bool ask_dot() {
 			FPUTS_UNICODE(_("Dot interpretation"), stdout);
 		}
 	}
-	if(!interactive_mode && !load_defaults) save_preferences(false);
+#ifdef _WIN32
+	if(!load_defaults) {
+#else
+	if(!interactive_mode && !load_defaults) {
+#endif
+		save_preferences(false);
+	}
 	return b_ret;
 }
 
@@ -7434,7 +7458,11 @@ bool ask_percent() {
 			FPUTS_UNICODE(_("Percentage interpretation"), stdout);
 		}
 	}
-	if(!interactive_mode && !load_defaults) {
+#ifdef _WIN32
+	if(!load_defaults) {
+#else
+	if((!interactive_mode || !save_mode_on_exit) && !load_defaults) {
+#endif
 		saved_percent = simplified_percentage;
 		save_preferences(false);
 	}
