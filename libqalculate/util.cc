@@ -535,6 +535,14 @@ string utf8_encode(const std::wstring &wstr) {
 }
 #endif
 
+string getHomeDir() {
+	const char *homedir;
+	if ((homedir = getenv("HOME")) == NULL) {
+		homedir = getpwuid(getuid())->pw_dir;
+	}
+	return homedir;
+}
+
 string getOldLocalDir() {
 #ifdef _WIN32
 	char path[MAX_PATH];
@@ -542,11 +550,7 @@ string getOldLocalDir() {
 	string str = path;
 	return str + "\\Qalculate";
 #else
-	const char *homedir;
-	if ((homedir = getenv("HOME")) == NULL) {
-		homedir = getpwuid(getuid())->pw_dir;
-	}
-	return string(homedir) + "/.qalculate";
+	return getHomeDir() + "/.qalculate";
 #endif
 }
 string getLocalDir() {
@@ -572,7 +576,7 @@ string getLocalDir() {
 #	endif
 #else
 	if((homedir = getenv("XDG_CONFIG_HOME")) == NULL) {
-		return string(getpwuid(getuid())->pw_dir) + "/.config/qalculate";
+		return getHomeDir() + "/.config/qalculate";
 	}
 	return string(homedir) + "/qalculate";
 #endif
@@ -600,7 +604,7 @@ string getLocalDataDir() {
 #	endif
 #else
 	if((homedir = getenv("XDG_DATA_HOME")) == NULL) {
-		return string(getpwuid(getuid())->pw_dir) + "/.local/share/qalculate";
+		return getHomeDir() + "/.local/share/qalculate";
 	}
 	return string(homedir) + "/qalculate";
 #endif
@@ -631,7 +635,7 @@ string getLocalTmpDir() {
 #	endif
 #else
 	if((homedir = getenv("XDG_CACHE_HOME")) == NULL) {
-		return string(getpwuid(getuid())->pw_dir) + "/.cache/qalculate";
+		return getHomeDir() + "/.cache/qalculate";
 	}
 	return string(homedir) + "/qalculate";
 #endif
