@@ -2888,10 +2888,11 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				if(!approximately_displayed) {
 					if(po.base != BASE_ROMAN_NUMERALS && po.base != BASE_BIJECTIVE_26 && po.number_fraction_format != FRACTION_FRACTIONAL_FIXED_DENOMINATOR && po.number_fraction_format != FRACTION_COMBINED_FIXED_DENOMINATOR) den.print(po2, ips_n);
 					if(!approximately_displayed) {
-						if((po.number_fraction_format == FRACTION_COMBINED || po.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR) && !o_number.isFraction()) {
+						if((po.number_fraction_format == FRACTION_COMBINED || po.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR) && (!o_number.isFraction() || num.isZero())) {
 							// mixed fraction format (e.g. 5/3=1+2/3)
 							Number nr_int(o_number);
-							nr_int.trunc();
+							if(num.isZero() && !nr_int.isInteger()) nr_int.round(get_rounding_mode(po));
+							else nr_int.trunc();
 							if(isApproximate()) nr_int.setApproximate();
 							if(po.base != BASE_ROMAN_NUMERALS && po.base != BASE_BIJECTIVE_26 && po.number_fraction_format != FRACTION_FRACTIONAL_FIXED_DENOMINATOR && po.number_fraction_format != FRACTION_COMBINED_FIXED_DENOMINATOR) nr_int.print(po2, ips_n);
 							if(!approximately_displayed) {
