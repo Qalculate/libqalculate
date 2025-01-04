@@ -496,6 +496,10 @@ bool QalculateDateTime::set(string str) {
 #ifndef _WIN32
 		}
 #endif
+	} else if(newyear <= 31 && newyear > 0 && newday > 999 && newmonth <= 12) {
+		long int y = newday;
+		newday = newyear;
+		newyear = y;
 	}
 	if(!set(newyear, newmonth, newday)) return false;
 	if(b_t) {
@@ -521,7 +525,16 @@ void QalculateDateTime::set(const QalculateDateTime &date) {
 	b_time = date.timeIsSet();
 }
 string QalculateDateTime::toISOString() const {
-	string str = i2s(i_year);
+	string str;
+	long int y = i_year;
+	if(y < 0) {
+		y = -y;
+		str += "-";
+	}
+	if(y < 10) str += "0";
+	if(y < 100) str += "0";
+	if(y < 1000) str += "0";
+	str += i2s(y);
 	str += "-";
 	if(i_month < 10) {
 		str += "0";
