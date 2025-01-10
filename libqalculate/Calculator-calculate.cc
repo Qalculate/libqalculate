@@ -1153,8 +1153,7 @@ bool test_simplified2(const MathStructure &m1, const MathStructure &m2) {
 	return true;
 }
 bool test_simplified(const MathStructure &m, bool top = true) {
-	if(m.isFunction() || (m.isVariable() && m.variable()->isKnown()) || (m.isUnit() && (m.unit()->hasApproximateRelationToBase() || (m.unit()->isCurrency() && m.unit() != CALCULATOR->getLocalCurrency())))) return false;
-	if(m.isComparison() && m[0].size() > 0) return false;
+	if(m.isFunction() || (m.isVariable() && m.variable()->isKnown()) || (m.isUnit() && (m.unit()->hasApproximateRelationToBase() || (m.unit()->isCurrency() && m.unit() != CALCULATOR->getLocalCurrency()))) || (m.isComparison() && (m[0].size() > 0 || (m[0].isVariable() && m[0].variable()->isKnown()) || m[0].isFunction()))) return false;
 	for(size_t i = 0; i < m.size(); i++) {
 		if(!test_simplified(m[i], false)) return false;
 	}
@@ -3692,7 +3691,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 			if(provided_to) {
 				mstruct.set(convert(mstruct, str2, eo, to_struct, false, parsed_struct));
 			} else {
-				if(!b_units && str.length() > 2) {
+				if(parsed_struct && !b_units && str.length() > 2) {
 					size_t i = str.rfind(":");
 					if(i != string::npos && i > 0) {
 						Unit *u = getActiveUnit(str2);

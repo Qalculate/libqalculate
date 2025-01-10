@@ -6973,25 +6973,22 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 				if(i > 0 && arg->type() == ARGUMENT_TYPE_SYMBOLIC && (CHILD(i).isZero() || CHILD(i).isUndefined())) {
 					// argument type is symbol and value is zero or undefined, search the first argument/child for symbols
 					for(size_t i2 = 0; i2 < i; i2++) {
-						if(o_function->getArgumentDefinition(i2 + 1) && o_function->getArgumentDefinition(i2 + 1)->type() == ARGUMENT_TYPE_SYMBOLIC) continue;
-						if(CHILD(i2).isVariable() && CHILD(i2).variable()->isKnown()) {
-							CHILD(i).set(((KnownVariable*) CHILD(i2).variable())->get().find_x_var(), true);
-						} else {
-							CHILD(i).set(CHILD(i2).find_x_var(), true);
-						}
-						if(!CHILD(i).isUndefined()) break;
+						if(o_function->getArgumentDefinition(i2 + 1) && o_function->getArgumentDefinition(i2 + 1)->type() != ARGUMENT_TYPE_FREE) continue;
+						if(CHILD(i2).isVariable() && CHILD(i2).variable()->isKnown()) CHILD(i).set(((KnownVariable*) CHILD(i2).variable())->get().find_x_var(), true);
+						else CHILD(i).set(CHILD(i2).find_x_var(), true);
+						break;
 					}
 					if(CHILD(i).isUndefined()) {
 						// no symbol found: calculate the argument/child and try again
-						CALCULATOR->beginTemporaryStopMessages();
 						for(size_t i2 = 0; i2 < i; i2++) {
-							if(o_function->getArgumentDefinition(i2 + 1) && o_function->getArgumentDefinition(i2 + 1)->type() == ARGUMENT_TYPE_SYMBOLIC) continue;
+							if(o_function->getArgumentDefinition(i2 + 1) && o_function->getArgumentDefinition(i2 + 1)->type() != ARGUMENT_TYPE_FREE) continue;
 							MathStructure mtest(CHILD(i2));
+							CALCULATOR->beginTemporaryStopMessages();
 							mtest.eval(eo);
+							CALCULATOR->endTemporaryStopMessages();
 							CHILD(i).set(mtest.find_x_var(), true);
-							if(!CHILD(i).isUndefined()) break;
+							break;
 						}
-						CALCULATOR->endTemporaryStopMessages();
 					}
 					if(CHILD(i).isUndefined()) {
 						CALCULATOR->error(false, _("No unknown variable/symbol was found."), NULL);

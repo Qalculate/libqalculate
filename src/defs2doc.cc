@@ -315,305 +315,304 @@ string fix_supsub(string str) {
 }
 
 void print_function(MathFunction *f) {
-
-		string str;
-		fputs("<varlistentry>\n", ffile);
-		fprintf(ffile, "<term><emphasis>%s</emphasis></term>\n", f->title(false).c_str());
-		fputs("<listitem>\n", ffile);
-		Argument *arg;
-		Argument default_arg;
-		string str2;
-		const ExpressionName *ename = &f->preferredName(false, printops.use_unicode_signs);
-		str = formatted_name(ename, TYPE_FUNCTION);
-		int iargs = f->maxargs();
-		if(iargs < 0) {
-			iargs = f->minargs() + 1;
-			if((int) f->lastArgumentDefinitionIndex() > iargs) iargs = (int) f->lastArgumentDefinitionIndex();
-		}
-		str += "(";
-		if(iargs != 0) {
-			for(int i2 = 1; i2 <= iargs; i2++) {
-				if(i2 > f->minargs()) {
-					str += "[";
-				}
-				if(i2 > 1) {
-					str += CALCULATOR->getComma();
-					str += " ";
-				}
-				arg = f->getArgumentDefinition(i2);
-				if(arg && !arg->name().empty()) {
-					str2 = arg->name();
-				} else {
-					str2 = _("argument");
-					if(i2 > 1 || f->maxargs() != 1) {
-						str2 += " ";
-						str2 += i2s(i2);
-					}
-				}
-				str += str2;
-				if(i2 > f->minargs()) {
-					str += "]";
-				}
+	string str;
+	fputs("<varlistentry>\n", ffile);
+	fprintf(ffile, "<term><emphasis>%s</emphasis></term>\n", f->title(false).c_str());
+	fputs("<listitem>\n", ffile);
+	Argument *arg;
+	Argument default_arg;
+	string str2;
+	const ExpressionName *ename = &f->preferredName(false, printops.use_unicode_signs);
+	str = formatted_name(ename, TYPE_FUNCTION);
+	int iargs = f->maxargs();
+	if(iargs < 0) {
+		iargs = f->minargs() + 1;
+		if((int) f->lastArgumentDefinitionIndex() > iargs) iargs = (int) f->lastArgumentDefinitionIndex();
+	}
+	str += "(";
+	if(iargs != 0) {
+		for(int i2 = 1; i2 <= iargs; i2++) {
+			if(i2 > f->minargs()) {
+				str += "[";
 			}
-			if(f->maxargs() < 0) {
+			if(i2 > 1) {
 				str += CALCULATOR->getComma();
-				str += " ...";
+				str += " ";
+			}
+			arg = f->getArgumentDefinition(i2);
+			if(arg && !arg->name().empty()) {
+				str2 = arg->name();
+			} else {
+				str2 = _("argument");
+				if(i2 > 1 || f->maxargs() != 1) {
+					str2 += " ";
+					str2 += i2s(i2);
+				}
+			}
+			str += str2;
+			if(i2 > f->minargs()) {
+				str += "]";
 			}
 		}
-		str += ")";
-		fprintf(ffile, "<para><command>%s</command></para>\n", str.c_str());
-		for(size_t i2 = 1; i2 <= f->countNames(); i2++) {
-			if(&f->getName(i2) != ename) {
-				fprintf(ffile, "<para><command>%s</command></para>", formatted_name(&f->getName(i2), TYPE_FUNCTION).c_str());
+		if(f->maxargs() < 0) {
+			str += CALCULATOR->getComma();
+			str += " ...";
+		}
+	}
+	str += ")";
+	fprintf(ffile, "<para><command>%s</command></para>\n", str.c_str());
+	for(size_t i2 = 1; i2 <= f->countNames(); i2++) {
+		if(&f->getName(i2) != ename) {
+			fprintf(ffile, "<para><command>%s</command></para>", formatted_name(&f->getName(i2), TYPE_FUNCTION).c_str());
+		}
+	}
+	if(f->subtype() == SUBTYPE_DATA_SET) {
+		fputs("<para>", ffile);
+		fprintf(ffile, _("Retrieves data from the %s data set for a given object and property. If \"info\" is typed as property, all properties of the object will be listed."), f->title().c_str());
+		fputs("</para>", ffile);
+	}
+	if(!f->description().empty()) {
+		fprintf(ffile, "<para>%s</para>\n", fix(f->description()).c_str());
+	}
+	if(!f->example(true).empty()) {
+		str = _("Example:"); str += " "; str += fix(f->example(false, formatted_name(ename, TYPE_FUNCTION)), printops.use_unicode_signs);
+		fprintf(ffile, "<para>%s</para>\n", str.c_str());
+	}
+	if(f->subtype() == SUBTYPE_DATA_SET && !((DataSet*) f)->copyright().empty()) {
+		fprintf(ffile, "<para>%s</para>\n", fix(((DataSet*) f)->copyright()).c_str());
+	}
+	if(iargs) {
+		fputs("<formalpara>\n", ffile);
+		fprintf(ffile, "<title>%s</title>", _("Arguments"));
+		fputs("<para><itemizedlist spacing=\"compact\">\n", ffile);
+		for(int i2 = 1; i2 <= iargs; i2++) {
+			arg = f->getArgumentDefinition(i2);
+			if(arg && !arg->name().empty()) {
+				str = arg->name();
+			} else {
+				str = i2s(i2);
 			}
-		}
-		if(f->subtype() == SUBTYPE_DATA_SET) {
-			fputs("<para>", ffile);
-			fprintf(ffile, _("Retrieves data from the %s data set for a given object and property. If \"info\" is typed as property, all properties of the object will be listed."), f->title().c_str());
-			fputs("</para>", ffile);
-		}
-		if(!f->description().empty()) {
-			fprintf(ffile, "<para>%s</para>\n", fix(f->description()).c_str());
-		}
-		if(!f->example(true).empty()) {
-			str = _("Example:"); str += " "; str += fix(f->example(false, formatted_name(ename, TYPE_FUNCTION)), printops.use_unicode_signs);
-			fprintf(ffile, "<para>%s</para>\n", str.c_str());
-		}
-		if(f->subtype() == SUBTYPE_DATA_SET && !((DataSet*) f)->copyright().empty()) {
-			fprintf(ffile, "<para>%s</para>\n", fix(((DataSet*) f)->copyright()).c_str());
-		}
-		if(iargs) {
-			fputs("<formalpara>\n", ffile);
-			fprintf(ffile, "<title>%s</title>", _("Arguments"));
-			fputs("<para><itemizedlist spacing=\"compact\">\n", ffile);
-			for(int i2 = 1; i2 <= iargs; i2++) {
-				arg = f->getArgumentDefinition(i2);
-				if(arg && !arg->name().empty()) {
-					str = arg->name();
-				} else {
-					str = i2s(i2);
+			str += ": ";
+			if(arg) {
+				str2 = fix(arg->printlong());
+			} else {
+				str2 = fix(default_arg.printlong());
+			}
+			if(i2 > f->minargs()) {
+				str2 += " (";
+				str2 += _("optional");
+				if(!f->getDefaultValue(i2).empty() && f->getDefaultValue(i2) != "\"\"") {
+					str2 += ", ";
+					str2 += _("default: ");
+					str2 += f->getDefaultValue(i2);
 				}
-				str += ": ";
-				if(arg) {
-					str2 = fix(arg->printlong());
-				} else {
-					str2 = fix(default_arg.printlong());
+				str2 += ")";
+			}
+			str += str2;
+			fprintf(ffile, "<listitem><para>%s</para></listitem>\n", str.c_str());
+		}
+		fputs("</itemizedlist></para>\n", ffile);
+		fputs("</formalpara>\n", ffile);
+	}
+	if(!f->condition().empty()) {
+		fputs("<formalpara>\n", ffile);
+		fprintf(ffile, "<title>%s</title>", _("Requirement"));
+		fputs("<para>\n", ffile);
+		fputs(fix(f->printCondition(), printops.use_unicode_signs).c_str(), ffile); fputs("\n", ffile);
+		fputs("</para>\n", ffile);
+		fputs("</formalpara>\n", ffile);
+	}
+	if(f->subtype() == SUBTYPE_DATA_SET) {
+		DataSet *ds = (DataSet*) f;
+		fputs("<formalpara>\n", ffile);
+		fprintf(ffile, "<title>%s</title>", _("Properties"));
+		fputs("<para><itemizedlist spacing=\"compact\">\n", ffile);
+		DataPropertyIter it;
+		DataProperty *dp = ds->getFirstProperty(&it);
+		while(dp) {
+			if(!dp->isHidden()) {
+				if(!dp->title(false).empty()) {
+					str = dp->title();
+					str += ": ";
 				}
-				if(i2 > f->minargs()) {
-					str2 += " (";
-					str2 += _("optional");
-					if(!f->getDefaultValue(i2).empty() && f->getDefaultValue(i2) != "\"\"") {
-						str2 += ", ";
-						str2 += _("default: ");
-						str2 += f->getDefaultValue(i2);
-					}
-					str2 += ")";
+				for(size_t i = 1; i <= dp->countNames(); i++) {
+					if(i > 1) str += ", ";
+					str += dp->getName(i);
 				}
-				str += str2;
+				if(dp->isKey()) {
+					str += " (";
+					str += _("key");
+					str += ")";
+				}
+				if(!dp->description().empty()) {
+					str += "</para><para>";
+					str += fix(dp->description());
+				}
 				fprintf(ffile, "<listitem><para>%s</para></listitem>\n", str.c_str());
 			}
-			fputs("</itemizedlist></para>\n", ffile);
-			fputs("</formalpara>\n", ffile);
+			dp = ds->getNextProperty(&it);
 		}
-		if(!f->condition().empty()) {
-			fputs("<formalpara>\n", ffile);
-			fprintf(ffile, "<title>%s</title>", _("Requirement"));
-			fputs("<para>\n", ffile);
-			fputs(fix(f->printCondition(), printops.use_unicode_signs).c_str(), ffile); fputs("\n", ffile);
-			fputs("</para>\n", ffile);
-			fputs("</formalpara>\n", ffile);
-		}
-		if(f->subtype() == SUBTYPE_DATA_SET) {
-			DataSet *ds = (DataSet*) f;
-			fputs("<formalpara>\n", ffile);
-			fprintf(ffile, "<title>%s</title>", _("Properties"));
-			fputs("<para><itemizedlist spacing=\"compact\">\n", ffile);
-			DataPropertyIter it;
-			DataProperty *dp = ds->getFirstProperty(&it);
-			while(dp) {
-				if(!dp->isHidden()) {
-					if(!dp->title(false).empty()) {
-						str = dp->title();
-						str += ": ";
-					}
-					for(size_t i = 1; i <= dp->countNames(); i++) {
-						if(i > 1) str += ", ";
-						str += dp->getName(i);
-					}
-					if(dp->isKey()) {
-						str += " (";
-						str += _("key");
-						str += ")";
-					}
-					if(!dp->description().empty()) {
-						str += "</para><para>";
-						str += fix(dp->description());
-					}
-					fprintf(ffile, "<listitem><para>%s</para></listitem>\n", str.c_str());
-				}
-				dp = ds->getNextProperty(&it);
-			}
-			fputs("</itemizedlist></para>\n", ffile);
-			fputs("</formalpara>\n", ffile);
-		}
-		fputs("</listitem>\n", ffile);
-		fputs("</varlistentry>\n", ffile);
+		fputs("</itemizedlist></para>\n", ffile);
+		fputs("</formalpara>\n", ffile);
+	}
+	fputs("</listitem>\n", ffile);
+	fputs("</varlistentry>\n", ffile);
 }
 
 void print_variable(Variable *v) {
-		string value, str;
-		fputs("<row valign=\"top\">\n", vfile);
-		fprintf(vfile, "<entry><para>%s</para></entry>\n", v->title().c_str());
-		bool b_first = true;
-		for(size_t i2 = 1; i2 <= v->countNames(); i2++) {
-			if(!b_first) str += " / ";
-			b_first = false;
-			str += formatted_name(&v->getName(i2), STRUCT_VARIABLE);
-		}
-		fprintf(vfile, "<entry><para>%s</para></entry>\n", str.c_str());
-		value = "";
-		bool is_relative = false;
-		if(is_answer_variable(v)) {
-			value = _("a previous result");
-		} else if(v == v_memory) {
-			value = _("result of memory operations (MC, MS, M+, M−)");
-		} else if(v->isKnown()) {
-			if(v->id() == VARIABLE_ID_PRECISION) {
-				value = _("current precision");
-			} else if(v->id() == VARIABLE_ID_TODAY) {
-				value = _("current date");
-			} else if(v->id() == VARIABLE_ID_TOMORROW) {
-				value = _("tomorrow's date");
-			} else if(v->id() == VARIABLE_ID_YESTERDAY) {
-				value = _("yesterday's date");
-			} else if(v->id() == VARIABLE_ID_NOW) {
-				value = _("current date and time");
-			} else if(v->id() == VARIABLE_ID_UPTIME) {
-				value = _("current computer uptime");
-			} else if(((KnownVariable*) v)->isExpression()) {
-				value = fix(CALCULATOR->localizeExpression(((KnownVariable*) v)->expression()), printops.use_unicode_signs);
-				if(!((KnownVariable*) v)->uncertainty(&is_relative).empty()) {
-					if(is_relative) {value += " ("; value += _("relative uncertainty"); value += ": ";}
-					else value += SIGN_PLUSMINUS;
-					value += fix(CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty()), printops.use_unicode_signs);
-					if(is_relative) {value += ")";}
-				}
-				if(((KnownVariable*) v)->expression().find_first_not_of(NUMBER_ELEMENTS EXPS) == string::npos && value.length() > 40) {
-					value = value.substr(0, 30);
-					value += "...";
-				}
-				if(!((KnownVariable*) v)->unit().empty() && ((KnownVariable*) v)->unit() != "auto") {
-					value += " ";
-					value += fix(((KnownVariable*) v)->unit());
-				}
-			} else {
-				if(((KnownVariable*) v)->get().isMatrix()) {
-					value = _("matrix");
-				} else if(((KnownVariable*) v)->get().isVector()) {
-					value = _("vector");
-				} else {
-					value = fix(CALCULATOR->print(((KnownVariable*) v)->get(), 30, printops), printops.use_unicode_signs);
-				}
+	string value, str;
+	fputs("<row valign=\"top\">\n", vfile);
+	fprintf(vfile, "<entry><para>%s</para></entry>\n", v->title().c_str());
+	bool b_first = true;
+	for(size_t i2 = 1; i2 <= v->countNames(); i2++) {
+		if(!b_first) str += " / ";
+		b_first = false;
+		str += formatted_name(&v->getName(i2), STRUCT_VARIABLE);
+	}
+	fprintf(vfile, "<entry><para>%s</para></entry>\n", str.c_str());
+	value = "";
+	bool is_relative = false;
+	if(is_answer_variable(v)) {
+		value = _("a previous result");
+	} else if(v == v_memory) {
+		value = _("result of memory operations (MC, MS, M+, M−)");
+	} else if(v->isKnown()) {
+		if(v->id() == VARIABLE_ID_PRECISION) {
+			value = _("current precision");
+		} else if(v->id() == VARIABLE_ID_TODAY) {
+			value = _("current date");
+		} else if(v->id() == VARIABLE_ID_TOMORROW) {
+			value = _("tomorrow's date");
+		} else if(v->id() == VARIABLE_ID_YESTERDAY) {
+			value = _("yesterday's date");
+		} else if(v->id() == VARIABLE_ID_NOW) {
+			value = _("current date and time");
+		} else if(v->id() == VARIABLE_ID_UPTIME) {
+			value = _("current computer uptime");
+		} else if(((KnownVariable*) v)->isExpression()) {
+			value = fix(CALCULATOR->localizeExpression(((KnownVariable*) v)->expression()), printops.use_unicode_signs);
+			if(!((KnownVariable*) v)->uncertainty(&is_relative).empty()) {
+				if(is_relative) {value += " ("; value += _("relative uncertainty"); value += ": ";}
+				else value += SIGN_PLUSMINUS;
+				value += fix(CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty()), printops.use_unicode_signs);
+				if(is_relative) {value += ")";}
+			}
+			if(((KnownVariable*) v)->expression().find_first_not_of(NUMBER_ELEMENTS EXPS) == string::npos && value.length() > 40) {
+				value = value.substr(0, 30);
+				value += "...";
+			}
+			if(!((KnownVariable*) v)->unit().empty() && ((KnownVariable*) v)->unit() != "auto") {
+				value += " ";
+				value += fix(((KnownVariable*) v)->unit());
 			}
 		} else {
-			if(((UnknownVariable*) v)->assumptions()) {
-				switch(((UnknownVariable*) v)->assumptions()->sign()) {
-					case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
-					case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
-					case ASSUMPTION_SIGN_NEGATIVE: {value = _("negative"); break;}
-					case ASSUMPTION_SIGN_NONNEGATIVE: {value = _("non-negative"); break;}
-					case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
-					default: {}
-				}
-				if(!value.empty() && ((UnknownVariable*) v)->assumptions()->type() != ASSUMPTION_TYPE_NONE) value += " ";
-				switch(((UnknownVariable*) v)->assumptions()->type()) {
-					case ASSUMPTION_TYPE_INTEGER: {value += _("integer"); break;}
-					case ASSUMPTION_TYPE_RATIONAL: {value += _("rational"); break;}
-					case ASSUMPTION_TYPE_REAL: {value += _("real"); break;}
-					case ASSUMPTION_TYPE_COMPLEX: {value += _("complex"); break;}
-					case ASSUMPTION_TYPE_NUMBER: {value += _("number"); break;}
-					case ASSUMPTION_TYPE_NONMATRIX: {value += _("non-matrix"); break;}
-					default: {}
-				}
-				if(value.empty()) value = _("unknown");
+			if(((KnownVariable*) v)->get().isMatrix()) {
+				value = _("matrix");
+			} else if(((KnownVariable*) v)->get().isVector()) {
+				value = _("vector");
 			} else {
-				value = _("default assumptions");
+				value = fix(CALCULATOR->print(((KnownVariable*) v)->get(), 30, printops), printops.use_unicode_signs);
 			}
 		}
-		if(v->isApproximate() && !is_relative && value.find(SIGN_PLUSMINUS) == string::npos) {
-			if(v->id() == VARIABLE_ID_PI || v->id() == VARIABLE_ID_E || v->id() == VARIABLE_ID_EULER || v->id() == VARIABLE_ID_CATALAN) {
-				value += " (";
-				value += _("variable precision");
-				value += ")";
-			} else {
-				value += " (";
-				value += _("approximate");
-				value += ")";
+	} else {
+		if(((UnknownVariable*) v)->assumptions()) {
+			switch(((UnknownVariable*) v)->assumptions()->sign()) {
+				case ASSUMPTION_SIGN_POSITIVE: {value = _("positive"); break;}
+				case ASSUMPTION_SIGN_NONPOSITIVE: {value = _("non-positive"); break;}
+				case ASSUMPTION_SIGN_NEGATIVE: {value = _("negative"); break;}
+				case ASSUMPTION_SIGN_NONNEGATIVE: {value = _("non-negative"); break;}
+				case ASSUMPTION_SIGN_NONZERO: {value = _("non-zero"); break;}
+				default: {}
 			}
+			if(!value.empty() && ((UnknownVariable*) v)->assumptions()->type() != ASSUMPTION_TYPE_NONE) value += " ";
+			switch(((UnknownVariable*) v)->assumptions()->type()) {
+				case ASSUMPTION_TYPE_INTEGER: {value += _("integer"); break;}
+				case ASSUMPTION_TYPE_RATIONAL: {value += _("rational"); break;}
+				case ASSUMPTION_TYPE_REAL: {value += _("real"); break;}
+				case ASSUMPTION_TYPE_COMPLEX: {value += _("complex"); break;}
+				case ASSUMPTION_TYPE_NUMBER: {value += _("number"); break;}
+				case ASSUMPTION_TYPE_NONMATRIX: {value += _("non-matrix"); break;}
+				default: {}
+			}
+			if(value.empty()) value = _("unknown");
+		} else {
+			value = _("default assumptions");
 		}
-		fprintf(vfile, "<entry><para>%s</para></entry>\n", value.c_str());
-		fputs("</row>\n", vfile);
+	}
+	if(v->isApproximate() && !is_relative && value.find(SIGN_PLUSMINUS) == string::npos) {
+		if(v->id() == VARIABLE_ID_PI || v->id() == VARIABLE_ID_E || v->id() == VARIABLE_ID_EULER || v->id() == VARIABLE_ID_CATALAN) {
+			value += " (";
+			value += _("variable precision");
+			value += ")";
+		} else {
+			value += " (";
+			value += _("approximate");
+			value += ")";
+		}
+	}
+	fprintf(vfile, "<entry><para>%s</para></entry>\n", value.c_str());
+	fputs("</row>\n", vfile);
 }
 
 void print_unit(Unit *u) {
-		if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) return;
-		string str, base_unit, relation;
-		fputs("<row valign=\"top\">\n", ufile);
-		fprintf(ufile, "<entry><para>%s</para></entry>\n", u->title().c_str());
-		bool b_first = true;
-		for(size_t i2 = 1; i2 <= u->countNames(); i2++) {
-			if(!b_first) str += " / ";
-			b_first = false;
-			str += formatted_name(&u->getName(i2), STRUCT_UNIT);
+	if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) return;
+	string str, base_unit, relation;
+	fputs("<row valign=\"top\">\n", ufile);
+	fprintf(ufile, "<entry><para>%s</para></entry>\n", u->title().c_str());
+	bool b_first = true;
+	for(size_t i2 = 1; i2 <= u->countNames(); i2++) {
+		if(!b_first) str += " / ";
+		b_first = false;
+		str += formatted_name(&u->getName(i2), STRUCT_UNIT);
+	}
+	if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+		fprintf(ufile, "<entry><para>(%s)</para></entry>\n", str.c_str());
+	} else {
+		fprintf(ufile, "<entry><para>%s</para></entry>\n", str.c_str());
+	}
+	switch(u->subtype()) {
+		case SUBTYPE_BASE_UNIT: {
+			base_unit = "";
+			relation = "";
+			break;
 		}
-		if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
-			fprintf(ufile, "<entry><para>(%s)</para></entry>\n", str.c_str());
-		} else {
-			fprintf(ufile, "<entry><para>%s</para></entry>\n", str.c_str());
-		}
-		switch(u->subtype()) {
-			case SUBTYPE_BASE_UNIT: {
-				base_unit = "";
-				relation = "";
-				break;
+		case SUBTYPE_ALIAS_UNIT: {
+			AliasUnit *au = (AliasUnit*) u;
+			base_unit = fix_supsub(au->firstBaseUnit()->print(printops, true, TAG_TYPE_HTML, false, false));
+			if(au->firstBaseExponent() != 1) {
+				if(au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {base_unit.insert(0, 1, '('); base_unit += ")";}
+				base_unit += "<superscript>";
+				base_unit += i2s(au->firstBaseExponent());
+				base_unit += "</superscript>";
 			}
-			case SUBTYPE_ALIAS_UNIT: {
-				AliasUnit *au = (AliasUnit*) u;
-				base_unit = fix_supsub(au->firstBaseUnit()->print(printops, true, TAG_TYPE_HTML, false, false));
-				if(au->firstBaseExponent() != 1) {
-					if(au->firstBaseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {base_unit.insert(0, 1, '('); base_unit += ")";}
-					base_unit += "<superscript>";
-					base_unit += i2s(au->firstBaseExponent());
-					base_unit += "</superscript>";
+			bool is_relative = false;
+			if(au->baseUnit() == CALCULATOR->u_euro && au->isBuiltin()) {
+				relation = "exchange rate";
+			} else {
+				relation = fix(CALCULATOR->localizeExpression(au->expression()).c_str(), printops.use_unicode_signs);
+				if(!au->uncertainty(&is_relative).empty()) {
+					if(is_relative) {relation += " ("; relation += _("relative uncertainty"); relation += ": ";}
+					else relation += SIGN_PLUSMINUS;
+					relation += fix(CALCULATOR->localizeExpression(au->uncertainty()));
+					if(is_relative) {relation += ")";}
 				}
-				bool is_relative = false;
-				if(au->baseUnit() == CALCULATOR->u_euro && au->isBuiltin()) {
-					relation = "exchange rate";
-				} else {
-					relation = fix(CALCULATOR->localizeExpression(au->expression()).c_str(), printops.use_unicode_signs);
-					if(!au->uncertainty(&is_relative).empty()) {
-						if(is_relative) {relation += " ("; relation += _("relative uncertainty"); relation += ": ";}
-						else relation += SIGN_PLUSMINUS;
-						relation += fix(CALCULATOR->localizeExpression(au->uncertainty()));
-						if(is_relative) {relation += ")";}
-					}
-					if(u->isApproximate() && !is_relative && relation.find(SIGN_PLUSMINUS) == string::npos) {
-						relation += " (";
-						relation += _("approximate");
-						relation += ")";
-					}
+				if(u->isApproximate() && !is_relative && relation.find(SIGN_PLUSMINUS) == string::npos) {
+					relation += " (";
+					relation += _("approximate");
+					relation += ")";
 				}
-				break;
 			}
-			case SUBTYPE_COMPOSITE_UNIT: {
-				base_unit = fix_supsub(((CompositeUnit*) u)->print(printops, true, TAG_TYPE_HTML, false, false));
-				relation = "";
-				break;
-			}
+			break;
 		}
-		fprintf(ufile, "<entry><para>%s</para></entry>\n", base_unit.c_str());
-		fprintf(ufile, "<entry><para>%s</para></entry>\n", relation.c_str());
-		fputs("</row>\n", ufile);
+		case SUBTYPE_COMPOSITE_UNIT: {
+			base_unit = fix_supsub(((CompositeUnit*) u)->print(printops, true, TAG_TYPE_HTML, false, false));
+			relation = "";
+			break;
+		}
+	}
+	fprintf(ufile, "<entry><para>%s</para></entry>\n", base_unit.c_str());
+	fprintf(ufile, "<entry><para>%s</para></entry>\n", relation.c_str());
+	fputs("</row>\n", ufile);
 }
 
 int main(int, char *[]) {
@@ -638,6 +637,7 @@ int main(int, char *[]) {
 
 	string ans_str = _("ans");
 	vans[0] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str, m_undefined, _("Last Answer"), false));
+	vans[0]->setDescription(_("Contains the result of the most recent calculation. Multiple results of an equation is represented as a vector. Access separate solutions using ans(n) (e.g. ans(1) for the first solution)."));
 	vans[0]->addName(_("answer"));
 	vans[0]->addName(ans_str + "1");
 	vans[1] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str + "2", m_undefined, _("Answer 2"), false));

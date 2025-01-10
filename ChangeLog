@@ -1,3 +1,49 @@
+2025-01-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Avoid recalculation of old calculate as you type expression when expression is empty, or calculation of empty expression before any calculation has occured, and calculation or parsing settings have been modified
+	* Add description to ans variable
+
+2025-01-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix rounding in 1/# conversion to integer (e.g. "1/2 to 0.99")
+
+2025-01-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Always use four digits for year in date (e.g. "0064-07-18" instead of "64-07-18")
+	* Support input of date using dd-mm-yyyy format
+
+2024-12-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix solving of x^4-4x^3+10x^2-12x+1=0, and similar, in exact mode
+	* Use hours or minutes as default unit for conversion to time unit of expression with time format but no units (e.g. "0:00:12 to s")
+
+2024-12-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix dual/auto approximation when unable to find exact solution to equation
+	* Fix unability to find approximate solutions to some high degree equations (e.g. "x⁴ − 4x³ + 10x² − 12x = −1")
+
+2024-12-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix terminal columns and rows when piping/redirecting input (call rl_initialize() even if readline() is used)
+
+2024-12-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add factor() function (returns integer or polynomial factors in a vector)
+	* Fix automatic variable detection in select()
+
+2024-12-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* a(i) and a[i] syntax (the latter with restrictions for a) for element in vector
+	* Set ans variable to solution(s) of equation (as if solve() were used)
+
+2024-12-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix compilation without readline
+
+2024-11-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix ans variables with calculate as you type activated
+
 2024-11-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add plot() function example, and support expression in y=f(x) format
