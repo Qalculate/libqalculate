@@ -224,7 +224,7 @@ msgid ""
 "(e.g. ans(1) for the first solution)."
 msgstr ""
 "Håller värdet av den senaste beräkningen. Multipla resultat av en ekvation "
-"representeras av en vektor.För åtkomst till separata lösningar använd ans(n) "
+"representeras av en vektor. För åtkomst till separata lösningar använd ans(n) "
 "(t.ex. ans(1) för den först lösningen)."
 
 #: ../src/defs2doc.cc:641 ../src/qalc.cc:3984

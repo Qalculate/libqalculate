@@ -535,6 +535,7 @@ string utf8_encode(const std::wstring &wstr) {
 }
 #endif
 
+#ifndef _WIN32
 string getHomeDir() {
 	const char *homedir;
 	if ((homedir = getenv("HOME")) == NULL) {
@@ -542,6 +543,7 @@ string getHomeDir() {
 	}
 	return homedir;
 }
+#endif
 
 string getOldLocalDir() {
 #ifdef _WIN32
