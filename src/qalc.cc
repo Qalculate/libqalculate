@@ -8903,7 +8903,7 @@ bool save_preferences(bool mode) {
 	if(file == NULL) {
 #ifndef _WIN32
 		struct stat st;
-		if(stat(filename.c_str(), &st) == 0 && S_ISLNK(st.st_mode)) return false;
+		if(lstat(filename.c_str(), &st) == 0 && S_ISLNK(st.st_mode)) return false;
 #endif
 		snprintf(buffer, 10000, _("Couldn't write preferences to\n%s"), filename.c_str());
 		FPUTS_UNICODE(buffer, stderr);
