@@ -540,10 +540,10 @@ Calculator::Calculator(bool ignore_locale) {
 		setlocale(LC_NUMERIC, "C");
 		lc = localeconv();
 	}
-	place_currency_sign_before = lc->p_cs_precedes;
+	place_currency_sign_before = true;
 	place_currency_sign_before_negative = lc->n_cs_precedes;
 #ifdef HAVE_STRUCT_LCONV_INT_P_CS_PRECEDES
- 	place_currency_code_before = lc->int_p_cs_precedes;
+ 	place_currency_code_before = true;
 #else
 	place_currency_code_before = place_currency_sign_before;
 #endif
