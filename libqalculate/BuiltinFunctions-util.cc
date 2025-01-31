@@ -1058,9 +1058,9 @@ int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 #define LIST_PLOT_OPTION_LAST(x) LIST_PLOT_OPTION_1(x)
 #define LIST_PLOT_OPTION_WV(x) LIST_PLOT_OPTION_1(x)
 #define LIST_PLOT_OPTION_ALT_WV(x, y) LIST_PLOT_OPTION_2(x, y)
-#define LIST_PLOT_VALUE(y, x) if(strcmp(y, x)) {str += _c(y, x); str += PLOT_OPTION_LOCALE_SEPARATOR;} str += x; str += ", ";
-#define LIST_PLOT_VALUE_FIRST(y, x) str += " ("; if(strcmp(y, x)) {str += _c(y, x); str += PLOT_OPTION_LOCALE_SEPARATOR;} str += x; str += ", ";
-#define LIST_PLOT_VALUE_LAST(y, x) if(strcmp(y, x)) {str += _c(y, x); str += PLOT_OPTION_LOCALE_SEPARATOR;} str += x; str += ")\n";
+#define LIST_PLOT_VALUE(y, x) if(strcmp(x, _c(y, x))) {str += _c(y, x); str += PLOT_OPTION_LOCALE_SEPARATOR;} str += x; str += ", ";
+#define LIST_PLOT_VALUE_FIRST(y, x) str += " ("; if(strcmp(x, _c(y, x))) {str += _c(y, x); str += PLOT_OPTION_LOCALE_SEPARATOR;} str += x; str += ", ";
+#define LIST_PLOT_VALUE_LAST(y, x) if(strcmp(x, _c(y, x))) {str += _c(y, x); str += PLOT_OPTION_LOCALE_SEPARATOR;} str += x; str += ")\n";
 #define LIST_PLOT_OPTION_ALT_VALUES(x, y, z) LIST_PLOT_OPTION_2(x, y) str += " ("; str += z; str += ")"; str += PLOT_OPTION_SEPARATOR;
 #define LIST_PLOT_OPTION_VALUES(x, y) LIST_PLOT_OPTION_1(x) str += " ("; str += y; str += ")"; str += PLOT_OPTION_SEPARATOR;
 
