@@ -1334,6 +1334,7 @@ bool comparison_compare(const MathStructure &m1, MathStructure &m2) {
 		return false;
 	} else {
 		if(m1.type() == m2.type() && m1.size() == m2.size()) {
+			if(m1.isVariable()) return m1.variable()->referenceName() == m2.variable()->referenceName();
 			if(m1.size() == 0) return m1.equals(m2, true);
 			if(m1.type() == STRUCT_COMPARISON) {
 				if(m1.comparisonType() != m2.comparisonType()) return false;

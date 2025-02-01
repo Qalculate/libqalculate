@@ -5993,7 +5993,12 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							CHILD(0).setToChild(1);
 							CHILD_UPDATED(0)
 							CHILD(1) *= CALCULATOR->getVariableById(VARIABLE_ID_E);
-							CHILD(1).last() ^= CALCULATOR->getVariableById(VARIABLE_ID_N);
+							UnknownVariable *var = new UnknownVariable("", "r");
+							var->setAssumptions(new Assumptions());
+							var->assumptions()->setType(ASSUMPTION_TYPE_REAL);
+							CHILD(1).last() ^= var;
+							CALCULATOR->error(false, "%s represents any real number.", var->name().c_str(), NULL);
+							var->destroy();
 							CHILD(1).last().last() *= nr_one_i;
 							CHILD(1).calculatesub(eo2, eo);
 							isolate_x_sub(eo, eo2, x_var, morig, depth + 1);
