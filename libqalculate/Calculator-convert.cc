@@ -90,7 +90,7 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 			}
 			for(size_t i = 0; i < units.size(); i++) {
 				Unit *ui = units[i];
-				if(ui->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) ui)->firstBaseUnit() == u  && ((AliasUnit*) ui)->firstBaseExponent() == 1) {
+				if(ui->isActive() && ui->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) ui)->firstBaseUnit() == u && ((AliasUnit*) ui)->firstBaseExponent() == 1) {
 					AliasUnit *aui = (AliasUnit*) ui;
 					int priority_i = aui->mixWithBase();
 					if(((priority_i > 0 && (!best_u || priority_i <= best_priority)) || (best_priority == 0 && priority_i == 0 && ((muc == MIXED_UNITS_CONVERSION_FORCE_INTEGER && aui->expression().find_first_not_of(NUMBERS) == string::npos) || muc == MIXED_UNITS_CONVERSION_FORCE_ALL))) && (aui->mixWithBaseMinimum() <= 1 || nr.isGreaterThanOrEqualTo(aui->mixWithBaseMinimum()))) {
@@ -168,7 +168,7 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 				int best_priority = 0;
 				for(size_t i = 0; i < units.size(); i++) {
 					Unit *ui = units[i];
-					if(ui->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) ui)->firstBaseUnit() == u && ((AliasUnit*) ui)->firstBaseExponent() == 1) {
+					if(ui->isActive() && ui->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) ui)->firstBaseUnit() == u && ((AliasUnit*) ui)->firstBaseExponent() == 1) {
 						AliasUnit *aui = (AliasUnit*) ui;
 						int priority_i = aui->mixWithBase();
 						if(aui->expression().find("1" DIVISION) == 0 && aui->expression().find_first_not_of(NUMBERS DIVISION, 2) == string::npos && ((priority_i > 0 && (!best_u || priority_i <= best_priority)) || (best_priority == 0 && priority_i == 0 && (muc == MIXED_UNITS_CONVERSION_FORCE_INTEGER || muc == MIXED_UNITS_CONVERSION_FORCE_ALL)))) {
@@ -1316,9 +1316,9 @@ Unit *Calculator::findMatchingUnit(const MathStructure &mstruct) {
 				}
 				for(size_t i = 0; i < units.size(); i++) {
 					Unit *u = units[i];
-					if(u->subtype() == SUBTYPE_ALIAS_UNIT && u->baseUnit() == u_base && ((AliasUnit*) u)->baseExponent() == exp) {
+					if(u->isActive() && u->subtype() == SUBTYPE_ALIAS_UNIT && u->baseUnit() == u_base && ((AliasUnit*) u)->baseExponent() == exp) {
 						return u;
-					} else if(u->subtype() == SUBTYPE_COMPOSITE_UNIT && ((CompositeUnit*) u)->countUnits() == 1 && ((CompositeUnit*) u)->get(1, &exp2)->baseUnit() == u_base && exp == ((CompositeUnit*) u)->get(1)->baseExponent(exp2)) {
+					} else if(u->isActive() && u->subtype() == SUBTYPE_COMPOSITE_UNIT && ((CompositeUnit*) u)->countUnits() == 1 && ((CompositeUnit*) u)->get(1, &exp2)->baseUnit() == u_base && exp == ((CompositeUnit*) u)->get(1)->baseExponent(exp2)) {
 						return u;
 					}
 				}
@@ -1361,10 +1361,9 @@ Unit *Calculator::findMatchingUnit(const MathStructure &mstruct) {
 				if(exp == 1) return u_base;
 				for(size_t i = 0; i < units.size(); i++) {
 					Unit *u = units[i];
-					if(u->subtype() == SUBTYPE_ALIAS_UNIT && u->baseUnit() == u_base && ((AliasUnit*) u)->baseExponent() == exp) {
+					if(u->isActive() && u->subtype() == SUBTYPE_ALIAS_UNIT && u->baseUnit() == u_base && ((AliasUnit*) u)->baseExponent() == exp) {
 						return u;
-					} else if(
-						u->subtype() == SUBTYPE_COMPOSITE_UNIT && ((CompositeUnit*) u)->countUnits() == 1 && ((CompositeUnit*) u)->get(1, &exp2)->baseUnit() == u_base && exp == ((CompositeUnit*) u)->get(1)->baseExponent(exp2)) {
+					} else if(u->isActive() && u->subtype() == SUBTYPE_COMPOSITE_UNIT && ((CompositeUnit*) u)->countUnits() == 1 && ((CompositeUnit*) u)->get(1, &exp2)->baseUnit() == u_base && exp == ((CompositeUnit*) u)->get(1)->baseExponent(exp2)) {
 						return u;
 					}
 				}
@@ -1372,7 +1371,7 @@ Unit *Calculator::findMatchingUnit(const MathStructure &mstruct) {
 			if(cu->countUnits() > 1) {
 				for(size_t i = 0; i < units.size(); i++) {
 					Unit *u = units[i];
-					if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+					if(u->isActive() && u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 						if(((CompositeUnit*) u)->countUnits() == cu->countUnits()) {
 							bool b = true;
 							for(size_t i2 = 1; i2 <= cu->countUnits(); i2++) {
@@ -1486,7 +1485,7 @@ Unit *Calculator::getOptimalUnit(Unit *u, bool allow_only_div, bool convert_to_l
 			Unit *best_u = NULL;
 			if(cu->countUnits() > 1) {
 				for(size_t i = 0; i < units.size(); i++) {
-					if(units[i]->subtype() == SUBTYPE_COMPOSITE_UNIT && !units[i]->isHidden() && units[i]->isSIUnit()) {
+					if(units[i]->isActive() && units[i]->subtype() == SUBTYPE_COMPOSITE_UNIT && !units[i]->isHidden() && units[i]->isSIUnit()) {
 						CompositeUnit *cu2 = (CompositeUnit*) units[i];
 						if(cu == cu2 && !cu2->isHidden()) {
 							points = max_points - 1;
@@ -1507,7 +1506,7 @@ Unit *Calculator::getOptimalUnit(Unit *u, bool allow_only_div, bool convert_to_l
 					}
 				}
 				for(size_t i = 0; i < units.size() && !best_u; i++) {
-					if(units[i]->subtype() == SUBTYPE_COMPOSITE_UNIT && !units[i]->isHidden() && units[i]->isSIUnit()) {
+					if(units[i]->isActive() && units[i]->subtype() == SUBTYPE_COMPOSITE_UNIT && !units[i]->isHidden() && units[i]->isSIUnit()) {
 						CompositeUnit *cu2 = (CompositeUnit*) units[i];
 						if(cu2->countUnits() <= cu->countUnits()) {
 							for(size_t i2 = 1; i2 <= cu2->countUnits(); i2++) {
@@ -1559,6 +1558,7 @@ Unit *Calculator::getOptimalUnit(Unit *u, bool allow_only_div, bool convert_to_l
 			AliasUnit *au;
 			for(size_t i = 0; i < units.size(); i++) {
 				u2 = units[i];
+				if(!u2->isActive()) continue;
 				if(u2->subtype() == SUBTYPE_BASE_UNIT && (points == 0 || (points == 1 && minus))) {
 					for(size_t i2 = 1; i2 <= cu->countUnits(); i2++) {
 						if(cu->get(i2, &exp)->baseUnit() == u2 && !cu->get(i2)->hasNonlinearRelationTo(u2)) {
