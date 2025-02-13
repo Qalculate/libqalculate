@@ -2956,6 +2956,9 @@ bool calculate_ans(MathStructure &mstruct, const EvaluationOptions &eo) {
 	return ret;
 }
 bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const EvaluationOptions &eo, vector<Variable*>& vars, bool empty_func, bool do_eval = true) {
+	if(m.isVariable() && m.variable()->isKnown()) {
+		m.calculatesub(eo, eo, false);
+	}
 	if(m.isComparison()) {
 		if(m.comparisonType() == COMPARISON_EQUALS) {
 			// x=y
@@ -3160,7 +3163,7 @@ void Calculator::parseExpressionAndWhere(MathStructure *mstruct, MathStructure *
 					if(b_equals) svalue.erase(0, 1);
 					remove_blank_ends(svalue);
 					Variable *v = NULL;
-					if(wheres[i2][index] == '=')	{
+					if(wheres[i2][index] == '=') {
 						v = new KnownVariable("\x14", sname, svalue);
 					} else {
 						wheres[i2] = wheres[i2].substr(index, wheres[i2].length() - 1);
@@ -3199,6 +3202,9 @@ void Calculator::parseExpressionAndWhere(MathStructure *mstruct, MathStructure *
 						where_vars.push_back(v);
 					}
 				}
+			} else {
+				where_vars.push_back(NULL);
+				repeat.push_back(false);
 			}
 		}
 	}
@@ -3563,6 +3569,9 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 						where_vars.push_back(v);
 					}
 				}
+			} else if(index == string::npos) {
+				if(!str_where.empty()) str_where += LOGICAL_AND;
+				str_where += wheres[i2];
 			}
 		}
 	}
