@@ -2850,7 +2850,7 @@ bool contains_wide_character(const char *str) {
 bool autocalc_busy = false, autocalc_input_available = false, autocalc_aborted = false, autocalc_was_aborted;
 string current_action_text;
 void do_autocalc(bool force, const char *action_text) {
-	if(block_autocalc || autocalc <= 0 || rpn_mode || unittest || (!autocalc_was_aborted && !force && prev_line == rl_line_buffer)) return;
+	if(block_autocalc || autocalc <= 0 || unittest || (!autocalc_was_aborted && !force && prev_line == rl_line_buffer)) return;
 	autocalc_busy = true;
 	if(force) prev_autocalc_result = "";
 	if(action_text) current_action_text = action_text;
@@ -2870,13 +2870,13 @@ void do_autocalc(bool force, const char *action_text) {
 	remove_blank_ends(str);
 	if(!str.empty() && !autocalc_aborted) {
 		update_command_list();
-		if(str[0] == '/' || str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS) == string::npos || str.find_first_not_of(OPERATORS PARENTHESISS SPACES) == string::npos) str = "";
+		if((str[0] == '/' && !rpn_mode) || ((str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS) == string::npos || str.find_first_not_of(rpn_mode ? PARENTHESISS SPACES : OPERATORS PARENTHESISS SPACES) == string::npos) && (!rpn_mode || !CALCULATOR->getActiveFunction(str)))) str = "";
 		for(size_t i = 0; !str.empty() && i < command_list.size(); i++) {
 			if(str.rfind(command_list[i], command_list[i].length() - 1) == 0 && (str.length() == command_list[i].length() || (command_arg[i] != 0 && str[command_list[i].length()] == ' '))) str = "";
 		}
-		if(!str.empty() && (autocalc_was_aborted || prev_action_text || rl_point != rl_end || unicode_length(orig_str) != unicode_length(autocalc_str) + 1 || !last_is_operator(str))) {
+		if(!str.empty() && (autocalc_was_aborted || prev_action_text || evalops.parse_options.parsing_mode == PARSING_MODE_RPN || rl_point != rl_end || unicode_length(orig_str) != unicode_length(autocalc_str) + 1 || !last_is_operator(str) || (rpn_mode && (str.find_first_not_of(OPERATORS) == string::npos || (unicode_length(str) == 1 && (str.length() > 0 || is_in(OPERATORS, str[0]))))))) {
 			expression_str = str;
-			if((autocalc_was_aborted || prev_action_text) && rl_point == rl_end && unicode_length(orig_str) == unicode_length(autocalc_str) + 1) {
+			if((autocalc_was_aborted || prev_action_text) && evalops.parse_options.parsing_mode != PARSING_MODE_RPN && rl_point == rl_end && unicode_length(orig_str) == unicode_length(autocalc_str) + 1) {
 				int l = last_is_operator(expression_str);
 				if(l > 0) expression_str.erase(expression_str.length() - l, l);
 			}
@@ -7579,6 +7579,25 @@ bool is_equation_solutions(const MathStructure &m) {
 	return false;
 }
 
+std::vector<MathStructure*> rpn_stack_bak;
+
+void save_rpn_stack() {
+	for(size_t i = 0; i < rpn_stack_bak.size(); i++) rpn_stack_bak[i]->unref();
+	rpn_stack_bak.clear();
+	for(size_t i = CALCULATOR->RPNStackSize(); i > 0; i--) {
+		MathStructure *m = CALCULATOR->getRPNRegister(i);
+		rpn_stack_bak.push_back(new MathStructure(*m));
+	}
+}
+
+void restore_rpn_stack() {
+	CALCULATOR->clearRPNStack();
+	for(size_t i = 0; i < rpn_stack_bak.size(); i++) {
+		CALCULATOR->RPNStackEnter(rpn_stack_bak[i]);
+	}
+	rpn_stack_bak.clear();
+}
+
 void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f, bool do_stack, size_t stack_index, bool check_exrates, bool auto_calculate) {
 
 	if(i_maxtime < 0) return;
@@ -7875,6 +7894,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 	} else if(rpn_mode) {
 		stack_size = CALCULATOR->RPNStackSize();
 		if(do_mathoperation) {
+			if(auto_calculate) save_rpn_stack();
 			if(f) CALCULATOR->calculateRPN(f, 0, evalops, parsed_mstruct);
 			else CALCULATOR->calculateRPN(op, 0, evalops, parsed_mstruct);
 		} else {
@@ -7885,21 +7905,22 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 			if(str2.length() == 1) {
 				do_mathoperation = true;
 				switch(str2[0]) {
-					case '^': {CALCULATOR->calculateRPN(OPERATION_RAISE, 0, evalops, parsed_mstruct); break;}
-					case '+': {CALCULATOR->calculateRPN(OPERATION_ADD, 0, evalops, parsed_mstruct); break;}
-					case '-': {CALCULATOR->calculateRPN(OPERATION_SUBTRACT, 0, evalops, parsed_mstruct); break;}
-					case '*': {CALCULATOR->calculateRPN(OPERATION_MULTIPLY, 0, evalops, parsed_mstruct); break;}
-					case '/': {CALCULATOR->calculateRPN(OPERATION_DIVIDE, 0, evalops, parsed_mstruct); break;}
-					case '&': {CALCULATOR->calculateRPN(OPERATION_BITWISE_AND, 0, evalops, parsed_mstruct); break;}
-					case '|': {CALCULATOR->calculateRPN(OPERATION_BITWISE_OR, 0, evalops, parsed_mstruct); break;}
-					case '~': {CALCULATOR->calculateRPNBitwiseNot(0, evalops, parsed_mstruct); break;}
-					case '!': {CALCULATOR->calculateRPN(CALCULATOR->getFunctionById(FUNCTION_ID_FACTORIAL), 0, evalops, parsed_mstruct); break;}
-					case '>': {CALCULATOR->calculateRPN(OPERATION_GREATER, 0, evalops, parsed_mstruct); break;}
-					case '<': {CALCULATOR->calculateRPN(OPERATION_LESS, 0, evalops, parsed_mstruct); break;}
-					case '=': {CALCULATOR->calculateRPN(OPERATION_EQUALS, 0, evalops, parsed_mstruct); break;}
+					case '^': {if(auto_calculate) {save_rpn_stack();} CALCULATOR->calculateRPN(OPERATION_RAISE, 0, evalops, parsed_mstruct); break;}
+					case '+': {if(auto_calculate) {save_rpn_stack();} CALCULATOR->calculateRPN(OPERATION_ADD, 0, evalops, parsed_mstruct); break;}
+					case '-': {if(auto_calculate) {save_rpn_stack();} CALCULATOR->calculateRPN(OPERATION_SUBTRACT, 0, evalops, parsed_mstruct); break;}
+					case '*': {if(auto_calculate) {save_rpn_stack();} CALCULATOR->calculateRPN(OPERATION_MULTIPLY, 0, evalops, parsed_mstruct); break;}
+					case '/': {if(auto_calculate) {save_rpn_stack();} CALCULATOR->calculateRPN(OPERATION_DIVIDE, 0, evalops, parsed_mstruct); break;}
+					case '&': {if(auto_calculate) {save_rpn_stack();} CALCULATOR->calculateRPN(OPERATION_BITWISE_AND, 0, evalops, parsed_mstruct); break;}
+					case '|': {if(auto_calculate) {save_rpn_stack();} CALCULATOR->calculateRPN(OPERATION_BITWISE_OR, 0, evalops, parsed_mstruct); break;}
+					case '~': {if(auto_calculate) {save_rpn_stack();} CALCULATOR->calculateRPNBitwiseNot(0, evalops, parsed_mstruct); break;}
+					case '!': {if(auto_calculate) {save_rpn_stack();} CALCULATOR->calculateRPN(CALCULATOR->getFunctionById(FUNCTION_ID_FACTORIAL), 0, evalops, parsed_mstruct); break;}
+					case '>': {if(auto_calculate) {save_rpn_stack();} CALCULATOR->calculateRPN(OPERATION_GREATER, 0, evalops, parsed_mstruct); break;}
+					case '<': {if(auto_calculate) {save_rpn_stack();} CALCULATOR->calculateRPN(OPERATION_LESS, 0, evalops, parsed_mstruct); break;}
+					case '=': {if(auto_calculate) {save_rpn_stack();} CALCULATOR->calculateRPN(OPERATION_EQUALS, 0, evalops, parsed_mstruct); break;}
 					case '\\': {
 						MathFunction *fdiv = CALCULATOR->getActiveFunction("div");
 						if(fdiv) {
+							if(auto_calculate) {save_rpn_stack();}
 							CALCULATOR->calculateRPN(fdiv, 0, evalops, parsed_mstruct);
 							break;
 						}
@@ -7908,32 +7929,40 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 				}
 			} else if(str2.length() == 2) {
 				if(str2 == "**") {
+					if(auto_calculate) save_rpn_stack();
 					CALCULATOR->calculateRPN(OPERATION_RAISE, 0, evalops, parsed_mstruct);
 					do_mathoperation = true;
 				} else if(str2 == "!!") {
+					if(auto_calculate) save_rpn_stack();
 					CALCULATOR->calculateRPN(CALCULATOR->getFunctionById(FUNCTION_ID_DOUBLE_FACTORIAL), 0, evalops, parsed_mstruct);
 					do_mathoperation = true;
 				} else if(str2 == "!=" || str == "=!" || str == "<>") {
+					if(auto_calculate) save_rpn_stack();
 					CALCULATOR->calculateRPN(OPERATION_NOT_EQUALS, 0, evalops, parsed_mstruct);
 					do_mathoperation = true;
 				} else if(str2 == "<=" || str == "=<") {
+					if(auto_calculate) save_rpn_stack();
 					CALCULATOR->calculateRPN(OPERATION_EQUALS_LESS, 0, evalops, parsed_mstruct);
 					do_mathoperation = true;
 				} else if(str2 == ">=" || str == "=>") {
+					if(auto_calculate) save_rpn_stack();
 					CALCULATOR->calculateRPN(OPERATION_EQUALS_GREATER, 0, evalops, parsed_mstruct);
 					do_mathoperation = true;
 				} else if(str2 == "==") {
+					if(auto_calculate) save_rpn_stack();
 					CALCULATOR->calculateRPN(OPERATION_EQUALS, 0, evalops, parsed_mstruct);
 					do_mathoperation = true;
 				} else if(str2 == "//") {
 					MathFunction *fdiv = CALCULATOR->getActiveFunction("div");
 					if(fdiv) {
+						if(auto_calculate) save_rpn_stack();
 						CALCULATOR->calculateRPN(fdiv, 0, evalops, parsed_mstruct);
 						do_mathoperation = true;
 					}
 				}
 			} else if(str2.length() == 3) {
 				if(str2 == "⊻") {
+					if(auto_calculate) save_rpn_stack();
 					CALCULATOR->calculateRPN(OPERATION_BITWISE_XOR, 0, evalops, parsed_mstruct);
 					do_mathoperation = true;
 				}
@@ -7980,12 +8009,20 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 					else f = CALCULATOR->getActiveFunction(str2);
 				}
 				if(f && f->minargs() > 0) {
+					if(auto_calculate) save_rpn_stack();
 					do_mathoperation = true;
 					original_expression = "";
 					CALCULATOR->calculateRPN(f, 0, evalops, parsed_mstruct);
 				} else {
 					original_expression = str2;
-					CALCULATOR->RPNStackEnter(str2, 0, evalops, parsed_mstruct, NULL);
+					if(auto_calculate && contains_plot_or_save(original_expression)) {
+						CALCULATOR->parse(parsed_mstruct, original_expression, evalops.parse_options);
+						MathStructure *m = new MathStructure();
+						m->setAborted();
+						CALCULATOR->RPNStackEnter(m);
+					} else {
+						CALCULATOR->RPNStackEnter(str2, 0, evalops, parsed_mstruct, NULL);
+					}
 				}
 			}
 		}
@@ -8126,6 +8163,10 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		mstruct = CALCULATOR->getRPNRegister(1);
 		if(!mstruct) mstruct = new MathStructure();
 		else mstruct->ref();
+		if(auto_calculate) {
+			if(do_mathoperation) restore_rpn_stack();
+			else CALCULATOR->deleteRPNRegister(1);
+		}
 	}
 
 	if(!auto_calculate && !avoid_recalculation && !do_mathoperation && ((ask_questions && test_ask_tc(*parsed_mstruct) && ask_tc()) || (ask_questions && (test_ask_sinc(*parsed_mstruct) || test_ask_sinc(*mstruct)) && ask_sinc()) || (ask_questions && test_ask_percent() && ask_percent()) || (check_exrates && check_exchange_rates()))) {
@@ -8276,7 +8317,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		result_text = str;
 	}
 	printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
-	if(rpn_mode && (!do_stack || stack_index == 0)) {
+	if(rpn_mode && (!do_stack || stack_index == 0) && !auto_calculate) {
 		if(CALCULATOR->RPNStackSize() < stack_size) {
 			RPNRegisterRemoved(1);
 		} else if(CALCULATOR->RPNStackSize() > stack_size) {
