@@ -2962,6 +2962,62 @@ int rl_getc_wrapper(FILE *file) {
 }
 #endif
 
+size_t ans_index = 1;
+vector<KnownVariable*> ans_variables;
+vector<string> ans_text;
+bool ans_updated = false;
+bool prev_ans_var = false;
+
+int key_insert(int, int) {
+#ifdef HAVE_LIBREADLINE
+	if(!ans_updated && prev_ans_var) {
+		rl_insert_text(ans_variables.back()->name().c_str());
+		return 0;
+	}
+	bool use_text = true;
+	string str;
+	if(use_text) {
+		MathStructure m(vans[0]->get());
+		PrintOptions po = printops;
+		bool approx = false, use_par = m.size() > 1 && !m.isFunction() && !m.isVector();
+		po.is_approximate = &approx;
+		if(evalops.parse_options.base < 2 || evalops.parse_options.base > 32) po.base = 10;
+		else po.base = evalops.parse_options.base;
+		po.base_display = BASE_DISPLAY_NONE;
+		po.twos_complement = evalops.parse_options.twos_complement;
+		po.hexadecimal_twos_complement = evalops.parse_options.hexadecimal_twos_complement;
+		if(po.number_fraction_format == FRACTION_DECIMAL) po.number_fraction_format = FRACTION_DECIMAL_EXACT;
+		printops.allow_non_usable = false;
+		if(((po.base == 2 && po.twos_complement) || (po.base == 16 && po.hexadecimal_twos_complement)) && ((m.isNumber() && m.number().isNegative()) || (!m.isNumber() && m[0].number().isNegative()))) po.binary_bits = evalops.parse_options.binary_bits;
+		CALCULATOR->startControl(500);
+		m.format(po);
+		if(use_par) str += "(";
+		str += m.print(po);
+		if(use_par) str += ")";
+		if(CALCULATOR->aborted() || approx || m.isApproximate() || str.length() > 50 || evalops.parse_options.base < 2 || evalops.parse_options.base > 32) use_text = false;
+		if(CALCULATOR->aborted() || str.length() > 1000) str = "";
+		CALCULATOR->stopControl();
+		if(use_text) rl_insert_text(str.c_str());
+	}
+	if(use_text) {
+		prev_ans_var = false;
+	} else {
+		string name = "ans";
+		if(ans_index < 10) name += "0";
+		if(ans_index < 100) name += "0";
+		name += i2s(ans_variables.size() + 1);
+		KnownVariable *v = new KnownVariable(CALCULATOR->temporaryCategory(), name, vans[0]->get(), "", false, true);
+		ans_variables.push_back(v);
+		ans_text.push_back(str);
+		CALCULATOR->addVariable(v);
+		rl_insert_text(name.c_str());
+		prev_ans_var = true;
+	}
+	ans_updated = false;
+#endif
+	return 0;
+}
+
 int key_clear(int, int) {
 #ifdef _WIN32
 	system("cls");
@@ -4173,6 +4229,7 @@ int main(int argc, char *argv[]) {
 		rl_bind_keyseq("\\C-f", key_fraction);
 		rl_bind_keyseq("\\C-a", key_save);
 		rl_bind_keyseq("\\C-l", key_clear);
+		rl_bind_keyseq("\\C-i", key_insert);
 		if(autocalc > 0) rl_getc_function = &rl_getc_wrapper;
 	}
 #endif
@@ -6089,13 +6146,17 @@ int main(int argc, char *argv[]) {
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "history", _("history"))) {
 			for(int i = 0; i < history_length; i++) {
-				PUTS_UNICODE(history_get(i + history_base)->line);
+				HIST_ENTRY *hist = history_get(i + history_base);
+				if(hist && hist->line && strcmp(hist->line, rlbuffer) == 0) {
+					PUTS_UNICODE(hist->line);
+				}
 			}
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear history", _("clear history"))) {
 			while(history_length > 0) {
 				HIST_ENTRY *hist = remove_history(0);
 				if(hist) free_history_entry(hist);
+				else break;
 			}
 
 			history_was_cleared = true;
@@ -8205,6 +8266,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		} else {
 			vans[0]->set(*mstruct);
 		}
+		ans_updated = true;
 	}
 
 	if(do_stack && stack_index > 0) {
@@ -8886,6 +8948,20 @@ void save_history() {
 	if(clear_history_on_exit) {
 		if(fileExists(buildPath(getLocalDir(), "qalc.history"))) history_truncate_file(buildPath(getLocalDir(), "qalc.history").c_str(), 0);
 	} else {
+		if(!ans_variables.empty()) {
+			for(int i = 0; i < history_length; i++) {
+				HIST_ENTRY *hist = history_get(i + history_base);
+				if(hist && hist->line) {
+					string str = hist->line;
+					if(str.find("ans") != string::npos) {
+						for(size_t i2 = 0; i2 < ans_variables.size(); i2++) {
+							if(!ans_text[i2].empty()) gsub(ans_variables[i2]->name(), ans_text[i2], str);
+						}
+						replace_history_entry(i, str.c_str(), NULL);
+					}
+				}
+			}
+		}
 		write_history(buildPath(getLocalDir(), "qalc.history").c_str());
 	}
 #endif
