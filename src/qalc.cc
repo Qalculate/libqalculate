@@ -2870,11 +2870,23 @@ void do_autocalc(bool force, const char *action_text) {
 	remove_blank_ends(str);
 	if(!str.empty() && !autocalc_aborted) {
 		update_command_list();
-		if((str[0] == '/' && !rpn_mode) || ((str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS) == string::npos || str.find_first_not_of(rpn_mode ? PARENTHESISS SPACES : OPERATORS PARENTHESISS SPACES) == string::npos) && (!rpn_mode || !CALCULATOR->getActiveFunction(str)))) str = "";
+		if(rpn_mode) {
+			if((str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS) == string::npos || str.find_first_not_of(PARENTHESISS SPACES) == string::npos) && !CALCULATOR->getActiveFunction(str)) {
+				CALCULATOR->parseSigns(str);
+				if((str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS) == string::npos || str.find_first_not_of(PARENTHESISS SPACES) == string::npos) && !CALCULATOR->getActiveFunction(str)) {
+					str = "";
+				} else {
+					str = orig_str;
+					remove_blank_ends(str);
+				}
+			}
+		} else if(str[0] == '/' || str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS) == string::npos || str.find_first_not_of(OPERATORS PARENTHESISS SPACES) == string::npos) {
+			str = "";
+		}
 		for(size_t i = 0; !str.empty() && i < command_list.size(); i++) {
 			if(str.rfind(command_list[i], command_list[i].length() - 1) == 0 && (str.length() == command_list[i].length() || (command_arg[i] != 0 && str[command_list[i].length()] == ' '))) str = "";
 		}
-		if(!str.empty() && (autocalc_was_aborted || prev_action_text || evalops.parse_options.parsing_mode == PARSING_MODE_RPN || rl_point != rl_end || unicode_length(orig_str) != unicode_length(autocalc_str) + 1 || !last_is_operator(str) || (rpn_mode && (str.find_first_not_of(OPERATORS) == string::npos || (unicode_length(str) == 1 && (str.length() > 0 || is_in(OPERATORS, str[0]))))))) {
+		if(!str.empty() && (autocalc_was_aborted || prev_action_text || evalops.parse_options.parsing_mode == PARSING_MODE_RPN || rl_point != rl_end || unicode_length(orig_str) != unicode_length(autocalc_str) + 1 || !last_is_operator(str) || (rpn_mode && (str.find_first_not_of(OPERATORS) == string::npos || (str.length() > 1 && unicode_length(str) == 1))))) {
 			expression_str = str;
 			if((autocalc_was_aborted || prev_action_text) && evalops.parse_options.parsing_mode != PARSING_MODE_RPN && rl_point == rl_end && unicode_length(orig_str) == unicode_length(autocalc_str) + 1) {
 				int l = last_is_operator(expression_str);
@@ -5994,6 +6006,7 @@ int main(int argc, char *argv[]) {
 				PUTS_UNICODE(_("(De)activates the Reverse Polish Notation stack and syntax."));
 				puts("");
 				PUTS_UNICODE(_("\"syntax\" activates only the RPN syntax and \"stack\" enables the RPN stack."));
+				PUTS_UNICODE(_("\"on\" (1) and \"off\" (0) (de)activates both."));
 				puts("");
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear stack", _("clear stack"))) {
 				puts("");
@@ -6147,7 +6160,7 @@ int main(int argc, char *argv[]) {
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "history", _("history"))) {
 			for(int i = 0; i < history_length; i++) {
 				HIST_ENTRY *hist = history_get(i + history_base);
-				if(hist && hist->line && strcmp(hist->line, rlbuffer) == 0) {
+				if(hist && hist->line) {
 					PUTS_UNICODE(hist->line);
 				}
 			}
