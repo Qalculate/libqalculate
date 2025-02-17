@@ -2400,7 +2400,18 @@ bool show_object_info(string name) {
 				}
 				if(!f->description().empty()) {
 					CHECK_IF_SCREEN_FILLED_PUTS("");
-					CHECK_IF_SCREEN_FILLED_PUTS(f->description().c_str());
+					str = f->description();
+					while(true) {
+						size_t i2 = str.find("\n", 1);
+						if(i2 == string::npos) {
+							CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+							break;
+						} else {
+							CHECK_IF_SCREEN_FILLED_PUTS(str.substr(0, i2).c_str());
+							str = str.substr(i2);
+							remove_blank_ends(str);
+						}
+					}
 				}
 				if(!f->example(true).empty()) {
 					CHECK_IF_SCREEN_FILLED_PUTS("");
