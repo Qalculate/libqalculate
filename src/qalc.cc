@@ -2403,13 +2403,12 @@ bool show_object_info(string name) {
 					str = f->description();
 					while(true) {
 						size_t i2 = str.find("\n", 1);
-						if(i2 == string::npos) {
+						if(i2 == string::npos || i2 == str.length() - 1) {
 							CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 							break;
 						} else {
 							CHECK_IF_SCREEN_FILLED_PUTS(str.substr(0, i2).c_str());
-							str = str.substr(i2);
-							remove_blank_ends(str);
+							str = str.substr(i2 + 1);
 						}
 					}
 				}
@@ -8637,7 +8636,7 @@ void load_preferences() {
 	}
 #endif
 
-	int version_numbers[] = {5, 5, 0};
+	int version_numbers[] = {5, 5, 1};
 
 	if(file) {
 		char line[10000];

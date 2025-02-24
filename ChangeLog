@@ -1,3 +1,35 @@
+2025-02-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Convert turn left over after unit conversion to radians (e.g. "10000Nm*250*rpm to W")
+
+2025-02-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Split function description into multiple text blocks, at newline, in help/info output in qalc in order to avoid blank lines when output does not fit terminal screen
+
+2025-02-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not convert to inactive unit
+	* Fix calculate as you type with RPN syntax (update when last character is an operator)
+	* Support calculate as you type with RPN stack enabled
+	* Fix "where" operator using a saved equation (the "where" expression is a variable containing an equality or inequality)
+	* Add Ctrl+I shortcut for input of the previous result, either with text of value, or as temporary variable (replaced in history on exit) for approximate or long values
+
+2025-02-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Return x=a*e^(i*r) (with r instead of n), with a warning informing the user that r represents any real number, for abs(x)=a
+
+2025-01-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not show value twice, if not translated, in description of plot function
+
+2025-01-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix solve() function with replace() function as first argument (fixes solve2() function)
+
+2025-01-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not show couldn't write preferences warning if file is a symlink
+
 2025-01-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Avoid recalculation of old calculate as you type expression when expression is empty, or calculation of empty expression before any calculation has occured, and calculation or parsing settings have been modified

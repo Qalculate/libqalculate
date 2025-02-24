@@ -1897,10 +1897,12 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				printops.use_prefixes_for_currencies = true;
 				printops.use_prefixes_for_all_units = true;
 				printops.use_unit_prefixes = true;
+			// base units
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "base", _c("units", "base"))) {
 				evalops.parse_options.units_enabled = true;
 				evalops.auto_post_conversion = POST_CONVERSION_BASE;
 				str_conv = "";
+			// number base #
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str1, "base", _("base"))) {
 				if(to_str2 == "b26" || to_str2 == "B26") printops.base = BASE_BIJECTIVE_26;
 				else if(equalsIgnoreCase(to_str2, "bcd")) printops.base = BASE_BINARY_DECIMAL;
@@ -2957,7 +2959,8 @@ bool calculate_ans(MathStructure &mstruct, const EvaluationOptions &eo) {
 }
 bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const EvaluationOptions &eo, vector<Variable*>& vars, bool empty_func, bool do_eval = true) {
 	if(m.isVariable() && m.variable()->isKnown()) {
-		m.calculatesub(eo, eo, false);
+		m.set(((KnownVariable*) m.variable())->get());
+		fix_intervals(m, eo, NULL, PRECISION);
 	}
 	if(m.isComparison()) {
 		if(m.comparisonType() == COMPARISON_EQUALS) {

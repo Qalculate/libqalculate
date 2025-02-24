@@ -816,6 +816,49 @@ bool angle_convert(MathStructure &m, Unit *u, const EvaluationOptions &eo) {
 	return b;
 }
 
+int contains_angle_unit_cc(const MathStructure &m) {
+	if(m.isUnit() && m.unit()->baseUnit() == CALCULATOR->getRadUnit() && m.unit()->baseExponent() == 1) {
+		if(m.unit()->referenceName() == "turn") return 3;
+		if(m.unit() == CALCULATOR->getRadUnit()) return 1;
+		return 2;
+	}
+	int ret = 0;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(!m.isFunction() || !m.function()->getArgumentDefinition(i + 1) || m.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) {
+			int i_ret = contains_angle_unit_cc(m[i]);
+			if(i_ret > ret) ret = i_ret;
+		}
+	}
+	return ret;
+}
+int contains_non_angle_unit_cc(const MathStructure &m) {
+	if(m.isUnit()) return m.unit() != CALCULATOR->getRadUnit();
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_non_angle_unit_cc(m[i])) return true;
+	}
+	return false;
+}
+bool remove_rad_unit_cc(MathStructure &m, const EvaluationOptions &eo) {
+	if(m.isUnit()) {
+		if(m.unit() == CALCULATOR->getRadUnit()) {
+			m.set(1, 1, 0, true);
+			return true;
+		}
+	} else {
+		bool b = false;
+		for(size_t i = 0; i < m.size(); i++) {
+			if((!m.isFunction() || !m.function()->getArgumentDefinition(i + 1) || m.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE) && remove_rad_unit_cc(m[i], eo)) {
+				b = true;
+			}
+		}
+		if(b) {
+			m.calculatesub(eo, eo, false);
+			return true;
+		}
+	}
+	return false;
+}
+
 MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo, bool always_convert, bool convert_to_mixed_units, bool transform_orig, MathStructure *parsed_struct) {
 	CompositeUnit *cu = NULL;
 	if(to_unit->subtype() == SUBTYPE_COMPOSITE_UNIT) cu = (CompositeUnit*) to_unit;
@@ -1217,6 +1260,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 						exp = 1;
 					}
 				}
+				if(!b_ratio && !b_angle && contains_angle_unit_cc(mstruct_new) == 3) mstruct_new.convert(getRadUnit(), false, NULL, true, eo2);
 				if(cu) {
 					MathStructure *mstruct_cu = new MathStructure(cu->generateMathStructure(false, eo.keep_prefixes));
 					Prefix *p = NULL;

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-10 08:59+0100\n"
+"POT-Creation-Date: 2025-02-14 14:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4948,8 +4948,8 @@ msgstr ""
 msgid ""
 "Converts a value to a number in a IEEE 754 floating-point format and returns "
 "sign, exponent, and significand in a vector. If the third argument (exponent "
-"bits) is set to zero, the standard number of exponent bits will be used (e."
-"g. 8 for 32-bit format)."
+"bits) is set to zero, the standard number of exponent bits will be used "
+"(e.g. 8 for 32-bit format)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:530
@@ -5063,10 +5063,10 @@ msgstr ""
 #: ../data/functions.xml.in.h:554
 msgid ""
 "Calculates the Body Mass Index. The resulting BMI-value is sometimes "
-"interpreted as follows (although varies with age, sex, etc.):&#10;&#10;"
-"Underweight &lt; 18.5&#10;Normal weight 18.5-25&#10;Overweight 25-30&#10;"
-"Obesity &gt; 30&#10;&#10;Note that you must use units for weight (ex. 59kg) "
-"and length (ex. 174cm)."
+"interpreted as follows (although varies with age, sex, "
+"etc.):&#10;&#10;Underweight &lt; 18.5&#10;Normal weight "
+"18.5-25&#10;Overweight 25-30&#10;Obesity &gt; 30&#10;&#10;Note that you must "
+"use units for weight (ex. 59kg) and length (ex. 174cm)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:555
@@ -5181,8 +5181,8 @@ msgstr ""
 #: ../data/functions.xml.in.h:580
 msgid ""
 "For gauges larger than 0000 (4/0), please use negative values (00=-1, "
-"000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation (e."
-"g. awg(x) = 20 mm^2)."
+"000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation "
+"(e.g. awg(x) = 20 mm^2)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:581
@@ -5196,8 +5196,8 @@ msgstr ""
 #: ../data/functions.xml.in.h:583
 msgid ""
 "For gauges larger than 0000 (4/0), please use negative values (00=-1, "
-"000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation (e."
-"g. awgd(x) = 5 mm)."
+"000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation "
+"(e.g. awgd(x) = 5 mm)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:584
@@ -6716,15 +6716,15 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:944
 msgid ""
-"Stores a value in a variable or saves an expression as a function.&#10;&#10;"
-"A function is created if the name includes parentheses (e.g. \"f()\"). "
-"Optionally the function arguments can be specified in the name (e.g. "
-"\"save(a+b,f(a,b))\"). Otherwise the function arguments are expected to be "
-"referred to in the expression using \\x, \\y, \\z ,\\a , \\b..., or x, y, z "
-"(e.g. \"save(x+y,f())\").&#10;&#10;If a function was created, the processed "
-"function expression is returned as a text string, otherwise the value is "
-"returned.&#10;&#10;The \":=\" operator (e.g. var1:=10) is a shortcut for "
-"this function."
+"Stores a value in a variable or saves an expression as a "
+"function.&#10;&#10;A function is created if the name includes parentheses "
+"(e.g. \"f()\"). Optionally the function arguments can be specified in the "
+"name (e.g. \"save(a+b,f(a,b))\"). Otherwise the function arguments are "
+"expected to be referred to in the expression using \\x, \\y, \\z ,\\a , "
+"\\b..., or x, y, z (e.g. \"save(x+y,f())\").&#10;&#10;If a function was "
+"created, the processed function expression is returned as a text string, "
+"otherwise the value is returned.&#10;&#10;The \":=\" operator (e.g. "
+"var1:=10) is a shortcut for this function."
 msgstr ""
 
 #: ../data/functions.xml.in.h:945
@@ -7966,11 +7966,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1236
 msgid ""
-"Determines the straight line depreciation of an asset for a single period."
-"&#10;&#10;Cost is the amount you paid for the asset. Salvage is the value of "
-"the asset at the end of the period. Life is the number of periods over which "
-"the asset is depreciated. SLN divides the cost evenly over the life of an "
-"asset."
+"Determines the straight line depreciation of an asset for a single "
+"period.&#10;&#10;Cost is the amount you paid for the asset. Salvage is the "
+"value of the asset at the end of the period. Life is the number of periods "
+"over which the asset is depreciated. SLN divides the cost evenly over the "
+"life of an asset."
 msgstr ""
 
 #: ../data/functions.xml.in.h:1237
@@ -8133,14 +8133,14 @@ msgstr ""
 #: ../data/functions.xml.in.h:1275
 msgid ""
 "Returns the amount of payment (negative) each period for a loan based on a "
-"constant interest rate and constant payments (each payment is equal amount)."
-"&#10;&#10;If type = 1 then the payment is made at the beginning of the "
-"period. If type = 0 (or omitted) it is made at the end of each period.&#10;"
-"&#10;Note that the interest rate here refers to the rate for each period and "
-"if you calculate with an annual rate, each period will be interpreted as a "
-"whole year. To get monthly payments divide the annual interest rate by 12 "
-"and enter the total number of months (12 times number of years) in the "
-"periods field."
+"constant interest rate and constant payments (each payment is equal "
+"amount).&#10;&#10;If type = 1 then the payment is made at the beginning of "
+"the period. If type = 0 (or omitted) it is made at the end of each "
+"period.&#10;&#10;Note that the interest rate here refers to the rate for "
+"each period and if you calculate with an annual rate, each period will be "
+"interpreted as a whole year. To get monthly payments divide the annual "
+"interest rate by 12 and enter the total number of months (12 times number of "
+"years) in the periods field."
 msgstr ""
 
 #: ../data/functions.xml.in.h:1276
@@ -8208,9 +8208,9 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1290
 msgid ""
-"Calculates the amount of a payment of an annuity going towards principal."
-"&#10;&#10;Type defines the due date. 1 for payment at the beginning of a "
-"period and 0 (default) for payment at the end of a period."
+"Calculates the amount of a payment of an annuity going towards "
+"principal.&#10;&#10;Type defines the due date. 1 for payment at the "
+"beginning of a period and 0 (default) for payment at the end of a period."
 msgstr ""
 
 #: ../data/functions.xml.in.h:1291
@@ -8295,9 +8295,9 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1309
 msgid ""
-"Calculates the amount of a payment of an annuity going towards interest.&#10;"
-"&#10;Type defines the due date. 1 for payment at the beginning of a period "
-"and 0 (default) for payment at the end of a period."
+"Calculates the amount of a payment of an annuity going towards "
+"interest.&#10;&#10;Type defines the due date. 1 for payment at the beginning "
+"of a period and 0 (default) for payment at the end of a period."
 msgstr ""
 
 #: ../data/functions.xml.in.h:1310
@@ -8372,10 +8372,10 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1326
 msgid ""
-"Returns the amount received at the maturity date for an invested security."
-"&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360 "
-"(default), 1: real days, 2: real days/360, 3: real days/365 or 4: European "
-"30/360. The settlement date must be before maturity date."
+"Returns the amount received at the maturity date for an invested "
+"security.&#10;&#10;Basis is the type of day counting you want to use: 0: US "
+"30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: "
+"European 30/360. The settlement date must be before maturity date."
 msgstr ""
 
 #: ../data/functions.xml.in.h:1327
@@ -8389,8 +8389,8 @@ msgstr ""
 #: ../data/functions.xml.in.h:1329
 msgid ""
 "Returns the discount rate for a security.&#10;&#10;Basis is the type of day "
-"counting you want to use: 0: US 30/360 (default), 1: real days, 2: real "
-"days/360, 3: real days/365 or 4: European 30/360."
+"counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/"
+"360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 
 #: ../data/functions.xml.in.h:1330
@@ -8431,10 +8431,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:1338
 msgid ""
-"Returns accrued interest for a security which pays periodic interest.&#10;"
-"&#10;Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. "
-"Basis is the type of day counting you want to use: 0: US 30/360 (default), "
-"1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
+"Returns accrued interest for a security which pays periodic "
+"interest.&#10;&#10;Allowed frequencies are 1 - annual, 2 - semi-annual or 4 "
+"- quarterly. Basis is the type of day counting you want to use: 0: US 30/360 "
+"(default), 1: real days, 2: real days/360, 3: real days/365 or 4: European "
+"30/360."
 msgstr ""
 
 #: ../data/functions.xml.in.h:1339
@@ -8493,8 +8494,8 @@ msgstr ""
 msgid ""
 "Calculates and returns the price per $100 face value of a security. The "
 "security pays interest at maturity.&#10;&#10;Basis is the type of day "
-"counting you want to use: 0: US 30/360 (default), 1: real days, 2: real "
-"days/360, 3: real days/365 or 4: European 30/360."
+"counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/"
+"360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 
 #: ../data/functions.xml.in.h:1351
@@ -9034,8 +9035,7 @@ msgid "Turn"
 msgstr ""
 
 #: ../data/units.xml.in.h:88
-msgid ""
-"a:tr,r:turn,p:turns,a:pla,a:rev,revolution,p:revolutions,a:cyc,cycle,p:cycles"
+msgid "a:tr,r:turn,p:turns,a:pla,a:rev,revolution,p:revolutions,a:cyc,cycle,p:cycles"
 msgstr ""
 
 #: ../data/units.xml.in.h:89
@@ -9657,8 +9657,7 @@ msgid "Degree Celsius"
 msgstr ""
 
 #: ../data/units.xml.in.h:252
-msgid ""
-"ar:oC,au:&#xB0;C,au:&#x2103;,r:celsius,p:celsius,centigrade,p:centigrades"
+msgid "ar:oC,au:&#xB0;C,au:&#x2103;,r:celsius,p:celsius,centigrade,p:centigrades"
 msgstr ""
 
 #: ../data/units.xml.in.h:253
@@ -11170,8 +11169,7 @@ msgid "Trit (Ternary Digit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:630
-msgid ""
-"r:trit,p:trits,trinary_digit,p:trinary_digits,ternary_digit,p:ternary_digits"
+msgid "r:trit,p:trits,trinary_digit,p:trinary_digits,ternary_digit,p:ternary_digits"
 msgstr ""
 
 #: ../data/units.xml.in.h:631
@@ -11203,9 +11201,7 @@ msgid "Nibble (Hexadecimal Digit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:638
-msgid ""
-"r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets,hex_digit,p:"
-"hex_digits,hexadecimal_digit,p:hexadecimal_digits"
+msgid "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets,hex_digit,p:hex_digits,hexadecimal_digit,p:hexadecimal_digits"
 msgstr ""
 
 #: ../data/units.xml.in.h:639
