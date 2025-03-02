@@ -1034,6 +1034,7 @@ int checkAvailableVersion(const char *version_id, const char *current_version, s
 		std::vector<int> version_parts_old, version_parts_new;
 
 		string s_old_version = current_version;
+		if(s_old_version == "5.5.1" && s_version == "5.5.2") return 0;
 		while((i = s_old_version.find('.', 0)) != string::npos) {
 			version_parts_old.push_back(s2i(s_old_version.substr(0, i)));
 			s_old_version = s_old_version.substr(i + 1);

@@ -643,8 +643,27 @@ void sigint_handler(int) {
 int rl_getc_wrapper(FILE*);
 void clear_autocalc();
 void do_autocalc(bool force = false, const char *action_text = NULL);
+int key_insert(int, int);
+int last_is_operator(string str, bool allow_exp = false);
 
-int rlcom_tab(int, int) {
+int rlcom_tab(int a, int b) {
+	if(rl_point == 0) return key_insert(a, b);
+	string str;
+	if(test_convert_from_local(rl_line_buffer)) {
+		char *gstr = locale_to_utf8(rl_line_buffer);
+		if(gstr) {
+			str = gstr;
+			free(gstr);
+		} else {
+			str = "";
+		}
+	} else {
+		str = rl_line_buffer;
+	}
+	if(rl_point != rl_end && (size_t) rl_point < str.length()) {
+		str = str.substr(0, rl_point);
+	}
+	if(!str.empty() && (last_is_operator(str, true) || is_in(VECTOR_WRAPS PARENTHESISS SPACES, str.back()))) return key_insert(a, b);
 	bool b_clear = result_autocalculated;
 	if(b_clear) clear_autocalc();
 	rl_complete_internal('!');
@@ -2828,7 +2847,7 @@ void clear_autocalc() {
 	prev_action_text = false;
 }
 
-int last_is_operator(string str, bool allow_exp = false) {
+int last_is_operator(string str, bool allow_exp) {
 	if((signed char) str[str.length() - 1] > 0) {
 		if((is_in(OPERATORS "\\" LEFT_PARENTHESIS LEFT_VECTOR_WRAP, str[str.length() - 1]) && (str[str.length() - 1] != '!' || str.length() == 1)) || (allow_exp && is_in(EXP, str[str.length() - 1])) ||
 		(str.length() >= 3 && str[str.length() - 1] == 'r' && str[str.length() - 2] == 'o' && str[str.length() - 3] == 'x')) {
@@ -2992,6 +3011,7 @@ bool prev_ans_var = false;
 
 int key_insert(int, int) {
 #ifdef HAVE_LIBREADLINE
+	if(vans[0]->get().isUndefined()) return 0;
 	if(!ans_updated && prev_ans_var) {
 		rl_insert_text(ans_variables.back()->name().c_str());
 		return 0;
@@ -4251,7 +4271,6 @@ int main(int argc, char *argv[]) {
 		rl_bind_keyseq("\\C-f", key_fraction);
 		rl_bind_keyseq("\\C-a", key_save);
 		rl_bind_keyseq("\\C-l", key_clear);
-		rl_bind_keyseq("\\C-i", key_insert);
 		if(autocalc > 0) rl_getc_function = &rl_getc_wrapper;
 	}
 #endif

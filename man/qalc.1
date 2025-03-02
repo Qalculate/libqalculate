@@ -284,8 +284,8 @@ When a line begins with '/', the text that follows is always interpreted as a co
 .SH "KEYBINDINGS"
 .PP
 .TP 8
-.B Tab
-shows a list of functions, variables, and units that matches the last object in the current expression
+.B Tab (Ctrl+I)
+shows a list of functions, variables, and units that matches the last object in the current expression, or, if cursor is at beginning of line or after operator, inserts the previous result (either with text of value, or as a temporary variable for approximate or long values)
 .PP
 .TP 8
 .B Ctrl+A
@@ -302,10 +302,6 @@ switches between approximation modes (exact, try exact, auto)
 .TP 8
 .B Ctrl+F
 switches between fraction modes (simple, decimal, auto)
-.PP
-.TP 8
-.B Ctrl+I
-inserts the previous result (either with text of value, or as a temporary variable for approximate or long values)
 .PP
 .TP 8
 .B Ctrl+L
