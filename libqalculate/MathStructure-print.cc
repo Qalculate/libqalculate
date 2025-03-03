@@ -3750,6 +3750,24 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					}
 				}
 			}
+			if(format && po.indicate_infinite_series == REPEATING_DECIMALS_OVERLINE && o_number.isRational() && !o_number.isInteger() && po.base != BASE_CUSTOM && po.base != BASE_UNICODE) {
+				size_t i = print_str.find("¯");
+				if(i != string::npos) {
+					if(po.base == BASE_DECIMAL) {
+						size_t i2 = print_str.find_first_of("Ee", i);
+						if(i2 != string::npos) i_number_end = i2;
+					}
+					if(tagtype == TAG_TYPE_TERMINAL) {
+						print_str.insert(i_number_end, "\033[55m");
+						print_str.erase(i, strlen("¯"));
+						print_str.insert(i, "\033[53m");
+					} else if(tagtype == TAG_TYPE_HTML) {
+						print_str.insert(i_number_end, "</span>");
+						print_str.erase(i, strlen("¯"));
+						print_str.insert(i, "<span style=\"text-decoration: overline\">");
+					}
+				}
+			}
 			break;
 		}
 		case STRUCT_ABORTED: {}

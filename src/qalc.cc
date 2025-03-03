@@ -1297,8 +1297,21 @@ void set_option(string str) {
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "variables", _("variables")) || svar == "var") SET_BOOL_PV(evalops.parse_options.variables_enabled)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "abbreviations", _("abbreviations")) || svar == "abbr" || svar == "abbrev") SET_BOOL_D(printops.abbreviate_names)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "show ending zeroes", _("show ending zeroes")) || svar == "zeroes") SET_BOOL_D(printops.show_ending_zeroes)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "repeating decimals", _("repeating decimals")) || svar == "repdeci") SET_BOOL_D(printops.indicate_infinite_series)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "angle unit", _("angle unit")) || svar == "angle") {
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "repeating decimals", _("repeating decimals")) || svar == "repdeci") {
+		int v = -1;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = REPEATING_DECIMALS_OFF;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "ellipsis", _("ellipsis"))) v = REPEATING_DECIMALS_ELLIPSIS;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "overline", _("overline"))) v = REPEATING_DECIMALS_OVERLINE;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		if(v < REPEATING_DECIMALS_OFF || v > REPEATING_DECIMALS_OVERLINE) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else if(v != printops.indicate_infinite_series) {
+			printops.indicate_infinite_series = v;
+			result_display_updated();
+		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "angle unit", _("angle unit")) || svar == "angle") {
 		int v = -1;
 		//angle unit
 		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "rad", _("rad")) || EQUALS_IGNORECASE_AND_LOCAL(svalue, "radians", _("radians"))) v = ANGLE_UNIT_RADIANS;
@@ -2189,7 +2202,7 @@ bool show_set_help(string set_option = "") {
 		CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 		SET_OPTION_FOUND
 	}
-	STR_AND_TABS_BOOL("repeating decimals", "repdeci", _("If activated, 1/6 is displayed as '0.1 666...', otherwise as '0.166667'."), printops.indicate_infinite_series);
+	STR_AND_TABS_2("repeating decimals", "repdeci", _("If activated, 1/6 is displayed as '0.1 666...', otherwise as '0.166667'."), printops.indicate_infinite_series, _("off"), _("ellipsis"), _("overline"));
 	int v = printops.rounding;
 	if(v == ROUNDING_TOWARD_ZERO) v = 2;
 	else if(v >= 2 && v < ROUNDING_TOWARD_ZERO) v++;
@@ -4100,8 +4113,8 @@ int main(int argc, char *argv[]) {
 	ename.case_sensitive = true;
 	ename.abbreviation = true;
 	v_memory->addName(ename);
-	ename.name = "MRC";
-	v_memory->addName(ename);
+	/*ename.name = "MRC";
+	v_memory->addName(ename);*/
 	CALCULATOR->addVariable(v_memory);
 
 	//load global definitions
@@ -5663,7 +5676,13 @@ int main(int argc, char *argv[]) {
 				str += _("off");
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
-			PRINT_AND_COLON_TABS(_("repeating decimals"), "repdeci"); str += b2oo(printops.indicate_infinite_series, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("repeating decimals"), "repdeci");
+			switch(printops.digit_grouping) {
+				case REPEATING_DECIMALS_OFF: {str += _("off"); break;}
+				case REPEATING_DECIMALS_ELLIPSIS: {str += _("ellipsis"); break;}
+				case REPEATING_DECIMALS_OVERLINE: {str += _("overline"); break;}
+			}
+			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("rounding"), "");
 			switch(printops.rounding) {
 				// rounding mode

@@ -451,6 +451,12 @@ enum {
 	UNICODE_SIGNS_WITHOUT_EXPONENTS
 };
 
+enum {
+	REPEATING_DECIMALS_OFF,
+	REPEATING_DECIMALS_ELLIPSIS,
+	REPEATING_DECIMALS_OVERLINE
+};
+
 // temporary custom time zone value for truncation rounding in output
 #define TZ_TRUNCATE -21586
 // temporary custom time zone value for special duodecimal symbols in output
@@ -471,7 +477,7 @@ struct PrintOptions {
 	/// If rational numbers will be displayed with decimals, as a fraction, or something in between. Default: FRACTION_DECIMAL
 	NumberFractionFormat number_fraction_format;
 	/// Show that the digit series of a number continues forever with three dots, instead of rounding (ex. 2/3 displays as 0.666666... instead of 0.666667). Default: false
-	bool indicate_infinite_series;
+	char indicate_infinite_series;
 	/// Show ending zeroes for approximate numbers to indicate precision (ex.1.2300000 instead of 1.23) . Default: false
 	bool show_ending_zeroes;
 	/// Prefer abbreviated names of variables, units, functions etc. Default: true
