@@ -3890,7 +3890,7 @@ msgstr "Наименьшее общее кратное"
 
 #: ../data/functions.xml.in.h:257
 msgid "r:lcm"
-msgstr "нод"
+msgstr "нок"
 
 #: ../data/functions.xml.in.h:258
 msgid "Divisors"
