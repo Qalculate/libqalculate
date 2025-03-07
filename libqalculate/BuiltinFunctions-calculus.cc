@@ -788,6 +788,8 @@ int DeriveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 			EvaluationOptions eo2 = eo;
 			eo2.approximation = APPROXIMATION_EXACT;
 			eo2.calculate_functions = false;
+			eo2.do_polynomial_division = true;
+			eo2.structuring = STRUCTURING_FACTORIZE;
 			mstruct.eval(eo2);
 		}
 	}
