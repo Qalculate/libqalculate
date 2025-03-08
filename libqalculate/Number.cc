@@ -167,13 +167,7 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 		bool nobreak = str.length() <= 20;
 		int do_thin_space = -1;
 		if(i_deci != string::npos) {
-			if(po.digit_grouping != DIGIT_GROUPING_LOCALE && i_deci + po.decimalpoint().length() < str.length() - 4 && str.find("…") == string::npos && str.find("...") == string::npos) {
-				size_t i_end = str.length();
-				if(po.indicate_infinite_series == REPEATING_DECIMALS_OVERLINE) {
-					i_end = str.find("¯");
-					if(i_end == string::npos) i_end = str.length();
-					else i_end++;
-				}
+			if(po.digit_grouping != DIGIT_GROUPING_LOCALE && i_deci + po.decimalpoint().length() < str.length() - 4 && str.find("…") == string::npos && str.find("...") == string::npos && str.find("¯") == string::npos) {
 				i = i_deci + 3 + po.decimalpoint().length();
 				if(do_thin_space == -1) {
 					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (THIN_SPACE, po.can_display_unicode_string_arg))) do_thin_space = 1;
@@ -183,15 +177,13 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 					if(do_thin_space != 0 && !IsWindows10OrGreater()) do_thin_space = 0;
 #endif
 				}
-				while(i < i_end) {
+				while(i < str.length()) {
 					if(do_thin_space) {
 						str.insert(i, nobreak ? NNBSP : THIN_SPACE);
 						i += 3 + strlen(nobreak ? NNBSP : THIN_SPACE);
-						i_end += strlen(nobreak ? NNBSP : THIN_SPACE);
 					} else {
 						str.insert(i, " ");
 						i += 4;
-						i_end += 1;
 					}
 				}
 			}

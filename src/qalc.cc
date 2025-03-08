@@ -3030,31 +3030,33 @@ int key_insert(int, int) {
 		return 0;
 	}
 	bool use_text = true;
-	string str;
-	if(use_text) {
-		MathStructure m(vans[0]->get());
-		PrintOptions po = printops;
-		bool approx = false, use_par = m.size() > 1 && !m.isFunction() && !m.isVector();
-		po.is_approximate = &approx;
-		if(evalops.parse_options.base < 2 || evalops.parse_options.base > 32) po.base = 10;
-		else po.base = evalops.parse_options.base;
-		po.base_display = BASE_DISPLAY_NONE;
-		po.twos_complement = evalops.parse_options.twos_complement;
-		po.hexadecimal_twos_complement = evalops.parse_options.hexadecimal_twos_complement;
-		if(po.number_fraction_format == FRACTION_DECIMAL) po.number_fraction_format = FRACTION_DECIMAL_EXACT;
-		printops.allow_non_usable = false;
-		if(((po.base == 2 && po.twos_complement) || (po.base == 16 && po.hexadecimal_twos_complement)) && ((m.isNumber() && m.number().isNegative()) || (!m.isNumber() && m[0].number().isNegative()))) po.binary_bits = evalops.parse_options.binary_bits;
-		CALCULATOR->startControl(500);
-		m.format(po);
-		if(use_par) str += "(";
-		str += m.print(po);
-		if(use_par) str += ")";
-		if(CALCULATOR->aborted() || approx || m.isApproximate() || str.length() > 50 || evalops.parse_options.base < 2 || evalops.parse_options.base > 32) use_text = false;
-		if(CALCULATOR->aborted() || str.length() > 1000) str = "";
-		CALCULATOR->stopControl();
-		if(use_text) rl_insert_text(str.c_str());
+	MathStructure m(vans[0]->get());
+	PrintOptions po = printops;
+	bool approx = false, use_par = m.size() > 1 && !m.isFunction() && !m.isVector();
+	po.is_approximate = &approx;
+	if(evalops.parse_options.base < 2 || evalops.parse_options.base > 32) po.base = 10;
+	else po.base = evalops.parse_options.base;
+	po.base_display = BASE_DISPLAY_NONE;
+	po.twos_complement = evalops.parse_options.twos_complement;
+	po.hexadecimal_twos_complement = evalops.parse_options.hexadecimal_twos_complement;
+	if(po.number_fraction_format == FRACTION_DECIMAL) po.number_fraction_format = FRACTION_DECIMAL_EXACT;
+	printops.allow_non_usable = false;
+	if(((po.base == 2 && po.twos_complement) || (po.base == 16 && po.hexadecimal_twos_complement)) && ((m.isNumber() && m.number().isNegative()) || (!m.isNumber() && m[0].number().isNegative()))) po.binary_bits = evalops.parse_options.binary_bits;
+	CALCULATOR->startControl(500);
+	m.format(po);
+	string str = m.print(po);
+	if(!use_par) {
+		string str2 = str;
+		CALCULATOR->parseSigns(str2);
+		if(str2.find_first_of("*/") != string::npos) use_par = true;
 	}
+	if(use_par) str.insert(0, "(");
+	if(use_par) str += ")";
+	if(CALCULATOR->aborted() || approx || m.isApproximate() || str.length() > 50 || evalops.parse_options.base < 2 || evalops.parse_options.base > 32) use_text = false;
+	if(CALCULATOR->aborted() || str.length() > 1000) str = "";
+	CALCULATOR->stopControl();
 	if(use_text) {
+		rl_insert_text(str.c_str());
 		prev_ans_var = false;
 	} else {
 		string name = "ans";
