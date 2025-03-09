@@ -6,7 +6,7 @@
       <!-- Data set for chemical elements -->
       <_title>!datasets!Elements</_title>
       <datafile>elements.xml</datafile>
-      <copyright>This data uses material from the Wikipedia, under the Creative Commons Attribution-ShareAlike License</copyright>
+      <_copyright>This data uses material from the Wikipedia, under the Creative Commons Attribution-ShareAlike License</_copyright>
       <_names>r:atom</_names>
       <object_argument>
         <!-- Object argument for chemical elements data set-->
@@ -84,7 +84,7 @@
     <dataset>
       <_title>Planets</_title>
       <datafile>planets.xml</datafile>
-      <copyright>This data uses material from the Wikipedia articles&#10;"Earth" (http://www.wikipedia.org/wiki/Earth),&#10;"Jupiter" (http://www.wikipedia.org/wiki/Jupiter),&#10;"Mars" (http://www.wikipedia.org/wiki/Mars),&#10;"Mercury (planet)" (http://www.wikipedia.org/wiki/Mercury_(planet)),&#10;"Neptune" (http://www.wikipedia.org/wiki/Neptune),&#10;"Pluto" (http://www.wikipedia.org/wiki/Pluto),&#10;"Saturn" (http://www.wikipedia.org/wiki/Saturn),&#10;"Uranus" (http://www.wikipedia.org/wiki/Uranus), and&#10;"Venus" (http://en.wikipedia.org/wiki/Venus), under Creative Commons Attribution-ShareAlike License</copyright>
+      <_copyright>This data uses material from the Wikipedia articles&#10;"Earth" (http://www.wikipedia.org/wiki/Earth),&#10;"Jupiter" (http://www.wikipedia.org/wiki/Jupiter),&#10;"Mars" (http://www.wikipedia.org/wiki/Mars),&#10;"Mercury (planet)" (http://www.wikipedia.org/wiki/Mercury_(planet)),&#10;"Neptune" (http://www.wikipedia.org/wiki/Neptune),&#10;"Pluto" (http://www.wikipedia.org/wiki/Pluto),&#10;"Saturn" (http://www.wikipedia.org/wiki/Saturn),&#10;"Uranus" (http://www.wikipedia.org/wiki/Uranus), and&#10;"Venus" (http://en.wikipedia.org/wiki/Venus), under Creative Commons Attribution-ShareAlike License</_copyright>
       <_names>r:planet</_names>
       <object_argument>
         <_title>Planet</_title>

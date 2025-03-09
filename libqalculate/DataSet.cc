@@ -724,6 +724,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 									}
 								} else if(!locale.empty() && (ils < 0 || lang_status[ils] < 2)) {
 									if(locale == (char*) lang) {
+										if(ils < 0 && properties[i]->isKey()) o->setNonlocalizedKeyProperty(properties[i], o->getProperty(properties[i]));
 										if(ils < 0) {
 											lang_status_p.push_back(properties[i]);
 											lang_status.push_back(2);
@@ -738,6 +739,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 										}
 										o->setProperty(properties[i], str, i_approx);
 									} else if((ils < 0 || lang_status[ils] < 1) && strlen((char*) lang) >= 2 && lang[0] == localebase[0] && lang[1] == localebase[1]) {
+										if(ils < 0 && properties[i]->isKey()) o->setNonlocalizedKeyProperty(properties[i], o->getProperty(properties[i]));
 										if(ils < 0) {
 											lang_status_p.push_back(properties[i]);
 											lang_status.push_back(1);

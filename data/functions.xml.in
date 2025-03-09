@@ -296,6 +296,7 @@
         <_title>First data row</_title>
       </argument>
       <argument index="3">
+        <!-- Delimiter -->
         <_title>Separator</_title>
       </argument>
     </builtin_function>
