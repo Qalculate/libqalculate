@@ -530,29 +530,25 @@
     <function>
       <_title>Permutations (Variations)</_title>
       <_names>r:perm,variations</_names>
-      <expression>if(\y>\x,0,\x!/(\x-\y)!)</expression>
+      <expression>binomial(\x,\y)*gamma(\y+1)</expression>
       <_description>Returns the number of possible arrangements of an ordered list with a number of objects to choose from and a list size. If there are three objects (1, 2 and 3) that are put in a list with two positions, the alternatives are [1, 2], [2, 1], [1, 3], [3, 1], [2, 3] and [3, 2], and thus the number of permutations is 6.</_description>
-      <argument type="integer" index="1">
+      <argument type="number" index="1">
         <_title>Objects</_title>
-        <min>0</min>
       </argument>
-      <argument type="integer" index="2">
+      <argument type="number" index="2">
         <_title>Size</_title>
-        <min>0</min>
       </argument>
     </function>
     <function>
       <_title>Combinations</_title>
       <_names>r:comb</_names>
-      <expression>if(\y>\x,0,\x!/(\y!*(\x-\y)!))</expression>
+      <expression>binomial(\x,\y)</expression>
       <_description>Returns the number of possible arrangements of an unordered list with a number of objects to choose from and a list size. If there are three objects (1, 2 and 3) that are put in a list with place for two, the alternatives are [1, 2], [1, 3], and [2, 3], and thus the number of combinations is 3.</_description>
-      <argument type="integer" index="1">
+      <argument type="number" index="1">
         <_title>Objects</_title>
-        <min>0</min>
       </argument>
-      <argument type="integer" index="2">
+      <argument type="number" index="2">
         <_title>Size</_title>
-        <min>0</min>
       </argument>
     </function>
     <function>

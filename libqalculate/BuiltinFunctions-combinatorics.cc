@@ -102,10 +102,41 @@ bool MultiFactorialFunction::representsOdd(const MathStructure&, bool) const {re
 bool MultiFactorialFunction::representsUndefined(const MathStructure&) const {return false;}
 
 BinomialFunction::BinomialFunction() : MathFunction("binomial", 2) {
-	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true));
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
+	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, true);
+	arg->setComplexAllowed(false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
+	arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, true);
+	arg->setComplexAllowed(false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(2, arg);
 }
-int BinomialFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+int BinomialFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(!vargs[0].number().isInteger() || !vargs[1].number().isInteger()) {
+		if(eo.approximation == APPROXIMATION_EXACT) return 0;
+		if(vargs[0].number().isInterval() || !vargs[0].number().isInterval()) {
+			KnownVariable *v1 = new KnownVariable("", format_and_print(vargs[0]), vargs[0]);
+			KnownVariable *v2 = new KnownVariable("", format_and_print(vargs[1]), vargs[1]);
+			MathStructure mdiv(v1);
+			mstruct = v1;
+			v1->destroy();
+			mstruct += m_one;
+			mstruct.transformById(FUNCTION_ID_GAMMA);
+			mdiv += m_one;
+			mdiv -= v2;
+			mdiv.transformById(FUNCTION_ID_GAMMA);
+			mdiv *= v2;
+			mdiv.last() += m_one;
+			mdiv.last().transformById(FUNCTION_ID_GAMMA);
+			mstruct /= mdiv;
+			v2->destroy();
+			return 1;
+		}
+		Number nr2(vargs[1].number()), nr1a(vargs[0].number()), nr1b(vargs[0].number());
+		if(!nr1a.add(1) || !nr1b.add(1) || !nr1b.subtract(nr2) || !nr2.add(1) || !nr2.gamma() || !nr1a.gamma() || !nr1b.gamma() || !nr1a.divide(nr1b) || !nr1a.divide(nr2)) return 0;
+		mstruct = nr1a;
+		return 1;
+	}
 	Number nr;
 	if(!nr.binomial(vargs[0].number(), vargs[1].number())) return 0;
 	mstruct = nr;
