@@ -38,11 +38,7 @@
 #include <libqalculate/MathStructure-support.h>
 
 using std::string;
-using std::cout;
 using std::vector;
-using std::endl;
-using std::iterator;
-using std::cerr;
 using std::list;
 
 class ViewThread : public Thread {
@@ -2977,7 +2973,14 @@ void do_autocalc(bool force, const char *action_text) {
 				if(vertical_space) sout += "\n";
 				sout += "\033["; sout += i2s(autocalc_lines); sout += "A";
 				if(move_pos) {
-					sout += "\033["; sout += i2s(unicode_length(orig_str, rl_point) + 3); sout += "G";
+					// Check if user has show-mode-in-prompt set to "on", and
+					// adjust the offset from the left to accomodate the mode
+					// string.
+					int input_offset = 3;
+					if (strcmp("on", rl_variable_value("show-mode-in-prompt")) == 0) {
+						input_offset += 5; // The prompt looks like "(ins)"; 5 chars.
+					}
+					sout += "\033["; sout += i2s(unicode_length(orig_str, rl_point) + input_offset); sout += "G";
 				}
 				FPUTS_UNICODE(sout.c_str(), stdout);
 				fflush(stdout);
