@@ -2484,7 +2484,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					mtest[1].clear();
 					mtest.childrenUpdated();
 				}
-				b = eo2.do_polynomial_division && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && do_simplification(mtest[0], eo, true, true, false, false, true);
+				b = (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && do_simplification(mtest[0], eo, true, true, false, false, true);
 				if(b && mtest[0].isMultiplication() && mtest[0].size() == 2 && mtest[0][1].isPower() && mtest[0][1][1].representsNegative()) {
 					MathStructure mreq(mtest);
 					mtest[0].setToChild(1, true);

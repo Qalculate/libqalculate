@@ -556,6 +556,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 		eo2.isolate_var = &y_var;
 		eo2.isolate_x = true;
 		eo2.test_comparisons = true;
+		eo2.do_polynomial_division = true;
 		mstruct.eval(eo2);
 		if(dsolve) {
 			if(x_value.isUndefined() || y_value.isUndefined()) {
