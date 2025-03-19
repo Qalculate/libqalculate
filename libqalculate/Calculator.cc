@@ -162,7 +162,7 @@ Calculator::Calculator() {
 				string lang = utf8_encode(wlocale);
 				gsub("-", "_", lang);
 				if(lang.length() > 5) lang = lang.substr(0, 5);
-				if(!lang.empty()) _putenv_s("LANG", lang.c_str());
+				if(!lang.empty()) _putenv_s("LC_MESSAGES", lang.c_str());
 			}
 			delete[] wlocale;
 		}
@@ -425,7 +425,7 @@ Calculator::Calculator(bool ignore_locale) {
 					string lang = utf8_encode(wlocale);
 					gsub("-", "_", lang);
 					if(lang.length() > 5) lang = lang.substr(0, 5);
-					if(!lang.empty()) _putenv_s("LANG", lang.c_str());
+					if(!lang.empty()) _putenv_s("LANGUAGE", lang.c_str());
 				}
 				delete[] wlocale;
 			}

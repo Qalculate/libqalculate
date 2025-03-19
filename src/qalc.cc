@@ -40,6 +40,8 @@
 using std::string;
 using std::vector;
 using std::list;
+using std::cout;
+using std::endl;
 
 class ViewThread : public Thread {
 protected:
@@ -102,6 +104,7 @@ int dual_fraction = -1, saved_dual_fraction = -1;
 int dual_approximation = -1, saved_dual_approximation = -1;
 bool tc_set = false, sinc_set = false;
 bool ignore_locale = false;
+string custom_lang;
 bool result_only = false, vertical_space = true;
 bool do_imaginary_j = false;
 int sigint_action = 1;
@@ -1527,6 +1530,12 @@ void set_option(string str) {
 			}
 			PUTS_UNICODE("Please restart the program for the change to take effect.");
 		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "language", _("language"))) {
+		if(svalue == "0" || svalue == "1" || EQUALS_IGNORECASE_AND_LOCAL(svar, "default", _("default"))) svalue = "";
+		if(svalue != custom_lang) {
+			custom_lang = svalue;
+			PUTS_UNICODE(_("Please restart the program for the change to take effect."));
+		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "save mode", _("save mode"))) {
 		int v = s2b(svalue);
 		if(v < 0) {
@@ -1907,6 +1916,7 @@ void set_option(string str) {
 			ADD_OPTION_TO_LIST("currency conversion", "curconv")
 			ADD_OPTION_TO_LIST1("exact")
 			ADD_OPTION_TO_LIST1("ignore locale")
+			ADD_OPTION_TO_LIST1("language")
 			ADD_OPTION_TO_LIST1("save mode")
 			ADD_OPTION_TO_LIST1("clear history")
 			ADD_OPTION_TO_LIST1("save history")
@@ -2339,6 +2349,15 @@ bool show_set_help(string set_option = "") {
 #endif
 	STR_AND_TABS_YESNO("clear history", "", _("Do not save expression history on exit."), clear_history_on_exit);
 	STR_AND_TABS_YESNO("ignore locale", "", _("Ignore system language and use English (requires restart)."), ignore_locale);
+	if(SET_OPTION_MATCHES("language", "")) {
+		STR_AND_TABS_SET("language", "");
+		str = " ";
+		if(custom_lang.empty()) str += _("default");
+		else str += custom_lang;
+		str += "*";
+		CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+		SET_OPTION_FOUND
+	}
 	STR_AND_TABS_BOOL("rpn", "", _("Activates the Reverse Polish Notation stack."), rpn_mode);
 	STR_AND_TABS_YESNO("save definitions", "", _("Save functions, units, and variables on exit."), save_defs_on_exit);
 	STR_AND_TABS_YESNO("save mode", "", _("Save settings on exit."), save_mode_on_exit);
@@ -3761,7 +3780,7 @@ int main(int argc, char *argv[]) {
 	string filename = buildPath(getLocalDir(), "qalc.cfg");
 	FILE *file = fopen(filename.c_str(), "r");
 	char line[10000];
-	string stmp;
+	string stmp, lang;
 	if(file) {
 		while(true) {
 			if(fgets(line, 10000, file) == NULL) break;
@@ -3770,11 +3789,42 @@ int main(int argc, char *argv[]) {
 				break;
 			} else if(strcmp(line, "ignore_locale=0\n") == 0) {
 				break;
+			} else if(strncmp(line, "language=", 9) == 0) {
+				lang = line + sizeof(char) * 9;
+				remove_blank_ends(lang);
+				if(!lang.empty()) {
+#	ifdef _WIN32
+					_putenv_s("LANGUAGE", lang.c_str());
+#	else
+					setenv("LANGUAGE", lang.c_str(), 1);
+#	endif
+				}
+				break;
 			}
 		}
 		fclose(file);
 	}
 	if(!ignore_locale) {
+#	ifdef _WIN32
+		if(lang.empty()) {
+			size_t n = 0;
+			getenv_s(&n, NULL, 0, "LANG");
+			if(n == 0) {
+				ULONG nlang = 0;
+				DWORD n = 0;
+				if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
+					WCHAR* wlocale = new WCHAR[n];
+					if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
+						string lang = utf8_encode(wlocale);
+						gsub("-", "_", lang);
+						if(lang.length() > 5) lang = lang.substr(0, 5);
+						if(!lang.empty()) _putenv_s("LANGUAGE", lang.c_str());
+					}
+					delete[] wlocale;
+				}
+			}
+		}
+#	endif
 		bindtextdomain(GETTEXT_PACKAGE, getPackageLocaleDir().c_str());
 		bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 		textdomain(GETTEXT_PACKAGE);
@@ -5458,7 +5508,7 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("angle unit"), "angle");
 			switch(evalops.parse_options.angle_unit) {
 				case ANGLE_UNIT_RADIANS: {str += _("rad"); break;}
-				case ANGLE_UNIT_DEGREES: {str += _("rad"); break;}
+				case ANGLE_UNIT_DEGREES: {str += _("deg"); break;}
 				case ANGLE_UNIT_GRADIANS: {str += _("gra"); break;}
 				case ANGLE_UNIT_CUSTOM: {if(CALCULATOR->customAngleUnit()) {str += CALCULATOR->customAngleUnit()->referenceName();} else {str += _("none");} break;}
 				default: {str += _("none"); break;}
@@ -5825,6 +5875,7 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("clear history"), ""); str += b2yn(clear_history_on_exit, false);
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("ignore locale"), ""); str += b2yn(ignore_locale, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			if(!custom_lang.empty()) {PRINT_AND_COLON_TABS(_("language"), ""); str += custom_lang; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())}
 			PRINT_AND_COLON_TABS(_("rpn"), ""); str += b2oo(rpn_mode, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("save definitions"), ""); str += b2yn(save_defs_on_exit, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("save mode"), ""); str += b2yn(save_mode_on_exit, false);
@@ -8613,6 +8664,8 @@ void load_preferences() {
 
 	ignore_locale = false;
 
+	custom_lang = "";
+
 	vertical_space = true;
 
 	adaptive_interval_display = true;
@@ -8706,6 +8759,8 @@ void load_preferences() {
 					save_defs_on_exit = v;
 				} else if(svar == "sigint_action") {
 					sigint_action = v;
+				} else if(svar == "language") {
+					custom_lang = svalue;
 				} else if(svar == "ignore_locale") {
 					ignore_locale = v;
 				} else if(svar == "colorize") {
@@ -9101,6 +9156,7 @@ bool save_preferences(bool mode) {
 #ifndef _WIN32
 	if(sigint_action != 1) fprintf(file, "sigint_action=%i\n", sigint_action);
 #endif
+	if(!custom_lang.empty()) fprintf(file, "language=%s\n", custom_lang.c_str());
 	fprintf(file, "ignore_locale=%i\n", ignore_locale);
 	fprintf(file, "colorize=%i\n", colorize);
 	fprintf(file, "auto_update_exchange_rates=%i\n", auto_update_exchange_rates);

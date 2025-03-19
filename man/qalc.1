@@ -481,7 +481,7 @@ Use lowercase letters for number bases > 10.
 .B min decimals, mindeci \fI(-1* = off, >= 0)\fP
 .PP
 .TP 8
-.B repeating decimals, repdeci \fI(on, off*)\fP
+.B repeating decimals, repdeci \fI(0 = off*, 1 = ellipsis, 2 = overline)\fP
 If activated, 1/6 is displayed as '0.1 666...', otherwise as '0.166667'.
 .PP
 .TP 8
@@ -614,6 +614,9 @@ Do not save expression history on exit.
 .TP 8
 .B ignore locale \fI(yes, no*)\fP
 Ignore system language and use English (requires restart).
+.PP
+.TP 8
+.B language
 .PP
 .TP 8
 .B rpn \fI(on, off*)\fP
