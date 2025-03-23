@@ -704,6 +704,16 @@ TanFunction::TanFunction() : MathFunction("tan", 1) {
 bool TanFunction::representsNumber(const MathStructure&, bool) const {return false;}
 bool TanFunction::representsReal(const MathStructure&, bool) const {return false;}
 bool TanFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonComplex(true);}
+bool TanFunction::representsUndefined(const MathStructure &vargs) const {
+	if(vargs.size() != 1) return false;
+	if(vargs[0].isMultiplication() && vargs[0].size() == 3 && vargs[0][0].isNumber() && vargs[0][0].number().denominatorIsTwo() && vargs[0][1].isVariable() && vargs[0][1].variable() == CALCULATOR->getVariableById(VARIABLE_ID_PI) && vargs[0][2].isUnit() && vargs[0][2].unit() == CALCULATOR->getRadUnit()) {
+		return true;
+	}
+	if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0].isMultiplication() && vargs[0][0].size() == 2 &&  vargs[0][0][0].isNumber() && vargs[0][0][0].number().denominatorIsTwo() && vargs[0][0][1].isVariable() && vargs[0][0][1].variable() == CALCULATOR->getVariableById(VARIABLE_ID_PI) && vargs[0][1].isUnit() && vargs[0][1].unit() == CALCULATOR->getRadUnit()) {
+		return true;
+	}
+	return false;
+}
 int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
 	if(vargs[0].isVector()) return 0;

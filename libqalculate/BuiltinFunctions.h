@@ -146,6 +146,20 @@
 							int id() const {return i;}\
 						};
 
+#define DECLARE_BUILTIN_FUNCTION_R4(x, i)	class x : public MathFunction { \
+						  public: \
+							int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+							x(); \
+							x(const x *function) {set(function);} \
+							ExpressionItem *copy() const {return new x(this);} \
+							bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsReal(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsUndefined(const MathStructure &vargs) const;\
+							TEST_NM_S_FUNCTIONS\
+							int id() const {return i;}\
+						};
+
 #define DECLARE_BUILTIN_FUNCTION_R3(x, i)	class x : public MathFunction { \
 						  public: \
 							int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
@@ -469,7 +483,7 @@ DECLARE_BUILTIN_FUNCTION(AllRootsFunction, FUNCTION_ID_ALL_ROOTS)
 
 DECLARE_BUILTIN_FUNCTION_R2(SinFunction, FUNCTION_ID_SIN)
 DECLARE_BUILTIN_FUNCTION_R2(CosFunction, FUNCTION_ID_COS)
-DECLARE_BUILTIN_FUNCTION_R2(TanFunction, FUNCTION_ID_TAN)
+DECLARE_BUILTIN_FUNCTION_R4(TanFunction, FUNCTION_ID_TAN)
 DECLARE_BUILTIN_FUNCTION_R1(AsinFunction, FUNCTION_ID_ASIN)
 DECLARE_BUILTIN_FUNCTION_R1(AcosFunction, FUNCTION_ID_ACOS)
 DECLARE_BUILTIN_FUNCTION_R2(AtanFunction, FUNCTION_ID_ATAN)

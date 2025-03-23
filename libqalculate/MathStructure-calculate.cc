@@ -1672,9 +1672,9 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 2;
 				}
-			} else if(mstruct.function()->id() == FUNCTION_ID_TAN && mstruct.size() == 1) {
+			} else if(mstruct.function()->id() == FUNCTION_ID_TAN && mstruct.size() == 1 && !mstruct.representsUndefined()) {
 				mstruct.setFunctionId(FUNCTION_ID_COS);
-				if(warn_about_assumed_not_value(mstruct, m_zero, eo)) {
+				if((eo.assume_denominators_nonzero && !eo.warn_about_denominators_assumed_nonzero) || warn_about_assumed_not_value(mstruct, m_zero, eo)) {
 					// 0*tan(x)=0 if cos(x) != 0
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 2;
@@ -2797,9 +2797,9 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 3;
 					}
-				} else if(o_function->id() == FUNCTION_ID_TAN && SIZE == 1 && mstruct.isZero()) {
+				} else if(o_function->id() == FUNCTION_ID_TAN && SIZE == 1 && mstruct.isZero() && !representsUndefined()) {
 					setFunctionId(FUNCTION_ID_COS);
-					if(warn_about_assumed_not_value(*this, m_zero, eo)) {
+					if((eo.assume_denominators_nonzero && !eo.warn_about_denominators_assumed_nonzero) || warn_about_assumed_not_value(*this, m_zero, eo)) {
 						// 0*tan(x)=0 if cos(x) is assume non-zero
 						clear(true);
 						MERGE_APPROX_AND_PREC(mstruct)

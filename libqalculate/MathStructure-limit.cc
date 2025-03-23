@@ -989,7 +989,7 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 					calculate_limit_sub(mstruct[0], x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, true, mstruct.function()->id() == FUNCTION_ID_LOG && reduce_addition);
 					break;
 				}
-			} else if(approach_direction != 0 && mstruct.function()->id() == FUNCTION_ID_TAN && mstruct.size() == 1) {
+			} else if(mstruct.function()->id() == FUNCTION_ID_TAN && mstruct.size() == 1) {
 				MathStructure mbak(mstruct);
 				mstruct.setFunctionId(FUNCTION_ID_SIN);
 				mbak.setFunctionId(FUNCTION_ID_COS);
