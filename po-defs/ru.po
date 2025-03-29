@@ -4604,7 +4604,7 @@ msgstr "Квадратный корень"
 
 #: ../data/functions.xml.in.h:410
 msgid "au:&#x221A;,r:sqrt"
-msgstr "au:&#x221A;,корень"
+msgstr "au:&#x221A;,квк"
 
 #: ../data/functions.xml.in.h:411
 msgid ""
