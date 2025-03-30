@@ -546,7 +546,7 @@ See syntax section.
 .PP
 .TP 8
 .B read precision, readprec \fI(0* = off, 1 = always, 2 = when decimals)\fP
-If activated, numbers are interpreted as approximate with precision equal to the number of significant digits (3.20 = 3.20+/-0.005).
+If activated, numbers are interpreted as approximations with precision equal to the number of significant digits (3.20 = 3.20+/-0.005).
 .PP
 .TP 8
 .B simplified percentage, percent \fI(on*, off)\fP
@@ -564,8 +564,8 @@ Enables automatic use of hecto, deca, deci, and centi.
 .PP
 .TP 8
 .B autoconversion, conv \fI(0 = none, 1* = optimal, 2 = base, 3 = optimalsi, 4 = mixed)\fP
-Controls automatic unit conversion of the result. 'optimalsi' always converts non-SI units, while 'optimal' only converts to more optimal unit
-expressions, with less units and exponents.
+Controls automatic unit conversion of the result. 'optimalsi' always converts non-SI units, while 'optimal' only converts to unit
+expressions with less units and exponents.
 .PP
 .TP 8
 .B binary prefixes, binpref \fI(on, off*)\fP

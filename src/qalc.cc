@@ -2294,7 +2294,7 @@ bool show_set_help(string set_option = "") {
 	}
 	STR_AND_TABS_BOOL("limit implicit multiplication", "limimpl", "", evalops.parse_options.limit_implicit_multiplication);
 	STR_AND_TABS_4("parsing mode", "syntax", _("See 'help parsing mode'."), evalops.parse_options.parsing_mode, _("adaptive"), _("implicit first"), _("conventional"), _("chain"), _("rpn"));
-	STR_AND_TABS_2("read precision", "readprec", _("If activated, numbers are interpreted as approximate with precision equal to the number of significant digits (3.20 = 3.20+/-0.005)."), evalops.parse_options.read_precision, _("off"), _("always"), _("when decimals"))
+	STR_AND_TABS_2("read precision", "readprec", _("If activated, numbers are interpreted as approximations with precision equal to the number of significant digits (3.20 = 3.20+/-0.005)."), evalops.parse_options.read_precision, _("off"), _("always"), _("when decimals"))
 	STR_AND_TABS_BOOL("simplified percentage", "percent", _("Interpret addition/subtraction of percentage as percentage increase/decrease of the first term (100 + 10% = 110)."), simplified_percentage);
 	STR_AND_TABS_BOOL("two's input", "twosin", _("Enables two's complement representation for input of negative binary numbers. All binary numbers starting with 1 are negative, unless binary bits is set."), evalops.parse_options.twos_complement);
 
@@ -2303,7 +2303,7 @@ bool show_set_help(string set_option = "") {
 	STR_AND_TABS_BOOL("all prefixes", "allpref", _("Enables automatic use of hecto, deca, deci, and centi."), printops.use_all_prefixes);
 	if(SET_OPTION_MATCHES("autoconversion", "conv")) {
 		STR_AND_TABS_SET("autoconversion", "conv");
-		SET_DESCRIPTION(_("Controls automatic unit conversion of the result. 'optimalsi' always converts non-SI units, while 'optimal' only converts to more optimal unit expressions, with less units and exponents."));
+		SET_DESCRIPTION(_("Controls automatic unit conversion of the result. 'optimalsi' always converts non-SI units, while 'optimal' only converts to unit expressions with less units and exponents."));
 		str += "(0";
 		if(evalops.auto_post_conversion == POST_CONVERSION_NONE && evalops.mixed_units_conversion == MIXED_UNITS_CONVERSION_NONE) str += "*";
 		str += " = "; str += (_("none"));
