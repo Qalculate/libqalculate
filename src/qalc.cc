@@ -608,7 +608,7 @@ void handle_exit() {
 
 #ifndef _WIN32
 void sigint_handler(int) {
-	if(CALCULATOR->busy()) {
+	if(b_busy || CALCULATOR->busy()) {
 		CALCULATOR->abort();
 		return;
 	}
