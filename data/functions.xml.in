@@ -1026,6 +1026,9 @@
         <argument index="3">
           <_title>Set of digits</_title>
         </argument>
+	<argument index="4">
+          <_title>Reverse conversion</_title>
+        </argument>
       </builtin_function>
       <builtin_function name="bin">
         <_title>Binary</_title>
@@ -1037,6 +1040,9 @@
         <argument index="2">
           <_title>Two's complement</_title>
         </argument>
+	<argument index="3">
+          <_title>Reverse conversion</_title>
+        </argument>
       </builtin_function>
       <builtin_function name="oct">
         <_title>Octal</_title>
@@ -1045,6 +1051,9 @@
         <argument index="1">
           <_title>Octal number</_title>
         </argument>
+	<argument index="2">
+          <_title>Reverse conversion</_title>
+        </argument>
       </builtin_function>
       <builtin_function name="dec">
         <_title>Decimal</_title>
@@ -1052,6 +1061,9 @@
         <_description>Returns a value from a decimal expression.</_description>
         <argument index="1">
           <_title>Decimal number</_title>
+        </argument>
+	<argument index="2">
+          <_title>Reverse conversion</_title>
         </argument>
       </builtin_function>
       <builtin_function name="hex">
@@ -1063,6 +1075,9 @@
         </argument>
         <argument index="2">
           <_title>Two's complement</_title>
+        </argument>
+	<argument index="3">
+          <_title>Reverse conversion</_title>
         </argument>
       </builtin_function>
       <builtin_function name="bijective">

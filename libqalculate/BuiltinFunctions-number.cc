@@ -1425,42 +1425,80 @@ int LDegreeFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 }
 
 
-BinFunction::BinFunction() : MathFunction("bin", 1, 2) {
+BinFunction::BinFunction() : MathFunction("bin", 1, 3) {
 	setArgumentDefinition(1, new TextArgument());
 	setArgumentDefinition(2, new BooleanArgument());
 	setDefaultValue(2, "0");
+	setArgumentDefinition(3, new BooleanArgument());
+	setDefaultValue(3, "0");
 }
 int BinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[2].number().getBoolean()) {
+		CALCULATOR->parse(&mstruct, vargs[0].symbol(), eo.parse_options);
+		PrintOptions po; po.base = BASE_BINARY;
+		po.twos_complement = vargs[1].number().getBoolean();
+		mstruct.eval(eo);
+		mstruct.set(mstruct.print(po), true, true);
+		return 1;
+	}
 	ParseOptions po = eo.parse_options;
 	po.base = BASE_BINARY;
 	po.twos_complement = vargs[1].number().getBoolean();
 	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
 	return 1;
 }
-OctFunction::OctFunction() : MathFunction("oct", 1) {
+OctFunction::OctFunction() : MathFunction("oct", 1, 2) {
 	setArgumentDefinition(1, new TextArgument());
+	setArgumentDefinition(2, new BooleanArgument());
+	setDefaultValue(2, "0");
 }
 int OctFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[1].number().getBoolean()) {
+		CALCULATOR->parse(&mstruct, vargs[0].symbol(), eo.parse_options);
+		PrintOptions po; po.base = BASE_OCTAL;
+		mstruct.eval(eo);
+		mstruct.set(mstruct.print(po), true, true);
+		return 1;
+	}
 	ParseOptions po = eo.parse_options;
 	po.base = BASE_OCTAL;
 	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
 	return 1;
 }
-DecFunction::DecFunction() : MathFunction("dec", 1) {
+DecFunction::DecFunction() : MathFunction("dec", 1, 2) {
 	setArgumentDefinition(1, new TextArgument());
+	setArgumentDefinition(2, new BooleanArgument());
+	setDefaultValue(2, "0");
 }
 int DecFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[1].number().getBoolean()) {
+		CALCULATOR->parse(&mstruct, vargs[0].symbol(), eo.parse_options);
+		PrintOptions po; po.base = BASE_DECIMAL;
+		mstruct.eval(eo);
+		mstruct.set(mstruct.print(po), true, true);
+		return 1;
+	}
 	ParseOptions po = eo.parse_options;
 	po.base = BASE_DECIMAL;
 	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
 	return 1;
 }
-HexFunction::HexFunction() : MathFunction("hex", 1, 2) {
+HexFunction::HexFunction() : MathFunction("hex", 1, 3) {
 	setArgumentDefinition(1, new TextArgument());
 	setArgumentDefinition(2, new BooleanArgument());
 	setDefaultValue(2, "0");
+	setArgumentDefinition(3, new BooleanArgument());
+	setDefaultValue(3, "0");
 }
 int HexFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[2].number().getBoolean()) {
+		CALCULATOR->parse(&mstruct, vargs[0].symbol(), eo.parse_options);
+		PrintOptions po; po.base = BASE_HEXADECIMAL;
+		po.hexadecimal_twos_complement = vargs[1].number().getBoolean();
+		mstruct.eval(eo);
+		mstruct.set(mstruct.print(po), true, true);
+		return 1;
+	}
 	ParseOptions po = eo.parse_options;
 	po.base = BASE_HEXADECIMAL;
 	po.hexadecimal_twos_complement = vargs[1].number().getBoolean();
@@ -1468,7 +1506,7 @@ int HexFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	return 1;
 }
 
-BaseFunction::BaseFunction() : MathFunction("base", 2, 3) {
+BaseFunction::BaseFunction() : MathFunction("base", 2, 4) {
 	setArgumentDefinition(1, new TextArgument());
 	Argument *arg = new Argument();
 	arg->setHandleVector(true);
@@ -1479,9 +1517,66 @@ BaseFunction::BaseFunction() : MathFunction("base", 2, 3) {
 	setArgumentDefinition(3, arg2);
 	setArgumentDefinition(3, new TextArgument());
 	setDefaultValue(3, "0");
+	setArgumentDefinition(4, new BooleanArgument());
+	setDefaultValue(4, "0");
 }
 int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[1].isVector()) return 0;
+	if(vargs[3].number().getBoolean()) {
+		PrintOptions po;
+		po.base = 10;
+		Number nbase;
+		if(vargs[1].isNumber()) {
+			nbase = vargs[1].number();
+		} else {
+			mstruct = vargs[1];
+			if(mstruct.isVariable()) {
+				if(mstruct.variable() == CALCULATOR->getVariableById(VARIABLE_ID_E)) po.base = BASE_E;
+				else if(mstruct.variable() == CALCULATOR->getVariableById(VARIABLE_ID_PI)) po.base = BASE_PI;
+				else if(mstruct.variable()->referenceName() == "golden") po.base = BASE_GOLDEN_RATIO;
+			} else if(mstruct.isSymbolic()) {
+				if(equalsIgnoreCase(mstruct.symbol(), "unicode")) po.base = BASE_UNICODE;
+				else if(equalsIgnoreCase(mstruct.symbol(), "sexa") || equalsIgnoreCase(mstruct.symbol(), "sexagesimal")) po.base = BASE_SEXAGESIMAL;
+				else if(equalsIgnoreCase(mstruct.symbol(), "bijective")) po.base = BASE_BIJECTIVE_26;
+				else if(equalsIgnoreCase(mstruct.symbol(), "roman")) po.base = BASE_ROMAN_NUMERALS;
+			} else if(mstruct.isPower() && mstruct[0] == nr_two && mstruct[1] == nr_half) {
+				po.base = BASE_SQRT2;
+			}
+			if(po.base == 10) {
+				mstruct.eval(eo);
+				if(mstruct.isVector()) return -2;
+				if(mstruct.isNumber()) {
+					nbase = mstruct.number();
+				} else if(mstruct.isVariable()) {
+					if(mstruct.variable() == CALCULATOR->getVariableById(VARIABLE_ID_E)) po.base = BASE_E;
+					else if(mstruct.variable() == CALCULATOR->getVariableById(VARIABLE_ID_PI)) po.base = BASE_PI;
+					else if(mstruct.variable()->referenceName() == "golden") po.base = BASE_GOLDEN_RATIO;
+				} else if(mstruct.isSymbolic()) {
+					if(equalsIgnoreCase(mstruct.symbol(), "unicode")) po.base = BASE_UNICODE;
+					else if(equalsIgnoreCase(mstruct.symbol(), "sexa") || equalsIgnoreCase(mstruct.symbol(), "sexagesimal")) po.base = BASE_SEXAGESIMAL;
+					else if(equalsIgnoreCase(mstruct.symbol(), "bijective")) po.base = BASE_BIJECTIVE_26;
+					else if(equalsIgnoreCase(mstruct.symbol(), "roman")) po.base = BASE_ROMAN_NUMERALS;
+				} else if(mstruct.isPower() && mstruct[0] == nr_two && mstruct[1] == nr_half) {
+					po.base = BASE_SQRT2;
+				}
+			}
+		}
+		Number nbase_bak = CALCULATOR->customOutputBase();
+		if(po.base == 10) {
+			if(nbase.isZero()) return 0;
+			if(nbase >= 2 && nbase <= 32) {
+				po.base = nbase.intValue();
+			} else {
+				po.base = BASE_CUSTOM;
+				CALCULATOR->setCustomOutputBase(nbase);
+			}
+		}
+		CALCULATOR->parse(&mstruct, vargs[0].symbol(), eo.parse_options);
+		mstruct.eval(eo);
+		mstruct.set(mstruct.print(po), true, true);
+		if(po.base == BASE_CUSTOM) CALCULATOR->setCustomOutputBase(nbase_bak);
+		return 1;
+	}
 	Number nbase;
 	int idigits = 0;
 	string sdigits;

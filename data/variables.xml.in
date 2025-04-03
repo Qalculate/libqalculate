@@ -230,7 +230,7 @@
       <_title>Electromagnetic Constants</_title>
       <variable>
         <_title>Bohr Magneton</_title>
-        <names>r:bohr_magneton,asu:&#x3BC;_B,asou:&#x0B5;_0,aos:mu_B</names>
+        <names>r:bohr_magneton,asu:&#x3BC;_B,asou:&#x0B5;_B,aos:mu_B</names>
         <value>(elementary_charge*planck)/(4*electron_mass*pi)</value>
       </variable>
       <variable>

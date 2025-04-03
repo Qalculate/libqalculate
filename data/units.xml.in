@@ -2725,7 +2725,7 @@
       <unit type="composite">
         <_title>Gallons per Second (U.S.)</_title>
         <system>US</system>
-        <names>r:gal_p_h</names>
+        <names>r:gal_p_s</names>
         <part>
           <unit>gal</unit>
           <prefix>0</prefix>
@@ -3354,7 +3354,7 @@
       </unit>
       <unit type="composite">
         <_title>Atomic Unit of Momentum</_title>
-        <names>planck_p_electron_sqc</names>
+        <names>planck_p_bohr</names>
         <system>Atomic</system>
         <part>
           <unit>planck_unit</unit>
