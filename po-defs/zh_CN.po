@@ -4795,7 +4795,7 @@ msgstr "-"
 
 #: ../data/functions.xml.in.h:469
 msgid "Hyperbolic Tangent"
-msgstr "双曲正割"
+msgstr "双曲正切"
 
 #: ../data/functions.xml.in.h:470
 msgid "r:tanh"
@@ -4901,7 +4901,7 @@ msgstr "-"
 
 #: ../data/functions.xml.in.h:495
 msgid "Hyperbolic Secant"
-msgstr "双曲正切"
+msgstr "双曲正割"
 
 #: ../data/functions.xml.in.h:496
 msgid "r:sech"
