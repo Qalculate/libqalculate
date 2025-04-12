@@ -3327,7 +3327,11 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	bool provided_to = false;
 
 	// retrieve expression after " to " and remove "to ..." from expression
-	if(make_to_division) separateToExpression(str, str2, eo, true);
+	if(make_to_division) {
+		separateToExpression(str, str2, eo, true);
+		size_t i = str2.find(RIGHT_PARENTHESIS);
+		if(i != string::npos && str2.rfind(LEFT_PARENTHESIS, i) == string::npos) error(false, _("Conversion of only part of an expression is not supported (\"%s\" is converted to \"%s\"."), str.c_str(), str2.c_str(), NULL);
+	}
 
 	// retrieve expression after " where " (or "/.") and remove "to ..." from expression
 	separateWhereExpression(str, str_where, eo);
