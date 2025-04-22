@@ -1147,6 +1147,20 @@ bool MathStructure::calculateLimit(const MathStructure &x_var, const MathStructu
 		eo.approximation = APPROXIMATION_EXACT_VARIABLES;
 	}
 	nr_limit.eval(eo);
+	MathStructure munit;
+	if(nr_limit.isMultiplication() && nr_limit.size() > 1 && nr_limit[0].isNumber()) {
+		bool b = true;
+		for(size_t i = 1; i < nr_limit.size(); i++) {
+			if(!nr_limit[i].isUnit_exp()) {b = false; break;}
+		}
+		if(b) {
+			MathStructure munit(nr_limit);
+			munit.delChild(1);
+			nr_limit.setToChild(1, true);
+			munit *= x_var;
+			replace(x_var, munit);
+		}
+	}
 	eo.approximation = eo_pre.approximation;
 	if(nr_limit.representsReal() || nr_limit.isInfinite()) ass->setType(ASSUMPTION_TYPE_REAL);
 	if(nr_limit.representsPositive()) ass->setSign(ASSUMPTION_SIGN_POSITIVE);
@@ -1172,7 +1186,7 @@ bool MathStructure::calculateLimit(const MathStructure &x_var, const MathStructu
 	calculate_limit_sub(*this, var, nr_limit, eo, approach_direction);
 	if(CALCULATOR->aborted() || (containsInfinity(true) && !isInfinite(true)) || limit_contains_undefined(*this) || containsFunctionId(FUNCTION_ID_FLOOR) || containsFunctionId(FUNCTION_ID_CEIL) || containsFunctionId(FUNCTION_ID_TRUNC)) {
 		set(mbak);
-		replace(var, x_var);
+		replace(var, munit.isZero() ? x_var : munit);
 		var->destroy();
 		CALCULATOR->endTemporaryStopMessages();
 		return false;
