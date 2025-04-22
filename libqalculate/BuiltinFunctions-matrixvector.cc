@@ -1220,12 +1220,14 @@ int GenerateVectorFunction::calculate(MathStructure &mstruct, const MathStructur
 	if(CALCULATOR->aborted()) return 0;
 	bool b_step = vargs[5].number().isPositive();
 	MathStructure msteps(vargs[3]);
-	if(!b_step) {
+	if(!b_step && !msteps.number().isInteger() && msteps.number().isInterval() && !msteps.number().isNonInteger() && msteps.number().precision(true) > PRECISION + 10) {
+		Number nr;
+		if(msteps.number().getCentralInteger(nr)) msteps.set(nr, true);
+	}
+	if(!b_step && vargs[5].number().isNegative()) {
 		CALCULATOR->beginTemporaryStopMessages();
 		msteps.eval(eo);
-		if(vargs[5].number().isNegative()) {
-			b_step = !msteps.isInteger() || msteps.number().isNegative() || msteps.number().isOne();
-		}
+		b_step = !msteps.isInteger() || msteps.number().isNegative() || msteps.number().isOne();
 		CALCULATOR->endTemporaryStopMessages(!b_step);
 	}
 	if(b_step) {
@@ -1233,7 +1235,7 @@ int GenerateVectorFunction::calculate(MathStructure &mstruct, const MathStructur
 	} else {
 		bool overflow = false;
 		int steps = msteps.number().intValue(&overflow);
-		if(!msteps.isNumber() || overflow || steps < 1) {
+		if(!msteps.isInteger() || overflow || steps < 1) {
 			CALCULATOR->error(true, _("The number of requested elements in generate vector function must be a positive integer."), NULL);
 			return 0;
 		}

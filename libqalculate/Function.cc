@@ -316,7 +316,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 							if(arg) {
 								// if index has argument definition, use for parsing
 								MathStructure *mstruct = new MathStructure();
-								if(arg->type() == ARGUMENT_TYPE_TEXT && getDefaultValue(itmp) == "\"\"") arg->parse(mstruct, "", po);
+								if(arg->type() == ARGUMENT_TYPE_TEXT && getDefaultValue(itmp).length() >= 2 && (getDefaultValue(itmp)[0] == '\"' || getDefaultValue(itmp)[0] == '\'') && getDefaultValue(itmp).find(getDefaultValue(itmp)[0], 1) == getDefaultValue(itmp).length() - 1) arg->parse(mstruct, getDefaultValue(itmp).substr(1, getDefaultValue(itmp).length() - 2));
 								else arg->parse(mstruct, getDefaultValue(itmp));
 								if(ignored) mstruct->unref();
 								else vargs.addChild_nocopy(mstruct);
@@ -355,7 +355,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 						remove_blank_ends(stmp);
 						if(stmp.empty()) {
 							MathStructure *mstruct = new MathStructure();
-							if(getArgumentDefinition(maxargs())->type() == ARGUMENT_TYPE_TEXT && getDefaultValue(itmp) == "\"\"") getArgumentDefinition(maxargs())->parse(mstruct, "");
+							if(getArgumentDefinition(maxargs())->type() == ARGUMENT_TYPE_TEXT && getDefaultValue(itmp).length() >= 2 && (getDefaultValue(itmp)[0] == '\"' || getDefaultValue(itmp)[0] == '\'') && getDefaultValue(itmp).find(getDefaultValue(itmp)[0], 1) == getDefaultValue(itmp).length() - 1) getArgumentDefinition(maxargs())->parse(mstruct, getDefaultValue(itmp).substr(1, getDefaultValue(itmp).length() - 2));
 							else getArgumentDefinition(maxargs())->parse(mstruct, getDefaultValue(itmp));
 							vargs[vargs.size() - 1].addChild_nocopy(mstruct);
 						} else {
@@ -389,7 +389,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 			if(stmp.empty()) {
 				if(arg) {
 					MathStructure *mstruct = new MathStructure();
-					if(arg->type() == ARGUMENT_TYPE_TEXT && getDefaultValue(itmp) == "\"\"") arg->parse(mstruct, "");
+					if(arg->type() == ARGUMENT_TYPE_TEXT && getDefaultValue(itmp).length() >= 2 && (getDefaultValue(itmp)[0] == '\"' || getDefaultValue(itmp)[0] == '\'') && getDefaultValue(itmp).find(getDefaultValue(itmp)[0], 1) == getDefaultValue(itmp).length() - 1) arg->parse(mstruct, getDefaultValue(itmp).substr(1, getDefaultValue(itmp).length() - 2));
 					else arg->parse(mstruct, getDefaultValue(itmp));
 					if(ignored) mstruct->unref();
 					else vargs.addChild_nocopy(mstruct);
@@ -427,7 +427,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 			remove_blank_ends(stmp);
 			if(stmp.empty()) {
 				MathStructure *mstruct = new MathStructure();
-				if(getArgumentDefinition(maxargs())->type() == ARGUMENT_TYPE_TEXT && getDefaultValue(itmp) == "\"\"") getArgumentDefinition(maxargs())->parse(mstruct, "");
+				if(getArgumentDefinition(maxargs())->type() == ARGUMENT_TYPE_TEXT && getDefaultValue(itmp).length() >= 2 && (getDefaultValue(itmp)[0] == '\"' || getDefaultValue(itmp)[0] == '\'') && getDefaultValue(itmp).find(getDefaultValue(itmp)[0], 1) == getDefaultValue(itmp).length() - 1) getArgumentDefinition(maxargs())->parse(mstruct, getDefaultValue(itmp).substr(1, getDefaultValue(itmp).length() - 2));
 				else getArgumentDefinition(maxargs())->parse(mstruct, getDefaultValue(itmp));
 				vargs[vargs.size() - 1].addChild_nocopy(mstruct);
 			} else {
@@ -453,7 +453,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 		while((size_t) itmp2 - minargs() < default_values.size() && (maxargs() > 0 || !default_values[itmp2 - minargs()].empty())) {
 			arg = getArgumentDefinition(itmp2 + 1);
 			MathStructure *mstruct = new MathStructure();
-			if(arg && arg->type() == ARGUMENT_TYPE_TEXT && default_values[itmp2 - minargs()] == "\"\"") arg->parse(mstruct, "");
+			if(arg && arg->type() == ARGUMENT_TYPE_TEXT && default_values[itmp2 - minargs()].length() >= 2 && (default_values[itmp2 - minargs()][0] == '\"' || default_values[itmp2 - minargs()][0] == '\'') && default_values[itmp2 - minargs()].find(default_values[itmp2 - minargs()][0], 1) == default_values[itmp2 - minargs()].length() - 1) arg->parse(mstruct, default_values[itmp2 - minargs()].substr(1, default_values[itmp2 - minargs()].length() - 2));
 			else if(arg) arg->parse(mstruct, default_values[itmp2 - minargs()]);
 			else CALCULATOR->parse(mstruct, default_values[itmp2 - minargs()]);
 			vargs.addChild_nocopy(mstruct);

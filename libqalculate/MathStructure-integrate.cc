@@ -7493,19 +7493,19 @@ bool MathStructure::integrate(const MathStructure &lower_limit, const MathStruct
 			if(definite_integral && mstruct.containsFunctionId(FUNCTION_ID_INTEGRATE, true) <= 0 && ((den_check < 0 && count_ln(mstruct) <= (size_t) -den_check) || test_definite_ln(mstruct, m_interval, x_var, eo))) {
 				CALCULATOR->endTemporaryStopMessages(true);
 				MathStructure mstruct_lower(mstruct);
-				if(m1.isInfinite() || m2.isInfinite()) {
+				if(m1.containsInfinity() || m2.containsInfinity()) {
 					CALCULATOR->beginTemporaryStopMessages();
 					EvaluationOptions eo3 = eo;
 					eo3.approximation = APPROXIMATION_EXACT;
-					if(m1.isInfinite()) {
-						b = mstruct_lower.calculateLimit(x_var, m1, eo3) && !mstruct_lower.isInfinite();
+					if(m1.containsInfinity()) {
+						b = mstruct_lower.calculateLimit(x_var, m1, eo3) && !mstruct_lower.containsInfinity();
 					} else {
 						mstruct_lower.replace(x_var, lower_limit, false, false, true);
 						b = eo.approximation == APPROXIMATION_EXACT || !contains_incalc_function(mstruct_lower, eo);
 					}
 					MathStructure mstruct_upper(mstruct);
-					if(m2.isInfinite()) {
-						b = mstruct_upper.calculateLimit(x_var, m2, eo3) && !mstruct_upper.isInfinite();
+					if(m2.containsInfinity()) {
+						b = mstruct_upper.calculateLimit(x_var, m2, eo3) && !mstruct_upper.containsInfinity();
 					} else {
 						mstruct_upper.replace(x_var, upper_limit, false, false, true);
 						b = eo.approximation == APPROXIMATION_EXACT || !contains_incalc_function(mstruct_upper, eo);
