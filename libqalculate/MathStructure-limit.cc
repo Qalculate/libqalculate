@@ -1148,16 +1148,21 @@ bool MathStructure::calculateLimit(const MathStructure &x_var, const MathStructu
 	}
 	nr_limit.eval(eo);
 	MathStructure munit;
-	if(nr_limit.isMultiplication() && nr_limit.size() > 1 && nr_limit[0].isNumber()) {
+	if(nr_limit.isMultiplication()) {
 		bool b = true;
-		for(size_t i = 1; i < nr_limit.size(); i++) {
-			if(!nr_limit[i].isUnit_exp()) {b = false; break;}
+		for(size_t i = 0; i < nr_limit.size(); i++) {
+			if(is_unit_multiexp(nr_limit[i])) {b = true; break;}
 		}
 		if(b) {
-			MathStructure munit(nr_limit);
-			munit.delChild(1);
-			nr_limit.setToChild(1, true);
-			munit *= x_var;
+			munit = x_var;
+			for(size_t i = 0; i < nr_limit.size(); i++) {
+				if(is_unit_multiexp(nr_limit[i])) {
+					munit.multiply(nr_limit[i]);
+					nr_limit.delChild(i + 1);
+				}
+			}
+			if(nr_limit.size() == 0) nr_limit.set(1, 1, 0, true);
+			else if(nr_limit.size() == 1) nr_limit.setToChild(1, true);
 			replace(x_var, munit);
 		}
 	}

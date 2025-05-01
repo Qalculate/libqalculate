@@ -1361,10 +1361,10 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	}
 	if(conversion_variant && had_errors) {
 		CALCULATOR->endTemporaryStopMessages();
-		CALCULATOR->error(true, _("Error(s) in unitexpression."), NULL);
+		CALCULATOR->error(true, _("Error(s) in unit expression."), NULL);
 	} else {
 		if(CALCULATOR->endTemporaryStopMessages() > 0) had_errors = true;
-		if(had_errors) CALCULATOR->error(false, _("Error(s) in unitexpression."), NULL);
+		if(had_errors) CALCULATOR->error(false, _("Error(s) in unit expression."), NULL);
 	}
 	setChanged(true);
 }

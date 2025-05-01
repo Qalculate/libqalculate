@@ -2481,10 +2481,32 @@ int AngleArgument::type() const {return ARGUMENT_TYPE_ANGLE;}
 Argument *AngleArgument::copy() const {return new AngleArgument(this);}
 string AngleArgument::print() const {return _("angle");}
 string AngleArgument::subprintlong() const {return _("an angle or a number (using the default angle unit)");}
+
+bool test_userfunctions_angle(const MathStructure &m, const ParseOptions &po, size_t depth = 0) {
+	if(!check_recursive_function_depth(depth)) return false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(test_userfunctions_angle(m[i], po, depth + 1)) {
+			return true;
+		}
+	}
+	if(m.isFunction() && m.function()->subtype() == SUBTYPE_USER_FUNCTION) {
+		EvaluationOptions eo;
+		eo.parse_options = po;
+		MathStructure mtest(m);
+		CALCULATOR->beginTemporaryStopMessages();
+		if(mtest.calculateFunctions(eo, false)) {
+			CALCULATOR->endTemporaryStopMessages();
+			if(contains_angle_unit(mtest, po)) return true;
+			return test_userfunctions_angle(mtest, po, depth + 1);
+		}
+		CALCULATOR->endTemporaryStopMessages();
+	}
+	return false;
+}
 void AngleArgument::parse(MathStructure *mstruct, const string &str, const ParseOptions &po) const {
 	CALCULATOR->parse(mstruct, str, po);
 	if(HAS_DEFAULT_ANGLE_UNIT(po.angle_unit)) {
-		if(contains_angle_unit(*mstruct, po)) return;
+		if(contains_angle_unit(*mstruct, po) || test_userfunctions_angle(*mstruct, po)) return;
 	}
 	switch(po.angle_unit) {
 		case ANGLE_UNIT_DEGREES: {
