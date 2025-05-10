@@ -930,7 +930,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 		if(mstruct_new.size() > 0) {
 			for(size_t i = 0; i < mstruct_new.size(); i++) {
 				if(aborted()) return mstruct;
-				if(!mstruct_new.isFunction() || !mstruct_new.function()->getArgumentDefinition(i + 1) || mstruct_new.function()->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_FREE || (!mstruct_new.function()->getArgumentDefinition(i + 1)->tests() && mstruct_new.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE)) {
+				if((i != 0 || !mstruct_new.isComparison() || mstruct[0].containsType(STRUCT_UNIT) > 0) && (!mstruct_new.isFunction() || !mstruct_new.function()->getArgumentDefinition(i + 1) || mstruct_new.function()->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_FREE || (!mstruct_new.function()->getArgumentDefinition(i + 1)->tests() && mstruct_new.function()->getArgumentDefinition(i + 1)->type() != ARGUMENT_TYPE_ANGLE))) {
 					mstruct_new[i] = convert(mstruct_new[i], to_unit, eo, false, convert_to_mixed_units, false, NULL);
 					if(!b_changed && !mstruct_new.equals(mstruct[i], true, true)) b_changed = true;
 				}
