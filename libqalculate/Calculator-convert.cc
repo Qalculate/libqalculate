@@ -888,15 +888,28 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 			fix_to_struct(munit);
 			if(!munit.isZero()) {
 				MathStructure mstruct_new(mstruct);
-				mstruct_new *= munit;
-				PrintOptions po = message_printoptions;
-				po.negative_exponents = false;
-				munit.format(po);
-				if(munit.isMultiplication() && munit.size() >= 2) {
-					if(munit[0].isOne()) munit.delChild(1, true);
-					else if(munit[1].isOne()) munit.delChild(2, true);
+				if(mstruct_new.isComparison() || (mstruct_new.isLogicalAnd() && mstruct_new.size() > 0 && mstruct_new[0].isComparison()) || (mstruct_new.isLogicalOr() && mstruct_new.size() > 0 && (mstruct_new[0].isComparison() || (mstruct_new[0].isLogicalAnd() && mstruct_new[0].size() > 0 && mstruct_new[0][0].isComparison())))) {
+					if(mstruct_new.isLogicalOr()) {
+						for(size_t i = 0; i < mstruct_new.size(); i++) {
+							if(mstruct_new[i].isComparison()) mstruct_new[i][1] *= munit;
+							else if(mstruct_new[i].isLogicalAnd() && mstruct_new[i].size() > 0 && mstruct_new[i][0].isComparison()) mstruct_new[i][0][1] *= munit;
+						}
+					} else {
+						if(mstruct_new.isLogicalAnd()) mstruct_new[0][1] *= munit;
+						else mstruct_new[1] *= munit;
+					}
+					mstruct_new.childrenUpdated(true);
+				} else {
+					mstruct_new *= munit;
+					PrintOptions po = message_printoptions;
+					po.negative_exponents = false;
+					munit.format(po);
+					if(munit.isMultiplication() && munit.size() >= 2) {
+						if(munit[0].isOne()) munit.delChild(1, true);
+						else if(munit[1].isOne()) munit.delChild(2, true);
+					}
+					if(parsed_struct) parsed_struct->multiply(munit, true);
 				}
-				if(parsed_struct) parsed_struct->multiply(munit, true);
 				return convert(mstruct_new, to_unit, eo, always_convert, convert_to_mixed_units, false, NULL);
 			}
 		}
@@ -905,6 +918,19 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 	MathStructure mstruct_new(mstruct);
 	size_t n_messages = messages.size();
 	if(to_unit->hasNonlinearRelationTo(to_unit->baseUnit()) && to_unit->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+		if(mstruct_new.isComparison() || (mstruct_new.isLogicalAnd() && mstruct_new.size() > 0 && mstruct_new[0].isComparison()) || (mstruct_new.isLogicalOr() && mstruct_new.size() > 0 && (mstruct_new[0].isComparison() || (mstruct_new[0].isLogicalAnd() && mstruct_new[0].size() > 0 && mstruct_new[0][0].isComparison())))) {
+			if(mstruct_new.isLogicalOr()) {
+				for(size_t i = 0; i < mstruct_new.size(); i++) {
+					if(mstruct_new[i].isComparison()) mstruct_new[i][1].set(convert(mstruct_new[i][1], to_unit, eo, always_convert, convert_to_mixed_units, transform_orig));
+					else if(mstruct_new[i].isLogicalAnd() && mstruct_new[i].size() > 0 && mstruct_new[i][0].isComparison()) mstruct_new[i][0][1].set(convert(mstruct_new[i][0][1], to_unit, eo, always_convert, convert_to_mixed_units, transform_orig));
+				}
+			} else {
+				if(mstruct_new.isLogicalAnd()) mstruct_new[0][1].set(convert(mstruct_new[0][1], to_unit, eo, always_convert, convert_to_mixed_units, transform_orig));
+				else mstruct_new[1].set(convert(mstruct_new[1], to_unit, eo, always_convert, convert_to_mixed_units, transform_orig));
+			}
+			mstruct_new.childrenUpdated(true);
+			return mstruct_new;
+		}
 		mstruct_new = convert(mstruct, to_unit->baseUnit(), eo, always_convert, convert_to_mixed_units, transform_orig, parsed_struct);
 		mstruct_new.calculateDivide(((CompositeUnit*) to_unit->baseUnit())->generateMathStructure(false, eo.keep_prefixes), eo);
 		to_unit->convertFromBaseUnit(mstruct_new);

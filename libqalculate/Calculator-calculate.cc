@@ -996,7 +996,7 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 	}
 
 	// for equalities, append exact values to approximate value (as third part of equalities)
-	if(do_exact) {
+	if(do_exact && mexact.type() == m.type()) {
 		if(mexact.isComparison() && mexact.comparisonType() == COMPARISON_EQUALS) {
 			mexact[1].ref();
 			if(m.isComparison()) {
@@ -1007,15 +1007,19 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 				m[0].addChild_nocopy(&mexact[1]);
 			}
 		} else if(mexact.isLogicalOr()) {
-			if(exact_cmp) *exact_cmp = true;
-			for(size_t i = 0; i < mexact.size(); i++) {
-				mexact[i][1].ref();
-				if(m[i].isComparison()) {
-					m[i].addChild_nocopy(&mexact[i][1]);
-				} else {
-					// only the first exact value is used from logical and
-					m[i][0].addChild_nocopy(&mexact[i][1]);
-					if(exact_cmp) *exact_cmp = false;
+			if(mexact.size() != m.size()) {
+				mexact.setUndefined();
+			} else {
+				if(exact_cmp) *exact_cmp = true;
+				for(size_t i = 0; i < mexact.size(); i++) {
+					mexact[i][1].ref();
+					if(m[i].isComparison()) {
+						m[i].addChild_nocopy(&mexact[i][1]);
+					} else {
+						// only the first exact value is used from logical and
+						m[i][0].addChild_nocopy(&mexact[i][1]);
+						if(exact_cmp) *exact_cmp = false;
+					}
 				}
 			}
 		}

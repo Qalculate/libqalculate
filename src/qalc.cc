@@ -4686,7 +4686,9 @@ int main(int argc, char *argv[]) {
 					gsub("z", "\\z", expr);
 				}
 				MathFunction *f = CALCULATOR->getActiveFunction(name, true);
-				if(f && f->isLocal() && f->subtype() == SUBTYPE_USER_FUNCTION && (!b_temp || f->category() == CALCULATOR->temporaryCategory())) {
+				if(CALCULATOR->hasToExpression(expr)) {
+					PUTS_UNICODE(_("Conversion (using \"to\") is not supported in functions."));
+				} else if(f && f->isLocal() && f->subtype() == SUBTYPE_USER_FUNCTION && (!b_temp || f->category() == CALCULATOR->temporaryCategory())) {
 					((UserFunction*) f)->setFormula(expr);
 					if(f->countNames() == 0) {
 						ExpressionName ename(name);
@@ -5005,7 +5007,9 @@ int main(int argc, char *argv[]) {
 				remove_blank_ends(str2);
 			}
 			remove_duplicate_blanks(str);
-			if(equalsIgnoreCase(str, "hex") || EQUALS_IGNORECASE_AND_LOCAL(str, "hexadecimal", _("hexadecimal"))) {
+			if(CALCULATOR->hasToExpression(str, false, evalops)) {
+				PUTS_UNICODE(_("Command does not allow multiple conversions at the same time."));
+			} else if(equalsIgnoreCase(str, "hex") || EQUALS_IGNORECASE_AND_LOCAL(str, "hexadecimal", _("hexadecimal"))) {
 				int save_base = printops.base;
 				printops.base = BASE_HEXADECIMAL;
 				setResult(NULL, false);
@@ -5307,6 +5311,7 @@ int main(int argc, char *argv[]) {
 				execute_command(COMMAND_EXPAND_PARTIAL_FRACTIONS);
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "best", _("best")) || EQUALS_IGNORECASE_AND_LOCAL(str, "optimal", _("optimal"))) {
 				CALCULATOR->resetExchangeRatesUsed();
+				mstruct_exact.setUndefined();
 				MathStructure mstruct_new(CALCULATOR->convertToOptimalUnit(*mstruct, evalops, true));
 				if(check_exchange_rates()) mstruct->set(CALCULATOR->convertToOptimalUnit(*mstruct, evalops, true));
 				else mstruct->set(mstruct_new);
@@ -5325,6 +5330,7 @@ int main(int argc, char *argv[]) {
 			//base units
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "base", _c("units", "base"))) {
 				CALCULATOR->resetExchangeRatesUsed();
+				mstruct_exact.setUndefined();
 				MathStructure mstruct_new(CALCULATOR->convertToBaseUnits(*mstruct, evalops));
 				if(check_exchange_rates()) mstruct->set(CALCULATOR->convertToBaseUnits(*mstruct, evalops));
 				else mstruct->set(mstruct_new);
@@ -5420,6 +5426,7 @@ int main(int argc, char *argv[]) {
 					CALCULATOR->resetExchangeRatesUsed();
 					MathStructure parsebak(*parsed_mstruct);
 					ParseOptions pa = evalops.parse_options; pa.base = 10;
+					mstruct_exact.setUndefined();
 					MathStructure mstruct_new(CALCULATOR->convert(*mstruct, CALCULATOR->unlocalizeExpression(str, pa), evalops, NULL, true, parsed_mstruct));
 					if(check_exchange_rates()) {
 						parsed_mstruct->set(parsebak);
