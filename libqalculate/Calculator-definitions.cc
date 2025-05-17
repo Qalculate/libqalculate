@@ -3504,7 +3504,7 @@ bool Calculator::loadExchangeRates() {
 						s2 = s2.substr(i, s2.length() - i);
 					}
 				}
-				if(!s1.empty() && !s2.empty()) {
+				if(!s1.empty() && !s2.empty() && nr1.find_first_not_of(NUMBER_ELEMENTS OPERATORS SPACES) == string::npos && nr2.find_first_not_of(NUMBER_ELEMENTS OPERATORS SPACES) == string::npos) {
 					u2 = CALCULATOR->getActiveUnit(s2);
 					if(!u2) {
 						u2 = addUnit(new AliasUnit(_("Currency"), s2, "", "", "", u_euro, "1", 1, "", false, true));
@@ -3587,7 +3587,7 @@ bool Calculator::loadExchangeRates() {
 			XML_GET_STRING_FROM_PROP(cur, "currency", currency);
 			if(!currency.empty()) {
 				XML_GET_STRING_FROM_PROP(cur, "rate", rate);
-				if(!rate.empty()) {
+				if(!rate.empty() && rate.find_first_not_of(NUMBER_ELEMENTS SPACES) == string::npos) {
 					rate = "1/" + rate;
 					u = getUnit(currency);
 					if(!u) {
@@ -3675,7 +3675,7 @@ bool Calculator::loadExchangeRates() {
 					size_t i2 = sbuffer.find("\"", i + 1);
 					size_t i4 = sbuffer.find("\"", i3 + 1);
 					u = getActiveUnit(sbuffer.substr(i3 + 1, i4 - (i3 + 1)));
-					if(u && u->isCurrency()) {
+					if(u && u->isCurrency() && sbuffer.substr(i + 1, i2 - (i + 1)).find_first_not_of(NUMBER_ELEMENTS SPACES) == string::npos) {
 						((AliasUnit*) u_btc)->setBaseUnit(u);
 						((AliasUnit*) u_btc)->setExpression(sbuffer.substr(i + 1, i2 - (i + 1)));
 						u_btc->setApproximate();
@@ -3830,7 +3830,7 @@ bool Calculator::loadExchangeRates() {
 						}
 					}
 				}
-				if(!rate.empty()) {
+				if(!rate.empty() && rate.find_first_not_of(NUMBER_ELEMENTS SPACES, 2) == string::npos) {
 					if(!u) {
 						u = addUnit(new AliasUnit(_("Currency"), currency, "", "", sname, u_euro, rate, 1, "", false, true), false, true);
 						if(u) u->setHidden(true);
@@ -3876,11 +3876,13 @@ bool Calculator::loadExchangeRates() {
 				if(i != string::npos) {
 					size_t i2 = sbuffer.find_first_not_of(NUMBER_ELEMENTS, i);
 					if(i2 == string::npos) i2 = sbuffer.length();
-					((AliasUnit*) priv->u_byn)->setBaseUnit(u_euro);
-					((AliasUnit*) priv->u_byn)->setExpression(string("1/") + sbuffer.substr(i, i2 - i));
-					priv->u_byn->setApproximate();
-					priv->u_byn->setPrecision(-2);
-					priv->u_byn->setChanged(false);
+					if(sbuffer.substr(i, i2 - i).find_first_not_of(NUMBER_ELEMENTS SPACES) == string::npos) {
+						((AliasUnit*) priv->u_byn)->setBaseUnit(u_euro);
+						((AliasUnit*) priv->u_byn)->setExpression(string("1/") + sbuffer.substr(i, i2 - i));
+						priv->u_byn->setApproximate();
+						priv->u_byn->setPrecision(-2);
+						priv->u_byn->setChanged(false);
+					}
 				}
 			}
 			i = sbuffer.find("\"Date\":");
@@ -3956,10 +3958,11 @@ string Calculator::getExchangeRatesUrl(int index) {
 				return "https://www.mycurrency.net/FR.json";
 			} else if(priv->exchange_rates_url3 == 2) {
 				return "https://www.floatrates.com/daily/eur.json";
-			} else {
+			} else if(priv->exchange_rates_url3 == 3) {
+				return "https://latest.currency-api.pages.dev/v1/currencies/eur.json";
+                        } else {
 				return "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/eur.json";
-                        }
-
+			}
 		}
 		case 4: {return "https://www.nbrb.by/api/exrates/rates/eur?parammode=2";}
 		default: {}
@@ -4088,29 +4091,32 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 		bool b = false;
 		bool bad_gateway = false;
 		string first_error;
-		for(size_t i = 0; i <= 2 || (bad_gateway && i == 3); i++) {
+		for(size_t i = 0; i <= 3 || (bad_gateway && i == 4); i++) {
 			sbuffer = "";
 			if(i == 0) curl_easy_setopt(curl, CURLOPT_URL, "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/eur.json");
-			else if(i == 2) curl_easy_setopt(curl, CURLOPT_URL, "https://www.floatrates.com/daily/eur.json");
+			else if(i == 1) curl_easy_setopt(curl, CURLOPT_URL, "https://latest.currency-api.pages.dev/v1/currencies/eur.json");
+			else if(i == 3) curl_easy_setopt(curl, CURLOPT_URL, "https://www.floatrates.com/daily/eur.json");
 			else curl_easy_setopt(curl, CURLOPT_URL, "https://www.mycurrency.net/FR.json");
 			curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
 			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
 			curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
-			if(i == 3) curl_easy_setopt(curl, CURLOPT_USERAGENT, (string("libqalculate/") + VERSION).c_str());
+			if(i == 4) curl_easy_setopt(curl, CURLOPT_USERAGENT, (string("libqalculate/") + VERSION).c_str());
 
 			res = curl_easy_perform(curl);
 
 			if(res == CURLE_OK) {
-				if((i == 0 && (sbuffer.find(": {") != string::npos || sbuffer.find(":{") != string::npos) && (sbuffer.find("\"eur\": 1,") != string::npos || sbuffer.find("\"eur\":1,") != string::npos || sbuffer.find("\"EUR\": 1,") != string::npos || sbuffer.find("\"EUR\":1,") != string::npos)) || ((i == 1 || i == 3) && sbuffer.find("\"currency_code\":") != string::npos && sbuffer.find("\"baseCurrency\":\"EUR\"") != string::npos) || (i == 2 && sbuffer.find("\"alphaCode\":") != string::npos)) {
-					if(i > 2) priv->exchange_rates_url3 = 1;
-					else priv->exchange_rates_url3 = i;
+				if(((i == 0 || i == 1) && (sbuffer.find(": {") != string::npos || sbuffer.find(":{") != string::npos) && (sbuffer.find("\"eur\": 1,") != string::npos || sbuffer.find("\"eur\":1,") != string::npos || sbuffer.find("\"EUR\": 1,") != string::npos || sbuffer.find("\"EUR\":1,") != string::npos)) || ((i == 2 || i == 4) && sbuffer.find("\"currency_code\":") != string::npos && sbuffer.find("\"baseCurrency\":\"EUR\"") != string::npos) || (i == 3 && sbuffer.find("\"alphaCode\":") != string::npos)) {
+					if(i == 2 || i == 4) priv->exchange_rates_url3 = 1;
+					else if(i == 1) priv->exchange_rates_url3 = 3;
+					else if(i == 3) priv->exchange_rates_url3 = 2;
+					else priv->exchange_rates_url3 = 0;
 					b = true;
-					mycurrency_net = (i == 1 || i == 3);
+					mycurrency_net = (i == 2 || i == 4);
 					break;
 				}
-				if(i == 1 && sbuffer.find("Bad Gateway") != string::npos) bad_gateway = true;
-				if(i == 0) first_error = "Document empty";
+				if(i == 2 && sbuffer.find("Bad Gateway") != string::npos) bad_gateway = true;
+				if(i == 0 || i == 1) first_error = "Document empty";
 			} else if(i == 0) {
 				if(strlen(error_buffer)) first_error = error_buffer;
 				else first_error = curl_easy_strerror(res);
