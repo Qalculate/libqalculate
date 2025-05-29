@@ -7662,6 +7662,18 @@ bool contains_plot_or_save(const string &str) {
 	for(size_t i = 1; f && i <= f->countNames(); i++) {
 		if(str.find(f->getName(i).name) != string::npos) return true;
 	}
+	f = CALCULATOR->getFunctionById(FUNCTION_ID_EXPORT);
+	for(size_t i = 1; f && i <= f->countNames(); i++) {
+		if(str.find(f->getName(i).name) != string::npos) return true;
+	}
+	f = CALCULATOR->getFunctionById(FUNCTION_ID_LOAD);
+	for(size_t i = 1; f && i <= f->countNames(); i++) {
+		if(str.find(f->getName(i).name) != string::npos) return true;
+	}
+	f = CALCULATOR->getFunctionById(FUNCTION_ID_COMMAND);
+	for(size_t i = 1; f && i <= f->countNames(); i++) {
+		if(str.find(f->getName(i).name) != string::npos) return true;
+	}
 	return false;
 }
 
