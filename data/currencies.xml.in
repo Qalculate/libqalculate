@@ -29,7 +29,7 @@
     </builtin_unit>
     <builtin_unit name="THB">
       <_title>Thai Baht</_title>
-      <_names>a-cr:THB</_names>
+      <_names>a-cr:THB,au:&#xE3F;</_names>
       <_countries>Thailand</_countries>
     </builtin_unit>
     <builtin_unit name="SEK">
@@ -98,7 +98,7 @@
       <_countries>Romania</_countries>
     </builtin_unit>
     <builtin_unit name="TRY">
-      <_title>Turkish New Lira</_title>
+      <_title>Turkish Lira</_title>
       <_names>a-cr:TRY,au:&#x20BA;</_names>
       <_countries>Turkey</_countries>
     </builtin_unit>
@@ -166,7 +166,7 @@
       <_names>a-cr:BTC,au:&#x20BF;,a:XBT,bitcoin,p:bitcoins</_names>
     </builtin_unit>
     <builtin_unit name="KES">
-      <_title>Kenya Shilling</_title>
+      <_title>Kenyan Shilling</_title>
       <_names>a-cr:KES</_names>
       <_countries>Kenya</_countries>
     </builtin_unit>
@@ -331,7 +331,7 @@
     </builtin_unit>
     <builtin_unit name="CRC">
       <_title>Costa Rican colón</_title>
-      <_names>a-cr:CRC</_names>
+      <_names>a-cr:CRC,au:&#x20A1;</_names>
       <_countries>Costa Rica</_countries>
     </builtin_unit>
     <builtin_unit name="CUP">
@@ -520,7 +520,7 @@
     </builtin_unit>
     <builtin_unit name="MVR">
       <_title>Maldivian Rufiyaa</_title>
-      <_names>a-cr:MVR</_names>
+      <_names>a-cr:MVR,aio:&#x783;ރ</_names>
       <_countries>Maldives</_countries>
     </builtin_unit>
     <builtin_unit name="MRU">
@@ -530,7 +530,7 @@
     </builtin_unit>
     <builtin_unit name="MUR">
       <_title>Mauritian Rupee</_title>
-      <_names>a-cr:MUR</_names>
+      <_names>a-cr:MUR,aio:&#x930;&#x941;</_names>
       <_countries>Mauritius</_countries>
     </builtin_unit>
     <builtin_unit name="MDL">
@@ -565,7 +565,7 @@
     </builtin_unit>
     <builtin_unit name="NPR">
       <_title>Nepalese Rupee</_title>
-      <_names>a-cr:NPR</_names>
+      <_names>a-cr:NPR,aio:&#x930;&#x942;</_names>
       <_countries>Nepal</_countries>
     </builtin_unit>
     <builtin_unit name="NIO">
@@ -589,7 +589,7 @@
       <_countries>Pakistan</_countries>
     </builtin_unit>
     <builtin_unit name="PAB">
-      <_title>Panamaian Balboa</_title>
+      <_title>Panamanian Balboa</_title>
       <_names>a-cr:PAB</_names>
       <_countries>Panama</_countries>
     </builtin_unit>
@@ -618,11 +618,6 @@
       <_names>a-cr:RWF</_names>
       <_countries>Rwanda</_countries>
     </builtin_unit>
-    <builtin_unit name="STD">
-      <_title>São Tomé and Príncipe Dobra</_title>
-      <_names>a-cr:STD</_names>
-      <_countries>Sao Tome and Principe</_countries>
-    </builtin_unit>
     <builtin_unit name="SAR">
       <_title>Saudi Riyal</_title>
       <_names>a-cr:SAR</_names>
@@ -638,9 +633,9 @@
       <_names>a-cr:SCR</_names>
       <_countries>Seychelles</_countries>
     </builtin_unit>
-    <builtin_unit name="SLL">
+    <builtin_unit name="SLE">
       <_title>Sierra Leonean Leone</_title>
-      <_names>a-cr:SLL</_names>
+      <_names>a-cr:SLE</_names>
       <_countries>Sierra Leone</_countries>
     </builtin_unit>
     <builtin_unit name="SBD">
@@ -671,7 +666,7 @@
     <builtin_unit name="SZL">
       <_title>Swazi Lilangeni</_title>
       <_names>a-cr:SZL</_names>
-      <_countries>Swaziland</_countries>
+      <_countries>Eswatini</_countries>
     </builtin_unit>
     <builtin_unit name="SYP">
       <_title>Syrian Pound</_title>
@@ -977,6 +972,16 @@
       <base>
         <unit>EUR</unit>
         <relation>1/3.45280</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>São Tomé and Príncipe Dobra</_title>
+      <_names>a-cr:STN</_names>
+      <_countries>Sao Tome and Principe</_countries>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/24.5</relation>
         <exponent>1</exponent>
       </base>
     </unit>
