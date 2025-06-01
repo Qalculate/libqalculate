@@ -305,8 +305,6 @@ bool Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp) const {
 	if(u == this) {
 		return true;
 	} else if(u->baseUnit() == baseUnit()) {
-		u->convertToBaseUnit(mvalue, mexp);
-		convertFromBaseUnit(mvalue, mexp);
 		if(isCurrency() && u->isCurrency()) {
 			int i = 0;
 			if(u->subtype() == SUBTYPE_ALIAS_UNIT && u->isBuiltin()) {
@@ -341,7 +339,14 @@ bool Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp) const {
 					i = i | 0b0100;
 				}
 			}
+			if(i == 0b0101 && u->subtype() == SUBTYPE_ALIAS_UNIT) ((AliasUnit*) u)->convertToBaseCurrencyAlt(mvalue, mexp);
+			else u->convertToBaseUnit(mvalue, mexp);
+			if(i == 0b0101 && subtype() == SUBTYPE_ALIAS_UNIT) ((AliasUnit*) this)->convertFromBaseCurrencyAlt(mvalue, mexp);
+			else convertFromBaseUnit(mvalue, mexp);
 			CALCULATOR->setExchangeRatesUsed(i);
+		} else {
+			u->convertToBaseUnit(mvalue, mexp);
+			convertFromBaseUnit(mvalue, mexp);
 		}
 		return true;
 	}
@@ -408,6 +413,7 @@ string AliasUnit::expression() const {
 	return svalue;
 }
 string AliasUnit::inverseExpression() const {
+	if(!sinverse.empty() && isBuiltin() && isCurrency()) return "";
 	return sinverse;
 }
 string AliasUnit::uncertainty(bool *is_relative) const {
@@ -484,10 +490,10 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 	if(i_exp != 1) mexp /= i_exp;
 	ParseOptions po;
 	if(isApproximate() && suncertainty.empty() && precision() == -1) {
-		if(sinverse.find(DOT) != string::npos || svalue.find(DOT) != string::npos) po.read_precision = READ_PRECISION_WHEN_DECIMALS;
+		if(svalue.find(DOT) != string::npos || inverseExpression().find(DOT) != string::npos) po.read_precision = READ_PRECISION_WHEN_DECIMALS;
 		else po.read_precision = ALWAYS_READ_PRECISION;
 	}
-	if(sinverse.empty()) {
+	if(inverseExpression().empty()) {
 		if(svalue.find("\\x") != string::npos) {
 			string stmp = svalue;
 			string stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
@@ -628,6 +634,72 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 	}
 	return mvalue;
 }
+MathStructure &AliasUnit::convertFromBaseCurrencyAlt(MathStructure &mvalue, MathStructure &mexp) const {
+	if(sinverse.empty()) return convertFromBaseUnit(mvalue, mexp);
+	if(i_exp != 1) mexp /= i_exp;
+	ParseOptions po;
+	if(isApproximate() && suncertainty.empty() && precision() == -1) {
+		if(sinverse.find(DOT) != string::npos) po.read_precision = READ_PRECISION_WHEN_DECIMALS;
+		else po.read_precision = ALWAYS_READ_PRECISION;
+	}
+	MathStructure *mstruct = new MathStructure();
+	bool b_number = false;
+	if(!suncertainty.empty()) {
+		b_number = true;
+	} else {
+		size_t i = sinverse.rfind(')');
+		if(i != string::npos && i > 2 && (i == sinverse.length() - 1 || (i < sinverse.length() - 2 && (sinverse[i + 1] == 'E' || sinverse[i + 1] == 'e')))) {
+			size_t i2 = sinverse.rfind('(');
+			if(i2 != string::npos && i2 < i - 1) {
+				if(sinverse.find_first_not_of(NUMBER_ELEMENTS SPACES, sinverse[0] == '-' || sinverse[0] == '+' ? 1 : 0) == i2 && sinverse.find_first_not_of(NUMBERS SPACES, i2 + 1) == i && (i == sinverse.length() - 1 || sinverse.find_first_not_of(NUMBER_ELEMENTS SPACES, sinverse[i + 2] == '-' || sinverse[i + 2] == '+' ? i + 3 : i + 2) == string::npos)) {
+					b_number = true;
+				}
+			}
+		}
+	}
+	if(b_number) {
+		mstruct->number().set(sinverse, po);
+		mstruct->numberUpdated();
+	} else {
+		CALCULATOR->parse(mstruct, sinverse, po);
+		if(mstruct->containsType(STRUCT_UNIT, false, true, true)) {
+			mstruct->transformById(FUNCTION_ID_STRIP_UNITS);
+		}
+	}
+	if(!suncertainty.empty()) {
+		Number nr_u(suncertainty);
+		if(mstruct->isNumber()) {
+			if(b_relative_uncertainty) mstruct->number().setRelativeUncertainty(nr_u);
+			else mstruct->number().setUncertainty(nr_u);
+			mstruct->numberUpdated();
+		} else if(mstruct->isMultiplication() && mstruct->size() > 0 && (*mstruct)[0].isNumber()) {
+			if(b_relative_uncertainty) (*mstruct)[0].number().setRelativeUncertainty(nr_u);
+			else (*mstruct)[0].number().setUncertainty(nr_u);
+			(*mstruct)[0].numberUpdated();
+			mstruct->childUpdated(1);
+		}
+	} else if(precision() > 0) {
+		if(mstruct->isNumber()) {
+			if(mstruct->number().precision() < 1 || precision() < mstruct->number().precision()) {
+				mstruct->number().setPrecision(precision());
+				mstruct->numberUpdated();
+			}
+		} else if(mstruct->isMultiplication() && mstruct->getChild(1)->isNumber()) {
+			if(mstruct->getChild(1)->number().precision() < 0 || precision() < mstruct->getChild(1)->number().precision()) {
+				mstruct->getChild(1)->number().setPrecision(precision());
+				mstruct->getChild(1)->numberUpdated();
+				mstruct->childUpdated(1);
+			}
+		} else if(mstruct->precision() < 0 || precision() < mstruct->precision()) {
+			mstruct->setPrecision(precision(), true);
+		}
+	} else if(isApproximate() && !mstruct->isApproximate()) {
+		mstruct->setApproximate(true, true);
+	}
+	if(!mexp.isOne()) mstruct->raise(mexp);
+	mvalue.divide_nocopy(mstruct, true);
+	return mvalue;
+}
 MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const {
 	ParseOptions po;
 	if(isApproximate() && suncertainty.empty() && precision() == -1) {
@@ -720,6 +792,77 @@ MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStru
 		} else {
 			mvalue.multiply_nocopy(mstruct, true);
 		}
+	}
+	if(i_exp != 1) mexp.multiply(i_exp);
+	return mvalue;
+}
+MathStructure &AliasUnit::convertToBaseCurrencyAlt(MathStructure &mvalue, MathStructure &mexp) const {
+	if(sinverse.empty()) return convertToBaseUnit(mvalue, mexp);
+	ParseOptions po;
+	if(isApproximate() && suncertainty.empty() && precision() == -1) {
+		if(sinverse.find(DOT) != string::npos) po.read_precision = READ_PRECISION_WHEN_DECIMALS;
+		else po.read_precision = ALWAYS_READ_PRECISION;
+	}
+	MathStructure *mstruct = new MathStructure();
+	bool b_number = false;
+	if(!suncertainty.empty()) {
+		b_number = true;
+	} else {
+		size_t i = sinverse.rfind(')');
+		if(i != string::npos && i > 2 && (i == sinverse.length() - 1 || (i < sinverse.length() - 2 && (sinverse[i + 1] == 'E' || sinverse[i + 1] == 'e')))) {
+			size_t i2 = sinverse.rfind('(');
+			if(i2 != string::npos && i2 < i - 1) {
+				if(sinverse.find_first_not_of(NUMBER_ELEMENTS SPACES, sinverse[0] == '-' || sinverse[0] == '+' ? 1 : 0) == i2 && sinverse.find_first_not_of(NUMBERS SPACES, i2 + 1) == i && (i == sinverse.length() - 1 || sinverse.find_first_not_of(NUMBER_ELEMENTS SPACES, sinverse[i + 2] == '-' || sinverse[i + 2] == '+' ? i + 3 : i + 2) == string::npos)) {
+					b_number = true;
+				}
+			}
+		}
+	}
+	if(b_number) {
+		mstruct->number().set(sinverse, po);
+		mstruct->numberUpdated();
+	} else {
+		CALCULATOR->parse(mstruct, sinverse, po);
+		if(mstruct->containsType(STRUCT_UNIT, false, true, true) > 0) {
+			mstruct->transformById(FUNCTION_ID_STRIP_UNITS);
+		}
+	}
+	if(!suncertainty.empty()) {
+		Number nr_u(suncertainty);
+		if(mstruct->isNumber()) {
+			if(b_relative_uncertainty) mstruct->number().setRelativeUncertainty(nr_u);
+			else mstruct->number().setUncertainty(nr_u);
+			mstruct->numberUpdated();
+		} else if(mstruct->isMultiplication() && mstruct->size() > 0 && (*mstruct)[0].isNumber()) {
+			if(b_relative_uncertainty) (*mstruct)[0].number().setRelativeUncertainty(nr_u);
+			else (*mstruct)[0].number().setUncertainty(nr_u);
+			(*mstruct)[0].numberUpdated();
+			mstruct->childUpdated(1);
+		}
+	} else if(precision() >= 0) {
+		if(mstruct->isNumber()) {
+			if(mstruct->number().precision() < 0 || precision() < mstruct->number().precision()) {
+				mstruct->number().setPrecision(precision());
+				mstruct->numberUpdated();
+			}
+		} else if(mstruct->isMultiplication() && mstruct->getChild(1)->isNumber()) {
+			if(mstruct->getChild(1)->number().precision() < 0 || precision() < mstruct->getChild(1)->number().precision()) {
+				mstruct->getChild(1)->number().setPrecision(precision());
+				mstruct->getChild(1)->numberUpdated();
+				mstruct->childUpdated(1);
+			}
+		} else if(mstruct->precision() < 0 || precision() < mstruct->precision()) {
+			mstruct->setPrecision(precision(), true);
+		}
+	} else if(isApproximate() && !mstruct->isApproximate()) {
+		mstruct->setApproximate(true, true);
+	}
+	if(!mexp.isOne()) mstruct->raise(mexp);
+	if(mvalue.isOne()) {
+		mvalue.set_nocopy(*mstruct);
+		mstruct->unref();
+	} else {
+		mvalue.multiply_nocopy(mstruct, true);
 	}
 	if(i_exp != 1) mexp.multiply(i_exp);
 	return mvalue;

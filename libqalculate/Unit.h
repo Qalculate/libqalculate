@@ -216,6 +216,8 @@ class AliasUnit : public Unit {
 	virtual MathStructure &convertFromBaseUnit(MathStructure &mvalue, MathStructure &mexp) const;
 	virtual MathStructure &convertToBaseUnit(MathStructure &mvalue) const;
 	virtual MathStructure &convertFromBaseUnit(MathStructure &mvalue) const;
+	virtual MathStructure &convertToBaseCurrencyAlt(MathStructure &mvalue, MathStructure &mexp) const;
+	virtual MathStructure &convertFromBaseCurrencyAlt(MathStructure &mvalue, MathStructure &mexp) const;
 	virtual MathStructure convertToBaseUnit() const;
 	virtual MathStructure convertFromBaseUnit() const;
 	virtual int baseExponent(int exp = 1) const;

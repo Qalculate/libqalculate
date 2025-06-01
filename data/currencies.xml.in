@@ -256,7 +256,7 @@
     </builtin_unit>
     <builtin_unit name="XOF">
       <_title>West African CFA Franc</_title>
-      <_names>a-cr:XOF,a:CFA</_names>
+      <_names>a-cr:XOF</_names>
       <_countries>Benin, Burkina Faso, Guinea-Bissau, Ivory Coast, Mali, Niger, Senegal, Togo</_countries>
     </builtin_unit>
     <builtin_unit name="BMD">
@@ -296,7 +296,7 @@
     </builtin_unit>
     <builtin_unit name="XAF">
       <_title>Central African CFA Franc</_title>
-      <_names>a-cr:XAF,a:FCFA</_names>
+      <_names>a-cr:XAF</_names>
       <_countries>Cameroon, Central African Republic, Chad, Republic of the Congo, Equatorial Guinea, Gabon</_countries>
     </builtin_unit>
     <builtin_unit name="CVE">
@@ -530,7 +530,7 @@
     </builtin_unit>
     <builtin_unit name="MUR">
       <_title>Mauritian Rupee</_title>
-      <_names>a-cr:MUR,aio:&#x930;&#x941;</_names>
+      <_names>a-cr:MUR</_names>
       <_countries>Mauritius</_countries>
     </builtin_unit>
     <builtin_unit name="MDL">
@@ -617,6 +617,11 @@
       <_title>Rwandan Franc</_title>
       <_names>a-cr:RWF</_names>
       <_countries>Rwanda</_countries>
+    </builtin_unit>
+    <builtin_unit name="STN">
+      <_title>São Tomé and Príncipe Dobra</_title>
+      <_names>a-cr:STN</_names>
+      <_countries>Sao Tome and Principe</_countries>
     </builtin_unit>
     <builtin_unit name="SAR">
       <_title>Saudi Riyal</_title>
@@ -972,16 +977,6 @@
       <base>
         <unit>EUR</unit>
         <relation>1/3.45280</relation>
-        <exponent>1</exponent>
-      </base>
-    </unit>
-    <unit type="alias">
-      <_title>São Tomé and Príncipe Dobra</_title>
-      <_names>a-cr:STN</_names>
-      <_countries>Sao Tome and Principe</_countries>
-      <base>
-        <unit>EUR</unit>
-        <relation>1/24.5</relation>
         <exponent>1</exponent>
       </base>
     </unit>

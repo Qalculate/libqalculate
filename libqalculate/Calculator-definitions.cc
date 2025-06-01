@@ -764,14 +764,22 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		locale = c_lang;
 		free(c_lang);
 	} else {
-		ULONG nlang = 0;
-		DWORD n = 0;
-		if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
-			WCHAR* wlocale = new WCHAR[n];
-			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
-				locale = utf8_encode(wlocale);
+		getenv_s(&n, NULL, 0, "LANGUAGE");
+		if(n > 0) {
+			char *c_lang = (char*) malloc(n * sizeof(char));
+			getenv_s(&n, c_lang, n, "LANGUAGE");
+			locale = c_lang;
+			free(c_lang);
+		} else {
+			ULONG nlang = 0;
+			DWORD n = 0;
+			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
+				WCHAR* wlocale = new WCHAR[n];
+				if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
+					locale = utf8_encode(wlocale);
+				}
+				delete[] wlocale;
 			}
-			delete[] wlocale;
 		}
 	}
 	gsub("-", "_", locale);
@@ -3802,7 +3810,7 @@ bool Calculator::loadExchangeRates() {
 		if(currency.length() == 3 && (currency_defs.empty() || currency_defs.find(builtin_str + currency) != string::npos) && currency != "BYR") {
 			if(!byn_found && currency == "BYN") byn_found = true;
 			u = getUnit(currency);
-			if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->isHidden() && u->isBuiltin() && !u->isLocal())) {
+			if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && (u->isHidden() || u->baseUnit() == u_euro) && u->isBuiltin() && !u->isLocal())) {
 				if(json_variant == 1 || json_variant == 2) {
 					i2 = sbuffer.find("\"rate\":", i3 + 1);
 					size_t i4 = sbuffer.find("}", i3 + 1);
@@ -3839,12 +3847,15 @@ bool Calculator::loadExchangeRates() {
 							u = NULL;
 						} else {
 							((AliasUnit*) u)->setBaseUnit(u_euro);
-							((AliasUnit*) u)->setExpression(rate);
+							if(!u->isHidden()) ((AliasUnit*) u)->setInverseExpression(rate);
+							else ((AliasUnit*) u)->setExpression(rate);
 						}
 					}
 					if(u) {
-						u->setApproximate();
-						u->setPrecision(-2);
+						if(u->isHidden()) {
+							u->setApproximate();
+							u->setPrecision(-2);
+						}
 						u->setChanged(false);
 					}
 				}
