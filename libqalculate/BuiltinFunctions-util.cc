@@ -870,6 +870,7 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			sarg2[1] = carg;
 			sarg_new[1] = carg;
 		}
+		if(CALCULATOR->hasToExpression(expr)) CALCULATOR->error(false, _("Conversion (using \"to\") is not supported in functions."), NULL);
 		if(CALCULATOR->functionNameTaken(name)) {
 			MathFunction *f = CALCULATOR->getActiveFunction(name, true);
 			if(f && f->isLocal() && f->subtype() == SUBTYPE_USER_FUNCTION) {

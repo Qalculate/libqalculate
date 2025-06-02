@@ -732,9 +732,14 @@ int EntrywiseMultiplicationFunction::calculate(MathStructure &mstruct, const Mat
 		mstruct = vargs[0];
 		if(!mstruct.isVector()) {
 			if(mstruct.representsScalar()) return 1;
+			CALCULATOR->beginTemporaryStopMessages();
 			mstruct.eval(eo);
-			mstruct = vargs[0];
-			if(!mstruct.isVector()) return 1;
+			if(!mstruct.isVector()) {
+				CALCULATOR->endTemporaryStopMessages();
+				mstruct = vargs[0];
+				return 1;
+			}
+			CALCULATOR->endTemporaryStopMessages(true);
 		}
 		mstruct.setType(STRUCT_FUNCTION);
 		mstruct.setFunction(this);

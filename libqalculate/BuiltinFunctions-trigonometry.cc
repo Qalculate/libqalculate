@@ -709,7 +709,7 @@ bool TanFunction::representsUndefined(const MathStructure &vargs) const {
 	if(vargs[0].isMultiplication() && vargs[0].size() == 3 && vargs[0][0].isNumber() && vargs[0][0].number().denominatorIsTwo() && vargs[0][1].isVariable() && vargs[0][1].variable() == CALCULATOR->getVariableById(VARIABLE_ID_PI) && vargs[0][2].isUnit() && vargs[0][2].unit() == CALCULATOR->getRadUnit()) {
 		return true;
 	}
-	if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0].isMultiplication() && vargs[0][0].size() == 2 &&  vargs[0][0][0].isNumber() && vargs[0][0][0].number().denominatorIsTwo() && vargs[0][0][1].isVariable() && vargs[0][0][1].variable() == CALCULATOR->getVariableById(VARIABLE_ID_PI) && vargs[0][1].isUnit() && vargs[0][1].unit() == CALCULATOR->getRadUnit()) {
+	if(vargs[0].isMultiplication() && vargs[0].size() == 2 && vargs[0][0].isMultiplication() && vargs[0][0].size() == 2 && vargs[0][0][0].isNumber() && vargs[0][0][0].number().denominatorIsTwo() && vargs[0][0][1].isVariable() && vargs[0][0][1].variable() == CALCULATOR->getVariableById(VARIABLE_ID_PI) && vargs[0][1].isUnit() && vargs[0][1].unit() == CALCULATOR->getRadUnit()) {
 		return true;
 	}
 	return false;

@@ -3846,9 +3846,12 @@ bool Calculator::loadExchangeRates() {
 						if(cunits.find(u) != cunits.end()) {
 							u = NULL;
 						} else {
-							((AliasUnit*) u)->setBaseUnit(u_euro);
-							if(!u->isHidden()) ((AliasUnit*) u)->setInverseExpression(rate);
-							else ((AliasUnit*) u)->setExpression(rate);
+							if(!u->isHidden()) {
+								((AliasUnit*) u)->setInverseExpression(rate);
+							} else {
+								((AliasUnit*) u)->setExpression(rate);
+								((AliasUnit*) u)->setBaseUnit(u_euro);
+							}
 						}
 					}
 					if(u) {

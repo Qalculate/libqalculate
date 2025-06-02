@@ -3809,6 +3809,7 @@ int main(int argc, char *argv[]) {
 		if(lang.empty()) {
 			size_t n = 0;
 			getenv_s(&n, NULL, 0, "LANG");
+			if(n == 0) getenv_s(&n, NULL, 0, "LANGUAGE");
 			if(n == 0) {
 				ULONG nlang = 0;
 				DWORD n = 0;

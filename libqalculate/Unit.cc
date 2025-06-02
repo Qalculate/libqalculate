@@ -339,10 +339,13 @@ bool Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp) const {
 					i = i | 0b0100;
 				}
 			}
-			if(i == 0b0101 && u->subtype() == SUBTYPE_ALIAS_UNIT) ((AliasUnit*) u)->convertToBaseCurrencyAlt(mvalue, mexp);
-			else u->convertToBaseUnit(mvalue, mexp);
-			if(i == 0b0101 && subtype() == SUBTYPE_ALIAS_UNIT) ((AliasUnit*) this)->convertFromBaseCurrencyAlt(mvalue, mexp);
-			else convertFromBaseUnit(mvalue, mexp);
+			if(u->subtype() == SUBTYPE_ALIAS_UNIT && subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit() == ((AliasUnit*) this)->firstBaseUnit()) {
+				((AliasUnit*) u)->convertToBaseCurrencyAlt(mvalue, mexp);
+				((AliasUnit*) this)->convertFromBaseCurrencyAlt(mvalue, mexp);
+			} else {
+				u->convertToBaseUnit(mvalue, mexp);
+				convertFromBaseUnit(mvalue, mexp);
+			}
 			CALCULATOR->setExchangeRatesUsed(i);
 		} else {
 			u->convertToBaseUnit(mvalue, mexp);

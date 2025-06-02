@@ -153,6 +153,7 @@ Calculator::Calculator() {
 #ifdef _WIN32
 	size_t n = 0;
 	getenv_s(&n, NULL, 0, "LANG");
+	if(n == 0) getenv_s(&n, NULL, 0, "LANGUAGE");
 	if(n == 0) {
 		ULONG nlang = 0;
 		DWORD n = 0;
@@ -162,7 +163,7 @@ Calculator::Calculator() {
 				string lang = utf8_encode(wlocale);
 				gsub("-", "_", lang);
 				if(lang.length() > 5) lang = lang.substr(0, 5);
-				if(!lang.empty()) _putenv_s("LC_MESSAGES", lang.c_str());
+				if(!lang.empty()) _putenv_s("LANGUAGE", lang.c_str());
 			}
 			delete[] wlocale;
 		}
@@ -416,6 +417,7 @@ Calculator::Calculator(bool ignore_locale) {
 #ifdef _WIN32
 		size_t n = 0;
 		getenv_s(&n, NULL, 0, "LANG");
+		if(n == 0) getenv_s(&n, NULL, 0, "LANGUAGE");
 		if(n == 0) {
 			ULONG nlang = 0;
 			DWORD n = 0;
