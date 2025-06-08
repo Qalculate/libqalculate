@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-03-09 08:23+0100\n"
-"PO-Revision-Date: 2025-06-02 23:15+0800\n"
+"PO-Revision-Date: 2025-06-08 14:40+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_TW\n"
@@ -2053,7 +2053,6 @@ msgstr "資料集"
 
 #. Data set for chemical elements
 #: ../data/datasets.xml.in.h:3
-#, fuzzy
 msgid "!datasets!Elements"
 msgstr "元素"
 
@@ -2062,51 +2061,44 @@ msgid ""
 "This data uses material from the Wikipedia, under the Creative Commons "
 "Attribution-ShareAlike License"
 msgstr ""
+"此資料使用來自Wikipedia的資料，在創用CC 姓名標示-相同方式分享 的授權條款下"
 
 #: ../data/datasets.xml.in.h:5
 msgid "r:atom"
-msgstr ""
+msgstr "r:atom"
 
 #. Object argument for chemical elements data set
 #: ../data/datasets.xml.in.h:7
-#, fuzzy
 msgid "!datasets!Element"
-msgstr "目前元素:"
+msgstr "元素"
 
 #: ../data/datasets.xml.in.h:8
-#, fuzzy
 msgid "Symbol"
 msgstr "符號"
 
 #: ../data/datasets.xml.in.h:9
-#, fuzzy
 msgid "r:symbol"
 msgstr "符號"
 
 #. Chemical elements number
 #: ../data/datasets.xml.in.h:11
-#, fuzzy
 msgid "!datasets!Number"
-msgstr "一個數字"
+msgstr "原子序"
 
 #. Chemical elements number
 #: ../data/datasets.xml.in.h:13
-#, fuzzy
 msgid "!datasets!r:number"
-msgstr "一個數字"
+msgstr "原子序"
 
 #: ../data/datasets.xml.in.h:14 ../data/functions.xml.in.h:935
-#, fuzzy
 msgid "Name"
 msgstr "名稱"
 
 #: ../data/datasets.xml.in.h:15
-#, fuzzy
 msgid "r:name"
 msgstr "名稱"
 
 #: ../data/datasets.xml.in.h:16
-#, fuzzy
 msgid "Classification"
 msgstr "分類"
 
@@ -2117,85 +2109,78 @@ msgid ""
 "Metal&#10;7 Metalloid&#10;8 Polyatomic Non-Metal&#10;9 Diatomic Non-"
 "Metal&#10;10 Noble Gas&#10;11 Unknown chemical properties"
 msgstr ""
+"代表元素分組的數字:&#10;1 鹼金屬&#10;2 鹼土金屬&#10;3 鑭系元素&#10;4 錒系元素"
+"&#10;5 過渡金屬&#10;6 金屬&#10;7 類金屬&#10;8 多原子非金屬&#10;9 雙原子非金屬"
+"&#10;10 惰性氣體&#10;11 未知化學性質"
 
 #: ../data/datasets.xml.in.h:18
-#, fuzzy
 msgid "r:class"
 msgstr "類別"
 
 #: ../data/datasets.xml.in.h:19 ../data/units.xml.in.h:150
 msgid "Atomic Mass"
-msgstr ""
+msgstr "原子量"
 
 #: ../data/datasets.xml.in.h:20
 msgid ""
 "The property uses standard atomic weight, when determined, or the mass "
 "number."
-msgstr ""
+msgstr "屬性使用標準原子量(確定時)或質量數。"
 
 #: ../data/datasets.xml.in.h:21
 msgid "r:mass,r:weight"
-msgstr ""
+msgstr "質量,重量"
 
 #: ../data/datasets.xml.in.h:22
-#, fuzzy
 msgid "Boiling Point"
-msgstr "小數點"
+msgstr "沸點"
 
 #: ../data/datasets.xml.in.h:23
 msgid "r:boiling"
-msgstr ""
+msgstr "沸點"
 
 #: ../data/datasets.xml.in.h:24
-#, fuzzy
 msgid "Melting Point"
-msgstr "小數點"
+msgstr "熔點"
 
 #: ../data/datasets.xml.in.h:25
 msgid "r:melting"
-msgstr ""
+msgstr "熔點"
 
 #: ../data/datasets.xml.in.h:26 ../data/units.xml.in.h:146
 msgid "Density"
-msgstr ""
+msgstr "密度"
 
 #: ../data/datasets.xml.in.h:27
 msgid "Density at STP (gases) or near room temperature"
-msgstr ""
+msgstr "在STP(氣體)或接近室溫的密度"
 
 #: ../data/datasets.xml.in.h:28
 msgid "r:density"
-msgstr ""
+msgstr "密度"
 
 #: ../data/datasets.xml.in.h:29
-#, fuzzy
 msgid "X Position"
-msgstr "X變數"
+msgstr "X位置"
 
 #: ../data/datasets.xml.in.h:30
-#, fuzzy
 msgid "r:x_pos"
-msgstr ""
-"Off: -x + y\n"
-"On: y - x"
+msgstr "r:x_pos"
 
 #: ../data/datasets.xml.in.h:31
-#, fuzzy
 msgid "Y Position"
-msgstr "類別(_y)"
+msgstr "Y位置"
 
 #: ../data/datasets.xml.in.h:32
-#, fuzzy
 msgid "r:y_pos"
-msgstr ""
-"Off: -x + y\n"
-"On: y - x"
+msgstr "r:y_pos"
 
 #: ../data/datasets.xml.in.h:33
 msgid "Planets"
-msgstr ""
+msgstr "行星"
 
 #: ../data/datasets.xml.in.h:34
+#, fuzzy
 msgid ""
 "This data uses material from the Wikipedia articles&#10;\"Earth\" (http://"
 "www.wikipedia.org/wiki/Earth),&#10;\"Jupiter\" (http://www.wikipedia.org/"
@@ -2207,582 +2192,582 @@ msgid ""
 "\"Venus\" (http://en.wikipedia.org/wiki/Venus), under Creative Commons "
 "Attribution-ShareAlike License"
 msgstr ""
+"此資料使用來自Wikipedia文章的資料&#10;\"地球\" (http://www.wikipedia.org/"
+"wiki/Earth),&#10;\"木星\" (http://www.wikipedia.org/wiki/Jupiter),&#10;\"火星"
+"\" (http://www.wikipedia.org/wiki/Mars),&#10;\"水星\" (http://www.wikipedia."
+"org/wiki/Mercury_(planet)),&#10;\"海王星\" (http://www.wikipedia.org/wiki/"
+"Neptune),&#10;\"冥王星\" (http://www.wikipedia.org/wiki/Pluto),&#10;\"土星"
+"\" (http://www.wikipedia.org/wiki/Saturn),&#10;\"天王星\" (http://www."
+"wikipedia.org/wiki/Uranus), and&#10;\"金星\" (http://en.wikipedia.org/wiki/"
+"Venus)，在創用CC 姓名標示-相同方式分享 的授權條款下"
 
 #: ../data/datasets.xml.in.h:35
 msgid "r:planet"
-msgstr ""
+msgstr "r:planet"
 
 #: ../data/datasets.xml.in.h:36
 msgid "Planet"
-msgstr ""
+msgstr "行星"
 
 #: ../data/datasets.xml.in.h:37
-#, fuzzy
 msgid "Orbital Period (Year)"
-msgstr "年"
+msgstr "軌道週期(年)"
 
 #. Orbital period for planet
 #: ../data/datasets.xml.in.h:39
-#, fuzzy
 msgid "!datasets!r:year"
 msgstr "年"
 
 #: ../data/datasets.xml.in.h:40
 msgid "Average Orbital Speed"
-msgstr ""
+msgstr "平均軌道速率"
 
 #: ../data/datasets.xml.in.h:41
 msgid "r:speed"
-msgstr ""
+msgstr "速率"
 
 #: ../data/datasets.xml.in.h:42
 msgid "Eccentricity"
-msgstr ""
+msgstr "離心率"
 
 #: ../data/datasets.xml.in.h:43
 msgid "r:eccentricity"
-msgstr ""
+msgstr "離心率"
 
 #: ../data/datasets.xml.in.h:44
 msgid "Inclination (to ecliptic)"
-msgstr ""
+msgstr "傾角(到黃道)"
 
 #: ../data/datasets.xml.in.h:45
 msgid "r:inclination"
-msgstr ""
+msgstr "傾角"
 
 #: ../data/datasets.xml.in.h:46
-#, fuzzy
 msgid "Number of Satellites"
-msgstr "一個數字"
+msgstr "衛星數量"
 
 #: ../data/datasets.xml.in.h:47
 msgid "r:satellites"
-msgstr ""
+msgstr "衛星"
 
 #. Planet mass
 #: ../data/datasets.xml.in.h:49
 msgid "!datasets!Mass"
-msgstr ""
+msgstr "質量"
 
 #: ../data/datasets.xml.in.h:50
 msgid "r:mass"
-msgstr ""
+msgstr "質量"
 
 #: ../data/datasets.xml.in.h:51
-#, fuzzy
 msgid "Mean Density"
-msgstr "mean"
+msgstr "平均密度"
 
 #: ../data/datasets.xml.in.h:52
 msgid "Surface Area"
-msgstr ""
+msgstr "表面積"
 
 #. Surface area of planet
 #: ../data/datasets.xml.in.h:54
 msgid "!datasets!r:area"
-msgstr ""
+msgstr "面積"
 
 #: ../data/datasets.xml.in.h:55
 msgid "Equatorial Gravity"
-msgstr ""
+msgstr "赤道重力"
 
 #: ../data/datasets.xml.in.h:56
 msgid "r:gravity"
-msgstr ""
+msgstr "重力"
 
 #: ../data/datasets.xml.in.h:57
-#, fuzzy
 msgid "Mean Surface Temperature"
-msgstr "mean"
+msgstr "平均表面溫度"
 
 #: ../data/datasets.xml.in.h:58
-#, fuzzy
 msgid "r:temperature"
-msgstr "溫度計算模式:"
+msgstr "溫度"
 
 #: ../data/datasets.xml.in.h:59
-#, fuzzy
 msgid "Mean Radius"
-msgstr "mean"
+msgstr "平均半徑"
 
 #: ../data/datasets.xml.in.h:60
 msgid "r:radius"
-msgstr ""
+msgstr "半徑"
 
 #: ../data/elements.xml.in.h:1
 msgid "Hydrogen"
-msgstr ""
+msgstr "氫"
 
 #: ../data/elements.xml.in.h:2
 msgid "Helium"
-msgstr ""
+msgstr "氦"
 
 #: ../data/elements.xml.in.h:3
 msgid "Lithium"
-msgstr ""
+msgstr "鋰"
 
 #: ../data/elements.xml.in.h:4
 msgid "Beryllium"
-msgstr ""
+msgstr "鈹"
 
 #: ../data/elements.xml.in.h:5
 msgid "Boron"
-msgstr ""
+msgstr "硼"
 
 #: ../data/elements.xml.in.h:6
 msgid "Carbon"
-msgstr ""
+msgstr "碳"
 
 #: ../data/elements.xml.in.h:7
 msgid "Nitrogen"
-msgstr ""
+msgstr "氮"
 
 #: ../data/elements.xml.in.h:8
 msgid "Oxygen"
-msgstr ""
+msgstr "氧"
 
 #: ../data/elements.xml.in.h:9
 msgid "Fluorine"
-msgstr ""
+msgstr "氟"
 
 #: ../data/elements.xml.in.h:10
 msgid "Neon"
-msgstr ""
+msgstr "氖"
 
 #: ../data/elements.xml.in.h:11
 msgid "Sodium"
-msgstr ""
+msgstr "鈉"
 
 #: ../data/elements.xml.in.h:12
 msgid "Magnesium"
-msgstr ""
+msgstr "鎂"
 
 #: ../data/elements.xml.in.h:13
 msgid "Aluminum"
-msgstr ""
+msgstr "鋁"
 
 #: ../data/elements.xml.in.h:14
 msgid "Silicon"
-msgstr ""
+msgstr "矽"
 
 #: ../data/elements.xml.in.h:15
 msgid "Phosphorus"
-msgstr ""
+msgstr "磷"
 
 #: ../data/elements.xml.in.h:16
 msgid "Sulfur"
-msgstr ""
+msgstr "硫"
 
 #: ../data/elements.xml.in.h:17
 msgid "Chlorine"
-msgstr ""
+msgstr "氯"
 
 #: ../data/elements.xml.in.h:18
 msgid "Argon"
-msgstr ""
+msgstr "氬"
 
 #: ../data/elements.xml.in.h:19
 msgid "Potassium"
-msgstr ""
+msgstr "鉀"
 
 #: ../data/elements.xml.in.h:20
 msgid "Calcium"
-msgstr ""
+msgstr "鈣"
 
 #: ../data/elements.xml.in.h:21
 msgid "Scandium"
-msgstr ""
+msgstr "鈧"
 
 #: ../data/elements.xml.in.h:22
 msgid "Titanium"
-msgstr ""
+msgstr "鈦"
 
 #: ../data/elements.xml.in.h:23
 msgid "Vanadium"
-msgstr ""
+msgstr "釩"
 
 #: ../data/elements.xml.in.h:24
 msgid "Chromium"
-msgstr ""
+msgstr "鉻"
 
 #: ../data/elements.xml.in.h:25
 msgid "Manganese"
-msgstr ""
+msgstr "錳"
 
 #: ../data/elements.xml.in.h:26
 msgid "Iron"
-msgstr ""
+msgstr "鐵"
 
 #: ../data/elements.xml.in.h:27
 msgid "Cobalt"
-msgstr ""
+msgstr "鈷"
 
 #: ../data/elements.xml.in.h:28
 msgid "Nickel"
-msgstr ""
+msgstr "鎳"
 
 #: ../data/elements.xml.in.h:29
 msgid "Copper"
-msgstr ""
+msgstr "銅"
 
 #: ../data/elements.xml.in.h:30
 msgid "Zinc"
-msgstr ""
+msgstr "鋅"
 
 #: ../data/elements.xml.in.h:31
 msgid "Gallium"
-msgstr ""
+msgstr "鎵"
 
 #: ../data/elements.xml.in.h:32
 msgid "Germanium"
-msgstr ""
+msgstr "鍺"
 
 #: ../data/elements.xml.in.h:33
 msgid "Arsenic"
-msgstr ""
+msgstr "砷"
 
 #: ../data/elements.xml.in.h:34
 msgid "Selenium"
-msgstr ""
+msgstr "硒"
 
 #: ../data/elements.xml.in.h:35
 msgid "Bromine"
-msgstr ""
+msgstr "溴"
 
 #: ../data/elements.xml.in.h:36
 msgid "Krypton"
-msgstr ""
+msgstr "氪"
 
 #: ../data/elements.xml.in.h:37
 msgid "Rubidium"
-msgstr ""
+msgstr "銣"
 
 #: ../data/elements.xml.in.h:38
 msgid "Strontium"
-msgstr ""
+msgstr "鍶"
 
 #: ../data/elements.xml.in.h:39
 msgid "Yttrium"
-msgstr ""
+msgstr "釔"
 
 #: ../data/elements.xml.in.h:40
 msgid "Zirconium"
-msgstr ""
+msgstr "鋯"
 
 #: ../data/elements.xml.in.h:41
 msgid "Niobium"
-msgstr ""
+msgstr "鈮"
 
 #: ../data/elements.xml.in.h:42
 msgid "Molybdenum"
-msgstr ""
+msgstr "鉬"
 
 #: ../data/elements.xml.in.h:43
 msgid "Technetium"
-msgstr ""
+msgstr "鎝"
 
 #: ../data/elements.xml.in.h:44
 msgid "Ruthenium"
-msgstr ""
+msgstr "釕"
 
 #: ../data/elements.xml.in.h:45
 msgid "Rhodium"
-msgstr ""
+msgstr "銠"
 
 #: ../data/elements.xml.in.h:46
 msgid "Palladium"
-msgstr ""
+msgstr "鈀"
 
 #: ../data/elements.xml.in.h:47
 msgid "Silver"
-msgstr ""
+msgstr "銀"
 
 #: ../data/elements.xml.in.h:48
 msgid "Cadmium"
-msgstr ""
+msgstr "鎘"
 
 #: ../data/elements.xml.in.h:49
 msgid "Indium"
-msgstr ""
+msgstr "銦"
 
 #: ../data/elements.xml.in.h:50
 msgid "Tin"
-msgstr ""
+msgstr "錫"
 
 #: ../data/elements.xml.in.h:51
 msgid "Antimony"
-msgstr ""
+msgstr "銻"
 
 #: ../data/elements.xml.in.h:52
 msgid "Tellurium"
-msgstr ""
+msgstr "碲"
 
 #: ../data/elements.xml.in.h:53
 msgid "Iodine"
-msgstr ""
+msgstr "碘"
 
 #: ../data/elements.xml.in.h:54
 msgid "Xenon"
-msgstr ""
+msgstr "氙"
 
 #: ../data/elements.xml.in.h:55
 msgid "Cesium"
-msgstr ""
+msgstr "銫"
 
 #: ../data/elements.xml.in.h:56
 msgid "Barium"
-msgstr ""
+msgstr "鋇"
 
 #: ../data/elements.xml.in.h:57
 msgid "Lanthanum"
-msgstr ""
+msgstr "鑭"
 
 #: ../data/elements.xml.in.h:58
 msgid "Cerium"
-msgstr ""
+msgstr "鈰"
 
 #: ../data/elements.xml.in.h:59
 msgid "Praseodymium"
-msgstr ""
+msgstr "鐠"
 
 #: ../data/elements.xml.in.h:60
 msgid "Neodymium"
-msgstr ""
+msgstr "釹"
 
 #: ../data/elements.xml.in.h:61
 msgid "Promethium"
-msgstr ""
+msgstr "鉕"
 
 #: ../data/elements.xml.in.h:62
 msgid "Samarium"
-msgstr ""
+msgstr "釤"
 
 #: ../data/elements.xml.in.h:63
 msgid "Europium"
-msgstr ""
+msgstr "銪"
 
 #: ../data/elements.xml.in.h:64
 msgid "Gadolinium"
-msgstr ""
+msgstr "釓"
 
 #: ../data/elements.xml.in.h:65
 msgid "Terbium"
-msgstr ""
+msgstr "鋱"
 
 #: ../data/elements.xml.in.h:66
 msgid "Dysprosium"
-msgstr ""
+msgstr "鏑"
 
 #: ../data/elements.xml.in.h:67
 msgid "Holmium"
-msgstr ""
+msgstr "鈥"
 
 #: ../data/elements.xml.in.h:68
 msgid "Erbium"
-msgstr ""
+msgstr "鉺"
 
 #: ../data/elements.xml.in.h:69
 msgid "Thulium"
-msgstr ""
+msgstr "銩"
 
 #: ../data/elements.xml.in.h:70
 msgid "Ytterbium"
-msgstr ""
+msgstr "鐿"
 
 #: ../data/elements.xml.in.h:71
 msgid "Lutetium"
-msgstr ""
+msgstr "鎦"
 
 #: ../data/elements.xml.in.h:72
 msgid "Hafnium"
-msgstr ""
+msgstr "鉿"
 
 #: ../data/elements.xml.in.h:73
 msgid "Tantalum"
-msgstr ""
+msgstr "鉭"
 
 #: ../data/elements.xml.in.h:74
 msgid "Tungsten"
-msgstr ""
+msgstr "鎢"
 
 #: ../data/elements.xml.in.h:75
 msgid "Rhenium"
-msgstr ""
+msgstr "錸"
 
 #: ../data/elements.xml.in.h:76
 msgid "Osmium"
-msgstr ""
+msgstr "鋨"
 
 #: ../data/elements.xml.in.h:77
 msgid "Iridium"
-msgstr ""
+msgstr "銥"
 
 #: ../data/elements.xml.in.h:78
 msgid "Platinum"
-msgstr ""
+msgstr "鉑"
 
 #: ../data/elements.xml.in.h:79
 msgid "Gold"
-msgstr ""
+msgstr "金"
 
 #. Chemical element
 #: ../data/elements.xml.in.h:81
-#, fuzzy
 msgid "!elements!Mercury"
-msgstr "元素"
+msgstr "汞"
 
 #: ../data/elements.xml.in.h:82
 msgid "Thallium"
-msgstr ""
+msgstr "鉈"
 
 #: ../data/elements.xml.in.h:83
 msgid "Lead"
-msgstr ""
+msgstr "鉛"
 
 #: ../data/elements.xml.in.h:84
 msgid "Bismuth"
-msgstr ""
+msgstr "鉍"
 
 #: ../data/elements.xml.in.h:85
 msgid "Polonium"
-msgstr ""
+msgstr "釙"
 
 #: ../data/elements.xml.in.h:86
 msgid "Astatine"
-msgstr ""
+msgstr "砈"
 
 #: ../data/elements.xml.in.h:87
 msgid "Radon"
-msgstr ""
+msgstr "氡"
 
 #: ../data/elements.xml.in.h:88
 msgid "Francium"
-msgstr ""
+msgstr "鍅"
 
 #: ../data/elements.xml.in.h:89
 msgid "Radium"
-msgstr ""
+msgstr "鐳"
 
 #: ../data/elements.xml.in.h:90
 msgid "Actinium"
-msgstr ""
+msgstr "錒"
 
 #: ../data/elements.xml.in.h:91
 msgid "Thorium"
-msgstr ""
+msgstr "釷"
 
 #: ../data/elements.xml.in.h:92
 msgid "Protactinium"
-msgstr ""
+msgstr "鏷"
 
 #: ../data/elements.xml.in.h:93
 msgid "Uranium"
-msgstr ""
+msgstr "鈾"
 
 #: ../data/elements.xml.in.h:94
 msgid "Neptunium"
-msgstr ""
+msgstr "錼"
 
 #: ../data/elements.xml.in.h:95
 msgid "Plutonium"
-msgstr ""
+msgstr "鈽"
 
 #: ../data/elements.xml.in.h:96
 msgid "Americium"
-msgstr ""
+msgstr "鋂"
 
 #: ../data/elements.xml.in.h:97
 msgid "Curium"
-msgstr ""
+msgstr "鋦"
 
 #: ../data/elements.xml.in.h:98
 msgid "Berkelium"
-msgstr ""
+msgstr "鉳"
 
 #: ../data/elements.xml.in.h:99
 msgid "Californium"
-msgstr ""
+msgstr "鉲"
 
 #: ../data/elements.xml.in.h:100
 msgid "Einsteinium"
-msgstr ""
+msgstr "鑀"
 
 #: ../data/elements.xml.in.h:101
 msgid "Fermium"
-msgstr ""
+msgstr "鐨"
 
 #: ../data/elements.xml.in.h:102
 msgid "Mendelevium"
-msgstr ""
+msgstr "鍆"
 
 #: ../data/elements.xml.in.h:103
 msgid "Nobelium"
-msgstr ""
+msgstr "鍩"
 
 #: ../data/elements.xml.in.h:104
 msgid "Lawrencium"
-msgstr ""
+msgstr "鐒"
 
 #: ../data/elements.xml.in.h:105
 msgid "Rutherfordium"
-msgstr ""
+msgstr "鑪"
 
 #: ../data/elements.xml.in.h:106
 msgid "Dubnium"
-msgstr ""
+msgstr "𨧀"
 
 #: ../data/elements.xml.in.h:107
 msgid "Seaborgium"
-msgstr ""
+msgstr "𨭎"
 
 #: ../data/elements.xml.in.h:108
 msgid "Bohrium"
-msgstr ""
+msgstr "𨨏"
 
 #: ../data/elements.xml.in.h:109
 msgid "Hassium"
-msgstr ""
+msgstr "𨭆"
 
 #: ../data/elements.xml.in.h:110
 msgid "Meitnerium"
-msgstr ""
+msgstr "䥑"
 
 #: ../data/elements.xml.in.h:111
 msgid "Darmstadtium"
-msgstr ""
+msgstr "鐽"
 
 #: ../data/elements.xml.in.h:112
 msgid "Roentgenium"
-msgstr ""
+msgstr "錀"
 
 #: ../data/elements.xml.in.h:113
 msgid "Copernicium"
-msgstr ""
+msgstr "鎶"
 
 #: ../data/elements.xml.in.h:114
 msgid "Nihonium"
-msgstr ""
+msgstr "鉨"
 
 #: ../data/elements.xml.in.h:115
 msgid "Flerovium"
-msgstr ""
+msgstr "鈇"
 
 #: ../data/elements.xml.in.h:116
 msgid "Moscovium"
-msgstr ""
+msgstr "鏌"
 
 #: ../data/elements.xml.in.h:117
 msgid "Livermorium"
-msgstr ""
+msgstr "鉝"
 
 #: ../data/elements.xml.in.h:118
 msgid "Tennessine"
-msgstr ""
+msgstr "鿬"
 
 #: ../data/elements.xml.in.h:119
 msgid "Oganesson"
-msgstr ""
+msgstr "鿫"
 
 #: ../data/functions.xml.in.h:1 ../data/variables.xml.in.h:214
 #, fuzzy
