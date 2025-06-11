@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-03-09 08:23+0100\n"
-"PO-Revision-Date: 2025-06-02 23:15+0800\n"
+"PO-Revision-Date: 2025-06-09 22:12+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_TW\n"
@@ -45,7 +45,6 @@ msgid "U.S. Dollar"
 msgstr "美元"
 
 #: ../data/currencies.xml.in.h:6
-#, fuzzy
 msgid "a:$,a-cr:USD,dollar,p:dollars"
 msgstr "a:$,a-cr:USD,dollar,美元"
 
@@ -60,7 +59,6 @@ msgid "Japanese Yen"
 msgstr "日圓"
 
 #: ../data/currencies.xml.in.h:9
-#, fuzzy
 msgid "a-cr:JPY,au:&#xA5;,yen"
 msgstr "a-cr:JPY,au:&#xA5;,yen,日圓"
 
@@ -97,7 +95,6 @@ msgid "Thai Baht"
 msgstr "泰銖"
 
 #: ../data/currencies.xml.in.h:18
-#, fuzzy
 msgid "a-cr:THB"
 msgstr "a-cr:THB,泰銖"
 
@@ -263,9 +260,8 @@ msgid "Romania"
 msgstr "羅馬尼亞"
 
 #: ../data/currencies.xml.in.h:59
-#, fuzzy
 msgid "Turkish New Lira"
-msgstr "新土耳其里拉"
+msgstr "土耳其里拉"
 
 #: ../data/currencies.xml.in.h:60
 msgid "a-cr:TRY,au:&#x20BA;"
@@ -1365,7 +1361,6 @@ msgid "Mozambique"
 msgstr "莫三比克"
 
 #: ../data/currencies.xml.in.h:331
-#, fuzzy
 msgid "Myanmar (Burmese Kyat)"
 msgstr "緬甸(緬甸元)"
 
@@ -1653,7 +1648,6 @@ msgid "a-cr:SZL"
 msgstr "a-cr:SZL"
 
 #: ../data/currencies.xml.in.h:402
-#, fuzzy
 msgid "Swaziland"
 msgstr "史瓦帝尼"
 
@@ -1802,7 +1796,6 @@ msgid "Uruguay"
 msgstr "烏拉圭"
 
 #: ../data/currencies.xml.in.h:439
-#, fuzzy
 msgid "Uzbekistan Soʻm"
 msgstr "烏茲別克頌"
 
@@ -1883,9 +1876,8 @@ msgid "Cent (USD)"
 msgstr "美分"
 
 #: ../data/currencies.xml.in.h:459
-#, fuzzy
 msgid "au:&#xA2;,r:cent,p:cents"
-msgstr "au:&#xA2;,r:cent,p:cents"
+msgstr "au:&#xA2;,r:cent,美分"
 
 #: ../data/currencies.xml.in.h:460
 msgid "Belgian Franc (obsolete)"
@@ -2053,7 +2045,6 @@ msgstr "資料集"
 
 #. Data set for chemical elements
 #: ../data/datasets.xml.in.h:3
-#, fuzzy
 msgid "!datasets!Elements"
 msgstr "元素"
 
@@ -2062,51 +2053,44 @@ msgid ""
 "This data uses material from the Wikipedia, under the Creative Commons "
 "Attribution-ShareAlike License"
 msgstr ""
+"此資料使用來自Wikipedia的資料，在創用CC 姓名標示-相同方式分享 的授權條款下"
 
 #: ../data/datasets.xml.in.h:5
 msgid "r:atom"
-msgstr ""
+msgstr "r:atom"
 
 #. Object argument for chemical elements data set
 #: ../data/datasets.xml.in.h:7
-#, fuzzy
 msgid "!datasets!Element"
-msgstr "目前元素:"
+msgstr "元素"
 
 #: ../data/datasets.xml.in.h:8
-#, fuzzy
 msgid "Symbol"
 msgstr "符號"
 
 #: ../data/datasets.xml.in.h:9
-#, fuzzy
 msgid "r:symbol"
 msgstr "符號"
 
 #. Chemical elements number
 #: ../data/datasets.xml.in.h:11
-#, fuzzy
 msgid "!datasets!Number"
-msgstr "一個數字"
+msgstr "原子序"
 
 #. Chemical elements number
 #: ../data/datasets.xml.in.h:13
-#, fuzzy
 msgid "!datasets!r:number"
-msgstr "一個數字"
+msgstr "原子序"
 
 #: ../data/datasets.xml.in.h:14 ../data/functions.xml.in.h:935
-#, fuzzy
 msgid "Name"
 msgstr "名稱"
 
 #: ../data/datasets.xml.in.h:15
-#, fuzzy
 msgid "r:name"
 msgstr "名稱"
 
 #: ../data/datasets.xml.in.h:16
-#, fuzzy
 msgid "Classification"
 msgstr "分類"
 
@@ -2117,83 +2101,75 @@ msgid ""
 "Metal&#10;7 Metalloid&#10;8 Polyatomic Non-Metal&#10;9 Diatomic Non-"
 "Metal&#10;10 Noble Gas&#10;11 Unknown chemical properties"
 msgstr ""
+"代表元素分組的數字:&#10;1 鹼金屬&#10;2 鹼土金屬&#10;3 鑭系元素&#10;4 錒系元素"
+"&#10;5 過渡金屬&#10;6 金屬&#10;7 類金屬&#10;8 多原子非金屬&#10;9 雙原子非金屬"
+"&#10;10 惰性氣體&#10;11 未知化學性質"
 
 #: ../data/datasets.xml.in.h:18
-#, fuzzy
 msgid "r:class"
 msgstr "類別"
 
 #: ../data/datasets.xml.in.h:19 ../data/units.xml.in.h:150
 msgid "Atomic Mass"
-msgstr ""
+msgstr "原子量"
 
 #: ../data/datasets.xml.in.h:20
 msgid ""
 "The property uses standard atomic weight, when determined, or the mass "
 "number."
-msgstr ""
+msgstr "屬性使用標準原子量(確定時)或質量數。"
 
 #: ../data/datasets.xml.in.h:21
 msgid "r:mass,r:weight"
-msgstr ""
+msgstr "質量,重量"
 
 #: ../data/datasets.xml.in.h:22
-#, fuzzy
 msgid "Boiling Point"
-msgstr "小數點"
+msgstr "沸點"
 
 #: ../data/datasets.xml.in.h:23
 msgid "r:boiling"
-msgstr ""
+msgstr "沸點"
 
 #: ../data/datasets.xml.in.h:24
-#, fuzzy
 msgid "Melting Point"
-msgstr "小數點"
+msgstr "熔點"
 
 #: ../data/datasets.xml.in.h:25
 msgid "r:melting"
-msgstr ""
+msgstr "熔點"
 
 #: ../data/datasets.xml.in.h:26 ../data/units.xml.in.h:146
 msgid "Density"
-msgstr ""
+msgstr "密度"
 
 #: ../data/datasets.xml.in.h:27
 msgid "Density at STP (gases) or near room temperature"
-msgstr ""
+msgstr "在STP(氣體)或接近室溫的密度"
 
 #: ../data/datasets.xml.in.h:28
 msgid "r:density"
-msgstr ""
+msgstr "密度"
 
 #: ../data/datasets.xml.in.h:29
-#, fuzzy
 msgid "X Position"
-msgstr "X變數"
+msgstr "X位置"
 
 #: ../data/datasets.xml.in.h:30
-#, fuzzy
 msgid "r:x_pos"
-msgstr ""
-"Off: -x + y\n"
-"On: y - x"
+msgstr "r:x_pos"
 
 #: ../data/datasets.xml.in.h:31
-#, fuzzy
 msgid "Y Position"
-msgstr "類別(_y)"
+msgstr "Y位置"
 
 #: ../data/datasets.xml.in.h:32
-#, fuzzy
 msgid "r:y_pos"
-msgstr ""
-"Off: -x + y\n"
-"On: y - x"
+msgstr "r:y_pos"
 
 #: ../data/datasets.xml.in.h:33
 msgid "Planets"
-msgstr ""
+msgstr "行星"
 
 #: ../data/datasets.xml.in.h:34
 msgid ""
@@ -2207,616 +2183,611 @@ msgid ""
 "\"Venus\" (http://en.wikipedia.org/wiki/Venus), under Creative Commons "
 "Attribution-ShareAlike License"
 msgstr ""
+"此資料使用來自Wikipedia文章的資料&#10;\"地球\" (http://www.wikipedia.org/"
+"wiki/Earth),&#10;\"木星\" (http://www.wikipedia.org/wiki/Jupiter),&#10;\"火星"
+"\" (http://www.wikipedia.org/wiki/Mars),&#10;\"水星\" (http://www.wikipedia."
+"org/wiki/Mercury_(planet)),&#10;\"海王星\" (http://www.wikipedia.org/wiki/"
+"Neptune),&#10;\"冥王星\" (http://www.wikipedia.org/wiki/Pluto),&#10;\"土星"
+"\" (http://www.wikipedia.org/wiki/Saturn),&#10;\"天王星\" (http://www."
+"wikipedia.org/wiki/Uranus), and&#10;\"金星\" (http://en.wikipedia.org/wiki/"
+"Venus)，在創用CC 姓名標示-相同方式分享 的授權條款下"
 
 #: ../data/datasets.xml.in.h:35
 msgid "r:planet"
-msgstr ""
+msgstr "r:planet"
 
 #: ../data/datasets.xml.in.h:36
 msgid "Planet"
-msgstr ""
+msgstr "行星"
 
 #: ../data/datasets.xml.in.h:37
-#, fuzzy
 msgid "Orbital Period (Year)"
-msgstr "年"
+msgstr "軌道週期(年)"
 
 #. Orbital period for planet
 #: ../data/datasets.xml.in.h:39
-#, fuzzy
 msgid "!datasets!r:year"
 msgstr "年"
 
 #: ../data/datasets.xml.in.h:40
 msgid "Average Orbital Speed"
-msgstr ""
+msgstr "平均軌道速率"
 
 #: ../data/datasets.xml.in.h:41
 msgid "r:speed"
-msgstr ""
+msgstr "速率"
 
 #: ../data/datasets.xml.in.h:42
 msgid "Eccentricity"
-msgstr ""
+msgstr "離心率"
 
 #: ../data/datasets.xml.in.h:43
 msgid "r:eccentricity"
-msgstr ""
+msgstr "離心率"
 
 #: ../data/datasets.xml.in.h:44
 msgid "Inclination (to ecliptic)"
-msgstr ""
+msgstr "傾角(到黃道)"
 
 #: ../data/datasets.xml.in.h:45
 msgid "r:inclination"
-msgstr ""
+msgstr "傾角"
 
 #: ../data/datasets.xml.in.h:46
-#, fuzzy
 msgid "Number of Satellites"
-msgstr "一個數字"
+msgstr "衛星數量"
 
 #: ../data/datasets.xml.in.h:47
 msgid "r:satellites"
-msgstr ""
+msgstr "衛星"
 
 #. Planet mass
 #: ../data/datasets.xml.in.h:49
 msgid "!datasets!Mass"
-msgstr ""
+msgstr "質量"
 
 #: ../data/datasets.xml.in.h:50
 msgid "r:mass"
-msgstr ""
+msgstr "質量"
 
 #: ../data/datasets.xml.in.h:51
-#, fuzzy
 msgid "Mean Density"
-msgstr "mean"
+msgstr "平均密度"
 
 #: ../data/datasets.xml.in.h:52
 msgid "Surface Area"
-msgstr ""
+msgstr "表面積"
 
 #. Surface area of planet
 #: ../data/datasets.xml.in.h:54
 msgid "!datasets!r:area"
-msgstr ""
+msgstr "面積"
 
 #: ../data/datasets.xml.in.h:55
 msgid "Equatorial Gravity"
-msgstr ""
+msgstr "赤道重力"
 
 #: ../data/datasets.xml.in.h:56
 msgid "r:gravity"
-msgstr ""
+msgstr "重力"
 
 #: ../data/datasets.xml.in.h:57
-#, fuzzy
 msgid "Mean Surface Temperature"
-msgstr "mean"
+msgstr "平均表面溫度"
 
 #: ../data/datasets.xml.in.h:58
-#, fuzzy
 msgid "r:temperature"
-msgstr "溫度計算模式:"
+msgstr "溫度"
 
 #: ../data/datasets.xml.in.h:59
-#, fuzzy
 msgid "Mean Radius"
-msgstr "mean"
+msgstr "平均半徑"
 
 #: ../data/datasets.xml.in.h:60
 msgid "r:radius"
-msgstr ""
+msgstr "半徑"
 
 #: ../data/elements.xml.in.h:1
 msgid "Hydrogen"
-msgstr ""
+msgstr "氫"
 
 #: ../data/elements.xml.in.h:2
 msgid "Helium"
-msgstr ""
+msgstr "氦"
 
 #: ../data/elements.xml.in.h:3
 msgid "Lithium"
-msgstr ""
+msgstr "鋰"
 
 #: ../data/elements.xml.in.h:4
 msgid "Beryllium"
-msgstr ""
+msgstr "鈹"
 
 #: ../data/elements.xml.in.h:5
 msgid "Boron"
-msgstr ""
+msgstr "硼"
 
 #: ../data/elements.xml.in.h:6
 msgid "Carbon"
-msgstr ""
+msgstr "碳"
 
 #: ../data/elements.xml.in.h:7
 msgid "Nitrogen"
-msgstr ""
+msgstr "氮"
 
 #: ../data/elements.xml.in.h:8
 msgid "Oxygen"
-msgstr ""
+msgstr "氧"
 
 #: ../data/elements.xml.in.h:9
 msgid "Fluorine"
-msgstr ""
+msgstr "氟"
 
 #: ../data/elements.xml.in.h:10
 msgid "Neon"
-msgstr ""
+msgstr "氖"
 
 #: ../data/elements.xml.in.h:11
 msgid "Sodium"
-msgstr ""
+msgstr "鈉"
 
 #: ../data/elements.xml.in.h:12
 msgid "Magnesium"
-msgstr ""
+msgstr "鎂"
 
 #: ../data/elements.xml.in.h:13
 msgid "Aluminum"
-msgstr ""
+msgstr "鋁"
 
 #: ../data/elements.xml.in.h:14
 msgid "Silicon"
-msgstr ""
+msgstr "矽"
 
 #: ../data/elements.xml.in.h:15
 msgid "Phosphorus"
-msgstr ""
+msgstr "磷"
 
 #: ../data/elements.xml.in.h:16
 msgid "Sulfur"
-msgstr ""
+msgstr "硫"
 
 #: ../data/elements.xml.in.h:17
 msgid "Chlorine"
-msgstr ""
+msgstr "氯"
 
 #: ../data/elements.xml.in.h:18
 msgid "Argon"
-msgstr ""
+msgstr "氬"
 
 #: ../data/elements.xml.in.h:19
 msgid "Potassium"
-msgstr ""
+msgstr "鉀"
 
 #: ../data/elements.xml.in.h:20
 msgid "Calcium"
-msgstr ""
+msgstr "鈣"
 
 #: ../data/elements.xml.in.h:21
 msgid "Scandium"
-msgstr ""
+msgstr "鈧"
 
 #: ../data/elements.xml.in.h:22
 msgid "Titanium"
-msgstr ""
+msgstr "鈦"
 
 #: ../data/elements.xml.in.h:23
 msgid "Vanadium"
-msgstr ""
+msgstr "釩"
 
 #: ../data/elements.xml.in.h:24
 msgid "Chromium"
-msgstr ""
+msgstr "鉻"
 
 #: ../data/elements.xml.in.h:25
 msgid "Manganese"
-msgstr ""
+msgstr "錳"
 
 #: ../data/elements.xml.in.h:26
 msgid "Iron"
-msgstr ""
+msgstr "鐵"
 
 #: ../data/elements.xml.in.h:27
 msgid "Cobalt"
-msgstr ""
+msgstr "鈷"
 
 #: ../data/elements.xml.in.h:28
 msgid "Nickel"
-msgstr ""
+msgstr "鎳"
 
 #: ../data/elements.xml.in.h:29
 msgid "Copper"
-msgstr ""
+msgstr "銅"
 
 #: ../data/elements.xml.in.h:30
 msgid "Zinc"
-msgstr ""
+msgstr "鋅"
 
 #: ../data/elements.xml.in.h:31
 msgid "Gallium"
-msgstr ""
+msgstr "鎵"
 
 #: ../data/elements.xml.in.h:32
 msgid "Germanium"
-msgstr ""
+msgstr "鍺"
 
 #: ../data/elements.xml.in.h:33
 msgid "Arsenic"
-msgstr ""
+msgstr "砷"
 
 #: ../data/elements.xml.in.h:34
 msgid "Selenium"
-msgstr ""
+msgstr "硒"
 
 #: ../data/elements.xml.in.h:35
 msgid "Bromine"
-msgstr ""
+msgstr "溴"
 
 #: ../data/elements.xml.in.h:36
 msgid "Krypton"
-msgstr ""
+msgstr "氪"
 
 #: ../data/elements.xml.in.h:37
 msgid "Rubidium"
-msgstr ""
+msgstr "銣"
 
 #: ../data/elements.xml.in.h:38
 msgid "Strontium"
-msgstr ""
+msgstr "鍶"
 
 #: ../data/elements.xml.in.h:39
 msgid "Yttrium"
-msgstr ""
+msgstr "釔"
 
 #: ../data/elements.xml.in.h:40
 msgid "Zirconium"
-msgstr ""
+msgstr "鋯"
 
 #: ../data/elements.xml.in.h:41
 msgid "Niobium"
-msgstr ""
+msgstr "鈮"
 
 #: ../data/elements.xml.in.h:42
 msgid "Molybdenum"
-msgstr ""
+msgstr "鉬"
 
 #: ../data/elements.xml.in.h:43
 msgid "Technetium"
-msgstr ""
+msgstr "鎝"
 
 #: ../data/elements.xml.in.h:44
 msgid "Ruthenium"
-msgstr ""
+msgstr "釕"
 
 #: ../data/elements.xml.in.h:45
 msgid "Rhodium"
-msgstr ""
+msgstr "銠"
 
 #: ../data/elements.xml.in.h:46
 msgid "Palladium"
-msgstr ""
+msgstr "鈀"
 
 #: ../data/elements.xml.in.h:47
 msgid "Silver"
-msgstr ""
+msgstr "銀"
 
 #: ../data/elements.xml.in.h:48
 msgid "Cadmium"
-msgstr ""
+msgstr "鎘"
 
 #: ../data/elements.xml.in.h:49
 msgid "Indium"
-msgstr ""
+msgstr "銦"
 
 #: ../data/elements.xml.in.h:50
 msgid "Tin"
-msgstr ""
+msgstr "錫"
 
 #: ../data/elements.xml.in.h:51
 msgid "Antimony"
-msgstr ""
+msgstr "銻"
 
 #: ../data/elements.xml.in.h:52
 msgid "Tellurium"
-msgstr ""
+msgstr "碲"
 
 #: ../data/elements.xml.in.h:53
 msgid "Iodine"
-msgstr ""
+msgstr "碘"
 
 #: ../data/elements.xml.in.h:54
 msgid "Xenon"
-msgstr ""
+msgstr "氙"
 
 #: ../data/elements.xml.in.h:55
 msgid "Cesium"
-msgstr ""
+msgstr "銫"
 
 #: ../data/elements.xml.in.h:56
 msgid "Barium"
-msgstr ""
+msgstr "鋇"
 
 #: ../data/elements.xml.in.h:57
 msgid "Lanthanum"
-msgstr ""
+msgstr "鑭"
 
 #: ../data/elements.xml.in.h:58
 msgid "Cerium"
-msgstr ""
+msgstr "鈰"
 
 #: ../data/elements.xml.in.h:59
 msgid "Praseodymium"
-msgstr ""
+msgstr "鐠"
 
 #: ../data/elements.xml.in.h:60
 msgid "Neodymium"
-msgstr ""
+msgstr "釹"
 
 #: ../data/elements.xml.in.h:61
 msgid "Promethium"
-msgstr ""
+msgstr "鉕"
 
 #: ../data/elements.xml.in.h:62
 msgid "Samarium"
-msgstr ""
+msgstr "釤"
 
 #: ../data/elements.xml.in.h:63
 msgid "Europium"
-msgstr ""
+msgstr "銪"
 
 #: ../data/elements.xml.in.h:64
 msgid "Gadolinium"
-msgstr ""
+msgstr "釓"
 
 #: ../data/elements.xml.in.h:65
 msgid "Terbium"
-msgstr ""
+msgstr "鋱"
 
 #: ../data/elements.xml.in.h:66
 msgid "Dysprosium"
-msgstr ""
+msgstr "鏑"
 
 #: ../data/elements.xml.in.h:67
 msgid "Holmium"
-msgstr ""
+msgstr "鈥"
 
 #: ../data/elements.xml.in.h:68
 msgid "Erbium"
-msgstr ""
+msgstr "鉺"
 
 #: ../data/elements.xml.in.h:69
 msgid "Thulium"
-msgstr ""
+msgstr "銩"
 
 #: ../data/elements.xml.in.h:70
 msgid "Ytterbium"
-msgstr ""
+msgstr "鐿"
 
 #: ../data/elements.xml.in.h:71
 msgid "Lutetium"
-msgstr ""
+msgstr "鎦"
 
 #: ../data/elements.xml.in.h:72
 msgid "Hafnium"
-msgstr ""
+msgstr "鉿"
 
 #: ../data/elements.xml.in.h:73
 msgid "Tantalum"
-msgstr ""
+msgstr "鉭"
 
 #: ../data/elements.xml.in.h:74
 msgid "Tungsten"
-msgstr ""
+msgstr "鎢"
 
 #: ../data/elements.xml.in.h:75
 msgid "Rhenium"
-msgstr ""
+msgstr "錸"
 
 #: ../data/elements.xml.in.h:76
 msgid "Osmium"
-msgstr ""
+msgstr "鋨"
 
 #: ../data/elements.xml.in.h:77
 msgid "Iridium"
-msgstr ""
+msgstr "銥"
 
 #: ../data/elements.xml.in.h:78
 msgid "Platinum"
-msgstr ""
+msgstr "鉑"
 
 #: ../data/elements.xml.in.h:79
 msgid "Gold"
-msgstr ""
+msgstr "金"
 
 #. Chemical element
 #: ../data/elements.xml.in.h:81
-#, fuzzy
 msgid "!elements!Mercury"
-msgstr "元素"
+msgstr "汞"
 
 #: ../data/elements.xml.in.h:82
 msgid "Thallium"
-msgstr ""
+msgstr "鉈"
 
 #: ../data/elements.xml.in.h:83
 msgid "Lead"
-msgstr ""
+msgstr "鉛"
 
 #: ../data/elements.xml.in.h:84
 msgid "Bismuth"
-msgstr ""
+msgstr "鉍"
 
 #: ../data/elements.xml.in.h:85
 msgid "Polonium"
-msgstr ""
+msgstr "釙"
 
 #: ../data/elements.xml.in.h:86
 msgid "Astatine"
-msgstr ""
+msgstr "砈"
 
 #: ../data/elements.xml.in.h:87
 msgid "Radon"
-msgstr ""
+msgstr "氡"
 
 #: ../data/elements.xml.in.h:88
 msgid "Francium"
-msgstr ""
+msgstr "鍅"
 
 #: ../data/elements.xml.in.h:89
 msgid "Radium"
-msgstr ""
+msgstr "鐳"
 
 #: ../data/elements.xml.in.h:90
 msgid "Actinium"
-msgstr ""
+msgstr "錒"
 
 #: ../data/elements.xml.in.h:91
 msgid "Thorium"
-msgstr ""
+msgstr "釷"
 
 #: ../data/elements.xml.in.h:92
 msgid "Protactinium"
-msgstr ""
+msgstr "鏷"
 
 #: ../data/elements.xml.in.h:93
 msgid "Uranium"
-msgstr ""
+msgstr "鈾"
 
 #: ../data/elements.xml.in.h:94
 msgid "Neptunium"
-msgstr ""
+msgstr "錼"
 
 #: ../data/elements.xml.in.h:95
 msgid "Plutonium"
-msgstr ""
+msgstr "鈽"
 
 #: ../data/elements.xml.in.h:96
 msgid "Americium"
-msgstr ""
+msgstr "鋂"
 
 #: ../data/elements.xml.in.h:97
 msgid "Curium"
-msgstr ""
+msgstr "鋦"
 
 #: ../data/elements.xml.in.h:98
 msgid "Berkelium"
-msgstr ""
+msgstr "鉳"
 
 #: ../data/elements.xml.in.h:99
 msgid "Californium"
-msgstr ""
+msgstr "鉲"
 
 #: ../data/elements.xml.in.h:100
 msgid "Einsteinium"
-msgstr ""
+msgstr "鑀"
 
 #: ../data/elements.xml.in.h:101
 msgid "Fermium"
-msgstr ""
+msgstr "鐨"
 
 #: ../data/elements.xml.in.h:102
 msgid "Mendelevium"
-msgstr ""
+msgstr "鍆"
 
 #: ../data/elements.xml.in.h:103
 msgid "Nobelium"
-msgstr ""
+msgstr "鍩"
 
 #: ../data/elements.xml.in.h:104
 msgid "Lawrencium"
-msgstr ""
+msgstr "鐒"
 
 #: ../data/elements.xml.in.h:105
 msgid "Rutherfordium"
-msgstr ""
+msgstr "鑪"
 
 #: ../data/elements.xml.in.h:106
 msgid "Dubnium"
-msgstr ""
+msgstr "𨧀"
 
 #: ../data/elements.xml.in.h:107
 msgid "Seaborgium"
-msgstr ""
+msgstr "𨭎"
 
 #: ../data/elements.xml.in.h:108
 msgid "Bohrium"
-msgstr ""
+msgstr "𨨏"
 
 #: ../data/elements.xml.in.h:109
 msgid "Hassium"
-msgstr ""
+msgstr "𨭆"
 
 #: ../data/elements.xml.in.h:110
 msgid "Meitnerium"
-msgstr ""
+msgstr "䥑"
 
 #: ../data/elements.xml.in.h:111
 msgid "Darmstadtium"
-msgstr ""
+msgstr "鐽"
 
 #: ../data/elements.xml.in.h:112
 msgid "Roentgenium"
-msgstr ""
+msgstr "錀"
 
 #: ../data/elements.xml.in.h:113
 msgid "Copernicium"
-msgstr ""
+msgstr "鎶"
 
 #: ../data/elements.xml.in.h:114
 msgid "Nihonium"
-msgstr ""
+msgstr "鉨"
 
 #: ../data/elements.xml.in.h:115
 msgid "Flerovium"
-msgstr ""
+msgstr "鈇"
 
 #: ../data/elements.xml.in.h:116
 msgid "Moscovium"
-msgstr ""
+msgstr "鏌"
 
 #: ../data/elements.xml.in.h:117
 msgid "Livermorium"
-msgstr ""
+msgstr "鉝"
 
 #: ../data/elements.xml.in.h:118
 msgid "Tennessine"
-msgstr ""
+msgstr "鿬"
 
 #: ../data/elements.xml.in.h:119
 msgid "Oganesson"
-msgstr ""
+msgstr "鿫"
 
 #: ../data/functions.xml.in.h:1 ../data/variables.xml.in.h:214
-#, fuzzy
 msgid "Matrices &amp; Vectors"
-msgstr "向量"
+msgstr "矩陣&amp;向量"
 
 #: ../data/functions.xml.in.h:2
-#, fuzzy
 msgid "Construct Vector"
-msgstr "一個向量具有"
+msgstr "建構向量"
 
 #: ../data/functions.xml.in.h:3
-#, fuzzy
 msgid "r:vector"
-msgstr "一個向量"
+msgstr "r:vector"
 
 #: ../data/functions.xml.in.h:4
 msgid "Returns a vector with listed elements."
-msgstr ""
+msgstr "回傳具有列出元素的向量。"
 
 #. Vector/matrix elements
 #: ../data/functions.xml.in.h:6
-#, fuzzy
 msgid "Elements"
 msgstr "元素"
 
 #: ../data/functions.xml.in.h:7
-#, fuzzy
 msgid "Generate Vector"
-msgstr "產生向量函數中要求的元素數量必須是一個正整數。"
+msgstr "產生向量"
 
 #: ../data/functions.xml.in.h:8
 msgid "r:genvector"
-msgstr ""
+msgstr "r:genvector"
 
 #: ../data/functions.xml.in.h:9
 msgid ""
@@ -2828,34 +2799,28 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:10
-#, fuzzy
 msgid "Function"
 msgstr "函數"
 
 #: ../data/functions.xml.in.h:11
-#, fuzzy
 msgid "Min"
 msgstr "最小值"
 
 #: ../data/functions.xml.in.h:12
-#, fuzzy
 msgid "Max"
 msgstr "最大值"
 
 #: ../data/functions.xml.in.h:13
-#, fuzzy
 msgid "Dimension / Step size"
-msgstr "步長"
+msgstr "大小/步長"
 
 #: ../data/functions.xml.in.h:14
-#, fuzzy
 msgid "Variable"
 msgstr "變數"
 
 #: ../data/functions.xml.in.h:15
-#, fuzzy
 msgid "Use step size"
-msgstr "步長"
+msgstr "使用步長"
 
 #: ../data/functions.xml.in.h:16
 msgid "Colon Function (number sequence vector)"
@@ -2870,52 +2835,44 @@ msgid "Returns a sequence of numbers as a vector."
 msgstr ""
 
 #: ../data/functions.xml.in.h:19
-#, fuzzy
 msgid "Starting value"
-msgstr "值"
+msgstr "起始值"
 
 #: ../data/functions.xml.in.h:20
-#, fuzzy
 msgid "Increment or Ending value"
-msgstr "顯示結尾零"
+msgstr "增量或結尾值"
 
 #: ../data/functions.xml.in.h:21
-#, fuzzy
 msgid "Ending value"
-msgstr "顯示結尾零"
+msgstr "結尾值"
 
 #: ../data/functions.xml.in.h:22
-#, fuzzy
 msgid "Sort"
-msgstr "減號排最後"
+msgstr "排序"
 
 #: ../data/functions.xml.in.h:23
-#, fuzzy
 msgid "r:sort"
-msgstr "減號排最後"
+msgstr "r:sort"
 
 #: ../data/functions.xml.in.h:24
-#, fuzzy
 msgid "Returns a sorted vector."
-msgstr "一個向量具有"
+msgstr "回傳一個已排序向量。"
 
 #: ../data/functions.xml.in.h:25
-#, fuzzy
 msgid "Vector"
 msgstr "向量"
 
 #: ../data/functions.xml.in.h:26
 msgid "Ascending"
-msgstr ""
+msgstr "升序"
 
 #: ../data/functions.xml.in.h:27
-#, fuzzy
 msgid "Rank"
-msgstr "嘗試排名向量時在元素%s有不可解的比較。"
+msgstr "排名"
 
 #: ../data/functions.xml.in.h:28
 msgid "r:rank"
-msgstr ""
+msgstr "r:rank"
 
 #: ../data/functions.xml.in.h:29
 msgid ""
@@ -2938,77 +2895,68 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:33
-#, fuzzy
 msgid "Matrix/vector"
-msgstr "接受此矩陣/向量的建立/修改"
+msgstr "矩陣/向量"
 
 #: ../data/functions.xml.in.h:34
 msgid "Dimension"
-msgstr ""
+msgstr "大小"
 
 #: ../data/functions.xml.in.h:35
-#, fuzzy
 msgid "Vector Limits"
-msgstr "一個向量具有"
+msgstr "向量界限"
 
 #: ../data/functions.xml.in.h:36
 msgid "r:limits"
-msgstr ""
+msgstr "r:limits"
 
 #: ../data/functions.xml.in.h:37
 msgid "Returns a part of a vector between two positions."
-msgstr ""
+msgstr "回傳兩個位置之間的一部分向量。"
 
 #: ../data/functions.xml.in.h:38
-#, fuzzy
 msgid "Lower limit"
-msgstr "下端點"
+msgstr "下界限"
 
 #: ../data/functions.xml.in.h:39
-#, fuzzy
 msgid "Upper limit"
-msgstr "上端點"
+msgstr "上界限"
 
 #: ../data/functions.xml.in.h:40
 msgid "r:dimension"
-msgstr ""
+msgstr "r:dimension"
 
 #: ../data/functions.xml.in.h:41
 msgid "Returns the number of elements in a vector."
 msgstr ""
 
 #: ../data/functions.xml.in.h:42
-#, fuzzy
 msgid "Merge Vectors"
-msgstr "向量"
+msgstr "合併向量"
 
 #: ../data/functions.xml.in.h:43
 msgid "r:mergevectors"
-msgstr ""
+msgstr "r:mergevectors"
 
 #: ../data/functions.xml.in.h:44
 msgid "Returns a vector with the elements from two vectors."
 msgstr ""
 
 #: ../data/functions.xml.in.h:45
-#, fuzzy
 msgid "Vector 1"
-msgstr "一個向量"
+msgstr "向量1"
 
 #: ../data/functions.xml.in.h:46
-#, fuzzy
 msgid "Vector 2"
-msgstr "一個向量"
+msgstr "向量2"
 
 #: ../data/functions.xml.in.h:47
-#, fuzzy
 msgid "Construct Matrix"
-msgstr "(非矩陣)"
+msgstr "建構矩陣"
 
 #: ../data/functions.xml.in.h:48
-#, fuzzy
 msgid "r:matrix"
-msgstr "一個矩陣"
+msgstr "r:matrix"
 
 #: ../data/functions.xml.in.h:49
 msgid ""
@@ -3017,157 +2965,132 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:50
-#, fuzzy
 msgid "Rows"
 msgstr "列"
 
 #: ../data/functions.xml.in.h:51
-#, fuzzy
 msgid "Columns"
-msgstr "檔案中用來分隔欄的定界符"
+msgstr "欄"
 
 #: ../data/functions.xml.in.h:52
-#, fuzzy
 msgid "Convert Matrix to Vector"
-msgstr "如果這是一個矩陣或向量"
+msgstr "矩陣轉換為向量"
 
 #: ../data/functions.xml.in.h:53
 msgid "r:matrix2vector"
-msgstr ""
+msgstr "r:matrix2vector"
 
 #: ../data/functions.xml.in.h:54
 msgid "Puts each element of a matrix in vertical order in a vector."
 msgstr ""
 
 #: ../data/functions.xml.in.h:55
-#, fuzzy
 msgid "Matrix"
 msgstr "矩陣"
 
 #: ../data/functions.xml.in.h:56
-#, fuzzy
 msgid "Matrix Area"
-msgstr "(非矩陣)"
+msgstr "矩陣區域"
 
 #. Matrix area
 #: ../data/functions.xml.in.h:58
 msgid "r:area"
-msgstr ""
+msgstr "r:area"
 
 #: ../data/functions.xml.in.h:59
-#, fuzzy
 msgid "Returns a part of a matrix."
-msgstr "矩陣"
+msgstr "回傳一部分矩陣。"
 
 #: ../data/functions.xml.in.h:60
-#, fuzzy
 msgid "Start row"
-msgstr "第一列"
+msgstr "起始列"
 
 #: ../data/functions.xml.in.h:61
-#, fuzzy
 msgid "Start column"
-msgstr "行"
+msgstr "起始行"
 
 #: ../data/functions.xml.in.h:62
-#, fuzzy
 msgid "End row"
-msgstr "第一列"
+msgstr "結尾列"
 
 #: ../data/functions.xml.in.h:63
-#, fuzzy
 msgid "End column"
-msgstr "行"
+msgstr "結尾行"
 
 #: ../data/functions.xml.in.h:64
-#, fuzzy
 msgid "r:rows"
-msgstr "列"
+msgstr "r:rows"
 
 #: ../data/functions.xml.in.h:65
-#, fuzzy
 msgid "Returns the number of rows in a matrix."
-msgstr "此矩陣的列數(顯示向量的列數)"
+msgstr "回傳矩陣中的列數。"
 
 #: ../data/functions.xml.in.h:66
 msgid "r:columns"
-msgstr ""
+msgstr "r:columns"
 
 #: ../data/functions.xml.in.h:67
-#, fuzzy
 msgid "Returns the number of columns in a matrix."
-msgstr "此矩陣的行數(顯示向量的行數)"
+msgstr "回傳矩陣中的行數。"
 
 #: ../data/functions.xml.in.h:68
-#, fuzzy
 msgid "Extract Row as Vector"
-msgstr "向量"
+msgstr "列抽取為向量"
 
 #: ../data/functions.xml.in.h:69
-#, fuzzy
 msgid "r:row"
-msgstr "第一列"
+msgstr "r:row"
 
 #: ../data/functions.xml.in.h:70
-#, fuzzy
 msgid "Returns a row in a matrix as a vector."
-msgstr "矩陣中列%s不存在。"
+msgstr "回傳矩陣中的列作為向量。"
 
 #: ../data/functions.xml.in.h:71
-#, fuzzy
 msgid "Row"
-msgstr "矩陣中列%s不存在。"
+msgstr "列"
 
 #: ../data/functions.xml.in.h:72
-#, fuzzy
 msgid "Extract Column as Vector"
-msgstr "行"
+msgstr "行抽取為向量"
 
 #: ../data/functions.xml.in.h:73
-#, fuzzy
 msgid "r:column"
-msgstr "行"
+msgstr "r:column"
 
 #: ../data/functions.xml.in.h:74
-#, fuzzy
 msgid "Returns a column in a matrix as a vector."
-msgstr "矩陣中行%s不存在。"
+msgstr "回傳矩陣中的行作為向量。"
 
 #: ../data/functions.xml.in.h:75
-#, fuzzy
 msgid "Column"
 msgstr "行"
 
 #: ../data/functions.xml.in.h:76
-#, fuzzy
 msgid "r:elements"
-msgstr "元素"
+msgstr "r:elements"
 
 #: ../data/functions.xml.in.h:77
 msgid "Returns the number of elements in a matrix or vector."
-msgstr ""
+msgstr "回傳矩陣或向量中的元素數量。"
 
 #. Vector/matrix element
 #: ../data/functions.xml.in.h:79
-#, fuzzy
 msgid "Element"
-msgstr "元素資料"
+msgstr "元素"
 
 #: ../data/functions.xml.in.h:80
-#, fuzzy
 msgid "r:element"
-msgstr "元素資料"
+msgstr "r:element"
 
 #: ../data/functions.xml.in.h:81
 msgid ""
 "Returns the element at specified position in a matrix (row and column) or "
 "vector (index)."
-msgstr ""
+msgstr "回傳矩陣(列和行)或向量(索引)中指定位置的元素。"
 
 #: ../data/functions.xml.in.h:82
-#, fuzzy
 msgid "Row/index"
-msgstr "索引"
+msgstr "列/索引"
 
 #: ../data/functions.xml.in.h:83
 msgid "Transpose"
@@ -3178,9 +3101,8 @@ msgid "r:transpose"
 msgstr ""
 
 #: ../data/functions.xml.in.h:85
-#, fuzzy
 msgid "Returns the transpose of a matrix."
-msgstr "(非矩陣)"
+msgstr "回傳矩陣的轉置。"
 
 #: ../data/functions.xml.in.h:86
 msgid "Identity"
@@ -3201,27 +3123,24 @@ msgid "Matrix or rows/columns"
 msgstr ""
 
 #: ../data/functions.xml.in.h:90
-#, fuzzy
 msgid "Determinant"
-msgstr "只能對正方形矩陣計算行列式。"
+msgstr "行列式"
 
 #: ../data/functions.xml.in.h:91
 msgid "r:det"
-msgstr ""
+msgstr "r:det"
 
 #: ../data/functions.xml.in.h:92
-#, fuzzy
 msgid "Calculates the determinant of a matrix."
-msgstr "(非矩陣)"
+msgstr "計算矩陣的行列式。"
 
 #: ../data/functions.xml.in.h:93
-#, fuzzy
 msgid "Permanent"
-msgstr "只能對正方形矩陣計算積和式。"
+msgstr "積和式"
 
 #: ../data/functions.xml.in.h:94
 msgid "r:permanent"
-msgstr ""
+msgstr "r:permanent"
 
 #: ../data/functions.xml.in.h:95
 msgid ""
@@ -3255,13 +3174,12 @@ msgid "Calculates the cofactor of the element at specified position."
 msgstr ""
 
 #: ../data/functions.xml.in.h:102
-#, fuzzy
 msgid "Matrix Inverse"
-msgstr "奇異矩陣的倒數。"
+msgstr "逆矩陣"
 
 #: ../data/functions.xml.in.h:103
 msgid "r:inv,r:inverse"
-msgstr ""
+msgstr "r:inv,r:inverse"
 
 #: ../data/functions.xml.in.h:104
 msgid ""
@@ -3270,14 +3188,12 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:105
-#, fuzzy
 msgid "Load CSV File"
-msgstr "匯出CSV檔"
+msgstr "載入CSV檔"
 
 #: ../data/functions.xml.in.h:106
-#, fuzzy
 msgid "r:load"
-msgstr "載入後設模式"
+msgstr "r:load"
 
 #: ../data/functions.xml.in.h:107
 msgid "Returns a matrix imported from a CSV data file."
@@ -3285,28 +3201,24 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:108
 msgid "Filename"
-msgstr ""
+msgstr "檔名"
 
 #: ../data/functions.xml.in.h:109
-#, fuzzy
 msgid "First data row"
-msgstr "第一列"
+msgstr "第一個資料列"
 
 #. Delimiter
 #: ../data/functions.xml.in.h:111
-#, fuzzy
 msgid "Separator"
-msgstr "決定預設的小數分隔符。"
+msgstr "分隔符"
 
 #: ../data/functions.xml.in.h:112
-#, fuzzy
 msgid "Export To CSV File"
-msgstr "匯出CSV檔…"
+msgstr "匯出到CSV檔"
 
 #: ../data/functions.xml.in.h:113
-#, fuzzy
 msgid "r:export"
-msgstr "匯出CSV檔"
+msgstr "r:export"
 
 #: ../data/functions.xml.in.h:114
 msgid "Exports a matrix to a CSV data file."
@@ -3327,18 +3239,16 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:118
-#, fuzzy
 msgid "Value"
 msgstr "值"
 
 #: ../data/functions.xml.in.h:119
-#, fuzzy
 msgid "Matrix Rank"
-msgstr "(非矩陣)"
+msgstr "矩陣的秩"
 
 #: ../data/functions.xml.in.h:120
 msgid "ra:rk"
-msgstr ""
+msgstr "ra:rk"
 
 #: ../data/functions.xml.in.h:121
 msgid "Reduced Row Echelon Form"
@@ -3353,27 +3263,24 @@ msgid "Concatenate Horizontally"
 msgstr ""
 
 #: ../data/functions.xml.in.h:124
-#, fuzzy
 msgid "Matrix 1"
-msgstr "一個矩陣"
+msgstr "矩陣1"
 
 #: ../data/functions.xml.in.h:125
-#, fuzzy
 msgid "Matrix 2"
-msgstr "一個矩陣"
+msgstr "矩陣2"
 
 #: ../data/functions.xml.in.h:126
 msgid "Concatenate Vertically"
 msgstr ""
 
 #: ../data/functions.xml.in.h:127
-#, fuzzy
 msgid "Entrywise Function"
-msgstr "函數(_F)"
+msgstr "逐項函數"
 
 #: ../data/functions.xml.in.h:128
 msgid "r:entrywise"
-msgstr ""
+msgstr "r:entrywise"
 
 #: ../data/functions.xml.in.h:129
 msgid ""
@@ -3385,96 +3292,82 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:130
-#, fuzzy
 msgid "Matrices/vectors and variables"
-msgstr "向量"
+msgstr "矩陣/向量和變數"
 
 #: ../data/functions.xml.in.h:131
 msgid "Norm (length)"
-msgstr ""
+msgstr "範數(長度)"
 
 #: ../data/functions.xml.in.h:132
 msgid "r:norm"
-msgstr ""
+msgstr "r:norm"
 
 #: ../data/functions.xml.in.h:133
 msgid "Calculates the norm/length of a vector."
 msgstr ""
 
 #: ../data/functions.xml.in.h:134
-#, fuzzy
 msgid "Exponent (p)"
-msgstr "指數"
+msgstr "指數(p)"
 
 #: ../data/functions.xml.in.h:135
-#, fuzzy
 msgid "Dot Product"
-msgstr "忽略點"
+msgstr "內積"
 
 #: ../data/functions.xml.in.h:136
-#, fuzzy
 msgid "r:dot"
-msgstr "點作為千位分隔符"
+msgstr "r:dot"
 
 #: ../data/functions.xml.in.h:137
 msgid "Calculates the dot product of two vectors."
-msgstr ""
+msgstr "計算兩個向量的內積。"
 
 #: ../data/functions.xml.in.h:138
-#, fuzzy
 msgid "Element-wise Multiplication"
-msgstr "目前元素:"
+msgstr "逐項乘法"
 
 #: ../data/functions.xml.in.h:139
 msgid "r:multiply,times,hadamard"
-msgstr ""
+msgstr "r:multiply,times,hadamard"
 
 #: ../data/functions.xml.in.h:140
-#, fuzzy
 msgid "Factor 1"
-msgstr "factor"
+msgstr "因數1"
 
 #: ../data/functions.xml.in.h:141
-#, fuzzy
 msgid "Factor 2"
-msgstr "factor"
+msgstr "因數2"
 
 #: ../data/functions.xml.in.h:142
 msgid "Element-wise Right Division"
 msgstr ""
 
 #: ../data/functions.xml.in.h:143
-#, fuzzy
 msgid "r:divide,rdivide"
-msgstr "除"
+msgstr "r:divide,rdivide"
 
 #: ../data/functions.xml.in.h:144
-#, fuzzy
 msgid "Numerator"
-msgstr ""
-"決定如何顯示有理數(例如5/4 = 1 + 1/4 = 1.25)。“長”移除分子和分母大小的限制。"
+msgstr "分子"
 
 #: ../data/functions.xml.in.h:145
-#, fuzzy
 msgid "Denominator"
-msgstr "啟用分母前綴"
+msgstr "分母"
 
 #: ../data/functions.xml.in.h:146
-#, fuzzy
 msgid "Element-wise Power"
-msgstr "目前元素:"
+msgstr "逐項冪"
 
 #: ../data/functions.xml.in.h:147
 msgid "r:pow,r:raise,power"
-msgstr ""
+msgstr "r:pow,r:raise,power"
 
 #: ../data/functions.xml.in.h:148
-#, fuzzy
 msgid "Base"
-msgstr "base"
+msgstr "底數"
 
 #: ../data/functions.xml.in.h:149
-#, fuzzy
 msgid "Exponent"
 msgstr "指數"
 
@@ -3504,9 +3397,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:156
-#, fuzzy
 msgid "Vector 3"
-msgstr "一個向量"
+msgstr "向量3"
 
 #: ../data/functions.xml.in.h:157
 msgid "Kronecker Product"
@@ -3536,13 +3428,12 @@ msgid "r:factorial"
 msgstr ""
 
 #: ../data/functions.xml.in.h:163
-#, fuzzy
 msgid "Double Factorial"
-msgstr "64位元(雙精度)"
+msgstr "雙階乘"
 
 #: ../data/functions.xml.in.h:164
 msgid "r:factorial2"
-msgstr ""
+msgstr "r:factorial2"
 
 #: ../data/functions.xml.in.h:165
 msgid ""
@@ -3622,25 +3513,20 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:180
-#, fuzzy
 msgid "Objects"
 msgstr "物件"
 
 #: ../data/functions.xml.in.h:181
-#, fuzzy
 msgid "Size"
-msgstr "向量大小不匹配"
+msgstr "大小"
 
 #: ../data/functions.xml.in.h:182
-#, fuzzy
 msgid "Combinations"
-msgstr ""
-"因為時間限制，在分解期間只嘗試了有限數量的項目組合。重複分解以嘗試其他隨機組"
-"合。"
+msgstr "組合"
 
 #: ../data/functions.xml.in.h:183
 msgid "r:comb"
-msgstr ""
+msgstr "r:comb"
 
 #: ../data/functions.xml.in.h:184
 msgid ""
@@ -3667,60 +3553,49 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:188
-#, fuzzy
 msgid "Number of elements"
-msgstr "產生向量函數中要求的元素數量必須是一個正整數。"
+msgstr "元素數量"
 
 #: ../data/functions.xml.in.h:189
-#, fuzzy
 msgid "Number Theory"
-msgstr "一個數字"
+msgstr "數論"
 
 #: ../data/functions.xml.in.h:190
-#, fuzzy
 msgid "Absolute Value"
-msgstr "絕對"
+msgstr "絕對值"
 
 #: ../data/functions.xml.in.h:191
 msgid "r:abs"
-msgstr ""
+msgstr "r:abs"
 
 #: ../data/functions.xml.in.h:192
-#, fuzzy
 msgid "Arithmetic"
-msgstr "計算;算術;科學;金融;"
+msgstr "算術"
 
 #: ../data/functions.xml.in.h:193
 msgid "Signum"
-msgstr ""
+msgstr "符號函數"
 
 #: ../data/functions.xml.in.h:194
 msgid "r:sgn"
-msgstr ""
+msgstr "r:sgn"
 
 #. A numerical value
 #: ../data/functions.xml.in.h:196
-#, fuzzy
 msgid "Number"
 msgstr "數字"
 
 #: ../data/functions.xml.in.h:197
-#, fuzzy
 msgid "Value for zero"
-msgstr ""
-"其他參數指定各種繪圖選項。輸入選項的名稱和期望的值，用空白分隔或作為個別的參"
-"數。對於大多數選項，可以省略該值以啟用預設的作用值。對於具有命名值的選項，可"
-"以省略選項名稱(否則可以用整數替換該值，表示該值的索引從零開始)。如果指定的第"
-"一個選項是數字值，則將此解釋為採樣率(對於整數>10)或步長值。"
+msgstr "零處的值"
 
 #: ../data/functions.xml.in.h:198
 msgid "r:numerator"
-msgstr ""
+msgstr "r:numerator"
 
 #: ../data/functions.xml.in.h:199
-#, fuzzy
 msgid "r:denominator"
-msgstr "啟用分母前綴"
+msgstr "r:denominator"
 
 #: ../data/functions.xml.in.h:200
 msgid "Remainder"
@@ -3735,9 +3610,8 @@ msgid "Modulus"
 msgstr ""
 
 #: ../data/functions.xml.in.h:203
-#, fuzzy
 msgid "r:mod"
-msgstr "mod"
+msgstr "r:mod"
 
 #: ../data/functions.xml.in.h:204
 msgid "Modular Exponentiation"
@@ -3755,73 +3629,64 @@ msgid "r:powmod,power_mod"
 msgstr ""
 
 #: ../data/functions.xml.in.h:207
-#, fuzzy
 msgid "Parallel Sum"
-msgstr "sum"
+msgstr "平行總和"
 
 #: ../data/functions.xml.in.h:208
 msgid "r:parallel"
-msgstr ""
+msgstr "r:parallel"
 
 #: ../data/functions.xml.in.h:209
-#, fuzzy
 msgid "Integer Division"
-msgstr "一個整數"
+msgstr "整數除法"
 
 #: ../data/functions.xml.in.h:210
 msgid "r:div"
-msgstr ""
+msgstr "r:div"
 
 #: ../data/functions.xml.in.h:211
-#, fuzzy
 msgid "Negate"
 msgstr "反相"
 
 #: ../data/functions.xml.in.h:212
 msgid "r:neg"
-msgstr ""
+msgstr "r:neg"
 
 #: ../data/functions.xml.in.h:213
-#, fuzzy
 msgid "Subtract"
 msgstr "減"
 
 #: ../data/functions.xml.in.h:214
-#, fuzzy
 msgid "r:subtract"
-msgstr "減"
+msgstr "r:subtract"
 
 #: ../data/functions.xml.in.h:215
-#, fuzzy
 msgid "Terms"
-msgstr ""
-"因為時間限制，在分解期間只嘗試了有限數量的項目組合。重複分解以嘗試其他隨機組"
-"合。"
+msgstr "項目"
 
 #: ../data/functions.xml.in.h:216
 msgid "Polynomials"
-msgstr ""
+msgstr "多項式"
 
 #: ../data/functions.xml.in.h:217
 msgid "Coefficient"
-msgstr ""
+msgstr "係數"
 
 #: ../data/functions.xml.in.h:218
 msgid "r:coeff"
-msgstr ""
+msgstr "r:coeff"
 
 #: ../data/functions.xml.in.h:219
-#, fuzzy
 msgid "Polynomial"
-msgstr "那是有理的(多項式)"
+msgstr "多項式"
 
 #: ../data/functions.xml.in.h:220
 msgid "Leading Coefficient"
-msgstr ""
+msgstr "領導係數"
 
 #: ../data/functions.xml.in.h:221
 msgid "r:lcoeff"
-msgstr ""
+msgstr "r:lcoeff"
 
 #: ../data/functions.xml.in.h:222
 msgid "Trailing Coefficient"
@@ -3832,13 +3697,12 @@ msgid "r:tcoeff"
 msgstr ""
 
 #: ../data/functions.xml.in.h:224
-#, fuzzy
 msgid "Polynomial Degree"
-msgstr "那是有理的(多項式)"
+msgstr "多項式次數"
 
 #: ../data/functions.xml.in.h:225
 msgid "r:degree"
-msgstr ""
+msgstr "r:degree"
 
 #: ../data/functions.xml.in.h:226
 msgid "Lowest Degree (Valuation)"
@@ -3849,55 +3713,48 @@ msgid "r:ldegree"
 msgstr ""
 
 #: ../data/functions.xml.in.h:228
-#, fuzzy
 msgid "Content Part"
-msgstr "虛部"
+msgstr ""
 
 #: ../data/functions.xml.in.h:229
 msgid "r:pcontent"
 msgstr ""
 
 #: ../data/functions.xml.in.h:230
-#, fuzzy
 msgid "Primitive Part"
-msgstr "虛部"
+msgstr ""
 
 #: ../data/functions.xml.in.h:231
 msgid "r:primpart"
 msgstr ""
 
 #: ../data/functions.xml.in.h:232
-#, fuzzy
 msgid "Unit Part"
-msgstr "虛部"
+msgstr ""
 
 #: ../data/functions.xml.in.h:233
 msgid "r:punit"
 msgstr ""
 
 #: ../data/functions.xml.in.h:234
-#, fuzzy
 msgid "Prime Numbers"
-msgstr "複數"
+msgstr "質數"
 
 #: ../data/functions.xml.in.h:235
-#, fuzzy
 msgid "Nth Prime Number"
-msgstr "該值可能是質數，但不確定。"
+msgstr "第n個質數"
 
 #: ../data/functions.xml.in.h:236
 msgid "r:nthprime"
-msgstr ""
+msgstr "r:nthprime"
 
 #: ../data/functions.xml.in.h:237
-#, fuzzy
 msgid "Index (n)"
-msgstr "索引"
+msgstr "索引(n)"
 
 #: ../data/functions.xml.in.h:238
-#, fuzzy
 msgid "Prime Counting Function"
-msgstr "函數"
+msgstr "質數計數函數"
 
 #: ../data/functions.xml.in.h:239
 msgid ""
@@ -3910,9 +3767,8 @@ msgid "r:primePi,ou:prime&#x3C0;,o:prime_pi"
 msgstr ""
 
 #: ../data/functions.xml.in.h:241
-#, fuzzy
 msgid "Next Prime Number"
-msgstr "該值可能是質數，但不確定。"
+msgstr "下一個質數"
 
 #: ../data/functions.xml.in.h:242
 msgid ""
@@ -3921,12 +3777,11 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:243
 msgid "r:nextprime"
-msgstr ""
+msgstr "r:nextprime"
 
 #: ../data/functions.xml.in.h:244
-#, fuzzy
 msgid "Previous Prime Number"
-msgstr "該值可能是質數，但不確定。"
+msgstr "上一個質數"
 
 #: ../data/functions.xml.in.h:245
 msgid ""
@@ -3936,16 +3791,15 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:246
 msgid "r:prevprime"
-msgstr ""
+msgstr "r:prevprime"
 
 #: ../data/functions.xml.in.h:247
-#, fuzzy
 msgid "Is Prime Number"
-msgstr "回傳值可能是質數，但不完全確定。"
+msgstr "是質數"
 
 #: ../data/functions.xml.in.h:248
 msgid "r:isprime"
-msgstr ""
+msgstr "r:isprime"
 
 #: ../data/functions.xml.in.h:249
 msgid "Prime Numbers Less Than or Equal"
@@ -3970,28 +3824,24 @@ msgid "rc:gcd,c:GCD"
 msgstr ""
 
 #: ../data/functions.xml.in.h:254
-#, fuzzy
 msgid "Value 1"
 msgstr "值1"
 
 #: ../data/functions.xml.in.h:255
-#, fuzzy
 msgid "Value 2"
 msgstr "值2"
 
 #: ../data/functions.xml.in.h:256
-#, fuzzy
 msgid "Value 3"
-msgstr "答案3"
+msgstr "值3"
 
 #: ../data/functions.xml.in.h:257
-#, fuzzy
 msgid "Least Common Multiple"
-msgstr "%s至少需要一個參數。"
+msgstr "最小公倍數"
 
 #: ../data/functions.xml.in.h:258
 msgid "r:lcm"
-msgstr ""
+msgstr "r:lcm"
 
 #: ../data/functions.xml.in.h:259
 msgid "Divisors"
@@ -4002,14 +3852,12 @@ msgid "r:divisors"
 msgstr ""
 
 #: ../data/functions.xml.in.h:261
-#, fuzzy
 msgid "Factors"
 msgstr "因子"
 
 #: ../data/functions.xml.in.h:262
-#, fuzzy
 msgid "r:factor"
-msgstr "factor"
+msgstr "r:factor"
 
 #: ../data/functions.xml.in.h:263
 msgid ""
@@ -4021,14 +3869,12 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:264
-#, fuzzy
 msgid "Mode"
 msgstr "模式"
 
 #: ../data/functions.xml.in.h:265
-#, fuzzy
 msgid "Bernoulli Number/Polynomial"
-msgstr "那是有理的(多項式)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:266
 msgid ""
@@ -4041,9 +3887,8 @@ msgid "r:bernoulli"
 msgstr ""
 
 #: ../data/functions.xml.in.h:268
-#, fuzzy
 msgid "Euler's Totient Function"
-msgstr "函數(_F)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:269
 msgid ""
@@ -4056,16 +3901,12 @@ msgid "r:totient,au:&#x3C6;,phi"
 msgstr ""
 
 #: ../data/functions.xml.in.h:271
-#, fuzzy
 msgid "n"
 msgstr ""
-"包含最近計算的結果。方程式的多個結果表示為向量。使用ans(n)存取個別的解答(例如"
-"ans(1)代表第一個解答)。"
 
 #: ../data/functions.xml.in.h:272
-#, fuzzy
 msgid "Fibonacci Number"
-msgstr "一個數字"
+msgstr ""
 
 #: ../data/functions.xml.in.h:273
 msgid "r:fibonacci"
@@ -4088,19 +3929,16 @@ msgid "Returns all multiples of a value in the specified range."
 msgstr ""
 
 #: ../data/functions.xml.in.h:278
-#, fuzzy
 msgid "Rounding"
 msgstr "捨入"
 
 #: ../data/functions.xml.in.h:279
-#, fuzzy
 msgid "Round"
-msgstr "四捨六入五成雙"
+msgstr "捨入"
 
 #: ../data/functions.xml.in.h:280
-#, fuzzy
 msgid "r:round"
-msgstr "上取"
+msgstr "r:round"
 
 #: ../data/functions.xml.in.h:281
 msgid ""
@@ -4114,35 +3952,30 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:282
-#, fuzzy
 msgid "Number of decimals"
-msgstr "顯示(以及捨入)小數的最大數量"
+msgstr ""
 
 #: ../data/functions.xml.in.h:283
-#, fuzzy
 msgid "Rounding method"
-msgstr "捨入"
+msgstr "捨入方法"
 
 #: ../data/functions.xml.in.h:284
-#, fuzzy
 msgid "Round Downwards"
-msgstr "捨入為偶數"
+msgstr "下取整"
 
 #: ../data/functions.xml.in.h:285
 msgid "r:floor"
-msgstr ""
+msgstr "r:floor"
 
 #: ../data/functions.xml.in.h:286
-#, fuzzy
 msgid "Round Upwards"
-msgstr "捨入為偶數"
+msgstr "上取整"
 
 #: ../data/functions.xml.in.h:287
 msgid "r:ceil"
-msgstr ""
+msgstr "r:ceil"
 
 #: ../data/functions.xml.in.h:288
-#, fuzzy
 msgid "Round Towards Zero"
 msgstr "無條件捨去"
 
@@ -4151,27 +3984,24 @@ msgid "r:trunc"
 msgstr ""
 
 #: ../data/functions.xml.in.h:290
-#, fuzzy
 msgid "Integer Part"
-msgstr "一個整數"
+msgstr "整數部分"
 
 #: ../data/functions.xml.in.h:291
 msgid "r:int"
 msgstr ""
 
 #: ../data/functions.xml.in.h:292
-#, fuzzy
 msgid "Fractional Part"
-msgstr "虛部"
+msgstr ""
 
 #: ../data/functions.xml.in.h:293
 msgid "r:frac"
 msgstr ""
 
 #: ../data/functions.xml.in.h:294
-#, fuzzy
 msgid "Integer Digits"
-msgstr "位數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:295
 msgid "r:integerDigits"
@@ -4182,9 +4012,8 @@ msgid "Length"
 msgstr ""
 
 #: ../data/functions.xml.in.h:297
-#, fuzzy
 msgid "Get Digit"
-msgstr "數字分組"
+msgstr ""
 
 #: ../data/functions.xml.in.h:298
 msgid "r:digitGet,numberDigit"
@@ -4197,14 +4026,12 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:300
-#, fuzzy
 msgid "Position"
-msgstr "在RPN堆疊上交換值的位置。"
+msgstr "位置"
 
 #: ../data/functions.xml.in.h:301
-#, fuzzy
 msgid "Set Digit"
-msgstr "數字分組"
+msgstr ""
 
 #: ../data/functions.xml.in.h:302
 msgid "r:digitSet"
@@ -4230,29 +4057,24 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:307
-#, fuzzy
 msgid "Lower bound"
-msgstr "下端點"
+msgstr ""
 
 #: ../data/functions.xml.in.h:308
-#, fuzzy
 msgid "Upper bound"
-msgstr "上端點"
+msgstr ""
 
 #: ../data/functions.xml.in.h:309
-#, fuzzy
 msgid "Number Bases"
 msgstr "底數"
 
 #: ../data/functions.xml.in.h:310
-#, fuzzy
 msgid "Number Base"
 msgstr "底數"
 
 #: ../data/functions.xml.in.h:311
-#, fuzzy
 msgid "r:base"
-msgstr "底數: "
+msgstr "r:base"
 
 #: ../data/functions.xml.in.h:312
 msgid ""
@@ -4279,19 +4101,16 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:313
-#, fuzzy
 msgid "Set of digits"
-msgstr "位數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:314
-#, fuzzy
 msgid "Binary"
 msgstr "二進制"
 
 #: ../data/functions.xml.in.h:315
-#, fuzzy
 msgid "r:bin"
-msgstr "bin"
+msgstr "r:bin"
 
 #: ../data/functions.xml.in.h:316
 msgid ""
@@ -4301,62 +4120,52 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:317
-#, fuzzy
 msgid "Binary number"
 msgstr "二進制數字"
 
 #: ../data/functions.xml.in.h:318
-#, fuzzy
 msgid "Two's complement"
 msgstr "二的補數"
 
 #: ../data/functions.xml.in.h:319
-#, fuzzy
 msgid "Octal"
 msgstr "八進制"
 
 #: ../data/functions.xml.in.h:320
-#, fuzzy
 msgid "r:oct"
-msgstr "oct"
+msgstr "r:oct"
 
 #: ../data/functions.xml.in.h:321
 msgid "Returns a value from an octal expression."
 msgstr ""
 
 #: ../data/functions.xml.in.h:322
-#, fuzzy
 msgid "Octal number"
 msgstr "八進制數字"
 
 #: ../data/functions.xml.in.h:323
-#, fuzzy
 msgid "Decimal"
 msgstr "十進制"
 
 #: ../data/functions.xml.in.h:324
-#, fuzzy
 msgid "r:dec"
-msgstr "dec"
+msgstr "r:dec"
 
 #: ../data/functions.xml.in.h:325
 msgid "Returns a value from a decimal expression."
 msgstr ""
 
 #: ../data/functions.xml.in.h:326
-#, fuzzy
 msgid "Decimal number"
 msgstr "十進制數字"
 
 #: ../data/functions.xml.in.h:327
-#, fuzzy
 msgid "Hexadecimal"
 msgstr "十六進制"
 
 #: ../data/functions.xml.in.h:328
-#, fuzzy
 msgid "r:hex"
-msgstr "hex"
+msgstr "r:hex"
 
 #: ../data/functions.xml.in.h:329
 msgid ""
@@ -4366,19 +4175,16 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:330
-#, fuzzy
 msgid "Hexadecimal number"
 msgstr "十六進制數字"
 
 #: ../data/functions.xml.in.h:331
-#, fuzzy
 msgid "Bijective base-26"
 msgstr "雙射二十六進制"
 
 #: ../data/functions.xml.in.h:332
-#, fuzzy
 msgid "r:bijective"
-msgstr "雙射"
+msgstr "r:bijective"
 
 #: ../data/functions.xml.in.h:333
 msgid ""
@@ -4387,23 +4193,20 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:334
-#, fuzzy
 msgid "Bijective base-26 number"
-msgstr "雙射二十六進制"
+msgstr "雙射二十六進制數字"
 
 #: ../data/functions.xml.in.h:335
-#, fuzzy
 msgid "Binary-Coded Decimal (BCD)"
-msgstr "- bcd(顯示為二進碼十進數)"
+msgstr "二進碼十進數(BCD)"
 
 #: ../data/functions.xml.in.h:336
 msgid "r:bcd"
-msgstr ""
+msgstr "r:bcd"
 
 #: ../data/functions.xml.in.h:337
-#, fuzzy
 msgid "Binary-coded decimal number"
-msgstr "- bcd(顯示為二進碼十進數)"
+msgstr "二進碼十進數"
 
 #. Packed binary-coded decimal
 #: ../data/functions.xml.in.h:339
@@ -4411,97 +4214,80 @@ msgid "Packed"
 msgstr ""
 
 #: ../data/functions.xml.in.h:340
-#, fuzzy
 msgid "Integers"
-msgstr ""
-"其他參數指定各種繪圖選項。輸入選項的名稱和期望的值，用空白分隔或作為個別的參"
-"數。對於大多數選項，可以省略該值以啟用預設的作用值。對於具有命名值的選項，可"
-"以省略選項名稱(否則可以用整數替換該值，表示該值的索引從零開始)。如果指定的第"
-"一個選項是數字值，則將此解釋為採樣率(對於整數>10)或步長值。"
+msgstr "整數"
 
 #: ../data/functions.xml.in.h:341
-#, fuzzy
 msgid "Even"
 msgstr "偶數"
 
 #: ../data/functions.xml.in.h:342
-#, fuzzy
 msgid "r:even"
-msgstr "偶數"
+msgstr "r:even"
 
 #: ../data/functions.xml.in.h:343
-#, fuzzy
 msgid "Odd"
-msgstr "四捨六入五成奇"
+msgstr "奇數"
 
 #: ../data/functions.xml.in.h:344
-#, fuzzy
 msgid "r:odd"
-msgstr "四捨六入五成奇"
+msgstr "r:odd"
 
 #: ../data/functions.xml.in.h:345
-#, fuzzy
 msgid "Special Functions"
-msgstr "函數:"
+msgstr ""
 
 #: ../data/functions.xml.in.h:346
-#, fuzzy
 msgid "Gamma Function"
-msgstr "函數(_F)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:347
 msgid "r:gamma"
 msgstr ""
 
 #: ../data/functions.xml.in.h:348
-#, fuzzy
 msgid "Digamma Function"
-msgstr "函數(_F)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:349
 msgid "r:digamma,psi"
 msgstr ""
 
 #: ../data/functions.xml.in.h:350
-#, fuzzy
 msgid "Beta Function"
-msgstr "函數(_F)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:351
 msgid "r:beta"
 msgstr ""
 
 #: ../data/functions.xml.in.h:352
-#, fuzzy
 msgid "Error Function"
-msgstr "錯誤"
+msgstr ""
 
 #: ../data/functions.xml.in.h:353
 msgid "r:erf"
 msgstr ""
 
 #: ../data/functions.xml.in.h:354
-#, fuzzy
 msgid "Complementary Error Function"
-msgstr "轉換誤差"
+msgstr ""
 
 #: ../data/functions.xml.in.h:355
 msgid "r:erfc"
 msgstr ""
 
 #: ../data/functions.xml.in.h:356
-#, fuzzy
 msgid "Imaginary Error Function"
-msgstr "虛數j"
+msgstr ""
 
 #: ../data/functions.xml.in.h:357
 msgid "r:erfi"
 msgstr ""
 
 #: ../data/functions.xml.in.h:358
-#, fuzzy
 msgid "Inverse Error Function"
-msgstr "反向關係"
+msgstr ""
 
 #: ../data/functions.xml.in.h:359
 msgid "r:erfinv"
@@ -4516,19 +4302,16 @@ msgid "rc:Li,polylog"
 msgstr ""
 
 #: ../data/functions.xml.in.h:362
-#, fuzzy
 msgid "Order"
-msgstr "元素(按水平順序)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:363
-#, fuzzy
 msgid "Argument"
-msgstr "參數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:364
-#, fuzzy
 msgid "Airy Function"
-msgstr "函數(_F)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:365
 msgid "r:airy"
@@ -4563,14 +4346,12 @@ msgid "r:zeta"
 msgstr ""
 
 #: ../data/functions.xml.in.h:373
-#, fuzzy
 msgid "Integral point"
-msgstr "定積分是近似的。"
+msgstr ""
 
 #: ../data/functions.xml.in.h:374
-#, fuzzy
 msgid "Hurwitz zeta argument"
-msgstr "參數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:375
 msgid "Kronecker Delta"
@@ -4585,14 +4366,12 @@ msgid "Returns 0 if i != j and 1 if i = j."
 msgstr ""
 
 #: ../data/functions.xml.in.h:378
-#, fuzzy
 msgid "Value 1 (i)"
-msgstr "值1"
+msgstr "值1(i)"
 
 #: ../data/functions.xml.in.h:379
-#, fuzzy
 msgid "Value 2 (j)"
-msgstr "值2"
+msgstr "值2(j)"
 
 #: ../data/functions.xml.in.h:380
 msgid "Logit Transformation"
@@ -4603,32 +4382,28 @@ msgid "r:logit"
 msgstr ""
 
 #: ../data/functions.xml.in.h:382
-#, fuzzy
 msgid "Probit Function"
-msgstr "函數(_F)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:383
 msgid "r:probit"
 msgstr ""
 
 #: ../data/functions.xml.in.h:384
-#, fuzzy
 msgid "Sigmoid Function"
-msgstr "函數(_F)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:385
 msgid "r:sigmoid"
 msgstr ""
 
 #: ../data/functions.xml.in.h:386
-#, fuzzy
 msgid "Step Functions"
-msgstr "步長"
+msgstr "步階函數"
 
 #: ../data/functions.xml.in.h:387
-#, fuzzy
 msgid "Heaviside Step Function"
-msgstr "步長"
+msgstr "單位步階函數"
 
 #: ../data/functions.xml.in.h:388
 msgid "r:heaviside,au:&#x03B8;"
@@ -4641,9 +4416,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:390
-#, fuzzy
 msgid "Dirac Delta Function"
-msgstr "函數(_F)"
+msgstr "狄拉克Delta函數"
 
 #: ../data/functions.xml.in.h:391
 msgid "r:dirac,au:&#x3B4;"
@@ -4654,40 +4428,34 @@ msgid "Returns 0 if x is non-zero, and infinity if x is zero."
 msgstr ""
 
 #: ../data/functions.xml.in.h:393
-#, fuzzy
 msgid "Ramp Function"
-msgstr "函數(_F)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:394
 msgid "r:ramp"
 msgstr ""
 
 #: ../data/functions.xml.in.h:395
-#, fuzzy
 msgid "Rectangular Function"
-msgstr "直角"
+msgstr ""
 
 #: ../data/functions.xml.in.h:396
-#, fuzzy
 msgid "r:rectangular"
-msgstr "直角"
+msgstr ""
 
 #: ../data/functions.xml.in.h:397
-#, fuzzy
 msgid "Triangular Function"
-msgstr "函數(_F)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:398
 msgid "r:triangular"
 msgstr ""
 
 #: ../data/functions.xml.in.h:399
-#, fuzzy
 msgid "Complex Numbers"
 msgstr "複數"
 
 #: ../data/functions.xml.in.h:400
-#, fuzzy
 msgid "Real Part"
 msgstr "實部"
 
@@ -4696,12 +4464,10 @@ msgid "r:re,au:&#x211C;"
 msgstr ""
 
 #: ../data/functions.xml.in.h:402
-#, fuzzy
 msgid "Complex number"
 msgstr "複數"
 
 #: ../data/functions.xml.in.h:403
-#, fuzzy
 msgid "Imaginary Part"
 msgstr "虛部"
 
@@ -4710,30 +4476,26 @@ msgid "r:im,au:&#x2111;"
 msgstr ""
 
 #: ../data/functions.xml.in.h:405
-#, fuzzy
 msgid "Principal Argument"
-msgstr "參數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:406
 msgid "r:arg"
 msgstr ""
 
 #: ../data/functions.xml.in.h:407
-#, fuzzy
 msgid "Complex Conjugate"
-msgstr "複數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:408
 msgid "r:conj"
 msgstr ""
 
 #: ../data/functions.xml.in.h:409
-#, fuzzy
 msgid "Exponents &amp; Logarithms"
-msgstr "負指數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:410
-#, fuzzy
 msgid "Square Root"
 msgstr "平方根"
 
@@ -4748,9 +4510,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:413
-#, fuzzy
 msgid "Cube Root"
-msgstr "平方根"
+msgstr "立方根"
 
 #: ../data/functions.xml.in.h:414
 msgid "r:cbrt,aou:&#x221B;"
@@ -4761,14 +4522,12 @@ msgid "Returns the third real root."
 msgstr ""
 
 #: ../data/functions.xml.in.h:416
-#, fuzzy
 msgid "Nth root"
-msgstr "平方根"
+msgstr "N次方根"
 
 #: ../data/functions.xml.in.h:417
-#, fuzzy
 msgid "r:root"
-msgstr "平方根"
+msgstr "r:root"
 
 #: ../data/functions.xml.in.h:418
 msgid ""
@@ -4782,16 +4541,14 @@ msgid "Degree (n)"
 msgstr ""
 
 #: ../data/functions.xml.in.h:421
-#, fuzzy
 msgid "All Roots"
-msgstr "對%s來說並非所有複數根都被計算。"
+msgstr ""
 
 #: ../data/functions.xml.in.h:422
 msgid "r:allroots"
 msgstr ""
 
 #: ../data/functions.xml.in.h:423
-#, fuzzy
 msgid "Square"
 msgstr "平方"
 
@@ -4800,29 +4557,24 @@ msgid "r:sq"
 msgstr ""
 
 #: ../data/functions.xml.in.h:425
-#, fuzzy
 msgid "Exponential (e^x)"
-msgstr "指數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:426
-#, fuzzy
 msgid "r:exp"
-msgstr "EXP"
+msgstr "r:exp"
 
 #: ../data/functions.xml.in.h:427
-#, fuzzy
 msgid "Natural Logarithm"
-msgstr "自然三次樣條"
+msgstr "自然對數"
 
 #: ../data/functions.xml.in.h:428
-#, fuzzy
 msgid "r:ln"
-msgstr "ln"
+msgstr "r:ln"
 
 #: ../data/functions.xml.in.h:429
-#, fuzzy
 msgid "Base-N Logarithm"
-msgstr "- base(轉換為基本單位)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:430
 msgid "r:log"
@@ -4847,19 +4599,16 @@ msgid "Branch"
 msgstr ""
 
 #: ../data/functions.xml.in.h:435
-#, fuzzy
 msgid "Complex Exponential (Cis)"
-msgstr "複數指數形式"
+msgstr ""
 
 #: ../data/functions.xml.in.h:436
-#, fuzzy
 msgid "r:cis"
-msgstr "複數cis形式"
+msgstr "r:cis"
 
 #: ../data/functions.xml.in.h:437
-#, fuzzy
 msgid "Power Tower"
-msgstr "次方"
+msgstr ""
 
 #: ../data/functions.xml.in.h:438
 msgid "r:powertower"
@@ -4882,9 +4631,8 @@ msgid "Base-10 Logarithm"
 msgstr ""
 
 #: ../data/functions.xml.in.h:443
-#, fuzzy
 msgid "rs:log10"
-msgstr "找不到log10函數。"
+msgstr ""
 
 #: ../data/functions.xml.in.h:444
 msgid "2 raised to the power X"
@@ -4895,7 +4643,6 @@ msgid "rs:exp2"
 msgstr ""
 
 #: ../data/functions.xml.in.h:446
-#, fuzzy
 msgid "10 raised to the power X"
 msgstr "10的次方"
 
@@ -4904,9 +4651,8 @@ msgid "rs:exp10"
 msgstr ""
 
 #: ../data/functions.xml.in.h:448
-#, fuzzy
 msgid "Square root (x * pi)"
-msgstr "平方根"
+msgstr ""
 
 #: ../data/functions.xml.in.h:449
 msgid "r:sqrtpi"
@@ -4917,9 +4663,8 @@ msgid "Returns the non-negative square root of x * pi"
 msgstr ""
 
 #: ../data/functions.xml.in.h:451
-#, fuzzy
 msgid "Non-negative value"
-msgstr "非負數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:452
 msgid "Trigonometry"
@@ -4930,12 +4675,10 @@ msgid "Sine"
 msgstr ""
 
 #: ../data/functions.xml.in.h:454
-#, fuzzy
 msgid "r:sin"
-msgstr "sin"
+msgstr "r:sin"
 
 #: ../data/functions.xml.in.h:455
-#, fuzzy
 msgid "Angle"
 msgstr "角度"
 
@@ -4944,41 +4687,36 @@ msgid "Cosine"
 msgstr ""
 
 #: ../data/functions.xml.in.h:457
-#, fuzzy
 msgid "r:cos"
-msgstr "cos"
+msgstr "r:cos"
 
 #: ../data/functions.xml.in.h:458
 msgid "Tangent"
 msgstr ""
 
 #: ../data/functions.xml.in.h:459
-#, fuzzy
 msgid "r:tan"
-msgstr "tan"
+msgstr "r:tan"
 
 #: ../data/functions.xml.in.h:460
-#, fuzzy
 msgid "Inverse Sine"
-msgstr "反向關係"
+msgstr ""
 
 #: ../data/functions.xml.in.h:461
 msgid "r:arcsin, r:asin"
 msgstr ""
 
 #: ../data/functions.xml.in.h:462
-#, fuzzy
 msgid "Inverse Cosine"
-msgstr "反向關係"
+msgstr ""
 
 #: ../data/functions.xml.in.h:463
 msgid "r:arccos, r:acos"
 msgstr ""
 
 #: ../data/functions.xml.in.h:464
-#, fuzzy
 msgid "Inverse Tangent"
-msgstr "反向關係"
+msgstr ""
 
 #: ../data/functions.xml.in.h:465
 msgid "r:arctan, r:atan"
@@ -5009,27 +4747,24 @@ msgid "r:tanh"
 msgstr ""
 
 #: ../data/functions.xml.in.h:472
-#, fuzzy
 msgid "Inverse Hyperbolic Sine"
-msgstr "反向關係"
+msgstr ""
 
 #: ../data/functions.xml.in.h:473
 msgid "r:arsinh, r:asinh"
 msgstr ""
 
 #: ../data/functions.xml.in.h:474
-#, fuzzy
 msgid "Inverse Hyperbolic Cosine"
-msgstr "奇異矩陣的倒數。"
+msgstr ""
 
 #: ../data/functions.xml.in.h:475
 msgid "r:arcosh, r:acosh"
 msgstr ""
 
 #: ../data/functions.xml.in.h:476
-#, fuzzy
 msgid "Inverse Hyperbolic Tangent"
-msgstr "奇異矩陣的倒數。"
+msgstr ""
 
 #: ../data/functions.xml.in.h:477
 msgid "r:artanh, r:atanh"
@@ -5050,47 +4785,36 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:481
-#, fuzzy
 msgid "Y"
-msgstr ""
-"Off: -x + y\n"
-"On: y - x"
+msgstr "Y"
 
 #: ../data/functions.xml.in.h:482
-#, fuzzy
 msgid "X"
-msgstr ""
-"Off: -x + y\n"
-"On: y - x"
+msgstr "X"
 
 #: ../data/functions.xml.in.h:483
-#, fuzzy
 msgid "Cardinal Sine (Sinc Function)"
-msgstr "Sinc函數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:484
-#, fuzzy
 msgid "r:sinc"
-msgstr "Sinc函數"
+msgstr "r:sinc"
 
 #: ../data/functions.xml.in.h:485
-#, fuzzy
 msgid "Radians to Default Angle Unit"
-msgstr "設定角度單位為弧度"
+msgstr ""
 
 #: ../data/functions.xml.in.h:486
 msgid "r:radtodef"
 msgstr ""
 
 #: ../data/functions.xml.in.h:487
-#, fuzzy
 msgid "Radians"
 msgstr "弧度"
 
 #: ../data/functions.xml.in.h:488
-#, fuzzy
 msgid "Default Angle Unit to Radians"
-msgstr "設定角度單位為弧度"
+msgstr ""
 
 #: ../data/functions.xml.in.h:489
 msgid "r:deftorad"
@@ -5145,54 +4869,48 @@ msgid "r:coth"
 msgstr ""
 
 #: ../data/functions.xml.in.h:502
-#, fuzzy
 msgid "Inverse Secant"
-msgstr "反向關係"
+msgstr ""
 
 #: ../data/functions.xml.in.h:503
 msgid "r:arcsec, r:asec"
 msgstr ""
 
 #: ../data/functions.xml.in.h:504
-#, fuzzy
 msgid "Inverse Cosecant"
-msgstr "反向關係"
+msgstr ""
 
 #: ../data/functions.xml.in.h:505
 msgid "r:arccsc, r:acsc"
 msgstr ""
 
 #: ../data/functions.xml.in.h:506
-#, fuzzy
 msgid "Inverse Cotangent"
-msgstr "反向關係"
+msgstr ""
 
 #: ../data/functions.xml.in.h:507
 msgid "r:arccot, r:acot"
 msgstr ""
 
 #: ../data/functions.xml.in.h:508
-#, fuzzy
 msgid "Inverse Hyperbolic Secant"
-msgstr "奇異矩陣的倒數。"
+msgstr ""
 
 #: ../data/functions.xml.in.h:509
 msgid "r:arsech, r:asech"
 msgstr ""
 
 #: ../data/functions.xml.in.h:510
-#, fuzzy
 msgid "Inverse Hyperbolic Cosecant"
-msgstr "奇異矩陣的倒數。"
+msgstr ""
 
 #: ../data/functions.xml.in.h:511
 msgid "r:arcsch, r:acsch"
 msgstr ""
 
 #: ../data/functions.xml.in.h:512
-#, fuzzy
 msgid "Inverse Hyperbolic Cotangent"
-msgstr "奇異矩陣的倒數。"
+msgstr ""
 
 #: ../data/functions.xml.in.h:513
 msgid "r:arcoth, r:acoth"
@@ -5203,9 +4921,8 @@ msgid "Miscellaneous"
 msgstr ""
 
 #: ../data/functions.xml.in.h:515
-#, fuzzy
 msgid "IEEE 754 Floating-Point"
-msgstr "浮點轉換(IEEE 754)"
+msgstr "IEEE 754浮點數"
 
 #: ../data/functions.xml.in.h:516
 msgid "r:float"
@@ -5220,29 +4937,24 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:518
-#, fuzzy
 msgid "Floating-point number (binary)"
-msgstr "16位元浮點數二進制格式"
+msgstr ""
 
 #: ../data/functions.xml.in.h:519
-#, fuzzy
 msgid "Number of bits"
-msgstr "- bin#(顯示為具有指定位元數量的二進制數字)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:520
-#, fuzzy
 msgid "Number of exponent bits"
-msgstr "指數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:521
-#, fuzzy
 msgid "Position of sign bit"
-msgstr "記住視窗位置"
+msgstr ""
 
 #: ../data/functions.xml.in.h:522
-#, fuzzy
 msgid "IEEE 754 Floating-Point Bits"
-msgstr "浮點轉換(IEEE 754)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:523
 msgid "r:floatBits"
@@ -5257,9 +4969,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:525
-#, fuzzy
 msgid "IEEE 754 Floating-Point Error"
-msgstr "浮點轉換(IEEE 754)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:526
 msgid "r:floatError"
@@ -5274,9 +4985,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:528
-#, fuzzy
 msgid "IEEE 754 Floating-Point Components"
-msgstr "浮點轉換(IEEE 754)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:529
 msgid "r:floatParts"
@@ -5291,9 +5001,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:531
-#, fuzzy
 msgid "IEEE 754 Floating-Point Value"
-msgstr "浮點轉換(IEEE 754)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:532
 msgid "r:floatValue"
@@ -5307,24 +5016,20 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:534
-#, fuzzy
 msgid "Roman Number"
-msgstr "羅馬"
+msgstr "羅馬數字"
 
 #: ../data/functions.xml.in.h:535
-#, fuzzy
 msgid "r:roman"
-msgstr "羅馬"
+msgstr "r:roman"
 
 #: ../data/functions.xml.in.h:536
-#, fuzzy
 msgid "Returns the value of a roman number."
-msgstr "該值可能是質數，但不確定。"
+msgstr ""
 
 #: ../data/functions.xml.in.h:537
-#, fuzzy
 msgid "Roman number"
-msgstr "羅馬"
+msgstr "羅馬數字"
 
 #: ../data/functions.xml.in.h:538
 msgid "Distance Between GPS Coordinates"
@@ -5344,24 +5049,20 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:541
-#, fuzzy
 msgid "Latitude 1"
-msgstr "緯度"
+msgstr "緯度1"
 
 #: ../data/functions.xml.in.h:542
-#, fuzzy
 msgid "Longitude 1"
-msgstr "經度"
+msgstr "經度1"
 
 #: ../data/functions.xml.in.h:543
-#, fuzzy
 msgid "Latitude 2"
-msgstr "緯度"
+msgstr "緯度2"
 
 #: ../data/functions.xml.in.h:544
-#, fuzzy
 msgid "Longitude 2"
-msgstr "經度"
+msgstr "經度2"
 
 #: ../data/functions.xml.in.h:545
 msgid "Convert to/from Q Format (Fixed Point)"
@@ -5380,19 +5081,16 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:548
-#, fuzzy
 msgid "Bits (integer part)"
-msgstr "虛部"
+msgstr ""
 
 #: ../data/functions.xml.in.h:549
-#, fuzzy
 msgid "Bits (fraction part)"
-msgstr "虛部"
+msgstr ""
 
 #: ../data/functions.xml.in.h:550
-#, fuzzy
 msgid "Always convert to"
-msgstr "總是"
+msgstr ""
 
 #: ../data/functions.xml.in.h:551
 msgid "Q Format Error (Fixed Point)"
@@ -5429,9 +5127,8 @@ msgid "!human!Height"
 msgstr ""
 
 #: ../data/functions.xml.in.h:559
-#, fuzzy
 msgid "RAID Space"
-msgstr "空白"
+msgstr ""
 
 #: ../data/functions.xml.in.h:560
 msgid "r:raid"
@@ -5455,9 +5152,8 @@ msgid "Capacity of each disk"
 msgstr ""
 
 #: ../data/functions.xml.in.h:564
-#, fuzzy
 msgid "Number of disks"
-msgstr "一個數字"
+msgstr ""
 
 #: ../data/functions.xml.in.h:565
 msgid "Stripes"
@@ -5472,9 +5168,8 @@ msgid "r:ramlatency"
 msgstr ""
 
 #: ../data/functions.xml.in.h:568
-#, fuzzy
 msgid "Data Rate"
-msgstr "採樣率"
+msgstr ""
 
 #: ../data/functions.xml.in.h:569
 msgid "CAS Latency"
@@ -5489,9 +5184,8 @@ msgid "Transfers per Clock Cycle"
 msgstr ""
 
 #: ../data/functions.xml.in.h:572
-#, fuzzy
 msgid "Depth of Field"
-msgstr "達到最大遞迴深度。"
+msgstr ""
 
 #: ../data/functions.xml.in.h:573
 msgid "r:dof"
@@ -5514,9 +5208,8 @@ msgid "Focal Length"
 msgstr ""
 
 #: ../data/functions.xml.in.h:576
-#, fuzzy
 msgid "F-stop (aperture)"
-msgstr "停止行程"
+msgstr ""
 
 #: ../data/functions.xml.in.h:577
 msgid "Distance"
@@ -5557,9 +5250,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:585
-#, fuzzy
 msgid "Drill Bit Size"
-msgstr "向量大小不匹配"
+msgstr ""
 
 #: ../data/functions.xml.in.h:586
 msgid "r:drillbit"
@@ -5577,21 +5269,18 @@ msgid "Statistics"
 msgstr ""
 
 #: ../data/functions.xml.in.h:589
-#, fuzzy
 msgid "Descriptive Statistics"
-msgstr "描述性名稱"
+msgstr ""
 
 #: ../data/functions.xml.in.h:590
-#, fuzzy
 msgid "Sum (total)"
-msgstr "sum"
+msgstr ""
 
 #: ../data/functions.xml.in.h:591
 msgid "r:total,r:add"
 msgstr ""
 
 #: ../data/functions.xml.in.h:592
-#, fuzzy
 msgid "Data"
 msgstr "資料"
 
@@ -5613,49 +5302,41 @@ msgid "Quantile algorithm (as in R)"
 msgstr ""
 
 #: ../data/functions.xml.in.h:598
-#, fuzzy
 msgid "r:min"
-msgstr "最小值"
+msgstr "r:min"
 
 #: ../data/functions.xml.in.h:599
-#, fuzzy
 msgid "Returns the lowest value."
-msgstr "數值類型"
+msgstr ""
 
 #: ../data/functions.xml.in.h:600
-#, fuzzy
 msgid "r:max"
-msgstr "最大值"
+msgstr "r:max"
 
 #: ../data/functions.xml.in.h:601
-#, fuzzy
 msgid "Returns the highest value."
-msgstr "數值類型"
+msgstr ""
 
 #. Statistical function ("!statistics!" is removed from title)
 #: ../data/functions.xml.in.h:603
-#, fuzzy
 msgid "!statistics!Mode"
-msgstr "模式(_M)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:604
-#, fuzzy
 msgid "r:mode"
-msgstr "模式(_M)"
+msgstr "r:mode"
 
 #: ../data/functions.xml.in.h:605
 msgid "Returns the most frequently occurring value."
 msgstr ""
 
 #: ../data/functions.xml.in.h:606
-#, fuzzy
 msgid "Range"
-msgstr "浮點範圍例外"
+msgstr ""
 
 #: ../data/functions.xml.in.h:607
-#, fuzzy
 msgid "r:range"
-msgstr "浮點範圍例外"
+msgstr "r:range"
 
 #: ../data/functions.xml.in.h:608
 msgid "Calculates the difference between the min and max value."
@@ -5690,9 +5371,8 @@ msgid "r:decile"
 msgstr ""
 
 #: ../data/functions.xml.in.h:616
-#, fuzzy
 msgid "Interquartile Range"
-msgstr "函數範圍"
+msgstr ""
 
 #: ../data/functions.xml.in.h:617
 msgid "r:iqr"
@@ -5703,30 +5383,25 @@ msgid "Calculates the difference between the first and third quartile."
 msgstr ""
 
 #: ../data/functions.xml.in.h:619
-#, fuzzy
 msgid "Number of Samples"
-msgstr "樣本"
+msgstr "樣本數"
 
 #. Number of samples
 #: ../data/functions.xml.in.h:621
-#, fuzzy
 msgid "r:number"
-msgstr "一個數字"
+msgstr "r:number"
 
 #: ../data/functions.xml.in.h:622
-#, fuzzy
 msgid "Returns the number of samples."
-msgstr "樣本"
+msgstr ""
 
 #: ../data/functions.xml.in.h:623
-#, fuzzy
 msgid "Random Numbers"
-msgstr "四捨六入五隨機"
+msgstr ""
 
 #: ../data/functions.xml.in.h:624
-#, fuzzy
 msgid "Random Number"
-msgstr "五隨機"
+msgstr ""
 
 #: ../data/functions.xml.in.h:625
 msgid "r:rand"
@@ -5743,9 +5418,8 @@ msgid "Ceil"
 msgstr ""
 
 #: ../data/functions.xml.in.h:628
-#, fuzzy
 msgid "Number of values"
-msgstr "可能的值:"
+msgstr ""
 
 #: ../data/functions.xml.in.h:629
 msgid "Normally Distributed Random Number"
@@ -5756,14 +5430,12 @@ msgid "r:randnorm"
 msgstr ""
 
 #: ../data/functions.xml.in.h:631
-#, fuzzy
 msgid "Mean"
-msgstr "mean"
+msgstr ""
 
 #: ../data/functions.xml.in.h:632
-#, fuzzy
 msgid "Standard deviation"
-msgstr "標準"
+msgstr "標準差"
 
 #: ../data/functions.xml.in.h:633
 msgid "Poisson Distributed Random Number"
@@ -5774,9 +5446,8 @@ msgid "r:randpoisson"
 msgstr ""
 
 #: ../data/functions.xml.in.h:635
-#, fuzzy
 msgid "Rate (λ)"
-msgstr "匯率來源:"
+msgstr ""
 
 #: ../data/functions.xml.in.h:636
 msgid "Uniformly Distributed Random Number"
@@ -5799,28 +5470,24 @@ msgid "Returns an integer between (including) bottom and top."
 msgstr ""
 
 #: ../data/functions.xml.in.h:641
-#, fuzzy
 msgid "Bottom"
-msgstr "左下"
+msgstr ""
 
 #: ../data/functions.xml.in.h:642
-#, fuzzy
 msgid "Top"
-msgstr "到頂部"
+msgstr ""
 
 #: ../data/functions.xml.in.h:643
-#, fuzzy
 msgid "Exponential Random Number"
-msgstr "指數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:644
 msgid "r:randexp"
 msgstr ""
 
 #: ../data/functions.xml.in.h:645
-#, fuzzy
 msgid "Rate parameter"
-msgstr "採樣率"
+msgstr ""
 
 #: ../data/functions.xml.in.h:646
 msgid "Rayleigh Distributed Random Number"
@@ -5843,27 +5510,24 @@ msgid "r:mean,average,au:x&#x0304;"
 msgstr ""
 
 #: ../data/functions.xml.in.h:651
-#, fuzzy
 msgid "Harmonic Mean"
-msgstr "mean"
+msgstr ""
 
 #: ../data/functions.xml.in.h:652
 msgid "r:harmmean"
 msgstr ""
 
 #: ../data/functions.xml.in.h:653
-#, fuzzy
 msgid "Geometric Mean"
-msgstr "mean"
+msgstr ""
 
 #: ../data/functions.xml.in.h:654
 msgid "r:geomean"
 msgstr ""
 
 #: ../data/functions.xml.in.h:655
-#, fuzzy
 msgid "Trimmed Mean"
-msgstr "mean"
+msgstr ""
 
 #: ../data/functions.xml.in.h:656
 msgid "r:trimmean"
@@ -5874,9 +5538,8 @@ msgid "Trimmed percentage (at each end)"
 msgstr ""
 
 #: ../data/functions.xml.in.h:658
-#, fuzzy
 msgid "Winsorized Mean"
-msgstr "mean"
+msgstr ""
 
 #: ../data/functions.xml.in.h:659
 msgid "r:winsormean"
@@ -5887,9 +5550,8 @@ msgid "Winsorized percentage (at each end)"
 msgstr ""
 
 #: ../data/functions.xml.in.h:661
-#, fuzzy
 msgid "Weighted Mean"
-msgstr "mean"
+msgstr ""
 
 #: ../data/functions.xml.in.h:662
 msgid "r:weighmean"
@@ -5900,9 +5562,8 @@ msgid "Weights"
 msgstr ""
 
 #: ../data/functions.xml.in.h:664
-#, fuzzy
 msgid "Quadratic Mean (RMS)"
-msgstr "mean"
+msgstr ""
 
 #: ../data/functions.xml.in.h:665
 msgid "r:rms"
@@ -5929,37 +5590,32 @@ msgid "r:stdev"
 msgstr ""
 
 #: ../data/functions.xml.in.h:671
-#, fuzzy
 msgid "Variance (entire population)"
-msgstr "變異數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:672
 msgid "r:varp"
 msgstr ""
 
 #: ../data/functions.xml.in.h:673
-#, fuzzy
 msgid "Variance (random sampling)"
-msgstr "變異數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:674
-#, fuzzy
 msgid "r:var"
-msgstr "VAR"
+msgstr "r:var"
 
 #: ../data/functions.xml.in.h:675
-#, fuzzy
 msgid "Standard Error"
-msgstr "標準"
+msgstr "標準誤"
 
 #: ../data/functions.xml.in.h:676
 msgid "r:stderr"
 msgstr ""
 
 #: ../data/functions.xml.in.h:677
-#, fuzzy
 msgid "Mean Deviation"
-msgstr "mean"
+msgstr ""
 
 #: ../data/functions.xml.in.h:678
 msgid "r:meandev"
@@ -5974,19 +5630,16 @@ msgid "r:cov,r:covar"
 msgstr ""
 
 #: ../data/functions.xml.in.h:681
-#, fuzzy
 msgid "Data 1"
-msgstr "資料"
+msgstr "資料1"
 
 #: ../data/functions.xml.in.h:682
-#, fuzzy
 msgid "Data 2"
-msgstr "答案2"
+msgstr "資料2"
 
 #: ../data/functions.xml.in.h:683
-#, fuzzy
 msgid "Pooled Variance"
-msgstr "變異數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:684
 msgid "r:poolvar"
@@ -5997,9 +5650,8 @@ msgid "Regression"
 msgstr ""
 
 #: ../data/functions.xml.in.h:686
-#, fuzzy
 msgid "Simple Linear Fit"
-msgstr "簡單"
+msgstr ""
 
 #: ../data/functions.xml.in.h:687
 msgid "r:linearfit"
@@ -6020,11 +5672,8 @@ msgid "X Values"
 msgstr ""
 
 #: ../data/functions.xml.in.h:690
-#, fuzzy
 msgid "Y Values"
 msgstr ""
-"繪製一個或多個表達式或向量。第一個參數使用向量來繪製多個序列。向量序列只使用"
-"第一個參數。也可以繪製一個矩陣，其中每一列是一對x和y值。"
 
 #: ../data/functions.xml.in.h:691
 msgid "Quadratic Fit"
@@ -6043,9 +5692,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:694
-#, fuzzy
 msgid "Cubic Fit"
-msgstr "自然三次樣條"
+msgstr ""
 
 #: ../data/functions.xml.in.h:695
 msgid "r:cubicfit"
@@ -6092,18 +5740,16 @@ msgid "Statistical Tests"
 msgstr ""
 
 #: ../data/functions.xml.in.h:705
-#, fuzzy
 msgid "Unpaired T-Test"
-msgstr "啟用規則和類型測試"
+msgstr ""
 
 #: ../data/functions.xml.in.h:706
 msgid "r:ttest"
 msgstr ""
 
 #: ../data/functions.xml.in.h:707
-#, fuzzy
 msgid "Paired T-Test"
-msgstr "配對矩陣"
+msgstr ""
 
 #: ../data/functions.xml.in.h:708
 msgid "r:pttest"
@@ -6128,14 +5774,12 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:713
-#, fuzzy
 msgid "Number of successes (k)"
-msgstr "一個數字"
+msgstr ""
 
 #: ../data/functions.xml.in.h:714
-#, fuzzy
 msgid "Number of trials (n)"
-msgstr "一個數字"
+msgstr ""
 
 #: ../data/functions.xml.in.h:715
 msgid "Probability (p)"
@@ -6146,9 +5790,8 @@ msgid "Cumulative"
 msgstr ""
 
 #: ../data/functions.xml.in.h:717
-#, fuzzy
 msgid "Exponential Distribution"
-msgstr "指數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:718
 msgid "r:expondist"
@@ -6169,9 +5812,8 @@ msgid "r:expinv"
 msgstr ""
 
 #: ../data/functions.xml.in.h:722
-#, fuzzy
 msgid "P"
-msgstr "a-cr:EUR,au:&#x20AC;,euro,歐元"
+msgstr ""
 
 #: ../data/functions.xml.in.h:723
 msgid "Logistic Distribution"
@@ -6188,18 +5830,16 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:726
-#, fuzzy
 msgid "Scale (s)"
-msgstr "對數x刻度"
+msgstr ""
 
 #: ../data/functions.xml.in.h:727
 msgid "Location (μ)"
 msgstr ""
 
 #: ../data/functions.xml.in.h:728
-#, fuzzy
 msgid "Normal Distribution"
-msgstr "正常(_N)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:729
 msgid "r:normdist"
@@ -6212,14 +5852,12 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:731
-#, fuzzy
 msgid "Mean (μ)"
-msgstr "mean"
+msgstr ""
 
 #: ../data/functions.xml.in.h:732
-#, fuzzy
 msgid "Standard deviation (σ)"
-msgstr "標準"
+msgstr "標準差(σ)"
 
 #: ../data/functions.xml.in.h:733
 msgid "Inverse Normal Cumulative Distribution"
@@ -6248,9 +5886,8 @@ msgid "Shape (α)"
 msgstr ""
 
 #: ../data/functions.xml.in.h:739
-#, fuzzy
 msgid "Scale (x_m)"
-msgstr "對數x刻度"
+msgstr ""
 
 #: ../data/functions.xml.in.h:740
 msgid "Poisson Distribution"
@@ -6281,9 +5918,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:746
-#, fuzzy
 msgid "Scale (σ)"
-msgstr "對數x刻度"
+msgstr ""
 
 #: ../data/functions.xml.in.h:747
 msgid "Rayleigh Tail Distribution"
@@ -6318,14 +5954,12 @@ msgid "Shape (k)"
 msgstr ""
 
 #: ../data/functions.xml.in.h:754
-#, fuzzy
 msgid "Scale (θ)"
-msgstr "對數x刻度"
+msgstr ""
 
 #: ../data/functions.xml.in.h:755
-#, fuzzy
 msgid "Chi-Square Distribution"
-msgstr "平方"
+msgstr ""
 
 #: ../data/functions.xml.in.h:756
 msgid "r:chisqdist"
@@ -6338,9 +5972,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:758
-#, fuzzy
 msgid "Degrees of freedom (k)"
-msgstr "度"
+msgstr ""
 
 #: ../data/functions.xml.in.h:759
 msgid "Inverse of Chi-Square Cumulative Distribution"
@@ -6365,9 +5998,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:764
-#, fuzzy
 msgid "Scale (λ)"
-msgstr "對數x刻度"
+msgstr ""
 
 #: ../data/functions.xml.in.h:765
 msgid "Weibull Inverse Cumulative Distribution"
@@ -6410,9 +6042,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:774
-#, fuzzy
 msgid "Degrees of freedom (v)"
-msgstr "度"
+msgstr ""
 
 #: ../data/functions.xml.in.h:775
 msgid "Inverse Cumulative Student's t-distribution"
@@ -6437,14 +6068,12 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:780
-#, fuzzy
 msgid "Degrees of freedom (numerator)"
-msgstr "度"
+msgstr ""
 
 #: ../data/functions.xml.in.h:781
-#, fuzzy
 msgid "Degrees of freedom (denominator)"
-msgstr "度"
+msgstr ""
 
 #: ../data/functions.xml.in.h:782
 msgid "Inverse Cumulative F-distribution"
@@ -6473,24 +6102,20 @@ msgid "Location (x_0)"
 msgstr ""
 
 #: ../data/functions.xml.in.h:788
-#, fuzzy
 msgid "Scale (γ)"
-msgstr "對數x刻度"
+msgstr ""
 
 #: ../data/functions.xml.in.h:789 ../data/variables.xml.in.h:230
-#, fuzzy
 msgid "Date &amp; Time"
-msgstr "目前日期和時間"
+msgstr "日期&amp;時間"
 
 #: ../data/functions.xml.in.h:790
-#, fuzzy
 msgid "Construct Date"
-msgstr "一個日期"
+msgstr "建構日期"
 
 #: ../data/functions.xml.in.h:791
-#, fuzzy
 msgid "r:date"
-msgstr "一個日期"
+msgstr "r:date"
 
 #: ../data/functions.xml.in.h:792
 msgid ""
@@ -6502,29 +6127,24 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:793
-#, fuzzy
 msgid "Year"
 msgstr "年"
 
 #: ../data/functions.xml.in.h:794 ../data/units.xml.in.h:174
-#, fuzzy
 msgid "Month"
 msgstr "月"
 
 #: ../data/functions.xml.in.h:795 ../data/units.xml.in.h:161
-#, fuzzy
 msgid "Day"
 msgstr "日"
 
 #: ../data/functions.xml.in.h:796
-#, fuzzy
 msgid "Calendar"
 msgstr "日曆"
 
 #: ../data/functions.xml.in.h:797
-#, fuzzy
 msgid "Construct Date and Time"
-msgstr "目前日期和時間"
+msgstr "建構日期和時間"
 
 #: ../data/functions.xml.in.h:798
 msgid "r:datetime"
@@ -6532,25 +6152,23 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:799 ../data/units.xml.in.h:159
 msgid "Hour"
-msgstr ""
+msgstr "時"
 
 #: ../data/functions.xml.in.h:800 ../data/units.xml.in.h:157
 msgid "Minute"
-msgstr ""
+msgstr "分"
 
 #: ../data/functions.xml.in.h:801 ../data/units.xml.in.h:155
-#, fuzzy
 msgid "Second"
-msgstr "第二個值減去頂部值"
+msgstr "秒"
 
 #: ../data/functions.xml.in.h:802
 msgid "Days between two dates"
 msgstr ""
 
 #: ../data/functions.xml.in.h:803
-#, fuzzy
 msgid "r:days"
-msgstr "天"
+msgstr "r:days"
 
 #: ../data/functions.xml.in.h:804
 msgid ""
@@ -6560,24 +6178,20 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:805
-#, fuzzy
 msgid "First date"
-msgstr "一個日期"
+msgstr "第一個日期"
 
 #: ../data/functions.xml.in.h:806
-#, fuzzy
 msgid "Second date"
-msgstr "一個日期"
+msgstr "第二個日期"
 
 #: ../data/functions.xml.in.h:807
-#, fuzzy
 msgid "Day counting basis"
-msgstr "%i天"
+msgstr ""
 
 #: ../data/functions.xml.in.h:808
-#, fuzzy
 msgid "Financial function mode"
-msgstr "計算;算術;科學;金融;"
+msgstr ""
 
 #: ../data/functions.xml.in.h:809
 msgid "Years between two dates"
@@ -6595,16 +6209,14 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:812
-#, fuzzy
 msgid "Week of Year"
-msgstr "年"
+msgstr ""
 
 #: ../data/functions.xml.in.h:813
 msgid "r:week"
 msgstr ""
 
 #: ../data/functions.xml.in.h:814
-#, fuzzy
 msgid "Date"
 msgstr "日期"
 
@@ -6613,57 +6225,48 @@ msgid "Week begins on Sunday"
 msgstr ""
 
 #: ../data/functions.xml.in.h:816
-#, fuzzy
 msgid "Day of Week"
-msgstr "日"
+msgstr ""
 
 #: ../data/functions.xml.in.h:817
 msgid "r:weekday"
 msgstr ""
 
 #: ../data/functions.xml.in.h:818
-#, fuzzy
 msgid "r:month"
-msgstr "月"
+msgstr "r:month"
 
 #: ../data/functions.xml.in.h:819
-#, fuzzy
 msgid "Day of Month"
-msgstr "日"
+msgstr ""
 
 #: ../data/functions.xml.in.h:820
-#, fuzzy
 msgid "r:day"
-msgstr "日"
+msgstr "r:day"
 
 #: ../data/functions.xml.in.h:821
-#, fuzzy
 msgid "r:year"
-msgstr "年"
+msgstr "r:year"
 
 #: ../data/functions.xml.in.h:822
-#, fuzzy
 msgid "Day of Year"
-msgstr "日"
+msgstr ""
 
 #: ../data/functions.xml.in.h:823
 msgid "r:yearday"
 msgstr ""
 
 #: ../data/functions.xml.in.h:824
-#, fuzzy
 msgid "Current Time"
-msgstr "目前日期和時間"
+msgstr "目前時間"
 
 #: ../data/functions.xml.in.h:825
-#, fuzzy
 msgid "r:time"
-msgstr "時間"
+msgstr "r:time"
 
 #: ../data/functions.xml.in.h:826
-#, fuzzy
 msgid "Time Value"
-msgstr "- time(以時間格式顯示)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:827
 msgid "r:timevalue"
@@ -6674,18 +6277,16 @@ msgid "Returns the time part, in fractional hours, of a date and time value."
 msgstr ""
 
 #: ../data/functions.xml.in.h:829
-#, fuzzy
 msgid "Date to Unix Timestamp"
-msgstr "一個日期"
+msgstr ""
 
 #: ../data/functions.xml.in.h:830
 msgid "r:timestamp"
 msgstr ""
 
 #: ../data/functions.xml.in.h:831
-#, fuzzy
 msgid "Unix Timestamp to Date"
-msgstr "一個日期"
+msgstr ""
 
 #: ../data/functions.xml.in.h:832
 msgid "r:stamptodate,unix2date"
@@ -6702,23 +6303,20 @@ msgid "Timestamp"
 msgstr ""
 
 #: ../data/functions.xml.in.h:835
-#, fuzzy
 msgid "Add Days"
-msgstr "天"
+msgstr ""
 
 #: ../data/functions.xml.in.h:836
 msgid "r:addDays"
 msgstr ""
 
 #: ../data/functions.xml.in.h:837
-#, fuzzy
 msgid "Days"
-msgstr "天"
+msgstr ""
 
 #: ../data/functions.xml.in.h:838
-#, fuzzy
 msgid "Add Months"
-msgstr "加入(_A)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:839
 msgid "r:addMonths"
@@ -6729,9 +6327,8 @@ msgid "Months"
 msgstr ""
 
 #: ../data/functions.xml.in.h:841
-#, fuzzy
 msgid "Add Years"
-msgstr "加入(_A)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:842
 msgid "r:addYears"
@@ -6742,9 +6339,8 @@ msgid "Years"
 msgstr ""
 
 #: ../data/functions.xml.in.h:844
-#, fuzzy
 msgid "Add Time"
-msgstr "時間"
+msgstr ""
 
 #: ../data/functions.xml.in.h:845
 msgid "r:addTime"
@@ -6758,7 +6354,6 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:847 ../data/units.xml.in.h:154
-#, fuzzy
 msgid "Time"
 msgstr "時間"
 
@@ -6778,9 +6373,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:851
-#, fuzzy
 msgid "Find Lunar Phase"
-msgstr "find"
+msgstr ""
 
 #: ../data/functions.xml.in.h:852
 msgid "r:nextlunarphase"
@@ -6797,14 +6391,12 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:854
-#, fuzzy
 msgid "Start Date"
-msgstr "一個日期"
+msgstr ""
 
 #: ../data/functions.xml.in.h:855
-#, fuzzy
 msgid "Days in Month"
-msgstr "天"
+msgstr ""
 
 #: ../data/functions.xml.in.h:856
 msgid "r:daysInMonth"
@@ -6819,38 +6411,32 @@ msgid "Intervals &amp; Uncertainties"
 msgstr ""
 
 #: ../data/functions.xml.in.h:859
-#, fuzzy
 msgid "Interval"
 msgstr "區間"
 
 #: ../data/functions.xml.in.h:860
-#, fuzzy
 msgid "r:interval"
-msgstr "區間"
+msgstr "r:interval"
 
 #: ../data/functions.xml.in.h:861
 msgid "Returns a closed interval with the specified endpoints."
 msgstr ""
 
 #: ../data/functions.xml.in.h:862
-#, fuzzy
 msgid "Lower endpoint"
 msgstr "下端點"
 
 #: ../data/functions.xml.in.h:863
-#, fuzzy
 msgid "Upper endpoint"
 msgstr "上端點"
 
 #: ../data/functions.xml.in.h:864
-#, fuzzy
 msgid "Uncertainty"
 msgstr "誤差"
 
 #: ../data/functions.xml.in.h:865
-#, fuzzy
 msgid "r:uncertainty"
-msgstr "誤差"
+msgstr "r:uncertainty"
 
 #: ../data/functions.xml.in.h:866
 msgid ""
@@ -6858,14 +6444,12 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:867
-#, fuzzy
 msgid "Uncertainty is relative"
-msgstr "相對誤差"
+msgstr ""
 
 #: ../data/functions.xml.in.h:868
-#, fuzzy
 msgid "Lower Endpoint (interval)"
-msgstr "區間"
+msgstr ""
 
 #: ../data/functions.xml.in.h:869
 msgid "r:lowerEndpoint"
@@ -6876,9 +6460,8 @@ msgid "Returns the lower endpoint of a numerical interval."
 msgstr ""
 
 #: ../data/functions.xml.in.h:871
-#, fuzzy
 msgid "Upper Endpoint (interval)"
-msgstr "上端點"
+msgstr ""
 
 #: ../data/functions.xml.in.h:872
 msgid "r:upperEndpoint"
@@ -6889,14 +6472,12 @@ msgid "Returns the upper endpoint of a numerical interval."
 msgstr ""
 
 #: ../data/functions.xml.in.h:874
-#, fuzzy
 msgid "Midpoint (interval)"
-msgstr "中點"
+msgstr ""
 
 #: ../data/functions.xml.in.h:875
-#, fuzzy
 msgid "r:midpoint,valuePart"
-msgstr "中點"
+msgstr "r:midpoint,valuePart"
 
 #: ../data/functions.xml.in.h:876
 msgid ""
@@ -6905,9 +6486,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:877
-#, fuzzy
 msgid "Get Uncertainty"
-msgstr "誤差"
+msgstr ""
 
 #: ../data/functions.xml.in.h:878
 msgid "r:errorPart"
@@ -6920,39 +6500,32 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:880
-#, fuzzy
 msgid "Plot Functions and Vectors"
-msgstr "開啟函數/資料繪圖"
+msgstr ""
 
 #: ../data/functions.xml.in.h:881
-#, fuzzy
 msgid "r:plot"
-msgstr "繪圖"
+msgstr "r:plot"
 
 #: ../data/functions.xml.in.h:882
-#, fuzzy
 msgid "Expression or vector"
-msgstr "將矩陣/向量插入表達式"
+msgstr "表達式或向量"
 
 #: ../data/functions.xml.in.h:883
-#, fuzzy
 msgid "Minimum x value"
 msgstr "最小x值"
 
 #: ../data/functions.xml.in.h:884
-#, fuzzy
 msgid "Maximum x value"
 msgstr "最大x值"
 
 #: ../data/functions.xml.in.h:885
-#, fuzzy
 msgid "Options"
-msgstr "通用顯示選項"
+msgstr "選項"
 
 #: ../data/functions.xml.in.h:886
-#, fuzzy
 msgid "Unicode Value"
-msgstr "- unicode"
+msgstr "Unicode值"
 
 #: ../data/functions.xml.in.h:887
 msgid "r:code"
@@ -6967,41 +6540,34 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:889
-#, fuzzy
 msgid "Character"
-msgstr "字元'%s'在數字\"%s\"(底數%s)中被忽略。"
+msgstr "字元"
 
 #: ../data/functions.xml.in.h:890
 msgid "Encoding"
 msgstr ""
 
 #: ../data/functions.xml.in.h:891
-#, fuzzy
 msgid "Use vector"
 msgstr ""
-"繪製一個或多個表達式或向量。第一個參數使用向量來繪製多個序列。向量序列只使用"
-"第一個參數。也可以繪製一個矩陣，其中每一列是一對x和y值。"
 
 #: ../data/functions.xml.in.h:892
-#, fuzzy
 msgid "Unicode Character"
-msgstr "- unicode"
+msgstr "Unicode字元"
 
 #: ../data/functions.xml.in.h:893
 msgid "r:char"
 msgstr ""
 
 #: ../data/functions.xml.in.h:894
-#, fuzzy
 msgid "Length of string"
-msgstr "一個文字字串"
+msgstr "字串長度"
 
 #: ../data/functions.xml.in.h:895
 msgid "r:len"
 msgstr ""
 
 #: ../data/functions.xml.in.h:896
-#, fuzzy
 msgid "Text"
 msgstr "文字"
 
@@ -7014,25 +6580,20 @@ msgid "r:concatenate"
 msgstr ""
 
 #: ../data/functions.xml.in.h:899
-#, fuzzy
 msgid "Text string 1"
-msgstr "一個文字字串"
+msgstr "文字字串1"
 
 #: ../data/functions.xml.in.h:900
-#, fuzzy
 msgid "Text string 2"
-msgstr "一個文字字串"
+msgstr "文字字串2"
 
 #: ../data/functions.xml.in.h:901
-#, fuzzy
 msgid "Replace"
-msgstr ""
-"組合鍵已經在使用。\n"
-"你想取代目前的動作嗎?"
+msgstr "取代"
 
 #: ../data/functions.xml.in.h:902
 msgid "r:replace"
-msgstr ""
+msgstr "r:replace"
 
 #: ../data/functions.xml.in.h:903
 msgid ""
@@ -7041,29 +6602,24 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:904
-#, fuzzy
 msgid "Expression"
 msgstr "表達式"
 
 #: ../data/functions.xml.in.h:905
-#, fuzzy
 msgid "Original value"
-msgstr "加上原始數值的百分比"
+msgstr "原始值"
 
 #: ../data/functions.xml.in.h:906
-#, fuzzy
 msgid "New value"
-msgstr "新增(_N)"
+msgstr "新值"
 
 #: ../data/functions.xml.in.h:907
-#, fuzzy
 msgid "Precalculate expression"
-msgstr "預先計算"
+msgstr "預先計算表達式"
 
 #: ../data/functions.xml.in.h:908
-#, fuzzy
 msgid "Strip Units"
-msgstr "單位:"
+msgstr ""
 
 #: ../data/functions.xml.in.h:909
 msgid "r:nounit,strip_units"
@@ -7076,169 +6632,136 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:911
-#, fuzzy
 msgid "Process Vector Elements"
-msgstr "元素"
+msgstr ""
 
 #: ../data/functions.xml.in.h:912
-#, fuzzy
 msgid "r:process"
-msgstr "停止行程"
+msgstr "r:process"
 
 #: ../data/functions.xml.in.h:913
-#, fuzzy
 msgid "Element variable"
-msgstr "目前元素:"
+msgstr "元素變數"
 
 #: ../data/functions.xml.in.h:914
-#, fuzzy
 msgid "Index variable"
-msgstr "索引"
+msgstr "索引變數"
 
 #: ../data/functions.xml.in.h:915
-#, fuzzy
 msgid "Vector variable"
-msgstr "矩陣/向量變數"
+msgstr "向量變數"
 
 #: ../data/functions.xml.in.h:916
-#, fuzzy
 msgid "Process Matrix Elements"
-msgstr "停止行程"
+msgstr ""
 
 #: ../data/functions.xml.in.h:917
 msgid "r:processm"
 msgstr ""
 
 #: ../data/functions.xml.in.h:918
-#, fuzzy
 msgid "Row variable"
-msgstr "第一列"
+msgstr "列變數"
 
 #: ../data/functions.xml.in.h:919
-#, fuzzy
 msgid "Column variable"
-msgstr "行"
+msgstr "行變數"
 
 #: ../data/functions.xml.in.h:920
-#, fuzzy
 msgid "Matrix variable"
-msgstr "矩陣/向量變數"
+msgstr "矩陣變數"
 
 #: ../data/functions.xml.in.h:921
-#, fuzzy
 msgid "Custom Sum of Elements"
-msgstr "元素"
+msgstr ""
 
 #: ../data/functions.xml.in.h:922
 msgid "r:csum"
 msgstr ""
 
 #: ../data/functions.xml.in.h:923
-#, fuzzy
 msgid "First element"
-msgstr "元素資料"
+msgstr "第一個元素"
 
 #: ../data/functions.xml.in.h:924
-#, fuzzy
 msgid "Last element"
-msgstr "元素資料"
+msgstr "最後的元素"
 
 #: ../data/functions.xml.in.h:925
-#, fuzzy
 msgid "Initial value"
-msgstr "值"
+msgstr "初始值"
 
 #: ../data/functions.xml.in.h:926
-#, fuzzy
 msgid "Value variable"
-msgstr "值"
+msgstr "值變數"
 
 #: ../data/functions.xml.in.h:927
-#, fuzzy
 msgid "Select Vector Elements"
-msgstr "元素"
+msgstr ""
 
 #: ../data/functions.xml.in.h:928
-#, fuzzy
 msgid "r:select"
-msgstr "選擇日期"
+msgstr "r:select"
 
 #: ../data/functions.xml.in.h:929
-#, fuzzy
 msgid "Condition"
 msgstr "條件"
 
 #: ../data/functions.xml.in.h:930
-#, fuzzy
 msgid "Select first match"
-msgstr "隱式優先"
+msgstr ""
 
 #: ../data/functions.xml.in.h:931
-#, fuzzy
 msgid "r:function"
-msgstr "函數(_F)"
+msgstr "r:function"
 
 #: ../data/functions.xml.in.h:932
-#, fuzzy
 msgid "Arguments"
 msgstr "參數"
 
 #: ../data/functions.xml.in.h:933
-#, fuzzy
 msgid "Title"
 msgstr "標題"
 
 #: ../data/functions.xml.in.h:934
-#, fuzzy
 msgid "r:title"
-msgstr "標題"
+msgstr "r:title"
 
 #: ../data/functions.xml.in.h:936
-#, fuzzy
 msgid "Display Error"
-msgstr "錯誤"
+msgstr "顯示錯誤"
 
 #: ../data/functions.xml.in.h:937
-#, fuzzy
 msgid "r:error"
-msgstr "錯誤"
+msgstr "r:error"
 
 #: ../data/functions.xml.in.h:938
-#, fuzzy
 msgid "Message"
-msgstr ""
-"當計算過程中產生錯誤，警告和其他資訊時，表達式框右上角的圖示會改變以反映這一"
-"點。\n"
-"如果指標保持在上方或單擊圖示，則將顯示該訊息。"
+msgstr "訊息"
 
 #: ../data/functions.xml.in.h:939
-#, fuzzy
 msgid "Display Warning"
-msgstr "警告"
+msgstr "顯示警告"
 
 #: ../data/functions.xml.in.h:940
-#, fuzzy
 msgid "r:warning"
-msgstr "警告"
+msgstr "r:warning"
 
 #: ../data/functions.xml.in.h:941
-#, fuzzy
 msgid "Display Message"
-msgstr "值假設非零後顯示一個訊息。"
+msgstr "顯示訊息"
 
 #: ../data/functions.xml.in.h:942
 msgid "r:message"
 msgstr ""
 
 #: ../data/functions.xml.in.h:943
-#, fuzzy
 msgid "Save as Variable or Function"
-msgstr "一個有效的函數、單位或變數名稱"
+msgstr ""
 
 #: ../data/functions.xml.in.h:944
-#, fuzzy
 msgid "r:save"
-msgstr "儲存(_S)"
+msgstr "r:save"
 
 #: ../data/functions.xml.in.h:945
 msgid ""
@@ -7254,49 +6777,40 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:946
-#, fuzzy
 msgid "Category"
 msgstr "類別"
 
 #: ../data/functions.xml.in.h:947
-#, fuzzy
 msgid "RPN Stack Register"
-msgstr "RPN暫存器已移動"
+msgstr "RPN堆疊暫存器"
 
 #: ../data/functions.xml.in.h:948
-#, fuzzy
 msgid "r:register"
-msgstr "RPN暫存器已移動"
+msgstr "r:register"
 
 #: ../data/functions.xml.in.h:949
-#, fuzzy
 msgid "Returns the value of a RPN stack register."
-msgstr "將RPN堆疊上的值複製到堆疊的頂部。"
+msgstr ""
 
 #: ../data/functions.xml.in.h:950
-#, fuzzy
 msgid "Index"
 msgstr "索引"
 
 #: ../data/functions.xml.in.h:951
-#, fuzzy
 msgid "RPN Stack Vector"
-msgstr "RPN堆疊為空。"
+msgstr "RPN堆疊向量"
 
 #: ../data/functions.xml.in.h:952
-#, fuzzy
 msgid "r:stack"
-msgstr "stack"
+msgstr "r:stack"
 
 #: ../data/functions.xml.in.h:953
-#, fuzzy
 msgid "Returns the RPN stack as a vector."
-msgstr "RPN堆疊為空。"
+msgstr ""
 
 #: ../data/functions.xml.in.h:954
-#, fuzzy
 msgid "Is Number"
-msgstr "一個數字"
+msgstr ""
 
 #: ../data/functions.xml.in.h:955
 msgid "r:isNumber"
@@ -7309,9 +6823,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:957
-#, fuzzy
 msgid "Is Real"
-msgstr "實數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:958
 msgid "r:isReal"
@@ -7324,9 +6837,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:960
-#, fuzzy
 msgid "Is Rational"
-msgstr "有理數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:961
 msgid "r:isRational"
@@ -7339,9 +6851,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:963
-#, fuzzy
 msgid "Is Integer"
-msgstr "一個整數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:964
 msgid "r:isInteger"
@@ -7354,9 +6865,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:966
-#, fuzzy
 msgid "Represents Number"
-msgstr "一個數字"
+msgstr ""
 
 #: ../data/functions.xml.in.h:967
 msgid "r:representsNumber"
@@ -7369,9 +6879,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:969
-#, fuzzy
 msgid "Represents Real"
-msgstr "實數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:970
 msgid "r:representsReal"
@@ -7384,9 +6893,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:972
-#, fuzzy
 msgid "Represents Rational"
-msgstr "有理數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:973
 msgid "r:representsRational"
@@ -7399,9 +6907,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:975
-#, fuzzy
 msgid "Represents Integer"
-msgstr "一個整數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:976
 msgid "r:representsInteger"
@@ -7414,53 +6921,44 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:978
-#, fuzzy
 msgid "External Command"
-msgstr "無法執行外部命令(%s)。"
+msgstr "外部命令"
 
 #: ../data/functions.xml.in.h:979
-#, fuzzy
 msgid "r:command"
-msgstr "命令"
+msgstr "r:command"
 
 #: ../data/functions.xml.in.h:980
-#, fuzzy
 msgid "Command"
 msgstr "命令"
 
 #: ../data/functions.xml.in.h:981
-#, fuzzy
 msgid "Logical"
-msgstr "邏輯OR"
+msgstr ""
 
 #: ../data/functions.xml.in.h:982
-#, fuzzy
 msgid "For...Do"
-msgstr "退出時不要儲存表達式歷史記錄。"
+msgstr "For...Do"
 
 #: ../data/functions.xml.in.h:983
 msgid "r:for"
 msgstr ""
 
 #: ../data/functions.xml.in.h:984
-#, fuzzy
 msgid "Initial value of counter"
-msgstr "數值類型"
+msgstr ""
 
 #: ../data/functions.xml.in.h:985
-#, fuzzy
 msgid "Counter variable"
-msgstr "變數(_V)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:986
-#, fuzzy
 msgid "For condition"
-msgstr "條件"
+msgstr "For條件"
 
 #: ../data/functions.xml.in.h:987
-#, fuzzy
 msgid "Counter update function"
-msgstr "更新"
+msgstr ""
 
 #: ../data/functions.xml.in.h:988
 msgid "Do function"
@@ -7489,43 +6987,36 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:994
-#, fuzzy
 msgid "Expression if condition is met"
-msgstr "條件"
+msgstr ""
 
 #: ../data/functions.xml.in.h:995
-#, fuzzy
 msgid "Expression if condition is NOT met"
-msgstr "條件"
+msgstr ""
 
 #: ../data/functions.xml.in.h:996
-#, fuzzy
 msgid "Assume false if not true"
-msgstr "assume"
+msgstr ""
 
 #: ../data/functions.xml.in.h:997
-#, fuzzy
 msgid "Bitwise Exclusive OR"
 msgstr "按位元互斥或"
 
 #: ../data/functions.xml.in.h:998
-#, fuzzy
 msgid "r:xor"
-msgstr "使用插入記號作為按位元XOR"
+msgstr "r:xor"
 
 #: ../data/functions.xml.in.h:999
-#, fuzzy
 msgid "Logical Exclusive OR"
-msgstr "按位元互斥或"
+msgstr "邏輯互斥或"
 
 #: ../data/functions.xml.in.h:1000
 msgid "r:lxor"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1001
-#, fuzzy
 msgid "Bitwise Shift"
-msgstr "按位元左移"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1002
 msgid ""
@@ -7535,23 +7026,20 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:1003
-#, fuzzy
 msgid "r:shift"
-msgstr "按位元左移"
+msgstr "r:shift"
 
 #: ../data/functions.xml.in.h:1004
-#, fuzzy
 msgid "Steps"
-msgstr "階梯"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1005
 msgid "Arithmetic shift using two's complement"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1006
-#, fuzzy
 msgid "Bitwise Complement (Not)"
-msgstr "按位元AND"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1007
 msgid ""
@@ -7565,14 +7053,12 @@ msgid "r:bitcmp"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1009
-#, fuzzy
 msgid "Bit width"
-msgstr "線寬"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1010
-#, fuzzy
 msgid "Signed integer"
-msgstr "一個整數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1011
 msgid "Bit Rotation"
@@ -7592,9 +7078,8 @@ msgid "r:bitrot"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1014
-#, fuzzy
 msgid "Set Bit"
-msgstr "set"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1015
 msgid ""
@@ -7608,9 +7093,8 @@ msgid "r:bitset"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1017
-#, fuzzy
 msgid "Set Multiple Bits"
-msgstr "二進制位元"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1018
 msgid ""
@@ -7625,14 +7109,12 @@ msgid "r:setbits"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1020
-#, fuzzy
 msgid "First position"
-msgstr "記住視窗位置"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1021
-#, fuzzy
 msgid "Last position"
-msgstr "上一個答案"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1022
 msgid "Get Bit"
@@ -7651,9 +7133,8 @@ msgid "r:bitget"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1025
-#, fuzzy
 msgid "Algebra"
-msgstr "代數模式"
+msgstr "代數"
 
 #: ../data/functions.xml.in.h:1026
 msgid "Summation"
@@ -7670,19 +7151,16 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:1029
-#, fuzzy
 msgid "Term expression"
-msgstr "搜尋項"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1030
-#, fuzzy
 msgid "Lower limit (i)"
-msgstr "下端點"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1031
-#, fuzzy
 msgid "Upper limit (n)"
-msgstr "上端點"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1032
 msgid "Product of a sequence"
@@ -7699,52 +7177,44 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:1035
-#, fuzzy
 msgid "Factor expression"
-msgstr "factor"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1036
-#, fuzzy
 msgid "Solve for multiple variables"
-msgstr "變數:"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1037
 msgid "r:multisolve"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1038
-#, fuzzy
 msgid "Equation vector"
-msgstr "向量"
+msgstr "方程式向量"
 
 #: ../data/functions.xml.in.h:1039
-#, fuzzy
 msgid "Variable vector"
-msgstr "矩陣/向量變數"
+msgstr "變數向量"
 
 #: ../data/functions.xml.in.h:1040
-#, fuzzy
 msgid "Solve equation"
-msgstr "無法求解微分方程式。"
+msgstr "求解方程式"
 
 #: ../data/functions.xml.in.h:1041
-#, fuzzy
 msgid "r:solve"
-msgstr "無法求解微分方程式。"
+msgstr "r:solve"
 
 #: ../data/functions.xml.in.h:1042
-#, fuzzy
 msgid "Equation"
-msgstr "找不到微分方程式。"
+msgstr "方程式"
 
 #: ../data/functions.xml.in.h:1043
 msgid "With respect to"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1044
-#, fuzzy
 msgid "Solve differential equation"
-msgstr "無法求解微分方程式。"
+msgstr "求解微分方程式"
 
 #: ../data/functions.xml.in.h:1045
 msgid "r:dsolve"
@@ -7778,14 +7248,12 @@ msgid "Initial estimate"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1052 ../data/variables.xml.in.h:224
-#, fuzzy
 msgid "Precision"
 msgstr "精確度"
 
 #: ../data/functions.xml.in.h:1053
-#, fuzzy
 msgid "Max iterations"
-msgstr "最大值"
+msgstr "最大疊代"
 
 #: ../data/functions.xml.in.h:1054
 msgid "Solve using Secant Method"
@@ -7796,19 +7264,16 @@ msgid "r:secantsolve"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1056
-#, fuzzy
 msgid "Initial estimate 1"
-msgstr "一個布林(0或1)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1057
-#, fuzzy
 msgid "Initial estimate 2"
-msgstr "範例: swap 2 4"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1058
-#, fuzzy
 msgid "Solve for two variables"
-msgstr "變數:"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1059
 msgid "r:solve2"
@@ -7821,28 +7286,24 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:1061
-#, fuzzy
 msgid "Equation 1"
-msgstr "找不到微分方程式。"
+msgstr "方程式1"
 
 #: ../data/functions.xml.in.h:1062
-#, fuzzy
 msgid "Equation 2"
-msgstr "答案2"
+msgstr "方程式2"
 
 #: ../data/functions.xml.in.h:1063
-#, fuzzy
 msgid "Variable 1"
-msgstr "變數(_V)"
+msgstr "變數1"
 
 #: ../data/functions.xml.in.h:1064
 msgid "Variable 2"
-msgstr ""
+msgstr "變數2"
 
 #: ../data/functions.xml.in.h:1065
-#, fuzzy
 msgid "Find Linear Function"
-msgstr "find"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1066
 msgid "r:linearfunction"
@@ -7882,28 +7343,24 @@ msgid "r:diff,derivative"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1075
-#, fuzzy
 msgid "Variable value"
-msgstr "值"
+msgstr "變數值"
 
 #: ../data/functions.xml.in.h:1076
-#, fuzzy
 msgid "Integrate"
-msgstr "無法積分表達式。"
+msgstr "積分"
 
 #: ../data/functions.xml.in.h:1077
 msgid "r:integrate,integral,au:&#x222B;"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1078
-#, fuzzy
 msgid "Variable of integration"
-msgstr "變數(_V)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1079
-#, fuzzy
 msgid "Force numerical integration"
-msgstr "數值顯示"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1080
 msgid "Romberg Integration"
@@ -7914,9 +7371,8 @@ msgid "r:romberg"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1082
-#, fuzzy
 msgid "Min iterations"
-msgstr "最小值"
+msgstr "最小疊代"
 
 #: ../data/functions.xml.in.h:1083
 msgid "Monte Carlo Integration"
@@ -7927,14 +7383,12 @@ msgid "r:montecarlo"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1085
-#, fuzzy
 msgid "Number of samples"
-msgstr "樣本"
+msgstr "樣本數"
 
 #: ../data/functions.xml.in.h:1086
-#, fuzzy
 msgid "Limit"
-msgstr "繪圖時間限制:"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1087
 msgid ""
@@ -7944,24 +7398,20 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:1088
-#, fuzzy
 msgid "r:limit"
-msgstr "繪圖時間限制:"
+msgstr "r:limit"
 
 #: ../data/functions.xml.in.h:1089
-#, fuzzy
 msgid "Value to approach"
-msgstr "值"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1090
-#, fuzzy
 msgid "Direction"
 msgstr "方向"
 
 #: ../data/functions.xml.in.h:1091
-#, fuzzy
 msgid "Limit with Multiple Variables"
-msgstr "變數:"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1092
 msgid "r:multilimit"
@@ -7975,126 +7425,100 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:1094
-#, fuzzy
 msgid "Value vector"
-msgstr "一個向量具有"
+msgstr "值向量"
 
 #: ../data/functions.xml.in.h:1095
-#, fuzzy
 msgid "Direction vector"
-msgstr "方向"
+msgstr "方向向量"
 
 #: ../data/functions.xml.in.h:1096
-#, fuzzy
 msgid "Extreme Values"
-msgstr "可能的值:"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1097
 msgid "r:extremum"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1098
-#, fuzzy
 msgid "Named Integrals"
-msgstr "已命名導出單位"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1099
-#, fuzzy
 msgid "Logarithmic Integral"
-msgstr "對數x刻度"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1100
 msgid "rc:li,logint"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1101
-#, fuzzy
 msgid "The integral of 1/ln(x)."
-msgstr "定積分是近似的。"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1102
-#, fuzzy
 msgid "Exponential Integral"
-msgstr "指數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1103
 msgid "rc:Ei,expint"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1104
-#, fuzzy
 msgid "The integral of e^x/x."
-msgstr "X變數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1105
-#, fuzzy
 msgid "Sine Integral"
-msgstr "定積分是近似的。"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1106
-#, fuzzy
 msgid "rc:Si,sinint"
-msgstr "啟用所有SI前綴(_x)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1107
-#, fuzzy
 msgid "The integral of sin(x)/x."
 msgstr ""
-"Off: -x + y\n"
-"On: y - x"
 
 #: ../data/functions.xml.in.h:1108
-#, fuzzy
 msgid "Cosine Integral"
-msgstr "定積分是近似的。"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1109
 msgid "rc:Ci,cosint"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1110
-#, fuzzy
 msgid "The integral of cos(x)/x."
 msgstr ""
-"Off: -x + y\n"
-"On: y - x"
 
 #: ../data/functions.xml.in.h:1111
-#, fuzzy
 msgid "Hyperbolic Sine Integral"
-msgstr "定積分是近似的。"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1112
 msgid "rc:Shi,sinhint"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1113
-#, fuzzy
 msgid "The integral of sinh(x)/x."
 msgstr ""
-"Off: -x + y\n"
-"On: y - x"
 
 #: ../data/functions.xml.in.h:1114
-#, fuzzy
 msgid "Hyperbolic Cosine Integral"
-msgstr "定積分是近似的。"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1115
 msgid "rc:Chi,coshint"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1116
-#, fuzzy
 msgid "The integral of cosh(x)/x."
 msgstr ""
-"Off: -x + y\n"
-"On: y - x"
 
 #: ../data/functions.xml.in.h:1117
-#, fuzzy
 msgid "Fresnel Integral S"
-msgstr "定積分是近似的。"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1118
 msgid "r:fresnels"
@@ -8105,9 +7529,8 @@ msgid "The integral of sin(pi*x^2/2)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:1120
-#, fuzzy
 msgid "Fresnel Integral C"
-msgstr "計算(_a)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1121
 msgid "r:fresnelc"
@@ -8170,9 +7593,8 @@ msgid "Side A"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1136
-#, fuzzy
 msgid "Side B"
-msgstr "<b>結果底數</b>"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1137
 msgid "Triangle Area"
@@ -8195,9 +7617,8 @@ msgid "r:triangle_perimeter"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1142
-#, fuzzy
 msgid "Side C"
-msgstr "轉換(_o)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1143
 msgid "Circle"
@@ -8288,28 +7709,24 @@ msgid "r:sphere_sa"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1165
-#, fuzzy
 msgid "Square Area"
-msgstr "平方"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1166
-#, fuzzy
 msgid "r:square"
-msgstr "平方"
+msgstr "r:square"
 
 #: ../data/functions.xml.in.h:1167
 msgid "Length of side"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1168
-#, fuzzy
 msgid "Square Perimeter"
-msgstr "平方"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1169
-#, fuzzy
 msgid "r:square_perimeter"
-msgstr "平方"
+msgstr "r:square_perimeter"
 
 #: ../data/functions.xml.in.h:1170
 msgid "Cube"
@@ -8344,9 +7761,8 @@ msgid "r:rect"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1178
-#, fuzzy
 msgid "Width"
-msgstr "線寬"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1179
 msgid "Rectangle Perimeter"
@@ -8361,9 +7777,8 @@ msgid "Prism"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1182
-#, fuzzy
 msgid "Volume of Rectangular Prism"
-msgstr "直角"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1183
 msgid "r:rectprism"
@@ -8416,14 +7831,12 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:1195
-#, fuzzy
 msgid "Length of base"
-msgstr "- base(轉換為基本單位)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1196
-#, fuzzy
 msgid "Width of base"
-msgstr "線寬"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1197
 msgid "Volume of Regular Tetrahedron"
@@ -8547,18 +7960,16 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:1225
-#, fuzzy
 msgid "Demand function"
-msgstr "函數(_F)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1226
 msgid "Price"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1227
-#, fuzzy
 msgid "Price variable"
-msgstr "變數(_V)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1228
 msgid "Sum-of-Years Digits Depreciation"
@@ -8583,9 +7994,8 @@ msgid "Cost"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1232
-#, fuzzy
 msgid "Salvage value"
-msgstr "值"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1233
 msgid "Life"
@@ -8596,9 +8006,8 @@ msgid "Period"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1235
-#, fuzzy
 msgid "Straight Line Depreciation"
-msgstr "具有點的線"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1236
 msgid "r:sln"
@@ -8614,9 +8023,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:1238
-#, fuzzy
 msgid "Present Value"
-msgstr "值"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1239
 msgid "ra:pv"
@@ -8630,33 +8038,28 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:1241
-#, fuzzy
 msgid "Interest rate"
-msgstr "採樣率"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1242
-#, fuzzy
 msgid "Number of periods"
-msgstr "一個數字"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1243
 msgid "Payment made each period"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1244
-#, fuzzy
 msgid "Future value"
-msgstr "值"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1245
-#, fuzzy
 msgid "Type"
-msgstr "類型"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1246
-#, fuzzy
 msgid "Nominal Interest Rate"
-msgstr "匯率來源:"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1247
 msgid "r:nominal"
@@ -8669,32 +8072,28 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:1249
-#, fuzzy
 msgid "Effective interest rate"
-msgstr "匯率來源:"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1250
 msgid "Periods"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1251
-#, fuzzy
 msgid "Zero Coupon"
-msgstr "無條件捨去"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1252
-#, fuzzy
 msgid "r:zero_coupon"
-msgstr "無條件捨去"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1253
 msgid "Calculates the value of a zero-coupon (pure discount) bond."
 msgstr ""
 
 #: ../data/functions.xml.in.h:1254
-#, fuzzy
 msgid "Face value"
-msgstr "值"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1255
 msgid "Treasury Bill Yield"
@@ -8709,14 +8108,12 @@ msgid "Returns the yield for a treasury bill."
 msgstr ""
 
 #: ../data/functions.xml.in.h:1258
-#, fuzzy
 msgid "Settlement date"
-msgstr "一個日期"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1259
-#, fuzzy
 msgid "Maturity date"
-msgstr "一個日期"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1260
 msgid "Price per $100 face value"
@@ -8735,14 +8132,12 @@ msgid "Returns the price per $100 value for a treasury bill."
 msgstr ""
 
 #: ../data/functions.xml.in.h:1264
-#, fuzzy
 msgid "Discount rate"
-msgstr "採樣率"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1265
-#, fuzzy
 msgid "Treasury Bill Equivalent"
-msgstr "等價於set approximation try exact。"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1266
 msgid "r:tbilleq"
@@ -8765,18 +8160,16 @@ msgid "Calculates the interest paid on a given period of an investment."
 msgstr ""
 
 #: ../data/functions.xml.in.h:1271
-#, fuzzy
 msgid "Periodic interest rate"
-msgstr "開啟元素週期表"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1272
 msgid "Amortizement period"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1273
-#, fuzzy
 msgid "Present value"
-msgstr "值"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1274
 msgid "Payment for a loan"
@@ -8800,19 +8193,16 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:1277
-#, fuzzy
 msgid "Rate"
-msgstr "匯率來源:"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1278
-#, fuzzy
 msgid "Rate of investment"
-msgstr "採樣率"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1279
-#, fuzzy
 msgid "r:rate"
-msgstr "匯率來源:"
+msgstr "r:rate"
 
 #: ../data/functions.xml.in.h:1281
 #, no-c-format
@@ -8848,9 +8238,8 @@ msgid "Periods for investment to attain desired value"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1287
-#, fuzzy
 msgid "r:g_duration"
-msgstr "範例: to ?g"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1288
 msgid ""
@@ -8874,14 +8263,12 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:1292
-#, fuzzy
 msgid "Desired future value"
-msgstr "值"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1293
-#, fuzzy
 msgid "Effective Interest Rate"
-msgstr "匯率來源:"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1294
 msgid "r:effect"
@@ -8892,14 +8279,12 @@ msgid "Calculates the effective interest for a given nominal rate."
 msgstr ""
 
 #: ../data/functions.xml.in.h:1296
-#, fuzzy
 msgid "Nominal interest rate"
-msgstr "匯率來源:"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1297
-#, fuzzy
 msgid "Future Value"
-msgstr "值"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1298
 msgid "ra:fv,a:FV"
@@ -8918,9 +8303,8 @@ msgid "Return on continuously compounded interest"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1301
-#, fuzzy
 msgid "r:continuous"
-msgstr "連續轉換"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1302
 msgid ""
@@ -8947,9 +8331,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:1307
-#, fuzzy
 msgid "Periods per year"
-msgstr "年"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1308
 msgid "Payment of an annuity going towards interest (IPMT)"
@@ -8990,9 +8373,8 @@ msgid "Redemption"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1316
-#, fuzzy
 msgid "Dollar Fraction"
-msgstr "分數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1317
 msgid "r:dollarfr"
@@ -9004,19 +8386,16 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:1319
-#, fuzzy
 msgid "Decimal dollar"
-msgstr "十進制(_D)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1320
-#, fuzzy
 msgid "Denominator of fraction"
-msgstr "分數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1321
-#, fuzzy
 msgid "Dollar Decimal"
-msgstr "十進制(_D)"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1322
 msgid "r:dollarde"
@@ -9029,9 +8408,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:1324
-#, fuzzy
 msgid "Fractional dollar"
-msgstr "澳幣"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1325
 msgid "Amount received at maturity for a security bond"
@@ -9050,9 +8428,8 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:1328
-#, fuzzy
 msgid "Discount rate for a security"
-msgstr "匯率來源:"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1329
 msgid "r:disc"
@@ -9082,19 +8459,16 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:1334
-#, fuzzy
 msgid "Issue date"
-msgstr "一個日期"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1335
-#, fuzzy
 msgid "Annual rate of security"
-msgstr "匯率來源:"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1336
-#, fuzzy
 msgid "Par value"
-msgstr "值"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1337
 msgid "Accrued interest of security with periodic interest payments"
@@ -9113,18 +8487,16 @@ msgid ""
 msgstr ""
 
 #: ../data/functions.xml.in.h:1340
-#, fuzzy
 msgid "First interest"
-msgstr "隱式優先"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1341
 msgid "Frequency"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1342
-#, fuzzy
 msgid "Number of coupons to be paid"
-msgstr "正整數"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1343
 msgid "r:coupnum"
@@ -9191,61 +8563,57 @@ msgid "Calculates the value of a level-coupon bond."
 msgstr ""
 
 #: ../data/functions.xml.in.h:1356
-#, fuzzy
 msgid "Coupon rate"
-msgstr "採樣率"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1357
-#, fuzzy
 msgid "Coupons per year"
-msgstr "年"
+msgstr ""
 
 #: ../data/functions.xml.in.h:1358
-#, fuzzy
 msgid "Market interest rate"
-msgstr "匯率來源:"
+msgstr ""
 
 #: ../data/planets.xml.in.h:1
-#, fuzzy
 msgid "Earth"
-msgstr "土"
+msgstr "地球"
 
 #: ../data/planets.xml.in.h:2
 msgid "Mars"
-msgstr ""
+msgstr "火星"
 
 #. Planet
 #: ../data/planets.xml.in.h:4
 msgid "!planets!Mercury"
-msgstr ""
+msgstr "水星"
 
 #: ../data/planets.xml.in.h:5
 msgid "Venus"
-msgstr ""
+msgstr "金星"
 
 #: ../data/planets.xml.in.h:6
 msgid "Jupiter"
-msgstr ""
+msgstr "木星"
 
 #: ../data/planets.xml.in.h:7
 msgid "Saturn"
-msgstr ""
+msgstr "土星"
 
 #: ../data/planets.xml.in.h:8
 msgid "Neptune"
-msgstr ""
+msgstr "海王星"
 
 #: ../data/planets.xml.in.h:9
 msgid "Pluto"
-msgstr ""
+msgstr "冥王星"
 
 #: ../data/planets.xml.in.h:10
 msgid "Uranus"
-msgstr ""
+msgstr "天王星"
 
 #: ../data/planets.xml.in.h:11
 msgid "Sun"
-msgstr ""
+msgstr "太陽"
 
 #: ../data/prefixes.xml.in.h:1
 msgid "ar:q,r:quecto"
@@ -9377,14 +8745,12 @@ msgstr ""
 
 #. Unit category
 #: ../data/units.xml.in.h:2
-#, fuzzy
 msgid "!units!Length"
-msgstr "單位:"
+msgstr "長度"
 
 #: ../data/units.xml.in.h:3
-#, fuzzy
 msgid "Meter"
-msgstr "此命令也可以直接在數學表達式的結尾鍵入(例如5 ft + 2 in to meter)。"
+msgstr "公尺"
 
 #: ../data/units.xml.in.h:4
 msgid "ar:m,meter,p:meters,metre,p:metres"
@@ -9431,51 +8797,40 @@ msgid "aru:&#xC5;,aou:&#x212B;,u:&#xE5;ngstr&#xF6;m,angstrom"
 msgstr ""
 
 #: ../data/units.xml.in.h:15
-#, fuzzy
 msgid "U.S. Survey Inch"
-msgstr "美制"
+msgstr ""
 
 #: ../data/units.xml.in.h:16
 msgid "ar:US_in,US_inch,p:US_inches"
 msgstr ""
 
 #: ../data/units.xml.in.h:17
-#, fuzzy
 msgid "Inch"
 msgstr ""
-"範例: 單位“hand”的優先權設定為2，而ft(foot)和in(inch)的優先權設定為1，導致"
-"\"17 in = 1 ft + 5 in\"，而不是\"17 in = 1 ft + 1 hand + 1 in\"。"
 
 #: ../data/units.xml.in.h:18
 msgid "ar:in,inch,p:inches"
 msgstr ""
 
 #: ../data/units.xml.in.h:19
-#, fuzzy
 msgid "Hand"
 msgstr ""
-"範例: 單位“hand”的優先權設定為2，而ft(foot)和in(inch)的優先權設定為1，導致"
-"\"17 in = 1 ft + 5 in\"，而不是\"17 in = 1 ft + 1 hand + 1 in\"。"
 
 #: ../data/units.xml.in.h:20
 msgid "r:hand,p:hands"
 msgstr ""
 
 #: ../data/units.xml.in.h:21
-#, fuzzy
 msgid "Foot"
 msgstr ""
-"範例: 單位“hand”的優先權設定為2，而ft(foot)和in(inch)的優先權設定為1，導致"
-"\"17 in = 1 ft + 5 in\"，而不是\"17 in = 1 ft + 1 hand + 1 in\"。"
 
 #: ../data/units.xml.in.h:22
 msgid "ar:ft,foot,p:feet"
 msgstr ""
 
 #: ../data/units.xml.in.h:23
-#, fuzzy
 msgid "U.S. Survey Foot"
-msgstr "美制"
+msgstr ""
 
 #: ../data/units.xml.in.h:24
 msgid "ar:US_ft,US_foot,p:US_feet"
@@ -9490,11 +8845,8 @@ msgid "ar:li,link,p:links"
 msgstr ""
 
 #: ../data/units.xml.in.h:27
-#, fuzzy
 msgid "Yard"
 msgstr ""
-"範例: yd(yard)的最小基本單位數量設定為12，導致\"3 × 3 ft = 9 ft\"(而不是\"3 "
-"yd\")和\"4 × 3 ft = 4 yd\"。"
 
 #: ../data/units.xml.in.h:28
 msgid "ar:yd,yard,p:yards"
@@ -9509,9 +8861,8 @@ msgid "ar:rd,rod,p:rods"
 msgstr ""
 
 #: ../data/units.xml.in.h:31
-#, fuzzy
 msgid "U.S. Survey Rod"
-msgstr "美制"
+msgstr ""
 
 #: ../data/units.xml.in.h:32
 msgid "ar:US_rd,US_rod,p:US_rods"
@@ -9526,9 +8877,8 @@ msgid "r:fathom,p:fathoms"
 msgstr ""
 
 #: ../data/units.xml.in.h:35
-#, fuzzy
 msgid "Chain"
-msgstr "連鎖"
+msgstr ""
 
 #: ../data/units.xml.in.h:36
 msgid "ar:ch,chain,p:chains"
@@ -9551,9 +8901,8 @@ msgid "ar:mi,mile,p:miles"
 msgstr ""
 
 #: ../data/units.xml.in.h:41
-#, fuzzy
 msgid "U.S. Survey Mile"
-msgstr "美制"
+msgstr ""
 
 #: ../data/units.xml.in.h:42
 msgid "ar:US_mi,US_mile,p:US_miles"
@@ -9568,45 +8917,40 @@ msgid "r:thou,mil,po:mils"
 msgstr ""
 
 #: ../data/units.xml.in.h:45
-#, fuzzy
 msgid "Astronomical Unit"
-msgstr "單位(_U)"
+msgstr ""
 
 #: ../data/units.xml.in.h:46
 msgid "ar:AU,astronomical_unit,p:astronomical_units"
 msgstr ""
 
 #: ../data/units.xml.in.h:47
-#, fuzzy
 msgid "Light Year"
-msgstr "淺色"
+msgstr ""
 
 #: ../data/units.xml.in.h:48
 msgid "ar:ly,lightyear,p:lightyears"
 msgstr ""
 
 #: ../data/units.xml.in.h:49
-#, fuzzy
 msgid "Light Second"
-msgstr "淺色"
+msgstr ""
 
 #: ../data/units.xml.in.h:50
 msgid "r:light_second,p:light_seconds"
 msgstr ""
 
 #: ../data/units.xml.in.h:51
-#, fuzzy
 msgid "Light Minute"
-msgstr "淺色"
+msgstr ""
 
 #: ../data/units.xml.in.h:52
 msgid "r:light_minute,p:light_minutes"
 msgstr ""
 
 #: ../data/units.xml.in.h:53
-#, fuzzy
 msgid "Light Hour"
-msgstr "淺色"
+msgstr ""
 
 #: ../data/units.xml.in.h:54
 msgid "r:light_hour,p:light_hours"
@@ -9621,9 +8965,8 @@ msgid "ar:pc,parsec,p:parsecs"
 msgstr ""
 
 #: ../data/units.xml.in.h:57
-#, fuzzy
 msgid "Solar Radius (nominal)"
-msgstr "伊朗曆(Solar Hijri)"
+msgstr ""
 
 #: ../data/units.xml.in.h:58
 msgid "r:solar_radius,au:R_&#x2609;"
@@ -9662,9 +9005,8 @@ msgid "r:toise,p:toises"
 msgstr ""
 
 #: ../data/units.xml.in.h:67
-#, fuzzy
 msgid "Planck Length"
-msgstr "範例: find variables planck。"
+msgstr ""
 
 #: ../data/units.xml.in.h:68
 msgid "Bohr (Atomic Unit of Length)"
@@ -9675,14 +9017,12 @@ msgid "Electronvolt Distance"
 msgstr ""
 
 #: ../data/units.xml.in.h:70
-#, fuzzy
 msgid "Natural Unit of Length"
-msgstr "自然三次樣條"
+msgstr ""
 
 #: ../data/units.xml.in.h:71
-#, fuzzy
 msgid "Rack Unit"
-msgstr "單位(_U)"
+msgstr ""
 
 #: ../data/units.xml.in.h:72
 msgid "a:U,r:rack_unit,p:rack_units,a:RU"
@@ -9690,14 +9030,12 @@ msgstr ""
 
 #. Unit category
 #: ../data/units.xml.in.h:74
-#, fuzzy
 msgid "!units!Angle"
-msgstr "角/平面角"
+msgstr "角度"
 
 #: ../data/units.xml.in.h:75
-#, fuzzy
 msgid "Plane Angle"
-msgstr "角/平面角"
+msgstr "平面角"
 
 #: ../data/units.xml.in.h:76
 msgid "Radian"
@@ -9750,9 +9088,8 @@ msgid ""
 msgstr ""
 
 #: ../data/units.xml.in.h:89
-#, fuzzy
 msgid "Solid Angle"
-msgstr "角度"
+msgstr ""
 
 #: ../data/units.xml.in.h:90
 msgid "Steradian"
@@ -9775,9 +9112,8 @@ msgid "Angular Velocity"
 msgstr ""
 
 #: ../data/units.xml.in.h:95
-#, fuzzy
 msgid "Radians per Second"
-msgstr "弧度"
+msgstr ""
 
 #: ../data/units.xml.in.h:96
 msgid "Revolutions per Minute (RPM)"
@@ -9789,9 +9125,8 @@ msgstr ""
 
 #. Unit category
 #: ../data/units.xml.in.h:99
-#, fuzzy
 msgid "!units!Mass"
-msgstr "單位:"
+msgstr "質量"
 
 #: ../data/units.xml.in.h:100
 msgid "Gram"
@@ -9802,7 +9137,6 @@ msgid "ar:g,gram,p:grams"
 msgstr ""
 
 #: ../data/units.xml.in.h:102
-#, fuzzy
 msgid "Kilogram"
 msgstr "公斤"
 
@@ -9843,9 +9177,8 @@ msgid "ars:oz_t,troy_ounce,p:troy_ounces"
 msgstr ""
 
 #: ../data/units.xml.in.h:112
-#, fuzzy
 msgid "Pound (troy)"
-msgstr "英鎊"
+msgstr ""
 
 #: ../data/units.xml.in.h:113
 msgid "ars:lb_t,troy_pound,p:troy_pounds"
@@ -9868,45 +9201,40 @@ msgid "ar:oz,ounce,p:ounces"
 msgstr ""
 
 #: ../data/units.xml.in.h:118
-#, fuzzy
 msgid "Pound"
-msgstr "英鎊"
+msgstr ""
 
 #: ../data/units.xml.in.h:119
 msgid "ar:lb,aou:&#x2114;,pound,p:pounds"
 msgstr ""
 
 #: ../data/units.xml.in.h:120
-#, fuzzy
 msgid "Short Hundredweight (Cental)"
-msgstr "短乘法"
+msgstr ""
 
 #: ../data/units.xml.in.h:121
 msgid "ar:cwt,hundredweight,cental,p:hundredweights,centals"
 msgstr ""
 
 #: ../data/units.xml.in.h:122
-#, fuzzy
 msgid "Long Hundredweight"
-msgstr "長"
+msgstr ""
 
 #: ../data/units.xml.in.h:123
 msgid "ar:l_cwt,long_hundredweight,p:long_hundredweights"
 msgstr ""
 
 #: ../data/units.xml.in.h:124
-#, fuzzy
 msgid "Short Ton"
-msgstr "短乘法"
+msgstr ""
 
 #: ../data/units.xml.in.h:125
 msgid "ar:s_ton,short_ton,p:short_tons"
 msgstr ""
 
 #: ../data/units.xml.in.h:126
-#, fuzzy
 msgid "Long Ton"
-msgstr "長"
+msgstr ""
 
 #: ../data/units.xml.in.h:127
 msgid "ar:l_ton,long_ton,p:long_tons"
@@ -9945,9 +9273,8 @@ msgid "r:zentner"
 msgstr ""
 
 #: ../data/units.xml.in.h:136
-#, fuzzy
 msgid "Planck Mass"
-msgstr "範例: find variables planck。"
+msgstr ""
 
 #: ../data/units.xml.in.h:137
 msgid "Atomic/Natural Unit of Mass"
@@ -9958,9 +9285,8 @@ msgid "Electronvolt Mass"
 msgstr ""
 
 #: ../data/units.xml.in.h:139
-#, fuzzy
 msgid "Atomic Mass Unit"
-msgstr "單位表達式"
+msgstr "原子質量單位"
 
 #: ../data/units.xml.in.h:140
 msgid "ar:u,a:AMU,atomic_mass_unit,p:atomic_mass_units"
@@ -9979,9 +9305,8 @@ msgid "Kilodalton"
 msgstr ""
 
 #: ../data/units.xml.in.h:144
-#, fuzzy
 msgid "Solar Mass"
-msgstr "伊朗曆(Solar Hijri)"
+msgstr ""
 
 #: ../data/units.xml.in.h:145
 msgid "r:solar_mass,au:M_&#x2609;"
@@ -10000,19 +9325,16 @@ msgid "Gram per Cubic Centimeter"
 msgstr ""
 
 #: ../data/units.xml.in.h:151
-#, fuzzy
 msgid "Gram per Mole"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:152
-#, fuzzy
 msgid "Mass Fraction"
-msgstr "分數"
+msgstr ""
 
 #: ../data/units.xml.in.h:153
-#, fuzzy
 msgid "Kilogram per Kilogram"
-msgstr "公斤"
+msgstr ""
 
 #: ../data/units.xml.in.h:156
 msgid "ar:s,second,p:seconds"
@@ -10047,9 +9369,8 @@ msgid "r:fortnight,p:fortnights"
 msgstr ""
 
 #: ../data/units.xml.in.h:167
-#, fuzzy
 msgid "Julian Year"
-msgstr "儒略曆:"
+msgstr ""
 
 #: ../data/units.xml.in.h:168
 msgid "r:year,p:years,as:a_j,a:yr,annus"
@@ -10064,18 +9385,16 @@ msgid ""
 msgstr ""
 
 #: ../data/units.xml.in.h:170
-#, fuzzy
 msgid "Mean Gregorian Year"
-msgstr "格里曆:"
+msgstr ""
 
 #: ../data/units.xml.in.h:171
 msgid "ars:a_g,gregorian_year,p:gregorian_years"
 msgstr ""
 
 #: ../data/units.xml.in.h:172
-#, fuzzy
 msgid "Mean Tropical Year"
-msgstr "mean"
+msgstr ""
 
 #: ../data/units.xml.in.h:173
 msgid "ars:a_t,tropical_year,p:tropical_years"
@@ -10086,30 +9405,25 @@ msgid "r:month,p:months"
 msgstr ""
 
 #: ../data/units.xml.in.h:176
-#, fuzzy
 msgid "Planck Time"
-msgstr "範例: find variables planck。"
+msgstr ""
 
 #: ../data/units.xml.in.h:177
-#, fuzzy
 msgid "Atomic Unit of Time"
-msgstr "- time(以時間格式顯示)"
+msgstr ""
 
 #: ../data/units.xml.in.h:178
-#, fuzzy
 msgid "Natural Unit of Time"
-msgstr "自然三次樣條"
+msgstr ""
 
 #: ../data/units.xml.in.h:179
-#, fuzzy
 msgid "Electronvolt Time"
-msgstr "- time(以時間格式顯示)"
+msgstr ""
 
 #. Unit category
 #: ../data/units.xml.in.h:181
-#, fuzzy
 msgid "!units!Frequency"
-msgstr "單位:"
+msgstr "頻率"
 
 #: ../data/units.xml.in.h:182
 msgid "Hertz"
@@ -10124,9 +9438,8 @@ msgid "Electricity"
 msgstr ""
 
 #: ../data/units.xml.in.h:185
-#, fuzzy
 msgid "Electric Current"
-msgstr "目前元素:"
+msgstr "電流"
 
 #: ../data/units.xml.in.h:186
 msgid "Ampere"
@@ -10145,9 +9458,8 @@ msgid "r:abampere,a:abA,p:abamperes,a:Bi,biot"
 msgstr ""
 
 #: ../data/units.xml.in.h:190
-#, fuzzy
 msgid "Current Density"
-msgstr "目前元素:"
+msgstr ""
 
 #: ../data/units.xml.in.h:191
 msgid "Ampere per Meter Squared"
@@ -10182,14 +9494,12 @@ msgid "r:statcoulomb,p:statcoulombs,a:statC,franklin,a:Fr,p:franklins"
 msgstr ""
 
 #: ../data/units.xml.in.h:199
-#, fuzzy
 msgid "Planck Charge"
-msgstr "範例: find variables planck。"
+msgstr ""
 
 #: ../data/units.xml.in.h:200
-#, fuzzy
 msgid "Atomic Unit of Charge"
-msgstr "單位表達式"
+msgstr ""
 
 #: ../data/units.xml.in.h:201
 msgid "Electric Charge Density"
@@ -10272,9 +9582,8 @@ msgid "Electrical Elastance"
 msgstr ""
 
 #: ../data/units.xml.in.h:221
-#, fuzzy
 msgid "Volt per Coulomb"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:222
 msgid "Reciprocal Farad"
@@ -10329,19 +9638,16 @@ msgid "ar:S,siemens,auio:&#x2127;"
 msgstr ""
 
 #: ../data/units.xml.in.h:235
-#, fuzzy
 msgid "Electric Field Strength"
-msgstr "表達式欄位為空。"
+msgstr ""
 
 #: ../data/units.xml.in.h:236
-#, fuzzy
 msgid "Volt per Meter"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:237
-#, fuzzy
 msgid "Newton per Coulomb"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:238
 msgid "Atomic Unit of Electric Field"
@@ -10352,9 +9658,8 @@ msgid "Permittivity"
 msgstr ""
 
 #: ../data/units.xml.in.h:240
-#, fuzzy
 msgid "Farad per Meter"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:241
 msgid "Inductance"
@@ -10381,23 +9686,16 @@ msgid "Permeability"
 msgstr ""
 
 #: ../data/units.xml.in.h:247
-#, fuzzy
 msgid "Henry per Meter"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:248
-#, fuzzy
 msgid "Temperature"
-msgstr "溫度計算模式:"
+msgstr "溫度"
 
 #: ../data/units.xml.in.h:249
-#, fuzzy
 msgid "Kelvin"
-msgstr ""
-"與基本單位的關係。對於線性關係，這應該只是一個數字。\n"
-"\n"
-"對於非線性關係，\\x代表係數，\\y代表指數（例如\"\\x + 273.15\"用於攝氏溫度和"
-"克耳文之間的關係）。"
+msgstr "克耳文"
 
 #: ../data/units.xml.in.h:250
 msgid "ar:K,aou:&#x212A;,kelvin,p:kelvins"
@@ -10429,14 +9727,12 @@ msgid "ar:oF,au:&#xB0;F,au:&#x2109;,r:fahrenheit"
 msgstr ""
 
 #: ../data/units.xml.in.h:257
-#, fuzzy
 msgid "Planck Temperature"
-msgstr "溫度計算"
+msgstr ""
 
 #: ../data/units.xml.in.h:258
-#, fuzzy
 msgid "Electronvolt Temperature"
-msgstr "溫度計算"
+msgstr ""
 
 #: ../data/units.xml.in.h:259
 msgid "Substance"
@@ -10487,9 +9783,8 @@ msgid "Katal per Cubic Meter"
 msgstr ""
 
 #: ../data/units.xml.in.h:271
-#, fuzzy
 msgid "Light"
-msgstr "淺色"
+msgstr ""
 
 #: ../data/units.xml.in.h:272
 msgid "Luminous Intensity"
@@ -10564,9 +9859,8 @@ msgid "Radiant Intensity"
 msgstr ""
 
 #: ../data/units.xml.in.h:290
-#, fuzzy
 msgid "Watt per Steradian"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:291
 msgid "Irradiance"
@@ -10597,23 +9891,20 @@ msgid "Area"
 msgstr ""
 
 #: ../data/units.xml.in.h:298
-#, fuzzy
 msgid "Square Meter"
-msgstr "平方"
+msgstr ""
 
 #: ../data/units.xml.in.h:299
-#, fuzzy
 msgid "Square Kilometer"
-msgstr "平方"
+msgstr ""
 
 #: ../data/units.xml.in.h:300
 msgid "Are"
 msgstr ""
 
 #: ../data/units.xml.in.h:301
-#, fuzzy
 msgid "ar:a,are,p:ares"
-msgstr "a:$,a-cr:USD,dollar,美元,美金"
+msgstr ""
 
 #: ../data/units.xml.in.h:302
 msgid "Circular Mil"
@@ -10684,28 +9975,24 @@ msgid "r:township,p:townships"
 msgstr ""
 
 #: ../data/units.xml.in.h:319
-#, fuzzy
 msgid "Square Foot"
-msgstr "平方"
+msgstr ""
 
 #: ../data/units.xml.in.h:320
-#, fuzzy
 msgid "Square Inch"
-msgstr "平方"
+msgstr ""
 
 #: ../data/units.xml.in.h:321
-#, fuzzy
 msgid "Square Mile"
-msgstr "平方"
+msgstr ""
 
 #: ../data/units.xml.in.h:322
 msgid "Volume"
 msgstr ""
 
 #: ../data/units.xml.in.h:323
-#, fuzzy
 msgid "Cubic Meter"
-msgstr "自然三次樣條"
+msgstr ""
 
 #: ../data/units.xml.in.h:324
 msgid "Liter"
@@ -10728,33 +10015,28 @@ msgid "Deciliter"
 msgstr ""
 
 #: ../data/units.xml.in.h:329
-#, fuzzy
 msgid "Cubic Inch"
-msgstr "自然三次樣條"
+msgstr ""
 
 #: ../data/units.xml.in.h:330
 msgid "Fuel Economy"
 msgstr ""
 
 #: ../data/units.xml.in.h:331
-#, fuzzy
 msgid "Liter per Kilometer"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:332
-#, fuzzy
 msgid "Kilometer per Liter"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:333
-#, fuzzy
 msgid "Miles per Gallon"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:334
-#, fuzzy
 msgid "a-cr:mpg"
-msgstr "a-cr:DKK"
+msgstr ""
 
 #: ../data/units.xml.in.h:335
 msgid "Cooking"
@@ -10785,208 +10067,184 @@ msgid "r:tablespoon,p:tablespoons"
 msgstr ""
 
 #: ../data/units.xml.in.h:342
-#, fuzzy
 msgid "Cup (U.S.)"
-msgstr "美元"
+msgstr ""
 
 #: ../data/units.xml.in.h:343
 msgid "r-c:cup,p-c:cups"
 msgstr ""
 
 #: ../data/units.xml.in.h:344
-#, fuzzy
 msgid "Imperial Capacity"
-msgstr "英制"
+msgstr ""
 
 #: ../data/units.xml.in.h:345
-#, fuzzy
 msgid "Imperial Fluid Ounce"
-msgstr "英制"
+msgstr ""
 
 #: ../data/units.xml.in.h:346
 msgid "ar:UK_fl_oz,imperial_fluid_ounce,p:imperial_fluid_ounces"
 msgstr ""
 
 #: ../data/units.xml.in.h:347
-#, fuzzy
 msgid "Imperial Gill"
-msgstr "英制"
+msgstr ""
 
 #: ../data/units.xml.in.h:348
 msgid "ar:UK_gi,imperial_gill,p:imperial_gills"
 msgstr ""
 
 #: ../data/units.xml.in.h:349
-#, fuzzy
 msgid "Imperial Pint"
-msgstr "英制"
+msgstr ""
 
 #: ../data/units.xml.in.h:350
 msgid "ar:UK_pt,imperial_pint,p:imperial_pints"
 msgstr ""
 
 #: ../data/units.xml.in.h:351
-#, fuzzy
 msgid "Imperial Quart"
-msgstr "英制"
+msgstr ""
 
 #: ../data/units.xml.in.h:352
 msgid "ar:UK_qt,imperial_quart,p:imperial_quarts"
 msgstr ""
 
 #: ../data/units.xml.in.h:353
-#, fuzzy
 msgid "Imperial Gallon"
-msgstr "英制"
+msgstr ""
 
 #: ../data/units.xml.in.h:354
 msgid "ar:UK_gal,imperial_gallon,p:imperial_gallons"
 msgstr ""
 
 #: ../data/units.xml.in.h:355
-#, fuzzy
 msgid "Imperial Minim"
-msgstr "英制"
+msgstr ""
 
 #: ../data/units.xml.in.h:356
 msgid "r:imperial_minim,p:imperial_minims"
 msgstr ""
 
 #: ../data/units.xml.in.h:357
-#, fuzzy
 msgid "Imperial Fluid Scuple"
-msgstr "英制"
+msgstr ""
 
 #: ../data/units.xml.in.h:358
 msgid "r:imperial_fluid_scuple,p:imperial_fluid_scuples"
 msgstr ""
 
 #: ../data/units.xml.in.h:359
-#, fuzzy
 msgid "Imperial Fluid Drachm"
-msgstr "英制"
+msgstr ""
 
 #: ../data/units.xml.in.h:360
 msgid "ar:UK_fl_dr,imperial_fluid_drachm,p:imperial_fluid_drachms"
 msgstr ""
 
 #: ../data/units.xml.in.h:361
-#, fuzzy
 msgid "Imperial Bushel"
-msgstr "英制"
+msgstr ""
 
 #: ../data/units.xml.in.h:362
 msgid "ar:UK_bu,imperial_bushel,p:imperial_bushels"
 msgstr ""
 
 #: ../data/units.xml.in.h:363
-#, fuzzy
 msgid "U.S. Capacity"
-msgstr "美元"
+msgstr ""
 
 #: ../data/units.xml.in.h:364
-#, fuzzy
 msgid "U.S. Fluid Ounce"
-msgstr "美元"
+msgstr ""
 
 #: ../data/units.xml.in.h:365
 msgid "ar:fl_oz,fluid_ounce,p:fluid_ounces"
 msgstr ""
 
 #: ../data/units.xml.in.h:366
-#, fuzzy
 msgid "U.S. Gill"
-msgstr "美制"
+msgstr ""
 
 #: ../data/units.xml.in.h:367
 msgid "ar:gi,gill,p:gills"
 msgstr ""
 
 #: ../data/units.xml.in.h:368
-#, fuzzy
 msgid "U.S. Liquid Pints"
-msgstr "美元"
+msgstr ""
 
 #: ../data/units.xml.in.h:369
 msgid "ar:liq_pt,liquid_pint,p:liquid_pints"
 msgstr ""
 
 #: ../data/units.xml.in.h:370
-#, fuzzy
 msgid "U.S. Liquid Quarts"
-msgstr "美元"
+msgstr ""
 
 #: ../data/units.xml.in.h:371
 msgid "ar:liq_qt,liquid_quart,p:liquid_quarts"
 msgstr ""
 
 #: ../data/units.xml.in.h:372
-#, fuzzy
 msgid "U.S. Minim"
-msgstr "美元"
+msgstr ""
 
 #: ../data/units.xml.in.h:373
 msgid "r:minim,p:minims"
 msgstr ""
 
 #: ../data/units.xml.in.h:374
-#, fuzzy
 msgid "U.S. Fluid Drachm"
-msgstr "美元"
+msgstr ""
 
 #: ../data/units.xml.in.h:375
 msgid "ar:fl_dr,fluid_drachm,p:fluid_drachms"
 msgstr ""
 
 #: ../data/units.xml.in.h:376
-#, fuzzy
 msgid "U.S. Dry Pint"
-msgstr "美元"
+msgstr ""
 
 #: ../data/units.xml.in.h:377
 msgid "ar:dry_pt,dry_pint,p:dry_pints"
 msgstr ""
 
 #: ../data/units.xml.in.h:378
-#, fuzzy
 msgid "U.S. Dry Quart"
-msgstr "美元"
+msgstr ""
 
 #: ../data/units.xml.in.h:379
 msgid "ar:dry_qt,dry_quart,p:dry_quarts"
 msgstr ""
 
 #: ../data/units.xml.in.h:380
-#, fuzzy
 msgid "U.S. Peck"
-msgstr "美制"
+msgstr ""
 
 #: ../data/units.xml.in.h:381
 msgid "ar:pk,peck,p:pecks"
 msgstr ""
 
 #: ../data/units.xml.in.h:382
-#, fuzzy
 msgid "U.S. Bushel"
-msgstr "美元"
+msgstr ""
 
 #: ../data/units.xml.in.h:383
 msgid "ar:bu,bushel,p:bushels"
 msgstr ""
 
 #: ../data/units.xml.in.h:384
-#, fuzzy
 msgid "U.S. Gallon"
-msgstr "美元"
+msgstr ""
 
 #: ../data/units.xml.in.h:385
 msgid "ar:gal,gallon,p:gallons"
 msgstr ""
 
 #: ../data/units.xml.in.h:386
-#, fuzzy
 msgid "U.S. Barrel (oil)"
-msgstr "美元"
+msgstr ""
 
 #: ../data/units.xml.in.h:387
 msgid "ar:bbl,barrel,p:barrels"
@@ -11005,24 +10263,20 @@ msgid "Cubic Meter per Kilogram"
 msgstr ""
 
 #: ../data/units.xml.in.h:391
-#, fuzzy
 msgid "Volumetric Flow Rate"
-msgstr "匯率來源:"
+msgstr ""
 
 #: ../data/units.xml.in.h:392
-#, fuzzy
 msgid "Liter per Second"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:393
-#, fuzzy
 msgid "Liter per Minute"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:394
-#, fuzzy
 msgid "Liter per Hour"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:395
 msgid "Cubic Meter per Second"
@@ -11049,9 +10303,8 @@ msgid "Cubic Foot per Minute (CFM)"
 msgstr ""
 
 #: ../data/units.xml.in.h:401
-#, fuzzy
 msgid "a-cr:cfm"
-msgstr "a-cr:DKK"
+msgstr ""
 
 #: ../data/units.xml.in.h:402
 msgid "Cubic Foot per Second"
@@ -11062,27 +10315,24 @@ msgid "Cubic Foot per Second (CFS)"
 msgstr ""
 
 #: ../data/units.xml.in.h:404
-#, fuzzy
 msgid "a-cr:cfs"
-msgstr "a-cr:DKK"
+msgstr ""
 
 #: ../data/units.xml.in.h:405
 msgid "Gallons per Minute (U.S.)"
 msgstr ""
 
 #: ../data/units.xml.in.h:406
-#, fuzzy
 msgid "a-cr:gpm"
-msgstr "a-cr:DKK"
+msgstr ""
 
 #: ../data/units.xml.in.h:407
 msgid "Gallons per Hour (U.S.)"
 msgstr ""
 
 #: ../data/units.xml.in.h:408
-#, fuzzy
 msgid "a-cr:gph"
-msgstr "a-cr:DKK"
+msgstr ""
 
 #: ../data/units.xml.in.h:409
 msgid "Gallons per Second (U.S.)"
@@ -11093,14 +10343,12 @@ msgid "Speed"
 msgstr ""
 
 #: ../data/units.xml.in.h:411
-#, fuzzy
 msgid "Meter per Second"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:412
-#, fuzzy
 msgid "Kilometer per Hour"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:413
 msgid "a-c-r:kph,a-c-r:kmph"
@@ -11119,23 +10367,20 @@ msgid "r:knot,p:knots"
 msgstr ""
 
 #: ../data/units.xml.in.h:417
-#, fuzzy
 msgid "Miles per Hour"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:418
-#, fuzzy
 msgid "a-cr:mph"
-msgstr "a-cr:DKK"
+msgstr ""
 
 #: ../data/units.xml.in.h:419
 msgid "Speed of Light (Natural Unit of Velocity)"
 msgstr ""
 
 #: ../data/units.xml.in.h:420
-#, fuzzy
 msgid "Atomic Unit of Velocity"
-msgstr "單位表達式"
+msgstr ""
 
 #: ../data/units.xml.in.h:421
 msgid "Acceleration"
@@ -11182,23 +10427,20 @@ msgid "Magnetism"
 msgstr ""
 
 #: ../data/units.xml.in.h:432
-#, fuzzy
 msgid "Wave Number"
-msgstr "一個數字"
+msgstr ""
 
 #: ../data/units.xml.in.h:433
 msgid "Reciprocal Meter"
 msgstr ""
 
 #: ../data/units.xml.in.h:434
-#, fuzzy
 msgid "Magnetic Field Strength"
-msgstr "表達式欄位為空。"
+msgstr ""
 
 #: ../data/units.xml.in.h:435
-#, fuzzy
 msgid "Ampere per Meter"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:436
 msgid "Oersted"
@@ -11257,18 +10499,16 @@ msgid "Magnetic Dipole Moment"
 msgstr ""
 
 #: ../data/units.xml.in.h:450
-#, fuzzy
 msgid "Ampere Square Meter"
-msgstr "平方"
+msgstr ""
 
 #: ../data/units.xml.in.h:451
 msgid "Atomic Unit of Magnetic Dipole Moment"
 msgstr ""
 
 #: ../data/units.xml.in.h:452
-#, fuzzy
 msgid "Force"
-msgstr "開頭附加+或-來強制/停止使用混合單位"
+msgstr "力"
 
 #: ../data/units.xml.in.h:453
 msgid "Newton"
@@ -11287,9 +10527,8 @@ msgid "ar:dyn,dyne,p:dynes"
 msgstr ""
 
 #: ../data/units.xml.in.h:457
-#, fuzzy
 msgid "Pound-force"
-msgstr "英鎊"
+msgstr ""
 
 #: ../data/units.xml.in.h:458
 msgid "ar:lbf,pound_force"
@@ -11320,14 +10559,12 @@ msgid "r:pond,p:ponds,a:gf"
 msgstr ""
 
 #: ../data/units.xml.in.h:465
-#, fuzzy
 msgid "Kilopond (Kilogram-Force)"
-msgstr "公斤"
+msgstr ""
 
 #: ../data/units.xml.in.h:466
-#, fuzzy
 msgid "Atomic Unit of Force"
-msgstr "單位"
+msgstr ""
 
 #: ../data/units.xml.in.h:467
 msgid "Moment of Force"
@@ -11350,14 +10587,12 @@ msgid "Electronvolt Momentum"
 msgstr ""
 
 #: ../data/units.xml.in.h:472
-#, fuzzy
 msgid "Natural Unit of Momentum"
-msgstr "自然三次樣條"
+msgstr ""
 
 #: ../data/units.xml.in.h:473
-#, fuzzy
 msgid "Atomic Unit of Momentum"
-msgstr "單位表達式"
+msgstr ""
 
 #: ../data/units.xml.in.h:474
 msgid "Pressure"
@@ -11380,18 +10615,16 @@ msgid "Pound-force per Square Inch (psi)"
 msgstr ""
 
 #: ../data/units.xml.in.h:479
-#, fuzzy
 msgid "a-cr:psi"
-msgstr "a-cr:DKK"
+msgstr ""
 
 #: ../data/units.xml.in.h:480
 msgid "Kilopound-force per Square Inch (ksi)"
 msgstr ""
 
 #: ../data/units.xml.in.h:481
-#, fuzzy
 msgid "a-cr:ksi"
-msgstr "a-cr:DKK"
+msgstr ""
 
 #: ../data/units.xml.in.h:482
 msgid "Bar"
@@ -11454,28 +10687,24 @@ msgid "ar:Ba,barye"
 msgstr ""
 
 #: ../data/units.xml.in.h:497
-#, fuzzy
 msgid "Meter of Water"
-msgstr "水"
+msgstr ""
 
 #: ../data/units.xml.in.h:498
 msgid "ar:mWC,a:mwg,au:mH&#x2082;O"
 msgstr ""
 
 #: ../data/units.xml.in.h:499
-#, fuzzy
 msgid "Millimeter of Water"
-msgstr "水"
+msgstr ""
 
 #: ../data/units.xml.in.h:500
-#, fuzzy
 msgid "Centimeter of Water"
-msgstr "水"
+msgstr ""
 
 #: ../data/units.xml.in.h:501
-#, fuzzy
 msgid "Inch of Water"
-msgstr "水"
+msgstr ""
 
 #: ../data/units.xml.in.h:502
 msgid "ar:inWC,a:iwg,au:inH&#x2082;O"
@@ -11526,9 +10755,8 @@ msgid "Surface Tension"
 msgstr ""
 
 #: ../data/units.xml.in.h:514
-#, fuzzy
 msgid "Newton per Meter"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:515
 msgid "Energy"
@@ -11555,9 +10783,8 @@ msgid "Kilowatt Hour"
 msgstr ""
 
 #: ../data/units.xml.in.h:521
-#, fuzzy
 msgid "Calorie (international table)"
-msgstr "開啟元素週期表"
+msgstr ""
 
 #: ../data/units.xml.in.h:522
 msgid "ars:cal_IT"
@@ -11576,9 +10803,8 @@ msgid "Kilocalorie"
 msgstr ""
 
 #: ../data/units.xml.in.h:526
-#, fuzzy
 msgid "Calorie (capital C)"
-msgstr "未知的羅馬數字: %c。"
+msgstr ""
 
 #: ../data/units.xml.in.h:527
 msgid "cr:Calorie,cp:Calories"
@@ -11589,18 +10815,16 @@ msgid "Gram of TNT"
 msgstr ""
 
 #: ../data/units.xml.in.h:529
-#, fuzzy
 msgid "a-cr:gTNT,gramTNT"
-msgstr "a-cr:GBP,au:&#xA3;,英鎊"
+msgstr ""
 
 #: ../data/units.xml.in.h:530
 msgid "Ton of TNT"
 msgstr ""
 
 #: ../data/units.xml.in.h:531
-#, fuzzy
 msgid "a-cr:tTNT,tonTNT"
-msgstr "a-cr:GBP,au:&#xA3;,英鎊"
+msgstr ""
 
 #: ../data/units.xml.in.h:532
 msgid "Calorie (15 degrees Celsius)"
@@ -11611,14 +10835,12 @@ msgid "ars:cal_fifteen"
 msgstr ""
 
 #: ../data/units.xml.in.h:534
-#, fuzzy
 msgid "Calorie (mean)"
-msgstr "mean"
+msgstr ""
 
 #: ../data/units.xml.in.h:535
-#, fuzzy
 msgid "ars:cal_mean"
-msgstr "mean"
+msgstr ""
 
 #: ../data/units.xml.in.h:536
 msgid "Calorie (IUNS)"
@@ -11629,9 +10851,8 @@ msgid "ars:cal_IUNS"
 msgstr ""
 
 #: ../data/units.xml.in.h:538
-#, fuzzy
 msgid "British Thermal Unit (IT)"
-msgstr "英鎊"
+msgstr ""
 
 #: ../data/units.xml.in.h:539
 msgid "ar:Btu"
@@ -11654,9 +10875,8 @@ msgid "r:therm_ISO,p:therms_ISO,a:thm_ISO"
 msgstr ""
 
 #: ../data/units.xml.in.h:544
-#, fuzzy
 msgid "Therm (U.S.)"
-msgstr "美元"
+msgstr ""
 
 #: ../data/units.xml.in.h:545
 msgid "r:therm_US,p:therms_US,a:thm_US"
@@ -11695,42 +10915,36 @@ msgid "r:foe,p:foes"
 msgstr ""
 
 #: ../data/units.xml.in.h:554
-#, fuzzy
 msgid "Foot-Pound Force"
-msgstr "英鎊"
+msgstr ""
 
 #: ../data/units.xml.in.h:555
 msgid "Hartree (Atomic Unit of Energy)"
 msgstr ""
 
 #: ../data/units.xml.in.h:556
-#, fuzzy
 msgid "Rydberg (unit)"
-msgstr "單位(_U)"
+msgstr ""
 
 #: ../data/units.xml.in.h:557
-#, fuzzy
 msgid "Natural Unit of Energy"
-msgstr "自然三次樣條"
+msgstr ""
 
 #: ../data/units.xml.in.h:558
 msgid "Specific Energy"
 msgstr ""
 
 #: ../data/units.xml.in.h:559
-#, fuzzy
 msgid "Joule per Kilogram"
-msgstr "公斤"
+msgstr ""
 
 #: ../data/units.xml.in.h:560
-#, fuzzy
 msgid "Kilocalerie per Gram"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:561
-#, fuzzy
 msgid "Power"
-msgstr "次方"
+msgstr "功率"
 
 #: ../data/units.xml.in.h:562
 msgid "Watt"
@@ -11741,9 +10955,8 @@ msgid "ar:W,watt,p:watts"
 msgstr ""
 
 #: ../data/units.xml.in.h:564
-#, fuzzy
 msgid "Horse Power"
-msgstr "馬"
+msgstr ""
 
 #: ../data/units.xml.in.h:565
 msgid "ar:hp,horsepower,p:horsepowers"
@@ -11774,14 +10987,12 @@ msgid "ar:dBW"
 msgstr ""
 
 #: ../data/units.xml.in.h:572
-#, fuzzy
 msgid "Erg per Second"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:573
-#, fuzzy
 msgid "Solar Luminosity (nominal)"
-msgstr "伊朗曆(Solar Hijri)"
+msgstr ""
 
 #: ../data/units.xml.in.h:574
 msgid "r:solar_luminosity,au:L_&#x2609;"
@@ -11792,14 +11003,12 @@ msgid "Entropy"
 msgstr ""
 
 #: ../data/units.xml.in.h:576
-#, fuzzy
 msgid "Joule per Kelvin"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:577
-#, fuzzy
 msgid "Boltzmann (unit)"
-msgstr "單位(_U)"
+msgstr ""
 
 #: ../data/units.xml.in.h:578
 msgid "Specific Entropy"
@@ -11830,9 +11039,8 @@ msgid "Molar Energy"
 msgstr ""
 
 #: ../data/units.xml.in.h:585
-#, fuzzy
 msgid "Joule per Mole"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:586
 msgid "Molar Entropy"
@@ -11843,9 +11051,8 @@ msgid "Joule per Mole Kelvin"
 msgstr ""
 
 #: ../data/units.xml.in.h:588
-#, fuzzy
 msgid "Action"
-msgstr "動作"
+msgstr ""
 
 #: ../data/units.xml.in.h:589
 msgid "Joule Second"
@@ -11896,19 +11103,16 @@ msgid "ar:Gy,gray,p:grays"
 msgstr ""
 
 #: ../data/units.xml.in.h:601
-#, fuzzy
 msgid "Rad"
-msgstr "rad"
+msgstr ""
 
 #: ../data/units.xml.in.h:602
-#, fuzzy
 msgid "rs:rad_radioactivity"
-msgstr "rad"
+msgstr ""
 
 #: ../data/units.xml.in.h:603
-#, fuzzy
 msgid "Dose Equivalent"
-msgstr "等價於set approximation exact。"
+msgstr ""
 
 #: ../data/units.xml.in.h:604
 msgid "Sievert"
@@ -11931,18 +11135,16 @@ msgid "Millirem"
 msgstr ""
 
 #: ../data/units.xml.in.h:609
-#, fuzzy
 msgid "Erg per Gram"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:610
 msgid "Exposure"
 msgstr ""
 
 #: ../data/units.xml.in.h:611
-#, fuzzy
 msgid "Coulomb per Kilogram"
-msgstr "公斤"
+msgstr ""
 
 #: ../data/units.xml.in.h:612
 msgid "Roentgen"
@@ -11953,24 +11155,20 @@ msgid "ar:R,roentgen,r&#x00f6;ntgen,p:roentgens,p:r&#x00f6;ntgens"
 msgstr ""
 
 #: ../data/units.xml.in.h:614
-#, fuzzy
 msgid "Absorbed Dose Rate"
-msgstr "採樣率"
+msgstr ""
 
 #: ../data/units.xml.in.h:615
-#, fuzzy
 msgid "Gray per Second"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:616
-#, fuzzy
 msgid "Millirem per Hour"
-msgstr "除以"
+msgstr ""
 
 #: ../data/units.xml.in.h:617
-#, fuzzy
 msgid "Ratio"
-msgstr "對數比率單位被視為其他單位，而結果可能不如預期。"
+msgstr ""
 
 #: ../data/units.xml.in.h:618
 msgid "Neper"
@@ -11997,14 +11195,12 @@ msgid "ar:dB,decibel,p:decibels"
 msgstr ""
 
 #: ../data/units.xml.in.h:624
-#, fuzzy
 msgid "Information"
-msgstr "如果啟用，則資訊單位預設使用二進制前綴。"
+msgstr ""
 
 #: ../data/units.xml.in.h:625
-#, fuzzy
 msgid "Bit (Binary Digit)"
-msgstr "數字分組"
+msgstr ""
 
 #: ../data/units.xml.in.h:626
 msgid "r:bit,p:bits,shannon,p:shannons,c:Sh,binary_digit,p:binary_digits"
@@ -12019,9 +11215,8 @@ msgid "r:nat,p:nats"
 msgstr ""
 
 #: ../data/units.xml.in.h:629
-#, fuzzy
 msgid "Trit (Ternary Digit)"
-msgstr "數字分組"
+msgstr ""
 
 #: ../data/units.xml.in.h:630
 msgid ""
@@ -12029,18 +11224,16 @@ msgid ""
 msgstr ""
 
 #: ../data/units.xml.in.h:631
-#, fuzzy
 msgid "Octal Digit"
-msgstr "數字分組"
+msgstr ""
 
 #: ../data/units.xml.in.h:632
 msgid "r:octal_digit,p:octal_digits"
 msgstr ""
 
 #: ../data/units.xml.in.h:633
-#, fuzzy
 msgid "Hartley (Decimal Digit)"
-msgstr "數字分組"
+msgstr ""
 
 #: ../data/units.xml.in.h:634
 msgid "r:hartley,p:hartleys,a:Hart,dit,p:dits,decimal_digit,p:decimal_digits"
@@ -12055,9 +11248,8 @@ msgid "r:byte,a:B,p:bytes,octet,p:octets,a:o"
 msgstr ""
 
 #: ../data/units.xml.in.h:637
-#, fuzzy
 msgid "Nibble (Hexadecimal Digit)"
-msgstr "十六進制(_H)"
+msgstr ""
 
 #: ../data/units.xml.in.h:638
 msgid ""
@@ -12090,9 +11282,8 @@ msgid "r:declet,p:declets"
 msgstr ""
 
 #: ../data/units.xml.in.h:645
-#, fuzzy
 msgid "Word (16-bit)"
-msgstr "16位元浮點數"
+msgstr ""
 
 #: ../data/units.xml.in.h:646
 msgid "r:word,p:words"
@@ -12175,9 +11366,8 @@ msgid "Typography"
 msgstr ""
 
 #: ../data/units.xml.in.h:666
-#, fuzzy
 msgid "PostScript Point"
-msgstr "小數點"
+msgstr ""
 
 #: ../data/units.xml.in.h:667
 msgid "ar:pt,a:pts,point,p:points"
@@ -12200,28 +11390,24 @@ msgid "r:ata_pica,p:ata_picas"
 msgstr ""
 
 #: ../data/units.xml.in.h:672
-#, fuzzy
 msgid "ATA Point"
-msgstr "小數點"
+msgstr ""
 
 #: ../data/units.xml.in.h:673
 msgid "r:ata_point,a:ata_pt,p:ata_points"
 msgstr ""
 
 #: ../data/units.xml.in.h:674
-#, fuzzy
 msgid "New Didot Point"
-msgstr "換行"
+msgstr ""
 
 #: ../data/units.xml.in.h:675
-#, fuzzy
 msgid "r:new_didot"
-msgstr "新增(_N)"
+msgstr ""
 
 #: ../data/units.xml.in.h:676
-#, fuzzy
 msgid "Didot Point"
-msgstr "小數點"
+msgstr ""
 
 #: ../data/units.xml.in.h:677
 msgid "r:didot,a:dd"
@@ -12236,35 +11422,28 @@ msgid "r:cicero"
 msgstr ""
 
 #: ../data/variables.xml.in.h:1
-#, fuzzy
 msgid "Small Numbers"
-msgstr "複數"
+msgstr ""
 
 #: ../data/variables.xml.in.h:2
-#, fuzzy
 msgid "Per Mille"
-msgstr "除以"
+msgstr ""
 
 #: ../data/variables.xml.in.h:3
 msgid "r:permille,au:&#x2030;"
 msgstr ""
 
 #: ../data/variables.xml.in.h:4
-#, fuzzy
 msgid "Per Myriad"
-msgstr "除以"
+msgstr ""
 
 #: ../data/variables.xml.in.h:5
 msgid "r:permyriad,au:&#x2031;"
 msgstr ""
 
 #: ../data/variables.xml.in.h:6
-#, fuzzy
 msgid "Percent"
 msgstr ""
-"Qalculate!是一款多功能的跨平台桌面計算器。它使用簡單然而提供了通常為複雜的數"
-"學套件保留的能力和多功能性，以及滿足日常需求的實用工具(例如貨幣轉換和百分比計"
-"算)。"
 
 #: ../data/variables.xml.in.h:8
 #, no-c-format
@@ -12272,9 +11451,8 @@ msgid "a:%,r:percent"
 msgstr ""
 
 #: ../data/variables.xml.in.h:9
-#, fuzzy
 msgid "Large Numbers"
-msgstr "指數太大。"
+msgstr ""
 
 #: ../data/variables.xml.in.h:10
 msgid "Googolplex"
@@ -12477,9 +11655,8 @@ msgid "-r:hundred"
 msgstr ""
 
 #: ../data/variables.xml.in.h:60
-#, fuzzy
 msgid "Traditional Numbers"
-msgstr "數字和運算子"
+msgstr ""
 
 #: ../data/variables.xml.in.h:61
 msgid "Dozen"
@@ -12506,9 +11683,8 @@ msgid "-r:score"
 msgstr ""
 
 #: ../data/variables.xml.in.h:67
-#, fuzzy
 msgid "Long Hundred"
-msgstr "長"
+msgstr ""
 
 #: ../data/variables.xml.in.h:68
 msgid "-r:long_hundred,great_hundred,twelfty"
@@ -12523,14 +11699,12 @@ msgid "-r:gross,a:gro"
 msgstr ""
 
 #: ../data/variables.xml.in.h:71
-#, fuzzy
 msgid "Long Thousand"
-msgstr "長"
+msgstr ""
 
 #: ../data/variables.xml.in.h:72
-#, fuzzy
 msgid "-r:long_thousand"
-msgstr "長"
+msgstr ""
 
 #: ../data/variables.xml.in.h:73
 msgid "Great Gross"
@@ -12541,14 +11715,12 @@ msgid "-r:great_gross"
 msgstr ""
 
 #: ../data/variables.xml.in.h:75
-#, fuzzy
 msgid "Physical Constants"
-msgstr "單位在物理常數中"
+msgstr "物理常數"
 
 #: ../data/variables.xml.in.h:76
-#, fuzzy
 msgid "Universal Constants"
-msgstr "單位在物理常數中"
+msgstr ""
 
 #: ../data/variables.xml.in.h:77
 msgid "Characteristic Impedance of Vacuum"
@@ -12563,32 +11735,28 @@ msgid "Magnetic Constant (Permeability of Free Space)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:80
-#, fuzzy
 msgid "Planck Constant"
-msgstr "範例: find variables planck。"
+msgstr ""
 
 #: ../data/variables.xml.in.h:81
 msgid "Reduced Planck Constant (Dirac constant)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:82
-#, fuzzy
 msgid "Newtonian Constant of Gravitation"
-msgstr "- 變數或物理常數(例如c)"
+msgstr ""
 
 #: ../data/variables.xml.in.h:83
-#, fuzzy
 msgid "Speed of Light in Vacuum"
-msgstr "淺色"
+msgstr ""
 
 #: ../data/variables.xml.in.h:84
 msgid "Standard Acceleration due to Gravity"
 msgstr ""
 
 #: ../data/variables.xml.in.h:85
-#, fuzzy
 msgid "Electromagnetic Constants"
-msgstr "單位在物理常數中"
+msgstr ""
 
 #: ../data/variables.xml.in.h:86
 msgid "Bohr Magneton"
@@ -12607,9 +11775,8 @@ msgid "Elementary Charge"
 msgstr ""
 
 #: ../data/variables.xml.in.h:90
-#, fuzzy
 msgid "Inverse of Conductance Quantum"
-msgstr "奇異矩陣的倒數。"
+msgstr ""
 
 #: ../data/variables.xml.in.h:91
 msgid "Josephson Constant"
@@ -12628,58 +11795,48 @@ msgid "Nuclear Magneton"
 msgstr ""
 
 #: ../data/variables.xml.in.h:95
-#, fuzzy
 msgid "von Klitzing Constant"
-msgstr "- 變數或物理常數(例如c)"
+msgstr ""
 
 #: ../data/variables.xml.in.h:96
 msgid "von Klitzing Constant (conventional value)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:97
-#, fuzzy
 msgid "Particle Mass in u"
-msgstr "單位"
+msgstr ""
 
 #: ../data/variables.xml.in.h:98
-#, fuzzy
 msgid "Deuteron Mass (in u)"
-msgstr "單位"
+msgstr ""
 
 #: ../data/variables.xml.in.h:99
-#, fuzzy
 msgid "Electron Mass (in u)"
-msgstr "單位"
+msgstr ""
 
 #: ../data/variables.xml.in.h:100
-#, fuzzy
 msgid "Helion Mass (in u)"
-msgstr "單位"
+msgstr ""
 
 #: ../data/variables.xml.in.h:101
-#, fuzzy
 msgid "Neutron Mass (in u)"
-msgstr "單位"
+msgstr ""
 
 #: ../data/variables.xml.in.h:102
-#, fuzzy
 msgid "Proton Mass (in u)"
-msgstr "單位"
+msgstr ""
 
 #: ../data/variables.xml.in.h:103
-#, fuzzy
 msgid "Tau Mass (in u)"
-msgstr "單位"
+msgstr ""
 
 #: ../data/variables.xml.in.h:104
-#, fuzzy
 msgid "Muon Mass (in u)"
-msgstr "單位"
+msgstr ""
 
 #: ../data/variables.xml.in.h:105
-#, fuzzy
 msgid "Triton Mass (in u)"
-msgstr "單位"
+msgstr ""
 
 #: ../data/variables.xml.in.h:106
 msgid "Alpha Particle Mass (in u)"
@@ -12790,9 +11947,8 @@ msgid "Alpha Particle Mass"
 msgstr ""
 
 #: ../data/variables.xml.in.h:133
-#, fuzzy
 msgid "Atomic and Nuclear Constants"
-msgstr "單位在物理常數中"
+msgstr ""
 
 #: ../data/variables.xml.in.h:134
 msgid "Bohr Radius"
@@ -12803,19 +11959,16 @@ msgid "Classical Electron Radius"
 msgstr ""
 
 #: ../data/variables.xml.in.h:136
-#, fuzzy
 msgid "Fermi Coupling Constant"
-msgstr "- 變數或物理常數(例如c)"
+msgstr ""
 
 #: ../data/variables.xml.in.h:137
-#, fuzzy
 msgid "Fine-Structure Constant"
-msgstr "- 變數或物理常數(例如c)"
+msgstr ""
 
 #: ../data/variables.xml.in.h:138
-#, fuzzy
 msgid "Hartree Energy (constant)"
-msgstr "- 變數或物理常數(例如c)"
+msgstr ""
 
 #: ../data/variables.xml.in.h:139
 msgid "Quantum of Circulation"
@@ -12842,18 +11995,16 @@ msgid "W to Z Mass Ratio"
 msgstr ""
 
 #: ../data/variables.xml.in.h:145
-#, fuzzy
 msgid "Physico-Chemical Constants"
-msgstr "單位在物理常數中"
+msgstr ""
 
 #: ../data/variables.xml.in.h:146
 msgid "Lattice Spacing of Ideal Silicon (220)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:147
-#, fuzzy
 msgid "Atomic Mass Constant"
-msgstr "- 變數或物理常數(例如c)"
+msgstr ""
 
 #: ../data/variables.xml.in.h:148
 msgid "Avogadro Constant"
@@ -12864,9 +12015,8 @@ msgid "Boltzmann Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:150
-#, fuzzy
 msgid "Molar Mass Constant"
-msgstr "- 變數或物理常數(例如c)"
+msgstr ""
 
 #: ../data/variables.xml.in.h:151
 msgid "Compton Wavelength"
@@ -12885,18 +12035,16 @@ msgid "Faraday Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:155
-#, fuzzy
 msgid "First Radiation Constant"
-msgstr "- 變數或物理常數(例如c)"
+msgstr ""
 
 #: ../data/variables.xml.in.h:156
 msgid "First Radiation Constant for Spectral Radiance"
 msgstr ""
 
 #: ../data/variables.xml.in.h:157
-#, fuzzy
 msgid "Gas Constant"
-msgstr "惰性氣體"
+msgstr ""
 
 #: ../data/variables.xml.in.h:158
 msgid "Lattice Parameter of Silicon"
@@ -12911,9 +12059,8 @@ msgid "Loschmidt Constant (273.15 K, 101.325 kPa)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:161
-#, fuzzy
 msgid "Molar Planck Constant"
-msgstr "- 變數或物理常數(例如c)"
+msgstr ""
 
 #: ../data/variables.xml.in.h:162
 msgid "Molar Volume of Ideal Gas (273.15 K, 100 kPa)"
@@ -12932,14 +12079,12 @@ msgid "Sackur-Tetrode constant (1 K, 101.325 kPa)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:166
-#, fuzzy
 msgid "Second Radiation Constant"
-msgstr "- 變數或物理常數(例如c)"
+msgstr ""
 
 #: ../data/variables.xml.in.h:167
-#, fuzzy
 msgid "Stefan-Boltzmann Constant"
-msgstr "- 變數或物理常數(例如c)"
+msgstr ""
 
 #: ../data/variables.xml.in.h:168
 msgid "Wien frequency displacement law constant"
@@ -12966,9 +12111,8 @@ msgid "Hertz - Kelvin Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:174
-#, fuzzy
 msgid "Hertz - Kilogram Relationship"
-msgstr "公斤"
+msgstr ""
 
 #: ../data/variables.xml.in.h:175
 msgid "Inverse Meter - Hertz Relationship"
@@ -12999,9 +12143,8 @@ msgid "Joule - Kelvin Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:182
-#, fuzzy
 msgid "Joule - Kilogram Relationship"
-msgstr "公斤"
+msgstr ""
 
 #: ../data/variables.xml.in.h:183
 msgid "Kelvin - Hertz Relationship"
@@ -13016,33 +12159,28 @@ msgid "Kelvin - Joule Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:186
-#, fuzzy
 msgid "Kelvin - Kilogram Relationship"
-msgstr "公斤"
+msgstr ""
 
 #: ../data/variables.xml.in.h:187
-#, fuzzy
 msgid "Kilogram - Hertz Relationship"
-msgstr "公斤"
+msgstr ""
 
 #: ../data/variables.xml.in.h:188
 msgid "Kilogram - Inverse Meter Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:189
-#, fuzzy
 msgid "Kilogram - Joule Relationship"
-msgstr "公斤"
+msgstr ""
 
 #: ../data/variables.xml.in.h:190
-#, fuzzy
 msgid "Kilogram - Kelvin Relationship"
-msgstr "公斤"
+msgstr ""
 
 #: ../data/variables.xml.in.h:191
-#, fuzzy
 msgid "Basic Constants"
-msgstr "單位在物理常數中"
+msgstr ""
 
 #: ../data/variables.xml.in.h:192
 msgid "Golden Ratio"
@@ -13065,18 +12203,16 @@ msgid "Tau (2pi)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:197
-#, fuzzy
 msgid "Plastic Number"
-msgstr "一個數字"
+msgstr ""
 
 #: ../data/variables.xml.in.h:198
 msgid "Base of Natural Logarithms (e)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:199
-#, fuzzy
 msgid "Archimedes' Constant (pi)"
-msgstr "- 變數或物理常數(例如c)"
+msgstr ""
 
 #: ../data/variables.xml.in.h:200
 msgid "Euler's Constant"
@@ -13091,155 +12227,129 @@ msgid "Special Numbers"
 msgstr ""
 
 #: ../data/variables.xml.in.h:203
-#, fuzzy
 msgid "Imaginary i (sqrt -1)"
-msgstr "虛數單位 i (√-1)"
+msgstr "虛數i(sqrt -1)"
 
 #: ../data/variables.xml.in.h:204
-#, fuzzy
 msgid "Positive Infinity"
-msgstr "無窮"
+msgstr "正無窮"
 
 #: ../data/variables.xml.in.h:205
 msgid "a:&#x221E;,r:plus_infinity,r:infinity"
 msgstr ""
 
 #: ../data/variables.xml.in.h:206
-#, fuzzy
 msgid "Negative Infinity"
-msgstr "無窮"
+msgstr "負無窮"
 
 #: ../data/variables.xml.in.h:207
-#, fuzzy
 msgid "r:minus_infinity"
-msgstr "減"
+msgstr "r:minus_infinity"
 
 #: ../data/variables.xml.in.h:208
-#, fuzzy
 msgid "Undefined"
 msgstr "未定義"
 
 #: ../data/variables.xml.in.h:209
-#, fuzzy
 msgid "r:undefined"
-msgstr "未定義"
+msgstr "r:undefined"
 
 #: ../data/variables.xml.in.h:210
-#, fuzzy
 msgid "False"
 msgstr "False"
 
 #: ../data/variables.xml.in.h:211
-#, fuzzy
 msgid "r:false,r:no"
-msgstr "false"
+msgstr "r:false,r:no"
 
 #: ../data/variables.xml.in.h:212
-#, fuzzy
 msgid "True"
 msgstr "True"
 
 #: ../data/variables.xml.in.h:213
 msgid "r:true,r:yes"
-msgstr ""
+msgstr "r:true,r:yes"
 
 #: ../data/variables.xml.in.h:215
-#, fuzzy
 msgid "Pauli Matrix 0"
-msgstr "矩陣"
+msgstr ""
 
 #: ../data/variables.xml.in.h:216
 msgid "rs:pauli_0,aus:&#x03C3;_0"
 msgstr ""
 
 #: ../data/variables.xml.in.h:217
-#, fuzzy
 msgid "Pauli Matrix 1"
-msgstr "(非矩陣)"
+msgstr ""
 
 #: ../data/variables.xml.in.h:218
 msgid "rs:pauli_1,aus:&#x03C3;_1"
 msgstr ""
 
 #: ../data/variables.xml.in.h:219
-#, fuzzy
 msgid "Pauli Matrix 2"
-msgstr "(非矩陣)"
+msgstr ""
 
 #: ../data/variables.xml.in.h:220
 msgid "rs:pauli_2,aus:&#x03C3;_2"
 msgstr ""
 
 #: ../data/variables.xml.in.h:221
-#, fuzzy
 msgid "Pauli Matrix 3"
-msgstr "答案3"
+msgstr ""
 
 #: ../data/variables.xml.in.h:222
 msgid "rs:pauli_3,aus:&#x03C3;_3"
 msgstr ""
 
 #: ../data/variables.xml.in.h:225
-#, fuzzy
 msgid "r:precision"
-msgstr "精確度(_P)"
+msgstr "r:precision"
 
 #: ../data/variables.xml.in.h:226
-#, fuzzy
 msgid "System Uptime"
-msgstr "系統"
+msgstr ""
 
 #: ../data/variables.xml.in.h:227
-#, fuzzy
 msgid "r:uptime"
-msgstr "目前電腦工作時間"
+msgstr "r:uptime"
 
 #: ../data/variables.xml.in.h:228
-#, fuzzy
 msgid "Unknowns"
 msgstr "未知數"
 
 #: ../data/variables.xml.in.h:229
-#, fuzzy
 msgid "n (integer)"
-msgstr "一個整數"
+msgstr "n(整數)"
 
 #: ../data/variables.xml.in.h:231
-#, fuzzy
 msgid "Today"
 msgstr "今天"
 
 #: ../data/variables.xml.in.h:232
-#, fuzzy
 msgid "r:today"
-msgstr "今天"
+msgstr "r:today"
 
 #: ../data/variables.xml.in.h:233
-#, fuzzy
 msgid "Tomorrow"
 msgstr "明天"
 
 #: ../data/variables.xml.in.h:234
-#, fuzzy
 msgid "r:tomorrow"
-msgstr "明天"
+msgstr "r:tomorrow"
 
 #: ../data/variables.xml.in.h:235
-#, fuzzy
 msgid "Yesterday"
 msgstr "昨天"
 
 #: ../data/variables.xml.in.h:236
-#, fuzzy
 msgid "r:yesterday"
-msgstr "昨天"
+msgstr "r:yesterday"
 
 #: ../data/variables.xml.in.h:237
-#, fuzzy
 msgid "Now (date and time)"
-msgstr "目前日期和時間"
+msgstr "現在(日期和時間)"
 
 #: ../data/variables.xml.in.h:238
-#, fuzzy
 msgid "r:now"
-msgstr "現在"
+msgstr "r:now"
