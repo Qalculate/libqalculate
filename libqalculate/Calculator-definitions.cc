@@ -3512,7 +3512,7 @@ bool Calculator::loadExchangeRates() {
 						s2 = s2.substr(i, s2.length() - i);
 					}
 				}
-				if(!s1.empty() && !s2.empty() && nr1.find_first_not_of(NUMBER_ELEMENTS OPERATORS SPACES) == string::npos && nr2.find_first_not_of(NUMBER_ELEMENTS OPERATORS SPACES) == string::npos) {
+				if(!s1.empty() && !s2.empty() && nr1.find_first_not_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS SPACES) == string::npos && nr2.find_first_not_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS SPACES) == string::npos) {
 					u2 = CALCULATOR->getActiveUnit(s2);
 					if(!u2) {
 						u2 = addUnit(new AliasUnit(_("Currency"), s2, "", "", "", u_euro, "1", 1, "", false, true));
@@ -3810,7 +3810,7 @@ bool Calculator::loadExchangeRates() {
 		if(currency.length() == 3 && (currency_defs.empty() || currency_defs.find(builtin_str + currency) != string::npos) && currency != "BYR") {
 			if(!byn_found && currency == "BYN") byn_found = true;
 			u = getUnit(currency);
-			if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && (u->isHidden() || u->baseUnit() == u_euro) && u->isBuiltin() && !u->isLocal())) {
+			if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && (u->isHidden() || (((AliasUnit*) u)->firstBaseUnit() == u_euro && u->precision() == -2 && ((AliasUnit*) u)->firstBaseExponent() == 1)) && u->isBuiltin() && !u->isLocal())) {
 				if(json_variant == 1 || json_variant == 2) {
 					i2 = sbuffer.find("\"rate\":", i3 + 1);
 					size_t i4 = sbuffer.find("}", i3 + 1);

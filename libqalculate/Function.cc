@@ -1511,6 +1511,7 @@ bool Argument::test(MathStructure &value, int index, MathFunction *f, const Eval
 		return true;
 	}
 	bool evaled = false;
+	if(b_text && index == 2 && f && f->id() == FUNCTION_ID_SAVE && value.isVariable() && value.variable()->isKnown() && ((KnownVariable*) value.variable())->get().isSymbolic() && (value.variable()->isLocal() || value.variable()->countNames() == 1)) value.set(value.variable()->name(), false, true);
 	bool b = subtest(value, eo);
 	if(b && !b_zero) {
 		if(!value.isNumber() && !value.representsNonZero()) {
@@ -1551,7 +1552,7 @@ bool Argument::test(MathStructure &value, int index, MathFunction *f, const Eval
 		if(value.isVector()) return false;
 	}
 	if(!b) {
-		if((b_error || (index == 2 && f->id() == FUNCTION_ID_ROOT && value.isNumber())) && (type() != ARGUMENT_TYPE_SYMBOLIC || !value.isUndefined())) {
+		if((b_error || (index == 2 && f && f->id() == FUNCTION_ID_ROOT && value.isNumber())) && (type() != ARGUMENT_TYPE_SYMBOLIC || !value.isUndefined())) {
 			if(sname.empty()) {
 				CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
 			} else {
@@ -1663,35 +1664,10 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 				}
 			}
 		}
-		if(cits == 0 && str.find(LEFT_PARENTHESIS, pars) != string::npos) {
-			CALCULATOR->beginTemporaryStopMessages();
-			CALCULATOR->parse(mstruct, str, po);
-			if(mstruct->isSymbolic() || (mstruct->isVariable() && mstruct->variable()->isKnown() && ((KnownVariable*) mstruct->variable())->get().isSymbolic()) || (mstruct->isFunction() && (mstruct->function()->subtype() == SUBTYPE_USER_FUNCTION || mstruct->function()->subtype() == SUBTYPE_DATA_SET || mstruct->function()->id() == FUNCTION_ID_REGISTER || mstruct->function()->id() == FUNCTION_ID_STACK || mstruct->function()->id() == FUNCTION_ID_LOAD || mstruct->function()->id() == FUNCTION_ID_CHAR || mstruct->function()->id() == FUNCTION_ID_CONCATENATE || mstruct->function()->id() == FUNCTION_ID_COMPONENT || mstruct->function()->id() == FUNCTION_ID_BINARY_DECIMAL || mstruct->function()->id() == FUNCTION_ID_BIJECTIVE || mstruct->function()->id() == FUNCTION_ID_ROMAN || ((mstruct->function()->id() == FUNCTION_ID_BIN || mstruct->function()->id() == FUNCTION_ID_OCT || mstruct->function()->id() == FUNCTION_ID_DEC || mstruct->function()->id() == FUNCTION_ID_HEX || mstruct->function()->id() == FUNCTION_ID_BASE) && mstruct->size() > 0 && mstruct->last().isOne())))) {
-				EvaluationOptions eo;
-				eo.parse_options = po;
-				MathStructure mtest(mstruct);
-				CALCULATOR->beginTemporaryStopMessages();
-				mtest.eval(eo);
-				CALCULATOR->endTemporaryStopMessages();
-				if(mtest.isSymbolic()) {
-					CALCULATOR->endTemporaryStopMessages(true);
-					return;
-				}
-				if(b_handle_vector && mtest.isVector()) {
-					bool b = true;
-					for(size_t i = 0; i < mtest.size(); i++) {
-						if(!mtest[i].isSymbolic()) {b = false; break;}
-					}
-					if(b) {
-						CALCULATOR->endTemporaryStopMessages(true);
-						return;
-					}
-				}
-			}
-			CALCULATOR->endTemporaryStopMessages();
-		}
-		if(pars == 0 && cits == 0 && str.find(ID_WRAP_LEFT) == string::npos) {
-			mstruct->set(str, false, true);
+		if(pars == 0 && cits == 0 && str.find(ID_WRAP_LEFT) == string::npos && str.find(LEFT_PARENTHESIS) == string::npos) {
+			Variable *v = CALCULATOR->getActiveVariable(str);
+			if(v && v->isKnown() && ((KnownVariable*) v)->get().isSymbolic()) mstruct->set(v);
+			else mstruct->set(str, false, true);
 			return;
 		}
 		string str2;
@@ -1745,6 +1721,33 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 					i = i2;
 				}
 			}
+		}
+		if(cits == 0 && str2.find(LEFT_PARENTHESIS, pars) != string::npos) {
+			CALCULATOR->beginTemporaryStopMessages();
+			CALCULATOR->parse(mstruct, str2, po);
+			if(mstruct->isSymbolic() || (mstruct->isVariable() && mstruct->variable()->isKnown() && ((KnownVariable*) mstruct->variable())->get().isSymbolic()) || (mstruct->isFunction() && (mstruct->function()->subtype() == SUBTYPE_USER_FUNCTION || mstruct->function()->subtype() == SUBTYPE_DATA_SET || mstruct->function()->id() == FUNCTION_ID_REGISTER || mstruct->function()->id() == FUNCTION_ID_STACK || mstruct->function()->id() == FUNCTION_ID_LOAD || mstruct->function()->id() == FUNCTION_ID_CHAR || mstruct->function()->id() == FUNCTION_ID_CONCATENATE || mstruct->function()->id() == FUNCTION_ID_COMPONENT || mstruct->function()->id() == FUNCTION_ID_BINARY_DECIMAL || mstruct->function()->id() == FUNCTION_ID_BIJECTIVE || mstruct->function()->id() == FUNCTION_ID_ROMAN || ((mstruct->function()->id() == FUNCTION_ID_BIN || mstruct->function()->id() == FUNCTION_ID_OCT || mstruct->function()->id() == FUNCTION_ID_DEC || mstruct->function()->id() == FUNCTION_ID_HEX || mstruct->function()->id() == FUNCTION_ID_BASE) && mstruct->size() > 0 && mstruct->last().isOne())))) {
+				EvaluationOptions eo;
+				eo.parse_options = po;
+				MathStructure mtest(mstruct);
+				CALCULATOR->beginTemporaryStopMessages();
+				mtest.eval(eo);
+				CALCULATOR->endTemporaryStopMessages();
+				if(mtest.isSymbolic()) {
+					CALCULATOR->endTemporaryStopMessages(true);
+					return;
+				}
+				if(b_handle_vector && mtest.isVector()) {
+					bool b = true;
+					for(size_t i = 0; i < mtest.size(); i++) {
+						if(!mtest[i].isSymbolic()) {b = false; break;}
+					}
+					if(b) {
+						CALCULATOR->endTemporaryStopMessages(true);
+						return;
+					}
+				}
+			}
+			CALCULATOR->endTemporaryStopMessages();
 		}
 		mstruct->set(str2, false, true);
 	} else {

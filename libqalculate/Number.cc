@@ -13022,8 +13022,9 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 		}
 		if(infinite_series) {
 			size_t i_dp = str.find(po.decimalpoint());
+			if(i_dp != string::npos && str[str.length() - 1] == '0' && i_dp < str.length() - infinite_series * 2 - 1 && str[str.length() - infinite_series * 2 - 1] == '0') str.erase(str.length() - 1, 1);
 			if(po.indicate_infinite_series == REPEATING_DECIMALS_OVERLINE) {
-				str = str.substr(0, str.length() - infinite_series);
+				str = str.substr(0, str.length() - (infinite_series == 1 ? 2 : infinite_series));
 				str.insert(str.length() - infinite_series, "¯");
 			} else {
 				bool nobreak = str.length() <= 20;

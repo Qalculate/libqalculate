@@ -520,7 +520,7 @@
     </builtin_unit>
     <builtin_unit name="MVR">
       <_title>Maldivian Rufiyaa</_title>
-      <_names>a-cr:MVR,aio:&#x783;ރ</_names>
+      <_names>a-cr:MVR,aio:&#x783;</_names>
       <_countries>Maldives</_countries>
     </builtin_unit>
     <builtin_unit name="MRU">
