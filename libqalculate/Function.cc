@@ -841,6 +841,16 @@ int UserFunction::subtype() const {
 	return SUBTYPE_USER_FUNCTION;
 }
 extern string format_and_print(const MathStructure &mstruct);
+
+bool contains_rand_function(MathStructure &mstruct) {
+	if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_RAND || mstruct.function()->id() == FUNCTION_ID_RANDN || mstruct.function()->id() == FUNCTION_ID_RAND_POISSON || (mstruct.function()->subtype() == SUBTYPE_USER_FUNCTION && mstruct.function()->referenceName().find("rand") == 0))) {
+		return true;
+	}
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(contains_rand_function(mstruct[i])) return true;
+	}
+	return false;
+}
 bool replace_intervals_f(MathStructure &mstruct) {
 	// replace intervals with temporary variables
 	if(mstruct.isNumber() && (mstruct.number().isInterval(false) || (CALCULATOR->usesIntervalArithmetic() && mstruct.number().precision() >= 0))) {
@@ -961,7 +971,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		for(int i = 0; i < i_args; i++) {
 			MathStructure *mv = new MathStructure(vargs[i]);
 			Argument *arg = getArgumentDefinition(i + 1);
-			if((!arg || !arg->tests() || arg->type() == ARGUMENT_TYPE_FREE) && mv->containsInterval(true, false, false, 0, true)) {
+			if((!arg || !arg->tests() || arg->type() == ARGUMENT_TYPE_FREE) && (mv->containsInterval(true, false, false, 0, true) || contains_rand_function(*mv))) {
 				size_t count = 0;
 				for(size_t i3 = 0; i3 < 1 || (maxargs() < 0 && i3 < 3); i3++) {
 					svar = '\\';
@@ -998,6 +1008,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					}
 				}
 				if(count > 1) {
+					calculate_rand(*mv, eo);
 					replace_f_interval(*mv, eo);
 					replace_intervals_f(*mv);
 				}

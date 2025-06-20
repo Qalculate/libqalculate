@@ -1541,7 +1541,16 @@ bool expression_contains_save_function(const string &str, const ParseOptions &po
 		if(i != string::npos && ((i > 0 && str[i - 1] == ':') || (i < str.length() - 1 && str[i + 1] == ':'))) return true;
 		MathFunction *f = CALCULATOR->getFunctionById(FUNCTION_ID_SAVE);
 		for(size_t i2 = 1; f && i2 <= f->countNames(); i2++) {
-			if(str.find(f->getName(i2).name) != string::npos) return true;
+			if(str.find(f->getName(i2).name) != string::npos) {
+				EvaluationOptions eo;
+				eo.parse_options = po;
+				MathStructure mtest;
+				CALCULATOR->beginTemporaryStopMessages();
+				CALCULATOR->parse(&mtest, str, po);
+				CALCULATOR->endTemporaryStopMessages();
+				if(mtest.containsFunctionId(FUNCTION_ID_SAVE)) return true;
+				break;
+			}
 		}
 	}
 	if(i == string::npos) return false;
@@ -2929,9 +2938,10 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
 	return true;
 }
 bool calculate_rand(MathStructure &mstruct, const EvaluationOptions &eo) {
-	if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_RAND || mstruct.function()->id() == FUNCTION_ID_RANDN || mstruct.function()->id() == FUNCTION_ID_RAND_POISSON)) {
+	if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_RAND || mstruct.function()->id() == FUNCTION_ID_RANDN || mstruct.function()->id() == FUNCTION_ID_RAND_POISSON || (mstruct.function()->subtype() == SUBTYPE_USER_FUNCTION && mstruct.function()->referenceName().find("rand") == 0))) {
 		mstruct.unformat(eo);
 		mstruct.calculateFunctions(eo, false);
+		calculate_rand(mstruct, eo);
 		return true;
 	}
 	bool ret = false;

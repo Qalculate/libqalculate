@@ -103,6 +103,7 @@ int test_comparisons(const MathStructure &msave, MathStructure &mthis, const Mat
 bool replace_function(MathStructure &m, MathFunction *f1, MathFunction *f2, const EvaluationOptions &eo);
 bool replace_intervals_f(MathStructure &mstruct);
 bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo);
+bool calculate_rand(MathStructure &mstruct, const EvaluationOptions &eo);
 bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *failed = NULL, long int min_precision = 2, bool function_middle = false);
 bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const EvaluationOptions &eo = default_evaluation_options, bool do_eval = false);
 bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
