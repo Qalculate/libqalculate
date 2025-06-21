@@ -842,12 +842,13 @@ int UserFunction::subtype() const {
 }
 extern string format_and_print(const MathStructure &mstruct);
 
-bool contains_rand_function(MathStructure &mstruct) {
+bool contains_rand(const MathStructure &mstruct, bool check_variables) {
 	if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_RAND || mstruct.function()->id() == FUNCTION_ID_RANDN || mstruct.function()->id() == FUNCTION_ID_RAND_POISSON || (mstruct.function()->subtype() == SUBTYPE_USER_FUNCTION && mstruct.function()->referenceName().find("rand") == 0))) {
 		return true;
 	}
+	if(check_variables && mstruct.type() == STRUCT_VARIABLE && mstruct.variable()->isKnown()) return contains_rand(((KnownVariable*) mstruct.variable())->get(), check_variables);
 	for(size_t i = 0; i < mstruct.size(); i++) {
-		if(contains_rand_function(mstruct[i])) return true;
+		if(contains_rand(mstruct[i], check_variables)) return true;
 	}
 	return false;
 }
@@ -971,7 +972,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		for(int i = 0; i < i_args; i++) {
 			MathStructure *mv = new MathStructure(vargs[i]);
 			Argument *arg = getArgumentDefinition(i + 1);
-			if((!arg || !arg->tests() || arg->type() == ARGUMENT_TYPE_FREE) && (mv->containsInterval(true, false, false, 0, true) || contains_rand_function(*mv))) {
+			if((!arg || !arg->tests() || arg->type() == ARGUMENT_TYPE_FREE) && (mv->containsInterval(true, false, false, 0, true) || contains_rand(*mv))) {
 				size_t count = 0;
 				for(size_t i3 = 0; i3 < 1 || (maxargs() < 0 && i3 < 3); i3++) {
 					svar = '\\';

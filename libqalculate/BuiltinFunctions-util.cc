@@ -1298,12 +1298,12 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	mstruct = vargs[0];
 	CALCULATOR->beginTemporaryStopIntervalArithmetic();
-	if(!mstruct.contains(mvar, true) || (!mstruct.isVector() && (!mstruct.isFunction() || (mstruct.function()->id() != FUNCTION_ID_HORZCAT && mstruct.function()->id() != FUNCTION_ID_VERTCAT)) && !mstruct.representsScalar())) {
+	if((!mstruct.contains(mvar, true) && !contains_rand(mstruct)) || (!mstruct.isVector() && (!mstruct.isFunction() || (mstruct.function()->id() != FUNCTION_ID_HORZCAT && mstruct.function()->id() != FUNCTION_ID_VERTCAT)) && !mstruct.representsScalar())) {
 		CALCULATOR->beginTemporaryStopMessages();
 		mstruct.eval(eo2);
 		CALCULATOR->endTemporaryStopMessages();
 		if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_HORZCAT || mstruct.function()->id() == FUNCTION_ID_VERTCAT)) mstruct.setType(STRUCT_VECTOR);
-		if(!mstruct.isVector() && vargs[0].contains(mvar, true)) mstruct = vargs[0];
+		if(!mstruct.isVector() && (vargs[0].contains(mvar, true) || contains_rand(vargs[0]))) mstruct = vargs[0];
 	} else {
 		eo2.calculate_functions = false;
 		eo2.expand = false;
