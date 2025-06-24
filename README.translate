@@ -39,9 +39,11 @@ All names of a object are contained in one text string. The names are separated 
 
 All properties are off by default, except for names with only one sign which are interpreted as abbreviations by default, and for abbreviations which by default are case-sensitive. A property can be turned off by preceding it with a minus '-'.
 
-The reference property tells that the name will be available to all users regardless of the language used. If a reference name is not included in the translated list of names, it is appended at the end by the program. The translator can include the reference names to select the position of the name and change all properties except 'r', 'c' and 'u'. All untranslated first names have the reference property explicitly specified, so names can easily be distinguished from other text strings by the preceding properties and colon.
+The reference property tells that the name will be available to all users regardless of the language used. If a reference name is not included in the translated list of names, it is appended at the end (lowest priority) by the program. The translator can include the reference names to select the position of the name and change all properties except 'r', 'c' and 'u'. The reference property is explicitely specified (with or without '-') at least once for untranslated text strings. Names can easily be distinguished from other text strings by the preceding properties and colon.
 
 Most functions and variables have only one name. Units usually have an abbreviated name, a normal name and a name in plural form. Units should always have a name in plural form if it differs from the singular form.
+
+Note that constants (large and traditional numbers) without any reference name are not available to users if not included in the translation.
 
 Property names work like the names described above except that 'r' for reference is the only possible property.
 

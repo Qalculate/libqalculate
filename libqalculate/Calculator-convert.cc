@@ -1218,16 +1218,20 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 				mstruct_new.eval(eo2);
 				eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_NONE;
 				bool b_pos = !cu, b_neg = false;
-				if(cu || to_unit->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
-					CompositeUnit *cu2 = cu;
-					if(cu2) b_pos = true;
-					else cu2 = (CompositeUnit*) to_unit->baseUnit();
+				CompositeUnit *cu2 = cu;
+				if(cu2) b_pos = true;
+				else if(to_unit->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) cu2 = (CompositeUnit*) to_unit->baseUnit();
+				if(cu2) {
 					int exp2 = 1;
 					for(size_t i = 1; i <= cu2->countUnits(); i++) {
 						cu2->get(i, &exp2);
+						if(!cu) exp2 *= to_unit->baseExponent();
+						exp2 *= cu2->get(i)->baseExponent();
 						if(exp2 < 0) b_neg = true;
 						else b_pos = true;
 					}
+				} else {
+					b_neg = to_unit->baseExponent() < 0;
 				}
 				long int n = count_unit_powers(mstruct_new);
 				test_convert(mstruct_new, to_unit, n, b_pos, eo2);

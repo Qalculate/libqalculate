@@ -1,3 +1,125 @@
+2025-06-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve avoidance of random number precalculation in iterative functions
+	* Do not overwrite user definitions when running tests
+	* Use inverse when converting from s to Hz (and similar)
+
+2025-06-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Calculate random function in function argument occurring multple times in function definition
+	* Improve random function handling in "where" expression
+
+2025-06-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve check for functions not compatible with calulate-as-you-type (less false positives)
+
+2025-06-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve output for repeating decimals (do not repeat zero, e.g. in 1/81, and fix single repeating decimal with overline)
+
+2025-06-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix handling of a single vector argument in times() function
+	* Warn in save() function when function expression contains conversion using "to"
+
+2025-06-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Remove symbols/names from XOF, XAF
+	* Avoid using multiple exchange rates sources for conversion between two currencies
+
+2025-05-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add symbols for THB, CRC, MVR, MUR, and NPR; Fix name for TRY, KES, and PAB
+	* Replace SLL with SLE, and STD with STN
+	* Use Eswatini instead of Swaziland as country name
+
+2025-05-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Disable calculate as you type for expression containing export, load, or command function (in addition to save and plot)
+
+2025-05-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Only allow numbers and white space in exchanges rates
+	* Add fallback URL for exchange-api
+
+2025-05-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Only convert right-hand side value for (in)equalities, when converting to dimensionless or angle units (for original values without unit), or non-linear units
+	* Reset exact value (for dual approximation) when applying "to" command in qalc
+	* Show error when trying to perform multiple conversions at same time using "to" command (without preceding expression on the same line)
+	* Fix segfault when exact and approximate results (of equation) have non-matching format (should not occur)
+
+2025-05-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix angle conversion for (in)equalities (both sides where converted)
+
+2025-05-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve handling of user functions returning value with angle unit, in angle arguments
+
+2025-04-30 howaboutuser <120489523+howaboutuser@users.noreply.github.com>
+
+	* Add traditional Chinese translation
+
+2025-04-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add support for units in limit() (separate units before calculating limit)
+	* Calculate limit for values containing infinity (not only infinite numbers) for definite integrals (do not return nonsense value for "integrate(x^2 exp(−x^2/(2m^2)),−infinity m,infinity m,x)")
+	* Treat approximate integer as integer for dimension, fix positive rational non-integer dimension not resulting in error, and do not test if number of steps is a positive integer if the sixth argument is negative, in genvector()
+	* Remove quotation marks (at beginning and end) from default value of text argument, even if the resulting text string is not empty
+
+2025-04-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix default separator in load() and export() functions
+	* Show a warning when it appears as if the user tries to convert part of an expression (when there is an closing bracket without an opening bracket after "to")
+
+2025-04-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add boolean argument for reversed conversion (to text string) in bin(), oct(), dec(), hex(), and base()
+	* Improve handling of function, returning text string, in text argument
+	* Fix µ_B name/symbol for Bohr magneton
+	* Fix name for gal/s and planck/bohr
+
+2025-03-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix abort using SIGINT (Ctrl+C) during factor command (and some other commands)
+
+2025-03-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix incorrect limit without direction for expression containing tan(x) when value to approach is pi/2
+	* Fix warning for some limits with tan(x)
+	* Do not return zero for tan(pi/2)-tan(pi/2)
+
+2025-03-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix assumption conflict in solve("v3"/"r1"*"r2"+"v3"=2.5,"v3") - set do_polynomial_division=true in solve() and use same simplification for factorization test during solving of equation regardless of state of do_polynomial_disivison (both changes fixes the issue separately)
+	* Use LANGUAGE instead of LANG environment variable on Windows in order to avoid changing regional format settings
+	* Add "language" option in qalc
+	* Fix angle unit in output for "mode" command in qalc
+
+2025-03-18 Rafael Franco <me@rafaelfranco.es>
+
+	* Fix autocalculate input offset with readline vi mode
+
+2025-03-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support all real numbers in binomial(), comb(), and perm() functions (and use binomial() in the other two functions)
+	* Fix non-localized data set key properties (when localized version is available)
+	* Make copyright text of Elements and Planets data sets translatable
+
+2025-03-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve decision to use parentheses for tab/ctrl+i result insert in qalc
+
+2025-03-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve simplification and speed in diff() function for high orders by applying polynomial division and factorization between iterations
+
+2025-03-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add support for display of repeating decimals using overline (vinculum) instead of ellipsis
+	* Remove confusing MRC name/symbol from MR (memory recall) variable
+
 2025-02-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Convert turn left over after unit conversion to radians (e.g. "10000Nm*250*rpm to W")

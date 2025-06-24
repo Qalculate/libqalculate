@@ -62,7 +62,7 @@ MathStructure *mstruct, *parsed_mstruct, mstruct_exact, prepend_mstruct;
 KnownVariable *vans[5], *v_memory;
 string result_text, parsed_text, original_expression;
 vector<string> alt_results;
-bool load_global_defs, fetch_exchange_rates_at_startup, first_time, save_mode_on_exit, save_defs_on_exit, clear_history_on_exit, load_defaults = false;
+bool load_global_defs, fetch_exchange_rates_at_startup, first_time, save_mode_on_exit, save_defs_on_exit = true, clear_history_on_exit, load_defaults = false;
 int auto_update_exchange_rates;
 PrintOptions printops, saved_printops;
 bool saved_concise_uncertainty_input = false;
@@ -4082,6 +4082,7 @@ int main(int argc, char *argv[]) {
 				unittest = true;
 				enable_unicode = 0;
 				interactive_mode = false;
+				save_defs_on_exit = false;
 				break;
 			}
 		} else if(!calc_arg_begun && svar == "--") {
@@ -7659,21 +7660,23 @@ bool ask_percent() {
 
 bool contains_plot_or_save(const string &str) {
 	if(expression_contains_save_function(str, evalops.parse_options, false)) return true;
-	MathFunction *f = CALCULATOR->getFunctionById(FUNCTION_ID_PLOT);
-	for(size_t i = 1; f && i <= f->countNames(); i++) {
-		if(str.find(f->getName(i).name) != string::npos) return true;
-	}
-	f = CALCULATOR->getFunctionById(FUNCTION_ID_EXPORT);
-	for(size_t i = 1; f && i <= f->countNames(); i++) {
-		if(str.find(f->getName(i).name) != string::npos) return true;
-	}
-	f = CALCULATOR->getFunctionById(FUNCTION_ID_LOAD);
-	for(size_t i = 1; f && i <= f->countNames(); i++) {
-		if(str.find(f->getName(i).name) != string::npos) return true;
-	}
-	f = CALCULATOR->getFunctionById(FUNCTION_ID_COMMAND);
-	for(size_t i = 1; f && i <= f->countNames(); i++) {
-		if(str.find(f->getName(i).name) != string::npos) return true;
+	for(size_t f_i = 0; f_i < 4; f_i++) {
+		int id = 0;
+		if(f_i == 0) id = FUNCTION_ID_PLOT;
+		else if(f_i == 1) id = FUNCTION_ID_EXPORT;
+		else if(f_i == 2) id = FUNCTION_ID_LOAD;
+		else if(f_i == 3) id = FUNCTION_ID_COMMAND;
+		MathFunction *f = CALCULATOR->getFunctionById(id);
+		for(size_t i = 1; f && i <= f->countNames(); i++) {
+			if(str.find(f->getName(i).name) != string::npos) {
+				MathStructure mtest;
+				CALCULATOR->beginTemporaryStopMessages();
+				CALCULATOR->parse(&mtest, str, evalops.parse_options);
+				CALCULATOR->endTemporaryStopMessages();
+				if(mtest.containsFunctionId(FUNCTION_ID_PLOT) || mtest.containsFunctionId(FUNCTION_ID_EXPORT) || mtest.containsFunctionId(FUNCTION_ID_LOAD) || mtest.containsFunctionId(FUNCTION_ID_COMMAND)) return true;
+				return false;
+			}
+		}
 	}
 	return false;
 }
@@ -8705,7 +8708,6 @@ void load_preferences() {
 
 	save_mode_on_exit = true;
 	clear_history_on_exit = false;
-	save_defs_on_exit = true;
 	auto_update_exchange_rates = -1;
 	first_time = false;
 	
@@ -8752,7 +8754,7 @@ void load_preferences() {
 	}
 #endif
 
-	int version_numbers[] = {5, 5, 1};
+	int version_numbers[] = {5, 6, 0};
 
 	if(file) {
 		char line[10000];
