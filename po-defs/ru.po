@@ -11920,7 +11920,7 @@ msgstr "Базисный пункт"
 
 #: ../data/variables.xml.in.h:5
 msgid "r:permyriad,au:&#x2031;"
-msgstr "баз.пункт,au:&#x2031;"
+msgstr "баз_пункт,au:&#x2031;"
 
 #: ../data/variables.xml.in.h:6
 msgid "Percent"

@@ -90,31 +90,55 @@ int main(int argc, char *argv[]) {
 				if(!msgid.empty() && (msgstr == msgid || msgstr == "-")) {
 					if(variant == 3 || variant == 4) cout << msgstr << endl;
 					sout = "msgstr \"\"";
-				} else if(variant != 1 && variant != 4 && sout.length() >= 10 && sout.find("\n", 10) == string::npos) {
+				} else {
 					size_t i = 0, i2 = 0;
 					while(true) {
-						i = msgstr.find(":", i);
+						i = msgid.find(":", i);
 						if(i == string::npos) break;
-						i2 = msgstr.find_last_of("r,\"",i);
-						if(i2 != string::npos && msgstr[i2] == 'r' && i != msgstr.length() - 1 && msgstr[i + 1] != ' ') {
-							if(variant == 3 || variant == 5) cout << msgstr << " -> ";
-							msgstr.erase(i2, 1);
+						i2 = msgid.find_last_of("r,\"",i);
+						if(i2 != string::npos && msgid[i2] == 'r' && i != msgid.length() - 1 && msgid[i + 1] != ' ') {
+							msgid.erase(i2, 1);
 							i--;
-							if(i2 > 0 && msgstr[i2 - 1] == '-') {
-								msgstr.erase(i2 - 1, 1);
+							if(i2 > 0 && msgid[i2 - 1] == '-') {
+								msgid.erase(i2 - 1, 1);
 								i--;
 								i2--;
 							}
-							if(i == i2 && (i == 0 || msgstr.find_last_of("aciopsu", i) != i - 1)) {
-								msgstr.erase(i, 1);
+							if(i == i2 && (i == 0 || msgid.find_last_of("aciopsu", i) != i - 1)) {
+								msgid.erase(i, 1);
 								i--;
 							}
-							if(variant == 3 || variant == 5) cout << msgstr << endl;
-							sout = "msgstr \"";
-							sout += msgstr;
-							sout += "\"";
 						}
 						i++;
+					}
+					if(!msgid.empty() && msgstr == msgid) {
+						if(variant == 3 || variant == 4) cout << msgstr << endl;
+						sout = "msgstr \"\"";
+					} else if(variant != 1 && variant != 4 && sout.length() >= 10 && sout.find("\n", 10) == string::npos) {
+						while(true) {
+							i = msgstr.find(":", i);
+							if(i == string::npos) break;
+							i2 = msgstr.find_last_of("r,\"",i);
+							if(i2 != string::npos && msgstr[i2] == 'r' && i != msgstr.length() - 1 && msgstr[i + 1] != ' ') {
+								if(variant == 3 || variant == 5) cout << msgstr << " -> ";
+								msgstr.erase(i2, 1);
+								i--;
+								if(i2 > 0 && msgstr[i2 - 1] == '-') {
+									msgstr.erase(i2 - 1, 1);
+									i--;
+									i2--;
+								}
+								if(i == i2 && (i == 0 || msgstr.find_last_of("aciopsu", i) != i - 1)) {
+									msgstr.erase(i, 1);
+									i--;
+								}
+								if(variant == 3 || variant == 5) cout << msgstr << endl;
+								sout = "msgstr \"";
+								sout += msgstr;
+								sout += "\"";
+							}
+							i++;
+						}
 					}
 				}
 				msgid = "";

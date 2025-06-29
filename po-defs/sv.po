@@ -11835,7 +11835,7 @@ msgstr "Noniljard"
 
 #: ../data/variables.xml.in.h:21
 msgid "-r:octodecillion"
-msgstr "noniljard,p:noniljarder.octodecillion"
+msgstr "noniljard,p:noniljarder,octodecillion"
 
 #: ../data/variables.xml.in.h:22
 msgid "Septendecillion"

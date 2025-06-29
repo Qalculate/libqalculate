@@ -2940,9 +2940,10 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
 bool calculate_rand(MathStructure &mstruct, const EvaluationOptions &eo) {
 	if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_RAND || mstruct.function()->id() == FUNCTION_ID_RANDN || mstruct.function()->id() == FUNCTION_ID_RAND_POISSON || (mstruct.function()->subtype() == SUBTYPE_USER_FUNCTION && mstruct.function()->referenceName().find("rand") == 0))) {
 		mstruct.unformat(eo);
-		mstruct.calculateFunctions(eo, false);
-		calculate_rand(mstruct, eo);
-		return true;
+		if(mstruct.calculateFunctions(eo, false)) {
+			calculate_rand(mstruct, eo);
+			return true;
+		}
 	}
 	bool ret = false;
 	for(size_t i = 0; i < mstruct.size(); i++) {

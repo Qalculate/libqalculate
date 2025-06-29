@@ -29,7 +29,8 @@
 
 2025-05-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Add symbols for THB, CRC, MVR, MUR, and NPR; Fix name for TRY, KES, and PAB
+	* Add symbols for THB, CRC, MVR, MUR, and NPR
+	* Fix name for TRY, KES, and PAB
 	* Replace SLL with SLE, and STD with STN
 	* Use Eswatini instead of Swaziland as country name
 

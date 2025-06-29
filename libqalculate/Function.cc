@@ -1691,9 +1691,10 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 		}
 		if(cits == 0) replace_internal_operators(str2);
 		size_t i = str2.find(ID_WRAP_LEFT);
+		string str2_alt = str2;
 		if(i != string::npos && i < str2.length() - 2) {
 			i = 0;
-			size_t i2 = 0; int id = 0;
+			size_t i2 = 0, alt_i = 0; int id = 0;
 			while((i = str2.find(ID_WRAP_LEFT, i)) != string::npos) {
 				i2 = str2.find_first_not_of(NUMBERS, i + 1);
 				if(i2 == string::npos) break;
@@ -1713,6 +1714,15 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 							i2++;
 						}
 						str2.replace(i, i2 - i + 1, m_temp->symbol());
+						if(!str2_alt.empty()) {
+							if(m_temp->symbol().find("\"") != string::npos) {
+								if(m_temp->symbol().find("\'") != string::npos) str2_alt = "";
+								else str2_alt.replace(i + alt_i, i2 - i + 1, string("\'") + m_temp->symbol() + "\'");
+							} else {
+								str2_alt.replace(i + alt_i, i2 - i + 1, string("\"") + m_temp->symbol() + "\"");
+							}
+							alt_i += 2;
+						}
 						i += m_temp->symbol().length();
 						m_temp->unref();
 					} else {
@@ -1727,6 +1737,15 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 						}
 						if(do_par) str3 += RIGHT_PARENTHESIS_CH;
 						str2.replace(i, i2 - i + 1, str3);
+						if(!str2_alt.empty()) {
+							if(str3.find("\"") != string::npos) {
+								if(str3.find("\'") != string::npos) str2_alt = "";
+								else str2_alt.replace(i + alt_i, i2 - i + 1, string("\'") + str3 + "\'");
+							} else {
+								str2_alt.replace(i + alt_i, i2 - i + 1, string("\"") + str + "\"");
+							}
+							alt_i += 2;
+						}
 						i += str3.length();
 					}
 				} else {
@@ -1734,10 +1753,14 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 				}
 			}
 		}
-		if(cits == 0 && str2.find(LEFT_PARENTHESIS, pars) != string::npos) {
+		if(cits == 0 && str2_alt.find(LEFT_PARENTHESIS, pars) != string::npos) {
 			CALCULATOR->beginTemporaryStopMessages();
-			CALCULATOR->parse(mstruct, str2, po);
-			if(mstruct->isSymbolic() || (mstruct->isVariable() && mstruct->variable()->isKnown() && ((KnownVariable*) mstruct->variable())->get().isSymbolic()) || (mstruct->isFunction() && (mstruct->function()->subtype() == SUBTYPE_USER_FUNCTION || mstruct->function()->subtype() == SUBTYPE_DATA_SET || mstruct->function()->id() == FUNCTION_ID_REGISTER || mstruct->function()->id() == FUNCTION_ID_STACK || mstruct->function()->id() == FUNCTION_ID_LOAD || mstruct->function()->id() == FUNCTION_ID_CHAR || mstruct->function()->id() == FUNCTION_ID_CONCATENATE || mstruct->function()->id() == FUNCTION_ID_COMPONENT || mstruct->function()->id() == FUNCTION_ID_BINARY_DECIMAL || mstruct->function()->id() == FUNCTION_ID_BIJECTIVE || mstruct->function()->id() == FUNCTION_ID_ROMAN || ((mstruct->function()->id() == FUNCTION_ID_BIN || mstruct->function()->id() == FUNCTION_ID_OCT || mstruct->function()->id() == FUNCTION_ID_DEC || mstruct->function()->id() == FUNCTION_ID_HEX || mstruct->function()->id() == FUNCTION_ID_BASE) && mstruct->size() > 0 && mstruct->last().isOne())))) {
+			CALCULATOR->parse(mstruct, str2_alt, po);
+			if(mstruct->isSymbolic()) {
+				CALCULATOR->endTemporaryStopMessages(true);
+				return;
+			}
+			if((mstruct->isVariable() && mstruct->variable()->isKnown() && ((KnownVariable*) mstruct->variable())->get().isSymbolic()) || (mstruct->isFunction() && (mstruct->function()->subtype() == SUBTYPE_USER_FUNCTION || mstruct->function()->subtype() == SUBTYPE_DATA_SET || mstruct->function()->id() == FUNCTION_ID_REGISTER || mstruct->function()->id() == FUNCTION_ID_STACK || mstruct->function()->id() == FUNCTION_ID_LOAD || mstruct->function()->id() == FUNCTION_ID_CHAR || mstruct->function()->id() == FUNCTION_ID_CONCATENATE || mstruct->function()->id() == FUNCTION_ID_COMPONENT || mstruct->function()->id() == FUNCTION_ID_BINARY_DECIMAL || mstruct->function()->id() == FUNCTION_ID_BIJECTIVE || mstruct->function()->id() == FUNCTION_ID_ROMAN || ((mstruct->function()->id() == FUNCTION_ID_BIN || mstruct->function()->id() == FUNCTION_ID_OCT || mstruct->function()->id() == FUNCTION_ID_DEC || mstruct->function()->id() == FUNCTION_ID_HEX || mstruct->function()->id() == FUNCTION_ID_BASE) && mstruct->size() > 0 && mstruct->last().isOne())))) {
 				EvaluationOptions eo;
 				eo.parse_options = po;
 				MathStructure mtest(mstruct);
