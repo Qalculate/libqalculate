@@ -737,9 +737,9 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 
 	xmlDocPtr doc;
 	xmlNodePtr cur, child, child2, child3;
-	string version, stmp, name, uname, type, svalue, sexp, plural, countries, singular, category_title, category, description, title, inverse, suncertainty, base, argname, usystem;
+	string version, stmp, name, uname, type, svalue, sexp, plural, countries, singular, category_title, category, description, title, inverse, suncertainty, base, argname, usystem, copyright;
 	bool unc_rel;
-	bool best_title = false, next_best_title = false, best_category_title, next_best_category_title, best_description, next_best_description;
+	bool best_title = false, next_best_title = false, best_category_title, next_best_category_title, best_description, next_best_description, best_copyright, next_best_copyright;
 	bool best_plural, next_best_plural, best_singular, next_best_singular, best_argname, next_best_argname, best_countries, next_best_countries;
 	bool best_proptitle, next_best_proptitle, best_propdescr, next_best_propdescr;
 	string proptitle, propdescr;
@@ -1111,6 +1111,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 				child = cur->xmlChildrenNode;
 				ITEM_INIT_DTH
 				ITEM_INIT_NAME
+				copyright = ""; best_copyright = false; next_best_copyright = false;
 				while(child != NULL) {
 					if(!xmlStrcmp(child->name, (const xmlChar*) "property")) {
 						dp = new DataProperty(dc);
@@ -1422,7 +1423,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "default_property")) {
 						XML_DO_FROM_TEXT(child, dc->setDefaultProperty)
 					} else if(!builtin && !xmlStrcmp(child->name, (const xmlChar*) "copyright")) {
-						XML_DO_FROM_TEXT(child, dc->setCopyright)
+						XML_GET_LOCALE_STRING_FROM_TEXT(child, copyright, best_copyright, next_best_copyright)
 					} else if(!builtin && !xmlStrcmp(child->name, (const xmlChar*) "datafile")) {
 						XML_DO_FROM_TEXT(child, dc->setDefaultDataFile)
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "example")) {
@@ -1454,6 +1455,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					}
 				}
 				ITEM_SET_DTH
+				if(!builtin) dc->setCopyright(copyright);
 				if(check_duplicates && !is_user_defs) {
 					for(size_t i = 1; i <= dc->countNames();) {
 						if(getActiveFunction(dc->getName(i).name)) dc->removeName(i);

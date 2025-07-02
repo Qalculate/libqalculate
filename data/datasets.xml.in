@@ -37,6 +37,7 @@
 	<_description>A number representing an element group:&#10;1 Alkali Metal&#10;2 Alkaline-Earth Metal&#10;3 Lanthanide&#10;4 Actinide&#10;5 Transition Metal&#10;6 Metal&#10;7 Metalloid&#10;8 Polyatomic Non-Metal&#10;9 Diatomic Non-Metal&#10;10 Noble Gas&#10;11 Unknown chemical properties</_description>
 	<type>number</type>
         <_names>r:class</_names>
+	<hidden>true</hidden>
       </property>
       <property>
         <_title>Atomic Mass</_title>

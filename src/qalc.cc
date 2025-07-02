@@ -6476,6 +6476,11 @@ bool display_errors(bool goto_input, int cols, bool *implicit_warning) {
 				if(DO_COLOR && (mtype == MESSAGE_ERROR || mtype == MESSAGE_WARNING)) str += "\033[0m";
 				BEGIN_ITALIC(str)
 				str += CALCULATOR->message()->message();
+				if(indent > 0 && str.find("\n") != string::npos) {
+					string nl_s = "\n";
+					nl_s.append(indent, ' ');
+					gsub("\n", nl_s, str);
+				}
 				END_ITALIC(str)
 				if(cols) addLineBreaks(str, cols, true, indent, str.length());
 				PUTS_UNICODE(str.c_str())
