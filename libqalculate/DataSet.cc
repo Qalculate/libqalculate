@@ -702,9 +702,9 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 								value = xmlNodeListGetString(doc, child->xmlChildrenNode, 1);
 								lang = xmlNodeGetLang(child);
 								ils = -1;
-								for(int i3 = lang_status_p.size() - 1; i3 > 0; i3--) {
-									if(lang_status_p[i3] == properties[i3]) {
-										ils = i3;
+								for(int i3 = lang_status_p.size(); i3 > 0; i3--) {
+									if(lang_status_p[i3 - 1] == properties[i3 - 1]) {
+										ils = i3 - 1;
 										break;
 									}
 								}
