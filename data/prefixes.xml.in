@@ -128,4 +128,12 @@
     <_names>ar:Yi,r:yobi</_names>
     <exponent>80</exponent>
   </prefix>
+  <prefix type="binary">
+    <_names>ar:Ri,r:robi</_names>
+    <exponent>90</exponent>
+  </prefix>
+  <prefix type="binary">
+    <_names>ar:Qi,r:quebi</_names>
+    <exponent>100</exponent>
+  </prefix>
 </QALCULATE>
