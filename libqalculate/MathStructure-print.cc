@@ -3737,6 +3737,19 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					i_number_end = print_str.length();
 				}
 			}
+
+			if(po.base == BASE_DECIMAL && colorize) {
+				size_t i = print_str.find_first_of("Ee");
+				if(i != string::npos) {
+					if(tagtype == TAG_TYPE_TERMINAL) {
+						print_str.insert(i, colorize == 2 ? "\033[0;92m" : "\033[0;32m");
+					} else if(tagtype == TAG_TYPE_HTML) {
+						print_str.insert(i, colorize == 2 ? "<span style=\"color:#BBFFBB\">" : "<span style=\"color:#008000\">");
+						print_str += "</span>";
+					}
+				}
+			}
+
 			if(colorize && tagtype == TAG_TYPE_TERMINAL) print_str += "\033[0m";
 			else if(colorize && tagtype == TAG_TYPE_HTML) print_str += "</span>";
 			if(!ips.wrap && ips.depth > 0 && o_number.isRational() && !o_number.isInteger() && po.base != BASE_CUSTOM && po.base != BASE_UNICODE) {
