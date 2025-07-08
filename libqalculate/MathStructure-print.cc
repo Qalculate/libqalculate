@@ -3618,12 +3618,11 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 						print_str += "</small></sub>";
 					}
 				}
-				bool color_span_unclosed = colorize;
 				if(!exp.empty() && !EXP_MODE_10 && po.base == 10) {
-					if(color_span_unclosed) print_str += "</span>";
-					color_span_unclosed = false;
+					if(colorize) print_str += "</span>";
 					if(po.exp_display == EXP_UPPERCASE_E) print_str += "<small>E</small>";
 					else print_str += "e";
+					if(colorize) print_str += (colorize == 2 ? "<span style=\"color:#AAFFFF\">" : "<span style=\"color:#005858\">");
 					if(exp_minus) {
 						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) print_str += SIGN_MINUS;
 						else print_str += "-";
@@ -3665,8 +3664,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					if(ips.power_depth <= 0) print_str += "</sup>";
 				} else if(BASE_IS_SEXAGESIMAL(po.base) || po.base == BASE_TIME) {
 					if(po.exp_display == EXP_UPPERCASE_E) {
-						gsub("E", color_span_unclosed ? "</span><small>E</small>" : "<small>E</small>", print_str);
-						color_span_unclosed = false;
+						gsub("E", colorize == 2 ? "</span><small>E</small><span style=\"color:#AAFFFF\">" : (colorize == 1 ? "</span><small>E</small><span style=\"color:#005858\">" : "<small>E</small>"), print_str);
 					} else if(po.exp_display == EXP_POWER_OF_10 && ips.power_depth <= 0) {
 						size_t i = print_str.find("10^");
 						if(i != string::npos) {
@@ -3679,7 +3677,6 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 						}
 					}
 				}
-				if(color_span_unclosed) print_str += "</span>";
 			} else {
 				if(po.exp_display == EXP_POWER_OF_10) {
 					PrintOptions po2 = po;
@@ -3740,14 +3737,17 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				} else {
 					print_str += o_number.print(po, ips_n);
 					i_number_end = print_str.length();
-				}
-				if(colorize) {
-					size_t i = po.base == BASE_DECIMAL ? print_str.find_first_of("Ee") : string::npos;
-					if(i != string::npos) print_str.insert(i, "\033[0m");
-					else print_str += "\033[0m";
+					if(colorize && tagtype == TAG_TYPE_TERMINAL && (po.base == BASE_DECIMAL || BASE_IS_SEXAGESIMAL(po.base) || po.base == BASE_TIME)) {
+						size_t i = print_str.find(po.exp_display == EXP_UPPERCASE_E ? "E" : "e");
+						if(i != string::npos) {
+							print_str.insert(i + 1, (colorize == 2 ? "\033[0;96m" : "\033[0;36m"));
+							print_str.insert(i, "\033[0m");
+						}
+					}
 				}
 			}
-
+			if(colorize && tagtype == TAG_TYPE_TERMINAL) print_str += "\033[0m";
+			else if(colorize && tagtype == TAG_TYPE_HTML) print_str += "</span>";
 			if(!ips.wrap && ips.depth > 0 && o_number.isRational() && !o_number.isInteger() && po.base != BASE_CUSTOM && po.base != BASE_UNICODE) {
 				for(size_t i = i_number + 1; i + 1 < i_number_end; i++) {
 					if(print_str[i] == DIVISION_CH || ((unsigned char) print_str[i] == 0xE2 && (unsigned char) print_str[i + 1] == 0x88 && i + 2 < print_str.size() && (unsigned char) print_str[i + 2] == 0x95) || ((unsigned char) print_str[i] == 0xC3 && (unsigned char) print_str[i + 1] == 0xB7)) {
