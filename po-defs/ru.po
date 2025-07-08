@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-02 18:01+0200\n"
+"POT-Creation-Date: 2025-07-08 07:48+0200\n"
 "PO-Revision-Date: 2024-05-04 10:02+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -4188,7 +4188,7 @@ msgid ""
 "automatic selection). Set it to 1 for digits 0-9 and A-Z, 2 for 0-9, A-Z and "
 "a-z, 3 for Unicode digits, and 4 for phonewords (e.g. ABC=2, CDE=3, etc.), "
 "or enter a text string with all digits placed in ascending order (e.g. "
-"\"0123456789\") and optionally separated by semicolon (to enable multple "
+"\"0123456789\") and optionally separated by semicolon (to enable multiple "
 "equivalent digits, e.g. \"0;aA1;bB2;cC3\"). When the set of digits is "
 "manually selected, the specified expression is always converted to a single "
 "number."
@@ -9211,6 +9211,16 @@ msgstr "ac:Зи,зеби"
 #: ../data/prefixes.xml.in.h:32
 msgid "ar:Yi,r:yobi"
 msgstr "ac:Йи,йоби"
+
+#: ../data/prefixes.xml.in.h:33
+#, fuzzy
+msgid "ar:Ri,r:robi"
+msgstr "ac:Йи,йоби"
+
+#: ../data/prefixes.xml.in.h:34
+#, fuzzy
+msgid "ar:Qi,r:quebi"
+msgstr "aс:Ми,меби"
 
 #. Unit category
 #: ../data/units.xml.in.h:2

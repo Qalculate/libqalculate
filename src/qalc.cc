@@ -1713,7 +1713,7 @@ void set_option(string str) {
 			printops.use_max_decimals = true;
 			result_format_updated();
 		} else {
-			CALCULATOR->error(true, "Illegal value: %s.", svalue.c_str(), NULL);
+			PUTS_UNICODE(_("Illegal value."));
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "fractions", _("fractions")) || svar == "fr") {
 		int v = -1;
@@ -3828,6 +3828,7 @@ int main(int argc, char *argv[]) {
 					_putenv_s("LANGUAGE", lang.c_str());
 #	else
 					setenv("LANGUAGE", lang.c_str(), 1);
+					setenv("LC_MESSAGES", lang.c_str(), 1);
 #	endif
 				}
 				break;

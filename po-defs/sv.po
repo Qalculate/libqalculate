@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-23 16:29+0200\n"
+"POT-Creation-Date: 2025-07-08 07:48+0200\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -4166,7 +4166,7 @@ msgid ""
 "automatic selection). Set it to 1 for digits 0-9 and A-Z, 2 for 0-9, A-Z and "
 "a-z, 3 for Unicode digits, and 4 for phonewords (e.g. ABC=2, CDE=3, etc.), "
 "or enter a text string with all digits placed in ascending order (e.g. "
-"\"0123456789\") and optionally separated by semicolon (to enable multple "
+"\"0123456789\") and optionally separated by semicolon (to enable multiple "
 "equivalent digits, e.g. \"0;aA1;bB2;cC3\"). When the set of digits is "
 "manually selected, the specified expression is always converted to a single "
 "number."
@@ -9078,6 +9078,15 @@ msgstr ""
 #: ../data/prefixes.xml.in.h:32
 msgid "ar:Yi,r:yobi"
 msgstr ""
+
+#: ../data/prefixes.xml.in.h:33
+msgid "ar:Ri,r:robi"
+msgstr ""
+
+#: ../data/prefixes.xml.in.h:34
+#, fuzzy
+msgid "ar:Qi,r:quebi"
+msgstr "a:q,quekto"
 
 #. Unit category
 #: ../data/units.xml.in.h:2
