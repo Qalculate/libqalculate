@@ -1895,7 +1895,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					} else {
 						au = new AliasUnit(category, name, plural, singular, title, u, svalue, exponent, inverse, is_user_defs, false, active);
 						au->setCountries(countries);
-						if(mix_priority > 0) {
+						if(mix_priority != 0) {
 							au->setMixWithBase(mix_priority);
 							au->setMixWithBaseMinimum(mix_min);
 						}
@@ -2769,7 +2769,7 @@ void Calculator::saveUnits(void *xmldoc, bool save_global, bool save_only_temp) 
 							xmlNewTextChild(newnode2, NULL, (xmlChar*) "inverse_relation", (xmlChar*) au->inverseExpression().c_str());
 						}
 						xmlNewTextChild(newnode2, NULL, (xmlChar*) "exponent", (xmlChar*) i2s(au->firstBaseExponent()).c_str());
-						if(au->mixWithBase() > 0) {
+						if(au->mixWithBase() != 0) {
 							newnode3 = xmlNewTextChild(newnode2, NULL, (xmlChar*) "mix", (xmlChar*) i2s(au->mixWithBase()).c_str());
 							if(au->mixWithBaseMinimum() > 1) xmlNewProp(newnode3, (xmlChar*) "min", (xmlChar*) i2s(au->mixWithBaseMinimum()).c_str());
 						}

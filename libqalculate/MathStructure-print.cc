@@ -658,6 +658,10 @@ void MathStructure::unformat(const EvaluationOptions &eo) {
 				set(((CompositeUnit*) o_unit)->generateMathStructure(false, eo.keep_prefixes));
 				unformat(eo);
 				break;
+			} else if(o_unit->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) o_unit)->mixWithBase() < 0) {
+				set(((AliasUnit*) o_unit)->firstBaseUnit());
+				unformat(eo);
+				break;
 			}
 			b_plural = false;
 			break;

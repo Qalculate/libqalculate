@@ -70,6 +70,7 @@
         <unit>um_c</unit>
         <relation>1</relation>
         <exponent>1</exponent>
+        <mix>-1</mix>
       </base>
     </unit>
     <unit type="alias">
@@ -2807,6 +2808,7 @@
         <unit>km_p_h</unit>
         <relation>1</relation>
         <exponent>1</exponent>
+        <mix>-1</mix>
       </base>
     </unit>
     <unit type="composite">

@@ -3053,6 +3053,8 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								str_index += name_length;
 								moved_forward = true;
 							} else {
+								MathStructure *log_arg2 = NULL;
+								f_begin:
 								bool b = false, b_unended_function = false, b_comma_before = false, b_power_before = false;
 								//bool b_space_first = false;
 								size_t i5 = 1;
@@ -3106,6 +3108,14 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								if(icand > 0) i6 = icand;
 								if(b && i5 >= 2) {
 									stmp2 = str.substr(str_index + name_length, i6 - 1);
+									if(!log_arg2 && f->id() == FUNCTION_ID_LOGN && arg_i == 1 && ((stmp2.length() >= 2 && is_in(NUMBERS DOT, stmp2[0])) || (stmp2.length() >= 3 && stmp2[0] == '_' && is_in(NUMBERS DOT, stmp2[1])))) {
+										size_t i7 = stmp2.find_first_not_of(NUMBERS DOT, stmp2[0] == '_' ? 2 : 1);
+										if(i7 != string::npos && stmp2[i7] == LEFT_PARENTHESIS_CH && CALCULATOR->getFunctionById(FUNCTION_ID_LOG)) {
+											name_length += i7;
+											log_arg2 = new MathStructure(Number(stmp2.substr(stmp2[0] == '_' ? 1 : 0, stmp2[0] == '_' ? i7 - 1 : i7)));
+											goto f_begin;
+										}
+									}
 									if(name_length < unit_chars_left) {
 										objects_finished = true;
 										if(is_not_in(NUMBER_ELEMENTS, stmp2[0])) {
@@ -3148,6 +3158,13 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 										ParseOptions po2 = po;
 										po2.read_precision = DONT_READ_PRECISION;
 										stmp += i2s(parseAddId(f, stmp2, po2));
+									} else if(log_arg2) {
+										MathStructure *mstruct = new MathStructure();
+										CALCULATOR->getFunctionById(FUNCTION_ID_LOG)->parse(*mstruct, stmp2, po);
+										mstruct->setFunction(f);
+										mstruct->addChild_nocopy(log_arg2);
+										stmp += i2s(addId(mstruct));
+										log_arg2 = NULL;
 									} else {
 										stmp += i2s(parseAddId(f, stmp2, po));
 									}
@@ -3199,6 +3216,11 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 										ParseOptions po2 = po;
 										po2.read_precision = DONT_READ_PRECISION;
 										f->parse(*mstruct, stmp2, po2);
+									} else if(log_arg2) {
+										CALCULATOR->getFunctionById(FUNCTION_ID_LOG)->parse(*mstruct, stmp2, po);
+										mstruct->setFunction(f);
+										mstruct->addChild_nocopy(log_arg2);
+										log_arg2 = NULL;
 									} else {
 										f->parse(*mstruct, stmp2, po);
 									}
@@ -3217,6 +3239,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									po.unended_function = NULL;
 									stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 								}
+								if(log_arg2) log_arg2->unref();
 							}
 							if(i4 > 0) {
 								str.replace(str_index, i4, stmp);
@@ -5774,13 +5797,13 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 							break;
 						}
 					}
-				} else if(u1 && !p1 && u1->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u1)->mixWithBase()) {
+				} else if(u1 && !p1 && u1->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u1)->mixWithBase() > 0) {
 					b_plus = true;
 					for(size_t i2 = 3; i2 < mstruct->size(); i2 += 2) {
-						if(!(*mstruct)[i2 - 1].isUnit_exp() && (*mstruct)[i2].isUnit() && u1->isChildOf((*mstruct)[i2].unit()) && !(*mstruct)[i2].prefix() && (i2 == mstruct->size() - 1 || ((*mstruct)[i2].unit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) (*mstruct)[i2].unit())->mixWithBase()))) {
+						if(!(*mstruct)[i2 - 1].isUnit_exp() && (*mstruct)[i2].isUnit() && u1->isChildOf((*mstruct)[i2].unit()) && !(*mstruct)[i2].prefix() && (i2 == mstruct->size() - 1 || ((*mstruct)[i2].unit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) (*mstruct)[i2].unit())->mixWithBase() > 0))) {
 							while(((AliasUnit*) u1)->firstBaseUnit() != (*mstruct)[i2].unit()) {
 								u1 = ((AliasUnit*) u1)->firstBaseUnit();
-								if(u1->subtype() != SUBTYPE_ALIAS_UNIT || !((AliasUnit*) u1)->mixWithBase()) {
+								if(u1->subtype() != SUBTYPE_ALIAS_UNIT || ((AliasUnit*) u1)->mixWithBase() <= 0) {
 									b_plus = false;
 									break;
 								}

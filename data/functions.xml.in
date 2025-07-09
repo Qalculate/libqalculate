@@ -1416,7 +1416,7 @@
     </builtin_function>
     <function>
       <_title>Base-2 Logarithm</_title>
-      <_names>rs:log2</_names>
+      <_names>rs:log2,lb,o:log_2</_names>
       <_description>Returns the base n logarithm.</_description>
       <expression>log(\x,2)</expression>
       <argument type="number" index="1">
@@ -1427,7 +1427,7 @@
     </function>
     <function>
       <_title>Base-10 Logarithm</_title>
-      <_names>rs:log10</_names>
+      <_names>rs:log10,lg,o:log_10</_names>
       <_description>Returns the base n logarithm.</_description>
       <expression>log(\x,10)</expression>
       <argument type="number" index="1">

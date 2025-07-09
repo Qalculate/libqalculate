@@ -73,7 +73,7 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 			if(u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseExponent() == 1 && ((AliasUnit*) u)->firstBaseUnit()->subtype() != SUBTYPE_COMPOSITE_UNIT) {
 				size_t idiv = ((AliasUnit*) u)->expression().find("1" DIVISION);
 				if(idiv == 0 && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS, 2) == string::npos) {
-					if((((AliasUnit*) u)->mixWithBase() > 0 || (((AliasUnit*) u)->mixWithBase() == 0 && (muc == MIXED_UNITS_CONVERSION_FORCE_INTEGER || muc == MIXED_UNITS_CONVERSION_FORCE_ALL))) && (((AliasUnit*) u)->mixWithBaseMinimum() <= 1 || nr.isGreaterThanOrEqualTo(((AliasUnit*) u)->mixWithBaseMinimum()))) {
+					if((((AliasUnit*) u)->mixWithBase() > 0 || (((AliasUnit*) u)->mixWithBase() <= 0 && (muc == MIXED_UNITS_CONVERSION_FORCE_INTEGER || muc == MIXED_UNITS_CONVERSION_FORCE_ALL))) && (((AliasUnit*) u)->mixWithBaseMinimum() <= 1 || nr.isGreaterThanOrEqualTo(((AliasUnit*) u)->mixWithBaseMinimum()))) {
 						best_u = ((AliasUnit*) u)->firstBaseUnit();
 						MathStructure mstruct_nr(nr);
 						MathStructure m_exp(m_one);
@@ -139,7 +139,7 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 				mstruct_nr.eval(eo);
 				while(!accept_obsolete && ((AliasUnit*) u)->firstBaseUnit()->subtype() == SUBTYPE_ALIAS_UNIT && abs(((AliasUnit*) ((AliasUnit*) u)->firstBaseUnit())->mixWithBase()) > 1) {
 					u = ((AliasUnit*) u)->firstBaseUnit();
-					if(((AliasUnit*) u)->firstBaseExponent() == 1 && (((AliasUnit*) u)->mixWithBase() != 0 || muc == MIXED_UNITS_CONVERSION_FORCE_ALL || (muc == MIXED_UNITS_CONVERSION_FORCE_INTEGER && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == string::npos))) {
+					if(((AliasUnit*) u)->firstBaseExponent() == 1 && (((AliasUnit*) u)->mixWithBase() > 0 || muc == MIXED_UNITS_CONVERSION_FORCE_ALL || (muc == MIXED_UNITS_CONVERSION_FORCE_INTEGER && ((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == string::npos))) {
 						((AliasUnit*) u)->convertToFirstBaseUnit(mstruct_nr, m_exp);
 						mstruct_nr.eval(eo);
 						if(!mstruct_nr.isNumber() || !m_exp.isOne()) break;
@@ -156,7 +156,7 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 							non_int = true;
 						}
 					} else {
-						if(((AliasUnit*) u)->mixWithBase() != 0 && muc > MIXED_UNITS_CONVERSION_DEFAULT) muc = MIXED_UNITS_CONVERSION_DEFAULT;
+						if(((AliasUnit*) u)->mixWithBase() > 0 && muc > MIXED_UNITS_CONVERSION_DEFAULT) muc = MIXED_UNITS_CONVERSION_DEFAULT;
 						u = ((AliasUnit*) u)->firstBaseUnit();
 						nr = mstruct_nr.number();
 						b = true;
