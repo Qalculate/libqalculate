@@ -1543,16 +1543,17 @@ void set_option(string str) {
 		if(svalue == "0" || svalue == "1" || EQUALS_IGNORECASE_AND_LOCAL(svar, "default", _("default"))) svalue = "> ";
 		if(svalue != prompt) {
 			prompt = svalue + " ";
-			prompt_l = svalue.length();
-			indent_s.clear();
-			indent_s.append(prompt_l, ' ');
+			prompt_l = prompt.length();
 #ifdef HAVE_LIBREADLINE
+			if(strcmp("on", rl_variable_value("show-mode-in-prompt")) == 0) prompt_l += strlen(rl_variable_value("vi-ins-mode-string"));
 			rl_set_prompt(prompt.c_str());
 #else
 			puts("");
 			fputs(prompt.c_str(), stdout);
 			fflush(stdout);
 #endif
+			indent_s.clear();
+			indent_s.append(prompt_l, ' ');
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "save mode", _("save mode"))) {
 		int v = s2b(svalue);
@@ -3020,14 +3021,7 @@ void do_autocalc(bool force, const char *action_text) {
 				if(vertical_space) sout += "\n";
 				sout += "\033["; sout += i2s(autocalc_lines); sout += "A";
 				if(move_pos) {
-					// Check if user has show-mode-in-prompt set to "on", and
-					// adjust the offset from the left to accomodate the mode
-					// string.
-					int input_offset = prompt_l + 1;
-					if (strcmp("on", rl_variable_value("show-mode-in-prompt")) == 0) {
-						input_offset += 5; // The prompt looks like "(ins)"; 5 chars.
-					}
-					sout += "\033["; sout += i2s(unicode_length(orig_str, rl_point) + input_offset); sout += "G";
+					sout += "\033["; sout += i2s(unicode_length(orig_str, rl_point) + prompt_l + 1); sout += "G";
 				}
 				FPUTS_UNICODE(sout.c_str(), stdout);
 				fflush(stdout);
@@ -4388,6 +4382,11 @@ int main(int argc, char *argv[]) {
 #ifdef HAVE_LIBREADLINE
 	if(interactive_mode) {
 		rl_initialize();
+		if(strcmp("on", rl_variable_value("show-mode-in-prompt")) == 0) {
+			prompt_l += strlen(rl_variable_value("vi-ins-mode-string"));
+			indent_s.clear();
+			indent_s.append(prompt_l, ' ');
+		}
 		if(!cfile && autocalc < 0 && ask_questions && !load_defaults) {
 			ask_autocalc();
 		}
