@@ -124,6 +124,7 @@ vector<OptionNames> option_list;
 
 string prompt, indent_s;
 size_t prompt_l;
+bool vi_mode = false;
 
 static char buffer[100000];
 
@@ -1545,7 +1546,10 @@ void set_option(string str) {
 			prompt = svalue + " ";
 			prompt_l = prompt.length();
 #ifdef HAVE_LIBREADLINE
-			if(strcmp("on", rl_variable_value("show-mode-in-prompt")) == 0) prompt_l += strlen(rl_variable_value("vi-ins-mode-string"));
+			if(strcmp("on", rl_variable_value("show-mode-in-prompt")) == 0) {
+				if(rl_editing_mode == 0) prompt_l += strlen(rl_variable_value("vi-ins-mode-string"));
+				else prompt_l += strlen(rl_variable_value("emacs-mode-string"));
+			}
 			rl_set_prompt(prompt.c_str());
 #else
 			puts("");
@@ -2876,6 +2880,24 @@ bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t 
 string autocalc_result;
 
 #ifdef HAVE_LIBREADLINE
+
+void check_vi_mode_change() {
+	if(vi_mode == rl_editing_mode) {
+		vi_mode = !rl_editing_mode;
+		if(strcmp("on", rl_variable_value("show-mode-in-prompt")) == 0) {
+			if(vi_mode) {
+				prompt_l -= strlen(rl_variable_value("emacs-mode-string"));
+				prompt_l += strlen(rl_variable_value("vi-ins-mode-string"));
+			} else {
+				prompt_l += strlen(rl_variable_value("emacs-mode-string"));
+				prompt_l -= strlen(rl_variable_value("vi-ins-mode-string"));
+			}
+			indent_s.clear();
+			indent_s.append(prompt_l, ' ');
+		}
+	}
+}
+
 void AutoCalcThread::run() {
 	while(true) {
 		int i = 0;
@@ -2977,6 +2999,7 @@ void do_autocalc(bool force, const char *action_text) {
 				int l = last_is_operator(expression_str);
 				if(l > 0) expression_str.erase(expression_str.length() - l, l);
 			}
+			check_vi_mode_change();
 			execute_expression(false, OPERATION_ADD, NULL, false, 0, false, true);
 			if(!autocalc_input_available && ((!result_autocalculated && !autocalc_result.empty()) || force || prev_autocalc_result != autocalc_result || !current_action_text.empty() || prev_action_text)) {
 				result_autocalculated = true;
@@ -4382,8 +4405,10 @@ int main(int argc, char *argv[]) {
 #ifdef HAVE_LIBREADLINE
 	if(interactive_mode) {
 		rl_initialize();
+		vi_mode = !rl_editing_mode;
 		if(strcmp("on", rl_variable_value("show-mode-in-prompt")) == 0) {
-			prompt_l += strlen(rl_variable_value("vi-ins-mode-string"));
+			if(rl_editing_mode == 0) prompt_l += strlen(rl_variable_value("vi-ins-mode-string"));
+			else prompt_l += strlen(rl_variable_value("emacs-mode-string"));
 			indent_s.clear();
 			indent_s.append(prompt_l, ' ');
 		}
@@ -4444,6 +4469,7 @@ int main(int argc, char *argv[]) {
 #ifdef HAVE_LIBREADLINE
 			rlbuffer = readline(prompt.c_str());
 			if(rlbuffer == NULL) break;
+			check_vi_mode_change();
 			if(autocalc > 0 && result_autocalculated) {
 				printf("\033[0J");
 			}
