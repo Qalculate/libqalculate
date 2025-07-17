@@ -124,7 +124,7 @@ vector<OptionNames> option_list;
 
 string prompt, indent_s;
 size_t prompt_l;
-bool vi_mode = false;
+int vi_mode = 0;
 
 static char buffer[100000];
 
@@ -2881,20 +2881,26 @@ string autocalc_result;
 
 #ifdef HAVE_LIBREADLINE
 
-void check_vi_mode_change() {
-	if(vi_mode == rl_editing_mode) {
-		vi_mode = !rl_editing_mode;
+void check_vi_mode_change(bool initial = false) {
+	int cur_mode = 0;
+	if(rl_editing_mode == 0) {
+		if(rl_get_keymap() == rl_get_keymap_by_name("vi-command")) cur_mode = 2;
+		else cur_mode = 1;
+	}
+	if(initial || vi_mode != cur_mode) {
 		if(strcmp("on", rl_variable_value("show-mode-in-prompt")) == 0) {
-			if(vi_mode) {
-				prompt_l -= strlen(rl_variable_value("emacs-mode-string"));
-				prompt_l += strlen(rl_variable_value("vi-ins-mode-string"));
-			} else {
-				prompt_l += strlen(rl_variable_value("emacs-mode-string"));
-				prompt_l -= strlen(rl_variable_value("vi-ins-mode-string"));
+			if(!initial) {
+				if(vi_mode == 0) prompt_l -= strlen(rl_variable_value("emacs-mode-string"));
+				else if(vi_mode == 1) prompt_l -= strlen(rl_variable_value("vi-ins-mode-string"));
+				else if(vi_mode == 2) prompt_l -= strlen(rl_variable_value("vi-cmd-mode-string"));
 			}
+			if(cur_mode == 0) prompt_l += strlen(rl_variable_value("emacs-mode-string"));
+			else if(cur_mode == 1) prompt_l += strlen(rl_variable_value("vi-ins-mode-string"));
+			else if(cur_mode == 2) prompt_l += strlen(rl_variable_value("vi-cmd-mode-string"));
 			indent_s.clear();
 			indent_s.append(prompt_l, ' ');
 		}
+		vi_mode = cur_mode;
 	}
 }
 
@@ -4405,13 +4411,7 @@ int main(int argc, char *argv[]) {
 #ifdef HAVE_LIBREADLINE
 	if(interactive_mode) {
 		rl_initialize();
-		vi_mode = !rl_editing_mode;
-		if(strcmp("on", rl_variable_value("show-mode-in-prompt")) == 0) {
-			if(rl_editing_mode == 0) prompt_l += strlen(rl_variable_value("vi-ins-mode-string"));
-			else prompt_l += strlen(rl_variable_value("emacs-mode-string"));
-			indent_s.clear();
-			indent_s.append(prompt_l, ' ');
-		}
+		check_vi_mode_change(true);
 		if(!cfile && autocalc < 0 && ask_questions && !load_defaults) {
 			ask_autocalc();
 		}
