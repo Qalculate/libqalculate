@@ -7551,10 +7551,11 @@ bool ask_tc() {
 }
 
 bool test_ask_dot(const string &str) {
-	if(dot_question_asked || CALCULATOR->getDecimalPoint() == DOT) return false;
+	if(dot_question_asked) return false;
+	bool test_comma = (CALCULATOR->getDecimalPoint() == DOT);
 	size_t i = 0;
 	while(true) {
-		i = str.find(DOT, i);
+		i = str.find(test_comma ? COMMA : DOT, i);
 		if(i == string::npos) return false;
 		i = str.find_first_not_of(SPACES, i + 1);
 		if(i == string::npos) return false;
@@ -7563,7 +7564,86 @@ bool test_ask_dot(const string &str) {
 	return false;
 }
 
+bool ask_comma() {
+	INIT_COLS
+	string str = _("Please select interpretation of comma (\",\").");
+	addLineBreaks(str, cols, true);
+	PUTS_UNICODE(str.c_str());
+	puts("");
+	str = ""; BEGIN_BOLD(str); str += "0 = "; str += _("Comma as separator for function arguments and matrix/vector elements"); END_BOLD(str);
+	if(!evalops.parse_options.comma_as_separator) {str += " ("; str += _("default"); str += ")";}
+	PUTS_UNICODE(str.c_str());
+	string s_eg = "(1.2 + root(16, 4) = 3.2)";
+	PUTS_ITALIC(s_eg);
+	puts("");
+	str = ""; BEGIN_BOLD(str); str += "1 = "; str += _("Comma as thousands separator"); END_BOLD(str);
+	if(evalops.parse_options.comma_as_separator) {str += " ("; str += _("default"); str += ")";}
+	PUTS_UNICODE(str.c_str());
+	s_eg = "(1,000,000 = 1000000)";
+	PUTS_ITALIC(s_eg);
+	puts("");
+	str = ""; BEGIN_BOLD(str); str += "2 = "; str += _("Both dot and comma as decimal separators"); END_BOLD(str);
+	PUTS_UNICODE(str.c_str());
+	s_eg = "(1.2 = 1,2)";
+	PUTS_ITALIC(s_eg);
+	puts("");
+	FPUTS_UNICODE(_("Comma interpretation"), stdout);
+	dot_question_asked = true;
+	bool b_ret = false;
+	while(true) {
+#ifdef HAVE_LIBREADLINE
+		block_autocalc++;
+		char *rlbuffer = readline(": ");
+		block_autocalc--;
+		if(!rlbuffer) {b_ret = false; break;}
+		string svalue = rlbuffer;
+		free(rlbuffer);
+#else
+		fputs(": ", stdout);
+		if(!fgets(buffer, 1000, stdin)) {b_ret = false; break;}
+		string svalue = buffer;
+#endif
+		remove_blank_ends(svalue);
+		int v = -1;
+		if(svalue.empty()) {
+			v = 0;
+		} else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		bool cas = evalops.parse_options.comma_as_separator;
+		if(v == 2) {
+			evalops.parse_options.dot_as_separator = false;
+			evalops.parse_options.comma_as_separator = false;
+			b_decimal_comma = true;
+			CALCULATOR->useDecimalComma();
+			b_ret = true;
+			break;
+		} else if(v == 1) {
+			evalops.parse_options.comma_as_separator = true;
+			CALCULATOR->useDecimalPoint(true);
+			b_ret = !cas;
+			break;
+		} else if(v == 0) {
+			evalops.parse_options.comma_as_separator = false;
+			CALCULATOR->useDecimalPoint(false);
+			b_ret = cas;
+			break;
+		} else {
+			FPUTS_UNICODE(_("Comma interpretation"), stdout);
+		}
+	}
+#ifdef _WIN32
+	if(!load_defaults) {
+#else
+	if(!interactive_mode && !load_defaults) {
+#endif
+		save_preferences(false);
+	}
+	return b_ret;
+}
+
 bool ask_dot() {
+	if(CALCULATOR->getDecimalPoint() == DOT) return ask_comma();
 	INIT_COLS
 	string str = _("Please select interpretation of dots (\".\").");
 	addLineBreaks(str, cols, true);
@@ -9095,7 +9175,7 @@ void load_preferences() {
 				} else if(svar == "hexadecimal_twos_complement_input") {
 					evalops.parse_options.hexadecimal_twos_complement = v;
 				} else if(svar == "spell_out_logical_operators") {
-						printops.spell_out_logical_operators = v;
+					printops.spell_out_logical_operators = v;
 				} else if(svar == "decimal_comma") {
 					b_decimal_comma = v;
 					if(v == 0) CALCULATOR->useDecimalPoint(evalops.parse_options.comma_as_separator);
