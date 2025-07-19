@@ -5149,7 +5149,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			break;
 		}
 		case STRUCT_FUNCTION: {
-			if(CHILD(0).function()->id() == FUNCTION_ID_ROOT && SIZE == 2) {
+			if(CHILD(0).function()->id() == FUNCTION_ID_ROOT && CHILD(0).size() == 2) {
 				if(CHILD(0)[0].contains(x_var) && VALID_ROOT(CHILD(0))) {
 					MathStructure *mposcheck = NULL;
 					bool b_test = false;
