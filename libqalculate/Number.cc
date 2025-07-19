@@ -7621,7 +7621,12 @@ bool Number::log(const Number &o) {
 		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
-	if(o.isOne()) return false;
+	if(o.isOne() || (o.isZero() && isZero())) return false;
+	if(o.equals(*this)) {
+		set(1, 1, 0, true);
+		setPrecisionAndApproximateFrom(o);
+		return true;
+	}
 	if(o.isRational() && o == 2 && isReal() && isPositive()) {
 		Number nr_bak(*this);
 		if(!setToFloatingPoint()) return false;

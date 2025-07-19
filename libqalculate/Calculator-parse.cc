@@ -3108,12 +3108,29 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								if(icand > 0) i6 = icand;
 								if(b && i5 >= 2) {
 									stmp2 = str.substr(str_index + name_length, i6 - 1);
-									if(!log_arg2 && f->id() == FUNCTION_ID_LOGN && arg_i == 1 && ((stmp2.length() >= 2 && is_in(NUMBERS DOT, stmp2[0])) || (stmp2.length() >= 3 && stmp2[0] == '_' && is_in(NUMBERS DOT, stmp2[1])))) {
-										size_t i7 = stmp2.find_first_not_of(NUMBERS DOT, stmp2[0] == '_' ? 2 : 1);
-										if(i7 != string::npos && stmp2[i7] == LEFT_PARENTHESIS_CH && CALCULATOR->getFunctionById(FUNCTION_ID_LOG)) {
-											name_length += i7;
-											log_arg2 = new MathStructure(Number(stmp2.substr(stmp2[0] == '_' ? 1 : 0, stmp2[0] == '_' ? i7 - 1 : i7)));
-											goto f_begin;
+									if(!log_arg2 && arg_i == 1 && stmp2.length() >= 2) {
+										if(f->id() == FUNCTION_ID_LOGN) {
+											if(is_in(NUMBERS DOT, stmp2[0]) || (stmp2[0] == '_' && stmp2.length() >= 3 && is_in(NUMBERS DOT, stmp2[1]))) {
+												size_t i7 = stmp2.find_first_not_of(NUMBERS DOT, stmp2[0] == '_' ? 2 : 1);
+												if(i7 != string::npos && stmp2[i7] == LEFT_PARENTHESIS_CH && CALCULATOR->getFunctionById(FUNCTION_ID_LOG)) {
+													name_length += i7;
+													log_arg2 = new MathStructure(Number(stmp2.substr(stmp2[0] == '_' ? 1 : 0, stmp2[0] == '_' ? i7 - 1 : i7)));
+													goto f_begin;
+												}
+											}
+										} else if(is_in(NUMBERS DOT, str[str_index + name_length - 1]) && is_in(NUMBERS DOT, stmp2[0]) && (f->referenceName() == "log2" || f->referenceName() == "log10")) {
+											size_t i7 = stmp2.find_first_not_of(NUMBERS DOT, 1);
+											if(i7 != string::npos && stmp2[i7] == LEFT_PARENTHESIS_CH) {
+												size_t i8 = str.find_last_not_of(NUMBERS DOT, str_index + name_length - 1);
+												if(i8 != string::npos && i7 > 0) {
+													MathFunction *f_logn = CALCULATOR->getFunctionById(FUNCTION_ID_LOGN);
+													if(f_logn && f_logn->hasName(str.substr(str_index, i8 - str_index + (i8 > 1 && str[i8] == '_' ? 0 : 1)), case_sensitive) && CALCULATOR->getFunctionById(FUNCTION_ID_LOG)) {
+														name_length += i7;
+														log_arg2 = new MathStructure(Number(str.substr(i8 + 1, str_index + name_length - (i8 + 1))));
+														goto f_begin;
+													}
+												}
+											}
 										}
 									}
 									if(name_length < unit_chars_left) {
@@ -3160,7 +3177,10 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 										stmp += i2s(parseAddId(f, stmp2, po2));
 									} else if(log_arg2) {
 										MathStructure *mstruct = new MathStructure();
+										if(f->id() != FUNCTION_ID_LOGN) f = CALCULATOR->getFunctionById(FUNCTION_ID_LOGN);
 										CALCULATOR->getFunctionById(FUNCTION_ID_LOG)->parse(*mstruct, stmp2, po);
+										if(po.unended_function && po.unended_function->equals(*mstruct, true, true)) po.unended_function->setFunction(f);
+										if(mstruct->size() == 0) mstruct->addChild(m_undefined);
 										mstruct->setFunction(f);
 										mstruct->addChild_nocopy(log_arg2);
 										stmp += i2s(addId(mstruct));
@@ -3217,7 +3237,10 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 										po2.read_precision = DONT_READ_PRECISION;
 										f->parse(*mstruct, stmp2, po2);
 									} else if(log_arg2) {
+										if(f->id() != FUNCTION_ID_LOGN) f = CALCULATOR->getFunctionById(FUNCTION_ID_LOGN);
 										CALCULATOR->getFunctionById(FUNCTION_ID_LOG)->parse(*mstruct, stmp2, po);
+										if(po.unended_function && po.unended_function->equals(*mstruct, true, true)) po.unended_function->setFunction(f);
+										if(mstruct->size() == 0) mstruct->addChild(m_undefined);
 										mstruct->setFunction(f);
 										mstruct->addChild_nocopy(log_arg2);
 										log_arg2 = NULL;

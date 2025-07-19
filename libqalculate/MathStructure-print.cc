@@ -4538,6 +4538,8 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 						PrintOptions po2 = po;
 						po2.show_ending_zeroes = false;
 						print_str += CHILD(i).print(po2, format, colorize, tagtype, ips_n);
+					} else if(po.preserve_format && o_function->id() == FUNCTION_ID_LOGN && i == 0 && argcount >= 2 && CHILD(i).type() == STRUCT_UNDEFINED) {
+						// 2nd argument before parenthesis and input of 1st argument not begun
 					} else {
 						print_str += CHILD(i).print(po, format, colorize, tagtype, ips_n);
 					}

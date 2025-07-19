@@ -763,9 +763,23 @@ int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 	} else if(mstruct.isNumber() && mstructv2.isNumber()) {
 		Number nr(mstruct.number());
-		if(nr.log(mstructv2.number()) && !(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
-			mstruct.set(nr, true);
-			return 1;
+		if(nr.log(mstructv2.number())) {
+			if(eo.approximation != APPROXIMATION_APPROXIMATE && !mstruct.isApproximate() && !mstructv2.isApproximate() && nr.isApproximate() && !nr.isNonInteger() && (eo.approximation == APPROXIMATION_EXACT || (nr < 100 && nr > -100))) {
+				Number nr2;
+				bool b = false;
+				nr.getCentralInteger(nr2, &b);
+				if(!b) {
+					Number nr_test(mstructv2.number());
+					nr_test.raise(nr2, eo.approximation == APPROXIMATION_EXACT);
+					if(mstruct.number().equals(nr_test)) {
+						nr = nr2;
+					}
+				}
+			}
+			if(!(eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) && !(!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) && !(!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
+				mstruct.set(nr, true);
+				return 1;
+			}
 		}
 	}
 	mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &vargs[0], NULL);
