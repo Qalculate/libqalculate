@@ -1962,9 +1962,9 @@ int main(int argc, char *argv[]) {
 	mstruct.eval(evalops);
 	cout << mstruct << endl;*/
 	//speed_test();
-	test_integration();
+	/*test_integration();
 	cout << successes << ":" << imaginary << endl;
-	return 0;
+	return 0;*/
 	//test_intervals(true);
 
 	/*Number nr;
@@ -2106,8 +2106,8 @@ int main(int argc, char *argv[]) {
 			//if(str[i] == '{' || str[i] == '}') str[i] = '+';
 		}
 		while(true) {
-			n = rand() % 12;
-			if(n > 6) break;
+			n = rand() % 15;
+			if(n > 11) break;
 			size_t i = rand() % str.length();
 			if(n == 0) str.insert(i, "(");
 			if(n == 1) str.insert(i, ")");
@@ -2116,11 +2116,17 @@ int main(int argc, char *argv[]) {
 			if(n == 4) str.insert(i, "/");
 			if(n == 5) str.insert(i, "^");
 			if(n == 6) str.insert(i, "-");
+			if(n == 7) str.insert(i, "log_(");
+			if(n == 8) str.insert(i, "log_3(");
+			if(n == 9) str.insert(i, "log_10");
+			if(n == 10) str.insert(i, "log13(");
+			if(n == 11) str.insert(i, "log_1");
 			//if(n == 7) str.insert(i, "~");
 		}
 		gsub("!", " ", str);
 		/*gsub("{", " ", str);
 		gsub("}", " ", str);*/
+		gsub("\"", " ", str);
 		gsub("~", " ", str);
 		gsub(":=", "=", str);
 		gsub("=:", "=", str);

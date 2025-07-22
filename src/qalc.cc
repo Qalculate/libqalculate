@@ -125,6 +125,7 @@ vector<OptionNames> option_list;
 string prompt, indent_s;
 size_t prompt_l;
 int vi_mode = 0;
+bool mode_in_prompt = false;
 
 static char buffer[100000];
 
@@ -700,15 +701,15 @@ int countRows(const char *str, int cols) {
 	return r;
 }
 
-int addLineBreaks(string &str, int cols, bool expr = false, size_t indent = 0, size_t result_start = 0) {
+int addLineBreaks(string &str, int cols, bool expr = false, bool or_break = false, size_t indent = 0, size_t result_start = 0) {
 	if(cols <= 0) return 1;
 	int r = 1;
 	size_t c = 0;
 	size_t lb_point = string::npos;
 	size_t or_point = string::npos;
 	int b_or = 0;
-	if(expr && str.find("||") != string::npos) b_or = 2;
-	else if(expr && str.find(_("or")) != string::npos) b_or = 1;
+	if(or_break && expr && str.find("||") != string::npos) b_or = 2;
+	else if(or_break && expr && str.find(_("or")) != string::npos) b_or = 1;
 	for(size_t i = 0; i < str.length(); i++) {
 		if(r != 1 && c == indent) {
 			if(str[i] == ' ') {
@@ -841,6 +842,30 @@ bool check_exchange_rates() {
 	return false;
 }
 
+#ifdef HAVE_LIBREADLINE
+void check_vi_mode_change(bool initial = false) {
+	if(initial) mode_in_prompt = (strcmp("on", rl_variable_value("show-mode-in-prompt")) == 0);
+	if(!mode_in_prompt) return;
+	int cur_mode = 0;
+	if(rl_editing_mode == 0) {
+		if(rl_get_keymap() == rl_get_keymap_by_name("vi-command")) cur_mode = 2;
+		else cur_mode = 1;
+	}
+	if(initial || vi_mode != cur_mode) {
+		if(!initial) {
+			if(vi_mode == 0) prompt_l -= strlen(rl_variable_value("emacs-mode-string"));
+			else if(vi_mode == 1) prompt_l -= strlen(rl_variable_value("vi-ins-mode-string"));
+			else if(vi_mode == 2) prompt_l -= strlen(rl_variable_value("vi-cmd-mode-string"));
+		}
+		if(cur_mode == 0) prompt_l += strlen(rl_variable_value("emacs-mode-string"));
+		else if(cur_mode == 1) prompt_l += strlen(rl_variable_value("vi-ins-mode-string"));
+		else if(cur_mode == 2) prompt_l += strlen(rl_variable_value("vi-cmd-mode-string"));
+		indent_s.clear();
+		indent_s.append(prompt_l, ' ');
+		vi_mode = cur_mode;
+	}
+}
+#endif
 
 #ifdef HAVE_LIBREADLINE
 #	define CHECK_IF_SCREEN_FILLED if(check_sf && rows > 0) {rcount++; if(rcount + 2 >= rows) {FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); sf_c = rl_read_key(); if(sf_c != '\n' && sf_c != '\r') {check_sf = false;} else {puts(""); if(sf_c == '\r') {puts("");} rcount = 1;}}}
@@ -1546,10 +1571,7 @@ void set_option(string str) {
 			prompt = svalue + " ";
 			prompt_l = prompt.length();
 #ifdef HAVE_LIBREADLINE
-			if(strcmp("on", rl_variable_value("show-mode-in-prompt")) == 0) {
-				if(rl_editing_mode == 0) prompt_l += strlen(rl_variable_value("vi-ins-mode-string"));
-				else prompt_l += strlen(rl_variable_value("emacs-mode-string"));
-			}
+			check_vi_mode_change(true);
 			rl_set_prompt(prompt.c_str());
 #else
 			puts("");
@@ -2375,7 +2397,7 @@ bool show_set_help(string set_option = "") {
 	STR_AND_TABS_YESNO("ignore locale", "", _("Ignore system language and use English (requires restart)."), ignore_locale);
 	if(SET_OPTION_MATCHES("language", "")) {
 		STR_AND_TABS_SET("language", "");
-		str = " ";
+		str += " ";
 		if(custom_lang.empty()) str += _("default");
 		else str += custom_lang;
 		str += "*";
@@ -2384,7 +2406,7 @@ bool show_set_help(string set_option = "") {
 	}
 	if(SET_OPTION_MATCHES("prompt", "")) {
 		STR_AND_TABS_SET("prompt", "");
-		str = " ";
+		str += " ";
 		str += prompt;
 		str += "*";
 		CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
@@ -2774,7 +2796,7 @@ bool show_object_info(string name) {
 						}
 					}
 					INIT_COLS
-					addLineBreaks(value, cols, true, unicode_length(value_pre) + tabs, unicode_length(value_pre) + tabs);
+					addLineBreaks(value, cols, true, false, unicode_length(value_pre) + tabs, unicode_length(value_pre) + tabs);
 					CHECK_IF_SCREEN_FILLED_PUTS(value.c_str());
 				}
 				if(v->isKnown() && ((KnownVariable*) v)->isExpression() && !((KnownVariable*) v)->unit().empty() && ((KnownVariable*) v)->unit() != "auto") {
@@ -2880,29 +2902,6 @@ bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t 
 string autocalc_result;
 
 #ifdef HAVE_LIBREADLINE
-
-void check_vi_mode_change(bool initial = false) {
-	int cur_mode = 0;
-	if(rl_editing_mode == 0) {
-		if(rl_get_keymap() == rl_get_keymap_by_name("vi-command")) cur_mode = 2;
-		else cur_mode = 1;
-	}
-	if(initial || vi_mode != cur_mode) {
-		if(strcmp("on", rl_variable_value("show-mode-in-prompt")) == 0) {
-			if(!initial) {
-				if(vi_mode == 0) prompt_l -= strlen(rl_variable_value("emacs-mode-string"));
-				else if(vi_mode == 1) prompt_l -= strlen(rl_variable_value("vi-ins-mode-string"));
-				else if(vi_mode == 2) prompt_l -= strlen(rl_variable_value("vi-cmd-mode-string"));
-			}
-			if(cur_mode == 0) prompt_l += strlen(rl_variable_value("emacs-mode-string"));
-			else if(cur_mode == 1) prompt_l += strlen(rl_variable_value("vi-ins-mode-string"));
-			else if(cur_mode == 2) prompt_l += strlen(rl_variable_value("vi-cmd-mode-string"));
-			indent_s.clear();
-			indent_s.append(prompt_l, ' ');
-		}
-		vi_mode = cur_mode;
-	}
-}
 
 void AutoCalcThread::run() {
 	while(true) {
@@ -3776,7 +3775,7 @@ void ask_autocalc() {
 	INIT_COLS
 	snprintf(buffer, 10000, _("%s now includes an option (controlled using \"%s\") to continuously display the result of the current expression as you type."), "Qalc", (string(_("set")) + " autocalc").c_str());
 	string str = buffer;
-	addLineBreaks(str, cols, true);
+	addLineBreaks(str, cols);
 	PUTS_UNICODE(str.c_str());
 	snprintf(buffer, 10000, _("Do you wish to activate this option (default: %s)?"), _("no"));
 	FPUTS_UNICODE(buffer, stdout);
@@ -5338,7 +5337,7 @@ int main(int argc, char *argv[]) {
 				}
 				if(interactive_mode && !cfile) {
 					if(vertical_space) base_str += "\n";
-					addLineBreaks(base_str, cols, true, 2, base_str.length());
+					addLineBreaks(base_str, cols, true, false, 2, base_str.length());
 				}
 				PUTS_UNICODE(base_str.c_str());
 				printops.base = save_base;
@@ -6252,15 +6251,15 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- prefix (convert to optimal prefix)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- mixed (convert to mixed units, e.g. hours + minutes)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- bin / binary (show as binary number)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- bin, binary (show as binary number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- bin# (show as binary number with specified number of bits)"));
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- oct / octal (show as octal number)"));
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- duo / duodecimal (show as duodecimal number)"));
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- hex / hexadecimal (show as hexadecimal number)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- oct, octal (show as octal number)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- duo, duodecimal (show as duodecimal number)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- hex, hexadecimal (show as hexadecimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- hex# (show as hexadecimal number with specified number of bits)"));
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- sexa / sexa2 / sexa3 / sexagesimal (show as sexagesimal number)"));
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- latitude / latitude2 (show as sexagesimal latitude)"));
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- longitude / longitude2 (show as sexagesimal longitude)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- sexa, sexa2, sexa3, sexagesimal (show as sexagesimal number)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- latitude, latitude2 (show as sexagesimal latitude)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- longitude, longitude2 (show as sexagesimal longitude)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- bijective (shown in bijective base-26)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- fp16, fp32, fp64, fp80, fp128 (show in binary floating-point format)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- bcd (show as binary-coded decimal)"));
@@ -6270,13 +6269,13 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- base # (show in specified number base)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- bases (show as binary, octal, decimal and hexadecimal number)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- rectangular / cartesian (show complex numbers in rectangular form)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- rectangular, cartesian (show complex numbers in rectangular form)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- exponential (show complex numbers in exponential form)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- polar (show complex numbers in polar form)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- cis (show complex numbers in cis form)"));
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- angle / phasor (show complex numbers in angle/phasor notation)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- angle, phasor (show complex numbers in angle/phasor notation)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
-				CHECK_IF_SCREEN_FILLED_PUTS(_("- fraction (show result as mixed fraction)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- fraction, 1/n (show result as mixed fraction)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- decimals (show result as decimal fraction)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- 1/# (show as mixed fraction with specified denominator)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("prepend with - to show as simple fraction"));
@@ -6508,7 +6507,7 @@ bool display_errors(bool goto_input, int cols, bool *implicit_warning) {
 					gsub("\n", nl_s, str);
 				}
 				END_ITALIC(str)
-				if(cols) addLineBreaks(str, cols, true, indent, str.length());
+				if(cols) addLineBreaks(str, cols, true, false, indent, str.length());
 				PUTS_UNICODE(str.c_str())
 			}
 		}
@@ -6581,7 +6580,7 @@ void ViewThread::run() {
 
 		po.allow_non_usable = DO_FORMAT;
 
-		print_dual(*mresult, original_expression, mparse ? *mparse : *parsed_mstruct, mstruct_exact, result_text, alt_results, po, evalops, dual_fraction < 0 ? AUTOMATIC_FRACTION_AUTO : (dual_fraction > 0 ? AUTOMATIC_FRACTION_DUAL : AUTOMATIC_FRACTION_OFF), dual_approximation < 0 ? AUTOMATIC_APPROXIMATION_AUTO : (dual_fraction > 0 ? AUTOMATIC_APPROXIMATION_DUAL : AUTOMATIC_APPROXIMATION_OFF), complex_angle_form, &exact_comparison, mparse != NULL, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL, -1, had_to_expression);
+		print_dual(*mresult, original_expression, mparse ? *mparse : *parsed_mstruct, mstruct_exact, result_text, alt_results, po, evalops, dual_fraction < 0 ? AUTOMATIC_FRACTION_AUTO : (dual_fraction > 0 ? AUTOMATIC_FRACTION_DUAL : AUTOMATIC_FRACTION_OFF), dual_approximation < 0 ? AUTOMATIC_APPROXIMATION_AUTO : (dual_approximation > 0 ? AUTOMATIC_APPROXIMATION_DUAL : AUTOMATIC_APPROXIMATION_OFF), complex_angle_form, &exact_comparison, mparse != NULL, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL, -1, had_to_expression);
 
 		if(!prepend_mstruct.isUndefined() && !CALCULATOR->aborted()) {
 			prepend_mstruct.format(po);
@@ -6654,7 +6653,7 @@ void add_equals(string &strout, bool b_exact, size_t *i_result_u = NULL, size_t 
 bool ask_implicit() {
 	INIT_COLS
 	string str = _("Please select interpretation of expressions with implicit multiplication.");
-	addLineBreaks(str, cols, true);
+	addLineBreaks(str, cols);
 	PUTS_UNICODE(str.c_str());
 	puts("");
 	str = ""; BEGIN_BOLD(str); str += "0 = "; str += _("Adaptive"); END_BOLD(str);
@@ -6815,6 +6814,16 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		if(b_busy && view_thread->running) {
 			on_abort_display();
 			i_maxtime = -1;
+		}
+		int i = 1;
+		while(b_busy && view_thread->running) {
+			sleep_ms(10);
+			i++;
+			if(!result_only && i % 10 == 0) {
+				printf(".");
+				fflush(stdout);
+				has_printed = true;
+			}
 		}
 	} else {
 
@@ -6995,7 +7004,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 
 		if(show_result) {
 			if(!exact_comparison && (b_comparison & 1)) exact_comparison = (update_parse || !prev_approximate) && !(*printops.is_approximate) && !mstruct->isApproximate();
-			if(!result_only && b_matrix && line_breaks) addLineBreaks(strout, cols, true, goto_input ? prompt_l : 0);
+			if(!result_only && b_matrix && line_breaks) addLineBreaks(strout, cols, true, false, goto_input ? prompt_l : 0);
 			for(size_t i = 0; i < alt_results.size(); i++) {
 				if(i != 0) add_equals(strout, true);
 				else if(!result_only) add_equals(strout, update_parse || !prev_approximate, &i_result_u, &i_result);
@@ -7101,7 +7110,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 				} else if(autocalc_info) {
 					strout += " (!)";
 				}
-				if(!b_matrix && line_breaks) addLineBreaks(strout, cols, true, result_only ? (goto_input ? prompt_l : 0) : i_result_u, i_result);
+				if(!b_matrix && line_breaks) addLineBreaks(strout, cols, true, mstruct->containsType(STRUCT_COMPARISON), result_only ? (goto_input ? prompt_l : 0) : i_result_u, i_result);
 				if(vertical_space && (b_matrix || goto_input) && !auto_calculate) strout += "\n";
 			}
 			if(b_matrix && goto_input && printops.digit_grouping != DIGIT_GROUPING_NONE) {
@@ -7122,7 +7131,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 			} else if(autocalc_info) {
 				strout += " (!)";
 			}
-			addLineBreaks(strout, cols, true, prompt_l);
+			addLineBreaks(strout, cols, true, mstruct->containsType(STRUCT_COMPARISON), prompt_l);
 		}
 		if(auto_calculate) {
 			autocalc_result = strout;
@@ -7396,7 +7405,7 @@ bool test_ask_sinc(MathStructure &m) {
 bool ask_sinc() {
 	INIT_COLS
 	string str = _("Please select desired variant of the sinc function.");
-	addLineBreaks(str, cols, true);
+	addLineBreaks(str, cols);
 	PUTS_UNICODE(str.c_str());
 	puts("");
 	str = ""; BEGIN_BOLD(str); str += "0 = "; str += _("unnormalized"); END_BOLD(str); str += " ("; str += _("default"); str += ")";
@@ -7481,7 +7490,7 @@ bool test_ask_tc(MathStructure &m) {
 bool ask_tc() {
 	INIT_COLS
 	string str = _("The expression is ambiguous. Please select temperature calculation mode (the mode can later be changed using \"set temp\" command).");
-	addLineBreaks(str, cols, true);
+	addLineBreaks(str, cols);
 	PUTS_UNICODE(str.c_str());
 	puts("");
 	str = ""; BEGIN_BOLD(str); str += "0 = "; str += _("hybrid"); END_BOLD(str); str += " ("; str += _("default"); str += ")";
@@ -7567,7 +7576,7 @@ bool test_ask_dot(const string &str) {
 bool ask_comma() {
 	INIT_COLS
 	string str = _("Please select interpretation of comma (\",\").");
-	addLineBreaks(str, cols, true);
+	addLineBreaks(str, cols);
 	PUTS_UNICODE(str.c_str());
 	puts("");
 	str = ""; BEGIN_BOLD(str); str += "0 = "; str += _("Comma as separator for function arguments and matrix/vector elements"); END_BOLD(str);
@@ -7646,7 +7655,7 @@ bool ask_dot() {
 	if(CALCULATOR->getDecimalPoint() == DOT) return ask_comma();
 	INIT_COLS
 	string str = _("Please select interpretation of dots (\".\").");
-	addLineBreaks(str, cols, true);
+	addLineBreaks(str, cols);
 	PUTS_UNICODE(str.c_str());
 	puts("");
 	str = ""; BEGIN_BOLD(str); str += "0 = "; str += _("Both dot and comma as decimal separators"); END_BOLD(str);
@@ -7726,7 +7735,7 @@ bool test_ask_percent() {
 bool ask_percent() {
 	INIT_COLS
 	string str = _("Please select interpretation of percentage addition.");
-	addLineBreaks(str, cols, true);
+	addLineBreaks(str, cols);
 	PUTS_UNICODE(str.c_str());
 	puts("");
 	str = ""; BEGIN_BOLD(str); str += "0 = "; str += _("Add percentage multiplied by 1/100"); END_BOLD(str);
@@ -8418,7 +8427,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		i = 0;
 	}
 
-	if(auto_calculate && was_aborted) mstruct->setAborted();
+	if(auto_calculate && (was_aborted || parsed_mstruct->contains(m_undefined))) mstruct->setAborted();
 
 	if(delay_complex) {
 		evalops.complex_number_form = cnf;
@@ -8661,7 +8670,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 #else
 			cols = 80;
 #endif
-			addLineBreaks(base_str, cols, false, prompt_l, base_str.length());
+			addLineBreaks(base_str, cols, false, false, prompt_l, base_str.length());
 		}
 		if(auto_calculate) {
 			autocalc_result = base_str;

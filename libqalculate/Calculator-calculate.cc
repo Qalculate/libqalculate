@@ -996,7 +996,8 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 	}
 
 	// for equalities, append exact values to approximate value (as third part of equalities)
-	if(do_exact && mexact.type() == m.type()) {
+	bool do_andor = !do_exact || mexact.containsType(STRUCT_COMPARISON);
+	if(do_andor && do_exact) {
 		if(mexact.isComparison() && mexact.comparisonType() == COMPARISON_EQUALS) {
 			mexact[1].ref();
 			if(m.isComparison()) {
@@ -1041,12 +1042,11 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 	else if(auto_frac == AUTOMATIC_FRACTION_DUAL) dfrac = 1;
 	if(auto_approx == AUTOMATIC_APPROXIMATION_AUTO) dappr = -1;
 	else if(auto_approx == AUTOMATIC_APPROXIMATION_DUAL) dappr = 1;
-	if(m.isLogicalOr()) {
+	if(do_andor && m.isLogicalOr()) {
 		if(max_length > 0) max_length /= m.size();
 		InternalPrintStruct ips;
 		bool b_approx = false;
 		for(size_t i = 0; i < m.size(); i++) {
-			if(CALCULATOR->aborted()) {result_str = CALCULATOR->abortedMessage(); break;}
 			if(i == 0) {
 				result_str = "";
 			} else if(po.spell_out_logical_operators) {
@@ -1061,7 +1061,6 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 			if(m[i].isLogicalAnd() && (po.preserve_format || m[i].size() != 2 || !m[i][0].isComparison() || !m[i][1].isComparison() || m[i][0].comparisonType() == COMPARISON_EQUALS || m[i][0].comparisonType() == COMPARISON_NOT_EQUALS || m[i][1].comparisonType() == COMPARISON_EQUALS || m[i][1].comparisonType() == COMPARISON_NOT_EQUALS || m[i][0][0] != m[i][1][0])) {
 				int ml = max_length / m[i].size();
 				for(size_t i2 = 0; i2 < m[i].size(); i2++) {
-					if(CALCULATOR->aborted()) {result_str = CALCULATOR->abortedMessage(); break;}
 					if(i2 > 0) {
 						if(po.spell_out_logical_operators) {
 							result_str += " ";
@@ -1081,6 +1080,7 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 					if(b_wrap) result_str += ")";
 					if(b_approx) *po.is_approximate = true;
 					b_approx = *po.is_approximate;
+					if(CALCULATOR->aborted()) {result_str = CALCULATOR->abortedMessage(); break;}
 				}
 			} else {
 				bool b_wrap = m[i].needsParenthesis(po, ips, m, i + 1, true, true);
@@ -1092,13 +1092,13 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 				if(b_approx) *po.is_approximate = true;
 				b_approx = *po.is_approximate;
 			}
+			if(CALCULATOR->aborted()) {result_str = CALCULATOR->abortedMessage(); break;}
 		}
-	} else if(m.isLogicalAnd() && (po.preserve_format || m.size() != 2 || !m[0].isComparison() || !m[1].isComparison() || m[0].comparisonType() == COMPARISON_EQUALS || m[0].comparisonType() == COMPARISON_NOT_EQUALS || m[1].comparisonType() == COMPARISON_EQUALS || m[1].comparisonType() == COMPARISON_NOT_EQUALS || m[0][0] != m[1][0])) {
+	} else if(do_andor && m.isLogicalAnd() && (po.preserve_format || m.size() != 2 || !m[0].isComparison() || !m[1].isComparison() || m[0].comparisonType() == COMPARISON_EQUALS || m[0].comparisonType() == COMPARISON_NOT_EQUALS || m[1].comparisonType() == COMPARISON_EQUALS || m[1].comparisonType() == COMPARISON_NOT_EQUALS || m[0][0] != m[1][0])) {
 		InternalPrintStruct ips;
 		bool b_approx = false;
 		max_length /= m.size();
 		for(size_t i = 0; i < m.size(); i++) {
-			if(CALCULATOR->aborted()) {result_str = CALCULATOR->abortedMessage(); break;}
 			if(i == 0) {
 				result_str = "";
 			} else if(po.spell_out_logical_operators) {
@@ -1118,6 +1118,7 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 			if(b_wrap) result_str += ")";
 			if(b_approx) *po.is_approximate = true;
 			b_approx = *po.is_approximate;
+			if(CALCULATOR->aborted()) {result_str = CALCULATOR->abortedMessage(); break;}
 		}
 	} else {
 		print_m(po, evalops, result_str, results_v, m, &mresult, original_expression, &mparse, dfrac, dappr, cplx_angle, false, format, colorize, tagtype, max_length);
@@ -1140,7 +1141,7 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 		}
 	}
 	po.is_approximate = save_is_approximate;
-	if(po.is_approximate && result_str == _("aborted")) {
+	if(po.is_approximate && (result_str == _("aborted") || result_str == _("timed out"))) {
 		*po.is_approximate = false;
 	}
 }
@@ -2190,7 +2191,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				result += str;
 				if(use_par) result += RIGHT_PARENTHESIS;
 			}
-		} else if(mstruct.isComparison() || mstruct.isLogicalOr() || mstruct.isLogicalAnd()) {
+		} else if((mstruct.isComparison() || mstruct.isLogicalOr() || mstruct.isLogicalAnd()) && (!aborted() || result != timedOutString())) {
 			if(result_is_comparison) {
 				*result_is_comparison = true;
 			} else {
@@ -2234,7 +2235,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			}
 		}
 
-		if(result_is_comparison && (mstruct.isComparison() || mstruct.isLogicalOr() || mstruct.isLogicalAnd())) *result_is_comparison = true;
+		if(result_is_comparison && (mstruct.isComparison() || mstruct.isLogicalOr() || mstruct.isLogicalAnd()) && (!aborted() || result != timedOutString())) *result_is_comparison = true;
 
 		// do not display the default angle unit in trigonometric functions
 		mstruct.removeDefaultAngleUnit(evalops);

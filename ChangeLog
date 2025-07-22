@@ -1,3 +1,56 @@
+2025-07-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault when displaying both approximate and exact logical OR value without (in)equality
+	* Do not add linebreak, in qalc, after OR outside of result display and when result does not contain (in)equality
+	* Fix display of result aborted because of time limit in some cases in qalc
+
+2025-07-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Return exact integers in more case in log() function
+	* Fix segfault during calculation of (in)equality with root() function with insufficient number of arguments
+
+2025-07-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault with text argument containing potential text returning function, or variable containing text value
+	* Add support for "to 1/n" as alternative to "to fraction"
+	* Ask for interpretation of comma (when comma is not default decimal separator)
+
+2025-07-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix calculate as you type and indentation for show-mode-in-prompt with custom mode strings
+
+2025-07-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support input of second argument of log() function with a number before parenthesis (e.g. log153(23409) = log_153(23409) = log(23409, 153))
+	* Add lb and log_2 names to log2() function, and lg and log_10 to log10()
+	* Add micron unit
+	* Convert micron and kph before calculation
+
+2025-07-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix locale used for definitions when language option is set in qalc
+
+2025-07-07 Marko Zajc <marko@zajc.tel>
+
+	* Do not colorize "E" in scientific E notation
+
+2025-07-06 Cookie04DE <52695768+Cookie04DE@users.noreply.github.com>
+
+	* Add new binary prefixes (robi, quebi)
+	* Enable use of recently added SI prefixes in output by default
+
+2025-07-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix non-localized data set key properties for languages where translations for multiple territories is available (e.g. zh_CN and zh_TW)
+	* Use semicolon as argument separator in output when comma is used as digit group separator
+	* Add indentation to each line of error/warning/information message with newline character (e.g. data object property list) in qalc
+	* Fix dataset copyright translation (the last translation in the data file were used regardless of language)
+	* Hide class property in elements data set
+
+2025-07-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Customizable prompt in qalc
+
 2025-06-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Improve avoidance of random number precalculation in iterative functions
