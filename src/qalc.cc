@@ -667,7 +667,7 @@ int rlcom_tab(int a, int b) {
 	if(rl_point != rl_end && (size_t) rl_point < str.length()) {
 		str = str.substr(0, rl_point);
 	}
-	if(!str.empty() && (last_is_operator(str, true) || is_in(VECTOR_WRAPS PARENTHESISS SPACES, str.back()))) return key_insert(a, b);
+	if(!str.empty() && (last_is_operator(str) || is_in(VECTOR_WRAPS PARENTHESISS SPACES, str.back()))) return key_insert(a, b);
 	bool b_clear = result_autocalculated;
 	if(b_clear) clear_autocalc();
 	rl_complete_internal('!');
@@ -5337,7 +5337,7 @@ int main(int argc, char *argv[]) {
 				}
 				if(interactive_mode && !cfile) {
 					if(vertical_space) base_str += "\n";
-					addLineBreaks(base_str, cols, true, false, 2, base_str.length());
+					addLineBreaks(base_str, cols, true, false, prompt_l, base_str.length());
 				}
 				PUTS_UNICODE(base_str.c_str());
 				printops.base = save_base;
@@ -6496,8 +6496,7 @@ bool display_errors(bool goto_input, int cols, bool *implicit_warning) {
 					str += _("warning"); str += ": ";
 				}
 				size_t indent = 0;
-				if(!str.empty()) indent = unicode_length_check(str.c_str());
-				else if(goto_input) indent = prompt_l;
+				if((goto_input || cols) && !str.empty()) indent = unicode_length_check(str.c_str());
 				if(DO_COLOR && (mtype == MESSAGE_ERROR || mtype == MESSAGE_WARNING)) str += "\033[0m";
 				BEGIN_ITALIC(str)
 				str += CALCULATOR->message()->message();
@@ -8670,7 +8669,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 #else
 			cols = 80;
 #endif
-			addLineBreaks(base_str, cols, false, false, prompt_l, base_str.length());
+			addLineBreaks(base_str, cols, true, false, prompt_l, base_str.length());
 		}
 		if(auto_calculate) {
 			autocalc_result = base_str;
