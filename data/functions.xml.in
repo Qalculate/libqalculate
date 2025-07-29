@@ -1791,7 +1791,7 @@
     <function>
       <_title>Q Format Error (Fixed Point)</_title>
       <_names>r:qError</_names>
-      <expression>abs(\x-qFormat(qNum(\x,\y,\Z{0}),\y,\z))</expression>
+      <expression>abs(\x-qFormat(qFormat(\x,\y,\Z{0},1),\y,\z,0))</expression>
       <argument type="number" index="1">
         <_title>Value</_title>
         <handle_vector>true</handle_vector>
