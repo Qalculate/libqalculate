@@ -3062,27 +3062,41 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								str.replace(i7, str_index + name_length - i7, stmp);
 								str_index += name_length;
 								moved_forward = true;
-							} else if(PARSING_MODE == PARSING_MODE_RPN && f->args() == 1 && str_index > 0 && str[str_index - 1] != LEFT_PARENTHESIS_CH && (str_index + name_length >= str.length() || str[str_index + name_length] != LEFT_PARENTHESIS_CH) && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != string::npos) {
+							} else if(PARSING_MODE == PARSING_MODE_RPN && str_index > 0 && str[str_index - 1] != LEFT_PARENTHESIS_CH && (str_index + name_length >= str.length() || str[str_index + name_length] != LEFT_PARENTHESIS_CH) && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != string::npos) {
 								size_t i7 = i6;
-								int nr_of_p = 0, nr_of_op = 0;
+								stmp2 = str.substr(0, i6 + 1);
+								int nr_of_p = 0, nr_of_op = 0, nr_of_args = f->minargs();
+								if(nr_of_args == 0 || f->id() == FUNCTION_ID_LOGN) nr_of_args = f->args();
 								bool b_started = false;
+								bool b_vector = (nr_of_args == 1 && f->getArgumentDefinition(1) && f->getArgumentDefinition(1)->type() == ARGUMENT_TYPE_VECTOR && stmp2.find_last_of(VECTOR_WRAPS) == string::npos);
 								while(i7 != 0) {
 									if(nr_of_p > 0) {
-										if(str[i7] == LEFT_PARENTHESIS_CH) {
+										if(stmp2[i7] == LEFT_PARENTHESIS_CH) {
 											nr_of_p--;
 											if(nr_of_p == 0 && nr_of_op == 0) break;
-										} else if(str[i7] == RIGHT_PARENTHESIS_CH) {
+										} else if(stmp2[i7] == RIGHT_PARENTHESIS_CH) {
 											nr_of_p++;
 										}
-									} else if(nr_of_p == 0 && is_in(OPERATORS INTERNAL_OPERATORS SPACE RIGHT_PARENTHESIS, str[i7])) {
+									} else if(nr_of_p == 0 && is_in(OPERATORS INTERNAL_OPERATORS SPACE RIGHT_PARENTHESIS, stmp2[i7])) {
 										if(nr_of_op == 0 && b_started) {
-											i7++;
-											break;
+											if(b_vector) {
+												stmp2.insert(i7, COMMA);
+												i6++;
+											} else {
+												nr_of_args--;
+												if(nr_of_args == 0) {
+													i7++;
+													break;
+												} else {
+													stmp2.insert(i7, COMMA);
+													i6++;
+												}
+											}
 										} else {
-											if(is_in(OPERATORS INTERNAL_OPERATORS, str[i7])) {
+											if(is_in(OPERATORS INTERNAL_OPERATORS, stmp2[i7])) {
 												nr_of_op++;
 												b_started = false;
-											} else if(str[i7] == RIGHT_PARENTHESIS_CH) {
+											} else if(stmp2[i7] == RIGHT_PARENTHESIS_CH) {
 												nr_of_p++;
 												b_started = true;
 											} else if(b_started) {
@@ -3095,7 +3109,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									}
 									i7--;
 								}
-								stmp2 = str.substr(i7, i6 - i7 + 1);
+								stmp2 = stmp2.substr(i7, i6 - i7 + 1);
 								stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 								if(f->id() == FUNCTION_ID_VECTOR) stmp += i2s(parseAddVectorId(stmp2, po));
 								else stmp += i2s(parseAddId(f, stmp2, po));
