@@ -1742,7 +1742,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 								if(str3.find("\'") != string::npos) str2_alt = "";
 								else str2_alt.replace(i + alt_i, i2 - i + 1, string("\'") + str3 + "\'");
 							} else {
-								str2_alt.replace(i + alt_i, i2 - i + 1, string("\"") + str + "\"");
+								str2_alt.replace(i + alt_i, i2 - i + 1, string("\"") + str3 + "\"");
 							}
 							alt_i += 2;
 						}

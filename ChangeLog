@@ -1,6 +1,32 @@
+2025-08-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault when parsing "( \" followed by operator with RPN syntax
+	* Fix segfault in parsing of text argument in some cases (with RPN syntax)
+
+2025-08-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add support for input of functions with more than one argument using RPN syntax
+
+2025-08-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Load exchange rates even if exchange rates updates is not enabled (compiled with --without-libcurl), and show error message when exrates command is used in this case
+
+2025-07-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix qError() function
+
+2025-07-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix completion of text string ending with capital E
+
+2025-07-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix input of inverse trigonometric function using Unicode power (e.g. sin⁻¹(x))
+	* Add support for input of exponent before argument of trigonometric function (e.g. sin²(x))
+
 2025-07-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Fix segfault when displaying both approximate and exact logical OR value without (in)equality
+	* Fix segfault during output of both approximate and exact logical OR value without (in)equality
 	* Do not add linebreak, in qalc, after OR outside of result display and when result does not contain (in)equality
 	* Fix display of result aborted because of time limit in some cases in qalc
 
@@ -21,7 +47,7 @@
 
 2025-07-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Support input of second argument of log() function with a number before parenthesis (e.g. log153(23409) = log_153(23409) = log(23409, 153))
+	* Support for input of second argument of log() function with a number before parenthesis (e.g. log153(23409) = log_153(23409) = log(23409, 153))
 	* Add lb and log_2 names to log2() function, and lg and log_10 to log10()
 	* Add micron unit
 	* Convert micron and kph before calculation

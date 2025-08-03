@@ -2098,16 +2098,17 @@ int main(int argc, char *argv[]) {
 	evalops.parse_options.units_enabled = true;
 	evalops.parse_options.unknowns_enabled = false;
 	size_t ni = 0;
+	evalops.parse_options.parsing_mode = PARSING_MODE_RPN;
 	for(size_t i2 = 0; i2 <= 10000000L; i2++) {
 		str = "";
-		size_t n = rand() % 200;
+		size_t n = rand() % 40;
 		for(size_t i = 0; i <= n; i++) {
 			str += (char) (rand() % (126 - 32) + 32);
 			//if(str[i] == '{' || str[i] == '}') str[i] = '+';
 		}
 		while(true) {
-			n = rand() % 15;
-			if(n > 11) break;
+			n = rand() % 19;
+			if(n > 17) break;
 			size_t i = rand() % str.length();
 			if(n == 0) str.insert(i, "(");
 			if(n == 1) str.insert(i, ")");
@@ -2116,11 +2117,10 @@ int main(int argc, char *argv[]) {
 			if(n == 4) str.insert(i, "/");
 			if(n == 5) str.insert(i, "^");
 			if(n == 6) str.insert(i, "-");
-			if(n == 7) str.insert(i, "log_(");
-			if(n == 8) str.insert(i, "log_3(");
-			if(n == 9) str.insert(i, "log_10");
-			if(n == 10) str.insert(i, "log13(");
-			if(n == 11) str.insert(i, "log_1");
+			if(n == 7) str.insert(i, "sin");
+			if(n == 8) str.insert(i, "log");
+			if(n == 9) str.insert(i, "root");
+			if(n > 9) str.insert(i, " ");
 			//if(n == 7) str.insert(i, "~");
 		}
 		gsub("!", " ", str);
@@ -2136,16 +2136,18 @@ int main(int argc, char *argv[]) {
 		gsub("=", " ", str);
 		remove_blank_ends(str);
 		while(str[0] == '/') {str.erase(0, 1); remove_blank_ends(str);}
+		//str = "H^^ @ 8*L 9e)q4)proe{8WH o{ Ly?(   H{ %|R*k8'lEUvQJ#8G;,o 7((@+^c ycZ5HqOg+#*T/DEC/%zUW`X+)07";
+		//str = "NsinrootCg5.KA-+)0?/ })W}Ly_ %($D(;(p  (Osin root | @hT 6)|} q/A^ BiN";
 		cout << "\n\n\n\n\n" << str << endl;
 		int max_length = 100 - unicode_length(str);
 		if(max_length < 50) max_length = 50;
 		string parsed;
 		MathStructure mstruct;
-		//CALCULATOR->parse(&mstruct, str, evalops.parse_options);
+		CALCULATOR->parse(&mstruct, str, evalops.parse_options);
 		//mstruct.eval(evalops);
 		//if(CALCULATOR->idCount() > 0) break;
 		//cout << mstruct.print() << endl;
-		str = CALCULATOR->calculateAndPrint(str, 100, evalops, default_print_options, AUTOMATIC_FRACTION_AUTO, AUTOMATIC_APPROXIMATION_AUTO, &parsed, max_length);
+		//str = CALCULATOR->calculateAndPrint(str, 100, evalops, default_print_options, AUTOMATIC_FRACTION_AUTO, AUTOMATIC_APPROXIMATION_AUTO, &parsed, max_length);
 		/*CALCULATOR->startControl(1000);
 		CALCULATOR->calculate(str, evalops);
 		CALCULATOR->stopControl();*/

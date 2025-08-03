@@ -2984,7 +2984,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 											trig_pow = new MathStructure(Number(str.substr(str_index + name_length + 1, i7 - (str_index + name_length + 1))));
 											name_length = i7 - str_index;
 										}
-									} else if(str[str_index + name_length] == INTERNAL_UPOW_CH && is_in(NUMBERS DOT, str[str_index + name_length + 2])) {
+									} else if(str[str_index + name_length] == INTERNAL_UPOW_CH && str[str_index + name_length + 1] == LEFT_PARENTHESIS_CH && is_in(NUMBERS DOT, str[str_index + name_length + 2])) {
 										size_t i7 = str.find_first_not_of(NUMBERS DOT, str_index + name_length + 2);
 										if(i7 != string::npos && str[i7] == RIGHT_PARENTHESIS_CH) {
 											trig_pow = new MathStructure(Number(str.substr(str_index + name_length + 2, i7 - (str_index + name_length + 2))));
@@ -3008,7 +3008,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									if(i7 != string::npos && str[i7] == LEFT_PARENTHESIS_CH) {
 										size_t i8 = str.find_last_not_of(NUMBERS DOT, str_index + name_length - 1);
 										if(i8 != string::npos) {
-											if(f_logn && f_logn->hasName(str.substr(str_index, i8 - str_index + (i8 > 1 && str[i8] == '_' ? 0 : 1)), case_sensitive) && f_ln) {
+											if(f_logn && f_logn->hasName(str.substr(str_index, i8 - str_index + (i8 > 1 && str[i8] == '_' ? 0 : 1))) && f_ln) {
 												log_arg2 = new MathStructure(Number(str.substr(i8 + 1, i7 - (i8 + 1))));
 												name_length = i7 - str_index;
 											}
@@ -3310,7 +3310,6 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									po.unended_function = NULL;
 									stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 								}
-								if(log_arg2) log_arg2->unref();
 							}
 							if(i4 > 0) {
 								str.replace(str_index, i4, stmp);
@@ -3741,7 +3740,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	if(PARSING_MODE == PARSING_MODE_RPN) {
 		size_t rpn_i = str.find(SPACE, 0);
 		while(rpn_i != string::npos) {
-			if(rpn_i == 0 || rpn_i + 1 == str.length() || is_in("~+-*/^\\" INTERNAL_OPERATORS_NOMOD, str[rpn_i - 1]) || (is_in("%&|", str[rpn_i - 1]) && str[rpn_i + 1] != str[rpn_i - 1]) || (is_in("!><=", str[rpn_i - 1]) && is_not_in("=<>", str[rpn_i + 1])) || (is_in(SPACE OPERATORS INTERNAL_OPERATORS, str[rpn_i + 1]) && (str[rpn_i - 1] == SPACE_CH || (str[rpn_i - 1] != str[rpn_i + 1] && is_not_in("!><=", str[rpn_i - 1]))))) {
+			if(rpn_i == 0 || rpn_i + 1 == str.length() || is_in("~+-*/^\\" INTERNAL_OPERATORS_NOMOD, str[rpn_i - 1]) || (is_in("%&|", str[rpn_i - 1]) && str[rpn_i + 1] != str[rpn_i - 1]) || (is_in("!><=", str[rpn_i - 1]) && is_not_in("=<>", str[rpn_i + 1])) || (is_in(SPACE OPERATORS "\\" INTERNAL_OPERATORS, str[rpn_i + 1]) && (str[rpn_i - 1] == SPACE_CH || (str[rpn_i - 1] != str[rpn_i + 1] && is_not_in("!><=", str[rpn_i - 1]))))) {
 				str.erase(rpn_i, 1);
 			} else {
 				rpn_i++;
@@ -4481,7 +4480,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						mstack.back()->transform(STRUCT_BITWISE_NOT);
 					}
 				}
-				mstruct->set_nocopy(*mstack.back());
+				if(!mstack.empty()) mstruct->set_nocopy(*mstack.back());
 				while(!mstack.empty()) {
 					mstack.back()->unref();
 					mstack.pop_back();

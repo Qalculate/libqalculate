@@ -1991,7 +1991,7 @@
           <max>4</max>
         </argument>
         <argument type="integer" index="3">
-          <_title>Quantile Algorithm (as in R)</_title>
+          <_title>Quantile algorithm (as in R)</_title>
           <min>1</min>
           <max>9</max>
         </argument>
@@ -2009,7 +2009,7 @@
           <max>10</max>
         </argument>
         <argument type="integer" index="3">
-          <_title>Quantile Algorithm (as in R)</_title>
+          <_title>Quantile algorithm (as in R)</_title>
           <min>1</min>
           <max>9</max>
         </argument>
@@ -2023,7 +2023,7 @@
           <_title>Data</_title>
         </argument>
         <argument type="integer" index="2">
-          <_title>Quantile Algorithm (as in R)</_title>
+          <_title>Quantile algorithm (as in R)</_title>
           <min>1</min>
           <max>9</max>
         </argument>
@@ -2315,10 +2315,10 @@
         <subfunction precalculate="true">if((dimension(\y)>0,rows(\x)>1&amp;&amp;columns(\x)=2),(\y,column(\x,2)),\x)</subfunction>
         <expression>((covar(\1,\2)/varp(\1))*(x-mean(\1)))+mean(\2)</expression>
         <argument type="vector" index="1">
-          <_title>X Values</_title>
+          <_title>X values</_title>
         </argument>
         <argument type="vector" index="2">
-          <_title>Y Values</_title>
+          <_title>Y values</_title>
         </argument>
       </function>
       <function>
@@ -2331,10 +2331,10 @@
         <subfunction precalculate="true">multisolve(("a"*total(\1.^4)+"b"*total(\1.^3)+"c"*total(\1.^2)=total((\1.^2).*\2),"a"*total(\1.^3)+"b"*total(\1.^2)+"c"*total(\1)=total(\1.*\2),"a"*total(\1.^2)+"b"*total(\1)+"c"*dimension(\1)=total(\2)),("a","b","c"))</subfunction>
         <expression>element(\3,1)*x^2+element(\3,2)*x+element(\3,3)</expression>
         <argument type="vector" index="1">
-          <_title>X Values</_title>
+          <_title>X values</_title>
         </argument>
         <argument type="vector" index="2">
-          <_title>Y Values</_title>
+          <_title>Y values</_title>
         </argument>
       </function>
       <function>
@@ -2347,10 +2347,10 @@
         <subfunction precalculate="true">multisolve(("a"*total(\1.^6)+"b"*total(\1.^5)+"c"*total(\1.^4)+"d"*total(\1.^3)=total((\1.^3).*\2),"a"*total(\1.^5)+"b"*total(\1.^4)+"c"*total(\1.^3)+"d"*total(\1.^2)=total((\1.^2).*\2),"a"*total(\1.^4)+"b"*total(\1.^3)+"c"*total(\1.^2)+"d"*total(\1)=total(\1.*\2),"a"*total(\1.^3)+"b"*total(\1.^2)+"c"*total(\1)+"d"*dimension(\1)=total(\2)),("a","b","c","d"))</subfunction>
         <expression>element(\3,1)*x^3+element(\3,2)*x^2+element(\3,3)*x+element(\3,4)</expression>
         <argument type="vector" index="1">
-          <_title>X Values</_title>
+          <_title>X values</_title>
         </argument>
         <argument type="vector" index="2">
-          <_title>Y Values</_title>
+          <_title>Y values</_title>
         </argument>
       </function>
     </category>
@@ -3016,10 +3016,10 @@
       <_names>r:nextlunarphase</_names>
       <_description>Returns the date when the specified lunar phase occurs. The function searches forward beginning at the specified date. The lunar phase is specified as a number between 0 and 1, where 0 represents new moon, 0.5 full moon, and 0.25 and 0.75 quarter moons. Angle values are also allowed (e.g. π rad = 180° which corresponds to a value of 0.5). Values above 1, without unit, are interpreted as degrees.</_description>
       <argument type="date" index="1">
-        <_title>Lunar Phase</_title>
+        <_title>Lunar phase</_title>
       </argument>
       <argument index="2">
-        <_title>Start Date</_title>
+        <_title>Start date</_title>
       </argument>
     </builtin_function>
     <function>

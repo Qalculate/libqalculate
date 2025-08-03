@@ -7621,8 +7621,9 @@ bool Number::log(const Number &o) {
 		setPrecisionAndApproximateFrom(o);
 		return true;
 	}
+	if(o.isOne()) return false;
 	if(o.isOne() || (o.isZero() && isZero())) return false;
-	if(o.equals(*this)) {
+	if(equals(o)) {
 		set(1, 1, 0, true);
 		setPrecisionAndApproximateFrom(o);
 		return true;

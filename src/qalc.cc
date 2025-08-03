@@ -817,6 +817,7 @@ int addLineBreaks(string &str, int cols, bool expr = false, bool or_break = fals
 }
 
 bool check_exchange_rates() {
+	if(!canfetch) return false;
 	int i = CALCULATOR->exchangeRatesUsed();
 	if(i == 0) return false;
 	if(CALCULATOR->checkExchangeRatesDate(auto_update_exchange_rates > 0 ? auto_update_exchange_rates : 7, false, auto_update_exchange_rates == 0 || (auto_update_exchange_rates < 0 && !ask_questions), i)) return false;
@@ -4195,8 +4196,8 @@ int main(int argc, char *argv[]) {
 	if(fetch_exchange_rates_at_startup && canfetch) {
 		CALCULATOR->fetchExchangeRates(15);
 	}
-	if(load_global_defs && load_currencies && canfetch) {
-		CALCULATOR->setExchangeRatesWarningEnabled(!interactive_mode && (!command_file.empty() || (result_only && !calc_arg.empty())));
+	if(load_global_defs && load_currencies) {
+		CALCULATOR->setExchangeRatesWarningEnabled(!canfetch || (!interactive_mode && (!command_file.empty() || (result_only && !calc_arg.empty()))));
 		CALCULATOR->loadExchangeRates();
 	}
 
@@ -4847,11 +4848,15 @@ int main(int argc, char *argv[]) {
 				if(!rpn_mode) CALCULATOR->clearRPNStack();
 			}
 		//qalc command
-		} else if(canfetch && EQUALS_IGNORECASE_AND_LOCAL(str, "exrates", _("exrates"))) {
-			CALCULATOR->fetchExchangeRates(15);
-			CALCULATOR->loadExchangeRates();
-			INIT_COLS
-			display_errors(false, cols);
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "exrates", _("exrates"))) {
+			if(canfetch) {
+				CALCULATOR->fetchExchangeRates(15);
+				CALCULATOR->loadExchangeRates();
+				INIT_COLS
+				display_errors(false, cols);
+			} else {
+				PUTS_UNICODE("libqalculate was compiled without support for retrieval of exchange rates.");
+			}
 		} else if(str == "M+") {
 			if(mstruct) {
 				MathStructure m = v_memory->get();
@@ -6167,7 +6172,7 @@ int main(int argc, char *argv[]) {
 				puts("");
 				PUTS_UNICODE(_("Example: info sin."));
 				puts("");
-			} else if(canfetch && EQUALS_IGNORECASE_AND_LOCAL(str, "exrates", _("exrates"))) {
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "exrates", _("exrates"))) {
 				puts("");
 				PUTS_UNICODE(_("Downloads current exchange rates from the Internet."));
 				puts("");
@@ -6360,7 +6365,7 @@ int main(int argc, char *argv[]) {
 #endif
 			break;
 		} else {
-			if(explicit_command && !scom.empty() && ((canfetch && EQUALS_IGNORECASE_AND_LOCAL(scom, "exrates", _("exrates"))) || EQUALS_IGNORECASE_AND_LOCAL(scom, "stack", _("stack")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "exact", _("exact")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "approximate", _("approximate")) || str == "approx" || EQUALS_IGNORECASE_AND_LOCAL(scom, "factor", _("factor")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "simplify", _("simplify")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "expand", _("expand")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "mode", _("mode")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "quit", _("quit")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "exit", _("exit")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "history", _("history")))) {
+			if(explicit_command && !scom.empty() && (EQUALS_IGNORECASE_AND_LOCAL(scom, "exrates", _("exrates")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "stack", _("stack")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "exact", _("exact")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "approximate", _("approximate")) || str == "approx" || EQUALS_IGNORECASE_AND_LOCAL(scom, "factor", _("factor")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "simplify", _("simplify")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "expand", _("expand")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "mode", _("mode")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "quit", _("quit")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "exit", _("exit")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "history", _("history")))) {
 				str = "";
 				BEGIN_BOLD(str)
 				str += scom;
@@ -8905,7 +8910,7 @@ void load_preferences() {
 	}
 #endif
 
-	int version_numbers[] = {5, 6, 0};
+	int version_numbers[] = {5, 7, 0};
 
 	if(file) {
 		char line[10000];

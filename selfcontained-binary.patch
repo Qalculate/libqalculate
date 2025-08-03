@@ -38,3 +38,16 @@ index 51e9cae..15b4b79 100644
  	@LIBCURL_CFLAGS@ @LIBXML_CFLAGS@ @ICU_CFLAGS@
  
  bin_PROGRAMS = @QALCULATE_TEXT@
+diff --git a/po-defs/remove-untranslated.cc b/po-defs/remove-untranslated.cc
+index de7565c..9f73c20 100644
+--- a/po-defs/remove-untranslated.cc
++++ b/po-defs/remove-untranslated.cc
+@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
+ 				} else {
+ 					msgstr = sbuffer.substr(8, sbuffer.length() - 9);
+ 				}
+-				if(!msgid.empty() && (msgstr == msgid || msgstr == "-")) {
++				if(true) {
+ 					if(variant == 3 || variant == 4) cout << msgstr << endl;
+ 					sout = "msgstr \"\"";
+ 				} else {

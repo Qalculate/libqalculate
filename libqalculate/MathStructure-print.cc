@@ -658,8 +658,17 @@ void MathStructure::unformat(const EvaluationOptions &eo) {
 				set(((CompositeUnit*) o_unit)->generateMathStructure(false, eo.keep_prefixes));
 				unformat(eo);
 				break;
-			} else if(o_unit->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) o_unit)->mixWithBase() < 0) {
-				set(((AliasUnit*) o_unit)->firstBaseUnit());
+			} else if(o_unit->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) o_unit)->mixWithBase() < 0 && !((AliasUnit*) o_unit)->hasNonlinearExpression()) {
+				if(((AliasUnit*) o_unit)->expression() == "1" && ((AliasUnit*) o_unit)->firstBaseExponent() == 1) {
+					set(((AliasUnit*) o_unit)->firstBaseUnit());
+				} else {
+					MathStructure m(1, 1, 0);
+					MathStructure mexp(1, 1, 0);
+					((AliasUnit*) o_unit)->convertToFirstBaseUnit(m, mexp);
+					set(((AliasUnit*) o_unit)->firstBaseUnit());
+					if(!mexp.isOne()) raise(m);
+					multiply(m);
+				}
 				unformat(eo);
 				break;
 			}
