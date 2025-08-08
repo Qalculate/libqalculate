@@ -725,6 +725,37 @@ int test_frac(const MathStructure &m, bool test_combined = true, int limit = 100
 	return 1;
 }
 
+size_t unformatted_length_q(const string &str, bool format, int tagtype) {
+	if(format && tagtype == TAG_TYPE_HTML) {
+		size_t l = 0;
+		bool intag = false;
+		for(size_t i = 0; i < str.length(); i++) {
+			if(intag) {
+				if(str[i] == '>') intag = false;
+			} else if(str[i] == '<') {
+				intag = true;
+			} else if((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
+				l++;
+			}
+		}
+		return l;
+	} else if(format && tagtype == TAG_TYPE_TERMINAL) {
+		size_t l = 0;
+		bool intag = false;
+		for(size_t i = 0; i < str.length(); i++) {
+			if(intag) {
+				if(str[i] == 'm') intag = false;
+			} else if(str[i] == '\033') {
+				intag = true;
+			} else if((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
+				l++;
+			}
+		}
+		return l;
+	}
+	return unicode_length(str);
+}
+
 void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, vector<string> &results_v, MathStructure &m, const MathStructure *mresult, const string &original_expression, const MathStructure *mparse, int dfrac, int dappr, bool cplx_angle, bool only_cmp = false, bool format = false, int colorize = 0, int tagtype = TAG_TYPE_HTML, int max_length = -1) {
 	bool b_exact = !mresult->isApproximate();
 	// avoid multiple results with inequalities
@@ -769,7 +800,7 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 		if(b_cmp3) {
 			do_frac = true;
 			mcmp = &m[2];
-		} else if(!mparse || ((dfrac > 0 || dappr > 0 || !contains_decimal(*mparse, &original_expression)) && (!mparse->isNumber() || !mresult->isNumber()))) {
+		} else if(!mparse || dfrac > 0 || ((dappr > 0 || !contains_decimal(*mparse, &original_expression)) && (!mparse->isNumber() || !mresult->isNumber()))) {
 			if(contains_decimal(m)) {
 				if(m.isComparison() && m.comparisonType() == COMPARISON_EQUALS) {
 					mcmp = mresult->getChild(2);
@@ -804,6 +835,10 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 				results_v.pop_back();
 			} else {
 				if(cplx_angle) replace_result_cis(results_v.back());
+				if(!b_cmp3 && dfrac > 0 && mparse && mparse->isNumber() && mresult->isNumber() && evalops.parse_options.base == po.base) {
+					str = results_v.back();
+					results_v.pop_back();
+				}
 			}
 		}
 		if(do_mixed) {
@@ -841,7 +876,7 @@ void print_m(PrintOptions &po, const EvaluationOptions &evalops, string &str, ve
 			}
 			if(ipos != string::npos) {
 				for(size_t i = results_v.size(); i > 0; i--) {
-					if((max_length < 0 || (unicode_length(str) + unicode_length(results_v[i - 1]) + 3 <= (size_t) max_length)) && results_v[i - 1] != str.substr(ipos2)) {
+					if((max_length < 0 || (unformatted_length_q(str, format, tagtype) + unformatted_length_q(results_v[i - 1], format, tagtype) + 3 <= (size_t) max_length)) && results_v[i - 1] != str.substr(ipos2)) {
 						str.insert(ipos, results_v[i - 1]);
 						str.insert(ipos, " = ");
 						ipos2 += 3;
@@ -886,6 +921,20 @@ bool test_parsed_comparison(const MathStructure &m) {
 	}
 	return false;
 }
+
+bool shown_with_scientific_notation(const Number &nr, const PrintOptions &po) {
+	if(po.min_exp == EXP_NONE || po.base != 10) return false;
+	CALCULATOR->beginTemporaryStopMessages();
+	string exp;
+	InternalPrintStruct ips;
+	PrintOptions po2 = po;
+	po2.is_approximate = NULL;
+	ips.exp = &exp;
+	nr.print(po2, ips);
+	CALCULATOR->endTemporaryStopMessages();
+	return !exp.empty();
+}
+
 void print_dual(const MathStructure &mresult, const string &original_expression, const MathStructure &mparse, MathStructure &mexact, string &result_str, vector<string> &results_v, PrintOptions &po, const EvaluationOptions &evalops, AutomaticFractionFormat auto_frac, AutomaticApproximation auto_approx, bool cplx_angle, bool *exact_cmp, bool b_parsed, bool format, int colorize, int tagtype, int max_length, bool converted) {
 
 	MathStructure m(mresult);
@@ -935,7 +984,7 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 	bool do_exact = !mexact.isUndefined() && m.isApproximate();
 
 	// If parsed value is number (simple fractions are parsed as division) only show result as combined fraction
-	if(auto_frac != AUTOMATIC_FRACTION_OFF && po.base == 10 && po.base == evalops.parse_options.base && !m.isApproximate() && b_parsed && mparse.isNumber() && !mparse.isInteger() && !converted) {
+	if((auto_frac == AUTOMATIC_FRACTION_AUTO || auto_frac == AUTOMATIC_FRACTION_SINGLE) && po.base == 10 && po.base == evalops.parse_options.base && !m.isApproximate() && b_parsed && mparse.isNumber() && !mparse.isInteger() && !converted && !shown_with_scientific_notation(mparse.number(), po)) {
 		po.number_fraction_format = FRACTION_COMBINED;
 	// with auto fractions show expressions with unknown variables/symbols only using simple fractions (if not parsed value contains decimals)
 	} else if((auto_frac == AUTOMATIC_FRACTION_AUTO || auto_frac == AUTOMATIC_FRACTION_SINGLE) && !m.isApproximate() && (test_fr_unknowns(m) || (m.containsType(STRUCT_ADDITION) && test_power_func(m))) && test_frac(m, false, -1) && (!b_parsed || !contains_decimal(mparse, &original_expression))) {
@@ -947,7 +996,8 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 	}
 
 	// for equalities, append exact values to approximate value (as third part of equalities)
-	if(do_exact) {
+	bool do_andor = !do_exact || mexact.containsType(STRUCT_COMPARISON);
+	if(do_andor && do_exact) {
 		if(mexact.isComparison() && mexact.comparisonType() == COMPARISON_EQUALS) {
 			mexact[1].ref();
 			if(m.isComparison()) {
@@ -958,15 +1008,19 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 				m[0].addChild_nocopy(&mexact[1]);
 			}
 		} else if(mexact.isLogicalOr()) {
-			if(exact_cmp) *exact_cmp = true;
-			for(size_t i = 0; i < mexact.size(); i++) {
-				mexact[i][1].ref();
-				if(m[i].isComparison()) {
-					m[i].addChild_nocopy(&mexact[i][1]);
-				} else {
-					// only the first exact value is used from logical and
-					m[i][0].addChild_nocopy(&mexact[i][1]);
-					if(exact_cmp) *exact_cmp = false;
+			if(mexact.size() != m.size()) {
+				mexact.setUndefined();
+			} else {
+				if(exact_cmp) *exact_cmp = true;
+				for(size_t i = 0; i < mexact.size(); i++) {
+					mexact[i][1].ref();
+					if(m[i].isComparison()) {
+						m[i].addChild_nocopy(&mexact[i][1]);
+					} else {
+						// only the first exact value is used from logical and
+						m[i][0].addChild_nocopy(&mexact[i][1]);
+						if(exact_cmp) *exact_cmp = false;
+					}
 				}
 			}
 		}
@@ -988,12 +1042,11 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 	else if(auto_frac == AUTOMATIC_FRACTION_DUAL) dfrac = 1;
 	if(auto_approx == AUTOMATIC_APPROXIMATION_AUTO) dappr = -1;
 	else if(auto_approx == AUTOMATIC_APPROXIMATION_DUAL) dappr = 1;
-	if(m.isLogicalOr()) {
+	if(do_andor && m.isLogicalOr()) {
 		if(max_length > 0) max_length /= m.size();
 		InternalPrintStruct ips;
 		bool b_approx = false;
 		for(size_t i = 0; i < m.size(); i++) {
-			if(CALCULATOR->aborted()) {result_str = CALCULATOR->abortedMessage(); break;}
 			if(i == 0) {
 				result_str = "";
 			} else if(po.spell_out_logical_operators) {
@@ -1008,7 +1061,6 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 			if(m[i].isLogicalAnd() && (po.preserve_format || m[i].size() != 2 || !m[i][0].isComparison() || !m[i][1].isComparison() || m[i][0].comparisonType() == COMPARISON_EQUALS || m[i][0].comparisonType() == COMPARISON_NOT_EQUALS || m[i][1].comparisonType() == COMPARISON_EQUALS || m[i][1].comparisonType() == COMPARISON_NOT_EQUALS || m[i][0][0] != m[i][1][0])) {
 				int ml = max_length / m[i].size();
 				for(size_t i2 = 0; i2 < m[i].size(); i2++) {
-					if(CALCULATOR->aborted()) {result_str = CALCULATOR->abortedMessage(); break;}
 					if(i2 > 0) {
 						if(po.spell_out_logical_operators) {
 							result_str += " ";
@@ -1028,6 +1080,7 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 					if(b_wrap) result_str += ")";
 					if(b_approx) *po.is_approximate = true;
 					b_approx = *po.is_approximate;
+					if(CALCULATOR->aborted()) {result_str = CALCULATOR->abortedMessage(); break;}
 				}
 			} else {
 				bool b_wrap = m[i].needsParenthesis(po, ips, m, i + 1, true, true);
@@ -1039,13 +1092,13 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 				if(b_approx) *po.is_approximate = true;
 				b_approx = *po.is_approximate;
 			}
+			if(CALCULATOR->aborted()) {result_str = CALCULATOR->abortedMessage(); break;}
 		}
-	} else if(m.isLogicalAnd() && (po.preserve_format || m.size() != 2 || !m[0].isComparison() || !m[1].isComparison() || m[0].comparisonType() == COMPARISON_EQUALS || m[0].comparisonType() == COMPARISON_NOT_EQUALS || m[1].comparisonType() == COMPARISON_EQUALS || m[1].comparisonType() == COMPARISON_NOT_EQUALS || m[0][0] != m[1][0])) {
+	} else if(do_andor && m.isLogicalAnd() && (po.preserve_format || m.size() != 2 || !m[0].isComparison() || !m[1].isComparison() || m[0].comparisonType() == COMPARISON_EQUALS || m[0].comparisonType() == COMPARISON_NOT_EQUALS || m[1].comparisonType() == COMPARISON_EQUALS || m[1].comparisonType() == COMPARISON_NOT_EQUALS || m[0][0] != m[1][0])) {
 		InternalPrintStruct ips;
 		bool b_approx = false;
 		max_length /= m.size();
 		for(size_t i = 0; i < m.size(); i++) {
-			if(CALCULATOR->aborted()) {result_str = CALCULATOR->abortedMessage(); break;}
 			if(i == 0) {
 				result_str = "";
 			} else if(po.spell_out_logical_operators) {
@@ -1065,6 +1118,7 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 			if(b_wrap) result_str += ")";
 			if(b_approx) *po.is_approximate = true;
 			b_approx = *po.is_approximate;
+			if(CALCULATOR->aborted()) {result_str = CALCULATOR->abortedMessage(); break;}
 		}
 	} else {
 		print_m(po, evalops, result_str, results_v, m, &mresult, original_expression, &mparse, dfrac, dappr, cplx_angle, false, format, colorize, tagtype, max_length);
@@ -1087,7 +1141,7 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 		}
 	}
 	po.is_approximate = save_is_approximate;
-	if(po.is_approximate && result_str == _("aborted")) {
+	if(po.is_approximate && (result_str == _("aborted") || result_str == _("timed out"))) {
 		*po.is_approximate = false;
 	}
 }
@@ -1104,7 +1158,7 @@ bool test_simplified2(const MathStructure &m1, const MathStructure &m2) {
 	return true;
 }
 bool test_simplified(const MathStructure &m, bool top = true) {
-	if(m.isFunction() || (m.isVariable() && m.variable()->isKnown()) || (m.isUnit() && (m.unit()->hasApproximateRelationToBase() || (m.unit()->isCurrency() && m.unit() != CALCULATOR->getLocalCurrency())))) return false;
+	if(m.isFunction() || (m.isVariable() && m.variable()->isKnown()) || (m.isUnit() && (m.unit()->hasApproximateRelationToBase() || (m.unit()->isCurrency() && m.unit() != CALCULATOR->getLocalCurrency()))) || (m.isComparison() && (m[0].size() > 0 || (m[0].isVariable() && m[0].variable()->isKnown()) || m[0].isFunction()))) return false;
 	for(size_t i = 0; i < m.size(); i++) {
 		if(!test_simplified(m[i], false)) return false;
 	}
@@ -1285,6 +1339,7 @@ bool comparison_compare(const MathStructure &m1, MathStructure &m2) {
 		return false;
 	} else {
 		if(m1.type() == m2.type() && m1.size() == m2.size()) {
+			if(m1.isVariable()) return m1.variable()->referenceName() == m2.variable()->referenceName();
 			if(m1.size() == 0) return m1.equals(m2, true);
 			if(m1.type() == STRUCT_COMPARISON) {
 				if(m1.comparisonType() != m2.comparisonType()) return false;
@@ -1487,7 +1542,16 @@ bool expression_contains_save_function(const string &str, const ParseOptions &po
 		if(i != string::npos && ((i > 0 && str[i - 1] == ':') || (i < str.length() - 1 && str[i + 1] == ':'))) return true;
 		MathFunction *f = CALCULATOR->getFunctionById(FUNCTION_ID_SAVE);
 		for(size_t i2 = 1; f && i2 <= f->countNames(); i2++) {
-			if(str.find(f->getName(i2).name) != string::npos) return true;
+			if(str.find(f->getName(i2).name) != string::npos) {
+				EvaluationOptions eo;
+				eo.parse_options = po;
+				MathStructure mtest;
+				CALCULATOR->beginTemporaryStopMessages();
+				CALCULATOR->parse(&mtest, str, po);
+				CALCULATOR->endTemporaryStopMessages();
+				if(mtest.containsFunctionId(FUNCTION_ID_SAVE)) return true;
+				break;
+			}
 		}
 	}
 	if(i == string::npos) return false;
@@ -1654,7 +1718,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 
 long int get_fixed_denominator2(const string &str, NumberFractionFormat &nff, bool b_minus, int frac) {
 	long int fden = 0;
-	if((frac > 0 && EQUALS_IGNORECASE_AND_LOCAL(str, "fraction", _("fraction"))) || (frac == 2 && str == "frac")) {
+	if((frac > 0 && (EQUALS_IGNORECASE_AND_LOCAL(str, "fraction", _("fraction")) || str == "1/n" || str == "/n")) || (frac == 2 && str == "frac")) {
 		fden = -1;
 		if(b_minus) nff = FRACTION_FRACTIONAL;
 		else nff = FRACTION_COMBINED;
@@ -1747,7 +1811,6 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				printops.base = BASE_OCTAL;
 			} else if(equalsIgnoreCase(to_str, "duo") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "duodecimal", _("duodecimal"))) {
 				printops.base = BASE_DUODECIMAL;
-				printops.duodecimal_symbols = false;
 			} else if(equalsIgnoreCase(to_str, "doz") || equalsIgnoreCase(to_str, "dozenal")) {
 				printops.base = BASE_DUODECIMAL;
 				printops.duodecimal_symbols = true;
@@ -1848,10 +1911,12 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				printops.use_prefixes_for_currencies = true;
 				printops.use_prefixes_for_all_units = true;
 				printops.use_unit_prefixes = true;
+			// base units
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "base", _c("units", "base"))) {
 				evalops.parse_options.units_enabled = true;
 				evalops.auto_post_conversion = POST_CONVERSION_BASE;
 				str_conv = "";
+			// number base #
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str1, "base", _("base"))) {
 				if(to_str2 == "b26" || to_str2 == "B26") printops.base = BASE_BIJECTIVE_26;
 				else if(equalsIgnoreCase(to_str2, "bcd")) printops.base = BASE_BINARY_DECIMAL;
@@ -1933,7 +1998,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	}
 
 	// check for factor or expand instruction at front a expression
-	size_t i = str.find_first_of(SPACES LEFT_PARENTHESIS);
+	size_t i = str.find_first_of(SPACES);
 	if(i != string::npos) {
 		to_str = str.substr(0, i);
 		if(to_str == "factor" || EQUALS_IGNORECASE_AND_LOCAL(to_str, "factorize", _("factorize"))) {
@@ -1962,37 +2027,8 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	}
 
 	// Always perform conversion to optimal (SI) unit when the expression is a number multiplied by a unit and input equals output
-	if(!had_to_expression && ((evalops.approximation == APPROXIMATION_EXACT && evalops.auto_post_conversion != POST_CONVERSION_NONE) || evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) && ((parsed_struct.isMultiplication() && parsed_struct.size() == 2 && parsed_struct[0].isNumber() && parsed_struct[1].isUnit_exp() && parsed_struct.equals(mstruct)) || (parsed_struct.isNegate() && parsed_struct[0].isMultiplication() && parsed_struct[0].size() == 2 && parsed_struct[0][0].isNumber() && parsed_struct[0][1].isUnit_exp() && mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[1] == parsed_struct[0][1] && mstruct[0].isNumber() && parsed_struct[0][0].number() == -mstruct[0].number()) || (parsed_struct.isUnit_exp() && parsed_struct.equals(mstruct)))) {
-		Unit *u = NULL;
-		MathStructure *munit = NULL;
-		if(mstruct.isMultiplication()) munit = &mstruct[1];
-		else munit = &mstruct;
-		if(munit->isUnit()) u = munit->unit();
-		else u = (*munit)[0].unit();
-		if(u && u->isCurrency()) {
-			if(evalops.local_currency_conversion && getLocalCurrency() && u != getLocalCurrency()) {
-				if(evalops.approximation == APPROXIMATION_EXACT) evalops.approximation = APPROXIMATION_TRY_EXACT;
-				mstruct.set(convertToOptimalUnit(mstruct, evalops, true));
-			}
-		} else if(u && u->subtype() != SUBTYPE_BASE_UNIT && !u->isSIUnit()) {
-			MathStructure mbak(mstruct);
-			if(evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL) {
-				if(munit->isUnit() && u->referenceName() == "oF") {
-					u = getActiveUnit("oC");
-					if(u) mstruct.set(convert(mstruct, u, evalops, true, false));
-				} else if(munit->isUnit() && u->referenceName() == "oC") {
-					u = getActiveUnit("oF");
-					if(u) mstruct.set(convert(mstruct, u, evalops, true, false));
-				} else {
-					mstruct.set(convertToOptimalUnit(mstruct, evalops, true));
-				}
-			}
-			if(evalops.approximation == APPROXIMATION_EXACT && (evalops.auto_post_conversion != POST_CONVERSION_OPTIMAL || mstruct.equals(mbak))) {
-				evalops.approximation = APPROXIMATION_TRY_EXACT;
-				if(evalops.auto_post_conversion == POST_CONVERSION_BASE) mstruct.set(convertToBaseUnits(mstruct, evalops));
-				else mstruct.set(convertToOptimalUnit(mstruct, evalops, true));
-			}
-		}
+	if(!had_to_expression && ((evalops.approximation == APPROXIMATION_EXACT && evalops.auto_post_conversion != POST_CONVERSION_NONE) || evalops.auto_post_conversion == POST_CONVERSION_OPTIMAL)) {
+		convert_unchanged_quantity_with_unit(parsed_struct, mstruct, evalops);
 	}
 
 	MathStructure mstruct_exact;
@@ -2123,8 +2159,11 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			str = result; result = "";
 			size_t equals_length = 3;
 			if(!printops.use_unicode_signs && (mstruct.isApproximate() || *printops.is_approximate)) equals_length += 1 + strlen(_("approx."));
+			size_t l = 0;
+			if(max_length > 0) l += unformatted_length_q(str, format, tagtype);
 			for(size_t i = 0; i < alt_results.size();) {
-				if(max_length > 0 && unicode_length(str) + unicode_length(result) + unicode_length(alt_results[i]) + equals_length > (size_t) max_length) {
+				if(max_length > 0) l += unformatted_length_q(alt_results[i], format, tagtype) + equals_length;
+				if((max_length > 0 && l > (size_t) max_length) || alt_results[i] == timedOutString()) {
 					alt_results.erase(alt_results.begin() + i);
 				} else {
 					if(i > 0) result += " = ";
@@ -2152,7 +2191,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				result += str;
 				if(use_par) result += RIGHT_PARENTHESIS;
 			}
-		} else if(mstruct.isComparison() || mstruct.isLogicalOr() || mstruct.isLogicalAnd()) {
+		} else if((mstruct.isComparison() || mstruct.isLogicalOr() || mstruct.isLogicalAnd()) && (!aborted() || result != timedOutString())) {
 			if(result_is_comparison) {
 				*result_is_comparison = true;
 			} else {
@@ -2196,7 +2235,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			}
 		}
 
-		if(result_is_comparison && (mstruct.isComparison() || mstruct.isLogicalOr() || mstruct.isLogicalAnd())) *result_is_comparison = true;
+		if(result_is_comparison && (mstruct.isComparison() || mstruct.isLogicalOr() || mstruct.isLogicalAnd()) && (!aborted() || result != timedOutString())) *result_is_comparison = true;
 
 		// do not display the default angle unit in trigonometric functions
 		mstruct.removeDefaultAngleUnit(evalops);
@@ -2473,7 +2512,6 @@ string Calculator::parseToExpression(string to_str, EvaluationOptions &evalops, 
 			if(custom_base) custom_base->clear();
 		} else if(equalsIgnoreCase(to_str, "duo") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "duodecimal", _("duodecimal"))) {
 			printops.base = BASE_DUODECIMAL;
-			printops.duodecimal_symbols = false;
 			if(custom_base) custom_base->clear();
 		} else if(equalsIgnoreCase(to_str, "doz") || equalsIgnoreCase(to_str, "dozenal")) {
 			printops.base = BASE_DUODECIMAL;
@@ -2901,10 +2939,12 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
 	return true;
 }
 bool calculate_rand(MathStructure &mstruct, const EvaluationOptions &eo) {
-	if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_RAND || mstruct.function()->id() == FUNCTION_ID_RANDN || mstruct.function()->id() == FUNCTION_ID_RAND_POISSON)) {
+	if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_RAND || mstruct.function()->id() == FUNCTION_ID_RANDN || mstruct.function()->id() == FUNCTION_ID_RAND_POISSON || (mstruct.function()->subtype() == SUBTYPE_USER_FUNCTION && mstruct.function()->referenceName().find("rand") == 0))) {
 		mstruct.unformat(eo);
-		mstruct.calculateFunctions(eo, false);
-		return true;
+		if(mstruct.calculateFunctions(eo, false)) {
+			calculate_rand(mstruct, eo);
+			return true;
+		}
 	}
 	bool ret = false;
 	for(size_t i = 0; i < mstruct.size(); i++) {
@@ -2934,6 +2974,10 @@ bool calculate_ans(MathStructure &mstruct, const EvaluationOptions &eo) {
 	return ret;
 }
 bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const EvaluationOptions &eo, vector<Variable*>& vars, bool empty_func, bool do_eval = true) {
+	if(m.isVariable() && m.variable()->isKnown()) {
+		m.set(((KnownVariable*) m.variable())->get());
+		fix_intervals(m, eo, NULL, PRECISION);
+	}
 	if(m.isComparison()) {
 		if(m.comparisonType() == COMPARISON_EQUALS) {
 			// x=y
@@ -3138,7 +3182,7 @@ void Calculator::parseExpressionAndWhere(MathStructure *mstruct, MathStructure *
 					if(b_equals) svalue.erase(0, 1);
 					remove_blank_ends(svalue);
 					Variable *v = NULL;
-					if(wheres[i2][index] == '=')	{
+					if(wheres[i2][index] == '=') {
 						v = new KnownVariable("\x14", sname, svalue);
 					} else {
 						wheres[i2] = wheres[i2].substr(index, wheres[i2].length() - 1);
@@ -3177,6 +3221,9 @@ void Calculator::parseExpressionAndWhere(MathStructure *mstruct, MathStructure *
 						where_vars.push_back(v);
 					}
 				}
+			} else {
+				where_vars.push_back(NULL);
+				repeat.push_back(false);
 			}
 		}
 	}
@@ -3296,7 +3343,11 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	bool provided_to = false;
 
 	// retrieve expression after " to " and remove "to ..." from expression
-	if(make_to_division) separateToExpression(str, str2, eo, true);
+	if(make_to_division) {
+		separateToExpression(str, str2, eo, true);
+		size_t i = str2.find(RIGHT_PARENTHESIS);
+		if(i != string::npos && str2.rfind(LEFT_PARENTHESIS, i) == string::npos) error(false, _("Conversion of only part of an expression is not supported (\"%s\" is converted to \"%s\")."), str.c_str(), str2.c_str(), NULL);
+	}
 
 	// retrieve expression after " where " (or "/.") and remove "to ..." from expression
 	separateWhereExpression(str, str_where, eo);
@@ -3433,7 +3484,6 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 						}
 						if(m.isNumber() && !m.number().hasImaginaryPart()) {
 							ComparisonType ct;
-							if(b_reversed) b_equals = !b_equals;
 							if((!b_reversed && wheres[i2][index] == '>') || (b_reversed && wheres[i2][index] == '<')) {
 								if(b_equals) ct = COMPARISON_EQUALS_GREATER;
 								else ct = COMPARISON_GREATER;
@@ -3542,6 +3592,9 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 						where_vars.push_back(v);
 					}
 				}
+			} else if(index == string::npos) {
+				if(!str_where.empty()) str_where += LOGICAL_AND;
+				str_where += wheres[i2];
 			}
 		}
 	}
@@ -3671,6 +3724,19 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 			if(provided_to) {
 				mstruct.set(convert(mstruct, str2, eo, to_struct, false, parsed_struct));
 			} else {
+				if(parsed_struct && !b_units && str.length() > 2) {
+					size_t i = str.rfind(":");
+					if(i != string::npos && i > 0) {
+						Unit *u = getActiveUnit(str2);
+						if(u && u->baseUnit()->referenceName() == "s" && parsed_struct->containsType(STRUCT_UNIT, false, true, true) == 0) {
+							Unit *hour = getActiveUnit(str.rfind(":", i - 1) != string::npos ? "h" : "min");
+							if(hour) {
+								parsed_struct->multiply(hour);
+								mstruct.multiply(hour);
+							}
+						}
+					}
+				}
 				string str2b;
 				while(true) {
 					separateToExpression(str2, str2b, eo, true);

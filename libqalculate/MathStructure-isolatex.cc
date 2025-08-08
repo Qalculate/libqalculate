@@ -308,9 +308,9 @@ int test_comparisons(const MathStructure &msave, MathStructure &mthis, const Mat
 				if(mtest.number().getBoolean() == 1) {
 					return 1;
 				} else if(mtest.number().getBoolean() == 0) {
-					if(mtest.isApproximate() && mtest.comparisonType() != COMPARISON_EQUALS && mtest.comparisonType() != COMPARISON_NOT_EQUALS) return -1;
-					if(mtest.comparisonType() == COMPARISON_EQUALS) mthis.clear();
-					else if(mtest.comparisonType() == COMPARISON_NOT_EQUALS) mthis = m_one;
+					if(mtest.isApproximate() && mthis.comparisonType() != COMPARISON_EQUALS && mthis.comparisonType() != COMPARISON_NOT_EQUALS) return -1;
+					if(mthis.comparisonType() == COMPARISON_EQUALS) mthis.clear();
+					else if(mthis.comparisonType() == COMPARISON_NOT_EQUALS) mthis = m_one;
 					return 0;
 				}
 			}
@@ -446,6 +446,8 @@ int newton_raphson(const MathStructure &mstruct, MathStructure &x_value, const M
 		nr = mguess.number();
 	}
 
+	int ret = 0;
+
 	for(int i = 0; i < 100 + PRECISION + ideg * 2; i++) {
 
 		mguess.number().setToFloatingPoint();
@@ -459,7 +461,8 @@ int newton_raphson(const MathStructure &mstruct, MathStructure &x_value, const M
 
 		Number nrdiv(mguess.number());
 		if(!mtest.isNumber() || !nrdiv.divide(mtest.number())) {
-			return -1;
+			ret = -1;
+			break;
 		}
 
 		if(nrdiv.isLessThan(nr_target_high) && nrdiv.isGreaterThan(nr_target_low)) {
@@ -490,7 +493,8 @@ int newton_raphson(const MathStructure &mstruct, MathStructure &x_value, const M
 
 		Number nrdiv(mguess.number());
 		if(!mtest.isNumber() || !nrdiv.divide(mtest.number())) {
-			return -1;
+			ret = -1;
+			break;
 		}
 		if(nrdiv.isLessThan(nr_target_high) && nrdiv.isGreaterThan(nr_target_low)) {
 			if(CALCULATOR->usesIntervalArithmetic()) {
@@ -505,7 +509,7 @@ int newton_raphson(const MathStructure &mstruct, MathStructure &x_value, const M
 		mguess = mtest;
 	}
 
-	return 0;
+	return ret;
 
 }
 
@@ -2480,7 +2484,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					mtest[1].clear();
 					mtest.childrenUpdated();
 				}
-				b = eo2.do_polynomial_division && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && do_simplification(mtest[0], eo, true, true, false, false, true);
+				b = (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && do_simplification(mtest[0], eo, true, true, false, false, true);
 				if(b && mtest[0].isMultiplication() && mtest[0].size() == 2 && mtest[0][1].isPower() && mtest[0][1][1].representsNegative()) {
 					MathStructure mreq(mtest);
 					mtest[0].setToChild(1, true);
@@ -3199,7 +3203,33 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 				}
 			}
-
+			if((!morig || !equals(*morig, true, true)) && CHILD(0).isRationalPolynomial()) {
+				Number ndeg = CHILD(0).degree(x_var);
+				if(ndeg == 6 || ndeg == 4) {
+					MathStructure coeff;
+					CHILD(0).coefficient(x_var, 1, coeff);
+					Number nr(coeff.number());
+					if(!nr.isZero()) {
+						CHILD(0).coefficient(x_var, ndeg - 1, coeff);
+						if(coeff.number().isZero()) nr.clear();
+						else nr /= coeff.number();
+					}
+					if(!nr.isZero()) {
+						MathStructure mtest(*this);
+						nr ^= 2;
+						mtest[0].add(nr, true);
+						mtest[1].calculateAdd(nr, eo2);
+						mtest.childrenUpdated();
+						if(mtest[0].factorize(eo2, false, false, 0, false, false, NULL, m_undefined, false, true, 3) && !(mtest[0].isMultiplication() && mtest[0].size() == 2 && (mtest[0][0].isNumber() || mtest[0][0] == CHILD(1) || mtest[0][1] == CHILD(1)))) {
+							mtest.childUpdated(1);
+							if(mtest.isolate_x_sub(eo, eo2, x_var, this, depth + 1)) {
+								set_nocopy(mtest);
+								return true;
+							}
+						}
+					}
+				}
+			}
 			break;
 		}
 		case STRUCT_MULTIPLICATION: {
@@ -5119,7 +5149,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			break;
 		}
 		case STRUCT_FUNCTION: {
-			if(CHILD(0).function()->id() == FUNCTION_ID_ROOT && SIZE == 2) {
+			if(CHILD(0).function()->id() == FUNCTION_ID_ROOT && CHILD(0).size() == 2) {
 				if(CHILD(0)[0].contains(x_var) && VALID_ROOT(CHILD(0))) {
 					MathStructure *mposcheck = NULL;
 					bool b_test = false;
@@ -5963,7 +5993,12 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							CHILD(0).setToChild(1);
 							CHILD_UPDATED(0)
 							CHILD(1) *= CALCULATOR->getVariableById(VARIABLE_ID_E);
-							CHILD(1).last() ^= CALCULATOR->getVariableById(VARIABLE_ID_N);
+							UnknownVariable *var = new UnknownVariable("", "r");
+							var->setAssumptions(new Assumptions());
+							var->assumptions()->setType(ASSUMPTION_TYPE_REAL);
+							CHILD(1).last() ^= var;
+							CALCULATOR->error(false, "%s represents any real number.", var->name().c_str(), NULL);
+							var->destroy();
 							CHILD(1).last().last() *= nr_one_i;
 							CHILD(1).calculatesub(eo2, eo);
 							isolate_x_sub(eo, eo2, x_var, morig, depth + 1);
@@ -6178,9 +6213,13 @@ bool replace_if_with_and(MathStructure &m, MathStructure *m_top = NULL, size_t i
 			m_top->swapChildren(1, 2);
 		} else {
 			if(m[0].isVector() || (m[0].isFunction() && (m[0].function()->id() == FUNCTION_ID_HORZCAT || m[0].function()->id() == FUNCTION_ID_VERTCAT))) {
-				if(m[0].isMatrix() && m[0].columns() == 1 && m[0].rows() > 1) m[0].transposeMatrix();
+				if(m[0].isMatrix() && m[0].columns() == 1 && m[0].rows() > 1) {
+					if(!m[0].transposeMatrix()) return false;
+				}
 				if(m[0].isFunction()) m[0].setType(STRUCT_VECTOR);
-				if(m[1].isMatrix() && m[1].columns() == 1 && m[1].rows() > 1) m[1].transposeMatrix();
+				if(m[1].isMatrix() && m[1].columns() == 1 && m[1].rows() > 1) {
+					if(!m[1].transposeMatrix()) return false;
+				}
 				if(m[1].isFunction() && (m[1].function()->id() == FUNCTION_ID_HORZCAT || m[1].function()->id() == FUNCTION_ID_VERTCAT)) m[1].setType(STRUCT_VECTOR);
 				MathStructure m_or;
 				m_or.setType(STRUCT_LOGICAL_OR);

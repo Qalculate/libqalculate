@@ -1704,8 +1704,8 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 							stmp += i2s(addId(new MathStructure(u)));
 							stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
-							if(i_op == i_quote) str += RIGHT_PARENTHESIS;
-							else str += PLUS;
+							if(i_op == i_quote) stmp += RIGHT_PARENTHESIS;
+							else stmp += PLUS;
 							str.replace(i_quote, strlen("′"), stmp);
 							stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 							stmp += i2s(addId(new MathStructure(getDegUnit())));
@@ -2702,7 +2702,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			size_t last_unit_char = str.find_last_not_of(NUMBERS, last_name_char);
 			size_t name_chars_left = last_name_char - str_index + 1;
 			size_t unit_chars_left = last_unit_char - str_index + 1;
-			if(consecutive_objects == 0) {
+			if(consecutive_objects == 0 || objects_finished) {
 				prev_object = 0;
 				suspect_object_order = false;
 				objects_finished = false;
@@ -2919,10 +2919,20 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					moved_forward = false;
 					switch(ufvt) {
 						case 'v': {
-							stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
-							stmp += i2s(addId(new MathStructure((Variable*) object)));
-							stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 							if(name_length >= unit_chars_left) objects_finished = true;
+							stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
+							if(objects_finished && ((Variable*) object)->isKnown() && str_index + name_length + 2 < str.length() && (str[str_index + name_length] == LEFT_PARENTHESIS_CH || str[str_index + name_length] == LEFT_VECTOR_WRAP_CH)) {
+								size_t i4 = str.find_first_not_of(NUMBERS, str_index + name_length + 1);
+								if(i4 != string::npos && i4 > str_index + name_length + 1 && ((str[str_index + name_length] == LEFT_PARENTHESIS_CH && str[i4] == RIGHT_PARENTHESIS_CH && ((KnownVariable*) object)->get().isVector()) || (str[str_index + name_length] == LEFT_VECTOR_WRAP_CH && str[i4] == RIGHT_VECTOR_WRAP_CH && (!((Variable*) object)->representsScalar() || (i4 == str_index + name_length + 2 && str[i4 - 1] == '1'))))) {
+									stmp += i2s(addId(new MathStructure(getFunctionById(FUNCTION_ID_ELEMENT), new MathStructure((Variable*) object), new MathStructure(Number(str.substr(str_index + name_length + 1, i4 - (str_index + name_length + 1)), po)), new MathStructure(), NULL)));
+									name_length = i4 - str_index + 1;
+								} else {
+									stmp += i2s(addId(new MathStructure((Variable*) object)));
+								}
+							} else {
+								stmp += i2s(addId(new MathStructure((Variable*) object)));
+							}
+							stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
 							str.replace(str_index, name_length, stmp);
 							str_index += stmp.length();
 							moved_forward = true;
@@ -2946,14 +2956,65 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							}
 							set_function:
 							MathFunction *f = (MathFunction*) object;
-							if(str_index + name_length + 2 < str.length() && (str[str_index + name_length] == POWER_CH || str[str_index + name_length] == INTERNAL_UPOW_CH) && (f->id() == FUNCTION_ID_SIN || f->id() == FUNCTION_ID_COS || f->id() == FUNCTION_ID_TAN || f->id() == FUNCTION_ID_SINH || f->id() == FUNCTION_ID_COSH || f->id() == FUNCTION_ID_TANH) && ((str[str_index + name_length + 1] == MINUS_CH && str[str_index + name_length + 2] == '1' && (str_index + name_length + 3 == str.length() || is_not_in(NUMBER_ELEMENTS, str[str_index + name_length + 3]))) || (str[str_index + name_length + 1] == LEFT_PARENTHESIS_CH && str[str_index + name_length + 2] == MINUS_CH && str_index + name_length + 4 < str.length() && str[str_index + name_length + 3] == '1' && str[str_index + name_length + 4] == RIGHT_PARENTHESIS_CH))) {
-								name_length += 3;
-								if(f->id() == FUNCTION_ID_SIN) f = f_asin;
-								else if(f->id() == FUNCTION_ID_COS) f = f_acos;
-								else if(f->id() == FUNCTION_ID_TAN) f = f_atan;
-								else if(f->id() == FUNCTION_ID_SINH) f = f_asinh;
-								else if(f->id() == FUNCTION_ID_COSH) f = f_acosh;
-								else if(f->id() == FUNCTION_ID_TANH) f = f_atanh;
+							MathStructure *trig_pow = NULL, *log_arg2 = NULL;
+							if(str_index + name_length + 1 < str.length() && (str[str_index + name_length] == POWER_CH || (str[str_index + name_length] == INTERNAL_UPOW_CH && str_index + name_length + 3 < str.length()))) {
+								if(f->id() == FUNCTION_ID_SIN || f->id() == FUNCTION_ID_COS || f->id() == FUNCTION_ID_TAN || f->id() == FUNCTION_ID_SINH || f->id() == FUNCTION_ID_COSH || f->id() == FUNCTION_ID_TANH || (f->subtype() == SUBTYPE_USER_FUNCTION && f_sin && f->category() == f_sin->category() && (f->referenceName() == "sec" || f->referenceName() == "csc" || f->referenceName() == "cot" || f->referenceName() == "sech" || f->referenceName() == "csch" || f->referenceName() == "coth"))) {
+									if((str[str_index + name_length + 1] == MINUS_CH && str_index + name_length + 2 < str.length() && str[str_index + name_length + 2] == '1' && (str_index + name_length + 3 == str.length() || is_not_in(NUMBER_ELEMENTS, str[str_index + name_length + 3]))) || (str[str_index + name_length + 1] == LEFT_PARENTHESIS_CH && str[str_index + name_length + 2] == MINUS_CH && str_index + name_length + 4 < str.length() && str[str_index + name_length + 3] == '1' && str[str_index + name_length + 4] == RIGHT_PARENTHESIS_CH)) {
+										MathFunction *finv = NULL;
+										if(f->id() == FUNCTION_ID_SIN) finv = f_asin;
+										else if(f->id() == FUNCTION_ID_COS) finv = f_acos;
+										else if(f->id() == FUNCTION_ID_TAN) finv = f_atan;
+										else if(f->id() == FUNCTION_ID_SINH) finv = f_asinh;
+										else if(f->id() == FUNCTION_ID_COSH) finv = f_acosh;
+										else if(f->id() == FUNCTION_ID_TANH) finv = f_atanh;
+										else if(f->referenceName() == "sec") finv = getActiveFunction("arcsec");
+										else if(f->referenceName() == "csc") finv = getActiveFunction("arccsc");
+										else if(f->referenceName() == "cot") finv = getActiveFunction("arccot");
+										else if(f->referenceName() == "sech") finv = getActiveFunction("arsech");
+										else if(f->referenceName() == "csch") finv = getActiveFunction("arcsch");
+										else if(f->referenceName() == "coth") finv = getActiveFunction("arcoth");
+										if(finv) {
+											name_length += (str[str_index + name_length + 1] == MINUS_CH) ? 3 : 5;
+											f = finv;
+										}
+									} else if(is_in(NUMBERS DOT, str[str_index + name_length + 1])) {
+										size_t i7 = str.find_first_not_of(NUMBERS DOT SPACE, str_index + name_length + 1);
+										if(i7 == string::npos || str[i7] == LEFT_PARENTHESIS_CH) {
+											if(i7 == string::npos) i7 = str.length();
+											trig_pow = new MathStructure(Number(str.substr(str_index + name_length + 1, i7 - (str_index + name_length + 1))));
+											name_length = i7 - str_index;
+										}
+									} else if(str[str_index + name_length] == INTERNAL_UPOW_CH && str[str_index + name_length + 1] == LEFT_PARENTHESIS_CH && is_in(NUMBERS DOT, str[str_index + name_length + 2])) {
+										size_t i7 = str.find_first_not_of(NUMBERS DOT, str_index + name_length + 2);
+										if(i7 != string::npos && str[i7] == RIGHT_PARENTHESIS_CH) {
+											trig_pow = new MathStructure(Number(str.substr(str_index + name_length + 2, i7 - (str_index + name_length + 2))));
+											name_length = (i7 + 1) - str_index;
+										}
+									}
+								}
+							}
+							if(str_index + name_length + 1 < str.length()) {
+								if(f->id() == FUNCTION_ID_LOGN) {
+									if(is_in(NUMBERS DOT, str[str_index + name_length]) || (str[str_index + name_length] == MINUS_CH && str_index + name_length + 2 < str.length() && is_in(NUMBERS DOT, str[str_index + name_length + 1])) || (str[str_index + name_length] == '_' && ((str_index + name_length + 2 < str.length() && is_in(NUMBERS DOT, str[str_index + name_length + 1])) || (str_index + name_length + 3 < str.length() && str[str_index + name_length + 1] == MINUS_CH && is_in(NUMBERS DOT, str[str_index + name_length + 2]))))) {
+										bool b_us = str[str_index + name_length] == '_';
+										size_t i7 = str.find_first_not_of(NUMBERS DOT, str_index + name_length + (b_us ? 2 : 1));
+										if(i7 != string::npos && str[i7] == LEFT_PARENTHESIS_CH && f_ln) {
+											log_arg2 = new MathStructure(Number(str.substr(str_index + name_length + (b_us ? 1 : 0), i7 - (str_index + name_length + (b_us ? 1 : 0)))));
+											name_length = i7 - str_index;
+										}
+									}
+								} else if(name_length > 1 && f->subtype() == SUBTYPE_USER_FUNCTION && is_in(NUMBERS DOT, str[str_index + name_length - 1]) && is_in(NUMBERS DOT, str[str_index + name_length]) && (f->referenceName() == "log2" || f->referenceName() == "log10")) {
+									size_t i7 = str.find_first_not_of(NUMBERS DOT, str_index + name_length + 1);
+									if(i7 != string::npos && str[i7] == LEFT_PARENTHESIS_CH) {
+										size_t i8 = str.find_last_not_of(NUMBERS DOT, str_index + name_length - 1);
+										if(i8 != string::npos) {
+											if(f_logn && f_logn->hasName(str.substr(str_index, i8 - str_index + (i8 > 1 && str[i8] == '_' ? 0 : 1))) && f_ln) {
+												log_arg2 = new MathStructure(Number(str.substr(i8 + 1, i7 - (i8 + 1))));
+												name_length = i7 - str_index;
+											}
+										}
+									}
+								}
 							}
 							int i4 = -1;
 							size_t i6;
@@ -3001,27 +3062,41 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								str.replace(i7, str_index + name_length - i7, stmp);
 								str_index += name_length;
 								moved_forward = true;
-							} else if(PARSING_MODE == PARSING_MODE_RPN && f->args() == 1 && str_index > 0 && str[str_index - 1] != LEFT_PARENTHESIS_CH && (str_index + name_length >= str.length() || str[str_index + name_length] != LEFT_PARENTHESIS_CH) && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != string::npos) {
+							} else if(PARSING_MODE == PARSING_MODE_RPN && str_index > 0 && str[str_index - 1] != LEFT_PARENTHESIS_CH && (str_index + name_length >= str.length() || str[str_index + name_length] != LEFT_PARENTHESIS_CH) && (i6 = str.find_last_not_of(SPACE, str_index - 1)) != string::npos) {
 								size_t i7 = i6;
-								int nr_of_p = 0, nr_of_op = 0;
+								stmp2 = str.substr(0, i6 + 1);
+								int nr_of_p = 0, nr_of_op = 0, nr_of_args = f->minargs();
+								if(nr_of_args == 0 || f->id() == FUNCTION_ID_LOGN) nr_of_args = f->args();
 								bool b_started = false;
+								bool b_vector = (nr_of_args == 1 && f->getArgumentDefinition(1) && f->getArgumentDefinition(1)->type() == ARGUMENT_TYPE_VECTOR && stmp2.find_last_of(VECTOR_WRAPS) == string::npos);
 								while(i7 != 0) {
 									if(nr_of_p > 0) {
-										if(str[i7] == LEFT_PARENTHESIS_CH) {
+										if(stmp2[i7] == LEFT_PARENTHESIS_CH) {
 											nr_of_p--;
 											if(nr_of_p == 0 && nr_of_op == 0) break;
-										} else if(str[i7] == RIGHT_PARENTHESIS_CH) {
+										} else if(stmp2[i7] == RIGHT_PARENTHESIS_CH) {
 											nr_of_p++;
 										}
-									} else if(nr_of_p == 0 && is_in(OPERATORS INTERNAL_OPERATORS SPACE RIGHT_PARENTHESIS, str[i7])) {
+									} else if(nr_of_p == 0 && is_in(OPERATORS INTERNAL_OPERATORS SPACE RIGHT_PARENTHESIS, stmp2[i7])) {
 										if(nr_of_op == 0 && b_started) {
-											i7++;
-											break;
+											if(b_vector) {
+												stmp2.insert(i7, COMMA);
+												i6++;
+											} else {
+												nr_of_args--;
+												if(nr_of_args == 0) {
+													i7++;
+													break;
+												} else {
+													stmp2.insert(i7, COMMA);
+													i6++;
+												}
+											}
 										} else {
-											if(is_in(OPERATORS INTERNAL_OPERATORS, str[i7])) {
+											if(is_in(OPERATORS INTERNAL_OPERATORS, stmp2[i7])) {
 												nr_of_op++;
 												b_started = false;
-											} else if(str[i7] == RIGHT_PARENTHESIS_CH) {
+											} else if(stmp2[i7] == RIGHT_PARENTHESIS_CH) {
 												nr_of_p++;
 												b_started = true;
 											} else if(b_started) {
@@ -3034,7 +3109,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									}
 									i7--;
 								}
-								stmp2 = str.substr(i7, i6 - i7 + 1);
+								stmp2 = stmp2.substr(i7, i6 - i7 + 1);
 								stmp = LEFT_PARENTHESIS ID_WRAP_LEFT;
 								if(f->id() == FUNCTION_ID_VECTOR) stmp += i2s(parseAddVectorId(stmp2, po));
 								else stmp += i2s(parseAddId(f, stmp2, po));
@@ -3132,12 +3207,28 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									if(b_unended_function && unended_function) {
 										po.unended_function = unended_function;
 									}
-									if(f->id() == FUNCTION_ID_VECTOR) {
+									if(log_arg2) {
+										MathStructure *mstruct = new MathStructure();
+										if(f->id() != FUNCTION_ID_LOGN) f = f_logn;
+										f_ln->parse(*mstruct, stmp2, po);
+										if(po.unended_function && po.unended_function->equals(*mstruct, true, true)) po.unended_function->setFunction(f);
+										if(mstruct->size() == 0) mstruct->addChild(m_undefined);
+										mstruct->setFunction(f);
+										mstruct->addChild_nocopy(log_arg2);
+										stmp += i2s(addId(mstruct));
+										log_arg2 = NULL;
+									} else if(f->id() == FUNCTION_ID_VECTOR) {
 										stmp += i2s(parseAddVectorId(stmp2, po));
 									} else if((f->id() == FUNCTION_ID_INTERVAL || f->id() == FUNCTION_ID_UNCERTAINTY) && po.read_precision != DONT_READ_PRECISION) {
 										ParseOptions po2 = po;
 										po2.read_precision = DONT_READ_PRECISION;
 										stmp += i2s(parseAddId(f, stmp2, po2));
+									} else if(trig_pow) {
+										MathStructure *mstruct = new MathStructure();
+										f->parse(*mstruct, stmp2, po);
+										mstruct->raise_nocopy(trig_pow);
+										trig_pow = NULL;
+										stmp += i2s(addId(mstruct));
 									} else {
 										stmp += i2s(parseAddId(f, stmp2, po));
 									}
@@ -3182,18 +3273,42 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 									if(b_unended_function && unended_function) {
 										po.unended_function = unended_function;
 									}
-									if(f->id() == FUNCTION_ID_VECTOR) {
-										stmp += i2s(parseAddVectorId(stmp2, po));
+									MathStructure *mstruct = new MathStructure();
+									if(log_arg2) {
+										if(f->id() != FUNCTION_ID_LOGN) f = f_logn;
+										f_ln->parse(*mstruct, stmp2, po);
+										if(po.unended_function && po.unended_function->equals(*mstruct, true, true)) po.unended_function->setFunction(f);
+										if(mstruct->size() == 0) mstruct->addChild(m_undefined);
+										mstruct->setFunction(f);
+										mstruct->addChild_nocopy(log_arg2);
+										log_arg2 = NULL;
+									} else if(f->id() == FUNCTION_ID_VECTOR) {
+										f_vector->args(stmp2, *mstruct, po);
 									} else if((f->id() == FUNCTION_ID_INTERVAL || f->id() == FUNCTION_ID_UNCERTAINTY) && po.read_precision != DONT_READ_PRECISION) {
 										ParseOptions po2 = po;
 										po2.read_precision = DONT_READ_PRECISION;
-										stmp += i2s(parseAddId(f, stmp2, po2));
+										f->parse(*mstruct, stmp2, po2);
 									} else {
-										stmp += i2s(parseAddId(f, stmp2, po));
+										f->parse(*mstruct, stmp2, po);
+										if(trig_pow) {
+											mstruct->raise_nocopy(trig_pow);
+											trig_pow = NULL;
+										}
 									}
+									i4 = i6 + 1 - str_index;
+									if(str_index + i4 + 2 < str.length() && str[str_index + i4] == LEFT_VECTOR_WRAP_CH) {
+										i5 = str.find_first_not_of(NUMBERS, str_index + i4 + 1);
+										if(i5 != string::npos && i5 > str_index + i4 + 1 && str[i5] == RIGHT_VECTOR_WRAP_CH && (!mstruct->representsScalar() || ((size_t) i5 == str_index + i4 + 2 && str[i5 - 1] == '1'))) {
+											mstruct->transformById(FUNCTION_ID_ELEMENT);
+											mstruct->addChild(Number(str.substr(str_index + i4 + 1, i5 - (str_index + i4 + 1)), po));
+											mstruct->addChild(m_zero);
+											i4 = i5 - str_index + 1;
+										} else {
+										}
+									}
+									stmp += i2s(addId(mstruct));
 									po.unended_function = NULL;
 									stmp += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
-									i4 = i6 + 1 - str_index;
 								}
 							}
 							if(i4 > 0) {
@@ -3205,6 +3320,8 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								objects_finished = true;
 								if(f->maxargs() != 0 && is_in(OPERATORS INTERNAL_OPERATORS RIGHT_PARENTHESIS, character_after_object) && is_not_in(NOT BITWISE_NOT PLUS MINUS, character_after_object)) suspect_object_order = true;
 							}
+							if(trig_pow) trig_pow->unref();
+							if(log_arg2) log_arg2->unref();
 							break;
 						}
 						case 'u': {
@@ -3623,7 +3740,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	if(PARSING_MODE == PARSING_MODE_RPN) {
 		size_t rpn_i = str.find(SPACE, 0);
 		while(rpn_i != string::npos) {
-			if(rpn_i == 0 || rpn_i + 1 == str.length() || is_in("~+-*/^\\" INTERNAL_OPERATORS_NOMOD, str[rpn_i - 1]) || (is_in("%&|", str[rpn_i - 1]) && str[rpn_i + 1] != str[rpn_i - 1]) || (is_in("!><=", str[rpn_i - 1]) && is_not_in("=<>", str[rpn_i + 1])) || (is_in(SPACE OPERATORS INTERNAL_OPERATORS, str[rpn_i + 1]) && (str[rpn_i - 1] == SPACE_CH || (str[rpn_i - 1] != str[rpn_i + 1] && is_not_in("!><=", str[rpn_i - 1]))))) {
+			if(rpn_i == 0 || rpn_i + 1 == str.length() || is_in("~+-*/^\\" INTERNAL_OPERATORS_NOMOD, str[rpn_i - 1]) || (is_in("%&|", str[rpn_i - 1]) && str[rpn_i + 1] != str[rpn_i - 1]) || (is_in("!><=", str[rpn_i - 1]) && is_not_in("=<>", str[rpn_i + 1])) || (is_in(SPACE OPERATORS "\\" INTERNAL_OPERATORS, str[rpn_i + 1]) && (str[rpn_i - 1] == SPACE_CH || (str[rpn_i - 1] != str[rpn_i + 1] && is_not_in("!><=", str[rpn_i - 1]))))) {
 				str.erase(rpn_i, 1);
 			} else {
 				rpn_i++;
@@ -4175,6 +4292,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		char last_operator2 = 0;
 		while(true) {
 			i = str.find_first_of(OPERATORS INTERNAL_OPERATORS_RPN SPACE "\\", i3 + 1);
+			while(i != string::npos && i > 1 && (str[i] == MINUS_CH || str[i] == PLUS_CH) && BASE_2_10 && i + 1 < str.length() && is_in(EXPS, str[i - 1]) && is_in(NUMBER_ELEMENTS, str[i - 2]) && is_in(NUMBER_ELEMENTS, str[i + 1])) i = str.find_first_of(OPERATORS INTERNAL_OPERATORS_RPN SPACE "\\", i + 1);
 			if(i == string::npos) {
 				if(!b) {
 					parseAdd(str, mstruct, po2);
@@ -4362,7 +4480,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 						mstack.back()->transform(STRUCT_BITWISE_NOT);
 					}
 				}
-				mstruct->set_nocopy(*mstack.back());
+				if(!mstack.empty()) mstruct->set_nocopy(*mstack.back());
 				while(!mstack.empty()) {
 					mstack.back()->unref();
 					mstack.pop_back();
@@ -5751,13 +5869,13 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 							break;
 						}
 					}
-				} else if(u1 && !p1 && u1->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u1)->mixWithBase()) {
+				} else if(u1 && !p1 && u1->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u1)->mixWithBase() > 0) {
 					b_plus = true;
 					for(size_t i2 = 3; i2 < mstruct->size(); i2 += 2) {
-						if(!(*mstruct)[i2 - 1].isUnit_exp() && (*mstruct)[i2].isUnit() && u1->isChildOf((*mstruct)[i2].unit()) && !(*mstruct)[i2].prefix() && (i2 == mstruct->size() - 1 || ((*mstruct)[i2].unit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) (*mstruct)[i2].unit())->mixWithBase()))) {
+						if(!(*mstruct)[i2 - 1].isUnit_exp() && (*mstruct)[i2].isUnit() && u1->isChildOf((*mstruct)[i2].unit()) && !(*mstruct)[i2].prefix() && (i2 == mstruct->size() - 1 || ((*mstruct)[i2].unit()->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) (*mstruct)[i2].unit())->mixWithBase() > 0))) {
 							while(((AliasUnit*) u1)->firstBaseUnit() != (*mstruct)[i2].unit()) {
 								u1 = ((AliasUnit*) u1)->firstBaseUnit();
-								if(u1->subtype() != SUBTYPE_ALIAS_UNIT || !((AliasUnit*) u1)->mixWithBase()) {
+								if(u1->subtype() != SUBTYPE_ALIAS_UNIT || ((AliasUnit*) u1)->mixWithBase() <= 0) {
 									b_plus = false;
 									break;
 								}

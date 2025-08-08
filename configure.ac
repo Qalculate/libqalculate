@@ -6,7 +6,7 @@ dnl  ----------------------
 dnl | initialize autotools |---------------------------------------------------
 dnl  ----------------------
 
-AC_INIT([libqalculate],[5.2.0])
+AC_INIT([libqalculate],[5.7.0])
 AC_CONFIG_SRCDIR(libqalculate/Calculator.cc)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS(config.h)
@@ -69,16 +69,16 @@ AC_DEFINE([HAVE_PTHREADS],1,
 dnl libtool versioning for libqalculate
 
 dnl increment if the interface has additions, changes, removals.
-QALCULATE_CURRENT=25
+QALCULATE_CURRENT=26
 
 dnl increment any time the source changes; set to 
 dnl  0 if you increment CURRENT
-QALCULATE_REVISION=0
+QALCULATE_REVISION=6
 
 dnl increment if any interfaces have been added; set to 0
 dnl  if any interfaces have been removed. removal has 
 dnl  precedence over adding, so set to 0 if both happened.
-QALCULATE_AGE=2
+QALCULATE_AGE=3
 
 AC_SUBST(QALCULATE_CURRENT)
 AC_SUBST(QALCULATE_REVISION)
@@ -168,7 +168,7 @@ if test "x$enable_textport" = "xyes" ; then
 
   AC_MSG_CHECKING([whether to use readline])
   AC_ARG_WITH(readline,
-  [  --with-readline         use readline in text port [[default=yes, default tries -lncurses, -lcurses, -ltermcap]] ],
+  [  --with-readline         use readline in text port [[default=yes, default tries -lncurses, -lcurses, -ltermcap, -ltinfo]] ],
     [case "${withval}" in
       yes) USE_READLINE="yes" ; AC_MSG_RESULT([yes]) ;;
       no) USE_READLINE="no" ; AC_MSG_RESULT([no]) ;;
@@ -208,17 +208,26 @@ if test "x$enable_textport" = "xyes" ; then
         else
           unset ac_cv_lib_readline_readline
           AC_CHECK_LIB(readline, readline, HAVE_LIBREADLINE=true,
-                       HAVE_LIBREADLINE=false, -ltermcap)
+                       HAVE_LIBREADLINE=false, -ltinfo)
           if test x${HAVE_LIBREADLINE} = xtrue ; then
-            echo "  Using -lreadline -ltermcap"
-            EXTRA_LIBREADLINE_DEPS=-ltermcap
+            echo "  Using -lreadline -ltinfo"
+            EXTRA_LIBREADLINE_DEPS=-ltinfo
             AC_DEFINE(HAVE_LIBREADLINE, [1], [Define if the text port uses readline])
           else
             unset ac_cv_lib_readline_readline
             AC_CHECK_LIB(readline, readline, HAVE_LIBREADLINE=true,
-                         HAVE_LIBREADLINE=false)
+                         HAVE_LIBREADLINE=false, -ltermcap)
             if test x${HAVE_LIBREADLINE} = xtrue ; then
+              echo "  Using -lreadline -ltermcap"
+              EXTRA_LIBREADLINE_DEPS=-ltermcap
               AC_DEFINE(HAVE_LIBREADLINE, [1], [Define if the text port uses readline])
+            else
+              unset ac_cv_lib_readline_readline
+              AC_CHECK_LIB(readline, readline, HAVE_LIBREADLINE=true,
+                           HAVE_LIBREADLINE=false)
+              if test x${HAVE_LIBREADLINE} = xtrue ; then
+                AC_DEFINE(HAVE_LIBREADLINE, [1], [Define if the text port uses readline])
+              fi
             fi
           fi
         fi
@@ -275,7 +284,7 @@ AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[The package name for gettext])
 
 dnl Please keep this in alphabetical order
-ALL_LINGUAS="ca de es fr ka nl ru sv zh_CN"
+ALL_LINGUAS="ca de es fr ka nl ru sv zh_CN zh_TW"
 AM_GNU_GETTEXT(external)
 AM_GNU_GETTEXT_VERSION([0.19.8])
 

@@ -1672,9 +1672,9 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 2;
 				}
-			} else if(mstruct.function()->id() == FUNCTION_ID_TAN && mstruct.size() == 1) {
+			} else if(mstruct.function()->id() == FUNCTION_ID_TAN && mstruct.size() == 1 && !mstruct.representsUndefined()) {
 				mstruct.setFunctionId(FUNCTION_ID_COS);
-				if(warn_about_assumed_not_value(mstruct, m_zero, eo)) {
+				if((eo.assume_denominators_nonzero && !eo.warn_about_denominators_assumed_nonzero) || warn_about_assumed_not_value(mstruct, m_zero, eo)) {
 					// 0*tan(x)=0 if cos(x) != 0
 					MERGE_APPROX_AND_PREC(mstruct)
 					return 2;
@@ -2797,9 +2797,9 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 3;
 					}
-				} else if(o_function->id() == FUNCTION_ID_TAN && SIZE == 1 && mstruct.isZero()) {
+				} else if(o_function->id() == FUNCTION_ID_TAN && SIZE == 1 && mstruct.isZero() && !representsUndefined()) {
 					setFunctionId(FUNCTION_ID_COS);
-					if(warn_about_assumed_not_value(*this, m_zero, eo)) {
+					if((eo.assume_denominators_nonzero && !eo.warn_about_denominators_assumed_nonzero) || warn_about_assumed_not_value(*this, m_zero, eo)) {
 						// 0*tan(x)=0 if cos(x) is assume non-zero
 						clear(true);
 						MERGE_APPROX_AND_PREC(mstruct)
@@ -6886,6 +6886,20 @@ bool MathStructure::calculateSubtract(const MathStructure &msub, const Evaluatio
 }
 
 bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursive, bool do_unformat) {
+	return calculateFunctions(eo, recursive, do_unformat, 1);
+}
+
+bool check_recursive_function_depth(size_t depth, bool show_error) {
+	if(depth > 3000) {
+		if(show_error) CALCULATOR->error(true, _("Maximum recursive depth reached."), NULL);
+		return false;
+	}
+	return true;
+}
+
+bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursive, bool do_unformat, size_t depth) {
+
+	if(recursive && !check_recursive_function_depth(depth)) return false;
 
 	if(m_type == STRUCT_FUNCTION && o_function != eo.protected_function && !b_protected && !CALCULATOR->aborted()) {
 
@@ -6935,7 +6949,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 				bool b = false;
 				for(size_t i2 = 0; i2 < CHILD(0).size(); i2++) {
 					CHILD(0)[i2].transform(o_function);
-					if(CHILD(0)[i2].calculateFunctions(eo, recursive, do_unformat)) b = true;
+					if(CHILD(0)[i2].calculateFunctions(eo, recursive, do_unformat, depth + 1)) b = true;
 					CHILD(0).childUpdated(i2 + 1);
 				}
 				SET_CHILD_MAP(0)
@@ -6958,15 +6972,23 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 				last_i = i;
 				if(i > 0 && arg->type() == ARGUMENT_TYPE_SYMBOLIC && (CHILD(i).isZero() || CHILD(i).isUndefined())) {
 					// argument type is symbol and value is zero or undefined, search the first argument/child for symbols
-					CHILD(i).set(CHILD(0).find_x_var(), true);
-					if(CHILD(i).isUndefined() && CHILD(0).isVariable() && CHILD(0).variable()->isKnown()) CHILD(i).set(((KnownVariable*) CHILD(0).variable())->get().find_x_var(), true);
+					for(size_t i2 = 0; i2 < i; i2++) {
+						if(o_function->getArgumentDefinition(i2 + 1) && o_function->getArgumentDefinition(i2 + 1)->type() != ARGUMENT_TYPE_FREE) continue;
+						if(CHILD(i2).isVariable() && CHILD(i2).variable()->isKnown()) CHILD(i).set(((KnownVariable*) CHILD(i2).variable())->get().find_x_var(), true);
+						else CHILD(i).set(CHILD(i2).find_x_var(), true);
+						break;
+					}
 					if(CHILD(i).isUndefined()) {
 						// no symbol found: calculate the argument/child and try again
-						CALCULATOR->beginTemporaryStopMessages();
-						MathStructure mtest(CHILD(0));
-						mtest.eval(eo);
-						CHILD(i).set(mtest.find_x_var(), true);
-						CALCULATOR->endTemporaryStopMessages();
+						for(size_t i2 = 0; i2 < i; i2++) {
+							if(o_function->getArgumentDefinition(i2 + 1) && o_function->getArgumentDefinition(i2 + 1)->type() != ARGUMENT_TYPE_FREE) continue;
+							MathStructure mtest(CHILD(i2));
+							CALCULATOR->beginTemporaryStopMessages();
+							mtest.eval(eo);
+							CALCULATOR->endTemporaryStopMessages();
+							CHILD(i).set(mtest.find_x_var(), true);
+							break;
+						}
 					}
 					if(CHILD(i).isUndefined()) {
 						CALCULATOR->error(false, _("No unknown variable/symbol was found."), NULL);
@@ -6989,7 +7011,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 					}
 				} else if(arg->handlesVector() && (arg->type() != ARGUMENT_TYPE_VECTOR || CHILD(i).isMatrix())) {
 					if(arg->type() == ARGUMENT_TYPE_VECTOR) {
-						CHILD(i).transposeMatrix();
+						if(!CHILD(i).transposeMatrix()) return false;
 					} else if((arg->tests() || (o_function->subtype() == SUBTYPE_USER_FUNCTION && CHILD(i).containsType(STRUCT_VECTOR, false, true, true) > 0)) && !CHILD(i).isVector() && !CHILD(i).representsScalar()) {
 						CHILD(i).eval(eo);
 					}
@@ -7029,11 +7051,13 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 			if(ret > 0) {
 				// function calculation was successful
 				while(mstruct->isVector() && mstruct->size() == 1) mstruct->setToChild(1, true);
+				m_type = STRUCT_FUNCTION;
+				if(mstruct->equals(*this, true, true) && mstruct->isApproximate() == b_approx && mstruct->precision() == i_precision && !mstruct->isProtected()) ret = 0;
 				set_nocopy(*mstruct, true);
-				if(recursive) calculateFunctions(eo);
+				if(ret && recursive) calculateFunctions(eo, recursive, do_unformat, depth + 1);
 				mstruct->unref();
 				if(do_unformat) unformat(eo);
-				return true;
+				return ret;
 			} else {
 				// function calculation failed
 				if(ret < 0) {
@@ -7120,7 +7144,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 						mi->addChild(CHILD(i2));
 					}
 				}
-				if(mi->calculateFunctions(eo, recursive, do_unformat)) b = true;
+				if(mi->calculateFunctions(eo, recursive, do_unformat, depth + 1)) b = true;
 				mstruct->addChild_nocopy(mi);
 			}
 			set_nocopy(*mstruct);
@@ -7132,7 +7156,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 	if(recursive) {
 		for(size_t i = 0; i < SIZE; i++) {
 			if(CALCULATOR->aborted()) break;
-			if(CHILD(i).calculateFunctions(eo, recursive, do_unformat)) {
+			if(CHILD(i).calculateFunctions(eo, recursive, do_unformat, depth + 1)) {
 				CHILD_UPDATED(i);
 				b = true;
 			}

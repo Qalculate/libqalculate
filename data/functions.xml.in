@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<QALCULATE version="5.2.0">
+<QALCULATE version="5.5.0">
   <category>
     <_title>Matrices &amp; Vectors</_title>
     <builtin_function name="vector">
@@ -296,6 +296,7 @@
         <_title>First data row</_title>
       </argument>
       <argument index="3">
+        <!-- Delimiter -->
         <_title>Separator</_title>
       </argument>
     </builtin_function>
@@ -433,6 +434,24 @@
         <condition>dimension(\x)==3</condition>
       </argument>
     </function>
+    <function>
+      <_title>Scalar Triple Product</_title>
+      <_names>r:triple_product,triple</_names>
+      <_description>Calculates the scalar-valued triple product of three 3-dimensional vectors.</_description>
+      <expression>det([\x; \y; \z])</expression>
+      <argument type="vector" index="1">
+        <_title>Vector 1</_title>
+        <condition>dimension(\x)==3</condition>
+      </argument>
+      <argument type="vector" index="2">
+        <_title>Vector 2</_title>
+        <condition>dimension(\x)==3</condition>
+      </argument>
+      <argument type="vector" index="3">
+        <_title>Vector 3</_title>
+        <condition>dimension(\x)==3</condition>
+      </argument>
+    </function>
     <builtin_function name="kron">
       <_title>Kronecker Product</_title>
       <_names>r:kron</_names>
@@ -511,29 +530,25 @@
     <function>
       <_title>Permutations (Variations)</_title>
       <_names>r:perm,variations</_names>
-      <expression>if(\y>\x,0,\x!/(\x-\y)!)</expression>
+      <expression>binomial(\x,\y)*gamma(\y+1)</expression>
       <_description>Returns the number of possible arrangements of an ordered list with a number of objects to choose from and a list size. If there are three objects (1, 2 and 3) that are put in a list with two positions, the alternatives are [1, 2], [2, 1], [1, 3], [3, 1], [2, 3] and [3, 2], and thus the number of permutations is 6.</_description>
-      <argument type="integer" index="1">
+      <argument type="number" index="1">
         <_title>Objects</_title>
-        <min>0</min>
       </argument>
-      <argument type="integer" index="2">
+      <argument type="number" index="2">
         <_title>Size</_title>
-        <min>0</min>
       </argument>
     </function>
     <function>
       <_title>Combinations</_title>
       <_names>r:comb</_names>
-      <expression>if(\y>\x,0,\x!/(\y!*(\x-\y)!))</expression>
+      <expression>binomial(\x,\y)</expression>
       <_description>Returns the number of possible arrangements of an unordered list with a number of objects to choose from and a list size. If there are three objects (1, 2 and 3) that are put in a list with place for two, the alternatives are [1, 2], [1, 3], and [2, 3], and thus the number of combinations is 3.</_description>
-      <argument type="integer" index="1">
+      <argument type="number" index="1">
         <_title>Objects</_title>
-        <min>0</min>
       </argument>
-      <argument type="integer" index="2">
+      <argument type="number" index="2">
         <_title>Size</_title>
-        <min>0</min>
       </argument>
     </function>
     <function>
@@ -605,12 +620,12 @@
       </builtin_function>
       <builtin_function name="powmod">
         <_title>Modular Exponentiation</_title>
-	<_description>Finds the modular inverse for negative exponents, and is otherwise equivalent to mod(a^b, c). For negative exponents the greatest common divisor of the numerator and the denominator must be 1.</_description>
+        <_description>Finds the modular inverse for negative exponents, and is otherwise equivalent to mod(a^b, c). For negative exponents the greatest common divisor of the numerator and the denominator must be 1.</_description>
         <_names>r:powmod,power_mod</_names>
         <argument index="1">
           <_title>Numerator</_title>
         </argument>
-	<argument index="2">
+        <argument index="2">
           <_title>Exponent</_title>
         </argument>
         <argument index="3">
@@ -638,7 +653,7 @@
         <expression>-\x</expression>
         <argument type="free" index="1">
           <_title>Value</_title>
-	  <handle_vector>false</handle_vector>
+          <handle_vector>false</handle_vector>
         </argument>
       </function>
       <function>
@@ -748,7 +763,7 @@
       </builtin_function>
       <builtin_function name="primePi">
         <_title>Prime Counting Function</_title>
-	<_description>Returns the number of prime numbers less than or equal to the specified number.</_description>
+        <_description>Returns the number of prime numbers less than or equal to the specified number.</_description>
         <_names>r:primePi,ou:prime&#x3C0;,o:prime_pi</_names>
         <argument index="1">
           <_title>Value</_title>
@@ -756,7 +771,7 @@
       </builtin_function>
       <builtin_function name="nextprime">
         <_title>Next Prime Number</_title>
-	<_description>Returns the next prime number greater than or equal to the specified number.</_description>
+        <_description>Returns the next prime number greater than or equal to the specified number.</_description>
         <_names>r:nextprime</_names>
         <argument index="1">
           <_title>Value</_title>
@@ -764,8 +779,8 @@
       </builtin_function>
       <builtin_function name="prevprime">
         <_title>Previous Prime Number</_title>
-	<_description>Returns the largest prime number smaller than or equal to the specified number.</_description>
-	<_description></_description>
+        <_description>Returns the largest prime number smaller than or equal to the specified number.</_description>
+        <_description></_description>
         <_names>r:prevprime</_names>
         <argument index="1">
           <_title>Value</_title>
@@ -780,7 +795,7 @@
       </builtin_function>
       <builtin_function name="primes">
         <_title>Prime Numbers Less Than or Equal</_title>
-	<_description>Returns a vector containing all the prime numbers less than or equal to the specified number.</_description>
+        <_description>Returns a vector containing all the prime numbers less than or equal to the specified number.</_description>
         <_names>r:primes</_names>
         <argument index="1">
           <_title>Value</_title>
@@ -818,6 +833,17 @@
       <_names>r:divisors</_names>
       <argument index="1">
         <_title>Value</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="factor">
+      <_title>Factors</_title>
+      <_names>r:factor</_names>
+      <_description>Performs integer or polynomial factorization, and returns the factors in a vector.&#10;&#10;Mode determines the return value for integer factorization as follows.&#10;0: all prime factors&#10;1: factors without duplicates&#10;2: factors and exponents in a matrix with two columns&#10;3: the exponent after each factor in vector</_description>
+      <argument index="1">
+        <_title>Value</_title>
+      </argument>
+      <argument index="2">
+        <_title>Mode</_title>
       </argument>
     </builtin_function>
     <builtin_function name="bernoulli">
@@ -928,41 +954,41 @@
         <argument index="1">
           <_title>Number</_title>
         </argument>
-	<argument index="2">
+        <argument index="2">
           <_title>Base</_title>
         </argument>
-	<argument index="3">
+        <argument index="3">
           <_title>Length</_title>
         </argument>
       </builtin_function>
       <builtin_function name="digitGet">
         <_title>Get Digit</_title>
         <_names>r:digitGet,numberDigit</_names>
-	<_description>Returns digit at specified position (index of first digit left of decimal sign is zero).</_description>
+        <_description>Returns digit at specified position (index of first digit left of decimal sign is zero).</_description>
         <argument index="1">
           <_title>Number</_title>
         </argument>
-	<argument index="2">
+        <argument index="2">
           <_title>Position</_title>
         </argument>
-	<argument index="3">
+        <argument index="3">
           <_title>Base</_title>
         </argument>
       </builtin_function>
       <builtin_function name="digitSet">
         <_title>Set Digit</_title>
         <_names>r:digitSet</_names>
-	<_description>Sets the digit at specified position (index of first digit left of decimal sign is zero).</_description>
+        <_description>Sets the digit at specified position (index of first digit left of decimal sign is zero).</_description>
         <argument index="1">
           <_title>Number</_title>
         </argument>
-	<argument index="2">
+        <argument index="2">
           <_title>Position</_title>
         </argument>
-	<argument index="3">
+        <argument index="3">
           <_title>Value</_title>
         </argument>
-	<argument index="4">
+        <argument index="4">
           <_title>Base</_title>
         </argument>
       </builtin_function>
@@ -990,7 +1016,7 @@
       <builtin_function name="base">
         <_title>Number Base</_title>
         <_names>r:base</_names>
-        <_description>Returns a value from an expression using the specified number base (radix). For bases between -62 and 62 full mathematical expressions (including operators and functions) are supported, while for other bases the specified expression is converted to a single number.&#10;&#10;Bases ≤ 36 use digits 0-9 and A-Z (case insensitive).&#10;&#10;Bases between 37 and 62 uses case sensitive letters (0-9, A-Z, a-z) as digits ('z' equals 61).&#10;&#10;Bases over 62 use Unicode characters as digits, with the character code as value (e.g. '0' equals 48). Escaped characters are in this case supported (e.g. '\0' = 0, '\523' = 523, '\x7f' = 127).&#10;&#10;Negative bases use the same digits as the corresponding positive bases and the digits used for non-integer bases are determined by rounding the base away from zero. Bases that are not real numbers by default use digits 0-9 and A-Z.&#10;&#10;The set of digits used can be selected using the third argument (defaults to 0 for automatic selection). Set it to 1 for digits 0-9 and A-Z, 2 for 0-9, A-Z and a-z, 3 for Unicode digits, and 4 for phonewords (e.g. ABC=2, CDE=3, etc.), or enter a text string with all digits placed in ascending order (e.g. "0123456789") and optionally separated by semicolon (to enable multple equivalent digits, e.g. "0;aA1;bB2;cC3"). When the set of digits is manually selected, the specified expression is always converted to a single number.</_description>
+        <_description>Returns a value from an expression using the specified number base (radix). For bases between -62 and 62 full mathematical expressions (including operators and functions) are supported, while for other bases the specified expression is converted to a single number.&#10;&#10;Bases ≤ 36 use digits 0-9 and A-Z (case insensitive).&#10;&#10;Bases between 37 and 62 uses case sensitive letters (0-9, A-Z, a-z) as digits ('z' equals 61).&#10;&#10;Bases over 62 use Unicode characters as digits, with the character code as value (e.g. '0' equals 48). Escaped characters are in this case supported (e.g. '\0' = 0, '\523' = 523, '\x7f' = 127).&#10;&#10;Negative bases use the same digits as the corresponding positive bases and the digits used for non-integer bases are determined by rounding the base away from zero. Bases that are not real numbers by default use digits 0-9 and A-Z.&#10;&#10;The set of digits used can be selected using the third argument (defaults to 0 for automatic selection). Set it to 1 for digits 0-9 and A-Z, 2 for 0-9, A-Z and a-z, 3 for Unicode digits, and 4 for phonewords (e.g. ABC=2, DEF=3, etc.), or enter a text string with all digits placed in ascending order (e.g. "0123456789") and optionally separated by semicolon (to enable multiple equivalent digits, e.g. "0;aA1;bB2;cC3"). When the set of digits is manually selected, the specified expression is always converted to a single number.</_description>
         <argument index="1">
           <_title>Number</_title>
         </argument>
@@ -999,6 +1025,9 @@
         </argument>
         <argument index="3">
           <_title>Set of digits</_title>
+        </argument>
+	<argument index="4">
+          <_title>Reverse conversion</_title>
         </argument>
       </builtin_function>
       <builtin_function name="bin">
@@ -1011,6 +1040,9 @@
         <argument index="2">
           <_title>Two's complement</_title>
         </argument>
+	<argument index="3">
+          <_title>Reverse conversion</_title>
+        </argument>
       </builtin_function>
       <builtin_function name="oct">
         <_title>Octal</_title>
@@ -1019,6 +1051,9 @@
         <argument index="1">
           <_title>Octal number</_title>
         </argument>
+	<argument index="2">
+          <_title>Reverse conversion</_title>
+        </argument>
       </builtin_function>
       <builtin_function name="dec">
         <_title>Decimal</_title>
@@ -1026,6 +1061,9 @@
         <_description>Returns a value from a decimal expression.</_description>
         <argument index="1">
           <_title>Decimal number</_title>
+        </argument>
+	<argument index="2">
+          <_title>Reverse conversion</_title>
         </argument>
       </builtin_function>
       <builtin_function name="hex">
@@ -1037,6 +1075,9 @@
         </argument>
         <argument index="2">
           <_title>Two's complement</_title>
+        </argument>
+	<argument index="3">
+          <_title>Reverse conversion</_title>
         </argument>
       </builtin_function>
       <builtin_function name="bijective">
@@ -1053,8 +1094,8 @@
         <argument index="1">
           <_title>Binary-coded decimal number</_title>
         </argument>
-	<argument index="2">
-	  <!-- Packed binary-coded decimal -->
+        <argument index="2">
+          <!-- Packed binary-coded decimal -->
           <_title>Packed</_title>
         </argument>
       </builtin_function>
@@ -1375,8 +1416,7 @@
     </builtin_function>
     <function>
       <_title>Base-2 Logarithm</_title>
-      <_names>rs:log2</_names>
-      <_description>Returns the base n logarithm.</_description>
+      <_names>rs:log2,lb,o:log_2</_names>
       <expression>log(\x,2)</expression>
       <argument type="number" index="1">
         <_title>Value</_title>
@@ -1386,8 +1426,7 @@
     </function>
     <function>
       <_title>Base-10 Logarithm</_title>
-      <_names>rs:log10</_names>
-      <_description>Returns the base n logarithm.</_description>
+      <_names>rs:log10,lg,o:log_10</_names>
       <expression>log(\x,10)</expression>
       <argument type="number" index="1">
         <_title>Value</_title>
@@ -1752,7 +1791,7 @@
     <function>
       <_title>Q Format Error (Fixed Point)</_title>
       <_names>r:qError</_names>
-      <expression>abs(\x-qFormat(qNum(\x,\y,\Z{0}),\y,\z))</expression>
+      <expression>abs(\x-qFormat(qFormat(\x,\y,\Z{0},1),\y,\z,0))</expression>
       <argument type="number" index="1">
         <_title>Value</_title>
         <handle_vector>true</handle_vector>
@@ -1776,7 +1815,7 @@
         <_title>Weight</_title>
       </argument>
       <argument type="free" index="2">
-	<!-- Length of human (omit "!human!" from translated string) -->
+        <!-- Length of human (omit "!human!" from translated string) -->
         <_title>!human!Height</_title>
       </argument>
     </function>
@@ -1914,7 +1953,8 @@
         </argument>
       </builtin_function>
       <builtin_function name="mode">
-        <_title>Mode</_title>
+        <!-- Statistical function ("!statistics!" is removed from title) -->
+        <_title>!statistics!Mode</_title>
         <_names>r:mode</_names>
         <_description>Returns the most frequently occurring value.</_description>
         <argument index="1">
@@ -1951,7 +1991,7 @@
           <max>4</max>
         </argument>
         <argument type="integer" index="3">
-          <_title>Quantile Algorithm (as in R)</_title>
+          <_title>Quantile algorithm (as in R)</_title>
           <min>1</min>
           <max>9</max>
         </argument>
@@ -1969,7 +2009,7 @@
           <max>10</max>
         </argument>
         <argument type="integer" index="3">
-          <_title>Quantile Algorithm (as in R)</_title>
+          <_title>Quantile algorithm (as in R)</_title>
           <min>1</min>
           <max>9</max>
         </argument>
@@ -1983,7 +2023,7 @@
           <_title>Data</_title>
         </argument>
         <argument type="integer" index="2">
-          <_title>Quantile Algorithm (as in R)</_title>
+          <_title>Quantile algorithm (as in R)</_title>
           <min>1</min>
           <max>9</max>
         </argument>
@@ -2029,7 +2069,7 @@
       <builtin_function name="randpoisson">
         <_title>Poisson Distributed Random Number</_title>
         <_names>r:randpoisson</_names>
-	<argument index="1">
+        <argument index="1">
           <_title>Rate (λ)</_title>
         </argument>
         <argument index="2">
@@ -2275,10 +2315,10 @@
         <subfunction precalculate="true">if((dimension(\y)>0,rows(\x)>1&amp;&amp;columns(\x)=2),(\y,column(\x,2)),\x)</subfunction>
         <expression>((covar(\1,\2)/varp(\1))*(x-mean(\1)))+mean(\2)</expression>
         <argument type="vector" index="1">
-          <_title>X Values</_title>
+          <_title>X values</_title>
         </argument>
         <argument type="vector" index="2">
-          <_title>Y Values</_title>
+          <_title>Y values</_title>
         </argument>
       </function>
       <function>
@@ -2291,10 +2331,10 @@
         <subfunction precalculate="true">multisolve(("a"*total(\1.^4)+"b"*total(\1.^3)+"c"*total(\1.^2)=total((\1.^2).*\2),"a"*total(\1.^3)+"b"*total(\1.^2)+"c"*total(\1)=total(\1.*\2),"a"*total(\1.^2)+"b"*total(\1)+"c"*dimension(\1)=total(\2)),("a","b","c"))</subfunction>
         <expression>element(\3,1)*x^2+element(\3,2)*x+element(\3,3)</expression>
         <argument type="vector" index="1">
-          <_title>X Values</_title>
+          <_title>X values</_title>
         </argument>
         <argument type="vector" index="2">
-          <_title>Y Values</_title>
+          <_title>Y values</_title>
         </argument>
       </function>
       <function>
@@ -2307,10 +2347,10 @@
         <subfunction precalculate="true">multisolve(("a"*total(\1.^6)+"b"*total(\1.^5)+"c"*total(\1.^4)+"d"*total(\1.^3)=total((\1.^3).*\2),"a"*total(\1.^5)+"b"*total(\1.^4)+"c"*total(\1.^3)+"d"*total(\1.^2)=total((\1.^2).*\2),"a"*total(\1.^4)+"b"*total(\1.^3)+"c"*total(\1.^2)+"d"*total(\1)=total(\1.*\2),"a"*total(\1.^3)+"b"*total(\1.^2)+"c"*total(\1)+"d"*dimension(\1)=total(\2)),("a","b","c","d"))</subfunction>
         <expression>element(\3,1)*x^3+element(\3,2)*x^2+element(\3,3)*x+element(\3,4)</expression>
         <argument type="vector" index="1">
-          <_title>X Values</_title>
+          <_title>X values</_title>
         </argument>
         <argument type="vector" index="2">
-          <_title>Y Values</_title>
+          <_title>Y values</_title>
         </argument>
       </function>
     </category>
@@ -2976,10 +3016,10 @@
       <_names>r:nextlunarphase</_names>
       <_description>Returns the date when the specified lunar phase occurs. The function searches forward beginning at the specified date. The lunar phase is specified as a number between 0 and 1, where 0 represents new moon, 0.5 full moon, and 0.25 and 0.75 quarter moons. Angle values are also allowed (e.g. π rad = 180° which corresponds to a value of 0.5). Values above 1, without unit, are interpreted as degrees.</_description>
       <argument type="date" index="1">
-        <_title>Lunar Phase</_title>
+        <_title>Lunar phase</_title>
       </argument>
       <argument index="2">
-        <_title>Start Date</_title>
+        <_title>Start date</_title>
       </argument>
     </builtin_function>
     <function>
@@ -3000,7 +3040,7 @@
       <builtin_function name="interval">
         <_title>Interval</_title>
         <_names>r:interval</_names>
-	<_description>Returns a closed interval with the specified endpoints.</_description>
+        <_description>Returns a closed interval with the specified endpoints.</_description>
         <argument index="1">
           <_title>Lower endpoint</_title>
         </argument>
@@ -3011,7 +3051,7 @@
       <builtin_function name="uncertainty">
         <_title>Uncertainty</_title>
         <_names>r:uncertainty</_names>
-	<_description>Specifies the absolute or relative (default) uncertainty/error of a value.</_description>
+        <_description>Specifies the absolute or relative (default) uncertainty/error of a value.</_description>
         <argument index="1">
           <_title>Value</_title>
         </argument>
@@ -3025,7 +3065,7 @@
       <builtin_function name="lowerEndpoint">
         <_title>Lower Endpoint (interval)</_title>
         <_names>r:lowerEndpoint</_names>
-	<_description>Returns the lower endpoint of a numerical interval.</_description>
+        <_description>Returns the lower endpoint of a numerical interval.</_description>
         <argument index="1">
           <_title>Value</_title>
         </argument>
@@ -3033,7 +3073,7 @@
       <builtin_function name="upperEndpoint">
         <_title>Upper Endpoint (interval)</_title>
         <_names>r:upperEndpoint</_names>
-	<_description>Returns the upper endpoint of a numerical interval.</_description>
+        <_description>Returns the upper endpoint of a numerical interval.</_description>
         <argument index="1">
           <_title>Value</_title>
         </argument>
@@ -3041,7 +3081,7 @@
       <builtin_function name="midpoint">
         <_title>Midpoint (interval)</_title>
         <_names>r:midpoint,valuePart</_names>
-	<_description>Returns the midpoint between the endpoints of a numerical interval, or the value part of a value with uncertainty/error.</_description>
+        <_description>Returns the midpoint between the endpoints of a numerical interval, or the value part of a value with uncertainty/error.</_description>
         <argument index="1">
           <_title>Value</_title>
         </argument>
@@ -3049,7 +3089,7 @@
       <builtin_function name="errorPart">
         <_title>Get Uncertainty</_title>
         <_names>r:errorPart</_names>
-	<_description>Returns the absolute (default) or relative uncertainty/error of a numerical value.</_description>
+        <_description>Returns the absolute (default) or relative uncertainty/error of a numerical value.</_description>
         <argument index="1">
           <_title>Value</_title>
         </argument>
@@ -3061,6 +3101,7 @@
     <builtin_function name="plot">
       <_title>Plot Functions and Vectors</_title>
       <_names>r:plot</_names>
+      <example>$name(5x + 2, -10, 10)</example>
       <argument index="1">
         <_title>Expression or vector</_title>
       </argument>
@@ -3132,7 +3173,8 @@
     <builtin_function name="nounit">
       <_title>Strip Units</_title>
       <_names>r:nounit,strip_units</_names>
-      <_description>Removes all units from an expression. The expression is calculated before the removal.</_description>
+      <_description>Removes all units from an expression. No unit conversion or prefix changes are performed before the removal.</_description>
+      <example>$name(5 km) = 5; $name(5 m + 2 ft) = 7</example>
       <argument index="1">
         <_title>Expression</_title>
       </argument>
@@ -3811,6 +3853,26 @@
         <_title>Direction</_title>
       </argument>
     </builtin_function>
+    <function>
+      <_title>Limit with Multiple Variables</_title>
+      <_names>r:multilimit</_names>
+      <_description>Returns limit of a function for multiple variables. The limit is calculated recursively, for one variable in each iteration, with the result of each iteration used as function in the next.</_description>
+      <example>$name(x^2/(x+y)*y, [x y], [-2 1]) = -4</example>
+      <condition>dimension(\y)=dimension(\z)</condition>
+      <expression>foreach(1...dimension(\y),\x,limit("$mlvalue",element(\z,"$mlindex"),element(\y,"$mlindex"),element(\A{0},if(dimension(\A)&lt;"$mlindex",dimension(\A),"$mlindex"))),"$mlvalue","$mlindex")</expression>
+      <argument type="free" index="1">
+        <_title>Function</_title>
+      </argument>
+      <argument type="vector" index="2">
+        <_title>Variable vector</_title>
+      </argument>
+      <argument type="vector" index="3">
+        <_title>Value vector</_title>
+      </argument>
+      <argument type="vector" index="4">
+        <_title>Direction vector</_title>
+      </argument>
+    </function>
     <function>
       <_title>Extreme Values</_title>
       <_names>r:extremum</_names>

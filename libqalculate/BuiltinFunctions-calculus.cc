@@ -789,6 +789,7 @@ int DeriveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 			eo2.approximation = APPROXIMATION_EXACT;
 			eo2.calculate_functions = false;
 			mstruct.eval(eo2);
+			mstruct.factorize(eo2, false, 0, 0, false, 1, NULL, m_undefined, false, true);
 		}
 	}
 	if(!vargs[3].isUndefined()) replace_diff_x(mstruct, vargs[1], vargs[3]);

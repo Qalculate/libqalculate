@@ -535,6 +535,16 @@ string utf8_encode(const std::wstring &wstr) {
 }
 #endif
 
+#ifndef _WIN32
+string getHomeDir() {
+	const char *homedir;
+	if ((homedir = getenv("HOME")) == NULL) {
+		homedir = getpwuid(getuid())->pw_dir;
+	}
+	return homedir;
+}
+#endif
+
 string getOldLocalDir() {
 #ifdef _WIN32
 	char path[MAX_PATH];
@@ -542,11 +552,7 @@ string getOldLocalDir() {
 	string str = path;
 	return str + "\\Qalculate";
 #else
-	const char *homedir;
-	if ((homedir = getenv("HOME")) == NULL) {
-		homedir = getpwuid(getuid())->pw_dir;
-	}
-	return string(homedir) + "/.qalculate";
+	return getHomeDir() + "/.qalculate";
 #endif
 }
 string getLocalDir() {
@@ -572,7 +578,7 @@ string getLocalDir() {
 #	endif
 #else
 	if((homedir = getenv("XDG_CONFIG_HOME")) == NULL) {
-		return string(getpwuid(getuid())->pw_dir) + "/.config/qalculate";
+		return getHomeDir() + "/.config/qalculate";
 	}
 	return string(homedir) + "/qalculate";
 #endif
@@ -600,7 +606,7 @@ string getLocalDataDir() {
 #	endif
 #else
 	if((homedir = getenv("XDG_DATA_HOME")) == NULL) {
-		return string(getpwuid(getuid())->pw_dir) + "/.local/share/qalculate";
+		return getHomeDir() + "/.local/share/qalculate";
 	}
 	return string(homedir) + "/qalculate";
 #endif
@@ -631,7 +637,7 @@ string getLocalTmpDir() {
 #	endif
 #else
 	if((homedir = getenv("XDG_CACHE_HOME")) == NULL) {
-		return string(getpwuid(getuid())->pw_dir) + "/.cache/qalculate";
+		return getHomeDir() + "/.cache/qalculate";
 	}
 	return string(homedir) + "/qalculate";
 #endif
@@ -889,10 +895,9 @@ char *utf8_strdown(const char *str, int l) {
 		ucasemap_utf8ToLower(ucm, buffer, outlength, str, inlength, &err);
 		if(U_SUCCESS(err)) {
 			return buffer;
-		} else {
-			free(buffer);
 		}
 	}
+	free(buffer);
 	return NULL;
 #else
 	return NULL;
@@ -909,6 +914,21 @@ char *utf8_strup(const char *str, int l) {
 	if(!buffer) return NULL;
 	int32_t length = ucasemap_utf8ToUpper(ucm, buffer, outlength, str, inlength, &err);
 	if(U_SUCCESS(err)) {
+		if(inlength > 1 && ((size_t) length != inlength || (buffer[0] != str[0] && buffer[1] != str[1]))) {
+			err = U_ZERO_ERROR;
+			char *buffer2 = (char*) malloc((inlength + 1) * sizeof(char));
+			if(buffer2) {
+				length = ucasemap_utf8ToLower(ucm, buffer2, inlength + 1, buffer, inlength, &err);
+				if(!U_SUCCESS(err) || (size_t) length != inlength || strncmp(str, buffer2, inlength) != 0) {
+					free(buffer2);
+					buffer2 = NULL;
+				}
+			}
+			if(!buffer2) {
+				free(buffer);
+				return NULL;
+			}
+		}
 		return buffer;
 	} else if(err == U_BUFFER_OVERFLOW_ERROR) {
 		outlength = length + 4;
@@ -918,11 +938,23 @@ char *utf8_strup(const char *str, int l) {
 		err = U_ZERO_ERROR;
 		ucasemap_utf8ToUpper(ucm, buffer, outlength, str, inlength, &err);
 		if(U_SUCCESS(err)) {
+			err = U_ZERO_ERROR;
+			char *buffer2 = (char*) malloc((inlength + 1) * sizeof(char));
+			if(buffer2) {
+				length = ucasemap_utf8ToLower(ucm, buffer2, inlength + 1, buffer, inlength, &err);
+				if(!U_SUCCESS(err) || (size_t) length != inlength || strncmp(str, buffer2, inlength) != 0) {
+					free(buffer2);
+					buffer2 = NULL;
+				}
+			}
+			if(!buffer2) {
+				free(buffer);
+				return NULL;
+			}
 			return buffer;
-		} else {
-			free(buffer);
 		}
 	}
+	free(buffer);
 	return NULL;
 #else
 	return NULL;
@@ -1002,6 +1034,7 @@ int checkAvailableVersion(const char *version_id, const char *current_version, s
 		std::vector<int> version_parts_old, version_parts_new;
 
 		string s_old_version = current_version;
+		if(s_old_version == "5.5.1" && s_version == "5.5.2") return 0;
 		while((i = s_old_version.find('.', 0)) != string::npos) {
 			version_parts_old.push_back(s2i(s_old_version.substr(0, i)));
 			s_old_version = s_old_version.substr(i + 1);

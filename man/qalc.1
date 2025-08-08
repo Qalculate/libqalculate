@@ -133,11 +133,11 @@ Sets the result number base (equivalent to set base).
 .PP
 .TP 8
 .B clear
-Clears the screen
+Clears the screen.
 .PP
 .TP 8
 .B clear history
-Clears the expression history
+Clears the expression history.
 .PP
 .TP 8
 .B delete \fIname\fP
@@ -174,12 +174,16 @@ Example: find variables planck.
 .PP
 .TP 8
 .B function \fIname expression\fP
-Creates a function with the specified name and expression. Use '\\x', '\\y', '\\z', '\\a', etc. for arguments in the expression.
+Creates a function with the specified name and expression. Use '\\x', '\\y', '\\z', '\\a', etc. for arguments in the expression. The function is persistent unless the command is invoked from file or in result only mode.
 .br
 Example: function func1 5*\\x.
 .PP
 .TP 8
 .B help \fI[command]\fP
+.PP
+.TP 8
+.B history
+Lists the expression history.
 .PP
 .TP 8
 .B info \fIname\fP
@@ -188,7 +192,7 @@ Displays information about a function, variable, unit, or prefix.
 Example: info sin.
 .PP
 .TP 8
-.B keep \fIname\fP
+.B keep/unkeep \fIname\fP
 Make the temporary user-defined variable or function with the specified name non-temporary.
 .br
 Example: keep var1.
@@ -230,7 +234,7 @@ Example: to bin
 .PP
 .TP 8
 .B variable \fIname expression\fP
-Create a variable with the specified name and expression.
+Create a variable with the specified name and expression. The variable is persistent unless the command is invoked from file or in result only mode.
 .br
 Example: variable var1 pi / 2.
 .PP
@@ -242,7 +246,7 @@ Commands for RPN mode:
 .PP
 .TP 8
 .B rpn \fIstate\fP
-(De)activates the Reverse Polish Notation stack and syntax. "syntax" activates only the RPN syntax and "stack" enables the RPN stack.
+(De)activates the Reverse Polish Notation stack and syntax. "syntax" activates only the RPN syntax and "stack" enables the RPN stack. "on" (1) and "off" (0) (de)activates both.
 .PP
 .TP 8
 .B stack
@@ -280,8 +284,12 @@ When a line begins with '/', the text that follows is always interpreted as a co
 .SH "KEYBINDINGS"
 .PP
 .TP 8
-.B Tab
-shows a list of functions, variables, and units that matches the last object in the current expression
+.B Tab (Ctrl+I)
+shows a list of functions, variables, and units that matches the last object in the current expression, or, if cursor is at beginning of line or after operator, inserts the previous result (either with text of value, or as a temporary variable for approximate or long values)
+.PP
+.TP 8
+.B Ctrl+A
+saves the current result in a temporary variable
 .PP
 .TP 8
 .B Ctrl+D
@@ -294,10 +302,6 @@ switches between approximation modes (exact, try exact, auto)
 .TP 8
 .B Ctrl+F
 switches between fraction modes (simple, decimal, auto)
-.PP
-.TP 8
-.B Ctrl+A
-saves the current result in a temporary variable
 .PP
 .TP 8
 .B Ctrl+L
@@ -444,6 +448,10 @@ Determines the default decimal separator.
 .B digit grouping, group \fI(0* = off, 1 = standard, 2 = locale)\fP
 .PP
 .TP 8
+.B digits \fI(-1* = auto, >= 2)\fP
+Specifies the number of displayed significant digits (by default determined by precision).
+.PP
+.TP 8
 .B exp display, edisp \fI(E*, e, 10)\fP
 Determines how scientific notation are displayed (e.g. 3E6, 3e6, or 3 * 10^6).
 .PP
@@ -473,7 +481,7 @@ Use lowercase letters for number bases > 10.
 .B min decimals, mindeci \fI(-1* = off, >= 0)\fP
 .PP
 .TP 8
-.B repeating decimals, repdeci \fI(on, off*)\fP
+.B repeating decimals, repdeci \fI(0 = off*, 1 = ellipsis, 2 = overline)\fP
 If activated, 1/6 is displayed as '0.1 666...', otherwise as '0.166667'.
 .PP
 .TP 8
@@ -481,8 +489,8 @@ If activated, 1/6 is displayed as '0.1 666...', otherwise as '0.166667'.
 Determines how approximate numbers are rounded.
 .PP
 .TP 8
-.B scientific notation, exp \fI(0 = off, -1* = auto, -3 = engineering, 1 = pure, 3 = scientific, >= 0)\fP
-Determines how scientific notation is used (e.g. 5 543 000 = 5.543E6).
+.B scientific notation, exp \fI(0 = off, -1* = auto, -3 = engineering, 1 = pure, 3 = scientific, >= 0, <= -2)\fP
+Determines how scientific notation is used (e.g. 5 543 000 = 5.543E6). A value >= 0 specifies the minimum exponent used. A value <= -2 specifies the multiplier used for the exponent.
 .PP
 .TP 8
 .B show ending zeroes, zeroes \fI(on*, off)\fP
@@ -538,7 +546,7 @@ See syntax section.
 .PP
 .TP 8
 .B read precision, readprec \fI(0* = off, 1 = always, 2 = when decimals)\fP
-If activated, numbers are interpreted as approximate with precision equal to the number of significant digits (3.20 = 3.20+/-0.005).
+If activated, numbers are interpreted as approximations with precision equal to the number of significant digits (3.20 = 3.20+/-0.005).
 .PP
 .TP 8
 .B simplified percentage, percent \fI(on*, off)\fP
@@ -556,8 +564,8 @@ Enables automatic use of hecto, deca, deci, and centi.
 .PP
 .TP 8
 .B autoconversion, conv \fI(0 = none, 1* = optimal, 2 = base, 3 = optimalsi, 4 = mixed)\fP
-Controls automatic unit conversion of the result. 'optimalsi' always converts non-SI units, while 'optimal' only converts to more optimal unit
-expressions, with less units and exponents.
+Controls automatic unit conversion of the result. 'optimalsi' always converts non-SI units, while 'optimal' only converts to unit
+expressions with less units and exponents.
 .PP
 .TP 8
 .B binary prefixes, binpref \fI(on, off*)\fP
@@ -596,12 +604,22 @@ Determines how expressions with temperature units are calculated (hybrid acts as
 Other:
 .PP
 .TP 8
+.B calculate as you type, autocalc \fI(on, off*)\fP
+Activates continuous calculation of the currently edited expression.
+.PP
+.TP 8
 .B clear history \fI(yes, no*)\fP
 Do not save expression history on exit.
 .PP
 .TP 8
 .B ignore locale \fI(yes, no*)\fP
 Ignore system language and use English (requires restart).
+.PP
+.TP 8
+.B language
+.PP
+.TP 8
+.B prompt
 .PP
 .TP 8
 .B rpn \fI(on, off*)\fP
@@ -632,7 +650,7 @@ A number interval can be entered using the interval() function, the uncertainty(
 .PP
 .B Vectors and Matrices
 .br
-A matrix is a two-dimensional rectangular array of mathematical objects. Vectors are matrices with only one row or column, and thus one-dimensional sequences of objects. Vectors and matrices are generated by various functions, or using syntax in the form of [1 2 3 4] and [1 2; 3 4], with columns separated by space or comma and rows separated by semi-colon, or (1, 2, 3, 4) and ((1, 2), (3, 4)). A vector with sequence of numbers can be created using "..." (e.g. "1...4"), or colon (e.g. "[1:4]", or "[1:1:4]" where the second value specifies the increment).
+A matrix is a two-dimensional rectangular array of mathematical objects. Vectors are matrices with only one row or column, and thus one-dimensional sequences of objects. Vectors and matrices are generated by various functions, or using syntax in the form of [1 2 3 4] and [1 2; 3 4], with columns separated by space or comma and rows separated by semi-colon, or (1, 2, 3, 4) and ((1, 2), (3, 4)). A vector with sequence of numbers can be created using "..." (e.g. "1...4"), or colon (e.g. "[1:4]", or "[1:1:4]" where the second value specifies the increment). A single element of a vector can be selected by placing the index (first index is 1) in parenthesis after a variable or function (e.g. "v(1)" or "f[1]").
 .PP
 .B Variables/Constants
 .br
@@ -693,7 +711,7 @@ Note that x^y^z equals x^(y^z), and not (x^y)^z. Note also that for non-integer 
 .PP
 .B Parellel sum (∥, ||)
 .br
-Returns the the reciprocal value of a sum of reciprocal values. || is interpreted as parallel if units are used, otherwise as logical OR.
+Returns the reciprocal value of a sum of reciprocal values. || is interpreted as parallel if units are used, otherwise as logical OR.
 .PP
 .B Logical operators (!, NOT, ||, OR, &&, AND, XOR, NOR, NAND)
 .PP
@@ -755,7 +773,7 @@ prepend with + or - to force/disable use of mixed units
 .br
 - hex# (show as hexadecimal number with specified number of bits)
 .br
-- sex, sexa2, sexa3, sexagesimal (show as sexagesimal number; sexa2 hides and sexa3 rounds arcseconds)
+- sexa, sexa2, sexa3, sexagesimal (show as sexagesimal number; sexa2 hides and sexa3 rounds arcseconds)
 .br
 - latitude, latitude2, longitude, longitude2 (show as sexagesimal latitude/longitude; latitude2 and longitude2 hide arcseconds)
 .br
@@ -798,7 +816,7 @@ prepend with + or - to force/disable use of mixed units
 .PP
 .TP 8
 .B Fractions
-- fraction (show result as mixed fraction)
+- fraction, 1/n (show result as mixed fraction)
 .br
 - decimals (show result as decimal fraction)
 .br
@@ -901,7 +919,7 @@ sum(x; 1; 5)
 = 1 + 2 + 3 + 4 + 5 = 15
 .PP
 .TP 8
-sum(\i^2+sin(\i); 1; 5; \i)
+sum(\\i^2+sin(\\i); 1; 5; \\i)
 = 1^2 + sin(1) + 2^2 + sin(2) + ... = 55.176162
 .PP
 .TP 8
@@ -1009,7 +1027,7 @@ sin(5+/-0.2)^2/2+/-0.3
 .PP
 .TP 8
 interval(-2; 5)^2
-= intervall(-8.2500000; 12.750000) (intervall(0; 25))
+= interval(-8.2500000; 12.750000) (interval(0; 25))
 .PP
 .B Algebra
 .PP

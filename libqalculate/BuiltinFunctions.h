@@ -44,6 +44,15 @@
 							ExpressionItem *copy() const {return new x(this);} \
 							int id() const {return i;}\
 						};
+#define DECLARE_BUILTIN_FUNCTION_P(x, i)	class x : public MathFunction { \
+						  public: \
+							int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+							x(); \
+							x(const x *function) {set(function);} \
+							ExpressionItem *copy() const {return new x(this);} \
+							int id() const {return i;}\
+							int parse(MathStructure &mstruct, const std::string &eq, const ParseOptions &po = default_parse_options);\
+						};
 
 #define DECLARE_BUILTIN_FUNCTION_M(x, i)	class x : public MathFunction { \
 						  public: \
@@ -133,6 +142,20 @@
 							bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
 							bool representsReal(const MathStructure &vargs, bool allow_units = false) const;\
 							bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
+							TEST_NM_S_FUNCTIONS\
+							int id() const {return i;}\
+						};
+
+#define DECLARE_BUILTIN_FUNCTION_R4(x, i)	class x : public MathFunction { \
+						  public: \
+							int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+							x(); \
+							x(const x *function) {set(function);} \
+							ExpressionItem *copy() const {return new x(this);} \
+							bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsReal(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsUndefined(const MathStructure &vargs) const;\
 							TEST_NM_S_FUNCTIONS\
 							int id() const {return i;}\
 						};
@@ -267,6 +290,7 @@ enum {
 	FUNCTION_ID_GCD = 1701,
 	FUNCTION_ID_LCM = 1702,
 	FUNCTION_ID_DIVISORS = 1703,
+	FUNCTION_ID_FACTORS = 1704,
 	FUNCTION_ID_SIGNUM = 1710,
 	FUNCTION_ID_ROUND = 1720,
 	FUNCTION_ID_FLOOR = 1721,
@@ -459,7 +483,7 @@ DECLARE_BUILTIN_FUNCTION(AllRootsFunction, FUNCTION_ID_ALL_ROOTS)
 
 DECLARE_BUILTIN_FUNCTION_R2(SinFunction, FUNCTION_ID_SIN)
 DECLARE_BUILTIN_FUNCTION_R2(CosFunction, FUNCTION_ID_COS)
-DECLARE_BUILTIN_FUNCTION_R2(TanFunction, FUNCTION_ID_TAN)
+DECLARE_BUILTIN_FUNCTION_R4(TanFunction, FUNCTION_ID_TAN)
 DECLARE_BUILTIN_FUNCTION_R1(AsinFunction, FUNCTION_ID_ASIN)
 DECLARE_BUILTIN_FUNCTION_R1(AcosFunction, FUNCTION_ID_ACOS)
 DECLARE_BUILTIN_FUNCTION_R2(AtanFunction, FUNCTION_ID_ATAN)
@@ -509,9 +533,9 @@ DECLARE_BUILTIN_FUNCTION_MT(RombergFunction, FUNCTION_ID_ROMBERG)
 
 DECLARE_BUILTIN_FUNCTION_MT(SumFunction, FUNCTION_ID_SUM)
 DECLARE_BUILTIN_FUNCTION_MT(ProductFunction, FUNCTION_ID_PRODUCT)
-DECLARE_BUILTIN_FUNCTION_MT(SolveFunction, FUNCTION_ID_SOLVE)
-DECLARE_BUILTIN_FUNCTION_MT(SolveMultipleFunction, FUNCTION_ID_SOLVE_MULTIPLE)
-DECLARE_BUILTIN_FUNCTION_MT(DSolveFunction, FUNCTION_ID_D_SOLVE)
+DECLARE_BUILTIN_FUNCTION(SolveFunction, FUNCTION_ID_SOLVE)
+DECLARE_BUILTIN_FUNCTION(SolveMultipleFunction, FUNCTION_ID_SOLVE_MULTIPLE)
+DECLARE_BUILTIN_FUNCTION(DSolveFunction, FUNCTION_ID_D_SOLVE)
 DECLARE_BUILTIN_FUNCTION_MT(NewtonRaphsonFunction, FUNCTION_ID_NEWTON_RAPHSON)
 DECLARE_BUILTIN_FUNCTION_MT(SecantMethodFunction, FUNCTION_ID_SECANT_METHOD)
 
@@ -526,12 +550,13 @@ DECLARE_BUILTIN_FUNCTION_R2(ArgFunction, FUNCTION_ID_ARG)
 
 DECLARE_BUILTIN_FUNCTION_R(AbsFunction, FUNCTION_ID_ABS)
 DECLARE_BUILTIN_FUNCTION_MT(GcdFunction, FUNCTION_ID_GCD)
+DECLARE_BUILTIN_FUNCTION(FactorsFunction, FUNCTION_ID_FACTORS)
 DECLARE_BUILTIN_FUNCTION_MT(LcmFunction, FUNCTION_ID_LCM)
 DECLARE_BUILTIN_FUNCTION(DivisorsFunction, FUNCTION_ID_DIVISORS)
 DECLARE_BUILTIN_FUNCTION_MT(PrimeCountFunction, FUNCTION_ID_PRIME_COUNT)
 DECLARE_BUILTIN_FUNCTION_MT(IsPrimeFunction, FUNCTION_ID_IS_PRIME)
 DECLARE_BUILTIN_FUNCTION_MT(NthPrimeFunction, FUNCTION_ID_NTH_PRIME)
-DECLARE_BUILTIN_FUNCTION_MT(PrimesFunction, FUNCTION_ID_PRIMES)
+DECLARE_BUILTIN_FUNCTION(PrimesFunction, FUNCTION_ID_PRIMES)
 DECLARE_BUILTIN_FUNCTION_MT(PrevPrimeFunction, FUNCTION_ID_PREV_PRIME)
 DECLARE_BUILTIN_FUNCTION_MT(NextPrimeFunction, FUNCTION_ID_NEXT_PRIME)
 DECLARE_BUILTIN_FUNCTION_R(SignumFunction, FUNCTION_ID_SIGNUM)
@@ -651,7 +676,7 @@ DECLARE_BUILTIN_FUNCTION(SaveFunction, FUNCTION_ID_SAVE)
 DECLARE_BUILTIN_FUNCTION(RegisterFunction, FUNCTION_ID_REGISTER)
 DECLARE_BUILTIN_FUNCTION(StackFunction, FUNCTION_ID_STACK)
 DECLARE_BUILTIN_FUNCTION(CommandFunction, FUNCTION_ID_COMMAND)
-DECLARE_BUILTIN_FUNCTION(PlotFunction, FUNCTION_ID_PLOT)
+DECLARE_BUILTIN_FUNCTION_P(PlotFunction, FUNCTION_ID_PLOT)
 DECLARE_BUILTIN_FUNCTION_R(IntervalFunction, FUNCTION_ID_INTERVAL)
 DECLARE_BUILTIN_FUNCTION(UncertaintyFunction, FUNCTION_ID_UNCERTAINTY)
 DECLARE_BUILTIN_FUNCTION(GeographicDistanceFunction, FUNCTION_ID_GEO_DISTANCE)

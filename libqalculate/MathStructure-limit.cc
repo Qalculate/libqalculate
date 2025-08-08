@@ -989,7 +989,7 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 					calculate_limit_sub(mstruct[0], x_var, nr_limit, eo, approach_direction, NULL, lhop_depth, true, mstruct.function()->id() == FUNCTION_ID_LOG && reduce_addition);
 					break;
 				}
-			} else if(approach_direction != 0 && mstruct.function()->id() == FUNCTION_ID_TAN && mstruct.size() == 1) {
+			} else if(mstruct.function()->id() == FUNCTION_ID_TAN && mstruct.size() == 1) {
 				MathStructure mbak(mstruct);
 				mstruct.setFunctionId(FUNCTION_ID_SIN);
 				mbak.setFunctionId(FUNCTION_ID_COS);
@@ -1147,6 +1147,25 @@ bool MathStructure::calculateLimit(const MathStructure &x_var, const MathStructu
 		eo.approximation = APPROXIMATION_EXACT_VARIABLES;
 	}
 	nr_limit.eval(eo);
+	MathStructure munit;
+	if(nr_limit.isMultiplication()) {
+		bool b = true;
+		for(size_t i = 0; i < nr_limit.size(); i++) {
+			if(is_unit_multiexp(nr_limit[i])) {b = true; break;}
+		}
+		if(b) {
+			munit = x_var;
+			for(size_t i = 0; i < nr_limit.size(); i++) {
+				if(is_unit_multiexp(nr_limit[i])) {
+					munit.multiply(nr_limit[i]);
+					nr_limit.delChild(i + 1);
+				}
+			}
+			if(nr_limit.size() == 0) nr_limit.set(1, 1, 0, true);
+			else if(nr_limit.size() == 1) nr_limit.setToChild(1, true);
+			replace(x_var, munit);
+		}
+	}
 	eo.approximation = eo_pre.approximation;
 	if(nr_limit.representsReal() || nr_limit.isInfinite()) ass->setType(ASSUMPTION_TYPE_REAL);
 	if(nr_limit.representsPositive()) ass->setSign(ASSUMPTION_SIGN_POSITIVE);
@@ -1172,7 +1191,7 @@ bool MathStructure::calculateLimit(const MathStructure &x_var, const MathStructu
 	calculate_limit_sub(*this, var, nr_limit, eo, approach_direction);
 	if(CALCULATOR->aborted() || (containsInfinity(true) && !isInfinite(true)) || limit_contains_undefined(*this) || containsFunctionId(FUNCTION_ID_FLOOR) || containsFunctionId(FUNCTION_ID_CEIL) || containsFunctionId(FUNCTION_ID_TRUNC)) {
 		set(mbak);
-		replace(var, x_var);
+		replace(var, munit.isZero() ? x_var : munit);
 		var->destroy();
 		CALCULATOR->endTemporaryStopMessages();
 		return false;

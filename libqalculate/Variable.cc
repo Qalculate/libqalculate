@@ -277,14 +277,17 @@ KnownVariable::KnownVariable(string cat_, string name_, const MathStructure &o, 
 KnownVariable::KnownVariable(string cat_, string name_, string expression_, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
 	mstruct = NULL; mstruct_alt = NULL;
 	calculated_precision = -1;
+	b_expression = true;
+	sexpression = expression_;
+	remove_blank_ends(sexpression);
 	suncertainty = "";
 	b_relative_uncertainty = false;
 	sunit = "";
-	set(expression_);
 	setChanged(false);
 }
 KnownVariable::KnownVariable() : Variable() {
 	mstruct = NULL; mstruct_alt = NULL;
+	b_expression = true;
 }
 KnownVariable::KnownVariable(const KnownVariable *variable) {
 	mstruct = NULL; mstruct_alt = NULL;

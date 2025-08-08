@@ -199,7 +199,7 @@ bool Calculator::loadLocalDefinitions() {
 	WIN32_FIND_DATA FindFileData;
 	if((hFind = FindFirstFile(buildPath(homedir, "*").c_str(), &FindFileData)) != INVALID_HANDLE_VALUE) {
 		do {
-			if(!(FineFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) eps.push_back(FindFileData.cFileName);
+			if(!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) eps.push_back(FindFileData.cFileName);
 		} while(FindNextFile(hFind, &FindFileData));
 		FindClose(hFind);
 	}
@@ -737,9 +737,9 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 
 	xmlDocPtr doc;
 	xmlNodePtr cur, child, child2, child3;
-	string version, stmp, name, uname, type, svalue, sexp, plural, countries, singular, category_title, category, description, title, inverse, suncertainty, base, argname, usystem;
+	string version, stmp, name, uname, type, svalue, sexp, plural, countries, singular, category_title, category, description, title, inverse, suncertainty, base, argname, usystem, copyright;
 	bool unc_rel;
-	bool best_title = false, next_best_title = false, best_category_title, next_best_category_title, best_description, next_best_description;
+	bool best_title = false, next_best_title = false, best_category_title, next_best_category_title, best_description, next_best_description, best_copyright, next_best_copyright;
 	bool best_plural, next_best_plural, best_singular, next_best_singular, best_argname, next_best_argname, best_countries, next_best_countries;
 	bool best_proptitle, next_best_proptitle, best_propdescr, next_best_propdescr;
 	string proptitle, propdescr;
@@ -764,14 +764,22 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		locale = c_lang;
 		free(c_lang);
 	} else {
-		ULONG nlang = 0;
-		DWORD n = 0;
-		if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
-			WCHAR* wlocale = new WCHAR[n];
-			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
-				locale = utf8_encode(wlocale);
+		getenv_s(&n, NULL, 0, "LANGUAGE");
+		if(n > 0) {
+			char *c_lang = (char*) malloc(n * sizeof(char));
+			getenv_s(&n, c_lang, n, "LANGUAGE");
+			locale = c_lang;
+			free(c_lang);
+		} else {
+			ULONG nlang = 0;
+			DWORD n = 0;
+			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
+				WCHAR* wlocale = new WCHAR[n];
+				if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
+					locale = utf8_encode(wlocale);
+				}
+				delete[] wlocale;
 			}
-			delete[] wlocale;
 		}
 	}
 	gsub("-", "_", locale);
@@ -854,7 +862,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {5, 2, 0};
+	int version_numbers[] = {5, 7, 0};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);
@@ -1103,6 +1111,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 				child = cur->xmlChildrenNode;
 				ITEM_INIT_DTH
 				ITEM_INIT_NAME
+				copyright = ""; best_copyright = false; next_best_copyright = false;
 				while(child != NULL) {
 					if(!xmlStrcmp(child->name, (const xmlChar*) "property")) {
 						dp = new DataProperty(dc);
@@ -1414,7 +1423,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "default_property")) {
 						XML_DO_FROM_TEXT(child, dc->setDefaultProperty)
 					} else if(!builtin && !xmlStrcmp(child->name, (const xmlChar*) "copyright")) {
-						XML_DO_FROM_TEXT(child, dc->setCopyright)
+						XML_GET_LOCALE_STRING_FROM_TEXT(child, copyright, best_copyright, next_best_copyright)
 					} else if(!builtin && !xmlStrcmp(child->name, (const xmlChar*) "datafile")) {
 						XML_DO_FROM_TEXT(child, dc->setDefaultDataFile)
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "example")) {
@@ -1446,6 +1455,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					}
 				}
 				ITEM_SET_DTH
+				if(!builtin) dc->setCopyright(copyright);
 				if(check_duplicates && !is_user_defs) {
 					for(size_t i = 1; i <= dc->countNames();) {
 						if(getActiveFunction(dc->getName(i).name)) dc->removeName(i);
@@ -1885,7 +1895,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					} else {
 						au = new AliasUnit(category, name, plural, singular, title, u, svalue, exponent, inverse, is_user_defs, false, active);
 						au->setCountries(countries);
-						if(mix_priority > 0) {
+						if(mix_priority != 0) {
 							au->setMixWithBase(mix_priority);
 							au->setMixWithBaseMinimum(mix_min);
 						}
@@ -2759,7 +2769,7 @@ void Calculator::saveUnits(void *xmldoc, bool save_global, bool save_only_temp) 
 							xmlNewTextChild(newnode2, NULL, (xmlChar*) "inverse_relation", (xmlChar*) au->inverseExpression().c_str());
 						}
 						xmlNewTextChild(newnode2, NULL, (xmlChar*) "exponent", (xmlChar*) i2s(au->firstBaseExponent()).c_str());
-						if(au->mixWithBase() > 0) {
+						if(au->mixWithBase() != 0) {
 							newnode3 = xmlNewTextChild(newnode2, NULL, (xmlChar*) "mix", (xmlChar*) i2s(au->mixWithBase()).c_str());
 							if(au->mixWithBaseMinimum() > 1) xmlNewProp(newnode3, (xmlChar*) "min", (xmlChar*) i2s(au->mixWithBaseMinimum()).c_str());
 						}
@@ -3229,6 +3239,7 @@ bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int fi
 						headers->push_back(str1);
 					}
 					mstruct.resizeMatrix(1, columns, m_undefined);
+					if(mstruct.rows() < 1 || mstruct.columns() < (size_t) columns) return false;
 				}
 			}
 			if((!headers || row > first_row) && !stmp.empty()) {
@@ -3321,6 +3332,7 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
 					}
 					if(to_matrix) {
 						mstruct.resizeMatrix(1, columns, m_undefined);
+						if(mstruct.rows() < 1 || mstruct.columns() < (size_t) columns) return false;
 					} else {
 						vectors.push_back(m_empty_vector);
 					}
@@ -3502,7 +3514,7 @@ bool Calculator::loadExchangeRates() {
 						s2 = s2.substr(i, s2.length() - i);
 					}
 				}
-				if(!s1.empty() && !s2.empty()) {
+				if(!s1.empty() && !s2.empty() && nr1.find_first_not_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS SPACES) == string::npos && nr2.find_first_not_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS SPACES) == string::npos) {
 					u2 = CALCULATOR->getActiveUnit(s2);
 					if(!u2) {
 						u2 = addUnit(new AliasUnit(_("Currency"), s2, "", "", "", u_euro, "1", 1, "", false, true));
@@ -3585,7 +3597,7 @@ bool Calculator::loadExchangeRates() {
 			XML_GET_STRING_FROM_PROP(cur, "currency", currency);
 			if(!currency.empty()) {
 				XML_GET_STRING_FROM_PROP(cur, "rate", rate);
-				if(!rate.empty()) {
+				if(!rate.empty() && rate.find_first_not_of(NUMBER_ELEMENTS SPACES) == string::npos) {
 					rate = "1/" + rate;
 					u = getUnit(currency);
 					if(!u) {
@@ -3673,7 +3685,7 @@ bool Calculator::loadExchangeRates() {
 					size_t i2 = sbuffer.find("\"", i + 1);
 					size_t i4 = sbuffer.find("\"", i3 + 1);
 					u = getActiveUnit(sbuffer.substr(i3 + 1, i4 - (i3 + 1)));
-					if(u && u->isCurrency()) {
+					if(u && u->isCurrency() && sbuffer.substr(i + 1, i2 - (i + 1)).find_first_not_of(NUMBER_ELEMENTS SPACES) == string::npos) {
 						((AliasUnit*) u_btc)->setBaseUnit(u);
 						((AliasUnit*) u_btc)->setExpression(sbuffer.substr(i + 1, i2 - (i + 1)));
 						u_btc->setApproximate();
@@ -3800,7 +3812,7 @@ bool Calculator::loadExchangeRates() {
 		if(currency.length() == 3 && (currency_defs.empty() || currency_defs.find(builtin_str + currency) != string::npos) && currency != "BYR") {
 			if(!byn_found && currency == "BYN") byn_found = true;
 			u = getUnit(currency);
-			if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->isHidden() && u->isBuiltin() && !u->isLocal())) {
+			if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && (u->isHidden() || (((AliasUnit*) u)->firstBaseUnit() == u_euro && u->precision() == -2 && ((AliasUnit*) u)->firstBaseExponent() == 1)) && u->isBuiltin() && !u->isLocal())) {
 				if(json_variant == 1 || json_variant == 2) {
 					i2 = sbuffer.find("\"rate\":", i3 + 1);
 					size_t i4 = sbuffer.find("}", i3 + 1);
@@ -3828,7 +3840,7 @@ bool Calculator::loadExchangeRates() {
 						}
 					}
 				}
-				if(!rate.empty()) {
+				if(!rate.empty() && rate.find_first_not_of(NUMBER_ELEMENTS SPACES, 2) == string::npos) {
 					if(!u) {
 						u = addUnit(new AliasUnit(_("Currency"), currency, "", "", sname, u_euro, rate, 1, "", false, true), false, true);
 						if(u) u->setHidden(true);
@@ -3836,13 +3848,19 @@ bool Calculator::loadExchangeRates() {
 						if(cunits.find(u) != cunits.end()) {
 							u = NULL;
 						} else {
-							((AliasUnit*) u)->setBaseUnit(u_euro);
-							((AliasUnit*) u)->setExpression(rate);
+							if(!u->isHidden()) {
+								((AliasUnit*) u)->setInverseExpression(rate);
+							} else {
+								((AliasUnit*) u)->setExpression(rate);
+								((AliasUnit*) u)->setBaseUnit(u_euro);
+							}
 						}
 					}
 					if(u) {
-						u->setApproximate();
-						u->setPrecision(-2);
+						if(u->isHidden()) {
+							u->setApproximate();
+							u->setPrecision(-2);
+						}
 						u->setChanged(false);
 					}
 				}
@@ -3874,11 +3892,13 @@ bool Calculator::loadExchangeRates() {
 				if(i != string::npos) {
 					size_t i2 = sbuffer.find_first_not_of(NUMBER_ELEMENTS, i);
 					if(i2 == string::npos) i2 = sbuffer.length();
-					((AliasUnit*) priv->u_byn)->setBaseUnit(u_euro);
-					((AliasUnit*) priv->u_byn)->setExpression(string("1/") + sbuffer.substr(i, i2 - i));
-					priv->u_byn->setApproximate();
-					priv->u_byn->setPrecision(-2);
-					priv->u_byn->setChanged(false);
+					if(sbuffer.substr(i, i2 - i).find_first_not_of(NUMBER_ELEMENTS SPACES) == string::npos) {
+						((AliasUnit*) priv->u_byn)->setBaseUnit(u_euro);
+						((AliasUnit*) priv->u_byn)->setExpression(string("1/") + sbuffer.substr(i, i2 - i));
+						priv->u_byn->setApproximate();
+						priv->u_byn->setPrecision(-2);
+						priv->u_byn->setChanged(false);
+					}
 				}
 			}
 			i = sbuffer.find("\"Date\":");
@@ -3954,10 +3974,11 @@ string Calculator::getExchangeRatesUrl(int index) {
 				return "https://www.mycurrency.net/FR.json";
 			} else if(priv->exchange_rates_url3 == 2) {
 				return "https://www.floatrates.com/daily/eur.json";
-			} else {
+			} else if(priv->exchange_rates_url3 == 3) {
+				return "https://latest.currency-api.pages.dev/v1/currencies/eur.json";
+                        } else {
 				return "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/eur.json";
-                        }
-
+			}
 		}
 		case 4: {return "https://www.nbrb.by/api/exrates/rates/eur?parammode=2";}
 		default: {}
@@ -4086,29 +4107,32 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 		bool b = false;
 		bool bad_gateway = false;
 		string first_error;
-		for(size_t i = 0; i <= 2 || (bad_gateway && i == 3); i++) {
+		for(size_t i = 0; i <= 3 || (bad_gateway && i == 4); i++) {
 			sbuffer = "";
 			if(i == 0) curl_easy_setopt(curl, CURLOPT_URL, "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/eur.json");
-			else if(i == 2) curl_easy_setopt(curl, CURLOPT_URL, "https://www.floatrates.com/daily/eur.json");
+			else if(i == 1) curl_easy_setopt(curl, CURLOPT_URL, "https://latest.currency-api.pages.dev/v1/currencies/eur.json");
+			else if(i == 3) curl_easy_setopt(curl, CURLOPT_URL, "https://www.floatrates.com/daily/eur.json");
 			else curl_easy_setopt(curl, CURLOPT_URL, "https://www.mycurrency.net/FR.json");
 			curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
 			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
 			curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
-			if(i == 3) curl_easy_setopt(curl, CURLOPT_USERAGENT, (string("libqalculate/") + VERSION).c_str());
+			if(i == 4) curl_easy_setopt(curl, CURLOPT_USERAGENT, (string("libqalculate/") + VERSION).c_str());
 
 			res = curl_easy_perform(curl);
 
 			if(res == CURLE_OK) {
-				if((i == 0 && (sbuffer.find(": {") != string::npos || sbuffer.find(":{") != string::npos) && (sbuffer.find("\"eur\": 1,") != string::npos || sbuffer.find("\"eur\":1,") != string::npos || sbuffer.find("\"EUR\": 1,") != string::npos || sbuffer.find("\"EUR\":1,") != string::npos)) || ((i == 1 || i == 3) && sbuffer.find("\"currency_code\":") != string::npos && sbuffer.find("\"baseCurrency\":\"EUR\"") != string::npos) || (i == 2 && sbuffer.find("\"alphaCode\":") != string::npos)) {
-					if(i > 2) priv->exchange_rates_url3 = 1;
-					else priv->exchange_rates_url3 = i;
+				if(((i == 0 || i == 1) && (sbuffer.find(": {") != string::npos || sbuffer.find(":{") != string::npos) && (sbuffer.find("\"eur\": 1,") != string::npos || sbuffer.find("\"eur\":1,") != string::npos || sbuffer.find("\"EUR\": 1,") != string::npos || sbuffer.find("\"EUR\":1,") != string::npos)) || ((i == 2 || i == 4) && sbuffer.find("\"currency_code\":") != string::npos && sbuffer.find("\"baseCurrency\":\"EUR\"") != string::npos) || (i == 3 && sbuffer.find("\"alphaCode\":") != string::npos)) {
+					if(i == 2 || i == 4) priv->exchange_rates_url3 = 1;
+					else if(i == 1) priv->exchange_rates_url3 = 3;
+					else if(i == 3) priv->exchange_rates_url3 = 2;
+					else priv->exchange_rates_url3 = 0;
 					b = true;
-					mycurrency_net = (i == 1 || i == 3);
+					mycurrency_net = (i == 2 || i == 4);
 					break;
 				}
-				if(i == 1 && sbuffer.find("Bad Gateway") != string::npos) bad_gateway = true;
-				if(i == 0) first_error = "Document empty";
+				if(i == 2 && sbuffer.find("Bad Gateway") != string::npos) bad_gateway = true;
+				if(i == 0 || i == 1) first_error = "Document empty";
 			} else if(i == 0) {
 				if(strlen(error_buffer)) first_error = error_buffer;
 				else first_error = curl_easy_strerror(res);

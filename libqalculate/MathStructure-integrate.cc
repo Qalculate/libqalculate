@@ -7051,14 +7051,22 @@ bool contains_complex(const MathStructure &mstruct) {
 	return false;
 }
 
-bool check_denominators(const MathStructure &m, const MathStructure &mi, const MathStructure &mx, const EvaluationOptions &eo) {
+int check_denominators(const MathStructure &m, const MathStructure &mi, const MathStructure &mx, const EvaluationOptions &eo) {
 	if(m.contains(mx, false, true, true) == 0) return true;
+	int ret = true;
 	for(size_t i = 0; i < m.size(); i++) {
-		if(!check_denominators(m[i], mi, mx, eo)) return false;
+		int ret_i = check_denominators(m[i], mi, mx, eo);
+		if(!ret_i) return false;
+		if(ret_i < 0) {
+			if(ret > 0) ret = ret_i;
+			else ret += ret_i;
+		}
 	}
 	if(m.isPower()) {
 		bool b_neg = m[1].representsNegative();
-		if(!m[1].representsNonNegative()) {
+		if(b_neg && (m[1].representsFraction() || (m[1].isMinusOne() && m[0].isFunction() && (m[0].function()->id() == FUNCTION_ID_SQRT || m[0].function()->id() == FUNCTION_ID_CBRT)))) {
+			return -1;
+		} else if(!b_neg && !m[1].representsNonNegative()) {
 			if(!m[0].representsNonZero()) {
 				EvaluationOptions eo2 = eo;
 				eo2.approximation = APPROXIMATION_APPROXIMATE;
@@ -7171,7 +7179,7 @@ bool check_denominators(const MathStructure &m, const MathStructure &mi, const M
 			v->destroy();
 		}
 	} else if(m.isVariable()) {
-		if(m.variable()->isKnown() && !check_denominators(((KnownVariable*) m.variable())->get(), mi, mx, eo)) return false;
+		if(m.variable()->isKnown()) return check_denominators(((KnownVariable*) m.variable())->get(), mi, mx, eo);
 	} else if(m.isFunction() && (m.function()->id() == FUNCTION_ID_TAN || m.function()->id() == FUNCTION_ID_TANH || !m.representsNumber(true))) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
@@ -7188,7 +7196,7 @@ bool check_denominators(const MathStructure &m, const MathStructure &mi, const M
 			if(!b) return false;
 		}
 	}
-	return true;
+	return ret;
 }
 bool replace_atanh(MathStructure &m, const MathStructure &x_var, const MathStructure &m1, const MathStructure &m2, const EvaluationOptions &eo) {
 	bool b = false;
@@ -7322,6 +7330,14 @@ void restore_intervals(MathStructure &m, MathStructure &m2, vector<KnownVariable
 		vars[i]->destroy();
 	}
 }
+size_t count_ln(const MathStructure &m) {
+	size_t n = 0;
+	if(m.isFunction() && m.function()->id() == FUNCTION_ID_LOG) n++;
+	for(size_t i = 0; i < m.size(); i++) {
+		n += count_ln(m[i]);
+	}
+	return n;
+}
 
 bool MathStructure::integrate(const MathStructure &lower_limit, const MathStructure &upper_limit, const MathStructure &x_var_pre, const EvaluationOptions &eo, bool force_numerical, bool simplify_first) {
 
@@ -7352,6 +7368,7 @@ bool MathStructure::integrate(const MathStructure &lower_limit, const MathStruct
 	CALCULATOR->beginTemporaryStopMessages();
 	MathStructure mstruct_pre(*this);
 	MathStructure m_interval;
+	int den_check = 1;
 	if(!m1.isUndefined()) {
 		m_interval.set(CALCULATOR->getFunctionById(FUNCTION_ID_INTERVAL), &m1, &m2, NULL);
 		CALCULATOR->beginTemporaryStopMessages();
@@ -7364,7 +7381,8 @@ bool MathStructure::integrate(const MathStructure &lower_limit, const MathStruct
 		x_var.set(var);
 		mstruct_pre.replace(x_var_pre, x_var, false, false, true);
 		var->destroy();
-		if(definite_integral && !check_denominators(mstruct_pre, m_interval, x_var, eo)) {
+		if(definite_integral) den_check = check_denominators(mstruct_pre, m_interval, x_var, eo);
+		if(!den_check) {
 			if(definite_integral < 0) {
 				definite_integral = 0;
 			} else {
@@ -7472,22 +7490,22 @@ bool MathStructure::integrate(const MathStructure &lower_limit, const MathStruct
 		}
 		eo2.approximation = eo.approximation;
 		if(b) {
-			if(definite_integral && mstruct.containsFunctionId(FUNCTION_ID_INTEGRATE, true) <= 0 && test_definite_ln(mstruct, m_interval, x_var, eo)) {
+			if(definite_integral && mstruct.containsFunctionId(FUNCTION_ID_INTEGRATE, true) <= 0 && ((den_check < 0 && count_ln(mstruct) <= (size_t) -den_check) || test_definite_ln(mstruct, m_interval, x_var, eo))) {
 				CALCULATOR->endTemporaryStopMessages(true);
 				MathStructure mstruct_lower(mstruct);
-				if(m1.isInfinite() || m2.isInfinite()) {
+				if(m1.containsInfinity() || m2.containsInfinity()) {
 					CALCULATOR->beginTemporaryStopMessages();
 					EvaluationOptions eo3 = eo;
 					eo3.approximation = APPROXIMATION_EXACT;
-					if(m1.isInfinite()) {
-						b = mstruct_lower.calculateLimit(x_var, m1, eo3) && !mstruct_lower.isInfinite();
+					if(m1.containsInfinity()) {
+						b = mstruct_lower.calculateLimit(x_var, m1, eo3) && !mstruct_lower.containsInfinity();
 					} else {
 						mstruct_lower.replace(x_var, lower_limit, false, false, true);
 						b = eo.approximation == APPROXIMATION_EXACT || !contains_incalc_function(mstruct_lower, eo);
 					}
 					MathStructure mstruct_upper(mstruct);
-					if(m2.isInfinite()) {
-						b = mstruct_upper.calculateLimit(x_var, m2, eo3) && !mstruct_upper.isInfinite();
+					if(m2.containsInfinity()) {
+						b = mstruct_upper.calculateLimit(x_var, m2, eo3) && !mstruct_upper.containsInfinity();
 					} else {
 						mstruct_upper.replace(x_var, upper_limit, false, false, true);
 						b = eo.approximation == APPROXIMATION_EXACT || !contains_incalc_function(mstruct_upper, eo);

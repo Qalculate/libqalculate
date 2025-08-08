@@ -103,6 +103,8 @@ int test_comparisons(const MathStructure &msave, MathStructure &mthis, const Mat
 bool replace_function(MathStructure &m, MathFunction *f1, MathFunction *f2, const EvaluationOptions &eo);
 bool replace_intervals_f(MathStructure &mstruct);
 bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo);
+bool calculate_rand(MathStructure &mstruct, const EvaluationOptions &eo);
+bool contains_rand(const MathStructure &mstruct, bool check_variables = false);
 bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *failed = NULL, long int min_precision = 2, bool function_middle = false);
 bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const EvaluationOptions &eo = default_evaluation_options, bool do_eval = false);
 bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
@@ -121,13 +123,13 @@ bool replace_interval_unknowns(MathStructure &m, bool do_assumptions = false);
 bool remove_rad_unit(MathStructure &m, const EvaluationOptions &eo, bool top = true);
 int contains_ass_intval(const MathStructure &m);
 int compare_check_incompability(MathStructure *mtest);
-bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOptions &eo, bool recursive = true, bool do_unformat = true, int i_type = 0);
+bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOptions &eo, bool recursive = true, bool do_unformat = true, int i_type = 0, size_t depth = 1);
 bool function_differentiable(MathFunction *o_function);
 bool montecarlo(const MathStructure &minteg, Number &nvalue, const MathStructure &x_var, const EvaluationOptions &eo, Number a, Number b, Number n);
 bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x_var, const EvaluationOptions &eo, Number a, Number b, long int max_steps = -1, long int min_steps = 6, bool safety_measures = true);
 bool sync_approximate_units(MathStructure &m, const EvaluationOptions &feo, std::vector<KnownVariable*> *vars = NULL, std::vector<MathStructure> *uncs = NULL, bool do_intervals = true);
 void fix_to_struct(MathStructure &m);
-bool calculate_userfunctions(MathStructure &m, const MathStructure &x_mstruct, const EvaluationOptions &eo, bool b_vector = false);
+bool calculate_userfunctions(MathStructure &m, const MathStructure &x_mstruct, const EvaluationOptions &eo, bool b_vector = false, size_t depth = 1);
 bool comparison_is_not_equal(ComparisonResult cr);
 bool comparison_is_equal_or_less(ComparisonResult cr);
 bool comparison_is_equal_or_greater(ComparisonResult cr);
@@ -155,6 +157,7 @@ void multiply_by_fraction_of_radian(MathStructure &mstruct, const EvaluationOpti
 Unit *default_angle_unit(const EvaluationOptions &eo, bool return_rad_if_none = false);
 
 bool check_recursive_depth(const MathStructure &m, size_t max_depth = 1000, bool show_error = true);
+bool check_recursive_function_depth(size_t depth, bool show_error = true);
 
 #endif
 

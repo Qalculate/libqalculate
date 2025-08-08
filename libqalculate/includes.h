@@ -33,7 +33,7 @@
 #include <stdint.h>
 
 #define QALCULATE_MAJOR_VERSION (5)
-#define QALCULATE_MINOR_VERSION (2)
+#define QALCULATE_MINOR_VERSION (7)
 #define QALCULATE_MICRO_VERSION (0)
 
 static std::string empty_string;
@@ -451,6 +451,12 @@ enum {
 	UNICODE_SIGNS_WITHOUT_EXPONENTS
 };
 
+enum {
+	REPEATING_DECIMALS_OFF,
+	REPEATING_DECIMALS_ELLIPSIS,
+	REPEATING_DECIMALS_OVERLINE
+};
+
 // temporary custom time zone value for truncation rounding in output
 #define TZ_TRUNCATE -21586
 // temporary custom time zone value for special duodecimal symbols in output
@@ -471,7 +477,7 @@ struct PrintOptions {
 	/// If rational numbers will be displayed with decimals, as a fraction, or something in between. Default: FRACTION_DECIMAL
 	NumberFractionFormat number_fraction_format;
 	/// Show that the digit series of a number continues forever with three dots, instead of rounding (ex. 2/3 displays as 0.666666... instead of 0.666667). Default: false
-	bool indicate_infinite_series;
+	char indicate_infinite_series;
 	/// Show ending zeroes for approximate numbers to indicate precision (ex.1.2300000 instead of 1.23) . Default: false
 	bool show_ending_zeroes;
 	/// Prefer abbreviated names of variables, units, functions etc. Default: true
@@ -498,7 +504,7 @@ struct PrintOptions {
 	bool limit_implicit_multiplication;
 	/// If it is not necessary that the displayed expression can be parsed correctly. Default: false
 	bool allow_non_usable;
-	/// If unicode signs can be displayed. Default: false
+	/// If unicode signs can be displayed. Allowed values are true (UNICODE_SIGNS_ON), false (UNICODE_SIGNS_OFF), or one of the options which limits use of Unicode exponents for non-HTML output (UNICODE_SIGNS_ONLY_UNIT_EXPONENTS and UNICODE_SIGNS_WITHOUT_EXPONENTS). Default: UNICODE_SIGNS_OFF
 	int use_unicode_signs;
 	/// Sign used for display of multiplication. Default: MULTIPLICATION_SIGN_DOT
 	MultiplicationSign multiplication_sign;
@@ -512,11 +518,11 @@ struct PrintOptions {
 	bool halfexp_to_sqrt;
 	/// Minimum number of decimals to display for numbers. Default: 0
 	int min_decimals;
-	/// Maximum number of decimals to display for numbers. A negative value disables the limit. Default: -1
+	/// Maximum number of decimals to display for numbers. Disables the limit of set to -1. Default: -1
 	int max_decimals;
 	/// Enable use of min_decimals. False is equivalent to a min_decimals value of zero. Default: true
 	bool use_min_decimals;
-	/// Enable use of max_decimals. False is equivalent to a negative max_decimals value. Default: true
+	/// Enable use of max_decimals. False is equivalent to a max_decimals value of -1. Default: true
 	bool use_max_decimals;
 	/// Deprecated: use rounding
 	bool round_halfway_to_even;

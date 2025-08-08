@@ -305,8 +305,6 @@ bool Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp) const {
 	if(u == this) {
 		return true;
 	} else if(u->baseUnit() == baseUnit()) {
-		u->convertToBaseUnit(mvalue, mexp);
-		convertFromBaseUnit(mvalue, mexp);
 		if(isCurrency() && u->isCurrency()) {
 			int i = 0;
 			if(u->subtype() == SUBTYPE_ALIAS_UNIT && u->isBuiltin()) {
@@ -341,7 +339,17 @@ bool Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp) const {
 					i = i | 0b0100;
 				}
 			}
+			if(isBuiltin() && u->isBuiltin() && u->subtype() == SUBTYPE_ALIAS_UNIT && subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit() == ((AliasUnit*) this)->firstBaseUnit()) {
+				((AliasUnit*) u)->convertToBaseCurrencyAlt(mvalue, mexp);
+				((AliasUnit*) this)->convertFromBaseCurrencyAlt(mvalue, mexp);
+			} else {
+				u->convertToBaseUnit(mvalue, mexp);
+				convertFromBaseUnit(mvalue, mexp);
+			}
 			CALCULATOR->setExchangeRatesUsed(i);
+		} else {
+			u->convertToBaseUnit(mvalue, mexp);
+			convertFromBaseUnit(mvalue, mexp);
 		}
 		return true;
 	}
@@ -408,6 +416,7 @@ string AliasUnit::expression() const {
 	return svalue;
 }
 string AliasUnit::inverseExpression() const {
+	if(!sinverse.empty() && isBuiltin() && o_unit == CALCULATOR->getUnitById(UNIT_ID_EURO) && i_exp == 1) return "";
 	return sinverse;
 }
 string AliasUnit::uncertainty(bool *is_relative) const {
@@ -484,10 +493,10 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 	if(i_exp != 1) mexp /= i_exp;
 	ParseOptions po;
 	if(isApproximate() && suncertainty.empty() && precision() == -1) {
-		if(sinverse.find(DOT) != string::npos || svalue.find(DOT) != string::npos) po.read_precision = READ_PRECISION_WHEN_DECIMALS;
+		if(svalue.find(DOT) != string::npos || inverseExpression().find(DOT) != string::npos) po.read_precision = READ_PRECISION_WHEN_DECIMALS;
 		else po.read_precision = ALWAYS_READ_PRECISION;
 	}
-	if(sinverse.empty()) {
+	if(inverseExpression().empty()) {
 		if(svalue.find("\\x") != string::npos) {
 			string stmp = svalue;
 			string stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
@@ -628,6 +637,15 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 	}
 	return mvalue;
 }
+MathStructure &AliasUnit::convertFromBaseCurrencyAlt(MathStructure &mvalue, MathStructure &mexp) const {
+	if(sinverse.empty() || !inverseExpression().empty()) return convertFromBaseUnit(mvalue, mexp);
+	ParseOptions po;
+	MathStructure *mstruct = new MathStructure();
+	CALCULATOR->parse(mstruct, sinverse, po);
+	if(isApproximate() && !mstruct->isApproximate()) mstruct->setApproximate(true, true);
+	mvalue.divide_nocopy(mstruct, true);
+	return mvalue;
+}
 MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStructure &mexp) const {
 	ParseOptions po;
 	if(isApproximate() && suncertainty.empty() && precision() == -1) {
@@ -722,6 +740,20 @@ MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStru
 		}
 	}
 	if(i_exp != 1) mexp.multiply(i_exp);
+	return mvalue;
+}
+MathStructure &AliasUnit::convertToBaseCurrencyAlt(MathStructure &mvalue, MathStructure &mexp) const {
+	if(sinverse.empty() || !inverseExpression().empty()) return convertToBaseUnit(mvalue, mexp);
+	ParseOptions po;
+	MathStructure *mstruct = new MathStructure();
+	CALCULATOR->parse(mstruct, sinverse, po);
+	if(isApproximate() && !mstruct->isApproximate()) mstruct->setApproximate(true, true);
+	if(mvalue.isOne()) {
+		mvalue.set_nocopy(*mstruct);
+		mstruct->unref();
+	} else {
+		mvalue.multiply_nocopy(mstruct, true);
+	}
 	return mvalue;
 }
 void AliasUnit::setExponent(int exp) {
@@ -1361,10 +1393,10 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	}
 	if(conversion_variant && had_errors) {
 		CALCULATOR->endTemporaryStopMessages();
-		CALCULATOR->error(true, _("Error(s) in unitexpression."), NULL);
+		CALCULATOR->error(true, _("Error(s) in unit expression."), NULL);
 	} else {
 		if(CALCULATOR->endTemporaryStopMessages() > 0) had_errors = true;
-		if(had_errors) CALCULATOR->error(false, _("Error(s) in unitexpression."), NULL);
+		if(had_errors) CALCULATOR->error(false, _("Error(s) in unit expression."), NULL);
 	}
 	setChanged(true);
 }

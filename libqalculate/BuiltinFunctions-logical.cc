@@ -345,7 +345,9 @@ int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 	}
 	mstruct = vargs[0];
 	if(mstruct.isVector() || (mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_HORZCAT || mstruct.function()->id() == FUNCTION_ID_VERTCAT))) {
-		if(mstruct.isMatrix() && mstruct.columns() == 1 && mstruct.rows() > 1) mstruct.transposeMatrix();
+		if(mstruct.isMatrix() && mstruct.columns() == 1 && mstruct.rows() > 1) {
+			if(!mstruct.transposeMatrix()) return 0;
+		}
 		for(size_t i = 0; i < mstruct.size(); i++) {
 			mstruct[i].eval(eo);
 			if(!mstruct[i].isNumber() && vargs[3].isZero()) {
@@ -354,7 +356,9 @@ int IFFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 			int result = mstruct[i].number().getBoolean();
 			if(result > 0) {
 				MathStructure m2(vargs[1]);
-				if(m2.isMatrix() && m2.columns() == 1 && m2.rows() > 1) m2.transposeMatrix();
+				if(m2.isMatrix() && m2.columns() == 1 && m2.rows() > 1) {
+					if(!m2.transposeMatrix()) return 0;
+				}
 				if(!m2.isVector() && (!m2.isFunction() || (m2.function()->id() != FUNCTION_ID_HORZCAT && m2.function()->id() != FUNCTION_ID_VERTCAT)) && !m2.representsScalar()) m2.eval(eo);
 				if((m2.isVector() || (m2.isFunction() && (m2.function()->id() == FUNCTION_ID_HORZCAT || m2.function()->id() == FUNCTION_ID_VERTCAT))) && m2.size() > 0) {
 					if(i >= m2.size()) mstruct = m2[i % m2.size()];
@@ -411,19 +415,20 @@ bool calculate_replace2(MathStructure &m, const MathStructure &mfrom1, const Mat
 	}
 	return b;
 }
-bool calculate_userfunctions2(MathStructure &m, const MathStructure &x_mstruct, const MathStructure &x_mstruct2, const EvaluationOptions &eo) {
+bool calculate_userfunctions2(MathStructure &m, const MathStructure &x_mstruct, const MathStructure &x_mstruct2, const EvaluationOptions &eo, size_t depth = 1) {
+	if(!check_recursive_function_depth(depth)) return false;
 	bool b_ret = false;
 	for(size_t i = 0; i < m.size(); i++) {
-		if(calculate_userfunctions2(m[i], x_mstruct, x_mstruct2, eo)) {
+		if(calculate_userfunctions2(m[i], x_mstruct, x_mstruct2, eo, depth + 1)) {
 			m.childUpdated(i + 1);
 			b_ret = true;
 		}
 	}
-	if(m.isFunction()) {
-		if(!m.contains(x_mstruct, true) && !m.contains(x_mstruct2, true) && !m.containsFunctionId(FUNCTION_ID_RAND, true, true, true) && !m.containsFunctionId(FUNCTION_ID_RANDN, true, true, true) && !m.containsFunctionId(FUNCTION_ID_RAND_POISSON, true, true, true)) {
+	if(m.isFunction() && !contains_rand(m, true)) {
+		if(!m.contains(x_mstruct, true)) {
 			if(m.calculateFunctions(eo, false)) {
 				b_ret = true;
-				calculate_userfunctions2(m, x_mstruct, x_mstruct2, eo);
+				calculate_userfunctions2(m, x_mstruct, x_mstruct2, eo, depth + 1);
 			}
 		} else if(m.function()->subtype() == SUBTYPE_USER_FUNCTION && m.function()->condition().empty()) {
 			bool b = true;
@@ -441,7 +446,7 @@ bool calculate_userfunctions2(MathStructure &m, const MathStructure &x_mstruct, 
 				}
 			}
 			if(b && m.calculateFunctions(eo, false)) {
-				calculate_userfunctions2(m, x_mstruct, x_mstruct2, eo);
+				calculate_userfunctions2(m, x_mstruct, x_mstruct2, eo, depth + 1);
 				b_ret = true;
 			}
 		}

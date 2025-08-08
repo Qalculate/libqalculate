@@ -51,7 +51,18 @@ using std::iterator;
 
 PrintOptions::PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), base_display(BASE_DISPLAY_NONE), lower_case_numbers(false), lower_case_e(false), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), show_ending_zeroes(true), abbreviate_names(true), use_reference_names(false), place_units_separately(true), use_unit_prefixes(true), use_prefixes_for_all_units(false), use_prefixes_for_currencies(false), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), limit_implicit_multiplication(false), allow_non_usable(false), use_unicode_signs(false), multiplication_sign(MULTIPLICATION_SIGN_DOT), division_sign(DIVISION_SIGN_DIVISION_SLASH), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), round_halfway_to_even(false), improve_division_multipliers(true), prefix(NULL), is_approximate(NULL), can_display_unicode_string_function(NULL), can_display_unicode_string_arg(NULL), hide_underscore_spaces(false), preserve_format(false), allow_factorization(false), spell_out_logical_operators(false), restrict_to_parent_precision(true), restrict_fraction_length(false), exp_to_root(false), preserve_precision(false), interval_display(INTERVAL_DISPLAY_INTERVAL), digit_grouping(DIGIT_GROUPING_NONE), date_time_format(DATE_TIME_FORMAT_ISO), time_zone(TIME_ZONE_LOCAL), custom_time_zone(0), twos_complement(true), hexadecimal_twos_complement(false), binary_bits(0), exp_display(EXP_DEFAULT), duodecimal_symbols(false), rounding(ROUNDING_HALF_AWAY_FROM_ZERO) {}
 
-const string &PrintOptions::comma() const {if(comma_sign.empty()) return CALCULATOR->getComma(); return comma_sign;}
+string semicolon_s;
+
+const string &PrintOptions::comma() const {
+	if(comma_sign.empty()) {
+		if(digit_grouping == DIGIT_GROUPING_LOCALE && CALCULATOR->local_digit_group_separator == COMMA && CALCULATOR->getComma() == COMMA) {
+			if(semicolon_s.empty()) semicolon_s = ";";
+			return semicolon_s;
+		}
+		return CALCULATOR->getComma();
+	}
+	return comma_sign;
+}
 const string &PrintOptions::decimalpoint() const {if(decimalpoint_sign.empty()) return CALCULATOR->getDecimalPoint(); return decimalpoint_sign;}
 
 InternalPrintStruct::InternalPrintStruct() : depth(0), power_depth(0), division_depth(0), wrap(false), num(NULL), den(NULL), re(NULL), im(NULL), exp(NULL), minus(NULL), exp_minus(NULL), parent_approximate(false), parent_precision(-1), iexp(NULL) {}
@@ -153,6 +164,7 @@ Calculator::Calculator() {
 #ifdef _WIN32
 	size_t n = 0;
 	getenv_s(&n, NULL, 0, "LANG");
+	if(n == 0) getenv_s(&n, NULL, 0, "LANGUAGE");
 	if(n == 0) {
 		ULONG nlang = 0;
 		DWORD n = 0;
@@ -162,7 +174,7 @@ Calculator::Calculator() {
 				string lang = utf8_encode(wlocale);
 				gsub("-", "_", lang);
 				if(lang.length() > 5) lang = lang.substr(0, 5);
-				if(!lang.empty()) _putenv_s("LANG", lang.c_str());
+				if(!lang.empty()) _putenv_s("LANGUAGE", lang.c_str());
 			}
 			delete[] wlocale;
 		}
@@ -198,13 +210,13 @@ Calculator::Calculator() {
 	srand(time(NULL));
 
 	exchange_rates_time[0] = 0;
-	exchange_rates_time[1] = (time_t) 477576L * (time_t) 3600;
+	exchange_rates_time[1] = (time_t) 487128L * (time_t) 3600;
 	exchange_rates_time[2] = 0;
-	priv->exchange_rates_time2[0] = (time_t) 477576L * (time_t) 3600;
+	priv->exchange_rates_time2[0] = (time_t) 487128L * (time_t) 3600;
 	exchange_rates_check_time[0] = 0;
-	exchange_rates_check_time[1] = (time_t) 477576L * (time_t) 3600;
+	exchange_rates_check_time[1] = (time_t) 487128L * (time_t) 3600;
 	exchange_rates_check_time[2] = 0;
-	priv->exchange_rates_check_time2[0] = (time_t) 477576L * (time_t) 3600;
+	priv->exchange_rates_check_time2[0] = (time_t) 487128L * (time_t) 3600;
 	b_exchange_rates_warning_enabled = true;
 	b_exchange_rates_used = 0;
 	priv->exchange_rates_url3 = 0;
@@ -416,6 +428,7 @@ Calculator::Calculator(bool ignore_locale) {
 #ifdef _WIN32
 		size_t n = 0;
 		getenv_s(&n, NULL, 0, "LANG");
+		if(n == 0) getenv_s(&n, NULL, 0, "LANGUAGE");
 		if(n == 0) {
 			ULONG nlang = 0;
 			DWORD n = 0;
@@ -425,7 +438,7 @@ Calculator::Calculator(bool ignore_locale) {
 					string lang = utf8_encode(wlocale);
 					gsub("-", "_", lang);
 					if(lang.length() > 5) lang = lang.substr(0, 5);
-					if(!lang.empty()) _putenv_s("LANG", lang.c_str());
+					if(!lang.empty()) _putenv_s("LANGUAGE", lang.c_str());
 				}
 				delete[] wlocale;
 			}
@@ -461,13 +474,13 @@ Calculator::Calculator(bool ignore_locale) {
 	srand(time(NULL));
 
 	exchange_rates_time[0] = 0;
-	exchange_rates_time[1] = (time_t) 477576L * (time_t) 3600;
+	exchange_rates_time[1] = (time_t) 487128L * (time_t) 3600;
 	exchange_rates_time[2] = 0;
-	priv->exchange_rates_time2[0] = (time_t) 477576L * (time_t) 3600;
+	priv->exchange_rates_time2[0] = (time_t) 487128L * (time_t) 3600;
 	exchange_rates_check_time[0] = 0;
-	exchange_rates_check_time[1] = (time_t) 477576L * (time_t) 3600;
+	exchange_rates_check_time[1] = (time_t) 487128L * (time_t) 3600;
 	exchange_rates_check_time[2] = 0;
-	priv->exchange_rates_check_time2[0] = (time_t) 477576L * (time_t) 3600;
+	priv->exchange_rates_check_time2[0] = (time_t) 487128L * (time_t) 3600;
 	b_exchange_rates_warning_enabled = true;
 	b_exchange_rates_used = 0;
 	priv->exchange_rates_url3 = 0;
@@ -543,7 +556,7 @@ Calculator::Calculator(bool ignore_locale) {
 	place_currency_sign_before = lc->p_cs_precedes;
 	place_currency_sign_before_negative = lc->n_cs_precedes;
 #ifdef HAVE_STRUCT_LCONV_INT_P_CS_PRECEDES
- 	place_currency_code_before = lc->int_p_cs_precedes;
+	place_currency_code_before = lc->int_p_cs_precedes;
 #else
 	place_currency_code_before = place_currency_sign_before;
 #endif
@@ -1135,7 +1148,7 @@ DecimalPrefix *Calculator::getOptimalDecimalPrefix(int exp10, int exp, bool all_
 	int exp10_1, exp10_2;
 	while((exp < 0 && i >= 0) || (exp >= 0 && i < (int) decimal_prefixes.size())) {
 		p = decimal_prefixes[i];
-		if(all_prefixes || (p->exponent() % 3 == 0 && p->exponent() >= -24 && p->exponent() <= 24)) {
+		if(all_prefixes || (p->exponent() % 3 == 0 && p->exponent() >= -30 && p->exponent() <= 30)) {
 			if(p_prev && (p_prev->exponent() >= 0) != (p->exponent() >= 0) && p_prev->exponent() != 0) {
 				if(exp < 0) {
 					i++;
@@ -1148,7 +1161,7 @@ DecimalPrefix *Calculator::getOptimalDecimalPrefix(int exp10, int exp, bool all_
 				if(p == decimal_null_prefix) return NULL;
 				return p;
 			} else if(p->exponent(exp) > exp10) {
-				if((exp < 0 && (i == (int) decimal_prefixes.size() - 1 || (!all_prefixes && p->exponent() == 24))) || (exp >= 0 && (i == 0 || (!all_prefixes && p->exponent() == -24)))) {
+				if((exp < 0 && (i == (int) decimal_prefixes.size() - 1 || (!all_prefixes && p->exponent() == 30))) || (exp >= 0 && (i == 0 || (!all_prefixes && p->exponent() == -30)))) {
 					if(p == decimal_null_prefix) return NULL;
 					return p;
 				}
@@ -1188,7 +1201,7 @@ DecimalPrefix *Calculator::getOptimalDecimalPrefix(const Number &exp10, const Nu
 	Number exp10_1, exp10_2;
 	while((exp.isNegative() && i >= 0) || (!exp.isNegative() && i < (int) decimal_prefixes.size())) {
 		p = decimal_prefixes[i];
-		if(all_prefixes || (p->exponent() % 3 == 0 && p->exponent() >= -24 && p->exponent() <= 24)) {
+		if(all_prefixes || (p->exponent() % 3 == 0 && p->exponent() >= -30 && p->exponent() <= 30)) {
 			if(p_prev && (p_prev->exponent() >= 0) != (p->exponent() >= 0) && p_prev->exponent() != 0) {
 				if(exp.isNegative()) {
 					i++;
@@ -1202,7 +1215,7 @@ DecimalPrefix *Calculator::getOptimalDecimalPrefix(const Number &exp10, const Nu
 				if(p == decimal_null_prefix) return NULL;
 				return p;
 			} else if(c == COMPARISON_RESULT_GREATER) {
-				if((exp.isNegative() && (i == (int) decimal_prefixes.size() - 1 || (!all_prefixes && p->exponent() == 24))) || (!exp.isNegative() && (i == 0 || (!all_prefixes && p->exponent() == -24)))) {
+				if((exp.isNegative() && (i == (int) decimal_prefixes.size() - 1 || (!all_prefixes && p->exponent() == 30))) || (!exp.isNegative() && (i == 0 || (!all_prefixes && p->exponent() == -30)))) {
 					if(p == decimal_null_prefix) return NULL;
 					return p;
 				}
@@ -1727,6 +1740,7 @@ void Calculator::addBuiltinFunctions() {
 	f_dirac = addFunction(new DiracFunction());
 	f_gcd = addFunction(new GcdFunction());
 	addFunction(new DivisorsFunction());
+	addFunction(new FactorsFunction());
 	addFunction(new PrimeCountFunction());
 	addFunction(new PrimesFunction());
 	addFunction(new IsPrimeFunction());
@@ -1957,11 +1971,11 @@ void Calculator::addBuiltinFunctions() {
 }
 void Calculator::addBuiltinUnits() {
 	u_euro = addUnit(new Unit(_("Currency"), "EUR", "euros", "euro", "European Euros", false, true, true));
-	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "56208.6", 1, "", false, true, true));
+	u_btc = addUnit(new AliasUnit(_("Currency"), "BTC", "bitcoins", "bitcoin", "Bitcoins", u_euro, "101634", 1, "", false, true, true));
 	u_btc->setApproximate();
 	u_btc->setPrecision(-2);
 	u_btc->setChanged(false);
-	priv->u_byn = addUnit(new AliasUnit(_("Currency"), "BYN", "", "", "Belarusian Ruble", u_euro, "1/3.50960", 1, "", false, true, true));
+	priv->u_byn = addUnit(new AliasUnit(_("Currency"), "BYN", "", "", "Belarusian Ruble", u_euro, "1/3.85001", 1, "", false, true, true));
 	priv->u_byn->setHidden(true);
 	priv->u_byn->setApproximate();
 	priv->u_byn->setPrecision(-2);
@@ -2742,6 +2756,7 @@ MathFunction* Calculator::getFunctionById(int id) const {
 		case FUNCTION_ID_SECANT_METHOD: {return priv->f_secant;}
 		case FUNCTION_ID_NEWTON_RAPHSON: {return priv->f_newton;}
 		case FUNCTION_ID_RAND: {return f_rand;}
+		case FUNCTION_ID_ELEMENT: {return f_element;}
 	}
 	unordered_map<int, MathFunction*>::iterator it = priv->id_functions.find(id);
 	if(it == priv->id_functions.end()) return NULL;

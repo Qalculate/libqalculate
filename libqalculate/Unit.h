@@ -235,6 +235,8 @@ class AliasUnit : public Unit {
 	virtual bool containsRelativeTo(Unit *u) const;
 	virtual bool hasNonlinearRelationToBase() const;
 	virtual bool hasApproximateRelationToBase(bool check_variables = false, bool ignore_high_precision_intervals = false) const;
+	MathStructure &convertToBaseCurrencyAlt(MathStructure &mvalue, MathStructure &mexp) const;
+	MathStructure &convertFromBaseCurrencyAlt(MathStructure &mvalue, MathStructure &mexp) const;
 
 };
 

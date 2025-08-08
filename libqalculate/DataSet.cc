@@ -519,14 +519,22 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 		locale = c_lang;
 		free(c_lang);
 	} else {
-		ULONG nlang = 0;
-		DWORD n = 0;
-		if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
-			WCHAR* wlocale = new WCHAR[n];
-			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
-				locale = utf8_encode(wlocale);
+		getenv_s(&n, NULL, 0, "LANGUAGE");
+		if(n > 0) {
+			char *c_lang = (char*) malloc(n * sizeof(char));
+			getenv_s(&n, c_lang, n, "LANGUAGE");
+			locale = c_lang;
+			free(c_lang);
+		} else {
+			ULONG nlang = 0;
+			DWORD n = 0;
+			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
+				WCHAR* wlocale = new WCHAR[n];
+				if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
+					locale = utf8_encode(wlocale);
+				}
+				delete[] wlocale;
 			}
-			delete[] wlocale;
 		}
 	}
 	gsub("-", "_", locale);
@@ -694,9 +702,9 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 								value = xmlNodeListGetString(doc, child->xmlChildrenNode, 1);
 								lang = xmlNodeGetLang(child);
 								ils = -1;
-								for(int i3 = lang_status_p.size() - 1; i3 > 0; i3--) {
-									if(lang_status_p[i3] == properties[i3]) {
-										ils = i3;
+								for(int i3 = lang_status_p.size(); i3 > 0; i3--) {
+									if(lang_status_p[i3 - 1] == properties[i3 - 1]) {
+										ils = i3 - 1;
 										break;
 									}
 								}
@@ -724,6 +732,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 									}
 								} else if(!locale.empty() && (ils < 0 || lang_status[ils] < 2)) {
 									if(locale == (char*) lang) {
+										if(ils < 0 && properties[i]->isKey()) o->setNonlocalizedKeyProperty(properties[i], o->getProperty(properties[i]));
 										if(ils < 0) {
 											lang_status_p.push_back(properties[i]);
 											lang_status.push_back(2);
@@ -738,6 +747,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 										}
 										o->setProperty(properties[i], str, i_approx);
 									} else if((ils < 0 || lang_status[ils] < 1) && strlen((char*) lang) >= 2 && lang[0] == localebase[0] && lang[1] == localebase[1]) {
+										if(ils < 0 && properties[i]->isKey()) o->setNonlocalizedKeyProperty(properties[i], o->getProperty(properties[i]));
 										if(ils < 0) {
 											lang_status_p.push_back(properties[i]);
 											lang_status.push_back(1);

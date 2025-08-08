@@ -658,6 +658,19 @@ void MathStructure::unformat(const EvaluationOptions &eo) {
 				set(((CompositeUnit*) o_unit)->generateMathStructure(false, eo.keep_prefixes));
 				unformat(eo);
 				break;
+			} else if(o_unit->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) o_unit)->mixWithBase() < 0 && !((AliasUnit*) o_unit)->hasNonlinearExpression()) {
+				if(((AliasUnit*) o_unit)->expression() == "1" && ((AliasUnit*) o_unit)->firstBaseExponent() == 1) {
+					set(((AliasUnit*) o_unit)->firstBaseUnit());
+				} else {
+					MathStructure m(1, 1, 0);
+					MathStructure mexp(1, 1, 0);
+					((AliasUnit*) o_unit)->convertToFirstBaseUnit(m, mexp);
+					set(((AliasUnit*) o_unit)->firstBaseUnit());
+					if(!mexp.isOne()) raise(m);
+					multiply(m);
+				}
+				unformat(eo);
+				break;
 			}
 			b_plural = false;
 			break;
@@ -1989,12 +2002,6 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure *paren
 			}
 			break;
 		}
-		case STRUCT_POWER: {
-			if(CHILD(0).isUnit()) {
-				CHILD(0).setPlural(false);
-				break;
-			}
-		}
 		case STRUCT_NEGATE: {
 			if(po.place_units_separately && (!parent || !parent->isAddition())) {
 				CHILD(0).postFormatUnits(po, this, 1);
@@ -2007,6 +2014,10 @@ void MathStructure::postFormatUnits(const PrintOptions &po, MathStructure *paren
 			}
 		}
 		default: {
+			if(m_type == STRUCT_POWER && CHILD(0).isUnit()) {
+				CHILD(0).setPlural(false);
+				break;
+			}
 			for(size_t i = 0; i < SIZE; i++) {
 				if(CALCULATOR->aborted()) break;
 				CHILD(i).postFormatUnits(po, this, i + 1);
@@ -2798,15 +2809,15 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				}
 				break;
 			}
-			if(po.number_fraction_format == FRACTION_PERCENT && po.base > BASE_FP16 && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME && !o_number.isInteger()) {
+			if(po.number_fraction_format == FRACTION_PERCENT && po.base > BASE_FP16 && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME) {
 				if(!o_number.multiply(100)) break;
 				multiply(CALCULATOR->getVariableById(VARIABLE_ID_PERCENT));
 				break;
-			} else if(po.number_fraction_format == FRACTION_PERMILLE && po.base > BASE_FP16 && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME && !o_number.isInteger()) {
+			} else if(po.number_fraction_format == FRACTION_PERMILLE && po.base > BASE_FP16 && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME) {
 				if(!o_number.multiply(1000)) break;
 				multiply(CALCULATOR->getVariableById(VARIABLE_ID_PERMILLE));
 				break;
-			} else if(po.number_fraction_format == FRACTION_PERMYRIAD && po.base > BASE_FP16 && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME && !o_number.isInteger()) {
+			} else if(po.number_fraction_format == FRACTION_PERMYRIAD && po.base > BASE_FP16 && !BASE_IS_SEXAGESIMAL(po.base) && po.base != BASE_TIME) {
 				if(!o_number.multiply(10000)) break;
 				multiply(CALCULATOR->getVariableById(VARIABLE_ID_PERMYRIAD));
 				break;
@@ -2890,10 +2901,11 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				if(!approximately_displayed) {
 					if(po.base != BASE_ROMAN_NUMERALS && po.base != BASE_BIJECTIVE_26 && po.number_fraction_format != FRACTION_FRACTIONAL_FIXED_DENOMINATOR && po.number_fraction_format != FRACTION_COMBINED_FIXED_DENOMINATOR) den.print(po2, ips_n);
 					if(!approximately_displayed) {
-						if((po.number_fraction_format == FRACTION_COMBINED || po.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR) && !o_number.isFraction()) {
+						if((po.number_fraction_format == FRACTION_COMBINED || po.number_fraction_format == FRACTION_COMBINED_FIXED_DENOMINATOR) && (!o_number.isFraction() || num.isZero())) {
 							// mixed fraction format (e.g. 5/3=1+2/3)
 							Number nr_int(o_number);
-							nr_int.trunc();
+							if(num.isZero() && !nr_int.isInteger()) nr_int.round(get_rounding_mode(po));
+							else nr_int.trunc();
 							if(isApproximate()) nr_int.setApproximate();
 							if(po.base != BASE_ROMAN_NUMERALS && po.base != BASE_BIJECTIVE_26 && po.number_fraction_format != FRACTION_FRACTIONAL_FIXED_DENOMINATOR && po.number_fraction_format != FRACTION_COMBINED_FIXED_DENOMINATOR) nr_int.print(po2, ips_n);
 							if(!approximately_displayed) {
@@ -3620,8 +3632,10 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					}
 				}
 				if(!exp.empty() && !EXP_MODE_10 && po.base == 10) {
+					if(colorize) print_str += "</span>";
 					if(po.exp_display == EXP_UPPERCASE_E) print_str += "<small>E</small>";
 					else print_str += "e";
+					if(colorize) print_str += (colorize == 2 ? "<span style=\"color:#AAFFFF\">" : "<span style=\"color:#005858\">");
 					if(exp_minus) {
 						if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_MINUS, po.can_display_unicode_string_arg))) print_str += SIGN_MINUS;
 						else print_str += "-";
@@ -3663,7 +3677,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					if(ips.power_depth <= 0) print_str += "</sup>";
 				} else if(BASE_IS_SEXAGESIMAL(po.base) || po.base == BASE_TIME) {
 					if(po.exp_display == EXP_UPPERCASE_E) {
-						gsub("E", "<small>E</small>", print_str);
+						gsub("E", colorize == 2 ? "</span><small>E</small><span style=\"color:#AAFFFF\">" : (colorize == 1 ? "</span><small>E</small><span style=\"color:#005858\">" : "<small>E</small>"), print_str);
 					} else if(po.exp_display == EXP_POWER_OF_10 && ips.power_depth <= 0) {
 						size_t i = print_str.find("10^");
 						if(i != string::npos) {
@@ -3736,6 +3750,13 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				} else {
 					print_str += o_number.print(po, ips_n);
 					i_number_end = print_str.length();
+					if(colorize && tagtype == TAG_TYPE_TERMINAL && (po.base == BASE_DECIMAL || BASE_IS_SEXAGESIMAL(po.base) || po.base == BASE_TIME)) {
+						size_t i = print_str.find(po.exp_display == EXP_UPPERCASE_E ? "E" : "e");
+						if(i != string::npos) {
+							print_str.insert(i + 1, (colorize == 2 ? "\033[0;96m" : "\033[0;36m"));
+							print_str.insert(i, "\033[0m");
+						}
+					}
 				}
 			}
 			if(colorize && tagtype == TAG_TYPE_TERMINAL) print_str += "\033[0m";
@@ -3748,6 +3769,24 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 						break;
 					} else if(print_str[i] == DOT_CH || print_str[i] == COMMA_CH) {
 						break;
+					}
+				}
+			}
+			if(format && po.indicate_infinite_series == REPEATING_DECIMALS_OVERLINE && o_number.isRational() && !o_number.isInteger() && po.base != BASE_CUSTOM && po.base != BASE_UNICODE) {
+				size_t i = print_str.find("¯");
+				if(i != string::npos) {
+					if(po.base == BASE_DECIMAL) {
+						size_t i2 = print_str.find_first_of("Ee", i);
+						if(i2 != string::npos) i_number_end = i2;
+					}
+					if(tagtype == TAG_TYPE_TERMINAL) {
+						print_str.insert(i_number_end, "\033[55m");
+						print_str.erase(i, strlen("¯"));
+						print_str.insert(i, "\033[53m");
+					} else if(tagtype == TAG_TYPE_HTML) {
+						print_str.insert(i_number_end, "</span>");
+						print_str.erase(i, strlen("¯"));
+						print_str.insert(i, "<span style=\"text-decoration: overline\">");
 					}
 				}
 			}
@@ -4508,6 +4547,8 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 						PrintOptions po2 = po;
 						po2.show_ending_zeroes = false;
 						print_str += CHILD(i).print(po2, format, colorize, tagtype, ips_n);
+					} else if(po.preserve_format && o_function->id() == FUNCTION_ID_LOGN && i == 0 && argcount >= 2 && CHILD(i).type() == STRUCT_UNDEFINED) {
+						// 2nd argument before parenthesis and input of 1st argument not begun
 					} else {
 						print_str += CHILD(i).print(po, format, colorize, tagtype, ips_n);
 					}

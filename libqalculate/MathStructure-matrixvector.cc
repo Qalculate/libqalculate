@@ -217,8 +217,10 @@ MathStructure &MathStructure::getArea(size_t r1, size_t c1, size_t r2, size_t c2
 	if(c2 < 1 || c2 > c) c2 = c;
 	else if(c2 < c1) c2 = c1;
 	mstruct.clearMatrix(); mstruct.resizeMatrix(r2 - r1 + 1, c2 - c1 + 1, m_undefined);
+	if(mstruct.rows() < r2 - r1 + 1 || mstruct.columns() < c2 - c1 + 1)  {mstruct = m_undefined; return mstruct;}
 	for(size_t index_r = r1; index_r <= r2; index_r++) {
 		for(size_t index_c = c1; index_c <= c2; index_c++) {
+			if(CALCULATOR->aborted()) {mstruct = m_undefined; return mstruct;}
 			mstruct[index_r - r1][index_c - c1] = CHILD(index_r - 1)[index_c - 1];
 		}
 	}
@@ -271,17 +273,23 @@ void MathStructure::setElement(const MathStructure &mstruct, size_t row, size_t 
 void MathStructure::addRows(size_t r, const MathStructure &mfill) {
 	if(r == 0) return;
 	size_t cols = columns();
+	bool test_abort = (r > 1000 || cols > 1000 || (r > 100 && cols > 100));
 	for(size_t i = 0; i < r; i++) {
 		APPEND(m_zero)
 		LAST.clearVector();
-		for(size_t i2 = 0; i2 < cols; i2++) LAST.addChild(mfill);
+		for(size_t i2 = 0; i2 < cols; i2++) {
+			if(test_abort && CALCULATOR->aborted()) {setUndefined(); break;}
+			LAST.addChild(mfill);
+		}
 	}
 }
 void MathStructure::addColumns(size_t c, const MathStructure &mfill) {
 	if(c == 0) return;
+	bool test_abort = (c > 1000 || SIZE > 1000 || (c > 100 && SIZE > 100));
 	for(size_t i = 0; i < SIZE; i++) {
 		if(CHILD(i).isVector()) {
 			for(size_t i2 = 0; i2 < c; i2++) {
+				if(test_abort && CALCULATOR->aborted()) {setUndefined(); break;}
 				CHILD(i).addChild(mfill);
 			}
 		}
@@ -304,7 +312,9 @@ void MathStructure::resizeMatrix(size_t r, size_t c, const MathStructure &mfill)
 	if(c > cols) {
 		addColumns(c - cols, mfill);
 	} else if(c != cols) {
+		bool test_abort = (c > 1000 || SIZE > 1000 || (c > 100 && SIZE > 100));
 		for(size_t i = 0; i < SIZE; i++) {
+			if(test_abort && CALCULATOR->aborted()) {setUndefined(); break;}
 			CHILD(i).resizeVector(c, mfill);
 		}
 	}
@@ -360,11 +370,11 @@ int MathStructure::pivot(size_t ro, size_t co, bool symbolic) {
 
 
 //from GiNaC
-void determinant_minor(const MathStructure &mtrx, MathStructure &mdet, const EvaluationOptions &eo) {
+bool determinant_minor(const MathStructure &mtrx, MathStructure &mdet, const EvaluationOptions &eo) {
 	size_t n = mtrx.size();
 	if(n == 1) {
 		mdet = mtrx[0][0];
-		return;
+		return true;
 	}
 	if(n == 2) {
 		mdet = mtrx[0][0];
@@ -373,7 +383,7 @@ void determinant_minor(const MathStructure &mtrx, MathStructure &mdet, const Eva
 		mdet[mdet.size() - 1].calculateMultiply(mtrx[0][1], eo);
 		mdet[mdet.size() - 1].calculateNegate(eo);
 		mdet.calculateAddLast(eo);
-		return;
+		return true;
 	}
 	if(n == 3) {
 		mdet = mtrx[0][0];
@@ -402,7 +412,7 @@ void determinant_minor(const MathStructure &mtrx, MathStructure &mdet, const Eva
 		mdet[mdet.size() - 1].calculateMultiply(mtrx[2][0], eo);
 		mdet[mdet.size() - 1].calculateNegate(eo);
 		mdet.calculateAddLast(eo);
-		return;
+		return true;
 	}
 
 	std::vector<size_t> Pkey;
@@ -414,6 +424,7 @@ void determinant_minor(const MathStructure &mtrx, MathStructure &mdet, const Eva
 	Rmap A;
 	Rmap B;
 	for(size_t r = 0; r < n; ++r) {
+		if(CALCULATOR->aborted()) return false;
 		Pkey.erase(Pkey.begin(), Pkey.end());
 		Pkey.push_back(r);
 		A.insert(Rmap_value(Pkey, mtrx[r][n - 1]));
@@ -426,9 +437,10 @@ void determinant_minor(const MathStructure &mtrx, MathStructure &mdet, const Eva
 		do {
 			mdet.clear();
 			for(size_t r = 0; r < n - c; ++r) {
-				if (mtrx[Pkey[r]][c].isZero()) continue;
+				if(mtrx[Pkey[r]][c].isZero()) continue;
 				Mkey.erase(Mkey.begin(), Mkey.end());
 				for(size_t i = 0; i < n - c; ++i) {
+					if(CALCULATOR->aborted()) return false;
 					if(i != r) Mkey.push_back(Pkey[i]);
 				}
 				mdet.add(mtrx[Pkey[r]][c], true);
@@ -448,7 +460,7 @@ void determinant_minor(const MathStructure &mtrx, MathStructure &mdet, const Eva
 		A = B;
 		B.clear();
 	}
-	return;
+	return true;
 }
 
 //from GiNaC
@@ -603,6 +615,7 @@ MathStructure &MathStructure::determinant(MathStructure &mstruct, const Evaluati
 		MathStructure result;
 		result.clearMatrix();
 		result.resizeMatrix(SIZE, CHILD(0).size(), m_zero);
+		if(result.rows() < SIZE || result.columns() < CHILD(0).size()) {mstruct = m_undefined; return mstruct;}
 
 		size_t c = 0;
 		for(std::vector<size_t>::const_iterator i = pre_sort.begin(); i != pre_sort.end(); ++i,++c) {
@@ -610,7 +623,7 @@ MathStructure &MathStructure::determinant(MathStructure &mstruct, const Evaluati
 		}
 		mstruct.clear();
 
-		determinant_minor(result, mstruct, eo);
+		if(!determinant_minor(result, mstruct, eo)) {mstruct = m_undefined; return mstruct;}
 
 		if(sign != 1) {
 			mstruct.calculateMultiply(sign, eo);
@@ -653,9 +666,11 @@ MathStructure &MathStructure::permanent(MathStructure &mstruct, const Evaluation
 		MathStructure mtrx;
 		mtrx.clearMatrix();
 		mtrx.resizeMatrix(SIZE - 1, CHILD(0).size() - 1, m_undefined);
+		if(mtrx.rows() < SIZE - 1 || mtrx.columns() < CHILD(0).size() - 1) {mstruct = m_undefined; return mstruct;}
 		for(size_t index_c = 0; index_c < CHILD(0).size(); index_c++) {
 			for(size_t index_r2 = 1; index_r2 < SIZE; index_r2++) {
 				for(size_t index_c2 = 0; index_c2 < CHILD(index_r2).size(); index_c2++) {
+					if(CALCULATOR->aborted()) {mstruct = m_undefined; return mstruct;}
 					if(index_c2 > index_c) {
 						mtrx.setElement(CHILD(index_r2)[index_c2], index_r2, index_c2);
 					} else if(index_c2 < index_c) {
@@ -665,6 +680,7 @@ MathStructure &MathStructure::permanent(MathStructure &mstruct, const Evaluation
 			}
 			MathStructure mdet;
 			mtrx.permanent(mdet, eo);
+			if(mdet.isUndefined()) {mstruct = m_undefined; return mstruct;}
 			if(IS_REAL(mdet) && IS_REAL(CHILD(0)[index_c])) {
 				mdet.number() *= CHILD(0)[index_c].number();
 			} else {
@@ -682,6 +698,7 @@ MathStructure &MathStructure::permanent(MathStructure &mstruct, const Evaluation
 void MathStructure::setToIdentityMatrix(size_t n) {
 	clearMatrix();
 	resizeMatrix(n, n, m_zero);
+	if(rows() < n || columns() < n) {setUndefined(); return;}
 	for(size_t i = 0; i < n; i++) {
 		CHILD(i)[i] = m_one;
 	}
@@ -766,8 +783,9 @@ bool MathStructure::invertMatrix(const EvaluationOptions &eo) {
 	} else {
 		MathStructure *mstruct = new MathStructure();
 		determinant(*mstruct, eo);
+		if(mstruct->isUndefined()) return false;
 		mstruct->calculateInverse(eo);
-		adjointMatrix(eo);
+		if(!adjointMatrix(eo)) return false;
 		multiply_nocopy(mstruct, true);
 		calculateMultiplyLast(eo);
 	}
@@ -780,11 +798,11 @@ bool MathStructure::adjointMatrix(const EvaluationOptions &eo) {
 	MathStructure msave(*this);
 	for(size_t index_r = 0; index_r < SIZE; index_r++) {
 		for(size_t index_c = 0; index_c < CHILD(0).size(); index_c++) {
-			if(CALCULATOR->aborted()) return false;
 			msave.cofactor(index_r + 1, index_c + 1, CHILD(index_r)[index_c], eo);
+			if(CALCULATOR->aborted() || CHILD(index_r)[index_c].isUndefined()) return false;
 		}
 	}
-	transposeMatrix();
+	if(!transposeMatrix()) return false;
 	return true;
 }
 bool MathStructure::transposeMatrix() {
@@ -796,9 +814,10 @@ bool MathStructure::transposeMatrix() {
 	}
 	MathStructure msave(*this);
 	resizeMatrix(CHILD(0).size(), SIZE, m_undefined);
+	if(rows() < msave[0].size() || columns() < msave.size()) {set(msave); return false;}
 	for(size_t index_r = 0; index_r < SIZE; index_r++) {
 		for(size_t index_c = 0; index_c < CHILD(0).size(); index_c++) {
-			if(CALCULATOR->aborted()) return false;
+			if(CALCULATOR->aborted()) {set(msave); return false;}
 			CHILD(index_r)[index_c] = msave[index_c][index_r];
 		}
 	}
@@ -814,9 +833,11 @@ MathStructure &MathStructure::cofactor(size_t r, size_t c, MathStructure &mstruc
 	r--; c--;
 	mstruct.clearMatrix();
 	mstruct.resizeMatrix(SIZE - 1, CHILD(0).size() - 1, m_undefined);
+	if(mstruct.rows() < SIZE - 1 || mstruct.columns() < CHILD(0).size() - 1) {mstruct = m_undefined; return mstruct;}
 	for(size_t index_r = 0; index_r < SIZE; index_r++) {
 		if(index_r != r) {
 			for(size_t index_c = 0; index_c < CHILD(0).size(); index_c++) {
+				if(CALCULATOR->aborted()) {mstruct = m_undefined; return mstruct;}
 				if(index_c > c) {
 					if(index_r > r) {
 						mstruct[index_r - 1][index_c - 1] = CHILD(index_r)[index_c];
@@ -835,25 +856,26 @@ MathStructure &MathStructure::cofactor(size_t r, size_t c, MathStructure &mstruc
 	}
 	MathStructure mstruct2;
 	mstruct = mstruct.determinant(mstruct2, eo);
-	if((r + c) % 2 == 1) {
+	if((r + c) % 2 == 1 && !mstruct.isUndefined()) {
 		mstruct.calculateNegate(eo);
 	}
 	return mstruct;
 }
 
-bool calculate_userfunctions(MathStructure &m, const MathStructure &x_mstruct, const EvaluationOptions &eo, bool b_vector) {
+bool calculate_userfunctions(MathStructure &m, const MathStructure &x_mstruct, const EvaluationOptions &eo, bool b_vector, size_t depth) {
+	if(!check_recursive_function_depth(depth)) return false;
 	bool b_ret = false;
 	for(size_t i = 0; i < m.size(); i++) {
-		if(calculate_userfunctions(m[i], x_mstruct, eo, b_vector)) {
+		if(calculate_userfunctions(m[i], x_mstruct, eo, b_vector, depth + 1)) {
 			m.childUpdated(i + 1);
 			b_ret = true;
 		}
 	}
-	if(m.isFunction()) {
-		if(!m.contains(x_mstruct, true) && !m.containsFunctionId(FUNCTION_ID_RAND, true, true, true) && !m.containsFunctionId(FUNCTION_ID_RANDN, true, true, true) && !m.containsFunctionId(FUNCTION_ID_RAND_POISSON, true, true, true)) {
+	if(m.isFunction() && !contains_rand(m, true)) {
+		if(!m.contains(x_mstruct, true)) {
 			if(m.calculateFunctions(eo, false)) {
 				b_ret = true;
-				calculate_userfunctions(m, x_mstruct, eo, b_vector);
+				calculate_userfunctions(m, x_mstruct, eo, b_vector, depth + 1);
 			}
 		} else if(m.function()->subtype() == SUBTYPE_USER_FUNCTION && m.function()->condition().empty()) {
 			bool b = true;
@@ -871,7 +893,7 @@ bool calculate_userfunctions(MathStructure &m, const MathStructure &x_mstruct, c
 				}
 			}
 			if(b && m.calculateFunctions(eo, false)) {
-				calculate_userfunctions(m, x_mstruct, eo, false);
+				calculate_userfunctions(m, x_mstruct, eo, false, depth + 1);
 				b_ret = true;
 			}
 		} else if(b_vector && ((m.function()->id() == FUNCTION_ID_DIFFERENTIATE && (m.size() < 3 || m[3].isUndefined())) || (m.function()->id() == FUNCTION_ID_INTEGRATE && (m.size() < 3 || (m[1].isUndefined() && m[2].isUndefined()))))) {

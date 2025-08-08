@@ -316,7 +316,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 							if(arg) {
 								// if index has argument definition, use for parsing
 								MathStructure *mstruct = new MathStructure();
-								if(arg->type() == ARGUMENT_TYPE_TEXT && getDefaultValue(itmp) == "\"\"") arg->parse(mstruct, "", po);
+								if(arg->type() == ARGUMENT_TYPE_TEXT && getDefaultValue(itmp).length() >= 2 && (getDefaultValue(itmp)[0] == '\"' || getDefaultValue(itmp)[0] == '\'') && getDefaultValue(itmp).find(getDefaultValue(itmp)[0], 1) == getDefaultValue(itmp).length() - 1) arg->parse(mstruct, getDefaultValue(itmp).substr(1, getDefaultValue(itmp).length() - 2));
 								else arg->parse(mstruct, getDefaultValue(itmp));
 								if(ignored) mstruct->unref();
 								else vargs.addChild_nocopy(mstruct);
@@ -355,7 +355,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 						remove_blank_ends(stmp);
 						if(stmp.empty()) {
 							MathStructure *mstruct = new MathStructure();
-							if(getArgumentDefinition(maxargs())->type() == ARGUMENT_TYPE_TEXT && getDefaultValue(itmp) == "\"\"") getArgumentDefinition(maxargs())->parse(mstruct, "");
+							if(getArgumentDefinition(maxargs())->type() == ARGUMENT_TYPE_TEXT && getDefaultValue(itmp).length() >= 2 && (getDefaultValue(itmp)[0] == '\"' || getDefaultValue(itmp)[0] == '\'') && getDefaultValue(itmp).find(getDefaultValue(itmp)[0], 1) == getDefaultValue(itmp).length() - 1) getArgumentDefinition(maxargs())->parse(mstruct, getDefaultValue(itmp).substr(1, getDefaultValue(itmp).length() - 2));
 							else getArgumentDefinition(maxargs())->parse(mstruct, getDefaultValue(itmp));
 							vargs[vargs.size() - 1].addChild_nocopy(mstruct);
 						} else {
@@ -389,7 +389,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 			if(stmp.empty()) {
 				if(arg) {
 					MathStructure *mstruct = new MathStructure();
-					if(arg->type() == ARGUMENT_TYPE_TEXT && getDefaultValue(itmp) == "\"\"") arg->parse(mstruct, "");
+					if(arg->type() == ARGUMENT_TYPE_TEXT && getDefaultValue(itmp).length() >= 2 && (getDefaultValue(itmp)[0] == '\"' || getDefaultValue(itmp)[0] == '\'') && getDefaultValue(itmp).find(getDefaultValue(itmp)[0], 1) == getDefaultValue(itmp).length() - 1) arg->parse(mstruct, getDefaultValue(itmp).substr(1, getDefaultValue(itmp).length() - 2));
 					else arg->parse(mstruct, getDefaultValue(itmp));
 					if(ignored) mstruct->unref();
 					else vargs.addChild_nocopy(mstruct);
@@ -427,7 +427,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 			remove_blank_ends(stmp);
 			if(stmp.empty()) {
 				MathStructure *mstruct = new MathStructure();
-				if(getArgumentDefinition(maxargs())->type() == ARGUMENT_TYPE_TEXT && getDefaultValue(itmp) == "\"\"") getArgumentDefinition(maxargs())->parse(mstruct, "");
+				if(getArgumentDefinition(maxargs())->type() == ARGUMENT_TYPE_TEXT && getDefaultValue(itmp).length() >= 2 && (getDefaultValue(itmp)[0] == '\"' || getDefaultValue(itmp)[0] == '\'') && getDefaultValue(itmp).find(getDefaultValue(itmp)[0], 1) == getDefaultValue(itmp).length() - 1) getArgumentDefinition(maxargs())->parse(mstruct, getDefaultValue(itmp).substr(1, getDefaultValue(itmp).length() - 2));
 				else getArgumentDefinition(maxargs())->parse(mstruct, getDefaultValue(itmp));
 				vargs[vargs.size() - 1].addChild_nocopy(mstruct);
 			} else {
@@ -453,7 +453,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 		while((size_t) itmp2 - minargs() < default_values.size() && (maxargs() > 0 || !default_values[itmp2 - minargs()].empty())) {
 			arg = getArgumentDefinition(itmp2 + 1);
 			MathStructure *mstruct = new MathStructure();
-			if(arg && arg->type() == ARGUMENT_TYPE_TEXT && default_values[itmp2 - minargs()] == "\"\"") arg->parse(mstruct, "");
+			if(arg && arg->type() == ARGUMENT_TYPE_TEXT && default_values[itmp2 - minargs()].length() >= 2 && (default_values[itmp2 - minargs()][0] == '\"' || default_values[itmp2 - minargs()][0] == '\'') && default_values[itmp2 - minargs()].find(default_values[itmp2 - minargs()][0], 1) == default_values[itmp2 - minargs()].length() - 1) arg->parse(mstruct, default_values[itmp2 - minargs()].substr(1, default_values[itmp2 - minargs()].length() - 2));
 			else if(arg) arg->parse(mstruct, default_values[itmp2 - minargs()]);
 			else CALCULATOR->parse(mstruct, default_values[itmp2 - minargs()]);
 			vargs.addChild_nocopy(mstruct);
@@ -841,6 +841,17 @@ int UserFunction::subtype() const {
 	return SUBTYPE_USER_FUNCTION;
 }
 extern string format_and_print(const MathStructure &mstruct);
+
+bool contains_rand(const MathStructure &mstruct, bool check_variables) {
+	if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_RAND || mstruct.function()->id() == FUNCTION_ID_RANDN || mstruct.function()->id() == FUNCTION_ID_RAND_POISSON || (mstruct.function()->subtype() == SUBTYPE_USER_FUNCTION && mstruct.function()->referenceName().find("rand") == 0))) {
+		return true;
+	}
+	if(check_variables && mstruct.type() == STRUCT_VARIABLE && mstruct.variable()->isKnown()) return contains_rand(((KnownVariable*) mstruct.variable())->get(), check_variables);
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(contains_rand(mstruct[i], check_variables)) return true;
+	}
+	return false;
+}
 bool replace_intervals_f(MathStructure &mstruct) {
 	// replace intervals with temporary variables
 	if(mstruct.isNumber() && (mstruct.number().isInterval(false) || (CALCULATOR->usesIntervalArithmetic() && mstruct.number().precision() >= 0))) {
@@ -961,7 +972,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		for(int i = 0; i < i_args; i++) {
 			MathStructure *mv = new MathStructure(vargs[i]);
 			Argument *arg = getArgumentDefinition(i + 1);
-			if((!arg || !arg->tests() || arg->type() == ARGUMENT_TYPE_FREE) && mv->containsInterval(true, false, false, 0, true)) {
+			if((!arg || !arg->tests() || arg->type() == ARGUMENT_TYPE_FREE) && (mv->containsInterval(true, false, false, 0, true) || contains_rand(*mv))) {
 				size_t count = 0;
 				for(size_t i3 = 0; i3 < 1 || (maxargs() < 0 && i3 < 3); i3++) {
 					svar = '\\';
@@ -998,6 +1009,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					}
 				}
 				if(count > 1) {
+					calculate_rand(*mv, eo);
 					replace_f_interval(*mv, eo);
 					replace_intervals_f(*mv);
 				}
@@ -1511,6 +1523,7 @@ bool Argument::test(MathStructure &value, int index, MathFunction *f, const Eval
 		return true;
 	}
 	bool evaled = false;
+	if(b_text && index == 2 && f && f->id() == FUNCTION_ID_SAVE && value.isVariable() && value.variable()->isKnown() && ((KnownVariable*) value.variable())->get().isSymbolic() && (value.variable()->isLocal() || value.variable()->countNames() == 1)) value.set(value.variable()->name(), false, true);
 	bool b = subtest(value, eo);
 	if(b && !b_zero) {
 		if(!value.isNumber() && !value.representsNonZero()) {
@@ -1551,7 +1564,7 @@ bool Argument::test(MathStructure &value, int index, MathFunction *f, const Eval
 		if(value.isVector()) return false;
 	}
 	if(!b) {
-		if((b_error || (index == 2 && f->id() == FUNCTION_ID_ROOT && value.isNumber())) && (type() != ARGUMENT_TYPE_SYMBOLIC || !value.isUndefined())) {
+		if((b_error || (index == 2 && f && f->id() == FUNCTION_ID_ROOT && value.isNumber())) && (type() != ARGUMENT_TYPE_SYMBOLIC || !value.isUndefined())) {
 			if(sname.empty()) {
 				CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
 			} else {
@@ -1585,13 +1598,6 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 		if(str.empty()) {
 			mstruct->set("", false, true);
 			return;
-		}
-		MathFunction *f_cat = CALCULATOR->getFunctionById(FUNCTION_ID_CONCATENATE);
-		for(size_t i = 1; i <= f_cat->countNames(); i++) {
-			if(str.find(f_cat->getName(i).name) != string::npos) {
-				CALCULATOR->parse(mstruct, str, po);
-				return;
-			}
 		}
 		size_t pars = 0;
 		while(true) {
@@ -1670,8 +1676,10 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 				}
 			}
 		}
-		if(pars == 0 && cits == 0 && str.find(ID_WRAP_LEFT) == string::npos) {
-			mstruct->set(str, false, true);
+		if(pars == 0 && cits == 0 && str.find(ID_WRAP_LEFT) == string::npos && str.find(LEFT_PARENTHESIS) == string::npos) {
+			Variable *v = CALCULATOR->getActiveVariable(str);
+			if(v && v->isKnown() && ((KnownVariable*) v)->get().isSymbolic()) mstruct->set(v);
+			else mstruct->set(str, false, true);
 			return;
 		}
 		string str2;
@@ -1683,9 +1691,10 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 		}
 		if(cits == 0) replace_internal_operators(str2);
 		size_t i = str2.find(ID_WRAP_LEFT);
+		string str2_alt = str2;
 		if(i != string::npos && i < str2.length() - 2) {
 			i = 0;
-			size_t i2 = 0; int id = 0;
+			size_t i2 = 0, alt_i = 0; int id = 0;
 			while((i = str2.find(ID_WRAP_LEFT, i)) != string::npos) {
 				i2 = str2.find_first_not_of(NUMBERS, i + 1);
 				if(i2 == string::npos) break;
@@ -1705,6 +1714,15 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 							i2++;
 						}
 						str2.replace(i, i2 - i + 1, m_temp->symbol());
+						if(!str2_alt.empty()) {
+							if(m_temp->symbol().find("\"") != string::npos) {
+								if(m_temp->symbol().find("\'") != string::npos) str2_alt = "";
+								else str2_alt.replace(i + alt_i, i2 - i + 1, string("\'") + m_temp->symbol() + "\'");
+							} else {
+								str2_alt.replace(i + alt_i, i2 - i + 1, string("\"") + m_temp->symbol() + "\"");
+							}
+							alt_i += 2;
+						}
 						i += m_temp->symbol().length();
 						m_temp->unref();
 					} else {
@@ -1719,12 +1737,52 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 						}
 						if(do_par) str3 += RIGHT_PARENTHESIS_CH;
 						str2.replace(i, i2 - i + 1, str3);
+						if(!str2_alt.empty()) {
+							if(str3.find("\"") != string::npos) {
+								if(str3.find("\'") != string::npos) str2_alt = "";
+								else str2_alt.replace(i + alt_i, i2 - i + 1, string("\'") + str3 + "\'");
+							} else {
+								str2_alt.replace(i + alt_i, i2 - i + 1, string("\"") + str3 + "\"");
+							}
+							alt_i += 2;
+						}
 						i += str3.length();
 					}
 				} else {
 					i = i2;
 				}
 			}
+		}
+		if(cits == 0 && str2_alt.find(LEFT_PARENTHESIS, pars) != string::npos) {
+			CALCULATOR->beginTemporaryStopMessages();
+			CALCULATOR->parse(mstruct, str2_alt, po);
+			if(mstruct->isSymbolic()) {
+				CALCULATOR->endTemporaryStopMessages(true);
+				return;
+			}
+			if((mstruct->isVariable() && mstruct->variable()->isKnown() && ((KnownVariable*) mstruct->variable())->get().isSymbolic()) || (mstruct->isFunction() && (mstruct->function()->subtype() == SUBTYPE_USER_FUNCTION || mstruct->function()->subtype() == SUBTYPE_DATA_SET || mstruct->function()->id() == FUNCTION_ID_REGISTER || mstruct->function()->id() == FUNCTION_ID_STACK || mstruct->function()->id() == FUNCTION_ID_LOAD || mstruct->function()->id() == FUNCTION_ID_CHAR || mstruct->function()->id() == FUNCTION_ID_CONCATENATE || mstruct->function()->id() == FUNCTION_ID_COMPONENT || mstruct->function()->id() == FUNCTION_ID_BINARY_DECIMAL || mstruct->function()->id() == FUNCTION_ID_BIJECTIVE || mstruct->function()->id() == FUNCTION_ID_ROMAN || ((mstruct->function()->id() == FUNCTION_ID_BIN || mstruct->function()->id() == FUNCTION_ID_OCT || mstruct->function()->id() == FUNCTION_ID_DEC || mstruct->function()->id() == FUNCTION_ID_HEX || mstruct->function()->id() == FUNCTION_ID_BASE) && mstruct->size() > 0 && mstruct->last().isOne())))) {
+				EvaluationOptions eo;
+				eo.parse_options = po;
+				MathStructure mtest(*mstruct);
+				CALCULATOR->beginTemporaryStopMessages();
+				mtest.eval(eo);
+				CALCULATOR->endTemporaryStopMessages();
+				if(mtest.isSymbolic()) {
+					CALCULATOR->endTemporaryStopMessages(true);
+					return;
+				}
+				if(b_handle_vector && mtest.isVector()) {
+					bool b = true;
+					for(size_t i = 0; i < mtest.size(); i++) {
+						if(!mtest[i].isSymbolic()) {b = false; break;}
+					}
+					if(b) {
+						CALCULATOR->endTemporaryStopMessages(true);
+						return;
+					}
+				}
+			}
+			CALCULATOR->endTemporaryStopMessages();
 		}
 		mstruct->set(str2, false, true);
 	} else {
@@ -2264,7 +2322,7 @@ bool VectorArgument::subtest(MathStructure &value, const EvaluationOptions &eo) 
 		else return false;
 	}
 	if(value.isMatrix() && value.columns() == 1 && value.rows() > 1) {
-		value.transposeMatrix();
+		if(!value.transposeMatrix()) return false;
 	}
 	if(b_argloop && subargs.size() > 0) {
 		for(size_t i = 0; i < value.countChildren(); i++) {
@@ -2461,10 +2519,32 @@ int AngleArgument::type() const {return ARGUMENT_TYPE_ANGLE;}
 Argument *AngleArgument::copy() const {return new AngleArgument(this);}
 string AngleArgument::print() const {return _("angle");}
 string AngleArgument::subprintlong() const {return _("an angle or a number (using the default angle unit)");}
+
+bool test_userfunctions_angle(const MathStructure &m, const ParseOptions &po, size_t depth = 0) {
+	if(!check_recursive_function_depth(depth)) return false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(test_userfunctions_angle(m[i], po, depth + 1)) {
+			return true;
+		}
+	}
+	if(m.isFunction() && m.function()->subtype() == SUBTYPE_USER_FUNCTION) {
+		EvaluationOptions eo;
+		eo.parse_options = po;
+		MathStructure mtest(m);
+		CALCULATOR->beginTemporaryStopMessages();
+		if(mtest.calculateFunctions(eo, false)) {
+			CALCULATOR->endTemporaryStopMessages();
+			if(contains_angle_unit(mtest, po)) return true;
+			return test_userfunctions_angle(mtest, po, depth + 1);
+		}
+		CALCULATOR->endTemporaryStopMessages();
+	}
+	return false;
+}
 void AngleArgument::parse(MathStructure *mstruct, const string &str, const ParseOptions &po) const {
 	CALCULATOR->parse(mstruct, str, po);
 	if(HAS_DEFAULT_ANGLE_UNIT(po.angle_unit)) {
-		if(contains_angle_unit(*mstruct, po)) return;
+		if(contains_angle_unit(*mstruct, po) || test_userfunctions_angle(*mstruct, po)) return;
 	}
 	switch(po.angle_unit) {
 		case ANGLE_UNIT_DEGREES: {

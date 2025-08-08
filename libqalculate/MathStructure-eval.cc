@@ -528,11 +528,12 @@ bool calculate_differentiable_functions(MathStructure &m, const EvaluationOption
 	}
 	return b;
 }
-bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOptions &eo, bool recursive, bool do_unformat, int i_type) {
+bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOptions &eo, bool recursive, bool do_unformat, int i_type, size_t depth) {
+	if(recursive && !check_recursive_function_depth(depth)) return false;
 	if(m.isFunction() && m.function() != eo.protected_function) {
 		if((i_type <= 0 && (!function_differentiable(m.function()) || (m.function()->id() == FUNCTION_ID_INCOMPLETE_BETA && (m.size() != 3 || m[1].containsInterval(true, false, false, 1, true) || m[2].containsInterval(true, false, false, 1, true))) || (m.function()->id() == FUNCTION_ID_I_GAMMA && (m.size() != 2 || m[1].containsInterval(true, false, false, 1, true))))) || (i_type >= 0 && !contains_interval_variable(m, i_type))) {
 			if(m.calculateFunctions(eo, false, do_unformat)) {
-				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type);
+				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type, depth + 1);
 				return true;
 			} else {
 				return false;
@@ -548,12 +549,12 @@ bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOpt
 			if(m[0].representsNegative(true)) {
 				m.setToChild(1);
 				m.negate();
-				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type);
+				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type, depth + 1);
 				return true;
 			}
 			if(m[0].representsNonNegative(true)) {
 				m.setToChild(1);
-				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type);
+				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type, depth + 1);
 				return true;
 			}
 			if(m[0].isMultiplication()) {
@@ -562,7 +563,7 @@ bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOpt
 					m[i].transformById(FUNCTION_ID_ABS);
 				}
 				m.childrenUpdated();
-				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type);
+				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type, depth + 1);
 				return true;
 			}
 			if(eo.approximation != APPROXIMATION_EXACT) {
@@ -572,12 +573,12 @@ bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOpt
 				if(mtest.representsNegative(true)) {
 					m.setToChild(1);
 					m.negate();
-					if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type);
+					if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type, depth + 1);
 					return true;
 				}
 				if(mtest.representsNonNegative(true)) {
 					m.setToChild(1);
-					if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type);
+					if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type, depth + 1);
 					return true;
 				}
 			}
@@ -587,7 +588,7 @@ bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOpt
 	if(recursive) {
 		for(size_t i = 0; i < m.size(); i++) {
 			if(CALCULATOR->aborted()) break;
-			if(calculate_nondifferentiable_functions(m[i], eo, recursive, do_unformat, i_type)) {
+			if(calculate_nondifferentiable_functions(m[i], eo, recursive, do_unformat, i_type, depth + 1)) {
 				m.childUpdated(i + 1);
 				b = true;
 			}
@@ -2167,7 +2168,7 @@ bool warn_ratio_units(MathStructure &m, bool top_level = true) {
 		}
 	} else {
 		for(size_t i = 0; i < m.size(); i++) {
-			if(warn_ratio_units(m[i], false)) return true;
+			if(warn_ratio_units(m[i], m.isFunction())) return true;
 		}
 	}
 	return false;
@@ -2207,7 +2208,7 @@ bool try_isolate_x(MathStructure &mstruct, EvaluationOptions &eo3, const Evaluat
 		else x_var2 = &mstruct.find_x_var();
 		if(x_var2->isUndefined() || (mtest[0] == *x_var2 && !mtest[1].contains(*x_var2))) {
 			CALCULATOR->endTemporaryStopMessages();
-			 return false;
+			return false;
 		}
 		if(mtest.isolate_x(eo3, eo, *x_var2, false)) {
 			if(test_comparisons(mstruct, mtest, *x_var2, eo3) >= 0) {

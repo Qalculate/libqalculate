@@ -556,6 +556,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 		eo2.isolate_var = &y_var;
 		eo2.isolate_x = true;
 		eo2.test_comparisons = true;
+		eo2.do_polynomial_division = true;
 		mstruct.eval(eo2);
 		if(dsolve) {
 			if(x_value.isUndefined() || y_value.isUndefined()) {
@@ -746,9 +747,11 @@ bool test_functions_comparison(const MathStructure &m, const EvaluationOptions &
 	for(size_t i = 0; i < m.size(); i++) {
 		if(test_functions_comparison(m[i], eo)) return true;
 	}
-	if(m.isFunction() && m.function()->subtype() == SUBTYPE_USER_FUNCTION) {
+	if(m.isFunction() && m.function()->id() == FUNCTION_ID_REPLACE && m.size() >= 2 && (m[0].containsType(STRUCT_COMPARISON, false, true, true) > 0 || m[2].containsType(STRUCT_COMPARISON, false, true, true) > 0)) {
+		return true;
+	} else if(m.isFunction() && m.function()->subtype() == SUBTYPE_USER_FUNCTION) {
 		CALCULATOR->beginTemporaryStopMessages();
-		MathStructure mtest;
+		MathStructure mtest(m);
 		mtest.eval(eo);
 		CALCULATOR->endTemporaryStopMessages();
 		if(mtest.containsType(STRUCT_COMPARISON, false, true, true) > 0) return true;
