@@ -4666,7 +4666,7 @@
     <_title>Typography</_title>
     <unit type="alias">
       <_title>PostScript Point (Big Point, DTP Point)</_title>
-      <_names>ar:pt,a:pts,point,p:points,bt,p:bts,big_point,p:big_points,dtp_point,p:dtp_points</_names>
+      <_names>ar:pt,a:pts,point,p:points,bp,p:bps,big_point,p:big_points,dtp_point,p:dtp_points</_names>
       <base>
         <unit>in</unit>
         <relation>1/72</relation>
