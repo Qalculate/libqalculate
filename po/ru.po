@@ -2336,7 +2336,7 @@ msgstr "префикс"
 #: ../libqalculate/Calculator-calculate.cc:1947
 #: ../libqalculate/Calculator-calculate.cc:2665
 msgid "decimals"
-msgstr "десятеричные"
+msgstr "десятеричные дроби"
 
 #. qalc command
 #: ../src/qalc.cc:5508 ../src/qalc.cc:5982 ../src/qalc.cc:6062

@@ -4665,11 +4665,20 @@
   <category>
     <_title>Typography</_title>
     <unit type="alias">
-      <_title>PostScript Point</_title>
-      <_names>ar:pt,a:pts,point,p:points</_names>
+      <_title>PostScript Point (Big Point, DTP Point)</_title>
+      <_names>ar:pt,a:pts,point,p:points,bp,p:bps,big_point,p:big_points,dtp_point,p:dtp_points</_names>
       <base>
         <unit>in</unit>
         <relation>1/72</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>TeX Point</_title>
+      <_names>r:tex_point,p:tex_points</_names>
+      <base>
+        <unit>in</unit>
+        <relation>1/72.27</relation>
         <exponent>1</exponent>
       </base>
     </unit>
