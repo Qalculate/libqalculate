@@ -4665,8 +4665,9 @@
   <category>
     <_title>Typography</_title>
     <unit type="alias">
-      <_title>PostScript Point (Big Point, DTP Point)</_title>
-      <_names>ar:pt,a:pts,point,p:points,bp,p:bps,big_point,p:big_points,dtp_point,p:dtp_points</_names>
+      <_title>PostScript Point (DTP)</_title>
+      <_description>The PostScript point, or desktop publishing point, is the screen-independent typographic unit commonly used in computer software and for digital printing. It is known as the big point (bp) in TeX.</_description>
+      <_names>ar:pt,a:pts,point,p:points</_names>
       <base>
         <unit>in</unit>
         <relation>1/72</relation>
@@ -4675,7 +4676,7 @@
     </unit>
     <unit type="alias">
       <_title>TeX Point</_title>
-      <_names>r:tex_point,p:tex_points</_names>
+      <_names>r:tex_point,a:tex_pt,p:tex_points</_names>
       <base>
         <unit>in</unit>
         <relation>1/72.27</relation>
@@ -4692,11 +4693,29 @@
       </base>
     </unit>
     <unit type="alias">
+      <_title>Twip</_title>
+      <_names>r:twip,p:twips</_names>
+      <base>
+        <unit>pt</unit>
+        <relation>1/20</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>Agate</_title>
+      <_names>r:agate,p:agates</_names>
+      <base>
+        <unit>pt</unit>
+        <relation>5.5</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
       <_title>ATA Pica</_title>
       <_names>r:ata_pica,p:ata_picas</_names>
       <base>
         <unit>in</unit>
-        <relation>0.166</relation>
+        <relation>0.16604</relation>
         <exponent>1</exponent>
       </base>
     </unit>
