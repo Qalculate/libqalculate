@@ -2647,12 +2647,24 @@ int LowerEndPointFunction::calculate(MathStructure &mstruct, const MathStructure
 	return 1;
 }
 MidPointFunction::MidPointFunction() : MathFunction("midpoint", 1) {
-	setArgumentDefinition(1, new NumberArgument());
+	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
 }
-int MidPointFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	Number nr(vargs[0].number());
-	nr.intervalToMidValue();
-	mstruct = nr;
+int MidPointFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isFunction() && vargs[0].function()->id() == FUNCTION_ID_UNCERTAINTY && vargs[0].size() >= 1) {
+		mstruct = vargs[0][0];
+		return 1;
+	}
+	if(!vargs[0].isNumber()) {
+		mstruct = vargs[0];
+		mstruct.eval(eo);
+		if(!mstruct.isNumber()) return -1;
+		mstruct.number().intervalToMidValue();
+		mstruct.numberUpdated();
+	} else {
+		Number nr(vargs[0].number());
+		nr.intervalToMidValue();
+		mstruct = nr;
+	}
 	return 1;
 }
 GetUncertaintyFunction::GetUncertaintyFunction() : MathFunction("errorPart", 1, 2) {

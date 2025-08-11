@@ -4522,7 +4522,15 @@ int main(int argc, char *argv[]) {
 			str = str.substr(ispace + 1, slen - (ispace + 1));
 			set_option(str);
 		//qalc command
-		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "save", _("save")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "store", _("store")) || EQUALS_IGNORECASE_AND_LOCAL(str, "store", _("store"))) {
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "save mode", _("save mode"))) {
+			if(save_mode()) {PUTS_UNICODE(_("mode saved"));}
+		//qalc command
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "save definitions", _("save definitions"))) {
+			if(save_defs()) {PUTS_UNICODE(_("definitions saved"));}
+		//qalc command
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "save", _("save"))
+			//qalc command
+			|| EQUALS_IGNORECASE_AND_LOCAL(scom, "store", _("store")) || EQUALS_IGNORECASE_AND_LOCAL(str, "store", _("store"))) {
 			if(scom.empty()) {
 				FPUTS_UNICODE(_("Name"), stdout);
 #ifdef HAVE_LIBREADLINE
@@ -4808,13 +4816,14 @@ int main(int argc, char *argv[]) {
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "assume", _("assume"))) {
 			string str2 = "assumptions ";
 			set_option(str2 + str.substr(ispace + 1, slen - (ispace + 1)));
-		//qalc command
+		//qalc command and option
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "base", _("base"))) {
 			set_option(str);
-		//qalc command
+		//qalc command and option
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "rpn", _("rpn"))) {
 			str = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(str);
+			//qalc RPN command value
 			if(EQUALS_IGNORECASE_AND_LOCAL(str, "syntax", _("syntax"))) {
 				if(evalops.parse_options.parsing_mode != PARSING_MODE_RPN) {
 					nonrpn_parsing_mode = evalops.parse_options.parsing_mode;
@@ -4873,7 +4882,7 @@ int main(int argc, char *argv[]) {
 			if(mstruct) v_memory->set(*mstruct);
 		} else if(str == "MC") {
 			v_memory->set(m_zero);
-		//qalc command
+		//qalc command and command value (RPN)
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "stack", _("stack"))) {
 			if(CALCULATOR->RPNStackSize() == 0) {
 				PUTS_UNICODE(_("The RPN stack is empty."));
@@ -4894,7 +4903,7 @@ int main(int argc, char *argv[]) {
 				}
 				puts("");
 			}
-		//qalc command
+		//qalc command (RPN)
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "swap", _("swap"))) {
 			if(CALCULATOR->RPNStackSize() == 0) {
 				PUTS_UNICODE(_("The RPN stack is empty."));
@@ -4903,7 +4912,7 @@ int main(int argc, char *argv[]) {
 			} else {
 				CALCULATOR->moveRPNRegisterUp(2);
 			}
-		//qalc command
+		//qalc command (RPN)
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "swap", _("swap"))) {
 			if(CALCULATOR->RPNStackSize() == 0) {
 				PUTS_UNICODE(_("The RPN stack is empty."));
@@ -4936,7 +4945,7 @@ int main(int argc, char *argv[]) {
 					CALCULATOR->moveRPNRegister((size_t) index2 - 1, (size_t) index1);
 				}
 			}
-		//qalc command
+		//qalc command (RPN)
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "move", _("move"))) {
 			if(CALCULATOR->RPNStackSize() == 0) {
 				PUTS_UNICODE(_("The RPN stack is empty."));
@@ -4965,7 +4974,7 @@ int main(int argc, char *argv[]) {
 					CALCULATOR->moveRPNRegister((size_t) index1, (size_t) index2);
 				}
 			}
-		//qalc command
+		//qalc command (RPN)
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "rotate", _("rotate"))) {
 			if(CALCULATOR->RPNStackSize() == 0) {
 				PUTS_UNICODE(_("The RPN stack is empty."));
@@ -4974,7 +4983,7 @@ int main(int argc, char *argv[]) {
 			} else {
 				CALCULATOR->moveRPNRegister(1, CALCULATOR->RPNStackSize());
 			}
-		//qalc command
+		//qalc command (RPN)
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "rotate", _("rotate"))) {
 			if(CALCULATOR->RPNStackSize() == 0) {
 				PUTS_UNICODE(_("The RPN stack is empty."));
@@ -4991,14 +5000,14 @@ int main(int argc, char *argv[]) {
 					PUTS_UNICODE(_("Illegal value."));
 				}
 			}
-		//qalc command
+		//qalc command (RPN)
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "copy", _("copy"))) {
 			if(CALCULATOR->RPNStackSize() == 0) {
 				PUTS_UNICODE(_("The RPN stack is empty."));
 			} else {
 				CALCULATOR->RPNStackEnter(new MathStructure(*CALCULATOR->getRPNRegister(1)));
 			}
-		//qalc command
+		//qalc command (RPN)
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "copy", _("copy"))) {
 			if(CALCULATOR->RPNStackSize() == 0) {
 				PUTS_UNICODE(_("The RPN stack is empty."));
@@ -5013,17 +5022,17 @@ int main(int argc, char *argv[]) {
 					CALCULATOR->RPNStackEnter(new MathStructure(*CALCULATOR->getRPNRegister((size_t) index1)));
 				}
 			}
-		//qalc command
+		//qalc command (RPN)
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "clear stack", _("clear stack"))) {
 			CALCULATOR->clearRPNStack();
-		//qalc command
+		//qalc command (RPN)
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "pop", _("pop"))) {
 			if(CALCULATOR->RPNStackSize() == 0) {
 				PUTS_UNICODE(_("The RPN stack is empty."));
 			} else {
 				CALCULATOR->deleteRPNRegister(1);
 			}
-		//qalc command
+		//qalc command (RPN)
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "pop", _("pop"))) {
 			if(CALCULATOR->RPNStackSize() == 0) {
 				PUTS_UNICODE(_("The RPN stack is empty."));
@@ -5037,13 +5046,13 @@ int main(int argc, char *argv[]) {
 					CALCULATOR->deleteRPNRegister((size_t) index1);
 				}
 			}
-		//qalc command
+		//qalc command and option value
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "exact", _("exact"))) {
 			if(evalops.approximation != APPROXIMATION_EXACT) {
 				evalops.approximation = APPROXIMATION_EXACT;
 				expression_calculation_updated();
 			}
-		//qalc command
+		//qalc command and option value
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "approximate", _("approximate")) || str == "approx") {
 			if(evalops.approximation == APPROXIMATION_TRY_EXACT) {
 				if(dual_approximation < 0) dual_approximation = 0;
@@ -5526,8 +5535,10 @@ int main(int argc, char *argv[]) {
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "partial fraction", _("partial fraction"))) {
 			execute_command(COMMAND_EXPAND_PARTIAL_FRACTIONS);
-		//qalc command
-		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "simplify", _("simplify")) || EQUALS_IGNORECASE_AND_LOCAL(str, "expand", _("expand"))) {
+		//qalc command and option value
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "simplify", _("simplify"))
+			//qalc command and option value
+			|| EQUALS_IGNORECASE_AND_LOCAL(str, "expand", _("expand"))) {
 			execute_command(COMMAND_EXPAND);
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "mode", _("mode"))) {
@@ -6026,7 +6037,9 @@ int main(int argc, char *argv[]) {
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "list", _("list"))) {
 			list_defs(true);
-		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "list", _("list")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "find", _("find"))) {
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "list", _("list"))
+			//qalc command
+			|| EQUALS_IGNORECASE_AND_LOCAL(scom, "find", _("find"))) {
 			str = str.substr(ispace + 1);
 			remove_blank_ends(str);
 			size_t i = str.find_first_of(SPACES);
@@ -6357,7 +6370,9 @@ int main(int argc, char *argv[]) {
 			printf("\033[1;1H\033[2J");
 #endif
 		//qalc command
-		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "quit", _("quit")) || EQUALS_IGNORECASE_AND_LOCAL(str, "exit", _("exit"))) {
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "quit", _("quit"))
+			//qalc command
+			|| EQUALS_IGNORECASE_AND_LOCAL(str, "exit", _("exit"))) {
 #ifdef HAVE_LIBREADLINE
 			if(!cfile) {
 				free(rlbuffer);

@@ -95,7 +95,7 @@
     <unit type="alias">
       <_title>U.S. Survey Inch</_title>
       <system>US Survey</system>
-      <_names>ar:US_in,US_inch,p:US_inches</_names>
+      <_names>as:in_US,aor:US_in,US_inch,p:US_inches</_names>
       <base>
         <unit>m</unit>
         <relation>100/3937</relation>
@@ -137,7 +137,7 @@
     <unit type="alias">
       <_title>U.S. Survey Foot</_title>
       <system>US Survey</system>
-      <_names>ar:US_ft,US_foot,p:US_feet</_names>
+      <_names>as:ft_US,aor:US_ft,US_foot,p:US_feet</_names>
       <base>
         <unit>US_in</unit>
         <relation>12</relation>
@@ -181,7 +181,7 @@
     <unit type="alias">
       <_title>U.S. Survey Rod</_title>
       <system>US Survey</system>
-      <_names>ar:US_rd,US_rod,p:US_rods</_names>
+      <_names>as:rd_US,aor:US_rd,US_rod,p:US_rods</_names>
       <base>
         <unit>US_ft</unit>
         <relation>16.5</relation>
@@ -236,7 +236,7 @@
     <unit type="alias">
       <_title>U.S. Survey Mile</_title>
       <system>US Survey</system>
-      <_names>ar:US_mi,US_mile,p:US_miles</_names>
+      <_names>as:mi_US,aor:US_mi,US_mile,p:US_miles</_names>
       <base>
         <unit>US_ft</unit>
         <relation>5280</relation>
@@ -609,7 +609,7 @@
     <unit type="alias">
       <_title>Metric Ton (Tonne)</_title>
       <_names>ar:t,tonne,p:tonnes,ton,p:tons</_names>
-      <use_with_prefixes>true</use_with_prefixes>
+      <use_with_prefixes min="0">true</use_with_prefixes>
       <base>
         <unit>g</unit>
         <relation>1000000</relation>
@@ -2288,7 +2288,7 @@
       <unit type="alias">
         <_title>Imperial Fluid Ounce</_title>
         <system>Imperial</system>
-        <_names>ar:UK_fl_oz,imperial_fluid_ounce,p:imperial_fluid_ounces</_names>
+        <_names>as:fl_oz_UK,aor:UK_fl_oz,imperial_fluid_ounce,p:imperial_fluid_ounces</_names>
         <base>
           <unit>L</unit>
           <relation>0.0284130625</relation>
@@ -2298,7 +2298,7 @@
       <unit type="alias">
         <_title>Imperial Gill</_title>
         <system>Imperial</system>
-        <_names>ar:UK_gi,imperial_gill,p:imperial_gills</_names>
+        <_names>as:gi_UK,aor:UK_gi,imperial_gill,p:imperial_gills</_names>
         <base>
           <unit>UK_fl_oz</unit>
           <relation>5</relation>
@@ -2309,7 +2309,7 @@
       <unit type="alias">
         <_title>Imperial Pint</_title>
         <system>Imperial</system>
-        <_names>ar:UK_pt,imperial_pint,p:imperial_pints</_names>
+        <_names>as:gil_UK,aor:UK_pt,imperial_pint,p:imperial_pints</_names>
         <base>
           <unit>UK_gi</unit>
           <relation>4</relation>
@@ -2320,7 +2320,7 @@
       <unit type="alias">
         <_title>Imperial Quart</_title>
         <system>Imperial</system>
-        <_names>ar:UK_qt,imperial_quart,p:imperial_quarts</_names>
+        <_names>as:qt_UK,aor:UK_qt,imperial_quart,p:imperial_quarts</_names>
         <base>
           <unit>UK_pt</unit>
           <relation>2</relation>
@@ -2331,7 +2331,7 @@
       <unit type="alias">
         <_title>Imperial Gallon</_title>
         <system>Imperial</system>
-        <_names>ar:UK_gal,imperial_gallon,p:imperial_gallons</_names>
+        <_names>as:gal_UK,aor:UK_gal,imperial_gallon,p:imperial_gallons</_names>
         <base>
           <unit>UK_qt</unit>
           <relation>4</relation>
@@ -2362,7 +2362,7 @@
       <unit type="alias">
         <_title>Imperial Fluid Drachm</_title>
         <system>Imperial</system>
-        <_names>ar:UK_fl_dr,imperial_fluid_drachm,p:imperial_fluid_drachms</_names>
+        <_names>as:fl_dr_UK,aor:UK_fl_dr,imperial_fluid_drachm,p:imperial_fluid_drachms</_names>
         <base>
           <unit>imperial_fluid_scuple</unit>
           <relation>3</relation>
@@ -2372,7 +2372,7 @@
       <unit type="alias">
         <_title>Imperial Bushel</_title>
         <system>Imperial</system>
-        <_names>ar:UK_bu,imperial_bushel,p:imperial_bushels</_names>
+        <_names>as:bu_UK,aor:UK_bu,imperial_bushel,p:imperial_bushels</_names>
         <base>
           <unit>UK_gal</unit>
           <relation>8</relation>
@@ -4667,7 +4667,7 @@
     <unit type="alias">
       <_title>PostScript Point (DTP)</_title>
       <_description>The PostScript point, or desktop publishing point, is the screen-independent typographic unit commonly used in computer software and for digital printing. It is known as the big point (bp) in TeX.</_description>
-      <_names>ar:pt,a:pts,point,p:points</_names>
+      <_names>ar:pt,a:pts,point,p:points,as:bp_tex,ao:tex_bp</_names>
       <base>
         <unit>in</unit>
         <relation>1/72</relation>
@@ -4676,10 +4676,19 @@
     </unit>
     <unit type="alias">
       <_title>TeX Point</_title>
-      <_names>r:tex_point,a:tex_pt,p:tex_points</_names>
+      <_names>r:tex_point,as:pt_TeX,ao:tex_pt,p:tex_points</_names>
       <base>
         <unit>in</unit>
         <relation>1/72.27</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <_title>TeX Scaled Point</_title>
+      <_names>r:tex_scaled_point,as:sp_TeX,ao:tex_sp,p:tex_scaled_points</_names>
+      <base>
+        <unit>tex_point</unit>
+        <relation>1/65536</relation>
         <exponent>1</exponent>
       </base>
     </unit>
@@ -4711,17 +4720,17 @@
       </base>
     </unit>
     <unit type="alias">
-      <_title>ATA Pica</_title>
-      <_names>r:ata_pica,p:ata_picas</_names>
+      <_title>Johnson Pica</_title>
+      <_names>JohnsonPica,ro:ata_pica,po:ata_picas</_names>
       <base>
         <unit>in</unit>
-        <relation>0.16604</relation>
+        <relation>0.166</relation>
         <exponent>1</exponent>
       </base>
     </unit>
     <unit type="alias">
-      <_title>ATA Point</_title>
-      <_names>r:ata_point,a:ata_pt,p:ata_points</_names>
+      <_title>American Point</_title>
+      <_names>US_point,ro:ata_point,as:pt_US,ao:ata_pt,p:US_points,po:ata_points</_names>
       <base>
         <unit>ata_pica</unit>
         <relation>1/12</relation>

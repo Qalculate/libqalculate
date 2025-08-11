@@ -2045,7 +2045,7 @@
       <builtin_function name="rand">
         <_title>Random Number</_title>
         <_names>r:rand</_names>
-        <_description>Generates a pseudo-random number. Returns a real number between 0 and 1, if ceil is zero (default), or an integer between 1 and (including) ceil.</_description>
+        <_description>Generates a uniformly distributed pseudo-random number. Returns a real number between 0 and 1, if ceil is zero (default), or an integer between 1 and (including) ceil.</_description>
         <argument index="1">
           <_title>Ceil</_title>
         </argument>
@@ -2097,7 +2097,7 @@
       <function>
         <_title>Random Number Between Limits</_title>
         <_names>r:randbetween</_names>
-        <_description>Returns an integer between (including) bottom and top.</_description>
+        <_description>Returns a uniformly distributed random integer between (including) bottom and top.</_description>
         <expression>rand(\y-\x+1,\Z{1})+\x-1</expression>
         <condition>\x&lt;=\y</condition>
         <argument type="integer" index="1">
@@ -2309,7 +2309,7 @@
       <function>
         <_title>Simple Linear Fit</_title>
         <_names>r:linearfit</_names>
-        <_description>Returns the linear function, for a set of x and y values, estimated using simple linear regression with a single explanatory variable using the ordinary least squares method. If the vector of y values is empty, the first argument is used for sequential y values (with x values 1, 2, ..., n). It is possible to pass both x and y values in a two column matrix as the first argument.</_description>
+        <_description>Returns the linear function, for a set of x and y values, estimated using simple linear regression with a single explanatory variable and the ordinary least squares method. If the vector of y values is empty, the first argument is used for sequential y values (with x values 1, 2, ..., n). It is possible to pass both x and y values in a two column matrix as the first argument.</_description>
         <condition>dimension(\x)=dimension(\y) || dimension(\y)=0</condition>
         <subfunction precalculate="true">if((dimension(\Y{[]})>0,rows(\x)>1&amp;&amp;columns(\x)=2),(\x,column(\x,1)),genvector("i",1,dimension(\x),1,"i",1))</subfunction>
         <subfunction precalculate="true">if((dimension(\y)>0,rows(\x)>1&amp;&amp;columns(\x)=2),(\y,column(\x,2)),\x)</subfunction>
@@ -2993,7 +2993,7 @@
     <function>
       <_title>Add Time</_title>
       <_names>r:addTime</_names>
-      <_description>Adds a time value to a date. The value can be positive or negative, but must use a unit based on seconds (such as day and year). Fractions of days are truncated.</_description>
+      <_description>Adds a time value to a date. The value can be positive or negative, but must use a unit based on seconds (such as day and year).</_description>
       <expression>\x+\y</expression>
       <argument type="date" index="1">
         <_title>Date</_title>
