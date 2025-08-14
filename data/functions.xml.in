@@ -2045,7 +2045,7 @@
       <builtin_function name="rand">
         <_title>Random Number</_title>
         <_names>r:rand</_names>
-        <_description>Generates a uniformly distributed pseudo-random number. Returns a real number between 0 and 1, if ceil is zero (default), or an integer between 1 and (including) ceil.</_description>
+        <_description>Generates uniformly distributed pseudo-random numbers. Returns real numbers between 0 and 1, if ceil is zero (default), or integers between 1 and (including) ceil.</_description>
         <argument index="1">
           <_title>Ceil</_title>
         </argument>
@@ -2097,7 +2097,7 @@
       <function>
         <_title>Random Number Between Limits</_title>
         <_names>r:randbetween</_names>
-        <_description>Returns a uniformly distributed random integer between (including) bottom and top.</_description>
+        <_description>Returns uniformly distributed random integers between (including) bottom and top.</_description>
         <expression>rand(\y-\x+1,\Z{1})+\x-1</expression>
         <condition>\x&lt;=\y</condition>
         <argument type="integer" index="1">
@@ -3308,7 +3308,7 @@
     <builtin_function name="save">
       <_title>Save as Variable or Function</_title>
       <_names>r:save</_names>
-      <_description>Stores a value in a variable or saves an expression as a function.&#10;&#10;A function is created if the name includes parentheses (e.g. "f()"). Optionally the function arguments can be specified in the name (e.g. "save(a+b,f(a,b))"). Otherwise the function arguments are expected to be referred to in the expression using \x, \y, \z ,\a , \b..., or x, y, z (e.g. "save(x+y,f())").&#10;&#10;If a function was created, the processed function expression is returned as a text string, otherwise the value is returned.&#10;&#10;The ":=" operator (e.g. var1:=10) is a shortcut for this function.</_description>
+      <_description>Stores a value in a variable or saves an expression as a function.&#10;&#10;A function is created if the name includes parentheses (e.g. "f()"). Optionally the function arguments can be specified in the name (e.g. "save(a+b,f(a,b))"). Otherwise the function arguments are expected to be referred to in the expression using \x, \y, \z, \a, \b, ..., or x, y, z (e.g. "save(x+y,f())").&#10;&#10;If a function was created, the processed function expression is returned as a text string, otherwise the value is returned.&#10;&#10;The ":=" operator (e.g. var1:=10) is a shortcut for this function.</_description>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -3341,7 +3341,7 @@
     <builtin_function name="isNumber">
       <_title>Is Number</_title>
       <_names>r:isNumber</_names>
-      <_description>Returns true if evaluated argument value is explicitely a real, complex, or infinite number (has number type).</_description>
+      <_description>Returns true if evaluated argument value is explicitly a real, complex, or infinite number (has number type).</_description>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -3349,7 +3349,7 @@
     <builtin_function name="isReal">
       <_title>Is Real</_title>
       <_names>r:isReal</_names>
-      <_description>Returns true if evaluated argument value is explicitely a real number (has number type with zero complex part).</_description>
+      <_description>Returns true if evaluated argument value is explicitly a real number (has number type with zero imaginary part).</_description>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -3357,7 +3357,7 @@
     <builtin_function name="isRational">
       <_title>Is Rational</_title>
       <_names>r:isRational</_names>
-      <_description>Returns true if evaluated argument value is explicitely a rational number (has rational type).</_description>
+      <_description>Returns true if evaluated argument value is explicitly a rational number (has rational type).</_description>
       <argument index="1">
         <_title>Value</_title>
       </argument>
@@ -3365,7 +3365,7 @@
     <builtin_function name="isInteger">
       <_title>Is Integer</_title>
       <_names>r:isInteger</_names>
-      <_description>Returns true if evaluated argument value is explicitely an integer (has integer type).</_description>
+      <_description>Returns true if evaluated argument value is explicitly an integer (has integer type).</_description>
       <example>$name(5 + 2) = 1; $name(x) = 0; $name(log(0.2, 5)) = 0</example>
       <argument index="1">
         <_title>Value</_title>

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-02 17:16+0200\n"
+"POT-Creation-Date: 2025-08-13 06:35+0200\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -5561,12 +5561,13 @@ msgstr "slumptal"
 
 #: ../data/functions.xml.in.h:625
 msgid ""
-"Generates a pseudo-random number. Returns a real number between 0 and 1, if "
-"ceil is zero (default), or an integer between 1 and (including) ceil."
+"Generates uniformly distributed pseudo-random numbers. Returns real numbers "
+"between 0 and 1, if ceil is zero (default), or integers between 1 and "
+"(including) ceil."
 msgstr ""
-"Generar ett pseudo-slumpmässigt nummer. Returnerar ett reealt tal mellan 0 "
-"och 1, om taket är noll (förval), eller ett heltal mellan 1 och (inklusive) "
-"taket."
+"Generar likformigt fördelade pseudo-slumpmässiga tal. Returnerar reella tal "
+"mellan 0 och 1, om taket är noll (förval), eller heltal mellan 1 och "
+"(inklusive) taket."
 
 #: ../data/functions.xml.in.h:626
 msgid "Ceil"
@@ -5606,7 +5607,7 @@ msgstr "Intensitetsparameter (λ)"
 
 #: ../data/functions.xml.in.h:635
 msgid "Uniformly Distributed Random Number"
-msgstr "Enhetligt fördelat slumptal"
+msgstr "Likformigt fördelat slumptal"
 
 #: ../data/functions.xml.in.h:636
 msgid "r:randuniform"
@@ -5621,8 +5622,12 @@ msgid "r:randbetween"
 msgstr ""
 
 #: ../data/functions.xml.in.h:639
-msgid "Returns an integer between (including) bottom and top."
-msgstr "Returnerar ett heltal mellan (inklusive) nedre och övre gräns"
+msgid ""
+"Returns uniformly distributed random integers between (including) bottom and "
+"top."
+msgstr ""
+"Returnerar likformigt fördelade slumpmässiga heltal mellan (inklusive) nedre "
+"och övre gräns"
 
 #: ../data/functions.xml.in.h:640
 msgid "Bottom"
@@ -5815,11 +5820,10 @@ msgstr ""
 #: ../data/functions.xml.in.h:687
 msgid ""
 "Returns the linear function, for a set of x and y values, estimated using "
-"simple linear regression with a single explanatory variable using the "
-"ordinary least squares method. If the vector of y values is empty, the first "
-"argument is used for sequential y values (with x values 1, 2, ..., n). It is "
-"possible to pass both x and y values in a two column matrix as the first "
-"argument."
+"simple linear regression with a single explanatory variable and the ordinary "
+"least squares method. If the vector of y values is empty, the first argument "
+"is used for sequential y values (with x values 1, 2, ..., n). It is possible "
+"to pass both x and y values in a two column matrix as the first argument."
 msgstr ""
 
 #: ../data/functions.xml.in.h:688
@@ -6547,12 +6551,10 @@ msgstr "adderaTid"
 #: ../data/functions.xml.in.h:845
 msgid ""
 "Adds a time value to a date. The value can be positive or negative, but must "
-"use a unit based on seconds (such as day and year). Fractions of days are "
-"truncated."
+"use a unit based on seconds (such as day and year)."
 msgstr ""
 "Adderar ett tidsvärde till ett datum. Värdet kan vara positivt eller "
-"negativt, men måste använda en enhet baserad på sekunder (såsom dag och år). "
-"Delar av dagar avrundas mot noll."
+"negativt, men måste använda en enhet baserad på sekunder (såsom dag och år)."
 
 #: ../data/functions.xml.in.h:846 ../data/units.xml.in.h:156
 msgid "Time"
@@ -6994,8 +6996,8 @@ msgid ""
 "function.&#10;&#10;A function is created if the name includes parentheses "
 "(e.g. \"f()\"). Optionally the function arguments can be specified in the "
 "name (e.g. \"save(a+b,f(a,b))\"). Otherwise the function arguments are "
-"expected to be referred to in the expression using \\x, \\y, \\z ,\\a , "
-"\\b..., or x, y, z (e.g. \"save(x+y,f())\").&#10;&#10;If a function was "
+"expected to be referred to in the expression using \\x, \\y, \\z, \\a, "
+"\\b, ..., or x, y, z (e.g. \"save(x+y,f())\").&#10;&#10;If a function was "
 "created, the processed function expression is returned as a text string, "
 "otherwise the value is returned.&#10;&#10;The \":=\" operator (e.g. "
 "var1:=10) is a shortcut for this function."
@@ -7004,7 +7006,7 @@ msgstr ""
 "funktion.&#10;&#10;En funktion skapas om namnet inkluderar parenteser (t.ex. "
 "\"f()\". Funktionsparametrar kan, om så önskas, specificeras i namnet (t.ex. "
 "\"save(a+b;f(a;b))\"). Annars förväntas funktionsparametrar hänvisas till "
-"med \\x, \\y, \\z ,\\a , \\b..., eller x, y, z (t.ex. \"save(x+y;f())"
+"med \\x, \\y, \\z, \\a, \\b, ..., eller x, y, z (t.ex. \"save(x+y;f())"
 "\").&#10;&#10;Om en funktion skapas, returneras det skapade "
 "funktionsuttrycket som en textsträng, annars returneras det angivna "
 "värdet.&#10;&#10;\":=\"-operatorn (t.ex. var1:=10) är en genväg för denna "
@@ -7052,7 +7054,7 @@ msgstr "ärNummer"
 
 #: ../data/functions.xml.in.h:956
 msgid ""
-"Returns true if evaluated argument value is explicitely a real, complex, or "
+"Returns true if evaluated argument value is explicitly a real, complex, or "
 "infinite number (has number type)."
 msgstr ""
 
@@ -7066,8 +7068,8 @@ msgstr "ärReellt"
 
 #: ../data/functions.xml.in.h:959
 msgid ""
-"Returns true if evaluated argument value is explicitely a real number (has "
-"number type with zero complex part)."
+"Returns true if evaluated argument value is explicitly a real number (has "
+"number type with zero imaginary part)."
 msgstr ""
 
 #: ../data/functions.xml.in.h:960
@@ -7080,7 +7082,7 @@ msgstr "ärRationellt"
 
 #: ../data/functions.xml.in.h:962
 msgid ""
-"Returns true if evaluated argument value is explicitely a rational number "
+"Returns true if evaluated argument value is explicitly a rational number "
 "(has rational type)."
 msgstr ""
 
@@ -7094,7 +7096,7 @@ msgstr "ärHeltal"
 
 #: ../data/functions.xml.in.h:965
 msgid ""
-"Returns true if evaluated argument value is explicitely an integer (has "
+"Returns true if evaluated argument value is explicitly an integer (has "
 "integer type)."
 msgstr ""
 
@@ -9149,7 +9151,7 @@ msgid "U.S. Survey Inch"
 msgstr ""
 
 #: ../data/units.xml.in.h:18
-msgid "ar:US_in,US_inch,p:US_inches"
+msgid "as:in_US,aor:US_in,US_inch,p:US_inches"
 msgstr ""
 
 #: ../data/units.xml.in.h:19
@@ -9181,7 +9183,7 @@ msgid "U.S. Survey Foot"
 msgstr ""
 
 #: ../data/units.xml.in.h:26
-msgid "ar:US_ft,US_foot,p:US_feet"
+msgid "as:ft_US,aor:US_ft,US_foot,p:US_feet"
 msgstr ""
 
 #: ../data/units.xml.in.h:27
@@ -9213,7 +9215,7 @@ msgid "U.S. Survey Rod"
 msgstr ""
 
 #: ../data/units.xml.in.h:34
-msgid "ar:US_rd,US_rod,p:US_rods"
+msgid "as:rd_US,aor:US_rd,US_rod,p:US_rods"
 msgstr ""
 
 #: ../data/units.xml.in.h:35
@@ -9253,7 +9255,7 @@ msgid "U.S. Survey Mile"
 msgstr ""
 
 #: ../data/units.xml.in.h:44
-msgid "ar:US_mi,US_mile,p:US_miles"
+msgid "as:mi_US,aor:US_mi,US_mile,p:US_miles"
 msgstr ""
 
 #: ../data/units.xml.in.h:45
@@ -10433,7 +10435,7 @@ msgid "Imperial Fluid Ounce"
 msgstr ""
 
 #: ../data/units.xml.in.h:348
-msgid "ar:UK_fl_oz,imperial_fluid_ounce,p:imperial_fluid_ounces"
+msgid "as:fl_oz_UK,aor:UK_fl_oz,imperial_fluid_ounce,p:imperial_fluid_ounces"
 msgstr ""
 
 #: ../data/units.xml.in.h:349
@@ -10441,7 +10443,7 @@ msgid "Imperial Gill"
 msgstr ""
 
 #: ../data/units.xml.in.h:350
-msgid "ar:UK_gi,imperial_gill,p:imperial_gills"
+msgid "as:gi_UK,aor:UK_gi,imperial_gill,p:imperial_gills"
 msgstr ""
 
 #: ../data/units.xml.in.h:351
@@ -10449,7 +10451,7 @@ msgid "Imperial Pint"
 msgstr ""
 
 #: ../data/units.xml.in.h:352
-msgid "ar:UK_pt,imperial_pint,p:imperial_pints"
+msgid "as:pt_UK,aor:UK_pt,imperial_pint,p:imperial_pints"
 msgstr ""
 
 #: ../data/units.xml.in.h:353
@@ -10457,7 +10459,7 @@ msgid "Imperial Quart"
 msgstr ""
 
 #: ../data/units.xml.in.h:354
-msgid "ar:UK_qt,imperial_quart,p:imperial_quarts"
+msgid "as:qt_UK,aor:UK_qt,imperial_quart,p:imperial_quarts"
 msgstr ""
 
 #: ../data/units.xml.in.h:355
@@ -10465,7 +10467,7 @@ msgid "Imperial Gallon"
 msgstr ""
 
 #: ../data/units.xml.in.h:356
-msgid "ar:UK_gal,imperial_gallon,p:imperial_gallons"
+msgid "as:gal_UK,aor:UK_gal,imperial_gallon,p:imperial_gallons"
 msgstr ""
 
 #: ../data/units.xml.in.h:357
@@ -10489,7 +10491,7 @@ msgid "Imperial Fluid Drachm"
 msgstr ""
 
 #: ../data/units.xml.in.h:362
-msgid "ar:UK_fl_dr,imperial_fluid_drachm,p:imperial_fluid_drachms"
+msgid "as:fl_dr_UK,aor:UK_fl_dr,imperial_fluid_drachm,p:imperial_fluid_drachms"
 msgstr ""
 
 #: ../data/units.xml.in.h:363
@@ -10497,7 +10499,7 @@ msgid "Imperial Bushel"
 msgstr ""
 
 #: ../data/units.xml.in.h:364
-msgid "ar:UK_bu,imperial_bushel,p:imperial_bushels"
+msgid "as:bu_UK,aor:UK_bu,imperial_bushel,p:imperial_bushels"
 msgstr ""
 
 #: ../data/units.xml.in.h:365
@@ -11713,58 +11715,97 @@ msgid "Typography"
 msgstr "Typografi"
 
 #: ../data/units.xml.in.h:668
-msgid "PostScript Point"
-msgstr "PostScipt-punkt"
+msgid "PostScript Point (DTP)"
+msgstr "PostScipt-punkt (DTP)"
 
 #: ../data/units.xml.in.h:669
-msgid "ar:pt,a:pts,point,p:points"
-msgstr "punkt,point,p:punkter,p:points"
+msgid ""
+"The PostScript point, or desktop publishing point, is the screen-independent "
+"typographic unit commonly used in computer software and for digital "
+"printing. It is known as the big point (bp) in TeX."
+msgstr ""
 
 #: ../data/units.xml.in.h:670
+msgid "ar:pt,a:pts,point,p:points,as:bp_tex,ao:tex_bp"
+msgstr "punkt,point,p:punkter,p:points,as:bp_tex,ao:tex_bp"
+
+#: ../data/units.xml.in.h:671
+msgid "TeX Point"
+msgstr "TeX-punkt"
+
+#: ../data/units.xml.in.h:672
+msgid "r:tex_point,as:pt_TeX,ao:tex_pt,p:tex_points"
+msgstr ""
+
+#: ../data/units.xml.in.h:673
+msgid "TeX Scaled Point"
+msgstr "Skalad TeX-punkt"
+
+#: ../data/units.xml.in.h:674
+msgid "r:tex_scaled_point,as:sp_TeX,ao:tex_sp,p:tex_scaled_points"
+msgstr ""
+
+#: ../data/units.xml.in.h:675
 msgid "PostScript Pica"
 msgstr "PostScript-pica"
 
-#: ../data/units.xml.in.h:671
+#: ../data/units.xml.in.h:676
 msgid "r:pica,p:picas"
 msgstr ""
 
-#: ../data/units.xml.in.h:672
-msgid "ATA Pica"
-msgstr "ATA-pica"
-
-#: ../data/units.xml.in.h:673
-msgid "r:ata_pica,p:ata_picas"
-msgstr ""
-
-#: ../data/units.xml.in.h:674
-msgid "ATA Point"
-msgstr "ATA-punkt"
-
-#: ../data/units.xml.in.h:675
-msgid "r:ata_point,a:ata_pt,p:ata_points"
-msgstr ""
-
-#: ../data/units.xml.in.h:676
-msgid "New Didot Point"
-msgstr "Ny Didotpunkt"
-
 #: ../data/units.xml.in.h:677
-msgid "r:new_didot"
+msgid "Twip"
 msgstr ""
 
 #: ../data/units.xml.in.h:678
-msgid "Didot Point"
-msgstr "Didotpunkt"
+msgid "r:twip,p:twips"
+msgstr ""
 
 #: ../data/units.xml.in.h:679
-msgid "r:didot,a:dd"
+msgid "Agate"
 msgstr ""
 
 #: ../data/units.xml.in.h:680
-msgid "Cicero"
+msgid "r:agate,p:agates"
 msgstr ""
 
 #: ../data/units.xml.in.h:681
+msgid "Johnson Pica"
+msgstr "Johnson-pica"
+
+#: ../data/units.xml.in.h:682
+msgid "JohnsonPica,ro:ata_pica,po:ata_picas"
+msgstr ""
+
+#: ../data/units.xml.in.h:683
+msgid "American Point"
+msgstr "Amerikansk punkt"
+
+#: ../data/units.xml.in.h:684
+msgid "US_point,ro:ata_point,as:pt_US,ao:ata_pt,p:US_points,po:ata_points"
+msgstr ""
+
+#: ../data/units.xml.in.h:685
+msgid "New Didot Point"
+msgstr "Ny Didotpunkt"
+
+#: ../data/units.xml.in.h:686
+msgid "r:new_didot"
+msgstr ""
+
+#: ../data/units.xml.in.h:687
+msgid "Didot Point"
+msgstr "Didotpunkt"
+
+#: ../data/units.xml.in.h:688
+msgid "r:didot,a:dd"
+msgstr ""
+
+#: ../data/units.xml.in.h:689
+msgid "Cicero"
+msgstr ""
+
+#: ../data/units.xml.in.h:690
 msgid "r:cicero"
 msgstr ""
 
@@ -12700,6 +12741,9 @@ msgstr "Nu (datum och tid)"
 #: ../data/variables.xml.in.h:238
 msgid "r:now"
 msgstr "nu"
+
+#~ msgid "ATA Pica"
+#~ msgstr "ATA-pica"
 
 #~ msgid "Quantile Algorithm (as in R)"
 #~ msgstr "Kvantilalgoritm (som i R)"

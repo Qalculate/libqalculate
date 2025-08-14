@@ -351,7 +351,7 @@ class MathStructure {
 		*/
 		void clearMatrix(bool preserve_precision = false);
 
-		/** Explicitely sets the type of the structure.
+		/** Explicitly sets the type of the structure.
 		* setType() is dangerous and might crash the program if used unwisely.
 		*
 		* @param mtype The new structure type

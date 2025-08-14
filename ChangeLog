@@ -534,7 +534,7 @@
 2024-04-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Do not show error for 2nd argument with unknown variable in root() function
-	* Fix precision for approximate data set number values, without uncertainty explicitely specified, with positive scientific e-notation exponent
+	* Fix precision for approximate data set number values, without uncertainty explicitly specified, with positive scientific e-notation exponent
 	* Ignore two's input setting for hexadecimal floating-point literals using 0x...p... notation
 
 2024-04-15 Hanna Knutsson <hanna.knutsson@protonmail.com>

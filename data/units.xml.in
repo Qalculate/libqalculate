@@ -2309,7 +2309,7 @@
       <unit type="alias">
         <_title>Imperial Pint</_title>
         <system>Imperial</system>
-        <_names>as:gil_UK,aor:UK_pt,imperial_pint,p:imperial_pints</_names>
+        <_names>as:pt_UK,aor:UK_pt,imperial_pint,p:imperial_pints</_names>
         <base>
           <unit>UK_gi</unit>
           <relation>4</relation>
