@@ -62,7 +62,7 @@ MathStructure *mstruct, *parsed_mstruct, mstruct_exact, prepend_mstruct;
 KnownVariable *vans[5], *v_memory;
 string result_text, parsed_text, original_expression;
 vector<string> alt_results;
-bool load_global_defs, fetch_exchange_rates_at_startup, first_time, save_mode_on_exit, save_defs_on_exit = true, clear_history_on_exit, load_defaults = false;
+bool load_global_defs, fetch_exchange_rates_at_startup, first_time, save_mode_on_exit, save_defs_on_exit = true, clear_history_on_exit, load_defaults = false, save_config = true;
 int auto_update_exchange_rates;
 PrintOptions printops, saved_printops;
 bool saved_concise_uncertainty_input = false;
@@ -1582,6 +1582,15 @@ void set_option(string str) {
 			indent_s.clear();
 			indent_s.append(prompt_l, ' ');
 		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "save config", _("save config"))) {
+		int v = s2b(svalue);
+		if(v < 0) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else if(v > 0) {
+			save_config = true;
+		} else {
+			save_config = false;
+		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "save mode", _("save mode"))) {
 		int v = s2b(svalue);
 		if(v < 0) {
@@ -2414,6 +2423,7 @@ bool show_set_help(string set_option = "") {
 		SET_OPTION_FOUND
 	}
 	STR_AND_TABS_BOOL("rpn", "", _("Activates the Reverse Polish Notation stack."), rpn_mode);
+	STR_AND_TABS_YESNO("save config", "", _("If disabled qalc.cfg is never automatically updated."), save_config);
 	STR_AND_TABS_YESNO("save definitions", "", _("Save functions, units, and variables on exit."), save_defs_on_exit);
 	STR_AND_TABS_YESNO("save mode", "", _("Save settings on exit."), save_mode_on_exit);
 #ifndef _WIN32
@@ -5959,6 +5969,7 @@ int main(int argc, char *argv[]) {
 			if(!custom_lang.empty()) {PRINT_AND_COLON_TABS(_("language"), ""); str += custom_lang; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())}
 			PRINT_AND_COLON_TABS(_("prompt"), ""); str += prompt; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("rpn"), ""); str += b2oo(rpn_mode, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("save config"), ""); str += b2yn(save_config, false);
 			PRINT_AND_COLON_TABS(_("save definitions"), ""); str += b2yn(save_defs_on_exit, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("save mode"), ""); str += b2yn(save_mode_on_exit, false);
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
@@ -8878,6 +8889,7 @@ void load_preferences() {
 	rpn_mode = false;
 
 	save_mode_on_exit = true;
+	save_config = true;
 	clear_history_on_exit = false;
 	auto_update_exchange_rates = -1;
 	first_time = false;
@@ -8944,6 +8956,8 @@ void load_preferences() {
 				v = s2i(svalue);
 				if(svar == "version") {
 					parse_qalculate_version(svalue, version_numbers);
+				} else if(svar == "save_config") {
+					save_config = v;
 				} else if(svar == "save_mode_on_exit") {
 					save_mode_on_exit = v;
 				} else if(svar == "clear_history_on_exit") {
@@ -9332,6 +9346,7 @@ void save_history() {
 	set mode to true to save current calculator mode
 */
 bool save_preferences(bool mode) {
+	if(!save_config) return false;
 	FILE *file = NULL;
 	save_history();
 	string filename = buildPath(getLocalDir(), "qalc.cfg");
@@ -9348,6 +9363,7 @@ bool save_preferences(bool mode) {
 	}
 	fprintf(file, "\n[General]\n");
 	fprintf(file, "version=%s\n", VERSION);
+	fprintf(file, "save_config=%i\n", save_config);
 	fprintf(file, "save_mode_on_exit=%i\n", save_mode_on_exit);
 	fprintf(file, "save_definitions_on_exit=%i\n", save_defs_on_exit);
 	fprintf(file, "clear_history_on_exit=%i\n", clear_history_on_exit);
