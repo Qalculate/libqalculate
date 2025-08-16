@@ -305,7 +305,7 @@ size_t unicode_length_check(const char *str) {
 			do {
 				i++;
 			} while(i < l && str[i] != 'm');
-		} else if((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
+		} else if((signed char) str[i] >= 32 || (unsigned char) str[i] >= 0xC0) {
 			l2++;
 		}
 	}
@@ -854,13 +854,13 @@ void check_vi_mode_change(bool initial = false) {
 	}
 	if(initial || vi_mode != cur_mode) {
 		if(!initial) {
-			if(vi_mode == 0) prompt_l -= strlen(rl_variable_value("emacs-mode-string"));
-			else if(vi_mode == 1) prompt_l -= strlen(rl_variable_value("vi-ins-mode-string"));
-			else if(vi_mode == 2) prompt_l -= strlen(rl_variable_value("vi-cmd-mode-string"));
+			if(vi_mode == 0) prompt_l -= unicode_length_check(rl_variable_value("emacs-mode-string"));
+			else if(vi_mode == 1) prompt_l -= unicode_length_check(rl_variable_value("vi-ins-mode-string"));
+			else if(vi_mode == 2) prompt_l -= unicode_length_check(rl_variable_value("vi-cmd-mode-string"));
 		}
-		if(cur_mode == 0) prompt_l += strlen(rl_variable_value("emacs-mode-string"));
-		else if(cur_mode == 1) prompt_l += strlen(rl_variable_value("vi-ins-mode-string"));
-		else if(cur_mode == 2) prompt_l += strlen(rl_variable_value("vi-cmd-mode-string"));
+		if(cur_mode == 0) prompt_l += unicode_length_check(rl_variable_value("emacs-mode-string"));
+		else if(cur_mode == 1) prompt_l += unicode_length_check(rl_variable_value("vi-ins-mode-string"));
+		else if(cur_mode == 2) prompt_l += unicode_length_check(rl_variable_value("vi-cmd-mode-string"));
 		indent_s.clear();
 		indent_s.append(prompt_l, ' ');
 		vi_mode = cur_mode;
@@ -1570,7 +1570,7 @@ void set_option(string str) {
 		if(svalue == "0" || svalue == "1" || EQUALS_IGNORECASE_AND_LOCAL(svar, "default", _("default"))) svalue = "> ";
 		if(svalue != prompt) {
 			prompt = svalue + " ";
-			prompt_l = prompt.length();
+			prompt_l = unicode_length_check(prompt.c_str());
 #ifdef HAVE_LIBREADLINE
 			check_vi_mode_change(true);
 			rl_set_prompt(prompt.c_str());
@@ -8972,7 +8972,7 @@ void load_preferences() {
 					ignore_locale = v;
 				} else if(svar == "prompt") {
 					prompt = svalue + " ";
-					prompt_l = prompt.length();
+					prompt_l = unicode_length_check(prompt.c_str());
 					indent_s.clear();
 					indent_s.append(prompt_l, ' ');
 				} else if(svar == "colorize") {
