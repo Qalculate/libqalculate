@@ -3972,10 +3972,12 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 		size_t i;
 		if(BASE_2_10) {
 			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS EXPS ID_WRAP_LEFT ":", 1);
+		} else if(po.base == 16) {
+			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS "p" ID_WRAP_LEFT ":", 1);
 		} else {
 			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS ID_WRAP_LEFT ":", 1);
 		}
-		if(i == string::npos && str[0] != LOGICAL_NOT_CH && str[0] != BITWISE_NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1) && (!BASE_2_10 || (str[0] != EXP_CH && str[0] != EXP2_CH))) {
+		if(i == string::npos && str[0] != LOGICAL_NOT_CH && str[0] != BITWISE_NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1) && (!BASE_2_10 || (str[0] != EXP_CH && str[0] != EXP2_CH)) && (po.base != 16 || str[0] != 'p')) {
 			return parseNumber(mstruct, str, po);
 		} else {
 			return parseOperators(mstruct, str, po);
@@ -3988,10 +3990,12 @@ bool Calculator::parseAdd(string &str, MathStructure *mstruct, const ParseOption
 		size_t i;
 		if(BASE_2_10) {
 			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS EXPS ID_WRAP_LEFT ":", 1);
+		} else if(po.base == 16) {
+			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS "p" ID_WRAP_LEFT ":", 1);
 		} else {
 			i = str.find_first_of(SPACE MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS ID_WRAP_LEFT ":", 1);
 		}
-		if(i == string::npos && str[0] != LOGICAL_NOT_CH && str[0] != BITWISE_NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1) && (!BASE_2_10 || (str[0] != EXP_CH && str[0] != EXP2_CH))) {
+		if(i == string::npos && str[0] != LOGICAL_NOT_CH && str[0] != BITWISE_NOT_CH && !(str[0] == ID_WRAP_LEFT_CH && str.find(ID_WRAP_RIGHT) < str.length() - 1) && (!BASE_2_10 || (str[0] != EXP_CH && str[0] != EXP2_CH)) && (po.base != 16 || str[0] != 'p')) {
 			if(s == OPERATION_EXP10 && po.read_precision == ALWAYS_READ_PRECISION) {
 				ParseOptions po2 = po;
 				po2.read_precision = READ_PRECISION_WHEN_DECIMALS;
@@ -5416,7 +5420,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					}
 				}
 				if(!b) {
-					i2 = str.find_last_not_of(BASE_2_10 ? NUMBERS INTERNAL_NUMBER_CHARS PLUS MINUS EXPS : NUMBERS INTERNAL_NUMBER_CHARS PLUS MINUS, i - 1);
+					i2 = str.find_last_not_of(BASE_2_10 ? NUMBERS INTERNAL_NUMBER_CHARS PLUS MINUS EXPS : (po.base == 16 ? "p" NUMBERS INTERNAL_NUMBER_CHARS PLUS MINUS EXPS : NUMBERS INTERNAL_NUMBER_CHARS PLUS MINUS), i - 1);
 					if(i2 == string::npos || (i2 != i - 1 && str[i2] == MULTIPLICATION_2_CH)) b = true;
 					i2 = str.rfind(MULTIPLICATION_2_CH, i - 1);
 					if(i2 == string::npos) b = true;
@@ -6039,6 +6043,23 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 		str = str.substr(i + 1, str.length() - (i + 1));
 		parseAdd(str, mstruct, po, OPERATION_EXP10);
+		if(i == 0 && mstruct->isMultiplication() && mstruct->size() == 2 && (*mstruct)[0].isOne()) mstruct->setToChild(2);
+	} else if(po.base == 16 && (i = str.find('p', 0)) != string::npos && i + 1 != str.length() && str.find("\b") == string::npos) {
+		// Parse scientific e-notation
+		if(i == 0) {
+			mstruct->set(1, 1, 0);
+		} else {
+			str2 = str.substr(0, i);
+			parseAdd(str2, mstruct, po);
+		}
+		str = str.substr(i + 1, str.length() - (i + 1));
+		MathStructure *mstruct2 = new MathStructure;
+		ParseOptions po2 = po;
+		po2.base = 10;
+		parseAdd(str, mstruct2, po2);
+		mstruct->multiply(nr_two);
+		mstruct->last().raise_nocopy(mstruct2);
+		mstruct->childUpdated(2);
 		if(i == 0 && mstruct->isMultiplication() && mstruct->size() == 2 && (*mstruct)[0].isOne()) mstruct->setToChild(2);
 	} else if((i = str.find(INTERNAL_UPOW_CH, 1)) != string::npos && i + 1 != str.length()) {
 		// Parse exponentiation (^)
