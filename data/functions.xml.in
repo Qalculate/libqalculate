@@ -2153,7 +2153,7 @@
         <_title>Harmonic Mean</_title>
         <_names>r:harmmean</_names>
         <condition>min(\x)>0</condition>
-        <expression>dimension(\x)/csum(1,-1,0,"y"+1/"x","x","y",\x)</expression>
+        <expression>dimension(\x)/total(\x.^-1)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
           <handle_vector>true</handle_vector>
@@ -2163,7 +2163,7 @@
         <_title>Geometric Mean</_title>
         <_names>r:geomean</_names>
         <condition>min(\x)>0</condition>
-        <expression>abs(csum(1,-1,1,"y"*"x","x","y",\x)^(1/dimension(\x)))</expression>
+        <expression>exp(total(ln(\x))/dimension(\x))</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
           <handle_vector>true</handle_vector>
@@ -2210,7 +2210,7 @@
       <function>
         <_title>Quadratic Mean (RMS)</_title>
         <_names>r:rms</_names>
-        <expression>abs((csum(1,-1,0,"y"+"x"^2,"x","y",\x)/dimension(\x))^(1/2))</expression>
+        <expression>abs((total(\x.^2)/dimension(\x))^(1/2))</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
           <handle_vector>true</handle_vector>
@@ -2241,7 +2241,7 @@
         <_title>Variance (entire population)</_title>
         <_names>r:varp</_names>
         <subfunction precalculate="true">mean(\x)</subfunction>
-        <expression>csum(1,-1,0,"y"+("x"-\1)^2,"x","y",\x)/dimension(\x)</expression>
+        <expression>total((\x-\1).^2)/dimension(\x)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
           <handle_vector>true</handle_vector>
@@ -2251,7 +2251,7 @@
         <_title>Variance (random sampling)</_title>
         <_names>r:var</_names>
         <subfunction precalculate="true">mean(\x)</subfunction>
-        <expression>csum(1,-1,0,"y"+("x"-\1)^2,"x","y",\x)/(dimension(\x)-1)</expression>
+        <expression>total((\x-\1).^2)/(dimension(\x)-1)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
           <handle_vector>true</handle_vector>
@@ -2270,7 +2270,7 @@
         <_title>Mean Deviation</_title>
         <_names>r:meandev</_names>
         <subfunction precalculate="true">mean(\x)</subfunction>
-        <expression>csum(1,-1,0,"y"+abs("x"-\1),"x","y",\x)/dimension(\x)</expression>
+        <expression>total(abs(\x-\1))/dimension(\x)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
           <handle_vector>true</handle_vector>
@@ -2281,9 +2281,8 @@
         <_names>r:cov,r:covar</_names>
         <subfunction precalculate="true">mean(\x)</subfunction>
         <subfunction precalculate="true">mean(\y)</subfunction>
-        <subfunction precalculate="true">dimension(\x)</subfunction>
-        <subfunction precalculate="true">min(dimension(\x),dimension(\y))</subfunction>
-        <expression>csum(1,\4,0,"y"+("x"-\1)*(element("v","i"+\3)-\2),"x","y",mergevectors(\x,\y),"i","v")/(\4)</expression>
+        <condition>dimension(\x)=dimension(\y)</condition>
+        <expression>total((\x-\1).*(\y-\2))/dimension(\x)</expression>
         <argument type="vector" index="1">
           <_title>Data 1</_title>
         </argument>
@@ -2296,7 +2295,7 @@
         <_names>r:poolvar</_names>
         <subfunction precalculate="true">mean(\x)</subfunction>
         <subfunction precalculate="true">mean(\y)</subfunction>
-        <expression>(csum(1,-1,0,"y"+("x"-\1)^2,"x","y",\x)+csum(1,-1,0,"y"+("x"-\2)^2,"x","y",\y))/(dimension(\x)+dimension(\y)-2)</expression>
+        <expression>(total((\x-\1).^2)+total((\y-\2).^2))/(dimension(\x)+dimension(\y)-2)</expression>
         <argument type="vector" index="1">
           <_title>Data 1</_title>
         </argument>
@@ -2358,25 +2357,9 @@
     <category>
       <_title>Correlation</_title>
       <function>
-        <_title>Statistical Correlation</_title>
-        <_names>r:cor</_names>
-        <expression>covar(\x,\y)/(stdev(\x)*stdev(\y))</expression>
-        <argument type="vector" index="1">
-          <_title>Data 1</_title>
-        </argument>
-        <argument type="vector" index="2">
-          <_title>Data 2</_title>
-        </argument>
-      </function>
-      <function>
         <_title>Pearson's Correlation Coefficient</_title>
-        <_names>r:pearson,r:correl</_names>
-        <condition>dimension(\x)=dimension(\y)</condition>
-        <subfunction precalculate="true">total(\x)</subfunction>
-        <subfunction precalculate="true">total(\y)</subfunction>
-        <subfunction precalculate="true">dimension(\x)</subfunction>
-        <subfunction precalculate="true">dimension(\y)</subfunction>
-        <expression>(\x.\y-\1*\2/\3)/abs(((\x.\x-(\1^2)/\3)*(\y.\y-(\2^2)/\4))^(1/2))</expression>
+        <_names>r:pearson,r:correl,r:cor</_names>
+        <expression>covar(\x,\y)/(stdevp(\x)*stdevp(\y))</expression>
         <argument type="vector" index="1">
           <_title>Data 1</_title>
         </argument>

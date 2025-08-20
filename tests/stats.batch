@@ -70,8 +70,6 @@ pearson(libqalculate_tests_vector, libqalculate_tests_vector2)
 	0.9519790480
 spearman(libqalculate_tests_vector, libqalculate_tests_vector2)
 	0.9742094209
-cor(libqalculate_tests_vector, libqalculate_tests_vector2)
-	0.9424592575
 covar(libqalculate_tests_vector, libqalculate_tests_vector2)
 	499.1760404
 poolvar(libqalculate_tests_vector, libqalculate_tests_vector2)
