@@ -60,7 +60,7 @@ PercentileFunction::PercentileFunction() : MathFunction("percentile", 2, 3) {
 	fr.set(9, 1, 0);
 	iarg->setMax(&fr);
 	setArgumentDefinition(3, iarg);
-	setDefaultValue(3, "8");
+	setDefaultValue(3, "7");
 }
 int PercentileFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	MathStructure v(vargs[0]);

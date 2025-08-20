@@ -2,12 +2,14 @@ mean(5; 6; 4; 2; 3; 7)
 	4.5
 stdev(5; 6; 4; 2; 3; 7)
 	1.870828693
-quartile((5; 6; 4; 2; 3; 7); 1)
+quartile((5; 6; 4; 2; 3; 7); 1; 8)
 	2.916666667
-percentile([5 6 4 2 3 7]; 25)
+percentile([5 6 4 2 3 7]; 25; 8)
 	2.916666667
 normdist(7; 5)
 	0.05399096651
+quadraticfit([5 3 4 5 6 7 13 24])
+	0.7797619048x^2 - 4.720238095x + 9.732142857
 cubicfit([5 3 4 5 6 7 13 24])
 	0.1489898990x^3 - 1.231601732x^2 + 2.952741703x + 2.357142857
 fdist(5, 2, 3, 0)
@@ -18,3 +20,65 @@ normdistinv(0.2, 5, 2)
 	3.316757533
 chisqdistinv(0.9, 3)
 	6.251388631
+libqalculate_tests_vector=load(tests/vectordata.csv)
+mean(libqalculate_tests_vector)
+	6.530919283
+geomean(abs(libqalculate_tests_vector))
+	14.25624271
+harmmean(abs(libqalculate_tests_vector))
+	5.691924037
+rms(libqalculate_tests_vector)
+	24.22585458
+trimmean(libqalculate_tests_vector, 10)
+	6.788959652
+winsormean(libqalculate_tests_vector, 10)
+	6.774860902
+weighmean(libqalculate_tests_vector, genvector(2;1;100))
+	6.530919283
+stdev(libqalculate_tests_vector)
+	23.44646004
+stderr(libqalculate_tests_vector)
+	2.344646004
+meandev(libqalculate_tests_vector)
+	19.20169382
+quartile(libqalculate_tests_vector, 1, 7)
+	-10.48274166
+percentile(libqalculate_tests_vector, 25, 7)
+	-10.48274166
+decile(libqalculate_tests_vector, 9, 7)
+	38.27474287
+min(libqalculate_tests_vector)
+	-43.38345286
+max(libqalculate_tests_vector)
+	54.40816396
+number(libqalculate_tests_vector)
+	100
+range(libqalculate_tests_vector)
+	97.79161682
+median(libqalculate_tests_vector)
+	8.084203925
+total(libqalculate_tests_vector)
+	653.0919283
+iqr(libqalculate_tests_vector)
+	33.42899060
+libqalculate_tests_vector2=load(tests/vectordata2.csv)
+ttest(libqalculate_tests_vector, libqalculate_tests_vector2)
+	0.3493127334
+pttest(libqalculate_tests_vector, libqalculate_tests_vector2)
+	1.583214005
+pearson(libqalculate_tests_vector, libqalculate_tests_vector2)
+	0.9519790480
+spearman(libqalculate_tests_vector, libqalculate_tests_vector2)
+	0.9742094209
+cor(libqalculate_tests_vector, libqalculate_tests_vector2)
+	0.9424592575
+covar(libqalculate_tests_vector, libqalculate_tests_vector2)
+	499.1760404
+poolvar(libqalculate_tests_vector, libqalculate_tests_vector2)
+	530.0195143
+mode([1 3 7 5 1 1 1 3])
+	1
+median([1 3 7 5 1 1 1 3])
+	2
+delete libqalculate_tests_vector
+delete libqalculate_tests_vector2

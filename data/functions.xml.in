@@ -1981,7 +1981,7 @@
       <function>
         <_title>Quartile</_title>
         <_names>r:quartile</_names>
-        <expression>percentile(\x,25*\y,\Z{8})</expression>
+        <expression>percentile(\x,25*\y,\Z{7})</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
         </argument>
@@ -1999,7 +1999,7 @@
       <function>
         <_title>Decile</_title>
         <_names>r:decile</_names>
-        <expression>percentile(\x,10*\y,\Z{8})</expression>
+        <expression>percentile(\x,10*\y,\Z{7})</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
         </argument>
@@ -2018,7 +2018,7 @@
         <_title>Interquartile Range</_title>
         <_names>r:iqr</_names>
         <_description>Calculates the difference between the first and third quartile.</_description>
-        <expression>quartile(\x,3,\Y{8})-quartile(\x,1,\Y{8})</expression>
+        <expression>quartile(\x,3,\Y{7})-quartile(\x,1,\Y{7})</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
         </argument>
@@ -2152,6 +2152,7 @@
       <function>
         <_title>Harmonic Mean</_title>
         <_names>r:harmmean</_names>
+        <condition>min(\x)>0</condition>
         <expression>dimension(\x)/csum(1,-1,0,"y"+1/"x","x","y",\x)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
@@ -2161,6 +2162,7 @@
       <function>
         <_title>Geometric Mean</_title>
         <_names>r:geomean</_names>
+        <condition>min(\x)>0</condition>
         <expression>abs(csum(1,-1,1,"y"*"x","x","y",\x)^(1/dimension(\x)))</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
@@ -2196,9 +2198,8 @@
       <function>
         <_title>Weighted Mean</_title>
         <_names>r:weighmean</_names>
-        <subfunction precalculate="true">dimension(\x)</subfunction>
-        <subfunction precalculate="true">min(dimension(\x),dimension(\y))</subfunction>
-        <expression>csum(1,\2,0,"y"+"x"*element("v","i"+\1),"x","y",mergevectors(\x,\y),"i","v")/total(limits(\y,1,\2))</expression>
+        <condition>dimension(\x)=dimension(\y)</condition>
+        <expression>total(\x.*\y)/total(\y)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
         </argument>
@@ -2294,7 +2295,7 @@
         <_title>Pooled Variance</_title>
         <_names>r:poolvar</_names>
         <subfunction precalculate="true">mean(\x)</subfunction>
-        <subfunction precalculate="true">mean(\y)^2</subfunction>
+        <subfunction precalculate="true">mean(\y)</subfunction>
         <expression>(csum(1,-1,0,"y"+("x"-\1)^2,"x","y",\x)+csum(1,-1,0,"y"+("x"-\2)^2,"x","y",\y))/(dimension(\x)+dimension(\y)-2)</expression>
         <argument type="vector" index="1">
           <_title>Data 1</_title>
@@ -2401,7 +2402,7 @@
       <function>
         <_title>Unpaired T-Test</_title>
         <_names>r:ttest</_names>
-        <subfunction precalculate="true">poolvar(\x,\y)^2</subfunction>
+        <subfunction precalculate="true">poolvar(\x,\y)</subfunction>
         <expression>(mean(\x)-mean(\y))/abs(((\1)/dimension(\x)+(\1)/dimension(\y))^(1/2))</expression>
         <argument type="vector" index="1">
           <_title>Data 1</_title>
