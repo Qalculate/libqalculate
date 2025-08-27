@@ -4290,7 +4290,7 @@
       <function>
         <_title>Elasticity</_title>
         <_names>r:elasticity</_names>
-        <_description>Calculates the demand elasticity. Also works for supply elasticity, income elasticity, cross-price elasticity, etc. Just replace demand with supply, or price with income...&#10;&#10;eg. elasticity(100-x^2, 3) calculates the demand elasticity when the price is 3 for the function "Q = 100 - x^2" where x is the default price variable.</_description>
+        <_description>Calculates the demand elasticity. Also works for supply elasticity, income elasticity, cross-price elasticity, etc. Just replace demand with supply, or price with income...&#10;&#10;e.g. elasticity(100-x^2, 3) calculates the demand elasticity when the price is 3 for the function "Q = 100 - x^2" where x is the default price variable.</_description>
         <expression>replace(diff(\x,\Z{x}),\Z,\y,1)*\y/replace(\x,\Z,\y)</expression>
         <argument type="free" index="1">
           <_title>Demand function</_title>
@@ -4402,7 +4402,7 @@
     <function>
       <_title>Treasury Bill Price</_title>
       <_names>r:tbillprice</_names>
-      <_description>Returns the price per $100 value for a treasury bill.</_description>
+      <_description>Returns the price per $100 face value for a treasury bill.</_description>
       <expression>100*(1-(\z*days(\x,\y,1,1))/360)</expression>
       <argument type="date" index="1">
         <_title>Settlement date</_title>
@@ -4563,7 +4563,7 @@
     <function>
       <_title>Effective Interest Rate</_title>
       <_names>r:effect</_names>
-      <_description>Calculates the effective interest for a given nominal rate.</_description>
+      <_description>Calculates the annual net interest rate for a nominal interest rate.</_description>
       <expression>(1+\x/\y)^\y-1</expression>
       <argument type="free" index="1">
         <_title>Nominal interest rate</_title>
@@ -4679,8 +4679,8 @@
       <_title>Dollar Fraction</_title>
       <_names>r:dollarfr</_names>
       <_description>Converts a decimal dollar price into a dollar price expressed as a fraction.</_description>
-      <expression>int(\x)+frac(\x)*\y/10^ceil(log(\y))</expression>
-      <argument type="free" index="1">
+      <expression>int(\x)+frac(\x)*\y/10^ceil(log10(\y))</expression>
+      <argument type="number" index="1">
         <_title>Decimal dollar</_title>
       </argument>
       <argument type="integer" index="2">
@@ -4692,8 +4692,8 @@
       <_title>Dollar Decimal</_title>
       <_names>r:dollarde</_names>
       <_description>Converts a dollar price expressed as a fraction into a dollar price expressed as a decimal number.</_description>
-      <expression>int(\x)+frac(\x)*10^ceil(log(\y))/\y</expression>
-      <argument type="free" index="1">
+      <expression>int(\x)+frac(\x)*10^ceil(log10(\y-0.5))/\y</expression>
+      <argument type="number" index="1">
         <_title>Fractional dollar</_title>
       </argument>
       <argument type="integer" index="2">
@@ -4702,7 +4702,7 @@
       </argument>
     </function>
     <function>
-      <_title>Amount received at maturity for a security bond</_title>
+      <_title>Amount received at maturity</_title>
       <_names>r:received</_names>
       <_description>Returns the amount received at the maturity date for an invested security.&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360. The settlement date must be before maturity date.</_description>
       <expression>\z/(1-\a*yearfrac(\x,\y,\B{0},1))</expression>
