@@ -1848,6 +1848,18 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				printops.base = BASE_TIME;
 			} else if(equalsIgnoreCase(to_str, "unicode")) {
 				printops.base = BASE_UNICODE;
+			} else if(equalsIgnoreCase(to_str, "sci") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "scientific", _("scientific"))) {
+				printops.sort_options.minus_last = false;
+				printops.min_exp = EXP_PURE;
+				printops.show_ending_zeroes = true;
+				printops.use_unit_prefixes = false;
+				printops.negative_exponents = true;
+			} else if(equalsIgnoreCase(to_str, "eng") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "engineering", _("engineering"))) {
+				printops.sort_options.minus_last = false;
+				printops.min_exp = EXP_BASE_3;
+				printops.show_ending_zeroes = true;
+				printops.use_unit_prefixes = false;
+				printops.negative_exponents = false;
 			} else if(equalsIgnoreCase(to_str, "utc") || equalsIgnoreCase(to_str, "gmt")) {
 				printops.time_zone = TIME_ZONE_UTC;
 			} else if(to_str.length() > 3 && equalsIgnoreCase(to_str.substr(0, 3), "bin") && is_in(NUMBERS, to_str[3])) {

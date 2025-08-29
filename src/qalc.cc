@@ -5209,6 +5209,40 @@ int main(int argc, char *argv[]) {
 				printops.base = BASE_UNICODE;
 				setResult(NULL, false);
 				printops.base = save_base;
+			} else if(equalsIgnoreCase(str, "sci") || EQUALS_IGNORECASE_AND_LOCAL(str, "scientific", _("scientific"))) {
+				bool save_minus = printops.sort_options.minus_last;
+				int save_exp = printops.min_exp;
+				bool save_zeroes = printops.show_ending_zeroes;
+				bool save_prefix = printops.use_unit_prefixes;
+				bool save_neg = printops.negative_exponents;
+				printops.sort_options.minus_last = false;
+				printops.min_exp = EXP_PURE;
+				printops.show_ending_zeroes = true;
+				printops.use_unit_prefixes = false;
+				printops.negative_exponents = true;
+				setResult(NULL, false);
+				printops.sort_options.minus_last = save_minus;
+				printops.min_exp = save_exp;
+				printops.show_ending_zeroes = save_zeroes;
+				printops.use_unit_prefixes = save_prefix;
+				printops.negative_exponents = save_neg;
+			} else if(equalsIgnoreCase(str, "eng") || EQUALS_IGNORECASE_AND_LOCAL(str, "engineering", _("engineering"))) {
+				bool save_minus = printops.sort_options.minus_last;
+				int save_exp = printops.min_exp;
+				bool save_zeroes = printops.show_ending_zeroes;
+				bool save_prefix = printops.use_unit_prefixes;
+				bool save_neg = printops.negative_exponents;
+				printops.sort_options.minus_last = false;
+				printops.min_exp = EXP_BASE_3;
+				printops.show_ending_zeroes = true;
+				printops.use_unit_prefixes = false;
+				printops.negative_exponents = false;
+				setResult(NULL, false);
+				printops.sort_options.minus_last = save_minus;
+				printops.min_exp = save_exp;
+				printops.show_ending_zeroes = save_zeroes;
+				printops.use_unit_prefixes = save_prefix;
+				printops.negative_exponents = save_neg;
 			} else if(equalsIgnoreCase(str, "utc") || equalsIgnoreCase(str, "gmt")) {
 				printops.time_zone = TIME_ZONE_UTC;
 				setResult(NULL, false);
@@ -6308,6 +6342,9 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- decimals (show result as decimal fraction)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- 1/# (show as mixed fraction with specified denominator)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("prepend with - to show as simple fraction"));
+				CHECK_IF_SCREEN_FILLED_PUTS("");
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- sci, scientific (show result with scientific notation)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- eng, engineering (show result with engineering notation)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- factors (factorize result)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
@@ -7953,6 +7990,10 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 	bool fixed_fraction_has_sign = true;
 	bool delay_complex = false;
 	bool save_duosyms = printops.duodecimal_symbols;
+	bool save_minus = printops.sort_options.minus_last;
+	int save_exp = printops.min_exp;
+	bool save_zeroes = printops.show_ending_zeroes;
+	bool save_neg = printops.negative_exponents;
 
 	if(do_stack) {
 	} else {
@@ -8026,6 +8067,18 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 					printops.base = BASE_TIME;
 				} else if(equalsIgnoreCase(to_str, "unicode")) {
 					printops.base = BASE_UNICODE;
+				} else if(equalsIgnoreCase(to_str, "sci") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "scientific", _("scientific"))) {
+					printops.sort_options.minus_last = false;
+					printops.min_exp = EXP_PURE;
+					printops.show_ending_zeroes = true;
+					printops.use_unit_prefixes = false;
+					printops.negative_exponents = true;
+				} else if(equalsIgnoreCase(to_str, "eng") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "engineering", _("engineering"))) {
+					printops.sort_options.minus_last = false;
+					printops.min_exp = EXP_BASE_3;
+					printops.show_ending_zeroes = true;
+					printops.use_unit_prefixes = false;
+					printops.negative_exponents = false;
 				} else if(equalsIgnoreCase(to_str, "utc") || equalsIgnoreCase(to_str, "gmt")) {
 					printops.time_zone = TIME_ZONE_UTC;
 				} else if(to_str.length() > 3 && equalsIgnoreCase(to_str.substr(0, 3), "bin") && is_in(NUMBERS, to_str[3])) {
@@ -8512,6 +8565,10 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		printops.use_denominator_prefix = save_den;
 		printops.restrict_fraction_length = save_rfl;
 		printops.number_fraction_format = save_format;
+		printops.sort_options.minus_last = save_minus;
+		printops.min_exp = save_exp;
+		printops.show_ending_zeroes = save_zeroes;
+		printops.negative_exponents = save_neg;
 		CALCULATOR->useBinaryPrefixes(save_bin);
 		CALCULATOR->setFixedDenominator(save_fden);
 		dual_fraction = save_dual;
@@ -8744,6 +8801,10 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 	printops.use_denominator_prefix = save_den;
 	printops.restrict_fraction_length = save_rfl;
 	printops.number_fraction_format = save_format;
+	printops.sort_options.minus_last = save_minus;
+	printops.min_exp = save_exp;
+	printops.show_ending_zeroes = save_zeroes;
+	printops.negative_exponents = save_neg;
 	CALCULATOR->useBinaryPrefixes(save_bin);
 	CALCULATOR->setFixedDenominator(save_fden);
 	dual_fraction = save_dual;
