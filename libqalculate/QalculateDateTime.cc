@@ -1179,7 +1179,6 @@ Number QalculateDateTime::daysTo(const QalculateDateTime &date, int basis, bool 
 	if(basis < 0 || basis > 4) basis = 1;
 
 	bool neg = false;
-	bool isleap = false;
 	long int days, years;
 
 	long int day1 = i_day, month1 = i_month, year1 = i_year;
@@ -1201,10 +1200,18 @@ Number QalculateDateTime::daysTo(const QalculateDateTime &date, int basis, bool 
 		neg = true;
 	}
 
+	if(basis == 0) {
+		if(month1 == 2 && month2 == 2 && day1 == daysPerMonth(month1, year1) && day2 == daysPerMonth(month2, year2)) day2 = 30;
+		if(month1 == 2 && day1 == daysPerMonth(month1, year1)) day1 = 30;
+		if(day2 == 31 && day1 >= 30) day2 = 30;
+		if(day1 == 31) day1 = 30;
+	} else if(basis == 4) {
+		if(day2 == 31) day2 = 30;
+		if(day1 == 31) day1 = 30;
+	}
+
 	years = year2  - year1;
 	days = day2 - day1;
-
-	isleap = isLeapYear(year1);
 
 	switch(basis) {
 		case 0: {
@@ -1213,19 +1220,6 @@ Number QalculateDateTime::daysTo(const QalculateDateTime &date, int basis, bool 
 			nr += (month2 - month1);
 			nr *= 30;
 			nr += days;
-			if(date_func) {
-				if(month1 == 2 && ((day1 == 28 && !isleap) || (day1 == 29 && isleap)) && !(month2 == month1 && day1 == day2 && year1 == year2)) {
-					if(isleap) nr -= 1;
-					else nr -= 2;
-				} else if(day1 == 31 && day2 < 31) {
-					nr++;
-				}
-			} else {
-				if(month1 == 2 && month2 != 2 && year1 == year2) {
-					if(isleap) nr -= 1;
-					else nr -= 2;
-				}
-			}
 			break;
 		}
 		case 1: {}
@@ -1274,10 +1268,6 @@ Number QalculateDateTime::daysTo(const QalculateDateTime &date, int basis, bool 
 			nr.set(years, 1, 0);
 			nr *= 12;
 			nr += (month2 - month1);
-			if(date_func) {
-				if(day2 == 31 && day1 < 31) days--;
-				if(day1 == 31 && day2 < 31) days++;
-			}
 			nr *= 30;
 			nr += days;
 			break;
@@ -1297,6 +1287,7 @@ Number QalculateDateTime::yearsTo(const QalculateDateTime &date, int basis, bool
 			bool neg = false;
 			long int day1 = i_day, month1 = i_month, year1 = i_year;
 			long int day2 = date.day(), month2 = date.month(), year2 = date.year();
+			Number nr_leap;
 			Number t1(n_sec), t2(date.second());
 			if(remove_leap_seconds) {
 				if(t1.isGreaterThanOrEqualTo(60)) t1--;
@@ -1314,30 +1305,36 @@ Number QalculateDateTime::yearsTo(const QalculateDateTime &date, int basis, bool
 			}
 			t1 /= 86400;
 			t2 /= 86400;
+			Number *nr_cur = NULL;
+			if(isLeapYear(year1)) nr_cur = &nr_leap;
+			else nr_cur = &nr;
 			for(int month = 12; month > month1; month--) {
-				nr += daysPerMonth(month, year1);
+				*nr_cur += daysPerMonth(month, year1);
 			}
-			nr += daysPerMonth(month1, year1) - day1 + 1;
-			nr -= t1;
+			*nr_cur += daysPerMonth(month1, year1) - day1 + 1;
+			*nr_cur -= t1;
+			if(isLeapYear(year2)) nr_cur = &nr_leap;
+			else nr_cur = &nr;
 			for(int month = 1; month < month2; month++) {
-				nr += daysPerMonth(month, year2);
+				*nr_cur += daysPerMonth(month, year2);
 			}
-			nr += day2 - 1;
-			nr += t2;
+			*nr_cur += day2 - 1;
+			*nr_cur += t2;
 			bool check_aborted = (year2 - year1) > 10000L;
 			Number days_of_years;
-			for(int year = year1; year <= year2; year++) {
+			for(int year = year1 + 1; year < year2; year++) {
 				if(check_aborted && CALCULATOR && CALCULATOR->aborted()) {
 					nr.setPlusInfinity();
 					return nr;
 				}
-				days_of_years += daysPerYear(year, basis);
 				if(year != year1 && year != year2) {
-					nr += daysPerYear(year, basis);
+					if(isLeapYear(year)) nr_leap += daysPerYear(year, basis);
+					else nr += daysPerYear(year, basis);
 				}
 			}
-			days_of_years /= year2 + 1 - year1;
-			nr /= days_of_years;
+			nr_leap /= 366;
+			nr /= 365;
+			nr += nr_leap;
 			if(neg) nr.negate();
 		}
 	} else {
