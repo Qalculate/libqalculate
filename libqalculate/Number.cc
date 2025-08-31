@@ -10518,6 +10518,12 @@ string to_float(Number nr_pre, unsigned int bits, unsigned int expbits, unsigned
 			po.is_approximate = &b_approx;
 			string sfrac = nrfrac.print(po);
 			remove_blanks(sfrac);
+			if(sfrac.length() <= 1 || sfrac.find_first_not_of("10.") != string::npos) {
+				if(!subnormal) return "";
+				sfrac = "0.";
+				nrexp.clear();
+				for(size_t i = expbits + 2; i < bits; i++) sfrac += "0";
+			}
 			if(subnormal && sfrac[0] == '1') {
 				sfrac = "";
 				nrexp = 1;
