@@ -69,6 +69,7 @@ bool saved_concise_uncertainty_input = false;
 bool complex_angle_form = false, saved_caf = false;
 EvaluationOptions evalops, saved_evalops;
 bool dot_question_asked = false, implicit_question_asked = false;
+bool assumptions_warning_shown = false;
 Number saved_custom_output_base, saved_custom_input_base;
 AssumptionType saved_assumption_type;
 AssumptionSign saved_assumption_sign;
@@ -1040,6 +1041,7 @@ void set_option(string str) {
 			if(value.empty()) value = _("unknown");
 			FPUTS_UNICODE(_("assumptions"), stdout); fputs(": ", stdout); PUTS_UNICODE(value.c_str());
 		}
+		assumptions_warning_shown = true;
 		expression_calculation_updated();
 	}
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "all prefixes", _("all prefixes")) || svar == "allpref") SET_BOOL_D(printops.use_all_prefixes)
@@ -6550,7 +6552,7 @@ bool display_errors(bool goto_input, int cols, bool *implicit_warning) {
 				*implicit_warning = true;
 				CALCULATOR->clearMessages();
 			}
-		} else {
+		} else if(!CALCULATOR->message()->message().empty()) {
 			if(!hide_parse_errors || (CALCULATOR->message()->stage() != MESSAGE_STAGE_PARSING && CALCULATOR->message()->stage() != MESSAGE_STAGE_CONVERSION_PARSING)) {
 				MessageType mtype = CALCULATOR->message()->type();
 				string str;
@@ -7466,6 +7468,25 @@ void execute_command(int command_type, bool show_result, bool auto_calculate) {
 
 }
 
+void warn_assumptions(MathStructure &m, bool auto_calculate) {
+	if(assumptions_warning_shown) return;
+	if(CALCULATOR->defaultAssumptions()->type() != ASSUMPTION_TYPE_REAL || CALCULATOR->defaultAssumptions()->sign() != ASSUMPTION_SIGN_UNKNOWN) {
+		assumptions_warning_shown = true;
+		return;
+	}
+	if(m.containsType(STRUCT_COMPARISON, false) <= 0 && !m.containsFunctionId(FUNCTION_ID_SOLVE)) return;
+	MathStructure mvar = m.find_x_var();
+	if(!mvar.isSymbolic() && !mvar.isVariable()) return;
+	if(mvar.isVariable() && (mvar.variable()->isKnown() || ((UnknownVariable*) mvar.variable())->assumptions())) return;
+	if(auto_calculate) {
+		CALCULATOR->error(false, "", NULL);
+	} else {
+		CALCULATOR->error(false, _("Unknown variables (e.g. x, y, z) are by default assumed real. Assumptions can be changed using the \"assume\" command."), NULL);
+		assumptions_warning_shown = true;
+	}
+}
+
+
 bool test_ask_sinc(MathStructure &m) {
 	return !sinc_set && m.containsFunctionId(FUNCTION_ID_SINC);
 }
@@ -8004,7 +8025,10 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 			return;
 		}
 		string from_str = str;
-		if(ask_questions && !auto_calculate && test_ask_dot(from_str)) ask_dot();
+		if(ask_questions && test_ask_dot(from_str)) {
+			if(auto_calculate) CALCULATOR->error(false, "", NULL);
+			else ask_dot();
+		}
 		if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
 			had_to_expression = true;
 			remove_duplicate_blanks(to_str);
@@ -8575,6 +8599,10 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		if(!simplified_percentage) evalops.parse_options.parsing_mode = (ParsingMode) (evalops.parse_options.parsing_mode & ~PARSE_PERCENT_AS_ORDINARY_CONSTANT);
 		return;
 	}
+	if(!result_only) warn_assumptions(*parsed_mstruct, auto_calculate);
+	if(auto_calculate && ask_questions && !avoid_recalculation && !do_mathoperation && !CALCULATOR->message() && (test_ask_sinc(*parsed_mstruct) || test_ask_sinc(*mstruct) || test_ask_percent() || test_ask_tc(*parsed_mstruct))) {
+		CALCULATOR->error(false, "", NULL);
+	}
 
 	mstruct_exact.setUndefined();
 
@@ -8944,6 +8972,8 @@ void load_preferences() {
 	tc_set = false;
 
 	sinc_set = false;
+
+	assumptions_warning_shown = false;
 
 	CALCULATOR->useBinaryPrefixes(0);
 
@@ -9359,6 +9389,8 @@ void load_preferences() {
 						}
 						CALCULATOR->defaultAssumptions()->setSign((AssumptionSign) v);
 					}
+				} else if(svar == "assumptions_warning_shown") {
+					assumptions_warning_shown = v;
 				}
 			}
 		}
@@ -9460,6 +9492,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "multiplication_sign=%i\n", printops.multiplication_sign);
 	fprintf(file, "division_sign=%i\n", printops.division_sign);
 	if(implicit_question_asked) fprintf(file, "implicit_question_asked=%i\n", implicit_question_asked);
+	if(assumptions_warning_shown) fprintf(file, "assumptions_warning_shown=%i\n", assumptions_warning_shown);
 	if(mode) {
 		int saved_df = 0, saved_da = 0;
 		if(result_only && dual_fraction == 0) saved_df = saved_dual_fraction;
