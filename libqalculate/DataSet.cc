@@ -379,7 +379,7 @@ DataSet::DataSet(string s_category, string s_name, string s_default_file, string
 	b_loaded = false;
 	setArgumentDefinition(1, new DataObjectArgument(this, _("Object")));
 	setArgumentDefinition(2, new DataPropertyArgument(this, _("Property")));
-	setDefaultValue(2, _("info"));
+	setDefaultValue(2, _c("info", "Data set argument"));
 	setChanged(false);
 }
 DataSet::DataSet(const DataSet *o) {

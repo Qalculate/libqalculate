@@ -1807,6 +1807,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				printops.base = BASE_BINARY;
 			} else if(equalsIgnoreCase(to_str, "dec") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "decimal", _("decimal"))) {
 				printops.base = BASE_DECIMAL;
+				printops.min_exp = EXP_NONE;
 			} else if(equalsIgnoreCase(to_str, "oct") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "octal", _("octal"))) {
 				printops.base = BASE_OCTAL;
 			} else if(equalsIgnoreCase(to_str, "duo") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "duodecimal", _("duodecimal"))) {
@@ -1859,6 +1860,12 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				printops.min_exp = EXP_BASE_3;
 				printops.show_ending_zeroes = true;
 				printops.use_unit_prefixes = false;
+				printops.negative_exponents = false;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "simple", _("simple"))) {
+				printops.sort_options.minus_last = true;
+				printops.min_exp = EXP_NONE;
+				printops.show_ending_zeroes = false;
+				printops.use_unit_prefixes = true;
 				printops.negative_exponents = false;
 			} else if(equalsIgnoreCase(to_str, "utc") || equalsIgnoreCase(to_str, "gmt")) {
 				printops.time_zone = TIME_ZONE_UTC;
@@ -2518,6 +2525,7 @@ string Calculator::parseToExpression(string to_str, EvaluationOptions &evalops, 
 			if(custom_base) custom_base->clear();
 		} else if(equalsIgnoreCase(to_str, "dec") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "decimal", _("decimal"))) {
 			printops.base = BASE_DECIMAL;
+			printops.min_exp = EXP_NONE;
 			if(custom_base) custom_base->clear();
 		} else if(equalsIgnoreCase(to_str, "oct") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "octal", _("octal"))) {
 			printops.base = BASE_OCTAL;
@@ -2580,6 +2588,24 @@ string Calculator::parseToExpression(string to_str, EvaluationOptions &evalops, 
 		} else if(equalsIgnoreCase(to_str, "unicode")) {
 			printops.base = BASE_UNICODE;
 			if(custom_base) custom_base->clear();
+		} else if(equalsIgnoreCase(to_str, "sci") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "scientific", _("scientific"))) {
+			printops.sort_options.minus_last = false;
+			printops.min_exp = EXP_PURE;
+			printops.show_ending_zeroes = true;
+			printops.use_unit_prefixes = false;
+			printops.negative_exponents = true;
+		} else if(equalsIgnoreCase(to_str, "eng") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "engineering", _("engineering"))) {
+			printops.sort_options.minus_last = false;
+			printops.min_exp = EXP_BASE_3;
+			printops.show_ending_zeroes = true;
+			printops.use_unit_prefixes = false;
+			printops.negative_exponents = false;
+		} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "simple", _("simple"))) {
+			printops.sort_options.minus_last = true;
+			printops.min_exp = EXP_NONE;
+			printops.show_ending_zeroes = false;
+			printops.use_unit_prefixes = true;
+			printops.negative_exponents = false;
 		} else if(equalsIgnoreCase(to_str, "utc") || equalsIgnoreCase(to_str, "gmt")) {
 			printops.time_zone = TIME_ZONE_UTC;
 		} else if(to_str.length() > 3 && equalsIgnoreCase(to_str.substr(0, 3), "bin") && is_in(NUMBERS, to_str[3])) {

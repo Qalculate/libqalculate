@@ -741,7 +741,7 @@ The evaluation of \fIshort/implicit multiplication\fP without any multiplication
 .PP
 In \fIchain mode\fP, expressions are calculated from left to right, ignoring standard order of operations, like the immediate execution mode of a traditional calculator (1+2*3 = (1+2)*3 = 9).
 .PP
-The \fI"to"-operator\fP is used for unit conversion and manipulation of how the result is presented. Place " to " or a right arrow (e.g. "->") followed by one of expressions/commands listed below, at the end of an expression.
+The \fI"to"-operator\fP is used for unit conversion and manipulation of how the result is presented. Place " to " or a right arrow (e.g. "->", but not ">") followed by one of expressions/commands listed below, at the end of an expression.
 .PP
 .TP 8
 .B Unit conversion
@@ -833,6 +833,8 @@ prepend with - to show as simple fraction
 - sci, scientific (show result with scientific notation)
 .br
 - eng, engineering (show result with engineering notation)
+.br
+- simple (show result with non-scientific notation)
 .PP
 .TP 8
 .B Other conversion commands

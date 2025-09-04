@@ -2511,7 +2511,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					}
 				}
 			}
-		} else if(str_index > 0 && base >= 2 && base <= 10 && is_in(EXPS, str[str_index]) && str_index + 1 < str.length() && (is_in(NUMBER_ELEMENTS, str[str_index + 1]) || (is_in(PLUS MINUS, str[str_index + 1]) && str_index + 2 < str.length() && is_in(NUMBER_ELEMENTS, str[str_index + 2]))) && (is_in(NUMBER_ELEMENTS, str[str_index - 1]) || (str_index > 3 && priv->concise_uncertainty_input && str[str_index - 1] == RIGHT_PARENTHESIS_CH && (i_dx = str.rfind(LEFT_PARENTHESIS_CH, str_index - 3)) != string::npos && i_dx > 0 && str.find_last_not_of(NUMBER_ELEMENTS, str_index - 2) == i_dx && is_in(NUMBER_ELEMENTS, str[i_dx - 1])))) {
+		} else if(str_index > 0 && ((base >= 2 && base <= 10 && is_in(EXPS, str[str_index])) || (base == 16 && str[str_index] == 'p')) && str_index + 1 < str.length() && (is_in(NUMBER_ELEMENTS, str[str_index + 1]) || (is_in(PLUS MINUS, str[str_index + 1]) && str_index + 2 < str.length() && is_in(NUMBER_ELEMENTS, str[str_index + 2]))) && (is_in(base == 16 ? NUMBER_ELEMENTS "abcdef" "ABCDEF" : NUMBER_ELEMENTS, str[str_index - 1]) || (str_index > 3 && priv->concise_uncertainty_input && str[str_index - 1] == RIGHT_PARENTHESIS_CH && (i_dx = str.rfind(LEFT_PARENTHESIS_CH, str_index - 3)) != string::npos && i_dx > 0 && str.find_last_not_of(NUMBER_ELEMENTS, str_index - 2) == i_dx && is_in(NUMBER_ELEMENTS, str[i_dx - 1])))) {
 			consecutive_objects = 0;
 			//don't do anything when e is used instead of E for EXP
 		} else if(base <= 33 && str[str_index] == '0' && (str_index == 0 || is_in(NOT_IN_NAMES INTERNAL_OPERATORS, str[str_index - 1]))) {
@@ -3149,7 +3149,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 												if(arg_i >= f->args() && f->args() >= 0) b = true;
 												else icand = i6 + 1;
 											}
-										} else if(!b_comma_before && i5 == 2 && ((arg_i >= f->args() && f->args() >= 0) || arg_i >= f->minargs()) && is_in(OPERATORS INTERNAL_OPERATORS, c) && c != POWER_CH && c != '\b' && c != INTERNAL_UPOW_CH && ((c != MINUS_CH && c != PLUS_CH) || (!b_power_before && (i6 < 3 || !BASE_2_10 || is_not_in(EXPS, str[str_index + name_length + i6 - 1]) || is_not_in(NUMBERS, str[str_index + name_length + i6 - 2]) || i6 + str_index + name_length == str.length() - 1 || is_not_in(NUMBERS, str[str_index + name_length + i6 + 1]))))) {
+										} else if(!b_comma_before && i5 == 2 && ((arg_i >= f->args() && f->args() >= 0) || arg_i >= f->minargs()) && is_in(OPERATORS INTERNAL_OPERATORS, c) && c != POWER_CH && c != '\b' && c != INTERNAL_UPOW_CH && ((c != MINUS_CH && c != PLUS_CH) || (!b_power_before && (i6 < 3 || ((!BASE_2_10 || is_not_in(EXPS, str[str_index + name_length + i6 - 1])) && (po.base != 16 || str[str_index + name_length + i6 - 1] != 'p')) || is_not_in(po.base == 16 ? NUMBERS "abcdef" "ABCDEF" : NUMBERS, str[str_index + name_length + i6 - 2]) || i6 + str_index + name_length == str.length() - 1 || is_not_in(NUMBERS, str[str_index + name_length + i6 + 1]))))) {
 											if(arg_i >= f->args() && f->args() >= 0) b = true;
 											else icand = i6 + 1;
 										} else if(c == COMMA_CH) {
@@ -3818,7 +3818,7 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 		} else if(str[i] == SPACE_CH) {
 			// ignore whitespace
 			str.erase(i, 1);
-		} else if(had_non_sign && !b_exp && BASE_2_10 && (str[i] == EXP_CH || str[i] == EXP2_CH)) {
+		} else if(had_non_sign && !b_exp && ((BASE_2_10 && (str[i] == EXP_CH || str[i] == EXP2_CH)) || (po.base == 16 && str[i] == 'p'))) {
 			// scientific e-notation
 			b_exp = true;
 			had_non_sign = true;
@@ -4129,7 +4129,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				i = 0;
 				i2++;
 			}
-			if(priv->concise_uncertainty_input && i > 0 && i2 > i + 1 && !is_not_number(str[i - 1], base) && !is_not_number(str[i + 1], base) && (i2 == str.length() - 1 || is_not_number(str[i2 + 1], base))) {
+			if(priv->concise_uncertainty_input && po.base == BASE_DECIMAL && i > 0 && i2 > i + 1 && !is_not_number(str[i - 1], base) && !is_not_number(str[i + 1], base) && (i2 == str.length() - 1 || is_not_number(str[i2 + 1], base))) {
 				for(i3 = i + 2; i < i2; i3++) {
 					if(is_not_number(str[i3], base)) break;
 				}
@@ -4170,7 +4170,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				break;
 			}
 		}
-		if(i > 0 && is_not_in(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS SPACE, str[i - 1]) && (!BASE_2_10 || (str[i - 1] != EXP_CH && str[i - 1] != EXP2_CH))) {
+		if(i > 0 && is_not_in(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS SPACE, str[i - 1]) && (!BASE_2_10 || (str[i - 1] != EXP_CH && str[i - 1] != EXP2_CH)) && (po.base != 16 || str[i - 1] != 'p')) {
 			if(PARSING_MODE == PARSING_MODE_RPN) {
 				str.insert(i2 + 1, MULTIPLICATION);
 				str.insert(i, SPACE);
@@ -4178,7 +4178,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 				i2++;
 			}
 		}
-		if(i2 + 1 < str.length() && is_not_in(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS SPACE, str[i2 + 1]) && (!BASE_2_10 || (str[i2 + 1] != EXP_CH && str[i2 + 1] != EXP2_CH))) {
+		if(i2 + 1 < str.length() && is_not_in(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS PARENTHESISS SPACE, str[i2 + 1]) && (!BASE_2_10 || (str[i2 + 1] != EXP_CH && str[i2 + 1] != EXP2_CH)) && (po.base != 16 || str[i2 + 1] != 'p')) {
 			if(PARSING_MODE == PARSING_MODE_RPN) {
 				i3 = str.find(SPACE, i2 + 1);
 				if(i3 == string::npos) {
@@ -4296,7 +4296,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		char last_operator2 = 0;
 		while(true) {
 			i = str.find_first_of(OPERATORS INTERNAL_OPERATORS_RPN SPACE "\\", i3 + 1);
-			while(i != string::npos && i > 1 && (str[i] == MINUS_CH || str[i] == PLUS_CH) && BASE_2_10 && i + 1 < str.length() && is_in(EXPS, str[i - 1]) && is_in(NUMBER_ELEMENTS, str[i - 2]) && is_in(NUMBER_ELEMENTS, str[i + 1])) i = str.find_first_of(OPERATORS INTERNAL_OPERATORS_RPN SPACE "\\", i + 1);
+			while(i != string::npos && i > 1 && (str[i] == MINUS_CH || str[i] == PLUS_CH) && i + 1 < str.length() && ((BASE_2_10 && is_in(EXPS, str[i - 1])) || (po.base == 16 && str[i - 1] == 'p')) && is_in(po.base == 16 ? NUMBER_ELEMENTS "abcdef" "ABCDEF" : NUMBER_ELEMENTS, str[i - 2]) && is_in(NUMBER_ELEMENTS, str[i + 1])) i = str.find_first_of(OPERATORS INTERNAL_OPERATORS_RPN SPACE "\\", i + 1);
 			if(i == string::npos) {
 				if(!b) {
 					parseAdd(str, mstruct, po2);
@@ -5162,7 +5162,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			bool b = false, c = false, append = false, do_percent = !(po.parsing_mode & PARSE_PERCENT_AS_ORDINARY_CONSTANT);
 			bool min = false;
 			while(i != string::npos && i + 1 != str.length()) {
-				if(is_not_in(BASE_2_10 ? MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS_TWO EXPS ":" : MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS_TWO ":", str[i - 1])) {
+				if(is_not_in(BASE_2_10 ? MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS_TWO EXPS ":" : (po.base == 16 ? MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS_TWO "p" ":" : MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS_TWO ":"), str[i - 1])) {
 					str2 = str.substr(0, i);
 					if(!c && b) {
 						bool b_add;
@@ -5503,7 +5503,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			int type = 0;
 			while(i != string::npos && i + 1 != str.length()) {
 				if(i < 1) {
-					if(str.find_first_not_of(MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS EXPS) == string::npos) {
+					if(str.find_first_not_of(BASE_2_10 ? MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS EXPS : (po.base == 16 ? MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS "p" ":" : MULTIPLICATION_2 OPERATORS INTERNAL_OPERATORS ":")) == string::npos) {
 						replace_internal_operators(str);
 						error(false, _("Misplaced operator(s) \"%s\" ignored"), str.c_str(), NULL);
 						return b;

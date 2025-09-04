@@ -5105,9 +5105,12 @@ int main(int argc, char *argv[]) {
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "dec") || EQUALS_IGNORECASE_AND_LOCAL(str, "decimal", _("decimal"))) {
 				int save_base = printops.base;
+				int save_exp = printops.min_exp;
 				printops.base = BASE_DECIMAL;
+				printops.min_exp = EXP_NONE;
 				setResult(NULL, false);
 				printops.base = save_base;
+				printops.min_exp = save_exp;
 			} else if(equalsIgnoreCase(str, "oct") || EQUALS_IGNORECASE_AND_LOCAL(str, "octal", _("octal"))) {
 				int save_base = printops.base;
 				printops.base = BASE_OCTAL;
@@ -5238,6 +5241,24 @@ int main(int argc, char *argv[]) {
 				printops.min_exp = EXP_BASE_3;
 				printops.show_ending_zeroes = true;
 				printops.use_unit_prefixes = false;
+				printops.negative_exponents = false;
+				setResult(NULL, false);
+				printops.sort_options.minus_last = save_minus;
+				printops.min_exp = save_exp;
+				printops.show_ending_zeroes = save_zeroes;
+				printops.use_unit_prefixes = save_prefix;
+				printops.negative_exponents = save_neg;
+			// opposite to scientific form
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "simple", _("simple"))) {
+				bool save_minus = printops.sort_options.minus_last;
+				int save_exp = printops.min_exp;
+				bool save_zeroes = printops.show_ending_zeroes;
+				bool save_prefix = printops.use_unit_prefixes;
+				bool save_neg = printops.negative_exponents;
+				printops.sort_options.minus_last = true;
+				printops.min_exp = EXP_NONE;
+				printops.show_ending_zeroes = false;
+				printops.use_unit_prefixes = true;
 				printops.negative_exponents = false;
 				setResult(NULL, false);
 				printops.sort_options.minus_last = save_minus;
@@ -6347,6 +6368,7 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- sci, scientific (show result with scientific notation)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- eng, engineering (show result with engineering notation)"));
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- simple (show result with non-scientific notation)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- factors (factorize result)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
@@ -7064,6 +7086,9 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		bool b_matrix = mstruct->isMatrix() && DO_FORMAT && result_text.find('\n') != string::npos;
 
 		bool show_result = !auto_calculate || (!was_aborted && !mstruct->isAborted() && (result_only || (!autocalc_error && (!alt_results.empty() || result_text != parsed_text))));
+		if(auto_calculate && show_result && mstruct->isZero() && parsed_mstruct->isFunction() && parsed_mstruct->function()->subtype() == SUBTYPE_DATA_SET && parsed_mstruct->size() >= 2 && parsed_mstruct->getChild(2)->isSymbolic() && EQUALS_IGNORECASE_AND_LOCAL(parsed_mstruct->getChild(2)->symbol(), "info", _c("info", "Data set argument"))) {
+			show_result = false;
+		}
 		if(show_result && auto_calculate && mstruct->countTotalChildren(false) >= 10) {
 			show_result = unformatted_length(result_text) < (size_t) cols && (!b_matrix || mstruct->rows() <= 3);
 			for(size_t i = 0; show_result && i < alt_results.size(); i++) {
@@ -8050,6 +8075,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 					printops.base = BASE_BINARY;
 				} else if(equalsIgnoreCase(to_str, "dec") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "decimal", _("decimal"))) {
 					printops.base = BASE_DECIMAL;
+					printops.min_exp = EXP_NONE;
 				} else if(equalsIgnoreCase(to_str, "oct") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "octal", _("octal"))) {
 					printops.base = BASE_OCTAL;
 				} else if(equalsIgnoreCase(to_str, "duo") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "duodecimal", _("duodecimal"))) {
@@ -8102,6 +8128,12 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 					printops.min_exp = EXP_BASE_3;
 					printops.show_ending_zeroes = true;
 					printops.use_unit_prefixes = false;
+					printops.negative_exponents = false;
+				} else if(EQUALS_IGNORECASE_AND_LOCAL(to_str, "simple", _("simple"))) {
+					printops.sort_options.minus_last = true;
+					printops.min_exp = EXP_NONE;
+					printops.show_ending_zeroes = false;
+					printops.use_unit_prefixes = true;
 					printops.negative_exponents = false;
 				} else if(equalsIgnoreCase(to_str, "utc") || equalsIgnoreCase(to_str, "gmt")) {
 					printops.time_zone = TIME_ZONE_UTC;
@@ -9132,7 +9164,7 @@ void load_preferences() {
 					if(v > 0 && (version_numbers[0] < 5 || (version_numbers[0] == 5 && (version_numbers[1] < 1 )))) simplified_percentage = -1;
 					else simplified_percentage = v;
 				} else if(svar == "implicit_question_asked") {
-					implicit_question_asked = true;
+					implicit_question_asked = v;
 				} else if(svar == "place_units_separately") {
 					printops.place_units_separately = v;
 				} else if(svar == "variable_units_enabled") {
