@@ -1,3 +1,61 @@
+2025-09-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not show calculate as you type result for data set function with "info" (default) as second argument
+	* Separate translation of "info" as data set argument from "info" as qalc command
+	* Add "simple" to-operator option for non-scientific notation and apply non-scientific notation (exp off) for "decimal"
+
+2025-09-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Show warning about default assumptions the first time an equation is solved, in qalc
+	* Show warning when trying to calculate logarithm of quantity with unit, or value with unit in exponent
+	* Show warning "(!)" when calculate as you type expression, in qalc, results in a question
+
+2025-08-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault with very small numbers (when floatValue() should return zero), high number of bits, and insufficient precision, in floating point conversion
+
+2025-08-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Update calculation of fraction of year (with day counting basis 0 and 1) to match method used in spreadsheets other than Gnumeric
+
+2025-08-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add output in scientific (sci), or engineering (eng), notation as "to"-operator option (e.g. 1000 000 to sci = 1E6; also affects use of unit prefixes, negative unit exponents, etc.)
+
+2025-08-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix dollarde() and dollarfr() functions
+
+2025-08-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Allow use of non-existing variables, without using quotation marks or backslash (now also supported in X variable value), in plot expressions, and set appropriate assumptions in all cases (this affects GUIs but not the plot() function)
+
+2025-08-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Parse 'p' in hexadecimal number as an operator (raise and multiply after parsing during calculation, e.g. 5p10 = 0x5 * 0x2^10), as with scientific E-notation, in order to improve display of parsed expression and avoid slow and very memory intensive calculations which might cause segfault in mpz_ui_pow_ui
+	* Fix poolvar(), ttest(), and cor() functions
+	* cor() and pearson() are the same function
+	* Simplify (do not use csum() function) poolvar(), covar(), meandev(), var(), varp(), rms(), geomean(), harmmean(), and weighmean() functions
+	* Change default quantile algorithm from 8 to 7
+	* Only allow positive values in geomean() and harmmean() functions
+
+2025-08-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix calculate as you type and indentation with prompt string containing Unicode characters, control characters, and/or escape sequences
+	* Add "save config" option (if disabled qalc.cfg is never automatically updated)
+
+2025-08-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add symbols/abbreviations with variant name (US, UK) as suffix (shown as subscript), and hide corresponding symbol/abbreviation with variant as prefix
+	* Add TeX scaled point unit
+	* Change "ATA Pica" to "Johnson Pica" and "ATA Point" to "American Point", and make corresponding name/symbol changes
+	* Set minimum preferred prefix to 0 for metric ton
+	* Return first argument of uncertainty() function directly without evaluation, in midpoint() function
+
+2025-08-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add TeX point, twip, and agate typography units
+
 2025-08-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault when parsing "( \" followed by operator with RPN syntax

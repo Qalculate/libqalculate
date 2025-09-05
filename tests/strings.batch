@@ -19,8 +19,12 @@ concatenate(1,2)
 	"12"
 concatenate(1*2, 5)
 	"1*25"
-concatenate(1+2, 5)
-	"1+25"
+dec(concatenate(4*2, 5))
+	100
+alpha:="c"
+beta:=2
+concatenate(concatenate(a, b), alpha, d, dec(123, 1), beta)
+	"abcd123beta"
 
 len("")
 	0

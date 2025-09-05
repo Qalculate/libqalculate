@@ -5,6 +5,8 @@ Qalculate! library and CLI
 
 Qalculate! is a multi-purpose cross-platform desktop calculator. It is simple to use but provides power and versatility normally reserved for complicated math packages, as well as useful tools for everyday needs (such as currency conversion and percent calculation). Features include a large library of customizable functions, unit calculations and conversion, symbolic calculations (including integrals and equations), arbitrary precision, uncertainty propagation, interval arithmetic, plotting, and a user-friendly interface (GTK+, Qt, and CLI).
 
+Visit the website at https://qalculate.github.io/ to see additional screenshots, read the manual, and download the latest version.
+
 ## Requirements
 * GMP and MPFR
 * libxml2
@@ -48,61 +50,71 @@ qalculate-gtk (https://github.com/Qalculate/qalculate-gtk) and
 qalculate-qt (https://github.com/Qalculate/qalculate-qt).
 
 Other software using libqalculate include
+* Qalculator web app (https://qalculator.xyz/) (also available as an app for [Android](https://play.google.com/store/apps/details?id=xyz.qalculator.twa), [iOS](https://apps.apple.com/app/qalculator-xyz/id1611421527), and [Windows](https://www.microsoft.com/store/productId/9P4866X24PD3))
+* Qalculate for Android (https://github.com/jherkenhoff/qalculate-android)
 * KDE Plasma Workspace (https://www.kde.org/workspaces/plasmadesktop/)
 * Cantor (http://kde.org/applications/education/cantor/)
 * Step (http://kde.org/applications/education/step/)
 * Qalculate widget for KDE Plasma (https://store.kde.org/p/1155946/)
 
 ## Features
-* Calculation and parsing:
-   * Basic operations and operators: + - * / mod ^ E () && || ! < > >= <= != ~ & | << >> xor
-   * Fault-tolerant parsing of strings: log 5 / 2 .5 (3) + (2( 3 +5 = ln(5) / (2.5 * 3) + 2 * (3 + 5)
+**Calculation and parsing**
+   * All basic operations and operators: arithmetic, logical, bitwise, element-wise, (in)equalities
+   * Fault-tolerant parsing of strings: *log 5 / 2 .5 (3) + (2( 3 +5* = *ln(5) / (2.5 × 3) + 2 × (3 + 5)*
+   * Calculate as you type
    * Expressions may contain any combination of numbers, functions, units, variables, vectors and matrices, and dates
    * Supports complex and infinite numbers
+   * Arbitrary precision
    * Propagation of uncertainty
    * Interval arithmetic (for determination of the number of significant digits or direct calculation with intervals of numbers)
-   * Supports all common number bases, as well as negative and non-integer radices, sexagesimal numbers, time format, and roman numerals
-   * Ability to disable functions, variables, units or unknown variables for less confusion: e.g. when you do not want (a+b)^2 to mean (are+barn)^2 but ("a"+"b")^2
-   * Controllable implicit multiplication
    * Matrices and vectors, and related operations (determinants etc.)
+   * Supports all common number bases, as well as negative and non-integer radices, sexagesimal numbers, time format, and roman numerals
+   * Ability to disable functions, variables, units or unknown variables for less confusion: e.g. when you do not want *(a+b)^2* to mean *(are+barn)^2* but *(\a+\b)^2*
+   * Controllable implicit multiplication
    * Verbose error messages
-   * Arbitrary precision
    * RPN mode
-* Result display:
+
+**Result display**
    * Supports all common number bases, as well as negative and non-integer radices, sexagesimal numbers, time format, and roman numerals
    * Many customization options: precision, max/min decimals, complex form, multiplication sign, etc.
-   * Exact or approximate: sqrt(32) returns 4 * sqrt(2) or 5.66
-   * Simple and mixed fractions: 4 / 6 * 2 = 1.333... = 4/3 = 1 + 1/3
-* Symbolic calculation:
-   * E.g. (x + y)^2 = x^2 + 2xy + y^2; 4 "apples" + 3 "oranges"
+   * Exact or approximate: *sqrt(32)* returns *4 × sqrt(2)* or *5.657*
+   * Simple and mixed fractions: *4 / 6 × 2* = *1.333…* = *4/3* = *1 + 1/3*
+
+**Symbolic calculations**
+   * E.g. *(x + y)^2* = *x^2 + 2xy + y^2*; *4 "apples" + 3 "oranges"*
    * Factorization and simplification
    * Differentiation and integration
    * Can solve most equations and inequalities
-   * Customizable assumptions give different results (e.g. ln(2x) = ln(2) + ln(x) if x is assumed positive)
-* Functions:
+   * Customizable assumptions give different results (e.g. *ln(2x) where x > 0* = *ln(2) + ln(x)*)
+
+**Functions**
    * Hundreds of flexible functions: trigonometry, exponents and logarithms, combinatorics, geometry, calculus, statistics, finance, time and date, etc.
    * Can easily be created, edited and saved to a standard XML file
-* Units:
+
+**Units**
    * Supports all SI units and prefixes (including binary), as well as imperial and other unit systems
-   * Automatic conversion: ft + yd + m = 2.2192 m
-   * Explicit conversion: 5 m/s to mi/h = 11.18 miles/hour
-   * Smart conversion: automatically converts 5 kg*m/s^2 to 5 N
+   * Automatic conversion: *ft + yd + m* = *2.2192 m*
+   * Explicit conversion: *5 m/s to mi/h* = *11.18 miles/hour*
+   * Smart conversion: automatically converts *5 kg × m/s^2* to *5 N*
    * Currency conversion with retrieval of daily exchange rates
    * Different name forms: abbreviation, singular, plural (m, meter, meters)
    * Can easily be created, edited and saved to a standard XML file
-* Variables and constants:
+
+**Variables and constants**
    * Basic constants: pi, e, etc.
    * Lots of physical constants (with or without units) and properties of chemical element
    * CSV file import and export
-   * Can easily be created, edited and saved to a standard XML file
+   * Can easily be created, edited and saved to a standard XML file (including by direct assignment, e.g. *x = 2 s*)
    * Flexible - may contain simple numbers, units, or whole expressions
    * Data sets with objects and associated properties in database-like structure
-* Plotting:
+
+**Plotting**
    * Uses Gnuplot
    * Can plot functions or data (matrices and vectors)
    * Ability to save plot to PNG image, postscript, etc.
    * Several customization options
-* and more...
+
+*…and more…*
 
 _For more details about the syntax, and available functions, units, and variables, please consult the manual (https://qalculate.github.io/manual/)_
 
@@ -341,4 +353,3 @@ sqrt(32) to base sqrt(2) _≈ 100000_
 0xD8 to unicode _= Ø_
 
 code(Ø) to hex _= 0xD8_
-

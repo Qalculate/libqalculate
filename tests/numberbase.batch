@@ -24,6 +24,10 @@ floatError(52.345)
 	1K
 sqrt(32) to base sqrt(2)
 	100000
+set input base 16
+5p10+AEp-2*p23
+	364909568
+set input base 10
 /set unicode 1
 52.34 to sexa
 	52°20′24″

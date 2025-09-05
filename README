@@ -59,7 +59,8 @@ completion, manipulate the result and change settings.
 
 Type "help" in interactive mode for more information.
 
-A man page is also available (shown using the command "man qalc", or online at https://qalculate.github.io/manual/qalc.html).
+A man page is also available (shown using the command "man qalc", or online at
+https://qalculate.github.io/manual/qalc.html).
 
 5. Other Applications
 
@@ -75,47 +76,52 @@ Other software using libqalculate include
 
 6. Features
 
-* Calculation and parsing:
-   * Basic operations and operators:
-     + - * / mod ^ E () && || ! < > >= <= != ~ & | << >> xor
+Calculation and parsing:
+   * All basic operations and operators:
+     arithmetic, logical, bitwise, element-wise, (in)equalities
    * Fault-tolerant parsing of strings:
      log 5 / 2 .5 (3) + (2( 3 +5 = ln(5) / (2.5 * 3) + 2 * (3 + 5)
+   * Calculate as you type
    * Expressions may contain any combination of numbers, functions, units,
      variables, vectors and matrices, and dates
    * Supports complex and infinite numbers
+   * Arbitrary precision
    * Propagation of uncertainty
    * Interval arithmetic (for determination of the number of significant digits
      or direct calculation with intervals of numbers)
+   * Matrices and vectors, and related operations (determinants etc.)
    * Supports all common number bases, as well as negative and non-integer
      radices, sexagesimal numbers, time format, and roman numerals
    * Ability to disable functions, variables, units or unknown variables for
      less confusion: e.g. when you do not want (a+b)^2 to mean (are+barn)^2 but
-     ("a"+"b")^2
+     (\a+\b)^2
    * Controllable implicit multiplication
-   * Matrices and vectors, and related operations (determinants etc.)
    * Verbose error messages
-   * Arbitrary precision
    * RPN mode
-* Result display:
+
+Result display:
    * Supports all common number bases, as well as negative and non-integer
      radices, sexagesimal numbers, time format, and roman numerals
    * Many customization options: precision, max/min decimals, complex form,
      multiplication sign, etc.
-   * Exact or approximate: sqrt(32) returns 4 * sqrt(2) or 5.66
+   * Exact or approximate: sqrt(32) returns 4 * sqrt(2) or 5.657
    * Simple and mixed fractions: 4 / 6 * 2 = 1.333... = 4/3 = 1 + 1/3
-* Symbolic calculation:
+
+Symbolic calculation:
    * E.g. (x + y)^2 = x^2 + 2xy + y^2; 4 "apples" + 3 "oranges"
    * Factorization and simplification
    * Differentiation and integration
    * Can solve most equations and inequalities
    * Customizable assumptions give different results
-     (e.g. ln(2x) = ln(2) + ln(x) if x is assumed positive)
-* Functions:
+     (e.g. ln(2x) where x > 0 = ln(2) + ln(x))
+
+Functions:
    * Hundreds of flexible functions: trigonometry, exponents and logarithms,
      combinatorics, geometry, calculus, statistics, finance, time and date,
      etc.
    * Can easily be created, edited and saved to a standard XML file
-* Units:
+
+Units:
    * Supports all SI units and prefixes (including binary), as well as imperial
      and other unit systems
    * Automatic conversion: ft + yd + m = 2.2192 m
@@ -124,19 +130,23 @@ Other software using libqalculate include
    * Currency conversion with retrieval of daily exchange rates
    * Different name forms: abbreviation, singular, plural (m, meter, meters)
    * Can easily be created, edited and saved to a standard XML file
-* Variables and constants:
+
+Variables and constants:
    * Basic constants: pi, e, etc.
    * Lots of physical constants (with or without units) and properties of
      chemical element
    * CSV file import and export
    * Can easily be created, edited and saved to a standard XML file
+     (including by direct assignment, e.g. x = 2 s)
    * Flexible - may contain simple numbers, units, or whole expressions
    * Data sets with objects and associated properties in database-like
      structure
-* Plotting:
+
+Plotting:
    * Uses Gnuplot
    * Can plot functions or data (matrices and vectors)
    * Ability to save plot to PNG image, postscript, etc.
    * Several customization options
-* and more...
+
+...and more...
 
