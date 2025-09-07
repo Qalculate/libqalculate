@@ -16,7 +16,7 @@ Qt, and CLI).
 * libcurl, icu, gettext (recommended)
 * iconv, readline (recommended for CLI)
 * Gnuplot 1.7 (optional)
-* doxygen (for compilation of git version)
+* doxygen (optional)
 
 For Linux distributions which provide separate development packages, these must
 be installed for all the required libraries (e.g. libmpfr-dev) before
@@ -69,84 +69,58 @@ qalculate-gtk (https://github.com/Qalculate/qalculate-gtk) and
 qalculate-qt (https://github.com/Qalculate/qalculate-qt).
 
 Other software using libqalculate include
+* Qalculator web app (https://qalculator.xyz/) (also available as apps for Android, iOS, and Windows)
+* Qalculate for Android (https://github.com/jherkenhoff/qalculate-android)
 * KDE Plasma Workspace (https://www.kde.org/workspaces/plasmadesktop/)
 * Cantor (http://kde.org/applications/education/cantor/)
 * Step (http://kde.org/applications/education/step/)
 * Qalculate widget for KDE Plasma (https://store.kde.org/p/1155946/)
 
+
 6. Features
 
-Calculation and parsing:
-   * All basic operations and operators:
-     arithmetic, logical, bitwise, element-wise, (in)equalities
-   * Fault-tolerant parsing of strings:
-     log 5 / 2 .5 (3) + (2( 3 +5 = ln(5) / (2.5 * 3) + 2 * (3 + 5)
+General
+   * All common operators — arithmetic, logical, bitwise, element-wise, (in)equalities
+   * Expressions may contain any combination of numbers, constants, functions, units, variables, matrices, vectors, and time/dates
+   * Fault-tolerant and flexible input parsing with verbose error/warning messages
    * Calculate as you type
-   * Expressions may contain any combination of numbers, functions, units,
-     variables, vectors and matrices, and dates
-   * Supports complex and infinite numbers
-   * Arbitrary precision
-   * Propagation of uncertainty
-   * Interval arithmetic (for determination of the number of significant digits
-     or direct calculation with intervals of numbers)
-   * Matrices and vectors, and related operations (determinants etc.)
-   * Supports all common number bases, as well as negative and non-integer
-     radices, sexagesimal numbers, time format, and roman numerals
-   * Ability to disable functions, variables, units or unknown variables for
-     less confusion: e.g. when you do not want (a+b)^2 to mean (are+barn)^2 but
-     (\a+\b)^2
-   * Controllable implicit multiplication
-   * Verbose error messages
+   * Arbitrary precision with both rational and floating point numbers
+   * Complex and infinite numbers
+   * Propagation of uncertainty and interval arithmetic
+   * Both exact and approximate output (sqrt(32) = 4 * sqrt(2) ≈ 5.657)
+   * Simple and mixed fractions (4 / 6 * 2 = 1.333... = 4/3 = 1 + 1/3)
+   * All common number bases, as well as negative and non-integer radices, roman numerals, etc.
    * RPN mode
+   * Highly customizable with a myriad of options for every aspect of the calculator
 
-Result display:
-   * Supports all common number bases, as well as negative and non-integer
-     radices, sexagesimal numbers, time format, and roman numerals
-   * Many customization options: precision, max/min decimals, complex form,
-     multiplication sign, etc.
-   * Exact or approximate: sqrt(32) returns 4 * sqrt(2) or 5.657
-   * Simple and mixed fractions: 4 / 6 * 2 = 1.333... = 4/3 = 1 + 1/3
-
-Symbolic calculation:
-   * E.g. (x + y)^2 = x^2 + 2xy + y^2; 4 "apples" + 3 "oranges"
+Symbolic calculations
    * Factorization and simplification
    * Differentiation and integration
    * Can solve most equations and inequalities
-   * Customizable assumptions give different results
-     (e.g. ln(2x) where x > 0 = ln(2) + ln(x))
+   * Customizable assumptions (e.g. ln(2x) where x > 0 = ln(2) + ln(x))
 
-Functions:
-   * Hundreds of flexible functions: trigonometry, exponents and logarithms,
-     combinatorics, geometry, calculus, statistics, finance, time and date,
-     etc.
-   * Can easily be created, edited and saved to a standard XML file
+Functions
+   * Over 400 flexible and diverse functions (trigonometry, exponents and logarithms, combinatorics, geometry, calculus, statistics, finance, time and date, etc.)
+   * Easily created and edited from the user interfaces, with support for different argument types, subfunctions, and custom conditions
 
-Units:
-   * Supports all SI units and prefixes (including binary), as well as imperial
-     and other unit systems
-   * Automatic conversion: ft + yd + m = 2.2192 m
-   * Explicit conversion: 5 m/s to mi/h = 11.18 miles/hour
-   * Smart conversion: automatically converts 5 kg*m/s^2 to 5 N
-   * Currency conversion with retrieval of daily exchange rates
-   * Different name forms: abbreviation, singular, plural (m, meter, meters)
-   * Can easily be created, edited and saved to a standard XML file
+Units
+   * Over 400 diverse units and all standard decimal and binary prefixes
+   * Includes all SI units, as well as imperial, CGS, atomic, and natural units, and more...
+   * Automatic and explicit conversion (e.g. ft + yd + m = 2.2192 m, 5 kg * m/s^2 = 5 N, 5 m/s to mph = 11.18 mph)
+   * Currency conversion with daily updated exchange rates
+   * Easily created and edited from the user interfaces
 
-Variables and constants:
-   * Basic constants: pi, e, etc.
-   * Lots of physical constants (with or without units) and properties of
-     chemical element
+Variables and constants
+   * All common basic constants (pi, e, etc.)
+   * All fundamental physical constants with 2022 CODATA values (including standard uncertainy and optional units)
    * CSV file import and export
-   * Can easily be created, edited and saved to a standard XML file
-     (including by direct assignment, e.g. x = 2 s)
-   * Flexible - may contain simple numbers, units, or whole expressions
-   * Data sets with objects and associated properties in database-like
-     structure
+   * Easily created and edited from the user interfaces (including by direct assignment, e.g. x = 2 s)
+   * Data sets with objects and associated properties in database-like structure (data set with chemical elements is included)
 
-Plotting:
+Plots and graphs
    * Uses Gnuplot
    * Can plot functions or data (matrices and vectors)
-   * Ability to save plot to PNG image, postscript, etc.
-   * Several customization options
+   * Can be customized using several options, and saved as image files
 
 ...and more...
 
