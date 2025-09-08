@@ -33,6 +33,7 @@
 #endif
 #ifndef _WIN32
 #	include <signal.h>
+#	include <pwd.h>
 #endif
 
 #include <libqalculate/MathStructure-support.h>
@@ -594,7 +595,7 @@ void handle_exit() {
 		}
 	}
 	if(interactive_mode) {
-		if(load_defaults) {
+		if(load_defaults || !save_config) {
 			save_history();
 		} else if(save_mode_on_exit) {
 			save_mode();
@@ -3809,9 +3810,9 @@ void ask_autocalc() {
 	}
 	if(autocalc > 0) rl_getc_function = &rl_getc_wrapper;
 #	ifdef _WIN32
-	if(autocalc >= 0 && !load_defaults) {
+	if(autocalc >= 0 && !load_defaults && save_config) {
 #	else
-	if(!save_mode_on_exit && autocalc >= 0 && !load_defaults) {
+	if(!save_mode_on_exit && autocalc >= 0 && !load_defaults && save_config) {
 #	endif
 		saved_autocalc = autocalc;
 		save_preferences(false);
@@ -6799,9 +6800,9 @@ bool ask_implicit() {
 		}
 	}
 #ifdef _WIN32
-	if(!load_defaults) {
+	if(!load_defaults && save_config) {
 #else
-	if((!interactive_mode || !save_mode_on_exit) && !load_defaults) {
+	if((!interactive_mode || !save_mode_on_exit) && !load_defaults && save_config) {
 #endif
 		saved_evalops.parse_options.parsing_mode = evalops.parse_options.parsing_mode;
 		save_preferences(false);
@@ -7564,9 +7565,9 @@ bool ask_sinc() {
 		}
 	}
 #ifdef _WIN32
-	if(!load_defaults) {
+	if(!load_defaults && save_config) {
 #else
-	if(!interactive_mode && !load_defaults) {
+	if(!interactive_mode && !load_defaults && save_config) {
 #endif
 		save_preferences(false);
 	}
@@ -7663,9 +7664,9 @@ bool ask_tc() {
 		}
 	}
 #ifdef _WIN32
-	if(!load_defaults) {
+	if(!load_defaults && save_config) {
 #else
-	if(!interactive_mode && !load_defaults) {
+	if(!interactive_mode && !load_defaults && save_config) {
 #endif
 		save_preferences(false);
 	}
@@ -7755,9 +7756,9 @@ bool ask_comma() {
 		}
 	}
 #ifdef _WIN32
-	if(!load_defaults) {
+	if(!load_defaults && save_config) {
 #else
-	if(!interactive_mode && !load_defaults) {
+	if(!interactive_mode && !load_defaults && save_config) {
 #endif
 		save_preferences(false);
 	}
@@ -7832,9 +7833,9 @@ bool ask_dot() {
 		}
 	}
 #ifdef _WIN32
-	if(!load_defaults) {
+	if(!load_defaults && save_config) {
 #else
-	if(!interactive_mode && !load_defaults) {
+	if(!interactive_mode && !load_defaults && save_config) {
 #endif
 		save_preferences(false);
 	}
@@ -7913,9 +7914,9 @@ bool ask_percent() {
 		}
 	}
 #ifdef _WIN32
-	if(!load_defaults) {
+	if(!load_defaults && save_config) {
 #else
-	if((!interactive_mode || !save_mode_on_exit) && !load_defaults) {
+	if((!interactive_mode || !save_mode_on_exit) && !load_defaults && save_config) {
 #endif
 		saved_percent = simplified_percentage;
 		save_preferences(false);
@@ -8906,6 +8907,21 @@ void set_saved_mode() {
 	saved_custom_input_base = CALCULATOR->customInputBase();
 }
 
+string getLocalStateDir() {
+#ifdef _WIN32
+	return getLocalDir();
+#else
+	const char *homedir;
+	if((homedir = getenv("QALCULATE_USER_DIR")) != NULL) {
+		return homedir;
+	}
+	if((homedir = getenv("XDG_STATE_HOME")) == NULL) {
+		if((homedir = getenv("HOME")) == NULL) homedir = getpwuid(getuid())->pw_dir;
+		return string(homedir) + "/.local/state/qalculate";
+	}
+	return string(homedir) + "/qalculate";
+#endif
+}
 
 void load_preferences() {
 
@@ -9025,8 +9041,20 @@ void load_preferences() {
 
 	FILE *file = NULL;
 #ifdef HAVE_LIBREADLINE
-	string historyfile = buildPath(getLocalDir(), "qalc.history");
-	string oldhistoryfile;
+	string historyfile = buildPath(getLocalStateDir(), "qalc.history");
+	stifle_history(100);
+#	ifndef _WIN32
+	if(fileExists(historyfile)) {
+		read_history(historyfile.c_str());
+	} else {
+		string oldhistoryfile = buildPath(getLocalDir(), "qalc.history");
+		if(fileExists(oldhistoryfile)) {
+			read_history(oldhistoryfile.c_str());
+			makeDir(getLocalStateDir());
+			move_file(oldhistoryfile.c_str(), historyfile.c_str());
+		}
+	}
+#	endif
 #endif
 	string oldfilename;
 	string filename = buildPath(getLocalDir(), "qalc.cfg");
@@ -9038,27 +9066,12 @@ void load_preferences() {
 #endif
 		if(!file) {
 			first_time = true;
-			save_preferences(true);
+			if(save_config) save_preferences(true);
 			update_message_print_options();
 			return;
 		}
-#ifdef HAVE_LIBREADLINE
-#	ifndef _WIN32
-		oldhistoryfile = buildPath(getOldLocalDir(), "qalc.history");
-#	endif
-#endif
 		makeDir(getLocalDir());
 	}
-
-#ifdef HAVE_LIBREADLINE
-	stifle_history(100);
-	if(!oldhistoryfile.empty()) {
-		read_history(oldhistoryfile.c_str());
-		move_file(oldhistoryfile.c_str(), historyfile.c_str());
-	} else {
-		read_history(historyfile.c_str());
-	}
-#endif
 
 	int version_numbers[] = {5, 7, 0};
 
@@ -9433,7 +9446,7 @@ void load_preferences() {
 		update_message_print_options();
 	} else {
 		first_time = true;
-		save_preferences(true);
+		if(save_config) save_preferences(true);
 		update_message_print_options();
 		return;
 	}
@@ -9442,10 +9455,11 @@ void load_preferences() {
 }
 
 void save_history() {
-	if(!dirExists(getLocalDir())) recursiveMakeDir(getLocalDir());
+	string history_dir = getLocalStateDir();
+	if(!dirExists(history_dir)) recursiveMakeDir(history_dir);
 #ifdef HAVE_LIBREADLINE
 	if(clear_history_on_exit) {
-		if(fileExists(buildPath(getLocalDir(), "qalc.history"))) history_truncate_file(buildPath(getLocalDir(), "qalc.history").c_str(), 0);
+		if(fileExists(buildPath(history_dir, "qalc.history"))) history_truncate_file(buildPath(history_dir, "qalc.history").c_str(), 0);
 	} else {
 		if(!ans_variables.empty()) {
 			for(int i = 0; i < history_length; i++) {
@@ -9461,7 +9475,7 @@ void save_history() {
 				}
 			}
 		}
-		write_history(buildPath(getLocalDir(), "qalc.history").c_str());
+		write_history(buildPath(history_dir, "qalc.history").c_str());
 	}
 #endif
 }
@@ -9471,7 +9485,6 @@ void save_history() {
 	set mode to true to save current calculator mode
 */
 bool save_preferences(bool mode) {
-	if(!save_config) return false;
 	FILE *file = NULL;
 	save_history();
 	string filename = buildPath(getLocalDir(), "qalc.cfg");
