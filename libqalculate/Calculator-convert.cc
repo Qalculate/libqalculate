@@ -1473,7 +1473,7 @@ Unit *Calculator::findMatchingUnit(const MathStructure &mstruct) {
 			if(u != cu && !u->isRegistered()) {
 				if(cu->countUnits() > 1 && u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 					MathStructure m_u = ((CompositeUnit*) u)->generateMathStructure();
-					if(m_u != cu->generateMathStructure()) {
+					if(m_u != cu->generateMathStructure() && m_u != mstruct) {
 						Unit *u2 = findMatchingUnit(m_u);
 						if(u2) {
 							MathStructure mtest(mstruct);

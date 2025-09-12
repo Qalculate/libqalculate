@@ -430,6 +430,7 @@ IsPrimeFunction::IsPrimeFunction() : MathFunction("isprime", 1) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
 }
 int IsPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].number().integerLength() > 10000) return 0;
 	Number nr;
 	int r = mpz_probab_prime_p(mpq_numref(vargs[0].number().internalRational()), 25);
 	if(r) mstruct = m_one;
@@ -464,7 +465,7 @@ int NthPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &var
 			mpz_set_si(i, (long int) PRIME_M[l10.lintValue() - 1]);
 		}
 		while(n < vargs[0].number()) {
-			if(CALCULATOR->aborted()) return 0;
+			if(CALCULATOR->aborted()) {mpz_clear(i); return 0;}
 			n++;
 			mpz_nextprime(i, i);
 		}
@@ -483,7 +484,7 @@ NextPrimeFunction::NextPrimeFunction() : MathFunction("nextprime", 1) {
 int NextPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	Number nr(vargs[0].number());
 	nr.ceil();
-	if(!nr.isInteger()) return 0;
+	if(!nr.isInteger() || nr.integerLength() > 10000) return 0;
 	if(nr <= 2) {
 		mstruct = nr_two;
 		return 1;
@@ -508,8 +509,13 @@ int NextPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	mpz_sub_ui(i, mpq_numref(nr.internalRational()), 1);
 	mpz_nextprime(i, i);
 	if(mpz_sizeinbase(i, 2) > 40) {
+		if(CALCULATOR->aborted()) {mpz_clear(i); return 0;}
 		int r = mpz_probab_prime_p(i, 25);
-		while(!r) {mpz_nextprime(i, i); r = mpz_probab_prime_p(i, 25);}
+		while(!r) {
+			if(CALCULATOR->aborted()) {mpz_clear(i); return 0;}
+			mpz_nextprime(i, i);
+			r = mpz_probab_prime_p(i, 25);
+		}
 		if(r == 1) CALCULATOR->error(false, _("The returned value is probably a prime number, but it is not completely certain."), NULL);
 	}
 	nr.setInternal(i);
@@ -525,7 +531,7 @@ PrevPrimeFunction::PrevPrimeFunction() : MathFunction("prevprime", 1) {
 int PrevPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	Number nr(vargs[0].number());
 	nr.floor();
-	if(!nr.isInteger()) return 0;
+	if(!nr.isInteger() || nr.integerLength() > 10000) return 0;
 	if(nr.isTwo()) {
 		mstruct = nr_two;
 		return 1;
@@ -550,16 +556,19 @@ int PrevPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	mpz_sub_ui(i, mpq_numref(nr.internalRational()), 1);
 	mpz_nextprime(p, i);
 	while(mpz_cmp(p, mpq_numref(nr.internalRational())) > 0) {
-		if(CALCULATOR->aborted()) {
-			mpz_clears(i, p);
-			return 0;
-		}
+		if(CALCULATOR->aborted()) {mpz_clears(i, p, NULL); return 0;}
 		mpz_sub_ui(i, i, 1);
 		mpz_nextprime(p, i);
 	}
 	if(mpz_sizeinbase(p, 2) > 40) {
+		if(CALCULATOR->aborted()) {mpz_clears(i, p, NULL); return 0;}
 		int r = mpz_probab_prime_p(p, 25);
-		while(!r) {mpz_sub_ui(i, i, 1); mpz_nextprime(p, i); r = mpz_probab_prime_p(p, 25);}
+		while(!r) {
+			if(CALCULATOR->aborted()) {mpz_clears(i, p, NULL); return 0;}
+			mpz_sub_ui(i, i, 1);
+			mpz_nextprime(p, i);
+			r = mpz_probab_prime_p(p, 25);
+		}
 		if(r == 1) CALCULATOR->error(false, _("The returned value is probably a prime number, but it is not completely certain."), NULL);
 	}
 	nr.setInternal(p);
@@ -2456,14 +2465,16 @@ IEEE754FloatFunction::IEEE754FloatFunction() : MathFunction("float", 1, 4) {
 	Argument *arg = new TextArgument();
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
-	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG);
+	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE);
 	Number nmin(8, 1);
 	iarg->setMin(&nmin);
+	Number nmax(10000, 1);
+	iarg->setMax(&nmax);
 	setArgumentDefinition(2, iarg);
 	setDefaultValue(2, "32");
-	setArgumentDefinition(3,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
+	setArgumentDefinition(3,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE));
 	setDefaultValue(3, "0");
-	setArgumentDefinition(4,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
+	setArgumentDefinition(4,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE));
 	setDefaultValue(4, "0");
 	setCondition("\\z<\\y-1 && \\a<\\y");
 }
@@ -2499,14 +2510,16 @@ IEEE754FloatBitsFunction::IEEE754FloatBitsFunction() : MathFunction("floatBits",
 	arg->setComplexAllowed(false);
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
-	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG);
+	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE);
 	Number nmin(8, 1);
 	iarg->setMin(&nmin);
+	Number nmax(10000, 1);
+	iarg->setMax(&nmax);
 	setArgumentDefinition(2, iarg);
 	setDefaultValue(2, "32");
-	setArgumentDefinition(3,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
+	setArgumentDefinition(3,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE));
 	setDefaultValue(3, "0");
-	setArgumentDefinition(4,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
+	setArgumentDefinition(4,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE));
 	setDefaultValue(4, "0");
 	setCondition("\\z<\\y-1 && \\a<\\y");
 }
@@ -2529,14 +2542,16 @@ IEEE754FloatComponentsFunction::IEEE754FloatComponentsFunction() : MathFunction(
 	arg->setComplexAllowed(false);
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
-	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG);
+	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE);
 	Number nmin(8, 1);
 	iarg->setMin(&nmin);
+	Number nmax(10000, 1);
+	iarg->setMax(&nmax);
 	setArgumentDefinition(2, iarg);
 	setDefaultValue(2, "32");
-	setArgumentDefinition(3,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
+	setArgumentDefinition(3,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE));
 	setDefaultValue(3, "0");
-	setArgumentDefinition(4,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
+	setArgumentDefinition(4,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE));
 	setDefaultValue(4, "0");
 	setCondition("\\z<\\y-1 && \\a<\\y");
 }
@@ -2574,14 +2589,16 @@ IEEE754FloatValueFunction::IEEE754FloatValueFunction() : MathFunction("floatValu
 	arg->setComplexAllowed(false);
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
-	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG);
+	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE);
 	Number nmin(8, 1);
 	iarg->setMin(&nmin);
+	Number nmax(10000, 1);
+	iarg->setMax(&nmax);
 	setArgumentDefinition(2, iarg);
 	setDefaultValue(2, "32");
-	setArgumentDefinition(3,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
+	setArgumentDefinition(3,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE));
 	setDefaultValue(3, "0");
-	setArgumentDefinition(4,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
+	setArgumentDefinition(4,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE));
 	setDefaultValue(4, "0");
 	setCondition("\\z<\\y-1 && \\a<\\y");
 }
@@ -2602,14 +2619,16 @@ IEEE754FloatErrorFunction::IEEE754FloatErrorFunction() : MathFunction("floatErro
 	arg->setComplexAllowed(false);
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
-	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG);
+	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE);
 	Number nmin(8, 1);
 	iarg->setMin(&nmin);
+	Number nmax(10000, 1);
+	iarg->setMax(&nmax);
 	setArgumentDefinition(2, iarg);
 	setDefaultValue(2, "32");
-	setArgumentDefinition(3,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
+	setArgumentDefinition(3,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE));
 	setDefaultValue(3, "0");
-	setArgumentDefinition(4,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
+	setArgumentDefinition(4,  new IntegerArgument("", ARGUMENT_MIN_MAX_NONE));
 	setDefaultValue(4, "0");
 	setCondition("\\z<\\y-1 && \\a<\\y");
 }

@@ -1353,9 +1353,17 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	}
 	remove_times_one(mstruct);
 	fix_division(mstruct, eo);
-	bool b_eval = !is_unit_multiexp(mstruct);
+	bool b_eval = !is_unit_multiexp(mstruct) && mstruct.containsType(STRUCT_UNIT, false, true, true) != 0;
 	while(true) {
-		if(b_eval) mstruct.eval(eo);
+		if(b_eval) {
+			if(CALCULATOR->isControlled()) {
+				mstruct.eval(eo);
+			} else {
+				CALCULATOR->startControl(100);
+				mstruct.eval(eo);
+				CALCULATOR->stopControl();
+			}
+		}
 		if(mstruct.isUnit()) {
 			add(mstruct.unit(), 1, mstruct.prefix());
 		} else if(mstruct.isPower() && mstruct[0].isUnit() && mstruct[1].isInteger()) {
