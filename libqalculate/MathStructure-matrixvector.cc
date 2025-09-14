@@ -1236,7 +1236,7 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 			if(y_vector[i].isNumber() && !y_vector[i].number().isReal()) y_vector[i].setUndefined();
 		}
 	}
-	if(adaptive) {
+	if(adaptive && x_vector.size() > 0) {
 		if(ydiff_total.isZero()) {
 			x_value = x_vector[0];
 			x_value.number() += step.number() / 2;
