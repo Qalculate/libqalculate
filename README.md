@@ -92,8 +92,8 @@ Other software using libqalculate include
    * Easily created and edited from the user interfaces
 
 #### Variables and constants
-   * All common basic constants (pi, e, etc.)
-   * All fundamental physical constants with 2022 CODATA values (including standard uncertainty and optional units)
+   * All common basic constants (π, e, φ, etc.)
+   * Fundamental physical constants with 2022 CODATA values (including standard uncertainty and optional units)
    * CSV file import and export
    * Easily created and edited from the user interfaces (including by using simple assignment expressions, e.g. *x = 2 s*)
    * Data sets with objects and associated properties (a data set with chemical elements is included)

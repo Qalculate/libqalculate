@@ -288,6 +288,8 @@ KnownVariable::KnownVariable(string cat_, string name_, string expression_, stri
 KnownVariable::KnownVariable() : Variable() {
 	mstruct = NULL; mstruct_alt = NULL;
 	b_expression = true;
+	b_relative_uncertainty = false;
+	calculated_precision = -1;
 }
 KnownVariable::KnownVariable(const KnownVariable *variable) {
 	mstruct = NULL; mstruct_alt = NULL;

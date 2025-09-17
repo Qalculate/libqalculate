@@ -112,7 +112,7 @@ Units
 
 Variables and constants
    * All common basic constants (pi, e, etc.)
-   * All fundamental physical constants with 2022 CODATA values (including standard uncertainy and optional units)
+   * Fundamental physical constants with 2022 CODATA values (including standard uncertainy and optional units)
    * CSV file import and export
    * Easily created and edited from the user interfaces (including by direct assignment, e.g. x = 2 s)
    * Data sets with objects and associated properties in database-like structure (data set with chemical elements is included)

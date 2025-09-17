@@ -1,3 +1,33 @@
+2025-09-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix endless loop in Calculator::hasToExpression() with expression containing negative circled sans-serif digit dingbat
+	* Add (reduced) compton wavelength for muon, neutron, proton, and tau
+	* Add ƛ_C symbol to reduced compton wavelength and change alternative symbol for natural unit of length to ƛ_unit
+	* Stricter command argument in command() function
+
+2025-09-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* More efficient reducing of vector size (fixes segfault when aborting plot with very large number of samples)
+
+2025-09-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault when plot data generation is aborted before first y value has been calculated
+
+2025-09-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault (infinite loop) in Calculator::findMatchingUnit() with "sr*Pa^2"
+	* Improve abortion of prime functions, and fix segfault when aborting prevprime() function
+	* Fix possible freeze when creating CompositeUnit with malformed expression (primarily relevant when parsing expression after "to" operator)
+	* Lower highest number of bits (to 10 000) in floating point conversion functions to avoid unresponsive application
+
+2025-09-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix value of planck unit (was rounded to 7 decimals)
+
+2025-09-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Relocate qalc.history to $XDG_STATE_HOME (~/.local/state)
+
 2025-09-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Do not show calculate as you type result for data set function with "info" (default) as second argument

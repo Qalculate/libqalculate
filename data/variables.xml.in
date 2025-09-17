@@ -459,6 +459,59 @@
       </variable>
     </category>
     <category>
+      <_title>Compton Wavelength</_title>
+      <variable>
+        <_title>Compton Wavelength (electron)</_title>
+        <names>r:compton_wavelength,asu:&#x3BB;_C,aos:lambda_C</names>
+        <value>planck/(electron_mass*c)</value>
+      </variable>
+      <variable>
+        <_title>Reduced Compton Wavelength (electron)</_title>
+        <names>r:compton_wavelength_2pi,asu:&#x019b;_C</names>
+        <value>planck2pi/(electron_mass*c)</value>
+      </variable>
+      <variable>
+        <_title>Muon Compton Wavelength</_title>
+        <names>r:muon_compton_wavelength,asu:&#x3BB;_C&#x3BC;</names>
+        <value>planck/(muon_mass*c)</value>
+      </variable>
+      <variable>
+        <_title>Reduced Muon Compton Wavelength</_title>
+        <names>r:muon_compton_wavelength_2pi,asu:&#x019b;_C&#x3BC;</names>
+        <value>planck2pi/(muon_mass*c)</value>
+      </variable>
+      <variable>
+        <_title>Neutron Compton Wavelength</_title>
+        <names>r:neutron_compton_wavelength,asu:&#x3BB;_Cn</names>
+        <value>planck/(neutron_mass*c)</value>
+      </variable>
+      <variable>
+        <_title>Reduced Neutron Compton Wavelength</_title>
+        <names>r:neutron_compton_wavelength_2pi,asu:&#x019b;_Cn</names>
+        <value>planck2pi/(neutron_mass*c)</value>
+      </variable>
+      <variable>
+        <_title>Proton Compton Wavelength</_title>
+        <names>r:proton_compton_wavelength,asu:&#x3BB;_Cp</names>
+        <value>planck/(proton_mass*c)</value>
+      </variable>
+      <variable>
+        <_title>Reduced Proton Compton Wavelength</_title>
+        <names>r:proton_compton_wavelength_2pi,asu:&#x019b;_Cp</names>
+        <value>planck2pi/(proton_mass*c)</value>
+      </variable>
+      <variable>
+        <_title>Tau Compton Wavelength</_title>
+        <names>r:tau_compton_wavelength,asu:&#x3BB;_C&#x3C4;</names>
+        <value>planck/(tau_mass*c)</value>
+      </variable>
+      <variable>
+        <_title>Reduced Tau Compton Wavelength</_title>
+        <names>r:tau_compton_wavelength_2pi,asu:&#x019b;_C&#x3C4;</names>
+        <value>planck2pi/(tau_mass*c)</value>
+      </variable>
+    </category>
+    <category>
       <_title>Atomic and Nuclear Constants</_title>
       <variable>
         <_title>Bohr Radius</_title>
@@ -542,16 +595,6 @@
         <_title>Molar Mass Constant</_title>
         <names>r:molar_mass,as:M_u</names>
         <value>(2*planck*rydberg*avogadro)/(c*fine_structure^2*nounit(electron_u))</value>
-      </variable>
-      <variable>
-        <_title>Compton Wavelength</_title>
-        <names>r:compton_wavelength,asu:&#x3BB;_C,aos:lambda_C</names>
-        <value>planck/(electron_mass*c)</value>
-      </variable>
-      <variable>
-        <_title>Reduced Compton Wavelength</_title>
-        <names>r:compton_wavelength_2pi</names>
-        <value>compton_wavelength/(2*pi)</value>
       </variable>
       <variable>
         <_title>Electronvolt (constant)</_title>

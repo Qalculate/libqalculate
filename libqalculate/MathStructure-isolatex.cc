@@ -2200,15 +2200,15 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				MathStructure mbak(*this);
 				bool strict_check = false;
 				for(size_t i3 = 0; i3 < CHILD(0).size(); i3++) {
-					bool b = false;
+					bool b3 = false;
 					if(!b2 || !mdiv.containsInterval()) {
 						if(CHILD(0)[i3].isPower() && CHILD(0)[i3].equals(mdiv, true)) {
 							CHILD(0)[i3].set(1, 1, 0, true);
-							b = true;
+							b3= true;
 						} else if(CHILD(0)[i3].isMultiplication()) {
 							for(size_t i4 = 0; i4 < CHILD(0)[i3].size(); i4++) {
 								if(CHILD(0)[i3][i4].isPower() && CHILD(0)[i3][i4].equals(mdiv, true)) {
-									b = true;
+									b3 = true;
 									CHILD(0)[i3].delChild(i4 + 1);
 									if(CHILD(0)[i3].size() == 0) CHILD(0)[i3].set(1, 1, 0, true);
 									else if(CHILD(0)[i3].size() == 1) CHILD(0)[i3].setToChild(1, true);
@@ -2217,7 +2217,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							}
 						}
 					}
-					if(!b) {
+					if(!b3) {
 						CHILD(0)[i3].calculateMultiply(mdiv_inv, eo3);
 						strict_check = true;
 					} else {

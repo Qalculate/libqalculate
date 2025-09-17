@@ -9073,7 +9073,7 @@ void load_preferences() {
 		makeDir(getLocalDir());
 	}
 
-	int version_numbers[] = {5, 7, 0};
+	int version_numbers[] = {5, 8, 0};
 
 	if(file) {
 		char line[10000];

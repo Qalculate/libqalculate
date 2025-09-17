@@ -2398,6 +2398,7 @@ bool Calculator::hasToExpression(const string &str, bool allow_empty_from) const
 		i = str.find("\xe2\x9e", i);
 		if(i == string::npos || i >= str.length() - 2) break;
 		if((unsigned char) str[i + 2] >= 0x94 && (unsigned char) str[i + 2] <= 0xbf) return true;
+		i += 3;
 	}
 	i = allow_empty_from ? 0 : 1;
 	size_t i2 = i;
@@ -2428,6 +2429,7 @@ bool Calculator::hasToExpression(const string &str, bool allow_empty_from, const
 		i = str.find("\xe2\x9e", i);
 		if(i == string::npos || i >= str.length() - 2) break;
 		if((unsigned char) str[i + 2] >= 148 && (unsigned char) str[i + 2] <= 191) return true;
+		i += 3;
 	}
 	i = allow_empty_from ? 0 : 1;
 	size_t i2 = i;

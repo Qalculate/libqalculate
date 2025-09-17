@@ -862,7 +862,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {5, 7, 0};
+	int version_numbers[] = {5, 8, 0};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);
@@ -3840,7 +3840,7 @@ bool Calculator::loadExchangeRates() {
 						}
 					}
 				}
-				if(!rate.empty() && rate.find_first_not_of(NUMBER_ELEMENTS SPACES, 2) == string::npos) {
+				if(rate.length() > 2 && rate.find_first_not_of(NUMBER_ELEMENTS SPACES, 2) == string::npos) {
 					if(!u) {
 						u = addUnit(new AliasUnit(_("Currency"), currency, "", "", sname, u_euro, rate, 1, "", false, true), false, true);
 						if(u) u->setHidden(true);

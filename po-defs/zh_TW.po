@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-04 14:43+0200\n"
+"POT-Creation-Date: 2025-09-17 09:12+0200\n"
 "PO-Revision-Date: 2025-09-06 15:54+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2169,22 +2169,23 @@ msgstr "行星"
 msgid ""
 "This data uses material from the Wikipedia articles&#10;\"Earth\" (http://"
 "www.wikipedia.org/wiki/Earth),&#10;\"Jupiter\" (http://www.wikipedia.org/"
-"wiki/Jupiter),&#10;\"Mars\" (http://www.wikipedia.org/wiki/Mars),&#10;"
-"\"Mercury (planet)\" (http://www.wikipedia.org/wiki/Mercury_(planet)),&#10;"
-"\"Neptune\" (http://www.wikipedia.org/wiki/Neptune),&#10;\"Pluto\" (http://"
-"www.wikipedia.org/wiki/Pluto),&#10;\"Saturn\" (http://www.wikipedia.org/wiki/"
-"Saturn),&#10;\"Uranus\" (http://www.wikipedia.org/wiki/Uranus), and&#10;"
-"\"Venus\" (http://en.wikipedia.org/wiki/Venus), under Creative Commons "
-"Attribution-ShareAlike License"
+"wiki/Jupiter),&#10;\"Mars\" (http://www.wikipedia.org/wiki/"
+"Mars),&#10;\"Mercury (planet)\" (http://www.wikipedia.org/wiki/"
+"Mercury_(planet)),&#10;\"Neptune\" (http://www.wikipedia.org/wiki/"
+"Neptune),&#10;\"Pluto\" (http://www.wikipedia.org/wiki/"
+"Pluto),&#10;\"Saturn\" (http://www.wikipedia.org/wiki/"
+"Saturn),&#10;\"Uranus\" (http://www.wikipedia.org/wiki/Uranus), "
+"and&#10;\"Venus\" (http://en.wikipedia.org/wiki/Venus), under Creative "
+"Commons Attribution-ShareAlike License"
 msgstr ""
 "此資料使用來自Wikipedia文章的資料&#10;\"地球\"(http://www.wikipedia.org/wiki/"
 "Earth)、&#10;\"木星\"(http://www.wikipedia.org/wiki/Jupiter)、&#10;\"火星"
-"\"(http://www.wikipedia.org/wiki/Mars)、&#10;\"水星\"(http://www.wikipedia."
-"org/wiki/Mercury_(planet))、&#10;\"海王星\"(http://www.wikipedia.org/wiki/"
-"Neptune)、&#10;\"冥王星\"(http://www.wikipedia.org/wiki/Pluto)、&#10;\"土星"
-"\"(http://www.wikipedia.org/wiki/Saturn)、&#10;\"天王星\"(http://www."
-"wikipedia.org/wiki/Uranus)和&#10;\"金星\"(http://en.wikipedia.org/wiki/"
-"Venus)，在創用CC 姓名標示-相同方式分享 的授權條款下"
+"\"(http://www.wikipedia.org/wiki/Mars)、&#10;\"水星\"(http://"
+"www.wikipedia.org/wiki/Mercury_(planet))、&#10;\"海王星\"(http://"
+"www.wikipedia.org/wiki/Neptune)、&#10;\"冥王星\"(http://www.wikipedia.org/"
+"wiki/Pluto)、&#10;\"土星\"(http://www.wikipedia.org/wiki/Saturn)、&#10;\"天王"
+"星\"(http://www.wikipedia.org/wiki/Uranus)和&#10;\"金星\"(http://"
+"en.wikipedia.org/wiki/Venus)，在創用CC 姓名標示-相同方式分享 的授權條款下"
 
 #: ../data/datasets.xml.in.h:35
 msgid "r:planet"
@@ -2754,7 +2755,7 @@ msgstr "鿬"
 msgid "Oganesson"
 msgstr "鿫"
 
-#: ../data/functions.xml.in.h:1 ../data/variables.xml.in.h:214
+#: ../data/functions.xml.in.h:1 ../data/variables.xml.in.h:223
 msgid "Matrices &amp; Vectors"
 msgstr "矩陣&amp;向量"
 
@@ -4129,17 +4130,17 @@ msgid ""
 "number."
 msgstr ""
 "使用指定的底數(基數)從表達式回傳一個值。對於-62和62之間的底數，支援完整的數學"
-"表達式(包含運算子和函數)，而對於其他底數，指定的表達式轉換到單個數字。&#10;"
-"&#10;底數≤36使用數字0-9和A-Z(大小寫無關)。&#10;&#10;底數在37和62之間使用大小"
-"寫有關的字母(0-9, A-Z, a-z)作為數字('z'等於61)。&#10;&#10;底數超過62使用"
+"表達式(包含運算子和函數)，而對於其他底數，指定的表達式轉換到單個數字。"
+"&#10;&#10;底數≤36使用數字0-9和A-Z(大小寫無關)。&#10;&#10;底數在37和62之間使用"
+"大小寫有關的字母(0-9, A-Z, a-z)作為數字('z'等於61)。&#10;&#10;底數超過62使用"
 "Unicode字元作為數字，用字元編碼作為值(例如'0'等於48)。在這種情況下支援跳脫字"
 "元(例如'\\0' = 0, '\\523' = 523, '\\x7f' = 127)。&#10;&#10;負底數和對應的正底"
 "數使用相同的數字，而用於非整數底數的數字用無條件進位底數決定。非實數的底數預"
 "設使用數字0-9和A-Z。&#10;&#10;使用的數字集可以使用第三個引數選擇(預設為0代表"
 "自動選擇)。將其設定為1代表數字0-9和A-Z，2代表數字0-9、A-Z和a-z，3代表Unicode"
 "數字，和4代表電話字(例如ABC=2、DEF=3等等)，或輸入一個所有數字都用升序放置的文"
-"字字串(例如\"0123456789\")並可選擇用分號分離(啟用多個等效數字，例如\"0;aA1;"
-"bB2;cC3\")。手動選擇數字集時，指定的表達式總是轉換到單個數字。"
+"字字串(例如\"0123456789\")並可選擇用分號分離(啟用多個等效數字，例如"
+"\"0;aA1;bB2;cC3\")。手動選擇數字集時，指定的表達式總是轉換到單個數字。"
 
 #: ../data/functions.xml.in.h:313
 msgid "Set of digits"
@@ -5051,8 +5052,8 @@ msgstr "r:floatParts"
 msgid ""
 "Converts a value to a number in a IEEE 754 floating-point format and returns "
 "sign, exponent, and significand in a vector. If the third argument (exponent "
-"bits) is set to zero, the standard number of exponent bits will be used (e."
-"g. 8 for 32-bit format)."
+"bits) is set to zero, the standard number of exponent bits will be used "
+"(e.g. 8 for 32-bit format)."
 msgstr ""
 "將值轉換到IEEE 754浮點格式的數字並以向量回傳符號、指數和有效數。如果第三個引"
 "數(指數位元)設定為零，則使用標準數量的指數位元(例如8用於32位元格式)。"
@@ -5176,14 +5177,14 @@ msgstr "-r:bmi"
 #: ../data/functions.xml.in.h:555
 msgid ""
 "Calculates the Body Mass Index. The resulting BMI-value is sometimes "
-"interpreted as follows (although varies with age, sex, etc.):&#10;&#10;"
-"Underweight &lt; 18.5&#10;Normal weight 18.5-25&#10;Overweight 25-30&#10;"
-"Obesity &gt; 30&#10;&#10;Note that you must use units for weight (ex. 59kg) "
-"and length (ex. 174cm)."
+"interpreted as follows (although varies with age, sex, "
+"etc.):&#10;&#10;Underweight &lt; 18.5&#10;Normal weight "
+"18.5-25&#10;Overweight 25-30&#10;Obesity &gt; 30&#10;&#10;Note that you must "
+"use units for weight (ex. 59kg) and length (ex. 174cm)."
 msgstr ""
-"計算身體質量指數。結果的BMI值有時被解釋如下(雖然隨著年齡，性別等等而變化):"
-"&#10;&#10;過輕 &lt; 18.5&#10;正常重量 18.5-25&#10;過重 25-30&#10;肥胖 &gt; "
-"30&#10;&#10;請注意，你必須使用重量(例如59kg)和長度(例如174cm)單位。"
+"計算身體質量指數。結果的BMI值有時被解釋如下(雖然隨著年齡，性別等等而變"
+"化):&#10;&#10;過輕 &lt; 18.5&#10;正常重量 18.5-25&#10;過重 25-30&#10;肥胖 "
+"&gt; 30&#10;&#10;請注意，你必須使用重量(例如59kg)和長度(例如174cm)單位。"
 
 #: ../data/functions.xml.in.h:556
 msgid "Weight"
@@ -5268,10 +5269,9 @@ msgid ""
 "that are in acceptably sharp focus in a photo. Enter focal length (e.g. 50 "
 "mm) and distance (e.g. 5 m) with units, and f-stop without unit (2.8, 4.0, "
 "5.6, etc.). Specify either a cicle of confusion diameter limit (e.g. 0.05 "
-"mm) or the sensor size of the camera - 0=\"35mm\", 1=\"APS-H\", 2=\"APS-"
-"CN\" (Nikon, Pentax, Sony), 3=\"APS-C\" (Canon), 4=\"4/3\" (Four Thirds "
-"System), or 5='1\"' (Nikon 1, Sony RX10, Sony RX100) - for a diameter based "
-"on d/1500."
+"mm) or the sensor size of the camera - 0=\"35mm\", 1=\"APS-H\", 2=\"APS-CN\" "
+"(Nikon, Pentax, Sony), 3=\"APS-C\" (Canon), 4=\"4/3\" (Four Thirds System), "
+"or 5='1\"' (Nikon 1, Sony RX10, Sony RX100) - for a diameter based on d/1500."
 msgstr ""
 "回傳照片中可接受的銳利焦點中最近和最遠的物體之間的估計距離。輸入具有單位的焦"
 "距(例如50 mm)和距離(例如5 m)，和無單位的F值(2.8、4.0、5.6等等)。指定模糊圈直"
@@ -5306,8 +5306,8 @@ msgstr "r:awg"
 #: ../data/functions.xml.in.h:581
 msgid ""
 "For gauges larger than 0000 (4/0), please use negative values (00=-1, "
-"000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation (e."
-"g. awg(x) = 20 mm^2)."
+"000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation "
+"(e.g. awg(x) = 20 mm^2)."
 msgstr ""
 "對於大於0000(4/0)的線規，請使用負值(00=-1、000=-2、0000=-3、00000=-4等等)。要"
 "轉換到AWG，使用方程式(例如awg(x) = 20 mm^2)。"
@@ -5323,8 +5323,8 @@ msgstr "r:awgd"
 #: ../data/functions.xml.in.h:584
 msgid ""
 "For gauges larger than 0000 (4/0), please use negative values (00=-1, "
-"000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation (e."
-"g. awgd(x) = 5 mm)."
+"000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation "
+"(e.g. awgd(x) = 5 mm)."
 msgstr ""
 "對於大於0000(4/0)的線規，請使用負值(00=-1、000=-2、0000=-3、00000=-4等等)。要"
 "轉換到AWG，使用方程式(例如awgd(x) = 5 mm)。"
@@ -5805,7 +5805,6 @@ msgid "Pearson's Correlation Coefficient"
 msgstr "皮爾森相關係數"
 
 #: ../data/functions.xml.in.h:698
-#| msgid "r:pearson,r:correl"
 msgid "r:pearson,r:correl,r:cor"
 msgstr "r:pearson,r:correl,r:cor"
 
@@ -6189,7 +6188,7 @@ msgstr "位置(x_0)"
 msgid "Scale (γ)"
 msgstr "尺度(γ)"
 
-#: ../data/functions.xml.in.h:786 ../data/variables.xml.in.h:230
+#: ../data/functions.xml.in.h:786 ../data/variables.xml.in.h:239
 msgid "Date &amp; Time"
 msgstr "日期&amp;時間"
 
@@ -6506,7 +6505,7 @@ msgstr "月的天數"
 msgid "r:daysInMonth"
 msgstr "r:daysInMonth"
 
-#: ../data/functions.xml.in.h:855 ../data/variables.xml.in.h:223
+#: ../data/functions.xml.in.h:855 ../data/variables.xml.in.h:232
 msgid "Utilities"
 msgstr "公用程式"
 
@@ -6874,19 +6873,19 @@ msgstr "r:save"
 
 #: ../data/functions.xml.in.h:943
 msgid ""
-"Stores a value in a variable or saves an expression as a function.&#10;&#10;"
-"A function is created if the name includes parentheses (e.g. \"f()\"). "
-"Optionally the function arguments can be specified in the name (e.g. "
-"\"save(a+b,f(a,b))\"). Otherwise the function arguments are expected to be "
-"referred to in the expression using \\x, \\y, \\z, \\a, \\b, ..., or x, y, z "
-"(e.g. \"save(x+y,f())\").&#10;&#10;If a function was created, the processed "
-"function expression is returned as a text string, otherwise the value is "
-"returned.&#10;&#10;The \":=\" operator (e.g. var1:=10) is a shortcut for "
-"this function."
+"Stores a value in a variable or saves an expression as a "
+"function.&#10;&#10;A function is created if the name includes parentheses "
+"(e.g. \"f()\"). Optionally the function arguments can be specified in the "
+"name (e.g. \"save(a+b,f(a,b))\"). Otherwise the function arguments are "
+"expected to be referred to in the expression using \\x, \\y, \\z, \\a, "
+"\\b, ..., or x, y, z (e.g. \"save(x+y,f())\").&#10;&#10;If a function was "
+"created, the processed function expression is returned as a text string, "
+"otherwise the value is returned.&#10;&#10;The \":=\" operator (e.g. "
+"var1:=10) is a shortcut for this function."
 msgstr ""
-"將值儲存在變數中或將表達式儲存為函數。&#10;&#10;如果名稱包含括號(例如"
-"\"f()\")，則建立一個函數。可選的函數引數可以在名稱中指定(例如\"save(a+b,f(a,"
-"b))\")。否則函數引數預期使用\\x、\\y、\\z、\\a、\\b、...，或x、y、z(例如"
+"將值儲存在變數中或將表達式儲存為函數。&#10;&#10;如果名稱包含括號(例如\"f()"
+"\")，則建立一個函數。可選的函數引數可以在名稱中指定(例如\"save(a+b,f(a,b))"
+"\")。否則函數引數預期使用\\x、\\y、\\z、\\a、\\b、...，或x、y、z(例如"
 "\"save(x+y,f())\")。&#10;&#10;如果函數被建立，則已處理的函數表達式回傳為文字"
 "字串，否則回傳該值。&#10;&#10;\":=\"運算子(例如var1:=10)是此函數的捷徑。"
 
@@ -7377,7 +7376,7 @@ msgstr "r:newtonsolve"
 msgid "Initial estimate"
 msgstr "初始估計"
 
-#: ../data/functions.xml.in.h:1050 ../data/variables.xml.in.h:224
+#: ../data/functions.xml.in.h:1050 ../data/variables.xml.in.h:233
 msgid "Precision"
 msgstr "精確度"
 
@@ -8155,11 +8154,11 @@ msgstr "r:sln"
 
 #: ../data/functions.xml.in.h:1235
 msgid ""
-"Determines the straight line depreciation of an asset for a single period."
-"&#10;&#10;Cost is the amount you paid for the asset. Salvage is the value of "
-"the asset at the end of the period. Life is the number of periods over which "
-"the asset is depreciated. SLN divides the cost evenly over the life of an "
-"asset."
+"Determines the straight line depreciation of an asset for a single "
+"period.&#10;&#10;Cost is the amount you paid for the asset. Salvage is the "
+"value of the asset at the end of the period. Life is the number of periods "
+"over which the asset is depreciated. SLN divides the cost evenly over the "
+"life of an asset."
 msgstr ""
 "決定一個週期內資產的直線折舊。&#10;&#10;成本是你為資產支付的金額。殘值是期末"
 "資產的價值。壽命是資產折舊的期數。SLN在資產壽命上均分成本。"
@@ -8326,19 +8325,20 @@ msgstr "r:pmt"
 #: ../data/functions.xml.in.h:1274
 msgid ""
 "Returns the amount of payment (negative) each period for a loan based on a "
-"constant interest rate and constant payments (each payment is equal amount)."
-"&#10;&#10;If type = 1 then the payment is made at the beginning of the "
-"period. If type = 0 (or omitted) it is made at the end of each period.&#10;"
-"&#10;Note that the interest rate here refers to the rate for each period and "
-"if you calculate with an annual rate, each period will be interpreted as a "
-"whole year. To get monthly payments divide the annual interest rate by 12 "
-"and enter the total number of months (12 times number of years) in the "
-"periods field."
+"constant interest rate and constant payments (each payment is equal "
+"amount).&#10;&#10;If type = 1 then the payment is made at the beginning of "
+"the period. If type = 0 (or omitted) it is made at the end of each "
+"period.&#10;&#10;Note that the interest rate here refers to the rate for "
+"each period and if you calculate with an annual rate, each period will be "
+"interpreted as a whole year. To get monthly payments divide the annual "
+"interest rate by 12 and enter the total number of months (12 times number of "
+"years) in the periods field."
 msgstr ""
-"基於固定利率和固定支付(每個支付金額相同)回傳貸款每期的支付(負數)金額。&#10;"
-"&#10;如果類型=1，則支付是在期初。如果類型=0(或省略)，則在每個期末。&#10;&#10;"
-"請注意，這裡的利率是指每個時期的利率，如果你用年利率計算，則每個時期將被解釋"
-"為全年。要得到每月支付，將年利率除以12並將總月數(12乘以年數)輸入期數欄位。"
+"基於固定利率和固定支付(每個支付金額相同)回傳貸款每期的支付(負數)金額。"
+"&#10;&#10;如果類型=1，則支付是在期初。如果類型=0(或省略)，則在每個期末。"
+"&#10;&#10;請注意，這裡的利率是指每個時期的利率，如果你用年利率計算，則每個時"
+"期將被解釋為全年。要得到每月支付，將年利率除以12並將總月數(12乘以年數)輸入期"
+"數欄位。"
 
 #: ../data/functions.xml.in.h:1275
 msgid "Rate"
@@ -8410,9 +8410,9 @@ msgstr "r:ppmt"
 
 #: ../data/functions.xml.in.h:1289
 msgid ""
-"Calculates the amount of a payment of an annuity going towards principal."
-"&#10;&#10;Type defines the due date. 1 for payment at the beginning of a "
-"period and 0 (default) for payment at the end of a period."
+"Calculates the amount of a payment of an annuity going towards "
+"principal.&#10;&#10;Type defines the due date. 1 for payment at the "
+"beginning of a period and 0 (default) for payment at the end of a period."
 msgstr ""
 "計算年金用於本金的支付金額。&#10;&#10;類型定義到期日。1代表在期初支付而0(預"
 "設)代表在期末支付。"
@@ -8501,9 +8501,9 @@ msgstr "r:ipmt"
 
 #: ../data/functions.xml.in.h:1308
 msgid ""
-"Calculates the amount of a payment of an annuity going towards interest.&#10;"
-"&#10;Type defines the due date. 1 for payment at the beginning of a period "
-"and 0 (default) for payment at the end of a period."
+"Calculates the amount of a payment of an annuity going towards "
+"interest.&#10;&#10;Type defines the due date. 1 for payment at the beginning "
+"of a period and 0 (default) for payment at the end of a period."
 msgstr ""
 "計算年金用於利息的支付金額。&#10;&#10;類型定義到期日。1代表在期初支付而0(預"
 "設)代表在期末支付。"
@@ -8582,10 +8582,10 @@ msgstr "r:received"
 
 #: ../data/functions.xml.in.h:1325
 msgid ""
-"Returns the amount received at the maturity date for an invested security."
-"&#10;&#10;Basis is the type of day counting you want to use: 0: US 30/360 "
-"(default), 1: real days, 2: real days/360, 3: real days/365 or 4: European "
-"30/360. The settlement date must be before maturity date."
+"Returns the amount received at the maturity date for an invested "
+"security.&#10;&#10;Basis is the type of day counting you want to use: 0: US "
+"30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: "
+"European 30/360. The settlement date must be before maturity date."
 msgstr ""
 "回傳投資證券到期日收到的金額。&#10;&#10;基礎是你想要使用的天數計數類型: 0: 美"
 "國30/360(預設)、1: 實際天數、2: 實際天數/360、3: 實際天數/365或4: 歐洲"
@@ -8602,8 +8602,8 @@ msgstr "r:disc"
 #: ../data/functions.xml.in.h:1328
 msgid ""
 "Returns the discount rate for a security.&#10;&#10;Basis is the type of day "
-"counting you want to use: 0: US 30/360 (default), 1: real days, 2: real "
-"days/360, 3: real days/365 or 4: European 30/360."
+"counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/"
+"360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 "回傳證券的貼現率。&#10;&#10;基礎是你想要使用的天數計數類型: 0: 美國30/360(預"
 "設)、1: 實際天數、2: 實際天數/360、3: 實際天數/365或4: 歐洲30/360。"
@@ -8649,10 +8649,11 @@ msgstr "r:accrint"
 
 #: ../data/functions.xml.in.h:1337
 msgid ""
-"Returns accrued interest for a security which pays periodic interest.&#10;"
-"&#10;Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. "
-"Basis is the type of day counting you want to use: 0: US 30/360 (default), "
-"1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
+"Returns accrued interest for a security which pays periodic "
+"interest.&#10;&#10;Allowed frequencies are 1 - annual, 2 - semi-annual or 4 "
+"- quarterly. Basis is the type of day counting you want to use: 0: US 30/360 "
+"(default), 1: real days, 2: real days/360, 3: real days/365 or 4: European "
+"30/360."
 msgstr ""
 "回傳支付定期利息的證券的應計利息。&#10;&#10;允許的頻率是1-年度、2-半年度或4-"
 "季度。基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實"
@@ -8720,8 +8721,8 @@ msgstr "r:pricemat"
 msgid ""
 "Calculates and returns the price per $100 face value of a security. The "
 "security pays interest at maturity.&#10;&#10;Basis is the type of day "
-"counting you want to use: 0: US 30/360 (default), 1: real days, 2: real "
-"days/360, 3: real days/365 or 4: European 30/360."
+"counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/"
+"360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 "計算並回傳證券每$100面值的價格。證券在到期時支付利息。&#10;&#10;基礎是你想要"
 "使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天數/360、3: 實"
@@ -8926,7 +8927,6 @@ msgstr ""
 
 #: ../data/prefixes.xml.in.h:33
 #, fuzzy
-#| msgid "r:probit"
 msgid "ar:Ri,r:robi"
 msgstr "r:probit"
 
@@ -9001,7 +9001,6 @@ msgstr "美制英寸"
 
 #: ../data/units.xml.in.h:18
 #, fuzzy
-#| msgid "ar:US_in,US_inch,p:US_inches"
 msgid "as:in_US,aor:US_in,US_inch,p:US_inches"
 msgstr "ar:US_in,US_inch,p:US_inches"
 
@@ -9035,7 +9034,6 @@ msgstr "美制英尺"
 
 #: ../data/units.xml.in.h:26
 #, fuzzy
-#| msgid "ar:US_ft,US_foot,p:US_feet"
 msgid "as:ft_US,aor:US_ft,US_foot,p:US_feet"
 msgstr "ar:US_ft,US_foot,p:US_feet"
 
@@ -9109,7 +9107,6 @@ msgstr "美制英里"
 
 #: ../data/units.xml.in.h:44
 #, fuzzy
-#| msgid "ar:US_mi,US_mile,p:US_miles"
 msgid "as:mi_US,aor:US_mi,US_mile,p:US_miles"
 msgstr "ar:US_mi,US_mile,p:US_miles"
 
@@ -9288,8 +9285,7 @@ msgid "Turn"
 msgstr "轉"
 
 #: ../data/units.xml.in.h:90
-msgid ""
-"a:tr,r:turn,p:turns,a:pla,a:rev,revolution,p:revolutions,a:cyc,cycle,p:cycles"
+msgid "a:tr,r:turn,p:turns,a:pla,a:rev,revolution,p:revolutions,a:cyc,cycle,p:cycles"
 msgstr ""
 "a:tr,r:turn,轉,a:pla,a:rev,revolution,p:revolutions,a:cyc,cycle,p:cycles"
 
@@ -9912,8 +9908,7 @@ msgid "Degree Celsius"
 msgstr ""
 
 #: ../data/units.xml.in.h:254
-msgid ""
-"ar:oC,au:&#xB0;C,au:&#x2103;,r:celsius,p:celsius,centigrade,p:centigrades"
+msgid "ar:oC,au:&#xB0;C,au:&#x2103;,r:celsius,p:celsius,centigrade,p:centigrades"
 msgstr ""
 
 #: ../data/units.xml.in.h:255
@@ -11425,8 +11420,7 @@ msgid "Trit (Ternary Digit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:632
-msgid ""
-"r:trit,p:trits,trinary_digit,p:trinary_digits,ternary_digit,p:ternary_digits"
+msgid "r:trit,p:trits,trinary_digit,p:trinary_digits,ternary_digit,p:ternary_digits"
 msgstr ""
 
 #: ../data/units.xml.in.h:633
@@ -11458,9 +11452,7 @@ msgid "Nibble (Hexadecimal Digit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:640
-msgid ""
-"r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets,hex_digit,p:"
-"hex_digits,hexadecimal_digit,p:hexadecimal_digits"
+msgid "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets,hex_digit,p:hex_digits,hexadecimal_digit,p:hexadecimal_digits"
 msgstr ""
 
 #: ../data/units.xml.in.h:641
@@ -11588,7 +11580,6 @@ msgstr ""
 
 #: ../data/units.xml.in.h:671
 #, fuzzy
-#| msgid "Melting Point"
 msgid "TeX Point"
 msgstr "熔點"
 
@@ -11622,13 +11613,11 @@ msgstr ""
 
 #: ../data/units.xml.in.h:679
 #, fuzzy
-#| msgid "Negate"
 msgid "Agate"
 msgstr "反相"
 
 #: ../data/units.xml.in.h:680
 #, fuzzy
-#| msgid "ar:a,are,p:ares"
 msgid "r:agate,p:agates"
 msgstr "ar:a,are,公畝"
 
@@ -11642,7 +11631,6 @@ msgstr ""
 
 #: ../data/units.xml.in.h:683
 #, fuzzy
-#| msgid "Melting Point"
 msgid "American Point"
 msgstr "熔點"
 
@@ -12200,410 +12188,446 @@ msgid "Alpha Particle Mass"
 msgstr ""
 
 #: ../data/variables.xml.in.h:133
-msgid "Atomic and Nuclear Constants"
-msgstr ""
-
-#: ../data/variables.xml.in.h:134
-msgid "Bohr Radius"
-msgstr ""
-
-#: ../data/variables.xml.in.h:135
-msgid "Classical Electron Radius"
-msgstr ""
-
-#: ../data/variables.xml.in.h:136
-msgid "Fermi Coupling Constant"
-msgstr ""
-
-#: ../data/variables.xml.in.h:137
-msgid "Fine-Structure Constant"
-msgstr ""
-
-#: ../data/variables.xml.in.h:138
-msgid "Hartree Energy (constant)"
-msgstr ""
-
-#: ../data/variables.xml.in.h:139
-msgid "Quantum of Circulation"
-msgstr ""
-
-#: ../data/variables.xml.in.h:140
-msgid "Quantum of Circulation times 2"
-msgstr ""
-
-#: ../data/variables.xml.in.h:141
-msgid "Rydberg Constant"
-msgstr ""
-
-#: ../data/variables.xml.in.h:142
-msgid "Thomson cross section"
-msgstr ""
-
-#: ../data/variables.xml.in.h:143
-msgid "Weak Mixing Angle (sin²&#x03B8;w)"
-msgstr ""
-
-#: ../data/variables.xml.in.h:144
-msgid "W to Z Mass Ratio"
-msgstr ""
-
-#: ../data/variables.xml.in.h:145
-msgid "Physico-Chemical Constants"
-msgstr ""
-
-#: ../data/variables.xml.in.h:146
-msgid "Lattice Spacing of Ideal Silicon (220)"
-msgstr ""
-
-#: ../data/variables.xml.in.h:147
-msgid "Atomic Mass Constant"
-msgstr ""
-
-#: ../data/variables.xml.in.h:148
-msgid "Avogadro Constant"
-msgstr ""
-
-#: ../data/variables.xml.in.h:149
-msgid "Boltzmann Constant"
-msgstr ""
-
-#: ../data/variables.xml.in.h:150
-msgid "Molar Mass Constant"
-msgstr ""
-
-#: ../data/variables.xml.in.h:151
 msgid "Compton Wavelength"
 msgstr ""
 
+#: ../data/variables.xml.in.h:134
+msgid "Compton Wavelength (electron)"
+msgstr ""
+
+#: ../data/variables.xml.in.h:135
+msgid "Reduced Compton Wavelength (electron)"
+msgstr ""
+
+#: ../data/variables.xml.in.h:136
+msgid "Muon Compton Wavelength"
+msgstr ""
+
+#: ../data/variables.xml.in.h:137
+msgid "Reduced Muon Compton Wavelength"
+msgstr ""
+
+#: ../data/variables.xml.in.h:138
+msgid "Neutron Compton Wavelength"
+msgstr ""
+
+#: ../data/variables.xml.in.h:139
+msgid "Reduced Neutron Compton Wavelength"
+msgstr ""
+
+#: ../data/variables.xml.in.h:140
+msgid "Proton Compton Wavelength"
+msgstr ""
+
+#: ../data/variables.xml.in.h:141
+msgid "Reduced Proton Compton Wavelength"
+msgstr ""
+
+#: ../data/variables.xml.in.h:142
+msgid "Tau Compton Wavelength"
+msgstr ""
+
+#: ../data/variables.xml.in.h:143
+msgid "Reduced Tau Compton Wavelength"
+msgstr ""
+
+#: ../data/variables.xml.in.h:144
+msgid "Atomic and Nuclear Constants"
+msgstr ""
+
+#: ../data/variables.xml.in.h:145
+msgid "Bohr Radius"
+msgstr ""
+
+#: ../data/variables.xml.in.h:146
+msgid "Classical Electron Radius"
+msgstr ""
+
+#: ../data/variables.xml.in.h:147
+msgid "Fermi Coupling Constant"
+msgstr ""
+
+#: ../data/variables.xml.in.h:148
+msgid "Fine-Structure Constant"
+msgstr ""
+
+#: ../data/variables.xml.in.h:149
+msgid "Hartree Energy (constant)"
+msgstr ""
+
+#: ../data/variables.xml.in.h:150
+msgid "Quantum of Circulation"
+msgstr ""
+
+#: ../data/variables.xml.in.h:151
+msgid "Quantum of Circulation times 2"
+msgstr ""
+
 #: ../data/variables.xml.in.h:152
-msgid "Reduced Compton Wavelength"
+msgid "Rydberg Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:153
-msgid "Electronvolt (constant)"
+msgid "Thomson cross section"
 msgstr ""
 
 #: ../data/variables.xml.in.h:154
-msgid "Faraday Constant"
+msgid "Weak Mixing Angle (sin²&#x03B8;w)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:155
-msgid "First Radiation Constant"
+msgid "W to Z Mass Ratio"
 msgstr ""
 
 #: ../data/variables.xml.in.h:156
-msgid "First Radiation Constant for Spectral Radiance"
+msgid "Physico-Chemical Constants"
 msgstr ""
 
 #: ../data/variables.xml.in.h:157
-msgid "Gas Constant"
+msgid "Lattice Spacing of Ideal Silicon (220)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:158
-msgid "Lattice Parameter of Silicon"
+msgid "Atomic Mass Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:159
-msgid "Loschmidt Constant (273.15 K, 100 kPa)"
+msgid "Avogadro Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:160
-msgid "Loschmidt Constant (273.15 K, 101.325 kPa)"
+msgid "Boltzmann Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:161
-msgid "Molar Planck Constant"
+msgid "Molar Mass Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:162
-msgid "Molar Volume of Ideal Gas (273.15 K, 100 kPa)"
+msgid "Electronvolt (constant)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:163
-msgid "Molar Volume of Ideal Gas (273.15 K, 101.325 kPa)"
+msgid "Faraday Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:164
-msgid "Sackur-Tetrode constant (1 K, 100 kPa)"
+msgid "First Radiation Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:165
-msgid "Sackur-Tetrode constant (1 K, 101.325 kPa)"
+msgid "First Radiation Constant for Spectral Radiance"
 msgstr ""
 
 #: ../data/variables.xml.in.h:166
-msgid "Second Radiation Constant"
+msgid "Gas Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:167
-msgid "Stefan-Boltzmann Constant"
+msgid "Lattice Parameter of Silicon"
 msgstr ""
 
 #: ../data/variables.xml.in.h:168
-msgid "Wien frequency displacement law constant"
+msgid "Loschmidt Constant (273.15 K, 100 kPa)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:169
-msgid "Wien wavelength displacement law constant"
+msgid "Loschmidt Constant (273.15 K, 101.325 kPa)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:170
-msgid "Conversion factors for energy equivalents"
+msgid "Molar Planck Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:171
-msgid "Hertz - Inverse Meter Relationship"
+msgid "Molar Volume of Ideal Gas (273.15 K, 100 kPa)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:172
-msgid "Hertz - Joule Relationship"
+msgid "Molar Volume of Ideal Gas (273.15 K, 101.325 kPa)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:173
-msgid "Hertz - Kelvin Relationship"
+msgid "Sackur-Tetrode constant (1 K, 100 kPa)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:174
-msgid "Hertz - Kilogram Relationship"
+msgid "Sackur-Tetrode constant (1 K, 101.325 kPa)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:175
-msgid "Inverse Meter - Hertz Relationship"
+msgid "Second Radiation Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:176
-msgid "Inverse Meter - Joule Relationship"
+msgid "Stefan-Boltzmann Constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:177
-msgid "Inverse Meter - Kelvin Relationship"
+msgid "Wien frequency displacement law constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:178
-msgid "Inverse Meter - Kilogram Relationship"
+msgid "Wien wavelength displacement law constant"
 msgstr ""
 
 #: ../data/variables.xml.in.h:179
-msgid "Joule - Hertz Relationship"
+msgid "Conversion factors for energy equivalents"
 msgstr ""
 
 #: ../data/variables.xml.in.h:180
-msgid "Joule - Inverse Meter Relationship"
+msgid "Hertz - Inverse Meter Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:181
-msgid "Joule - Kelvin Relationship"
+msgid "Hertz - Joule Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:182
-msgid "Joule - Kilogram Relationship"
+msgid "Hertz - Kelvin Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:183
-msgid "Kelvin - Hertz Relationship"
+msgid "Hertz - Kilogram Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:184
-msgid "Kelvin - Inverse Meter Relationship"
+msgid "Inverse Meter - Hertz Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:185
-msgid "Kelvin - Joule Relationship"
+msgid "Inverse Meter - Joule Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:186
-msgid "Kelvin - Kilogram Relationship"
+msgid "Inverse Meter - Kelvin Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:187
-msgid "Kilogram - Hertz Relationship"
+msgid "Inverse Meter - Kilogram Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:188
-msgid "Kilogram - Inverse Meter Relationship"
+msgid "Joule - Hertz Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:189
-msgid "Kilogram - Joule Relationship"
+msgid "Joule - Inverse Meter Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:190
-msgid "Kilogram - Kelvin Relationship"
+msgid "Joule - Kelvin Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:191
-msgid "Basic Constants"
-msgstr "基本常數"
+msgid "Joule - Kilogram Relationship"
+msgstr ""
 
 #: ../data/variables.xml.in.h:192
-msgid "Golden Ratio"
-msgstr "黃金比例"
+msgid "Kelvin - Hertz Relationship"
+msgstr ""
 
 #: ../data/variables.xml.in.h:193
-msgid "Omega Constant"
-msgstr "歐米加常數"
+msgid "Kelvin - Inverse Meter Relationship"
+msgstr ""
 
 #: ../data/variables.xml.in.h:194
-msgid "Pythagoras' Constant (sqrt 2)"
+msgid "Kelvin - Joule Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:195
-msgid "Apery's Constant"
+msgid "Kelvin - Kilogram Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:196
-msgid "Tau (2pi)"
+msgid "Kilogram - Hertz Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:197
-msgid "Plastic Number"
+msgid "Kilogram - Inverse Meter Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:198
-msgid "Base of Natural Logarithms (e)"
+msgid "Kilogram - Joule Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:199
-msgid "Archimedes' Constant (pi)"
+msgid "Kilogram - Kelvin Relationship"
 msgstr ""
 
 #: ../data/variables.xml.in.h:200
+msgid "Basic Constants"
+msgstr "基本常數"
+
+#: ../data/variables.xml.in.h:201
+msgid "Golden Ratio"
+msgstr "黃金比例"
+
+#: ../data/variables.xml.in.h:202
+msgid "Omega Constant"
+msgstr "歐米加常數"
+
+#: ../data/variables.xml.in.h:203
+msgid "Pythagoras' Constant (sqrt 2)"
+msgstr ""
+
+#: ../data/variables.xml.in.h:204
+msgid "Apery's Constant"
+msgstr ""
+
+#: ../data/variables.xml.in.h:205
+msgid "Tau (2pi)"
+msgstr ""
+
+#: ../data/variables.xml.in.h:206
+msgid "Plastic Number"
+msgstr ""
+
+#: ../data/variables.xml.in.h:207
+msgid "Base of Natural Logarithms (e)"
+msgstr ""
+
+#: ../data/variables.xml.in.h:208
+msgid "Archimedes' Constant (pi)"
+msgstr ""
+
+#: ../data/variables.xml.in.h:209
 msgid "Euler's Constant"
 msgstr "歐拉常數"
 
-#: ../data/variables.xml.in.h:201
+#: ../data/variables.xml.in.h:210
 msgid "Catalan's Constant"
 msgstr ""
 
-#: ../data/variables.xml.in.h:202
+#: ../data/variables.xml.in.h:211
 msgid "Special Numbers"
 msgstr ""
 
-#: ../data/variables.xml.in.h:203
+#: ../data/variables.xml.in.h:212
 msgid "Imaginary i (sqrt -1)"
 msgstr "虛數i(sqrt -1)"
 
-#: ../data/variables.xml.in.h:204
+#: ../data/variables.xml.in.h:213
 msgid "Positive Infinity"
 msgstr "正無窮"
 
-#: ../data/variables.xml.in.h:205
+#: ../data/variables.xml.in.h:214
 msgid "a:&#x221E;,r:plus_infinity,r:infinity"
 msgstr "a:&#x221E;,r:plus_infinity,r:infinity"
 
-#: ../data/variables.xml.in.h:206
+#: ../data/variables.xml.in.h:215
 msgid "Negative Infinity"
 msgstr "負無窮"
 
-#: ../data/variables.xml.in.h:207
+#: ../data/variables.xml.in.h:216
 msgid "r:minus_infinity"
 msgstr "r:minus_infinity"
 
-#: ../data/variables.xml.in.h:208
+#: ../data/variables.xml.in.h:217
 msgid "Undefined"
 msgstr "未定義"
 
-#: ../data/variables.xml.in.h:209
+#: ../data/variables.xml.in.h:218
 msgid "r:undefined"
 msgstr "r:undefined"
 
-#: ../data/variables.xml.in.h:210
+#: ../data/variables.xml.in.h:219
 msgid "False"
 msgstr "假"
 
-#: ../data/variables.xml.in.h:211
+#: ../data/variables.xml.in.h:220
 msgid "r:false,r:no"
 msgstr "r:false,r:no"
 
-#: ../data/variables.xml.in.h:212
+#: ../data/variables.xml.in.h:221
 msgid "True"
 msgstr "真"
 
-#: ../data/variables.xml.in.h:213
+#: ../data/variables.xml.in.h:222
 msgid "r:true,r:yes"
 msgstr "r:true,r:yes"
 
-#: ../data/variables.xml.in.h:215
+#: ../data/variables.xml.in.h:224
 msgid "Pauli Matrix 0"
 msgstr ""
 
-#: ../data/variables.xml.in.h:216
+#: ../data/variables.xml.in.h:225
 msgid "rs:pauli_0,aus:&#x03C3;_0"
 msgstr ""
 
-#: ../data/variables.xml.in.h:217
+#: ../data/variables.xml.in.h:226
 msgid "Pauli Matrix 1"
 msgstr ""
 
-#: ../data/variables.xml.in.h:218
+#: ../data/variables.xml.in.h:227
 msgid "rs:pauli_1,aus:&#x03C3;_1"
 msgstr ""
 
-#: ../data/variables.xml.in.h:219
+#: ../data/variables.xml.in.h:228
 msgid "Pauli Matrix 2"
 msgstr ""
 
-#: ../data/variables.xml.in.h:220
+#: ../data/variables.xml.in.h:229
 msgid "rs:pauli_2,aus:&#x03C3;_2"
 msgstr ""
 
-#: ../data/variables.xml.in.h:221
+#: ../data/variables.xml.in.h:230
 msgid "Pauli Matrix 3"
 msgstr ""
 
-#: ../data/variables.xml.in.h:222
+#: ../data/variables.xml.in.h:231
 msgid "rs:pauli_3,aus:&#x03C3;_3"
 msgstr ""
 
-#: ../data/variables.xml.in.h:225
+#: ../data/variables.xml.in.h:234
 msgid "r:precision"
 msgstr "r:precision"
 
-#: ../data/variables.xml.in.h:226
+#: ../data/variables.xml.in.h:235
 msgid "System Uptime"
 msgstr "系統工作時間"
 
-#: ../data/variables.xml.in.h:227
+#: ../data/variables.xml.in.h:236
 msgid "r:uptime"
 msgstr "r:uptime"
 
-#: ../data/variables.xml.in.h:228
+#: ../data/variables.xml.in.h:237
 msgid "Unknowns"
 msgstr "未知數"
 
-#: ../data/variables.xml.in.h:229
+#: ../data/variables.xml.in.h:238
 msgid "n (integer)"
 msgstr "n(整數)"
 
-#: ../data/variables.xml.in.h:231
+#: ../data/variables.xml.in.h:240
 msgid "Today"
 msgstr "今天"
 
-#: ../data/variables.xml.in.h:232
+#: ../data/variables.xml.in.h:241
 msgid "r:today"
 msgstr "r:today"
 
-#: ../data/variables.xml.in.h:233
+#: ../data/variables.xml.in.h:242
 msgid "Tomorrow"
 msgstr "明天"
 
-#: ../data/variables.xml.in.h:234
+#: ../data/variables.xml.in.h:243
 msgid "r:tomorrow"
 msgstr "r:tomorrow"
 
-#: ../data/variables.xml.in.h:235
+#: ../data/variables.xml.in.h:244
 msgid "Yesterday"
 msgstr "昨天"
 
-#: ../data/variables.xml.in.h:236
+#: ../data/variables.xml.in.h:245
 msgid "r:yesterday"
 msgstr "r:yesterday"
 
-#: ../data/variables.xml.in.h:237
+#: ../data/variables.xml.in.h:246
 msgid "Now (date and time)"
 msgstr "現在(日期和時間)"
 
-#: ../data/variables.xml.in.h:238
+#: ../data/variables.xml.in.h:247
 msgid "r:now"
 msgstr "r:now"
 

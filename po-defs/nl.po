@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate-defs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-04 14:27+0200\n"
+"POT-Creation-Date: 2025-09-17 08:51+0200\n"
 "PO-Revision-Date: 2007-05-18 15:47+0200\n"
 "Last-Translator: Jaap Woldringh <jjh.woldringh@planet.nl>\n"
 "Language-Team:  <kde-i18n-nl@kde.org>\n"
@@ -2839,7 +2839,7 @@ msgstr ""
 msgid "Oganesson"
 msgstr ""
 
-#: ../data/functions.xml.in.h:1 ../data/variables.xml.in.h:214
+#: ../data/functions.xml.in.h:1 ../data/variables.xml.in.h:223
 msgid "Matrices &amp; Vectors"
 msgstr "Matrices &amp; vectoren"
 
@@ -6410,7 +6410,7 @@ msgstr ""
 msgid "Scale (γ)"
 msgstr "Schaal"
 
-#: ../data/functions.xml.in.h:786 ../data/variables.xml.in.h:230
+#: ../data/functions.xml.in.h:786 ../data/variables.xml.in.h:239
 msgid "Date &amp; Time"
 msgstr "Datum &amp; Tijd"
 
@@ -6726,7 +6726,7 @@ msgstr "Dagen in maand"
 msgid "r:daysInMonth"
 msgstr ""
 
-#: ../data/functions.xml.in.h:855 ../data/variables.xml.in.h:223
+#: ../data/functions.xml.in.h:855 ../data/variables.xml.in.h:232
 msgid "Utilities"
 msgstr "Hulpmiddelen"
 
@@ -7603,7 +7603,7 @@ msgstr "oplossen"
 msgid "Initial estimate"
 msgstr "Beginwaarde"
 
-#: ../data/functions.xml.in.h:1050 ../data/variables.xml.in.h:224
+#: ../data/functions.xml.in.h:1050 ../data/variables.xml.in.h:233
 #, fuzzy
 msgid "Precision"
 msgstr "Regressie"
@@ -12552,420 +12552,456 @@ msgid "Alpha Particle Mass"
 msgstr "Massa alfadeeltje"
 
 #: ../data/variables.xml.in.h:133
+msgid "Compton Wavelength"
+msgstr "Compton golflengte"
+
+#: ../data/variables.xml.in.h:134
+msgid "Compton Wavelength (electron)"
+msgstr "Compton golflengte (elektron)"
+
+#: ../data/variables.xml.in.h:135
+msgid "Reduced Compton Wavelength (electron)"
+msgstr "Gereduceerde Compton golflengte (elektron)"
+
+#: ../data/variables.xml.in.h:136
+msgid "Muon Compton Wavelength"
+msgstr "Compton golflengte van muon"
+
+#: ../data/variables.xml.in.h:137
+msgid "Reduced Muon Compton Wavelength"
+msgstr "Gereduceerde Compton golflengte van muon"
+
+#: ../data/variables.xml.in.h:138
+msgid "Neutron Compton Wavelength"
+msgstr "Compton golflengte van neutron"
+
+#: ../data/variables.xml.in.h:139
+msgid "Reduced Neutron Compton Wavelength"
+msgstr "Gereduceerde Compton golflengte van neutron"
+
+#: ../data/variables.xml.in.h:140
+msgid "Proton Compton Wavelength"
+msgstr "Compton golflengte van proton"
+
+#: ../data/variables.xml.in.h:141
+msgid "Reduced Proton Compton Wavelength"
+msgstr "Gereduceerde Compton golflengte van proton"
+
+#: ../data/variables.xml.in.h:142
+msgid "Tau Compton Wavelength"
+msgstr "Compton golflengte van tau"
+
+#: ../data/variables.xml.in.h:143
+msgid "Reduced Tau Compton Wavelength"
+msgstr "Gereduceerde Compton golflengte vab tau"
+
+#: ../data/variables.xml.in.h:144
 msgid "Atomic and Nuclear Constants"
 msgstr "Atomaire- en nucleaire constanten"
 
-#: ../data/variables.xml.in.h:134
+#: ../data/variables.xml.in.h:145
 msgid "Bohr Radius"
 msgstr "Bohr-straal"
 
-#: ../data/variables.xml.in.h:135
+#: ../data/variables.xml.in.h:146
 msgid "Classical Electron Radius"
 msgstr "Klassieke straal elektron"
 
-#: ../data/variables.xml.in.h:136
+#: ../data/variables.xml.in.h:147
 #, fuzzy
 msgid "Fermi Coupling Constant"
 msgstr "von Klitzing constante"
 
-#: ../data/variables.xml.in.h:137
+#: ../data/variables.xml.in.h:148
 msgid "Fine-Structure Constant"
 msgstr "Fijnstructuurconstante"
 
-#: ../data/variables.xml.in.h:138
+#: ../data/variables.xml.in.h:149
 msgid "Hartree Energy (constant)"
 msgstr "Hartree-energie (constante)"
 
-#: ../data/variables.xml.in.h:139
+#: ../data/variables.xml.in.h:150
 msgid "Quantum of Circulation"
 msgstr ""
 
-#: ../data/variables.xml.in.h:140
+#: ../data/variables.xml.in.h:151
 msgid "Quantum of Circulation times 2"
 msgstr ""
 
-#: ../data/variables.xml.in.h:141
+#: ../data/variables.xml.in.h:152
 msgid "Rydberg Constant"
 msgstr "Rydberg constante"
 
-#: ../data/variables.xml.in.h:142
+#: ../data/variables.xml.in.h:153
 msgid "Thomson cross section"
 msgstr ""
 
-#: ../data/variables.xml.in.h:143
+#: ../data/variables.xml.in.h:154
 msgid "Weak Mixing Angle (sin²&#x03B8;w)"
 msgstr ""
 
-#: ../data/variables.xml.in.h:144
+#: ../data/variables.xml.in.h:155
 #, fuzzy
 msgid "W to Z Mass Ratio"
 msgstr "Massafractie"
 
-#: ../data/variables.xml.in.h:145
+#: ../data/variables.xml.in.h:156
 msgid "Physico-Chemical Constants"
 msgstr "Fysisch-chemische constanten"
 
-#: ../data/variables.xml.in.h:146
+#: ../data/variables.xml.in.h:157
 msgid "Lattice Spacing of Ideal Silicon (220)"
 msgstr ""
 
-#: ../data/variables.xml.in.h:147
+#: ../data/variables.xml.in.h:158
 msgid "Atomic Mass Constant"
 msgstr "Atomaire massaconstante"
 
-#: ../data/variables.xml.in.h:148
+#: ../data/variables.xml.in.h:159
 msgid "Avogadro Constant"
 msgstr "Constante van Avogadro"
 
-#: ../data/variables.xml.in.h:149
+#: ../data/variables.xml.in.h:160
 msgid "Boltzmann Constant"
 msgstr "Boltzmannconstante"
 
-#: ../data/variables.xml.in.h:150
+#: ../data/variables.xml.in.h:161
 #, fuzzy
 msgid "Molar Mass Constant"
 msgstr "Atomaire massaconstante"
 
-#: ../data/variables.xml.in.h:151
-msgid "Compton Wavelength"
-msgstr "Compton golflengte"
-
-#: ../data/variables.xml.in.h:152
-msgid "Reduced Compton Wavelength"
-msgstr "Gereduceerde Compton golflengte"
-
-#: ../data/variables.xml.in.h:153
+#: ../data/variables.xml.in.h:162
 msgid "Electronvolt (constant)"
 msgstr "Elektronvolt (constante)"
 
-#: ../data/variables.xml.in.h:154
+#: ../data/variables.xml.in.h:163
 msgid "Faraday Constant"
 msgstr "Faradayconstante"
 
-#: ../data/variables.xml.in.h:155
+#: ../data/variables.xml.in.h:164
 msgid "First Radiation Constant"
 msgstr "Eerste stralingsconstante"
 
-#: ../data/variables.xml.in.h:156
+#: ../data/variables.xml.in.h:165
 #, fuzzy
 msgid "First Radiation Constant for Spectral Radiance"
 msgstr "Eerste stralingsconstante"
 
-#: ../data/variables.xml.in.h:157
+#: ../data/variables.xml.in.h:166
 msgid "Gas Constant"
 msgstr "Gasconstante"
 
-#: ../data/variables.xml.in.h:158
+#: ../data/variables.xml.in.h:167
 msgid "Lattice Parameter of Silicon"
 msgstr ""
 
-#: ../data/variables.xml.in.h:159
+#: ../data/variables.xml.in.h:168
 msgid "Loschmidt Constant (273.15 K, 100 kPa)"
 msgstr ""
 
-#: ../data/variables.xml.in.h:160
+#: ../data/variables.xml.in.h:169
 msgid "Loschmidt Constant (273.15 K, 101.325 kPa)"
 msgstr ""
 
-#: ../data/variables.xml.in.h:161
+#: ../data/variables.xml.in.h:170
 #, fuzzy
 msgid "Molar Planck Constant"
 msgstr "Planck constante"
 
-#: ../data/variables.xml.in.h:162
+#: ../data/variables.xml.in.h:171
 msgid "Molar Volume of Ideal Gas (273.15 K, 100 kPa)"
 msgstr "Molaire volume van één mol ideaal gas (273.15 K, 100 kPa)"
 
-#: ../data/variables.xml.in.h:163
+#: ../data/variables.xml.in.h:172
 msgid "Molar Volume of Ideal Gas (273.15 K, 101.325 kPa)"
 msgstr "Molaire volume van één mol ideaal gas (273.15 K, 101.325 kPa)"
 
-#: ../data/variables.xml.in.h:164
+#: ../data/variables.xml.in.h:173
 msgid "Sackur-Tetrode constant (1 K, 100 kPa)"
 msgstr ""
 
-#: ../data/variables.xml.in.h:165
+#: ../data/variables.xml.in.h:174
 msgid "Sackur-Tetrode constant (1 K, 101.325 kPa)"
 msgstr ""
 
-#: ../data/variables.xml.in.h:166
+#: ../data/variables.xml.in.h:175
 msgid "Second Radiation Constant"
 msgstr "Tweede stralingsconstante"
 
-#: ../data/variables.xml.in.h:167
+#: ../data/variables.xml.in.h:176
 msgid "Stefan-Boltzmann Constant"
 msgstr "Constante van Stefan-Boltzmann"
 
-#: ../data/variables.xml.in.h:168
+#: ../data/variables.xml.in.h:177
 msgid "Wien frequency displacement law constant"
 msgstr ""
 
-#: ../data/variables.xml.in.h:169
+#: ../data/variables.xml.in.h:178
 msgid "Wien wavelength displacement law constant"
 msgstr ""
 
-#: ../data/variables.xml.in.h:170
+#: ../data/variables.xml.in.h:179
 msgid "Conversion factors for energy equivalents"
 msgstr ""
 
-#: ../data/variables.xml.in.h:171
+#: ../data/variables.xml.in.h:180
 msgid "Hertz - Inverse Meter Relationship"
 msgstr ""
 
-#: ../data/variables.xml.in.h:172
+#: ../data/variables.xml.in.h:181
 msgid "Hertz - Joule Relationship"
 msgstr ""
 
-#: ../data/variables.xml.in.h:173
+#: ../data/variables.xml.in.h:182
 msgid "Hertz - Kelvin Relationship"
 msgstr ""
 
-#: ../data/variables.xml.in.h:174
+#: ../data/variables.xml.in.h:183
 msgid "Hertz - Kilogram Relationship"
 msgstr ""
 
-#: ../data/variables.xml.in.h:175
+#: ../data/variables.xml.in.h:184
 msgid "Inverse Meter - Hertz Relationship"
 msgstr ""
 
-#: ../data/variables.xml.in.h:176
+#: ../data/variables.xml.in.h:185
 msgid "Inverse Meter - Joule Relationship"
 msgstr ""
 
-#: ../data/variables.xml.in.h:177
+#: ../data/variables.xml.in.h:186
 msgid "Inverse Meter - Kelvin Relationship"
 msgstr ""
 
-#: ../data/variables.xml.in.h:178
+#: ../data/variables.xml.in.h:187
 msgid "Inverse Meter - Kilogram Relationship"
 msgstr ""
 
-#: ../data/variables.xml.in.h:179
+#: ../data/variables.xml.in.h:188
 #, fuzzy
 msgid "Joule - Hertz Relationship"
 msgstr "Joule per Kelvin"
 
-#: ../data/variables.xml.in.h:180
+#: ../data/variables.xml.in.h:189
 msgid "Joule - Inverse Meter Relationship"
 msgstr ""
 
-#: ../data/variables.xml.in.h:181
+#: ../data/variables.xml.in.h:190
 #, fuzzy
 msgid "Joule - Kelvin Relationship"
 msgstr "Joule per Kelvin"
 
-#: ../data/variables.xml.in.h:182
+#: ../data/variables.xml.in.h:191
 #, fuzzy
 msgid "Joule - Kilogram Relationship"
 msgstr "Joule per kilogram Kelvin"
 
-#: ../data/variables.xml.in.h:183
+#: ../data/variables.xml.in.h:192
 msgid "Kelvin - Hertz Relationship"
 msgstr ""
 
-#: ../data/variables.xml.in.h:184
+#: ../data/variables.xml.in.h:193
 msgid "Kelvin - Inverse Meter Relationship"
 msgstr ""
 
-#: ../data/variables.xml.in.h:185
+#: ../data/variables.xml.in.h:194
 msgid "Kelvin - Joule Relationship"
 msgstr ""
 
-#: ../data/variables.xml.in.h:186
+#: ../data/variables.xml.in.h:195
 msgid "Kelvin - Kilogram Relationship"
 msgstr ""
 
-#: ../data/variables.xml.in.h:187
+#: ../data/variables.xml.in.h:196
 msgid "Kilogram - Hertz Relationship"
 msgstr ""
 
-#: ../data/variables.xml.in.h:188
+#: ../data/variables.xml.in.h:197
 msgid "Kilogram - Inverse Meter Relationship"
 msgstr ""
 
-#: ../data/variables.xml.in.h:189
+#: ../data/variables.xml.in.h:198
 msgid "Kilogram - Joule Relationship"
 msgstr ""
 
-#: ../data/variables.xml.in.h:190
+#: ../data/variables.xml.in.h:199
 msgid "Kilogram - Kelvin Relationship"
 msgstr ""
 
-#: ../data/variables.xml.in.h:191
+#: ../data/variables.xml.in.h:200
 msgid "Basic Constants"
 msgstr "Basisconstanten"
 
-#: ../data/variables.xml.in.h:192
+#: ../data/variables.xml.in.h:201
 msgid "Golden Ratio"
 msgstr "Gulden snede"
 
-#: ../data/variables.xml.in.h:193
+#: ../data/variables.xml.in.h:202
 msgid "Omega Constant"
 msgstr "Omega constante"
 
-#: ../data/variables.xml.in.h:194
+#: ../data/variables.xml.in.h:203
 msgid "Pythagoras' Constant (sqrt 2)"
 msgstr "Pythagoras constante (sqrt 2)"
 
-#: ../data/variables.xml.in.h:195
+#: ../data/variables.xml.in.h:204
 msgid "Apery's Constant"
 msgstr "Apery's constante"
 
-#: ../data/variables.xml.in.h:196
+#: ../data/variables.xml.in.h:205
 msgid "Tau (2pi)"
 msgstr ""
 
-#: ../data/variables.xml.in.h:197
+#: ../data/variables.xml.in.h:206
 msgid "Plastic Number"
 msgstr "Plastisch getal"
 
-#: ../data/variables.xml.in.h:198
+#: ../data/variables.xml.in.h:207
 msgid "Base of Natural Logarithms (e)"
 msgstr "Grondtal natuurlijke logaritmen (e)"
 
-#: ../data/variables.xml.in.h:199
+#: ../data/variables.xml.in.h:208
 msgid "Archimedes' Constant (pi)"
 msgstr "Archimede's constante (pi)"
 
-#: ../data/variables.xml.in.h:200
+#: ../data/variables.xml.in.h:209
 msgid "Euler's Constant"
 msgstr "Euler's constante"
 
-#: ../data/variables.xml.in.h:201
+#: ../data/variables.xml.in.h:210
 msgid "Catalan's Constant"
 msgstr "Catalan's constante"
 
-#: ../data/variables.xml.in.h:202
+#: ../data/variables.xml.in.h:211
 msgid "Special Numbers"
 msgstr "Bijzondere getallen"
 
-#: ../data/variables.xml.in.h:203
+#: ../data/variables.xml.in.h:212
 msgid "Imaginary i (sqrt -1)"
 msgstr "Imaginaire i (sqrt -1)"
 
-#: ../data/variables.xml.in.h:204
+#: ../data/variables.xml.in.h:213
 msgid "Positive Infinity"
 msgstr "Positief oneindig"
 
-#: ../data/variables.xml.in.h:205
+#: ../data/variables.xml.in.h:214
 msgid "a:&#x221E;,r:plus_infinity,r:infinity"
 msgstr "a:&#x221E;,oneindig"
 
-#: ../data/variables.xml.in.h:206
+#: ../data/variables.xml.in.h:215
 msgid "Negative Infinity"
 msgstr "Negatief oneindig"
 
-#: ../data/variables.xml.in.h:207
+#: ../data/variables.xml.in.h:216
 msgid "r:minus_infinity"
 msgstr "min_oneindig"
 
-#: ../data/variables.xml.in.h:208
+#: ../data/variables.xml.in.h:217
 msgid "Undefined"
 msgstr "Ongedefinieerd"
 
-#: ../data/variables.xml.in.h:209
+#: ../data/variables.xml.in.h:218
 msgid "r:undefined"
 msgstr "ongedefinieerd"
 
-#: ../data/variables.xml.in.h:210
+#: ../data/variables.xml.in.h:219
 msgid "False"
 msgstr "Onwaar"
 
-#: ../data/variables.xml.in.h:211
+#: ../data/variables.xml.in.h:220
 msgid "r:false,r:no"
 msgstr "onwaar,nee"
 
-#: ../data/variables.xml.in.h:212
+#: ../data/variables.xml.in.h:221
 msgid "True"
 msgstr "Waar"
 
-#: ../data/variables.xml.in.h:213
+#: ../data/variables.xml.in.h:222
 msgid "r:true,r:yes"
 msgstr "waar,ja"
 
-#: ../data/variables.xml.in.h:215
+#: ../data/variables.xml.in.h:224
 msgid "Pauli Matrix 0"
 msgstr "Pauli-spinmatrix 0"
 
-#: ../data/variables.xml.in.h:216
+#: ../data/variables.xml.in.h:225
 msgid "rs:pauli_0,aus:&#x03C3;_0"
 msgstr ""
 
-#: ../data/variables.xml.in.h:217
+#: ../data/variables.xml.in.h:226
 msgid "Pauli Matrix 1"
 msgstr "Pauli-spinmatrix 1"
 
-#: ../data/variables.xml.in.h:218
+#: ../data/variables.xml.in.h:227
 msgid "rs:pauli_1,aus:&#x03C3;_1"
 msgstr ""
 
-#: ../data/variables.xml.in.h:219
+#: ../data/variables.xml.in.h:228
 msgid "Pauli Matrix 2"
 msgstr "Pauli-spinmatrix 2"
 
-#: ../data/variables.xml.in.h:220
+#: ../data/variables.xml.in.h:229
 msgid "rs:pauli_2,aus:&#x03C3;_2"
 msgstr ""
 
-#: ../data/variables.xml.in.h:221
+#: ../data/variables.xml.in.h:230
 msgid "Pauli Matrix 3"
 msgstr "Pauli-spinmatrix 3"
 
-#: ../data/variables.xml.in.h:222
+#: ../data/variables.xml.in.h:231
 msgid "rs:pauli_3,aus:&#x03C3;_3"
 msgstr ""
 
-#: ../data/variables.xml.in.h:225
+#: ../data/variables.xml.in.h:234
 #, fuzzy
 msgid "r:precision"
 msgstr "Expressie"
 
-#: ../data/variables.xml.in.h:226
+#: ../data/variables.xml.in.h:235
 msgid "System Uptime"
 msgstr ""
 
-#: ../data/variables.xml.in.h:227
+#: ../data/variables.xml.in.h:236
 #, fuzzy
 msgid "r:uptime"
 msgstr "tijd"
 
-#: ../data/variables.xml.in.h:228
+#: ../data/variables.xml.in.h:237
 msgid "Unknowns"
 msgstr "Onbekenden"
 
-#: ../data/variables.xml.in.h:229
+#: ../data/variables.xml.in.h:238
 msgid "n (integer)"
 msgstr "n (geheel getal)"
 
-#: ../data/variables.xml.in.h:231
+#: ../data/variables.xml.in.h:240
 msgid "Today"
 msgstr "Vandaag"
 
-#: ../data/variables.xml.in.h:232
+#: ../data/variables.xml.in.h:241
 msgid "r:today"
 msgstr "vandaag"
 
-#: ../data/variables.xml.in.h:233
+#: ../data/variables.xml.in.h:242
 msgid "Tomorrow"
 msgstr "Morgen"
 
-#: ../data/variables.xml.in.h:234
+#: ../data/variables.xml.in.h:243
 msgid "r:tomorrow"
 msgstr "morgen"
 
-#: ../data/variables.xml.in.h:235
+#: ../data/variables.xml.in.h:244
 msgid "Yesterday"
 msgstr "Gisteren"
 
-#: ../data/variables.xml.in.h:236
+#: ../data/variables.xml.in.h:245
 msgid "r:yesterday"
 msgstr "gisteren"
 
-#: ../data/variables.xml.in.h:237
+#: ../data/variables.xml.in.h:246
 msgid "Now (date and time)"
 msgstr ""
 
-#: ../data/variables.xml.in.h:238
+#: ../data/variables.xml.in.h:247
 msgid "r:now"
 msgstr ""
 

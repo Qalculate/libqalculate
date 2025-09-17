@@ -2295,6 +2295,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 			if(v->referenceName() == "bohr_radius") u = CALCULATOR->getActiveUnit("bohr_unit");
 			else if(v->referenceName() == "elementary_charge") u = CALCULATOR->getActiveUnit("e_unit");
 			else if(v->referenceName() == "electron_mass") u = CALCULATOR->getActiveUnit("electron_unit");
+			else if(v->referenceName() == "compton_wavelength_2pi") u = CALCULATOR->getActiveUnit("l_N");
 		}
 		if(u) v = NULL;
 	}

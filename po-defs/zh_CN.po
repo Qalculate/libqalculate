@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-04 14:27+0200\n"
+"POT-Creation-Date: 2025-09-17 09:00+0200\n"
 "PO-Revision-Date: 2021-08-23 09:54+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
@@ -2747,7 +2747,7 @@ msgstr "鿬"
 msgid "Oganesson"
 msgstr "鿫"
 
-#: ../data/functions.xml.in.h:1 ../data/variables.xml.in.h:214
+#: ../data/functions.xml.in.h:1 ../data/variables.xml.in.h:223
 msgid "Matrices &amp; Vectors"
 msgstr "矩阵与向量"
 
@@ -6214,7 +6214,7 @@ msgstr "位置参数（x_0）"
 msgid "Scale (γ)"
 msgstr "尺度参数（γ）"
 
-#: ../data/functions.xml.in.h:786 ../data/variables.xml.in.h:230
+#: ../data/functions.xml.in.h:786 ../data/variables.xml.in.h:239
 msgid "Date &amp; Time"
 msgstr "日期与时间"
 
@@ -6531,7 +6531,7 @@ msgstr "每月的天数"
 msgid "r:daysInMonth"
 msgstr "-"
 
-#: ../data/functions.xml.in.h:855 ../data/variables.xml.in.h:223
+#: ../data/functions.xml.in.h:855 ../data/variables.xml.in.h:232
 msgid "Utilities"
 msgstr "工具"
 
@@ -7412,7 +7412,7 @@ msgstr "-"
 msgid "Initial estimate"
 msgstr "初始估值"
 
-#: ../data/functions.xml.in.h:1050 ../data/variables.xml.in.h:224
+#: ../data/functions.xml.in.h:1050 ../data/variables.xml.in.h:233
 msgid "Precision"
 msgstr "精度"
 
@@ -12276,410 +12276,446 @@ msgid "Alpha Particle Mass"
 msgstr "α粒子质量"
 
 #: ../data/variables.xml.in.h:133
-msgid "Atomic and Nuclear Constants"
-msgstr "原子与核物理常数"
-
-#: ../data/variables.xml.in.h:134
-msgid "Bohr Radius"
-msgstr "玻尔半径"
-
-#: ../data/variables.xml.in.h:135
-msgid "Classical Electron Radius"
-msgstr "经典电子半径"
-
-#: ../data/variables.xml.in.h:136
-msgid "Fermi Coupling Constant"
-msgstr "费米耦合常数"
-
-#: ../data/variables.xml.in.h:137
-msgid "Fine-Structure Constant"
-msgstr "精细结构常数"
-
-#: ../data/variables.xml.in.h:138
-msgid "Hartree Energy (constant)"
-msgstr "哈特里能量(常数)"
-
-#: ../data/variables.xml.in.h:139
-msgid "Quantum of Circulation"
-msgstr "环量量子"
-
-#: ../data/variables.xml.in.h:140
-msgid "Quantum of Circulation times 2"
-msgstr "环量量子×2"
-
-#: ../data/variables.xml.in.h:141
-msgid "Rydberg Constant"
-msgstr "里德伯常数"
-
-#: ../data/variables.xml.in.h:142
-msgid "Thomson cross section"
-msgstr "汤姆逊散射截面"
-
-#: ../data/variables.xml.in.h:143
-msgid "Weak Mixing Angle (sin²&#x03B8;w)"
-msgstr "溫伯格角(sin²&#x03B8;w)"
-
-#: ../data/variables.xml.in.h:144
-msgid "W to Z Mass Ratio"
-msgstr "W与Z玻色子质量比"
-
-#: ../data/variables.xml.in.h:145
-msgid "Physico-Chemical Constants"
-msgstr "物理化学常数"
-
-#: ../data/variables.xml.in.h:146
-msgid "Lattice Spacing of Ideal Silicon (220)"
-msgstr "理想硅的晶格间距(220)"
-
-#: ../data/variables.xml.in.h:147
-msgid "Atomic Mass Constant"
-msgstr "原子质量常数"
-
-#: ../data/variables.xml.in.h:148
-msgid "Avogadro Constant"
-msgstr "阿伏伽德罗常数"
-
-#: ../data/variables.xml.in.h:149
-msgid "Boltzmann Constant"
-msgstr "玻耳兹曼常数"
-
-#: ../data/variables.xml.in.h:150
-msgid "Molar Mass Constant"
-msgstr "摩尔质量常数"
-
-#: ../data/variables.xml.in.h:151
 msgid "Compton Wavelength"
 msgstr "康普顿波长"
 
+#: ../data/variables.xml.in.h:134
+msgid "Compton Wavelength (electron)"
+msgstr "康普顿波长(电子)"
+
+#: ../data/variables.xml.in.h:135
+msgid "Reduced Compton Wavelength (electron)"
+msgstr "约化康普顿波长(电子)"
+
+#: ../data/variables.xml.in.h:136
+msgid "Muon Compton Wavelength"
+msgstr "μ子的康普顿波长"
+
+#: ../data/variables.xml.in.h:137
+msgid "Reduced Muon Compton Wavelength"
+msgstr "μ子的约化康普顿波长"
+
+#: ../data/variables.xml.in.h:138
+msgid "Neutron Compton Wavelength"
+msgstr "中子的康普顿波长"
+
+#: ../data/variables.xml.in.h:139
+msgid "Reduced Neutron Compton Wavelength"
+msgstr "中子的约化康普顿波长"
+
+#: ../data/variables.xml.in.h:140
+msgid "Proton Compton Wavelength"
+msgstr "质子的康普顿波长"
+
+#: ../data/variables.xml.in.h:141
+msgid "Reduced Proton Compton Wavelength"
+msgstr "质子的约化康普顿波长"
+
+#: ../data/variables.xml.in.h:142
+msgid "Tau Compton Wavelength"
+msgstr "τ子的康普顿波长"
+
+#: ../data/variables.xml.in.h:143
+msgid "Reduced Tau Compton Wavelength"
+msgstr "τ子的约化康普顿波长"
+
+#: ../data/variables.xml.in.h:144
+msgid "Atomic and Nuclear Constants"
+msgstr "原子与核物理常数"
+
+#: ../data/variables.xml.in.h:145
+msgid "Bohr Radius"
+msgstr "玻尔半径"
+
+#: ../data/variables.xml.in.h:146
+msgid "Classical Electron Radius"
+msgstr "经典电子半径"
+
+#: ../data/variables.xml.in.h:147
+msgid "Fermi Coupling Constant"
+msgstr "费米耦合常数"
+
+#: ../data/variables.xml.in.h:148
+msgid "Fine-Structure Constant"
+msgstr "精细结构常数"
+
+#: ../data/variables.xml.in.h:149
+msgid "Hartree Energy (constant)"
+msgstr "哈特里能量(常数)"
+
+#: ../data/variables.xml.in.h:150
+msgid "Quantum of Circulation"
+msgstr "环量量子"
+
+#: ../data/variables.xml.in.h:151
+msgid "Quantum of Circulation times 2"
+msgstr "环量量子×2"
+
 #: ../data/variables.xml.in.h:152
-msgid "Reduced Compton Wavelength"
-msgstr "约化康普顿波长"
+msgid "Rydberg Constant"
+msgstr "里德伯常数"
 
 #: ../data/variables.xml.in.h:153
+msgid "Thomson cross section"
+msgstr "汤姆逊散射截面"
+
+#: ../data/variables.xml.in.h:154
+msgid "Weak Mixing Angle (sin²&#x03B8;w)"
+msgstr "溫伯格角(sin²&#x03B8;w)"
+
+#: ../data/variables.xml.in.h:155
+msgid "W to Z Mass Ratio"
+msgstr "W与Z玻色子质量比"
+
+#: ../data/variables.xml.in.h:156
+msgid "Physico-Chemical Constants"
+msgstr "物理化学常数"
+
+#: ../data/variables.xml.in.h:157
+msgid "Lattice Spacing of Ideal Silicon (220)"
+msgstr "理想硅的晶格间距(220)"
+
+#: ../data/variables.xml.in.h:158
+msgid "Atomic Mass Constant"
+msgstr "原子质量常数"
+
+#: ../data/variables.xml.in.h:159
+msgid "Avogadro Constant"
+msgstr "阿伏伽德罗常数"
+
+#: ../data/variables.xml.in.h:160
+msgid "Boltzmann Constant"
+msgstr "玻耳兹曼常数"
+
+#: ../data/variables.xml.in.h:161
+msgid "Molar Mass Constant"
+msgstr "摩尔质量常数"
+
+#: ../data/variables.xml.in.h:162
 msgid "Electronvolt (constant)"
 msgstr "电子伏(常数)"
 
-#: ../data/variables.xml.in.h:154
+#: ../data/variables.xml.in.h:163
 msgid "Faraday Constant"
 msgstr "法拉第常数"
 
-#: ../data/variables.xml.in.h:155
+#: ../data/variables.xml.in.h:164
 msgid "First Radiation Constant"
 msgstr "第一辐射常数"
 
-#: ../data/variables.xml.in.h:156
+#: ../data/variables.xml.in.h:165
 msgid "First Radiation Constant for Spectral Radiance"
 msgstr "光谱辐射的第一辐射常数"
 
-#: ../data/variables.xml.in.h:157
+#: ../data/variables.xml.in.h:166
 msgid "Gas Constant"
 msgstr "气体常数"
 
-#: ../data/variables.xml.in.h:158
+#: ../data/variables.xml.in.h:167
 msgid "Lattice Parameter of Silicon"
 msgstr "硅晶格参数"
 
-#: ../data/variables.xml.in.h:159
+#: ../data/variables.xml.in.h:168
 msgid "Loschmidt Constant (273.15 K, 100 kPa)"
 msgstr "洛施密特常数(273.15K,100kPa)"
 
-#: ../data/variables.xml.in.h:160
+#: ../data/variables.xml.in.h:169
 msgid "Loschmidt Constant (273.15 K, 101.325 kPa)"
 msgstr "洛施密特常数(273.15K,101.325kPa)"
 
-#: ../data/variables.xml.in.h:161
+#: ../data/variables.xml.in.h:170
 msgid "Molar Planck Constant"
 msgstr "摩尔普朗克常数"
 
-#: ../data/variables.xml.in.h:162
+#: ../data/variables.xml.in.h:171
 msgid "Molar Volume of Ideal Gas (273.15 K, 100 kPa)"
 msgstr "理想气体的摩尔体积(273.15K,100kPa)"
 
-#: ../data/variables.xml.in.h:163
+#: ../data/variables.xml.in.h:172
 msgid "Molar Volume of Ideal Gas (273.15 K, 101.325 kPa)"
 msgstr "理想气体的摩尔体积(273.15K,101.325kPa)"
 
-#: ../data/variables.xml.in.h:164
+#: ../data/variables.xml.in.h:173
 msgid "Sackur-Tetrode constant (1 K, 100 kPa)"
 msgstr "Sackur-Tetrode常数(1K,100kPa)"
 
-#: ../data/variables.xml.in.h:165
+#: ../data/variables.xml.in.h:174
 msgid "Sackur-Tetrode constant (1 K, 101.325 kPa)"
 msgstr "Sackur-Tetrode常数(1K,101325 kPa)"
 
-#: ../data/variables.xml.in.h:166
+#: ../data/variables.xml.in.h:175
 msgid "Second Radiation Constant"
 msgstr "第二辐射常数"
 
-#: ../data/variables.xml.in.h:167
+#: ../data/variables.xml.in.h:176
 msgid "Stefan-Boltzmann Constant"
 msgstr "斯忒藩-玻尔兹曼常数"
 
-#: ../data/variables.xml.in.h:168
+#: ../data/variables.xml.in.h:177
 msgid "Wien frequency displacement law constant"
 msgstr "维恩频率位移定律常数"
 
-#: ../data/variables.xml.in.h:169
+#: ../data/variables.xml.in.h:178
 msgid "Wien wavelength displacement law constant"
 msgstr "维恩波长位移定律常数"
 
-#: ../data/variables.xml.in.h:170
+#: ../data/variables.xml.in.h:179
 msgid "Conversion factors for energy equivalents"
 msgstr "能量当量换算系数"
 
-#: ../data/variables.xml.in.h:171
+#: ../data/variables.xml.in.h:180
 msgid "Hertz - Inverse Meter Relationship"
 msgstr "赫兹-倒数米关系"
 
-#: ../data/variables.xml.in.h:172
+#: ../data/variables.xml.in.h:181
 msgid "Hertz - Joule Relationship"
 msgstr "赫兹-焦耳关系"
 
-#: ../data/variables.xml.in.h:173
+#: ../data/variables.xml.in.h:182
 msgid "Hertz - Kelvin Relationship"
 msgstr "赫兹-开尔文关系"
 
-#: ../data/variables.xml.in.h:174
+#: ../data/variables.xml.in.h:183
 msgid "Hertz - Kilogram Relationship"
 msgstr "赫兹-千克关系"
 
-#: ../data/variables.xml.in.h:175
+#: ../data/variables.xml.in.h:184
 msgid "Inverse Meter - Hertz Relationship"
 msgstr "倒数米-赫兹关系"
 
-#: ../data/variables.xml.in.h:176
+#: ../data/variables.xml.in.h:185
 msgid "Inverse Meter - Joule Relationship"
 msgstr "倒数米-焦耳关系"
 
-#: ../data/variables.xml.in.h:177
+#: ../data/variables.xml.in.h:186
 msgid "Inverse Meter - Kelvin Relationship"
 msgstr "倒数米-开尔文关系"
 
-#: ../data/variables.xml.in.h:178
+#: ../data/variables.xml.in.h:187
 msgid "Inverse Meter - Kilogram Relationship"
 msgstr "倒数米-千克关系"
 
-#: ../data/variables.xml.in.h:179
+#: ../data/variables.xml.in.h:188
 msgid "Joule - Hertz Relationship"
 msgstr "焦耳-开尔文关系"
 
-#: ../data/variables.xml.in.h:180
+#: ../data/variables.xml.in.h:189
 msgid "Joule - Inverse Meter Relationship"
 msgstr "焦耳-倒数米关系"
 
-#: ../data/variables.xml.in.h:181
+#: ../data/variables.xml.in.h:190
 msgid "Joule - Kelvin Relationship"
 msgstr "焦耳-开尔文关系"
 
-#: ../data/variables.xml.in.h:182
+#: ../data/variables.xml.in.h:191
 msgid "Joule - Kilogram Relationship"
 msgstr "焦耳-千克关系"
 
-#: ../data/variables.xml.in.h:183
+#: ../data/variables.xml.in.h:192
 msgid "Kelvin - Hertz Relationship"
 msgstr "开尔文-赫兹关系"
 
-#: ../data/variables.xml.in.h:184
+#: ../data/variables.xml.in.h:193
 msgid "Kelvin - Inverse Meter Relationship"
 msgstr "开尔文-倒数米关系"
 
-#: ../data/variables.xml.in.h:185
+#: ../data/variables.xml.in.h:194
 msgid "Kelvin - Joule Relationship"
 msgstr "开尔文-焦耳关系"
 
-#: ../data/variables.xml.in.h:186
+#: ../data/variables.xml.in.h:195
 msgid "Kelvin - Kilogram Relationship"
 msgstr "开尔文-千克关系"
 
-#: ../data/variables.xml.in.h:187
+#: ../data/variables.xml.in.h:196
 msgid "Kilogram - Hertz Relationship"
 msgstr "千克-赫兹关系"
 
-#: ../data/variables.xml.in.h:188
+#: ../data/variables.xml.in.h:197
 msgid "Kilogram - Inverse Meter Relationship"
 msgstr "千克-倒数米关系"
 
-#: ../data/variables.xml.in.h:189
+#: ../data/variables.xml.in.h:198
 msgid "Kilogram - Joule Relationship"
 msgstr "千克-开尔文关系"
 
-#: ../data/variables.xml.in.h:190
+#: ../data/variables.xml.in.h:199
 msgid "Kilogram - Kelvin Relationship"
 msgstr "千克-开尔文关系"
 
-#: ../data/variables.xml.in.h:191
+#: ../data/variables.xml.in.h:200
 msgid "Basic Constants"
 msgstr "基本常数"
 
-#: ../data/variables.xml.in.h:192
+#: ../data/variables.xml.in.h:201
 msgid "Golden Ratio"
 msgstr "黄金分割率"
 
-#: ../data/variables.xml.in.h:193
+#: ../data/variables.xml.in.h:202
 msgid "Omega Constant"
 msgstr "欧米加常数"
 
-#: ../data/variables.xml.in.h:194
+#: ../data/variables.xml.in.h:203
 msgid "Pythagoras' Constant (sqrt 2)"
 msgstr "毕达哥拉斯常数(√2)"
 
-#: ../data/variables.xml.in.h:195
+#: ../data/variables.xml.in.h:204
 msgid "Apery's Constant"
 msgstr "阿培里常数"
 
-#: ../data/variables.xml.in.h:196
+#: ../data/variables.xml.in.h:205
 msgid "Tau (2pi)"
 msgstr "二倍圆周率(τ/2π)"
 
-#: ../data/variables.xml.in.h:197
+#: ../data/variables.xml.in.h:206
 msgid "Plastic Number"
 msgstr "塑胶数"
 
-#: ../data/variables.xml.in.h:198
+#: ../data/variables.xml.in.h:207
 msgid "Base of Natural Logarithms (e)"
 msgstr "自然对数底数(e)"
 
-#: ../data/variables.xml.in.h:199
+#: ../data/variables.xml.in.h:208
 msgid "Archimedes' Constant (pi)"
 msgstr "圆周率(π)"
 
-#: ../data/variables.xml.in.h:200
+#: ../data/variables.xml.in.h:209
 msgid "Euler's Constant"
 msgstr "欧拉常数"
 
-#: ../data/variables.xml.in.h:201
+#: ../data/variables.xml.in.h:210
 msgid "Catalan's Constant"
 msgstr "卡塔兰常数"
 
-#: ../data/variables.xml.in.h:202
+#: ../data/variables.xml.in.h:211
 msgid "Special Numbers"
 msgstr "特殊数字"
 
-#: ../data/variables.xml.in.h:203
+#: ../data/variables.xml.in.h:212
 msgid "Imaginary i (sqrt -1)"
 msgstr "虚数i(√-1)"
 
-#: ../data/variables.xml.in.h:204
+#: ../data/variables.xml.in.h:213
 msgid "Positive Infinity"
 msgstr "正无穷(+∞)"
 
-#: ../data/variables.xml.in.h:205
+#: ../data/variables.xml.in.h:214
 msgid "a:&#x221E;,r:plus_infinity,r:infinity"
 msgstr "a:&#x221E;,正无穷,r:plus_infinity,r:infinity"
 
-#: ../data/variables.xml.in.h:206
+#: ../data/variables.xml.in.h:215
 msgid "Negative Infinity"
 msgstr "负无穷(-∞)"
 
-#: ../data/variables.xml.in.h:207
+#: ../data/variables.xml.in.h:216
 msgid "r:minus_infinity"
 msgstr "负无穷"
 
-#: ../data/variables.xml.in.h:208
+#: ../data/variables.xml.in.h:217
 msgid "Undefined"
 msgstr "未定义(undefined)"
 
-#: ../data/variables.xml.in.h:209
+#: ../data/variables.xml.in.h:218
 msgid "r:undefined"
 msgstr "未定义"
 
-#: ../data/variables.xml.in.h:210
+#: ../data/variables.xml.in.h:219
 msgid "False"
 msgstr "假(false)"
 
-#: ../data/variables.xml.in.h:211
+#: ../data/variables.xml.in.h:220
 msgid "r:false,r:no"
 msgstr "假,否"
 
-#: ../data/variables.xml.in.h:212
+#: ../data/variables.xml.in.h:221
 msgid "True"
 msgstr "真(true)"
 
-#: ../data/variables.xml.in.h:213
+#: ../data/variables.xml.in.h:222
 msgid "r:true,r:yes"
 msgstr "真,是"
 
-#: ../data/variables.xml.in.h:215
+#: ../data/variables.xml.in.h:224
 msgid "Pauli Matrix 0"
 msgstr "泡利矩阵 0"
 
-#: ../data/variables.xml.in.h:216
+#: ../data/variables.xml.in.h:225
 msgid "rs:pauli_0,aus:&#x03C3;_0"
 msgstr ""
 
-#: ../data/variables.xml.in.h:217
+#: ../data/variables.xml.in.h:226
 msgid "Pauli Matrix 1"
 msgstr "泡利矩阵 1"
 
-#: ../data/variables.xml.in.h:218
+#: ../data/variables.xml.in.h:227
 msgid "rs:pauli_1,aus:&#x03C3;_1"
 msgstr ""
 
-#: ../data/variables.xml.in.h:219
+#: ../data/variables.xml.in.h:228
 msgid "Pauli Matrix 2"
 msgstr "泡利矩阵 2"
 
-#: ../data/variables.xml.in.h:220
+#: ../data/variables.xml.in.h:229
 msgid "rs:pauli_2,aus:&#x03C3;_2"
 msgstr ""
 
-#: ../data/variables.xml.in.h:221
+#: ../data/variables.xml.in.h:230
 msgid "Pauli Matrix 3"
 msgstr "泡利矩阵 3"
 
-#: ../data/variables.xml.in.h:222
+#: ../data/variables.xml.in.h:231
 msgid "rs:pauli_3,aus:&#x03C3;_3"
 msgstr ""
 
-#: ../data/variables.xml.in.h:225
+#: ../data/variables.xml.in.h:234
 msgid "r:precision"
 msgstr "-"
 
-#: ../data/variables.xml.in.h:226
+#: ../data/variables.xml.in.h:235
 msgid "System Uptime"
 msgstr "系统运行时间"
 
-#: ../data/variables.xml.in.h:227
+#: ../data/variables.xml.in.h:236
 msgid "r:uptime"
 msgstr "-"
 
-#: ../data/variables.xml.in.h:228
+#: ../data/variables.xml.in.h:237
 msgid "Unknowns"
 msgstr "未知数"
 
-#: ../data/variables.xml.in.h:229
+#: ../data/variables.xml.in.h:238
 msgid "n (integer)"
 msgstr "n(整数)"
 
-#: ../data/variables.xml.in.h:231
+#: ../data/variables.xml.in.h:240
 msgid "Today"
 msgstr "今天"
 
-#: ../data/variables.xml.in.h:232
+#: ../data/variables.xml.in.h:241
 msgid "r:today"
 msgstr "今天"
 
-#: ../data/variables.xml.in.h:233
+#: ../data/variables.xml.in.h:242
 msgid "Tomorrow"
 msgstr "明天"
 
-#: ../data/variables.xml.in.h:234
+#: ../data/variables.xml.in.h:243
 msgid "r:tomorrow"
 msgstr "明天"
 
-#: ../data/variables.xml.in.h:235
+#: ../data/variables.xml.in.h:244
 msgid "Yesterday"
 msgstr "昨天"
 
-#: ../data/variables.xml.in.h:236
+#: ../data/variables.xml.in.h:245
 msgid "r:yesterday"
 msgstr "昨天"
 
-#: ../data/variables.xml.in.h:237
+#: ../data/variables.xml.in.h:246
 msgid "Now (date and time)"
 msgstr "现在"
 
-#: ../data/variables.xml.in.h:238
+#: ../data/variables.xml.in.h:247
 msgid "r:now"
 msgstr "现在"
 

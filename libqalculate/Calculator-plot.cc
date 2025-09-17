@@ -45,6 +45,10 @@ PlotParameters::PlotParameters() {
 	x_log = false;
 	y_log_base = 10;
 	x_log_base = 10;
+	y_min = 0;
+	y_max = 10;
+	x_min = 0;
+	x_max = 10;
 	grid = false;
 	color = true;
 	linewidth = -1;

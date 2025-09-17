@@ -974,6 +974,28 @@ int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 
 	FILE *pipe = NULL;
 	string commandline = vargs[0].symbol();
+	remove_blank_ends(commandline);
+	if(commandline.empty()) {
+		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str(), NULL);
+		return 0;
+	}
+	bool quoted = commandline.length() >= 2 && (commandline[0] == '\"' || commandline[0] == '\'') && commandline.find(commandline[0], 1) == commandline.length() - 1;
+	if(!quoted) {
+		if(commandline.find("\'") != string::npos) {
+			CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str(), NULL);
+			return 0;
+		}
+		commandline.insert(0, "\'");
+		commandline += "\'";
+	}
+	string cmd;
+	size_t pos = commandline.find_last_of("/\\");
+	if(pos == string::npos) pos = 0;
+	cmd = commandline.substr(pos + 1, commandline.length() - (pos + 1) - 1);
+	if(cmd.empty() || cmd == "rm" || cmd == "wget" || cmd == "curl" || cmd == "exec" || cmd == "rmdir" || cmd == "su" || cmd == "sudo" || cmd.find("run") == 0 || cmd.find("python") == 0 || cmd.find("perl") == 0 || cmd.find("sh", cmd.length() - 2) != string::npos || cmd == "fdisk" || cmd.find("-open") != string::npos || cmd.find("-launch") != string::npos || cmd.find("terminal") != string::npos || cmd.find("rxvt") != string::npos || (cmd.length() >= 4 && cmd.find("term", cmd.length() - 4) != string::npos) || cmd.find("shell") != string::npos || cmd.find("command") != string::npos) {
+		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str(), NULL);
+		return 0;
+	}
 	for(size_t i = 1; i < vargs.size(); i++) {
 		commandline += " ";
 		if(vargs[i].isSymbolic()) {
