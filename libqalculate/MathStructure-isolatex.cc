@@ -4564,7 +4564,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 
 						}
 						MathStructure *mtest = new MathStructure(CHILD(0));
-						CHILD(1).set(1, 1, 0);
+						CHILD(1).calculateInverse(eo2);
 						CHILDREN_UPDATED
 						MathStructure *malt = new MathStructure(*this);
 						if(ct_comp == COMPARISON_EQUALS_GREATER) {
