@@ -23,6 +23,7 @@
 #include <time.h>
 #include <limits>
 #include <algorithm>
+#include <limits.h>
 
 #include "MathStructure-support.h"
 
@@ -83,7 +84,12 @@ int XorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 
 ShiftFunction::ShiftFunction() : MathFunction("shift", 2, 3) {
 	setArgumentDefinition(1, new IntegerArgument());
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SLONG));
+	IntegerArgument *iarg = new IntegerArgument();
+	Number nmin(-1, 1, 9);
+	iarg->setMin(&nmin);
+	Number nmax(1, 1, 9);
+	iarg->setMax(&nmax);
+	setArgumentDefinition(2, iarg);
 	setArgumentDefinition(3, new BooleanArgument());
 	setDefaultValue(3, "1");
 }
@@ -100,7 +106,12 @@ int ShiftFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 CircularShiftFunction::CircularShiftFunction() : MathFunction("bitrot", 2, 4) {
 	setArgumentDefinition(1, new IntegerArgument());
 	setArgumentDefinition(2, new IntegerArgument());
-	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_UINT));
+	IntegerArgument *iarg = new IntegerArgument();
+	iarg->setMin(&nr_zero);
+	Number nmax(1, 1, 5);
+	if(nmax > UINT_MAX) nmax = UINT_MAX;
+	iarg->setMax(&nmax);
+	setArgumentDefinition(3, iarg);
 	setArgumentDefinition(4, new BooleanArgument());
 	setDefaultValue(3, "0");
 	setDefaultValue(4, "1");
@@ -187,7 +198,11 @@ int BitCmpFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 
 BitSetFunction::BitSetFunction() : MathFunction("bitset", 2, 5) {
 	setArgumentDefinition(1, new IntegerArgument());
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_ULONG));
+	IntegerArgument *iarg = new IntegerArgument();
+	iarg->setMin(&nr_one);
+	Number nmax(1, 1, 9);
+	iarg->setMax(&nmax);
+	setArgumentDefinition(2, iarg);
 	setArgumentDefinition(3, new BooleanArgument());
 	setDefaultValue(3, "1");
 	setArgumentDefinition(4, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_UINT));
@@ -230,8 +245,15 @@ int BitSetFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 
 SetBitsFunction::SetBitsFunction() : MathFunction("setbits", 4, 6) {
 	setArgumentDefinition(1, new IntegerArgument());
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_ULONG));
-	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_ULONG));
+	IntegerArgument *iarg = new IntegerArgument();
+	iarg->setMin(&nr_one);
+	Number nmax(1, 1, 9);
+	iarg->setMax(&nmax);
+	setArgumentDefinition(2, iarg);
+	iarg = new IntegerArgument();
+	iarg->setMin(&nr_one);
+	iarg->setMax(&nmax);
+	setArgumentDefinition(3, iarg);
 	setArgumentDefinition(4, new IntegerArgument());
 	setArgumentDefinition(5, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_UINT));
 	setDefaultValue(5, "0");

@@ -1,9 +1,22 @@
+2025-09-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use mol as base unit for Einstein and clarify that Einstein refers to one mole of pohoton
+	* Match object name on words after underscore, e.g. oz in fl_oz (find/list command)
+
+2025-09-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix inequality with 1/f(x) on one side, e.g. "1/(x-2) <= 2"
+	* Add erg/(cm²⋅s) unit
+	* Lower max bit width in bitrot(), bitset(), and setbits() functions, and max steps in shift()
+
 2025-09-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix endless loop in Calculator::hasToExpression() with expression containing negative circled sans-serif digit dingbat
 	* Add (reduced) compton wavelength for muon, neutron, proton, and tau
 	* Add ƛ_C symbol to reduced compton wavelength and change alternative symbol for natural unit of length to ƛ_unit
 	* Stricter command argument in command() function
+	* Fix search term with more than one word and search for word preceded by parenthesis in title
+	* Specify minimal vector size for linearfit(), quadraticfit(), and cubicfit() functions
 
 2025-09-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
@@ -22,7 +35,7 @@
 
 2025-09-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Fix value of planck unit (was rounded to 7 decimals)
+	* Fix value of Planck unit (was rounded to 7 decimals)
 
 2025-09-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

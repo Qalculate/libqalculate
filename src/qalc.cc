@@ -2858,7 +2858,7 @@ bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t 
 	size_t l = 0;
 	if(i2_end == string::npos) i2_end = str2.length();
 	for(size_t i1 = 0;; i1++, i2++) {
-		if(i2 >= i2_end) {
+		if(i2 >= i2_end || i2 >= str2.length()) {
 			return i1 >= str1.length();
 		}
 		if(i1 >= str1.length()) break;
@@ -3348,12 +3348,11 @@ bool title_matches(ExpressionItem *item, const string &str, size_t minlength = 0
 	while(true) {
 		while(true) {
 			if(i >= title.length()) return false;
-			if(title[i] != ' ') break;
+			if(title[i] != ' ' && title[i] != '(') break;
 			i++;
 		}
 		size_t i2 = title.find(' ', i);
-		if(title[i] == '(') i++;
-		if(equalsIgnoreCase(str, title, i, -1, minlength)) {
+		if(equalsIgnoreCase(str, title, i, title.length(), minlength)) {
 			return true;
 		}
 		if(i2 == string::npos) break;
@@ -3363,13 +3362,25 @@ bool title_matches(ExpressionItem *item, const string &str, size_t minlength = 0
 }
 bool name_matches(ExpressionItem *item, const string &str) {
 	for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
-		if(item->getName(i2).case_sensitive) {
-			if(str == item->getName(i2).name.substr(0, str.length())) {
+		const ExpressionName *ename = &item->getName(i2);
+		if(ename->case_sensitive) {
+			if(str == ename->name.substr(0, str.length())) {
 				return true;
 			}
 		} else {
-			if(equalsIgnoreCase(str, item->getName(i2).name, 0, str.length(), 0) || (name_has_formatting(&item->getName(i2)) && equalsIgnoreCase(str, item->getName(i2).formattedName(item->type(), true), 0, str.length(), 0))) {
+			if(equalsIgnoreCase(str, ename->name, 0, string::npos, 0) || (name_has_formatting(&item->getName(i2)) && equalsIgnoreCase(str, ename->formattedName(item->type(), true), 0, string::npos, 0))) {
 				return true;
+			}
+		}
+		if(unicode_length(str) >= 2) {
+			size_t i = 0;
+			while(true) {
+				i = ename->name.find("_", i);
+				if(i == string::npos || i + 2 >= ename->name.length()) break;
+				i++;
+				if((ename->case_sensitive && str.length() <= ename->name.length() - i && str == ename->name.substr(i, str.length())) || (!ename->case_sensitive && equalsIgnoreCase(str, ename->name, i, string::npos, 2))) {
+					return true;
+				}
 			}
 		}
 	}
@@ -3382,7 +3393,7 @@ bool name_matches(Prefix *item, const string &str) {
 				return true;
 			}
 		} else {
-			if(equalsIgnoreCase(str, item->getName(i2).name, 0, str.length(), 0)) {
+			if(equalsIgnoreCase(str, item->getName(i2).name, 0, string::npos, 0)) {
 				return true;
 			}
 		}
@@ -6134,6 +6145,7 @@ int main(int argc, char *argv[]) {
 				else if(equalsIgnoreCase(str, _("units"))) list_type = 'u';
 				else if(equalsIgnoreCase(str, _("prefixes"))) list_type = 'p';
 				if(list_type != 0) str2 = "";
+				else str2 = str;
 			} else str2 = str;
 			list_defs(true, list_type, str2);
 		//qalc command

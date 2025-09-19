@@ -2310,7 +2310,7 @@
         <_title>Simple Linear Fit</_title>
         <_names>r:linearfit</_names>
         <_description>Returns the linear function, for a set of x and y values, estimated using simple linear regression with a single explanatory variable and the ordinary least squares method. If the vector of y values is empty, the first argument is used for sequential y values (with x values 1, 2, ..., n). It is possible to pass both x and y values in a two column matrix as the first argument.</_description>
-        <condition>dimension(\x)=dimension(\y) || dimension(\y)=0</condition>
+        <condition>dimension(\x)>=2 &amp;&amp; (dimension(\x)=dimension(\y) || dimension(\y)=0)</condition>
         <subfunction precalculate="true">if((dimension(\Y{[]})>0,rows(\x)>1&amp;&amp;columns(\x)=2),(\x,column(\x,1)),genvector("i",1,dimension(\x),1,"i",1))</subfunction>
         <subfunction precalculate="true">if((dimension(\y)>0,rows(\x)>1&amp;&amp;columns(\x)=2),(\y,column(\x,2)),\x)</subfunction>
         <expression>((covar(\1,\2)/varp(\1))*(x-mean(\1)))+mean(\2)</expression>
@@ -2325,7 +2325,7 @@
         <_title>Quadratic Fit</_title>
         <_names>r:quadraticfit</_names>
         <_description>Fit data to a polynomial of degree 2, using least-squares method. If the vector of y values is empty, the first argument is used for sequential y values (with x values 1, 2, ..., n). It is possible to pass both x and y values in a two column matrix as the first argument.</_description>
-        <condition>dimension(\x)=dimension(\y) || dimension(\y)=0</condition>
+        <condition>dimension(\x)>=3 &amp;&amp; (dimension(\x)=dimension(\y) || dimension(\y)=0)</condition>
         <subfunction precalculate="true">if((dimension(\Y{[]})>0,rows(\x)>1&amp;&amp;columns(\x)=2),(\x,column(\x,1)),genvector("i",1,dimension(\x),1,"i",1))</subfunction>
         <subfunction precalculate="true">if((dimension(\y)>0,rows(\x)>1&amp;&amp;columns(\x)=2),(\y,column(\x,2)),\x)</subfunction>
         <subfunction precalculate="true">multisolve(("a"*total(\1.^4)+"b"*total(\1.^3)+"c"*total(\1.^2)=total((\1.^2).*\2),"a"*total(\1.^3)+"b"*total(\1.^2)+"c"*total(\1)=total(\1.*\2),"a"*total(\1.^2)+"b"*total(\1)+"c"*dimension(\1)=total(\2)),("a","b","c"))</subfunction>
@@ -2341,7 +2341,7 @@
         <_title>Cubic Fit</_title>
         <_names>r:cubicfit</_names>
         <_description>Fit data to a polynomial of degree 3, using least-squares method. If the vector of y values is empty, the first argument is used for sequential y values (with x values 1, 2, ..., n). It is possible to pass both x and y values in a two column matrix as the first argument.</_description>
-        <condition>dimension(\x)=dimension(\y) || dimension(\y)=0</condition>
+	<condition>dimension(\x)>=4 &amp;&amp; (dimension(\x)=dimension(\y) || dimension(\y)=0)</condition>
         <subfunction precalculate="true">if((dimension(\Y{[]})>0,rows(\x)>1&amp;&amp;columns(\x)=2),(\x,column(\x,1)),genvector("i",1,dimension(\x),1,"i",1))</subfunction>
         <subfunction precalculate="true">if((dimension(\y)>0,rows(\x)>1&amp;&amp;columns(\x)=2),(\y,column(\x,2)),\x)</subfunction>
         <subfunction precalculate="true">multisolve(("a"*total(\1.^6)+"b"*total(\1.^5)+"c"*total(\1.^4)+"d"*total(\1.^3)=total((\1.^3).*\2),"a"*total(\1.^5)+"b"*total(\1.^4)+"c"*total(\1.^3)+"d"*total(\1.^2)=total((\1.^2).*\2),"a"*total(\1.^4)+"b"*total(\1.^3)+"c"*total(\1.^2)+"d"*total(\1)=total(\1.*\2),"a"*total(\1.^3)+"b"*total(\1.^2)+"c"*total(\1)+"d"*dimension(\1)=total(\2)),("a","b","c","d"))</subfunction>

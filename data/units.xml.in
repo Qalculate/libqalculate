@@ -1678,9 +1678,14 @@
       <_title>Mole</_title>
       <_names>ar:mol,mole,p:moles</_names>
     </unit>
-    <unit type="base">
-      <_title>Einstein</_title>
+    <unit type="alias">
+      <_title>Einstein (one mole of photons)</_title>
       <_names>r:einstein,p:einsteins</_names>
+      <base>
+       <unit>mol</unit>
+       <relation>1</relation>
+       <exponent>1</exponent>
+      </base>
     </unit>
     <category>
       <_title>Substance Concentration</_title>
@@ -1909,6 +1914,26 @@
           <unit>m</unit>
           <prefix>0</prefix>
           <exponent>-2</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <system>CGS</system>
+        <_title>Erg per Centimeter Squared per Second</_title>
+        <names>r:erg_p_sqcm_p_s</names>
+        <part>
+          <unit>erg</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>-2</prefix>
+          <exponent>-2</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
         </part>
       </unit>
       <unit type="composite">
