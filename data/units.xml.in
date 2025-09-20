@@ -1688,6 +1688,87 @@
       </base>
     </unit>
     <category>
+      <_title>Molar Flux</_title>
+      <unit type="composite">
+        <system>SI</system>
+        <_title>Mole per Meter Squared per Second</_title>
+        <names>r:mol_p_sqm_p_s</names>
+        <part>
+          <unit>mol</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-2</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <system>SI</system>
+        <_title>Micromole per Meter Squared per Second</_title>
+        <names>r:micromol_p_sqm_p_s</names>
+        <part>
+          <unit>mol</unit>
+          <prefix>-6</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-2</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <_title>Einstein per Meter Squared per Second</_title>
+        <names>r:einstein_p_sqm_p_s</names>
+        <part>
+          <unit>einstein</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-2</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <_title>Microeinstein per Meter Squared per Second</_title>
+        <names>r:microeinstein_p_sqm_p_s</names>
+        <part>
+          <unit>einstein</unit>
+          <prefix>-6</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>0</prefix>
+          <exponent>-2</exponent>
+        </part>
+        <part>
+          <unit>s</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+    </category>
+    <category>
       <_title>Substance Concentration</_title>
       <unit type="composite">
         <system>SI</system>
@@ -1936,50 +2017,12 @@
           <exponent>-1</exponent>
         </part>
       </unit>
-      <unit type="composite">
-        <_title>Einstein per Meter Squared per Second</_title>
-        <names>r:einstein_p_sqm_p_s</names>
-        <part>
-          <unit>einstein</unit>
-          <prefix>0</prefix>
-          <exponent>1</exponent>
-        </part>
-        <part>
-          <unit>m</unit>
-          <prefix>0</prefix>
-          <exponent>-2</exponent>
-        </part>
-        <part>
-          <unit>s</unit>
-          <prefix>0</prefix>
-          <exponent>-1</exponent>
-        </part>
-      </unit>
-      <unit type="composite">
-        <_title>Microeinstein per Meter Squared per Second</_title>
-        <names>r:microeinstein_p_sqm_p_s</names>
-        <part>
-          <unit>einstein</unit>
-          <prefix>-6</prefix>
-          <exponent>1</exponent>
-        </part>
-        <part>
-          <unit>m</unit>
-          <prefix>0</prefix>
-          <exponent>-2</exponent>
-        </part>
-        <part>
-          <unit>s</unit>
-          <prefix>0</prefix>
-          <exponent>-1</exponent>
-        </part>
-      </unit>
     </category>
     <category>
       <_title>Radiance</_title>
       <unit type="composite">
         <system>SI</system>
-        <_title>Watt per Square Meter Steradian</_title>
+        <_title>Watt per Steradian per Square Meter</_title>
         <names>r:W_p_sqm_sr</names>
         <part>
           <unit>W</unit>

@@ -2,6 +2,7 @@
 
 	* Use mol as base unit for Einstein and clarify that Einstein refers to one mole of pohoton
 	* Match object name on words after underscore, e.g. oz in fl_oz (find/list command)
+	* Move (micro)einstein/(m²⋅s) to new category (molar flux) and add corresponding SI units
 
 2025-09-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

@@ -3360,6 +3360,16 @@ bool title_matches(ExpressionItem *item, const string &str, size_t minlength = 0
 	}
 	return false;
 }
+bool test_unicode_length_from(const string &str, size_t i, size_t l) {
+	if(l == 0) return true;
+	for(; i < str.length(); i++) {
+		if((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0) {
+			l--;
+			if(l == 0) return true;
+		}
+	}
+	return false;
+}
 bool name_matches(ExpressionItem *item, const string &str) {
 	for(size_t i2 = 1; i2 <= item->countNames(); i2++) {
 		const ExpressionName *ename = &item->getName(i2);
@@ -3372,13 +3382,13 @@ bool name_matches(ExpressionItem *item, const string &str) {
 				return true;
 			}
 		}
-		if(unicode_length(str) >= 2) {
+		if(test_unicode_length_from(str, 0, 2)) {
 			size_t i = 0;
 			while(true) {
 				i = ename->name.find("_", i);
-				if(i == string::npos || i + 2 >= ename->name.length()) break;
+				if(i == string::npos || !test_unicode_length_from(ename->name, i + 1, 2)) break;
 				i++;
-				if((ename->case_sensitive && str.length() <= ename->name.length() - i && str == ename->name.substr(i, str.length())) || (!ename->case_sensitive && equalsIgnoreCase(str, ename->name, i, string::npos, 2))) {
+				if((ename->case_sensitive && str == ename->name.substr(i, str.length())) || (!ename->case_sensitive && equalsIgnoreCase(str, ename->name, i, string::npos, 0))) {
 					return true;
 				}
 			}
