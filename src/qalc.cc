@@ -2917,11 +2917,21 @@ string autocalc_result;
 
 #ifdef HAVE_LIBREADLINE
 
+bool autocalc_busy = false, autocalc_input_available = false, autocalc_aborted = false, autocalc_was_aborted = false;
+
 void AutoCalcThread::run() {
 	while(true) {
 		int i = 0;
 		if(!read(&i) || i == 0) break;
-		do_autocalc();
+		if(i == 2) {
+			autocalc_busy = true;
+			for(size_t i2 = 0; i2 < 1000 && !autocalc_aborted; i2 += 5) {
+				sleep_ms(5);
+			}
+			autocalc_busy = false;
+			if(autocalc_aborted) continue;
+		}
+		do_autocalc(i == 2);
 	}
 }
 
@@ -2973,7 +2983,6 @@ bool contains_wide_character(const char *str) {
 	return false;
 }
 
-bool autocalc_busy = false, autocalc_input_available = false, autocalc_aborted = false, autocalc_was_aborted;
 string current_action_text;
 void do_autocalc(bool force, const char *action_text) {
 	if(block_autocalc || autocalc <= 0 || unittest || (!autocalc_was_aborted && !force && prev_line == rl_line_buffer)) return;
@@ -2997,7 +3006,7 @@ void do_autocalc(bool force, const char *action_text) {
 	if(!str.empty() && !autocalc_aborted) {
 		update_command_list();
 		if(rpn_mode) {
-			if((str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS) == string::npos || str.find_first_not_of(PARENTHESISS SPACES) == string::npos) && !CALCULATOR->getActiveFunction(str)) {
+			if((str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS) == string::npos || str.find_first_not_of(PARENTHESISS SPACES) == string::npos) && !CALCULATOR->getActiveFunction(str) && !CALCULATOR->hasToExpression(str, false, evalops)) {
 				CALCULATOR->parseSigns(str);
 				if((str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS) == string::npos || str.find_first_not_of(PARENTHESISS SPACES) == string::npos) && !CALCULATOR->getActiveFunction(str)) {
 					str = "";
@@ -3006,7 +3015,7 @@ void do_autocalc(bool force, const char *action_text) {
 					remove_blank_ends(str);
 				}
 			}
-		} else if(str[0] == '/' || str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS) == string::npos || str.find_first_not_of(OPERATORS PARENTHESISS SPACES) == string::npos) {
+		} else if(str[0] == '/' || ((str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS) == string::npos || str.find_first_not_of(OPERATORS PARENTHESISS SPACES) == string::npos) && !CALCULATOR->hasToExpression(str, false, evalops))) {
 			str = "";
 		}
 		for(size_t i = 0; !str.empty() && i < command_list.size(); i++) {
@@ -3073,6 +3082,10 @@ void do_autocalc(bool force, const char *action_text) {
 					rl_forced_update_display();
 				}
 				prev_autocalc_result = autocalc_result;
+				if(parsed_mstruct && (parsed_mstruct->containsFunctionId(FUNCTION_ID_TIME, true) || parsed_mstruct->contains(CALCULATOR->getVariableById(VARIABLE_ID_UPTIME), true) || parsed_mstruct->contains(CALCULATOR->getVariableById(VARIABLE_ID_NOW), true))) {
+					if(!autocalc_thread) autocalc_thread = new AutoCalcThread;
+					if(autocalc_thread->running || autocalc_thread->start()) autocalc_thread->write(2);
+				}
 			}
 		}
 	}
