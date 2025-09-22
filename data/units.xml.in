@@ -394,7 +394,7 @@
       </part>
     </unit>
     <unit type="composite">
-      <title>Planck per Electron Mass per Light Speed</title>
+      <title>Planck per Electron Mass Light Speed</title>
       <names>planck_p_electron_c</names>
       <system>Natural</system>
       <hidden>true</hidden>
@@ -1114,7 +1114,7 @@
       <_title>Current Density</_title>
       <unit type="composite">
         <system>SI</system>
-        <_title>Ampere per Meter Squared</_title>
+        <_title>Ampere per Square Meter</_title>
         <names>r:A_p_sqm</names>
         <part>
           <unit>A</unit>
@@ -1262,7 +1262,7 @@
       <_title>Electric Flux Density</_title>
       <unit type="composite">
         <system>SI</system>
-        <_title>Coulomb per Meter Squared</_title>
+        <_title>Coulomb per Square Meter</_title>
         <names>r:C_p_sqm</names>
         <part>
           <unit>C</unit>
@@ -1691,7 +1691,7 @@
       <_title>Molar Flux</_title>
       <unit type="composite">
         <system>SI</system>
-        <_title>Mole per Meter Squared per Second</_title>
+        <_title>Mole per Square Meter Second</_title>
         <names>r:mol_p_sqm_p_s</names>
         <part>
           <unit>mol</unit>
@@ -1711,7 +1711,7 @@
       </unit>
       <unit type="composite">
         <system>SI</system>
-        <_title>Micromole per Meter Squared per Second</_title>
+        <_title>Micromole per Square Meter Second</_title>
         <names>r:micromol_p_sqm_p_s</names>
         <part>
           <unit>mol</unit>
@@ -1730,7 +1730,7 @@
         </part>
       </unit>
       <unit type="composite">
-        <_title>Einstein per Meter Squared per Second</_title>
+        <_title>Einstein per Square Meter Second</_title>
         <names>r:einstein_p_sqm_p_s</names>
         <part>
           <unit>einstein</unit>
@@ -1749,7 +1749,7 @@
         </part>
       </unit>
       <unit type="composite">
-        <_title>Microeinstein per Meter Squared per Second</_title>
+        <_title>Microeinstein per Square Meter Second</_title>
         <names>r:microeinstein_p_sqm_p_s</names>
         <part>
           <unit>einstein</unit>
@@ -1847,7 +1847,7 @@
       <_title>Luminance</_title>
       <unit type="composite">
         <system>SI</system>
-        <_title>Candela per Meter Squared</_title>
+        <_title>Candela per Square Meter</_title>
         <names>r:cd_p_sqm</names>
         <part>
           <unit>cd</unit>
@@ -1867,6 +1867,24 @@
         <base>
           <unit>cd_p_sqm</unit>
           <relation>10000</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>Lambert</_title>
+        <_names>r:lambert,p:lamberts</_names>
+        <base>
+          <unit>cd_p_sqm</unit>
+          <relation>10000/pi</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <_title>Foot-Lambert</_title>
+        <_names>r:foot_lambert,p:foot_lamberts</_names>
+        <base>
+          <unit>lambert</unit>
+          <relation>1/929.0304</relation>
           <exponent>1</exponent>
         </base>
       </unit>
@@ -1903,7 +1921,7 @@
       <_title>Illuminance</_title>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Lumen per Meter Squared</title>
+        <title>Lumen per Square Meter</title>
         <names>r:lm_p_sqm</names>
         <part>
           <unit>lm</unit>
@@ -1918,7 +1936,7 @@
       </unit>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Lumen per Foot Squared</title>
+        <title>Lumen per Square Foot</title>
         <names>r:lm_p_sqft</names>
         <part>
           <unit>lm</unit>
@@ -1944,7 +1962,7 @@
       <unit type="alias">
         <_title>Foot-Candle</_title>
         <system>Imperial/US</system>
-        <_names>ar:fc,footcandle,p:footcandles</_names>
+        <_names>ar:fc,foot_candle,p:foot_candles</_names>
         <base>
           <unit>lm_p_sqft</unit>
           <relation>1</relation>
@@ -1984,7 +2002,7 @@
       <_title>Irradiance</_title>
       <unit type="composite">
         <system>SI</system>
-        <_title>Watt per Meter Squared</_title>
+        <_title>Watt per Square Meter</_title>
         <names>r:W_p_sqm</names>
         <part>
           <unit>W</unit>
@@ -1999,7 +2017,7 @@
       </unit>
       <unit type="composite">
         <system>CGS</system>
-        <_title>Erg per Centimeter Squared per Second</_title>
+        <_title>Erg per Square Centimeter Second</_title>
         <names>r:erg_p_sqcm_p_s</names>
         <part>
           <unit>erg</unit>
@@ -2022,7 +2040,7 @@
       <_title>Radiance</_title>
       <unit type="composite">
         <system>SI</system>
-        <_title>Watt per Steradian per Square Meter</_title>
+        <_title>Watt per Square Meter Steradian</_title>
         <names>r:W_p_sqm_sr</names>
         <part>
           <unit>W</unit>
@@ -2189,6 +2207,27 @@
         <unit>mi</unit>
         <prefix>0</prefix>
         <exponent>2</exponent>
+      </part>
+    </unit>
+    <unit type="alias">
+      <_title>Darcy</_title>
+      <system>CGS</system>
+      <names>r:darcy,p:darcys</names>
+      <base>
+        <unit>sqm</unit>
+        <relation>1/1.01325E12</relation>
+        <exponent>1</exponent>
+      </base>
+      <use_with_prefixes default="-3">true</use_with_prefixes>
+    </unit>
+    <unit type="composite">
+      <_title>Millidarcy</_title>
+      <system>CGS</system>
+      <names>r:millidarcy</names>
+      <part>
+        <unit>darcy</unit>
+        <prefix>-3</prefix>
+        <exponent>1</exponent>
       </part>
     </unit>
   </category>
@@ -3070,6 +3109,15 @@
           <exponent>-1</exponent>
         </part>
       </unit>
+      <unit type="alias">
+        <_title>Kayser</_title>
+        <_names>r:kayser,p:kaysers</_names>
+        <base>
+          <unit>recm</unit>
+          <relation>100</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
     </category>
     <category>
       <_title>Magnetic Field Strength</_title>
@@ -3142,7 +3190,7 @@
       <_title>Magnetic Flux Density</_title>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Weber per Meter Squared</title>
+        <title>Weber per Square Meter</title>
         <names>r:Wb_p_sqm</names>
         <part>
           <unit>Wb</unit>
@@ -3451,7 +3499,7 @@
       <_title>Pressure</_title>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Newton per Meter Squared</title>
+        <title>Newton per Square Meter</title>
         <names>r:N_p_sqm</names>
         <part>
           <unit>N</unit>
@@ -4150,6 +4198,12 @@
         </base>
       </unit>
     </category>
+    Mole per Square Meter Second
+    Micromole per Square Meter Second
+    Einstein per Square Meter Second
+    Microeinstein per Square Meter Second
+    Erg per Square Centimeter Second
+    Watt per Square Meter Steradian
     <category>
       <_title>Specific Entropy</_title>
       <unit type="composite">

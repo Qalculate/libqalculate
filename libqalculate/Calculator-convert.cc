@@ -1920,21 +1920,25 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 	eo2.isolate_x = false;
 	eo2.test_comparisons = false;
 	switch(mstruct.type()) {
+		case STRUCT_UNIT: {}
 		case STRUCT_POWER: {
-			if(mstruct.base()->isUnit() && mstruct.exponent()->isNumber() && mstruct.exponent()->number().isRational() && !mstruct.exponent()->number().isZero()) {
-				MathStructure mstruct_new(mstruct);
+			if(mstruct.isUnit() || (mstruct.base()->isUnit() && mstruct.exponent()->isNumber() && mstruct.exponent()->number().isRational() && !mstruct.exponent()->number().isZero())) {
 				int old_points = 0;
 				bool overflow = false;
-				if(mstruct_new.exponent()->isInteger()) old_points = mstruct_new.exponent()->number().intValue(&overflow);
-				else old_points = mstruct_new.exponent()->number().numerator().intValue(&overflow) + mstruct_new.exponent()->number().denominator().intValue() * (mstruct_new.exponent()->number().isNegative() ? -1 : 1);
-				if(overflow) return mstruct_new;
+				Unit *u = (mstruct.isUnit() ? mstruct.unit() : mstruct.base()->unit());
+				if(mstruct.isUnit()) old_points = 1;
+				else if(mstruct.exponent()->isInteger()) old_points = mstruct.exponent()->number().intValue(&overflow);
+				else old_points = mstruct.exponent()->number().numerator().intValue(&overflow) + mstruct.exponent()->number().denominator().intValue() * (mstruct.exponent()->number().isNegative() ? -1 : 1);
+				if(overflow) return mstruct;
+				bool is_si_units = u->isSIUnit();
+				if(old_points == 1 && (is_si_units || !convert_to_si_units) && (!eo.local_currency_conversion || !u->isCurrency())) return mstruct;
 				bool old_minus = false;
 				if(old_points < 0) {
 					old_points = -old_points;
 					old_minus = true;
 				}
-				bool is_si_units = mstruct_new.base()->unit()->isSIUnit();
-				if(mstruct_new.base()->unit()->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
+				MathStructure mstruct_new(mstruct);
+				if(u->baseUnit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 					mstruct_new.convertToBaseUnits(true, NULL, true, eo2, true);
 					if(mstruct_new.equals(mstruct, true, true)) {
 						return mstruct_new;
@@ -1944,21 +1948,31 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 					mstruct_new = convertToOptimalUnit(mstruct_new, eo, convert_to_si_units);
 					if(mstruct_new.equals(mstruct, true, true)) return mstruct_new;
 				} else {
-					CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_optimal_unit");
-					cu->add(mstruct_new.base()->unit(), mstruct_new.exponent()->number().numerator().intValue());
-					Unit *u = getOptimalUnit(cu, false, eo.local_currency_conversion);
-					if(u == cu) {
+					Unit *u_new = u;
+					if(mstruct_new.isUnit()) {
+						u_new = getOptimalUnit(u, false, eo.local_currency_conversion);
+						if(u_new == u) return mstruct_new;
+						if(eo.approximation == APPROXIMATION_EXACT && u->hasApproximateRelationTo(u_new, true)) {
+							if(!u_new->isRegistered()) delete u_new;
+							return mstruct_new;
+						}
+					} else {
+						CompositeUnit *cu = new CompositeUnit("", "temporary_composite_convert_to_optimal_unit");
+						cu->add(u, mstruct_new.exponent()->number().numerator().intValue());
+						u_new = getOptimalUnit(cu, false, eo.local_currency_conversion);
+						if(u_new == cu) {
+							delete cu;
+							return mstruct_new;
+						}
+						if(eo.approximation == APPROXIMATION_EXACT && cu->hasApproximateRelationTo(u_new, true)) {
+							if(!u_new->isRegistered()) delete u_new;
+							delete cu;
+							return mstruct_new;
+						}
 						delete cu;
-						return mstruct_new;
 					}
-					if(eo.approximation == APPROXIMATION_EXACT && cu->hasApproximateRelationTo(u, true)) {
-						if(!u->isRegistered()) delete u;
-						delete cu;
-						return mstruct_new;
-					}
-					delete cu;
-					mstruct_new = convert(mstruct_new, u, eo, true);
-					if(!u->isRegistered()) delete u;
+					mstruct_new = convert(mstruct_new, u_new, eo, true);
+					if(!u_new->isRegistered()) delete u_new;
 					UNFORMAT(mstruct_new);
 				}
 				int new_points = 0;
@@ -2073,20 +2087,6 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 				}
 			}
 			return mstruct_new;
-		}
-		case STRUCT_UNIT: {
-			if((!mstruct.unit()->isCurrency() || !eo.local_currency_conversion) && (!convert_to_si_units || mstruct.unit()->isSIUnit())) return mstruct;
-			Unit *u = getOptimalUnit(mstruct.unit(), false, eo.local_currency_conversion);
-			if(u != mstruct.unit()) {
-				if((u->isSIUnit() || (u->isCurrency() && eo.local_currency_conversion)) && (eo.approximation != APPROXIMATION_EXACT || !mstruct.unit()->hasApproximateRelationTo(u, true))) {
-					MathStructure mstruct_new = convert(mstruct, u, eo, true);
-					if(!u->isRegistered()) delete u;
-					UNFORMAT(mstruct_new)
-					return mstruct_new;
-				}
-				if(!u->isRegistered()) delete u;
-			}
-			break;
 		}
 		case STRUCT_MULTIPLICATION: {
 			if(!mstruct.containsType(STRUCT_UNIT, true)) return mstruct;
