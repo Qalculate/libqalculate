@@ -4199,7 +4199,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			mstruct2->setInParentheses(true);
 		} else {
 			i3 = str2.find(":", 1);
-			if(i3 != string::npos && i3 < str2.length() - 1 && str2.find_first_not_of(NUMBERS ":", str2[0] == MINUS_CH ? 1 : 0) == string::npos) {
+			if(i3 != string::npos && i3 < str2.length() - 1 && str2.find_first_of(OPERATORS INTERNAL_OPERATORS PARENTHESISS VECTOR_WRAPS COMMAS, str2[0] == MINUS_CH ? 1 : 0) == string::npos) {
 				str3 = str2.substr(0, i3);
 				parseOperators(mstruct2, str3, po);
 				mstruct2->transform(priv->f_colon);
@@ -5979,7 +5979,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		mstruct->transform(priv->f_colon);
 		mstruct->addChild_nocopy(mstruct2);
 		mstruct->addChild(m_undefined);
-	} else if(str.length() > 2 && (i = str.find(":", 1)) != string::npos && test_colon(str, i)) {
+	} else /*if(str.length() > 2 && (i = str.find(":", 1)) != string::npos && test_colon(str, i)) {
 		str2 = str.substr(0, i);
 		parseOperators(mstruct, str2, po);
 		if(po.preserve_format) {
@@ -6009,7 +6009,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			parseOperators(mstruct2, str, po);
 			mstruct->addChild_nocopy(mstruct2);
 		}
-	} else if((i = str.find("\b", 1)) != string::npos) {
+	} else*/ if((i = str.find("\b", 1)) != string::npos) {
 		// Parse uncertainty (using \b as internal single substitution character for +/-)
 		str2 = str.substr(0, i);
 		MathStructure *mstruct2 = new MathStructure;

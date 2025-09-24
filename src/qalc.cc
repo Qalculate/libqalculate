@@ -2983,6 +2983,23 @@ bool contains_wide_character(const char *str) {
 	return false;
 }
 
+bool contains_updating_time(const MathStructure &m) {
+	if((m.isVariable() && (m.variable()->id() == VARIABLE_ID_NOW || m.variable()->id() == VARIABLE_ID_UPTIME)) || (m.isFunction() && (m.function()->id() == FUNCTION_ID_TIME))) return true;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_updating_time(m[i])) return true;
+		if(m[i].isDateTime() && m.isFunction() && m.function()->getArgumentDefinition(i + 1) && m.function()->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_DATE) {
+			QalculateDateTime dnow;
+			dnow.setToCurrentTime();
+			if(dnow == *m[i].datetime()) return true;
+			if(dnow > *m[i].datetime()) {
+				dnow.addSeconds(-5);
+				if(dnow < *m[i].datetime()) return true;
+			}
+		}
+	}
+	return false;
+}
+
 string current_action_text;
 void do_autocalc(bool force, const char *action_text) {
 	if(block_autocalc || autocalc <= 0 || unittest || (!autocalc_was_aborted && !force && prev_line == rl_line_buffer)) return;
@@ -3082,7 +3099,7 @@ void do_autocalc(bool force, const char *action_text) {
 					rl_forced_update_display();
 				}
 				prev_autocalc_result = autocalc_result;
-				if(parsed_mstruct && (parsed_mstruct->containsFunctionId(FUNCTION_ID_TIME, true) || parsed_mstruct->contains(CALCULATOR->getVariableById(VARIABLE_ID_UPTIME), true) || parsed_mstruct->contains(CALCULATOR->getVariableById(VARIABLE_ID_NOW), true))) {
+				if(parsed_mstruct && contains_updating_time(*parsed_mstruct)) {
 					if(!autocalc_thread) autocalc_thread = new AutoCalcThread;
 					if(autocalc_thread->running || autocalc_thread->start()) autocalc_thread->write(2);
 				}
@@ -3899,7 +3916,7 @@ int main(int argc, char *argv[]) {
 					_putenv_s("LANGUAGE", lang.c_str());
 #	else
 					setenv("LANGUAGE", lang.c_str(), 1);
-					setenv("LC_MESSAGES", lang.c_str(), 1);
+					if(lang.find(".") != string::npos) setenv("LC_MESSAGES", lang.c_str(), 1);
 #	endif
 				}
 				break;

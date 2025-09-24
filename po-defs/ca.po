@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate-defs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-22 08:54+0200\n"
+"POT-Creation-Date: 2025-09-24 10:41+0200\n"
 "PO-Revision-Date: 2021-06-06 21:44-0600\n"
 "Last-Translator: Alex Henrie <alexhenrie24@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -10514,11 +10514,11 @@ msgid "r:imperial_minim,p:imperial_minims"
 msgstr ""
 
 #: ../data/units.xml.in.h:369
-msgid "Imperial Fluid Scuple"
+msgid "Imperial Fluid Scruple"
 msgstr ""
 
 #: ../data/units.xml.in.h:370
-msgid "r:imperial_fluid_scuple,p:imperial_fluid_scuples"
+msgid "r:imperial_fluid_scruple,p:imperial_fluid_scruples,ro:imperial_fluid_scuple"
 msgstr ""
 
 #: ../data/units.xml.in.h:371
@@ -10558,7 +10558,7 @@ msgid "ar:gi,gill,p:gills"
 msgstr ""
 
 #: ../data/units.xml.in.h:380
-msgid "U.S. Liquid Pints"
+msgid "U.S. Liquid Pint"
 msgstr ""
 
 #: ../data/units.xml.in.h:381
@@ -10566,7 +10566,7 @@ msgid "ar:liq_pt,liquid_pint,p:liquid_pints"
 msgstr ""
 
 #: ../data/units.xml.in.h:382
-msgid "U.S. Liquid Quarts"
+msgid "U.S. Liquid Quart"
 msgstr ""
 
 #: ../data/units.xml.in.h:383

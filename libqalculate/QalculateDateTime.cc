@@ -238,6 +238,7 @@ int dateTimeZone(const QalculateDateTime &dt, bool b_utc) {
 	Number nsect(dt.second());
 	nsect.trunc();
 	tmdate.tm_sec = nsect.intValue();
+	tmdate.tm_isdst = -1;
 	rawtime = mktime(&tmdate);
 	if(rawtime == (time_t) -1 && (dt.year() != 1969 || dt.month() != 12 || dt.day() != 31)) {
 		if(isLeapYear(dt.year())) tmdate.tm_year = 72;

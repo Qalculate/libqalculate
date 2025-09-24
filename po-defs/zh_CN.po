@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-22 09:14+0200\n"
+"POT-Creation-Date: 2025-09-24 10:41+0200\n"
 "PO-Revision-Date: 2021-08-23 09:54+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
@@ -10437,11 +10437,11 @@ msgid "r:imperial_minim,p:imperial_minims"
 msgstr "英制量滴"
 
 #: ../data/units.xml.in.h:369
-msgid "Imperial Fluid Scuple"
+msgid "Imperial Fluid Scruple"
 msgstr "英制容量斯克鲁普尔"
 
 #: ../data/units.xml.in.h:370
-msgid "r:imperial_fluid_scuple,p:imperial_fluid_scuples"
+msgid "r:imperial_fluid_scruple,p:imperial_fluid_scruples,ro:imperial_fluid_scuple"
 msgstr "英制容量斯克鲁普尔"
 
 #: ../data/units.xml.in.h:371
@@ -10481,7 +10481,7 @@ msgid "ar:gi,gill,p:gills"
 msgstr "ar:gi,及耳,gill"
 
 #: ../data/units.xml.in.h:380
-msgid "U.S. Liquid Pints"
+msgid "U.S. Liquid Pint"
 msgstr "美制液量品脱"
 
 #: ../data/units.xml.in.h:381
@@ -10489,7 +10489,7 @@ msgid "ar:liq_pt,liquid_pint,p:liquid_pints"
 msgstr "ar:liq_pt,液量品脱,liquid_pint"
 
 #: ../data/units.xml.in.h:382
-msgid "U.S. Liquid Quarts"
+msgid "U.S. Liquid Quart"
 msgstr "美制液量夸脱"
 
 #: ../data/units.xml.in.h:383

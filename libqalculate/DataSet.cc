@@ -539,13 +539,17 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	}
 	gsub("-", "_", locale);
 #else
-	char *clocale = setlocale(LC_MESSAGES, NULL);
+	char *clocale = getenv("LANGUAGE");
+	if(!clocale || strlen(clocale) == 0) clocale = getenv("LANG");
+	if(!clocale || strlen(clocale) == 0) clocale = setlocale(LC_MESSAGES, NULL);
 	if(clocale) locale = clocale;
 #endif
 	if(CALCULATOR->getIgnoreLocale() || locale == "POSIX" || locale == "C") {
 		locale = "";
 	} else {
-		size_t i = locale.find('.');
+		size_t i = locale.find(':');
+		if(i != string::npos) locale = locale.substr(0, i);
+		i = locale.find('.');
 		if(i != string::npos) locale = locale.substr(0, i);
 	}
 

@@ -784,14 +784,18 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 	}
 	gsub("-", "_", locale);
 #else
-	char *clocale = setlocale(LC_MESSAGES, NULL);
+	char *clocale = getenv("LANGUAGE");
+	if(!clocale || strlen(clocale) == 0) clocale = getenv("LANG");
+	if(!clocale || strlen(clocale) == 0) clocale = setlocale(LC_MESSAGES, NULL);
 	if(clocale) locale = clocale;
 #endif
 
 	if(b_ignore_locale || locale == "POSIX" || locale == "C") {
 		locale = "";
 	} else {
-		size_t i = locale.find('.');
+		size_t i = locale.find(':');
+		if(i != string::npos) locale = locale.substr(0, i);
+		i = locale.find('.');
 		if(i != string::npos) locale = locale.substr(0, i);
 	}
 

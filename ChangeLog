@@ -1,3 +1,11 @@
+2025-09-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix language option without encoding (without ".utf8" at end)
+	* Fix LANGUAGE and LANG variables for translation of definitions on platforms other than Window
+	* Fix scruple unit typo ("scuple")
+	* Hide questionable IUNS calorie unit
+	* Initialize tm_isdst with -1 to make time zone determination more predictable, and accurate, for time around when daylight saving changes
+
 2025-09-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Make titles for derived units without special symbols more consistent

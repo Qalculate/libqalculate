@@ -1787,11 +1787,53 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 		mstruct->set(str2, false, true);
 	} else {
 		size_t i = string::npos;
-		if((b_handle_vector && type() == ARGUMENT_TYPE_INTEGER) || type() == ARGUMENT_TYPE_VECTOR || (type() == ARGUMENT_TYPE_SET && ((ArgumentSet*) this)->countArguments() == 2 && ((ArgumentSet*) this)->getArgument(1)->type() == ARGUMENT_TYPE_INTEGER && ((ArgumentSet*) this)->getArgument(2)->type() == ARGUMENT_TYPE_VECTOR)) i = str.find(":", 1);
-		if(i != string::npos && i < str.length() - 1 && str.find_first_not_of(NUMBERS ":", str[0] == MINUS_CH ? 1 : 0) == string::npos) {
-			string str2 = "["; str2 += str; str2 += "]";
-			CALCULATOR->parse(mstruct, str2, po);
-			return;
+		if((b_handle_vector && type() == ARGUMENT_TYPE_INTEGER) || type() == ARGUMENT_TYPE_VECTOR || type() == ARGUMENT_TYPE_MATRIX || (type() == ARGUMENT_TYPE_SET && ((ArgumentSet*) this)->countArguments() == 2 && ((ArgumentSet*) this)->getArgument(1)->type() == ARGUMENT_TYPE_INTEGER && ((ArgumentSet*) this)->getArgument(2)->type() == ARGUMENT_TYPE_VECTOR)) i = str.find(":", 1);
+		if(i != string::npos && i < str.length() - 1) {
+			bool in_cit1 = false, in_cit2 = false;
+			int pars = 0;
+			int brackets = 0;
+			bool do_colon = false;
+			for(size_t i2 = 0; i2 < str.size() && !do_colon; i2++) {
+				switch(str[i2]) {
+					case LEFT_VECTOR_WRAP_CH: {
+						if(!in_cit1 && !in_cit2) brackets++;
+						break;
+					}
+					case RIGHT_VECTOR_WRAP_CH: {
+						if(!in_cit1 && !in_cit2 && brackets > 0) brackets--;
+						break;
+					}
+					case LEFT_PARENTHESIS_CH: {
+						if(!brackets && !in_cit1 && !in_cit2) pars++;
+						cout << pars << endl;
+						break;
+					}
+					case RIGHT_PARENTHESIS_CH: {
+						if(!brackets && !in_cit1 && !in_cit2 && pars > 0) pars--;
+						break;
+					}
+					case '\"': {
+						if(in_cit1) in_cit1 = false;
+						else if(!in_cit2) in_cit1 = true;
+						break;
+					}
+					case '\'': {
+						if(in_cit2) in_cit2 = false;
+						else if(!in_cit1) in_cit1 = true;
+						break;
+					}
+					case ':': {
+						if(!in_cit1 && !in_cit2 && brackets == 0 && pars == 0) do_colon = true;
+						break;
+					}
+					default: {break;}
+				}
+			}
+			if(do_colon) {
+				string str2 = "["; str2 += str; str2 += "]";
+				CALCULATOR->parse(mstruct, str2, po);
+				return;
+			}
 		}
 		CALCULATOR->parse(mstruct, str, po);
 	}

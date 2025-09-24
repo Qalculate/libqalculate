@@ -2457,9 +2457,9 @@
         </base>
       </unit>
       <unit type="alias">
-        <_title>Imperial Fluid Scuple</_title>
+        <_title>Imperial Fluid Scruple</_title>
         <system>Imperial</system>
-        <_names>r:imperial_fluid_scuple,p:imperial_fluid_scuples</_names>
+        <_names>r:imperial_fluid_scruple,p:imperial_fluid_scruples,ro:imperial_fluid_scuple</_names>
         <base>
           <unit>imperial_minim</unit>
           <relation>20</relation>
@@ -2471,7 +2471,7 @@
         <system>Imperial</system>
         <_names>as:fl_dr_UK,aor:UK_fl_dr,imperial_fluid_drachm,p:imperial_fluid_drachms</_names>
         <base>
-          <unit>imperial_fluid_scuple</unit>
+          <unit>imperial_fluid_scruple</unit>
           <relation>3</relation>
           <exponent>1</exponent>
         </base>
@@ -2511,7 +2511,7 @@
         </base>
       </unit>
       <unit type="alias">
-        <_title>U.S. Liquid Pints</_title>
+        <_title>U.S. Liquid Pint</_title>
         <system>US</system>
         <_names>ar:liq_pt,liquid_pint,p:liquid_pints</_names>
         <base>
@@ -2521,7 +2521,7 @@
         </base>
       </unit>
       <unit type="alias">
-        <_title>U.S. Liquid Quarts</_title>
+        <_title>U.S. Liquid Quart</_title>
         <system>US</system>
         <_names>ar:liq_qt,liquid_quart,p:liquid_quarts</_names>
         <base>
@@ -3918,6 +3918,7 @@
       </base>
     </unit>
     <unit type="alias">
+      <hidden>true</hidden>
       <_title>Calorie (IUNS)</_title>
       <_names>ars:cal_IUNS</_names>
       <base>
