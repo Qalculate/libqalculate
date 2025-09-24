@@ -220,7 +220,7 @@ int dateTimeZone(time_t rawtime) {
 #endif
 }
 int dateTimeZone(const QalculateDateTime &dt, bool b_utc) {
-	struct tm tmdate = {};
+	struct tm tmdate = { .tm_isdst = -1 };
 	time_t rawtime;
 	if(dt.year() > 2038) {
 		if(isLeapYear(dt.year())) tmdate.tm_year = 136;
@@ -564,7 +564,7 @@ string QalculateDateTime::toISOString() const {
 }
 string QalculateDateTime::toLocalString() const {
 	if(i_year > INT_MAX || i_year < INT_MIN + 1900) return toISOString();
-	struct tm tmdate = {};
+	struct tm tmdate = { .tm_isdst = -1 };
 	tmdate.tm_year = i_year - 1900;
 	tmdate.tm_mon = i_month - 1;
 	tmdate.tm_mday = i_day;
