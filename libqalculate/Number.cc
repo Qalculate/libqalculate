@@ -1602,7 +1602,14 @@ void Number::splitInterval(unsigned int nr_of_parts, vector<Number> &v) const {
 	}
 }
 bool Number::getCentralInteger(Number &nr_int, bool *b_multiple, vector<Number> *v) const {
-	if(!isInterval() || !isReal()) {
+	if(!isInterval()) {
+		if(b_multiple) *b_multiple = false;
+		if(isInteger()) {
+			nr_int.set(*this);
+			if(v) v->push_back(nr_int);
+		}
+		return false;
+	} else if(!isReal()) {
 		if(b_multiple) {
 			if(imaginaryPartIsNonZero()) {
 				*b_multiple = false;

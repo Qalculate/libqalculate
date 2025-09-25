@@ -776,7 +776,7 @@ int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	} else if(mstruct.isNumber() && mstructv2.isNumber()) {
 		Number nr(mstruct.number());
 		if(nr.log(mstructv2.number())) {
-			if(eo.approximation != APPROXIMATION_APPROXIMATE && !mstruct.isApproximate() && !mstructv2.isApproximate() && nr.isApproximate() && (eo.approximation == APPROXIMATION_EXACT || (nr < 100 && nr > -100)) && !nr.isNonInteger()) {
+			if(eo.approximation != APPROXIMATION_APPROXIMATE && !mstruct.isApproximate() && !mstructv2.isApproximate() && nr.isInterval() && (eo.approximation == APPROXIMATION_EXACT || (nr < 100 && nr > -100)) && !nr.isNonInteger()) {
 				Number nr2;
 				bool b = false;
 				nr.getCentralInteger(nr2, &b);
