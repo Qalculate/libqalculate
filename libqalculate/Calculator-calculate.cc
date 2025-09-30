@@ -1426,11 +1426,20 @@ bool equals_with_vname(const MathStructure &m1, const MathStructure &m2) {
 	return true;
 }
 
+bool contains_no_recalculate_exact_object(const MathStructure &m) {
+	if(m.isFunction() && (m.function()->id() == FUNCTION_ID_SAVE || m.function()->id() == FUNCTION_ID_PLOT || m.function()->id() == FUNCTION_ID_RAND || m.function()->id() == FUNCTION_ID_RANDN || m.function()->id() == FUNCTION_ID_RAND_POISSON || m.function()->id() == FUNCTION_ID_EXPORT || m.function()->id() == FUNCTION_ID_COMMAND || m.function()->id() == FUNCTION_ID_TIME)) return true;
+	if(m.isVariable() && (m.variable()->id() == VARIABLE_ID_UPTIME || m.variable()->id() == VARIABLE_ID_NOW)) return true;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_no_recalculate_exact_object(m[i])) return true;
+	}
+	return false;
+}
+
 void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, const string &original_expression, const MathStructure *parsed_mstruct, EvaluationOptions &evalops, AutomaticApproximation auto_approx, int msecs, int max_size) {
 	int dual_approximation = 0;
 	if(auto_approx == AUTOMATIC_APPROXIMATION_AUTO || auto_approx == AUTOMATIC_APPROXIMATION_SINGLE) dual_approximation = -1;
 	else if(auto_approx == AUTOMATIC_APPROXIMATION_DUAL) dual_approximation = 1;
-	if(dual_approximation != 0 && evalops.approximation == APPROXIMATION_TRY_EXACT && mstruct->isApproximate() && (dual_approximation > 0 || (!mstruct->containsType(STRUCT_UNIT, false, false, false) && !parsed_mstruct->containsType(STRUCT_UNIT, false, false, false) && original_expression.find(DOT) == string::npos)) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_SAVE) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_PLOT) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_RAND) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_RANDN) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_RAND_POISSON) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_EXPORT) && !parsed_mstruct->containsFunctionId(FUNCTION_ID_COMMAND) && !parsed_mstruct->containsInterval(true, false, false, false, true)) {
+	if(dual_approximation != 0 && evalops.approximation == APPROXIMATION_TRY_EXACT && mstruct->isApproximate() && (dual_approximation > 0 || (!mstruct->containsType(STRUCT_UNIT, false, false, false) && !parsed_mstruct->containsType(STRUCT_UNIT, false, false, false) && original_expression.find(DOT) == string::npos)) && !contains_no_recalculate_exact_object(*parsed_mstruct) && !parsed_mstruct->containsInterval(true, false, false, false, true)) {
 		ApproximationMode approx_bak = evalops.approximation;
 		int expand_bak = evalops.expand;
 		evalops.approximation = APPROXIMATION_EXACT;
@@ -3644,6 +3653,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 			if(where_vars[i]->isKnown()) {
 				MathStructure m;
 				parse(&m, ((KnownVariable*) where_vars[i])->expression(), eo.parse_options);
+				replace_f_interval(m, eo);
 				calculate_rand(m, eo);
 				((KnownVariable*) where_vars[i])->set(m);
 			}

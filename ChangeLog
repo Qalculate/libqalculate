@@ -1,3 +1,24 @@
+2025-09-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve accuracy for intervals in solutions to equations when using interval arithmethic
+	* Improve handling of intervals in where expressions
+	* Move jerk, snap, crackle, and pop to subcategory
+	* Change title "Gee" to "Standard Gravity (unit)" and add standard gravity per second
+
+2025-09-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Avoid slow display of extreme numbers (> 2^10000000) with calculate-as-you-type
+	* Add min/km and min/mile (pace)
+	* Fix output of extremely large exact number with unnecessarily low precision with PrintOptions::preverve_precision activated
+	* Restrict number of digits (10000) for extremely large numbers when saving variable to file
+	* Fix 10 in scientific notation for approximate number in variable value displayed with decimals
+
+2025-09-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault when calculating log(a^n, a) with interval arthmetic is disabled
+	* Show warning and ask for confirmation when decativating interval arithmetic in qalc
+	* (Re)activate interval arithmetic in qalc (if configuration from prevision version)
+
 2025-09-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix language option without encoding (without ".utf8" at end)

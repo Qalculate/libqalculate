@@ -365,6 +365,7 @@ Calculator::Calculator() {
 	save_printoptions.limit_implicit_multiplication = true;
 	save_printoptions.spacious = false;
 	save_printoptions.number_fraction_format = FRACTION_FRACTIONAL;
+	save_printoptions.restrict_fraction_length = true;
 	save_printoptions.short_multiplication = false;
 	save_printoptions.show_ending_zeroes = false;
 	save_printoptions.use_unit_prefixes = false;
@@ -622,6 +623,7 @@ Calculator::Calculator(bool ignore_locale) {
 	save_printoptions.interval_display = INTERVAL_DISPLAY_INTERVAL;
 	save_printoptions.limit_implicit_multiplication = true;
 	save_printoptions.spacious = false;
+	save_printoptions.restrict_fraction_length = true;
 	save_printoptions.number_fraction_format = FRACTION_FRACTIONAL;
 	save_printoptions.short_multiplication = false;
 	save_printoptions.show_ending_zeroes = false;

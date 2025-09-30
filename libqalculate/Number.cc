@@ -1605,8 +1605,9 @@ bool Number::getCentralInteger(Number &nr_int, bool *b_multiple, vector<Number> 
 	if(!isInterval()) {
 		if(b_multiple) *b_multiple = false;
 		if(isInteger()) {
-			nr_int.set(*this);
+			nr_int.setInternal(mpq_numref(r_value));
 			if(v) v->push_back(nr_int);
+			return true;
 		}
 		return false;
 	} else if(!isReal()) {
@@ -11478,9 +11479,11 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 	// adjust output precision if precision of the number is lower than global precision
 	if(b_approx && i_precision >= 0 && (po.preserve_precision || po.preserve_format || i_precision < precision)) precision = i_precision;
 	// if preserve_precision is true, use full precision
-	else if(b_approx && i_precision < 0 && po.preserve_precision && FROM_BIT_PRECISION(NUMBER_BIT_PRECISION) > precision) precision = FROM_BIT_PRECISION(NUMBER_BIT_PRECISION);
+	else if(i_precision < 0 && po.preserve_precision && FROM_BIT_PRECISION(NUMBER_BIT_PRECISION) > precision) precision = FROM_BIT_PRECISION(NUMBER_BIT_PRECISION);
 	// if preserve_format is true, use full precision - 1 (avoids confusing output)
 	else if(b_approx && i_precision < 0 && po.preserve_format && FROM_BIT_PRECISION(NUMBER_BIT_PRECISION) - 1 > precision) precision = FROM_BIT_PRECISION(NUMBER_BIT_PRECISION) - 1;
+
+	if(po.preserve_precision && !b_approx && i_precision < 0 && precision < 10000) precision = 10000;
 
 	// adjust output precision to precision of parent MathStructure
 	if(po.restrict_to_parent_precision && ips.parent_precision >= 0 && ips.parent_precision < precision) precision = ips.parent_precision;

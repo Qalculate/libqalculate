@@ -70,6 +70,7 @@ bool saved_concise_uncertainty_input = false;
 bool complex_angle_form = false, saved_caf = false;
 EvaluationOptions evalops, saved_evalops;
 bool dot_question_asked = false, implicit_question_asked = false;
+bool ia_question_asked = false, pref_ia_activated = false;
 bool assumptions_warning_shown = false;
 Number saved_custom_output_base, saved_custom_input_base;
 AssumptionType saved_assumption_type;
@@ -1705,8 +1706,11 @@ void set_option(string str) {
 		bool b = CALCULATOR->usesIntervalArithmetic();
 		SET_BOOL(b)
 		if(b != CALCULATOR->usesIntervalArithmetic()) {
-			CALCULATOR->useIntervalArithmetic(b);
-			expression_calculation_updated();
+			if(b || !ask_questions || ia_question_asked || ask_question(_("Deactivating interval arithmetic might result in inaccurate output. Do you want to deactivate it anyway?"))) {
+				if(!b && ask_questions) ia_question_asked = true;
+				CALCULATOR->useIntervalArithmetic(b);
+				expression_calculation_updated();
+			}
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "variable units", _("variable units")) || svar == "varunits") {
 		bool b = CALCULATOR->variableUnitsEnabled();
@@ -2743,6 +2747,7 @@ bool show_object_info(string name) {
 							po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 							po.base = 10;
 							po.number_fraction_format = FRACTION_DECIMAL_EXACT;
+							po.restrict_to_parent_precision = false;
 							po.is_approximate = NULL;
 							po.allow_non_usable = false;
 							value = CALCULATOR->print(((KnownVariable*) v)->get(), 30, po);
@@ -2858,10 +2863,9 @@ bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t 
 	size_t l = 0;
 	if(i2_end == string::npos) i2_end = str2.length();
 	for(size_t i1 = 0;; i1++, i2++) {
-		if(i2 >= i2_end || i2 >= str2.length()) {
-			return i1 >= str1.length();
-		}
+		if(i2 >= i2_end) return i1 >= str1.length();
 		if(i1 >= str1.length()) break;
+		if(i2 >= str2.length()) return false;
 		if(((signed char) str1[i1] < 0 && i1 + 1 < str1.length()) || ((signed char) str2[i2] < 0 && i2 + 1 < str2.length())) {
 			size_t iu1 = 1, iu2 = 1;
 			size_t n1 = 1, n2 = 1;
@@ -3382,7 +3386,7 @@ bool title_matches(ExpressionItem *item, const string &str, size_t minlength = 0
 			i++;
 		}
 		size_t i2 = title.find(' ', i);
-		if(equalsIgnoreCase(str, title, i, title.length(), minlength)) {
+		if(equalsIgnoreCase(str, title, i, i2, minlength)) {
 			return true;
 		}
 		if(i2 == string::npos) break;
@@ -3408,7 +3412,7 @@ bool name_matches(ExpressionItem *item, const string &str) {
 				return true;
 			}
 		} else {
-			if(equalsIgnoreCase(str, ename->name, 0, string::npos, 0) || (name_has_formatting(&item->getName(i2)) && equalsIgnoreCase(str, ename->formattedName(item->type(), true), 0, string::npos, 0))) {
+			if(equalsIgnoreCase(str, ename->name, 0, str.length(), 0) || (name_has_formatting(&item->getName(i2)) && equalsIgnoreCase(str, ename->formattedName(item->type(), true), 0, str.length(), 0))) {
 				return true;
 			}
 		}
@@ -3418,7 +3422,7 @@ bool name_matches(ExpressionItem *item, const string &str) {
 				i = ename->name.find("_", i);
 				if(i == string::npos || !test_unicode_length_from(ename->name, i + 1, 2)) break;
 				i++;
-				if((ename->case_sensitive && str == ename->name.substr(i, str.length())) || (!ename->case_sensitive && equalsIgnoreCase(str, ename->name, i, string::npos, 0))) {
+				if((ename->case_sensitive && str == ename->name.substr(i, str.length())) || (!ename->case_sensitive && equalsIgnoreCase(str, ename->name, i, str.length() + i, 0))) {
 					return true;
 				}
 			}
@@ -3433,7 +3437,7 @@ bool name_matches(Prefix *item, const string &str) {
 				return true;
 			}
 		} else {
-			if(equalsIgnoreCase(str, item->getName(i2).name, 0, string::npos, 0)) {
+			if(equalsIgnoreCase(str, item->getName(i2).name, 0, str.length(), 0)) {
 				return true;
 			}
 		}
@@ -3661,6 +3665,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 							PrintOptions po = printops;
 							po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 							po.base = 10;
+							po.restrict_to_parent_precision = false;
 							po.number_fraction_format = FRACTION_DECIMAL_EXACT;
 							po.is_approximate = NULL;
 							po.allow_non_usable = false;
@@ -4482,6 +4487,10 @@ int main(int argc, char *argv[]) {
 		}
 	}
 #endif
+	if(ask_questions && pref_ia_activated) {
+		set_option("ia 0");
+		pref_ia_activated = false;
+	}
 
 	while(true) {
 		if(cfile) {
@@ -4508,6 +4517,10 @@ int main(int argc, char *argv[]) {
 				}
 				if(!interactive_mode) break;
 				i_maxtime = 0;
+				if(ask_questions && pref_ia_activated) {
+					set_option("ia 0");
+					pref_ia_activated = false;
+				}
 #ifdef HAVE_LIBREADLINE
 				if(autocalc < 0 && ask_questions && !load_defaults) {
 					puts("");
@@ -8057,6 +8070,20 @@ void restore_rpn_stack() {
 	rpn_stack_bak.clear();
 }
 
+bool contains_extreme_number(const MathStructure &m) {
+	if(m.isNumber()) {
+		if(m.number().isFloatingPoint() && (mpfr_get_exp(m.number().internalUpperFloat()) > 10000000L || mpfr_get_exp(m.number().internalLowerFloat()) < -10000000L)) {
+			return true;
+		} else if(m.number().isInteger() && ::abs(m.number().integerLength()) > 10000000L) {
+			return true;
+		}
+	}
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_extreme_number(m[i])) return true;
+	}
+	return false;
+}
+
 void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f, bool do_stack, size_t stack_index, bool check_exrates, bool auto_calculate) {
 
 	if(i_maxtime < 0) return;
@@ -8620,7 +8647,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		i = 0;
 	}
 
-	if(auto_calculate && (was_aborted || parsed_mstruct->contains(m_undefined))) mstruct->setAborted();
+	if(auto_calculate && (was_aborted || parsed_mstruct->contains(m_undefined) || contains_extreme_number(*mstruct))) mstruct->setAborted();
 
 	if(delay_complex) {
 		evalops.complex_number_form = cnf;
@@ -9188,7 +9215,13 @@ void load_preferences() {
 					if(v == 8 && (version_numbers[0] < 3 || (version_numbers[0] == 3 && version_numbers[1] <= 12))) v = 10;
 					CALCULATOR->setPrecision(v);
 				} else if(svar == "interval_arithmetic") {
-					if(version_numbers[0] >= 3) CALCULATOR->useIntervalArithmetic(v);
+					if((version_numbers[0] > 5 || (version_numbers[0] == 5 && version_numbers[1] >= 8)) || ia_question_asked || !save_config) {
+						CALCULATOR->useIntervalArithmetic(v);
+					} else if(!v) {
+						pref_ia_activated = true;
+					}
+				} else if(svar == "interval_arithmetic_question_asked") {
+					ia_question_asked = v;
 				} else if(svar == "interval_display") {
 					if(v == 0) {
 						adaptive_interval_display = true;
@@ -9618,6 +9651,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "use_max_deci=%i\n", saved_printops.use_max_decimals);
 	fprintf(file, "precision=%i\n", saved_precision);
 	fprintf(file, "interval_arithmetic=%i\n", saved_interval);
+	if(ia_question_asked) fprintf(file, "interval_arithmetic_question_asked=%i\n", ia_question_asked);
 	if(saved_adaptive_interval_display) fprintf(file, "interval_display=%i\n", 0);
 	else fprintf(file, "interval_display=%i\n", saved_printops.interval_display + 1);
 	fprintf(file, "min_exp=%i\n", saved_printops.min_exp);

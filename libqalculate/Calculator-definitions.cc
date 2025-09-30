@@ -906,6 +906,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 			} else if(category_title == "Temporary") {
 				category_title = temporaryCategory();
 			}
+			gsub("/", SIGN_DIVISION_SLASH, category_title);
 			if(!category_title.empty() && category_title[0] == '!') {\
 				size_t i = category_title.find('!', 1);
 				if(i == string::npos) {

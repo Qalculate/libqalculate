@@ -1710,7 +1710,6 @@
         </part>
       </unit>
       <unit type="composite">
-        <system>SI</system>
         <_title>Micromole per Square Meter Second</_title>
         <names>r:micromol_p_sqm_p_s</names>
         <part>
@@ -2302,8 +2301,8 @@
     </unit>
     <unit type="alias">
       <hidden>true</hidden>
-      <title>Cubic Centimeter (cc)</title>
-      <_names>a-c-r:cc</_names>
+      <_title>Cubic Centimeter (cc)</_title>
+      <_names>a-r:cc,ao-r:CC</_names>
       <base>
         <unit>cucm</unit>
         <relation>1</relation>
@@ -2928,7 +2927,7 @@
       </part>
     </unit>
     <unit type="alias">
-      <title>Kilometer per Hour (kph)</title>
+      <_title>Kilometer per Hour (kph)</_title>
       <hidden>true</hidden>
       <_names>a-c-r:kph,a-c-r:kmph</_names>
       <base>
@@ -2987,6 +2986,34 @@
         <exponent>1</exponent>
       </base>
     </unit>
+    <unit type="composite">
+      <_title>Minutes per Kilometer</_title>
+      <names>r:min_p_km</names>
+      <part>
+        <unit>min</unit>
+        <prefix>0</prefix>
+        <exponent>1</exponent>
+      </part>
+      <part>
+        <unit>m</unit>
+        <prefix>3</prefix>
+        <exponent>-1</exponent>
+      </part>
+    </unit>
+    <unit type="composite">
+      <_title>Minutes per Mile</_title>
+      <names>r:min_p_mile</names>
+      <part>
+        <unit>min</unit>
+        <prefix>0</prefix>
+        <exponent>1</exponent>
+      </part>
+      <part>
+        <unit>mile</unit>
+        <prefix>0</prefix>
+        <exponent>-1</exponent>
+      </part>
+    </unit>
     <unit type="alias">
       <_title>Speed of Light (Natural Unit of Velocity)</_title>
       <names>ars:c_unit</names>
@@ -3033,66 +3060,6 @@
           <exponent>-2</exponent>
         </part>
       </unit>
-      <unit type="composite">
-        <system>SI</system>
-        <_title>Meter per Second Cubed (Jerk)</_title>
-        <names>r:m_p_scu</names>
-        <part>
-          <unit>m</unit>
-          <prefix>0</prefix>
-          <exponent>1</exponent>
-        </part>
-        <part>
-          <unit>s</unit>
-          <prefix>0</prefix>
-          <exponent>-3</exponent>
-        </part>
-      </unit>
-      <unit type="composite">
-        <system>SI</system>
-        <_title>Meter per Second to the Fourth (Snap)</_title>
-        <names>r:m_p_sfourth</names>
-        <part>
-          <unit>m</unit>
-          <prefix>0</prefix>
-          <exponent>1</exponent>
-        </part>
-        <part>
-          <unit>s</unit>
-          <prefix>0</prefix>
-          <exponent>-4</exponent>
-        </part>
-      </unit>
-      <unit type="composite">
-        <system>SI</system>
-        <_title>Meter per Second to the Fifth (Crackle)</_title>
-        <names>r:m_p_sfifth</names>
-        <part>
-          <unit>m</unit>
-          <prefix>0</prefix>
-          <exponent>1</exponent>
-        </part>
-        <part>
-          <unit>s</unit>
-          <prefix>0</prefix>
-          <exponent>-5</exponent>
-        </part>
-      </unit>
-      <unit type="composite">
-        <system>SI</system>
-        <_title>Meter per Second to the Sixth (Pop)</_title>
-        <names>r:m_p_ssixth</names>
-        <part>
-          <unit>m</unit>
-          <prefix>0</prefix>
-          <exponent>1</exponent>
-        </part>
-        <part>
-          <unit>s</unit>
-          <prefix>0</prefix>
-          <exponent>-6</exponent>
-        </part>
-      </unit>
       <unit type="alias">
         <system>CGS</system>
         <_title>Galileo</_title>
@@ -3105,7 +3072,7 @@
         <use_with_prefixes>true</use_with_prefixes>
       </unit>
       <unit type="alias">
-        <_title>Gee</_title>
+        <_title>Standard Gravity (unit)</_title>
         <_names>r:gee,p:gees</_names>
         <base>
           <unit>m_p_sqs</unit>
@@ -3113,6 +3080,80 @@
           <exponent>1</exponent>
         </base>
       </unit>
+      <category>
+        <_title>Acceleration Change</_title>
+        <unit type="composite">
+          <system>SI</system>
+          <_title>Meter per Second Cubed (Jerk)</_title>
+          <names>r:m_p_scu</names>
+          <part>
+            <unit>m</unit>
+            <prefix>0</prefix>
+            <exponent>1</exponent>
+          </part>
+          <part>
+            <unit>s</unit>
+            <prefix>0</prefix>
+            <exponent>-3</exponent>
+          </part>
+        </unit>
+        <unit type="composite">
+          <_title>Standard Gravity per Second</_title>
+          <names>r:gee_p_s</names>
+          <part>
+            <unit>gee</unit>
+            <prefix>0</prefix>
+            <exponent>1</exponent>
+          </part>
+          <part>
+            <unit>s</unit>
+            <prefix>0</prefix>
+            <exponent>-1</exponent>
+          </part>
+        </unit>
+        <unit type="composite">
+          <_title>Meter per Second to the Fourth (Snap)</_title>
+          <names>r:m_p_sfourth</names>
+          <part>
+            <unit>m</unit>
+            <prefix>0</prefix>
+            <exponent>1</exponent>
+          </part>
+          <part>
+            <unit>s</unit>
+            <prefix>0</prefix>
+            <exponent>-4</exponent>
+          </part>
+        </unit>
+        <unit type="composite">
+          <_title>Meter per Second to the Fifth (Crackle)</_title>
+          <names>r:m_p_sfifth</names>
+          <part>
+            <unit>m</unit>
+            <prefix>0</prefix>
+            <exponent>1</exponent>
+          </part>
+          <part>
+            <unit>s</unit>
+            <prefix>0</prefix>
+            <exponent>-5</exponent>
+          </part>
+        </unit>
+        <unit type="composite">
+          <_title>Meter per Second to the Sixth (Pop)</_title>
+          <names>r:m_p_ssixth</names>
+          <part>
+            <unit>m</unit>
+            <prefix>0</prefix>
+            <exponent>1</exponent>
+          </part>
+          <part>
+            <unit>s</unit>
+            <prefix>0</prefix>
+            <exponent>-6</exponent>
+          </part>
+        </unit>
+      </category>
     </category>
   </category>
   <category>
@@ -4219,12 +4260,6 @@
         </base>
       </unit>
     </category>
-    Mole per Square Meter Second
-    Micromole per Square Meter Second
-    Einstein per Square Meter Second
-    Microeinstein per Square Meter Second
-    Erg per Square Centimeter Second
-    Watt per Square Meter Steradian
     <category>
       <_title>Specific Entropy</_title>
       <unit type="composite">
