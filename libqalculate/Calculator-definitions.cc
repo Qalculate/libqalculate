@@ -785,8 +785,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 	gsub("-", "_", locale);
 #else
 	char *clocale = getenv("LANGUAGE");
-	if(!clocale || strlen(clocale) == 0) clocale = getenv("LANG");
 	if(!clocale || strlen(clocale) == 0) clocale = setlocale(LC_MESSAGES, NULL);
+	if(!clocale || strlen(clocale) == 0) clocale = getenv("LANG");
 	if(clocale) locale = clocale;
 #endif
 

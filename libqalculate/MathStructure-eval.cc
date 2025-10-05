@@ -821,11 +821,12 @@ void fix_interval_variable(KnownVariable *v, MathStructure &mvar) {
 }
 
 void solve_intervals(MathStructure &mstruct, const EvaluationOptions &eo, const EvaluationOptions &feo) {
-	if(mstruct.isLogicalOr() || mstruct.isLogicalAnd() || (mstruct.isComparison() && !mstruct[0].containsInterval(true, true, false, 1, true))) {
+	if(mstruct.isLogicalOr() || mstruct.isLogicalAnd() || (mstruct.isComparison() && (!mstruct[0].containsInterval(true, true, false, 1, true) || !mstruct[1].containsInterval(true, true, false, 1, true)))) {
 		for(size_t i = 0; i < mstruct.size(); i++) {
 			solve_intervals(mstruct[i], eo, feo);
 		}
 		mstruct.childrenUpdated();
+		return;
 	}
 	bool b = false;
 	while(true) {
@@ -866,6 +867,7 @@ void solve_intervals(MathStructure &mstruct, const EvaluationOptions &eo, const 
 			mstruct[0].subtract(mstruct[1]);
 			solve_intervals2(mstruct[0], vars, eo);
 			mstruct[1].clear(true);
+			CALCULATOR->error(false, MESSAGE_CATEGORY_WIDE_INTERVAL, _("Interval potentially calculated wide."), NULL);
 		} else {
 			solve_intervals2(mstruct[0], vars, eo);
 			solve_intervals2(mstruct[1], vars, eo);
@@ -1208,7 +1210,7 @@ MathStructure calculate_uncertainty(MathStructure &m, const EvaluationOptions &e
 }
 
 Variable *find_interval_replace_var_comp(MathStructure &m, const EvaluationOptions &eo, Variable **v) {
-	if(eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables && m.isVariable() && m.variable()->isKnown() && ((KnownVariable*) m.variable())->get().containsInterval(true, true, false, 1, true)) {
+	if(eo.calculate_variables && m.isVariable() && ((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES) || m.variable()->title() == "\b") && m.variable()->isKnown() && ((KnownVariable*) m.variable())->get().containsInterval(true, true, false, 1, true)) {
 		UnknownVariable *uv = new UnknownVariable("", format_and_print(m));
 		uv->setInterval(m);
 		*v = m.variable();
@@ -2491,20 +2493,21 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 			eo3.assume_denominators_nonzero = false;
 			if(eo.approximation == APPROXIMATION_APPROXIMATE && !containsUnknowns()) eo3.approximation = APPROXIMATION_EXACT_VARIABLES;
 			else eo3.approximation = APPROXIMATION_EXACT;
-			vector<KnownVariable*> vars;
+			vector<KnownVariable*> vars_u;
 			vector<MathStructure> uncs;
 			calculatesub(eo3, eo3);
-			while(eo.sync_units && (separate_unit_vars(*this, feo, true) || sync_approximate_units(*this, feo, &vars, &uncs, false))) {
+			while(eo.sync_units && (separate_unit_vars(*this, feo, true) || sync_approximate_units(*this, feo, &vars_u, &uncs, false))) {
 				calculatesub(eo3, eo3);
 			}
 			eo3.approximation = APPROXIMATION_APPROXIMATE;
 			if(eo.sync_units) {
-				sync_approximate_units(*this, feo, &vars, &uncs, true);
+				sync_approximate_units(*this, feo, &vars_u, &uncs, true);
 			}
-			vars.clear();
+			vector<Variable*> vars;
 			if(containsType(STRUCT_COMPARISON)) {
 				EvaluationOptions eo3 = eo;
 				eo3.approximation = APPROXIMATION_EXACT;
+				eo3.interval_calculation = INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC;
 				eo3.structuring = STRUCTURING_NONE;
 				eo3.complex_number_form = COMPLEX_NUMBER_FORM_RECTANGULAR;
 				while(true) {
@@ -2512,10 +2515,19 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 					Variable *uv = find_interval_replace_var_comp(*this, eo3, &v);
 					if(!uv) break;
 					if(v) replace(v, uv);
-					vars.push_back((KnownVariable*) uv);
+					vars.push_back(uv);
 				}
 				eval(eo3);
 
+			}
+			for(size_t i = 0; i < vars.size();) {
+				if(!vars[i]->isKnown()) {
+					replace(vars[i], ((UnknownVariable*) vars[i])->interval());
+					vars[i]->destroy();
+					vars.erase(vars.begin() + i);
+				} else {
+					i++;
+				}
 			}
 			factorize_variables(*this, eo3);
 			if(eo.approximation == APPROXIMATION_APPROXIMATE && !containsUnknowns()) eo3.approximation = APPROXIMATION_EXACT_VARIABLES;
@@ -2524,7 +2536,8 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 			eo3.assume_denominators_nonzero = eo.assume_denominators_nonzero;
 			solve_intervals(*this, eo3, feo);
 			for(size_t i = 0; i < vars.size(); i++) {
-				if(eo.approximation == APPROXIMATION_EXACT) replace(vars[i], ((KnownVariable*) vars[i])->get());
+				if(vars[i]->isKnown()) replace(vars[i], ((KnownVariable*) vars[i])->get());
+				else replace(vars[i], ((UnknownVariable*) vars[i])->interval());
 				vars[i]->destroy();
 			}
 		}

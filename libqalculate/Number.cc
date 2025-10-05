@@ -1602,24 +1602,21 @@ void Number::splitInterval(unsigned int nr_of_parts, vector<Number> &v) const {
 	}
 }
 bool Number::getCentralInteger(Number &nr_int, bool *b_multiple, vector<Number> *v) const {
-	if(!isInterval()) {
+	if(!isReal()) {
+		if(imaginaryPartIsNonZero()) {
+			if(b_multiple) *b_multiple = false;
+			return false;
+		} else if(includesInfinity()) {
+			if(b_multiple) *b_multiple = true;
+			return false;
+		}
+		return realPart().getCentralInteger(nr_int, b_multiple);
+	} else if(!isInterval()) {
 		if(b_multiple) *b_multiple = false;
 		if(isInteger()) {
 			nr_int.setInternal(mpq_numref(r_value));
 			if(v) v->push_back(nr_int);
 			return true;
-		}
-		return false;
-	} else if(!isReal()) {
-		if(b_multiple) {
-			if(imaginaryPartIsNonZero()) {
-				*b_multiple = false;
-			} else if(includesInfinity()) {
-				*b_multiple = true;
-			} else {
-				Number nr;
-				realPart().getCentralInteger(nr, b_multiple);
-			}
 		}
 		return false;
 	}

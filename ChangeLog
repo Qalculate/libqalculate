@@ -1,3 +1,18 @@
+2025-10-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Move erg/gram from equivalent to absorbed dose category
+	* If last character is a digit, include both letters and numerals in matched word for completion
+
+2025-10-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Calculate with interval/uncertainty in where expression even if exact mode
+	* Fix display of "calculate as you type" and "save config" options, and remove duplicate "save mode" on Windows, in mode list
+	* Update names for Loschmidt, Molary volume of ideal gas, and Sackur tetrode constants to improve consistency
+	* Update value of HiggsBoson, quark_c, and quark_t constants
+	* Add StandardGravity_unit name
+	* Minor adjustment to Fine-Structure and Rydberg constants to more precisely reflect CODATA values for derived constants
+	* Use current mode for display of value, place units and uncertanity on same line, for variables in qalc
+
 2025-09-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Improve accuracy for intervals in solutions to equations when using interval arithmethic

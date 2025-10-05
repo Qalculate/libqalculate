@@ -2979,6 +2979,7 @@
       <_names>r:addTime</_names>
       <_description>Adds a time value to a date. The value can be positive or negative, but must use a unit based on seconds (such as day and year).</_description>
       <expression>\x+\y</expression>
+      <example>$name(today, 10 d) = today + 10 d; $name(2025-10-05T07:48, 10 min) = "2025-10-05T07:48" + 10 min = "2025-10-05T07:58"</example>
       <argument type="date" index="1">
         <_title>Date</_title>
       </argument>

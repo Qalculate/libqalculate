@@ -40,7 +40,7 @@ bool is_answer_variable(Variable *v) {
 }
 
 
-string fix(string str, bool replace_signs = false, bool b2 = false) {
+string fix(string str, bool replace_signs = false) {
 	if(printops.use_unicode_signs) {
 		gsub(">=", SIGN_GREATER_OR_EQUAL, str);
 		gsub("<=", SIGN_LESS_OR_EQUAL, str);
@@ -395,6 +395,8 @@ void print_function(MathFunction *f) {
 			str += ": ";
 			if(arg) {
 				str2 = fix(arg->printlong());
+				gsub(" :", "", str2);
+				gsub(":", "", str2);
 			} else {
 				str2 = fix(default_arg.printlong());
 			}
@@ -471,7 +473,7 @@ void print_variable(Variable *v) {
 	}
 	fprintf(vfile, "<entry><para>%s</para></entry>\n", str.c_str());
 	value = "";
-	bool is_relative = false;
+	bool b_approx = false;
 	if(is_answer_variable(v)) {
 		value = _("a previous result");
 	} else if(v == v_memory) {
@@ -489,30 +491,14 @@ void print_variable(Variable *v) {
 			value = _("current date and time");
 		} else if(v->id() == VARIABLE_ID_UPTIME) {
 			value = _("current computer uptime");
-		} else if(((KnownVariable*) v)->isExpression()) {
-			value = fix(CALCULATOR->localizeExpression(((KnownVariable*) v)->expression()), printops.use_unicode_signs);
-			if(!((KnownVariable*) v)->uncertainty(&is_relative).empty()) {
-				if(is_relative) {value += " ("; value += _("relative uncertainty"); value += ": ";}
-				else value += SIGN_PLUSMINUS;
-				value += fix(CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty()), printops.use_unicode_signs);
-				if(is_relative) {value += ")";}
-			}
-			if(((KnownVariable*) v)->expression().find_first_not_of(NUMBER_ELEMENTS EXPS) == string::npos && value.length() > 40) {
-				value = value.substr(0, 30);
-				value += "...";
-			}
-			if(!((KnownVariable*) v)->unit().empty() && ((KnownVariable*) v)->unit() != "auto") {
-				value += " ";
-				value += fix(((KnownVariable*) v)->unit());
-			}
 		} else {
-			if(((KnownVariable*) v)->get().isMatrix()) {
-				value = _("matrix");
-			} else if(((KnownVariable*) v)->get().isVector()) {
-				value = _("vector");
-			} else {
-				value = fix(CALCULATOR->print(((KnownVariable*) v)->get(), 30, printops), printops.use_unicode_signs);
-			}
+			if(((KnownVariable*) v)->uncertainty().empty()) printops.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+			else printops.interval_display = INTERVAL_DISPLAY_CONCISE;
+			printops.is_approximate = &b_approx;
+			MathStructure m(((KnownVariable*) v)->get());
+			m.format(printops);
+			value = fix_supsub(m.print(printops, true, false, TAG_TYPE_HTML));
+			printops.is_approximate = NULL;
 		}
 	} else {
 		if(((UnknownVariable*) v)->assumptions()) {
@@ -539,7 +525,7 @@ void print_variable(Variable *v) {
 			value = _("default assumptions");
 		}
 	}
-	if(v->isApproximate() && !is_relative && value.find(SIGN_PLUSMINUS) == string::npos) {
+	if((v->isApproximate() || b_approx) && (!v->isKnown() || ((KnownVariable*) v)->uncertainty().empty()) && value.find(SIGN_PLUSMINUS) == string::npos) {
 		if(v->id() == VARIABLE_ID_PI || v->id() == VARIABLE_ID_E || v->id() == VARIABLE_ID_EULER || v->id() == VARIABLE_ID_CATALAN) {
 			value += " (";
 			value += _("variable precision");
@@ -634,6 +620,7 @@ int main(int, char *[]) {
 	string str;
 
 	CALCULATOR->loadExchangeRates();
+	CALCULATOR->setPrecision(20);
 
 	string ans_str = _("ans");
 	vans[0] = (KnownVariable*) CALCULATOR->addVariable(new KnownVariable(_("Temporary"), ans_str, m_undefined, _("Last Answer"), false));
@@ -661,6 +648,8 @@ int main(int, char *[]) {
 	printops.use_unicode_signs = true;
 	printops.multiplication_sign = MULTIPLICATION_SIGN_X;
 	printops.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+	printops.min_exp = 6;
+	printops.exp_display = EXP_POWER_OF_10;
 
 	generate_functions_tree_struct();
 	generate_variables_tree_struct();

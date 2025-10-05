@@ -12569,7 +12569,7 @@ msgstr "Molvolym för ideal gas (273.15 K, 101.325 kPa)"
 
 #: ../data/variables.xml.in.h:173
 msgid "Sackur-Tetrode constant (1 K, 100 kPa)"
-msgstr "Sackur-Tetrodes konstant (1 K, 100 kPa))"
+msgstr "Sackur-Tetrodes konstant (1 K, 100 kPa)"
 
 #: ../data/variables.xml.in.h:174
 msgid "Sackur-Tetrode constant (1 K, 101.325 kPa)"

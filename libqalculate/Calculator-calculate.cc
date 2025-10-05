@@ -3233,6 +3233,7 @@ void Calculator::parseExpressionAndWhere(MathStructure *mstruct, MathStructure *
 					Variable *v = NULL;
 					if(wheres[i2][index] == '=') {
 						v = new KnownVariable("\x14", sname, svalue);
+						v->setTitle("\b");
 					} else {
 						wheres[i2] = wheres[i2].substr(index, wheres[i2].length() - 1);
 						bool b = false;
@@ -3498,6 +3499,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 					Variable *v = NULL;
 					if(wheres[i2][index] == '=') {
 						v = new KnownVariable("\x14", sname, svalue);
+						v->setTitle("\b");
 					} else {
 						MathStructure m;
 						beginTemporaryStopMessages();

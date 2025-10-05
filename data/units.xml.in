@@ -3073,7 +3073,7 @@
       </unit>
       <unit type="alias">
         <_title>Standard Gravity (unit)</_title>
-        <_names>r:gee,p:gees</_names>
+        <_names>is:standard_gravity_unit,r:gee,p:gees</_names>
         <base>
           <unit>m_p_sqs</unit>
           <relation>9.80665</relation>
@@ -4445,6 +4445,20 @@
           <exponent>1</exponent>
         </base>
       </unit>
+      <unit type="composite">
+        <_title>Erg per Gram</_title>
+        <names>r:erg_p_g</names>
+        <part>
+          <unit>erg</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>g</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
     </category>
     <category>
       <_title>Dose Equivalent</_title>
@@ -4476,20 +4490,6 @@
           <unit>rem_radioactivity</unit>
           <prefix>-3</prefix>
           <exponent>1</exponent>
-        </part>
-      </unit>
-      <unit type="composite">
-        <_title>Erg per Gram</_title>
-        <names>r:erg_p_g</names>
-        <part>
-          <unit>erg</unit>
-          <prefix>0</prefix>
-          <exponent>1</exponent>
-        </part>
-        <part>
-          <unit>g</unit>
-          <prefix>0</prefix>
-          <exponent>-1</exponent>
         </part>
       </unit>
     </category>

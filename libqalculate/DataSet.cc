@@ -540,8 +540,8 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	gsub("-", "_", locale);
 #else
 	char *clocale = getenv("LANGUAGE");
-	if(!clocale || strlen(clocale) == 0) clocale = getenv("LANG");
 	if(!clocale || strlen(clocale) == 0) clocale = setlocale(LC_MESSAGES, NULL);
+	if(!clocale || strlen(clocale) == 0) clocale = getenv("LANG");
 	if(clocale) locale = clocale;
 #endif
 	if(CALCULATOR->getIgnoreLocale() || locale == "POSIX" || locale == "C") {

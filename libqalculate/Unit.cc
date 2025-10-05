@@ -1315,7 +1315,6 @@ bool replace_variables(MathStructure &m) {
 			else if(m.variable()->referenceName() == "elementary_charge") u = CALCULATOR->getActiveUnit("e_unit");
 			else if(m.variable()->referenceName() == "electron_mass") u = CALCULATOR->getActiveUnit("electron_unit");
 			else if(m.variable()->referenceName() == "compton_wavelength_2pi") u = CALCULATOR->getActiveUnit("l_N");
-
 		}
 		if(u) {
 			m.set(u, true);

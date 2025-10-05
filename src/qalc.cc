@@ -673,7 +673,13 @@ int rlcom_tab(int a, int b) {
 	if(!str.empty() && (last_is_operator(str) || is_in(VECTOR_WRAPS PARENTHESISS SPACES, str.back()))) return key_insert(a, b);
 	bool b_clear = result_autocalculated;
 	if(b_clear) clear_autocalc();
-	rl_complete_internal('!');
+	if(!str.empty() && is_in(NUMBERS, str.back())) {
+		rl_completer_word_break_characters = NOT_IN_NAMES;
+		rl_complete_internal('!');
+		rl_completer_word_break_characters = rl_basic_word_break_characters;
+	} else {
+		rl_complete_internal('!');
+	}
 	if(b_clear) do_autocalc(true);
 	return 0;
 }
@@ -2553,6 +2559,8 @@ bool show_object_info(string name) {
 						str += ": ";
 						if(arg) {
 							str2 = arg->printlong();
+							gsub(" :", "", str2);
+							gsub(":", "", str2);
 						} else {
 							str2 = default_arg.printlong();
 						}
@@ -2734,23 +2742,24 @@ bool show_object_info(string name) {
 				if(is_answer_variable(v)) {
 					value = _("a previous result");
 				} else if(v->isKnown()) {
-					if(((KnownVariable*) v)->isExpression() && !v->isLocal()) {
-						ParseOptions pa = evalops.parse_options; pa.base = 10;
-						value = CALCULATOR->localizeExpression(((KnownVariable*) v)->expression(), pa);
+					bool is_approximate = false;
+					if(((KnownVariable*) v)->get().isMatrix() && ((KnownVariable*) v)->get().columns() * ((KnownVariable*) v)->get().rows() > 6) {
+						value = _("matrix");
+					} else if(((KnownVariable*) v)->get().isVector() && ((KnownVariable*) v)->get().size() > 6) {
+						value = _("vector");
 					} else {
-						if(((KnownVariable*) v)->get().isMatrix()) {
-							value = _("matrix");
-						} else if(((KnownVariable*) v)->get().isVector()) {
-							value = _("vector");
-						} else {
-							PrintOptions po = printops;
-							po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
-							po.base = 10;
-							po.number_fraction_format = FRACTION_DECIMAL_EXACT;
-							po.restrict_to_parent_precision = false;
-							po.is_approximate = NULL;
-							po.allow_non_usable = false;
-							value = CALCULATOR->print(((KnownVariable*) v)->get(), 30, po);
+						PrintOptions po = printops;
+						po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+						po.base = 10;
+						po.number_fraction_format = FRACTION_DECIMAL_EXACT;
+						po.restrict_to_parent_precision = false;
+						po.allow_non_usable = false;
+						po.is_approximate = &is_approximate;
+						value = CALCULATOR->print(((KnownVariable*) v)->get(), 100, po);
+						if((v->isApproximate() || is_approximate) && value.find(SIGN_PLUSMINUS) == string::npos) {
+							value.insert(0, " ");
+							if(printops.use_unicode_signs) value.insert(0, SIGN_ALMOST_EQUAL);
+							else value.insert(0, _("approx."));
 						}
 					}
 				} else {
@@ -2782,46 +2791,19 @@ bool show_object_info(string name) {
 					}
 				}
 				CHECK_IF_SCREEN_FILLED_PUTS("");
-				bool is_relative = false;
-				if(v->isKnown() && ((KnownVariable*) v)->isExpression() && !((KnownVariable*) v)->uncertainty(&is_relative).empty()) {
-					PRINT_AND_COLON_TABS_INFO(_("Value"));
-					FPUTS_UNICODE(value.c_str(), stdout);
-					CHECK_IF_SCREEN_FILLED_PUTS("");
-					if(is_relative) {PRINT_AND_COLON_TABS_INFO(_("Relative uncertainty"));}
-					else {PRINT_AND_COLON_TABS_INFO(_("Uncertainty"));}
-					CHECK_IF_SCREEN_FILLED_PUTS(CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty(), pa).c_str())
-				} else {
-					string value_pre = _("Value");
-					STR_AND_COLON_TABS_INFO(value_pre);
-					value.insert(0, value_pre);
-					bool b_approx = item->isApproximate();
-					if(b_approx && v->isKnown()) {
-						if(((KnownVariable*) v)->isExpression()) {
-							b_approx = ((KnownVariable*) v)->expression().find(SIGN_PLUSMINUS) == string::npos && ((KnownVariable*) v)->expression().find(CALCULATOR->getFunctionById(FUNCTION_ID_INTERVAL)->referenceName()) == string::npos;
-						} else {
-							b_approx = ((KnownVariable*) v)->get().containsInterval(true, false, false, 0, true) <= 0;
-						}
+				string value_pre = _("Value");
+				STR_AND_COLON_TABS_INFO(value_pre);
+				value.insert(0, value_pre);
+				int tabs = 0;
+				for(size_t i = 0; i < value_pre.length(); i++) {
+					if(value_pre[i] == '\t') {
+						if(tabs == 0) tabs += (7 - ((i - 1) % 8));
+						else tabs += 7;
 					}
-					if(b_approx) {
-						value += " (";
-						value += _("approximate");
-						value += ")";
-					}
-					int tabs = 0;
-					for(size_t i = 0; i < value_pre.length(); i++) {
-						if(value_pre[i] == '\t') {
-							if(tabs == 0) tabs += (7 - ((i - 1) % 8));
-							else tabs += 7;
-						}
-					}
-					INIT_COLS
-					addLineBreaks(value, cols, true, false, unicode_length(value_pre) + tabs, unicode_length(value_pre) + tabs);
-					CHECK_IF_SCREEN_FILLED_PUTS(value.c_str());
 				}
-				if(v->isKnown() && ((KnownVariable*) v)->isExpression() && !((KnownVariable*) v)->unit().empty() && ((KnownVariable*) v)->unit() != "auto") {
-					PRINT_AND_COLON_TABS_INFO(_("Unit"));
-					CHECK_IF_SCREEN_FILLED_PUTS(((KnownVariable*) v)->unit().c_str())
-				}
+				INIT_COLS
+				addLineBreaks(value, cols, true, false, unicode_length(value_pre) + tabs, unicode_length(value_pre) + tabs);
+				CHECK_IF_SCREEN_FILLED_PUTS(value.c_str());
 				if(!item->description().empty()) {
 					fputs("\n", stdout);
 					FPUTS_UNICODE(item->description().c_str(), stdout);
@@ -3630,55 +3612,27 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 				FPUTS_UNICODE(str.c_str(), stdout);
 				string value;
 				if(v->isKnown()) {
-					bool is_relative = false;
-					if(((KnownVariable*) v)->isExpression() && !v->isLocal()) {
-						value = CALCULATOR->localizeExpression(((KnownVariable*) v)->expression(), pa);
-						if(!((KnownVariable*) v)->uncertainty(&is_relative).empty()) {
-							if(is_relative) {value += " ("; value += _("relative uncertainty"); value += ": ";}
-							else value += SIGN_PLUSMINUS;
-							value += CALCULATOR->localizeExpression(((KnownVariable*) v)->uncertainty());
-							if(is_relative) {value += ")";}
-						}
-						if(!((KnownVariable*) v)->unit().empty() && ((KnownVariable*) v)->unit() != "auto") {
-							value += " ";
-							value += ((KnownVariable*) v)->unit();
-						}
-						if(value.length() > 40) {
-							size_t n = 30;
-							while(n > 0 && (signed char) value[n + 1] < 0 && (unsigned char) value[n + 1] < 0xC0) n--;
-							value = value.substr(0, n);
-							value += "...";
-						}
-						FPUTS_UNICODE(value.c_str(), stdout);
-						if(!is_relative && ((KnownVariable*) v)->uncertainty().empty() && v->isApproximate() && ((KnownVariable*) v)->expression().find(SIGN_PLUSMINUS) == string::npos && ((KnownVariable*) v)->expression().find(CALCULATOR->getFunctionById(FUNCTION_ID_INTERVAL)->referenceName()) == string::npos) {
-							fputs(" (", stdout);
-							FPUTS_UNICODE(_("approximate"), stdout);
-							fputs(")", stdout);
-
-						}
+					bool is_approximate = false;
+					if(((KnownVariable*) v)->get().isMatrix() && ((KnownVariable*) v)->get().columns() * ((KnownVariable*) v)->get().rows() > 6) {
+						value = _("matrix");
+					} else if(((KnownVariable*) v)->get().isVector() && ((KnownVariable*) v)->get().size() > 6) {
+						value = _("vector");
 					} else {
-						if(((KnownVariable*) v)->get().isMatrix()) {
-							value = _("matrix");
-						} else if(((KnownVariable*) v)->get().isVector()) {
-							value = _("vector");
-						} else {
-							PrintOptions po = printops;
-							po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
-							po.base = 10;
-							po.restrict_to_parent_precision = false;
-							po.number_fraction_format = FRACTION_DECIMAL_EXACT;
-							po.is_approximate = NULL;
-							po.allow_non_usable = false;
-							value = CALCULATOR->print(((KnownVariable*) v)->get(), 30, po);
-						}
-						FPUTS_UNICODE(value.c_str(), stdout);
-						if(v->isApproximate() && ((KnownVariable*) v)->get().containsInterval(true, false, false, 0, true) <= 0) {
-							fputs(" (", stdout);
-							FPUTS_UNICODE(_("approximate"), stdout);
-							fputs(")", stdout);
+						PrintOptions po = printops;
+						po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+						po.base = 10;
+						po.number_fraction_format = FRACTION_DECIMAL_EXACT;
+						po.restrict_to_parent_precision = false;
+						po.allow_non_usable = false;
+						po.is_approximate = &is_approximate;
+						value = CALCULATOR->print(((KnownVariable*) v)->get(), 1000);
+						if((v->isApproximate() || is_approximate) && value.find(SIGN_PLUSMINUS) == string::npos) {
+							value.insert(0, " ");
+							if(printops.use_unicode_signs) value.insert(0, SIGN_ALMOST_EQUAL);
+							value.insert(0, _("approx."));
 						}
 					}
-
+					FPUTS_UNICODE(value.c_str(), stdout);
 				} else {
 					if(((UnknownVariable*) v)->assumptions()) {
 						if(((UnknownVariable*) v)->assumptions()->type() != ASSUMPTION_TYPE_BOOLEAN) {
@@ -6084,18 +6038,16 @@ int main(int argc, char *argv[]) {
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Other"));
 
 #ifdef HAVE_LIBREADLINE
-			PRINT_AND_COLON_TABS(_("calculate as you type"), "autocalc"); str += b2yn(autocalc > 0, false);
+			PRINT_AND_COLON_TABS(_("calculate as you type"), "autocalc"); str += b2yn(autocalc > 0, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 #endif
-			PRINT_AND_COLON_TABS(_("clear history"), ""); str += b2yn(clear_history_on_exit, false);
-			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("clear history"), ""); str += b2yn(clear_history_on_exit, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("ignore locale"), ""); str += b2yn(ignore_locale, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			if(!custom_lang.empty()) {PRINT_AND_COLON_TABS(_("language"), ""); str += custom_lang; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())}
 			PRINT_AND_COLON_TABS(_("prompt"), ""); str += prompt; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("rpn"), ""); str += b2oo(rpn_mode, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
-			PRINT_AND_COLON_TABS(_("save config"), ""); str += b2yn(save_config, false);
+			PRINT_AND_COLON_TABS(_("save config"), ""); str += b2yn(save_config, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("save definitions"), ""); str += b2yn(save_defs_on_exit, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
-			PRINT_AND_COLON_TABS(_("save mode"), ""); str += b2yn(save_mode_on_exit, false);
-			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("save mode"), ""); str += b2yn(save_mode_on_exit, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 #ifndef _WIN32
 			PRINT_AND_COLON_TABS(_("sigint action"), "sigint");
 			switch(sigint_action) {
@@ -6103,8 +6055,8 @@ int main(int argc, char *argv[]) {
 				case 2: {str += _("interrupt"); break;}
 				default: {str += _("kill"); break;}
 			}
-#endif
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+#endif
 			puts("");
 		//qalc command
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "help", _("help")) || str == "?") {
@@ -9541,9 +9493,9 @@ void load_preferences() {
 }
 
 void save_history() {
+#ifdef HAVE_LIBREADLINE
 	string history_dir = getLocalStateDir();
 	if(!dirExists(history_dir)) recursiveMakeDir(history_dir);
-#ifdef HAVE_LIBREADLINE
 	if(clear_history_on_exit) {
 		if(fileExists(buildPath(history_dir, "qalc.history"))) history_truncate_file(buildPath(history_dir, "qalc.history").c_str(), 0);
 	} else {

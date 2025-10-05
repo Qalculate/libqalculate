@@ -2171,6 +2171,10 @@ bool IntegerArgument::subtest(MathStructure &value, const EvaluationOptions &eo)
 		value.eval(eo);
 	}
 	if(!value.isNumber()) return false;
+	if(value.number().hasImaginaryPart()) {
+		if(!value.number().imaginaryPartIsNonZero() && value.number().imaginaryPart().isFraction()) value.number().clearImaginary();
+		else return false;
+	}
 	if(!value.number().isInteger() && value.number().isInterval() && value.number().precision(true) > PRECISION + 10) {
 		Number nr;
 		if(value.number().getCentralInteger(nr)) value.set(nr, true);

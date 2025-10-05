@@ -1228,7 +1228,7 @@ int GenerateVectorFunction::calculate(MathStructure &mstruct, const MathStructur
 	if(!b_step) {
 		CALCULATOR->beginTemporaryStopMessages();
 		msteps.eval(eo);
-		if(!msteps.number().isInteger() && msteps.number().isInterval() && !msteps.number().isNonInteger() && msteps.number().precision(true) > PRECISION + 10) {
+		if(msteps.isNumber() && !msteps.number().isInteger() && msteps.number().isInterval() && !msteps.number().isNonInteger() && msteps.number().precision(true) > PRECISION + 10) {
 			Number nr;
 			if(msteps.number().getCentralInteger(nr)) {
 				msteps.set(nr, true);

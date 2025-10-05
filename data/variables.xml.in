@@ -377,7 +377,7 @@
       <variable>
         <_title>Charm Quark Mass (in MeV/c^2)</_title>
         <names>r:quark_c</names>
-        <value unit="MeV*c_unit^(-2)" uncertainty="35">1275</value>
+        <value unit="MeV*c_unit^(-2)" uncertainty="20">1270</value>
       </variable>
       <variable>
         <_title>Strange Quark Mass (in MeV/c^2)</_title>
@@ -387,7 +387,7 @@
       <variable>
         <_title>Top Quark Mass (in MeV/c^2)</_title>
         <names>r:quark_t</names>
-        <value unit="MeV*c_unit^(-2)" uncertainty="510">173210</value>
+        <value unit="MeV*c_unit^(-2)" uncertainty="300">172760</value>
       </variable>
       <variable>
         <_title>Bottom Quark Mass (in MeV/c^2)</_title>
@@ -397,7 +397,7 @@
       <variable>
         <_title>Higgs Boson Mass (in MeV/c^2)</_title>
         <names>r:higgs_boson</names>
-        <value unit="MeV*c_unit^(-2)" uncertainty="160">125180</value>
+        <value unit="MeV*c_unit^(-2)" uncertainty="110">125110</value>
       </variable>
       <variable>
         <_title>W Boson Mass (in MeV/c^2)</_title>
@@ -531,7 +531,7 @@
       <variable>
         <_title>Fine-Structure Constant</_title>
         <names>r:fine_structure,au:&#x03B1;,ao:alpha</names>
-        <value uncertainty="1.1E-12">7.2973525643E-3</value>
+        <value uncertainty="1.13E-12">7.29735256434E-3</value>
       </variable>
       <variable>
         <_title>Hartree Energy (constant)</_title>
@@ -551,7 +551,7 @@
       <variable>
         <_title>Rydberg Constant</_title>
         <names>r:rydberg,asu:R_&#x221E;</names>
-        <value uncertainty="0.000012" unit="m^(-1)">10973731.568157</value>
+        <value uncertainty="0.000012" unit="m^(-1)">10973731.5681569</value>
       </variable>
       <variable>
         <_title>Thomson cross section</_title>
@@ -628,12 +628,12 @@
       </variable>
       <variable>
         <_title>Loschmidt Constant (273.15 K, 100 kPa)</_title>
-        <names>loschmidt_100</names>
+        <names>rs:loschmidt_100,aos:n_0100</names>
         <value unit="auto">(100000*Pa)/(boltzmann*273.15*K)</value>
       </variable>
       <variable>
         <_title>Loschmidt Constant (273.15 K, 101.325 kPa)</_title>
-        <names>rs:loschmidt,as:n_0</names>
+        <names>s:loschmidt_atm,ros:loschmidt,aos:n_0</names>
         <value unit="auto">(101325*Pa)/(boltzmann*273.15*K)</value>
       </variable>
       <variable>
@@ -643,22 +643,22 @@
       </variable>
       <variable>
         <_title>Molar Volume of Ideal Gas (273.15 K, 100 kPa)</_title>
-        <names>r:ideal_gas_molar,as:V_m</names>
+        <names>s:ideal_gas_molar_100,r:ideal_gas_molar,as:V_m</names>
         <value unit="auto">(gas_constant*273.15*K)/(100000*Pa)</value>
       </variable>
       <variable>
         <_title>Molar Volume of Ideal Gas (273.15 K, 101.325 kPa)</_title>
-        <names>rs:ideal_gas_molar_101,as:V_m101</names>
+        <names>s:ideal_gas_molar_atm,rs:ideal_gas_molar_101,aos:V_m101</names>
         <value unit="auto">(gas_constant*273.15*K)/(101325*Pa)</value>
       </variable>
       <variable>
         <_title>Sackur-Tetrode constant (1 K, 100 kPa)</_title>
-        <names>r:sackur_tetrode</names>
+        <names>s:sackur_tetrode_100,r:sackur_tetrode</names>
         <value uncertainty="4.7E-10">-1.15170753496</value>
       </variable>
       <variable>
         <_title>Sackur-Tetrode constant (1 K, 101.325 kPa)</_title>
-        <names>rs:sackur_tetrode_101</names>
+        <names>s:sackur_tetrode_atm,rs:sackur_tetrode_101</names>
         <value uncertainty="4.7E-10">-1.16487052149</value>
       </variable>
       <variable>
