@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25 09:57+0200\n"
-"PO-Revision-Date: 2025-04-30 22:46+0800\n"
+"PO-Revision-Date: 2025-10-05 13:37+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_TW\n"
@@ -21,7 +21,7 @@ msgstr ""
 #: ../src/defs2doc.cc:346 ../src/qalc.cc:2492 ../libqalculate/Function.cc:227
 #: ../libqalculate/Function.cc:1504
 msgid "argument"
-msgstr "參數"
+msgstr "引數"
 
 #: ../src/defs2doc.cc:371 ../src/qalc.cc:2517
 #, c-format
@@ -38,7 +38,7 @@ msgstr "範例:"
 
 #: ../src/defs2doc.cc:386 ../src/qalc.cc:2545
 msgid "Arguments"
-msgstr "參數"
+msgstr "引數"
 
 #. optional argument, in description
 #: ../src/defs2doc.cc:403 ../src/qalc.cc:2567
@@ -68,7 +68,7 @@ msgstr "一個先前結果"
 
 #: ../src/defs2doc.cc:478
 msgid "result of memory operations (MC, MS, M+, M−)"
-msgstr "記憶運算的結果(MC, MS, M+, M−)"
+msgstr "記憶運算的結果(MC、MS、M+、M−)"
 
 #: ../src/defs2doc.cc:481
 msgid "current precision"
@@ -890,7 +890,7 @@ msgstr "自訂"
 
 #: ../src/qalc.cc:1372
 msgid "Please specify a custom angle unit as argument (e.g. set angle arcsec)."
-msgstr "請將自訂角度單位指定為參數(例如set angle arcsec)。"
+msgstr "請將自訂角度單位指定為引數(例如set angle arcsec)。"
 
 #: ../src/qalc.cc:1379 ../src/qalc.cc:5996
 msgid "caret as xor"
@@ -1090,12 +1090,11 @@ msgstr "請重新啟動程式使變更生效。"
 
 #: ../src/qalc.cc:1573 ../src/qalc.cc:6092
 msgid "prompt"
-msgstr ""
+msgstr "提示字元"
 
 #: ../src/qalc.cc:1589 ../src/qalc.cc:6094
-#, fuzzy
 msgid "save config"
-msgstr "儲存模式"
+msgstr "儲存組態"
 
 #. qalc command
 #: ../src/qalc.cc:1598 ../src/qalc.cc:4602 ../src/qalc.cc:6096
@@ -1201,7 +1200,7 @@ msgstr "簡潔"
 msgid ""
 "Deactivating interval arithmetic might result in inaccurate output. Do you "
 "want to deactivate it anyway?"
-msgstr ""
+msgstr "停用區間算術可能導致不準確的輸出。你無論如何都想停用它嗎?"
 
 #: ../src/qalc.cc:1715 ../src/qalc.cc:5766
 msgid "variable units"
@@ -1555,7 +1554,7 @@ msgid ""
 "numbers. All hexadecimal numbers starting with 8 or higher are negative, "
 "unless binary bits is set."
 msgstr ""
-"啟用二的補數表示法輸入負十六進制數字。所有以8或更高開始的十六進制數字都是負"
+"啟用二的補數表示法輸入負十六進制數字。所有以8或更高起始的十六進制數字都是負"
 "數，除非設定二進制位元。"
 
 #: ../src/qalc.cc:2328
@@ -1589,7 +1588,7 @@ msgid ""
 "numbers. All binary numbers starting with 1 are negative, unless binary bits "
 "is set."
 msgstr ""
-"啟用二的補數表示法輸入負二進制數字。所有以1開始的二進制數字都是負數，除非設定"
+"啟用二的補數表示法輸入負二進制數字。所有以1起始的二進制數字都是負數，除非設定"
 "二進制位元。"
 
 #: ../src/qalc.cc:2364 ../src/qalc.cc:6046
@@ -1606,7 +1605,7 @@ msgid ""
 "converts non-SI units, while 'optimal' only converts to unit expressions "
 "with less units and exponents."
 msgstr ""
-"控制結果的自動單位轉換。“最佳SI”總是轉換非SI單位，而“最佳”只轉換為具有較少單"
+"控制結果的自動單位轉換。“最佳SI”總是轉換非SI單位，而“最佳”只轉換到具有較少單"
 "位和指數的單位表達式。"
 
 #: ../src/qalc.cc:2389
@@ -1618,7 +1617,7 @@ msgstr "如果啟用，則資訊單位預設使用二進制前綴。"
 msgid ""
 "Enables automatic conversion to the local currency when optimal unit "
 "conversion is enabled."
-msgstr "啟用最佳單位轉換時，能夠自動轉換為本地貨幣。"
+msgstr "啟用最佳單位轉換時，能夠自動轉換到本地貨幣。"
 
 #: ../src/qalc.cc:2391
 msgid ""
@@ -1638,7 +1637,7 @@ msgstr "啟用在結果中自動使用前綴。"
 msgid ""
 "Use negative exponents instead of division for units in result (m/s = "
 "m*s^-1)."
-msgstr "在結果中單位使用負指數而不是除法 (m/s = m*s^-1)。"
+msgstr "在結果中單位使用負指數而不是除法(m/s = m*s^-1)。"
 
 #: ../src/qalc.cc:2396
 #, fuzzy
@@ -1676,7 +1675,7 @@ msgstr "啟用逆波蘭記法堆疊。"
 
 #: ../src/qalc.cc:2433
 msgid "If disabled qalc.cfg is never automatically updated."
-msgstr ""
+msgstr "如果停用，qalc.cfg永遠不會自動更新。"
 
 #: ../src/qalc.cc:2434
 msgid "Save functions, units, and variables on exit."
@@ -1779,7 +1778,7 @@ msgstr ""
 
 #: ../src/qalc.cc:3472
 msgid "Calendar"
-msgstr "日曆"
+msgstr "曆法"
 
 #: ../src/qalc.cc:3472
 msgid "Day"
@@ -1986,7 +1985,7 @@ msgstr "不要從檔案中載入任何全域變數"
 msgid ""
 "start in programming mode (same as -b \"BASE BASE\" -s \"xor^\", with base "
 "conversion)"
-msgstr "用程式設計模式啟動(和-b \"底數 底數\" -s \"xor^\"相同，具有底數轉換)"
+msgstr "以程式設計模式啟動(和-b \"底數 底數\" -s \"xor^\"相同，具有底數轉換)"
 
 #: ../src/qalc.cc:4028 ../src/qalc.cc:6146
 msgid "OPTION"
@@ -2030,8 +2029,8 @@ msgid ""
 "qalculate.github.io/manual/index.html)."
 msgstr ""
 "有關數學表達式和不同選項的更多資訊，以及函數、變數和單位的完整列表，請觀看圖"
-"形使用者介面手冊中的相關區段(可以在https://qalculate.github.io/manual/"
-"index.html得到)。"
+"形使用者介面手冊中的相關區段(可以在https://qalculate.github.io/manual/index."
+"html得到)。"
 
 #: ../src/qalc.cc:4042 ../src/qalc.cc:6167
 msgid ""
@@ -2119,7 +2118,7 @@ msgstr ""
 
 #: ../src/qalc.cc:4834 ../libqalculate/BuiltinFunctions-util.cc:873
 msgid "Conversion (using \"to\") is not supported in functions."
-msgstr ""
+msgstr "在函數中不支援轉換(使用“to“)。"
 
 #. qalc command
 #: ../src/qalc.cc:4851 ../src/qalc.cc:6124 ../src/qalc.cc:6291
@@ -2239,7 +2238,7 @@ msgstr "to"
 
 #: ../src/qalc.cc:5160
 msgid "Command does not allow multiple conversions at the same time."
-msgstr ""
+msgstr "命令不允許同時多個轉換。"
 
 #. opposite to scientific form
 #: ../src/qalc.cc:5317 ../src/qalc.cc:8198
@@ -2265,7 +2264,7 @@ msgstr "底數"
 #: ../libqalculate/Calculator-calculate.cc:1922
 #: ../libqalculate/Calculator-calculate.cc:2665
 msgid "calendars"
-msgstr "日曆"
+msgstr "曆法"
 
 #: ../src/qalc.cc:5501 ../src/qalc.cc:8238
 #: ../libqalculate/Calculator-calculate.cc:1915
@@ -2499,7 +2498,7 @@ msgstr "建立一個具有指定名稱和表達式的函數。"
 
 #: ../src/qalc.cc:6287
 msgid "Use '\\x', '\\y', '\\z', '\\a', etc. for arguments in the expression."
-msgstr "在表達式中使用'\\x'、'\\y'、'\\z'、'\\a'等等作為參數。"
+msgstr "在表達式中使用'\\x'、'\\y'、'\\z'、'\\a'等等作為引數。"
 
 #: ../src/qalc.cc:6289
 msgid "Example: function func1 5*\\x."
@@ -2539,9 +2538,9 @@ msgid ""
 "and/or prefixes. If command is called with no argument all user-defined "
 "objects are listed."
 msgstr ""
-"輸入參數“貨幣”、“函數”、“變數”、“單位”或“前綴”，以顯示所有貨幣、函數、變數、"
+"輸入引數“貨幣”、“函數”、“變數”、“單位”或“前綴”，以顯示所有貨幣、函數、變數、"
 "單位或前綴的列表。輸入搜尋項以尋找匹配的變數、函數、單位和/或前綴。如果沒有用"
-"參數呼叫命令，則列出所有使用者定義的物件。"
+"引數呼叫命令，則列出所有使用者定義的物件。"
 
 #: ../src/qalc.cc:6312
 msgid "Example: list functions."
@@ -2652,7 +2651,7 @@ msgstr "等價於set approximation try exact。"
 msgid ""
 "Converts the current result (equivalent to using \"to\" at the end of an "
 "expression)."
-msgstr "轉換目前結果(等價於在表達式結尾使用“ to”)。"
+msgstr "轉換目前結果(等價於在表達式結尾使用“to”)。"
 
 #: ../src/qalc.cc:6394
 msgid "Possible values:"
@@ -2680,23 +2679,23 @@ msgstr "- 變數或物理常數(例如c)"
 
 #: ../src/qalc.cc:6401
 msgid "- base (convert to base units)"
-msgstr "- base(轉換為基本單位)"
+msgstr "- base(轉換到基本單位)"
 
 #: ../src/qalc.cc:6402
 msgid "- optimal (convert to optimal unit)"
-msgstr "- optimal(轉換為最佳單位)"
+msgstr "- optimal(轉換到最佳單位)"
 
 #: ../src/qalc.cc:6403
 msgid "- prefix (convert to optimal prefix)"
-msgstr "- prefix(轉換為最佳前綴)"
+msgstr "- prefix(轉換到最佳前綴)"
 
 #: ../src/qalc.cc:6404
 msgid "- mixed (convert to mixed units, e.g. hours + minutes)"
-msgstr "- mixed(轉換為混合單位，例如hours + minutes)"
+msgstr "- mixed(轉換到混合單位，例如hours + minutes)"
 
 #: ../src/qalc.cc:6406
 msgid "- bin, binary (show as binary number)"
-msgstr "- bin, binary(顯示為二進制數字)"
+msgstr "- bin、binary(顯示為二進制數字)"
 
 #: ../src/qalc.cc:6407
 msgid "- bin# (show as binary number with specified number of bits)"
@@ -2704,15 +2703,15 @@ msgstr "- bin#(顯示為具有指定位元數量的二進制數字)"
 
 #: ../src/qalc.cc:6408
 msgid "- oct, octal (show as octal number)"
-msgstr "- oct, octal(顯示為八進制數字)"
+msgstr "- oct、octal(顯示為八進制數字)"
 
 #: ../src/qalc.cc:6409
 msgid "- duo, duodecimal (show as duodecimal number)"
-msgstr "- duo, duodecimal(顯示為十二進制數字)"
+msgstr "- duo、duodecimal(顯示為十二進制數字)"
 
 #: ../src/qalc.cc:6410
 msgid "- hex, hexadecimal (show as hexadecimal number)"
-msgstr "- hex, hexadecimal(顯示為十六進制數字)"
+msgstr "- hex、hexadecimal(顯示為十六進制數字)"
 
 #: ../src/qalc.cc:6411
 msgid "- hex# (show as hexadecimal number with specified number of bits)"
@@ -2720,15 +2719,15 @@ msgstr "- hex#(顯示為具有指定位元數量的十六進制數字)"
 
 #: ../src/qalc.cc:6412
 msgid "- sexa, sexa2, sexa3, sexagesimal (show as sexagesimal number)"
-msgstr "- sexa, sexa2, sexa3, sexagesimal(顯示為六十進制數字)"
+msgstr "- sexa、sexa2、sexa3、sexagesimal(顯示為六十進制數字)"
 
 #: ../src/qalc.cc:6413
 msgid "- latitude, latitude2 (show as sexagesimal latitude)"
-msgstr "- latitude, latitude2(顯示為六十進制緯度)"
+msgstr "- latitude、latitude2(顯示為六十進制緯度)"
 
 #: ../src/qalc.cc:6414
 msgid "- longitude, longitude2 (show as sexagesimal longitude)"
-msgstr "- longitude, longitude2(顯示為六十進制經度)"
+msgstr "- longitude、longitude2(顯示為六十進制經度)"
 
 #: ../src/qalc.cc:6415
 msgid "- bijective (shown in bijective base-26)"
@@ -2736,7 +2735,7 @@ msgstr "- bijective(以雙射二十六進制顯示)"
 
 #: ../src/qalc.cc:6416
 msgid "- fp16, fp32, fp64, fp80, fp128 (show in binary floating-point format)"
-msgstr "- fp16, fp32, fp64, fp80, fp128(以二進制浮點格式顯示)"
+msgstr "- fp16、fp32、fp64、fp80、fp128(以二進制浮點格式顯示)"
 
 #: ../src/qalc.cc:6417
 msgid "- bcd (show as binary-coded decimal)"
@@ -2764,7 +2763,7 @@ msgstr "- bases(顯示為二進制、八進制、十進制和十六進制數字)
 
 #: ../src/qalc.cc:6424
 msgid "- rectangular, cartesian (show complex numbers in rectangular form)"
-msgstr "- rectangular, cartesian(以直角座標形式顯示複數)"
+msgstr "- rectangular、cartesian(以直角座標形式顯示複數)"
 
 #: ../src/qalc.cc:6425
 msgid "- exponential (show complex numbers in exponential form)"
@@ -2780,11 +2779,11 @@ msgstr "- cis(以cis形式顯示複數)"
 
 #: ../src/qalc.cc:6428
 msgid "- angle, phasor (show complex numbers in angle/phasor notation)"
-msgstr "- angle, phasor(以角度/相量記法顯示複數)"
+msgstr "- angle、phasor(以角度/相量記法顯示複數)"
 
 #: ../src/qalc.cc:6430
 msgid "- fraction, 1/n (show result as mixed fraction)"
-msgstr "- fraction, 1/n(將結果顯示為帶分數)"
+msgstr "- fraction、1/n(將結果顯示為帶分數)"
 
 #: ../src/qalc.cc:6431
 msgid "- decimals (show result as decimal fraction)"
@@ -2799,18 +2798,18 @@ msgid "prepend with - to show as simple fraction"
 msgstr "開頭附加-來顯示為簡單分數"
 
 #: ../src/qalc.cc:6435
-#, fuzzy
+#| msgid "- fraction, 1/n (show result as mixed fraction)"
 msgid "- sci, scientific (show result with scientific notation)"
-msgstr "- fraction, 1/n(將結果顯示為帶分數)"
+msgstr "- sci、scientific(用科學記法顯示結果)"
 
 #: ../src/qalc.cc:6436
 msgid "- eng, engineering (show result with engineering notation)"
-msgstr ""
+msgstr "- eng、engineering(用工程記法顯示結果)"
 
 #: ../src/qalc.cc:6437
-#, fuzzy
+#| msgid "- decimals (show result as decimal fraction)"
 msgid "- simple (show result with non-scientific notation)"
-msgstr "- decimals(將結果顯示為小數)"
+msgstr "- simple(用非科學記法顯示結果)"
 
 #: ../src/qalc.cc:6439
 msgid "- factors (factorize result)"
@@ -2856,7 +2855,7 @@ msgid ""
 "(\"12/2(1+2) = 12/(2*3) = 2\", \"5x/5y = (5*x)/(5*y) = x/y\")."
 msgstr ""
 "在顯式乘法之前剖析隱式乘法(\"12/2(1+2) = 12/(2*3) = 2\", \"5x/5y = (5*x)/"
-"(5*y) = x/y\")."
+"(5*y) = x/y\")。"
 
 #: ../src/qalc.cc:6464
 msgid ""
@@ -2875,7 +2874,7 @@ msgid ""
 "multiplication in front of variables and units is parsed first regardless of "
 "mode (\"sqrt 2x = sqrt(2x)\")."
 msgstr ""
-"沒有括號的函數參數是一個例外，無論模式如何優先剖析在變數和單位前的隱式乘法"
+"沒有括號的函數引數是一個例外，無論模式如何優先剖析在變數和單位前的隱式乘法"
 "(\"sqrt 2x = sqrt(2x)\")。"
 
 #: ../src/qalc.cc:6469
@@ -2892,12 +2891,12 @@ msgstr "從左到右執行運算，像傳統計算機的即時執行模式(\"1+2
 #: ../src/qalc.cc:6526
 #, c-format
 msgid "%s does not accept any arguments."
-msgstr "%s不接受任何參數。"
+msgstr "%s不接受任何引數。"
 
 #: ../src/qalc.cc:6549
 #, c-format
 msgid "%s requires at least one argument."
-msgstr "%s至少需要一個參數。"
+msgstr "%s至少需要一個引數。"
 
 #: ../src/qalc.cc:6554
 msgid "Unknown command."
@@ -2970,10 +2969,9 @@ msgid "base: "
 msgstr "底數: "
 
 #: ../src/qalc.cc:7155 ../libqalculate/DataSet.cc:382
-#, fuzzy
 msgctxt "info"
 msgid "Data set argument"
-msgstr "參數"
+msgstr "資料集引數"
 
 #: ../src/qalc.cc:7471
 msgid "Factorizing"
@@ -2995,7 +2993,7 @@ msgstr "計算中"
 msgid ""
 "Unknown variables (e.g. x, y, z) are by default assumed real. Assumptions "
 "can be changed using the \"assume\" command."
-msgstr ""
+msgstr "未知變數(例如x、y、z)預設假設為實數。假設可以使用\"assume\"命令變更。"
 
 #: ../src/qalc.cc:7586
 msgid "Please select desired variant of the sinc function."
@@ -3017,27 +3015,24 @@ msgid "Temperature calculation mode"
 msgstr "溫度計算模式"
 
 #: ../src/qalc.cc:7757
-#, fuzzy
 msgid "Please select interpretation of comma (\",\")."
-msgstr "請選擇點(\".\")的判讀。"
+msgstr "請選擇逗號(\",\")的判讀。"
 
 #: ../src/qalc.cc:7761
 msgid "Comma as separator for function arguments and matrix/vector elements"
-msgstr ""
+msgstr "逗號作為函數引數和矩陣/向量元素的分隔符"
 
 #: ../src/qalc.cc:7767
-#, fuzzy
 msgid "Comma as thousands separator"
-msgstr "點作為千位分隔符"
+msgstr "逗號作為千位分隔符"
 
 #: ../src/qalc.cc:7773 ../src/qalc.cc:7840
 msgid "Both dot and comma as decimal separators"
 msgstr "點和逗號都作為小數分隔符"
 
 #: ../src/qalc.cc:7778 ../src/qalc.cc:7820
-#, fuzzy
 msgid "Comma interpretation"
-msgstr "點的判讀"
+msgstr "逗號的判讀"
 
 #: ../src/qalc.cc:7836
 msgid "Please select interpretation of dots (\".\")."
@@ -3280,7 +3275,7 @@ msgstr "%s()需要所有矩陣/向量都具有相同的大小。"
 msgid ""
 "The number of requested elements in generate vector function must be a "
 "positive integer."
-msgstr "產生向量函數中要求的元素數量必須是一個正整數。"
+msgstr "產生向量函數中要求的元素數量必須為一個正整數。"
 
 #: ../libqalculate/BuiltinFunctions-matrixvector.cc:1290
 msgid "Comparison failed."
@@ -3312,7 +3307,7 @@ msgstr "無法積分表達式。"
 
 #: ../libqalculate/BuiltinFunctions-explog.cc:704
 msgid "Unexpected unit in logarithm."
-msgstr ""
+msgstr "對數中有非預期的單位。"
 
 #: ../libqalculate/BuiltinFunctions-explog.cc:935
 #: ../libqalculate/BuiltinFunctions-explog.cc:972
@@ -3437,8 +3432,8 @@ msgid ""
 "series. It is also possible to plot a matrix where each row is a pair of x "
 "and y values."
 msgstr ""
-"繪製一個或多個表達式或向量。第一個參數使用向量來繪製多個序列。向量序列只使用"
-"第一個參數。也可以繪製一個矩陣，其中每一列是一對x和y值。"
+"繪製一個或多個表達式或向量。第一個引數使用向量來繪製多個序列。向量序列只使用"
+"第一個引數。也可以繪製一個矩陣，其中每一列是一對x和y值。"
 
 #: ../libqalculate/BuiltinFunctions-util.cc:1105
 msgid ""
@@ -3451,7 +3446,7 @@ msgid ""
 "numerical value, this is interpreted as either sampling rate (for integers > "
 "10) or step value."
 msgstr ""
-"其他參數指定各種繪圖選項。輸入選項的名稱和期望的值，用空白分隔或作為個別的參"
+"其他引數指定各種繪圖選項。輸入選項的名稱和期望的值，用空白分離或作為個別的引"
 "數。對於大多數選項，可以省略該值以啟用預設的作用值。對於具有命名值的選項，可"
 "以省略選項名稱(否則可以用整數替換該值，表示該值的索引從零開始)。如果指定的第"
 "一個選項是數字值，則將此解釋為採樣率(對於整數>10)或步長值。"
@@ -3683,7 +3678,7 @@ msgstr "無法用目前最小值、最大值和步長產生繪圖資料。"
 #: ../libqalculate/BuiltinFunctions-util.cc:1401
 #: ../libqalculate/BuiltinFunctions-util.cc:1449
 msgid "Sampling rate must be a positive integer."
-msgstr "採樣率必須是一個正整數。"
+msgstr "採樣率必須為一個正整數。"
 
 #: ../libqalculate/BuiltinFunctions-util.cc:1408
 #: ../libqalculate/BuiltinFunctions-util.cc:1456
@@ -3699,7 +3694,7 @@ msgstr "計算已被強制終止。請重新啟動應用程式。"
 #: ../libqalculate/Calculator-calculate.cc:352
 #: ../libqalculate/Calculator-calculate.cc:464
 msgid "Stack is empty. Filling remaining function arguments with zeroes."
-msgstr "堆疊為空。用零填充剩下的函數參數。"
+msgstr "堆疊為空。用零填充剩下的函數引數。"
 
 #. logical operator
 #: ../libqalculate/Calculator-calculate.cc:1067
@@ -3743,7 +3738,7 @@ msgstr "未處置的\"where\"表達式: %s"
 msgid ""
 "Conversion of only part of an expression is not supported (\"%s\" is "
 "converted to \"%s\")."
-msgstr ""
+msgstr "不支援表達式的部分轉換(\"%s\"被轉換到\"%s\")。"
 
 #. division operator
 #: ../libqalculate/Calculator.cc:264 ../libqalculate/Calculator.cc:527
@@ -4007,10 +4002,10 @@ msgid "no properties available"
 msgstr "沒有可用的屬性"
 
 #: ../libqalculate/DataSet.cc:1176
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Data set \"%s\" has no object key that supports the provided argument type."
-msgstr "資料集\"%s\"沒有支援提供的參數類型的物件鍵。"
+msgstr "資料集\"%s\"沒有支援提供的引數類型的物件鍵。"
 
 #: ../libqalculate/DataSet.cc:1181
 msgid "data object"
@@ -4066,7 +4061,7 @@ msgstr "這是一個錯誤。請報告它。"
 msgid ""
 "log() with a single argument is considered ambiguous. Please use ln() or "
 "log10() instead."
-msgstr "具有一個參數的log()被認為是有歧義的。請改用ln()或log10()。"
+msgstr "具有一個引數的log()被認為是有歧義的。請改用ln()或log10()。"
 
 #: ../libqalculate/MathStructure-calculate.cc:6994
 #: ../libqalculate/Function.cc:594
@@ -4107,7 +4102,7 @@ msgid ""
 "were tried during factorization. Repeat factorization to try other random "
 "combinations."
 msgstr ""
-"因為時間限制，在分解期間只嘗試了有限數量的項目組合。重複分解以嘗試其他隨機組"
+"因為時間限制，在分解期間只嘗試了有限數量的項組合。重複分解以嘗試其他隨機組"
 "合。"
 
 #: ../libqalculate/MathStructure-integrate.cc:7765
@@ -4161,11 +4156,11 @@ msgstr "嘗試排序向量時在元素%s有不可解的比較。"
 
 #: ../libqalculate/MathStructure-matrixvector.cc:577
 msgid "The determinant can only be calculated for square matrices."
-msgstr "只能對正方形矩陣計算行列式。"
+msgstr "只能對方陣計算行列式。"
 
 #: ../libqalculate/MathStructure-matrixvector.cc:641
 msgid "The permanent can only be calculated for square matrices."
-msgstr "只能對正方形矩陣計算積和式。"
+msgstr "只能對方陣計算積和式。"
 
 #: ../libqalculate/MathStructure-matrixvector.cc:732
 msgid "Inverse of singular matrix."
@@ -4210,19 +4205,19 @@ msgid ""
 msgid_plural ""
 "Additional arguments for function %s() were ignored. Function can only use "
 "%s arguments."
-msgstr[0] "忽略用於函數%s()的額外參數。函數只能使用%s個參數。"
+msgstr[0] "忽略用於函數%s()的額外引數。函數只能使用%s個引數。"
 
 #: ../libqalculate/Function.cc:532
 #, c-format
 msgid "You need at least %s argument (%s) in function %s()."
 msgid_plural "You need at least %s arguments (%s) in function %s()."
-msgstr[0] "你至少需要%s個參數(%s)在函數%s()中。"
+msgstr[0] "你至少需要%s個引數(%s)在函數%s()中。"
 
 #: ../libqalculate/Function.cc:534
 #, c-format
 msgid "You need at least %s argument in function %s()."
 msgid_plural "You need at least %s arguments in function %s()."
-msgstr[0] "你至少需要%s個參數在函數%s()中。"
+msgstr[0] "你至少需要%s個引數在函數%s()中。"
 
 #: ../libqalculate/Function.cc:1480
 msgid "a free value"
@@ -4243,12 +4238,12 @@ msgstr "滿足條件:"
 #: ../libqalculate/Function.cc:1569
 #, c-format
 msgid "Argument %s in %s() must be %s."
-msgstr "參數%s在%s()中必須為%s."
+msgstr "引數%s在%s()中必須為%s."
 
 #: ../libqalculate/Function.cc:1571
 #, c-format
 msgid "Argument %s, %s, in %s() must be %s."
-msgstr "參數%s，%s，在%s()中必須為%s."
+msgstr "引數%s，%s，在%s()中必須為%s."
 
 #: ../libqalculate/Function.cc:2058
 msgid "a rational number"
@@ -4300,7 +4295,7 @@ msgstr "一個向量"
 
 #: ../libqalculate/Function.cc:2462
 msgid "a square matrix"
-msgstr "一個正方形矩陣"
+msgstr "一個方陣"
 
 #: ../libqalculate/Function.cc:2464
 msgid "a matrix"
@@ -4847,7 +4842,6 @@ msgid "leap month"
 msgstr "閏月"
 
 #: ../libqalculate/Unit.cc:1406 ../libqalculate/Unit.cc:1409
-#, fuzzy
 msgid "Error(s) in unit expression."
 msgstr "單位表達式中有錯誤。"
 
