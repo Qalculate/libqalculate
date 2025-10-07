@@ -12,3 +12,5 @@ fixpo$(BUILD_EXEEXT): remove-untranslated.cc
 
 EXTRA_DIST = \
 	remove-untranslated.cc POTFILES.in ca.po es.po fr.po nl.po ru.po sv.po zh_CN.po zh_TW.po
+
+DISTCLEANFILES = fixpo$(BUILD_EXEEXT)

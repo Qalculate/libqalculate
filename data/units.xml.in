@@ -256,7 +256,7 @@
     </unit>
     <unit type="alias">
       <_title>Astronomical Unit</_title>
-      <_names>ar:AU,astronomical_unit,p:astronomical_units</_names>
+      <_names>a-cr:au,astronomical_unit,p:astronomical_units</_names>
       <base>
         <unit>m</unit>
         <relation>149597870700</relation>
@@ -2244,7 +2244,7 @@
     </unit>
     <unit type="alias">
       <_title>Liter</_title>
-      <_names>ar:L,a:l,aou:&#x2113;,liter,p:liters,litre,p:litres</_names>
+      <_names>ar:L,ar:l,aou:&#x2113;,liter,p:liters,litre,p:litres</_names>
       <use_with_prefixes max="0">true</use_with_prefixes>
       <base>
         <unit>m</unit>
@@ -2256,7 +2256,7 @@
       <_title>Milliliter</_title>
       <names>r:ml_c</names>
       <part>
-        <unit>l</unit>
+        <unit>L</unit>
         <prefix>-3</prefix>
         <exponent>1</exponent>
       </part>
@@ -2265,7 +2265,7 @@
       <_title>Centiliter</_title>
       <names>r:cl_c</names>
       <part>
-        <unit>l</unit>
+        <unit>L</unit>
         <prefix>-2</prefix>
         <exponent>1</exponent>
       </part>
@@ -2274,7 +2274,7 @@
       <_title>Deciliter</_title>
       <names>r:dl_c</names>
       <part>
-        <unit>l</unit>
+        <unit>L</unit>
         <prefix>-1</prefix>
         <exponent>1</exponent>
       </part>
@@ -2315,7 +2315,7 @@
         <_title>Liter per Kilometer</_title>
         <names>r:l_p_km</names>
         <part>
-          <unit>l</unit>
+          <unit>L</unit>
           <prefix>0</prefix>
           <exponent>1</exponent>
         </part>
@@ -2334,7 +2334,7 @@
           <exponent>1</exponent>
         </part>
         <part>
-          <unit>l</unit>
+          <unit>L</unit>
           <prefix>0</prefix>
           <exponent>-1</exponent>
         </part>
@@ -3009,7 +3009,7 @@
         <exponent>1</exponent>
       </part>
       <part>
-        <unit>mile</unit>
+        <unit>mi</unit>
         <prefix>0</prefix>
         <exponent>-1</exponent>
       </part>
@@ -3928,7 +3928,7 @@
       <_title>Kilocalorie</_title>
       <names>r:kcal_c</names>
       <part>
-        <unit>cal</unit>
+        <unit>cal_th</unit>
         <prefix>3</prefix>
         <exponent>1</exponent>
       </part>
@@ -3937,7 +3937,7 @@
       <_title>Calorie (capital C)</_title>
       <_names>cr:Calorie,cp:Calories</_names>
       <base>
-        <unit>cal</unit>
+        <unit>cal_th</unit>
         <relation>1000</relation>
         <exponent>1</exponent>
       </base>
@@ -4132,7 +4132,7 @@
         <_title>Kilocalerie per Gram</_title>
         <names>r:kcal_p_g</names>
         <part>
-          <unit>cal</unit>
+          <unit>cal_th</unit>
           <prefix>3</prefix>
           <exponent>1</exponent>
         </part>

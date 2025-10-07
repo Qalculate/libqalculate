@@ -1,7 +1,17 @@
+2025-10-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use category and title from existing local variable/function when using "=" for variable/function assignment
+	* Fix output of calculate-as-you-type parsed value (division was displayed using negative exponent) for excluded functions
+	* Do not write unnecessary (de)activate global objects to local definitions
+	* Always include million, thousand, hundred (they are not ambiguous like other large numbers)
+	* Fix make distcheck
+
 2025-10-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Move erg/gram from equivalent to absorbed dose category
 	* If last character is a digit, include both letters and numerals in matched word for completion
+	* Fix reference names not used for reference of base units in some cases causing failure to load 13 units with Russian translation
+	* Make astronomical unit symbol case insensitive and use lower-case letters by default ("au")
 
 2025-10-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

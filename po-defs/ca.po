@@ -9270,7 +9270,7 @@ msgid "Astronomical Unit"
 msgstr ""
 
 #: ../data/units.xml.in.h:48
-msgid "ar:AU,astronomical_unit,p:astronomical_units"
+msgid "a-cr:au,astronomical_unit,p:astronomical_units"
 msgstr ""
 
 #: ../data/units.xml.in.h:49
@@ -10386,7 +10386,7 @@ msgid "Liter"
 msgstr ""
 
 #: ../data/units.xml.in.h:337
-msgid "ar:L,a:l,aou:&#x2113;,liter,p:liters,litre,p:litres"
+msgid "ar:L,ar:l,aou:&#x2113;,liter,p:liters,litre,p:litres"
 msgstr ""
 
 #: ../data/units.xml.in.h:338
@@ -12098,7 +12098,7 @@ msgid "Million"
 msgstr ""
 
 #: ../data/variables.xml.in.h:55
-msgid "-r:million"
+msgid "r:million"
 msgstr ""
 
 #: ../data/variables.xml.in.h:56
@@ -12106,7 +12106,7 @@ msgid "Thousand"
 msgstr ""
 
 #: ../data/variables.xml.in.h:57
-msgid "-r:thousand"
+msgid "r:thousand"
 msgstr ""
 
 #: ../data/variables.xml.in.h:58
@@ -12114,7 +12114,7 @@ msgid "Hundred"
 msgstr ""
 
 #: ../data/variables.xml.in.h:59
-msgid "-r:hundred"
+msgid "r:hundred"
 msgstr ""
 
 #: ../data/variables.xml.in.h:60

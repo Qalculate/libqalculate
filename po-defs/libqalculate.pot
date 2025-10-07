@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-30 10:12+0200\n"
+"POT-Creation-Date: 2025-10-07 07:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -8903,7 +8903,7 @@ msgid "Astronomical Unit"
 msgstr ""
 
 #: ../data/units.xml.in.h:48
-msgid "ar:AU,astronomical_unit,p:astronomical_units"
+msgid "a-cr:au,astronomical_unit,p:astronomical_units"
 msgstr ""
 
 #: ../data/units.xml.in.h:49
@@ -10019,7 +10019,7 @@ msgid "Liter"
 msgstr ""
 
 #: ../data/units.xml.in.h:337
-msgid "ar:L,a:l,aou:&#x2113;,liter,p:liters,litre,p:litres"
+msgid "ar:L,ar:l,aou:&#x2113;,liter,p:liters,litre,p:litres"
 msgstr ""
 
 #: ../data/units.xml.in.h:338
@@ -10447,7 +10447,7 @@ msgid "Standard Gravity (unit)"
 msgstr ""
 
 #: ../data/units.xml.in.h:444
-msgid "r:gee,p:gees"
+msgid "is:standard_gravity_unit,r:gee,p:gees"
 msgstr ""
 
 #: ../data/units.xml.in.h:445
@@ -11171,31 +11171,31 @@ msgid "rs:rad_radioactivity"
 msgstr ""
 
 #: ../data/units.xml.in.h:625
-msgid "Dose Equivalent"
+msgid "Erg per Gram"
 msgstr ""
 
 #: ../data/units.xml.in.h:626
-msgid "Sievert"
+msgid "Dose Equivalent"
 msgstr ""
 
 #: ../data/units.xml.in.h:627
-msgid "ar:Sv,sievert,p:sieverts"
+msgid "Sievert"
 msgstr ""
 
 #: ../data/units.xml.in.h:628
-msgid "Roentgen Equivalent Man (Rem)"
+msgid "ar:Sv,sievert,p:sieverts"
 msgstr ""
 
 #: ../data/units.xml.in.h:629
-msgid "ros:rem_radioactivity,a:rem"
+msgid "Roentgen Equivalent Man (Rem)"
 msgstr ""
 
 #: ../data/units.xml.in.h:630
-msgid "Millirem"
+msgid "ros:rem_radioactivity,a:rem"
 msgstr ""
 
 #: ../data/units.xml.in.h:631
-msgid "Erg per Gram"
+msgid "Millirem"
 msgstr ""
 
 #: ../data/units.xml.in.h:632
@@ -11731,7 +11731,7 @@ msgid "Million"
 msgstr ""
 
 #: ../data/variables.xml.in.h:55
-msgid "-r:million"
+msgid "r:million"
 msgstr ""
 
 #: ../data/variables.xml.in.h:56
@@ -11739,7 +11739,7 @@ msgid "Thousand"
 msgstr ""
 
 #: ../data/variables.xml.in.h:57
-msgid "-r:thousand"
+msgid "r:thousand"
 msgstr ""
 
 #: ../data/variables.xml.in.h:58
@@ -11747,7 +11747,7 @@ msgid "Hundred"
 msgstr ""
 
 #: ../data/variables.xml.in.h:59
-msgid "-r:hundred"
+msgid "r:hundred"
 msgstr ""
 
 #: ../data/variables.xml.in.h:60

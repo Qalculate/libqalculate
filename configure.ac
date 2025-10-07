@@ -330,6 +330,7 @@ AC_CONFIG_FILES([
   docs/Makefile
   docs/reference/Makefile
   man/Makefile
+  tests/Makefile
   libqalculate.pc
 ])
 AC_OUTPUT

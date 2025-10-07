@@ -1524,14 +1524,31 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		string value = str.substr(isave + 2, str.length() - (isave + 2));
 		remove_blank_ends(value);
 		MathStructure mvalue;
-		MathStructure mtmp(CALCULATOR->temporaryCategory(), true);
-		MathStructure mempty(string(""), true);
+		MathStructure mcat(CALCULATOR->temporaryCategory(), true);
+		MathStructure mtitle(string(""), true);
 		MathStructure mname;
 		po.unended_function = unended_function;
 		parse(&mvalue, value, po);
 		if(f_save->getArgumentDefinition(2)) f_save->getArgumentDefinition(2)->parse(&mname, name, po);
 		else mname.set(name, true);
-		mstruct->set(f_save, &mvalue, &mname, &mtmp, &mempty, str[isave] == '=' ? &m_one : &m_zero, NULL);
+		if(mname.isSymbolic()) {
+			size_t ipar = mname.symbol().find(LEFT_PARENTHESIS, 1);
+			if(ipar != string::npos) ipar = mname.symbol().find_last_not_of(SPACES, ipar - 1);
+			if(ipar != string::npos) {
+				MathFunction *f = getActiveFunction(mname.symbol().substr(0, ipar + 1));
+				if(f && f->isLocal()) {
+					mcat.set(f->category());
+					mtitle.set(f->title());
+				}
+			} else {
+				Variable *v = getActiveVariable(mname.symbol());
+				if(v && v->isLocal() && v->isKnown()) {
+					mcat.set(v->category());
+					mtitle.set(v->title());
+				}
+			}
+		}
+		mstruct->set(f_save, &mvalue, &mname, &mcat, &mtitle, str[isave] == '=' ? &m_one : &m_zero, NULL);
 		return;
 	}
 
@@ -5420,7 +5437,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 					}
 				}
 				if(!b) {
-					i2 = str.find_last_not_of(BASE_2_10 ? NUMBERS INTERNAL_NUMBER_CHARS PLUS MINUS EXPS : (po.base == 16 ? "p" NUMBERS INTERNAL_NUMBER_CHARS PLUS MINUS EXPS : NUMBERS INTERNAL_NUMBER_CHARS PLUS MINUS), i - 1);
+					i2 = str.find_last_not_of(BASE_2_10 ? NUMBERS INTERNAL_NUMBER_CHARS PLUS MINUS EXPS : (po.base == 16 ? NUMBERS INTERNAL_NUMBER_CHARS PLUS MINUS "p" : NUMBERS INTERNAL_NUMBER_CHARS PLUS MINUS), i - 1);
 					if(i2 == string::npos || (i2 != i - 1 && str[i2] == MULTIPLICATION_2_CH)) b = true;
 					i2 = str.rfind(MULTIPLICATION_2_CH, i - 1);
 					if(i2 == string::npos) b = true;

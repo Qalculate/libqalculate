@@ -9117,8 +9117,8 @@ msgid "Astronomical Unit"
 msgstr "天文單位"
 
 #: ../data/units.xml.in.h:48
-msgid "ar:AU,astronomical_unit,p:astronomical_units"
-msgstr "ar:AU,astronomical_unit,天文單位"
+msgid "a-cr:au,astronomical_unit,p:astronomical_units"
+msgstr "a-cr:au,astronomical_unit,天文單位"
 
 #: ../data/units.xml.in.h:49
 msgid "Light Year"
@@ -10242,8 +10242,8 @@ msgid "Liter"
 msgstr "公升"
 
 #: ../data/units.xml.in.h:337
-msgid "ar:L,a:l,aou:&#x2113;,liter,p:liters,litre,p:litres"
-msgstr "ar:L,a:l,aou:&#x2113;,liter,升,公升,litre"
+msgid "ar:L,ar:l,aou:&#x2113;,liter,p:liters,litre,p:litres"
+msgstr "ar:L,ar:l,aou:&#x2113;,liter,升,公升,litre"
 
 #: ../data/units.xml.in.h:338
 msgid "Milliliter"
@@ -11965,7 +11965,7 @@ msgid "Million"
 msgstr "一百萬"
 
 #: ../data/variables.xml.in.h:55
-msgid "-r:million"
+msgid "r:million"
 msgstr "一百萬"
 
 #: ../data/variables.xml.in.h:56
@@ -11973,7 +11973,7 @@ msgid "Thousand"
 msgstr "一千"
 
 #: ../data/variables.xml.in.h:57
-msgid "-r:thousand"
+msgid "r:thousand"
 msgstr "一千"
 
 #: ../data/variables.xml.in.h:58
@@ -11981,7 +11981,7 @@ msgid "Hundred"
 msgstr "一百"
 
 #: ../data/variables.xml.in.h:59
-msgid "-r:hundred"
+msgid "r:hundred"
 msgstr "一百"
 
 #: ../data/variables.xml.in.h:60

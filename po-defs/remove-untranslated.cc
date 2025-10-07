@@ -87,9 +87,10 @@ int main(int argc, char *argv[]) {
 				} else {
 					msgstr = sbuffer.substr(8, sbuffer.length() - 9);
 				}
-				if(!msgid.empty() && (msgstr == msgid || msgstr == "-")) {
+				if(!msgid.empty() && (msgstr == msgid || msgstr == "-" || msgstr == "+")) {
 					if(variant == 3 || variant == 4) cout << msgstr << endl;
-					sout = "msgstr \"\"";
+					if(msgstr == "+") {sout = "msgstr \""; sout += msgstr; sout += "\"";}
+					else sout = "msgstr \"\"";
 				} else {
 					size_t i = 0, i2 = 0;
 					while(true) {
@@ -111,7 +112,8 @@ int main(int argc, char *argv[]) {
 						}
 						i++;
 					}
-					if(!msgid.empty() && msgstr == msgid) {
+					if(msgid.empty()) {
+					} else if(msgstr == msgid) {
 						if(variant == 3 || variant == 4) cout << msgstr << endl;
 						sout = "msgstr \"\"";
 					} else if(variant != 1 && variant != 4 && sout.length() >= 10 && sout.find("\n", 10) == string::npos) {

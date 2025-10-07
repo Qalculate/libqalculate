@@ -1805,7 +1805,6 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 					}
 					case LEFT_PARENTHESIS_CH: {
 						if(!brackets && !in_cit1 && !in_cit2) pars++;
-						cout << pars << endl;
 						break;
 					}
 					case RIGHT_PARENTHESIS_CH: {

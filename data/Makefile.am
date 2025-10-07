@@ -13,6 +13,7 @@ endif
 
 @INTLTOOL_QALCULATE_DEFINITIONS_RULE@
 
-EXTRA_DIST = \
-	$(xml_in_files) $(xml_DATA) $(noinst_DATA)
+EXTRA_DIST = $(xml_in_files) eurofxref-daily.xml rates.json
+
+DISTCLEANFILES = $(xml_in_files:.xml.in=.xml)
 

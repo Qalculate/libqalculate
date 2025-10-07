@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-30 10:01+0200\n"
+"POT-Creation-Date: 2025-10-07 07:26+0200\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -9262,8 +9262,8 @@ msgid "Astronomical Unit"
 msgstr "Astronomisk enhet"
 
 #: ../data/units.xml.in.h:48
-msgid "ar:AU,astronomical_unit,p:astronomical_units"
-msgstr "a:AU,astronomisk_enhet,p:astronomiska_enheter"
+msgid "a-cr:au,astronomical_unit,p:astronomical_units"
+msgstr "a-c:au,astronomisk_enhet,p:astronomiska_enheter"
 
 #: ../data/units.xml.in.h:49
 msgid "Light Year"
@@ -10384,7 +10384,7 @@ msgid "Liter"
 msgstr ""
 
 #: ../data/units.xml.in.h:337
-msgid "ar:L,a:l,aou:&#x2113;,liter,p:liters,litre,p:litres"
+msgid "ar:L,ar:l,aou:&#x2113;,liter,p:liters,litre,p:litres"
 msgstr "a:l,a:L,aou:&#x2113;,liter"
 
 #: ../data/units.xml.in.h:338
@@ -10812,7 +10812,7 @@ msgid "Standard Gravity (unit)"
 msgstr "Standardgravitation (enhet)"
 
 #: ../data/units.xml.in.h:444
-msgid "r:gee,p:gees"
+msgid "is:standard_gravity_unit,r:gee,p:gees"
 msgstr ""
 
 #: ../data/units.xml.in.h:445
@@ -11536,32 +11536,32 @@ msgid "rs:rad_radioactivity"
 msgstr "s:rad_radioaktivitet"
 
 #: ../data/units.xml.in.h:625
+msgid "Erg per Gram"
+msgstr "Erg per gram"
+
+#: ../data/units.xml.in.h:626
 msgid "Dose Equivalent"
 msgstr "Dosekvivalent"
 
-#: ../data/units.xml.in.h:626
+#: ../data/units.xml.in.h:627
 msgid "Sievert"
 msgstr ""
 
-#: ../data/units.xml.in.h:627
+#: ../data/units.xml.in.h:628
 msgid "ar:Sv,sievert,p:sieverts"
 msgstr "a:Sv,sievert"
 
-#: ../data/units.xml.in.h:628
+#: ../data/units.xml.in.h:629
 msgid "Roentgen Equivalent Man (Rem)"
 msgstr ""
 
-#: ../data/units.xml.in.h:629
+#: ../data/units.xml.in.h:630
 msgid "ros:rem_radioactivity,a:rem"
 msgstr ""
 
-#: ../data/units.xml.in.h:630
+#: ../data/units.xml.in.h:631
 msgid "Millirem"
 msgstr ""
-
-#: ../data/units.xml.in.h:631
-msgid "Erg per Gram"
-msgstr "Erg per gram"
 
 #: ../data/units.xml.in.h:632
 msgid "Exposure"
@@ -12096,7 +12096,7 @@ msgid "Million"
 msgstr "Miljon"
 
 #: ../data/variables.xml.in.h:55
-msgid "-r:million"
+msgid "r:million"
 msgstr "miljon,p:miljoner,million"
 
 #: ../data/variables.xml.in.h:56
@@ -12104,7 +12104,7 @@ msgid "Thousand"
 msgstr "Tusen"
 
 #: ../data/variables.xml.in.h:57
-msgid "-r:thousand"
+msgid "r:thousand"
 msgstr "tusen,thousand"
 
 #: ../data/variables.xml.in.h:58
@@ -12112,7 +12112,7 @@ msgid "Hundred"
 msgstr "Hundra"
 
 #: ../data/variables.xml.in.h:59
-msgid "-r:hundred"
+msgid "r:hundred"
 msgstr "hundra,hundred"
 
 #: ../data/variables.xml.in.h:60

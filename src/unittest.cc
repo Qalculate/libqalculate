@@ -21,12 +21,12 @@ void print_usage() {
 	puts("If filename is omitted, it will run all unit tests");
 }
 
-void run_unit_test(char *filename) {
+void run_unit_test(char *filename, char *dir = NULL) {
 	char buffer[1000];
 #ifdef _WIN32
-	snprintf(buffer, 1000, "src\\qalc.exe --test-file=\"%s\"", filename);
+	snprintf(buffer, 1000, "%s\\qalc.exe --test-file=\"%s\"", dir ? dir : "src", filename);
 #else
-	snprintf(buffer, 1000, "src/qalc --test-file=\"%s\"", filename);
+	snprintf(buffer, 1000, "%s/qalc --test-file=\"%s\"", dir ? dir : "src", filename);
 #endif
 	int ret = system(buffer);
 	if(ret == EXIT_SUCCESS) return;
@@ -44,10 +44,31 @@ int ends_with(const char *str, const char *suffix) {
 
 int main(int argc, char *argv[]) {
 
-	if (argc == 1) {
+	if(argc == 1) {
 		puts("Running all unit tests\n");
 		struct stat info;
-		if(stat("./tests", &info) != 0) {
+		char curdir[500];
+		bool in_srcdir = false;
+#ifdef _WIN32
+		size_t n = 0;
+		getenv_s(&n, NULL, 0, "srcdir");
+		if(n > 0) {
+			char *srcdir = (char*) malloc(n * sizeof(char));
+			getenv_s(&n, srcdir, n, "srcdir");
+			getcwd(curdir, 500);
+			chdir(srcdir);
+			free(srcdir);
+			in_srcdir = true;
+		}
+#else
+		const char *srcdir = getenv("srcdir");
+		if(srcdir && strlen(srcdir) > 0) {
+			getcwd(curdir, 500);
+			chdir(srcdir);
+			in_srcdir = true;
+		}
+#endif
+		if(in_srcdir || stat("./tests", &info) != 0) {
 			if(chdir("..") != 0) {
 				printf(RED "\nCannot change directory\n\n" RESET);
 			}
@@ -73,7 +94,7 @@ int main(int argc, char *argv[]) {
 				strcat(fullPath, "/");
 #endif
 				strcat(fullPath, filename);
-				run_unit_test(fullPath);
+				run_unit_test(fullPath, in_srcdir ? curdir : NULL);
 			}
 			closedir(d);
 		}

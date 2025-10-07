@@ -2440,7 +2440,7 @@ void Calculator::saveVariables(void *xmldoc, bool save_global, bool save_only_te
 	bool matlab_matrices_bak = priv->matlab_matrices;
 	priv->matlab_matrices = false;
 	for(size_t i = 0; i < variables.size(); i++) {
-		if((save_global || variables[i]->isLocal() || (!save_only_temp && variables[i]->hasChanged())) && (variables[i]->category() != _("Temporary") && variables[i]->category() != "Temporary") == !save_only_temp && (!save_only_temp || !variables[i]->isBuiltin())) {
+		if((save_global || variables[i]->isLocal()) && (variables[i]->category() != _("Temporary") && variables[i]->category() != "Temporary") == !save_only_temp && (!save_only_temp || !variables[i]->isBuiltin())) {
 			item = &top;
 			if(!variables[i]->category().empty()) {
 				if(save_only_temp) cat = "Temporary";
@@ -2631,7 +2631,7 @@ void Calculator::saveUnits(void *xmldoc, bool save_global, bool save_only_temp) 
 	string cat, cat_sub;
 	for(size_t i = 0; i < units.size(); i++) {
 		u = units[i];
-		if((save_global || u->isLocal() || (!save_only_temp && u->hasChanged())) && (u->category() != _("Temporary") && u->category() != "Temporary") == !save_only_temp && (!save_only_temp || !units[i]->isBuiltin())) {
+		if((save_global || u->isLocal()) && (u->category() != _("Temporary") && u->category() != "Temporary") == !save_only_temp && (!save_only_temp || !units[i]->isBuiltin())) {
 			item = &top;
 			if(!u->category().empty()) {
 				if(save_only_temp) cat = "Temporary";
@@ -2808,7 +2808,7 @@ void Calculator::saveFunctions(void *xmldoc, bool save_global, bool save_only_te
 	NumberArgument *farg;
 	string str;
 	for(size_t i = 0; i < functions.size(); i++) {
-		if(functions[i]->subtype() != SUBTYPE_DATA_SET && (save_global || functions[i]->isLocal() || (!save_only_temp && functions[i]->hasChanged())) && (functions[i]->category() != _("Temporary") && functions[i]->category() != "Temporary") == !save_only_temp && (!save_only_temp || !functions[i]->isBuiltin())) {
+		if(functions[i]->subtype() != SUBTYPE_DATA_SET && (save_global || functions[i]->isLocal()) && (functions[i]->category() != _("Temporary") && functions[i]->category() != "Temporary") == !save_only_temp && (!save_only_temp || !functions[i]->isBuiltin())) {
 			item = &top;
 			if(!functions[i]->category().empty()) {
 				if(save_only_temp) cat = "Temporary";

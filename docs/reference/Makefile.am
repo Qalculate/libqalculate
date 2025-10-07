@@ -9,18 +9,18 @@ if HAVE_DOXYGEN
 
 referencedir = $(docdir)/reference/html
 reference_DATA = \
-		$(builddir)/html/*.html \
-		$(builddir)/html/*.png \
-		$(builddir)/html/*.css \
-		$(builddir)/html/*.js
+		$(builddir)/html/index.html \
+		$(builddir)/html/*
 
 .PHONY: docs
 docs:
 	top_srcdir=$(top_srcdir) $(DOXYGEN) $(srcdir)/Doxyfile
 
-$(builddir)/html/*.html: $(srcdir)/Doxyfile
+$(builddir)/html/index.html: $(srcdir)/Doxyfile
 	top_srcdir=$(top_srcdir) $(DOXYGEN) $(srcdir)/Doxyfile
 
-$(builddir)/html/*.png $(builddir)/html/*.css $(builddir)/html/*.js:
+$(builddir)/html/*:
+
+DISTCLEANFILES = $(reference_DATA)
 
 endif

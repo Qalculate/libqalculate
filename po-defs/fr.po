@@ -9197,7 +9197,7 @@ msgid "Astronomical Unit"
 msgstr "Unité astronomique"
 
 #: ../data/units.xml.in.h:48
-msgid "ar:AU,astronomical_unit,p:astronomical_units"
+msgid "a-cr:au,astronomical_unit,p:astronomical_units"
 msgstr ""
 
 #: ../data/units.xml.in.h:49
@@ -10330,7 +10330,7 @@ msgid "Liter"
 msgstr "Litre"
 
 #: ../data/units.xml.in.h:337
-msgid "ar:L,a:l,aou:&#x2113;,liter,p:liters,litre,p:litres"
+msgid "ar:L,ar:l,aou:&#x2113;,liter,p:liters,litre,p:litres"
 msgstr ""
 
 #: ../data/units.xml.in.h:338
@@ -12024,35 +12024,35 @@ msgstr ""
 
 #: ../data/variables.xml.in.h:44
 msgid "Sextillion"
-msgstr ""
+msgstr "Quadrilliard"
 
 #: ../data/variables.xml.in.h:45
 msgid "-r:sextillion"
-msgstr ""
+msgstr "quadrilliard"
 
 #: ../data/variables.xml.in.h:46
 msgid "Quintillion"
-msgstr ""
+msgstr "Quadrillion"
 
 #: ../data/variables.xml.in.h:47
 msgid "-r:quintillion"
-msgstr ""
+msgstr "quadrilllion"
 
 #: ../data/variables.xml.in.h:48
 msgid "Quadrillion"
-msgstr ""
+msgstr "Trilliard"
 
 #: ../data/variables.xml.in.h:49
 msgid "-r:quadrillion"
-msgstr ""
+msgstr "trilliard"
 
 #: ../data/variables.xml.in.h:50
 msgid "Trillion"
-msgstr ""
+msgstr "Billion"
 
 #: ../data/variables.xml.in.h:51
 msgid "-r:trillion"
-msgstr ""
+msgstr "billion"
 
 #: ../data/variables.xml.in.h:52
 msgid "Billion"
@@ -12060,30 +12060,30 @@ msgstr "Milliard"
 
 #: ../data/variables.xml.in.h:53
 msgid "-r:billion"
-msgstr ""
+msgstr "milliard"
 
 #: ../data/variables.xml.in.h:54
 msgid "Million"
 msgstr "Million"
 
 #: ../data/variables.xml.in.h:55
-msgid "-r:million"
+msgid "r:million"
 msgstr "million"
 
 #: ../data/variables.xml.in.h:56
 msgid "Thousand"
-msgstr ""
+msgstr "Mille"
 
 #: ../data/variables.xml.in.h:57
-msgid "-r:thousand"
-msgstr ""
+msgid "r:thousand"
+msgstr "mille"
 
 #: ../data/variables.xml.in.h:58
 msgid "Hundred"
 msgstr ""
 
 #: ../data/variables.xml.in.h:59
-msgid "-r:hundred"
+msgid "r:hundred"
 msgstr ""
 
 #: ../data/variables.xml.in.h:60

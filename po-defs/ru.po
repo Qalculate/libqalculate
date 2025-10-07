@@ -9399,7 +9399,7 @@ msgid "Astronomical Unit"
 msgstr "Астрономическая единица"
 
 #: ../data/units.xml.in.h:48
-msgid "ar:AU,astronomical_unit,p:astronomical_units"
+msgid "a-cr:au,astronomical_unit,p:astronomical_units"
 msgstr "a:а_е,астрономическая_единица,p:астрономических_единицы,p:астрономических_единиц"
 
 #: ../data/units.xml.in.h:49
@@ -10536,7 +10536,7 @@ msgid "Liter"
 msgstr "Литр"
 
 #: ../data/units.xml.in.h:337
-msgid "ar:L,a:l,aou:&#x2113;,liter,p:liters,litre,p:litres"
+msgid "ar:L,ar:l,aou:&#x2113;,liter,p:liters,litre,p:litres"
 msgstr "a:л,aou:&#x2113;,литр,p:литра,p:литров"
 
 #: ../data/units.xml.in.h:338
@@ -12268,7 +12268,7 @@ msgid "Million"
 msgstr "Миллион"
 
 #: ../data/variables.xml.in.h:55
-msgid "-r:million"
+msgid "r:million"
 msgstr "миллион"
 
 #: ../data/variables.xml.in.h:56
@@ -12276,7 +12276,7 @@ msgid "Thousand"
 msgstr "Тысяча"
 
 #: ../data/variables.xml.in.h:57
-msgid "-r:thousand"
+msgid "r:thousand"
 msgstr "тысяча"
 
 #: ../data/variables.xml.in.h:58
@@ -12284,7 +12284,7 @@ msgid "Hundred"
 msgstr "Сотня"
 
 #: ../data/variables.xml.in.h:59
-msgid "-r:hundred"
+msgid "r:hundred"
 msgstr "сотня"
 
 #: ../data/variables.xml.in.h:60

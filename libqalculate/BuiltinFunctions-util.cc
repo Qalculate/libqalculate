@@ -824,9 +824,11 @@ SaveFunction::SaveFunction() : MathFunction("save", 2, 5) {
 int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	if(vargs[4].number().getBoolean()) mstruct.eval(eo);
-	size_t i = vargs[1].symbol().find(LEFT_PARENTHESIS);
-	if(i != string::npos) {
-		string name = vargs[1].symbol().substr(0, i);
+	size_t i = vargs[1].symbol().find(LEFT_PARENTHESIS, 1);
+	size_t i2 = string::npos;
+	if(i != string::npos) i2 = vargs[1].symbol().find_last_not_of(SPACES, i - 1);
+	if(i2 != string::npos) {
+		string name = vargs[1].symbol().substr(0, i2 + 1);
 		if(!CALCULATOR->functionNameIsValid(name)) {
 			CALCULATOR->error(true, _("Invalid function name (%s)."), name.c_str(), NULL);
 			if(vargs[4].number().getBoolean()) return -1;

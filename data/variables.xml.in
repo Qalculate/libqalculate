@@ -129,17 +129,17 @@
     </variable>
     <variable require_translation="true">
       <_title>Million</_title>
-      <_names>-r:million</_names>
+      <_names>r:million</_names>
       <value>1E6</value>
     </variable>
     <variable require_translation="true">
       <_title>Thousand</_title>
-      <_names>-r:thousand</_names>
+      <_names>r:thousand</_names>
       <value>1E3</value>
     </variable>
     <variable require_translation="true">
       <_title>Hundred</_title>
-      <_names>-r:hundred</_names>
+      <_names>r:hundred</_names>
       <value>1E2</value>
     </variable>
   </category>

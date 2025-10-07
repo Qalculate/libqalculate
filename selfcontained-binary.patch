@@ -1,15 +1,17 @@
 diff --git a/libqalculate/Calculator-definitions.cc b/libqalculate/Calculator-definitions.cc
-index d53272a..2ece786 100644
+index 1313e37..63850ff 100644
 --- a/libqalculate/Calculator-definitions.cc
 +++ b/libqalculate/Calculator-definitions.cc
-@@ -736,12 +736,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
+@@ -790,14 +790,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
  	if(clocale) locale = clocale;
  #endif
  
 -	if(b_ignore_locale || locale == "POSIX" || locale == "C") {
 -		locale = "";
 -	} else {
--		size_t i = locale.find('.');
+-		size_t i = locale.find(':');
+-		if(i != string::npos) locale = locale.substr(0, i);
+-		i = locale.find('.');
 -		if(i != string::npos) locale = locale.substr(0, i);
 -	}
 +	locale = "";
@@ -39,15 +41,19 @@ index 51e9cae..15b4b79 100644
  
  bin_PROGRAMS = @QALCULATE_TEXT@
 diff --git a/po-defs/remove-untranslated.cc b/po-defs/remove-untranslated.cc
-index de7565c..9f73c20 100644
+index 945b73f..de24ba7 100644
 --- a/po-defs/remove-untranslated.cc
 +++ b/po-defs/remove-untranslated.cc
-@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
+@@ -87,10 +87,9 @@ int main(int argc, char *argv[]) {
  				} else {
  					msgstr = sbuffer.substr(8, sbuffer.length() - 9);
  				}
--				if(!msgid.empty() && (msgstr == msgid || msgstr == "-")) {
+-				if(!msgid.empty() && (msgstr == msgid || msgstr == "-" || msgstr == "+")) {
 +				if(true) {
  					if(variant == 3 || variant == 4) cout << msgstr << endl;
- 					sout = "msgstr \"\"";
+-					if(msgstr == "+") {sout = "msgstr \""; sout += msgstr; sout += "\"";}
+-					else sout = "msgstr \"\"";
++					sout = "msgstr \"\"";
  				} else {
+ 					size_t i = 0, i2 = 0;
+ 					while(true) {

@@ -580,17 +580,17 @@ void handle_exit() {
 	bool b_savedefs = save_defs_on_exit && defs_edited > 0;
 	if(save_defs_on_exit && (CALCULATOR->checkSaveFunctionCalled() || defs_edited < 0)) {
 		for(size_t i = 0; !b_savedefs && i < CALCULATOR->variables.size(); i++) {
-			if(CALCULATOR->variables[i]->hasChanged() && CALCULATOR->variables[i]->category() != CALCULATOR->temporaryCategory() && CALCULATOR->variables[i]->category() != "Temporary") {
+			if(CALCULATOR->variables[i]->hasChanged() && CALCULATOR->variables[i]->isLocal() && CALCULATOR->variables[i]->category() != CALCULATOR->temporaryCategory() && CALCULATOR->variables[i]->category() != "Temporary") {
 				b_savedefs = true;
 			}
 		}
 		for(size_t i = 0; !b_savedefs && i < CALCULATOR->functions.size(); i++) {
-			if(CALCULATOR->functions[i]->hasChanged() && CALCULATOR->functions[i]->category() != CALCULATOR->temporaryCategory() && CALCULATOR->functions[i]->category() != "Temporary") {
+			if(CALCULATOR->functions[i]->hasChanged() && CALCULATOR->functions[i]->isLocal() && CALCULATOR->functions[i]->category() != CALCULATOR->temporaryCategory() && CALCULATOR->functions[i]->category() != "Temporary") {
 				b_savedefs = true;
 			}
 		}
 		for(size_t i = 0; !b_savedefs && i < CALCULATOR->units.size(); i++) {
-			if(CALCULATOR->units[i]->hasChanged() && CALCULATOR->units[i]->category() != CALCULATOR->temporaryCategory() && CALCULATOR->units[i]->category() != "Temporary") {
+			if(CALCULATOR->units[i]->hasChanged() && CALCULATOR->units[i]->isLocal() && CALCULATOR->units[i]->category() != CALCULATOR->temporaryCategory() && CALCULATOR->units[i]->category() != "Temporary") {
 				b_savedefs = true;
 			}
 		}
@@ -2749,13 +2749,30 @@ bool show_object_info(string name) {
 						value = _("vector");
 					} else {
 						PrintOptions po = printops;
-						po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+						if(po.interval_display != INTERVAL_DISPLAY_CONCISE && po.interval_display != INTERVAL_DISPLAY_RELATIVE) po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 						po.base = 10;
 						po.number_fraction_format = FRACTION_DECIMAL_EXACT;
+						po.restrict_fraction_length = true;
 						po.restrict_to_parent_precision = false;
 						po.allow_non_usable = false;
 						po.is_approximate = &is_approximate;
-						value = CALCULATOR->print(((KnownVariable*) v)->get(), 100, po);
+						bool b_phys = false;
+						Variable *v_planck = CALCULATOR->getActiveVariable("planck");
+						if(v_planck) {
+							string phys_cat = v_planck->category();
+							size_t i_sub = phys_cat.find("/");
+							if(i_sub != string::npos) phys_cat = phys_cat.substr(0, i_sub);
+							b_phys = (v->category().find(phys_cat) == 0);
+						}
+						if(b_phys) {
+							int prec_bak = CALCULATOR->getPrecision();
+							if(prec_bak < 20) CALCULATOR->setPrecision(20);
+							if(po.min_exp == EXP_PRECISION) po.min_exp = prec_bak;
+							value = CALCULATOR->print(((KnownVariable*) v)->get(), 100, po);
+							CALCULATOR->setPrecision(prec_bak);
+						} else {
+							value = CALCULATOR->print(((KnownVariable*) v)->get(), 100, po);
+						}
 						if((v->isApproximate() || is_approximate) && value.find(SIGN_PLUSMINUS) == string::npos) {
 							value.insert(0, " ");
 							if(printops.use_unicode_signs) value.insert(0, SIGN_ALMOST_EQUAL);
@@ -3594,7 +3611,6 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 		puts("");
 		if(in_interactive) {CHECK_IF_SCREEN_FILLED;}
 		bool b_variables = false, b_functions = false, b_units = false;
-		ParseOptions pa = evalops.parse_options; pa.base = 10;
 		for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
 			Variable *v = CALCULATOR->variables[i];
 			if((v->isLocal() || ((is_answer_variable(v) || v == v_memory) && !((KnownVariable*) v)->get().isUndefined() && v->hasChanged())) && v->isActive()) {
@@ -3619,17 +3635,18 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 						value = _("vector");
 					} else {
 						PrintOptions po = printops;
-						po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+						if(po.interval_display != INTERVAL_DISPLAY_CONCISE && po.interval_display != INTERVAL_DISPLAY_RELATIVE) po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 						po.base = 10;
 						po.number_fraction_format = FRACTION_DECIMAL_EXACT;
+						po.restrict_fraction_length = true;
 						po.restrict_to_parent_precision = false;
 						po.allow_non_usable = false;
 						po.is_approximate = &is_approximate;
-						value = CALCULATOR->print(((KnownVariable*) v)->get(), 1000);
+						value = CALCULATOR->print(((KnownVariable*) v)->get(), 1000, po);
 						if((v->isApproximate() || is_approximate) && value.find(SIGN_PLUSMINUS) == string::npos) {
 							value.insert(0, " ");
 							if(printops.use_unicode_signs) value.insert(0, SIGN_ALMOST_EQUAL);
-							value.insert(0, _("approx."));
+							else value.insert(0, _("approx."));
 						}
 					}
 					FPUTS_UNICODE(value.c_str(), stdout);
@@ -8480,7 +8497,9 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 				} else {
 					original_expression = str2;
 					if(auto_calculate && contains_plot_or_save(original_expression)) {
-						CALCULATOR->parse(parsed_mstruct, original_expression, evalops.parse_options);
+						ParseOptions po = evalops.parse_options;
+						po.preserve_format = true;
+						CALCULATOR->parse(parsed_mstruct, original_expression, po);
 						MathStructure *m = new MathStructure();
 						m->setAborted();
 						CALCULATOR->RPNStackEnter(m);
@@ -8494,7 +8513,9 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		original_expression = CALCULATOR->unlocalizeExpression(str, evalops.parse_options);
 		transform_expression_for_equals_save(original_expression, evalops.parse_options);
 		if(auto_calculate && contains_plot_or_save(original_expression)) {
-			CALCULATOR->parse(parsed_mstruct, original_expression, evalops.parse_options);
+			ParseOptions po = evalops.parse_options;
+			po.preserve_format = true;
+			CALCULATOR->parse(parsed_mstruct, original_expression, po);
 			mstruct->setAborted();
 		} else {
 			CALCULATOR->calculate(mstruct, original_expression, 0, evalops, parsed_mstruct, &to_struct);
