@@ -1,3 +1,10 @@
+2025-10-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Allow any separator before time in date/time value if colon is used, and allow space as separator even if quotation marks are not used
+	* Allow use of Z after date for UTC time (without any time specified)
+	* Do not allow left over characters after date
+	* Fix negative time zone in date and time input
+
 2025-10-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Use category and title from existing local variable/function when using "=" for variable/function assignment
