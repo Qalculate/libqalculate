@@ -81,36 +81,7 @@ void CalculateThread::run() {
 			mstruct->setAborted();
 			if(CALCULATOR->tmp_parsedstruct) CALCULATOR->tmp_parsedstruct->setAborted();
 			//if(CALCULATOR->tmp_tostruct) CALCULATOR->tmp_tostruct->setUndefined();
-			if(CALCULATOR->expression_to_calculate.find_first_of(ID_WRAPS) != string::npos) {
-				string str = CALCULATOR->expression_to_calculate;
-				bool quote1 = false, quote2 = false;
-				size_t id_li = string::npos;
-				for(size_t i = 0; i < str.size(); i++) {
-					if(!quote1 && str[i] == '\'') {
-						quote2 = !quote2;
-						id_li = string::npos;
-					} else if(!quote2 && str[i] == '\"') {
-						quote1 = !quote1;
-						id_li = string::npos;
-					} else if(str[i] == ID_WRAP_LEFT_CH) {
-						if(!quote2 && !quote1) str[i] = LEFT_PARENTHESIS_CH;
-						else id_li = i;
-					} else if(str[i] == ID_WRAP_RIGHT_CH) {
-						if(!quote2 && !quote1) {
-							str[i] = RIGHT_PARENTHESIS_CH;
-						} else if(id_li != string::npos) {
-							if(id_li < i - 1 && str.find_first_not_of(NUMBERS SPACES, id_li + 1) == i) {
-								str[i] = RIGHT_PARENTHESIS_CH;
-								str[id_li] = LEFT_PARENTHESIS_CH;
-							}
-							id_li = string::npos;
-						}
-					}
-				}
-				mstruct->set(CALCULATOR->calculate(str, CALCULATOR->tmp_evaluationoptions, CALCULATOR->tmp_parsedstruct, CALCULATOR->tmp_tostruct, CALCULATOR->tmp_maketodivision));
-			} else {
-				mstruct->set(CALCULATOR->calculate(CALCULATOR->expression_to_calculate, CALCULATOR->tmp_evaluationoptions, CALCULATOR->tmp_parsedstruct, CALCULATOR->tmp_tostruct, CALCULATOR->tmp_maketodivision));
-			}
+			mstruct->set(CALCULATOR->calculate(CALCULATOR->expression_to_calculate, CALCULATOR->tmp_evaluationoptions, CALCULATOR->tmp_parsedstruct, CALCULATOR->tmp_tostruct, CALCULATOR->tmp_maketodivision));
 		} else {
 			MathStructure meval(*mstruct);
 			mstruct->setAborted();
@@ -191,8 +162,8 @@ bool Calculator::abort() {
 		// wait 5 seconds for clean abortation
 		int msecs = i_precision > 1000 ? 10000 : 5000;
 		while(b_busy && msecs > 0) {
-			sleep_ms(10);
-			msecs -= 10;
+			sleep_ms(1);
+			msecs -= 1;
 		}
 		if(b_busy) {
 
@@ -255,8 +226,8 @@ bool Calculator::calculateRPN(MathStructure *mstruct, int command, size_t index,
 	if(!calculate_thread->write(false)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	if(!calculate_thread->write((void*) mstruct)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	while(msecs > 0 && b_busy) {
-		sleep_ms(10);
-		msecs -= 10;
+		sleep_ms(1);
+		msecs -= 1;
 	}
 	if(had_msecs && b_busy) {
 		abort();
@@ -281,8 +252,8 @@ bool Calculator::calculateRPN(string str, int command, size_t index, int msecs, 
 	if(!calculate_thread->write(true)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	if(!calculate_thread->write((void*) mstruct)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	while(msecs > 0 && b_busy) {
-		sleep_ms(10);
-		msecs -= 10;
+		sleep_ms(1);
+		msecs -= 1;
 	}
 	if(had_msecs && b_busy) {
 		abort();
@@ -1779,9 +1750,6 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	MathStructure mstruct;
 	bool do_bases = false, do_factors = false, do_pfe = false, do_calendars = false, do_expand = false, do_binary_prefixes = false, complex_angle_form = false, fraction_changed = false;
 
-	gsub(ID_WRAP_LEFT, LEFT_PARENTHESIS, str);
-	gsub(ID_WRAP_RIGHT, RIGHT_PARENTHESIS, str);
-
 	string to_str = parseComments(str, evalops.parse_options);
 	if(!to_str.empty() && str.empty()) {stopControl(); if(parsed_expression) {*parsed_expression = "";} return "";}
 
@@ -2355,8 +2323,8 @@ bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const 
 
 	// check time while calculation proceeds
 	while(msecs > 0 && b_busy) {
-		sleep_ms(10);
-		msecs -= 10;
+		sleep_ms(1);
+		msecs -= 1;
 	}
 	if(had_msecs && b_busy) {
 		if(!abort()) mstruct->setAborted();
@@ -2384,8 +2352,8 @@ bool Calculator::calculate(MathStructure *mstruct, int msecs, const EvaluationOp
 
 	// check time while calculation proceeds
 	while(msecs > 0 && b_busy) {
-		sleep_ms(10);
-		msecs -= 10;
+		sleep_ms(1);
+		msecs -= 1;
 	}
 	if(had_msecs && b_busy) {
 		if(!abort()) mstruct->setAborted();
@@ -3387,6 +3355,33 @@ void replace_variable_name(MathStructure &m, Variable *v) {
 }
 
 MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
+
+	if(CALCULATOR->expression_to_calculate.find_first_of(ID_WRAPS) != string::npos) {
+		bool quote1 = false, quote2 = false;
+		size_t id_li = string::npos;
+		for(size_t i = 0; i < str.size(); i++) {
+			if(!quote1 && str[i] == '\'') {
+				quote2 = !quote2;
+				id_li = string::npos;
+			} else if(!quote2 && str[i] == '\"') {
+				quote1 = !quote1;
+				id_li = string::npos;
+			} else if(str[i] == ID_WRAP_LEFT_CH) {
+				if(!quote2 && !quote1) str[i] = LEFT_PARENTHESIS_CH;
+				else id_li = i;
+			} else if(str[i] == ID_WRAP_RIGHT_CH) {
+				if(!quote2 && !quote1) {
+					str[i] = RIGHT_PARENTHESIS_CH;
+				} else if(id_li != string::npos) {
+					if(id_li < i - 1 && str.find_first_not_of(NUMBERS SPACES, id_li + 1) == i) {
+						str[i] = RIGHT_PARENTHESIS_CH;
+						str[id_li] = LEFT_PARENTHESIS_CH;
+					}
+					id_li = string::npos;
+				}
+			}
+		}
+	}
 
 	string str2, str_where;
 	

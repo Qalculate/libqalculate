@@ -2928,8 +2928,8 @@ void AutoCalcThread::run() {
 		if(!read(&i) || i == 0) break;
 		if(i == 2) {
 			autocalc_busy = true;
-			for(size_t i2 = 0; i2 < 1000 && !autocalc_aborted; i2 += 5) {
-				sleep_ms(5);
+			for(size_t i2 = 0; i2 < 1000 && !autocalc_aborted; i2 += 1) {
+				sleep_ms(1);
 			}
 			autocalc_busy = false;
 			if(autocalc_aborted) continue;
@@ -6649,6 +6649,76 @@ void on_abort_display() {
 
 bool exact_comparison = false;
 
+void view_thread_func(MathStructure *mresult, MathStructure *mparse, bool *is_approximate_p, bool preserve_format) {
+	PrintOptions po;
+	if(mparse) {
+		po.is_approximate = is_approximate_p;
+		po.preserve_format = preserve_format;
+		po.show_ending_zeroes = false;
+		po.exp_display = printops.exp_display;
+		po.lower_case_numbers = printops.lower_case_numbers;
+		po.base_display = printops.base_display;
+		po.twos_complement = printops.twos_complement;
+		po.rounding = printops.rounding;
+		po.hexadecimal_twos_complement = printops.hexadecimal_twos_complement;
+		po.base = evalops.parse_options.base;
+		po.allow_non_usable = DO_FORMAT;
+		Number nr_base;
+		if(po.base == BASE_CUSTOM && (CALCULATOR->usesIntervalArithmetic() || CALCULATOR->customInputBase().isRational()) && (CALCULATOR->customInputBase().isInteger() || !CALCULATOR->customInputBase().isNegative()) && (CALCULATOR->customInputBase() > 1 || CALCULATOR->customInputBase() < -1)) {
+			nr_base = CALCULATOR->customOutputBase();
+			CALCULATOR->setCustomOutputBase(CALCULATOR->customInputBase());
+		} else if(po.base == BASE_CUSTOM || (po.base < BASE_CUSTOM && !CALCULATOR->usesIntervalArithmetic() && po.base != BASE_UNICODE)) {
+			po.base = 10;
+			po.min_exp = 6;
+			po.use_max_decimals = true;
+			po.max_decimals = 5;
+			po.preserve_format = false;
+		}
+		po.abbreviate_names = false;
+		po.digit_grouping = printops.digit_grouping;
+		po.use_unicode_signs = printops.use_unicode_signs;
+		po.multiplication_sign = printops.multiplication_sign;
+		po.division_sign = printops.division_sign;
+		po.short_multiplication = false;
+		po.excessive_parenthesis = true;
+		po.improve_division_multipliers = false;
+		po.restrict_to_parent_precision = false;
+		po.spell_out_logical_operators = printops.spell_out_logical_operators;
+		po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+		MathStructure mp(*mparse);
+		mp.format(po);
+		parsed_text = mp.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
+		if(po.base == BASE_CUSTOM) {
+			CALCULATOR->setCustomOutputBase(nr_base);
+		}
+	}
+
+	po = printops;
+
+	po.allow_non_usable = DO_FORMAT;
+
+	print_dual(*mresult, original_expression, mparse ? *mparse : *parsed_mstruct, mstruct_exact, result_text, alt_results, po, evalops, dual_fraction < 0 ? AUTOMATIC_FRACTION_AUTO : (dual_fraction > 0 ? AUTOMATIC_FRACTION_DUAL : AUTOMATIC_FRACTION_OFF), dual_approximation < 0 ? AUTOMATIC_APPROXIMATION_AUTO : (dual_approximation > 0 ? AUTOMATIC_APPROXIMATION_DUAL : AUTOMATIC_APPROXIMATION_OFF), complex_angle_form, &exact_comparison, mparse != NULL, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL, -1, had_to_expression);
+
+	if(!prepend_mstruct.isUndefined() && !CALCULATOR->aborted()) {
+		prepend_mstruct.format(po);
+		po.min_exp = 0;
+		alt_results.insert(alt_results.begin(), prepend_mstruct.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL));
+	}
+
+	if(CALCULATOR->aborted() || avoid_recalculation) {
+		bool set_aborted = result_text.length() > 10000;
+		for(size_t i = 0; !set_aborted && i < alt_results.size(); i++) {
+			if(alt_results[i].length() > 10000) set_aborted = true;
+		}
+		if(set_aborted) {
+			alt_results.clear();
+			MathStructure m;
+			m.setAborted();
+			result_text = m.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
+		}
+	}
+}
+
 void ViewThread::run() {
 
 	while(true) {
@@ -6660,73 +6730,14 @@ void ViewThread::run() {
 		if(!read(&x)) break;
 		CALCULATOR->startControl();
 		MathStructure *mparse = (MathStructure*) x;
-		PrintOptions po;
+
+		bool *is_approximate_p = NULL, preserve_format = false;
 		if(mparse) {
-			if(!read(&po.is_approximate)) break;
-			if(!read<bool>(&po.preserve_format)) break;
-			po.show_ending_zeroes = false;
-			po.exp_display = printops.exp_display;
-			po.lower_case_numbers = printops.lower_case_numbers;
-			po.base_display = printops.base_display;
-			po.twos_complement = printops.twos_complement;
-			po.rounding = printops.rounding;
-			po.hexadecimal_twos_complement = printops.hexadecimal_twos_complement;
-			po.base = evalops.parse_options.base;
-			po.allow_non_usable = DO_FORMAT;
-			Number nr_base;
-			if(po.base == BASE_CUSTOM && (CALCULATOR->usesIntervalArithmetic() || CALCULATOR->customInputBase().isRational()) && (CALCULATOR->customInputBase().isInteger() || !CALCULATOR->customInputBase().isNegative()) && (CALCULATOR->customInputBase() > 1 || CALCULATOR->customInputBase() < -1)) {
-				nr_base = CALCULATOR->customOutputBase();
-				CALCULATOR->setCustomOutputBase(CALCULATOR->customInputBase());
-			} else if(po.base == BASE_CUSTOM || (po.base < BASE_CUSTOM && !CALCULATOR->usesIntervalArithmetic() && po.base != BASE_UNICODE)) {
-				po.base = 10;
-				po.min_exp = 6;
-				po.use_max_decimals = true;
-				po.max_decimals = 5;
-				po.preserve_format = false;
-			}
-			po.abbreviate_names = false;
-			po.digit_grouping = printops.digit_grouping;
-			po.use_unicode_signs = printops.use_unicode_signs;
-			po.multiplication_sign = printops.multiplication_sign;
-			po.division_sign = printops.division_sign;
-			po.short_multiplication = false;
-			po.excessive_parenthesis = true;
-			po.improve_division_multipliers = false;
-			po.restrict_to_parent_precision = false;
-			po.spell_out_logical_operators = printops.spell_out_logical_operators;
-			po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
-			MathStructure mp(*mparse);
-			mp.format(po);
-			parsed_text = mp.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
-			if(po.base == BASE_CUSTOM) {
-				CALCULATOR->setCustomOutputBase(nr_base);
-			}
+			if(!read(&is_approximate_p)) break;
+			if(!read<bool>(&preserve_format)) break;
 		}
 
-		po = printops;
-
-		po.allow_non_usable = DO_FORMAT;
-
-		print_dual(*mresult, original_expression, mparse ? *mparse : *parsed_mstruct, mstruct_exact, result_text, alt_results, po, evalops, dual_fraction < 0 ? AUTOMATIC_FRACTION_AUTO : (dual_fraction > 0 ? AUTOMATIC_FRACTION_DUAL : AUTOMATIC_FRACTION_OFF), dual_approximation < 0 ? AUTOMATIC_APPROXIMATION_AUTO : (dual_approximation > 0 ? AUTOMATIC_APPROXIMATION_DUAL : AUTOMATIC_APPROXIMATION_OFF), complex_angle_form, &exact_comparison, mparse != NULL, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL, -1, had_to_expression);
-
-		if(!prepend_mstruct.isUndefined() && !CALCULATOR->aborted()) {
-			prepend_mstruct.format(po);
-			po.min_exp = 0;
-			alt_results.insert(alt_results.begin(), prepend_mstruct.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL));
-		}
-
-		if(CALCULATOR->aborted() || avoid_recalculation) {
-			bool set_aborted = result_text.length() > 10000;
-			for(size_t i = 0; !set_aborted && i < alt_results.size(); i++) {
-				if(alt_results[i].length() > 10000) set_aborted = true;
-			}
-			if(set_aborted) {
-				alt_results.clear();
-				MathStructure m;
-				m.setAborted();
-				result_text = m.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
-			}
-		}
+		view_thread_func(mresult, mparse, is_approximate_p, preserve_format);
 
 		b_busy = false;
 
@@ -6871,7 +6882,9 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 
 	b_busy = true;
 
-	if(!view_thread->running && !view_thread->start()) {b_busy = false; return;}
+	bool use_thread = (!cfile || i_maxtime != 0);
+
+	if(use_thread && !view_thread->running && !view_thread->start()) {b_busy = false; return;}
 
 	bool line_breaks = goto_input && interactive_mode;
 	if(!interactive_mode || cfile) goto_input = false;
@@ -6899,27 +6912,34 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 	printops.prefix = prefix;
 
 	bool parsed_approx = false;
-	if(stack_index == 0) {
-		if(!view_thread->write((void*) mstruct)) {b_busy = false; view_thread->cancel(); return;}
-	} else {
-		MathStructure *mreg = CALCULATOR->getRPNRegister(stack_index + 1);
-		if(!view_thread->write((void*) mreg)) {b_busy = false; view_thread->cancel(); return;}
+
+	if(update_parse && adaptive_interval_display) {
+		if((parsed_mstruct && parsed_mstruct->containsFunctionId(FUNCTION_ID_UNCERTAINTY)) || expression_str.find("+/-") != string::npos || expression_str.find("+/" SIGN_MINUS) != string::npos || expression_str.find("±") != string::npos) {
+			if(parsed_mstruct && intervals_are_relative(*parsed_mstruct) > 0) printops.interval_display = INTERVAL_DISPLAY_RELATIVE;
+			else printops.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
+		} else if(parsed_mstruct && parsed_mstruct->containsFunctionId(FUNCTION_ID_INTERVAL)) printops.interval_display = INTERVAL_DISPLAY_INTERVAL;
+		else printops.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
 	}
-	if(update_parse) {
-		if(adaptive_interval_display) {
-			if((parsed_mstruct && parsed_mstruct->containsFunctionId(FUNCTION_ID_UNCERTAINTY)) || expression_str.find("+/-") != string::npos || expression_str.find("+/" SIGN_MINUS) != string::npos || expression_str.find("±") != string::npos) {
-				if(parsed_mstruct && intervals_are_relative(*parsed_mstruct) > 0) printops.interval_display = INTERVAL_DISPLAY_RELATIVE;
-				else printops.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
-			} else if(parsed_mstruct && parsed_mstruct->containsFunctionId(FUNCTION_ID_INTERVAL)) printops.interval_display = INTERVAL_DISPLAY_INTERVAL;
-			else printops.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+
+	if(!update_parse && printops.base != BASE_DECIMAL && dual_approximation <= 0) mstruct_exact.setUndefined();
+	if(use_thread) {
+		if(stack_index == 0) {
+			if(!view_thread->write((void*) mstruct)) {b_busy = false; view_thread->cancel(); return;}
+		} else {
+			MathStructure *mreg = CALCULATOR->getRPNRegister(stack_index + 1);
+			if(!view_thread->write((void*) mreg)) {b_busy = false; view_thread->cancel(); return;}
 		}
-		if(!view_thread->write((void *) parsed_mstruct)) {b_busy = false; view_thread->cancel(); return;}
-		bool *parsed_approx_p = &parsed_approx;
-		if(!view_thread->write(parsed_approx_p)) {b_busy = false; view_thread->cancel(); return;}
-		if(!view_thread->write(prev_result_text == _("RPN Operation") ? false : true)) {b_busy = false; view_thread->cancel(); return;}
+		if(update_parse) {
+			if(!view_thread->write((void*) parsed_mstruct)) {b_busy = false; view_thread->cancel(); return;}
+			bool *parsed_approx_p = &parsed_approx;
+			if(!view_thread->write(parsed_approx_p)) {b_busy = false; view_thread->cancel(); return;}
+			if(!view_thread->write(prev_result_text == _("RPN Operation") ? false : true)) {b_busy = false; view_thread->cancel(); return;}
+		} else {
+			if(!view_thread->write((void*) NULL)) {b_busy = false; view_thread->cancel(); return;}
+		}
 	} else {
-		if(printops.base != BASE_DECIMAL && dual_approximation <= 0) mstruct_exact.setUndefined();
-		if(!view_thread->write((void *) NULL)) {b_busy = false; view_thread->cancel(); return;}
+		view_thread_func(stack_index == 0 ? mstruct : CALCULATOR->getRPNRegister(stack_index + 1), update_parse ? parsed_mstruct : NULL, &parsed_approx, prev_result_text == _("RPN Operation") ? false : true);
+		b_busy = false;
 	}
 
 	bool has_printed = false, was_aborted = false;
@@ -6935,8 +6955,8 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		long int i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_nsec / 1000) / 1000;
 #endif
 		while(b_busy && view_thread->running && i_timeleft > 0) {
-			sleep_ms(10);
-			i_timeleft -= 10;
+			sleep_ms(1);
+			i_timeleft -= 1;
 		}
 		if(b_busy && view_thread->running) {
 			on_abort_display();
@@ -6954,13 +6974,13 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		}
 	} else {
 
-		int i = 0;
-		while(b_busy && view_thread->running && i < 75) {
-			if(auto_calculate && i == 50) {
+		long int i = 0;
+		while(b_busy && view_thread->running && i < 750) {
+			if(auto_calculate && i == 500) {
 				CALCULATOR->abort();
 				was_aborted = true;
 			}
-			sleep_ms(10);
+			sleep_ms(1);
 			i++;
 		}
 		i = 0;
@@ -6983,9 +7003,9 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 #endif
 		while(b_busy && view_thread->running) {
 			if(cfile) {
-				sleep_ms(100);
+				sleep_ms(10);
 			} else {
-				if(wait_for_key_press(100)) {
+				if(wait_for_key_press(10)) {
 #ifdef HAVE_LIBREADLINE
 					if(use_readline) {
 						c = rl_read_key();
@@ -7008,14 +7028,14 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 						has_printed = false;
 					}
 				} else {
-					if(!result_only) {
+					if(i % 10 == 0 && !result_only) {
 						printf(".");
 						fflush(stdout);
 					}
-					sleep_ms(100);
-#ifdef _WIN32
+					sleep_ms(10);
 					i++;
-					if(i == 1000 && !result_only) on_abort_display();
+#ifdef _WIN32
+					if(i == 10000 && !result_only) on_abort_display();
 #endif
 				}
 			}
@@ -7412,8 +7432,8 @@ void execute_command(int command_type, bool show_result, bool auto_calculate) {
 		long int i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_nsec / 1000) / 1000;
 #endif
 		while(b_busy && command_thread->running && i_timeleft > 0) {
-			sleep_ms(10);
-			i_timeleft -= 10;
+			sleep_ms(1);
+			i_timeleft -= 1;
 		}
 		if(b_busy && command_thread->running) {
 			on_abort_command();
@@ -7422,14 +7442,14 @@ void execute_command(int command_type, bool show_result, bool auto_calculate) {
 		}
 	} else {
 
-		int i = 0;
+		long int i = 0;
 		bool has_printed = false;
-		while(b_busy && command_thread->running && i < 75) {
-			if(auto_calculate && i == 5) {
+		while(b_busy && command_thread->running && i < 750) {
+			if(auto_calculate && i == 50) {
 				CALCULATOR->abort();
 				command_aborted = true;
 			}
-			sleep_ms(10);
+			sleep_ms(1);
 			i++;
 		}
 		i = 0;
@@ -7469,9 +7489,9 @@ void execute_command(int command_type, bool show_result, bool auto_calculate) {
 #endif
 		while(b_busy && command_thread->running) {
 			if(cfile || auto_calculate) {
-				sleep_ms(100);
+				sleep_ms(10);
 			} else {
-				if(wait_for_key_press(100)) {
+				if(wait_for_key_press(10)) {
 #ifdef HAVE_LIBREADLINE
 					if(use_readline) {
 						c = rl_read_key();
@@ -7485,14 +7505,14 @@ void execute_command(int command_type, bool show_result, bool auto_calculate) {
 						on_abort_command();
 					}
 				} else {
-					if(!result_only) {
+					if(i % 10 == 0 && !result_only) {
 						printf(".");
 						fflush(stdout);
 					}
-					sleep_ms(100);
-#ifdef _WIN32
+					sleep_ms(10);
 					i++;
-					if(i == 1000 && !result_only) on_abort_display();
+#ifdef _WIN32
+					if(i == 10000 && !result_only) on_abort_display();
 #endif
 				}
 			}
@@ -8517,6 +8537,8 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 			po.preserve_format = true;
 			CALCULATOR->parse(parsed_mstruct, original_expression, po);
 			mstruct->setAborted();
+		} else if(cfile && i_maxtime == 0) {
+			mstruct->set(CALCULATOR->calculate(original_expression, evalops, parsed_mstruct, &to_struct));
 		} else {
 			CALCULATOR->calculate(mstruct, original_expression, 0, evalops, parsed_mstruct, &to_struct);
 		}
@@ -8535,10 +8557,10 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		clock_gettime(CLOCK_MONOTONIC, &tv);
 		long int i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_nsec / 1000) / 1000;
 #endif
-		if(i_timeleft <= 0 && CALCULATOR->busy()) sleep_ms(10);
+		if(i_timeleft <= 0 && CALCULATOR->busy()) sleep_ms(1);
 		while(CALCULATOR->busy() && i_timeleft > 0) {
-			sleep_ms(10);
-			i_timeleft -= 10;
+			sleep_ms(1);
+			i_timeleft -= 1;
 		}
 		if(CALCULATOR->busy()) {
 			CALCULATOR->abort();
@@ -8548,13 +8570,13 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		}
 	} else {
 
-		int i = 0;
-		while(CALCULATOR->busy() && i < 75) {
-			if(auto_calculate && i == ((do_factors || do_pfe || do_expand) ? 5 : 10)) {
+		long int i = 0;
+		while(CALCULATOR->busy() && i < 750) {
+			if(auto_calculate && i == ((do_factors || do_pfe || do_expand) ? 50 : 100)) {
 				CALCULATOR->abort();
 				was_aborted = true;
 			}
-			sleep_ms(10);
+			sleep_ms(1);
 			i++;
 		}
 		i = 0;
@@ -8578,9 +8600,9 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 #endif
 		while(CALCULATOR->busy()) {
 			if(cfile || auto_calculate) {
-				sleep_ms(100);
+				sleep_ms(10);
 			} else {
-				if(wait_for_key_press(100)) {
+				if(wait_for_key_press(10)) {
 #ifdef HAVE_LIBREADLINE
 					if(use_readline) {
 						c = rl_read_key();
@@ -8604,15 +8626,15 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 						has_printed = 0;
 					}
 				} else {
-					if(!result_only) {
+					if(i % 10 == 0 && !result_only) {
 						has_printed++;
 						printf(".");
 						fflush(stdout);
 					}
-					sleep_ms(100);
-#ifdef _WIN32
+					sleep_ms(10);
 					i++;
-					if(i == 1000 && !result_only) on_abort_display();
+#ifdef _WIN32
+					if(i == 10000 && !result_only) on_abort_display();
 #endif
 				}
 			}

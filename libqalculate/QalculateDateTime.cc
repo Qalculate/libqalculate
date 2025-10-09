@@ -381,6 +381,7 @@ bool QalculateDateTime::set(string str) {
 	}
 	bool b_t = false, b_tz = false, b_tspace = true;
 	size_t i_t = str.find("T");
+	if(i_t != string::npos && str.find_first_of(NUMBERS, i_t) == string::npos) i_t = string::npos;
 	if(i_t == string::npos) {
 		size_t i_c = str.find(":", 1);
 		if(i_c != string::npos) {
@@ -399,7 +400,7 @@ bool QalculateDateTime::set(string str) {
 	}
 	int newhour = 0, newmin = 0, newsec = 0;
 	int itz = 0;
-	if(i_t != string::npos && i_t < str.length() - 1 && is_in(NUMBERS, str[i_t + 1])) {
+	if(i_t != string::npos) {
 		b_t = true;
 		string time_str = str.substr(i_t + 1);
 		remove_blank_ends(time_str);
