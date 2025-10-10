@@ -55,16 +55,14 @@ int main(int argc, char *argv[]) {
 		if(n > 0) {
 			char *srcdir = (char*) malloc(n * sizeof(char));
 			getenv_s(&n, srcdir, n, "srcdir");
-			getcwd(curdir, 500);
-			chdir(srcdir);
+			if(getcwd(curdir, 500) && chdir(srcdir) == 0) {
+				in_srcdir = true;
+			}
 			free(srcdir);
-			in_srcdir = true;
 		}
 #else
 		const char *srcdir = getenv("srcdir");
-		if(srcdir && strlen(srcdir) > 0) {
-			getcwd(curdir, 500);
-			chdir(srcdir);
+		if(srcdir && strlen(srcdir) > 0 && getcwd(curdir, 500) && chdir(srcdir) == 0) {
 			in_srcdir = true;
 		}
 #endif

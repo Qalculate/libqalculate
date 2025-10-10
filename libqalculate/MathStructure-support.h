@@ -78,6 +78,37 @@
 
 #define FUNCTION_PROTECTED(evalops, id) (evalops.protected_function != NULL && evalops.protected_function == CALCULATOR->getFunctionById(id))
 
+#ifndef CLOCK_MONOTONIC
+#	define PREPARE_TIMECHECK_VAR struct timeval tv_end;
+#	define PREPARE_TIMECHECK_TIME(ms) \
+					gettimeofday(&tv_end, NULL); \
+					tv_end.tv_usec += ((ms) % 1000) * 1000; \
+					tv_end.tv_sec += ((ms) / 1000); \
+					if(tv_end.tv_usec >= 1000000L) { \
+						tv_end.tv_sec++; \
+						tv_end.tv_usec -= 1000000L; \
+					}
+#	define DO_TIMECHECK \
+					struct timeval tv; \
+					gettimeofday(&tv, NULL); \
+					if(tv.tv_sec > tv_end.tv_sec || (tv.tv_sec == tv_end.tv_sec && tv.tv_usec >= tv_end.tv_usec))
+#else
+#	define PREPARE_TIMECHECK_VAR struct timespec tv_end;
+#	define PREPARE_TIMECHECK_TIME(ms) \
+					clock_gettime(CLOCK_MONOTONIC, &tv_end); \
+					tv_end.tv_nsec += ((ms) % 1000) * 1000000L; \
+					tv_end.tv_sec += ((ms) / 1000); \
+					if(tv_end.tv_nsec >= 1000000000L) { \
+						tv_end.tv_sec++; \
+						tv_end.tv_nsec -= 1000000000L; \
+					}
+#	define DO_TIMECHECK \
+					struct timespec tv; \
+					clock_gettime(CLOCK_MONOTONIC, &tv); \
+					if(tv.tv_sec > tv_end.tv_sec || (tv.tv_sec == tv_end.tv_sec && tv.tv_nsec >= tv_end.tv_nsec))
+#endif
+#	define PREPARE_TIMECHECK(ms) PREPARE_TIMECHECK_VAR PREPARE_TIMECHECK_TIME(ms)
+
 void printRecursive(const MathStructure &mstruct);
 
 std::string format_and_print(const MathStructure &mstruct);

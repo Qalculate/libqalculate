@@ -160,10 +160,10 @@ bool Calculator::abort() {
 		b_busy = false;
 	} else {
 		// wait 5 seconds for clean abortation
-		int msecs = i_precision > 1000 ? 10000 : 5000;
-		while(b_busy && msecs > 0) {
+		PREPARE_TIMECHECK(i_precision > 1000 ? 10000 : 5000)
+		for(int i = 0; b_busy && i < 10000; i++) {
 			sleep_ms(1);
-			msecs -= 1;
+			DO_TIMECHECK {break;}
 		}
 		if(b_busy) {
 
@@ -225,9 +225,13 @@ bool Calculator::calculateRPN(MathStructure *mstruct, int command, size_t index,
 	tmp_tostruct = NULL;
 	if(!calculate_thread->write(false)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	if(!calculate_thread->write((void*) mstruct)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
-	while(msecs > 0 && b_busy) {
-		sleep_ms(1);
-		msecs -= 1;
+	if(msecs > 0 && b_busy) {
+		PREPARE_TIMECHECK(msecs)
+		msecs *= 2;
+		for(int i = 0; b_busy && i < msecs; i++) {
+			sleep_ms(1);
+			DO_TIMECHECK {break;}
+		}
 	}
 	if(had_msecs && b_busy) {
 		abort();
@@ -251,9 +255,13 @@ bool Calculator::calculateRPN(string str, int command, size_t index, int msecs, 
 	tmp_proc_registers = function_arguments;
 	if(!calculate_thread->write(true)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	if(!calculate_thread->write((void*) mstruct)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
-	while(msecs > 0 && b_busy) {
-		sleep_ms(1);
-		msecs -= 1;
+	if(msecs > 0 && b_busy) {
+		PREPARE_TIMECHECK(msecs)
+		msecs *= 2;
+		for(int i = 0; b_busy && i < msecs; i++) {
+			sleep_ms(1);
+			DO_TIMECHECK {break;}
+		}
 	}
 	if(had_msecs && b_busy) {
 		abort();
@@ -2322,9 +2330,13 @@ bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const 
 	if(!calculate_thread->write((void*) mstruct)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 
 	// check time while calculation proceeds
-	while(msecs > 0 && b_busy) {
-		sleep_ms(1);
-		msecs -= 1;
+	if(msecs > 0 && b_busy) {
+		PREPARE_TIMECHECK(msecs)
+		msecs *= 2;
+		for(int i = 0; b_busy && i < msecs; i++) {
+			sleep_ms(1);
+			DO_TIMECHECK {break;}
+		}
 	}
 	if(had_msecs && b_busy) {
 		if(!abort()) mstruct->setAborted();
@@ -2351,9 +2363,13 @@ bool Calculator::calculate(MathStructure *mstruct, int msecs, const EvaluationOp
 	if(!calculate_thread->write((void*) mstruct)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 
 	// check time while calculation proceeds
-	while(msecs > 0 && b_busy) {
-		sleep_ms(1);
-		msecs -= 1;
+	if(msecs > 0 && b_busy) {
+		PREPARE_TIMECHECK(msecs)
+		msecs *= 2;
+		for(int i = 0; b_busy && i < msecs; i++) {
+			sleep_ms(1);
+			DO_TIMECHECK {break;}
+		}
 	}
 	if(had_msecs && b_busy) {
 		if(!abort()) mstruct->setAborted();

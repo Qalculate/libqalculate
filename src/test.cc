@@ -1922,6 +1922,10 @@ int main(int argc, char *argv[]) {
 	evalops.structuring = STRUCTURING_SIMPLIFY;
 	//evalops.approximation = APPROXIMATION_EXACT;
 
+	for(size_t i = 0; i < 100000; i++) {
+		cout << rnd_expression(false, false, 5, 4, false, false, false, false, false) << endl;
+	}
+return 0;
 	/*po.use_unicode_signs = true;
 	po.number_fraction_format = FRACTION_DECIMAL;
 	bool b_approx = false;

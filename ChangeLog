@@ -2,6 +2,7 @@
 
 	* Improve speed when performing many multiple calculations read from file (by a factor of about 100 for simple calculations)
 	* Increase responsiveness by decreasing the length of sleep periods (from 10 to 1 ms) while waiting
+	* Improve calculation timer accuracy and add workaround for low time resolution for sleep on Windows
 
 2025-10-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

@@ -811,6 +811,7 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 	if(mand.size() < eorder.size()) return 0;
 
 	for(size_t i = 0; i < eorder.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
 		MathStructure msolve(vargs[0][eorder[i]]);
 		EvaluationOptions eo2 = eo;
 		eo2.isolate_var = &vargs[1][i];
@@ -976,6 +977,7 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 			}
 		} else {
 			for(size_t i3 = 0; i3 < mand[i].size(); i3++) {
+				if(CALCULATOR->aborted()) return 0;
 				mand[i][i3][0] = mstruct[i];
 				CALCULATOR->beginTemporaryStopMessages();
 				mand[i][i3].eval(eo);

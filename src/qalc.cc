@@ -2922,14 +2922,28 @@ string autocalc_result;
 
 bool autocalc_busy = false, autocalc_input_available = false, autocalc_aborted = false, autocalc_was_aborted = false;
 
+#ifndef CLOCK_MONOTONIC
+#	define DO_TIMECHECK_END \
+					struct timeval tv; \
+					gettimeofday(&tv, NULL); \
+					if(tv.tv_sec > t_end.tv_sec || (tv.tv_sec == t_end.tv_sec && tv.tv_usec >= t_end.tv_usec))
+#else
+#	define DO_TIMECHECK_END \
+					struct timespec tv; \
+					clock_gettime(CLOCK_MONOTONIC, &tv); \
+					if(tv.tv_sec > t_end.tv_sec || (tv.tv_sec == t_end.tv_sec && tv.tv_nsec / 1000 >= t_end.tv_usec))
+#endif
+
 void AutoCalcThread::run() {
 	while(true) {
 		int i = 0;
 		if(!read(&i) || i == 0) break;
 		if(i == 2) {
 			autocalc_busy = true;
-			for(size_t i2 = 0; i2 < 1000 && !autocalc_aborted; i2 += 1) {
+			PREPARE_TIMECHECK(1000);
+			for(int i = 0; i < 10000 && !autocalc_aborted; i++) {
 				sleep_ms(1);
+				DO_TIMECHECK {break;}
 			}
 			autocalc_busy = false;
 			if(autocalc_aborted) continue;
@@ -6945,18 +6959,9 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 	bool has_printed = false, was_aborted = false;
 
 	if(i_maxtime != 0) {
-#ifndef CLOCK_MONOTONIC
-		struct timeval tv;
-		gettimeofday(&tv, NULL);
-		long int i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_usec) / 1000;
-#else
-		struct timespec tv;
-		clock_gettime(CLOCK_MONOTONIC, &tv);
-		long int i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_nsec / 1000) / 1000;
-#endif
-		while(b_busy && view_thread->running && i_timeleft > 0) {
+		while(b_busy && view_thread->running) {
+			DO_TIMECHECK_END {break;}
 			sleep_ms(1);
-			i_timeleft -= 1;
 		}
 		if(b_busy && view_thread->running) {
 			on_abort_display();
@@ -6973,17 +6978,19 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 			}
 		}
 	} else {
-
-		long int i = 0;
-		while(b_busy && view_thread->running && i < 750) {
-			if(auto_calculate && i == 500) {
-				CALCULATOR->abort();
-				was_aborted = true;
-			}
+		PREPARE_TIMECHECK(auto_calculate ? 100 : 750);
+		int i = 0;
+		while(b_busy && view_thread->running && i < 10000) {
 			sleep_ms(1);
 			i++;
+			DO_TIMECHECK {break;}
 		}
 		i = 0;
+
+		if(auto_calculate && b_busy && view_thread->running) {
+			CALCULATOR->abort();
+			was_aborted = true;
+		}
 
 		if(b_busy && view_thread->running && !cfile && !auto_calculate) {
 			if(!result_only) {
@@ -7002,7 +7009,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		char c = 0;
 #endif
 		while(b_busy && view_thread->running) {
-			if(cfile) {
+			if(cfile || auto_calculate) {
 				sleep_ms(10);
 			} else {
 				if(wait_for_key_press(10)) {
@@ -7040,7 +7047,6 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 				}
 			}
 		}
-		i = 0;
 	}
 
 
@@ -7343,10 +7349,10 @@ void expression_format_updated(bool reparse) {
 
 void on_abort_command() {
 	CALCULATOR->abort();
-	int msecs = 5000;
-	while(b_busy && msecs > 0) {
+	PREPARE_TIMECHECK(5000);
+	for(int i = 0; i < 10000 && b_busy; i++) {
 		sleep_ms(10);
-		msecs -= 10;
+		DO_TIMECHECK {break;}
 	}
 	if(b_busy) {
 		command_thread->cancel();
@@ -7422,18 +7428,9 @@ void execute_command(int command_type, bool show_result, bool auto_calculate) {
 	}
 
 	if(i_maxtime != 0) {
-#ifndef CLOCK_MONOTONIC
-		struct timeval tv;
-		gettimeofday(&tv, NULL);
-		long int i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_usec) / 1000;
-#else
-		struct timespec tv;
-		clock_gettime(CLOCK_MONOTONIC, &tv);
-		long int i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_nsec / 1000) / 1000;
-#endif
-		while(b_busy && command_thread->running && i_timeleft > 0) {
+		while(b_busy && command_thread->running) {
+			DO_TIMECHECK_END {break;}
 			sleep_ms(1);
-			i_timeleft -= 1;
 		}
 		if(b_busy && command_thread->running) {
 			on_abort_command();
@@ -7441,17 +7438,21 @@ void execute_command(int command_type, bool show_result, bool auto_calculate) {
 			PUTS_UNICODE(_("aborted"));
 		}
 	} else {
-
-		long int i = 0;
 		bool has_printed = false;
-		while(b_busy && command_thread->running && i < 750) {
-			if(auto_calculate && i == 50) {
-				CALCULATOR->abort();
-				command_aborted = true;
-			}
+
+		PREPARE_TIMECHECK(auto_calculate ? 50 : 750);
+		int i = 0;
+		while(b_busy && command_thread->running && i < 10000) {
 			sleep_ms(1);
 			i++;
+			DO_TIMECHECK {break;}
 		}
+
+		if(auto_calculate && command_thread->running && b_busy) {
+			CALCULATOR->abort();
+			command_aborted = true;
+		}
+
 		i = 0;
 
 		if(b_busy && command_thread->running && !cfile && !auto_calculate) {
@@ -7517,7 +7518,6 @@ void execute_command(int command_type, bool show_result, bool auto_calculate) {
 				}
 			}
 		}
-		i = 0;
 
 		if(has_printed) printf("\n");
 
@@ -8548,19 +8548,9 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 	bool was_aborted = false;
 
 	if(i_maxtime != 0) {
-#ifndef CLOCK_MONOTONIC
-		struct timeval tv;
-		gettimeofday(&tv, NULL);
-		long int i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_usec) / 1000;
-#else
-		struct timespec tv;
-		clock_gettime(CLOCK_MONOTONIC, &tv);
-		long int i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_nsec / 1000) / 1000;
-#endif
-		if(i_timeleft <= 0 && CALCULATOR->busy()) sleep_ms(1);
-		while(CALCULATOR->busy() && i_timeleft > 0) {
+		while(CALCULATOR->busy()) {
+			DO_TIMECHECK_END {break;}
 			sleep_ms(1);
-			i_timeleft -= 1;
 		}
 		if(CALCULATOR->busy()) {
 			CALCULATOR->abort();
@@ -8569,18 +8559,18 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 			PUTS_UNICODE(_("aborted"));
 		}
 	} else {
-
-		long int i = 0;
-		while(CALCULATOR->busy() && i < 750) {
-			if(auto_calculate && i == ((do_factors || do_pfe || do_expand) ? 50 : 100)) {
-				CALCULATOR->abort();
-				was_aborted = true;
-			}
+		PREPARE_TIMECHECK(auto_calculate ? ((do_factors || do_pfe || do_expand) ? 50 : 100) : 750);
+		int i = 0;
+		while(CALCULATOR->busy() && i < 10000) {
 			sleep_ms(1);
 			i++;
+			DO_TIMECHECK {break;}
 		}
 		i = 0;
-
+		if(auto_calculate && CALCULATOR->busy()) {
+			CALCULATOR->abort();
+			was_aborted = true;
+		}
 		if(CALCULATOR->busy() && !cfile && !auto_calculate) {
 			if(!result_only) {
 				FPUTS_UNICODE(_("Calculating"), stdout);
@@ -8639,7 +8629,6 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 				}
 			}
 		}
-		i = 0;
 	}
 
 	if(auto_calculate && (was_aborted || parsed_mstruct->contains(m_undefined) || contains_extreme_number(*mstruct))) mstruct->setAborted();
@@ -8741,11 +8730,6 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 				CALCULATOR->stopControl();
 			}
 		}
-#ifndef CLOCK_MONOTONIC
-		if(i_maxtime) {struct timeval tv; gettimeofday(&tv, NULL); i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_usec) / 1000;}
-#else
-		if(i_maxtime) {struct timespec tv; clock_gettime(CLOCK_MONOTONIC, &tv); i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_nsec / 1000) / 1000;}
-#endif
 	}
 	if(has_printed) printf("\n");
 

@@ -250,9 +250,15 @@ MathStructure Calculator::convertTimeOut(string str, Unit *from_unit, Unit *to_u
 	if(!calculate_thread->write(b_parse)) {calculate_thread->cancel(); return mstruct;}
 	void *x = (void*) &mstruct;
 	if(!calculate_thread->write(x)) {calculate_thread->cancel(); return mstruct;}
-	while(msecs > 0 && b_busy) {
-		sleep_ms(1);
-		msecs -= 1;
+
+	PREPARE_TIMECHECK_VAR
+	if(msecs > 0 && b_busy) {
+		PREPARE_TIMECHECK_TIME(msecs)
+		msecs *= 2;
+		for(int i = 0; b_busy && i < msecs; i++) {
+			sleep_ms(1);
+			DO_TIMECHECK {break;}
+		}
 	}
 	if(had_msecs && b_busy) {
 		abort();
@@ -271,9 +277,11 @@ MathStructure Calculator::convertTimeOut(string str, Unit *from_unit, Unit *to_u
 	if(!calculate_thread->write(b_parse)) {calculate_thread->cancel(); return mstruct;}
 	x = (void*) &mstruct;
 	if(!calculate_thread->write(x)) {calculate_thread->cancel(); return mstruct;}
-	while(msecs > 0 && b_busy) {
-		sleep_ms(1);
-		msecs -= 1;
+	if(msecs > 0 && b_busy) {
+		for(int i = 0; b_busy && i < msecs; i++) {
+			sleep_ms(1);
+			DO_TIMECHECK {break;}
+		}
 	}
 	if(had_msecs && b_busy) {
 		abort();
