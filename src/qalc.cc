@@ -3423,7 +3423,7 @@ bool title_matches(ExpressionItem *item, const string &str, size_t minlength = 0
 			i++;
 		}
 		size_t i2 = title.find(' ', i);
-		if(equalsIgnoreCase(str, title, i, i2, minlength)) {
+		if(equalsIgnoreCase(str, title, i, str.length() + i, minlength)) {
 			return true;
 		}
 		if(i2 == string::npos) break;
