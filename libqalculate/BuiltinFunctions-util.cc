@@ -1070,6 +1070,7 @@ int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	return 0;
 #	endif
 #else
+	CALCULATOR->error(true, "%s is disabled when libqalculate is compiled with \"--disable-insecure\" configure option.", (preferredName().name + "()").c_str(), NULL);
 	return 0;
 #endif
 }

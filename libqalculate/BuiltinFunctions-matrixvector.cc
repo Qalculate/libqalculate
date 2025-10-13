@@ -1319,6 +1319,7 @@ LoadFunction::LoadFunction() : MathFunction("load", 1, 3) {
 	setDefaultValue(3, ",");
 }
 int LoadFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+#ifndef DISABLE_INSECURE
 	string delim = vargs[2].symbol();
 	if(delim == "tab") {
 		delim = "\t";
@@ -1328,6 +1329,10 @@ int LoadFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		return 0;
 	}
 	return 1;
+#else
+	CALCULATOR->error(true, "%s is disabled when libqalculate is compiled with \"--disable-insecure\" configure option.", (preferredName().name + "()").c_str(), NULL);
+	return 0;
+#endif
 }
 ExportFunction::ExportFunction() : MathFunction("export", 2, 3) {
 	setArgumentDefinition(1, new MatrixArgument());
@@ -1336,6 +1341,7 @@ ExportFunction::ExportFunction() : MathFunction("export", 2, 3) {
 	setDefaultValue(3, ",");
 }
 int ExportFunction::calculate(MathStructure&, const MathStructure &vargs, const EvaluationOptions&) {
+#ifndef DISABLE_INSECURE
 	string delim = vargs[2].symbol();
 	if(delim == "tab") {
 		delim = "\t";
@@ -1345,6 +1351,10 @@ int ExportFunction::calculate(MathStructure&, const MathStructure &vargs, const 
 		return 0;
 	}
 	return 1;
+#else
+	CALCULATOR->error(true, "%s is disabled when libqalculate is compiled with \"--disable-insecure\" configure option.", (preferredName().name + "()").c_str(), NULL);
+	return 0;
+#endif
 }
 KroneckerProductFunction::KroneckerProductFunction() : MathFunction("kron", 2) {
 	setArgumentDefinition(1, new MatrixArgument());

@@ -1674,11 +1674,9 @@ void Calculator::addBuiltinVariables() {
 	v_yesterday = (KnownVariable*) addVariable(new YesterdayVariable());
 	v_tomorrow = (KnownVariable*) addVariable(new TomorrowVariable());
 	v_now = (KnownVariable*) addVariable(new NowVariable());
-#ifndef DISABLE_INSECURE
 #if 	defined __linux__ || defined _WIN32
 	addVariable(new UptimeVariable());
 #	endif
-#endif
 
 }
 
@@ -1915,20 +1913,13 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new ForEachFunction());
 
 	f_save = addFunction(new SaveFunction());
-#ifndef DISABLE_INSECURE
 	f_load = addFunction(new LoadFunction());
 	f_export = addFunction(new ExportFunction());
-#else
-	f_load = NULL;
-	f_export = NULL;
-#endif
 
 	f_register = addFunction(new RegisterFunction());
 	f_stack = addFunction(new StackFunction());
 
-#ifndef DISABLE_INSECURE
 	addFunction(new CommandFunction());
-#endif
 
 	f_diff = addFunction(new DeriveFunction());
 	f_integrate = addFunction(new IntegrateFunction());

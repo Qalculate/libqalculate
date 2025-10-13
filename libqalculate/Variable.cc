@@ -665,7 +665,7 @@ void NowVariable::calculate(MathStructure &m) const {
 
 #include <fstream>
 
-void UptimeVariable:: calculate(MathStructure &m) const {
+void UptimeVariable::calculate(MathStructure &m) const {
 #ifndef DISABLE_INSECURE
 	Number nr;
 #	ifdef __linux__
@@ -684,6 +684,11 @@ void UptimeVariable:: calculate(MathStructure &m) const {
 	nr += (long int) (i_uptime / 1000);
 #	endif
 	m = nr;
+	Unit *u = CALCULATOR->getUnit("s");
+	if(u) m *= u;
+#else
+	CALCULATOR->error(true, "%s is disabled when libqalculate is compiled with \"--disable-insecure\" configure option.", preferredName().name.c_str(), NULL);
+	m = nr_zero;
 	Unit *u = CALCULATOR->getUnit("s");
 	if(u) m *= u;
 #endif
