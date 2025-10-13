@@ -3458,6 +3458,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 												best_pl = name_length + name_length_old;
 												best_pnl = name_length_old;
 												index = -1;
+												break;
 											}
 											if(!p_mode) {
 												str.erase(str_index - name_length_old, name_length_old);
