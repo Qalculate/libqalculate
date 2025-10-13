@@ -178,6 +178,19 @@ enum {
 		else if(unicode_exponents == 2) printops.use_unicode_signs = UNICODE_SIGNS_ONLY_UNIT_EXPONENTS;\
 	}
 
+void sleep_us(int us) {
+#ifdef _WIN32
+	Sleep(1);
+#elif _POSIX_C_SOURCE >= 199309L
+	struct timespec ts;
+	ts.tv_sec = 0;
+	ts.tv_nsec = us * 1000;
+	nanosleep(&ts, NULL);
+#else
+	usleep(us);
+#endif
+}
+
 int convert_from_local = -1;
 
 bool contains_unicode_char(const char *str) {
@@ -2756,23 +2769,13 @@ bool show_object_info(string name) {
 						po.restrict_to_parent_precision = false;
 						po.allow_non_usable = false;
 						po.is_approximate = &is_approximate;
-						bool b_phys = false;
-						Variable *v_planck = CALCULATOR->getActiveVariable("planck");
-						if(v_planck) {
-							string phys_cat = v_planck->category();
-							size_t i_sub = phys_cat.find("/");
-							if(i_sub != string::npos) phys_cat = phys_cat.substr(0, i_sub);
-							b_phys = (v->category().find(phys_cat) == 0);
-						}
-						if(b_phys) {
-							int prec_bak = CALCULATOR->getPrecision();
-							if(prec_bak < 20) CALCULATOR->setPrecision(20);
-							if(po.min_exp == EXP_PRECISION) po.min_exp = prec_bak;
-							value = CALCULATOR->print(((KnownVariable*) v)->get(), 100, po);
-							CALCULATOR->setPrecision(prec_bak);
-						} else {
-							value = CALCULATOR->print(((KnownVariable*) v)->get(), 100, po);
-						}
+						int prec_bak = CALCULATOR->getPrecision();
+						if(prec_bak > 40) CALCULATOR->setPrecision(40);
+						else if(prec_bak < 20) CALCULATOR->setPrecision(20);
+						if(po.min_exp == EXP_PRECISION && prec_bak < CALCULATOR->getPrecision()) po.min_exp = prec_bak;
+						else if(po.min_exp == EXP_NONE) po.min_exp = CALCULATOR->getPrecision();
+						value = CALCULATOR->print(((KnownVariable*) v)->get(), 1000, po);
+						CALCULATOR->setPrecision(prec_bak);
 						if((v->isApproximate() || is_approximate) && value.find(SIGN_PLUSMINUS) == string::npos) {
 							value.insert(0, " ");
 							if(printops.use_unicode_signs) value.insert(0, SIGN_ALMOST_EQUAL);
@@ -3017,6 +3020,10 @@ bool contains_updating_time(const MathStructure &m) {
 	return false;
 }
 
+string result_text_a;
+MathStructure *mstruct_a = NULL, *parsed_mstruct_a = NULL;
+MathStructure mstruct_exact_a;
+
 string current_action_text;
 void do_autocalc(bool force, const char *action_text) {
 	if(block_autocalc || autocalc <= 0 || unittest || (!autocalc_was_aborted && !force && prev_line == rl_line_buffer)) return;
@@ -3062,6 +3069,16 @@ void do_autocalc(bool force, const char *action_text) {
 				if(l > 0) expression_str.erase(expression_str.length() - l, l);
 			}
 			check_vi_mode_change();
+			if(!mstruct_a) {
+				mstruct_a = new MathStructure();
+				parsed_mstruct_a = new MathStructure();
+				mstruct_exact_a.setUndefined();
+			}
+			MathStructure *mbak = mstruct;
+			MathStructure *pbak = parsed_mstruct;
+			mstruct = mstruct_a;
+			parsed_mstruct = parsed_mstruct_a;
+			result_text_a = result_text;
 			execute_expression(false, OPERATION_ADD, NULL, false, 0, false, true);
 			if(!autocalc_input_available && ((!result_autocalculated && !autocalc_result.empty()) || force || prev_autocalc_result != autocalc_result || !current_action_text.empty() || prev_action_text)) {
 				result_autocalculated = true;
@@ -3121,6 +3138,9 @@ void do_autocalc(bool force, const char *action_text) {
 					if(autocalc_thread->running || autocalc_thread->start()) autocalc_thread->write(2);
 				}
 			}
+			parsed_mstruct = pbak;
+			mstruct = mbak;
+			result_text = result_text_a;
 		}
 	}
 	if(str.empty() && result_autocalculated && !autocalc_aborted) {
@@ -3656,7 +3676,13 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 						po.restrict_to_parent_precision = false;
 						po.allow_non_usable = false;
 						po.is_approximate = &is_approximate;
-						value = CALCULATOR->print(((KnownVariable*) v)->get(), 1000, po);
+						int prec_bak = CALCULATOR->getPrecision();
+						if(prec_bak > 40) CALCULATOR->setPrecision(40);
+						else if(prec_bak < 20) CALCULATOR->setPrecision(20);
+						if(po.min_exp == EXP_PRECISION && prec_bak < CALCULATOR->getPrecision()) po.min_exp = prec_bak;
+						else if(po.min_exp == EXP_NONE) po.min_exp = CALCULATOR->getPrecision();
+						value = CALCULATOR->print(((KnownVariable*) v)->get(), 100, po);
+						CALCULATOR->setPrecision(prec_bak);
 						if((v->isApproximate() || is_approximate) && value.find(SIGN_PLUSMINUS) == string::npos) {
 							value.insert(0, " ");
 							if(printops.use_unicode_signs) value.insert(0, SIGN_ALMOST_EQUAL);
@@ -6959,15 +6985,18 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 	bool has_printed = false, was_aborted = false;
 
 	if(i_maxtime != 0) {
+		int i = 0;
 		while(b_busy && view_thread->running) {
 			DO_TIMECHECK_END {break;}
-			sleep_ms(1);
+			if(i < 20) sleep_us(50);
+			else sleep_ms(1);
+			i++;
 		}
 		if(b_busy && view_thread->running) {
 			on_abort_display();
 			i_maxtime = -1;
 		}
-		int i = 1;
+		i = 1;
 		while(b_busy && view_thread->running) {
 			sleep_ms(10);
 			i++;
@@ -6981,7 +7010,8 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		PREPARE_TIMECHECK(auto_calculate ? 100 : 750);
 		int i = 0;
 		while(b_busy && view_thread->running && i < 10000) {
-			sleep_ms(1);
+			if(i < 10) sleep_us(100);
+			else sleep_ms(1);
 			i++;
 			DO_TIMECHECK {break;}
 		}
@@ -7428,9 +7458,12 @@ void execute_command(int command_type, bool show_result, bool auto_calculate) {
 	}
 
 	if(i_maxtime != 0) {
+		int i = 0;
 		while(b_busy && command_thread->running) {
 			DO_TIMECHECK_END {break;}
-			sleep_ms(1);
+			if(i < 20) sleep_us(50);
+			else sleep_ms(1);
+			i++;
 		}
 		if(b_busy && command_thread->running) {
 			on_abort_command();
@@ -7443,7 +7476,8 @@ void execute_command(int command_type, bool show_result, bool auto_calculate) {
 		PREPARE_TIMECHECK(auto_calculate ? 50 : 750);
 		int i = 0;
 		while(b_busy && command_thread->running && i < 10000) {
-			sleep_ms(1);
+			if(i < 10) sleep_us(100);
+			else sleep_ms(1);
 			i++;
 			DO_TIMECHECK {break;}
 		}
@@ -8374,7 +8408,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 
 	if(caret_as_xor) gsub("^", "⊻", str);
 
-	expression_executed = true;
+	if(!auto_calculate) expression_executed = true;
 
 	b_busy = true;
 
@@ -8548,9 +8582,12 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 	bool was_aborted = false;
 
 	if(i_maxtime != 0) {
+		int i = 0;
 		while(CALCULATOR->busy()) {
 			DO_TIMECHECK_END {break;}
-			sleep_ms(1);
+			if(i < 20) sleep_us(50);
+			else sleep_ms(1);
+			i++;
 		}
 		if(CALCULATOR->busy()) {
 			CALCULATOR->abort();
@@ -8562,7 +8599,8 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		PREPARE_TIMECHECK(auto_calculate ? ((do_factors || do_pfe || do_expand) ? 50 : 100) : 750);
 		int i = 0;
 		while(CALCULATOR->busy() && i < 10000) {
-			sleep_ms(1);
+			if(i < 10) sleep_us(100);
+			else sleep_ms(1);
 			i++;
 			DO_TIMECHECK {break;}
 		}

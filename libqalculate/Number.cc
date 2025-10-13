@@ -11650,6 +11650,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 					if(precexp > precision + prec_add) precexp = precision + prec_add;
 					if(exact && ((expo >= 0 && length - 1 < precexp) || (expo < 0 && expo > -PRECISION))) expo = 0;
 					else expo = length - 1;
+					if(expo == 0 && po.preserve_precision && po.min_exp > 0) {
+						for(long int i = length - 1; i >= 0; i--) {
+							if(mpz_str[i] != '0') {
+								break;
+							}
+							expo++;
+						}
+					}
 				} else {
 					// by default exponent = output string length - 1
 					expo = length - 1;

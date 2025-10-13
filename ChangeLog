@@ -38,7 +38,7 @@
 
 2025-09-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Improve accuracy for intervals in solutions to equations when using interval arithmethic
+	* Improve accuracy for intervals in solutions to equations when using interval arithmetic
 	* Improve handling of intervals in where expressions
 	* Move jerk, snap, crackle, and pop to subcategory
 	* Change title "Gee" to "Standard Gravity (unit)" and add standard gravity per second
@@ -54,7 +54,7 @@
 2025-09-25 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault when calculating log(a^n, a) with interval arthmetic is disabled
-	* Show warning and ask for confirmation when decativating interval arithmetic in qalc
+	* Show warning and ask for confirmation when deactivating interval arithmetic in qalc
 	* (Re)activate interval arithmetic in qalc (if configuration from prevision version)
 
 2025-09-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
