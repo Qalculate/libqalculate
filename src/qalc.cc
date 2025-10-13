@@ -686,13 +686,17 @@ int rlcom_tab(int a, int b) {
 	if(!str.empty() && (last_is_operator(str) || is_in(VECTOR_WRAPS PARENTHESISS SPACES, str.back()))) return key_insert(a, b);
 	bool b_clear = result_autocalculated;
 	if(b_clear) clear_autocalc();
+#	if RL_READLINE_VERSION >= 0x0802
 	if(!str.empty() && is_in(NUMBERS, str.back())) {
 		rl_completer_word_break_characters = NOT_IN_NAMES;
 		rl_complete_internal('!');
 		rl_completer_word_break_characters = rl_basic_word_break_characters;
 	} else {
+#	endif
 		rl_complete_internal('!');
+#	if RL_READLINE_VERSION >= 0x0802
 	}
+#	endif
 	if(b_clear) do_autocalc(true);
 	return 0;
 }
