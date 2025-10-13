@@ -4558,6 +4558,9 @@ int main(int argc, char *argv[]) {
 			}
 			if(!unittest || str.empty() || str[0] != '\t') remove_blank_ends(str);
 			if(str.empty() || str[0] == '#' || (str.length() >= 2 && str[0] == '/' && str[1] == '/')) continue;
+#ifdef DISABLE_INSECURE
+			if(unittest && str.find("libqalculate_tests_vector") != string::npos) break;
+#endif
 		} else {
 #ifdef HAVE_LIBREADLINE
 			rlbuffer = readline(prompt.c_str());
