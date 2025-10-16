@@ -612,6 +612,10 @@ Activates continuous calculation of the currently edited expression.
 Do not save expression history on exit.
 .PP
 .TP 8
+.B completion \fI(0 = off, 1* = select multiple, 2 = select, 3 = list multiple, 4 = list)\fP
+Determines completion action when pressing tab key. "select" shows a numbered list of matches and waits for an item to be selected by entering a number, while "list" returns directly to the expression without input. "select multiple" and "list multiple" completes the word directly if there is only one match.
+.PP
+.TP 8
 .B ignore locale \fI(yes, no*)\fP
 Ignore system language and use English (requires restart).
 .PP

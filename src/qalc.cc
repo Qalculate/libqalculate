@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <vector>
 #include <list>
+#include <algorithm>
 #ifdef HAVE_LIBREADLINE
 #	include <readline/readline.h>
 #	include <readline/history.h>
@@ -487,12 +488,6 @@ void replace_subscripts(string &str) {
 	}
 }
 
-vector<string> matches;
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 bool name_has_formatting(const ExpressionName *ename) {
 	if(ename->name.length() < 2) return false;
 	if(ename->suffix) return true;
@@ -504,40 +499,74 @@ bool name_has_formatting(const ExpressionName *ename) {
 
 #ifdef HAVE_LIBREADLINE
 
+vector<string> matches;
+
+#define COMPLETION_MATCH_NAME \
+		if(ename && l <= ename->name.length()) { \
+			b_match = true; \
+			b_formatted = false; \
+			for(size_t i2 = 0; i2 < l; i2++) { \
+				if(ename->name[i2] != text[i2]) { \
+					b_match = false; \
+					break; \
+				} \
+			} \
+		} \
+		if(!b_match && name_has_formatting(ename)) { \
+			strcmp = ename->formattedName(item->type(), true); \
+			if(l <= strcmp.length()) { \
+				b_match = true; \
+				b_formatted = true; \
+				for(size_t i2 = 0; i2 < l; i2++) { \
+					if(strcmp[i2] != text[i2]) { \
+						b_match = false; \
+						break; \
+					} \
+				} \
+			} \
+		}
+
 void completion_match_item(ExpressionItem *item, const char *text, size_t l) {
 	const ExpressionName *ename = NULL;
 	bool b_match = false, b_formatted = false;
 	string strcmp;
 	for(size_t name_i = 1; name_i <= item->countNames() && !b_match; name_i++) {
 		ename = &item->getName(name_i);
-		if(ename && l <= ename->name.length()) {
-			b_match = true;
-			b_formatted = false;
-			for(size_t i2 = 0; i2 < l; i2++) {
-				if(ename->name[i2] != text[i2]) {
-					b_match = false;
-					break;
-				}
-			}
+		if(!ename->abbreviation || ename->completion_only || ename->plural || ename->avoid_input || (ename->unicode && !printops.use_unicode_signs)) continue;
+		COMPLETION_MATCH_NAME
+	}
+	for(size_t name_i = 1; name_i <= item->countNames() && !b_match; name_i++) {
+		ename = &item->getName(name_i);
+		if(ename->abbreviation || ename->completion_only || ename->plural || ename->avoid_input || (ename->unicode && !printops.use_unicode_signs)) continue;
+		COMPLETION_MATCH_NAME
+	}
+	if(!printops.use_unicode_signs) {
+		for(size_t name_i = 1; name_i <= item->countNames() && !b_match; name_i++) {
+			ename = &item->getName(name_i);
+			if(!ename->unicode || !ename->abbreviation || ename->plural || ename->completion_only || ename->avoid_input) continue;
+			COMPLETION_MATCH_NAME
 		}
-		if(!b_match && name_has_formatting(ename)) {
-			strcmp = ename->formattedName(item->type(), true);
-			if(l <= strcmp.length()) {
-				b_match = true;
-				b_formatted = true;
-				for(size_t i2 = 0; i2 < l; i2++) {
-					if(strcmp[i2] != text[i2]) {
-						b_match = false;
-						break;
-					}
-				}
-			}
+		for(size_t name_i = 1; name_i <= item->countNames() && !b_match; name_i++) {
+			ename = &item->getName(name_i);
+			if(!ename->unicode || ename->abbreviation || ename->plural || ename->completion_only || ename->avoid_input) continue;
+			COMPLETION_MATCH_NAME
 		}
+	}
+	for(size_t name_i = 1; name_i <= item->countNames() && !b_match; name_i++) {
+		ename = &item->getName(name_i);
+		if((!ename->plural && !ename->completion_only) || (ename->completion_only && ename->name.length() > 10)) continue;
+		COMPLETION_MATCH_NAME
 	}
 	if(b_match && ename) {
 		if(ename->completion_only) {
-			ename = &item->preferredInputName(ename->abbreviation, printops.use_unicode_signs);
-			matches.push_back(ename->formattedName(item->type(), true, false, printops.use_unicode_signs));
+			if(printops.use_unicode_signs) {
+				ename = &item->preferredInputName(ename->abbreviation, printops.use_unicode_signs);
+				b_formatted = (text[0] >= 'A' || text[0] <= 'Z');
+				for(size_t i = 0; b_formatted && i < strlen(text); i++) {
+					if(text[i] == '_') b_formatted = false;
+				}
+			}
+			matches.push_back(b_formatted ? ename->formattedName(item->type(), true, false, printops.use_unicode_signs) : ename->name);
 		} else if(b_formatted) {
 			matches.push_back(ename->formattedName(item->type(), true, false, printops.use_unicode_signs));
 		} else {
@@ -546,26 +575,29 @@ void completion_match_item(ExpressionItem *item, const char *text, size_t l) {
 	}
 }
 
+void generate_completion_matches(const char *text) {
+	matches.clear();
+	size_t l = strlen(text);
+	for(size_t i = 0; i < CALCULATOR->functions.size(); i++) {
+		if(CALCULATOR->functions[i]->isActive()) {
+			completion_match_item(CALCULATOR->functions[i], text, l);
+		}
+	}
+	for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
+		if(CALCULATOR->variables[i]->isActive()) {
+			completion_match_item(CALCULATOR->variables[i], text, l);
+		}
+	}
+	for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
+		if(CALCULATOR->units[i]->isActive() && CALCULATOR->units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT) {
+			completion_match_item(CALCULATOR->units[i], text, l);
+		}
+	}
+}
 char *qalc_completion(const char *text, int index) {
 	if(index == 0) {
 		if(strlen(text) < 1) return NULL;
-		matches.clear();
-		size_t l = strlen(text);
-		for(size_t i = 0; i < CALCULATOR->functions.size(); i++) {
-			if(CALCULATOR->functions[i]->isActive()) {
-				completion_match_item(CALCULATOR->functions[i], text, l);
-			}
-		}
-		for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
-			if(CALCULATOR->variables[i]->isActive()) {
-				completion_match_item(CALCULATOR->variables[i], text, l);
-			}
-		}
-		for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
-			if(CALCULATOR->units[i]->isActive() && CALCULATOR->units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT) {
-				completion_match_item(CALCULATOR->units[i], text, l);
-			}
-		}
+		generate_completion_matches(text);
 	}
 	if(index >= 0 && index < (int) matches.size()) {
 		char *cstr = (char*) malloc(sizeof(char) *matches[index].length() + 1);
@@ -575,10 +607,6 @@ char *qalc_completion(const char *text, int index) {
 	return NULL;
 }
 
-#endif
-
-#ifdef __cplusplus
-}
 #endif
 
 int enable_unicode = -1;
@@ -658,6 +686,15 @@ void sigint_handler(int) {
 }
 #endif
 
+enum {
+	COMPLETION_OFF,
+	COMPLETION_SELECT_MULTIPLE,
+	COMPLETION_SELECT,
+	COMPLETION_LIST_MULTIPLE,
+	COMPLETION_LIST,
+};
+int completion_mode = COMPLETION_SELECT_MULTIPLE;
+
 #ifdef HAVE_LIBREADLINE
 
 int rl_getc_wrapper(FILE*);
@@ -666,9 +703,28 @@ void do_autocalc(bool force = false, const char *action_text = NULL);
 int key_insert(int, int);
 int last_is_operator(string str, bool allow_exp = false);
 
+bool was_completed = false;
+string completion_string;
+int completion_pos = -1;
+
+int preinput_hook() {
+	if(was_completed) {
+		was_completed = false;
+		if(!completion_string.empty()) {
+			rl_replace_line(completion_string.c_str(), 0);
+			rl_point = completion_pos;
+			rl_redisplay();
+			completion_string = "";
+			completion_pos = -1;
+			do_autocalc(true);
+		}
+	}
+	return 0;
+}
+
 int rlcom_tab(int a, int b) {
 	if(rl_point == 0) return key_insert(a, b);
-	string str;
+	string str, fullstr;
 	if(test_convert_from_local(rl_line_buffer)) {
 		char *gstr = locale_to_utf8(rl_line_buffer);
 		if(gstr) {
@@ -680,24 +736,98 @@ int rlcom_tab(int a, int b) {
 	} else {
 		str = rl_line_buffer;
 	}
+	fullstr = str;
 	if(rl_point != rl_end && (size_t) rl_point < str.length()) {
 		str = str.substr(0, rl_point);
 	}
 	if(!str.empty() && (last_is_operator(str) || is_in(VECTOR_WRAPS PARENTHESISS SPACES, str.back()))) return key_insert(a, b);
+	if(completion_mode == COMPLETION_OFF) return 0;
 	bool b_clear = result_autocalculated;
 	if(b_clear) clear_autocalc();
-#	if RL_READLINE_VERSION >= 0x0802
-	if(!str.empty() && is_in(NUMBERS, str.back())) {
-		rl_completer_word_break_characters = NOT_IN_NAMES;
-		rl_complete_internal('!');
-		rl_completer_word_break_characters = rl_basic_word_break_characters;
+	if((completion_mode == COMPLETION_SELECT || completion_mode == COMPLETION_SELECT_MULTIPLE) && !str.empty()) {
+		size_t pos = str.find_last_of(is_in(NUMBERS, str.back()) ? NOT_IN_NAMES : NOT_IN_NAMES NUMBERS);
+		if(pos == string::npos || pos < str.length() - 1) {
+			generate_completion_matches(pos == string::npos ? str.c_str() : str.substr(pos + 1).c_str());
+			if(matches.size() == 1 && completion_mode == COMPLETION_SELECT_MULTIPLE) {
+				rl_insert_text(matches[0].substr(str.length() - (pos == string::npos ? 0 : pos + 1)).c_str());
+			} else if(!matches.empty()) {
+				int rows = 0, cols = 0;
+				rl_get_screen_size(&rows, &cols);
+				std::sort(matches.begin(), matches.end(), std::locale());
+				size_t max_l = 0;
+				for(size_t i = 0; i < matches.size(); i++) {
+					matches[i].insert(0, i2s(i + 1) + ". ");
+					size_t l = unicode_length(matches[i]);
+					if(l > max_l) max_l = l;
+				}
+				int c = 0;
+				int max_tabs = (max_l / 8) + 1;
+				int max_c = cols / (max_tabs * 8);
+				puts("");
+				for(size_t i = 0; i < matches.size(); i++) {
+					c++;
+					if(c >= max_c || i == matches.size() - 1) {
+						c = 0;
+						PUTS_UNICODE(matches[i].c_str());
+					} else {
+						int l = unicode_length_check(matches[i].c_str());
+						int nr_of_tabs = max_tabs - (l / 8);
+						for(int tab_nr = 0; tab_nr < nr_of_tabs; tab_nr++) {
+							matches[i] += "\t";
+						}
+						FPUTS_UNICODE(matches[i].c_str(), stdout);
+					}
+				}
+				completion_string = "";
+				completion_pos = rl_point;
+				while(true) {
+					block_autocalc++;
+					if(matches.size() < 10) rl_num_chars_to_read = 1;
+					else if(matches.size() < 100) rl_num_chars_to_read = 2;
+					else rl_num_chars_to_read = 3;
+					char *rlbuffer = readline(": ");
+					rl_num_chars_to_read = 0;
+					block_autocalc--;
+					string svalue;
+					if(rlbuffer) {
+						svalue = rlbuffer;
+						free(rlbuffer);
+						remove_blank_ends(svalue);
+					}
+					int i = 0;
+					if(!svalue.empty() && svalue.find_first_not_of(NUMBERS) == string::npos) {
+						i = s2i(svalue);
+					}
+					if((size_t) i > matches.size()) continue;
+					was_completed = true;
+					if(i <= 0) {
+						completion_string = fullstr;
+						break;
+					}
+					string match = matches[i - 1].substr(matches[i - 1].find(". ") + 1);
+					remove_blank_ends(match);
+					completion_string = str.substr(0, pos == string::npos ? 0 : pos + 1);
+					completion_string += match;
+					completion_pos = completion_string.length();
+					completion_string += fullstr.substr(str.length());
+					break;
+				}
+			}
+		}
 	} else {
-#	endif
-		rl_complete_internal('!');
 #	if RL_READLINE_VERSION >= 0x0802
-	}
+		if(!str.empty() && is_in(NUMBERS, str.back())) {
+			rl_completer_word_break_characters = NOT_IN_NAMES;
+			rl_complete_internal(completion_mode == COMPLETION_LIST ? '?' : '!');
+			rl_completer_word_break_characters = rl_basic_word_break_characters;
+		} else {
 #	endif
-	if(b_clear) do_autocalc(true);
+			rl_complete_internal(completion_mode == COMPLETION_LIST ? '?' : '!');
+#	if RL_READLINE_VERSION >= 0x0802
+		}
+#	endif
+		if(b_clear) do_autocalc(true);
+	}
 	return 0;
 }
 #endif
@@ -1190,6 +1320,21 @@ void set_option(string str) {
 		SET_BOOL(autocalc);
 		if(autocalc > 0) rl_getc_function = &rl_getc_wrapper;
 		else rl_getc_function = &rl_getc;
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "completion", _("completion"))) {
+		int v = -1;
+		if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "off", _("off"))) v = COMPLETION_OFF;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "select", _("select"))) v = COMPLETION_SELECT;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "select multiple", _("select multiple"))) v = COMPLETION_SELECT_MULTIPLE;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "list", _("list"))) v = COMPLETION_LIST;
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "list multiple", _("list multiple"))) v = COMPLETION_LIST_MULTIPLE;
+		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
+			v = s2i(svalue);
+		}
+		if(v < COMPLETION_OFF || v > COMPLETION_LIST) {
+			PUTS_UNICODE(_("Illegal value."));
+		} else {
+			completion_mode = v;
+		}
 #endif
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "simplified percentage", _("simplified percentage")) || svar == "percent") SET_BOOL_PT(simplified_percentage)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "short multiplication", _("short multiplication")) || svar == "shortmul") SET_BOOL_D(printops.short_multiplication)
@@ -1958,6 +2103,7 @@ void set_option(string str) {
 			ADD_OPTION_TO_LIST1("rpn")
 #ifdef HAVE_LIBREADLINE
 			ADD_OPTION_TO_LIST("calculate as you type", "autocalc")
+			ADD_OPTION_TO_LIST1("completion")
 #endif
 			ADD_OPTION_TO_LIST("simplified percentage", "percent")
 			ADD_OPTION_TO_LIST("short multiplication", "shortmul")
@@ -2434,6 +2580,9 @@ bool show_set_help(string set_option = "") {
 	STR_AND_TABS_BOOL("calculate as you type", "autocalc", _("Activates continuous calculation of the currently edited expression."), (autocalc > 0));
 #endif
 	STR_AND_TABS_YESNO("clear history", "", _("Do not save expression history on exit."), clear_history_on_exit);
+#ifdef HAVE_LIBREADLINE
+	STR_AND_TABS_4("completion", "", _("Determines completion action when pressing tab key. \"select\" shows a numbered list of matches and waits for an item to be selected by entering a number, while \"list\" returns directly to the expression without input. \"select multiple\" and \"list multiple\" completes the word directly if there is only one match."), completion_mode, _("off"), _("select multiple"), _("select"), _("list multiple"), _("list"));
+#endif
 	STR_AND_TABS_YESNO("ignore locale", "", _("Ignore system language and use English (requires restart)."), ignore_locale);
 	if(SET_OPTION_MATCHES("language", "")) {
 		STR_AND_TABS_SET("language", "");
@@ -4474,6 +4623,7 @@ int main(int argc, char *argv[]) {
 	rl_readline_name = "qalc";
 	rl_basic_word_break_characters = NOT_IN_NAMES NUMBERS;
 	rl_completion_entry_function = qalc_completion;
+	rl_pre_input_hook = &preinput_hook;
 	if(interactive_mode) {
 		rl_bind_key('\t', rlcom_tab);
 		rl_bind_keyseq("\\C-[", key_escape);
@@ -4565,6 +4715,7 @@ int main(int argc, char *argv[]) {
 #ifdef HAVE_LIBREADLINE
 			rlbuffer = readline(prompt.c_str());
 			if(rlbuffer == NULL) break;
+			if(was_completed) continue;
 			check_vi_mode_change();
 			if(autocalc > 0 && result_autocalculated) {
 				printf("\033[0J");
@@ -6105,6 +6256,17 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("calculate as you type"), "autocalc"); str += b2yn(autocalc > 0, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 #endif
 			PRINT_AND_COLON_TABS(_("clear history"), ""); str += b2yn(clear_history_on_exit, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+#ifdef HAVE_LIBREADLINE
+			PRINT_AND_COLON_TABS(_("completion"), "");
+			switch(completion_mode) {
+				case COMPLETION_OFF: {str += _("off"); break;}
+				case COMPLETION_SELECT_MULTIPLE: {str += _("select multiple"); break;}
+				case COMPLETION_SELECT: {str += _("select"); break;}
+				case COMPLETION_LIST_MULTIPLE: {str += _("list multiple"); break;}
+				case COMPLETION_LIST: {str += _("list"); break;}
+			}
+			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+#endif
 			PRINT_AND_COLON_TABS(_("ignore locale"), ""); str += b2yn(ignore_locale, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			if(!custom_lang.empty()) {PRINT_AND_COLON_TABS(_("language"), ""); str += custom_lang; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())}
 			PRINT_AND_COLON_TABS(_("prompt"), ""); str += prompt; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
@@ -9522,6 +9684,10 @@ void load_preferences() {
 					}
 				} else if(svar == "calculate_as_you_type") {
 					autocalc = v;
+				} else if(svar == "completion_mode") {
+					if(v >= COMPLETION_OFF && v <= COMPLETION_LIST) {
+						completion_mode = v;
+					}
 				} else if(svar == "in_rpn_mode") {
 					rpn_mode = v;
 				} else if(svar == "rpn_syntax") {
@@ -9732,6 +9898,7 @@ bool save_preferences(bool mode) {
 	else fprintf(file, "approximation=%i\n", saved_evalops.approximation);
 	fprintf(file, "interval_calculation=%i\n", saved_evalops.interval_calculation);
 	if(autocalc >= 0) fprintf(file, "calculate_as_you_type=%i\n", saved_autocalc);
+	if(completion_mode != COMPLETION_SELECT_MULTIPLE) fprintf(file, "completion_mode=%i\n", completion_mode);
 	fprintf(file, "in_rpn_mode=%i\n", saved_rpn_mode);
 	fprintf(file, "rpn_syntax=%i\n", saved_evalops.parse_options.parsing_mode == PARSING_MODE_RPN);
 	fprintf(file, "limit_implicit_multiplication=%i\n", saved_evalops.parse_options.limit_implicit_multiplication);

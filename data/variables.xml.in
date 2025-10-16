@@ -633,7 +633,7 @@
       </variable>
       <variable>
         <_title>Loschmidt Constant (273.15 K, 101.325 kPa)</_title>
-        <names>s:loschmidt_atm,ros:loschmidt,aos:n_0</names>
+        <names>rs:loschmidt_atm,ros:loschmidt,aos:n_0</names>
         <value unit="auto">(101325*Pa)/(boltzmann*273.15*K)</value>
       </variable>
       <variable>
@@ -648,7 +648,7 @@
       </variable>
       <variable>
         <_title>Molar Volume of Ideal Gas (273.15 K, 101.325 kPa)</_title>
-        <names>s:ideal_gas_molar_atm,rs:ideal_gas_molar_101,aos:V_m101</names>
+        <names>rs:ideal_gas_molar_atm,ros:ideal_gas_molar_101,aos:V_m101</names>
         <value unit="auto">(gas_constant*273.15*K)/(101325*Pa)</value>
       </variable>
       <variable>
@@ -658,7 +658,7 @@
       </variable>
       <variable>
         <_title>Sackur-Tetrode constant (1 K, 101.325 kPa)</_title>
-        <names>s:sackur_tetrode_atm,rs:sackur_tetrode_101</names>
+        <names>rs:sackur_tetrode_atm,ros:sackur_tetrode_101</names>
         <value uncertainty="4.7E-10">-1.16487052149</value>
       </variable>
       <variable>
