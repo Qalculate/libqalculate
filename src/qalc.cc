@@ -3224,7 +3224,7 @@ bool contains_updating_time(const MathStructure &m) {
 
 string result_text_a;
 MathStructure *mstruct_a = NULL, *parsed_mstruct_a = NULL;
-MathStructure mstruct_exact_a;
+MathStructure mstruct_exact_a, prepend_mstruct_a;
 
 string current_action_text;
 void do_autocalc(bool force, const char *action_text) {
@@ -3276,11 +3276,12 @@ void do_autocalc(bool force, const char *action_text) {
 			if(!mstruct_a) {
 				mstruct_a = new MathStructure();
 				parsed_mstruct_a = new MathStructure();
-				mstruct_exact_a.setUndefined();
 			}
 			MathStructure *mbak = mstruct;
 			MathStructure *pbak = parsed_mstruct;
 			mstruct = mstruct_a;
+			mstruct_exact_a = mstruct_exact;
+			prepend_mstruct_a = prepend_mstruct;
 			parsed_mstruct = parsed_mstruct_a;
 			result_text_a = result_text;
 			execute_expression(false, OPERATION_ADD, NULL, false, 0, false, true);
@@ -3343,7 +3344,9 @@ void do_autocalc(bool force, const char *action_text) {
 				}
 			}
 			parsed_mstruct = pbak;
+			mstruct_exact = mstruct_exact_a;
 			mstruct = mbak;
+			prepend_mstruct = prepend_mstruct_a;
 			result_text = result_text_a;
 		}
 	}
@@ -7805,8 +7808,8 @@ void execute_command(int command_type, bool show_result, bool auto_calculate) {
 
 	if(!command_aborted) {
 		if(mfactor2) {mstruct_exact.set(*mfactor2); mfactor2->unref();}
-		mstruct->unref();
-		mstruct = mfactor;
+		mstruct->set_nocopy(*mfactor);
+		mfactor->unref();
 		switch(command_type) {
 			case COMMAND_FACTORIZE: {
 				printops.allow_factorization = true;
@@ -8947,13 +8950,15 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 	}
 
 	if(rpn_mode && (!do_stack || stack_index == 0)) {
-		mstruct->unref();
-		mstruct = CALCULATOR->getRPNRegister(1);
-		if(!mstruct) mstruct = new MathStructure();
-		else mstruct->ref();
 		if(auto_calculate) {
+			mstruct->set_nocopy(*CALCULATOR->getRPNRegister(1));
 			if(do_mathoperation) restore_rpn_stack();
 			else CALCULATOR->deleteRPNRegister(1);
+		} else {
+			mstruct->unref();
+			mstruct = CALCULATOR->getRPNRegister(1);
+			if(!mstruct) mstruct = new MathStructure();
+			else mstruct->ref();
 		}
 	}
 
