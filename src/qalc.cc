@@ -91,7 +91,7 @@ ParsingMode nonrpn_parsing_mode = PARSING_MODE_ADAPTIVE, saved_parsing_mode;
 int saved_percent;
 bool rpn_mode = false, saved_rpn_mode = false;
 int autocalc = -1, saved_autocalc = -1;
-int block_autocalc = 0;
+int block_autocalc = 0, block_keys = 0;
 bool caret_as_xor = false, saved_caret_as_xor = false;
 string custom_angle_unit, saved_custom_angle_unit;
 bool use_readline = true;
@@ -109,6 +109,7 @@ int dual_approximation = -1, saved_dual_approximation = -1;
 bool tc_set = false, sinc_set = false;
 bool ignore_locale = false;
 string custom_lang;
+bool utf8_encoding = false;
 bool result_only = false, vertical_space = true;
 bool do_imaginary_j = false;
 int sigint_action = 1;
@@ -201,7 +202,7 @@ bool contains_unicode_char(const char *str) {
 	return false;
 }
 bool test_convert_from_local(const char *str) {
-	if(convert_from_local == 0) return false;
+	if(convert_from_local == 0 || utf8_encoding) return false;
 	size_t n = 0;
 	for(size_t i = 0; i < strlen(str); i++) {
 		if(convert_from_local > 0) {
@@ -253,8 +254,8 @@ LPWSTR utf8wchar(const char *str) {
 #	define PUTS_UNICODE(x)		if(!contains_unicode_char(x)) {puts(x);} else if(printops.use_unicode_signs) {fputws(utf8wchar(x), stdout); puts("");} else {char *gstr = locale_from_utf8(x); if(gstr) {puts(gstr); free(gstr);} else {puts(x);}}
 #	define FPUTS_UNICODE(x, y)	if(!contains_unicode_char(x)) {fputs(x, y);} else if(printops.use_unicode_signs) {fputws(utf8wchar(x), y);} else {char *gstr = locale_from_utf8(x); if(gstr) {fputs(gstr, y); free(gstr);} else {fputs(x, y);}}
 #else
-#	define PUTS_UNICODE(x)		if(printops.use_unicode_signs || !contains_unicode_char(x)) {puts(x);} else {char *gstr = locale_from_utf8(x); if(gstr) {puts(gstr); free(gstr);} else {puts(x);}}
-#	define FPUTS_UNICODE(x, y)	if(printops.use_unicode_signs || !contains_unicode_char(x)) {fputs(x, y);} else {char *gstr = locale_from_utf8(x); if(gstr) {fputs(gstr, y); free(gstr);} else {fputs(x, y);}}
+#	define PUTS_UNICODE(x)		if(utf8_encoding || !contains_unicode_char(x)) {puts(x);} else {char *gstr = locale_from_utf8(x); if(gstr) {puts(gstr); free(gstr);} else {puts(x);}}
+#	define FPUTS_UNICODE(x, y)	if(utf8_encoding || !contains_unicode_char(x)) {fputs(x, y);} else {char *gstr = locale_from_utf8(x); if(gstr) {fputs(gstr, y); free(gstr);} else {fputs(x, y);}}
 #endif
 
 #define ADD_TO_COMMANDS(x, y) command_list.push_back(x); command_arg.push_back(y); command_list.push_back(_(x)); command_arg.push_back(y);
@@ -394,7 +395,9 @@ bool ask_question(const char *question, bool default_answer = false) {
 	while(true) {
 #ifdef HAVE_LIBREADLINE
 		block_autocalc++;
+		block_keys++;
 		char *rlbuffer = readline(" ");
+		block_keys--;
 		block_autocalc--;
 		if(!rlbuffer) return false;
 		string str = rlbuffer;
@@ -502,6 +505,7 @@ bool name_has_formatting(const ExpressionName *ename) {
 vector<string> matches;
 
 #define COMPLETION_MATCH_NAME \
+		if(ename->unicode && !allow_unicode) continue; \
 		if(ename && l <= ename->name.length()) { \
 			b_match = true; \
 			b_formatted = false; \
@@ -529,6 +533,11 @@ vector<string> matches;
 void completion_match_item(ExpressionItem *item, const char *text, size_t l) {
 	const ExpressionName *ename = NULL;
 	bool b_match = false, b_formatted = false;
+#ifdef _WIN32
+	bool allow_unicode = utf8_encoding || contains_unicode_char(text);
+#else
+	bool allow_unicode = utf8_encoding || printops.use_unicode_signs || contains_unicode_char(text);
+#endif
 	string strcmp;
 	for(size_t name_i = 1; name_i <= item->countNames() && !b_match; name_i++) {
 		ename = &item->getName(name_i);
@@ -540,7 +549,7 @@ void completion_match_item(ExpressionItem *item, const char *text, size_t l) {
 		if(ename->abbreviation || ename->completion_only || ename->plural || ename->avoid_input || (ename->unicode && !printops.use_unicode_signs)) continue;
 		COMPLETION_MATCH_NAME
 	}
-	if(!printops.use_unicode_signs) {
+	if(!printops.use_unicode_signs && allow_unicode) {
 		for(size_t name_i = 1; name_i <= item->countNames() && !b_match; name_i++) {
 			ename = &item->getName(name_i);
 			if(!ename->unicode || !ename->abbreviation || ename->plural || ename->completion_only || ename->avoid_input) continue;
@@ -559,7 +568,7 @@ void completion_match_item(ExpressionItem *item, const char *text, size_t l) {
 	}
 	if(b_match && ename) {
 		if(ename->completion_only) {
-			if(printops.use_unicode_signs) {
+			if(utf8_encoding) {
 				ename = &item->preferredInputName(ename->abbreviation, printops.use_unicode_signs);
 				b_formatted = (text[0] >= 'A' || text[0] <= 'Z');
 				for(size_t i = 0; b_formatted && i < strlen(text); i++) {
@@ -723,10 +732,13 @@ int preinput_hook() {
 }
 
 int rlcom_tab(int a, int b) {
+	if(block_keys) return 0;
 	if(rl_point == 0) return key_insert(a, b);
 	string str, fullstr;
+	bool local_converted = false;
 	if(test_convert_from_local(rl_line_buffer)) {
 		char *gstr = locale_to_utf8(rl_line_buffer);
+		local_converted = true;
 		if(gstr) {
 			str = gstr;
 			free(gstr);
@@ -749,7 +761,13 @@ int rlcom_tab(int a, int b) {
 		if(pos == string::npos || pos < str.length() - 1) {
 			generate_completion_matches(pos == string::npos ? str.c_str() : str.substr(pos + 1).c_str());
 			if(matches.size() == 1 && completion_mode == COMPLETION_SELECT_MULTIPLE) {
-				rl_insert_text(matches[0].substr(str.length() - (pos == string::npos ? 0 : pos + 1)).c_str());
+				if(matches[0].substr(str.length() - (pos == string::npos ? 0 : pos + 1)) == (pos == string::npos ? str : str.substr(pos + 1))) {
+					rl_insert_text(matches[0].substr(str.length() - (pos == string::npos ? 0 : pos + 1)).c_str());
+				} else {
+					rl_point = (pos == string::npos ? 0 : pos + 1);
+					rl_delete_text(rl_point, str.length());
+					rl_insert_text(matches[0].c_str());
+				}
 			} else if(!matches.empty()) {
 				int rows = 0, cols = 0;
 				rl_get_screen_size(&rows, &cols);
@@ -785,7 +803,9 @@ int rlcom_tab(int a, int b) {
 					if(matches.size() < 10) rl_num_chars_to_read = 1;
 					else if(matches.size() < 100) rl_num_chars_to_read = 2;
 					else rl_num_chars_to_read = 3;
+					block_keys++;
 					char *rlbuffer = readline(": ");
+					block_keys--;
 					rl_num_chars_to_read = 0;
 					block_autocalc--;
 					string svalue;
@@ -807,9 +827,38 @@ int rlcom_tab(int a, int b) {
 					string match = matches[i - 1].substr(matches[i - 1].find(". ") + 1);
 					remove_blank_ends(match);
 					completion_string = str.substr(0, pos == string::npos ? 0 : pos + 1);
-					completion_string += match;
+					if(local_converted) {
+						char *gstr = locale_from_utf8(completion_string.c_str());
+						if(gstr) {
+							completion_string = gstr;
+							free(gstr);
+						}
+					}
+					if(utf8_encoding || !contains_unicode_char(match.c_str())) {
+						completion_string += match;
+					} else {
+						char *gstr = locale_from_utf8(match.c_str());
+						if(gstr) {
+							completion_string += gstr;
+							free(gstr);
+						} else {
+							completion_string += match;
+						}
+					}
 					completion_pos = completion_string.length();
-					completion_string += fullstr.substr(str.length());
+					if(fullstr.length() != str.length()) {
+						if(local_converted) {
+							char *gstr = locale_from_utf8(fullstr.substr(str.length()).c_str());
+							if(gstr) {
+								completion_string += gstr;
+								free(gstr);
+							} else {
+								completion_string += fullstr.substr(str.length());
+							}
+						} else {
+							completion_string += fullstr.substr(str.length());
+						}
+					}
 					break;
 				}
 			}
@@ -3184,8 +3233,10 @@ void do_autocalc(bool force, const char *action_text) {
 	if(force) prev_autocalc_result = "";
 	if(action_text) current_action_text = action_text;
 	string orig_str;
+	bool local_converted = false;
 	if(test_convert_from_local(rl_line_buffer)) {
 		char *gstr = locale_to_utf8(rl_line_buffer);
+		local_converted = true;
 		if(gstr) {
 			orig_str = gstr;
 			free(gstr);
@@ -3276,7 +3327,7 @@ void do_autocalc(bool force, const char *action_text) {
 				if(vertical_space) sout += "\n";
 				sout += "\033["; sout += i2s(autocalc_lines); sout += "A";
 				if(move_pos) {
-					sout += "\033["; sout += i2s(unicode_length(orig_str, rl_point) + prompt_l + 1); sout += "G";
+					sout += "\033["; sout += i2s((local_converted ? rl_point : unicode_length(orig_str, rl_point)) + prompt_l + 1); sout += "G";
 				}
 				FPUTS_UNICODE(sout.c_str(), stdout);
 				fflush(stdout);
@@ -3329,6 +3380,7 @@ bool ans_updated = false;
 bool prev_ans_var = false;
 
 int key_insert(int, int) {
+	if(block_keys) return 0;
 #ifdef HAVE_LIBREADLINE
 	if(vans[0]->get().isUndefined()) return 0;
 	if(!ans_updated && prev_ans_var) {
@@ -3382,6 +3434,7 @@ int key_insert(int, int) {
 }
 
 int key_clear(int, int) {
+	if(block_keys) return 0;
 #ifdef _WIN32
 	system("cls");
 #else
@@ -3397,6 +3450,7 @@ int key_clear(int, int) {
 
 #ifdef HAVE_LIBREADLINE
 int key_escape(int, int) {
+	if(block_keys) return 0;
 	if(rl_end > 0) {
 		rl_replace_line("", 0);
 		rl_redisplay();
@@ -3406,6 +3460,7 @@ int key_escape(int, int) {
 #endif
 
 int key_exact(int, int) {
+	if(block_keys) return 0;
 	bool silent = false;
 #ifdef HAVE_LIBREADLINE
 	if(rl_end > 0) {
@@ -3442,6 +3497,7 @@ int key_exact(int, int) {
 }
 
 int key_fraction(int, int) {
+	if(block_keys) return 0;
 	bool silent = false;
 #ifdef HAVE_LIBREADLINE
 	if(rl_end > 0) {
@@ -3486,6 +3542,7 @@ int key_fraction(int, int) {
 }
 
 int key_save(int, int) {
+	if(block_keys) return 0;
 #ifdef HAVE_LIBREADLINE
 	if(rl_end > 0) {
 		rl_point = 0;
@@ -3504,7 +3561,9 @@ int key_save(int, int) {
 	FPUTS_UNICODE(_("Name"), stdout);
 #ifdef HAVE_LIBREADLINE
 	block_autocalc++;
+	block_keys++;
 	char *rlbuffer = readline(": ");
+	block_keys--;
 	block_autocalc--;
 	if(!rlbuffer) return 1;
 	name = rlbuffer;
@@ -3555,7 +3614,9 @@ int key_save(int, int) {
 	fputs(prompt.c_str(), stdout);
 #ifdef HAVE_LIBREADLINE
 	block_autocalc++;
+	block_keys++;
 	rlbuffer = readline("");
+	block_keys--;
 	block_autocalc--;
 	if(rlbuffer) free(rlbuffer);
 #endif
@@ -4017,7 +4078,9 @@ void ask_autocalc() {
 	while(true) {
 		autocalc = 0;
 		block_autocalc++;
+		block_keys++;
 		char *rlbuffer = readline(" ");
+		block_keys--;
 		block_autocalc--;
 		if(!rlbuffer) {autocalc = -1; break;}
 		string svalue = rlbuffer;
@@ -4055,11 +4118,6 @@ int main(int argc, char *argv[]) {
 	result_only = false;
 	bool load_units = true, load_functions = true, load_variables = true, load_currencies = true, load_datasets = true;
 	load_global_defs = true;
-#ifdef _WIN32
-	printops.use_unicode_signs = false;
-#else
-	printops.use_unicode_signs = true;
-#endif
 	fetch_exchange_rates_at_startup = false;
 	char list_type = 'n';
 	string search_str;
@@ -4122,6 +4180,19 @@ int main(int argc, char *argv[]) {
 #endif
 
 	if(!ignore_locale) setlocale(LC_ALL, "");
+	else setlocale(LC_CTYPE, "");
+
+	char *gstr = locale_from_utf8(SIGN_MULTIPLICATION);
+	if(gstr) {
+		utf8_encoding = !strcmp(gstr, SIGN_MULTIPLICATION);
+		free(gstr);
+	}
+#ifndef _WIN32
+	else {
+		utf8_encoding = true;
+	}
+#endif
+	printops.use_unicode_signs = utf8_encoding;
 
 	int expression_after_argc = -1;
 	for(int i = 1; i < argc; i++) {
@@ -4782,7 +4853,9 @@ int main(int argc, char *argv[]) {
 				FPUTS_UNICODE(_("Name"), stdout);
 #ifdef HAVE_LIBREADLINE
 				block_autocalc++;
+				block_keys++;
 				char *rlbuffer = readline(": ");
+				block_keys--;
 				block_autocalc--;
 				if(!rlbuffer) {
 					str = "";
@@ -7024,7 +7097,9 @@ bool ask_implicit() {
 	while(true) {
 #ifdef HAVE_LIBREADLINE
 		block_autocalc++;
+		block_keys++;
 		char *rlbuffer = readline(": ");
+		block_keys--;
 		block_autocalc--;
 		if(!rlbuffer) break;
 		string svalue = rlbuffer;
@@ -7795,7 +7870,9 @@ bool ask_sinc() {
 	while(true) {
 #ifdef HAVE_LIBREADLINE
 		block_autocalc++;
+		block_keys++;
 		char *rlbuffer = readline(": ");
+		block_keys--;
 		block_autocalc--;
 		if(!rlbuffer) {b_ret = false; break;}
 		string svalue = rlbuffer;
@@ -7892,7 +7969,9 @@ bool ask_tc() {
 	while(true) {
 #ifdef HAVE_LIBREADLINE
 		block_autocalc++;
+		block_keys++;
 		char *rlbuffer = readline(": ");
+		block_keys--;
 		block_autocalc--;
 		if(!rlbuffer) {b_ret = false; break;}
 		string svalue = rlbuffer;
@@ -7974,7 +8053,9 @@ bool ask_comma() {
 	while(true) {
 #ifdef HAVE_LIBREADLINE
 		block_autocalc++;
+		block_keys++;
 		char *rlbuffer = readline(": ");
+		block_keys--;
 		block_autocalc--;
 		if(!rlbuffer) {b_ret = false; break;}
 		string svalue = rlbuffer;
@@ -8053,7 +8134,9 @@ bool ask_dot() {
 	while(true) {
 #ifdef HAVE_LIBREADLINE
 		block_autocalc++;
+		block_keys++;
 		char *rlbuffer = readline(": ");
+		block_keys--;
 		block_autocalc--;
 		if(!rlbuffer) {b_ret = false; break;}
 		string svalue = rlbuffer;
@@ -8143,7 +8226,9 @@ bool ask_percent() {
 	while(true) {
 #ifdef HAVE_LIBREADLINE
 		block_autocalc++;
+		block_keys++;
 		char *rlbuffer = readline(": ");
+		block_keys--;
 		block_autocalc--;
 		if(!rlbuffer) {b_ret = false; break;}
 		string svalue = rlbuffer;
