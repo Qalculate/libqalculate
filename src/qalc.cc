@@ -731,6 +731,11 @@ int preinput_hook() {
 	return 0;
 }
 
+int tab_timeout_hook() {
+	rl_stuff_char('\r');
+	return 0;
+}
+
 int rlcom_tab(int a, int b) {
 	if(block_keys) return 0;
 	if(rl_point == 0) return key_insert(a, b);
@@ -800,28 +805,46 @@ int rlcom_tab(int a, int b) {
 				completion_pos = rl_point;
 				while(true) {
 					block_autocalc++;
-					if(matches.size() < 10) rl_num_chars_to_read = 1;
-					else if(matches.size() < 100) rl_num_chars_to_read = 2;
-					else rl_num_chars_to_read = 3;
 					block_keys++;
-					char *rlbuffer = readline(": ");
+					fputs(": ", stdout);
+					fflush(stdout);
+					int c = rl_read_key();
+					if(c == '\033') {
+						int timeout_bak = rl_set_keyboard_input_timeout(0);
+						rl_hook_func_t *hook_bak = rl_event_hook;
+						rl_event_hook = &tab_timeout_hook;
+						while(rl_read_key() != '\r') {}
+						rl_event_hook = hook_bak;
+						rl_set_keyboard_input_timeout(timeout_bak);
+					}
+					size_t i = 0;
+					size_t n = 0;
+					while(c > 32) {
+						if(c == 127) {
+							if(n == 0) break;
+							i /= 10;
+							fputs("\033[1D\033[0J", stdout);
+							fflush(stdout);
+							n--;
+						} else if(c >= '0' && c <= '9') {
+							putc((char) c, stdout);
+							fflush(stdout);
+							i *= 10;
+							i += c - '0';
+							n++;
+						}
+						if(i * 10 > matches.size()) break;
+						c = rl_read_key();
+						if(c != '\r' && c < 32) i = 0;
+					}
 					block_keys--;
-					rl_num_chars_to_read = 0;
 					block_autocalc--;
-					string svalue;
-					if(rlbuffer) {
-						svalue = rlbuffer;
-						free(rlbuffer);
-						remove_blank_ends(svalue);
-					}
-					int i = 0;
-					if(!svalue.empty() && svalue.find_first_not_of(NUMBERS) == string::npos) {
-						i = s2i(svalue);
-					}
-					if((size_t) i > matches.size()) continue;
+					rl_clear_visible_line();
+					if(i > matches.size()) continue;
 					was_completed = true;
-					if(i <= 0) {
+					if(i == 0) {
 						completion_string = fullstr;
+						rl_done = 1;
 						break;
 					}
 					string match = matches[i - 1].substr(matches[i - 1].find(". ") + 1);
@@ -859,6 +882,7 @@ int rlcom_tab(int a, int b) {
 							completion_string += fullstr.substr(str.length());
 						}
 					}
+					rl_done = 1;
 					break;
 				}
 			}
