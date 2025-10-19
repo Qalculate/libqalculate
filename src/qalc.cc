@@ -780,18 +780,21 @@ int rlcom_tab(int a, int b) {
 				size_t max_l = 0;
 				for(size_t i = 0; i < matches.size(); i++) {
 					matches[i].insert(0, i2s(i + 1) + ". ");
+					if(i < 9) matches[i].insert(0, " ");
 					size_t l = unicode_length(matches[i]);
 					if(l > max_l) max_l = l;
 				}
 				int c = 0;
 				int max_tabs = (max_l / 8) + 1;
 				int max_c = cols / (max_tabs * 8);
+				int l = 0;
 				puts("");
 				for(size_t i = 0; i < matches.size(); i++) {
 					c++;
 					if(c >= max_c || i == matches.size() - 1) {
 						c = 0;
 						PUTS_UNICODE(matches[i].c_str());
+						l++;
 					} else {
 						int l = unicode_length_check(matches[i].c_str());
 						int nr_of_tabs = max_tabs - (l / 8);
@@ -809,14 +812,6 @@ int rlcom_tab(int a, int b) {
 					fputs(": ", stdout);
 					fflush(stdout);
 					int c = rl_read_key();
-					if(c == '\033') {
-						int timeout_bak = rl_set_keyboard_input_timeout(0);
-						rl_hook_func_t *hook_bak = rl_event_hook;
-						rl_event_hook = &tab_timeout_hook;
-						while(rl_read_key() != '\r') {}
-						rl_event_hook = hook_bak;
-						rl_set_keyboard_input_timeout(timeout_bak);
-					}
 					size_t i = 0;
 					size_t n = 0;
 					while(c > 32) {
@@ -833,14 +828,25 @@ int rlcom_tab(int a, int b) {
 							i += c - '0';
 							n++;
 						}
-						if(i * 10 > matches.size()) break;
+						if(i * 10 > matches.size() || (i > 0 && i < 10 && n > (matches.size() >= 100 ? 2 : 1)) || (i >= 10 && i < 100 && n > 2)) break;
 						c = rl_read_key();
-						if(c != '\r' && c < 32) i = 0;
+						if(c == '\b') c = 127;
+						if(c != '\f' && c != '\n' && c != '\r' && c < 32) i = 0;
+					}
+					if(c == '\033') {
+						int timeout_bak = rl_set_keyboard_input_timeout(0);
+						rl_hook_func_t *hook_bak = rl_event_hook;
+						rl_event_hook = &tab_timeout_hook;
+						while(rl_read_key() != '\r') {}
+						rl_event_hook = hook_bak;
+						rl_set_keyboard_input_timeout(timeout_bak);
 					}
 					block_keys--;
 					block_autocalc--;
 					rl_clear_visible_line();
 					if(i > matches.size()) continue;
+					fprintf(stdout, "\033[%iF\033[0J", l + 1);
+					fflush(stdout);
 					was_completed = true;
 					if(i == 0) {
 						completion_string = fullstr;
@@ -903,6 +909,11 @@ int rlcom_tab(int a, int b) {
 	}
 	return 0;
 }
+void completion_hook(char**, int, int) {
+	if(block_keys || rl_point == 0) return;
+	rlcom_tab(0, 0);
+}
+
 #endif
 
 int countRows(const char *str, int cols) {
@@ -1075,6 +1086,8 @@ bool check_exchange_rates() {
 #ifdef HAVE_LIBREADLINE
 void check_vi_mode_change(bool initial = false) {
 	if(initial) mode_in_prompt = (strcmp("on", rl_variable_value("show-mode-in-prompt")) == 0);
+	if((completion_mode == COMPLETION_SELECT || completion_mode == COMPLETION_SELECT_MULTIPLE) && rl_editing_mode == 0) rl_completion_display_matches_hook = &completion_hook;
+	else rl_completion_display_matches_hook = NULL;
 	if(!mode_in_prompt) return;
 	int cur_mode = 0;
 	if(rl_editing_mode == 0) {
@@ -1407,6 +1420,8 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
 			completion_mode = v;
+			if((completion_mode == COMPLETION_SELECT || completion_mode == COMPLETION_SELECT_MULTIPLE) && rl_editing_mode == 0) rl_completion_display_matches_hook = &completion_hook;
+			else rl_completion_display_matches_hook = NULL;
 		}
 #endif
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "simplified percentage", _("simplified percentage")) || svar == "percent") SET_BOOL_PT(simplified_percentage)
