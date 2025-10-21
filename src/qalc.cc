@@ -390,13 +390,26 @@ bool equalsIgnoreCaseFirst(const string &str1, const char *str2) {
 	return true;
 }
 
+#define READLINE_SPACE_PROMPT \
+		char *rlbuffer = NULL; \
+		if(mode_in_prompt && prompt_l > unicode_length_check(prompt.c_str())) { \
+			fputs(" ", stdout); \
+			rlbuffer = readline(""); \
+		} else { \
+			rlbuffer = readline(" "); \
+		}
+
+#define READLINE_COLON_PROMPT \
+		fputs(":", stdout); \
+		READLINE_SPACE_PROMPT
+
 bool ask_question(const char *question, bool default_answer = false) {
 	FPUTS_UNICODE(question, stdout);
 	while(true) {
 #ifdef HAVE_LIBREADLINE
 		block_autocalc++;
 		block_keys++;
-		char *rlbuffer = readline(" ");
+		READLINE_SPACE_PROMPT
 		block_keys--;
 		block_autocalc--;
 		if(!rlbuffer) return false;
@@ -3604,7 +3617,7 @@ int key_save(int, int) {
 #ifdef HAVE_LIBREADLINE
 	block_autocalc++;
 	block_keys++;
-	char *rlbuffer = readline(": ");
+	READLINE_COLON_PROMPT
 	block_keys--;
 	block_autocalc--;
 	if(!rlbuffer) return 1;
@@ -4121,7 +4134,7 @@ void ask_autocalc() {
 		autocalc = 0;
 		block_autocalc++;
 		block_keys++;
-		char *rlbuffer = readline(" ");
+		READLINE_SPACE_PROMPT
 		block_keys--;
 		block_autocalc--;
 		if(!rlbuffer) {autocalc = -1; break;}
@@ -4896,7 +4909,7 @@ int main(int argc, char *argv[]) {
 #ifdef HAVE_LIBREADLINE
 				block_autocalc++;
 				block_keys++;
-				char *rlbuffer = readline(": ");
+				READLINE_COLON_PROMPT
 				block_keys--;
 				block_autocalc--;
 				if(!rlbuffer) {
@@ -7140,7 +7153,7 @@ bool ask_implicit() {
 #ifdef HAVE_LIBREADLINE
 		block_autocalc++;
 		block_keys++;
-		char *rlbuffer = readline(": ");
+		READLINE_COLON_PROMPT
 		block_keys--;
 		block_autocalc--;
 		if(!rlbuffer) break;
@@ -7913,7 +7926,7 @@ bool ask_sinc() {
 #ifdef HAVE_LIBREADLINE
 		block_autocalc++;
 		block_keys++;
-		char *rlbuffer = readline(": ");
+		READLINE_COLON_PROMPT
 		block_keys--;
 		block_autocalc--;
 		if(!rlbuffer) {b_ret = false; break;}
@@ -8012,7 +8025,7 @@ bool ask_tc() {
 #ifdef HAVE_LIBREADLINE
 		block_autocalc++;
 		block_keys++;
-		char *rlbuffer = readline(": ");
+		READLINE_COLON_PROMPT
 		block_keys--;
 		block_autocalc--;
 		if(!rlbuffer) {b_ret = false; break;}
@@ -8096,7 +8109,7 @@ bool ask_comma() {
 #ifdef HAVE_LIBREADLINE
 		block_autocalc++;
 		block_keys++;
-		char *rlbuffer = readline(": ");
+		READLINE_COLON_PROMPT
 		block_keys--;
 		block_autocalc--;
 		if(!rlbuffer) {b_ret = false; break;}
@@ -8177,7 +8190,7 @@ bool ask_dot() {
 #ifdef HAVE_LIBREADLINE
 		block_autocalc++;
 		block_keys++;
-		char *rlbuffer = readline(": ");
+		READLINE_COLON_PROMPT
 		block_keys--;
 		block_autocalc--;
 		if(!rlbuffer) {b_ret = false; break;}
@@ -8269,7 +8282,7 @@ bool ask_percent() {
 #ifdef HAVE_LIBREADLINE
 		block_autocalc++;
 		block_keys++;
-		char *rlbuffer = readline(": ");
+		READLINE_COLON_PROMPT
 		block_keys--;
 		block_autocalc--;
 		if(!rlbuffer) {b_ret = false; break;}
@@ -8990,7 +9003,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 
 	if(rpn_mode && (!do_stack || stack_index == 0)) {
 		if(auto_calculate) {
-			mstruct->set_nocopy(*CALCULATOR->getRPNRegister(1));
+			if(CALCULATOR->getRPNRegister(1)) mstruct->set_nocopy(*CALCULATOR->getRPNRegister(1));
 			if(do_mathoperation) restore_rpn_stack();
 			else CALCULATOR->deleteRPNRegister(1);
 		} else {
@@ -9468,7 +9481,7 @@ void load_preferences() {
 		makeDir(getLocalDir());
 	}
 
-	int version_numbers[] = {5, 8, 0};
+	int version_numbers[] = {5, 8, 1};
 
 	if(file) {
 		char line[10000];

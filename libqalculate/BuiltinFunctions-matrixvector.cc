@@ -1330,7 +1330,7 @@ int LoadFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	return 1;
 #else
-	CALCULATOR->error(true, "%s is disabled when libqalculate is compiled with \"--disable-insecure\" configure option.", (preferredName().name + "()").c_str(), NULL);
+	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), (preferredName().name + "()").c_str(), "libqalculate", "--disable-insecure", NULL);
 	return 0;
 #endif
 }
@@ -1352,7 +1352,7 @@ int ExportFunction::calculate(MathStructure&, const MathStructure &vargs, const 
 	}
 	return 1;
 #else
-	CALCULATOR->error(true, "%s is disabled when libqalculate is compiled with \"--disable-insecure\" configure option.", (preferredName().name + "()").c_str(), NULL);
+	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), (preferredName().name + "()").c_str(), "libqalculate", "--disable-insecure", NULL);
 	return 0;
 #endif
 }

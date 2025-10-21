@@ -3689,7 +3689,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								}
 							}
 						}
-						if(vt2 >= -1 && name && compare_name_with_error(*name, full_name, name_length, base, underscore, errors_allowed, case_sensitive)) {
+						if(vt2 >= -1 && name && compare_name_with_error(*name, full_name, name_length, base, underscore, errors_allowed, case_sensitive) && ename->name != full_name) {
 							CALCULATOR->error(false, _("Did you mean \"%s\" (instead of \"%s\")?"), ename->formattedName(vt2 == 0 ? -1 : ((ExpressionItem*) object)->type(), underscore).c_str(), full_name.c_str(), NULL);
 							full_name = "";
 							break;

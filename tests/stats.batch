@@ -20,6 +20,10 @@ normdistinv(0.2, 5, 2)
 	3.316757533
 chisqdistinv(0.9, 3)
 	6.251388631
+mode([1 3 7 5 1 1 1 3])
+	1
+median([1 3 7 5 1 1 1 3])
+	2
 libqalculate_tests_vector=load(tests/vectordata.csv)
 mean(libqalculate_tests_vector)
 	6.530919283
@@ -74,9 +78,5 @@ covar(libqalculate_tests_vector, libqalculate_tests_vector2)
 	499.1760404
 poolvar(libqalculate_tests_vector, libqalculate_tests_vector2)
 	530.0195143
-mode([1 3 7 5 1 1 1 3])
-	1
-median([1 3 7 5 1 1 1 3])
-	2
 delete libqalculate_tests_vector
 delete libqalculate_tests_vector2

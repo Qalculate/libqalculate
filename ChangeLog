@@ -1,3 +1,31 @@
+2025-10-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Hide mode string (when show-mode-in-prompt is enabled) when asking for user input
+
+2025-10-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Avoid "Did you mean..." warning with same original text string as suggested
+
+2025-10-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix crash after factorization with calculate-as-you-type enabled
+	* Fix segfault with both calculate-as-you-type and RPN mode enabled
+	* Improve support for character encodings other than UTF-8
+
+2025-10-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* New completion method which presents a numbered list of matches and lets the user select an item by entering the corresponding number
+	* Completion mode option
+	* Refine completion matching
+	* Hide "101" name variants
+
+2025-10-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Show error when function or variable disabled by "--disable-insecure" is used
+	* Fix "make test" (unittest) when compiled with --disable-insecure
+	* Fix matching of multiple words
+	* Fix compilation with -fsanitize=undefined in title
+
 2025-10-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Improve speed when performing many multiple calculations read from file (by a factor of about 100 for simple calculations)
