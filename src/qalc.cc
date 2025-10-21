@@ -9905,6 +9905,7 @@ void save_history() {
 bool save_preferences(bool mode) {
 	FILE *file = NULL;
 	save_history();
+	if(!dirExists(getLocalDir())) recursiveMakeDir(getLocalDir());
 	string filename = buildPath(getLocalDir(), "qalc.cfg");
 	file = fopen(filename.c_str(), "w+");
 	if(file == NULL) {
