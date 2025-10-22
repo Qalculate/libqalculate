@@ -21,6 +21,8 @@
 #include "Prefix.h"
 #include "MathStructure-support.h"
 
+#include <stdint.h>
+
 using std::string;
 using std::cout;
 using std::vector;
@@ -2136,20 +2138,20 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 								if(lcoeff % 2 == 0) factorsl.push_back(lcoeff / 2);
 								factorsl.push_back(lcoeff);
 
-								long long int cmax = 500000LL / (factors0.size() * factorsl.size());
+								int64_t cmax = 500000LL / (factors0.size() * factorsl.size());
 								if(term_combination_levels != 0) cmax *= 10;
 								if(degree >= 2 && cmax > 10) {
 									vector<Number> vden;
 									vector<Number> vquo;
 									vden.resize(3, nr_zero);
-									long int c0;
+									int64_t c0;
 									for(size_t i = 0; i < factors0.size() * 2; i++) {
 										c0 = factors0[i / 2];
 										if(i % 2 == 1) c0 = -c0;
-										long int c2;
+										int64_t c2;
 										for(size_t i2 = 0; i2 < factorsl.size(); i2++) {
 											c2 = factorsl[i2];
-											long int c1max = vs[1] - c0 - c2, c1min;
+											int64_t c1max = vs[1] - c0 - c2, c1min;
 											if(c1max < 0) {c1min = c1max; c1max = -vs[1] - c0 - c2;}
 											else {c1min = -vs[1] - c0 - c2;}
 											if(-(vs[2] - c0 - c2) < -(-vs[2] - c0 - c2)) {
@@ -2161,8 +2163,8 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 											}
 											if(c1min < -cmax / 2) c1min = -cmax / 2;
 											for(long int c1 = c1min; c1 <= c1max && c1 <= cmax / 2; c1++) {
-												long int v1 = ::labs(c2 + c1 + c0);
-												long int v2 = ::labs(c2 - c1 + c0);
+												int64_t v1 = ::llabs(c2 + c1 + c0);
+												int64_t v2 = ::llabs(c2 - c1 + c0);
 												if(v1 != 0 && v2 != 0 && v1 <= vs[1] && v2 <= vs[2] && (c1 != 0 || c2 != 0) && vs[1] % v1 == 0 && vs[2] % v2 == 0) {
 													vden[0] = c0; vden[1] = c1; vden[2] = c2;
 													if(CALCULATOR->aborted()) return false;
@@ -2210,23 +2212,23 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 								}
 								for(int i_d = 3; i_d <= degree; i_d++) {
 									if(CALCULATOR->aborted()) return false;
-									long int t1max = ::pow(cmax / (i_d - 1), 1.0 / (i_d - 1));
+									int64_t t1max = ::pow(cmax / (i_d - 1), 1.0 / (i_d - 1));
 									if(t1max < 1) break;
 									if(t1max > 1000) t1max = 1000;
-									long int c2totalmax = t1max;
-									long int c2cur;
+									int64_t c2totalmax = t1max;
+									int64_t c2cur;
 									for(int i = 0; i < i_d - 3; i++) {
 										c2totalmax *= t1max;
 									}
 									vector<Number> vden;
 									vector<Number> vquo;
-									long int *vc = (long int*) malloc(sizeof(long int) * (i_d + 1));
+									int64_t *vc = (int64_t*) malloc(sizeof(int64_t) * (i_d + 1));
 									vden.resize(i_d + 1, nr_zero);
 									for(size_t i = 0; i < factors0.size() * 2; i++) {
 										vc[0] = factors0[i / 2] * (i % 2 == 1 ? -1 : 1);
 										for(size_t i2 = 0; i2 < factorsl.size(); i2++) {
 											vc[i_d] = factorsl[i2];
-											for(long int c2p = 0; c2p <= c2totalmax; c2p++) {
+											for(int64_t c2p = 0; c2p <= c2totalmax; c2p++) {
 												c2cur = c2p;
 												for(int i = 2; i < i_d; i++) {
 													vc[i] = c2cur % t1max;
@@ -2234,10 +2236,10 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 													vc[i] = vc[i] / 2 + vc[i] % 2;
 													c2cur /= t1max;
 												}
-												long int c1max = t1max / 2 + t1max % 2, c1min = -t1max / 2 - t1max % 2;
+												int64_t c1max = t1max / 2 + t1max % 2, c1min = -t1max / 2 - t1max % 2;
 												for(size_t i = 1; i < vs.size(); i++) {
-													long int vsmax = vs[i] - vc[0];
-													long int vsmin = -vs[i] - vc[0];
+													int64_t vsmax = vs[i] - vc[0];
+													int64_t vsmin = -vs[i] - vc[0];
 													int ix = (i / 2 + i % 2) * (i % 2 == 0 ? -1 : 1);
 													int ixi = ix;
 													for(int i2 = 2; i2 <= i_d; i2++) {
