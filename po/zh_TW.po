@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-20 11:20+0200\n"
-"PO-Revision-Date: 2025-10-05 13:37+0800\n"
+"PO-Revision-Date: 2025-10-22 23:01+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_TW\n"
@@ -703,17 +703,16 @@ msgid "calculate as you type"
 msgstr "即時計算"
 
 #: ../src/qalc.cc:1409 ../src/qalc.cc:6375
-#, fuzzy
 msgid "completion"
-msgstr "複數"
+msgstr "補全"
 
 #: ../src/qalc.cc:1412 ../src/qalc.cc:2672 ../src/qalc.cc:6379
 msgid "select"
-msgstr ""
+msgstr "選擇"
 
 #: ../src/qalc.cc:1413 ../src/qalc.cc:2672 ../src/qalc.cc:6378
 msgid "select multiple"
-msgstr ""
+msgstr "選擇多個"
 
 #. qalc command
 #: ../src/qalc.cc:1414 ../src/qalc.cc:2672 ../src/qalc.cc:6381
@@ -723,9 +722,8 @@ msgid "list"
 msgstr "list"
 
 #: ../src/qalc.cc:1415 ../src/qalc.cc:2672 ../src/qalc.cc:6380
-#, fuzzy
 msgid "list multiple"
-msgstr "短乘法"
+msgstr "列出多個"
 
 #: ../src/qalc.cc:1427 ../src/qalc.cc:6328
 msgid "simplified percentage"
@@ -1110,7 +1108,7 @@ msgstr "提示字元"
 
 #: ../src/qalc.cc:1845 ../src/qalc.cc:6389
 msgid "save config"
-msgstr "儲存組態"
+msgstr "儲存配置"
 
 #. qalc command
 #: ../src/qalc.cc:1854 ../src/qalc.cc:4885 ../src/qalc.cc:6391
@@ -1689,6 +1687,9 @@ msgid ""
 "\"select multiple\" and \"list multiple\" completes the word directly if "
 "there is only one match."
 msgstr ""
+"決定按Tab鍵時的補全動作。“選擇”顯示匹配的編號列表並等待輸入數字來選擇項目，"
+"而“list”則直接回傳到表達式而不用輸入。如果只有一個匹配，則“選擇多個”和“列出多"
+"個”會直接完成該字。"
 
 #: ../src/qalc.cc:2674
 msgid "Ignore system language and use English (requires restart)."
@@ -2070,8 +2071,8 @@ msgid ""
 "qalculate.github.io/manual/index.html)."
 msgstr ""
 "有關數學表達式和不同選項的更多資訊，以及函數、變數和單位的完整列表，請觀看圖"
-"形使用者介面手冊中的相關區段(可以在https://qalculate.github.io/manual/"
-"index.html得到)。"
+"形使用者介面手冊中的相關區段(可以在https://qalculate.github.io/manual/index."
+"html得到)。"
 
 #: ../src/qalc.cc:4320 ../src/qalc.cc:6461
 msgid ""
@@ -3311,7 +3312,7 @@ msgstr "比較失敗。"
 #: ../libqalculate/Variable.cc:690
 #, c-format
 msgid "%s is disabled when %s is compiled with \"%s\" configure option."
-msgstr ""
+msgstr "停用%s，當%s用“%s”配置選項編譯時。"
 
 #: ../libqalculate/BuiltinFunctions-statistics.cc:189
 #: ../libqalculate/BuiltinFunctions-statistics.cc:234
@@ -3758,7 +3759,7 @@ msgstr "where"
 
 #: ../libqalculate/Calculator-calculate.cc:2316
 msgid "calculating..."
-msgstr "計算中…"
+msgstr "計算中..."
 
 #: ../libqalculate/Calculator-calculate.cc:3138
 #, c-format
