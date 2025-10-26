@@ -4159,6 +4159,57 @@ void ask_autocalc() {
 }
 #endif
 
+void fix_expression(string &str) {
+	ParseOptions pa = evalops.parse_options; pa.base = 10;
+	str = CALCULATOR->unlocalizeExpression(str, pa);
+	if(str.empty()) return;
+	size_t i = 0;
+	bool b = false;
+	while(true) {
+		i = str.find("\\", i);
+		if(i == string::npos || i == str.length() - 1) break;
+		if((str[i + 1] >= 'a' && str[i + 1] <= 'z') || (str[i + 1] >= 'A' && str[i + 1] <= 'Z') || (str[i + 1] >= '1' && str[i + 1] <= '9')) {
+			b = true;
+			break;
+		}
+		i++;
+	}
+	CALCULATOR->parseSigns(str);
+	if(!b) {
+		bool in_cit1 = false, in_cit2 = false;
+		for(i = 0; i < str.length(); i++) {
+			if(!in_cit2 && str[i] == '\"') {
+				in_cit1 = !in_cit1;
+			} else if(!in_cit1 && str[i] == '\'') {
+				in_cit2 = !in_cit2;
+			} else if(!in_cit1 && !in_cit2 && (str[i] == 'x' || str[i] == 'y' || str[i] == 'z')) {
+				size_t i2 = str.find_last_of(NOT_IN_NAMES NUMBERS, i);
+				size_t i3 = str.find_first_of(NOT_IN_NAMES NUMBERS, i);
+				if(i2 == string::npos) i2 = 0;
+				else i2++;
+				if(i3 == string::npos) i3 = str.length();
+				size_t i4 = i2;
+				if(i4 > 0) {
+					i4 = str.find_last_of(NOT_IN_NAMES, i4);
+					if(i4 == string::npos) i4 = 0;
+					else i4++;
+				}
+				size_t i5 = i3;
+				if(i5 < str.length()) {
+					i5 = str.find_first_of(NOT_IN_NAMES, i5 - 1);
+					if(i5 == string::npos) i5 = str.length();
+				}
+				if((i2 == i3 - 1 || !CALCULATOR->getActiveExpressionItem(str.substr(i2, i3 - i2))) && ((i4 == i2 && i5 == i3) || !CALCULATOR->getActiveExpressionItem(str.substr(i4, i5 - i4)))) {
+					str.insert(i, 1, '\\');
+					i++;
+				} else {
+					i = i5 - 1;
+				}
+			}
+		}
+	}
+}
+
 int main(int argc, char *argv[]) {
 
 	string calc_arg;
@@ -5122,11 +5173,7 @@ int main(int argc, char *argv[]) {
 				b = !ask_questions || ask_question(_("A function with the same name already exists.\nDo you want to overwrite it (default: no)?"));
 			}
 			if(b) {
-				if(expr.find("\\") == string::npos) {
-					gsub("x", "\\x", expr);
-					gsub("y", "\\y", expr);
-					gsub("z", "\\z", expr);
-				}
+				fix_expression(expr);
 				MathFunction *f = CALCULATOR->getActiveFunction(name, true);
 				if(CALCULATOR->hasToExpression(expr)) {
 					PUTS_UNICODE(_("Conversion (using \"to\") is not supported in functions."));

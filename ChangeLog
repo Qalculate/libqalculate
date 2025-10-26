@@ -1,6 +1,11 @@
+2025-10-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix infinite loop during factorization (e.g. when calculating "base(1234567,x,3)=2^31") on Windows
+
 2025-10-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Hide mode string (when show-mode-in-prompt is enabled) when asking for user input
+	* Improve interpretation of function expressions with x, y, and/or z in object names (e.g. "x year"), and/or within quotation marks (e.g. "x*code('x')"), in qalc
 
 2025-10-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
@@ -23,8 +28,8 @@
 
 	* Show error when function or variable disabled by "--disable-insecure" is used
 	* Fix "make test" (unittest) when compiled with --disable-insecure
-	* Fix matching of multiple words
-	* Fix compilation with -fsanitize=undefined in title
+	* Fix matching of multiple words in title
+	* Fix compilation with -fsanitize=undefined
 
 2025-10-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

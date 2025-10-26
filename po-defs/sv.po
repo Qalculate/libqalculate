@@ -9714,7 +9714,7 @@ msgstr "Julianskt år"
 
 #: ../data/units.xml.in.h:170
 msgid "r:year,p:years,as:a_j,a:yr,annus"
-msgstr "år,as:a_j,annus,yr,po:years"
+msgstr "år,as:a_j,annus,c:yr,po:years"
 
 #: ../data/units.xml.in.h:171
 msgid ""

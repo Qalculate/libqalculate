@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-30 10:09+0200\n"
+"POT-Creation-Date: 2025-10-23 08:50+0200\n"
 "PO-Revision-Date: 2024-05-04 10:02+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -3275,7 +3275,7 @@ msgstr "рнг"
 
 #: ../data/functions.xml.in.h:121
 msgid "Reduced Row Echelon Form"
-msgstr "Приведённый ступенчатый вид по строкам (канонический вид по строкам)"
+msgstr "Приведённый ступенчатый вид по строкам"
 
 #: ../data/functions.xml.in.h:122
 msgid "r:rref"
@@ -3696,9 +3696,7 @@ msgstr "стмод,степень_мод"
 
 #: ../data/functions.xml.in.h:207
 msgid "Parallel Sum"
-msgstr ""
-"Обратная сумма обратных величин (параллельное соединение сопротивлений/"
-"индуктивностей)"
+msgstr "Обратная сумма обратных величин (параллельное соединение)"
 
 #: ../data/functions.xml.in.h:208
 msgid "r:parallel"
@@ -5791,8 +5789,8 @@ msgstr "откл"
 #: ../data/functions.xml.in.h:668
 msgid "Standard Deviation (random sampling)"
 msgstr ""
-"Среднеквадратическое отклонение (на основании несмещённой оценки дисперсии "
-"(подправленной выборочной дисперсии))"
+"Среднеквадратическое отклонение (несмещённой, подправленной выборочной "
+"дисперсии)"
 
 #: ../data/functions.xml.in.h:669
 msgid "r:stdev"
@@ -5809,8 +5807,7 @@ msgstr "дисп"
 #: ../data/functions.xml.in.h:672
 msgid "Variance (random sampling)"
 msgstr ""
-"Дисперсия распределения (на основании несмещённой оценки дисперсии "
-"(подправленной выборочной дисперсии))"
+"Дисперсия распределения (несмещённой, подправленной выборочной дисперсии)"
 
 #: ../data/functions.xml.in.h:673
 msgid "r:var"
@@ -9687,9 +9684,7 @@ msgstr "фунт,aou:&#x2114;,p:фунта,p:фунтов"
 
 #: ../data/units.xml.in.h:122
 msgid "Short Hundredweight (Cental)"
-msgstr ""
-"Американский хандредвейт (короткий хандредвейт, короткий центнер, "
-"американский центнер, центал, английский квинтал)"
+msgstr "Американский хандредвейт (короткий хандредвейт, центал)"
 
 #: ../data/units.xml.in.h:123
 msgid "ar:cwt,hundredweight,cental,p:hundredweights,centals"
@@ -9697,9 +9692,7 @@ msgstr "a:кхв,хандредвейт,центал"
 
 #: ../data/units.xml.in.h:124
 msgid "Long Hundredweight"
-msgstr ""
-"Английский хандредвейт (длинный хандредвейт, длинный центнер, английский "
-"центнер, лондонский хандредвейт)"
+msgstr "Английский хандредвейт (длинный хандредвейт)"
 
 #: ../data/units.xml.in.h:125
 msgid "ar:l_cwt,long_hundredweight,p:long_hundredweights"
@@ -10004,9 +9997,7 @@ msgstr "Кулоновский метр"
 
 #: ../data/units.xml.in.h:207
 msgid "Debye"
-msgstr ""
-"Дебай (внесистемная единица измерения электрического дипольного момента "
-"молекул)"
+msgstr "Дебай"
 
 #: ../data/units.xml.in.h:208
 msgid "ar:D,debye,p:debyes"
@@ -10968,8 +10959,8 @@ msgid "Standard Gravity (unit)"
 msgstr "Ускорение свободного падения (единица измерения)"
 
 #: ../data/units.xml.in.h:444
-msgid "r:gee,p:gees"
-msgstr "gee"
+msgid "is:standard_gravity_unit,r:gee,p:gees"
+msgstr ""
 
 #: ../data/units.xml.in.h:445
 msgid "Acceleration Change"
@@ -11645,9 +11636,7 @@ msgstr "джоуль-секунда"
 
 #: ../data/units.xml.in.h:612
 msgid "Reduced Planck (Atomic/Natural Unit of Action)"
-msgstr ""
-"Приведённая постоянная Планка (действие в атомной/естественной системе "
-"единиц)"
+msgstr "Приведённая постоянная Планка (атомной/естественной системе единиц)"
 
 #: ../data/units.xml.in.h:613
 msgid "Radioactivity"
@@ -11698,32 +11687,32 @@ msgid "rs:rad_radioactivity"
 msgstr "s:рад_радиоактивность"
 
 #: ../data/units.xml.in.h:625
+msgid "Erg per Gram"
+msgstr "эрг на грамм"
+
+#: ../data/units.xml.in.h:626
 msgid "Dose Equivalent"
 msgstr "Эквивалентная доза"
 
-#: ../data/units.xml.in.h:626
+#: ../data/units.xml.in.h:627
 msgid "Sievert"
 msgstr "Зиверт"
 
-#: ../data/units.xml.in.h:627
+#: ../data/units.xml.in.h:628
 msgid "ar:Sv,sievert,p:sieverts"
 msgstr "a:Зв,зиверт"
 
-#: ../data/units.xml.in.h:628
+#: ../data/units.xml.in.h:629
 msgid "Roentgen Equivalent Man (Rem)"
 msgstr "Биологический эквивалент рентгена (Бэр)"
 
-#: ../data/units.xml.in.h:629
+#: ../data/units.xml.in.h:630
 msgid "ros:rem_radioactivity,a:rem"
 msgstr "os:бэр_радиоактивность,a:бэр"
 
-#: ../data/units.xml.in.h:630
+#: ../data/units.xml.in.h:631
 msgid "Millirem"
 msgstr "Миллибэр"
-
-#: ../data/units.xml.in.h:631
-msgid "Erg per Gram"
-msgstr "эрг на грамм"
 
 #: ../data/units.xml.in.h:632
 msgid "Exposure"
@@ -12469,11 +12458,11 @@ msgstr "Масса мюона (а. е. м.)"
 
 #: ../data/variables.xml.in.h:105
 msgid "Triton Mass (in u)"
-msgstr "Масса тритона (ядро атома трития) (а. е. м.)"
+msgstr "Масса тритона (а. е. м.)"
 
 #: ../data/variables.xml.in.h:106
 msgid "Alpha Particle Mass (in u)"
-msgstr "Масса альфа частицы (ядро атома гелия) (а. е. м.)"
+msgstr "Масса альфа частицы (а. е. м.)"
 
 #: ../data/variables.xml.in.h:107
 msgid "Particle Mass in MeV*c^(-2)"
@@ -12501,7 +12490,7 @@ msgstr "Масса мюона (в МэВ/c&#x00B2;)"
 
 #: ../data/variables.xml.in.h:113
 msgid "Alpha Particle Mass (in MeV/c^2)"
-msgstr "Масса альфа частицы (ядро атома гелия) (в МэВ/c&#x00B2;)"
+msgstr "Масса альфа частицы (в МэВ/c&#x00B2;)"
 
 #: ../data/variables.xml.in.h:114
 msgid "Up Quark Mass (in MeV/c^2)"
@@ -13022,6 +13011,9 @@ msgstr "Сейчас (дата и время)"
 #: ../data/variables.xml.in.h:247
 msgid "r:now"
 msgstr "сейчас"
+
+#~ msgid "r:gee,p:gees"
+#~ msgstr "gee"
 
 #~ msgid "Gee"
 #~ msgstr "Жэ (ускорение свободного падения на поверхности Земли)"
