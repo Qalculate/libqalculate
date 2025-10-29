@@ -6310,7 +6310,7 @@ bool Number::airy() {
 	return true;
 }
 bool Number::besselj(const Number &o) {
-	if(hasImaginaryPart() || !o.isInteger()) return false;
+	if(hasImaginaryPart() || !o.isInteger() || CALCULATOR->aborted()) return false;
 	if(isZero()) {
 		if(o.isZero()) set(1, 1, 0, true);
 		else clear(true);
@@ -6342,20 +6342,25 @@ bool Number::besselj(const Number &o) {
 		mpfr_set(fu_test, fu_value, MPFR_RNDN);
 		mpfr_set(fl_test, fl_value, MPFR_RNDN);
 		mpfr_jn(fu_value, n, fu_value, MPFR_RNDU);
+		if(CALCULATOR->aborted()) {mpfr_clears(fu_test, fl_test, NULL); set(nr_bak); return false;}
 		mpfr_jn(fl_value, n, fl_value, MPFR_RNDD);
 		int c1 = mpfr_cmp(fl_value, fu_value);
 		if(c1 > 0) {
+			if(CALCULATOR->aborted()) {mpfr_clears(fu_test, fl_test, NULL); set(nr_bak); return false;}
 			mpfr_jn(fu_value, n, fl_test, MPFR_RNDU);
+			if(CALCULATOR->aborted()) {mpfr_clears(fu_test, fl_test, NULL); set(nr_bak); return false;}
 			mpfr_jn(fl_value, n, fu_test, MPFR_RNDD);
 		}
 		if(!b_iverror && !mpfr_equal_p(fu_test, fl_test)) {
 			mpfr_nextabove(fl_test);
 			if(mpfr_equal_p(fu_test, fl_test)) {
+				if(CALCULATOR->aborted()) {mpfr_clears(fu_test, fl_test, NULL); set(nr_bak); return false;}
 				mpfr_set_prec(fl_test, mpfr_get_prec(fu_test) + 1);
 				mpfr_set(fl_test, fu_test, MPFR_RNDN);
 				mpfr_nextbelow(fl_test);
 				mpfr_set_prec(fu_test, mpfr_get_prec(fl_test));
 				mpfr_jn(fu_test, n, fl_test, MPFR_RNDU);
+				if(CALCULATOR->aborted()) {mpfr_clears(fu_test, fl_test, NULL); set(nr_bak); return false;}
 				if(mpfr_cmp(fu_test, fl_value) < 0) {
 					mpfr_jn(fl_value, n, fl_test, MPFR_RNDD);
 					b_iverror = true;
@@ -6368,6 +6373,7 @@ bool Number::besselj(const Number &o) {
 				mpfr_init2(f_test, mpfr_get_prec(fl_test));
 				mpfr_nextbelow(fl_test);
 				while(true) {
+					if(CALCULATOR->aborted()) {mpfr_clears(fu_test, fl_test, f_test, NULL); set(nr_bak); return false;}
 					mpfr_nextabove(fl_test);
 					if(mpfr_equal_p(fu_test, fl_test)) break;
 					mpfr_jn(f_test, n, fl_test, c1 > 0 ? MPFR_RNDU : MPFR_RNDD);
@@ -6378,6 +6384,7 @@ bool Number::besselj(const Number &o) {
 					}
 				}
 				while(!b_iverror && !mpfr_equal_p(fu_test, fl_test)) {
+					if(CALCULATOR->aborted()) {mpfr_clears(fu_test, fl_test, f_test, NULL); set(nr_bak); return false;}
 					mpfr_nextbelow(fu_test);
 					if(mpfr_equal_p(fu_test, fl_test)) break;
 					mpfr_jn(f_test, n, fu_test, c1 > 0 ? MPFR_RNDD : MPFR_RNDU);
@@ -6400,7 +6407,7 @@ bool Number::besselj(const Number &o) {
 	return true;
 }
 bool Number::bessely(const Number &o) {
-	if(hasImaginaryPart() || !isNonNegative() || !o.isInteger() || isZero()) return false;
+	if(hasImaginaryPart() || !isNonNegative() || !o.isInteger() || isZero() || CALCULATOR->aborted()) return false;
 	if(isPlusInfinity()) {
 		clear(true);
 		return true;
@@ -6428,20 +6435,25 @@ bool Number::bessely(const Number &o) {
 		mpfr_set(fu_test, fu_value, MPFR_RNDN);
 		mpfr_set(fl_test, fl_value, MPFR_RNDN);
 		mpfr_yn(fu_value, n, fu_value, MPFR_RNDU);
+		if(CALCULATOR->aborted()) {mpfr_clears(fu_test, fl_test, NULL); set(nr_bak); return false;}
 		mpfr_yn(fl_value, n, fl_value, MPFR_RNDD);
 		int c1 = mpfr_cmp(fl_value, fu_value);
 		if(c1 > 0) {
+			if(CALCULATOR->aborted()) {mpfr_clears(fu_test, fl_test, NULL); set(nr_bak); return false;}
 			mpfr_yn(fu_value, n, fl_test, MPFR_RNDU);
+			if(CALCULATOR->aborted()) {mpfr_clears(fu_test, fl_test, NULL); set(nr_bak); return false;}
 			mpfr_yn(fl_value, n, fu_test, MPFR_RNDD);
 		}
 		if(!b_iverror && !mpfr_equal_p(fu_test, fl_test)) {
 			mpfr_nextabove(fl_test);
 			if(mpfr_equal_p(fu_test, fl_test)) {
+				if(CALCULATOR->aborted()) {mpfr_clears(fu_test, fl_test, NULL); set(nr_bak); return false;}
 				mpfr_set_prec(fl_test, mpfr_get_prec(fu_test) + 1);
 				mpfr_set(fl_test, fu_test, MPFR_RNDN);
 				mpfr_nextbelow(fl_test);
 				mpfr_set_prec(fu_test, mpfr_get_prec(fl_test));
 				mpfr_yn(fu_test, n, fl_test, MPFR_RNDU);
+				if(CALCULATOR->aborted()) {mpfr_clears(fu_test, fl_test, NULL); set(nr_bak); return false;}
 				if(mpfr_cmp(fu_test, fl_value) < 0) {
 					mpfr_yn(fl_value, n, fl_test, MPFR_RNDD);
 					b_iverror = true;
@@ -6454,6 +6466,7 @@ bool Number::bessely(const Number &o) {
 				mpfr_init2(f_test, mpfr_get_prec(fl_test));
 				mpfr_nextbelow(fl_test);
 				while(true) {
+					if(CALCULATOR->aborted()) {mpfr_clears(fu_test, fl_test, f_test, NULL); set(nr_bak); return false;}
 					mpfr_nextabove(fl_test);
 					if(mpfr_equal_p(fu_test, fl_test)) break;
 					mpfr_yn(f_test, n, fl_test, c1 > 0 ? MPFR_RNDU : MPFR_RNDD);
@@ -6464,6 +6477,7 @@ bool Number::bessely(const Number &o) {
 					}
 				}
 				while(!b_iverror && !mpfr_equal_p(fu_test, fl_test)) {
+					if(CALCULATOR->aborted()) {mpfr_clears(fu_test, fl_test, f_test, NULL); set(nr_bak); return false;}
 					mpfr_nextbelow(fu_test);
 					if(mpfr_equal_p(fu_test, fl_test)) break;
 					mpfr_yn(f_test, n, fu_test, c1 > 0 ? MPFR_RNDD : MPFR_RNDU);

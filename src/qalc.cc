@@ -9109,6 +9109,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		if(i_maxtime) {
 			if(i_timeleft < i_maxtime / 2) i_timeleft = -1;
 			else i_timeleft -= 10;
+			if(i_timeleft > 2000) i_timeleft = mstruct->containsType(STRUCT_COMPARISON) ? 2000 : 1000;
 		} else {
 			if(auto_calculate) i_timeleft = 50;
 			else if(has_printed > 10) i_timeleft = -1;

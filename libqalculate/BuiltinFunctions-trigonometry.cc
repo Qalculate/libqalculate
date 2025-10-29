@@ -998,7 +998,9 @@ void multiply_by_fraction_of_radian(MathStructure &mstruct, const EvaluationOpti
 	}
 }
 AsinFunction::AsinFunction() : MathFunction("asin", 1) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 }
 bool AsinFunction::representsNumber(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsNumber(allow_units);}
 int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
@@ -1081,7 +1083,9 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 }
 
 AcosFunction::AcosFunction() : MathFunction("acos", 1) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 }
 bool AcosFunction::representsNumber(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsNumber(allow_units);}
 int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
@@ -1161,7 +1165,9 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 }
 
 AtanFunction::AtanFunction() : MathFunction("atan", 1) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 }
 bool AtanFunction::representsNumber(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && (vargs[0].representsReal(allow_units) || (vargs[0].isNumber() && !vargs[0].number().isI() && !vargs[0].number().isMinusI()));}
 bool AtanFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
@@ -1271,7 +1277,9 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 }
 
 SinhFunction::SinhFunction() : MathFunction("sinh", 1) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 }
 bool SinhFunction::representsNumber(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsNumber(allow_units);}
 bool SinhFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
@@ -1320,7 +1328,9 @@ int SinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	return 1;
 }
 CoshFunction::CoshFunction() : MathFunction("cosh", 1) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 }
 bool CoshFunction::representsNumber(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsNumber(allow_units);}
 bool CoshFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
@@ -1364,7 +1374,9 @@ int CoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	return 1;
 }
 TanhFunction::TanhFunction() : MathFunction("tanh", 1) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 }
 bool TanhFunction::representsNumber(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsNumber(allow_units);}
 bool TanhFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
@@ -1415,7 +1427,9 @@ int TanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	return 1;
 }
 AsinhFunction::AsinhFunction() : MathFunction("asinh", 1) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 }
 bool AsinhFunction::representsNumber(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 1 && vargs[0].representsNumber(allow_units);}
 bool AsinhFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
@@ -1465,7 +1479,9 @@ int AcoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	return 1;
 }
 AtanhFunction::AtanhFunction() : MathFunction("atanh", 1) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 }
 int AtanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector()) return 0;

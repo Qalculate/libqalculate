@@ -265,10 +265,12 @@ BesseljFunction::BesseljFunction() : MathFunction("besselj", 2) {
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(2);
 }
 int BesseljFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0];
 	int ret = 0;
 	if(!mstruct.isNumber()) {
 		mstruct.eval(eo);
+		if(mstruct.isVector()) return -1;
 		if(!mstruct.equals(vargs[0], true, true)) ret = -1;
 	}
 	Argument *arg = getArgumentDefinition(1);
@@ -286,20 +288,26 @@ int BesseljFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	} else if(!mstruct.isNumber()) {
 		return ret;
 	}
+	if((mstruct.number().isNegative() || mstruct.number() > 100) && vargs[1].number() > 1000) return false;
 	FR_FUNCTION_2Rm(besselj)
 }
 BesselyFunction::BesselyFunction() : MathFunction("bessely", 2) {
-	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, false, true, INTEGER_TYPE_SLONG);
+	IntegerArgument *iarg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, false, true);
 	Number nmax(1000);
 	iarg->setMax(&nmax);
+	Number nmin(-1000);
+	iarg->setMin(&nmin);
+	iarg->setHandleVector(true);
 	setArgumentDefinition(1, iarg);
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(2);
 }
 int BesselyFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0];
 	int ret = 0;
 	if(!mstruct.isNumber()) {
 		mstruct.eval(eo);
+		if(mstruct.isVector()) return -1;
 		if(!mstruct.equals(vargs[0], true, true)) ret = -1;
 	}
 	Argument *arg = getArgumentDefinition(1);
@@ -317,6 +325,7 @@ int BesselyFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	} else if(!mstruct.isNumber()) {
 		return ret;
 	}
+	if((mstruct.number().isNegative() || mstruct.number() > 100) && vargs[1].number() > 1000) return false;
 	FR_FUNCTION_2Rm(bessely)
 }
 ErfFunction::ErfFunction() : MathFunction("erf", 1) {
