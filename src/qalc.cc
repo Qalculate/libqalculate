@@ -108,7 +108,7 @@ int dual_fraction = -1, saved_dual_fraction = -1;
 int dual_approximation = -1, saved_dual_approximation = -1;
 bool tc_set = false, sinc_set = false;
 bool ignore_locale = false;
-string custom_lang;
+string custom_lang, default_currency;
 bool utf8_encoding = false;
 bool result_only = false, vertical_space = true;
 bool do_imaginary_j = false;
@@ -1839,6 +1839,20 @@ void set_option(string str) {
 			custom_lang = svalue;
 			PUTS_UNICODE(_("Please restart the program for the change to take effect."));
 		}
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "default currency", _("default currency")) || equalsIgnoreCase(svar, "currency")) {
+		if(svalue == "0" || svalue == "1" || EQUALS_IGNORECASE_AND_LOCAL(svar, "default", _("default"))) svalue = "";
+		if(svalue.empty()) {
+			default_currency = svalue;
+			CALCULATOR->setLocalCurrency(NULL);
+		} else if(svalue != default_currency) {
+			Unit *u = CALCULATOR->getActiveUnit(svalue);
+			if(u && u->isCurrency()) {
+				CALCULATOR->setLocalCurrency(u);
+				default_currency = u->referenceName();
+			} else {
+				PUTS_UNICODE(_("Illegal value."));
+			}
+		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "prompt", _("prompt"))) {
 		if(svalue == "0" || svalue == "1" || EQUALS_IGNORECASE_AND_LOCAL(svar, "default", _("default"))) svalue = "> ";
 		if(svalue != prompt) {
@@ -2249,6 +2263,7 @@ void set_option(string str) {
 			ADD_OPTION_TO_LIST1("exact")
 			ADD_OPTION_TO_LIST1("ignore locale")
 			ADD_OPTION_TO_LIST1("language")
+			ADD_OPTION_TO_LIST("default currency", "currency")
 			ADD_OPTION_TO_LIST1("prompt")
 			ADD_OPTION_TO_LIST1("save mode")
 			ADD_OPTION_TO_LIST1("clear history")
@@ -2658,6 +2673,15 @@ bool show_set_help(string set_option = "") {
 	}
 	STR_AND_TABS_BOOL("binary prefixes", "binpref", _("If activated, binary prefixes are used by default for information units."), (CALCULATOR->usesBinaryPrefixes() > 0));
 	STR_AND_TABS_BOOL("currency conversion", "curconv", _("Enables automatic conversion to the local currency when optimal unit conversion is enabled."), evalops.local_currency_conversion);
+	if(SET_OPTION_MATCHES("default currency", "currency")) {
+		STR_AND_TABS_SET("default currency", "currency");
+		str += " ";
+		if(CALCULATOR->getLocalCurrency()) str += CALCULATOR->getLocalCurrency()->referenceName();
+		else str += _("none");
+		str += "*";
+		CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+		SET_OPTION_FOUND
+	}
 	STR_AND_TABS_BOOL("denominator prefixes", "denpref", _("Enables automatic use of prefixes in the denominator of unit expressions."), printops.use_denominator_prefix);
 	STR_AND_TABS_BOOL("place units separately", "unitsep", _("If activated, units are separated from variables at the end of the result."), printops.place_units_separately);
 	STR_AND_TABS_BOOL("prefixes", "pref", _("Enables automatic use of prefixes in the result."), printops.use_unit_prefixes);
@@ -4668,7 +4692,10 @@ int main(int argc, char *argv[]) {
 		if(!first_time && CALCULATOR->customAngleUnit()) saved_custom_angle_unit = CALCULATOR->customAngleUnit()->referenceName();
 		if(evalops.parse_options.angle_unit == ANGLE_UNIT_CUSTOM && !CALCULATOR->customAngleUnit()) evalops.parse_options.angle_unit = ANGLE_UNIT_NONE;
 	}
-
+	if(!default_currency.empty()) {
+		Unit *u = CALCULATOR->getActiveUnit(default_currency);
+		if(u) CALCULATOR->setLocalCurrency(u);
+	}
 	if(do_imaginary_j && CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") == 0) {
 		ExpressionName ename = CALCULATOR->getVariableById(VARIABLE_ID_I)->getName(1);
 		ename.name = "j";
@@ -6405,6 +6432,8 @@ int main(int argc, char *argv[]) {
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("binary prefixes"), "binpref"); str += b2oo(CALCULATOR->usesBinaryPrefixes() > 0, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("currency conversion"), "curconv"); str += b2oo(evalops.local_currency_conversion, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("default currency"), "currency"); str += (CALCULATOR->getLocalCurrency() ? CALCULATOR->getLocalCurrency()->referenceName() : _("none"));
+			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("denominator prefixes"), "denpref"); str += b2oo(printops.use_denominator_prefix, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("place units separately"), "unitsep"); str += b2oo(printops.place_units_separately, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("prefixes"), "pref"); str += b2oo(printops.use_unit_prefixes, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
@@ -9109,7 +9138,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		if(i_maxtime) {
 			if(i_timeleft < i_maxtime / 2) i_timeleft = -1;
 			else i_timeleft -= 10;
-			if(i_timeleft > 2000) i_timeleft = mstruct->containsType(STRUCT_COMPARISON) ? 2000 : 1000;
+			if(dual_approximation < 0 && i_timeleft > 2000) i_timeleft = mstruct->containsType(STRUCT_COMPARISON) ? 2000 : 1000;
 		} else {
 			if(auto_calculate) i_timeleft = 50;
 			else if(has_printed > 10) i_timeleft = -1;
@@ -9560,6 +9589,8 @@ void load_preferences() {
 					sigint_action = v;
 				} else if(svar == "language") {
 					custom_lang = svalue;
+				} else if(svar == "default_currency") {
+					default_currency = svalue;
 				} else if(svar == "ignore_locale") {
 					ignore_locale = v;
 				} else if(svar == "prompt") {
@@ -9976,6 +10007,7 @@ bool save_preferences(bool mode) {
 	if(sigint_action != 1) fprintf(file, "sigint_action=%i\n", sigint_action);
 #endif
 	if(!custom_lang.empty()) fprintf(file, "language=%s\n", custom_lang.c_str());
+	if(!default_currency.empty()) fprintf(file, "default_currency=%s\n", default_currency.c_str());
 	fprintf(file, "ignore_locale=%i\n", ignore_locale);
 	if(prompt != "> ") fprintf(file, "prompt=%s\n", prompt.c_str());
 	fprintf(file, "colorize=%i\n", colorize);
