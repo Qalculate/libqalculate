@@ -87,9 +87,13 @@ int main(int argc, char *argv[]) {
 				} else {
 					msgstr = sbuffer.substr(8, sbuffer.length() - 9);
 				}
+				bool omit = msgid.find("-r:") != string::npos;
+				bool hyphen = msgid.find("r:") != string::npos;
 				if(!msgid.empty() && (msgstr == msgid || msgstr == "-" || msgstr == "+")) {
+					cout << msgid << endl;
 					if(variant == 3 || variant == 4) cout << msgstr << endl;
-					if(msgstr == "+") {sout = "msgstr \""; sout += msgstr; sout += "\"";}
+					if(msgstr == "+" || (!omit && !hyphen)) {sout = "msgstr \""; sout += msgid; sout += "\"";}
+					else if(!omit) sout = "msgstr \"-\"";
 					else sout = "msgstr \"\"";
 				} else {
 					size_t i = 0, i2 = 0;
@@ -115,7 +119,8 @@ int main(int argc, char *argv[]) {
 					if(msgid.empty()) {
 					} else if(msgstr == msgid) {
 						if(variant == 3 || variant == 4) cout << msgstr << endl;
-						sout = "msgstr \"\"";
+						if(hyphen) sout = "msgstr \"-\"";
+						else sout = "msgstr \"" + msgstr +"\"";
 					} else if(variant != 1 && variant != 4 && sout.length() >= 10 && sout.find("\n", 10) == string::npos) {
 						while(true) {
 							i = msgstr.find(":", i);
@@ -136,7 +141,8 @@ int main(int argc, char *argv[]) {
 								}
 								if(variant == 3 || variant == 5) cout << msgstr << endl;
 								sout = "msgstr \"";
-								sout += msgstr;
+								if(msgstr == msgid && hyphen) sout += "-";
+								else sout += msgstr;
 								sout += "\"";
 							}
 							i++;

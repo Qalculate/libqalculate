@@ -201,6 +201,7 @@ Calculator::Calculator() {
 	priv->persistent_plot = false;
 	priv->concise_uncertainty_input = false;
 	priv->fixed_denominator = 2;
+	priv->definitions_locale_set = false;
 
 #ifdef HAVE_ICU
 	UErrorCode err = U_ZERO_ERROR;
@@ -467,6 +468,7 @@ Calculator::Calculator(bool ignore_locale) {
 	priv->persistent_plot = false;
 	priv->concise_uncertainty_input = false;
 	priv->fixed_denominator = 2;
+	priv->definitions_locale_set = ignore_locale;
 
 #ifdef HAVE_ICU
 	UErrorCode err = U_ZERO_ERROR;
@@ -1692,6 +1694,7 @@ void Calculator::addBuiltinFunctions() {
 	f_matrix = addFunction(new MatrixFunction());
 	f_matrix_to_vector = addFunction(new MatrixToVectorFunction());
 	f_area = addFunction(new AreaFunction());
+	priv->f_replace_part = addFunction(new ReplacePartFunction());
 	f_rows = addFunction(new RowsFunction());
 	f_columns = addFunction(new ColumnsFunction());
 	f_row = addFunction(new RowFunction());
@@ -1719,6 +1722,7 @@ void Calculator::addBuiltinFunctions() {
 	priv->f_horzcat = addFunction(new HorzCatFunction());
 	addFunction(new KroneckerProductFunction());
 	addFunction(new FlipFunction());
+	addFunction(new CircShiftFunction());
 
 	f_factorial = addFunction(new FactorialFunction());
 	f_factorial2 = addFunction(new DoubleFactorialFunction());
@@ -2752,6 +2756,7 @@ MathFunction* Calculator::getFunctionById(int id) const {
 		case FUNCTION_ID_NEWTON_RAPHSON: {return priv->f_newton;}
 		case FUNCTION_ID_RAND: {return f_rand;}
 		case FUNCTION_ID_ELEMENT: {return f_element;}
+		case FUNCTION_ID_REPLACE_PART: {return priv->f_replace_part;}
 	}
 	unordered_map<int, MathFunction*>::iterator it = priv->id_functions.find(id);
 	if(it == priv->id_functions.end()) return NULL;

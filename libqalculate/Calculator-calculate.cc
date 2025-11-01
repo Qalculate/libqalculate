@@ -1562,13 +1562,20 @@ bool expression_contains_save_function(const string &str, const ParseOptions &po
 		}
 	}
 	if(!b_quote && (str[i_name2] == ':' || str[i_name2] == '!' || str[i_name2] == '<' || str[i_name2] == '>')) return false;
-	bool b_func = false;
+	bool b_func = false, b_matrix = false;
 	if(!b_quote && i_name2 - i_name1 >= 2 && str[i_name2] == RIGHT_PARENTHESIS_CH) {
 		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
 		if(i_name2 == string::npos || i_name2 == 0 || str[i_name2] != LEFT_PARENTHESIS_CH) return false;
 		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
 		if(i_name2 == string::npos) return false;
 		b_func = true;
+	}
+	if(!b_quote && i_name2 - i_name1 >= 2 && str[i_name2] == RIGHT_VECTOR_WRAP_CH) {
+		i_name2 = str.find_last_not_of(SPACES NUMBERS COMMAS, i_name2 - 1);
+		if(i_name2 == string::npos || i_name2 == 0 || str[i_name2] != LEFT_VECTOR_WRAP_CH) return false;
+		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
+		if(i_name2 == string::npos) return false;
+		b_matrix = true;
 	}
 	if(!b_quote && !CALCULATOR->variableNameIsValid(str.substr(i_name1, i_name2 - i_name1 + 1))) return false;
 	string name = str.substr(i_name1, i_name2 - i_name1 + 1);
@@ -1588,30 +1595,35 @@ bool expression_contains_save_function(const string &str, const ParseOptions &po
 	if(CALCULATOR->hasWhereExpression(str, eo) && str.rfind(_("where"), i - 1) == string::npos && str.rfind("where", i - 1) == string::npos && str.rfind("/.", str.length() - 2) == string::npos) {
 		return false;
 	}
-	size_t i2 = str.find(name, i);
-	if(i2 != string::npos && str.rfind("#", i2 - 1) == string::npos) {
-		if(b_quote) return false;
-		string value = str.substr(i + 1, str.length() - (i + 1));
-		CALCULATOR->parseComments(value);
-		string stmp;
-		CALCULATOR->separateToExpression(value, stmp, eo);
-		CALCULATOR->separateWhereExpression(value, stmp, eo);
-		CALCULATOR->parseSigns(value);
+	if(b_matrix) {
+		Variable *v  = CALCULATOR->getActiveVariable(name);
+		if(!v || !v->isLocal() || !v->isKnown() || !((KnownVariable*) v)->get().isVector()) return false;
+	} else {
 		size_t i2 = str.find(name, i);
-		if(i2 != string::npos) {
-			ExpressionItem *item1 = CALCULATOR->getActiveExpressionItem(name);
-			ExpressionItem *item2 = item1 ? CALCULATOR->getActiveExpressionItem(name, item1) : NULL;
-			if(item1) {
-				MathStructure mtest;
-				CALCULATOR->beginTemporaryStopMessages();
-				CALCULATOR->parse(&mtest, str.substr(i + 1, str.length() - (i + 1)), po);
-				CALCULATOR->endTemporaryStopMessages();
-				if(!b_func && item1->type() == TYPE_VARIABLE && !((Variable*) item1)->isKnown() && mtest.contains((Variable*) item1, true, true, false)) return false;
-				else if(!b_func && item1->type() == TYPE_UNIT && mtest.contains((Unit*) item1, true, true, false)) return false;
-				else if(b_func && item1->type() == TYPE_FUNCTION && mtest.containsFunction((MathFunction*) item1, true, true, false)) return false;
-				if(!b_func && item2 && item2->type() == TYPE_VARIABLE && !((Variable*) item2)->isKnown() && mtest.contains((Variable*) item2, true, true, false)) return false;
-				else if(!b_func && item2 && item2->type() == TYPE_UNIT && mtest.contains((Unit*) item2, true, true, false)) return false;
-				else if(b_func && item2 && item2->type() == TYPE_FUNCTION && mtest.containsFunction((MathFunction*) item2, true, true, false)) return false;
+		if(i2 != string::npos && str.rfind("#", i2 - 1) == string::npos) {
+			if(b_quote) return false;
+			string value = str.substr(i + 1, str.length() - (i + 1));
+			CALCULATOR->parseComments(value);
+			string stmp;
+			CALCULATOR->separateToExpression(value, stmp, eo);
+			CALCULATOR->separateWhereExpression(value, stmp, eo);
+			CALCULATOR->parseSigns(value);
+			size_t i2 = str.find(name, i);
+			if(i2 != string::npos) {
+				ExpressionItem *item1 = CALCULATOR->getActiveExpressionItem(name);
+				ExpressionItem *item2 = item1 ? CALCULATOR->getActiveExpressionItem(name, item1) : NULL;
+				if(item1) {
+					MathStructure mtest;
+					CALCULATOR->beginTemporaryStopMessages();
+					CALCULATOR->parse(&mtest, str.substr(i + 1, str.length() - (i + 1)), po);
+					CALCULATOR->endTemporaryStopMessages();
+					if(!b_func && item1->type() == TYPE_VARIABLE && !((Variable*) item1)->isKnown() && mtest.contains((Variable*) item1, true, true, false)) return false;
+					else if(!b_func && item1->type() == TYPE_UNIT && mtest.contains((Unit*) item1, true, true, false)) return false;
+					else if(b_func && item1->type() == TYPE_FUNCTION && mtest.containsFunction((MathFunction*) item1, true, true, false)) return false;
+					if(!b_func && item2 && item2->type() == TYPE_VARIABLE && !((Variable*) item2)->isKnown() && mtest.contains((Variable*) item2, true, true, false)) return false;
+					else if(!b_func && item2 && item2->type() == TYPE_UNIT && mtest.contains((Unit*) item2, true, true, false)) return false;
+					else if(b_func && item2 && item2->type() == TYPE_FUNCTION && mtest.containsFunction((MathFunction*) item2, true, true, false)) return false;
+				}
 			}
 		}
 	}
@@ -1640,13 +1652,20 @@ bool transform_expression_for_equals_save(string &str, const ParseOptions &po) {
 		}
 	}
 	if(!b_quote && (str[i_name2] == ':' || str[i_name2] == '!' || str[i_name2] == '<' || str[i_name2] == '>')) return false;
-	bool b_func = false;
+	bool b_func = false, b_matrix;
 	if(!b_quote && i_name2 - i_name1 >= 2 && str[i_name2] == RIGHT_PARENTHESIS_CH) {
 		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
 		if(i_name2 == string::npos || i_name2 == 0 || str[i_name2] != LEFT_PARENTHESIS_CH) return false;
 		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
 		if(i_name2 == string::npos) return false;
 		b_func = true;
+	}
+	if(!b_quote && i_name2 - i_name1 >= 2 && str[i_name2] == RIGHT_VECTOR_WRAP_CH) {
+		i_name2 = str.find_last_not_of(SPACES NUMBERS COMMAS, i_name2 - 1);
+		if(i_name2 == string::npos || i_name2 == 0 || str[i_name2] != LEFT_VECTOR_WRAP_CH) return false;
+		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
+		if(i_name2 == string::npos) return false;
+		b_matrix = true;
 	}
 	if(!b_quote && !CALCULATOR->variableNameIsValid(str.substr(i_name1, i_name2 - i_name1 + 1))) return false;
 	string name = str.substr(i_name1, i_name2 - i_name1 + 1);
@@ -1666,30 +1685,35 @@ bool transform_expression_for_equals_save(string &str, const ParseOptions &po) {
 	if(CALCULATOR->hasWhereExpression(str, eo) && str.rfind(_("where"), i - 1) == string::npos && str.rfind("where", i - 1) == string::npos && str.rfind("/.", str.length() - 2) == string::npos) {
 		return false;
 	}
-	size_t i2 = str.find(name, i);
-	if(i2 != string::npos && str.rfind("#", i2 - 1) == string::npos) {
-		if(b_quote) return false;
-		string value = str.substr(i + 1, str.length() - (i + 1));
-		CALCULATOR->parseComments(value);
-		string stmp;
-		CALCULATOR->separateWhereExpression(value, stmp, eo);
-		CALCULATOR->separateToExpression(value, stmp, eo);
-		CALCULATOR->parseSigns(value);
+	if(b_matrix) {
+		Variable *v  = CALCULATOR->getActiveVariable(name);
+		if(!v || !v->isLocal() || !v->isKnown() || !((KnownVariable*) v)->get().isVector()) return false;
+	} else {
 		size_t i2 = str.find(name, i);
-		if(i2 != string::npos) {
-			ExpressionItem *item1  = CALCULATOR->getActiveExpressionItem(name);
-			ExpressionItem *item2  = item1 ? CALCULATOR->getActiveExpressionItem(name, item1) : NULL;
-			if(item1) {
-				MathStructure mtest;
-				CALCULATOR->beginTemporaryStopMessages();
-				CALCULATOR->parse(&mtest, str.substr(i + 1, str.length() - (i + 1)), po);
-				CALCULATOR->endTemporaryStopMessages();
-				if(!b_func && item1->type() == TYPE_VARIABLE && !((Variable*) item1)->isKnown() && mtest.contains((Variable*) item1, true, true, false)) return false;
-				else if(!b_func && item1->type() == TYPE_UNIT && mtest.contains((Unit*) item1, true, true, false)) return false;
-				else if(b_func && item1->type() == TYPE_FUNCTION && mtest.containsFunction((MathFunction*) item1, true, true, false)) return false;
-				if(!b_func && item2 && item2->type() == TYPE_VARIABLE && !((Variable*) item2)->isKnown() && mtest.contains((Variable*) item2, true, true, false)) return false;
-				else if(!b_func && item2 && item2->type() == TYPE_UNIT && mtest.contains((Unit*) item2, true, true, false)) return false;
-				else if(b_func && item2 && item2->type() == TYPE_FUNCTION && mtest.containsFunction((MathFunction*) item2, true, true, false)) return false;
+		if(i2 != string::npos && str.rfind("#", i2 - 1) == string::npos) {
+			if(b_quote) return false;
+			string value = str.substr(i + 1, str.length() - (i + 1));
+			CALCULATOR->parseComments(value);
+			string stmp;
+			CALCULATOR->separateWhereExpression(value, stmp, eo);
+			CALCULATOR->separateToExpression(value, stmp, eo);
+			CALCULATOR->parseSigns(value);
+			size_t i2 = str.find(name, i);
+			if(i2 != string::npos) {
+				ExpressionItem *item1  = CALCULATOR->getActiveExpressionItem(name);
+				ExpressionItem *item2  = item1 ? CALCULATOR->getActiveExpressionItem(name, item1) : NULL;
+				if(item1) {
+					MathStructure mtest;
+					CALCULATOR->beginTemporaryStopMessages();
+					CALCULATOR->parse(&mtest, str.substr(i + 1, str.length() - (i + 1)), po);
+					CALCULATOR->endTemporaryStopMessages();
+					if(!b_func && item1->type() == TYPE_VARIABLE && !((Variable*) item1)->isKnown() && mtest.contains((Variable*) item1, true, true, false)) return false;
+					else if(!b_func && item1->type() == TYPE_UNIT && mtest.contains((Unit*) item1, true, true, false)) return false;
+					else if(b_func && item1->type() == TYPE_FUNCTION && mtest.containsFunction((MathFunction*) item1, true, true, false)) return false;
+					if(!b_func && item2 && item2->type() == TYPE_VARIABLE && !((Variable*) item2)->isKnown() && mtest.contains((Variable*) item2, true, true, false)) return false;
+					else if(!b_func && item2 && item2->type() == TYPE_UNIT && mtest.contains((Unit*) item2, true, true, false)) return false;
+					else if(b_func && item2 && item2->type() == TYPE_FUNCTION && mtest.containsFunction((MathFunction*) item2, true, true, false)) return false;
+				}
 			}
 		}
 	}

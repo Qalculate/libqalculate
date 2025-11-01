@@ -86,18 +86,32 @@
         <_title>Dimension</_title>
       </argument>
     </builtin_function>
+    <builtin_function name="circshift">
+      <_title>Circular Vector Shift</_title>
+      <_names>r:circshift</_names>
+      <example>$name([1  2  3], 1) = [3 1 2]</example>
+      <argument index="1">
+        <_title>Matrix/vector</_title>
+      </argument>
+      <argument index="2">
+        <_title>Steps</_title>
+      </argument>
+      <argument index="3">
+        <_title>Dimension</_title>
+      </argument>
+    </builtin_function>
     <builtin_function name="limits">
-      <_title>Vector Limits</_title>
-      <_names>r:limits</_names>
-      <_description>Returns a part of a vector between two positions.</_description>
+      <_title>Vector Part</_title>
+      <_names>slice,r:limits</_names>
+      <_description>Returns a part of a vector between two positions. Negative indeces are counted from the back of the vector. If the second index is beyond the end of the vector, zeroes are appended to the returned vector.</_description>
       <argument index="1">
         <_title>Vector</_title>
       </argument>
       <argument index="2">
-        <_title>Lower limit</_title>
+        <_title>Index 1</_title>
       </argument>
       <argument index="3">
-        <_title>Upper limit</_title>
+        <_title>Index 2</_title>
       </argument>
     </builtin_function>
     <builtin_function name="dimension">
@@ -109,9 +123,9 @@
       </argument>
     </builtin_function>
     <builtin_function name="mergevectors">
-      <_title>Merge Vectors</_title>
-      <_names>r:mergevectors</_names>
-      <_description>Returns a vector with the elements from two vectors.</_description>
+      <_title>Combine Vectors</_title>
+      <_names>combine,r:mergevectors</_names>
+      <_description>Returns a vector with the elements from multiple vectors.</_description>
       <argument index="1">
         <_title>Vector 1</_title>
       </argument>
@@ -142,9 +156,9 @@
       </argument>
     </builtin_function>
     <builtin_function name="area">
-      <_title>Matrix Area</_title>
+      <_title>Matrix Part</_title>
       <!-- Matrix area -->
-      <_names>r:area</_names>
+      <_names>part,r:area</_names>
       <_description>Returns a part of a matrix.</_description>
       <argument index="1">
         <_title>Matrix</_title>
@@ -159,6 +173,28 @@
         <_title>End row</_title>
       </argument>
       <argument index="5">
+        <_title>End column</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="replacePart">
+      <_title>Replace Part of Matrix</_title>
+      <_names>r:replacePart</_names>
+      <argument index="1">
+        <_title>Matrix</_title>
+      </argument>
+      <argument index="2">
+        <_title>Replacement</_title>
+      </argument>
+      <argument index="3">
+        <_title>Start row</_title>
+      </argument>
+      <argument index="4">
+        <_title>Start column</_title>
+      </argument>
+      <argument index="5">
+        <_title>End row</_title>
+      </argument>
+      <argument index="6">
         <_title>End column</_title>
       </argument>
     </builtin_function>
@@ -1807,7 +1843,7 @@
     </function>
     <function>
       <_title>Body Mass Index (BMI)</_title>
-      <_names>-r:bmi</_names>
+      <_names>r:bmi</_names>
       <_description>Calculates the Body Mass Index. The resulting BMI-value is sometimes interpreted as follows (although varies with age, sex, etc.):&#10;&#10;Underweight &lt; 18.5&#10;Normal weight 18.5-25&#10;Overweight 25-30&#10;Obesity &gt; 30&#10;&#10;Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</_description>
       <example>$name(127 lb, 5ft + 4in) = 21.80</example>
       <expression>(\x/(1000g))/(\y/m)^2</expression>

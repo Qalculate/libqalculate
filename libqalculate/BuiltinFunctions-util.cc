@@ -914,6 +914,42 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 		}
 	}
+	i = vargs[1].symbol().find(LEFT_VECTOR_WRAP, 1);
+	i2 = string::npos;
+	if(i != string::npos) i2 = vargs[1].symbol().find_last_not_of(SPACES, i - 1);
+	if(i2 != string::npos) {
+		string name = vargs[1].symbol().substr(0, i2 + 1);
+		Variable *v = CALCULATOR->getActiveVariable(name);
+		if(!v || !v->isLocal() || !v->isKnown() || !((KnownVariable*) v)->get().isVector()) {
+			CALCULATOR->error(true, _("Matrix/vector (%s) not found."), name.c_str(), NULL);
+			if(vargs[4].number().getBoolean()) return -1;
+			return 0;
+		}
+		i2 = vargs[1].symbol().rfind(RIGHT_VECTOR_WRAP);
+		string index;
+		if(i2 == string::npos || i2 < i) index = vargs[1].symbol().substr(i + 1);
+		else index = vargs[1].symbol().substr(i + 1, i2 - (i + 1));
+		MathStructure mindex;
+		gsub(";", COMMA, index);
+		ParseOptions po = eo.parse_options;
+		po.base = 10;
+		CALCULATOR->parse(&mindex, index, po);
+		mindex.eval(eo);
+		mstruct.transformById(FUNCTION_ID_REPLACE_PART);
+		mstruct.insertChild(((KnownVariable*) v)->get(), 1);
+		if(mindex.isVector()) {
+			for(size_t i = 0; i < mindex.size(); i++) {
+				mstruct.addChild(mindex[i]);
+			}
+		} else {
+			mstruct.addChild(mindex);
+		}
+		while(mstruct.size() < 6) mstruct.addChild(m_zero);
+		mstruct.calculateFunctions(eo, false);
+		if(mstruct.isMatrix()) ((KnownVariable*) v)->set(mstruct);
+		CALCULATOR->saveFunctionCalled();
+		return 1;
+	}
 	if(!CALCULATOR->variableNameIsValid(vargs[1].symbol())) {
 		CALCULATOR->error(true, _("Invalid variable name (%s)."), vargs[1].symbol().c_str(), NULL);
 		if(vargs[4].number().getBoolean()) return -1;

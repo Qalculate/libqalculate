@@ -83,8 +83,8 @@ using std::queue;
 #define XML_DO_FROM_TEXT(node, action)			value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {action((char*) value); xmlFree(value);} else action("");
 #define XML_GET_INT_FROM_PROP(node, name, i)		value = xmlGetProp(node, (xmlChar*) name); if(value) {i = s2i((char*) value); xmlFree(value);}
 #define XML_GET_INT_FROM_TEXT(node, i)			value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {i = s2i((char*) value); xmlFree(value);}
-#define XML_GET_LOCALE_STRING_FROM_TEXT(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); if(!best) {if(!lang) {if(!next_best) {if(value) {str = (char*) value; remove_blank_ends(str);} else str = ""; if(locale.empty()) {best = true;}}} else {if(locale == (char*) lang) {best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && strlen((char*) lang) >= 2 && fulfilled_translation == 0 && lang[0] == localebase[0] && lang[1] == localebase[1]) {next_best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && str.empty() && value) {str = (char*) value; remove_blank_ends(str);}}} if(value) xmlFree(value); if(lang) xmlFree(lang);
-#define XML_GET_LOCALE_STRING_FROM_TEXT_REQ(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); if(!best) {if(!lang) {if(!next_best) {if(value) {str = (char*) value; remove_blank_ends(str);} else str = ""; if(locale.empty()) {best = true;}}} else {if(locale == (char*) lang) {best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && strlen((char*) lang) >= 2 && fulfilled_translation == 0 && lang[0] == localebase[0] && lang[1] == localebase[1]) {next_best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && str.empty() && value && !require_translation) {str = (char*) value; remove_blank_ends(str);}}} if(value) xmlFree(value); if(lang) xmlFree(lang);
+#define XML_GET_LOCALE_STRING_FROM_TEXT(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); if(!best) {if(!lang) {if(!next_best) {if(value) {str = (char*) value; remove_blank_ends(str);} else str = ""; if(locale.empty()) {best = true;}}} else {if(locale == (char*) lang) {best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && fulfilled_translation == 0  && !altlocale.empty() && altlocale == (char*) lang) {next_best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && str.empty() && value) {str = (char*) value; remove_blank_ends(str);}}} if(value) xmlFree(value); if(lang) xmlFree(lang);
+#define XML_GET_LOCALE_STRING_FROM_TEXT_REQ(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); if(!best) {if(!lang) {if(!next_best) {if(value) {str = (char*) value; remove_blank_ends(str);} else str = ""; if(locale.empty()) {best = true;}}} else {if(locale == (char*) lang) {best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && fulfilled_translation == 0 && !altlocale.empty() && altlocale == (char*) lang) {next_best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && str.empty() && value && !require_translation) {str = (char*) value; remove_blank_ends(str);}}} if(value) xmlFree(value); if(lang) xmlFree(lang);
 
 #define VERSION_BEFORE(i1, i2, i3) (version_numbers[0] < i1 || (version_numbers[0] == i1 && (version_numbers[1] < i2 || (version_numbers[1] == i2 && version_numbers[2] < i3))))
 
@@ -454,7 +454,7 @@ bool Calculator::loadLocalDefinitions() {
 												if(value2) names[name_index].name = (char*) value2;\
 												else names[name_index].name = "";\
 											}\
-										} else if(!nextbest_name[name_index] && strlen((char*) lang) >= 2 && fulfilled_translation == 0 && lang[0] == localebase[0] && lang[1] == localebase[1]) {\
+										} else if(!nextbest_name[name_index] && fulfilled_translation == 0 && !altlocale.empty() && altlocale == (char*) lang) {\
 											value2 = xmlNodeListGetString(doc, child2->xmlChildrenNode, 1);\
 											if(!value2 || validation((char*) value2, version_numbers, is_user_defs)) {\
 												nextbest_name[name_index] = true; \
@@ -542,7 +542,7 @@ bool Calculator::loadLocalDefinitions() {
 								} else {\
 									best_names = " ";\
 								}\
-							} else if(nextbest_names.empty() && strlen((char*) lang) >= 2 && fulfilled_translation == 0 && lang[0] == localebase[0] && lang[1] == localebase[1]) {\
+							} else if(nextbest_names.empty() && fulfilled_translation == 0 && !altlocale.empty() && altlocale == (char*) lang) {\
 								if(value) {\
 									nextbest_names = (char*) value;\
 									remove_blank_ends(nextbest_names);\
@@ -733,6 +733,32 @@ bool Calculator::loadLocalDefinitions() {
 						}\
 					}
 
+static const char *definition_linguas[] = {"ca", "es", "fr", "nl", "sv", "ru", "zh_CN", "zh_TW"};
+size_t n_definition_linguas = 8;
+
+string set_definition_language(const string &s) {
+	if(s == "C" || s == "POSIX") return "en";
+	string str = s;
+	size_t i = str.find('.');
+	if(i != string::npos) str = str.substr(0, i);
+	if(str == "en") return str;
+	for(size_t i = 0; i < n_definition_linguas; i++) {
+		if(str == definition_linguas[i]) return str;
+	}
+	if(str.length() > 2) {
+		str = str.substr(0, 2);
+		if(str == "en") return str;
+		for(size_t i = 0; i < n_definition_linguas; i++) {
+			if(str == definition_linguas[i]) return str;
+		}
+	}
+	return "";
+}
+
+vector<string> Calculator::getDefinitionsLocales() const {
+	return priv->definitions_locales;
+}
+
 int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool check_duplicates) {
 
 	xmlDocPtr doc;
@@ -754,70 +780,86 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 	int name_index, prec;
 	ExpressionName ename;
 
-	string locale;
+	string locale, altlocale;
+	if(!priv->definitions_locale_set) {
 #ifdef _WIN32
-	size_t n = 0;
-	getenv_s(&n, NULL, 0, "LANG");
-	if(n > 0) {
-		char *c_lang = (char*) malloc(n * sizeof(char));
-		getenv_s(&n, c_lang, n, "LANG");
-		locale = c_lang;
-		free(c_lang);
-	} else {
-		getenv_s(&n, NULL, 0, "LANGUAGE");
+		size_t n = 0;
+		getenv_s(&n, NULL, 0, "LANG");
 		if(n > 0) {
 			char *c_lang = (char*) malloc(n * sizeof(char));
-			getenv_s(&n, c_lang, n, "LANGUAGE");
+			getenv_s(&n, c_lang, n, "LANG");
 			locale = c_lang;
 			free(c_lang);
 		} else {
-			ULONG nlang = 0;
-			DWORD n = 0;
-			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
-				WCHAR* wlocale = new WCHAR[n];
-				if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
-					locale = utf8_encode(wlocale);
+			getenv_s(&n, NULL, 0, "LANGUAGE");
+			if(n > 0) {
+				char *c_lang = (char*) malloc(n * sizeof(char));
+				getenv_s(&n, c_lang, n, "LANGUAGE");
+				locale = c_lang;
+				free(c_lang);
+			} else {
+				ULONG nlang = 0;
+				DWORD n = 0;
+				if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
+					WCHAR* wlocale = new WCHAR[n];
+					for(size_t i = 2; i < n - 1; i++) {
+						if(wlocale[i] == '\0') {
+							if(wlocale[i + 1] == '\0') break;
+							wlocale[i] = ':';
+						}
+					}
+					if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
+						locale = utf8_encode(wlocale);
+					}
+					delete[] wlocale;
 				}
-				delete[] wlocale;
 			}
 		}
-	}
-	gsub("-", "_", locale);
+		gsub("-", "_", locale);
 #else
-	char *clocale = getenv("LANGUAGE");
-	if(!clocale || strlen(clocale) == 0) clocale = setlocale(LC_MESSAGES, NULL);
-	if(!clocale || strlen(clocale) == 0) clocale = getenv("LANG");
-	if(clocale) locale = clocale;
+		char *clocale = getenv("LANGUAGE");
+		if(!clocale || strlen(clocale) == 0) clocale = setlocale(LC_MESSAGES, NULL);
+		if(!clocale || strlen(clocale) == 0) clocale = getenv("LANG");
+		if(clocale) locale = clocale;
 #endif
 
-	if(b_ignore_locale || locale == "POSIX" || locale == "C") {
-		locale = "";
-	} else {
-		size_t i = locale.find(':');
-		if(i != string::npos) locale = locale.substr(0, i);
-		i = locale.find('.');
-		if(i != string::npos) locale = locale.substr(0, i);
-	}
+		if(b_ignore_locale || locale == "POSIX" || locale == "C") {
+			locale = "";
+		} else {
+			size_t i = locale.find(':');
+			while(i != string::npos) {
+				if(i + 1 < locale.length()) altlocale = locale.substr(i + 1);
+				locale = set_definition_language(locale.substr(0, i));
+				if(locale.empty()) locale = altlocale;
+				else break;
+				i = locale.find(':');
+			}
+			locale = set_definition_language(locale);
+			i = altlocale.find(':');
+			while(i != string::npos) {
+				string altlocale2;
+				if(i + 1 < altlocale.length()) altlocale2 = altlocale.substr(i + 1);
+				altlocale = set_definition_language(altlocale.substr(0, i));
+				if(altlocale.empty() || altlocale == locale) altlocale = altlocale2;
+				else break;
+				i = altlocale.find(':');
+			}
+			altlocale = set_definition_language(altlocale);
+			if(altlocale == locale) altlocale = "";
+		}
 
-	int fulfilled_translation = 0;
-	string localebase;
-	if(locale.length() > 2) {
-		localebase = locale.substr(0, 2);
-		if(locale == "en_US") {
-			fulfilled_translation = 2;
-		} else if(localebase == "en") {
-			fulfilled_translation = 1;
-		}
+		if(altlocale == "en") altlocale = "";
+
+		if(!locale.empty()) priv->definitions_locales.push_back(locale);
+		if(!altlocale.empty()) priv->definitions_locales.push_back(altlocale);
+		priv->definitions_locale_set = true;
 	} else {
-		localebase = locale;
-		if(locale == "en") {
-			fulfilled_translation = 2;
-		}
+		if(priv->definitions_locales.size() >= 1) locale = priv->definitions_locales[0];
+		if(priv->definitions_locales.size() >= 2) altlocale = priv->definitions_locales[1];
 	}
-	while(localebase.length() < 2) {
-		localebase += " ";
-		fulfilled_translation = 2;
-	}
+	int fulfilled_translation = 0;
+	if(locale == "en") fulfilled_translation = 2;
+	else if(altlocale.empty()) fulfilled_translation = 1;
 
 	int exponent = 1, litmp = 0, mix_priority = 0, mix_min = 0;
 	bool active = false, b = false, require_translation = false, use_with_prefixes = false, use_with_prefixes_set = false;
@@ -1166,7 +1208,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 													best_name[name_index] = true;
 													if(value2) prop_names[name_index] = (char*) value2;
 													else prop_names[name_index] = "";
-												} else if(!nextbest_name[name_index] && strlen((char*) lang) >= 2 && fulfilled_translation == 0 && lang[0] == localebase[0] && lang[1] == localebase[1]) {
+												} else if(!nextbest_name[name_index] && !altlocale.empty() && fulfilled_translation == 0 && altlocale == (char*) lang) {
 													value2 = xmlNodeListGetString(doc, child3->xmlChildrenNode, 1);
 													nextbest_name[name_index] = true;
 													if(value2) prop_names[name_index] = (char*) value2;
@@ -1203,14 +1245,14 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 											} else {
 												best_prop_names = " ";
 											}
-									} else if(nextbest_prop_names.empty() && strlen((char*) lang) >= 2 && fulfilled_translation == 0 && lang[0] == localebase[0] && lang[1] == localebase[1]) {
+									} else if(nextbest_prop_names.empty() && !altlocale.empty() && fulfilled_translation == 0 && altlocale == (char*) lang) {
 										if(value2) {
 											nextbest_prop_names = (char*) value2;
 											remove_blank_ends(nextbest_prop_names);
 										} else {
 											nextbest_prop_names = " ";
 										}
-									} else if(nextbest_prop_names.empty() && default_prop_names.empty() && value2 && !require_translation) {
+									} else if(nextbest_prop_names.empty() && !altlocale.empty() && default_prop_names.empty() && value2 && !require_translation) {
 										nextbest_prop_names = (char*) value2;
 										remove_blank_ends(nextbest_prop_names);
 									}
@@ -2196,7 +2238,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 								if(locale == (char*) lang) {
 									XML_GET_STRING_FROM_TEXT(child, name);
 									b_best = true;
-								} else if(strlen((char*) lang) >= 2 && lang[0] == localebase[0] && lang[1] == localebase[1]) {
+								} else if(!altlocale.empty() && altlocale == (char*) lang) {
 									XML_GET_STRING_FROM_TEXT(child, name);
 								}
 							}

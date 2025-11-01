@@ -147,6 +147,59 @@ int FlipFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	return 1;
 }
+CircShiftFunction::CircShiftFunction() : MathFunction("circshift", 2, 3) {
+	setArgumentDefinition(1, new MatrixArgument());
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT));
+	IntegerArgument *iarg = new IntegerArgument();
+	iarg->setMin(&nr_zero);
+	iarg->setMax(&nr_two);
+	setArgumentDefinition(3, iarg);
+	setDefaultValue(3, "0");
+}
+int CircShiftFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	mstruct = vargs[0];
+	int steps = vargs[1].number().intValue();
+	int dimension = vargs[2].number().intValue();
+	if((dimension == 0 || dimension == 1) && mstruct.size() > 1) {
+		steps = steps % mstruct.size();
+		while(steps > 0) {
+			steps--;
+			MathStructure *m = &mstruct.last();
+			m->ref();
+			mstruct.delChild(mstruct.size());
+			mstruct.insertChild_nocopy(m, 1);
+		}
+		while(steps < 0) {
+			steps++;
+			MathStructure *m = &mstruct[0];
+			m->ref();
+			mstruct.delChild(1);
+			mstruct.addChild_nocopy(m);
+		}
+	}
+	if(((dimension == 0 && mstruct.size() == 1) || dimension == 2) && mstruct.columns() > 1) {
+		steps = steps % mstruct.columns();
+		if(steps != 0) {
+			for(size_t i = 0; i < mstruct.size(); i++) {
+				while(steps > 0) {
+					steps--;
+					MathStructure *m = &mstruct[i].last();
+					m->ref();
+					mstruct[i].delChild(mstruct[i].size());
+					mstruct[i].insertChild_nocopy(m, 1);
+				}
+				while(steps < 0) {
+					steps++;
+					MathStructure *m = &mstruct[i][0];
+					m->ref();
+					mstruct[i].delChild(1);
+					mstruct[i].addChild_nocopy(m);
+				}
+			}
+		}
+	}
+	return 1;
+}
 VertCatFunction::VertCatFunction() : MathFunction("vertcat", 1, -1) {
 	setArgumentDefinition(1, new MatrixArgument(""));
 	setArgumentDefinition(2, new MatrixArgument(""));
@@ -377,37 +430,215 @@ int ComponentFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	mstruct = *vargs[1].getChild(i);
 	return 1;
 }
-LimitsFunction::LimitsFunction() : MathFunction("limits", 3) {
+LimitsFunction::LimitsFunction() : MathFunction("limits", 2, 3) {
 	setArgumentDefinition(1, new VectorArgument(""));
 	Argument *arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT);
 	arg->setHandleVector(false);
 	setArgumentDefinition(2, arg);
 	arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT);
 	arg->setHandleVector(false);
+	setDefaultValue(3, "-1");
 	setArgumentDefinition(3, arg);
 }
 int LimitsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	vargs[0].getRange(vargs[1].number().intValue(), vargs[2].number().intValue(), mstruct);
+	int i1 = vargs[1].number().intValue();
+	if(i1 == 0) i1 = 1;
+	else if(i1 < 0) i1 = vargs[0].size() + 1 + i1;
+	int i2 = vargs[2].number().intValue();
+	if(i2 == 0) i2 = vargs[0].size();
+	else if(i2 < 0) i2 = vargs[0].size() + 1 + i2;
+	if(i1 <= 0 || i2 <= 0) return 0;
+	if(i2 < i1) {
+		vargs[0].getRange(i2, i1, mstruct);
+		if((size_t) i1 - i2 + 1 > mstruct.size()) mstruct.resizeVector(i1 - i2 + 1, m_zero);
+		if(mstruct.size() != (size_t) i1 - i2 + 1) return 0;
+		mstruct.flipVector();
+	} else {
+		vargs[0].getRange(i1, i2, mstruct);
+		if((size_t) i2 - i1 + 1 > mstruct.size()) mstruct.resizeVector(i2 - i1 + 1, m_zero);
+		if(mstruct.size() != (size_t) i2 - i1 + 1) return 0;
+	}
 	return 1;
 }
-AreaFunction::AreaFunction() : MathFunction("area", 5) {
+AreaFunction::AreaFunction() : MathFunction("area", 2, 5) {
 	setArgumentDefinition(1, new MatrixArgument(""));
-	Argument *arg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE);
+	Argument *arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT);
 	arg->setHandleVector(false);
 	setArgumentDefinition(2, arg);
-	arg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE);
+	arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT);
 	arg->setHandleVector(false);
+	setDefaultValue(3, "1");
 	setArgumentDefinition(3, arg);
-	arg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE);
+	arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT);
 	arg->setHandleVector(false);
+	setDefaultValue(4, "-1");
 	setArgumentDefinition(4, arg);
-	arg = new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE);
+	arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT);
 	arg->setHandleVector(false);
+	setDefaultValue(5, "-1");
 	setArgumentDefinition(5, arg);
 }
 int AreaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	vargs[0].getArea(vargs[1].number().uintValue(), vargs[2].number().uintValue(), vargs[3].number().uintValue(), vargs[4].number().uintValue(), mstruct);
-	if(vargs[0].isUndefined()) return 0;
+	size_t rows = vargs[0].rows();
+	size_t cols = vargs[0].columns();
+	int r1 = vargs[1].number().intValue();
+	if(r1 == 0) r1 = 1;
+	else if(r1 < 0) r1 = rows + 1 + r1;
+	int r2 = vargs[3].number().intValue();
+	if(r2 == 0) r2 = rows;
+	else if(r2 < 0) r2 = rows + 1 + r2;
+	int c1 = vargs[2].number().intValue();
+	if(c1 == 0) c1 = 1;
+	else if(c1 < 0) c1 = cols + 1 + c1;
+	int c2 = vargs[4].number().intValue();
+	if(c2 == 0) c2 = cols;
+	else if(c2 < 0) c2 = cols + 1 + c2;
+	if(r1 <= 0 || r2 <= 0 || c1 <= 0 || c2 <= 0) return 0;
+	bool flip_r = r2 < r1, flip_c = c2 < c1;
+	if(flip_r) {int r = r2; r2 = r1; r1 = r;}
+	if(flip_c) {int c = c2; c2 = c1; c1 = c;}
+	if((size_t) c1 > cols || (size_t) r1 > rows) {
+		mstruct.clearVector();
+		mstruct.addChild(m_zero);
+		mstruct[0].clearVector();
+	} else {
+		vargs[0].getArea((size_t) r1, (size_t) c1, (size_t) r2, (size_t) c2, mstruct);
+	}
+	if(mstruct.isUndefined()) return 0;
+	if((size_t) c2 - c1 + 1 > mstruct.columns() || (size_t) r2 - r1 + 1 > mstruct.rows()) {
+		mstruct.resizeMatrix(r2 - r1 + 1, c2 - c1 + 1, m_zero);
+	}
+	if((size_t) c2 - c1 + 1 != mstruct.columns() || (size_t) r2 - r1 + 1 != mstruct.rows()) return 0;
+	if(flip_r) mstruct.flipVector();
+	if(flip_c) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			mstruct[i].flipVector();
+		}
+	}
+	return 1;
+}
+ReplacePartFunction::ReplacePartFunction() : MathFunction("replacePart", 3, 6) {
+	setArgumentDefinition(1, new MatrixArgument());
+	setArgumentDefinition(2, new MatrixArgument());
+	Argument *arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT);
+	arg->setHandleVector(false);
+	setArgumentDefinition(3, arg);
+	arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT);
+	arg->setHandleVector(false);
+	setDefaultValue(4, "0");
+	setArgumentDefinition(4, arg);
+	arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT);
+	arg->setHandleVector(false);
+	setDefaultValue(5, "0");
+	setArgumentDefinition(5, arg);
+	arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT);
+	arg->setHandleVector(false);
+	setDefaultValue(6, "0");
+	setArgumentDefinition(6, arg);
+}
+int ReplacePartFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	size_t rows = vargs[0].rows();
+	size_t cols = vargs[0].columns();
+	size_t rr = vargs[1].rows();
+	size_t cr = vargs[1].columns();
+	bool scalar = (rr == 1 && cr == 1);
+	int r1i = vargs[2].number().intValue();
+	if(r1i < 0) r1i = rows + r1i + 1;
+	int r2i = vargs[4].number().intValue();
+	if(r2i < 0) r2i = rows + r2i + 1;
+	int c1i = vargs[3].number().intValue();
+	if(c1i < 0) c1i = cols + c1i + 1;
+	int c2i = vargs[5].number().intValue();
+	if(c2i < 0) c2i = cols + c2i + 1;
+	if(r1i < 0 || r2i < 0 || c1i < 0 || c2i < 0) return 0;
+	if(r1i == 0 && c1i == 0) return 0;
+	size_t c1 = (size_t) c1i;
+	size_t c2 = (size_t) c2i;
+	size_t r1 = (size_t) r1i;
+	size_t r2 = (size_t) r2i;
+	mstruct = vargs[0];
+	MathStructure mreplace(vargs[1]);
+	if(r1 == 0) {
+		r1 = 1;
+		if(r2 == 0) r2 = rows;
+		if(rr == 1 && cr > 1) {mreplace.transposeMatrix(); rr = cr; cr = 1;}
+	}
+	if(c1 == 0) {
+		c1 = 1;
+		if(c2 == 0) c2 = cols;
+		if(cr == 1 && rr > 1) {mreplace.transposeMatrix(); cr = rr; rr = 1;}
+	}
+	if(cr == 0) {
+		if(c2 == 0) c2 = c1;
+		if(r2 == 0) r2 = r1;
+	}
+	if(c2 == 0) {c2 = c1 + cr - 1;}
+	if(r2 == 0) {r2 = r1 + rr - 1;}
+	bool flip_r = r2 < r1, flip_c = c2 < c1;
+	if(flip_r) {int r = r2; r2 = r1; r1 = r;}
+	if(flip_c) {int c = c2; c2 = c1; c1 = c;}
+	if(cr == 0) {
+		if(c1 == 1 && c2 >= mstruct[0].size()) {
+			if(cols > 0 && r1 == 1 && r2 == mstruct.size()) {
+				mstruct[0].clearVector();
+				mstruct.setToChild(1);
+				return 1;
+			}
+			for(size_t i = r1; i <= r2 && i <= rows; i++) {
+				mstruct.delChild(r1);
+			}
+			return 1;
+		} else if(r1 == 1 && r2 >= mstruct.size()) {
+			for(size_t i = 0; i < mstruct.size(); i++) {
+				for(size_t i2 = c1; i2 <= c2 && i2 <= cols; i2++) {
+					cout << i2 << ":" << i << endl;
+					mstruct[i].delChild(c1);
+				}
+			}
+			return 1;
+		}
+	}
+	while(r2 < r1 + rr - 1 && r2 < mstruct.size()) {
+		r2++;
+		mstruct.insertChild(m_zero, r2);
+		mstruct[r2 - 1].clearVector();
+		mstruct[r2 - 1].resizeVector(cols, m_zero);
+		if(mstruct[r2 - 1].size() != cols) return 0;
+	}
+	while(c2 < c1 + cr - 1 && c2 < mstruct[0].size()) {
+		c2++;
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			mstruct[i].insertChild(m_zero, c2);
+		}
+	}
+	size_t new_r = rows;
+	size_t new_c = cols;
+	if(c2 > new_c) new_c = c2;
+	if(cr + c1 - 1 > new_c) new_c = cr + c1 - 1;
+	if(r2 > new_r) new_r = r2;
+	if(rr + r1 - 1 > new_r) new_r = rr + r1 - 1;
+	if(new_r != rows || new_c != cols) {
+		mstruct.resizeMatrix(new_r, new_c, m_zero);
+		if(mstruct.rows() != new_r || mstruct.columns() != new_c) return 0;
+	}
+	if(c2 - c1 + 1 > cr || r2 - r1 + 1 > rr) {
+		new_r = (r2 - r1 + 1 > rr ? r2 - r1 + 1 : rr);
+		new_c = (c2 - c1 + 1 > cr ? c2 - c1 + 1 : cr);
+		mreplace.resizeMatrix(new_r, new_c, scalar ? mreplace[0][0] : m_zero);
+		if(mreplace.rows() != new_r || mreplace.columns() != new_c) return 0;
+	}
+	if(flip_r) mreplace.flipVector();
+	if(flip_c) {
+		for(size_t i = 0; i < mreplace.size(); i++) {
+			mreplace[i].flipVector();
+		}
+	}
+	for(size_t i = 0; i < mreplace.size(); i++) {
+		for(size_t i2 = 0; i2 < mreplace[i].size(); i2++) {
+			mreplace[i][i2].ref();
+			mstruct[r1 + i - 1].setChild_nocopy(&mreplace[i][i2], c1 + i2);
+		}
+	}
 	return 1;
 }
 TransposeFunction::TransposeFunction() : MathFunction("transpose", 1) {

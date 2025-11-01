@@ -509,57 +509,10 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	xmlDocPtr doc;
 	xmlNodePtr cur, child;
 
-	string locale, lang_tmp;
-#ifdef _WIN32
-	size_t n = 0;
-	getenv_s(&n, NULL, 0, "LANG");
-	if(n > 0) {
-		char *c_lang = (char*) malloc(n * sizeof(char));
-		getenv_s(&n, c_lang, n, "LANG");
-		locale = c_lang;
-		free(c_lang);
-	} else {
-		getenv_s(&n, NULL, 0, "LANGUAGE");
-		if(n > 0) {
-			char *c_lang = (char*) malloc(n * sizeof(char));
-			getenv_s(&n, c_lang, n, "LANGUAGE");
-			locale = c_lang;
-			free(c_lang);
-		} else {
-			ULONG nlang = 0;
-			DWORD n = 0;
-			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
-				WCHAR* wlocale = new WCHAR[n];
-				if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
-					locale = utf8_encode(wlocale);
-				}
-				delete[] wlocale;
-			}
-		}
-	}
-	gsub("-", "_", locale);
-#else
-	char *clocale = getenv("LANGUAGE");
-	if(!clocale || strlen(clocale) == 0) clocale = setlocale(LC_MESSAGES, NULL);
-	if(!clocale || strlen(clocale) == 0) clocale = getenv("LANG");
-	if(clocale) locale = clocale;
-#endif
-	if(CALCULATOR->getIgnoreLocale() || locale == "POSIX" || locale == "C") {
-		locale = "";
-	} else {
-		size_t i = locale.find(':');
-		if(i != string::npos) locale = locale.substr(0, i);
-		i = locale.find('.');
-		if(i != string::npos) locale = locale.substr(0, i);
-	}
-
-	string localebase;
-	if(locale.length() > 2) {
-		localebase = locale.substr(0, 2);
-	} else {
-		localebase = locale;
-	}
-	while(localebase.length() < 2) localebase += " ";
+	string locale, altlocale;
+	vector<string> locales = CALCULATOR->getDefinitionsLocales();
+	if(locales.size() >= 1) locale = locales[0];
+	if(locales.size() >= 2) altlocale = locales[1];
 
 #ifdef COMPILED_DEFINITIONS
 	if(!is_user_defs) {
@@ -707,7 +660,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 								lang = xmlNodeGetLang(child);
 								ils = -1;
 								for(int i3 = lang_status_p.size(); i3 > 0; i3--) {
-									if(lang_status_p[i3 - 1] == properties[i3 - 1]) {
+									if(lang_status_p[i3 - 1] == properties[i]) {
 										ils = i3 - 1;
 										break;
 									}
@@ -750,7 +703,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 											str = "";
 										}
 										o->setProperty(properties[i], str, i_approx);
-									} else if((ils < 0 || lang_status[ils] < 1) && strlen((char*) lang) >= 2 && lang[0] == localebase[0] && lang[1] == localebase[1]) {
+									} else if((ils < 0 || lang_status[ils] < 1) && !altlocale.empty() && altlocale == (char*) lang) {
 										if(ils < 0 && properties[i]->isKey()) o->setNonlocalizedKeyProperty(properties[i], o->getProperty(properties[i]));
 										if(ils < 0) {
 											lang_status_p.push_back(properties[i]);

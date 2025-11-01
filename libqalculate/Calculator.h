@@ -1161,6 +1161,7 @@ class Calculator {
 	void saveVariables(void *xmldoc, bool save_global = false, bool save_only_temp = false);
 	void saveUnits(void *xmldoc, bool save_global = false, bool save_only_temp = false);
 	void saveFunctions(void *xmldoc, bool save_global = false, bool save_only_temp = false);
+	std::vector<std::string> getDefinitionsLocales() const;
 	//@}
 
 	/** @name Functions for CSV file import/export. */
