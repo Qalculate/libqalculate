@@ -3199,10 +3199,6 @@ bool equalsIgnoreCase(const string &str1, const string &str2, size_t i2, size_t 
 
 string autocalc_result;
 
-#ifdef HAVE_LIBREADLINE
-
-bool autocalc_busy = false, autocalc_input_available = false, autocalc_aborted = false, autocalc_was_aborted = false;
-
 #ifndef CLOCK_MONOTONIC
 #	define DO_TIMECHECK_END \
 					struct timeval tv; \
@@ -3214,6 +3210,10 @@ bool autocalc_busy = false, autocalc_input_available = false, autocalc_aborted =
 					clock_gettime(CLOCK_MONOTONIC, &tv); \
 					if(tv.tv_sec > t_end.tv_sec || (tv.tv_sec == t_end.tv_sec && tv.tv_nsec / 1000 >= t_end.tv_usec))
 #endif
+
+#ifdef HAVE_LIBREADLINE
+
+bool autocalc_busy = false, autocalc_input_available = false, autocalc_aborted = false, autocalc_was_aborted = false;
 
 void AutoCalcThread::run() {
 	while(true) {
