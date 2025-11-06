@@ -89,7 +89,7 @@
     <builtin_function name="circshift">
       <_title>Circular Vector Shift</_title>
       <_names>r:circshift</_names>
-      <example>$name([1  2  3], 1) = [3 1 2]</example>
+      <example>$name([1  2  3], 1) = [3  1  2]</example>
       <argument index="1">
         <_title>Matrix/vector</_title>
       </argument>
@@ -98,6 +98,20 @@
       </argument>
       <argument index="3">
         <_title>Dimension</_title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="reshape">
+      <_title>Reshape Matrix</_title>
+      <_names>r:reshape</_names>
+      <example>$name([1  2  3  4], 2, 2) = [1  3;  2  4]</example>
+      <argument index="1">
+        <_title>Matrix/vector</_title>
+      </argument>
+      <argument index="2">
+        <_title>Rows</_title>
+      </argument>
+      <argument index="3">
+        <_title>Columns</_title>
       </argument>
     </builtin_function>
     <builtin_function name="limits">

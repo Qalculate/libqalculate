@@ -802,13 +802,14 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 				DWORD n = 0;
 				if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
 					WCHAR* wlocale = new WCHAR[n];
-					for(size_t i = 2; i < n - 1; i++) {
-						if(wlocale[i] == '\0') {
-							if(wlocale[i + 1] == '\0') break;
-							wlocale[i] = ':';
-						}
-					}
 					if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
+						for(size_t i = 2; nlang > 1 && i < n - 1; i++) {
+							if(wlocale[i] == '\0') {
+								if(wlocale[i + 1] == '\0') break;
+								wlocale[i] = ':';
+								nlang--;
+							}
+						}
 						locale = utf8_encode(wlocale);
 					}
 					delete[] wlocale;

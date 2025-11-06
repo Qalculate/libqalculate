@@ -147,6 +147,43 @@ int FlipFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	return 1;
 }
+ReshapeFunction::ReshapeFunction() : MathFunction("reshape", 2, 3) {
+	setArgumentDefinition(1, new MatrixArgument());
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, true, true, INTEGER_TYPE_SINT));
+	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE, true, true, INTEGER_TYPE_SINT));
+	setDefaultValue(3, "0");
+}
+int ReshapeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	int rows = vargs[1].number().intValue();
+	int cols = vargs[2].number().intValue();
+	if(cols == 0 && rows == 0) return 0;
+	if((rows > 1000 || cols > 1000) && vargs[1].number() * vargs[2].number() > Number(1, 1, 6)) return 0;
+	long int elements = vargs[0].rows() * vargs[0].columns();
+	if(cols == 0) cols = elements / rows + elements % rows;
+	else if(rows == 0) rows = elements / cols + elements % cols;
+	mstruct.clearVector();
+	mstruct.resizeVector(rows, m_empty_vector);
+	if(mstruct.size() != (size_t) rows) return 0;
+	size_t r = 0; size_t c = 0;
+	for(int i2 = 0; i2 < cols; i2++) {
+		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(CALCULATOR->aborted()) return 0;
+			if(r < vargs[0].rows() && c < vargs[0].columns()) {
+				mstruct[i].addChild(vargs[0][r][c]);
+				r++;
+				if(r >= vargs[0].rows()) {c++; r = 0;}
+			} else {
+				mstruct[i].addChild(m_zero);
+			}
+		}
+	}
+	if(rows * cols < elements) {
+		CALCULATOR->error(false, _("Elements where from the end of matrix/vector in %s()."), name().c_str(), NULL);
+	} else if(rows * cols > elements) {
+		CALCULATOR->error(false, _("Matrix/vector where expanded with zeroes in %s()."), name().c_str(), NULL);
+	}
+	return 1;
+}
 CircShiftFunction::CircShiftFunction() : MathFunction("circshift", 2, 3) {
 	setArgumentDefinition(1, new MatrixArgument());
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT));
@@ -448,16 +485,18 @@ int LimitsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	if(i2 == 0) i2 = vargs[0].size();
 	else if(i2 < 0) i2 = vargs[0].size() + 1 + i2;
 	if(i1 <= 0 || i2 <= 0) return 0;
+	bool expanded = false;
 	if(i2 < i1) {
 		vargs[0].getRange(i2, i1, mstruct);
-		if((size_t) i1 - i2 + 1 > mstruct.size()) mstruct.resizeVector(i1 - i2 + 1, m_zero);
+		if((size_t) i1 - i2 + 1 > mstruct.size()) {mstruct.resizeVector(i1 - i2 + 1, m_zero); expanded = true;}
 		if(mstruct.size() != (size_t) i1 - i2 + 1) return 0;
 		mstruct.flipVector();
 	} else {
 		vargs[0].getRange(i1, i2, mstruct);
-		if((size_t) i2 - i1 + 1 > mstruct.size()) mstruct.resizeVector(i2 - i1 + 1, m_zero);
+		if((size_t) i2 - i1 + 1 > mstruct.size()) {mstruct.resizeVector(i2 - i1 + 1, m_zero); expanded = true;}
 		if(mstruct.size() != (size_t) i2 - i1 + 1) return 0;
 	}
+	if(expanded) CALCULATOR->error(false, _("Matrix/vector where expanded with zeroes in %s()."), name().c_str(), NULL);
 	return 1;
 }
 AreaFunction::AreaFunction() : MathFunction("area", 2, 5) {
@@ -498,15 +537,15 @@ int AreaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	if(flip_r) {int r = r2; r2 = r1; r1 = r;}
 	if(flip_c) {int c = c2; c2 = c1; c1 = c;}
 	if((size_t) c1 > cols || (size_t) r1 > rows) {
-		mstruct.clearVector();
-		mstruct.addChild(m_zero);
-		mstruct[0].clearVector();
+		mstruct = m_empty_matrix;
 	} else {
 		vargs[0].getArea((size_t) r1, (size_t) c1, (size_t) r2, (size_t) c2, mstruct);
 	}
 	if(mstruct.isUndefined()) return 0;
+	bool expanded = false;
 	if((size_t) c2 - c1 + 1 > mstruct.columns() || (size_t) r2 - r1 + 1 > mstruct.rows()) {
 		mstruct.resizeMatrix(r2 - r1 + 1, c2 - c1 + 1, m_zero);
+		expanded = true;
 	}
 	if((size_t) c2 - c1 + 1 != mstruct.columns() || (size_t) r2 - r1 + 1 != mstruct.rows()) return 0;
 	if(flip_r) mstruct.flipVector();
@@ -515,6 +554,7 @@ int AreaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			mstruct[i].flipVector();
 		}
 	}
+	if(expanded) CALCULATOR->error(false, _("Matrix/vector where expanded with zeroes in %s()."), name().c_str(), NULL);
 	return 1;
 }
 ReplacePartFunction::ReplacePartFunction() : MathFunction("replacePart", 3, 6) {
@@ -591,7 +631,6 @@ int ReplacePartFunction::calculate(MathStructure &mstruct, const MathStructure &
 		} else if(r1 == 1 && r2 >= mstruct.size()) {
 			for(size_t i = 0; i < mstruct.size(); i++) {
 				for(size_t i2 = c1; i2 <= c2 && i2 <= cols; i2++) {
-					cout << i2 << ":" << i << endl;
 					mstruct[i].delChild(c1);
 				}
 			}
@@ -608,6 +647,7 @@ int ReplacePartFunction::calculate(MathStructure &mstruct, const MathStructure &
 	while(c2 < c1 + cr - 1 && c2 < mstruct[0].size()) {
 		c2++;
 		for(size_t i = 0; i < mstruct.size(); i++) {
+			if(CALCULATOR->aborted()) return 0;
 			mstruct[i].insertChild(m_zero, c2);
 		}
 	}
@@ -635,6 +675,7 @@ int ReplacePartFunction::calculate(MathStructure &mstruct, const MathStructure &
 	}
 	for(size_t i = 0; i < mreplace.size(); i++) {
 		for(size_t i2 = 0; i2 < mreplace[i].size(); i2++) {
+			if(CALCULATOR->aborted()) return 0;
 			mreplace[i][i2].ref();
 			mstruct[r1 + i - 1].setChild_nocopy(&mreplace[i][i2], c1 + i2);
 		}
@@ -1561,7 +1602,7 @@ int LoadFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	return 1;
 #else
-	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), (preferredName().name + "()").c_str(), "libqalculate", "--disable-insecure", NULL);
+	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), (name() + "()").c_str(), "libqalculate", "--disable-insecure", NULL);
 	return 0;
 #endif
 }
@@ -1583,7 +1624,7 @@ int ExportFunction::calculate(MathStructure&, const MathStructure &vargs, const 
 	}
 	return 1;
 #else
-	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), (preferredName().name + "()").c_str(), "libqalculate", "--disable-insecure", NULL);
+	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), (name() + "()").c_str(), "libqalculate", "--disable-insecure", NULL);
 	return 0;
 #endif
 }

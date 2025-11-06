@@ -687,7 +687,7 @@ void UptimeVariable::calculate(MathStructure &m) const {
 	Unit *u = CALCULATOR->getUnit("s");
 	if(u) m *= u;
 #else
-	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), preferredName().name.c_str(), "libqalculate", "--disable-insecure", NULL);
+	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), name().c_str(), "libqalculate", "--disable-insecure", NULL);
 	m = nr_zero;
 	Unit *u = CALCULATOR->getUnit("s");
 	if(u) m *= u;

@@ -4293,9 +4293,15 @@ int main(int argc, char *argv[]) {
 				if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
 					WCHAR* wlocale = new WCHAR[n];
 					if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
+						for(size_t i = 2; nlang > 1 && i < n - 1; i++) {
+							if(wlocale[i] == '\0') {
+								if(wlocale[i + 1] == '\0') break;
+								wlocale[i] = ':';
+								nlang--;
+							}
+						}
 						string lang = utf8_encode(wlocale);
 						gsub("-", "_", lang);
-						if(lang.length() > 5) lang = lang.substr(0, 5);
 						if(!lang.empty()) _putenv_s("LANGUAGE", lang.c_str());
 					}
 					delete[] wlocale;
