@@ -1083,7 +1083,7 @@ int EntrywiseMultiplicationFunction::calculate(MathStructure &mstruct, const Mat
 						return 1;
 					}
 				}
-			} else if(mstruct.columns() == 1) {
+			} else if(mstruct.columns() == 1 && m2.size() > 0) {
 				for(size_t i = 0; i < mstruct.size(); i++) {
 					for(size_t i2 = 1; i2 < m2.size(); i2++) {
 						if(CALCULATOR->aborted()) return 0;
@@ -1097,7 +1097,7 @@ int EntrywiseMultiplicationFunction::calculate(MathStructure &mstruct, const Mat
 				return 1;
 			}
 		} else {
-			if(m2.isMatrix() && m2.columns() == 1) {
+			if(m2.isMatrix() && m2.columns() == 1 && mstruct.size() > 0) {
 				mstruct.transform(STRUCT_VECTOR);
 				for(size_t i = 1; i < m2.size(); i++) {
 					if(CALCULATOR->aborted()) return 0;
@@ -1204,7 +1204,7 @@ int EntrywiseDivisionFunction::calculate(MathStructure &mstruct, const MathStruc
 							return 1;
 						}
 					}
-				} else if(mstruct.columns() == 1) {
+				} else if(mstruct.columns() == 1 && m2.size() > 0) {
 					for(size_t i = 0; i < mstruct.size(); i++) {
 						for(size_t i2 = 1; i2 < m2.size(); i2++) {
 							if(CALCULATOR->aborted()) return 0;
@@ -1218,7 +1218,7 @@ int EntrywiseDivisionFunction::calculate(MathStructure &mstruct, const MathStruc
 					return 1;
 				}
 			} else {
-				if(m2.isMatrix() && m2.columns() == 1) {
+				if(m2.isMatrix() && m2.columns() == 1 && mstruct.size() > 0) {
 					mstruct.transform(STRUCT_VECTOR);
 					for(size_t i = 1; i < m2.size(); i++) {
 						if(CALCULATOR->aborted()) return 0;
@@ -1342,7 +1342,7 @@ int EntrywisePowerFunction::calculate(MathStructure &mstruct, const MathStructur
 							return 1;
 						}
 					}
-				} else if(mstruct.columns() == 1) {
+				} else if(mstruct.columns() == 1 && m2.size() > 0) {
 					for(size_t i = 0; i < mstruct.size(); i++) {
 						for(size_t i2 = 1; i2 < m2.size(); i2++) {
 							if(CALCULATOR->aborted()) return 0;
@@ -1356,7 +1356,7 @@ int EntrywisePowerFunction::calculate(MathStructure &mstruct, const MathStructur
 					return 1;
 				}
 			} else {
-				if(m2.isMatrix() && m2.columns() == 1) {
+				if(m2.isMatrix() && m2.columns() == 1 && mstruct.size() > 0) {
 					mstruct.transform(STRUCT_VECTOR);
 					for(size_t i = 1; i < m2.size(); i++) {
 						if(CALCULATOR->aborted()) return 0;
