@@ -65,15 +65,16 @@ PlotDataParameters::PlotDataParameters() {
 
 bool Calculator::canPlot() {
 #ifdef HAVE_GNUPLOT_CALL
+	if(priv->can_plot >= 0) return priv->can_plot;
 #	ifdef _WIN32
 	LPSTR lpFilePart;
 	char filename[MAX_PATH];
-	return SearchPath(NULL, "gnuplot", ".exe", MAX_PATH, filename, &lpFilePart);
+	priv->can_plot = SearchPath(NULL, "gnuplot", ".exe", MAX_PATH, filename, &lpFilePart) > 0;
 #	else
 	FILE *pipe = popen("gnuplot - 2>/dev/null", "w");
-	if(!pipe) return false;
-	return pclose(pipe) == 0;
+	priv->can_plot = (pipe != NULL) && (pclose(pipe) == 0);
 #	endif
+	return priv->can_plot;
 #else
 #	ifdef HAVE_BYO_GNUPLOT
 	return true;

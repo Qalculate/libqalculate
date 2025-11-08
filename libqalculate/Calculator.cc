@@ -205,6 +205,7 @@ Calculator::Calculator() {
 	priv->temperature_calculation = TEMPERATURE_CALCULATION_HYBRID;
 	priv->matlab_matrices = true;
 	priv->persistent_plot = false;
+	priv->can_plot = -1;
 	priv->concise_uncertainty_input = false;
 	priv->fixed_denominator = 2;
 	priv->definitions_locale_set = false;
@@ -478,6 +479,7 @@ Calculator::Calculator(bool ignore_locale) {
 	priv->temperature_calculation = TEMPERATURE_CALCULATION_HYBRID;
 	priv->matlab_matrices = true;
 	priv->persistent_plot = false;
+	priv->can_plot = -1;
 	priv->concise_uncertainty_input = false;
 	priv->fixed_denominator = 2;
 	priv->definitions_locale_set = ignore_locale;
@@ -1964,8 +1966,7 @@ void Calculator::addBuiltinFunctions() {
 
 	addFunction(new GeographicDistanceFunction());
 
-	if(canPlot()) f_plot = addFunction(new PlotFunction());
-	else f_plot = NULL;
+	f_plot = addFunction(new PlotFunction());
 
 	/*void *plugin = dlopen("", RTLD_NOW);
 	if(plugin) {

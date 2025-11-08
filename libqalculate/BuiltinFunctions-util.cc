@@ -1103,6 +1103,7 @@ int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	return 1;
 
 #	else
+	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), (name() + "()").c_str(), "libqalculate", "--without-gnuplot-call", NULL);
 	return 0;
 #	endif
 #else
@@ -1173,7 +1174,16 @@ int PlotFunction::parse(MathStructure &mstruct, const std::string &eq, const Par
 }
 
 int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-
+#ifndef HAVE_GNUPLOT_CALL
+#	ifndef HAVE_BYO_GNUPLOT
+	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), (name() + "()").c_str(), "libqalculate", "--without-gnuplot-call", NULL);
+	return 0;
+#	endif
+#endif
+	if(!CALCULATOR->canPlot()) {
+		CALCULATOR->error(true, _("Gnuplot was not found"), (name() + "()").c_str(), "libqalculate", "--without-gnuplot-call", NULL);
+		return 0;
+	}
 	EvaluationOptions eo2;
 	eo2.parse_options = eo.parse_options;
 	eo2.approximation = APPROXIMATION_APPROXIMATE;
