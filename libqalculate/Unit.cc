@@ -499,18 +499,18 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 	if(inverseExpression().empty()) {
 		if(svalue.find("\\x") != string::npos) {
 			string stmp = svalue;
-			string stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+			string stmp2 = LEFT_PARENTHESIS INTERNAL_ID_L;
 			int x_id = CALCULATOR->addId(new MathStructure(mvalue), true);
 			stmp2 += i2s(x_id);
-			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+			stmp2 += INTERNAL_ID_R RIGHT_PARENTHESIS;
 			gsub("\\x", stmp2, stmp);
-			stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+			stmp2 = LEFT_PARENTHESIS INTERNAL_ID_L;
 			int y_id = -1;
 			if(svalue.find("\\y") != string::npos) {
-				stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+				stmp2 = LEFT_PARENTHESIS INTERNAL_ID_L;
 				y_id = CALCULATOR->addId(new MathStructure(mexp), true);
 				stmp2 += i2s(y_id);
-				stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+				stmp2 += INTERNAL_ID_R RIGHT_PARENTHESIS;
 				gsub("\\y", stmp2, stmp);
 			}
 			CALCULATOR->parse(&mvalue, stmp, po);
@@ -583,17 +583,17 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 	} else {
 		if(sinverse.find("\\x") != string::npos) {
 			string stmp = sinverse;
-			string stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+			string stmp2 = LEFT_PARENTHESIS INTERNAL_ID_L;
 			int x_id = CALCULATOR->addId(new MathStructure(mvalue), true);
 			stmp2 += i2s(x_id);
-			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+			stmp2 += INTERNAL_ID_R RIGHT_PARENTHESIS;
 			gsub("\\x", stmp2, stmp);
 			int y_id = -1;
 			if(svalue.find("\\y") != string::npos) {
-				stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+				stmp2 = LEFT_PARENTHESIS INTERNAL_ID_L;
 				y_id = CALCULATOR->addId(new MathStructure(mexp), true);
 				stmp2 += i2s(y_id);
-				stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+				stmp2 += INTERNAL_ID_R RIGHT_PARENTHESIS;
 				gsub("\\y", stmp2, stmp);
 			}
 			CALCULATOR->parse(&mvalue, stmp, po);
@@ -654,17 +654,17 @@ MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStru
 	}
 	if(svalue.find("\\x") != string::npos) {
 		string stmp = svalue;
-		string stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+		string stmp2 = LEFT_PARENTHESIS INTERNAL_ID_L;
 		int x_id = CALCULATOR->addId(new MathStructure(mvalue), true);
 		int y_id = -1;
 		stmp2 += i2s(x_id);
-		stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+		stmp2 += INTERNAL_ID_R RIGHT_PARENTHESIS;
 		gsub("\\x", stmp2, stmp);
 		if(svalue.find("\\y") != string::npos) {
-			stmp2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+			stmp2 = LEFT_PARENTHESIS INTERNAL_ID_L;
 			y_id = CALCULATOR->addId(new MathStructure(mexp), true);
 			stmp2 += i2s(y_id);
-			stmp2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+			stmp2 += INTERNAL_ID_R RIGHT_PARENTHESIS;
 			gsub("\\y", stmp2, stmp);
 		}
 		CALCULATOR->parse(&mvalue, stmp, po);

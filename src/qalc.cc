@@ -490,7 +490,7 @@ void replace_subscripts(string &str) {
 				}
 				case '\'': {
 					if(in_cit2) in_cit2 = false;
-					else if(!in_cit1) in_cit1 = true;
+					else if(!in_cit1) in_cit2 = true;
 					break;
 				}
 				case '\xe2': {

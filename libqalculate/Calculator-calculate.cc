@@ -3394,37 +3394,22 @@ void replace_variable_name(MathStructure &m, Variable *v) {
 	}
 }
 
-MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
-
-	if(CALCULATOR->expression_to_calculate.find_first_of(ID_WRAPS) != string::npos) {
-		bool quote1 = false, quote2 = false;
-		size_t id_li = string::npos;
-		for(size_t i = 0; i < str.size(); i++) {
-			if(!quote1 && str[i] == '\'') {
-				quote2 = !quote2;
-				id_li = string::npos;
-			} else if(!quote2 && str[i] == '\"') {
-				quote1 = !quote1;
-				id_li = string::npos;
-			} else if(str[i] == ID_WRAP_LEFT_CH) {
-				if(!quote2 && !quote1) str[i] = LEFT_PARENTHESIS_CH;
-				else id_li = i;
-			} else if(str[i] == ID_WRAP_RIGHT_CH) {
-				if(!quote2 && !quote1) {
-					str[i] = RIGHT_PARENTHESIS_CH;
-				} else if(id_li != string::npos) {
-					if(id_li < i - 1 && str.find_first_not_of(NUMBERS SPACES, id_li + 1) == i) {
-						str[i] = RIGHT_PARENTHESIS_CH;
-						str[id_li] = LEFT_PARENTHESIS_CH;
-					}
-					id_li = string::npos;
-				}
-			}
+void replace_control_characters(string &str) {
+	for(size_t i = 0; i < str.size();) {
+		if((str[i] > 0 && str[i] < 9) || ((str[i] > 13 && str[i] < 32) && str[i] != '\e')) {
+			str.erase(i, 1);
+		} else {
+			i++;
 		}
 	}
+}
+
+MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, MathStructure *parsed_struct, MathStructure *to_struct, bool make_to_division) {
+
+	if(eo.parse_options.base != BASE_UNICODE && (eo.parse_options.base != BASE_CUSTOM || priv->custom_input_base_i <= 62)) replace_control_characters(str);
 
 	string str2, str_where;
-	
+
 	bool provided_to = false;
 
 	// retrieve expression after " to " and remove "to ..." from expression

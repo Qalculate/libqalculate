@@ -109,6 +109,12 @@
 #endif
 #	define PREPARE_TIMECHECK(ms) PREPARE_TIMECHECK_VAR PREPARE_TIMECHECK_TIME(ms)
 
+#define INTERNAL_ID_L "\x02"
+#define INTERNAL_ID_R "\x03"
+#define INTERNAL_ID_L_CH '\x02'
+#define INTERNAL_ID_R_CH '\x03'
+#define INTERNAL_ID_LR "\x02\x03"
+
 void printRecursive(const MathStructure &mstruct);
 
 std::string format_and_print(const MathStructure &mstruct);

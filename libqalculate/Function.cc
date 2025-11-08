@@ -291,7 +291,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 				if(in_cit2) {
 					in_cit2 = false;
 				} else if(!in_cit1) {
-					in_cit1 = true;
+					in_cit2 = true;
 				}
 				break;
 			}
@@ -699,7 +699,7 @@ int MathFunction::stringArgs(const string &argstr, vector<string> &svargs) {
 				if(in_cit2) {
 					in_cit2 = false;
 				} else if(!in_cit1) {
-					in_cit1 = true;
+					in_cit2 = true;
 				}
 				break;
 			}
@@ -1015,22 +1015,22 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				}
 			}
 			v_id.push_back(CALCULATOR->addId(mv, true));
-			v_strs.push_back(LEFT_PARENTHESIS ID_WRAP_LEFT);
+			v_strs.push_back(LEFT_PARENTHESIS INTERNAL_ID_L);
 			v_strs[i] += i2s(v_id[i]);
-			v_strs[i] += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+			v_strs[i] += INTERNAL_ID_R RIGHT_PARENTHESIS;
 		}
 		if(maxargs() < 0) {
 			if(stmp.find("\\v") != string::npos) {
 				v_id.push_back(CALCULATOR->addId(new MathStructure(produceVector(vargs)), true));
-				v_str = LEFT_PARENTHESIS ID_WRAP_LEFT;
+				v_str = LEFT_PARENTHESIS INTERNAL_ID_L;
 				v_str += i2s(v_id[v_id.size() - 1]);
-				v_str += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+				v_str += INTERNAL_ID_R RIGHT_PARENTHESIS;
 			}
 			if(stmp.find("\\w") != string::npos) {
 				v_id.push_back(CALCULATOR->addId(new MathStructure(produceArgumentsVector(vargs)), true));
-				w_str = LEFT_PARENTHESIS ID_WRAP_LEFT;
+				w_str = LEFT_PARENTHESIS INTERNAL_ID_L;
 				w_str += i2s(v_id[v_id.size() - 1]);
-				w_str += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+				w_str += INTERNAL_ID_R RIGHT_PARENTHESIS;
 			}
 		}
 
@@ -1070,9 +1070,9 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 							} else {
 								if(subfunctionPrecalculated(i3 + 1)) {
 									if(str2.empty()) {
-										str2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+										str2 = LEFT_PARENTHESIS INTERNAL_ID_L;
 										str2 += i2s(v_id[v_id_i]);
-										str2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+										str2 += INTERNAL_ID_R RIGHT_PARENTHESIS;
 									}
 									str.replace(i2, svar.size(), str2);
 								} else {
@@ -1118,9 +1118,9 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				CALCULATOR->parse(v_mstruct, str, po);
 				v_mstruct->eval(eo);
 				v_id.push_back(CALCULATOR->addId(v_mstruct, true));
-				str = LEFT_PARENTHESIS ID_WRAP_LEFT;
+				str = LEFT_PARENTHESIS INTERNAL_ID_L;
 				str += i2s(v_id[v_id.size() - 1]);
-				str += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+				str += INTERNAL_ID_R RIGHT_PARENTHESIS;
 				i2 = 0;
 				svar = '\\';
 				svar += i2s(i + 1);
@@ -1150,9 +1150,9 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 							} else {
 								if(subfunctionPrecalculated(i3 + 1)) {
 									if(str2.empty()) {
-										str2 = LEFT_PARENTHESIS ID_WRAP_LEFT;
+										str2 = LEFT_PARENTHESIS INTERNAL_ID_L;
 										str2 += i2s(v_id[v_id_i]);
-										str2 += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+										str2 += INTERNAL_ID_R RIGHT_PARENTHESIS;
 									}
 									str.replace(i2, svar.size(), str2);
 								} else {
@@ -1286,8 +1286,8 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 					goto before_find_in_set_formula;
 				}
 				i3 = 0;
-				if(new_formula.length() > i2 + 2 && new_formula[i2 + 2] == ID_WRAP_LEFT_CH) {
-					if((i3 = new_formula.find(ID_WRAP_RIGHT_CH, i2 + 2)) != string::npos) {
+				if(new_formula.length() > i2 + 2 && new_formula[i2 + 2] == '{') {
+					if((i3 = new_formula.find('}', i2 + 2)) != string::npos) {
 						svar_v = new_formula.substr(i2 + 3, i3 - (i2 + 3));
 						i3 -= i2 + 1;
 					} else i3 = 0;
@@ -1302,7 +1302,7 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 					if(i2 > 0 && new_formula[i2 - 1] == '\\') {
 						i2++;
 					} else {
-						if(i2 + 4 < new_formula.length() && new_formula[i2 + 2] == ID_WRAP_LEFT_CH && (i3 = new_formula.find(ID_WRAP_RIGHT_CH, i2 + 3)) != string::npos) {
+						if(i2 + 4 < new_formula.length() && new_formula[i2 + 2] == '{' && (i3 = new_formula.find('}', i2 + 3)) != string::npos) {
 							new_formula.replace(i2, i3 - i2 + 1, svar);
 						} else {
 							new_formula.replace(i2, 2, svar);
@@ -1335,8 +1335,8 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 							goto before_find_in_vsubs_set_formula;
 						}
 						i3 = 0;
-						if(priv->v_subs_calc[sub_i].length() > i2 + 2 && priv->v_subs_calc[sub_i][i2 + 2] == ID_WRAP_LEFT_CH) {
-							if((i3 = priv->v_subs_calc[sub_i].find(ID_WRAP_RIGHT_CH, i2 + 2)) != string::npos) {
+						if(priv->v_subs_calc[sub_i].length() > i2 + 2 && priv->v_subs_calc[sub_i][i2 + 2] == '{') {
+							if((i3 = priv->v_subs_calc[sub_i].find('}', i2 + 2)) != string::npos) {
 								svar_v = priv->v_subs_calc[sub_i].substr(i2 + 3, i3 - (i2 + 3));
 								i3 -= i2 + 1;
 							} else i3 = 0;
@@ -1549,11 +1549,14 @@ bool Argument::test(MathStructure &value, int index, MathFunction *f, const Eval
 	if(b && !scondition.empty()) {
 		string expression = scondition;
 		int id = CALCULATOR->addId(new MathStructure(value), true);
-		string ids = LEFT_PARENTHESIS ID_WRAP_LEFT;
+		string ids = LEFT_PARENTHESIS INTERNAL_ID_L;
 		ids += i2s(id);
-		ids += ID_WRAP_RIGHT RIGHT_PARENTHESIS;
+		ids += INTERNAL_ID_R RIGHT_PARENTHESIS;
 		gsub("\\x", ids, expression);
-		b = CALCULATOR->testCondition(expression);
+		MathStructure m;
+		CALCULATOR->parse(&m, expression);
+		m.eval();
+		b = (m.isNumber() && m.number().getBoolean());
 		CALCULATOR->delId(id);
 	}
 	if(!b && b_handle_vector) {
@@ -1627,7 +1630,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 		}
 		size_t cits = 0;
 		if(str.length() >= 2 + pars * 2) {
-			if(str[pars] == ID_WRAP_LEFT_CH && str[str.length() - 1 - pars] == ID_WRAP_RIGHT_CH && str.find(ID_WRAP_RIGHT, pars + 1) == str.length() - 1 - pars && str.find_first_not_of(NUMBERS, pars + 1) == str.length() - 1 - pars) {
+			if(str[pars] == INTERNAL_ID_L_CH && str[str.length() - 1 - pars] == INTERNAL_ID_R_CH && str.find(INTERNAL_ID_R, pars + 1) == str.length() - 1 - pars && str.find_first_not_of(NUMBERS, pars + 1) == str.length() - 1 - pars) {
 				MathStructure *m_temp = CALCULATOR->getId((size_t) s2i(str.substr(pars + 1, str.length() - pars * 2 - 2)));
 				if(m_temp) {
 					fix_date_time_string(m_temp);
@@ -1655,7 +1658,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 				fix_date_time_string(mstruct);
 				return;
 			}
-			if(b_handle_vector && str[pars] == LEFT_VECTOR_WRAP_CH && str[str.length() - 1 - pars] == RIGHT_VECTOR_WRAP_CH && (str.find_first_of("\"\'", pars + 1) != string::npos || (str.find(LEFT_PARENTHESIS ID_WRAP_LEFT) != string::npos && str.find(ID_WRAP_RIGHT RIGHT_PARENTHESIS) != string::npos))) {
+			if(b_handle_vector && str[pars] == LEFT_VECTOR_WRAP_CH && str[str.length() - 1 - pars] == RIGHT_VECTOR_WRAP_CH && (str.find_first_of("\"\'", pars + 1) != string::npos || (str.find(LEFT_PARENTHESIS INTERNAL_ID_L) != string::npos && str.find(INTERNAL_ID_R RIGHT_PARENTHESIS) != string::npos))) {
 				CALCULATOR->parse(mstruct, str.substr(1 + pars, str.length() - 2 - pars * 2), po);
 				vector_fix_date_time_string(mstruct);
 				return;
@@ -1676,7 +1679,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 				}
 			}
 		}
-		if(pars == 0 && cits == 0 && str.find(ID_WRAP_LEFT) == string::npos && str.find(LEFT_PARENTHESIS) == string::npos) {
+		if(pars == 0 && cits == 0 && str.find(INTERNAL_ID_L) == string::npos && str.find(LEFT_PARENTHESIS) == string::npos) {
 			Variable *v = CALCULATOR->getActiveVariable(str);
 			if(v && v->isKnown() && ((KnownVariable*) v)->get().isSymbolic()) mstruct->set(v);
 			else mstruct->set(str, false, true);
@@ -1690,15 +1693,15 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 			remove_blank_ends(str2);
 		}
 		if(cits == 0) replace_internal_operators(str2);
-		size_t i = str2.find(ID_WRAP_LEFT);
+		size_t i = str2.find(INTERNAL_ID_L);
 		string str2_alt = str2;
 		if(i != string::npos && i < str2.length() - 2) {
 			i = 0;
 			size_t i2 = 0, alt_i = 0; int id = 0;
-			while((i = str2.find(ID_WRAP_LEFT, i)) != string::npos) {
+			while((i = str2.find(INTERNAL_ID_L, i)) != string::npos) {
 				i2 = str2.find_first_not_of(NUMBERS, i + 1);
 				if(i2 == string::npos) break;
-				if(i2 > i + 1 && str2[i2] == ID_WRAP_RIGHT_CH) {
+				if(i2 > i + 1 && str2[i2] == INTERNAL_ID_R_CH) {
 					id = s2i(str2.substr(i + 1, i2 - (i + 1)));
 					MathStructure *m_temp = CALCULATOR->getId((size_t) id);
 					bool do_par = (i == 0 || i2 + 1 == str2.length() || str2[i - 1] != LEFT_PARENTHESIS_CH || str2[i2 + 1] != RIGHT_PARENTHESIS_CH);
@@ -1818,7 +1821,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 					}
 					case '\'': {
 						if(in_cit2) in_cit2 = false;
-						else if(!in_cit1) in_cit1 = true;
+						else if(!in_cit1) in_cit2 = true;
 						break;
 					}
 					case ':': {

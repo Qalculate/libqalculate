@@ -267,6 +267,8 @@ Calculator::Calculator() {
 	addStringAlternative("∨", BITWISE_OR);
 	addStringAlternative("¬", BITWISE_NOT);
 	addStringAlternative("…", "...");
+	addStringAlternative("{", "(");
+	addStringAlternative("}", ")");
 
 	//division operator
 	per_str = _("per");
@@ -395,8 +397,8 @@ Calculator::Calculator() {
 	priv->simplified_percentage_used = false;
 	b_save_called = false;
 
-	ILLEGAL_IN_NAMES = "\a\b" + DOT_S + RESERVED OPERATORS SEXADOT SPACES PARENTHESISS VECTOR_WRAPS COMMAS;
-	ILLEGAL_IN_NAMES_MINUS_SPACE_STR = "\a\b" + DOT_S + RESERVED OPERATORS SEXADOT PARENTHESISS VECTOR_WRAPS COMMAS;
+	ILLEGAL_IN_NAMES = "\a\b" + DOT_S + RESERVED OPERATORS SEXADOT SPACES PARENTHESISS VECTOR_WRAPS COMMAS INTERNAL_ID_LR;
+	ILLEGAL_IN_NAMES_MINUS_SPACE_STR = "\a\b" + DOT_S + RESERVED OPERATORS SEXADOT PARENTHESISS VECTOR_WRAPS COMMAS INTERNAL_ID_LR;
 	ILLEGAL_IN_UNITNAMES = ILLEGAL_IN_NAMES + NUMBERS;
 	b_argument_errors = true;
 	current_stage = MESSAGE_STAGE_UNSET;
@@ -541,6 +543,8 @@ Calculator::Calculator(bool ignore_locale) {
 	addStringAlternative("∨", BITWISE_OR);
 	addStringAlternative("¬", BITWISE_NOT);
 	addStringAlternative("…", "...");
+	addStringAlternative("{", "(");
+	addStringAlternative("}", ")");
 
 	per_str = _("per");
 	per_str_len = per_str.length();
@@ -663,8 +667,8 @@ Calculator::Calculator(bool ignore_locale) {
 	priv->simplified_percentage_used = false;
 	b_save_called = false;
 
-	ILLEGAL_IN_NAMES = "\a\b" + DOT_S + RESERVED OPERATORS SEXADOT SPACES PARENTHESISS VECTOR_WRAPS COMMAS;
-	ILLEGAL_IN_NAMES_MINUS_SPACE_STR = "\a\b" + DOT_S + RESERVED OPERATORS SEXADOT PARENTHESISS VECTOR_WRAPS COMMAS;
+	ILLEGAL_IN_NAMES = "\a\b" + DOT_S + RESERVED OPERATORS SEXADOT SPACES PARENTHESISS VECTOR_WRAPS COMMAS INTERNAL_ID_LR;
+	ILLEGAL_IN_NAMES_MINUS_SPACE_STR = "\a\b" + DOT_S + RESERVED OPERATORS SEXADOT PARENTHESISS VECTOR_WRAPS COMMAS INTERNAL_ID_LR;
 	ILLEGAL_IN_UNITNAMES = ILLEGAL_IN_NAMES + NUMBERS;
 	b_argument_errors = true;
 	current_stage = MESSAGE_STAGE_UNSET;
