@@ -1831,13 +1831,13 @@ void set_option(string str) {
 			} else {
 				ignore_locale = false;
 			}
-			PUTS_UNICODE("Please restart the program for the change to take effect.");
+			if(interactive_mode) {PUTS_UNICODE("Please restart the program for the change to take effect.");}
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "language", _("language"))) {
 		if(svalue == "0" || svalue == "1" || EQUALS_IGNORECASE_AND_LOCAL(svar, "default", _("default"))) svalue = "";
 		if(svalue != custom_lang) {
 			custom_lang = svalue;
-			PUTS_UNICODE(_("Please restart the program for the change to take effect."));
+			if(interactive_mode) {PUTS_UNICODE(_("Please restart the program for the change to take effect."));}
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "default currency", _("default currency")) || equalsIgnoreCase(svar, "currency")) {
 		if(svalue == "0" || svalue == "1" || EQUALS_IGNORECASE_AND_LOCAL(svar, "default", _("default"))) svalue = "";
@@ -4252,7 +4252,6 @@ int main(int argc, char *argv[]) {
 	char list_type = 'n';
 	string search_str;
 
-#ifdef ENABLE_NLS
 	string filename = buildPath(getLocalDir(), "qalc.cfg");
 	FILE *file = fopen(filename.c_str(), "r");
 	char line[10000];
@@ -4268,20 +4267,68 @@ int main(int argc, char *argv[]) {
 			} else if(strncmp(line, "language=", 9) == 0) {
 				lang = line + sizeof(char) * 9;
 				remove_blank_ends(lang);
-				if(!lang.empty()) {
-#	ifdef _WIN32
-					_putenv_s("LANGUAGE", lang.c_str());
-#	else
-					setenv("LANGUAGE", lang.c_str(), 1);
-					if(lang.find(".") != string::npos) setenv("LC_MESSAGES", lang.c_str(), 1);
-#	endif
-				}
 				break;
 			}
 		}
 		fclose(file);
 	}
+	for(int i = 1; i < argc; i++) {
+		string svalue, svar;
+		svar = argv[i];
+		size_t i2 = svar.find_first_of(NUMBERS "=");
+		if(i2 != string::npos && i2 != 0 && svar[0] != '+' && (svar[i2] == '=' || i2 == 2) && (svar[i2] != '=' || i2 != svar.length() - 1)) {
+			svalue = svar.substr(svar[i2] == '=' ? i2 + 1 : i2);
+			svar = svar.substr(0, i2);
+		}
+		if(svar == "-set" || svar == "--set" || svar == "-s") {
+			if(svalue.empty()) {
+				if(i + 1 < argc) {
+					i++;
+					svalue = argv[i];
+				}
+			}
+			if(!svalue.empty()) {
+				while(true) {
+					size_t i2 = svalue.find(";");
+					if(i2 == string::npos) {
+						if(svalue.find("ignore locale") == 0 || svalue.find("ignore_locale") == 0) {
+							svalue = svalue.substr(strlen("ignore locale"));
+							remove_blank_ends(svalue);
+							ignore_locale = svalue.empty() || s2b(svalue);
+						} else if(svalue.find("language") == 0) {
+							lang = svalue.substr(strlen("language"));
+							remove_blank_ends(lang);
+						}
+						break;
+					} else {
+						if(svalue.substr(0, i2).find("ignore locale") == 0 || svalue.substr(0, i2).find("ignore_locale") == 0) {
+							svalue = svalue.substr(strlen("ignore locale"), i2 - strlen("ignore locale"));
+							remove_blank_ends(svalue);
+							ignore_locale = svalue.empty() || s2b(svalue);
+						} else if(svalue.substr(0, i2).find("language") == 0) {
+							lang = svalue.substr(strlen("language"), i2 - strlen("language"));
+							remove_blank_ends(lang);
+						}
+						if(i2 + 1 == svalue.length()) break;
+						svalue = svalue.substr(i2 + 1, svalue.length() - (i2 + 1));
+
+					}
+				}
+			}
+		} else if(svar == "--") {
+			break;
+		}
+	}
+#ifdef ENABLE_NLS
 	if(!ignore_locale) {
+		if(!lang.empty()) {
+#	ifdef _WIN32
+			_putenv_s("LANGUAGE", lang.c_str());
+#	else
+			setenv("LANGUAGE", lang.c_str(), 1);
+			if(lang.find(".") != string::npos) setenv("LC_MESSAGES", lang.c_str(), 1);
+#	endif
+		}
 #	ifdef _WIN32
 		if(lang.empty()) {
 			size_t n = 0;
