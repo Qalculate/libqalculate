@@ -307,8 +307,14 @@ int ChiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 }
 
 IGammaFunction::IGammaFunction() : MathFunction("igamma", 2) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
-	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false));
+	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false);
+	Number nmax(1, 1, 6);
+	arg->setMax(&nmax);
+	setArgumentDefinition(1, arg);
+	nmax.set(1, 1, 3);
+	arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false);
+	arg->setMax(&nmax);
+	setArgumentDefinition(2, arg);
 }
 bool IGammaFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 2 && (vargs[1].representsPositive() || (vargs[0].representsInteger() && vargs[0].representsPositive()));}
 bool IGammaFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 2 && (vargs[1].representsNonNegative() || (vargs[0].representsInteger() && vargs[0].representsNonNegative()));}
