@@ -90,7 +90,6 @@ int main(int argc, char *argv[]) {
 				bool omit = msgid.find("-r:") != string::npos;
 				bool hyphen = msgid.find("r:") != string::npos;
 				if(!msgid.empty() && (msgstr == msgid || msgstr == "-" || msgstr == "+")) {
-					cout << msgid << endl;
 					if(variant == 3 || variant == 4) cout << msgstr << endl;
 					if(msgstr == "+" || (!omit && !hyphen)) {sout = "msgstr \""; sout += msgid; sout += "\"";}
 					else if(!omit) sout = "msgstr \"-\"";

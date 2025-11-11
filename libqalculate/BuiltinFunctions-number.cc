@@ -484,7 +484,7 @@ NextPrimeFunction::NextPrimeFunction() : MathFunction("nextprime", 1) {
 int NextPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	Number nr(vargs[0].number());
 	nr.ceil();
-	if(!nr.isInteger() || nr.integerLength() > 10000) return 0;
+	if(!nr.isInteger() || nr.integerLength() > 1000) return 0;
 	if(nr <= 2) {
 		mstruct = nr_two;
 		return 1;
@@ -531,7 +531,7 @@ PrevPrimeFunction::PrevPrimeFunction() : MathFunction("prevprime", 1) {
 int PrevPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	Number nr(vargs[0].number());
 	nr.floor();
-	if(!nr.isInteger() || nr.integerLength() > 10000) return 0;
+	if(!nr.isInteger() || nr.integerLength() > 1000) return 0;
 	if(nr.isTwo()) {
 		mstruct = nr_two;
 		return 1;
@@ -1291,6 +1291,7 @@ int BernoulliFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		Number bin, k, nmk(vargs[0].number()), nrB;
 		while(k <= vargs[0].number()) {
 			if(nmk.isEven() || nmk.isOne()) {
+				if(CALCULATOR->aborted()) return 0;
 				nrB.set(nmk);
 				if(!bin.binomial(vargs[0].number(), k) || !nrB.bernoulli() || !nrB.multiply(bin)) return 0;
 				if(eo.approximation == APPROXIMATION_EXACT && nrB.isApproximate()) return 0;

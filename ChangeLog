@@ -1,3 +1,45 @@
+2025-11-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add abortion point in bernoulli function with non-zero second argument
+	* Add abortion point in zeta function with negative integer as first argument and second argument != 1
+
+2025-11-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix handling of single quotation marks
+	* Limit the range of supported arguments in igamma function to avoid segfault and very slow unabortable calculations
+	* Fix use of options "ignore locale" and "language" in command line arguments
+	* Reduce max argument of nextprime() and prevprime()
+
+2025-11-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Show error when plot function is used when Gnuplot is not found or is disabled by "--without-gnuplot-call"
+	* Fix segfault with entrywise operation on a column vector and an empty vector (e.g. "[1; 2].*[]")
+	* Fix segfaults with "{" or "}" in expression (qalc not affected)
+
+2025-11-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add reshape() function
+	* Add warning when matrix/vector has been expanded in slice() or part()
+	* Improve support for multiple preferred languages on Windows
+
+2025-11-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix compilation without readline
+	* Add circshift and replacePart functions
+	* v[i, ...]=... syntax for assignment of part of matrix/vector variable
+	* Rename and improve area (now "part"), limits ("slice"), and mergevectors ("combine") functions
+	* Improve language handling in definitions files
+
+2025-10-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add default currency option in qalc
+
+2025-10-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Limit the range of supported arguments in bessely and besselj functions (to avoid very slow unabortable calculations), and add abortion points
+	* Limit time used for dual calculation with time command line argument to same limit as without
+	* Do not try to calculate exact result with automatic approximation for expressions with iterative functions
+
 2025-10-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix infinite loop during factorization (e.g. when calculating "base(1234567,x,3)=2^31") on Windows

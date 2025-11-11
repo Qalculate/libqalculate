@@ -1877,12 +1877,108 @@ bool contains_abs_or_currency(const MathStructure &m) {
 	return false;
 }
 
+/*	ARGUMENT_TYPE_FREE,
+	ARGUMENT_TYPE_SYMBOLIC,
+	ARGUMENT_TYPE_TEXT,
+	ARGUMENT_TYPE_DATE,
+	ARGUMENT_TYPE_FILE,
+	ARGUMENT_TYPE_INTEGER,
+	ARGUMENT_TYPE_NUMBER,
+	ARGUMENT_TYPE_VECTOR,
+	ARGUMENT_TYPE_MATRIX,
+	ARGUMENT_TYPE_EXPRESSION_ITEM,
+	ARGUMENT_TYPE_FUNCTION,
+	ARGUMENT_TYPE_UNIT,
+	ARGUMENT_TYPE_BOOLEAN,
+	ARGUMENT_TYPE_VARIABLE,
+	ARGUMENT_TYPE_ANGLE,
+	ARGUMENT_TYPE_SET,
+	ARGUMENT_TYPE_DATA_OBJECT,
+	ARGUMENT_TYPE_DATA_PROPERTY
+
+string rnd_number(bool use_par = true, bool only_integers = false, bool only_positive = false, bool allow_complex = true, bool allow_interval = false)
+void test_functions(const EvaluationOptions &eo) {
+	for(size_t i = 0; i < CALCULATOR->functions.size(); i++) {
+		MathFunction *f = CALCULATOR->functions[i];
+		string str = f->referenceName();
+		str += "(";
+		int n = f->maxargs();
+		if(n < 0) n = f->minargs();
+		if(n > 0) {
+			bool last_vector = f->getArgumentDefinition(n) && f->getArgumentDefinition(n)->type() == ARGUMENT_TYPE_VECTOR;
+			for(int t i = 1; i= < n; i++) {
+				if(i > 1) str += ";";
+				Arugment *arg = f->getArgumentDefinition(i);
+				if(arg) {
+					switch(arg->type()) {
+						case ARGUMENT_TYPE_: {
+							str += rnd_number(false, false, false, true, true);
+							break;
+						}
+						case ARGUMENT_TYPE_SYMBOLIC: {
+							str += "x";
+							break;
+						}
+						case ARGUMENT_TYPE_TEXT: {
+							str += "test";
+							break;
+						}
+						case ARGUMENT_TYPE_DATE: {
+							str += QalculateDateTime(rand() % 2000000000L).print();
+							break;
+						}
+						case ARGUMENT_TYPE_INTEGER: {
+							str += rnd_number(false, true, false, true, true);
+							break;
+						}
+						case ARGUMENT_TYPE_: {
+							str += rnd_number(false, false, false, true, true);
+							break;
+						}
+						case ARGUMENT_TYPE_: {
+							str += rnd_number(false, false, false, true, true);
+							break;
+						}
+						case ARGUMENT_TYPE_: {
+							str += rnd_number(false, false, false, true, true);
+							break;
+						}
+						case ARGUMENT_TYPE_: {
+							str += rnd_number(false, false, false, true, true);
+							break;
+						}
+						case ARGUMENT_TYPE_: {
+							str += rnd_number(false, false, false, true, true);
+							break;
+						}
+						case ARGUMENT_TYPE_: {
+							str += rnd_number(false, false, false, true, true);
+							break;
+						}
+						default: {
+							str = "";
+							break;
+						}
+					}
+				} else {
+					str += rnd_number(false, false, false, true, true);
+				}
+				if(str.empty()) break;
+			}
+		}
+		if(str.empty()) continue;
+		str += ")";
+		cout << str << endl;
+		cout << CALCULATOR->calculateAndPrint(str, 5000, evalops, default_print_options) << endl;
+	}
+}*/
+
 #include "libqalculate/MathStructure-support.h"
 int main(int argc, char *argv[]) {
 
 	new Calculator(false);
 	//CALCULATOR->loadExchangeRates();
-	CALCULATOR->loadGlobalDefinitions();
+	//CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
 	CALCULATOR->setPrecision(10);
 
@@ -1922,10 +2018,6 @@ int main(int argc, char *argv[]) {
 	evalops.structuring = STRUCTURING_SIMPLIFY;
 	//evalops.approximation = APPROXIMATION_EXACT;
 
-	for(size_t i = 0; i < 100000; i++) {
-		cout << rnd_expression(false, false, 5, 4, false, false, false, false, false) << endl;
-	}
-return 0;
 	/*po.use_unicode_signs = true;
 	po.number_fraction_format = FRACTION_DECIMAL;
 	bool b_approx = false;
@@ -1966,9 +2058,9 @@ return 0;
 	mstruct.eval(evalops);
 	cout << mstruct << endl;*/
 	//speed_test();
-	/*test_integration();
+	test_integration();
 	cout << successes << ":" << imaginary << endl;
-	return 0;*/
+	return 0;
 	//test_intervals(true);
 
 	/*Number nr;

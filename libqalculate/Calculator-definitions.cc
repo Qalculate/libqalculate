@@ -859,7 +859,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		if(priv->definitions_locales.size() >= 2) altlocale = priv->definitions_locales[1];
 	}
 	int fulfilled_translation = 0;
-	if(locale == "en") fulfilled_translation = 2;
+	if(locale.empty() || locale == "en") fulfilled_translation = 2;
 	else if(altlocale.empty()) fulfilled_translation = 1;
 
 	int exponent = 1, litmp = 0, mix_priority = 0, mix_min = 0;
@@ -909,7 +909,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {5, 8, 1};
+	int version_numbers[] = {5, 8, 2};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);

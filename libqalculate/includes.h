@@ -34,7 +34,7 @@
 
 #define QALCULATE_MAJOR_VERSION (5)
 #define QALCULATE_MINOR_VERSION (8)
-#define QALCULATE_MICRO_VERSION (1)
+#define QALCULATE_MICRO_VERSION (2)
 
 static std::string empty_string;
 

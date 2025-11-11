@@ -53,7 +53,7 @@ bool bernoulli_poly(MathStructure &m, Number n, const MathStructure &mx, const E
 	while(k <= n) {
 		if(nmk.isEven() || nmk.isOne()) {
 			nrB.set(nmk);
-			if(!bin.binomial(n, k) || !nrB.bernoulli() || !nrB.multiply(bin)) return false;
+			if(!bin.binomial(n, k) || !nrB.bernoulli() || !nrB.multiply(bin) || CALCULATOR->aborted()) return false;
 			if(eo.approximation == APPROXIMATION_EXACT && nrB.isApproximate()) return false;
 			m.add(nrB, true);
 			m.last().multiply(mx);

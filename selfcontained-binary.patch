@@ -1,23 +1,25 @@
-diff --git a/libqalculate/Calculator-definitions.cc b/libqalculate/Calculator-definitions.cc
-index 1313e37..63850ff 100644
---- a/libqalculate/Calculator-definitions.cc
-+++ b/libqalculate/Calculator-definitions.cc
-@@ -790,14 +790,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
- 	if(clocale) locale = clocale;
- #endif
+diff --git a/libqalculate/Calculator.cc b/libqalculate/Calculator.cc
+index 6f33ad7..b76d67f 100644
+--- a/libqalculate/Calculator.cc
++++ b/libqalculate/Calculator.cc
+@@ -208,7 +208,7 @@ Calculator::Calculator() {
+ 	priv->can_plot = -1;
+ 	priv->concise_uncertainty_input = false;
+ 	priv->fixed_denominator = 2;
+-	priv->definitions_locale_set = false;
++	priv->definitions_locale_set = true;
  
--	if(b_ignore_locale || locale == "POSIX" || locale == "C") {
--		locale = "";
--	} else {
--		size_t i = locale.find(':');
--		if(i != string::npos) locale = locale.substr(0, i);
--		i = locale.find('.');
--		if(i != string::npos) locale = locale.substr(0, i);
--	}
-+	locale = "";
+ #ifdef HAVE_ICU
+ 	UErrorCode err = U_ZERO_ERROR;
+@@ -484,7 +484,7 @@ Calculator::Calculator(bool ignore_locale) {
+ 	priv->can_plot = -1;
+ 	priv->concise_uncertainty_input = false;
+ 	priv->fixed_denominator = 2;
+-	priv->definitions_locale_set = ignore_locale;
++	priv->definitions_locale_set = true;
  
- 	int fulfilled_translation = 0;
- 	string localebase;
+ #ifdef HAVE_ICU
+ 	UErrorCode err = U_ZERO_ERROR;
 diff --git a/libqalculate/Makefile.am b/libqalculate/Makefile.am
 index 3729a26..6d45f69 100644
 --- a/libqalculate/Makefile.am
@@ -41,17 +43,18 @@ index 51e9cae..15b4b79 100644
  
  bin_PROGRAMS = @QALCULATE_TEXT@
 diff --git a/po-defs/remove-untranslated.cc b/po-defs/remove-untranslated.cc
-index 945b73f..de24ba7 100644
+index 6e35b59..02feef2 100644
 --- a/po-defs/remove-untranslated.cc
 +++ b/po-defs/remove-untranslated.cc
-@@ -87,10 +87,9 @@ int main(int argc, char *argv[]) {
- 				} else {
- 					msgstr = sbuffer.substr(8, sbuffer.length() - 9);
+@@ -89,11 +89,9 @@ int main(int argc, char *argv[]) {
  				}
+ 				bool omit = msgid.find("-r:") != string::npos;
+ 				bool hyphen = msgid.find("r:") != string::npos;
 -				if(!msgid.empty() && (msgstr == msgid || msgstr == "-" || msgstr == "+")) {
 +				if(true) {
  					if(variant == 3 || variant == 4) cout << msgstr << endl;
--					if(msgstr == "+") {sout = "msgstr \""; sout += msgstr; sout += "\"";}
+-					if(msgstr == "+" || (!omit && !hyphen)) {sout = "msgstr \""; sout += msgid; sout += "\"";}
+-					else if(!omit) sout = "msgstr \"-\"";
 -					else sout = "msgstr \"\"";
 +					sout = "msgstr \"\"";
  				} else {

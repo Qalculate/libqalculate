@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<QALCULATE version="5.5.0">
+<QALCULATE version="5.8.2">
   <category>
     <_title>Matrices &amp; Vectors</_title>
     <builtin_function name="vector">
@@ -116,7 +116,7 @@
     </builtin_function>
     <builtin_function name="limits">
       <_title>Vector Part</_title>
-      <_names>slice,r:limits</_names>
+      <_names>r:slice,r:limits</_names>
       <_description>Returns a part of a vector between two positions. Negative indeces are counted from the back of the vector. If the second index is beyond the end of the vector, zeroes are appended to the returned vector.</_description>
       <argument index="1">
         <_title>Vector</_title>
@@ -138,7 +138,7 @@
     </builtin_function>
     <builtin_function name="mergevectors">
       <_title>Combine Vectors</_title>
-      <_names>combine,r:mergevectors</_names>
+      <_names>r:combine,r:mergevectors</_names>
       <_description>Returns a vector with the elements from multiple vectors.</_description>
       <argument index="1">
         <_title>Vector 1</_title>
@@ -172,7 +172,7 @@
     <builtin_function name="area">
       <_title>Matrix Part</_title>
       <!-- Matrix area -->
-      <_names>part,r:area</_names>
+      <_names>r:part,r:area</_names>
       <_description>Returns a part of a matrix.</_description>
       <argument index="1">
         <_title>Matrix</_title>
