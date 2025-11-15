@@ -1978,7 +1978,7 @@ int main(int argc, char *argv[]) {
 
 	new Calculator(false);
 	//CALCULATOR->loadExchangeRates();
-	//CALCULATOR->loadGlobalDefinitions();
+	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
 	CALCULATOR->setPrecision(10);
 

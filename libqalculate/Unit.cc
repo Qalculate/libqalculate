@@ -1354,7 +1354,7 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	}
 	remove_times_one(mstruct);
 	fix_division(mstruct, eo);
-	bool b_eval = !is_unit_multiexp(mstruct) && mstruct.containsType(STRUCT_UNIT, false, true, true) != 0;
+	bool b_eval = !is_unit_multiexp(mstruct) && mstruct.containsType(STRUCT_UNIT, false, true, true) != 0 && !mstruct.containsFunctionId(FUNCTION_ID_PLOT) && !mstruct.containsFunctionId(FUNCTION_ID_COMMAND) && !mstruct.containsFunctionId(FUNCTION_ID_EXPORT) && !mstruct.containsFunctionId(FUNCTION_ID_SAVE);
 	while(true) {
 		if(b_eval) {
 			if(CALCULATOR->isControlled()) {
@@ -1392,7 +1392,7 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 		} else {
 			had_errors = true;
 		}
-		if(had_errors && !b_eval) {
+		if(had_errors && !b_eval && mstruct.containsType(STRUCT_UNIT, false, true, true) != 0 && !mstruct.containsFunctionId(FUNCTION_ID_PLOT) && !mstruct.containsFunctionId(FUNCTION_ID_COMMAND) && !mstruct.containsFunctionId(FUNCTION_ID_EXPORT) && !mstruct.containsFunctionId(FUNCTION_ID_SAVE)) {
 			had_errors = false;
 			b_eval = true;
 			clear();

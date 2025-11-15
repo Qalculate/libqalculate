@@ -10129,11 +10129,12 @@ bool Number::binomial(const Number &m, const Number &k) {
 		clear();
 		return true;
 	}
-	if(m.isZero() || m.equals(k)) {
+	if(m.equals(k) || k.isZero()) {
 		set(1, 1, 0);
 		return true;
 	}
 	if(!mpz_fits_ulong_p(mpq_numref(k.internalRational()))) return false;
+	if((k.integerLength() > 21 || m.integerLength() > 22 * (1 << (21 - k.integerLength()))) && m > k + 1000000L) return false;
 	clear();
 	mpz_bin_ui(mpq_numref(r_value), mpq_numref(m.internalRational()), mpz_get_ui(mpq_numref(k.internalRational())));
 	return true;

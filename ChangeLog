@@ -1,3 +1,12 @@
+2025-11-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix default data property argument ("info")
+	* Limit range of arguments in binomial function
+
+2025-11-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Show vector, with many elements, in result using colon function when possible
+
 2025-11-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Add abortion point in bernoulli function with non-zero second argument

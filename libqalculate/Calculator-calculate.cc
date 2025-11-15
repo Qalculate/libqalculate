@@ -1652,7 +1652,7 @@ bool transform_expression_for_equals_save(string &str, const ParseOptions &po) {
 		}
 	}
 	if(!b_quote && (str[i_name2] == ':' || str[i_name2] == '!' || str[i_name2] == '<' || str[i_name2] == '>')) return false;
-	bool b_func = false, b_matrix;
+	bool b_func = false, b_matrix = false;
 	if(!b_quote && i_name2 - i_name1 >= 2 && str[i_name2] == RIGHT_PARENTHESIS_CH) {
 		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
 		if(i_name2 == string::npos || i_name2 == 0 || str[i_name2] != LEFT_PARENTHESIS_CH) return false;

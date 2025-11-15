@@ -310,6 +310,8 @@ IGammaFunction::IGammaFunction() : MathFunction("igamma", 2) {
 	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false);
 	Number nmax(1, 1, 6);
 	arg->setMax(&nmax);
+	nmax.set(-1, 1, 5);
+	arg->setMin(&nmax);
 	setArgumentDefinition(1, arg);
 	nmax.set(1, 1, 3);
 	arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false);

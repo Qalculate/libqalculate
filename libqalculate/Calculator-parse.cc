@@ -1555,12 +1555,12 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	if(po.default_dataset != NULL && str.length() > 1) {
 		size_t str_index = str.find(DOT_CH, 1);
 		while(str_index != string::npos) {
-			if(str_index + 1 < str.length() && ((is_not_number(str[str_index + 1], base) && is_not_in(INTERNAL_OPERATORS NOT_IN_NAMES, str[str_index + 1]) && is_not_in(INTERNAL_OPERATORS NOT_IN_NAMES, str[str_index - 1])) || (is_not_in(INTERNAL_OPERATORS NOT_IN_NAMES, str[str_index + 1]) && is_not_number(str[str_index - 1], base) && is_not_in(INTERNAL_OPERATORS NOT_IN_NAMES, str[str_index - 1])))) {
-				size_t dot_index = str.find_first_of(NOT_IN_NAMES INTERNAL_OPERATORS DOT, str_index + 1);
+			if(str_index + 1 < str.length() && ((is_not_number(str[str_index + 1], base) && is_not_in(INTERNAL_OPERATORS NOT_IN_NAMES INTERNAL_ID_LR, str[str_index + 1]) && is_not_in(INTERNAL_OPERATORS NOT_IN_NAMES INTERNAL_ID_LR, str[str_index - 1])) || (is_not_in(INTERNAL_OPERATORS NOT_IN_NAMES INTERNAL_ID_LR, str[str_index + 1]) && is_not_number(str[str_index - 1], base) && is_not_in(INTERNAL_OPERATORS NOT_IN_NAMES INTERNAL_ID_LR, str[str_index - 1])))) {
+				size_t dot_index = str.find_first_of(NOT_IN_NAMES INTERNAL_ID_LR INTERNAL_OPERATORS DOT, str_index + 1);
 				if(dot_index != string::npos && str[dot_index] == DOT_CH) {
 					str_index = dot_index;
 				} else {
-					size_t property_index = str.find_last_of(NOT_IN_NAMES INTERNAL_OPERATORS, str_index - 1);
+					size_t property_index = str.find_last_of(NOT_IN_NAMES INTERNAL_ID_LR INTERNAL_OPERATORS, str_index - 1);
 					if(property_index == string::npos) {
 						str.insert(0, 1, '.');
 						str.insert(0, po.default_dataset->referenceName());
@@ -1877,7 +1877,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	size_t i_dx = str.find("dx", 4);
 	while(i_dx != string::npos) {
 		i_dx++;
-		if(i_dx == str.length() - 1 || is_in(NUMBERS NOT_IN_NAMES, str[i_dx + 1])) {
+		if(i_dx == str.length() - 1 || is_in(NUMBERS NOT_IN_NAMES INTERNAL_ID_LR, str[i_dx + 1])) {
 			size_t l_dx = 2;
 			if(i_dx > 4 && str[i_dx - 2] == SPACE_CH) l_dx++;
 			if(str[i_dx - l_dx] == DIVISION_CH) {
@@ -2294,7 +2294,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 				}
 				if(b_old_matrix == 1) priv->matlab_matrices = true;
 			}
-		} else if(str[str_index] == '\\' && str_index + 1 < str.length() && (is_not_in(NOT_IN_NAMES INTERNAL_OPERATORS NUMBERS, str[str_index + 1]) || (PARSING_MODE != PARSING_MODE_RPN && str_index > 0 && is_in(NUMBERS SPACE PLUS MINUS BITWISE_NOT NOT LEFT_PARENTHESIS, str[str_index + 1])))) {
+		} else if(str[str_index] == '\\' && str_index + 1 < str.length() && (is_not_in(NOT_IN_NAMES INTERNAL_ID_LR INTERNAL_OPERATORS NUMBERS, str[str_index + 1]) || (PARSING_MODE != PARSING_MODE_RPN && str_index > 0 && is_in(NUMBERS SPACE PLUS MINUS BITWISE_NOT NOT LEFT_PARENTHESIS, str[str_index + 1])))) {
 			consecutive_objects = 0;
 			if(is_in(NUMBERS SPACE PLUS MINUS BITWISE_NOT NOT LEFT_PARENTHESIS, str[str_index + 1])) {
 				// replace \ followed by number with // for integer division
@@ -2531,7 +2531,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		} else if(str_index > 0 && ((base >= 2 && base <= 10 && is_in(EXPS, str[str_index])) || (base == 16 && str[str_index] == 'p')) && str_index + 1 < str.length() && (is_in(NUMBER_ELEMENTS, str[str_index + 1]) || (is_in(PLUS MINUS, str[str_index + 1]) && str_index + 2 < str.length() && is_in(NUMBER_ELEMENTS, str[str_index + 2]))) && (is_in(base == 16 ? NUMBER_ELEMENTS "abcdef" "ABCDEF" : NUMBER_ELEMENTS, str[str_index - 1]) || (str_index > 3 && priv->concise_uncertainty_input && str[str_index - 1] == RIGHT_PARENTHESIS_CH && (i_dx = str.rfind(LEFT_PARENTHESIS_CH, str_index - 3)) != string::npos && i_dx > 0 && str.find_last_not_of(NUMBER_ELEMENTS, str_index - 2) == i_dx && is_in(NUMBER_ELEMENTS, str[i_dx - 1])))) {
 			consecutive_objects = 0;
 			//don't do anything when e is used instead of E for EXP
-		} else if(base <= 33 && str[str_index] == '0' && (str_index == 0 || is_in(NOT_IN_NAMES INTERNAL_OPERATORS, str[str_index - 1]))) {
+		} else if(base <= 33 && str[str_index] == '0' && (str_index == 0 || is_in(NOT_IN_NAMES INTERNAL_ID_LR INTERNAL_OPERATORS, str[str_index - 1]))) {
 			consecutive_objects = 0;
 			if(str_index + 2 < str.length() && (str[str_index + 1] == 'x' || str[str_index + 1] == 'X') && is_in(NUMBER_ELEMENTS "abcdefABCDEF", str[str_index + 2])) {
 				//hexadecimal number 0x...
@@ -2647,7 +2647,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			else if(str[str_index + 1] == DIVISION_CH) str.replace(str_index, 2, "\x18");
 			else if(str[str_index + 1] == POWER_CH) str.replace(str_index, 2, "\x19");
 			else str[str_index] = '\x16';
-		} else if(is_not_in(NUMBERS INTERNAL_OPERATORS NOT_IN_NAMES, str[str_index])) {
+		} else if(is_not_in(NUMBERS INTERNAL_OPERATORS NOT_IN_NAMES INTERNAL_ID_LR, str[str_index])) {
 			// dx/dy derivative notation
 			if((str[str_index] == 'd' && is_not_number('d', base)) || ((signed char) str[str_index] == -50 && str_index + 1 < str.length() && (signed char) str[str_index + 1] == -108) || ((signed char) str[str_index] == -16 && str_index + 3 < str.length() && (signed char) str[str_index + 1] == -99 && (signed char) str[str_index + 2] == -102 && (signed char) str[str_index + 3] == -85)) {
 				size_t d_len = 1;
@@ -2710,7 +2710,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			size_t vt3 = 0;
 			size_t underscore = false;
 			char ufvt = 0;
-			size_t last_name_char = str.find_first_of(NOT_IN_NAMES INTERNAL_OPERATORS, str_index + 1);
+			size_t last_name_char = str.find_first_of(NOT_IN_NAMES INTERNAL_ID_LR INTERNAL_OPERATORS, str_index + 1);
 			if(last_name_char == string::npos) {
 				last_name_char = str.length() - 1;
 			} else {
@@ -2960,7 +2960,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								str[str_index + name_length] = LEFT_PARENTHESIS_CH;
 								size_t dot2_index = str.find(DOT_CH, str_index + name_length + 1);
 								str[dot2_index] = COMMA_CH;
-								size_t end_index = str.find_first_of(NOT_IN_NAMES INTERNAL_OPERATORS, dot2_index + 1);
+								size_t end_index = str.find_first_of(NOT_IN_NAMES INTERNAL_ID_LR INTERNAL_OPERATORS, dot2_index + 1);
 								if(end_index == string::npos) str += RIGHT_PARENTHESIS_CH;
 								else str.insert(end_index, 1, RIGHT_PARENTHESIS_CH);
 							}
@@ -3364,7 +3364,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						case 'p': {}
 						case 'P': {
 							p = (Prefix*) object;
-							if(str_index + name_length == str.length() || is_in(NOT_IN_NAMES INTERNAL_OPERATORS, str[str_index + name_length])) {
+							if(str_index + name_length == str.length() || is_in(NOT_IN_NAMES INTERNAL_ID_LR INTERNAL_OPERATORS, str[str_index + name_length])) {
 								if(ufvt == 'P') {
 									stmp = LEFT_PARENTHESIS INTERNAL_ID_L;
 									switch(p->type()) {

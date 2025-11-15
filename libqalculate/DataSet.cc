@@ -379,7 +379,7 @@ DataSet::DataSet(string s_category, string s_name, string s_default_file, string
 	b_loaded = false;
 	setArgumentDefinition(1, new DataObjectArgument(this, _("Object")));
 	setArgumentDefinition(2, new DataPropertyArgument(this, _("Property")));
-	setDefaultValue(2, _c("info", "Data set argument"));
+	setDefaultValue(2, _c("Data set argument", "info"));
 	setChanged(false);
 }
 DataSet::DataSet(const DataSet *o) {
@@ -410,7 +410,7 @@ int DataSet::calculate(MathStructure &mstruct, const MathStructure &vargs, const
 		CALCULATOR->error(true, _("Object %s not available in data set."), vargs[0].symbol().c_str(), NULL);
 		return 0;
 	}
-	if(equalsIgnoreCase(vargs[1].symbol(), string("info")) || equalsIgnoreCase(vargs[1].symbol(), string(_("info")))) {
+	if(equalsIgnoreCase(vargs[1].symbol(), string("info")) || equalsIgnoreCase(vargs[1].symbol(), string(_c("Data set argument", "info")))) {
 		string str = printProperties(o);
 		CALCULATOR->message(MESSAGE_INFORMATION, str.c_str(), NULL);
 		return 1;
@@ -1062,7 +1062,7 @@ bool DataPropertyArgument::subtest(MathStructure &value, const EvaluationOptions
 	if(!value.isSymbolic()) {
 		value.eval(eo);
 	}
-	return value.isSymbolic() && o_data && (o_data->getProperty(value.symbol()) || equalsIgnoreCase(value.symbol(), string("info")) || equalsIgnoreCase(value.symbol(), string(_("info"))));
+	return value.isSymbolic() && o_data && (o_data->getProperty(value.symbol()) || equalsIgnoreCase(value.symbol(), string("info")) || equalsIgnoreCase(value.symbol(), string(_c("Data set argument", "info"))));
 }
 int DataPropertyArgument::type() const {return ARGUMENT_TYPE_DATA_PROPERTY;}
 Argument *DataPropertyArgument::copy() const {return new DataPropertyArgument(this);}

@@ -1181,7 +1181,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 #	endif
 #endif
 	if(!CALCULATOR->canPlot()) {
-		CALCULATOR->error(true, _("Gnuplot was not found"), (name() + "()").c_str(), "libqalculate", "--without-gnuplot-call", NULL);
+		CALCULATOR->error(true, _("Gnuplot was not found"), NULL);
 		return 0;
 	}
 	EvaluationOptions eo2;

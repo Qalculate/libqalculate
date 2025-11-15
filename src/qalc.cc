@@ -7606,7 +7606,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		bool b_matrix = mstruct->isMatrix() && DO_FORMAT && result_text.find('\n') != string::npos;
 
 		bool show_result = !auto_calculate || (!was_aborted && !mstruct->isAborted() && (result_only || (!autocalc_error && (!alt_results.empty() || result_text != parsed_text))));
-		if(auto_calculate && show_result && mstruct->isZero() && parsed_mstruct->isFunction() && parsed_mstruct->function()->subtype() == SUBTYPE_DATA_SET && parsed_mstruct->size() >= 2 && parsed_mstruct->getChild(2)->isSymbolic() && EQUALS_IGNORECASE_AND_LOCAL(parsed_mstruct->getChild(2)->symbol(), "info", _c("info", "Data set argument"))) {
+		if(auto_calculate && show_result && mstruct->isZero() && parsed_mstruct->isFunction() && parsed_mstruct->function()->subtype() == SUBTYPE_DATA_SET && parsed_mstruct->size() >= 2 && parsed_mstruct->getChild(2)->isSymbolic() && EQUALS_IGNORECASE_AND_LOCAL(parsed_mstruct->getChild(2)->symbol(), "info", _c("Data set argument", "info"))) {
 			show_result = false;
 		}
 		if(show_result && auto_calculate && mstruct->countTotalChildren(false) >= 10) {

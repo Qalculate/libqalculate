@@ -3153,7 +3153,7 @@ int Calculator::saveDataSets(const char* file_name, bool save_global) {
 						xmlNewTextChild(newnode2, NULL, (xmlChar*) "title", (xmlChar*) arg->name().c_str());
 					}
 				}
-				if((!save_global && !ds->isLocal()) || ds->getDefaultValue(2) != _("info")) {
+				if((!save_global && !ds->isLocal()) || ds->getDefaultValue(2) != _c("Data set argument", "info")) {
 					xmlNewTextChild(newnode, NULL, (xmlChar*) "default_property", (xmlChar*) ds->getDefaultValue(2).c_str());
 				}
 				DataPropertyIter it;

@@ -2775,6 +2775,7 @@ MathFunction* Calculator::getFunctionById(int id) const {
 		case FUNCTION_ID_RAND: {return f_rand;}
 		case FUNCTION_ID_ELEMENT: {return f_element;}
 		case FUNCTION_ID_REPLACE_PART: {return priv->f_replace_part;}
+		case FUNCTION_ID_COLON: {return priv->f_colon;}
 	}
 	unordered_map<int, MathFunction*>::iterator it = priv->id_functions.find(id);
 	if(it == priv->id_functions.end()) return NULL;
