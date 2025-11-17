@@ -4483,7 +4483,17 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 		case STRUCT_FUNCTION: {
 			if(SIZE < 2 || (o_function->id() != FUNCTION_ID_HORZCAT && o_function->id() != FUNCTION_ID_VERTCAT) || !CALCULATOR->usesMatlabStyleMatrices()) {
 				ips_n.depth++;
-				if(o_function->id() == FUNCTION_ID_PARALLEL && SIZE >= 2) {
+				if(o_function->id() == FUNCTION_ID_COLON && SIZE == 3 && CALCULATOR->usesMatlabStyleMatrices() && !po.preserve_format) {
+					print_str += LEFT_VECTOR_WRAP_CH;
+					for(size_t i = 0; i < 3; i++) {
+						if(i == 2 && CHILD(i).isUndefined()) break;
+						if(i > 0) print_str += ":";
+						ips_n.wrap = CHILD(i).needsParenthesis(po, ips_n, m_empty_vector, i + 1, true, flat_power);
+						print_str += CHILD(i).print(po, format, colorize, tagtype, ips_n);
+					}
+					print_str += RIGHT_VECTOR_WRAP_CH;
+					break;
+				} else if(o_function->id() == FUNCTION_ID_PARALLEL && SIZE >= 2) {
 					for(size_t i = 0; i < SIZE; i++) {
 						if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 						if(i > 0) {

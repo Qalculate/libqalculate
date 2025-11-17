@@ -1768,7 +1768,10 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 				eo.parse_options = po;
 				MathStructure mtest(*mstruct);
 				CALCULATOR->beginTemporaryStopMessages();
+				bool b_c = CALCULATOR->isControlled();
+				if(!b_c) CALCULATOR->startControl(100);
 				mtest.eval(eo);
+				if(!b_c) CALCULATOR->stopControl();
 				CALCULATOR->endTemporaryStopMessages();
 				if(mtest.isSymbolic()) {
 					CALCULATOR->endTemporaryStopMessages(true);
@@ -2575,33 +2578,21 @@ bool test_userfunctions_angle(const MathStructure &m, const ParseOptions &po, si
 			return true;
 		}
 	}
-	if(m.isFunction() && m.function()->subtype() == SUBTYPE_USER_FUNCTION && m.function()->condition().empty()) {
-		bool b = true;
-		for(size_t i = 0; i < ((UserFunction*) m.function())->countSubfunctions(); i++) {
-			if(((UserFunction*) m.function())->subfunctionPrecalculated(i + 1)) {
-				b = false;
-				break;
-			}
-		}
-		for(size_t i = 0; b && i < m.size(); i++) {
-			Argument *arg = m.function()->getArgumentDefinition(i + 1);
-			if(arg && arg->tests() && (arg->type() != ARGUMENT_TYPE_FREE || !arg->getCustomCondition().empty() || arg->rationalPolynomial() || arg->zeroForbidden() || (arg->handlesVector() && m[i].isVector()))) {
-				b = false;
-				break;
-			}
-		}
-		if(b) {
-			EvaluationOptions eo;
-			eo.parse_options = po;
-			MathStructure mtest(m);
-			CALCULATOR->beginTemporaryStopMessages();
-			if(mtest.calculateFunctions(eo, false)) {
-				CALCULATOR->endTemporaryStopMessages();
-				if(contains_angle_unit(mtest, po)) return true;
-				return test_userfunctions_angle(mtest, po, depth + 1);
-			}
+	if(m.isFunction() && m.function()->subtype() == SUBTYPE_USER_FUNCTION) {
+		EvaluationOptions eo;
+		eo.parse_options = po;
+		MathStructure mtest(m);
+		CALCULATOR->beginTemporaryStopMessages();
+		bool b_c = CALCULATOR->isControlled();
+		if(!b_c) CALCULATOR->startControl(100);
+		if(mtest.calculateFunctions(eo, false)) {
+			if(!b_c) CALCULATOR->stopControl();
 			CALCULATOR->endTemporaryStopMessages();
+			if(contains_angle_unit(mtest, po)) return true;
+			return test_userfunctions_angle(mtest, po, depth + 1);
 		}
+		if(!b_c) CALCULATOR->stopControl();
+		CALCULATOR->endTemporaryStopMessages();
 	}
 	return false;
 }

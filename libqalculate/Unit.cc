@@ -1357,13 +1357,10 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	bool b_eval = !is_unit_multiexp(mstruct) && mstruct.containsType(STRUCT_UNIT, false, true, true) != 0 && !mstruct.containsFunctionId(FUNCTION_ID_PLOT) && !mstruct.containsFunctionId(FUNCTION_ID_COMMAND) && !mstruct.containsFunctionId(FUNCTION_ID_EXPORT) && !mstruct.containsFunctionId(FUNCTION_ID_SAVE);
 	while(true) {
 		if(b_eval) {
-			if(CALCULATOR->isControlled()) {
-				mstruct.eval(eo);
-			} else {
-				CALCULATOR->startControl(100);
-				mstruct.eval(eo);
-				CALCULATOR->stopControl();
-			}
+			bool b_c = CALCULATOR->isControlled();
+			if(!b_c) CALCULATOR->startControl(100);
+			mstruct.eval(eo);
+			if(!b_c) CALCULATOR->stopControl();
 		}
 		if(mstruct.isUnit()) {
 			add(mstruct.unit(), 1, mstruct.prefix());
