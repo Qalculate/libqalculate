@@ -4125,7 +4125,7 @@ msgid ""
 "\"%s\" were ignored."
 msgstr ""
 "Caracteres finales \"%s\" (variable/función/unidad inválida) en el número "
-"fueron ignorados."
+"\"%s\" fueron ignorados."
 
 #: ../libqalculate/Calculator-parse.cc:4042
 #: ../libqalculate/Calculator-parse.cc:4058
