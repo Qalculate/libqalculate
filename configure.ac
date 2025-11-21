@@ -306,8 +306,10 @@ AC_DEFINE_UNQUOTED(PACKAGE_LOCALE_DIR, "$PACKAGE_LOCALE_DIR",
 	[The directory in which qalculate's locale data will be stored])
 	 AC_MSG_RESULT("$PACKAGE_LOCALE_DIR")
 
-QALCULATE_PODEFS_RULE='%.po: $(top_srcdir)/po-defs/$@ $(top_srcdir)/po-defs/remove-untranslated.cc; $(top_builddir)/po-defs/fixpo $(top_srcdir)/po-defs/$@ $@'
+QALCULATE_PODEFS_RULE='%.po: $(top_srcdir)/po-defs/$@ $(top_srcdir)/po-defs-fixed/remove-untranslated.cc; $(top_builddir)/po-defs-fixed/fixpo $(top_srcdir)/po-defs/$@ $@'
 AC_SUBST(QALCULATE_PODEFS_RULE)
+
+AC_CONFIG_LINKS([po-defs-fixed/fixed/LINGUAS:po-defs/LINGUAS])
 
 dnl  --------
 dnl | output |-----------------------------------------------------------------
@@ -319,8 +321,9 @@ AC_CONFIG_FILES([
   libqalculate/Makefile
   data/Makefile
   po/Makefile.in
-  po-defs/Makefile
-  po-defs/fixed/Makefile
+  po-defs/Makefile.in
+  po-defs-fixed/Makefile
+  po-defs-fixed/fixed/Makefile
   docs/Makefile
   docs/reference/Makefile
   man/Makefile

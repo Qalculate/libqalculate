@@ -187,42 +187,42 @@
       <title>Universal Constants</title>
       <variable>
         <title>Characteristic Impedance of Vacuum</title>
-        <names>r:characteristic_impedance,as:Z_0</names>
+        <names translatable="no">r:characteristic_impedance,as:Z_0</names>
         <value>(2*planck*fine_structure)/(elementary_charge^2)</value>
       </variable>
       <variable>
         <title>Electric Constant (Permittivity of Free Space)</title>
-        <names>r:electric_constant,asu:ε_0,vacuum_permittivity,aos:epsilon_0</names>
+        <names translatable="no">r:electric_constant,asu:ε_0,vacuum_permittivity,aos:epsilon_0</names>
         <value>elementary_charge^2/(2*planck*fine_structure*c)</value>
       </variable>
       <variable>
         <title>Magnetic Constant (Permeability of Free Space)</title>
-        <names>r:magnetic_constant,asu:μ_0,asou:µ_0,vacuum_permeability,aos:mu_0</names>
+        <names translatable="no">r:magnetic_constant,asu:μ_0,asou:µ_0,vacuum_permeability,aos:mu_0</names>
         <value>(2*planck*fine_structure)/(c*elementary_charge^2)</value>
       </variable>
       <variable>
         <title>Planck Constant</title>
-        <names>r:planck,au:&#x210e;</names>
+        <names translatable="no">r:planck,au:&#x210e;</names>
         <value unit="J*s">6.62607015E-34</value>
       </variable>
       <variable>
         <title>Reduced Planck Constant (Dirac constant)</title>
-        <names>r:planck2pi,dirac,au:&#x210f;,o:hbar</names>
+        <names translatable="no">r:planck2pi,dirac,au:&#x210f;,o:hbar</names>
         <value>planck/(2*pi)</value>
       </variable>
       <variable>
         <title>Newtonian Constant of Gravitation</title>
-        <names>r:newtonian_constant,a:G</names>
+        <names translatable="no">r:newtonian_constant,a:G</names>
         <value uncertainty="1.5E-15" unit="m^3*kg^(-1)*s^(-2)">6.67430E-11</value>
       </variable>
       <variable>
         <title>Speed of Light in Vacuum</title>
-        <names>ar:c,speed_of_light</names>
+        <names translatable="no">ar:c,speed_of_light</names>
         <value unit="m*s^(-1)">299792458</value>
       </variable>
       <variable>
         <title>Standard Acceleration due to Gravity</title>
-        <names>r:standard_gravity,asu:g_0,asu:ɡ_0,asu:&#x0261;_n</names>
+        <names translatable="no">r:standard_gravity,asu:g_0,asu:ɡ_0,asu:ɡ_n</names>
         <value unit="m s^(-2)">9.80665</value>
       </variable>
     </category>
@@ -230,57 +230,57 @@
       <title>Electromagnetic Constants</title>
       <variable>
         <title>Bohr Magneton</title>
-        <names>r:bohr_magneton,asu:μ_B,asou:µ_B,aos:mu_B</names>
+        <names translatable="no">r:bohr_magneton,asu:μ_B,asou:µ_B,aos:mu_B</names>
         <value>(elementary_charge*planck)/(4*electron_mass*pi)</value>
       </variable>
       <variable>
         <title>Conductance Quantum</title>
-        <names>r:conductance_quantum,as:G_0</names>
+        <names translatable="no">r:conductance_quantum,as:G_0</names>
         <value>2*elementary_charge^2/planck</value>
       </variable>
       <variable>
         <title>Coulomb's Constant (Electric Force Constant)</title>
-        <names>r:coulombs_constant,as:k_e</names>
+        <names translatable="no">r:coulombs_constant,as:k_e</names>
         <value>(magnetic_constant*c^2)/(4pi)</value>
       </variable>
       <variable>
         <title>Elementary Charge</title>
-        <names>r:elementary_charge,as:q_e,as:e_charge</names>
+        <names translatable="no">r:elementary_charge,as:q_e,as:e_charge</names>
         <value unit="C">1.602176634E-19</value>
       </variable>
       <variable>
         <title>Inverse of Conductance Quantum</title>
-        <names>r:inverse_conductance_quantum</names>
+        <names translatable="no">r:inverse_conductance_quantum</names>
         <value>planck/(2*elementary_charge^2)</value>
       </variable>
       <variable>
         <title>Josephson Constant</title>
-        <names>r:josephson,as:K_J</names>
+        <names translatable="no">r:josephson,as:K_J</names>
         <value>2*elementary_charge/planck</value>
       </variable>
       <variable>
         <title>Josephson Constant (conventional value)</title>
-        <names>rs:josephson_conventional,as:K_J90</names>
+        <names translatable="no">rs:josephson_conventional,as:K_J90</names>
         <value unit="Hz*V^(-1)">4.835979E14</value>
       </variable>
       <variable>
         <title>Magnetic Flux Quantum</title>
-        <names>r:magnetic_flux_quantum,asu:Φ_0,aos:phi_0</names>
+        <names translatable="no">r:magnetic_flux_quantum,asu:Φ_0,aos:phi_0</names>
         <value>planck/(2*elementary_charge)</value>
       </variable>
       <variable>
         <title>Nuclear Magneton</title>
-        <names>r:nuclear_magneton,asu:μ_N,asou:µ_N,aos:mu_N</names>
+        <names translatable="no">r:nuclear_magneton,asu:μ_N,asou:µ_N,aos:mu_N</names>
         <value>elementary_charge*planck2pi/(2*proton_mass)</value>
       </variable>
       <variable>
         <title>von Klitzing Constant</title>
-        <names>r:klitzing,as:R_K</names>
+        <names translatable="no">r:klitzing,as:R_K</names>
         <value>planck/elementary_charge^2</value>
       </variable>
       <variable>
         <title>von Klitzing Constant (conventional value)</title>
-        <names>rs:klitzing_conventional,as:R_K90</names>
+        <names translatable="no">rs:klitzing_conventional,as:R_K90</names>
         <value unit="ohm">25812.807</value>
       </variable>
     </category>
@@ -288,47 +288,47 @@
       <title>Particle Mass in u</title>
       <variable>
         <title>Deuteron Mass (in u)</title>
-        <names>rs:deuteron_u</names>
+        <names translatable="no">rs:deuteron_u</names>
         <value unit="u" uncertainty="1.5E-11">2.013553212544</value>
       </variable>
       <variable>
         <title>Electron Mass (in u)</title>
-        <names>rs:electron_u</names>
+        <names translatable="no">rs:electron_u</names>
         <value unit="u" uncertainty="9.7E-15">5.485799090441E-4</value>
       </variable>
       <variable>
         <title>Helion Mass (in u)</title>
-        <names>rs:helion_u</names>
+        <names translatable="no">rs:helion_u</names>
         <value unit="u" uncertainty="7.4E-11">3.014932246932</value>
       </variable>
       <variable>
         <title>Neutron Mass (in u)</title>
-        <names>rs:neutron_u</names>
+        <names translatable="no">rs:neutron_u</names>
         <value unit="u" uncertainty="4.0E-10">1.00866491606</value>
       </variable>
       <variable>
         <title>Proton Mass (in u)</title>
-        <names>rs:proton_u</names>
+        <names translatable="no">rs:proton_u</names>
         <value unit="u" uncertainty="8.3E-12">1.0072764665789</value>
       </variable>
       <variable>
         <title>Tau Mass (in u)</title>
-        <names>rs:tau_u</names>
+        <names translatable="no">rs:tau_u</names>
         <value unit="u" uncertainty="1.3E-4">1.90754</value>
       </variable>
       <variable>
         <title>Muon Mass (in u)</title>
-        <names>rs:muon_u</names>
+        <names translatable="no">rs:muon_u</names>
         <value unit="u" uncertainty="2.5E-9">0.1134289257</value>
       </variable>
       <variable>
         <title>Triton Mass (in u)</title>
-        <names>rs:triton_u</names>
+        <names translatable="no">rs:triton_u</names>
         <value unit="u" uncertainty="1.0E-10">3.01550071597</value>
       </variable>
       <variable>
         <title>Alpha Particle Mass (in u)</title>
-        <names>rs:alpha_particle_u</names>
+        <names translatable="no">rs:alpha_particle_u</names>
         <value unit="u" uncertainty="6.2E-11">4.001506179129</value>
       </variable>
     </category>
@@ -336,77 +336,77 @@
       <title>Particle Mass in MeV*c^(-2)</title>
       <variable>
         <title>Electron Mass (in MeV/c^2)</title>
-        <names>rs:electron_eV</names>
+        <names translatable="no">rs:electron_eV</names>
         <value unit="MeV*c_unit^(-2)">electron_mass*c^2/electronvolt_constant*1E-6</value>
       </variable>
       <variable>
         <title>Neutron Mass (in MeV/c^2)</title>
-        <names>rs:neutron_eV</names>
+        <names translatable="no">rs:neutron_eV</names>
         <value unit="MeV*c_unit^(-2)">neutron_mass*c^2/electronvolt_constant*1E-6</value>
       </variable>
       <variable>
         <title>Proton Mass (in MeV/c^2)</title>
-        <names>rs:proton_eV</names>
+        <names translatable="no">rs:proton_eV</names>
         <value unit="MeV*c_unit^(-2)">proton_mass*c^2/electronvolt_constant*1E-6</value>
       </variable>
       <variable>
         <title>Tau Mass (in MeV/c^2)</title>
-        <names>rs:tau_eV</names>
+        <names translatable="no">rs:tau_eV</names>
         <value unit="MeV*c_unit^(-2)">tau_mass*c^2/electronvolt_constant*1E-6</value>
       </variable>
       <variable>
         <title>Muon Mass (in MeV/c^2)</title>
-        <names>rs:muon_eV</names>
+        <names translatable="no">rs:muon_eV</names>
         <value unit="MeV*c_unit^(-2)">muon_mass*c^2/electronvolt_constant*1E-6</value>
       </variable>
       <variable>
         <title>Alpha Particle Mass (in MeV/c^2)</title>
-        <names>rs:alpha_particle_eV</names>
+        <names translatable="no">rs:alpha_particle_eV</names>
         <value unit="MeV*c_unit^(-2)">alpha_particle_mass*c^2/electronvolt_constant*1E-6</value>
       </variable>
       <variable>
         <title>Up Quark Mass (in MeV/c^2)</title>
-        <names>r:quark_u</names>
+        <names translatable="no">r:quark_u</names>
         <value unit="MeV*c_unit^(-2)" uncertainty="0.5">2.2</value>
       </variable>
       <variable>
         <title>Down Quark Mass (in MeV/c^2)</title>
-        <names>r:quark_d</names>
+        <names translatable="no">r:quark_d</names>
         <value unit="MeV*c_unit^(-2)" uncertainty="0.5">4.7</value>
       </variable>
       <variable>
         <title>Charm Quark Mass (in MeV/c^2)</title>
-        <names>r:quark_c</names>
+        <names translatable="no">r:quark_c</names>
         <value unit="MeV*c_unit^(-2)" uncertainty="20">1270</value>
       </variable>
       <variable>
         <title>Strange Quark Mass (in MeV/c^2)</title>
-        <names>r:quark_s</names>
+        <names translatable="no">r:quark_s</names>
         <value unit="MeV*c_unit^(-2)" uncertainty="9">95</value>
       </variable>
       <variable>
         <title>Top Quark Mass (in MeV/c^2)</title>
-        <names>r:quark_t</names>
+        <names translatable="no">r:quark_t</names>
         <value unit="MeV*c_unit^(-2)" uncertainty="300">172760</value>
       </variable>
       <variable>
         <title>Bottom Quark Mass (in MeV/c^2)</title>
-        <names>r:quark_b</names>
+        <names translatable="no">r:quark_b</names>
         <value unit="MeV*c_unit^(-2)" uncertainty="40">4180</value>
       </variable>
       <variable>
         <title>Higgs Boson Mass (in MeV/c^2)</title>
-        <names>r:higgs_boson</names>
+        <names translatable="no">r:higgs_boson</names>
         <value unit="MeV*c_unit^(-2)" uncertainty="110">125110</value>
       </variable>
       <variable>
         <title>W Boson Mass (in MeV/c^2)</title>
-        <names>r:w_boson</names>
+        <names translatable="no">r:w_boson</names>
         <value unit="MeV*c_unit^(-2)" uncertainty="12">80379</value>
       </variable>
       <variable>
         <title>Z Boson Mass (in MeV/c^2)</title>
-        <names>r:z_boson</names>
+        <names translatable="no">r:z_boson</names>
         <value unit="MeV*c_unit^(-2)" uncertainty="2.1">91187.6</value>
       </variable>
     </category>
@@ -414,47 +414,47 @@
       <title>Particle Mass in kg</title>
       <variable>
         <title>Deuteron Mass</title>
-        <names>rs:deuteron_mass</names>
+        <names translatable="no">rs:deuteron_mass</names>
         <value>nounit(deuteron_u)*atomic_mass_constant</value>
       </variable>
       <variable>
         <title>Electron Mass</title>
-        <names>rs:electron_mass,as:m_e</names>
+        <names translatable="no">rs:electron_mass,as:m_e</names>
         <value>(2*rydberg*planck)/(c*fine_structure^2)</value>
       </variable>
       <variable>
         <title>Helion Mass</title>
-        <names>rs:helion_mass,as:m_h</names>
+        <names translatable="no">rs:helion_mass,as:m_h</names>
         <value>nounit(helion_u)*atomic_mass_constant</value>
       </variable>
       <variable>
         <title>Neutron Mass</title>
-        <names>rs:neutron_mass,as:m_n</names>
+        <names translatable="no">rs:neutron_mass,as:m_n</names>
         <value>nounit(neutron_u)*atomic_mass_constant</value>
       </variable>
       <variable>
         <title>Proton Mass</title>
-        <names>rs:proton_mass,as:m_p</names>
+        <names translatable="no">rs:proton_mass,as:m_p</names>
         <value>nounit(proton_u)*atomic_mass_constant</value>
       </variable>
       <variable>
         <title>Tau Mass</title>
-        <names>rs:tau_mass,asu:m_τ,aos:m_tau</names>
+        <names translatable="no">rs:tau_mass,asu:m_τ,aos:m_tau</names>
         <value>nounit(tau_u)*atomic_mass_constant</value>
       </variable>
       <variable>
         <title>Muon Mass</title>
-        <names>rs:muon_mass,asu:m_μ,asou:m_µ,aos:m_mu</names>
+        <names translatable="no">rs:muon_mass,asu:m_μ,asou:m_µ,aos:m_mu</names>
         <value>nounit(muon_u)*atomic_mass_constant</value>
       </variable>
       <variable>
         <title>Triton Mass</title>
-        <names>rs:triton_mass</names>
+        <names translatable="no">rs:triton_mass</names>
         <value>nounit(triton_u)*atomic_mass_constant</value>
       </variable>
       <variable>
         <title>Alpha Particle Mass</title>
-        <names>rs:alpha_particle_mass,asu:m_α,aos:m_alpha</names>
+        <names translatable="no">rs:alpha_particle_mass,asu:m_α,aos:m_alpha</names>
         <value>nounit(alpha_particle_u)*atomic_mass_constant</value>
       </variable>
     </category>
@@ -462,52 +462,52 @@
       <title>Compton Wavelength</title>
       <variable>
         <title>Compton Wavelength (electron)</title>
-        <names>r:compton_wavelength,asu:λ_C,aos:lambda_C</names>
+        <names translatable="no">r:compton_wavelength,asu:λ_C,aos:lambda_C</names>
         <value>planck/(electron_mass*c)</value>
       </variable>
       <variable>
         <title>Reduced Compton Wavelength (electron)</title>
-        <names>r:compton_wavelength_2pi,asu:&#x019b;_C</names>
+        <names translatable="no">r:compton_wavelength_2pi,asu:&#x019b;_C</names>
         <value>planck2pi/(electron_mass*c)</value>
       </variable>
       <variable>
         <title>Muon Compton Wavelength</title>
-        <names>r:muon_compton_wavelength,asu:λ_Cμ</names>
+        <names translatable="no">r:muon_compton_wavelength,asu:λ_Cμ</names>
         <value>planck/(muon_mass*c)</value>
       </variable>
       <variable>
         <title>Reduced Muon Compton Wavelength</title>
-        <names>r:muon_compton_wavelength_2pi,asu:&#x019b;_Cμ</names>
+        <names translatable="no">r:muon_compton_wavelength_2pi,asu:&#x019b;_Cμ</names>
         <value>planck2pi/(muon_mass*c)</value>
       </variable>
       <variable>
         <title>Neutron Compton Wavelength</title>
-        <names>r:neutron_compton_wavelength,asu:λ_Cn</names>
+        <names translatable="no">r:neutron_compton_wavelength,asu:λ_Cn</names>
         <value>planck/(neutron_mass*c)</value>
       </variable>
       <variable>
         <title>Reduced Neutron Compton Wavelength</title>
-        <names>r:neutron_compton_wavelength_2pi,asu:&#x019b;_Cn</names>
+        <names translatable="no">r:neutron_compton_wavelength_2pi,asu:&#x019b;_Cn</names>
         <value>planck2pi/(neutron_mass*c)</value>
       </variable>
       <variable>
         <title>Proton Compton Wavelength</title>
-        <names>r:proton_compton_wavelength,asu:λ_Cp</names>
+        <names translatable="no">r:proton_compton_wavelength,asu:λ_Cp</names>
         <value>planck/(proton_mass*c)</value>
       </variable>
       <variable>
         <title>Reduced Proton Compton Wavelength</title>
-        <names>r:proton_compton_wavelength_2pi,asu:&#x019b;_Cp</names>
+        <names translatable="no">r:proton_compton_wavelength_2pi,asu:&#x019b;_Cp</names>
         <value>planck2pi/(proton_mass*c)</value>
       </variable>
       <variable>
         <title>Tau Compton Wavelength</title>
-        <names>r:tau_compton_wavelength,asu:λ_Cτ</names>
+        <names translatable="no">r:tau_compton_wavelength,asu:λ_Cτ</names>
         <value>planck/(tau_mass*c)</value>
       </variable>
       <variable>
         <title>Reduced Tau Compton Wavelength</title>
-        <names>r:tau_compton_wavelength_2pi,asu:&#x019b;_Cτ</names>
+        <names translatable="no">r:tau_compton_wavelength_2pi,asu:&#x019b;_Cτ</names>
         <value>planck2pi/(tau_mass*c)</value>
       </variable>
     </category>
@@ -515,57 +515,57 @@
       <title>Atomic and Nuclear Constants</title>
       <variable>
         <title>Bohr Radius</title>
-        <names>r:bohr_radius,as:a_0</names>
+        <names translatable="no">r:bohr_radius,as:a_0</names>
         <value>planck2pi/(fine_structure*electron_mass*c)</value>
       </variable>
       <variable>
         <title>Classical Electron Radius</title>
-        <names>r:classical_electron_radius,as:r_e</names>
+        <names translatable="no">r:classical_electron_radius,as:r_e</names>
         <value>elementary_charge^2/(4*pi*electric_constant*electron_mass*c^2)</value>
       </variable>
       <variable>
         <title>Fermi Coupling Constant</title>
-        <names>r:fermi_coupling</names>
+        <names translatable="no">r:fermi_coupling</names>
         <value unit="GeV^(-2)" uncertainty="6E-12">1.1663787E-5</value>
       </variable>
       <variable>
         <title>Fine-Structure Constant</title>
-        <names>r:fine_structure,au:α,ao:alpha</names>
+        <names translatable="no">r:fine_structure,au:α,ao:alpha</names>
         <value uncertainty="1.13E-12">7.29735256434E-3</value>
       </variable>
       <variable>
         <title>Hartree Energy (constant)</title>
-        <names>rs:hartree_constant,as:Ha_constant</names>
+        <names translatable="no">rs:hartree_constant,as:Ha_constant</names>
         <value>2*rydberg*planck*c</value>
       </variable>
       <variable>
         <title>Quantum of Circulation</title>
-        <names>r:quantum_circulation</names>
+        <names translatable="no">r:quantum_circulation</names>
         <value>planck/(2*electron_mass)</value>
       </variable>
       <variable>
         <title>Quantum of Circulation times 2</title>
-        <names>r:quantum_circulation_2</names>
+        <names translatable="no">r:quantum_circulation_2</names>
         <value>quantum_circulation*2</value>
       </variable>
       <variable>
         <title>Rydberg Constant</title>
-        <names>r:rydberg,asu:R_∞</names>
+        <names translatable="no">r:rydberg,asu:R_∞</names>
         <value uncertainty="0.000012" unit="m^(-1)">10973731.5681569</value>
       </variable>
       <variable>
         <title>Thomson cross section</title>
-        <names>r:thomson_cross_section,asu:σ_t,aos:sigma_t</names>
+        <names translatable="no">r:thomson_cross_section,asu:σ_t,aos:sigma_t</names>
         <value>(8*pi/3)*classical_electron_radius^2</value>
       </variable>
       <variable>
         <title>Weak Mixing Angle (sin²θw)</title>
-        <names>weak_mixing_angle,asu:sin2θ_W,r:weinberg,aos:sin2_theta_W</names>
+        <names translatable="no">weak_mixing_angle,asu:sin2θ_W,r:weinberg,aos:sin2_theta_W</names>
         <value>1-w_z_ratio^2</value>
       </variable>
       <variable>
         <title>W to Z Mass Ratio</title>
-        <names>r:w_z_ratio</names>
+        <names translatable="no">r:w_z_ratio</names>
         <value uncertainty="0.00013">0.88145</value>
       </variable>
     </category>
@@ -573,112 +573,112 @@
       <title>Physico-Chemical Constants</title>
       <variable>
         <title>Lattice Spacing of Ideal Silicon (220)</title>
-        <names>rs:lattice_spacing_Si220,as:d_220</names>
+        <names translatable="no">rs:lattice_spacing_Si220,as:d_220</names>
         <value>lattice_parameter_Si/sqrt(8)</value>
       </variable>
       <variable>
         <title>Atomic Mass Constant</title>
-        <names>r:atomic_mass_constant,as:m_u</names>
+        <names translatable="no">r:atomic_mass_constant,as:m_u</names>
         <value units="auto">(2*rydberg*planck)/(c*fine_structure^2*nounit(electron_u))</value>
       </variable>
       <variable>
         <title>Avogadro Constant</title>
-        <names>r:avogadro,as:N_A</names>
+        <names translatable="no">r:avogadro,as:N_A</names>
         <value unit="mol^(-1)">6.02214076E23</value>
       </variable>
       <variable>
         <title>Boltzmann Constant</title>
-        <names>r:boltzmann,as:k_B</names>
+        <names translatable="no">r:boltzmann,as:k_B</names>
         <value unit="J*K^(-1)">1.380649E-23</value>
       </variable>
       <variable>
         <title>Molar Mass Constant</title>
-        <names>r:molar_mass,as:M_u</names>
+        <names translatable="no">r:molar_mass,as:M_u</names>
         <value>(2*planck*rydberg*avogadro)/(c*fine_structure^2*nounit(electron_u))</value>
       </variable>
       <variable>
         <title>Electronvolt (constant)</title>
-        <names>rs:electronvolt_constant,as:eV_constant</names>
+        <names translatable="no">rs:electronvolt_constant,as:eV_constant</names>
         <value unit="auto">elementary_charge/C*J</value>
       </variable>
       <variable>
         <title>Faraday Constant</title>
-        <names>r:faraday,au:ℱ</names>
+        <names translatable="no">r:faraday,au:ℱ</names>
         <value>avogadro*elementary_charge</value>
       </variable>
       <variable>
         <title>First Radiation Constant</title>
-        <names>r:first_radiation,as:c_1</names>
+        <names translatable="no">r:first_radiation,as:c_1</names>
         <value>2*pi*planck*c^2</value>
       </variable>
       <variable>
         <title>First Radiation Constant for Spectral Radiance</title>
-        <names>rs:first_radiation_sr,as:c_1L</names>
+        <names translatable="no">rs:first_radiation_sr,as:c_1L</names>
         <value>first_radiation/pi</value>
       </variable>
       <variable>
         <title>Gas Constant</title>
-        <names>r:gas_constant,ideal_gas</names>
+        <names translatable="no">r:gas_constant,ideal_gas</names>
         <value>boltzmann*avogadro</value>
       </variable>
       <variable>
         <title>Lattice Parameter of Silicon</title>
-        <names>rs:lattice_parameter_Si</names>
+        <names translatable="no">rs:lattice_parameter_Si</names>
         <value unit="m" uncertainty="8.9E-18">543.1020511E-12</value>
       </variable>
       <variable>
         <title>Loschmidt Constant (273.15 K, 100 kPa)</title>
-        <names>rs:loschmidt_100,aos:n_0100</names>
+        <names translatable="no">rs:loschmidt_100,aos:n_0100</names>
         <value unit="auto">(100000*Pa)/(boltzmann*273.15*K)</value>
       </variable>
       <variable>
         <title>Loschmidt Constant (273.15 K, 101.325 kPa)</title>
-        <names>rs:loschmidt_atm,ros:loschmidt,aos:n_0</names>
+        <names translatable="no">rs:loschmidt_atm,ros:loschmidt,aos:n_0</names>
         <value unit="auto">(101325*Pa)/(boltzmann*273.15*K)</value>
       </variable>
       <variable>
         <title>Molar Planck Constant</title>
-        <names>r:molar_planck</names>
+        <names translatable="no">r:molar_planck</names>
         <value>avogadro*planck</value>
       </variable>
       <variable>
         <title>Molar Volume of Ideal Gas (273.15 K, 100 kPa)</title>
-        <names>s:ideal_gas_molar_100,r:ideal_gas_molar,as:V_m</names>
+        <names translatable="no">s:ideal_gas_molar_100,r:ideal_gas_molar,as:V_m</names>
         <value unit="auto">(gas_constant*273.15*K)/(100000*Pa)</value>
       </variable>
       <variable>
         <title>Molar Volume of Ideal Gas (273.15 K, 101.325 kPa)</title>
-        <names>rs:ideal_gas_molar_atm,ros:ideal_gas_molar_101,aos:V_m101</names>
+        <names translatable="no">rs:ideal_gas_molar_atm,ros:ideal_gas_molar_101,aos:V_m101</names>
         <value unit="auto">(gas_constant*273.15*K)/(101325*Pa)</value>
       </variable>
       <variable>
         <title>Sackur-Tetrode constant (1 K, 100 kPa)</title>
-        <names>s:sackur_tetrode_100,r:sackur_tetrode</names>
+        <names translatable="no">s:sackur_tetrode_100,r:sackur_tetrode</names>
         <value uncertainty="4.7E-10">-1.15170753496</value>
       </variable>
       <variable>
         <title>Sackur-Tetrode constant (1 K, 101.325 kPa)</title>
-        <names>rs:sackur_tetrode_atm,ros:sackur_tetrode_101</names>
+        <names translatable="no">rs:sackur_tetrode_atm,ros:sackur_tetrode_101</names>
         <value uncertainty="4.7E-10">-1.16487052149</value>
       </variable>
       <variable>
         <title>Second Radiation Constant</title>
-        <names>r:second_radiation,as:c_2</names>
+        <names translatable="no">r:second_radiation,as:c_2</names>
         <value>planck*c/boltzmann</value>
       </variable>
       <variable>
         <title>Stefan-Boltzmann Constant</title>
-        <names>r:stefan,au:σ,ao:sigma</names>
+        <names translatable="no">r:stefan,au:σ,ao:sigma</names>
         <value>(2pi^5*boltzmann^4)/(15*planck^3*c^2)</value>
       </variable>
       <variable>
         <title>Wien frequency displacement law constant</title>
-        <names>r:wien_frequency</names>
+        <names translatable="no">r:wien_frequency</names>
         <value>(k_B/planck)×(lambertw(−3/e^3)+3)</value>
       </variable>
       <variable>
         <title>Wien wavelength displacement law constant</title>
-        <names>r:wien_displacement,ais:b_energy</names>
+        <names translatable="no">r:wien_displacement,ais:b_energy</names>
         <value>(planck×c/k_B)/(lambertw(−5/e^5)+5)</value>
       </variable>
     </category>
@@ -686,102 +686,102 @@
       <title>Conversion factors for energy equivalents</title>
       <variable>
         <title>Hertz - Inverse Meter Relationship</title>
-        <names>r:Hz_to_m</names>
+        <names translatable="no">r:Hz_to_m</names>
         <value>1/c</value>
       </variable>
       <variable>
         <title>Hertz - Joule Relationship</title>
-        <names>r:Hz_to_J</names>
+        <names translatable="no">r:Hz_to_J</names>
         <value>planck</value>
       </variable>
       <variable>
         <title>Hertz - Kelvin Relationship</title>
-        <names>r:Hz_to_K</names>
+        <names translatable="no">r:Hz_to_K</names>
         <value>planck/boltzmann</value>
       </variable>
       <variable>
         <title>Hertz - Kilogram Relationship</title>
-        <names>r:Hz_to_kg</names>
+        <names translatable="no">r:Hz_to_kg</names>
         <value>planck/c^2</value>
       </variable>
       <variable>
         <title>Inverse Meter - Hertz Relationship</title>
-        <names>r:m_to_Hz</names>
+        <names translatable="no">r:m_to_Hz</names>
         <value>c</value>
       </variable>
       <variable>
         <title>Inverse Meter - Joule Relationship</title>
-        <names>r:m_to_J</names>
+        <names translatable="no">r:m_to_J</names>
         <value>planck*c</value>
       </variable>
       <variable>
         <title>Inverse Meter - Kelvin Relationship</title>
-        <names>r:m_to_K</names>
+        <names translatable="no">r:m_to_K</names>
         <value>planck*c/boltzmann</value>
       </variable>
       <variable>
         <title>Inverse Meter - Kilogram Relationship</title>
-        <names>r:m_to_kg</names>
+        <names translatable="no">r:m_to_kg</names>
         <value>planck/c</value>
       </variable>
       <variable>
         <title>Joule - Hertz Relationship</title>
-        <names>r:J_to_Hz</names>
+        <names translatable="no">r:J_to_Hz</names>
         <value>1/planck</value>
       </variable>
       <variable>
         <title>Joule - Inverse Meter Relationship</title>
-        <names>r:J_to_m</names>
+        <names translatable="no">r:J_to_m</names>
         <value>1/(planck*c)</value>
       </variable>
       <variable>
         <title>Joule - Kelvin Relationship</title>
-        <names>r:J_to_K</names>
+        <names translatable="no">r:J_to_K</names>
         <value>1/boltzmann</value>
       </variable>
       <variable>
         <title>Joule - Kilogram Relationship</title>
-        <names>r:J_to_kg</names>
+        <names translatable="no">r:J_to_kg</names>
         <value>1/c^2</value>
       </variable>
       <variable>
         <title>Kelvin - Hertz Relationship</title>
-        <names>r:K_to_Hz</names>
+        <names translatable="no">r:K_to_Hz</names>
         <value>boltzmann/planck</value>
       </variable>
       <variable>
         <title>Kelvin - Inverse Meter Relationship</title>
-        <names>r:K_to_m</names>
+        <names translatable="no">r:K_to_m</names>
         <value>boltzmann/(planck*c)</value>
       </variable>
       <variable>
         <title>Kelvin - Joule Relationship</title>
-        <names>r:K_to_J</names>
+        <names translatable="no">r:K_to_J</names>
         <value>boltzmann</value>
       </variable>
       <variable>
         <title>Kelvin - Kilogram Relationship</title>
-        <names>r:K_to_kg</names>
+        <names translatable="no">r:K_to_kg</names>
         <value>boltzmann/c^2</value>
       </variable>
       <variable>
         <title>Kilogram - Hertz Relationship</title>
-        <names>r:kg_to_Hz</names>
+        <names translatable="no">r:kg_to_Hz</names>
         <value>c^2/planck</value>
       </variable>
       <variable>
         <title>Kilogram - Inverse Meter Relationship</title>
-        <names>r:kg_to_m</names>
+        <names translatable="no">r:kg_to_m</names>
         <value>c/planck</value>
       </variable>
       <variable>
         <title>Kilogram - Joule Relationship</title>
-        <names>r:kg_to_J</names>
+        <names translatable="no">r:kg_to_J</names>
         <value>c^2</value>
       </variable>
       <variable>
         <title>Kilogram - Kelvin Relationship</title>
-        <names>r:kg_to_K</names>
+        <names translatable="no">r:kg_to_K</names>
         <value>c^2/boltzmann</value>
       </variable>
     </category>
@@ -790,56 +790,56 @@
     <title>Basic Constants</title>
     <variable>
       <title>Golden Ratio</title>
-      <names>r:golden,au:φ,aos:phi</names>
+      <names translatable="no">r:golden,au:φ,aos:phi</names>
       <value>(1+sqrt(5))/2</value>
     </variable>
     <variable>
       <title>Omega Constant</title>
-      <names>r:omega</names>
+      <names translatable="no">r:omega</names>
       <value>lambertw(1)</value>
     </variable>
     <variable>
       <title>Pythagoras' Constant (sqrt 2)</title>
-      <names>r:pythagoras</names>
+      <names translatable="no">r:pythagoras</names>
       <value>sqrt(2)</value>
     </variable>
     <variable>
       <title>Apery's Constant</title>
-      <names>r:apery</names>
+      <names translatable="no">r:apery</names>
       <value>zeta(3)</value>
     </variable>
     <variable>
       <title>Tau (2pi)</title>
-      <names>au:τ,r:tau</names>
+      <names translatable="no">au:τ,r:tau</names>
       <value>2*pi</value>
     </variable>
     <variable>
       <title>Plastic Number</title>
-      <names>r:plastic,au:ρ,aos:rho</names>
+      <names translatable="no">r:plastic,au:ρ,aos:rho</names>
       <value>cbrt((9+sqrt(69))/18)+cbrt((9-sqrt(69))/18)</value>
     </variable>
     <builtin_variable name="e">
       <title>Base of Natural Logarithms (e)</title>
-      <names>r:e</names>
+      <names translatable="no">r:e</names>
     </builtin_variable>
     <builtin_variable name="pi">
       <title>Archimedes' Constant (pi)</title>
-      <names>au:π,r:pi</names>
+      <names translatable="no">au:π,r:pi</names>
     </builtin_variable>
     <builtin_variable name="euler">
       <title>Euler's Constant</title>
-      <names>au:γ,r:euler</names>
+      <names translatable="no">au:γ,r:euler</names>
     </builtin_variable>
     <builtin_variable name="catalan">
       <title>Catalan's Constant</title>
-      <names>r:catalan</names>
+      <names translatable="no">r:catalan</names>
     </builtin_variable>
   </category>
   <category>
     <title>Special Numbers</title>
     <builtin_variable name="i">
       <title>Imaginary i (sqrt -1)</title>
-      <names>r:i</names>
+      <names translatable="no">r:i</names>
     </builtin_variable>
     <builtin_variable name="plus_infinity">
       <title>Positive Infinity</title>
@@ -901,17 +901,17 @@
   <category>
     <title>Unknowns</title>
     <unknown>
-      <names>r:x</names>
+      <names translatable="no">r:x</names>
     </unknown>
     <unknown>
-      <names>r:y</names>
+      <names translatable="no">r:y</names>
     </unknown>
     <unknown>
-      <names>r:z</names>
+      <names translatable="no">r:z</names>
     </unknown>
     <builtin_variable name="n">
       <title>n (integer)</title>
-      <names>r:n</names>
+      <names translatable="no">r:n</names>
     </builtin_variable>
   </category>
   <category>

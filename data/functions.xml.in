@@ -388,7 +388,7 @@
     </builtin_function>
     <builtin_function name="horzcat">
       <title>Concatenate Horizontally</title>
-      <names>r:horzcat</names>
+      <names translatable="no">r:horzcat</names>
       <argument index="1">
         <title>Matrix 1</title>
       </argument>
@@ -398,7 +398,7 @@
     </builtin_function>
     <builtin_function name="vertcat">
       <title>Concatenate Vertically</title>
-      <names>r:vertcat</names>
+      <names translatable="no">r:vertcat</names>
       <argument index="1">
         <title>Matrix 1</title>
       </argument>
@@ -549,10 +549,10 @@
       <title>Binomial Coefficient</title>
       <names>r:binomial</names>
       <argument index="1">
-        <title>n</title>
+        <title translatable="no">n</title>
       </argument>
       <argument index="2">
-        <title>k</title>
+        <title translatable="no">k</title>
       </argument>
     </builtin_function>
     <function>

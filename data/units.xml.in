@@ -11,7 +11,7 @@
     </unit>
     <unit type="composite">
       <title>Kilometer</title>
-      <names>r:km_c</names>
+      <names translatable="no">r:km_c</names>
       <part>
         <unit>m</unit>
         <prefix>3</prefix>
@@ -20,7 +20,7 @@
     </unit>
     <unit type="composite">
       <title>Decimeter</title>
-      <names>r:dm_c</names>
+      <names translatable="no">r:dm_c</names>
       <part>
         <unit>m</unit>
         <prefix>-1</prefix>
@@ -29,7 +29,7 @@
     </unit>
     <unit type="composite">
       <title>Centimeter</title>
-      <names>r:cm_c</names>
+      <names translatable="no">r:cm_c</names>
       <part>
         <unit>m</unit>
         <prefix>-2</prefix>
@@ -38,7 +38,7 @@
     </unit>
     <unit type="composite">
       <title>Millimeter</title>
-      <names>r:mm_c</names>
+      <names translatable="no">r:mm_c</names>
       <part>
         <unit>m</unit>
         <prefix>-3</prefix>
@@ -47,7 +47,7 @@
     </unit>
     <unit type="composite">
       <title>Micrometer</title>
-      <names>r:um_c</names>
+      <names translatable="no">r:um_c</names>
       <part>
         <unit>m</unit>
         <prefix>-6</prefix>
@@ -56,7 +56,7 @@
     </unit>
     <unit type="composite">
       <title>Nanometer</title>
-      <names>r:nm_c</names>
+      <names translatable="no">r:nm_c</names>
       <part>
         <unit>m</unit>
         <prefix>-9</prefix>
@@ -356,7 +356,7 @@
     </unit>
     <unit type="alias">
       <title>Planck Length</title>
-      <names>r:planck_length,as:l_P</names>
+      <names translatable="no">r:planck_length,as:l_P</names>
       <system>Planck</system>
       <base>
         <unit>m</unit>
@@ -366,7 +366,7 @@
     </unit>
     <unit type="alias">
       <title>Bohr (Atomic Unit of Length)</title>
-      <names>rs:bohr_unit,as:a_0unit</names>
+      <names translatable="no">rs:bohr_unit,as:a_0unit</names>
       <system>Atomic</system>
       <base>
         <unit>m</unit>
@@ -376,7 +376,7 @@
     </unit>
     <unit type="composite">
       <title>Electronvolt Distance</title>
-      <names>planck_c_p_eV</names>
+      <names translatable="no">planck_c_p_eV</names>
       <part>
         <unit>planck_unit</unit>
         <prefix>0</prefix>
@@ -394,8 +394,8 @@
       </part>
     </unit>
     <unit type="composite">
-      <title>Planck per Electron Mass Light Speed</title>
-      <names>planck_p_electron_c</names>
+      <title translatable="no">Planck per Electron Mass Light Speed</title>
+      <names translatable="no">planck_p_electron_c</names>
       <system>Natural</system>
       <hidden>true</hidden>
       <part>
@@ -416,7 +416,7 @@
     </unit>
     <unit type="alias">
       <title>Natural Unit of Length</title>
-      <names>ars:l_N,aus:ƛ_unit</names>
+      <names translatable="no">ars:l_N,aus:ƛ_unit</names>
       <system>Natural</system>
       <base>
         <unit>planck_p_electron_c</unit>
@@ -498,8 +498,8 @@
     <category>
       <title>Solid Angle</title>
       <unit type="composite">
-        <title>Square Degree</title>
-        <names>r:sqdeg</names>
+        <title translatable="no">Square Degree</title>
+        <names translatable="no">r:sqdeg</names>
         <part>
           <unit>deg</unit>
           <prefix>0</prefix>
@@ -522,7 +522,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Radians per Second Squared</title>
-        <names>r:rad_p_sqs</names>
+        <names translatable="no">r:rad_p_sqs</names>
         <part>
           <unit>rad</unit>
           <prefix>0</prefix>
@@ -540,7 +540,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Radians per Second</title>
-        <names>r:rad_p_s</names>
+        <names translatable="no">r:rad_p_s</names>
         <part>
           <unit>rad</unit>
           <prefix>0</prefix>
@@ -554,8 +554,8 @@
       </unit>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Revolutions per Minute</title>
-        <names>r:turn_p_min</names>
+        <title translatable="no">Revolutions per Minute</title>
+        <names translatable="no">r:turn_p_min</names>
         <part>
           <unit>turn</unit>
           <prefix>0</prefix>
@@ -590,7 +590,7 @@
     <unit type="composite">
       <system>SI</system>
       <title>Kilogram</title>
-      <names>r:kg_c</names>
+      <names translatable="no">r:kg_c</names>
       <part>
         <unit>g</unit>
         <prefix>3</prefix>
@@ -599,7 +599,7 @@
     </unit>
     <unit type="composite">
       <title>Hectogram</title>
-      <names>r:hg_c</names>
+      <names translatable="no">r:hg_c</names>
       <part>
         <unit>g</unit>
         <prefix>2</prefix>
@@ -770,7 +770,7 @@
     </unit>
     <unit type="alias">
       <title>Planck Mass</title>
-      <names>r:planck_mass,as:m_P</names>
+      <names translatable="no">r:planck_mass,as:m_P</names>
       <system>Planck</system>
       <base>
         <unit>g</unit>
@@ -780,7 +780,7 @@
     </unit>
     <unit type="alias">
       <title>Atomic/Natural Unit of Mass</title>
-      <names>rs:electron_unit,as:m_eunit</names>
+      <names translatable="no">rs:electron_unit,as:m_eunit</names>
       <system>Atomic/Natural</system>
       <base>
         <unit>g</unit>
@@ -790,7 +790,7 @@
     </unit>
     <unit type="composite">
       <title>Electronvolt Mass</title>
-      <names>eV_p_sqc</names>
+      <names translatable="no">eV_p_sqc</names>
       <part>
         <unit>eV</unit>
         <prefix>0</prefix>
@@ -823,7 +823,7 @@
     </unit>
     <unit type="composite">
       <title>Kilodalton</title>
-      <names>r:kDa_c</names>
+      <names translatable="no">r:kDa_c</names>
       <part>
         <unit>Da</unit>
         <prefix>3</prefix>
@@ -844,7 +844,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Kilogram per Cubic Meter</title>
-        <names>r:kg_p_cum</names>
+        <names translatable="no">r:kg_p_cum</names>
         <part>
           <unit>g</unit>
           <prefix>3</prefix>
@@ -858,7 +858,7 @@
       </unit>
       <unit type="composite">
         <title>Gram per Cubic Decimeter</title>
-        <names>r:g_p_cudm</names>
+        <names translatable="no">r:g_p_cudm</names>
         <part>
           <unit>g</unit>
           <prefix>0</prefix>
@@ -872,7 +872,7 @@
       </unit>
       <unit type="composite">
         <title>Gram per Cubic Centimeter</title>
-        <names>r:g_p_cucm</names>
+        <names translatable="no">r:g_p_cucm</names>
         <part>
           <unit>g</unit>
           <prefix>0</prefix>
@@ -889,7 +889,7 @@
       <title>Atomic Mass</title>
       <unit type="composite">
         <title>Gram per Mole</title>
-        <names>r:g_p_mol</names>
+        <names translatable="no">r:g_p_mol</names>
         <part>
           <unit>g</unit>
           <prefix>0</prefix>
@@ -907,7 +907,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Kilogram per Kilogram</title>
-        <names>r:kg_p_kg</names>
+        <names translatable="no">r:kg_p_kg</names>
         <part>
           <unit>g</unit>
           <prefix>3</prefix>
@@ -1018,7 +1018,7 @@
     </unit>
     <unit type="alias">
       <title>Planck Time</title>
-      <names>r:planck_time,as:t_P</names>
+      <names translatable="no">r:planck_time,as:t_P</names>
       <system>Planck</system>
       <base>
         <unit>s</unit>
@@ -1028,7 +1028,7 @@
     </unit>
     <unit type="composite">
       <title>Atomic Unit of Time</title>
-      <names>planck_p_Ha</names>
+      <names translatable="no">planck_p_Ha</names>
       <system>Atomic</system>
       <part>
         <unit>planck_unit</unit>
@@ -1043,7 +1043,7 @@
     </unit>
     <unit type="composite">
       <title>Natural Unit of Time</title>
-      <names>planck_p_electron_sqc</names>
+      <names translatable="no">planck_p_electron_sqc</names>
       <system>Natural</system>
       <part>
         <unit>planck_unit</unit>
@@ -1063,7 +1063,7 @@
     </unit>
     <unit type="composite">
       <title>Electronvolt Time</title>
-      <names>planck_p_eV</names>
+      <names translatable="no">planck_p_eV</names>
       <part>
         <unit>planck_unit</unit>
         <prefix>0</prefix>
@@ -1115,7 +1115,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Ampere per Square Meter</title>
-        <names>r:A_p_sqm</names>
+        <names translatable="no">r:A_p_sqm</names>
         <part>
           <unit>A</unit>
           <prefix>0</prefix>
@@ -1132,8 +1132,8 @@
       <title>Electric Charge</title>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Ampere Second</title>
-        <names>r:A_s</names>
+        <title translatable="no">Ampere Second</title>
+        <names translatable="no">r:A_s</names>
         <part>
           <unit>A</unit>
           <prefix>0</prefix>
@@ -1177,7 +1177,7 @@
       </unit>
       <unit type="alias">
         <title>Planck Charge</title>
-        <names>r:planck_charge,as:q_P</names>
+        <names translatable="no">r:planck_charge,as:q_P</names>
         <system>Planck</system>
         <base>
           <unit>C</unit>
@@ -1187,7 +1187,7 @@
       </unit>
       <unit type="alias">
         <title>Atomic Unit of Charge</title>
-        <names>ars:e_unit,as:q_A</names>
+        <names translatable="no">ars:e_unit,as:q_A</names>
         <system>Atomic</system>
         <base>
           <unit>C</unit>
@@ -1201,7 +1201,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Coulomb per Cubic Meter</title>
-        <names>r:C_p_cum</names>
+        <names translatable="no">r:C_p_cum</names>
         <part>
           <unit>C</unit>
           <prefix>0</prefix>
@@ -1219,7 +1219,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Coulomb Meter</title>
-        <names>r:C_m</names>
+        <names translatable="no">r:C_m</names>
         <part>
           <unit>C</unit>
           <prefix>0</prefix>
@@ -1233,9 +1233,9 @@
       </unit>
       <unit type="composite">
         <system>CGS</system>
-        <title>Statcoulomb Centimeter</title>
+        <title translatable="no">Statcoulomb Centimeter</title>
         <hidden>true</hidden>
-        <names>r:statcoulomb_cm</names>
+        <names translatable="no">r:statcoulomb_cm</names>
         <part>
           <unit>statcoulomb</unit>
           <prefix>0</prefix>
@@ -1263,7 +1263,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Coulomb per Square Meter</title>
-        <names>r:C_p_sqm</names>
+        <names translatable="no">r:C_p_sqm</names>
         <part>
           <unit>C</unit>
           <prefix>0</prefix>
@@ -1280,8 +1280,8 @@
       <title>Electric Potential</title>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Watt per Ampere</title>
-        <names>r:W_p_A</names>
+        <title translatable="no">Watt per Ampere</title>
+        <names translatable="no">r:W_p_A</names>
         <part>
           <unit>W</unit>
           <prefix>0</prefix>
@@ -1325,7 +1325,7 @@
       </unit>
       <unit type="composite">
         <title>Atomic Unit of Electric Potential</title>
-        <names>Ha_p_e</names>
+        <names translatable="no">Ha_p_e</names>
         <system>Atomic</system>
         <part>
           <unit>Ha</unit>
@@ -1343,8 +1343,8 @@
       <title>Capacitance</title>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Coulomb per Volt</title>
-        <names>r:C_p_V</names>
+        <title translatable="no">Coulomb per Volt</title>
+        <names translatable="no">r:C_p_V</names>
         <part>
           <unit>C</unit>
           <prefix>0</prefix>
@@ -1371,7 +1371,7 @@
       <title>Electrical Elastance</title>
       <unit type="composite">
         <title>Volt per Coulomb</title>
-        <names>r:V_p_C</names>
+        <names translatable="no">r:V_p_C</names>
         <part>
           <unit>V</unit>
           <prefix>0</prefix>
@@ -1386,7 +1386,7 @@
       <unit type="composite">
 	<system>SI</system>
         <title>Reciprocal Farad</title>
-        <names>r:recF</names>
+        <names translatable="no">r:recF</names>
         <part>
           <unit>F</unit>
           <prefix>0</prefix>
@@ -1407,8 +1407,8 @@
       <title>Electric Resistance</title>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Volt per Ampere</title>
-        <names>r:V_p_A</names>
+        <title translatable="no">Volt per Ampere</title>
+        <names translatable="no">r:V_p_A</names>
         <part>
           <unit>V</unit>
           <prefix>0</prefix>
@@ -1455,8 +1455,8 @@
       <title>Electric Conductance</title>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Ampere per Volt</title>
-        <names>r:A_p_V</names>
+        <title translatable="no">Ampere per Volt</title>
+        <names translatable="no">r:A_p_V</names>
         <part>
           <unit>A</unit>
           <prefix>0</prefix>
@@ -1484,7 +1484,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Volt per Meter</title>
-        <names>r:V_p_m</names>
+        <names translatable="no">r:V_p_m</names>
         <part>
           <unit>V</unit>
           <prefix>0</prefix>
@@ -1498,7 +1498,7 @@
       </unit>
       <unit type="composite">
         <title>Newton per Coulomb</title>
-        <names>r:N_p_C</names>
+        <names translatable="no">r:N_p_C</names>
         <part>
           <unit>N</unit>
           <prefix>0</prefix>
@@ -1512,7 +1512,7 @@
       </unit>
       <unit type="composite">
         <title>Atomic Unit of Electric Field</title>
-        <names>Ha_p_e_bohr</names>
+        <names translatable="no">Ha_p_e_bohr</names>
         <system>Atomic</system>
         <part>
           <unit>Ha</unit>
@@ -1536,7 +1536,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Farad per Meter</title>
-        <names>r:F_p_m</names>
+        <names translatable="no">r:F_p_m</names>
         <part>
           <unit>F</unit>
           <prefix>0</prefix>
@@ -1553,8 +1553,8 @@
       <title>Inductance</title>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Weber per Ampere</title>
-        <names>r:Wb_p_A</names>
+        <title translatable="no">Weber per Ampere</title>
+        <names translatable="no">r:Wb_p_A</names>
         <part>
           <unit>Wb</unit>
           <prefix>0</prefix>
@@ -1592,7 +1592,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Henry per Meter</title>
-        <names>r:H_p_m</names>
+        <names translatable="no">r:H_p_m</names>
         <part>
           <unit>H</unit>
           <prefix>0</prefix>
@@ -1628,7 +1628,7 @@
     <unit type="alias">
       <title>Degree Rankine</title>
       <system>Imperial/US</system>
-      <names>ar:oR,a:oRa,au:°R,au:&#xB0;Ra,r:rankine</names>
+      <names>ar:oR,a:oRa,au:°R,au:°Ra,r:rankine</names>
       <base>
         <unit>K</unit>
         <relation>5/9</relation>
@@ -1648,7 +1648,7 @@
     </unit>
     <unit type="alias">
       <title>Planck Temperature</title>
-      <names>r:planck_temperature,as:T_P</names>
+      <names translatable="no">r:planck_temperature,as:T_P</names>
       <system>Planck</system>
       <base>
         <unit>K</unit>
@@ -1658,7 +1658,7 @@
     </unit>
     <unit type="composite">
       <title>Electronvolt Temperature</title>
-      <names>eV_p_kB</names>
+      <names translatable="no">eV_p_kB</names>
       <part>
         <unit>eV</unit>
         <prefix>0</prefix>
@@ -1692,7 +1692,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Mole per Square Meter Second</title>
-        <names>r:mol_p_sqm_p_s</names>
+        <names translatable="no">r:mol_p_sqm_p_s</names>
         <part>
           <unit>mol</unit>
           <prefix>0</prefix>
@@ -1711,7 +1711,7 @@
       </unit>
       <unit type="composite">
         <title>Micromole per Square Meter Second</title>
-        <names>r:micromol_p_sqm_p_s</names>
+        <names translatable="no">r:micromol_p_sqm_p_s</names>
         <part>
           <unit>mol</unit>
           <prefix>-6</prefix>
@@ -1730,7 +1730,7 @@
       </unit>
       <unit type="composite">
         <title>Einstein per Square Meter Second</title>
-        <names>r:einstein_p_sqm_p_s</names>
+        <names translatable="no">r:einstein_p_sqm_p_s</names>
         <part>
           <unit>einstein</unit>
           <prefix>0</prefix>
@@ -1749,7 +1749,7 @@
       </unit>
       <unit type="composite">
         <title>Microeinstein per Square Meter Second</title>
-        <names>r:microeinstein_p_sqm_p_s</names>
+        <names translatable="no">r:microeinstein_p_sqm_p_s</names>
         <part>
           <unit>einstein</unit>
           <prefix>-6</prefix>
@@ -1772,7 +1772,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Mole per Cubic Meter</title>
-        <names>r:mol_p_cum</names>
+        <names translatable="no">r:mol_p_cum</names>
         <part>
           <unit>mol</unit>
           <prefix>0</prefix>
@@ -1789,8 +1789,8 @@
       <title>Catalytic Activity</title>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Reciprocal Seconds Mole</title>
-        <names>r:recs_mol</names>
+        <title translatable="no">Reciprocal Seconds Mole</title>
+        <names translatable="no">r:recs_mol</names>
         <part>
           <unit>mol</unit>
           <prefix>0</prefix>
@@ -1818,7 +1818,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Katal per Cubic Meter</title>
-        <names>r:kat_p_cum</names>
+        <names translatable="no">r:kat_p_cum</names>
         <part>
           <unit>kat</unit>
           <prefix>0</prefix>
@@ -1847,7 +1847,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Candela per Square Meter</title>
-        <names>r:cd_p_sqm</names>
+        <names translatable="no">r:cd_p_sqm</names>
         <part>
           <unit>cd</unit>
           <prefix>0</prefix>
@@ -1892,8 +1892,8 @@
       <title>Luminous Flux</title>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Candela Steradian</title>
-        <names>r:cd_sr</names>
+        <title translatable="no">Candela Steradian</title>
+        <names translatable="no">r:cd_sr</names>
         <part>
           <unit>cd</unit>
           <prefix>0</prefix>
@@ -1920,8 +1920,8 @@
       <title>Illuminance</title>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Lumen per Square Meter</title>
-        <names>r:lm_p_sqm</names>
+        <title translatable="no">Lumen per Square Meter</title>
+        <names translatable="no">r:lm_p_sqm</names>
         <part>
           <unit>lm</unit>
           <prefix>0</prefix>
@@ -1935,8 +1935,8 @@
       </unit>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Lumen per Square Foot</title>
-        <names>r:lm_p_sqft</names>
+        <title translatable="no">Lumen per Square Foot</title>
+        <names translatable="no">r:lm_p_sqft</names>
         <part>
           <unit>lm</unit>
           <prefix>0</prefix>
@@ -1984,7 +1984,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Watt per Steradian</title>
-        <names>r:W_p_sr</names>
+        <names translatable="no">r:W_p_sr</names>
         <part>
           <unit>W</unit>
           <prefix>0</prefix>
@@ -2002,7 +2002,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Watt per Square Meter</title>
-        <names>r:W_p_sqm</names>
+        <names translatable="no">r:W_p_sqm</names>
         <part>
           <unit>W</unit>
           <prefix>0</prefix>
@@ -2017,7 +2017,7 @@
       <unit type="composite">
         <system>CGS</system>
         <title>Erg per Square Centimeter Second</title>
-        <names>r:erg_p_sqcm_p_s</names>
+        <names translatable="no">r:erg_p_sqcm_p_s</names>
         <part>
           <unit>erg</unit>
           <prefix>0</prefix>
@@ -2040,7 +2040,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Watt per Square Meter Steradian</title>
-        <names>r:W_p_sqm_sr</names>
+        <names translatable="no">r:W_p_sqm_sr</names>
         <part>
           <unit>W</unit>
           <prefix>0</prefix>
@@ -2064,7 +2064,7 @@
     <unit type="composite">
       <system>SI</system>
       <title>Square Meter</title>
-      <names>r:sqm</names>
+      <names translatable="no">r:sqm</names>
       <part>
         <unit>m</unit>
         <prefix>0</prefix>
@@ -2073,7 +2073,7 @@
     </unit>
     <unit type="composite">
       <title>Square Kilometer</title>
-      <names>r:sqkm</names>
+      <names translatable="no">r:sqkm</names>
       <part>
         <unit>m</unit>
         <prefix>3</prefix>
@@ -2103,7 +2103,7 @@
     <unit type="alias">
       <title>Thousand of Circular Mil</title>
       <system>US</system>
-      <names>r:kcmil,MCM</names>
+      <names translatable="no">r:kcmil,MCM</names>
       <base>
         <unit>cmil</unit>
         <relation>1000</relation>
@@ -2181,7 +2181,7 @@
     <unit type="composite">
       <title>Square Foot</title>
       <system>Imperial/US</system>
-      <names>r:sqft</names>
+      <names translatable="no">r:sqft</names>
       <part>
         <unit>ft</unit>
         <prefix>0</prefix>
@@ -2191,7 +2191,7 @@
     <unit type="composite">
       <title>Square Inch</title>
       <system>Imperial/US</system>
-      <names>r:sqin</names>
+      <names translatable="no">r:sqin</names>
       <part>
         <unit>in</unit>
         <prefix>0</prefix>
@@ -2201,7 +2201,7 @@
     <unit type="composite">
       <title>Square Mile</title>
       <system>Imperial/US</system>
-      <names>r:sqmi</names>
+      <names translatable="no">r:sqmi</names>
       <part>
         <unit>mi</unit>
         <prefix>0</prefix>
@@ -2211,7 +2211,7 @@
     <unit type="alias">
       <title>Darcy</title>
       <system>CGS</system>
-      <names>r:darcy,p:darcys</names>
+      <names translatable="no">r:darcy,p:darcys</names>
       <base>
         <unit>sqm</unit>
         <relation>1/1.01325E12</relation>
@@ -2222,7 +2222,7 @@
     <unit type="composite">
       <title>Millidarcy</title>
       <system>CGS</system>
-      <names>r:millidarcy</names>
+      <names translatable="no">r:millidarcy</names>
       <part>
         <unit>darcy</unit>
         <prefix>-3</prefix>
@@ -2235,7 +2235,7 @@
     <unit type="composite">
       <system>SI</system>
       <title>Cubic Meter</title>
-      <names>r:cum</names>
+      <names translatable="no">r:cum</names>
       <part>
         <unit>m</unit>
         <prefix>0</prefix>
@@ -2254,7 +2254,7 @@
     </unit>
     <unit type="composite">
       <title>Milliliter</title>
-      <names>r:ml_c</names>
+      <names translatable="no">r:ml_c</names>
       <part>
         <unit>L</unit>
         <prefix>-3</prefix>
@@ -2263,7 +2263,7 @@
     </unit>
     <unit type="composite">
       <title>Centiliter</title>
-      <names>r:cl_c</names>
+      <names translatable="no">r:cl_c</names>
       <part>
         <unit>L</unit>
         <prefix>-2</prefix>
@@ -2272,7 +2272,7 @@
     </unit>
     <unit type="composite">
       <title>Deciliter</title>
-      <names>r:dl_c</names>
+      <names translatable="no">r:dl_c</names>
       <part>
         <unit>L</unit>
         <prefix>-1</prefix>
@@ -2282,7 +2282,7 @@
     <unit type="composite">
       <title>Cubic Inch</title>
       <system>Imperial/US</system>
-      <names>r:cuin</names>
+      <names translatable="no">r:cuin</names>
       <part>
         <unit>in</unit>
         <prefix>0</prefix>
@@ -2292,7 +2292,7 @@
     <unit type="composite">
       <system>SI</system>
       <title>Cubic Centimeter</title>
-      <names>r:cucm</names>
+      <names translatable="no">r:cucm</names>
       <part>
         <unit>m</unit>
         <prefix>-2</prefix>
@@ -2313,7 +2313,7 @@
       <title>Fuel Economy</title>
       <unit type="composite">
         <title>Liter per Kilometer</title>
-        <names>r:l_p_km</names>
+        <names translatable="no">r:l_p_km</names>
         <part>
           <unit>L</unit>
           <prefix>0</prefix>
@@ -2327,7 +2327,7 @@
       </unit>
       <unit type="composite">
         <title>Kilometer per Liter</title>
-        <names>r:km_p_l</names>
+        <names translatable="no">r:km_p_l</names>
         <part>
           <unit>m</unit>
           <prefix>3</prefix>
@@ -2341,9 +2341,9 @@
       </unit>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Miles per Gallon</title>
+        <title translatable="no">Miles per Gallon</title>
         <system>US</system>
-        <names>r:mile_p_gal</names>
+        <names translatable="no">r:mile_p_gal</names>
         <part>
           <unit>mi</unit>
           <prefix>0</prefix>
@@ -2632,7 +2632,7 @@
       <unit type="composite">
         <title>Acre-Foot</title>
         <system>US</system>
-        <names>r:acre_ft</names>
+        <names translatable="no">r:acre_ft</names>
         <part>
           <unit>acre</unit>
           <prefix>0</prefix>
@@ -2650,7 +2650,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Cubic Meter per Kilogram</title>
-        <names>r:cum_p_kg</names>
+        <names translatable="no">r:cum_p_kg</names>
         <part>
           <unit>m</unit>
           <prefix>0</prefix>
@@ -2667,7 +2667,7 @@
       <title>Volumetric Flow Rate</title>
       <unit type="composite">
         <title>Liter per Second</title>
-        <names>r:l_p_s</names>
+        <names translatable="no">r:l_p_s</names>
         <part>
           <unit>L</unit>
           <prefix>0</prefix>
@@ -2681,7 +2681,7 @@
       </unit>
       <unit type="composite">
         <title>Liter per Minute</title>
-        <names>r:l_p_min</names>
+        <names translatable="no">r:l_p_min</names>
         <part>
           <unit>L</unit>
           <prefix>0</prefix>
@@ -2695,7 +2695,7 @@
       </unit>
       <unit type="composite">
         <title>Liter per Hour</title>
-        <names>r:l_p_h</names>
+        <names translatable="no">r:l_p_h</names>
         <part>
           <unit>L</unit>
           <prefix>0</prefix>
@@ -2710,7 +2710,7 @@
       <unit type="composite">
         <title>Cubic Meter per Second</title>
         <system>SI</system>
-        <names>r:cum_p_s</names>
+        <names translatable="no">r:cum_p_s</names>
         <part>
           <unit>m</unit>
           <prefix>0</prefix>
@@ -2725,7 +2725,7 @@
       <unit type="composite">
         <title>Cubic Centimeter per Minute</title>
         <system>SI</system>
-        <names>r:cucm_p_min</names>
+        <names translatable="no">r:cucm_p_min</names>
         <part>
           <unit>m</unit>
           <prefix>-2</prefix>
@@ -2739,8 +2739,8 @@
       </unit>
       <unit type="alias">
         <hidden>true</hidden>
-        <title>Cumecs</title>
-        <names>r:cumec,p:cumecs</names>
+        <title translatable="no">Cumecs</title>
+        <names translatable="no">r:cumec,p:cumecs</names>
         <base>
           <unit>cum_p_s</unit>
           <relation>1</relation>
@@ -2759,7 +2759,7 @@
       <unit type="composite">
         <title>Cubic Foot per Minute</title>
         <system>Imperial/US</system>
-        <names>r:cuf_p_min</names>
+        <names translatable="no">r:cuf_p_min</names>
         <part>
           <unit>ft</unit>
           <prefix>0</prefix>
@@ -2784,7 +2784,7 @@
       <unit type="composite">
         <title>Cubic Foot per Second</title>
         <system>Imperial/US</system>
-        <names>r:cuf_p_s</names>
+        <names translatable="no">r:cuf_p_s</names>
         <part>
           <unit>ft</unit>
           <prefix>0</prefix>
@@ -2808,9 +2808,9 @@
       </unit>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Gallons per Minute</title>
+        <title translatable="no">Gallons per Minute</title>
         <system>US</system>
-        <names>r:gal_p_min</names>
+        <names translatable="no">r:gal_p_min</names>
         <part>
           <unit>gal</unit>
           <prefix>0</prefix>
@@ -2834,9 +2834,9 @@
       </unit>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Gallons per Hour</title>
+        <title translatable="no">Gallons per Hour</title>
         <system>US</system>
-        <names>r:gal_p_h</names>
+        <names translatable="no">r:gal_p_h</names>
         <part>
           <unit>gal</unit>
           <prefix>0</prefix>
@@ -2861,7 +2861,7 @@
       <unit type="composite">
         <title>Gallons per Second (U.S.)</title>
         <system>US</system>
-        <names>r:gal_p_s</names>
+        <names translatable="no">r:gal_p_s</names>
         <part>
           <unit>gal</unit>
           <prefix>0</prefix>
@@ -2874,9 +2874,9 @@
         </part>
       </unit>
       <unit type="composite">
-        <title>Acre-Foot per Day</title>
+        <title translatable="no">Acre-Foot per Day</title>
         <system>US</system>
-        <names>r:acre_ft_p_d</names>
+        <names translatable="no">r:acre_ft_p_d</names>
         <part>
           <unit>acre</unit>
           <prefix>0</prefix>
@@ -2900,7 +2900,7 @@
     <unit type="composite">
       <system>SI</system>
       <title>Meter per Second</title>
-      <names>r:m_p_s</names>
+      <names translatable="no">r:m_p_s</names>
       <part>
         <unit>m</unit>
         <prefix>0</prefix>
@@ -2914,7 +2914,7 @@
     </unit>
     <unit type="composite">
       <title>Kilometer per Hour</title>
-      <names>r:km_p_h</names>
+      <names translatable="no">r:km_p_h</names>
       <part>
         <unit>m</unit>
         <prefix>3</prefix>
@@ -2939,7 +2939,7 @@
     </unit>
     <unit type="composite">
       <title>Nautical Mile per Hour</title>
-      <names>r:nautical_mile_p_h</names>
+      <names translatable="no">r:nautical_mile_p_h</names>
       <part>
         <unit>nautical_mile</unit>
         <prefix>0</prefix>
@@ -2962,9 +2962,9 @@
     </unit>
     <unit type="composite">
       <hidden>true</hidden>
-      <title>Miles per Hour</title>
+      <title translatable="no">Miles per Hour</title>
       <system>Imperial/US</system>
-      <names>r:mile_p_h</names>
+      <names translatable="no">r:mile_p_h</names>
       <part>
         <unit>mi</unit>
         <prefix>0</prefix>
@@ -2988,7 +2988,7 @@
     </unit>
     <unit type="composite">
       <title>Minutes per Kilometer</title>
-      <names>r:min_p_km</names>
+      <names translatable="no">r:min_p_km</names>
       <part>
         <unit>min</unit>
         <prefix>0</prefix>
@@ -3002,7 +3002,7 @@
     </unit>
     <unit type="composite">
       <title>Minutes per Mile</title>
-      <names>r:min_p_mile</names>
+      <names translatable="no">r:min_p_mile</names>
       <part>
         <unit>min</unit>
         <prefix>0</prefix>
@@ -3016,7 +3016,7 @@
     </unit>
     <unit type="alias">
       <title>Speed of Light (Natural Unit of Velocity)</title>
-      <names>ars:c_unit</names>
+      <names translatable="no">ars:c_unit</names>
       <base>
         <unit>m_p_s</unit>
         <relation>299792458</relation>
@@ -3025,7 +3025,7 @@
     </unit>
     <unit type="composite">
       <title>Atomic Unit of Velocity</title>
-      <names>bohr_Ha_p_planck</names>
+      <names translatable="no">bohr_Ha_p_planck</names>
       <system>Atomic</system>
       <part>
         <unit>bohr_unit</unit>
@@ -3048,7 +3048,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Meter per Second Squared</title>
-        <names>r:m_p_sqs</names>
+        <names translatable="no">r:m_p_sqs</names>
         <part>
           <unit>m</unit>
           <prefix>0</prefix>
@@ -3085,7 +3085,7 @@
         <unit type="composite">
           <system>SI</system>
           <title>Meter per Second Cubed (Jerk)</title>
-          <names>r:m_p_scu</names>
+          <names translatable="no">r:m_p_scu</names>
           <part>
             <unit>m</unit>
             <prefix>0</prefix>
@@ -3099,7 +3099,7 @@
         </unit>
         <unit type="composite">
           <title>Standard Gravity per Second</title>
-          <names>r:gee_p_s</names>
+          <names translatable="no">r:gee_p_s</names>
           <part>
             <unit>gee</unit>
             <prefix>0</prefix>
@@ -3113,7 +3113,7 @@
         </unit>
         <unit type="composite">
           <title>Meter per Second to the Fourth (Snap)</title>
-          <names>r:m_p_sfourth</names>
+          <names translatable="no">r:m_p_sfourth</names>
           <part>
             <unit>m</unit>
             <prefix>0</prefix>
@@ -3127,7 +3127,7 @@
         </unit>
         <unit type="composite">
           <title>Meter per Second to the Fifth (Crackle)</title>
-          <names>r:m_p_sfifth</names>
+          <names translatable="no">r:m_p_sfifth</names>
           <part>
             <unit>m</unit>
             <prefix>0</prefix>
@@ -3141,7 +3141,7 @@
         </unit>
         <unit type="composite">
           <title>Meter per Second to the Sixth (Pop)</title>
-          <names>r:m_p_ssixth</names>
+          <names translatable="no">r:m_p_ssixth</names>
           <part>
             <unit>m</unit>
             <prefix>0</prefix>
@@ -3163,7 +3163,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Reciprocal Meter</title>
-        <names>r:recm</names>
+        <names translatable="no">r:recm</names>
         <part>
           <unit>m</unit>
           <prefix>0</prefix>
@@ -3185,7 +3185,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Ampere per Meter</title>
-        <names>r:A_p_m</names>
+        <names translatable="no">r:A_p_m</names>
         <part>
           <unit>A</unit>
           <prefix>0</prefix>
@@ -3213,8 +3213,8 @@
       <title>Magnetic Flux</title>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Volt Seconds</title>
-        <names>r:V_s</names>
+        <title translatable="no">Volt Seconds</title>
+        <names translatable="no">r:V_s</names>
         <part>
           <unit>V</unit>
           <prefix>0</prefix>
@@ -3251,8 +3251,8 @@
       <title>Magnetic Flux Density</title>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Weber per Square Meter</title>
-        <names>r:Wb_p_sqm</names>
+        <title translatable="no">Weber per Square Meter</title>
+        <names translatable="no">r:Wb_p_sqm</names>
         <part>
           <unit>Wb</unit>
           <prefix>0</prefix>
@@ -3287,7 +3287,7 @@
       </unit>
       <unit type="composite">
         <title>Atomic Unit of Magnetic Flux Density</title>
-        <names>planck_p_e_sqbohr</names>
+        <names translatable="no">planck_p_e_sqbohr</names>
         <system>Atomic</system>
         <part>
           <unit>planck_unit</unit>
@@ -3311,7 +3311,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Ampere Square Meter</title>
-        <names>r:A_sqm</names>
+        <names translatable="no">r:A_sqm</names>
         <part>
           <unit>A</unit>
           <prefix>0</prefix>
@@ -3325,7 +3325,7 @@
       </unit>
       <unit type="composite">
         <title>Atomic Unit of Magnetic Dipole Moment</title>
-        <names>e_planck_p_electron</names>
+        <names translatable="no">e_planck_p_electron</names>
         <system>Atomic</system>
         <part>
           <unit>e_unit</unit>
@@ -3349,8 +3349,8 @@
     <title>Force</title>
     <unit type="composite">
       <hidden>true</hidden>
-      <title>Meter Kilogram per Second Squared</title>
-      <names>r:m_kg_p_sqs</names>
+      <title translatable="no">Meter Kilogram per Second Squared</title>
+      <names translatable="no">r:m_kg_p_sqs</names>
       <part>
         <unit>m</unit>
         <prefix>0</prefix>
@@ -3409,8 +3409,8 @@
     </unit>
     <unit type="composite">
       <hidden>true</hidden>
-      <title>Pound Foot per Second Squared</title>
-      <names>r:lb_ft_p_sqs</names>
+      <title translatable="no">Pound Foot per Second Squared</title>
+      <names translatable="no">r:lb_ft_p_sqs</names>
       <part>
         <unit>lb</unit>
         <prefix>0</prefix>
@@ -3449,7 +3449,7 @@
     </unit>
     <unit type="composite">
       <title>Kilopond (Kilogram-Force)</title>
-      <names>r:kpond_c</names>
+      <names translatable="no">r:kpond_c</names>
       <part>
         <unit>pond</unit>
         <prefix>3</prefix>
@@ -3458,7 +3458,7 @@
     </unit>
     <unit type="composite">
       <title>Atomic Unit of Force</title>
-      <names>Ha_p_bohr</names>
+      <names translatable="no">Ha_p_bohr</names>
       <system>Atomic</system>
       <part>
         <unit>Ha</unit>
@@ -3476,7 +3476,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Newton Meter</title>
-        <names>r:N_m</names>
+        <names translatable="no">r:N_m</names>
         <part>
           <unit>N</unit>
           <prefix>0</prefix>
@@ -3494,7 +3494,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Kilogram Meter per Second</title>
-        <names>r:kg_m_p_s</names>
+        <names translatable="no">r:kg_m_p_s</names>
         <part>
           <unit>g</unit>
           <prefix>3</prefix>
@@ -3513,7 +3513,7 @@
       </unit>
       <unit type="composite">
         <title>Electronvolt Momentum</title>
-        <names>eV_p_c</names>
+        <names translatable="no">eV_p_c</names>
         <part>
           <unit>eV</unit>
           <prefix>0</prefix>
@@ -3527,7 +3527,7 @@
       </unit>
       <unit type="composite">
         <title>Natural Unit of Momentum</title>
-        <names>electron_c</names>
+        <names translatable="no">electron_c</names>
         <system>Natural</system>
         <part>
           <unit>electron_unit</unit>
@@ -3542,7 +3542,7 @@
       </unit>
       <unit type="composite">
         <title>Atomic Unit of Momentum</title>
-        <names>planck_p_bohr</names>
+        <names translatable="no">planck_p_bohr</names>
         <system>Atomic</system>
         <part>
           <unit>planck_unit</unit>
@@ -3560,8 +3560,8 @@
       <title>Pressure</title>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Newton per Square Meter</title>
-        <names>r:N_p_sqm</names>
+        <title translatable="no">Newton per Square Meter</title>
+        <names translatable="no">r:N_p_sqm</names>
         <part>
           <unit>N</unit>
           <prefix>0</prefix>
@@ -3574,10 +3574,10 @@
         </part>
       </unit>
       <unit type="composite">
-        <title>Pound-force per Square Inch</title>
+        <title translatable="no">Pound-force per Square Inch</title>
         <system>Imperial/US</system>
         <hidden>true</hidden>
-        <names>r:lbf_p_sqin</names>
+        <names translatable="no">r:lbf_p_sqin</names>
         <part>
           <unit>lbf</unit>
           <prefix>0</prefix>
@@ -3601,7 +3601,7 @@
       </unit>
       <unit type="composite">
         <title>Kilogram-force per Square Centimetre</title>
-        <names>r:kpond_p_sqcm</names>
+        <names translatable="no">r:kpond_p_sqcm</names>
         <part>
           <unit>pond</unit>
           <prefix>3</prefix>
@@ -3692,7 +3692,7 @@
       </unit>
       <unit type="composite">
         <title>Millitorr</title>
-        <names>r:mTorr_c</names>
+        <names translatable="no">r:mTorr_c</names>
         <part>
           <unit>Torr</unit>
           <prefix>-3</prefix>
@@ -3701,8 +3701,8 @@
       </unit>
       <unit type="composite">
         <system>CGS</system>
-        <title>Dyne per Square Centimetre</title>
-        <names>r:dyn_p_sqcm</names>
+        <title translatable="no">Dyne per Square Centimetre</title>
+        <names translatable="no">r:dyn_p_sqcm</names>
         <hidden>true</hidden>
         <part>
           <unit>dyn</unit>
@@ -3736,7 +3736,7 @@
       </unit>
       <unit type="composite">
         <title>Millimeter of Water</title>
-        <names>mmWC_c</names>
+        <names translatable="no">mmWC_c</names>
         <part>
           <unit>mWC</unit>
           <prefix>-3</prefix>
@@ -3745,7 +3745,7 @@
       </unit>
       <unit type="composite">
         <title>Centimeter of Water</title>
-        <names>cmWC_c</names>
+        <names translatable="no">cmWC_c</names>
         <part>
           <unit>mWC</unit>
           <prefix>-2</prefix>
@@ -3767,7 +3767,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Pascal Second</title>
-        <names>r:Pa_s</names>
+        <names translatable="no">r:Pa_s</names>
         <part>
           <unit>Pa</unit>
           <prefix>0</prefix>
@@ -3792,7 +3792,7 @@
       <unit type="composite">
         <system>CGS</system>
         <title>Centipoise</title>
-        <names>r:cP_c</names>
+        <names translatable="no">r:cP_c</names>
         <part>
           <unit>P</unit>
           <prefix>-2</prefix>
@@ -3805,7 +3805,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Square Meter per Second</title>
-        <names>r:sqm_p_s</names>
+        <names translatable="no">r:sqm_p_s</names>
         <part>
           <unit>m</unit>
           <prefix>0</prefix>
@@ -3830,7 +3830,7 @@
       <unit type="composite">
         <system>CGS</system>
         <title>Centistokes</title>
-        <names>r:cSt_c</names>
+        <names translatable="no">r:cSt_c</names>
         <part>
           <unit>St</unit>
           <prefix>-2</prefix>
@@ -3843,7 +3843,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Newton per Meter</title>
-        <names>r:N_p_m</names>
+        <names translatable="no">r:N_p_m</names>
         <part>
           <unit>N</unit>
           <prefix>0</prefix>
@@ -3871,7 +3871,7 @@
     </unit>
     <unit type="composite">
       <title>Kilojoule</title>
-      <names>r:kJ_c</names>
+      <names translatable="no">r:kJ_c</names>
       <part>
         <unit>J</unit>
         <prefix>3</prefix>
@@ -3880,7 +3880,7 @@
     </unit>
     <unit type="composite">
       <title>Watt Hour</title>
-      <names>r:W_h</names>
+      <names translatable="no">r:W_h</names>
       <part>
         <unit>W</unit>
         <prefix>0</prefix>
@@ -3894,7 +3894,7 @@
     </unit>
     <unit type="composite">
       <title>Kilowatt Hour</title>
-      <names>r:kW_h</names>
+      <names translatable="no">r:kW_h</names>
       <part>
         <unit>W</unit>
         <prefix>3</prefix>
@@ -3926,7 +3926,7 @@
     </unit>
     <unit type="composite">
       <title>Kilocalorie</title>
-      <names>r:kcal_c</names>
+      <names translatable="no">r:kcal_c</names>
       <part>
         <unit>cal_th</unit>
         <prefix>3</prefix>
@@ -4065,7 +4065,7 @@
     <unit type="composite">
       <system>Imperial</system>
       <title>Foot-Pound Force</title>
-      <names>r:ft_lbf</names>
+      <names translatable="no">r:ft_lbf</names>
       <part>
         <unit>ft</unit>
         <prefix>0</prefix>
@@ -4079,7 +4079,7 @@
     </unit>
     <unit type="alias">
       <title>Hartree (Atomic Unit of Energy)</title>
-      <names>ar:Ha,as:E_h,hartree</names>
+      <names translatable="no">ar:Ha,as:E_h,hartree</names>
       <system>Atomic</system>
       <base>
         <unit>J</unit>
@@ -4089,7 +4089,7 @@
     </unit>
     <unit type="alias">
       <title>Rydberg (unit)</title>
-      <names>ar:Ry,s:rydberg_unit</names>
+      <names translatable="no">ar:Ry,s:rydberg_unit</names>
       <base>
         <unit>Ha</unit>
         <relation>0.5</relation>
@@ -4098,7 +4098,7 @@
     </unit>
     <unit type="composite">
       <title>Natural Unit of Energy</title>
-      <names>electron_sqc</names>
+      <names translatable="no">electron_sqc</names>
       <system>Natural</system>
       <part>
         <unit>electron_unit</unit>
@@ -4116,7 +4116,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Joule per Kilogram</title>
-        <names>r:J_p_kg</names>
+        <names translatable="no">r:J_p_kg</names>
         <part>
           <unit>J</unit>
           <prefix>0</prefix>
@@ -4130,7 +4130,7 @@
       </unit>
       <unit type="composite">
         <title>Kilocalerie per Gram</title>
-        <names>r:kcal_p_g</names>
+        <names translatable="no">r:kcal_p_g</names>
         <part>
           <unit>cal_th</unit>
           <prefix>3</prefix>
@@ -4147,8 +4147,8 @@
       <title>Power</title>
       <unit type="composite">
         <hidden>true</hidden>
-        <title>Joule per Second</title>
-        <names>r:J_p_s</names>
+        <title translatable="no">Joule per Second</title>
+        <names translatable="no">r:J_p_s</names>
         <part>
           <unit>J</unit>
           <prefix>0</prefix>
@@ -4211,7 +4211,7 @@
       <unit type="composite">
         <system>CGS</system>
         <title>Erg per Second</title>
-        <names>r:erg_p_s</names>
+        <names translatable="no">r:erg_p_s</names>
         <part>
           <unit>erg</unit>
           <prefix>0</prefix>
@@ -4238,7 +4238,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Joule per Kelvin</title>
-        <names>r:J_p_K</names>
+        <names translatable="no">r:J_p_K</names>
         <part>
           <unit>J</unit>
           <prefix>0</prefix>
@@ -4252,7 +4252,7 @@
       </unit>
       <unit type="alias">
         <title>Boltzmann (unit)</title>
-        <names>rs:boltzmann_unit,as:k_Bunit</names>
+        <names translatable="no">rs:boltzmann_unit,as:k_Bunit</names>
         <base>
           <unit>J_p_K</unit>
           <relation>1.380649E-23</relation>
@@ -4265,7 +4265,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Joule per Kilogram Kelvin</title>
-        <names>r:J_p_kg_K</names>
+        <names translatable="no">r:J_p_kg_K</names>
         <part>
           <unit>J</unit>
           <prefix>0</prefix>
@@ -4288,7 +4288,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Watt per Meter Kelvin</title>
-        <names>r:W_p_m_K</names>
+        <names translatable="no">r:W_p_m_K</names>
         <part>
           <unit>W</unit>
           <prefix>0</prefix>
@@ -4311,7 +4311,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Joule per Cubic Meter</title>
-        <names>r:J_p_cum</names>
+        <names translatable="no">r:J_p_cum</names>
         <part>
           <unit>J</unit>
           <prefix>0</prefix>
@@ -4329,7 +4329,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Joule per Mole</title>
-        <names>r:J_p_mol</names>
+        <names translatable="no">r:J_p_mol</names>
         <part>
           <unit>J</unit>
           <prefix>0</prefix>
@@ -4347,7 +4347,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Joule per Mole Kelvin</title>
-        <names>r:J_p_mol_K</names>
+        <names translatable="no">r:J_p_mol_K</names>
         <part>
           <unit>J</unit>
           <prefix>0</prefix>
@@ -4370,7 +4370,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Joule Second</title>
-        <names>r:J_s</names>
+        <names translatable="no">r:J_s</names>
         <part>
           <unit>J</unit>
           <prefix>0</prefix>
@@ -4384,7 +4384,7 @@
       </unit>
       <unit type="alias">
         <title>Reduced Planck (Atomic/Natural Unit of Action)</title>
-        <names>rs:planck_unit,aus:&#x210f;_unit</names>
+        <names translatable="no">rs:planck_unit,aus:&#x210f;_unit</names>
         <system>Atomic/Natural</system>
         <base>
           <unit>J_s</unit>
@@ -4447,7 +4447,7 @@
       </unit>
       <unit type="composite">
         <title>Erg per Gram</title>
-        <names>r:erg_p_g</names>
+        <names translatable="no">r:erg_p_g</names>
         <part>
           <unit>erg</unit>
           <prefix>0</prefix>
@@ -4485,7 +4485,7 @@
       <unit type="composite">
         <system>CGS</system>
         <title>Millirem</title>
-        <names>r:mrem_c</names>
+        <names translatable="no">r:mrem_c</names>
         <part>
           <unit>rem_radioactivity</unit>
           <prefix>-3</prefix>
@@ -4498,7 +4498,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Coulomb per Kilogram</title>
-        <names>r:C_p_kg</names>
+        <names translatable="no">r:C_p_kg</names>
         <part>
           <unit>C</unit>
           <prefix>0</prefix>
@@ -4525,7 +4525,7 @@
       <unit type="composite">
         <system>SI</system>
         <title>Gray per Second</title>
-        <names>r:Gy_p_s</names>
+        <names translatable="no">r:Gy_p_s</names>
         <part>
           <unit>Gy</unit>
           <prefix>0</prefix>
@@ -4540,7 +4540,7 @@
       <unit type="composite">
         <system>CGS</system>
         <title>Millirem per Hour</title>
-        <names>r:mrem_p_h</names>
+        <names translatable="no">r:mrem_p_h</names>
         <part>
           <unit>rem_radioactivity</unit>
           <prefix>-3</prefix>
@@ -4679,7 +4679,7 @@
     </unit>
     <unit type="composite">
       <title>Kilobyte</title>
-      <names>r:kbyte_c</names>
+      <names translatable="no">r:kbyte_c</names>
       <part>
         <unit>byte</unit>
         <prefix>3</prefix>
@@ -4688,7 +4688,7 @@
     </unit>
     <unit type="composite">
       <title>Megabyte</title>
-      <names>r:Mbyte_c</names>
+      <names translatable="no">r:Mbyte_c</names>
       <part>
         <unit>byte</unit>
         <prefix>6</prefix>
@@ -4697,7 +4697,7 @@
     </unit>
     <unit type="composite">
       <title>Gigabyte</title>
-      <names>r:Gbyte_c</names>
+      <names translatable="no">r:Gbyte_c</names>
       <part>
         <unit>byte</unit>
         <prefix>9</prefix>
@@ -4706,7 +4706,7 @@
     </unit>
     <unit type="composite">
       <title>Terabyte</title>
-      <names>r:Tbyte_c</names>
+      <names translatable="no">r:Tbyte_c</names>
       <part>
         <unit>byte</unit>
         <prefix>12</prefix>
@@ -4715,7 +4715,7 @@
     </unit>
     <unit type="composite">
       <title>Petabyte</title>
-      <names>r:Pbyte_c</names>
+      <names translatable="no">r:Pbyte_c</names>
       <part>
         <unit>byte</unit>
         <prefix>15</prefix>
@@ -4724,7 +4724,7 @@
     </unit>
     <unit type="composite">
       <title>Exabyte</title>
-      <names>r:Ebyte_c</names>
+      <names translatable="no">r:Ebyte_c</names>
       <part>
         <unit>byte</unit>
         <prefix>18</prefix>
@@ -4733,7 +4733,7 @@
     </unit>
     <unit type="composite">
       <title>Kibibyte</title>
-      <names>r:Kibyte_c</names>
+      <names translatable="no">r:Kibyte_c</names>
       <part>
         <unit>byte</unit>
         <prefix type="binary">10</prefix>
@@ -4742,7 +4742,7 @@
     </unit>
     <unit type="composite">
       <title>Mebibyte</title>
-      <names>r:Mibyte_c</names>
+      <names translatable="no">r:Mibyte_c</names>
       <part>
         <unit>byte</unit>
         <prefix type="binary">20</prefix>
@@ -4751,7 +4751,7 @@
     </unit>
     <unit type="composite">
       <title>Gibibyte</title>
-      <names>r:Gibyte_c</names>
+      <names translatable="no">r:Gibyte_c</names>
       <part>
         <unit>byte</unit>
         <prefix type="binary">30</prefix>
@@ -4760,7 +4760,7 @@
     </unit>
     <unit type="composite">
       <title>Tebibyte</title>
-      <names>r:Tibyte_c</names>
+      <names translatable="no">r:Tibyte_c</names>
       <part>
         <unit>byte</unit>
         <prefix type="binary">40</prefix>
@@ -4769,7 +4769,7 @@
     </unit>
     <unit type="composite">
       <title>Kilobit</title>
-      <names>r:kbit_c</names>
+      <names translatable="no">r:kbit_c</names>
       <part>
         <unit>bit</unit>
         <prefix>3</prefix>
@@ -4778,7 +4778,7 @@
     </unit>
     <unit type="composite">
       <title>Megabit</title>
-      <names>r:Mbit_c</names>
+      <names translatable="no">r:Mbit_c</names>
       <part>
         <unit>bit</unit>
         <prefix>6</prefix>
@@ -4787,7 +4787,7 @@
     </unit>
     <unit type="composite">
       <title>Gigabit</title>
-      <names>r:Gbit_c</names>
+      <names translatable="no">r:Gbit_c</names>
       <part>
         <unit>bit</unit>
         <prefix>9</prefix>
@@ -4796,7 +4796,7 @@
     </unit>
     <unit type="composite">
       <title>Terabit</title>
-      <names>r:Tbit_c</names>
+      <names translatable="no">r:Tbit_c</names>
       <part>
         <unit>bit</unit>
         <prefix>12</prefix>
@@ -4805,7 +4805,7 @@
     </unit>
     <unit type="composite">
       <title>Petabit</title>
-      <names>r:Pbit_c</names>
+      <names translatable="no">r:Pbit_c</names>
       <part>
         <unit>bit</unit>
         <prefix>15</prefix>
@@ -4814,7 +4814,7 @@
     </unit>
     <unit type="composite">
       <title>Kibibit</title>
-      <names>r:Kibit_c</names>
+      <names translatable="no">r:Kibit_c</names>
       <part>
         <unit>bit</unit>
         <prefix type="binary">10</prefix>
@@ -4823,7 +4823,7 @@
     </unit>
     <unit type="composite">
       <title>Mebibit</title>
-      <names>r:Mibit_c</names>
+      <names translatable="no">r:Mibit_c</names>
       <part>
         <unit>bit</unit>
         <prefix type="binary">20</prefix>
@@ -4832,7 +4832,7 @@
     </unit>
     <unit type="composite">
       <title>Gibibit</title>
-      <names>r:Gibit_c</names>
+      <names translatable="no">r:Gibit_c</names>
       <part>
         <unit>bit</unit>
         <prefix type="binary">30</prefix>

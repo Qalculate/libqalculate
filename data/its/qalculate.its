@@ -4,4 +4,6 @@
   <its:translateRule
     selector="//title|//name|//names|//countries|//copyright|//description"
     translate="yes"/>
+  <its:translateRule selector="//title[@translatable = 'no']|//names[@translatable = 'no']"
+    translate="no"/>
 </its:rules>

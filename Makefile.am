@@ -2,7 +2,7 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = po-defs po-defs/fixed data libqalculate src man po docs tests
+SUBDIRS = po-defs po-defs-fixed po-defs-fixed/fixed data libqalculate src man po docs tests
 
 EXTRA_DIST = config.rpath  \
 	autogen.sh \
