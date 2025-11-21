@@ -20,16 +20,6 @@ DIE=0
   DIE=1
 }
 
-(grep "^IT_PROG_INTLTOOL" $srcdir/configure.ac >/dev/null) && {
-  (intltoolize --version) < /dev/null > /dev/null 2>&1 || {
-    echo 
-    echo "**Error**: You must have \`intltool' installed."
-    echo "You can get it from:"
-    echo "  ftp://ftp.gnome.org/pub/GNOME/stable/sources/intltool/"
-    DIE=1
-  }
-}
-
 (grep "^LT_INIT" $srcdir/configure.ac >/dev/null) && {
   (libtoolize --version) < /dev/null > /dev/null 2>&1 || {
     echo
@@ -101,10 +91,6 @@ do
 	echo "no" | glib-gettextize --force --copy
 	echo "Making $dr/aclocal.m4 writable ..."
 	test -r $dr/aclocal.m4 && chmod u+w $dr/aclocal.m4
-      fi
-      if grep "^IT_PROG_INTLTOOL" configure.ac >/dev/null; then
-        echo "Running intltoolize..."
-	intltoolize --copy --force --automake
       fi
       if grep "^LT_INIT" configure.ac >/dev/null; then
 	if test -z "$NO_LIBTOOLIZE" ; then 

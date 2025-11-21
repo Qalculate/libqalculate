@@ -1,7 +1,7 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <QALCULATE version="0.9.4">
   <object>
-    <_name>Earth</_name>
+    <name>Earth</name>
     <year>365.256363004</year>
     <speed>29.7827</speed>
     <eccentricity>0.0167086</eccentricity>
@@ -15,7 +15,7 @@
     <radius>6371.0</radius>
   </object>
   <object>
-    <_name>Mars</_name>
+    <name>Mars</name>
     <year>686.971</year>
     <speed>24.07</speed>
     <eccentricity>0.0934</eccentricity>
@@ -30,7 +30,7 @@
   </object>
   <object>
     <!-- Planet -->
-    <_name>!planets!Mercury</_name>
+    <name>!planets!Mercury</name>
     <year>87.9691</year>
     <speed>47.36</speed>
     <eccentricity>0.205630</eccentricity>
@@ -44,7 +44,7 @@
     <radius>2439.7+/-1.0</radius>
   </object>
   <object>
-    <_name>Venus</_name>
+    <name>Venus</name>
     <year>224.701</year>
     <speed>35.02</speed>
     <eccentricity>0.006772</eccentricity>
@@ -58,7 +58,7 @@
     <radius>6051.8+/-1.0</radius>
   </object>
   <object>
-    <_name>Jupiter</_name>
+    <name>Jupiter</name>
     <year>4332.59</year>
     <speed>13.07</speed>
     <eccentricity>0.0489</eccentricity>
@@ -72,7 +72,7 @@
     <radius>69911</radius>
   </object>
   <object>
-    <_name>Saturn</_name>
+    <name>Saturn</name>
     <year>10755.70</year>
     <speed>9.68</speed>
     <eccentricity>0.0565</eccentricity>
@@ -86,7 +86,7 @@
     <radius>58232</radius>
   </object>
   <object>
-    <_name>Neptune</_name>
+    <name>Neptune</name>
     <year>60195</year>
     <speed>5.43</speed>
     <eccentricity>0.008678</eccentricity>
@@ -100,7 +100,7 @@
     <radius>24622+/-19</radius>
   </object>
   <object>
-    <_name>Pluto</_name>
+    <name>Pluto</name>
     <year>90560</year>
     <speed>4.743</speed>
     <eccentricity>0.2488</eccentricity>
@@ -114,7 +114,7 @@
     <radius>1188.3+/-0.8</radius>
   </object>
   <object>
-    <_name>Uranus</_name>
+    <name>Uranus</name>
     <year>30688.5</year>
     <speed>6.80</speed>
     <eccentricity>0.04717</eccentricity>
@@ -128,7 +128,7 @@
     <radius>25362+/-7</radius>
   </object>
   <object>
-    <_name>Sun</_name>
+    <name>Sun</name>
     <mass>1.988470(70)E30</mass>
     <density>1.408</density>
     <area>6.09E12</area>

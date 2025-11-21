@@ -1,139 +1,139 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <QALCULATE version="3.19.0">
   <prefix type="decimal">
-    <_names>ar:q,r:quecto</_names>
+    <names>ar:q,r:quecto</names>
     <exponent>-30</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:r,r:ronto</_names>
+    <names>ar:r,r:ronto</names>
     <exponent>-27</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:y,r:yocto</_names>
+    <names>ar:y,r:yocto</names>
     <exponent>-24</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:z,r:zepto</_names>
+    <names>ar:z,r:zepto</names>
     <exponent>-21</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:a,r:atto</_names>
+    <names>ar:a,r:atto</names>
     <exponent>-18</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:f,r:femto</_names>
+    <names>ar:f,r:femto</names>
     <exponent>-15</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:p,r:pico</_names>
+    <names>ar:p,r:pico</names>
     <exponent>-12</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:n,r:nano</_names>
+    <names>ar:n,r:nano</names>
     <exponent>-9</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>aur:&#x3BC;,auor:&#x0B5;,ar:u,r:micro</_names>
+    <names>aur:μ,auor:µ,ar:u,r:micro</names>
     <exponent>-6</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:m,r:milli</_names>
+    <names>ar:m,r:milli</names>
     <exponent>-3</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:c,r:centi</_names>
+    <names>ar:c,r:centi</names>
     <exponent>-2</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:d,r:deci</_names>
+    <names>ar:d,r:deci</names>
     <exponent>-1</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:da,r:deca</_names>
+    <names>ar:da,r:deca</names>
     <exponent>1</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:h,r:hecto</_names>
+    <names>ar:h,r:hecto</names>
     <exponent>2</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:k,r:kilo</_names>
+    <names>ar:k,r:kilo</names>
     <exponent>3</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:M,r:mega</_names>
+    <names>ar:M,r:mega</names>
     <exponent>6</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:G,r:giga</_names>
+    <names>ar:G,r:giga</names>
     <exponent>9</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:T,r:tera</_names>
+    <names>ar:T,r:tera</names>
     <exponent>12</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:P,r:peta</_names>
+    <names>ar:P,r:peta</names>
     <exponent>15</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:E,r:exa</_names>
+    <names>ar:E,r:exa</names>
     <exponent>18</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:Z,r:zetta</_names>
+    <names>ar:Z,r:zetta</names>
     <exponent>21</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:Y,r:yotta</_names>
+    <names>ar:Y,r:yotta</names>
     <exponent>24</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:R,r:ronna</_names>
+    <names>ar:R,r:ronna</names>
     <exponent>27</exponent>
   </prefix>
   <prefix type="decimal">
-    <_names>ar:Q,r:quetta</_names>
+    <names>ar:Q,r:quetta</names>
     <exponent>30</exponent>
   </prefix>
   <prefix type="binary">
-    <_names>ar:Ki,r:kibi</_names>
+    <names>ar:Ki,r:kibi</names>
     <exponent>10</exponent>
   </prefix>
   <prefix type="binary">
-    <_names>ar:Mi,r:mebi</_names>
+    <names>ar:Mi,r:mebi</names>
     <exponent>20</exponent>
   </prefix>
   <prefix type="binary">
-    <_names>ar:Gi,r:gibi</_names>
+    <names>ar:Gi,r:gibi</names>
     <exponent>30</exponent>
   </prefix>
   <prefix type="binary">
-    <_names>ar:Ti,r:tebi</_names>
+    <names>ar:Ti,r:tebi</names>
     <exponent>40</exponent>
   </prefix>
   <prefix type="binary">
-    <_names>ar:Pi,r:pebi</_names>
+    <names>ar:Pi,r:pebi</names>
     <exponent>50</exponent>
   </prefix>
   <prefix type="binary">
-    <_names>ar:Ei,r:exbi</_names>
+    <names>ar:Ei,r:exbi</names>
     <exponent>60</exponent>
   </prefix>
   <prefix type="binary">
-    <_names>ar:Zi,r:zebi</_names>
+    <names>ar:Zi,r:zebi</names>
     <exponent>70</exponent>
   </prefix>
   <prefix type="binary">
-    <_names>ar:Yi,r:yobi</_names>
+    <names>ar:Yi,r:yobi</names>
     <exponent>80</exponent>
   </prefix>
   <prefix type="binary">
-    <_names>ar:Ri,r:robi</_names>
+    <names>ar:Ri,r:robi</names>
     <exponent>90</exponent>
   </prefix>
   <prefix type="binary">
-    <_names>ar:Qi,r:quebi</_names>
+    <names>ar:Qi,r:quebi</names>
     <exponent>100</exponent>
   </prefix>
 </QALCULATE>

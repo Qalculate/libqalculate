@@ -1,5 +1,5 @@
-# progtest.m4 serial 8 (gettext-0.20.2)
-dnl Copyright (C) 1996-2003, 2005, 2008-2020 Free Software Foundation, Inc.
+# progtest.m4 serial 10 (gettext-0.23)
+dnl Copyright (C) 1996-2003, 2005, 2008-2024 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -16,7 +16,7 @@ dnl They are *not* in the public domain.
 dnl Authors:
 dnl   Ulrich Drepper <drepper@cygnus.com>, 1996.
 
-AC_PREREQ([2.50])
+AC_PREREQ([2.53])
 
 # Search path for a program which passes the given test.
 
@@ -60,9 +60,9 @@ AC_CACHE_VAL([ac_cv_path_$1],
     ac_cv_path_$1="[$]$1" # Let the user override the test with a path.
     ;;
   *)
-    ac_save_IFS="$IFS"; IFS=$PATH_SEPARATOR
-    for ac_dir in ifelse([$5], , $PATH, [$5]); do
-      IFS="$ac_save_IFS"
+    gt_saved_IFS="$IFS"; IFS=$PATH_SEPARATOR
+    for ac_dir in m4_if([$5], , $PATH, [$5]); do
+      IFS="$gt_saved_IFS"
       test -z "$ac_dir" && ac_dir=.
       for ac_exec_ext in '' $ac_executable_extensions; do
         if $ac_executable_p "$ac_dir/$ac_word$ac_exec_ext"; then
@@ -74,15 +74,15 @@ AC_CACHE_VAL([ac_cv_path_$1],
         fi
       done
     done
-    IFS="$ac_save_IFS"
+    IFS="$gt_saved_IFS"
 dnl If no 4th arg is given, leave the cache variable unset,
 dnl so AC_PATH_PROGS will keep looking.
-ifelse([$4], , , [  test -z "[$]ac_cv_path_$1" && ac_cv_path_$1="$4"
+m4_if([$4], , , [  test -z "[$]ac_cv_path_$1" && ac_cv_path_$1="$4"
 ])dnl
     ;;
 esac])dnl
 $1="$ac_cv_path_$1"
-if test ifelse([$4], , [-n "[$]$1"], ["[$]$1" != "$4"]); then
+if test m4_if([$4], , [-n "[$]$1"], ["[$]$1" != "$4"]); then
   AC_MSG_RESULT([$][$1])
 else
   AC_MSG_RESULT([no])

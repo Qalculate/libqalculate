@@ -1,5 +1,9 @@
-# This file, Rules-quot, can be copied and used freely without restrictions.
 # Special Makefile rules for English message catalogs with quotation marks.
+#
+# Copyright (C) 2001-2017 Free Software Foundation, Inc.
+# This file, Rules-quot, and its auxiliary files (listed under
+# DISTFILES.common.extra1) are free software; the Free Software Foundation
+# gives unlimited permission to use, copy, distribute, and modify them.
 
 DISTFILES.common.extra1 = quot.sed boldquot.sed en@quot.header en@boldquot.header insert-header.sin Rules-quot
 

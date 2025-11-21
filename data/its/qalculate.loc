@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<locatingRules>
+  <locatingRule name="qalculate" pattern="*.xml">
+    <documentRule localName="QALCULATE" target="qalculate.its"/>
+  </locatingRule>
+</locatingRules>

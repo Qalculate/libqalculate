@@ -1,5 +1,5 @@
-# lib-prefix.m4 serial 17
-dnl Copyright (C) 2001-2005, 2008-2020 Free Software Foundation, Inc.
+# lib-prefix.m4 serial 22
+dnl Copyright (C) 2001-2005, 2008-2024 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -126,10 +126,10 @@ AC_DEFUN([AC_LIB_PREPARE_PREFIX],
   else
     acl_final_exec_prefix="$exec_prefix"
   fi
-  acl_save_prefix="$prefix"
+  acl_saved_prefix="$prefix"
   prefix="$acl_final_prefix"
   eval acl_final_exec_prefix=\"$acl_final_exec_prefix\"
-  prefix="$acl_save_prefix"
+  prefix="$acl_saved_prefix"
 ])
 
 dnl AC_LIB_WITH_FINAL_PREFIX([statement]) evaluates statement, with the
@@ -137,13 +137,13 @@ dnl variables prefix and exec_prefix bound to the values they will have
 dnl at the end of the configure script.
 AC_DEFUN([AC_LIB_WITH_FINAL_PREFIX],
 [
-  acl_save_prefix="$prefix"
+  acl_saved_prefix="$prefix"
   prefix="$acl_final_prefix"
-  acl_save_exec_prefix="$exec_prefix"
+  acl_saved_exec_prefix="$exec_prefix"
   exec_prefix="$acl_final_exec_prefix"
   $1
-  exec_prefix="$acl_save_exec_prefix"
-  prefix="$acl_save_prefix"
+  exec_prefix="$acl_saved_exec_prefix"
+  prefix="$acl_saved_prefix"
 ])
 
 dnl AC_LIB_PREPARE_MULTILIB creates
@@ -174,14 +174,14 @@ AC_DEFUN([AC_LIB_PREPARE_MULTILIB],
 
   AC_CACHE_CHECK([for ELF binary format], [gl_cv_elf],
     [AC_EGREP_CPP([Extensible Linking Format],
-       [#ifdef __ELF__
+       [#if defined __ELF__ || (defined __linux__ && defined __EDG__)
         Extensible Linking Format
         #endif
        ],
        [gl_cv_elf=yes],
        [gl_cv_elf=no])
-     ])
-  if test $gl_cv_elf; then
+    ])
+  if test $gl_cv_elf = yes; then
     # Extract the ELF class of a file (5th byte) in decimal.
     # Cf. https://en.wikipedia.org/wiki/Executable_and_Linkable_Format#File_header
     if od -A x < /dev/null >/dev/null 2>/dev/null; then
@@ -198,20 +198,23 @@ AC_DEFUN([AC_LIB_PREPARE_MULTILIB],
         echo
       }
     fi
+    # Use 'expr', not 'test', to compare the values of func_elfclass, because on
+    # Solaris 11 OpenIndiana and Solaris 11 OmniOS, the result is 001 or 002,
+    # not 1 or 2.
 changequote(,)dnl
     case $HOST_CPU_C_ABI_32BIT in
       yes)
         # 32-bit ABI.
         acl_is_expected_elfclass ()
         {
-          test "`func_elfclass | sed -e 's/[ 	]//g'`" = 1
+          expr "`func_elfclass | sed -e 's/[ 	]//g'`" = 1 > /dev/null
         }
         ;;
       no)
         # 64-bit ABI.
         acl_is_expected_elfclass ()
         {
-          test "`func_elfclass | sed -e 's/[ 	]//g'`" = 2
+          expr "`func_elfclass | sed -e 's/[ 	]//g'`" = 2 > /dev/null
         }
         ;;
       *)
@@ -253,6 +256,15 @@ changequote([,])dnl
            esac
          fi
          ;;
+       netbsd*)
+         dnl On NetBSD/sparc64, there is a 'sparc' subdirectory that contains
+         dnl 32-bit libraries.
+         if test $HOST_CPU_C_ABI_32BIT != no; then
+           case "$host_cpu" in
+             sparc*) acl_libdirstem2=lib/sparc ;;
+           esac
+         fi
+         ;;
        *)
          dnl If $CC generates code for a 32-bit ABI, the libraries are
          dnl surely under $prefix/lib or $prefix/lib32, not $prefix/lib64.
@@ -277,7 +289,7 @@ changequote([,])dnl
            fi
          fi
          if test -n "$searchpath"; then
-           acl_save_IFS="${IFS= 	}"; IFS=":"
+           acl_saved_IFS="${IFS= 	}"; IFS=":"
            for searchdir in $searchpath; do
              if test -d "$searchdir"; then
                case "$searchdir" in
@@ -294,7 +306,7 @@ changequote([,])dnl
                esac
              fi
            done
-           IFS="$acl_save_IFS"
+           IFS="$acl_saved_IFS"
            if test $HOST_CPU_C_ABI_32BIT = yes; then
              # 32-bit ABI.
              acl_libdirstem3=

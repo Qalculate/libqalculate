@@ -44,7 +44,6 @@ AX_PROG_CXX_FOR_BUILD
 AC_PROG_LN_S
 AC_PROG_EGREP
 
-IT_PROG_INTLTOOL
 LT_INIT
 
 dnl  ------------------------------------
@@ -283,8 +282,6 @@ GETTEXT_PACKAGE=libqalculate
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[The package name for gettext])
 
-dnl Please keep this in alphabetical order
-ALL_LINGUAS="ca de es fr ka nl ru sv zh_CN zh_TW"
 AM_GNU_GETTEXT(external)
 AM_GNU_GETTEXT_VERSION([0.19.8])
 
@@ -311,9 +308,6 @@ AC_DEFINE_UNQUOTED(PACKAGE_LOCALE_DIR, "$PACKAGE_LOCALE_DIR",
 
 QALCULATE_PODEFS_RULE='%.po: $(top_srcdir)/po-defs/$@ $(top_srcdir)/po-defs/remove-untranslated.cc; $(top_builddir)/po-defs/fixpo $(top_srcdir)/po-defs/$@ $@'
 AC_SUBST(QALCULATE_PODEFS_RULE)
-
-INTLTOOL_QALCULATE_DEFINITIONS_RULE='%.xml:       %.xml.in      $(INTLTOOL_MERGE) $(wildcard $(top_builddir)/po-defs/fixed/*.po) ; LC_ALL=C $(INTLTOOL_MERGE) -x -u -c $(top_builddir)/po-defs/fixed/.intltool-merge-cache $(top_builddir)/po-defs/fixed $< [$]@'
-AC_SUBST(INTLTOOL_QALCULATE_DEFINITIONS_RULE)
 
 dnl  --------
 dnl | output |-----------------------------------------------------------------
