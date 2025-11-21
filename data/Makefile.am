@@ -12,7 +12,7 @@ xml_DATA = $(xml_in_files:.xml.in=.xml) eurofxref-daily.xml rates.json
 endif
 
 %.xml: %.xml.in
-	$(AM_V_GEN)GETTEXTDATADIRS=$(srcdir) $(MSGFMT) --xml --template $< -d $(top_srcdir)/po-defs -o $@
+	$(AM_V_GEN)GETTEXTDATADIRS=$(srcdir) $(MSGFMT) --xml --template $< -d $(top_srcdir)/po -o $@
 
 EXTRA_DIST = $(xml_in_files) eurofxref-daily.xml rates.json
 
