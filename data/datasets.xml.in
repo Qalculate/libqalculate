@@ -34,7 +34,18 @@
       </property>
       <property>
         <title>Classification</title>
-        <description>A number representing an element group:&#10;1 Alkali Metal&#10;2 Alkaline-Earth Metal&#10;3 Lanthanide&#10;4 Actinide&#10;5 Transition Metal&#10;6 Metal&#10;7 Metalloid&#10;8 Polyatomic Non-Metal&#10;9 Diatomic Non-Metal&#10;10 Noble Gas&#10;11 Unknown chemical properties</description>
+        <description>A number representing an element group:
+1 Alkali Metal
+2 Alkaline-Earth Metal
+3 Lanthanide
+4 Actinide
+5 Transition Metal
+6 Metal
+7 Metalloid
+8 Polyatomic Non-Metal
+9 Diatomic Non-Metal
+10 Noble Gas
+11 Unknown chemical properties</description>
         <type>number</type>
         <names>r:class</names>
         <hidden>true</hidden>
@@ -85,7 +96,16 @@
     <dataset>
       <title>Planets</title>
       <datafile>planets.xml</datafile>
-      <copyright>This data uses material from the Wikipedia articles&#10;"Earth" (http://www.wikipedia.org/wiki/Earth),&#10;"Jupiter" (http://www.wikipedia.org/wiki/Jupiter),&#10;"Mars" (http://www.wikipedia.org/wiki/Mars),&#10;"Mercury (planet)" (http://www.wikipedia.org/wiki/Mercury_(planet)),&#10;"Neptune" (http://www.wikipedia.org/wiki/Neptune),&#10;"Pluto" (http://www.wikipedia.org/wiki/Pluto),&#10;"Saturn" (http://www.wikipedia.org/wiki/Saturn),&#10;"Uranus" (http://www.wikipedia.org/wiki/Uranus), and&#10;"Venus" (http://en.wikipedia.org/wiki/Venus), under Creative Commons Attribution-ShareAlike License</copyright>
+      <copyright>This data uses material from the Wikipedia articles&#10;
+"Earth" (http://www.wikipedia.org/wiki/Earth),
+"Jupiter" (http://www.wikipedia.org/wiki/Jupiter),
+"Mars" (http://www.wikipedia.org/wiki/Mars),
+"Mercury (planet)" (http://www.wikipedia.org/wiki/Mercury_(planet)),
+"Neptune" (http://www.wikipedia.org/wiki/Neptune),
+"Pluto" (http://www.wikipedia.org/wiki/Pluto),
+"Saturn" (http://www.wikipedia.org/wiki/Saturn),
+"Uranus" (http://www.wikipedia.org/wiki/Uranus), and
+"Venus" (http://en.wikipedia.org/wiki/Venus), under Creative Commons Attribution-ShareAlike License</copyright>
       <names>r:planet</names>
       <object_argument>
         <title>Planet</title>
