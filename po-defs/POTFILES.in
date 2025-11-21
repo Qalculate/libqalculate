@@ -1,5 +1,4 @@
 # List of source files containing translatable strings.
-[encoding: UTF-8]
 data/currencies.xml.in
 data/datasets.xml.in
 data/elements.xml.in
