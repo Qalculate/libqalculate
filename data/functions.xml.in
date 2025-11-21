@@ -814,7 +814,7 @@
       <builtin_function name="primePi">
         <_title>Prime Counting Function</_title>
         <_description>Returns the number of prime numbers less than or equal to the specified number.</_description>
-        <_names>r:primePi,ou:prime&#x3C0;,o:prime_pi</_names>
+        <_names>r:primePi,ou:primeπ,o:prime_pi</_names>
         <argument index="1">
           <_title>Value</_title>
         </argument>
@@ -910,7 +910,7 @@
     <builtin_function name="totient">
       <_title>Euler's Totient Function</_title>
       <_description>Counts the positive integers up to a given integer n that are relatively prime to n.</_description>
-      <_names>r:totient,au:&#x3C6;,phi</_names>
+      <_names>r:totient,au:φ,phi</_names>
       <argument index="1">
         <_title>n</_title>
       </argument>
@@ -1290,12 +1290,12 @@
     <_title>Step Functions</_title>
       <builtin_function name="heaviside">
         <_title>Heaviside Step Function</_title>
-        <_names>r:heaviside,au:&#x03B8;</_names>
+        <_names>r:heaviside,au:θ</_names>
         <_description>Discontinuous function also known as "unit step function". Returns 0 if x &lt; 0, 1 if x &gt; 0, and 1/2 if x = 0.</_description>
       </builtin_function>
       <builtin_function name="dirac">
         <_title>Dirac Delta Function</_title>
-        <_names>r:dirac,au:&#x3B4;</_names>
+        <_names>r:dirac,au:δ</_names>
         <_description>Returns 0 if x is non-zero, and infinity if x is zero.</_description>
       </builtin_function>
       <function>
@@ -1334,14 +1334,14 @@
     <_title>Complex Numbers</_title>
     <builtin_function name="re">
       <_title>Real Part</_title>
-      <_names>r:re,au:&#x211C;</_names>
+      <_names>r:re,au:ℜ</_names>
       <argument index="1">
         <_title>Complex number</_title>
       </argument>
     </builtin_function>
     <builtin_function name="im">
       <_title>Imaginary Part</_title>
-      <_names>r:im,au:&#x2111;</_names>
+      <_names>r:im,au:ℑ</_names>
       <argument index="1">
         <_title>Complex number</_title>
       </argument>
@@ -1367,7 +1367,7 @@
     <_title>Exponents &amp; Logarithms</_title>
     <builtin_function name="sqrt">
       <_title>Square Root</_title>
-      <_names>au:&#x221A;,r:sqrt</_names>
+      <_names>au:√,r:sqrt</_names>
       <_description>Returns the principal square root (for positive values the positive root is returned).</_description>
       <argument index="1">
         <_title>Value</_title>
@@ -1375,7 +1375,7 @@
     </builtin_function>
     <builtin_function name="cbrt">
       <_title>Cube Root</_title>
-      <_names>r:cbrt,aou:&#x221B;</_names>
+      <_names>r:cbrt,aou:∛</_names>
       <_description>Returns the third real root.</_description>
       <argument index="1">
         <_title>Value</_title>
@@ -2192,7 +2192,7 @@
       <_title>Means</_title>
       <function>
         <_title>Mean</_title>
-        <_names>r:mean,average,au:x&#x0304;</_names>
+        <_names>r:mean,average,au:x̄</_names>
         <expression>total(\x)/dimension(\x)</expression>
         <argument type="vector" index="1">
           <_title>Data</_title>
@@ -3645,7 +3645,7 @@
     <_title>Algebra</_title>
     <builtin_function name="sum">
       <_title>Summation</_title>
-      <_names>au:&#x3A3;,au:&#x2211;,r:sum</_names>
+      <_names>au:Σ,au:∑,r:sum</_names>
       <_description>Corresponds to the summation symbol. Adds terms for each x ranging from the lower to the upper limit.</_description>
       <example>$name(x^2, 1, 5) = 1^2 + 2^2 + 3^2 + 4^2 + 5^2 = 55</example>
       <argument index="1">
@@ -3663,7 +3663,7 @@
     </builtin_function>
     <builtin_function name="product">
       <_title>Product of a sequence</_title>
-      <_names>au:&#x3A0;,r:product</_names>
+      <_names>au:Π,r:product</_names>
       <_description>Corresponds to the product symbol. Multiplies factors for each x ranging from the lower to the upper limit.</_description>
       <example>$name(x^2, 1, 5) = 1^2 * 2^2 * 3^2 * 4^2 * 5^2 = 14400</example>
       <argument index="1">
@@ -3812,7 +3812,7 @@
     </builtin_function>
     <builtin_function name="integrate">
       <_title>Integrate</_title>
-      <_names>r:integrate,integral,au:&#x222B;</_names>
+      <_names>r:integrate,integral,au:∫</_names>
       <argument index="1">
         <_title>Function</_title>
       </argument>

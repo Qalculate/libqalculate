@@ -4,7 +4,7 @@
     <_title>Currency</_title>
     <builtin_unit name="EUR">
       <_title>European Euro</_title>
-      <_names>a-cr:EUR,au:&#x20AC;,euro,p:euros</_names>
+      <_names>a-cr:EUR,au:€,euro,p:euros</_names>
       <_countries>Andorra, Austria, Belgium, Croatia, Cyprus, Estonia, Finland, France, Germany, Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City</_countries>
     </builtin_unit>
     <builtin_unit name="USD">
@@ -14,7 +14,7 @@
     </builtin_unit>
     <builtin_unit name="JPY">
       <_title>Japanese Yen</_title>
-      <_names>a-cr:JPY,au:&#xA5;,yen</_names>
+      <_names>a-cr:JPY,au:¥,yen</_names>
       <_countries>Japan</_countries>
     </builtin_unit>
     <builtin_unit name="DKK">
@@ -24,12 +24,12 @@
     </builtin_unit>
     <builtin_unit name="GBP">
       <_title>British Pound</_title>
-      <_names>a-cr:GBP,au:&#xA3;</_names>
+      <_names>a-cr:GBP,au:£</_names>
       <_countries>United Kingdom</_countries>
     </builtin_unit>
     <builtin_unit name="THB">
       <_title>Thai Baht</_title>
-      <_names>a-cr:THB,au:&#xE3F;</_names>
+      <_names>a-cr:THB,au:฿</_names>
       <_countries>Thailand</_countries>
     </builtin_unit>
     <builtin_unit name="SEK">
@@ -54,12 +54,12 @@
     </builtin_unit>
     <builtin_unit name="RUB">
       <_title>Russian Ruble</_title>
-      <_names>a-cr:RUB,au:&#x20BD;,ruble</_names>
+      <_names>a-cr:RUB,au:₽,ruble</_names>
       <_countries>Russia</_countries>
     </builtin_unit>
     <builtin_unit name="PHP">
       <_title>Philippine Peso</_title>
-      <_names>a-cr:PHP,au:&#x20B1;</_names>
+      <_names>a-cr:PHP,au:₱</_names>
       <_countries>Philippines</_countries>
     </builtin_unit>
     <builtin_unit name="MYR">
@@ -79,7 +79,7 @@
     </builtin_unit>
     <builtin_unit name="CZK">
       <_title>Czech Koruna</_title>
-      <_names>a-cr:CZK,au-c:K&#x10D;</_names>
+      <_names>a-cr:CZK,au-c:Kč</_names>
       <_countries>Czech Republic</_countries>
     </builtin_unit>
      <builtin_unit name="HUF">
@@ -89,7 +89,7 @@
     </builtin_unit>
     <builtin_unit name="PLN">
       <_title>Polish Zloty</_title>
-      <_names>a-cr:PLN,au:z&#x0142;,zloty</_names>
+      <_names>a-cr:PLN,au:zł,zloty</_names>
       <_countries>Poland</_countries>
     </builtin_unit>
     <builtin_unit name="RON">
@@ -99,7 +99,7 @@
     </builtin_unit>
     <builtin_unit name="TRY">
       <_title>Turkish Lira</_title>
-      <_names>a-cr:TRY,au:&#x20BA;</_names>
+      <_names>a-cr:TRY,au:₺</_names>
       <_countries>Turkey</_countries>
     </builtin_unit>
     <builtin_unit name="AUD">
@@ -128,7 +128,7 @@
     </builtin_unit>
     <builtin_unit name="KRW">
       <_title>South Korean Won</_title>
-      <_names>a-cr:KRW,au:&#x20A9;,won</_names>
+      <_names>a-cr:KRW,au:₩,won</_names>
       <_countries>South Korea</_countries>
     </builtin_unit>
     <builtin_unit name="ZAR">
@@ -138,12 +138,12 @@
     </builtin_unit>
     <builtin_unit name="INR">
       <_title>Indian Rupee</_title>
-      <_names>a-cr:INR,au:&#x20B9;,rupee</_names>
+      <_names>a-cr:INR,au:₹,rupee</_names>
       <_countries>India</_countries>
     </builtin_unit>
     <builtin_unit name="ILS">
       <_title>Israeli New Sheqel</_title>
-      <_names>a-cr:ILS,au:&#x20AA;,sheqel</_names>
+      <_names>a-cr:ILS,au:₪,sheqel</_names>
       <_countries>Israel</_countries>
     </builtin_unit>
     <builtin_unit name="MXN">
@@ -163,7 +163,7 @@
     </builtin_unit>
     <builtin_unit name="BTC">
       <_title>Bitcoin</_title>
-      <_names>a-cr:BTC,au:&#x20BF;,a:XBT,bitcoin,p:bitcoins</_names>
+      <_names>a-cr:BTC,au:₿,a:XBT,bitcoin,p:bitcoins</_names>
     </builtin_unit>
     <builtin_unit name="KES">
       <_title>Kenyan Shilling</_title>
@@ -172,7 +172,7 @@
     </builtin_unit>
     <builtin_unit name="AFN">
       <_title>Afghan Afghani</_title>
-      <_names>a-cr:AFN,aio:&#x060B;</_names>
+      <_names>a-cr:AFN,aio:؋</_names>
       <_countries>Afghanistan</_countries>
     </builtin_unit>
     <builtin_unit name="ALL">
@@ -202,7 +202,7 @@
     </builtin_unit>
     <builtin_unit name="AMD">
       <_title>Armenian Dram</_title>
-      <_names>a-cr:AMD,au:&#x058F;</_names>
+      <_names>a-cr:AMD,au:֏</_names>
       <_countries>Armenia</_countries>
     </builtin_unit>
     <builtin_unit name="AWG">
@@ -217,7 +217,7 @@
     </builtin_unit>
     <builtin_unit name="AZN">
       <_title>Azerbaijani Manat</_title>
-      <_names>a-cr:AZN,au:&#x20BC;</_names>
+      <_names>a-cr:AZN,au:₼</_names>
       <_countries>Azerbaijan</_countries>
     </builtin_unit>
     <builtin_unit name="BSD">
@@ -232,7 +232,7 @@
     </builtin_unit>
     <builtin_unit name="BDT">
       <_title>Bangladeshi Taka</_title>
-      <_names>a-cr:BDT,au:&#x09F3;</_names>
+      <_names>a-cr:BDT,au:৳</_names>
       <_countries>Bangladesh</_countries>
     </builtin_unit>
     <builtin_unit name="BBD">
@@ -291,7 +291,7 @@
     </builtin_unit>
     <builtin_unit name="KHR">
       <_title>Cambodian Riel</_title>
-      <_names>a-cr:KHR,aiu:&#x17DB;</_names>
+      <_names>a-cr:KHR,aiu:៛</_names>
       <_countries>Cambodia</_countries>
     </builtin_unit>
     <builtin_unit name="XAF">
@@ -331,7 +331,7 @@
     </builtin_unit>
     <builtin_unit name="CRC">
       <_title>Costa Rican colón</_title>
-      <_names>a-cr:CRC,au:&#x20A1;</_names>
+      <_names>a-cr:CRC,au:₡</_names>
       <_countries>Costa Rica</_countries>
     </builtin_unit>
     <builtin_unit name="CUP">
@@ -390,12 +390,12 @@
     </builtin_unit>
     <builtin_unit name="GEL">
       <_title>Georgian Lari</_title>
-      <_names>a-cr:GEL,au:&#x20BE;</_names>
+      <_names>a-cr:GEL,au:₾</_names>
       <_countries>Georgia</_countries>
     </builtin_unit>
     <builtin_unit name="GHS">
       <_title>Ghanaian Cedi</_title>
-      <_names>a-cr:GHS,au:&#x20B5;</_names>
+      <_names>a-cr:GHS,au:₵</_names>
       <_countries>Ghana</_countries>
     </builtin_unit>
     <builtin_unit name="GIP">
@@ -435,7 +435,7 @@
     </builtin_unit>
     <builtin_unit name="IRR">
       <_title>Iranian Rial</_title>
-      <_names>a-cr:IRR,aio:&#xFDFC;</_names>
+      <_names>a-cr:IRR,aio:﷼</_names>
       <_countries>Iran</_countries>
     </builtin_unit>
     <builtin_unit name="IQD">
@@ -455,7 +455,7 @@
     </builtin_unit>
     <builtin_unit name="KZT">
       <_title>Kazakhstani Tenge</_title>
-      <_names>a-cr:KZT,au:&#x20B8;</_names>
+      <_names>a-cr:KZT,au:₸</_names>
       <_countries>Kazakhstan</_countries>
     </builtin_unit>
     <builtin_unit name="KPW">
@@ -475,7 +475,7 @@
     </builtin_unit>
     <builtin_unit name="LAK">
       <_title>Lao Kip</_title>
-      <_names>a-cr:LAK,au:&#x20AD;</_names>
+      <_names>a-cr:LAK,au:₭</_names>
       <_countries>Laos</_countries>
     </builtin_unit>
     <builtin_unit name="LBP">
@@ -520,7 +520,7 @@
     </builtin_unit>
     <builtin_unit name="MVR">
       <_title>Maldivian Rufiyaa</_title>
-      <_names>a-cr:MVR,aio:&#x783;</_names>
+      <_names>a-cr:MVR,aio:ރ</_names>
       <_countries>Maldives</_countries>
     </builtin_unit>
     <builtin_unit name="MRU">
@@ -540,7 +540,7 @@
     </builtin_unit>
     <builtin_unit name="MNT">
       <_title>Mongolian Tögrög</_title>
-      <_names>a-cr:MNT,au:&#x20AE;</_names>
+      <_names>a-cr:MNT,au:₮</_names>
       <_countries>Mongolia</_countries>
     </builtin_unit>
     <builtin_unit name="MAD">
@@ -565,7 +565,7 @@
     </builtin_unit>
     <builtin_unit name="NPR">
       <_title>Nepalese Rupee</_title>
-      <_names>a-cr:NPR,aio:&#x930;&#x942;</_names>
+      <_names>a-cr:NPR,aio:रू</_names>
       <_countries>Nepal</_countries>
     </builtin_unit>
     <builtin_unit name="NIO">
@@ -575,7 +575,7 @@
     </builtin_unit>
     <builtin_unit name="NGN">
       <_title>Nigerian Naira</_title>
-      <_names>a-cr:NGN,au:&#x20A6;</_names>
+      <_names>a-cr:NGN,au:₦</_names>
       <_countries>Nigeria</_countries>
     </builtin_unit>
     <builtin_unit name="OMR">
@@ -600,7 +600,7 @@
     </builtin_unit>
     <builtin_unit name="PYG">
       <_title>Paraguayan Guaraní</_title>
-      <_names>a-cr:PYG,au:&#x20B2;</_names>
+      <_names>a-cr:PYG,au:₲</_names>
       <_countries>Paraguay</_countries>
     </builtin_unit>
     <builtin_unit name="PEN">
@@ -655,7 +655,7 @@
     </builtin_unit>
     <builtin_unit name="LKR">
       <_title>Sri Lankan Rupee</_title>
-      <_names>a-cr:LKR,aou:&#x0BF9;</_names>
+      <_names>a-cr:LKR,aou:௹</_names>
       <_countries>Sri Lanka</_countries>
     </builtin_unit>
     <builtin_unit name="SDG">
@@ -720,7 +720,7 @@
     </builtin_unit>
     <builtin_unit name="UAH">
       <_title>Ukrainian Hryvnia</_title>
-      <_names>a-cr:UAH,au:&#x20B4;</_names>
+      <_names>a-cr:UAH,au:₴</_names>
       <_countries>Ukraine</_countries>
     </builtin_unit>
     <builtin_unit name="AED">
@@ -749,7 +749,7 @@
     </builtin_unit>
     <builtin_unit name="VND">
       <_title>Vietnamese Đồng</_title>
-      <_names>a-cr:VND,au:&#x20AB;</_names>
+      <_names>a-cr:VND,au:₫</_names>
       <_countries>Vietnam</_countries>
     </builtin_unit>
     <builtin_unit name="YER">
@@ -773,7 +773,7 @@
     </unit>
     <unit type="alias">
       <_title>Cent (USD)</_title>
-      <_names>au:&#xA2;,r:cent,p:cents</_names>
+      <_names>au:¢,r:cent,p:cents</_names>
       <base>
         <unit>USD</unit>
         <relation>1/100</relation>
@@ -803,7 +803,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>Greek Drachma (obsolete)</_title>
-      <_names>a-cr:GRD,au:&#x20AF;</_names>
+      <_names>a-cr:GRD,au:₯</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/340.750</relation>
@@ -813,7 +813,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>French Franc (obsolete)</_title>
-      <_names>a-cr:FRF,au:&#x20A3;</_names>
+      <_names>a-cr:FRF,au:₣</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/6.55957</relation>
@@ -863,7 +863,7 @@
     <unit type="alias">
       <hidden>true</hidden>
       <_title>Spanish Peseta (obsolete)</_title>
-      <_names>a-cr:ESP,au:&#x20A7;</_names>
+      <_names>a-cr:ESP,au:₧</_names>
       <base>
         <unit>EUR</unit>
         <relation>1/166.386</relation>

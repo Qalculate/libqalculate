@@ -29,7 +29,7 @@ msgid "European Euro"
 msgstr "Europese euro"
 
 #: ../data/currencies.xml.in.h:3
-msgid "a-cr:EUR,au:&#x20AC;,euro,p:euros"
+msgid "a-cr:EUR,au:€,euro,p:euros"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:4
@@ -58,7 +58,7 @@ msgid "Japanese Yen"
 msgstr "Japanse yen"
 
 #: ../data/currencies.xml.in.h:9
-msgid "a-cr:JPY,au:&#xA5;,yen"
+msgid "a-cr:JPY,au:¥,yen"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:10
@@ -82,7 +82,7 @@ msgid "British Pound"
 msgstr "Britse Pond"
 
 #: ../data/currencies.xml.in.h:15
-msgid "a-cr:GBP,au:&#xA3;"
+msgid "a-cr:GBP,au:£"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:16
@@ -94,7 +94,7 @@ msgid "Thai Baht"
 msgstr "Thailandse bat"
 
 #: ../data/currencies.xml.in.h:18
-msgid "a-cr:THB,au:&#xE3F;"
+msgid "a-cr:THB,au:฿"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:19
@@ -156,8 +156,8 @@ msgstr "Russische roebel"
 
 #: ../data/currencies.xml.in.h:33
 #, fuzzy
-msgid "a-cr:RUB,au:&#x20BD;,ruble"
-msgstr "a:RUB,au:&#x20BD;,roebel"
+msgid "a-cr:RUB,au:₽,ruble"
+msgstr "a:RUB,au:₽,roebel"
 
 #: ../data/currencies.xml.in.h:34
 #, fuzzy
@@ -170,7 +170,7 @@ msgstr "Filippijnse peso"
 
 #: ../data/currencies.xml.in.h:36
 #, fuzzy
-msgid "a-cr:PHP,au:&#x20B1;"
+msgid "a-cr:PHP,au:₱"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:37
@@ -222,7 +222,7 @@ msgstr "Tsjechische kroon"
 
 #: ../data/currencies.xml.in.h:48
 #, fuzzy
-msgid "a-cr:CZK,au-c:K&#x10D;"
+msgid "a-cr:CZK,au-c:Kč"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:49
@@ -247,7 +247,7 @@ msgstr "Poolse zloty"
 
 #: ../data/currencies.xml.in.h:54
 #, fuzzy
-msgid "a-cr:PLN,au:z&#x0142;,zloty"
+msgid "a-cr:PLN,au:zł,zloty"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:55
@@ -273,7 +273,7 @@ msgstr "Turkse lire"
 
 #: ../data/currencies.xml.in.h:60
 #, fuzzy
-msgid "a-cr:TRY,au:&#x20BA;"
+msgid "a-cr:TRY,au:₺"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:61
@@ -345,7 +345,7 @@ msgstr "Zuid-Koreaanse won"
 
 #: ../data/currencies.xml.in.h:77
 #, fuzzy
-msgid "a-cr:KRW,au:&#x20A9;,won"
+msgid "a-cr:KRW,au:₩,won"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:78
@@ -372,8 +372,8 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:83
 #, fuzzy
-msgid "a-cr:INR,au:&#x20B9;,rupee"
-msgstr "a:RUB,au:&#x20BD;,roebel"
+msgid "a-cr:INR,au:₹,rupee"
+msgstr "a:RUB,au:₽,roebel"
 
 #: ../data/currencies.xml.in.h:84
 msgid "India"
@@ -385,7 +385,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:86
 #, fuzzy
-msgid "a-cr:ILS,au:&#x20AA;,sheqel"
+msgid "a-cr:ILS,au:₪,sheqel"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:87
@@ -434,7 +434,7 @@ msgid "Bitcoin"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:98
-msgid "a-cr:BTC,au:&#x20BF;,a:XBT,bitcoin,p:bitcoins"
+msgid "a-cr:BTC,au:₿,a:XBT,bitcoin,p:bitcoins"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:99
@@ -456,7 +456,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:103
 #, fuzzy
-msgid "a-cr:AFN,aio:&#x060B;"
+msgid "a-cr:AFN,aio:؋"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:104
@@ -534,7 +534,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:121
 #, fuzzy
-msgid "a-cr:AMD,au:&#x058F;"
+msgid "a-cr:AMD,au:֏"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:122
@@ -572,7 +572,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:130
 #, fuzzy
-msgid "a-cr:AZN,au:&#x20BC;"
+msgid "a-cr:AZN,au:₼"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:131
@@ -610,7 +610,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:139
 #, fuzzy
-msgid "a-cr:BDT,au:&#x09F3;"
+msgid "a-cr:BDT,au:৳"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:140
@@ -763,7 +763,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:174
 #, fuzzy
-msgid "a-cr:KHR,aiu:&#x17DB;"
+msgid "a-cr:KHR,aiu:៛"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:175
@@ -868,7 +868,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:198
 #, fuzzy
-msgid "a-cr:CRC,au:&#x20A1;"
+msgid "a-cr:CRC,au:₡"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:199
@@ -1013,7 +1013,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:233
 #, fuzzy
-msgid "a-cr:GEL,au:&#x20BE;"
+msgid "a-cr:GEL,au:₾"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:234
@@ -1026,7 +1026,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:236
 #, fuzzy
-msgid "a-cr:GHS,au:&#x20B5;"
+msgid "a-cr:GHS,au:₵"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:237
@@ -1127,7 +1127,7 @@ msgstr "Italiaanse lire"
 
 #: ../data/currencies.xml.in.h:260
 #, fuzzy
-msgid "a-cr:IRR,aio:&#xFDFC;"
+msgid "a-cr:IRR,aio:﷼"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:261
@@ -1177,7 +1177,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:272
 #, fuzzy
-msgid "a-cr:KZT,au:&#x20B8;"
+msgid "a-cr:KZT,au:₸"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:273
@@ -1228,7 +1228,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:284
 #, fuzzy
-msgid "a-cr:LAK,au:&#x20AD;"
+msgid "a-cr:LAK,au:₭"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:285
@@ -1338,7 +1338,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:311
 #, fuzzy
-msgid "a-cr:MVR,aio:&#x783;"
+msgid "a-cr:MVR,aio:ރ"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:312
@@ -1390,7 +1390,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:323
 #, fuzzy
-msgid "a-cr:MNT,au:&#x20AE;"
+msgid "a-cr:MNT,au:₮"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:324
@@ -1453,7 +1453,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:338
 #, fuzzy
-msgid "a-cr:NPR,aio:&#x930;&#x942;"
+msgid "a-cr:NPR,aio:रू"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:339
@@ -1479,7 +1479,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:344
 #, fuzzy
-msgid "a-cr:NGN,au:&#x20A6;"
+msgid "a-cr:NGN,au:₦"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:345
@@ -1541,7 +1541,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:359
 #, fuzzy
-msgid "a-cr:PYG,au:&#x20B2;"
+msgid "a-cr:PYG,au:₲"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:360
@@ -1678,7 +1678,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:392
 #, fuzzy
-msgid "a-cr:LKR,aou:&#x0BF9;"
+msgid "a-cr:LKR,aou:௹"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:393
@@ -1841,7 +1841,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:431
 #, fuzzy
-msgid "a-cr:UAH,au:&#x20B4;"
+msgid "a-cr:UAH,au:₴"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:432
@@ -1912,7 +1912,7 @@ msgstr ""
 
 #: ../data/currencies.xml.in.h:448
 #, fuzzy
-msgid "a-cr:VND,au:&#x20AB;"
+msgid "a-cr:VND,au:₫"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/currencies.xml.in.h:449
@@ -1959,8 +1959,8 @@ msgid "Cent (USD)"
 msgstr "Cent (USD)"
 
 #: ../data/currencies.xml.in.h:459
-msgid "au:&#xA2;,r:cent,p:cents"
-msgstr "au:&#xA2;,cent,p:centen"
+msgid "au:¢,r:cent,p:cents"
+msgstr "au:¢,cent,p:centen"
 
 #: ../data/currencies.xml.in.h:460
 msgid "Belgian Franc (obsolete)"
@@ -1983,7 +1983,7 @@ msgid "Greek Drachma (obsolete)"
 msgstr "Griekse drachme (verouderd)"
 
 #: ../data/currencies.xml.in.h:465
-msgid "a-cr:GRD,au:&#x20AF;"
+msgid "a-cr:GRD,au:₯"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:466
@@ -1991,7 +1991,7 @@ msgid "French Franc (obsolete)"
 msgstr "Franse franc (verouderd)"
 
 #: ../data/currencies.xml.in.h:467
-msgid "a-cr:FRF,au:&#x20A3;"
+msgid "a-cr:FRF,au:₣"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:468
@@ -2032,7 +2032,7 @@ msgid "Spanish Peseta (obsolete)"
 msgstr "Spaanse peseta (verouderd)"
 
 #: ../data/currencies.xml.in.h:477
-msgid "a-cr:ESP,au:&#x20A7;"
+msgid "a-cr:ESP,au:₧"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:478
@@ -3960,7 +3960,7 @@ msgstr ""
 "gewenste waarde bereikt."
 
 #: ../data/functions.xml.in.h:248
-msgid "r:primePi,ou:prime&#x3C0;,o:prime_pi"
+msgid "r:primePi,ou:primeπ,o:prime_pi"
 msgstr ""
 
 #: ../data/functions.xml.in.h:249
@@ -4105,8 +4105,8 @@ msgstr ""
 
 #: ../data/functions.xml.in.h:278
 #, fuzzy
-msgid "r:totient,au:&#x3C6;,phi"
-msgstr "gouden,&#x3C6;"
+msgid "r:totient,au:φ,phi"
+msgstr "gouden,φ"
 
 #: ../data/functions.xml.in.h:279
 msgid "n"
@@ -4641,7 +4641,7 @@ msgid "Heaviside Step Function"
 msgstr "Heaviside stapfunctie"
 
 #: ../data/functions.xml.in.h:397
-msgid "r:heaviside,au:&#x03B8;"
+msgid "r:heaviside,au:θ"
 msgstr ""
 
 #: ../data/functions.xml.in.h:398
@@ -4657,7 +4657,7 @@ msgid "Dirac Delta Function"
 msgstr "Diracdelta"
 
 #: ../data/functions.xml.in.h:400
-msgid "r:dirac,au:&#x3B4;"
+msgid "r:dirac,au:δ"
 msgstr ""
 
 #: ../data/functions.xml.in.h:401
@@ -4699,7 +4699,7 @@ msgstr "Reële deel"
 
 #: ../data/functions.xml.in.h:410
 #, fuzzy
-msgid "r:re,au:&#x211C;"
+msgid "r:re,au:ℜ"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/functions.xml.in.h:411
@@ -4712,8 +4712,8 @@ msgstr "Imaginaire deel"
 
 #: ../data/functions.xml.in.h:413
 #, fuzzy
-msgid "r:im,au:&#x2111;"
-msgstr "gouden,&#x3C6;"
+msgid "r:im,au:ℑ"
+msgstr "gouden,φ"
 
 #: ../data/functions.xml.in.h:414
 #, fuzzy
@@ -4741,7 +4741,7 @@ msgid "Square Root"
 msgstr "Vierkantswortel"
 
 #: ../data/functions.xml.in.h:420
-msgid "au:&#x221A;,r:sqrt"
+msgid "au:√,r:sqrt"
 msgstr ""
 
 #: ../data/functions.xml.in.h:421
@@ -4756,7 +4756,7 @@ msgstr "Derdemachtswortel"
 
 #: ../data/functions.xml.in.h:423
 #, fuzzy
-msgid "r:cbrt,aou:&#x221B;"
+msgid "r:cbrt,aou:∛"
 msgstr "a:ITL,au:&#x20A4;,lire"
 
 #: ../data/functions.xml.in.h:424
@@ -5789,8 +5789,8 @@ msgid "Means"
 msgstr "Gemiddelden"
 
 #: ../data/functions.xml.in.h:659
-msgid "r:mean,average,au:x&#x0304;"
-msgstr "gemiddelde,au:x&#x0304;"
+msgid "r:mean,average,au:x̄"
+msgstr "gemiddelde,au:x̄"
 
 #: ../data/functions.xml.in.h:660
 msgid "Harmonic Mean"
@@ -7535,8 +7535,8 @@ msgid "Summation"
 msgstr "Sommatie"
 
 #: ../data/functions.xml.in.h:1034
-msgid "au:&#x3A3;,au:&#x2211;,r:sum"
-msgstr "au:&#x3A3;,au:&#x2211;,som"
+msgid "au:Σ,au:∑,r:sum"
+msgstr "au:Σ,au:∑,som"
 
 #: ../data/functions.xml.in.h:1035
 #, fuzzy
@@ -7564,7 +7564,7 @@ msgid "Product of a sequence"
 msgstr "Product"
 
 #: ../data/functions.xml.in.h:1040
-msgid "au:&#x3A0;,r:product"
+msgid "au:Π,r:product"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1041
@@ -7762,8 +7762,8 @@ msgid "Integrate"
 msgstr "Integreren"
 
 #: ../data/functions.xml.in.h:1084
-msgid "r:integrate,integral,au:&#x222B;"
-msgstr "integreren,integraal,au:&#x222B;"
+msgid "r:integrate,integral,au:∫"
+msgstr "integreren,integraal,au:∫"
 
 #: ../data/functions.xml.in.h:1085
 msgid "Variable of integration"
@@ -9196,7 +9196,7 @@ msgid "ar:n,r:nano"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:9
-msgid "aur:&#x3BC;,auor:&#x0B5;,ar:u,r:micro"
+msgid "aur:μ,auor:µ,ar:u,r:micro"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:10
@@ -9356,11 +9356,11 @@ msgid "r:nautical_mile,p:nautical_miles,a:nmi"
 msgstr "nautische_mijl,p:nautische_mijlen,ao:nmi"
 
 #: ../data/units.xml.in.h:15
-msgid "&#xC5;ngstr&#xF6;m"
+msgid "Ångström"
 msgstr ""
 
 #: ../data/units.xml.in.h:16
-msgid "aru:&#xC5;,aou:&#x212B;,u:&#xE5;ngstr&#xF6;m,angstrom"
+msgid "aru:Å,aou:Å,u:ångström,angstrom"
 msgstr ""
 
 #: ../data/units.xml.in.h:17
@@ -9542,7 +9542,7 @@ msgstr ""
 
 #: ../data/units.xml.in.h:60
 #, fuzzy
-msgid "r:solar_radius,au:R_&#x2609;"
+msgid "r:solar_radius,au:R_☉"
 msgstr "eerste_straling,ais:c_1"
 
 #: ../data/units.xml.in.h:61
@@ -9627,8 +9627,8 @@ msgid "Degree"
 msgstr "Graad"
 
 #: ../data/units.xml.in.h:82
-msgid "ar:deg,au:&#xB0;,degree,p:degrees"
-msgstr "a:grd,au:&#xB0;,graad,p:graden"
+msgid "ar:deg,au:°,degree,p:degrees"
+msgstr "a:grd,au:°,graad,p:graden"
 
 #: ../data/units.xml.in.h:83
 msgid "Gradian (Gon)"
@@ -9780,7 +9780,7 @@ msgid "Pound"
 msgstr ""
 
 #: ../data/units.xml.in.h:121
-msgid "ar:lb,aou:&#x2114;,pound,p:pounds"
+msgid "ar:lb,aou:℔,pound,p:pounds"
 msgstr ""
 
 #: ../data/units.xml.in.h:122
@@ -9887,8 +9887,8 @@ msgstr "Planckmassa"
 
 #: ../data/units.xml.in.h:147
 #, fuzzy
-msgid "r:solar_mass,au:M_&#x2609;"
-msgstr "tau_massa,aisu:m_&#x3C4;"
+msgid "r:solar_mass,au:M_☉"
+msgstr "tau_massa,aisu:m_τ"
 
 #: ../data/units.xml.in.h:149
 msgid "Kilogram per Cubic Meter"
@@ -10191,15 +10191,15 @@ msgid "Ohm"
 msgstr ""
 
 #: ../data/units.xml.in.h:229
-msgid "au:&#x3A9;,r:ohm,p:ohms,auio:&#x2126;"
-msgstr "au:&#x3A9;,ohm,auio:&#x2126;"
+msgid "au:Ω,r:ohm,p:ohms,auio:Ω"
+msgstr "au:Ω,ohm,auio:Ω"
 
 #: ../data/units.xml.in.h:230
 msgid "Abohm"
 msgstr ""
 
 #: ../data/units.xml.in.h:231
-msgid "r:abohm,p:abohms,au:ab&#x3A9;"
+msgid "r:abohm,p:abohms,au:abΩ"
 msgstr ""
 
 #: ../data/units.xml.in.h:232
@@ -10207,7 +10207,7 @@ msgid "Statohm"
 msgstr ""
 
 #: ../data/units.xml.in.h:233
-msgid "r:statohm,p:statohms,au:stat&#x3A9;"
+msgid "r:statohm,p:statohms,au:statΩ"
 msgstr ""
 
 #: ../data/units.xml.in.h:234
@@ -10219,7 +10219,7 @@ msgid "Siemens"
 msgstr ""
 
 #: ../data/units.xml.in.h:236
-msgid "ar:S,siemens,auio:&#x2127;"
+msgid "ar:S,siemens,auio:℧"
 msgstr ""
 
 #: ../data/units.xml.in.h:237
@@ -10283,7 +10283,7 @@ msgid "Kelvin"
 msgstr "Kelvin"
 
 #: ../data/units.xml.in.h:252
-msgid "ar:K,aou:&#x212A;,kelvin,p:kelvins"
+msgid "ar:K,aou:K,kelvin,p:kelvins"
 msgstr ""
 
 #: ../data/units.xml.in.h:253
@@ -10292,15 +10292,15 @@ msgstr "Graden Celsius"
 
 #: ../data/units.xml.in.h:254
 #, fuzzy
-msgid "ar:oC,au:&#xB0;C,au:&#x2103;,r:celsius,p:celsius,centigrade,p:centigrades"
-msgstr "grd,&#xB0;,graad,graden"
+msgid "ar:oC,au:°C,au:℃,r:celsius,p:celsius,centigrade,p:centigrades"
+msgstr "grd,°,graad,graden"
 
 #: ../data/units.xml.in.h:255
 msgid "Degree Rankine"
 msgstr "Graden Rankine"
 
 #: ../data/units.xml.in.h:256
-msgid "ar:oR,a:oRa,au:&#xB0;R,au:&#xB0;Ra,r:rankine"
+msgid "ar:oR,a:oRa,au:°R,au:&#xB0;Ra,r:rankine"
 msgstr ""
 
 #: ../data/units.xml.in.h:257
@@ -10308,7 +10308,7 @@ msgid "Degree Fahrenheit"
 msgstr "Graden Fahrenheit"
 
 #: ../data/units.xml.in.h:258
-msgid "ar:oF,au:&#xB0;F,au:&#x2109;,r:fahrenheit"
+msgid "ar:oF,au:°F,au:℉,r:fahrenheit"
 msgstr ""
 
 #: ../data/units.xml.in.h:259
@@ -10629,8 +10629,8 @@ msgid "Liter"
 msgstr ""
 
 #: ../data/units.xml.in.h:337
-msgid "ar:L,ar:l,aou:&#x2113;,liter,p:liters,litre,p:litres"
-msgstr "a:L,a:l,aou:&#x2113;,liter,p:liters"
+msgid "ar:L,ar:l,aou:ℓ,liter,p:liters,litre,p:litres"
+msgstr "a:L,a:l,aou:ℓ,liter,p:liters"
 
 #: ../data/units.xml.in.h:338
 msgid "Milliliter"
@@ -11380,8 +11380,8 @@ msgid "Meter of Water"
 msgstr "Meter waterkolom"
 
 #: ../data/units.xml.in.h:520
-msgid "ar:mWC,a:mwg,au:mH&#x2082;O"
-msgstr "a:mwk,au:mH&#x2082;O"
+msgid "ar:mWC,a:mwg,au:mH₂O"
+msgstr "a:mwk,au:mH₂O"
 
 #: ../data/units.xml.in.h:521
 msgid "Millimeter of Water"
@@ -11396,7 +11396,7 @@ msgid "Inch of Water"
 msgstr "Inches waterkolom"
 
 #: ../data/units.xml.in.h:524
-msgid "ar:inWC,a:iwg,au:inH&#x2082;O"
+msgid "ar:inWC,a:iwg,au:inH₂O"
 msgstr ""
 
 #: ../data/units.xml.in.h:525
@@ -11657,11 +11657,11 @@ msgid "ar:hp,horsepower,p:horsepowers"
 msgstr ""
 
 #: ../data/units.xml.in.h:588
-msgid "Pferdest&#xE4;rke"
+msgid "Pferdestärke"
 msgstr "Paardekracht (metrisch)"
 
 #: ../data/units.xml.in.h:589
-msgid "ar:PS,u:pferdest&#xE4;rke"
+msgid "ar:PS,u:pferdestärke"
 msgstr "pk,paardekracht,paardekrachten"
 
 #: ../data/units.xml.in.h:590
@@ -11689,7 +11689,7 @@ msgid "Solar Luminosity (nominal)"
 msgstr ""
 
 #: ../data/units.xml.in.h:596
-msgid "r:solar_luminosity,au:L_&#x2609;"
+msgid "r:solar_luminosity,au:L_☉"
 msgstr ""
 
 #: ../data/units.xml.in.h:597
@@ -12165,15 +12165,15 @@ msgid "Per Mille"
 msgstr "Promille"
 
 #: ../data/variables.xml.in.h:3
-msgid "r:permille,au:&#x2030;"
-msgstr "promille,au:&#x2030;"
+msgid "r:permille,au:‰"
+msgstr "promille,au:‰"
 
 #: ../data/variables.xml.in.h:4
 msgid "Per Myriad"
 msgstr "Promyriad"
 
 #: ../data/variables.xml.in.h:5
-msgid "r:permyriad,au:&#x2031;"
+msgid "r:permyriad,au:‱"
 msgstr ""
 
 #: ../data/variables.xml.in.h:6
@@ -12768,7 +12768,7 @@ msgid "Thomson cross section"
 msgstr ""
 
 #: ../data/variables.xml.in.h:154
-msgid "Weak Mixing Angle (sin²&#x03B8;w)"
+msgid "Weak Mixing Angle (sin²θw)"
 msgstr ""
 
 #: ../data/variables.xml.in.h:155
@@ -13015,8 +13015,8 @@ msgid "Positive Infinity"
 msgstr "Positief oneindig"
 
 #: ../data/variables.xml.in.h:214
-msgid "a:&#x221E;,r:plus_infinity,r:infinity"
-msgstr "a:&#x221E;,oneindig"
+msgid "a:∞,r:plus_infinity,r:infinity"
+msgstr "a:∞,oneindig"
 
 #: ../data/variables.xml.in.h:215
 msgid "Negative Infinity"
@@ -13055,7 +13055,7 @@ msgid "Pauli Matrix 0"
 msgstr "Pauli-spinmatrix 0"
 
 #: ../data/variables.xml.in.h:225
-msgid "rs:pauli_0,aus:&#x03C3;_0"
+msgid "rs:pauli_0,aus:σ_0"
 msgstr ""
 
 #: ../data/variables.xml.in.h:226
@@ -13063,7 +13063,7 @@ msgid "Pauli Matrix 1"
 msgstr "Pauli-spinmatrix 1"
 
 #: ../data/variables.xml.in.h:227
-msgid "rs:pauli_1,aus:&#x03C3;_1"
+msgid "rs:pauli_1,aus:σ_1"
 msgstr ""
 
 #: ../data/variables.xml.in.h:228
@@ -13071,7 +13071,7 @@ msgid "Pauli Matrix 2"
 msgstr "Pauli-spinmatrix 2"
 
 #: ../data/variables.xml.in.h:229
-msgid "rs:pauli_2,aus:&#x03C3;_2"
+msgid "rs:pauli_2,aus:σ_2"
 msgstr ""
 
 #: ../data/variables.xml.in.h:230
@@ -13079,7 +13079,7 @@ msgid "Pauli Matrix 3"
 msgstr "Pauli-spinmatrix 3"
 
 #: ../data/variables.xml.in.h:231
-msgid "rs:pauli_3,aus:&#x03C3;_3"
+msgid "rs:pauli_3,aus:σ_3"
 msgstr ""
 
 #: ../data/variables.xml.in.h:234
@@ -13356,19 +13356,19 @@ msgstr ""
 #~ msgstr "newton_constante,a:G"
 
 #, fuzzy
-#~ msgid "r:electric_constant,asu:&#x3B5;_0,vacuum_permittivity,aos:epsilon_0"
-#~ msgstr "elektrische_constante,aisu:&#x3B5;_0"
+#~ msgid "r:electric_constant,asu:ε_0,vacuum_permittivity,aos:epsilon_0"
+#~ msgstr "elektrische_constante,aisu:ε_0"
 
 #, fuzzy
-#~ msgid "r:magnetic_constant,asu:&#x3BC;_0,vacuum_permeability,aos:mu_0"
-#~ msgstr "magnetische_constante,aisu:&#x3BC;_0"
+#~ msgid "r:magnetic_constant,asu:μ_0,vacuum_permeability,aos:mu_0"
+#~ msgstr "magnetische_constante,aisu:μ_0"
 
 #~ msgid "r:characteristic_impedance,ais:Z_0"
 #~ msgstr "karakteristieke_impedantie,ais:Z_0"
 
 #, fuzzy
-#~ msgid "r:bohr_magneton,asu:&#x3BC;_B,aos:mu_B"
-#~ msgstr "nucleaire_magneton,aisu:&#x3BC;_N"
+#~ msgid "r:bohr_magneton,asu:μ_B,aos:mu_B"
+#~ msgstr "nucleaire_magneton,aisu:μ_N"
 
 #~ msgid "r:conductance_quantum,ais:G_0"
 #~ msgstr "geleidings_kwantum,ais:G_0"
@@ -13377,22 +13377,22 @@ msgstr ""
 #~ msgstr "elementaire_lading,ais:e_lading"
 
 #, fuzzy
-#~ msgid "r:magnetic_flux_quantum,asu:&#x3A6;_0,aos:phi_0"
-#~ msgstr "magnetische_flux_kwantum,aisu:&#x3A6;_0"
+#~ msgid "r:magnetic_flux_quantum,asu:Φ_0,aos:phi_0"
+#~ msgstr "magnetische_flux_kwantum,aisu:Φ_0"
 
 #, fuzzy
-#~ msgid "r:nuclear_magneton,asu:&#x3BC;_N,aos:mu_N"
-#~ msgstr "nucleaire_magneton,aisu:&#x3BC;_N"
+#~ msgid "r:nuclear_magneton,asu:μ_N,aos:mu_N"
+#~ msgstr "nucleaire_magneton,aisu:μ_N"
 
-#~ msgid "r:alpha_particle_mass,aisu:m_&#x3B1;"
-#~ msgstr "alfa_deeltje_massa,aisu:m_&#x3B1;"
+#~ msgid "r:alpha_particle_mass,aisu:m_α"
+#~ msgstr "alfa_deeltje_massa,aisu:m_α"
 
 #~ msgid "r:classical_electron_radius,ais:r_e"
 #~ msgstr "klassieke_electron_radius,ais:r_e"
 
 #, fuzzy
-#~ msgid "r:compton_wavelength,asu:&#x3BB;_C,aos:lambda_C"
-#~ msgstr "compton_golflengte,aisu:&#x3BB;_C"
+#~ msgid "r:compton_wavelength,asu:λ_C,aos:lambda_C"
+#~ msgstr "compton_golflengte,aisu:λ_C"
 
 #~ msgid "r:electron_mass,ais:m_e"
 #~ msgstr "elektron_massa,ais:m_e"

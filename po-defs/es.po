@@ -24,7 +24,7 @@ msgid "European Euro"
 msgstr "Euro europeo"
 
 #: ../data/currencies.xml.in.h:3
-msgid "a-cr:EUR,au:&#x20AC;,euro,p:euros"
+msgid "a-cr:EUR,au:€,euro,p:euros"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:4
@@ -59,7 +59,7 @@ msgid "Japanese Yen"
 msgstr "Yen japonés"
 
 #: ../data/currencies.xml.in.h:9
-msgid "a-cr:JPY,au:&#xA5;,yen"
+msgid "a-cr:JPY,au:¥,yen"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:10
@@ -83,7 +83,7 @@ msgid "British Pound"
 msgstr "Libra esterlina"
 
 #: ../data/currencies.xml.in.h:15
-msgid "a-cr:GBP,au:&#xA3;"
+msgid "a-cr:GBP,au:£"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:16
@@ -95,7 +95,7 @@ msgid "Thai Baht"
 msgstr "Baht tailandés"
 
 #: ../data/currencies.xml.in.h:18
-msgid "a-cr:THB,au:&#xE3F;"
+msgid "a-cr:THB,au:฿"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:19
@@ -155,7 +155,7 @@ msgid "Russian Ruble"
 msgstr "Rublo ruso"
 
 #: ../data/currencies.xml.in.h:33
-msgid "a-cr:RUB,au:&#x20BD;,ruble"
+msgid "a-cr:RUB,au:₽,ruble"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:34
@@ -167,7 +167,7 @@ msgid "Philippine Peso"
 msgstr "Peso filipino"
 
 #: ../data/currencies.xml.in.h:36
-msgid "a-cr:PHP,au:&#x20B1;"
+msgid "a-cr:PHP,au:₱"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:37
@@ -215,7 +215,7 @@ msgid "Czech Koruna"
 msgstr "Corona checa"
 
 #: ../data/currencies.xml.in.h:48
-msgid "a-cr:CZK,au-c:K&#x10D;"
+msgid "a-cr:CZK,au-c:Kč"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:49
@@ -239,7 +239,7 @@ msgid "Polish Zloty"
 msgstr "Esloti polaco"
 
 #: ../data/currencies.xml.in.h:54
-msgid "a-cr:PLN,au:z&#x0142;,zloty"
+msgid "a-cr:PLN,au:zł,zloty"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:55
@@ -263,7 +263,7 @@ msgid "Turkish Lira"
 msgstr "Lira turca"
 
 #: ../data/currencies.xml.in.h:60
-msgid "a-cr:TRY,au:&#x20BA;"
+msgid "a-cr:TRY,au:₺"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:61
@@ -331,7 +331,7 @@ msgid "South Korean Won"
 msgstr "Won surcoreano"
 
 #: ../data/currencies.xml.in.h:77
-msgid "a-cr:KRW,au:&#x20A9;,won"
+msgid "a-cr:KRW,au:₩,won"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:78
@@ -355,7 +355,7 @@ msgid "Indian Rupee"
 msgstr "Rupia india"
 
 #: ../data/currencies.xml.in.h:83
-msgid "a-cr:INR,au:&#x20B9;,rupee"
+msgid "a-cr:INR,au:₹,rupee"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:84
@@ -367,7 +367,7 @@ msgid "Israeli New Sheqel"
 msgstr "Nuevo séquel israelí"
 
 #: ../data/currencies.xml.in.h:86
-msgid "a-cr:ILS,au:&#x20AA;,sheqel"
+msgid "a-cr:ILS,au:₪,sheqel"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:87
@@ -415,7 +415,7 @@ msgid "Bitcoin"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:98
-msgid "a-cr:BTC,au:&#x20BF;,a:XBT,bitcoin,p:bitcoins"
+msgid "a-cr:BTC,au:₿,a:XBT,bitcoin,p:bitcoins"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:99
@@ -435,7 +435,7 @@ msgid "Afghan Afghani"
 msgstr "Afgani afgano"
 
 #: ../data/currencies.xml.in.h:103
-msgid "a-cr:AFN,aio:&#x060B;"
+msgid "a-cr:AFN,aio:؋"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:104
@@ -511,7 +511,7 @@ msgid "Armenian Dram"
 msgstr "Dram armenio"
 
 #: ../data/currencies.xml.in.h:121
-msgid "a-cr:AMD,au:&#x058F;"
+msgid "a-cr:AMD,au:֏"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:122
@@ -547,7 +547,7 @@ msgid "Azerbaijani Manat"
 msgstr "Manat azerbaiyano"
 
 #: ../data/currencies.xml.in.h:130
-msgid "a-cr:AZN,au:&#x20BC;"
+msgid "a-cr:AZN,au:₼"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:131
@@ -583,7 +583,7 @@ msgid "Bangladeshi Taka"
 msgstr "Taka bangladesí"
 
 #: ../data/currencies.xml.in.h:139
-msgid "a-cr:BDT,au:&#x09F3;"
+msgid "a-cr:BDT,au:৳"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:140
@@ -726,7 +726,7 @@ msgid "Cambodian Riel"
 msgstr "Riel camboyano"
 
 #: ../data/currencies.xml.in.h:174
-msgid "a-cr:KHR,aiu:&#x17DB;"
+msgid "a-cr:KHR,aiu:៛"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:175
@@ -826,7 +826,7 @@ msgid "Costa Rican colón"
 msgstr "Colón costarricense"
 
 #: ../data/currencies.xml.in.h:198
-msgid "a-cr:CRC,au:&#x20A1;"
+msgid "a-cr:CRC,au:₡"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:199
@@ -966,7 +966,7 @@ msgid "Georgian Lari"
 msgstr "Lari georgiano"
 
 #: ../data/currencies.xml.in.h:233
-msgid "a-cr:GEL,au:&#x20BE;"
+msgid "a-cr:GEL,au:₾"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:234
@@ -978,7 +978,7 @@ msgid "Ghanaian Cedi"
 msgstr "Cedi ghanés"
 
 #: ../data/currencies.xml.in.h:236
-msgid "a-cr:GHS,au:&#x20B5;"
+msgid "a-cr:GHS,au:₵"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:237
@@ -1074,7 +1074,7 @@ msgid "Iranian Rial"
 msgstr "Rial iraní"
 
 #: ../data/currencies.xml.in.h:260
-msgid "a-cr:IRR,aio:&#xFDFC;"
+msgid "a-cr:IRR,aio:﷼"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:261
@@ -1122,7 +1122,7 @@ msgid "Kazakhstani Tenge"
 msgstr "Tenge kazajo"
 
 #: ../data/currencies.xml.in.h:272
-msgid "a-cr:KZT,au:&#x20B8;"
+msgid "a-cr:KZT,au:₸"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:273
@@ -1170,7 +1170,7 @@ msgid "Lao Kip"
 msgstr "Kip laosiano"
 
 #: ../data/currencies.xml.in.h:284
-msgid "a-cr:LAK,au:&#x20AD;"
+msgid "a-cr:LAK,au:₭"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:285
@@ -1278,7 +1278,7 @@ msgid "Maldivian Rufiyaa"
 msgstr "Rupia maldiva"
 
 #: ../data/currencies.xml.in.h:311
-msgid "a-cr:MVR,aio:&#x783;"
+msgid "a-cr:MVR,aio:ރ"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:312
@@ -1327,7 +1327,7 @@ msgid "Mongolian Tögrög"
 msgstr "Tugrik mongol"
 
 #: ../data/currencies.xml.in.h:323
-msgid "a-cr:MNT,au:&#x20AE;"
+msgid "a-cr:MNT,au:₮"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:324
@@ -1387,7 +1387,7 @@ msgid "Nepalese Rupee"
 msgstr "Rupia nepalí"
 
 #: ../data/currencies.xml.in.h:338
-msgid "a-cr:NPR,aio:&#x930;&#x942;"
+msgid "a-cr:NPR,aio:रू"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:339
@@ -1411,7 +1411,7 @@ msgid "Nigerian Naira"
 msgstr "Naira nigerina"
 
 #: ../data/currencies.xml.in.h:344
-msgid "a-cr:NGN,au:&#x20A6;"
+msgid "a-cr:NGN,au:₦"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:345
@@ -1471,7 +1471,7 @@ msgid "Paraguayan Guaraní"
 msgstr "Guaraní paraguayo"
 
 #: ../data/currencies.xml.in.h:359
-msgid "a-cr:PYG,au:&#x20B2;"
+msgid "a-cr:PYG,au:₲"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:360
@@ -1603,7 +1603,7 @@ msgid "Sri Lankan Rupee"
 msgstr "Rupia esrilanqués"
 
 #: ../data/currencies.xml.in.h:392
-msgid "a-cr:LKR,aou:&#x0BF9;"
+msgid "a-cr:LKR,aou:௹"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:393
@@ -1759,7 +1759,7 @@ msgid "Ukrainian Hryvnia"
 msgstr "Grivna ucraniana"
 
 #: ../data/currencies.xml.in.h:431
-msgid "a-cr:UAH,au:&#x20B4;"
+msgid "a-cr:UAH,au:₴"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:432
@@ -1827,7 +1827,7 @@ msgid "Vietnamese Đồng"
 msgstr "Đồng vietnamita"
 
 #: ../data/currencies.xml.in.h:448
-msgid "a-cr:VND,au:&#x20AB;"
+msgid "a-cr:VND,au:₫"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:449
@@ -1871,7 +1871,7 @@ msgid "Cent (USD)"
 msgstr "Centavo (USD)"
 
 #: ../data/currencies.xml.in.h:459
-msgid "au:&#xA2;,r:cent,p:cents"
+msgid "au:¢,r:cent,p:cents"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:460
@@ -1895,7 +1895,7 @@ msgid "Greek Drachma (obsolete)"
 msgstr "Dracma griega (obsoleta)"
 
 #: ../data/currencies.xml.in.h:465
-msgid "a-cr:GRD,au:&#x20AF;"
+msgid "a-cr:GRD,au:₯"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:466
@@ -1903,7 +1903,7 @@ msgid "French Franc (obsolete)"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:467
-msgid "a-cr:FRF,au:&#x20A3;"
+msgid "a-cr:FRF,au:₣"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:468
@@ -1943,7 +1943,7 @@ msgid "Spanish Peseta (obsolete)"
 msgstr "Peseta española (obsoleta)"
 
 #: ../data/currencies.xml.in.h:477
-msgid "a-cr:ESP,au:&#x20A7;"
+msgid "a-cr:ESP,au:₧"
 msgstr ""
 
 #: ../data/currencies.xml.in.h:478
@@ -3854,7 +3854,7 @@ msgstr ""
 "valor deseado."
 
 #: ../data/functions.xml.in.h:248
-msgid "r:primePi,ou:prime&#x3C0;,o:prime_pi"
+msgid "r:primePi,ou:primeπ,o:prime_pi"
 msgstr ""
 
 #: ../data/functions.xml.in.h:249
@@ -3997,7 +3997,7 @@ msgstr ""
 "relativos de n."
 
 #: ../data/functions.xml.in.h:278
-msgid "r:totient,au:&#x3C6;,phi"
+msgid "r:totient,au:φ,phi"
 msgstr ""
 
 #: ../data/functions.xml.in.h:279
@@ -4561,7 +4561,7 @@ msgid "Heaviside Step Function"
 msgstr "Función escalón de Heaviside"
 
 #: ../data/functions.xml.in.h:397
-msgid "r:heaviside,au:&#x03B8;"
+msgid "r:heaviside,au:θ"
 msgstr ""
 
 #: ../data/functions.xml.in.h:398
@@ -4577,7 +4577,7 @@ msgid "Dirac Delta Function"
 msgstr "Función delta de Dirac"
 
 #: ../data/functions.xml.in.h:400
-msgid "r:dirac,au:&#x3B4;"
+msgid "r:dirac,au:δ"
 msgstr ""
 
 #: ../data/functions.xml.in.h:401
@@ -4617,7 +4617,7 @@ msgid "Real Part"
 msgstr "Parte real"
 
 #: ../data/functions.xml.in.h:410
-msgid "r:re,au:&#x211C;"
+msgid "r:re,au:ℜ"
 msgstr ""
 
 #: ../data/functions.xml.in.h:411
@@ -4629,7 +4629,7 @@ msgid "Imaginary Part"
 msgstr "Parte imaginaria"
 
 #: ../data/functions.xml.in.h:413
-msgid "r:im,au:&#x2111;"
+msgid "r:im,au:ℑ"
 msgstr ""
 
 #: ../data/functions.xml.in.h:414
@@ -4657,7 +4657,7 @@ msgid "Square Root"
 msgstr "Raíz cuadrada"
 
 #: ../data/functions.xml.in.h:420
-msgid "au:&#x221A;,r:sqrt"
+msgid "au:√,r:sqrt"
 msgstr ""
 
 #: ../data/functions.xml.in.h:421
@@ -4673,7 +4673,7 @@ msgid "Cube Root"
 msgstr "Raíz cúbica"
 
 #: ../data/functions.xml.in.h:423
-msgid "r:cbrt,aou:&#x221B;"
+msgid "r:cbrt,aou:∛"
 msgstr ""
 
 #: ../data/functions.xml.in.h:424
@@ -5734,7 +5734,7 @@ msgid "Means"
 msgstr "Medias"
 
 #: ../data/functions.xml.in.h:659
-msgid "r:mean,average,au:x&#x0304;"
+msgid "r:mean,average,au:x̄"
 msgstr ""
 
 #: ../data/functions.xml.in.h:660
@@ -7475,7 +7475,7 @@ msgid "Summation"
 msgstr "Sumatorio"
 
 #: ../data/functions.xml.in.h:1034
-msgid "au:&#x3A3;,au:&#x2211;,r:sum"
+msgid "au:Σ,au:∑,r:sum"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1035
@@ -7503,7 +7503,7 @@ msgid "Product of a sequence"
 msgstr "Productorio"
 
 #: ../data/functions.xml.in.h:1040
-msgid "au:&#x3A0;,r:product"
+msgid "au:Π,r:product"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1041
@@ -7695,7 +7695,7 @@ msgid "Integrate"
 msgstr "Integrar"
 
 #: ../data/functions.xml.in.h:1084
-msgid "r:integrate,integral,au:&#x222B;"
+msgid "r:integrate,integral,au:∫"
 msgstr ""
 
 #: ../data/functions.xml.in.h:1085
@@ -9110,7 +9110,7 @@ msgid "ar:n,r:nano"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:9
-msgid "aur:&#x3BC;,auor:&#x0B5;,ar:u,r:micro"
+msgid "aur:μ,auor:µ,ar:u,r:micro"
 msgstr ""
 
 #: ../data/prefixes.xml.in.h:10
@@ -9269,11 +9269,11 @@ msgid "r:nautical_mile,p:nautical_miles,a:nmi"
 msgstr "milla_náutica,p:millas_náuticas,ao:nmi"
 
 #: ../data/units.xml.in.h:15
-msgid "&#xC5;ngstr&#xF6;m"
+msgid "Ångström"
 msgstr ""
 
 #: ../data/units.xml.in.h:16
-msgid "aru:&#xC5;,aou:&#x212B;,u:&#xE5;ngstr&#xF6;m,angstrom"
+msgid "aru:Å,aou:Å,u:ångström,angstrom"
 msgstr ""
 
 #: ../data/units.xml.in.h:17
@@ -9457,7 +9457,7 @@ msgid "Solar Radius (nominal)"
 msgstr ""
 
 #: ../data/units.xml.in.h:60
-msgid "r:solar_radius,au:R_&#x2609;"
+msgid "r:solar_radius,au:R_☉"
 msgstr ""
 
 #: ../data/units.xml.in.h:61
@@ -9541,8 +9541,8 @@ msgid "Degree"
 msgstr "Grado"
 
 #: ../data/units.xml.in.h:82
-msgid "ar:deg,au:&#xB0;,degree,p:degrees"
-msgstr "au:&#xB0;,grado,p;grados"
+msgid "ar:deg,au:°,degree,p:degrees"
+msgstr "au:°,grado,p;grados"
 
 #: ../data/units.xml.in.h:83
 msgid "Gradian (Gon)"
@@ -9694,8 +9694,8 @@ msgid "Pound"
 msgstr "Libra"
 
 #: ../data/units.xml.in.h:121
-msgid "ar:lb,aou:&#x2114;,pound,p:pounds"
-msgstr "a:lb,aou:&#x2114;,libra,p:libras"
+msgid "ar:lb,aou:℔,pound,p:pounds"
+msgstr "a:lb,aou:℔,libra,p:libras"
 
 #: ../data/units.xml.in.h:122
 msgid "Short Hundredweight (Cental)"
@@ -9799,7 +9799,7 @@ msgid "Solar Mass"
 msgstr "Masa de Planck"
 
 #: ../data/units.xml.in.h:147
-msgid "r:solar_mass,au:M_&#x2609;"
+msgid "r:solar_mass,au:M_☉"
 msgstr ""
 
 #: ../data/units.xml.in.h:149
@@ -10103,15 +10103,15 @@ msgid "Ohm"
 msgstr "Ohmio"
 
 #: ../data/units.xml.in.h:229
-msgid "au:&#x3A9;,r:ohm,p:ohms,auio:&#x2126;"
-msgstr "au:&#x3A9;,ohmio,p:ohmios,auio:&#x2126;"
+msgid "au:Ω,r:ohm,p:ohms,auio:Ω"
+msgstr "au:Ω,ohmio,p:ohmios,auio:Ω"
 
 #: ../data/units.xml.in.h:230
 msgid "Abohm"
 msgstr "Abohmio"
 
 #: ../data/units.xml.in.h:231
-msgid "r:abohm,p:abohms,au:ab&#x3A9;"
+msgid "r:abohm,p:abohms,au:abΩ"
 msgstr ""
 
 #: ../data/units.xml.in.h:232
@@ -10119,7 +10119,7 @@ msgid "Statohm"
 msgstr "Estatohmio"
 
 #: ../data/units.xml.in.h:233
-msgid "r:statohm,p:statohms,au:stat&#x3A9;"
+msgid "r:statohm,p:statohms,au:statΩ"
 msgstr ""
 
 #: ../data/units.xml.in.h:234
@@ -10131,7 +10131,7 @@ msgid "Siemens"
 msgstr ""
 
 #: ../data/units.xml.in.h:236
-msgid "ar:S,siemens,auio:&#x2127;"
+msgid "ar:S,siemens,auio:℧"
 msgstr ""
 
 #: ../data/units.xml.in.h:237
@@ -10195,7 +10195,7 @@ msgid "Kelvin"
 msgstr ""
 
 #: ../data/units.xml.in.h:252
-msgid "ar:K,aou:&#x212A;,kelvin,p:kelvins"
+msgid "ar:K,aou:K,kelvin,p:kelvins"
 msgstr ""
 
 #: ../data/units.xml.in.h:253
@@ -10203,7 +10203,7 @@ msgid "Degree Celsius"
 msgstr "Grado Celsius"
 
 #: ../data/units.xml.in.h:254
-msgid "ar:oC,au:&#xB0;C,au:&#x2103;,r:celsius,p:celsius,centigrade,p:centigrades"
+msgid "ar:oC,au:°C,au:℃,r:celsius,p:celsius,centigrade,p:centigrades"
 msgstr ""
 
 #: ../data/units.xml.in.h:255
@@ -10211,7 +10211,7 @@ msgid "Degree Rankine"
 msgstr "Grado Rankine"
 
 #: ../data/units.xml.in.h:256
-msgid "ar:oR,a:oRa,au:&#xB0;R,au:&#xB0;Ra,r:rankine"
+msgid "ar:oR,a:oRa,au:°R,au:&#xB0;Ra,r:rankine"
 msgstr ""
 
 #: ../data/units.xml.in.h:257
@@ -10219,7 +10219,7 @@ msgid "Degree Fahrenheit"
 msgstr "Grado Fahrenheit"
 
 #: ../data/units.xml.in.h:258
-msgid "ar:oF,au:&#xB0;F,au:&#x2109;,r:fahrenheit"
+msgid "ar:oF,au:°F,au:℉,r:fahrenheit"
 msgstr ""
 
 #: ../data/units.xml.in.h:259
@@ -10539,8 +10539,8 @@ msgid "Liter"
 msgstr "Litro"
 
 #: ../data/units.xml.in.h:337
-msgid "ar:L,ar:l,aou:&#x2113;,liter,p:liters,litre,p:litres"
-msgstr "a:L,a:l,aou:&#x2113;,litro,p:litros"
+msgid "ar:L,ar:l,aou:ℓ,liter,p:liters,litre,p:litres"
+msgstr "a:L,a:l,aou:ℓ,litro,p:litros"
 
 #: ../data/units.xml.in.h:338
 msgid "Milliliter"
@@ -11280,8 +11280,8 @@ msgid "Meter of Water"
 msgstr "Metro de columna de agua"
 
 #: ../data/units.xml.in.h:520
-msgid "ar:mWC,a:mwg,au:mH&#x2082;O"
-msgstr "a:mca,au:mH&#x2082;O"
+msgid "ar:mWC,a:mwg,au:mH₂O"
+msgstr "a:mca,au:mH₂O"
 
 #: ../data/units.xml.in.h:521
 msgid "Millimeter of Water"
@@ -11296,7 +11296,7 @@ msgid "Inch of Water"
 msgstr "Pulgada de columna de aqua"
 
 #: ../data/units.xml.in.h:524
-msgid "ar:inWC,a:iwg,au:inH&#x2082;O"
+msgid "ar:inWC,a:iwg,au:inH₂O"
 msgstr ""
 
 #: ../data/units.xml.in.h:525
@@ -11553,11 +11553,11 @@ msgid "ar:hp,horsepower,p:horsepowers"
 msgstr ""
 
 #: ../data/units.xml.in.h:588
-msgid "Pferdest&#xE4;rke"
+msgid "Pferdestärke"
 msgstr ""
 
 #: ../data/units.xml.in.h:589
-msgid "ar:PS,u:pferdest&#xE4;rke"
+msgid "ar:PS,u:pferdestärke"
 msgstr ""
 
 #: ../data/units.xml.in.h:590
@@ -11585,7 +11585,7 @@ msgid "Solar Luminosity (nominal)"
 msgstr ""
 
 #: ../data/units.xml.in.h:596
-msgid "r:solar_luminosity,au:L_&#x2609;"
+msgid "r:solar_luminosity,au:L_☉"
 msgstr ""
 
 #: ../data/units.xml.in.h:597
@@ -12058,7 +12058,7 @@ msgid "Per Mille"
 msgstr "Por mil"
 
 #: ../data/variables.xml.in.h:3
-msgid "r:permille,au:&#x2030;"
+msgid "r:permille,au:‰"
 msgstr ""
 
 #: ../data/variables.xml.in.h:4
@@ -12066,7 +12066,7 @@ msgid "Per Myriad"
 msgstr "Por diez mil"
 
 #: ../data/variables.xml.in.h:5
-msgid "r:permyriad,au:&#x2031;"
+msgid "r:permyriad,au:‱"
 msgstr ""
 
 #: ../data/variables.xml.in.h:6
@@ -12659,8 +12659,8 @@ msgid "Thomson cross section"
 msgstr "Sección eficaz de Thomson"
 
 #: ../data/variables.xml.in.h:154
-msgid "Weak Mixing Angle (sin²&#x03B8;w)"
-msgstr "Ángulo de mezcla débil (sin²&#x03B8;w)"
+msgid "Weak Mixing Angle (sin²θw)"
+msgstr "Ángulo de mezcla débil (sin²θw)"
 
 #: ../data/variables.xml.in.h:155
 msgid "W to Z Mass Ratio"
@@ -12899,7 +12899,7 @@ msgid "Positive Infinity"
 msgstr "Infinito positivo"
 
 #: ../data/variables.xml.in.h:214
-msgid "a:&#x221E;,r:plus_infinity,r:infinity"
+msgid "a:∞,r:plus_infinity,r:infinity"
 msgstr "infinito,másinfinito"
 
 #: ../data/variables.xml.in.h:215
@@ -12939,7 +12939,7 @@ msgid "Pauli Matrix 0"
 msgstr "Matriz de Pauli 0"
 
 #: ../data/variables.xml.in.h:225
-msgid "rs:pauli_0,aus:&#x03C3;_0"
+msgid "rs:pauli_0,aus:σ_0"
 msgstr ""
 
 #: ../data/variables.xml.in.h:226
@@ -12947,7 +12947,7 @@ msgid "Pauli Matrix 1"
 msgstr "Matriz de Pauli 1"
 
 #: ../data/variables.xml.in.h:227
-msgid "rs:pauli_1,aus:&#x03C3;_1"
+msgid "rs:pauli_1,aus:σ_1"
 msgstr ""
 
 #: ../data/variables.xml.in.h:228
@@ -12955,7 +12955,7 @@ msgid "Pauli Matrix 2"
 msgstr "Matriz de Pauli 2"
 
 #: ../data/variables.xml.in.h:229
-msgid "rs:pauli_2,aus:&#x03C3;_2"
+msgid "rs:pauli_2,aus:σ_2"
 msgstr ""
 
 #: ../data/variables.xml.in.h:230
@@ -12963,7 +12963,7 @@ msgid "Pauli Matrix 3"
 msgstr "Matriz de Pauli 3"
 
 #: ../data/variables.xml.in.h:231
-msgid "rs:pauli_3,aus:&#x03C3;_3"
+msgid "rs:pauli_3,aus:σ_3"
 msgstr ""
 
 #: ../data/variables.xml.in.h:234

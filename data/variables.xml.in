@@ -4,11 +4,11 @@
     <_title>Small Numbers</_title>
     <builtin_variable name="permille">
       <_title>Per Mille</_title>
-      <_names>r:permille,au:&#x2030;</_names>
+      <_names>r:permille,au:‰</_names>
     </builtin_variable>
     <builtin_variable name="permyriad">
       <_title>Per Myriad</_title>
-      <_names>r:permyriad,au:&#x2031;</_names>
+      <_names>r:permyriad,au:‱</_names>
     </builtin_variable>
     <builtin_variable name="%">
       <_title>Percent</_title>
@@ -192,12 +192,12 @@
       </variable>
       <variable>
         <_title>Electric Constant (Permittivity of Free Space)</_title>
-        <names>r:electric_constant,asu:&#x3B5;_0,vacuum_permittivity,aos:epsilon_0</names>
+        <names>r:electric_constant,asu:ε_0,vacuum_permittivity,aos:epsilon_0</names>
         <value>elementary_charge^2/(2*planck*fine_structure*c)</value>
       </variable>
       <variable>
         <_title>Magnetic Constant (Permeability of Free Space)</_title>
-        <names>r:magnetic_constant,asu:&#x3BC;_0,asou:&#x0B5;_0,vacuum_permeability,aos:mu_0</names>
+        <names>r:magnetic_constant,asu:μ_0,asou:µ_0,vacuum_permeability,aos:mu_0</names>
         <value>(2*planck*fine_structure)/(c*elementary_charge^2)</value>
       </variable>
       <variable>
@@ -222,7 +222,7 @@
       </variable>
       <variable>
         <_title>Standard Acceleration due to Gravity</_title>
-        <names>r:standard_gravity,asu:g_0,asu:&#x0261;_0,asu:&#x0261;_n</names>
+        <names>r:standard_gravity,asu:g_0,asu:ɡ_0,asu:&#x0261;_n</names>
         <value unit="m s^(-2)">9.80665</value>
       </variable>
     </category>
@@ -230,7 +230,7 @@
       <_title>Electromagnetic Constants</_title>
       <variable>
         <_title>Bohr Magneton</_title>
-        <names>r:bohr_magneton,asu:&#x3BC;_B,asou:&#x0B5;_B,aos:mu_B</names>
+        <names>r:bohr_magneton,asu:μ_B,asou:µ_B,aos:mu_B</names>
         <value>(elementary_charge*planck)/(4*electron_mass*pi)</value>
       </variable>
       <variable>
@@ -265,12 +265,12 @@
       </variable>
       <variable>
         <_title>Magnetic Flux Quantum</_title>
-        <names>r:magnetic_flux_quantum,asu:&#x3A6;_0,aos:phi_0</names>
+        <names>r:magnetic_flux_quantum,asu:Φ_0,aos:phi_0</names>
         <value>planck/(2*elementary_charge)</value>
       </variable>
       <variable>
         <_title>Nuclear Magneton</_title>
-        <names>r:nuclear_magneton,asu:&#x3BC;_N,asou:&#x0B5;_N,aos:mu_N</names>
+        <names>r:nuclear_magneton,asu:μ_N,asou:µ_N,aos:mu_N</names>
         <value>elementary_charge*planck2pi/(2*proton_mass)</value>
       </variable>
       <variable>
@@ -439,12 +439,12 @@
       </variable>
       <variable>
         <_title>Tau Mass</_title>
-        <names>rs:tau_mass,asu:m_&#x3C4;,aos:m_tau</names>
+        <names>rs:tau_mass,asu:m_τ,aos:m_tau</names>
         <value>nounit(tau_u)*atomic_mass_constant</value>
       </variable>
       <variable>
         <_title>Muon Mass</_title>
-        <names>rs:muon_mass,asu:m_&#x3BC;,asou:m_&#x0B5;,aos:m_mu</names>
+        <names>rs:muon_mass,asu:m_μ,asou:m_µ,aos:m_mu</names>
         <value>nounit(muon_u)*atomic_mass_constant</value>
       </variable>
       <variable>
@@ -454,7 +454,7 @@
       </variable>
       <variable>
         <_title>Alpha Particle Mass</_title>
-        <names>rs:alpha_particle_mass,asu:m_&#x3B1;,aos:m_alpha</names>
+        <names>rs:alpha_particle_mass,asu:m_α,aos:m_alpha</names>
         <value>nounit(alpha_particle_u)*atomic_mass_constant</value>
       </variable>
     </category>
@@ -462,7 +462,7 @@
       <_title>Compton Wavelength</_title>
       <variable>
         <_title>Compton Wavelength (electron)</_title>
-        <names>r:compton_wavelength,asu:&#x3BB;_C,aos:lambda_C</names>
+        <names>r:compton_wavelength,asu:λ_C,aos:lambda_C</names>
         <value>planck/(electron_mass*c)</value>
       </variable>
       <variable>
@@ -472,17 +472,17 @@
       </variable>
       <variable>
         <_title>Muon Compton Wavelength</_title>
-        <names>r:muon_compton_wavelength,asu:&#x3BB;_C&#x3BC;</names>
+        <names>r:muon_compton_wavelength,asu:λ_Cμ</names>
         <value>planck/(muon_mass*c)</value>
       </variable>
       <variable>
         <_title>Reduced Muon Compton Wavelength</_title>
-        <names>r:muon_compton_wavelength_2pi,asu:&#x019b;_C&#x3BC;</names>
+        <names>r:muon_compton_wavelength_2pi,asu:&#x019b;_Cμ</names>
         <value>planck2pi/(muon_mass*c)</value>
       </variable>
       <variable>
         <_title>Neutron Compton Wavelength</_title>
-        <names>r:neutron_compton_wavelength,asu:&#x3BB;_Cn</names>
+        <names>r:neutron_compton_wavelength,asu:λ_Cn</names>
         <value>planck/(neutron_mass*c)</value>
       </variable>
       <variable>
@@ -492,7 +492,7 @@
       </variable>
       <variable>
         <_title>Proton Compton Wavelength</_title>
-        <names>r:proton_compton_wavelength,asu:&#x3BB;_Cp</names>
+        <names>r:proton_compton_wavelength,asu:λ_Cp</names>
         <value>planck/(proton_mass*c)</value>
       </variable>
       <variable>
@@ -502,12 +502,12 @@
       </variable>
       <variable>
         <_title>Tau Compton Wavelength</_title>
-        <names>r:tau_compton_wavelength,asu:&#x3BB;_C&#x3C4;</names>
+        <names>r:tau_compton_wavelength,asu:λ_Cτ</names>
         <value>planck/(tau_mass*c)</value>
       </variable>
       <variable>
         <_title>Reduced Tau Compton Wavelength</_title>
-        <names>r:tau_compton_wavelength_2pi,asu:&#x019b;_C&#x3C4;</names>
+        <names>r:tau_compton_wavelength_2pi,asu:&#x019b;_Cτ</names>
         <value>planck2pi/(tau_mass*c)</value>
       </variable>
     </category>
@@ -530,7 +530,7 @@
       </variable>
       <variable>
         <_title>Fine-Structure Constant</_title>
-        <names>r:fine_structure,au:&#x03B1;,ao:alpha</names>
+        <names>r:fine_structure,au:α,ao:alpha</names>
         <value uncertainty="1.13E-12">7.29735256434E-3</value>
       </variable>
       <variable>
@@ -550,17 +550,17 @@
       </variable>
       <variable>
         <_title>Rydberg Constant</_title>
-        <names>r:rydberg,asu:R_&#x221E;</names>
+        <names>r:rydberg,asu:R_∞</names>
         <value uncertainty="0.000012" unit="m^(-1)">10973731.5681569</value>
       </variable>
       <variable>
         <_title>Thomson cross section</_title>
-        <names>r:thomson_cross_section,asu:&#x03C3;_t,aos:sigma_t</names>
+        <names>r:thomson_cross_section,asu:σ_t,aos:sigma_t</names>
         <value>(8*pi/3)*classical_electron_radius^2</value>
       </variable>
       <variable>
-        <_title>Weak Mixing Angle (sin²&#x03B8;w)</_title>
-        <names>weak_mixing_angle,asu:sin2&#x03B8;_W,r:weinberg,aos:sin2_theta_W</names>
+        <_title>Weak Mixing Angle (sin²θw)</_title>
+        <names>weak_mixing_angle,asu:sin2θ_W,r:weinberg,aos:sin2_theta_W</names>
         <value>1-w_z_ratio^2</value>
       </variable>
       <variable>
@@ -603,7 +603,7 @@
       </variable>
       <variable>
         <_title>Faraday Constant</_title>
-        <names>r:faraday,au:&#x2131;</names>
+        <names>r:faraday,au:ℱ</names>
         <value>avogadro*elementary_charge</value>
       </variable>
       <variable>
@@ -668,7 +668,7 @@
       </variable>
       <variable>
         <_title>Stefan-Boltzmann Constant</_title>
-        <names>r:stefan,au:&#x03C3;,ao:sigma</names>
+        <names>r:stefan,au:σ,ao:sigma</names>
         <value>(2pi^5*boltzmann^4)/(15*planck^3*c^2)</value>
       </variable>
       <variable>
@@ -790,7 +790,7 @@
     <_title>Basic Constants</_title>
     <variable>
       <_title>Golden Ratio</_title>
-      <names>r:golden,au:&#x3C6;,aos:phi</names>
+      <names>r:golden,au:φ,aos:phi</names>
       <value>(1+sqrt(5))/2</value>
     </variable>
     <variable>
@@ -810,12 +810,12 @@
     </variable>
     <variable>
       <_title>Tau (2pi)</_title>
-      <names>au:&#x3C4;,r:tau</names>
+      <names>au:τ,r:tau</names>
       <value>2*pi</value>
     </variable>
     <variable>
       <_title>Plastic Number</_title>
-      <names>r:plastic,au:&#x3C1;,aos:rho</names>
+      <names>r:plastic,au:ρ,aos:rho</names>
       <value>cbrt((9+sqrt(69))/18)+cbrt((9-sqrt(69))/18)</value>
     </variable>
     <builtin_variable name="e">
@@ -824,11 +824,11 @@
     </builtin_variable>
     <builtin_variable name="pi">
       <_title>Archimedes' Constant (pi)</_title>
-      <names>au:&#x3C0;,r:pi</names>
+      <names>au:π,r:pi</names>
     </builtin_variable>
     <builtin_variable name="euler">
       <_title>Euler's Constant</_title>
-      <names>au:&#x3B3;,r:euler</names>
+      <names>au:γ,r:euler</names>
     </builtin_variable>
     <builtin_variable name="catalan">
       <_title>Catalan's Constant</_title>
@@ -843,7 +843,7 @@
     </builtin_variable>
     <builtin_variable name="plus_infinity">
       <_title>Positive Infinity</_title>
-      <_names>a:&#x221E;,r:plus_infinity,r:infinity</_names>
+      <_names>a:∞,r:plus_infinity,r:infinity</_names>
     </builtin_variable>
     <builtin_variable name="minus_infinity">
       <_title>Negative Infinity</_title>
@@ -868,22 +868,22 @@
     <_title>Matrices &amp; Vectors</_title>
     <variable>
       <_title>Pauli Matrix 0</_title>
-      <_names>rs:pauli_0,aus:&#x03C3;_0</_names>
+      <_names>rs:pauli_0,aus:σ_0</_names>
       <value>[1 0; 0 1]</value>
     </variable>
     <variable>
       <_title>Pauli Matrix 1</_title>
-      <_names>rs:pauli_1,aus:&#x03C3;_1</_names>
+      <_names>rs:pauli_1,aus:σ_1</_names>
       <value>[0 1; 1 0]</value>
     </variable>
     <variable>
       <_title>Pauli Matrix 2</_title>
-      <_names>rs:pauli_2,aus:&#x03C3;_2</_names>
+      <_names>rs:pauli_2,aus:σ_2</_names>
       <value>[0 -i; i 0]</value>
     </variable>
     <variable>
       <_title>Pauli Matrix 3</_title>
-      <_names>rs:pauli_3,aus:&#x03C3;_3</_names>
+      <_names>rs:pauli_3,aus:σ_3</_names>
       <value>[1 0; 0 -1]</value>
     </variable>
   </category>
