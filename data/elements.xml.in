@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <QALCULATE version="2.9.0">
   <object symbol="H" number="1">
-    <_name>Hydrogen</_name>
+    <name>Hydrogen</name>
     <class>9</class>
     <weight>[1.00784, 1.00811]</weight>
     <boiling>20.271</boiling>
@@ -11,7 +11,7 @@
     <y_pos>1</y_pos>
   </object>
   <object symbol="He" number="2">
-    <_name>Helium</_name>
+    <name>Helium</name>
     <class>10</class>
     <weight>4.002602(2)</weight>
     <boiling>4.222</boiling>
@@ -21,7 +21,7 @@
     <y_pos>1</y_pos>
   </object>
   <object symbol="Li" number="3">
-    <_name>Lithium</_name>
+    <name>Lithium</name>
     <class>1</class>
     <weight>[6.938, 6.997] </weight>
     <boiling>1603</boiling>
@@ -31,7 +31,7 @@
     <y_pos>2</y_pos>
   </object>
   <object symbol="Be" number="4">
-    <_name>Beryllium</_name>
+    <name>Beryllium</name>
     <class>2</class>
     <weight>9.0121831(5)</weight>
     <boiling>2742</boiling>
@@ -41,7 +41,7 @@
     <y_pos>2</y_pos>
   </object>
   <object symbol="B" number="5">
-    <_name>Boron</_name>
+    <name>Boron</name>
     <class>7</class>
     <weight>[10.806, 10.821]</weight>
     <boiling>4200</boiling>
@@ -51,7 +51,7 @@
     <y_pos>2</y_pos>
   </object>
   <object symbol="C" number="6">
-    <_name>Carbon</_name>
+    <name>Carbon</name>
     <class>8</class>
     <weight>[12.0096, 12.0116]</weight>
     <density>2.266</density>
@@ -59,7 +59,7 @@
     <y_pos>2</y_pos>
   </object>
   <object symbol="N" number="7">
-    <_name>Nitrogen</_name>
+    <name>Nitrogen</name>
     <class>9</class>
     <weight>[14.00643, 14.00728]</weight>
     <boiling>77.355</boiling>
@@ -69,7 +69,7 @@
     <y_pos>2</y_pos>
   </object>
   <object symbol="O" number="8">
-    <_name>Oxygen</_name>
+    <name>Oxygen</name>
     <class>9</class>
     <weight>[15.99903, 15.99977]</weight>
     <boiling>90.188</boiling>
@@ -79,7 +79,7 @@
     <y_pos>2</y_pos>
   </object>
   <object symbol="F" number="9">
-    <_name>Fluorine</_name>
+    <name>Fluorine</name>
     <class>9</class>
     <weight>18.998403163(6)</weight>
     <boiling>85.03</boiling>
@@ -89,7 +89,7 @@
     <y_pos>2</y_pos>
   </object>
   <object symbol="Ne" number="10">
-    <_name>Neon</_name>
+    <name>Neon</name>
     <class>10</class>
     <weight>20.1797(6)</weight>
     <boiling>27.104</boiling>
@@ -99,7 +99,7 @@
     <y_pos>2</y_pos>
   </object>
   <object symbol="Na" number="11">
-    <_name>Sodium</_name>
+    <name>Sodium</name>
     <class>1</class>
     <weight>22.98976928(2)</weight>
     <boiling>1156.090</boiling>
@@ -109,7 +109,7 @@
     <y_pos>3</y_pos>
   </object>
   <object symbol="Mg" number="12">
-    <_name>Magnesium</_name>
+    <name>Magnesium</name>
     <class>2</class>
     <weight>[24.304, 24.307]</weight>
     <boiling>1363</boiling>
@@ -119,7 +119,7 @@
     <y_pos>3</y_pos>
   </object>
   <object symbol="Al" number="13">
-    <_name>Aluminum</_name>
+    <name>Aluminum</name>
     <class>6</class>
     <weight>26.9815384(3)</weight>
     <boiling>2743</boiling>
@@ -129,7 +129,7 @@
     <y_pos>3</y_pos>
   </object>
   <object symbol="Si" number="14">
-    <_name>Silicon</_name>
+    <name>Silicon</name>
     <class>7</class>
     <weight>[28.084, 28.086]</weight>
     <boiling>3538</boiling>
@@ -139,7 +139,7 @@
     <y_pos>3</y_pos>
   </object>
   <object symbol="P" number="15">
-    <_name>Phosphorus</_name>
+    <name>Phosphorus</name>
     <class>8</class>
     <weight>30.973761998(5)</weight>
     <boiling>553.7</boiling>
@@ -149,7 +149,7 @@
     <y_pos>3</y_pos>
   </object>
   <object symbol="S" number="16">
-    <_name>Sulfur</_name>
+    <name>Sulfur</name>
     <class>8</class>
     <weight>[32.059, 32.076]</weight>
     <boiling>717.8</boiling>
@@ -159,7 +159,7 @@
     <y_pos>3</y_pos>
   </object>
   <object symbol="Cl" number="17">
-    <_name>Chlorine</_name>
+    <name>Chlorine</name>
     <class>9</class>
     <weight>[35.446, 35.457]</weight>
     <boiling>239.11</boiling>
@@ -169,7 +169,7 @@
     <y_pos>3</y_pos>
   </object>
   <object symbol="Ar" number="18">
-    <_name>Argon</_name>
+    <name>Argon</name>
     <class>10</class>
     <weight>[39.792, 39.963]</weight>
     <boiling>87.302</boiling>
@@ -179,7 +179,7 @@
     <y_pos>3</y_pos>
   </object>
   <object symbol="K" number="19">
-    <_name>Potassium</_name>
+    <name>Potassium</name>
     <class>1</class>
     <weight>39.0983(1)</weight>
     <boiling>1032</boiling>
@@ -189,7 +189,7 @@
     <y_pos>4</y_pos>
   </object>
   <object symbol="Ca" number="20">
-    <_name>Calcium</_name>
+    <name>Calcium</name>
     <class>2</class>
     <weight>40.078(4)</weight>
     <boiling>1757</boiling>
@@ -199,7 +199,7 @@
     <y_pos>4</y_pos>
   </object>
   <object symbol="Sc" number="21">
-    <_name>Scandium</_name>
+    <name>Scandium</name>
     <class>5</class>
     <weight>44.955908(5)</weight>
     <boiling>3109</boiling>
@@ -209,7 +209,7 @@
     <y_pos>4</y_pos>
   </object>
   <object symbol="Ti" number="22">
-    <_name>Titanium</_name>
+    <name>Titanium</name>
     <class>5</class>
     <weight>47.867(1)</weight>
     <boiling>3560</boiling>
@@ -219,7 +219,7 @@
     <y_pos>4</y_pos>
   </object>
   <object symbol="V" number="23">
-    <_name>Vanadium</_name>
+    <name>Vanadium</name>
     <class>5</class>
     <weight>50.9415(1)</weight>
     <boiling>3680</boiling>
@@ -229,7 +229,7 @@
     <y_pos>4</y_pos>
   </object>
   <object symbol="Cr" number="24">
-    <_name>Chromium</_name>
+    <name>Chromium</name>
     <class>5</class>
     <weight>51.9961(6)</weight>
     <boiling>2944</boiling>
@@ -239,7 +239,7 @@
     <y_pos>4</y_pos>
   </object>
   <object symbol="Mn" number="25">
-    <_name>Manganese</_name>
+    <name>Manganese</name>
     <class>5</class>
     <weight>54.938043(2)</weight>
     <boiling>2334</boiling>
@@ -249,7 +249,7 @@
     <y_pos>4</y_pos>
   </object>
   <object symbol="Fe" number="26">
-    <_name>Iron</_name>
+    <name>Iron</name>
     <class>5</class>
     <weight>55.845(2)</weight>
     <boiling>3134</boiling>
@@ -259,7 +259,7 @@
     <y_pos>4</y_pos>
   </object>
   <object symbol="Co" number="27">
-    <_name>Cobalt</_name>
+    <name>Cobalt</name>
     <class>5</class>
     <weight>58.933194(3)</weight>
     <boiling>3200</boiling>
@@ -269,7 +269,7 @@
     <y_pos>4</y_pos>
   </object>
   <object symbol="Ni" number="28">
-    <_name>Nickel</_name>
+    <name>Nickel</name>
     <class>5</class>
     <weight>58.6934(4)</weight>
     <boiling>3003</boiling>
@@ -279,7 +279,7 @@
     <y_pos>4</y_pos>
   </object>
   <object symbol="Cu" number="29">
-    <_name>Copper</_name>
+    <name>Copper</name>
     <class>5</class>
     <weight>63.546(3)</weight>
     <boiling>2835</boiling>
@@ -289,7 +289,7 @@
     <y_pos>4</y_pos>
   </object>
   <object symbol="Zn" number="30">
-    <_name>Zinc</_name>
+    <name>Zinc</name>
     <class>5</class>
     <weight>65.38(2)</weight>
     <boiling>1180</boiling>
@@ -299,7 +299,7 @@
     <y_pos>4</y_pos>
   </object>
   <object symbol="Ga" number="31">
-    <_name>Gallium</_name>
+    <name>Gallium</name>
     <class>6</class>
     <weight>69.723(1)</weight>
     <boiling>2673</boiling>
@@ -309,7 +309,7 @@
     <y_pos>4</y_pos>
   </object>
   <object symbol="Ge" number="32">
-    <_name>Germanium</_name>
+    <name>Germanium</name>
     <class>7</class>
     <weight>72.630(8)</weight>
     <boiling>3106</boiling>
@@ -319,7 +319,7 @@
     <y_pos>4</y_pos>
   </object>
   <object symbol="As" number="33">
-    <_name>Arsenic</_name>
+    <name>Arsenic</name>
     <class>7</class>
     <weight>74.921595(6)</weight>
     <boiling>887</boiling>
@@ -329,7 +329,7 @@
     <y_pos>4</y_pos>
   </object>
   <object symbol="Se" number="34">
-    <_name>Selenium</_name>
+    <name>Selenium</name>
     <class>8</class>
     <weight>78.971(8)</weight>
     <boiling>958</boiling>
@@ -339,7 +339,7 @@
     <y_pos>4</y_pos>
   </object>
   <object symbol="Br" number="35">
-    <_name>Bromine</_name>
+    <name>Bromine</name>
     <class>9</class>
     <weight>[79.901, 79.907]</weight>
     <boiling>332.0</boiling>
@@ -349,7 +349,7 @@
     <y_pos>4</y_pos>
   </object>
   <object symbol="Kr" number="36">
-    <_name>Krypton</_name>
+    <name>Krypton</name>
     <class>10</class>
     <weight>83.798(2)</weight>
     <boiling>119.93</boiling>
@@ -359,7 +359,7 @@
     <y_pos>4</y_pos>
   </object>
   <object symbol="Rb" number="37">
-    <_name>Rubidium</_name>
+    <name>Rubidium</name>
     <class>1</class>
     <weight>85.4678(3)</weight>
     <boiling>961</boiling>
@@ -369,7 +369,7 @@
     <y_pos>5</y_pos>
   </object>
   <object symbol="Sr" number="38">
-    <_name>Strontium</_name>
+    <name>Strontium</name>
     <class>2</class>
     <weight>87.62(1)</weight>
     <boiling>1650</boiling>
@@ -379,7 +379,7 @@
     <y_pos>5</y_pos>
   </object>
   <object symbol="Y" number="39">
-    <_name>Yttrium</_name>
+    <name>Yttrium</name>
     <class>5</class>
     <weight>88.90584(1)</weight>
     <boiling>3203</boiling>
@@ -389,7 +389,7 @@
     <y_pos>5</y_pos>
   </object>
   <object symbol="Zr" number="40">
-    <_name>Zirconium</_name>
+    <name>Zirconium</name>
     <class>5</class>
     <weight>91.224(2)</weight>
     <boiling>4650</boiling>
@@ -399,7 +399,7 @@
     <y_pos>5</y_pos>
   </object>
   <object symbol="Nb" number="41">
-    <_name>Niobium</_name>
+    <name>Niobium</name>
     <class>5</class>
     <weight>92.90637(1)</weight>
     <boiling>5017</boiling>
@@ -409,7 +409,7 @@
     <y_pos>5</y_pos>
   </object>
   <object symbol="Mo" number="42">
-    <_name>Molybdenum</_name>
+    <name>Molybdenum</name>
     <class>5</class>
     <weight>95.95(1)</weight>
     <boiling>4912</boiling>
@@ -419,7 +419,7 @@
     <y_pos>5</y_pos>
   </object>
   <object symbol="Tc" number="43">
-    <_name>Technetium</_name>
+    <name>Technetium</name>
     <class>5</class>
     <weight>98</weight>
     <boiling>4538</boiling>
@@ -429,7 +429,7 @@
     <y_pos>5</y_pos>
   </object>
   <object symbol="Ru" number="44">
-    <_name>Ruthenium</_name>
+    <name>Ruthenium</name>
     <class>5</class>
     <weight>101.07(2)</weight>
     <boiling>4423</boiling>
@@ -439,7 +439,7 @@
     <y_pos>5</y_pos>
   </object>
   <object symbol="Rh" number="45">
-    <_name>Rhodium</_name>
+    <name>Rhodium</name>
     <class>5</class>
     <weight>102.90549(2)</weight>
     <boiling>3968</boiling>
@@ -449,7 +449,7 @@
     <y_pos>5</y_pos>
   </object>
   <object symbol="Pd" number="46">
-    <_name>Palladium</_name>
+    <name>Palladium</name>
     <class>5</class>
     <weight>106.42(1)</weight>
     <boiling>3236</boiling>
@@ -459,7 +459,7 @@
     <y_pos>5</y_pos>
   </object>
   <object symbol="Ag" number="47">
-    <_name>Silver</_name>
+    <name>Silver</name>
     <class>5</class>
     <weight>107.8682(2)</weight>
     <boiling>2435</boiling>
@@ -469,7 +469,7 @@
     <y_pos>5</y_pos>
   </object>
   <object symbol="Cd" number="48">
-    <_name>Cadmium</_name>
+    <name>Cadmium</name>
     <class>5</class>
     <weight>112.414(4)</weight>
     <boiling>1040</boiling>
@@ -479,7 +479,7 @@
     <y_pos>5</y_pos>
   </object>
   <object symbol="In" number="49">
-    <_name>Indium</_name>
+    <name>Indium</name>
     <class>6</class>
     <weight>114.818(1)</weight>
     <boiling>2345</boiling>
@@ -489,7 +489,7 @@
     <y_pos>5</y_pos>
   </object>
   <object symbol="Sn" number="50">
-    <_name>Tin</_name>
+    <name>Tin</name>
     <class>6</class>
     <weight>118.710(7)</weight>
     <boiling>2875</boiling>
@@ -499,7 +499,7 @@
     <y_pos>5</y_pos>
   </object>
   <object symbol="Sb" number="51">
-    <_name>Antimony</_name>
+    <name>Antimony</name>
     <class>7</class>
     <weight>121.760(1)</weight>
     <boiling>1908</boiling>
@@ -509,7 +509,7 @@
     <y_pos>5</y_pos>
   </object>
   <object symbol="Te" number="52">
-    <_name>Tellurium</_name>
+    <name>Tellurium</name>
     <class>7</class>
     <weight>127.60(3)</weight>
     <boiling>1261</boiling>
@@ -519,7 +519,7 @@
     <y_pos>5</y_pos>
   </object>
   <object symbol="I" number="53">
-    <_name>Iodine</_name>
+    <name>Iodine</name>
     <class>9</class>
     <weight>126.90447(3)</weight>
     <boiling>457.4</boiling>
@@ -529,7 +529,7 @@
     <y_pos>5</y_pos>
   </object>
   <object symbol="Xe" number="54">
-    <_name>Xenon</_name>
+    <name>Xenon</name>
     <class>10</class>
     <weight>131.293(6)</weight>
     <boiling>165.051</boiling>
@@ -539,7 +539,7 @@
     <y_pos>5</y_pos>
   </object>
   <object symbol="Cs" number="55">
-    <_name>Cesium</_name>
+    <name>Cesium</name>
     <class>1</class>
     <weight>132.90545196(6)</weight>
     <boiling>944</boiling>
@@ -549,7 +549,7 @@
     <y_pos>6</y_pos>
   </object>
   <object symbol="Ba" number="56">
-    <_name>Barium</_name>
+    <name>Barium</name>
     <class>2</class>
     <weight>137.327(7)</weight>
     <boiling>2118</boiling>
@@ -559,7 +559,7 @@
     <y_pos>6</y_pos>
   </object>
   <object symbol="La" number="57">
-    <_name>Lanthanum</_name>
+    <name>Lanthanum</name>
     <class>3</class>
     <weight>138.90547(7)</weight>
     <boiling>3737</boiling>
@@ -569,7 +569,7 @@
     <y_pos>9</y_pos>
   </object>
   <object symbol="Ce" number="58">
-    <_name>Cerium</_name>
+    <name>Cerium</name>
     <class>3</class>
     <weight>140.116(1)</weight>
     <boiling>3716</boiling>
@@ -579,7 +579,7 @@
     <y_pos>9</y_pos>
   </object>
   <object symbol="Pr" number="59">
-    <_name>Praseodymium</_name>
+    <name>Praseodymium</name>
     <class>3</class>
     <weight>140.90766(1)</weight>
     <boiling>3403</boiling>
@@ -589,7 +589,7 @@
     <y_pos>9</y_pos>
   </object>
   <object symbol="Nd" number="60">
-    <_name>Neodymium</_name>
+    <name>Neodymium</name>
     <class>3</class>
     <weight>144.242(3)</weight>
     <boiling>3347</boiling>
@@ -599,7 +599,7 @@
     <y_pos>9</y_pos>
   </object>
   <object symbol="Pm" number="61">
-    <_name>Promethium</_name>
+    <name>Promethium</name>
     <class>3</class>
     <weight>145</weight>
     <boiling>3273</boiling>
@@ -609,7 +609,7 @@
     <y_pos>9</y_pos>
   </object>
   <object symbol="Sm" number="62">
-    <_name>Samarium</_name>
+    <name>Samarium</name>
     <class>3</class>
     <weight>150.36(2)</weight>
     <boiling>2173</boiling>
@@ -619,7 +619,7 @@
     <y_pos>9</y_pos>
   </object>
   <object symbol="Eu" number="63">
-    <_name>Europium</_name>
+    <name>Europium</name>
     <class>3</class>
     <weight>151.964(1)</weight>
     <boiling>1802</boiling>
@@ -629,7 +629,7 @@
     <y_pos>9</y_pos>
   </object>
   <object symbol="Gd" number="64">
-    <_name>Gadolinium</_name>
+    <name>Gadolinium</name>
     <class>3</class>
     <weight>157.25(3)</weight>
     <boiling>3273</boiling>
@@ -639,7 +639,7 @@
     <y_pos>9</y_pos>
   </object>
   <object symbol="Tb" number="65">
-    <_name>Terbium</_name>
+    <name>Terbium</name>
     <class>3</class>
     <weight>158.925354(8)</weight>
     <boiling>3396</boiling>
@@ -649,7 +649,7 @@
     <y_pos>9</y_pos>
   </object>
   <object symbol="Dy" number="66">
-    <_name>Dysprosium</_name>
+    <name>Dysprosium</name>
     <class>3</class>
     <weight>162.500(1)</weight>
     <boiling>2840</boiling>
@@ -659,7 +659,7 @@
     <y_pos>9</y_pos>
   </object>
   <object symbol="Ho" number="67">
-    <_name>Holmium</_name>
+    <name>Holmium</name>
     <class>3</class>
     <weight>164.930328(7)</weight>
     <boiling>2873</boiling>
@@ -669,7 +669,7 @@
     <y_pos>9</y_pos>
   </object>
   <object symbol="Er" number="68">
-    <_name>Erbium</_name>
+    <name>Erbium</name>
     <class>3</class>
     <weight>167.259(3)</weight>
     <boiling>3141</boiling>
@@ -679,7 +679,7 @@
     <y_pos>9</y_pos>
   </object>
   <object symbol="Tm" number="69">
-    <_name>Thulium</_name>
+    <name>Thulium</name>
     <class>3</class>
     <weight>168.934218(6)</weight>
     <boiling>2223</boiling>
@@ -689,7 +689,7 @@
     <y_pos>9</y_pos>
   </object>
   <object symbol="Yb" number="70">
-    <_name>Ytterbium</_name>
+    <name>Ytterbium</name>
     <class>3</class>
     <weight>173.045(10)</weight>
     <boiling>1469</boiling>
@@ -699,7 +699,7 @@
     <y_pos>9</y_pos>
   </object>
   <object symbol="Lu" number="71">
-    <_name>Lutetium</_name>
+    <name>Lutetium</name>
     <class>3</class>
     <weight>174.9668(1)</weight>
     <boiling>3675</boiling>
@@ -709,7 +709,7 @@
     <y_pos>6</y_pos>
   </object>
   <object symbol="Hf" number="72">
-    <_name>Hafnium</_name>
+    <name>Hafnium</name>
     <class>5</class>
     <weight>178.49(2)</weight>
     <boiling>4876</boiling>
@@ -719,7 +719,7 @@
     <y_pos>6</y_pos>
   </object>
   <object symbol="Ta" number="73">
-    <_name>Tantalum</_name>
+    <name>Tantalum</name>
     <class>5</class>
     <weight>180.94788(2)</weight>
     <boiling>5731</boiling>
@@ -729,7 +729,7 @@
     <y_pos>6</y_pos>
   </object>
   <object symbol="W" number="74">
-    <_name>Tungsten</_name>
+    <name>Tungsten</name>
     <class>5</class>
     <weight>183.84(1)</weight>
     <boiling>6203</boiling>
@@ -739,7 +739,7 @@
     <y_pos>6</y_pos>
   </object>
   <object symbol="Re" number="75">
-    <_name>Rhenium</_name>
+    <name>Rhenium</name>
     <class>5</class>
     <weight>186.207(1)</weight>
     <boiling>5903</boiling>
@@ -749,7 +749,7 @@
     <y_pos>6</y_pos>
   </object>
   <object symbol="Os" number="76">
-    <_name>Osmium</_name>
+    <name>Osmium</name>
     <class>5</class>
     <weight>190.23(3)</weight>
     <boiling>5285</boiling>
@@ -759,7 +759,7 @@
     <y_pos>6</y_pos>
   </object>
   <object symbol="Ir" number="77">
-    <_name>Iridium</_name>
+    <name>Iridium</name>
     <class>5</class>
     <weight>192.217(2)</weight>
     <boiling>4403</boiling>
@@ -769,7 +769,7 @@
     <y_pos>6</y_pos>
   </object>
   <object symbol="Pt" number="78">
-    <_name>Platinum</_name>
+    <name>Platinum</name>
     <class>5</class>
     <weight>195.084(9)</weight>
     <boiling>4098</boiling>
@@ -779,7 +779,7 @@
     <y_pos>6</y_pos>
   </object>
   <object symbol="Au" number="79">
-    <_name>Gold</_name>
+    <name>Gold</name>
     <class>5</class>
     <weight>196.966570(4)</weight>
     <boiling>3243</boiling>
@@ -790,7 +790,7 @@
   </object>
   <object symbol="Hg" number="80">
     <!-- Chemical element -->
-    <_name>!elements!Mercury</_name>
+    <name>!elements!Mercury</name>
     <class>5</class>
     <weight>200.592(3)</weight>
     <boiling>629.88</boiling>
@@ -800,7 +800,7 @@
     <y_pos>6</y_pos>
   </object>
   <object symbol="Tl" number="81">
-    <_name>Thallium</_name>
+    <name>Thallium</name>
     <class>6</class>
     <weight>[204.382, 204.385]</weight>
     <boiling>1746</boiling>
@@ -810,7 +810,7 @@
     <y_pos>6</y_pos>
   </object>
   <object symbol="Pb" number="82">
-    <_name>Lead</_name>
+    <name>Lead</name>
     <class>6</class>
     <weight>207.2(1)</weight>
     <boiling>2022</boiling>
@@ -820,7 +820,7 @@
     <y_pos>6</y_pos>
   </object>
   <object symbol="Bi" number="83">
-    <_name>Bismuth</_name>
+    <name>Bismuth</name>
     <class>6</class>
     <weight>208.98040(1)</weight>
     <boiling>1837</boiling>
@@ -830,7 +830,7 @@
     <y_pos>6</y_pos>
   </object>
   <object symbol="Po" number="84">
-    <_name>Polonium</_name>
+    <name>Polonium</name>
     <class>6</class>
     <weight>209</weight>
     <boiling>1235</boiling>
@@ -840,7 +840,7 @@
     <y_pos>6</y_pos>
   </object>
   <object symbol="At" number="85">
-    <_name>Astatine</_name>
+    <name>Astatine</name>
     <class>7</class>
     <weight>210</weight>
     <boiling>610</boiling>
@@ -850,7 +850,7 @@
     <y_pos>6</y_pos>
   </object>
   <object symbol="Rn" number="86">
-    <_name>Radon</_name>
+    <name>Radon</name>
     <class>10</class>
     <weight>222</weight>
     <boiling>211.5</boiling>
@@ -860,7 +860,7 @@
     <y_pos>6</y_pos>
   </object>
   <object symbol="Fr" number="87">
-    <_name>Francium</_name>
+    <name>Francium</name>
     <class>1</class>
     <weight>223</weight>
     <boiling>950</boiling>
@@ -870,7 +870,7 @@
     <y_pos>7</y_pos>
   </object>
   <object symbol="Ra" number="88">
-    <_name>Radium</_name>
+    <name>Radium</name>
     <class>2</class>
     <weight>226</weight>
     <boiling>2010</boiling>
@@ -880,7 +880,7 @@
     <y_pos>7</y_pos>
   </object>
   <object symbol="Ac" number="89">
-    <_name>Actinium</_name>
+    <name>Actinium</name>
     <class>4</class>
     <weight>227</weight>
     <boiling>3500+/-300</boiling>
@@ -890,7 +890,7 @@
     <y_pos>10</y_pos>
   </object>
   <object symbol="Th" number="90">
-    <_name>Thorium</_name>
+    <name>Thorium</name>
     <class>4</class>
     <weight>232.0377(4)</weight>
     <boiling>5061</boiling>
@@ -900,7 +900,7 @@
     <y_pos>10</y_pos>
   </object>
   <object symbol="Pa" number="91">
-    <_name>Protactinium</_name>
+    <name>Protactinium</name>
     <class>4</class>
     <weight>231.03588(1)</weight>
     <boiling>4300</boiling>
@@ -910,7 +910,7 @@
     <y_pos>10</y_pos>
   </object>
   <object symbol="U" number="92">
-    <_name>Uranium</_name>
+    <name>Uranium</name>
     <class>4</class>
     <weight>238.02891(3)</weight>
     <boiling>4404</boiling>
@@ -920,7 +920,7 @@
     <y_pos>10</y_pos>
   </object>
   <object symbol="Np" number="93">
-    <_name>Neptunium</_name>
+    <name>Neptunium</name>
     <class>4</class>
     <weight>237</weight>
     <boiling>4447</boiling>
@@ -930,7 +930,7 @@
     <y_pos>10</y_pos>
   </object>
   <object symbol="Pu" number="94">
-    <_name>Plutonium</_name>
+    <name>Plutonium</name>
     <class>4</class>
     <weight>244</weight>
     <boiling>3505</boiling>
@@ -940,7 +940,7 @@
     <y_pos>10</y_pos>
   </object>
   <object symbol="Am" number="95">
-    <_name>Americium</_name>
+    <name>Americium</name>
     <class>4</class>
     <weight>243</weight>
     <boiling>2880</boiling>
@@ -950,7 +950,7 @@
     <y_pos>10</y_pos>
   </object>
   <object symbol="Cm" number="96">
-    <_name>Curium</_name>
+    <name>Curium</name>
     <class>4</class>
     <weight>247</weight>
     <boiling>3383</boiling>
@@ -960,7 +960,7 @@
     <y_pos>10</y_pos>
   </object>
   <object symbol="Bk" number="97">
-    <_name>Berkelium</_name>
+    <name>Berkelium</name>
     <class>4</class>
     <weight>247</weight>
     <boiling>2900</boiling>
@@ -970,7 +970,7 @@
     <y_pos>10</y_pos>
   </object>
   <object symbol="Cf" number="98">
-    <_name>Californium</_name>
+    <name>Californium</name>
     <class>4</class>
     <weight>251</weight>
     <boiling>1743</boiling>
@@ -980,7 +980,7 @@
     <y_pos>10</y_pos>
   </object>
   <object symbol="Es" number="99">
-    <_name>Einsteinium</_name>
+    <name>Einsteinium</name>
     <class>4</class>
     <weight>252</weight>
     <boiling>1269</boiling>
@@ -990,7 +990,7 @@
     <y_pos>10</y_pos>
   </object>
   <object symbol="Fm" number="100">
-    <_name>Fermium</_name>
+    <name>Fermium</name>
     <class>4</class>
     <weight>257</weight>
     <melting>1800</melting>
@@ -999,7 +999,7 @@
     <y_pos>10</y_pos>
   </object>
   <object symbol="Md" number="101">
-    <_name>Mendelevium</_name>
+    <name>Mendelevium</name>
     <class>4</class>
     <weight>258</weight>
     <melting>1100</melting>
@@ -1008,7 +1008,7 @@
     <y_pos>10</y_pos>
   </object>
   <object symbol="No" number="102">
-    <_name>Nobelium</_name>
+    <name>Nobelium</name>
     <class>4</class>
     <weight>259</weight>
     <melting>1100</melting>
@@ -1017,7 +1017,7 @@
     <y_pos>10</y_pos>
   </object>
   <object symbol="Lr" number="103">
-    <_name>Lawrencium</_name>
+    <name>Lawrencium</name>
     <class>4</class>
     <weight>266</weight>
     <melting>1900</melting>
@@ -1026,7 +1026,7 @@
     <y_pos>7</y_pos>
   </object>
   <object symbol="Rf" number="104">
-    <_name>Rutherfordium</_name>
+    <name>Rutherfordium</name>
     <class>5</class>
     <weight>267</weight>
     <boiling>5800</boiling>
@@ -1036,7 +1036,7 @@
     <y_pos>7</y_pos>
   </object>
   <object symbol="Db" number="105">
-    <_name>Dubnium</_name>
+    <name>Dubnium</name>
     <class>5</class>
     <weight>268</weight>
     <density>29.3</density>
@@ -1044,7 +1044,7 @@
     <y_pos>7</y_pos>
   </object>
   <object symbol="Sg" number="106">
-    <_name>Seaborgium</_name>
+    <name>Seaborgium</name>
     <class>5</class>
     <weight>269</weight>
     <density>35.0</density>
@@ -1052,7 +1052,7 @@
     <y_pos>7</y_pos>
   </object>
   <object symbol="Bh" number="107">
-    <_name>Bohrium</_name>
+    <name>Bohrium</name>
     <class>5</class>
     <weight>270</weight>
     <density>37.1</density>
@@ -1060,7 +1060,7 @@
     <y_pos>7</y_pos>
   </object>
   <object symbol="Hs" number="108">
-    <_name>Hassium</_name>
+    <name>Hassium</name>
     <class>5</class>
     <weight>269</weight>
     <density>41</density>
@@ -1068,7 +1068,7 @@
     <y_pos>7</y_pos>
   </object>
   <object symbol="Mt" number="109">
-    <_name>Meitnerium</_name>
+    <name>Meitnerium</name>
     <class>11</class>
     <weight>278</weight>
     <density>37.4</density>
@@ -1076,7 +1076,7 @@
     <y_pos>7</y_pos>
   </object>
   <object symbol="Ds" number="110">
-    <_name>Darmstadtium</_name>
+    <name>Darmstadtium</name>
     <class>11</class>
     <weight>281</weight>
     <density>34.8</density>
@@ -1084,7 +1084,7 @@
     <y_pos>7</y_pos>
   </object>
   <object symbol="Rg" number="111">
-    <_name>Roentgenium</_name>
+    <name>Roentgenium</name>
     <class>11</class>
     <weight>282</weight>
     <density>28.7</density>
@@ -1092,14 +1092,14 @@
     <y_pos>7</y_pos>
   </object>
   <object symbol="Cn" number="112">
-    <_name>Copernicium</_name>
+    <name>Copernicium</name>
     <class>5</class>
     <weight>285</weight>
     <x_pos>12</x_pos>
     <y_pos>7</y_pos>
   </object>
   <object symbol="Nh" number="113">
-    <_name>Nihonium</_name>
+    <name>Nihonium</name>
     <class>11</class>
     <weight>286</weight>
     <boiling>1430</boiling>
@@ -1109,7 +1109,7 @@
     <y_pos>7</y_pos>
   </object>
   <object symbol="Fl" number="114">
-    <_name>Flerovium</_name>
+    <name>Flerovium</name>
     <class>11</class>
     <boiling>210</boiling>
     <weight>289</weight>
@@ -1117,7 +1117,7 @@
     <y_pos>7</y_pos>
   </object>
   <object symbol="Mc" number="115">
-    <_name>Moscovium</_name>
+    <name>Moscovium</name>
     <class>11</class>
     <weight>290</weight>
     <boiling>1400</boiling>
@@ -1127,7 +1127,7 @@
     <y_pos>7</y_pos>
   </object>
   <object symbol="Lv" number="116">
-    <_name>Livermorium</_name>
+    <name>Livermorium</name>
     <class>11</class>
     <weight>293</weight>
     <boiling>1085+/-50</boiling>
@@ -1137,7 +1137,7 @@
     <y_pos>7</y_pos>
   </object>
   <object symbol="Ts" number="117">
-    <_name>Tennessine</_name>
+    <name>Tennessine</name>
     <class>11</class>
     <weight>294</weight>
     <boiling>883</boiling>
@@ -1147,7 +1147,7 @@
     <y_pos>7</y_pos>
   </object>
   <object symbol="Og" number="118">
-    <_name>Oganesson</_name>
+    <name>Oganesson</name>
     <class>11</class>
     <weight>294</weight>
     <boiling>350+/-30</boiling>

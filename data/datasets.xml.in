@@ -1,176 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
 <QALCULATE version="2.8.3">
   <category>
-    <_title>Data Sets</_title>
+    <title>Data Sets</title>
     <dataset>
       <!-- Data set for chemical elements -->
-      <_title>!datasets!Elements</_title>
+      <title>!datasets!Elements</title>
       <datafile>elements.xml</datafile>
-      <_copyright>This data uses material from the Wikipedia, under the Creative Commons Attribution-ShareAlike License</_copyright>
-      <_names>r:atom</_names>
+      <copyright>This data uses material from the Wikipedia, under the Creative Commons Attribution-ShareAlike License</copyright>
+      <names>r:atom</names>
       <object_argument>
         <!-- Object argument for chemical elements data set-->
-        <_title>!datasets!Element</_title>
+        <title>!datasets!Element</title>
       </object_argument>
       <property>
-        <_title>Symbol</_title>
+        <title>Symbol</title>
         <type>text</type>
         <key>true</key>
-        <_names>r:symbol</_names>
+        <names>r:symbol</names>
       </property>
       <property>
         <!-- Chemical elements number -->
-        <_title>!datasets!Number</_title>
+        <title>!datasets!Number</title>
         <type>number</type>
         <key>true</key>
         <!-- Chemical elements number -->
-        <_names>!datasets!r:number</_names>
+        <names>!datasets!r:number</names>
       </property>
       <property>
-        <_title>Name</_title>
+        <title>Name</title>
         <type>text</type>
         <key>true</key>
-        <_names>r:name</_names>
+        <names>r:name</names>
       </property>
       <property>
-        <_title>Classification</_title>
-        <_description>A number representing an element group:&#10;1 Alkali Metal&#10;2 Alkaline-Earth Metal&#10;3 Lanthanide&#10;4 Actinide&#10;5 Transition Metal&#10;6 Metal&#10;7 Metalloid&#10;8 Polyatomic Non-Metal&#10;9 Diatomic Non-Metal&#10;10 Noble Gas&#10;11 Unknown chemical properties</_description>
+        <title>Classification</title>
+        <description>A number representing an element group:&#10;1 Alkali Metal&#10;2 Alkaline-Earth Metal&#10;3 Lanthanide&#10;4 Actinide&#10;5 Transition Metal&#10;6 Metal&#10;7 Metalloid&#10;8 Polyatomic Non-Metal&#10;9 Diatomic Non-Metal&#10;10 Noble Gas&#10;11 Unknown chemical properties</description>
         <type>number</type>
-        <_names>r:class</_names>
+        <names>r:class</names>
         <hidden>true</hidden>
       </property>
       <property>
-        <_title>Atomic Mass</_title>
-        <_description>The property uses standard atomic weight, when determined, or the mass number.</_description>
+        <title>Atomic Mass</title>
+        <description>The property uses standard atomic weight, when determined, or the mass number.</description>
         <type>number</type>
         <unit>u</unit>
         <approximate>true</approximate>
-        <_names>r:mass,r:weight</_names>
+        <names>r:mass,r:weight</names>
       </property>
       <property>
-        <_title>Boiling Point</_title>
+        <title>Boiling Point</title>
         <type>number</type>
         <unit>K</unit>
         <approximate>true</approximate>
-        <_names>r:boiling</_names>
+        <names>r:boiling</names>
       </property>
       <property>
-        <_title>Melting Point</_title>
+        <title>Melting Point</title>
         <type>number</type>
         <unit>K</unit>
         <approximate>true</approximate>
-        <_names>r:melting</_names>
+        <names>r:melting</names>
       </property>
       <property>
-        <_title>Density</_title>
-        <_description>Density at STP (gases) or near room temperature</_description>
+        <title>Density</title>
+        <description>Density at STP (gases) or near room temperature</description>
         <type>number</type>
         <unit>g/cm^3</unit>
         <approximate>true</approximate>
-        <_names>r:density</_names>
+        <names>r:density</names>
       </property>
       <property>
-        <_title>X Position</_title>
+        <title>X Position</title>
         <type>number</type>
         <hidden>true</hidden>
-        <_names>r:x_pos</_names>
+        <names>r:x_pos</names>
       </property>
       <property>
-        <_title>Y Position</_title>
+        <title>Y Position</title>
         <type>number</type>
         <hidden>true</hidden>
-        <_names>r:y_pos</_names>
+        <names>r:y_pos</names>
       </property>
     </dataset>
     <dataset>
-      <_title>Planets</_title>
+      <title>Planets</title>
       <datafile>planets.xml</datafile>
-      <_copyright>This data uses material from the Wikipedia articles&#10;"Earth" (http://www.wikipedia.org/wiki/Earth),&#10;"Jupiter" (http://www.wikipedia.org/wiki/Jupiter),&#10;"Mars" (http://www.wikipedia.org/wiki/Mars),&#10;"Mercury (planet)" (http://www.wikipedia.org/wiki/Mercury_(planet)),&#10;"Neptune" (http://www.wikipedia.org/wiki/Neptune),&#10;"Pluto" (http://www.wikipedia.org/wiki/Pluto),&#10;"Saturn" (http://www.wikipedia.org/wiki/Saturn),&#10;"Uranus" (http://www.wikipedia.org/wiki/Uranus), and&#10;"Venus" (http://en.wikipedia.org/wiki/Venus), under Creative Commons Attribution-ShareAlike License</_copyright>
-      <_names>r:planet</_names>
+      <copyright>This data uses material from the Wikipedia articles&#10;"Earth" (http://www.wikipedia.org/wiki/Earth),&#10;"Jupiter" (http://www.wikipedia.org/wiki/Jupiter),&#10;"Mars" (http://www.wikipedia.org/wiki/Mars),&#10;"Mercury (planet)" (http://www.wikipedia.org/wiki/Mercury_(planet)),&#10;"Neptune" (http://www.wikipedia.org/wiki/Neptune),&#10;"Pluto" (http://www.wikipedia.org/wiki/Pluto),&#10;"Saturn" (http://www.wikipedia.org/wiki/Saturn),&#10;"Uranus" (http://www.wikipedia.org/wiki/Uranus), and&#10;"Venus" (http://en.wikipedia.org/wiki/Venus), under Creative Commons Attribution-ShareAlike License</copyright>
+      <names>r:planet</names>
       <object_argument>
-        <_title>Planet</_title>
+        <title>Planet</title>
       </object_argument>
       <property>
-        <_title>Name</_title>
+        <title>Name</title>
         <type>text</type>
         <key>true</key>
-        <_names>r:name</_names>
+        <names>r:name</names>
       </property>
       <property>
-        <_title>Orbital Period (Year)</_title>
+        <title>Orbital Period (Year)</title>
         <type>number</type>
         <unit>d</unit>
         <approximate>true</approximate>
         <!-- Orbital period for planet -->
-        <_names>!datasets!r:year</_names>
+        <names>!datasets!r:year</names>
       </property>
       <property>
-        <_title>Average Orbital Speed</_title>
+        <title>Average Orbital Speed</title>
         <type>number</type>
         <unit>km/s</unit>
         <approximate>true</approximate>
-        <_names>r:speed</_names>
+        <names>r:speed</names>
       </property>
       <property>
-        <_title>Eccentricity</_title>
+        <title>Eccentricity</title>
         <type>number</type>
         <approximate>true</approximate>
-        <_names>r:eccentricity</_names>
+        <names>r:eccentricity</names>
       </property>
       <property>
-        <_title>Inclination (to ecliptic)</_title>
+        <title>Inclination (to ecliptic)</title>
         <type>number</type>
         <approximate>true</approximate>
-        <_names>r:inclination</_names>
+        <names>r:inclination</names>
       </property>
       <property>
-        <_title>Number of Satellites</_title>
+        <title>Number of Satellites</title>
         <type>number</type>
-        <_names>r:satellites</_names>
+        <names>r:satellites</names>
       </property>
       <property>
         <!-- Planet mass -->
-        <_title>!datasets!Mass</_title>
+        <title>!datasets!Mass</title>
         <type>number</type>
         <unit>kg</unit>
         <approximate>true</approximate>
-        <_names>r:mass</_names>
+        <names>r:mass</names>
       </property>
       <property>
-        <_title>Mean Density</_title>
+        <title>Mean Density</title>
         <type>number</type>
         <unit>g/cm^3</unit>
         <approximate>true</approximate>
-        <_names>r:density</_names>
+        <names>r:density</names>
       </property>
       <property>
-        <_title>Surface Area</_title>
+        <title>Surface Area</title>
         <type>number</type>
         <unit>km^2</unit>
         <approximate>true</approximate>
         <!-- Surface area of planet -->
-        <_names>!datasets!r:area</_names>
+        <names>!datasets!r:area</names>
       </property>
       <property>
-        <_title>Equatorial Gravity</_title>
+        <title>Equatorial Gravity</title>
         <type>number</type>
         <unit>m/s^2</unit>
         <approximate>true</approximate>
-        <_names>r:gravity</_names>
+        <names>r:gravity</names>
       </property>
       <property>
-        <_title>Mean Surface Temperature</_title>
+        <title>Mean Surface Temperature</title>
         <type>number</type>
         <unit>K</unit>
         <approximate>true</approximate>
-        <_names>r:temperature</_names>
+        <names>r:temperature</names>
       </property>
       <property>
-        <_title>Mean Radius</_title>
+        <title>Mean Radius</title>
         <type>number</type>
         <unit>km</unit>
         <approximate>true</approximate>
-        <_names>r:radius</_names>
+        <names>r:radius</names>
       </property>
     </dataset>
   </category>
