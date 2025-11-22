@@ -1071,7 +1071,9 @@ int checkAvailableVersion(const char *version_id, const char *current_version, s
 }
 
 void free_thread_caches() {
+#if MPFR_VERSION_MAJOR >= 4
 	mpfr_free_cache2(MPFR_FREE_LOCAL_CACHE);
+#endif
 }
 
 #ifdef _WIN32
@@ -1095,7 +1097,9 @@ DWORD WINAPI Thread::doRun(void *data) {
 	Thread *thread = (Thread *) data;
 	SetEvent(thread->m_threadReadyEvent);
 	thread->run();
+#if MPFR_VERSION_MAJOR >= 4
 	mpfr_free_cache2(MPFR_FREE_LOCAL_CACHE);
+#endif
 	thread->running = false;
 	return 0;
 }
@@ -1145,7 +1149,9 @@ Thread::~Thread() {
 void Thread::doCleanup(void *data) {
 	Thread *thread = (Thread *) data;
 	thread->running = false;
+#if MPFR_VERSION_MAJOR >= 4
 	mpfr_free_cache2(MPFR_FREE_LOCAL_CACHE);
+#endif
 }
 
 void Thread::enableAsynchronousCancel() {

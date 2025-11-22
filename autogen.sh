@@ -47,6 +47,14 @@ grep "^AM_GLIB_GNU_GETTEXT" $srcdir/configure.ac >/dev/null && {
   NO_AUTOMAKE=yes
 }
 
+test -n "$NO_AUTOMAKE" || (autopoint --version) < /dev/null > /dev/null 2>&1 || {
+  echo
+  echo "**Error**: You must have \`autopoint' installed."
+  echo "You can get it from: ftp://ftp.gnu.org/pub/gnu/"
+  DIE=1
+  NO_AUTOPOINT=yes
+}
+
 
 # if no automake, don't bother testing for aclocal
 test -n "$NO_AUTOMAKE" || (aclocal --version) < /dev/null > /dev/null 2>&1 || {
@@ -98,6 +106,8 @@ do
 	  libtoolize --force --copy
 	fi
       fi
+      echo "Running autopoint..."
+      autopoint -f
       echo "Running aclocal $aclocalinclude ..."
       aclocal $aclocalinclude
       if grep "^AC_CONFIG_HEADERS" configure.ac >/dev/null; then

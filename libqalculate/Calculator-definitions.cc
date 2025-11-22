@@ -83,8 +83,22 @@ using std::queue;
 #define XML_DO_FROM_TEXT(node, action)			value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {action((char*) value); xmlFree(value);} else action("");
 #define XML_GET_INT_FROM_PROP(node, name, i)		value = xmlGetProp(node, (xmlChar*) name); if(value) {i = s2i((char*) value); xmlFree(value);}
 #define XML_GET_INT_FROM_TEXT(node, i)			value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {i = s2i((char*) value); xmlFree(value);}
-#define XML_GET_LOCALE_STRING_FROM_TEXT(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); if(!best) {if(!lang) {if(!next_best) {if(value) {str = (char*) value; remove_blank_ends(str);} else str = ""; if(locale.empty()) {best = true;}}} else {if(locale == (char*) lang) {best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && fulfilled_translation == 0  && !altlocale.empty() && altlocale == (char*) lang) {next_best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && str.empty() && value) {str = (char*) value; remove_blank_ends(str);}}} if(value) xmlFree(value); if(lang) xmlFree(lang);
-#define XML_GET_LOCALE_STRING_FROM_TEXT_REQ(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); if(!best) {if(!lang) {if(!next_best) {if(value) {str = (char*) value; remove_blank_ends(str);} else str = ""; if(locale.empty()) {best = true;}}} else {if(locale == (char*) lang) {best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && fulfilled_translation == 0 && !altlocale.empty() && altlocale == (char*) lang) {next_best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && str.empty() && value && !require_translation) {str = (char*) value; remove_blank_ends(str);}}} if(value) xmlFree(value); if(lang) xmlFree(lang);
+#define UPDATE_LOCALE_LANG				if(locale_variant < 0 && lang) {\
+								for(size_t ilv = 0; ilv < strlen((char*) lang); ilv++) {\
+									if(lang[ilv] == '_') locale_variant = 0;\
+									else if(lang[ilv] == '-') {\
+										locale_variant = 1;\
+										gsub("_", "-", altlocale);\
+										gsub("_", "-", locale);\
+										if(locale == "zh-CN") locale = "zh-Hans-CN";\
+										else if(locale == "zh-TW") locale = "zh-Hant-TW";\
+										if(altlocale == "zh-CN") altlocale = "zh-Hans-CN";\
+										else if(altlocale == "zh-TW") altlocale = "zh-Hant-TW";\
+									}\
+								}\
+							}
+#define XML_GET_LOCALE_STRING_FROM_TEXT(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); UPDATE_LOCALE_LANG if(!best) {if(!lang) {if(!next_best) {if(value) {str = (char*) value; remove_blank_ends(str);} else str = ""; if(locale.empty()) {best = true;}}} else {if(locale == (char*) lang) {best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && fulfilled_translation == 0  && !altlocale.empty() && altlocale == (char*) lang) {next_best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && str.empty() && value) {str = (char*) value; remove_blank_ends(str);}}} if(value) xmlFree(value); if(lang) xmlFree(lang);
+#define XML_GET_LOCALE_STRING_FROM_TEXT_REQ(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); UPDATE_LOCALE_LANG if(!best) {if(!lang) {if(!next_best) {if(value) {str = (char*) value; remove_blank_ends(str);} else str = ""; if(locale.empty()) {best = true;}}} else {if(locale == (char*) lang) {best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && fulfilled_translation == 0 && !altlocale.empty() && altlocale == (char*) lang) {next_best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && str.empty() && value && !require_translation) {str = (char*) value; remove_blank_ends(str);}}} if(value) xmlFree(value); if(lang) xmlFree(lang);
 
 #define VERSION_BEFORE(i1, i2, i3) (version_numbers[0] < i1 || (version_numbers[0] == i1 && (version_numbers[1] < i2 || (version_numbers[1] == i2 && version_numbers[2] < i3))))
 
@@ -430,6 +444,7 @@ bool Calculator::loadLocalDefinitions() {
 							while(child2 != NULL) {\
 								if((!best_name[name_index] || (ref_names[name_index].name.empty() && !locale.empty())) && !xmlStrcmp(child2->name, (const xmlChar*) "name")) {\
 									lang = xmlNodeGetLang(child2);\
+									UPDATE_LOCALE_LANG \
 									if(!lang) {\
 										value2 = xmlNodeListGetString(doc, child2->xmlChildrenNode, 1);\
 										if(!value2 || validation((char*) value2, version_numbers, is_user_defs)) {\
@@ -930,11 +945,15 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 	Unit *u_gbp = getUnit("GBP");
 	bool b_remove_cent = false;
 
+	int locale_variant = -1;
+	if(locale.find("_") == string::npos && altlocale.find("_") == string::npos) locale_variant = 0;
+
 	while(true) {
 		if(!in_unfinished) {
 			category_title = ""; best_category_title = false; next_best_category_title = false;
 			child = cur->xmlChildrenNode;
 			while(child != NULL) {
+
 				if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {
 					XML_GET_LOCALE_STRING_FROM_TEXT(child, category_title, best_category_title, next_best_category_title)
 				} else if(!xmlStrcmp(child->name, (const xmlChar*) "category")) {
@@ -1189,6 +1208,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 									while(child3 != NULL) {
 										if((!best_name[name_index] || (ref_prop_names[name_index].empty() && !locale.empty())) && !xmlStrcmp(child3->name, (const xmlChar*) "name")) {
 											lang = xmlNodeGetLang(child3);
+											UPDATE_LOCALE_LANG
 											if(!lang) {
 												value2 = xmlNodeListGetString(doc, child3->xmlChildrenNode, 1);
 												if(locale.empty()) {
@@ -1229,6 +1249,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 							} else if(new_names && !xmlStrcmp(child2->name, (const xmlChar*) "names") && ((best_prop_names.empty() && fulfilled_translation != 2) || default_prop_names.empty())) {
 									value2 = xmlNodeListGetString(doc, child2->xmlChildrenNode, 1);
  									lang = xmlNodeGetLang(child2);
+									UPDATE_LOCALE_LANG
 									if(!lang) {
 										if(default_prop_names.empty()) {
 											if(value2) {
@@ -2230,6 +2251,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 				while(child != NULL) {
 					if(!new_prefix_names && !xmlStrcmp(child->name, (const xmlChar*) "name")) {
 						lang = xmlNodeGetLang(child);
+						UPDATE_LOCALE_LANG
 						if(!lang) {
 							if(name.empty()) {
 								XML_GET_STRING_FROM_TEXT(child, name);

@@ -856,7 +856,9 @@ int rlcom_tab(int a, int b) {
 					}
 					block_keys--;
 					block_autocalc--;
+#if RL_VERSION_MAJOR >= 7
 					rl_clear_visible_line();
+#endif
 					if(i > matches.size()) continue;
 					fprintf(stdout, "\033[%iF\033[0J", l + 1);
 					fflush(stdout);
@@ -3239,13 +3241,17 @@ void clear_autocalc() {
 	int p_bak = rl_point;
 	if(rl_point != rl_end) {
 		rl_point = rl_end;
+#if RL_VERSION_MAJOR >= 7
 		rl_clear_visible_line();
+#endif
 		rl_forced_update_display();
 	}
 	printf("\033[0J");
 	if(rl_point != p_bak) {
 		rl_point = p_bak;
+#if RL_VERSION_MAJOR >= 7
 		rl_clear_visible_line();
+#endif
 		rl_forced_update_display();
 	}
 	prev_autocalc_result = "";
@@ -3381,7 +3387,9 @@ void do_autocalc(bool force, const char *action_text) {
 					} else {
 						sout += "\033[0J\n";
 						rl_point = rl_end;
+#if RL_VERSION_MAJOR >= 7
 						rl_clear_visible_line();
+#endif
 						rl_forced_update_display();
 					}
 				} else {
@@ -3410,7 +3418,9 @@ void do_autocalc(bool force, const char *action_text) {
 				fflush(stdout);
 				if(!move_pos) {
 					rl_point = p_bak;
+#if RL_VERSION_MAJOR >= 7
 					rl_clear_visible_line();
+#endif
 					rl_forced_update_display();
 				}
 				prev_autocalc_result = autocalc_result;

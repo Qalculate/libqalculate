@@ -452,6 +452,21 @@ const string &DataSet::defaultDataFile() const {
 	return sfile;
 }
 
+#define UPDATE_LOCALE_LANG				if(locale_variant < 0 && lang) {\
+								for(size_t ilv = 0; ilv < strlen((char*) lang); ilv++) {\
+									if(lang[ilv] == '_') locale_variant = 0;\
+									else if(lang[ilv] == '-') {\
+										locale_variant = 1;\
+										gsub("_", "-", altlocale);\
+										gsub("_", "-", locale);\
+										if(locale == "zh-CN") locale = "zh-Hans-CN";\
+										else if(locale == "zh-TW") locale = "zh-Hant-TW";\
+										if(altlocale == "zh-CN") altlocale = "zh-Hans-CN";\
+										else if(altlocale == "zh-TW") altlocale = "zh-Hant-TW";\
+									}\
+								}\
+							}
+
 #ifdef _WIN32
 #	define FILE_SEPARATOR_CHAR '\\'
 #else
@@ -513,6 +528,9 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	vector<string> locales = CALCULATOR->getDefinitionsLocales();
 	if(locales.size() >= 1) locale = locales[0];
 	if(locales.size() >= 2) altlocale = locales[1];
+
+	int locale_variant = -1;
+	if(locale.find("_") == string::npos && altlocale.find("_") == string::npos) locale_variant = 0;
 
 #ifdef COMPILED_DEFINITIONS
 	if(!is_user_defs) {
@@ -658,6 +676,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 							if(properties[i]->propertyType() == PROPERTY_STRING) {
 								value = xmlNodeListGetString(doc, child->xmlChildrenNode, 1);
 								lang = xmlNodeGetLang(child);
+								UPDATE_LOCALE_LANG
 								ils = -1;
 								for(int i3 = lang_status_p.size(); i3 > 0; i3--) {
 									if(lang_status_p[i3 - 1] == properties[i]) {
