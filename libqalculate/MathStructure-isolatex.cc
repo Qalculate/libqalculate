@@ -2042,7 +2042,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								i_root = CHILD(0)[i][1].number().denominator().intValue();
 								root_index = i;
 							}
-						} else if(!CHILD(0)[i][1].isNumber() || !CHILD(0)[i][1].number().isInteger()) {
+						} else if(!CHILD(0)[i][1].isNumber() || !CHILD(0)[i][1].number().isInteger() || CHILD(0)[i][1].number().integerLength() > 5) {
 							i_root = 0;
 							break;
 						}
@@ -2077,7 +2077,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 											i_root = CHILD(0)[i][i2][1].number().denominator().intValue();
 											root_index = i;
 										}
-									} else if(!CHILD(0)[i][i2][1].isNumber() || !CHILD(0)[i][i2][1].number().isInteger()) {
+									} else if(!CHILD(0)[i][i2][1].isNumber() || !CHILD(0)[i][i2][1].number().isInteger() || CHILD(0)[i][i2][1].number().integerLength() > 5) {
 										i_root = 0;
 										b_break = true;
 										break;
@@ -2119,9 +2119,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					mtest[1].calculateSubtract(msub, eo2);
 					if(mtest[0].calculateRaise(i_root, eo2) && mtest[1].calculateRaise(i_root, eo2)) {
 						mtest.childrenUpdated();
+						mtest[0].calculateSubtract(mtest[1], eo2);
+						mtest[1].clear(true);
 						if(eo2.expand && morig) {
 							MathStructure mtest2(mtest[0]);
-							mtest2.calculateSubtract(mtest[1], eo2);
 							if(mtest2.factorize(eo2, false, false, 0, false, false, NULL, m_undefined, false, false, 3) && mtest2.isMultiplication()) {
 								for(size_t i = 0; i < mtest2.size(); i++) {
 									if(mtest2[i].equals(CHILD(0), true, true)) {
@@ -2131,10 +2132,35 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								}
 							}
 						}
+						bool b2 = false;
+						if(mtest[0].isAddition()) {
+							for(size_t i = 0; i < mtest[0].size();) {
+								if(!mtest[0][i].contains(x_var)) {
+									mtest[0][i].calculateNegate(eo2);
+									mtest[0][i].ref();
+									mtest[1].add_nocopy(&mtest[0][i], true);
+									mtest[1].calculateAddLast(eo2);
+									mtest[0].delChild(i + 1);
+									b2 = true;
+								} else {
+									i++;
+								}
+							}
+							if(b2) {
+								mtest.childUpdated(1);
+								mtest.childUpdated(2);
+								if(mtest[0].size() == 1) {
+									mtest[0].setToChild(1, true);
+								} else if(mtest[0].size() == 0) {
+									mtest[0].clear(true);
+								}
+							}
+						}
+						MathStructure mtest_orig(mtest);
 						if(i_root && mtest.isolate_x(eo2, eo, x_var, false, depth + 1)) {
 							ComparisonType ct_comp_bak = ct_comp;
 							if((mtest.isLogicalAnd() || mtest.isLogicalOr() || mtest.isComparison()) && test_comparisons(*this, mtest, x_var, eo, false, eo2.expand ? 1 : 2) < 0) {
-								if(eo2.expand) {
+								if(eo2.expand && !mtest.equals(mtest_orig, true, true)) {
 									CALCULATOR->endTemporaryStopMessages(true);
 									add(mtest, ct_comp_bak == COMPARISON_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
 									calculatesub(eo2, eo, false);

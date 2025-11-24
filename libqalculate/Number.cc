@@ -12382,6 +12382,14 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			precision = (i_precision_base > i_log + 1) ? i_log + 1 : i_precision_base;
 		}
 		i_log -= ((use_max_idp || (po.interval_display != INTERVAL_DISPLAY_PLUSMINUS && po.interval_display != INTERVAL_DISPLAY_CONCISE && po.interval_display != INTERVAL_DISPLAY_RELATIVE) || !is_interval) && po.use_max_decimals && po.max_decimals >= 0 && precision > po.max_decimals + i_log - expo) ? po.max_decimals + i_log - expo : precision - 1;
+#ifdef _WIN32
+		if(i_log >= 323228497L || i_log <= -323228497L) {
+			mpfr_clears(v, f_base, f_mid, NULL);
+			if(i_log > 0) CALCULATOR->error(true, _("Floating point overflow"), NULL);
+			else CALCULATOR->error(true, _("Floating point underflow"), NULL);
+			return CALCULATOR->abortedMessage();
+		}
+#endif
 		l10 = expo - i_log;
 		mpz_t z_log;
 		mpz_init(z_log);
