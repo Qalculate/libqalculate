@@ -10534,6 +10534,7 @@ string to_float(Number nr_pre, unsigned int bits, unsigned int expbits, unsigned
 			po.rounding = ROUNDING_HALF_TO_EVEN;
 			po.binary_bits = 1;
 			po.base_display = BASE_DISPLAY_NONE;
+			po.decimalpoint_sign = DOT;
 			bool b_approx = false;
 			po.is_approximate = &b_approx;
 			string sfrac = nrfrac.print(po);
