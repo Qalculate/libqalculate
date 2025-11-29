@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/Qalculate/libqalculate/issues\n"
 "POT-Creation-Date: 2025-11-21 21:27+0100\n"
-"PO-Revision-Date: 2025-10-05 12:36+0800\n"
+"PO-Revision-Date: 2025-11-29 22:35+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_TW\n"
@@ -168,7 +168,7 @@ msgstr "菲律賓披索"
 
 #: data/currencies.xml.in:62
 msgid "a-cr:PHP,au:₱"
-msgstr "a-cr:PHP,au:₱"
+msgstr "a-cr:PHP,au:₽"
 
 #: data/currencies.xml.in:63
 msgid "Philippines"
@@ -332,7 +332,6 @@ msgid "South Korean Won"
 msgstr "韓元"
 
 #: data/currencies.xml.in:131
-#, fuzzy
 msgid "a-cr:KRW,au:₩,won"
 msgstr "a-cr:KRW,au:₩,won"
 
@@ -357,7 +356,6 @@ msgid "Indian Rupee"
 msgstr "印度盧比"
 
 #: data/currencies.xml.in:141
-#, fuzzy
 msgid "a-cr:INR,au:₹,rupee"
 msgstr "a-cr:INR,au:₹,rupee"
 
@@ -2096,18 +2094,8 @@ msgid ""
 "Polyatomic Non-Metal 9 Diatomic Non-Metal 10 Noble Gas 11 Unknown chemical "
 "properties"
 msgstr ""
-"表示元素分組的數字:\n"
-"1 鹼金屬\n"
-"2 鹼土金屬\n"
-"3 鑭系元素\n"
-"4 錒系元素\n"
-"5 過渡金屬\n"
-"6 金屬\n"
-"7 類金屬\n"
-"8 多原子非金屬\n"
-"9 雙原子非金屬\n"
-"10 惰性氣體\n"
-"11 未知化學性質"
+"表示元素分組的數字: 1 鹼金屬 2 鹼土金屬 3 鑭系元素 4 錒系元素 5 過渡金屬 6 金"
+"屬 7 類金屬 8 多原子非金屬 9 雙原子非金屬 10 惰性氣體 11 未知化學性質"
 
 #: data/datasets.xml.in:50
 msgid "r:class"
@@ -2177,27 +2165,24 @@ msgstr "行星"
 
 #: data/datasets.xml.in:99
 msgid ""
-"This data uses material from the Wikipedia articles \"Earth\" (http://"
-"www.wikipedia.org/wiki/Earth), \"Jupiter\" (http://www.wikipedia.org/wiki/"
-"Jupiter), \"Mars\" (http://www.wikipedia.org/wiki/Mars), \"Mercury (planet)"
-"\" (http://www.wikipedia.org/wiki/Mercury_(planet)), \"Neptune\" (http://"
-"www.wikipedia.org/wiki/Neptune), \"Pluto\" (http://www.wikipedia.org/wiki/"
-"Pluto), \"Saturn\" (http://www.wikipedia.org/wiki/Saturn), \"Uranus\" "
-"(http://www.wikipedia.org/wiki/Uranus), and \"Venus\" (http://"
-"en.wikipedia.org/wiki/Venus), under Creative Commons Attribution-ShareAlike "
-"License"
+"This data uses material from the Wikipedia articles \"Earth\" (http://www."
+"wikipedia.org/wiki/Earth), \"Jupiter\" (http://www.wikipedia.org/wiki/"
+"Jupiter), \"Mars\" (http://www.wikipedia.org/wiki/Mars), \"Mercury "
+"(planet)\" (http://www.wikipedia.org/wiki/Mercury_(planet)), "
+"\"Neptune\" (http://www.wikipedia.org/wiki/Neptune), \"Pluto\" (http://www."
+"wikipedia.org/wiki/Pluto), \"Saturn\" (http://www.wikipedia.org/wiki/"
+"Saturn), \"Uranus\" (http://www.wikipedia.org/wiki/Uranus), and "
+"\"Venus\" (http://en.wikipedia.org/wiki/Venus), under Creative Commons "
+"Attribution-ShareAlike License"
 msgstr ""
-"此資料使用來自Wikipedia文章的資料\n"
-"\"地球\"(http://www.wikipedia.org/wiki/Earth)、\n"
-"\"木星\"(http://www.wikipedia.org/wiki/Jupiter)、\n"
-"\"火星\"(http://www.wikipedia.org/wiki/Mars)、\n"
-"\"水星\"(http://www.wikipedia.org/wiki/Mercury_(planet))、\n"
-"\"海王星\"(http://www.wikipedia.org/wiki/Neptune)、\n"
-"\"冥王星\"(http://www.wikipedia.org/wiki/Pluto)、\n"
-"\"土星\"(http://www.wikipedia.org/wiki/Saturn)、\n"
-"\"天王星\"(http://www.wikipedia.org/wiki/Uranus)和\n"
-"\"金星\"(http://en.wikipedia.org/wiki/Venus)，在創用CC 姓名標示-相同方式分享 "
-"的授權條款下"
+"此資料使用來自Wikipedia文章的資料 \"地球\"(http://www.wikipedia.org/wiki/"
+"Earth)、\"木星\"(http://www.wikipedia.org/wiki/Jupiter)、\"火星\"(http://www."
+"wikipedia.org/wiki/Mars)、\"水星\"(http://www.wikipedia.org/wiki/"
+"Mercury_(planet))、\"海王星\"(http://www.wikipedia.org/wiki/Neptune)、\"冥王"
+"星\"(http://www.wikipedia.org/wiki/Pluto)、\"土星\"(http://www.wikipedia.org/"
+"wiki/Saturn)、\"天王星\"(http://www.wikipedia.org/wiki/Uranus)和\"金星"
+"\"(http://en.wikipedia.org/wiki/Venus)，在創用CC 姓名標示-相同方式分享 的授權"
+"條款下"
 
 #: data/datasets.xml.in:109
 msgid "r:planet"
@@ -2769,7 +2754,7 @@ msgstr "鿫"
 
 #: data/functions.xml.in:4 data/variables.xml.in:868
 msgid "Matrices & Vectors"
-msgstr "矩陣&向量"
+msgstr "矩陣和向量"
 
 #: data/functions.xml.in:6
 msgid "Construct Vector"
@@ -2935,14 +2920,12 @@ msgid "Dimension"
 msgstr "維度"
 
 #: data/functions.xml.in:90
-#, fuzzy
 msgid "Circular Vector Shift"
-msgstr "圓密耳"
+msgstr "環狀向量移位"
 
 #: data/functions.xml.in:91
-#, fuzzy
 msgid "r:circshift"
-msgstr "r:shift"
+msgstr "r:circshift"
 
 #: data/functions.xml.in:97 data/functions.xml.in:3581
 #: data/functions.xml.in:3609
@@ -2950,34 +2933,30 @@ msgid "Steps"
 msgstr "步數"
 
 #: data/functions.xml.in:104
-#, fuzzy
 msgid "Reshape Matrix"
-msgstr "矩陣"
+msgstr "重塑矩陣"
 
 #: data/functions.xml.in:105
-#, fuzzy
 msgid "r:reshape"
-msgstr "r:replace"
+msgstr "r:reshape"
 
 #: data/functions.xml.in:111 data/functions.xml.in:155
 #: data/functions.xml.in:216
 msgid "Rows"
-msgstr "列"
+msgstr "列數"
 
 #: data/functions.xml.in:114 data/functions.xml.in:158
 #: data/functions.xml.in:224
 msgid "Columns"
-msgstr "欄"
+msgstr "行數"
 
 #: data/functions.xml.in:118
-#, fuzzy
 msgid "Vector Part"
-msgstr "向量1"
+msgstr "部分向量"
 
 #: data/functions.xml.in:119
-#, fuzzy
 msgid "r:slice,r:limits"
-msgstr "r:limits"
+msgstr "r:slice,r:limits"
 
 #: data/functions.xml.in:120
 msgid ""
@@ -2985,16 +2964,16 @@ msgid ""
 "counted from the back of the vector. If the second index is beyond the end "
 "of the vector, zeroes are appended to the returned vector."
 msgstr ""
+"回傳兩個位置之間的一部分向量。負索引是從向量的後面計數的。如果第二個索引超越"
+"向量的結尾，則回傳向量結尾附加零。"
 
 #: data/functions.xml.in:125
-#, fuzzy
 msgid "Index 1"
-msgstr "索引"
+msgstr "索引1"
 
 #: data/functions.xml.in:128
-#, fuzzy
 msgid "Index 2"
-msgstr "索引"
+msgstr "索引2"
 
 #: data/functions.xml.in:133
 msgid "r:dimension"
@@ -3005,19 +2984,16 @@ msgid "Returns the number of elements in a vector."
 msgstr "回傳向量中元素的數量。"
 
 #: data/functions.xml.in:140
-#, fuzzy
 msgid "Combine Vectors"
-msgstr "組合數學"
+msgstr "合併向量"
 
 #: data/functions.xml.in:141
-#, fuzzy
 msgid "r:combine,r:mergevectors"
-msgstr "r:mergevectors"
+msgstr "r:combine,r:mergevectors"
 
 #: data/functions.xml.in:142
-#, fuzzy
 msgid "Returns a vector with the elements from multiple vectors."
-msgstr "回傳具有兩個向量元素的向量。"
+msgstr "回傳具有多個向量元素的向量。"
 
 #: data/functions.xml.in:144 data/functions.xml.in:437
 #: data/functions.xml.in:479 data/functions.xml.in:493
@@ -3067,15 +3043,13 @@ msgid "Matrix"
 msgstr "矩陣"
 
 #: data/functions.xml.in:173
-#, fuzzy
 msgid "Matrix Part"
-msgstr "矩陣1"
+msgstr "部分矩陣"
 
 #. Matrix area
 #: data/functions.xml.in:175
-#, fuzzy
 msgid "r:part,r:area"
-msgstr "r:area"
+msgstr "r:part,r:area"
 
 #: data/functions.xml.in:176
 msgid "Returns a part of a matrix."
@@ -3098,17 +3072,14 @@ msgid "End column"
 msgstr "結尾行"
 
 #: data/functions.xml.in:194
-#, fuzzy
 msgid "Replace Part of Matrix"
-msgstr "回傳一部分矩陣。"
+msgstr "取代一部分矩陣"
 
 #: data/functions.xml.in:195
-#, fuzzy
 msgid "r:replacePart"
-msgstr "r:replace"
+msgstr "r:replacePart"
 
 #: data/functions.xml.in:200
-#, fuzzy
 msgid "Replacement"
 msgstr "取代"
 
@@ -4042,13 +4013,8 @@ msgid ""
 "exponents in a matrix with two columns 3: the exponent after each factor in "
 "vector"
 msgstr ""
-"執行整數或多項式分解，並用向量回傳因子。\n"
-"\n"
-"模式如下決定整數分解的回傳值。\n"
-"0: 所有質因數\n"
-"1: 沒有重複的因數\n"
-"2: 因數和指數(雙行矩陣)\n"
-"3: 指數在每個因數之後(向量)"
+"執行整數或多項式分解，並用向量回傳因子。模式如下決定整數分解的回傳值。0: 所有"
+"質因數 1: 沒有重複的因數 2: 因數和指數(雙行矩陣) 3: 指數在每個因數之後(向量)"
 
 #: data/functions.xml.in:902
 msgid "Mode"
@@ -4133,11 +4099,9 @@ msgid ""
 "zero (8), up (9), down (10)"
 msgstr ""
 "捨入到最近的整數或小數。如果第二個引數為零，則該值朝最近的整數捨入，否則該值"
-"將捨入到小數點右側(如果為正)或左側(如果為負)對應的數字數量。\n"
-"\n"
-"可用的捨入方法(第3個引數): 四捨五入(0)、五成雙(1)、五成奇(2)、五捨六入(3)、五"
-"上取(4)、五下取(5)、五隨機(6)、無條件捨去(7)、無條件進位(8)、上取(9)、下取"
-"(10)"
+"將捨入到小數點右側(如果為正)或左側(如果為負)對應的數字數量。可用的捨入方法(第"
+"3個引數): 四捨五入(0)、五成雙(1)、五成奇(2)、五捨六入(3)、五上取(4)、五下取"
+"(5)、五隨機(6)、無條件捨去(7)、無條件進位(8)、上取(9)、下取(10)"
 
 #: data/functions.xml.in:968
 msgid "Number of decimals"
@@ -4290,23 +4254,17 @@ msgid ""
 "always converted to a single number."
 msgstr ""
 "使用指定的底數(基數)從表達式回傳一個值。對於-62和62之間的底數，支援完整的數學"
-"表達式(包含運算子和函數)，而對於其他底數，指定的表達式轉換到單個數字。\n"
-"\n"
-"底數≤36使用數字0-9和A-Z(大小寫無關)。\n"
-"\n"
-"底數在37和62之間使用大小寫有關的字母(0-9, A-Z, a-z)作為數字('z'等於61)。\n"
-"\n"
-"底數超過62使用Unicode字元作為數字，用字元編碼作為值(例如'0'等於48)。在這種情"
-"況下支援跳脫字元(例如'\\0' = 0, '\\523' = 523, '\\x7f' = 127)。\n"
-"\n"
-"負底數和對應的正底數使用相同的數字，而用於非整數底數的數字用無條件進位底數決"
-"定。非實數的底數預設使用數字0-9和A-Z。\n"
-"\n"
-"使用的數字集可以使用第三個引數選擇(預設為0代表自動選擇)。將其設定為1代表數字"
-"0-9和A-Z，2代表數字0-9、A-Z和a-z，3代表Unicode數字，和4代表電話字(例如ABC=2、"
-"DEF=3等等)，或輸入一個所有數字都用升序放置的文字字串(例如\"0123456789\")並可"
-"選擇用分號分離(啟用多個等效數字，例如\"0;aA1;bB2;cC3\")。手動選擇數字集時，指"
-"定的表達式總是轉換到單個數字。"
+"表達式(包含運算子和函數)，而對於其他底數，指定的表達式轉換到單個數字。底數≤36"
+"使用數字0-9和A-Z(大小寫無關)。底數在37和62之間使用區分大小寫的字母(0-9, A-Z, "
+"a-z)作為數字('z'等於61)。底數超過62使用Unicode字元作為數字，用字元編碼作為值"
+"(例如'0'等於48)。在這種情況下支援跳脫字元(例如'\\0' = 0, '\\523' = 523, "
+"'\\x7f' = 127)。負底數和對應的正底數使用相同的數字，而用於非整數底數的數字用"
+"無條件進位底數決定。非實數的底數預設使用數字0-9和A-Z。使用的數字集可以使用第"
+"三個引數選擇(預設為0代表自動選擇)。將其設定為1代表數字0-9和A-Z，2代表數字"
+"0-9、A-Z和a-z，3代表Unicode數字，和4代表電話字(例如ABC=2、DEF=3等等)，或輸入"
+"一個所有數字都用升序放置的文字字串(例如\"0123456789\")並可選擇用分號分離(啟用"
+"多個等效數字，例如\"0;aA1;bB2;cC3\")。手動選擇數字集時，指定的表達式總是轉換"
+"到單個數字。"
 
 #: data/functions.xml.in:1095
 msgid "Set of digits"
@@ -4635,8 +4593,8 @@ msgid ""
 "Discontinuous function also known as \"unit step function\". Returns 0 if x "
 "< 0, 1 if x > 0, and 1/2 if x = 0."
 msgstr ""
-"不連續函數也稱為“單位步階函數”。回傳0(如果x < 0)、1(如果x > 0)和1/2(如果x = "
-"0)。"
+"不連續函數也稱為\"單位步階函數\"。回傳0(如果x < 0)、1(如果x > 0)和1/2(如果x "
+"= 0)。"
 
 #: data/functions.xml.in:1315
 msgid "Dirac Delta Function"
@@ -4717,7 +4675,7 @@ msgstr "r:conj"
 
 #: data/functions.xml.in:1385
 msgid "Exponents & Logarithms"
-msgstr "指數&對數"
+msgstr "指數和對數"
 
 #: data/functions.xml.in:1387
 msgid "Square Root"
@@ -5239,8 +5197,8 @@ msgstr "r:floatParts"
 msgid ""
 "Converts a value to a number in a IEEE 754 floating-point format and returns "
 "sign, exponent, and significand in a vector. If the third argument (exponent "
-"bits) is set to zero, the standard number of exponent bits will be used "
-"(e.g. 8 for 32-bit format)."
+"bits) is set to zero, the standard number of exponent bits will be used (e."
+"g. 8 for 32-bit format)."
 msgstr ""
 "將值轉換到IEEE 754浮點格式的數字並以向量回傳符號、指數和有效數。如果第三個引"
 "數(指數位元)設定為零，則使用標準數量的指數位元(例如8用於32位元格式)。"
@@ -5358,9 +5316,8 @@ msgid "Body Mass Index (BMI)"
 msgstr "身體質量指數(BMI)"
 
 #: data/functions.xml.in:1878
-#, fuzzy
 msgid "r:bmi"
-msgstr "-r:bmi"
+msgstr "r:bmi"
 
 #: data/functions.xml.in:1879
 msgid ""
@@ -5369,14 +5326,9 @@ msgid ""
 "18.5 Normal weight 18.5-25 Overweight 25-30 Obesity > 30 Note that you must "
 "use units for weight (ex. 59kg) and length (ex. 174cm)."
 msgstr ""
-"計算身體質量指數。結果的BMI值有時被解釋如下(雖然隨著年齡，性別等等而變化):\n"
-"\n"
-"過輕 < 18.5\n"
-"正常重量 18.5-25\n"
-"過重 25-30\n"
-"肥胖 > 30\n"
-"\n"
-"請注意，你必須使用重量(例如59kg)和長度(例如174cm)單位。"
+"計算身體質量指數。結果的BMI值有時被解釋如下(雖然隨著年齡，性別等等而變化): 過"
+"輕 < 18.5 正常重量 18.5-25 過重 25-30 肥胖 > 30 請注意，你必須使用重量(例如"
+"59kg)和長度(例如174cm)單位。"
 
 #: data/functions.xml.in:1890
 msgid "Weight"
@@ -5405,7 +5357,7 @@ msgid ""
 msgstr ""
 "計算可用於資料儲存的RAID陣列磁碟容量。如果磁碟數量和RAID等級的組合無效，則回"
 "傳零。支援的RAID等級有0、1、2、3、4、5、6、1+0/10、0+1、5+0/50、6+0/60和1+6。"
-"條帶是可選的，只用於巢狀RAID等級(除了1+0)。"
+"條帶是選擇性的，只用於巢狀RAID等級(除了1+0)。"
 
 #: data/functions.xml.in:1904
 msgid "RAID level"
@@ -5461,9 +5413,10 @@ msgid ""
 "that are in acceptably sharp focus in a photo. Enter focal length (e.g. 50 "
 "mm) and distance (e.g. 5 m) with units, and f-stop without unit (2.8, 4.0, "
 "5.6, etc.). Specify either a cicle of confusion diameter limit (e.g. 0.05 "
-"mm) or the sensor size of the camera - 0=\"35mm\", 1=\"APS-H\", 2=\"APS-CN\" "
-"(Nikon, Pentax, Sony), 3=\"APS-C\" (Canon), 4=\"4/3\" (Four Thirds System), "
-"or 5='1\"' (Nikon 1, Sony RX10, Sony RX100) - for a diameter based on d/1500."
+"mm) or the sensor size of the camera - 0=\"35mm\", 1=\"APS-H\", 2=\"APS-"
+"CN\" (Nikon, Pentax, Sony), 3=\"APS-C\" (Canon), 4=\"4/3\" (Four Thirds "
+"System), or 5='1\"' (Nikon 1, Sony RX10, Sony RX100) - for a diameter based "
+"on d/1500."
 msgstr ""
 "回傳照片中可接受的銳利焦點中最近和最遠的物體之間的估計距離。輸入具有單位的焦"
 "距(例如50 mm)和距離(例如5 m)，和無單位的F值(2.8、4.0、5.6等等)。指定模糊圈直"
@@ -5498,15 +5451,15 @@ msgstr "r:awg"
 #: data/functions.xml.in:1962
 msgid ""
 "For gauges larger than 0000 (4/0), please use negative values (00=-1, "
-"000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation "
-"(e.g. awg(x) = 20 mm^2)."
+"000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation (e."
+"g. awg(x) = 20 mm^2)."
 msgstr ""
 "對於大於0000(4/0)的線規，請使用負值(00=-1、000=-2、0000=-3、00000=-4等等)。要"
 "轉換到AWG，使用方程式(例如awg(x) = 20 mm^2)。"
 
 #: data/functions.xml.in:1965 data/functions.xml.in:1974
 msgid "AWG"
-msgstr ""
+msgstr "AWG"
 
 #: data/functions.xml.in:1969
 msgid "American Wire Gauge Diameter"
@@ -5519,8 +5472,8 @@ msgstr "r:awgd"
 #: data/functions.xml.in:1971
 msgid ""
 "For gauges larger than 0000 (4/0), please use negative values (00=-1, "
-"000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation "
-"(e.g. awgd(x) = 5 mm)."
+"000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation (e."
+"g. awgd(x) = 5 mm)."
 msgstr ""
 "對於大於0000(4/0)的線規，請使用負值(00=-1、000=-2、0000=-3、00000=-4等等)。要"
 "轉換到AWG，使用方程式(例如awgd(x) = 5 mm)。"
@@ -5543,10 +5496,8 @@ msgstr ""
 "位)，如果引數是整數或大寫字元(放在引號內)"
 
 #: data/functions.xml.in:1986
-#, fuzzy
-#| msgid "Millimeter of Water"
 msgid "Diameter or Gauge"
-msgstr "毫米水柱"
+msgstr "直徑或規格"
 
 #: data/functions.xml.in:1991
 msgid "Statistics"
@@ -6431,7 +6382,7 @@ msgstr "尺度(γ)"
 
 #: data/functions.xml.in:2873 data/variables.xml.in:918
 msgid "Date & Time"
-msgstr "日期&時間"
+msgstr "日期和時間"
 
 #: data/functions.xml.in:2875
 msgid "Construct Date"
@@ -6503,13 +6454,11 @@ msgstr "r:days"
 #: data/functions.xml.in:2916
 msgid ""
 "Returns the number of days between two dates. Basis is the type of day "
-"counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/"
-"360, 3: real days/365 or 4: European 30/360."
+"counting you want to use: 0: US 30/360, 1: real days (default), 2: real "
+"days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"回傳兩個日期之間的天數。\n"
-"\n"
-"基礎是你想要使用的天數計數類型: 0: 美國30/360、1: 實際天數(預設)、2: 實際天"
-"數/360、3: 實際天數/365或4: 歐洲30/360。"
+"回傳兩個日期之間的天數。基礎是你想要使用的天數計數類型: 0: 美國30/360、1: 實"
+"際天數(預設)、2: 實際天數/360、3: 實際天數/365或4: 歐洲30/360。"
 
 #: data/functions.xml.in:2920 data/functions.xml.in:2939
 msgid "First date"
@@ -6545,10 +6494,8 @@ msgid ""
 "type of day counting you want to use: 0: US 30/360, 1: real days (default), "
 "2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"回傳兩個日期之間的年數(分數)。\n"
-"\n"
-"基礎是你想要使用的天數計數類型: 0: 美國30/360、1: 實際天數(預設)、2: 實際天"
-"數/360、3: 實際天數/365或4: 歐洲30/360。"
+"回傳兩個日期之間的年數(分數)。基礎是你想要使用的天數計數類型: 0: 美國30/360、"
+"1: 實際天數(預設)、2: 實際天數/360、3: 實際天數/365或4: 歐洲30/360。"
 
 #: data/functions.xml.in:2952
 msgid "Week of Year"
@@ -6769,7 +6716,7 @@ msgstr "公用程式"
 
 #: data/functions.xml.in:3103
 msgid "Intervals & Uncertainties"
-msgstr "區間&誤差"
+msgstr "區間和誤差"
 
 #: data/functions.xml.in:3105
 msgid "Interval"
@@ -7146,15 +7093,11 @@ msgid ""
 "expression is returned as a text string, otherwise the value is returned. "
 "The \":=\" operator (e.g. var1:=10) is a shortcut for this function."
 msgstr ""
-"將值儲存在變數中或將表達式儲存為函數。\n"
-"\n"
-"如果名稱包含括號(例如\"f()\")，則建立一個函數。可選的函數引數可以在名稱中指定"
-"(例如\"save(a+b,f(a,b))\")。否則函數引數預期使用\\x、\\y、\\z、\\a、"
-"\\b、...，或x、y、z(例如\"save(x+y,f())\")。\n"
-"\n"
-"如果函數被建立，則已處理的函數表達式回傳為文字字串，否則回傳該值。\n"
-"\n"
-"\":=\"運算子(例如var1:=10)是此函數的捷徑。"
+"將值儲存在變數中或將表達式儲存為函數。如果名稱包含括號(例如\"f()\")，則建立一"
+"個函數。函數引數可以在名稱中選擇性的指定(例如\"save(a+b,f(a,b))\")。否則函數"
+"引數預期使用\\x、\\y、\\z、\\a、\\b、...，或x、y、z(例如\"save(x+y,f())\")。"
+"如果函數被建立，則已處理的函數表達式回傳為文字字串，否則回傳該值。\":=\"運算"
+"子(例如var1:=10)是此函數的捷徑。"
 
 #: data/functions.xml.in:3389
 msgid "Category"
@@ -8378,10 +8321,8 @@ msgid ""
 "the default price variable."
 msgstr ""
 "計算需求彈性。也適用於供給彈性、所得彈性、交叉價格彈性等等。只要用供給取代需"
-"求，或用所得取代價格...\n"
-"\n"
-"例如elasticity(100-x^2, 3)計算函數\"Q = 100 - x^2\"的價格為3時的需求彈性，其"
-"中x是預設的價格變數。"
+"求，或用所得取代價格...例如elasticity(100-x^2, 3)計算函數\"Q = 100 - x^2\"的"
+"價格為3時的需求彈性，其中x是預設的價格變數。"
 
 #: data/functions.xml.in:4384
 msgid "Demand function"
@@ -8447,10 +8388,8 @@ msgid ""
 "at the end of the period. Life is the number of periods over which the asset "
 "is depreciated. SLN divides the cost evenly over the life of an asset."
 msgstr ""
-"決定一個週期內資產的直線折舊。\n"
-"\n"
-"成本是你為資產支付的金額。殘值是期末資產的價值。壽命是資產折舊的期數。SLN在資"
-"產壽命上均分成本。"
+"決定一個週期內資產的直線折舊。成本是你為資產支付的金額。殘值是期末資產的價"
+"值。壽命是資產折舊的期數。SLN在資產壽命上均分成本。"
 
 #: data/functions.xml.in:4430
 msgid "Present Value"
@@ -8466,9 +8405,8 @@ msgid ""
 "made at the beginning of the period. If type = 0 (or omitted) it is made at "
 "the end of each period."
 msgstr ""
-"回傳投資的現值。\n"
-"\n"
-"如果類型=1，則支付是在期初。如果類型=0(或省略)，則在每個期末。"
+"回傳投資的現值。如果類型=1，則支付是在期初。如果類型=0(或省略)，則在每個期"
+"末。"
 
 #: data/functions.xml.in:4437 data/functions.xml.in:4473
 #: data/functions.xml.in:4609 data/functions.xml.in:4687
@@ -8648,12 +8586,10 @@ msgid ""
 "monthly payments divide the annual interest rate by 12 and enter the total "
 "number of months (12 times number of years) in the periods field."
 msgstr ""
-"基於固定利率和固定支付(每個支付金額相同)回傳貸款每期的支付(負數)金額。\n"
-"\n"
-"如果類型=1，則支付是在期初。如果類型=0(或省略)，則在每個期末。\n"
-"\n"
-"請注意，這裡的利率是指每個時期的利率，如果你用年利率計算，則每個時期將被解釋"
-"為全年。要得到每月支付，將年利率除以12並將總月數(12乘以年數)輸入期數欄位。"
+"基於固定利率和固定支付(每個支付金額相同)回傳貸款每期的支付(負數)金額。如果類"
+"型=1，則支付是在期初。如果類型=0(或省略)，則在每個期末。請注意，這裡的利率是"
+"指每個時期的利率，如果你用年利率計算，則每個時期將被解釋為全年。要得到每月支"
+"付，將年利率除以12並將總月數(12乘以年數)輸入期數欄位。"
 
 #: data/functions.xml.in:4555 data/functions.xml.in:4630
 msgid "Rate"
@@ -8674,11 +8610,8 @@ msgid ""
 "each period. Note that the optional guess is needed because there can be "
 "more than one valid result. It defaults to 10%."
 msgstr ""
-"計算報酬的利率。\n"
-"\n"
-"如果類型=1，則支付是在期初。如果類型=0(或省略)，則在每個期末。\n"
-"\n"
-"請注意，選擇性的猜測是需要的，因為可能有多個有效結果。預設為10%。"
+"計算報酬的利率。如果類型=1，則支付是在期初。如果類型=0(或省略)，則在每個期"
+"末。請注意，選擇性的猜測是需要的，因為可能有多個有效結果。預設為10%。"
 
 #: data/functions.xml.in:4598
 msgid "Guess"
@@ -8699,9 +8632,8 @@ msgid ""
 "payment at the beginning of a period and 0 (default) for payment at the end "
 "of a period."
 msgstr ""
-"基於定期固定支付和固定利率計算投資的期數。\n"
-"\n"
-"類型定義到期日。1代表在期初支付而0(預設)代表在期末支付。"
+"基於定期固定支付和固定利率計算投資的期數。類型定義到期日。1代表在期初支付而"
+"0(預設)代表在期末支付。"
 
 #: data/functions.xml.in:4625
 msgid "Periods for investment to attain desired value"
@@ -8731,9 +8663,8 @@ msgid ""
 "Type defines the due date. 1 for payment at the beginning of a period and 0 "
 "(default) for payment at the end of a period."
 msgstr ""
-"計算年金用於本金的支付金額。\n"
-"\n"
-"類型定義到期日。1代表在期初支付而0(預設)代表在期末支付。"
+"計算年金用於本金的支付金額。類型定義到期日。1代表在期初支付而0(預設)代表在期"
+"末支付。"
 
 #: data/functions.xml.in:4661
 msgid "Desired future value"
@@ -8770,9 +8701,8 @@ msgid ""
 "is made at the beginning of the period. If type = 0 (or omitted) it is made "
 "at the end of each period."
 msgstr ""
-"計算投資的終值。這基於定期固定支付和固定利率。\n"
-"\n"
-"如果類型=1，則支付是在期初。如果類型=0(或省略)，則在每個期末。"
+"計算投資的終值。這基於定期固定支付和固定利率。如果類型=1，則支付是在期初。如"
+"果類型=0(或省略)，則在每個期末。"
 
 #: data/functions.xml.in:4703
 msgid "Return on continuously compounded interest"
@@ -8824,9 +8754,8 @@ msgid ""
 "Type defines the due date. 1 for payment at the beginning of a period and 0 "
 "(default) for payment at the end of a period."
 msgstr ""
-"計算年金用於利息的支付金額。\n"
-"\n"
-"類型定義到期日。1代表在期初支付而0(預設)代表在期末支付。"
+"計算年金用於利息的支付金額。類型定義到期日。1代表在期初支付而0(預設)代表在期"
+"末支付。"
 
 #: data/functions.xml.in:4764
 msgid "Interest rate for a fully invested security"
@@ -8842,10 +8771,8 @@ msgid ""
 "of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: "
 "real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"回傳充分投資證券的利率。\n"
-"\n"
-"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天"
-"數/360、3: 實際天數/365或4: 歐洲30/360。"
+"回傳充分投資證券的利率。基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、"
+"1: 實際天數、2: 實際天數/360、3: 實際天數/365或4: 歐洲30/360。"
 
 #: data/functions.xml.in:4777 data/functions.xml.in:4828
 msgid "Investment"
@@ -8910,10 +8837,9 @@ msgid ""
 "1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360. The "
 "settlement date must be before maturity date."
 msgstr ""
-"回傳投資證券到期日收到的金額。\n"
-"\n"
-"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天"
-"數/360、3: 實際天數/365或4: 歐洲30/360。交割日必須在到期日之前。"
+"回傳投資證券到期日收到的金額。基礎是你想要使用的天數計數類型: 0: 美國"
+"30/360(預設)、1: 實際天數、2: 實際天數/360、3: 實際天數/365或4: 歐洲30/360。"
+"交割日必須在到期日之前。"
 
 #: data/functions.xml.in:4840
 msgid "Discount rate for a security"
@@ -8929,10 +8855,8 @@ msgid ""
 "you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: "
 "real days/365 or 4: European 30/360."
 msgstr ""
-"回傳證券的貼現率。\n"
-"\n"
-"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天"
-"數/360、3: 實際天數/365或4: 歐洲30/360。"
+"回傳證券的貼現率。基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實"
+"際天數、2: 實際天數/360、3: 實際天數/365或4: 歐洲30/360。"
 
 #: data/functions.xml.in:4865
 msgid "Accrued interest of security paying at maturity"
@@ -8949,10 +8873,8 @@ msgid ""
 "(default), 1: real days, 2: real days/360, 3: real days/365 or 4: European "
 "30/360."
 msgstr ""
-"回傳在到期日支付利息的證券的應計利息。\n"
-"\n"
-"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天"
-"數/360、3: 實際天數/365或4: 歐洲30/360。"
+"回傳在到期日支付利息的證券的應計利息。基礎是你想要使用的天數計數類型: 0: 美國"
+"30/360(預設)、1: 實際天數、2: 實際天數/360、3: 實際天數/365或4: 歐洲30/360。"
 
 #: data/functions.xml.in:4872 data/functions.xml.in:4897
 #: data/functions.xml.in:4985
@@ -8982,10 +8904,9 @@ msgid ""
 "is the type of day counting you want to use: 0: US 30/360 (default), 1: real "
 "days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"回傳支付定期利息的證券的應計利息。\n"
-"\n"
-"允許的頻率是1-年度、2-半年度或4-季度。基礎是你想要使用的天數計數類型: 0: 美國"
-"30/360(預設)、1: 實際天數、2: 實際天數/360、3: 實際天數/365或4: 歐洲30/360。"
+"回傳支付定期利息的證券的應計利息。允許的頻率是1-年度、2-半年度或4-季度。基礎"
+"是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天"
+"數/360、3: 實際天數/365或4: 歐洲30/360。"
 
 #: data/functions.xml.in:4900
 msgid "First interest"
@@ -9010,10 +8931,9 @@ msgid ""
 "(default), 1: real days, 2: real days/360, 3: real days/365 or 4: European "
 "30/360."
 msgstr ""
-"回傳交割日和到期日之間要支付的息票數量。\n"
-"\n"
-"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天"
-"數/360、3: 實際天數/365或4: 歐洲30/360。"
+"回傳交割日和到期日之間要支付的息票數量。基礎是你想要使用的天數計數類型: 0: 美"
+"國30/360(預設)、1: 實際天數、2: 實際天數/360、3: 實際天數/365或4: 歐洲"
+"30/360。"
 
 #: data/functions.xml.in:4947
 msgid "Price per $100 face value of a discounted security"
@@ -9030,10 +8950,9 @@ msgid ""
 "of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: "
 "real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"計算並回傳貼現證券每$100面值的價格。證券在到期時不支付利息。\n"
-"\n"
-"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天"
-"數/360、3: 實際天數/365或4: 歐洲30/360。"
+"計算並回傳貼現證券每$100面值的價格。證券在到期時不支付利息。基礎是你想要使用"
+"的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天數/360、3: 實際天"
+"數/365或4: 歐洲30/360。"
 
 #: data/functions.xml.in:4960
 msgid "Discount"
@@ -9054,10 +8973,9 @@ msgid ""
 "want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real "
 "days/365 or 4: European 30/360."
 msgstr ""
-"計算並回傳證券每$100面值的價格。證券在到期時支付利息。\n"
-"\n"
-"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天"
-"數/360、3: 實際天數/365或4: 歐洲30/360。"
+"計算並回傳證券每$100面值的價格。證券在到期時支付利息。基礎是你想要使用的天數"
+"計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天數/360、3: 實際天數/365"
+"或4: 歐洲30/360。"
 
 #: data/functions.xml.in:4991
 msgid "Annual yield"
@@ -9130,99 +9048,99 @@ msgstr "太陽"
 
 #: data/prefixes.xml.in:4
 msgid "ar:q,r:quecto"
-msgstr "ar:q,r:quecto,匱"
+msgstr "匱"
 
 #: data/prefixes.xml.in:8
 msgid "ar:r,r:ronto"
-msgstr "ar:r,r:ronto,絨"
+msgstr "絨"
 
 #: data/prefixes.xml.in:12
 msgid "ar:y,r:yocto"
-msgstr "ar:y,r:yocto,攸"
+msgstr "攸"
 
 #: data/prefixes.xml.in:16
 msgid "ar:z,r:zepto"
-msgstr "ar:z,r:zepto,介"
+msgstr "介"
 
 #: data/prefixes.xml.in:20
 msgid "ar:a,r:atto"
-msgstr "ar:a,r:atto,阿"
+msgstr "阿"
 
 #: data/prefixes.xml.in:24
 msgid "ar:f,r:femto"
-msgstr "ar:f,r:femto,飛"
+msgstr "飛"
 
 #: data/prefixes.xml.in:28
 msgid "ar:p,r:pico"
-msgstr "ar:p,r:pico,皮"
+msgstr "皮"
 
 #: data/prefixes.xml.in:32
 msgid "ar:n,r:nano"
-msgstr "ar:n,r:nano,奈"
+msgstr "奈"
 
 #: data/prefixes.xml.in:36
 msgid "aur:μ,auor:µ,ar:u,r:micro"
-msgstr "aur:μ,auor:µ,ar:u,r:micro,微"
+msgstr "微"
 
 #: data/prefixes.xml.in:40
 msgid "ar:m,r:milli"
-msgstr "ar:m,r:milli,毫"
+msgstr "毫"
 
 #: data/prefixes.xml.in:44
 msgid "ar:c,r:centi"
-msgstr "ar:c,r:centi,厘"
+msgstr "厘"
 
 #: data/prefixes.xml.in:48
 msgid "ar:d,r:deci"
-msgstr "ar:d,r:deci,分"
+msgstr "分"
 
 #: data/prefixes.xml.in:52
 msgid "ar:da,r:deca"
-msgstr "ar:da,r:deca,十"
+msgstr "十"
 
 #: data/prefixes.xml.in:56
 msgid "ar:h,r:hecto"
-msgstr "ar:h,r:hecto,百"
+msgstr "百"
 
 #: data/prefixes.xml.in:60
 msgid "ar:k,r:kilo"
-msgstr "ar:k,r:kilo,千"
+msgstr "千"
 
 #: data/prefixes.xml.in:64
 msgid "ar:M,r:mega"
-msgstr "ar:M,r:mega,百萬"
+msgstr "百萬"
 
 #: data/prefixes.xml.in:68
 msgid "ar:G,r:giga"
-msgstr "ar:G,r:giga,吉"
+msgstr "吉"
 
 #: data/prefixes.xml.in:72
 msgid "ar:T,r:tera"
-msgstr "ar:T,r:tera,兆"
+msgstr "兆"
 
 #: data/prefixes.xml.in:76
 msgid "ar:P,r:peta"
-msgstr "ar:P,r:peta,拍"
+msgstr "拍"
 
 #: data/prefixes.xml.in:80
 msgid "ar:E,r:exa"
-msgstr "ar:E,r:exa,艾"
+msgstr "艾"
 
 #: data/prefixes.xml.in:84
 msgid "ar:Z,r:zetta"
-msgstr "ar:Z,r:zetta,皆"
+msgstr "皆"
 
 #: data/prefixes.xml.in:88
 msgid "ar:Y,r:yotta"
-msgstr "ar:Y,r:yotta,佑"
+msgstr "佑"
 
 #: data/prefixes.xml.in:92
 msgid "ar:R,r:ronna"
-msgstr "ar:R,r:ronna,羅"
+msgstr "羅"
 
 #: data/prefixes.xml.in:96
 msgid "ar:Q,r:quetta"
-msgstr "ar:Q,r:quetta,昆"
+msgstr "昆"
 
 #: data/prefixes.xml.in:100
 msgid "ar:Ki,r:kibi"
@@ -9291,7 +9209,7 @@ msgstr "公分"
 
 #: data/units.xml.in:40
 msgid "Millimeter"
-msgstr "毫米(公厘)"
+msgstr "毫米(公釐、公厘)"
 
 #: data/units.xml.in:49
 msgid "Micrometer"
@@ -9613,7 +9531,8 @@ msgid "Turn"
 msgstr "轉"
 
 #: data/units.xml.in:490
-msgid "a:tr,r:turn,p:turns,a:pla,a:rev,revolution,p:revolutions,a:cyc,cycle,p:cycles"
+msgid ""
+"a:tr,r:turn,p:turns,a:pla,a:rev,revolution,p:revolutions,a:cyc,cycle,p:cycles"
 msgstr "a:tr,r:turn,轉,a:pla,a:rev,revolution,a:cyc,cycle"
 
 #: data/units.xml.in:499
@@ -9786,20 +9705,22 @@ msgid "r:carat,p:carats"
 msgstr "r:carat,克拉"
 
 #: data/units.xml.in:754
+#, fuzzy
 msgid "Pfund"
-msgstr ""
+msgstr "五百克(Pfund)"
 
 #: data/units.xml.in:755
 msgid "r:pfund"
-msgstr ""
+msgstr "r:pfund"
 
 #: data/units.xml.in:763
+#, fuzzy
 msgid "Zentner"
-msgstr ""
+msgstr "五十公斤(Zentner)"
 
 #: data/units.xml.in:764
 msgid "r:zentner"
-msgstr ""
+msgstr "r:zentner"
 
 #: data/units.xml.in:772
 msgid "Planck Mass"
@@ -10523,12 +10444,13 @@ msgid "r:acre,p:acres"
 msgstr "r:acre,英畝"
 
 #: data/units.xml.in:2161
+#, fuzzy
 msgid "Section"
-msgstr ""
+msgstr "一平方英里(Section)"
 
 #: data/units.xml.in:2163
 msgid "r:section,p:sections"
-msgstr ""
+msgstr "r:section"
 
 #: data/units.xml.in:2171
 msgid "Township"
@@ -10715,7 +10637,8 @@ msgid "Imperial Fluid Scruple"
 msgstr "英制液量吩"
 
 #: data/units.xml.in:2481
-msgid "r:imperial_fluid_scruple,p:imperial_fluid_scruples,ro:imperial_fluid_scuple"
+msgid ""
+"r:imperial_fluid_scruple,p:imperial_fluid_scruples,ro:imperial_fluid_scuple"
 msgstr "r:imperial_fluid_scruple,英制液量吩,ro:imperial_fluid_scuple"
 
 #: data/units.xml.in:2489
@@ -11000,7 +10923,7 @@ msgstr "標準重力(單位)"
 
 #: data/units.xml.in:3076
 msgid "is:standard_gravity_unit,r:gee,p:gees"
-msgstr ""
+msgstr "is:standard_gravity_unit,r:gee"
 
 #: data/units.xml.in:3084
 msgid "Acceleration Change"
@@ -11522,12 +11445,13 @@ msgid "r:erg,p:ergs"
 msgstr "r:erg,爾格"
 
 #: data/units.xml.in:4057
+#, fuzzy
 msgid "Foe"
-msgstr ""
+msgstr "十的五十一次方爾格(Foe)"
 
 #: data/units.xml.in:4058
 msgid "r:foe,p:foes"
-msgstr ""
+msgstr "r:foe"
 
 #: data/units.xml.in:4067
 msgid "Foot-Pound Force"
@@ -11834,7 +11758,8 @@ msgid "Trit (Ternary Digit)"
 msgstr "Trit (三進制數字)"
 
 #: data/units.xml.in:4600
-msgid "r:trit,p:trits,trinary_digit,p:trinary_digits,ternary_digit,p:ternary_digits"
+msgid ""
+"r:trit,p:trits,trinary_digit,p:trinary_digits,ternary_digit,p:ternary_digits"
 msgstr "r:trit,trinary_digit,ternary_digit,三進制數字"
 
 #: data/units.xml.in:4608
@@ -11866,33 +11791,38 @@ msgid "Nibble (Hexadecimal Digit)"
 msgstr "半字節(十六進制數字)"
 
 #: data/units.xml.in:4637
-msgid "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets,hex_digit,p:hex_digits,hexadecimal_digit,p:hexadecimal_digits"
+msgid ""
+"r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets,hex_digit,p:"
+"hex_digits,hexadecimal_digit,p:hexadecimal_digits"
 msgstr ""
 "r:nibble,半字節,nybble,semioctet,hex_digit,hexadecimal_digit,十六進制數字"
 
 #: data/units.xml.in:4645
+#, fuzzy
 msgid "Tribble"
-msgstr ""
+msgstr "十二位元(Tribble)"
 
 #: data/units.xml.in:4646
 msgid "r:tribble,p:tribbles"
-msgstr ""
+msgstr "r:tribble"
 
 #: data/units.xml.in:4654
+#, fuzzy
 msgid "Nonet"
-msgstr ""
+msgstr "九位元(Nonet)"
 
 #: data/units.xml.in:4655
 msgid "r:nonet,p:nonets"
-msgstr ""
+msgstr "r:nonet"
 
 #: data/units.xml.in:4663
+#, fuzzy
 msgid "Declet"
-msgstr ""
+msgstr "十位元(Declet)"
 
 #: data/units.xml.in:4664
 msgid "r:declet,p:declets"
-msgstr ""
+msgstr "r:declet"
 
 #: data/units.xml.in:4672
 msgid "Word (16-bit)"
@@ -12020,20 +11950,22 @@ msgid "r:pica,p:picas"
 msgstr "r:pica,派卡"
 
 #: data/units.xml.in:4883
+#, fuzzy
 msgid "Twip"
-msgstr ""
+msgstr "二十分之一點(Twip)"
 
 #: data/units.xml.in:4884
 msgid "r:twip,p:twips"
-msgstr ""
+msgstr "r:twip"
 
 #: data/units.xml.in:4892
+#, fuzzy
 msgid "Agate"
-msgstr ""
+msgstr "五點五點(Agate)"
 
 #: data/units.xml.in:4893
 msgid "r:agate,p:agates"
-msgstr ""
+msgstr "r:agate"
 
 #: data/units.xml.in:4901
 msgid "Johnson Pica"
@@ -12320,28 +12252,30 @@ msgid "-r:dozen,a:dz,a:doz"
 msgstr "-r:dozen,a:dz,a:doz,打"
 
 #: data/variables.xml.in:154
+#, fuzzy
 msgid "Baker's Dozen"
-msgstr ""
+msgstr "十三(Baker's Dozen)"
 
 #: data/variables.xml.in:155
 msgid "-r:bakers_dozen"
-msgstr ""
+msgstr "-r:bakers_dozen"
 
 #: data/variables.xml.in:159
 msgid "Score"
-msgstr ""
+msgstr "廿"
 
 #: data/variables.xml.in:160
 msgid "-r:score"
-msgstr ""
+msgstr "-r:score,廿"
 
 #: data/variables.xml.in:164
+#, fuzzy
 msgid "Long Hundred"
-msgstr ""
+msgstr "一百二十(Long Hundred)"
 
 #: data/variables.xml.in:165
 msgid "-r:long_hundred,great_hundred,twelfty"
-msgstr ""
+msgstr "-r:long_hundred,great_hundred,twelfty"
 
 #: data/variables.xml.in:169
 msgid "Gross"
@@ -12352,12 +12286,13 @@ msgid "-r:gross,a:gro"
 msgstr "-r:gross,a:gro,籮"
 
 #: data/variables.xml.in:174
+#, fuzzy
 msgid "Long Thousand"
-msgstr ""
+msgstr "一千兩百(Long Thousand)"
 
 #: data/variables.xml.in:175
 msgid "-r:long_thousand"
-msgstr ""
+msgstr "-r:long_thousand"
 
 #: data/variables.xml.in:179
 msgid "Great Gross"
@@ -13046,6 +12981,12 @@ msgstr "現在(日期和時間)"
 msgid "r:now"
 msgstr "r:now,現在"
 
+#~ msgid "a-cr:CRC,au:&#x20A1;"
+#~ msgstr "a-cr:CRC,au:&#x20A1;"
+
+#~ msgid "a-cr:NPR,aio:&#x930;&#x942;"
+#~ msgstr "a-cr:NPR,aio:&#x930;&#x942;"
+
 #~ msgid "Vector Limits"
 #~ msgstr "向量界限"
 
@@ -13057,6 +12998,21 @@ msgstr "r:now,現在"
 
 #~ msgid "Matrix Area"
 #~ msgstr "矩陣區域"
+
+#~ msgid "r:area"
+#~ msgstr "r:area"
+
+#~ msgid "r:re,au:&#x211C;"
+#~ msgstr "r:re,au:&#x211C;"
+
+#~ msgid "r:im,au:&#x2111;"
+#~ msgstr "r:im,au:&#x2111;"
+
+#~ msgid "au:&#x3A3;,au:&#x2211;,r:sum"
+#~ msgstr "au:&#x3A3;,au:&#x2211;,r:sum"
+
+#~ msgid "&#xC5;ngstr&#xF6;m"
+#~ msgstr "埃"
 
 #~ msgid "r:gee,p:gees"
 #~ msgstr "r:gee"
@@ -13104,9 +13060,6 @@ msgstr "r:now,現在"
 #, fuzzy
 #~ msgid "a-cr:XAF,a:FCFA"
 #~ msgstr "a-cr:XAF,a:FCFA"
-
-#~ msgid "a-cr:CRC"
-#~ msgstr "a-cr:CRC"
 
 #, fuzzy
 #~ msgid "a-cr:MVR"
