@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/Qalculate/libqalculate/issues\n"
 "POT-Creation-Date: 2025-11-21 23:35+0100\n"
-"PO-Revision-Date: 2025-10-22 23:01+0800\n"
+"PO-Revision-Date: 2025-11-29 22:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_TW\n"
@@ -29,8 +29,8 @@ msgid ""
 "Retrieves data from the %s data set for a given object and property. If "
 "\"info\" is typed as property, all properties of the object will be listed."
 msgstr ""
-"為給定的物件和屬性從%s資料集中檢索資料。如果鍵入“info”為屬性，則列出物件的所"
-"有屬性。"
+"為給定的物件和屬性從%s資料集中檢索資料。如果鍵入\"info\"為屬性，則列出物件的"
+"所有屬性。"
 
 #: src/defs2doc.cc:378 src/qalc.cc:2835
 msgid "Example:"
@@ -1055,9 +1055,8 @@ msgid "Please restart the program for the change to take effect."
 msgstr "請重新啟動程式使變更生效。"
 
 #: src/qalc.cc:1844 src/qalc.cc:6502
-#, fuzzy
 msgid "default currency"
-msgstr "預設: "
+msgstr "預設貨幣"
 
 #: src/qalc.cc:1858 src/qalc.cc:6543
 msgid "prompt"
@@ -1141,7 +1140,7 @@ msgstr "區間"
 
 #: src/qalc.cc:1962 src/qalc.cc:2539 src/qalc.cc:6361
 msgid "plusminus"
-msgstr "加減"
+msgstr "正負"
 
 #. interval display mode: midpoint number in range
 #: src/qalc.cc:1964 src/qalc.cc:2539 src/qalc.cc:6362
@@ -1441,7 +1440,7 @@ msgstr "決定預設的小數分隔符。"
 msgid ""
 "Specifies the number of displayed significant digits (by default determined "
 "by precision)."
-msgstr "指定顯示有效數字的數量(預設情況下由精確度決定)。"
+msgstr "指定顯示有效數字的數量(預設由精確度決定)。"
 
 #: src/qalc.cc:2525
 msgid ""
@@ -1454,7 +1453,8 @@ msgid ""
 "Determines how rational numbers are displayed (e.g. 5/4 = 1 + 1/4 = 1.25). "
 "'long' removes limits on the size of the numerator and denominator."
 msgstr ""
-"決定如何顯示有理數(例如5/4 = 1 + 1/4 = 1.25)。“長”移除分子和分母大小的限制。"
+"決定如何顯示有理數(例如5/4 = 1 + 1/4 = 1.25)。\"長\"移除分子和分母大小的限"
+"制。"
 
 #: src/qalc.cc:2537
 msgid ""
@@ -1473,7 +1473,7 @@ msgstr "底數>10使用小寫字母。"
 #: src/qalc.cc:2561
 msgid ""
 "If activated, 1/6 is displayed as '0.1 666...', otherwise as '0.166667'."
-msgstr "如果啟用，則1/6顯示為“0.1 666...”，否則為“0.166667”。"
+msgstr "如果啟用，則1/6顯示為\"0.1 666...\"，否則為\"0.166667\"。"
 
 #: src/qalc.cc:2565
 msgid "Determines how approximate numbers are rounded."
@@ -1528,7 +1528,7 @@ msgstr "允許使用'.'作為千位分隔符。"
 
 #: src/qalc.cc:2646
 msgid "See 'help parsing mode'."
-msgstr "請觀看“help parsing mode”。"
+msgstr "請觀看\"help parsing mode\"。"
 
 #: src/qalc.cc:2647
 msgid ""
@@ -1566,8 +1566,8 @@ msgid ""
 "converts non-SI units, while 'optimal' only converts to unit expressions "
 "with less units and exponents."
 msgstr ""
-"控制結果的自動單位轉換。“最佳SI”總是轉換非SI單位，而“最佳”只轉換到具有較少單"
-"位和指數的單位表達式。"
+"控制結果的自動單位轉換。\"最佳SI\"總是轉換非SI單位，而\"最佳\"只轉換到具有較"
+"少單位和指數的單位表達式。"
 
 #: src/qalc.cc:2676
 msgid ""
@@ -1634,9 +1634,9 @@ msgid ""
 "\"select multiple\" and \"list multiple\" completes the word directly if "
 "there is only one match."
 msgstr ""
-"決定按Tab鍵時的補全動作。“選擇”顯示匹配的編號列表並等待輸入數字來選擇項目，"
-"而“list”則直接回傳到表達式而不用輸入。如果只有一個匹配，則“選擇多個”和“列出多"
-"個”會直接完成該字。"
+"決定按Tab鍵時的補全動作。\"選擇\"顯示匹配的編號列表並等待輸入數字來選擇項目，"
+"而\"list\"直接回到表達式而不用輸入。如果只有一個匹配，則\"選擇多個\"和\"列出"
+"多個\"會直接完成該字。"
 
 #: src/qalc.cc:2713
 msgid "Ignore system language and use English (requires restart)."
@@ -1848,14 +1848,14 @@ msgstr "單位:"
 
 #: src/qalc.cc:4058
 msgid "No local variables, functions or units have been defined."
-msgstr "未定義局部變數，函數或單位。"
+msgstr "未定義局部變數、函數或單位。"
 
 #: src/qalc.cc:4161
 #, c-format
 msgid ""
 "%s now includes an option (controlled using \"%s\") to continuously display "
 "the result of the current expression as you type."
-msgstr "%s現在包含一個選項(使用“%s”控制)以連續顯示你輸入時目前表達式的結果。"
+msgstr "%s現在包含一個選項(使用\"%s\"控制)以連續顯示你輸入時目前表達式的結果。"
 
 #: src/qalc.cc:4165
 #, c-format
@@ -2015,8 +2015,8 @@ msgid ""
 "qalculate.github.io/manual/index.html)."
 msgstr ""
 "有關數學表達式和不同選項的更多資訊，以及函數、變數和單位的完整列表，請觀看圖"
-"形使用者介面手冊中的相關區段(可以在https://qalculate.github.io/manual/"
-"index.html得到)。"
+"形使用者介面手冊中的相關區段(可以在https://qalculate.github.io/manual/index."
+"html得到)。"
 
 #: src/qalc.cc:4471 src/qalc.cc:6617
 msgid ""
@@ -2102,7 +2102,7 @@ msgstr ""
 
 #: src/qalc.cc:5273 libqalculate/BuiltinFunctions-util.cc:875
 msgid "Conversion (using \"to\") is not supported in functions."
-msgstr "在函數中不支援轉換(使用“to“)。"
+msgstr "在函數中不支援轉換(使用\"to\")。"
 
 #. qalc command
 #: src/qalc.cc:5290 src/qalc.cc:6574 src/qalc.cc:6741 src/qalc.cc:6979
@@ -2333,7 +2333,7 @@ msgstr "標題"
 
 #: src/qalc.cc:6597
 msgid "UNIT or \"TO\" COMMAND"
-msgstr "單位或“TO”命令"
+msgstr "單位或\"TO\"命令"
 
 #. qalc command
 #: src/qalc.cc:6599 src/qalc.cc:6901 src/qalc.cc:6961 src/qalc.cc:6971
@@ -2366,14 +2366,14 @@ msgstr "方向"
 
 #: src/qalc.cc:6610
 msgid "Type help COMMAND for more information (example: help save)."
-msgstr "鍵入“help 命令”以獲取更多資訊(範例: help save)。"
+msgstr "鍵入\"help 命令\"以獲取更多資訊(範例: help save)。"
 
 #: src/qalc.cc:6611
 msgid ""
 "Type info NAME for information about a function, variable, unit, or prefix "
 "(example: info sin)."
 msgstr ""
-"鍵入“info 名稱”以獲取有關函數、變數、單位或前綴的資訊(範例: info sin)。"
+"鍵入\"info 名稱\"以獲取有關函數、變數、單位或前綴的資訊(範例: info sin)。"
 
 #: src/qalc.cc:6612
 msgid ""
@@ -2410,13 +2410,13 @@ msgid ""
 "Saves the current result in a variable with the specified name. You may "
 "optionally also provide a category (default \"Temporary\") and a title."
 msgstr ""
-"將目前結果儲存在指定名稱的變數中。你還可以選擇提供類別(預設“臨時”)和標題。"
+"將目前結果儲存在指定名稱的變數中。你還可以選擇提供類別(預設\"臨時\")和標題。"
 
 #: src/qalc.cc:6710
 msgid ""
 "If name equals \"mode\" or \"definitions\", the current mode and "
 "definitions, respectively, will be saved."
-msgstr "如果名稱等於“模式”或“定義”，則分別儲存目前的模式和定義。"
+msgstr "如果名稱等於\"模式\"或\"定義\"，則分別儲存目前的模式和定義。"
 
 #: src/qalc.cc:6712
 msgid "Example: store var1."
@@ -2488,9 +2488,9 @@ msgid ""
 "and/or prefixes. If command is called with no argument all user-defined "
 "objects are listed."
 msgstr ""
-"輸入引數“貨幣”、“函數”、“變數”、“單位”或“前綴”，以顯示所有貨幣、函數、變數、"
-"單位或前綴的列表。輸入搜尋項以尋找匹配的變數、函數、單位和/或前綴。如果沒有用"
-"引數呼叫命令，則列出所有使用者定義的物件。"
+"輸入引數\"貨幣\"、\"函數\"、\"變數\"、\"單位\"或\"前綴\"，以顯示所有貨幣、函"
+"數、變數、單位或前綴的列表。輸入搜尋項以尋找匹配的變數、函數、單位和/或前綴。"
+"如果沒有用引數呼叫命令，則列出所有使用者定義的物件。"
 
 #: src/qalc.cc:6762
 msgid "Example: list functions."
@@ -2523,7 +2523,7 @@ msgstr "(停)啟用逆波蘭記法堆疊和語法。"
 #: src/qalc.cc:6780
 msgid ""
 "\"syntax\" activates only the RPN syntax and \"stack\" enables the RPN stack."
-msgstr "“語法”只啟用RPN語法，而“堆叠”啟用RPN堆叠。"
+msgstr "\"語法\"只啟用RPN語法，而\"堆叠\"啟用RPN堆叠。"
 
 #: src/qalc.cc:6781
 msgid "\"on\" (1) and \"off\" (0) (de)activates both."
@@ -2600,7 +2600,7 @@ msgstr "等價於set approximation try exact。"
 msgid ""
 "Converts the current result (equivalent to using \"to\" at the end of an "
 "expression)."
-msgstr "轉換目前結果(等價於在表達式結尾使用“to”)。"
+msgstr "轉換目前結果(等價於在表達式結尾使用\"to\")。"
 
 #: src/qalc.cc:6844
 msgid "Possible values:"
@@ -2811,7 +2811,7 @@ msgid ""
 "adaptive mode unit expressions are parsed separately (\"5 m/5 m/s = (5*m)/"
 "(5*(m/s)) = 1 s\")."
 msgstr ""
-"除非找到空格，否則預設自適應模式運作為“隱式優先”模式(\"1/5x = 1/(5*x)\"，但"
+"除非找到空格，否則預設自適應模式運作為\"隱式優先\"模式(\"1/5x = 1/(5*x)\"，但"
 "\"1/5 x = (1/5)*x\")。在自適應模式中個別解析單位表達式(\"5 m/5 m/s = (5*m)/"
 "(5*(m/s)) = 1 s\")。"
 
@@ -2908,7 +2908,6 @@ msgstr "底數: "
 #: src/qalc.cc:7623 libqalculate/Calculator-definitions.cc:3178
 #: libqalculate/DataSet.cc:382 libqalculate/DataSet.cc:413
 #: libqalculate/DataSet.cc:1084
-#, fuzzy
 msgctxt "Data set argument"
 msgid "info"
 msgstr "info"
@@ -3000,7 +2999,7 @@ msgstr "加上百分比乘以1/100"
 
 #: src/qalc.cc:8408
 msgid "Add percentage of original value"
-msgstr "加上原始數值的百分比"
+msgstr "加上原始值的百分比"
 
 #: src/qalc.cc:8422 src/qalc.cc:8454
 msgid "Percentage interpretation"
@@ -3181,14 +3180,14 @@ msgstr "元素(%s)對矩陣的大小(%sx%s)來說太多。"
 #: libqalculate/BuiltinFunctions-matrixvector.cc:181
 #, c-format
 msgid "Elements where from the end of matrix/vector in %s()."
-msgstr ""
+msgstr "在%s()中元素來自矩陣/向量的結尾。"
 
 #: libqalculate/BuiltinFunctions-matrixvector.cc:183
 #: libqalculate/BuiltinFunctions-matrixvector.cc:499
 #: libqalculate/BuiltinFunctions-matrixvector.cc:557
 #, c-format
 msgid "Matrix/vector where expanded with zeroes in %s()."
-msgstr ""
+msgstr "在%s()中矩陣/向量用零擴充。"
 
 #: libqalculate/BuiltinFunctions-matrixvector.cc:248
 msgid "Vertical concatenation requires equal number of columns."
@@ -3239,7 +3238,7 @@ msgstr "比較失敗。"
 #: libqalculate/BuiltinFunctions-util.cc:1179 libqalculate/Variable.cc:690
 #, c-format
 msgid "%s is disabled when %s is compiled with \"%s\" configure option."
-msgstr "停用%s，當%s用“%s”配置選項編譯時。"
+msgstr "停用%s，當%s用\"%s\"配置選項編譯時。"
 
 #: libqalculate/BuiltinFunctions-statistics.cc:189
 #: libqalculate/BuiltinFunctions-statistics.cc:234
@@ -3274,7 +3273,7 @@ msgstr "對數中有非預期的單位。"
 #: libqalculate/MathStructure-calculate.cc:6894
 #: libqalculate/MathStructure-isolatex.cc:653
 msgid "Maximum recursive depth reached."
-msgstr "達到最大遞迴深度。"
+msgstr "已達到最大遞迴深度。"
 
 #: libqalculate/BuiltinFunctions-number.cc:438
 msgid "The value is probably a prime number, but it is not certain."
@@ -3355,9 +3354,9 @@ msgid ""
 msgstr "一個全域函數被停用。移除新函數後它會恢復。"
 
 #: libqalculate/BuiltinFunctions-util.cc:924
-#, fuzzy, c-format
+#, c-format
 msgid "Matrix/vector (%s) not found."
-msgstr "找不到原始值(%s)。"
+msgstr "找不到矩陣/向量(%s)。"
 
 #: libqalculate/BuiltinFunctions-util.cc:954
 #, c-format
@@ -3421,7 +3420,7 @@ msgstr "選項列表:"
 
 #: libqalculate/BuiltinFunctions-util.cc:1184
 msgid "Gnuplot was not found"
-msgstr ""
+msgstr "找不到Gnuplot"
 
 #: libqalculate/BuiltinFunctions-util.cc:1210
 msgctxt "plot"
@@ -3828,7 +3827,7 @@ msgstr "你的意思是\"%s\"(而不是%s)嗎?"
 #: libqalculate/Calculator-parse.cc:5781 libqalculate/Calculator-parse.cc:5803
 #, c-format
 msgid "Misplaced operator(s) \"%s\" ignored"
-msgstr "誤置的運算子“%s”已被忽略"
+msgstr "誤置的運算子\"%s\"已被忽略"
 
 #: libqalculate/Calculator-parse.cc:3904 libqalculate/Function.cc:1647
 #: libqalculate/Function.cc:1735
@@ -4065,7 +4064,7 @@ msgstr "無法精確積分表達式。"
 
 #: libqalculate/MathStructure-integrate.cc:7804
 msgid "Definite integral was approximated."
-msgstr "定積分是近似的。"
+msgstr "定積分被近似。"
 
 #: libqalculate/MathStructure-isolatex.cc:1030
 #: libqalculate/MathStructure-isolatex.cc:1209
@@ -4079,7 +4078,7 @@ msgstr "定積分是近似的。"
 #: libqalculate/MathStructure-isolatex.cc:3188
 #, c-format
 msgid "Interval arithmetic was disabled during calculation of %s."
-msgstr "在%s的計算期間禁用區間算術。"
+msgstr "在%s的計算期間停用區間算術。"
 
 #: libqalculate/MathStructure-isolatex.cc:3187
 #, c-format
@@ -4303,7 +4302,7 @@ msgstr "不能將大於9999或小於-9999的數字顯示為羅馬數字。"
 #: libqalculate/Number.cc:527
 #, c-format
 msgid "Character '%s' was ignored in the number \"%s\" in bijective base-26."
-msgstr "字元’%s‘在數字\"%s\"(雙射二十六進制)中被忽略。"
+msgstr "字元'%s'在數字\"%s\"(雙射二十六進制)中被忽略。"
 
 #: libqalculate/Number.cc:718
 #, c-format
@@ -4826,3 +4825,7 @@ msgstr "On"
 #: libqalculate/util.cc:194
 msgid "Off"
 msgstr "Off"
+
+#~ msgctxt "info"
+#~ msgid "Data set argument"
+#~ msgstr "資料集引數"
