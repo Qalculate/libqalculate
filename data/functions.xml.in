@@ -117,7 +117,7 @@
     <builtin_function name="limits">
       <title>Vector Part</title>
       <names>r:slice,r:limits</names>
-      <description>Returns a part of a vector between two positions. Negative indeces are counted from the back of the vector. If the second index is beyond the end of the vector, zeroes are appended to the returned vector.</description>
+      <description>Returns a part of a vector between two positions. Negative indexes are counted from the back of the vector. If the second index is beyond the end of the vector, zeroes are appended to the returned vector.</description>
       <argument index="1">
         <title>Vector</title>
       </argument>

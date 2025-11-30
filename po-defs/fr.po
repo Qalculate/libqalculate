@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: https://github.com/Qalculate/libqalculate/issues\n"
-"POT-Creation-Date: 2025-11-21 21:27+0100\n"
+"POT-Creation-Date: 2025-11-30 09:37+0100\n"
 "PO-Revision-Date: 2020-12-02 13:25+0100\n"
 "Last-Translator: Polakrity\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -2093,10 +2093,18 @@ msgstr "Classification"
 
 #: data/datasets.xml.in:37
 msgid ""
-"A number representing an element group: 1 Alkali Metal 2 Alkaline-Earth "
-"Metal 3 Lanthanide 4 Actinide 5 Transition Metal 6 Metal 7 Metalloid 8 "
-"Polyatomic Non-Metal 9 Diatomic Non-Metal 10 Noble Gas 11 Unknown chemical "
-"properties"
+"A number representing an element group:\n"
+"1 Alkali Metal\n"
+"2 Alkaline-Earth Metal\n"
+"3 Lanthanide\n"
+"4 Actinide\n"
+"5 Transition Metal\n"
+"6 Metal\n"
+"7 Metalloid\n"
+"8 Polyatomic Non-Metal\n"
+"9 Diatomic Non-Metal\n"
+"10 Noble Gas\n"
+"11 Unknown chemical properties"
 msgstr ""
 "Un nombre représente un groupe d'éléments :\n"
 "1 Métal alcalin\n"
@@ -2181,15 +2189,18 @@ msgstr "Planètes"
 
 #: data/datasets.xml.in:99
 msgid ""
-"This data uses material from the Wikipedia articles \"Earth\" (http://"
-"www.wikipedia.org/wiki/Earth), \"Jupiter\" (http://www.wikipedia.org/wiki/"
-"Jupiter), \"Mars\" (http://www.wikipedia.org/wiki/Mars), \"Mercury (planet)"
-"\" (http://www.wikipedia.org/wiki/Mercury_(planet)), \"Neptune\" (http://"
-"www.wikipedia.org/wiki/Neptune), \"Pluto\" (http://www.wikipedia.org/wiki/"
-"Pluto), \"Saturn\" (http://www.wikipedia.org/wiki/Saturn), \"Uranus\" "
-"(http://www.wikipedia.org/wiki/Uranus), and \"Venus\" (http://"
-"en.wikipedia.org/wiki/Venus), under Creative Commons Attribution-ShareAlike "
-"License"
+"This data uses material from the Wikipedia articles\n"
+"\n"
+"\"Earth\" (http://www.wikipedia.org/wiki/Earth),\n"
+"\"Jupiter\" (http://www.wikipedia.org/wiki/Jupiter),\n"
+"\"Mars\" (http://www.wikipedia.org/wiki/Mars),\n"
+"\"Mercury (planet)\" (http://www.wikipedia.org/wiki/Mercury_(planet)),\n"
+"\"Neptune\" (http://www.wikipedia.org/wiki/Neptune),\n"
+"\"Pluto\" (http://www.wikipedia.org/wiki/Pluto),\n"
+"\"Saturn\" (http://www.wikipedia.org/wiki/Saturn),\n"
+"\"Uranus\" (http://www.wikipedia.org/wiki/Uranus), and\n"
+"\"Venus\" (http://en.wikipedia.org/wiki/Venus), under Creative Commons "
+"Attribution-ShareAlike License"
 msgstr ""
 
 #: data/datasets.xml.in:109
@@ -2860,8 +2871,9 @@ msgid "Starting value"
 msgstr "Par valeur"
 
 #: data/functions.xml.in:47
+#, fuzzy
 msgid "Increment or Ending value"
-msgstr ""
+msgstr "2ème valeur"
 
 #: data/functions.xml.in:50
 #, fuzzy
@@ -2979,7 +2991,7 @@ msgstr "r:limits"
 
 #: data/functions.xml.in:120
 msgid ""
-"Returns a part of a vector between two positions. Negative indeces are "
+"Returns a part of a vector between two positions. Negative indexes are "
 "counted from the back of the vector. If the second index is beyond the end "
 "of the vector, zeroes are appended to the returned vector."
 msgstr ""
@@ -3507,8 +3519,9 @@ msgid "Element-wise Power"
 msgstr "Éléments"
 
 #: data/functions.xml.in:465
+#, fuzzy
 msgid "r:pow,r:raise,power"
-msgstr ""
+msgstr "r:rood,p:roods"
 
 #: data/functions.xml.in:467 data/functions.xml.in:1016
 #: data/functions.xml.in:1033 data/functions.xml.in:1050
@@ -3906,8 +3919,10 @@ msgid "r:ldegree"
 msgstr "r:ldegree"
 
 #: data/functions.xml.in:775
+#, fuzzy
+#| msgid "Integer Part"
 msgid "Content Part"
-msgstr ""
+msgstr "Partie entière"
 
 #: data/functions.xml.in:776
 msgid "r:pcontent"
@@ -3922,8 +3937,10 @@ msgid "r:primpart"
 msgstr "r:primpart"
 
 #: data/functions.xml.in:795
+#, fuzzy
+#| msgid "Integer Part"
 msgid "Unit Part"
-msgstr ""
+msgstr "Partie entière"
 
 #: data/functions.xml.in:796
 msgid "r:punit"
@@ -3938,8 +3955,9 @@ msgid "Nth Prime Number"
 msgstr "Nombre premier n-ième"
 
 #: data/functions.xml.in:809
+#, fuzzy
 msgid "r:nthprime"
-msgstr ""
+msgstr "r:rectprism"
 
 #: data/functions.xml.in:811 data/functions.xml.in:910
 #: data/functions.xml.in:931
@@ -3985,10 +4003,13 @@ msgid "Previous Prime Number"
 msgstr "Nombre premier précédent"
 
 #: data/functions.xml.in:832
+#, fuzzy
 msgid ""
 "Returns the largest prime number smaller than or equal to the specified "
 "number."
 msgstr ""
+"Retourne la matrice identité ou une matrice avec le nombre indiqué de lignes/"
+"colonnes."
 
 #: data/functions.xml.in:834
 #, fuzzy
@@ -4009,10 +4030,13 @@ msgid "Prime Numbers Less Than or Equal"
 msgstr "Nombres premiers inférieurs ou égaux"
 
 #: data/functions.xml.in:848
+#, fuzzy
 msgid ""
 "Returns a vector containing all the prime numbers less than or equal to the "
 "specified number."
 msgstr ""
+"Retourne le nombre de périodes nécessaires à un investissement pour "
+"atteindre un valeur désirée."
 
 #: data/functions.xml.in:849
 #, fuzzy
@@ -4071,10 +4095,13 @@ msgstr "r:cofactor"
 #: data/functions.xml.in:891
 msgid ""
 "Performs integer or polynomial factorization, and returns the factors in a "
-"vector. Mode determines the return value for integer factorization as "
-"follows. 0: all prime factors 1: factors without duplicates 2: factors and "
-"exponents in a matrix with two columns 3: the exponent after each factor in "
-"vector"
+"vector.\n"
+"\n"
+"Mode determines the return value for integer factorization as follows.\n"
+"0: all prime factors\n"
+"1: factors without duplicates\n"
+"2: factors and exponents in a matrix with two columns\n"
+"3: the exponent after each factor in vector"
 msgstr ""
 
 #: data/functions.xml.in:902
@@ -4122,8 +4149,10 @@ msgid "r:fibonacci"
 msgstr "r:fibonacci"
 
 #: data/functions.xml.in:927
+#, fuzzy
+#| msgid "Returns the number of elements in a vector."
 msgid "Returns the n-th term of the Fibonacci sequence."
-msgstr ""
+msgstr "Retourne le nombre d'éléments dans un vecteur."
 
 #: data/functions.xml.in:936
 #, fuzzy
@@ -4157,10 +4186,11 @@ msgid ""
 "Round to nearest integer or decimal. If the second argument is zero, the "
 "value is rounded towards the nearest integer, otherwise the value is rounded "
 "to the corresponding number of digits to the right (if positive) or left (if "
-"negative) of the decimal point. Available rounding methods (3rd argument): "
-"half away from zero (0), half to even (1), half to odd (2), half toward zero "
-"(3), half up (4), half down (5), half random (6), toward zero (7), away from "
-"zero (8), up (9), down (10)"
+"negative) of the decimal point.\n"
+"\n"
+"Available rounding methods (3rd argument): half away from zero (0), half to "
+"even (1), half to odd (2), half toward zero (3), half up (4), half down (5), "
+"half random (6), toward zero (7), away from zero (8), up (9), down (10)"
 msgstr ""
 
 #: data/functions.xml.in:968
@@ -4234,8 +4264,9 @@ msgid "Get Digit"
 msgstr "Octal"
 
 #: data/functions.xml.in:1024
+#, fuzzy
 msgid "r:digitGet,numberDigit"
-msgstr ""
+msgstr "r:isInteger"
 
 #: data/functions.xml.in:1025
 msgid ""
@@ -4305,22 +4336,30 @@ msgid ""
 "Returns a value from an expression using the specified number base (radix). "
 "For bases between -62 and 62 full mathematical expressions (including "
 "operators and functions) are supported, while for other bases the specified "
-"expression is converted to a single number. Bases ≤ 36 use digits 0-9 and A-"
-"Z (case insensitive). Bases between 37 and 62 uses case sensitive letters "
-"(0-9, A-Z, a-z) as digits ('z' equals 61). Bases over 62 use Unicode "
-"characters as digits, with the character code as value (e.g. '0' equals 48). "
-"Escaped characters are in this case supported (e.g. '\\0' = 0, '\\523' = "
-"523, '\\x7f' = 127). Negative bases use the same digits as the corresponding "
-"positive bases and the digits used for non-integer bases are determined by "
-"rounding the base away from zero. Bases that are not real numbers by default "
-"use digits 0-9 and A-Z. The set of digits used can be selected using the "
-"third argument (defaults to 0 for automatic selection). Set it to 1 for "
-"digits 0-9 and A-Z, 2 for 0-9, A-Z and a-z, 3 for Unicode digits, and 4 for "
-"phonewords (e.g. ABC=2, DEF=3, etc.), or enter a text string with all digits "
-"placed in ascending order (e.g. \"0123456789\") and optionally separated by "
-"semicolon (to enable multiple equivalent digits, e.g. \"0;aA1;bB2;cC3\"). "
-"When the set of digits is manually selected, the specified expression is "
-"always converted to a single number."
+"expression is converted to a single number.\n"
+"\n"
+"Bases ≤ 36 use digits 0-9 and A-Z (case insensitive).\n"
+"\n"
+"Bases between 37 and 62 uses case sensitive letters (0-9, A-Z, a-z) as "
+"digits ('z' equals 61).\n"
+"\n"
+"Bases over 62 use Unicode characters as digits, with the character code as "
+"value (e.g. '0' equals 48). Escaped characters are in this case supported "
+"(e.g. '\\0' = 0, '\\523' = 523, '\\x7f' = 127).\n"
+"\n"
+"Negative bases use the same digits as the corresponding positive bases and "
+"the digits used for non-integer bases are determined by rounding the base "
+"away from zero. Bases that are not real numbers by default use digits 0-9 "
+"and A-Z.\n"
+"\n"
+"The set of digits used can be selected using the third argument (defaults to "
+"0 for automatic selection). Set it to 1 for digits 0-9 and A-Z, 2 for 0-9, A-"
+"Z and a-z, 3 for Unicode digits, and 4 for phonewords (e.g. ABC=2, DEF=3, "
+"etc.), or enter a text string with all digits placed in ascending order "
+"(e.g. \"0123456789\") and optionally separated by semicolon (to enable "
+"multiple equivalent digits, e.g. \"0;aA1;bB2;cC3\"). When the set of digits "
+"is manually selected, the specified expression is always converted to a "
+"single number."
 msgstr ""
 
 #: data/functions.xml.in:1095
@@ -4633,8 +4672,10 @@ msgid "r:sigmoid"
 msgstr "r:sigmoid"
 
 #: data/functions.xml.in:1308
+#, fuzzy
+#| msgid "Special Functions"
 msgid "Step Functions"
-msgstr ""
+msgstr "Fonction remarquable"
 
 #: data/functions.xml.in:1310
 msgid "Heaviside Step Function"
@@ -4754,8 +4795,10 @@ msgid "r:cbrt,aou:∛"
 msgstr "r:cbrt,aou:∛"
 
 #: data/functions.xml.in:1397
+#, fuzzy
+#| msgid "Returns the highest value."
 msgid "Returns the third real root."
-msgstr ""
+msgstr "Retourne la plus grande valeur."
 
 #: data/functions.xml.in:1403
 msgid "Nth root"
@@ -4777,8 +4820,9 @@ msgid "Degree (n)"
 msgstr "n"
 
 #: data/functions.xml.in:1415
+#, fuzzy
 msgid "All Roots"
-msgstr ""
+msgstr "r:root"
 
 #: data/functions.xml.in:1416
 #, fuzzy
@@ -5053,8 +5097,10 @@ msgid "r:radtodef"
 msgstr "r:radtodef"
 
 #: data/functions.xml.in:1611
+#, fuzzy
+#| msgid "Radiance"
 msgid "Radians"
-msgstr ""
+msgstr "Luminance énergétique"
 
 #: data/functions.xml.in:1615
 msgid "Default Angle Unit to Radians"
@@ -5065,8 +5111,10 @@ msgid "r:deftorad"
 msgstr "r:deftorad"
 
 #: data/functions.xml.in:1623
+#, fuzzy
+#| msgid "Cosecant"
 msgid "Secant"
-msgstr ""
+msgstr "Cosécante"
 
 #: data/functions.xml.in:1624
 msgid "r:sec"
@@ -5193,8 +5241,10 @@ msgstr "Nombre de bits"
 #: data/functions.xml.in:1738 data/functions.xml.in:1755
 #: data/functions.xml.in:1772 data/functions.xml.in:1789
 #: data/functions.xml.in:1806
+#, fuzzy
+#| msgid "Number of bits"
 msgid "Number of exponent bits"
-msgstr ""
+msgstr "Nombre de bits"
 
 #: data/functions.xml.in:1741 data/functions.xml.in:1758
 #: data/functions.xml.in:1775 data/functions.xml.in:1792
@@ -5370,9 +5420,14 @@ msgstr "-r:bmi"
 #: data/functions.xml.in:1879
 msgid ""
 "Calculates the Body Mass Index. The resulting BMI-value is sometimes "
-"interpreted as follows (although varies with age, sex, etc.): Underweight < "
-"18.5 Normal weight 18.5-25 Overweight 25-30 Obesity > 30 Note that you must "
-"use units for weight (ex. 59kg) and length (ex. 174cm)."
+"interpreted as follows (although varies with age, sex, etc.):\n"
+"\n"
+"Underweight < 18.5\n"
+"Normal weight 18.5-25\n"
+"Overweight 25-30\n"
+"Obesity > 30\n"
+"\n"
+"Note that you must use units for weight (ex. 59kg) and length (ex. 174cm)."
 msgstr ""
 "Calcule l'Indice de Masse Corporelle. L'IMC est parfois interprété de la "
 "façon suivante (bien qu'il varie selon l'âge, le sexe, etc.) :\n"
@@ -5473,8 +5528,10 @@ msgid ""
 msgstr ""
 
 #: data/functions.xml.in:1946
+#, fuzzy
+#| msgid "Length"
 msgid "Focal Length"
-msgstr ""
+msgstr "Longueur"
 
 #: data/functions.xml.in:1949
 msgid "F-stop (aperture)"
@@ -5527,8 +5584,10 @@ msgid "Drill Bit Size"
 msgstr ""
 
 #: data/functions.xml.in:1979
+#, fuzzy
+#| msgid "-r:quadrillion"
 msgid "r:drillbit"
-msgstr ""
+msgstr "trilliard"
 
 #: data/functions.xml.in:1980
 msgid ""
@@ -5620,8 +5679,10 @@ msgid "Returns the most frequently occurring value."
 msgstr "Retourne la valeur qui apparaît le plus souvent."
 
 #: data/functions.xml.in:2040
+#, fuzzy
+#| msgid "Tangent"
 msgid "Range"
-msgstr ""
+msgstr "Tangente"
 
 #: data/functions.xml.in:2041
 msgid "r:range"
@@ -5715,8 +5776,10 @@ msgid "Number of values"
 msgstr "Nombre de valeurs"
 
 #: data/functions.xml.in:2132
+#, fuzzy
+#| msgid "Normal Distribution"
 msgid "Normally Distributed Random Number"
-msgstr ""
+msgstr "Loi normale"
 
 #: data/functions.xml.in:2133
 msgid "r:randnorm"
@@ -5727,12 +5790,16 @@ msgid "Mean"
 msgstr "Moyenne"
 
 #: data/functions.xml.in:2138
+#, fuzzy
+#| msgid "Standard deviation (σ)"
 msgid "Standard deviation"
-msgstr ""
+msgstr "Écart type (σ)"
 
 #: data/functions.xml.in:2145
+#, fuzzy
+#| msgid "Poisson Distribution"
 msgid "Poisson Distributed Random Number"
-msgstr ""
+msgstr "Loi de Poisson"
 
 #: data/functions.xml.in:2146
 msgid "r:randpoisson"
@@ -5786,20 +5853,26 @@ msgid "Top"
 msgstr "Haut"
 
 #: data/functions.xml.in:2190
+#, fuzzy
+#| msgid "Random Number"
 msgid "Exponential Random Number"
-msgstr ""
+msgstr "Nombre aléatoire"
 
 #: data/functions.xml.in:2191
 msgid "r:randexp"
 msgstr "r:randexp"
 
 #: data/functions.xml.in:2194
+#, fuzzy
+#| msgid "Separator"
 msgid "Rate parameter"
-msgstr ""
+msgstr "Séparateur"
 
 #: data/functions.xml.in:2203
+#, fuzzy
+#| msgid "Rayleigh Distribution"
 msgid "Rayleigh Distributed Random Number"
-msgstr ""
+msgstr "Distribution de Rayleigh"
 
 #: data/functions.xml.in:2204
 msgid "r:randrayleigh"
@@ -5846,8 +5919,10 @@ msgid "Trimmed percentage (at each end)"
 msgstr ""
 
 #: data/functions.xml.in:2259
+#, fuzzy
+#| msgid "Trimmed Mean"
 msgid "Winsorized Mean"
-msgstr ""
+msgstr "Moyenne tronquée"
 
 #: data/functions.xml.in:2260
 msgid "r:winsormean"
@@ -5878,8 +5953,10 @@ msgid "r:rms"
 msgstr "r:rms"
 
 #: data/functions.xml.in:2296
+#, fuzzy
+#| msgid "Momentum"
 msgid "Moments"
-msgstr ""
+msgstr "Quantité de mouvement"
 
 #: data/functions.xml.in:2298
 msgid "Standard Deviation (entire population)"
@@ -5930,8 +6007,10 @@ msgid "r:meandev"
 msgstr "r:meandev"
 
 #: data/functions.xml.in:2355
+#, fuzzy
+#| msgid "Radiance"
 msgid "Covariance"
-msgstr ""
+msgstr "Luminance énergétique"
 
 #: data/functions.xml.in:2356
 msgid "r:cov,r:covar"
@@ -6053,8 +6132,10 @@ msgid "Statistical Tests"
 msgstr "Test statistique"
 
 #: data/functions.xml.in:2461
+#, fuzzy
+#| msgid "Paired T-Test"
 msgid "Unpaired T-Test"
-msgstr ""
+msgstr "Test du T"
 
 #: data/functions.xml.in:2462
 msgid "r:ttest"
@@ -6117,14 +6198,21 @@ msgid "r:expondist"
 msgstr "r:expondist"
 
 #: data/functions.xml.in:2511
+#, fuzzy
+#| msgid ""
+#| "Returns the probability density p(x) at x for a Pareto distribution with "
+#| "exponent and scale. (from Gnumeric)"
 msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "exponential distribution."
 msgstr ""
+"Retourne la densité de probabilité p(x) au x choisi pour une distribution de "
+"Pareto avec l'exposant et l'échelle. (utilise Gnumeric)"
 
 #: data/functions.xml.in:2526
+#, fuzzy
 msgid "Exponential Inverse Cumulative Distribution"
-msgstr ""
+msgstr "Loi normale"
 
 #: data/functions.xml.in:2527
 msgid "r:expinv"
@@ -6145,10 +6233,16 @@ msgid "r:logistic"
 msgstr "r:logistic"
 
 #: data/functions.xml.in:2542
+#, fuzzy
+#| msgid ""
+#| "Returns the probability density p(x) at x for a Pareto distribution with "
+#| "exponent and scale. (from Gnumeric)"
 msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "logistic distribution."
 msgstr ""
+"Retourne la densité de probabilité p(x) au x choisi pour une distribution de "
+"Pareto avec l'exposant et l'échelle. (utilise Gnumeric)"
 
 #: data/functions.xml.in:2548
 msgid "Scale (s)"
@@ -6167,10 +6261,16 @@ msgid "r:normdist"
 msgstr "r:normdist"
 
 #: data/functions.xml.in:2561
+#, fuzzy
+#| msgid ""
+#| "Returns the probability density p(x) at x for a Pareto distribution with "
+#| "exponent and scale. (from Gnumeric)"
 msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "normal distribution."
 msgstr ""
+"Retourne la densité de probabilité p(x) au x choisi pour une distribution de "
+"Pareto avec l'exposant et l'échelle. (utilise Gnumeric)"
 
 #: data/functions.xml.in:2567 data/functions.xml.in:2587
 msgid "Mean (μ)"
@@ -6199,10 +6299,16 @@ msgid "r:pareto"
 msgstr "r:pareto"
 
 #: data/functions.xml.in:2597
+#, fuzzy
+#| msgid ""
+#| "Returns the probability density p(x) at x for a Rayleigh distribution "
+#| "with scale parameter sigma. (from Gnumeric)"
 msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "Pareto distribution."
 msgstr ""
+"Retourne la densité de probabilité p(x) au x choisi pour une distribution de "
+"Rayleigh avec le paramètre d'échelle sigma. (utilise Gnumeric)"
 
 #: data/functions.xml.in:2604 data/functions.xml.in:2768
 msgid "Shape (α)"
@@ -6221,10 +6327,16 @@ msgid "r:poisson"
 msgstr "r:poisson"
 
 #: data/functions.xml.in:2618
+#, fuzzy
+#| msgid ""
+#| "Returns the probability density p(x) at x for a Pareto distribution with "
+#| "exponent and scale. (from Gnumeric)"
 msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "Poisson distribution."
 msgstr ""
+"Retourne la densité de probabilité p(x) au x choisi pour une distribution de "
+"Pareto avec l'exposant et l'échelle. (utilise Gnumeric)"
 
 #: data/functions.xml.in:2633
 msgid "Rayleigh Distribution"
@@ -6235,42 +6347,64 @@ msgid "r:rayleigh"
 msgstr "r:rayleigh"
 
 #: data/functions.xml.in:2635
+#, fuzzy
+#| msgid ""
+#| "Returns the probability density p(x) at x for a Pareto distribution with "
+#| "exponent and scale. (from Gnumeric)"
 msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "Rayleigh distribution."
 msgstr ""
+"Retourne la densité de probabilité p(x) au x choisi pour une distribution de "
+"Pareto avec l'exposant et l'échelle. (utilise Gnumeric)"
 
 #: data/functions.xml.in:2642 data/functions.xml.in:2661
 msgid "Scale (σ)"
 msgstr "Échelle (σ)"
 
 #: data/functions.xml.in:2650
+#, fuzzy
+#| msgid "Rayleigh Distribution"
 msgid "Rayleigh Tail Distribution"
-msgstr ""
+msgstr "Distribution de Rayleigh"
 
 #: data/functions.xml.in:2651
 msgid "r:rayleightail"
 msgstr "r:rayleightail"
 
 #: data/functions.xml.in:2652
+#, fuzzy
+#| msgid ""
+#| "Returns the probability density p(x) at x for a Rayleigh distribution "
+#| "with scale parameter sigma. (from Gnumeric)"
 msgid ""
 "Returns the probability density p(x) at x for a Rayleigh tail distribution "
 "with scale parameter sigma and a lower limit. (from Gnumeric)"
 msgstr ""
+"Retourne la densité de probabilité p(x) au x choisi pour une distribution de "
+"Rayleigh avec le paramètre d'échelle sigma. (utilise Gnumeric)"
 
 #: data/functions.xml.in:2666
 msgid "Gamma Distribution"
 msgstr "Loi Gamma"
 
 #: data/functions.xml.in:2667
+#, fuzzy
+#| msgid "r:gamma"
 msgid "r:gammadist"
-msgstr ""
+msgstr "r:gamma"
 
 #: data/functions.xml.in:2668
+#, fuzzy
+#| msgid ""
+#| "Returns the probability density p(x) at x for a Rayleigh distribution "
+#| "with scale parameter sigma. (from Gnumeric)"
 msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "gamma distribution."
 msgstr ""
+"Retourne la densité de probabilité p(x) au x choisi pour une distribution de "
+"Rayleigh avec le paramètre d'échelle sigma. (utilise Gnumeric)"
 
 #: data/functions.xml.in:2675 data/functions.xml.in:2732
 #: data/functions.xml.in:2753
@@ -6286,14 +6420,22 @@ msgid "Chi-Square Distribution"
 msgstr "Loi du chi carré"
 
 #: data/functions.xml.in:2688
+#, fuzzy
+#| msgid "r:tdist"
 msgid "r:chisqdist"
-msgstr ""
+msgstr "r:tdist"
 
 #: data/functions.xml.in:2689
+#, fuzzy
+#| msgid ""
+#| "Returns the probability density p(x) at x for a Pareto distribution with "
+#| "exponent and scale. (from Gnumeric)"
 msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "chi-square distribution."
 msgstr ""
+"Retourne la densité de probabilité p(x) au x choisi pour une distribution de "
+"Pareto avec l'exposant et l'échelle. (utilise Gnumeric)"
 
 #: data/functions.xml.in:2696 data/functions.xml.in:2714
 msgid "Degrees of freedom (k)"
@@ -6305,30 +6447,40 @@ msgid "Inverse of Chi-Square Cumulative Distribution"
 msgstr "Loi du chi carré"
 
 #: data/functions.xml.in:2705
+#, fuzzy
 msgid "r:chisqdistinv"
-msgstr ""
+msgstr "r:tdist"
 
 #: data/functions.xml.in:2719
 msgid "Weibull Distribution"
 msgstr "Loi de Weibull"
 
 #: data/functions.xml.in:2720
+#, fuzzy
+#| msgid "r:betadist"
 msgid "r:weibulldist"
-msgstr ""
+msgstr "r:betadist"
 
 #: data/functions.xml.in:2721
+#, fuzzy
+#| msgid ""
+#| "Returns the probability density p(x) at x for a Pareto distribution with "
+#| "exponent and scale. (from Gnumeric)"
 msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "Weibull distribution."
 msgstr ""
+"Retourne la densité de probabilité p(x) au x choisi pour une distribution de "
+"Pareto avec l'exposant et l'échelle. (utilise Gnumeric)"
 
 #: data/functions.xml.in:2728 data/functions.xml.in:2749
 msgid "Scale (λ)"
 msgstr "Échelle (λ)"
 
 #: data/functions.xml.in:2740
+#, fuzzy
 msgid "Weibull Inverse Cumulative Distribution"
-msgstr ""
+msgstr "Loi normale"
 
 #: data/functions.xml.in:2741
 msgid "r:wblinv"
@@ -6343,10 +6495,16 @@ msgid "r:betadist"
 msgstr "r:betadist"
 
 #: data/functions.xml.in:2760
+#, fuzzy
+#| msgid ""
+#| "Returns the probability density p(x) at x for a Pareto distribution with "
+#| "exponent and scale. (from Gnumeric)"
 msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "beta distribution."
 msgstr ""
+"Retourne la densité de probabilité p(x) au x choisi pour une distribution de "
+"Pareto avec l'exposant et l'échelle. (utilise Gnumeric)"
 
 #: data/functions.xml.in:2772
 msgid "Shape (β)"
@@ -6361,10 +6519,16 @@ msgid "r:tdist"
 msgstr "r:tdist"
 
 #: data/functions.xml.in:2782
+#, fuzzy
+#| msgid ""
+#| "Returns the probability density p(x) at x for a Pareto distribution with "
+#| "exponent and scale. (from Gnumeric)"
 msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "Student's t distribution."
 msgstr ""
+"Retourne la densité de probabilité p(x) au x choisi pour une distribution de "
+"Pareto avec l'exposant et l'échelle. (utilise Gnumeric)"
 
 #: data/functions.xml.in:2788 data/functions.xml.in:2806
 msgid "Degrees of freedom (v)"
@@ -6389,10 +6553,16 @@ msgid "r:fdist"
 msgstr "r:fdist"
 
 #: data/functions.xml.in:2813
+#, fuzzy
+#| msgid ""
+#| "Returns the probability density p(x) at x for a Pareto distribution with "
+#| "exponent and scale. (from Gnumeric)"
 msgid ""
 "Returns the probability density or cumulative distribution function of the F-"
 "distribution."
 msgstr ""
+"Retourne la densité de probabilité p(x) au x choisi pour une distribution de "
+"Pareto avec l'exposant et l'échelle. (utilise Gnumeric)"
 
 #: data/functions.xml.in:2820 data/functions.xml.in:2842
 msgid "Degrees of freedom (numerator)"
@@ -6403,8 +6573,9 @@ msgid "Degrees of freedom (denominator)"
 msgstr "Degrés de liberté (dénominateur)"
 
 #: data/functions.xml.in:2832
+#, fuzzy
 msgid "Inverse Cumulative F-distribution"
-msgstr ""
+msgstr "Loi normale"
 
 #: data/functions.xml.in:2833
 #, fuzzy
@@ -6416,14 +6587,22 @@ msgid "Cauchy Distribution"
 msgstr "Loi de Cauchy"
 
 #: data/functions.xml.in:2852
+#, fuzzy
+#| msgid "r:betadist"
 msgid "r:cauchydist"
-msgstr ""
+msgstr "r:betadist"
 
 #: data/functions.xml.in:2853
+#, fuzzy
+#| msgid ""
+#| "Returns the probability density p(x) at x for a Pareto distribution with "
+#| "exponent and scale. (from Gnumeric)"
 msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "Cauchy distribution."
 msgstr ""
+"Retourne la densité de probabilité p(x) au x choisi pour une distribution de "
+"Pareto avec l'exposant et l'échelle. (utilise Gnumeric)"
 
 #: data/functions.xml.in:2860
 msgid "Location (x_0)"
@@ -6502,9 +6681,10 @@ msgstr "r:days"
 
 #: data/functions.xml.in:2916
 msgid ""
-"Returns the number of days between two dates. Basis is the type of day "
-"counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/"
-"360, 3: real days/365 or 4: European 30/360."
+"Returns the number of days between two dates.\n"
+"\n"
+"Basis is the type of day counting you want to use: 0: US 30/360, 1: real "
+"days (default), 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 "Retourne le nombre de jours entre deux dates.\n"
 "\n"
@@ -6542,9 +6722,10 @@ msgstr "r:yearfrac"
 
 #: data/functions.xml.in:2935
 msgid ""
-"Returns the number of years (fractional) between two dates. Basis is the "
-"type of day counting you want to use: 0: US 30/360, 1: real days (default), "
-"2: real days/360, 3: real days/365 or 4: European 30/360."
+"Returns the number of years (fractional) between two dates.\n"
+"\n"
+"Basis is the type of day counting you want to use: 0: US 30/360, 1: real "
+"days (default), 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 "Retourne le nombre d'années (sous forme de fraction) entre deux dates.\n"
 "\n"
@@ -6635,8 +6816,10 @@ msgid "r:timestamp"
 msgstr "r:timestamp"
 
 #: data/functions.xml.in:3019
+#, fuzzy
+#| msgid "Date to Unix Timestamp"
 msgid "Unix Timestamp to Date"
-msgstr ""
+msgstr "Date selon l'horodatage Unix"
 
 #: data/functions.xml.in:3020
 msgid "r:stamptodate,unix2date"
@@ -6649,8 +6832,10 @@ msgid ""
 msgstr ""
 
 #: data/functions.xml.in:3023
+#, fuzzy
+#| msgid "r:timestamp"
 msgid "Timestamp"
-msgstr ""
+msgstr "r:timestamp"
 
 #: data/functions.xml.in:3027
 msgid "Add Days"
@@ -6746,16 +6931,20 @@ msgid "Lunar phase"
 msgstr "Phase lunaire"
 
 #: data/functions.xml.in:3086
+#, fuzzy
+#| msgid "First date"
 msgid "Start date"
-msgstr ""
+msgstr "Première date"
 
 #: data/functions.xml.in:3090
 msgid "Days in Month"
 msgstr "Jours du mois"
 
 #: data/functions.xml.in:3091
+#, fuzzy
+#| msgid "Days in Month"
 msgid "r:daysInMonth"
-msgstr ""
+msgstr "Jours du mois"
 
 #: data/functions.xml.in:3101 data/variables.xml.in:891
 msgid "Utilities"
@@ -6808,8 +6997,10 @@ msgid "Lower Endpoint (interval)"
 msgstr "Limite inférieure (intervalle)"
 
 #: data/functions.xml.in:3131
+#, fuzzy
+#| msgid "Lower endpoint"
 msgid "r:lowerEndpoint"
-msgstr ""
+msgstr "Limite inférieure"
 
 #: data/functions.xml.in:3132
 #, fuzzy
@@ -6821,8 +7012,10 @@ msgid "Upper Endpoint (interval)"
 msgstr "Limite supérieure (intervalle)"
 
 #: data/functions.xml.in:3139
+#, fuzzy
+#| msgid "Upper endpoint"
 msgid "r:upperEndpoint"
-msgstr ""
+msgstr "Limite supérieure"
 
 #: data/functions.xml.in:3140
 #, fuzzy
@@ -6848,14 +7041,17 @@ msgid "Get Uncertainty"
 msgstr "Récupérer les incertitudes"
 
 #: data/functions.xml.in:3155
+#, fuzzy
+#| msgid "r:error"
 msgid "r:errorPart"
-msgstr ""
+msgstr "r:error"
 
 #: data/functions.xml.in:3156
+#, fuzzy
 msgid ""
 "Returns the absolute (default) or relative uncertainty/error of a numerical "
 "value."
-msgstr ""
+msgstr "Retourne la transposée d'une matrice."
 
 #: data/functions.xml.in:3166
 msgid "Plot Functions and Vectors"
@@ -6980,8 +7176,10 @@ msgid "Precalculate expression"
 msgstr "Expression précalculée"
 
 #: data/functions.xml.in:3238
+#, fuzzy
+#| msgid "Stripes"
 msgid "Strip Units"
-msgstr ""
+msgstr "Bandes"
 
 #: data/functions.xml.in:3239
 msgid "r:nounit,strip_units"
@@ -7136,13 +7334,17 @@ msgstr "r:save"
 
 #: data/functions.xml.in:3375
 msgid ""
-"Stores a value in a variable or saves an expression as a function. A "
-"function is created if the name includes parentheses (e.g. \"f()\"). "
+"Stores a value in a variable or saves an expression as a function.\n"
+"\n"
+"A function is created if the name includes parentheses (e.g. \"f()\"). "
 "Optionally the function arguments can be specified in the name (e.g. "
 "\"save(a+b,f(a,b))\"). Otherwise the function arguments are expected to be "
 "referred to in the expression using \\x, \\y, \\z, \\a, \\b, ..., or x, y, z "
-"(e.g. \"save(x+y,f())\"). If a function was created, the processed function "
-"expression is returned as a text string, otherwise the value is returned. "
+"(e.g. \"save(x+y,f())\").\n"
+"\n"
+"If a function was created, the processed function expression is returned as "
+"a text string, otherwise the value is returned.\n"
+"\n"
 "The \":=\" operator (e.g. var1:=10) is a shortcut for this function."
 msgstr ""
 
@@ -7179,8 +7381,10 @@ msgid "Returns the RPN stack as a vector."
 msgstr "Retourne la pile NPI sous forme de vecteur."
 
 #: data/functions.xml.in:3412
+#, fuzzy
+#| msgid "Number"
 msgid "Is Number"
-msgstr ""
+msgstr "Nombre"
 
 #: data/functions.xml.in:3413
 msgid "r:isNumber"
@@ -7193,8 +7397,10 @@ msgid ""
 msgstr ""
 
 #: data/functions.xml.in:3420
+#, fuzzy
+#| msgid "r:isReal"
 msgid "Is Real"
-msgstr ""
+msgstr "r:isReal"
 
 #: data/functions.xml.in:3421
 msgid "r:isReal"
@@ -7207,8 +7413,10 @@ msgid ""
 msgstr ""
 
 #: data/functions.xml.in:3428
+#, fuzzy
+#| msgid "r:isRational"
 msgid "Is Rational"
-msgstr ""
+msgstr "r:isRational"
 
 #: data/functions.xml.in:3429
 msgid "r:isRational"
@@ -7221,8 +7429,10 @@ msgid ""
 msgstr ""
 
 #: data/functions.xml.in:3436
+#, fuzzy
+#| msgid "Integers"
 msgid "Is Integer"
-msgstr ""
+msgstr "Entiers"
 
 #: data/functions.xml.in:3437
 msgid "r:isInteger"
@@ -7235,8 +7445,10 @@ msgid ""
 msgstr ""
 
 #: data/functions.xml.in:3445
+#, fuzzy
+#| msgid "r:representsNumber"
 msgid "Represents Number"
-msgstr ""
+msgstr "r:representsNumber"
 
 #: data/functions.xml.in:3446
 msgid "r:representsNumber"
@@ -7249,8 +7461,10 @@ msgid ""
 msgstr ""
 
 #: data/functions.xml.in:3453
+#, fuzzy
+#| msgid "r:representsReal"
 msgid "Represents Real"
-msgstr ""
+msgstr "r:representsReal"
 
 #: data/functions.xml.in:3454
 msgid "r:representsReal"
@@ -7263,8 +7477,10 @@ msgid ""
 msgstr ""
 
 #: data/functions.xml.in:3461
+#, fuzzy
+#| msgid "r:representsRational"
 msgid "Represents Rational"
-msgstr ""
+msgstr "r:representsRational"
 
 #: data/functions.xml.in:3462
 msgid "r:representsRational"
@@ -7277,8 +7493,10 @@ msgid ""
 msgstr ""
 
 #: data/functions.xml.in:3469
+#, fuzzy
+#| msgid "r:representsInteger"
 msgid "Represents Integer"
-msgstr ""
+msgstr "r:representsInteger"
 
 #: data/functions.xml.in:3470
 msgid "r:representsInteger"
@@ -7300,8 +7518,9 @@ msgid "r:command"
 msgstr "r:compound"
 
 #: data/functions.xml.in:3481
+#, fuzzy
 msgid "Command"
-msgstr ""
+msgstr "r:compound"
 
 #: data/functions.xml.in:3489
 msgid "Logical"
@@ -7406,8 +7625,10 @@ msgid "Arithmetic shift using two's complement"
 msgstr ""
 
 #: data/functions.xml.in:3588
+#, fuzzy
+#| msgid "Two's complement"
 msgid "Bitwise Complement (Not)"
-msgstr ""
+msgstr "Complément à deux"
 
 #: data/functions.xml.in:3589
 msgid ""
@@ -7432,8 +7653,10 @@ msgid "Signed integer"
 msgstr "Entier signé"
 
 #: data/functions.xml.in:3602
+#, fuzzy
+#| msgid "Min iterations"
 msgid "Bit Rotation"
-msgstr ""
+msgstr "Itérations min."
 
 #: data/functions.xml.in:3603
 msgid ""
@@ -7466,8 +7689,9 @@ msgid "r:bitset"
 msgstr "r:bitrot"
 
 #: data/functions.xml.in:3640
+#, fuzzy
 msgid "Set Multiple Bits"
-msgstr ""
+msgstr "Multiplier"
 
 #: data/functions.xml.in:3641
 msgid ""
@@ -7478,8 +7702,9 @@ msgid ""
 msgstr ""
 
 #: data/functions.xml.in:3643
+#, fuzzy
 msgid "r:setbits"
-msgstr ""
+msgstr "r:bitrot"
 
 #: data/functions.xml.in:3648
 #, fuzzy
@@ -7492,8 +7717,9 @@ msgid "Last position"
 msgstr "Position en x"
 
 #: data/functions.xml.in:3664
+#, fuzzy
 msgid "Get Bit"
-msgstr ""
+msgstr "Ensemble de chiffres"
 
 #: data/functions.xml.in:3665
 msgid ""
@@ -7796,8 +8022,10 @@ msgid "r:limit"
 msgstr "r:limit"
 
 #: data/functions.xml.in:3917
+#, fuzzy
+#| msgid "Value for zero"
 msgid "Value to approach"
-msgstr ""
+msgstr "Valeur pour zéro"
 
 #: data/functions.xml.in:3923
 msgid "Direction"
@@ -7959,8 +8187,9 @@ msgid "Regularized Incomplete Beta Function"
 msgstr "Fonction bêta incomplète régularisée"
 
 #: data/functions.xml.in:4010
+#, fuzzy
 msgid "r:betainc"
-msgstr ""
+msgstr "r:beta"
 
 #: data/functions.xml.in:4013
 msgid "Inverse Regularized Incomplete Beta Function"
@@ -8162,8 +8391,10 @@ msgid "r:cube_sa"
 msgstr "r:cube_sa"
 
 #: data/functions.xml.in:4188
+#, fuzzy
+#| msgid "Rectangle Area"
 msgid "Rectangle"
-msgstr ""
+msgstr "Aire de rectangle"
 
 #: data/functions.xml.in:4190
 msgid "Rectangle Area"
@@ -8344,8 +8575,10 @@ msgid "Trapezoid"
 msgstr "Trapèze"
 
 #: data/functions.xml.in:4356
+#, fuzzy
+#| msgid "Trapezoid"
 msgid "Trapezoid Area"
-msgstr ""
+msgstr "Trapèze"
 
 #: data/functions.xml.in:4357
 msgid "r:trapezoid"
@@ -8376,9 +8609,11 @@ msgstr "r:elasticity"
 msgid ""
 "Calculates the demand elasticity. Also works for supply elasticity, income "
 "elasticity, cross-price elasticity, etc. Just replace demand with supply, or "
-"price with income... e.g. elasticity(100-x^2, 3) calculates the demand "
-"elasticity when the price is 3 for the function \"Q = 100 - x^2\" where x is "
-"the default price variable."
+"price with income...\n"
+"\n"
+"e.g. elasticity(100-x^2, 3) calculates the demand elasticity when the price "
+"is 3 for the function \"Q = 100 - x^2\" where x is the default price "
+"variable."
 msgstr ""
 "Calcule l'élasticité de la demande. Fonctionne également pour l'élasticité "
 "de l'offre, de revenu, de prix croisés, etc. Remplacez simplement demande "
@@ -8429,8 +8664,10 @@ msgid "Cost"
 msgstr "Coût"
 
 #: data/functions.xml.in:4403 data/functions.xml.in:4423
+#, fuzzy
+#| msgid "Face value"
 msgid "Salvage value"
-msgstr ""
+msgstr "Valeur nominale"
 
 #: data/functions.xml.in:4406 data/functions.xml.in:4426
 msgid "Life"
@@ -8450,7 +8687,8 @@ msgstr "r:sln"
 
 #: data/functions.xml.in:4415
 msgid ""
-"Determines the straight line depreciation of an asset for a single period. "
+"Determines the straight line depreciation of an asset for a single period.\n"
+"\n"
 "Cost is the amount you paid for the asset. Salvage is the value of the asset "
 "at the end of the period. Life is the number of periods over which the asset "
 "is depreciated. SLN divides the cost evenly over the life of an asset."
@@ -8471,9 +8709,10 @@ msgstr ""
 
 #: data/functions.xml.in:4432
 msgid ""
-"Returns the present value of an investment. If type = 1 then the payment is "
-"made at the beginning of the period. If type = 0 (or omitted) it is made at "
-"the end of each period."
+"Returns the present value of an investment.\n"
+"\n"
+"If type = 1 then the payment is made at the beginning of the period. If type "
+"= 0 (or omitted) it is made at the end of each period."
 msgstr ""
 "Retourne la valeur actuelle d'un investissement.\n"
 "\n"
@@ -8544,8 +8783,10 @@ msgid "r:zero_coupon"
 msgstr "r:zero_coupon"
 
 #: data/functions.xml.in:4467
+#, fuzzy
+#| msgid "Calculates the area of a circle using the radius"
 msgid "Calculates the value of a zero-coupon (pure discount) bond."
-msgstr ""
+msgstr "Calcule l'aire d'un cercle d'après son rayon"
 
 #: data/functions.xml.in:4470 data/functions.xml.in:5005
 msgid "Face value"
@@ -8560,8 +8801,9 @@ msgid "r:tbillyield"
 msgstr "r:tbillyield"
 
 #: data/functions.xml.in:4482
+#, fuzzy
 msgid "Returns the yield for a treasury bill."
-msgstr ""
+msgstr "Retourne le prix pour 100 $ de valeur faciale de bons du trésor."
 
 #: data/functions.xml.in:4485 data/functions.xml.in:4500
 #: data/functions.xml.in:4515 data/functions.xml.in:4771
@@ -8569,8 +8811,10 @@ msgstr ""
 #: data/functions.xml.in:4875 data/functions.xml.in:4903
 #: data/functions.xml.in:4930 data/functions.xml.in:4954
 #: data/functions.xml.in:4979
+#, fuzzy
+#| msgid "Second date"
 msgid "Settlement date"
-msgstr ""
+msgstr "Deuxième date"
 
 #: data/functions.xml.in:4488 data/functions.xml.in:4503
 #: data/functions.xml.in:4518 data/functions.xml.in:4774
@@ -8603,8 +8847,10 @@ msgid "Discount rate"
 msgstr "Taux d'actualisation"
 
 #: data/functions.xml.in:4510
+#, fuzzy
+#| msgid "Dose Equivalent"
 msgid "Treasury Bill Equivalent"
-msgstr ""
+msgstr "Dose équivalente"
 
 #: data/functions.xml.in:4511
 msgid "r:tbilleq"
@@ -8629,8 +8875,10 @@ msgstr "Calcule l'intérêt d'un investissement payé sur une période donnée."
 
 #: data/functions.xml.in:4530 data/functions.xml.in:4647
 #: data/functions.xml.in:4743
+#, fuzzy
+#| msgid "Nominal interest rate"
 msgid "Periodic interest rate"
-msgstr ""
+msgstr "Taux d'intérêt nominal"
 
 #: data/functions.xml.in:4533 data/functions.xml.in:4650
 msgid "Amortizement period"
@@ -8655,13 +8903,17 @@ msgstr "r:pmt"
 #, fuzzy
 msgid ""
 "Returns the amount of payment (negative) each period for a loan based on a "
-"constant interest rate and constant payments (each payment is equal amount). "
+"constant interest rate and constant payments (each payment is equal "
+"amount).\n"
+"\n"
 "If type = 1 then the payment is made at the beginning of the period. If type "
-"= 0 (or omitted) it is made at the end of each period. Note that the "
-"interest rate here refers to the rate for each period and if you calculate "
-"with an annual rate, each period will be interpreted as a whole year. To get "
-"monthly payments divide the annual interest rate by 12 and enter the total "
-"number of months (12 times number of years) in the periods field."
+"= 0 (or omitted) it is made at the end of each period.\n"
+"\n"
+"Note that the interest rate here refers to the rate for each period and if "
+"you calculate with an annual rate, each period will be interpreted as a "
+"whole year. To get monthly payments divide the annual interest rate by 12 "
+"and enter the total number of months (12 times number of years) in the "
+"periods field."
 msgstr ""
 "Retourne le montant des versements d'un emprunt basé sur un taux d'intérêt "
 "constant (tous les versements sont égaux).\n"
@@ -8684,25 +8936,24 @@ msgid "r:rate"
 msgstr "r:intrate"
 
 #: data/functions.xml.in:4573
-#, fuzzy
 msgid ""
-"Calculates the rate of return. If type = 1 then the payment is made at the "
-"beginning of the period. If type = 0 (or omitted) it is made at the end of "
-"each period. Note that the optional guess is needed because there can be "
-"more than one valid result. It defaults to 10%."
-msgstr ""
-"Retourne la valeur actuelle d'un investissement.\n"
+"Calculates the rate of return.\n"
 "\n"
-"Si type = 1 alors le paiement est fait au début de la période, si type = 0 "
-"(ou omis) il est fait à la fin de chaque période."
+"If type = 1 then the payment is made at the beginning of the period. If type "
+"= 0 (or omitted) it is made at the end of each period.\n"
+"\n"
+"Note that the optional guess is needed because there can be more than one "
+"valid result. It defaults to 10%."
+msgstr ""
 
 #: data/functions.xml.in:4598
 msgid "Guess"
 msgstr ""
 
 #: data/functions.xml.in:4602
+#, fuzzy
 msgid "Periods of an investment"
-msgstr ""
+msgstr "Investissement"
 
 #: data/functions.xml.in:4603
 msgid "r:nper"
@@ -8711,9 +8962,10 @@ msgstr "r:nper"
 #: data/functions.xml.in:4604
 msgid ""
 "Calculates number of periods of an investment based on periodic constant "
-"payments and a constant interest rate. Type defines the due date. 1 for "
-"payment at the beginning of a period and 0 (default) for payment at the end "
-"of a period."
+"payments and a constant interest rate.\n"
+"\n"
+"Type defines the due date. 1 for payment at the beginning of a period and 0 "
+"(default) for payment at the end of a period."
 msgstr ""
 "Calcule le nombre de périodes d'un investissement reposant sur des paiements "
 "périodiques constants et un taux d'intérêt constant..\n"
@@ -8722,8 +8974,14 @@ msgstr ""
 "défaut) pour paiement en fin de période."
 
 #: data/functions.xml.in:4625
+#, fuzzy
+#| msgid ""
+#| "Returns the number of periods needed for an investment to attain a "
+#| "desired value."
 msgid "Periods for investment to attain desired value"
 msgstr ""
+"Retourne le nombre de périodes nécessaires à un investissement pour "
+"atteindre un valeur désirée."
 
 #: data/functions.xml.in:4626
 msgid "r:g_duration"
@@ -8747,7 +9005,8 @@ msgstr "r:ppmt"
 
 #: data/functions.xml.in:4642
 msgid ""
-"Calculates the amount of a payment of an annuity going towards principal. "
+"Calculates the amount of a payment of an annuity going towards principal.\n"
+"\n"
 "Type defines the due date. 1 for payment at the beginning of a period and 0 "
 "(default) for payment at the end of a period."
 msgstr ""
@@ -8787,9 +9046,10 @@ msgstr ""
 #: data/functions.xml.in:4682
 msgid ""
 "Computes the future value of an investment. This is based on periodic, "
-"constant payments and a constant interest rate. If type = 1 then the payment "
-"is made at the beginning of the period. If type = 0 (or omitted) it is made "
-"at the end of each period."
+"constant payments and a constant interest rate.\n"
+"\n"
+"If type = 1 then the payment is made at the beginning of the period. If type "
+"= 0 (or omitted) it is made at the end of each period."
 msgstr ""
 "Calcule la valeur future d'un investissement. Cela est basé sur des "
 "paiements constants périodiques et un taux d'intérêt constant.\n"
@@ -8832,8 +9092,10 @@ msgid ""
 msgstr ""
 
 #: data/functions.xml.in:4729
+#, fuzzy
+#| msgid "Coupons per year"
 msgid "Periods per year"
-msgstr ""
+msgstr "Coupons par an"
 
 #: data/functions.xml.in:4736
 msgid "Payment of an annuity going towards interest (IPMT)"
@@ -8845,7 +9107,8 @@ msgstr "r:ipmt"
 
 #: data/functions.xml.in:4738
 msgid ""
-"Calculates the amount of a payment of an annuity going towards interest. "
+"Calculates the amount of a payment of an annuity going towards interest.\n"
+"\n"
 "Type defines the due date. 1 for payment at the beginning of a period and 0 "
 "(default) for payment at the end of a period."
 msgstr ""
@@ -8864,14 +9127,17 @@ msgstr "r:intrate"
 
 #: data/functions.xml.in:4766
 msgid ""
-"Returns the interest rate for a fully invested security. Basis is the type "
-"of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: "
-"real days/360, 3: real days/365 or 4: European 30/360."
+"Returns the interest rate for a fully invested security.\n"
+"\n"
+"Basis is the type of day counting you want to use: 0: US 30/360 (default), "
+"1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"Retourne le taux d'intérêt pour une obligation entièrement investie. La base "
-"est les manière de compter les jours que vous souhaitez utiliser : 0 : US "
-"30/360 (par défaut), 1 : jours réels, 2: jours réels/360, 3: jours réels/365 "
-"or 4: Européenne 30/360.La date de contrat doit être antérieure à l'échéance."
+"Retourne le taux d'intérêt pour une obligation entièrement investie.\n"
+"\n"
+"La base est les manière de compter les jours que vous souhaitez utiliser : "
+"0 : US 30/360 (par défaut), 1 : jours réels, 2: jours réels/360, 3: jours "
+"réels/365 or 4: Européenne 30/360.La date de contrat doit être antérieure à "
+"l'échéance."
 
 #: data/functions.xml.in:4777 data/functions.xml.in:4828
 msgid "Investment"
@@ -8935,15 +9201,17 @@ msgstr "r:received"
 
 #: data/functions.xml.in:4817
 msgid ""
-"Returns the amount received at the maturity date for an invested security. "
+"Returns the amount received at the maturity date for an invested security.\n"
+"\n"
 "Basis is the type of day counting you want to use: 0: US 30/360 (default), "
 "1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360. The "
 "settlement date must be before maturity date."
 msgstr ""
-"Retourne le montant reçu à échéance pour un investissement en obligation. La "
-"base est les manière de compter les jours que vous souhaitez utiliser : 0 : "
-"US 30/360 (par défaut), 1 : jours réels, 2: jours réels/360, 3: jours réels/"
-"365 or 4: Européenne 30/360.La date de contrat doit être antérieure à "
+"Retourne le montant reçu à échéance pour un investissement en obligation.\n"
+"\n"
+"La base est les manière de compter les jours que vous souhaitez utiliser : "
+"0 : US 30/360 (par défaut), 1 : jours réels, 2: jours réels/360, 3: jours "
+"réels/365 or 4: Européenne 30/360.La date de contrat doit être antérieure à "
 "l'échéance."
 
 #: data/functions.xml.in:4840
@@ -8956,14 +9224,11 @@ msgstr "r:disc"
 
 #: data/functions.xml.in:4842
 msgid ""
-"Returns the discount rate for a security. Basis is the type of day counting "
-"you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: "
-"real days/365 or 4: European 30/360."
+"Returns the discount rate for a security.\n"
+"\n"
+"Basis is the type of day counting you want to use: 0: US 30/360 (default), "
+"1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"Retourne le taux d'intérêt pour une obligation entièrement investie. La base "
-"est les manière de compter les jours que vous souhaitez utiliser : 0 : US "
-"30/360 (par défaut), 1 : jours réels, 2: jours réels/360, 3: jours réels/365 "
-"or 4: Européenne 30/360.La date de contrat doit être antérieure à l'échéance."
 
 #: data/functions.xml.in:4865
 msgid "Accrued interest of security paying at maturity"
@@ -8976,14 +9241,17 @@ msgstr "r:accrintm"
 #: data/functions.xml.in:4867
 msgid ""
 "Returns the accrued interest for a security which pays interest at maturity "
-"date. Basis is the type of day counting you want to use: 0: US 30/360 "
-"(default), 1: real days, 2: real days/360, 3: real days/365 or 4: European "
-"30/360."
+"date.\n"
+"\n"
+"Basis is the type of day counting you want to use: 0: US 30/360 (default), "
+"1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 "Retourne les intérêts cumulés d'une obligation dont le versement à lieu à "
-"échéance. La base est les manière de compter les jours que vous souhaitez "
-"utiliser : 0 : US 30/360 (par défaut), 1 : jours réels, 2: jours réels/360, "
-"3: jours réels/365 or 4: Européenne 30/360."
+"échéance.\n"
+"\n"
+"La base est les manière de compter les jours que vous souhaitez utiliser : "
+"0 : US 30/360 (par défaut), 1 : jours réels, 2: jours réels/360, 3: jours "
+"réels/365 or 4: Européenne 30/360."
 
 #: data/functions.xml.in:4872 data/functions.xml.in:4897
 #: data/functions.xml.in:4985
@@ -9008,7 +9276,8 @@ msgstr "r:accrint"
 
 #: data/functions.xml.in:4892
 msgid ""
-"Returns accrued interest for a security which pays periodic interest. "
+"Returns accrued interest for a security which pays periodic interest.\n"
+"\n"
 "Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. Basis "
 "is the type of day counting you want to use: 0: US 30/360 (default), 1: real "
 "days, 2: real days/360, 3: real days/365 or 4: European 30/360."
@@ -9040,15 +9309,18 @@ msgstr "r:coupnum"
 #: data/functions.xml.in:4925
 msgid ""
 "Returns the number of coupons to be paid between the settlement and the "
-"maturity. Basis is the type of day counting you want to use: 0: US 30/360 "
-"(default), 1: real days, 2: real days/360, 3: real days/365 or 4: European "
-"30/360."
+"maturity.\n"
+"\n"
+"Basis is the type of day counting you want to use: 0: US 30/360 (default), "
+"1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 "Retourne le nombre de coupons à payer entre la date de transaction et "
-"l'échéance. La base est les manière de compter les jours que vous souhaitez "
-"utiliser : 0 : US 30/360 (par défaut), 1 : jours réels, 2: jours réels/360, "
-"3: jours réels/365 or 4: Européenne 30/360.La date de contrat doit être "
-"antérieure à l'échéance."
+"l'échéance.\n"
+"\n"
+"La base est les manière de compter les jours que vous souhaitez utiliser : "
+"0 : US 30/360 (par défaut), 1 : jours réels, 2: jours réels/360, 3: jours "
+"réels/365 or 4: Européenne 30/360.La date de contrat doit être antérieure à "
+"l'échéance."
 
 #: data/functions.xml.in:4947
 msgid "Price per $100 face value of a discounted security"
@@ -9061,9 +9333,10 @@ msgstr "r:pricedisc"
 #: data/functions.xml.in:4949
 msgid ""
 "Calculates and returns the price per $100 face value of a discounted "
-"security. The security does not pay interest at maturity. Basis is the type "
-"of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: "
-"real days/360, 3: real days/365 or 4: European 30/360."
+"security. The security does not pay interest at maturity.\n"
+"\n"
+"Basis is the type of day counting you want to use: 0: US 30/360 (default), "
+"1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 "Calcule et retourne le prix par bon d'obligation de 100$ de valeur faciale. "
 "L'obligation ne paie pas d'intérêt à maturité.\n"
@@ -9087,9 +9360,10 @@ msgstr "r:pricemat"
 #: data/functions.xml.in:4974
 msgid ""
 "Calculates and returns the price per $100 face value of a security. The "
-"security pays interest at maturity. Basis is the type of day counting you "
-"want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real "
-"days/365 or 4: European 30/360."
+"security pays interest at maturity.\n"
+"\n"
+"Basis is the type of day counting you want to use: 0: US 30/360 (default), "
+"1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 "Calcule et retourne le prix par obligation de 100$ de valeur faciale. "
 "L'obligation paie des intérêts à maturité.\n"
@@ -9111,8 +9385,10 @@ msgid "r:level_coupon"
 msgstr "r:level_coupon"
 
 #: data/functions.xml.in:5002
+#, fuzzy
+#| msgid "Calculates the norm/length of a vector."
 msgid "Calculates the value of a level-coupon bond."
-msgstr ""
+msgstr "Calcule la norme/longueur d'un vecteur."
 
 #: data/functions.xml.in:5008
 msgid "Coupon rate"
@@ -13332,22 +13608,8 @@ msgstr "r:actuel"
 #~ msgid "yobi"
 #~ msgstr "yobi"
 
-#~ msgid ""
-#~ "Returns the probability density p(x) at x for a Pareto distribution with "
-#~ "exponent and scale. (from Gnumeric)"
-#~ msgstr ""
-#~ "Retourne la densité de probabilité p(x) au x choisi pour une distribution "
-#~ "de Pareto avec l'exposant et l'échelle. (utilise Gnumeric)"
-
 #~ msgid "Number of events (x)"
 #~ msgstr "Nombre d'évènements (x)"
-
-#~ msgid ""
-#~ "Returns the probability density p(x) at x for a Rayleigh distribution "
-#~ "with scale parameter sigma. (from Gnumeric)"
-#~ msgstr ""
-#~ "Retourne la densité de probabilité p(x) au x choisi pour une distribution "
-#~ "de Rayleigh avec le paramètre d'échelle sigma. (utilise Gnumeric)"
 
 #~ msgid "Adjoint"
 #~ msgstr "Adjoint"
