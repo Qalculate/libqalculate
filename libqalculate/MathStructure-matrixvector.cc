@@ -100,29 +100,47 @@ bool MathStructure::rankVector(bool ascending) {
 	}
 	return true;
 }
+bool m_nr_cmp_a(const MathStructure *m1, const MathStructure *m2) {
+	ComparisonResult cmp = m1->compare(*m2);
+	if(cmp == COMPARISON_RESULT_EQUAL) return false;
+	return COMPARISON_IS_EQUAL_OR_GREATER(cmp);
+}
+bool m_nr_cmp_d(const MathStructure *m1, const MathStructure *m2) {
+	ComparisonResult cmp = m1->compare(*m2);
+	if(cmp == COMPARISON_RESULT_EQUAL) return false;
+	return COMPARISON_IS_EQUAL_OR_LESS(cmp);
+}
 bool MathStructure::sortVector(bool ascending) {
-	vector<size_t> ranked_mstructs;
-	bool b;
+	vector<MathStructure*> v_subs_new = v_subs;
+	bool b = true;
 	for(size_t index = 0; index < SIZE; index++) {
-		b = false;
-		for(size_t i = 0; i < ranked_mstructs.size(); i++) {
-			if(CALCULATOR->aborted()) return false;
-			ComparisonResult cmp = CHILD(index).compare(*v_subs[ranked_mstructs[i]]);
-			if(COMPARISON_MIGHT_BE_LESS_OR_GREATER(cmp)) {
-				CALCULATOR->error(true, _("Unsolvable comparison at element %s when trying to sort vector."), i2s(index).c_str(), NULL);
-				return false;
-			}
-			if((ascending && COMPARISON_IS_EQUAL_OR_GREATER(cmp)) || (!ascending && COMPARISON_IS_EQUAL_OR_LESS(cmp))) {
-				ranked_mstructs.insert(ranked_mstructs.begin() + i, v_order[index]);
-				b = true;
+		if(!CHILD(index).isNumber() || !CHILD(index).number().isRational()) {
+			b = false;
+			break;
+		}
+	}
+	if(ascending) std::sort(v_subs_new.begin(), v_subs_new.end(), m_nr_cmp_a);
+	else std::sort(v_subs_new.begin(), v_subs_new.end(), m_nr_cmp_d);
+	if(!b) {
+		b = true;
+		for(size_t i = 1; i < v_subs_new.size(); i++) {
+			ComparisonResult cmp = v_subs_new[i - 1]->number().compare(v_subs_new[i]->number());
+			if((ascending && !COMPARISON_IS_EQUAL_OR_GREATER(cmp)) || (!ascending && !COMPARISON_IS_EQUAL_OR_LESS(cmp))) {
+				for(size_t index = 0; index < SIZE; index++) {
+					if(&CHILD(index) == v_subs_new[i]) {
+						CALCULATOR->error(true, _("Unsolvable comparison at element %s when trying to sort vector."), i2s(index + 1).c_str(), NULL);
+					}
+				}
+				b = false;
 				break;
 			}
 		}
-		if(!b) {
-			ranked_mstructs.push_back(v_order[index]);
-		}
 	}
-	v_order = ranked_mstructs;
+	if(!b) return false;
+	v_subs = v_subs_new;
+	for(size_t i = 0; i < v_order.size(); i++) {
+		v_order[i] = i;
+	}
 	return true;
 }
 void MathStructure::flipVector() {

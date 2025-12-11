@@ -8026,7 +8026,7 @@ void execute_command(int command_type, bool show_result, bool auto_calculate) {
 }
 
 void warn_assumptions(MathStructure &m, bool auto_calculate) {
-	if(assumptions_warning_shown) return;
+	if(load_defaults || assumptions_warning_shown) return;
 	if(CALCULATOR->defaultAssumptions()->type() != ASSUMPTION_TYPE_REAL || CALCULATOR->defaultAssumptions()->sign() != ASSUMPTION_SIGN_UNKNOWN) {
 		assumptions_warning_shown = true;
 		return;
@@ -8045,7 +8045,7 @@ void warn_assumptions(MathStructure &m, bool auto_calculate) {
 
 
 bool test_ask_sinc(MathStructure &m) {
-	return !sinc_set && m.containsFunctionId(FUNCTION_ID_SINC);
+	return !load_defaults && !sinc_set && m.containsFunctionId(FUNCTION_ID_SINC);
 }
 bool ask_sinc() {
 	INIT_COLS
@@ -8120,7 +8120,7 @@ bool contains_temperature_unit_q(const MathStructure &m) {
 	return false;
 }
 bool test_ask_tc(MathStructure &m) {
-	if(tc_set || !contains_temperature_unit_q(m)) return false;
+	if(load_defaults || tc_set || !contains_temperature_unit_q(m)) return false;
 	MathStructure *mp = &m;
 	if(m.isMultiplication() && m.size() == 2 && m[0].isMinusOne()) mp = &m[1];
 	else if(m.isNegate()) mp = &m[0];
@@ -8209,7 +8209,7 @@ bool ask_tc() {
 }
 
 bool test_ask_dot(const string &str) {
-	if(dot_question_asked) return false;
+	if(load_defaults || dot_question_asked) return false;
 	bool test_comma = (CALCULATOR->getDecimalPoint() == DOT);
 	size_t i = 0;
 	while(true) {
@@ -8382,7 +8382,7 @@ bool ask_dot() {
 }
 
 bool test_ask_percent() {
-	return simplified_percentage < 0 && CALCULATOR->simplifiedPercentageUsed();
+	return !load_defaults && simplified_percentage < 0 && CALCULATOR->simplifiedPercentageUsed();
 }
 
 bool ask_percent() {

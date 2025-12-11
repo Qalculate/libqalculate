@@ -34,7 +34,6 @@
 #define PREPEND_REF(o)		{MathStructure *m_append = o; v_order.insert(v_order.begin(), v_subs.size()); v_subs.push_back(m_append); m_append->ref(); if(!b_approx && m_append->isApproximate()) b_approx = true; if(m_append->precision() > 0 && (i_precision < 1 || m_append->precision() < i_precision)) i_precision = m_append->precision();}
 #define INSERT_REF(o, i)	{MathStructure *m_append = o; v_order.insert(v_order.begin() + i, v_subs.size()); v_subs.push_back(m_append); m_append->ref(); if(!b_approx && m_append->isApproximate()) b_approx = true; if(m_append->precision() > 0 && (i_precision < 1 || m_append->precision() < i_precision)) i_precision = m_append->precision();}
 #define CLEAR			v_order.clear(); for(size_t i = 0; i < v_subs.size(); i++) {v_subs[i]->unref();} v_subs.clear();
-//#define REDUCE(v_size)		for(size_t v_index = v_size; v_index < v_order.size(); v_index++) {v_subs[v_order[v_index]]->unref(); v_subs.erase(v_subs.begin() + v_order[v_index]);} v_order.resize(v_size);
 #define REDUCE(v_size)          {\
 	for(size_t v_index = v_size; v_index < v_order.size(); v_index++) {\
 		v_subs[v_order[v_index]]->unref();\
@@ -64,7 +63,17 @@
 #define CHILD(v_index)		(*v_subs[v_order[v_index]])
 #define SIZE			v_order.size()
 #define LAST			(*v_subs[v_order[v_order.size() - 1]])
-#define ERASE(v_index)		v_subs[v_order[v_index]]->unref(); v_subs.erase(v_subs.begin() + v_order[v_index]); for(size_t v_index2 = 0; v_index2 < v_order.size(); v_index2++) {if(v_order[v_index2] > v_order[v_index]) v_order[v_index2]--;} v_order.erase(v_order.begin() + (v_index));
+#define ERASE(v_index)		{\
+	size_t i_order = v_order[v_index];\
+	v_subs[i_order]->unref();\
+	v_subs.erase(v_subs.begin() + i_order);\
+	if(i_order < v_subs.size()) {\
+		for(std::vector<size_t>::iterator it = v_order.begin(); it != v_order.end(); ++it) {\
+			if(*it > i_order) (*it)--;\
+		}\
+	}\
+	v_order.erase(v_order.begin() + (v_index));\
+}
 
 #define IS_REAL(o)		(o.isNumber() && o.number().isReal())
 #define IS_RATIONAL(o)		(o.isNumber() && o.number().isRational())
