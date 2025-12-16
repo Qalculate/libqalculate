@@ -762,7 +762,33 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 	if(convert_to_internal_representation) {
 		// remove superfluous whitespace
 		remove_blank_ends(str);
-		remove_duplicate_blanks(str);
+		{
+			size_t ui = str.find("  ");
+			size_t ui2 = 0;
+			while(ui != string::npos) {
+				// check that found index is outside quotes
+				for(; ui2 < q_end.size(); ui2++) {
+					if(ui >= q_begin[ui2]) {
+						if(ui <= q_end[ui2]) {
+							ui = str.find("  ", q_end[ui2] + 1);
+							if(ui == string::npos) break;
+						}
+					} else {
+						break;
+					}
+				}
+				if(ui == string::npos) break;
+				// adjust quotation mark indices
+				int index_shift = 1;
+				for(size_t ui3 = ui2; ui3 < q_begin.size(); ui3++) {
+					q_begin[ui3] += index_shift;
+					q_end[ui3] += index_shift;
+				}
+				// perform replacement and search for next occurrence
+				str.erase(ui, 1);
+				ui = str.find("  ", ui);
+			}
+		}
 		// replace operators with multiple chars with internal single character version
 		for(size_t i = 0; i < INTERNAL_SIGNS_COUNT; i += 2) {
 			if(b_unicode || internal_signs[i][0] > 0) {
