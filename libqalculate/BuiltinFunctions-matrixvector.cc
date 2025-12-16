@@ -74,7 +74,7 @@ RankFunction::RankFunction() : MathFunction("rank", 1, 2) {
 	setArgumentDefinition(2, new BooleanArgument(""));
 	setDefaultValue(2, "1");
 }
-int RankFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+int RankFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isMatrix()) {
 		MathStructure mvector;
 		mvector.clearVector();
@@ -85,6 +85,9 @@ int RankFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				mvector.addChild(vargs[0][i][i2]);
 			}
 		}
+		EvaluationOptions eo2 = eo;
+		eo2.approximation = APPROXIMATION_EXACT;
+		mstruct.eval(eo2);
 		if(!mvector.rankVector(vargs[1].number().getBoolean())) return 0;
 		mstruct.clearMatrix();
 		mstruct.resizeMatrix(rows, cols, m_zero);
@@ -96,6 +99,9 @@ int RankFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		return 1;
 	}
 	mstruct = vargs[0];
+	EvaluationOptions eo2 = eo;
+	eo2.approximation = APPROXIMATION_EXACT;
+	mstruct.eval(eo2);
 	return mstruct.rankVector(vargs[1].number().getBoolean());
 }
 SortFunction::SortFunction() : MathFunction("sort", 1, 2) {
@@ -103,8 +109,11 @@ SortFunction::SortFunction() : MathFunction("sort", 1, 2) {
 	setArgumentDefinition(2, new BooleanArgument(""));
 	setDefaultValue(2, "1");
 }
-int SortFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+int SortFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
+	EvaluationOptions eo2 = eo;
+	eo2.approximation = APPROXIMATION_EXACT;
+	mstruct.eval(eo2);
 	return mstruct.sortVector(vargs[1].number().getBoolean());
 }
 MergeVectorsFunction::MergeVectorsFunction() : MathFunction("mergevectors", 1, -1) {
@@ -326,14 +335,14 @@ int ColumnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	return 1;
 }
 RowsFunction::RowsFunction() : MathFunction("rows", 1) {
-	setArgumentDefinition(1, new MatrixArgument(""));
+	setArgumentDefinition(1, new MatrixArgument());
 }
 int RowsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	mstruct.set((long int) vargs[0].rows(), 1L, 0L);
 	return 1;
 }
 ColumnsFunction::ColumnsFunction() : MathFunction("columns", 1) {
-	setArgumentDefinition(1, new MatrixArgument(""));
+	setArgumentDefinition(1, new MatrixArgument());
 }
 int ColumnsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	mstruct.set((long int) vargs[0].columns(), 1L, 0L);
@@ -343,32 +352,30 @@ ElementsFunction::ElementsFunction() : MathFunction("elements", 1) {
 	setArgumentDefinition(1, new MatrixArgument("", false));
 }
 int ElementsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isMatrix()) {
+		mstruct.set((long int) (vargs[0].rows() * vargs[0].columns()), 1L, 0L);
+		return 1;
+	} else if(vargs[0].isVector() && !represents_loose_matrix(vargs[0])) {
+		mstruct.set((long int) vargs[0].size(), 1L, 0L);
+		return 1;
+	} else if(vargs[0].representsScalar()) {
+		mstruct.set(1L, 1L, 0L);
+		return 1;
+	}
 	mstruct = vargs[0];
-	mstruct.eval(eo);
+	while(mstruct.isFunction() && !mstruct.representsScalar() && !function_differentiable(mstruct.function())) {
+		if(!mstruct.calculateFunctions(eo, false) || CALCULATOR->aborted()) break;
+	}
+	if((!mstruct.isVector() && !mstruct.representsScalar()) || (!mstruct.isMatrix() && represents_loose_matrix(mstruct))) {
+		mstruct.eval(eo);
+	}
 	if(!mstruct.isMatrix()) {
 		if(mstruct.isVector() && (mstruct.size() == 0 || mstruct[0].representsScalar())) {
 			mstruct.set((long int) mstruct.size(), 1L, 0L);
 			return 1;
 		} else if(mstruct.representsScalar()) {
-			mstruct = m_one;
+			mstruct.set(1L, 1L, 0L);
 			return 1;
-		} else if(eo.approximation == APPROXIMATION_EXACT || eo.approximation == APPROXIMATION_EXACT_VARIABLES) {
-			EvaluationOptions eo2 = eo;
-			eo2.approximation = APPROXIMATION_APPROXIMATE;
-			MathStructure m2(vargs[0]);
-			CALCULATOR->beginTemporaryStopMessages();
-			m2.eval(eo2);
-			if(CALCULATOR->endTemporaryStopMessages()) return -1;
-			if(m2.isMatrix()) {
-				mstruct.set((long int) (m2.rows() * m2.columns()), 1L, 0L);
-				return 1;
-			} else if(m2.isVector() && (m2.size() == 0 || m2[0].representsScalar())) {
-				mstruct.set((long int) m2.size(), 1L, 0L);
-				return 1;
-			} else if(m2.representsScalar()) {
-				mstruct = m_one;
-				return 1;
-			}
 		}
 		return -1;
 	}
@@ -376,7 +383,7 @@ int ElementsFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	return 1;
 }
 ElementFunction::ElementFunction() : MathFunction("element", 2, 3) {
-	setArgumentDefinition(1, new MatrixArgument(""));
+	setArgumentDefinition(1, new MatrixArgument());
 	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
 	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SIZE));
 	setDefaultValue(3, "0");
@@ -436,7 +443,7 @@ int ElementFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	return 1;
 }
 DimensionFunction::DimensionFunction() : MathFunction("dimension", 1) {
-	setArgumentDefinition(1, new VectorArgument(""));
+	setArgumentDefinition(1, new VectorArgument());
 }
 int DimensionFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct.set((long int) vargs[0].countChildren(), 1L, 0L);
@@ -444,7 +451,7 @@ int DimensionFunction::calculate(MathStructure &mstruct, const MathStructure &va
 }
 ComponentFunction::ComponentFunction() : MathFunction("component", 2) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
-	setArgumentDefinition(2, new VectorArgument(""));
+	setArgumentDefinition(2, new VectorArgument());
 }
 bool ComponentFunction::representsScalar(const MathStructure &vargs) const {
 	if(vargs.size() >= 2 && vargs[0].isVector() && vargs[1].isInteger() && vargs[1].number().isPositive() && vargs[1].number() <= vargs[0].size()) {
@@ -468,7 +475,7 @@ int ComponentFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	return 1;
 }
 LimitsFunction::LimitsFunction() : MathFunction("limits", 2, 3) {
-	setArgumentDefinition(1, new VectorArgument(""));
+	setArgumentDefinition(1, new VectorArgument());
 	Argument *arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT);
 	arg->setHandleVector(false);
 	setArgumentDefinition(2, arg);
@@ -500,7 +507,7 @@ int LimitsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	return 1;
 }
 AreaFunction::AreaFunction() : MathFunction("area", 2, 5) {
-	setArgumentDefinition(1, new MatrixArgument(""));
+	setArgumentDefinition(1, new MatrixArgument());
 	Argument *arg = new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT);
 	arg->setHandleVector(false);
 	setArgumentDefinition(2, arg);
@@ -718,8 +725,11 @@ DeterminantFunction::DeterminantFunction() : MathFunction("det", 1) {
 	setArgumentDefinition(1, marg);
 }
 int DeterminantFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	vargs[0].determinant(mstruct, eo);
-	return !mstruct.isUndefined();
+	MathStructure v(vargs[0]);
+	v.eval(eo);
+	v.determinant(mstruct, eo);
+	if(mstruct.isUndefined()) {mstruct = v; return -1;}
+	return 1;
 }
 PermanentFunction::PermanentFunction() : MathFunction("permanent", 1) {
 	MatrixArgument *marg = new MatrixArgument();
@@ -727,8 +737,11 @@ PermanentFunction::PermanentFunction() : MathFunction("permanent", 1) {
 	setArgumentDefinition(1, marg);
 }
 int PermanentFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	vargs[0].permanent(mstruct, eo);
-	return !mstruct.isUndefined();
+	MathStructure v(vargs[0]);
+	v.eval(eo);
+	v.permanent(mstruct, eo);
+	if(mstruct.isUndefined()) {mstruct = v; return -1;}
+	return 1;
 }
 CofactorFunction::CofactorFunction() : MathFunction("cofactor", 3) {
 	MatrixArgument *marg = new MatrixArgument();
@@ -738,8 +751,11 @@ CofactorFunction::CofactorFunction() : MathFunction("cofactor", 3) {
 	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
 }
 int CofactorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	vargs[0].cofactor((size_t) vargs[1].number().uintValue(), (size_t) vargs[2].number().uintValue(), mstruct, eo);
-	return !mstruct.isUndefined();
+	MathStructure v(vargs[0]);
+	v.eval(eo);
+	v.cofactor((size_t) vargs[1].number().uintValue(), (size_t) vargs[2].number().uintValue(), mstruct, eo);
+	if(mstruct.isUndefined()) {mstruct = v; return -1;}
+	return 1;
 }
 AdjointFunction::AdjointFunction() : MathFunction("adj", 1) {
 	MatrixArgument *marg = new MatrixArgument();
@@ -748,8 +764,8 @@ AdjointFunction::AdjointFunction() : MathFunction("adj", 1) {
 }
 int AdjointFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
-	if(!mstruct.adjointMatrix(eo)) return 0;
-	return !mstruct.isUndefined();
+	mstruct.eval(eo);
+	return mstruct.adjointMatrix(eo) && !mstruct.isUndefined();
 }
 InverseFunction::InverseFunction() : MathFunction("inv", 1) {
 	MatrixArgument *marg = new MatrixArgument();
@@ -901,17 +917,17 @@ RRefFunction::RRefFunction() : MathFunction("rref", 1) {
 }
 int RRefFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	// echelon matrix
-	MathStructure m(vargs[0]);
-	if(!matrix_to_rref(m, eo)) return false;
-	mstruct = m;
-	return 1;
+	mstruct = vargs[0];
+	mstruct.eval(eo);
+	return matrix_to_rref(mstruct, eo);
 }
 MatrixRankFunction::MatrixRankFunction() : MathFunction("rk", 1) {
 	setArgumentDefinition(1, new MatrixArgument());
 }
 int MatrixRankFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	MathStructure m(vargs[0]);
-	if(!matrix_to_rref(m, eo)) return false;
+	m.eval(eo);
+	if(!matrix_to_rref(m, eo)) return 0;
 	size_t rows = m.rows();
 	size_t cols = m.columns();
 	Number nr;

@@ -8465,29 +8465,6 @@ bool ask_percent() {
 	return b_ret;
 }
 
-bool contains_plot_or_save(const string &str) {
-	if(expression_contains_save_function(str, evalops.parse_options, false)) return true;
-	for(size_t f_i = 0; f_i < 4; f_i++) {
-		int id = 0;
-		if(f_i == 0) id = FUNCTION_ID_PLOT;
-		else if(f_i == 1) id = FUNCTION_ID_EXPORT;
-		else if(f_i == 2) id = FUNCTION_ID_LOAD;
-		else if(f_i == 3) id = FUNCTION_ID_COMMAND;
-		MathFunction *f = CALCULATOR->getFunctionById(id);
-		for(size_t i = 1; f && i <= f->countNames(); i++) {
-			if(str.find(f->getName(i).name) != string::npos) {
-				MathStructure mtest;
-				CALCULATOR->beginTemporaryStopMessages();
-				CALCULATOR->parse(&mtest, str, evalops.parse_options);
-				CALCULATOR->endTemporaryStopMessages();
-				if(mtest.containsFunctionId(FUNCTION_ID_PLOT) || mtest.containsFunctionId(FUNCTION_ID_EXPORT) || mtest.containsFunctionId(FUNCTION_ID_LOAD) || mtest.containsFunctionId(FUNCTION_ID_COMMAND)) return true;
-				return false;
-			}
-		}
-	}
-	return false;
-}
-
 bool is_equation_solutions(const MathStructure &m) {
 	if(m.isComparison()) {
 		return m.comparisonType() == COMPARISON_EQUALS && m[0].isUnknown();
@@ -8557,6 +8534,25 @@ bool contains_extreme_number(const MathStructure &m) {
 		if(contains_extreme_number(m[i])) return true;
 	}
 	return false;
+}
+bool test_autocalculable(const MathStructure &m, bool top = true) {
+	if(m.isFunction()) {
+		if(m.size() < (size_t) m.function()->minargs() && (m.size() != 1 || m[0].representsScalar())) {
+			MathStructure mfunc(m);
+			mfunc.calculateFunctions(evalops, false);
+			return false;
+		}
+		if(m.function()->id() == FUNCTION_ID_SAVE || m.function()->id() == FUNCTION_ID_PLOT || m.function()->id() == FUNCTION_ID_EXPORT || m.function()->id() == FUNCTION_ID_LOAD || m.function()->id() == FUNCTION_ID_COMMAND) return false;
+		if(m.size() > 0 && (m.function()->id() == FUNCTION_ID_FACTORIAL || m.function()->id() == FUNCTION_ID_DOUBLE_FACTORIAL || m.function()->id() == FUNCTION_ID_MULTI_FACTORIAL) && m[0].isInteger() && m[0].number().integerLength() > 17) {
+			return false;
+		}
+		if(m.function()->id() == FUNCTION_ID_LOGN && m.size() == 2 && m[0].isUndefined() && m[1].isNumber()) return false;
+		if(top && m.function()->subtype() == SUBTYPE_DATA_SET && m.size() >= 2 && m[1].isSymbolic() && equalsIgnoreCase(m[1].symbol(), "info")) return false;
+	}
+	for(size_t i = 0; i < m.size(); i++) {
+		if(!test_autocalculable(m[i], false)) return false;
+	}
+	return true;
 }
 
 void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f, bool do_stack, size_t stack_index, bool check_exrates, bool auto_calculate) {
@@ -9002,13 +8998,19 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 					CALCULATOR->calculateRPN(f, 0, evalops, parsed_mstruct);
 				} else {
 					original_expression = str2;
-					if(auto_calculate && contains_plot_or_save(original_expression)) {
+					if(auto_calculate) {
 						ParseOptions po = evalops.parse_options;
 						po.preserve_format = true;
+						CALCULATOR->startControl(50);
 						CALCULATOR->parse(parsed_mstruct, original_expression, po);
-						MathStructure *m = new MathStructure();
-						m->setAborted();
-						CALCULATOR->RPNStackEnter(m);
+						CALCULATOR->stopControl();
+						if(!test_autocalculable(*parsed_mstruct))  {
+							MathStructure *m = new MathStructure();
+							m->setAborted();
+							CALCULATOR->RPNStackEnter(m);
+						} else {
+							CALCULATOR->RPNStackEnter(str2, 0, evalops, parsed_mstruct, NULL);
+						}
 					} else {
 						CALCULATOR->RPNStackEnter(str2, 0, evalops, parsed_mstruct, NULL);
 					}
@@ -9018,13 +9020,19 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 	} else {
 		original_expression = CALCULATOR->unlocalizeExpression(str, evalops.parse_options);
 		transform_expression_for_equals_save(original_expression, evalops.parse_options);
-		if(auto_calculate && contains_plot_or_save(original_expression)) {
+		if(cfile && i_maxtime == 0) {
+			mstruct->set(CALCULATOR->calculate(original_expression, evalops, parsed_mstruct, &to_struct));
+		} else if(auto_calculate) {
 			ParseOptions po = evalops.parse_options;
 			po.preserve_format = true;
+			CALCULATOR->startControl(50);
 			CALCULATOR->parse(parsed_mstruct, original_expression, po);
-			mstruct->setAborted();
-		} else if(cfile && i_maxtime == 0) {
-			mstruct->set(CALCULATOR->calculate(original_expression, evalops, parsed_mstruct, &to_struct));
+			CALCULATOR->stopControl();
+			if(!test_autocalculable(*parsed_mstruct))  {
+				mstruct->setAborted();
+			} else {
+				CALCULATOR->calculate(mstruct, original_expression, 0, evalops, parsed_mstruct, &to_struct);
+			}
 		} else {
 			CALCULATOR->calculate(mstruct, original_expression, 0, evalops, parsed_mstruct, &to_struct);
 		}
@@ -9121,7 +9129,9 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		}
 	}
 
-	if(auto_calculate && (was_aborted || parsed_mstruct->contains(m_undefined) || contains_extreme_number(*mstruct))) mstruct->setAborted();
+	if(auto_calculate && (was_aborted || mstruct->size() > 50 || mstruct->countTotalChildren(false) > 500 || (mstruct->isMatrix() && mstruct->rows() * mstruct->columns() > 50) || contains_extreme_number(*mstruct))) {
+		mstruct->setAborted();
+	}
 
 	if(delay_complex) {
 		evalops.complex_number_form = cnf;

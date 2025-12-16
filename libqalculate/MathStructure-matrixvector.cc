@@ -49,51 +49,62 @@ MathStructure &MathStructure::flattenVector(MathStructure &mstruct) const {
 	}
 	return mstruct;
 }
+bool sort_vector_comparison_failed = false;
+bool m_nr_cmp_ar(const MathStructure *m1, const MathStructure *m2) {
+	if(sort_vector_comparison_failed || CALCULATOR->aborted()) return false;
+	ComparisonResult cmp = m1->compare(*m2);
+	if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) return false;
+	if(cmp == COMPARISON_RESULT_GREATER) return true;
+	if(cmp != COMPARISON_RESULT_LESS) sort_vector_comparison_failed = true;
+	return false;
+}
+bool m_nr_cmp_dr(const MathStructure *m1, const MathStructure *m2) {
+	if(sort_vector_comparison_failed || CALCULATOR->aborted()) return false;
+	ComparisonResult cmp = m1->compare(*m2);
+	if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) return false;
+	if(cmp == COMPARISON_RESULT_LESS) return true;
+	if(cmp != COMPARISON_RESULT_GREATER) sort_vector_comparison_failed = true;
+	return false;
+}
 bool MathStructure::rankVector(bool ascending) {
-	vector<int> ranked;
-	vector<bool> ranked_equals_prev;
-	bool b;
-	for(size_t index = 0; index < SIZE; index++) {
-		b = false;
-		for(size_t i = 0; i < ranked.size(); i++) {
+	if(CALCULATOR->aborted()) return false;
+	vector<MathStructure*> v_subs_new = v_subs;
+	sort_vector_comparison_failed = false;
+	if(ascending) std::sort(v_subs_new.begin(), v_subs_new.end(), m_nr_cmp_ar);
+	else std::sort(v_subs_new.begin(), v_subs_new.end(), m_nr_cmp_dr);
+	if(sort_vector_comparison_failed) {
+		for(size_t i = 1; i < v_subs_new.size(); i++) {
 			if(CALCULATOR->aborted()) return false;
-			ComparisonResult cmp = CHILD(index).compare(CHILD(ranked[i]));
-			if(COMPARISON_NOT_FULLY_KNOWN(cmp)) {
-				CALCULATOR->error(true, _("Unsolvable comparison at element %s when trying to rank vector."), i2s(index).c_str(), NULL);
-				return false;
-			}
-			if((ascending && cmp == COMPARISON_RESULT_GREATER) || cmp == COMPARISON_RESULT_EQUAL || (!ascending && cmp == COMPARISON_RESULT_LESS)) {
-				if(cmp == COMPARISON_RESULT_EQUAL) {
-					ranked.insert(ranked.begin() + i + 1, index);
-					ranked_equals_prev.insert(ranked_equals_prev.begin() + i + 1, true);
-				} else {
-					ranked.insert(ranked.begin() + i, index);
-					ranked_equals_prev.insert(ranked_equals_prev.begin() + i, false);
+			ComparisonResult cmp = v_subs_new[i - 1]->number().compare(v_subs_new[i]->number());
+			if(cmp != COMPARISON_RESULT_EQUAL && cmp != COMPARISON_RESULT_EQUAL_LIMITS && ((ascending && cmp != COMPARISON_RESULT_GREATER) || (!ascending && cmp != COMPARISON_RESULT_LESS))) {
+				for(size_t index = 0; index < SIZE; index++) {
+					if(CALCULATOR->aborted()) return false;
+					if(&CHILD(index) == v_subs_new[i]) {
+						CALCULATOR->error(true, _("Unsolvable comparison at element %s when trying to rank vector."), i2s(index + 1).c_str(), NULL);
+					}
 				}
-				b = true;
 				break;
 			}
 		}
-		if(!b) {
-			ranked.push_back(index);
-			ranked_equals_prev.push_back(false);
-		}
+		return false;
 	}
 	int n_rep = 0;
-	for(long int i = (long int) ranked.size() - 1; i >= 0; i--) {
+	for(size_t i = 0; i < SIZE; i++) {
 		if(CALCULATOR->aborted()) return false;
-		if(ranked_equals_prev[i]) {
+		ComparisonResult cmp = COMPARISON_RESULT_UNKNOWN;
+		if(i < SIZE - 1) cmp = v_subs_new[i]->compare(*v_subs_new[i + 1]);
+		if(cmp == COMPARISON_RESULT_EQUAL) {
 			n_rep++;
 		} else {
 			if(n_rep) {
-				MathStructure v(i + 1 + n_rep, 1L, 0L);
+				MathStructure v(i + 1 - n_rep, 1L, 0L);
 				v += i + 1;
 				v *= MathStructure(1, 2, 0);
 				for(; n_rep >= 0; n_rep--) {
-					CHILD(ranked[i + n_rep]) = v;
+					v_subs_new[i - n_rep]->set(v);
 				}
 			} else {
-				CHILD(ranked[i]).set(i + 1, 1L, 0L);
+				v_subs_new[i]->set(i + 1, 1L, 0L);
 			}
 			n_rep = 0;
 		}
@@ -101,42 +112,43 @@ bool MathStructure::rankVector(bool ascending) {
 	return true;
 }
 bool m_nr_cmp_a(const MathStructure *m1, const MathStructure *m2) {
+	if(sort_vector_comparison_failed || CALCULATOR->aborted()) return false;
 	ComparisonResult cmp = m1->compare(*m2);
-	if(cmp == COMPARISON_RESULT_EQUAL) return false;
-	return COMPARISON_IS_EQUAL_OR_GREATER(cmp);
+	if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) return false;
+	if(COMPARISON_IS_EQUAL_OR_GREATER(cmp)) return true;
+	if(!COMPARISON_IS_EQUAL_OR_LESS(cmp)) sort_vector_comparison_failed = true;
+	return false;
 }
 bool m_nr_cmp_d(const MathStructure *m1, const MathStructure *m2) {
+	if(sort_vector_comparison_failed || CALCULATOR->aborted()) return false;
 	ComparisonResult cmp = m1->compare(*m2);
-	if(cmp == COMPARISON_RESULT_EQUAL) return false;
-	return COMPARISON_IS_EQUAL_OR_LESS(cmp);
+	if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) return false;
+	if(COMPARISON_IS_EQUAL_OR_LESS(cmp)) return true;
+	if(!COMPARISON_IS_EQUAL_OR_GREATER(cmp)) sort_vector_comparison_failed = true;
+	return false;
 }
 bool MathStructure::sortVector(bool ascending) {
+	if(CALCULATOR->aborted()) return false;
 	vector<MathStructure*> v_subs_new = v_subs;
-	bool b = true;
-	for(size_t index = 0; index < SIZE; index++) {
-		if(!CHILD(index).isNumber() || !CHILD(index).number().isRational()) {
-			b = false;
-			break;
-		}
-	}
+	sort_vector_comparison_failed = false;
 	if(ascending) std::sort(v_subs_new.begin(), v_subs_new.end(), m_nr_cmp_a);
 	else std::sort(v_subs_new.begin(), v_subs_new.end(), m_nr_cmp_d);
-	if(!b) {
-		b = true;
+	if(sort_vector_comparison_failed) {
 		for(size_t i = 1; i < v_subs_new.size(); i++) {
+			if(CALCULATOR->aborted()) return false;
 			ComparisonResult cmp = v_subs_new[i - 1]->number().compare(v_subs_new[i]->number());
-			if((ascending && !COMPARISON_IS_EQUAL_OR_GREATER(cmp)) || (!ascending && !COMPARISON_IS_EQUAL_OR_LESS(cmp))) {
+			if(cmp != COMPARISON_RESULT_EQUAL_LIMITS && ((ascending && !COMPARISON_IS_EQUAL_OR_GREATER(cmp)) || (!ascending && !COMPARISON_IS_EQUAL_OR_LESS(cmp)))) {
 				for(size_t index = 0; index < SIZE; index++) {
+					if(CALCULATOR->aborted()) return false;
 					if(&CHILD(index) == v_subs_new[i]) {
-						CALCULATOR->error(true, _("Unsolvable comparison at element %s when trying to sort vector."), i2s(index + 1).c_str(), NULL);
+						CALCULATOR->error(true, _("Unsolvable comparison at element %s when trying to rank vector."), i2s(index + 1).c_str(), NULL);
 					}
 				}
-				b = false;
 				break;
 			}
 		}
+		return false;
 	}
-	if(!b) return false;
 	v_subs = v_subs_new;
 	for(size_t i = 0; i < v_order.size(); i++) {
 		v_order[i] = i;

@@ -2979,7 +2979,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				MathStructure mbegin(CHILD(0)), mend(LAST);
 				if(ndiff.isOne()) {
 					set(f, &mbegin, &mend, &m_undefined, NULL);
-				} else {
+				} else if(!ndiff.isZero()) {
 					MathStructure mdiff(ndiff);
 					set(f, &mbegin, &mdiff, &mend, NULL);
 				}

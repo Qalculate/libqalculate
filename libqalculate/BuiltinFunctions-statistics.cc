@@ -36,9 +36,13 @@ int TotalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	bool b_calc = (eo.interval_calculation != INTERVAL_CALCULATION_VARIANCE_FORMULA && eo.interval_calculation != INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) || !vargs[0].containsInterval(true, true, false, 1, true);
 	for(size_t index = 0; index < vargs[0].size(); index++) {
 		if(CALCULATOR->aborted()) return 0;
-		if(index == 0) mstruct = vargs[0][index];
-		else if(b_calc) mstruct.calculateAdd(vargs[0][index], eo);
-		else mstruct.add(vargs[0][index], true);
+		if(index == 0) {
+			mstruct = vargs[0][index];
+		} else if(b_calc) {
+			mstruct.calculateAdd(vargs[0][index], eo);
+		} else {
+			mstruct.add(vargs[0][index], true);
+		}
 	}
 	return 1;
 }
@@ -62,108 +66,108 @@ PercentileFunction::PercentileFunction() : MathFunction("percentile", 2, 3) {
 	setArgumentDefinition(3, iarg);
 	setDefaultValue(3, "7");
 }
-int PercentileFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+int PercentileFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	MathStructure v(vargs[0]);
 	if(v.size() == 0) {mstruct.clear(); return 1;}
 	MathStructure *mp;
 	Number fr100(100, 1, 0);
 	int i_variant = vargs[2].number().intValue();
-	if(!v.sortVector()) {
-		return 0;
-	} else {
-		Number pfr(vargs[1].number());
-		if(pfr == fr100) {
-			// Max value
-			mstruct = v[v.size() - 1];
-			return 1;
-		} else if(pfr.isZero()) {
-			// Min value
-			mstruct = v[0];
-			return 1;
-		}
-		pfr /= 100;
-		if(pfr == nr_half) {
-			// Median
-			if(v.size() % 2 == 1) {
-				mstruct = v[v.size() / 2];
-			} else {
-				mstruct = v[v.size() / 2 - 1];
-				mstruct += v[v.size() / 2];
-				mstruct *= nr_half;
-			}
-			return 1;
-		}
-		// Method numbers as in R
-		switch(i_variant) {
-			case 2: {
-				Number ufr(pfr);
-				ufr *= (long int) v.countChildren();
-				if(ufr.isInteger()) {
-					pfr = ufr;
-					ufr++;
-					mstruct = v[pfr.uintValue() - 1];
-					if(ufr.uintValue() > v.size()) return 1;
-					mstruct += v[ufr.uintValue() - 1];
-					mstruct *= nr_half;
-					return 1;
-				}
-			}
-			case 1: {
-				pfr *= (long int) v.countChildren();
-				pfr.intervalToMidValue();
-				pfr.ceil();
-				size_t index = pfr.uintValue();
-				if(index > v.size()) index = v.size();
-				if(index == 0) index = 1;
-				mstruct = v[index - 1];
-				return 1;
-			}
-			case 3: {
-				pfr *= (long int) v.countChildren();
-				pfr.intervalToMidValue();
-				pfr.round();
-				size_t index = pfr.uintValue();
-				if(index > v.size()) index = v.size();
-				if(index == 0) index = 1;
-				mstruct = v[index - 1];
-				return 1;
-			}
-			case 4: {pfr *= (long int) v.countChildren(); break;}
-			case 5: {pfr *= (long int) v.countChildren(); pfr += nr_half; break;}
-			case 6: {pfr *= (long int) v.countChildren() + 1; break;}
-			case 7: {pfr *= (long int) v.countChildren() - 1; pfr += 1; break;}
-			case 9: {pfr *= Number(v.countChildren() * 4 + 1, 4); pfr += Number(3, 8); break;}
-			case 8: {}
-			default: {pfr *= Number(v.countChildren() * 3 + 1, 3); pfr += Number(1, 3); break;}
-		}
-		pfr.intervalToMidValue();
-		Number ufr(pfr);
-		ufr.ceil();
-		Number lfr(pfr);
-		lfr.floor();
-		pfr -= lfr;
-		size_t u_index = ufr.uintValue();
-		size_t l_index = lfr.uintValue();
-		if(u_index > v.size()) {
-			mstruct = v[v.size() - 1];
-			return 1;
-		}
-		if(l_index == 0) {
-			mstruct = v[0];
-			return 1;
-		}
-		mp = v.getChild(u_index);
-		if(!mp) return 0;
-		MathStructure gap(*mp);
-		mp = v.getChild(l_index);
-		if(!mp) return 0;
-		gap -= *mp;
-		gap *= pfr;
-		mp = v.getChild(l_index);
-		if(!mp) return 0;
-		mstruct = *mp;
-		mstruct += gap;
+	EvaluationOptions eo2 = eo;
+	eo2.approximation = APPROXIMATION_EXACT;
+	v.eval(eo2);
+	if(!v.sortVector()) return 0;
+	Number pfr(vargs[1].number());
+	if(pfr == fr100) {
+		// Max value
+		mstruct = v[v.size() - 1];
+		return 1;
+	} else if(pfr.isZero()) {
+		// Min value
+		mstruct = v[0];
+		return 1;
 	}
+	pfr /= 100;
+	if(pfr == nr_half) {
+		// Median
+		if(v.size() % 2 == 1) {
+			mstruct = v[v.size() / 2];
+		} else {
+			mstruct = v[v.size() / 2 - 1];
+			mstruct += v[v.size() / 2];
+			mstruct *= nr_half;
+		}
+		return 1;
+	}
+	// Method numbers as in R
+	switch(i_variant) {
+		case 2: {
+			Number ufr(pfr);
+			ufr *= (long int) v.countChildren();
+			if(ufr.isInteger()) {
+				pfr = ufr;
+				ufr++;
+				mstruct = v[pfr.uintValue() - 1];
+				if(ufr.uintValue() > v.size()) return 1;
+				mstruct += v[ufr.uintValue() - 1];
+				mstruct *= nr_half;
+				return 1;
+			}
+		}
+		case 1: {
+			pfr *= (long int) v.countChildren();
+			pfr.intervalToMidValue();
+			pfr.ceil();
+			size_t index = pfr.uintValue();
+			if(index > v.size()) index = v.size();
+			if(index == 0) index = 1;
+			mstruct = v[index - 1];
+			return 1;
+		}
+		case 3: {
+			pfr *= (long int) v.countChildren();
+			pfr.intervalToMidValue();
+			pfr.round();
+			size_t index = pfr.uintValue();
+			if(index > v.size()) index = v.size();
+			if(index == 0) index = 1;
+			mstruct = v[index - 1];
+			return 1;
+		}
+		case 4: {pfr *= (long int) v.countChildren(); break;}
+		case 5: {pfr *= (long int) v.countChildren(); pfr += nr_half; break;}
+		case 6: {pfr *= (long int) v.countChildren() + 1; break;}
+		case 7: {pfr *= (long int) v.countChildren() - 1; pfr += 1; break;}
+		case 9: {pfr *= Number(v.countChildren() * 4 + 1, 4); pfr += Number(3, 8); break;}
+		case 8: {}
+		default: {pfr *= Number(v.countChildren() * 3 + 1, 3); pfr += Number(1, 3); break;}
+	}
+	pfr.intervalToMidValue();
+	Number ufr(pfr);
+	ufr.ceil();
+	Number lfr(pfr);
+	lfr.floor();
+	pfr -= lfr;
+	size_t u_index = ufr.uintValue();
+	size_t l_index = lfr.uintValue();
+	if(u_index > v.size()) {
+		mstruct = v[v.size() - 1];
+		return 1;
+	}
+	if(l_index == 0) {
+		mstruct = v[0];
+		return 1;
+	}
+	mp = v.getChild(u_index);
+	if(!mp) return 0;
+	MathStructure gap(*mp);
+	mp = v.getChild(l_index);
+	if(!mp) return 0;
+	gap -= *mp;
+	gap *= pfr;
+	mp = v.getChild(l_index);
+	if(!mp) return 0;
+	mstruct = *mp;
+	mstruct += gap;
 	return 1;
 }
 MinFunction::MinFunction() : MathFunction("min", 1) {
@@ -261,40 +265,41 @@ ModeFunction::ModeFunction() : MathFunction("mode", 1) {
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
 }
-int ModeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+int ModeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].size() <= 0) {
 		return 0;
 	}
-	size_t n = 0;
-	bool b;
-	vector<const MathStructure*> vargs_nodup;
-	vector<size_t> is;
-	const MathStructure *value = NULL;
-	for(size_t index_c = 0; index_c < vargs[0].size(); index_c++) {
-		b = true;
-		for(size_t index = 0; index < vargs_nodup.size(); index++) {
-			if(vargs_nodup[index]->equals(vargs[0][index_c])) {
-				is[index]++;
-				b = false;
-				break;
-			}
-		}
-		if(b) {
-			vargs_nodup.push_back(&vargs[0][index_c]);
-			is.push_back(1);
-		}
-	}
-	for(size_t index = 0; index < is.size(); index++) {
-		if(is[index] > n || (is[index] == n && comparison_is_equal_or_less(value->compare(*vargs_nodup[index])))) {
-			n = is[index];
-			value = vargs_nodup[index];
-		}
-	}
-	if(value) {
-		mstruct = *value;
+	if(vargs[0].size() == 1) {
+		mstruct = vargs[0];
 		return 1;
 	}
-	return 0;
+	MathStructure v(vargs[0]);
+	EvaluationOptions eo2 = eo;
+	eo2.approximation = APPROXIMATION_EXACT;
+	v.eval(eo2);
+	if(!v.sortVector()) return 0;
+	size_t n = 1, nmax = 0;
+	const MathStructure *value = NULL;
+	for(size_t i = 1; i < v.size(); i++) {
+		ComparisonResult cmp = v[i].compare(v[i - 1]);
+		if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) {
+			n++;
+		} else if(COMPARISON_MIGHT_BE_EQUAL(cmp)) {
+			if(CALCULATOR->showArgumentErrors()) {
+				CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), NULL);
+				return 0;
+			}
+		} else {
+			if(n > nmax) {
+				nmax = n;
+				value = &v[i - 1];
+			}
+			n = 1;
+		}
+	}
+	if(n > nmax) value = &v.last();
+	mstruct = *value;
+	return 1;
 }
 
 RandFunction::RandFunction() : MathFunction("rand", 0, 2) {
@@ -323,9 +328,17 @@ int RandFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	return 1;
 }
-bool RandFunction::representsReal(const MathStructure&, bool) const {return true;}
-bool RandFunction::representsInteger(const MathStructure &vargs, bool) const {return vargs.size() > 0 && vargs[0].isNumber() && vargs[0].number().isPositive();}
-bool RandFunction::representsNonNegative(const MathStructure&, bool) const {return true;}
+bool RandFunction::representsReal(const MathStructure &vargs, bool) const {return representsScalar(vargs);}
+bool RandFunction::representsInteger(const MathStructure &vargs, bool) const {return representsScalar(vargs) && vargs[0].isNumber() && vargs[0].number().isPositive();}
+bool RandFunction::representsNonNegative(const MathStructure &vargs, bool) const {return representsScalar(vargs);}
+bool RandFunction::representsNonMatrix(const MathStructure &vargs) const {
+	if(vargs.size() < 1) return false;
+	if(vargs.size() == 1 || vargs[1].isOne()) return vargs[0].representsNonMatrix();
+	return vargs[1].representsScalar() && vargs[0].representsScalar();
+}
+bool RandFunction::representsScalar(const MathStructure &vargs) const {
+	return vargs.size() == 1 || (vargs.size() >= 2 && vargs[1].isOne() && vargs[0].representsScalar());
+}
 
 RandnFunction::RandnFunction() : MathFunction("randnorm", 0, 3) {
 	setDefaultValue(1, "0");
@@ -378,9 +391,17 @@ int RandnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	if(!vargs[0].isZero()) mstruct += vargs[0];
 	return 1;
 }
-bool RandnFunction::representsReal(const MathStructure&, bool) const {return true;}
-bool RandnFunction::representsNonComplex(const MathStructure&, bool) const {return true;}
-bool RandnFunction::representsNumber(const MathStructure&, bool) const {return true;}
+bool RandnFunction::representsReal(const MathStructure &vargs, bool) const {return representsScalar(vargs);}
+bool RandnFunction::representsNonComplex(const MathStructure &vargs, bool) const {return representsScalar(vargs);}
+bool RandnFunction::representsNumber(const MathStructure &vargs, bool) const {return representsScalar(vargs);}
+bool RandnFunction::representsNonMatrix(const MathStructure &vargs) const {
+	if(vargs.size() < 2) return false;
+	if(vargs.size() == 2 || vargs[2].isOne()) return vargs[0].representsNonMatrix() && vargs[1].representsNonMatrix();
+	return vargs[0].representsScalar() && vargs[1].representsScalar() && vargs[0].representsScalar();
+}
+bool RandnFunction::representsScalar(const MathStructure &vargs) const {
+	return vargs.size() == 2 || (vargs.size() >= 3 && vargs[2].isOne() && vargs[1].representsScalar() && vargs[0].representsScalar());
+}
 
 RandPoissonFunction::RandPoissonFunction() : MathFunction("randpoisson", 1, 2) {
 	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE));
@@ -411,7 +432,16 @@ int RandPoissonFunction::calculate(MathStructure &mstruct, const MathStructure &
 	}
 	return 1;
 }
-bool RandPoissonFunction::representsReal(const MathStructure&, bool) const {return true;}
-bool RandPoissonFunction::representsInteger(const MathStructure &vargs, bool) const {return true;}
-bool RandPoissonFunction::representsNonNegative(const MathStructure&, bool) const {return true;}
+bool RandPoissonFunction::representsReal(const MathStructure &vargs, bool) const {return representsScalar(vargs);}
+bool RandPoissonFunction::representsInteger(const MathStructure &vargs, bool) const {return representsScalar(vargs);}
+bool RandPoissonFunction::representsNonNegative(const MathStructure &vargs, bool) const {return representsScalar(vargs);}
+bool RandPoissonFunction::representsNonMatrix(const MathStructure &vargs) const {
+	if(vargs.size() < 1) return false;
+	if(vargs.size() == 1 || vargs[1].isOne()) return vargs[0].representsNonMatrix();
+	if(vargs[1].isOne()) return vargs[0].representsNonMatrix();
+	return vargs[1].representsScalar() && vargs[0].representsScalar();
+}
+bool RandPoissonFunction::representsScalar(const MathStructure &vargs) const {
+	return vargs.size() == 1 || (vargs.size() >= 2 && vargs[1].isOne() && vargs[0].representsScalar());
+}
 

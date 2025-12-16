@@ -19,13 +19,8 @@
 #define TEST_NM_S_FUNCTIONS \
 	bool representsNonMatrix(const MathStructure &vargs) const {\
 		if(vargs.size() == 1) return vargs[0].representsNonMatrix();\
-		bool non_scalar = false;\
 		for(size_t i = 0; i < vargs.size(); i++) {\
 			if(!vargs[i].representsNonMatrix()) return false;\
-			if(!vargs[i].representsScalar()) {\
-				if(non_scalar) return false;\
-				non_scalar = true;\
-			}\
 		}\
 		return true;\
 	}\
@@ -109,6 +104,20 @@
 							int id() const {return i;}\
 						};
 
+#define DECLARE_BUILTIN_FUNCTION_RPIV(x, i)	class x : public MathFunction { \
+						  public: \
+							int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+							x(); \
+							x(const x *function) {set(function);} \
+							ExpressionItem *copy() const {return new x(this);} \
+							bool representsReal(const MathStructure&, bool) const;\
+							bool representsInteger(const MathStructure&, bool) const;\
+							bool representsNonNegative(const MathStructure&, bool) const;\
+							bool representsNonMatrix(const MathStructure&) const;\
+							bool representsScalar(const MathStructure&) const;\
+							int id() const {return i;}\
+						};
+
 #define DECLARE_BUILTIN_FUNCTION_R(x, i)	class x : public MathFunction { \
 						  public: \
 							int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
@@ -143,6 +152,20 @@
 							bool representsReal(const MathStructure &vargs, bool allow_units = false) const;\
 							bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
 							TEST_NM_S_FUNCTIONS\
+							int id() const {return i;}\
+						};
+
+#define DECLARE_BUILTIN_FUNCTION_R2V(x, i)	class x : public MathFunction { \
+						  public: \
+							int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);  \
+							x(); \
+							x(const x *function) {set(function);} \
+							ExpressionItem *copy() const {return new x(this);} \
+							bool representsNumber(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsReal(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsNonComplex(const MathStructure &vargs, bool allow_units = false) const;\
+							bool representsNonMatrix(const MathStructure&) const;\
+							bool representsScalar(const MathStructure&) const;\
 							int id() const {return i;}\
 						};
 
@@ -638,9 +661,9 @@ DECLARE_BUILTIN_FUNCTION(PercentileFunction, FUNCTION_ID_PERCENTILE)
 DECLARE_BUILTIN_FUNCTION(MinFunction, FUNCTION_ID_MIN)
 DECLARE_BUILTIN_FUNCTION(MaxFunction, FUNCTION_ID_MAX)
 DECLARE_BUILTIN_FUNCTION(ModeFunction, FUNCTION_ID_MODE)
-DECLARE_BUILTIN_FUNCTION_RPI(RandFunction, FUNCTION_ID_RAND)
-DECLARE_BUILTIN_FUNCTION_R2(RandnFunction, FUNCTION_ID_RANDN)
-DECLARE_BUILTIN_FUNCTION_RPI(RandPoissonFunction, FUNCTION_ID_RAND_POISSON)
+DECLARE_BUILTIN_FUNCTION_RPIV(RandFunction, FUNCTION_ID_RAND)
+DECLARE_BUILTIN_FUNCTION_R2V(RandnFunction, FUNCTION_ID_RANDN)
+DECLARE_BUILTIN_FUNCTION_RPIV(RandPoissonFunction, FUNCTION_ID_RAND_POISSON)
 
 DECLARE_BUILTIN_FUNCTION(DateFunction, FUNCTION_ID_DATE)
 DECLARE_BUILTIN_FUNCTION(DateTimeFunction, FUNCTION_ID_DATE_TIME)

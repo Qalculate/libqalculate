@@ -15,6 +15,7 @@
 #include "util.h"
 #include "Calculator.h"
 #include "MathStructure.h"
+#include "MathStructure-support.h"
 #include "Number.h"
 #include "BuiltinFunctions.h"
 
@@ -402,8 +403,6 @@ bool set_precision_of_numbers(MathStructure &mstruct, int i_prec) {
 	}
 	return b;
 }
-extern bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const EvaluationOptions &eo = default_evaluation_options, bool do_eval = false);
-extern bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
 bool replace_f_interval(MathStructure &mstruct) {
 	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_INTERVAL && mstruct.size() == 2) {
 		if(mstruct[0].isNumber() && mstruct[1].isNumber()) {

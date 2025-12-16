@@ -2353,23 +2353,30 @@ VectorArgument::~VectorArgument() {
 		delete subargs[i];
 	}
 }
-bool VectorArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
-	bool subvector = false;
-	for(size_t i = 0; i < subargs.size(); i++) {
-		if(subargs[i] && (subargs[i]->type() == ARGUMENT_TYPE_VECTOR || subargs[i]->type() == ARGUMENT_TYPE_MATRIX)) {
-			subvector = true;
-			break;
+
+bool function_returns_vector(int id) {
+	return id == FUNCTION_ID_SORT || id == FUNCTION_ID_RANK || id == FUNCTION_ID_LIMITS || id == FUNCTION_ID_FLIP || id == FUNCTION_ID_CIRCSHIFT || id == FUNCTION_ID_PROCESS || id == FUNCTION_ID_SELECT || id == FUNCTION_ID_COLON || id == FUNCTION_ID_GENERATE_VECTOR || id == FUNCTION_ID_RAND || id == FUNCTION_ID_RANDN || id == FUNCTION_ID_RAND_POISSON;
+}
+bool represents_loose_matrix(const MathStructure &m) {
+	if(m.isVector()) {
+		for(size_t i = 0; i < m.size(); i++) {
+			if(!m.representsScalar()) return true;
 		}
+	} else if(!m.representsNonMatrix()) {
+		return true;
 	}
-	if(subvector && value.isFunction() && (value.function()->id() == FUNCTION_ID_HORZCAT || value.function()->id() == FUNCTION_ID_VERTCAT)) {
-		value.setType(STRUCT_VECTOR);
+	return false;
+}
+bool VectorArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
+	while(value.isFunction() && !value.representsScalar() && !function_differentiable(value.function())) {
+		if(!value.calculateFunctions(eo, false) || CALCULATOR->aborted()) break;
 	}
-	if(!subvector || !value.isVector()) {
+	if((!value.isVector() && !value.representsScalar()) || (!value.isMatrix() && represents_loose_matrix(value))) {
 		value.eval(eo);
 	}
 	if(!value.isVector()) {
-		if(isLastArgument() && eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES) value.transform(STRUCT_VECTOR);
-		else if(value.representsScalar()) value.transform(STRUCT_VECTOR);
+		if(value.representsScalar()) value.transform(STRUCT_VECTOR);
+		else if(isLastArgument() && eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES && (!value.isFunction() || !function_returns_vector(value.function()->id()))) value.transform(STRUCT_VECTOR);
 		else return false;
 	}
 	if(value.isMatrix() && value.columns() == 1 && value.rows() > 1) {
@@ -2444,7 +2451,12 @@ MatrixArgument::MatrixArgument(const MatrixArgument *arg) {
 }
 MatrixArgument::~MatrixArgument() {}
 bool MatrixArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
-	value.eval(eo);
+	while(value.isFunction() && !value.representsScalar() && !function_differentiable(value.function())) {
+		if(!value.calculateFunctions(eo, false) || CALCULATOR->aborted()) break;
+	}
+	if((!value.isVector() && !value.representsScalar()) || (!value.isMatrix() && represents_loose_matrix(value))) {
+		value.eval(eo);
+	}
 	if(!value.isMatrix()) {
 		if(value.isVector() && (value.size() == 0 || value[0].representsScalar())) {
 			if(CALCULATOR->usesMatlabStyleMatrices() || value.size() == 0) {
