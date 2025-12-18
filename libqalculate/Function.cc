@@ -2360,7 +2360,7 @@ bool function_returns_vector(int id) {
 bool represents_loose_matrix(const MathStructure &m) {
 	if(m.isVector()) {
 		for(size_t i = 0; i < m.size(); i++) {
-			if(!m.representsScalar()) return true;
+			if(!m[i].representsScalar()) return true;
 		}
 	} else if(!m.representsNonMatrix()) {
 		return true;
@@ -2368,7 +2368,11 @@ bool represents_loose_matrix(const MathStructure &m) {
 	return false;
 }
 bool VectorArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
-	while(value.isFunction() && !value.representsScalar() && !function_differentiable(value.function())) {
+	if(value.isVariable() && eo.calculate_variables && value.variable()->isKnown() && (eo.approximation == APPROXIMATION_APPROXIMATE || eo.approximation == APPROXIMATION_TRY_EXACT || !value.variable()->isApproximate()) && !((KnownVariable*) value.variable())->get().containsInterval(true, false, false, 0, true) && !((KnownVariable*) value.variable())->get().isAborted()) {
+		value.set(((KnownVariable*) value.variable())->get());
+		value.unformat(eo);
+	}
+	while(value.isFunction() && eo.calculate_functions && eo.protected_function != value.function() && !value.representsScalar() && !function_differentiable(value.function())) {
 		if(!value.calculateFunctions(eo, false) || CALCULATOR->aborted()) break;
 	}
 	if((!value.isVector() && !value.representsScalar()) || (!value.isMatrix() && represents_loose_matrix(value))) {
@@ -2451,7 +2455,11 @@ MatrixArgument::MatrixArgument(const MatrixArgument *arg) {
 }
 MatrixArgument::~MatrixArgument() {}
 bool MatrixArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
-	while(value.isFunction() && !value.representsScalar() && !function_differentiable(value.function())) {
+	if(value.isVariable() && eo.calculate_variables && value.variable()->isKnown() && (eo.approximation == APPROXIMATION_APPROXIMATE || eo.approximation == APPROXIMATION_TRY_EXACT || !value.variable()->isApproximate()) && !((KnownVariable*) value.variable())->get().containsInterval(true, false, false, 0, true) && !((KnownVariable*) value.variable())->get().isAborted()) {
+		value.set(((KnownVariable*) value.variable())->get());
+		value.unformat(eo);
+	}
+	while(value.isFunction() && eo.calculate_functions && eo.protected_function != value.function() && !value.representsScalar() && !function_differentiable(value.function())) {
 		if(!value.calculateFunctions(eo, false) || CALCULATOR->aborted()) break;
 	}
 	if((!value.isVector() && !value.representsScalar()) || (!value.isMatrix() && represents_loose_matrix(value))) {

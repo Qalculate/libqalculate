@@ -242,6 +242,17 @@ size_t unformatted_length(const string &str) {
 	}
 	return l;
 }
+string unformatted_string(string str) {
+	size_t i = 0;
+	while(true) {
+		i = str.find('\033', i);
+		if(i == string::npos) break;
+		size_t i2 = str.find('m', i);
+		if(i == string::npos) break;
+		str.erase(i, i2 - i + 1);
+	}
+	return str;
+}
 
 #ifdef _WIN32
 LPWSTR utf8wchar(const char *str) {
@@ -7358,6 +7369,51 @@ int intervals_are_relative(MathStructure &m) {
 
 int save_base = 10;
 
+string ellipsize_vector(const string &str, size_t length) {
+	length /= 2;
+	size_t l = 0;
+	size_t i1 = 0;
+	bool inform = false;
+	size_t i = 0, i2 = 0;
+	for(; i < str.length(); i++) {
+		if(!inform && str[i] == '\033') {
+			inform = true;
+		} else if(!inform && ((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0)) {
+			l++;
+			if(l >= length && str[i] == SPACE && str[i - 1] == SPACE) {
+				i1 = i;
+				break;
+			}
+		} else if(inform && str[i] == 'm') {
+			inform = false;
+		}
+	}
+	length = unformatted_length(str) - length;
+	for(; i < str.length(); i++) {
+		if(!inform && str[i] == '\033') {
+			inform = true;
+		} else if(!inform && ((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0)) {
+			l++;
+			if(l >= length && str[i] == SPACE && str[i - 1] == SPACE) {
+				i2 = i;
+				break;
+			}
+		} else if(inform && str[i] == 'm') {
+			inform = false;
+		}
+	}
+	if(i1 == 0 || i2 == 0) return str;
+	return str.substr(0, i1) + string(printops.use_unicode_signs ? "(…)" : "(...)") + str.substr(i2);
+}
+
+bool contains_large_matrix(const MathStructure &m, bool top = true) {
+	if(!top && ((m.isVector() && m.size() > 500) || (m.isMatrix() && m.rows() * m.columns() > 500))) return true;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_large_matrix(m[i], false)) return true;
+	}
+	return false;
+}
+
 void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_index, bool register_moved, bool noprint, bool auto_calculate) {
 
 	if(i_maxtime < 0) return;
@@ -7631,6 +7687,9 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		}
 
 		if(show_result) {
+			if(!cfile && !auto_calculate && contains_large_matrix(*mstruct) && (long long int) unformatted_length(result_text) > PRECISION * 500LL) {
+				result_text = ellipsize_vector(result_text, PRECISION * 50);
+			}
 			if(!exact_comparison && (b_comparison & 1)) exact_comparison = (update_parse || !prev_approximate) && !(*printops.is_approximate) && !mstruct->isApproximate();
 			if(!result_only && b_matrix && line_breaks) addLineBreaks(strout, cols, true, false, goto_input ? prompt_l : 0);
 			for(size_t i = 0; i < alt_results.size(); i++) {

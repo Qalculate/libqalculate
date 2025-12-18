@@ -87,7 +87,7 @@ int RankFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_EXACT;
-		mstruct.eval(eo2);
+		mvector.eval(eo2);
 		if(!mvector.rankVector(vargs[1].number().getBoolean())) return 0;
 		mstruct.clearMatrix();
 		mstruct.resizeMatrix(rows, cols, m_zero);
@@ -363,7 +363,11 @@ int ElementsFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		return 1;
 	}
 	mstruct = vargs[0];
-	while(mstruct.isFunction() && !mstruct.representsScalar() && !function_differentiable(mstruct.function())) {
+	if(mstruct.isVariable() && eo.calculate_variables && mstruct.variable()->isKnown() && (eo.approximation == APPROXIMATION_APPROXIMATE || eo.approximation == APPROXIMATION_TRY_EXACT || !mstruct.variable()->isApproximate()) && !((KnownVariable*) mstruct.variable())->get().containsInterval(true, false, false, 0, true) && !((KnownVariable*) mstruct.variable())->get().isAborted()) {
+		mstruct.set(((KnownVariable*) mstruct.variable())->get());
+		mstruct.unformat(eo);
+	}
+	while(mstruct.isFunction() && eo.calculate_functions && eo.protected_function != mstruct.function() && !mstruct.representsScalar() && !function_differentiable(mstruct.function())) {
 		if(!mstruct.calculateFunctions(eo, false) || CALCULATOR->aborted()) break;
 	}
 	if((!mstruct.isVector() && !mstruct.representsScalar()) || (!mstruct.isMatrix() && represents_loose_matrix(mstruct))) {
