@@ -7418,6 +7418,8 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 
 	if(i_maxtime < 0) return;
 
+	if(result_only && cfile && !unittest && parsed_mstruct && parsed_mstruct->isFunction() && parsed_mstruct->function()->id() == FUNCTION_ID_SAVE) return;
+
 	b_busy = true;
 
 	bool use_thread = (!cfile || i_maxtime != 0);
