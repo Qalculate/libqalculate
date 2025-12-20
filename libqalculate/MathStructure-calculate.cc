@@ -4699,6 +4699,16 @@ int MathStructure::merge_logical_or(MathStructure &mstruct, const EvaluationOpti
 									}
 									return 3;
 								}
+								case COMPARISON_EQUALS_GREATER: {
+									if(cr == COMPARISON_RESULT_LESS && CHILD(1).isInteger() && mstruct[1].isInteger() && CHILD(1).number() + 1 == mstruct[1].number()) {
+										setComparisonType(ct2);
+										return 1;
+									}
+									if(cr == COMPARISON_RESULT_GREATER && CHILD(1).isInteger() && mstruct[1].isInteger() && CHILD(1).number() - 1 == mstruct[1].number()) {
+										setComparisonType(COMPARISON_EQUALS_LESS);
+										return 1;
+									}
+								}
 								default: {}
 							}
 							break;
