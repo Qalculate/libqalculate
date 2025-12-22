@@ -1769,6 +1769,20 @@ bool contains_fraction_q(const MathStructure &m) {
 	return false;
 }
 
+bool contains_extreme_number_q(const MathStructure &m) {
+	if(m.isNumber()) {
+		if(m.number().isFloatingPoint() && (mpfr_get_exp(m.number().internalUpperFloat()) > 50000000L || mpfr_get_exp(m.number().internalLowerFloat()) < -50000000L)) {
+			return true;
+		} else if(m.number().isInteger() && ::abs(m.number().integerLength()) > 50000000L) {
+			return true;
+		}
+	}
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_extreme_number_q(m[i])) return true;
+	}
+	return false;
+}
+
 string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, AutomaticFractionFormat auto_fraction, AutomaticApproximation auto_approx, std::string *parsed_expression, int max_length, bool *result_is_comparison, bool format, int colorize, int tagtype) {
 
 	if(msecs > 0) startControl(msecs);
@@ -2047,6 +2061,8 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 
 	// perform calculation
 	mstruct = calculate(str, evalops, &parsed_struct);
+
+	if(msecs <= 100 && contains_extreme_number_q(mstruct)) mstruct.setAborted();
 
 	if(delay_complex) {
 		evalops.complex_number_form = cnf;
@@ -2810,7 +2826,7 @@ bool Calculator::hasWhereExpression(const string &str, const EvaluationOptions &
 		if(i == string::npos) break;
 		if(i > 0 && is_in(SPACES, str[i - 1]) && i + l < str.length() && is_in(SPACES, str[i + l])) return true;
 	}
-	if((i = str.rfind("/.", str.length() - 2)) != string::npos && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) return true;
+	if((i = str.rfind("/.", str.length() - 2)) != string::npos && i > 0 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) return true;
 	size_t i4 = rfind_outside_enclosures(str, COMMA_CH);
 	if(i4 == string::npos || i4 < 3) return false;
 	i = 0;
@@ -2881,7 +2897,7 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
 	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
 	to_str = "";
 	size_t i = 0;
-	if((i = str.rfind("/.", str.length() - 2)) != string::npos && i != str.length() - 2 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) {
+	if((i = str.rfind("/.", str.length() - 2)) != string::npos && i > 0 && i != str.length() - 2 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) {
 		to_str = str.substr(i + 2 , str.length() - i - 2);
 	} else {
 		i = str.length() - 1;

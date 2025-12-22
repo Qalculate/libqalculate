@@ -175,6 +175,7 @@ typedef enum {
 #define MESSAGE_CATEGORY_WIDE_INTERVAL			10
 #define MESSAGE_CATEGORY_IMPLICIT_MULTIPLICATION	11
 #define MESSAGE_CATEGORY_NO_PROPER_INTERVAL_SUPPORT	12
+#define MESSAGE_CATEGORY_GLOBAL_OBJECT_DEACTIVATED	13
 
 
 /// A message with information to the user. Primarily used for errors and warnings.

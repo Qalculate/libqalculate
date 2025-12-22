@@ -197,7 +197,7 @@ RootFunction::RootFunction() : MathFunction("root", 2) {
 	arg->setComplexAllowed(false);
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
-	NumberArgument *arg2 = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false);
+	NumberArgument *arg2 = new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false);
 	arg2->setComplexAllowed(false);
 	arg2->setRationalNumber(true);
 	arg2->setHandleVector(true);
@@ -205,7 +205,7 @@ RootFunction::RootFunction() : MathFunction("root", 2) {
 }
 int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector()) return 0;
-	if(vargs[1].number().isOne()) {
+	if(vargs[1].number().isOne() || vargs[0].isOne()) {
 		mstruct = vargs[0];
 		return 1;
 	}

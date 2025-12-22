@@ -3925,42 +3925,26 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			default_power_merge:
 
 			if(mstruct.isAddition()) {
-				// x^(a+b+...)
-				bool b = representsNonNegative(true);
-				if(!b) {
-					// if x is not >= 0 each term of the exponent must be either an integer
-					// or, if x<0, a rational number with an even denominator
-					b = true;
-					bool bneg = representsNegative(true);
-					for(size_t i = 0; i < mstruct.size(); i++) {
-						if(!mstruct[i].representsInteger() && (!bneg || !mstruct[i].isNumber() || !mstruct[i].number().isRational() || !mstruct[i].number().denominatorIsEven())) {
-							b = false;
-							break;
-						}
-					}
+				// x^(a+b+...)=x^a*x^b*...
+				MathStructure msave(*this);
+				clear(true);
+				m_type = STRUCT_MULTIPLICATION;
+				MERGE_APPROX_AND_PREC(mstruct)
+				for(size_t i = 0; i < mstruct.size(); i++) {
+					APPEND(msave);
+					mstruct[i].ref();
+					LAST.raise_nocopy(&mstruct[i]);
+					LAST.calculateRaiseExponent(eo);
+					calculateMultiplyLast(eo, false);
 				}
-				if(b) {
-					// x^(a+b+...)=x^a*x^b*...
-					MathStructure msave(*this);
+				if(SIZE == 1) {
+					setToChild(1, false, mparent, index_this + 1);
+				} else if(SIZE == 0) {
 					clear(true);
-					m_type = STRUCT_MULTIPLICATION;
-					MERGE_APPROX_AND_PREC(mstruct)
-					for(size_t i = 0; i < mstruct.size(); i++) {
-						APPEND(msave);
-						mstruct[i].ref();
-						LAST.raise_nocopy(&mstruct[i]);
-						LAST.calculateRaiseExponent(eo);
-						calculateMultiplyLast(eo, false);
-					}
-					if(SIZE == 1) {
-						setToChild(1, false, mparent, index_this + 1);
-					} else if(SIZE == 0) {
-						clear(true);
-					} else {
-						evalSort();
-					}
-					return 1;
+				} else {
+					evalSort();
 				}
+				return 1;
 			} else if(mstruct.isMultiplication() && mstruct.size() > 1 && !isMultiplication()) {
 				// x^(a*b*...)
 				bool b = representsNonNegative(true);
@@ -7018,6 +7002,13 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 					} else {
 						// argument/child did not fulfil criteria
 						b_valid = false;
+						if(o_function->id() == FUNCTION_ID_ROOT && SIZE == 2 && !CHILD(1).isNumber() && CHILD(1).representsRational() && ((CHILD(0).representsPositive() && CHILD(1).representsNonZero()) || (CHILD(0).representsNonNegative() && CHILD(1).representsPositive()))) {
+							CHILD(1).inverse();
+							m_type = STRUCT_FUNCTION;
+							setType(STRUCT_POWER);
+							if(recursive) calculateFunctions(eo, recursive, do_unformat, depth + 1);
+							return true;
+						}
 					}
 				} else if(arg->handlesVector() && (arg->type() != ARGUMENT_TYPE_VECTOR || CHILD(i).isMatrix())) {
 					if(arg->type() == ARGUMENT_TYPE_VECTOR) {

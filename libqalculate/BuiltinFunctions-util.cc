@@ -887,7 +887,7 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					f->setName(name, 1);
 				}
 			} else {
-				CALCULATOR->error(false, _("A global function was deactivated. It will be restored after the new function has been removed."), NULL);
+				CALCULATOR->error(false, MESSAGE_CATEGORY_GLOBAL_OBJECT_DEACTIVATED, _("A global function was deactivated. It will be restored after the new function has been removed."), NULL);
 				CALCULATOR->addFunction(new UserFunction(vargs[2].symbol(), name, expr, true, marg.size() == 0 ? -1 : marg.size(), vargs[3].symbol()))->setChanged(true);
 			}
 		} else {
@@ -970,7 +970,7 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				v->setName(vargs[1].symbol(), 1);
 			}
 		} else {
-			CALCULATOR->error(false, _("A global unit or variable was deactivated. It will be restored after the new variable has been removed."), NULL);
+			CALCULATOR->error(false, MESSAGE_CATEGORY_GLOBAL_OBJECT_DEACTIVATED, _("A global unit or variable was deactivated. It will be restored after the new variable has been removed."), NULL);
 			CALCULATOR->addVariable(new KnownVariable(vargs[2].symbol(), vargs[1].symbol(), mstruct, vargs[3].symbol()))->setChanged(true);
 		}
 	} else {

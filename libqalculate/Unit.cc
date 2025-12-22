@@ -1323,6 +1323,23 @@ bool replace_variables(MathStructure &m) {
 	}
 	return b_ret;
 }
+bool cu_test_eval(const MathStructure &mstruct, int depth = 0) {
+	if(depth == 0 && !mstruct.containsType(STRUCT_UNIT, false, true, true)) return false;
+	if(mstruct.isNumber()) {
+		if(!mstruct.number().isRational() || mstruct.number().numeratorIsGreaterThan(9) || mstruct.number().numeratorIsLessThan(-9) || mstruct.number().denominatorIsGreaterThan(9)) return false;
+		return true;
+	} else if(mstruct.isFunction()) {
+		if(mstruct.function()->id() != FUNCTION_ID_SQRT && mstruct.function()->id() != FUNCTION_ID_CBRT && mstruct.function()->id() != FUNCTION_ID_ABS && mstruct.function()->id() != FUNCTION_ID_ROOT && mstruct.function()->id() != FUNCTION_ID_LOG && mstruct.function()->id() != FUNCTION_ID_LOGN && mstruct.function()->id() != FUNCTION_ID_ENTRYWISE_MULTIPLICATION && mstruct.function()->id() != FUNCTION_ID_ENTRYWISE_DIVISION && mstruct.function()->id() != FUNCTION_ID_ENTRYWISE_POWER) return false;
+	} else if(mstruct.isUnit()) {
+		return true;
+	}
+	if(mstruct.size() == 0 || mstruct.size() > 9) return false;
+	if(depth > 4) return false;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(!cu_test_eval(mstruct[i], depth + 1)) return false;
+	}
+	return true;
+}
 void CompositeUnit::setBaseExpression(string base_expression_) {
 	clear();
 	if(base_expression_.empty()) {
@@ -1354,7 +1371,7 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	}
 	remove_times_one(mstruct);
 	fix_division(mstruct, eo);
-	bool b_eval = !is_unit_multiexp(mstruct) && mstruct.containsType(STRUCT_UNIT, false, true, true) != 0 && !mstruct.containsFunctionId(FUNCTION_ID_PLOT) && !mstruct.containsFunctionId(FUNCTION_ID_COMMAND) && !mstruct.containsFunctionId(FUNCTION_ID_EXPORT) && !mstruct.containsFunctionId(FUNCTION_ID_SAVE);
+	bool b_eval = !is_unit_multiexp(mstruct) && cu_test_eval(mstruct);
 	while(true) {
 		if(b_eval) {
 			bool b_c = CALCULATOR->isControlled();
@@ -1389,7 +1406,7 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 		} else {
 			had_errors = true;
 		}
-		if(had_errors && !b_eval && mstruct.containsType(STRUCT_UNIT, false, true, true) != 0 && !mstruct.containsFunctionId(FUNCTION_ID_PLOT) && !mstruct.containsFunctionId(FUNCTION_ID_COMMAND) && !mstruct.containsFunctionId(FUNCTION_ID_EXPORT) && !mstruct.containsFunctionId(FUNCTION_ID_SAVE)) {
+		if(had_errors && !b_eval && cu_test_eval(mstruct)) {
 			had_errors = false;
 			b_eval = true;
 			clear();

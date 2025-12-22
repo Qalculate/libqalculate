@@ -7102,7 +7102,7 @@ bool display_errors(bool goto_input, int cols, bool *implicit_warning) {
 				CALCULATOR->clearMessages();
 			}
 		} else if(!CALCULATOR->message()->message().empty()) {
-			if(!hide_parse_errors || (CALCULATOR->message()->stage() != MESSAGE_STAGE_PARSING && CALCULATOR->message()->stage() != MESSAGE_STAGE_CONVERSION_PARSING)) {
+			if((!hide_parse_errors || (CALCULATOR->message()->stage() != MESSAGE_STAGE_PARSING && CALCULATOR->message()->stage() != MESSAGE_STAGE_CONVERSION_PARSING)) && (!cfile || CALCULATOR->message()->category() != MESSAGE_CATEGORY_GLOBAL_OBJECT_DEACTIVATED)) {
 				MessageType mtype = CALCULATOR->message()->type();
 				string str;
 				if(goto_input) str += indent_s;
@@ -7678,9 +7678,6 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		bool b_matrix = mstruct->isMatrix() && DO_FORMAT && result_text.find('\n') != string::npos;
 
 		bool show_result = !auto_calculate || (!was_aborted && !mstruct->isAborted() && (result_only || (!autocalc_error && (!alt_results.empty() || result_text != parsed_text))));
-		if(auto_calculate && show_result && mstruct->isZero() && parsed_mstruct->isFunction() && parsed_mstruct->function()->subtype() == SUBTYPE_DATA_SET && parsed_mstruct->size() >= 2 && parsed_mstruct->getChild(2)->isSymbolic() && EQUALS_IGNORECASE_AND_LOCAL(parsed_mstruct->getChild(2)->symbol(), "info", _c("Data set argument", "info"))) {
-			show_result = false;
-		}
 		if(show_result && auto_calculate && mstruct->countTotalChildren(false) >= 10) {
 			show_result = unformatted_length(result_text) < (size_t) cols && (!b_matrix || mstruct->rows() <= 3);
 			for(size_t i = 0; show_result && i < alt_results.size(); i++) {
@@ -9086,14 +9083,65 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		} else if(auto_calculate) {
 			ParseOptions po = evalops.parse_options;
 			po.preserve_format = true;
+			MathStructure mfunc;
+			po.unended_function = &mfunc;
 			CALCULATOR->startControl(50);
 			CALCULATOR->parse(parsed_mstruct, original_expression, po);
 			CALCULATOR->stopControl();
-			if(!test_autocalculable(*parsed_mstruct))  {
-				mstruct->setAborted();
-			} else {
-				CALCULATOR->calculate(mstruct, original_expression, 0, evalops, parsed_mstruct, &to_struct);
+			bool do_calc = test_autocalculable(*parsed_mstruct);
+#ifdef HAVE_LIBREADLINE
+			if(do_calc && !parsed_mstruct->isNumber() && rl_point == rl_end && !had_to_expression && (!mfunc.isFunction() || mfunc.size() == 0 || !mfunc.function()->getArgumentDefinition(mfunc.size()) || !mfunc.function()->getArgumentDefinition(mfunc.size())->suggestsQuotes()) && !((evalops.parse_options.base > 10 && evalops.parse_options.base <= 36) || evalops.parse_options.base == BASE_UNICODE || evalops.parse_options.base == BASE_BIJECTIVE_26 || (evalops.parse_options.base == BASE_CUSTOM && (CALCULATOR->customInputBase() > 10 || CALCULATOR->customInputBase() < -10))) && original_expression.find("0x") == string::npos && original_expression.find("0d") == string::npos) {
+				size_t pos = original_expression.length();
+				while(pos > 0) {
+					size_t l = 1;
+					while(pos - l > 0 && (unsigned char) original_expression[pos - l] >= 0x80 && (unsigned char) original_expression[pos - l] < 0xC0) l++;
+					pos -= l;
+					if(!CALCULATOR->utf8_pos_is_valid_in_name((char*) original_expression.c_str() + sizeof(char) * pos)) {
+						pos += l;
+						break;
+					} else if(l == 1 && is_in(NUMBERS, original_expression[pos])) {
+						pos++;
+						break;
+					}
+				}
+				if(pos > 0) {
+					bool cit1 = false, cit2 = false;
+					for(size_t i = 0; i < pos; i++) {
+						if(!cit1 && original_expression[i] == '\"') {
+							cit2 = !cit2;
+						} else if(!cit2 && original_expression[i] == '\'') {
+							cit1 = !cit1;
+						}
+					}
+					if(cit1 || cit2) pos = original_expression.length();
+				}
+				if(pos < original_expression.length()) {
+					MathStructure m;
+					CALCULATOR->beginTemporaryStopMessages();
+					CALCULATOR->parse(&m, original_expression.substr(pos), evalops.parse_options);
+					if(!CALCULATOR->endTemporaryStopMessages()) {
+						MathStructure *mfunc = NULL;
+						if(m.isFunction() && m.size() > 0) mfunc = &m;
+						else if(m.isMultiplication() && m.size() > 0 && m.last().isFunction() && m.last().size() > 0) mfunc = &m.last();
+						if(mfunc) {
+							if((*mfunc)[0].isMultiplication()) {
+								for(size_t i = 0; i < (*mfunc)[0].size(); i++) {
+									if(!(*mfunc)[0][i].isVariable() || ((*mfunc)[0][i].variable() != CALCULATOR->getVariableById(VARIABLE_ID_X) && (*mfunc)[0][i].variable() != CALCULATOR->getVariableById(VARIABLE_ID_Y) && (*mfunc)[0][i].variable() != CALCULATOR->getVariableById(VARIABLE_ID_Z))) {
+										do_calc = false;
+										break;
+									}
+
+								}
+							} else if(!(*mfunc)[0].isVariable() || ((*mfunc)[0].variable() != CALCULATOR->getVariableById(VARIABLE_ID_X) && (*mfunc)[0].variable() != CALCULATOR->getVariableById(VARIABLE_ID_Y) && (*mfunc)[0].variable() != CALCULATOR->getVariableById(VARIABLE_ID_Z))) {
+								do_calc = false;
+							}
+						}
+					}
+				}
 			}
+#endif
+			if(do_calc) CALCULATOR->calculate(mstruct, original_expression, 0, evalops, parsed_mstruct, &to_struct);
+			else mstruct->setAborted();
 		} else {
 			CALCULATOR->calculate(mstruct, original_expression, 0, evalops, parsed_mstruct, &to_struct);
 		}
