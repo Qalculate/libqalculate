@@ -8593,6 +8593,28 @@ bool contains_extreme_number(const MathStructure &m) {
 	}
 	return false;
 }
+bool contains_plot_or_save(const string &str) {
+	if(expression_contains_save_function(str, evalops.parse_options, false)) return true;
+	for(size_t f_i = 0; f_i < 4; f_i++) {
+		int id = 0;
+		if(f_i == 0) id = FUNCTION_ID_PLOT;
+		else if(f_i == 1) id = FUNCTION_ID_EXPORT;
+		else if(f_i == 2) id = FUNCTION_ID_LOAD;
+		else if(f_i == 3) id = FUNCTION_ID_COMMAND;
+		MathFunction *f = CALCULATOR->getFunctionById(id);
+		for(size_t i = 1; f && i <= f->countNames(); i++) {
+			if(str.find(f->getName(i).name) != string::npos) {
+				MathStructure mtest;
+				CALCULATOR->beginTemporaryStopMessages();
+				CALCULATOR->parse(&mtest, str, evalops.parse_options);
+				CALCULATOR->endTemporaryStopMessages();
+				if(mtest.containsFunctionId(FUNCTION_ID_PLOT) || mtest.containsFunctionId(FUNCTION_ID_EXPORT) || mtest.containsFunctionId(FUNCTION_ID_LOAD) || mtest.containsFunctionId(FUNCTION_ID_COMMAND)) return true;
+				return false;
+			}
+		}
+	}
+	return false;
+}
 bool test_autocalculable(const MathStructure &m, bool top = true) {
 	if(m.isFunction()) {
 		if(m.size() < (size_t) m.function()->minargs() && (m.size() != 1 || m[0].representsScalar())) {
@@ -8606,6 +8628,8 @@ bool test_autocalculable(const MathStructure &m, bool top = true) {
 		}
 		if(m.function()->id() == FUNCTION_ID_LOGN && m.size() == 2 && m[0].isUndefined() && m[1].isNumber()) return false;
 		if(top && m.function()->subtype() == SUBTYPE_DATA_SET && m.size() >= 2 && m[1].isSymbolic() && equalsIgnoreCase(m[1].symbol(), "info")) return false;
+	} else if(m.isSymbolic() && contains_plot_or_save(m.symbol())) {
+		return false;
 	}
 	for(size_t i = 0; i < m.size(); i++) {
 		if(!test_autocalculable(m[i], false)) return false;

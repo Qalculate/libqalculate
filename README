@@ -105,7 +105,7 @@ Functions
 
 Units
    * Over 400 diverse units and all standard decimal and binary prefixes
-   * Includes all SI units, as well as imperial, CGS, atomic, and natural units, and more...
+   * Includes all SI units, as well as imperial, CGS, and atomic units, and more...
    * Automatic and explicit conversion (e.g. ft + yd + m = 2.2192 m, 5 kg * m/s^2 = 5 N, 5 m/s to mph = 11.18 mph)
    * Currency conversion with daily updated exchange rates
    * Easily created and edited from the user interfaces

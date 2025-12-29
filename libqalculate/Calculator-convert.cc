@@ -1412,7 +1412,9 @@ Unit *Calculator::findMatchingUnit(const MathStructure &mstruct) {
 				} else if(u != cu) {
 					MathStructure mtest(mstruct);
 					mtest.divide(u);
+					beginTemporaryStopMessages();
 					mtest.eval();
+					endTemporaryStopMessages();
 					if(mtest.isNumber()) {
 						delete cu;
 						return u;
@@ -1484,9 +1486,11 @@ Unit *Calculator::findMatchingUnit(const MathStructure &mstruct) {
 					if(m_u != cu->generateMathStructure() && m_u != mstruct) {
 						Unit *u2 = findMatchingUnit(m_u);
 						if(u2) {
-							MathStructure mtest(mstruct);
+							MathStructure mtest(cu->generateMathStructure());
 							mtest.divide(u2);
+							beginTemporaryStopMessages();
 							mtest.eval();
+							endTemporaryStopMessages();
 							if(mtest.isNumber()) {
 								delete cu;
 								delete u;
@@ -1497,9 +1501,11 @@ Unit *Calculator::findMatchingUnit(const MathStructure &mstruct) {
 				}
 				delete u;
 			} else if(u != cu) {
-				MathStructure mtest(mstruct);
+				MathStructure mtest(cu->generateMathStructure());
 				mtest.divide(u);
+				beginTemporaryStopMessages();
 				mtest.eval();
+				endTemporaryStopMessages();
 				if(mtest.isNumber()) {
 					delete cu;
 					return u;

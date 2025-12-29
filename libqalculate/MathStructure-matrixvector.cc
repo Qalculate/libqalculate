@@ -308,7 +308,7 @@ void MathStructure::addRows(size_t r, const MathStructure &mfill) {
 		APPEND(m_zero)
 		LAST.clearVector();
 		for(size_t i2 = 0; i2 < cols; i2++) {
-			if(test_abort && CALCULATOR->aborted()) {setUndefined(); break;}
+			if(test_abort && CALCULATOR->aborted()) {setUndefined(); return;}
 			LAST.addChild(mfill);
 		}
 	}
@@ -319,7 +319,7 @@ void MathStructure::addColumns(size_t c, const MathStructure &mfill) {
 	for(size_t i = 0; i < SIZE; i++) {
 		if(CHILD(i).isVector()) {
 			for(size_t i2 = 0; i2 < c; i2++) {
-				if(test_abort && CALCULATOR->aborted()) {setUndefined(); break;}
+				if(test_abort && CALCULATOR->aborted()) {setUndefined(); return;}
 				CHILD(i).addChild(mfill);
 			}
 		}
