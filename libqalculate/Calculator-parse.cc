@@ -5866,6 +5866,53 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		return false;
 	}
 
+	if((i = str.find("\b", 2)) != string::npos && (i2 = str.rfind(INTERNAL_ID_R, i - 1)) != string::npos) {
+		// Handle expression such as 5 m +/- 2 cm
+		bool b = true;
+		if(i2 != i - 1) {
+			if(!is_not_number(str[i - 1], base)) {
+				b = false;
+				if((i2 + 3 == i && str[i - 2] == POWER_CH) || (i2 + 4 == i && str[i - 3] == POWER_CH && str[i - 2] == MINUS_CH)) {
+					i3 = str2.rfind(INTERNAL_ID_L, i2);
+					if(i3 != string::npos) {
+						i3 = s2i(str2.substr(i3 + 1, i2 - i3 - 1));
+						if(priv->id_structs.find(i3) != priv->id_structs.end() && is_unit_multiexp(*priv->id_structs[i3])) {
+							b = true;
+						}
+					}
+				}
+			}
+			if(b) {
+				i3 = str.find_last_of(EXPS, i - 1);
+				if(i3 != string::npos && i3 > 0 && i3 - 1 > i2) b = false;
+			}
+		}
+		if(b) {
+			str2 = str.substr(0, i);
+			MathStructure *mstruct2 = new MathStructure;
+			if(po.read_precision != DONT_READ_PRECISION) {
+				ParseOptions po2 = po;
+				po2.read_precision = DONT_READ_PRECISION;
+				parseAdd(str2, mstruct, po2);
+				if(i + 1 != str.length()) {
+					str = str.substr(i + 1, str.length() - (i + 1));
+					parseAdd(str, mstruct2, po2);
+				}
+			} else {
+				parseAdd(str2, mstruct, po);
+				if(i + 1 != str.length()) {
+					str = str.substr(i + 1, str.length() - (i + 1));
+					parseAdd(str, mstruct2, po);
+				}
+			}
+			mstruct->transform(f_uncertainty);
+			mstruct->addChild_nocopy(mstruct2);
+			if(mstruct2->isMultiplication() && mstruct2->size() >= 2 && mstruct2->last().isVariable() && (mstruct2->last().variable() == v_percent || mstruct2->last().variable() == v_permille || mstruct2->last().variable() == v_permyriad)) mstruct->addChild(m_one);
+			else mstruct->addChild(m_zero);
+			return true;
+		}
+	}
+
 	// Implicit multiplication
 	if((i = str.find_first_of(INTERNAL_ID_LR, 1)) != string::npos && i + 1 != str.length()) {
 		bool b = false, append = false;
@@ -6023,37 +6070,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		mstruct->transform(priv->f_colon);
 		mstruct->addChild_nocopy(mstruct2);
 		mstruct->addChild(m_undefined);
-	} else /*if(str.length() > 2 && (i = str.find(":", 1)) != string::npos && test_colon(str, i)) {
-		str2 = str.substr(0, i);
-		parseOperators(mstruct, str2, po);
-		if(po.preserve_format) {
-			while(minus_count > 0) {
-				mstruct->transform(STRUCT_NEGATE);
-				minus_count--;
-			}
-		} else if(minus_count % 2 == 1) {
-			mstruct->negate();
-		}
-		minus_count = 0;
-		mstruct->transform(priv->f_colon);
-		str = str.substr(i + 1, str.length() - (i + 1));
-		i = str.find(":");
-		if(i == string::npos) {
-			MathStructure *mstruct2 = new MathStructure();
-			parseOperators(mstruct2, str, po);
-			mstruct->addChild_nocopy(mstruct2);
-			mstruct->addChild(m_undefined);
-		} else {
-			str2 = str.substr(0, i);
-			MathStructure *mstruct2 = new MathStructure();
-			parseOperators(mstruct2, str2, po);
-			mstruct->addChild_nocopy(mstruct2);
-			str = str.substr(i + 1, str.length() - (i + 1));
-			mstruct2 = new MathStructure();
-			parseOperators(mstruct2, str, po);
-			mstruct->addChild_nocopy(mstruct2);
-		}
-	} else*/ if((i = str.find("\b", 1)) != string::npos) {
+	} else if((i = str.find("\b", 1)) != string::npos) {
 		// Parse uncertainty (using \b as internal single substitution character for +/-)
 		str2 = str.substr(0, i);
 		MathStructure *mstruct2 = new MathStructure;
