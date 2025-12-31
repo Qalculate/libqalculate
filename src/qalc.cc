@@ -312,6 +312,119 @@ void update_command_list() {
 	}
 }
 
+
+#define ADD_OPTION_TO_LIST3(x, y, z) \
+	{OptionNames opt; \
+	opt.long_name = x; \
+	if(opt.long_name != _(x)) opt.local_name = _(x); \
+	opt.short_name = y; \
+	opt.alt_short_name = z; \
+	option_list.push_back(opt);}
+#define ADD_OPTION_TO_LIST1(x) ADD_OPTION_TO_LIST3(x, "", "")
+#define ADD_OPTION_TO_LIST(x, y) ADD_OPTION_TO_LIST3(x, y, "")
+
+void update_option_list() {
+	if(option_list.empty()) {
+		ADD_OPTION_TO_LIST1("base")
+		ADD_OPTION_TO_LIST("input base", "inbase")
+		ADD_OPTION_TO_LIST("output base", "outbase")
+		ADD_OPTION_TO_LIST3("assumptions", "asm", "ass")
+		ADD_OPTION_TO_LIST("all prefixes", "allpref")
+		ADD_OPTION_TO_LIST1("color")
+		ADD_OPTION_TO_LIST("complex numbers", "cplx")
+		ADD_OPTION_TO_LIST("excessive parentheses", "expar")
+		ADD_OPTION_TO_LIST1("functions")
+		ADD_OPTION_TO_LIST("infinite numbers", "inf")
+		ADD_OPTION_TO_LIST("show negative exponents", "negexp")
+		ADD_OPTION_TO_LIST("minus last", "minlast")
+		ADD_OPTION_TO_LIST("algebra mode", "alg")
+		ADD_OPTION_TO_LIST("assume nonzero denominators", "nzd")
+		ADD_OPTION_TO_LIST("warn nonzero denominators", "warnnzd")
+		ADD_OPTION_TO_LIST3("prefixes", "pref", "prefix")
+		ADD_OPTION_TO_LIST("binary prefixes", "binpref")
+		ADD_OPTION_TO_LIST("denominator prefixes", "denpref")
+		ADD_OPTION_TO_LIST("place units separately", "unitsep")
+		ADD_OPTION_TO_LIST("calculate variables", "calcvar")
+		ADD_OPTION_TO_LIST("calculate functions", "calcfunc")
+		ADD_OPTION_TO_LIST("sync units", "sync")
+		ADD_OPTION_TO_LIST("temperature calculation", "temp")
+		ADD_OPTION_TO_LIST1("sinc")
+		ADD_OPTION_TO_LIST("round to even", "rndeven")
+		ADD_OPTION_TO_LIST("rounding", "round")
+		ADD_OPTION_TO_LIST("rpn syntax", "rpnsyn")
+		ADD_OPTION_TO_LIST1("rpn")
+#ifdef HAVE_LIBREADLINE
+		ADD_OPTION_TO_LIST("calculate as you type", "autocalc")
+		ADD_OPTION_TO_LIST1("completion")
+#endif
+		ADD_OPTION_TO_LIST("simplified percentage", "percent")
+		ADD_OPTION_TO_LIST("short multiplication", "shortmul")
+		ADD_OPTION_TO_LIST("lowercase e", "lowe")
+		ADD_OPTION_TO_LIST("lowercase numbers", "lownum")
+		ADD_OPTION_TO_LIST("duodecimal symbols", "duosyms")
+		ADD_OPTION_TO_LIST("imaginary j", "imgj")
+		ADD_OPTION_TO_LIST("base display", "basedisp")
+		ADD_OPTION_TO_LIST("two's complement", "twos")
+		ADD_OPTION_TO_LIST("hexadecimal two's", "hextwos")
+		ADD_OPTION_TO_LIST("two's complement input", "twosin")
+		ADD_OPTION_TO_LIST("hexadecimal two's input", "hextwosin")
+		ADD_OPTION_TO_LIST("binary bits", "bits")
+		ADD_OPTION_TO_LIST("digit grouping", "group")
+		ADD_OPTION_TO_LIST("spell out logical", "spellout")
+		ADD_OPTION_TO_LIST("ignore dot", "nodot")
+		ADD_OPTION_TO_LIST("ignore comma", "nocomma")
+		ADD_OPTION_TO_LIST1("decimal comma")
+		ADD_OPTION_TO_LIST("limit implicit multiplication", "limimpl")
+		ADD_OPTION_TO_LIST("spacious", "space")
+		ADD_OPTION_TO_LIST("vertical space", "vspace")
+		ADD_OPTION_TO_LIST("unicode", "uni")
+		ADD_OPTION_TO_LIST("unicode exponents", "uniexp")
+		ADD_OPTION_TO_LIST("units", "unit")
+		ADD_OPTION_TO_LIST("unknowns", "unknown")
+		ADD_OPTION_TO_LIST("variables", "var")
+		ADD_OPTION_TO_LIST3("abbreviations", "abbr", "abbrev")
+		ADD_OPTION_TO_LIST("show ending zeroes", "zeroes")
+		ADD_OPTION_TO_LIST("repeating decimal", "repdeci")
+		ADD_OPTION_TO_LIST("angle unit", "angle")
+		ADD_OPTION_TO_LIST("caret as xor", "xor^")
+		ADD_OPTION_TO_LIST("concise uncertainty", "concise")
+		ADD_OPTION_TO_LIST3("parsing mode", "syntax", "parse")
+		ADD_OPTION_TO_LIST("update exchange rates", "upxrates")
+		ADD_OPTION_TO_LIST("multiplication sign", "mulsign")
+		ADD_OPTION_TO_LIST("division sign", "divsign")
+		ADD_OPTION_TO_LIST3("approximation", "appr", "approx")
+		ADD_OPTION_TO_LIST("interval calculation", "ic")
+		ADD_OPTION_TO_LIST("uncertainty propagation", "up")
+		ADD_OPTION_TO_LIST("autoconversion", "conv")
+		ADD_OPTION_TO_LIST("currency conversion", "curconv")
+		ADD_OPTION_TO_LIST1("exact")
+		ADD_OPTION_TO_LIST1("ignore locale")
+		ADD_OPTION_TO_LIST1("language")
+		ADD_OPTION_TO_LIST("default currency", "currency")
+		ADD_OPTION_TO_LIST1("prompt")
+		ADD_OPTION_TO_LIST1("save mode")
+		ADD_OPTION_TO_LIST1("clear history")
+		ADD_OPTION_TO_LIST1("save history")
+		ADD_OPTION_TO_LIST("save definitions", "save defs")
+		ADD_OPTION_TO_LIST3("scientific notation", "exp", "exp mode")
+		ADD_OPTION_TO_LIST("exp display", "edisp")
+		ADD_OPTION_TO_LIST("precision", "prec")
+		ADD_OPTION_TO_LIST("interval display", "ivdisp")
+		ADD_OPTION_TO_LIST3("interval arithmetic", "ia", "interval")
+		ADD_OPTION_TO_LIST("variable units", "varunits")
+		ADD_OPTION_TO_LIST("max decimals", "maxdeci")
+		ADD_OPTION_TO_LIST("min decimal", "mindeci")
+		ADD_OPTION_TO_LIST1("digits")
+		ADD_OPTION_TO_LIST("fractions", "fr")
+		ADD_OPTION_TO_LIST("complex form", "cplxform")
+		ADD_OPTION_TO_LIST("read precision", "readprec")
+#ifndef _WIN32
+		ADD_OPTION_TO_LIST("sigint action", "sigint")
+#endif
+	}
+	for(size_t i = 0; i < option_list.size(); i++) option_list[i].found = false;
+}
+
 void update_message_print_options() {
 	PrintOptions message_printoptions = printops;
 	message_printoptions.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
@@ -611,19 +724,59 @@ void completion_match_item(ExpressionItem *item, const char *text, size_t l) {
 void generate_completion_matches(const char *text) {
 	matches.clear();
 	size_t l = strlen(text);
-	for(size_t i = 0; i < CALCULATOR->functions.size(); i++) {
-		if(CALCULATOR->functions[i]->isActive()) {
-			completion_match_item(CALCULATOR->functions[i], text, l);
+	string str = rl_line_buffer;
+	size_t i = str.find(" ");
+	if(i != string::npos && strlen(text) == str.length() - (i + 1)) {
+		if(str[0] == '/') str = str.substr(1, i - 1);
+		else str = str.substr(0, i);
+		if(EQUALS_IGNORECASE_AND_LOCAL(str, "set", _("set"))) {
+			update_option_list();
+			for(size_t i = 0; i < option_list.size(); i++) {
+				for(size_t i3 = 0; i3 < 4; i3++) {
+					string *name;
+					if(i3 == 0) name = &option_list[i].long_name;
+					else if(i3 == 1) name = &option_list[i].local_name;
+					else if(i3 == 2) name = &option_list[i].short_name;
+					else name = &option_list[i].alt_short_name;
+					if(!name->empty() && name->rfind(text, strlen(text) - 1) == 0) {
+						matches.push_back(*name);
+						break;
+					}
+				}
+			}
+		}
+		return;
+	}
+	if(str.empty() || str[0] != '/') {
+		for(size_t i = 0; i < CALCULATOR->functions.size(); i++) {
+			if(CALCULATOR->functions[i]->isActive()) {
+				completion_match_item(CALCULATOR->functions[i], text, l);
+			}
+		}
+		for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
+			if(CALCULATOR->variables[i]->isActive()) {
+				completion_match_item(CALCULATOR->variables[i], text, l);
+			}
+		}
+		for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
+			if(CALCULATOR->units[i]->isActive() && CALCULATOR->units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT) {
+				completion_match_item(CALCULATOR->units[i], text, l);
+			}
 		}
 	}
-	for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
-		if(CALCULATOR->variables[i]->isActive()) {
-			completion_match_item(CALCULATOR->variables[i], text, l);
-		}
-	}
-	for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
-		if(CALCULATOR->units[i]->isActive() && CALCULATOR->units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT) {
-			completion_match_item(CALCULATOR->units[i], text, l);
+	if(!str.empty() && (strlen(text) == str.length() || (str[0] == '/' && strlen(text) == str.length() - 1))) {
+		update_command_list();
+		for(size_t i = 0; i < command_list.size(); i++) {
+			if(command_list[i].rfind(text, strlen(text) - 1) == 0) {
+				bool b = false;
+				for(size_t i2 = 0; i2 < matches.size(); i2++) {
+					if(matches[i2] == command_list[i]) {
+						b = true;
+						break;
+					}
+				}
+				if(!b) matches.push_back(command_list[i]);
+			}
 		}
 	}
 }
@@ -2191,117 +2344,9 @@ void set_option(string str) {
 
 		PUTS_UNICODE(_("Unrecognized option."));
 
-#define ADD_OPTION_TO_LIST3(x, y, z) \
-	{OptionNames opt; \
-	opt.long_name = x; \
-	if(opt.long_name != _(x)) opt.local_name = _(x); \
-	opt.short_name = y; \
-	opt.alt_short_name = z; \
-	option_list.push_back(opt);}
-#define ADD_OPTION_TO_LIST1(x) ADD_OPTION_TO_LIST3(x, "", "")
-#define ADD_OPTION_TO_LIST(x, y) ADD_OPTION_TO_LIST3(x, y, "")
-
-		if(option_list.empty()) {
-			ADD_OPTION_TO_LIST1("base")
-			ADD_OPTION_TO_LIST("input base", "inbase")
-			ADD_OPTION_TO_LIST("output base", "outbase")
-			ADD_OPTION_TO_LIST3("assumptions", "asm", "ass")
-			ADD_OPTION_TO_LIST("all prefixes", "allpref")
-			ADD_OPTION_TO_LIST1("color")
-			ADD_OPTION_TO_LIST("complex numbers", "cplx")
-			ADD_OPTION_TO_LIST("excessive parentheses", "expar")
-			ADD_OPTION_TO_LIST1("functions")
-			ADD_OPTION_TO_LIST("infinite numbers", "inf")
-			ADD_OPTION_TO_LIST("show negative exponents", "negexp")
-			ADD_OPTION_TO_LIST("minus last", "minlast")
-			ADD_OPTION_TO_LIST("assume nonzero denominators", "nzd")
-			ADD_OPTION_TO_LIST("warn nonzero denominators", "warnnzd")
-			ADD_OPTION_TO_LIST3("prefixes", "pref", "prefix")
-			ADD_OPTION_TO_LIST("binary prefixes", "binpref")
-			ADD_OPTION_TO_LIST("denominator prefixes", "denpref")
-			ADD_OPTION_TO_LIST("place units separately", "unitsep")
-			ADD_OPTION_TO_LIST("calculate variables", "calcvar")
-			ADD_OPTION_TO_LIST("calculate functions", "calcfunc")
-			ADD_OPTION_TO_LIST("sync units", "sync")
-			ADD_OPTION_TO_LIST("temperature calculation", "temp")
-			ADD_OPTION_TO_LIST1("sinc")
-			ADD_OPTION_TO_LIST("round to even", "rndeven")
-			ADD_OPTION_TO_LIST("rounding", "round")
-			ADD_OPTION_TO_LIST("rpn syntax", "rpnsyn")
-			ADD_OPTION_TO_LIST1("rpn")
-#ifdef HAVE_LIBREADLINE
-			ADD_OPTION_TO_LIST("calculate as you type", "autocalc")
-			ADD_OPTION_TO_LIST1("completion")
-#endif
-			ADD_OPTION_TO_LIST("simplified percentage", "percent")
-			ADD_OPTION_TO_LIST("short multiplication", "shortmul")
-			ADD_OPTION_TO_LIST("lowercase e", "lowe")
-			ADD_OPTION_TO_LIST("lowercase numbers", "lownum")
-			ADD_OPTION_TO_LIST("duodecimal symbols", "duosyms")
-			ADD_OPTION_TO_LIST("imaginary j", "imgj")
-			ADD_OPTION_TO_LIST("base display", "basedisp")
-			ADD_OPTION_TO_LIST("two's complement", "twos")
-			ADD_OPTION_TO_LIST("hexadecimal two's", "hextwos")
-			ADD_OPTION_TO_LIST("two's complement input", "twosin")
-			ADD_OPTION_TO_LIST("hexadecimal two's input", "hextwosin")
-			ADD_OPTION_TO_LIST("binary bits", "bits")
-			ADD_OPTION_TO_LIST("digit grouping", "group")
-			ADD_OPTION_TO_LIST("spell out logical", "spellout")
-			ADD_OPTION_TO_LIST("ignore dot", "nodot")
-			ADD_OPTION_TO_LIST("ignore comma", "nocomma")
-			ADD_OPTION_TO_LIST1("decimal comma")
-			ADD_OPTION_TO_LIST("limit implicit multiplication", "limimpl")
-			ADD_OPTION_TO_LIST("spacious", "space")
-			ADD_OPTION_TO_LIST("vertical space", "vspace")
-			ADD_OPTION_TO_LIST("unicode", "uni")
-			ADD_OPTION_TO_LIST("unicode exponents", "uniexp")
-			ADD_OPTION_TO_LIST("units", "unit")
-			ADD_OPTION_TO_LIST("unknowns", "unknown")
-			ADD_OPTION_TO_LIST("variables", "var")
-			ADD_OPTION_TO_LIST3("abbreviations", "abbr", "abbrev")
-			ADD_OPTION_TO_LIST("show ending zeroes", "zeroes")
-			ADD_OPTION_TO_LIST("repeating decimal", "repdeci")
-			ADD_OPTION_TO_LIST("angle unit", "angle")
-			ADD_OPTION_TO_LIST("caret as xor", "xor^")
-			ADD_OPTION_TO_LIST("concise uncertainty", "concise")
-			ADD_OPTION_TO_LIST3("parsing mode", "syntax", "parse")
-			ADD_OPTION_TO_LIST("update exchange rates", "upxrates")
-			ADD_OPTION_TO_LIST("multiplication sign", "mulsign")
-			ADD_OPTION_TO_LIST("division sign", "divsign")
-			ADD_OPTION_TO_LIST3("approximation", "appr", "approx")
-			ADD_OPTION_TO_LIST("interval calculation", "ic")
-			ADD_OPTION_TO_LIST("uncertainty propagation", "up")
-			ADD_OPTION_TO_LIST("autoconversion", "conv")
-			ADD_OPTION_TO_LIST("currency conversion", "curconv")
-			ADD_OPTION_TO_LIST1("exact")
-			ADD_OPTION_TO_LIST1("ignore locale")
-			ADD_OPTION_TO_LIST1("language")
-			ADD_OPTION_TO_LIST("default currency", "currency")
-			ADD_OPTION_TO_LIST1("prompt")
-			ADD_OPTION_TO_LIST1("save mode")
-			ADD_OPTION_TO_LIST1("clear history")
-			ADD_OPTION_TO_LIST1("save history")
-			ADD_OPTION_TO_LIST("save definitions", "save defs")
-			ADD_OPTION_TO_LIST3("scientific notation", "exp", "exp mode")
-			ADD_OPTION_TO_LIST("exp display", "edisp")
-			ADD_OPTION_TO_LIST("precision", "prec")
-			ADD_OPTION_TO_LIST("interval display", "ivdisp")
-			ADD_OPTION_TO_LIST3("interval arithmetic", "ia", "interval")
-			ADD_OPTION_TO_LIST("variable units", "varunits")
-			ADD_OPTION_TO_LIST("max decimals", "maxdeci")
-			ADD_OPTION_TO_LIST("min decimal", "mindeci")
-			ADD_OPTION_TO_LIST1("digits")
-			ADD_OPTION_TO_LIST("fractions", "fr")
-			ADD_OPTION_TO_LIST("complex form", "cplxform")
-			ADD_OPTION_TO_LIST("read precision", "readprec")
-#ifndef _WIN32
-			ADD_OPTION_TO_LIST("sigint action", "sigint")
-#endif
-		}
-
+		update_option_list();
 		string name;
 		bool b = false;
-		for(size_t i = 0; i < option_list.size(); i++) option_list[i].found = false;
 		for(int n = 1; n <= 2 && !b; n++) {
 			for(size_t i2 = 0; i2 < 4; i2++) {
 				if(svars[i2].empty()) continue;
@@ -7612,7 +7657,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 	bool implicit_warning = false;
 	if(auto_calculate) {
 		while(CALCULATOR->message()) {
-			if(!mstruct->isAborted() || CALCULATOR->message()->stage() != MESSAGE_STAGE_CALCULATION) {
+			if((!mstruct->isAborted() || CALCULATOR->message()->stage() != MESSAGE_STAGE_CALCULATION) && (CALCULATOR->message()->category() != MESSAGE_CATEGORY_IMPLICIT_MULTIPLICATION || !implicit_question_asked)) {
 				if(CALCULATOR->message()->type() == MESSAGE_ERROR) autocalc_error = true;
 				else if(CALCULATOR->message()->type() == MESSAGE_WARNING) autocalc_warning = true;
 				else autocalc_info = true;
@@ -8637,11 +8682,89 @@ bool test_autocalculable(const MathStructure &m, bool top = true) {
 	return true;
 }
 
+bool is_digit_qalc(char c, int base) {
+	if(c >= '0' && c <= '9') return true;
+	if(base < 0) return true;
+	if(base <= 10) return false;
+	if(base == 12) return c == 'E' || c == 'X' || c == 'A' || c == 'B' || c == 'a' || c == 'b';
+	if(base <= 36) {
+		if(c >= 'a' && c < 'a' + (base - 10)) return true;
+		if(c >= 'A' && c < 'A' + (base - 10)) return true;
+		return false;
+	}
+	if(base <= 62) {
+		if(c >= 'a' && c < 'a' + (base - 36)) return true;
+		if(c >= 'A' && c < 'Z') return true;
+		return false;
+	}
+	return true;
+}
+
+#ifdef HAVE_LIBREADLINE
+bool test_autocalc_function(const string &original_expression) {
+	size_t pos = original_expression.length();
+	bool do_calc = true;
+	while(pos > 0) {
+		size_t l = 1;
+		while(pos - l > 0 && (unsigned char) original_expression[pos - l] >= 0x80 && (unsigned char) original_expression[pos - l] < 0xC0) l++;
+		pos -= l;
+		if(!CALCULATOR->utf8_pos_is_valid_in_name((char*) original_expression.c_str() + sizeof(char) * pos)) {
+			pos += l;
+			break;
+		} else if(l == 1 && is_in(NUMBERS, original_expression[pos])) {
+			pos++;
+			break;
+		}
+	}
+	if(pos > 0) {
+		bool cit1 = false, cit2 = false;
+		for(size_t i = 0; i < pos; i++) {
+			if(!cit1 && original_expression[i] == '\"') {
+				cit2 = !cit2;
+			} else if(!cit2 && original_expression[i] == '\'') {
+				cit1 = !cit1;
+			} else if(i > 0 && i + 1 < pos && original_expression[i] == 'x' && original_expression[i - 1] == '0' && is_digit_qalc(original_expression[i + 1], 16)) {
+				cit1 = true;
+				break;
+			} else if(i > 0 && i + 2 < pos && original_expression[i] == 'd' && original_expression[i - 1] == '0' && is_digit_qalc(original_expression[i + 1], 12) && is_digit_qalc(original_expression[i + 2], 12)) {
+				cit1 = true;
+				break;
+			}
+		}
+		if(cit1 || cit2) pos = original_expression.length();
+	}
+	if(pos < original_expression.length()) {
+		MathStructure m;
+		CALCULATOR->beginTemporaryStopMessages();
+		CALCULATOR->parse(&m, original_expression.substr(pos), evalops.parse_options);
+		if(!CALCULATOR->endTemporaryStopMessages()) {
+			MathStructure *mfunc = NULL;
+			if(m.isFunction() && m.size() > 0) mfunc = &m;
+			else if(m.isMultiplication() && m.size() > 0 && m.last().isFunction() && m.last().size() > 0) mfunc = &m.last();
+			if(mfunc) {
+				if((*mfunc)[0].isMultiplication()) {
+					for(size_t i = 0; i < (*mfunc)[0].size(); i++) {
+						if(!(*mfunc)[0][i].isVariable() || ((*mfunc)[0][i].variable() != CALCULATOR->getVariableById(VARIABLE_ID_X) && (*mfunc)[0][i].variable() != CALCULATOR->getVariableById(VARIABLE_ID_Y) && (*mfunc)[0][i].variable() != CALCULATOR->getVariableById(VARIABLE_ID_Z))) {
+							do_calc = false;
+							break;
+						}
+
+					}
+				} else if(!(*mfunc)[0].isVariable() || ((*mfunc)[0].variable() != CALCULATOR->getVariableById(VARIABLE_ID_X) && (*mfunc)[0].variable() != CALCULATOR->getVariableById(VARIABLE_ID_Y) && (*mfunc)[0].variable() != CALCULATOR->getVariableById(VARIABLE_ID_Z))) {
+					do_calc = false;
+				}
+			}
+		}
+	}
+	return do_calc;
+}
+#endif
+
 void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f, bool do_stack, size_t stack_index, bool check_exrates, bool auto_calculate) {
 
 	if(i_maxtime < 0) return;
 
-	string str, str_conv;
+	string str, str_conv, from_str;
 	bool do_bases = programmers_mode, do_factors = false, do_expand = false, do_pfe = false, do_calendars = false, do_binary_prefixes = false, fraction_changed = false;
 	avoid_recalculation = false;
 	bool goto_input = interactive_mode;
@@ -8683,11 +8806,11 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 			if(auto_calculate) autocalc_result = "";
 			return;
 		}
-		string from_str = str;
 		if(ask_questions && test_ask_dot(from_str)) {
 			if(auto_calculate) CALCULATOR->error(false, "", NULL);
 			else ask_dot();
 		}
+		from_str = str;
 		if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
 			had_to_expression = true;
 			remove_duplicate_blanks(to_str);
@@ -9083,10 +9206,33 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 					if(auto_calculate) {
 						ParseOptions po = evalops.parse_options;
 						po.preserve_format = true;
+						MathStructure mfunc;
+						po.unended_function = &mfunc;
+						bool do_calc = true;
 						CALCULATOR->startControl(50);
-						CALCULATOR->parse(parsed_mstruct, original_expression, po);
+						if(str_conv.empty()) {
+							CALCULATOR->parse(parsed_mstruct, str2, po);
+							do_calc = test_autocalculable(*parsed_mstruct);
+						} else {
+							CALCULATOR->parse(parsed_mstruct, CALCULATOR->unlocalizeExpression(from_str, evalops.parse_options), po);
+							do_calc = test_autocalculable(*parsed_mstruct);
+							while(do_calc) {
+								string str_left;
+								CALCULATOR->separateToExpression(str_conv, str_left, evalops, false);
+								MathStructure m;
+								CALCULATOR->parse(&m, CALCULATOR->unlocalizeExpression(str_conv, evalops.parse_options), evalops.parse_options);
+								do_calc = test_autocalculable(m);
+								if(str_left.empty()) break;
+								str_conv = str_left;
+							}
+						}
+#ifdef HAVE_LIBREADLINE
+						if(do_calc && !parsed_mstruct->isNumber() && rl_point == rl_end && !had_to_expression && (!mfunc.isFunction() || mfunc.size() == 0 || !mfunc.function()->getArgumentDefinition(mfunc.size()) || !mfunc.function()->getArgumentDefinition(mfunc.size())->suggestsQuotes()) && !((evalops.parse_options.base > 10 && evalops.parse_options.base <= 36) || evalops.parse_options.base == BASE_UNICODE || evalops.parse_options.base == BASE_BIJECTIVE_26 || (evalops.parse_options.base == BASE_CUSTOM && (CALCULATOR->customInputBase() > 10 || CALCULATOR->customInputBase() < -10)))) {
+							do_calc = test_autocalc_function(str2);
+						}
+#endif
 						CALCULATOR->stopControl();
-						if(!test_autocalculable(*parsed_mstruct))  {
+						if(!do_calc) {
 							MathStructure *m = new MathStructure();
 							m->setAborted();
 							CALCULATOR->RPNStackEnter(m);
@@ -9109,61 +9255,30 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 			po.preserve_format = true;
 			MathStructure mfunc;
 			po.unended_function = &mfunc;
+			bool do_calc = true;
 			CALCULATOR->startControl(50);
-			CALCULATOR->parse(parsed_mstruct, original_expression, po);
-			CALCULATOR->stopControl();
-			bool do_calc = test_autocalculable(*parsed_mstruct);
-#ifdef HAVE_LIBREADLINE
-			if(do_calc && !parsed_mstruct->isNumber() && rl_point == rl_end && !had_to_expression && (!mfunc.isFunction() || mfunc.size() == 0 || !mfunc.function()->getArgumentDefinition(mfunc.size()) || !mfunc.function()->getArgumentDefinition(mfunc.size())->suggestsQuotes()) && !((evalops.parse_options.base > 10 && evalops.parse_options.base <= 36) || evalops.parse_options.base == BASE_UNICODE || evalops.parse_options.base == BASE_BIJECTIVE_26 || (evalops.parse_options.base == BASE_CUSTOM && (CALCULATOR->customInputBase() > 10 || CALCULATOR->customInputBase() < -10))) && original_expression.find("0x") == string::npos && original_expression.find("0d") == string::npos) {
-				size_t pos = original_expression.length();
-				while(pos > 0) {
-					size_t l = 1;
-					while(pos - l > 0 && (unsigned char) original_expression[pos - l] >= 0x80 && (unsigned char) original_expression[pos - l] < 0xC0) l++;
-					pos -= l;
-					if(!CALCULATOR->utf8_pos_is_valid_in_name((char*) original_expression.c_str() + sizeof(char) * pos)) {
-						pos += l;
-						break;
-					} else if(l == 1 && is_in(NUMBERS, original_expression[pos])) {
-						pos++;
-						break;
-					}
-				}
-				if(pos > 0) {
-					bool cit1 = false, cit2 = false;
-					for(size_t i = 0; i < pos; i++) {
-						if(!cit1 && original_expression[i] == '\"') {
-							cit2 = !cit2;
-						} else if(!cit2 && original_expression[i] == '\'') {
-							cit1 = !cit1;
-						}
-					}
-					if(cit1 || cit2) pos = original_expression.length();
-				}
-				if(pos < original_expression.length()) {
+			if(str_conv.empty()) {
+				CALCULATOR->parse(parsed_mstruct, original_expression, po);
+				do_calc = test_autocalculable(*parsed_mstruct);
+			} else {
+				CALCULATOR->parse(parsed_mstruct, CALCULATOR->unlocalizeExpression(from_str, evalops.parse_options), po);
+				do_calc = test_autocalculable(*parsed_mstruct);
+				while(do_calc) {
+					string str_left;
+					CALCULATOR->separateToExpression(str_conv, str_left, evalops, false);
 					MathStructure m;
-					CALCULATOR->beginTemporaryStopMessages();
-					CALCULATOR->parse(&m, original_expression.substr(pos), evalops.parse_options);
-					if(!CALCULATOR->endTemporaryStopMessages()) {
-						MathStructure *mfunc = NULL;
-						if(m.isFunction() && m.size() > 0) mfunc = &m;
-						else if(m.isMultiplication() && m.size() > 0 && m.last().isFunction() && m.last().size() > 0) mfunc = &m.last();
-						if(mfunc) {
-							if((*mfunc)[0].isMultiplication()) {
-								for(size_t i = 0; i < (*mfunc)[0].size(); i++) {
-									if(!(*mfunc)[0][i].isVariable() || ((*mfunc)[0][i].variable() != CALCULATOR->getVariableById(VARIABLE_ID_X) && (*mfunc)[0][i].variable() != CALCULATOR->getVariableById(VARIABLE_ID_Y) && (*mfunc)[0][i].variable() != CALCULATOR->getVariableById(VARIABLE_ID_Z))) {
-										do_calc = false;
-										break;
-									}
-
-								}
-							} else if(!(*mfunc)[0].isVariable() || ((*mfunc)[0].variable() != CALCULATOR->getVariableById(VARIABLE_ID_X) && (*mfunc)[0].variable() != CALCULATOR->getVariableById(VARIABLE_ID_Y) && (*mfunc)[0].variable() != CALCULATOR->getVariableById(VARIABLE_ID_Z))) {
-								do_calc = false;
-							}
-						}
-					}
+					CALCULATOR->parse(&m, CALCULATOR->unlocalizeExpression(str_conv, evalops.parse_options), evalops.parse_options);
+					do_calc = test_autocalculable(m);
+					if(str_left.empty()) break;
+					str_conv = str_left;
 				}
 			}
+#ifdef HAVE_LIBREADLINE
+			if(do_calc && !parsed_mstruct->isNumber() && rl_point == rl_end && !had_to_expression && (!mfunc.isFunction() || mfunc.size() == 0 || !mfunc.function()->getArgumentDefinition(mfunc.size()) || !mfunc.function()->getArgumentDefinition(mfunc.size())->suggestsQuotes()) && !((evalops.parse_options.base > 10 && evalops.parse_options.base <= 36) || evalops.parse_options.base == BASE_UNICODE || evalops.parse_options.base == BASE_BIJECTIVE_26 || (evalops.parse_options.base == BASE_CUSTOM && (CALCULATOR->customInputBase() > 10 || CALCULATOR->customInputBase() < -10)))) {
+				do_calc = test_autocalc_function(original_expression);
+			}
 #endif
+			CALCULATOR->stopControl();
 			if(do_calc) CALCULATOR->calculate(mstruct, original_expression, 0, evalops, parsed_mstruct, &to_struct);
 			else mstruct->setAborted();
 		} else {
