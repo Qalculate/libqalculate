@@ -817,15 +817,16 @@ void fix_user_function_expression(string &str, const EvaluationOptions &eo) {
 	gsub("\b", "}", str);
 }
 
-FunctionFunction::FunctionFunction() : MathFunction("function", 2) {
+FunctionFunction::FunctionFunction() : MathFunction("function", 1, -1) {
 	setArgumentDefinition(1, new TextArgument());
-	setArgumentDefinition(2, new VectorArgument());
 }
 int FunctionFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	cout << vargs << endl;
 	string str = vargs[0].symbol();
 	fix_user_function_expression(str, eo);
 	UserFunction f = new UserFunction("", "Generated MathFunction", str);
-	MathStructure args = vargs[1];
+	MathStructure args = vargs;
+	args.delChild(1);
 	mstruct = f.MathFunction::calculate(args, eo);
 	if(mstruct.isFunction() && mstruct.function() == &f) mstruct.setUndefined();
 	return 1;

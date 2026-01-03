@@ -3339,7 +3339,10 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <title>Expression</title>
       </argument>
       <argument index="2">
-        <title>Arguments</title>
+        <title>Argument 1</title>
+      </argument>
+      <argument index="3">
+        <title>Argument 2</title>
       </argument>
     </builtin_function>
     <builtin_function name="title">
