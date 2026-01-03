@@ -3334,6 +3334,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     <builtin_function name="function">
       <title>Function</title>
       <names>r:function</names>
+      <example>$name(x + y, 1, 2) = 1 + 2 = 3</example>
       <argument index="1">
         <title>Expression</title>
       </argument>

@@ -397,7 +397,7 @@ bool RandnFunction::representsNumber(const MathStructure &vargs, bool) const {re
 bool RandnFunction::representsNonMatrix(const MathStructure &vargs) const {
 	if(vargs.size() < 2) return false;
 	if(vargs.size() == 2 || vargs[2].isOne()) return vargs[0].representsNonMatrix() && vargs[1].representsNonMatrix();
-	return vargs[0].representsScalar() && vargs[1].representsScalar() && vargs[0].representsScalar();
+	return vargs[0].representsScalar() && vargs[1].representsScalar() && vargs[2].representsScalar();
 }
 bool RandnFunction::representsScalar(const MathStructure &vargs) const {
 	return vargs.size() == 2 || (vargs.size() >= 3 && vargs[2].isOne() && vargs[1].representsScalar() && vargs[0].representsScalar());
