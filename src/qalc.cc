@@ -7407,7 +7407,7 @@ string ellipsize_vector(const string &str, size_t length) {
 			inform = true;
 		} else if(!inform && ((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0)) {
 			l++;
-			if(l >= length && str[i] == SPACE && str[i - 1] == SPACE) {
+			if(l >= length && str[i] == SPACE_CH && str[i - 1] == SPACE_CH) {
 				i1 = i;
 				break;
 			}
@@ -7421,7 +7421,7 @@ string ellipsize_vector(const string &str, size_t length) {
 			inform = true;
 		} else if(!inform && ((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0)) {
 			l++;
-			if(l >= length && str[i] == SPACE && str[i - 1] == SPACE) {
+			if(l >= length && str[i] == SPACE_CH && str[i - 1] == SPACE_CH) {
 				i2 = i;
 				break;
 			}
@@ -9197,6 +9197,8 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 							do_calc = test_autocalculable(*parsed_mstruct);
 						} else {
 							CALCULATOR->parse(parsed_mstruct, CALCULATOR->unlocalizeExpression(from_str, evalops.parse_options), po);
+							if(str_conv.length() > 1 && str_conv[1] == '?' && (str_conv[0] == 'b' || str_conv[0] == 'a' || str_conv[0] == 'd')) str_conv = str_conv.erase(0, 2);
+							else if(str_conv[0] == '?' || str_conv[0] == '0' || str_conv[0] == '+' || str_conv[0] == '-') str_conv = str_conv.erase(0, 1);
 							do_calc = test_autocalculable(*parsed_mstruct);
 							while(do_calc) {
 								string str_left;
@@ -9244,6 +9246,8 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 				do_calc = test_autocalculable(*parsed_mstruct);
 			} else {
 				CALCULATOR->parse(parsed_mstruct, CALCULATOR->unlocalizeExpression(from_str, evalops.parse_options), po);
+				if(str_conv.length() > 1 && str_conv[1] == '?' && (str_conv[0] == 'b' || str_conv[0] == 'a' || str_conv[0] == 'd')) str_conv = str_conv.erase(0, 2);
+				else if(str_conv[0] == '?' || str_conv[0] == '0' || str_conv[0] == '+' || str_conv[0] == '-') str_conv = str_conv.erase(0, 1);
 				do_calc = test_autocalculable(*parsed_mstruct);
 				while(do_calc) {
 					string str_left;

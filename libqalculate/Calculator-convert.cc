@@ -2293,7 +2293,9 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 	if(str2[0] == '-') eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_NONE;
 	else if(str2[0] == '+') eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_FORCE_INTEGER;
 	else if(eo2.mixed_units_conversion != MIXED_UNITS_CONVERSION_NONE) eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_DOWNWARDS_KEEP;
+	char c0 = 0;
 	if(do_prefix || str2[0] == '0' || str2[0] == '+' || str2[0] == '-') {
+		if(!do_prefix) c0 = str2[0];
 		str2 = str2.substr(do_prefix > 1 ? 2 : 1, str2.length() - (do_prefix > 1 ? 2 : 1));
 		remove_blank_ends(str2);
 		if(str2.empty()) {
@@ -2363,6 +2365,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct_to_convert, strin
 			endTemporaryStopMessages();
 			ParseOptions po = eo.parse_options;
 			po.units_enabled = true;
+			if(c0 != 0) str2.insert(0, 1, c0);
 			parse(&munits, str2, po);
 			eo2.mixed_units_conversion = MIXED_UNITS_CONVERSION_NONE;
 		} else {
