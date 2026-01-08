@@ -400,6 +400,21 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				if(b_even) mstruct.set(1, 2, 0);
 				else mstruct.set(-1, 2, 0);
 				b = true;
+			} else if(eo.approximation == APPROXIMATION_EXACT && (nr.equals(Number(1, 12, 0)) || nr.equals(Number(11, 12, 0)))) {
+				mstruct.set(6, 1, 0);
+				mstruct ^= nr_half;
+				mstruct += nr_two;
+				mstruct.last() ^= nr_half;
+				mstruct.last().negate();
+				mstruct.multiply_nocopy(new MathStructure(b_even ? 1 : -1, 4, 0));
+				b = true;
+			} else if(eo.approximation == APPROXIMATION_EXACT && (nr.equals(Number(5, 12, 0)) || nr.equals(Number(7, 12, 0)))) {
+				mstruct.set(6, 1, 0);
+				mstruct ^= nr_half;
+				mstruct += nr_two;
+				mstruct.last() ^= nr_half;
+				mstruct.multiply_nocopy(new MathStructure(b_even ? 1 : -1, 4, 0));
+				b = true;
 			} else if(eo.approximation == APPROXIMATION_EXACT && (mstruct[0].number().isNegative() || !mstruct[0].number().isFraction() || mstruct[0].number().isGreaterThan(nr_half))) {
 				nr_int = mstruct[0].number();
 				nr_int.floor();
@@ -612,6 +627,36 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				mstruct.raise_nocopy(new MathStructure(1, 2, 0));
 				mstruct.divide_nocopy(new MathStructure(2, 1, 0));
 				if(b_even) mstruct.negate();
+				b = true;
+			} else if(eo.approximation == APPROXIMATION_EXACT && nr.equals(Number(1, 12, 0))) {
+				mstruct.set(6, 1, 0);
+				mstruct ^= nr_half;
+				mstruct += nr_two;
+				mstruct.last() ^= nr_half;
+				mstruct.multiply_nocopy(new MathStructure(b_even ? 1 : -1, 4, 0));
+				b = true;
+			} else if(eo.approximation == APPROXIMATION_EXACT && nr.equals(Number(11, 12, 0))) {
+				mstruct.set(6, 1, 0);
+				mstruct ^= nr_half;
+				mstruct += nr_two;
+				mstruct.last() ^= nr_half;
+				mstruct.multiply_nocopy(new MathStructure(b_even ? -1 : 1, 4, 0));
+				b = true;
+			} else if(eo.approximation == APPROXIMATION_EXACT && nr.equals(Number(5, 12, 0))) {
+				mstruct.set(6, 1, 0);
+				mstruct ^= nr_half;
+				mstruct += nr_two;
+				mstruct.last() ^= nr_half;
+				mstruct.last().negate();
+				mstruct.multiply_nocopy(new MathStructure(b_even ? 1 : -1, 4, 0));
+				b = true;
+			} else if(eo.approximation == APPROXIMATION_EXACT && nr.equals(Number(7, 12, 0))) {
+				mstruct.set(6, 1, 0);
+				mstruct ^= nr_half;
+				mstruct += nr_two;
+				mstruct.last() ^= nr_half;
+				mstruct.last().negate();
+				mstruct.multiply_nocopy(new MathStructure(b_even ? -1 : 1, 4, 0));
 				b = true;
 			} else if(eo.approximation == APPROXIMATION_EXACT && (mstruct[0].number().isNegative() || !mstruct[0].number().isFraction() || mstruct[0].number().isGreaterThan(nr_half))) {
 				nr_int = mstruct[0].number();
@@ -868,6 +913,12 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				mstruct.raise_nocopy(new MathStructure(1, 2, 0));
 				mstruct.add_nocopy(new MathStructure(2, 1, 0));
 				if(b_neg) mstruct.negate();
+				b = true;
+			} else if(nr.equals(Number(7, 12, 0))) {
+				mstruct.set(3, 1, 0);
+				mstruct.raise_nocopy(new MathStructure(1, 2, 0));
+				mstruct.add_nocopy(new MathStructure(2, 1, 0));
+				if(!b_neg) mstruct.negate();
 				b = true;
 			} else if(eo.approximation == APPROXIMATION_EXACT && (mstruct[0].number().isNegative() || !mstruct[0].number().isFraction() || mstruct[0].number().isGreaterThan(nr_half))) {
 				Number nr_int(mstruct[0].number());
