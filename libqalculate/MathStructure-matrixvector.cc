@@ -141,7 +141,7 @@ bool MathStructure::sortVector(bool ascending) {
 				for(size_t index = 0; index < SIZE; index++) {
 					if(CALCULATOR->aborted()) return false;
 					if(&CHILD(index) == v_subs_new[i]) {
-						CALCULATOR->error(true, _("Unsolvable comparison at element %s when trying to rank vector."), i2s(index + 1).c_str(), NULL);
+						CALCULATOR->error(true, _("Unsolvable comparison at element %s when trying to sort vector."), i2s(index + 1).c_str(), NULL);
 					}
 				}
 				break;

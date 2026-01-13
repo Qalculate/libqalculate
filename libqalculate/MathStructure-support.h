@@ -124,6 +124,14 @@
 #define INTERNAL_ID_R_CH '\x03'
 #define INTERNAL_ID_LR "\x02\x03"
 
+#define VARIABLE_APPROXIMATE(xv) (xv->isApproximate() || ((KnownVariable*) xv)->get().isApproximate() || ((KnownVariable*) xv)->get().containsInterval(true, false, false, 0, true))
+#define SET_VARIABLE_VALUE(xm, xv, xeo) xm.set(((KnownVariable*) xv)->get()); \
+					xm.unformat(xeo); \
+					fix_intervals(xm, xeo, NULL, PRECISION);
+#define SET_VARIABLE_VALUE_THIS(xeo)	set(((KnownVariable*) o_variable)->get()); \
+					unformat(xeo); \
+					fix_intervals(*this, xeo, NULL, PRECISION);
+
 void printRecursive(const MathStructure &mstruct);
 
 std::string format_and_print(const MathStructure &mstruct);

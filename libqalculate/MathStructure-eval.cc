@@ -1977,7 +1977,8 @@ bool separate_unit(MathStructure &m, Unit *u, const EvaluationOptions &eo) {
 					m.transformById(FUNCTION_ID_STRIP_UNITS);
 					for(size_t i = 0; i < mvar.size(); i++) {
 						if(is_unit_multiexp(mvar[i])) {
-							m.multiply(mvar[i], i);
+							m.multiply(mvar[i], i > 0);
+							fix_intervals(m.last(), eo, NULL, PRECISION);
 						}
 					}
 					m.unformat(eo);
@@ -1985,9 +1986,8 @@ bool separate_unit(MathStructure &m, Unit *u, const EvaluationOptions &eo) {
 					return true;
 				}
 			}
-			if(eo.calculate_variables && ((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES) || (!m.variable()->isApproximate() && !mvar.containsInterval(true, false, false, 0, true)))) {
-				m.set(mvar);
-				m.unformat(eo);
+			if(eo.calculate_variables && ((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES) || !VARIABLE_APPROXIMATE(m.variable()))) {
+				SET_VARIABLE_VALUE(m, m.variable(), eo)
 				separate_unit(m, u, eo);
 				return true;
 			}
@@ -2083,7 +2083,8 @@ bool separate_temperature_units(MathStructure &m, const EvaluationOptions &eo) {
 					m.transformById(FUNCTION_ID_STRIP_UNITS);
 					for(size_t i = 0; i < mvar.size(); i++) {
 						if(is_unit_multiexp(mvar[i])) {
-							m.multiply(mvar[i], i);
+							m.multiply(mvar[i], i > 0);
+							fix_intervals(m.last(), eo, NULL, PRECISION);
 						}
 					}
 					m.unformat(eo);
@@ -2091,9 +2092,8 @@ bool separate_temperature_units(MathStructure &m, const EvaluationOptions &eo) {
 					return true;
 				}
 			}
-			if(eo.calculate_variables && ((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES) || (!m.variable()->isApproximate() && !mvar.containsInterval(true, false, false, 0, true)))) {
-				m.set(mvar);
-				m.unformat(eo);
+			if(eo.calculate_variables && ((eo.approximation != APPROXIMATION_EXACT && eo.approximation != APPROXIMATION_EXACT_VARIABLES) || !VARIABLE_APPROXIMATE(m.variable()))) {
+				SET_VARIABLE_VALUE(m, m.variable(), eo);
 				separate_temperature_units(m, eo);
 				return true;
 			}
@@ -2387,7 +2387,7 @@ bool merge_uncertainty(MathStructure &m, MathStructure &munc, const EvaluationOp
 }
 
 bool separate_vector_vars(MathStructure &m, const EvaluationOptions &eo, vector<KnownVariable*> &vars, vector<MathStructure> &values) {
-	if(m.isVariable() && m.variable()->isKnown() && (!m.variable()->isApproximate() || eo.approximation == APPROXIMATION_TRY_EXACT || eo.approximation == APPROXIMATION_APPROXIMATE)) {
+	if(m.isVariable() && m.variable()->isKnown() && (eo.approximation == APPROXIMATION_TRY_EXACT || eo.approximation == APPROXIMATION_APPROXIMATE || !VARIABLE_APPROXIMATE(m.variable()))) {
 		const MathStructure &mvar = ((KnownVariable*) m.variable())->get();
 		if(mvar.isVector() && mvar.containsInterval(true, false, false, 1, true)) {
 			bool b = false;

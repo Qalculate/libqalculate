@@ -242,17 +242,6 @@ size_t unformatted_length(const string &str) {
 	}
 	return l;
 }
-string unformatted_string(string str) {
-	size_t i = 0;
-	while(true) {
-		i = str.find('\033', i);
-		if(i == string::npos) break;
-		size_t i2 = str.find('m', i);
-		if(i == string::npos) break;
-		str.erase(i, i2 - i + 1);
-	}
-	return str;
-}
 
 #ifdef _WIN32
 LPWSTR utf8wchar(const char *str) {
@@ -707,7 +696,7 @@ void completion_match_item(ExpressionItem *item, const char *text, size_t l) {
 		if(ename->completion_only) {
 			if(utf8_encoding) {
 				ename = &item->preferredInputName(ename->abbreviation, printops.use_unicode_signs);
-				b_formatted = (text[0] >= 'A' || text[0] <= 'Z');
+				b_formatted = (text[0] >= 'A' && text[0] <= 'Z');
 				for(size_t i = 0; b_formatted && i < strlen(text); i++) {
 					if(text[i] == '_') b_formatted = false;
 				}
@@ -8649,7 +8638,7 @@ bool test_autocalculable(const MathStructure &m, bool top = true) {
 			mfunc.calculateFunctions(evalops, false);
 			return false;
 		}
-		if(m.function()->id() == FUNCTION_ID_SAVE || m.function()->id() == FUNCTION_ID_PLOT || m.function()->id() == FUNCTION_ID_EXPORT || m.function()->id() == FUNCTION_ID_LOAD || m.function()->id() == FUNCTION_ID_COMMAND) return false;
+		if(m.function()->id() == FUNCTION_ID_SAVE || m.function()->id() == FUNCTION_ID_PLOT || m.function()->id() == FUNCTION_ID_EXPORT || m.function()->id() == FUNCTION_ID_LOAD || m.function()->id() == FUNCTION_ID_COMMAND || (m.function()->subtype() == SUBTYPE_USER_FUNCTION && ((UserFunction*) m.function())->formula().find("plot(") != string::npos)) return false;
 		if(m.size() > 0 && (m.function()->id() == FUNCTION_ID_FACTORIAL || m.function()->id() == FUNCTION_ID_DOUBLE_FACTORIAL || m.function()->id() == FUNCTION_ID_MULTI_FACTORIAL) && m[0].isInteger() && m[0].number().integerLength() > 17) {
 			return false;
 		}
@@ -9869,7 +9858,7 @@ void load_preferences() {
 		makeDir(getLocalDir());
 	}
 
-	int version_numbers[] = {5, 8, 2};
+	int version_numbers[] = {5, 9, 0};
 
 	if(file) {
 		char line[10000];

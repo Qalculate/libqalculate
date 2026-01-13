@@ -5371,7 +5371,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 		case STRUCT_VARIABLE: {
 			if(eo.calculate_variables && o_variable->isKnown()) {
 				// replace variable with value of calculation is approximate or variable is exact (variable is approximate if marked as approximate or value contains interval)
-				if((eo.approximation == APPROXIMATION_APPROXIMATE || (!o_variable->isApproximate() && !((KnownVariable*) o_variable)->get().containsInterval(true, false, false, 0, true))) && !((KnownVariable*) o_variable)->get().isAborted()) {
+				if((eo.approximation == APPROXIMATION_APPROXIMATE || !VARIABLE_APPROXIMATE(o_variable)) && !((KnownVariable*) o_variable)->get().isAborted()) {
 					set(((KnownVariable*) o_variable)->get());
 					unformat(eo);
 					if(eo.calculate_functions) {

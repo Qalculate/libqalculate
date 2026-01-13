@@ -5,7 +5,7 @@
     <builtin_unit name="EUR">
       <title>European Euro</title>
       <names>a-cr:EUR,au:€,euro,p:euros</names>
-      <countries>Andorra, Austria, Belgium, Croatia, Cyprus, Estonia, Finland, France, Germany, Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City</countries>
+      <countries>Andorra, Austria, Belgium, Bulgaria, Croatia, Cyprus, Estonia, Finland, France, Germany, Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City</countries>
     </builtin_unit>
     <builtin_unit name="USD">
       <title>U.S. Dollar</title>
@@ -46,11 +46,6 @@
       <title>Norwegian Krone</title>
       <names>a-cr:NOK</names>
       <countries>Norway</countries>
-    </builtin_unit>
-    <builtin_unit name="BGN">
-      <title>Bulgarian Lev</title>
-      <names>lev,a-cr:BGN</names>
-      <countries>Bulgaria</countries>
     </builtin_unit>
     <builtin_unit name="RUB">
       <title>Russian Ruble</title>
@@ -977,6 +972,16 @@
       <base>
         <unit>EUR</unit>
         <relation>1/3.45280</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
+    <unit type="alias">
+      <hidden>true</hidden>
+      <title>Bulgarian Lev (obsolete)</title>
+      <names>lev,a-cr:BGN</names>
+      <base>
+        <unit>EUR</unit>
+        <relation>1/1.95583</relation>
         <exponent>1</exponent>
       </base>
     </unit>

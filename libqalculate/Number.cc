@@ -11860,7 +11860,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 
 		if(!exact && po.is_approximate) *po.is_approximate = true;
 
-		if(base != BASE_ROMAN_NUMERALS && po.show_ending_zeroes && (mpz_str.length() > 1 || mpz_str == "0") && (!exact || approx) && (!po.use_max_decimals || po.max_decimals < 0 || po.max_decimals > decimals)) {
+		if(base != BASE_ROMAN_NUMERALS && po.show_ending_zeroes && (mpz_str.length() > 1 || po.preserve_precision || mpz_str == "0") && (!exact || approx) && (!po.use_max_decimals || po.max_decimals < 0 || po.max_decimals > decimals)) {
 			precision = precision_base;
 			precision -= mpz_str.length();
 			if(dp_added) {

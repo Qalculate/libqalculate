@@ -520,10 +520,9 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 			}
 			mstruct = m_eqn;
 			b = true;
-		} else if(m_eqn.isVariable() && m_eqn.variable()->isKnown() && (eo.approximation != APPROXIMATION_EXACT || !m_eqn.variable()->isApproximate()) && ((KnownVariable*) m_eqn.variable())->get().isComparison()) {
-			mstruct = ((KnownVariable*) m_eqn.variable())->get();
-			mstruct.unformat();
-			ct = m_eqn.comparisonType();
+		} else if(m_eqn.isVariable() && m_eqn.variable()->isKnown() && (eo.approximation != APPROXIMATION_EXACT || !VARIABLE_APPROXIMATE(m_eqn.variable())) && ((KnownVariable*) m_eqn.variable())->get().isComparison()) {
+			SET_VARIABLE_VALUE(mstruct, m_eqn.variable(), eo)
+			ct = mstruct.comparisonType();
 			b = true;
 		} else {
 			EvaluationOptions eo2 = eo;

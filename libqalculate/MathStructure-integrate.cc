@@ -6513,9 +6513,8 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 		}
 		case STRUCT_VARIABLE: {
 			if(eo.calculate_variables && o_variable->isKnown()) {
-				if(eo.approximation != APPROXIMATION_EXACT || !o_variable->isApproximate()) {
-					set(((KnownVariable*) o_variable)->get(), true);
-					unformat(eo);
+				if((eo.approximation != APPROXIMATION_EXACT || !VARIABLE_APPROXIMATE(o_variable)) && !((KnownVariable*) o_variable)->get().isAborted()) {
+					SET_VARIABLE_VALUE_THIS(eo)
 					return integrate(x_var, eo, true, use_abs, definite_integral, true, max_part_depth, parent_parts);
 				} else if(containsRepresentativeOf(x_var, true, true) != 0) {
 					CANNOT_INTEGRATE

@@ -1267,36 +1267,40 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 	if(argc_ < 0) {
 		argc_ = 0, max_argc_ = 0;
 		string svar, svar_o, svar_v;
-		bool optionals = false, b;
-		size_t i3 = 0, i4 = 0, i5 = 0;
-		size_t i2 = 0;
+		bool optionals = false, b = false;
+		size_t last_def_i = (size_t) -1;
 		for(int i = 0; i < 26; i++) {
-			begin_loop_in_set_formula:
-			i4 = 0; i5 = 0;
 			svar = '\\';
 			svar_o = '\\';
 			if('x' + i > 'z') svar += (char) ('a' + i - 3);
 			else svar += 'x' + i;
 			if('X' + i > 'Z') svar_o += (char) ('A' + i - 3);
 			else svar_o += 'X' + i;
-			before_find_in_set_formula:
-			if(i < 24 && (i2 = new_formula.find(svar_o, i4)) != string::npos) {
-				if(i2 > 0 && new_formula[i2 - 1] == '\\') {
-					i4 = i2 + 2;
-					goto before_find_in_set_formula;
-				}
-				i3 = 0;
+			size_t i4 = 0, i2 = 0;
+			b = false;
+			while(i < 24 && (i2 = new_formula.find(svar_o, i4)) != string::npos) {
+				i4 = i2 + 2;
+				if(i2 > 0 && new_formula[i2 - 1] == '\\') continue;
+				size_t i3 = 0;
 				if(new_formula.length() > i2 + 2 && new_formula[i2 + 2] == '{') {
 					if((i3 = new_formula.find('}', i2 + 2)) != string::npos) {
 						svar_v = new_formula.substr(i2 + 3, i3 - (i2 + 3));
 						i3 -= i2 + 1;
-					} else i3 = 0;
+					}
 				}
-				if(i3) {
-					default_values.push_back(svar_v);
-				} else {
+				for(; last_def_i != (size_t) -1 && last_def_i + 1 < i; last_def_i++) {
 					default_values.push_back("0");
 				}
+				if(last_def_i != i) {
+					if(i3) {
+						default_values.push_back(svar_v);
+					} else {
+						default_values.push_back("0");
+					}
+				} else if(i3) {
+					default_values.back() = svar_v;
+				}
+				last_def_i = i;
 				new_formula.replace(i2, 2 + i3, svar);
 				while((i2 = new_formula.find(svar_o, i2 + 1)) != string::npos) {
 					if(i2 > 0 && new_formula[i2 - 1] == '\\') {
@@ -1309,8 +1313,43 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 						}
 					}
 				}
-				for(size_t sub_i = 0; sub_i < priv->v_subs_calc.size(); sub_i++) {
-					i2 = 0;
+				optionals = true;
+				b = true;
+			}
+			i2 = 0;
+			while(!b && (i2 = new_formula.find(svar, i2)) != string::npos) {
+				if(i2 > 0 && new_formula[i2 - 1] == '\\') {
+					i2 += 2;
+				} else {
+					b = true;
+				}
+			}
+			for(size_t sub_i = 0; sub_i < priv->v_subs_calc.size(); sub_i++) {
+				i4 = 0;
+				while(i < 24 && (i2 = priv->v_subs_calc[sub_i].find(svar_o, i4)) != string::npos) {
+					i4 = i2 + 2;
+					if(i2 > 0 && priv->v_subs_calc[sub_i][i2 - 1] == '\\') continue;
+					size_t i3 = 0;
+					if(priv->v_subs_calc[sub_i].length() > i2 + 2 && priv->v_subs_calc[sub_i][i2 + 2] == '{') {
+						if((i3 = priv->v_subs_calc[sub_i].find('}', i2 + 2)) != string::npos) {
+							svar_v = priv->v_subs_calc[sub_i].substr(i2 + 3, i3 - (i2 + 3));
+							i3 -= i2 + 1;
+						}
+					}
+					if(last_def_i != (size_t) -1 && last_def_i + 1 < i) {
+						default_values.push_back("0");
+					}
+					if(last_def_i != i) {
+						if(i3) {
+							default_values.push_back(svar_v);
+						} else {
+							default_values.push_back("0");
+						}
+					} else if(i3) {
+						default_values.back() = svar_v;
+					}
+					last_def_i = i;
+					priv->v_subs_calc[sub_i].replace(i2, 2 + i3, svar);
 					while((i2 = priv->v_subs_calc[sub_i].find(svar_o, i2 + 1)) != string::npos) {
 						if(i2 > 0 && priv->v_subs_calc[sub_i][i2 - 1] == '\\') {
 							i2++;
@@ -1318,59 +1357,24 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 							priv->v_subs_calc[sub_i].replace(i2, 2, svar);
 						}
 					}
+					optionals = true;
+					b = true;
 				}
-				optionals = true;
-			} else if((i2 = new_formula.find(svar, i5)) != string::npos) {
-				if(i2 > 0 && new_formula[i2 - 1] == '\\') {
-					i5 = i2 + 2;
-					goto before_find_in_set_formula;
-				}
-			} else {
-				b = false;
-				for(size_t sub_i = 0; sub_i < priv->v_subs_calc.size(); sub_i++) {
-					before_find_in_vsubs_set_formula:
-					if(i < 24 && (i2 = priv->v_subs_calc[sub_i].find(svar_o, i4)) != string::npos) {
-						if(i2 > 0 && priv->v_subs_calc[sub_i][i2 - 1] == '\\') {
-							i4 = i2 + 2;
-							goto before_find_in_vsubs_set_formula;
-						}
-						i3 = 0;
-						if(priv->v_subs_calc[sub_i].length() > i2 + 2 && priv->v_subs_calc[sub_i][i2 + 2] == '{') {
-							if((i3 = priv->v_subs_calc[sub_i].find('}', i2 + 2)) != string::npos) {
-								svar_v = priv->v_subs_calc[sub_i].substr(i2 + 3, i3 - (i2 + 3));
-								i3 -= i2 + 1;
-							} else i3 = 0;
-						}
-						if(i3) {
-							default_values.push_back(svar_v);
-						} else {
-							default_values.push_back("0");
-						}
-						priv->v_subs_calc[sub_i].replace(i2, 2 + i3, svar);
-						while((i2 = priv->v_subs_calc[sub_i].find(svar_o, i2 + 1)) != string::npos) {
-							if(i2 > 0 && priv->v_subs_calc[sub_i][i2 - 1] == '\\') {
-								i2++;
-							} else {
-								priv->v_subs_calc[sub_i].replace(i2, 2, svar);
-							}
-						}
-						optionals = true;
-						b = true;
-					} else if((i2 = priv->v_subs_calc[sub_i].find(svar, i5)) != string::npos) {
-						if(i2 > 0 && priv->v_subs_calc[sub_i][i2 - 1] == '\\') {
-							i5 = i2 + 2;
-							goto before_find_in_vsubs_set_formula;
-						}
+				i2 = 0;
+				while(!b && (i2 = priv->v_subs_calc[sub_i].find(svar, i2)) != string::npos) {
+					if(i2 > 0 && priv->v_subs_calc[sub_i][i2 - 1] == '\\') {
+						i2 += 2;
+					} else {
 						b = true;
 					}
 				}
-				if(!b) {
-					if(i < 24 && !optionals) {
-						i = 24;
-						goto begin_loop_in_set_formula;
-					}
-					break;
+			}
+			if(!b) {
+				if(i < 24 && !optionals) {
+					i = 23;
+					continue;
 				}
+				break;
 			}
 			if(i >= 24) {
 				max_argc_ = -1;
@@ -1384,12 +1388,9 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 			}
 		}
 	}
-	if(argc_ > 24) {
-		argc_ = 24;
-	}
-	if(max_argc_ > 24) {
-		max_argc_ = 24;
-	}
+
+	if(argc_ > 24) argc_ = 24;
+	if(max_argc_ > 24) max_argc_ = 24;
 	if(max_argc_ < 0 || argc_ < 0) {
 		max_argc_ = -1;
 		if(argc_ < 0) argc_ = 0;
@@ -1397,10 +1398,8 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 		max_argc_ = argc_;
 	}
 
-	while((int) default_values.size() < max_argc_ - argc_) {
-		default_values.push_back("0");
-	}
-	if(max_argc_ > 0) default_values.resize(max_argc_ - argc_);
+	if(max_argc_ > 0 && default_values.size() < max_argc_ - argc_) default_values.resize(max_argc_ - argc_, "0");
+
 	sformula_calc = new_formula;
 	argc = argc_;
 	max_argc = max_argc_;
@@ -1765,14 +1764,17 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 		}
 		if(cits == 0 && str2_alt.find(LEFT_PARENTHESIS, pars) != string::npos) {
 			CALCULATOR->beginTemporaryStopMessages();
-			CALCULATOR->parse(mstruct, str2_alt, po);
+			ParseOptions po2 = po;
+			MathStructure mfunc;
+			if(po2.unended_function) po2.unended_function = &mfunc;
+			CALCULATOR->parse(mstruct, str2_alt, po2);
 			if(mstruct->isSymbolic()) {
 				CALCULATOR->endTemporaryStopMessages(true);
 				return;
 			}
 			if((mstruct->isVariable() && mstruct->variable()->isKnown() && ((KnownVariable*) mstruct->variable())->get().isSymbolic()) || (mstruct->isFunction() && ((mstruct->function()->subtype() == SUBTYPE_USER_FUNCTION && test_function_argument_testable(*mstruct)) || mstruct->function()->subtype() == SUBTYPE_DATA_SET || mstruct->function()->id() == FUNCTION_ID_REGISTER || mstruct->function()->id() == FUNCTION_ID_STACK || mstruct->function()->id() == FUNCTION_ID_LOAD || mstruct->function()->id() == FUNCTION_ID_CHAR || mstruct->function()->id() == FUNCTION_ID_CONCATENATE || mstruct->function()->id() == FUNCTION_ID_COMPONENT || mstruct->function()->id() == FUNCTION_ID_BINARY_DECIMAL || mstruct->function()->id() == FUNCTION_ID_BIJECTIVE || mstruct->function()->id() == FUNCTION_ID_ROMAN || ((mstruct->function()->id() == FUNCTION_ID_BIN || mstruct->function()->id() == FUNCTION_ID_OCT || mstruct->function()->id() == FUNCTION_ID_DEC || mstruct->function()->id() == FUNCTION_ID_HEX || mstruct->function()->id() == FUNCTION_ID_BASE) && mstruct->size() > 1 && mstruct->last().isOne())))) {
 				EvaluationOptions eo;
-				eo.parse_options = po;
+				eo.parse_options = po2;
 				MathStructure mtest(*mstruct);
 				CALCULATOR->beginTemporaryStopMessages();
 				bool b_c = CALCULATOR->isControlled();
@@ -1787,6 +1789,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 				if(!b_c) CALCULATOR->stopControl();
 				CALCULATOR->endTemporaryStopMessages();
 				if(mtest.isSymbolic()) {
+					if(po.unended_function) po.unended_function->set(mfunc);
 					CALCULATOR->endTemporaryStopMessages(true);
 					return;
 				}
@@ -1796,6 +1799,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 						if(!mtest[i].isSymbolic()) {b = false; break;}
 					}
 					if(b) {
+						if(po.unended_function) po.unended_function->set(mfunc);
 						CALCULATOR->endTemporaryStopMessages(true);
 						return;
 					}
@@ -2381,9 +2385,8 @@ bool represents_loose_matrix(const MathStructure &m) {
 	return false;
 }
 bool VectorArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
-	if(value.isVariable() && eo.calculate_variables && value.variable()->isKnown() && (eo.approximation == APPROXIMATION_APPROXIMATE || eo.approximation == APPROXIMATION_TRY_EXACT || !value.variable()->isApproximate()) && !((KnownVariable*) value.variable())->get().containsInterval(true, false, false, 0, true) && !((KnownVariable*) value.variable())->get().isAborted()) {
-		value.set(((KnownVariable*) value.variable())->get());
-		value.unformat(eo);
+	if(value.isVariable() && eo.calculate_variables && value.variable()->isKnown() && (eo.approximation == APPROXIMATION_APPROXIMATE || eo.approximation == APPROXIMATION_TRY_EXACT || !VARIABLE_APPROXIMATE(value.variable())) && !((KnownVariable*) value.variable())->get().isAborted() && !value.representsScalar()) {
+		SET_VARIABLE_VALUE(value, value.variable(), eo)
 	}
 	while(value.isFunction() && eo.calculate_functions && eo.protected_function != value.function() && !value.representsScalar() && !function_differentiable(value.function())) {
 		if(!value.calculateFunctions(eo, false) || CALCULATOR->aborted()) break;
@@ -2468,9 +2471,8 @@ MatrixArgument::MatrixArgument(const MatrixArgument *arg) {
 }
 MatrixArgument::~MatrixArgument() {}
 bool MatrixArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
-	if(value.isVariable() && eo.calculate_variables && value.variable()->isKnown() && (eo.approximation == APPROXIMATION_APPROXIMATE || eo.approximation == APPROXIMATION_TRY_EXACT || !value.variable()->isApproximate()) && !((KnownVariable*) value.variable())->get().containsInterval(true, false, false, 0, true) && !((KnownVariable*) value.variable())->get().isAborted()) {
-		value.set(((KnownVariable*) value.variable())->get());
-		value.unformat(eo);
+	if(value.isVariable() && eo.calculate_variables && value.variable()->isKnown() && (eo.approximation == APPROXIMATION_APPROXIMATE || eo.approximation == APPROXIMATION_TRY_EXACT || !VARIABLE_APPROXIMATE(value.variable())) && !((KnownVariable*) value.variable())->get().isAborted() && !value.representsScalar()) {
+		SET_VARIABLE_VALUE(value, value.variable(), eo)
 	}
 	while(value.isFunction() && eo.calculate_functions && eo.protected_function != value.function() && !value.representsScalar() && !function_differentiable(value.function())) {
 		if(!value.calculateFunctions(eo, false) || CALCULATOR->aborted()) break;

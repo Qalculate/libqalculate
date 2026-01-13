@@ -454,8 +454,10 @@ const string &DataSet::defaultDataFile() const {
 
 #define UPDATE_LOCALE_LANG				if(locale_variant < 0 && lang) {\
 								for(size_t ilv = 0; ilv < strlen((char*) lang); ilv++) {\
-									if(lang[ilv] == '_') locale_variant = 0;\
-									else if(lang[ilv] == '-') {\
+									if(lang[ilv] == '_') {\
+										locale_variant = 0;\
+										break;\
+									} else if(lang[ilv] == '-') {\
 										locale_variant = 1;\
 										gsub("_", "-", altlocale);\
 										gsub("_", "-", locale);\
@@ -463,6 +465,7 @@ const string &DataSet::defaultDataFile() const {
 										else if(locale == "zh-TW") locale = "zh-Hant-TW";\
 										if(altlocale == "zh-CN") altlocale = "zh-Hans-CN";\
 										else if(altlocale == "zh-TW") altlocale = "zh-Hant-TW";\
+										break;\
 									}\
 								}\
 							}

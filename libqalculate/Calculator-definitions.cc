@@ -85,8 +85,10 @@ using std::queue;
 #define XML_GET_INT_FROM_TEXT(node, i)			value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {i = s2i((char*) value); xmlFree(value);}
 #define UPDATE_LOCALE_LANG				if(locale_variant < 0 && lang) {\
 								for(size_t ilv = 0; ilv < strlen((char*) lang); ilv++) {\
-									if(lang[ilv] == '_') locale_variant = 0;\
-									else if(lang[ilv] == '-') {\
+									if(lang[ilv] == '_') {\
+										locale_variant = 0;\
+										break;\
+									} else if(lang[ilv] == '-') {\
 										locale_variant = 1;\
 										gsub("_", "-", altlocale);\
 										gsub("_", "-", locale);\
@@ -94,6 +96,7 @@ using std::queue;
 										else if(locale == "zh-TW") locale = "zh-Hant-TW";\
 										if(altlocale == "zh-CN") altlocale = "zh-Hans-CN";\
 										else if(altlocale == "zh-TW") altlocale = "zh-Hant-TW";\
+										break;\
 									}\
 								}\
 							}
@@ -924,7 +927,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		xmlFreeDoc(doc);
 		return false;
 	}
-	int version_numbers[] = {5, 8, 2};
+	int version_numbers[] = {5, 9, 0};
 	parse_qalculate_version(version, version_numbers);
 
 	bool new_names = version_numbers[0] > 0 || version_numbers[1] > 9 || (version_numbers[1] == 9 && version_numbers[2] >= 4);
@@ -953,7 +956,6 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 			category_title = ""; best_category_title = false; next_best_category_title = false;
 			child = cur->xmlChildrenNode;
 			while(child != NULL) {
-
 				if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {
 					XML_GET_LOCALE_STRING_FROM_TEXT(child, category_title, best_category_title, next_best_category_title)
 				} else if(!xmlStrcmp(child->name, (const xmlChar*) "category")) {
@@ -2492,6 +2494,25 @@ int Calculator::saveVariables(const char* file_name, bool save_global) {
 	xmlFreeDoc(doc);
 	return returnvalue;
 }
+
+bool dot_only_in_interval(const string &expression) {
+	size_t pos = 0;
+	while(true) {
+		size_t pos2 = expression.find(".", pos);
+		pos = expression.find("interval(", pos);
+		if(pos2 != string::npos && (pos == string::npos || pos2 < pos)) {
+			return false;
+		}
+		if(pos == string::npos) break;
+		pos = expression.find_first_not_of(NUMBERS DOT SPACE COMMA, pos + 9);
+		if(pos == string::npos) break;
+		if(expression[pos] != RIGHT_PARENTHESIS_CH) {
+			return false;
+		}
+	}
+	return true;
+}
+
 void Calculator::saveVariables(void *xmldoc, bool save_global, bool save_only_temp) {
 	xmlDocPtr doc = (xmlDocPtr) xmldoc;
 	xmlNodePtr cur, newnode, newnode2;
@@ -2588,16 +2609,25 @@ void Calculator::saveVariables(void *xmldoc, bool save_global, bool save_only_te
 					if(variables[i]->isKnown()) {
 						bool is_approx = false;
 						save_printoptions.is_approximate = &is_approx;
+						bool ignore_approx = false;
 						if(((KnownVariable*) variables[i])->isExpression()) {
 							newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "value", (xmlChar*) ((KnownVariable*) variables[i])->expression().c_str());
 							bool unc_rel = false;
 							if(!((KnownVariable*) variables[i])->uncertainty(&unc_rel).empty()) xmlNewProp(newnode2, (xmlChar*) (unc_rel ? "relative_uncertainty" : "uncertainty"), (xmlChar*) ((KnownVariable*) variables[i])->uncertainty().c_str());
 							if(!((KnownVariable*) variables[i])->unit().empty()) xmlNewProp(newnode2, (xmlChar*) "unit", (xmlChar*) ((KnownVariable*) variables[i])->unit().c_str());
 						} else {
-							newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "value", (xmlChar*) ((KnownVariable*) variables[i])->get().print(save_printoptions).c_str());
+							bool test_approx = (variables[i]->precision() < 0 && ((KnownVariable*) variables[i])->get().precision() < 0) && ((KnownVariable*) variables[i])->get().containsInterval();
+							if(test_approx) save_printoptions.restrict_to_parent_precision = false;
+							string expression = ((KnownVariable*) variables[i])->get().print(save_printoptions);
+							if(test_approx) save_printoptions.restrict_to_parent_precision = true;
+							if(test_approx && (variables[i]->isApproximate() || is_approx) && expression.find("interval(") != string::npos) {
+								if(dot_only_in_interval(expression)) ignore_approx = true;
+								else expression = ((KnownVariable*) variables[i])->get().print(save_printoptions);
+							}
+							newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "value", (xmlChar*) expression.c_str());
 						}
 						save_printoptions.is_approximate = NULL;
-						if(variables[i]->isApproximate() || is_approx) xmlNewProp(newnode2, (xmlChar*) "approximate", (xmlChar*) "true");
+						if(!ignore_approx && (variables[i]->isApproximate() || is_approx)) xmlNewProp(newnode2, (xmlChar*) "approximate", (xmlChar*) "true");
 						if(variables[i]->precision() >= 0) xmlNewProp(newnode2, (xmlChar*) "precision", (xmlChar*) i2s(variables[i]->precision()).c_str());
 					} else {
 						if(((UnknownVariable*) variables[i])->assumptions()) {

@@ -455,7 +455,8 @@ const MathStructure &KnownVariable::get() {
 		}
 		ParseOptions po;
 		if(isApproximate() && precision() == -1 && suncertainty.empty()) {
-			po.read_precision = ALWAYS_READ_PRECISION;
+			if(sexpression.find(DOT) != string::npos) po.read_precision = READ_PRECISION_WHEN_DECIMALS;
+			else po.read_precision = ALWAYS_READ_PRECISION;
 		}
 		bool b_number = false;
 		if(!suncertainty.empty()) {

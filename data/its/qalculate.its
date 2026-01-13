@@ -7,4 +7,5 @@
   <its:translateRule selector="//title[@translatable = 'no']|//names[@translatable = 'no']"
     translate="no"/>
   <its:preserveSpaceRule selector="//description|//copyright" space="preserve"/>
+  <its:escapeRule selector="//*" escape="yes"/>
 </its:rules>

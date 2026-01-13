@@ -3319,7 +3319,13 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 		}
 		case STRUCT_VECTOR: {
 			if(!CALCULATOR->usesMatlabStyleMatrices() || (!flat_division && (isDivision() || isInverse())) || (!flat_power && isPower())) return false;
-			string str_e = print(po);
+			InternalPrintStruct ips_e;
+			ips_e.depth = ips.depth;
+			ips_e.power_depth = ips.power_depth;
+			ips_e.division_depth = ips.division_depth;
+			ips_e.parent_approximate = ips.parent_approximate;
+			ips_e.parent_precision = ips.parent_precision;
+			string str_e = print(po, ips_e);
 			bool in_cit1 = false, in_cit2 = false;
 			int pars = 0, brackets = 0;
 			for(size_t i = 0; i < str_e.size(); i++) {
@@ -4174,6 +4180,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			} else {
 				po2.use_unicode_signs = po.use_unicode_signs;
 				po2.show_ending_zeroes = false;
+				if(b_units) po2.restrict_to_parent_precision = false;
 				bool b_sup = ips_n.power_depth == 0 && format && tagtype == TAG_TYPE_HTML;
 				if(b_sup && b_units) {
 					print_str += "<sup>";

@@ -1,3 +1,93 @@
+2026-01-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Exclude functions with expression containing "plot(" from calculate-as-you-type
+	* Update currencies to reflect that BGN has been replaced with EUR as official currency
+
+2026-01-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Clean up code for reading default values from function expression and make it more forgiving and consistent for input which deviates from the ideal
+
+2026-01-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add exact values for multiples of pi/12 (15°) in sin() and cos(), and tan(7/12*pi*n)
+	* Fix loading of approximate variable with both approximate and exact values (e.g. in vector)
+	* Fix missing parenthesis for exact number shown as approximate in vector
+
+2026-01-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix conversion to non-unit expression beginning with zero (when not before decimal separator) or minus
+
+2026-01-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add example and support for x, y, and z without preceding backslash in function() function
+	* Support X, Y, and Z (uppercase) without backslash for function creation, in qalc
+	* Fix support for vector as only argument to function in function() function
+
+2025-12-31 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Completion for commands and options
+
+2025-12-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Parse +/- before implicit multiplication when not preceded by number (e.g. "7 km +/- 5m")
+
+2025-12-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix abortion of matrix resize in some cases
+	* Improve efficiency and block errors and warnings in Calculator::findMatchingUnit()
+
+2025-12-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Always consider x^(a+b) equivalent to x^a * x^b (fixes "x^(y+z) - x^y * x^z" returns "(1 − 1)x^(y + z)")
+	* Simplify root(a, x) to a^(1/x) when x represents a rational number, a is real, and a != 0 and x > 0, or a > 0 and x != 0
+	* Do not allow zero as 2nd argument in root function
+	* Reduce evaluation (perform for a smaller subset of malformed unit expression) in CompositeUnit::setBaseExpression()
+	* Do not interpret expression after "./" as "where"-expression if there is no left hand side expression
+	* Predict timeout error for extremely large numbers in Calculator::calculateAndPrint()
+	* Do not show global object deactivated error when reading expressions from file
+	* Improve decision to not show calculate-as-you-type result for incomplete object name (e.g. "integ" interpreted as "int(e*g)")
+
+2025-12-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Simplify (x = a || x >= a+1) and (x = a || x <= a - 1) when x is an unknown integer (fixes abs(x-1)=abs(1-x))
+
+2025-12-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not show result for variable assignment when -t and -f command line options are used
+	* Ellipsize large matrices and vectors when a subset of output (e.g. in a failed function), in qalc
+
+2025-12-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not remove duplicate whitespace characters from text strings (in quotation marks)
+	* Improve speed of vector rank and mode
+	* Reduce unnecessary approximation of vector/matrix elements
+	* Fix exchange rates marked as used (and subsequently updated) after calculation of expression with only one currency (while conversion to more optimal currency was attempted conversion to € occured)
+
+2025-12-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve speed of vector sort
+	* Improve efficieny of MathStructure child deletion
+	* Do not ask questions when --defaults is used
+
+2025-11-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix floating point conversion when comma is used as decimal separator
+
+2025-11-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix (almost) endless loop with increasingly complex equations in x+x^(1/a) => x=(b-x)^a (e.g. when solving "x + y = k/2 and x^2 + y^2 = k")
+	* Do not append multiple duplicate (sort of) equations (e.g. "x^51+sqrt(x)=3" returned "x^51 + √(x) = 3 && 6x^51 − x^102 + x = 9")
+	* Fix crash on Windows during output of extremely small or large (> 10^323228497) floating point number
+
+2025-11-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix compilation with readline < 7.0
+	* Fix compilation with mpfr < 4.0
+
+2025-11-21 Đoàn Trần Công Danh <sgn.danh@gmail.com>
+
+	* Drop intltool requirement
+
 2025-11-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix default data property argument ("info")

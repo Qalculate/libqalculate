@@ -2062,7 +2062,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 	// perform calculation
 	mstruct = calculate(str, evalops, &parsed_struct);
 
-	if(msecs <= 100 && contains_extreme_number_q(mstruct)) mstruct.setAborted();
+	if(msecs > 0 && msecs <= 100 && contains_extreme_number_q(mstruct)) mstruct.setAborted();
 
 	if(delay_complex) {
 		evalops.complex_number_form = cnf;
@@ -2826,7 +2826,7 @@ bool Calculator::hasWhereExpression(const string &str, const EvaluationOptions &
 		if(i == string::npos) break;
 		if(i > 0 && is_in(SPACES, str[i - 1]) && i + l < str.length() && is_in(SPACES, str[i + l])) return true;
 	}
-	if((i = str.rfind("/.", str.length() - 2)) != string::npos && i > 0 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) return true;
+	if(str.length() > 3 && (i = str.rfind("/.", str.length() - 2)) != string::npos && i > 0 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) return true;
 	size_t i4 = rfind_outside_enclosures(str, COMMA_CH);
 	if(i4 == string::npos || i4 < 3) return false;
 	i = 0;
@@ -2897,7 +2897,7 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
 	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
 	to_str = "";
 	size_t i = 0;
-	if((i = str.rfind("/.", str.length() - 2)) != string::npos && i > 0 && i != str.length() - 2 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) {
+	if(str.length() > 3 && (i = str.rfind("/.", str.length() - 2)) != string::npos && i > 0 && i != str.length() - 2 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) {
 		to_str = str.substr(i + 2 , str.length() - i - 2);
 	} else {
 		i = str.length() - 1;
@@ -3048,8 +3048,7 @@ bool calculate_ans(MathStructure &mstruct, const EvaluationOptions &eo) {
 }
 bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const EvaluationOptions &eo, vector<Variable*>& vars, bool empty_func, bool do_eval = true) {
 	if(m.isVariable() && m.variable()->isKnown()) {
-		m.set(((KnownVariable*) m.variable())->get());
-		fix_intervals(m, eo, NULL, PRECISION);
+		SET_VARIABLE_VALUE(m, m.variable(), eo)
 	}
 	if(m.isComparison()) {
 		if(m.comparisonType() == COMPARISON_EQUALS) {

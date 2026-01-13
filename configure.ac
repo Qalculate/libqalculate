@@ -6,7 +6,7 @@ dnl  ----------------------
 dnl | initialize autotools |---------------------------------------------------
 dnl  ----------------------
 
-AC_INIT([libqalculate],[5.8.2])
+AC_INIT([libqalculate],[5.9.0])
 AC_CONFIG_SRCDIR(libqalculate/Calculator.cc)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS(config.h)
@@ -72,7 +72,7 @@ QALCULATE_CURRENT=26
 
 dnl increment any time the source changes; set to 
 dnl  0 if you increment CURRENT
-QALCULATE_REVISION=9
+QALCULATE_REVISION=10
 
 dnl increment if any interfaces have been added; set to 0
 dnl  if any interfaces have been removed. removal has 

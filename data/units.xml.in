@@ -4899,7 +4899,7 @@
     </unit>
     <unit type="alias">
       <title>Johnson Pica</title>
-      <names>JohnsonPica,ro:ata_pica,po:ata_picas</names>
+      <names>johnson_pica,ro:ata_pica,po:ata_picas</names>
       <base>
         <unit>in</unit>
         <relation>0.166</relation>

@@ -363,9 +363,8 @@ int ElementsFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		return 1;
 	}
 	mstruct = vargs[0];
-	if(mstruct.isVariable() && eo.calculate_variables && mstruct.variable()->isKnown() && (eo.approximation == APPROXIMATION_APPROXIMATE || eo.approximation == APPROXIMATION_TRY_EXACT || !mstruct.variable()->isApproximate()) && !((KnownVariable*) mstruct.variable())->get().containsInterval(true, false, false, 0, true) && !((KnownVariable*) mstruct.variable())->get().isAborted()) {
-		mstruct.set(((KnownVariable*) mstruct.variable())->get());
-		mstruct.unformat(eo);
+	if(mstruct.isVariable() && eo.calculate_variables && mstruct.variable()->isKnown() && (eo.approximation == APPROXIMATION_APPROXIMATE || eo.approximation == APPROXIMATION_TRY_EXACT || !VARIABLE_APPROXIMATE(mstruct.variable())) && !((KnownVariable*) mstruct.variable())->get().isAborted() && !mstruct.representsScalar()) {
+		SET_VARIABLE_VALUE(mstruct, mstruct.variable(), eo)
 	}
 	while(mstruct.isFunction() && eo.calculate_functions && eo.protected_function != mstruct.function() && !mstruct.representsScalar() && !function_differentiable(mstruct.function())) {
 		if(!mstruct.calculateFunctions(eo, false) || CALCULATOR->aborted()) break;
@@ -380,6 +379,23 @@ int ElementsFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		} else if(mstruct.representsScalar()) {
 			mstruct.set(1L, 1L, 0L);
 			return 1;
+		} else if(eo.approximation == APPROXIMATION_EXACT || eo.approximation == APPROXIMATION_EXACT_VARIABLES) {
+			EvaluationOptions eo2 = eo;
+			eo2.approximation = APPROXIMATION_APPROXIMATE;
+			MathStructure m2(vargs[0]);
+			CALCULATOR->beginTemporaryStopMessages();
+			m2.eval(eo2);
+			if(CALCULATOR->endTemporaryStopMessages()) return -1;
+			if(m2.isMatrix()) {
+				mstruct.set((long int) (m2.rows() * m2.columns()), 1L, 0L);
+				return 1;
+			} else if(m2.isVector() && (m2.size() == 0 || m2[0].representsScalar())) {
+				mstruct.set((long int) m2.size(), 1L, 0L);
+				return 1;
+			} else if(m2.representsScalar()) {
+				mstruct = m_one;
+				return 1;
+			}
 		}
 		return -1;
 	}

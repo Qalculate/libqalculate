@@ -732,9 +732,8 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 		case STRUCT_VARIABLE: {
 			// differentiate value of variable
 			if(eo.calculate_variables && o_variable->isKnown()) {
-				if(eo.approximation != APPROXIMATION_EXACT || !o_variable->isApproximate()) {
-					set(((KnownVariable*) o_variable)->get(), true);
-					unformat(eo);
+				if((eo.approximation != APPROXIMATION_EXACT || !VARIABLE_APPROXIMATE(o_variable)) && !((KnownVariable*) o_variable)->get().isAborted()) {
+					SET_VARIABLE_VALUE_THIS(eo)
 					return differentiate(x_var, eo);
 				} else {
 					transformById(FUNCTION_ID_DIFFERENTIATE);

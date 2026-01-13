@@ -821,7 +821,6 @@ FunctionFunction::FunctionFunction() : MathFunction("function", 1, -1) {
 	setArgumentDefinition(1, new TextArgument());
 }
 int FunctionFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	cout << vargs << endl;
 	string str = vargs[0].symbol();
 	fix_user_function_expression(str, eo);
 	UserFunction f = new UserFunction("", "Generated MathFunction", str);

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: https://github.com/Qalculate/libqalculate/issues\n"
-"POT-Creation-Date: 2025-11-30 09:37+0100\n"
+"POT-Creation-Date: 2026-01-13 13:58+0100\n"
 "PO-Revision-Date: 2020-12-02 13:25+0100\n"
 "Last-Translator: Polakrity\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -31,11 +31,12 @@ msgstr "a-cr:EUR,au:€,euro,p:euros"
 
 #: data/currencies.xml.in:8
 msgid ""
-"Andorra, Austria, Belgium, Croatia, Cyprus, Estonia, Finland, France, "
-"Germany, Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, "
-"Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City"
+"Andorra, Austria, Belgium, Bulgaria, Croatia, Cyprus, Estonia, Finland, "
+"France, Germany, Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, "
+"Malta, Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican "
+"City"
 msgstr ""
-"Allemagne, Andorre, Autriche, Belgique, Chypre, Cité du Vatican, Croatie, "
+"Allemagne, Andorre, Autriche, Belgique, Bulgarie, Chypre, Cité du Vatican, Croatie, "
 "Espagne, Estonie, Finlande, France, Grèce, Irlande, Italie, Lettonie, "
 "Lituanie, Luxembourg, Malte, Pays-Bas, Portugal, Saint-Marin, Slovaquie, "
 "Slovénie"
@@ -141,354 +142,342 @@ msgid "Norway"
 msgstr "Norvège"
 
 #: data/currencies.xml.in:51
-msgid "Bulgarian Lev"
-msgstr "Lev bulgare"
-
-#: data/currencies.xml.in:52
-msgid "lev,a-cr:BGN"
-msgstr "lev,a-cr:BGN"
-
-#: data/currencies.xml.in:53
-msgid "Bulgaria"
-msgstr "Bulgarie"
-
-#: data/currencies.xml.in:56
 msgid "Russian Ruble"
 msgstr "Rouble russe"
 
-#: data/currencies.xml.in:57
+#: data/currencies.xml.in:52
 msgid "a-cr:RUB,au:₽,ruble"
 msgstr "a-c:RUB,au:₽,rouble"
 
-#: data/currencies.xml.in:58
+#: data/currencies.xml.in:53
 msgid "Russia"
 msgstr "Russie"
 
-#: data/currencies.xml.in:61
+#: data/currencies.xml.in:56
 msgid "Philippine Peso"
 msgstr "Peso philippin"
 
-#: data/currencies.xml.in:62
+#: data/currencies.xml.in:57
 msgid "a-cr:PHP,au:₱"
 msgstr "a-cr:PHP,au:₱"
 
-#: data/currencies.xml.in:63
+#: data/currencies.xml.in:58
 msgid "Philippines"
 msgstr "Philippines"
 
-#: data/currencies.xml.in:66
+#: data/currencies.xml.in:61
 msgid "Malaysian Ringgit"
 msgstr "Ringgit malais"
 
-#: data/currencies.xml.in:67
+#: data/currencies.xml.in:62
 msgid "acr:MYR,ac:myr"
 msgstr ""
 
-#: data/currencies.xml.in:68
+#: data/currencies.xml.in:63
 msgid "Malaysia"
 msgstr "Malaisie"
 
-#: data/currencies.xml.in:71
+#: data/currencies.xml.in:66
 msgid "Chinese Yuan Renminbi"
 msgstr "Yuan ou renminbi chinois"
 
-#: data/currencies.xml.in:72
+#: data/currencies.xml.in:67
 msgid "a-cr:CNY"
 msgstr "a-cr:CNY"
 
-#: data/currencies.xml.in:73
+#: data/currencies.xml.in:68
 msgid "China"
 msgstr "Chine"
 
-#: data/currencies.xml.in:76
+#: data/currencies.xml.in:71
 msgid "Indonesian Rupiah"
 msgstr "Roupie indonésienne"
 
-#: data/currencies.xml.in:77
+#: data/currencies.xml.in:72
 msgid "a-cr:IDR,rupiah"
 msgstr "a-cr:IDR,rupiah"
 
-#: data/currencies.xml.in:78
+#: data/currencies.xml.in:73
 msgid "Indonesia"
 msgstr "Indonésie"
 
-#: data/currencies.xml.in:81
+#: data/currencies.xml.in:76
 msgid "Czech Koruna"
 msgstr "Couronne tchèque"
 
-#: data/currencies.xml.in:82
+#: data/currencies.xml.in:77
 msgid "a-cr:CZK,au-c:Kč"
 msgstr "a-cr:CZK,au-c:Kč"
 
-#: data/currencies.xml.in:83
+#: data/currencies.xml.in:78
 msgid "Czech Republic"
 msgstr "République tchèque"
 
-#: data/currencies.xml.in:86
+#: data/currencies.xml.in:81
 msgid "Hungarian Forint"
 msgstr "Forint hongrois"
 
-#: data/currencies.xml.in:87
+#: data/currencies.xml.in:82
 msgid "forint,a-cr:HUF"
 msgstr "forint,a-cr:HUF"
 
-#: data/currencies.xml.in:88
+#: data/currencies.xml.in:83
 msgid "Hungary"
 msgstr "Hongrie"
 
-#: data/currencies.xml.in:91
+#: data/currencies.xml.in:86
 msgid "Polish Zloty"
 msgstr "Zloty polonais"
 
-#: data/currencies.xml.in:92
+#: data/currencies.xml.in:87
 msgid "a-cr:PLN,au:zł,zloty"
 msgstr "a-cr:PLN,au:zł,zloty"
 
-#: data/currencies.xml.in:93
+#: data/currencies.xml.in:88
 msgid "Poland"
 msgstr "Pologne"
 
-#: data/currencies.xml.in:96
+#: data/currencies.xml.in:91
 msgid "Romanian Leu"
 msgstr "Leu roumain"
 
-#: data/currencies.xml.in:97
+#: data/currencies.xml.in:92
 msgid "a-cr:RON"
 msgstr "a-cr:RON"
 
-#: data/currencies.xml.in:98
+#: data/currencies.xml.in:93
 msgid "Romania"
 msgstr "Roumanie"
 
-#: data/currencies.xml.in:101
+#: data/currencies.xml.in:96
 msgid "Turkish Lira"
 msgstr "Livre turque"
 
-#: data/currencies.xml.in:102
+#: data/currencies.xml.in:97
 msgid "a-cr:TRY,au:₺"
 msgstr "a-cr:TRY,au:₺"
 
-#: data/currencies.xml.in:103
+#: data/currencies.xml.in:98
 msgid "Turkey"
 msgstr "Turquie"
 
-#: data/currencies.xml.in:106
+#: data/currencies.xml.in:101
 msgid "Australian Dollar"
 msgstr "Dollar australien"
 
-#: data/currencies.xml.in:107
+#: data/currencies.xml.in:102
 msgid "a-cr:AUD"
 msgstr "a-cr:AUD"
 
-#: data/currencies.xml.in:108
+#: data/currencies.xml.in:103
 msgid "Australia"
 msgstr "Australie"
 
-#: data/currencies.xml.in:111
+#: data/currencies.xml.in:106
 msgid "Canadian Dollar"
 msgstr "Dollar canadien"
 
-#: data/currencies.xml.in:112
+#: data/currencies.xml.in:107
 msgid "a-cr:CAD"
 msgstr "a-cr:CAD"
 
-#: data/currencies.xml.in:113
+#: data/currencies.xml.in:108
 msgid "Canada"
 msgstr "Canada"
 
-#: data/currencies.xml.in:116
+#: data/currencies.xml.in:111
 msgid "Hong Kong Dollar"
 msgstr "Dollar de Hong Kong"
 
-#: data/currencies.xml.in:117
+#: data/currencies.xml.in:112
 msgid "a-cr:HKD"
 msgstr "a-cr:HKD"
 
-#: data/currencies.xml.in:120
+#: data/currencies.xml.in:115
 msgid "New Zealand Dollar"
 msgstr "Dollar néo-zélandais"
 
-#: data/currencies.xml.in:121
+#: data/currencies.xml.in:116
 msgid "a-cr:NZD"
 msgstr "a-cr:NZD"
 
-#: data/currencies.xml.in:122
+#: data/currencies.xml.in:117
 msgid "New Zealand"
 msgstr "Nouvelle-Zélande"
 
-#: data/currencies.xml.in:125
+#: data/currencies.xml.in:120
 msgid "Singapore Dollar"
 msgstr "Dollar de Singapour"
 
-#: data/currencies.xml.in:126
+#: data/currencies.xml.in:121
 msgid "a-cr:SGD"
 msgstr "a-cr:SGD"
 
-#: data/currencies.xml.in:127
+#: data/currencies.xml.in:122
 msgid "Singapore"
 msgstr "Singapour"
 
-#: data/currencies.xml.in:130
+#: data/currencies.xml.in:125
 msgid "South Korean Won"
 msgstr "Won sud-corréen"
 
-#: data/currencies.xml.in:131
+#: data/currencies.xml.in:126
 msgid "a-cr:KRW,au:₩,won"
 msgstr "a-cr:KRW,au:₩,won"
 
-#: data/currencies.xml.in:132
+#: data/currencies.xml.in:127
 msgid "South Korea"
 msgstr "Corée du Sud"
 
-#: data/currencies.xml.in:135
+#: data/currencies.xml.in:130
 msgid "South African Rand"
 msgstr "Rand sud-africain"
 
-#: data/currencies.xml.in:136
+#: data/currencies.xml.in:131
 msgid "a-cr:ZAR"
 msgstr "a-cr:ZAR"
 
-#: data/currencies.xml.in:137
+#: data/currencies.xml.in:132
 msgid "South Africa"
 msgstr "Afrique du Sud"
 
-#: data/currencies.xml.in:140
+#: data/currencies.xml.in:135
 msgid "Indian Rupee"
 msgstr "Roupie indienne"
 
-#: data/currencies.xml.in:141
+#: data/currencies.xml.in:136
 msgid "a-cr:INR,au:₹,rupee"
 msgstr "a-cr:INR,au:₹,rupee"
 
-#: data/currencies.xml.in:142
+#: data/currencies.xml.in:137
 msgid "India"
 msgstr "Inde"
 
-#: data/currencies.xml.in:145
+#: data/currencies.xml.in:140
 msgid "Israeli New Sheqel"
 msgstr "Shekel israélien"
 
-#: data/currencies.xml.in:146
+#: data/currencies.xml.in:141
 msgid "a-cr:ILS,au:₪,sheqel"
 msgstr "a-cr:ILS,au:₪,sheqel"
 
-#: data/currencies.xml.in:147
+#: data/currencies.xml.in:142
 msgid "Israel"
 msgstr "Israël"
 
-#: data/currencies.xml.in:150
+#: data/currencies.xml.in:145
 msgid "Mexican Peso"
 msgstr "Peso mexicain"
 
-#: data/currencies.xml.in:151
+#: data/currencies.xml.in:146
 msgid "a-cr:MXN"
 msgstr "a-cr:MXN"
 
-#: data/currencies.xml.in:152
+#: data/currencies.xml.in:147
 msgid "Mexico"
 msgstr "Mexique"
 
-#: data/currencies.xml.in:155
+#: data/currencies.xml.in:150
 msgid "Brazilian Real"
 msgstr "Réal brésilien"
 
-#: data/currencies.xml.in:156
+#: data/currencies.xml.in:151
 msgid "a-cr:BRL"
 msgstr "a-cr:BRL"
 
-#: data/currencies.xml.in:157
+#: data/currencies.xml.in:152
 msgid "Brazil"
 msgstr "Brésil"
 
-#: data/currencies.xml.in:160
+#: data/currencies.xml.in:155
 msgid "Icelandic Krónur"
 msgstr "Couronne islandaise"
 
-#: data/currencies.xml.in:161
+#: data/currencies.xml.in:156
 msgid "a-cr:ISK"
 msgstr "a-cr:ISK"
 
-#: data/currencies.xml.in:162
+#: data/currencies.xml.in:157
 msgid "Iceland"
 msgstr "Islande"
 
-#: data/currencies.xml.in:165
+#: data/currencies.xml.in:160
 msgid "Bitcoin"
 msgstr "Bitcoin"
 
-#: data/currencies.xml.in:166
+#: data/currencies.xml.in:161
 msgid "a-cr:BTC,au:₿,a:XBT,bitcoin,p:bitcoins"
 msgstr "a-cr:BTC,au:₿,a:XBT,bitcoin,p:bitcoins"
 
-#: data/currencies.xml.in:169
+#: data/currencies.xml.in:164
 msgid "Kenyan Shilling"
 msgstr "Shilling kényan"
 
-#: data/currencies.xml.in:170
+#: data/currencies.xml.in:165
 msgid "a-cr:KES"
 msgstr "a-cr:KES"
 
-#: data/currencies.xml.in:171
+#: data/currencies.xml.in:166
 msgid "Kenya"
 msgstr "Kenya"
 
-#: data/currencies.xml.in:174
+#: data/currencies.xml.in:169
 msgid "Afghan Afghani"
 msgstr "Afghani afghan"
 
-#: data/currencies.xml.in:175
+#: data/currencies.xml.in:170
 msgid "a-cr:AFN,aio:؋"
 msgstr "a-cr:AFN,aio:؋"
 
-#: data/currencies.xml.in:176
+#: data/currencies.xml.in:171
 msgid "Afghanistan"
 msgstr "Afghanistan"
 
-#: data/currencies.xml.in:179
+#: data/currencies.xml.in:174
 msgid "Albanian Lek"
 msgstr "Lek albanais"
 
-#: data/currencies.xml.in:180
+#: data/currencies.xml.in:175
 msgid "a-cr:ALL"
 msgstr "a-cr:ALL"
 
-#: data/currencies.xml.in:181
+#: data/currencies.xml.in:176
 msgid "Albania"
 msgstr "Albanie"
 
-#: data/currencies.xml.in:184
+#: data/currencies.xml.in:179
 msgid "Algerian Dinar"
 msgstr "Dinar algérien"
 
-#: data/currencies.xml.in:185
+#: data/currencies.xml.in:180
 msgid "a-cr:DZD"
 msgstr "a-cr:DZD"
 
-#: data/currencies.xml.in:186
+#: data/currencies.xml.in:181
 msgid "Algeria"
 msgstr "Algérie"
 
-#: data/currencies.xml.in:189
+#: data/currencies.xml.in:184
 msgid "Angolan Kwanza"
 msgstr "Kwanza angolais"
 
-#: data/currencies.xml.in:190
+#: data/currencies.xml.in:185
 msgid "a-cr:AOA"
 msgstr "a-cr:AOA"
 
-#: data/currencies.xml.in:191
+#: data/currencies.xml.in:186
 msgid "Angola"
 msgstr "Angola"
 
-#: data/currencies.xml.in:194
+#: data/currencies.xml.in:189
 msgid "Eastern Caribbean Dollar"
 msgstr "Dollar des Caraïbes orientales"
 
-#: data/currencies.xml.in:195
+#: data/currencies.xml.in:190
 msgid "a-cr:XCD"
 msgstr "a-cr:XCD"
 
-#: data/currencies.xml.in:196
+#: data/currencies.xml.in:191
 msgid ""
 "Antigua and Barbuda, Dominica, Grenada, Montserrat, Saint Kitts and Nevis, "
 "Saint Lucia, Saint Vincent and the Grenadines, Anguilla"
@@ -496,253 +485,253 @@ msgstr ""
 "Anguilla, Antigua-et-Barbuda, Dominique, Grenade, Montserrat, Saint-"
 "Christophe-et-Niévès, Sainte-Lucie, Saint-Vincent-et-les-Grenadines"
 
-#: data/currencies.xml.in:199
+#: data/currencies.xml.in:194
 msgid "Argentine Peso"
 msgstr "Peso argentin"
 
-#: data/currencies.xml.in:200
+#: data/currencies.xml.in:195
 msgid "a-cr:ARS"
 msgstr "a-cr:ARS"
 
-#: data/currencies.xml.in:201
+#: data/currencies.xml.in:196
 msgid "Argentina"
 msgstr "Argentine"
 
-#: data/currencies.xml.in:204
+#: data/currencies.xml.in:199
 msgid "Armenian Dram"
 msgstr "Dram arménien"
 
-#: data/currencies.xml.in:205
+#: data/currencies.xml.in:200
 msgid "a-cr:AMD,au:֏"
 msgstr "a-cr:AMD,au:֏"
 
-#: data/currencies.xml.in:206
+#: data/currencies.xml.in:201
 msgid "Armenia"
 msgstr "Arménie"
 
-#: data/currencies.xml.in:209
+#: data/currencies.xml.in:204
 msgid "Aruban Florin"
 msgstr "Florin arubais"
 
-#: data/currencies.xml.in:210
+#: data/currencies.xml.in:205
 msgid "a-cr:AWG"
 msgstr "a-cr:AWG"
 
-#: data/currencies.xml.in:211
+#: data/currencies.xml.in:206
 msgid "Aruba"
 msgstr "Aruba"
 
-#: data/currencies.xml.in:214
+#: data/currencies.xml.in:209
 msgid "Netherlands Antillean Guilder"
 msgstr "Florin des Antilles néerlandaises"
 
-#: data/currencies.xml.in:215
+#: data/currencies.xml.in:210
 msgid "a-cr:ANG"
 msgstr "a-cr:ANG"
 
-#: data/currencies.xml.in:216
+#: data/currencies.xml.in:211
 msgid "Curaçao, Sint Maarten"
 msgstr "Curaçao, Saint-Martin"
 
-#: data/currencies.xml.in:219
+#: data/currencies.xml.in:214
 msgid "Azerbaijani Manat"
 msgstr "Manat azerbaïdjanais"
 
-#: data/currencies.xml.in:220
+#: data/currencies.xml.in:215
 msgid "a-cr:AZN,au:₼"
 msgstr "a-cr:AZN,au:₼"
 
-#: data/currencies.xml.in:221
+#: data/currencies.xml.in:216
 msgid "Azerbaijan"
 msgstr "Azerbaïdjan"
 
-#: data/currencies.xml.in:224
+#: data/currencies.xml.in:219
 msgid "Bahamian Dollar"
 msgstr "Dollar bahaméen"
 
-#: data/currencies.xml.in:225
+#: data/currencies.xml.in:220
 msgid "a-cr:BSD"
 msgstr "a-cr:BSD"
 
-#: data/currencies.xml.in:226
+#: data/currencies.xml.in:221
 msgid "Bahamas"
 msgstr "Bahamas"
 
-#: data/currencies.xml.in:229
+#: data/currencies.xml.in:224
 msgid "Bahraini Dinar"
 msgstr "Dinar bahreïni"
 
-#: data/currencies.xml.in:230
+#: data/currencies.xml.in:225
 msgid "a-cr:BHD"
 msgstr "a-cr:BHD"
 
-#: data/currencies.xml.in:231
+#: data/currencies.xml.in:226
 msgid "Bahrain"
 msgstr "Bahreïn"
 
-#: data/currencies.xml.in:234
+#: data/currencies.xml.in:229
 msgid "Bangladeshi Taka"
 msgstr "Taka bangladais"
 
-#: data/currencies.xml.in:235
+#: data/currencies.xml.in:230
 msgid "a-cr:BDT,au:৳"
 msgstr "a-cr:BDT,au:৳"
 
-#: data/currencies.xml.in:236
+#: data/currencies.xml.in:231
 msgid "Bangladesh"
 msgstr "Bangladesh"
 
-#: data/currencies.xml.in:239
+#: data/currencies.xml.in:234
 msgid "Barbadian Dollar"
 msgstr "Dollar de la Barbade"
 
-#: data/currencies.xml.in:240
+#: data/currencies.xml.in:235
 msgid "a-cr:BBD"
 msgstr "a-cr:BBD"
 
-#: data/currencies.xml.in:241
+#: data/currencies.xml.in:236
 msgid "Barbados"
 msgstr "Barbade"
 
-#: data/currencies.xml.in:244
+#: data/currencies.xml.in:239
 msgid "Belarusian Ruble"
 msgstr "Rouble biélorusse"
 
-#: data/currencies.xml.in:245
+#: data/currencies.xml.in:240
 msgid "a-cr:BYN"
 msgstr "a-cr:BYN"
 
-#: data/currencies.xml.in:246
+#: data/currencies.xml.in:241
 msgid "Belarus"
 msgstr "Biélorussie"
 
-#: data/currencies.xml.in:249
+#: data/currencies.xml.in:244
 msgid "Belarusian Ruble p. (obsolete)"
 msgstr "Rouble biélorusse p. (obsolète)"
 
-#: data/currencies.xml.in:250
+#: data/currencies.xml.in:245
 msgid "a-cr:BYR"
 msgstr "a-cr:BYR"
 
-#: data/currencies.xml.in:253
+#: data/currencies.xml.in:248
 msgid "Belize Dollar"
 msgstr "Dollar bélizien"
 
-#: data/currencies.xml.in:254
+#: data/currencies.xml.in:249
 msgid "a-cr:BZD"
 msgstr "a-cr:BZD"
 
-#: data/currencies.xml.in:255
+#: data/currencies.xml.in:250
 msgid "Belize"
 msgstr "Belize"
 
-#: data/currencies.xml.in:258
+#: data/currencies.xml.in:253
 msgid "West African CFA Franc"
 msgstr "Franc CFA"
 
-#: data/currencies.xml.in:259
+#: data/currencies.xml.in:254
 msgid "a-cr:XOF"
 msgstr ""
 
-#: data/currencies.xml.in:260
+#: data/currencies.xml.in:255
 msgid ""
 "Benin, Burkina Faso, Guinea-Bissau, Ivory Coast, Mali, Niger, Senegal, Togo"
 msgstr ""
 "Bénin, Burkina Faso, Côte d'Ivoire, Guinée-Bissau, Mali, Niger, Sénégal, Togo"
 
-#: data/currencies.xml.in:263
+#: data/currencies.xml.in:258
 msgid "Bermudian Dollar"
 msgstr "Dollar bermudien"
 
-#: data/currencies.xml.in:264
+#: data/currencies.xml.in:259
 msgid "a-cr:BMD"
 msgstr "a-cr:BMD"
 
-#: data/currencies.xml.in:265
+#: data/currencies.xml.in:260
 msgid "Bermuda"
 msgstr "Bermudes"
 
-#: data/currencies.xml.in:268
+#: data/currencies.xml.in:263
 msgid "Bolivian Boliviano Bs"
 msgstr "Bolíviano bolivien"
 
-#: data/currencies.xml.in:269
+#: data/currencies.xml.in:264
 msgid "a-cr:BOB"
 msgstr "a-cr:BOB"
 
-#: data/currencies.xml.in:270
+#: data/currencies.xml.in:265
 msgid "Bolivia"
 msgstr "Bolivie"
 
-#: data/currencies.xml.in:273
+#: data/currencies.xml.in:268
 msgid "Bosnia and Herzegovina Convertible Mark"
 msgstr "Mark convertible de Bosnie-Herzégovine"
 
-#: data/currencies.xml.in:274
+#: data/currencies.xml.in:269
 msgid "a-cr:BAM"
 msgstr "a-cr:BAM"
 
-#: data/currencies.xml.in:275
+#: data/currencies.xml.in:270
 msgid "Bosnia and Herzegovina"
 msgstr "Bosnie-Herzégovine"
 
-#: data/currencies.xml.in:278
+#: data/currencies.xml.in:273
 msgid "Botswana Pula"
 msgstr "Pula du Botswana"
 
-#: data/currencies.xml.in:279
+#: data/currencies.xml.in:274
 msgid "a-cr:BWP"
 msgstr "a-cr:BWP"
 
-#: data/currencies.xml.in:280
+#: data/currencies.xml.in:275
 msgid "Botswana"
 msgstr "Botswana"
 
-#: data/currencies.xml.in:283
+#: data/currencies.xml.in:278
 msgid "Brunei Dollar"
 msgstr "Dollar du Brunei"
 
-#: data/currencies.xml.in:284
+#: data/currencies.xml.in:279
 msgid "a-cr:BND"
 msgstr "a-cr:BND"
 
-#: data/currencies.xml.in:285
+#: data/currencies.xml.in:280
 msgid "Brunei"
 msgstr "Brunei"
 
-#: data/currencies.xml.in:288
+#: data/currencies.xml.in:283
 msgid "Burundian Franc"
 msgstr "Franc burundais"
 
-#: data/currencies.xml.in:289
+#: data/currencies.xml.in:284
 msgid "a-cr:BIF"
 msgstr "a-cr:BIF"
 
-#: data/currencies.xml.in:290
+#: data/currencies.xml.in:285
 msgid "Burundi"
 msgstr "Burundi"
 
-#: data/currencies.xml.in:293
+#: data/currencies.xml.in:288
 msgid "Cambodian Riel"
 msgstr "Riel cambodgien"
 
-#: data/currencies.xml.in:294
+#: data/currencies.xml.in:289
 msgid "a-cr:KHR,aiu:៛"
 msgstr "a-cr:KHR,aiu:៛"
 
-#: data/currencies.xml.in:295
+#: data/currencies.xml.in:290
 msgid "Cambodia"
 msgstr "Cambodge"
 
-#: data/currencies.xml.in:298
+#: data/currencies.xml.in:293
 msgid "Central African CFA Franc"
 msgstr "Franc CFA d’Afrique centrale"
 
-#: data/currencies.xml.in:299
+#: data/currencies.xml.in:294
 msgid "a-cr:XAF"
 msgstr ""
 
-#: data/currencies.xml.in:300
+#: data/currencies.xml.in:295
 msgid ""
 "Cameroon, Central African Republic, Chad, Republic of the Congo, Equatorial "
 "Guinea, Gabon"
@@ -750,1291 +739,1299 @@ msgstr ""
 "Cameroun, Gabon, Guinée équatoriale, République centrafricaine, République "
 "du Congo, Tchad"
 
-#: data/currencies.xml.in:303
+#: data/currencies.xml.in:298
 msgid "Cape Verdean Escudo"
 msgstr "Escudo cap-verdien"
 
-#: data/currencies.xml.in:304
+#: data/currencies.xml.in:299
 msgid "a-cr:CVE"
 msgstr "a-cr:CVE"
 
-#: data/currencies.xml.in:305
+#: data/currencies.xml.in:300
 msgid "Cape Verde"
 msgstr "Cap-Vert"
 
-#: data/currencies.xml.in:308
+#: data/currencies.xml.in:303
 msgid "Cayman Islands Dollar"
 msgstr "Dollar des îles Caïmans"
 
-#: data/currencies.xml.in:309
+#: data/currencies.xml.in:304
 msgid "a-cr:KYD"
 msgstr "a-cr:KYD"
 
-#: data/currencies.xml.in:310
+#: data/currencies.xml.in:305
 msgid "Cayman Islands"
 msgstr "Îles Caïmans"
 
-#: data/currencies.xml.in:313
+#: data/currencies.xml.in:308
 msgid "Chilean Peso"
 msgstr "Peso chilien"
 
-#: data/currencies.xml.in:314
+#: data/currencies.xml.in:309
 msgid "a-cr:CLP"
 msgstr "a-cr:CLP"
 
-#: data/currencies.xml.in:315
+#: data/currencies.xml.in:310
 msgid "Chile"
 msgstr "Chili"
 
-#: data/currencies.xml.in:318
+#: data/currencies.xml.in:313
 msgid "Colombian Peso"
 msgstr "Peso colombien"
 
-#: data/currencies.xml.in:319
+#: data/currencies.xml.in:314
 msgid "a-cr:COP"
 msgstr "a-cr:COP"
 
-#: data/currencies.xml.in:320
+#: data/currencies.xml.in:315
 msgid "Colombia"
 msgstr "Colombie"
 
-#: data/currencies.xml.in:323
+#: data/currencies.xml.in:318
 msgid "Comorian Franc"
 msgstr "Franc comorien"
 
-#: data/currencies.xml.in:324
+#: data/currencies.xml.in:319
 msgid "a-cr:KMF"
 msgstr "a-cr:KMF"
 
-#: data/currencies.xml.in:325
+#: data/currencies.xml.in:320
 msgid "Comoros"
 msgstr "Comores"
 
-#: data/currencies.xml.in:328
+#: data/currencies.xml.in:323
 msgid "Democratic Republic of the Congo (Congolese Franc)"
 msgstr "Franc congolais"
 
-#: data/currencies.xml.in:329
+#: data/currencies.xml.in:324
 msgid "a-cr:CDF"
 msgstr "a-cr:CDF"
 
-#: data/currencies.xml.in:330
+#: data/currencies.xml.in:325
 msgid "Democratic Republic of the Congo"
 msgstr "République démocratique du Congo"
 
-#: data/currencies.xml.in:333
+#: data/currencies.xml.in:328
 msgid "Costa Rican colón"
 msgstr "Colon costaricain"
 
-#: data/currencies.xml.in:334
+#: data/currencies.xml.in:329
 msgid "a-cr:CRC,au:₡"
 msgstr ""
 
-#: data/currencies.xml.in:335
+#: data/currencies.xml.in:330
 msgid "Costa Rica"
 msgstr "Costa Rica"
 
-#: data/currencies.xml.in:338
+#: data/currencies.xml.in:333
 msgid "Cuban Peso"
 msgstr "Peso cubain"
 
-#: data/currencies.xml.in:339
+#: data/currencies.xml.in:334
 msgid "acr:CUP"
 msgstr "acr:CUP"
 
-#: data/currencies.xml.in:340
+#: data/currencies.xml.in:335
 msgid "Cuba"
 msgstr "Cuba"
 
-#: data/currencies.xml.in:343
+#: data/currencies.xml.in:338
 msgid "Djiboutian Franc"
 msgstr "Franc de Djibouti"
 
-#: data/currencies.xml.in:344
+#: data/currencies.xml.in:339
 msgid "a-cr:DJF"
 msgstr "a-cr:DJF"
 
-#: data/currencies.xml.in:345
+#: data/currencies.xml.in:340
 msgid "Djibouti"
 msgstr "Djibouti"
 
-#: data/currencies.xml.in:348
+#: data/currencies.xml.in:343
 msgid "Dominican Peso"
 msgstr "Peso dominicain"
 
-#: data/currencies.xml.in:349
+#: data/currencies.xml.in:344
 msgid "a-cr:DOP"
 msgstr "a-cr:DOP"
 
-#: data/currencies.xml.in:350
+#: data/currencies.xml.in:345
 msgid "Dominican Republic"
 msgstr "République dominicaine"
 
-#: data/currencies.xml.in:353
+#: data/currencies.xml.in:348
 msgid "Egyptian Pound"
 msgstr "Livre égyptienne"
 
-#: data/currencies.xml.in:354
+#: data/currencies.xml.in:349
 msgid "a-cr:EGP"
 msgstr "a-cr:EGP"
 
-#: data/currencies.xml.in:355
+#: data/currencies.xml.in:350
 msgid "Egypt"
 msgstr "Égypte"
 
-#: data/currencies.xml.in:358
+#: data/currencies.xml.in:353
 msgid "El Salvadoran Colon (obsolete)"
 msgstr "Colon salvadorien (obsolète)"
 
-#: data/currencies.xml.in:359
+#: data/currencies.xml.in:354
 msgid "a-cr:SVC"
 msgstr "a-cr:SVC"
 
-#: data/currencies.xml.in:362
+#: data/currencies.xml.in:357
 msgid "Eritrean Nafka"
 msgstr "Nakfa érythréen"
 
-#: data/currencies.xml.in:363
+#: data/currencies.xml.in:358
 msgid "a-cr:ERN"
 msgstr "a-cr:ERN"
 
-#: data/currencies.xml.in:364
+#: data/currencies.xml.in:359
 msgid "Eritrea"
 msgstr "Érythrée"
 
-#: data/currencies.xml.in:367
+#: data/currencies.xml.in:362
 msgid "Ethiopian Birr"
 msgstr "Birr éthiopien"
 
-#: data/currencies.xml.in:368
+#: data/currencies.xml.in:363
 msgid "a-cr:ETB"
 msgstr "a-cr:ETB"
 
-#: data/currencies.xml.in:369
+#: data/currencies.xml.in:364
 msgid "Ethiopia"
 msgstr "Éthiopie"
 
-#: data/currencies.xml.in:372
+#: data/currencies.xml.in:367
 msgid "Falkland Islands Pound"
 msgstr "Livre des Îles Malouines"
 
-#: data/currencies.xml.in:373
+#: data/currencies.xml.in:368
 msgid "a-cr:FKP"
 msgstr "a-cr:FKP"
 
-#: data/currencies.xml.in:374
+#: data/currencies.xml.in:369
 msgid "Falkland Islands"
 msgstr "Îles Falkland"
 
-#: data/currencies.xml.in:377
+#: data/currencies.xml.in:372
 msgid "Fijian Dollar"
 msgstr "Dollar de Fidji"
 
-#: data/currencies.xml.in:378
+#: data/currencies.xml.in:373
 msgid "a-cr:FJD"
 msgstr "a-cr:FJD"
 
-#: data/currencies.xml.in:379
+#: data/currencies.xml.in:374
 msgid "Fiji"
 msgstr "Fidji"
 
-#: data/currencies.xml.in:382
+#: data/currencies.xml.in:377
 msgid "CFP franc"
 msgstr "Franc CFP"
 
-#: data/currencies.xml.in:383
+#: data/currencies.xml.in:378
 msgid "a-cr:XPF"
 msgstr "a-cr:XPF"
 
-#: data/currencies.xml.in:384
+#: data/currencies.xml.in:379
 msgid "French Polynesia, New Caledonia, Wallis and Futuna"
 msgstr "Nouvelle-Calédonie, Polynésie française, Wallis et Futuna"
 
-#: data/currencies.xml.in:387
+#: data/currencies.xml.in:382
 msgid "Gambian Dalasi"
 msgstr "Dalasi gambien"
 
-#: data/currencies.xml.in:388
+#: data/currencies.xml.in:383
 msgid "a-cr:GMD"
 msgstr "a-cr:GMD"
 
-#: data/currencies.xml.in:389
+#: data/currencies.xml.in:384
 msgid "Gambia"
 msgstr "Gambie"
 
-#: data/currencies.xml.in:392
+#: data/currencies.xml.in:387
 msgid "Georgian Lari"
 msgstr "Lari géorgien"
 
-#: data/currencies.xml.in:393
+#: data/currencies.xml.in:388
 msgid "a-cr:GEL,au:₾"
 msgstr "a-cr:GEL,au:₾"
 
-#: data/currencies.xml.in:394
+#: data/currencies.xml.in:389
 msgid "Georgia"
 msgstr "Géorgie"
 
-#: data/currencies.xml.in:397
+#: data/currencies.xml.in:392
 msgid "Ghanaian Cedi"
 msgstr "Cédi ghanéen"
 
-#: data/currencies.xml.in:398
+#: data/currencies.xml.in:393
 msgid "a-cr:GHS,au:₵"
 msgstr "a-cr:GHS,au:₵"
 
-#: data/currencies.xml.in:399
+#: data/currencies.xml.in:394
 msgid "Ghana"
 msgstr "Ghana"
 
-#: data/currencies.xml.in:402
+#: data/currencies.xml.in:397
 msgid "Gibraltar Pound"
 msgstr "Livre de Gibraltar"
 
-#: data/currencies.xml.in:403
+#: data/currencies.xml.in:398
 msgid "a-cr:GIP"
 msgstr "a-cr:GIP"
 
-#: data/currencies.xml.in:404
+#: data/currencies.xml.in:399
 msgid "Gibraltar"
 msgstr "Gibraltar"
 
-#: data/currencies.xml.in:407
+#: data/currencies.xml.in:402
 msgid "Guatemalan Quetzal"
 msgstr "Quetzal guatémaltèque"
 
-#: data/currencies.xml.in:408
+#: data/currencies.xml.in:403
 msgid "a-cr:GTQ"
 msgstr "a-cr:GTQ"
 
-#: data/currencies.xml.in:409
+#: data/currencies.xml.in:404
 msgid "Guatemala"
 msgstr "Guatemala"
 
-#: data/currencies.xml.in:412
+#: data/currencies.xml.in:407
 msgid "Guernsey Pound"
 msgstr "Livre de Guernesey"
 
-#: data/currencies.xml.in:413
+#: data/currencies.xml.in:408
 msgid "a-cr:GGP"
 msgstr "a-cr:GGP"
 
-#: data/currencies.xml.in:414
+#: data/currencies.xml.in:409
 msgid "Guernsey"
 msgstr "Guernesey"
 
-#: data/currencies.xml.in:417
+#: data/currencies.xml.in:412
 msgid "Guinean Franc"
 msgstr "Franc guinéen"
 
-#: data/currencies.xml.in:418
+#: data/currencies.xml.in:413
 msgid "a-cr:GNF"
 msgstr "a-cr:GNF"
 
-#: data/currencies.xml.in:419
+#: data/currencies.xml.in:414
 msgid "Guinea"
 msgstr "Guinée"
 
-#: data/currencies.xml.in:422
+#: data/currencies.xml.in:417
 msgid "Guyanese Dollar"
 msgstr "Dollar guyanien"
 
-#: data/currencies.xml.in:423
+#: data/currencies.xml.in:418
 msgid "a-cr:GYD"
 msgstr "a-cr:GYD"
 
-#: data/currencies.xml.in:424
+#: data/currencies.xml.in:419
 msgid "Guyana"
 msgstr "Guyana"
 
-#: data/currencies.xml.in:427
+#: data/currencies.xml.in:422
 msgid "Haitian Gourde"
 msgstr "Gourde haïtienne"
 
-#: data/currencies.xml.in:428
+#: data/currencies.xml.in:423
 msgid "a-cr:HTG"
 msgstr "a-cr:HTG"
 
-#: data/currencies.xml.in:429
+#: data/currencies.xml.in:424
 msgid "Haiti"
 msgstr "Haïti"
 
-#: data/currencies.xml.in:432
+#: data/currencies.xml.in:427
 msgid "Honduran Lempira"
 msgstr "Lempira hondurien"
 
-#: data/currencies.xml.in:433
+#: data/currencies.xml.in:428
 msgid "a-cr:HNL"
 msgstr "a-cr:HNL"
 
-#: data/currencies.xml.in:434
+#: data/currencies.xml.in:429
 msgid "Honduras"
 msgstr "Honduras"
 
-#: data/currencies.xml.in:437
+#: data/currencies.xml.in:432
 msgid "Iranian Rial"
 msgstr "Rial iranien"
 
-#: data/currencies.xml.in:438
+#: data/currencies.xml.in:433
 msgid "a-cr:IRR,aio:﷼"
 msgstr "a-cr:IRR,aio:﷼"
 
-#: data/currencies.xml.in:439
+#: data/currencies.xml.in:434
 msgid "Iran"
 msgstr "Iran"
 
-#: data/currencies.xml.in:442
+#: data/currencies.xml.in:437
 msgid "Iraqi Dinar"
 msgstr "Dinar irakien"
 
-#: data/currencies.xml.in:443
+#: data/currencies.xml.in:438
 msgid "a-cr:IQD"
 msgstr "a-cr:IQD"
 
-#: data/currencies.xml.in:444
+#: data/currencies.xml.in:439
 msgid "Iraq"
 msgstr "Irak"
 
-#: data/currencies.xml.in:447
+#: data/currencies.xml.in:442
 msgid "Jamaican Dollar"
 msgstr "Dollar jamaïcain"
 
-#: data/currencies.xml.in:448
+#: data/currencies.xml.in:443
 msgid "a-cr:JMD"
 msgstr "a-cr:JMD"
 
-#: data/currencies.xml.in:449
+#: data/currencies.xml.in:444
 msgid "Jamaica"
 msgstr "Jamaïque"
 
-#: data/currencies.xml.in:452
+#: data/currencies.xml.in:447
 msgid "Jordanian Dinar"
 msgstr "Dinar jordanien"
 
-#: data/currencies.xml.in:453
+#: data/currencies.xml.in:448
 msgid "a-cr:JOD"
 msgstr "a-cr:JOD"
 
-#: data/currencies.xml.in:454
+#: data/currencies.xml.in:449
 msgid "Jordan"
 msgstr "Jordanie"
 
-#: data/currencies.xml.in:457
+#: data/currencies.xml.in:452
 msgid "Kazakhstani Tenge"
 msgstr "Tenge kazakh"
 
-#: data/currencies.xml.in:458
+#: data/currencies.xml.in:453
 msgid "a-cr:KZT,au:₸"
 msgstr "a-cr:KZT,au:₸"
 
-#: data/currencies.xml.in:459
+#: data/currencies.xml.in:454
 msgid "Kazakhstan"
 msgstr "Kazakhstan"
 
-#: data/currencies.xml.in:462
+#: data/currencies.xml.in:457
 msgid "North Korean Won"
 msgstr "Won nord-coréen"
 
-#: data/currencies.xml.in:463
+#: data/currencies.xml.in:458
 msgid "a-cr:KPW"
 msgstr "a-cr:KPW"
 
-#: data/currencies.xml.in:464
+#: data/currencies.xml.in:459
 msgid "North Korea"
 msgstr "Corée du Nord"
 
-#: data/currencies.xml.in:467
+#: data/currencies.xml.in:462
 msgid "Kuwaiti Dinar"
 msgstr "Dinar koweïtien"
 
-#: data/currencies.xml.in:468
+#: data/currencies.xml.in:463
 msgid "a-cr:KWD"
 msgstr "a-cr:KWD"
 
-#: data/currencies.xml.in:469
+#: data/currencies.xml.in:464
 msgid "Kuwait"
 msgstr "Koweït"
 
-#: data/currencies.xml.in:472
+#: data/currencies.xml.in:467
 msgid "Kyrgyzstani Som"
 msgstr "Som du Kirghizistan"
 
-#: data/currencies.xml.in:473
+#: data/currencies.xml.in:468
 msgid "acr:KGS"
 msgstr ""
 
-#: data/currencies.xml.in:474
+#: data/currencies.xml.in:469
 msgid "Kyrgyzstan"
 msgstr "Kyrgyzstan"
 
-#: data/currencies.xml.in:477
+#: data/currencies.xml.in:472
 msgid "Lao Kip"
 msgstr "Kip laotien"
 
-#: data/currencies.xml.in:478
+#: data/currencies.xml.in:473
 msgid "a-cr:LAK,au:₭"
 msgstr "a-cr:LAK,au:₭"
 
-#: data/currencies.xml.in:479
+#: data/currencies.xml.in:474
 msgid "Laos"
 msgstr "Laos"
 
-#: data/currencies.xml.in:482
+#: data/currencies.xml.in:477
 msgid "Lebanese Pound"
 msgstr "Livre libanaise"
 
-#: data/currencies.xml.in:483
+#: data/currencies.xml.in:478
 msgid "a-cr:LBP"
 msgstr "a-cr:LBP"
 
-#: data/currencies.xml.in:484
+#: data/currencies.xml.in:479
 msgid "Lebanon"
 msgstr "Liban"
 
-#: data/currencies.xml.in:487
+#: data/currencies.xml.in:482
 msgid "Lesotho Loti"
 msgstr "Loti du Lesotho"
 
-#: data/currencies.xml.in:488
+#: data/currencies.xml.in:483
 msgid "a-cr:LSL"
 msgstr "a-cr:LSL"
 
-#: data/currencies.xml.in:489
+#: data/currencies.xml.in:484
 msgid "Lesotho"
 msgstr "Lesotho"
 
-#: data/currencies.xml.in:492
+#: data/currencies.xml.in:487
 msgid "Liberian Dollar"
 msgstr "Dollar libérien"
 
-#: data/currencies.xml.in:493
+#: data/currencies.xml.in:488
 msgid "a-cr:LRD"
 msgstr "a-cr:LRD"
 
-#: data/currencies.xml.in:494
+#: data/currencies.xml.in:489
 msgid "Liberia"
 msgstr "Liberia"
 
-#: data/currencies.xml.in:497
+#: data/currencies.xml.in:492
 msgid "Libyan Dinar"
 msgstr "Dinar libyen"
 
-#: data/currencies.xml.in:498
+#: data/currencies.xml.in:493
 msgid "a-cr:LYD"
 msgstr "a-cr:LYD"
 
-#: data/currencies.xml.in:499
+#: data/currencies.xml.in:494
 msgid "Libya"
 msgstr "Libye"
 
-#: data/currencies.xml.in:502
+#: data/currencies.xml.in:497
 msgid "Macanese Pataca"
 msgstr "Pataca de Macao"
 
-#: data/currencies.xml.in:503
+#: data/currencies.xml.in:498
 msgid "a-cr:MOP"
 msgstr "a-cr:MOP"
 
-#: data/currencies.xml.in:504
+#: data/currencies.xml.in:499
 msgid "Macau"
 msgstr "Macao"
 
-#: data/currencies.xml.in:507
+#: data/currencies.xml.in:502
 msgid "Macedonian Denar"
 msgstr "Dinar macédonien"
 
-#: data/currencies.xml.in:508
+#: data/currencies.xml.in:503
 msgid "a-cr:MKD"
 msgstr "a-cr:MKD"
 
-#: data/currencies.xml.in:509
+#: data/currencies.xml.in:504
 msgid "Macedonia"
 msgstr "Macédoine"
 
-#: data/currencies.xml.in:512
+#: data/currencies.xml.in:507
 msgid "Malagasy Ariary"
 msgstr "Ariary malgache"
 
-#: data/currencies.xml.in:513
+#: data/currencies.xml.in:508
 msgid "a-cr:MGA"
 msgstr "a-cr:MGA"
 
-#: data/currencies.xml.in:514
+#: data/currencies.xml.in:509
 msgid "Madagascar"
 msgstr "Madagascar"
 
-#: data/currencies.xml.in:517
+#: data/currencies.xml.in:512
 msgid "Malawian Kwacha"
 msgstr "Kwacha malawien"
 
-#: data/currencies.xml.in:518
+#: data/currencies.xml.in:513
 msgid "a-cr:MWK"
 msgstr "a-cr:MWK"
 
-#: data/currencies.xml.in:519
+#: data/currencies.xml.in:514
 msgid "Malawi"
 msgstr "Malawi"
 
-#: data/currencies.xml.in:522
+#: data/currencies.xml.in:517
 msgid "Maldivian Rufiyaa"
 msgstr "Rufiyaa maldivien"
 
-#: data/currencies.xml.in:523
+#: data/currencies.xml.in:518
 #, fuzzy
 msgid "a-cr:MVR,aio:ރ"
 msgstr "a-cr:IRR,aio:﷼"
 
-#: data/currencies.xml.in:524
+#: data/currencies.xml.in:519
 msgid "Maldives"
 msgstr "Maldives"
 
-#: data/currencies.xml.in:527
+#: data/currencies.xml.in:522
 msgid "Mauritanian Ouguiya"
 msgstr "Ouguiya mauritanien"
 
-#: data/currencies.xml.in:528
+#: data/currencies.xml.in:523
 msgid "a-cr:MRU"
 msgstr ""
 
-#: data/currencies.xml.in:529
+#: data/currencies.xml.in:524
 msgid "Mauritania"
 msgstr "Mauritanie"
 
-#: data/currencies.xml.in:532
+#: data/currencies.xml.in:527
 msgid "Mauritian Rupee"
 msgstr "Roupie mauricienne"
 
-#: data/currencies.xml.in:533
+#: data/currencies.xml.in:528
 msgid "a-cr:MUR"
 msgstr "a-cr:MUR"
 
-#: data/currencies.xml.in:534
+#: data/currencies.xml.in:529
 msgid "Mauritius"
 msgstr "Maurice"
 
-#: data/currencies.xml.in:537
+#: data/currencies.xml.in:532
 msgid "Moldovan Leu"
 msgstr "Leu moldave"
 
-#: data/currencies.xml.in:538
+#: data/currencies.xml.in:533
 msgid "a-cr:MDL"
 msgstr "a-cr:MDL"
 
-#: data/currencies.xml.in:539
+#: data/currencies.xml.in:534
 msgid "Moldova"
 msgstr "Moldavie"
 
-#: data/currencies.xml.in:542
+#: data/currencies.xml.in:537
 msgid "Mongolian Tögrög"
 msgstr "Tugrik mongol"
 
-#: data/currencies.xml.in:543
+#: data/currencies.xml.in:538
 msgid "a-cr:MNT,au:₮"
 msgstr "a-cr:MNT,au:₮"
 
-#: data/currencies.xml.in:544
+#: data/currencies.xml.in:539
 msgid "Mongolia"
 msgstr "Mongolie"
 
-#: data/currencies.xml.in:547
+#: data/currencies.xml.in:542
 msgid "Moroccan Dirham"
 msgstr "Dirham marocain"
 
-#: data/currencies.xml.in:548
+#: data/currencies.xml.in:543
 msgid "a-cr:MAD"
 msgstr "a-cr:MAD"
 
-#: data/currencies.xml.in:549
+#: data/currencies.xml.in:544
 msgid "Morocco"
 msgstr "Maroc"
 
-#: data/currencies.xml.in:552
+#: data/currencies.xml.in:547
 msgid "Mozambican Metical"
 msgstr "Metical mozambicain"
 
-#: data/currencies.xml.in:553
+#: data/currencies.xml.in:548
 msgid "a-cr:MZN"
 msgstr "a-cr:MZN"
 
-#: data/currencies.xml.in:554
+#: data/currencies.xml.in:549
 msgid "Mozambique"
 msgstr "Mozambique"
 
-#: data/currencies.xml.in:557
+#: data/currencies.xml.in:552
 msgid "Myanmar (Burmese Kyat)"
 msgstr "Kyat du Myanmar"
 
-#: data/currencies.xml.in:558
+#: data/currencies.xml.in:553
 msgid "a-cr:MMK"
 msgstr "a-cr:MMK"
 
-#: data/currencies.xml.in:559
+#: data/currencies.xml.in:554
 msgid "Myanmar"
 msgstr "Myanmar"
 
-#: data/currencies.xml.in:562
+#: data/currencies.xml.in:557
 msgid "Namibian Dollar"
 msgstr "Dollar namibien"
 
-#: data/currencies.xml.in:563
+#: data/currencies.xml.in:558
 msgid "a-cr:NAD"
 msgstr "a-cr:NAD"
 
-#: data/currencies.xml.in:564
+#: data/currencies.xml.in:559
 msgid "Namibia"
 msgstr "Namibie"
 
-#: data/currencies.xml.in:567
+#: data/currencies.xml.in:562
 msgid "Nepalese Rupee"
 msgstr "Roupie népalaise"
 
-#: data/currencies.xml.in:568
+#: data/currencies.xml.in:563
 msgid "a-cr:NPR,aio:रू"
 msgstr ""
 
-#: data/currencies.xml.in:569
+#: data/currencies.xml.in:564
 msgid "Nepal"
 msgstr "Népal"
 
-#: data/currencies.xml.in:572
+#: data/currencies.xml.in:567
 msgid "Nicaraguan Córdoba"
 msgstr "Cordoba nicaraguayen"
 
-#: data/currencies.xml.in:573
+#: data/currencies.xml.in:568
 msgid "a-cr:NIO"
 msgstr "a-cr:NIO"
 
-#: data/currencies.xml.in:574
+#: data/currencies.xml.in:569
 msgid "Nicaragua"
 msgstr "Nicaragua"
 
-#: data/currencies.xml.in:577
+#: data/currencies.xml.in:572
 msgid "Nigerian Naira"
 msgstr "Naira nigérian"
 
-#: data/currencies.xml.in:578
+#: data/currencies.xml.in:573
 msgid "a-cr:NGN,au:₦"
 msgstr "a-cr:NGN,au:₦"
 
-#: data/currencies.xml.in:579
+#: data/currencies.xml.in:574
 msgid "Nigeria"
 msgstr "Nigéria"
 
-#: data/currencies.xml.in:582
+#: data/currencies.xml.in:577
 msgid "Omani Rial"
 msgstr "Rial omanais"
 
-#: data/currencies.xml.in:583
+#: data/currencies.xml.in:578
 msgid "a-cr:OMR"
 msgstr "a-cr:OMR"
 
-#: data/currencies.xml.in:584
+#: data/currencies.xml.in:579
 msgid "Oman"
 msgstr "Oman"
 
-#: data/currencies.xml.in:587
+#: data/currencies.xml.in:582
 msgid "Pakistani Rupee"
 msgstr "Roupie pakistanaise"
 
-#: data/currencies.xml.in:588
+#: data/currencies.xml.in:583
 msgid "a-cr:PKR"
 msgstr "a-cr:PKR"
 
-#: data/currencies.xml.in:589
+#: data/currencies.xml.in:584
 msgid "Pakistan"
 msgstr "Pakistan"
 
-#: data/currencies.xml.in:592
+#: data/currencies.xml.in:587
 msgid "Panamanian Balboa"
 msgstr "Balboa panaméen"
 
-#: data/currencies.xml.in:593
+#: data/currencies.xml.in:588
 msgid "a-cr:PAB"
 msgstr "a-cr:PAB"
 
-#: data/currencies.xml.in:594
+#: data/currencies.xml.in:589
 msgid "Panama"
 msgstr "Panama"
 
-#: data/currencies.xml.in:597
+#: data/currencies.xml.in:592
 msgid "Papua New Guinean Kina"
 msgstr "Kina de Papouasie-Nouvelle-Guinée"
 
-#: data/currencies.xml.in:598
+#: data/currencies.xml.in:593
 msgid "a-cr:PGK"
 msgstr "a-cr:PGK"
 
-#: data/currencies.xml.in:599
+#: data/currencies.xml.in:594
 msgid "Papua New Guinea"
 msgstr "Papouasie-Nouvelle-Guinée"
 
-#: data/currencies.xml.in:602
+#: data/currencies.xml.in:597
 msgid "Paraguayan Guaraní"
 msgstr "Guarani paraguayen"
 
-#: data/currencies.xml.in:603
+#: data/currencies.xml.in:598
 msgid "a-cr:PYG,au:₲"
 msgstr "a-cr:PYG,au:₲"
 
-#: data/currencies.xml.in:604
+#: data/currencies.xml.in:599
 msgid "Paraguay"
 msgstr "Paraguay"
 
-#: data/currencies.xml.in:607
+#: data/currencies.xml.in:602
 msgid "Peruvian Sol"
 msgstr "Sol péruvien"
 
-#: data/currencies.xml.in:608
+#: data/currencies.xml.in:603
 msgid "a-cr:PEN"
 msgstr "a-cr:PEN"
 
-#: data/currencies.xml.in:609
+#: data/currencies.xml.in:604
 msgid "Peru"
 msgstr "Pérou"
 
-#: data/currencies.xml.in:612
+#: data/currencies.xml.in:607
 msgid "Qatari Riyal"
 msgstr "Rial qatari"
 
-#: data/currencies.xml.in:613
+#: data/currencies.xml.in:608
 msgid "a-cr:QAR"
 msgstr "a-cr:QAR"
 
-#: data/currencies.xml.in:614
+#: data/currencies.xml.in:609
 msgid "Qatar"
 msgstr "Qatar"
 
-#: data/currencies.xml.in:617
+#: data/currencies.xml.in:612
 msgid "Rwandan Franc"
 msgstr "Franc rwandais"
 
-#: data/currencies.xml.in:618
+#: data/currencies.xml.in:613
 msgid "a-cr:RWF"
 msgstr "a-cr:RWF"
 
-#: data/currencies.xml.in:619
+#: data/currencies.xml.in:614
 msgid "Rwanda"
 msgstr "Rwanda"
 
-#: data/currencies.xml.in:622
+#: data/currencies.xml.in:617
 msgid "São Tomé and Príncipe Dobra"
 msgstr "Dobra são-tomense"
 
-#: data/currencies.xml.in:623
+#: data/currencies.xml.in:618
 msgid "a-cr:STN"
 msgstr ""
 
-#: data/currencies.xml.in:624
+#: data/currencies.xml.in:619
 msgid "Sao Tome and Principe"
 msgstr "Sao Tomé-et-Principe"
 
-#: data/currencies.xml.in:627
+#: data/currencies.xml.in:622
 msgid "Saudi Riyal"
 msgstr "Rial saoudien"
 
-#: data/currencies.xml.in:628
+#: data/currencies.xml.in:623
 msgid "a-cr:SAR"
 msgstr "a-cr:SAR"
 
-#: data/currencies.xml.in:629
+#: data/currencies.xml.in:624
 msgid "Saudi Arabia"
 msgstr "Arabie saoudite"
 
-#: data/currencies.xml.in:632
+#: data/currencies.xml.in:627
 msgid "Serbian Dinar"
 msgstr "Dinar serbe"
 
-#: data/currencies.xml.in:633
+#: data/currencies.xml.in:628
 msgid "a-cr:RSD"
 msgstr "a-cr:RSD"
 
-#: data/currencies.xml.in:634
+#: data/currencies.xml.in:629
 msgid "Serbia"
 msgstr "Serbie"
 
-#: data/currencies.xml.in:637
+#: data/currencies.xml.in:632
 msgid "Seychellois Rupee"
 msgstr "Roupie seychelloise"
 
-#: data/currencies.xml.in:638
+#: data/currencies.xml.in:633
 msgid "a-cr:SCR"
 msgstr "a-cr:SCR"
 
-#: data/currencies.xml.in:639
+#: data/currencies.xml.in:634
 msgid "Seychelles"
 msgstr "Seychelles"
 
-#: data/currencies.xml.in:642
+#: data/currencies.xml.in:637
 msgid "Sierra Leonean Leone"
 msgstr "Leone de Sierra Leone"
 
-#: data/currencies.xml.in:643
+#: data/currencies.xml.in:638
 msgid "a-cr:SLE"
 msgstr ""
 
-#: data/currencies.xml.in:644
+#: data/currencies.xml.in:639
 msgid "Sierra Leone"
 msgstr "Sierra Leone"
 
-#: data/currencies.xml.in:647
+#: data/currencies.xml.in:642
 msgid "Solomon Islands Dollar"
 msgstr "Dollar des îles Salomon"
 
-#: data/currencies.xml.in:648
+#: data/currencies.xml.in:643
 msgid "a-cr:SBD"
 msgstr "a-cr:SBD"
 
-#: data/currencies.xml.in:649
+#: data/currencies.xml.in:644
 msgid "Solomon Islands"
 msgstr "Salomon"
 
-#: data/currencies.xml.in:652
+#: data/currencies.xml.in:647
 msgid "Somali Shilling"
 msgstr "Shilling somalien"
 
-#: data/currencies.xml.in:653
+#: data/currencies.xml.in:648
 msgid "a-cr:SOS"
 msgstr "a-cr:SOS"
 
-#: data/currencies.xml.in:654
+#: data/currencies.xml.in:649
 msgid "Somalia"
 msgstr "Somalie"
 
-#: data/currencies.xml.in:657
+#: data/currencies.xml.in:652
 msgid "Sri Lankan Rupee"
 msgstr "Roupie sri lankaise"
 
-#: data/currencies.xml.in:658
+#: data/currencies.xml.in:653
 msgid "a-cr:LKR,aou:௹"
 msgstr "a-cr:LKR,aou:௹"
 
-#: data/currencies.xml.in:659
+#: data/currencies.xml.in:654
 msgid "Sri Lanka"
 msgstr "Sri Lanka"
 
-#: data/currencies.xml.in:662
+#: data/currencies.xml.in:657
 msgid "Sudanese Pound"
 msgstr "Livre soudanaise"
 
-#: data/currencies.xml.in:663
+#: data/currencies.xml.in:658
 msgid "a-cr:SDG"
 msgstr "a-cr:SDG"
 
-#: data/currencies.xml.in:664
+#: data/currencies.xml.in:659
 msgid "Sudan"
 msgstr "Soudan"
 
-#: data/currencies.xml.in:667
+#: data/currencies.xml.in:662
 msgid "Surinamese Dollar"
 msgstr "Dollar du Surinam"
 
-#: data/currencies.xml.in:668
+#: data/currencies.xml.in:663
 msgid "a-cr:SRD"
 msgstr "a-cr:SRD"
 
-#: data/currencies.xml.in:669
+#: data/currencies.xml.in:664
 msgid "Suriname"
 msgstr "Surinam"
 
-#: data/currencies.xml.in:672
+#: data/currencies.xml.in:667
 msgid "Swazi Lilangeni"
 msgstr "Lilangeni du Swaziland"
 
-#: data/currencies.xml.in:673
+#: data/currencies.xml.in:668
 msgid "a-cr:SZL"
 msgstr "a-cr:SZL"
 
-#: data/currencies.xml.in:674
+#: data/currencies.xml.in:669
 msgid "Eswatini"
 msgstr "Eswatini"
 
-#: data/currencies.xml.in:677
+#: data/currencies.xml.in:672
 msgid "Syrian Pound"
 msgstr "Livre syrienne"
 
-#: data/currencies.xml.in:678
+#: data/currencies.xml.in:673
 msgid "a-cr:SYP"
 msgstr "a-cr:SYP"
 
-#: data/currencies.xml.in:679
+#: data/currencies.xml.in:674
 msgid "Syria"
 msgstr "Syrie"
 
-#: data/currencies.xml.in:682
+#: data/currencies.xml.in:677
 msgid "New Taiwan Dollar"
 msgstr "Nouveau dollar de Taïwan"
 
-#: data/currencies.xml.in:683
+#: data/currencies.xml.in:678
 msgid "a-cr:TWD"
 msgstr "a-cr:TWD"
 
-#: data/currencies.xml.in:684
+#: data/currencies.xml.in:679
 msgid "Taiwan"
 msgstr "Taïwan"
 
-#: data/currencies.xml.in:687
+#: data/currencies.xml.in:682
 msgid "Tajikistani Somoni"
 msgstr "Somoni tadjik"
 
-#: data/currencies.xml.in:688
+#: data/currencies.xml.in:683
 msgid "a-cr:TJS"
 msgstr "a-cr:TJS"
 
-#: data/currencies.xml.in:689
+#: data/currencies.xml.in:684
 msgid "Tajikistan"
 msgstr "Tadjikistan"
 
-#: data/currencies.xml.in:692
+#: data/currencies.xml.in:687
 msgid "Tanzanian Shilling"
 msgstr "Shilling tanzanien"
 
-#: data/currencies.xml.in:693
+#: data/currencies.xml.in:688
 msgid "a-cr:TZS"
 msgstr "a-cr:TZS"
 
-#: data/currencies.xml.in:694
+#: data/currencies.xml.in:689
 msgid "Tanzania"
 msgstr "Tanzanie"
 
-#: data/currencies.xml.in:697
+#: data/currencies.xml.in:692
 msgid "Tongan Paʻanga"
 msgstr "Pa’anga de Tonga"
 
-#: data/currencies.xml.in:698
+#: data/currencies.xml.in:693
 msgid "a-cr:TOP"
 msgstr "a-cr:TOP"
 
-#: data/currencies.xml.in:699
+#: data/currencies.xml.in:694
 msgid "Tonga"
 msgstr "Tonga"
 
-#: data/currencies.xml.in:702
+#: data/currencies.xml.in:697
 msgid "Trinidad and Tobago dollar"
 msgstr "Dollar de Trinidad"
 
-#: data/currencies.xml.in:703
+#: data/currencies.xml.in:698
 msgid "a-cr:TTD"
 msgstr "a-cr:TTD"
 
-#: data/currencies.xml.in:704
+#: data/currencies.xml.in:699
 msgid "Trinidad and Tobago"
 msgstr "Trinidad, Tobago"
 
-#: data/currencies.xml.in:707
+#: data/currencies.xml.in:702
 msgid "Tunisian Dinar"
 msgstr "Dinar tunisien"
 
-#: data/currencies.xml.in:708
+#: data/currencies.xml.in:703
 msgid "a-cr:TND"
 msgstr "a-cr:TND"
 
-#: data/currencies.xml.in:709
+#: data/currencies.xml.in:704
 msgid "Tunisia"
 msgstr "Tunisie"
 
-#: data/currencies.xml.in:712
+#: data/currencies.xml.in:707
 msgid "Turkmenistan Manat"
 msgstr "Manat turkmène"
 
-#: data/currencies.xml.in:713
+#: data/currencies.xml.in:708
 msgid "a-cr:TMT"
 msgstr "a-cr:TMT"
 
-#: data/currencies.xml.in:714
+#: data/currencies.xml.in:709
 msgid "Turkmenistan"
 msgstr "Turkménistan"
 
-#: data/currencies.xml.in:717
+#: data/currencies.xml.in:712
 msgid "Ugandan Shilling"
 msgstr "Shilling ougandais"
 
-#: data/currencies.xml.in:718
+#: data/currencies.xml.in:713
 msgid "a-cr:UGX"
 msgstr "a-cr:UGX"
 
-#: data/currencies.xml.in:719
+#: data/currencies.xml.in:714
 msgid "Uganda"
 msgstr "Ouganda"
 
-#: data/currencies.xml.in:722
+#: data/currencies.xml.in:717
 msgid "Ukrainian Hryvnia"
 msgstr "Hryvnia ukrainienne"
 
-#: data/currencies.xml.in:723
+#: data/currencies.xml.in:718
 msgid "a-cr:UAH,au:₴"
 msgstr "a-cr:UAH,au:₴"
 
-#: data/currencies.xml.in:724
+#: data/currencies.xml.in:719
 msgid "Ukraine"
 msgstr "Ukraine"
 
-#: data/currencies.xml.in:727
+#: data/currencies.xml.in:722
 msgid "United Arab Emirates Dirham"
 msgstr "Dirham des Émirats arabes unis"
 
-#: data/currencies.xml.in:728
+#: data/currencies.xml.in:723
 msgid "a-cr:AED"
 msgstr "a-cr:AED"
 
-#: data/currencies.xml.in:729
+#: data/currencies.xml.in:724
 msgid "United Arab Emirates"
 msgstr "Émirats arabes unis"
 
-#: data/currencies.xml.in:732
+#: data/currencies.xml.in:727
 msgid "Uruguayan Peso"
 msgstr "Peso uruguayen"
 
-#: data/currencies.xml.in:733
+#: data/currencies.xml.in:728
 msgid "a-cr:UYU"
 msgstr "a-cr:UYU"
 
-#: data/currencies.xml.in:734
+#: data/currencies.xml.in:729
 msgid "Uruguay"
 msgstr "Uruguay"
 
-#: data/currencies.xml.in:737
+#: data/currencies.xml.in:732
 msgid "Uzbekistan Soʻm"
 msgstr "Som ouzbek"
 
-#: data/currencies.xml.in:738
+#: data/currencies.xml.in:733
 msgid "a-cr:UZS"
 msgstr "a-cr:UZS"
 
-#: data/currencies.xml.in:739
+#: data/currencies.xml.in:734
 msgid "Uzbekistan"
 msgstr "Ouzbékistan"
 
-#: data/currencies.xml.in:742
+#: data/currencies.xml.in:737
 msgid "Vanuatu Vatu"
 msgstr "Vatu vanuatais"
 
-#: data/currencies.xml.in:743
+#: data/currencies.xml.in:738
 msgid "a-cr:VUV"
 msgstr "a-cr:VUV"
 
-#: data/currencies.xml.in:744
+#: data/currencies.xml.in:739
 msgid "Vanuatu"
 msgstr "Vanuatu"
 
-#: data/currencies.xml.in:747
+#: data/currencies.xml.in:742
 msgid "Venezuelan Bolívar"
 msgstr "Bolivar vénézuélien"
 
-#: data/currencies.xml.in:748
+#: data/currencies.xml.in:743
 msgid "a-cr:VES"
 msgstr ""
 
-#: data/currencies.xml.in:751
+#: data/currencies.xml.in:746
 msgid "Vietnamese Đồng"
 msgstr "Dong vietnamien"
 
-#: data/currencies.xml.in:752
+#: data/currencies.xml.in:747
 msgid "a-cr:VND,au:₫"
 msgstr "a-cr:VND,au:₫"
 
-#: data/currencies.xml.in:753
+#: data/currencies.xml.in:748
 msgid "Vietnam"
 msgstr "Vietnam"
 
-#: data/currencies.xml.in:756
+#: data/currencies.xml.in:751
 msgid "Yemeni Rial"
 msgstr "Rial yéménite"
 
-#: data/currencies.xml.in:757
+#: data/currencies.xml.in:752
 msgid "a-cr:YER"
 msgstr "a-cr:YER"
 
-#: data/currencies.xml.in:758
+#: data/currencies.xml.in:753
 msgid "Yemen"
 msgstr "Yémen"
 
-#: data/currencies.xml.in:761
+#: data/currencies.xml.in:756
 msgid "Zambian Kwacha"
 msgstr "Kwacha zambien"
 
-#: data/currencies.xml.in:762
+#: data/currencies.xml.in:757
 #, fuzzy
 msgid "a-cr:ZMW"
 msgstr "a-cr:ZMK"
 
-#: data/currencies.xml.in:763
+#: data/currencies.xml.in:758
 msgid "Zambia"
 msgstr "Zambie"
 
-#: data/currencies.xml.in:766
+#: data/currencies.xml.in:761
 msgid "Euro Cent"
 msgstr "Centime d'euro"
 
-#: data/currencies.xml.in:767
+#: data/currencies.xml.in:762
 msgid "r:eurocent,p:eurocents"
 msgstr "r:centeuro,p:centseuro"
 
-#: data/currencies.xml.in:775
+#: data/currencies.xml.in:770
 msgid "Cent (USD)"
 msgstr "Cent (USD)"
 
-#: data/currencies.xml.in:776
+#: data/currencies.xml.in:771
 msgid "au:¢,r:cent,p:cents"
 msgstr "au:¢,r:cent,p:cents"
 
-#: data/currencies.xml.in:785
+#: data/currencies.xml.in:780
 msgid "Belgian Franc (obsolete)"
 msgstr "Franc belge (obsolète)"
 
-#: data/currencies.xml.in:786
+#: data/currencies.xml.in:781
 msgid "a-cr:BEF"
 msgstr "a-cr:BEF"
 
-#: data/currencies.xml.in:795
+#: data/currencies.xml.in:790
 msgid "Croatian Kuna (obsolete)"
 msgstr "Kuna croate (obsolète)"
 
-#: data/currencies.xml.in:796
+#: data/currencies.xml.in:791
 msgid "a-cr:HRK"
 msgstr "a-cr:HRK"
 
-#: data/currencies.xml.in:805
+#: data/currencies.xml.in:800
 msgid "Greek Drachma (obsolete)"
 msgstr "Drachme grecque (obsolète"
 
-#: data/currencies.xml.in:806
+#: data/currencies.xml.in:801
 msgid "a-cr:GRD,au:₯"
 msgstr "a-cr:GRD,au:₯"
 
-#: data/currencies.xml.in:815
+#: data/currencies.xml.in:810
 msgid "French Franc (obsolete)"
 msgstr "Franc français (obsolète)"
 
-#: data/currencies.xml.in:816
+#: data/currencies.xml.in:811
 msgid "a-cr:FRF,au:₣"
 msgstr "a-cr:FRF,au:₣"
 
-#: data/currencies.xml.in:825
+#: data/currencies.xml.in:820
 msgid "Italian Lira (obsolete)"
 msgstr "Lire italienne (obsolète)"
 
-#: data/currencies.xml.in:826
+#: data/currencies.xml.in:821
 msgid "a-cr:ITL"
 msgstr "a-cr:ITL"
 
-#: data/currencies.xml.in:835
+#: data/currencies.xml.in:830
 msgid "Dutch Guilder (obsolete)"
 msgstr "Florin néerlandais (obsolète)"
 
-#: data/currencies.xml.in:836
+#: data/currencies.xml.in:831
 msgid "a-cr:NLG"
 msgstr "a-cr:NLG"
 
-#: data/currencies.xml.in:845
+#: data/currencies.xml.in:840
 msgid "Portuguese Escudo (obsolete)"
 msgstr "Escudo portugais (obsolète)"
 
-#: data/currencies.xml.in:846
+#: data/currencies.xml.in:841
 msgid "a-cr:PTE"
 msgstr "a-cr:PTE"
 
-#: data/currencies.xml.in:855
+#: data/currencies.xml.in:850
 msgid "Deutsche Mark (obsolete)"
 msgstr "Deutsche Mark (obsolète)"
 
-#: data/currencies.xml.in:856
+#: data/currencies.xml.in:851
 msgid "a-cr:DEM"
 msgstr "a-cr:DEM"
 
-#: data/currencies.xml.in:865
+#: data/currencies.xml.in:860
 msgid "Spanish Peseta (obsolete)"
 msgstr "Peseta espagnole (obsolète)"
 
-#: data/currencies.xml.in:866
+#: data/currencies.xml.in:861
 msgid "a-cr:ESP,au:₧"
 msgstr "a-cr:ESP,au:₧"
 
-#: data/currencies.xml.in:875
+#: data/currencies.xml.in:870
 msgid "Irish Pound (obsolete)"
 msgstr "Livre irlandaise (obsolète)"
 
-#: data/currencies.xml.in:876
+#: data/currencies.xml.in:871
 msgid "a-cr:IEP"
 msgstr "a-cr:IEP"
 
-#: data/currencies.xml.in:885
+#: data/currencies.xml.in:880
 msgid "Luxembourg Franc (obsolete)"
 msgstr "Franc luxembourgeois (obsolète)"
 
-#: data/currencies.xml.in:886
+#: data/currencies.xml.in:881
 msgid "a-cr:LUF"
 msgstr "a-cr:LUF"
 
-#: data/currencies.xml.in:895
+#: data/currencies.xml.in:890
 msgid "Austrian Schilling (obsolete)"
 msgstr "Shilling autrichien (obsolète)"
 
-#: data/currencies.xml.in:896
+#: data/currencies.xml.in:891
 msgid "a-cr:ATS"
 msgstr "a-cr:ATS"
 
-#: data/currencies.xml.in:905
+#: data/currencies.xml.in:900
 msgid "Finnish Markka (obsolete)"
 msgstr "Markka finnois (obsolète)"
 
-#: data/currencies.xml.in:906
+#: data/currencies.xml.in:901
 msgid "a-cr:FIM"
 msgstr "a-cr:FIM"
 
-#: data/currencies.xml.in:915
+#: data/currencies.xml.in:910
 msgid "Slovenian Tolar (obsolete)"
 msgstr "Tolar slovène (obsolète)"
 
-#: data/currencies.xml.in:916
+#: data/currencies.xml.in:911
 msgid "a-cr:SIT"
 msgstr "a-cr:SIT"
 
-#: data/currencies.xml.in:925
+#: data/currencies.xml.in:920
 msgid "Cypriot Pound (obsolete)"
 msgstr "Livre chypriote (obsolète)"
 
-#: data/currencies.xml.in:926
+#: data/currencies.xml.in:921
 msgid "a-cr:CYP"
 msgstr "a-cr:CYP"
 
-#: data/currencies.xml.in:935
+#: data/currencies.xml.in:930
 msgid "Estonian Kroon (obsolete)"
 msgstr "Kroon estonienne (obsolète)"
 
-#: data/currencies.xml.in:936
+#: data/currencies.xml.in:931
 msgid "a-cr:EEK"
 msgstr "a-cr:EEK"
 
-#: data/currencies.xml.in:945
+#: data/currencies.xml.in:940
 msgid "Slovak Koruna (obsolete)"
 msgstr "Couronne slovaque (obsolète)"
 
-#: data/currencies.xml.in:946
+#: data/currencies.xml.in:941
 msgid "a-cr:SKK"
 msgstr "a-cr:SKK"
 
-#: data/currencies.xml.in:955
+#: data/currencies.xml.in:950
 msgid "Maltese Lira (obsolete)"
 msgstr "Lire maltaise (obsolète)"
 
-#: data/currencies.xml.in:956
+#: data/currencies.xml.in:951
 msgid "a-cr:MTL"
 msgstr "a-cr:MTL"
 
-#: data/currencies.xml.in:965
+#: data/currencies.xml.in:960
 msgid "Latvian Lats (obsolete)"
 msgstr "Lats letton (obsolète)"
 
-#: data/currencies.xml.in:966
+#: data/currencies.xml.in:961
 msgid "a-cr:LVL"
 msgstr "a-cr:LVL"
 
-#: data/currencies.xml.in:975
+#: data/currencies.xml.in:970
 msgid "Lithuanian Litas (obsolete)"
 msgstr "Litas lituanien (obsolète)"
 
-#: data/currencies.xml.in:976
+#: data/currencies.xml.in:971
 msgid "a-cr:LTL"
 msgstr "a-cr:LTL"
+
+#: data/currencies.xml.in:980
+msgid "Bulgarian Lev (obsolete)"
+msgstr "Lev bulgare (obsolète)"
+
+#: data/currencies.xml.in:981
+msgid "lev,a-cr:BGN"
+msgstr "lev,a-cr:BGN"
 
 #: data/datasets.xml.in:4
 msgid "Data Sets"
@@ -2078,8 +2075,8 @@ msgstr "!datasets!Nombre"
 msgid "!datasets!r:number"
 msgstr "!datasets!r:nombre"
 
-#: data/datasets.xml.in:30 data/datasets.xml.in:114 data/functions.xml.in:3348
-#: data/functions.xml.in:3386
+#: data/datasets.xml.in:30 data/datasets.xml.in:114 data/functions.xml.in:3352
+#: data/functions.xml.in:3390
 msgid "Name"
 msgstr "Nom"
 
@@ -2817,10 +2814,10 @@ msgstr ""
 #: data/functions.xml.in:20 data/functions.xml.in:415
 #: data/functions.xml.in:3250 data/functions.xml.in:3269
 #: data/functions.xml.in:3300 data/functions.xml.in:3335
-#: data/functions.xml.in:3836 data/functions.xml.in:3852
-#: data/functions.xml.in:3871 data/functions.xml.in:3894
-#: data/functions.xml.in:3914 data/functions.xml.in:3934
-#: data/functions.xml.in:3951
+#: data/functions.xml.in:3840 data/functions.xml.in:3856
+#: data/functions.xml.in:3875 data/functions.xml.in:3898
+#: data/functions.xml.in:3918 data/functions.xml.in:3938
+#: data/functions.xml.in:3955
 msgid "Function"
 msgstr "Fonction"
 
@@ -2842,8 +2839,8 @@ msgstr "Dimension / Taille du pas"
 #: data/functions.xml.in:751 data/functions.xml.in:761
 #: data/functions.xml.in:771 data/functions.xml.in:781
 #: data/functions.xml.in:791 data/functions.xml.in:801
-#: data/functions.xml.in:913 data/functions.xml.in:3762
-#: data/functions.xml.in:3784 data/functions.xml.in:3920
+#: data/functions.xml.in:913 data/functions.xml.in:3766
+#: data/functions.xml.in:3788 data/functions.xml.in:3924
 msgid "Variable"
 msgstr "Variable"
 
@@ -2938,7 +2935,7 @@ msgstr ""
 
 #: data/functions.xml.in:83 data/functions.xml.in:94 data/functions.xml.in:108
 #: data/functions.xml.in:258 data/functions.xml.in:267
-#: data/functions.xml.in:358 data/functions.xml.in:3521
+#: data/functions.xml.in:358 data/functions.xml.in:3525
 msgid "Matrix/vector"
 msgstr "Matrice/vecteur"
 
@@ -2955,8 +2952,8 @@ msgstr ""
 msgid "r:circshift"
 msgstr "r:shift"
 
-#: data/functions.xml.in:97 data/functions.xml.in:3581
-#: data/functions.xml.in:3609
+#: data/functions.xml.in:97 data/functions.xml.in:3585
+#: data/functions.xml.in:3613
 msgid "Steps"
 msgstr ""
 
@@ -3381,12 +3378,12 @@ msgstr ""
 #: data/functions.xml.in:3120 data/functions.xml.in:3134
 #: data/functions.xml.in:3142 data/functions.xml.in:3150
 #: data/functions.xml.in:3158 data/functions.xml.in:3200
-#: data/functions.xml.in:3383 data/functions.xml.in:3416
-#: data/functions.xml.in:3424 data/functions.xml.in:3432
-#: data/functions.xml.in:3441 data/functions.xml.in:3449
-#: data/functions.xml.in:3457 data/functions.xml.in:3465
-#: data/functions.xml.in:3474 data/functions.xml.in:3630
-#: data/functions.xml.in:3654
+#: data/functions.xml.in:3387 data/functions.xml.in:3420
+#: data/functions.xml.in:3428 data/functions.xml.in:3436
+#: data/functions.xml.in:3445 data/functions.xml.in:3453
+#: data/functions.xml.in:3461 data/functions.xml.in:3469
+#: data/functions.xml.in:3478 data/functions.xml.in:3634
+#: data/functions.xml.in:3658
 msgid "Value"
 msgstr "Valeur"
 
@@ -3526,7 +3523,7 @@ msgstr "r:rood,p:roods"
 #: data/functions.xml.in:467 data/functions.xml.in:1016
 #: data/functions.xml.in:1033 data/functions.xml.in:1050
 #: data/functions.xml.in:1092 data/functions.xml.in:1453
-#: data/functions.xml.in:4038 data/functions.xml.in:4334
+#: data/functions.xml.in:4042 data/functions.xml.in:4338
 msgid "Base"
 msgstr "Base"
 
@@ -3780,9 +3777,9 @@ msgstr "r:sgn"
 #: data/functions.xml.in:1013 data/functions.xml.in:1027
 #: data/functions.xml.in:1041 data/functions.xml.in:1089
 #: data/functions.xml.in:1177 data/functions.xml.in:1184
-#: data/functions.xml.in:3578 data/functions.xml.in:3592
-#: data/functions.xml.in:3606 data/functions.xml.in:3624
-#: data/functions.xml.in:3645 data/functions.xml.in:3669
+#: data/functions.xml.in:3582 data/functions.xml.in:3596
+#: data/functions.xml.in:3610 data/functions.xml.in:3628
+#: data/functions.xml.in:3649 data/functions.xml.in:3673
 msgid "Number"
 msgstr "Nombre"
 
@@ -4052,12 +4049,12 @@ msgid "rc:gcd,c:GCD"
 msgstr ""
 
 #: data/functions.xml.in:859 data/functions.xml.in:872
-#: data/functions.xml.in:3557 data/functions.xml.in:3567
+#: data/functions.xml.in:3561 data/functions.xml.in:3571
 msgid "Value 1"
 msgstr "Valeur 1"
 
 #: data/functions.xml.in:862 data/functions.xml.in:875
-#: data/functions.xml.in:3560 data/functions.xml.in:3570
+#: data/functions.xml.in:3564 data/functions.xml.in:3574
 msgid "Value 2"
 msgstr "Valeur 2"
 
@@ -4252,9 +4249,9 @@ msgstr "Division d'entier"
 msgid "r:integerDigits"
 msgstr "r:isInteger"
 
-#: data/functions.xml.in:1019 data/functions.xml.in:4194
-#: data/functions.xml.in:4205 data/functions.xml.in:4220
-#: data/functions.xml.in:4235 data/functions.xml.in:4250
+#: data/functions.xml.in:1019 data/functions.xml.in:4198
+#: data/functions.xml.in:4209 data/functions.xml.in:4224
+#: data/functions.xml.in:4239 data/functions.xml.in:4254
 msgid "Length"
 msgstr "Longueur"
 
@@ -4275,7 +4272,7 @@ msgid ""
 msgstr ""
 
 #: data/functions.xml.in:1030 data/functions.xml.in:1044
-#: data/functions.xml.in:3627 data/functions.xml.in:3672
+#: data/functions.xml.in:3631 data/functions.xml.in:3676
 #, fuzzy
 msgid "Position"
 msgstr "Position en x"
@@ -4574,12 +4571,12 @@ msgstr "rc:Li,polylog"
 
 #: data/functions.xml.in:1223 data/functions.xml.in:1237
 #: data/functions.xml.in:1247 data/functions.xml.in:1482
-#: data/functions.xml.in:3842
+#: data/functions.xml.in:3846
 msgid "Order"
 msgstr "Ordre"
 
 #: data/functions.xml.in:1226 data/functions.xml.in:1240
-#: data/functions.xml.in:1250 data/functions.xml.in:3484
+#: data/functions.xml.in:1250 data/functions.xml.in:3488
 msgid "Argument"
 msgstr "Argument"
 
@@ -4829,7 +4826,7 @@ msgstr "r:root"
 msgid "r:allroots"
 msgstr "r:root"
 
-#: data/functions.xml.in:1426 data/functions.xml.in:4150
+#: data/functions.xml.in:1426 data/functions.xml.in:4154
 msgid "Square"
 msgstr "Carré"
 
@@ -5819,13 +5816,13 @@ msgid "r:randuniform"
 msgstr "r:randuniform"
 
 #: data/functions.xml.in:2160 data/functions.xml.in:2658
-#: data/functions.xml.in:3855 data/functions.xml.in:3874
-#: data/functions.xml.in:3897
+#: data/functions.xml.in:3859 data/functions.xml.in:3878
+#: data/functions.xml.in:3901
 msgid "Lower limit"
 msgstr "Limite inférieure"
 
-#: data/functions.xml.in:2164 data/functions.xml.in:3858
-#: data/functions.xml.in:3877 data/functions.xml.in:3900
+#: data/functions.xml.in:2164 data/functions.xml.in:3862
+#: data/functions.xml.in:3881 data/functions.xml.in:3904
 msgid "Upper limit"
 msgstr "Limite supérieure"
 
@@ -6701,10 +6698,10 @@ msgid "Second date"
 msgstr "Deuxième date"
 
 #: data/functions.xml.in:2926 data/functions.xml.in:2945
-#: data/functions.xml.in:4783 data/functions.xml.in:4834
-#: data/functions.xml.in:4859 data/functions.xml.in:4884
-#: data/functions.xml.in:4917 data/functions.xml.in:4941
-#: data/functions.xml.in:4966 data/functions.xml.in:4994
+#: data/functions.xml.in:4787 data/functions.xml.in:4838
+#: data/functions.xml.in:4863 data/functions.xml.in:4888
+#: data/functions.xml.in:4921 data/functions.xml.in:4945
+#: data/functions.xml.in:4970 data/functions.xml.in:4998
 msgid "Day counting basis"
 msgstr "Base de comptage des jours"
 
@@ -6869,9 +6866,9 @@ msgstr "Ajouter des années"
 msgid "r:addYears"
 msgstr "r:addYears"
 
-#: data/functions.xml.in:3053 data/functions.xml.in:4476
-#: data/functions.xml.in:4714 data/functions.xml.in:4732
-#: data/functions.xml.in:5014
+#: data/functions.xml.in:3053 data/functions.xml.in:4480
+#: data/functions.xml.in:4718 data/functions.xml.in:4736
+#: data/functions.xml.in:5018
 msgid "Years"
 msgstr "Années"
 
@@ -7159,7 +7156,7 @@ msgstr ""
 "vrai."
 
 #: data/functions.xml.in:3225 data/functions.xml.in:3243
-#: data/functions.xml.in:3338
+#: data/functions.xml.in:3339
 msgid "Expression"
 msgstr "Expression"
 
@@ -7171,7 +7168,7 @@ msgstr "Valeur originale"
 msgid "New value"
 msgstr "Nouvelle valeur"
 
-#: data/functions.xml.in:3234 data/functions.xml.in:3395
+#: data/functions.xml.in:3234 data/functions.xml.in:3399
 msgid "Precalculate expression"
 msgstr "Expression précalculée"
 
@@ -7204,12 +7201,12 @@ msgstr "r:process"
 
 #: data/functions.xml.in:3253 data/functions.xml.in:3272
 #: data/functions.xml.in:3303 data/functions.xml.in:3328
-#: data/functions.xml.in:3533
+#: data/functions.xml.in:3537
 msgid "Element variable"
 msgstr "Variable élément"
 
 #: data/functions.xml.in:3259 data/functions.xml.in:3312
-#: data/functions.xml.in:3696 data/functions.xml.in:3714
+#: data/functions.xml.in:3700 data/functions.xml.in:3718
 msgid "Index variable"
 msgstr "Variable d'index"
 
@@ -7253,13 +7250,13 @@ msgstr "Premier élément"
 msgid "Last element"
 msgstr "Dernier élément"
 
-#: data/functions.xml.in:3297 data/functions.xml.in:3507
-#: data/functions.xml.in:3524
+#: data/functions.xml.in:3297 data/functions.xml.in:3511
+#: data/functions.xml.in:3528
 msgid "Initial value"
 msgstr "Valeur initiale"
 
-#: data/functions.xml.in:3306 data/functions.xml.in:3513
-#: data/functions.xml.in:3530
+#: data/functions.xml.in:3306 data/functions.xml.in:3517
+#: data/functions.xml.in:3534
 msgid "Value variable"
 msgstr "Variable valeur"
 
@@ -7271,7 +7268,7 @@ msgstr "Sélectionner les éléments de vecteur"
 msgid "r:select"
 msgstr "r:select"
 
-#: data/functions.xml.in:3325 data/functions.xml.in:3541
+#: data/functions.xml.in:3325 data/functions.xml.in:3545
 msgid "Condition"
 msgstr "Condition"
 
@@ -7283,56 +7280,60 @@ msgstr "Sélectionner la première occurrence"
 msgid "r:function"
 msgstr "r:function"
 
-#: data/functions.xml.in:3341
-msgid "Arguments"
-msgstr "Arguments"
+#: data/functions.xml.in:3342
+msgid "Argument 1"
+msgstr "Argument 1"
 
-#: data/functions.xml.in:3345 data/functions.xml.in:3392
+#: data/functions.xml.in:3345
+msgid "Argument 2"
+msgstr "Argument 2"
+
+#: data/functions.xml.in:3349 data/functions.xml.in:3396
 msgid "Title"
 msgstr "Titre"
 
-#: data/functions.xml.in:3346
+#: data/functions.xml.in:3350
 msgid "r:title"
 msgstr "r:title"
 
-#: data/functions.xml.in:3352
+#: data/functions.xml.in:3356
 msgid "Display Error"
 msgstr "Afficher l'erreur"
 
-#: data/functions.xml.in:3353
+#: data/functions.xml.in:3357
 msgid "r:error"
 msgstr "r:error"
 
-#: data/functions.xml.in:3355 data/functions.xml.in:3362
-#: data/functions.xml.in:3369
+#: data/functions.xml.in:3359 data/functions.xml.in:3366
+#: data/functions.xml.in:3373
 msgid "Message"
 msgstr "Message"
 
-#: data/functions.xml.in:3359
+#: data/functions.xml.in:3363
 msgid "Display Warning"
 msgstr "Afficher l'avertissement"
 
-#: data/functions.xml.in:3360
+#: data/functions.xml.in:3364
 msgid "r:warning"
 msgstr "r:warning"
 
-#: data/functions.xml.in:3366
+#: data/functions.xml.in:3370
 msgid "Display Message"
 msgstr "Afficher le message"
 
-#: data/functions.xml.in:3367
+#: data/functions.xml.in:3371
 msgid "r:message"
 msgstr "r:message"
 
-#: data/functions.xml.in:3373
+#: data/functions.xml.in:3377
 msgid "Save as Variable or Function"
 msgstr "Enregistrer comme variable ou fonction"
 
-#: data/functions.xml.in:3374
+#: data/functions.xml.in:3378
 msgid "r:save"
 msgstr "r:save"
 
-#: data/functions.xml.in:3375
+#: data/functions.xml.in:3379
 msgid ""
 "Stores a value in a variable or saves an expression as a function.\n"
 "\n"
@@ -7348,317 +7349,317 @@ msgid ""
 "The \":=\" operator (e.g. var1:=10) is a shortcut for this function."
 msgstr ""
 
-#: data/functions.xml.in:3389
+#: data/functions.xml.in:3393
 msgid "Category"
 msgstr "Catégorie"
 
-#: data/functions.xml.in:3399
+#: data/functions.xml.in:3403
 msgid "RPN Stack Register"
 msgstr "Registre de pile NPI"
 
-#: data/functions.xml.in:3400
+#: data/functions.xml.in:3404
 msgid "r:register"
 msgstr "r:register"
 
-#: data/functions.xml.in:3401
+#: data/functions.xml.in:3405
 msgid "Returns the value of a RPN stack register."
 msgstr "Retourne la valeur d'un registre de pile NPI."
 
-#: data/functions.xml.in:3403
+#: data/functions.xml.in:3407
 msgid "Index"
 msgstr "Index"
 
-#: data/functions.xml.in:3407
+#: data/functions.xml.in:3411
 msgid "RPN Stack Vector"
 msgstr "Vecteur de pile NPI"
 
-#: data/functions.xml.in:3408
+#: data/functions.xml.in:3412
 msgid "r:stack"
 msgstr "r:stack"
 
-#: data/functions.xml.in:3409
+#: data/functions.xml.in:3413
 msgid "Returns the RPN stack as a vector."
 msgstr "Retourne la pile NPI sous forme de vecteur."
 
-#: data/functions.xml.in:3412
+#: data/functions.xml.in:3416
 #, fuzzy
 #| msgid "Number"
 msgid "Is Number"
 msgstr "Nombre"
 
-#: data/functions.xml.in:3413
+#: data/functions.xml.in:3417
 msgid "r:isNumber"
 msgstr "r:isNumber"
 
-#: data/functions.xml.in:3414
+#: data/functions.xml.in:3418
 msgid ""
 "Returns true if evaluated argument value is explicitly a real, complex, or "
 "infinite number (has number type)."
 msgstr ""
 
-#: data/functions.xml.in:3420
+#: data/functions.xml.in:3424
 #, fuzzy
 #| msgid "r:isReal"
 msgid "Is Real"
 msgstr "r:isReal"
 
-#: data/functions.xml.in:3421
+#: data/functions.xml.in:3425
 msgid "r:isReal"
 msgstr "r:isReal"
 
-#: data/functions.xml.in:3422
+#: data/functions.xml.in:3426
 msgid ""
 "Returns true if evaluated argument value is explicitly a real number (has "
 "number type with zero imaginary part)."
 msgstr ""
 
-#: data/functions.xml.in:3428
+#: data/functions.xml.in:3432
 #, fuzzy
 #| msgid "r:isRational"
 msgid "Is Rational"
 msgstr "r:isRational"
 
-#: data/functions.xml.in:3429
+#: data/functions.xml.in:3433
 msgid "r:isRational"
 msgstr "r:isRational"
 
-#: data/functions.xml.in:3430
+#: data/functions.xml.in:3434
 msgid ""
 "Returns true if evaluated argument value is explicitly a rational number "
 "(has rational type)."
 msgstr ""
 
-#: data/functions.xml.in:3436
+#: data/functions.xml.in:3440
 #, fuzzy
 #| msgid "Integers"
 msgid "Is Integer"
 msgstr "Entiers"
 
-#: data/functions.xml.in:3437
+#: data/functions.xml.in:3441
 msgid "r:isInteger"
 msgstr "r:isInteger"
 
-#: data/functions.xml.in:3438
+#: data/functions.xml.in:3442
 msgid ""
 "Returns true if evaluated argument value is explicitly an integer (has "
 "integer type)."
 msgstr ""
 
-#: data/functions.xml.in:3445
+#: data/functions.xml.in:3449
 #, fuzzy
 #| msgid "r:representsNumber"
 msgid "Represents Number"
 msgstr "r:representsNumber"
 
-#: data/functions.xml.in:3446
+#: data/functions.xml.in:3450
 msgid "r:representsNumber"
 msgstr "r:representsNumber"
 
-#: data/functions.xml.in:3447
+#: data/functions.xml.in:3451
 msgid ""
 "Returns true if value is or represents a number (scalar without unit). False "
 "negatives are allowed."
 msgstr ""
 
-#: data/functions.xml.in:3453
+#: data/functions.xml.in:3457
 #, fuzzy
 #| msgid "r:representsReal"
 msgid "Represents Real"
 msgstr "r:representsReal"
 
-#: data/functions.xml.in:3454
+#: data/functions.xml.in:3458
 msgid "r:representsReal"
 msgstr "r:representsReal"
 
-#: data/functions.xml.in:3455
+#: data/functions.xml.in:3459
 msgid ""
 "Returns true if value is or represents a real number. False negatives are "
 "allowed."
 msgstr ""
 
-#: data/functions.xml.in:3461
+#: data/functions.xml.in:3465
 #, fuzzy
 #| msgid "r:representsRational"
 msgid "Represents Rational"
 msgstr "r:representsRational"
 
-#: data/functions.xml.in:3462
+#: data/functions.xml.in:3466
 msgid "r:representsRational"
 msgstr "r:representsRational"
 
-#: data/functions.xml.in:3463
+#: data/functions.xml.in:3467
 msgid ""
 "Returns true if value is or represents a rational number. False negatives "
 "are allowed."
 msgstr ""
 
-#: data/functions.xml.in:3469
+#: data/functions.xml.in:3473
 #, fuzzy
 #| msgid "r:representsInteger"
 msgid "Represents Integer"
 msgstr "r:representsInteger"
 
-#: data/functions.xml.in:3470
+#: data/functions.xml.in:3474
 msgid "r:representsInteger"
 msgstr "r:representsInteger"
 
-#: data/functions.xml.in:3471
+#: data/functions.xml.in:3475
 msgid ""
 "Returns true if value is or represents an integer. False negatives are "
 "allowed."
 msgstr ""
 
-#: data/functions.xml.in:3478
+#: data/functions.xml.in:3482
 msgid "External Command"
 msgstr ""
 
-#: data/functions.xml.in:3479
+#: data/functions.xml.in:3483
 #, fuzzy
 msgid "r:command"
 msgstr "r:compound"
 
-#: data/functions.xml.in:3481
+#: data/functions.xml.in:3485
 #, fuzzy
 msgid "Command"
 msgstr "r:compound"
 
-#: data/functions.xml.in:3489
+#: data/functions.xml.in:3493
 msgid "Logical"
 msgstr "Logique"
 
-#: data/functions.xml.in:3491
+#: data/functions.xml.in:3495
 msgid "For...Do"
 msgstr "For...do (pour...faire)"
 
-#: data/functions.xml.in:3492
+#: data/functions.xml.in:3496
 msgid "r:for"
 msgstr "r:for"
 
-#: data/functions.xml.in:3495
+#: data/functions.xml.in:3499
 msgid "Initial value of counter"
 msgstr "Valeur initiale du compteur"
 
-#: data/functions.xml.in:3498
+#: data/functions.xml.in:3502
 msgid "Counter variable"
 msgstr "Variable de compteur"
 
-#: data/functions.xml.in:3501
+#: data/functions.xml.in:3505
 msgid "For condition"
 msgstr "Condition de boucle for"
 
-#: data/functions.xml.in:3504
+#: data/functions.xml.in:3508
 msgid "Counter update function"
 msgstr "Fonction d'incrémentation du compteur"
 
-#: data/functions.xml.in:3510 data/functions.xml.in:3527
+#: data/functions.xml.in:3514 data/functions.xml.in:3531
 msgid "Do function"
 msgstr "Fonction 'faire'"
 
-#: data/functions.xml.in:3517
+#: data/functions.xml.in:3521
 msgid "For Each Element...Do"
 msgstr ""
 
-#: data/functions.xml.in:3518
+#: data/functions.xml.in:3522
 #, fuzzy
 msgid "r:foreach"
 msgstr "r:for"
 
-#: data/functions.xml.in:3537
+#: data/functions.xml.in:3541
 msgid "If...Then...Else"
 msgstr "Si...sinon..alors"
 
-#: data/functions.xml.in:3538
+#: data/functions.xml.in:3542
 msgid "r:if"
 msgstr "r:if"
 
-#: data/functions.xml.in:3539
+#: data/functions.xml.in:3543
 msgid ""
 "Tests a condition and returns a value depending on the result. Vectors can "
 "be used for argument 1 and 2, instead of nested functions."
 msgstr "Teste une condition et retourne une valeur en fonction du résultat."
 
-#: data/functions.xml.in:3544
+#: data/functions.xml.in:3548
 msgid "Expression if condition is met"
 msgstr "Expression si la condition est remplie"
 
-#: data/functions.xml.in:3547
+#: data/functions.xml.in:3551
 msgid "Expression if condition is NOT met"
 msgstr "Expression si la condition N'EST PAS remplie"
 
-#: data/functions.xml.in:3550
+#: data/functions.xml.in:3554
 msgid "Assume false if not true"
 msgstr ""
 
-#: data/functions.xml.in:3554
+#: data/functions.xml.in:3558
 msgid "Bitwise Exclusive OR"
 msgstr "OU exclusif bit à bit"
 
-#: data/functions.xml.in:3555
+#: data/functions.xml.in:3559
 msgid "r:xor"
 msgstr "r:xor"
 
-#: data/functions.xml.in:3564
+#: data/functions.xml.in:3568
 msgid "Logical Exclusive OR"
 msgstr "OU exclusif logique"
 
-#: data/functions.xml.in:3565
+#: data/functions.xml.in:3569
 msgid "r:lxor"
 msgstr "r:lxor"
 
-#: data/functions.xml.in:3574
+#: data/functions.xml.in:3578
 msgid "Bitwise Shift"
 msgstr "Décalage de bits"
 
-#: data/functions.xml.in:3575
+#: data/functions.xml.in:3579
 msgid ""
 "Applies logical or arithmetic bitwise shift to an integer. The second "
 "argument specifies the number of steps that each binary bit is shifted to "
 "the left (use negative values for right shift)."
 msgstr ""
 
-#: data/functions.xml.in:3576
+#: data/functions.xml.in:3580
 msgid "r:shift"
 msgstr "r:shift"
 
-#: data/functions.xml.in:3584
+#: data/functions.xml.in:3588
 msgid "Arithmetic shift using two's complement"
 msgstr ""
 
-#: data/functions.xml.in:3588
+#: data/functions.xml.in:3592
 #, fuzzy
 #| msgid "Two's complement"
 msgid "Bitwise Complement (Not)"
 msgstr "Complément à deux"
 
-#: data/functions.xml.in:3589
+#: data/functions.xml.in:3593
 msgid ""
 "Applies bitwise NOT to an integer of specified bit width and signedness (use "
 "1 for signed and 0 for unsigned). If bit width is zero, the smallest "
 "necessary number of bits (of 8, 16, 32, 64, 128, ...) will be used."
 msgstr ""
 
-#: data/functions.xml.in:3590
+#: data/functions.xml.in:3594
 msgid "r:bitcmp"
 msgstr "r:bitcmp"
 
-#: data/functions.xml.in:3595 data/functions.xml.in:3612
-#: data/functions.xml.in:3633 data/functions.xml.in:3657
+#: data/functions.xml.in:3599 data/functions.xml.in:3616
+#: data/functions.xml.in:3637 data/functions.xml.in:3661
 msgid "Bit width"
 msgstr ""
 
-#: data/functions.xml.in:3598 data/functions.xml.in:3615
-#: data/functions.xml.in:3636 data/functions.xml.in:3660
+#: data/functions.xml.in:3602 data/functions.xml.in:3619
+#: data/functions.xml.in:3640 data/functions.xml.in:3664
 #, fuzzy
 msgid "Signed integer"
 msgstr "Entier signé"
 
-#: data/functions.xml.in:3602
+#: data/functions.xml.in:3606
 #, fuzzy
 #| msgid "Min iterations"
 msgid "Bit Rotation"
 msgstr "Itérations min."
 
-#: data/functions.xml.in:3603
+#: data/functions.xml.in:3607
 msgid ""
 "Applies circular bitwise shift to an integer of specified bit width and "
 "signedness (use 1 for signed and 0 for unsigned). The second argument "
@@ -7667,33 +7668,33 @@ msgid ""
 "necessary number of bits (of 8, 16, 32, 64, 128, ...) will be used."
 msgstr ""
 
-#: data/functions.xml.in:3604
+#: data/functions.xml.in:3608
 msgid "r:bitrot"
 msgstr "r:bitrot"
 
-#: data/functions.xml.in:3619
+#: data/functions.xml.in:3623
 #, fuzzy
 msgid "Set Bit"
 msgstr "Ensemble de chiffres"
 
-#: data/functions.xml.in:3620
+#: data/functions.xml.in:3624
 msgid ""
 "Set binary bit at specified position. The index of the least significant bit "
 "is 1. Specify bit width and signedness (use 1 for signed and 0 for unsigned) "
 "to allow sign changes when the most significant bit is set."
 msgstr ""
 
-#: data/functions.xml.in:3622
+#: data/functions.xml.in:3626
 #, fuzzy
 msgid "r:bitset"
 msgstr "r:bitrot"
 
-#: data/functions.xml.in:3640
+#: data/functions.xml.in:3644
 #, fuzzy
 msgid "Set Multiple Bits"
 msgstr "Multiplier"
 
-#: data/functions.xml.in:3641
+#: data/functions.xml.in:3645
 msgid ""
 "Set binary bits at specified range with binary bits from an integer (index 1 "
 "to length of range). The index of the least significant bit is 1. Specify "
@@ -7701,27 +7702,27 @@ msgid ""
 "changes when the most significant bit is set."
 msgstr ""
 
-#: data/functions.xml.in:3643
+#: data/functions.xml.in:3647
 #, fuzzy
 msgid "r:setbits"
 msgstr "r:bitrot"
 
-#: data/functions.xml.in:3648
+#: data/functions.xml.in:3652
 #, fuzzy
 msgid "First position"
 msgstr "Position en x"
 
-#: data/functions.xml.in:3651 data/functions.xml.in:3675
+#: data/functions.xml.in:3655 data/functions.xml.in:3679
 #, fuzzy
 msgid "Last position"
 msgstr "Position en x"
 
-#: data/functions.xml.in:3664
+#: data/functions.xml.in:3668
 #, fuzzy
 msgid "Get Bit"
 msgstr "Ensemble de chiffres"
 
-#: data/functions.xml.in:3665
+#: data/functions.xml.in:3669
 msgid ""
 "Returns the binary bit at the specified position. The index of the least "
 "significant bit is 1. If last index is non-zero the bits from (first) "
@@ -7729,24 +7730,24 @@ msgid ""
 "number."
 msgstr ""
 
-#: data/functions.xml.in:3667
+#: data/functions.xml.in:3671
 #, fuzzy
 msgid "r:bitget"
 msgstr "r:bitrot"
 
-#: data/functions.xml.in:3680
+#: data/functions.xml.in:3684
 msgid "Algebra"
 msgstr "Algèbre"
 
-#: data/functions.xml.in:3682
+#: data/functions.xml.in:3686
 msgid "Summation"
 msgstr "Somme"
 
-#: data/functions.xml.in:3683
+#: data/functions.xml.in:3687
 msgid "au:Σ,au:∑,r:sum"
 msgstr "au:Σ,au:∑,r:sum"
 
-#: data/functions.xml.in:3684
+#: data/functions.xml.in:3688
 msgid ""
 "Corresponds to the summation symbol. Adds terms for each x ranging from the "
 "lower to the upper limit."
@@ -7754,27 +7755,27 @@ msgstr ""
 "Correspond au symbole de la somme. Ajoute les termes pour chaque x allant de "
 "la limite inférieure à la limite supérieure."
 
-#: data/functions.xml.in:3687
+#: data/functions.xml.in:3691
 msgid "Term expression"
 msgstr "Expression de terme"
 
-#: data/functions.xml.in:3690 data/functions.xml.in:3708
+#: data/functions.xml.in:3694 data/functions.xml.in:3712
 msgid "Lower limit (i)"
 msgstr "Limite inférieure (i)"
 
-#: data/functions.xml.in:3693 data/functions.xml.in:3711
+#: data/functions.xml.in:3697 data/functions.xml.in:3715
 msgid "Upper limit (n)"
 msgstr "Limite supérieure (n)"
 
-#: data/functions.xml.in:3700
+#: data/functions.xml.in:3704
 msgid "Product of a sequence"
 msgstr "Produit d'une séquence"
 
-#: data/functions.xml.in:3701
+#: data/functions.xml.in:3705
 msgid "au:Π,r:product"
 msgstr "au:Π,r:product"
 
-#: data/functions.xml.in:3702
+#: data/functions.xml.in:3706
 msgid ""
 "Corresponds to the product symbol. Multiplies factors for each x ranging "
 "from the lower to the upper limit."
@@ -7782,119 +7783,119 @@ msgstr ""
 "Correspond au symbole du produit. Multiplie les facteurs pour chaque x "
 "allant de la la limite inférieure à la limite supérieure."
 
-#: data/functions.xml.in:3705
+#: data/functions.xml.in:3709
 msgid "Factor expression"
 msgstr "Factoriser expression"
 
-#: data/functions.xml.in:3718
+#: data/functions.xml.in:3722
 msgid "Solve for multiple variables"
 msgstr "Résoudre variables multiples"
 
-#: data/functions.xml.in:3719
+#: data/functions.xml.in:3723
 msgid "r:multisolve"
 msgstr "r:multisolve"
 
-#: data/functions.xml.in:3721
+#: data/functions.xml.in:3725
 msgid "Equation vector"
 msgstr "Vecteur d'équation"
 
-#: data/functions.xml.in:3724 data/functions.xml.in:3937
+#: data/functions.xml.in:3728 data/functions.xml.in:3941
 msgid "Variable vector"
 msgstr "Variable du vecteur"
 
-#: data/functions.xml.in:3728
+#: data/functions.xml.in:3732
 msgid "Solve equation"
 msgstr "Résoudre équation"
 
-#: data/functions.xml.in:3729
+#: data/functions.xml.in:3733
 msgid "r:solve"
 msgstr "r:solve"
 
-#: data/functions.xml.in:3731 data/functions.xml.in:3741
-#: data/functions.xml.in:3756 data/functions.xml.in:3775
+#: data/functions.xml.in:3735 data/functions.xml.in:3745
+#: data/functions.xml.in:3760 data/functions.xml.in:3779
 msgid "Equation"
 msgstr "Équation"
 
-#: data/functions.xml.in:3734 data/functions.xml.in:3839
-#: data/functions.xml.in:3954
+#: data/functions.xml.in:3738 data/functions.xml.in:3843
+#: data/functions.xml.in:3958
 msgid "With respect to"
 msgstr ""
 
-#: data/functions.xml.in:3738
+#: data/functions.xml.in:3742
 msgid "Solve differential equation"
 msgstr "Résoudre l'équation différentielle"
 
-#: data/functions.xml.in:3739
+#: data/functions.xml.in:3743
 msgid "r:dsolve"
 msgstr "r:dsolve"
 
-#: data/functions.xml.in:3744
+#: data/functions.xml.in:3748
 msgid "Initial condition: function value (y)"
 msgstr "Condition initiale : fonction valeur (y)"
 
-#: data/functions.xml.in:3747
+#: data/functions.xml.in:3751
 msgid "Initial condition: argument value (x)"
 msgstr "Condition initiale : argument valeur (x)"
 
-#: data/functions.xml.in:3749
+#: data/functions.xml.in:3753
 msgid ""
 "Solves a differential equation and returns the value of y(x). The derivative "
 "in the equation should be in the format diff(y, x). Only first-order "
 "differential equations are currently supported."
 msgstr ""
 
-#: data/functions.xml.in:3753
+#: data/functions.xml.in:3757
 msgid "Solve using Newton's Method"
 msgstr ""
 
-#: data/functions.xml.in:3754
+#: data/functions.xml.in:3758
 #, fuzzy
 msgid "r:newtonsolve"
 msgstr "r:solve"
 
-#: data/functions.xml.in:3759
+#: data/functions.xml.in:3763
 #, fuzzy
 msgid "Initial estimate"
 msgstr "Valeur initiale"
 
-#: data/functions.xml.in:3765 data/functions.xml.in:3787
+#: data/functions.xml.in:3769 data/functions.xml.in:3791
 #: data/variables.xml.in:893
 msgid "Precision"
 msgstr "Précision"
 
-#: data/functions.xml.in:3768 data/functions.xml.in:3790
-#: data/functions.xml.in:3883
+#: data/functions.xml.in:3772 data/functions.xml.in:3794
+#: data/functions.xml.in:3887
 msgid "Max iterations"
 msgstr "Itérations max."
 
-#: data/functions.xml.in:3772
+#: data/functions.xml.in:3776
 msgid "Solve using Secant Method"
 msgstr ""
 
-#: data/functions.xml.in:3773
+#: data/functions.xml.in:3777
 #, fuzzy
 msgid "r:secantsolve"
 msgstr "r:solve"
 
-#: data/functions.xml.in:3778
+#: data/functions.xml.in:3782
 #, fuzzy
 msgid "Initial estimate 1"
 msgstr "Valeur initiale"
 
-#: data/functions.xml.in:3781
+#: data/functions.xml.in:3785
 #, fuzzy
 msgid "Initial estimate 2"
 msgstr "Valeur initiale"
 
-#: data/functions.xml.in:3794
+#: data/functions.xml.in:3798
 msgid "Solve for two variables"
 msgstr "Résoudre pour deux variables"
 
-#: data/functions.xml.in:3795
+#: data/functions.xml.in:3799
 msgid "r:solve2"
 msgstr "r:solve2"
 
-#: data/functions.xml.in:3796
+#: data/functions.xml.in:3800
 msgid ""
 "Solves two equations with two unknown variables. Returns the value of the "
 "first variable."
@@ -7902,575 +7903,575 @@ msgstr ""
 "Résout deux équations à deux inconnues. Retourne la valeur de la première "
 "variable."
 
-#: data/functions.xml.in:3799
+#: data/functions.xml.in:3803
 msgid "Equation 1"
 msgstr "Équation 2"
 
-#: data/functions.xml.in:3802
+#: data/functions.xml.in:3806
 msgid "Equation 2"
 msgstr "Équation 2"
 
-#: data/functions.xml.in:3805
+#: data/functions.xml.in:3809
 msgid "Variable 1"
 msgstr "Variable 1"
 
-#: data/functions.xml.in:3808
+#: data/functions.xml.in:3812
 msgid "Variable 2"
 msgstr "Variable 2"
 
-#: data/functions.xml.in:3812
+#: data/functions.xml.in:3816
 msgid "Find Linear Function"
 msgstr "Trouver fonction linéaire"
 
-#: data/functions.xml.in:3813
+#: data/functions.xml.in:3817
 msgid "r:linearfunction"
 msgstr "r:linearfunction"
 
-#: data/functions.xml.in:3814
+#: data/functions.xml.in:3818
 msgid ""
 "Finds the linear function for the straight line between two distinct points."
 msgstr ""
 "Trouve la fonction affine pour la ligne droite passant entre deux points "
 "distincts."
 
-#: data/functions.xml.in:3817
+#: data/functions.xml.in:3821
 msgid "x1"
 msgstr "x1"
 
-#: data/functions.xml.in:3820
+#: data/functions.xml.in:3824
 msgid "y1"
 msgstr "y1"
 
-#: data/functions.xml.in:3823
+#: data/functions.xml.in:3827
 msgid "x2"
 msgstr "x2"
 
-#: data/functions.xml.in:3826
+#: data/functions.xml.in:3830
 msgid "y2"
 msgstr "y2"
 
-#: data/functions.xml.in:3831
+#: data/functions.xml.in:3835
 msgid "Calculus"
 msgstr "Calcul infinitésimal"
 
-#: data/functions.xml.in:3833
+#: data/functions.xml.in:3837
 msgid "Differentiate"
 msgstr "Différentielle"
 
-#: data/functions.xml.in:3834
+#: data/functions.xml.in:3838
 msgid "r:diff,derivative"
 msgstr "r:diff,derivative"
 
-#: data/functions.xml.in:3845
+#: data/functions.xml.in:3849
 msgid "Variable value"
 msgstr "Valeur de variable"
 
-#: data/functions.xml.in:3849
+#: data/functions.xml.in:3853
 msgid "Integrate"
 msgstr "Intégration"
 
-#: data/functions.xml.in:3850
+#: data/functions.xml.in:3854
 msgid "r:integrate,integral,au:∫"
 msgstr "r:integrate,integral,au:∫"
 
-#: data/functions.xml.in:3861 data/functions.xml.in:3886
-#: data/functions.xml.in:3906
+#: data/functions.xml.in:3865 data/functions.xml.in:3890
+#: data/functions.xml.in:3910
 msgid "Variable of integration"
 msgstr "Variable d'intégration"
 
-#: data/functions.xml.in:3864
+#: data/functions.xml.in:3868
 msgid "Force numerical integration"
 msgstr "Forcer l'intégration numérique"
 
-#: data/functions.xml.in:3868
+#: data/functions.xml.in:3872
 msgid "Romberg Integration"
 msgstr "Méthode de Romberg"
 
-#: data/functions.xml.in:3869
+#: data/functions.xml.in:3873
 msgid "r:romberg"
 msgstr "r:romberg"
 
-#: data/functions.xml.in:3880
+#: data/functions.xml.in:3884
 msgid "Min iterations"
 msgstr "Itérations min."
 
-#: data/functions.xml.in:3891
+#: data/functions.xml.in:3895
 msgid "Monte Carlo Integration"
 msgstr "Méthode Monte-Carlo"
 
-#: data/functions.xml.in:3892
+#: data/functions.xml.in:3896
 msgid "r:montecarlo"
 msgstr "r:montecarlo"
 
-#: data/functions.xml.in:3903
+#: data/functions.xml.in:3907
 msgid "Number of samples"
 msgstr "Nombre d'échantillons"
 
-#: data/functions.xml.in:3910
+#: data/functions.xml.in:3914
 msgid "Limit"
 msgstr "Limite"
 
-#: data/functions.xml.in:3911
+#: data/functions.xml.in:3915
 msgid ""
 "Returns the two-sided limit of the function if direction is zero, limit from "
 "left (below) if direction is -1, or limit from right (above) if direction is "
 "+1."
 msgstr ""
 
-#: data/functions.xml.in:3912
+#: data/functions.xml.in:3916
 msgid "r:limit"
 msgstr "r:limit"
 
-#: data/functions.xml.in:3917
+#: data/functions.xml.in:3921
 #, fuzzy
 #| msgid "Value for zero"
 msgid "Value to approach"
 msgstr "Valeur pour zéro"
 
-#: data/functions.xml.in:3923
+#: data/functions.xml.in:3927
 msgid "Direction"
 msgstr "Direction"
 
-#: data/functions.xml.in:3927
+#: data/functions.xml.in:3931
 #, fuzzy
 msgid "Limit with Multiple Variables"
 msgstr "Résoudre variables multiples"
 
-#: data/functions.xml.in:3928
+#: data/functions.xml.in:3932
 #, fuzzy
 msgid "r:multilimit"
 msgstr "r:limit"
 
-#: data/functions.xml.in:3929
+#: data/functions.xml.in:3933
 msgid ""
 "Returns limit of a function for multiple variables. The limit is calculated "
 "recursively, for one variable in each iteration, with the result of each "
 "iteration used as function in the next."
 msgstr ""
 
-#: data/functions.xml.in:3940
+#: data/functions.xml.in:3944
 #, fuzzy
 msgid "Value vector"
 msgstr "Variable du vecteur"
 
-#: data/functions.xml.in:3943
+#: data/functions.xml.in:3947
 #, fuzzy
 msgid "Direction vector"
 msgstr "Direction"
 
-#: data/functions.xml.in:3947
+#: data/functions.xml.in:3951
 msgid "Extreme Values"
 msgstr "Valeurs extrêmes"
 
-#: data/functions.xml.in:3948
+#: data/functions.xml.in:3952
 msgid "r:extremum"
 msgstr "r:extremum"
 
-#: data/functions.xml.in:3958
+#: data/functions.xml.in:3962
 msgid "Named Integrals"
 msgstr "Intégrales définies"
 
-#: data/functions.xml.in:3960
+#: data/functions.xml.in:3964
 msgid "Logarithmic Integral"
 msgstr "Logarithme intégral"
 
-#: data/functions.xml.in:3961
+#: data/functions.xml.in:3965
 msgid "rc:li,logint"
 msgstr "rc:li,logint"
 
-#: data/functions.xml.in:3962
+#: data/functions.xml.in:3966
 msgid "The integral of 1/ln(x)."
 msgstr "L'intégrale de 1/ln(x)."
 
-#: data/functions.xml.in:3965
+#: data/functions.xml.in:3969
 msgid "Exponential Integral"
 msgstr "Exponentielle intégrale"
 
-#: data/functions.xml.in:3966
+#: data/functions.xml.in:3970
 msgid "rc:Ei,expint"
 msgstr "rc:Ei,expint"
 
-#: data/functions.xml.in:3967
+#: data/functions.xml.in:3971
 msgid "The integral of e^x/x."
 msgstr "L'intégrale de e^x/x."
 
-#: data/functions.xml.in:3970
+#: data/functions.xml.in:3974
 msgid "Sine Integral"
 msgstr "Sinus intégral"
 
-#: data/functions.xml.in:3971
+#: data/functions.xml.in:3975
 msgid "rc:Si,sinint"
 msgstr "rc:Si,sinint"
 
-#: data/functions.xml.in:3972
+#: data/functions.xml.in:3976
 msgid "The integral of sin(x)/x."
 msgstr "L'intégrale de sin(x)/x."
 
-#: data/functions.xml.in:3975
+#: data/functions.xml.in:3979
 msgid "Cosine Integral"
 msgstr "Cosinus intégral"
 
-#: data/functions.xml.in:3976
+#: data/functions.xml.in:3980
 msgid "rc:Ci,cosint"
 msgstr "rc:Ci,cosint"
 
-#: data/functions.xml.in:3977
+#: data/functions.xml.in:3981
 msgid "The integral of cos(x)/x."
 msgstr "L'intégrale de cos(x)/x."
 
-#: data/functions.xml.in:3980
+#: data/functions.xml.in:3984
 msgid "Hyperbolic Sine Integral"
 msgstr "Sinus Hyperbolique"
 
-#: data/functions.xml.in:3981
+#: data/functions.xml.in:3985
 msgid "rc:Shi,sinhint"
 msgstr "rc:Shi,sinhint"
 
-#: data/functions.xml.in:3982
+#: data/functions.xml.in:3986
 msgid "The integral of sinh(x)/x."
 msgstr "L'intégrale de sinh(x)/x."
 
-#: data/functions.xml.in:3985
+#: data/functions.xml.in:3989
 msgid "Hyperbolic Cosine Integral"
 msgstr "Cosinus hyperbolique intégral"
 
-#: data/functions.xml.in:3986
+#: data/functions.xml.in:3990
 msgid "rc:Chi,coshint"
 msgstr "rc:Chi,coshint"
 
-#: data/functions.xml.in:3987
+#: data/functions.xml.in:3991
 msgid "The integral of cosh(x)/x."
 msgstr "L'intégrale de cosh(x)/x."
 
-#: data/functions.xml.in:3990
+#: data/functions.xml.in:3994
 msgid "Fresnel Integral S"
 msgstr "Intégrale de Fresnel S"
 
-#: data/functions.xml.in:3991
+#: data/functions.xml.in:3995
 msgid "r:fresnels"
 msgstr "r:fresnels"
 
-#: data/functions.xml.in:3992
+#: data/functions.xml.in:3996
 msgid "The integral of sin(pi*x^2/2)."
 msgstr "L'intégrale de sin(pi*x^2/2)."
 
-#: data/functions.xml.in:3995
+#: data/functions.xml.in:3999
 msgid "Fresnel Integral C"
 msgstr "Intégrale de Fresnel C"
 
-#: data/functions.xml.in:3996
+#: data/functions.xml.in:4000
 msgid "r:fresnelc"
 msgstr "r:fresnelc"
 
-#: data/functions.xml.in:3997
+#: data/functions.xml.in:4001
 msgid "The integral of cos(pi*x^2/2)."
 msgstr "L'intégrale de cos(pi*x^2/2)."
 
-#: data/functions.xml.in:4000
+#: data/functions.xml.in:4004
 msgid "Upper Incomplete Gamma Function"
 msgstr "Fonction gamma incomplète supérieure"
 
-#: data/functions.xml.in:4001
+#: data/functions.xml.in:4005
 msgid "r:igamma"
 msgstr "r:igamma"
 
-#: data/functions.xml.in:4004
+#: data/functions.xml.in:4008
 msgid "Lower Incomplete Gamma Function"
 msgstr "Fonction gamma incomplète inférieure"
 
-#: data/functions.xml.in:4005
+#: data/functions.xml.in:4009
 msgid "r:gammainc"
 msgstr "r:gammainc"
 
-#: data/functions.xml.in:4009
+#: data/functions.xml.in:4013
 msgid "Regularized Incomplete Beta Function"
 msgstr "Fonction bêta incomplète régularisée"
 
-#: data/functions.xml.in:4010
+#: data/functions.xml.in:4014
 #, fuzzy
 msgid "r:betainc"
 msgstr "r:beta"
 
-#: data/functions.xml.in:4013
+#: data/functions.xml.in:4017
 msgid "Inverse Regularized Incomplete Beta Function"
 msgstr "Inverse de fonction bêta incomplète régularisée"
 
-#: data/functions.xml.in:4014
+#: data/functions.xml.in:4018
 #, fuzzy
 msgid "r:betaincinv"
 msgstr "r:beta"
 
-#: data/functions.xml.in:4019
+#: data/functions.xml.in:4023
 msgid "Geometry"
 msgstr "Géométrie"
 
-#: data/functions.xml.in:4021
+#: data/functions.xml.in:4025
 msgid "Triangle"
 msgstr "Triangle"
 
-#: data/functions.xml.in:4023
+#: data/functions.xml.in:4027
 msgid "Hypotenuse"
 msgstr "Hypoténuse"
 
-#: data/functions.xml.in:4024
+#: data/functions.xml.in:4028
 msgid "r:hypot"
 msgstr "r:hypot"
 
-#: data/functions.xml.in:4027 data/functions.xml.in:4049
-#: data/functions.xml.in:4346 data/functions.xml.in:4361
+#: data/functions.xml.in:4031 data/functions.xml.in:4053
+#: data/functions.xml.in:4350 data/functions.xml.in:4365
 msgid "Side A"
 msgstr "Côté A"
 
-#: data/functions.xml.in:4030 data/functions.xml.in:4052
-#: data/functions.xml.in:4349 data/functions.xml.in:4364
+#: data/functions.xml.in:4034 data/functions.xml.in:4056
+#: data/functions.xml.in:4353 data/functions.xml.in:4368
 msgid "Side B"
 msgstr "Côté B"
 
-#: data/functions.xml.in:4034
+#: data/functions.xml.in:4038
 msgid "Triangle Area"
 msgstr "Aire de triangle"
 
-#: data/functions.xml.in:4035
+#: data/functions.xml.in:4039
 msgid "r:triangle"
 msgstr "r:triangle"
 
-#: data/functions.xml.in:4041 data/functions.xml.in:4090
-#: data/functions.xml.in:4101 data/functions.xml.in:4115
-#: data/functions.xml.in:4126 data/functions.xml.in:4226
-#: data/functions.xml.in:4241 data/functions.xml.in:4256
-#: data/functions.xml.in:4274 data/functions.xml.in:4337
-#: data/functions.xml.in:4367
+#: data/functions.xml.in:4045 data/functions.xml.in:4094
+#: data/functions.xml.in:4105 data/functions.xml.in:4119
+#: data/functions.xml.in:4130 data/functions.xml.in:4230
+#: data/functions.xml.in:4245 data/functions.xml.in:4260
+#: data/functions.xml.in:4278 data/functions.xml.in:4341
+#: data/functions.xml.in:4371
 msgid "Height"
 msgstr "Hauteur"
 
-#: data/functions.xml.in:4045
+#: data/functions.xml.in:4049
 msgid "Triangle Perimeter"
 msgstr "Périmètre de triangle"
 
-#: data/functions.xml.in:4046
+#: data/functions.xml.in:4050
 msgid "r:triangle_perimeter"
 msgstr "r:triangle_perimeter"
 
-#: data/functions.xml.in:4055
+#: data/functions.xml.in:4059
 msgid "Side C"
 msgstr "Côté C"
 
-#: data/functions.xml.in:4060
+#: data/functions.xml.in:4064
 msgid "Circle"
 msgstr "Cercle"
 
-#: data/functions.xml.in:4062
+#: data/functions.xml.in:4066
 msgid "Circle Area"
 msgstr "Aire d'un cercle"
 
-#: data/functions.xml.in:4063
+#: data/functions.xml.in:4067
 msgid "r:circle"
 msgstr "r:circle"
 
-#: data/functions.xml.in:4064 data/functions.xml.in:4073
+#: data/functions.xml.in:4068 data/functions.xml.in:4077
 msgid "Calculates the area of a circle using the radius"
 msgstr "Calcule l'aire d'un cercle d'après son rayon"
 
-#: data/functions.xml.in:4067 data/functions.xml.in:4076
-#: data/functions.xml.in:4087 data/functions.xml.in:4098
-#: data/functions.xml.in:4112 data/functions.xml.in:4123
-#: data/functions.xml.in:4137 data/functions.xml.in:4145
+#: data/functions.xml.in:4071 data/functions.xml.in:4080
+#: data/functions.xml.in:4091 data/functions.xml.in:4102
+#: data/functions.xml.in:4116 data/functions.xml.in:4127
+#: data/functions.xml.in:4141 data/functions.xml.in:4149
 msgid "Radius"
 msgstr "Rayon"
 
-#: data/functions.xml.in:4071
+#: data/functions.xml.in:4075
 msgid "Circle Circumference"
 msgstr "Circonférence d'un cercle"
 
-#: data/functions.xml.in:4072
+#: data/functions.xml.in:4076
 msgid "r:circumference"
 msgstr "r:circumference"
 
-#: data/functions.xml.in:4081
+#: data/functions.xml.in:4085
 msgid "Cylinder"
 msgstr "Cylindre"
 
-#: data/functions.xml.in:4083
+#: data/functions.xml.in:4087
 msgid "Cylinder Volume"
 msgstr "Volume d'un cylindre"
 
-#: data/functions.xml.in:4084
+#: data/functions.xml.in:4088
 msgid "r:cylinder"
 msgstr "r:cylinder"
 
-#: data/functions.xml.in:4094
+#: data/functions.xml.in:4098
 msgid "Surface Area of Cylinder"
 msgstr "Aire d'un cylindre"
 
-#: data/functions.xml.in:4095
+#: data/functions.xml.in:4099
 msgid "r:cylinder_sa"
 msgstr "r:cylinder_sa"
 
-#: data/functions.xml.in:4106
+#: data/functions.xml.in:4110
 msgid "Cone"
 msgstr "Cône"
 
-#: data/functions.xml.in:4108
+#: data/functions.xml.in:4112
 msgid "Cone Volume"
 msgstr "Volume d'un cône"
 
-#: data/functions.xml.in:4109
+#: data/functions.xml.in:4113
 msgid "r:cone"
 msgstr "r:cone"
 
-#: data/functions.xml.in:4119
+#: data/functions.xml.in:4123
 msgid "Surface Area of Cone"
 msgstr "Aire d'un cône"
 
-#: data/functions.xml.in:4120
+#: data/functions.xml.in:4124
 msgid "r:cone_sa"
 msgstr "r:cone_sa"
 
-#: data/functions.xml.in:4131
+#: data/functions.xml.in:4135
 msgid "Sphere"
 msgstr "Sphère"
 
-#: data/functions.xml.in:4133
+#: data/functions.xml.in:4137
 msgid "Sphere Volume"
 msgstr "Volume de sphère"
 
-#: data/functions.xml.in:4134
+#: data/functions.xml.in:4138
 msgid "r:sphere"
 msgstr "r:sphere"
 
-#: data/functions.xml.in:4141
+#: data/functions.xml.in:4145
 msgid "Surface Area of Sphere"
 msgstr "Aire d'une sphère"
 
-#: data/functions.xml.in:4142
+#: data/functions.xml.in:4146
 msgid "r:sphere_sa"
 msgstr "r:sphere_sa"
 
-#: data/functions.xml.in:4152
+#: data/functions.xml.in:4156
 msgid "Square Area"
 msgstr "Aire d'un carré"
 
-#: data/functions.xml.in:4153
+#: data/functions.xml.in:4157
 msgid "r:square"
 msgstr "r:square"
 
-#: data/functions.xml.in:4156 data/functions.xml.in:4164
-#: data/functions.xml.in:4175 data/functions.xml.in:4183
-#: data/functions.xml.in:4282 data/functions.xml.in:4290
-#: data/functions.xml.in:4298 data/functions.xml.in:4306
-#: data/functions.xml.in:4314 data/functions.xml.in:4322
+#: data/functions.xml.in:4160 data/functions.xml.in:4168
+#: data/functions.xml.in:4179 data/functions.xml.in:4187
+#: data/functions.xml.in:4286 data/functions.xml.in:4294
+#: data/functions.xml.in:4302 data/functions.xml.in:4310
+#: data/functions.xml.in:4318 data/functions.xml.in:4326
 msgid "Length of side"
 msgstr "Longueur du côté"
 
-#: data/functions.xml.in:4160
+#: data/functions.xml.in:4164
 msgid "Square Perimeter"
 msgstr "Périmètre d'un carré"
 
-#: data/functions.xml.in:4161
+#: data/functions.xml.in:4165
 msgid "r:square_perimeter"
 msgstr "r:square_perimeter"
 
-#: data/functions.xml.in:4169
+#: data/functions.xml.in:4173
 msgid "Cube"
 msgstr "Cube"
 
-#: data/functions.xml.in:4171
+#: data/functions.xml.in:4175
 msgid "Cube Volume"
 msgstr "Volume d'un cube"
 
-#: data/functions.xml.in:4172
+#: data/functions.xml.in:4176
 msgid "r:cube"
 msgstr "r:cube"
 
-#: data/functions.xml.in:4179
+#: data/functions.xml.in:4183
 msgid "Surface Area of Cube"
 msgstr "Aire de la surface d'un cube"
 
-#: data/functions.xml.in:4180
+#: data/functions.xml.in:4184
 msgid "r:cube_sa"
 msgstr "r:cube_sa"
 
-#: data/functions.xml.in:4188
+#: data/functions.xml.in:4192
 #, fuzzy
 #| msgid "Rectangle Area"
 msgid "Rectangle"
 msgstr "Aire de rectangle"
 
-#: data/functions.xml.in:4190
+#: data/functions.xml.in:4194
 msgid "Rectangle Area"
 msgstr "Aire de rectangle"
 
-#: data/functions.xml.in:4191
+#: data/functions.xml.in:4195
 msgid "r:rect"
 msgstr "r:rect"
 
-#: data/functions.xml.in:4197 data/functions.xml.in:4208
-#: data/functions.xml.in:4223 data/functions.xml.in:4238
-#: data/functions.xml.in:4253
+#: data/functions.xml.in:4201 data/functions.xml.in:4212
+#: data/functions.xml.in:4227 data/functions.xml.in:4242
+#: data/functions.xml.in:4257
 msgid "Width"
 msgstr "Largeur"
 
-#: data/functions.xml.in:4201
+#: data/functions.xml.in:4205
 msgid "Rectangle Perimeter"
 msgstr "Périmètre de rectangle"
 
-#: data/functions.xml.in:4202
+#: data/functions.xml.in:4206
 msgid "r:rect_perimeter"
 msgstr "r:rect_perimeter"
 
-#: data/functions.xml.in:4213
+#: data/functions.xml.in:4217
 msgid "Prism"
 msgstr "Prisme"
 
-#: data/functions.xml.in:4215
+#: data/functions.xml.in:4219
 msgid "Volume of Rectangular Prism"
 msgstr "Volume de prisme rectangulaire"
 
-#: data/functions.xml.in:4216
+#: data/functions.xml.in:4220
 msgid "r:rectprism"
 msgstr "r:rectprism"
 
-#: data/functions.xml.in:4217
+#: data/functions.xml.in:4221
 msgid "Calculates the volume of a prism with rectangular base."
 msgstr "Calcule le volume d'un prisme à base rectangulaire."
 
-#: data/functions.xml.in:4230
+#: data/functions.xml.in:4234
 msgid "Surface Area of Rectangular Prism"
 msgstr "Aire de la surface d'un prisme rectangulaire"
 
-#: data/functions.xml.in:4231
+#: data/functions.xml.in:4235
 msgid "r:rectprism_sa"
 msgstr "r:rectprism_sa"
 
-#: data/functions.xml.in:4232
+#: data/functions.xml.in:4236
 msgid "Calculates the surface area of a prism with rectangular base."
 msgstr "Calcule l'aire de la surface d'un prisme à base rectangulaire."
 
-#: data/functions.xml.in:4245
+#: data/functions.xml.in:4249
 msgid "Volume of Triangular Prism"
 msgstr "Volume de prisme rectangulaire"
 
-#: data/functions.xml.in:4246
+#: data/functions.xml.in:4250
 msgid "r:triangleprism"
 msgstr "r:triangleprism"
 
-#: data/functions.xml.in:4247
+#: data/functions.xml.in:4251
 msgid "Calculates the volume of a prism with triangular base."
 msgstr "Calcule le volume d'un prisme à base triangulaire."
 
-#: data/functions.xml.in:4261
+#: data/functions.xml.in:4265
 msgid "Pyramid"
 msgstr "Pyramide"
 
-#: data/functions.xml.in:4263
+#: data/functions.xml.in:4267
 msgid "Pyramid Volume"
 msgstr "Volume de pyramide"
 
-#: data/functions.xml.in:4264
+#: data/functions.xml.in:4268
 msgid "r:pyramid"
 msgstr "r:pyramid"
 
-#: data/functions.xml.in:4265
+#: data/functions.xml.in:4269
 msgid ""
 "Calculates the volume of a 3-dimensional shape standing on a rectangular "
 "base and terminating in a point at the top."
@@ -8478,75 +8479,75 @@ msgstr ""
 "Calcule le volume d'une forme à trois dimensions basée sur un rectangle et "
 "se finissant en un point au sommet."
 
-#: data/functions.xml.in:4268
+#: data/functions.xml.in:4272
 msgid "Length of base"
 msgstr "Longueur de la base"
 
-#: data/functions.xml.in:4271
+#: data/functions.xml.in:4275
 msgid "Width of base"
 msgstr "Largeur de la base"
 
-#: data/functions.xml.in:4278
+#: data/functions.xml.in:4282
 msgid "Volume of Regular Tetrahedron"
 msgstr "Volume de tétraèdre régulier"
 
-#: data/functions.xml.in:4279
+#: data/functions.xml.in:4283
 msgid "r:tetrahedron"
 msgstr "r:tetrahedron"
 
-#: data/functions.xml.in:4286
+#: data/functions.xml.in:4290
 msgid "Surface Area of Regular Tetrahedron"
 msgstr "Aire de la surface d'un tétraèdre régulier"
 
-#: data/functions.xml.in:4287
+#: data/functions.xml.in:4291
 msgid "r:tetrahedron_sa"
 msgstr "r:tetrahedron_sa"
 
-#: data/functions.xml.in:4294
+#: data/functions.xml.in:4298
 msgid "Height of Regular Tetrahedron"
 msgstr "Hauteur d'un tétraèdre régulier"
 
-#: data/functions.xml.in:4295
+#: data/functions.xml.in:4299
 msgid "r:tetrahedron_height"
 msgstr "r:tetrahedron_height"
 
-#: data/functions.xml.in:4302
+#: data/functions.xml.in:4306
 msgid "Volume of Square Pyramid (Equilateral)"
 msgstr "Volume de pyramide à base carrée (équilatéral)"
 
-#: data/functions.xml.in:4303
+#: data/functions.xml.in:4307
 msgid "r:sqpyramid"
 msgstr "r:sqpyramid"
 
-#: data/functions.xml.in:4310
+#: data/functions.xml.in:4314
 msgid "Surface Area of Square Pyramid (Equilateral)"
 msgstr "Aire de la surface d'une pyramide (équilatéral)"
 
-#: data/functions.xml.in:4311
+#: data/functions.xml.in:4315
 msgid "r:sqpyramid_sa"
 msgstr "r:sqpyramid_sa"
 
-#: data/functions.xml.in:4318
+#: data/functions.xml.in:4322
 msgid "Height of Square Pyramid (Equilateral)"
 msgstr "Hauteur d'une pyramide à base carrée (équilatéral)"
 
-#: data/functions.xml.in:4319
+#: data/functions.xml.in:4323
 msgid "r:sqpyramid_height"
 msgstr "r:sqpyramid_height"
 
-#: data/functions.xml.in:4327
+#: data/functions.xml.in:4331
 msgid "Parallelogram"
 msgstr "Parallélogramme"
 
-#: data/functions.xml.in:4329
+#: data/functions.xml.in:4333
 msgid "Parallelogram Area"
 msgstr "Aire d'un parallélogramme"
 
-#: data/functions.xml.in:4330
+#: data/functions.xml.in:4334
 msgid "r:parallelogram"
 msgstr "r:parallelogram"
 
-#: data/functions.xml.in:4331
+#: data/functions.xml.in:4335
 msgid ""
 "Calculates the area of a four-sided figure whose opposite sides are both "
 "parallel and equal in length."
@@ -8554,15 +8555,15 @@ msgstr ""
 "Calcule l'aire d'un parallélogramme (quadrilatère dont les côtés opposés "
 "sont parallèles et de même longueur)."
 
-#: data/functions.xml.in:4341
+#: data/functions.xml.in:4345
 msgid "Parallelogram Perimeter"
 msgstr "Périmètre d'un parallélogramme"
 
-#: data/functions.xml.in:4342
+#: data/functions.xml.in:4346
 msgid "r:parallelogram_perimeter"
 msgstr "r:parallelogram_perimeter"
 
-#: data/functions.xml.in:4343
+#: data/functions.xml.in:4347
 msgid ""
 "Calculates the perimeter of a four-sided figure whose opposite sides are "
 "both parallel and equal in length."
@@ -8570,42 +8571,42 @@ msgstr ""
 "Calcule le périmètre d'un parallélogramme (quadrilatère dont les côtés "
 "opposés sont parallèles et de même longueur)."
 
-#: data/functions.xml.in:4354
+#: data/functions.xml.in:4358
 msgid "Trapezoid"
 msgstr "Trapèze"
 
-#: data/functions.xml.in:4356
+#: data/functions.xml.in:4360
 #, fuzzy
 #| msgid "Trapezoid"
 msgid "Trapezoid Area"
 msgstr "Trapèze"
 
-#: data/functions.xml.in:4357
+#: data/functions.xml.in:4361
 msgid "r:trapezoid"
 msgstr "r:trapezoid"
 
-#: data/functions.xml.in:4358
+#: data/functions.xml.in:4362
 msgid "Calculates the area of a four-sided figure with two parallel sides."
 msgstr ""
 "Calcule l'aire d'un trapèze (quadrilatère dont deux côtés sont parallèles)."
 
-#: data/functions.xml.in:4373
+#: data/functions.xml.in:4377
 msgid "Economics"
 msgstr "Économie"
 
-#: data/functions.xml.in:4375
+#: data/functions.xml.in:4379
 msgid "Microeconomics"
 msgstr "Micro-économie"
 
-#: data/functions.xml.in:4377
+#: data/functions.xml.in:4381
 msgid "Elasticity"
 msgstr "Élasticité"
 
-#: data/functions.xml.in:4378
+#: data/functions.xml.in:4382
 msgid "r:elasticity"
 msgstr "r:elasticity"
 
-#: data/functions.xml.in:4379
+#: data/functions.xml.in:4383
 msgid ""
 "Calculates the demand elasticity. Also works for supply elasticity, income "
 "elasticity, cross-price elasticity, etc. Just replace demand with supply, or "
@@ -8623,27 +8624,27 @@ msgstr ""
 "est 3 pour la fonction \"Q = 100 - x^2\" où x est la variable de prix par "
 "défaut."
 
-#: data/functions.xml.in:4384
+#: data/functions.xml.in:4388
 msgid "Demand function"
 msgstr "Fonction de la demande"
 
-#: data/functions.xml.in:4387
+#: data/functions.xml.in:4391
 msgid "Price"
 msgstr "Prix"
 
-#: data/functions.xml.in:4390
+#: data/functions.xml.in:4394
 msgid "Price variable"
 msgstr "Variable de prix"
 
-#: data/functions.xml.in:4395
+#: data/functions.xml.in:4399
 msgid "Sum-of-Years Digits Depreciation"
 msgstr ""
 
-#: data/functions.xml.in:4396
+#: data/functions.xml.in:4400
 msgid "r:syd"
 msgstr "r:syd"
 
-#: data/functions.xml.in:4397
+#: data/functions.xml.in:4401
 msgid ""
 "Calculates the sum-of-years digits depreciation for an asset based on its "
 "cost, salvage value, anticipated life, and a particular period. This method "
@@ -8659,33 +8660,33 @@ msgstr ""
 "valeur réelle moins la valeur résiduelle. La vie utile est le nombre de "
 "périodes (typiquement années) pendant lesquelles les actifs sont dépréciés."
 
-#: data/functions.xml.in:4400 data/functions.xml.in:4420
+#: data/functions.xml.in:4404 data/functions.xml.in:4424
 msgid "Cost"
 msgstr "Coût"
 
-#: data/functions.xml.in:4403 data/functions.xml.in:4423
+#: data/functions.xml.in:4407 data/functions.xml.in:4427
 #, fuzzy
 #| msgid "Face value"
 msgid "Salvage value"
 msgstr "Valeur nominale"
 
-#: data/functions.xml.in:4406 data/functions.xml.in:4426
+#: data/functions.xml.in:4410 data/functions.xml.in:4430
 msgid "Life"
 msgstr "Vie"
 
-#: data/functions.xml.in:4409 data/functions.xml.in:4746
+#: data/functions.xml.in:4413 data/functions.xml.in:4750
 msgid "Period"
 msgstr "Période"
 
-#: data/functions.xml.in:4413
+#: data/functions.xml.in:4417
 msgid "Straight Line Depreciation"
 msgstr ""
 
-#: data/functions.xml.in:4414
+#: data/functions.xml.in:4418
 msgid "r:sln"
 msgstr "r:sln"
 
-#: data/functions.xml.in:4415
+#: data/functions.xml.in:4419
 msgid ""
 "Determines the straight line depreciation of an asset for a single period.\n"
 "\n"
@@ -8699,15 +8700,15 @@ msgstr ""
 "résiduelle est la valeur de l'actif à la fin de la période. La vie est le "
 "nombre de périodes pendant lesquelles l'actif est déprécié."
 
-#: data/functions.xml.in:4430
+#: data/functions.xml.in:4434
 msgid "Present Value"
 msgstr "Valeur actuelle"
 
-#: data/functions.xml.in:4431
+#: data/functions.xml.in:4435
 msgid "ra:pv"
 msgstr ""
 
-#: data/functions.xml.in:4432
+#: data/functions.xml.in:4436
 msgid ""
 "Returns the present value of an investment.\n"
 "\n"
@@ -8719,46 +8720,46 @@ msgstr ""
 "Si type = 1 alors le paiement est fait au début de la période, si type = 0 "
 "(ou omis) il est fait à la fin de chaque période."
 
-#: data/functions.xml.in:4437 data/functions.xml.in:4473
-#: data/functions.xml.in:4609 data/functions.xml.in:4687
-#: data/functions.xml.in:4711
+#: data/functions.xml.in:4441 data/functions.xml.in:4477
+#: data/functions.xml.in:4613 data/functions.xml.in:4691
+#: data/functions.xml.in:4715
 msgid "Interest rate"
 msgstr "Taux d'intérêt"
 
-#: data/functions.xml.in:4440 data/functions.xml.in:4537
-#: data/functions.xml.in:4558 data/functions.xml.in:4582
-#: data/functions.xml.in:4654 data/functions.xml.in:4690
-#: data/functions.xml.in:4750
+#: data/functions.xml.in:4444 data/functions.xml.in:4541
+#: data/functions.xml.in:4562 data/functions.xml.in:4586
+#: data/functions.xml.in:4658 data/functions.xml.in:4694
+#: data/functions.xml.in:4754
 msgid "Number of periods"
 msgstr "Nombre de périodes"
 
-#: data/functions.xml.in:4443 data/functions.xml.in:4586
-#: data/functions.xml.in:4612 data/functions.xml.in:4693
+#: data/functions.xml.in:4447 data/functions.xml.in:4590
+#: data/functions.xml.in:4616 data/functions.xml.in:4697
 msgid "Payment made each period"
 msgstr "Versement effectué à chaque période"
 
-#: data/functions.xml.in:4446 data/functions.xml.in:4564
-#: data/functions.xml.in:4592 data/functions.xml.in:4618
-#: data/functions.xml.in:4636 data/functions.xml.in:4757
+#: data/functions.xml.in:4450 data/functions.xml.in:4568
+#: data/functions.xml.in:4596 data/functions.xml.in:4622
+#: data/functions.xml.in:4640 data/functions.xml.in:4761
 msgid "Future value"
 msgstr "Valeur future"
 
-#: data/functions.xml.in:4449 data/functions.xml.in:4567
-#: data/functions.xml.in:4595 data/functions.xml.in:4621
-#: data/functions.xml.in:4664 data/functions.xml.in:4699
-#: data/functions.xml.in:4760
+#: data/functions.xml.in:4453 data/functions.xml.in:4571
+#: data/functions.xml.in:4599 data/functions.xml.in:4625
+#: data/functions.xml.in:4668 data/functions.xml.in:4703
+#: data/functions.xml.in:4764
 msgid "Type"
 msgstr ""
 
-#: data/functions.xml.in:4453
+#: data/functions.xml.in:4457
 msgid "Nominal Interest Rate"
 msgstr "Taux d'intérêt nominal"
 
-#: data/functions.xml.in:4454
+#: data/functions.xml.in:4458
 msgid "r:nominal"
 msgstr "r:nominal"
 
-#: data/functions.xml.in:4455
+#: data/functions.xml.in:4459
 msgid ""
 "Calculates the nominal interest rate from a given effective interest rate "
 "compounded at given intervals."
@@ -8766,140 +8767,140 @@ msgstr ""
 "Calcule le taux d'intérêt nominal pour un taux d'intérêt effectif donné "
 "composé à des intervalles donnés."
 
-#: data/functions.xml.in:4458
+#: data/functions.xml.in:4462
 msgid "Effective interest rate"
 msgstr "Taux d'intérêt effectif"
 
-#: data/functions.xml.in:4461 data/functions.xml.in:4676
+#: data/functions.xml.in:4465 data/functions.xml.in:4680
 msgid "Periods"
 msgstr "Périodes"
 
-#: data/functions.xml.in:4465
+#: data/functions.xml.in:4469
 msgid "Zero Coupon"
 msgstr "Zéro-coupon"
 
-#: data/functions.xml.in:4466
+#: data/functions.xml.in:4470
 msgid "r:zero_coupon"
 msgstr "r:zero_coupon"
 
-#: data/functions.xml.in:4467
+#: data/functions.xml.in:4471
 #, fuzzy
 #| msgid "Calculates the area of a circle using the radius"
 msgid "Calculates the value of a zero-coupon (pure discount) bond."
 msgstr "Calcule l'aire d'un cercle d'après son rayon"
 
-#: data/functions.xml.in:4470 data/functions.xml.in:5005
+#: data/functions.xml.in:4474 data/functions.xml.in:5009
 msgid "Face value"
 msgstr "Valeur nominale"
 
-#: data/functions.xml.in:4480
+#: data/functions.xml.in:4484
 msgid "Treasury Bill Yield"
 msgstr ""
 
-#: data/functions.xml.in:4481
+#: data/functions.xml.in:4485
 msgid "r:tbillyield"
 msgstr "r:tbillyield"
 
-#: data/functions.xml.in:4482
+#: data/functions.xml.in:4486
 #, fuzzy
 msgid "Returns the yield for a treasury bill."
 msgstr "Retourne le prix pour 100 $ de valeur faciale de bons du trésor."
 
-#: data/functions.xml.in:4485 data/functions.xml.in:4500
-#: data/functions.xml.in:4515 data/functions.xml.in:4771
-#: data/functions.xml.in:4822 data/functions.xml.in:4847
-#: data/functions.xml.in:4875 data/functions.xml.in:4903
-#: data/functions.xml.in:4930 data/functions.xml.in:4954
-#: data/functions.xml.in:4979
+#: data/functions.xml.in:4489 data/functions.xml.in:4504
+#: data/functions.xml.in:4519 data/functions.xml.in:4775
+#: data/functions.xml.in:4826 data/functions.xml.in:4851
+#: data/functions.xml.in:4879 data/functions.xml.in:4907
+#: data/functions.xml.in:4934 data/functions.xml.in:4958
+#: data/functions.xml.in:4983
 #, fuzzy
 #| msgid "Second date"
 msgid "Settlement date"
 msgstr "Deuxième date"
 
-#: data/functions.xml.in:4488 data/functions.xml.in:4503
-#: data/functions.xml.in:4518 data/functions.xml.in:4774
-#: data/functions.xml.in:4825 data/functions.xml.in:4850
-#: data/functions.xml.in:4933 data/functions.xml.in:4957
-#: data/functions.xml.in:4982
+#: data/functions.xml.in:4492 data/functions.xml.in:4507
+#: data/functions.xml.in:4522 data/functions.xml.in:4778
+#: data/functions.xml.in:4829 data/functions.xml.in:4854
+#: data/functions.xml.in:4937 data/functions.xml.in:4961
+#: data/functions.xml.in:4986
 msgid "Maturity date"
 msgstr "Échéance"
 
-#: data/functions.xml.in:4491 data/functions.xml.in:4853
+#: data/functions.xml.in:4495 data/functions.xml.in:4857
 msgid "Price per $100 face value"
 msgstr "Prix pour 100 $ de valeur faciale"
 
-#: data/functions.xml.in:4495
+#: data/functions.xml.in:4499
 msgid "Treasury Bill Price"
 msgstr ""
 
-#: data/functions.xml.in:4496
+#: data/functions.xml.in:4500
 msgid "r:tbillprice"
 msgstr "r:tbillprice"
 
-#: data/functions.xml.in:4497
+#: data/functions.xml.in:4501
 #, fuzzy
 msgid "Returns the price per $100 face value for a treasury bill."
 msgstr "Retourne le prix pour 100 $ de valeur faciale de bons du trésor."
 
-#: data/functions.xml.in:4506 data/functions.xml.in:4521
-#: data/functions.xml.in:4831 data/functions.xml.in:4988
+#: data/functions.xml.in:4510 data/functions.xml.in:4525
+#: data/functions.xml.in:4835 data/functions.xml.in:4992
 msgid "Discount rate"
 msgstr "Taux d'actualisation"
 
-#: data/functions.xml.in:4510
+#: data/functions.xml.in:4514
 #, fuzzy
 #| msgid "Dose Equivalent"
 msgid "Treasury Bill Equivalent"
 msgstr "Dose équivalente"
 
-#: data/functions.xml.in:4511
+#: data/functions.xml.in:4515
 msgid "r:tbilleq"
 msgstr "r:tbilleq"
 
-#: data/functions.xml.in:4512
+#: data/functions.xml.in:4516
 #, fuzzy
 msgid "Returns the bond equivalent yield for a treasury bill."
 msgstr "Retourne le prix pour 100 $ de valeur faciale de bons du trésor."
 
-#: data/functions.xml.in:4525
+#: data/functions.xml.in:4529
 msgid "Interest paid on a given period of an investment (ISPMT)"
 msgstr "Intérêt payé pour une période donnée d'un investissement"
 
-#: data/functions.xml.in:4526
+#: data/functions.xml.in:4530
 msgid "r:ispmt"
 msgstr "r:ispmt"
 
-#: data/functions.xml.in:4527
+#: data/functions.xml.in:4531
 msgid "Calculates the interest paid on a given period of an investment."
 msgstr "Calcule l'intérêt d'un investissement payé sur une période donnée."
 
-#: data/functions.xml.in:4530 data/functions.xml.in:4647
-#: data/functions.xml.in:4743
+#: data/functions.xml.in:4534 data/functions.xml.in:4651
+#: data/functions.xml.in:4747
 #, fuzzy
 #| msgid "Nominal interest rate"
 msgid "Periodic interest rate"
 msgstr "Taux d'intérêt nominal"
 
-#: data/functions.xml.in:4533 data/functions.xml.in:4650
+#: data/functions.xml.in:4537 data/functions.xml.in:4654
 msgid "Amortizement period"
 msgstr "Période d'amortissement"
 
-#: data/functions.xml.in:4541 data/functions.xml.in:4561
-#: data/functions.xml.in:4589 data/functions.xml.in:4615
-#: data/functions.xml.in:4633 data/functions.xml.in:4658
-#: data/functions.xml.in:4696 data/functions.xml.in:4754
+#: data/functions.xml.in:4545 data/functions.xml.in:4565
+#: data/functions.xml.in:4593 data/functions.xml.in:4619
+#: data/functions.xml.in:4637 data/functions.xml.in:4662
+#: data/functions.xml.in:4700 data/functions.xml.in:4758
 msgid "Present value"
 msgstr "Valeur actuelle"
 
-#: data/functions.xml.in:4545
+#: data/functions.xml.in:4549
 msgid "Payment for a loan"
 msgstr "Versement pour un emprunt"
 
-#: data/functions.xml.in:4546
+#: data/functions.xml.in:4550
 msgid "r:pmt"
 msgstr "r:pmt"
 
-#: data/functions.xml.in:4547
+#: data/functions.xml.in:4551
 #, fuzzy
 msgid ""
 "Returns the amount of payment (negative) each period for a loan based on a "
@@ -8921,21 +8922,21 @@ msgstr ""
 "Si type = 1 alors le paiement est réalisé en début de période, si type = 0 "
 "(ou omis) il est fait en fin de chaque période."
 
-#: data/functions.xml.in:4555 data/functions.xml.in:4630
+#: data/functions.xml.in:4559 data/functions.xml.in:4634
 msgid "Rate"
 msgstr "Taux"
 
-#: data/functions.xml.in:4571
+#: data/functions.xml.in:4575
 #, fuzzy
 msgid "Rate of investment"
 msgstr "Investissement"
 
-#: data/functions.xml.in:4572
+#: data/functions.xml.in:4576
 #, fuzzy
 msgid "r:rate"
 msgstr "r:intrate"
 
-#: data/functions.xml.in:4573
+#: data/functions.xml.in:4577
 msgid ""
 "Calculates the rate of return.\n"
 "\n"
@@ -8946,20 +8947,20 @@ msgid ""
 "valid result. It defaults to 10%."
 msgstr ""
 
-#: data/functions.xml.in:4598
+#: data/functions.xml.in:4602
 msgid "Guess"
 msgstr ""
 
-#: data/functions.xml.in:4602
+#: data/functions.xml.in:4606
 #, fuzzy
 msgid "Periods of an investment"
 msgstr "Investissement"
 
-#: data/functions.xml.in:4603
+#: data/functions.xml.in:4607
 msgid "r:nper"
 msgstr "r:nper"
 
-#: data/functions.xml.in:4604
+#: data/functions.xml.in:4608
 msgid ""
 "Calculates number of periods of an investment based on periodic constant "
 "payments and a constant interest rate.\n"
@@ -8973,7 +8974,7 @@ msgstr ""
 "Le type définit l'échéance. 1 pour paiement en début de période et 0 (par "
 "défaut) pour paiement en fin de période."
 
-#: data/functions.xml.in:4625
+#: data/functions.xml.in:4629
 #, fuzzy
 #| msgid ""
 #| "Returns the number of periods needed for an investment to attain a "
@@ -8983,11 +8984,11 @@ msgstr ""
 "Retourne le nombre de périodes nécessaires à un investissement pour "
 "atteindre un valeur désirée."
 
-#: data/functions.xml.in:4626
+#: data/functions.xml.in:4630
 msgid "r:g_duration"
 msgstr "r:g_duration"
 
-#: data/functions.xml.in:4627
+#: data/functions.xml.in:4631
 msgid ""
 "Returns the number of periods needed for an investment to attain a desired "
 "value."
@@ -8995,15 +8996,15 @@ msgstr ""
 "Retourne le nombre de périodes nécessaires à un investissement pour "
 "atteindre un valeur désirée."
 
-#: data/functions.xml.in:4640
+#: data/functions.xml.in:4644
 msgid "Payment of an annuity going towards principal (PPMT)"
 msgstr "Versements d'une rente orientée vers le capital"
 
-#: data/functions.xml.in:4641
+#: data/functions.xml.in:4645
 msgid "r:ppmt"
 msgstr "r:ppmt"
 
-#: data/functions.xml.in:4642
+#: data/functions.xml.in:4646
 msgid ""
 "Calculates the amount of a payment of an annuity going towards principal.\n"
 "\n"
@@ -9015,35 +9016,35 @@ msgstr ""
 "Le type définit la date de paiement. 1 pour des paiements en début de "
 "période et 0 (par défaut) pour des paiements en fin de période."
 
-#: data/functions.xml.in:4661
+#: data/functions.xml.in:4665
 msgid "Desired future value"
 msgstr "Valeur future souhaitée"
 
-#: data/functions.xml.in:4668
+#: data/functions.xml.in:4672
 msgid "Effective Interest Rate"
 msgstr "Taux d'intérêt effectif"
 
-#: data/functions.xml.in:4669
+#: data/functions.xml.in:4673
 msgid "r:effect"
 msgstr "r:effect"
 
-#: data/functions.xml.in:4670
+#: data/functions.xml.in:4674
 msgid "Calculates the annual net interest rate for a nominal interest rate."
 msgstr "Calcule l'intérêt effectif pour un taux nominal donné."
 
-#: data/functions.xml.in:4673 data/functions.xml.in:4726
+#: data/functions.xml.in:4677 data/functions.xml.in:4730
 msgid "Nominal interest rate"
 msgstr "Taux d'intérêt nominal"
 
-#: data/functions.xml.in:4680
+#: data/functions.xml.in:4684
 msgid "Future Value"
 msgstr "Valeur Future"
 
-#: data/functions.xml.in:4681
+#: data/functions.xml.in:4685
 msgid "ra:fv,a:FV"
 msgstr ""
 
-#: data/functions.xml.in:4682
+#: data/functions.xml.in:4686
 msgid ""
 "Computes the future value of an investment. This is based on periodic, "
 "constant payments and a constant interest rate.\n"
@@ -9057,15 +9058,15 @@ msgstr ""
 "Si le type = 1 alors le paiement est effectué au début de chaque période; si "
 "le type = 0 (ou omis), il a lieu à la fin de chaque période."
 
-#: data/functions.xml.in:4703
+#: data/functions.xml.in:4707
 msgid "Return on continuously compounded interest"
 msgstr "Retour sur intérêt continûment composé"
 
-#: data/functions.xml.in:4704
+#: data/functions.xml.in:4708
 msgid "r:continuous"
 msgstr "r:continuous"
 
-#: data/functions.xml.in:4705
+#: data/functions.xml.in:4709
 msgid ""
 "Calculates the return on continuously compounded interest, given the "
 "principal, nominal rate and time in years."
@@ -9073,39 +9074,39 @@ msgstr ""
 "Calcule le retour sur intérêt composé continument, étant donnés le taux "
 "nominal principal et la durée en années."
 
-#: data/functions.xml.in:4708 data/functions.xml.in:4723
+#: data/functions.xml.in:4712 data/functions.xml.in:4727
 msgid "Principal"
 msgstr "Capital"
 
-#: data/functions.xml.in:4718
+#: data/functions.xml.in:4722
 msgid "Compound"
 msgstr "Composé"
 
-#: data/functions.xml.in:4719
+#: data/functions.xml.in:4723
 msgid "r:compound"
 msgstr "r:compound"
 
-#: data/functions.xml.in:4720
+#: data/functions.xml.in:4724
 msgid ""
 "Returns the value of an investment, given the principal, nominal interest "
 "rate, compounding frequency and time."
 msgstr ""
 
-#: data/functions.xml.in:4729
+#: data/functions.xml.in:4733
 #, fuzzy
 #| msgid "Coupons per year"
 msgid "Periods per year"
 msgstr "Coupons par an"
 
-#: data/functions.xml.in:4736
+#: data/functions.xml.in:4740
 msgid "Payment of an annuity going towards interest (IPMT)"
 msgstr "Versements d'une rente orientée vers les intérêts"
 
-#: data/functions.xml.in:4737
+#: data/functions.xml.in:4741
 msgid "r:ipmt"
 msgstr "r:ipmt"
 
-#: data/functions.xml.in:4738
+#: data/functions.xml.in:4742
 msgid ""
 "Calculates the amount of a payment of an annuity going towards interest.\n"
 "\n"
@@ -9117,15 +9118,15 @@ msgstr ""
 "Le type définit la date de paiement. 1 pour des paiements en début de "
 "période et 0 (par défaut) pour des paiements en fin de période."
 
-#: data/functions.xml.in:4764
+#: data/functions.xml.in:4768
 msgid "Interest rate for a fully invested security"
 msgstr "Taux d'intérêt d'une obligation entièrement investie"
 
-#: data/functions.xml.in:4765
+#: data/functions.xml.in:4769
 msgid "r:intrate"
 msgstr "r:intrate"
 
-#: data/functions.xml.in:4766
+#: data/functions.xml.in:4770
 msgid ""
 "Returns the interest rate for a fully invested security.\n"
 "\n"
@@ -9139,47 +9140,47 @@ msgstr ""
 "réels/365 or 4: Européenne 30/360.La date de contrat doit être antérieure à "
 "l'échéance."
 
-#: data/functions.xml.in:4777 data/functions.xml.in:4828
+#: data/functions.xml.in:4781 data/functions.xml.in:4832
 msgid "Investment"
 msgstr "Investissement"
 
-#: data/functions.xml.in:4780 data/functions.xml.in:4856
-#: data/functions.xml.in:4963
+#: data/functions.xml.in:4784 data/functions.xml.in:4860
+#: data/functions.xml.in:4967
 msgid "Redemption"
 msgstr "Amortissement"
 
-#: data/functions.xml.in:4789
+#: data/functions.xml.in:4793
 msgid "Dollar Fraction"
 msgstr "Fraction en dollar"
 
-#: data/functions.xml.in:4790
+#: data/functions.xml.in:4794
 msgid "r:dollarfr"
 msgstr "r:dollarfr"
 
-#: data/functions.xml.in:4791
+#: data/functions.xml.in:4795
 msgid ""
 "Converts a decimal dollar price into a dollar price expressed as a fraction."
 msgstr ""
 "Convertit un prix en dollars décimaux en un prix en dollars sous forme de "
 "fraction."
 
-#: data/functions.xml.in:4794
+#: data/functions.xml.in:4798
 msgid "Decimal dollar"
 msgstr "Dollar décimal"
 
-#: data/functions.xml.in:4797 data/functions.xml.in:4810
+#: data/functions.xml.in:4801 data/functions.xml.in:4814
 msgid "Denominator of fraction"
 msgstr "Dénominateur d'une fraction"
 
-#: data/functions.xml.in:4802
+#: data/functions.xml.in:4806
 msgid "Dollar Decimal"
 msgstr "Dollar décimal"
 
-#: data/functions.xml.in:4803
+#: data/functions.xml.in:4807
 msgid "r:dollarde"
 msgstr "r:dollarde"
 
-#: data/functions.xml.in:4804
+#: data/functions.xml.in:4808
 msgid ""
 "Converts a dollar price expressed as a fraction into a dollar price "
 "expressed as a decimal number."
@@ -9187,19 +9188,19 @@ msgstr ""
 "Convertit en prix en dollars sous forme de fraction en un prix en dollars "
 "décimaux."
 
-#: data/functions.xml.in:4807
+#: data/functions.xml.in:4811
 msgid "Fractional dollar"
 msgstr "Dollar fractionnaire"
 
-#: data/functions.xml.in:4815
+#: data/functions.xml.in:4819
 msgid "Amount received at maturity"
 msgstr "Montant reçu à maturité"
 
-#: data/functions.xml.in:4816
+#: data/functions.xml.in:4820
 msgid "r:received"
 msgstr "r:received"
 
-#: data/functions.xml.in:4817
+#: data/functions.xml.in:4821
 msgid ""
 "Returns the amount received at the maturity date for an invested security.\n"
 "\n"
@@ -9214,15 +9215,15 @@ msgstr ""
 "réels/365 or 4: Européenne 30/360.La date de contrat doit être antérieure à "
 "l'échéance."
 
-#: data/functions.xml.in:4840
+#: data/functions.xml.in:4844
 msgid "Discount rate for a security"
 msgstr "Taux d'actualisation d'une obligation"
 
-#: data/functions.xml.in:4841
+#: data/functions.xml.in:4845
 msgid "r:disc"
 msgstr "r:disc"
 
-#: data/functions.xml.in:4842
+#: data/functions.xml.in:4846
 msgid ""
 "Returns the discount rate for a security.\n"
 "\n"
@@ -9230,15 +9231,15 @@ msgid ""
 "1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 
-#: data/functions.xml.in:4865
+#: data/functions.xml.in:4869
 msgid "Accrued interest of security paying at maturity"
 msgstr "Intérêt de sécurité cumulé payé à maturité"
 
-#: data/functions.xml.in:4866
+#: data/functions.xml.in:4870
 msgid "r:accrintm"
 msgstr "r:accrintm"
 
-#: data/functions.xml.in:4867
+#: data/functions.xml.in:4871
 msgid ""
 "Returns the accrued interest for a security which pays interest at maturity "
 "date.\n"
@@ -9253,28 +9254,28 @@ msgstr ""
 "0 : US 30/360 (par défaut), 1 : jours réels, 2: jours réels/360, 3: jours "
 "réels/365 or 4: Européenne 30/360."
 
-#: data/functions.xml.in:4872 data/functions.xml.in:4897
-#: data/functions.xml.in:4985
+#: data/functions.xml.in:4876 data/functions.xml.in:4901
+#: data/functions.xml.in:4989
 msgid "Issue date"
 msgstr "Date de fin"
 
-#: data/functions.xml.in:4878 data/functions.xml.in:4906
+#: data/functions.xml.in:4882 data/functions.xml.in:4910
 msgid "Annual rate of security"
 msgstr "Taux de sécurité annuel"
 
-#: data/functions.xml.in:4881 data/functions.xml.in:4909
+#: data/functions.xml.in:4885 data/functions.xml.in:4913
 msgid "Par value"
 msgstr "Par valeur"
 
-#: data/functions.xml.in:4890
+#: data/functions.xml.in:4894
 msgid "Accrued interest of security with periodic interest payments"
 msgstr "Intérêt de sécurité cumulé avec paiements périodiques"
 
-#: data/functions.xml.in:4891
+#: data/functions.xml.in:4895
 msgid "r:accrint"
 msgstr "r:accrint"
 
-#: data/functions.xml.in:4892
+#: data/functions.xml.in:4896
 msgid ""
 "Returns accrued interest for a security which pays periodic interest.\n"
 "\n"
@@ -9290,23 +9291,23 @@ msgstr ""
 "souhaitez utiliser : 0 : US 30/360 (par défaut), 1 : jours réels, 2: jours "
 "réels/360, 3: jours réels/365 or 4: Européenne 30/360."
 
-#: data/functions.xml.in:4900
+#: data/functions.xml.in:4904
 msgid "First interest"
 msgstr "Premier intérêt"
 
-#: data/functions.xml.in:4912 data/functions.xml.in:4936
+#: data/functions.xml.in:4916 data/functions.xml.in:4940
 msgid "Frequency"
 msgstr "Fréquence"
 
-#: data/functions.xml.in:4923
+#: data/functions.xml.in:4927
 msgid "Number of coupons to be paid"
 msgstr "Nombre de coupons à payer"
 
-#: data/functions.xml.in:4924
+#: data/functions.xml.in:4928
 msgid "r:coupnum"
 msgstr "r:coupnum"
 
-#: data/functions.xml.in:4925
+#: data/functions.xml.in:4929
 msgid ""
 "Returns the number of coupons to be paid between the settlement and the "
 "maturity.\n"
@@ -9322,15 +9323,15 @@ msgstr ""
 "réels/365 or 4: Européenne 30/360.La date de contrat doit être antérieure à "
 "l'échéance."
 
-#: data/functions.xml.in:4947
+#: data/functions.xml.in:4951
 msgid "Price per $100 face value of a discounted security"
 msgstr "Prix pour 100 $ de valeur faciale d'une obligation"
 
-#: data/functions.xml.in:4948
+#: data/functions.xml.in:4952
 msgid "r:pricedisc"
 msgstr "r:pricedisc"
 
-#: data/functions.xml.in:4949
+#: data/functions.xml.in:4953
 msgid ""
 "Calculates and returns the price per $100 face value of a discounted "
 "security. The security does not pay interest at maturity.\n"
@@ -9345,19 +9346,19 @@ msgstr ""
 "0: US 30/360 (par défaut), 1: jours réels, 2: jours réels/360, 3: jours "
 "réels/365 or 4: Européenne 30/360."
 
-#: data/functions.xml.in:4960
+#: data/functions.xml.in:4964
 msgid "Discount"
 msgstr "Escompte"
 
-#: data/functions.xml.in:4972
+#: data/functions.xml.in:4976
 msgid "Price per $100 face value of a security"
 msgstr "Prix pour 100 $ de valeur faciale d'une obligation"
 
-#: data/functions.xml.in:4973
+#: data/functions.xml.in:4977
 msgid "r:pricemat"
 msgstr "r:pricemat"
 
-#: data/functions.xml.in:4974
+#: data/functions.xml.in:4978
 msgid ""
 "Calculates and returns the price per $100 face value of a security. The "
 "security pays interest at maturity.\n"
@@ -9372,33 +9373,33 @@ msgstr ""
 "0: US 30/360 (par défaut), 1: jours réels, 2: jours réels/360, 3: jours "
 "réels/365 or 4: Européenne 30/360."
 
-#: data/functions.xml.in:4991
+#: data/functions.xml.in:4995
 msgid "Annual yield"
 msgstr "Revenu annuel"
 
-#: data/functions.xml.in:5000
+#: data/functions.xml.in:5004
 msgid "Level-Coupon Bond"
 msgstr ""
 
-#: data/functions.xml.in:5001
+#: data/functions.xml.in:5005
 msgid "r:level_coupon"
 msgstr "r:level_coupon"
 
-#: data/functions.xml.in:5002
+#: data/functions.xml.in:5006
 #, fuzzy
 #| msgid "Calculates the norm/length of a vector."
 msgid "Calculates the value of a level-coupon bond."
 msgstr "Calcule la norme/longueur d'un vecteur."
 
-#: data/functions.xml.in:5008
+#: data/functions.xml.in:5012
 msgid "Coupon rate"
 msgstr "Taux du coupon"
 
-#: data/functions.xml.in:5011
+#: data/functions.xml.in:5015
 msgid "Coupons per year"
 msgstr "Coupons par an"
 
-#: data/functions.xml.in:5017
+#: data/functions.xml.in:5021
 msgid "Market interest rate"
 msgstr "Taux d'intérêt du marché"
 
@@ -12395,7 +12396,7 @@ msgid "Johnson Pica"
 msgstr ""
 
 #: data/units.xml.in:4902
-msgid "JohnsonPica,ro:ata_pica,po:ata_picas"
+msgid "johnson_pica,ro:ata_pica,po:ata_picas"
 msgstr ""
 
 #: data/units.xml.in:4910
@@ -13402,6 +13403,9 @@ msgstr "Actuellement (date et heure)"
 #: data/variables.xml.in:933
 msgid "r:now"
 msgstr "r:actuel"
+
+#~ msgid "Arguments"
+#~ msgstr "Arguments"
 
 #~ msgid "Vector Limits"
 #~ msgstr "Limites de vecteur"
