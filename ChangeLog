@@ -1,3 +1,7 @@
+2026-01-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Simplify (x <= a || x >= a+1) when x and a are integers (fixes abs(x-1)=abs(1-x))
+
 2026-01-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Exclude functions with expression containing "plot(" from calculate-as-you-type
@@ -49,7 +53,7 @@
 
 2025-12-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Simplify (x = a || x >= a+1) and (x = a || x <= a - 1) when x is an unknown integer (fixes abs(x-1)=abs(1-x))
+	* Simplify (x = a || x >= a+1) and (x = a || x <= a - 1) when x and a are integers (fixes abs(x-1)=abs(1-x))
 
 2025-12-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

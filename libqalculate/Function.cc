@@ -1268,7 +1268,7 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 		argc_ = 0, max_argc_ = 0;
 		string svar, svar_o, svar_v;
 		bool optionals = false, b = false;
-		size_t last_def_i = (size_t) -1;
+		int last_def_i = -1;
 		for(int i = 0; i < 26; i++) {
 			svar = '\\';
 			svar_o = '\\';
@@ -1288,7 +1288,7 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 						i3 -= i2 + 1;
 					}
 				}
-				for(; last_def_i != (size_t) -1 && last_def_i + 1 < i; last_def_i++) {
+				for(; last_def_i >= 0  && last_def_i + 1 < i; last_def_i++) {
 					default_values.push_back("0");
 				}
 				if(last_def_i != i) {
@@ -1336,7 +1336,7 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 							i3 -= i2 + 1;
 						}
 					}
-					if(last_def_i != (size_t) -1 && last_def_i + 1 < i) {
+					if(last_def_i >= 0 && last_def_i + 1 < i) {
 						default_values.push_back("0");
 					}
 					if(last_def_i != i) {
@@ -1398,7 +1398,7 @@ void UserFunction::setFormula(string new_formula, int argc_, int max_argc_) {
 		max_argc_ = argc_;
 	}
 
-	if(max_argc_ > 0 && default_values.size() < max_argc_ - argc_) default_values.resize(max_argc_ - argc_, "0");
+	if(max_argc_ > 0 && (int) default_values.size() < max_argc_ - argc_) default_values.resize(max_argc_ - argc_, "0");
 
 	sformula_calc = new_formula;
 	argc = argc_;

@@ -34,9 +34,9 @@ msgid ""
 "Malta, Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican "
 "City"
 msgstr ""
-"Andorra, Österrike, Belgien, Bulgarien, Cypern, Estland, Finland, Frankrike, Tyskland, "
-"Grekland, Irland, Italien, Kroatien, Lettland, Litauen, Luxemburg, Malta, "
-"Nederländerna, Portugal, San Marina, Slovakien, Slovenien, Spanien, "
+"Andorra, Österrike, Belgien, Bulgarien, Cypern, Estland, Finland, Frankrike, "
+"Tyskland, Grekland, Irland, Italien, Kroatien, Lettland, Litauen, Luxemburg, "
+"Malta, Nederländerna, Portugal, San Marina, Slovakien, Slovenien, Spanien, "
 "Vatikanstaten"
 
 #: data/currencies.xml.in:11

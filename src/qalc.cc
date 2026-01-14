@@ -714,25 +714,23 @@ void generate_completion_matches(const char *text) {
 	matches.clear();
 	size_t l = strlen(text);
 	string str = rl_line_buffer;
-	size_t i = str.find(" ");
 	bool b_help = false;
-	if(!str.empty() && i != string::npos) {
-		if(str[0] == '/') {
-			if(str.rfind("help", 4) == 1) {str.erase(0, 5); b_help = true;}
-			else if(str.rfind(_("help"), strlen(_("help"))) == 1) {str.erase(0, strlen(_("help")) + 1); b_help = true;}
-		} else {
-			if(str.rfind("help", 3) == 0) {str.erase(0, 4); b_help = true;}
-			else if(str.rfind(_("help"), strlen(_("help")) - 1) == 0) {str.erase(0, strlen(_("help"))); b_help = true;}
-		}
+	bool first_slash = !str.empty() && str[0] == '/';
+	if(first_slash) {
+		str.erase(0, 1);
+		remove_blank_ends(str);
+	}
+	size_t i = str.find(" ");
+	if(i != string::npos && i > 0) {
+		if(i == 4 && str.rfind("help", 3) == 0) {str.erase(0, 4); b_help = true;}
+		else if(i == strlen(_("help")) && str.rfind(_("help"), strlen(_("help")) - 1) == 0) {str.erase(0, strlen(_("help"))); b_help = true;}
 		if(b_help) {
 			remove_blank_ends(str);
 			i = str.find(" ");
 		}
 	}
 	if(i != string::npos && strlen(text) == str.length() - (i + 1)) {
-		if(str[0] == '/') str = str.substr(1, i - 1);
-		else str = str.substr(0, i);
-		if(EQUALS_IGNORECASE_AND_LOCAL(str, "set", _("set"))) {
+		if((i == 3 && str.rfind("set", 2) == 0) || (i == strlen(_("set")) && str.rfind(_("set"), strlen(_("set")) - 1) == 0)) {
 			update_option_list();
 			for(size_t i = 0; i < option_list.size(); i++) {
 				for(size_t i3 = 0; i3 < 4; i3++) {
@@ -750,7 +748,7 @@ void generate_completion_matches(const char *text) {
 			return;
 		}
 	}
-	if(str.empty() || str[0] != '/') {
+	if(!first_slash) {
 		for(size_t i = 0; i < CALCULATOR->functions.size(); i++) {
 			if(CALCULATOR->functions[i]->isActive()) {
 				completion_match_item(CALCULATOR->functions[i], text, l);
@@ -767,7 +765,7 @@ void generate_completion_matches(const char *text) {
 			}
 		}
 	}
-	if(!str.empty() && (strlen(text) == str.length() || (str[0] == '/' && strlen(text) == str.length() - 1))) {
+	if(!str.empty() && strlen(text) == str.length()) {
 		update_command_list();
 		for(size_t i = 0; i < command_list.size(); i++) {
 			if(command_list[i].rfind(text, strlen(text) - 1) == 0) {
@@ -3415,16 +3413,16 @@ void do_autocalc(bool force, const char *action_text) {
 	if(!str.empty() && !autocalc_aborted) {
 		update_command_list();
 		if(rpn_mode) {
-			if((str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS) == string::npos || str.find_first_not_of(PARENTHESISS SPACES) == string::npos) && !CALCULATOR->getActiveFunction(str) && !CALCULATOR->hasToExpression(str, false, evalops)) {
+			if((str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS SPACES) == string::npos || str.find_first_not_of(PARENTHESISS SPACES) == string::npos) && !CALCULATOR->getActiveFunction(str) && !CALCULATOR->hasToExpression(str, false, evalops)) {
 				CALCULATOR->parseSigns(str);
-				if((str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS) == string::npos || str.find_first_not_of(PARENTHESISS SPACES) == string::npos) && !CALCULATOR->getActiveFunction(str)) {
+				if((str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS SPACES) == string::npos || str.find_first_not_of(PARENTHESISS SPACES) == string::npos) && !CALCULATOR->getActiveFunction(str)) {
 					str = "";
 				} else {
 					str = orig_str;
 					remove_blank_ends(str);
 				}
 			}
-		} else if(str[0] == '/' || ((str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS) == string::npos || str.find_first_not_of(OPERATORS PARENTHESISS SPACES) == string::npos) && !CALCULATOR->hasToExpression(str, false, evalops))) {
+		} else if(str[0] == '/' || ((str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS SPACES) == string::npos || str.find_first_not_of(OPERATORS PARENTHESISS SPACES) == string::npos) && !CALCULATOR->hasToExpression(str, false, evalops))) {
 			str = "";
 		}
 		for(size_t i = 0; !str.empty() && i < command_list.size(); i++) {
@@ -7422,10 +7420,10 @@ string ellipsize_vector(const string &str, size_t length) {
 	return str.substr(0, i1) + string(printops.use_unicode_signs ? "(…)" : "(...)") + str.substr(i2);
 }
 
-bool contains_large_matrix(const MathStructure &m, bool top = true) {
+bool contains_large_matrix(const MathStructure &m, int top = 2) {
 	if(!top && ((m.isVector() && m.size() > 500) || (m.isMatrix() && m.rows() * m.columns() > 500))) return true;
 	for(size_t i = 0; i < m.size(); i++) {
-		if(contains_large_matrix(m[i], false)) return true;
+		if(contains_large_matrix(m[i], top == 2 && m.isMatrix())) return true;
 	}
 	return false;
 }
@@ -8777,11 +8775,11 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 			if(auto_calculate) autocalc_result = "";
 			return;
 		}
+		from_str = str;
 		if(ask_questions && test_ask_dot(from_str)) {
 			if(auto_calculate) CALCULATOR->error(false, "", NULL);
 			else ask_dot();
 		}
-		from_str = str;
 		if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
 			had_to_expression = true;
 			remove_duplicate_blanks(to_str);
@@ -9181,29 +9179,39 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 						po.unended_function = &mfunc;
 						bool do_calc = true;
 						CALCULATOR->startControl(50);
-						if(str_conv.empty()) {
+						if(str_conv.empty() && !CALCULATOR->hasWhereExpression(original_expression, evalops)) {
 							CALCULATOR->parse(parsed_mstruct, str2, po);
 							do_calc = test_autocalculable(*parsed_mstruct);
+#ifdef HAVE_LIBREADLINE
+							if(do_calc && !parsed_mstruct->isNumber() && rl_point == rl_end && !had_to_expression && (!mfunc.isFunction() || mfunc.size() == 0 || !mfunc.function()->getArgumentDefinition(mfunc.size()) || !mfunc.function()->getArgumentDefinition(mfunc.size())->suggestsQuotes()) && !((evalops.parse_options.base > 10 && evalops.parse_options.base <= 36) || evalops.parse_options.base == BASE_UNICODE || evalops.parse_options.base == BASE_BIJECTIVE_26 || (evalops.parse_options.base == BASE_CUSTOM && (CALCULATOR->customInputBase() > 10 || CALCULATOR->customInputBase() < -10)))) {
+								do_calc = test_autocalc_function(str2);
+							}
+#endif
 						} else {
-							CALCULATOR->parse(parsed_mstruct, CALCULATOR->unlocalizeExpression(from_str, evalops.parse_options), po);
-							if(str_conv.length() > 1 && str_conv[1] == '?' && (str_conv[0] == 'b' || str_conv[0] == 'a' || str_conv[0] == 'd')) str_conv = str_conv.erase(0, 2);
-							else if(str_conv[0] == '?' || str_conv[0] == '0' || str_conv[0] == '+' || str_conv[0] == '-') str_conv = str_conv.erase(0, 1);
-							do_calc = test_autocalculable(*parsed_mstruct);
-							while(do_calc) {
-								string str_left;
-								CALCULATOR->separateToExpression(str_conv, str_left, evalops, false);
-								MathStructure m;
-								CALCULATOR->parse(&m, CALCULATOR->unlocalizeExpression(str_conv, evalops.parse_options), evalops.parse_options);
-								do_calc = test_autocalculable(m);
-								if(str_left.empty()) break;
-								str_conv = str_left;
+							from_str = CALCULATOR->unlocalizeExpression(from_str, po);
+							string str_w;
+							if(CALCULATOR->separateWhereExpression(from_str, str_w, evalops)) {
+								MathStructure mwhere;
+								CALCULATOR->parseExpressionAndWhere(parsed_mstruct, &mwhere, from_str, str_w, po);
+								do_calc = test_autocalculable(mwhere);
+							} else {
+								CALCULATOR->parse(parsed_mstruct, from_str, po);
+							}
+							if(do_calc) do_calc = test_autocalculable(*parsed_mstruct);
+							if(!str_conv.empty()) {
+								if(str_conv.length() > 1 && str_conv[1] == '?' && (str_conv[0] == 'b' || str_conv[0] == 'a' || str_conv[0] == 'd')) str_conv = str_conv.erase(0, 2);
+								else if(str_conv[0] == '?' || str_conv[0] == '0' || str_conv[0] == '+' || str_conv[0] == '-') str_conv = str_conv.erase(0, 1);
+								while(do_calc) {
+									string str_left;
+									CALCULATOR->separateToExpression(str_conv, str_left, evalops, false);
+									MathStructure m;
+									CALCULATOR->parse(&m, CALCULATOR->unlocalizeExpression(str_conv, evalops.parse_options), evalops.parse_options);
+									do_calc = test_autocalculable(m);
+									if(str_left.empty()) break;
+									str_conv = str_left;
+								}
 							}
 						}
-#ifdef HAVE_LIBREADLINE
-						if(do_calc && !parsed_mstruct->isNumber() && rl_point == rl_end && !had_to_expression && (!mfunc.isFunction() || mfunc.size() == 0 || !mfunc.function()->getArgumentDefinition(mfunc.size()) || !mfunc.function()->getArgumentDefinition(mfunc.size())->suggestsQuotes()) && !((evalops.parse_options.base > 10 && evalops.parse_options.base <= 36) || evalops.parse_options.base == BASE_UNICODE || evalops.parse_options.base == BASE_BIJECTIVE_26 || (evalops.parse_options.base == BASE_CUSTOM && (CALCULATOR->customInputBase() > 10 || CALCULATOR->customInputBase() < -10)))) {
-							do_calc = test_autocalc_function(str2);
-						}
-#endif
 						CALCULATOR->stopControl();
 						if(!do_calc) {
 							MathStructure *m = new MathStructure();
@@ -9230,29 +9238,39 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 			po.unended_function = &mfunc;
 			bool do_calc = true;
 			CALCULATOR->startControl(50);
-			if(str_conv.empty()) {
+			if(str_conv.empty() && !CALCULATOR->hasWhereExpression(original_expression, evalops)) {
 				CALCULATOR->parse(parsed_mstruct, original_expression, po);
 				do_calc = test_autocalculable(*parsed_mstruct);
+#ifdef HAVE_LIBREADLINE
+				if(do_calc && !parsed_mstruct->isNumber() && rl_point == rl_end && !had_to_expression && (!mfunc.isFunction() || mfunc.size() == 0 || !mfunc.function()->getArgumentDefinition(mfunc.size()) || !mfunc.function()->getArgumentDefinition(mfunc.size())->suggestsQuotes()) && !((evalops.parse_options.base > 10 && evalops.parse_options.base <= 36) || evalops.parse_options.base == BASE_UNICODE || evalops.parse_options.base == BASE_BIJECTIVE_26 || (evalops.parse_options.base == BASE_CUSTOM && (CALCULATOR->customInputBase() > 10 || CALCULATOR->customInputBase() < -10)))) {
+					do_calc = test_autocalc_function(original_expression);
+				}
+#endif
 			} else {
-				CALCULATOR->parse(parsed_mstruct, CALCULATOR->unlocalizeExpression(from_str, evalops.parse_options), po);
-				if(str_conv.length() > 1 && str_conv[1] == '?' && (str_conv[0] == 'b' || str_conv[0] == 'a' || str_conv[0] == 'd')) str_conv = str_conv.erase(0, 2);
-				else if(str_conv[0] == '?' || str_conv[0] == '0' || str_conv[0] == '+' || str_conv[0] == '-') str_conv = str_conv.erase(0, 1);
-				do_calc = test_autocalculable(*parsed_mstruct);
-				while(do_calc) {
-					string str_left;
-					CALCULATOR->separateToExpression(str_conv, str_left, evalops, false);
-					MathStructure m;
-					CALCULATOR->parse(&m, CALCULATOR->unlocalizeExpression(str_conv, evalops.parse_options), evalops.parse_options);
-					do_calc = test_autocalculable(m);
-					if(str_left.empty()) break;
-					str_conv = str_left;
+				from_str = CALCULATOR->unlocalizeExpression(from_str, po);
+				string str_w;
+				if(CALCULATOR->separateWhereExpression(from_str, str_w, evalops)) {
+					MathStructure mwhere;
+					CALCULATOR->parseExpressionAndWhere(parsed_mstruct, &mwhere, from_str, str_w, po);
+					do_calc = test_autocalculable(mwhere);
+				} else {
+					CALCULATOR->parse(parsed_mstruct, from_str, po);
+				}
+				if(do_calc) do_calc = test_autocalculable(*parsed_mstruct);
+				if(!str_conv.empty()) {
+					if(str_conv.length() > 1 && str_conv[1] == '?' && (str_conv[0] == 'b' || str_conv[0] == 'a' || str_conv[0] == 'd')) str_conv = str_conv.erase(0, 2);
+					else if(str_conv[0] == '?' || str_conv[0] == '0' || str_conv[0] == '+' || str_conv[0] == '-') str_conv = str_conv.erase(0, 1);
+					while(do_calc) {
+						string str_left;
+						CALCULATOR->separateToExpression(str_conv, str_left, evalops, false);
+						MathStructure m;
+						CALCULATOR->parse(&m, CALCULATOR->unlocalizeExpression(str_conv, evalops.parse_options), evalops.parse_options);
+						do_calc = test_autocalculable(m);
+						if(str_left.empty()) break;
+						str_conv = str_left;
+					}
 				}
 			}
-#ifdef HAVE_LIBREADLINE
-			if(do_calc && !parsed_mstruct->isNumber() && rl_point == rl_end && !had_to_expression && (!mfunc.isFunction() || mfunc.size() == 0 || !mfunc.function()->getArgumentDefinition(mfunc.size()) || !mfunc.function()->getArgumentDefinition(mfunc.size())->suggestsQuotes()) && !((evalops.parse_options.base > 10 && evalops.parse_options.base <= 36) || evalops.parse_options.base == BASE_UNICODE || evalops.parse_options.base == BASE_BIJECTIVE_26 || (evalops.parse_options.base == BASE_CUSTOM && (CALCULATOR->customInputBase() > 10 || CALCULATOR->customInputBase() < -10)))) {
-				do_calc = test_autocalc_function(original_expression);
-			}
-#endif
 			CALCULATOR->stopControl();
 			if(do_calc) CALCULATOR->calculate(mstruct, original_expression, 0, evalops, parsed_mstruct, &to_struct);
 			else mstruct->setAborted();

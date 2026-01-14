@@ -809,9 +809,10 @@ int Calculator::endTemporaryStopMessages(int *message_count, int *warning_count,
 	int ret = stopped_errors_count[disable_errors_ref];
 	bool release_messages = false;
 	if(release_messages_if_no_equal_or_greater_than_message_type >= MESSAGE_INFORMATION) {
-		if(ret > 0) release_messages = true;
-		if(release_messages_if_no_equal_or_greater_than_message_type == MESSAGE_WARNING && stopped_warnings_count[disable_errors_ref] > 0) release_messages = true;
-		else if(release_messages_if_no_equal_or_greater_than_message_type == MESSAGE_INFORMATION && stopped_messages_count[disable_errors_ref] > 0) release_messages = true;
+		release_messages = true;
+		if(release_messages_if_no_equal_or_greater_than_message_type <= MESSAGE_ERROR && ret > 0) release_messages = false;
+		else if(release_messages_if_no_equal_or_greater_than_message_type == MESSAGE_INFORMATION && stopped_messages_count[disable_errors_ref] > 0) release_messages = false;
+		else if(release_messages_if_no_equal_or_greater_than_message_type == MESSAGE_WARNING && stopped_warnings_count[disable_errors_ref] > 0) release_messages = false;
 	}
 	if(message_count) *message_count = stopped_messages_count[disable_errors_ref];
 	if(warning_count) *warning_count = stopped_warnings_count[disable_errors_ref];

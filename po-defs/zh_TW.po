@@ -37,9 +37,9 @@ msgid ""
 "Malta, Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican "
 "City"
 msgstr ""
-"安道爾、奧地利、比利時、保加利亞、克羅埃西亞、賽普勒斯、愛沙尼亞、芬蘭、法國、德國、希"
-"臘、愛爾蘭、義大利、拉脫維亞、立陶宛、盧森堡、馬爾他、荷蘭、葡萄牙、聖馬利"
-"諾、斯洛伐克、斯洛維尼亞、西班牙、梵蒂岡城"
+"安道爾、奧地利、比利時、保加利亞、克羅埃西亞、賽普勒斯、愛沙尼亞、芬蘭、法"
+"國、德國、希臘、愛爾蘭、義大利、拉脫維亞、立陶宛、盧森堡、馬爾他、荷蘭、葡萄"
+"牙、聖馬利諾、斯洛伐克、斯洛維尼亞、西班牙、梵蒂岡城"
 
 #: data/currencies.xml.in:11
 msgid "U.S. Dollar"
@@ -2021,7 +2021,6 @@ msgid "a-cr:LTL"
 msgstr "a-cr:LTL"
 
 #: data/currencies.xml.in:980
-#| msgid "Belgian Franc (obsolete)"
 msgid "Bulgarian Lev (obsolete)"
 msgstr "保加利亞列弗(過時)"
 
