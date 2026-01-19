@@ -3422,8 +3422,16 @@ void do_autocalc(bool force, const char *action_text) {
 					remove_blank_ends(str);
 				}
 			}
-		} else if(str[0] == '/' || ((str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS SPACES) == string::npos || str.find_first_not_of(OPERATORS PARENTHESISS SPACES) == string::npos) && !CALCULATOR->hasToExpression(str, false, evalops))) {
+		} else if(str[0] == '/') {
 			str = "";
+		} else if((str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS SPACES) == string::npos || str.find_first_not_of(OPERATORS PARENTHESISS SPACES) == string::npos) && !CALCULATOR->hasToExpression(str, false, evalops)) {
+			Variable *v = CALCULATOR->getActiveVariable(str);
+			if(!v || !v->isKnown()) {
+				MathFunction *f = (v ? NULL : CALCULATOR->getActiveFunction(str));
+				if(!f || f->minargs() > 0) {
+					str = "";
+				}
+			}
 		}
 		for(size_t i = 0; !str.empty() && i < command_list.size(); i++) {
 			if(str.rfind(command_list[i], command_list[i].length() - 1) == 0 && (str.length() == command_list[i].length() || (command_arg[i] != 0 && str[command_list[i].length()] == ' '))) str = "";
@@ -8629,9 +8637,10 @@ bool contains_plot_or_save(const string &str) {
 	}
 	return false;
 }
-bool test_autocalculable(const MathStructure &m, bool top = true) {
+bool test_autocalculable(const MathStructure &m, bool where = false, bool top = true) {
+	if(where && top && ((m.isVariable() && !m.variable()->isKnown()) || m.isNumber())) return false;
 	if(m.isFunction()) {
-		if(m.size() < (size_t) m.function()->minargs() && (m.size() != 1 || m[0].representsScalar())) {
+		if(m.size() < (size_t) m.function()->minargs() && (!where || m.size() != 0) && (m.size() != 1 || m[0].representsScalar())) {
 			MathStructure mfunc(m);
 			mfunc.calculateFunctions(evalops, false);
 			return false;
@@ -8646,7 +8655,7 @@ bool test_autocalculable(const MathStructure &m, bool top = true) {
 		return false;
 	}
 	for(size_t i = 0; i < m.size(); i++) {
-		if(!test_autocalculable(m[i], false)) return false;
+		if(!test_autocalculable(m[i], where || (m.isFunction() && m.function()->id() == FUNCTION_ID_REPLACE && i > 0), false)) return false;
 	}
 	return true;
 }
@@ -8672,7 +8681,6 @@ bool is_digit_qalc(char c, int base) {
 #ifdef HAVE_LIBREADLINE
 bool test_autocalc_function(const string &original_expression) {
 	size_t pos = original_expression.length();
-	bool do_calc = true;
 	while(pos > 0) {
 		size_t l = 1;
 		while(pos - l > 0 && (unsigned char) original_expression[pos - l] >= 0x80 && (unsigned char) original_expression[pos - l] < 0xC0) l++;
@@ -8700,7 +8708,7 @@ bool test_autocalc_function(const string &original_expression) {
 				break;
 			}
 		}
-		if(cit1 || cit2) pos = original_expression.length();
+		if(cit1 || cit2) return true;
 	}
 	if(pos < original_expression.length()) {
 		MathStructure m;
@@ -8710,22 +8718,28 @@ bool test_autocalc_function(const string &original_expression) {
 			MathStructure *mfunc = NULL;
 			if(m.isFunction() && m.size() > 0) mfunc = &m;
 			else if(m.isMultiplication() && m.size() > 0 && m.last().isFunction() && m.last().size() > 0) mfunc = &m.last();
-			if(mfunc) {
+			if(mfunc && mfunc->function()->minargs() > 0) {
 				if((*mfunc)[0].isMultiplication()) {
 					for(size_t i = 0; i < (*mfunc)[0].size(); i++) {
 						if(!(*mfunc)[0][i].isVariable() || ((*mfunc)[0][i].variable() != CALCULATOR->getVariableById(VARIABLE_ID_X) && (*mfunc)[0][i].variable() != CALCULATOR->getVariableById(VARIABLE_ID_Y) && (*mfunc)[0][i].variable() != CALCULATOR->getVariableById(VARIABLE_ID_Z))) {
-							do_calc = false;
-							break;
+							return false;
 						}
 
 					}
 				} else if(!(*mfunc)[0].isVariable() || ((*mfunc)[0].variable() != CALCULATOR->getVariableById(VARIABLE_ID_X) && (*mfunc)[0].variable() != CALCULATOR->getVariableById(VARIABLE_ID_Y) && (*mfunc)[0].variable() != CALCULATOR->getVariableById(VARIABLE_ID_Z))) {
-					do_calc = false;
+					return false;
+				}
+			}
+			if(m.isMultiplication()) {
+				for(size_t i = 1; i < m.size(); i++) {
+					if(m[i].isVariable() && m[i].variable() == CALCULATOR->getVariableById(VARIABLE_ID_I) && m[i - 1].isUnit() && m[i - 1].unit()->baseUnit() != CALCULATOR->getRadUnit()) {
+						return false;
+					}
 				}
 			}
 		}
 	}
-	return do_calc;
+	return true;
 }
 #endif
 
@@ -9193,7 +9207,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 							if(CALCULATOR->separateWhereExpression(from_str, str_w, evalops)) {
 								MathStructure mwhere;
 								CALCULATOR->parseExpressionAndWhere(parsed_mstruct, &mwhere, from_str, str_w, po);
-								do_calc = test_autocalculable(mwhere);
+								do_calc = test_autocalculable(mwhere, true);
 							} else {
 								CALCULATOR->parse(parsed_mstruct, from_str, po);
 							}
@@ -9252,7 +9266,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 				if(CALCULATOR->separateWhereExpression(from_str, str_w, evalops)) {
 					MathStructure mwhere;
 					CALCULATOR->parseExpressionAndWhere(parsed_mstruct, &mwhere, from_str, str_w, po);
-					do_calc = test_autocalculable(mwhere);
+					do_calc = test_autocalculable(mwhere, true);
 				} else {
 					CALCULATOR->parse(parsed_mstruct, from_str, po);
 				}

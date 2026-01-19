@@ -2496,8 +2496,11 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 			vector<KnownVariable*> vars_u;
 			vector<MathStructure> uncs;
 			calculatesub(eo3, eo3);
+			int i = 0;
 			while(eo.sync_units && (separate_unit_vars(*this, feo, true) || sync_approximate_units(*this, feo, &vars_u, &uncs, false))) {
 				calculatesub(eo3, eo3);
+				i++;
+				if((i > 2 && CALCULATOR->aborted()) || i > 20) break;
 			}
 			eo3.approximation = APPROXIMATION_APPROXIMATE;
 			if(eo.sync_units) {
@@ -2570,9 +2573,13 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 				uncs.clear();
 				calculatesub(eo3, eo3);
 				// remove units from variables with uncertainties
+				int i = 0;
 				while(eo.sync_units && (separate_unit_vars(*this, feo, true) || sync_approximate_units(*this, feo, &vars, &uncs, false))) {
 					calculatesub(eo3, eo3);
+					i++;
+					if((i > 2 && CALCULATOR->aborted()) || i > 20) break;
 				}
+
 			}
 			bool b_failed = false;
 			if(containsType(STRUCT_COMPARISON)) {

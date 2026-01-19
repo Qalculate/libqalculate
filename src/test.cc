@@ -189,7 +189,7 @@ void search_provider_test(string expression) {
 					}
 				}
 			} else if(m.isFunction() && m.size() > 0 && str2.find_first_of(NOT_IN_NAMES NUMBERS) == string::npos) {
-				b_valid = false;
+				if(m.function()->minargs() > 0 || !m.function()->hasName(str)) b_valid = false;
 			}
 		}
 		if(!b_valid) {CALCULATOR->stopControl(); cout << "NULL1b" << endl; return;}
