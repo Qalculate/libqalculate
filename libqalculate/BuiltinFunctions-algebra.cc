@@ -314,7 +314,7 @@ MathStructure *solve_handle_logical_and(MathStructure &mstruct, MathStructure **
 }
 
 void simplify_constant(MathStructure &mstruct, const MathStructure &x_var, const MathStructure &y_var, const MathStructure &c_var, bool in_comparison = false, bool in_or = false, bool in_and = false);
-void simplify_constant(MathStructure &mstruct, const MathStructure &x_var, const MathStructure &y_var, const MathStructure &c_var, bool in_comparison, bool in_or, bool in_and) {
+void simplify_constant(MathStructure &mstruct, const MathStructure &x_var, const MathStructure &y_var, const MathStructure &c_var, bool in_comparison, bool in_or, [[maybe_unused]] bool in_and) {
 	if(!in_comparison && mstruct.isComparison()) {
 		if(mstruct[0] == c_var) {
 			if(in_or) mstruct.clear(true);

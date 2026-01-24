@@ -273,7 +273,7 @@ HorzCatFunction::HorzCatFunction() : MathFunction("horzcat", 1, -1) {
 	setArgumentDefinition(1, new MatrixArgument(""));
 	setArgumentDefinition(2, new MatrixArgument(""));
 }
-bool HorzCatFunction::representsScalar(const MathStructure &vargs) const {return false;}
+bool HorzCatFunction::representsScalar([[maybe_unused]] const MathStructure &vargs) const {return false;}
 bool HorzCatFunction::representsNonMatrix(const MathStructure &vargs) const {
 	for(size_t i = 0; i < vargs.size(); i++) {
 		if(!vargs[i].representsNonMatrix()) return false;
@@ -465,7 +465,7 @@ int ElementFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 DimensionFunction::DimensionFunction() : MathFunction("dimension", 1) {
 	setArgumentDefinition(1, new VectorArgument());
 }
-int DimensionFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int DimensionFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, [[maybe_unused]] const EvaluationOptions &eo) {
 	mstruct.set((long int) vargs[0].countChildren(), 1L, 0L);
 	return 1;
 }
@@ -1019,7 +1019,7 @@ DotProductFunction::DotProductFunction() : MathFunction("dot", 2) {
 	setArgumentDefinition(1, new VectorArgument(""));
 	setArgumentDefinition(2, new VectorArgument(""));
 }
-int DotProductFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int DotProductFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, [[maybe_unused]] const EvaluationOptions &eo) {
 	mstruct = vargs[0];
 	MathStructure m2(vargs[1]);
 	if(mstruct.size() == m2.size()) {
@@ -1626,7 +1626,7 @@ LoadFunction::LoadFunction() : MathFunction("load", 1, 3) {
 	setArgumentDefinition(3, new TextArgument());
 	setDefaultValue(3, ",");
 }
-int LoadFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+int LoadFunction::calculate([[maybe_unused]] MathStructure &mstruct, [[maybe_unused]] const MathStructure &vargs, const EvaluationOptions&) {
 #ifndef DISABLE_INSECURE
 	string delim = vargs[2].symbol();
 	if(delim == "tab") {
@@ -1648,7 +1648,7 @@ ExportFunction::ExportFunction() : MathFunction("export", 2, 3) {
 	setArgumentDefinition(3, new TextArgument());
 	setDefaultValue(3, ",");
 }
-int ExportFunction::calculate(MathStructure&, const MathStructure &vargs, const EvaluationOptions&) {
+int ExportFunction::calculate(MathStructure&, [[maybe_unused]] const MathStructure &vargs, const EvaluationOptions&) {
 #ifndef DISABLE_INSECURE
 	string delim = vargs[2].symbol();
 	if(delim == "tab") {

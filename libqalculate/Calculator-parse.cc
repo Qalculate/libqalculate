@@ -2116,6 +2116,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						case SPACE_CH: {
 							if(b_comma) break;
 						}
+						[[fallthrough]]
 						case ',': {
 							if(brackets == 1 && pars == 0 && !in_cit1 && !in_cit2) {
 								if(!b_comma && (str[i - 1] == ';' || (is_in(OPERATORS INTERNAL_OPERATORS, str[i - 1]) && str[i - 1] != NOT_CH))) break;
@@ -2864,6 +2865,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							}
 						}
 					}
+					[[fallthrough]]
 					case 0: {
 						if(po.units_enabled && vt3 < ufv[vt2][ufv_index].size()) {
 							object = ufv[vt2][ufv_index][vt3];
@@ -2888,6 +2890,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						vt2 = 1;
 						vt3 = 0;
 					}
+					[[fallthrough]]
 					case 1: {
 						if(!found_function_name && po.functions_enabled && !p_mode && (!po.limit_implicit_multiplication || ufv_index + 1 == unit_chars_left || ufv_index + 1 == name_chars_left) && vt3 < ufv[vt2][ufv_index].size()) {
 							object = ufv[vt2][ufv_index][vt3];
@@ -2902,6 +2905,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						vt2 = 2;
 						vt3 = 0;
 					}
+					[[fallthrough]]
 					case 2: {
 						if(po.units_enabled && !p_mode && (!po.limit_implicit_multiplication || ufv_index + 1 == unit_chars_left) && ufv_index < unit_chars_left && vt3 < ufv[vt2][ufv_index].size()) {
 							object = ufv[vt2][ufv_index][vt3];
@@ -2918,6 +2922,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						vt2 = 3;
 						vt3 = 0;
 					}
+					[[fallthrough]]
 					case 3: {
 						if(po.variables_enabled && !p_mode && (!po.limit_implicit_multiplication || ufv_index + 1 == unit_chars_left || ufv_index + 1 == name_chars_left) && vt3 < ufv[vt2][ufv_index].size()) {
 							object = ufv[vt2][ufv_index][vt3];

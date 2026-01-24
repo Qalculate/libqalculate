@@ -354,7 +354,8 @@ bool QalculateDateTime::set(const Number &newtimestamp) {
 }
 bool QalculateDateTime::set(string str) {
 
-	long int newyear = 0, newmonth = 0, newday = 0;
+	long int newyear = 0;
+	unsigned long newmonth = 0, newday = 0;
 
 	string str_bak(str);
 
@@ -398,7 +399,7 @@ bool QalculateDateTime::set(string str) {
 			}
 		}
 	}
-	int newhour = 0, newmin = 0, newsec = 0;
+	unsigned newhour = 0, newmin = 0, newsec = 0;
 	int itz = 0;
 	if(i_t != string::npos) {
 		b_t = true;

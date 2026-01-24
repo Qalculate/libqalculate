@@ -48,7 +48,7 @@ bool FactorialFunction::representsInteger(const MathStructure &vargs, bool) cons
 bool FactorialFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
 bool FactorialFunction::representsRational(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
 bool FactorialFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
-bool FactorialFunction::representsNonComplex(const MathStructure &vargs, bool) const {return true;}
+bool FactorialFunction::representsNonComplex([[maybe_unused]] const MathStructure &vargs, bool) const {return true;}
 bool FactorialFunction::representsComplex(const MathStructure&, bool) const {return false;}
 bool FactorialFunction::representsNonZero(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
 bool FactorialFunction::representsEven(const MathStructure&, bool) const {return false;}
@@ -72,7 +72,7 @@ bool DoubleFactorialFunction::representsInteger(const MathStructure &vargs, bool
 bool DoubleFactorialFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
 bool DoubleFactorialFunction::representsRational(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
 bool DoubleFactorialFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
-bool DoubleFactorialFunction::representsNonComplex(const MathStructure &vargs, bool) const {return true;}
+bool DoubleFactorialFunction::representsNonComplex([[maybe_unused]] const MathStructure &vargs, bool) const {return true;}
 bool DoubleFactorialFunction::representsComplex(const MathStructure&, bool) const {return false;}
 bool DoubleFactorialFunction::representsNonZero(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
 bool DoubleFactorialFunction::representsEven(const MathStructure&, bool) const {return false;}
@@ -92,7 +92,7 @@ bool MultiFactorialFunction::representsNonNegative(const MathStructure &vargs, b
 bool MultiFactorialFunction::representsNonPositive(const MathStructure&, bool) const {return false;}
 bool MultiFactorialFunction::representsInteger(const MathStructure &vargs, bool) const {return vargs.size() == 2 && vargs[1].representsInteger() && vargs[1].representsPositive() && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
 bool MultiFactorialFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 2 && vargs[1].representsInteger() && vargs[1].representsPositive() && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
-bool MultiFactorialFunction::representsNonComplex(const MathStructure &vargs, bool) const {return true;}
+bool MultiFactorialFunction::representsNonComplex([[maybe_unused]] const MathStructure &vargs, bool) const {return true;}
 bool MultiFactorialFunction::representsRational(const MathStructure &vargs, bool) const {return vargs.size() == 2 && vargs[1].representsInteger() && vargs[1].representsPositive() && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
 bool MultiFactorialFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 2 && vargs[1].representsInteger() && vargs[1].representsPositive() && vargs[0].representsInteger() && vargs[0].representsNonNegative();}
 bool MultiFactorialFunction::representsComplex(const MathStructure&, bool) const {return false;}

@@ -286,7 +286,7 @@ bool Unit::hasApproximateRelationTo(Unit *u, bool check_variables, bool ignore_h
 		fbu = (Unit*) ((AliasUnit*) fbu)->firstBaseUnit();
 	}
 }
-bool Unit::containsRelativeTo(Unit *u) const {return false;}
+bool Unit::containsRelativeTo([[maybe_unused]] Unit *u) const {return false;}
 bool Unit::hasNonlinearRelationToBase() const {return false;}
 bool Unit::hasApproximateRelationToBase(bool, bool) const {return false;}
 

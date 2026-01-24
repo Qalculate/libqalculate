@@ -780,10 +780,13 @@ bool MathStructure::representsNumber(bool allow_units) const {
 		case STRUCT_FUNCTION: {return (function_value && function_value->representsNumber(allow_units)) || o_function->representsNumber(*this, allow_units);}
 		case STRUCT_UNIT: {return allow_units;}
 		case STRUCT_DATETIME: {return allow_units;}
+		[[fallthrough]]
 		case STRUCT_POWER: {
 			if(!CHILD(0).representsNonZero(allow_units) && !CHILD(1).representsPositive(allow_units)) return false;
 		}
+		[[fallthrough]]
 		case STRUCT_ADDITION: {}
+		[[fallthrough]]
 		case STRUCT_MULTIPLICATION: {
 			for(size_t i = 0; i < SIZE; i++) {
 				if(!CHILD(i).representsNumber(allow_units)) return false;
@@ -1272,9 +1275,11 @@ bool MathStructure::representsUndefined(bool include_childs, bool include_infini
 				}
 			}
 		}
+		[[fallthrough]]
 		case STRUCT_MULTIPLICATION: {
 			if(SIZE > 1 && CHILD(0).isZero() && CHILD(1).isInfinity()) return true;
 		}
+		[[fallthrough]]
 		default: {
 			if(include_childs) {
 				for(size_t i = 0; i < SIZE; i++) {
@@ -2918,6 +2923,7 @@ void MathStructure::findAllUnknowns(MathStructure &unknowns_vector) {
 				break;
 			}
 		}
+		[[fallthrough]]
 		case STRUCT_SYMBOLIC: {
 			bool b = false;
 			for(size_t i = 0; i < unknowns_vector.size(); i++) {

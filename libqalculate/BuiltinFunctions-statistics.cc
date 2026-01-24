@@ -113,6 +113,7 @@ int PercentileFunction::calculate(MathStructure &mstruct, const MathStructure &v
 				return 1;
 			}
 		}
+		[[fallthrough]]
 		case 1: {
 			pfr *= (long int) v.countChildren();
 			pfr.intervalToMidValue();

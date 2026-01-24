@@ -1063,7 +1063,7 @@ CommandFunction::CommandFunction() : MathFunction("command", 1, -1) {
 	setArgumentDefinition(1, new TextArgument());
 	setArgumentDefinition(2, new Argument());
 }
-int CommandFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int CommandFunction::calculate([[maybe_unused]] MathStructure &mstruct, [[maybe_unused]] const MathStructure &vargs, [[maybe_unused]] const EvaluationOptions &eo) {
 #ifndef DISABLE_INSECURE
 #	ifdef HAVE_GNUPLOT_CALL
 

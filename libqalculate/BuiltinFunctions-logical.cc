@@ -116,7 +116,7 @@ CircularShiftFunction::CircularShiftFunction() : MathFunction("bitrot", 2, 4) {
 	setDefaultValue(3, "0");
 	setDefaultValue(4, "1");
 }
-int CircularShiftFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int CircularShiftFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, [[maybe_unused]] const EvaluationOptions &eo) {
 	if(vargs[0].number().isZero()) {
 		mstruct.clear();
 		return 1;
@@ -167,7 +167,7 @@ BitCmpFunction::BitCmpFunction() : MathFunction("bitcmp", 1, 3) {
 	setArgumentDefinition(3, new BooleanArgument());
 	setDefaultValue(3, "0");
 }
-int BitCmpFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int BitCmpFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, [[maybe_unused]] const EvaluationOptions &eo) {
 	Number nr(vargs[0].number());
 	if(vargs.size() >= 3 && vargs[2].number().getBoolean()) {
 		if(nr.bitNot()) {
@@ -210,7 +210,7 @@ BitSetFunction::BitSetFunction() : MathFunction("bitset", 2, 5) {
 	setArgumentDefinition(5, new BooleanArgument());
 	setDefaultValue(5, "0");
 }
-int BitSetFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int BitSetFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, [[maybe_unused]] const EvaluationOptions &eo) {
 	Number nr(vargs[0].number());
 	unsigned int bits = vargs[3].number().uintValue();
 	bool b_signed = vargs[4].number().getBoolean();
@@ -260,7 +260,7 @@ SetBitsFunction::SetBitsFunction() : MathFunction("setbits", 4, 6) {
 	setArgumentDefinition(6, new BooleanArgument());
 	setDefaultValue(6, "0");
 }
-int SetBitsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int SetBitsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, [[maybe_unused]] const EvaluationOptions &eo) {
 	Number nr(vargs[0].number());
 	unsigned long int first_pos = vargs[1].number().ulintValue();
 	unsigned long int last_pos = vargs[2].number().ulintValue();
@@ -314,7 +314,7 @@ BitGetFunction::BitGetFunction() : MathFunction("bitget", 2, 3) {
 	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_ULONG));
 	setDefaultValue(3, "0");
 }
-int BitGetFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int BitGetFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, [[maybe_unused]] const EvaluationOptions &eo) {
 	Number nr(vargs[0].number());
 	unsigned long int first_pos = vargs[1].number().ulintValue();
 	unsigned long int last_pos = vargs[2].number().ulintValue();

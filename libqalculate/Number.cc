@@ -753,6 +753,7 @@ void Number::set(string number, const ParseOptions &po) {
 						break;
 					}
 				}
+				[[fallthrough]]
 				case 'J': {}
 				case 'i': {}
 				case 'j': {
@@ -864,6 +865,7 @@ void Number::set(string number, const ParseOptions &po) {
 						break;
 					}
 				}
+				[[fallthrough]]
 				case ')': {
 					CALCULATOR->error(true, _("Error in roman numerals: %s."), number_bak.c_str(), NULL);
 					break;

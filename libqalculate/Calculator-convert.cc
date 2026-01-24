@@ -1935,6 +1935,7 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 	eo2.test_comparisons = false;
 	switch(mstruct.type()) {
 		case STRUCT_UNIT: {}
+		[[fallthrough]]
 		case STRUCT_POWER: {
 			if(mstruct.isUnit() || (mstruct.base()->isUnit() && mstruct.exponent()->isNumber() && mstruct.exponent()->number().isRational() && !mstruct.exponent()->number().isZero())) {
 				int old_points = 0;
@@ -2045,6 +2046,7 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 				return mstruct_new;
 			}
 		}
+		[[fallthrough]]
 		case STRUCT_BITWISE_XOR: {}
 		case STRUCT_BITWISE_OR: {}
 		case STRUCT_BITWISE_AND: {}
