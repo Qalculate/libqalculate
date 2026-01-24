@@ -34,3 +34,10 @@ stamp-h1
 lokalize-scripts/
 main.lqa
 libqalculate.lokalize
+m4/
+po/
+po-defs/
+po-defs-fixed/
+compile
+*.gcm
+test-driver
