@@ -62,7 +62,7 @@ int BitXorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		if(mstruct.size() < vargs[i1].size()) return 0;
 		size_t i = 0;
 		for(; i < vargs[i2].size(); i++) {
-			mstruct[i].set(CALCULATOR->getFunctionById(FUNCTION_ID_XOR), &vargs[i1][i], &vargs[i2][0], NULL);
+			mstruct[i].set(CALCULATOR->getFunctionById(FUNCTION_ID_XOR), &vargs[i1][i], &vargs[i2][0], nullptr);
 		}
 		for(; i < vargs[i1].size(); i++) {
 			mstruct[i] = vargs[i1][i];
@@ -486,7 +486,7 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	mstruct = vargs[4];
 	if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
 		while(true) {
-			Variable *v = NULL;
+			Variable *v = nullptr;
 			Variable *uv = find_interval_replace_var_comp(mstruct, eo, &v);
 			if(!uv) break;
 			if(v) mstruct.replace(v, uv);
@@ -500,7 +500,7 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	MathStructure mbak(m5);
 	if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
 		while(true) {
-			Variable *v = NULL;
+			Variable *v = nullptr;
 			Variable *uv = find_interval_replace_var_comp(m5, eo, &v);
 			if(!uv) break;
 			if(v) m5.replace(v, uv);
@@ -515,7 +515,7 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	if(calculate_userfunctions2(m5, vargs[6], vargs[1], eo)) {
 		if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
 			while(true) {
-				Variable *v = NULL;
+				Variable *v = nullptr;
 				Variable *uv = find_interval_replace_var_comp(m5, eo, &v);
 				if(!uv) break;
 				if(v) m5.replace(v, uv);
@@ -525,7 +525,7 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		m5.calculatesub(eo2, eo2, true);
 	}
 	int im = 0;
-	if(CALCULATOR->endTemporaryStopMessages(NULL, &im) > 0 || im > 0) {
+	if(CALCULATOR->endTemporaryStopMessages(nullptr, &im) > 0 || im > 0) {
 		m5 = mbak;
 	}
 	MathStructure mcounter = vargs[0];
@@ -574,7 +574,7 @@ int ForEachFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	mstruct = vargs[1];
 	if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
 		while(true) {
-			Variable *v = NULL;
+			Variable *v = nullptr;
 			Variable *uv = find_interval_replace_var_comp(mstruct, eo, &v);
 			if(!uv) break;
 			if(v) mstruct.replace(v, uv);
@@ -588,7 +588,7 @@ int ForEachFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	MathStructure mbak(m5);
 	if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
 		while(true) {
-			Variable *v = NULL;
+			Variable *v = nullptr;
 			Variable *uv = find_interval_replace_var_comp(m5, eo, &v);
 			if(!uv) break;
 			if(v) m5.replace(v, uv);
@@ -603,7 +603,7 @@ int ForEachFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	if(calculate_userfunctions2(m5, vargs[3], vargs[4], eo)) {
 		if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
 			while(true) {
-				Variable *v = NULL;
+				Variable *v = nullptr;
 				Variable *uv = find_interval_replace_var_comp(m5, eo, &v);
 				if(!uv) break;
 				if(v) m5.replace(v, uv);
@@ -613,7 +613,7 @@ int ForEachFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		m5.calculatesub(eo2, eo2, true);
 	}
 	int im = 0;
-	if(CALCULATOR->endTemporaryStopMessages(NULL, &im) > 0 || im > 0) {
+	if(CALCULATOR->endTemporaryStopMessages(nullptr, &im) > 0 || im > 0) {
 		m5 = mbak;
 	}
 	MathStructure mupdate;

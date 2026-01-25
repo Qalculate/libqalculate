@@ -70,7 +70,7 @@ DateFunction::DateFunction() : MathFunction("date", 1, 4) {
 int DateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	int ct = calender_to_id(vargs[3].symbol());
 	if(ct < 0) {
-		CALCULATOR->error(true, "Unrecognized calendar.", NULL);
+		CALCULATOR->error(true, "Unrecognized calendar.", nullptr);
 		return 0;
 	}
 	QalculateDateTime dt;
@@ -159,7 +159,7 @@ int TimestampToDateFunction::calculate(MathStructure &mstruct, const MathStructu
 	mstruct = vargs[0];
 	mstruct.eval(eo);
 	if((mstruct.isUnit() && mstruct.unit()->baseUnit() == CALCULATOR->getUnitById(UNIT_ID_SECOND)) || (mstruct.isMultiplication() && mstruct.size() >= 2 && mstruct.last().isUnit() && mstruct.last().unit()->baseUnit() == CALCULATOR->getUnitById(UNIT_ID_SECOND))) {
-		Unit *u = NULL;
+		Unit *u = nullptr;
 		if(mstruct.isUnit()) {
 			u = mstruct.unit();
 			mstruct.set(1, 1, 0, true);

@@ -271,7 +271,7 @@ void QalculateDateTime::setToCurrentDate() {
 void QalculateDateTime::setToCurrentTime() {
 	parsed_string.clear();
 	struct timeval tv;
-	gettimeofday(&tv, NULL);
+	gettimeofday(&tv, nullptr);
 	Number nr(tv.tv_usec, 0, -6);
 	nr += tv.tv_sec;
 	set(nr);
@@ -1346,7 +1346,7 @@ Number QalculateDateTime::yearsTo(const QalculateDateTime &date, int basis, bool
 			}
 			t1 /= 86400;
 			t2 /= 86400;
-			Number *nr_cur = NULL;
+			Number *nr_cur = nullptr;
 			if(isLeapYear(year1)) nr_cur = &nr_leap;
 			else nr_cur = &nr;
 			for(int month = 12; month > month1; month--) {
@@ -2742,7 +2742,7 @@ QalculateDateTime findNextSolarLongitude(const QalculateDateTime &date, Number l
 	Number time = date.second(); time /= 60; time += date.minute(); time -= dateTimeZone(date, false); time /= 60; time += date.hour(); time /= 24;
 	fixed += time;
 	fixed = solar_longitude_after(longitude, fixed);
-	long int y, m, d;
+	long int y, m{}, d;
 	fixed_to_date(fixed, y, m, d, CALENDAR_GREGORIAN);
 	QalculateDateTime dt(y, m, d);
 	Number fixed2 = date_to_fixed(y, m, d, CALENDAR_GREGORIAN);
@@ -2768,7 +2768,7 @@ QalculateDateTime findNextLunarPhase(const QalculateDateTime &date, Number phase
 	fixed += time;
 	phase *= 360;
 	fixed = lunar_phase_at_or_after(phase, fixed);
-	long int y, m, d;
+	long int y, m{}, d;
 	fixed_to_date(fixed, y, m, d, CALENDAR_GREGORIAN);
 	QalculateDateTime dt(y, m, d);
 	Number fixed2 = date_to_fixed(y, m, d, CALENDAR_GREGORIAN);

@@ -250,11 +250,11 @@ int AbsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			return 1;
 		}
 	}
-	MathStructure m_im(CALCULATOR->getFunctionById(FUNCTION_ID_IM), &mstruct, NULL);
+	MathStructure m_im(CALCULATOR->getFunctionById(FUNCTION_ID_IM), &mstruct, nullptr);
 	CALCULATOR->beginTemporaryStopMessages();
 	m_im.eval(eo);
 	if(!m_im.containsFunctionId(FUNCTION_ID_IM) && m_im.representsReal(true)) {
-		MathStructure m_re(CALCULATOR->getFunctionById(FUNCTION_ID_RE), &mstruct, NULL);
+		MathStructure m_re(CALCULATOR->getFunctionById(FUNCTION_ID_RE), &mstruct, nullptr);
 		m_re.eval(eo);
 		if(!m_re.containsFunctionId(FUNCTION_ID_RE)) {
 			if(m_re.isZero()) {
@@ -435,7 +435,7 @@ int IsPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	int r = mpz_probab_prime_p(mpq_numref(vargs[0].number().internalRational()), 25);
 	if(r) mstruct = m_one;
 	else mstruct = m_zero;
-	if(r == 1) CALCULATOR->error(false, _("The value is probably a prime number, but it is not certain."), NULL);
+	if(r == 1) CALCULATOR->error(false, _("The value is probably a prime number, but it is not certain."), nullptr);
 	return 1;
 }
 NthPrimeFunction::NthPrimeFunction() : MathFunction("nthprime", 1) {
@@ -516,7 +516,7 @@ int NextPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &va
 			mpz_nextprime(i, i);
 			r = mpz_probab_prime_p(i, 25);
 		}
-		if(r == 1) CALCULATOR->error(false, _("The returned value is probably a prime number, but it is not completely certain."), NULL);
+		if(r == 1) CALCULATOR->error(false, _("The returned value is probably a prime number, but it is not completely certain."), nullptr);
 	}
 	nr.setInternal(i);
 	mstruct = nr;
@@ -552,28 +552,28 @@ int PrevPrimeFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		return 1;
 	}
 	mpz_t i, p;
-	mpz_inits(i, p, NULL);
+	mpz_inits(i, p, nullptr);
 	mpz_sub_ui(i, mpq_numref(nr.internalRational()), 1);
 	mpz_nextprime(p, i);
 	while(mpz_cmp(p, mpq_numref(nr.internalRational())) > 0) {
-		if(CALCULATOR->aborted()) {mpz_clears(i, p, NULL); return 0;}
+		if(CALCULATOR->aborted()) {mpz_clears(i, p, nullptr); return 0;}
 		mpz_sub_ui(i, i, 1);
 		mpz_nextprime(p, i);
 	}
 	if(mpz_sizeinbase(p, 2) > 40) {
-		if(CALCULATOR->aborted()) {mpz_clears(i, p, NULL); return 0;}
+		if(CALCULATOR->aborted()) {mpz_clears(i, p, nullptr); return 0;}
 		int r = mpz_probab_prime_p(p, 25);
 		while(!r) {
-			if(CALCULATOR->aborted()) {mpz_clears(i, p, NULL); return 0;}
+			if(CALCULATOR->aborted()) {mpz_clears(i, p, nullptr); return 0;}
 			mpz_sub_ui(i, i, 1);
 			mpz_nextprime(p, i);
 			r = mpz_probab_prime_p(p, 25);
 		}
-		if(r == 1) CALCULATOR->error(false, _("The returned value is probably a prime number, but it is not completely certain."), NULL);
+		if(r == 1) CALCULATOR->error(false, _("The returned value is probably a prime number, but it is not completely certain."), nullptr);
 	}
 	nr.setInternal(p);
 	mstruct = nr;
-	mpz_clears(i, p, NULL);
+	mpz_clears(i, p, nullptr);
 	return 1;
 }
 
@@ -625,7 +625,7 @@ int FactorsFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 			}
 		}
 	} else {
-		mstruct.factorize(eo, false, 0, 0, false, 2, NULL, m_undefined, true, false, -1);
+		mstruct.factorize(eo, false, 0, 0, false, 2, nullptr, m_undefined, true, false, -1);
 		if(mstruct.isMultiplication()) mstruct.setType(STRUCT_VECTOR);
 	}
 	return 1;
@@ -1316,13 +1316,13 @@ int TotientFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	if(vargs[0].number().isZero()) {mstruct.clear(); return 1;}
 	if(vargs[0].number() <= 2 && vargs[0].number() >= -2) {mstruct.set(1, 1, 0); return 1;}
 	mpz_t n, result, tmp, p_square, p;
-	mpz_inits(n, result, tmp, p_square, p, NULL);
+	mpz_inits(n, result, tmp, p_square, p, nullptr);
 	mpz_set(n, mpq_numref(vargs[0].number().internalRational()));
 	mpz_abs(n, n);
 	mpz_set(result, n);
 	size_t i = 0;
 	while(true) {
-		if(CALCULATOR->aborted()) {mpz_clears(n, result, tmp, p, p_square, NULL); return 0;}
+		if(CALCULATOR->aborted()) {mpz_clears(n, result, tmp, p, p_square, nullptr); return 0;}
 		if(i < NR_OF_PRIMES) {
 			if(i < NR_OF_SQUARE_PRIMES) {
 				if(mpz_cmp_si(n, SQUARE_PRIMES[i]) < 0) break;
@@ -1356,7 +1356,7 @@ int TotientFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	}
 	mstruct.clear();
 	mstruct.number().setInternal(result);
-	mpz_clears(n, result, tmp, p, p_square, NULL);
+	mpz_clears(n, result, tmp, p, p_square, nullptr);
 	return 1;
 }
 
@@ -1681,7 +1681,7 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						if(l == 1 && (number[i] == CALCULATOR->getDecimalPoint()[0] || (!eo.parse_options.dot_as_separator && number[i] == '.'))) {
 							if(i_dot == number.length()) i_dot = digits.size();
 						} else if(!is_in(SPACES, number[i])) {
-							CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), number.substr(i, l).c_str(), number.c_str(), format_and_print(mstruct).c_str(), NULL);
+							CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), number.substr(i, l).c_str(), number.c_str(), format_and_print(mstruct).c_str(), nullptr);
 						}
 					}
 					i += l;
@@ -1756,7 +1756,7 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 							i++;
 							str_char += number[i];
 						}
-						CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), str_char.c_str(), number.c_str(), format_and_print(mstruct).c_str(), NULL);
+						CALCULATOR->error(true, _("Character \'%s\' was ignored in the number \"%s\" with base %s."), str_char.c_str(), number.c_str(), format_and_print(mstruct).c_str(), nullptr);
 					}
 					if(c >= 0) {
 						digits.push_back(c);
@@ -1995,7 +1995,7 @@ int ImFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 			mstruct.multiply(nr.realPart());
 			return 1;
 		}
-		MathStructure *mreal = NULL;
+		MathStructure *mreal = nullptr;
 		for(size_t i = 0; i < mstruct.size();) {
 			if(mstruct[i].representsReal(true)) {
 				if(!mreal) {
@@ -2121,7 +2121,7 @@ int ReFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 			mstruct.multiply(nr.realPart());
 			return 1;
 		}
-		MathStructure *mreal = NULL;
+		MathStructure *mreal = nullptr;
 		for(size_t i = 0; i < mstruct.size();) {
 			if(mstruct[i].representsReal(true)) {
 				if(!mreal) {
@@ -2317,11 +2317,11 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mstruct[1].setType(STRUCT_MULTIPLICATION);
 			return true;
 		}
-		MathStructure m_im(CALCULATOR->getFunctionById(FUNCTION_ID_IM), &mstruct, NULL);
+		MathStructure m_im(CALCULATOR->getFunctionById(FUNCTION_ID_IM), &mstruct, nullptr);
 		CALCULATOR->beginTemporaryStopMessages();
 		m_im.eval(eo);
 		if(!m_im.containsFunctionId(FUNCTION_ID_IM)) {
-			MathStructure m_re(CALCULATOR->getFunctionById(FUNCTION_ID_RE), &mstruct, NULL);
+			MathStructure m_re(CALCULATOR->getFunctionById(FUNCTION_ID_RE), &mstruct, nullptr);
 			m_re.eval(eo);
 			if(!m_re.containsFunctionId(FUNCTION_ID_RE)) {
 				ComparisonResult cr_im = m_im.compare(m_zero);
@@ -2351,20 +2351,20 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 					} else if(cr_re == COMPARISON_RESULT_GREATER) {
 						if(cr_im == COMPARISON_RESULT_GREATER) {
 							m_im.divide(m_re);
-							mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &m_im, NULL);
+							mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &m_im, nullptr);
 							add_fraction_of_turn(mstruct, eo, -1, 2);
 							CALCULATOR->endTemporaryStopMessages(true);
 							return 1;
 						} else if(cr_im == COMPARISON_RESULT_LESS) {
 							m_im.divide(m_re);
-							mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &m_im, NULL);
+							mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &m_im, nullptr);
 							add_fraction_of_turn(mstruct, eo, 1, 2);
 							CALCULATOR->endTemporaryStopMessages(true);
 							return 1;
 						}
 					} else if(cr_re == COMPARISON_RESULT_LESS) {
 						m_im.divide(m_re);
-						mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &m_im, NULL);
+						mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &m_im, nullptr);
 						CALCULATOR->endTemporaryStopMessages(true);
 						return 1;
 					}
@@ -2413,14 +2413,14 @@ int ArgFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			if(!new_nr.number().divide(mstruct.number().realPart())) return -1;
 			if(mstruct.number().realPartIsNegative()) {
 				if(mstruct.number().imaginaryPartIsNegative()) {
-					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
+					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, nullptr);
 					add_fraction_of_turn(mstruct, eo, -1, 2);
 				} else {
-					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
+					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, nullptr);
 					add_fraction_of_turn(mstruct, eo, 1, 2);
 				}
 			} else {
-				mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
+				mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, nullptr);
 			}
 		}
 		return 1;
@@ -2533,8 +2533,8 @@ int IEEE754FloatBitsFunction::calculate(MathStructure &mstruct, const MathStruct
 	ParseOptions pa;
 	pa.base = BASE_BINARY;
 	Number nr(sbin, pa);
-	if(nr.isInfinite() && !vargs[0].number().isInfinite()) CALCULATOR->error(false, _("Floating point overflow"), NULL);
-	else if(nr.isZero() && !vargs[0].isZero()) CALCULATOR->error(false, _("Floating point underflow"), NULL);
+	if(nr.isInfinite() && !vargs[0].number().isInfinite()) CALCULATOR->error(false, _("Floating point overflow"), nullptr);
+	else if(nr.isZero() && !vargs[0].isZero()) CALCULATOR->error(false, _("Floating point underflow"), nullptr);
 	mstruct = nr;
 	return 1;
 }
@@ -2779,7 +2779,7 @@ int DigitGetFunction::calculate(MathStructure &mstruct, const MathStructure &var
 				CALCULATOR->endTemporaryStopMessages(false);
 				CALCULATOR->setPrecision(PRECISION * 5);
 			} else {
-				CALCULATOR->error(true, _("Insufficient precision."), NULL);
+				CALCULATOR->error(true, _("Insufficient precision."), nullptr);
 				break;
 			}
 		}
@@ -2808,7 +2808,7 @@ int DigitSetFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	Number nr_value(vargs[2].number());
 	if(!nr_exp.raise(vargs[1].number()) || !nr.divide(nr_exp) || !nr.trunc()) return 0;
 	if(!nr.isInteger()) {
-		CALCULATOR->error(true, _("Insufficient precision."), NULL);
+		CALCULATOR->error(true, _("Insufficient precision."), nullptr);
 		return 0;
 	}
 	if(!nr_low.rem(nr_exp) || !nr.iquo(vargs[3].number()) || !nr_value.multiply(nr_exp) || !nr_exp.multiply(vargs[3].number()) || !nr.multiply(nr_exp) || !nr.add(nr_low)) return 0;

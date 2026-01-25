@@ -70,7 +70,7 @@ string format_and_print(const MathStructure &mstruct) {
 	MathStructure m_print(mstruct);
 	if(CALCULATOR) {
 		m_print.sort(CALCULATOR->messagePrintOptions());
-		m_print.formatsub(CALCULATOR->messagePrintOptions(), NULL, 0, true, &m_print);
+		m_print.formatsub(CALCULATOR->messagePrintOptions(), nullptr, 0, true, &m_print);
 		return m_print.print(CALCULATOR->messagePrintOptions());
 	} else {
 		PrintOptions po;
@@ -78,7 +78,7 @@ string format_and_print(const MathStructure &mstruct) {
 		po.spell_out_logical_operators = true;
 		po.number_fraction_format = FRACTION_FRACTIONAL;
 		m_print.sort(po);
-		m_print.formatsub(po, NULL, 0, true, &m_print);
+		m_print.formatsub(po, nullptr, 0, true, &m_print);
 		return m_print.print(po);
 	}
 }
@@ -625,7 +625,7 @@ void MathStructure::unformat(const EvaluationOptions &eo) {
 			CHILD(i).unformat(eo);
 		}
 	}
-	if(m_type != STRUCT_UNIT && o_prefix) o_prefix = NULL;
+	if(m_type != STRUCT_UNIT && o_prefix) o_prefix = nullptr;
 	switch(m_type) {
 		case STRUCT_INVERSE: {
 			APPEND(m_minus_one);
@@ -645,7 +645,7 @@ void MathStructure::unformat(const EvaluationOptions &eo) {
 		case STRUCT_UNIT: {
 			if(o_prefix && !eo.keep_prefixes) {
 				if(o_prefix == CALCULATOR->getDecimalNullPrefix() || o_prefix == CALCULATOR->getBinaryNullPrefix()) {
-					o_prefix = NULL;
+					o_prefix = nullptr;
 				} else {
 					Unit *u = o_unit;
 					Prefix *p = o_prefix;
@@ -914,7 +914,7 @@ bool displays_number_exact(Number nr, const PrintOptions &po, MathStructure *top
 	return !approximately_displayed;
 }
 
-bool fix_approximate_multiplier(MathStructure &m, const PrintOptions &po, MathStructure *top_parent = NULL) {
+bool fix_approximate_multiplier(MathStructure &m, const PrintOptions &po, MathStructure *top_parent = nullptr) {
 	if(!top_parent) top_parent = &m;
 	if(po.number_fraction_format == FRACTION_DECIMAL) {
 		PrintOptions po2 = po;
@@ -1251,7 +1251,7 @@ bool use_prefix_with_unit(const MathStructure &mstruct, const PrintOptions &po) 
 }
 
 bool has_prefix(const MathStructure &mstruct) {
-	if(mstruct.isUnit()) return mstruct.prefix() != NULL;
+	if(mstruct.isUnit()) return mstruct.prefix() != nullptr;
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		if(has_prefix(mstruct[i])) return true;
 	}
@@ -1311,7 +1311,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 				Number exp(1, 1);
 				Number exp2(1, 1);
 				bool b2 = false;
-				MathStructure *munit = NULL, *munit2 = NULL;
+				MathStructure *munit = nullptr, *munit2 = nullptr;
 				if(b_im) munit = &CHILD(i)[0][im];
 				else munit = &CHILD(i);
 				if(CHILD(i).isPower()) {
@@ -1471,7 +1471,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 						exp10.intervalToMidValue();
 						if(exp10.isLessThanOrEqualTo(Number(1, 1, 1000)) && exp10.isGreaterThanOrEqualTo(Number(1, 1, -1000))) {
 							Unit *u = (munit->isUnit() ? munit->unit() : (*munit)[0].unit());
-							Unit *u2 = NULL;
+							Unit *u2 = nullptr;
 							if(b2) u2 = (munit2->isUnit() ? munit2->unit() : (*munit2)[0].unit());
 							bool use_binary_prefix = (CALCULATOR->usesBinaryPrefixes() > 1 || (CALCULATOR->usesBinaryPrefixes() == 1 && u->baseUnit()->referenceName() == "bit"));
 							exp10.log(use_binary_prefix ? 2 : 10);
@@ -1538,7 +1538,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 							Prefix *p = (use_binary_prefix > 0 ? (Prefix*) CALCULATOR->getOptimalBinaryPrefix(exp10, exp) : (Prefix*) CALCULATOR->getOptimalDecimalPrefix(exp10, exp, po.use_all_prefixes));
 							if(!po.use_all_prefixes && !po.use_prefixes_for_all_units && p && p->type() == PREFIX_DECIMAL) {
 								if(((DecimalPrefix*) p)->exponent() > u->maxPreferredPrefix()) {
-									p = NULL;
+									p = nullptr;
 									int mexp = u->maxPreferredPrefix();
 									if(mexp < 0) {
 										if(mexp % 3 != 0) mexp = ((mexp / 3) - 1) * 3;
@@ -1551,7 +1551,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 										} while(!p && mexp >= 0);
 									}
 								} else if(((DecimalPrefix*) p)->exponent() < u->minPreferredPrefix()) {
-									p = NULL;
+									p = nullptr;
 									int mexp = u->minPreferredPrefix();
 									if(mexp < 0) {
 										if(mexp % 3 != 0) mexp = (mexp / 3) * 3;
@@ -1580,7 +1580,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 								else test_exp -= ((DecimalPrefix*) p)->exponent(exp);
 								if(test_exp.isInteger()) {
 									if((!use_binary_prefix && !b2 && ((test_exp.isNegative() && ((DecimalPrefix*) p)->exponent() < -9) || (((DecimalPrefix*) p)->exponent() > 9 && test_exp > 3))) || ((exp10.isPositive() && exp10 <= test_exp) || (exp10.isNegative() && exp10 >= test_exp))) {
-										p = (u->defaultPrefix() != 0) ? CALCULATOR->getExactDecimalPrefix(u->defaultPrefix()) : NULL;
+										p = (u->defaultPrefix() != 0) ? CALCULATOR->getExactDecimalPrefix(u->defaultPrefix()) : nullptr;
 									}
 									if(p) {
 										CHILD(0).number() /= p->value(exp);
@@ -1591,7 +1591,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 							}
 						}
 					} else if(!po.use_unit_prefixes) {
-						Prefix *p = NULL;
+						Prefix *p = nullptr;
 						if(munit->isUnit() && munit->unit()->defaultPrefix() != 0) {
 							p = CALCULATOR->getExactDecimalPrefix(munit->unit()->defaultPrefix());
 						} else if(munit->isPower() && (*munit)[0].isUnit() && (*munit)[0].unit()->defaultPrefix() != 0) {
@@ -1621,7 +1621,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 							Prefix *p = (use_binary_prefix > 0 ? (Prefix*) CALCULATOR->getOptimalBinaryPrefix(exp10, exp2) : (Prefix*) CALCULATOR->getOptimalDecimalPrefix(exp10, exp2, po.use_all_prefixes));
 							if(!po.use_all_prefixes && !po.use_prefixes_for_all_units && p && p->type() == PREFIX_DECIMAL) {
 								if(((DecimalPrefix*) p)->exponent() > u->maxPreferredPrefix()) {
-									p = NULL;
+									p = nullptr;
 									int mexp = u->maxPreferredPrefix();
 									if(mexp < 0) {
 										if(mexp % 3 != 0) mexp = ((mexp / 3) - 1) * 3;
@@ -1634,7 +1634,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 										} while(!p && mexp >= 0);
 									}
 								} else if(((DecimalPrefix*) p)->exponent() < u->minPreferredPrefix()) {
-									p = NULL;
+									p = nullptr;
 									int mexp = u->minPreferredPrefix();
 									if(mexp < 0) {
 										if(mexp % 3 != 0) mexp = (mexp / 3) * 3;
@@ -1665,10 +1665,10 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 									bool b_error = (exp10.isPositive() && exp10 <= test_exp) || (exp10.isNegative() && exp10 >= test_exp);
 									if(b_error || (!use_binary_prefix && (test_exp.isNegative() || test_exp > 3))) {
 										if(b_error || ((DecimalPrefix*) p)->exponent() > 9 || ((DecimalPrefix*) p)->exponent() < -9) {
-											p = (u->defaultPrefix() != 0) ? CALCULATOR->getExactDecimalPrefix(u->defaultPrefix()) : NULL;
+											p = (u->defaultPrefix() != 0) ? CALCULATOR->getExactDecimalPrefix(u->defaultPrefix()) : nullptr;
 										}
-										Unit *u1 = NULL;
-										Prefix *p1 = NULL;
+										Unit *u1 = nullptr;
+										Prefix *p1 = nullptr;
 										if(munit->isUnit()) {
 											u1 = munit->unit();
 											p1 = munit->prefix();
@@ -1681,9 +1681,9 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 												if(p1 && p1->type() == PREFIX_DECIMAL) {
 													if(((DecimalPrefix*) p1)->exponent() != u1->defaultPrefix()) {
 														CHILD(0).number() *= p1->value(exp);
-														if(munit->isUnit()) munit->setPrefix(NULL);
-														else (*munit)[0].setPrefix(NULL);
-														p1 = NULL;
+														if(munit->isUnit()) munit->setPrefix(nullptr);
+														else (*munit)[0].setPrefix(nullptr);
+														p1 = nullptr;
 													}
 												}
 											}
@@ -2142,7 +2142,7 @@ Unit *default_angle_unit(const EvaluationOptions &eo, bool return_rad_if_none) {
 		default: {}
 	}
 	if(return_rad_if_none) return CALCULATOR->getRadUnit();
-	return NULL;
+	return nullptr;
 }
 
 bool remove_angle_unit(MathStructure &m, Unit *u) {
@@ -2210,7 +2210,7 @@ bool MathStructure::removeDefaultAngleUnit(const EvaluationOptions &eo) {
 	if(!u) return false;
 	return remove_angle_unit(*this, u);
 }
-void separate_units(MathStructure &m, MathStructure *parent = NULL, size_t index = 0) {
+void separate_units(MathStructure &m, MathStructure *parent = nullptr, size_t index = 0) {
 	if(m.isMultiplication() && parent && parent->isMultiplication() && m.containsType(STRUCT_UNIT, false, false, false)) {
 		for(size_t i = 0; i < m.size();) {
 			if(m[i].isUnit_exp() || m[i].prefix()) {
@@ -2309,7 +2309,7 @@ void MathStructure::format(const PrintOptions &po) {
 		// 1*a=a
 		remove_multi_one(*this);
 	}
-	formatsub(po, NULL, 0, true, this);
+	formatsub(po, nullptr, 0, true, this);
 	if(!po.preserve_format) {
 		postFormatUnits(po);
 		if(po.sort_options.prefix_currencies) {
@@ -2545,7 +2545,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				MathStructure *num = new MathStructure();
 				num->setUndefined();
 				short ds = 0, ns = 0;
-				MathStructure *mnum = NULL, *mden = NULL;
+				MathStructure *mnum = nullptr, *mden = nullptr;
 				for(size_t i = 0; i < SIZE; i++) {
 					if(CHILD(i).isInverse()) {
 						mden = &CHILD(i)[0];
@@ -2568,7 +2568,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 							num->set(*mnum);
 						}
 						ns++;
-						mnum = NULL;
+						mnum = nullptr;
 					}
 					if(mden) {
 						if(ds > 0) {
@@ -2583,7 +2583,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 							den->set(*mden);
 						}
 						ds++;
-						mden = NULL;
+						mden = nullptr;
 					}
 				}
 				clear(true);
@@ -2642,7 +2642,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 		}
 		case STRUCT_POWER: {
 			if(po.preserve_format) break;
-			if(CHILD(1).isNegate() && ((!po.negative_exponents && parent != NULL) || !CHILD(0).isUnit()) && (!CHILD(0).isVector() || !CHILD(1).isMinusOne())) {
+			if(CHILD(1).isNegate() && ((!po.negative_exponents && parent != nullptr) || !CHILD(0).isUnit()) && (!CHILD(0).isVector() || !CHILD(1).isMinusOne())) {
 				if(CHILD(1)[0].isOne()) {
 					// f(a)^-1=1/f(a)
 					m_type = STRUCT_INVERSE;
@@ -2675,15 +2675,15 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 					if(CHILD(1).number().isOne()) {
 						setToChild(1, true);
 						if(parent && parent->isMultiplication()) {
-							parent->insertChild_nocopy(new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), this, NULL), pindex + 1);
+							parent->insertChild_nocopy(new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), this, nullptr), pindex + 1);
 						} else {
-							multiply_nocopy(new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), this, NULL));
+							multiply_nocopy(new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), this, nullptr));
 						}
 					} else {
 						if(parent && parent->isMultiplication()) {
-							parent->insertChild_nocopy(new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), &CHILD(0), NULL), pindex + 1);
+							parent->insertChild_nocopy(new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), &CHILD(0), nullptr), pindex + 1);
 						} else {
-							multiply_nocopy(new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), &CHILD(0), NULL));
+							multiply_nocopy(new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), &CHILD(0), nullptr));
 						}
 					}
 				}
@@ -2739,7 +2739,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				setFunctionId(FUNCTION_ID_CBRT);
 			} else if(o_function->id() == FUNCTION_ID_INTERVAL && SIZE == 2 && CHILD(0).isAddition() && CHILD(0).size() == 2 && CHILD(1).isAddition() && CHILD(1).size() == 2) {
 				// interval(f(a)+c,f(a)-c)=uncertainty(f(a),c)
-				MathStructure *mmid = NULL, *munc = NULL;
+				MathStructure *mmid = nullptr, *munc = nullptr;
 				if(CHILD(0)[0].equals(CHILD(1)[0], true, true)) {
 					mmid = &CHILD(0)[0];
 					if(CHILD(0)[1].isNegate() && CHILD(0)[1][0].equals(CHILD(1)[1], true, true)) munc = &CHILD(1)[1];
@@ -2978,10 +2978,10 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				if(!f) break;
 				MathStructure mbegin(CHILD(0)), mend(LAST);
 				if(ndiff.isOne()) {
-					set(f, &mbegin, &mend, &m_undefined, NULL);
+					set(f, &mbegin, &mend, &m_undefined, nullptr);
 				} else if(!ndiff.isZero()) {
 					MathStructure mdiff(ndiff);
-					set(f, &mbegin, &mdiff, &mend, NULL);
+					set(f, &mbegin, &mdiff, &mend, nullptr);
 				}
 			} else if(SIZE == 1 && (!parent || !parent->isMatrix())) {
 				setToChild(1, true);
@@ -2992,7 +2992,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 	}
 }
 
-int namelen(const MathStructure &mstruct, const PrintOptions &po, const InternalPrintStruct&, bool *abbreviated = NULL) {
+int namelen(const MathStructure &mstruct, const PrintOptions &po, const InternalPrintStruct&, bool *abbreviated = nullptr) {
 	// returns the length of the name used (for mstruct) with the current mode (and if the name is an abbreviation)
 	const string *str;
 	switch(mstruct.type()) {
@@ -3391,14 +3391,14 @@ int MathStructure::neededMultiplicationSign(const PrintOptions &po, const Intern
 		if(is_unit_multiexp_strict(*this) && (po.short_multiplication || !parent[index - 2].containsType(STRUCT_UNIT, false, false, false))) return MULTIPLICATION_SIGN_SPACE;
 		if(isUnknown_exp()) {
 			// (a)*"xy"=(a) "xy", (a)*"xy"^b=(a) "xy"^b, (a)*x=(a)x, (a)*x^b=ax^b
-			return (namelen(isPower() ? CHILD(0) : *this, po, ips, NULL) > 1 ? MULTIPLICATION_SIGN_SPACE : MULTIPLICATION_SIGN_NONE);
+			return (namelen(isPower() ? CHILD(0) : *this, po, ips, nullptr) > 1 ? MULTIPLICATION_SIGN_SPACE : MULTIPLICATION_SIGN_NONE);
 		}
 		if(isMultiplication() && SIZE > 0) {
 			// (a)*uv=(a) uv
 			if(CHILD(0).isUnit_exp()) return MULTIPLICATION_SIGN_SPACE;
 			if(CHILD(0).isUnknown_exp()) {
 				// (a)*"xy"z=(a) "xy"z, (a)*xy=(a)xy
-				return (namelen(CHILD(0).isPower() ? CHILD(0)[0] : CHILD(0), po, ips, NULL) > 1 ? MULTIPLICATION_SIGN_SPACE : MULTIPLICATION_SIGN_NONE);
+				return (namelen(CHILD(0).isPower() ? CHILD(0)[0] : CHILD(0), po, ips, nullptr) > 1 ? MULTIPLICATION_SIGN_SPACE : MULTIPLICATION_SIGN_NONE);
 			}
 		} else if(isDivision()) {
 			// (a)*(u1/u2)=(a) u1/u2
@@ -4519,7 +4519,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					print_str += "|";
 					break;
 				} else if(o_function->id() == FUNCTION_ID_UNCERTAINTY && SIZE == 3 && CHILD(2).isZero()) {
-					MathStructure *mmid = NULL, *munc = NULL;
+					MathStructure *mmid = nullptr, *munc = nullptr;
 					if(o_function->id() == FUNCTION_ID_UNCERTAINTY) {
 						mmid = &CHILD(0);
 						munc = &CHILD(1);

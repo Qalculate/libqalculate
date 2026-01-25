@@ -73,7 +73,7 @@ bool warn_about_assumed_not_value(const MathStructure &mstruct, const MathStruct
 	if(mnonzero.isZero()) return false;
 	if(mnonzero.isOne()) return true;
 	if(mvalue.isZero() && mnonzero.isComparison() && mnonzero.comparisonType() == COMPARISON_NOT_EQUALS && mnonzero[1].isZero() && mnonzero[0].representsApproximatelyZero(true)) return false;
-	CALCULATOR->error(false, _("Required assumption: %s."), format_and_print(mnonzero).c_str(), NULL);
+	CALCULATOR->error(false, _("Required assumption: %s."), format_and_print(mnonzero).c_str(), nullptr);
 	return true;
 }
 bool warn_about_denominators_assumed_nonzero(const MathStructure &mstruct, const EvaluationOptions &eo) {
@@ -92,7 +92,7 @@ bool warn_about_denominators_assumed_nonzero(const MathStructure &mstruct, const
 	if(mnonzero.isZero()) return false;
 	if(mnonzero.isOne()) return true;
 	if(mnonzero.isComparison() && mnonzero.comparisonType() == COMPARISON_NOT_EQUALS && mnonzero[1].isZero() && mnonzero[0].representsApproximatelyZero(true)) return false;
-	CALCULATOR->error(false, _("To avoid division by zero, the following must be true: %s."), format_and_print(mnonzero).c_str(), NULL);
+	CALCULATOR->error(false, _("To avoid division by zero, the following must be true: %s."), format_and_print(mnonzero).c_str(), nullptr);
 	return true;
 }
 bool warn_about_denominators_assumed_nonzero_or_positive(const MathStructure &mstruct, const MathStructure &mstruct2, const EvaluationOptions &eo) {
@@ -114,7 +114,7 @@ bool warn_about_denominators_assumed_nonzero_or_positive(const MathStructure &ms
 	if(mnonzero.isZero()) return false;
 	if(mnonzero.isOne()) return true;
 	if(mnonzero.isComparison() && mnonzero.comparisonType() == COMPARISON_NOT_EQUALS && mnonzero[1].isZero() && mnonzero[0].representsApproximatelyZero(true)) return false;
-	CALCULATOR->error(false, _("To avoid division by zero, the following must be true: %s."), format_and_print(mnonzero).c_str(), NULL);
+	CALCULATOR->error(false, _("To avoid division by zero, the following must be true: %s."), format_and_print(mnonzero).c_str(), nullptr);
 	return true;
 }
 bool warn_about_denominators_assumed_nonzero_llgg(const MathStructure &mstruct, const MathStructure &mstruct2, const MathStructure &mstruct3, const EvaluationOptions &eo) {
@@ -145,7 +145,7 @@ bool warn_about_denominators_assumed_nonzero_llgg(const MathStructure &mstruct, 
 	if(mnonzero.isZero()) return false;
 	if(mnonzero.isOne()) return true;
 	if(mnonzero.isComparison() && mnonzero.comparisonType() == COMPARISON_NOT_EQUALS && mnonzero[1].isZero() && mnonzero[0].representsApproximatelyZero(true)) return false;
-	CALCULATOR->error(false, _("To avoid division by zero, the following must be true: %s."), format_and_print(mnonzero).c_str(), NULL);
+	CALCULATOR->error(false, _("To avoid division by zero, the following must be true: %s."), format_and_print(mnonzero).c_str(), nullptr);
 	return true;
 }
 
@@ -1399,7 +1399,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 	if(representsUndefined() || mstruct.representsUndefined()) return -1;
 
 	// check if factors are numerator and denominator, and denominator is polynomial
-	const MathStructure *mnum = NULL, *mden = NULL;
+	const MathStructure *mnum = nullptr, *mden = nullptr;
 	bool b_nonzero = false;
 	if(eo.reduce_divisions) {
 		if(!isNumber() && mstruct.isPower() && mstruct[0].isAddition() && mstruct[0].size() > 1 && mstruct[1].isNumber() && mstruct[1].number().isMinusOne()) {
@@ -1716,7 +1716,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					if(!isMatrix() && mstruct.isMatrix()) {
 						if(!representsNonMatrix()) return -1;
 						if(SIZE != mstruct.size()) {
-							CALCULATOR->error(true, _("The second matrix must have as many rows (was %s) as the first has columns (was %s) for matrix multiplication."), i2s(mstruct.size()).c_str(), i2s(SIZE).c_str(), NULL);
+							CALCULATOR->error(true, _("The second matrix must have as many rows (was %s) as the first has columns (was %s) for matrix multiplication."), i2s(mstruct.size()).c_str(), i2s(SIZE).c_str(), nullptr);
 							return -1;
 						}
 						transform(STRUCT_VECTOR);
@@ -1726,14 +1726,14 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 							if(!mstruct.representsNonMatrix()) return -1;
 							if(CALCULATOR->usesMatlabStyleMatrices()) {
 								if(CHILD(0).size() != 1) {
-									CALCULATOR->error(true, _("The second matrix must have as many rows (was %s) as the first has columns (was %s) for matrix multiplication."), i2s(1).c_str(), i2s(CHILD(0).size()).c_str(), NULL);
+									CALCULATOR->error(true, _("The second matrix must have as many rows (was %s) as the first has columns (was %s) for matrix multiplication."), i2s(1).c_str(), i2s(CHILD(0).size()).c_str(), nullptr);
 									return -1;
 								}
 								mstruct.transform(STRUCT_VECTOR);
 							} else {
 								// matrix multiplication (vector is treated as matrix with 1 column)
 								if(CHILD(0).size() != mstruct.size()) {
-									CALCULATOR->error(true, _("The second matrix must have as many rows (was %s) as the first has columns (was %s) for matrix multiplication."), i2s(mstruct.size()).c_str(), i2s(CHILD(0).size()).c_str(), NULL);
+									CALCULATOR->error(true, _("The second matrix must have as many rows (was %s) as the first has columns (was %s) for matrix multiplication."), i2s(mstruct.size()).c_str(), i2s(CHILD(0).size()).c_str(), nullptr);
 									return -1;
 								}
 								MathStructure msave(*this);
@@ -1769,7 +1769,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						// matrix multiplication
 						// the number of columns in the first matrix must be equal to the number of rows in the second matrix
 						if(CHILD(0).size() != mstruct.size()) {
-							CALCULATOR->error(true, _("The second matrix must have as many rows (was %s) as the first has columns (was %s) for matrix multiplication."), i2s(mstruct.size()).c_str(), i2s(CHILD(0).size()).c_str(), NULL);
+							CALCULATOR->error(true, _("The second matrix must have as many rows (was %s) as the first has columns (was %s) for matrix multiplication."), i2s(mstruct.size()).c_str(), i2s(CHILD(0).size()).c_str(), nullptr);
 							return -1;
 						}
 						MathStructure msave(*this);
@@ -1797,7 +1797,7 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						MERGE_APPROX_AND_PREC(mstruct)
 						return 1;
 					} else if(representsNonMatrix() && mstruct.representsNonMatrix()) {
-						CALCULATOR->error(true, _("Please use the cross(), dot(), and hadamard() functions for vector multiplication."), NULL);
+						CALCULATOR->error(true, _("Please use the cross(), dot(), and hadamard() functions for vector multiplication."), nullptr);
 						// dot product of two vectors: [a1, a2, a3, ..]*[b1, b2, b3, ...]=a1*b1+a2*b2+a3*b3+...
 						// dimension of the vectors must be equal
 						/*if(SIZE == mstruct.size()) {
@@ -1905,9 +1905,9 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 						MathStructure *mstruct2 = new MathStructure(mstruct);
 						for(size_t i = 0; i < SIZE; i++) {
 							if(CHILD(i).isOne()) ret = -1;
-							else ret = CHILD(i).merge_multiplication(*mstruct2, eo, NULL, 0, 0, false, false);
+							else ret = CHILD(i).merge_multiplication(*mstruct2, eo, nullptr, 0, 0, false, false);
 							if(ret == 0) {
-								ret = mstruct2->merge_multiplication(CHILD(i), eo, NULL, 0, 0, true, false);
+								ret = mstruct2->merge_multiplication(CHILD(i), eo, nullptr, 0, 0, true, false);
 								if(ret >= 1) {
 									mstruct2->ref();
 									setChild_nocopy(mstruct2, i + 1);
@@ -2057,9 +2057,9 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 					} else {
 						for(size_t i = 0; i < SIZE; i++) {
 							if(CALCULATOR->aborted()) break;
-							int ret = CHILD(i).merge_multiplication(mstruct, eo, NULL, 0, 0, false, false);
+							int ret = CHILD(i).merge_multiplication(mstruct, eo, nullptr, 0, 0, false, false);
 							if(ret == 0) {
-								ret = mstruct.merge_multiplication(CHILD(i), eo, NULL, 0, 0, true, false);
+								ret = mstruct.merge_multiplication(CHILD(i), eo, nullptr, 0, 0, true, false);
 								if(ret >= 1) {
 									if(ret == 2) ret = 3;
 									else if(ret == 3) ret = 2;
@@ -3752,7 +3752,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 							CHILD(0).calculateNegate(eo);
 						} else if(!CHILD(0).representsNonNegative(true)) {
 							MathStructure mstruct_base(CHILD(0));
-							CHILD(0).set(CALCULATOR->getFunctionById(FUNCTION_ID_ABS), &mstruct_base, NULL);
+							CHILD(0).set(CALCULATOR->getFunctionById(FUNCTION_ID_ABS), &mstruct_base, nullptr);
 						}
 					} else if(!CHILD(1).representsOdd() && !CHILD(0).representsNonNegative(true)) {
 						// it is not known if a is even or odd (and x might be negative)
@@ -5217,7 +5217,7 @@ bool contains_zero_unit(const MathStructure &mstruct) {
 	return false;
 }
 
-bool test_var_int(const MathStructure &mstruct, bool *v = NULL) {
+bool test_var_int(const MathStructure &mstruct, bool *v = nullptr) {
 	if(mstruct.isVariable() && (mstruct.variable()->id() == VARIABLE_ID_E || mstruct.variable()->id() == VARIABLE_ID_PI)) {
 		if(!v) return true;
 		if(*v) return false;
@@ -5388,7 +5388,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 						calculateFunctions(feo);
 					}
 					// replace precision with interval and vice versa depending on interval calculation mode (foremost relevant for INTERVAL_CALCULATION_NONE)
-					fix_intervals(*this, feo, NULL, PRECISION);
+					fix_intervals(*this, feo, nullptr, PRECISION);
 					b = true;
 					calculatesub(eo, feo, true, mparent, index_this);
 				}
@@ -5435,7 +5435,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					}
 					CHILDREN_UPDATED;
 					if(temp_unit_found) CALCULATOR->beginTemporaryStopMessages();
-					syncUnits(true, NULL, true, feo);
+					syncUnits(true, nullptr, true, feo);
 					if(temp_unit_found) CALCULATOR->endTemporaryStopMessages();
 				}
 				unformat(eo);
@@ -5465,10 +5465,10 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					replace(CALCULATOR->getUnitById(UNIT_ID_CELSIUS), CALCULATOR->getUnitById(UNIT_ID_KELVIN));
 				}
 				if(temp_unit_found) CALCULATOR->beginTemporaryStopMessages();
-				syncUnits(true, NULL, true, feo);
+				syncUnits(true, nullptr, true, feo);
 				if(temp_unit_found) CALCULATOR->endTemporaryStopMessages();
 			}
-			if(eo.sync_units && syncUnits(eo.sync_nonlinear_unit_relations, NULL, true, feo)) {
+			if(eo.sync_units && syncUnits(eo.sync_nonlinear_unit_relations, nullptr, true, feo)) {
 				unformat(eo);
 				MERGE_RECURSE
 			}
@@ -5846,7 +5846,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					break;
 				}
 			}
-			if(eo.sync_units && syncUnits(eo.sync_nonlinear_unit_relations, NULL, true, feo)) {
+			if(eo.sync_units && syncUnits(eo.sync_nonlinear_unit_relations, nullptr, true, feo)) {
 				unformat(eo);
 				if(recursive) {
 					CHILD(0).calculatesub(eo2, feo, true, this, 0);
@@ -6205,7 +6205,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 						mtest[1].calculatesub(eo2, eo3, true);
 						CALCULATOR->endTemporaryEnableIntervalArithmetic();
 						mtest.childrenUpdated();
-						if(CALCULATOR->endTemporaryStopMessages(NULL, NULL, MESSAGE_ERROR) == 0) {
+						if(CALCULATOR->endTemporaryStopMessages(nullptr, nullptr, MESSAGE_ERROR) == 0) {
 							eo2.approximation = eo.approximation;
 							eo2.test_comparisons = -1;
 							mtest.calculatesub(eo2, feo, false);
@@ -6396,7 +6396,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				}
 				CHILDREN_UPDATED;
 			}
-			if(eo.sync_units && syncUnits(eo.sync_nonlinear_unit_relations, NULL, true, feo)) {
+			if(eo.sync_units && syncUnits(eo.sync_nonlinear_unit_relations, nullptr, true, feo)) {
 				unformat(eo);
 				if(recursive) {
 					for(size_t i = 0; i < SIZE; i++) {
@@ -6521,7 +6521,7 @@ bool MathStructure::calculateLogicalOrLast(const EvaluationOptions &eo, bool che
 bool MathStructure::calculateLogicalOrIndex(size_t index, const EvaluationOptions &eo, bool check_size, MathStructure *mparent, size_t index_this) {
 
 	if(index >= SIZE || !isLogicalOr()) {
-		CALCULATOR->error(true, "calculateLogicalOrIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), NULL);
+		CALCULATOR->error(true, "calculateLogicalOrIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), nullptr);
 		return false;
 	}
 
@@ -6560,7 +6560,7 @@ bool MathStructure::calculateLogicalOr(const MathStructure &mor, const Evaluatio
 bool MathStructure::calculateLogicalXorLast(const EvaluationOptions &eo, MathStructure *mparent, size_t index_this) {
 
 	if(!isLogicalXor()) {
-		CALCULATOR->error(true, "calculateLogicalXorLast() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), NULL);
+		CALCULATOR->error(true, "calculateLogicalXorLast() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), nullptr);
 		return false;
 	}
 	if(CHILD(0).merge_logical_xor(CHILD(1), eo, this, 0, 1) >= 1) {
@@ -6592,7 +6592,7 @@ bool MathStructure::calculateLogicalAndLast(const EvaluationOptions &eo, bool ch
 bool MathStructure::calculateLogicalAndIndex(size_t index, const EvaluationOptions &eo, bool check_size, MathStructure *mparent, size_t index_this) {
 
 	if(index >= SIZE || !isLogicalAnd()) {
-		CALCULATOR->error(true, "calculateLogicalAndIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), NULL);
+		CALCULATOR->error(true, "calculateLogicalAndIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), nullptr);
 		return false;
 	}
 
@@ -6657,7 +6657,7 @@ bool MathStructure::calculateLogicalNot(const EvaluationOptions &eo, MathStructu
 }
 bool MathStructure::calculateRaiseExponent(const EvaluationOptions &eo, MathStructure *mparent, size_t index_this) {
 	if(!isPower()) {
-		CALCULATOR->error(true, "calculateRaiseExponent() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), NULL);
+		CALCULATOR->error(true, "calculateRaiseExponent() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), nullptr);
 		return false;
 	}
 	if(CALCULATOR->aborted()) return false;
@@ -6686,7 +6686,7 @@ bool MathStructure::calculateBitwiseAndLast(const EvaluationOptions &eo, bool ch
 bool MathStructure::calculateBitwiseAndIndex(size_t index, const EvaluationOptions &eo, bool check_size, MathStructure *mparent, size_t index_this) {
 
 	if(index >= SIZE || !isBitwiseAnd()) {
-		CALCULATOR->error(true, "calculateBitwiseAndIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), NULL);
+		CALCULATOR->error(true, "calculateBitwiseAndIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), nullptr);
 		return false;
 	}
 
@@ -6705,7 +6705,7 @@ bool MathStructure::calculateBitwiseOrLast(const EvaluationOptions &eo, bool che
 bool MathStructure::calculateBitwiseOrIndex(size_t index, const EvaluationOptions &eo, bool check_size, MathStructure *mparent, size_t index_this) {
 
 	if(index >= SIZE || !isBitwiseOr()) {
-		CALCULATOR->error(true, "calculateBitwiseOrIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), NULL);
+		CALCULATOR->error(true, "calculateBitwiseOrIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), nullptr);
 		return false;
 	}
 
@@ -6724,7 +6724,7 @@ bool MathStructure::calculateBitwiseXorLast(const EvaluationOptions &eo, bool ch
 bool MathStructure::calculateBitwiseXorIndex(size_t index, const EvaluationOptions &eo, bool check_size, MathStructure *mparent, size_t index_this) {
 
 	if(index >= SIZE || !isBitwiseXor()) {
-		CALCULATOR->error(true, "calculateBitwiseXorIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), NULL);
+		CALCULATOR->error(true, "calculateBitwiseXorIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), nullptr);
 		return false;
 	}
 
@@ -6743,7 +6743,7 @@ bool MathStructure::calculateMultiplyLast(const EvaluationOptions &eo, bool chec
 bool MathStructure::calculateMultiplyIndex(size_t index, const EvaluationOptions &eo, bool check_size, MathStructure *mparent, size_t index_this) {
 
 	if(index >= SIZE || !isMultiplication()) {
-		CALCULATOR->error(true, "calculateMultiplyIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), NULL);
+		CALCULATOR->error(true, "calculateMultiplyIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), nullptr);
 		return false;
 	}
 
@@ -6851,7 +6851,7 @@ bool MathStructure::calculateAddLast(const EvaluationOptions &eo, bool check_siz
 bool MathStructure::calculateAddIndex(size_t index, const EvaluationOptions &eo, bool check_size, MathStructure *mparent, size_t index_this) {
 
 	if(index >= SIZE || !isAddition()) {
-		CALCULATOR->error(true, "calculateAddIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), NULL);
+		CALCULATOR->error(true, "calculateAddIndex() error: %s. %s", format_and_print(*this).c_str(), _("This is a bug. Please report it."), nullptr);
 		return false;
 	}
 
@@ -6894,7 +6894,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 
 bool check_recursive_function_depth(size_t depth, bool show_error) {
 	if(depth > 3000) {
-		if(show_error) CALCULATOR->error(true, _("Maximum recursive depth reached."), NULL);
+		if(show_error) CALCULATOR->error(true, _("Maximum recursive depth reached."), nullptr);
 		return false;
 	}
 	return true;
@@ -6909,7 +6909,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 		if(function_value) {
 			// clear stored function value (presently not used)
 			function_value->unref();
-			function_value = NULL;
+			function_value = nullptr;
 		}
 
 		// test if the number of arguments (children) is appropriate for the function
@@ -6932,7 +6932,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 				SET_CHILD_MAP(0)
 			}
 			if(SIZE >= (size_t) o_function->minargs()) {
-				if(o_function->id() == FUNCTION_ID_LOGN) CALCULATOR->error(false, _("log() with a single argument is considered ambiguous. Please use ln() or log10() instead."), NULL);
+				if(o_function->id() == FUNCTION_ID_LOGN) CALCULATOR->error(false, _("log() with a single argument is considered ambiguous. Please use ln() or log10() instead."), nullptr);
 				while((o_function->maxargs() > 0 && SIZE < (size_t) o_function->maxargs()) || (o_function->maxargs() < 0 && !o_function->getDefaultValue(SIZE + 1).empty())) {
 					Argument *arg = o_function->getArgumentDefinition(SIZE + 1);
 					APPEND(m_zero)
@@ -6962,7 +6962,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 			REDUCE(o_function->maxargs());
 		}
 		m_type = STRUCT_VECTOR;
-		Argument *arg = NULL, *last_arg = NULL;
+		Argument *arg = nullptr, *last_arg = nullptr;
 		int last_i = 0;
 
 		bool b_valid = true;
@@ -6994,7 +6994,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 						}
 					}
 					if(CHILD(i).isUndefined()) {
-						CALCULATOR->error(false, _("No unknown variable/symbol was found."), NULL);
+						CALCULATOR->error(false, _("No unknown variable/symbol was found."), nullptr);
 						CHILD(i).set(CALCULATOR->getVariableById(VARIABLE_ID_X), true);
 					}
 				}
@@ -7005,7 +7005,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 							vector_size = CHILD(i).size();
 						} else if(vector_size != CHILD(i).size()) {
 							b_valid = false;
-							CALCULATOR->error(true, _("Vector size mismatch"), NULL);
+							CALCULATOR->error(true, _("Vector size mismatch"), nullptr);
 						}
 						n_vector++;
 					} else {
@@ -7030,7 +7030,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 							vector_size = CHILD(i).size();
 						} else if(vector_size != CHILD(i).size()) {
 							b_valid = false;
-							CALCULATOR->error(true, _("Vector size mismatch"), NULL);
+							CALCULATOR->error(true, _("Vector size mismatch"), nullptr);
 						}
 						n_vector++;
 					}
@@ -7099,7 +7099,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 					}
 					if(CALCULATOR->endTemporaryStopMessages() > 0 && function_value) {
 						function_value->unref();
-						function_value = NULL;
+						function_value = nullptr;
 					}
 				}*/
 				m_type = STRUCT_FUNCTION;
@@ -7132,7 +7132,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 						vector_size = CHILD(i).size();
 					} else if(vector_size != CHILD(i).size()) {
 						b_valid = false;
-						CALCULATOR->error(true, _("Vector size mismatch"), NULL);
+						CALCULATOR->error(true, _("Vector size mismatch"), nullptr);
 					}
 				}
 			}
@@ -7142,7 +7142,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 			MathStructure *mstruct = new MathStructure();
 			mstruct->clearVector();
 			for(size_t i = 0; i < vector_size; i++) {
-				MathStructure *mi = new MathStructure(o_function, NULL);
+				MathStructure *mi = new MathStructure(o_function, nullptr);
 				for(size_t i2 = 0; i2 < SIZE; i2++) {
 					if(SIZE == n_vector) {
 						mi->addChild(CHILD(i2)[i]);

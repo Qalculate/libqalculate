@@ -154,7 +154,7 @@ GammaFunction::GammaFunction() : MathFunction("gamma", 1, 1, SIGN_CAPITAL_GAMMA)
 int GammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].number().isRational() && (eo.approximation == APPROXIMATION_EXACT || (eo.approximation == APPROXIMATION_TRY_EXACT && vargs[0].number().isLessThan(1000)))) {
 		if(vargs[0].number().isInteger() && vargs[0].number().isPositive()) {
-			mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_FACTORIAL), &vargs[0], NULL);
+			mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_FACTORIAL), &vargs[0], nullptr);
 			mstruct[0] -= 1;
 			return 1;
 		} else if(vargs[0].number().denominatorIsTwo()) {
@@ -162,7 +162,7 @@ int GammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			nr.floor();
 			if(nr.isZero()) {
 				MathStructure mtmp(CALCULATOR->getVariableById(VARIABLE_ID_PI));
-				mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), &mtmp, NULL);
+				mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), &mtmp, nullptr);
 				return 1;
 			} else if(nr.isPositive()) {
 				Number nr2(nr);
@@ -174,7 +174,7 @@ int GammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 				nr2 /= nr3;
 				mstruct = nr2;
 				MathStructure mtmp1(CALCULATOR->getVariableById(VARIABLE_ID_PI));
-				MathStructure mtmp2(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), &mtmp1, NULL);
+				MathStructure mtmp2(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), &mtmp1, nullptr);
 				mstruct *= mtmp2;
 				return 1;
 			} else {
@@ -189,7 +189,7 @@ int GammaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 				nr3 /= nr2;
 				mstruct = nr3;
 				MathStructure mtmp1(CALCULATOR->getVariableById(VARIABLE_ID_PI));
-				MathStructure mtmp2(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), &mtmp1, NULL);
+				MathStructure mtmp2(CALCULATOR->getFunctionById(FUNCTION_ID_SQRT), &mtmp1, nullptr);
 				mstruct *= mtmp2;
 				return 1;
 			}
@@ -223,7 +223,7 @@ int BetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	m1.eval(eo);
 	m2.eval(eo);
 	if(m1.isVector() || m2.isVector()) {
-		mstruct.setVector(&m1, &m2, NULL);
+		mstruct.setVector(&m1, &m2, nullptr);
 		return -3;
 	}
 	if(!m1.isNumber() && m2.isInteger() && m2.number().isPositive() && m2.number() <= 13) {
@@ -242,8 +242,8 @@ int BetaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		mstruct *= fac;
 		return 1;
 	}
-	mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_GAMMA), &m1, NULL);
-	MathStructure mstruct2(CALCULATOR->getFunctionById(FUNCTION_ID_GAMMA), &m2, NULL);
+	mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_GAMMA), &m1, nullptr);
+	MathStructure mstruct2(CALCULATOR->getFunctionById(FUNCTION_ID_GAMMA), &m2, nullptr);
 	mstruct *= mstruct2;
 	mstruct2[0] += m1;
 	mstruct /= mstruct2;

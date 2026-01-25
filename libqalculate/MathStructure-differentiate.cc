@@ -156,7 +156,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				MathStructure *exp_mstruct = new MathStructure(CHILD(1));
 				exp_mstruct->differentiate(x_var, eo);
 				if(!CHILD(0).isVariable() || CHILD(0).variable()->id() != VARIABLE_ID_E) {
-					MathStructure *mstruct = new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &CHILD(0), NULL);
+					MathStructure *mstruct = new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &CHILD(0), nullptr);
 					multiply_nocopy(mstruct);
 				}
 				multiply_nocopy(exp_mstruct);
@@ -168,7 +168,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				base_mstruct->differentiate(x_var, eo);
 				base_mstruct->divide(CHILD(0));
 				base_mstruct->multiply(CHILD(1));
-				MathStructure *mstruct = new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &CHILD(0), NULL);
+				MathStructure *mstruct = new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &CHILD(0), nullptr);
 				mstruct->multiply_nocopy(exp_mstruct);
 				mstruct->add_nocopy(base_mstruct);
 				multiply_nocopy(mstruct);
@@ -222,7 +222,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				}
 			} else if(o_function->id() == FUNCTION_ID_LOGN && SIZE == 2) {
 				// log(f,g)'=(log(f)/log(g))'
-				MathStructure *mstruct = new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &CHILD(1), NULL);
+				MathStructure *mstruct = new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &CHILD(1), nullptr);
 				setFunctionId(FUNCTION_ID_LOG);
 				ERASE(1)
 				divide_nocopy(mstruct);
@@ -232,7 +232,7 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 				MathStructure mdigamma(CHILD(0));
 				mdigamma += CHILD(1);
 				mdigamma.transformById(FUNCTION_ID_DIGAMMA);
-				MathStructure *m1 = NULL, *m2 = NULL;
+				MathStructure *m1 = nullptr, *m2 = nullptr;
 				if(CHILD(0).containsRepresentativeOf(x_var, true, true) != 0) {
 					m1 = new MathStructure(CHILD(0));
 					m1->transformById(FUNCTION_ID_DIGAMMA);
@@ -590,10 +590,10 @@ bool MathStructure::differentiate(const MathStructure &x_var, const EvaluationOp
 			} else if(o_function->id() == FUNCTION_ID_SINC && SIZE == 1) {
 				// sinc(f)'=f'*(cos(f)/f-sin(f)/f^2)
 				if(o_function->getDefaultValue(2) == "pi") CHILD(0) *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-				MathStructure m_cos(CALCULATOR->getFunctionById(FUNCTION_ID_COS), &CHILD(0), NULL);
+				MathStructure m_cos(CALCULATOR->getFunctionById(FUNCTION_ID_COS), &CHILD(0), nullptr);
 				m_cos[0].multiply(CALCULATOR->getRadUnit());
 				m_cos.divide(CHILD(0));
-				MathStructure m_sin(CALCULATOR->getFunctionById(FUNCTION_ID_SIN), &CHILD(0), NULL);
+				MathStructure m_sin(CALCULATOR->getFunctionById(FUNCTION_ID_SIN), &CHILD(0), nullptr);
 				m_sin[0].multiply(CALCULATOR->getRadUnit());
 				MathStructure mstruct(CHILD(0));
 				mstruct.raise(Number(-2, 1, 0));

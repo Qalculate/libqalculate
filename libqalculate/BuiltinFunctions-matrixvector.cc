@@ -56,7 +56,7 @@ int MatrixFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	size_t r = 1, c = 1;
 	for(size_t i = 0; i < vargs[2].size(); i++) {
 		if(r > rows || c > columns) {
-			CALCULATOR->error(false, _("Too many elements (%s) for the dimensions (%sx%s) of the matrix."), i2s(vargs[2].size()).c_str(), i2s(rows).c_str(), i2s(columns).c_str(), NULL);
+			CALCULATOR->error(false, _("Too many elements (%s) for the dimensions (%sx%s) of the matrix."), i2s(vargs[2].size()).c_str(), i2s(rows).c_str(), i2s(columns).c_str(), nullptr);
 			break;
 		}
 		mstruct[r - 1][c - 1] = vargs[2][i];
@@ -187,9 +187,9 @@ int ReshapeFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		}
 	}
 	if(rows * cols < elements) {
-		CALCULATOR->error(false, _("Elements where from the end of matrix/vector in %s()."), name().c_str(), NULL);
+		CALCULATOR->error(false, _("Elements where from the end of matrix/vector in %s()."), name().c_str(), nullptr);
 	} else if(rows * cols > elements) {
-		CALCULATOR->error(false, _("Matrix/vector where expanded with zeroes in %s()."), name().c_str(), NULL);
+		CALCULATOR->error(false, _("Matrix/vector where expanded with zeroes in %s()."), name().c_str(), nullptr);
 	}
 	return 1;
 }
@@ -254,7 +254,7 @@ int VertCatFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	mstruct = vargs[0];
 	for(size_t i = 1; i < vargs.size(); i++) {
 		if(vargs[i].columns() != mstruct.columns()) {
-			CALCULATOR->error(true, _("Vertical concatenation requires equal number of columns."), NULL);
+			CALCULATOR->error(true, _("Vertical concatenation requires equal number of columns."), nullptr);
 			if(i > 1) {
 				mstruct.transform(this);
 				for(; i < vargs.size(); i++) mstruct.addChild(vargs[i]);
@@ -284,7 +284,7 @@ int HorzCatFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	mstruct = vargs[0];
 	for(size_t i = 1; i < vargs.size(); i++) {
 		if(vargs[i].rows() != mstruct.rows()) {
-			CALCULATOR->error(true, _("Horizontal concatenation requires equal number of rows."), NULL);
+			CALCULATOR->error(true, _("Horizontal concatenation requires equal number of rows."), nullptr);
 			if(i > 1) {
 				mstruct.transform(this);
 				for(; i < vargs.size(); i++) mstruct.addChild(vargs[i]);
@@ -315,7 +315,7 @@ RowFunction::RowFunction() : MathFunction("row", 2) {
 int RowFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	size_t row = (size_t) vargs[1].number().uintValue();
 	if(row > vargs[0].rows()) {
-		CALCULATOR->error(true, _("Row %s does not exist in matrix."), format_and_print(vargs[1]).c_str(), NULL);
+		CALCULATOR->error(true, _("Row %s does not exist in matrix."), format_and_print(vargs[1]).c_str(), nullptr);
 		return 0;
 	}
 	vargs[0].rowToVector(row, mstruct);
@@ -328,7 +328,7 @@ ColumnFunction::ColumnFunction() : MathFunction("column", 2) {
 int ColumnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	size_t col = (size_t) vargs[1].number().uintValue();
 	if(col > vargs[0].columns()) {
-		CALCULATOR->error(true, _("Column %s does not exist in matrix."), format_and_print(vargs[1]).c_str(), NULL);
+		CALCULATOR->error(true, _("Column %s does not exist in matrix."), format_and_print(vargs[1]).c_str(), nullptr);
 		return 0;
 	}
 	vargs[0].columnToVector(col, mstruct);
@@ -446,15 +446,15 @@ int ElementFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 			else mstruct = vargs[0][row - 1];
 			return 1;
 		}
-		CALCULATOR->error(true, _("Element %s does not exist in vector."), format_and_print(vargs[1]).c_str(), NULL);
+		CALCULATOR->error(true, _("Element %s does not exist in vector."), format_and_print(vargs[1]).c_str(), nullptr);
 		return 0;
 	}
 	if(col > vargs[0].columns()) {
-		CALCULATOR->error(true, _("Column %s does not exist in matrix."), format_and_print(vargs[2]).c_str(), NULL);
+		CALCULATOR->error(true, _("Column %s does not exist in matrix."), format_and_print(vargs[2]).c_str(), nullptr);
 		return 0;
 	}
 	if(row > vargs[0].rows()) {
-		CALCULATOR->error(true, _("Row %s does not exist in matrix."), format_and_print(vargs[1]).c_str(), NULL);
+		CALCULATOR->error(true, _("Row %s does not exist in matrix."), format_and_print(vargs[1]).c_str(), nullptr);
 		return 0;
 	}
 	const MathStructure *em = vargs[0].getElement(row, col);
@@ -488,7 +488,7 @@ bool ComponentFunction::representsNonMatrix(const MathStructure &vargs) const {
 int ComponentFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	size_t i = (size_t) vargs[0].number().uintValue();
 	if(i > vargs[1].countChildren()) {
-		CALCULATOR->error(true, _("Element %s does not exist in vector."), format_and_print(vargs[0]).c_str(), NULL);
+		CALCULATOR->error(true, _("Element %s does not exist in vector."), format_and_print(vargs[0]).c_str(), nullptr);
 		return 0;
 	}
 	mstruct = *vargs[1].getChild(i);
@@ -523,7 +523,7 @@ int LimitsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		if((size_t) i2 - i1 + 1 > mstruct.size()) {mstruct.resizeVector(i2 - i1 + 1, m_zero); expanded = true;}
 		if(mstruct.size() != (size_t) i2 - i1 + 1) return 0;
 	}
-	if(expanded) CALCULATOR->error(false, _("Matrix/vector where expanded with zeroes in %s()."), name().c_str(), NULL);
+	if(expanded) CALCULATOR->error(false, _("Matrix/vector where expanded with zeroes in %s()."), name().c_str(), nullptr);
 	return 1;
 }
 AreaFunction::AreaFunction() : MathFunction("area", 2, 5) {
@@ -581,7 +581,7 @@ int AreaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			mstruct[i].flipVector();
 		}
 	}
-	if(expanded) CALCULATOR->error(false, _("Matrix/vector where expanded with zeroes in %s()."), name().c_str(), NULL);
+	if(expanded) CALCULATOR->error(false, _("Matrix/vector where expanded with zeroes in %s()."), name().c_str(), nullptr);
 	return 1;
 }
 ReplacePartFunction::ReplacePartFunction() : MathFunction("replacePart", 3, 6) {
@@ -984,11 +984,11 @@ int EntrywiseFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	for(size_t i3 = 2; i3 < vargs[1].size(); i3 += 2) {
 		if(b_matrix) {
 			if(!vargs[1][i3].isMatrix() || vargs[1][i3].columns() != vargs[1][0].columns() || vargs[1][i3].rows() != vargs[1][0].rows()) {
-				CALCULATOR->error(true, _("%s() requires that all matrices/vectors have the same dimensions."), preferredDisplayName().name.c_str(), NULL);
+				CALCULATOR->error(true, _("%s() requires that all matrices/vectors have the same dimensions."), preferredDisplayName().name.c_str(), nullptr);
 				return 0;
 			}
 		} else if(vargs[1][i3].size() != vargs[1][0].size()) {
-			CALCULATOR->error(true, _("%s() requires that all matrices/vectors have the same dimensions."), preferredDisplayName().name.c_str(), NULL);
+			CALCULATOR->error(true, _("%s() requires that all matrices/vectors have the same dimensions."), preferredDisplayName().name.c_str(), nullptr);
 			return 0;
 		}
 	}
@@ -1546,15 +1546,15 @@ int GenerateVectorFunction::calculate(MathStructure &mstruct, const MathStructur
 		CALCULATOR->endTemporaryStopMessages(!b_step);
 	}
 	if(b_step) {
-		mstruct = vargs[0].generateVector(vargs[4], vargs[1], vargs[2], vargs[3], NULL, eo);
+		mstruct = vargs[0].generateVector(vargs[4], vargs[1], vargs[2], vargs[3], nullptr, eo);
 	} else {
 		bool overflow = false;
 		int steps = msteps.number().intValue(&overflow);
 		if(!msteps.isInteger() || overflow || steps < 1) {
-			CALCULATOR->error(true, _("The number of requested elements in generate vector function must be a positive integer."), NULL);
+			CALCULATOR->error(true, _("The number of requested elements in generate vector function must be a positive integer."), nullptr);
 			return 0;
 		}
-		mstruct = vargs[0].generateVector(vargs[4], vargs[1], vargs[2], steps, NULL, eo);
+		mstruct = vargs[0].generateVector(vargs[4], vargs[1], vargs[2], steps, nullptr, eo);
 	}
 	if(CALCULATOR->aborted() || mstruct.size() == 0) return 0;
 	return 1;
@@ -1574,8 +1574,8 @@ ColonFunction::ColonFunction() : MathFunction("colon", 2, 3) {
 int ColonFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(CALCULATOR->aborted()) return 0;
 	mstruct.set("x", true);
-	if(vargs[2].isUndefined()) mstruct = mstruct.generateVector(mstruct, vargs[0], vargs[1], m_one, NULL, eo);
-	else mstruct = mstruct.generateVector(mstruct, vargs[0], vargs[2], vargs[1], NULL, eo);
+	if(vargs[2].isUndefined()) mstruct = mstruct.generateVector(mstruct, vargs[0], vargs[1], m_one, nullptr, eo);
+	else mstruct = mstruct.generateVector(mstruct, vargs[0], vargs[2], vargs[1], nullptr, eo);
 	if(CALCULATOR->aborted() || mstruct.size() == 0) return 0;
 	return 1;
 }
@@ -1595,7 +1595,7 @@ int SelectFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		mtest.replace(vargs[2], mstruct[i], false, false, true);
 		mtest.eval(eo);
 		if(!mtest.isNumber() || mtest.number().getBoolean() < 0) {
-			CALCULATOR->error(true, _("Comparison failed."), NULL);
+			CALCULATOR->error(true, _("Comparison failed."), nullptr);
 			return 0;
 		}
 		if(mtest.number().getBoolean() == 0) {
@@ -1612,7 +1612,7 @@ int SelectFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		}
 	}
 	if(vargs[3].number().getBoolean() > 0) {
-		CALCULATOR->error(true, _("No matching item found."), NULL);
+		CALCULATOR->error(true, _("No matching item found."), nullptr);
 		return 0;
 	}
 	return 1;
@@ -1633,12 +1633,12 @@ int LoadFunction::calculate([[maybe_unused]] MathStructure &mstruct, [[maybe_unu
 		delim = "\t";
 	}
 	if(!CALCULATOR->importCSV(mstruct, vargs[0].symbol().c_str(), vargs[1].number().intValue(), delim)) {
-		CALCULATOR->error(true, "Failed to load %s.", vargs[0].symbol().c_str(), NULL);
+		CALCULATOR->error(true, "Failed to load %s.", vargs[0].symbol().c_str(), nullptr);
 		return 0;
 	}
 	return 1;
 #else
-	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), (name() + "()").c_str(), "libqalculate", "--disable-insecure", NULL);
+	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), (name() + "()").c_str(), "libqalculate", "--disable-insecure", nullptr);
 	return 0;
 #endif
 }
@@ -1655,12 +1655,12 @@ int ExportFunction::calculate(MathStructure&, [[maybe_unused]] const MathStructu
 		delim = "\t";
 	}
 	if(!CALCULATOR->exportCSV(vargs[0], vargs[1].symbol().c_str(), delim)) {
-		CALCULATOR->error(true, "Failed to export to %s.", vargs[1].symbol().c_str(), NULL);
+		CALCULATOR->error(true, "Failed to export to %s.", vargs[1].symbol().c_str(), nullptr);
 		return 0;
 	}
 	return 1;
 #else
-	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), (name() + "()").c_str(), "libqalculate", "--disable-insecure", NULL);
+	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), (name() + "()").c_str(), "libqalculate", "--disable-insecure", nullptr);
 	return 0;
 #endif
 }

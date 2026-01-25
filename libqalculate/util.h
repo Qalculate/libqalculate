@@ -56,7 +56,7 @@ void *s2p(const char *str);
 
 void now(int &hour, int &min, int &sec);
 
-size_t find_ending_bracket(const std::string &str, size_t start, int *missing = NULL);
+size_t find_ending_bracket(const std::string &str, size_t start, int *missing = nullptr);
 
 char op2ch(MathOperation op);
 
@@ -111,7 +111,7 @@ bool move_file(const char *from_file, const char *to_file);
 
 void free_thread_caches();
 
-int checkAvailableVersion(const char *version_id, const char *current_version, std::string *available_version = NULL, int timeout = 5);
+int checkAvailableVersion(const char *version_id, const char *current_version, std::string *available_version = nullptr, int timeout = 5);
 int checkAvailableVersion(const char *version_id, const char *current_version, std::string *available_version, std::string *url, int timeout = 5);
 
 class Thread {
@@ -141,7 +141,7 @@ protected:
 	template <class T> T read() {
 #ifdef _WIN32
 		MSG msg;
-		int ret = GetMessage(&msg, NULL, WM_USER, WM_USER);
+		int ret = GetMessage(&msg, nullptr, WM_USER, WM_USER);
 		return (T) msg.wParam;
 #else
 		T x;
@@ -152,7 +152,7 @@ protected:
 	template <class T> bool read(T *data) {
 #ifdef _WIN32
 		MSG msg;
-		int ret = GetMessage(&msg, NULL, WM_USER, WM_USER);
+		int ret = GetMessage(&msg, nullptr, WM_USER, WM_USER);
 		if(ret == 0 || ret == -1) return false;
 		*data = (T) msg.wParam;
 		return true;

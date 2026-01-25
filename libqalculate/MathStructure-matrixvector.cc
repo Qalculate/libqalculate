@@ -80,7 +80,7 @@ bool MathStructure::rankVector(bool ascending) {
 				for(size_t index = 0; index < SIZE; index++) {
 					if(CALCULATOR->aborted()) return false;
 					if(&CHILD(index) == v_subs_new[i]) {
-						CALCULATOR->error(true, _("Unsolvable comparison at element %s when trying to rank vector."), i2s(index + 1).c_str(), NULL);
+						CALCULATOR->error(true, _("Unsolvable comparison at element %s when trying to rank vector."), i2s(index + 1).c_str(), nullptr);
 					}
 				}
 				break;
@@ -141,7 +141,7 @@ bool MathStructure::sortVector(bool ascending) {
 				for(size_t index = 0; index < SIZE; index++) {
 					if(CALCULATOR->aborted()) return false;
 					if(&CHILD(index) == v_subs_new[i]) {
-						CALCULATOR->error(true, _("Unsolvable comparison at element %s when trying to sort vector."), i2s(index + 1).c_str(), NULL);
+						CALCULATOR->error(true, _("Unsolvable comparison at element %s when trying to sort vector."), i2s(index + 1).c_str(), nullptr);
 					}
 				}
 				break;
@@ -208,31 +208,31 @@ size_t MathStructure::columns() const {
 	return CHILD(0).size();
 }
 const MathStructure *MathStructure::getElement(size_t row, size_t column) const {
-	if(row == 0 || column == 0) return NULL;
+	if(row == 0 || column == 0) return nullptr;
 	if(m_type != STRUCT_VECTOR) {
 		if(row == 1 && column == 1) return this;
-		return NULL;
+		return nullptr;
 	}
-	if(SIZE == 0) return NULL;
+	if(SIZE == 0) return nullptr;
 	if(row == 1 && !CHILD(0).isVector()) {
-		if(column > SIZE) return NULL;
+		if(column > SIZE) return nullptr;
 		return &CHILD(column - 1);
 	}
-	if(row > SIZE || column > CHILD(row - 1).size()) return NULL;
+	if(row > SIZE || column > CHILD(row - 1).size()) return nullptr;
 	return &CHILD(row - 1)[column - 1];
 }
 MathStructure *MathStructure::getElement(size_t row, size_t column) {
-	if(row == 0 || column == 0) return NULL;
+	if(row == 0 || column == 0) return nullptr;
 	if(m_type != STRUCT_VECTOR) {
 		if(row == 1 && column == 1) return this;
-		return NULL;
+		return nullptr;
 	}
-	if(SIZE == 0) return NULL;
+	if(SIZE == 0) return nullptr;
 	if(row == 1 && !CHILD(0).isVector()) {
-		if(column > SIZE) return NULL;
+		if(column > SIZE) return nullptr;
 		return &CHILD(column - 1);
 	}
-	if(row > SIZE || column > CHILD(row - 1).size()) return NULL;
+	if(row > SIZE || column > CHILD(row - 1).size()) return nullptr;
 	return &CHILD(row - 1)[column - 1];
 }
 MathStructure &MathStructure::getArea(size_t r1, size_t c1, size_t r2, size_t c2, MathStructure &mstruct) const {
@@ -604,7 +604,7 @@ int permutation_sign(It first, It last)
 MathStructure &MathStructure::determinant(MathStructure &mstruct, const EvaluationOptions &eo) const {
 
 	if(!matrixIsSquare()) {
-		CALCULATOR->error(true, _("The determinant can only be calculated for square matrices."), NULL);
+		CALCULATOR->error(true, _("The determinant can only be calculated for square matrices."), nullptr);
 		mstruct = m_undefined;
 		return mstruct;
 	}
@@ -668,7 +668,7 @@ MathStructure &MathStructure::determinant(MathStructure &mstruct, const Evaluati
 
 MathStructure &MathStructure::permanent(MathStructure &mstruct, const EvaluationOptions &eo) const {
 	if(!matrixIsSquare()) {
-		CALCULATOR->error(true, _("The permanent can only be calculated for square matrices."), NULL);
+		CALCULATOR->error(true, _("The permanent can only be calculated for square matrices."), nullptr);
 		mstruct = m_undefined;
 		return mstruct;
 	}
@@ -759,7 +759,7 @@ bool MathStructure::invertMatrix(const EvaluationOptions &eo) {
 				}
 				if(CALCULATOR->aborted()) return false;
 				if(i == n) {
-					CALCULATOR->error(true, _("Inverse of singular matrix."), NULL);
+					CALCULATOR->error(true, _("Inverse of singular matrix."), nullptr);
 					return false;
 				}
 
@@ -950,7 +950,7 @@ bool find_legal_point(const MathStructure &m, const MathStructure &x_mstruct, Ma
 	if((b_number && ((m.isPower() && m[1].isNumber() && m[1].number().isReal() && !m[1].number().isInteger() && m[0].contains(x_mstruct, true) > 0) || (m.isFunction() && m.size() > 0 && (m.function()->id() == FUNCTION_ID_ACOS || m.function()->id() == FUNCTION_ID_ASIN || m.function()->id() == FUNCTION_ID_ACOSH || (m.function()->id() == FUNCTION_ID_LAMBERT_W && (m.size() == 1 || m[1].isZero())))))) || (!b_number && m.isFunction() && m.size() > 0 && m.isFunction() && m.function()->id() == FUNCTION_ID_ROOT && m.size() >= 2 && m[1].representsEven())) {
 		MathFunction *f = CALCULATOR->getFunctionById(FUNCTION_ID_SECANT_METHOD);
 		if(f) {
-			MathStructure msolve(f, NULL);
+			MathStructure msolve(f, nullptr);
 			msolve.addChild(m[0]);
 			if(m.isFunction() && (m.function()->id() == FUNCTION_ID_ACOS || m.function()->id() == FUNCTION_ID_ASIN || m.function()->id() == FUNCTION_ID_ACOSH)) {
 				if(m.function()->id() != FUNCTION_ID_ACOSH) msolve[0].transformById(FUNCTION_ID_ABS);
@@ -979,7 +979,7 @@ bool find_legal_point(const MathStructure &m, const MathStructure &x_mstruct, Ma
 bool find_zero_point(const MathStructure &m, const MathStructure &x_mstruct, MathStructure &mx, const MathStructure &min, const MathStructure &max, const EvaluationOptions &eo) {
 	MathFunction *f = CALCULATOR->getFunctionById(FUNCTION_ID_SECANT_METHOD);
 	if(f) {
-		MathStructure msolve(f, NULL);
+		MathStructure msolve(f, nullptr);
 		msolve.addChild(m);
 		msolve.addChild(min);
 		msolve.addChild(max);
@@ -1009,10 +1009,10 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 		if(!step.isZero()) mtest.calculateDivide(step, eo);
 		mtest.eval(eo);
 		if(step.isZero() || !mtest.isNumber() || mtest.number().isNegative()) {
-			CALCULATOR->error(true, _("The selected min, max and step size do not result in a positive, finite number of data points"), NULL);
+			CALCULATOR->error(true, _("The selected min, max and step size do not result in a positive, finite number of data points"), nullptr);
 			return;
 		} else if(mtest.number().isGreaterThan(1000000)) {
-			CALCULATOR->error(true, _("Too many data points"), NULL);
+			CALCULATOR->error(true, _("Too many data points"), nullptr);
 			return;
 		}
 		mtest.number().round();
@@ -1059,7 +1059,7 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 	y_vector.clearVector();
 	x_vector.clearVector();
 	if(steps > 1000000) {
-		CALCULATOR->error(true, _("Too many data points"), NULL);
+		CALCULATOR->error(true, _("Too many data points"), nullptr);
 		return;
 	}
 	if(adaptive && (!min.isNumber() || !max.isNumber())) adaptive = false;
@@ -1069,7 +1069,7 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 	if(steps != 1) step.calculateDivide(steps - 1, eo);
 	step.eval(eo);
 	if(!step.isNumber() || step.number().isNegative()) {
-		CALCULATOR->error(true, _("The selected min and max do not result in a positive, finite number of data points"), NULL);
+		CALCULATOR->error(true, _("The selected min and max do not result in a positive, finite number of data points"), nullptr);
 		return;
 	}
 	MathStructure ydiff;
@@ -1331,7 +1331,7 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 	MathStructure y_vector;
 	y_vector.clearVector();
 	if(steps > 1000000) {
-		CALCULATOR->error(true, _("Too many data points"), NULL);
+		CALCULATOR->error(true, _("Too many data points"), nullptr);
 		return y_vector;
 	}
 	CALCULATOR->beginTemporaryStopMessages();
@@ -1341,7 +1341,7 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 	step.eval(eo);
 	CALCULATOR->endTemporaryStopMessages();
 	if(!step.isNumber() || step.number().isNegative()) {
-		CALCULATOR->error(true, _("The selected min and max do not result in a positive, finite number of data points"), NULL);
+		CALCULATOR->error(true, _("The selected min and max do not result in a positive, finite number of data points"), nullptr);
 		return y_vector;
 	}
 	y_vector.resizeVector(steps, m_zero);
@@ -1391,10 +1391,10 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 			}
 			CALCULATOR->endTemporaryStopMessages();
 			if(step.isZero() || !mtest.isNumber() || mtest.number().isNegative()) {
-				CALCULATOR->error(true, _("The selected min, max and step size do not result in a positive, finite number of data points"), NULL);
+				CALCULATOR->error(true, _("The selected min, max and step size do not result in a positive, finite number of data points"), nullptr);
 				return y_vector;
 			} else if(mtest.number().isGreaterThan(1000000)) {
-				CALCULATOR->error(true, _("Too many data points"), NULL);
+				CALCULATOR->error(true, _("Too many data points"), nullptr);
 				return y_vector;
 			}
 			mtest.number().round();

@@ -747,7 +747,7 @@ int LimitFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	EvaluationOptions eo2 = eo;
 	eo2.approximation = APPROXIMATION_EXACT;
 	if(mstruct.calculateLimit(vargs[2], vargs[1], eo2, vargs[3].number().intValue())) return 1;
-	CALCULATOR->error(true, _("Unable to find limit."), NULL);
+	CALCULATOR->error(true, _("Unable to find limit."), nullptr);
 	return -1;
 }
 bool replace_diff_x(MathStructure &m, const MathStructure &mfrom, const MathStructure &mto) {
@@ -797,7 +797,7 @@ int DeriveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 			eo2.approximation = APPROXIMATION_EXACT;
 			eo2.calculate_functions = false;
 			mstruct.eval(eo2);
-			mstruct.factorize(eo2, false, 0, 0, false, 1, NULL, m_undefined, false, true);
+			mstruct.factorize(eo2, false, 0, 0, false, 1, nullptr, m_undefined, false, true);
 		}
 	}
 	if(!vargs[3].isUndefined()) replace_diff_x(mstruct, vargs[1], vargs[3]);
@@ -843,7 +843,7 @@ int RombergFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		return 1;
 	}
 	CALCULATOR->endTemporaryStopMessages();
-	CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
+	CALCULATOR->error(false, _("Unable to integrate the expression."), nullptr);
 	return 0;
 }
 MonteCarloFunction::MonteCarloFunction() : MathFunction("montecarlo", 4, 5) {
@@ -875,7 +875,7 @@ int MonteCarloFunction::calculate(MathStructure &mstruct, const MathStructure &v
 		mstruct = nr;
 		return 1;
 	}
-	CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
+	CALCULATOR->error(false, _("Unable to integrate the expression."), nullptr);
 	return 0;
 }
 

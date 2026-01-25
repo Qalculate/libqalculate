@@ -73,7 +73,7 @@ void CalculateThread::run() {
 	while(true) {
 		bool b_parse = true;
 		if(!read<bool>(&b_parse)) break;
-		void *x = NULL;
+		void *x = nullptr;
 		if(!read<void *>(&x) || !x) break;
 		MathStructure *mstruct = (MathStructure*) x;
 		CALCULATOR->startControl();
@@ -180,13 +180,13 @@ bool Calculator::abort() {
 			i_stop_interval = 0;
 			i_start_interval = 0;
 			if(tmp_rpn_mstruct) tmp_rpn_mstruct->unref();
-			tmp_rpn_mstruct = NULL;
+			tmp_rpn_mstruct = nullptr;
 
 			// thread cancellation is not safe
 			if(i_precision > 10000) {
-				error(true, _("The calculation has been forcibly terminated. Please restart the application."), NULL);
+				error(true, _("The calculation has been forcibly terminated. Please restart the application."), nullptr);
 			} else {
-				error(true, _("The calculation has been forcibly terminated. Please restart the application and report this as a bug."), NULL);
+				error(true, _("The calculation has been forcibly terminated. Please restart the application and report this as a bug."), nullptr);
 			}
 
 			b_busy = false;
@@ -201,7 +201,7 @@ bool Calculator::busy() {
 }
 void Calculator::terminateThreads() {
 	if(calculate_thread->running) {
-		if(!calculate_thread->write(false) || !calculate_thread->write(NULL)) calculate_thread->cancel();
+		if(!calculate_thread->write(false) || !calculate_thread->write(nullptr)) calculate_thread->cancel();
 		for(size_t i = 0; i < 10 && calculate_thread->running; i++) {
 			sleep_ms(1);
 		}
@@ -222,7 +222,7 @@ bool Calculator::calculateRPN(MathStructure *mstruct, int command, size_t index,
 	tmp_rpnindex = index;
 	tmp_rpn_mstruct = mstruct;
 	tmp_proc_registers = function_arguments;
-	tmp_tostruct = NULL;
+	tmp_tostruct = nullptr;
 	if(!calculate_thread->write(false)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	if(!calculate_thread->write((void*) mstruct)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	if(msecs > 0 && b_busy) {
@@ -313,7 +313,7 @@ bool Calculator::calculateRPN(MathOperation op, int msecs, const EvaluationOptio
 	return calculateRPN(mstruct, PROC_RPN_OPERATION_2, 0, msecs, eo);
 }
 bool Calculator::calculateRPN(MathFunction *f, int msecs, const EvaluationOptions &eo, MathStructure *parsed_struct) {
-	MathStructure *mstruct = new MathStructure(f, NULL);
+	MathStructure *mstruct = new MathStructure(f, nullptr);
 	int iregs = 0;
 	if(f->args() != 0) {
 		size_t i = f->minargs();
@@ -328,7 +328,7 @@ bool Calculator::calculateRPN(MathFunction *f, int msecs, const EvaluationOption
 		}
 		for(; i > 0; i--) {
 			if(i > rpn_stack.size()) {
-				error(false, _("Stack is empty. Filling remaining function arguments with zeroes."), NULL);
+				error(false, _("Stack is empty. Filling remaining function arguments with zeroes."), nullptr);
 				mstruct->addChild(m_zero);
 			} else {
 				if(fill_vector && rpn_stack.size() - i == (size_t) f->minargs() - 1) mstruct->addChild(m_empty_vector);
@@ -426,7 +426,7 @@ MathStructure *Calculator::calculateRPN(MathOperation op, const EvaluationOption
 }
 MathStructure *Calculator::calculateRPN(MathFunction *f, const EvaluationOptions &eo, MathStructure *parsed_struct) {
 	current_stage = MESSAGE_STAGE_PARSING;
-	MathStructure *mstruct = new MathStructure(f, NULL);
+	MathStructure *mstruct = new MathStructure(f, nullptr);
 	size_t iregs = 0;
 	if(f->args() != 0) {
 		size_t i = f->minargs();
@@ -440,7 +440,7 @@ MathStructure *Calculator::calculateRPN(MathFunction *f, const EvaluationOptions
 		}
 		for(; i > 0; i--) {
 			if(i > rpn_stack.size()) {
-				error(false, _("Stack is empty. Filling remaining function arguments with zeroes."), NULL);
+				error(false, _("Stack is empty. Filling remaining function arguments with zeroes."), nullptr);
 				mstruct->addChild(m_zero);
 			} else {
 				if(fill_vector && rpn_stack.size() - i == (size_t) f->minargs() - 1) mstruct->addChild(m_empty_vector);
@@ -550,7 +550,7 @@ void Calculator::RPNStackEnter(string str, const EvaluationOptions &eo, MathStru
 	else rpn_stack.push_back(new MathStructure(calculate(str, eo, parsed_struct, to_struct, make_to_division)));
 }
 bool Calculator::setRPNRegister(size_t index, MathStructure *mstruct, int msecs, const EvaluationOptions &eo) {
-	if(mstruct == NULL) {
+	if(mstruct == nullptr) {
 		deleteRPNRegister(index);
 		return true;
 	}
@@ -562,7 +562,7 @@ bool Calculator::setRPNRegister(size_t index, string str, int msecs, const Evalu
 	return calculateRPN(str, PROC_RPN_SET, index, msecs, eo, parsed_struct, to_struct, make_to_division);
 }
 void Calculator::setRPNRegister(size_t index, MathStructure *mstruct, bool eval, const EvaluationOptions &eo) {
-	if(mstruct == NULL) {
+	if(mstruct == nullptr) {
 		deleteRPNRegister(index);
 		return;
 	}
@@ -596,7 +596,7 @@ MathStructure *Calculator::getRPNRegister(size_t index) const {
 		index = rpn_stack.size() - index;
 		return rpn_stack[index];
 	}
-	return NULL;
+	return nullptr;
 }
 size_t Calculator::RPNStackSize() const {
 	return rpn_stack.size();
@@ -677,7 +677,7 @@ void replace_result_cis(string &resstr) {
 }
 
 // test if contains decimal value (if test_orig = true, check for decimal point in original expression)
-bool contains_decimal(const MathStructure &m, const string *original_expression = NULL) {
+bool contains_decimal(const MathStructure &m, const string *original_expression = nullptr) {
 	if(original_expression && !original_expression->empty()) return original_expression->find(DOT) != string::npos;
 	if(m.isNumber()) return !m.number().isInteger();
 	for(size_t i = 0; i < m.size(); i++) {
@@ -907,7 +907,7 @@ bool shown_with_scientific_notation(const Number &nr, const PrintOptions &po) {
 	string exp;
 	InternalPrintStruct ips;
 	PrintOptions po2 = po;
-	po2.is_approximate = NULL;
+	po2.is_approximate = nullptr;
 	ips.exp = &exp;
 	nr.print(po2, ips);
 	CALCULATOR->endTemporaryStopMessages();
@@ -1611,7 +1611,7 @@ bool expression_contains_save_function(const string &str, const ParseOptions &po
 			size_t i2 = str.find(name, i);
 			if(i2 != string::npos) {
 				ExpressionItem *item1 = CALCULATOR->getActiveExpressionItem(name);
-				ExpressionItem *item2 = item1 ? CALCULATOR->getActiveExpressionItem(name, item1) : NULL;
+				ExpressionItem *item2 = item1 ? CALCULATOR->getActiveExpressionItem(name, item1) : nullptr;
 				if(item1) {
 					MathStructure mtest;
 					CALCULATOR->beginTemporaryStopMessages();
@@ -1701,7 +1701,7 @@ bool transform_expression_for_equals_save(string &str, const ParseOptions &po) {
 			size_t i2 = str.find(name, i);
 			if(i2 != string::npos) {
 				ExpressionItem *item1  = CALCULATOR->getActiveExpressionItem(name);
-				ExpressionItem *item2  = item1 ? CALCULATOR->getActiveExpressionItem(name, item1) : NULL;
+				ExpressionItem *item2  = item1 ? CALCULATOR->getActiveExpressionItem(name, item1) : nullptr;
 				if(item1) {
 					MathStructure mtest;
 					CALCULATOR->beginTemporaryStopMessages();
@@ -1725,7 +1725,7 @@ bool transform_expression_for_equals_save(string &str, const ParseOptions &po) {
 #define EQUALS_IGNORECASE_AND_LOCAL_NR(x,y,z,a)	(equalsIgnoreCase(x, y a) || (x.length() == strlen(z) + strlen(a) && equalsIgnoreCase(x.substr(0, x.length() - strlen(a)), z) && equalsIgnoreCase(x.substr(x.length() - strlen(a)), a)))
 
 string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, std::string *parsed_expression) {
-	return calculateAndPrint(str, msecs, eo, po, AUTOMATIC_FRACTION_OFF, AUTOMATIC_APPROXIMATION_OFF, parsed_expression, -1, NULL, false, 0, TAG_TYPE_HTML);
+	return calculateAndPrint(str, msecs, eo, po, AUTOMATIC_FRACTION_OFF, AUTOMATIC_APPROXIMATION_OFF, parsed_expression, -1, nullptr, false, 0, TAG_TYPE_HTML);
 }
 
 long int get_fixed_denominator2(const string &str, NumberFractionFormat &nff, bool b_minus, int frac) {
@@ -1917,7 +1917,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 					itz = tzh * 60 + tzm;
 					if(b_minus) itz = -itz;
 				} else {
-					error(true, _("Time zone parsing failed."), NULL);
+					error(true, _("Time zone parsing failed."), nullptr);
 				}
 				printops.time_zone = TIME_ZONE_CUSTOM;
 				printops.custom_time_zone = itz;
@@ -2083,7 +2083,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			long int usec, sec;
 #ifndef CLOCK_MONOTONIC
 			struct timeval tv;
-			gettimeofday(&tv, NULL);
+			gettimeofday(&tv, nullptr);
 			usec = tv.tv_usec + msecs / 3L * 2L * 1000L;
 			sec = tv.tv_sec;
 			if(usec > 1000000L) {sec += usec / 1000000L; usec = usec % 1000000L;}
@@ -2362,7 +2362,7 @@ bool Calculator::calculate(MathStructure *mstruct, string str, int msecs, const 
 	expression_to_calculate = str;
 	tmp_evaluationoptions = eo;
 	tmp_proc_command = PROC_NO_COMMAND;
-	tmp_rpn_mstruct = NULL;
+	tmp_rpn_mstruct = nullptr;
 	tmp_parsedstruct = parsed_struct;
 	tmp_tostruct = to_struct;
 	tmp_maketodivision = make_to_division;
@@ -2394,10 +2394,10 @@ bool Calculator::calculate(MathStructure *mstruct, int msecs, const EvaluationOp
 	expression_to_calculate = "";
 	tmp_evaluationoptions = eo;
 	tmp_proc_command = PROC_NO_COMMAND;
-	tmp_rpn_mstruct = NULL;
-	tmp_parsedstruct = NULL;
+	tmp_rpn_mstruct = nullptr;
+	tmp_parsedstruct = nullptr;
 	if(!to_str.empty()) tmp_tostruct = new MathStructure(to_str);
-	else tmp_tostruct = NULL;
+	else tmp_tostruct = nullptr;
 	tmp_maketodivision = false;
 	if(!calculate_thread->write(false)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
 	if(!calculate_thread->write((void*) mstruct)) {calculate_thread->cancel(); mstruct->setAborted(); return false;}
@@ -2670,7 +2670,7 @@ string Calculator::parseToExpression(string to_str, EvaluationOptions &evalops, 
 				itz = tzh * 60 + tzm;
 				if(b_minus) itz = -itz;
 			} else {
-				CALCULATOR->error(true, _("Time zone parsing failed."), NULL);
+				CALCULATOR->error(true, _("Time zone parsing failed."), nullptr);
 			}
 			printops.time_zone = TIME_ZONE_CUSTOM;
 			printops.custom_time_zone = itz;
@@ -3065,7 +3065,7 @@ bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const Eva
 			}
 			if(m[0].isFunction() && m[1].isFunction() && (m[0].size() == 0 || (empty_func && m[0].function()->minargs() == 0)) && (m[1].size() == 0 || (empty_func && m[1].function()->minargs() == 0))) {
 				// if left value is a function without any arguments, do function replacement
-				if(!replace_function(mstruct, m[0].function(), m[1].function(), eo)) CALCULATOR->error(false, _("Original value (%s) was not found."), (m[0].function()->name() + "()").c_str(), NULL);
+				if(!replace_function(mstruct, m[0].function(), m[1].function(), eo)) CALCULATOR->error(false, _("Original value (%s) was not found."), (m[0].function()->name() + "()").c_str(), nullptr);
 			} else {
 				if(mstruct.countOccurrences(m[0], true) > 1) {
 
@@ -3077,12 +3077,12 @@ bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const Eva
 						MathStructure mv(m[1]);
 						replace_f_interval(mv, eo);
 						replace_intervals_f(mv);
-						if(!mstruct.replace(m[0], mv, false, false, true)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(m[0]).c_str(), NULL);
+						if(!mstruct.replace(m[0], mv, false, false, true)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(m[0]).c_str(), nullptr);
 					} else {
-						if(!mstruct.replace(m[0], m[1], false, false, true)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(m[0]).c_str(), NULL);
+						if(!mstruct.replace(m[0], m[1], false, false, true)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(m[0]).c_str(), nullptr);
 					}
 				} else {
-					if(!mstruct.replace(m[0], m[1], false, false, true)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(m[0]).c_str(), NULL);
+					if(!mstruct.replace(m[0], m[1], false, false, true)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(m[0]).c_str(), nullptr);
 				}
 			}
 			return true;
@@ -3092,7 +3092,7 @@ bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const Eva
 			// right hand side value must be a non-complex number
 			if(!m[1].isNumber()) m[1].eval(eo);
 			if(m[1].isNumber() && !m[1].number().hasImaginaryPart()) {
-				Assumptions *ass = NULL;
+				Assumptions *ass = nullptr;
 				// search for assumptions from previous "where" replacements
 				for(size_t i = 0; i < vars.size(); i++) {
 					if(!vars[i]->isKnown() && (m[0] == vars[i] || (m[0].isSymbolic() && format_and_print(m[0]) == vars[i]->name()))) {
@@ -3152,7 +3152,7 @@ bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const Eva
 						var->setAssumptions(ass);
 						vars.push_back(var);
 						MathStructure u_var(var);
-						if(!mstruct.replace(m[0], u_var, false, false, true)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(m[0]).c_str(), NULL);
+						if(!mstruct.replace(m[0], u_var, false, false, true)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(m[0]).c_str(), nullptr);
 						return true;
 					}
 				}
@@ -3174,7 +3174,7 @@ bool handle_where_expression(MathStructure &m, MathStructure &mstruct, const Eva
 		}
 		return ret;
 	}
-	CALCULATOR->error(true, _("Unhandled \"where\" expression: %s"), format_and_print(m).c_str(), NULL);
+	CALCULATOR->error(true, _("Unhandled \"where\" expression: %s"), format_and_print(m).c_str(), nullptr);
 	return false;
 }
 void replace_unregistered_variables(MathStructure &m) {
@@ -3246,14 +3246,14 @@ void Calculator::parseExpressionAndWhere(MathStructure *mstruct, MathStructure *
 				}
 				remove_blank_ends(sname);
 				if(!variableNameIsValid(sname)) {
-					where_vars.push_back(NULL);
+					where_vars.push_back(nullptr);
 					repeat.push_back(false);
 				} else {
 					string svalue = wheres[i2].substr(index + 1, wheres[i2].length() - (index + 1));
 					bool b_equals = !svalue.empty() && wheres[i2][index] != '=' && svalue[0] == '=';
 					if(b_equals) svalue.erase(0, 1);
 					remove_blank_ends(svalue);
-					Variable *v = NULL;
+					Variable *v = nullptr;
 					if(wheres[i2][index] == '=') {
 						v = new KnownVariable("\x14", sname, svalue);
 						v->setTitle("\b");
@@ -3295,7 +3295,7 @@ void Calculator::parseExpressionAndWhere(MathStructure *mstruct, MathStructure *
 					}
 				}
 			} else {
-				where_vars.push_back(NULL);
+				where_vars.push_back(nullptr);
 				repeat.push_back(false);
 			}
 		}
@@ -3431,14 +3431,14 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 	if(make_to_division) {
 		separateToExpression(str, str2, eo, true);
 		size_t i = str2.find(RIGHT_PARENTHESIS);
-		if(i != string::npos && str2.rfind(LEFT_PARENTHESIS, i) == string::npos) error(false, _("Conversion of only part of an expression is not supported (\"%s\" is converted to \"%s\")."), str.c_str(), str2.c_str(), NULL);
+		if(i != string::npos && str2.rfind(LEFT_PARENTHESIS, i) == string::npos) error(false, _("Conversion of only part of an expression is not supported (\"%s\" is converted to \"%s\")."), str.c_str(), str2.c_str(), nullptr);
 	}
 
 	// retrieve expression after " where " (or "/.") and remove "to ..." from expression
 	separateWhereExpression(str, str_where, eo);
 
 	// handle to expression provided as argument
-	Unit *u = NULL;
+	Unit *u = nullptr;
 	if(to_struct) {
 		// ignore if expression contains "to" expression
 		if(str2.empty()) {
@@ -3531,7 +3531,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 					if(!str_where.empty()) str_where += LOGICAL_AND;
 					str_where += wheres[i2];
 				} else {
-					Variable *v = NULL;
+					Variable *v = nullptr;
 					if(wheres[i2][index] == '=') {
 						v = new KnownVariable("\x14", sname, svalue);
 						v->setTitle("\b");
@@ -3583,7 +3583,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 								if(ct == COMPARISON_LESS) m.number() = m.number().lowerEndPoint();
 								else m.number() = m.number().upperEndPoint();
 							}
-							Assumptions *ass = NULL;
+							Assumptions *ass = nullptr;
 							for(size_t i = 0; i < where_vars.size(); i++) {
 								if(!where_vars[i]->isKnown() && where_vars[i]->name() == sname) {
 									ass = ((UnknownVariable*) where_vars[i])->assumptions();
@@ -3982,7 +3982,7 @@ void Calculator::startControl(int milli_timeout) {
 	i_timeout = milli_timeout;
 	if(i_timeout > 0) {
 #ifndef CLOCK_MONOTONIC
-		gettimeofday(&t_end, NULL);
+		gettimeofday(&t_end, nullptr);
 #else
 		struct timespec ts;
 		clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -4000,7 +4000,7 @@ bool Calculator::aborted() {
 	if(i_timeout > 0) {
 #ifndef CLOCK_MONOTONIC
 		struct timeval tv;
-		gettimeofday(&tv, NULL);
+		gettimeofday(&tv, nullptr);
 		if(tv.tv_sec > t_end.tv_sec || (tv.tv_sec == t_end.tv_sec && tv.tv_usec > t_end.tv_usec)) {
 #else
 		struct timespec tv;

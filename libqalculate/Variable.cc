@@ -22,7 +22,7 @@
 using std::string;
 using std::vector;
 
-Assumptions::Assumptions() : i_type(ASSUMPTION_TYPE_NUMBER), i_sign(ASSUMPTION_SIGN_UNKNOWN), fmin(NULL), fmax(NULL), b_incl_min(true), b_incl_max(true) {}
+Assumptions::Assumptions() : i_type(ASSUMPTION_TYPE_NUMBER), i_sign(ASSUMPTION_SIGN_UNKNOWN), fmin(nullptr), fmax(nullptr), b_incl_min(true), b_incl_max(true) {}
 Assumptions::~Assumptions() {
 	if(fmin) delete fmin;
 	if(fmax) delete fmax;
@@ -122,16 +122,16 @@ void Variable::set(const ExpressionItem *item) {
 
 UnknownVariable::UnknownVariable(string cat_, string name_, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
 	setChanged(false);
-	o_assumption = NULL;
-	mstruct = NULL;
+	o_assumption = nullptr;
+	mstruct = nullptr;
 }
 UnknownVariable::UnknownVariable() : Variable() {
-	o_assumption = NULL;
-	mstruct = NULL;
+	o_assumption = nullptr;
+	mstruct = nullptr;
 }
 UnknownVariable::UnknownVariable(const UnknownVariable *variable) {
-	mstruct = NULL;
-	o_assumption = NULL;
+	mstruct = nullptr;
+	o_assumption = nullptr;
 	set(variable);
 }
 UnknownVariable::~UnknownVariable() {
@@ -147,7 +147,7 @@ void UnknownVariable::set(const ExpressionItem *item) {
 		o_assumption = ((UnknownVariable*) item)->assumptions();
 		if(((UnknownVariable*) item)->interval().isUndefined()) {
 			if(mstruct) mstruct->unref();
-			mstruct = NULL;
+			mstruct = nullptr;
 		} else {
 			if(mstruct) mstruct->set(((UnknownVariable*) item)->interval());
 			else mstruct = new MathStructure(((UnknownVariable*) item)->interval());
@@ -186,7 +186,7 @@ void UnknownVariable::setInterval(const MathStructure &o) {
 	setAssumptions(o);
 	if(o.isUndefined()) {
 		if(mstruct) mstruct->unref();
-		mstruct = NULL;
+		mstruct = nullptr;
 	} else {
 		if(mstruct) mstruct->set(o);
 		else mstruct = new MathStructure(o);
@@ -264,7 +264,7 @@ bool UnknownVariable::representsScalar() {
 }
 
 KnownVariable::KnownVariable(string cat_, string name_, const MathStructure &o, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
-	mstruct = new MathStructure(o); mstruct_alt = NULL;
+	mstruct = new MathStructure(o); mstruct_alt = nullptr;
 	setApproximate(mstruct->isApproximate());
 	setPrecision(mstruct->precision());
 	b_expression = false;
@@ -276,7 +276,7 @@ KnownVariable::KnownVariable(string cat_, string name_, const MathStructure &o, 
 	setChanged(false);
 }
 KnownVariable::KnownVariable(string cat_, string name_, string expression_, string title_, bool is_local, bool is_builtin, bool is_active) : Variable(cat_, name_, title_, is_local, is_builtin, is_active) {
-	mstruct = NULL; mstruct_alt = NULL;
+	mstruct = nullptr; mstruct_alt = nullptr;
 	calculated_precision = -1;
 	b_expression = true;
 	sexpression = expression_;
@@ -287,13 +287,13 @@ KnownVariable::KnownVariable(string cat_, string name_, string expression_, stri
 	setChanged(false);
 }
 KnownVariable::KnownVariable() : Variable() {
-	mstruct = NULL; mstruct_alt = NULL;
+	mstruct = nullptr; mstruct_alt = nullptr;
 	b_expression = true;
 	b_relative_uncertainty = false;
 	calculated_precision = -1;
 }
 KnownVariable::KnownVariable(const KnownVariable *variable) {
-	mstruct = NULL; mstruct_alt = NULL;
+	mstruct = nullptr; mstruct_alt = nullptr;
 	set(variable);
 }
 KnownVariable::~KnownVariable() {
@@ -328,8 +328,8 @@ void KnownVariable::set(const ExpressionItem *item) {
 		} else {
 			if(mstruct) delete mstruct;
 			if(mstruct_alt) delete mstruct_alt;
-			mstruct = NULL;
-			mstruct_alt = NULL;
+			mstruct = nullptr;
+			mstruct_alt = nullptr;
 		}
 	}
 	ExpressionItem::set(item);
@@ -338,7 +338,7 @@ void KnownVariable::set(const MathStructure &o) {
 	if(!mstruct) mstruct = new MathStructure(o);
 	else mstruct->set(o);
 	if(mstruct_alt) delete mstruct_alt;
-	mstruct_alt = NULL;
+	mstruct_alt = nullptr;
 	setApproximate(mstruct->isApproximate());
 	setPrecision(mstruct->precision());
 	calculated_precision = -1;
@@ -351,8 +351,8 @@ void KnownVariable::set(string expression_) {
 	if(b_expression && sexpression == expression_) return;
 	if(mstruct) delete mstruct;
 	if(mstruct_alt) delete mstruct_alt;
-	mstruct = NULL;
-	mstruct_alt = NULL;
+	mstruct = nullptr;
+	mstruct_alt = nullptr;
 	b_expression = true;
 	sexpression = expression_;
 	remove_blank_ends(sexpression);
@@ -362,8 +362,8 @@ void KnownVariable::set(string expression_) {
 void KnownVariable::setUncertainty(string standard_uncertainty, bool is_relative) {
 	if(mstruct) delete mstruct;
 	if(mstruct_alt) delete mstruct_alt;
-	mstruct = NULL;
-	mstruct_alt = NULL;
+	mstruct = nullptr;
+	mstruct_alt = nullptr;
 	suncertainty = standard_uncertainty;
 	b_relative_uncertainty = is_relative;
 	remove_blank_ends(suncertainty);
@@ -374,8 +374,8 @@ void KnownVariable::setUncertainty(string standard_uncertainty, bool is_relative
 void KnownVariable::setUnit(string unit_expression) {
 	if(mstruct) delete mstruct;
 	if(mstruct_alt) delete mstruct_alt;
-	mstruct = NULL;
-	mstruct_alt = NULL;
+	mstruct = nullptr;
+	mstruct_alt = nullptr;
 	sunit = unit_expression;
 	remove_blank_ends(sunit);
 	calculated_precision = -1;
@@ -520,7 +520,7 @@ const MathStructure &KnownVariable::get() {
 		replace_f_interval(*m);
 	}
 	if(m->contains(this, false, true, true) > 0) {
-		CALCULATOR->error(true, _("Recursive variable: %s = %s"), name().c_str(), m->print().c_str(), NULL);
+		CALCULATOR->error(true, _("Recursive variable: %s = %s"), name().c_str(), m->print().c_str(), nullptr);
 		return m_undefined;
 	}
 	return *m;
@@ -574,8 +574,8 @@ const MathStructure &DynamicVariable::get() {
 	if(!always_recalculate && !CALCULATOR->usesIntervalArithmetic()) m = mstruct_alt;
 	if(always_recalculate || calculated_precision != CALCULATOR->getPrecision() || !m || m->isAborted()) {
 		if(m) {
-			if(mstruct) {mstruct->unref(); mstruct = NULL;}
-			if(mstruct_alt) {mstruct_alt->unref(); mstruct_alt = NULL;}
+			if(mstruct) {mstruct->unref(); mstruct = nullptr;}
+			if(mstruct_alt) {mstruct_alt->unref(); mstruct_alt = nullptr;}
 		}
 		if(!always_recalculate && !CALCULATOR->usesIntervalArithmetic()) {
 			mstruct_alt = new MathStructure();
@@ -687,7 +687,7 @@ void UptimeVariable::calculate(MathStructure &m) const {
 	Unit *u = CALCULATOR->getUnit("s");
 	if(u) m *= u;
 #else
-	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), name().c_str(), "libqalculate", "--disable-insecure", NULL);
+	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), name().c_str(), "libqalculate", "--disable-insecure", nullptr);
 	m = nr_zero;
 	Unit *u = CALCULATOR->getUnit("s");
 	if(u) m *= u;

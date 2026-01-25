@@ -113,7 +113,7 @@ void MathStructure::polynomialContent(const MathStructure &xvar, MathStructure &
 	for(Number i(ldeg); i.isLessThanOrEqualTo(deg); i++) {
 		coefficient(xvar, i, coeff);
 		mtmp = mcontent;
-		if(!MathStructure::gcd(coeff, mtmp, mcontent, eo, NULL, NULL, false)) mcontent.set(1, 1, 0);
+		if(!MathStructure::gcd(coeff, mtmp, mcontent, eo, nullptr, nullptr, false)) mcontent.set(1, 1, 0);
 		if(mcontent.isOne()) break;
 	}
 
@@ -225,8 +225,8 @@ void MathStructure::polynomialPrimpart(const MathStructure &xvar, const MathStru
 }
 
 const Number& MathStructure::degree(const MathStructure &xvar) const {
-	const Number *c = NULL;
-	const MathStructure *mcur = NULL;
+	const Number *c = nullptr;
+	const MathStructure *mcur = nullptr;
 	for(size_t i = 0; ; i++) {
 		if(isAddition()) {
 			if(i >= SIZE) break;
@@ -261,8 +261,8 @@ const Number& MathStructure::degree(const MathStructure &xvar) const {
 	return *c;
 }
 const Number& MathStructure::ldegree(const MathStructure &xvar) const {
-	const Number *c = NULL;
-	const MathStructure *mcur = NULL;
+	const Number *c = nullptr;
+	const MathStructure *mcur = nullptr;
 	for(size_t i = 0; ; i++) {
 		if(isAddition()) {
 			if(i >= SIZE) break;
@@ -305,7 +305,7 @@ void MathStructure::tcoefficient(const MathStructure &xvar, MathStructure &mcoef
 	coefficient(xvar, ldegree(xvar), mcoeff);
 }
 void MathStructure::coefficient(const MathStructure &xvar, const Number &pownr, MathStructure &mcoeff) const {
-	const MathStructure *mcur = NULL;
+	const MathStructure *mcur = nullptr;
 	mcoeff.clear();
 	for(size_t i = 0; ; i++) {
 		if(isAddition()) {

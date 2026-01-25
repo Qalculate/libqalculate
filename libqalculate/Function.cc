@@ -186,7 +186,7 @@ bool MathFunction::testCondition(const MathStructure &vargs) {
 	// check if result is true
 	if(!mstruct.isNumber() || !mstruct.number().getBoolean()) {
 		if(CALCULATOR->showArgumentErrors() && !CALCULATOR->aborted()) {
-			CALCULATOR->error(true, _("%s() requires that %s"), name().c_str(), printCondition().c_str(), NULL);
+			CALCULATOR->error(true, _("%s() requires that %s"), name().c_str(), printCondition().c_str(), nullptr);
 		}
 		return false;
 	}
@@ -247,7 +247,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 	// read arguments from expression (e.g. "52, 2" from expression "sin(52, 2)"); used in Calculator::parse()
 	ParseOptions po = parseoptions;
 	MathStructure *unended_function = po.unended_function;
-	po.unended_function = NULL;
+	po.unended_function = nullptr;
 	vargs.clearVector();
 	int start_pos = 0;
 	bool in_cit1 = false, in_cit2 = false;
@@ -341,7 +341,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 						}
 						if(ignored) {
 							CALCULATOR->endTemporaryStopMessages();
-							CALCULATOR->error(false, _n("Additional arguments for function %s() were ignored. Function can only use %s argument.", "Additional arguments for function %s() were ignored. Function can only use %s arguments.", maxargs()), name().c_str(), i2s(maxargs()).c_str(), NULL);
+							CALCULATOR->error(false, _n("Additional arguments for function %s() were ignored. Function can only use %s argument.", "Additional arguments for function %s() were ignored. Function can only use %s arguments.", maxargs()), name().c_str(), i2s(maxargs()).c_str(), nullptr);
 						}
 					} else if(last_is_vctr) {
 						// if last argument is a vector, use additional arguments to fill the vector
@@ -414,7 +414,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 			}
 			if(ignored) {
 				CALCULATOR->endTemporaryStopMessages();
-				CALCULATOR->error(false, _n("Additional arguments for function %s() were ignored. Function can only use %s argument.", "Additional arguments for function %s() were ignored. Function can only use %s arguments.", maxargs()), name().c_str(), i2s(maxargs()).c_str(), NULL);
+				CALCULATOR->error(false, _n("Additional arguments for function %s() were ignored. Function can only use %s argument.", "Additional arguments for function %s() were ignored. Function can only use %s arguments.", maxargs()), name().c_str(), i2s(maxargs()).c_str(), nullptr);
 			}
 		} else if(last_is_vctr) {
 			if(!vctr_started) {
@@ -449,7 +449,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 	// append default values
 	if((itmp < maxargs() && itmp >= minargs()) || (maxargs() < 0 && itmp >= minargs() && (size_t) itmp - minargs() < default_values.size() && !default_values[itmp - minargs()].empty())) {
 		int itmp2 = itmp;
-		if(id() == FUNCTION_ID_LOGN) CALCULATOR->error(false, _("log() with a single argument is considered ambiguous. Please use ln() or log10() instead."), NULL);
+		if(id() == FUNCTION_ID_LOGN) CALCULATOR->error(false, _("log() with a single argument is considered ambiguous. Please use ln() or log10() instead."), nullptr);
 		while((size_t) itmp2 - minargs() < default_values.size() && (maxargs() > 0 || !default_values[itmp2 - minargs()].empty())) {
 			arg = getArgumentDefinition(itmp2 + 1);
 			MathStructure *mstruct = new MathStructure();
@@ -469,7 +469,7 @@ Argument *MathFunction::getArgumentDefinition(size_t index) {
 	if(priv->argdefs.find(index) != priv->argdefs.end()) {
 		return priv->argdefs[index];
 	}
-	return NULL;
+	return nullptr;
 }
 void MathFunction::clearArgumentDefinitions() {
 	for(unordered_map<size_t, Argument*>::iterator it = priv->argdefs.begin(); it != priv->argdefs.end(); ++it) {
@@ -508,7 +508,7 @@ void MathFunction::setArgumentDefinition(size_t index, Argument *argdef) {
 bool MathFunction::testArgumentCount(int itmp) {
 	if(itmp >= minargs()) {
 		if(itmp > maxargs() && maxargs() >= 0 && (maxargs() > 1 || !getArgumentDefinition(1) || !getArgumentDefinition(1)->handlesVector())) {
-			CALCULATOR->error(false, _n("Additional arguments for function %s() were ignored. Function can only use %s argument.", "Additional arguments for function %s() were ignored. Function can only use %s arguments.", maxargs()), name().c_str(), i2s(maxargs()).c_str(), NULL);
+			CALCULATOR->error(false, _n("Additional arguments for function %s() were ignored. Function can only use %s argument.", "Additional arguments for function %s() were ignored. Function can only use %s arguments.", maxargs()), name().c_str(), i2s(maxargs()).c_str(), nullptr);
 		}
 		return true;
 	}
@@ -529,21 +529,21 @@ bool MathFunction::testArgumentCount(int itmp) {
 		}
 	}
 	if(b) {
-		CALCULATOR->error(true, _n("You need at least %s argument (%s) in function %s().", "You need at least %s arguments (%s) in function %s().", minargs()), i2s(minargs()).c_str(), str.c_str(), name().c_str(), NULL);
+		CALCULATOR->error(true, _n("You need at least %s argument (%s) in function %s().", "You need at least %s arguments (%s) in function %s().", minargs()), i2s(minargs()).c_str(), str.c_str(), name().c_str(), nullptr);
 	} else {
-		CALCULATOR->error(true, _n("You need at least %s argument in function %s().", "You need at least %s arguments in function %s().", minargs()), i2s(minargs()).c_str(), name().c_str(), NULL);
+		CALCULATOR->error(true, _n("You need at least %s argument in function %s().", "You need at least %s arguments in function %s().", minargs()), i2s(minargs()).c_str(), name().c_str(), nullptr);
 	}
 	return false;
 }
 MathStructure MathFunction::createFunctionMathStructureFromVArgs(const MathStructure &vargs) {
-	MathStructure mstruct(this, NULL);
+	MathStructure mstruct(this, nullptr);
 	for(size_t i = 0; i < vargs.size(); i++) {
 		mstruct.addChild(vargs[i]);
 	}
 	return mstruct;
 }
 MathStructure MathFunction::createFunctionMathStructureFromSVArgs(vector<string> &svargs) {
-	MathStructure mstruct(this, NULL);
+	MathStructure mstruct(this, nullptr);
 	for(size_t i = 0; i < svargs.size(); i++) {
 		mstruct.addChild(svargs[i]);
 	}
@@ -591,7 +591,7 @@ bool MathFunction::testArguments(MathStructure &vargs) {
 				}
 				if(vargs[it->first - 1].isUndefined()) {
 					vargs[it->first - 1].set(CALCULATOR->getVariableById(VARIABLE_ID_X), true);
-					CALCULATOR->error(false, _("No unknown variable/symbol was found."), NULL);
+					CALCULATOR->error(false, _("No unknown variable/symbol was found."), nullptr);
 				}
 			}
 			if(!it->second->test(vargs[it->first - 1], it->first, this)) return false;
@@ -1568,9 +1568,9 @@ bool Argument::test(MathStructure &value, int index, MathFunction *f, const Eval
 	if(!b) {
 		if((b_error || (index == 2 && f && f->id() == FUNCTION_ID_ROOT && value.isNumber())) && (type() != ARGUMENT_TYPE_SYMBOLIC || !value.isUndefined())) {
 			if(sname.empty()) {
-				CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
+				CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), nullptr);
 			} else {
-				CALCULATOR->error(true, _("Argument %s, %s, in %s() must be %s."), i2s(index).c_str(), sname.c_str(), f->name().c_str(), printlong().c_str(), NULL);
+				CALCULATOR->error(true, _("Argument %s, %s, in %s() must be %s."), i2s(index).c_str(), sname.c_str(), f->name().c_str(), printlong().c_str(), nullptr);
 			}
 		}
 		return false;
@@ -1650,7 +1650,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 				} else {
 					string str3;
 					if(!m_temp) {
-						CALCULATOR->error(true, _("Internal id %s does not exist."), str.substr(pars + 1, str.length() - pars * 2 - 2).c_str(), NULL);
+						CALCULATOR->error(true, _("Internal id %s does not exist."), str.substr(pars + 1, str.length() - pars * 2 - 2).c_str(), nullptr);
 						mstruct->set(CALCULATOR->getVariableById(VARIABLE_ID_UNDEFINED)->preferredInputName(true, false, false, true).name, false, true);
 					} else {
 						mstruct->set(m_temp->print(CALCULATOR->save_printoptions), false, true);
@@ -1738,7 +1738,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 						string str3;
 						if(do_par) str3 = LEFT_PARENTHESIS_CH;
 						if(!m_temp) {
-							CALCULATOR->error(true, _("Internal id %s does not exist."), i2s(id).c_str(), NULL);
+							CALCULATOR->error(true, _("Internal id %s does not exist."), i2s(id).c_str(), nullptr);
 							str3 += CALCULATOR->getVariableById(VARIABLE_ID_UNDEFINED)->preferredInputName(true, false, false, true).name;
 						} else {
 							str3 += m_temp->print(CALCULATOR->save_printoptions);
@@ -1913,8 +1913,8 @@ bool Argument::rationalPolynomial() const {return b_rational;}
 void Argument::setRationalPolynomial(bool rational_polynomial) {b_rational = rational_polynomial;}
 
 NumberArgument::NumberArgument(string name_, ArgumentMinMaxPreDefinition minmax, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
-	fmin = NULL;
-	fmax = NULL;
+	fmin = nullptr;
+	fmax = nullptr;
 	b_incl_min = true;
 	b_incl_max = true;
 	b_complex = true;
@@ -1943,8 +1943,8 @@ NumberArgument::NumberArgument(string name_, ArgumentMinMaxPreDefinition minmax,
 	b_handle_vector = does_test;
 }
 NumberArgument::NumberArgument(const NumberArgument *arg) {
-	fmin = NULL;
-	fmax = NULL;
+	fmin = nullptr;
+	fmax = nullptr;
 	set(arg);
 }
 NumberArgument::~NumberArgument() {
@@ -2056,11 +2056,11 @@ void NumberArgument::set(const Argument *arg) {
 		b_rational_number = farg->rationalNumber();
 		if(fmin) {
 			delete fmin;
-			fmin = NULL;
+			fmin = nullptr;
 		}
 		if(fmax) {
 			delete fmax;
-			fmax = NULL;
+			fmax = nullptr;
 		}
 		if(farg->min()) {
 			fmin = new Number(*farg->min());
@@ -2115,8 +2115,8 @@ string NumberArgument::subprintlong() const {
 }
 
 IntegerArgument::IntegerArgument(string name_, ArgumentMinMaxPreDefinition minmax, bool does_test, bool does_error, IntegerType integer_type) : Argument(name_, does_test, does_error) {
-	imin = NULL;
-	imax = NULL;
+	imin = nullptr;
+	imax = nullptr;
 	i_inttype = integer_type;
 	switch(minmax) {
 		case ARGUMENT_MIN_MAX_POSITIVE: {
@@ -2140,8 +2140,8 @@ IntegerArgument::IntegerArgument(string name_, ArgumentMinMaxPreDefinition minma
 	b_handle_vector = does_test;
 }
 IntegerArgument::IntegerArgument(const IntegerArgument *arg) {
-	imin = NULL;
-	imax = NULL;
+	imin = nullptr;
+	imax = nullptr;
 	i_inttype = INTEGER_TYPE_NONE;
 	set(arg);
 }
@@ -2229,11 +2229,11 @@ void IntegerArgument::set(const Argument *arg) {
 		const IntegerArgument *iarg = (const IntegerArgument*) arg;
 		if(imin) {
 			delete imin;
-			imin = NULL;
+			imin = nullptr;
 		}
 		if(imax) {
 			delete imax;
-			imax = NULL;
+			imax = nullptr;
 		}
 		if(iarg->min()) {
 			imin = new Number(*iarg->min());
@@ -2404,13 +2404,13 @@ bool VectorArgument::subtest(MathStructure &value, const EvaluationOptions &eo) 
 	}
 	if(b_argloop && subargs.size() > 0) {
 		for(size_t i = 0; i < value.countChildren(); i++) {
-			if(!subargs[i % subargs.size()]->test(value[i], 1, NULL, eo)) {
+			if(!subargs[i % subargs.size()]->test(value[i], 1, nullptr, eo)) {
 				return false;
 			}
 		}
 	} else {
 		for(size_t i = 0; i < subargs.size() && i < value.countChildren(); i++) {
-			if(!subargs[i]->test(value[i], 1, NULL, eo)) {
+			if(!subargs[i]->test(value[i], 1, nullptr, eo)) {
 				return false;
 			}
 		}
@@ -2459,7 +2459,7 @@ Argument *VectorArgument::getArgument(size_t index) const {
 	if(index > 0 && index <= subargs.size()) {
 		return subargs[index - 1];
 	}
-	return NULL;
+	return nullptr;
 }
 
 MatrixArgument::MatrixArgument(string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
@@ -2675,7 +2675,7 @@ ArgumentSet::~ArgumentSet() {
 }
 bool ArgumentSet::subtest(MathStructure &value, const EvaluationOptions &eo) const {
 	for(size_t i = 0; i < subargs.size(); i++) {
-		if((i == 0 || subargs[i]->type() != ARGUMENT_TYPE_MATRIX || !subargs[i]->tests() || !value.representsScalar()) && subargs[i]->test(value, 1, NULL, eo)) {
+		if((i == 0 || subargs[i]->type() != ARGUMENT_TYPE_MATRIX || !subargs[i]->tests() || !value.representsScalar()) && subargs[i]->test(value, 1, nullptr, eo)) {
 			return true;
 		}
 	}
@@ -2731,5 +2731,5 @@ Argument *ArgumentSet::getArgument(size_t index) const {
 	if(index > 0 && index <= subargs.size()) {
 		return subargs[index - 1];
 	}
-	return NULL;
+	return nullptr;
 }

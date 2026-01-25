@@ -46,7 +46,7 @@ int main(int, char *[]) {
 	fputs("<appendix id=\"qalculate-examples\">\n<title>Example expressions</title>\n", efile);
 	while(true) {
 		if(b_readline) {
-			if(fgets(line, 10000, rfile) == NULL) break;
+			if(fgets(line, 10000, rfile) == nullptr) break;
 			stmp = line;
 			remove_blank_ends(stmp);
 		}

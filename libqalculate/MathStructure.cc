@@ -59,13 +59,13 @@ inline void MathStructure::init() {
 	i_precision = -1;
 	i_ref = 1;
 	ct_comp = COMPARISON_EQUALS;
-	function_value = NULL;
+	function_value = nullptr;
 	b_protected = false;
-	o_variable = NULL;
-	o_function = NULL;
-	o_unit = NULL;
-	o_prefix = NULL;
-	o_datetime = NULL;
+	o_variable = nullptr;
+	o_function = nullptr;
+	o_unit = nullptr;
+	o_prefix = nullptr;
+	o_datetime = nullptr;
 	b_parentheses = false;
 }
 
@@ -142,7 +142,7 @@ MathStructure::MathStructure(string sym, bool force_symbol) {
 			return;
 		}
 		delete o_datetime;
-		o_datetime = NULL;
+		o_datetime = nullptr;
 	}
 	s_sym = sym;
 	m_type = STRUCT_SYMBOLIC;
@@ -384,7 +384,7 @@ void MathStructure::set(string sym, bool preserve_precision, bool force_symbol) 
 			return;
 		}
 		delete o_datetime;
-		o_datetime = NULL;
+		o_datetime = nullptr;
 	}
 	s_sym = sym;
 	m_type = STRUCT_SYMBOLIC;
@@ -568,17 +568,17 @@ void MathStructure::clear(bool preserve_precision) {
 	o_number.clear();
 	if(function_value) {
 		function_value->unref();
-		function_value = NULL;
+		function_value = nullptr;
 	}
 	if(o_function) o_function->unref();
-	o_function = NULL;
+	o_function = nullptr;
 	if(o_variable) o_variable->unref();
-	o_variable = NULL;
+	o_variable = nullptr;
 	if(o_unit) o_unit->unref();
-	o_unit = NULL;
+	o_unit = nullptr;
 	if(o_datetime) delete o_datetime;
-	o_datetime = NULL;
-	o_prefix = NULL;
+	o_datetime = nullptr;
+	o_prefix = nullptr;
 	b_plural = false;
 	b_protected = false;
 	b_parentheses = false;
@@ -644,14 +644,14 @@ void MathStructure::setType(StructureType mtype) {
 	if(m_type != STRUCT_FUNCTION) {
 		if(function_value) {
 			function_value->unref();
-			function_value = NULL;
+			function_value = nullptr;
 		}
 		if(o_function) o_function->unref();
-		o_function = NULL;
+		o_function = nullptr;
 	}
-	if(m_type != STRUCT_VARIABLE && o_variable) {o_variable->unref(); o_variable = NULL;}
-	if(m_type != STRUCT_UNIT && o_unit) {o_unit->unref(); o_unit = NULL; o_prefix = NULL;}
-	if(m_type != STRUCT_DATETIME && o_datetime) {delete o_datetime; o_datetime = NULL;}
+	if(m_type != STRUCT_VARIABLE && o_variable) {o_variable->unref(); o_variable = nullptr;}
+	if(m_type != STRUCT_UNIT && o_unit) {o_unit->unref(); o_unit = nullptr; o_prefix = nullptr;}
+	if(m_type != STRUCT_DATETIME && o_datetime) {delete o_datetime; o_datetime = nullptr;}
 }
 Unit *MathStructure::unit() const {
 	return o_unit;
@@ -659,7 +659,7 @@ Unit *MathStructure::unit() const {
 Unit *MathStructure::unit_exp_unit() const {
 	if(isUnit()) return o_unit;
 	if(isPower() && CHILD(0).isUnit()) return CHILD(0).unit();
-	return NULL;
+	return nullptr;
 }
 Prefix *MathStructure::prefix() const {
 	return o_prefix;
@@ -667,7 +667,7 @@ Prefix *MathStructure::prefix() const {
 Prefix *MathStructure::unit_exp_prefix() const {
 	if(isUnit()) return o_prefix;
 	if(isPower() && CHILD(0).isUnit()) return CHILD(0).prefix();
-	return NULL;
+	return nullptr;
 }
 void MathStructure::setPrefix(Prefix *p) {
 	o_prefix = p;
@@ -780,13 +780,13 @@ bool MathStructure::representsNumber(bool allow_units) const {
 		case STRUCT_FUNCTION: {return (function_value && function_value->representsNumber(allow_units)) || o_function->representsNumber(*this, allow_units);}
 		case STRUCT_UNIT: {return allow_units;}
 		case STRUCT_DATETIME: {return allow_units;}
-		[[fallthrough]]
+		[[fallthrough]];
 		case STRUCT_POWER: {
 			if(!CHILD(0).representsNonZero(allow_units) && !CHILD(1).representsPositive(allow_units)) return false;
 		}
-		[[fallthrough]]
+		[[fallthrough]];
 		case STRUCT_ADDITION: {}
-		[[fallthrough]]
+		[[fallthrough]];
 		case STRUCT_MULTIPLICATION: {
 			for(size_t i = 0; i < SIZE; i++) {
 				if(!CHILD(i).representsNumber(allow_units)) return false;
@@ -1275,11 +1275,11 @@ bool MathStructure::representsUndefined(bool include_childs, bool include_infini
 				}
 			}
 		}
-		[[fallthrough]]
+		[[fallthrough]];
 		case STRUCT_MULTIPLICATION: {
 			if(SIZE > 1 && CHILD(0).isZero() && CHILD(1).isInfinity()) return true;
+		[[fallthrough]];
 		}
-		[[fallthrough]]
 		default: {
 			if(include_childs) {
 				for(size_t i = 0; i < SIZE; i++) {
@@ -1912,8 +1912,8 @@ bool MathStructure::equals(const MathStructure &o, bool allow_interval, bool all
 		case STRUCT_NUMBER: {return o_number.equals(o.number(), allow_interval, allow_infinite);}
 		case STRUCT_VARIABLE: {return o_variable == o.variable();}
 		case STRUCT_UNIT: {
-			Prefix *p1 = (o_prefix == NULL || o_prefix == CALCULATOR->getDecimalNullPrefix() || o_prefix == CALCULATOR->getBinaryNullPrefix()) ? NULL : o_prefix;
-			Prefix *p2 = (o.prefix() == NULL || o.prefix() == CALCULATOR->getDecimalNullPrefix() || o.prefix() == CALCULATOR->getBinaryNullPrefix()) ? NULL : o.prefix();
+			Prefix *p1 = (o_prefix == nullptr || o_prefix == CALCULATOR->getDecimalNullPrefix() || o_prefix == CALCULATOR->getBinaryNullPrefix()) ? nullptr : o_prefix;
+			Prefix *p2 = (o.prefix() == nullptr || o.prefix() == CALCULATOR->getDecimalNullPrefix() || o.prefix() == CALCULATOR->getBinaryNullPrefix()) ? nullptr : o.prefix();
 			return o_unit == o.unit() && p1 == p2;
 		}
 		case STRUCT_COMPARISON: {if(ct_comp != o.comparisonType()) return false; break;}
@@ -2454,13 +2454,13 @@ const MathStructure *MathStructure::getChild(size_t index) const {
 	if(index > 0 && index <= v_order.size()) {
 		return &CHILD(index - 1);
 	}
-	return NULL;
+	return nullptr;
 }
 MathStructure *MathStructure::getChild(size_t index) {
 	if(index > 0 && index <= v_order.size()) {
 		return &CHILD(index - 1);
 	}
-	return NULL;
+	return nullptr;
 }
 size_t MathStructure::countChildren() const {
 	return SIZE;
@@ -2472,25 +2472,25 @@ const MathStructure *MathStructure::base() const {
 	if(m_type == STRUCT_POWER && SIZE >= 1) {
 		return &CHILD(0);
 	}
-	return NULL;
+	return nullptr;
 }
 const MathStructure *MathStructure::exponent() const {
 	if(m_type == STRUCT_POWER && SIZE >= 2) {
 		return &CHILD(1);
 	}
-	return NULL;
+	return nullptr;
 }
 MathStructure *MathStructure::base() {
 	if(m_type == STRUCT_POWER && SIZE >= 1) {
 		return &CHILD(0);
 	}
-	return NULL;
+	return nullptr;
 }
 MathStructure *MathStructure::exponent() {
 	if(m_type == STRUCT_POWER && SIZE >= 2) {
 		return &CHILD(1);
 	}
-	return NULL;
+	return nullptr;
 }
 
 StructureType MathStructure::type() const {
@@ -2521,7 +2521,7 @@ int contains_angle_unit(const MathStructure &m, const ParseOptions &po, int chec
 }
 
 int MathStructure::contains(const MathStructure &mstruct, bool structural_only, bool check_variables, bool check_functions, bool loose_equals) const {
-	if(mstruct.isUnit() && mstruct.prefix() == NULL && m_type == STRUCT_UNIT) return mstruct.unit() == o_unit;
+	if(mstruct.isUnit() && mstruct.prefix() == nullptr && m_type == STRUCT_UNIT) return mstruct.unit() == o_unit;
 	if(equals(mstruct, loose_equals, loose_equals)) return 1;
 	if(structural_only) {
 		for(size_t i = 0; i < SIZE; i++) {
@@ -2561,7 +2561,7 @@ size_t MathStructure::countOccurrences(const MathStructure &mstruct) const {
 	return countOccurrences(mstruct, false);
 }
 size_t MathStructure::countOccurrences(const MathStructure &mstruct, bool check_variables) const {
-	if(mstruct.isUnit() && mstruct.prefix() == NULL && m_type == STRUCT_UNIT && mstruct.unit() == o_unit) return 1;
+	if(mstruct.isUnit() && mstruct.prefix() == nullptr && m_type == STRUCT_UNIT && mstruct.unit() == o_unit) return 1;
 	if(equals(mstruct, true, true)) return 1;
 	if(check_variables && m_type == STRUCT_VARIABLE && o_variable->isKnown()) return ((KnownVariable*) o_variable)->get().countOccurrences(mstruct, true);
 	size_t i_occ = 0;
@@ -2922,8 +2922,8 @@ void MathStructure::findAllUnknowns(MathStructure &unknowns_vector) {
 			if(o_variable->isKnown()) {
 				break;
 			}
+		[[fallthrough]];
 		}
-		[[fallthrough]]
 		case STRUCT_SYMBOLIC: {
 			bool b = false;
 			for(size_t i = 0; i < unknowns_vector.size(); i++) {

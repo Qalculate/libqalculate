@@ -113,10 +113,10 @@ void generate_units_tree_struct() {
 	size_t cat_i, cat_i_prev;
 	bool b;
 	string str, cat, cat_sub;
-	Unit *u = NULL;
+	Unit *u = nullptr;
 	unit_cats.items.clear();
 	unit_cats.objects.clear();
-	unit_cats.parent = NULL;
+	unit_cats.parent = nullptr;
 	ia_units.clear();
 	list<tree_struct>::iterator it;
 	for(size_t i = 0; i < CALCULATOR->units.size(); i++) {
@@ -177,10 +177,10 @@ void generate_variables_tree_struct() {
 	size_t cat_i, cat_i_prev;
 	bool b;
 	string str, cat, cat_sub;
-	Variable *v = NULL;
+	Variable *v = nullptr;
 	variable_cats.items.clear();
 	variable_cats.objects.clear();
-	variable_cats.parent = NULL;
+	variable_cats.parent = nullptr;
 	ia_variables.clear();
 	list<tree_struct>::iterator it;
 	for(size_t i = 0; i < CALCULATOR->variables.size(); i++) {
@@ -241,10 +241,10 @@ void generate_functions_tree_struct() {
 	size_t cat_i, cat_i_prev;
 	bool b;
 	string str, cat, cat_sub;
-	MathFunction *f = NULL;
+	MathFunction *f = nullptr;
 	function_cats.items.clear();
 	function_cats.objects.clear();
-	function_cats.parent = NULL;
+	function_cats.parent = nullptr;
 	ia_functions.clear();
 	list<tree_struct>::iterator it;
 
@@ -498,7 +498,7 @@ void print_variable(Variable *v) {
 			MathStructure m(((KnownVariable*) v)->get());
 			m.format(printops);
 			value = fix_supsub(m.print(printops, true, false, TAG_TYPE_HTML));
-			printops.is_approximate = NULL;
+			printops.is_approximate = nullptr;
 		}
 	} else {
 		if(((UnknownVariable*) v)->assumptions()) {
@@ -664,7 +664,7 @@ int main(int, char *[]) {
 		++function_cats.it;
 		item->it = item->items.begin();
 	} else {
-		item = NULL;
+		item = nullptr;
 	}
 	str = "";
 	int level = 1;
@@ -716,7 +716,7 @@ int main(int, char *[]) {
 		++variable_cats.it;
 		item->it = item->items.begin();
 	} else {
-		item = NULL;
+		item = nullptr;
 	}
 	str = "";
 	level = 1;
@@ -798,7 +798,7 @@ int main(int, char *[]) {
 		++unit_cats.it;
 		item->it = item->items.begin();
 	} else {
-		item = NULL;
+		item = nullptr;
 	}
 	str = "";
 	level = 1;

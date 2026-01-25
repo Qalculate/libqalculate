@@ -96,7 +96,7 @@ bool test_search_result(const MathStructure &m, bool top = true) {
 		return false;
 	} else if(m.isAddition() && m.size() >= 2) {
 		if(m[m.size() - 1].isUnitCompatible(m[m.size() - 2]) == 0) {
-			const MathStructure *u1 = NULL, *u2 = NULL;
+			const MathStructure *u1 = nullptr, *u2 = nullptr;
 			if(m[m.size() - 1].isUnit_exp()) u1 = m.getChild(m.size());
 			else if(m[m.size() - 1].isMultiplication() && m[m.size() - 1].last().isUnit_exp()) u1 = m[m.size() - 1].getChild(m[m.size() - 1].size());
 			if(m[m.size() - 2].isUnit()) u2 = m.getChild(m.size() - 1);
@@ -219,10 +219,10 @@ void search_provider_test(string expression) {
 			MathStructure mparse_to;
 			Unit *u = CALCULATOR->getActiveUnit(str_to);
 			if(!u) u = CALCULATOR->getCompositeUnit(str_to);
-			Variable *v = NULL;
+			Variable *v = nullptr;
 			if(!u) v = CALCULATOR->getActiveVariable(str_to);
-			if(v && !v->isKnown()) v = NULL;
-			Prefix *p = NULL;
+			if(v && !v->isKnown()) v = nullptr;
+			Prefix *p = nullptr;
 			if(!u && !v && CALCULATOR->unitNameIsValid(str_to)) p = CALCULATOR->getPrefix(str_to);
 			if(!u && !v && !p) {
 				CALCULATOR->beginTemporaryStopMessages();
@@ -1689,7 +1689,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 		CALCULATOR->v_x->setAssumptions(nr);
 		eo.approximation = APPROXIMATION_EXACT;
 		CALCULATOR->calculate(&m2, 5000, eo);
-		CALCULATOR->v_x->setAssumptions(NULL);
+		CALCULATOR->v_x->setAssumptions(nullptr);
 		if(m2.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED5: " << nr << endl; CALCULATOR->useIntervalArithmetic(b_iv); return;}
 		m2.replace(CALCULATOR->v_x, nr);
 		MathStructure m4 = m2;
@@ -1984,7 +1984,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 		eo.approximation = APPROXIMATION_EXACT;
 		CALCULATOR->v_x->setAssumptions(nr);
 		CALCULATOR->calculate(&m2, 5000, eo);
-		CALCULATOR->v_x->setAssumptions(NULL);
+		CALCULATOR->v_x->setAssumptions(nullptr);
 		if(m2.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED5: " << nr << endl; CALCULATOR->useIntervalArithmetic(b_iv); return;}
 		m2.replace(CALCULATOR->v_x, nr);
 		MathStructure m4 = m2;
@@ -2237,16 +2237,16 @@ void speed_test() {
 	/*MathStructure m = CALCULATOR->parse("x^2/3", eo.parse_options);
 	eo.expand = false;
 	m.eval(eo);
-	MathStructure v1 = m.generateVector(CALCULATOR->v_x, 1, 100, 800000, NULL, eo);
+	MathStructure v1 = m.generateVector(CALCULATOR->v_x, 1, 100, 800000, nullptr, eo);
 	m = CALCULATOR->parse("1/x");
 	m.eval(eo);
-	MathStructure v2 = m.generateVector(CALCULATOR->v_x, 1, 100, 800000, NULL, eo);
+	MathStructure v2 = m.generateVector(CALCULATOR->v_x, 1, 100, 800000, nullptr, eo);
 	m = CALCULATOR->parse("x/4-3");
 	m.eval(eo);
-	MathStructure v3 = m.generateVector(CALCULATOR->v_x, 1, 100, 800000, NULL, eo);
+	MathStructure v3 = m.generateVector(CALCULATOR->v_x, 1, 100, 800000, nullptr, eo);
 	m = CALCULATOR->parse("sin(x)", eo.parse_options);
 	m.eval(eo);
-	MathStructure v4 = m.generateVector(CALCULATOR->v_x, 1, 100, 800000, NULL, eo);*/
+	MathStructure v4 = m.generateVector(CALCULATOR->v_x, 1, 100, 800000, nullptr, eo);*/
 	//cout << v4.size() << ":" << v4[0] << ":" << v4[v4.size() - 1] << endl;
 }
 
@@ -2309,7 +2309,7 @@ void test_functions(const EvaluationOptions &eo) {
 		if(n < 0) n = f->minargs();
 		if(n > 0) {
 			bool last_vector = f->getArgumentDefinition(n) && f->getArgumentDefinition(n)->type() == ARGUMENT_TYPE_VECTOR;
-			for(int t i = 1; i= < n; i++) {
+			for(int i = 1; i= < n; i++) {
 				if(i > 1) str += ";";
 				Arugment *arg = f->getArgumentDefinition(i);
 				if(arg) {
@@ -2483,7 +2483,7 @@ int main(int argc, char *argv[]) {
 	for(size_t i = 0; i < 10000; i++) {
 		string str = rnd_expression(false, true, 0, 2, false, false, false, false, true);
 		cerr << str << endl;
-		string str2 = CALCULATOR->calculateAndPrint(str, 1000, evalops, po, AUTOMATIC_FRACTION_AUTO, AUTOMATIC_APPROXIMATION_AUTO, NULL, -1);
+		string str2 = CALCULATOR->calculateAndPrint(str, 1000, evalops, po, AUTOMATIC_FRACTION_AUTO, AUTOMATIC_APPROXIMATION_AUTO, nullptr, -1);
 		if(str2.find("=") != string::npos || str2.find(SIGN_ALMOST_EQUAL) != string::npos || (!b_approx && str2.find_first_not_of(NUMBER_ELEMENTS) == string::npos)) {
 			cout << str << endl;
 			cout << str2 << endl << endl;
@@ -2492,7 +2492,7 @@ int main(int argc, char *argv[]) {
 	for(size_t i = 0; i < 10000; i++) {
 		string str = rnd_expression(4, true, 0, 2, false, false, false, false, true);
 		cerr << str << endl;
-		string str2 = CALCULATOR->calculateAndPrint(str, 1000, evalops, po, AUTOMATIC_FRACTION_AUTO, AUTOMATIC_APPROXIMATION_AUTO, NULL, -1);
+		string str2 = CALCULATOR->calculateAndPrint(str, 1000, evalops, po, AUTOMATIC_FRACTION_AUTO, AUTOMATIC_APPROXIMATION_AUTO, nullptr, -1);
 		if(str2.find("=") != string::npos || str2.find(SIGN_ALMOST_EQUAL) != string::npos || (!b_approx && str2.find_first_not_of(NUMBER_ELEMENTS) == string::npos)) {
 			cout << str << endl;
 			cout << str2 << endl << endl;

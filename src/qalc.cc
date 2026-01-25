@@ -134,8 +134,8 @@ bool mode_in_prompt = false;
 
 static char buffer[100000];
 
-void setResult(Prefix *prefix = NULL, bool update_parse = false, bool goto_input = true, size_t stack_index = 0, bool register_moved = false, bool noprint = false, bool auto_calculate = false);
-void execute_expression(bool do_mathoperation = false, MathOperation op = OPERATION_ADD, MathFunction *f = NULL, bool do_stack = false, size_t stack_index = 0, bool check_exrates = true, bool auto_calculate = false);
+void setResult(Prefix *prefix = nullptr, bool update_parse = false, bool goto_input = true, size_t stack_index = 0, bool register_moved = false, bool noprint = false, bool auto_calculate = false);
+void execute_expression(bool do_mathoperation = false, MathOperation op = OPERATION_ADD, MathFunction *f = nullptr, bool do_stack = false, size_t stack_index = 0, bool check_exrates = true, bool auto_calculate = false);
 void execute_command(int command_type, bool show_result = true, bool auto_calculate = false);
 void load_preferences();
 void save_history();
@@ -146,10 +146,10 @@ bool save_defs();
 void result_display_updated();
 void result_format_updated();
 void result_action_executed();
-void result_prefix_changed(Prefix *prefix = NULL);
+void result_prefix_changed(Prefix *prefix = nullptr);
 void expression_format_updated(bool reparse);
 void expression_calculation_updated();
-bool display_errors(bool goto_input = false, int cols = 0, bool *implicit_warning = NULL);
+bool display_errors(bool goto_input = false, int cols = 0, bool *implicit_warning = nullptr);
 void replace_result_cis(string &resstr);
 
 FILE *cfile;
@@ -187,7 +187,7 @@ void sleep_us(int us) {
 	struct timespec ts;
 	ts.tv_sec = 0;
 	ts.tv_nsec = us * 1000;
-	nanosleep(&ts, NULL);
+	nanosleep(&ts, nullptr);
 #else
 	usleep(us);
 #endif
@@ -246,7 +246,7 @@ size_t unformatted_length(const string &str) {
 #ifdef _WIN32
 LPWSTR utf8wchar(const char *str) {
 	size_t len = strlen(str) + 1;
-	int size_needed = MultiByteToWideChar(CP_UTF8, 0, str, len, NULL, 0);
+	int size_needed = MultiByteToWideChar(CP_UTF8, 0, str, len, nullptr, 0);
 	LPWSTR wstr = (LPWSTR) LocalAlloc(LPTR, sizeof(WCHAR) * size_needed);
 	MultiByteToWideChar(CP_UTF8, 0, str, len, wstr, size_needed);
 	return wstr;
@@ -504,7 +504,7 @@ bool equalsIgnoreCaseFirst(const string &str1, const char *str2) {
 }
 
 #define READLINE_SPACE_PROMPT \
-		char *rlbuffer = NULL; \
+		char *rlbuffer = nullptr; \
 		if(mode_in_prompt && prompt_l > unicode_length_check(prompt.c_str())) { \
 			fputs(" ", stdout); \
 			rlbuffer = readline(""); \
@@ -657,7 +657,7 @@ vector<string> matches;
 		}
 
 void completion_match_item(ExpressionItem *item, const char *text, size_t l) {
-	const ExpressionName *ename = NULL;
+	const ExpressionName *ename = nullptr;
 	bool b_match = false, b_formatted = false;
 #ifdef _WIN32
 	bool allow_unicode = utf8_encoding || contains_unicode_char(text);
@@ -806,7 +806,7 @@ void generate_completion_matches(const char *text) {
 }
 char *qalc_completion(const char *text, int index) {
 	if(index == 0) {
-		if(strlen(text) < 1) return NULL;
+		if(strlen(text) < 1) return nullptr;
 		generate_completion_matches(text);
 	}
 	if(index >= 0 && index < (int) matches.size()) {
@@ -814,7 +814,7 @@ char *qalc_completion(const char *text, int index) {
 		strcpy(cstr, matches[index].c_str());
 		return cstr;
 	}
-	return NULL;
+	return nullptr;
 }
 
 #endif
@@ -856,9 +856,9 @@ void handle_exit() {
 		}
 	}
 	if(b_savedefs) save_defs();
-	if(!view_thread->write(NULL)) view_thread->cancel();
+	if(!view_thread->write(nullptr)) view_thread->cancel();
 	if(autocalc_thread && !autocalc_thread->write((int) 0)) autocalc_thread->cancel();
-	if(command_thread->running && (!command_thread->write((int) 0) || !command_thread->write(NULL))) command_thread->cancel();
+	if(command_thread->running && (!command_thread->write((int) 0) || !command_thread->write(nullptr))) command_thread->cancel();
 	CALCULATOR->terminateThreads();
 	if(result_autocalculated) {
 		printf("\033[0J");
@@ -909,7 +909,7 @@ int completion_mode = COMPLETION_SELECT_MULTIPLE;
 
 int rl_getc_wrapper(FILE*);
 void clear_autocalc();
-void do_autocalc(bool force = false, const char *action_text = NULL);
+void do_autocalc(bool force = false, const char *action_text = nullptr);
 int key_insert(int, int);
 int last_is_operator(string str, bool allow_exp = false);
 
@@ -1268,7 +1268,7 @@ bool check_exchange_rates() {
 	bool b = false;
 	if(auto_update_exchange_rates < 0) {
 		string ask_str;
-		int days = (int) floor(difftime(time(NULL), CALCULATOR->getExchangeRatesTime(i)) / 86400);
+		int days = (int) floor(difftime(time(nullptr), CALCULATOR->getExchangeRatesTime(i)) / 86400);
 		int cx = snprintf(buffer, 10000, _n("It has been %s day since the exchange rates last were updated.", "It has been %s days since the exchange rates last were updated.", days), i2s(days).c_str());
 		if(cx >= 0 && cx < 10000) {
 			ask_str = buffer;
@@ -1290,7 +1290,7 @@ bool check_exchange_rates() {
 void check_vi_mode_change(bool initial = false) {
 	if(initial) mode_in_prompt = (strcmp("on", rl_variable_value("show-mode-in-prompt")) == 0);
 	if((completion_mode == COMPLETION_SELECT || completion_mode == COMPLETION_SELECT_MULTIPLE) && rl_editing_mode == 0) rl_completion_display_matches_hook = &completion_hook;
-	else rl_completion_display_matches_hook = NULL;
+	else rl_completion_display_matches_hook = nullptr;
 	if(!mode_in_prompt) return;
 	int cur_mode = 0;
 	if(rl_editing_mode == 0) {
@@ -1317,7 +1317,7 @@ void check_vi_mode_change(bool initial = false) {
 #	define CHECK_IF_SCREEN_FILLED if(check_sf && rows > 0) {rcount++; if(rcount + 2 >= rows) {FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); sf_c = rl_read_key(); if(sf_c != '\n' && sf_c != '\r') {check_sf = false;} else {puts(""); if(sf_c == '\r') {puts("");} rcount = 1;}}}
 #	define CHECK_IF_SCREEN_FILLED_PUTS_RP(x, rplus) {str_lb = x; int cr = 0; if(!cfile) {cr = addLineBreaks(str_lb, cols);} if(check_sf && rows > 0) {if(rcount + cr + 1 + rplus >= rows) {rcount += 2; while(rcount < rows) {puts(""); rcount++;} FPUTS_UNICODE(_("\nPress Enter to continue."), stdout); fflush(stdout); sf_c = rl_read_key(); if(sf_c != '\n' && sf_c != '\r') {check_sf = false;} else {rcount = 0; if(str_lb.empty() || str_lb[0] != '\n') {puts(""); if(sf_c == '\r') {puts("");} rcount++;}}} if(check_sf) {rcount += cr;}} PUTS_UNICODE(str_lb.c_str());}
 #	define CHECK_IF_SCREEN_FILLED_PUTS(x) CHECK_IF_SCREEN_FILLED_PUTS_RP(x, 0)
-#	define INIT_SCREEN_CHECK int rows = 0, cols = 0, rcount = 0; bool check_sf = (cfile == NULL); char sf_c; string str_lb; if(!cfile || interactive_mode) rl_get_screen_size(&rows, &cols);
+#	define INIT_SCREEN_CHECK int rows = 0, cols = 0, rcount = 0; bool check_sf = (cfile == nullptr); char sf_c; string str_lb; if(!cfile || interactive_mode) rl_get_screen_size(&rows, &cols);
 #	define INIT_COLS int rows = 0, cols = 0; if(!cfile || interactive_mode) rl_get_screen_size(&rows, &cols);
 #	define CHECK_IF_SCREEN_FILLED_HEADING_S(x) if(set_option.empty()) {str = "\n"; BEGIN_UNDERLINED(str); str += x; END_UNDERLINED(str); CHECK_IF_SCREEN_FILLED_PUTS_RP(str.c_str(), 1);}
 #	define CHECK_IF_SCREEN_FILLED_HEADING(x) str = "\n"; BEGIN_UNDERLINED(str); BEGIN_BOLD(str); str += x; END_UNDERLINED(str); END_BOLD(str); CHECK_IF_SCREEN_FILLED_PUTS_RP(str.c_str(), 1);
@@ -1624,7 +1624,7 @@ void set_option(string str) {
 		} else {
 			completion_mode = v;
 			if((completion_mode == COMPLETION_SELECT || completion_mode == COMPLETION_SELECT_MULTIPLE) && rl_editing_mode == 0) rl_completion_display_matches_hook = &completion_hook;
-			else rl_completion_display_matches_hook = NULL;
+			else rl_completion_display_matches_hook = nullptr;
 		}
 #endif
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "simplified percentage", _("simplified percentage")) || svar == "percent") SET_BOOL_PT(simplified_percentage)
@@ -2033,7 +2033,7 @@ void set_option(string str) {
 		if(svalue == "0" || svalue == "1" || EQUALS_IGNORECASE_AND_LOCAL(svar, "default", _("default"))) svalue = "";
 		if(svalue.empty()) {
 			default_currency = svalue;
-			CALCULATOR->setLocalCurrency(NULL);
+			CALCULATOR->setLocalCurrency(nullptr);
 		} else if(svalue != default_currency) {
 			Unit *u = CALCULATOR->getActiveUnit(svalue);
 			if(u && u->isCurrency()) {
@@ -2604,7 +2604,7 @@ bool show_set_help(string set_option = "") {
 	}
 	STR_AND_TABS_2("exp display", "edisp", _("Determines how scientific notation are displayed (e.g. 3E6, 3e6, or 3 * 10^6)."), printops.exp_display - 1, "E", "e", "10");
 	int nff = printops.number_fraction_format;
-	Variable *var = NULL;
+	Variable *var = nullptr;
 	if(dual_fraction < 0) nff = -1;
 	else if(dual_fraction > 0) nff = 5;
 	else if(!printops.restrict_fraction_length && printops.number_fraction_format == FRACTION_FRACTIONAL) nff = 4;
@@ -3080,7 +3080,7 @@ bool show_object_info(string name) {
 					case SUBTYPE_COMPOSITE_UNIT: {
 						PRINT_AND_COLON_TABS_INFO(_("Base Units"));
 						PrintOptions po = printops;
-						po.is_approximate = NULL;
+						po.is_approximate = nullptr;
 						po.abbreviate_names = true;
 						CHECK_IF_SCREEN_FILLED_PUTS(((CompositeUnit*) item)->print(po, true, TAG_TYPE_TERMINAL, false, false).c_str());
 						break;
@@ -3284,7 +3284,7 @@ string autocalc_result;
 #ifndef CLOCK_MONOTONIC
 #	define DO_TIMECHECK_END \
 					struct timeval tv; \
-					gettimeofday(&tv, NULL); \
+					gettimeofday(&tv, nullptr); \
 					if(tv.tv_sec > t_end.tv_sec || (tv.tv_sec == t_end.tv_sec && tv.tv_usec >= t_end.tv_usec))
 #else
 #	define DO_TIMECHECK_END \
@@ -3385,7 +3385,7 @@ bool contains_updating_time(const MathStructure &m) {
 }
 
 string result_text_a;
-MathStructure *mstruct_a = NULL, *parsed_mstruct_a = NULL;
+MathStructure *mstruct_a = nullptr, *parsed_mstruct_a = nullptr;
 MathStructure mstruct_exact_a, prepend_mstruct_a;
 
 string current_action_text;
@@ -3427,7 +3427,7 @@ void do_autocalc(bool force, const char *action_text) {
 		} else if((str.find_first_of(NUMBER_ELEMENTS OPERATORS PARENTHESISS SPACES) == string::npos || str.find_first_not_of(OPERATORS PARENTHESISS SPACES) == string::npos) && !CALCULATOR->hasToExpression(str, false, evalops)) {
 			Variable *v = CALCULATOR->getActiveVariable(str);
 			if(!v || !v->isKnown()) {
-				MathFunction *f = (v ? NULL : CALCULATOR->getActiveFunction(str));
+				MathFunction *f = (v ? nullptr : CALCULATOR->getActiveFunction(str));
 				if(!f || f->minargs() > 0) {
 					str = "";
 				}
@@ -3454,7 +3454,7 @@ void do_autocalc(bool force, const char *action_text) {
 			prepend_mstruct_a = prepend_mstruct;
 			parsed_mstruct = parsed_mstruct_a;
 			result_text_a = result_text;
-			execute_expression(false, OPERATION_ADD, NULL, false, 0, false, true);
+			execute_expression(false, OPERATION_ADD, nullptr, false, 0, false, true);
 			if(!autocalc_input_available && ((!result_autocalculated && !autocalc_result.empty()) || force || prev_autocalc_result != autocalc_result || !current_action_text.empty() || prev_action_text)) {
 				result_autocalculated = true;
 				int autocalc_lines = vertical_space ? 3 : 1;
@@ -3764,7 +3764,7 @@ int key_save(int, int) {
 			}
 		}
 	}
-	Variable *v = NULL;
+	Variable *v = nullptr;
 	if(b) v = CALCULATOR->getActiveVariable(name, true);
 	if(b && ((!v && CALCULATOR->variableNameTaken(name)) || (v && (!v->isKnown() || !v->isLocal() || v->category() != CALCULATOR->temporaryCategory())))) {
 		b = ask_question(_("A unit or variable with the same name already exists.\nDo you want to overwrite it (default: no)?"));
@@ -3916,7 +3916,7 @@ string show_calendars(const QalculateDateTime &date, bool indentation = true) {
 void list_defs(bool in_interactive, char list_type = 0, string search_str = "") {
 #ifdef HAVE_LIBREADLINE
 	int rows = 0, cols = 0, rcount = 0;
-	bool check_sf = (cfile == NULL);
+	bool check_sf = (cfile == nullptr);
 	char sf_c;
 	if(in_interactive && !cfile) {
 		rl_get_screen_size(&rows, &cols);
@@ -3941,7 +3941,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 			else if(i2 == 1) i_end = CALCULATOR->variables.size();
 			else if(i2 == 2) i_end = CALCULATOR->units.size();
 			else if(i2 == 3) i_end = CALCULATOR->prefixes.size();
-			ExpressionItem *item = NULL;
+			ExpressionItem *item = nullptr;
 			string name_str, name_str2;
 			for(int i = 0; i < i_end; i++) {
 				if(i2 == 0) item = CALCULATOR->functions[i];
@@ -4160,7 +4160,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 		if(list_type == 'u') i_end = CALCULATOR->units.size();
 		if(list_type == 'c') i_end = CALCULATOR->units.size();
 		if(list_type == 'p') i_end = CALCULATOR->prefixes.size();
-		ExpressionItem *item = NULL;
+		ExpressionItem *item = nullptr;
 		string name_str, name_str2;
 		for(int i = 0; i < i_end; i++) {
 			if(list_type == 'f') item = CALCULATOR->functions[i];
@@ -4290,7 +4290,7 @@ int main(int argc, char *argv[]) {
 	vector<string> set_option_strings;
 	bool calc_arg_begun = false;
 	string command_file;
-	cfile = NULL;
+	cfile = nullptr;
 	interactive_mode = false;
 	result_only = false;
 	bool load_units = true, load_functions = true, load_variables = true, load_currencies = true, load_datasets = true;
@@ -4305,7 +4305,7 @@ int main(int argc, char *argv[]) {
 	string stmp, lang;
 	if(file) {
 		while(true) {
-			if(fgets(line, 10000, file) == NULL) break;
+			if(fgets(line, 10000, file) == nullptr) break;
 			if(strcmp(line, "ignore_locale=1\n") == 0) {
 				ignore_locale = true;
 				break;
@@ -4379,12 +4379,12 @@ int main(int argc, char *argv[]) {
 #	ifdef _WIN32
 		if(lang.empty()) {
 			size_t n = 0;
-			getenv_s(&n, NULL, 0, "LANG");
-			if(n == 0) getenv_s(&n, NULL, 0, "LANGUAGE");
+			getenv_s(&n, nullptr, 0, "LANG");
+			if(n == 0) getenv_s(&n, nullptr, 0, "LANGUAGE");
 			if(n == 0) {
 				ULONG nlang = 0;
 				DWORD n = 0;
-				if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
+				if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, nullptr, &n)) {
 					WCHAR* wlocale = new WCHAR[n];
 					if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
 						for(size_t i = 2; nlang > 1 && i < n - 1; i++) {
@@ -4625,11 +4625,11 @@ int main(int argc, char *argv[]) {
 			load_global_defs = false;
 		} else if(!calc_arg_begun && (svar == "-time" || svar == "--time" || svar == "-m")) {
 			if(!svalue.empty()) {
-				i_maxtime += strtol(svalue.c_str(), NULL, 10);
+				i_maxtime += strtol(svalue.c_str(), nullptr, 10);
 				if(i_maxtime < 0) i_maxtime = 0;
 			} else if(i + 1 < argc) {
 				i++;
-				i_maxtime += strtol(argv[i], NULL, 10);
+				i_maxtime += strtol(argv[i], nullptr, 10);
 				if(i_maxtime < 0) i_maxtime = 0;
 			}
 		} else if(!calc_arg_begun && (svar == "-set" || svar == "--set" || svar == "-s")) {
@@ -4831,7 +4831,7 @@ int main(int argc, char *argv[]) {
 
 	view_thread = new ViewThread;
 	command_thread = new CommandThread;
-	autocalc_thread = NULL;
+	autocalc_thread = nullptr;
 
 	if(!command_file.empty()) {
 		if(command_file == "-") {
@@ -4842,8 +4842,8 @@ int main(int argc, char *argv[]) {
 				snprintf(buffer, 10000, _("Could not open \"%s\"."), command_file.c_str());
 				PUTS_UNICODE(buffer)
 				if(!interactive_mode) {
-					if(!view_thread->write(NULL)) view_thread->cancel();
-					if(command_thread->running && (!command_thread->write((int) 0) || !command_thread->write(NULL))) command_thread->cancel();
+					if(!view_thread->write(nullptr)) view_thread->cancel();
+					if(command_thread->running && (!command_thread->write((int) 0) || !command_thread->write(nullptr))) command_thread->cancel();
 					CALCULATOR->terminateThreads();
 					return EXIT_FAILURE;
 				}
@@ -4854,7 +4854,7 @@ int main(int argc, char *argv[]) {
 
 	if(i_maxtime > 0) {
 #ifndef CLOCK_MONOTONIC
-		gettimeofday(&t_end, NULL);
+		gettimeofday(&t_end, nullptr);
 #else
 		struct timespec ts;
 		clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -4900,8 +4900,8 @@ int main(int argc, char *argv[]) {
 					CALCULATOR->nextMessage();
 				}
 			}
-			if(!view_thread->write(NULL)) view_thread->cancel();
-			if(command_thread->running && (!command_thread->write((int) 0) || !command_thread->write(NULL))) command_thread->cancel();
+			if(!view_thread->write(nullptr)) view_thread->cancel();
+			if(command_thread->running && (!command_thread->write((int) 0) || !command_thread->write(nullptr))) command_thread->cancel();
 			CALCULATOR->terminateThreads();
 			if(had_errors) return EXIT_FAILURE;
 			return 0;
@@ -4967,7 +4967,7 @@ int main(int argc, char *argv[]) {
 				if(cfile != stdin) {
 					fclose(cfile);
 				}
-				cfile = NULL;
+				cfile = nullptr;
 				convert_from_local = -1;
 				ask_questions = !result_only;
 				if(!calc_arg.empty()) {
@@ -5018,7 +5018,7 @@ int main(int argc, char *argv[]) {
 		} else {
 #ifdef HAVE_LIBREADLINE
 			rlbuffer = readline(prompt.c_str());
-			if(rlbuffer == NULL) break;
+			if(rlbuffer == nullptr) break;
 			if(was_completed) continue;
 			check_vi_mode_change();
 			if(autocalc > 0 && result_autocalculated) {
@@ -5168,7 +5168,7 @@ int main(int argc, char *argv[]) {
 						}
 					}
 				}
-				Variable *v = NULL;
+				Variable *v = nullptr;
 				if(b) v = CALCULATOR->getActiveVariable(name, true);
 				if(b && ask_questions && ((!v && CALCULATOR->variableNameTaken(name)) || (v && (!v->isKnown() || !v->isLocal() || v->category() != CALCULATOR->temporaryCategory())))) {
 					b = ask_question(_("A unit or variable with the same name already exists.\nDo you want to overwrite it (default: no)?"));
@@ -5232,7 +5232,7 @@ int main(int argc, char *argv[]) {
 					}
 				}
 			}
-			Variable *v = NULL;
+			Variable *v = nullptr;
 			if(b) v = CALCULATOR->getActiveVariable(name, true);
 			bool b_temp = false;
 			if(b && ((!v && CALCULATOR->variableNameTaken(name)) || (v && (!v->isKnown() || !v->isLocal() || v->category() != CALCULATOR->temporaryCategory())))) {
@@ -5633,123 +5633,123 @@ int main(int argc, char *argv[]) {
 			} else if(equalsIgnoreCase(str, "hex") || EQUALS_IGNORECASE_AND_LOCAL(str, "hexadecimal", _("hexadecimal"))) {
 				int save_base = printops.base;
 				printops.base = BASE_HEXADECIMAL;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "bin") || EQUALS_IGNORECASE_AND_LOCAL(str, "binary", _("binary"))) {
 				int save_base = printops.base;
 				printops.base = BASE_BINARY;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "dec") || EQUALS_IGNORECASE_AND_LOCAL(str, "decimal", _("decimal"))) {
 				int save_base = printops.base;
 				int save_exp = printops.min_exp;
 				printops.base = BASE_DECIMAL;
 				printops.min_exp = EXP_NONE;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 				printops.min_exp = save_exp;
 			} else if(equalsIgnoreCase(str, "oct") || EQUALS_IGNORECASE_AND_LOCAL(str, "octal", _("octal"))) {
 				int save_base = printops.base;
 				printops.base = BASE_OCTAL;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "duo") || EQUALS_IGNORECASE_AND_LOCAL(str, "duodecimal", _("duodecimal"))) {
 				int save_base = printops.base;
 				printops.base = BASE_DUODECIMAL;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "doz") || equalsIgnoreCase(str, "dozenal")) {
 				int save_base = printops.base;
 				bool save_syms = printops.duodecimal_symbols;
 				printops.base = BASE_DUODECIMAL;
 				printops.duodecimal_symbols = true;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.duodecimal_symbols = save_syms;
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "roman") || equalsIgnoreCase(str, _("roman"))) {
 				int save_base = printops.base;
 				printops.base = BASE_ROMAN_NUMERALS;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "bijective") || equalsIgnoreCase(str, _("bijective"))) {
 				int save_base = printops.base;
 				printops.base = BASE_BIJECTIVE_26;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "bcd")) {
 				int save_base = printops.base;
 				printops.base = BASE_BINARY_DECIMAL;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "sexa") || EQUALS_IGNORECASE_AND_LOCAL(str, "sexagesimal", _("sexagesimal"))) {
 				int save_base = printops.base;
 				printops.base = BASE_SEXAGESIMAL;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "sexa2") || EQUALS_IGNORECASE_AND_LOCAL_NR(str, "sexagesimal", _("sexagesimal"), "2")) {
 				int save_base = printops.base;
 				printops.base = BASE_SEXAGESIMAL_2;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "sexa3") || EQUALS_IGNORECASE_AND_LOCAL_NR(str, "sexagesimal", _("sexagesimal"), "3")) {
 				int save_base = printops.base;
 				printops.base = BASE_SEXAGESIMAL_3;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "longitude", _("longitude"))) {
 				int save_base = printops.base;
 				printops.base = BASE_LONGITUDE;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL_NR(str, "longitude", _("longitude"), "2")) {
 				int save_base = printops.base;
 				printops.base = BASE_LONGITUDE_2;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "latitude", _("latitude"))) {
 				int save_base = printops.base;
 				printops.base = BASE_LATITUDE;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL_NR(str, "latitude", _("latitude"), "2")) {
 				int save_base = printops.base;
 				printops.base = BASE_LATITUDE_2;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "fp32") || equalsIgnoreCase(str, "binary32") || equalsIgnoreCase(str, "float")) {
 				int save_base = printops.base;
 				printops.base = BASE_FP32;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "fp64") || equalsIgnoreCase(str, "binary64") || equalsIgnoreCase(str, "double")) {
 				int save_base = printops.base;
 				printops.base = BASE_FP64;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "fp16") || equalsIgnoreCase(str, "binary16")) {
 				int save_base = printops.base;
 				printops.base = BASE_FP16;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "fp80")) {
 				int save_base = printops.base;
 				printops.base = BASE_FP80;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "fp128") || equalsIgnoreCase(str, "binary128")) {
 				int save_base = printops.base;
 				printops.base = BASE_FP128;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "time", _("time"))) {
 				int save_base = printops.base;
 				printops.base = BASE_TIME;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "unicode")) {
 				int save_base = printops.base;
 				printops.base = BASE_UNICODE;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 			} else if(equalsIgnoreCase(str, "sci") || EQUALS_IGNORECASE_AND_LOCAL(str, "scientific", _("scientific"))) {
 				bool save_minus = printops.sort_options.minus_last;
@@ -5762,7 +5762,7 @@ int main(int argc, char *argv[]) {
 				printops.show_ending_zeroes = true;
 				printops.use_unit_prefixes = false;
 				printops.negative_exponents = true;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.sort_options.minus_last = save_minus;
 				printops.min_exp = save_exp;
 				printops.show_ending_zeroes = save_zeroes;
@@ -5779,7 +5779,7 @@ int main(int argc, char *argv[]) {
 				printops.show_ending_zeroes = true;
 				printops.use_unit_prefixes = false;
 				printops.negative_exponents = false;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.sort_options.minus_last = save_minus;
 				printops.min_exp = save_exp;
 				printops.show_ending_zeroes = save_zeroes;
@@ -5797,7 +5797,7 @@ int main(int argc, char *argv[]) {
 				printops.show_ending_zeroes = false;
 				printops.use_unit_prefixes = true;
 				printops.negative_exponents = false;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.sort_options.minus_last = save_minus;
 				printops.min_exp = save_exp;
 				printops.show_ending_zeroes = save_zeroes;
@@ -5805,14 +5805,14 @@ int main(int argc, char *argv[]) {
 				printops.negative_exponents = save_neg;
 			} else if(equalsIgnoreCase(str, "utc") || equalsIgnoreCase(str, "gmt")) {
 				printops.time_zone = TIME_ZONE_UTC;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.time_zone = TIME_ZONE_LOCAL;
 			} else if(str.length() > 3 && equalsIgnoreCase(str.substr(0, 3), "bin") && is_in(NUMBERS, str[3])) {
 				int save_base = printops.base;
 				unsigned int save_bits = printops.binary_bits;
 				printops.base = BASE_BINARY;
 				printops.binary_bits = s2i(str.substr(3));
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 				printops.binary_bits = save_bits;
 			} else if(str.length() > 3 && equalsIgnoreCase(str.substr(0, 3), "hex") && is_in(NUMBERS, str[3])) {
@@ -5820,7 +5820,7 @@ int main(int argc, char *argv[]) {
 				unsigned int save_bits = printops.binary_bits;
 				printops.base = BASE_HEXADECIMAL;
 				printops.binary_bits = s2i(str.substr(3));
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.base = save_base;
 				printops.binary_bits = save_bits;
 			} else if(str.length() > 3 && (equalsIgnoreCase(str.substr(0, 3), "utc") || equalsIgnoreCase(str.substr(0, 3), "gmt"))) {
@@ -5842,16 +5842,16 @@ int main(int argc, char *argv[]) {
 					itz = tzh * 60 + tzm;
 					if(b_minus) itz = -itz;
 				} else {
-					CALCULATOR->error(true, _("Time zone parsing failed."), NULL);
+					CALCULATOR->error(true, _("Time zone parsing failed."), nullptr);
 				}
 				printops.time_zone = TIME_ZONE_CUSTOM;
 				printops.custom_time_zone = itz;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.time_zone = TIME_ZONE_LOCAL;
 			} else if(str == "CET") {
 				printops.time_zone = TIME_ZONE_CUSTOM;
 				printops.custom_time_zone = 60;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.time_zone = TIME_ZONE_LOCAL;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "rectangular", _("rectangular")) || EQUALS_IGNORECASE_AND_LOCAL(str, "cartesian", _("cartesian")) || str == "rect") {
 				avoid_recalculation = false;
@@ -5932,25 +5932,25 @@ int main(int argc, char *argv[]) {
 				if(save_base != BASE_BINARY) {
 					base_str += " = ";
 					printops.base = BASE_BINARY;
-					setResult(NULL, false, true, 0, false, true);
+					setResult(nullptr, false, true, 0, false, true);
 					base_str += result_text;
 				}
 				if(save_base != BASE_OCTAL) {
 					base_str += " = ";
 					printops.base = BASE_OCTAL;
-					setResult(NULL, false, true, 0, false, true);
+					setResult(nullptr, false, true, 0, false, true);
 					base_str += result_text;
 				}
 				if(save_base != BASE_DECIMAL) {
 					base_str += " = ";
 					printops.base = BASE_DECIMAL;
-					setResult(NULL, false, true, 0, false, true);
+					setResult(nullptr, false, true, 0, false, true);
 					base_str += result_text;
 				}
 				if(save_base != BASE_HEXADECIMAL) {
 					base_str += " = ";
 					printops.base = BASE_HEXADECIMAL;
-					setResult(NULL, false, true, 0, false, true);
+					setResult(nullptr, false, true, 0, false, true);
 					base_str += result_text;
 				}
 				if(interactive_mode && !cfile) {
@@ -5999,7 +5999,7 @@ int main(int argc, char *argv[]) {
 				printops.use_unit_prefixes = true;
 				printops.use_prefixes_for_currencies = true;
 				printops.use_prefixes_for_all_units = true;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.use_unit_prefixes = save_pre;
 				printops.use_prefixes_for_currencies = save_cur;
 				printops.use_prefixes_for_all_units = save_allu;
@@ -6037,7 +6037,7 @@ int main(int argc, char *argv[]) {
 						CALCULATOR->setCustomOutputBase(m.number());
 					}
 				}
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				CALCULATOR->setCustomOutputBase(save_nr);
 				printops.base = save_base;
 			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "decimals", _("decimals"))) {
@@ -6047,7 +6047,7 @@ int main(int argc, char *argv[]) {
 				dual_fraction = 0;
 				printops.restrict_fraction_length = false;
 				printops.number_fraction_format = FRACTION_DECIMAL;
-				setResult(NULL, false);
+				setResult(nullptr, false);
 				printops.restrict_fraction_length = save_rfl;
 				printops.number_fraction_format = save_format;
 				dual_fraction = save_dual;
@@ -6067,7 +6067,7 @@ int main(int argc, char *argv[]) {
 						CALCULATOR->setFixedDenominator(fden);
 						if(!fixed_fraction_has_sign && !contains_fraction_q(*mstruct)) printops.number_fraction_format = FRACTION_FRACTIONAL_FIXED_DENOMINATOR;
 					}
-					setResult(NULL, false);
+					setResult(nullptr, false);
 					printops.restrict_fraction_length = save_rfl;
 					printops.number_fraction_format = save_format;
 					CALCULATOR->setFixedDenominator(save_fden);
@@ -6103,16 +6103,16 @@ int main(int argc, char *argv[]) {
 					MathStructure parsebak(*parsed_mstruct);
 					ParseOptions pa = evalops.parse_options; pa.base = 10;
 					mstruct_exact.setUndefined();
-					MathStructure mstruct_new(CALCULATOR->convert(*mstruct, CALCULATOR->unlocalizeExpression(str, pa), evalops, NULL, true, parsed_mstruct));
+					MathStructure mstruct_new(CALCULATOR->convert(*mstruct, CALCULATOR->unlocalizeExpression(str, pa), evalops, nullptr, true, parsed_mstruct));
 					if(check_exchange_rates()) {
 						parsed_mstruct->set(parsebak);
-						mstruct->set(CALCULATOR->convert(*mstruct, CALCULATOR->unlocalizeExpression(str, pa), evalops, NULL, true, parsed_mstruct));
+						mstruct->set(CALCULATOR->convert(*mstruct, CALCULATOR->unlocalizeExpression(str, pa), evalops, nullptr, true, parsed_mstruct));
 					} else {
 						mstruct->set(mstruct_new);
 					}
 					if(expression_executed) {
 						printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
-						setResult(NULL, !parsed_mstruct->equals(parsebak, true, true));
+						setResult(nullptr, !parsed_mstruct->equals(parsebak, true, true));
 					}
 					printops.use_unit_prefixes = save_pre;
 					printops.use_all_prefixes = save_all;
@@ -7210,7 +7210,7 @@ void view_thread_func(MathStructure *mresult, MathStructure *mparse, bool *is_ap
 
 	po.allow_non_usable = DO_FORMAT;
 
-	print_dual(*mresult, original_expression, mparse ? *mparse : *parsed_mstruct, mstruct_exact, result_text, alt_results, po, evalops, dual_fraction < 0 ? AUTOMATIC_FRACTION_AUTO : (dual_fraction > 0 ? AUTOMATIC_FRACTION_DUAL : AUTOMATIC_FRACTION_OFF), dual_approximation < 0 ? AUTOMATIC_APPROXIMATION_AUTO : (dual_approximation > 0 ? AUTOMATIC_APPROXIMATION_DUAL : AUTOMATIC_APPROXIMATION_OFF), complex_angle_form, &exact_comparison, mparse != NULL, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL, -1, had_to_expression);
+	print_dual(*mresult, original_expression, mparse ? *mparse : *parsed_mstruct, mstruct_exact, result_text, alt_results, po, evalops, dual_fraction < 0 ? AUTOMATIC_FRACTION_AUTO : (dual_fraction > 0 ? AUTOMATIC_FRACTION_DUAL : AUTOMATIC_FRACTION_OFF), dual_approximation < 0 ? AUTOMATIC_APPROXIMATION_AUTO : (dual_approximation > 0 ? AUTOMATIC_APPROXIMATION_DUAL : AUTOMATIC_APPROXIMATION_OFF), complex_angle_form, &exact_comparison, mparse != nullptr, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL, -1, had_to_expression);
 
 	if(!prepend_mstruct.isUndefined() && !CALCULATOR->aborted()) {
 		prepend_mstruct.format(po);
@@ -7236,15 +7236,15 @@ void ViewThread::run() {
 
 	while(true) {
 
-		void *x = NULL;
+		void *x = nullptr;
 		if(!read(&x) || !x) break;
 		MathStructure *mresult = (MathStructure*) x;
-		x = NULL;
+		x = nullptr;
 		if(!read(&x)) break;
 		CALCULATOR->startControl();
 		MathStructure *mparse = (MathStructure*) x;
 
-		bool *is_approximate_p = NULL, preserve_format = false;
+		bool *is_approximate_p = nullptr, preserve_format = false;
 		if(mparse) {
 			if(!read(&is_approximate_p)) break;
 			if(!read<bool>(&preserve_format)) break;
@@ -7273,11 +7273,11 @@ static bool wait_for_key_press(int timeout_ms) {
 
 	FD_ZERO(&in_set);
 	FD_SET(STDIN_FILENO, &in_set);
-	return select(FD_SETSIZE, &in_set, NULL, NULL, &timeout) > 0;
+	return select(FD_SETSIZE, &in_set, nullptr, nullptr, &timeout) > 0;
 #endif
 }
 
-void add_equals(string &strout, bool b_exact, size_t *i_result_u = NULL, size_t *i_result = NULL, bool add_space = true) {
+void add_equals(string &strout, bool b_exact, size_t *i_result_u = nullptr, size_t *i_result = nullptr, bool add_space = true) {
 	if(b_exact) {
 		if(add_space) strout += " = ";
 		else strout += "= ";
@@ -7497,10 +7497,10 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 			if(!view_thread->write(parsed_approx_p)) {b_busy = false; view_thread->cancel(); return;}
 			if(!view_thread->write(prev_result_text == _("RPN Operation") ? false : true)) {b_busy = false; view_thread->cancel(); return;}
 		} else {
-			if(!view_thread->write((void*) NULL)) {b_busy = false; view_thread->cancel(); return;}
+			if(!view_thread->write((void*) nullptr)) {b_busy = false; view_thread->cancel(); return;}
 		}
 	} else {
-		view_thread_func(stack_index == 0 ? mstruct : CALCULATOR->getRPNRegister(stack_index + 1), update_parse ? parsed_mstruct : NULL, &parsed_approx, prev_result_text == _("RPN Operation") ? false : true);
+		view_thread_func(stack_index == 0 ? mstruct : CALCULATOR->getRPNRegister(stack_index + 1), update_parse ? parsed_mstruct : nullptr, &parsed_approx, prev_result_text == _("RPN Operation") ? false : true);
 		b_busy = false;
 	}
 
@@ -7602,7 +7602,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 	}
 
 
-	printops.prefix = NULL;
+	printops.prefix = nullptr;
 
 	if(noprint) {
 		return;
@@ -7642,7 +7642,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 			CALCULATOR->nextMessage();
 		}
 	} else if(!result_only) {
-		display_errors(goto_input, cols, ask_questions && evalops.parse_options.parsing_mode <= PARSING_MODE_CONVENTIONAL && update_parse && stack_index == 0 && !noprint ? &implicit_warning : NULL);
+		display_errors(goto_input, cols, ask_questions && evalops.parse_options.parsing_mode <= PARSING_MODE_CONVENTIONAL && update_parse && stack_index == 0 && !noprint ? &implicit_warning : nullptr);
 	}
 
 	if(implicit_warning) {
@@ -7851,22 +7851,22 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 	b_busy = false;
 }
 
-void viewresult(Prefix *prefix = NULL) {
+void viewresult(Prefix *prefix = nullptr) {
 	setResult(prefix);
 }
 
 void result_display_updated() {
 	update_message_print_options();
-	if(expression_executed) setResult(NULL, false);
+	if(expression_executed) setResult(nullptr, false);
 }
 void result_format_updated() {
 	update_message_print_options();
-	if(expression_executed) setResult(NULL, false);
+	if(expression_executed) setResult(nullptr, false);
 }
 void result_action_executed() {
 	if(expression_executed) {
 		printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
-		setResult(NULL, false);
+		setResult(nullptr, false);
 	}
 }
 void result_prefix_changed(Prefix *prefix) {
@@ -7921,9 +7921,9 @@ void CommandThread::run() {
 	while(true) {
 		int command_type = 0;
 		if(!read(&command_type)) break;
-		void *x = NULL;
+		void *x = nullptr;
 		if(!read(&x) || !x) break;
-		void *x2 = NULL;
+		void *x2 = nullptr;
 		if(!read(&x2)) break;
 		CALCULATOR->startControl();
 		switch(command_type) {
@@ -7969,7 +7969,7 @@ void execute_command(int command_type, bool show_result, bool auto_calculate) {
 
 	if(!command_thread->write(command_type)) {command_thread->cancel(); b_busy = false; return;}
 	MathStructure *mfactor = new MathStructure(*mstruct);
-	MathStructure *mfactor2 = NULL;
+	MathStructure *mfactor2 = nullptr;
 	if(!mstruct_exact.isUndefined()) mfactor2 = new MathStructure(mstruct_exact);
 	if(!command_thread->write((void *) mfactor) || !command_thread->write((void *) mfactor2)) {
 		command_thread->cancel();
@@ -8098,7 +8098,7 @@ void execute_command(int command_type, bool show_result, bool auto_calculate) {
 				printops.allow_factorization = (evalops.structuring == STRUCTURING_FACTORIZE);
 			}
 		}
-		if(show_result) setResult(NULL, false);
+		if(show_result) setResult(nullptr, false);
 	} else if(auto_calculate) {
 		mstruct->setAborted();
 	}
@@ -8116,9 +8116,9 @@ void warn_assumptions(MathStructure &m, bool auto_calculate) {
 	if(!mvar.isSymbolic() && !mvar.isVariable()) return;
 	if(mvar.isVariable() && (mvar.variable()->isKnown() || ((UnknownVariable*) mvar.variable())->assumptions())) return;
 	if(auto_calculate) {
-		CALCULATOR->error(false, "", NULL);
+		CALCULATOR->error(false, "", nullptr);
 	} else {
-		CALCULATOR->error(false, _("Unknown variables (e.g. x, y, z) are by default assumed real. Assumptions can be changed using the \"assume\" command."), NULL);
+		CALCULATOR->error(false, _("Unknown variables (e.g. x, y, z) are by default assumed real. Assumptions can be changed using the \"assume\" command."), nullptr);
 		assumptions_warning_shown = true;
 	}
 }
@@ -8715,7 +8715,7 @@ bool test_autocalc_function(const string &original_expression) {
 		CALCULATOR->beginTemporaryStopMessages();
 		CALCULATOR->parse(&m, original_expression.substr(pos), evalops.parse_options);
 		if(!CALCULATOR->endTemporaryStopMessages()) {
-			MathStructure *mfunc = NULL;
+			MathStructure *mfunc = nullptr;
 			if(m.isFunction() && m.size() > 0) mfunc = &m;
 			else if(m.isMultiplication() && m.size() > 0 && m.last().isFunction() && m.last().size() > 0) mfunc = &m.last();
 			if(mfunc && mfunc->function()->minargs() > 0) {
@@ -8791,7 +8791,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		}
 		from_str = str;
 		if(ask_questions && test_ask_dot(from_str)) {
-			if(auto_calculate) CALCULATOR->error(false, "", NULL);
+			if(auto_calculate) CALCULATOR->error(false, "", nullptr);
 			else ask_dot();
 		}
 		if(CALCULATOR->separateToExpression(from_str, to_str, evalops, true)) {
@@ -8902,7 +8902,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 						itz = tzh * 60 + tzm;
 						if(b_minus) itz = -itz;
 					} else {
-						CALCULATOR->error(true, _("Time zone parsing failed."), NULL);
+						CALCULATOR->error(true, _("Time zone parsing failed."), nullptr);
 					}
 					printops.time_zone = TIME_ZONE_CUSTOM;
 					printops.custom_time_zone = itz;
@@ -9061,7 +9061,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		stack_size = CALCULATOR->RPNStackSize();
 		string str2 = CALCULATOR->unlocalizeExpression(str, evalops.parse_options);
 		transform_expression_for_equals_save(str2, evalops.parse_options);
-		CALCULATOR->setRPNRegister(stack_index + 1, str2, 0, evalops, parsed_mstruct, NULL);
+		CALCULATOR->setRPNRegister(stack_index + 1, str2, 0, evalops, parsed_mstruct, nullptr);
 	} else if(rpn_mode) {
 		stack_size = CALCULATOR->RPNStackSize();
 		if(do_mathoperation) {
@@ -9174,7 +9174,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 						had_nonnum = true;
 					}
 				}
-				f = NULL;
+				f = nullptr;
 				if(test_function) {
 					if(in_par) f = CALCULATOR->getActiveFunction(str2.substr(0, in_par));
 					else f = CALCULATOR->getActiveFunction(str2);
@@ -9232,10 +9232,10 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 							m->setAborted();
 							CALCULATOR->RPNStackEnter(m);
 						} else {
-							CALCULATOR->RPNStackEnter(str2, 0, evalops, parsed_mstruct, NULL);
+							CALCULATOR->RPNStackEnter(str2, 0, evalops, parsed_mstruct, nullptr);
 						}
 					} else {
-						CALCULATOR->RPNStackEnter(str2, 0, evalops, parsed_mstruct, NULL);
+						CALCULATOR->RPNStackEnter(str2, 0, evalops, parsed_mstruct, nullptr);
 					}
 				}
 			}
@@ -9455,7 +9455,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 	}
 	if(!result_only) warn_assumptions(*parsed_mstruct, auto_calculate);
 	if(auto_calculate && ask_questions && !avoid_recalculation && !do_mathoperation && !CALCULATOR->message() && (test_ask_sinc(*parsed_mstruct) || test_ask_sinc(*mstruct) || test_ask_percent() || test_ask_tc(*parsed_mstruct))) {
-		CALCULATOR->error(false, "", NULL);
+		CALCULATOR->error(false, "", nullptr);
 	}
 
 	mstruct_exact.setUndefined();
@@ -9463,7 +9463,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 	if((!rpn_mode || (!do_stack && !do_mathoperation)) && (!do_calendars || !mstruct->isDateTime()) && (dual_approximation > 0 || printops.base == BASE_DECIMAL) && !do_bases && !avoid_recalculation && i_maxtime >= 0) {
 		long int i_timeleft = 0;
 #ifndef CLOCK_MONOTONIC
-		if(i_maxtime) {struct timeval tv; gettimeofday(&tv, NULL); i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_usec) / 1000;}
+		if(i_maxtime) {struct timeval tv; gettimeofday(&tv, nullptr); i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_usec) / 1000;}
 #else
 		if(i_maxtime) {struct timespec tv; clock_gettime(CLOCK_MONOTONIC, &tv); i_timeleft = ((long int) t_end.tv_sec - tv.tv_sec) * 1000 + (t_end.tv_usec - tv.tv_nsec / 1000) / 1000;}
 #endif
@@ -9583,7 +9583,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 	}
 
 	if(do_calendars && mstruct->isDateTime()) {
-		setResult(NULL, (!do_stack || stack_index == 0), false, do_stack ? stack_index : 0, false, true);
+		setResult(nullptr, (!do_stack || stack_index == 0), false, do_stack ? stack_index : 0, false, true);
 		if(goto_input && !auto_calculate) printf("\n");
 		string cal_str = show_calendars(*mstruct->datetime(), goto_input);
 		if(auto_calculate) {
@@ -9594,19 +9594,19 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		}
 	} else if(do_bases) {
 		printops.base = BASE_BINARY;
-		setResult(NULL, (!do_stack || stack_index == 0), false, do_stack ? stack_index : 0, false, true);
+		setResult(nullptr, (!do_stack || stack_index == 0), false, do_stack ? stack_index : 0, false, true);
 		string base_str = result_text;
 		base_str += " = ";
 		printops.base = BASE_OCTAL;
-		setResult(NULL, false, false, do_stack ? stack_index : 0, false, true);
+		setResult(nullptr, false, false, do_stack ? stack_index : 0, false, true);
 		base_str += result_text;
 		base_str += " = ";
 		printops.base = BASE_DECIMAL;
-		setResult(NULL, false, false, do_stack ? stack_index : 0, false, true);
+		setResult(nullptr, false, false, do_stack ? stack_index : 0, false, true);
 		base_str += result_text;
 		base_str += " = ";
 		printops.base = BASE_HEXADECIMAL;
-		setResult(NULL, false, false, do_stack ? stack_index : 0, false, true);
+		setResult(nullptr, false, false, do_stack ? stack_index : 0, false, true);
 		base_str += result_text;
 		if(has_printed) printf("\n");
 		if(goto_input && !auto_calculate) printf("\n");
@@ -9658,7 +9658,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 				printops.use_prefixes_for_all_units = true;
 			}
 		}
-		setResult(NULL, (!do_stack || stack_index == 0), goto_input, do_stack ? stack_index : 0, false, false, auto_calculate);
+		setResult(nullptr, (!do_stack || stack_index == 0), goto_input, do_stack ? stack_index : 0, false, false, auto_calculate);
 	}
 	prepend_mstruct.setUndefined();
 
@@ -9729,11 +9729,11 @@ string getLocalStateDir() {
 	return getLocalDir();
 #else
 	const char *homedir;
-	if((homedir = getenv("QALCULATE_USER_DIR")) != NULL) {
+	if((homedir = getenv("QALCULATE_USER_DIR")) != nullptr) {
 		return homedir;
 	}
-	if((homedir = getenv("XDG_STATE_HOME")) == NULL) {
-		if((homedir = getenv("HOME")) == NULL) homedir = getpwuid(getuid())->pw_dir;
+	if((homedir = getenv("XDG_STATE_HOME")) == nullptr) {
+		if((homedir = getenv("HOME")) == nullptr) homedir = getpwuid(getuid())->pw_dir;
 		return string(homedir) + "/.local/state/qalculate";
 	}
 	return string(homedir) + "/qalculate";
@@ -9743,7 +9743,7 @@ string getLocalStateDir() {
 void load_preferences() {
 
 	printops.is_approximate = new bool(false);
-	printops.prefix = NULL;
+	printops.prefix = nullptr;
 	printops.use_min_decimals = false;
 	printops.use_denominator_prefix = true;
 	printops.min_decimals = 0;
@@ -9856,7 +9856,7 @@ void load_preferences() {
 	colorize = 1;
 #endif
 
-	FILE *file = NULL;
+	FILE *file = nullptr;
 #ifdef HAVE_LIBREADLINE
 	string historyfile = buildPath(getLocalStateDir(), "qalc.history");
 	stifle_history(100);
@@ -9898,7 +9898,7 @@ void load_preferences() {
 		size_t i;
 		int v;
 		while(true && !load_defaults) {
-			if(fgets(line, 10000, file) == NULL) break;
+			if(fgets(line, 10000, file) == nullptr) break;
 			stmp = line;
 			remove_blank_ends(stmp);
 			if((i = stmp.find_first_of("=")) != string::npos) {
@@ -10299,7 +10299,7 @@ void save_history() {
 						for(size_t i2 = 0; i2 < ans_variables.size(); i2++) {
 							if(!ans_text[i2].empty()) gsub(ans_variables[i2]->name(), ans_text[i2], str);
 						}
-						replace_history_entry(i, str.c_str(), NULL);
+						replace_history_entry(i, str.c_str(), nullptr);
 					}
 				}
 			}
@@ -10314,12 +10314,12 @@ void save_history() {
 	set mode to true to save current calculator mode
 */
 bool save_preferences(bool mode) {
-	FILE *file = NULL;
+	FILE *file = nullptr;
 	save_history();
 	if(!dirExists(getLocalDir())) recursiveMakeDir(getLocalDir());
 	string filename = buildPath(getLocalDir(), "qalc.cfg");
 	file = fopen(filename.c_str(), "w+");
-	if(file == NULL) {
+	if(file == nullptr) {
 #ifndef _WIN32
 		struct stat st;
 		if(lstat(filename.c_str(), &st) == 0 && S_ISLNK(st.st_mode)) return false;

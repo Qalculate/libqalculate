@@ -58,7 +58,7 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	vector<Variable*> vars;
 	if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
 		while(true) {
-			Variable *v = NULL;
+			Variable *v = nullptr;
 			Variable *uv = find_interval_replace_var_comp(m1, eo, &v);
 			if(!uv) break;
 			if(v) m1.replace(v, uv);
@@ -70,7 +70,7 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	if(calculate_userfunctions(m1, vargs[3], eo)) {
 		if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
 			while(true) {
-				Variable *v = NULL;
+				Variable *v = nullptr;
 				Variable *uv = find_interval_replace_var_comp(m1, eo, &v);
 				if(!uv) break;
 				if(v) m1.replace(v, uv);
@@ -80,7 +80,7 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		m1.calculatesub(eo2, eo2, true);
 	}
 	int im = 0;
-	if(CALCULATOR->endTemporaryStopMessages(NULL, &im) > 0 || im > 0) m1 = mbak;
+	if(CALCULATOR->endTemporaryStopMessages(nullptr, &im) > 0 || im > 0) m1 = mbak;
 	eo2.calculate_functions = eo.calculate_functions;
 	eo2.expand = eo.expand;
 	mstruct.clear();
@@ -93,7 +93,7 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				return 0;
 			} else if(i_nr != vargs[2].number()) {
 				MathStructure mmin(i_nr);
-				mstruct.add(MathStructure(this, &vargs[0], &mmin, &vargs[2], &vargs[3], NULL), true);
+				mstruct.add(MathStructure(this, &vargs[0], &mmin, &vargs[2], &vargs[3], nullptr), true);
 				break;
 			}
 		}
@@ -144,7 +144,7 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	vector<Variable*> vars;
 	if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
 		while(true) {
-			Variable *v = NULL;
+			Variable *v = nullptr;
 			Variable *uv = find_interval_replace_var_comp(m1, eo, &v);
 			if(!uv) break;
 			if(v) m1.replace(v, uv);
@@ -156,7 +156,7 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	if(calculate_userfunctions(m1, vargs[3], eo)) {
 		if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
 			while(true) {
-				Variable *v = NULL;
+				Variable *v = nullptr;
 				Variable *uv = find_interval_replace_var_comp(m1, eo, &v);
 				if(!uv) break;
 				if(v) m1.replace(v, uv);
@@ -166,7 +166,7 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		m1.calculatesub(eo2, eo2, true);
 	}
 	int im = 0;
-	if(CALCULATOR->endTemporaryStopMessages(NULL, &im) || im > 0) m1 = mbak;
+	if(CALCULATOR->endTemporaryStopMessages(nullptr, &im) || im > 0) m1 = mbak;
 	eo2.calculate_functions = eo.calculate_functions;
 	eo2.expand = eo.expand;
 	mstruct.clear();
@@ -179,7 +179,7 @@ int ProductFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 				return 0;
 			} else if(i_nr != vargs[2].number()) {
 				MathStructure mmin(i_nr);
-				mstruct.multiply(MathStructure(this, &vargs[0], &mmin, &vargs[2], &vargs[3], NULL), true);
+				mstruct.multiply(MathStructure(this, &vargs[0], &mmin, &vargs[2], &vargs[3], nullptr), true);
 				break;
 			}
 		}
@@ -209,7 +209,7 @@ SolveFunction::SolveFunction() : MathFunction("solve", 1, 2) {
 	setArgumentDefinition(2, new SymbolicArgument());
 	setDefaultValue(2, "undefined");
 }
-bool is_comparison_structure(const MathStructure &mstruct, const MathStructure &xvar, bool *bce = NULL, bool do_bce_or = false);
+bool is_comparison_structure(const MathStructure &mstruct, const MathStructure &xvar, bool *bce = nullptr, bool do_bce_or = false);
 bool is_comparison_structure(const MathStructure &mstruct, const MathStructure &xvar, bool *bce, bool do_bce_or) {
 	if(mstruct.isComparison()) {
 		if(bce) *bce = mstruct.comparisonType() == COMPARISON_EQUALS && mstruct[0] == xvar;
@@ -240,7 +240,7 @@ bool is_comparison_structure(const MathStructure &mstruct, const MathStructure &
 }
 
 MathStructure *solve_handle_logical_and(MathStructure &mstruct, MathStructure **mtruefor, ComparisonType ct, bool &b_partial, const MathStructure &x_var) {
-	MathStructure *mcondition = NULL;
+	MathStructure *mcondition = nullptr;
 	for(size_t i2 = 0; i2 < mstruct.size(); ) {
 		if(ct == COMPARISON_EQUALS) {
 			if(mstruct[i2].isComparison() && ct == mstruct[i2].comparisonType() && mstruct[i2][0].contains(x_var)) {
@@ -303,7 +303,7 @@ MathStructure *solve_handle_logical_and(MathStructure &mstruct, MathStructure **
 			} else {
 				(*mtruefor)->add_nocopy(mcondition, OPERATION_LOGICAL_OR, true);
 			}
-			mcondition = NULL;
+			mcondition = nullptr;
 		} else if(ct != COMPARISON_EQUALS) {
 			for(size_t i = 0; i < mstruct.size(); i++) {
 				mstruct[i].setProtected();
@@ -404,7 +404,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 	int ierror = 0;
 	int first_error = 0;
 
-	Assumptions *assumptions = NULL;
+	Assumptions *assumptions = nullptr;
 	bool assumptions_added = false;
 	AssumptionSign as = ASSUMPTION_SIGN_UNKNOWN;
 	AssumptionType at = ASSUMPTION_TYPE_NUMBER;
@@ -415,7 +415,7 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 
 		if(itry == 1) {
 			if(ierror == 1) {
-				if(!dsolve) CALCULATOR->error(true, _("No equality or inequality to solve. The entered expression to solve is not correct (e.g. \"x + 5 = 3\" is correct)"), NULL);
+				if(!dsolve) CALCULATOR->error(true, _("No equality or inequality to solve. The entered expression to solve is not correct (e.g. \"x + 5 = 3\" is correct)"), nullptr);
 				return -1;
 			} else {
 				first_error = ierror;
@@ -459,26 +459,26 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 		if(itry > 3) {
 			if(as != ASSUMPTION_SIGN_UNKNOWN) assumptions->setSign(as);
 			if(at > ASSUMPTION_TYPE_NUMBER) assumptions->setType(at);
-			if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(NULL);
+			if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(nullptr);
 			switch(first_error) {
 				case 2: {
-					CALCULATOR->error(true, _("The comparison is true for all %s (with current assumptions)."), format_and_print(y_var).c_str(), NULL);
+					CALCULATOR->error(true, _("The comparison is true for all %s (with current assumptions)."), format_and_print(y_var).c_str(), nullptr);
 					break;
 				}
 				case 3: {
-					CALCULATOR->error(true, _("No possible solution was found (with current assumptions)."), NULL);
+					CALCULATOR->error(true, _("No possible solution was found (with current assumptions)."), nullptr);
 					break;
 				}
 				case 4: {
-					CALCULATOR->error(true, _("Was unable to completely isolate %s."), format_and_print(y_var).c_str(), NULL);
+					CALCULATOR->error(true, _("Was unable to completely isolate %s."), format_and_print(y_var).c_str(), nullptr);
 					break;
 				}
 				case 7: {
-					CALCULATOR->error(false, _("The comparison is true for all %s if %s."), format_and_print(y_var).c_str(), strueforall.c_str(), NULL);
+					CALCULATOR->error(false, _("The comparison is true for all %s if %s."), format_and_print(y_var).c_str(), strueforall.c_str(), nullptr);
 					break;
 				}
 				default: {
-					CALCULATOR->error(true, _("Was unable to isolate %s."), format_and_print(y_var).c_str(), NULL);
+					CALCULATOR->error(true, _("Was unable to isolate %s."), format_and_print(y_var).c_str(), nullptr);
 					break;
 				}
 			}
@@ -599,17 +599,17 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 			if(itry > 1) {
 				assumptions->setSign(as);
 				if(itry == 2) {
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefore temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefore temporarily set as unknown."), format_and_print(y_var).c_str(), nullptr);
 				} else if(itry == 3) {
 					assumptions->setType(at);
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefore temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefore temporarily set as unknown."), format_and_print(y_var).c_str(), nullptr);
 				}
-				if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(NULL);
+				if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(nullptr);
 			}
 			return 1;
 		} else if(mstruct.isLogicalAnd()) {
-			MathStructure *mtruefor = NULL;
-			bool b_partial;
+			MathStructure *mtruefor = nullptr;
+			bool b_partial = false;
 			MathStructure mcopy(mstruct);
 			MathStructure *mcondition = solve_handle_logical_and(mstruct, &mtruefor, ct, b_partial, y_var);
 			if((!mstruct.isComparison() && !mstruct.isLogicalAnd()) || (ct == COMPARISON_EQUALS && (!mstruct.isComparison() || mstruct.comparisonType() != COMPARISON_EQUALS || mstruct[0] != y_var)) || !mstruct.contains(y_var)) {
@@ -626,29 +626,29 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 			if(itry > 1) {
 				assumptions->setSign(as);
 				if(itry == 2) {
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefore temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefore temporarily set as unknown."), format_and_print(y_var).c_str(), nullptr);
 				} else if(itry == 3) {
 					assumptions->setType(at);
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefore temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefore temporarily set as unknown."), format_and_print(y_var).c_str(), nullptr);
 				}
-				if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(NULL);
+				if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(nullptr);
 			}
 			if(mcondition) {
-				CALCULATOR->error(false, _("The solution requires that %s."), format_and_print(*mcondition).c_str(), NULL);
+				CALCULATOR->error(false, _("The solution requires that %s."), format_and_print(*mcondition).c_str(), nullptr);
 				delete mcondition;
 			}
 			if(mtruefor) {
-				CALCULATOR->error(false, _("The comparison is true for all %s if %s."), format_and_print(y_var).c_str(), format_and_print(*mtruefor).c_str(), NULL);
+				CALCULATOR->error(false, _("The comparison is true for all %s if %s."), format_and_print(y_var).c_str(), format_and_print(*mtruefor).c_str(), nullptr);
 				delete mtruefor;
 			}
 			if(ct == COMPARISON_EQUALS) mstruct.setToChild(2, true);
 			return 1;
 		} else if(mstruct.isLogicalOr()) {
 			MathStructure mcopy(mstruct);
-			MathStructure *mtruefor = NULL;
+			MathStructure *mtruefor = nullptr;
 			vector<MathStructure*> mconditions;
 			for(size_t i = 0; i < mstruct.size(); ) {
-				MathStructure *mcondition = NULL;
+				MathStructure *mcondition = nullptr;
 				bool b_and = false;
 				if(mstruct[i].isLogicalAnd()) {
 					mcondition = solve_handle_logical_and(mstruct[i], &mtruefor, ct, b_partial, y_var);
@@ -707,30 +707,30 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 			if(itry > 1) {
 				assumptions->setSign(as);
 				if(itry == 2) {
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefore temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed sign was therefore temporarily set as unknown."), format_and_print(y_var).c_str(), nullptr);
 				} else if(itry == 3) {
 					assumptions->setType(at);
-					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefore temporarily set as unknown."), format_and_print(y_var).c_str(), NULL);
+					CALCULATOR->error(false, _("Was unable to isolate %s with the current assumptions. The assumed type and sign was therefore temporarily set as unknown."), format_and_print(y_var).c_str(), nullptr);
 				}
-				if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(NULL);
+				if(assumptions_added) ((UnknownVariable*) y_var.variable())->setAssumptions(nullptr);
 			}
 
 			if(mconditions.size() == 1) {
 				if(mconditions[0]) {
-					CALCULATOR->error(false, _("The solution requires that %s."), format_and_print(*mconditions[0]).c_str(), NULL);
+					CALCULATOR->error(false, _("The solution requires that %s."), format_and_print(*mconditions[0]).c_str(), nullptr);
 					delete mconditions[0];
 				}
 			} else {
 				string sconditions;
 				for(size_t i = 0; i < mconditions.size(); i++) {
 					if(mconditions[i]) {
-						CALCULATOR->error(false, _("Solution %s requires that %s."), i2s(i + 1).c_str(), format_and_print(*mconditions[i]).c_str(), NULL);
+						CALCULATOR->error(false, _("Solution %s requires that %s."), i2s(i + 1).c_str(), format_and_print(*mconditions[i]).c_str(), nullptr);
 						delete mconditions[i];
 					}
 				}
 			}
 			if(mtruefor) {
-				CALCULATOR->error(false, _("The comparison is true for all %s if %s."), format_and_print(y_var).c_str(), format_and_print(*mtruefor).c_str(), NULL);
+				CALCULATOR->error(false, _("The comparison is true for all %s if %s."), format_and_print(y_var).c_str(), format_and_print(*mtruefor).c_str(), nullptr);
 				delete mtruefor;
 			}
 			return 1;
@@ -829,16 +829,16 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 		if(msolve.isComparison()) {
 			if(msolve[0] != vargs[1][i]) {
 				if(!b) {
-					CALCULATOR->error(true, _("Unable to isolate %s.\n\nYou might need to place the equations and variables in an appropriate order so that each equation at least contains the corresponding variable (if automatic reordering failed)."), format_and_print(vargs[1][i]).c_str(), NULL);
+					CALCULATOR->error(true, _("Unable to isolate %s.\n\nYou might need to place the equations and variables in an appropriate order so that each equation at least contains the corresponding variable (if automatic reordering failed)."), format_and_print(vargs[1][i]).c_str(), nullptr);
 				} else {
-					CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), NULL);
+					CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), nullptr);
 				}
 				return 0;
 			} else {
 				if(msolve.comparisonType() == COMPARISON_EQUALS) {
 					mstruct.addChild(msolve[1]);
 				} else {
-					CALCULATOR->error(true, _("Inequalities are not allowed in %s()."), name().c_str(), NULL);
+					CALCULATOR->error(true, _("Inequalities are not allowed in %s()."), name().c_str(), nullptr);
 					return 0;
 				}
 			}
@@ -868,14 +868,14 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 						}
 					}
 					if(!b) {
-						CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), NULL);
+						CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), nullptr);
 						return 0;
 					}
 					msolve[i2].setToChild(i_solve + 1, true);
 				} else if(msolve[i2].isComparison() && msolve[i2].comparisonType() == COMPARISON_EQUALS && msolve[i2][0] == vargs[1][i]) {
 					msolve[i2].setToChild(2, true);
 				} else {
-					CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), NULL);
+					CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), nullptr);
 					return 0;
 				}
 			}
@@ -903,11 +903,11 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 				}
 			}
 			if(!b) {
-				CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), NULL);
+				CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), nullptr);
 				return 0;
 			}
 		} else {
-			CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), NULL);
+			CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), nullptr);
 			return 0;
 		}
 		for(size_t i2 = 0; i2 < i; i2++) {
@@ -944,7 +944,7 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 					mtest.eval(eo);
 					CALCULATOR->endTemporaryStopMessages();
 					if(!mtest.isOne()) {
-						CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), NULL);
+						CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), nullptr);
 						return 0;
 					}
 				}
@@ -982,7 +982,7 @@ int SolveMultipleFunction::calculate(MathStructure &mstruct, const MathStructure
 				mand[i][i3].eval(eo);
 				CALCULATOR->endTemporaryStopMessages();
 				if(!mand[i][i3].isOne()) {
-					CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), NULL);
+					CALCULATOR->error(true, _("Unable to isolate %s."), format_and_print(vargs[1][i]).c_str(), nullptr);
 					return 0;
 				}
 			}
@@ -1000,7 +1000,7 @@ MathStructure *find_deqn(MathStructure &mstruct) {
 		MathStructure *m = find_deqn(mstruct[i]);
 		if(m) return m;
 	}
-	return NULL;
+	return nullptr;
 }
 
 bool contains_ignore_diff(const MathStructure &m, const MathStructure &mstruct, const MathStructure &mdiff);
@@ -1083,7 +1083,7 @@ bool dsolve(MathStructure &m_eqn, const EvaluationOptions &eo, const MathStructu
 			}
 		} else {
 			MathStructure mfactor(m_eqn);
-			mfactor[1].factorize(eo, false, 0, 0, false, false, NULL, m_x);
+			mfactor[1].factorize(eo, false, 0, 0, false, false, nullptr, m_x);
 			if(mfactor[1].isMultiplication() && mfactor[1].size() >= 2) {
 				mfactor.childUpdated(2);
 				if(dsolve(mfactor, eo, m_diff, y_value, x_value)) {
@@ -1306,7 +1306,7 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	eo2.isolate_x = false;
 	eo2.protected_function = CALCULATOR->getFunctionById(FUNCTION_ID_DIFFERENTIATE);
 	m_eqn.eval(eo2);
-	MathStructure *m_diff_p = NULL;
+	MathStructure *m_diff_p = nullptr;
 	if(m_eqn.isLogicalAnd()) {
 		for(size_t i = 0; i < m_eqn.size(); i++) {
 			if(m_eqn[i].isComparison() && m_eqn.comparisonType() == COMPARISON_EQUALS) {
@@ -1318,16 +1318,16 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		m_diff_p = find_deqn(m_eqn);
 	}
 	if(!m_diff_p) {
-		CALCULATOR->error(true, _("No differential equation found."), NULL);
+		CALCULATOR->error(true, _("No differential equation found."), nullptr);
 		mstruct = m_eqn; return -1;
 	}
 	MathStructure m_diff(*m_diff_p);
 	if(m_diff.size() < 3 || (!m_diff[0].isSymbolic() && !m_diff[0].isVariable()) || (!m_diff[1].isSymbolic() && !m_diff[1].isVariable()) || !m_diff[2].isInteger() || !m_diff[2].number().isPositive() || !m_diff[2].number().isLessThanOrEqualTo(10)) {
-		CALCULATOR->error(true, _("No differential equation found."), NULL);
+		CALCULATOR->error(true, _("No differential equation found."), nullptr);
 		mstruct = m_eqn; return -1;
 	}
 	if(m_diff[2].number().intValue() != 1) {
-		CALCULATOR->error(true, _("Unable to solve differential equation."), NULL);
+		CALCULATOR->error(true, _("Unable to solve differential equation."), nullptr);
 		mstruct = m_eqn;
 		protect_mdiff(mstruct, m_diff, eo);
 		return -1;
@@ -1357,7 +1357,7 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		dsolve(m_eqn, eo2, m_diff, vargs[1], vargs[2]);
 	}
 	if(m_eqn.contains(m_diff)) {
-		CALCULATOR->error(true, _("Unable to solve differential equation."), NULL);
+		CALCULATOR->error(true, _("Unable to solve differential equation."), nullptr);
 		protect_mdiff(mstruct, m_diff, eo);
 		return -1;
 	}
@@ -1379,7 +1379,7 @@ int DSolveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		msolve.addChild(m_diff[0]);
 		msolve.setProtected(true);
 	} else if(ret <= 0) {
-		CALCULATOR->error(true, _("Unable to solve differential equation."), NULL);
+		CALCULATOR->error(true, _("Unable to solve differential equation."), nullptr);
 		protect_mdiff(mstruct, m_diff, eo);
 		return -1;
 	}

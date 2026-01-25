@@ -423,22 +423,22 @@ class Calculator {
 	* @param str Expression.
 	* @param msecs The maximum time for the calculation in milliseconds. If msecs <= 0 the time will be unlimited.
 	* @param eo Options for the evaluation and parsing of the expression.
-	* @param[out] parsed_struct NULL or a math structure to fill with the result of the parsing of the expression.
-	* @param[out] to_struct NULL or a math structure to fill with unit expression parsed after "to". If expression does not contain a "to" string, and to_struct is a unit or a symbol (a unit expression string), to_struct will be used instead.
+	* @param[out] parsed_struct nullptr or a math structure to fill with the result of the parsing of the expression.
+	* @param[out] to_struct nullptr or a math structure to fill with unit expression parsed after "to". If expression does not contain a "to" string, and to_struct is a unit or a symbol (a unit expression string), to_struct will be used instead.
 	* @param make_to_division If true, the expression after "to" will be interpreted as a unit expression to convert the result to.
 	* @returns true if the calculation was successfully started (and finished if msecs > 0).
 	*/
-	bool calculate(MathStructure *mstruct, std::string str, int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
+	bool calculate(MathStructure *mstruct, std::string str, int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = nullptr, MathStructure *to_struct = nullptr, bool make_to_division = true);
 	/** Calculates an expression. The expression should be unlocalized first with unlocalizeExpression().
 	*
 	* @param str Expression.
 	* @param eo Options for the evaluation and parsing of the expression.
-	* @param[out] parsed_struct NULL or a math structure to fill with the result of the parsing of the expression.
-	* @param[out] to_struct NULL or a math structure to fill with unit expression parsed after "to". If expression does not contain a "to" string, and to_struct is a unit or a symbol (a unit expression string), to_struct will be used instead.
+	* @param[out] parsed_struct nullptr or a math structure to fill with the result of the parsing of the expression.
+	* @param[out] to_struct nullptr or a math structure to fill with unit expression parsed after "to". If expression does not contain a "to" string, and to_struct is a unit or a symbol (a unit expression string), to_struct will be used instead.
 	* @param make_to_division If true, the expression after "to" will be interpreted as a unit expression to convert the result to.
 	* @returns The result of the calculation.
 	*/
-	MathStructure calculate(std::string str, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
+	MathStructure calculate(std::string str, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = nullptr, MathStructure *to_struct = nullptr, bool make_to_division = true);
 	/** Calculates a parsed value.
 	* This function starts the calculation in a separate thread and will return when the calculation has started unless a maximum time has been specified.
 	* The calculation can then be stopped with abort().
@@ -470,7 +470,7 @@ class Calculator {
 	* @returns The result of the calculation.
 	* \since 2.6.0
 	*/
-	std::string calculateAndPrint(std::string str, int msecs = 10000, const EvaluationOptions &eo = default_user_evaluation_options, const PrintOptions &po = default_print_options, std::string *parsed_expression = NULL);
+	std::string calculateAndPrint(std::string str, int msecs = 10000, const EvaluationOptions &eo = default_user_evaluation_options, const PrintOptions &po = default_print_options, std::string *parsed_expression = nullptr);
 	/** Calculates an expression.and outputs the result to a text string. The expression should be unlocalized first with unlocalizeExpression().
 	*
 	* Unlike other functions for expression evaluation this function handles ending "to"-commands, in addition to unit conversion, such "to hexadecimal" or to "fractions", similar to the qalc application.
@@ -483,7 +483,7 @@ class Calculator {
 	* @returns The result of the calculation.
 	* \since 4.0.0
 	*/
-	std::string calculateAndPrint(std::string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, AutomaticFractionFormat auto_fraction, AutomaticApproximation auto_approx = AUTOMATIC_APPROXIMATION_OFF, std::string *parsed_expression = NULL, int max_length = -1, bool *result_is_comparison = NULL, bool format = false, int colorize = 0, int tagtype = TAG_TYPE_HTML);
+	std::string calculateAndPrint(std::string str, int msecs, const EvaluationOptions &eo, const PrintOptions &po, AutomaticFractionFormat auto_fraction, AutomaticApproximation auto_approx = AUTOMATIC_APPROXIMATION_OFF, std::string *parsed_expression = nullptr, int max_length = -1, bool *result_is_comparison = nullptr, bool format = false, int colorize = 0, int tagtype = TAG_TYPE_HTML);
 	int testCondition(std::string expression);
 	//@}
 
@@ -572,10 +572,10 @@ class Calculator {
 	* @param op Operation.
 	* @param msecs The maximum time for the calculation in milliseconds. If msecs <= 0 the time will be unlimited.
 	* @param eo Options for the evaluation and parsing of the expression.
-	* @param[out] parsed_struct NULL or a math structure to fill with the unevaluated result.
+	* @param[out] parsed_struct nullptr or a math structure to fill with the unevaluated result.
 	* @returns true if the calculation was successfully started (and finished if msecs > 0).
 	*/
-	bool calculateRPN(MathOperation op, int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL);
+	bool calculateRPN(MathOperation op, int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = nullptr);
 	/** Applies a mathematical operation to the first value on the RPN stack. The value is set as the first argument of the function.
 	* If no register is available, then zero is added.
 	* This function starts the calculation in a separate thread and will return when the calculation has started unless a maximum time has been specified.
@@ -584,10 +584,10 @@ class Calculator {
 	* @param f Mathematical function.
 	* @param msecs The maximum time for the calculation in milliseconds. If msecs <= 0 the time will be unlimited.
 	* @param eo Options for the evaluation and parsing of the expression.
-	* @param[out] parsed_struct NULL or a math structure to fill with the unevaluated result.
+	* @param[out] parsed_struct nullptr or a math structure to fill with the unevaluated result.
 	* @returns true if the calculation was successfully started (and finished if msecs > 0).
 	*/
-	bool calculateRPN(MathFunction *f, int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL);
+	bool calculateRPN(MathFunction *f, int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = nullptr);
 	/** Applies bitwise not to the first value on the RPN stack.
 	* If no register is available, then zero is added.
 	* This function starts the calculation in a separate thread and will return when the calculation has started unless a maximum time has been specified.
@@ -595,10 +595,10 @@ class Calculator {
 	*
 	* @param msecs The maximum time for the calculation in milliseconds. If msecs <= 0 the time will be unlimited.
 	* @param eo Options for the evaluation and parsing of the expression.
-	* @param[out] parsed_struct NULL or a math structure to fill with the unevaluated result.
+	* @param[out] parsed_struct nullptr or a math structure to fill with the unevaluated result.
 	* @returns true if the calculation was successfully started (and finished if msecs > 0).
 	*/
-	bool calculateRPNBitwiseNot(int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL);
+	bool calculateRPNBitwiseNot(int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = nullptr);
 	/** Applies logical not to the first value on the RPN stack.
 	* If no register is available, then zero is added.
 	* This function starts the calculation in a separate thread and will return when the calculation has started unless a maximum time has been specified.
@@ -606,45 +606,45 @@ class Calculator {
 	*
 	* @param msecs The maximum time for the calculation in milliseconds. If msecs <= 0 the time will be unlimited.
 	* @param eo Options for the evaluation and parsing of the expression.
-	* @param[out] parsed_struct NULL or a math structure to fill with the unevaluated result.
+	* @param[out] parsed_struct nullptr or a math structure to fill with the unevaluated result.
 	* @returns true if the calculation was successfully started (and finished if msecs > 0).
 	*/
-	bool calculateRPNLogicalNot(int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL);
+	bool calculateRPNLogicalNot(int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = nullptr);
 	/** Applies a mathematical operation to the first and second value on the RPN stack. The the second value is changed with input from the first value.
 	* For example, with OPERATION_SUBTRACT the first value is subtracted from the second. The first value on the stack is removed.
 	* If not enough registers is available, then zeros are added.
 	*
 	* @param op Operation.
 	* @param eo Options for the evaluation and parsing of the expression.
-	* @param[out] parsed_struct NULL or a math structure to fill with the unevaluated result.
+	* @param[out] parsed_struct nullptr or a math structure to fill with the unevaluated result.
 	* @returns The first value on the stack.
 	*/
-	MathStructure *calculateRPN(MathOperation op, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL);
+	MathStructure *calculateRPN(MathOperation op, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = nullptr);
 	/** Applies a mathematical operation to the first value on the RPN stack. The value is set as the first argument of the function.
 	* If no register is available, then zero is added.
 	*
 	* @param f Mathematical function.
 	* @param eo Options for the evaluation and parsing of the expression.
-	* @param[out] parsed_struct NULL or a math structure to fill with the unevaluated result.
+	* @param[out] parsed_struct nullptr or a math structure to fill with the unevaluated result.
 	* @returns The first value on the stack.
 	*/
-	MathStructure *calculateRPN(MathFunction *f, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL);
+	MathStructure *calculateRPN(MathFunction *f, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = nullptr);
 	/** Applies bitwise not to the first value on the RPN stack.
 	* If no register is available, then zero is added.
 	*
 	* @param eo Options for the evaluation and parsing of the expression.
-	* @param[out] parsed_struct NULL or a math structure to fill with the unevaluated result.
+	* @param[out] parsed_struct nullptr or a math structure to fill with the unevaluated result.
 	* @returns The first value on the stack.
 	*/
-	MathStructure *calculateRPNBitwiseNot(const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL);
+	MathStructure *calculateRPNBitwiseNot(const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = nullptr);
 	/** Applies logical not to the first value on the RPN stack.
 	* If no register is available, then zero is added.
 	*
 	* @param eo Options for the evaluation and parsing of the expression.
-	* @param[out] parsed_struct NULL or a math structure to fill with the unevaluated result.
+	* @param[out] parsed_struct nullptr or a math structure to fill with the unevaluated result.
 	* @returns The first value on the stack.
 	*/
-	MathStructure *calculateRPNLogicalNot(const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL);
+	MathStructure *calculateRPNLogicalNot(const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = nullptr);
 	/** Evaluates a value and adds the result first on the RPN stack.
 	* This function starts the calculation in a separate thread and will return when the calculation has started unless a maximum time has been specified.
 	* The calculation can then be stopped with abort().
@@ -662,12 +662,12 @@ class Calculator {
 	* @param str Expression.
 	* @param msecs The maximum time for the calculation in milliseconds. If msecs <= 0 the time will be unlimited.
 	* @param eo Options for the evaluation and parsing of the expression.
-	* @param[out] parsed_struct NULL or a math structure to fill with the result of the parsing of the expression.
-	* @param[out] to_struct NULL or a math structure to fill with unit expression parsed after "to".
+	* @param[out] parsed_struct nullptr or a math structure to fill with the result of the parsing of the expression.
+	* @param[out] to_struct nullptr or a math structure to fill with unit expression parsed after "to".
 	* @param make_to_division If true, the expression after "to" will be interpreted as a unit expression to convert the result to.
 	* @returns true if the calculation was successfully started (and finished if msecs > 0).
 	*/
-	bool RPNStackEnter(std::string str, int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
+	bool RPNStackEnter(std::string str, int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = nullptr, MathStructure *to_struct = nullptr, bool make_to_division = true);
 	/** Adds a value first on the RPN stack.
 	*
 	* @param mstruct Value.
@@ -678,15 +678,15 @@ class Calculator {
 	*
 	* @param str Expression.
 	* @param eo Options for the evaluation and parsing of the expression.
-	* @param[out] parsed_struct NULL or a math structure to fill with the result of the parsing of the expression.
-	* @param[out] to_struct NULL or a math structure to fill with unit expression parsed after "to".
+	* @param[out] parsed_struct nullptr or a math structure to fill with the result of the parsing of the expression.
+	* @param[out] to_struct nullptr or a math structure to fill with unit expression parsed after "to".
 	* @param make_to_division If true, the expression after "to" will be interpreted as a unit expression to convert the result to.
 	*/
-	void RPNStackEnter(std::string str, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
+	void RPNStackEnter(std::string str, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = nullptr, MathStructure *to_struct = nullptr, bool make_to_division = true);
 	bool setRPNRegister(size_t index, MathStructure *mstruct, int msecs, const EvaluationOptions &eo = default_user_evaluation_options);
-	bool setRPNRegister(size_t index, std::string str, int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
+	bool setRPNRegister(size_t index, std::string str, int msecs, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = nullptr, MathStructure *to_struct = nullptr, bool make_to_division = true);
 	void setRPNRegister(size_t index, MathStructure *mstruct, bool eval = false, const EvaluationOptions &eo = default_user_evaluation_options);
-	void setRPNRegister(size_t index, std::string str, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = NULL, MathStructure *to_struct = NULL, bool make_to_division = true);
+	void setRPNRegister(size_t index, std::string str, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *parsed_struct = nullptr, MathStructure *to_struct = nullptr, bool make_to_division = true);
 	void deleteRPNRegister(size_t index);
 	MathStructure *getRPNRegister(size_t index = 1) const;
 	size_t RPNStackSize() const;
@@ -735,13 +735,13 @@ class Calculator {
 	 * @param[out] do_bases Set to true if expression includes "to bases"
 	 * @returns the remaining unit expression
 	 */
-	std::string parseToExpression(std::string to_str, EvaluationOptions &evalops, PrintOptions &printops, Number *custom_base = NULL, int *binary_prefixes = NULL, bool *complex_angle_form = NULL, bool *do_factors = NULL, bool *do_pfe = NULL, bool *do_calendars = NULL, bool *do_bases = NULL) const;
+	std::string parseToExpression(std::string to_str, EvaluationOptions &evalops, PrintOptions &printops, Number *custom_base = nullptr, int *binary_prefixes = nullptr, bool *complex_angle_form = nullptr, bool *do_factors = nullptr, bool *do_pfe = nullptr, bool *do_calendars = nullptr, bool *do_bases = nullptr) const;
 
 	/// Split an expression string after and before " where ".
 	bool separateWhereExpression(std::string &str, std::string &where_str, const EvaluationOptions &eo) const;
 	bool hasWhereExpression(const std::string &str, const EvaluationOptions &eo) const;
 
-	std::string parseComments(std::string &str, const ParseOptions &po = default_parse_options, bool *double_tag = NULL);
+	std::string parseComments(std::string &str, const ParseOptions &po = default_parse_options, bool *double_tag = nullptr);
 	void parseSigns(std::string &str, bool convert_to_internal_representation = false) const;
 	/** Parse an expression and place in a MathStructure object.
 	*
@@ -766,11 +766,11 @@ class Calculator {
 	* @param mstruct The value to convert.
 	* @param composite_ Unit expression.
 	* @param eo Evaluation options.
-	* @param[out] units NULL or a math structure to fill with the parsed unit expression (or set to undefined if no units were found).
+	* @param[out] units nullptr or a math structure to fill with the parsed unit expression (or set to undefined if no units were found).
 	* @returns Converted value.
 	*/
-	MathStructure convert(const MathStructure &mstruct, std::string composite_, const EvaluationOptions &eo, MathStructure *units, bool transform_orig, MathStructure *parsed_struct = NULL);
-	MathStructure convert(const MathStructure &mstruct, std::string composite_, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *units = NULL);
+	MathStructure convert(const MathStructure &mstruct, std::string composite_, const EvaluationOptions &eo, MathStructure *units, bool transform_orig, MathStructure *parsed_struct = nullptr);
+	MathStructure convert(const MathStructure &mstruct, std::string composite_, const EvaluationOptions &eo = default_user_evaluation_options, MathStructure *units = nullptr);
 	/** Converts to a unit.
 	* The converted value is evaluated.
 	*
@@ -780,7 +780,7 @@ class Calculator {
 	* @param always_convert ...
 	* @returns Converted value.
 	*/
-	MathStructure convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo = default_user_evaluation_options, bool always_convert = true, bool convert_to_mixed_units = true, bool transform_orig = false, MathStructure *parsed_struct = NULL);
+	MathStructure convert(const MathStructure &mstruct, Unit *to_unit, const EvaluationOptions &eo = default_user_evaluation_options, bool always_convert = true, bool convert_to_mixed_units = true, bool transform_orig = false, MathStructure *parsed_struct = nullptr);
 	MathStructure convert(const MathStructure &mstruct, KnownVariable *to_var, const EvaluationOptions &eo = default_user_evaluation_options);
 	MathStructure convert(double value, Unit *from_unit, Unit *to_unit, const EvaluationOptions &eo = default_user_evaluation_options);
 	MathStructure convert(std::string str, Unit *from_unit, Unit *to_unit, int milliseconds, const EvaluationOptions &eo = default_user_evaluation_options);
@@ -833,28 +833,28 @@ class Calculator {
 	*
 	* @param exp10 Base-10 exponent of the requested prefix.
 	* @param exp The exponent of the unit.
-	* @returns A prefix or NULL if not found.
+	* @returns A prefix or nullptr if not found.
 	*/
 	DecimalPrefix *getExactDecimalPrefix(int exp10, int exp = 1) const;
 	/** Returns a binary prefix with exactly the provided value, that fulfils the condition prefix->exponent(exp) == exp2.
 	*
 	* @param exp2 Base-2 exponent of the requested prefix.
 	* @param exp The exponent of the unit.
-	* @returns A prefix or NULL if not found.
+	* @returns A prefix or nullptr if not found.
 	*/
 	BinaryPrefix *getExactBinaryPrefix(int exp2, int exp = 1) const;
 	/** Returns a prefix with exactly the provided value, that fulfils the condition prefix->value(exp) == o.
 	*
 	* @param o Value of the requested prefix.
 	* @param exp The exponent of the unit.
-	* @returns A prefix or NULL if not found.
+	* @returns A prefix or nullptr if not found.
 	*/
 	Prefix *getExactPrefix(const Number &o, int exp = 1) const;
 	/** Returns the nearest decimal prefix for a value.
 	*
 	* @param exp10 Base-10 exponent of the value.
 	* @param exp The exponent of the unit.
-	* @returns A prefix or NULL if no decimal prefix is available.
+	* @returns A prefix or nullptr if no decimal prefix is available.
 	*/
 	DecimalPrefix *getNearestDecimalPrefix(int exp10, int exp = 1) const;
 	/** Returns the best suited decimal prefix for a value.
@@ -862,7 +862,7 @@ class Calculator {
 	* @param exp10 Base-10 exponent of the value.
 	* @param exp The exponent of the unit.
 	* @param all_prefixes If false, prefixes which is not a multiple of thousand (centi, deci, deca, hecto) will be skipped.
-	* @returns A prefix or NULL if the unit should be left without prefix.
+	* @returns A prefix or nullptr if the unit should be left without prefix.
 	*/
 	DecimalPrefix *getOptimalDecimalPrefix(int exp10, int exp = 1, bool all_prefixes = true) const;
 	/** Returns the best suited decimal prefix for a value.
@@ -870,28 +870,28 @@ class Calculator {
 	* @param exp10 Base-10 exponent of the value.
 	* @param exp The exponent of the unit.
 	* @param all_prefixes If false, prefixes which is not a multiple of thousand (centi, deci, deca, hecto) will be skipped.
-	* @returns A prefix or NULL if the unit should be left without prefix.
+	* @returns A prefix or nullptr if the unit should be left without prefix.
 	*/
 	DecimalPrefix *getOptimalDecimalPrefix(const Number &exp10, const Number &exp, bool all_prefixes = true) const;
 	/** Returns the nearest binary prefix for a value.
 	*
 	* @param exp2 Base-2 exponent of the value.
 	* @param exp The exponent of the unit.
-	* @returns A prefix or NULL if no binary prefix is available.
+	* @returns A prefix or nullptr if no binary prefix is available.
 	*/
 	BinaryPrefix *getNearestBinaryPrefix(int exp2, int exp = 1) const;
 	/** Returns the best suited binary prefix for a value.
 	*
 	* @param exp2 Base-2 exponent of the value.
 	* @param exp The exponent of the unit.
-	* @returns A prefix or NULL if the unit should be left without prefix.
+	* @returns A prefix or nullptr if the unit should be left without prefix.
 	*/
 	BinaryPrefix *getOptimalBinaryPrefix(int exp2, int exp = 1) const;
 	/** Returns the best suited binary prefix for a value.
 	*
 	* @param exp2 Base-2 exponent of the value.
 	* @param exp The exponent of the unit.
-	* @returns A prefix or NULL if the unit should be left without prefix.
+	* @returns A prefix or nullptr if the unit should be left without prefix.
 	*/
 	BinaryPrefix *getOptimalBinaryPrefix(const Number &exp2, const Number &exp) const;
 	/** Controls if binary, instead of decimal, prefixes will be used by default.
@@ -911,8 +911,8 @@ class Calculator {
 	void expressionItemDeactivated(ExpressionItem *item);
 	void expressionItemDeleted(ExpressionItem *item);
 	void nameChanged(ExpressionItem *item, bool new_item = false);
-	void deleteName(std::string name_, ExpressionItem *object = NULL);
-	void deleteUnitName(std::string name_, Unit *object = NULL);
+	void deleteName(std::string name_, ExpressionItem *object = nullptr);
+	void deleteUnitName(std::string name_, Unit *object = nullptr);
 	Unit* addUnit(Unit *u, bool force = true, bool check_names = true);
 	void delPrefixUFV(Prefix *object);
 	void delUFV(ExpressionItem *object);
@@ -936,11 +936,11 @@ class Calculator {
 	bool stillHasFunction(MathFunction *f);
 	void saveFunctionCalled();
 	bool checkSaveFunctionCalled();
-	ExpressionItem *getActiveExpressionItem(std::string name, ExpressionItem *item = NULL);
+	ExpressionItem *getActiveExpressionItem(std::string name, ExpressionItem *item = nullptr);
 	ExpressionItem *getActiveExpressionItem(std::string name, ExpressionItem *item, bool ignore_us);
-	ExpressionItem *getInactiveExpressionItem(std::string name, ExpressionItem *item = NULL);
+	ExpressionItem *getInactiveExpressionItem(std::string name, ExpressionItem *item = nullptr);
 	ExpressionItem *getActiveExpressionItem(ExpressionItem *item);
-	ExpressionItem *getExpressionItem(std::string name, ExpressionItem *item = NULL);
+	ExpressionItem *getExpressionItem(std::string name, ExpressionItem *item = nullptr);
 	Unit* getUnit(std::string name_);
 	Unit* getUnitById(int id) const;
 	Unit* getActiveUnit(std::string name_);
@@ -948,16 +948,16 @@ class Calculator {
 	Unit* getCompositeUnit(std::string internal_name_);
 	Unit* getLocalCurrency();
 	void setLocalCurrency(Unit *u);
-	/** Returns prefix for an index (starting at zero). All prefixes can be traversed by starting at index zero and increasing the index until NULL is returned.
+	/** Returns prefix for an index (starting at zero). All prefixes can be traversed by starting at index zero and increasing the index until nullptr is returned.
 	*
 	* @param index Index of prefix.
-	* @returns Prefix for index or NULL if not found.
+	* @returns Prefix for index or nullptr if not found.
 	*/
 	Prefix *getPrefix(size_t index) const;
 	/** Returns prefix with provided name.
 	*
 	* @param name_ Name of prefix to retrieve.
-	* @returns Prefix with provided name or NULL if not found.
+	* @returns Prefix with provided name or nullptr if not found.
 	*/
 	Prefix *getPrefix(std::string name_) const;
 	Prefix *getDecimalNullPrefix() const;
@@ -979,22 +979,22 @@ class Calculator {
 	MathFunction* getFunctionById(int id) const;
 	MathFunction* getActiveFunction(std::string name_);
 	MathFunction* getActiveFunction(std::string name_, bool ignore_us);
-	/** Returns variable for an index (starting at zero). All variables can be traversed by starting at index zero and increasing the index until NULL is returned.
+	/** Returns variable for an index (starting at zero). All variables can be traversed by starting at index zero and increasing the index until nullptr is returned.
 	*
 	* @param index Index of variable.
-	* @returns Variable for index or NULL if not found.
+	* @returns Variable for index or nullptr if not found.
 	*/
 	Variable *getVariable(size_t index) const;
-	/** Returns unit for an index (starting at zero). All units can be traversed by starting at index zero and increasing the index until NULL is returned.
+	/** Returns unit for an index (starting at zero). All units can be traversed by starting at index zero and increasing the index until nullptr is returned.
 	*
 	* @param index Index of unit.
-	* @returns Unit for index or NULL if not found.
+	* @returns Unit for index or nullptr if not found.
 	*/
 	Unit *getUnit(size_t index) const;
-	/** Returns function for an index (starting at zero). All functions can be traversed by starting at index zero and increasing the index until NULL is returned.
+	/** Returns function for an index (starting at zero). All functions can be traversed by starting at index zero and increasing the index until nullptr is returned.
 	*
 	* @param index Index of function.
-	* @returns Function for index or NULL if not found.
+	* @returns Function for index or nullptr if not found.
 	*/
 	MathFunction *getFunction(size_t index) const;
 	bool unitIsUsedByOtherUnits(const Unit *u) const;
@@ -1055,11 +1055,11 @@ class Calculator {
 	* @param object Object to exclude from check.
 	* @returns true if the name is used.
 	*/
-	bool nameTaken(std::string name, ExpressionItem *object = NULL);
-	bool variableNameTaken(std::string name, Variable *object = NULL);
-	bool unitNameTaken(std::string name, Unit *object = NULL);
-	bool functionNameTaken(std::string name, MathFunction *object = NULL);
-	std::string getName(std::string name = "", ExpressionItem *object = NULL, bool force = false, bool always_append = false);
+	bool nameTaken(std::string name, ExpressionItem *object = nullptr);
+	bool variableNameTaken(std::string name, Variable *object = nullptr);
+	bool unitNameTaken(std::string name, Unit *object = nullptr);
+	bool functionNameTaken(std::string name, MathFunction *object = nullptr);
+	std::string getName(std::string name = "", ExpressionItem *object = nullptr, bool force = false, bool always_append = false);
 	//@}
 
 	/** @name Functions for message handling. */
@@ -1082,8 +1082,8 @@ class Calculator {
 	void clearMessages();
 	bool showArgumentErrors() const;
 	void beginTemporaryStopMessages();
-	int endTemporaryStopMessages(int *message_count = NULL, int *warning_count = NULL, int release_messages_if_no_equal_or_greater_than_message_type = -1);
-	void endTemporaryStopMessages(bool release_messages, std::vector<CalculatorMessage> *blocked_messages = NULL);
+	int endTemporaryStopMessages(int *message_count = nullptr, int *warning_count = nullptr, int release_messages_if_no_equal_or_greater_than_message_type = -1);
+	void endTemporaryStopMessages(bool release_messages, std::vector<CalculatorMessage> *blocked_messages = nullptr);
 	void addMessages(std::vector<CalculatorMessage> *message_vector);
 	const PrintOptions &messagePrintOptions() const;
 	void setMessagePrintOptions(const PrintOptions &po);
@@ -1167,7 +1167,7 @@ class Calculator {
 
 	/** @name Functions for CSV file import/export. */
 	//@{
-	bool importCSV(MathStructure &mstruct, const char *file_name, int first_row = 1, std::string delimiter = ",", std::vector<std::string> *headers = NULL);
+	bool importCSV(MathStructure &mstruct, const char *file_name, int first_row = 1, std::string delimiter = ",", std::vector<std::string> *headers = nullptr);
 	bool importCSV(const char *file_name, int first_row = 1, bool headers = true, std::string delimiter = ",", bool to_matrix = false, std::string name = "", std::string title = "", std::string category = "");
 	bool exportCSV(const MathStructure &mstruct, const char *file_name, std::string delimiter = ",");
 	//@}
@@ -1239,12 +1239,12 @@ class Calculator {
 	* @returns true if gnuplot was found.
 	*/
 	bool canPlot();
-	MathStructure expressionToPlotVector(std::string expression, const MathStructure &min, const MathStructure &max, int steps, bool separate_complex_part, MathStructure *x_vector = NULL, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
-	MathStructure expressionToPlotVector(std::string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector = NULL, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
-	MathStructure expressionToPlotVector(std::string expression, float min, float max, int steps, MathStructure *x_vector = NULL, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
-	MathStructure expressionToPlotVector(std::string expression, const MathStructure &min, const MathStructure &max, const MathStructure &step, bool separate_complex_part, MathStructure *x_vector = NULL, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
-	MathStructure expressionToPlotVector(std::string expression, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector = NULL, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
-	MathStructure expressionToPlotVector(std::string expression, float min, float max, float step, MathStructure *x_vector = NULL, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
+	MathStructure expressionToPlotVector(std::string expression, const MathStructure &min, const MathStructure &max, int steps, bool separate_complex_part, MathStructure *x_vector = nullptr, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
+	MathStructure expressionToPlotVector(std::string expression, const MathStructure &min, const MathStructure &max, int steps, MathStructure *x_vector = nullptr, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
+	MathStructure expressionToPlotVector(std::string expression, float min, float max, int steps, MathStructure *x_vector = nullptr, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
+	MathStructure expressionToPlotVector(std::string expression, const MathStructure &min, const MathStructure &max, const MathStructure &step, bool separate_complex_part, MathStructure *x_vector = nullptr, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
+	MathStructure expressionToPlotVector(std::string expression, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure *x_vector = nullptr, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
+	MathStructure expressionToPlotVector(std::string expression, float min, float max, float step, MathStructure *x_vector = nullptr, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
 	MathStructure expressionToPlotVector(std::string expression, const MathStructure &x_vector, std::string x_var = "\\x", const ParseOptions &po = default_parse_options, int msecs = 5000);
 	bool plotVectors(PlotParameters *param, const std::vector<MathStructure> &y_vectors, const std::vector<MathStructure> &x_vectors, std::vector<PlotDataParameters*> &pdps, bool persistent = false, int msecs = 5000);
 	void forcePersistentPlot(bool persistent = true);
@@ -1365,10 +1365,10 @@ class Calculator {
 
 };
 
-void print_dual(const MathStructure &mresult, const std::string &original_expression, const MathStructure &mparse, MathStructure &mexact, std::string &result_str, std::vector<std::string> &results_v, PrintOptions &po, const EvaluationOptions &evalops, AutomaticFractionFormat auto_frac, AutomaticApproximation auto_approx, bool cplx_angle = false, bool *exact_cmp = NULL, bool b_parsed = true, bool format = false, int colorize = 0, int tagtype = TAG_TYPE_HTML, int max_length = -1, bool converted = false);
+void print_dual(const MathStructure &mresult, const std::string &original_expression, const MathStructure &mparse, MathStructure &mexact, std::string &result_str, std::vector<std::string> &results_v, PrintOptions &po, const EvaluationOptions &evalops, AutomaticFractionFormat auto_frac, AutomaticApproximation auto_approx, bool cplx_angle = false, bool *exact_cmp = nullptr, bool b_parsed = true, bool format = false, int colorize = 0, int tagtype = TAG_TYPE_HTML, int max_length = -1, bool converted = false);
 void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, const std::string &original_expression, const MathStructure *parsed_mstruct, EvaluationOptions &evalops, AutomaticApproximation auto_approx, int msecs = 0, int max_size = 10);
 bool transform_expression_for_equals_save(std::string&, const ParseOptions&);
-MathStructure get_units_for_parsed_expression(const MathStructure *parsed_struct, Unit *to_unit, const EvaluationOptions &eo, const MathStructure *mstruct = NULL);
+MathStructure get_units_for_parsed_expression(const MathStructure *parsed_struct, Unit *to_unit, const EvaluationOptions &eo, const MathStructure *mstruct = nullptr);
 MathStructure get_units_for_parsed_expression(const MathStructure *parsed_struct, Unit *to_unit, const EvaluationOptions &eo, const MathStructure *mstruct, std::string parsed_text);
 bool expression_contains_save_function(const std::string&, const ParseOptions&, bool = false);
 void convert_unchanged_quantity_with_unit(const MathStructure &mp, MathStructure &mr, EvaluationOptions &eo);

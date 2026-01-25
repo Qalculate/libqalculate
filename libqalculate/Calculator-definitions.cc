@@ -270,7 +270,7 @@ bool Calculator::loadLocalDefinitions() {
 
 #define X_SET_BEST_NAMES(validation, x) \
 	size_t names_i = 0, i2 = 0; \
-	string *str_names = NULL; \
+	string *str_names = nullptr; \
 	if(best_names == "-") {best_names = ""; nextbest_names = "";} \
 	if(!best_names.empty()) {str_names = &best_names;} \
 	else if(!nextbest_names.empty()) {str_names = &nextbest_names;} \
@@ -278,7 +278,7 @@ bool Calculator::loadLocalDefinitions() {
 	if(str_names && !str_names->empty() && (*str_names)[0] == '!') { \
 		names_i = str_names->find('!', 1) + 1; \
 	} \
-	while(str_names != NULL) { \
+	while(str_names != nullptr) { \
 		size_t i3 = names_i; \
 		names_i = str_names->find(",", i3); \
 		if(i2 == 0) { \
@@ -434,7 +434,7 @@ bool Calculator::loadLocalDefinitions() {
 							name_index--;\
 							names[name_index] = empty_expression_name;\
 							ref_names[name_index] = empty_expression_name;\
-							value2 = NULL;\
+							value2 = nullptr;\
 							bool case_set = false;\
 							if(child->name[0] == 'a') {\
 								names[name_index].abbreviation = true;\
@@ -444,7 +444,7 @@ bool Calculator::loadLocalDefinitions() {
 								ref_names[name_index].plural = true;\
 							}\
 							child2 = child->xmlChildrenNode;\
-							while(child2 != NULL) {\
+							while(child2 != nullptr) {\
 								if((!best_name[name_index] || (ref_names[name_index].name.empty() && !locale.empty())) && !xmlStrcmp(child2->name, (const xmlChar*) "name")) {\
 									lang = xmlNodeGetLang(child2);\
 									UPDATE_LOCALE_LANG \
@@ -483,7 +483,7 @@ bool Calculator::loadLocalDefinitions() {
 									}\
 									if(value2) xmlFree(value2);\
 									if(lang) xmlFree(lang);\
-									value2 = NULL; lang = NULL;\
+									value2 = nullptr; lang = nullptr;\
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "unicode")) {\
 									XML_GET_BOOL_FROM_TEXT(child2, names[name_index].unicode)\
 									ref_names[name_index].unicode = names[name_index].unicode;\
@@ -802,14 +802,14 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 	if(!priv->definitions_locale_set) {
 #ifdef _WIN32
 		size_t n = 0;
-		getenv_s(&n, NULL, 0, "LANG");
+		getenv_s(&n, nullptr, 0, "LANG");
 		if(n > 0) {
 			char *c_lang = (char*) malloc(n * sizeof(char));
 			getenv_s(&n, c_lang, n, "LANG");
 			locale = c_lang;
 			free(c_lang);
 		} else {
-			getenv_s(&n, NULL, 0, "LANGUAGE");
+			getenv_s(&n, nullptr, 0, "LANGUAGE");
 			if(n > 0) {
 				char *c_lang = (char*) malloc(n * sizeof(char));
 				getenv_s(&n, c_lang, n, "LANGUAGE");
@@ -818,7 +818,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 			} else {
 				ULONG nlang = 0;
 				DWORD n = 0;
-				if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
+				if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, nullptr, &n)) {
 					WCHAR* wlocale = new WCHAR[n];
 					if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
 						for(size_t i = 2; nlang > 1 && i < n - 1; i++) {
@@ -837,7 +837,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		gsub("-", "_", locale);
 #else
 		char *clocale = getenv("LANGUAGE");
-		if(!clocale || strlen(clocale) == 0) clocale = setlocale(LC_MESSAGES, NULL);
+		if(!clocale || strlen(clocale) == 0) clocale = setlocale(LC_MESSAGES, nullptr);
 		if(!clocale || strlen(clocale) == 0) clocale = getenv("LANG");
 		if(clocale) locale = clocale;
 #endif
@@ -907,23 +907,23 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 	} else {
 		doc = xmlParseFile(file_name);
 	}
-	if(doc == NULL) {
+	if(doc == nullptr) {
 		return false;
 	}
 	cur = xmlDocGetRootElement(doc);
-	if(cur == NULL) {
+	if(cur == nullptr) {
 		xmlFreeDoc(doc);
 		return false;
 	}
-	while(cur != NULL) {
+	while(cur != nullptr) {
 		if(!xmlStrcmp(cur->name, (const xmlChar*) "QALCULATE")) {
 			XML_GET_STRING_FROM_PROP(cur, "version", version)
 			break;
 		}
 		cur = cur->next;
 	}
-	if(cur == NULL) {
-		error(true, _("File not identified as Qalculate! definitions file: %s."), file_name, NULL);
+	if(cur == nullptr) {
+		error(true, _("File not identified as Qalculate! definitions file: %s."), file_name, nullptr);
 		xmlFreeDoc(doc);
 		return false;
 	}
@@ -955,7 +955,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 		if(!in_unfinished) {
 			category_title = ""; best_category_title = false; next_best_category_title = false;
 			child = cur->xmlChildrenNode;
-			while(child != NULL) {
+			while(child != nullptr) {
 				if(!xmlStrcmp(child->name, (const xmlChar*) "title")) {
 					XML_GET_LOCALE_STRING_FROM_TEXT(child, category_title, best_category_title, next_best_category_title)
 				} else if(!xmlStrcmp(child->name, (const xmlChar*) "category")) {
@@ -1014,7 +1014,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 				child = cur->xmlChildrenNode;
 				ITEM_INIT_DTH
 				ITEM_INIT_NAME
-				while(child != NULL) {
+				while(child != nullptr) {
 					if(!xmlStrcmp(child->name, (const xmlChar*) "expression")) {
 						XML_DO_FROM_TEXT(child, ((UserFunction*) f)->setFormula);
 						XML_GET_PREC_FROM_PROP(child, prec)
@@ -1030,7 +1030,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 						else ((UserFunction*) f)->addSubfunction("", true);
 						if(value) xmlFree(value);
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "argument")) {
-						farg = NULL; iarg = NULL;
+						farg = nullptr; iarg = nullptr;
 						XML_GET_STRING_FROM_PROP(child, "type", type);
 						if(type == "text") {
 							arg = new TextArgument();
@@ -1061,16 +1061,16 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 						} else if(type == "angle") {
 							arg = new AngleArgument();
 						} else if(type == "data-object") {
-							arg = new DataObjectArgument(NULL, "");
+							arg = new DataObjectArgument(nullptr, "");
 						} else if(type == "data-property") {
-							arg = new DataPropertyArgument(NULL, "");
+							arg = new DataPropertyArgument(nullptr, "");
 						} else {
 							arg = new Argument();
 							if(!is_user_defs) arg->setHandleVector(true);
 						}
 						child2 = child->xmlChildrenNode;
 						argname = ""; best_argname = false; next_best_argname = false;
-						while(child2 != NULL) {
+						while(child2 != nullptr) {
 							if(!xmlStrcmp(child2->name, (const xmlChar*) "title")) {
 								XML_GET_LOCALE_STRING_FROM_TEXT(child2, argname, best_argname, next_best_argname)
 							} else if(!xmlStrcmp(child2->name, (const xmlChar*) "min")) {
@@ -1157,7 +1157,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 				}
 				if(f->countNames() == 0) {
 					f->destroy();
-					f = NULL;
+					f = nullptr;
 				} else {
 					f->setChanged(false);
 					addFunction(f, true, is_user_defs);
@@ -1181,7 +1181,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 				ITEM_INIT_DTH
 				ITEM_INIT_NAME
 				copyright = ""; best_copyright = false; next_best_copyright = false;
-				while(child != NULL) {
+				while(child != nullptr) {
 					if(!xmlStrcmp(child->name, (const xmlChar*) "property")) {
 						dp = new DataProperty(dc);
 						child2 = child->xmlChildrenNode;
@@ -1195,7 +1195,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 						}
 						proptitle = ""; best_proptitle = false; next_best_proptitle = false;
 						propdescr = ""; best_propdescr = false; next_best_propdescr = false;
-						while(child2 != NULL) {
+						while(child2 != nullptr) {
 							if(!xmlStrcmp(child2->name, (const xmlChar*) "title")) {
 								XML_GET_LOCALE_STRING_FROM_TEXT(child2, proptitle, best_proptitle, next_best_proptitle)
 							} else if(!new_names && !xmlStrcmp(child2->name, (const xmlChar*) "name")) {
@@ -1205,9 +1205,9 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 									name_index--;
 									prop_names[name_index] = "";
 									ref_prop_names[name_index] = "";
-									value2 = NULL;
+									value2 = nullptr;
 									child3 = child2->xmlChildrenNode;
-									while(child3 != NULL) {
+									while(child3 != nullptr) {
 										if((!best_name[name_index] || (ref_prop_names[name_index].empty() && !locale.empty())) && !xmlStrcmp(child3->name, (const xmlChar*) "name")) {
 											lang = xmlNodeGetLang(child3);
 											UPDATE_LOCALE_LANG
@@ -1240,7 +1240,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 											}
 											if(value2) xmlFree(value2);
 											if(lang) xmlFree(lang);
-											value2 = NULL; lang = NULL;
+											value2 = nullptr; lang = nullptr;
 										}
 										child3 = child3->next;
 									}
@@ -1436,7 +1436,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "argument")) {
 						child2 = child->xmlChildrenNode;
 						argname = ""; best_argname = false; next_best_argname = false;
-						while(child2 != NULL) {
+						while(child2 != nullptr) {
 							if(!xmlStrcmp(child2->name, (const xmlChar*) "title")) {
 								XML_GET_LOCALE_STRING_FROM_TEXT(child2, argname, best_argname, next_best_argname)
 							}
@@ -1450,7 +1450,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "object_argument")) {
 						child2 = child->xmlChildrenNode;
 						argname = ""; best_argname = false; next_best_argname = false;
-						while(child2 != NULL) {
+						while(child2 != nullptr) {
 							if(!xmlStrcmp(child2->name, (const xmlChar*) "title")) {
 								XML_GET_LOCALE_STRING_FROM_TEXT(child2, argname, best_argname, next_best_argname)
 							}
@@ -1472,7 +1472,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					} else if(!xmlStrcmp(child->name, (const xmlChar*) "property_argument")) {
 						child2 = child->xmlChildrenNode;
 						argname = ""; best_argname = false; next_best_argname = false;
-						while(child2 != NULL) {
+						while(child2 != nullptr) {
 							if(!xmlStrcmp(child2->name, (const xmlChar*) "title")) {
 								XML_GET_LOCALE_STRING_FROM_TEXT(child2, argname, best_argname, next_best_argname)
 							}
@@ -1535,7 +1535,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 				}
 				if(!builtin && dc->countNames() == 0) {
 					dc->destroy();
-					dc = NULL;
+					dc = nullptr;
 				} else {
 					dc->setChanged(builtin && is_user_defs);
 					if(!builtin) addDataSet(dc, true, is_user_defs);
@@ -1552,11 +1552,11 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					child = cur->xmlChildrenNode;
 					ITEM_INIT_DTH
 					ITEM_INIT_NAME
-					while(child != NULL) {
+					while(child != nullptr) {
 						if(!xmlStrcmp(child->name, (const xmlChar*) "argument")) {
 							child2 = child->xmlChildrenNode;
 							argname = ""; best_argname = false; next_best_argname = false;
-							while(child2 != NULL) {
+							while(child2 != nullptr) {
 								if(!xmlStrcmp(child2->name, (const xmlChar*) "title")) {
 									XML_GET_LOCALE_STRING_FROM_TEXT(child2, argname, best_argname, next_best_argname)
 								}
@@ -1626,7 +1626,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 				b = true;
 				ITEM_INIT_DTH
 				ITEM_INIT_NAME
-				while(child != NULL) {
+				while(child != nullptr) {
 					if(!xmlStrcmp(child->name, (const xmlChar*) "type")) {
 						XML_GET_STRING_FROM_TEXT(child, stmp);
 						if(!((UnknownVariable*) v)->assumptions()) ((UnknownVariable*) v)->setAssumptions(new Assumptions());
@@ -1687,7 +1687,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 				}
 				if(v->countNames() == 0) {
 					v->destroy();
-					v = NULL;
+					v = nullptr;
 				} else {
 					addVariable(v, true, is_user_defs);
 					v->setChanged(false);
@@ -1707,7 +1707,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 				b = true;
 				ITEM_INIT_DTH
 				ITEM_INIT_NAME
-				while(child != NULL) {
+				while(child != nullptr) {
 					if(!xmlStrcmp(child->name, (const xmlChar*) "value")) {
 						XML_DO_FROM_TEXT(child, ((KnownVariable*) v)->set);
 						XML_GET_STRING_FROM_PROP(child, "relative_uncertainty", suncertainty)
@@ -1744,7 +1744,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 				}
 				if(v->countNames() == 0) {
 					v->destroy();
-					v = NULL;
+					v = nullptr;
 				} else {
 					addVariable(v, true, is_user_defs);
 					item->setChanged(false);
@@ -1760,7 +1760,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					child = cur->xmlChildrenNode;
 					ITEM_INIT_DTH
 					ITEM_INIT_NAME
-					while(child != NULL) {
+					while(child != nullptr) {
 						ITEM_READ_NAME(variableNameIsValid)
 						 else ITEM_READ_DTH
 						 else {
@@ -1802,7 +1802,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					max_prefix = INT_MAX, min_prefix = INT_MIN, default_prefix = 0;
 					ITEM_INIT_DTH
 					ITEM_INIT_NAME
-					while(child != NULL) {
+					while(child != nullptr) {
 						if(!xmlStrcmp(child->name, (const xmlChar*) "system")) {
 							XML_DO_FROM_TEXT(child, u->setSystem)
 						} else if(!xmlStrcmp(child->name, (const xmlChar*) "use_with_prefixes")) {
@@ -1856,7 +1856,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					}
 					if(u->countNames() == 0) {
 						u->destroy();
-						u = NULL;
+						u = nullptr;
 					} else {
 						if(!is_user_defs && u->referenceName() == "s") u_second = u;
 						else if(!is_user_defs && u->referenceName() == "K") priv->u_kelvin = u;
@@ -1871,7 +1871,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 						name = "";
 					}
 					XML_GET_FALSE_FROM_PROP(cur, "active", active)
-					u = NULL;
+					u = nullptr;
 					child = cur->xmlChildrenNode;
 					singular = ""; best_singular = false; next_best_singular = false;
 					plural = ""; best_plural = false; next_best_plural = false;
@@ -1884,7 +1884,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					ITEM_INIT_DTH
 					ITEM_INIT_NAME
 					unc_rel = false;
-					while(child != NULL) {
+					while(child != nullptr) {
 						if(!xmlStrcmp(child->name, (const xmlChar*) "base")) {
 							child2 = child->xmlChildrenNode;
 							exponent = 1;
@@ -1894,7 +1894,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 							inverse = "";
 							suncertainty = "";
 							b = true;
-							while(child2 != NULL) {
+							while(child2 != nullptr) {
 								if(!xmlStrcmp(child2->name, (const xmlChar*) "unit")) {
 									XML_GET_STRING_FROM_TEXT(child2, base);
 									u = getActiveUnit(base);
@@ -2002,7 +2002,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 						}
 						if(au->countNames() == 0 || (b_remove_cent && au->firstBaseUnit() == u_usd && au->hasName("cent"))) {
 							au->destroy();
-							au = NULL;
+							au = nullptr;
 						} else {
 							if(!is_user_defs && au->baseUnit() == u_second) {
 								if(au->referenceName() == "d" || au->referenceName() == "day") u_day = au;
@@ -2031,17 +2031,17 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					usystem = "";
 					use_with_prefixes_set = false;
 					max_prefix = INT_MAX, min_prefix = INT_MIN, default_prefix = 0;
-					cu = NULL;
+					cu = nullptr;
 					ITEM_INIT_DTH
 					ITEM_INIT_NAME
 					b = true;
-					while(child != NULL) {
-						u = NULL;
+					while(child != nullptr) {
+						u = nullptr;
 						if(!xmlStrcmp(child->name, (const xmlChar*) "part")) {
 							child2 = child->xmlChildrenNode;
-							p = NULL;
+							p = nullptr;
 							exponent = 1;
-							while(child2 != NULL) {
+							while(child2 != nullptr) {
 								if(!xmlStrcmp(child2->name, (const xmlChar*) "unit")) {
 									XML_GET_STRING_FROM_TEXT(child2, base);
 									u = getUnit(base);
@@ -2051,7 +2051,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "prefix")) {
 									XML_GET_STRING_FROM_PROP(child2, "type", stmp)
 									XML_GET_STRING_FROM_TEXT(child2, svalue);
-									p = NULL;
+									p = nullptr;
 									if(stmp == "binary") {
 										litmp = s2i(svalue);
 										if(litmp != 0) {
@@ -2075,7 +2075,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 										if(cu) {
 											delete cu;
 										}
-										cu = NULL;
+										cu = nullptr;
 										break;
 									}
 								} else if(!xmlStrcmp(child2->name, (const xmlChar*) "exponent")) {
@@ -2096,7 +2096,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 								cu->add(u, exponent, p);
 							} else {
 								if(cu) delete cu;
-								cu = NULL;
+								cu = nullptr;
 								if(!in_unfinished) {
 									unfinished_nodes.push_back(cur);
 									unfinished_cats.push_back(category);
@@ -2145,7 +2145,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 						}
 						if(cu->countNames() == 0) {
 							cu->destroy();
-							cu = NULL;
+							cu = nullptr;
 						} else {
 							addUnit(cu, true, is_user_defs);
 							cu->setChanged(false);
@@ -2173,7 +2173,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					use_with_prefixes_set = false;
 					ITEM_INIT_DTH
 					ITEM_INIT_NAME
-					while(child != NULL) {
+					while(child != nullptr) {
 						if(!xmlStrcmp(child->name, (const xmlChar*) "singular")) {
 							XML_GET_LOCALE_STRING_FROM_TEXT(child, singular, best_singular, next_best_singular)
 							if(!unitNameIsValid(singular, version_numbers, is_user_defs)) {
@@ -2250,7 +2250,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 				uname = ""; sexp = ""; svalue = ""; name = "";
 				bool b_best = false;
 				ITEM_INIT_NAME
-				while(child != NULL) {
+				while(child != nullptr) {
 					if(!new_prefix_names && !xmlStrcmp(child->name, (const xmlChar*) "name")) {
 						lang = xmlNodeGetLang(child);
 						UPDATE_LOCALE_LANG
@@ -2282,7 +2282,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					}
 					child = child->next;
 				}
-				p = NULL;
+				p = nullptr;
 				if(type == "decimal") {
 					p = new DecimalPrefix(s2i(sexp), name, stmp, uname);
 				} else if(type == "number") {
@@ -2308,7 +2308,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 				done_something = true;
 			}
 			after_load_object:
-			cur = NULL;
+			cur = nullptr;
 			if(in_unfinished) {
 				if(done_something) {
 					in_unfinished--;
@@ -2351,10 +2351,10 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 				in_unfinished = 1;
 				done_something = false;
 			} else {
-				cur = NULL;
+				cur = nullptr;
 			}
 		}
-		if(cur == NULL) {
+		if(cur == nullptr) {
 			break;
 		}
 	}
@@ -2384,7 +2384,7 @@ struct node_tree_item {
 int Calculator::saveDataObjects() {
 	int returnvalue = 1;
 	for(size_t i = 0; i < data_sets.size(); i++) {
-		int rv = data_sets[i]->saveObjects(NULL, false);
+		int rv = data_sets[i]->saveObjects(nullptr, false);
 		if(rv <= 0) returnvalue = rv;
 	}
 	return returnvalue;
@@ -2407,9 +2407,9 @@ int Calculator::saveDataObjects() {
 					if(str.empty() || str[str.length() - 1] == ',') {\
 						if(i2 == 1 && o->countNames() == 1) {\
 							if(save_global) {\
-								xmlNewTextChild(newnode, NULL, (xmlChar*) "_names", (xmlChar*) ename->name.c_str());\
+								xmlNewTextChild(newnode, nullptr, (xmlChar*) "_names", (xmlChar*) ename->name.c_str());\
 							} else {\
-								xmlNewTextChild(newnode, NULL, (xmlChar*) "names", (xmlChar*) ename->name.c_str());\
+								xmlNewTextChild(newnode, nullptr, (xmlChar*) "names", (xmlChar*) ename->name.c_str());\
 							}\
 							break;\
 						}\
@@ -2420,9 +2420,9 @@ int Calculator::saveDataObjects() {
 					i2++;\
 					if(i2 > o->countNames()) {\
 						if(save_global) {\
-							xmlNewTextChild(newnode, NULL, (xmlChar*) "_names", (xmlChar*) str.c_str());\
+							xmlNewTextChild(newnode, nullptr, (xmlChar*) "_names", (xmlChar*) str.c_str());\
 						} else {\
-							xmlNewTextChild(newnode, NULL, (xmlChar*) "names", (xmlChar*) str.c_str());\
+							xmlNewTextChild(newnode, nullptr, (xmlChar*) "names", (xmlChar*) str.c_str());\
 						}\
 						break;\
 					}\
@@ -2437,26 +2437,26 @@ int Calculator::savePrefixes(const char* file_name, bool save_global) {
 	const ExpressionName *ename;
 	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");
 	xmlNodePtr cur, newnode;
-	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);
+	doc->children = xmlNewDocNode(doc, nullptr, (xmlChar*) "QALCULATE", nullptr);
 	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
 	cur = doc->children;
 	for(size_t i = 0; i < prefixes.size(); i++) {
-		newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "prefix", NULL);
+		newnode = xmlNewTextChild(cur, nullptr, (xmlChar*) "prefix", nullptr);
 		SAVE_NAMES(prefixes[i])
 		switch(prefixes[i]->type()) {
 			case PREFIX_DECIMAL: {
 				xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "decimal");
-				xmlNewTextChild(newnode, NULL, (xmlChar*) "exponent", (xmlChar*) i2s(((DecimalPrefix*) prefixes[i])->exponent()).c_str());
+				xmlNewTextChild(newnode, nullptr, (xmlChar*) "exponent", (xmlChar*) i2s(((DecimalPrefix*) prefixes[i])->exponent()).c_str());
 				break;
 			}
 			case PREFIX_BINARY: {
 				xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "binary");
-				xmlNewTextChild(newnode, NULL, (xmlChar*) "exponent", (xmlChar*) i2s(((BinaryPrefix*) prefixes[i])->exponent()).c_str());
+				xmlNewTextChild(newnode, nullptr, (xmlChar*) "exponent", (xmlChar*) i2s(((BinaryPrefix*) prefixes[i])->exponent()).c_str());
 				break;
 			}
 			case PREFIX_NUMBER: {
 				xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "number");
-				xmlNewTextChild(newnode, NULL, (xmlChar*) "value", (xmlChar*) prefixes[i]->value().print(save_printoptions).c_str());
+				xmlNewTextChild(newnode, nullptr, (xmlChar*) "value", (xmlChar*) prefixes[i]->value().print(save_printoptions).c_str());
 				break;
 			}
 		}
@@ -2472,13 +2472,13 @@ string Calculator::temporaryCategory() const {
 
 string Calculator::saveTemporaryDefinitions() {
 	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");
-	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);
+	doc->children = xmlNewDocNode(doc, nullptr, (xmlChar*) "QALCULATE", nullptr);
 	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
 	saveVariables(doc, false, true);
 	saveFunctions(doc, false, true);
 	saveUnits(doc, false, true);
 	int len = 0;
-	xmlChar *s = NULL;
+	xmlChar *s = nullptr;
 	xmlDocDumpMemory(doc, &s, &len);
 	string str = (char*) s;
 	xmlFree(s);
@@ -2487,7 +2487,7 @@ string Calculator::saveTemporaryDefinitions() {
 }
 int Calculator::saveVariables(const char* file_name, bool save_global) {
 	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");
-	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);
+	doc->children = xmlNewDocNode(doc, nullptr, (xmlChar*) "QALCULATE", nullptr);
 	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
 	saveVariables(doc, save_global, false);
 	int returnvalue = xmlSaveFormatFile(file_name, doc, 1);
@@ -2549,13 +2549,13 @@ void Calculator::saveVariables(void *xmldoc, bool save_global, bool save_only_te
 					}
 					if(!b) {
 						item->items.resize(item->items.size() + 1);
-						item->items[item->items.size() - 1].node = xmlNewTextChild(item->node, NULL, (xmlChar*) "category", NULL);
+						item->items[item->items.size() - 1].node = xmlNewTextChild(item->node, nullptr, (xmlChar*) "category", nullptr);
 						item = &item->items[item->items.size() - 1];
 						item->category = cat_sub;
 						if(save_global) {
-							xmlNewTextChild(item->node, NULL, (xmlChar*) "_title", (xmlChar*) item->category.c_str());
+							xmlNewTextChild(item->node, nullptr, (xmlChar*) "_title", (xmlChar*) item->category.c_str());
 						} else {
-							xmlNewTextChild(item->node, NULL, (xmlChar*) "title", (xmlChar*) item->category.c_str());
+							xmlNewTextChild(item->node, nullptr, (xmlChar*) "title", (xmlChar*) item->category.c_str());
 						}
 					}
 					if(cat_i == string::npos) {
@@ -2568,41 +2568,41 @@ void Calculator::saveVariables(void *xmldoc, bool save_global, bool save_only_te
 			cur = item->node;
 			if(!save_global && !variables[i]->isLocal() && variables[i]->hasChanged()) {
 				if(variables[i]->isActive()) {
-					xmlNewTextChild(cur, NULL, (xmlChar*) "activate", (xmlChar*) variables[i]->referenceName().c_str());
+					xmlNewTextChild(cur, nullptr, (xmlChar*) "activate", (xmlChar*) variables[i]->referenceName().c_str());
 				} else {
-					xmlNewTextChild(cur, NULL, (xmlChar*) "deactivate", (xmlChar*) variables[i]->referenceName().c_str());
+					xmlNewTextChild(cur, nullptr, (xmlChar*) "deactivate", (xmlChar*) variables[i]->referenceName().c_str());
 				}
 			} else if(save_global || variables[i]->isLocal()) {
 				if(variables[i]->isBuiltin()) {
 					if(variables[i]->isKnown()) {
-						newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "builtin_variable", NULL);
+						newnode = xmlNewTextChild(cur, nullptr, (xmlChar*) "builtin_variable", nullptr);
 					} else {
-						newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "builtin_unknown", NULL);
+						newnode = xmlNewTextChild(cur, nullptr, (xmlChar*) "builtin_unknown", nullptr);
 					}
 					xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) variables[i]->referenceName().c_str());
 				} else {
 					if(variables[i]->isKnown()) {
-						newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "variable", NULL);
+						newnode = xmlNewTextChild(cur, nullptr, (xmlChar*) "variable", nullptr);
 					} else {
-						newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "unknown", NULL);
+						newnode = xmlNewTextChild(cur, nullptr, (xmlChar*) "unknown", nullptr);
 					}
 				}
 				if(!variables[i]->isActive()) xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "false");
-				if(variables[i]->isHidden()) xmlNewTextChild(newnode, NULL, (xmlChar*) "hidden", (xmlChar*) "true");
+				if(variables[i]->isHidden()) xmlNewTextChild(newnode, nullptr, (xmlChar*) "hidden", (xmlChar*) "true");
 				if(!variables[i]->title(false).empty()) {
 					if(save_global) {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) variables[i]->title(false).c_str());
+						xmlNewTextChild(newnode, nullptr, (xmlChar*) "_title", (xmlChar*) variables[i]->title(false).c_str());
 					} else {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) variables[i]->title(false).c_str());
+						xmlNewTextChild(newnode, nullptr, (xmlChar*) "title", (xmlChar*) variables[i]->title(false).c_str());
 					}
 				}
 				SAVE_NAMES(variables[i])
 				if(!variables[i]->description().empty()) {
 					str = variables[i]->description();
 					if(save_global) {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "_description", (xmlChar*) str.c_str());
+						xmlNewTextChild(newnode, nullptr, (xmlChar*) "_description", (xmlChar*) str.c_str());
 					} else {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "description", (xmlChar*) str.c_str());
+						xmlNewTextChild(newnode, nullptr, (xmlChar*) "description", (xmlChar*) str.c_str());
 					}
 				}
 				if(!variables[i]->isBuiltin()) {
@@ -2611,7 +2611,7 @@ void Calculator::saveVariables(void *xmldoc, bool save_global, bool save_only_te
 						save_printoptions.is_approximate = &is_approx;
 						bool ignore_approx = false;
 						if(((KnownVariable*) variables[i])->isExpression()) {
-							newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "value", (xmlChar*) ((KnownVariable*) variables[i])->expression().c_str());
+							newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "value", (xmlChar*) ((KnownVariable*) variables[i])->expression().c_str());
 							bool unc_rel = false;
 							if(!((KnownVariable*) variables[i])->uncertainty(&unc_rel).empty()) xmlNewProp(newnode2, (xmlChar*) (unc_rel ? "relative_uncertainty" : "uncertainty"), (xmlChar*) ((KnownVariable*) variables[i])->uncertainty().c_str());
 							if(!((KnownVariable*) variables[i])->unit().empty()) xmlNewProp(newnode2, (xmlChar*) "unit", (xmlChar*) ((KnownVariable*) variables[i])->unit().c_str());
@@ -2624,71 +2624,71 @@ void Calculator::saveVariables(void *xmldoc, bool save_global, bool save_only_te
 								if(dot_only_in_interval(expression)) ignore_approx = true;
 								else expression = ((KnownVariable*) variables[i])->get().print(save_printoptions);
 							}
-							newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "value", (xmlChar*) expression.c_str());
+							newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "value", (xmlChar*) expression.c_str());
 						}
-						save_printoptions.is_approximate = NULL;
+						save_printoptions.is_approximate = nullptr;
 						if(!ignore_approx && (variables[i]->isApproximate() || is_approx)) xmlNewProp(newnode2, (xmlChar*) "approximate", (xmlChar*) "true");
 						if(variables[i]->precision() >= 0) xmlNewProp(newnode2, (xmlChar*) "precision", (xmlChar*) i2s(variables[i]->precision()).c_str());
 					} else {
 						if(((UnknownVariable*) variables[i])->assumptions()) {
 							switch(((UnknownVariable*) variables[i])->assumptions()->type()) {
 								case ASSUMPTION_TYPE_INTEGER: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "integer");
+									newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "type", (xmlChar*) "integer");
 									break;
 								}
 								case ASSUMPTION_TYPE_BOOLEAN: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "boolean");
+									newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "type", (xmlChar*) "boolean");
 									break;
 								}
 								case ASSUMPTION_TYPE_RATIONAL: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "rational");
+									newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "type", (xmlChar*) "rational");
 									break;
 								}
 								case ASSUMPTION_TYPE_REAL: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "real");
+									newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "type", (xmlChar*) "real");
 									break;
 								}
 								case ASSUMPTION_TYPE_COMPLEX: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "complex");
+									newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "type", (xmlChar*) "complex");
 									break;
 								}
 								case ASSUMPTION_TYPE_NUMBER: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "number");
+									newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "type", (xmlChar*) "number");
 									break;
 								}
 								case ASSUMPTION_TYPE_NONMATRIX: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "non-matrix");
+									newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "type", (xmlChar*) "non-matrix");
 									break;
 								}
 								case ASSUMPTION_TYPE_NONE: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "none");
+									newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "type", (xmlChar*) "none");
 									break;
 								}
 							}
 							if(((UnknownVariable*) variables[i])->assumptions()->type() != ASSUMPTION_TYPE_BOOLEAN) {
 								switch(((UnknownVariable*) variables[i])->assumptions()->sign()) {
 									case ASSUMPTION_SIGN_NONZERO: {
-										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "non-zero");
+										newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "sign", (xmlChar*) "non-zero");
 										break;
 									}
 									case ASSUMPTION_SIGN_NONPOSITIVE: {
-										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "non-positive");
+										newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "sign", (xmlChar*) "non-positive");
 										break;
 									}
 									case ASSUMPTION_SIGN_NEGATIVE: {
-										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "negative");
+										newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "sign", (xmlChar*) "negative");
 										break;
 									}
 									case ASSUMPTION_SIGN_NONNEGATIVE: {
-										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "non-negative");
+										newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "sign", (xmlChar*) "non-negative");
 										break;
 									}
 									case ASSUMPTION_SIGN_POSITIVE: {
-										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "positive");
+										newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "sign", (xmlChar*) "positive");
 										break;
 									}
 									case ASSUMPTION_SIGN_UNKNOWN: {
-										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "unknown");
+										newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "sign", (xmlChar*) "unknown");
 										break;
 									}
 								}
@@ -2704,7 +2704,7 @@ void Calculator::saveVariables(void *xmldoc, bool save_global, bool save_only_te
 
 int Calculator::saveUnits(const char* file_name, bool save_global) {
 	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");
-	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);
+	doc->children = xmlNewDocNode(doc, nullptr, (xmlChar*) "QALCULATE", nullptr);
 	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
 	saveUnits(doc, save_global, false);
 	int returnvalue = xmlSaveFormatFile(file_name, doc, 1);
@@ -2716,8 +2716,8 @@ void Calculator::saveUnits(void *xmldoc, bool save_global, bool save_only_temp) 
 	string str;
 	xmlNodePtr cur, newnode, newnode2, newnode3;
 	const ExpressionName *ename;
-	CompositeUnit *cu = NULL;
-	AliasUnit *au = NULL;
+	CompositeUnit *cu = nullptr;
+	AliasUnit *au = nullptr;
 	Unit *u;
 	node_tree_item top;
 	top.category = "";
@@ -2749,13 +2749,13 @@ void Calculator::saveUnits(void *xmldoc, bool save_global, bool save_only_temp) 
 					}
 					if(!b) {
 						item->items.resize(item->items.size() + 1);
-						item->items[item->items.size() - 1].node = xmlNewTextChild(item->node, NULL, (xmlChar*) "category", NULL);
+						item->items[item->items.size() - 1].node = xmlNewTextChild(item->node, nullptr, (xmlChar*) "category", nullptr);
 						item = &item->items[item->items.size() - 1];
 						item->category = cat_sub;
 						if(save_global) {
-							xmlNewTextChild(item->node, NULL, (xmlChar*) "_title", (xmlChar*) item->category.c_str());
+							xmlNewTextChild(item->node, nullptr, (xmlChar*) "_title", (xmlChar*) item->category.c_str());
 						} else {
-							xmlNewTextChild(item->node, NULL, (xmlChar*) "title", (xmlChar*) item->category.c_str());
+							xmlNewTextChild(item->node, nullptr, (xmlChar*) "title", (xmlChar*) item->category.c_str());
 						}
 					}
 					if(cat_i == string::npos) {
@@ -2768,16 +2768,16 @@ void Calculator::saveUnits(void *xmldoc, bool save_global, bool save_only_temp) 
 			cur = item->node;
 			if(!save_global && !u->isLocal() && u->hasChanged()) {
 				if(u->isActive()) {
-					xmlNewTextChild(cur, NULL, (xmlChar*) "activate", (xmlChar*) u->referenceName().c_str());
+					xmlNewTextChild(cur, nullptr, (xmlChar*) "activate", (xmlChar*) u->referenceName().c_str());
 				} else {
-					xmlNewTextChild(cur, NULL, (xmlChar*) "deactivate", (xmlChar*) u->referenceName().c_str());
+					xmlNewTextChild(cur, nullptr, (xmlChar*) "deactivate", (xmlChar*) u->referenceName().c_str());
 				}
 			} else if(save_global || u->isLocal()) {
 				if(u->isBuiltin()) {
-					newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "builtin_unit", NULL);
+					newnode = xmlNewTextChild(cur, nullptr, (xmlChar*) "builtin_unit", nullptr);
 					xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) u->referenceName().c_str());
 				} else {
-					newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "unit", NULL);
+					newnode = xmlNewTextChild(cur, nullptr, (xmlChar*) "unit", nullptr);
 					switch(u->subtype()) {
 						case SUBTYPE_BASE_UNIT: {
 							xmlNewProp(newnode, (xmlChar*) "type", (xmlChar*) "base");
@@ -2796,21 +2796,21 @@ void Calculator::saveUnits(void *xmldoc, bool save_global, bool save_only_temp) 
 					}
 				}
 				if(!u->isActive()) xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "false");
-				if(u->isHidden()) xmlNewTextChild(newnode, NULL, (xmlChar*) "hidden", (xmlChar*) "true");
+				if(u->isHidden()) xmlNewTextChild(newnode, nullptr, (xmlChar*) "hidden", (xmlChar*) "true");
 				if(!u->system().empty()) {
-					xmlNewTextChild(newnode, NULL, (xmlChar*) "system", (xmlChar*) u->system().c_str());
+					xmlNewTextChild(newnode, nullptr, (xmlChar*) "system", (xmlChar*) u->system().c_str());
 				}
 				if((u->isSIUnit() && (!u->useWithPrefixesByDefault() || u->maxPreferredPrefix() != INT_MAX || u->minPreferredPrefix() != INT_MIN)) || (u->useWithPrefixesByDefault() && !u->isSIUnit()) || u->defaultPrefix() != 0) {
-					newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "use_with_prefixes", u->useWithPrefixesByDefault() ? (xmlChar*) "true" : (xmlChar*) "false");
+					newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "use_with_prefixes", u->useWithPrefixesByDefault() ? (xmlChar*) "true" : (xmlChar*) "false");
 					if(u->minPreferredPrefix() != INT_MIN) xmlNewProp(newnode2, (xmlChar*) "min", (xmlChar*) i2s(u->minPreferredPrefix()).c_str());
 					if(u->maxPreferredPrefix() != INT_MAX) xmlNewProp(newnode2, (xmlChar*) "max", (xmlChar*) i2s(u->maxPreferredPrefix()).c_str());
 					if(u->defaultPrefix() != 0) xmlNewProp(newnode2, (xmlChar*) "default", (xmlChar*) i2s(u->defaultPrefix()).c_str());
 				}
 				if(!u->title(false).empty()) {
 					if(save_global) {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) u->title(false).c_str());
+						xmlNewTextChild(newnode, nullptr, (xmlChar*) "_title", (xmlChar*) u->title(false).c_str());
 					} else {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) u->title(false).c_str());
+						xmlNewTextChild(newnode, nullptr, (xmlChar*) "title", (xmlChar*) u->title(false).c_str());
 					}
 				}
 				if(save_global && u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
@@ -2823,54 +2823,54 @@ void Calculator::saveUnits(void *xmldoc, bool save_global, bool save_only_temp) 
 				if(!u->description().empty()) {
 					str = u->description();
 					if(save_global) {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "_description", (xmlChar*) str.c_str());
+						xmlNewTextChild(newnode, nullptr, (xmlChar*) "_description", (xmlChar*) str.c_str());
 					} else {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "description", (xmlChar*) str.c_str());
+						xmlNewTextChild(newnode, nullptr, (xmlChar*) "description", (xmlChar*) str.c_str());
 					}
 				}
 				if(!u->isBuiltin()) {
 					if(u->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 						for(size_t i2 = 1; i2 <= cu->countUnits(); i2++) {
-							newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "part", NULL);
+							newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "part", nullptr);
 							int exp = 1;
-							Prefix *p = NULL;
+							Prefix *p = nullptr;
 							Unit *u = cu->get(i2, &exp, &p);
-							xmlNewTextChild(newnode2, NULL, (xmlChar*) "unit", (xmlChar*) u->referenceName().c_str());
+							xmlNewTextChild(newnode2, nullptr, (xmlChar*) "unit", (xmlChar*) u->referenceName().c_str());
 							if(p) {
 								switch(p->type()) {
 									case PREFIX_DECIMAL: {
-										xmlNewTextChild(newnode2, NULL, (xmlChar*) "prefix", (xmlChar*) i2s(((DecimalPrefix*) p)->exponent()).c_str());
+										xmlNewTextChild(newnode2, nullptr, (xmlChar*) "prefix", (xmlChar*) i2s(((DecimalPrefix*) p)->exponent()).c_str());
 										break;
 									}
 									case PREFIX_BINARY: {
-										newnode3 = xmlNewTextChild(newnode2, NULL, (xmlChar*) "prefix", (xmlChar*) i2s(((BinaryPrefix*) p)->exponent()).c_str());
+										newnode3 = xmlNewTextChild(newnode2, nullptr, (xmlChar*) "prefix", (xmlChar*) i2s(((BinaryPrefix*) p)->exponent()).c_str());
 										xmlNewProp(newnode3, (xmlChar*) "type", (xmlChar*) "binary");
 										break;
 									}
 									case PREFIX_NUMBER: {
-										newnode3 = xmlNewTextChild(newnode2, NULL, (xmlChar*) "prefix", (xmlChar*) p->value().print(save_printoptions).c_str());
+										newnode3 = xmlNewTextChild(newnode2, nullptr, (xmlChar*) "prefix", (xmlChar*) p->value().print(save_printoptions).c_str());
 										xmlNewProp(newnode3, (xmlChar*) "type", (xmlChar*) "number");
 										break;
 									}
 								}
 							}
-							xmlNewTextChild(newnode2, NULL, (xmlChar*) "exponent", (xmlChar*) i2s(exp).c_str());
+							xmlNewTextChild(newnode2, nullptr, (xmlChar*) "exponent", (xmlChar*) i2s(exp).c_str());
 						}
 					}
 					if(u->subtype() == SUBTYPE_ALIAS_UNIT) {
-						newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "base", NULL);
-						xmlNewTextChild(newnode2, NULL, (xmlChar*) "unit", (xmlChar*) au->firstBaseUnit()->referenceName().c_str());
-						newnode3 = xmlNewTextChild(newnode2, NULL, (xmlChar*) "relation", (xmlChar*) au->expression().c_str());
+						newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "base", nullptr);
+						xmlNewTextChild(newnode2, nullptr, (xmlChar*) "unit", (xmlChar*) au->firstBaseUnit()->referenceName().c_str());
+						newnode3 = xmlNewTextChild(newnode2, nullptr, (xmlChar*) "relation", (xmlChar*) au->expression().c_str());
 						if(au->isApproximate()) xmlNewProp(newnode3, (xmlChar*) "approximate", (xmlChar*) "true");
 						if(au->precision() >= 0) xmlNewProp(newnode3, (xmlChar*) "precision", (xmlChar*) i2s(u->precision()).c_str());
 						bool unc_rel = false;
 						if(!au->uncertainty(&unc_rel).empty()) xmlNewProp(newnode3, (xmlChar*) (unc_rel ? "relative_uncertainty" : "uncertainty"), (xmlChar*) au->uncertainty().c_str());
 						if(!au->inverseExpression().empty()) {
-							xmlNewTextChild(newnode2, NULL, (xmlChar*) "inverse_relation", (xmlChar*) au->inverseExpression().c_str());
+							xmlNewTextChild(newnode2, nullptr, (xmlChar*) "inverse_relation", (xmlChar*) au->inverseExpression().c_str());
 						}
-						xmlNewTextChild(newnode2, NULL, (xmlChar*) "exponent", (xmlChar*) i2s(au->firstBaseExponent()).c_str());
+						xmlNewTextChild(newnode2, nullptr, (xmlChar*) "exponent", (xmlChar*) i2s(au->firstBaseExponent()).c_str());
 						if(au->mixWithBase() != 0) {
-							newnode3 = xmlNewTextChild(newnode2, NULL, (xmlChar*) "mix", (xmlChar*) i2s(au->mixWithBase()).c_str());
+							newnode3 = xmlNewTextChild(newnode2, nullptr, (xmlChar*) "mix", (xmlChar*) i2s(au->mixWithBase()).c_str());
 							if(au->mixWithBaseMinimum() > 1) xmlNewProp(newnode3, (xmlChar*) "min", (xmlChar*) i2s(au->mixWithBaseMinimum()).c_str());
 						}
 					}
@@ -2882,7 +2882,7 @@ void Calculator::saveUnits(void *xmldoc, bool save_global, bool save_only_temp) 
 
 int Calculator::saveFunctions(const char* file_name, bool save_global) {
 	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");
-	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);
+	doc->children = xmlNewDocNode(doc, nullptr, (xmlChar*) "QALCULATE", nullptr);
 	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
 	saveFunctions(doc, save_global, false);
 	int returnvalue = xmlSaveFormatFile(file_name, doc, 1);
@@ -2926,13 +2926,13 @@ void Calculator::saveFunctions(void *xmldoc, bool save_global, bool save_only_te
 					}
 					if(!b) {
 						item->items.resize(item->items.size() + 1);
-						item->items[item->items.size() - 1].node = xmlNewTextChild(item->node, NULL, (xmlChar*) "category", NULL);
+						item->items[item->items.size() - 1].node = xmlNewTextChild(item->node, nullptr, (xmlChar*) "category", nullptr);
 						item = &item->items[item->items.size() - 1];
 						item->category = cat_sub;
 						if(save_global) {
-							xmlNewTextChild(item->node, NULL, (xmlChar*) "_title", (xmlChar*) item->category.c_str());
+							xmlNewTextChild(item->node, nullptr, (xmlChar*) "_title", (xmlChar*) item->category.c_str());
 						} else {
-							xmlNewTextChild(item->node, NULL, (xmlChar*) "title", (xmlChar*) item->category.c_str());
+							xmlNewTextChild(item->node, nullptr, (xmlChar*) "title", (xmlChar*) item->category.c_str());
 						}
 					}
 					if(cat_i == string::npos) {
@@ -2945,73 +2945,73 @@ void Calculator::saveFunctions(void *xmldoc, bool save_global, bool save_only_te
 			cur = item->node;
 			if(!save_global && !functions[i]->isLocal() && functions[i]->hasChanged()) {
 				if(functions[i]->isActive()) {
-					xmlNewTextChild(cur, NULL, (xmlChar*) "activate", (xmlChar*) functions[i]->referenceName().c_str());
+					xmlNewTextChild(cur, nullptr, (xmlChar*) "activate", (xmlChar*) functions[i]->referenceName().c_str());
 				} else {
-					xmlNewTextChild(cur, NULL, (xmlChar*) "deactivate", (xmlChar*) functions[i]->referenceName().c_str());
+					xmlNewTextChild(cur, nullptr, (xmlChar*) "deactivate", (xmlChar*) functions[i]->referenceName().c_str());
 				}
 			} else if(save_global || functions[i]->isLocal()) {
 				if(functions[i]->isBuiltin()) {
-					newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "builtin_function", NULL);
+					newnode = xmlNewTextChild(cur, nullptr, (xmlChar*) "builtin_function", nullptr);
 					xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) functions[i]->referenceName().c_str());
 				} else {
-					newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "function", NULL);
+					newnode = xmlNewTextChild(cur, nullptr, (xmlChar*) "function", nullptr);
 				}
 				if(!functions[i]->isActive()) xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "false");
-				if(functions[i]->isHidden()) xmlNewTextChild(newnode, NULL, (xmlChar*) "hidden", (xmlChar*) "true");
+				if(functions[i]->isHidden()) xmlNewTextChild(newnode, nullptr, (xmlChar*) "hidden", (xmlChar*) "true");
 				if(!functions[i]->title(false).empty()) {
 					if(save_global) {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) functions[i]->title(false).c_str());
+						xmlNewTextChild(newnode, nullptr, (xmlChar*) "_title", (xmlChar*) functions[i]->title(false).c_str());
 					} else {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) functions[i]->title(false).c_str());
+						xmlNewTextChild(newnode, nullptr, (xmlChar*) "title", (xmlChar*) functions[i]->title(false).c_str());
 					}
 				}
 				SAVE_NAMES(functions[i])
 				if(!functions[i]->description().empty()) {
 					str = functions[i]->description();
 					if(save_global) {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "_description", (xmlChar*) str.c_str());
+						xmlNewTextChild(newnode, nullptr, (xmlChar*) "_description", (xmlChar*) str.c_str());
 					} else {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "description", (xmlChar*) str.c_str());
+						xmlNewTextChild(newnode, nullptr, (xmlChar*) "description", (xmlChar*) str.c_str());
 					}
 				}
-				if(!functions[i]->example(true).empty()) newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "example", (xmlChar*) functions[i]->example(true).c_str());
+				if(!functions[i]->example(true).empty()) newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "example", (xmlChar*) functions[i]->example(true).c_str());
 				if(functions[i]->isBuiltin()) {
 					cur = newnode;
 					for(size_t i2 = 1; i2 <= functions[i]->lastArgumentDefinitionIndex(); i2++) {
 						arg = functions[i]->getArgumentDefinition(i2);
 						if(arg && !arg->name().empty()) {
-							newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "argument", NULL);
+							newnode = xmlNewTextChild(cur, nullptr, (xmlChar*) "argument", nullptr);
 							if(save_global) {
-								xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) arg->name().c_str());
+								xmlNewTextChild(newnode, nullptr, (xmlChar*) "_title", (xmlChar*) arg->name().c_str());
 							} else {
-								xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) arg->name().c_str());
+								xmlNewTextChild(newnode, nullptr, (xmlChar*) "title", (xmlChar*) arg->name().c_str());
 							}
 							xmlNewProp(newnode, (xmlChar*) "index", (xmlChar*) i2s(i2).c_str());
 						}
 					}
 				} else {
 					for(size_t i2 = 1; i2 <= ((UserFunction*) functions[i])->countSubfunctions(); i2++) {
-						newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "subfunction", (xmlChar*) ((UserFunction*) functions[i])->getSubfunction(i2).c_str());
+						newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "subfunction", (xmlChar*) ((UserFunction*) functions[i])->getSubfunction(i2).c_str());
 						if(((UserFunction*) functions[i])->subfunctionPrecalculated(i2)) xmlNewProp(newnode2, (xmlChar*) "precalculate", (xmlChar*) "true");
 						else xmlNewProp(newnode2, (xmlChar*) "precalculate", (xmlChar*) "false");
 
 					}
-					newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "expression", (xmlChar*) ((UserFunction*) functions[i])->formula().c_str());
+					newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "expression", (xmlChar*) ((UserFunction*) functions[i])->formula().c_str());
 					if(functions[i]->isApproximate()) xmlNewProp(newnode2, (xmlChar*) "approximate", (xmlChar*) "true");
 					if(functions[i]->precision() >= 0) xmlNewProp(newnode2, (xmlChar*) "precision", (xmlChar*) i2s(functions[i]->precision()).c_str());
 					if(!functions[i]->condition().empty()) {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "condition", (xmlChar*) functions[i]->condition().c_str());
+						xmlNewTextChild(newnode, nullptr, (xmlChar*) "condition", (xmlChar*) functions[i]->condition().c_str());
 					}
 					cur = newnode;
 					for(size_t i2 = 1; i2 <= functions[i]->lastArgumentDefinitionIndex(); i2++) {
 						arg = functions[i]->getArgumentDefinition(i2);
 						if(arg) {
-							newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "argument", NULL);
+							newnode = xmlNewTextChild(cur, nullptr, (xmlChar*) "argument", nullptr);
 							if(!arg->name().empty()) {
 								if(save_global) {
-									xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) arg->name().c_str());
+									xmlNewTextChild(newnode, nullptr, (xmlChar*) "_title", (xmlChar*) arg->name().c_str());
 								} else {
-									xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) arg->name().c_str());
+									xmlNewTextChild(newnode, nullptr, (xmlChar*) "title", (xmlChar*) arg->name().c_str());
 								}
 							}
 							switch(arg->type()) {
@@ -3035,37 +3035,37 @@ void Calculator::saveFunctions(void *xmldoc, bool save_global, bool save_only_te
 							xmlNewProp(newnode, (xmlChar*) "index", (xmlChar*) i2s(i2).c_str());
 							bool default_hv = arg->tests() && (arg->type() == ARGUMENT_TYPE_NUMBER || arg->type() == ARGUMENT_TYPE_INTEGER);
 							if(!default_hv && arg->handlesVector()) {
-								xmlNewTextChild(newnode, NULL, (xmlChar*) "handle_vector", (xmlChar*) "true");
+								xmlNewTextChild(newnode, nullptr, (xmlChar*) "handle_vector", (xmlChar*) "true");
 							} else if(default_hv && !arg->handlesVector()) {
-								xmlNewTextChild(newnode, NULL, (xmlChar*) "handle_vector", (xmlChar*) "false");
+								xmlNewTextChild(newnode, nullptr, (xmlChar*) "handle_vector", (xmlChar*) "false");
 							}
 							if(!arg->tests()) {
-								xmlNewTextChild(newnode, NULL, (xmlChar*) "test", (xmlChar*) "false");
+								xmlNewTextChild(newnode, nullptr, (xmlChar*) "test", (xmlChar*) "false");
 							}
 							if(!arg->alerts()) {
-								xmlNewTextChild(newnode, NULL, (xmlChar*) "alert", (xmlChar*) "false");
+								xmlNewTextChild(newnode, nullptr, (xmlChar*) "alert", (xmlChar*) "false");
 							}
 							if(arg->zeroForbidden()) {
-								xmlNewTextChild(newnode, NULL, (xmlChar*) "zero_forbidden", (xmlChar*) "true");
+								xmlNewTextChild(newnode, nullptr, (xmlChar*) "zero_forbidden", (xmlChar*) "true");
 							}
 							if(arg->matrixAllowed()) {
-								xmlNewTextChild(newnode, NULL, (xmlChar*) "matrix_allowed", (xmlChar*) "true");
+								xmlNewTextChild(newnode, nullptr, (xmlChar*) "matrix_allowed", (xmlChar*) "true");
 							}
 							switch(arg->type()) {
 								case ARGUMENT_TYPE_INTEGER: {
 									iarg = (IntegerArgument*) arg;
 									if(iarg->min()) {
-										xmlNewTextChild(newnode, NULL, (xmlChar*) "min", (xmlChar*) iarg->min()->print(save_printoptions).c_str());
+										xmlNewTextChild(newnode, nullptr, (xmlChar*) "min", (xmlChar*) iarg->min()->print(save_printoptions).c_str());
 									}
 									if(iarg->max()) {
-										xmlNewTextChild(newnode, NULL, (xmlChar*) "max", (xmlChar*) iarg->max()->print(save_printoptions).c_str());
+										xmlNewTextChild(newnode, nullptr, (xmlChar*) "max", (xmlChar*) iarg->max()->print(save_printoptions).c_str());
 									}
 									break;
 								}
 								case ARGUMENT_TYPE_NUMBER: {
 									farg = (NumberArgument*) arg;
 									if(farg->min()) {
-										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "min", (xmlChar*) farg->min()->print(save_printoptions).c_str());
+										newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "min", (xmlChar*) farg->min()->print(save_printoptions).c_str());
 										if(farg->includeEqualsMin()) {
 											xmlNewProp(newnode2, (xmlChar*) "include_equals", (xmlChar*) "true");
 										} else {
@@ -3073,7 +3073,7 @@ void Calculator::saveFunctions(void *xmldoc, bool save_global, bool save_only_te
 										}
 									}
 									if(farg->max()) {
-										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "max", (xmlChar*) farg->max()->print(save_printoptions).c_str());
+										newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "max", (xmlChar*) farg->max()->print(save_printoptions).c_str());
 										if(farg->includeEqualsMax()) {
 											xmlNewProp(newnode2, (xmlChar*) "include_equals", (xmlChar*) "true");
 										} else {
@@ -3081,13 +3081,13 @@ void Calculator::saveFunctions(void *xmldoc, bool save_global, bool save_only_te
 										}
 									}
 									if(!farg->complexAllowed()) {
-										xmlNewTextChild(newnode, NULL, (xmlChar*) "complex_allowed", (xmlChar*) "false");
+										xmlNewTextChild(newnode, nullptr, (xmlChar*) "complex_allowed", (xmlChar*) "false");
 									}
 									break;
 								}
 							}
 							if(!arg->getCustomCondition().empty()) {
-								xmlNewTextChild(newnode, NULL, (xmlChar*) "condition", (xmlChar*) arg->getCustomCondition().c_str());
+								xmlNewTextChild(newnode, nullptr, (xmlChar*) "condition", (xmlChar*) arg->getCustomCondition().c_str());
 							}
 						}
 					}
@@ -3099,7 +3099,7 @@ void Calculator::saveFunctions(void *xmldoc, bool save_global, bool save_only_te
 int Calculator::saveDataSets(const char* file_name, bool save_global) {
 	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");
 	xmlNodePtr cur, newnode, newnode2;
-	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);
+	doc->children = xmlNewDocNode(doc, nullptr, (xmlChar*) "QALCULATE", nullptr);
 	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
 	const ExpressionName *ename;
 	node_tree_item top;
@@ -3135,13 +3135,13 @@ int Calculator::saveDataSets(const char* file_name, bool save_global) {
 					}
 					if(!b) {
 						item->items.resize(item->items.size() + 1);
-						item->items[item->items.size() - 1].node = xmlNewTextChild(item->node, NULL, (xmlChar*) "category", NULL);
+						item->items[item->items.size() - 1].node = xmlNewTextChild(item->node, nullptr, (xmlChar*) "category", nullptr);
 						item = &item->items[item->items.size() - 1];
 						item->category = cat_sub;
 						if(save_global) {
-							xmlNewTextChild(item->node, NULL, (xmlChar*) "_title", (xmlChar*) item->category.c_str());
+							xmlNewTextChild(item->node, nullptr, (xmlChar*) "_title", (xmlChar*) item->category.c_str());
 						} else {
-							xmlNewTextChild(item->node, NULL, (xmlChar*) "title", (xmlChar*) item->category.c_str());
+							xmlNewTextChild(item->node, nullptr, (xmlChar*) "title", (xmlChar*) item->category.c_str());
 						}
 					}
 					if(cat_i == string::npos) {
@@ -3154,103 +3154,103 @@ int Calculator::saveDataSets(const char* file_name, bool save_global) {
 			cur = item->node;
 			if(save_global || ds->isLocal() || ds->hasChanged()) {
 				if(save_global || ds->isLocal()) {
-					newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "dataset", NULL);
+					newnode = xmlNewTextChild(cur, nullptr, (xmlChar*) "dataset", nullptr);
 				} else {
-					newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "builtin_dataset", NULL);
+					newnode = xmlNewTextChild(cur, nullptr, (xmlChar*) "builtin_dataset", nullptr);
 					xmlNewProp(newnode, (xmlChar*) "name", (xmlChar*) ds->referenceName().c_str());
 				}
 				if(!ds->isActive()) xmlNewProp(newnode, (xmlChar*) "active", (xmlChar*) "false");
-				if(ds->isHidden()) xmlNewTextChild(newnode, NULL, (xmlChar*) "hidden", (xmlChar*) "true");
+				if(ds->isHidden()) xmlNewTextChild(newnode, nullptr, (xmlChar*) "hidden", (xmlChar*) "true");
 				if(!ds->title(false).empty()) {
 					if(save_global) {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "_title", (xmlChar*) ds->title(false).c_str());
+						xmlNewTextChild(newnode, nullptr, (xmlChar*) "_title", (xmlChar*) ds->title(false).c_str());
 					} else {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "title", (xmlChar*) ds->title(false).c_str());
+						xmlNewTextChild(newnode, nullptr, (xmlChar*) "title", (xmlChar*) ds->title(false).c_str());
 					}
 				}
 				if((save_global || ds->isLocal()) && !ds->defaultDataFile().empty()) {
-					xmlNewTextChild(newnode, NULL, (xmlChar*) "datafile", (xmlChar*) ds->defaultDataFile().c_str());
+					xmlNewTextChild(newnode, nullptr, (xmlChar*) "datafile", (xmlChar*) ds->defaultDataFile().c_str());
 				}
 				SAVE_NAMES(ds)
 				if(!ds->description().empty()) {
 					str = ds->description();
 					if(save_global) {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "_description", (xmlChar*) str.c_str());
+						xmlNewTextChild(newnode, nullptr, (xmlChar*) "_description", (xmlChar*) str.c_str());
 					} else {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "description", (xmlChar*) str.c_str());
+						xmlNewTextChild(newnode, nullptr, (xmlChar*) "description", (xmlChar*) str.c_str());
 					}
 				}
 				if((save_global || ds->isLocal()) && !ds->copyright().empty()) {
 					if(save_global) {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "_copyright", (xmlChar*) ds->copyright().c_str());
+						xmlNewTextChild(newnode, nullptr, (xmlChar*) "_copyright", (xmlChar*) ds->copyright().c_str());
 					} else {
-						xmlNewTextChild(newnode, NULL, (xmlChar*) "copyright", (xmlChar*) ds->copyright().c_str());
+						xmlNewTextChild(newnode, nullptr, (xmlChar*) "copyright", (xmlChar*) ds->copyright().c_str());
 					}
 				}
 				arg = ds->getArgumentDefinition(1);
 				if(arg && ((!save_global && !ds->isLocal()) || arg->name() != _("Object"))) {
-					newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "object_argument", NULL);
+					newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "object_argument", nullptr);
 					if(save_global) {
-						xmlNewTextChild(newnode2, NULL, (xmlChar*) "_title", (xmlChar*) arg->name().c_str());
+						xmlNewTextChild(newnode2, nullptr, (xmlChar*) "_title", (xmlChar*) arg->name().c_str());
 					} else {
-						xmlNewTextChild(newnode2, NULL, (xmlChar*) "title", (xmlChar*) arg->name().c_str());
+						xmlNewTextChild(newnode2, nullptr, (xmlChar*) "title", (xmlChar*) arg->name().c_str());
 					}
 				}
 				arg = ds->getArgumentDefinition(2);
 				if(arg && ((!save_global && !ds->isLocal()) || arg->name() != _("Property"))) {
-					newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "property_argument", NULL);
+					newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "property_argument", nullptr);
 					if(save_global) {
-						xmlNewTextChild(newnode2, NULL, (xmlChar*) "_title", (xmlChar*) arg->name().c_str());
+						xmlNewTextChild(newnode2, nullptr, (xmlChar*) "_title", (xmlChar*) arg->name().c_str());
 					} else {
-						xmlNewTextChild(newnode2, NULL, (xmlChar*) "title", (xmlChar*) arg->name().c_str());
+						xmlNewTextChild(newnode2, nullptr, (xmlChar*) "title", (xmlChar*) arg->name().c_str());
 					}
 				}
 				if((!save_global && !ds->isLocal()) || ds->getDefaultValue(2) != _c("Data set argument", "info")) {
-					xmlNewTextChild(newnode, NULL, (xmlChar*) "default_property", (xmlChar*) ds->getDefaultValue(2).c_str());
+					xmlNewTextChild(newnode, nullptr, (xmlChar*) "default_property", (xmlChar*) ds->getDefaultValue(2).c_str());
 				}
 				DataPropertyIter it;
 				dp = ds->getFirstProperty(&it);
 				while(dp) {
 					if(save_global || ds->isLocal() || dp->isUserModified()) {
-						newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "property", NULL);
+						newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) "property", nullptr);
 						if(!dp->title(false).empty()) {
 							if(save_global) {
-								xmlNewTextChild(newnode2, NULL, (xmlChar*) "_title", (xmlChar*) dp->title().c_str());
+								xmlNewTextChild(newnode2, nullptr, (xmlChar*) "_title", (xmlChar*) dp->title().c_str());
 							} else {
-								xmlNewTextChild(newnode2, NULL, (xmlChar*) "title", (xmlChar*) dp->title().c_str());
+								xmlNewTextChild(newnode2, nullptr, (xmlChar*) "title", (xmlChar*) dp->title().c_str());
 							}
 						}
 						switch(dp->propertyType()) {
 							case PROPERTY_STRING: {
-								xmlNewTextChild(newnode2, NULL, (xmlChar*) "type", (xmlChar*) "text");
+								xmlNewTextChild(newnode2, nullptr, (xmlChar*) "type", (xmlChar*) "text");
 								break;
 							}
 							case PROPERTY_NUMBER: {
-								xmlNewTextChild(newnode2, NULL, (xmlChar*) "type", (xmlChar*) "number");
+								xmlNewTextChild(newnode2, nullptr, (xmlChar*) "type", (xmlChar*) "number");
 								break;
 							}
 							case PROPERTY_EXPRESSION: {
-								xmlNewTextChild(newnode2, NULL, (xmlChar*) "type", (xmlChar*) "expression");
+								xmlNewTextChild(newnode2, nullptr, (xmlChar*) "type", (xmlChar*) "expression");
 								break;
 							}
 						}
 						if(dp->isHidden()) {
-							xmlNewTextChild(newnode2, NULL, (xmlChar*) "hidden", (xmlChar*) "true");
+							xmlNewTextChild(newnode2, nullptr, (xmlChar*) "hidden", (xmlChar*) "true");
 						}
 						if(dp->isKey()) {
-							xmlNewTextChild(newnode2, NULL, (xmlChar*) "key", (xmlChar*) "true");
+							xmlNewTextChild(newnode2, nullptr, (xmlChar*) "key", (xmlChar*) "true");
 						}
 						if(dp->isApproximate()) {
-							xmlNewTextChild(newnode2, NULL, (xmlChar*) "approximate", (xmlChar*) "true");
+							xmlNewTextChild(newnode2, nullptr, (xmlChar*) "approximate", (xmlChar*) "true");
 						}
 						if(dp->usesBrackets()) {
-							xmlNewTextChild(newnode2, NULL, (xmlChar*) "brackets", (xmlChar*) "true");
+							xmlNewTextChild(newnode2, nullptr, (xmlChar*) "brackets", (xmlChar*) "true");
 						}
 						if(dp->isCaseSensitive()) {
-							xmlNewTextChild(newnode2, NULL, (xmlChar*) "case_sensitive", (xmlChar*) "true");
+							xmlNewTextChild(newnode2, nullptr, (xmlChar*) "case_sensitive", (xmlChar*) "true");
 						}
 						if(!dp->getUnitString().empty()) {
-							xmlNewTextChild(newnode2, NULL, (xmlChar*) "unit", (xmlChar*) dp->getUnitString().c_str());
+							xmlNewTextChild(newnode2, nullptr, (xmlChar*) "unit", (xmlChar*) dp->getUnitString().c_str());
 						}
 						str = "";
 						for(size_t i2 = 1;;)  {
@@ -3258,9 +3258,9 @@ int Calculator::saveDataSets(const char* file_name, bool save_global) {
 							if(str.empty() || str[str.length() - 1] == ',') {
 								if(i2 == 1 && dp->countNames() == 1) {
 									if(save_global) {
-										xmlNewTextChild(newnode2, NULL, (xmlChar*) "_names", (xmlChar*) dp->getName(i2).c_str());
+										xmlNewTextChild(newnode2, nullptr, (xmlChar*) "_names", (xmlChar*) dp->getName(i2).c_str());
 									} else {
-										xmlNewTextChild(newnode2, NULL, (xmlChar*) "names", (xmlChar*) dp->getName(i2).c_str());
+										xmlNewTextChild(newnode2, nullptr, (xmlChar*) "names", (xmlChar*) dp->getName(i2).c_str());
 									}
 									break;
 								}
@@ -3271,9 +3271,9 @@ int Calculator::saveDataSets(const char* file_name, bool save_global) {
 							i2++;
 							if(i2 > dp->countNames()) {
 								if(save_global) {
-									xmlNewTextChild(newnode2, NULL, (xmlChar*) "_names", (xmlChar*) str.c_str());
+									xmlNewTextChild(newnode2, nullptr, (xmlChar*) "_names", (xmlChar*) str.c_str());
 								} else {
-									xmlNewTextChild(newnode2, NULL, (xmlChar*) "names", (xmlChar*) str.c_str());
+									xmlNewTextChild(newnode2, nullptr, (xmlChar*) "names", (xmlChar*) str.c_str());
 								}
 								break;
 							}
@@ -3282,9 +3282,9 @@ int Calculator::saveDataSets(const char* file_name, bool save_global) {
 						if(!dp->description().empty()) {
 							str = dp->description();
 							if(save_global) {
-								xmlNewTextChild(newnode2, NULL, (xmlChar*) "_description", (xmlChar*) str.c_str());
+								xmlNewTextChild(newnode2, nullptr, (xmlChar*) "_description", (xmlChar*) str.c_str());
 							} else {
-								xmlNewTextChild(newnode2, NULL, (xmlChar*) "description", (xmlChar*) str.c_str());
+								xmlNewTextChild(newnode2, nullptr, (xmlChar*) "description", (xmlChar*) str.c_str());
 							}
 						}
 					}
@@ -3300,7 +3300,7 @@ int Calculator::saveDataSets(const char* file_name, bool save_global) {
 
 bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int first_row, string delimiter, vector<string> *headers) {
 	FILE *file = fopen(file_name, "r");
-	if(file == NULL) {
+	if(file == nullptr) {
 		return false;
 	}
 	if(first_row < 1) {
@@ -3372,7 +3372,7 @@ bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int fi
 
 bool Calculator::importCSV(const char *file_name, int first_row, bool headers, string delimiter, bool to_matrix, string name, string title, string category) {
 	FILE *file = fopen(file_name, "r");
-	if(file == NULL) {
+	if(file == nullptr) {
 		return false;
 	}
 	if(first_row < 1) {
@@ -3521,7 +3521,7 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
 }
 bool Calculator::exportCSV(const MathStructure &mstruct, const char *file_name, string delimiter) {
 	FILE *file = fopen(file_name, "w+");
-	if(file == NULL) {
+	if(file == nullptr) {
 		return false;
 	}
 	MathStructure mcsv(mstruct);
@@ -3557,8 +3557,8 @@ bool Calculator::exportCSV(const MathStructure &mstruct, const char *file_name, 
 
 bool Calculator::loadExchangeRates() {
 
-	xmlDocPtr doc = NULL;
-	xmlNodePtr cur = NULL;
+	xmlDocPtr doc = nullptr;
+	xmlNodePtr cur = nullptr;
 	xmlChar *value;
 	bool global_file = false;
 	string currency, rate, sdate;
@@ -3704,7 +3704,7 @@ bool Calculator::loadExchangeRates() {
 						u = addUnit(new AliasUnit(_("Currency"), currency, "", "", "", u_euro, rate, 1, "", false, true));
 					} else if(u->subtype() == SUBTYPE_ALIAS_UNIT) {
 						if(cunits.find(u) != cunits.end()) {
-							u = NULL;
+							u = nullptr;
 						} else {
 							((AliasUnit*) u)->setBaseUnit(u_euro);
 							((AliasUnit*) u)->setExpression(rate);
@@ -3742,7 +3742,7 @@ bool Calculator::loadExchangeRates() {
 				struct tm *temptm = localtime(&exchange_rates_time[0]);
 				if(temptm) {
 					struct tm extm = *temptm;
-					time_t time_now = time(NULL);
+					time_t time_now = time(nullptr);
 					struct tm *newtm = localtime(&time_now);
 					if(newtm && newtm->tm_mday != extm.tm_mday) {
 						newtm->tm_hour = extm.tm_hour;
@@ -3946,7 +3946,7 @@ bool Calculator::loadExchangeRates() {
 						if(u) u->setHidden(true);
 					} else {
 						if(cunits.find(u) != cunits.end()) {
-							u = NULL;
+							u = nullptr;
 						} else {
 							if(!u->isHidden()) {
 								((AliasUnit*) u)->setInverseExpression(rate);
@@ -4101,12 +4101,12 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, string *sbuffer) {
 			buffer[n1] = ' '; n1++;\
 			int n2 = snprintf(buffer + (sizeof(char) * n1), 10000 - n1, _("Exchange rates were successfully downloaded from %s."), z);\
 			if(n2 > 0 && n2 + n1 < 10000) {\
-				error(true, buffer, NULL);\
+				error(true, buffer, nullptr);\
 			}\
 		}\
 	} else {\
-		if(strlen(u) > 0) error(true, _("Failed to download exchange rates (%s) from %s: %s."), u, x, y, NULL);\
-		else error(true, _("Failed to download exchange rates from %s: %s."), x, y, NULL);\
+		if(strlen(u) > 0) error(true, _("Failed to download exchange rates (%s) from %s: %s."), u, x, y, nullptr);\
+		else error(true, _("Failed to download exchange rates from %s: %s."), x, y, nullptr);\
 	}
 
 #define FETCH_FAIL_CLEANUP curl_easy_cleanup(curl); curl_global_cleanup(); time(&exchange_rates_check_time[0]); time(&exchange_rates_check_time[1]); time(&exchange_rates_check_time[2]); time(&priv->exchange_rates_check_time2[0]);
@@ -4131,7 +4131,7 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 	curl_easy_setopt(curl, CURLOPT_FILETIME, &file_time);
 #ifdef _WIN32
 	char exepath[MAX_PATH];
-	GetModuleFileName(NULL, exepath, MAX_PATH);
+	GetModuleFileName(nullptr, exepath, MAX_PATH);
 	string datadir(exepath);
 	datadir.resize(datadir.find_last_of('\\'));
 	if(datadir.substr(datadir.length() - 4) != "\\bin" && datadir.substr(datadir.length() - 6) != "\\.libs") {
@@ -4306,13 +4306,13 @@ bool Calculator::checkExchangeRatesDate(unsigned int n_days, bool force_check, b
 		if(i > 2 && priv->exchange_rates_check_time2[i - 3] < cextime) cextime = priv->exchange_rates_check_time2[i - 3];
 		else if(i <= 2 && (i != 2 || n != 4) && exchange_rates_check_time[i] < cextime) cextime = exchange_rates_check_time[i];
 	}
-	if(extime > 0 && ((!force_check && cextime > 0 && difftime(time(NULL), cextime) < 86400 * n_days) || difftime(time(NULL), extime) < (86400 * n_days) + 3600)) return true;
+	if(extime > 0 && ((!force_check && cextime > 0 && difftime(time(nullptr), cextime) < 86400 * n_days) || difftime(time(nullptr), extime) < (86400 * n_days) + 3600)) return true;
 	for(int i = 0; i < (n > 4 ? 4 : n); i++) {
 		if(i <= 2 && (i != 2 || n != 4)) time(&exchange_rates_check_time[i]);
 		else if(i > 2) time(&priv->exchange_rates_check_time2[i - 3]);
 	}
-	int days = (int) floor(difftime(time(NULL), extime) / 86400);
-	if(send_warning) error(false, _n("It has been %s day since the exchange rates last were updated.", "It has been %s days since the exchange rates last were updated.", days), i2s(days).c_str(), NULL);
+	int days = (int) floor(difftime(time(nullptr), extime) / 86400);
+	if(send_warning) error(false, _n("It has been %s day since the exchange rates last were updated.", "It has been %s days since the exchange rates last were updated.", days), i2s(days).c_str(), nullptr);
 	return false;
 }
 void Calculator::setExchangeRatesWarningEnabled(bool enable) {

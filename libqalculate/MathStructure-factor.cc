@@ -360,7 +360,7 @@ bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const E
 
 	MathStructure xvar(symbols[symbol_index]);
 
-	UnknownVariable *var = NULL;
+	UnknownVariable *var = nullptr;
 	if(xvar.size() > 0) {
 		var = new UnknownVariable("", format_and_print(xvar));
 		var->setAssumptions(xvar);
@@ -413,7 +413,7 @@ bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const E
 
 	if(CALCULATOR->aborted()) return false;
 	if(mpoly.isZero()) {
-		CALCULATOR->error(true, "mpoly is zero: %s. %s", format_and_print(tmp).c_str(), _("This is a bug. Please report it."), NULL);
+		CALCULATOR->error(true, "mpoly is zero: %s. %s", format_and_print(tmp).c_str(), _("This is a bug. Please report it."), nullptr);
 		return false;
 	}
 	MathStructure mquo;
@@ -426,7 +426,7 @@ bool sqrfree(MathStructure &mpoly, const vector<MathStructure> &symbols, const E
 
 	if(CALCULATOR->aborted()) return false;
 	if(mquo.isZero()) {
-		//CALCULATOR->error(true, "quo is zero: %s. %s", format_and_print(tmp).c_str(), _("This is a bug. Please report it."), NULL);
+		//CALCULATOR->error(true, "quo is zero: %s. %s", format_and_print(tmp).c_str(), _("This is a bug. Please report it."), nullptr);
 		return false;
 	}
 	if(newsymbols.size() > 0) {
@@ -480,7 +480,7 @@ bool MathStructure::integerFactorize() {
 	if(factors.size() <= 1) return true;
 	clear(true);
 	bool b_pow = false;
-	Number *lastnr = NULL;
+	Number *lastnr = nullptr;
 	for(size_t i = 0; i < factors.size(); i++) {
 		if(lastnr && factors[i] == *lastnr) {
 			if(!b_pow) {
@@ -689,7 +689,7 @@ bool factorize_find_multiplier(const MathStructure &mstruct, MathStructure &mnew
 						cur_mstruct = &mstruct[0];
 					}
 					if(!cur_mstruct->containsInterval(true) && !cur_mstruct->isNumber() && (!only_units || cur_mstruct->isUnit_exp())) {
-						const MathStructure *exp = NULL;
+						const MathStructure *exp = nullptr;
 						const MathStructure *bas;
 						if(cur_mstruct->isPower() && IS_REAL((*cur_mstruct)[1]) && !(*cur_mstruct)[0].isNumber()) {
 							exp = cur_mstruct->exponent();
@@ -713,7 +713,7 @@ bool factorize_find_multiplier(const MathStructure &mstruct, MathStructure &mnew
 								}
 								if(cmp_mstruct->equals(*bas)) {
 									if(exp) {
-										exp = NULL;
+										exp = nullptr;
 									}
 									b = true;
 									break;
@@ -763,7 +763,7 @@ bool factorize_find_multiplier(const MathStructure &mstruct, MathStructure &mnew
 									cmp_mstruct = &factor_mstruct[i3];
 									if(cmp_mstruct->equals(factor_mstruct.last())) {
 										if(exp) {
-											exp = NULL;
+											exp = nullptr;
 										}
 										b = true;
 										break;
@@ -1181,7 +1181,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 	struct timeval endtime;
 	if(max_msecs > 0 && !endtime_p) {
 #ifndef CLOCK_MONOTONIC
-		gettimeofday(&endtime, NULL);
+		gettimeofday(&endtime, nullptr);
 #else
 		struct timespec ts;
 		clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -1347,7 +1347,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				if(!b_equal) {
 					eo.protected_function = eo_pre.protected_function;
 					if(CALCULATOR->aborted()) return false;
-					CALCULATOR->error(true, "factorized result is wrong: %s != %s. %s", format_and_print(msqrfree).c_str(), format_and_print(*this).c_str(), _("This is a bug. Please report it."), NULL);
+					CALCULATOR->error(true, "factorized result is wrong: %s != %s. %s", format_and_print(msqrfree).c_str(), format_and_print(*this).c_str(), _("This is a bug. Please report it."), nullptr);
 				} else {
 					eo.protected_function = eo_pre.protected_function;
 					set(msqrfree);
@@ -1553,7 +1553,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 			if(term_combination_levels >= -1 && !only_sqrfree && max_factor_degree != 0) {
 
 				if(SIZE <= 3 && SIZE > 1) {
-					MathStructure *xvar = NULL;
+					MathStructure *xvar = nullptr;
 					Number nr2(1, 1);
 					if(CHILD(0).isPower() && CHILD(0)[0].size() == 0 && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isTwo()) {
 						xvar = &CHILD(0)[0];
@@ -1714,7 +1714,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 				factor_mstruct->unref();
 
 				if(SIZE > 1 && CHILD(SIZE - 1).isNumber() && CHILD(SIZE - 1).number().isInteger() && max_factor_degree != 0) {
-					MathStructure *xvar = NULL;
+					MathStructure *xvar = nullptr;
 					Number qnr(1, 1);
 					int degree = 1;
 					bool overflow = false;
@@ -2004,7 +2004,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 								evalSort(true);
 								Number dupspow;
 								for(size_t i = 0; i < SIZE - 1; i++) {
-									mcur = NULL;
+									mcur = nullptr;
 									if(CHILD(i).isPower()) {
 										if(CHILD(i)[0].isAddition() && CHILD(i)[1].isNumber()) {
 											mcur = &CHILD(i)[0];
@@ -2017,12 +2017,12 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 											if(CHILD(i + 1)[0].isAddition() && CHILD(i + 1)[1].isNumber() && mcur->equals(CHILD(i + 1)[0])) {
 												dupspow += CHILD(i + 1)[1].number();
 											} else {
-												mcur = NULL;
+												mcur = nullptr;
 											}
 										} else if(CHILD(i + 1).isAddition() && mcur->equals(CHILD(i + 1))) {
 											dupspow++;
 										} else {
-											mcur = NULL;
+											mcur = nullptr;
 										}
 										if(mcur) {
 											ERASE(i + 1);
@@ -2632,7 +2632,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 			if(max_factor_degree != 0 && (term_combination_levels != 0 || complete_square)) {
 				if(only_integers) {
 					if(SIZE <= 3 && SIZE > 1) {
-						MathStructure *xvar = NULL;
+						MathStructure *xvar = nullptr;
 						Number nr2(1, 1);
 						if(CHILD(0).isPower() && CHILD(0)[0].size() == 0 && CHILD(0)[1].isNumber() && CHILD(0)[1].number().isTwo()) {
 							xvar = &CHILD(0)[0];
@@ -2686,7 +2686,7 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 					}
 				} else {
 					MathStructure m2, m1, m0;
-					const MathStructure *xvar = NULL;
+					const MathStructure *xvar = nullptr;
 					if(!force_factorization.isUndefined()) {
 						xvar = &force_factorization;
 					} else {
@@ -3194,14 +3194,14 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 					if(endtime_p && endtime_p->tv_sec > 0) {
 #ifndef CLOCK_MONOTONIC
 						struct timeval curtime;
-						gettimeofday(&curtime, NULL);
+						gettimeofday(&curtime, nullptr);
 						if(curtime.tv_sec > endtime_p->tv_sec || (curtime.tv_sec == endtime_p->tv_sec && curtime.tv_usec > endtime_p->tv_usec)) {
 #else
 						struct timespec curtime;
 						clock_gettime(CLOCK_MONOTONIC, &curtime);
 						if(curtime.tv_sec > endtime_p->tv_sec || (curtime.tv_sec == endtime_p->tv_sec && curtime.tv_nsec / 1000 > endtime_p->tv_usec)) {
 #endif
-							CALCULATOR->error(false, _("Because of time constraints only a limited number of combinations of terms were tried during factorization. Repeat factorization to try other random combinations."), NULL);
+							CALCULATOR->error(false, _("Because of time constraints only a limited number of combinations of terms were tried during factorization. Repeat factorization to try other random combinations."), nullptr);
 							break;
 						}
 					}

@@ -60,7 +60,7 @@ bool eqstr::operator()(const char *s1, const char *s2) const {
 }
 
 #ifdef HAVE_ICU
-	UCaseMap *ucm = NULL;
+	UCaseMap *ucm = nullptr;
 #endif
 
 void sleep_ms(int milliseconds) {
@@ -70,14 +70,14 @@ void sleep_ms(int milliseconds) {
 	struct timespec ts;
 	ts.tv_sec = milliseconds / 1000;
 	ts.tv_nsec = (milliseconds % 1000) * 1000000;
-	nanosleep(&ts, NULL);
+	nanosleep(&ts, nullptr);
 #else
 	usleep(milliseconds * 1000);
 #endif
 }
 
 void now(int &hour, int &min, int &sec) {
-	time_t t = time(NULL);
+	time_t t = time(nullptr);
 	struct tm *lt = localtime(&t);
 	hour = lt->tm_hour;
 	min = lt->tm_min;
@@ -200,19 +200,19 @@ long int s2i(const string& str) {
 	if(str.find(' ') != string::npos) {
 		string str2 = str;
 		remove_blanks(str2);
-		return strtol(str2.c_str(), NULL, 10);
+		return strtol(str2.c_str(), nullptr, 10);
 	}
-	return strtol(str.c_str(), NULL, 10);
+	return strtol(str.c_str(), nullptr, 10);
 }
 long int s2i(const char *str) {
 	for(size_t i = 0; i < strlen(str); i++) {
 		if(str[i] == ' ') {
 			string str2 = str;
 			remove_blanks(str2);
-			return strtol(str2.c_str(), NULL, 10);
+			return strtol(str2.c_str(), nullptr, 10);
 		}
 	}
-	return strtol(str, NULL, 10);
+	return strtol(str, nullptr, 10);
 }
 void *s2p(const string& str) {
 	void *p;
@@ -528,9 +528,9 @@ void parse_qalculate_version(string qalculate_version, int *qalculate_version_nu
 #ifdef _WIN32
 string utf8_encode(const std::wstring &wstr) {
 	if(wstr.empty()) return string();
-	int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int) wstr.size(), NULL, 0, NULL, NULL);
+	int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int) wstr.size(), nullptr, 0, nullptr, nullptr);
 	std::string strTo(size_needed, 0);
-	WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int) wstr.size(), &strTo[0], size_needed, NULL, NULL);
+	WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int) wstr.size(), &strTo[0], size_needed, nullptr, nullptr);
 	return strTo;
 }
 #endif
@@ -538,7 +538,7 @@ string utf8_encode(const std::wstring &wstr) {
 #ifndef _WIN32
 string getHomeDir() {
 	const char *homedir;
-	if ((homedir = getenv("HOME")) == NULL) {
+	if ((homedir = getenv("HOME")) == nullptr) {
 		homedir = getpwuid(getuid())->pw_dir;
 	}
 	return homedir;
@@ -548,7 +548,7 @@ string getHomeDir() {
 string getOldLocalDir() {
 #ifdef _WIN32
 	char path[MAX_PATH];
-	SHGetFolderPathA(NULL, CSIDL_PROFILE, NULL, 0, path);
+	SHGetFolderPathA(nullptr, CSIDL_PROFILE, nullptr, 0, path);
 	string str = path;
 	return str + "\\Qalculate";
 #else
@@ -557,12 +557,12 @@ string getOldLocalDir() {
 }
 string getLocalDir() {
 	const char *homedir;
-	if((homedir = getenv("QALCULATE_USER_DIR")) != NULL) {
+	if((homedir = getenv("QALCULATE_USER_DIR")) != nullptr) {
 		return homedir;
 	}
 #ifdef _WIN32
 	char exepath[MAX_PATH];
-	GetModuleFileName(NULL, exepath, MAX_PATH);
+	GetModuleFileName(nullptr, exepath, MAX_PATH);
 	string str(exepath);
 	str.resize(str.find_last_of('\\'));
 	str += "\\user";
@@ -572,12 +572,12 @@ string getLocalDir() {
 #	else
 	if(dirExists(str)) return str;
 	char path[MAX_PATH];
-	SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path);
+	SHGetFolderPathA(nullptr, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, nullptr, 0, path);
 	str = path;
 	return str + "\\Qalculate";
 #	endif
 #else
-	if((homedir = getenv("XDG_CONFIG_HOME")) == NULL) {
+	if((homedir = getenv("XDG_CONFIG_HOME")) == nullptr) {
 		return getHomeDir() + "/.config/qalculate";
 	}
 	return string(homedir) + "/qalculate";
@@ -585,12 +585,12 @@ string getLocalDir() {
 }
 string getLocalDataDir() {
 	const char *homedir;
-	if((homedir = getenv("QALCULATE_USER_DIR")) != NULL) {
+	if((homedir = getenv("QALCULATE_USER_DIR")) != nullptr) {
 		return homedir;
 	}
 #ifdef _WIN32
 	char exepath[MAX_PATH];
-	GetModuleFileName(NULL, exepath, MAX_PATH);
+	GetModuleFileName(nullptr, exepath, MAX_PATH);
 	string str(exepath);
 	str.resize(str.find_last_of('\\'));
 	str += "\\user";
@@ -600,12 +600,12 @@ string getLocalDataDir() {
 #	else
 	if(dirExists(str)) return str;
 	char path[MAX_PATH];
-	SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path);
+	SHGetFolderPathA(nullptr, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, nullptr, 0, path);
 	str = path;
 	return str + "\\Qalculate";
 #	endif
 #else
-	if((homedir = getenv("XDG_DATA_HOME")) == NULL) {
+	if((homedir = getenv("XDG_DATA_HOME")) == nullptr) {
 		return getHomeDir() + "/.local/share/qalculate";
 	}
 	return string(homedir) + "/qalculate";
@@ -613,12 +613,12 @@ string getLocalDataDir() {
 }
 string getLocalTmpDir() {
 	const char *homedir;
-	if((homedir = getenv("QALCULATE_USER_DIR")) != NULL) {
+	if((homedir = getenv("QALCULATE_USER_DIR")) != nullptr) {
 		return homedir;
 	}
 #ifdef _WIN32
 	char exepath[MAX_PATH];
-	GetModuleFileName(NULL, exepath, MAX_PATH);
+	GetModuleFileName(nullptr, exepath, MAX_PATH);
 	string str(exepath);
 	str.resize(str.find_last_of('\\'));
 #	ifdef WIN_PORTABLE
@@ -629,14 +629,14 @@ string getLocalTmpDir() {
 	str += "\\user";
 	if(dirExists(str)) return str;
 	char path[MAX_PATH];
-	SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, path);
+	SHGetFolderPathA(nullptr, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, nullptr, 0, path);
 	str = path;
 	str += "\\cache";
 	_mkdir(str.c_str());
 	return str + "\\Qalculate";
 #	endif
 #else
-	if((homedir = getenv("XDG_CACHE_HOME")) == NULL) {
+	if((homedir = getenv("XDG_CACHE_HOME")) == nullptr) {
 		return getHomeDir() + "/.cache/qalculate";
 	}
 	return string(homedir) + "/qalculate";
@@ -684,7 +684,7 @@ string getPackageDataDir() {
 	return PACKAGE_DATA_DIR;
 #else
 	char exepath[MAX_PATH];
-	GetModuleFileName(NULL, exepath, MAX_PATH);
+	GetModuleFileName(nullptr, exepath, MAX_PATH);
 	string datadir(exepath);
 	datadir.resize(datadir.find_last_of('\\'));
 	if (datadir.substr(datadir.length() - 4) == "\\bin") {
@@ -714,7 +714,7 @@ string getGlobalDefinitionsDir() {
 	return string(PACKAGE_DATA_DIR) + "/qalculate";
 #	else
 	char exepath[MAX_PATH];
-	GetModuleFileName(NULL, exepath, MAX_PATH);
+	GetModuleFileName(nullptr, exepath, MAX_PATH);
 	string datadir(exepath);
 	bool is_qalc = datadir.substr(datadir.length() - 8) == "qalc.exe";
 	datadir.resize(datadir.find_last_of('\\'));
@@ -745,7 +745,7 @@ string getPackageLocaleDir() {
 	return PACKAGE_LOCALE_DIR;
 #else
 	char exepath[MAX_PATH];
-	GetModuleFileName(NULL, exepath, MAX_PATH);
+	GetModuleFileName(nullptr, exepath, MAX_PATH);
 	string datadir(exepath);
 	datadir.resize(datadir.find_last_of('\\'));
 	if(datadir.substr(datadir.length() - 4) == "\\bin" || datadir.substr(datadir.length() - 6) == "\\.libs") {
@@ -803,7 +803,7 @@ bool recursiveMakeDir(string dirpath) {
 	return _mkdir(dirpath.c_str()) == 0;
 #else
 	char tmp[256];
-	char *p = NULL;
+	char *p = nullptr;
 	size_t len;
 	snprintf(tmp, sizeof(tmp), "%s", dirpath.c_str());
 	len = strlen(tmp);
@@ -833,49 +833,49 @@ bool removeDir(string dirpath) {
 char *locale_from_utf8(const char *str) {
 #ifdef HAVE_ICONV
 	iconv_t conv = iconv_open("", "UTF-8");
-	if(conv == (iconv_t) -1) return NULL;
+	if(conv == (iconv_t) -1) return nullptr;
 	size_t inlength = strlen(str);
 	size_t outlength = inlength * 4;
 	char *dest, *buffer;
 	buffer = dest = (char*) malloc((outlength + 4) * sizeof(char));
-	if(!buffer) return NULL;
+	if(!buffer) return nullptr;
 	size_t err = iconv(conv, (ICONV_CONST char **) &str, &inlength, &buffer, &outlength);
-	if(err != (size_t) -1) err = iconv(conv, NULL, &inlength, &buffer, &outlength);
+	if(err != (size_t) -1) err = iconv(conv, nullptr, &inlength, &buffer, &outlength);
 	iconv_close(conv);
 	memset(buffer, 0, 4);
-	if(err == (size_t) -1) {free(dest); return NULL;}
+	if(err == (size_t) -1) {free(dest); return nullptr;}
 	return dest;
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 char *locale_to_utf8(const char *str) {
 #ifdef HAVE_ICONV
 	iconv_t conv = iconv_open("UTF-8", "");
-	if(conv == (iconv_t) -1) return NULL;
+	if(conv == (iconv_t) -1) return nullptr;
 	size_t inlength = strlen(str);
 	size_t outlength = inlength * 4;
 	char *dest, *buffer;
 	buffer = dest = (char*) malloc((outlength + 4) * sizeof(char));
-	if(!buffer) return NULL;
+	if(!buffer) return nullptr;
 	size_t err = iconv(conv, (ICONV_CONST char**) &str, &inlength, &buffer, &outlength);
-	if(err != (size_t) -1) err = iconv(conv, NULL, &inlength, &buffer, &outlength);
+	if(err != (size_t) -1) err = iconv(conv, nullptr, &inlength, &buffer, &outlength);
 	iconv_close(conv);
 	memset(buffer, 0, 4 * sizeof(char));
-	if(err == (size_t) -1) {free(dest); return NULL;}
+	if(err == (size_t) -1) {free(dest); return nullptr;}
 	return dest;
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 char *utf8_strdown(const char *str, int l) {
 #ifdef HAVE_ICU
-	if(!ucm) return NULL;
+	if(!ucm) return nullptr;
 	UErrorCode err = U_ZERO_ERROR;
 	size_t inlength = l <= 0 ? strlen(str) : (size_t) l;
 	size_t outlength = inlength + 4;
 	char *buffer = (char*) malloc(outlength * sizeof(char));
-	if(!buffer) return NULL;
+	if(!buffer) return nullptr;
 	int32_t length = ucasemap_utf8ToLower(ucm, buffer, outlength, str, inlength, &err);
 	if(U_SUCCESS(err)) {
 		//basic accent removal
@@ -890,7 +890,7 @@ char *utf8_strdown(const char *str, int l) {
 		outlength = length + 4;
 		char *buffer_realloc = (char*) realloc(buffer, outlength * sizeof(char));
 		if(buffer_realloc) buffer = buffer_realloc;
-		else {free(buffer); return NULL;}
+		else {free(buffer); return nullptr;}
 		err = U_ZERO_ERROR;
 		ucasemap_utf8ToLower(ucm, buffer, outlength, str, inlength, &err);
 		if(U_SUCCESS(err)) {
@@ -898,20 +898,20 @@ char *utf8_strdown(const char *str, int l) {
 		}
 	}
 	free(buffer);
-	return NULL;
+	return nullptr;
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
 char *utf8_strup(const char *str, int l) {
 #ifdef HAVE_ICU
-	if(!ucm) return NULL;
+	if(!ucm) return nullptr;
 	UErrorCode err = U_ZERO_ERROR;
 	size_t inlength = l <= 0 ? strlen(str) : (size_t) l;
 	size_t outlength = inlength + 4;
 	char *buffer = (char*) malloc(outlength * sizeof(char));
-	if(!buffer) return NULL;
+	if(!buffer) return nullptr;
 	int32_t length = ucasemap_utf8ToUpper(ucm, buffer, outlength, str, inlength, &err);
 	if(U_SUCCESS(err)) {
 		if(inlength > 1 && ((size_t) length != inlength || (buffer[0] != str[0] && buffer[1] != str[1]))) {
@@ -921,12 +921,12 @@ char *utf8_strup(const char *str, int l) {
 				length = ucasemap_utf8ToLower(ucm, buffer2, inlength + 1, buffer, inlength, &err);
 				if(!U_SUCCESS(err) || (size_t) length != inlength || strncmp(str, buffer2, inlength) != 0) {
 					free(buffer2);
-					buffer2 = NULL;
+					buffer2 = nullptr;
 				}
 			}
 			if(!buffer2) {
 				free(buffer);
-				return NULL;
+				return nullptr;
 			}
 		}
 		return buffer;
@@ -934,7 +934,7 @@ char *utf8_strup(const char *str, int l) {
 		outlength = length + 4;
 		char *buffer_realloc = (char*) realloc(buffer, outlength * sizeof(char));
 		if(buffer_realloc) buffer = buffer_realloc;
-		else {free(buffer); return NULL;}
+		else {free(buffer); return nullptr;}
 		err = U_ZERO_ERROR;
 		ucasemap_utf8ToUpper(ucm, buffer, outlength, str, inlength, &err);
 		if(U_SUCCESS(err)) {
@@ -944,26 +944,26 @@ char *utf8_strup(const char *str, int l) {
 				length = ucasemap_utf8ToLower(ucm, buffer2, inlength + 1, buffer, inlength, &err);
 				if(!U_SUCCESS(err) || (size_t) length != inlength || strncmp(str, buffer2, inlength) != 0) {
 					free(buffer2);
-					buffer2 = NULL;
+					buffer2 = nullptr;
 				}
 			}
 			if(!buffer2) {
 				free(buffer);
-				return NULL;
+				return nullptr;
 			}
 			return buffer;
 		}
 	}
 	free(buffer);
-	return NULL;
+	return nullptr;
 #else
-	return NULL;
+	return nullptr;
 #endif
 }
 
 extern size_t write_data(void *ptr, size_t size, size_t nmemb, string *sbuffer);
 int checkAvailableVersion(const char *version_id, const char *current_version, string *available_version, int timeout) {
-	return checkAvailableVersion(version_id, current_version, available_version, NULL, timeout);
+	return checkAvailableVersion(version_id, current_version, available_version, nullptr, timeout);
 }
 int checkAvailableVersion(const char *version_id, const char *current_version, string *available_version, string *url, int timeout) {
 #ifdef HAVE_LIBCURL
@@ -983,7 +983,7 @@ int checkAvailableVersion(const char *version_id, const char *current_version, s
 	curl_easy_setopt(curl, CURLOPT_FILETIME, &file_time);
 #ifdef _WIN32
 	char exepath[MAX_PATH];
-	GetModuleFileName(NULL, exepath, MAX_PATH);
+	GetModuleFileName(nullptr, exepath, MAX_PATH);
 	string datadir(exepath);
 	datadir.resize(datadir.find_last_of('\\'));
 	if(datadir.substr(datadir.length() - 4) != "\\bin" && datadir.substr(datadir.length() - 6) != "\\.libs") {
@@ -1078,8 +1078,8 @@ void free_thread_caches() {
 
 #ifdef _WIN32
 
-Thread::Thread() : running(false), m_thread(NULL), m_threadReadyEvent(NULL), m_threadID(0) {
-	m_threadReadyEvent = CreateEvent(NULL, false, false, NULL);
+Thread::Thread() : running(false), m_thread(nullptr), m_threadReadyEvent(nullptr), m_threadID(0) {
+	m_threadReadyEvent = CreateEvent(nullptr, false, false, nullptr);
 }
 
 Thread::~Thread() {
@@ -1092,7 +1092,7 @@ void Thread::enableAsynchronousCancel() {}
 DWORD WINAPI Thread::doRun(void *data) {
 	// create thread message queue
 	MSG msg;
-	PeekMessage(&msg, NULL, WM_USER, WM_USER, PM_NOREMOVE);
+	PeekMessage(&msg, nullptr, WM_USER, WM_USER, PM_NOREMOVE);
 
 	Thread *thread = (Thread *) data;
 	SetEvent(thread->m_threadReadyEvent);
@@ -1105,8 +1105,8 @@ DWORD WINAPI Thread::doRun(void *data) {
 }
 
 bool Thread::start() {
-	m_thread = CreateThread(NULL, 0, Thread::doRun, this, 0, &m_threadID);
-	running = (m_thread != NULL);
+	m_thread = CreateThread(nullptr, 0, Thread::doRun, this, 0, &m_threadID);
+	running = (m_thread != nullptr);
 	if(!running) return false;
 	WaitForSingleObject(m_threadReadyEvent, INFINITE);
 	return running;
@@ -1118,7 +1118,7 @@ bool Thread::cancel() {
 	int ret = TerminateThread(m_thread, 0);
 	if(ret == 0) return false;
 	CloseHandle(m_thread);
-	m_thread = NULL;
+	m_thread = nullptr;
 	m_threadID = 0;
 	running = false;
 	return true;
@@ -1126,7 +1126,7 @@ bool Thread::cancel() {
 
 #else
 
-Thread::Thread() : running(false), m_pipe_r(NULL), m_pipe_w(NULL) {
+Thread::Thread() : running(false), m_pipe_r(nullptr), m_pipe_w(nullptr) {
 	pthread_attr_init(&m_thread_attr);
 	int pipe_wr[] = {0, 0};
 #ifdef HAVE_PIPE2
@@ -1155,8 +1155,8 @@ void Thread::doCleanup(void *data) {
 }
 
 void Thread::enableAsynchronousCancel() {
-	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, nullptr);
+	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, nullptr);
 }
 
 void *Thread::doRun(void *data) {
@@ -1167,7 +1167,7 @@ void *Thread::doRun(void *data) {
 	thread->run();
 
 	pthread_cleanup_pop(1);
-	return NULL;
+	return nullptr;
 
 }
 

@@ -629,7 +629,7 @@ ExpressionItem *ExpressionItem::getReferencer(size_t index) const {
 	if(index > 0 && index <= v_refs.size()) {
 		return v_refs[index - 1];
 	}
-	return NULL;
+	return nullptr;
 }
 bool ExpressionItem::changeReference(ExpressionItem*, ExpressionItem*) {
 	return false;

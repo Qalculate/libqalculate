@@ -86,7 +86,7 @@ class Prefix {
 	* @param can_display_unicode_string_arg Argument to pass to the above test function.
 	* @returns A preferred name.
  	*/
-	const std::string &name(bool short_default = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	const std::string &name(bool short_default = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = nullptr, void *can_display_unicode_string_arg = nullptr) const;
 	const std::string &referenceName() const;
 	/** Returns the name that best fulfils provided criterias. If two names are equally preferred, the one with lowest index is returned.
 	*
@@ -98,7 +98,7 @@ class Prefix {
 	* @param can_display_unicode_string_arg Argument to pass to the above test function.
 	* @returns The preferred name.
 	*/
-	const ExpressionName &preferredName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	const ExpressionName &preferredName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false, bool (*can_display_unicode_string_function) (const char*, void*) = nullptr, void *can_display_unicode_string_arg = nullptr) const;
 	/** Returns the name that best fulfils provided criterias and is suitable for user input. If two names are equally preferred, the one with lowest index is returned.
 	*
 	* @param abbreviation If an abbreviated name is preferred.
@@ -109,7 +109,7 @@ class Prefix {
 	* @param can_display_unicode_string_arg Argument to pass to the above test function.
 	* @returns The preferred name.
 	*/
-	const ExpressionName &preferredInputName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	const ExpressionName &preferredInputName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false, bool (*can_display_unicode_string_function) (const char*, void*) = nullptr, void *can_display_unicode_string_arg = nullptr) const;
 	/** Returns the name that best fulfils provided criterias and is suitable for display. If two names are equally preferred, the one with lowest index is returned.
 	*
 	* @param abbreviation If an abbreviated name is preferred.
@@ -118,7 +118,7 @@ class Prefix {
 	* @param can_display_unicode_string_arg Argument to pass to the above test function.
 	* @returns The preferred name.
 	*/
-	const ExpressionName &preferredDisplayName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	const ExpressionName &preferredDisplayName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false, bool (*can_display_unicode_string_function) (const char*, void*) = nullptr, void *can_display_unicode_string_arg = nullptr) const;
 	/** Returns name for an index (starting at one). All functions can be traversed by starting at index one and increasing the index until empty_expression_name is returned.
 	*
 	* @param index Index of name.
@@ -167,7 +167,7 @@ class Prefix {
 	* @param can_display_unicode_string_arg Argument to pass to the above test function.
 	* @returns The first found name with the specified properties or empty_expression_name if none found.
 	*/
-	const ExpressionName &findName(int abbreviation = -1, int use_unicode = -1, int plural = -1, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	const ExpressionName &findName(int abbreviation = -1, int use_unicode = -1, int plural = -1, bool (*can_display_unicode_string_function) (const char*, void*) = nullptr, void *can_display_unicode_string_arg = nullptr) const;
 	/** Returns the value of the prefix.
 	*
 	* @param nexp The power of the prefixed unit.

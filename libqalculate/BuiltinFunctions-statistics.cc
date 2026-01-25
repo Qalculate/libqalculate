@@ -113,7 +113,7 @@ int PercentileFunction::calculate(MathStructure &mstruct, const MathStructure &v
 				return 1;
 			}
 		}
-		[[fallthrough]]
+		[[fallthrough]];
 		case 1: {
 			pfr *= (long int) v.countChildren();
 			pfr.intervalToMidValue();
@@ -178,11 +178,11 @@ MinFunction::MinFunction() : MathFunction("min", 1) {
 }
 int MinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	ComparisonResult cmp;
-	const MathStructure *min = NULL;
+	const MathStructure *min = nullptr;
 	vector<const MathStructure*> unsolveds;
 	bool b = false;
 	for(size_t index = 0; index < vargs[0].size(); index++) {
-		if(min == NULL) {
+		if(min == nullptr) {
 			min = &vargs[0][index];
 		} else {
 			cmp = min->compare(vargs[0][index]);
@@ -191,7 +191,7 @@ int MinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				b = true;
 			} else if(COMPARISON_NOT_FULLY_KNOWN(cmp)) {
 				if(CALCULATOR->showArgumentErrors()) {
-					CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), NULL);
+					CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), nullptr);
 				}
 				unsolveds.push_back(&vargs[0][index]);
 			} else {
@@ -207,7 +207,7 @@ int MinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			for(size_t i = 0; i < unsolveds.size(); i++) {
 				margs.addChild(*unsolveds[i]);
 			}
-			mstruct.set(this, &margs, NULL);
+			mstruct.set(this, &margs, nullptr);
 			return 1;
 		} else {
 			mstruct = *min;
@@ -223,11 +223,11 @@ MaxFunction::MaxFunction() : MathFunction("max", 1) {
 }
 int MaxFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	ComparisonResult cmp;
-	const MathStructure *max = NULL;
+	const MathStructure *max = nullptr;
 	vector<const MathStructure*> unsolveds;
 	bool b = false;
 	for(size_t index = 0; index < vargs[0].size(); index++) {
-		if(max == NULL) {
+		if(max == nullptr) {
 			max = &vargs[0][index];
 		} else {
 			cmp = max->compare(vargs[0][index]);
@@ -236,7 +236,7 @@ int MaxFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 				b = true;
 			} else if(COMPARISON_NOT_FULLY_KNOWN(cmp)) {
 				if(CALCULATOR->showArgumentErrors()) {
-					CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), NULL);
+					CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), nullptr);
 				}
 				unsolveds.push_back(&vargs[0][index]);
 			} else {
@@ -252,7 +252,7 @@ int MaxFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			for(size_t i = 0; i < unsolveds.size(); i++) {
 				margs.addChild(*unsolveds[i]);
 			}
-			mstruct.set(this, &margs, NULL);
+			mstruct.set(this, &margs, nullptr);
 			return 1;
 		} else {
 			mstruct = *max;
@@ -280,14 +280,14 @@ int ModeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	v.eval(eo2);
 	if(!v.sortVector()) return 0;
 	size_t n = 1, nmax = 0;
-	const MathStructure *value = NULL;
+	const MathStructure *value = nullptr;
 	for(size_t i = 1; i < v.size(); i++) {
 		ComparisonResult cmp = v[i].compare(v[i - 1]);
 		if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) {
 			n++;
 		} else if(COMPARISON_MIGHT_BE_EQUAL(cmp)) {
 			if(CALCULATOR->showArgumentErrors()) {
-				CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), NULL);
+				CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), nullptr);
 				return 0;
 			}
 		} else {

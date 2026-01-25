@@ -169,7 +169,7 @@ class MathFunction : public ExpressionItem {
 	/** Returns the argument definition for an argument index.
 	*
 	* @param index Argument index.
-	* @returns The argument definition for the index or NULL if no the argument was not defined for the index
+	* @returns The argument definition for the index or nullptr if no the argument was not defined for the index
 	*/
 	Argument *getArgumentDefinition(size_t index);
 	/** Removes all argument definitions for the function.

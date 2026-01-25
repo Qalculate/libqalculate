@@ -373,7 +373,7 @@ bool expand_partial_fractions(MathStructure &m, const EvaluationOptions &eo, boo
 	}
 	if(mtest.isPower() && mtest[1].representsNegative()) {
 		MathStructure x_var = mtest[0].find_x_var();
-		if(!x_var.isUndefined() && mtest[0].factorize(eo, false, 0, 0, false, false, NULL, x_var)) {
+		if(!x_var.isUndefined() && mtest[0].factorize(eo, false, 0, 0, false, false, nullptr, x_var)) {
 			if(mtest.decomposeFractions(x_var, eo) && mtest.isAddition()) {
 				m = mtest;
 				return true;
@@ -401,7 +401,7 @@ bool expand_partial_fractions(MathStructure &m, const EvaluationOptions &eo, boo
 							return true;
 						}
 					}
-					if(b_poly && mtest[i][0].factorize(eo, false, 0, 0, false, false, NULL, x_var)) {
+					if(b_poly && mtest[i][0].factorize(eo, false, 0, 0, false, false, nullptr, x_var)) {
 						MathStructure mmul(1, 1, 0);
 						while(mtest[i][0].isMultiplication() && mtest[i][0].size() >= 2 && !mtest[i][0][0].containsRepresentativeOf(x_var, true)) {
 							if(mmul.isOne()) {

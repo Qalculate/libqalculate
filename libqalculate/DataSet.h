@@ -64,16 +64,16 @@ class DataObject {
 	/** Returns parsed value for a property. Parses the text string value if not parsed before
 	*
 	* @param property Property to read.
-	* @returns Parsed value or NULL if property value is not set.
+	* @returns Parsed value or nullptr if property value is not set.
 	*/
 	const MathStructure *getPropertyStruct(DataProperty *property);
 	/** Returns unparsed value for a property.
 	*
 	* @param property Property to read.
-	* @param[out] is_approximate If the value is approximate. Is set to 1 for approximate, 0 for exact, -1 for property default, if not NULL.
+	* @param[out] is_approximate If the value is approximate. Is set to 1 for approximate, 0 for exact, -1 for property default, if not nullptr.
 	* @returns Unparsed value or empty string if property value is not set.
 	*/
-	const std::string &getProperty(DataProperty *property, int *is_approximate = NULL);
+	const std::string &getProperty(DataProperty *property, int *is_approximate = nullptr);
 	/** Returns unparsed untranslated value for a key property. Used when a text value is translated, but the original value still is needed as a reference key.
 	*
 	* @param property Property to read.
@@ -225,8 +225,8 @@ class DataSet : public MathFunction {
 
 	virtual int calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo);
 
-	bool loadObjects(const char *file_name = NULL, bool is_user_defs = true);
-	int saveObjects(const char *file_name = NULL, bool save_global = false);
+	bool loadObjects(const char *file_name = nullptr, bool is_user_defs = true);
+	int saveObjects(const char *file_name = nullptr, bool save_global = false);
 	bool objectsLoaded() const;
 	void setObjectsLoaded(bool objects_loaded);
 

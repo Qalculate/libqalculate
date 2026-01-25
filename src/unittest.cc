@@ -21,7 +21,7 @@ void print_usage() {
 	puts("If filename is omitted, it will run all unit tests");
 }
 
-void run_unit_test(char *filename, char *dir = NULL) {
+void run_unit_test(char *filename, char *dir = nullptr) {
 	char buffer[1000];
 #ifdef _WIN32
 	snprintf(buffer, 1000, "%s\\qalc.exe --test-file=\"%s\"", dir ? dir : "src", filename);
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
 		bool in_srcdir = false;
 #ifdef _WIN32
 		size_t n = 0;
-		getenv_s(&n, NULL, 0, "srcdir");
+		getenv_s(&n, nullptr, 0, "srcdir");
 		if(n > 0) {
 			char *srcdir = (char*) malloc(n * sizeof(char));
 			getenv_s(&n, srcdir, n, "srcdir");
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
 		struct dirent *dir;
 		d = opendir(path);
 		if(d) {
-			while((dir = readdir(d)) != NULL) {
+			while((dir = readdir(d)) != nullptr) {
 #ifdef _DIRENT_HAVE_D_TYPE
 				if(dir->d_type != DT_REG) continue;
 #endif
@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
 				strcat(fullPath, "/");
 #endif
 				strcat(fullPath, filename);
-				run_unit_test(fullPath, in_srcdir ? curdir : NULL);
+				run_unit_test(fullPath, in_srcdir ? curdir : nullptr);
 			}
 			closedir(d);
 		}

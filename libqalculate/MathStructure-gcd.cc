@@ -86,7 +86,7 @@ bool sr_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgc
 
 	MathStructure gamma;
 
-	if(!MathStructure::gcd(cont_c, cont_d, gamma, eo, NULL, NULL, false)) return false;
+	if(!MathStructure::gcd(cont_c, cont_d, gamma, eo, nullptr, nullptr, false)) return false;
 	mgcd = gamma;
 	if(ddeg.isZero()) {
 		return true;

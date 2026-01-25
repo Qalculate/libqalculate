@@ -504,14 +504,14 @@ int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 			CALCULATOR->endTemporaryStopMessages(true);
 			for(size_t i = 0; i < vargs[1].size(); i++) {
 				if(vargs[1][i].isFunction() && meval[i].isFunction() && vargs[1][i].size() == 0 && meval[i].size() == 0) {
-					if(!replace_function(mstruct, vargs[1][i].function(), meval[i].function(), eo)) CALCULATOR->error(false, _("Original value (%s) was not found."), (vargs[1][i].function()->name() + "()").c_str(), NULL);
+					if(!replace_function(mstruct, vargs[1][i].function(), meval[i].function(), eo)) CALCULATOR->error(false, _("Original value (%s) was not found."), (vargs[1][i].function()->name() + "()").c_str(), nullptr);
 				} else if(meval[i].containsInterval(true, false, false, 0, true)) {
 					MathStructure mv(meval[i]);
 					replace_f_interval(mv, eo);
 					replace_intervals_f(mv);
-					if(!mstruct.replace(vargs[1][i], mv, false, false, replace_in_variables)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1][i]).c_str(), NULL);
+					if(!mstruct.replace(vargs[1][i], mv, false, false, replace_in_variables)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1][i]).c_str(), nullptr);
 				} else {
-					if(!mstruct.replace(vargs[1][i], meval[i], false, false, replace_in_variables)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1][i]).c_str(), NULL);
+					if(!mstruct.replace(vargs[1][i], meval[i], false, false, replace_in_variables)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1][i]).c_str(), nullptr);
 				}
 			}
 			return 1;
@@ -521,14 +521,14 @@ int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	if(vargs[1].isVector() && vargs[2].isVector() && vargs[1].size() == vargs[2].size()) {
 		for(size_t i = 0; i < vargs[1].size(); i++) {
 			if(vargs[1][i].isFunction() && vargs[2][i].isFunction() && vargs[1][i].size() == 0 && vargs[2][i].size() == 0) {
-				if(!replace_function(mstruct, vargs[1][i].function(), vargs[2][i].function(), eo)) CALCULATOR->error(false, _("Original value (%s) was not found."), (vargs[1][i].function()->name() + "()").c_str(), NULL);
+				if(!replace_function(mstruct, vargs[1][i].function(), vargs[2][i].function(), eo)) CALCULATOR->error(false, _("Original value (%s) was not found."), (vargs[1][i].function()->name() + "()").c_str(), nullptr);
 			} else if(vargs[2][i].containsInterval(true, false, false, 0, true)) {
 				MathStructure mv(vargs[2][i]);
 				replace_f_interval(mv, eo);
 				replace_intervals_f(mv);
-				if(!mstruct.replace(vargs[1][i], mv, false, false, replace_in_variables)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1][i]).c_str(), NULL);
+				if(!mstruct.replace(vargs[1][i], mv, false, false, replace_in_variables)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1][i]).c_str(), nullptr);
 			} else {
-				if(!mstruct.replace(vargs[1][i], vargs[2][i], false, false, replace_in_variables)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1][i]).c_str(), NULL);
+				if(!mstruct.replace(vargs[1][i], vargs[2][i], false, false, replace_in_variables)) CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1][i]).c_str(), nullptr);
 			}
 		}
 	} else {
@@ -544,7 +544,7 @@ int ReplaceFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 				if(mstruct.replace(vargs[1], vargs[2], false, false, replace_in_variables)) break;
 			}
 			if(b_evaled) {
-				CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1]).c_str(), NULL);
+				CALCULATOR->error(false, _("Original value (%s) was not found."), format_and_print(vargs[1]).c_str(), nullptr);
 				break;
 			} else {
 				mstruct.eval();
@@ -571,7 +571,7 @@ int StripUnitsFunction::calculate(MathStructure &mstruct, const MathStructure &v
 	mstruct.removeType(STRUCT_UNIT);
 	if(mstruct.containsType(STRUCT_UNIT, false, true, true) == 0) return 1;
 	if(mstruct.isMultiplication() || mstruct.isAddition()) {
-		MathStructure *mleft = NULL;
+		MathStructure *mleft = nullptr;
 		for(size_t i = 0; i < mstruct.size(); i++) {
 			if(mstruct[i].containsType(STRUCT_UNIT, false, true, true) == 0) {
 				mstruct[i].ref();
@@ -610,7 +610,7 @@ int StripUnitsFunction::calculate(MathStructure &mstruct, const MathStructure &v
 	mstruct.removeType(STRUCT_UNIT);
 	if(mstruct.containsType(STRUCT_UNIT, false, true, true) == 0) return 1;
 	if(mstruct.isMultiplication() || mstruct.isAddition()) {
-		MathStructure *mleft = NULL;
+		MathStructure *mleft = nullptr;
 		for(size_t i = 0; i < mstruct.size(); i++) {
 			if(mstruct[i].containsType(STRUCT_UNIT, false, true, true) == 0) {
 				mstruct[i].ref();
@@ -648,21 +648,21 @@ ErrorFunction::ErrorFunction() : MathFunction("error", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
 int ErrorFunction::calculate(MathStructure&, const MathStructure &vargs, const EvaluationOptions&) {
-	CALCULATOR->error(true, vargs[0].symbol().c_str(), NULL);
+	CALCULATOR->error(true, vargs[0].symbol().c_str(), nullptr);
 	return 1;
 }
 WarningFunction::WarningFunction() : MathFunction("warning", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
 int WarningFunction::calculate(MathStructure&, const MathStructure &vargs, const EvaluationOptions&) {
-	CALCULATOR->error(false, vargs[0].symbol().c_str(), NULL);
+	CALCULATOR->error(false, vargs[0].symbol().c_str(), nullptr);
 	return 1;
 }
 MessageFunction::MessageFunction() : MathFunction("message", 1) {
 	setArgumentDefinition(1, new TextArgument());
 }
 int MessageFunction::calculate(MathStructure&, const MathStructure &vargs, const EvaluationOptions&) {
-	CALCULATOR->message(MESSAGE_INFORMATION, vargs[0].symbol().c_str(), NULL);
+	CALCULATOR->message(MESSAGE_INFORMATION, vargs[0].symbol().c_str(), nullptr);
 	return 1;
 }
 
@@ -734,11 +734,11 @@ int CustomSumFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	int end = vargs[1].number().intValue();
 	int n = vargs[6].countChildren();
 	if(start > n) {
-		CALCULATOR->error(true, _("Too few elements (%s) in vector (%s required)"), i2s(n).c_str(), i2s(start).c_str(), NULL);
+		CALCULATOR->error(true, _("Too few elements (%s) in vector (%s required)"), i2s(n).c_str(), i2s(start).c_str(), nullptr);
 		start = n;
 	}
 	if(end < 1 || end > n) {
-		if(end > n) CALCULATOR->error(true, _("Too few elements (%s) in vector (%s required)"), i2s(n).c_str(), i2s(end).c_str(), NULL);
+		if(end > n) CALCULATOR->error(true, _("Too few elements (%s) in vector (%s required)"), i2s(n).c_str(), i2s(end).c_str(), nullptr);
 		end = n;
 	} else if(end < start) {
 		end = start;
@@ -842,7 +842,7 @@ TitleFunction::TitleFunction() : MathFunction("title", 1) {
 int TitleFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	ExpressionItem *item = CALCULATOR->getExpressionItem(vargs[0].symbol());
 	if(!item) {
-		CALCULATOR->error(true, _("Object %s does not exist."), vargs[0].symbol().c_str(), NULL);
+		CALCULATOR->error(true, _("Object %s does not exist."), vargs[0].symbol().c_str(), nullptr);
 		return 0;
 	} else {
 		mstruct = item->title();
@@ -887,7 +887,7 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	if(i2 != string::npos) {
 		string name = vargs[1].symbol().substr(0, i2 + 1);
 		if(!CALCULATOR->functionNameIsValid(name)) {
-			CALCULATOR->error(true, _("Invalid function name (%s)."), name.c_str(), NULL);
+			CALCULATOR->error(true, _("Invalid function name (%s)."), name.c_str(), nullptr);
 			if(vargs[4].number().getBoolean()) return -1;
 			return 0;
 		}
@@ -929,7 +929,7 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			sarg2[1] = carg;
 			sarg_new[1] = carg;
 		}
-		if(CALCULATOR->hasToExpression(expr)) CALCULATOR->error(false, _("Conversion (using \"to\") is not supported in functions."), NULL);
+		if(CALCULATOR->hasToExpression(expr)) CALCULATOR->error(false, _("Conversion (using \"to\") is not supported in functions."), nullptr);
 		if(CALCULATOR->functionNameTaken(name)) {
 			MathFunction *f = CALCULATOR->getActiveFunction(name, true);
 			if(f && f->isLocal() && f->subtype() == SUBTYPE_USER_FUNCTION) {
@@ -944,7 +944,7 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					f->setName(name, 1);
 				}
 			} else {
-				CALCULATOR->error(false, MESSAGE_CATEGORY_GLOBAL_OBJECT_DEACTIVATED, _("A global function was deactivated. It will be restored after the new function has been removed."), NULL);
+				CALCULATOR->error(false, MESSAGE_CATEGORY_GLOBAL_OBJECT_DEACTIVATED, _("A global function was deactivated. It will be restored after the new function has been removed."), nullptr);
 				CALCULATOR->addFunction(new UserFunction(vargs[2].symbol(), name, expr, true, marg.size() == 0 ? -1 : marg.size(), vargs[3].symbol()))->setChanged(true);
 			}
 		} else {
@@ -978,7 +978,7 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		string name = vargs[1].symbol().substr(0, i2 + 1);
 		Variable *v = CALCULATOR->getActiveVariable(name);
 		if(!v || !v->isLocal() || !v->isKnown() || !((KnownVariable*) v)->get().isVector()) {
-			CALCULATOR->error(true, _("Matrix/vector (%s) not found."), name.c_str(), NULL);
+			CALCULATOR->error(true, _("Matrix/vector (%s) not found."), name.c_str(), nullptr);
 			if(vargs[4].number().getBoolean()) return -1;
 			return 0;
 		}
@@ -1008,7 +1008,7 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		return 1;
 	}
 	if(!CALCULATOR->variableNameIsValid(vargs[1].symbol())) {
-		CALCULATOR->error(true, _("Invalid variable name (%s)."), vargs[1].symbol().c_str(), NULL);
+		CALCULATOR->error(true, _("Invalid variable name (%s)."), vargs[1].symbol().c_str(), nullptr);
 		if(vargs[4].number().getBoolean()) return -1;
 		return 0;
 	}
@@ -1027,7 +1027,7 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				v->setName(vargs[1].symbol(), 1);
 			}
 		} else {
-			CALCULATOR->error(false, MESSAGE_CATEGORY_GLOBAL_OBJECT_DEACTIVATED, _("A global unit or variable was deactivated. It will be restored after the new variable has been removed."), NULL);
+			CALCULATOR->error(false, MESSAGE_CATEGORY_GLOBAL_OBJECT_DEACTIVATED, _("A global unit or variable was deactivated. It will be restored after the new variable has been removed."), nullptr);
 			CALCULATOR->addVariable(new KnownVariable(vargs[2].symbol(), vargs[1].symbol(), mstruct, vargs[3].symbol()))->setChanged(true);
 		}
 	} else {
@@ -1042,7 +1042,7 @@ RegisterFunction::RegisterFunction() : MathFunction("register", 1) {
 }
 int RegisterFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	if(vargs[0].number().isGreaterThan(CALCULATOR->RPNStackSize())) {
-		CALCULATOR->error(false, _("Register %s does not exist. Returning zero."), format_and_print(vargs[0]).c_str(), NULL);
+		CALCULATOR->error(false, _("Register %s does not exist. Returning zero."), format_and_print(vargs[0]).c_str(), nullptr);
 		mstruct.clear();
 		return 1;
 	}
@@ -1067,17 +1067,17 @@ int CommandFunction::calculate([[maybe_unused]] MathStructure &mstruct, [[maybe_
 #ifndef DISABLE_INSECURE
 #	ifdef HAVE_GNUPLOT_CALL
 
-	FILE *pipe = NULL;
+	FILE *pipe = nullptr;
 	string commandline = vargs[0].symbol();
 	remove_blank_ends(commandline);
 	if(commandline.empty()) {
-		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str(), NULL);
+		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str(), nullptr);
 		return 0;
 	}
 	bool quoted = commandline.length() >= 2 && (commandline[0] == '\"' || commandline[0] == '\'') && commandline.find(commandline[0], 1) == commandline.length() - 1;
 	if(!quoted) {
 		if(commandline.find("\'") != string::npos) {
-			CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str(), NULL);
+			CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str(), nullptr);
 			return 0;
 		}
 		commandline.insert(0, "\'");
@@ -1088,7 +1088,7 @@ int CommandFunction::calculate([[maybe_unused]] MathStructure &mstruct, [[maybe_
 	if(pos == string::npos) pos = 0;
 	cmd = commandline.substr(pos + 1, commandline.length() - (pos + 1) - 1);
 	if(cmd.empty() || cmd == "rm" || cmd == "wget" || cmd == "curl" || cmd == "exec" || cmd == "rmdir" || cmd == "su" || cmd == "sudo" || cmd.find("run") == 0 || cmd.find("python") == 0 || cmd.find("perl") == 0 || cmd.find("sh", cmd.length() - 2) != string::npos || cmd == "fdisk" || cmd.find("-open") != string::npos || cmd.find("-launch") != string::npos || cmd.find("terminal") != string::npos || cmd.find("rxvt") != string::npos || (cmd.length() >= 4 && cmd.find("term", cmd.length() - 4) != string::npos) || cmd.find("shell") != string::npos || cmd.find("command") != string::npos) {
-		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str(), NULL);
+		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str(), nullptr);
 		return 0;
 	}
 	for(size_t i = 1; i < vargs.size(); i++) {
@@ -1113,13 +1113,13 @@ int CommandFunction::calculate([[maybe_unused]] MathStructure &mstruct, [[maybe_
 #endif
 
 	if(!pipe) {
-		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str(), NULL);
+		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str(), nullptr);
 		return 0;
 	}
 
 	char buffer[1000];
 	string output;
-	while(fgets(buffer, sizeof(buffer), pipe) != NULL) {
+	while(fgets(buffer, sizeof(buffer), pipe) != nullptr) {
 		output += buffer;
 	}
 
@@ -1128,7 +1128,7 @@ int CommandFunction::calculate([[maybe_unused]] MathStructure &mstruct, [[maybe_
 #else
 	if(pclose(pipe) > 0 && output.empty()) {
 #endif
-		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str(), NULL);
+		CALCULATOR->error(true, _("Failed to run external command (%s)."), commandline.c_str(), nullptr);
 		return 0;
 	}
 
@@ -1152,7 +1152,7 @@ int CommandFunction::calculate([[maybe_unused]] MathStructure &mstruct, [[maybe_
 	if(b_error) {
 		size_t i = output.find("\n");
 		if(i != string::npos && i > 0 && i < output.length() - 1) output.insert(0, "\n");
-		CALCULATOR->error(true, _("Parsing of command output failed: %s"), output.c_str(), NULL);
+		CALCULATOR->error(true, _("Parsing of command output failed: %s"), output.c_str(), nullptr);
 		return 0;
 	}
 	CALCULATOR->addMessages(&blocked_messages);
@@ -1160,11 +1160,11 @@ int CommandFunction::calculate([[maybe_unused]] MathStructure &mstruct, [[maybe_
 	return 1;
 
 #	else
-	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), (name() + "()").c_str(), "libqalculate", "--without-gnuplot-call", NULL);
+	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), (name() + "()").c_str(), "libqalculate", "--without-gnuplot-call", nullptr);
 	return 0;
 #	endif
 #else
-	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), (name() + "()").c_str(), "libqalculate", "--disable-insecure", NULL);
+	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), (name() + "()").c_str(), "libqalculate", "--disable-insecure", nullptr);
 	return 0;
 #endif
 }
@@ -1233,12 +1233,12 @@ int PlotFunction::parse(MathStructure &mstruct, const std::string &eq, const Par
 int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 #ifndef HAVE_GNUPLOT_CALL
 #	ifndef HAVE_BYO_GNUPLOT
-	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), (name() + "()").c_str(), "libqalculate", "--without-gnuplot-call", NULL);
+	CALCULATOR->error(true, _("%s is disabled when %s is compiled with \"%s\" configure option."), (name() + "()").c_str(), "libqalculate", "--without-gnuplot-call", nullptr);
 	return 0;
 #	endif
 #endif
 	if(!CALCULATOR->canPlot()) {
-		CALCULATOR->error(true, _("Gnuplot was not found"), NULL);
+		CALCULATOR->error(true, _("Gnuplot was not found"), nullptr);
 		return 0;
 	}
 	EvaluationOptions eo2;
@@ -1384,12 +1384,12 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 								if(i_value == 0) smoothing = PLOT_SMOOTHING_NONE;
 								else if(i_value == 1) smoothing = PLOT_SMOOTHING_CSPLINES;
 								else if(i_value == 2) smoothing = PLOT_SMOOTHING_BEZIER;
-								else CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), NULL);
+								else CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), nullptr);
 								break;
 							}
 							case 4: {
 								if(i_value >= 0 && i_value <= PLOT_STYLE_DOTS) style = (PlotStyle) i_value;
-								else CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), NULL);
+								else CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), nullptr);
 								break;
 							}
 							case 5: {b_persistent = i_value; break;}
@@ -1401,12 +1401,12 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 							case 13: {param.grid = i_value; break;}
 							case 14: {
 								if(i_value > 0 && i_value < 100) param.linewidth = i_value;
-								else CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), NULL);
+								else CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), nullptr);
 								break;
 							}
 							case 18: {
 								if(i_value >= 0 && i_value < PLOT_LEGEND_OUTSIDE) param.legend_placement = (PlotLegendPlacement) i_value;
-								else CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), NULL);
+								else CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), nullptr);
 								break;
 							}
 							case 20: {eo2.allow_complex = i_value; break;}
@@ -1415,10 +1415,10 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					} else if((i_prev == 0 && (m.isNumber() || svalue.find_first_of(NUMBERS) != string::npos)) || i_prev == 2) {
 						mstep = m;
 					} else {
-						CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), NULL);
+						CALCULATOR->error(false, _("Illegal value: %s."), svalue.c_str(), nullptr);
 					}
 				} else {
-					CALCULATOR->error(false, _("Unrecognized option: %s."), svalue.c_str(), NULL);
+					CALCULATOR->error(false, _("Unrecognized option: %s."), svalue.c_str(), nullptr);
 				}
 			}
 			i_prev = -1;
@@ -1438,7 +1438,7 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		CALCULATOR->beginTemporaryStopMessages();
 		mstruct.eval(eo2);
 		int im = 0;
-		if(CALCULATOR->endTemporaryStopMessages(NULL, &im) > 0 || im > 0) mstruct = vargs[0];
+		if(CALCULATOR->endTemporaryStopMessages(nullptr, &im) > 0 || im > 0) mstruct = vargs[0];
 		eo2.calculate_functions = eo.calculate_functions;
 		eo2.expand = eo.expand;
 	}
@@ -1502,16 +1502,16 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 						generate_plotvector(mstruct[i], mvar, vargs[1], vargs[2], mstep, x_vector, y_vector, eo2);
 						CALCULATOR->endTemporaryStopIntervalArithmetic();
 						CALCULATOR->endTemporaryStopMessages();
-						if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
+						if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), nullptr);
 					} else if(i_rate < 1) {
-						CALCULATOR->error(true, _("Sampling rate must be a positive integer."), NULL);
+						CALCULATOR->error(true, _("Sampling rate must be a positive integer."), nullptr);
 					} else {
 						CALCULATOR->beginTemporaryStopMessages();
 						CALCULATOR->beginTemporaryStopIntervalArithmetic();
 						if(i_rate <= 1000000) generate_plotvector(mstruct[i], mvar, vargs[1], vargs[2], i_rate, x_vector, y_vector, eo2);
 						CALCULATOR->endTemporaryStopIntervalArithmetic();
 						CALCULATOR->endTemporaryStopMessages();
-						if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
+						if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), nullptr);
 					}
 					if(CALCULATOR->aborted()) {
 						mstruct.clear();
@@ -1550,16 +1550,16 @@ int PlotFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			generate_plotvector(mstruct, mvar, vargs[1], vargs[2], mstep, x_vector, y_vector, eo2);
 			CALCULATOR->endTemporaryStopIntervalArithmetic();
 			CALCULATOR->endTemporaryStopMessages();
-			if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
+			if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and step size."), nullptr);
 		} else if(i_rate < 1) {
-			CALCULATOR->error(true, _("Sampling rate must be a positive integer."), NULL);
+			CALCULATOR->error(true, _("Sampling rate must be a positive integer."), nullptr);
 		} else {
 			CALCULATOR->beginTemporaryStopMessages();
 			CALCULATOR->beginTemporaryStopIntervalArithmetic();
 			if(i_rate <= 1000000) generate_plotvector(mstruct, mvar, vargs[1], vargs[2], i_rate, x_vector, y_vector, eo2);
 			CALCULATOR->endTemporaryStopIntervalArithmetic();
 			CALCULATOR->endTemporaryStopMessages();
-			if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
+			if(y_vector.size() == 0) CALCULATOR->error(true, _("Unable to generate plot data with current min, max and sampling rate."), nullptr);
 		}
 		if(CALCULATOR->aborted()) {
 			mstruct.clear();

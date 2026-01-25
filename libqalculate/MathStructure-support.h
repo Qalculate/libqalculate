@@ -48,7 +48,7 @@
 	}\
 	if(b_reorder_subs) {\
 		std::vector<MathStructure*> v_subs_new;\
-		v_subs_new.resize(v_order.size(), NULL);\
+		v_subs_new.resize(v_order.size(), nullptr);\
 		for(size_t v_index = 0; v_index < v_order.size(); v_index++) {\
 			v_subs_new[v_index] = v_subs[v_order[v_index]];\
 		}\
@@ -57,7 +57,7 @@
 			v_order[v_index] = v_index;\
 		}\
 	} else {\
-		v_subs.resize(v_order.size(), NULL);\
+		v_subs.resize(v_order.size(), nullptr);\
 	}\
 }
 #define CHILD(v_index)		(*v_subs[v_order[v_index]])
@@ -85,12 +85,12 @@
 #define VALID_ROOT(o)		(o.size() == 2 && o[1].isNumber() && o[1].number().isInteger() && o[1].number().isPositive())
 #define THIS_VALID_ROOT		(SIZE == 2 && CHILD(1).isNumber() && CHILD(1).number().isInteger() && CHILD(1).number().isPositive())
 
-#define FUNCTION_PROTECTED(evalops, id) (evalops.protected_function != NULL && evalops.protected_function == CALCULATOR->getFunctionById(id))
+#define FUNCTION_PROTECTED(evalops, id) (evalops.protected_function != nullptr && evalops.protected_function == CALCULATOR->getFunctionById(id))
 
 #ifndef CLOCK_MONOTONIC
 #	define PREPARE_TIMECHECK_VAR struct timeval tv_end;
 #	define PREPARE_TIMECHECK_TIME(ms) \
-					gettimeofday(&tv_end, NULL); \
+					gettimeofday(&tv_end, nullptr); \
 					tv_end.tv_usec += ((ms) % 1000) * 1000; \
 					tv_end.tv_sec += ((ms) / 1000); \
 					if(tv_end.tv_usec >= 1000000L) { \
@@ -99,7 +99,7 @@
 					}
 #	define DO_TIMECHECK \
 					struct timeval tv; \
-					gettimeofday(&tv, NULL); \
+					gettimeofday(&tv, nullptr); \
 					if(tv.tv_sec > tv_end.tv_sec || (tv.tv_sec == tv_end.tv_sec && tv.tv_usec >= tv_end.tv_usec))
 #else
 #	define PREPARE_TIMECHECK_VAR struct timespec tv_end;
@@ -127,10 +127,10 @@
 #define VARIABLE_APPROXIMATE(xv) (xv->isApproximate() || ((KnownVariable*) xv)->get().isApproximate() || ((KnownVariable*) xv)->get().containsInterval(true, false, false, 0, true))
 #define SET_VARIABLE_VALUE(xm, xv, xeo) xm.set(((KnownVariable*) xv)->get()); \
 					xm.unformat(xeo); \
-					fix_intervals(xm, xeo, NULL, PRECISION);
+					fix_intervals(xm, xeo, nullptr, PRECISION);
 #define SET_VARIABLE_VALUE_THIS(xeo)	set(((KnownVariable*) o_variable)->get()); \
 					unformat(xeo); \
-					fix_intervals(*this, xeo, NULL, PRECISION);
+					fix_intervals(*this, xeo, nullptr, PRECISION);
 
 void printRecursive(const MathStructure &mstruct);
 
@@ -155,7 +155,7 @@ bool get_first_symbol(const MathStructure &mpoly, MathStructure &xvar);
 bool divide_in_z(const MathStructure &mnum, const MathStructure &mden, MathStructure &mquotient, const sym_desc_vec &sym_stats, size_t var_i, const EvaluationOptions &eo);
 bool prem(const MathStructure &mnum, const MathStructure &mden, const MathStructure &xvar, MathStructure &mrem, const EvaluationOptions &eo, bool check_args = true);
 bool sr_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgcd, const sym_desc_vec &sym_stats, size_t var_i, const EvaluationOptions &eo);
-void polynomial_smod(const MathStructure &mpoly, const Number &xi, MathStructure &msmod, const EvaluationOptions &eo, MathStructure *mparent = NULL, size_t index_smod = 0);
+void polynomial_smod(const MathStructure &mpoly, const Number &xi, MathStructure &msmod, const EvaluationOptions &eo, MathStructure *mparent = nullptr, size_t index_smod = 0);
 bool heur_gcd(const MathStructure &m1, const MathStructure &m2, MathStructure &mgcd, const EvaluationOptions &eo, MathStructure *ca, MathStructure *cb, const sym_desc_vec &sym_stats, size_t var_i);
 void add_symbol(const MathStructure &mpoly, sym_desc_vec &v);
 void collect_symbols(const MathStructure &mpoly, sym_desc_vec &v);
@@ -184,7 +184,7 @@ bool replace_intervals_f(MathStructure &mstruct);
 bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo);
 bool calculate_rand(MathStructure &mstruct, const EvaluationOptions &eo);
 bool contains_rand(const MathStructure &mstruct, bool check_variables = false);
-bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *failed = NULL, long int min_precision = 2, bool function_middle = false);
+bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *failed = nullptr, long int min_precision = 2, bool function_middle = false);
 bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const EvaluationOptions &eo = default_evaluation_options, bool do_eval = false);
 bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
 bool combine_powers(MathStructure &m, const MathStructure &x_var, const EvaluationOptions &eo, const EvaluationOptions &feo);
@@ -206,7 +206,7 @@ bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOpt
 bool function_differentiable(MathFunction *o_function);
 bool montecarlo(const MathStructure &minteg, Number &nvalue, const MathStructure &x_var, const EvaluationOptions &eo, Number a, Number b, Number n);
 bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x_var, const EvaluationOptions &eo, Number a, Number b, long int max_steps = -1, long int min_steps = 6, bool safety_measures = true);
-bool sync_approximate_units(MathStructure &m, const EvaluationOptions &feo, std::vector<KnownVariable*> *vars = NULL, std::vector<MathStructure> *uncs = NULL, bool do_intervals = true);
+bool sync_approximate_units(MathStructure &m, const EvaluationOptions &feo, std::vector<KnownVariable*> *vars = nullptr, std::vector<MathStructure> *uncs = nullptr, bool do_intervals = true);
 void fix_to_struct(MathStructure &m);
 bool calculate_userfunctions(MathStructure &m, const MathStructure &x_mstruct, const EvaluationOptions &eo, bool b_vector = false, size_t depth = 1);
 bool comparison_is_not_equal(ComparisonResult cr);
@@ -220,7 +220,7 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure &x_vector, MathStructure &y_vector, const EvaluationOptions &eo);
 
 void replace_internal_operators(std::string &str);
-long int get_fixed_denominator(const std::string &str, NumberFractionFormat &nff, int frac, bool *has_sign = NULL);
+long int get_fixed_denominator(const std::string &str, NumberFractionFormat &nff, int frac, bool *has_sign = nullptr);
 bool contains_fraction_q(const MathStructure&);
 bool compare_name_with_error(const std::string &name, const std::string &str, const size_t &name_length, int base, size_t ignore_us, int errors_allowed, bool case_sensitive);
 RoundingMode get_rounding_mode(const PrintOptions &po);

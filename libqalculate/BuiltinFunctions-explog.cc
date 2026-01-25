@@ -103,7 +103,7 @@ bool calculate_arg(MathStructure &mstruct, const EvaluationOptions &eo) {
 			if(!new_nr.number().divide(mstruct.number().realPart())) return false;
 			if(mstruct.number().realPartIsNegative()) {
 				if(mstruct.number().imaginaryPartIsNegative()) {
-					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
+					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, nullptr);
 					if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) {
 						mstruct /= CALCULATOR->getRadUnit();
 					} else if(eo.parse_options.angle_unit != ANGLE_UNIT_RADIANS) {
@@ -112,7 +112,7 @@ bool calculate_arg(MathStructure &mstruct, const EvaluationOptions &eo) {
 					}
 					mstruct.subtract(CALCULATOR->getVariableById(VARIABLE_ID_PI));
 				} else if(mstruct.number().imaginaryPartIsNonNegative()) {
-					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
+					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, nullptr);
 					if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) {
 						mstruct /= CALCULATOR->getRadUnit();
 					} else if(eo.parse_options.angle_unit != ANGLE_UNIT_RADIANS) {
@@ -124,7 +124,7 @@ bool calculate_arg(MathStructure &mstruct, const EvaluationOptions &eo) {
 					return false;
 				}
 			} else {
-				mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
+				mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, nullptr);
 				if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) {
 					mstruct /= CALCULATOR->getRadUnit();
 				} else if(eo.parse_options.angle_unit != ANGLE_UNIT_RADIANS) {
@@ -188,7 +188,7 @@ int CbrtFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		mstruct.raise(Number(1, 3, 0));
 	} else {
 		MathStructure mroot(3, 1, 0);
-		mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ROOT), &vargs[0], &mroot, NULL);
+		mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ROOT), &vargs[0], &mroot, nullptr);
 	}
 	return 1;
 }
@@ -377,7 +377,7 @@ int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					} else {
 						for(size_t i = 0; i < mstruct.size(); i++) {
 							if(mstruct[i].isNumber() && mstruct[i].number().isNegative() && !mstruct[i].isMinusOne()) {
-								MathStructure *mmul = new MathStructure(this, &mstruct[i], &vargs[1], NULL);
+								MathStructure *mmul = new MathStructure(this, &mstruct[i], &vargs[1], nullptr);
 								(*mmul)[0].negate();
 								mstruct[i] = nr_minus_one;
 								mstruct.transform(STRUCT_FUNCTION, vargs[1]);
@@ -408,7 +408,7 @@ int RootFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	if(!nr.root(vargs[1].number()) || (eo.approximation < APPROXIMATION_APPROXIMATE && nr.isApproximate() && !vargs[0].isApproximate() && !mstruct.isApproximate() && !vargs[1].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {
 		if(!eval_mstruct) {
 			if(vargs[0].number().isNegative() && vargs[1].number().isOdd()) {
-				mstruct.set(this, &vargs[0], &vargs[1], NULL);
+				mstruct.set(this, &vargs[0], &vargs[1], nullptr);
 				mstruct[0].number().negate();
 				mstruct.negate();
 				return 1;
@@ -522,7 +522,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			}
 		} else if(eo.approximation != APPROXIMATION_APPROXIMATE && ((mstruct[0].representsPositive(true) && mstruct[1].representsReal()) || (mstruct[1].isNumber() && mstruct[1].number().isFraction()))) {
 			MathStructure mstruct2;
-			mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &mstruct[0], NULL);
+			mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &mstruct[0], nullptr);
 			mstruct2 *= mstruct[1];
 			mstruct = mstruct2;
 			return true;
@@ -552,7 +552,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			}
 		} else if((mstruct[0].representsPositive(true) && mstruct[1].representsReal()) || (mstruct[1].isNumber() && mstruct[1].number().isFraction())) {
 			MathStructure mstruct2;
-			mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &mstruct[0], NULL);
+			mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &mstruct[0], nullptr);
 			mstruct2 *= mstruct[1];
 			mstruct = mstruct2;
 			b = true;
@@ -567,9 +567,9 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		}
 		if(b) {
 			MathStructure mstruct2;
-			mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &mstruct[0], NULL);
+			mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &mstruct[0], nullptr);
 			for(size_t i = 1; i < mstruct.size(); i++) {
-				mstruct2.add(MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &mstruct[i], NULL), i > 1);
+				mstruct2.add(MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &mstruct[i], nullptr), i > 1);
 			}
 			mstruct = mstruct2;
 		}
@@ -623,7 +623,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 								if(mstruct.last().isMultiplication()) mstruct.last().last().number()++;
 								else mstruct.last() *= nr_two;
 							} else {
-								mstruct.addChild(MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), NULL));
+								mstruct.addChild(MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), nullptr));
 								mstruct.last().addChild(factors[i]);
 							}
 						}
@@ -632,7 +632,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 					}
 				}
 			} else {
-				MathStructure mstruct2(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), NULL);
+				MathStructure mstruct2(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), nullptr);
 				mstruct2.addChild(mstruct.number().denominator());
 				mstruct.number().set(mstruct.number().numerator());
 				mstruct.transformById(FUNCTION_ID_LOG);
@@ -664,7 +664,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	} else if(mstruct.isPower()) {
 		if((mstruct[0].representsPositive(true) && mstruct[1].representsReal()) || (mstruct[1].isNumber() && mstruct[1].number().isFraction())) {
 			MathStructure mstruct2;
-			mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &mstruct[0], NULL);
+			mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &mstruct[0], nullptr);
 			mstruct2 *= mstruct[1];
 			mstruct = mstruct2;
 			return 1;
@@ -683,7 +683,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			mtest.eval(eo2);
 			if(!CALCULATOR->endTemporaryStopMessages() && mtest.isNumber() && mtest.number().isFraction()) {
 				MathStructure mstruct2;
-				mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &mstruct[0], NULL);
+				mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &mstruct[0], nullptr);
 				mstruct2 *= mstruct[1];
 				mstruct = mstruct2;
 				return 1;
@@ -701,7 +701,7 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			}
 		}
 	}
-	if(unit_error) CALCULATOR->error(false, _("Unexpected unit in logarithm."), NULL);
+	if(unit_error) CALCULATOR->error(false, _("Unexpected unit in logarithm."), nullptr);
 	if(eo.allow_complex && mstruct.representsNegative()) {
 		mstruct.negate();
 		mstruct.transformById(FUNCTION_ID_LOG);
@@ -736,7 +736,7 @@ LognFunction::LognFunction() : MathFunction("log", 1, 2) {
 int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector() || vargs[1].isVector()) return 0;
 	if(vargs[1].isVariable() && vargs[1].variable()->id() == VARIABLE_ID_E) {
-		mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &vargs[0], NULL);
+		mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &vargs[0], nullptr);
 		return 1;
 	}
 	mstruct = vargs[0];
@@ -751,7 +751,7 @@ int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	if(mstruct.isPower()) {
 		if((mstruct[0].representsPositive(true) && mstruct[1].representsReal()) || (mstruct[1].isNumber() && mstruct[1].number().isFraction())) {
 			MathStructure mstruct2;
-			mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOGN), &mstruct[0], &mstructv2, NULL);
+			mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOGN), &mstruct[0], &mstructv2, nullptr);
 			mstruct2 *= mstruct[1];
 			mstruct = mstruct2;
 			return 1;
@@ -766,9 +766,9 @@ int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 		if(b) {
 			MathStructure mstruct2;
-			mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOGN), &mstruct[0], &mstructv2, NULL);
+			mstruct2.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOGN), &mstruct[0], &mstructv2, nullptr);
 			for(size_t i = 1; i < mstruct.size(); i++) {
-				mstruct2.add(MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOGN), &mstruct[i], &mstructv2, NULL), i > 1);
+				mstruct2.add(MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOGN), &mstruct[i], &mstructv2, nullptr), i > 1);
 			}
 			mstruct = mstruct2;
 			return 1;
@@ -792,8 +792,8 @@ int LognFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 		}
 	}
-	mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &vargs[0], NULL);
-	mstruct.divide_nocopy(new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &vargs[1], NULL));
+	mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &vargs[0], nullptr);
+	mstruct.divide_nocopy(new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &vargs[1], nullptr));
 	return 1;
 }
 CisFunction::CisFunction() : MathFunction("cis", 1) {
@@ -930,7 +930,7 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 
 bool check_recursive_depth(const MathStructure &m, size_t max_depth, bool show_error) {
 	if(max_depth == 0) {
-		if(show_error) CALCULATOR->error(true, _("Maximum recursive depth reached."), NULL);
+		if(show_error) CALCULATOR->error(true, _("Maximum recursive depth reached."), nullptr);
 		return false;
 	}
 	for(size_t i = 0; i < m.size(); i++) {
@@ -967,7 +967,7 @@ int PowerTowerFunction::calculate(MathStructure &mstruct, const MathStructure &v
 			}
 		}
 		if((mstruct.isNumber() || i == 1) && vargs[1].number() - i >= 1000) {
-			CALCULATOR->error(true, _("Maximum recursive depth reached."), NULL);
+			CALCULATOR->error(true, _("Maximum recursive depth reached."), nullptr);
 			return 0;
 		}
 		mstruct.raise(mbak);

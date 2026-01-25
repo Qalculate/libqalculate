@@ -128,7 +128,7 @@ class Number {
 		void intervalToMidValue(bool increase_precision_if_close);
 		void intervalToMidValue();
 		void splitInterval(unsigned int nr_of_parts, std::vector<Number> &v) const;
-		bool getCentralInteger(Number &nr_int, bool *b_multiple = NULL, std::vector<Number> *v = NULL) const;
+		bool getCentralInteger(Number &nr_int, bool *b_multiple = nullptr, std::vector<Number> *v = nullptr) const;
 		bool mergeInterval(const Number &o, bool set_to_overlap = false);
 		void setUncertainty(const Number &o, bool to_precision = false);
 		void setRelativeUncertainty(const Number &o, bool to_precision = false);
@@ -142,11 +142,11 @@ class Number {
 		* @param[out] overflow If overflow is non-null it will be set to true if the number was to large to fit the return type.
 		* @return Resulting integer.
  		*/
-		int intValue(bool *overflow = NULL) const;
-		unsigned int uintValue(bool *overflow = NULL) const;
-		long int lintValue(bool *overflow = NULL) const;
+		int intValue(bool *overflow = nullptr) const;
+		unsigned int uintValue(bool *overflow = nullptr) const;
+		long int lintValue(bool *overflow = nullptr) const;
 		long long int llintValue() const;
-		unsigned long int ulintValue(bool *overflow = NULL) const;
+		unsigned long int ulintValue(bool *overflow = nullptr) const;
 
 		/** Returns true if the number is approximate.
 		*
@@ -542,8 +542,8 @@ bool testComplexZero(const Number *this_nr, const Number *i_nr);
 
 unsigned int standard_expbits(unsigned int bits);
 int from_float(Number &nr, std::string sbin, unsigned int bits, unsigned int expbits = 0);
-std::string to_float(Number nr, unsigned int bits, unsigned int expbits = 0, bool *approx = NULL);
+std::string to_float(Number nr, unsigned int bits, unsigned int expbits = 0, bool *approx = nullptr);
 int from_float(Number &nr, std::string sbin, unsigned int bits, unsigned int expbits, unsigned int sgnpos);
-std::string to_float(Number nr, unsigned int bits, unsigned int expbits, unsigned int sgnpos, bool *approx = NULL);
+std::string to_float(Number nr, unsigned int bits, unsigned int expbits, unsigned int sgnpos, bool *approx = nullptr);
 
 #endif

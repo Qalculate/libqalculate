@@ -56,7 +56,7 @@ struct ExpressionName {
 	bool operator != (const ExpressionName &ename) const;
 
 	int underscoreRemovalAllowed() const;
-	std::string formattedName(int type, bool capitalize, bool html_suffix = false, int unicode_suffix = 0, bool remove_typename = false, bool hide_underscore = false, bool *was_formatted = NULL, bool *was_capitalized = NULL) const;
+	std::string formattedName(int type, bool capitalize, bool html_suffix = false, int unicode_suffix = 0, bool remove_typename = false, bool hide_underscore = false, bool *was_formatted = nullptr, bool *was_capitalized = nullptr) const;
 
 };
 
@@ -109,7 +109,7 @@ class ExpressionItem {
 	/// For internal use.
 	void setRegistered(bool is_registered);
 
-	virtual const std::string &name(bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	virtual const std::string &name(bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = nullptr, void *can_display_unicode_string_arg = nullptr) const;
 	virtual const std::string &referenceName() const;
 
 	/** Returns the name that best fulfils provided criteria. If two names are equally preferred, the one with lowest index is returned.
@@ -122,7 +122,7 @@ class ExpressionItem {
 	* @param can_display_unicode_string_arg Argument to pass to the above test function.
 	* @returns The preferred name.
 	*/
-	virtual const ExpressionName &preferredName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	virtual const ExpressionName &preferredName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false, bool (*can_display_unicode_string_function) (const char*, void*) = nullptr, void *can_display_unicode_string_arg = nullptr) const;
 	/** Returns the name that best fulfils provided criteria and is suitable for user input. If two names are equally preferred, the one with lowest index is returned.
 	*
 	* @param abbreviation If an abbreviated name is preferred.
@@ -133,7 +133,7 @@ class ExpressionItem {
 	* @param can_display_unicode_string_arg Argument to pass to the above test function.
 	* @returns The preferred name.
 	*/
-	virtual const ExpressionName &preferredInputName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	virtual const ExpressionName &preferredInputName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false, bool (*can_display_unicode_string_function) (const char*, void*) = nullptr, void *can_display_unicode_string_arg = nullptr) const;
 	/** Returns the name that best fulfils provided criteria and is suitable for display. If two names are equally preferred, the one with lowest index is returned.
 	*
 	* @param abbreviation If an abbreviated name is preferred.
@@ -144,7 +144,7 @@ class ExpressionItem {
 	* @param can_display_unicode_string_arg Argument to pass to the above test function.
 	* @returns The preferred name.
 	*/
-	virtual const ExpressionName &preferredDisplayName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	virtual const ExpressionName &preferredDisplayName(bool abbreviation = false, bool use_unicode = false, bool plural = false, bool reference = false, bool (*can_display_unicode_string_function) (const char*, void*) = nullptr, void *can_display_unicode_string_arg = nullptr) const;
 	/** Returns name for an index (starting at one). All functions can be traversed by starting at index one and increasing the index until empty_expression_name is returned.
 	*
 	* @param index Index of name.
@@ -195,7 +195,7 @@ class ExpressionItem {
 	* @param can_display_unicode_string_arg Argument to pass to the above test function.
 	* @returns The first found name with the specified properties or empty_expression_name if none found.
 	*/
-	virtual const ExpressionName &findName(int abbreviation = -1, int use_unicode = -1, int plural = -1, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	virtual const ExpressionName &findName(int abbreviation = -1, int use_unicode = -1, int plural = -1, bool (*can_display_unicode_string_function) (const char*, void*) = nullptr, void *can_display_unicode_string_arg = nullptr) const;
 
 	/** Returns the title, descriptive name, of the item.
 	*
@@ -205,7 +205,7 @@ class ExpressionItem {
 	* @param can_display_unicode_string_arg Argument to pass to the above test function (passed to preferredName()).
 	* @returns Item title.
 	*/
-	virtual const std::string &title(bool return_name_if_no_title = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = NULL, void *can_display_unicode_string_arg = NULL) const;
+	virtual const std::string &title(bool return_name_if_no_title = true, bool use_unicode = false, bool (*can_display_unicode_string_function) (const char*, void*) = nullptr, void *can_display_unicode_string_arg = nullptr) const;
 
 	/** Sets the title, descriptive name, of the item. The title can not be used in expressions.
 	*

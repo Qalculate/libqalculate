@@ -69,14 +69,14 @@ void DataObject::setProperty(DataProperty *property, string s_value, int is_appr
 			a_properties[i] = is_approximate;
 			if(m_properties[i]) {
 				m_properties[i]->unref();
-				m_properties[i] = NULL;
+				m_properties[i] = nullptr;
 			}
 			return;
 		}
 	}
 	properties.push_back(property);
 	s_properties.push_back(s_value);
-	m_properties.push_back(NULL);
+	m_properties.push_back(nullptr);
 	a_properties.push_back(is_approximate);
 	s_nonlocalized_properties.push_back("");
 }
@@ -89,7 +89,7 @@ void DataObject::setNonlocalizedKeyProperty(DataProperty *property, string s_val
 	}
 	properties.push_back(property);
 	s_properties.push_back("");
-	m_properties.push_back(NULL);
+	m_properties.push_back(nullptr);
 	a_properties.push_back(-1);
 	s_nonlocalized_properties.push_back(s_value);
 }
@@ -132,14 +132,14 @@ string DataObject::getPropertyDisplayString(DataProperty *property) {
 	return empty_string;
 }
 const MathStructure *DataObject::getPropertyStruct(DataProperty *property) {
-	if(!property) return NULL;
+	if(!property) return nullptr;
 	for(size_t i = 0; i < properties.size(); i++) {
 		if(properties[i] == property) {
 			if(!m_properties[i]) m_properties[i] = property->generateStruct(s_properties[i], a_properties[i]);
 			return m_properties[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 bool DataObject::isUserModified() const {
@@ -161,13 +161,13 @@ DataProperty::DataProperty(DataSet *parent_set, string s_name, string s_title, s
 	stitle = s_title;
 	sdescr = s_description;
 	parent = parent_set;
-	m_unit = NULL;
+	m_unit = nullptr;
 	ptype = PROPERTY_EXPRESSION;
 	b_key = false; b_case = false; b_hide = false; b_brackets = false; b_approximate = false;
 	b_uchanged = false;
 }
 DataProperty::DataProperty(const DataProperty &dp) {
-	m_unit = NULL;
+	m_unit = nullptr;
 	set(dp);
 }
 DataProperty::~DataProperty() {
@@ -180,7 +180,7 @@ void DataProperty::set(const DataProperty &dp) {
 	sunit = dp.getUnitString();
 	parent = dp.parentSet();
 	if(m_unit) m_unit->unref();
-	m_unit = NULL;
+	m_unit = nullptr;
 	ptype = dp.propertyType();
 	b_key = dp.isKey();
 	b_case = dp.isCaseSensitive();
@@ -262,7 +262,7 @@ void DataProperty::setDescription(string s_description) {
 void DataProperty::setUnit(string s_unit) {
 	sunit = s_unit;
 	if(m_unit) m_unit->unref();
-	m_unit = NULL;
+	m_unit = nullptr;
 }
 const string &DataProperty::getUnitString() const {
 	return sunit;
@@ -298,7 +298,7 @@ string DataProperty::getDisplayString(const string &valuestr) {
 	return CALCULATOR->localizeExpression(valuestr);
 }
 MathStructure *DataProperty::generateStruct(const string &valuestr, int is_approximate) {
-	MathStructure *mstruct = NULL;
+	MathStructure *mstruct = nullptr;
 	switch(ptype) {
 		case PROPERTY_EXPRESSION: {
 			ParseOptions po;
@@ -407,22 +407,22 @@ int DataSet::subtype() const {
 int DataSet::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	DataObject *o = getObject(vargs[0]);
 	if(!o) {
-		CALCULATOR->error(true, _("Object %s not available in data set."), vargs[0].symbol().c_str(), NULL);
+		CALCULATOR->error(true, _("Object %s not available in data set."), vargs[0].symbol().c_str(), nullptr);
 		return 0;
 	}
 	if(equalsIgnoreCase(vargs[1].symbol(), string("info")) || equalsIgnoreCase(vargs[1].symbol(), string(_c("Data set argument", "info")))) {
 		string str = printProperties(o);
-		CALCULATOR->message(MESSAGE_INFORMATION, str.c_str(), NULL);
+		CALCULATOR->message(MESSAGE_INFORMATION, str.c_str(), nullptr);
 		return 1;
 	}
 	DataProperty *dp = getProperty(vargs[1].symbol());
 	if(!dp) {
-		CALCULATOR->error(true, _("Property %s not available in data set."), vargs[1].symbol().c_str(), NULL);
+		CALCULATOR->error(true, _("Property %s not available in data set."), vargs[1].symbol().c_str(), nullptr);
 		return 0;
 	}
 	const MathStructure *pmstruct = o->getPropertyStruct(dp);
 	if(!pmstruct) {
-		CALCULATOR->error(true, _("Property %s not defined for object %s."), vargs[1].symbol().c_str(), vargs[0].symbol().c_str(), NULL);
+		CALCULATOR->error(true, _("Property %s not defined for object %s."), vargs[1].symbol().c_str(), vargs[0].symbol().c_str(), nullptr);
 		return 0;
 	}
 	mstruct.set(*pmstruct);
@@ -551,36 +551,36 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	doc = xmlParseFile(file_name);
 #endif
 
-	if(doc == NULL) {
+	if(doc == nullptr) {
 		if(!is_user_defs) {
-			CALCULATOR->error(true, _("Unable to load data objects in %s."), file_name, NULL);
+			CALCULATOR->error(true, _("Unable to load data objects in %s."), file_name, nullptr);
 		}
 		return false;
 	}
 	cur = xmlDocGetRootElement(doc);
-	if(cur == NULL) {
+	if(cur == nullptr) {
 		xmlFreeDoc(doc);
 		if(!is_user_defs) {
-			CALCULATOR->error(true, _("Unable to load data objects in %s."), file_name, NULL);
+			CALCULATOR->error(true, _("Unable to load data objects in %s."), file_name, nullptr);
 		}
 		return false;
 	}
 	string version;
 	xmlChar *value, *lang, *uncertainty;
 	bool unc_rel;
-	while(cur != NULL) {
+	while(cur != nullptr) {
 		if(!xmlStrcmp(cur->name, (const xmlChar*) "QALCULATE")) {
 			XML_GET_STRING_FROM_PROP(cur, "version", version)
 			break;
 		}
 		cur = cur->next;
 	}
-	if(cur == NULL) {
-		CALCULATOR->error(true, _("File not identified as Qalculate! definitions file: %s."), file_name, NULL);
+	if(cur == nullptr) {
+		CALCULATOR->error(true, _("File not identified as Qalculate! definitions file: %s."), file_name, nullptr);
 		xmlFreeDoc(doc);
 		return false;
 	}
-	DataObject *o = NULL;
+	DataObject *o = nullptr;
 	cur = cur->xmlChildrenNode;
 	string str, str2;
 	vector<DataProperty*> lang_status_p;
@@ -781,7 +781,7 @@ bool DataSet::loadObjects(const char *file_name, bool is_user_defs) {
 	xmlFreeDoc(doc);
 	b_loaded = true;
 	/*if(!scopyright.empty()) {
-		CALCULATOR->message(MESSAGE_INFORMATION, scopyright.c_str(), NULL);
+		CALCULATOR->message(MESSAGE_INFORMATION, scopyright.c_str(), nullptr);
 	}*/
 	return true;
 }
@@ -801,7 +801,7 @@ int DataSet::saveObjects(const char *file_name, bool save_global) {
 	const string *vstr;
 	xmlDocPtr doc = xmlNewDoc((xmlChar*) "1.0");
 	xmlNodePtr cur, newnode, newnode2;
-	doc->children = xmlNewDocNode(doc, NULL, (xmlChar*) "QALCULATE", NULL);
+	doc->children = xmlNewDocNode(doc, nullptr, (xmlChar*) "QALCULATE", nullptr);
 	xmlNewProp(doc->children, (xmlChar*) "version", (xmlChar*) VERSION);
 	cur = doc->children;
 	DataObject *o;
@@ -811,7 +811,7 @@ int DataSet::saveObjects(const char *file_name, bool save_global) {
 		if(save_global || objects[i]->isUserModified()) {
 			do_save = true;
 			o = objects[i];
-			newnode = xmlNewTextChild(cur, NULL, (xmlChar*) "object", NULL);
+			newnode = xmlNewTextChild(cur, nullptr, (xmlChar*) "object", nullptr);
 			if(!save_global) {
 				for(size_t i2 = 0; i2 < properties.size(); i2++) {
 					if(properties[i2]->isKey()) {
@@ -843,14 +843,14 @@ int DataSet::saveObjects(const char *file_name, bool save_global) {
 							}
 							str += properties[i2]->getReferenceName();
 							gsub(" ", "_", str);
-							newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) str.c_str(), (xmlChar*) vstr->c_str());
+							newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) str.c_str(), (xmlChar*) vstr->c_str());
 						} else {
 							if(save_global && properties[i2]->propertyType() == PROPERTY_STRING) {
 								str = "_";
 								str += properties[i2]->getReferenceName();
-								newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) str.c_str(), (xmlChar*) vstr->c_str());
+								newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) str.c_str(), (xmlChar*) vstr->c_str());
 							} else {
-								newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) properties[i2]->getReferenceName().c_str(), (xmlChar*) vstr->c_str());
+								newnode2 = xmlNewTextChild(newnode, nullptr, (xmlChar*) properties[i2]->getReferenceName().c_str(), (xmlChar*) vstr->c_str());
 							}
 						}
 						if(approx >= 0) {
@@ -899,24 +899,24 @@ DataProperty *DataSet::getPrimaryKeyProperty() {
 	for(size_t i = 0; i < properties.size(); i++) {
 		if(properties[i]->isKey()) return properties[i];
 	}
-	return NULL;
+	return nullptr;
 }
 DataProperty *DataSet::getProperty(string property) {
-	if(property.empty()) return NULL;
+	if(property.empty()) return nullptr;
 	for(size_t i = 0; i < properties.size(); i++) {
 		if(properties[i]->hasName(property)) return properties[i];
 	}
-	return NULL;
+	return nullptr;
 }
 DataProperty *DataSet::getFirstProperty(DataPropertyIter *it) {
 	*it = properties.begin();
 	if(*it != properties.end()) return **it;
-	return NULL;
+	return nullptr;
 }
 DataProperty *DataSet::getNextProperty(DataPropertyIter *it) {
 	++(*it);
 	if(*it != properties.end()) return **it;
-	return NULL;
+	return nullptr;
 }
 const string &DataSet::getFirstPropertyName(DataPropertyIter *it) {
 	*it = properties.begin();
@@ -949,7 +949,7 @@ void DataSet::delObject(DataObjectIter *it) {
 }
 DataObject *DataSet::getObject(string object) {
 	if(!objectsLoaded()) loadObjects();
-	if(object.empty()) return NULL;
+	if(object.empty()) return nullptr;
 	DataProperty *dp;
 	for(size_t i = 0; i < properties.size(); i++) {
 		if(properties[i]->isKey()) {
@@ -969,7 +969,7 @@ DataObject *DataSet::getObject(string object) {
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 DataObject *DataSet::getObject(const MathStructure &object) {
 	if(object.isSymbolic()) return getObject(object.symbol());
@@ -989,18 +989,18 @@ DataObject *DataSet::getObject(const MathStructure &object) {
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 DataObject *DataSet::getFirstObject(DataObjectIter *it) {
 	if(!objectsLoaded()) loadObjects();
 	*it = objects.begin();
 	if(*it != objects.end()) return **it;
-	return NULL;
+	return nullptr;
 }
 DataObject *DataSet::getNextObject(DataObjectIter *it) {
 	++(*it);
 	if(*it != objects.end()) return **it;
-	return NULL;
+	return nullptr;
 }
 
 const MathStructure *DataSet::getObjectProperyStruct(string property, string object) {
@@ -1009,7 +1009,7 @@ const MathStructure *DataSet::getObjectProperyStruct(string property, string obj
 	if(o && dp) {
 		return o->getPropertyStruct(dp);
 	}
-	return NULL;
+	return nullptr;
 }
 const string &DataSet::getObjectProperty(string property, string object) {
 	DataObject *o = getObject(object);
@@ -1093,7 +1093,7 @@ string DataPropertyArgument::subprintlong() const {
 	string str = _("name of a data property");
 	str += " (";
 	DataPropertyIter it;
-	DataProperty *o = NULL;
+	DataProperty *o = nullptr;
 	if(o_data) {
 		o = o_data->getFirstProperty(&it);
 	}
@@ -1148,7 +1148,7 @@ bool DataObjectArgument::subtest(MathStructure &value, const EvaluationOptions &
 		}
 		dp = o_data->getNextProperty(&it);
 	}
-	CALCULATOR->error(true, _("Data set \"%s\" has no object key that supports the provided argument type."), o_data->title().c_str(), NULL);
+	CALCULATOR->error(true, _("Data set \"%s\" has no object key that supports the provided argument type."), o_data->title().c_str(), nullptr);
 	return false;
 }
 int DataObjectArgument::type() const {return ARGUMENT_TYPE_DATA_OBJECT;}
@@ -1161,7 +1161,7 @@ string DataObjectArgument::subprintlong() const {
 	str += o_data->title();
 	str += "\"";
 	DataPropertyIter it;
-	DataProperty *o = NULL;
+	DataProperty *o = nullptr;
 	o = o_data->getFirstProperty(&it);
 	if(o) {
 		string stmp;

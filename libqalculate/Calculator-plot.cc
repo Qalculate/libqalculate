@@ -69,10 +69,10 @@ bool Calculator::canPlot() {
 #	ifdef _WIN32
 	LPSTR lpFilePart;
 	char filename[MAX_PATH];
-	priv->can_plot = SearchPath(NULL, "gnuplot", ".exe", MAX_PATH, filename, &lpFilePart) > 0;
+	priv->can_plot = SearchPath(nullptr, "gnuplot", ".exe", MAX_PATH, filename, &lpFilePart) > 0;
 #	else
 	FILE *pipe = popen("gnuplot - 2>/dev/null", "w");
-	priv->can_plot = (pipe != NULL) && (pclose(pipe) == 0);
+	priv->can_plot = (pipe != nullptr) && (pclose(pipe) == 0);
 #	endif
 	return priv->can_plot;
 #else
@@ -90,7 +90,7 @@ void parse_and_precalculate_plot(const string &expression, const string &x_var, 
 	po2.read_precision = DONT_READ_PRECISION;
 	eo.parse_options = po2;
 	eo.interval_calculation = INTERVAL_CALCULATION_NONE;
-	UnknownVariable *tmp_v = NULL;
+	UnknownVariable *tmp_v = nullptr;
 	CALCULATOR->beginTemporaryStopMessages();
 	mstruct = CALCULATOR->parse(expression, po2);
 	if(x_var.length() > 1 && x_var[0] == '\\') {
@@ -137,7 +137,7 @@ void parse_and_precalculate_plot(const string &expression, const string &x_var, 
 		tmp_v->destroy();
 	}
 	int im = 0;
-	if(CALCULATOR->endTemporaryStopMessages(NULL, &im) > 0 || im > 0) mstruct = mbak;
+	if(CALCULATOR->endTemporaryStopMessages(nullptr, &im) > 0 || im > 0) mstruct = mbak;
 	eo.calculate_functions = true;
 	eo.expand = true;
 }
@@ -160,11 +160,11 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	endTemporaryStopMessages();
 	endTemporaryStopIntervalArithmetic();
 	if(msecs > 0) {
-		if(aborted()) error(true, _("It took too long to generate the plot data."), NULL);
+		if(aborted()) error(true, _("It took too long to generate the plot data."), nullptr);
 		stopControl();
 	}
 	if(y_vector.size() == 0) {
-		error(true, _("Unable to generate plot data with current min, max and sampling rate."), NULL);
+		error(true, _("Unable to generate plot data with current min, max and sampling rate."), nullptr);
 	}
 	return y_vector;
 }
@@ -193,11 +193,11 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	endTemporaryStopMessages();
 	endTemporaryStopIntervalArithmetic();
 	if(msecs > 0) {
-		if(aborted()) error(true, _("It took too long to generate the plot data."), NULL);
+		if(aborted()) error(true, _("It took too long to generate the plot data."), nullptr);
 		stopControl();
 	}
 	if(y_vector.size() == 0) {
-		error(true, _("Unable to generate plot data with current min, max and step size."), NULL);
+		error(true, _("Unable to generate plot data with current min, max and step size."), nullptr);
 	}
 	return y_vector;
 }
@@ -214,13 +214,13 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 	MathStructure mparse;
 	if(msecs > 0) startControl(msecs);
 	beginTemporaryStopIntervalArithmetic();
-	parse_and_precalculate_plot(expression, x_var, mparse, x_mstruct, NULL, NULL, po, eo);
+	parse_and_precalculate_plot(expression, x_var, mparse, x_mstruct, nullptr, nullptr, po, eo);
 	beginTemporaryStopMessages();
 	MathStructure y_vector(mparse.generateVector(x_mstruct, x_vector, eo).eval(eo));
 	endTemporaryStopMessages();
 	endTemporaryStopIntervalArithmetic();
 	if(msecs > 0) {
-		if(aborted()) error(true, _("It took too long to generate the plot data."), NULL);
+		if(aborted()) error(true, _("It took too long to generate the plot data."), nullptr);
 		stopControl();
 	}
 	return y_vector;
@@ -229,7 +229,7 @@ MathStructure Calculator::expressionToPlotVector(string expression, const MathSt
 #ifdef HAVE_GNUPLOT_CALL
 bool Calculator::invokeGnuplot(string commands, string commandline_extra, bool persistent) {
 	if(priv->persistent_plot) persistent = true;
-	FILE *pipe = NULL;
+	FILE *pipe = nullptr;
 	if(!b_gnuplot_open || !gnuplot_pipe || persistent || commandline_extra != gnuplot_cmdline) {
 		if(!persistent) {
 			closeGnuplot();
@@ -247,7 +247,7 @@ bool Calculator::invokeGnuplot(string commands, string commandline_extra, bool p
 		pipe = popen(commandline.c_str(), "w");
 #endif
 		if(!pipe) {
-			error(true, _("Failed to invoke gnuplot. Make sure that you have gnuplot installed in your path."), NULL);
+			error(true, _("Failed to invoke gnuplot. Make sure that you have gnuplot installed in your path."), nullptr);
 			return false;
 		}
 		if(!persistent && pipe) {
@@ -349,7 +349,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 			size_t i = param->filename.rfind(".");
 			if(i == string::npos) {
 				param->filetype = PLOT_FILETYPE_PNG;
-				error(false, _("No extension in file name. Saving as PNG image."), NULL);
+				error(false, _("No extension in file name. Saving as PNG image."), nullptr);
 			} else {
 				string ext = param->filename.substr(i + 1, param->filename.length() - (i + 1));
 				if(ext == "png") {
@@ -368,7 +368,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 					param->filetype = PLOT_FILETYPE_LATEX;
 				} else {
 					param->filetype = PLOT_FILETYPE_PNG;
-					error(false, _("Unknown extension in file name. Saving as PNG image."), NULL);
+					error(false, _("Unknown extension in file name. Saving as PNG image."), nullptr);
 				}
 			}
 		}
@@ -650,7 +650,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 			string filepath = buildPath(homedir, filename);
 			FILE *fdata = fopen(filepath.c_str(), "w+");
 			if(!fdata) {
-				error(true, _("Could not create temporary file %s"), filepath.c_str(), NULL);
+				error(true, _("Could not create temporary file %s"), filepath.c_str(), nullptr);
 				return false;
 			}
 #else
@@ -664,7 +664,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 			size_t discontinuous_count = 0, point_count = 0;
 			bool discontinuous_start = false, discontinuous_end = false;
 			bool prev_failed = false;
-			const MathStructure *yprev = NULL;
+			const MathStructure *yprev = nullptr;
 			for(size_t i = 1; (i_pre % 2 == 0 && i <= y_vectors[serie].countChildren()) || (i_pre % 2 == 1 && i <= yim_vectors[serie].countChildren()); i++) {
 				bool b_real = (i_pre % 2 == 0 && !yim_vectors[serie].isUndefined());
 				ComparisonResult ct = COMPARISON_RESULT_UNKNOWN;
@@ -770,7 +770,7 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 					fclose(fdata);
 #endif
 					if(msecs > 0) {
-						error(true, _("It took too long to generate the plot data."), NULL);
+						error(true, _("It took too long to generate the plot data."), nullptr);
 						stopControl();
 					}
 					return false;
@@ -807,11 +807,11 @@ bool Calculator::closeGnuplot() {
 #	else
 		int rv = pclose(gnuplot_pipe);
 #	endif
-		gnuplot_pipe = NULL;
+		gnuplot_pipe = nullptr;
 		b_gnuplot_open = false;
 		return rv == 0;
 	}
-	gnuplot_pipe = NULL;
+	gnuplot_pipe = nullptr;
 	b_gnuplot_open = false;
 	return true;
 #else

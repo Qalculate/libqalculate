@@ -273,7 +273,7 @@ void fix_leftover_angle_unit(MathStructure &mstruct, const EvaluationOptions &eo
 #define TRIGONOMETRIC_FUNCTION_PREPARATIONS \
 	convert_to_radians(vargs[0], mstruct, eo); \
 \
-	MathFunction *f = NULL;\
+	MathFunction *f = nullptr;\
 	if(!f && eo.approximation == APPROXIMATION_APPROXIMATE && !DEFAULT_RADIANS(eo.parse_options.angle_unit)) {\
 		if(mstruct.isMultiplication() && mstruct.size() == 3 && mstruct[0].isFunction() && mstruct[0].size() == 1 && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI && mstruct[2].isNumber() && !mstruct[2].number().isZero() && mstruct[2].equals(angle_units_in_turn(eo, 2, 1, true))) {\
 			f = mstruct[0].function();\
@@ -1518,7 +1518,7 @@ int AcoshFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	} else if(eo.approximation != APPROXIMATION_APPROXIMATE && eo.allow_complex && vargs[0].number() <= -1) {
 		mstruct = nr_one_i;
 		mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-		mstruct.add_nocopy(new MathStructure(this, &vargs[0], NULL));
+		mstruct.add_nocopy(new MathStructure(this, &vargs[0], nullptr));
 		mstruct.last()[0].negate();
 		return 1;
 	}
@@ -1559,14 +1559,14 @@ int AtanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 		mstruct.set(-1, 2, 0);
 		mstruct.number() *= nr_one_i;
 		mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-		mstruct.add_nocopy(new MathStructure(this, &vargs[0], NULL));
+		mstruct.add_nocopy(new MathStructure(this, &vargs[0], nullptr));
 		mstruct.last()[0].inverse();
 		return 1;
 	} else if(eo.approximation != APPROXIMATION_APPROXIMATE && eo.allow_complex && mstruct.number() < -1) {
 		mstruct.set(1, 2, 0);
 		mstruct.number() *= nr_one_i;
 		mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
-		mstruct.add_nocopy(new MathStructure(this, &vargs[0], NULL));
+		mstruct.add_nocopy(new MathStructure(this, &vargs[0], nullptr));
 		mstruct.last()[0].inverse();
 		mstruct.last()[0].negate();
 		mstruct.last().negate();
@@ -1597,7 +1597,7 @@ int SincFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(getDefaultValue(2) == "pi") mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 		bool b = replace_f_interval(mstruct, eo);
 		b = replace_intervals_f(mstruct) || b;
-		MathStructure *m_sin = new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_SIN), &mstruct, NULL);
+		MathStructure *m_sin = new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_SIN), &mstruct, nullptr);
 		(*m_sin)[0].multiply(CALCULATOR->getRadUnit());
 		mstruct.inverse();
 		mstruct.multiply_nocopy(m_sin);
@@ -1716,14 +1716,14 @@ int Atan2Function::calculate(MathStructure &mstruct, const MathStructure &vargs,
 			}
 			if(m2.number().isNegative()) {
 				if(mstruct.number().isNegative()) {
-					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
+					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, nullptr);
 					add_fraction_of_turn(mstruct, eo, -1, 2);
 				} else {
-					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
+					mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, nullptr);
 					add_fraction_of_turn(mstruct, eo, 1, 2);
 				}
 			} else {
-				mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, NULL);
+				mstruct.set(CALCULATOR->getFunctionById(FUNCTION_ID_ATAN), &new_nr, nullptr);
 			}
 		}
 		return 1;

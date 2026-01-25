@@ -369,7 +369,7 @@ AliasUnit::AliasUnit(string cat_, string name_, string plural_, string short_nam
 	i_mix_min = 0;
 }
 AliasUnit::AliasUnit() {
-	o_unit = NULL;
+	o_unit = nullptr;
 	svalue = "";
 	sinverse = "";
 	suncertainty = "";
@@ -980,7 +980,7 @@ void CompositeUnit::set(const ExpressionItem *item) {
 		if(((Unit*) item)->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 			CompositeUnit *cu = (CompositeUnit*) item;
 			for(size_t i = 1; i <= cu->countUnits(); i++) {
-				int exp = 1; Prefix *p = NULL;
+				int exp = 1; Prefix *p = nullptr;
 				Unit *u = cu->get(i, &exp, &p);
 				units.push_back(new AliasUnit_Composite(u, exp, p));
 			}
@@ -1008,7 +1008,7 @@ Unit *CompositeUnit::get(size_t index, int *exp, Prefix **prefix) const {
 		if(prefix) *prefix = (Prefix*) units[index - 1]->prefix();
 		return (Unit*) units[index - 1]->firstBaseUnit();
 	}
-	return NULL;
+	return nullptr;
 }
 void CompositeUnit::setExponent(size_t index, int exp) {
 	if(index > 0 && index <= units.size()) {
@@ -1416,10 +1416,10 @@ void CompositeUnit::setBaseExpression(string base_expression_) {
 	}
 	if(conversion_variant && had_errors) {
 		CALCULATOR->endTemporaryStopMessages();
-		CALCULATOR->error(true, _("Error(s) in unit expression."), NULL);
+		CALCULATOR->error(true, _("Error(s) in unit expression."), nullptr);
 	} else {
 		if(CALCULATOR->endTemporaryStopMessages() > 0) had_errors = true;
-		if(had_errors) CALCULATOR->error(false, _("Error(s) in unit expression."), NULL);
+		if(had_errors) CALCULATOR->error(false, _("Error(s) in unit expression."), nullptr);
 	}
 	setChanged(true);
 }

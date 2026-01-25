@@ -528,9 +528,9 @@ struct PrintOptions {
 	bool round_halfway_to_even;
 	/// Multiply numerator and denominator to get integers (ex. (6x+y)/2z instead of (3x+0.5y)/z). Default: true
 	bool improve_division_multipliers;
-	/// Force use of a specific prefix for units if not NULL. Default: NULL
+	/// Force use of a specific prefix for units if not nullptr. Default: nullptr
 	Prefix *prefix;
-	/// If not NULL will be set to true if the output is approximate. Default: NULL
+	/// If not nullptr will be set to true if the output is approximate. Default: nullptr
 	bool *is_approximate;
 	/// Options for the order of values in the displayed expression. Default: default_sort_options
 	SortOptions sort_options;
@@ -538,9 +538,9 @@ struct PrintOptions {
 	std::string comma_sign;
 	/// Decimal sign or empty string to use default decimal sign. Default: empty string
 	std::string decimalpoint_sign;
-	/// Function that returns true if a text string with unicode signs can be properly displayed. Default: NULL
+	/// Function that returns true if a text string with unicode signs can be properly displayed. Default: nullptr
 	bool (*can_display_unicode_string_function) (const char*, void*);
-	/// Argument passed to can_display_unicode_string_function. Default: NULL
+	/// Argument passed to can_display_unicode_string_function. Default: nullptr
 	void *can_display_unicode_string_arg;
 	/// Replace underscores in names with spaces, unless name has suffix. Default: false
 	bool hide_underscore_spaces;
@@ -723,11 +723,11 @@ struct ParseOptions {
 	bool brackets_as_parentheses;
 	/// Default angle unit for trigonometric functions. Default: ANGLE_UNIT_NONE
 	AngleUnit angle_unit;
-	/// If non-NULL will be set to unfinished function at the end of the expression (if there is one). Default: NULL
+	/// If non-nullptr will be set to unfinished function at the end of the expression (if there is one). Default: nullptr
 	MathStructure *unended_function;
 	/// Preserve the expression structure as much as possible. Default: false
 	bool preserve_format;
-	/// Default dataset. Used for object.property syntax without a preceding data set. Default: NULL
+	/// Default dataset. Used for object.property syntax without a preceding data set. Default: nullptr
 	DataSet *default_dataset;
 	/// Parsing mode. Default: PARSING_MODE_ADAPTIVE
 	ParsingMode parsing_mode;
@@ -788,11 +788,11 @@ struct EvaluationOptions {
 	StructuringMode structuring;
 	/// Options for parsing of expression. Default: default_parse_options
 	ParseOptions parse_options;
-	/// If set will decide which variable to isolate in an equation. Default: NULL
+	/// If set will decide which variable to isolate in an equation. Default: nullptr
 	const MathStructure *isolate_var;
 	/// Use polynomial division to simplify the result. Default: true
 	bool do_polynomial_division;
-	/// Do not calculate the specified function. Default: NULL
+	/// Do not calculate the specified function. Default: nullptr
 	MathFunction *protected_function;
 	/// Complex number form. Default: COMPLEX_NUMBER_FORM_RECTANGULAR
 	ComplexNumberForm complex_number_form;

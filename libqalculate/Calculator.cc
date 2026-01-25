@@ -49,7 +49,7 @@ using std::iterator;
 
 #include "Calculator_p.h"
 
-PrintOptions::PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), base_display(BASE_DISPLAY_NONE), lower_case_numbers(false), lower_case_e(false), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), show_ending_zeroes(true), abbreviate_names(true), use_reference_names(false), place_units_separately(true), use_unit_prefixes(true), use_prefixes_for_all_units(false), use_prefixes_for_currencies(false), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), limit_implicit_multiplication(false), allow_non_usable(false), use_unicode_signs(false), multiplication_sign(MULTIPLICATION_SIGN_DOT), division_sign(DIVISION_SIGN_DIVISION_SLASH), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), round_halfway_to_even(false), improve_division_multipliers(true), prefix(NULL), is_approximate(NULL), can_display_unicode_string_function(NULL), can_display_unicode_string_arg(NULL), hide_underscore_spaces(false), preserve_format(false), allow_factorization(false), spell_out_logical_operators(false), restrict_to_parent_precision(true), restrict_fraction_length(false), exp_to_root(false), preserve_precision(false), interval_display(INTERVAL_DISPLAY_INTERVAL), digit_grouping(DIGIT_GROUPING_NONE), date_time_format(DATE_TIME_FORMAT_ISO), time_zone(TIME_ZONE_LOCAL), custom_time_zone(0), twos_complement(true), hexadecimal_twos_complement(false), binary_bits(0), exp_display(EXP_DEFAULT), duodecimal_symbols(false), rounding(ROUNDING_HALF_AWAY_FROM_ZERO) {}
+PrintOptions::PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), base_display(BASE_DISPLAY_NONE), lower_case_numbers(false), lower_case_e(false), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), show_ending_zeroes(true), abbreviate_names(true), use_reference_names(false), place_units_separately(true), use_unit_prefixes(true), use_prefixes_for_all_units(false), use_prefixes_for_currencies(false), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), limit_implicit_multiplication(false), allow_non_usable(false), use_unicode_signs(false), multiplication_sign(MULTIPLICATION_SIGN_DOT), division_sign(DIVISION_SIGN_DIVISION_SLASH), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), round_halfway_to_even(false), improve_division_multipliers(true), prefix(nullptr), is_approximate(nullptr), can_display_unicode_string_function(nullptr), can_display_unicode_string_arg(nullptr), hide_underscore_spaces(false), preserve_format(false), allow_factorization(false), spell_out_logical_operators(false), restrict_to_parent_precision(true), restrict_fraction_length(false), exp_to_root(false), preserve_precision(false), interval_display(INTERVAL_DISPLAY_INTERVAL), digit_grouping(DIGIT_GROUPING_NONE), date_time_format(DATE_TIME_FORMAT_ISO), time_zone(TIME_ZONE_LOCAL), custom_time_zone(0), twos_complement(true), hexadecimal_twos_complement(false), binary_bits(0), exp_display(EXP_DEFAULT), duodecimal_symbols(false), rounding(ROUNDING_HALF_AWAY_FROM_ZERO) {}
 
 string semicolon_s;
 
@@ -65,11 +65,11 @@ const string &PrintOptions::comma() const {
 }
 const string &PrintOptions::decimalpoint() const {if(decimalpoint_sign.empty()) return CALCULATOR->getDecimalPoint(); return decimalpoint_sign;}
 
-InternalPrintStruct::InternalPrintStruct() : depth(0), power_depth(0), division_depth(0), wrap(false), num(NULL), den(NULL), re(NULL), im(NULL), exp(NULL), minus(NULL), exp_minus(NULL), parent_approximate(false), parent_precision(-1), iexp(NULL) {}
+InternalPrintStruct::InternalPrintStruct() : depth(0), power_depth(0), division_depth(0), wrap(false), num(nullptr), den(nullptr), re(nullptr), im(nullptr), exp(nullptr), minus(nullptr), exp_minus(nullptr), parent_approximate(false), parent_precision(-1), iexp(nullptr) {}
 
-ParseOptions::ParseOptions() : variables_enabled(true), functions_enabled(true), unknowns_enabled(true), units_enabled(true), rpn(false), base(BASE_DECIMAL), limit_implicit_multiplication(false), read_precision(DONT_READ_PRECISION), dot_as_separator(false), brackets_as_parentheses(false), angle_unit(ANGLE_UNIT_NONE), unended_function(NULL), preserve_format(false), default_dataset(NULL), parsing_mode(PARSING_MODE_ADAPTIVE), twos_complement(false), hexadecimal_twos_complement(false), binary_bits(0) {}
+ParseOptions::ParseOptions() : variables_enabled(true), functions_enabled(true), unknowns_enabled(true), units_enabled(true), rpn(false), base(BASE_DECIMAL), limit_implicit_multiplication(false), read_precision(DONT_READ_PRECISION), dot_as_separator(false), brackets_as_parentheses(false), angle_unit(ANGLE_UNIT_NONE), unended_function(nullptr), preserve_format(false), default_dataset(nullptr), parsing_mode(PARSING_MODE_ADAPTIVE), twos_complement(false), hexadecimal_twos_complement(false), binary_bits(0) {}
 
-EvaluationOptions::EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_nonlinear_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), expand(true), combine_divisions(false), reduce_divisions(true), allow_complex(true), allow_infinite(true), assume_denominators_nonzero(true), warn_about_denominators_assumed_nonzero(false), split_squares(true), keep_zero_units(true), auto_post_conversion(POST_CONVERSION_OPTIMAL), mixed_units_conversion(MIXED_UNITS_CONVERSION_DEFAULT), structuring(STRUCTURING_SIMPLIFY), isolate_var(NULL), do_polynomial_division(true), protected_function(NULL), complex_number_form(COMPLEX_NUMBER_FORM_RECTANGULAR), local_currency_conversion(true), transform_trigonometric_functions(true), interval_calculation(INTERVAL_CALCULATION_VARIANCE_FORMULA) {}
+EvaluationOptions::EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_nonlinear_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), expand(true), combine_divisions(false), reduce_divisions(true), allow_complex(true), allow_infinite(true), assume_denominators_nonzero(true), warn_about_denominators_assumed_nonzero(false), split_squares(true), keep_zero_units(true), auto_post_conversion(POST_CONVERSION_OPTIMAL), mixed_units_conversion(MIXED_UNITS_CONVERSION_DEFAULT), structuring(STRUCTURING_SIMPLIFY), isolate_var(nullptr), do_polynomial_division(true), protected_function(nullptr), complex_number_form(COMPLEX_NUMBER_FORM_RECTANGULAR), local_currency_conversion(true), transform_trigonometric_functions(true), interval_calculation(INTERVAL_CALCULATION_VARIANCE_FORMULA) {}
 
 /*#include <time.h>
 #include <sys/time.h>
@@ -77,10 +77,10 @@ EvaluationOptions::EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT),
 struct timeval tvtime;
 long int usecs, secs, usecs2, usecs3;
 
-#define PRINT_TIME(x) gettimeofday(&tvtime, NULL); usecs2 = tvtime.tv_usec - usecs + (tvtime.tv_sec - secs) * 1000000; printf("%s %li\n", x, usecs2);
-#define PRINT_TIMEDIFF(x) gettimeofday(&tvtime, NULL); printf("%s %li\n", x, tvtime.tv_usec - usecs + (tvtime.tv_sec - secs) * 1000000 - usecs2); usecs2 = tvtime.tv_usec - usecs + (tvtime.tv_sec - secs) * 1000000;
-#define ADD_TIME1 gettimeofday(&tvtime, NULL); usecs2 = tvtime.tv_usec - usecs + (tvtime.tv_sec - secs) * 1000000;
-#define ADD_TIME2 gettimeofday(&tvtime, NULL); usecs3 += tvtime.tv_usec - usecs + (tvtime.tv_sec - secs) * 1000000 - usecs2; */
+#define PRINT_TIME(x) gettimeofday(&tvtime, nullptr); usecs2 = tvtime.tv_usec - usecs + (tvtime.tv_sec - secs) * 1000000; printf("%s %li\n", x, usecs2);
+#define PRINT_TIMEDIFF(x) gettimeofday(&tvtime, nullptr); printf("%s %li\n", x, tvtime.tv_usec - usecs + (tvtime.tv_sec - secs) * 1000000 - usecs2); usecs2 = tvtime.tv_usec - usecs + (tvtime.tv_sec - secs) * 1000000;
+#define ADD_TIME1 gettimeofday(&tvtime, nullptr); usecs2 = tvtime.tv_usec - usecs + (tvtime.tv_sec - secs) * 1000000;
+#define ADD_TIME2 gettimeofday(&tvtime, nullptr); usecs3 += tvtime.tv_usec - usecs + (tvtime.tv_sec - secs) * 1000000 - usecs2; */
 
 typedef void (*CREATEPLUG_PROC)();
 
@@ -141,7 +141,7 @@ bool Calculator::delDefaultStringAlternative(string replacement, string standard
 	return false;
 }
 
-Calculator *calculator = NULL;
+Calculator *calculator = nullptr;
 
 MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one, m_minus_one, m_one_i;
 Number nr_zero, nr_one, nr_two, nr_three, nr_minus_one, nr_one_i, nr_minus_i, nr_half, nr_minus_half, nr_plus_inf, nr_minus_inf;
@@ -163,12 +163,12 @@ Calculator::Calculator() {
 
 #ifdef _WIN32
 	size_t n = 0;
-	getenv_s(&n, NULL, 0, "LANG");
-	if(n == 0) getenv_s(&n, NULL, 0, "LANGUAGE");
+	getenv_s(&n, nullptr, 0, "LANG");
+	if(n == 0) getenv_s(&n, nullptr, 0, "LANGUAGE");
 	if(n == 0) {
 		ULONG nlang = 0;
 		DWORD n = 0;
-		if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
+		if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, nullptr, &n)) {
 			WCHAR* wlocale = new WCHAR[n];
 			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
 				for(size_t i = 2; nlang > 1 && i < n - 1; i++) {
@@ -195,12 +195,12 @@ Calculator::Calculator() {
 	setlocale(LC_ALL, "");
 
 	gmp_randinit_default(randstate);
-	gmp_randseed_ui(randstate, (unsigned long int) time(NULL));
+	gmp_randseed_ui(randstate, (unsigned long int) time(nullptr));
 
 	priv = new Calculator_p;
 	priv->custom_input_base_i = 0;
 	priv->ids_i = 0;
-	priv->local_currency = NULL;
+	priv->local_currency = nullptr;
 	priv->use_binary_prefixes = 0;
 	priv->temperature_calculation = TEMPERATURE_CALCULATION_HYBRID;
 	priv->matlab_matrices = true;
@@ -212,10 +212,10 @@ Calculator::Calculator() {
 
 #ifdef HAVE_ICU
 	UErrorCode err = U_ZERO_ERROR;
-	ucm = ucasemap_open(NULL, 0, &err);
+	ucm = ucasemap_open(nullptr, 0, &err);
 #endif
 
-	srand(time(NULL));
+	srand(time(nullptr));
 
 	exchange_rates_time[0] = 0;
 	exchange_rates_time[1] = (time_t) 491184L * (time_t) 3600;
@@ -297,9 +297,9 @@ Calculator::Calculator() {
 	XOR_str = "XOR";
 	XOR_str_len = XOR_str.length();
 
-	char *current_lc_numeric = setlocale(LC_NUMERIC, NULL);
+	char *current_lc_numeric = setlocale(LC_NUMERIC, nullptr);
 	if(current_lc_numeric) saved_locale = strdup(current_lc_numeric);
-	else saved_locale = NULL;
+	else saved_locale = nullptr;
 	struct lconv *lc = localeconv();
 	if(!lc) {
 		setlocale(LC_NUMERIC, "C");
@@ -391,8 +391,8 @@ Calculator::Calculator() {
 	default_assumptions->setType(ASSUMPTION_TYPE_REAL);
 	default_assumptions->setSign(ASSUMPTION_SIGN_UNKNOWN);
 
-	u_rad = NULL; u_gra = NULL; u_deg = NULL;
-	priv->custom_angle_unit = NULL;
+	u_rad = nullptr; u_gra = nullptr; u_deg = nullptr;
+	priv->custom_angle_unit = nullptr;
 
 	priv->simplified_percentage_used = false;
 	b_save_called = false;
@@ -412,7 +412,7 @@ Calculator::Calculator() {
 	disable_errors_ref = 0;
 	b_busy = false;
 	b_gnuplot_open = false;
-	gnuplot_pipe = NULL;
+	gnuplot_pipe = nullptr;
 
 	calculate_thread = new CalculateThread;
 }
@@ -423,28 +423,28 @@ Calculator::Calculator(bool ignore_locale) {
 	if(b_ignore_locale) {
 		char *current_lc_monetary = setlocale(LC_MONETARY, "");
 		if(current_lc_monetary) saved_locale = strdup(current_lc_monetary);
-		else saved_locale = NULL;
+		else saved_locale = nullptr;
 		setlocale(LC_ALL, "C");
 #ifdef ENABLE_NLS
 #	ifdef _WIN32
-		bindtextdomain(GETTEXT_PACKAGE, "NULL");
+		bindtextdomain(GETTEXT_PACKAGE, "nullptr");
 		bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 #	endif
 #endif
 		if(saved_locale) {
 			setlocale(LC_MONETARY, saved_locale);
 			free(saved_locale);
-			saved_locale = NULL;
+			saved_locale = nullptr;
 		}
 	} else {
 #ifdef _WIN32
 		size_t n = 0;
-		getenv_s(&n, NULL, 0, "LANG");
-		if(n == 0) getenv_s(&n, NULL, 0, "LANGUAGE");
+		getenv_s(&n, nullptr, 0, "LANG");
+		if(n == 0) getenv_s(&n, nullptr, 0, "LANGUAGE");
 		if(n == 0) {
 			ULONG nlang = 0;
 			DWORD n = 0;
-			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, NULL, &n)) {
+			if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, nullptr, &n)) {
 				WCHAR* wlocale = new WCHAR[n];
 				if(GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &nlang, wlocale, &n)) {
 					for(size_t i = 2; nlang > 1 && i < n - 1; i++) {
@@ -471,12 +471,12 @@ Calculator::Calculator(bool ignore_locale) {
 
 
 	gmp_randinit_default(randstate);
-	gmp_randseed_ui(randstate, (unsigned long int) time(NULL));
+	gmp_randseed_ui(randstate, (unsigned long int) time(nullptr));
 
 	priv = new Calculator_p;
 	priv->custom_input_base_i = 0;
 	priv->ids_i = 0;
-	priv->local_currency = NULL;
+	priv->local_currency = nullptr;
 	priv->use_binary_prefixes = 0;
 	priv->temperature_calculation = TEMPERATURE_CALCULATION_HYBRID;
 	priv->matlab_matrices = true;
@@ -488,10 +488,10 @@ Calculator::Calculator(bool ignore_locale) {
 
 #ifdef HAVE_ICU
 	UErrorCode err = U_ZERO_ERROR;
-	ucm = ucasemap_open(NULL, 0, &err);
+	ucm = ucasemap_open(nullptr, 0, &err);
 #endif
 
-	srand(time(NULL));
+	srand(time(nullptr));
 
 	exchange_rates_time[0] = 0;
 	exchange_rates_time[1] = (time_t) 491184L * (time_t) 3600;
@@ -567,9 +567,9 @@ Calculator::Calculator(bool ignore_locale) {
 	XOR_str = "XOR";
 	XOR_str_len = XOR_str.length();
 
-	char *current_lc_numeric = setlocale(LC_NUMERIC, NULL);
+	char *current_lc_numeric = setlocale(LC_NUMERIC, nullptr);
 	if(current_lc_numeric) saved_locale = strdup(current_lc_numeric);
-	else saved_locale = NULL;
+	else saved_locale = nullptr;
 	struct lconv *lc = localeconv();
 	if(!lc) {
 		setlocale(LC_NUMERIC, "C");
@@ -661,8 +661,8 @@ Calculator::Calculator(bool ignore_locale) {
 	default_assumptions->setType(ASSUMPTION_TYPE_REAL);
 	default_assumptions->setSign(ASSUMPTION_SIGN_UNKNOWN);
 
-	u_rad = NULL; u_gra = NULL; u_deg = NULL;
-	priv->custom_angle_unit = NULL;
+	u_rad = nullptr; u_gra = nullptr; u_deg = nullptr;
+	priv->custom_angle_unit = nullptr;
 
 	priv->simplified_percentage_used = false;
 	b_save_called = false;
@@ -682,7 +682,7 @@ Calculator::Calculator(bool ignore_locale) {
 	disable_errors_ref = 0;
 	b_busy = false;
 	b_gnuplot_open = false;
-	gnuplot_pipe = NULL;
+	gnuplot_pipe = nullptr;
 
 	calculate_thread = new CalculateThread;
 }
@@ -705,7 +705,7 @@ Calculator::~Calculator() {
 	if(saved_locale) free(saved_locale);
 	delete priv;
 	delete calculate_thread;
-	calculator = NULL;
+	calculator = nullptr;
 	gmp_randclear(randstate);
 	mpfr_free_cache();
 #ifdef HAVE_ICU
@@ -719,7 +719,7 @@ string Calculator::logicalANDString(void) const {return _("and");}
 Unit *Calculator::getGraUnit() {
 	if(!u_gra) u_gra = getUnit("gra");
 	if(!u_gra) {
-		error(true, _("Gradians unit is missing. Creating one for this session."), NULL);
+		error(true, _("Gradians unit is missing. Creating one for this session."), nullptr);
 		u_gra = addUnit(new AliasUnit(_("Angle/Plane Angle"), "gra", "gradians", "gradian", "Gradian", getRadUnit(), "pi/200", 1, "", false, true, true));
 	}
 	return u_gra;
@@ -727,7 +727,7 @@ Unit *Calculator::getGraUnit() {
 Unit *Calculator::getRadUnit() {
 	if(!u_rad) u_rad = getUnit("rad");
 	if(!u_rad) {
-		error(true, _("Radians unit is missing. Creating one for this session."), NULL);
+		error(true, _("Radians unit is missing. Creating one for this session."), nullptr);
 		u_rad = addUnit(new Unit(_("Angle/Plane Angle"), "rad", "radians", "radian", "Radian", false, true, true));
 	}
 	return u_rad;
@@ -735,7 +735,7 @@ Unit *Calculator::getRadUnit() {
 Unit *Calculator::getDegUnit() {
 	if(!u_deg) u_deg = getUnit("deg");
 	if(!u_deg) {
-		error(true, _("Degrees unit is missing. Creating one for this session."), NULL);
+		error(true, _("Degrees unit is missing. Creating one for this session."), nullptr);
 		u_deg = addUnit(new AliasUnit(_("Angle/Plane Angle"), "deg", "degrees", "degree", "Degree", getRadUnit(), "pi/180", 1, "", false, true, true));
 	}
 	return u_deg;
@@ -867,7 +867,7 @@ Variable *Calculator::getVariable(size_t index) const {
 	if(index < variables.size()) {
 		return variables[index];
 	}
-	return NULL;
+	return nullptr;
 }
 bool Calculator::hasVariable(Variable *v) {
 	for(size_t i = 0; i < variables.size(); i++) {
@@ -973,14 +973,14 @@ bool equalsIgnoreCase(const string &str1, const string &str2, int ignore_us) {
 	return true;
 }
 ExpressionItem *Calculator::getActiveExpressionItem(ExpressionItem *item) {
-	if(!item) return NULL;
+	if(!item) return nullptr;
 	for(size_t i = 1; i <= item->countNames(); i++) {
 		ExpressionItem *item2 = getActiveExpressionItem(item->getName(i).name, item, !item->getName(i).completion_only);
 		if(item2) {
 			return item2;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 bool name_allows_underscore_removal(const string &name) {
 	size_t i = name.find('_', 1);
@@ -1004,7 +1004,7 @@ ExpressionItem *Calculator::getActiveExpressionItem(string name_, ExpressionItem
 	return getActiveExpressionItem(name_, o);
 }
 ExpressionItem *Calculator::getActiveExpressionItem(string name_, ExpressionItem *item) {
-	if(name_.empty()) return NULL;
+	if(name_.empty()) return nullptr;
 	size_t l = name_.length();
 	if(l > UFV_LENGTHS) {
 		for(size_t i = 0; i < ufvl.size(); i++) {
@@ -1030,10 +1030,10 @@ ExpressionItem *Calculator::getActiveExpressionItem(string name_, ExpressionItem
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 ExpressionItem *Calculator::getInactiveExpressionItem(string name, ExpressionItem *item) {
-	if(name.empty()) return NULL;
+	if(name.empty()) return nullptr;
 	for(size_t index = 0; index < variables.size(); index++) {
 		if(variables[index] != item && !variables[index]->isActive() && variables[index]->hasName(name)) {
 			return variables[index];
@@ -1049,10 +1049,10 @@ ExpressionItem *Calculator::getInactiveExpressionItem(string name, ExpressionIte
 			return units[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 ExpressionItem *Calculator::getExpressionItem(string name, ExpressionItem *item) {
-	if(name.empty()) return NULL;
+	if(name.empty()) return nullptr;
 	Variable *v = getVariable(name);
 	if(v && v != item) return v;
 	MathFunction *f = getFunction(name);
@@ -1061,19 +1061,19 @@ ExpressionItem *Calculator::getExpressionItem(string name, ExpressionItem *item)
 	if(u && u != item) return u;
 	u = getCompositeUnit(name);
 	if(u && u != item) return u;
-	return NULL;
+	return nullptr;
 }
 Unit *Calculator::getUnit(size_t index) const {
 	if(index < units.size()) {
 		return units[index];
 	}
-	return NULL;
+	return nullptr;
 }
 MathFunction *Calculator::getFunction(size_t index) const {
 	if(index < functions.size()) {
 		return functions[index];
 	}
-	return NULL;
+	return nullptr;
 }
 
 void Calculator::setDefaultAssumptions(Assumptions *ass) {
@@ -1093,7 +1093,7 @@ Prefix *Calculator::getPrefix(size_t index) const {
 	if(index < prefixes.size()) {
 		return prefixes[index];
 	}
-	return NULL;
+	return nullptr;
 }
 Prefix *Calculator::getPrefix(string name_) const {
 	for(size_t i = 0; i < prefixes.size(); i++) {
@@ -1101,7 +1101,7 @@ Prefix *Calculator::getPrefix(string name_) const {
 			return prefixes[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 Prefix *Calculator::getDecimalNullPrefix() const {return decimal_null_prefix;}
 Prefix *Calculator::getBinaryNullPrefix() const {return binary_null_prefix;}
@@ -1113,7 +1113,7 @@ DecimalPrefix *Calculator::getExactDecimalPrefix(int exp10, int exp) const {
 			break;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 BinaryPrefix *Calculator::getExactBinaryPrefix(int exp2, int exp) const {
 	for(size_t i = 0; i < binary_prefixes.size(); i++) {
@@ -1123,7 +1123,7 @@ BinaryPrefix *Calculator::getExactBinaryPrefix(int exp2, int exp) const {
 			break;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 Prefix *Calculator::getExactPrefix(const Number &o, int exp) const {
 	ComparisonResult c;
@@ -1135,10 +1135,10 @@ Prefix *Calculator::getExactPrefix(const Number &o, int exp) const {
 			break;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 DecimalPrefix *Calculator::getNearestDecimalPrefix(int exp10, int exp) const {
-	if(decimal_prefixes.size() <= 0) return NULL;
+	if(decimal_prefixes.size() <= 0) return nullptr;
 	int i = 0;
 	if(exp < 0) {
 		i = decimal_prefixes.size() - 1;
@@ -1164,12 +1164,12 @@ DecimalPrefix *Calculator::getNearestDecimalPrefix(int exp10, int exp) const {
 	return decimal_prefixes[decimal_prefixes.size() - 1];
 }
 DecimalPrefix *Calculator::getOptimalDecimalPrefix(int exp10, int exp, bool all_prefixes) const {
-	if(decimal_prefixes.size() <= 0 || exp10 == 0) return NULL;
+	if(decimal_prefixes.size() <= 0 || exp10 == 0) return nullptr;
 	int i = 0;
 	if(exp < 0) {
 		i = decimal_prefixes.size() - 1;
 	}
-	DecimalPrefix *p = NULL, *p_prev = NULL;
+	DecimalPrefix *p = nullptr, *p_prev = nullptr;
 	int exp10_1, exp10_2;
 	while((exp < 0 && i >= 0) || (exp >= 0 && i < (int) decimal_prefixes.size())) {
 		p = decimal_prefixes[i];
@@ -1183,11 +1183,11 @@ DecimalPrefix *Calculator::getOptimalDecimalPrefix(int exp10, int exp, bool all_
 				p = decimal_null_prefix;
 			}
 			if(p->exponent(exp) == exp10) {
-				if(p == decimal_null_prefix) return NULL;
+				if(p == decimal_null_prefix) return nullptr;
 				return p;
 			} else if(p->exponent(exp) > exp10) {
 				if((exp < 0 && (i == (int) decimal_prefixes.size() - 1 || (!all_prefixes && p->exponent() == 30))) || (exp >= 0 && (i == 0 || (!all_prefixes && p->exponent() == -30)))) {
-					if(p == decimal_null_prefix) return NULL;
+					if(p == decimal_null_prefix) return nullptr;
 					return p;
 				}
 				exp10_1 = exp10;
@@ -1199,7 +1199,7 @@ DecimalPrefix *Calculator::getOptimalDecimalPrefix(int exp10, int exp, bool all_
 				exp10_2 *= 2;
 				exp10_2 += 2;
 				if(exp10_1 < exp10_2) {
-					if(p_prev == decimal_null_prefix) return NULL;
+					if(p_prev == decimal_null_prefix) return nullptr;
 					return p_prev;
 				} else {
 					return p;
@@ -1216,13 +1216,13 @@ DecimalPrefix *Calculator::getOptimalDecimalPrefix(int exp10, int exp, bool all_
 	return p_prev;
 }
 DecimalPrefix *Calculator::getOptimalDecimalPrefix(const Number &exp10, const Number &exp, bool all_prefixes) const {
-	if(decimal_prefixes.size() <= 0 || exp10.isZero()) return NULL;
+	if(decimal_prefixes.size() <= 0 || exp10.isZero()) return nullptr;
 	int i = 0;
 	ComparisonResult c;
 	if(exp.isNegative()) {
 		i = decimal_prefixes.size() - 1;
 	}
-	DecimalPrefix *p = NULL, *p_prev = NULL;
+	DecimalPrefix *p = nullptr, *p_prev = nullptr;
 	Number exp10_1, exp10_2;
 	while((exp.isNegative() && i >= 0) || (!exp.isNegative() && i < (int) decimal_prefixes.size())) {
 		p = decimal_prefixes[i];
@@ -1237,11 +1237,11 @@ DecimalPrefix *Calculator::getOptimalDecimalPrefix(const Number &exp10, const Nu
 			}
 			c = exp10.compare(p->exponent(exp));
 			if(c == COMPARISON_RESULT_EQUAL) {
-				if(p == decimal_null_prefix) return NULL;
+				if(p == decimal_null_prefix) return nullptr;
 				return p;
 			} else if(c == COMPARISON_RESULT_GREATER) {
 				if((exp.isNegative() && (i == (int) decimal_prefixes.size() - 1 || (!all_prefixes && p->exponent() == 30))) || (!exp.isNegative() && (i == 0 || (!all_prefixes && p->exponent() == -30)))) {
-					if(p == decimal_null_prefix) return NULL;
+					if(p == decimal_null_prefix) return nullptr;
 					return p;
 				}
 				exp10_1 = exp10;
@@ -1253,7 +1253,7 @@ DecimalPrefix *Calculator::getOptimalDecimalPrefix(const Number &exp10, const Nu
 				exp10_2 *= 2;
 				exp10_2 += 2;
 				if(exp10_1.isLessThan(exp10_2)) {
-					if(p_prev == decimal_null_prefix) return NULL;
+					if(p_prev == decimal_null_prefix) return nullptr;
 					return p_prev;
 				} else {
 					return p;
@@ -1282,7 +1282,7 @@ void Calculator::useBinaryPrefixes(int use_binary_prefixes) {
 	priv->use_binary_prefixes = use_binary_prefixes;
 }
 BinaryPrefix *Calculator::getNearestBinaryPrefix(int exp2, int exp) const {
-	if(binary_prefixes.size() <= 0) return NULL;
+	if(binary_prefixes.size() <= 0) return nullptr;
 	int i = 0;
 	if(exp < 0) {
 		i = binary_prefixes.size() - 1;
@@ -1308,12 +1308,12 @@ BinaryPrefix *Calculator::getNearestBinaryPrefix(int exp2, int exp) const {
 	return binary_prefixes[binary_prefixes.size() - 1];
 }
 BinaryPrefix *Calculator::getOptimalBinaryPrefix(int exp2, int exp) const {
-	if(binary_prefixes.size() <= 0 || exp2 == 0) return NULL;
+	if(binary_prefixes.size() <= 0 || exp2 == 0) return nullptr;
 	int i = -1;
 	if(exp < 0) {
 		i = binary_prefixes.size() - 1;
 	}
-	BinaryPrefix *p = NULL, *p_prev = NULL;
+	BinaryPrefix *p = nullptr, *p_prev = nullptr;
 	int exp2_1, exp2_2;
 	while((exp < 0 && i >= -1) || (exp >= 0 && i < (int) binary_prefixes.size())) {
 		if(i >= 0) p = binary_prefixes[i];
@@ -1327,11 +1327,11 @@ BinaryPrefix *Calculator::getOptimalBinaryPrefix(int exp2, int exp) const {
 			p = binary_null_prefix;
 		}
 		if(p->exponent(exp) == exp2) {
-			if(p == binary_null_prefix) return NULL;
+			if(p == binary_null_prefix) return nullptr;
 			return p;
 		} else if(p->exponent(exp) > exp2) {
 			if((exp >= 0 && i == 0) || (exp < 0 && i == (int) binary_prefixes.size())) {
-				if(p == binary_null_prefix) return NULL;
+				if(p == binary_null_prefix) return nullptr;
 				return p;
 			}
 			exp2_1 = exp2;
@@ -1342,7 +1342,7 @@ BinaryPrefix *Calculator::getOptimalBinaryPrefix(int exp2, int exp) const {
 			exp2_2 -= exp2;
 			exp2_2 += 9;
 			if(exp2_1 < exp2_2) {
-				if(p_prev == binary_null_prefix) return NULL;
+				if(p_prev == binary_null_prefix) return nullptr;
 				return p_prev;
 			} else {
 				return p;
@@ -1358,24 +1358,24 @@ BinaryPrefix *Calculator::getOptimalBinaryPrefix(int exp2, int exp) const {
 	return p_prev;
 }
 BinaryPrefix *Calculator::getOptimalBinaryPrefix(const Number &exp2, const Number &exp) const {
-	if(binary_prefixes.size() <= 0 || exp2.isZero()) return NULL;
+	if(binary_prefixes.size() <= 0 || exp2.isZero()) return nullptr;
 	int i = -1;
 	ComparisonResult c;
 	if(exp.isNegative()) {
 		i = binary_prefixes.size() - 1;
 	}
-	BinaryPrefix *p = NULL, *p_prev = NULL;
+	BinaryPrefix *p = nullptr, *p_prev = nullptr;
 	Number exp2_1, exp2_2;
 	while((exp.isNegative() && i >= -1) || (!exp.isNegative() && i < (int) binary_prefixes.size())) {
 		if(i >= 0) p = binary_prefixes[i];
 		else p = binary_null_prefix;
 		c = exp2.compare(p->exponent(exp));
 		if(c == COMPARISON_RESULT_EQUAL) {
-			if(p == binary_null_prefix) return NULL;
+			if(p == binary_null_prefix) return nullptr;
 			return p;
 		} else if(c == COMPARISON_RESULT_GREATER) {
 			if((exp.isNegative() && i == (int) binary_prefixes.size() - 1) || (!exp.isNegative() && i == 0)) {
-				if(p == binary_null_prefix) return NULL;
+				if(p == binary_null_prefix) return nullptr;
 				return p;
 			}
 			exp2_1 = exp2;
@@ -1386,7 +1386,7 @@ BinaryPrefix *Calculator::getOptimalBinaryPrefix(const Number &exp2, const Numbe
 			exp2_2 -= exp2;
 			exp2_2 += 9;
 			if(exp2_1.isLessThan(exp2_2)) {
-				if(p_prev == binary_null_prefix) return NULL;
+				if(p_prev == binary_null_prefix) return nullptr;
 				return p_prev;
 			} else {
 				return p;
@@ -1564,22 +1564,22 @@ void Calculator::setLocale() {
 void Calculator::setIgnoreLocale() {
 	if(saved_locale) {
 		free(saved_locale);
-		saved_locale = NULL;
+		saved_locale = nullptr;
 	}
-	char *current_lc_monetary = setlocale(LC_MONETARY, NULL);
+	char *current_lc_monetary = setlocale(LC_MONETARY, nullptr);
 	if(current_lc_monetary) saved_locale = strdup(current_lc_monetary);
-	else saved_locale = NULL;
+	else saved_locale = nullptr;
 	setlocale(LC_ALL, "C");
 #ifdef ENABLE_NLS
 #	ifdef _WIN32
-	bindtextdomain(GETTEXT_PACKAGE, "NULL");
+	bindtextdomain(GETTEXT_PACKAGE, "nullptr");
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 #	endif
 #endif
 	if(saved_locale) {
 		setlocale(LC_MONETARY, saved_locale);
 		free(saved_locale);
-		saved_locale = NULL;
+		saved_locale = nullptr;
 	}
 	b_ignore_locale = true;
 	per_str = "per";
@@ -1976,7 +1976,7 @@ void Calculator::addBuiltinFunctions() {
 	/*void *plugin = dlopen("", RTLD_NOW);
 	if(plugin) {
 		CREATEPLUG_PROC createproc = (CREATEPLUG_PROC) dlsym(plugin, "createPlugin");
-		if (dlerror() != NULL) {
+		if (dlerror() != nullptr) {
 			dlclose(plugin);
 			printf( "dlsym error\n");
 		} else {
@@ -2001,16 +2001,16 @@ void Calculator::addBuiltinUnits() {
 	Unit *u = addUnit(new AliasUnit(_("Currency"), "BYR", "", "", "Belarusian Ruble p. (obsolete)", priv->u_byn, "0.0001", 1, "", false, true, true));
 	u->setHidden(true);
 	u->setChanged(false);
-	priv->u_kelvin = NULL;
-	priv->u_rankine = NULL;
-	priv->u_celsius = NULL;
-	priv->u_fahrenheit = NULL;
-	u_second = NULL;
-	u_minute = NULL;
-	u_hour = NULL;
-	u_day = NULL;
-	u_month = NULL;
-	u_year = NULL;
+	priv->u_kelvin = nullptr;
+	priv->u_rankine = nullptr;
+	priv->u_celsius = nullptr;
+	priv->u_fahrenheit = nullptr;
+	u_second = nullptr;
+	u_minute = nullptr;
+	u_hour = nullptr;
+	u_day = nullptr;
+	u_month = nullptr;
+	u_year = nullptr;
 }
 
 void Calculator::setVariableUnitsEnabled(bool enable_variable_units) {
@@ -2109,7 +2109,7 @@ CalculatorMessage* Calculator::message() {
 	if(!messages.empty()) {
 		return &messages[0];
 	}
-	return NULL;
+	return nullptr;
 }
 CalculatorMessage* Calculator::nextMessage() {
 	if(!messages.empty()) {
@@ -2118,7 +2118,7 @@ CalculatorMessage* Calculator::nextMessage() {
 			return &messages[0];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 void Calculator::clearMessages() {
 	messages.clear();
@@ -2140,13 +2140,13 @@ void Calculator::deleteName(string name_, ExpressionItem *object) {
 	if(v2 == object) {
 		return;
 	}
-	if(v2 != NULL) {
+	if(v2 != nullptr) {
 		v2->destroy();
 	} else {
 		MathFunction *f2 = getFunction(name_);
 		if(f2 == object)
 			return;
-		if(f2 != NULL) {
+		if(f2 != nullptr) {
 			f2->destroy();
 		}
 	}
@@ -2269,13 +2269,13 @@ void Calculator::delUFV(ExpressionItem *object) {
 	}
 }
 Unit* Calculator::getUnit(string name_) {
-	if(name_.empty()) return NULL;
+	if(name_.empty()) return nullptr;
 	for(size_t i = 0; i < units.size(); i++) {
 		if(units[i]->subtype() != SUBTYPE_COMPOSITE_UNIT && (units[i]->hasName(name_))) {
 			return units[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 Unit* Calculator::getUnitById(int id) const {
 	switch(id) {
@@ -2294,7 +2294,7 @@ Unit* Calculator::getUnitById(int id) const {
 		case UNIT_ID_YEAR: {return u_year;}
 	}
 	unordered_map<int, Unit*>::iterator it = priv->id_units.find(id);
-	if(it == priv->id_units.end()) return NULL;
+	if(it == priv->id_units.end()) return nullptr;
 	return it->second;
 }
 Unit *Calculator::getActiveUnit(string name_, bool ignore_us) {
@@ -2304,7 +2304,7 @@ Unit *Calculator::getActiveUnit(string name_, bool ignore_us) {
 	return getActiveUnit(name_);
 }
 Unit* Calculator::getActiveUnit(string name_) {
-	if(name_.empty()) return NULL;
+	if(name_.empty()) return nullptr;
 	size_t l = name_.length();
 	if(l > UFV_LENGTHS) {
 		for(size_t i = 0; i < ufvl.size(); i++) {
@@ -2324,7 +2324,7 @@ Unit* Calculator::getActiveUnit(string name_) {
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 Unit* Calculator::getLocalCurrency() {
 	if(priv->local_currency) return priv->local_currency;
@@ -2337,19 +2337,19 @@ Unit* Calculator::getLocalCurrency() {
 			return getActiveUnit(local_currency);
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 void Calculator::setLocalCurrency(Unit *u) {
 	priv->local_currency = u;
 }
 Unit* Calculator::getCompositeUnit(string internal_name_) {
-	if(internal_name_.empty()) return NULL;
+	if(internal_name_.empty()) return nullptr;
 	for(size_t i = 0; i < units.size(); i++) {
 		if(units[i]->subtype() == SUBTYPE_COMPOSITE_UNIT && units[i]->hasName(internal_name_)) {
 			return units[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 Variable* Calculator::addVariable(Variable *v, bool force, bool check_names) {
@@ -2580,13 +2580,13 @@ void Calculator::unitNameChanged(Unit *u, bool new_item) {
 }
 
 Variable* Calculator::getVariable(string name_) {
-	if(name_.empty()) return NULL;
+	if(name_.empty()) return nullptr;
 	for(size_t i = 0; i < variables.size(); i++) {
 		if(variables[i]->hasName(name_)) {
 			return variables[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 Variable* Calculator::getVariableById(int id) const {
 	switch(id) {
@@ -2608,7 +2608,7 @@ Variable* Calculator::getVariableById(int id) const {
 		case VARIABLE_ID_UNDEFINED: {return v_undef;}
 	}
 	unordered_map<int, Variable*>::iterator it = priv->id_variables.find(id);
-	if(it == priv->id_variables.end()) return NULL;
+	if(it == priv->id_variables.end()) return nullptr;
 	return it->second;
 }
 Variable *Calculator::getActiveVariable(string name_, bool ignore_us) {
@@ -2618,7 +2618,7 @@ Variable *Calculator::getActiveVariable(string name_, bool ignore_us) {
 	return getActiveVariable(name_);
 }
 Variable* Calculator::getActiveVariable(string name_) {
-	if(name_.empty()) return NULL;
+	if(name_.empty()) return nullptr;
 	size_t l = name_.length();
 	if(l > UFV_LENGTHS) {
 		for(size_t i = 0; i < ufvl.size(); i++) {
@@ -2638,7 +2638,7 @@ Variable* Calculator::getActiveVariable(string name_) {
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 ExpressionItem* Calculator::addExpressionItem(ExpressionItem *item, bool force) {
 	switch(item->type()) {
@@ -2653,7 +2653,7 @@ ExpressionItem* Calculator::addExpressionItem(ExpressionItem *item, bool force) 
 			return addUnit((Unit*) item, force);
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 MathFunction* Calculator::addFunction(MathFunction *f, bool force, bool check_names) {
 	if(check_names) {
@@ -2690,22 +2690,22 @@ DataSet* Calculator::getDataSet(size_t index) {
 	return 0;
 }
 DataSet* Calculator::getDataSet(string name) {
-	if(name.empty()) return NULL;
+	if(name.empty()) return nullptr;
 	for(size_t i = 0; i < data_sets.size(); i++) {
 		if(data_sets[i]->hasName(name)) {
 			return data_sets[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 MathFunction* Calculator::getFunction(string name_) {
-	if(name_.empty()) return NULL;
+	if(name_.empty()) return nullptr;
 	for(size_t i = 0; i < functions.size(); i++) {
 		if(functions[i]->hasName(name_)) {
 			return functions[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 MathFunction* Calculator::getFunctionById(int id) const {
 	switch(id) {
@@ -2779,7 +2779,7 @@ MathFunction* Calculator::getFunctionById(int id) const {
 		case FUNCTION_ID_COLON: {return priv->f_colon;}
 	}
 	unordered_map<int, MathFunction*>::iterator it = priv->id_functions.find(id);
-	if(it == priv->id_functions.end()) return NULL;
+	if(it == priv->id_functions.end()) return nullptr;
 	return it->second;
 }
 MathFunction *Calculator::getActiveFunction(string name_, bool ignore_us) {
@@ -2789,7 +2789,7 @@ MathFunction *Calculator::getActiveFunction(string name_, bool ignore_us) {
 	return getActiveFunction(name_);
 }
 MathFunction* Calculator::getActiveFunction(string name_) {
-	if(name_.empty()) return NULL;
+	if(name_.empty()) return nullptr;
 	size_t l = name_.length();
 	if(l > UFV_LENGTHS) {
 		for(size_t i = 0; i < ufvl.size(); i++) {
@@ -2809,7 +2809,7 @@ MathFunction* Calculator::getActiveFunction(string name_) {
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 bool Calculator::variableNameIsValid(const string &name_) const {
 	return !name_.empty() && name_.find_first_of(ILLEGAL_IN_NAMES) == string::npos && is_not_in(NUMBERS, name_[0]);
@@ -2867,7 +2867,7 @@ bool Calculator::variableNameIsValid(const char *name_, int version_numbers[3], 
 		}
 	}
 	if(b) {
-		error(true, _("\"%s\" is not allowed in names anymore. Please change the name of \"%s\", or the variable will be lost."), BITWISE_NOT, name_, NULL);
+		error(true, _("\"%s\" is not allowed in names anymore. Please change the name of \"%s\", or the variable will be lost."), BITWISE_NOT, name_, nullptr);
 	}
 	return true;
 }
@@ -2885,7 +2885,7 @@ bool Calculator::functionNameIsValid(const char *name_, int version_numbers[3], 
 		}
 	}
 	if(b) {
-		error(true, _("\"%s\" is not allowed in names anymore. Please change the name \"%s\", or the function will be lost."), BITWISE_NOT, name_, NULL);
+		error(true, _("\"%s\" is not allowed in names anymore. Please change the name \"%s\", or the function will be lost."), BITWISE_NOT, name_, nullptr);
 	}
 	return true;
 }
@@ -2902,7 +2902,7 @@ bool Calculator::unitNameIsValid(const char *name_, int version_numbers[3], bool
 		}
 	}
 	if(b) {
-		error(true, _("\"%s\" is not allowed in names anymore. Please change the name \"%s\", or the unit will be lost."), BITWISE_NOT, name_, NULL);
+		error(true, _("\"%s\" is not allowed in names anymore. Please change the name \"%s\", or the unit will be lost."), BITWISE_NOT, name_, nullptr);
 	}
 	return true;
 }
@@ -2947,7 +2947,7 @@ bool Calculator::nameTaken(string name, ExpressionItem *object) {
 			case TYPE_FUNCTION: {return functionNameTaken(name, (MathFunction*) object);}
 		}
 	} else {
-		return getActiveExpressionItem(name) != NULL;
+		return getActiveExpressionItem(name) != nullptr;
 	}
 	return false;
 }
@@ -2984,7 +2984,7 @@ bool Calculator::unitIsUsedByOtherUnits(const Unit *u) const {
 }
 
 string Calculator::getName(string name, ExpressionItem *object, bool force, bool always_append) {
-	ExpressionItem *item = NULL;
+	ExpressionItem *item = nullptr;
 	if(!object) {
 	} else if(object->type() == TYPE_FUNCTION) {
 		item = getActiveFunction(name);
@@ -3018,7 +3018,7 @@ string Calculator::getName(string name, ExpressionItem *object, bool force, bool
 	if(name.empty()) {
 		name = "var";
 		always_append = true;
-		item = NULL;
+		item = nullptr;
 		changed = true;
 	}
 	string stmp = name;
@@ -3067,7 +3067,7 @@ string Calculator::getName(string name, ExpressionItem *object, bool force, bool
 		}
 	}
 	if(i2 > 1 && !always_append) {
-		error(false, _("Name \"%s\" is in use. Replacing with \"%s\"."), name.c_str(), stmp.c_str(), NULL);
+		error(false, _("Name \"%s\" is in use. Replacing with \"%s\"."), name.c_str(), stmp.c_str(), nullptr);
 	}
 	return stmp;
 }

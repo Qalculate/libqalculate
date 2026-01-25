@@ -250,16 +250,16 @@ bool MathStructure::syncUnits(bool sync_nonlinear_relations, bool *found_nonline
 	b = false;
 	bool fcr = false;
 	for(size_t i = 0; i < composite_units.size(); i++) {
-		if(convert(composite_units[i], sync_nonlinear_relations, (found_nonlinear_relations || sync_nonlinear_relations) ? &fcr : NULL, calculate_new_functions, feo)) b = true;
+		if(convert(composite_units[i], sync_nonlinear_relations, (found_nonlinear_relations || sync_nonlinear_relations) ? &fcr : nullptr, calculate_new_functions, feo)) b = true;
 	}
 	if(dissolveAllCompositeUnits()) b = true;
 	for(size_t i = 0; i < base_units.size(); i++) {
-		if(convert(base_units[i], sync_nonlinear_relations, (found_nonlinear_relations || sync_nonlinear_relations) ? &fcr : NULL, calculate_new_functions, feo)) b = true;
+		if(convert(base_units[i], sync_nonlinear_relations, (found_nonlinear_relations || sync_nonlinear_relations) ? &fcr : nullptr, calculate_new_functions, feo)) b = true;
 	}
 	for(size_t i = 0; i < alias_units.size(); i++) {
-		if(convert(alias_units[i], sync_nonlinear_relations, (found_nonlinear_relations || sync_nonlinear_relations) ? &fcr : NULL, calculate_new_functions, feo)) b = true;
+		if(convert(alias_units[i], sync_nonlinear_relations, (found_nonlinear_relations || sync_nonlinear_relations) ? &fcr : nullptr, calculate_new_functions, feo)) b = true;
 	}
-	//if(b && sync_nonlinear_relations && fcr) CALCULATOR->error(false, _("Calculations involving conversion of units without proportional linear relationship might give unexpected results and is not recommended."), NULL);
+	//if(b && sync_nonlinear_relations && fcr) CALCULATOR->error(false, _("Calculations involving conversion of units without proportional linear relationship might give unexpected results and is not recommended."), nullptr);
 	if(fcr && found_nonlinear_relations) *found_nonlinear_relations = fcr;
 	return b;
 }
@@ -295,7 +295,7 @@ bool MathStructure::testDissolveCompositeUnit(Unit *u) {
 	}
 	return false;
 }
-bool test_dissolve_cu(MathStructure &mstruct, Unit *u, bool convert_nonlinear_relations, bool *found_nonlinear_relations, bool calculate_new_functions, const EvaluationOptions &feo, Prefix *new_prefix = NULL) {
+bool test_dissolve_cu(MathStructure &mstruct, Unit *u, bool convert_nonlinear_relations, bool *found_nonlinear_relations, bool calculate_new_functions, const EvaluationOptions &feo, Prefix *new_prefix = nullptr) {
 	if(mstruct.isUnit()) {
 		if(mstruct.unit()->subtype() == SUBTYPE_COMPOSITE_UNIT) {
 			if(((CompositeUnit*) mstruct.unit())->containsRelativeTo(u)) {
@@ -402,8 +402,8 @@ bool MathStructure::convertToBaseUnits(bool convert_nonlinear_relations, bool *f
 				if(!convert_nonlinear_relations) {
 					if(!au->hasNonlinearExpression() && ((feo.approximation != APPROXIMATION_EXACT && feo.approximation != APPROXIMATION_EXACT_VARIABLES) || !au->hasApproximateExpression(avoid_approximate_variables, false))) {
 						MathStructure mstruct_old(*this);
-						if(convert(au->firstBaseUnit(), false, NULL, calculate_new_functions, feo) && !equals(mstruct_old)) {
-							convertToBaseUnits(false, NULL, calculate_new_functions, feo, avoid_approximate_variables);
+						if(convert(au->firstBaseUnit(), false, nullptr, calculate_new_functions, feo) && !equals(mstruct_old)) {
+							convertToBaseUnits(false, nullptr, calculate_new_functions, feo, avoid_approximate_variables);
 							return true;
 						}
 					}
@@ -412,8 +412,8 @@ bool MathStructure::convertToBaseUnits(bool convert_nonlinear_relations, bool *f
 			}
 			if((feo.approximation == APPROXIMATION_EXACT || feo.approximation == APPROXIMATION_EXACT_VARIABLES) && au->hasApproximateRelationTo(au->baseUnit(), avoid_approximate_variables, false)) {
 				MathStructure mstruct_old(*this);
-				if(convert(au->firstBaseUnit(), false, NULL, calculate_new_functions, feo) && !equals(mstruct_old)) {
-					convertToBaseUnits(false, NULL, calculate_new_functions, feo, avoid_approximate_variables);
+				if(convert(au->firstBaseUnit(), false, nullptr, calculate_new_functions, feo) && !equals(mstruct_old)) {
+					convertToBaseUnits(false, nullptr, calculate_new_functions, feo, avoid_approximate_variables);
 					return true;
 				}
 				return false;
@@ -425,8 +425,8 @@ bool MathStructure::convertToBaseUnits(bool convert_nonlinear_relations, bool *f
 		}
 		return false;
 	} else if(m_type == STRUCT_MULTIPLICATION && (convert_nonlinear_relations || found_nonlinear_relations)) {
-		AliasUnit *complex_au = NULL;
-		if(convert_nonlinear_relations && convertToBaseUnits(false, NULL, calculate_new_functions, feo, avoid_approximate_variables)) {
+		AliasUnit *complex_au = nullptr;
+		if(convert_nonlinear_relations && convertToBaseUnits(false, nullptr, calculate_new_functions, feo, avoid_approximate_variables)) {
 			convertToBaseUnits(convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, avoid_approximate_variables);
 			return true;
 		}
@@ -440,7 +440,7 @@ bool MathStructure::convertToBaseUnits(bool convert_nonlinear_relations, bool *f
 					}
 					if(convert_nonlinear_relations) {
 						if(complex_au) {
-							complex_au = NULL;
+							complex_au = nullptr;
 							convert_nonlinear_relations = false;
 							break;
 						} else {
@@ -454,7 +454,7 @@ bool MathStructure::convertToBaseUnits(bool convert_nonlinear_relations, bool *f
 		}
 		if(convert_nonlinear_relations && complex_au && ((feo.approximation != APPROXIMATION_EXACT && feo.approximation != APPROXIMATION_EXACT_VARIABLES) || !complex_au->hasApproximateExpression(avoid_approximate_variables, false))) {
 			MathStructure mstruct_old(*this);
-			if(convert(complex_au->firstBaseUnit(), true, NULL, calculate_new_functions, feo) && !equals(mstruct_old)) {
+			if(convert(complex_au->firstBaseUnit(), true, nullptr, calculate_new_functions, feo) && !equals(mstruct_old)) {
 				convertToBaseUnits(convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, avoid_approximate_variables);
 				return true;
 			}
@@ -531,7 +531,7 @@ bool convert_approximate(MathStructure &m, Unit *u, const EvaluationOptions &feo
 		MathStructure *exp = new MathStructure(1, 1, 0);
 		MathStructure *mstruct = new MathStructure(1, 1, 0);
 		Unit *u_m = m.unit();
-		KnownVariable *v = NULL;
+		KnownVariable *v = nullptr;
 		if(u_m->subtype() == SUBTYPE_ALIAS_UNIT && do_intervals) {
 			for(size_t i = 0; i < units->size(); i++) {
 				if((*units)[i] == u_m) {
@@ -1004,7 +1004,7 @@ bool MathStructure::convert(Unit *u, bool convert_nonlinear_relations, bool *fou
 bool MathStructure::convert(const MathStructure unit_mstruct, bool convert_nonlinear_relations, bool *found_nonlinear_relations, bool calculate_new_functions, const EvaluationOptions &feo) {
 	bool b = false;
 	if(unit_mstruct.type() == STRUCT_UNIT) {
-		if(convert(unit_mstruct.unit(), convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, feo.keep_prefixes ? unit_mstruct.prefix() : NULL)) b = true;
+		if(convert(unit_mstruct.unit(), convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo, feo.keep_prefixes ? unit_mstruct.prefix() : nullptr)) b = true;
 	} else {
 		for(size_t i = 0; i < unit_mstruct.size(); i++) {
 			if(convert(unit_mstruct[i], convert_nonlinear_relations, found_nonlinear_relations, calculate_new_functions, feo)) b = true;

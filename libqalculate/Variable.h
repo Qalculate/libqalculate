@@ -302,7 +302,7 @@ class KnownVariable : public Variable {
 	* @returns The variable's expression.
 	*/
 	virtual std::string expression() const;
-	virtual std::string uncertainty(bool *is_relative = NULL) const;
+	virtual std::string uncertainty(bool *is_relative = nullptr) const;
 	virtual std::string unit() const;
 
 	int subtype() const {return SUBTYPE_KNOWN_VARIABLE;}

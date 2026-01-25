@@ -18,6 +18,7 @@ install-sh
 libqalculate.kdev4
 libqalculate.pc
 libqalculate/.*
+libqalculate/definitions.c
 libtool
 ltmain.sh
 missing
