@@ -70,14 +70,14 @@ class DataProperty;
 class DataObject;
 
 /// Type of ExpressionItem
-typedef enum {
+enum ExpressionItemType{
 	/// class Variable
 	TYPE_VARIABLE,
 	/// class MathFunction
 	TYPE_FUNCTION,
 	/// class Unit
 	TYPE_UNIT
-} ExpressionItemType;
+} ;
 
 #define COMPARISON_MIGHT_BE_LESS_OR_GREATER(i)	(i >= COMPARISON_RESULT_UNKNOWN || i == COMPARISON_RESULT_NOT_EQUAL)
 #define COMPARISON_NOT_FULLY_KNOWN(i)		(i >= COMPARISON_RESULT_UNKNOWN || i == COMPARISON_RESULT_NOT_EQUAL || i == COMPARISON_RESULT_EQUAL_OR_LESS || i == COMPARISON_RESULT_EQUAL_OR_GREATER)
@@ -206,7 +206,7 @@ static const long int RAISED_PRIMES[][49] = {
 };
 
 /// The result of a comparison of two values
-typedef enum {
+enum ComparisonResult{
 	COMPARISON_RESULT_EQUAL,
 	COMPARISON_RESULT_GREATER,
 	COMPARISON_RESULT_LESS,
@@ -219,10 +219,10 @@ typedef enum {
 	COMPARISON_RESULT_CONTAINED,
 	COMPARISON_RESULT_OVERLAPPING_LESS,
 	COMPARISON_RESULT_OVERLAPPING_GREATER
-} ComparisonResult;
+} ;
 
 /// Placement of legend
-typedef enum {
+enum PlotLegendPlacement{
 	PLOT_LEGEND_NONE,
 	PLOT_LEGEND_TOP_LEFT,
 	PLOT_LEGEND_TOP_RIGHT,
@@ -230,10 +230,10 @@ typedef enum {
 	PLOT_LEGEND_BOTTOM_RIGHT,
 	PLOT_LEGEND_BELOW,
 	PLOT_LEGEND_OUTSIDE
-} PlotLegendPlacement;
+} ;
 
 /// Plot type/style
-typedef enum {
+enum PlotStyle{
 	PLOT_STYLE_LINES,
 	PLOT_STYLE_POINTS,
 	PLOT_STYLE_POINTS_LINES,
@@ -243,19 +243,19 @@ typedef enum {
 	PLOT_STYLE_CANDLESTICKS,
 	PLOT_STYLE_DOTS,
 	PLOT_STYLE_POLAR
-} PlotStyle;
+} ;
 
 /// Smoothing a plotted lines
-typedef enum {
+enum PlotSmoothing{
 	PLOT_SMOOTHING_NONE,
 	PLOT_SMOOTHING_UNIQUE,
 	PLOT_SMOOTHING_CSPLINES,
 	PLOT_SMOOTHING_BEZIER,
 	PLOT_SMOOTHING_SBEZIER
-} PlotSmoothing;
+} ;
 
 /// File type for saving plot to image
-typedef enum {
+enum PlotFileType{
 	PLOT_FILETYPE_AUTO,
 	PLOT_FILETYPE_PNG,
 	PLOT_FILETYPE_PS,
@@ -264,10 +264,10 @@ typedef enum {
 	PLOT_FILETYPE_SVG,
 	PLOT_FILETYPE_FIG,
 	PLOT_FILETYPE_PDF
-} PlotFileType;
+} ;
 
 /// Mathematical operations
-typedef enum {
+enum MathOperation{
 	OPERATION_MULTIPLY,
 	OPERATION_DIVIDE,
 	OPERATION_ADD,
@@ -286,22 +286,22 @@ typedef enum {
 	OPERATION_EQUALS_GREATER,
 	OPERATION_EQUALS,
 	OPERATION_NOT_EQUALS
-} MathOperation;
+} ;
 
 /// Comparison signs for comparison structures
-typedef enum {
+enum ComparisonType{
 	COMPARISON_LESS,
 	COMPARISON_GREATER,
 	COMPARISON_EQUALS_LESS,
 	COMPARISON_EQUALS_GREATER,
 	COMPARISON_EQUALS,
 	COMPARISON_NOT_EQUALS
-} ComparisonType;
+} ;
 
-typedef enum {
+enum SortFlags{
 	SORT_DEFAULT				= 1 << 0,
 	SORT_SCIENTIFIC				= 1 << 1
-} SortFlags;
+} ;
 
 /// Special values for PrintOptions::base and ParseOptions::base
 #define BASE_ROMAN_NUMERALS	-1
@@ -343,7 +343,7 @@ typedef enum {
 #define EXP_PURE		1
 #define EXP_SCIENTIFIC		3
 
-typedef enum {
+enum NumberFractionFormat{
 	/// Display numbers in decimal, not fractional, format (ex. 0.333333)
 	FRACTION_DECIMAL,
 	/// Display as fraction if necessary to get an exact display of the result (ex. 1/3, but 0.25)
@@ -362,7 +362,7 @@ typedef enum {
 	FRACTION_PERMILLE,
 	/// Display numbers in decimal format multiplied by permyriad
 	FRACTION_PERMYRIAD
-} NumberFractionFormat;
+} ;
 
 /// Options for ordering the parts of a mathematical expression/result before display
 struct SortOptions {
@@ -375,27 +375,27 @@ struct SortOptions {
 
 static const SortOptions default_sort_options;
 
-typedef enum {
+enum MultiplicationSign{
 	MULTIPLICATION_SIGN_ASTERISK,
 	MULTIPLICATION_SIGN_DOT,
 	MULTIPLICATION_SIGN_X,
 	MULTIPLICATION_SIGN_ALTDOT
-} MultiplicationSign;
+} ;
 
-typedef enum {
+enum DivisionSign{
 	DIVISION_SIGN_SLASH,
 	DIVISION_SIGN_DIVISION_SLASH,
 	DIVISION_SIGN_DIVISION
-} DivisionSign;
+} ;
 
-typedef enum {
+enum BaseDisplay{
 	BASE_DISPLAY_NONE,
 	BASE_DISPLAY_NORMAL,
 	BASE_DISPLAY_ALTERNATIVE,
 	BASE_DISPLAY_SUFFIX
-} BaseDisplay;
+} ;
 
-typedef enum {
+enum IntervalDisplay{
 	INTERVAL_DISPLAY_SIGNIFICANT_DIGITS,
 	INTERVAL_DISPLAY_INTERVAL,
 	INTERVAL_DISPLAY_PLUSMINUS,
@@ -404,33 +404,33 @@ typedef enum {
 	INTERVAL_DISPLAY_UPPER,
 	INTERVAL_DISPLAY_CONCISE,
 	INTERVAL_DISPLAY_RELATIVE
-} IntervalDisplay;
+} ;
 
-typedef enum {
+enum DigitGrouping{
 	DIGIT_GROUPING_NONE,
 	DIGIT_GROUPING_STANDARD,
 	DIGIT_GROUPING_LOCALE
-} DigitGrouping;
+} ;
 
-typedef enum {
+enum DateTimeFormat{
 	DATE_TIME_FORMAT_ISO,
 	DATE_TIME_FORMAT_LOCALE
-} DateTimeFormat;
+} ;
 
-typedef enum {
+enum TimeZone{
 	TIME_ZONE_UTC,
 	TIME_ZONE_LOCAL,
 	TIME_ZONE_CUSTOM
-} TimeZone;
+} ;
 
-typedef enum {
+enum ExpDisplay{
 	EXP_DEFAULT,
 	EXP_UPPERCASE_E,
 	EXP_LOWERCASE_E,
 	EXP_POWER_OF_10
-} ExpDisplay;
+} ;
 
-typedef enum {
+enum RoundingMode{
 	ROUNDING_HALF_AWAY_FROM_ZERO,
 	ROUNDING_HALF_TO_EVEN,
 	ROUNDING_HALF_TO_ODD,
@@ -442,7 +442,7 @@ typedef enum {
 	ROUNDING_AWAY_FROM_ZERO,
 	ROUNDING_UP,
 	ROUNDING_DOWN
-} RoundingMode;
+} ;
 
 enum {
 	UNICODE_SIGNS_OFF,
@@ -604,7 +604,7 @@ struct InternalPrintStruct {
 
 static const InternalPrintStruct top_ips;
 
-typedef enum {
+enum ApproximationMode{
 	/// Allow only exact results
 	APPROXIMATION_EXACT,
 	/// Try to make the result as exact as possible
@@ -613,11 +613,11 @@ typedef enum {
 	APPROXIMATION_APPROXIMATE,
 	/// Used internally
 	APPROXIMATION_EXACT_VARIABLES
-} ApproximationMode;
+} ;
 
 #define STRUCTURING_SIMPLIFY STRUCTURING_EXPAND
 
-typedef enum {
+enum StructuringMode{
 	/// Do not do any factorization or additional simplifications
 	STRUCTURING_NONE,
 	/// Simplify the result as much as possible and expand (minimal factorization, normally the same as STRUCTURING_NONE)
@@ -626,9 +626,9 @@ typedef enum {
 	STRUCTURING_FACTORIZE,
 	/// Deprecated: use STRUCTURING_SIMPLIFY instead
 	STRUCTURING_HYBRID
-} StructuringMode;
+} ;
 
-typedef enum {
+enum AutoPostConversion{
 	/// Do not do any conversion of units in addition to syncing
 	POST_CONVERSION_NONE,
 	/// Convert to the least amount of units. Non-SI units are converted to SI units.
@@ -637,41 +637,41 @@ typedef enum {
 	POST_CONVERSION_BASE,
 	/// Convert to the least amount of units. Non-SI units is kept (if optimal), but for conversion only SI units are used.
 	POST_CONVERSION_OPTIMAL
-} AutoPostConversion;
+} ;
 
 #define POST_CONVERSION_BEST POST_CONVERSION_OPTIMAL_SI
 
-typedef enum {
+enum MixedUnitsConversion{
 	MIXED_UNITS_CONVERSION_NONE,
 	MIXED_UNITS_CONVERSION_DOWNWARDS_KEEP,
 	MIXED_UNITS_CONVERSION_DOWNWARDS,
 	MIXED_UNITS_CONVERSION_DEFAULT,
 	MIXED_UNITS_CONVERSION_FORCE_INTEGER,
 	MIXED_UNITS_CONVERSION_FORCE_ALL
-} MixedUnitsConversion;
+} ;
 
-typedef enum {
+enum ReadPrecisionMode{
 	DONT_READ_PRECISION,
 	ALWAYS_READ_PRECISION,
 	READ_PRECISION_WHEN_DECIMALS
-} ReadPrecisionMode;
+} ;
 
-typedef enum {
+enum AngleUnit{
 	ANGLE_UNIT_NONE,
 	ANGLE_UNIT_RADIANS,
 	ANGLE_UNIT_DEGREES,
 	ANGLE_UNIT_GRADIANS,
 	ANGLE_UNIT_CUSTOM,
-} AngleUnit;
+} ;
 
-typedef enum {
+enum ComplexNumberForm{
 	COMPLEX_NUMBER_FORM_RECTANGULAR,
 	COMPLEX_NUMBER_FORM_EXPONENTIAL,
 	COMPLEX_NUMBER_FORM_POLAR,
 	COMPLEX_NUMBER_FORM_CIS
-} ComplexNumberForm;
+} ;
 
-typedef enum {
+enum ParsingMode{
 	/// The default adaptive mode works as the "parse implicit multiplication first" mode, unless spaces are found (<quote>1/5x = 1/(5*x)</quote>, but <quote>1/5 x = (1/5)*x</quote>). In the adaptive mode unit expressions are parsed separately (<quote>5 m/5 m/s = (5*m)/(5*(m/s)) = 1 s</quote>).
 	PARSING_MODE_ADAPTIVE,
 	/// In the "parse implicit multiplication first" mode, implicit multiplication is parsed before explicit multiplication (<quote>12/2(1+2) = 12/(2*3) = 2</quote>, <quote>5x/5y = (5*x)/(5*y) = x/y</quote>).
@@ -681,18 +681,18 @@ typedef enum {
 	// as immediate execution mode in simple traditional calculators (e.g. 5+2*3=(5+2)*3=21)
 	PARSING_MODE_CHAIN,
 	PARSING_MODE_RPN
-} ParsingMode;
+} ;
 
 #define PARSE_PERCENT_AS_ORDINARY_CONSTANT 0x10
 
-typedef enum {
+enum IntervalCalculation{
 	/// Ignores uncertainties and uses the middle value of intervals
 	INTERVAL_CALCULATION_NONE,
 	INTERVAL_CALCULATION_VARIANCE_FORMULA,
 	INTERVAL_CALCULATION_INTERVAL_ARITHMETIC,
 	/// Treats all intervals as uncorrelated
 	INTERVAL_CALCULATION_SIMPLE_INTERVAL_ARITHMETIC
-} IntervalCalculation;
+} ;
 
 /// Options for parsing expressions.
 struct ParseOptions {

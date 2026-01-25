@@ -3411,7 +3411,7 @@ void replace_variable_name(MathStructure &m, Variable *v) {
 
 void replace_control_characters(string &str) {
 	for(size_t i = 0; i < str.size();) {
-		if((str[i] > 0 && str[i] < 9) || ((str[i] > 13 && str[i] < 32) && str[i] != 0x1b)) {
+		if((str[i] > 0 && str[i] < 9) || ((str[i] > 13 && str[i] < 32) && str[i] != '\033')) {
 			str.erase(i, 1);
 		} else {
 			i++;
