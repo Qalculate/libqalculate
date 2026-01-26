@@ -147,7 +147,6 @@ MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one, m_minu
 Number nr_zero, nr_one, nr_two, nr_three, nr_minus_one, nr_one_i, nr_minus_i, nr_half, nr_minus_half, nr_plus_inf, nr_minus_inf;
 EvaluationOptions no_evaluation;
 ExpressionName empty_expression_name;
-extern gmp_randstate_t randstate;
 #ifdef HAVE_ICU
 	extern UCaseMap *ucm;
 #endif
@@ -193,17 +192,6 @@ Calculator::Calculator() {
 #endif
 
 	setlocale(LC_ALL, "");
-
-	gmp_randinit_default(randstate);
-	unsigned long int seed = 0;
-	FILE *devrandom;
-	if((devrandom = fopen("/dev/urandom", "r")) != NULL) {
-		fread(&seed, sizeof(seed), 1, devrandom);
-		fclose(devrandom);
-	} else {
-		seed = time(NULL);
-	}
-	gmp_randseed_ui(randstate, seed);
 
 	priv = new Calculator_p;
 	priv->custom_input_base_i = 0;
@@ -477,17 +465,6 @@ Calculator::Calculator(bool ignore_locale) {
 		setlocale(LC_ALL, "");
 	}
 
-	gmp_randinit_default(randstate);
-	unsigned long int seed = 0;
-	FILE *devrandom;
-	if((devrandom = fopen("/dev/urandom", "r")) != NULL) {
-		fread(&seed, sizeof(seed), 1, devrandom);
-		fclose(devrandom);
-	} else {
-		seed = time(NULL);
-	}
-	gmp_randseed_ui(randstate, seed);
-
 	priv = new Calculator_p;
 	priv->custom_input_base_i = 0;
 	priv->ids_i = 0;
@@ -721,7 +698,7 @@ Calculator::~Calculator() {
 	delete priv;
 	delete calculate_thread;
 	calculator = NULL;
-	gmp_randclear(randstate);
+	clear_randstate();
 	mpfr_free_cache();
 #ifdef HAVE_ICU
 	if(ucm) ucasemap_close(ucm);

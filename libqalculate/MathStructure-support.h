@@ -239,5 +239,9 @@ Unit *default_angle_unit(const EvaluationOptions &eo, bool return_rad_if_none = 
 bool check_recursive_depth(const MathStructure &m, size_t max_depth = 1000, bool show_error = true);
 bool check_recursive_function_depth(size_t depth, bool show_error = true);
 
+void init_randstate(unsigned long int seed);
+void init_randstate();
+void clear_randstate();
+
 #endif
 

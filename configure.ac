@@ -60,6 +60,23 @@ if test "x$GCC" = "xyes"; then
 fi
 changequote([,])dnl
 
+AC_CANONICAL_HOST
+
+case "${host_os}" in
+	linux*)
+		build_linux=yes
+		;;
+	mingw*)
+		build_windows=yes
+		;;
+	darwin*)
+		build_mac=yes
+		;;
+esac
+
+AM_CONDITIONAL(PLATFORM_LINUX, test "$build_linux" = "yes")
+AM_CONDITIONAL(PLATFORM_WIN32, test "$build_windows" = "yes")
+
 dnl check for threading model
 dnl TODO
 AC_DEFINE([HAVE_PTHREADS],1,

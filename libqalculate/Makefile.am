@@ -50,8 +50,13 @@ nodist_libqalculate_la_SOURCES = $(libqalculate_compiled_def_sources)
 
 libqalculate_la_LDFLAGS = -version-info $(QALCULATE_CURRENT):$(QALCULATE_REVISION):$(QALCULATE_AGE) -no-undefined
 
+if PLATFORM_WIN32
+libqalculate_la_LIBADD = \
+	@LIBCURL_LIBS@ @LIBXML_LIBS@ @ICU_LIBS@ @LTLIBINTL@ @LTLIBICONV@ -lBcrypt
+else
 libqalculate_la_LIBADD = \
 	@LIBCURL_LIBS@ @LIBXML_LIBS@ @ICU_LIBS@ @LTLIBINTL@ @LTLIBICONV@
+endif
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir) \

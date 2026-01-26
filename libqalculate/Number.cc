@@ -61,6 +61,31 @@ RoundingMode get_rounding_mode(const PrintOptions &po) {
 
 
 gmp_randstate_t randstate;
+bool randstate_initialized = false;
+
+void init_randstate(unsigned long int seed) {
+	gmp_randinit_default(randstate);
+	gmp_randseed_ui(randstate, seed);
+	randstate_initialized = true;
+}
+void init_randstate() {
+	unsigned long int seed = 0;
+#ifdef _WIN32
+	if(BCryptGenRandom(NULL, (UCHAR*) &seed, sizeof(seed), BCRYPT_USE_SYSTEM_PREFERRED_RNG) == 0) {
+#else
+	FILE *devrandom;
+	if((devrandom = fopen("/dev/urandom", "r")) != NULL) {
+		fread(&seed, sizeof(seed), 1, devrandom);
+		fclose(devrandom);
+#endif
+	} else {
+		seed = time(NULL);
+	}
+	init_randstate(seed);
+}
+void clear_randstate() {
+	gmp_randclear(randstate);
+}
 
 Number nr_e;
 
@@ -10200,6 +10225,7 @@ void Number::rand() {
 		mpq_set_ui(r_value, 0, 1);
 		n_type = NUMBER_TYPE_FLOAT;
 	}
+	if(!randstate_initialized) init_randstate();
 	mpfr_urandom(fu_value, randstate, MPFR_RNDN);
 	mpfr_set(fl_value, fu_value, MPFR_RNDN);
 	b_approx = false;
@@ -10225,6 +10251,7 @@ void Number::randn() {
 		mpq_set_ui(r_value, 0, 1);
 		n_type = NUMBER_TYPE_FLOAT;
 	}
+	if(!randstate_initialized) init_randstate();
 	mpfr_nrandom(fu_value, randstate, MPFR_RNDN);
 	mpfr_set(fl_value, fu_value, MPFR_RNDN);
 #endif
@@ -10234,6 +10261,7 @@ void Number::randn() {
 void Number::intRand(const Number &ceil) {
 	clear();
 	if(!ceil.isInteger() || !ceil.isPositive()) return;
+	if(!randstate_initialized) init_randstate();
 	mpz_urandomm(mpq_numref(r_value), randstate, mpq_numref(ceil.internalRational()));
 }
 
