@@ -195,7 +195,15 @@ Calculator::Calculator() {
 	setlocale(LC_ALL, "");
 
 	gmp_randinit_default(randstate);
-	gmp_randseed_ui(randstate, (unsigned long int) time(NULL));
+	unsigned long int seed = 0;
+	FILE *devrandom;
+	if((devrandom = fopen("/dev/urandom", "r")) != NULL) {
+		fread(&seed, sizeof(seed), 1, devrandom);
+		fclose(devrandom);
+	} else {
+		seed = time(NULL);
+	}
+	gmp_randseed_ui(randstate, seed);
 
 	priv = new Calculator_p;
 	priv->custom_input_base_i = 0;
@@ -469,9 +477,16 @@ Calculator::Calculator(bool ignore_locale) {
 		setlocale(LC_ALL, "");
 	}
 
-
 	gmp_randinit_default(randstate);
-	gmp_randseed_ui(randstate, (unsigned long int) time(NULL));
+	unsigned long int seed = 0;
+	FILE *devrandom;
+	if((devrandom = fopen("/dev/urandom", "r")) != NULL) {
+		fread(&seed, sizeof(seed), 1, devrandom);
+		fclose(devrandom);
+	} else {
+		seed = time(NULL);
+	}
+	gmp_randseed_ui(randstate, seed);
 
 	priv = new Calculator_p;
 	priv->custom_input_base_i = 0;
