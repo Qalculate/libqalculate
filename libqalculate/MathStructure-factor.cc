@@ -2659,11 +2659,11 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 								MathStructure *mterm = new MathStructure(force_factorization);
 								mterm->raise(Number((n - 1) * i_u, 1));
 								m2->add_nocopy(mterm, true);
-								mterm = new MathStructure(force_factorization);
-								if(i_u != 1) mterm->raise(Number(i_u, 1));
+								MathStructure *mterm2 = new MathStructure(force_factorization);
+								if(i_u != 1) mterm2->raise(Number(i_u, 1));
 								set(madd, true);
 								calculateRaise(Number(1, n), eo);
-								add_nocopy(mterm);
+								add_nocopy(mterm2);
 								multiply_nocopy(m2);
 							}
 							if(!mmul.isOne()) multiply(mmul, true);
