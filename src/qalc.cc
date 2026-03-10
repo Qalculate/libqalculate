@@ -7487,8 +7487,22 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		if((parsed_mstruct && parsed_mstruct->containsFunctionId(FUNCTION_ID_UNCERTAINTY)) || expression_str.find("+/-") != string::npos || expression_str.find("+/" SIGN_MINUS) != string::npos || expression_str.find("±") != string::npos) {
 			if(parsed_mstruct && intervals_are_relative(*parsed_mstruct) > 0) printops.interval_display = INTERVAL_DISPLAY_RELATIVE;
 			else printops.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
-		} else if(parsed_mstruct && parsed_mstruct->containsFunctionId(FUNCTION_ID_INTERVAL)) printops.interval_display = INTERVAL_DISPLAY_INTERVAL;
-		else printops.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+		} else if(parsed_mstruct && parsed_mstruct->containsFunctionId(FUNCTION_ID_INTERVAL)) {
+			printops.interval_display = INTERVAL_DISPLAY_INTERVAL;
+		} else {
+			bool b = false;
+			if(CALCULATOR->hasWhereExpression(expression_str, evalops)) {
+				MathFunction *f = CALCULATOR->getFunctionById(FUNCTION_ID_INTERVAL);
+				for(size_t i = 1; f && i <= f->countNames(); i++) {
+					if(expression_str.find(f->getName(i).name) != string::npos) {
+						b = true;
+						break;
+					}
+				}
+			}
+			if(b) printops.interval_display = INTERVAL_DISPLAY_INTERVAL;
+			else printops.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS;
+		}
 	}
 
 	if(!update_parse && printops.base != BASE_DECIMAL && dual_approximation <= 0) mstruct_exact.setUndefined();

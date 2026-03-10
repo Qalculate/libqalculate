@@ -459,8 +459,17 @@ bool contains_undefined(MathStructure &m, const EvaluationOptions &eo = default_
 	return false;
 }
 
+MathStructure *find_division_by_zero(MathStructure &m) {
+	if(m.isPower() && m[1].isNumber() && m[1].number().isNegative() && m[0].isNumber() && !m[0].number().isNonZero()) return &m[0];
+	for(size_t i = 0; i < m.size(); i++) {
+		MathStructure *m_p = find_division_by_zero(m[i]);
+		if(m_p) return m_p;
+	}
+	return NULL;
+}
+
 // search for values where the expression is non-zero, using intervals of diminishing width
-bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, const MathStructure &mvar, const Number &nr_intval, const EvaluationOptions &eo, int depth, const Number &nr_prec, int orig_prec = 0, int is_real = -1, int undef_depth = 0) {
+bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, const MathStructure &mvar, const Number &nr_intval, const EvaluationOptions &eo, int depth, const Number &nr_prec, const MathStructure &morig, int orig_prec = 0, int is_real = -1, int undef_depth = 0) {
 	if(CALCULATOR->aborted()) return false;
 	if(depth == 0) orig_prec = nr_intval.precision(1);
 	MathStructure mtest(mstruct);
@@ -468,13 +477,27 @@ bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, co
 	mtest.eval(eo);
 	if(is_real < 0) is_real = mtest.representsNonComplex(true);
 	ComparisonResult cmp;
-	if(is_real == 0) {
+	MathStructure *m_dz = find_division_by_zero(mtest);
+	if(m_dz) {
+		cmp = m_dz->compare(m_zero);
+	} else if(is_real == 0) {
 		MathStructure m_re(CALCULATOR->getFunctionById(FUNCTION_ID_RE), &mtest, NULL);
 		m_re.calculateFunctions(eo);
 		cmp = m_re.compare(m_zero);
 		MathStructure m_im(CALCULATOR->getFunctionById(FUNCTION_ID_IM), &mtest, NULL);
 		m_im.calculateFunctions(eo);
 		ComparisonResult cmp2 = m_im.compare(m_zero);
+		if(cmp != cmp2 && (cmp == COMPARISON_RESULT_EQUAL || cmp2 == COMPARISON_RESULT_EQUAL)) {
+			MathStructure mtest2(morig);
+			mtest.replace(mvar, nr_intval);
+			mtest.eval(eo);
+			if(cmp == COMPARISON_RESULT_EQUAL && (!mtest.isNumber() || !mtest.number().hasRealPart())) {
+				cmp = COMPARISON_RESULT_NOT_EQUAL;
+			} else if(cmp2 == COMPARISON_RESULT_EQUAL && (!mtest.isNumber() || !mtest.number().hasImaginaryPart())) {
+				if(mtest.isNumber()) is_real = 1;
+				cmp2 = COMPARISON_RESULT_NOT_EQUAL;
+			}
+		}
 		if(COMPARISON_IS_NOT_EQUAL(cmp) || cmp2 == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_UNKNOWN) cmp = cmp2;
 	} else {
 		cmp = mtest.compare(m_zero);
@@ -484,6 +507,12 @@ bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, co
 	} else if(cmp != COMPARISON_RESULT_UNKNOWN || (undef_depth <= 5 && contains_undefined(mtest))) {
 		if(cmp == COMPARISON_RESULT_EQUAL || (nr_intval.precision(1) > (orig_prec > PRECISION ? orig_prec + 5 : PRECISION + 5) || (!nr_intval.isNonZero() && nr_intval.uncertainty().isLessThan(nr_prec)))) {
 			if(cmp == COMPARISON_RESULT_EQUAL && depth <= 3) return false;
+			if(m_dz) {
+				mtest = morig;
+				mtest.replace(mvar, nr_intval);
+				mtest.eval(eo);
+				if(!mtest.isNumber()) return false;
+			}
 			if(malts.size() > 0 && (cmp = malts.last().compare(nr_intval)) != COMPARISON_RESULT_UNKNOWN && cmp != COMPARISON_RESULT_EQUAL && COMPARISON_MIGHT_BE_EQUAL(cmp)) {
 				malts.last().number().setInterval(malts.last().number(), nr_intval);
 				if(malts.last().number().precision(1) < (orig_prec > PRECISION ? orig_prec + 3 : PRECISION + 3)) {
@@ -497,7 +526,7 @@ bool find_interval_zeroes(const MathStructure &mstruct, MathStructure &malts, co
 		vector<Number> splits;
 		nr_intval.splitInterval(2, splits);
 		for(size_t i = 0; i < splits.size(); i++) {
-			if(!find_interval_zeroes(mstruct, malts, mvar, splits[i], eo, depth + 1, nr_prec, orig_prec, is_real, cmp == COMPARISON_RESULT_UNKNOWN ? undef_depth + 1 : 0)) return false;
+			if(!find_interval_zeroes(mstruct, malts, mvar, splits[i], eo, depth + 1, nr_prec, morig, orig_prec, is_real, cmp == COMPARISON_RESULT_UNKNOWN ? undef_depth + 1 : 0)) return false;
 		}
 		return true;
 	}
@@ -650,10 +679,11 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 		MathStructure msolve(mstruct);
 		msolve.replace(v, mvar);
 		msolve.unformat(eo);
+		MathStructure mdiff(msolve);
 		bool b = true;
 		CALCULATOR->beginTemporaryStopMessages();
 
-		if(!msolve.differentiate(u_var, eo) || msolve.countTotalChildren(false) > 10000 || contains_diff_for(msolve, u_var) || CALCULATOR->aborted()) {
+		if(!mdiff.differentiate(u_var, eo) || mdiff.countTotalChildren(false) > 10000 || contains_diff_for(mdiff, u_var) || CALCULATOR->aborted()) {
 			b = false;
 		}
 
@@ -664,7 +694,7 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 			eo.approximation = APPROXIMATION_APPROXIMATE;
 			eo.expand = eo_pre.expand;
 			// test if derivative is non-zero, replacing each occurrence of the variable with independent intervals
-			MathStructure mtest(msolve);
+			MathStructure mtest(mdiff);
 			mtest.replace(u_var, nr_intval);
 			mtest.eval(eo);
 			if(mtest.countTotalChildren(false) < 100) {
@@ -691,13 +721,13 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 			eo.approximation = APPROXIMATION_EXACT_VARIABLES;
 			if(!b) {
 				b = true;
-				msolve.calculatesub(eo, eo, true);
+				mdiff.calculatesub(eo, eo, true);
 				eo.approximation = APPROXIMATION_APPROXIMATE;
 				eo.expand = eo_pre.expand;
-				msolve.factorize(eo, false, false, 0, false, true, NULL, m_undefined, false, false, 1);
-				remove_nonzero_mul(msolve, u_var, eo);
-				if(msolve.isZero()) {
-				} else if(contains_undefined(msolve) || msolve.countTotalChildren(false) > 1000 || msolve.containsInterval(true, true, false, 1, true)) {
+				mdiff.factorize(eo, false, false, 0, false, true, NULL, m_undefined, false, false, 1);
+				remove_nonzero_mul(mdiff, u_var, eo);
+				if(mdiff.isZero()) {
+				} else if(contains_undefined(mdiff) || mdiff.countTotalChildren(false) > 1000 || mdiff.containsInterval(true, true, false, 1, true)) {
 					b = false;
 				} else {
 					MathStructure mtest(mstruct);
@@ -709,7 +739,7 @@ void solve_intervals2(MathStructure &mstruct, vector<KnownVariable*> vars, const
 						Number nr_prec(1, 1, -(PRECISION + 10));
 						nr_prec *= nr_intval.uncertainty();
 						// search for values where derivative is non-zero
-						b = find_interval_zeroes(msolve, malts, u_var, nr_intval, eo, 0, nr_prec);
+						b = find_interval_zeroes(mdiff, malts, u_var, nr_intval, eo, 0, nr_prec, msolve);
 					}
 				}
 				eo.expand = false;
