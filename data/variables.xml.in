@@ -14,6 +14,31 @@
       <title>Percent</title>
       <names>a:%,r:percent</names>
     </builtin_variable>
+    <variable>
+      <title>Per Cent Mille</title>
+      <names>r:pcm</names>
+      <value>1E-5</value>
+    </variable>
+    <variable>
+      <title>Per Million</title>
+      <names>r:ppm</names>
+      <value>1E-6</value>
+    </variable>
+    <variable>
+      <title>Per Billion</title>
+      <names>r:ppb</names>
+      <value>1E-9</value>
+    </variable>
+    <variable>
+      <title>Per Trillion</title>
+      <names>r:ppt</names>
+      <value>1E-12</value>
+    </variable>
+    <variable>
+      <title>Per Quadrillon</title>
+      <names>r:ppq</names>
+      <value>1E-15</value>
+    </variable>
   </category>
   <category>
     <title>Large Numbers</title>

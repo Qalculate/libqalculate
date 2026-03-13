@@ -839,6 +839,15 @@
         <exponent>1</exponent>
       </base>
     </unit>
+    <unit type="alias">
+      <title>Slug</title>
+      <names>r:slug,p:slugs</names>
+      <base>
+        <unit>g</unit>
+        <relation>8896443230521/609600000</relation>
+        <exponent>1</exponent>
+      </base>
+    </unit>
     <category>
       <title>Density</title>
       <unit type="composite">
