@@ -4025,7 +4025,31 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					i--;
 				}
 				size_t l = print_str.length();
-				print_str += CHILD(i).print(po, format, b_units ? 0 : colorize, tagtype, ips_n);
+				if(i == 0 && SIZE == 2 && !po.preserve_precision && (CHILD(i).isNumber() || (CHILD(i).isNegate() && CHILD(i)[0].isNumber())) && CHILD(1).isUnit() && CHILD(i).isApproximate() && CHILD(i).precision() < 0 && CHILD(1).unit()->isCurrency() && !po.use_max_decimals && !po.use_min_decimals) {
+					PrintOptions po2 = po;
+					po2.use_max_decimals = true;
+					po2.max_decimals = 4;
+					const Number &nr = (CHILD(i).isNegate() ? CHILD(i)[0].number() : CHILD(i).number());
+					if(nr >= 1000000L) {
+						po2.max_decimals = 0;
+					} else if(nr >= 10000) {
+						po2.max_decimals = 2;
+					} else if(nr.isFraction()) {
+						Number nlog(nr);
+						nlog.log(10);
+						nlog.trunc();
+						if(nlog < -1) po2.max_decimals = 4 - nlog.intValue();
+					}
+					if(po2.max_decimals > PRECISION) po2.max_decimals = PRECISION;
+					if(po2.max_decimals > 2) {
+						po2.use_min_decimals = true;
+						po2.min_decimals = po2.max_decimals - 2;
+					}
+					po2.show_ending_zeroes = false;
+					print_str += CHILD(i).print(po2, format, b_units ? 0 : colorize, tagtype, ips_n);
+				} else {
+					print_str += CHILD(i).print(po, format, b_units ? 0 : colorize, tagtype, ips_n);
+				}
 				if(((i > 0 && i_sign_prev == MULTIPLICATION_SIGN_NONE) || (i < SIZE - 1 && i_sign == MULTIPLICATION_SIGN_NONE)) && CHILD(i).isNumber() && (print_str.find_first_of("*^", l) != string::npos || (po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_DOT && print_str.find(SIGN_MULTIDOT, l) != string::npos) || ((po.multiplication_sign == MULTIPLICATION_SIGN_DOT || po.multiplication_sign == MULTIPLICATION_SIGN_ALTDOT) && print_str.find(SIGN_MIDDLEDOT, l) != string::npos) || (po.use_unicode_signs && po.multiplication_sign == MULTIPLICATION_SIGN_X && print_str.find(SIGN_MULTIPLICATION, l) != string::npos))) {
 					print_str.insert(l, "(");
 					print_str += ")";
