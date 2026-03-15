@@ -340,7 +340,6 @@ void update_option_list() {
 		ADD_OPTION_TO_LIST1("sinc")
 		ADD_OPTION_TO_LIST("round to even", "rndeven")
 		ADD_OPTION_TO_LIST("rounding", "round")
-		ADD_OPTION_TO_LIST("rpn syntax", "rpnsyn")
 		ADD_OPTION_TO_LIST1("rpn")
 #ifdef HAVE_LIBREADLINE
 		ADD_OPTION_TO_LIST("calculate as you type", "autocalc")
@@ -355,7 +354,7 @@ void update_option_list() {
 		ADD_OPTION_TO_LIST("base display", "basedisp")
 		ADD_OPTION_TO_LIST("two's complement", "twos")
 		ADD_OPTION_TO_LIST("hexadecimal two's", "hextwos")
-		ADD_OPTION_TO_LIST("two's complement input", "twosin")
+		ADD_OPTION_TO_LIST("two's input", "twosin")
 		ADD_OPTION_TO_LIST("hexadecimal two's input", "hextwosin")
 		ADD_OPTION_TO_LIST("binary bits", "bits")
 		ADD_OPTION_TO_LIST("digit grouping", "group")
@@ -373,7 +372,7 @@ void update_option_list() {
 		ADD_OPTION_TO_LIST("variables", "var")
 		ADD_OPTION_TO_LIST3("abbreviations", "abbr", "abbrev")
 		ADD_OPTION_TO_LIST("show ending zeroes", "zeroes")
-		ADD_OPTION_TO_LIST("repeating decimal", "repdeci")
+		ADD_OPTION_TO_LIST("repeating decimals", "repdeci")
 		ADD_OPTION_TO_LIST("angle unit", "angle")
 		ADD_OPTION_TO_LIST("caret as xor", "xor^")
 		ADD_OPTION_TO_LIST("concise uncertainty", "concise")
@@ -393,8 +392,8 @@ void update_option_list() {
 		ADD_OPTION_TO_LIST1("prompt")
 		ADD_OPTION_TO_LIST1("save mode")
 		ADD_OPTION_TO_LIST1("clear history")
-		ADD_OPTION_TO_LIST1("save history")
 		ADD_OPTION_TO_LIST("save definitions", "save defs")
+		ADD_OPTION_TO_LIST1("save config")
 		ADD_OPTION_TO_LIST3("scientific notation", "exp", "exp mode")
 		ADD_OPTION_TO_LIST("exp display", "edisp")
 		ADD_OPTION_TO_LIST("precision", "prec")
@@ -402,7 +401,7 @@ void update_option_list() {
 		ADD_OPTION_TO_LIST3("interval arithmetic", "ia", "interval")
 		ADD_OPTION_TO_LIST("variable units", "varunits")
 		ADD_OPTION_TO_LIST("max decimals", "maxdeci")
-		ADD_OPTION_TO_LIST("min decimal", "mindeci")
+		ADD_OPTION_TO_LIST("min decimals", "mindeci")
 		ADD_OPTION_TO_LIST1("digits")
 		ADD_OPTION_TO_LIST("fractions", "fr")
 		ADD_OPTION_TO_LIST("complex form", "cplxform")
@@ -1674,7 +1673,7 @@ void set_option(string str) {
 		}
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "two's complement", _("two's complement")) || svar == "twos") SET_BOOL_D(printops.twos_complement)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "hexadecimal two's", _("hexadecimal two's")) || svar == "hextwos") SET_BOOL_D(printops.hexadecimal_twos_complement)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "two's complement input", _("two's complement input")) || svar == "twosin") SET_BOOL_PF(evalops.parse_options.twos_complement)
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "two's input", _("two's input")) || EQUALS_IGNORECASE_AND_LOCAL(svar, "two's complement input", _("two's complement input")) || svar == "twosin") SET_BOOL_PF(evalops.parse_options.twos_complement)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "hexadecimal two's input", _("hexadecimal two's input")) || svar == "hextwosin") SET_BOOL_PF(evalops.parse_options.hexadecimal_twos_complement)
 	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "binary bits", _("binary bits")) || svar == "bits") {
 		int v = -1;
@@ -2674,7 +2673,7 @@ bool show_set_help(string set_option = "") {
 
 	STR_AND_TABS_BOOL("caret as xor", "xor^", _("Use ^ as bitwise exclusive OR operator."), caret_as_xor);
 	STR_AND_TABS_BOOL("concise uncertainty", "concise", _("Allow input of uncertainty using concise notation."), CALCULATOR->conciseUncertaintyInputEnabled());
-	if(SET_OPTION_MATCHES("decimal comma", "")) {
+	if(set_option.empty()) {
 		STR_AND_TABS_SET("decimal comma", "");
 		SET_DESCRIPTION(_("Determines the default decimal separator."));
 		str += "(-1";
@@ -2697,7 +2696,7 @@ bool show_set_help(string set_option = "") {
 	if(CALCULATOR->getDecimalPoint() != DOT) {
 		STR_AND_TABS_BOOL("ignore dot", "", _("Allows use of '.' as thousands separator."), evalops.parse_options.dot_as_separator);
 	}
-	STR_AND_TABS_BOOL("imaginary j", "imgj", _("Use 'j' (instead of 'i') as default symbol for the imaginary unit."), (CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") > 0));
+	if(set_option.empty()) {STR_AND_TABS_BOOL("imaginary j", "imgj", _("Use 'j' (instead of 'i') as default symbol for the imaginary unit."), (CALCULATOR->getVariableById(VARIABLE_ID_I)->hasName("j") > 0));}
 
 	if(SET_OPTION_MATCHES("input base", "inbase")) {
 		STR_AND_TABS_SET("input base", "inbase"); str += "(-1114112 - 1114112"; str += ", "; str += _("bin");
@@ -6521,7 +6520,7 @@ int main(int argc, char *argv[]) {
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("simplified percentage"), "percent"); str += b2oo(simplified_percentage, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
-			PRINT_AND_COLON_TABS(_("two's complement input"), "twosin"); str += b2oo(evalops.parse_options.twos_complement, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("two's input"), "twosin"); str += b2oo(evalops.parse_options.twos_complement, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Units"));
 
@@ -7379,7 +7378,7 @@ bool ask_implicit() {
 	return pm_bak != evalops.parse_options.parsing_mode;
 }
 
-int intervals_are_relative(MathStructure &m) {
+int intervals_are_relative(const MathStructure &m) {
 	int ret = -1;
 	if(m.isFunction() && m.function()->id() == FUNCTION_ID_UNCERTAINTY && m.size() == 3) {
 		if(m[2].isOne() && m[1].isMultiplication() && m[1].size() > 1 && m[1].last().isVariable() && (m[1].last().variable() == CALCULATOR->getVariableById(VARIABLE_ID_PERCENT) || m[1].last().variable() == CALCULATOR->getVariableById(VARIABLE_ID_PERMILLE) || m[1].last().variable() == CALCULATOR->getVariableById(VARIABLE_ID_PERMYRIAD))) {
