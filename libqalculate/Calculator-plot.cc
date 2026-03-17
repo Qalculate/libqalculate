@@ -724,6 +724,9 @@ bool Calculator::plotVectors(PlotParameters *param, const vector<MathStructure> 
 						if(i == 1 || ct2 == COMPARISON_RESULT_UNKNOWN) ct = COMPARISON_RESULT_EQUAL;
 						else ct = yprev->number().compare(yvalue->number());
 						if((ct == COMPARISON_RESULT_GREATER || ct == COMPARISON_RESULT_LESS) && (ct1 == COMPARISON_RESULT_GREATER || ct1 == COMPARISON_RESULT_LESS) && (ct2 == COMPARISON_RESULT_GREATER || ct2 == COMPARISON_RESULT_LESS) && ct1 != ct2 && ct != ct2) {
+							if(yprev->number().equalsApproximately(yvalue->number(), PRECISION + 28) > 0) ct = COMPARISON_RESULT_EQUAL;
+						}
+						if((ct == COMPARISON_RESULT_GREATER || ct == COMPARISON_RESULT_LESS) && (ct1 == COMPARISON_RESULT_GREATER || ct1 == COMPARISON_RESULT_LESS) && (ct2 == COMPARISON_RESULT_GREATER || ct2 == COMPARISON_RESULT_LESS) && ct1 != ct2 && ct != ct2) {
 							if(last_index2 != string::npos) {
 								plot_data.insert(last_index2 + 1, "  \n");
 								discontinuous_count++;
