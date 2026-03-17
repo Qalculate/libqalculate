@@ -2612,19 +2612,6 @@ bool fix_inequalities(MathStructure &m, const EvaluationOptions &eo) {
 	return b_ret;
 }
 
-bool replace_ln_zero(MathStructure &m) {
-	if(m.isFunction() && m.function()->id() == FUNCTION_ID_LOG && m.size() == 1 && m[0].isZero()) {
-		m.setToChild(1, true);
-		m.number().setMinusInfinity();
-		return true;
-	}
-	bool b_ret = false;
-	for(size_t i = 0; i < m.size(); i++) {
-		if(replace_ln_zero(m[i])) b_ret = true;
-	}
-	return b_ret;
-}
-
 MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
 	if(m_type == STRUCT_NUMBER) {FORMAT_COMPLEX_NUMBERS; return *this;}
@@ -2967,8 +2954,6 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 	if(eo2.approximation == APPROXIMATION_EXACT) replace_function_vars(*this);
 
 	calculatesub(eo2, feo);
-
-	if(eo2.allow_infinite && replace_ln_zero(*this)) calculatesub(eo2, feo);
 
 	if(m_type == STRUCT_NUMBER) {FORMAT_COMPLEX_NUMBERS; return *this;}
 	if(m_type == STRUCT_UNDEFINED || m_type == STRUCT_ABORTED || m_type == STRUCT_DATETIME || m_type == STRUCT_UNIT || m_type == STRUCT_SYMBOLIC || (m_type == STRUCT_VARIABLE && !o_variable->isKnown())) return *this;

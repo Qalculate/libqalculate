@@ -4489,7 +4489,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						}
 						return true;
 					}
-				} else if(CHILD(0)[1].isNumber() && CHILD(0)[1].number().isRational()) {
+				} else if(CHILD(0)[1].isNumber() && CHILD(0)[1].number().isRational() && CHILD(0)[1].number().isNonZero()) {
 					// x^a=b
 					if((ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) && !CHILD(0)[1].number().isInteger() && !CHILD(0)[1].number().isFraction() && !CHILD(0).representsNonComplex(true)) {
 						MathStructure mvar(CHILD(0)[0]);

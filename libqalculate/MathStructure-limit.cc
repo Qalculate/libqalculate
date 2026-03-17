@@ -1193,15 +1193,10 @@ bool MathStructure::calculateLimit(const MathStructure &x_var, const MathStructu
 	do_simplification(*this, eo, true, false, false, true, true);
 	eo.do_polynomial_division = true;
 	calculate_limit_sub(*this, var, nr_limit, eo, approach_direction);
-	std::vector<CalculatorMessage> messages;
 	bool b = true;
-	CALCULATOR->endTemporaryStopMessages(false, &messages);
-	for(size_t i = 0; i < messages.size(); i++) {
-		if(messages[i].message() == _("0^0 was assumed equal to 1, but might be considered undefined")) {b = false; break;}
-	}
 	if(!b || CALCULATOR->aborted() || (containsInfinity(true) && !isInfinite(true)) || limit_contains_undefined(*this) || containsFunctionId(FUNCTION_ID_FLOOR) || containsFunctionId(FUNCTION_ID_CEIL) || containsFunctionId(FUNCTION_ID_TRUNC)) {
+		CALCULATOR->endTemporaryStopMessages();
 		b = false;
-		messages.clear();
 		if(retry) {
 			CALCULATOR->beginTemporaryStopMessages();
 			eo.expand = false;
@@ -1212,22 +1207,19 @@ bool MathStructure::calculateLimit(const MathStructure &x_var, const MathStructu
 				set(mbak2);
 				replace_equal_limits2(*this, var, nr_limit, eo, approach_direction);
 				calculate_limit_sub(*this, var, nr_limit, eo, approach_direction);
-				CALCULATOR->endTemporaryStopMessages(false, &messages);
-				for(size_t i = 0; i < messages.size(); i++) {
-					if(messages[i].message() == _("0^0 was assumed equal to 1, but might be considered undefined")) {b = false; break;}
-				}
 			}
 		}
 		if(!b || CALCULATOR->aborted() || (containsInfinity(true) && !isInfinite(true)) || limit_contains_undefined(*this) || containsFunctionId(FUNCTION_ID_FLOOR) || containsFunctionId(FUNCTION_ID_CEIL) || containsFunctionId(FUNCTION_ID_TRUNC)) {
+			if(retry) CALCULATOR->endTemporaryStopMessages();
 			set(mbak);
 			replace(var, munit.isZero() ? x_var : munit);
 			var->destroy();
 			return false;
 		}
 	}
+	CALCULATOR->endTemporaryStopMessages(true);
 	replace(var, nr_limit);
 	var->destroy();
-	CALCULATOR->addMessages(&messages);
 	return true;
 }
 

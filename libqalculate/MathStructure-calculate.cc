@@ -3381,7 +3381,14 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		// 0^a=0 if a is positive
 		return 1;
 	}
-	if(mstruct.isZero() && !representsUndefined(true, true)) {
+	if(mstruct.isZero() && !representsUndefined(true, true) && (eo.assume_denominators_nonzero || representsNonZero(true))) {
+		if(isVariable()) {
+			if(!o_variable->isKnown() && ((UnknownVariable*) o_variable)->interval().isNumber() && !((UnknownVariable*) o_variable)->interval().number().isNonZero()) {
+				return 0;
+			} else if(o_variable->isKnown() && ((KnownVariable*) o_variable)->get().isNumber() && !((KnownVariable*) o_variable)->get().number().isNonZero()) {
+				return 0;
+			}
+		}
 		// x^0=1
 		set(m_one);
 		MERGE_APPROX_AND_PREC(mstruct)
@@ -3968,7 +3975,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			} else if(mstruct.isMultiplication() && mstruct.size() > 1) {
 				if(!isMultiplication()) {
 					// x^(a*b*...)
-					bool b = representsNonNegative(true);
+					bool b = representsNonNegative(true) && mstruct.containsInfinity(false, true, true) <= 0;
 					if(!b) {
 						// all factors of the exponent must be integers
 						b = true;
@@ -5451,12 +5458,15 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 		case STRUCT_POWER: {
 			if(recursive) {
 				CHILD(0).calculatesub(eo, feo, true, this, 0);
-				if(CHILD(0).isZero() && CHILD(1).containsInfinity(false, true, false)) {
+				if(!CHILD(0).representsNonZero(true) && CHILD(1).containsInfinity(false, true, true) > 0) {
 					MathStructure mbak(CHILD(1));
 					CALCULATOR->beginTemporaryStopMessages();
 					CHILD(1).calculatesub(eo, feo, true, this, 1);
 					CALCULATOR->endTemporaryStopMessages(!CHILD(1).isZero());
-					if(CHILD(1).isZero()) CHILD(1).set(mbak);
+					if(CHILD(1).isZero()) {
+						CHILD(1).set(mbak);
+						break;
+					}
 				} else {
 					CHILD(1).calculatesub(eo, feo, true, this, 1);
 				}

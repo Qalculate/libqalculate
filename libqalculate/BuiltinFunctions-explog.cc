@@ -591,7 +591,6 @@ int LogFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 
 	if(mstruct.isNumber()) {
-		if(mstruct.number().isZero()) return -1;
 		if(eo.allow_complex && mstruct.number().isMinusOne()) {
 			mstruct = nr_one_i;
 			mstruct *= CALCULATOR->getVariableById(VARIABLE_ID_PI);

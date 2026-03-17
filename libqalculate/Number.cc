@@ -3917,10 +3917,10 @@ bool Number::raise(const Number &o, bool try_exact) {
 	if(isZero()) {
 		if(o.isZero()) {
 			//0^0
-			CALCULATOR->error(false, _("0^0 was assumed equal to 1, but might be considered undefined"), NULL);
+			/*CALCULATOR->error(false, _("0^0 was assumed equal to 1, but might be considered undefined"), NULL);
 			set(1, 1, 0, true);
-			setPrecisionAndApproximateFrom(o);
-			return true;
+			setPrecisionAndApproximateFrom(o);*/
+			return false;
 		} else if(!o.realPartIsNonNegative() || (o.hasImaginaryPart() && !o.realPartIsNonZero())) {
 			return false;
 		}
@@ -3928,7 +3928,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 	}
 
 	if(o.isZero()) {
-		if(hasImaginaryPart() && i_value->includesInfinity()) return false;
+		if((hasImaginaryPart() && i_value->includesInfinity()) || !isNonZero()) return false;
 		set(1, 1, 0, false);
 		setPrecisionAndApproximateFrom(o);
 		return true;
