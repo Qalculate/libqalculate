@@ -1177,7 +1177,7 @@
       <unit type="alias">
         <system>CGS</system>
         <title>Statcoulomb (Franklin)</title>
-        <names>r:statcoulomb,p:statcoulombs,a:statC,franklin,a:Fr,p:franklins</names>
+        <names>r:statcoulomb,p:statcoulombs,a:statC,franklin,a:Fr,p:franklins,esu</names>
         <base>
           <unit>C</unit>
           <relation>1/2997924580</relation>
