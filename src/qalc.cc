@@ -9898,7 +9898,6 @@ void load_preferences() {
 #ifdef HAVE_LIBREADLINE
 	string historyfile = buildPath(getLocalStateDir(), "qalc.history");
 	stifle_history(100);
-#	ifndef _WIN32
 	if(fileExists(historyfile)) {
 		read_history(historyfile.c_str());
 	} else {
@@ -9909,7 +9908,6 @@ void load_preferences() {
 			move_file(oldhistoryfile.c_str(), historyfile.c_str());
 		}
 	}
-#	endif
 #endif
 	string oldfilename;
 	string filename = buildPath(getLocalDir(), "qalc.cfg");
