@@ -758,7 +758,7 @@
       <countries>Zambia</countries>
     </builtin_unit>
     <builtin_unit name="XAG">
-      <title>Silve (one troy ounce)</title>
+      <title>Silver (one troy ounce)</title>
       <names>a-cr:XAG</names>
     </builtin_unit>
     <builtin_unit name="XAU">

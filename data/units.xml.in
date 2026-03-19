@@ -1177,7 +1177,7 @@
       <unit type="alias">
         <system>CGS</system>
         <title>Statcoulomb (Franklin)</title>
-        <names>r:statcoulomb,p:statcoulombs,a:statC,franklin,a:Fr,p:franklins,esu</names>
+        <names>r:statcoulomb,p:statcoulombs,a:statC,franklin,a:Fr,p:franklins,a:esu</names>
         <base>
           <unit>C</unit>
           <relation>1/2997924580</relation>
@@ -1792,6 +1792,44 @@
           <prefix>0</prefix>
           <exponent>-3</exponent>
         </part>
+      </unit>
+      <unit type="composite">
+        <title>Mole per Liter</title>
+        <names translatable="no">r:mol_p_L</names>
+        <part>
+          <unit>mol</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>L</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+      <unit type="composite">
+        <title>Mole per Cubic Decimeter</title>
+        <names translatable="no">r:mol_p_cudm</names>
+        <part>
+          <unit>mol</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>m</unit>
+          <prefix>-1</prefix>
+          <exponent>-3</exponent>
+        </part>
+      </unit>
+      <unit type="alias">
+        <title>Molar</title>
+        <names>r:molar</names>
+        <base>
+          <unit>mol_p_L</unit>
+          <relation>1</relation>
+          <exponent>1</exponent>
+        </base>
+        <use_with_prefixes max="-3">true</use_with_prefixes>
       </unit>
     </category>
     <category>
