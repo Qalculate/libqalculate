@@ -699,6 +699,10 @@ string getPackageDataDir() {
 }
 
 string getGlobalDefinitionsDir() {
+	const char *homedir;
+	if((homedir = getenv("QALCULATE_DEFINITIONS_DIR")) != NULL) {
+		return homedir;
+	}
 #ifdef COMPILED_DEFINITIONS
 	return "";
 #else
