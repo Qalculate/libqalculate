@@ -87,7 +87,10 @@ int RankFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_EXACT;
-		mvector.eval(eo2);
+		for(size_t i = 0; i < mvector.size(); i++) {
+			if(CALCULATOR->aborted()) return 0;
+			mvector[i].eval(eo2);
+		}
 		if(!mvector.rankVector(vargs[1].number().getBoolean())) return 0;
 		mstruct.clearMatrix();
 		mstruct.resizeMatrix(rows, cols, m_zero);
@@ -101,7 +104,10 @@ int RankFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	mstruct = vargs[0];
 	EvaluationOptions eo2 = eo;
 	eo2.approximation = APPROXIMATION_EXACT;
-	mstruct.eval(eo2);
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
+		mstruct[i].eval(eo2);
+	}
 	return mstruct.rankVector(vargs[1].number().getBoolean());
 }
 SortFunction::SortFunction() : MathFunction("sort", 1, 2) {
@@ -113,7 +119,10 @@ int SortFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	mstruct = vargs[0];
 	EvaluationOptions eo2 = eo;
 	eo2.approximation = APPROXIMATION_EXACT;
-	mstruct.eval(eo2);
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
+		mstruct[i].eval(eo2);
+	}
 	return mstruct.sortVector(vargs[1].number().getBoolean());
 }
 MergeVectorsFunction::MergeVectorsFunction() : MathFunction("mergevectors", 1, -1) {
@@ -739,6 +748,15 @@ int IdentityMatrixFunction::calculate(MathStructure &mstruct, const MathStructur
 	if(mstruct.isUndefined()) return 0;
 	return 1;
 }
+
+#define EVAL_MATRIX(m) \
+	for(size_t r = 0; r < m.size(); r++) {\
+		for(size_t c = 0; c < m[r].size(); c++) {\
+			if(CALCULATOR->aborted()) return 0;\
+			m[r][c].eval(eo);\
+		}\
+	}
+
 DeterminantFunction::DeterminantFunction() : MathFunction("det", 1) {
 	MatrixArgument *marg = new MatrixArgument();
 	marg->setSquareDemanded(true);
@@ -746,7 +764,7 @@ DeterminantFunction::DeterminantFunction() : MathFunction("det", 1) {
 }
 int DeterminantFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	MathStructure v(vargs[0]);
-	v.eval(eo);
+	EVAL_MATRIX(v)
 	v.determinant(mstruct, eo);
 	if(mstruct.isUndefined()) {mstruct = v; return -1;}
 	return 1;
@@ -758,7 +776,7 @@ PermanentFunction::PermanentFunction() : MathFunction("permanent", 1) {
 }
 int PermanentFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	MathStructure v(vargs[0]);
-	v.eval(eo);
+	EVAL_MATRIX(v)
 	v.permanent(mstruct, eo);
 	if(mstruct.isUndefined()) {mstruct = v; return -1;}
 	return 1;
@@ -772,7 +790,7 @@ CofactorFunction::CofactorFunction() : MathFunction("cofactor", 3) {
 }
 int CofactorFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	MathStructure v(vargs[0]);
-	v.eval(eo);
+	EVAL_MATRIX(v)
 	v.cofactor((size_t) vargs[1].number().uintValue(), (size_t) vargs[2].number().uintValue(), mstruct, eo);
 	if(mstruct.isUndefined()) {mstruct = v; return -1;}
 	return 1;
@@ -784,7 +802,7 @@ AdjointFunction::AdjointFunction() : MathFunction("adj", 1) {
 }
 int AdjointFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
-	mstruct.eval(eo);
+	EVAL_MATRIX(mstruct)
 	return mstruct.adjointMatrix(eo) && !mstruct.isUndefined();
 }
 InverseFunction::InverseFunction() : MathFunction("inv", 1) {
@@ -938,7 +956,7 @@ RRefFunction::RRefFunction() : MathFunction("rref", 1) {
 int RRefFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	// echelon matrix
 	mstruct = vargs[0];
-	mstruct.eval(eo);
+	EVAL_MATRIX(mstruct)
 	return matrix_to_rref(mstruct, eo);
 }
 MatrixRankFunction::MatrixRankFunction() : MathFunction("rk", 1) {
@@ -946,7 +964,7 @@ MatrixRankFunction::MatrixRankFunction() : MathFunction("rk", 1) {
 }
 int MatrixRankFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	MathStructure m(vargs[0]);
-	m.eval(eo);
+	EVAL_MATRIX(m)
 	if(!matrix_to_rref(m, eo)) return 0;
 	size_t rows = m.rows();
 	size_t cols = m.columns();
