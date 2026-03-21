@@ -617,7 +617,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 											}
 										} else if(mstruct.size() - 2 == SIZE && mstruct[0].isMinusOne()) {
 											b = true;
-											for(size_t i = 1; i < SIZE; i++) {
+											for(size_t i = 0; i < SIZE; i++) {
 												if(!CHILD(i).equals(mstruct[i2 > i + 1 ? i + 1 : i + 2])) {b = false; break;}
 											}
 										}
@@ -4027,7 +4027,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 				}
 				for(size_t i = 0; i < mstruct.size(); i++) {
 					if(mstruct[i].isPower() && mstruct[i][1].isMinusOne() && mstruct[i][0].isFunction() && mstruct[i][0].function()->id() == FUNCTION_ID_LOG && mstruct[i][0].size() == 1 && equals(mstruct[i][0][0])) {
-						// a^(b*ln(a)) = e^a
+						// a^(b/ln(a)) = e^b
 						mstruct.delChild(i + 1, true);
 						set(CALCULATOR->getVariableById(VARIABLE_ID_E), true);
 						mstruct.ref();
