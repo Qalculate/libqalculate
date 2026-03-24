@@ -4279,6 +4279,30 @@
           <exponent>1</exponent>
         </base>
       </unit>
+      <unit type="composite">
+        <hidden>true</hidden>
+        <title translatable="no">Btu per Hour</title>
+        <names translatable="no">r:Btu_p_h</names>
+        <part>
+          <unit>Btu</unit>
+          <prefix>0</prefix>
+          <exponent>1</exponent>
+        </part>
+        <part>
+          <unit>h</unit>
+          <prefix>0</prefix>
+          <exponent>-1</exponent>
+        </part>
+      </unit>
+      <unit type="alias">
+        <title>Ton of Refrigeration</title>
+        <names>r:ton_refrigaration,ac:TOR</names>
+        <base>
+          <unit>Btu_p_h</unit>
+          <relation>12000</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
     </category>
     <category>
       <title>Entropy</title>
