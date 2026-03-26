@@ -1131,7 +1131,42 @@ string Calculator::localizeExpression(string str, const ParseOptions &po) const 
 	return str;
 }
 string Calculator::unlocalizeExpression(string str, const ParseOptions &po) const {
-	if((DOT_STR == DOT && COMMA_STR == COMMA && !po.comma_as_separator) || po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return str;
+	if(po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return str;
+	if(((local_digit_group_separator.length() == 3 && local_digit_group_separator == "’") || (local_digit_group_separator.length() == 1 && local_digit_group_separator[0] == '\'')) && str.length() >= 5) {
+		size_t i = 0;
+		bool b = true, b_found = false;
+		while(true) {
+			i = str.find("’", i);
+			if(i == string::npos) break;
+			b_found = true;
+			if(i == 0 || str[i - 1] < '0' || str[i - 1] > '9') {b = false; break;}
+			if(i + 5 >= str.length() || str[i + 3] < '0' || str[i + 3] > '9' || str[i + 4] < '0' || str[i + 4] > '9' || str[i + 5] < '0' || str[i + 5] > '9') {b = false; break;}
+			i += 6;
+			if(i == str.length()) break;
+			if(str.rfind(LEFT_VECTOR_WRAP, i) == string::npos) i = str.find_first_not_of(SPACES, i);
+			if(i == string::npos) break;
+			if(str[i] >= '0' && str[i] <= '9') {b = false; break;}
+		}
+		if(b_found && b) {
+			gsub("’", "", str);
+		} else if(!b_found) {
+			i = 0; b = true; b_found = false;
+			while(true) {
+				i = str.find("'", i);
+				if(i == string::npos) break;
+				b_found = true;
+				if(i == 0 || str[i - 1] < '0' || str[i - 1] > '9') {b = false; break;}
+				if(i >= str.length() - 3 || str[i + 1] < '0' || str[i + 1] > '9' || str[i + 2] < '0' || str[i + 2] > '9' || str[i + 3] < '0' || str[i + 3] > '9') {b = false; break;}
+				i += 4;
+				if(i == str.length()) break;
+				if(str.rfind(LEFT_VECTOR_WRAP, i) == string::npos) i = str.find_first_not_of(SPACES, i);
+				if(i == string::npos) break;
+				if(str[i] >= '0' && str[i] <= '9') {b = false; break;}
+			}
+			if(b_found && b) gsub("\'", "", str);
+		}
+	}
+	if(DOT_STR == DOT && COMMA_STR == COMMA && !po.comma_as_separator) return str;
 	int base = po.base;
 	if(base == BASE_CUSTOM) {
 		base = (int) priv->custom_input_base_i;
