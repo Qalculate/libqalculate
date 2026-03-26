@@ -174,6 +174,7 @@ void lcm_of_coefficients_denominators(const MathStructure &e, Number &nlcm);
 void multiply_lcm(const MathStructure &e, const Number &lcm, MathStructure &mmul, const EvaluationOptions &eo);
 bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool combine_divisions = true, bool only_gcd = false, bool combine_only = false, bool recursive = true, bool limit_size = false, int i_run = 1);
 bool do_function_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool recursive = true, int depth = 0);
+bool simplify_roots(MathStructure &mstruct, const EvaluationOptions &eo, bool dry_run = false);
 bool expand_partial_fractions(MathStructure &m, const EvaluationOptions &eo, bool do_simplify = true);
 bool warn_about_assumed_not_value(const MathStructure &mstruct, const MathStructure &mvalue, const EvaluationOptions &eo);
 bool warn_about_denominators_assumed_nonzero(const MathStructure &mstruct, const EvaluationOptions &eo);

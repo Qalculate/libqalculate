@@ -419,12 +419,12 @@ int has_not_a_comparison() {
 	}
 	return 0;
 }
-bool display_errors(bool show_only_errors = false) {
+bool display_errors(bool show_only_errors = false, bool hide_division_by_zero = false) {
 	if(!CALCULATOR->message()) return false;
 	bool b_ret = false;
 	while(true) {
 		MessageType mtype = CALCULATOR->message()->type();
-		if(!show_only_errors || mtype == MESSAGE_ERROR) {
+		if((!show_only_errors || mtype == MESSAGE_ERROR) && (!hide_division_by_zero || CALCULATOR->message()->message() != _("Division by zero."))) {
 			if(mtype == MESSAGE_ERROR) cout << "error: ";
 			else if(mtype == MESSAGE_WARNING) cout << "warning: ";
 			cout << CALCULATOR->message()->message() << endl;
@@ -1608,8 +1608,9 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 	bool b_iv = CALCULATOR->usesIntervalArithmetic();
 	IntervalCalculation ic = eo.interval_calculation;
 	cerr << "A0" << endl;
-	string str = rnd_expression(allow_unknowns, allow_functions, 6, 4, allow_unit, allow_variable, allow_interval);
+	string str = rnd_expression(allow_unknowns, allow_functions, 6, 4, allow_unit, allow_variable, false);
 	cerr << "A2:" << str << endl;
+	//str = "log((2i)-cosh(tanh(root((4141.8-7.6)^3*cbrt(pi-x),8)-(4.9))),2)^(1/3)/599";
 	PrintOptions po; po.interval_display = INTERVAL_DISPLAY_SIGNIFICANT_DIGITS; po.use_max_decimals = true; po.max_decimals = 2; po.min_exp = 1;
 	MathStructure mp, m1, m2, m3, m4;
 	CALCULATOR->parse(&mp, str, eo.parse_options);
@@ -1619,7 +1620,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 	m4 = mp;
 	cerr << "A3" << endl;
 	cerr << mp << endl;
-	eo.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
+	//eo.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
 	CALCULATOR->calculate(&m1, 5000, eo);
 	if(m1.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED1" << endl; CALCULATOR->useIntervalArithmetic(b_iv); return;}
 	cerr << "A3b" << endl;
@@ -1678,13 +1679,13 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 		m1.replace(CALCULATOR->v_x, nr);
 		m3 = m1;
 		cerr << "A2:" << m1 << endl;
-		eo.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
+		//eo.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
 		CALCULATOR->calculate(&m1, 5000, eo);
 		if(m1.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED4: " << nr << endl; CALCULATOR->useIntervalArithmetic(b_iv); return;}
 		/*eo.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
 		CALCULATOR->calculate(&m3, 5000, eo);
-		if(m3.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED4b: " << nr << endl; CALCULATOR->useIntervalArithmetic(b_iv); return;}
-		eo.interval_calculation = ic;*/
+		if(m3.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED4b: " << nr << endl; CALCULATOR->useIntervalArithmetic(b_iv); return;}*/
+		eo.interval_calculation = ic;
 		m2 = mp;
 		CALCULATOR->v_x->setAssumptions(nr);
 		eo.approximation = APPROXIMATION_EXACT;
@@ -1904,7 +1905,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 		}
 	}
 
-	string str2 = rnd_expression(allow_unknowns, allow_functions, 5, 4, allow_unit, allow_variable, allow_interval);
+	string str2 = rnd_expression(allow_unknowns, allow_functions, 5, 4, allow_unit, allow_variable, false);
 	str.insert(0, "(");
 	str += ") / (";
 	str += str2;
@@ -1918,7 +1919,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 	m4 = m1;
 	cerr << "DEN:" << str2 << " => " << mp << endl;
 
-	eo.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
+	//eo.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
 	CALCULATOR->calculate(&m1, 5000, eo);
 	if(m1.isAborted()) {cout << str << " => " << mp << endl; cout << "ABORTED1" << endl; CALCULATOR->useIntervalArithmetic(b_iv); return;}
 	/*eo.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
@@ -1971,7 +1972,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 		if(nr.hasImaginaryPart() && rand() % 2 == 0) nr += Number(rnd_number(false, false, false, false, false));
 		m1 = mp;
 		m1.replace(CALCULATOR->v_x, nr);
-		eo.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
+		//eo.interval_calculation = INTERVAL_CALCULATION_VARIANCE_FORMULA;
 		m3 = m1;
 		cerr << "A2:" << m1 << endl;
 		CALCULATOR->calculate(&m1, 5000, eo);
@@ -2086,7 +2087,7 @@ void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bo
 		}
 	}
 	cerr << "D" << endl;
-	if(display_errors(true)) cout << str << ":" << str2 << endl;
+	if(display_errors(true, true)) cout << str << ":" << str2 << endl;
 }
 
 void speed_test() {
@@ -2429,6 +2430,7 @@ int main(int argc, char *argv[]) {
 	CALCULATOR->loadGlobalDefinitions();
 	CALCULATOR->loadLocalDefinitions();
 	CALCULATOR->setPrecision(10);
+	CALCULATOR->useDecimalComma();
 
 	CALCULATOR->useIntervalArithmetic();
 	PrintOptions po = CALCULATOR->messagePrintOptions();
@@ -2466,6 +2468,7 @@ int main(int argc, char *argv[]) {
 	evalops.auto_post_conversion = POST_CONVERSION_OPTIMAL_SI;
 	evalops.structuring = STRUCTURING_SIMPLIFY;
 	evalops.approximation = APPROXIMATION_TRY_EXACT;
+	//evalops.interval_calculation = INTERVAL_CALCULATION_INTERVAL_ARITHMETIC;
 
 	search_po = po;
 	search_po.number_fraction_format = FRACTION_DECIMAL;
@@ -2631,9 +2634,9 @@ int main(int argc, char *argv[]) {
 	v = new KnownVariable("", "v", m_zero);
 
 	//CALCULATOR->defaultAssumptions()->setType(ASSUMPTION_TYPE_NUMBER);
-	//CALCULATOR->useIntervalArithmetic();
+	CALCULATOR->useIntervalArithmetic();
 
-	//for(size_t i = 0; i <= 150000; i++) {
+	for(size_t i = 0; i <= 1000000; i++) {
 		/*string str = rnd_expression(17, false, 20, 4, false, false, false, false, true);
 		cout << str << endl;
 		MathStructure mstruct;
@@ -2642,12 +2645,13 @@ int main(int argc, char *argv[]) {
 		cout << mstruct.print() << endl;
 		if(mstruct.isAborted()) break;*/
 		//if(mstruct.isPower() || (mstruct.isMultiplication() && !mstruct.containsType(STRUCT_DIVISION))) cout << str << "\n" << mstruct << endl;
-	/*	rnd_test(evalops, 4, true, false, true, false, true, false);
+		//void rnd_test(EvaluationOptions eo, int allow_unknowns, bool allow_functions, bool test_interval = true, bool test_equation = true, bool allow_unit = false, bool allow_variable = false, bool allow_interval = false) {
+		rnd_test(evalops, 4, true, false, false, false, false, false);
 		if(i % 1000 == 0) cout << endl << rt1 << ":" << rt2 << ":" << rt3 << ":" << rt4 << ":" << rt5 << ":" << rt6 << ":" << rt7 << ":" << rt8 << ":" << rt9 << endl << endl;
 	}
 	cout << endl << endl << "-----------------------------------------" << endl << endl << endl;
 
-	return 0;*/
+	return 0;
 	evalops.parse_options.units_enabled = true;
 	evalops.parse_options.unknowns_enabled = false;
 	size_t ni = 0;

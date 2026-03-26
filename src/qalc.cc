@@ -9926,7 +9926,7 @@ void load_preferences() {
 		makeDir(getLocalDir());
 	}
 
-	int version_numbers[] = {5, 9, 0};
+	int version_numbers[] = {5, 10, 0};
 
 	if(file) {
 		char line[10000];

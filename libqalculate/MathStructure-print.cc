@@ -4025,7 +4025,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					i--;
 				}
 				size_t l = print_str.length();
-				if(i == 0 && SIZE == 2 && !po.preserve_precision && (CHILD(i).isNumber() || (CHILD(i).isNegate() && CHILD(i)[0].isNumber())) && CHILD(1).isUnit() && CHILD(i).isApproximate() && CHILD(i).precision() < 0 && CHILD(1).unit()->isCurrency() && !po.use_max_decimals && !po.use_min_decimals) {
+				if(i == 0 && SIZE == 2 && !po.preserve_precision && (CHILD(i).isNumber() || (CHILD(i).isNegate() && CHILD(i)[0].isNumber())) && CHILD(1).isUnit() && CHILD(i).isApproximate() && CHILD(i).precision() < 0 && CHILD(1).unit()->isCurrency() && (!po.use_max_decimals || po.max_decimals < 0) && (!po.use_min_decimals || po.min_decimals <= 0)) {
 					PrintOptions po2 = po;
 					po2.use_max_decimals = true;
 					po2.max_decimals = 4;

@@ -73,6 +73,7 @@ bool warn_about_assumed_not_value(const MathStructure &mstruct, const MathStruct
 	if(mnonzero.isZero()) return false;
 	if(mnonzero.isOne()) return true;
 	if(mvalue.isZero() && mnonzero.isComparison() && mnonzero.comparisonType() == COMPARISON_NOT_EQUALS && mnonzero[1].isZero() && mnonzero[0].representsApproximatelyZero(true)) return false;
+	if(mnonzero.countTotalChildren() > 10000) return false;
 	CALCULATOR->error(false, _("Required assumption: %s."), format_and_print(mnonzero).c_str(), NULL);
 	return true;
 }
@@ -92,6 +93,7 @@ bool warn_about_denominators_assumed_nonzero(const MathStructure &mstruct, const
 	if(mnonzero.isZero()) return false;
 	if(mnonzero.isOne()) return true;
 	if(mnonzero.isComparison() && mnonzero.comparisonType() == COMPARISON_NOT_EQUALS && mnonzero[1].isZero() && mnonzero[0].representsApproximatelyZero(true)) return false;
+	if(mnonzero.countTotalChildren() > 10000) return false;
 	CALCULATOR->error(false, _("To avoid division by zero, the following must be true: %s."), format_and_print(mnonzero).c_str(), NULL);
 	return true;
 }
@@ -114,6 +116,7 @@ bool warn_about_denominators_assumed_nonzero_or_positive(const MathStructure &ms
 	if(mnonzero.isZero()) return false;
 	if(mnonzero.isOne()) return true;
 	if(mnonzero.isComparison() && mnonzero.comparisonType() == COMPARISON_NOT_EQUALS && mnonzero[1].isZero() && mnonzero[0].representsApproximatelyZero(true)) return false;
+	if(mnonzero.countTotalChildren() > 10000) return false;
 	CALCULATOR->error(false, _("To avoid division by zero, the following must be true: %s."), format_and_print(mnonzero).c_str(), NULL);
 	return true;
 }
@@ -145,6 +148,7 @@ bool warn_about_denominators_assumed_nonzero_llgg(const MathStructure &mstruct, 
 	if(mnonzero.isZero()) return false;
 	if(mnonzero.isOne()) return true;
 	if(mnonzero.isComparison() && mnonzero.comparisonType() == COMPARISON_NOT_EQUALS && mnonzero[1].isZero() && mnonzero[0].representsApproximatelyZero(true)) return false;
+	if(mnonzero.countTotalChildren() > 10000) return false;
 	CALCULATOR->error(false, _("To avoid division by zero, the following must be true: %s."), format_and_print(mnonzero).c_str(), NULL);
 	return true;
 }
@@ -487,7 +491,7 @@ int MathStructure::merge_addition(MathStructure &mstruct, const EvaluationOption
 										}
 									} else if(mstruct.size() == SIZE - 2 && CHILD(0).isMinusOne()) {
 										b = true;
-										for(size_t i = 1; i < mstruct.size(); i++) {
+										for(size_t i = 0; i < mstruct.size(); i++) {
 											if(!mstruct[i].equals(CHILD(i2 > i + 1 ? i + 1 : i + 2))) {b = false; break;}
 										}
 									}

@@ -403,3 +403,5 @@ limit((e^(3x)-3x-1)/(sin(x)^2),0)
 	9/2
 limit((x^3)/(x-atan(x)),0)
 	3
+limit((1-sin(x)/x)^(1/ln(x)),0)
+	e^2

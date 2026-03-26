@@ -637,7 +637,7 @@ factored_2:
 			int u;
 			m2.polynomialUnitContentPrimpart(xvar, u, c, mprim, eo);
 			if(!m2.equals(c, true, true)) MathStructure::gcd(m1, c, mresult, eo, ca, cb, false);
-			if(CALCULATOR->aborted()) {
+			if(CALCULATOR->aborted() || mprim.isZero()) {
 				if(ca) *ca = m1;
 				if(cb) *cb = m2;
 				mresult.set(1, 1, 0);
@@ -659,7 +659,7 @@ factored_2:
 			int u;
 			m1.polynomialUnitContentPrimpart(xvar, u, c, mprim, eo);
 			if(!m1.equals(c, true, true)) MathStructure::gcd(c, m2, mresult, eo, ca, cb, false);
-			if(CALCULATOR->aborted()) {
+			if(CALCULATOR->aborted() || mprim.isZero()) {
 				if(ca) *ca = m1;
 				if(cb) *cb = m2;
 				mresult.set(1, 1, 0);
@@ -1063,6 +1063,16 @@ int simplify_cumbersome_number(const MathStructure &m) {
 	return v;
 }
 
+bool contains_abs_sym(const MathStructure &m, const MathStructure &sym) {
+	if(m.isFunction() && m.function()->id() == FUNCTION_ID_ABS && (m[0].size() == 0 || m[0].isMultiplication() || m[0].isAddition() || m[0].isPower()) && m[0].contains(sym, false)) return true;
+	if(m.isMultiplication() || m.isAddition() || m.isPower()) {
+		for(size_t i = 0; i < m.size(); i++) {
+			if(contains_abs_sym(m[i], sym)) return true;
+		}
+	}
+	return false;
+}
+
 bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool combine_divisions, bool only_gcd, bool combine_only, bool recursive, bool limit_size, int i_run_pre) {
 
 	if(!eo.expand || !eo.assume_denominators_nonzero || mstruct.size() == 0) return false;
@@ -1073,6 +1083,25 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 		i_run -= 100;
 		depth++;
 	}
+
+	if(!combine_only && i_run == 1 && depth == 0) {
+		if(simplify_roots(mstruct, eo, true)) {
+			MathStructure mbak(mstruct);
+			if(simplify_roots(mstruct, eo, false)) {
+				depth++;
+				if(do_simplification(mstruct, eo, combine_divisions, only_gcd, combine_only, recursive, limit_size, I_RUN_ARG(1))) {
+					EvaluationOptions eo2 = eo;
+					eo2.expand = false;
+					mstruct.calculatesub(eo2, eo);
+					return true;
+				} else {
+					mstruct = mbak;
+					return false;
+				}
+			}
+		}
+	}
+
 	if(!combine_only && combine_divisions && i_run == 1) {
 		bool b_ret = do_simplification(mstruct, eo, combine_divisions, only_gcd, combine_only, recursive, limit_size, I_RUN_ARG(-1));
 		if(test_replace_fracpow(mstruct) > 0) {
@@ -1581,6 +1610,7 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 						}
 					}
 				}
+				if(b_found && contains_abs_sym(divs[0], symsd[i])) b_found = false;
 				if(b_found) i++;
 				else symsd.erase(symsd.begin() + i);
 			}

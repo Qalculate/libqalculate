@@ -960,7 +960,7 @@ bool polynomial_long_division(const MathStructure &mnum, const MathStructure &md
 	mden.coefficient(xvar, dendeg, dencoeff);
 
 	for(size_t i = 0; numdeg.isGreaterThanOrEqualTo(dendeg); i++) {
-		if(i > 10000 || CALCULATOR->aborted()) {
+		if(i > 1000 || CALCULATOR->aborted()) {
 			mrem = mnum;
 			mquotient.clear();
 			return false;

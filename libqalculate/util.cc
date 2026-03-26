@@ -699,13 +699,13 @@ string getPackageDataDir() {
 }
 
 string getGlobalDefinitionsDir() {
+#ifdef COMPILED_DEFINITIONS
+	return "";
+#else
 	const char *homedir;
 	if((homedir = getenv("QALCULATE_DEFINITIONS_DIR")) != NULL) {
 		return homedir;
 	}
-#ifdef COMPILED_DEFINITIONS
-	return "";
-#else
 #	ifndef WIN32
 	char buffer[500];
 	if(getcwd(buffer, 500)) {

@@ -1608,10 +1608,11 @@ bool simplify_ln(MathStructure &mstruct) {
 	return b_ret;
 }
 
-bool simplify_roots(MathStructure &mstruct, const EvaluationOptions &eo) {
+bool simplify_roots(MathStructure &mstruct, const EvaluationOptions &eo, bool dry_run) {
 	bool b_ret = false;
 	for(size_t i = 0; i < mstruct.size(); i++) {
-		if(simplify_roots(mstruct[i], eo)) {
+		if(simplify_roots(mstruct[i], eo, dry_run)) {
+			if(dry_run) return true;
 			mstruct.childUpdated(i + 1);
 			b_ret = true;
 		}
@@ -1620,6 +1621,7 @@ bool simplify_roots(MathStructure &mstruct, const EvaluationOptions &eo) {
 		for(size_t i = 1; i < mstruct.size(); i++) {
 			if(mstruct[i].isPower() && mstruct[i][1].isNumber() && !mstruct[i][1].number().includesInfinity() && mstruct[i][0].isNumber() && mstruct[i][0].number().isRational() && !mstruct[i][0].number().isZero()) {
 				if(mstruct[0].number().denominator() == mstruct[i][0].number().numerator() && mstruct[0].number().numerator() == mstruct[i][0].number().denominator()) {
+					if(dry_run) return true;
 					// (n/m)^a*m/n=(n/m)^(a-1)
 					mstruct[i][1].number()--;
 					mstruct.childUpdated(i + 1);
@@ -1627,6 +1629,7 @@ bool simplify_roots(MathStructure &mstruct, const EvaluationOptions &eo) {
 					b_ret = true;
 					break;
 				} else if(mstruct[i][1].number().isNegative() && mstruct[0].number().isIntegerDivisible(mstruct[i][0].number())) {
+					if(dry_run) return true;
 					if(mstruct[0].number().divide(mstruct[i][0].number())) {
 						mstruct[0].numberUpdated();
 						mstruct.childUpdated(1);
@@ -1635,6 +1638,7 @@ bool simplify_roots(MathStructure &mstruct, const EvaluationOptions &eo) {
 						if(mstruct[0].isOne()) {mstruct.delChild(1); break;}
 					}
 				} else if(mstruct[i][1].number().isPositive() && !mstruct[0].number().isInteger() && mstruct[0].number().denominator().isIntegerDivisible(mstruct[i][0].number())) {
+					if(dry_run) return true;
 					if(mstruct[0].number().multiply(mstruct[i][0].number())) {
 						mstruct[0].numberUpdated();
 						mstruct.childUpdated(1);
@@ -1654,6 +1658,7 @@ bool simplify_roots(MathStructure &mstruct, const EvaluationOptions &eo) {
 						if(!eo.allow_complex && !mstruct[i][0].representsNonNegative(true) && (!mstruct[i][1].representsInteger() || !mstruct[i2][1].representsInteger())) {
 							break;
 						}
+						if(dry_run) return true;
 						mstruct[i][1].add(mstruct[i2][1], true);
 						mstruct[i][1].calculateAddLast(eo);
 						mstruct.delChild(i2 + 1);

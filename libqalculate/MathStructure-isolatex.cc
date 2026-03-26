@@ -513,8 +513,6 @@ int newton_raphson(const MathStructure &mstruct, MathStructure &x_value, const M
 
 }
 
-int find_interval_precision(const MathStructure &mstruct);
-
 int find_interval_precision(const MathStructure &mstruct) {
 	if(mstruct.isNumber()) {
 		return mstruct.number().precision(1);
@@ -530,7 +528,6 @@ int find_interval_precision(const MathStructure &mstruct) {
 	return iv_prec;
 }
 
-MathStructure *find_abs_sgn(MathStructure &mstruct, const MathStructure &x_var);
 MathStructure *find_abs_sgn(MathStructure &mstruct, const MathStructure &x_var) {
 	switch(mstruct.type()) {
 		case STRUCT_FUNCTION: {
@@ -553,6 +550,38 @@ MathStructure *find_abs_sgn(MathStructure &mstruct, const MathStructure &x_var) 
 		default: {break;}
 	}
 	return NULL;
+}
+
+size_t count_abs_sgn(MathStructure &mstruct, const MathStructure &x_var, vector<const MathStructure*> *found = NULL) {
+	if(!found) {
+		vector<const MathStructure*> v;
+		return count_abs_sgn(mstruct, x_var, &v);
+	}
+	switch(mstruct.type()) {
+		case STRUCT_FUNCTION: {
+			if(((mstruct.function()->id() == FUNCTION_ID_ABS && mstruct.size() == 1) || (mstruct.function()->id() == FUNCTION_ID_SIGNUM && mstruct.size() == 2)) && mstruct[0].contains(x_var, false) && mstruct[0].representsNonComplex()) {
+				for(size_t i = 0; i < found->size(); i++) {
+					if((*found)[i]->equals(mstruct)) return 0;
+				}
+				found->push_back(&mstruct);
+				return 1;
+			}
+			break;
+		}
+		case STRUCT_POWER: {
+			return count_abs_sgn(mstruct[0], x_var, found);
+		}
+		case STRUCT_ADDITION: {}
+		case STRUCT_MULTIPLICATION: {
+			size_t n = 0;
+			for(size_t i = 0; i < mstruct.size(); i++) {
+				n += count_abs_sgn(mstruct[i], x_var, found);
+			}
+			return n;
+		}
+		default: {break;}
+	}
+	return 0;
 }
 
 bool is_units_with_multiplier(const MathStructure &mstruct) {
@@ -3097,6 +3126,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 
 			// abs(x)+x=a => -x+x=a || x+x=a; sgn(x)+x=a => -1+x=a || 0+x=a || 1+x=a
 			MathStructure *m = find_abs_sgn(CHILD(0), x_var);
+			if(m && count_abs_sgn(CHILD(0), x_var) >= 5) m = NULL;
 			if(m && m->function()->id() == FUNCTION_ID_ABS) {
 
 				MathStructure mabs(*m);
@@ -4091,6 +4121,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			if(!eo2.expand) break;
 			// abs(x)*x=a => -x*x=a || x*x=a; sgn(x)*x=a => -1*x=a || 0*x=a || 1*x=a
 			MathStructure *m = find_abs_sgn(CHILD(0), x_var);
+			if(m && count_abs_sgn(CHILD(0), x_var) >= 5) m = NULL;
 			if(m && m->function()->id() == FUNCTION_ID_ABS) {
 
 				MathStructure mabs(*m);

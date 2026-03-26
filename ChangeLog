@@ -1,3 +1,134 @@
+2026-03-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Allow use of apostrophe as thousands separator in input, when specified as group separator by locale
+	* Do not attempt to solve equations with five or more abs() or sgn()
+	* Do not allow extremely long expressions in required assumption warning
+
+2026-03-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix bad simplification in some cases (e.g. "√(58 + 8 × cbrt(58)^2 + 15 × cbrt(58))"), leading to recursive simplification in log() function
+	* Fix wrong result, e.g. wrong sign in asin(), in some cases because extremely small imaginary part of complex number was opportunistically removed (assumed zero) in too many cases
+	* Add ton of refrigeration unit
+
+2026-03-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix wrong simplification of "sin(2-cosh(x)^2/x+x)"
+
+2026-03-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault in some cases when argument in det() contains only a single element
+
+2026-03-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add mol/dm³, mol/L, and molar units
+	* Enable compiled definitions by default
+
+2026-03-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix loading of qalc history on Windows
+
+2026-03-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Treat 0^0 as undefined (but assume that base is non-zero by default, thus f(x)^0 = 1)
+	* Assume that plot function is not discontinuous if values are so close that they can safely be assumed to be equal (e.g. when approximately calculated function results in horizontal line, e.g. x^log(a, x))
+
+2026-03-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use max 4 decimals, and min 2 decimals, by default (with less decimals for large numbers and more decimals for small numbers) for display of value of converted currencies
+
+2026-03-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add slug unit
+	* Add pcm, ppm, ppb, ppt, and ppq (parts per ...) as variables
+
+2026-03-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve interval calculation (avoid "interval potentially calculated wide" when interval calculation is set to interval arithmetic) with division by zero and/or both real and complex numbers in derivative of expression
+	* Fix adaptive interval display when "where" expression contains interval function
+
+2026-03-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add lakh and crore variables
+
+2026-02-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve simplification
+	* Fix root(x, n)=z when z is a complex number (should return false)
+
+2026-02-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix recursive variable in "where" expression
+
+2026-02-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add XAG, XAU, XPD, and XPT currencies (precious metals)
+
+2026-02-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* abs(x+a*abs(x)) equals x+a*abs(x) if a>=1, or abs(x)-x if a=-1
+	* Enable abs(f(x)) and sgn(f(x)) substitution for all inequalities
+	* Improve handling of abs(x)/x-sgn(x)
+
+2026-02-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Factorize a+2*sqrt(c) to (sqrt(n)+sqrt(m))^2 (and similar) and simplify sqrt(a+b*sqrt(c))
+	* Increase time before forced abortion with high precision
+
+2026-01-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve factorization and simplification with radicals
+	* Improve simplification of log function, e.g. ln(x^2+2x+1)
+	* Fix x^2+y^2-1=0 && y-x=0
+	* Fix 0^(a/ln(0)) (delay ln(0)=-infinity);
+
+2026-02-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Simplify a^(b/ln(a)) to e^b
+	* Complete the square when first exponent equals second exponent times two, e.g. x+2*sqrt(x)+1=(sqrt(x)+2)^2
+	* Do not prefer no exponent in factor over exponent < 1, thus avoiding negative exponents, e.g. x+sqrt(x)=(sqrt(x)+1)*sqrt(x) instead of (1/sqrt(x)+1)*x)
+
+2026-02-18 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve check for division by zero in factor when solving f(x)*g(x)=0 (e.g. "(1/sqrt(x)+1)*x=0" returned the invalid solution)
+	* Do not show negative exponents (if "negexp" is deactivated) when expressions contains unknown variables, even if all units have negative exponents
+	* Do show warning about denominators assumed non-zero when converting to expression with non-unit objects
+
+2026-02-17 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix (x-y)/(y-x)+1 not simplified
+	* Do not show expression in complex exponential form when possibly not real but not complex or arg() fails for the expression
+
+2026-02-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use L'Hôpital's rule for 0^0 and infinity^0 (in addition to 1^infinity)
+	* When limit fails, try unexpanded expression
+	* Show warning when using limit function
+	* 0^(a*i) is undefined (not zero)
+
+2026-02-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* sgn(x^a)=sgn(x)^a if a is real
+	* Normalize sign of argument in sgn, erf, root (with odd degree), and cbrt functions (e.g. cbrt(x-y)=-cbrt(y-x))
+	* Fix negative exponents always used for units with rounding set to (halfway) down or up
+
+2026-02-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve solving of abs(f(x))=0, abs(f(x))<=a, and abs(f(x))>=a
+
+2026-02-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Delay simplification of integer inequalities (e.g. from n>0 to n>=1), and further simplify inequalities at end of evaluation when it is safe to ignore the possibility that the value of an unknown variable has a unit
+
+2026-01-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Improve handling of "to mixed" after previous conversion statement (e.g. "1 m to in to mixed")
+	* Add missing "mixed" option for to command in qalc
+
+2026-01-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Set initial random seed using /dev/random, or BCryptGenRandom (on Windows)
+	* Do not initialize and seed random state until random number functions are used
+
 2026-01-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault in some corner cases when converting approximate units before uncertainty calculation
