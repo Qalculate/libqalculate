@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/Qalculate/libqalculate/issues\n"
 "POT-Creation-Date: 2026-03-16 08:52+0100\n"
-"PO-Revision-Date: 2025-11-29 22:26+0800\n"
+"PO-Revision-Date: 2026-03-28 19:56+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_TW\n"
@@ -2025,8 +2025,8 @@ msgid ""
 "qalculate.github.io/manual/index.html)."
 msgstr ""
 "有關數學表達式和不同選項的更多資訊，以及函數、變數和單位的完整列表，請觀看圖"
-"形使用者介面手冊中的相關區段(可以在https://qalculate.github.io/manual/"
-"index.html得到)。"
+"形使用者介面手冊中的相關區段(可以在https://qalculate.github.io/manual/index."
+"html得到)。"
 
 #: src/qalc.cc:4507 src/qalc.cc:6657
 msgid ""
@@ -3253,7 +3253,7 @@ msgstr "在%s中有不可解的比較。"
 #: libqalculate/BuiltinFunctions-calculus.cc:749
 #, c-format
 msgid "%s() is incomplete and unreliable."
-msgstr ""
+msgstr "%s()不完整且不可靠。"
 
 #: libqalculate/BuiltinFunctions-calculus.cc:751
 msgid "Unable to find limit."
