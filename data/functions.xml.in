@@ -4074,7 +4074,7 @@ The ":=" operator (e.g. var1:=10) is a shortcut for this function.</description>
       <function>
         <title>Circle Circumference</title>
         <names>r:circumference</names>
-        <description>Calculates the area of a circle using the radius</description>
+        <description>Calculates the circumference of a circle using the radius</description>
         <expression>\x*2*pi</expression>
         <argument type="free" index="1">
           <title>Radius</title>
