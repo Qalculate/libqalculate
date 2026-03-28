@@ -1484,8 +1484,11 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 		}
 
 		if(CALCULATOR->aborted()) DIVISION_BY_POLYNOMIAL_ABORT
+
+		size_t iter_n = 0;
 		while(!combine_only && !only_gcd && divs.size() > 0 && divs[0].isAddition() && !nums[0].isNumber()) {
-			if(CALCULATOR->aborted()) break;
+			if(iter_n > 100 || CALCULATOR->aborted()) break;
+			iter_n++;
 			bool b_unknown = divs[0].containsUnknowns();
 			if(!b_unknown || nums[0].containsUnknowns()) {
 				MathStructure mcomps;
@@ -1565,8 +1568,9 @@ bool do_simplification(MathStructure &mstruct, const EvaluationOptions &eo, bool
 					}
 					MathStructure mquo, mrem;
 					if(polynomial_long_division(nums[0].isAddition() ? nums[0][matches[i_selected]] : nums[0], divs[0], m_zero, mquo, mrem, eo2, false) && !mquo.isZero() && mrem != (nums[0].isAddition() ? nums[0][matches[i_selected]] : nums[0])) {
-						if(CALCULATOR->aborted()) DIVISION_BY_POLYNOMIAL_ABORT
-						if((nums[0].isAddition() && nums[0].size() > 1) || !mrem.isZero() || divs[0].representsNonZero(true) || (eo.warn_about_denominators_assumed_nonzero && !warn_about_denominators_assumed_nonzero(divs[0], eo))) {
+						if(nums[0].isAddition() && simplify_highest_power(nums[0][matches[i_selected]]) <= simplify_highest_power(mrem) && nums[0][matches[i_selected]].countTotalChildren(true) < mrem.countTotalChildren(true)) {
+						} else if(!nums[0].isAddition() && simplify_highest_power(nums[0]) <= simplify_highest_power(mrem) && nums[0].countTotalChildren(true) < mrem.countTotalChildren(true)) {
+						} else if((nums[0].isAddition() && nums[0].size() > 1) || !mrem.isZero() || divs[0].representsNonZero(true) || (eo.warn_about_denominators_assumed_nonzero && !warn_about_denominators_assumed_nonzero(divs[0], eo))) {
 							mleft.addChild(mquo);
 							if(nums[0].isAddition()) {
 								nums[0].delChild(matches[i_selected] + 1, true);
