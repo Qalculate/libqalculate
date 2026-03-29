@@ -6112,7 +6112,7 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					break;
 				}
 			}
-			if(CHILD(0).isVector() || CHILD(1).isVector() && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS)) {
+			if((CHILD(0).isVector() || CHILD(1).isVector()) && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS)) {
 				int c = compare_vectors(CHILD(0), CHILD(1));
 				if(c < 0 && !is_zero_vector(CHILD(1))) {
 					CHILD(0).calculateSubtract(CHILD(1), eo2);
