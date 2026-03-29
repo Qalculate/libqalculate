@@ -1,3 +1,8 @@
+2026-03-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Initial support for comparison of vectors and matrices (e.g. "[1 2 3] = [1 2 3]" returns true)
+	* Fix newtonsolve((x+1)^2,1) and similar (when intermediate value is zero)
+
 2026-03-26 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Allow use of apostrophe as thousands separator in input, when specified as group separator by locale

@@ -1408,7 +1408,7 @@ bool equals_with_vname(const MathStructure &m1, const MathStructure &m2) {
 }
 
 bool contains_no_recalculate_exact_object(const MathStructure &m, int dual_approx) {
-	if(m.isFunction() && (m.function()->id() == FUNCTION_ID_SAVE || m.function()->id() == FUNCTION_ID_PLOT || m.function()->id() == FUNCTION_ID_RAND || m.function()->id() == FUNCTION_ID_RANDN || m.function()->id() == FUNCTION_ID_RAND_POISSON || m.function()->id() == FUNCTION_ID_EXPORT || m.function()->id() == FUNCTION_ID_COMMAND || m.function()->id() == FUNCTION_ID_TIME || (dual_approx < 0 && (m.function()->id() == FUNCTION_ID_GENERATE_VECTOR || m.function()->id() == FUNCTION_ID_SUM || m.function()->id() == FUNCTION_ID_PRODUCT || m.function()->id() == FUNCTION_ID_FOR || m.function()->id() == FUNCTION_ID_FOREACH)))) return true;
+	if(m.isFunction() && (m.function()->id() == FUNCTION_ID_SAVE || m.function()->id() == FUNCTION_ID_PLOT || m.function()->id() == FUNCTION_ID_RAND || m.function()->id() == FUNCTION_ID_RANDN || m.function()->id() == FUNCTION_ID_RAND_POISSON || m.function()->id() == FUNCTION_ID_EXPORT || m.function()->id() == FUNCTION_ID_COMMAND || m.function()->id() == FUNCTION_ID_TIME || (dual_approx < 0 && (m.function()->id() == FUNCTION_ID_GENERATE_VECTOR || m.function()->id() == FUNCTION_ID_SUM || m.function()->id() == FUNCTION_ID_PRODUCT || m.function()->id() == FUNCTION_ID_FOR || m.function()->id() == FUNCTION_ID_FOREACH || m.function()->id() == FUNCTION_ID_NEWTON_RAPHSON || m.function()->id() == FUNCTION_ID_SECANT_METHOD)))) return true;
 	if(m.isVariable() && (m.variable()->id() == VARIABLE_ID_UPTIME || m.variable()->id() == VARIABLE_ID_NOW)) return true;
 	for(size_t i = 0; i < m.size(); i++) {
 		if(contains_no_recalculate_exact_object(m[i], dual_approx)) return true;

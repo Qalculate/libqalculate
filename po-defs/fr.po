@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: https://github.com/Qalculate/libqalculate/issues\n"
-"POT-Creation-Date: 2026-03-24 07:29+0100\n"
+"POT-Creation-Date: 2026-03-29 07:18+0200\n"
 "PO-Revision-Date: 2020-12-02 13:25+0100\n"
 "Last-Translator: Polakrity\n"
 "Language-Team: Français <fr@li.org>\n"
@@ -8308,9 +8308,9 @@ msgstr "Aire d'un cercle"
 msgid "r:circle"
 msgstr "r:circle"
 
-#: data/functions.xml.in:4068 data/functions.xml.in:4077
-msgid "Calculates the area of a circle using the radius"
-msgstr "Calcule l'aire d'un cercle d'après son rayon"
+#: data/functions.xml.in:4068
+msgid "Calculates the area of a circle using the radius."
+msgstr "Calcule l'aire d'un cercle d'après son rayon."
 
 #: data/functions.xml.in:4071 data/functions.xml.in:4080
 #: data/functions.xml.in:4091 data/functions.xml.in:4102
@@ -8326,6 +8326,10 @@ msgstr "Circonférence d'un cercle"
 #: data/functions.xml.in:4076
 msgid "r:circumference"
 msgstr "r:circumference"
+
+#: data/functions.xml.in:4077
+msgid "Calculates the circumference of a circle using the radius."
+msgstr "Calcule la circonférence d'un cercle d'après son rayon."
 
 #: data/functions.xml.in:4085
 msgid "Cylinder"

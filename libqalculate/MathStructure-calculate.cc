@@ -5431,6 +5431,34 @@ int contains_temp_unit(const MathStructure &m, bool top = true) {
 	return 0;
 }
 
+int compare_vectors(const MathStructure &m1, const MathStructure &m2) {
+	if(CALCULATOR->aborted()) return -1;
+	if(!m1.isVector()) {
+		if(!m2.isVector()) {
+			ComparisonResult cr = m1.compare(m2);
+			if(COMPARISON_IS_NOT_EQUAL(cr)) return 0;
+			if(cr == COMPARISON_RESULT_EQUAL) return 1;
+			return -1;
+		}
+		if(m2.size() != 1 && m1.representsScalar()) return 0;
+		return -1;
+	} else if(!m2.isVector()) {
+		if(m1.size() != 1 && m2.representsScalar()) return 0;
+		return -1;
+	}
+	if(m1.size() != m2.size()) return 0;
+	int ret = 1;
+	for(size_t i = 0; i < m1.size(); i++) {
+		int r = compare_vectors(m1[i], m2[i]);
+		if(r == 0) {
+			return 0;
+		} else if(r < 0) {
+			ret = r;
+		}
+	}
+	return ret;
+}
+
 bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOptions &feo, bool recursive, MathStructure *mparent, size_t index_this) {
 
 	// do not modify MathStructure marked as protected
@@ -6083,6 +6111,27 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					b = true;
 					break;
 				}
+			}
+			if(CHILD(0).isVector() || CHILD(1).isVector() && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS)) {
+				int c = compare_vectors(CHILD(0), CHILD(1));
+				if(c < 0 && !is_zero_vector(CHILD(1))) {
+					CHILD(0).calculateSubtract(CHILD(1), eo2);
+					CHILD(1).clear();
+					recursive_zero_vector(CHILD(1), CHILD(0));
+					c = compare_vectors(CHILD(0), CHILD(1));
+				}
+				if(c < 0) break;
+				if(ct_comp == COMPARISON_NOT_EQUALS) c = !c;
+				if(c > 0) {
+					set(1, 1, 0, true);
+					b = true;
+					break;
+				} else {
+					clear(true);
+					b = true;
+					break;
+				}
+				break;
 			}
 			if((ct_comp == COMPARISON_EQUALS_LESS || ct_comp == COMPARISON_GREATER) && CHILD(1).isZero()) {
 				if(CHILD(0).isLogicalNot() || CHILD(0).isLogicalAnd() || CHILD(0).isLogicalOr() || CHILD(0).isLogicalXor() || CHILD(0).isComparison()) {

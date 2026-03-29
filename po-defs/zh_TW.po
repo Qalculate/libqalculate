@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/Qalculate/libqalculate/issues\n"
-"POT-Creation-Date: 2026-03-24 07:29+0100\n"
+"POT-Creation-Date: 2026-03-29 07:18+0200\n"
 "PO-Revision-Date: 2026-03-28 20:38+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -32,11 +32,14 @@ msgstr "a-cr:EUR,au:€,euro,歐元"
 
 #: data/currencies.xml.in:8
 msgid ""
-"Andorra, Austria, Belgium, Bulgaria, Croatia, Cyprus, Estonia, Finland, France, Germany, Greece, Ireland, Italy, Latvia, "
-"Lithuania, Luxembourg, Malta, Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican City"
+"Andorra, Austria, Belgium, Bulgaria, Croatia, Cyprus, Estonia, Finland, "
+"France, Germany, Greece, Ireland, Italy, Latvia, Lithuania, Luxembourg, "
+"Malta, Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican "
+"City"
 msgstr ""
-"安道爾、奧地利、比利時、保加利亞、克羅埃西亞、賽普勒斯、愛沙尼亞、芬蘭、法國、德國、希臘、愛爾蘭、義大利、拉脫維亞、立陶宛、盧"
-"森堡、馬爾他、荷蘭、葡萄牙、聖馬利諾、斯洛伐克、斯洛維尼亞、西班牙、梵蒂岡城"
+"安道爾、奧地利、比利時、保加利亞、克羅埃西亞、賽普勒斯、愛沙尼亞、芬蘭、法"
+"國、德國、希臘、愛爾蘭、義大利、拉脫維亞、立陶宛、盧森堡、馬爾他、荷蘭、葡萄"
+"牙、聖馬利諾、斯洛伐克、斯洛維尼亞、西班牙、梵蒂岡城"
 
 #: data/currencies.xml.in:11
 msgid "U.S. Dollar"
@@ -47,7 +50,9 @@ msgid "a:$,a-cr:USD,dollar,p:dollars"
 msgstr "a:$,a-cr:USD,dollar,美元"
 
 #: data/currencies.xml.in:13
-msgid "United States, East Timor, Ecuador, El Salvador, Micronesia, Marshall Islands, Palau, Zimbabwe"
+msgid ""
+"United States, East Timor, Ecuador, El Salvador, Micronesia, Marshall "
+"Islands, Palau, Zimbabwe"
 msgstr "美國、東帝汶、厄瓜多、薩爾瓦多、密克羅尼西亞、馬紹爾群島、帛琉、辛巴威"
 
 #: data/currencies.xml.in:16
@@ -473,9 +478,11 @@ msgstr "a-cr:XCD"
 
 #: data/currencies.xml.in:191
 msgid ""
-"Antigua and Barbuda, Dominica, Grenada, Montserrat, Saint Kitts and Nevis, Saint Lucia, Saint Vincent and the Grenadines, "
-"Anguilla"
-msgstr "安地卡及巴布達、多米尼克、格瑞那達、蒙哲臘、聖克里斯多福及尼維斯、聖露西亞、聖文森及格瑞那丁、安吉拉"
+"Antigua and Barbuda, Dominica, Grenada, Montserrat, Saint Kitts and Nevis, "
+"Saint Lucia, Saint Vincent and the Grenadines, Anguilla"
+msgstr ""
+"安地卡及巴布達、多米尼克、格瑞那達、蒙哲臘、聖克里斯多福及尼維斯、聖露西亞、"
+"聖文森及格瑞那丁、安吉拉"
 
 #: data/currencies.xml.in:194
 msgid "Argentine Peso"
@@ -626,7 +633,8 @@ msgid "a-cr:XOF"
 msgstr "a-cr:XOF"
 
 #: data/currencies.xml.in:255
-msgid "Benin, Burkina Faso, Guinea-Bissau, Ivory Coast, Mali, Niger, Senegal, Togo"
+msgid ""
+"Benin, Burkina Faso, Guinea-Bissau, Ivory Coast, Mali, Niger, Senegal, Togo"
 msgstr "貝南、布吉納法索、幾內亞比索、象牙海岸、馬利、尼日、塞內加爾、多哥"
 
 #: data/currencies.xml.in:258
@@ -722,7 +730,9 @@ msgid "a-cr:XAF"
 msgstr "a-cr:XAF"
 
 #: data/currencies.xml.in:295
-msgid "Cameroon, Central African Republic, Chad, Republic of the Congo, Equatorial Guinea, Gabon"
+msgid ""
+"Cameroon, Central African Republic, Chad, Republic of the Congo, Equatorial "
+"Guinea, Gabon"
 msgstr "喀麥隆、中非共和國、查德、剛果共和國、赤道幾內亞、加彭"
 
 #: data/currencies.xml.in:298
@@ -1839,7 +1849,6 @@ msgid "Silver (one troy ounce)"
 msgstr "銀(一金衡盎司)"
 
 #: data/currencies.xml.in:762
-#| msgid "a-cr:XAF"
 msgid "a-cr:XAG"
 msgstr "a-cr:XAG"
 
@@ -1848,7 +1857,6 @@ msgid "Gold (one troy ounce)"
 msgstr "金(一金衡盎司)"
 
 #: data/currencies.xml.in:766
-#| msgid "a-cr:XAF"
 msgid "a-cr:XAU"
 msgstr "a-cr:XAU"
 
@@ -1857,7 +1865,6 @@ msgid "Palladium (one troy ounce)"
 msgstr "鈀(一金衡盎司)"
 
 #: data/currencies.xml.in:770
-#| msgid "a-cr:XPF"
 msgid "a-cr:XPD"
 msgstr "a-cr:XPD"
 
@@ -1866,7 +1873,6 @@ msgid "Platinum (one troy ounce)"
 msgstr "鉑(一金衡盎司)"
 
 #: data/currencies.xml.in:774
-#| msgid "a-cr:XPF"
 msgid "a-cr:XPT"
 msgstr "a-cr:XPT"
 
@@ -2064,8 +2070,11 @@ msgid "!datasets!Elements"
 msgstr "元素"
 
 #: data/datasets.xml.in:9
-msgid "This data uses material from the Wikipedia, under the Creative Commons Attribution-ShareAlike License"
-msgstr "此資料使用來自Wikipedia的資料，在創用CC 姓名標示-相同方式分享 的授權條款下"
+msgid ""
+"This data uses material from the Wikipedia, under the Creative Commons "
+"Attribution-ShareAlike License"
+msgstr ""
+"此資料使用來自Wikipedia的資料，在創用CC 姓名標示-相同方式分享 的授權條款下"
 
 #: data/datasets.xml.in:10
 msgid "r:atom"
@@ -2094,7 +2103,8 @@ msgstr "原子序"
 msgid "!datasets!r:number"
 msgstr "原子序"
 
-#: data/datasets.xml.in:30 data/datasets.xml.in:114 data/functions.xml.in:3352 data/functions.xml.in:3390
+#: data/datasets.xml.in:30 data/datasets.xml.in:114 data/functions.xml.in:3352
+#: data/functions.xml.in:3390
 msgid "Name"
 msgstr "名稱"
 
@@ -2143,7 +2153,9 @@ msgid "Atomic Mass"
 msgstr "原子量"
 
 #: data/datasets.xml.in:55
-msgid "The property uses standard atomic weight, when determined, or the mass number."
+msgid ""
+"The property uses standard atomic weight, when determined, or the mass "
+"number."
 msgstr "屬性使用標準原子量(確定時)或質量數。"
 
 #: data/datasets.xml.in:59
@@ -2210,7 +2222,8 @@ msgid ""
 "\"Pluto\" (http://www.wikipedia.org/wiki/Pluto),\n"
 "\"Saturn\" (http://www.wikipedia.org/wiki/Saturn),\n"
 "\"Uranus\" (http://www.wikipedia.org/wiki/Uranus), and\n"
-"\"Venus\" (http://en.wikipedia.org/wiki/Venus), under Creative Commons Attribution-ShareAlike License"
+"\"Venus\" (http://en.wikipedia.org/wiki/Venus), under Creative Commons "
+"Attribution-ShareAlike License"
 msgstr ""
 "此資料使用來自Wikipedia文章的資料\n"
 "\"地球\"(http://www.wikipedia.org/wiki/Earth)、\n"
@@ -2221,7 +2234,8 @@ msgstr ""
 "\"冥王星\"(http://www.wikipedia.org/wiki/Pluto)、\n"
 "\"土星\"(http://www.wikipedia.org/wiki/Saturn)、\n"
 "\"天王星\"(http://www.wikipedia.org/wiki/Uranus)和\n"
-"\"金星\"(http://en.wikipedia.org/wiki/Venus)，在創用CC 姓名標示-相同方式分享 的授權條款下"
+"\"金星\"(http://en.wikipedia.org/wiki/Venus)，在創用CC 姓名標示-相同方式分享 "
+"的授權條款下"
 
 #: data/datasets.xml.in:109
 msgid "r:planet"
@@ -2822,25 +2836,33 @@ msgstr "r:genvector"
 
 #: data/functions.xml.in:18
 msgid ""
-"Returns a vector generated from a function with a variable (default x) running from min to max. The 4th argument is either "
-"the step between each value of the variable, if the 6th argument is 1 or if the value is 1 (default), negative, or not an "
-"integer and the 6th argument is -1 (default), or the number of elements."
+"Returns a vector generated from a function with a variable (default x) "
+"running from min to max. The 4th argument is either the step between each "
+"value of the variable, if the 6th argument is 1 or if the value is 1 "
+"(default), negative, or not an integer and the 6th argument is -1 (default), "
+"or the number of elements."
 msgstr ""
-"回傳一個從函數産生的向量，該函數的變數(預設x)從最小值跑到最大值。第4個引數是變數每個值之間的步長(如果第6個引數為1，或者該值為"
-"1(預設)、負數或不是整數且第6個引數為-1(預設))或元素的數量。"
+"回傳一個從函數産生的向量，該函數的變數(預設x)從最小值跑到最大值。第4個引數是"
+"變數每個值之間的步長(如果第6個引數為1，或者該值為1(預設)、負數或不是整數且第6"
+"個引數為-1(預設))或元素的數量。"
 
-#: data/functions.xml.in:20 data/functions.xml.in:415 data/functions.xml.in:3250 data/functions.xml.in:3269
-#: data/functions.xml.in:3300 data/functions.xml.in:3335 data/functions.xml.in:3840 data/functions.xml.in:3856
-#: data/functions.xml.in:3875 data/functions.xml.in:3898 data/functions.xml.in:3918 data/functions.xml.in:3938
+#: data/functions.xml.in:20 data/functions.xml.in:415
+#: data/functions.xml.in:3250 data/functions.xml.in:3269
+#: data/functions.xml.in:3300 data/functions.xml.in:3335
+#: data/functions.xml.in:3840 data/functions.xml.in:3856
+#: data/functions.xml.in:3875 data/functions.xml.in:3898
+#: data/functions.xml.in:3918 data/functions.xml.in:3938
 #: data/functions.xml.in:3955
 msgid "Function"
 msgstr "函數"
 
-#: data/functions.xml.in:23 data/functions.xml.in:947 data/functions.xml.in:2015
+#: data/functions.xml.in:23 data/functions.xml.in:947
+#: data/functions.xml.in:2015
 msgid "Min"
 msgstr "最小值"
 
-#: data/functions.xml.in:26 data/functions.xml.in:951 data/functions.xml.in:2023
+#: data/functions.xml.in:26 data/functions.xml.in:951
+#: data/functions.xml.in:2023
 msgid "Max"
 msgstr "最大值"
 
@@ -2848,10 +2870,12 @@ msgstr "最大值"
 msgid "Dimension / Step size"
 msgstr "大小/步長"
 
-#: data/functions.xml.in:32 data/functions.xml.in:731 data/functions.xml.in:741 data/functions.xml.in:751
-#: data/functions.xml.in:761 data/functions.xml.in:771 data/functions.xml.in:781 data/functions.xml.in:791
-#: data/functions.xml.in:801 data/functions.xml.in:913 data/functions.xml.in:3766 data/functions.xml.in:3788
-#: data/functions.xml.in:3924
+#: data/functions.xml.in:32 data/functions.xml.in:731 data/functions.xml.in:741
+#: data/functions.xml.in:751 data/functions.xml.in:761
+#: data/functions.xml.in:771 data/functions.xml.in:781
+#: data/functions.xml.in:791 data/functions.xml.in:801
+#: data/functions.xml.in:913 data/functions.xml.in:3766
+#: data/functions.xml.in:3788 data/functions.xml.in:3924
 msgid "Variable"
 msgstr "變數"
 
@@ -2895,9 +2919,12 @@ msgstr "r:sort"
 msgid "Returns a sorted vector."
 msgstr "回傳一個已排序向量。"
 
-#: data/functions.xml.in:59 data/functions.xml.in:71 data/functions.xml.in:122 data/functions.xml.in:136
-#: data/functions.xml.in:426 data/functions.xml.in:2005 data/functions.xml.in:2019 data/functions.xml.in:2027
-#: data/functions.xml.in:2036 data/functions.xml.in:3256 data/functions.xml.in:3309 data/functions.xml.in:3322
+#: data/functions.xml.in:59 data/functions.xml.in:71 data/functions.xml.in:122
+#: data/functions.xml.in:136 data/functions.xml.in:426
+#: data/functions.xml.in:2005 data/functions.xml.in:2019
+#: data/functions.xml.in:2027 data/functions.xml.in:2036
+#: data/functions.xml.in:3256 data/functions.xml.in:3309
+#: data/functions.xml.in:3322
 msgid "Vector"
 msgstr "向量"
 
@@ -2914,7 +2941,8 @@ msgid "r:rank"
 msgstr "r:rank"
 
 #: data/functions.xml.in:68
-msgid "Returns a vector with values of elements replaced with their mutual ranks."
+msgid ""
+"Returns a vector with values of elements replaced with their mutual ranks."
 msgstr "回傳元素值用它們的相互排名取代的向量。"
 
 #: data/functions.xml.in:78
@@ -2927,12 +2955,16 @@ msgstr "r:flip"
 
 #: data/functions.xml.in:80
 msgid ""
-"Reverses the order of elements in a matrix or vector. If dimension is 1, the order of rows is reversed, if 2 column order is "
-"changed, and if 0 (default) both are changed."
-msgstr "反轉矩陣或向量中元素的順序。如果維度為1則反轉列的順序，如果為2則變更行的順序，而如果為0(預設)則變更兩者。"
+"Reverses the order of elements in a matrix or vector. If dimension is 1, the "
+"order of rows is reversed, if 2 column order is changed, and if 0 (default) "
+"both are changed."
+msgstr ""
+"反轉矩陣或向量中元素的順序。如果維度為1則反轉列的順序，如果為2則變更行的順"
+"序，而如果為0(預設)則變更兩者。"
 
-#: data/functions.xml.in:83 data/functions.xml.in:94 data/functions.xml.in:108 data/functions.xml.in:258
-#: data/functions.xml.in:267 data/functions.xml.in:358 data/functions.xml.in:3525
+#: data/functions.xml.in:83 data/functions.xml.in:94 data/functions.xml.in:108
+#: data/functions.xml.in:258 data/functions.xml.in:267
+#: data/functions.xml.in:358 data/functions.xml.in:3525
 msgid "Matrix/vector"
 msgstr "矩陣/向量"
 
@@ -2948,7 +2980,8 @@ msgstr "環狀向量移位"
 msgid "r:circshift"
 msgstr "r:circshift"
 
-#: data/functions.xml.in:97 data/functions.xml.in:3585 data/functions.xml.in:3613
+#: data/functions.xml.in:97 data/functions.xml.in:3585
+#: data/functions.xml.in:3613
 msgid "Steps"
 msgstr "步數"
 
@@ -2960,11 +2993,13 @@ msgstr "重塑矩陣"
 msgid "r:reshape"
 msgstr "r:reshape"
 
-#: data/functions.xml.in:111 data/functions.xml.in:155 data/functions.xml.in:216
+#: data/functions.xml.in:111 data/functions.xml.in:155
+#: data/functions.xml.in:216
 msgid "Rows"
 msgstr "列數"
 
-#: data/functions.xml.in:114 data/functions.xml.in:158 data/functions.xml.in:224
+#: data/functions.xml.in:114 data/functions.xml.in:158
+#: data/functions.xml.in:224
 msgid "Columns"
 msgstr "行數"
 
@@ -2978,9 +3013,12 @@ msgstr "r:slice,r:limits"
 
 #: data/functions.xml.in:120
 msgid ""
-"Returns a part of a vector between two positions. Negative indexes are counted from the back of the vector. If the second "
-"index is beyond the end of the vector, zeroes are appended to the returned vector."
-msgstr "回傳兩個位置之間的一部分向量。負索引是從向量的後面計數的。如果第二個索引超越向量的結尾，則回傳向量結尾附加零。"
+"Returns a part of a vector between two positions. Negative indexes are "
+"counted from the back of the vector. If the second index is beyond the end "
+"of the vector, zeroes are appended to the returned vector."
+msgstr ""
+"回傳兩個位置之間的一部分向量。負索引是從向量的後面計數的。如果第二個索引超越"
+"向量的結尾，則回傳向量結尾附加零。"
 
 #: data/functions.xml.in:125
 msgid "Index 1"
@@ -3010,11 +3048,13 @@ msgstr "r:combine,r:mergevectors"
 msgid "Returns a vector with the elements from multiple vectors."
 msgstr "回傳具有多個向量元素的向量。"
 
-#: data/functions.xml.in:144 data/functions.xml.in:437 data/functions.xml.in:479 data/functions.xml.in:493
+#: data/functions.xml.in:144 data/functions.xml.in:437
+#: data/functions.xml.in:479 data/functions.xml.in:493
 msgid "Vector 1"
 msgstr "向量1"
 
-#: data/functions.xml.in:147 data/functions.xml.in:440 data/functions.xml.in:483 data/functions.xml.in:497
+#: data/functions.xml.in:147 data/functions.xml.in:440
+#: data/functions.xml.in:483 data/functions.xml.in:497
 msgid "Vector 2"
 msgstr "向量2"
 
@@ -3027,7 +3067,9 @@ msgid "r:matrix"
 msgstr "r:matrix"
 
 #: data/functions.xml.in:153
-msgid "Returns a matrix with specified dimensions and listed elements. Omitted elements are set to zero."
+msgid ""
+"Returns a matrix with specified dimensions and listed elements. Omitted "
+"elements are set to zero."
 msgstr "回傳具有指定大小和列出元素的矩陣。省略的元素設定為零。"
 
 #: data/functions.xml.in:165
@@ -3042,10 +3084,14 @@ msgstr "r:matrix2vector"
 msgid "Puts each element of a matrix in vertical order in a vector."
 msgstr "將矩陣的每個元素按垂直順序放在向量中。"
 
-#: data/functions.xml.in:169 data/functions.xml.in:178 data/functions.xml.in:197 data/functions.xml.in:220
-#: data/functions.xml.in:228 data/functions.xml.in:236 data/functions.xml.in:247 data/functions.xml.in:281
-#: data/functions.xml.in:297 data/functions.xml.in:305 data/functions.xml.in:313 data/functions.xml.in:321
-#: data/functions.xml.in:335 data/functions.xml.in:379 data/functions.xml.in:386 data/functions.xml.in:3275
+#: data/functions.xml.in:169 data/functions.xml.in:178
+#: data/functions.xml.in:197 data/functions.xml.in:220
+#: data/functions.xml.in:228 data/functions.xml.in:236
+#: data/functions.xml.in:247 data/functions.xml.in:281
+#: data/functions.xml.in:297 data/functions.xml.in:305
+#: data/functions.xml.in:313 data/functions.xml.in:321
+#: data/functions.xml.in:335 data/functions.xml.in:379
+#: data/functions.xml.in:386 data/functions.xml.in:3275
 msgid "Matrix"
 msgstr "矩陣"
 
@@ -3134,7 +3180,8 @@ msgstr "r:column"
 msgid "Returns a column in a matrix as a vector."
 msgstr "回傳矩陣中的行作為向量。"
 
-#: data/functions.xml.in:250 data/functions.xml.in:273 data/functions.xml.in:327
+#: data/functions.xml.in:250 data/functions.xml.in:273
+#: data/functions.xml.in:327
 msgid "Column"
 msgstr "行"
 
@@ -3156,7 +3203,9 @@ msgid "r:element"
 msgstr "r:element"
 
 #: data/functions.xml.in:265
-msgid "Returns the element at specified position in a matrix (row and column) or vector (index)."
+msgid ""
+"Returns the element at specified position in a matrix (row and column) or "
+"vector (index)."
 msgstr "回傳矩陣(列和行)或向量(索引)中指定位置的元素。"
 
 #: data/functions.xml.in:270
@@ -3184,7 +3233,9 @@ msgid "r:identity"
 msgstr "r:identity"
 
 #: data/functions.xml.in:287
-msgid "Returns the identity matrix of a matrix or with specified number of rows/columns."
+msgid ""
+"Returns the identity matrix of a matrix or with specified number of rows/"
+"columns."
 msgstr "回傳矩陣的單位矩陣或指定數量的列/行。"
 
 #: data/functions.xml.in:289
@@ -3213,8 +3264,9 @@ msgstr "r:permanent"
 
 #: data/functions.xml.in:303
 msgid ""
-"Calculates the permanent of a matrix. The permanent differs from a determinant in that all signs in the expansion by minors "
-"are taken as positive."
+"Calculates the permanent of a matrix. The permanent differs from a "
+"determinant in that all signs in the expansion by minors are taken as "
+"positive."
 msgstr "計算矩陣的積和式。積和式與行列式不同，在子式展開中的所有符號都取正。"
 
 #: data/functions.xml.in:309
@@ -3251,8 +3303,8 @@ msgstr "r:inv,r:inverse"
 
 #: data/functions.xml.in:333
 msgid ""
-"Calculates the inverse of a matrix. The inverse is the matrix that multiplied by the original matrix equals the identity "
-"matrix (AB = BA = I)."
+"Calculates the inverse of a matrix. The inverse is the matrix that "
+"multiplied by the original matrix equals the identity matrix (AB = BA = I)."
 msgstr "計算矩陣的倒數。該矩陣乘以原始矩陣等於單位矩陣(AB = BA = I)。"
 
 #: data/functions.xml.in:339
@@ -3301,25 +3353,43 @@ msgid "r:magnitude"
 msgstr "r:magnitude"
 
 #: data/functions.xml.in:370
-msgid "Calculates the magnitude of a value. This function returns the same value as abs() for all values except vectors."
+msgid ""
+"Calculates the magnitude of a value. This function returns the same value as "
+"abs() for all values except vectors."
 msgstr "計算值的大小。此函數對向量之外的所有值回傳和abs()相同的值。"
 
-#: data/functions.xml.in:372 data/functions.xml.in:524 data/functions.xml.in:533 data/functions.xml.in:542
-#: data/functions.xml.in:565 data/functions.xml.in:576 data/functions.xml.in:621 data/functions.xml.in:705
-#: data/functions.xml.in:819 data/functions.xml.in:827 data/functions.xml.in:836 data/functions.xml.in:843
-#: data/functions.xml.in:851 data/functions.xml.in:885 data/functions.xml.in:899 data/functions.xml.in:943
-#: data/functions.xml.in:965 data/functions.xml.in:978 data/functions.xml.in:985 data/functions.xml.in:992
-#: data/functions.xml.in:999 data/functions.xml.in:1006 data/functions.xml.in:1047 data/functions.xml.in:1060
-#: data/functions.xml.in:1285 data/functions.xml.in:1293 data/functions.xml.in:1303 data/functions.xml.in:1324
-#: data/functions.xml.in:1334 data/functions.xml.in:1344 data/functions.xml.in:1391 data/functions.xml.in:1399
-#: data/functions.xml.in:1407 data/functions.xml.in:1419 data/functions.xml.in:1429 data/functions.xml.in:1443
-#: data/functions.xml.in:1450 data/functions.xml.in:1461 data/functions.xml.in:1479 data/functions.xml.in:1490
-#: data/functions.xml.in:1500 data/functions.xml.in:1619 data/functions.xml.in:1749 data/functions.xml.in:1766
-#: data/functions.xml.in:1783 data/functions.xml.in:1800 data/functions.xml.in:1844 data/functions.xml.in:1864
-#: data/functions.xml.in:3120 data/functions.xml.in:3134 data/functions.xml.in:3142 data/functions.xml.in:3150
-#: data/functions.xml.in:3158 data/functions.xml.in:3200 data/functions.xml.in:3387 data/functions.xml.in:3420
-#: data/functions.xml.in:3428 data/functions.xml.in:3436 data/functions.xml.in:3445 data/functions.xml.in:3453
-#: data/functions.xml.in:3461 data/functions.xml.in:3469 data/functions.xml.in:3478 data/functions.xml.in:3634
+#: data/functions.xml.in:372 data/functions.xml.in:524
+#: data/functions.xml.in:533 data/functions.xml.in:542
+#: data/functions.xml.in:565 data/functions.xml.in:576
+#: data/functions.xml.in:621 data/functions.xml.in:705
+#: data/functions.xml.in:819 data/functions.xml.in:827
+#: data/functions.xml.in:836 data/functions.xml.in:843
+#: data/functions.xml.in:851 data/functions.xml.in:885
+#: data/functions.xml.in:899 data/functions.xml.in:943
+#: data/functions.xml.in:965 data/functions.xml.in:978
+#: data/functions.xml.in:985 data/functions.xml.in:992
+#: data/functions.xml.in:999 data/functions.xml.in:1006
+#: data/functions.xml.in:1047 data/functions.xml.in:1060
+#: data/functions.xml.in:1285 data/functions.xml.in:1293
+#: data/functions.xml.in:1303 data/functions.xml.in:1324
+#: data/functions.xml.in:1334 data/functions.xml.in:1344
+#: data/functions.xml.in:1391 data/functions.xml.in:1399
+#: data/functions.xml.in:1407 data/functions.xml.in:1419
+#: data/functions.xml.in:1429 data/functions.xml.in:1443
+#: data/functions.xml.in:1450 data/functions.xml.in:1461
+#: data/functions.xml.in:1479 data/functions.xml.in:1490
+#: data/functions.xml.in:1500 data/functions.xml.in:1619
+#: data/functions.xml.in:1749 data/functions.xml.in:1766
+#: data/functions.xml.in:1783 data/functions.xml.in:1800
+#: data/functions.xml.in:1844 data/functions.xml.in:1864
+#: data/functions.xml.in:3120 data/functions.xml.in:3134
+#: data/functions.xml.in:3142 data/functions.xml.in:3150
+#: data/functions.xml.in:3158 data/functions.xml.in:3200
+#: data/functions.xml.in:3387 data/functions.xml.in:3420
+#: data/functions.xml.in:3428 data/functions.xml.in:3436
+#: data/functions.xml.in:3445 data/functions.xml.in:3453
+#: data/functions.xml.in:3461 data/functions.xml.in:3469
+#: data/functions.xml.in:3478 data/functions.xml.in:3634
 #: data/functions.xml.in:3658
 msgid "Value"
 msgstr "值"
@@ -3344,11 +3414,13 @@ msgstr "r:rref"
 msgid "Concatenate Horizontally"
 msgstr "水平串接"
 
-#: data/functions.xml.in:393 data/functions.xml.in:403 data/functions.xml.in:509
+#: data/functions.xml.in:393 data/functions.xml.in:403
+#: data/functions.xml.in:509
 msgid "Matrix 1"
 msgstr "矩陣1"
 
-#: data/functions.xml.in:396 data/functions.xml.in:406 data/functions.xml.in:512
+#: data/functions.xml.in:396 data/functions.xml.in:406
+#: data/functions.xml.in:512
 msgid "Matrix 2"
 msgstr "矩陣2"
 
@@ -3366,12 +3438,15 @@ msgstr "r:entrywise"
 
 #: data/functions.xml.in:412
 msgid ""
-"Calculates a new matrix or vector using each separate element in matrix/vector 1 and the corresponding (in the same row and "
-"column) elements in matrix/vector 2. An unlimited number of matrices/vectors can be specified, with each matrix/vector "
-"argument followed by the corresponding variable used in the function argument."
+"Calculates a new matrix or vector using each separate element in matrix/"
+"vector 1 and the corresponding (in the same row and column) elements in "
+"matrix/vector 2. An unlimited number of matrices/vectors can be specified, "
+"with each matrix/vector argument followed by the corresponding variable used "
+"in the function argument."
 msgstr ""
-"使用矩陣/向量1中的每個單獨元素和矩陣/向量2中的對應(同列同行)元素來計算新的矩陣或向量。可以指定無數個矩陣/向量，每個矩陣/向量引"
-"數接著一個在函數引數中使用的對應變數。"
+"使用矩陣/向量1中的每個單獨元素和矩陣/向量2中的對應(同列同行)元素來計算新的矩"
+"陣或向量。可以指定無數個矩陣/向量，每個矩陣/向量引數接著一個在函數引數中使用"
+"的對應變數。"
 
 #: data/functions.xml.in:418
 msgid "Matrices/vectors and variables"
@@ -3429,12 +3504,14 @@ msgstr "逐項右除"
 msgid "r:divide,rdivide"
 msgstr "r:divide,rdivide"
 
-#: data/functions.xml.in:457 data/functions.xml.in:638 data/functions.xml.in:655 data/functions.xml.in:665
+#: data/functions.xml.in:457 data/functions.xml.in:638
+#: data/functions.xml.in:655 data/functions.xml.in:665
 #: data/functions.xml.in:676 data/functions.xml.in:694
 msgid "Numerator"
 msgstr "分子"
 
-#: data/functions.xml.in:460 data/functions.xml.in:645 data/functions.xml.in:658 data/functions.xml.in:668
+#: data/functions.xml.in:460 data/functions.xml.in:645
+#: data/functions.xml.in:658 data/functions.xml.in:668
 #: data/functions.xml.in:682 data/functions.xml.in:697
 msgid "Denominator"
 msgstr "分母"
@@ -3447,12 +3524,15 @@ msgstr "逐項冪"
 msgid "r:pow,r:raise,power"
 msgstr "r:pow,r:raise,power"
 
-#: data/functions.xml.in:467 data/functions.xml.in:1016 data/functions.xml.in:1033 data/functions.xml.in:1050
-#: data/functions.xml.in:1092 data/functions.xml.in:1453 data/functions.xml.in:4042 data/functions.xml.in:4338
+#: data/functions.xml.in:467 data/functions.xml.in:1016
+#: data/functions.xml.in:1033 data/functions.xml.in:1050
+#: data/functions.xml.in:1092 data/functions.xml.in:1453
+#: data/functions.xml.in:4042 data/functions.xml.in:4338
 msgid "Base"
 msgstr "底數"
 
-#: data/functions.xml.in:470 data/functions.xml.in:679 data/functions.xml.in:1436 data/functions.xml.in:1471
+#: data/functions.xml.in:470 data/functions.xml.in:679
+#: data/functions.xml.in:1436 data/functions.xml.in:1471
 #: data/functions.xml.in:1510 data/functions.xml.in:1518
 msgid "Exponent"
 msgstr "指數"
@@ -3478,7 +3558,8 @@ msgid "r:triple_product,triple"
 msgstr "r:triple_product,triple"
 
 #: data/functions.xml.in:490
-msgid "Calculates the scalar-valued triple product of three 3-dimensional vectors."
+msgid ""
+"Calculates the scalar-valued triple product of three 3-dimensional vectors."
 msgstr "計算三個3維向量的純量三重積。"
 
 #: data/functions.xml.in:501
@@ -3503,9 +3584,12 @@ msgstr "階乘"
 
 #: data/functions.xml.in:520
 msgid ""
-"Calculates the factorial of an integer. Multiplies the argument with every lesser positive integer (n(n-1)(n-2)...2*1). Can "
-"also be entered as a number followed by one exclamation mark."
-msgstr "計算整數的階乘。將引數乘以每個較小的正整數(n(n-1)(n-2)...2*1)。也可以輸入一個數字接著一個驚歎號。"
+"Calculates the factorial of an integer. Multiplies the argument with every "
+"lesser positive integer (n(n-1)(n-2)...2*1). Can also be entered as a number "
+"followed by one exclamation mark."
+msgstr ""
+"計算整數的階乘。將引數乘以每個較小的正整數(n(n-1)(n-2)...2*1)。也可以輸入一個"
+"數字接著一個驚歎號。"
 
 #: data/functions.xml.in:522
 msgid "r:factorial"
@@ -3521,9 +3605,12 @@ msgstr "r:factorial2"
 
 #: data/functions.xml.in:530
 msgid ""
-"Calculates the double factorial of an integer. Multiplies the argument with every second lesser positive integer (n(n-2)"
-"(n-4)...). Can also be entered as a number followed by two exclamation marks."
-msgstr "計算整數的雙階乘。將引數乘以每個小二的正整數(n(n-2)(n-4)...)。也可以輸入一個數字接著兩個驚歎號。"
+"Calculates the double factorial of an integer. Multiplies the argument with "
+"every second lesser positive integer (n(n-2)(n-4)...). Can also be entered "
+"as a number followed by two exclamation marks."
+msgstr ""
+"計算整數的雙階乘。將引數乘以每個小二的正整數(n(n-2)(n-4)...)。也可以輸入一個"
+"數字接著兩個驚歎號。"
 
 #: data/functions.xml.in:537
 msgid "Multifactorial"
@@ -3535,9 +3622,12 @@ msgstr "r:multifactorial"
 
 #: data/functions.xml.in:539
 msgid ""
-"Calculates the multifactorial of an integer. Multiplies the argument with every x lesser positive integer (n(n-x)(n-2x)...). "
-"Can also be entered as a number followed by three or more exclamation marks."
-msgstr "計算整數的多重階乘。將引數乘以每個小x的正整數(n(n-x)(n-2x)...)。也可以輸入一個數字接著三個或更多驚歎號。"
+"Calculates the multifactorial of an integer. Multiplies the argument with "
+"every x lesser positive integer (n(n-x)(n-2x)...). Can also be entered as a "
+"number followed by three or more exclamation marks."
+msgstr ""
+"計算整數的多重階乘。將引數乘以每個小x的正整數(n(n-x)(n-2x)...)。也可以輸入一"
+"個數字接著三個或更多驚歎號。"
 
 #: data/functions.xml.in:549
 msgid "Binomial Coefficient"
@@ -3557,9 +3647,12 @@ msgstr "r:hyperfactorial"
 
 #: data/functions.xml.in:562
 msgid ""
-"Calculates the hyperfactorial of an integer. Multiplies the argument raised by itself with every lesser positive integer "
-"raised by themselves (1^1 * 2^2 ... n^n)."
-msgstr "計算整數的過階乘。將引數自身次方乘以每一個較小的正整數自身次方(1^1 * 2^2 ... n^n)。"
+"Calculates the hyperfactorial of an integer. Multiplies the argument raised "
+"by itself with every lesser positive integer raised by themselves (1^1 * "
+"2^2 ... n^n)."
+msgstr ""
+"計算整數的過階乘。將引數自身次方乘以每一個較小的正整數自身次方(1^1 * 2^2 ... "
+"n^n)。"
 
 #: data/functions.xml.in:570
 msgid "Superfactorial"
@@ -3571,9 +3664,11 @@ msgstr "r:superfactorial"
 
 #: data/functions.xml.in:573
 msgid ""
-"Calculates the superfactorial of an integer. Multiplies the factorial of the argument with the factorial of every lesser "
-"positive integer (1! * 2! ... n!)."
-msgstr "計算整數的超階乘。將引數的階乘乘以每個較小正整數的階乘(1! * 2! ... n!)。"
+"Calculates the superfactorial of an integer. Multiplies the factorial of the "
+"argument with the factorial of every lesser positive integer (1! * 2! ... "
+"n!)."
+msgstr ""
+"計算整數的超階乘。將引數的階乘乘以每個較小正整數的階乘(1! * 2! ... n!)。"
 
 #: data/functions.xml.in:581
 msgid "Permutations (Variations)"
@@ -3585,12 +3680,15 @@ msgstr "r:perm,variations"
 
 #: data/functions.xml.in:584
 msgid ""
-"Returns the number of possible arrangements of an ordered list with a number of objects to choose from and a list size. If "
-"there are three objects (1, 2 and 3) that are put in a list with two positions, the alternatives are [1, 2], [2, 1], [1, 3], "
-"[3, 1], [2, 3] and [3, 2], and thus the number of permutations is 6."
+"Returns the number of possible arrangements of an ordered list with a number "
+"of objects to choose from and a list size. If there are three objects (1, 2 "
+"and 3) that are put in a list with two positions, the alternatives are [1, "
+"2], [2, 1], [1, 3], [3, 1], [2, 3] and [3, 2], and thus the number of "
+"permutations is 6."
 msgstr ""
-"回傳有序列表的可能配置數量，使用一個要從中選取的物件數量和一個列表大小。如果有三個物件(1、2和3)放在具有兩個位置的列表中，則可"
-"供選擇的有[1, 2]、[2, 1]、[1, 3]、[3, 1]、[2, 3]和[3, 2]，因此排列數量是6。"
+"回傳有序列表的可能配置數量，使用一個要從中選取的物件數量和一個列表大小。如果"
+"有三個物件(1、2和3)放在具有兩個位置的列表中，則可供選擇的有[1, 2]、[2, 1]、"
+"[1, 3]、[3, 1]、[2, 3]和[3, 2]，因此排列數量是6。"
 
 #: data/functions.xml.in:586 data/functions.xml.in:598
 msgid "Objects"
@@ -3610,12 +3708,14 @@ msgstr "r:comb"
 
 #: data/functions.xml.in:596
 msgid ""
-"Returns the number of possible arrangements of an unordered list with a number of objects to choose from and a list size. If "
-"there are three objects (1, 2 and 3) that are put in a list with place for two, the alternatives are [1, 2], [1, 3], and [2, "
-"3], and thus the number of combinations is 3."
+"Returns the number of possible arrangements of an unordered list with a "
+"number of objects to choose from and a list size. If there are three objects "
+"(1, 2 and 3) that are put in a list with place for two, the alternatives are "
+"[1, 2], [1, 3], and [2, 3], and thus the number of combinations is 3."
 msgstr ""
-"回傳無序列表的可能配置數量，使用一個要從中選取的物件數量和一個列表大小。如果有三個物件(1、2和3)放在具有兩個位置的列表中，則可"
-"供選擇的有[1, 2]、[1, 3]和[2, 3]，因此組合數量是3。"
+"回傳無序列表的可能配置數量，使用一個要從中選取的物件數量和一個列表大小。如果"
+"有三個物件(1、2和3)放在具有兩個位置的列表中，則可供選擇的有[1, 2]、[1, 3]和"
+"[2, 3]，因此組合數量是3。"
 
 #: data/functions.xml.in:605
 msgid "Derangements"
@@ -3627,12 +3727,14 @@ msgstr "r:derangements"
 
 #: data/functions.xml.in:607
 msgid ""
-"Returns the number of possible rearrangements of an ordered list, of a certain size, where none of the objects are in their "
-"original positions. If the original list is [1, 2, 3], the possible derangements are [2, 3, 1] and [3, 1, 2], and thus the "
-"number of derangements is 2."
+"Returns the number of possible rearrangements of an ordered list, of a "
+"certain size, where none of the objects are in their original positions. If "
+"the original list is [1, 2, 3], the possible derangements are [2, 3, 1] and "
+"[3, 1, 2], and thus the number of derangements is 2."
 msgstr ""
-"回傳有序列表的可能重新配置數量，有確定的大小，其中沒有物件在它們原來的位置。如果原始列表是[1, 2, 3]，則可能的錯排有[2, 3, 1]和"
-"[3, 1, 2]，因此錯排數量是2。"
+"回傳有序列表的可能重新配置數量，有確定的大小，其中沒有物件在它們原來的位置。"
+"如果原始列表是[1, 2, 3]，則可能的錯排有[2, 3, 1]和[3, 1, 2]，因此錯排數量是"
+"2。"
 
 #: data/functions.xml.in:610
 msgid "Number of elements"
@@ -3663,10 +3765,14 @@ msgid "r:sgn"
 msgstr "r:sgn"
 
 #. A numerical value
-#: data/functions.xml.in:631 data/functions.xml.in:641 data/functions.xml.in:648 data/functions.xml.in:728
-#: data/functions.xml.in:1013 data/functions.xml.in:1027 data/functions.xml.in:1041 data/functions.xml.in:1089
-#: data/functions.xml.in:1177 data/functions.xml.in:1184 data/functions.xml.in:3582 data/functions.xml.in:3596
-#: data/functions.xml.in:3610 data/functions.xml.in:3628 data/functions.xml.in:3649 data/functions.xml.in:3673
+#: data/functions.xml.in:631 data/functions.xml.in:641
+#: data/functions.xml.in:648 data/functions.xml.in:728
+#: data/functions.xml.in:1013 data/functions.xml.in:1027
+#: data/functions.xml.in:1041 data/functions.xml.in:1089
+#: data/functions.xml.in:1177 data/functions.xml.in:1184
+#: data/functions.xml.in:3582 data/functions.xml.in:3596
+#: data/functions.xml.in:3610 data/functions.xml.in:3628
+#: data/functions.xml.in:3649 data/functions.xml.in:3673
 msgid "Number"
 msgstr "數字"
 
@@ -3704,9 +3810,12 @@ msgstr "模冪"
 
 #: data/functions.xml.in:673
 msgid ""
-"Finds the modular inverse for negative exponents, and is otherwise equivalent to mod(a^b, c). For negative exponents the "
-"greatest common divisor of the numerator and the denominator must be 1."
-msgstr "找到負指數的模反元素，否則等價於mod(a^b, c)。對於負指數，分子和分母的最大公因數必須為1。"
+"Finds the modular inverse for negative exponents, and is otherwise "
+"equivalent to mod(a^b, c). For negative exponents the greatest common "
+"divisor of the numerator and the denominator must be 1."
+msgstr ""
+"找到負指數的模反元素，否則等價於mod(a^b, c)。對於負指數，分子和分母的最大公因"
+"數必須為1。"
 
 #: data/functions.xml.in:674
 msgid "r:powmod,power_mod"
@@ -3760,8 +3869,10 @@ msgstr "係數"
 msgid "r:coeff"
 msgstr "r:coeff"
 
-#: data/functions.xml.in:725 data/functions.xml.in:738 data/functions.xml.in:748 data/functions.xml.in:758
-#: data/functions.xml.in:768 data/functions.xml.in:778 data/functions.xml.in:788 data/functions.xml.in:798
+#: data/functions.xml.in:725 data/functions.xml.in:738
+#: data/functions.xml.in:748 data/functions.xml.in:758
+#: data/functions.xml.in:768 data/functions.xml.in:778
+#: data/functions.xml.in:788 data/functions.xml.in:798
 msgid "Polynomial"
 msgstr "多項式"
 
@@ -3833,7 +3944,8 @@ msgstr "第N個質數"
 msgid "r:nthprime"
 msgstr "r:nthprime"
 
-#: data/functions.xml.in:811 data/functions.xml.in:910 data/functions.xml.in:931
+#: data/functions.xml.in:811 data/functions.xml.in:910
+#: data/functions.xml.in:931
 msgid "Index (n)"
 msgstr "索引(n)"
 
@@ -3842,7 +3954,9 @@ msgid "Prime Counting Function"
 msgstr "質數計數函數"
 
 #: data/functions.xml.in:816
-msgid "Returns the number of prime numbers less than or equal to the specified number."
+msgid ""
+"Returns the number of prime numbers less than or equal to the specified "
+"number."
 msgstr "回傳小於或等於指定數字的質數數量。"
 
 #: data/functions.xml.in:817
@@ -3854,7 +3968,8 @@ msgid "Next Prime Number"
 msgstr "下一個質數"
 
 #: data/functions.xml.in:824
-msgid "Returns the next prime number greater than or equal to the specified number."
+msgid ""
+"Returns the next prime number greater than or equal to the specified number."
 msgstr "回傳大於或等於指定數字的下一個質數。"
 
 #: data/functions.xml.in:825
@@ -3866,7 +3981,9 @@ msgid "Previous Prime Number"
 msgstr "上一個質數"
 
 #: data/functions.xml.in:832
-msgid "Returns the largest prime number smaller than or equal to the specified number."
+msgid ""
+"Returns the largest prime number smaller than or equal to the specified "
+"number."
 msgstr "回傳小於或等於指定數字的最大質數。"
 
 #: data/functions.xml.in:834
@@ -3886,7 +4003,9 @@ msgid "Prime Numbers Less Than or Equal"
 msgstr "質數(小於或等於)"
 
 #: data/functions.xml.in:848
-msgid "Returns a vector containing all the prime numbers less than or equal to the specified number."
+msgid ""
+"Returns a vector containing all the prime numbers less than or equal to the "
+"specified number."
 msgstr "回傳包含所有小於或等於指定數字的質數的向量。"
 
 #: data/functions.xml.in:849
@@ -3901,11 +4020,13 @@ msgstr "最大公因數"
 msgid "rc:gcd,c:GCD,c:gcf,c:GCF,c:hcf,c:HCF"
 msgstr "-"
 
-#: data/functions.xml.in:859 data/functions.xml.in:872 data/functions.xml.in:3561 data/functions.xml.in:3571
+#: data/functions.xml.in:859 data/functions.xml.in:872
+#: data/functions.xml.in:3561 data/functions.xml.in:3571
 msgid "Value 1"
 msgstr "值1"
 
-#: data/functions.xml.in:862 data/functions.xml.in:875 data/functions.xml.in:3564 data/functions.xml.in:3574
+#: data/functions.xml.in:862 data/functions.xml.in:875
+#: data/functions.xml.in:3564 data/functions.xml.in:3574
 msgid "Value 2"
 msgstr "值2"
 
@@ -3939,7 +4060,8 @@ msgstr "r:factor"
 
 #: data/functions.xml.in:891
 msgid ""
-"Performs integer or polynomial factorization, and returns the factors in a vector.\n"
+"Performs integer or polynomial factorization, and returns the factors in a "
+"vector.\n"
 "\n"
 "Mode determines the return value for integer factorization as follows.\n"
 "0: all prime factors\n"
@@ -3964,7 +4086,9 @@ msgid "Bernoulli Number/Polynomial"
 msgstr "白努利數/多項式"
 
 #: data/functions.xml.in:907
-msgid "Returns the nth Bernoulli number or polynomial (if the second argument is non-zero)."
+msgid ""
+"Returns the nth Bernoulli number or polynomial (if the second argument is "
+"non-zero)."
 msgstr "回傳第n個白努利數或多項式(如果第二個引數非零)。"
 
 #: data/functions.xml.in:908
@@ -3976,7 +4100,9 @@ msgid "Euler's Totient Function"
 msgstr "歐拉函數"
 
 #: data/functions.xml.in:918
-msgid "Counts the positive integers up to a given integer n that are relatively prime to n."
+msgid ""
+"Counts the positive integers up to a given integer n that are relatively "
+"prime to n."
 msgstr "將與n互質的正整數計數到給定整數n。"
 
 #: data/functions.xml.in:919
@@ -4025,18 +4151,21 @@ msgstr "r:round"
 
 #: data/functions.xml.in:961
 msgid ""
-"Round to nearest integer or decimal. If the second argument is zero, the value is rounded towards the nearest integer, "
-"otherwise the value is rounded to the corresponding number of digits to the right (if positive) or left (if negative) of the "
-"decimal point.\n"
+"Round to nearest integer or decimal. If the second argument is zero, the "
+"value is rounded towards the nearest integer, otherwise the value is rounded "
+"to the corresponding number of digits to the right (if positive) or left (if "
+"negative) of the decimal point.\n"
 "\n"
-"Available rounding methods (3rd argument): half away from zero (0), half to even (1), half to odd (2), half toward zero (3), "
-"half up (4), half down (5), half random (6), toward zero (7), away from zero (8), up (9), down (10)"
+"Available rounding methods (3rd argument): half away from zero (0), half to "
+"even (1), half to odd (2), half toward zero (3), half up (4), half down (5), "
+"half random (6), toward zero (7), away from zero (8), up (9), down (10)"
 msgstr ""
-"捨入到最近的整數或小數。如果第二個引數為零，則該值朝最近的整數捨入，否則該值將捨入到小數點右側(如果為正)或左側(如果為負)對應的"
-"數字數量。\n"
+"捨入到最近的整數或小數。如果第二個引數為零，則該值朝最近的整數捨入，否則該值"
+"將捨入到小數點右側(如果為正)或左側(如果為負)對應的數字數量。\n"
 "\n"
-"可用的捨入方法(第3個引數): 四捨五入(0)、五成雙(1)、五成奇(2)、五捨六入(3)、五上取(4)、五下取(5)、五隨機(6)、無條件捨去(7)、無"
-"條件進位(8)、上取(9)、下取(10)"
+"可用的捨入方法(第3個引數): 四捨五入(0)、五成雙(1)、五成奇(2)、五捨六入(3)、五"
+"上取(4)、五下取(5)、五隨機(6)、無條件捨去(7)、無條件進位(8)、上取(9)、下取"
+"(10)"
 
 #: data/functions.xml.in:968
 msgid "Number of decimals"
@@ -4094,7 +4223,8 @@ msgstr "整數數字"
 msgid "r:integerDigits"
 msgstr "r:integerDigits"
 
-#: data/functions.xml.in:1019 data/functions.xml.in:4198 data/functions.xml.in:4209 data/functions.xml.in:4224
+#: data/functions.xml.in:1019 data/functions.xml.in:4198
+#: data/functions.xml.in:4209 data/functions.xml.in:4224
 #: data/functions.xml.in:4239 data/functions.xml.in:4254
 msgid "Length"
 msgstr "長度"
@@ -4108,10 +4238,13 @@ msgid "r:digitGet,numberDigit"
 msgstr "r:digitGet,numberDigit"
 
 #: data/functions.xml.in:1025
-msgid "Returns digit at specified position (index of first digit left of decimal sign is zero)."
+msgid ""
+"Returns digit at specified position (index of first digit left of decimal "
+"sign is zero)."
 msgstr "回傳指定位置的數字(小數點左側第一個數字的索引是零)。"
 
-#: data/functions.xml.in:1030 data/functions.xml.in:1044 data/functions.xml.in:3631 data/functions.xml.in:3676
+#: data/functions.xml.in:1030 data/functions.xml.in:1044
+#: data/functions.xml.in:3631 data/functions.xml.in:3676
 msgid "Position"
 msgstr "位置"
 
@@ -4124,7 +4257,9 @@ msgid "r:digitSet"
 msgstr "r:digitSet"
 
 #: data/functions.xml.in:1039
-msgid "Sets the digit at specified position (index of first digit left of decimal sign is zero)."
+msgid ""
+"Sets the digit at specified position (index of first digit left of decimal "
+"sign is zero)."
 msgstr "設定指定位置的數字(小數點左側第一個數字的索引是零)。"
 
 #: data/functions.xml.in:1054
@@ -4136,7 +4271,8 @@ msgid "r:clip"
 msgstr "r:clip"
 
 #: data/functions.xml.in:1056
-msgid "Clips or limits the input value to be between the lower and upper bounds."
+msgid ""
+"Clips or limits the input value to be between the lower and upper bounds."
 msgstr "剪輯或限制輸入值在下界和上界之間。"
 
 #: data/functions.xml.in:1063
@@ -4161,47 +4297,59 @@ msgstr "r:base"
 
 #: data/functions.xml.in:1077
 msgid ""
-"Returns a value from an expression using the specified number base (radix). For bases between -62 and 62 full mathematical "
-"expressions (including operators and functions) are supported, while for other bases the specified expression is converted to "
-"a single number.\n"
+"Returns a value from an expression using the specified number base (radix). "
+"For bases between -62 and 62 full mathematical expressions (including "
+"operators and functions) are supported, while for other bases the specified "
+"expression is converted to a single number.\n"
 "\n"
 "Bases ≤ 36 use digits 0-9 and A-Z (case insensitive).\n"
 "\n"
-"Bases between 37 and 62 uses case sensitive letters (0-9, A-Z, a-z) as digits ('z' equals 61).\n"
+"Bases between 37 and 62 uses case sensitive letters (0-9, A-Z, a-z) as "
+"digits ('z' equals 61).\n"
 "\n"
-"Bases over 62 use Unicode characters as digits, with the character code as value (e.g. '0' equals 48). Escaped characters are "
-"in this case supported (e.g. '\\0' = 0, '\\523' = 523, '\\x7f' = 127).\n"
+"Bases over 62 use Unicode characters as digits, with the character code as "
+"value (e.g. '0' equals 48). Escaped characters are in this case supported "
+"(e.g. '\\0' = 0, '\\523' = 523, '\\x7f' = 127).\n"
 "\n"
-"Negative bases use the same digits as the corresponding positive bases and the digits used for non-integer bases are "
-"determined by rounding the base away from zero. Bases that are not real numbers by default use digits 0-9 and A-Z.\n"
+"Negative bases use the same digits as the corresponding positive bases and "
+"the digits used for non-integer bases are determined by rounding the base "
+"away from zero. Bases that are not real numbers by default use digits 0-9 "
+"and A-Z.\n"
 "\n"
-"The set of digits used can be selected using the third argument (defaults to 0 for automatic selection). Set it to 1 for "
-"digits 0-9 and A-Z, 2 for 0-9, A-Z and a-z, 3 for Unicode digits, and 4 for phonewords (e.g. ABC=2, DEF=3, etc.), or enter a "
-"text string with all digits placed in ascending order (e.g. \"0123456789\") and optionally separated by semicolon (to enable "
-"multiple equivalent digits, e.g. \"0;aA1;bB2;cC3\"). When the set of digits is manually selected, the specified expression is "
-"always converted to a single number."
+"The set of digits used can be selected using the third argument (defaults to "
+"0 for automatic selection). Set it to 1 for digits 0-9 and A-Z, 2 for 0-9, A-"
+"Z and a-z, 3 for Unicode digits, and 4 for phonewords (e.g. ABC=2, DEF=3, "
+"etc.), or enter a text string with all digits placed in ascending order "
+"(e.g. \"0123456789\") and optionally separated by semicolon (to enable "
+"multiple equivalent digits, e.g. \"0;aA1;bB2;cC3\"). When the set of digits "
+"is manually selected, the specified expression is always converted to a "
+"single number."
 msgstr ""
-"使用指定的底數(基數)從表達式回傳一個值。對於-62和62之間的底數，支援完整的數學表達式(包含運算子和函數)，而對於其他底數，指定的"
-"表達式轉換到單個數字。\n"
+"使用指定的底數(基數)從表達式回傳一個值。對於-62和62之間的底數，支援完整的數學"
+"表達式(包含運算子和函數)，而對於其他底數，指定的表達式轉換到單個數字。\n"
 "\n"
 "底數≤36使用數字0-9和A-Z(大小寫無關)。\n"
 "\n"
 "底數在37和62之間使用區分大小寫的字母(0-9, A-Z, a-z)作為數字('z'等於61)。\n"
 "\n"
-"底數超過62使用Unicode字元作為數字，用字元編碼作為值(例如'0'等於48)。在這種情況下支援跳脫字元(例如'\\0' = 0, '\\523' = 523, "
-"'\\x7f' = 127)。\n"
+"底數超過62使用Unicode字元作為數字，用字元編碼作為值(例如'0'等於48)。在這種情"
+"況下支援跳脫字元(例如'\\0' = 0, '\\523' = 523, '\\x7f' = 127)。\n"
 "\n"
-"負底數和對應的正底數使用相同的數字，而用於非整數底數的數字用無條件進位底數決定。非實數的底數預設使用數字0-9和A-Z。\n"
+"負底數和對應的正底數使用相同的數字，而用於非整數底數的數字用無條件進位底數決"
+"定。非實數的底數預設使用數字0-9和A-Z。\n"
 "\n"
-"使用的數字集可以使用第三個引數選擇(預設為0代表自動選擇)。將其設定為1代表數字0-9和A-Z，2代表數字0-9、A-Z和a-z，3代表Unicode數"
-"字，和4代表電話字(例如ABC=2、DEF=3等等)，或輸入一個所有數字都用升序放置的文字字串(例如\"0123456789\")並可選擇用分號分離(啟用多"
-"個等效數字，例如\"0;aA1;bB2;cC3\")。手動選擇數字集時，指定的表達式總是轉換到單個數字。"
+"使用的數字集可以使用第三個引數選擇(預設為0代表自動選擇)。將其設定為1代表數字"
+"0-9和A-Z，2代表數字0-9、A-Z和a-z，3代表Unicode數字，和4代表電話字(例如ABC=2、"
+"DEF=3等等)，或輸入一個所有數字都用升序放置的文字字串(例如\"0123456789\")並可"
+"選擇用分號分離(啟用多個等效數字，例如\"0;aA1;bB2;cC3\")。手動選擇數字集時，指"
+"定的表達式總是轉換到單個數字。"
 
 #: data/functions.xml.in:1095
 msgid "Set of digits"
 msgstr "數字集"
 
-#: data/functions.xml.in:1098 data/functions.xml.in:1112 data/functions.xml.in:1123 data/functions.xml.in:1134
+#: data/functions.xml.in:1098 data/functions.xml.in:1112
+#: data/functions.xml.in:1123 data/functions.xml.in:1134
 #: data/functions.xml.in:1148
 msgid "Reverse conversion"
 msgstr "反向轉換"
@@ -4216,9 +4364,12 @@ msgstr "r:bin"
 
 #: data/functions.xml.in:1104
 msgid ""
-"Returns a value from a binary expression. If two's complement is true, numbers beginning with '1' are interpreted as negative "
-"binary numbers using two's complement."
-msgstr "從二進制表達式回傳一個值。如果二的補數為真，則以'1'開頭的數字使用二的補數解釋為負二進制數字。"
+"Returns a value from a binary expression. If two's complement is true, "
+"numbers beginning with '1' are interpreted as negative binary numbers using "
+"two's complement."
+msgstr ""
+"從二進制表達式回傳一個值。如果二的補數為真，則以'1'開頭的數字使用二的補數解釋"
+"為負二進制數字。"
 
 #: data/functions.xml.in:1106
 msgid "Binary number"
@@ -4270,9 +4421,12 @@ msgstr "r:hex"
 
 #: data/functions.xml.in:1140
 msgid ""
-"Returns a value from a hexadecimal expression. If two's complement is true, numbers beginning with 8 or higher are "
-"interpreted as negative hexadecimal numbers using two's complement."
-msgstr "從十六進制表達式回傳一個值。如果二的補數為真，則以8或更高開頭的數字使用二的補數解釋為負十六進制數字。"
+"Returns a value from a hexadecimal expression. If two's complement is true, "
+"numbers beginning with 8 or higher are interpreted as negative hexadecimal "
+"numbers using two's complement."
+msgstr ""
+"從十六進制表達式回傳一個值。如果二的補數為真，則以8或更高開頭的數字使用二的補"
+"數解釋為負十六進制數字。"
 
 #: data/functions.xml.in:1142
 msgid "Hexadecimal number"
@@ -4287,7 +4441,9 @@ msgid "r:bijective"
 msgstr "r:bijective"
 
 #: data/functions.xml.in:1154
-msgid "Returns a value from an expression in bijective base-26. Conversion in the opposite direction is also supported."
+msgid ""
+"Returns a value from an expression in bijective base-26. Conversion in the "
+"opposite direction is also supported."
 msgstr "從雙射二十六進制表達式回傳一個值。也支援反方向的轉換。"
 
 #: data/functions.xml.in:1156
@@ -4399,12 +4555,14 @@ msgstr "多重對數函數"
 msgid "rc:Li,polylog"
 msgstr "rc:Li,polylog"
 
-#: data/functions.xml.in:1223 data/functions.xml.in:1237 data/functions.xml.in:1247 data/functions.xml.in:1482
+#: data/functions.xml.in:1223 data/functions.xml.in:1237
+#: data/functions.xml.in:1247 data/functions.xml.in:1482
 #: data/functions.xml.in:3846
 msgid "Order"
 msgstr "階"
 
-#: data/functions.xml.in:1226 data/functions.xml.in:1240 data/functions.xml.in:1250 data/functions.xml.in:3488
+#: data/functions.xml.in:1226 data/functions.xml.in:1240
+#: data/functions.xml.in:1250 data/functions.xml.in:3488
 msgid "Argument"
 msgstr "引數"
 
@@ -4509,8 +4667,12 @@ msgid "r:heaviside,au:θ"
 msgstr "r:heaviside,au:θ"
 
 #: data/functions.xml.in:1312
-msgid "Discontinuous function also known as \"unit step function\". Returns 0 if x < 0, 1 if x > 0, and 1/2 if x = 0."
-msgstr "不連續函數也稱為\"單位步階函數\"。回傳0(如果x < 0)、1(如果x > 0)和1/2(如果x = 0)。"
+msgid ""
+"Discontinuous function also known as \"unit step function\". Returns 0 if x "
+"< 0, 1 if x > 0, and 1/2 if x = 0."
+msgstr ""
+"不連續函數也稱為\"單位步階函數\"。回傳0(如果x < 0)、1(如果x > 0)和1/2(如果x "
+"= 0)。"
 
 #: data/functions.xml.in:1315
 msgid "Dirac Delta Function"
@@ -4560,7 +4722,8 @@ msgstr "實部"
 msgid "r:re,au:ℜ"
 msgstr "r:re,au:ℜ"
 
-#: data/functions.xml.in:1357 data/functions.xml.in:1364 data/functions.xml.in:1371 data/functions.xml.in:1379
+#: data/functions.xml.in:1357 data/functions.xml.in:1364
+#: data/functions.xml.in:1371 data/functions.xml.in:1379
 msgid "Complex number"
 msgstr "複數"
 
@@ -4601,7 +4764,9 @@ msgid "au:√,r:sqrt"
 msgstr "au:√,r:sqrt"
 
 #: data/functions.xml.in:1389
-msgid "Returns the principal square root (for positive values the positive root is returned)."
+msgid ""
+"Returns the principal square root (for positive values the positive root is "
+"returned)."
 msgstr "回傳主平方根(對於正值，回傳正根)。"
 
 #: data/functions.xml.in:1395
@@ -4625,7 +4790,9 @@ msgid "r:root"
 msgstr "r:root"
 
 #: data/functions.xml.in:1405
-msgid "Returns the real root. For negative values the degree must be odd. Complex values are not allowed."
+msgid ""
+"Returns the real root. For negative values the degree must be odd. Complex "
+"values are not allowed."
 msgstr "回傳實根。對於負值，次數必須為奇數。不允許複數。"
 
 #. nth root argument
@@ -4683,9 +4850,10 @@ msgstr "r:lambertw,productlog"
 
 #: data/functions.xml.in:1459
 msgid ""
-"Returns the inverse function for x*e^x as ln() does for e^x. Only the principal branch and real valued results are currently "
-"supported."
-msgstr "回傳x*e^x的反函數，像ln()對e^x所做的一樣。目前只支援主分支和實數的結果。"
+"Returns the inverse function for x*e^x as ln() does for e^x. Only the "
+"principal branch and real valued results are currently supported."
+msgstr ""
+"回傳x*e^x的反函數，像ln()對e^x所做的一樣。目前只支援主分支和實數的結果。"
 
 #: data/functions.xml.in:1464
 msgid "Branch"
@@ -4767,7 +4935,8 @@ msgstr "正弦"
 msgid "r:sin"
 msgstr "r:sin"
 
-#: data/functions.xml.in:1539 data/functions.xml.in:1546 data/functions.xml.in:1553 data/functions.xml.in:1627
+#: data/functions.xml.in:1539 data/functions.xml.in:1546
+#: data/functions.xml.in:1553 data/functions.xml.in:1627
 #: data/functions.xml.in:1637 data/functions.xml.in:1647
 msgid "Angle"
 msgstr "角度"
@@ -4869,17 +5038,23 @@ msgid "r:atan2, arctan2"
 msgstr "r:atan2, arctan2"
 
 #: data/functions.xml.in:1595
-msgid "Computes the principal value of the argument function applied to the complex number x+iy."
+msgid ""
+"Computes the principal value of the argument function applied to the complex "
+"number x+iy."
 msgstr "計算套用到複數x+iy的輻角函數的主值。"
 
 #: data/functions.xml.in:1597
 msgid "Y"
 msgstr "Y"
 
-#: data/functions.xml.in:1600 data/functions.xml.in:2514 data/functions.xml.in:2545 data/functions.xml.in:2564
-#: data/functions.xml.in:2601 data/functions.xml.in:2621 data/functions.xml.in:2638 data/functions.xml.in:2655
-#: data/functions.xml.in:2671 data/functions.xml.in:2692 data/functions.xml.in:2724 data/functions.xml.in:2763
-#: data/functions.xml.in:2785 data/functions.xml.in:2816 data/functions.xml.in:2856
+#: data/functions.xml.in:1600 data/functions.xml.in:2514
+#: data/functions.xml.in:2545 data/functions.xml.in:2564
+#: data/functions.xml.in:2601 data/functions.xml.in:2621
+#: data/functions.xml.in:2638 data/functions.xml.in:2655
+#: data/functions.xml.in:2671 data/functions.xml.in:2692
+#: data/functions.xml.in:2724 data/functions.xml.in:2763
+#: data/functions.xml.in:2785 data/functions.xml.in:2816
+#: data/functions.xml.in:2856
 msgid "X"
 msgstr "X"
 
@@ -5021,28 +5196,33 @@ msgstr "r:float"
 
 #: data/functions.xml.in:1730
 msgid ""
-"Reads a number in a IEEE 754 floating-point format. The number will be read as a binary number, unless it contains digits "
-"other than 1 or 0. If the third argument (exponent bits) is set to zero, the standard number of exponent bits will be used (e."
-"g. 8 for 32-bit format)."
+"Reads a number in a IEEE 754 floating-point format. The number will be read "
+"as a binary number, unless it contains digits other than 1 or 0. If the "
+"third argument (exponent bits) is set to zero, the standard number of "
+"exponent bits will be used (e.g. 8 for 32-bit format)."
 msgstr ""
-"以IEEE 754浮點格式讀取一個數字。該數字將被讀取為一個二進制數字，除非它包含除了1或0以外的其他數字。如果第三個引數(指數位元)設定"
-"為零，則使用標準數量的指數位元(例如8用於32位元格式)。"
+"以IEEE 754浮點格式讀取一個數字。該數字將被讀取為一個二進制數字，除非它包含除"
+"了1或0以外的其他數字。如果第三個引數(指數位元)設定為零，則使用標準數量的指數"
+"位元(例如8用於32位元格式)。"
 
 #: data/functions.xml.in:1732
 msgid "Floating-point number (binary)"
 msgstr "浮點數(二進制)"
 
-#: data/functions.xml.in:1735 data/functions.xml.in:1752 data/functions.xml.in:1769 data/functions.xml.in:1786
+#: data/functions.xml.in:1735 data/functions.xml.in:1752
+#: data/functions.xml.in:1769 data/functions.xml.in:1786
 #: data/functions.xml.in:1803
 msgid "Number of bits"
 msgstr "位元數量"
 
-#: data/functions.xml.in:1738 data/functions.xml.in:1755 data/functions.xml.in:1772 data/functions.xml.in:1789
+#: data/functions.xml.in:1738 data/functions.xml.in:1755
+#: data/functions.xml.in:1772 data/functions.xml.in:1789
 #: data/functions.xml.in:1806
 msgid "Number of exponent bits"
 msgstr "指數位元數量"
 
-#: data/functions.xml.in:1741 data/functions.xml.in:1758 data/functions.xml.in:1775 data/functions.xml.in:1792
+#: data/functions.xml.in:1741 data/functions.xml.in:1758
+#: data/functions.xml.in:1775 data/functions.xml.in:1792
 #: data/functions.xml.in:1809
 msgid "Position of sign bit"
 msgstr "符號位元位置"
@@ -5057,12 +5237,13 @@ msgstr "r:floatBits"
 
 #: data/functions.xml.in:1747
 msgid ""
-"Converts a value to a number in a IEEE 754 floating-point format and returns the number corresponding to the binary "
-"representation. If the third argument (exponent bits) is set to zero, the standard number of exponent bits will be used (e.g. "
-"8 for 32-bit format)."
+"Converts a value to a number in a IEEE 754 floating-point format and returns "
+"the number corresponding to the binary representation. If the third argument "
+"(exponent bits) is set to zero, the standard number of exponent bits will be "
+"used (e.g. 8 for 32-bit format)."
 msgstr ""
-"將值轉換到IEEE 754浮點格式的數字並回傳對應於二進制表示法的數字。如果第三個引數(指數位元)設定為零，則使用標準數量的指數位元(例"
-"如8用於32位元格式)。"
+"將值轉換到IEEE 754浮點格式的數字並回傳對應於二進制表示法的數字。如果第三個引"
+"數(指數位元)設定為零，則使用標準數量的指數位元(例如8用於32位元格式)。"
 
 #: data/functions.xml.in:1762
 msgid "IEEE 754 Floating-Point Error"
@@ -5074,12 +5255,13 @@ msgstr "r:floatError"
 
 #: data/functions.xml.in:1764
 msgid ""
-"Calculates the error (the difference between the original and the converted value) when converting a value to a IEEE 754 "
-"floating-point format. If the third argument (exponent bits) is set to zero, the standard number of exponent bits will be "
-"used (e.g. 8 for 32-bit format)."
+"Calculates the error (the difference between the original and the converted "
+"value) when converting a value to a IEEE 754 floating-point format. If the "
+"third argument (exponent bits) is set to zero, the standard number of "
+"exponent bits will be used (e.g. 8 for 32-bit format)."
 msgstr ""
-"值轉換到IEEE 754浮點格式時計算誤差(原始值和轉換值之間的差異)。如果第三個引數(指數位元)設定為零，則使用標準數量的指數位元(例如8"
-"用於32位元格式)。"
+"值轉換到IEEE 754浮點格式時計算誤差(原始值和轉換值之間的差異)。如果第三個引數"
+"(指數位元)設定為零，則使用標準數量的指數位元(例如8用於32位元格式)。"
 
 #: data/functions.xml.in:1779
 msgid "IEEE 754 Floating-Point Components"
@@ -5091,12 +5273,13 @@ msgstr "r:floatParts"
 
 #: data/functions.xml.in:1781
 msgid ""
-"Converts a value to a number in a IEEE 754 floating-point format and returns sign, exponent, and significand in a vector. If "
-"the third argument (exponent bits) is set to zero, the standard number of exponent bits will be used (e.g. 8 for 32-bit "
-"format)."
+"Converts a value to a number in a IEEE 754 floating-point format and returns "
+"sign, exponent, and significand in a vector. If the third argument (exponent "
+"bits) is set to zero, the standard number of exponent bits will be used "
+"(e.g. 8 for 32-bit format)."
 msgstr ""
-"將值轉換到IEEE 754浮點格式的數字並以向量回傳符號、指數和有效數。如果第三個引數(指數位元)設定為零，則使用標準數量的指數位元(例"
-"如8用於32位元格式)。"
+"將值轉換到IEEE 754浮點格式的數字並以向量回傳符號、指數和有效數。如果第三個引"
+"數(指數位元)設定為零，則使用標準數量的指數位元(例如8用於32位元格式)。"
 
 #: data/functions.xml.in:1796
 msgid "IEEE 754 Floating-Point Value"
@@ -5108,10 +5291,12 @@ msgstr "r:floatValue"
 
 #: data/functions.xml.in:1798
 msgid ""
-"Returns the closest value that can be represented by a IEEE 754 floating-point format. If the third argument (exponent bits) "
-"is set to zero, the standard number of exponent bits will be used (e.g. 8 for 32-bit format)."
+"Returns the closest value that can be represented by a IEEE 754 floating-"
+"point format. If the third argument (exponent bits) is set to zero, the "
+"standard number of exponent bits will be used (e.g. 8 for 32-bit format)."
 msgstr ""
-"回傳可以用IEEE 754浮點格式表示的最接近值。如果第三個引數(指數位元)設定為零，則使用標準數量的指數位元(例如8用於32位元格式)。"
+"回傳可以用IEEE 754浮點格式表示的最接近值。如果第三個引數(指數位元)設定為零，"
+"則使用標準數量的指數位元(例如8用於32位元格式)。"
 
 #: data/functions.xml.in:1813
 msgid "Roman Number"
@@ -5139,12 +5324,15 @@ msgstr "r:geodistance,gpsdistance"
 
 #: data/functions.xml.in:1823
 msgid ""
-"Calculates the distance between two geodetic coordinates using Vincenty's formulae (with datum WGS 84), or, in case of "
-"failure, the Haversine forumla. Each coordinate can be specified using a numerical value (representing decimal degrees), an "
-"angle (e.g. with degree unit), or a text string ending with N, S, E, or W (S for negative latitude, W for negative longitude)."
+"Calculates the distance between two geodetic coordinates using Vincenty's "
+"formulae (with datum WGS 84), or, in case of failure, the Haversine forumla. "
+"Each coordinate can be specified using a numerical value (representing "
+"decimal degrees), an angle (e.g. with degree unit), or a text string ending "
+"with N, S, E, or W (S for negative latitude, W for negative longitude)."
 msgstr ""
-"使用Vincenty公式(基準WGS 84)，或者半正矢公式(在失敗的情況下)，計算兩個測地坐標之間的距離。每個坐標可以使用一個數值(表示十進制"
-"度)、一個角度(例如具有度單位)或一個以N、S、E或W(S代表負緯度，W代表負經度)結尾的文字字串指定。"
+"使用Vincenty公式(基準WGS 84)，或者半正矢公式(在失敗的情況下)，計算兩個測地坐"
+"標之間的距離。每個坐標可以使用一個數值(表示十進制度)、一個角度(例如具有度單"
+"位)或一個以N、S、E或W(S代表負緯度，W代表負經度)結尾的文字字串指定。"
 
 #: data/functions.xml.in:1825
 msgid "Latitude 1"
@@ -5172,12 +5360,14 @@ msgstr "r:qFormat"
 
 #: data/functions.xml.in:1842
 msgid ""
-"Converts to or from fixed point number. Corresponds to Qm.n format where m is the second argument and n is the third "
-"argument. m does not include the sign bit. If the value is an integer, and the fourth argument is false, the value is "
-"converted from fixed point, otherwise to."
+"Converts to or from fixed point number. Corresponds to Qm.n format where m "
+"is the second argument and n is the third argument. m does not include the "
+"sign bit. If the value is an integer, and the fourth argument is false, the "
+"value is converted from fixed point, otherwise to."
 msgstr ""
-"轉換到或從定點數。對應於Qm.n格式，其中m是第二個引數，n是第三個引數。m不包含符號位元。如果該值是整數且第四個引數為假，則該值從"
-"定點數轉換，否則轉換到定點數。"
+"轉換到或從定點數。對應於Qm.n格式，其中m是第二個引數，n是第三個引數。m不包含符"
+"號位元。如果該值是整數且第四個引數為假，則該值從定點數轉換，否則轉換到定點"
+"數。"
 
 #: data/functions.xml.in:1848 data/functions.xml.in:1868
 msgid "Bits (integer part)"
@@ -5209,8 +5399,8 @@ msgstr "r:bmi"
 
 #: data/functions.xml.in:1879
 msgid ""
-"Calculates the Body Mass Index. The resulting BMI-value is sometimes interpreted as follows (although varies with age, sex, "
-"etc.):\n"
+"Calculates the Body Mass Index. The resulting BMI-value is sometimes "
+"interpreted as follows (although varies with age, sex, etc.):\n"
 "\n"
 "Underweight < 18.5\n"
 "Normal weight 18.5-25\n"
@@ -5247,12 +5437,15 @@ msgstr "r:raid"
 
 #: data/functions.xml.in:1900
 msgid ""
-"Calculates RAID array disk capacity usable for data storage. If the combination of number of disks and RAID level is invalid, "
-"zero is returned. Supported RAID levels are 0, 1, 2, 3, 4, 5, 6, 1+0/10, 0+1, 5+0/50, 6+0/60, and 1+6. Stripes are optional "
-"and only used for nested RAID levels (except 1+0)."
+"Calculates RAID array disk capacity usable for data storage. If the "
+"combination of number of disks and RAID level is invalid, zero is returned. "
+"Supported RAID levels are 0, 1, 2, 3, 4, 5, 6, 1+0/10, 0+1, 5+0/50, 6+0/60, "
+"and 1+6. Stripes are optional and only used for nested RAID levels (except "
+"1+0)."
 msgstr ""
-"計算可用於資料儲存的RAID陣列磁碟容量。如果磁碟數量和RAID等級的組合無效，則回傳零。支援的RAID等級有0、1、2、3、4、5、6、"
-"1+0/10、0+1、5+0/50、6+0/60和1+6。條帶是選擇性的，只用於巢狀RAID等級(除了1+0)。"
+"計算可用於資料儲存的RAID陣列磁碟容量。如果磁碟數量和RAID等級的組合無效，則回"
+"傳零。支援的RAID等級有0、1、2、3、4、5、6、1+0/10、0+1、5+0/50、6+0/60和1+6。"
+"條帶是選擇性的，只用於巢狀RAID等級(除了1+0)。"
 
 #: data/functions.xml.in:1904
 msgid "RAID level"
@@ -5304,15 +5497,19 @@ msgstr "r:dof"
 
 #: data/functions.xml.in:1942
 msgid ""
-"Returns the estimated distance between the nearest and the farthest objects that are in acceptably sharp focus in a photo. "
-"Enter focal length (e.g. 50 mm) and distance (e.g. 5 m) with units, and f-stop without unit (2.8, 4.0, 5.6, etc.). Specify "
-"either a cicle of confusion diameter limit (e.g. 0.05 mm) or the sensor size of the camera - 0=\"35mm\", 1=\"APS-H\", 2=\"APS-"
-"CN\" (Nikon, Pentax, Sony), 3=\"APS-C\" (Canon), 4=\"4/3\" (Four Thirds System), or 5='1\"' (Nikon 1, Sony RX10, Sony RX100) "
-"- for a diameter based on d/1500."
+"Returns the estimated distance between the nearest and the farthest objects "
+"that are in acceptably sharp focus in a photo. Enter focal length (e.g. 50 "
+"mm) and distance (e.g. 5 m) with units, and f-stop without unit (2.8, 4.0, "
+"5.6, etc.). Specify either a cicle of confusion diameter limit (e.g. 0.05 "
+"mm) or the sensor size of the camera - 0=\"35mm\", 1=\"APS-H\", 2=\"APS-CN\" "
+"(Nikon, Pentax, Sony), 3=\"APS-C\" (Canon), 4=\"4/3\" (Four Thirds System), "
+"or 5='1\"' (Nikon 1, Sony RX10, Sony RX100) - for a diameter based on d/1500."
 msgstr ""
-"回傳照片中可接受的銳利焦點中最近和最遠的物體之間的估計距離。輸入具有單位的焦距(例如50 mm)和距離(例如5 m)，和無單位的F值(2.8、"
-"4.0、5.6等等)。指定模糊圈直徑極限(例如0.05 mm)或相機的感測器大小 - 0=\"35mm\"、1=\"APS-H\"、2=\"APS-CN\" (Nikon、Pentax、"
-"Sony)、3=\"APS-C\" (Canon)、4=\"4/3\" (4/3系統)或5='1\"' (Nikon 1、Sony RX10、Sony RX100) - 基於d/1500的直徑。"
+"回傳照片中可接受的銳利焦點中最近和最遠的物體之間的估計距離。輸入具有單位的焦"
+"距(例如50 mm)和距離(例如5 m)，和無單位的F值(2.8、4.0、5.6等等)。指定模糊圈直"
+"徑極限(例如0.05 mm)或相機的感測器大小 - 0=\"35mm\"、1=\"APS-H\"、2=\"APS-"
+"CN\" (Nikon、Pentax、Sony)、3=\"APS-C\" (Canon)、4=\"4/3\" (4/3系統)或"
+"5='1\"' (Nikon 1、Sony RX10、Sony RX100) - 基於d/1500的直徑。"
 
 #: data/functions.xml.in:1946
 msgid "Focal Length"
@@ -5340,10 +5537,12 @@ msgstr "r:awg"
 
 #: data/functions.xml.in:1962
 msgid ""
-"For gauges larger than 0000 (4/0), please use negative values (00=-1, 000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, "
-"use an equation (e.g. awg(x) = 20 mm^2)."
+"For gauges larger than 0000 (4/0), please use negative values (00=-1, "
+"000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation "
+"(e.g. awg(x) = 20 mm^2)."
 msgstr ""
-"對於大於0000(4/0)的線規，請使用負值(00=-1、000=-2、0000=-3、00000=-4等等)。要轉換到AWG，使用方程式(例如awg(x) = 20 mm^2)。"
+"對於大於0000(4/0)的線規，請使用負值(00=-1、000=-2、0000=-3、00000=-4等等)。要"
+"轉換到AWG，使用方程式(例如awg(x) = 20 mm^2)。"
 
 #: data/functions.xml.in:1965 data/functions.xml.in:1974
 msgid "AWG"
@@ -5359,10 +5558,12 @@ msgstr "r:awgd"
 
 #: data/functions.xml.in:1971
 msgid ""
-"For gauges larger than 0000 (4/0), please use negative values (00=-1, 000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, "
-"use an equation (e.g. awgd(x) = 5 mm)."
+"For gauges larger than 0000 (4/0), please use negative values (00=-1, "
+"000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation "
+"(e.g. awgd(x) = 5 mm)."
 msgstr ""
-"對於大於0000(4/0)的線規，請使用負值(00=-1、000=-2、0000=-3、00000=-4等等)。要轉換到AWG，使用方程式(例如awgd(x) = 5 mm)。"
+"對於大於0000(4/0)的線規，請使用負值(00=-1、000=-2、0000=-3、00000=-4等等)。要"
+"轉換到AWG，使用方程式(例如awgd(x) = 5 mm)。"
 
 #: data/functions.xml.in:1978
 msgid "Drill Bit Size"
@@ -5374,9 +5575,12 @@ msgstr "r:drillbit"
 
 #: data/functions.xml.in:1980
 msgid ""
-"Returns drill bit gauge number or letter, if argument is fraction or diameter value with length unit, or drill bit diameter "
-"(with length unit), if argument is an integer or an upper-case character (quoted)"
-msgstr "回傳鑽頭號數或字母，如果引數為分數或具有長度單位的直徑，或鑽頭直徑(具有長度單位)，如果引數是整數或大寫字元(放在引號內)"
+"Returns drill bit gauge number or letter, if argument is fraction or "
+"diameter value with length unit, or drill bit diameter (with length unit), "
+"if argument is an integer or an upper-case character (quoted)"
+msgstr ""
+"回傳鑽頭號數或字母，如果引數為分數或具有長度單位的直徑，或鑽頭直徑(具有長度單"
+"位)，如果引數是整數或大寫字元(放在引號內)"
 
 #: data/functions.xml.in:1986
 msgid "Diameter or Gauge"
@@ -5398,11 +5602,16 @@ msgstr "總和"
 msgid "r:total,r:add"
 msgstr "r:total,r:add"
 
-#: data/functions.xml.in:1998 data/functions.xml.in:2045 data/functions.xml.in:2053 data/functions.xml.in:2061
-#: data/functions.xml.in:2079 data/functions.xml.in:2098 data/functions.xml.in:2113 data/functions.xml.in:2223
-#: data/functions.xml.in:2233 data/functions.xml.in:2243 data/functions.xml.in:2252 data/functions.xml.in:2266
-#: data/functions.xml.in:2279 data/functions.xml.in:2290 data/functions.xml.in:2302 data/functions.xml.in:2311
-#: data/functions.xml.in:2321 data/functions.xml.in:2331 data/functions.xml.in:2340 data/functions.xml.in:2350
+#: data/functions.xml.in:1998 data/functions.xml.in:2045
+#: data/functions.xml.in:2053 data/functions.xml.in:2061
+#: data/functions.xml.in:2079 data/functions.xml.in:2098
+#: data/functions.xml.in:2113 data/functions.xml.in:2223
+#: data/functions.xml.in:2233 data/functions.xml.in:2243
+#: data/functions.xml.in:2252 data/functions.xml.in:2266
+#: data/functions.xml.in:2279 data/functions.xml.in:2290
+#: data/functions.xml.in:2302 data/functions.xml.in:2311
+#: data/functions.xml.in:2321 data/functions.xml.in:2331
+#: data/functions.xml.in:2340 data/functions.xml.in:2350
 msgid "Data"
 msgstr "資料"
 
@@ -5418,7 +5627,8 @@ msgstr "r:percentile"
 msgid "Percentile (%)"
 msgstr "百分位數(%)"
 
-#: data/functions.xml.in:2011 data/functions.xml.in:2069 data/functions.xml.in:2087 data/functions.xml.in:2101
+#: data/functions.xml.in:2011 data/functions.xml.in:2069
+#: data/functions.xml.in:2087 data/functions.xml.in:2101
 msgid "Quantile algorithm (as in R)"
 msgstr "分位數演算法(像R中的一樣)"
 
@@ -5526,16 +5736,21 @@ msgstr "r:rand"
 
 #: data/functions.xml.in:2123
 msgid ""
-"Generates uniformly distributed pseudo-random numbers. Returns real numbers between 0 and 1, if ceil is zero (default), or "
-"integers between 1 and (including) ceil."
-msgstr "產生均匀分布的偽亂數。回傳0和1之間的實數，如果頂值為零(預設)，或1和(包含)頂值之間的整數。"
+"Generates uniformly distributed pseudo-random numbers. Returns real numbers "
+"between 0 and 1, if ceil is zero (default), or integers between 1 and "
+"(including) ceil."
+msgstr ""
+"產生均匀分布的偽亂數。回傳0和1之間的實數，如果頂值為零(預設)，或1和(包含)頂值"
+"之間的整數。"
 
 #: data/functions.xml.in:2125
 msgid "Ceil"
 msgstr "頂值"
 
-#: data/functions.xml.in:2128 data/functions.xml.in:2141 data/functions.xml.in:2151 data/functions.xml.in:2168
-#: data/functions.xml.in:2185 data/functions.xml.in:2198 data/functions.xml.in:2211
+#: data/functions.xml.in:2128 data/functions.xml.in:2141
+#: data/functions.xml.in:2151 data/functions.xml.in:2168
+#: data/functions.xml.in:2185 data/functions.xml.in:2198
+#: data/functions.xml.in:2211
 msgid "Number of values"
 msgstr "值的數量"
 
@@ -5563,7 +5778,8 @@ msgstr "卜瓦松分布亂數"
 msgid "r:randpoisson"
 msgstr "r:randpoisson"
 
-#: data/functions.xml.in:2148 data/functions.xml.in:2518 data/functions.xml.in:2535 data/functions.xml.in:2625
+#: data/functions.xml.in:2148 data/functions.xml.in:2518
+#: data/functions.xml.in:2535 data/functions.xml.in:2625
 msgid "Rate (λ)"
 msgstr "速率(λ)"
 
@@ -5575,12 +5791,14 @@ msgstr "均勻分布亂數"
 msgid "r:randuniform"
 msgstr "r:randuniform"
 
-#: data/functions.xml.in:2160 data/functions.xml.in:2658 data/functions.xml.in:3859 data/functions.xml.in:3878
+#: data/functions.xml.in:2160 data/functions.xml.in:2658
+#: data/functions.xml.in:3859 data/functions.xml.in:3878
 #: data/functions.xml.in:3901
 msgid "Lower limit"
 msgstr "下界限"
 
-#: data/functions.xml.in:2164 data/functions.xml.in:3862 data/functions.xml.in:3881 data/functions.xml.in:3904
+#: data/functions.xml.in:2164 data/functions.xml.in:3862
+#: data/functions.xml.in:3881 data/functions.xml.in:3904
 msgid "Upper limit"
 msgstr "上界限"
 
@@ -5593,7 +5811,9 @@ msgid "r:randbetween"
 msgstr "r:randbetween"
 
 #: data/functions.xml.in:2175
-msgid "Returns uniformly distributed random integers between (including) bottom and top."
+msgid ""
+"Returns uniformly distributed random integers between (including) bottom and "
+"top."
 msgstr "回傳底部和頂部之間(包含)的均匀分布隨機整數。"
 
 #: data/functions.xml.in:2179
@@ -5756,12 +5976,14 @@ msgstr "共變異數"
 msgid "r:cov,r:covar"
 msgstr "r:cov,r:covar"
 
-#: data/functions.xml.in:2362 data/functions.xml.in:2375 data/functions.xml.in:2439 data/functions.xml.in:2451
+#: data/functions.xml.in:2362 data/functions.xml.in:2375
+#: data/functions.xml.in:2439 data/functions.xml.in:2451
 #: data/functions.xml.in:2466 data/functions.xml.in:2477
 msgid "Data 1"
 msgstr "資料1"
 
-#: data/functions.xml.in:2365 data/functions.xml.in:2378 data/functions.xml.in:2442 data/functions.xml.in:2454
+#: data/functions.xml.in:2365 data/functions.xml.in:2378
+#: data/functions.xml.in:2442 data/functions.xml.in:2454
 #: data/functions.xml.in:2469 data/functions.xml.in:2480
 msgid "Data 2"
 msgstr "資料2"
@@ -5788,19 +6010,23 @@ msgstr "r:linearfit"
 
 #: data/functions.xml.in:2387
 msgid ""
-"Returns the linear function, for a set of x and y values, estimated using simple linear regression with a single explanatory "
-"variable and the ordinary least squares method. If the vector of y values is empty, the first argument is used for sequential "
-"y values (with x values 1, 2, ..., n). It is possible to pass both x and y values in a two column matrix as the first "
-"argument."
+"Returns the linear function, for a set of x and y values, estimated using "
+"simple linear regression with a single explanatory variable and the ordinary "
+"least squares method. If the vector of y values is empty, the first argument "
+"is used for sequential y values (with x values 1, 2, ..., n). It is possible "
+"to pass both x and y values in a two column matrix as the first argument."
 msgstr ""
-"回傳用於X和Y值集合的線性函數，估計使用具有單個解釋變數的簡單線性回歸和普通最小平方法。如果y值的向量為空，則第一個引數用於循序y"
-"值(具有x值1、2、...、n)。可以傳遞x和y值在其中的雙行矩陣作為第一個引數。"
+"回傳用於X和Y值集合的線性函數，估計使用具有單個解釋變數的簡單線性回歸和普通最"
+"小平方法。如果y值的向量為空，則第一個引數用於循序y值(具有x值1、2、...、n)。可"
+"以傳遞x和y值在其中的雙行矩陣作為第一個引數。"
 
-#: data/functions.xml.in:2393 data/functions.xml.in:2409 data/functions.xml.in:2425
+#: data/functions.xml.in:2393 data/functions.xml.in:2409
+#: data/functions.xml.in:2425
 msgid "X values"
 msgstr "X值"
 
-#: data/functions.xml.in:2396 data/functions.xml.in:2412 data/functions.xml.in:2428
+#: data/functions.xml.in:2396 data/functions.xml.in:2412
+#: data/functions.xml.in:2428
 msgid "Y values"
 msgstr "Y值"
 
@@ -5814,12 +6040,13 @@ msgstr "r:quadraticfit"
 
 #: data/functions.xml.in:2402
 msgid ""
-"Fit data to a polynomial of degree 2, using least-squares method. If the vector of y values is empty, the first argument is "
-"used for sequential y values (with x values 1, 2, ..., n). It is possible to pass both x and y values in a two column matrix "
-"as the first argument."
+"Fit data to a polynomial of degree 2, using least-squares method. If the "
+"vector of y values is empty, the first argument is used for sequential y "
+"values (with x values 1, 2, ..., n). It is possible to pass both x and y "
+"values in a two column matrix as the first argument."
 msgstr ""
-"使用最小平方法將資料擬合到2次多項式。如果y值的向量為空，則第一個引數用於循序y值(具有x值1、2、...、n)。可以傳遞x和y值在其中的雙"
-"行矩陣作為第一個引數。"
+"使用最小平方法將資料擬合到2次多項式。如果y值的向量為空，則第一個引數用於循序y"
+"值(具有x值1、2、...、n)。可以傳遞x和y值在其中的雙行矩陣作為第一個引數。"
 
 #: data/functions.xml.in:2416
 msgid "Cubic Fit"
@@ -5831,12 +6058,13 @@ msgstr "r:cubicfit"
 
 #: data/functions.xml.in:2418
 msgid ""
-"Fit data to a polynomial of degree 3, using least-squares method. If the vector of y values is empty, the first argument is "
-"used for sequential y values (with x values 1, 2, ..., n). It is possible to pass both x and y values in a two column matrix "
-"as the first argument."
+"Fit data to a polynomial of degree 3, using least-squares method. If the "
+"vector of y values is empty, the first argument is used for sequential y "
+"values (with x values 1, 2, ..., n). It is possible to pass both x and y "
+"values in a two column matrix as the first argument."
 msgstr ""
-"使用最小平方法將資料擬合到3次多項式。如果y值的向量為空，則第一個引數用於循序y值(具有x值1、2、...、n)。可以傳遞x和y值在其中的雙"
-"行矩陣作為第一個引數。"
+"使用最小平方法將資料擬合到3次多項式。如果y值的向量為空，則第一個引數用於循序y"
+"值(具有x值1、2、...、n)。可以傳遞x和y值在其中的雙行矩陣作為第一個引數。"
 
 #: data/functions.xml.in:2433
 msgid "Correlation"
@@ -5891,7 +6119,9 @@ msgid "r:binomdist"
 msgstr "r:binomdist"
 
 #: data/functions.xml.in:2489
-msgid "Returns the probability mass or cumulative distribution function of the binomial distribution."
+msgid ""
+"Returns the probability mass or cumulative distribution function of the "
+"binomial distribution."
 msgstr "回傳二項式分布的機率質量或累積分布函數。"
 
 #: data/functions.xml.in:2492
@@ -5906,9 +6136,12 @@ msgstr "試驗數量(n)"
 msgid "Probability (p)"
 msgstr "機率(p)"
 
-#: data/functions.xml.in:2505 data/functions.xml.in:2522 data/functions.xml.in:2555 data/functions.xml.in:2574
-#: data/functions.xml.in:2612 data/functions.xml.in:2629 data/functions.xml.in:2646 data/functions.xml.in:2683
-#: data/functions.xml.in:2700 data/functions.xml.in:2736 data/functions.xml.in:2776 data/functions.xml.in:2792
+#: data/functions.xml.in:2505 data/functions.xml.in:2522
+#: data/functions.xml.in:2555 data/functions.xml.in:2574
+#: data/functions.xml.in:2612 data/functions.xml.in:2629
+#: data/functions.xml.in:2646 data/functions.xml.in:2683
+#: data/functions.xml.in:2700 data/functions.xml.in:2736
+#: data/functions.xml.in:2776 data/functions.xml.in:2792
 #: data/functions.xml.in:2828 data/functions.xml.in:2867
 msgid "Cumulative"
 msgstr "累積"
@@ -5922,7 +6155,9 @@ msgid "r:expondist"
 msgstr "r:expondist"
 
 #: data/functions.xml.in:2511
-msgid "Returns the probability density or cumulative distribution function of the exponential distribution."
+msgid ""
+"Returns the probability density or cumulative distribution function of the "
+"exponential distribution."
 msgstr "回傳指數分布的機率密度或累積分布函數。"
 
 #: data/functions.xml.in:2526
@@ -5933,7 +6168,8 @@ msgstr "指數逆累積分布"
 msgid "r:expinv"
 msgstr "r:expinv"
 
-#: data/functions.xml.in:2530 data/functions.xml.in:2582 data/functions.xml.in:2709 data/functions.xml.in:2744
+#: data/functions.xml.in:2530 data/functions.xml.in:2582
+#: data/functions.xml.in:2709 data/functions.xml.in:2744
 #: data/functions.xml.in:2801 data/functions.xml.in:2837
 msgid "P"
 msgstr "P"
@@ -5947,7 +6183,9 @@ msgid "r:logistic"
 msgstr "r:logistic"
 
 #: data/functions.xml.in:2542
-msgid "Returns the probability density or cumulative distribution function of the logistic distribution."
+msgid ""
+"Returns the probability density or cumulative distribution function of the "
+"logistic distribution."
 msgstr "回傳邏輯斯諦分布的機率密度或累積分布函數。"
 
 #: data/functions.xml.in:2548
@@ -5967,7 +6205,9 @@ msgid "r:normdist"
 msgstr "r:normdist"
 
 #: data/functions.xml.in:2561
-msgid "Returns the probability density or cumulative distribution function of the normal distribution."
+msgid ""
+"Returns the probability density or cumulative distribution function of the "
+"normal distribution."
 msgstr "回傳常態分布的機率密度或累積分布函數。"
 
 #: data/functions.xml.in:2567 data/functions.xml.in:2587
@@ -5995,7 +6235,9 @@ msgid "r:pareto"
 msgstr "r:pareto"
 
 #: data/functions.xml.in:2597
-msgid "Returns the probability density or cumulative distribution function of the Pareto distribution."
+msgid ""
+"Returns the probability density or cumulative distribution function of the "
+"Pareto distribution."
 msgstr "回傳帕累托分布的機率密度或累積分布函數。"
 
 #: data/functions.xml.in:2604 data/functions.xml.in:2768
@@ -6015,7 +6257,9 @@ msgid "r:poisson"
 msgstr "r:poisson"
 
 #: data/functions.xml.in:2618
-msgid "Returns the probability density or cumulative distribution function of the Poisson distribution."
+msgid ""
+"Returns the probability density or cumulative distribution function of the "
+"Poisson distribution."
 msgstr "回傳卜瓦松分布的機率密度或累積分布函數。"
 
 #: data/functions.xml.in:2633
@@ -6027,7 +6271,9 @@ msgid "r:rayleigh"
 msgstr "r:rayleigh"
 
 #: data/functions.xml.in:2635
-msgid "Returns the probability density or cumulative distribution function of the Rayleigh distribution."
+msgid ""
+"Returns the probability density or cumulative distribution function of the "
+"Rayleigh distribution."
 msgstr "回傳瑞利分布的機率密度或累積分布函數。"
 
 #: data/functions.xml.in:2642 data/functions.xml.in:2661
@@ -6044,9 +6290,11 @@ msgstr "r:rayleightail"
 
 #: data/functions.xml.in:2652
 msgid ""
-"Returns the probability density p(x) at x for a Rayleigh tail distribution with scale parameter sigma and a lower limit. "
-"(from Gnumeric)"
-msgstr "回傳x處的機率密度p(x)，用於具有尺度參數sigma和下限的瑞利尾端分布。(來自Gnumeric)"
+"Returns the probability density p(x) at x for a Rayleigh tail distribution "
+"with scale parameter sigma and a lower limit. (from Gnumeric)"
+msgstr ""
+"回傳x處的機率密度p(x)，用於具有尺度參數sigma和下限的瑞利尾端分布。(來自"
+"Gnumeric)"
 
 #: data/functions.xml.in:2666
 msgid "Gamma Distribution"
@@ -6057,10 +6305,13 @@ msgid "r:gammadist"
 msgstr "r:gammadist"
 
 #: data/functions.xml.in:2668
-msgid "Returns the probability density or cumulative distribution function of the gamma distribution."
+msgid ""
+"Returns the probability density or cumulative distribution function of the "
+"gamma distribution."
 msgstr "回傳伽瑪分布的機率密度或累積分布函數。"
 
-#: data/functions.xml.in:2675 data/functions.xml.in:2732 data/functions.xml.in:2753
+#: data/functions.xml.in:2675 data/functions.xml.in:2732
+#: data/functions.xml.in:2753
 msgid "Shape (k)"
 msgstr "形狀(k)"
 
@@ -6077,7 +6328,9 @@ msgid "r:chisqdist"
 msgstr "r:chisqdist"
 
 #: data/functions.xml.in:2689
-msgid "Returns the probability density or cumulative distribution function of the chi-square distribution."
+msgid ""
+"Returns the probability density or cumulative distribution function of the "
+"chi-square distribution."
 msgstr "回傳卡方分布的機率密度或累積分布函數。"
 
 #: data/functions.xml.in:2696 data/functions.xml.in:2714
@@ -6101,7 +6354,9 @@ msgid "r:weibulldist"
 msgstr "r:weibulldist"
 
 #: data/functions.xml.in:2721
-msgid "Returns the probability density or cumulative distribution function of the Weibull distribution."
+msgid ""
+"Returns the probability density or cumulative distribution function of the "
+"Weibull distribution."
 msgstr "回傳韋伯分布的機率密度或累積分布函數。"
 
 #: data/functions.xml.in:2728 data/functions.xml.in:2749
@@ -6125,7 +6380,9 @@ msgid "r:betadist"
 msgstr "r:betadist"
 
 #: data/functions.xml.in:2760
-msgid "Returns the probability density or cumulative distribution function of the beta distribution."
+msgid ""
+"Returns the probability density or cumulative distribution function of the "
+"beta distribution."
 msgstr "回傳貝他分布的機率密度或累積分布函數。"
 
 #: data/functions.xml.in:2772
@@ -6141,7 +6398,9 @@ msgid "r:tdist"
 msgstr "r:tdist"
 
 #: data/functions.xml.in:2782
-msgid "Returns the probability density or cumulative distribution function of the Student's t distribution."
+msgid ""
+"Returns the probability density or cumulative distribution function of the "
+"Student's t distribution."
 msgstr "回傳司徒頓t分布的機率密度或累積分布函數。"
 
 #: data/functions.xml.in:2788 data/functions.xml.in:2806
@@ -6165,7 +6424,9 @@ msgid "r:fdist"
 msgstr "r:fdist"
 
 #: data/functions.xml.in:2813
-msgid "Returns the probability density or cumulative distribution function of the F-distribution."
+msgid ""
+"Returns the probability density or cumulative distribution function of the F-"
+"distribution."
 msgstr "回傳F分布的機率密度或累積分布函數。"
 
 #: data/functions.xml.in:2820 data/functions.xml.in:2842
@@ -6193,7 +6454,9 @@ msgid "r:cauchydist"
 msgstr "r:cauchydist"
 
 #: data/functions.xml.in:2853
-msgid "Returns the probability density or cumulative distribution function of the Cauchy distribution."
+msgid ""
+"Returns the probability density or cumulative distribution function of the "
+"Cauchy distribution."
 msgstr "回傳柯西分布的機率密度或累積分布函數。"
 
 #: data/functions.xml.in:2860
@@ -6218,18 +6481,24 @@ msgstr "r:date"
 
 #: data/functions.xml.in:2877
 msgid ""
-"Returns a date. Available calendars are gregorian (1), hebrew (2), islamic (3), persian (4), indian (5), chinese (6), julian "
-"(7), milankovic (8), coptic (9), ethiopian (10), egyptian (11). The Chinese year uses an epoch of 2697 BCE and chinese leap "
-"months are indicated by adding 12 to the month number (e.g. leap month 4 = 16)."
+"Returns a date. Available calendars are gregorian (1), hebrew (2), islamic "
+"(3), persian (4), indian (5), chinese (6), julian (7), milankovic (8), "
+"coptic (9), ethiopian (10), egyptian (11). The Chinese year uses an epoch of "
+"2697 BCE and chinese leap months are indicated by adding 12 to the month "
+"number (e.g. leap month 4 = 16)."
 msgstr ""
-"回傳一個日期。可用的曆法有格里曆(1)、希伯來曆(2)、伊斯蘭曆(3)、伊朗曆(4)、印度曆(5)、農曆(6)、儒略曆(7)、儒略改革曆(8)、科普特"
-"曆(9)、衣索比亞曆(10)、埃及曆 (11)。農曆年使用西元前2697年的紀元，而農曆閏月用12加上月數指示(例如閏4月 = 16)。"
+"回傳一個日期。可用的曆法有格里曆(1)、希伯來曆(2)、伊斯蘭曆(3)、伊朗曆(4)、印"
+"度曆(5)、農曆(6)、儒略曆(7)、儒略改革曆(8)、科普特曆(9)、衣索比亞曆(10)、埃及"
+"曆 (11)。農曆年使用西元前2697年的紀元，而農曆閏月用12加上月數指示(例如閏4月 "
+"= 16)。"
 
-#: data/functions.xml.in:2879 data/functions.xml.in:2895 data/functions.xml.in:2986
+#: data/functions.xml.in:2879 data/functions.xml.in:2895
+#: data/functions.xml.in:2986
 msgid "Year"
 msgstr "年"
 
-#: data/functions.xml.in:2882 data/functions.xml.in:2898 data/functions.xml.in:2972 data/units.xml.in:1020
+#: data/functions.xml.in:2882 data/functions.xml.in:2898
+#: data/functions.xml.in:2972 data/units.xml.in:1020
 msgid "Month"
 msgstr "月"
 
@@ -6273,12 +6542,13 @@ msgstr "r:days"
 msgid ""
 "Returns the number of days between two dates.\n"
 "\n"
-"Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 "
-"or 4: European 30/360."
+"Basis is the type of day counting you want to use: 0: US 30/360, 1: real "
+"days (default), 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 "回傳兩個日期之間的天數。\n"
 "\n"
-"基礎是你想要使用的天數計數類型: 0: 美國30/360、1: 實際天數(預設)、2: 實際天數/360、3: 實際天數/365或4: 歐洲30/360。"
+"基礎是你想要使用的天數計數類型: 0: 美國30/360、1: 實際天數(預設)、2: 實際天"
+"數/360、3: 實際天數/365或4: 歐洲30/360。"
 
 #: data/functions.xml.in:2920 data/functions.xml.in:2939
 msgid "First date"
@@ -6288,8 +6558,10 @@ msgstr "第一個日期"
 msgid "Second date"
 msgstr "第二個日期"
 
-#: data/functions.xml.in:2926 data/functions.xml.in:2945 data/functions.xml.in:4787 data/functions.xml.in:4838
-#: data/functions.xml.in:4863 data/functions.xml.in:4888 data/functions.xml.in:4921 data/functions.xml.in:4945
+#: data/functions.xml.in:2926 data/functions.xml.in:2945
+#: data/functions.xml.in:4787 data/functions.xml.in:4838
+#: data/functions.xml.in:4863 data/functions.xml.in:4888
+#: data/functions.xml.in:4921 data/functions.xml.in:4945
 #: data/functions.xml.in:4970 data/functions.xml.in:4998
 msgid "Day counting basis"
 msgstr "天數計數基礎"
@@ -6310,12 +6582,13 @@ msgstr "r:yearfrac"
 msgid ""
 "Returns the number of years (fractional) between two dates.\n"
 "\n"
-"Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (default), 2: real days/360, 3: real days/365 "
-"or 4: European 30/360."
+"Basis is the type of day counting you want to use: 0: US 30/360, 1: real "
+"days (default), 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 "回傳兩個日期之間的年數(分數)。\n"
 "\n"
-"基礎是你想要使用的天數計數類型: 0: 美國30/360、1: 實際天數(預設)、2: 實際天數/360、3: 實際天數/365或4: 歐洲30/360。"
+"基礎是你想要使用的天數計數類型: 0: 美國30/360、1: 實際天數(預設)、2: 實際天"
+"數/360、3: 實際天數/365或4: 歐洲30/360。"
 
 #: data/functions.xml.in:2952
 msgid "Week of Year"
@@ -6325,9 +6598,12 @@ msgstr "年中的第幾週"
 msgid "r:week"
 msgstr "r:week"
 
-#: data/functions.xml.in:2955 data/functions.xml.in:2965 data/functions.xml.in:2975 data/functions.xml.in:2982
-#: data/functions.xml.in:2989 data/functions.xml.in:2996 data/functions.xml.in:3008 data/functions.xml.in:3015
-#: data/functions.xml.in:3030 data/functions.xml.in:3040 data/functions.xml.in:3050 data/functions.xml.in:3063
+#: data/functions.xml.in:2955 data/functions.xml.in:2965
+#: data/functions.xml.in:2975 data/functions.xml.in:2982
+#: data/functions.xml.in:2989 data/functions.xml.in:2996
+#: data/functions.xml.in:3008 data/functions.xml.in:3015
+#: data/functions.xml.in:3030 data/functions.xml.in:3040
+#: data/functions.xml.in:3050 data/functions.xml.in:3063
 #: data/functions.xml.in:3075 data/functions.xml.in:3096
 msgid "Date"
 msgstr "日期"
@@ -6406,9 +6682,11 @@ msgstr "r:stamptodate,unix2date"
 
 #: data/functions.xml.in:3021
 msgid ""
-"Returns the local date and time represented by the specified Unix timestamp (seconds, excluding leap seconds, since "
-"1970-01-01). Supports time units."
-msgstr "回傳用指定的UNIX時戳(秒，不包括閏秒，自從1970-01-01)表示的本地日期和時間。支援時間單位。"
+"Returns the local date and time represented by the specified Unix timestamp "
+"(seconds, excluding leap seconds, since 1970-01-01). Supports time units."
+msgstr ""
+"回傳用指定的UNIX時戳(秒，不包括閏秒，自從1970-01-01)表示的本地日期和時間。支"
+"援時間單位。"
 
 #: data/functions.xml.in:3023
 msgid "Timestamp"
@@ -6446,7 +6724,8 @@ msgstr "加上年數"
 msgid "r:addYears"
 msgstr "r:addYears"
 
-#: data/functions.xml.in:3053 data/functions.xml.in:4480 data/functions.xml.in:4718 data/functions.xml.in:4736
+#: data/functions.xml.in:3053 data/functions.xml.in:4480
+#: data/functions.xml.in:4718 data/functions.xml.in:4736
 #: data/functions.xml.in:5018
 msgid "Years"
 msgstr "年數"
@@ -6461,9 +6740,10 @@ msgstr "r:addTime"
 
 #: data/functions.xml.in:3059
 msgid ""
-"Adds a time value to a date. The value can be positive or negative, but must use a unit based on seconds (such as day and "
-"year)."
-msgstr "將時間值加上日期。該值可以是正數或負數，但必須使用基於秒(例如日和年)的單位。"
+"Adds a time value to a date. The value can be positive or negative, but must "
+"use a unit based on seconds (such as day and year)."
+msgstr ""
+"將時間值加上日期。該值可以是正數或負數，但必須使用基於秒(例如日和年)的單位。"
 
 #: data/functions.xml.in:3066 data/units.xml.in:934
 msgid "Time"
@@ -6479,9 +6759,12 @@ msgstr "r:lunarphase"
 
 #: data/functions.xml.in:3073
 msgid ""
-"Returns the lunar phase, as a number between 0 and 1, for the specified date. This value corresponds to an angle between 0 "
-"and 360 degrees. 0 represents new moon, 0.5 full moon, and 0.25 and 0.75 quarter moons."
-msgstr "回傳指定日期的月相(0和1之間的數字)。該值對應於0和360度之間的角度。0代表新月、0.5代表滿月，而0.25和0.75代表弦月。"
+"Returns the lunar phase, as a number between 0 and 1, for the specified "
+"date. This value corresponds to an angle between 0 and 360 degrees. 0 "
+"represents new moon, 0.5 full moon, and 0.25 and 0.75 quarter moons."
+msgstr ""
+"回傳指定日期的月相(0和1之間的數字)。該值對應於0和360度之間的角度。0代表新月、"
+"0.5代表滿月，而0.25和0.75代表弦月。"
 
 #: data/functions.xml.in:3079
 msgid "Find Lunar Phase"
@@ -6493,13 +6776,16 @@ msgstr "r:nextlunarphase"
 
 #: data/functions.xml.in:3081
 msgid ""
-"Returns the date when the specified lunar phase occurs. The function searches forward beginning at the specified date. The "
-"lunar phase is specified as a number between 0 and 1, where 0 represents new moon, 0.5 full moon, and 0.25 and 0.75 quarter "
-"moons. Angle values are also allowed (e.g. π rad = 180° which corresponds to a value of 0.5). Values above 1, without unit, "
-"are interpreted as degrees."
+"Returns the date when the specified lunar phase occurs. The function "
+"searches forward beginning at the specified date. The lunar phase is "
+"specified as a number between 0 and 1, where 0 represents new moon, 0.5 full "
+"moon, and 0.25 and 0.75 quarter moons. Angle values are also allowed (e.g. π "
+"rad = 180° which corresponds to a value of 0.5). Values above 1, without "
+"unit, are interpreted as degrees."
 msgstr ""
-"回傳指定月相發生的日期。該函數從指定日期開始向前搜尋。月相指定為0和1之間的數字，其中0代表新月、0.5代表滿月和0.25和0.75代表弦"
-"月。也允許角度值(例如π rad = 180°，對應於0.5的值)。高於1的值(無單位)被解釋為度。"
+"回傳指定月相發生的日期。該函數從指定日期開始向前搜尋。月相指定為0和1之間的數"
+"字，其中0代表新月、0.5代表滿月和0.25和0.75代表弦月。也允許角度值(例如π rad = "
+"180°，對應於0.5的值)。高於1的值(無單位)被解釋為度。"
 
 #: data/functions.xml.in:3083
 msgid "Lunar phase"
@@ -6554,7 +6840,8 @@ msgid "r:uncertainty"
 msgstr "r:uncertainty"
 
 #: data/functions.xml.in:3118
-msgid "Specifies the absolute or relative (default) uncertainty/error of a value."
+msgid ""
+"Specifies the absolute or relative (default) uncertainty/error of a value."
 msgstr "指定一個值的絕對或相對(預設)誤差。"
 
 #: data/functions.xml.in:3126 data/functions.xml.in:3161
@@ -6594,7 +6881,9 @@ msgid "r:midpoint,valuePart"
 msgstr "r:midpoint,valuePart"
 
 #: data/functions.xml.in:3148
-msgid "Returns the midpoint between the endpoints of a numerical interval, or the value part of a value with uncertainty/error."
+msgid ""
+"Returns the midpoint between the endpoints of a numerical interval, or the "
+"value part of a value with uncertainty/error."
 msgstr "回傳數值區間的端點之間的中點，或具有誤差的值的值部分。"
 
 #: data/functions.xml.in:3154
@@ -6606,7 +6895,9 @@ msgid "r:errorPart"
 msgstr "r:errorPart"
 
 #: data/functions.xml.in:3156
-msgid "Returns the absolute (default) or relative uncertainty/error of a numerical value."
+msgid ""
+"Returns the absolute (default) or relative uncertainty/error of a numerical "
+"value."
 msgstr "回傳數值的絕對(預設)或相對誤差。"
 
 #: data/functions.xml.in:3166
@@ -6643,12 +6934,14 @@ msgstr "r:code"
 
 #: data/functions.xml.in:3185
 msgid ""
-"Encodes a Unicode character or text string using the selected format. Supported encodings are UTF-8 (0), UTF-16 (1), and "
-"UTF-32 (2). If the third argument is true, each separate code unit (8, 16, or 32 bits depending on encoding) is placed in a "
-"vector."
+"Encodes a Unicode character or text string using the selected format. "
+"Supported encodings are UTF-8 (0), UTF-16 (1), and UTF-32 (2). If the third "
+"argument is true, each separate code unit (8, 16, or 32 bits depending on "
+"encoding) is placed in a vector."
 msgstr ""
-"使用選擇的格式編碼Unicode字元或文字字串。支援的編碼有UTF-8 (0)、UTF-16 (1)和UTF-32 (2)。如果第三個引數為真，則將每個單獨的代碼"
-"單元(8、16或32位元取決於編碼)放在向量中。"
+"使用選擇的格式編碼Unicode字元或文字字串。支援的編碼有UTF-8 (0)、UTF-16 (1)和"
+"UTF-32 (2)。如果第三個引數為真，則將每個單獨的代碼單元(8、16或32位元取決於編"
+"碼)放在向量中。"
 
 #: data/functions.xml.in:3187
 msgid "Character"
@@ -6708,11 +7001,13 @@ msgstr "r:replace"
 
 #: data/functions.xml.in:3223
 msgid ""
-"Replaces a certain value in an expression with a new value. The expression is calculated before the replacement if the fourth "
-"argument is true."
-msgstr "用新值取代表達式中的某個值。如果第四個引數為真，則在取代前計算該表達式。"
+"Replaces a certain value in an expression with a new value. The expression "
+"is calculated before the replacement if the fourth argument is true."
+msgstr ""
+"用新值取代表達式中的某個值。如果第四個引數為真，則在取代前計算該表達式。"
 
-#: data/functions.xml.in:3225 data/functions.xml.in:3243 data/functions.xml.in:3339
+#: data/functions.xml.in:3225 data/functions.xml.in:3243
+#: data/functions.xml.in:3339
 msgid "Expression"
 msgstr "表達式"
 
@@ -6737,7 +7032,9 @@ msgid "r:nounit,strip_units"
 msgstr "r:nounit,strip_units"
 
 #: data/functions.xml.in:3240
-msgid "Removes all units from an expression. No unit conversion or prefix changes are performed before the removal."
+msgid ""
+"Removes all units from an expression. No unit conversion or prefix changes "
+"are performed before the removal."
 msgstr "從表達式中移除所有單位。在移除前不執行單位轉換或前綴變更。"
 
 #: data/functions.xml.in:3247
@@ -6748,12 +7045,14 @@ msgstr "處理向量元素"
 msgid "r:process"
 msgstr "r:process"
 
-#: data/functions.xml.in:3253 data/functions.xml.in:3272 data/functions.xml.in:3303 data/functions.xml.in:3328
+#: data/functions.xml.in:3253 data/functions.xml.in:3272
+#: data/functions.xml.in:3303 data/functions.xml.in:3328
 #: data/functions.xml.in:3537
 msgid "Element variable"
 msgstr "元素變數"
 
-#: data/functions.xml.in:3259 data/functions.xml.in:3312 data/functions.xml.in:3700 data/functions.xml.in:3718
+#: data/functions.xml.in:3259 data/functions.xml.in:3312
+#: data/functions.xml.in:3700 data/functions.xml.in:3718
 msgid "Index variable"
 msgstr "索引變數"
 
@@ -6797,11 +7096,13 @@ msgstr "第一個元素"
 msgid "Last element"
 msgstr "最後一個元素"
 
-#: data/functions.xml.in:3297 data/functions.xml.in:3511 data/functions.xml.in:3528
+#: data/functions.xml.in:3297 data/functions.xml.in:3511
+#: data/functions.xml.in:3528
 msgid "Initial value"
 msgstr "初始值"
 
-#: data/functions.xml.in:3306 data/functions.xml.in:3517 data/functions.xml.in:3534
+#: data/functions.xml.in:3306 data/functions.xml.in:3517
+#: data/functions.xml.in:3534
 msgid "Value variable"
 msgstr "值變數"
 
@@ -6849,7 +7150,8 @@ msgstr "顯示錯誤"
 msgid "r:error"
 msgstr "r:error"
 
-#: data/functions.xml.in:3359 data/functions.xml.in:3366 data/functions.xml.in:3373
+#: data/functions.xml.in:3359 data/functions.xml.in:3366
+#: data/functions.xml.in:3373
 msgid "Message"
 msgstr "訊息"
 
@@ -6881,18 +7183,22 @@ msgstr "r:save"
 msgid ""
 "Stores a value in a variable or saves an expression as a function.\n"
 "\n"
-"A function is created if the name includes parentheses (e.g. \"f()\"). Optionally the function arguments can be specified in "
-"the name (e.g. \"save(a+b,f(a,b))\"). Otherwise the function arguments are expected to be referred to in the expression using "
-"\\x, \\y, \\z, \\a, \\b, ..., or x, y, z (e.g. \"save(x+y,f())\").\n"
+"A function is created if the name includes parentheses (e.g. \"f()\"). "
+"Optionally the function arguments can be specified in the name (e.g. "
+"\"save(a+b,f(a,b))\"). Otherwise the function arguments are expected to be "
+"referred to in the expression using \\x, \\y, \\z, \\a, \\b, ..., or x, y, z "
+"(e.g. \"save(x+y,f())\").\n"
 "\n"
-"If a function was created, the processed function expression is returned as a text string, otherwise the value is returned.\n"
+"If a function was created, the processed function expression is returned as "
+"a text string, otherwise the value is returned.\n"
 "\n"
 "The \":=\" operator (e.g. var1:=10) is a shortcut for this function."
 msgstr ""
 "將值儲存在變數中或將表達式儲存為函數。\n"
 "\n"
-"如果名稱包含括號(例如\"f()\")，則建立一個函數。函數引數可以在名稱中選擇性的指定(例如\"save(a+b,f(a,b))\")。否則函數引數預期使"
-"用\\x、\\y、\\z、\\a、\\b、...，或x、y、z(例如\"save(x+y,f())\")。\n"
+"如果名稱包含括號(例如\"f()\")，則建立一個函數。函數引數可以在名稱中選擇性的指"
+"定(例如\"save(a+b,f(a,b))\")。否則函數引數預期使用\\x、\\y、\\z、\\a、"
+"\\b、...，或x、y、z(例如\"save(x+y,f())\")。\n"
 "\n"
 "如果函數被建立，則已處理的函數表達式回傳為文字字串，否則回傳該值。\n"
 "\n"
@@ -6939,7 +7245,9 @@ msgid "r:isNumber"
 msgstr "r:isNumber"
 
 #: data/functions.xml.in:3418
-msgid "Returns true if evaluated argument value is explicitly a real, complex, or infinite number (has number type)."
+msgid ""
+"Returns true if evaluated argument value is explicitly a real, complex, or "
+"infinite number (has number type)."
 msgstr "如果評估的引數值明確是實數、複數或無窮數字(具有數字類型)，則回傳true。"
 
 #: data/functions.xml.in:3424
@@ -6951,7 +7259,9 @@ msgid "r:isReal"
 msgstr "r:isReal"
 
 #: data/functions.xml.in:3426
-msgid "Returns true if evaluated argument value is explicitly a real number (has number type with zero imaginary part)."
+msgid ""
+"Returns true if evaluated argument value is explicitly a real number (has "
+"number type with zero imaginary part)."
 msgstr "如果評估的引數值明確是實數(沒有虛部的數字類型)，則回傳true。"
 
 #: data/functions.xml.in:3432
@@ -6963,7 +7273,9 @@ msgid "r:isRational"
 msgstr "r:isRational"
 
 #: data/functions.xml.in:3434
-msgid "Returns true if evaluated argument value is explicitly a rational number (has rational type)."
+msgid ""
+"Returns true if evaluated argument value is explicitly a rational number "
+"(has rational type)."
 msgstr "如果評估的引數值明確是有理數(具有有理類型)，則回傳true。"
 
 #: data/functions.xml.in:3440
@@ -6975,7 +7287,9 @@ msgid "r:isInteger"
 msgstr "r:isInteger"
 
 #: data/functions.xml.in:3442
-msgid "Returns true if evaluated argument value is explicitly an integer (has integer type)."
+msgid ""
+"Returns true if evaluated argument value is explicitly an integer (has "
+"integer type)."
 msgstr "如果評估的引數值明確是整數(具有整數類型)，則回傳true。"
 
 #: data/functions.xml.in:3449
@@ -6987,7 +7301,9 @@ msgid "r:representsNumber"
 msgstr "r:representsNumber"
 
 #: data/functions.xml.in:3451
-msgid "Returns true if value is or represents a number (scalar without unit). False negatives are allowed."
+msgid ""
+"Returns true if value is or represents a number (scalar without unit). False "
+"negatives are allowed."
 msgstr "如果該值是或表示一個數字(無單位純量)，則回傳true。允許偽陰性。"
 
 #: data/functions.xml.in:3457
@@ -6999,7 +7315,9 @@ msgid "r:representsReal"
 msgstr "r:representsReal"
 
 #: data/functions.xml.in:3459
-msgid "Returns true if value is or represents a real number. False negatives are allowed."
+msgid ""
+"Returns true if value is or represents a real number. False negatives are "
+"allowed."
 msgstr "如果該值是或表示一個實數，則回傳true。允許偽陰性。"
 
 #: data/functions.xml.in:3465
@@ -7011,7 +7329,9 @@ msgid "r:representsRational"
 msgstr "r:representsRational"
 
 #: data/functions.xml.in:3467
-msgid "Returns true if value is or represents a rational number. False negatives are allowed."
+msgid ""
+"Returns true if value is or represents a rational number. False negatives "
+"are allowed."
 msgstr "如果該值是或表示一個有理數，則回傳true。允許偽陰性。"
 
 #: data/functions.xml.in:3473
@@ -7023,7 +7343,9 @@ msgid "r:representsInteger"
 msgstr "r:representsInteger"
 
 #: data/functions.xml.in:3475
-msgid "Returns true if value is or represents an integer. False negatives are allowed."
+msgid ""
+"Returns true if value is or represents an integer. False negatives are "
+"allowed."
 msgstr "如果該值是或表示一個整數，則回傳true。允許偽陰性。"
 
 #: data/functions.xml.in:3482
@@ -7088,8 +7410,8 @@ msgstr "r:if"
 
 #: data/functions.xml.in:3543
 msgid ""
-"Tests a condition and returns a value depending on the result. Vectors can be used for argument 1 and 2, instead of nested "
-"functions."
+"Tests a condition and returns a value depending on the result. Vectors can "
+"be used for argument 1 and 2, instead of nested functions."
 msgstr "測試條件並根據結果回傳一個值。向量可用於引數1和2，代替巢狀函數。"
 
 #: data/functions.xml.in:3548
@@ -7126,9 +7448,12 @@ msgstr "按位元移位"
 
 #: data/functions.xml.in:3579
 msgid ""
-"Applies logical or arithmetic bitwise shift to an integer. The second argument specifies the number of steps that each binary "
-"bit is shifted to the left (use negative values for right shift)."
-msgstr "將邏輯或算術按位元移位應用於整數。第二個引數指定每個二進制位元移位到左側的步數(使用負值右移)。"
+"Applies logical or arithmetic bitwise shift to an integer. The second "
+"argument specifies the number of steps that each binary bit is shifted to "
+"the left (use negative values for right shift)."
+msgstr ""
+"將邏輯或算術按位元移位應用於整數。第二個引數指定每個二進制位元移位到左側的步"
+"數(使用負值右移)。"
 
 #: data/functions.xml.in:3580
 msgid "r:shift"
@@ -7144,21 +7469,24 @@ msgstr "按位元補數(Not)"
 
 #: data/functions.xml.in:3593
 msgid ""
-"Applies bitwise NOT to an integer of specified bit width and signedness (use 1 for signed and 0 for unsigned). If bit width "
-"is zero, the smallest necessary number of bits (of 8, 16, 32, 64, 128, ...) will be used."
+"Applies bitwise NOT to an integer of specified bit width and signedness (use "
+"1 for signed and 0 for unsigned). If bit width is zero, the smallest "
+"necessary number of bits (of 8, 16, 32, 64, 128, ...) will be used."
 msgstr ""
-"將按位元NOT應用於指定的位元寬度和符號性(1用於有號，0用於無號)的整數。如果位元寬度為零，則使用最少必要的位元數量(8、16、32、"
-"64、128、...)。"
+"將按位元NOT應用於指定的位元寬度和符號性(1用於有號，0用於無號)的整數。如果位元"
+"寬度為零，則使用最少必要的位元數量(8、16、32、64、128、...)。"
 
 #: data/functions.xml.in:3594
 msgid "r:bitcmp"
 msgstr "r:bitcmp"
 
-#: data/functions.xml.in:3599 data/functions.xml.in:3616 data/functions.xml.in:3637 data/functions.xml.in:3661
+#: data/functions.xml.in:3599 data/functions.xml.in:3616
+#: data/functions.xml.in:3637 data/functions.xml.in:3661
 msgid "Bit width"
 msgstr "位元寬度"
 
-#: data/functions.xml.in:3602 data/functions.xml.in:3619 data/functions.xml.in:3640 data/functions.xml.in:3664
+#: data/functions.xml.in:3602 data/functions.xml.in:3619
+#: data/functions.xml.in:3640 data/functions.xml.in:3664
 msgid "Signed integer"
 msgstr "有號整數"
 
@@ -7168,12 +7496,15 @@ msgstr "位元旋轉"
 
 #: data/functions.xml.in:3607
 msgid ""
-"Applies circular bitwise shift to an integer of specified bit width and signedness (use 1 for signed and 0 for unsigned). The "
-"second argument specifies the number of steps that each binary bit is shifted to the left (use negative values for right "
-"shift). If bit width is zero, the smallest necessary number of bits (of 8, 16, 32, 64, 128, ...) will be used."
+"Applies circular bitwise shift to an integer of specified bit width and "
+"signedness (use 1 for signed and 0 for unsigned). The second argument "
+"specifies the number of steps that each binary bit is shifted to the left "
+"(use negative values for right shift). If bit width is zero, the smallest "
+"necessary number of bits (of 8, 16, 32, 64, 128, ...) will be used."
 msgstr ""
-"將環形的按位元移位應用於指定的位元寬度和符號性的整數(1用於有號，0用於無號)。第二個引數指定每個二進制位元移位到左側的步數(使用"
-"負值右移)。如果位元寬度為零，則使用最少必要的位元數量(8、16、32、64、128、...)。"
+"將環形的按位元移位應用於指定的位元寬度和符號性的整數(1用於有號，0用於無號)。"
+"第二個引數指定每個二進制位元移位到左側的步數(使用負值右移)。如果位元寬度為"
+"零，則使用最少必要的位元數量(8、16、32、64、128、...)。"
 
 #: data/functions.xml.in:3608
 msgid "r:bitrot"
@@ -7185,11 +7516,12 @@ msgstr "設定位元"
 
 #: data/functions.xml.in:3624
 msgid ""
-"Set binary bit at specified position. The index of the least significant bit is 1. Specify bit width and signedness (use 1 "
-"for signed and 0 for unsigned) to allow sign changes when the most significant bit is set."
+"Set binary bit at specified position. The index of the least significant bit "
+"is 1. Specify bit width and signedness (use 1 for signed and 0 for unsigned) "
+"to allow sign changes when the most significant bit is set."
 msgstr ""
-"設定指定位置的二進制位元。最低有效位元的索引為1。設定最高有效位元時，指定位元寬度和符號性(1用於有號，0用於無號)以允許符號變"
-"更。"
+"設定指定位置的二進制位元。最低有效位元的索引為1。設定最高有效位元時，指定位元"
+"寬度和符號性(1用於有號，0用於無號)以允許符號變更。"
 
 #: data/functions.xml.in:3626
 msgid "r:bitset"
@@ -7201,12 +7533,14 @@ msgstr "設定多個位元"
 
 #: data/functions.xml.in:3645
 msgid ""
-"Set binary bits at specified range with binary bits from an integer (index 1 to length of range). The index of the least "
-"significant bit is 1. Specify bit width and signedness (use 1 for signed and 0 for unsigned) to allow sign changes when the "
-"most significant bit is set."
+"Set binary bits at specified range with binary bits from an integer (index 1 "
+"to length of range). The index of the least significant bit is 1. Specify "
+"bit width and signedness (use 1 for signed and 0 for unsigned) to allow sign "
+"changes when the most significant bit is set."
 msgstr ""
-"用來自整數的二進制位元設定在指定範圍的二進制位元(索引1至範圍長度)。最低有效位元的索引為1。設定最高有效位元時，指定位元寬度和符"
-"號性(1用於有號，0用於無號)以允許符號變更。"
+"用來自整數的二進制位元設定在指定範圍的二進制位元(索引1至範圍長度)。最低有效位"
+"元的索引為1。設定最高有效位元時，指定位元寬度和符號性(1用於有號，0用於無號)以"
+"允許符號變更。"
 
 #: data/functions.xml.in:3647
 msgid "r:setbits"
@@ -7226,11 +7560,13 @@ msgstr "取得位元"
 
 #: data/functions.xml.in:3669
 msgid ""
-"Returns the binary bit at the specified position. The index of the least significant bit is 1. If last index is non-zero the "
-"bits from (first) position to, and including, last position are returned as a new binary number."
+"Returns the binary bit at the specified position. The index of the least "
+"significant bit is 1. If last index is non-zero the bits from (first) "
+"position to, and including, last position are returned as a new binary "
+"number."
 msgstr ""
-"回傳指定位置的二進制位元。最低有效位元的索引為1。如果最後一個索引非零，則從(第一個)位置到(包括)最後一個位置的位元回傳為新的二"
-"進制數字。"
+"回傳指定位置的二進制位元。最低有效位元的索引為1。如果最後一個索引非零，則從"
+"(第一個)位置到(包括)最後一個位置的位元回傳為新的二進制數字。"
 
 #: data/functions.xml.in:3671
 msgid "r:bitget"
@@ -7249,7 +7585,9 @@ msgid "au:Σ,au:∑,r:sum"
 msgstr "au:Σ,au:∑,r:sum"
 
 #: data/functions.xml.in:3688
-msgid "Corresponds to the summation symbol. Adds terms for each x ranging from the lower to the upper limit."
+msgid ""
+"Corresponds to the summation symbol. Adds terms for each x ranging from the "
+"lower to the upper limit."
 msgstr "對應於求和符號。對每個範圍從下限到上限的x將項相加。"
 
 #: data/functions.xml.in:3691
@@ -7273,7 +7611,9 @@ msgid "au:Π,r:product"
 msgstr "au:Π,r:product"
 
 #: data/functions.xml.in:3706
-msgid "Corresponds to the product symbol. Multiplies factors for each x ranging from the lower to the upper limit."
+msgid ""
+"Corresponds to the product symbol. Multiplies factors for each x ranging "
+"from the lower to the upper limit."
 msgstr "對應於積符號。對每個範圍從下限到上限的x將因數相乘。"
 
 #: data/functions.xml.in:3709
@@ -7304,11 +7644,13 @@ msgstr "求解方程式"
 msgid "r:solve"
 msgstr "r:solve"
 
-#: data/functions.xml.in:3735 data/functions.xml.in:3745 data/functions.xml.in:3760 data/functions.xml.in:3779
+#: data/functions.xml.in:3735 data/functions.xml.in:3745
+#: data/functions.xml.in:3760 data/functions.xml.in:3779
 msgid "Equation"
 msgstr "方程式"
 
-#: data/functions.xml.in:3738 data/functions.xml.in:3843 data/functions.xml.in:3958
+#: data/functions.xml.in:3738 data/functions.xml.in:3843
+#: data/functions.xml.in:3958
 msgid "With respect to"
 msgstr "對於"
 
@@ -7330,9 +7672,12 @@ msgstr "初始條件: 引數值(x)"
 
 #: data/functions.xml.in:3753
 msgid ""
-"Solves a differential equation and returns the value of y(x). The derivative in the equation should be in the format diff(y, "
-"x). Only first-order differential equations are currently supported."
-msgstr "求解微分方程式並回傳y(x)的值。方程式中的導數應為格式diff(y, x)。目前只支援一階微分方程式。"
+"Solves a differential equation and returns the value of y(x). The derivative "
+"in the equation should be in the format diff(y, x). Only first-order "
+"differential equations are currently supported."
+msgstr ""
+"求解微分方程式並回傳y(x)的值。方程式中的導數應為格式diff(y, x)。目前只支援一"
+"階微分方程式。"
 
 #: data/functions.xml.in:3757
 msgid "Solve using Newton's Method"
@@ -7346,11 +7691,13 @@ msgstr "r:newtonsolve"
 msgid "Initial estimate"
 msgstr "初始估計"
 
-#: data/functions.xml.in:3769 data/functions.xml.in:3791 data/variables.xml.in:928
+#: data/functions.xml.in:3769 data/functions.xml.in:3791
+#: data/variables.xml.in:928
 msgid "Precision"
 msgstr "精確度"
 
-#: data/functions.xml.in:3772 data/functions.xml.in:3794 data/functions.xml.in:3887
+#: data/functions.xml.in:3772 data/functions.xml.in:3794
+#: data/functions.xml.in:3887
 msgid "Max iterations"
 msgstr "最大疊代"
 
@@ -7379,7 +7726,9 @@ msgid "r:solve2"
 msgstr "r:solve2"
 
 #: data/functions.xml.in:3800
-msgid "Solves two equations with two unknown variables. Returns the value of the first variable."
+msgid ""
+"Solves two equations with two unknown variables. Returns the value of the "
+"first variable."
 msgstr "求解具有兩個未知數的兩個方程式。回傳第一個變數的值。"
 
 #: data/functions.xml.in:3803
@@ -7407,7 +7756,8 @@ msgid "r:linearfunction"
 msgstr "r:linearfunction"
 
 #: data/functions.xml.in:3818
-msgid "Finds the linear function for the straight line between two distinct points."
+msgid ""
+"Finds the linear function for the straight line between two distinct points."
 msgstr "尋找兩個不同點之間的直線的線性函數。"
 
 #: data/functions.xml.in:3821
@@ -7450,7 +7800,8 @@ msgstr "積分"
 msgid "r:integrate,integral,au:∫"
 msgstr "r:integrate,integral,au:∫"
 
-#: data/functions.xml.in:3865 data/functions.xml.in:3890 data/functions.xml.in:3910
+#: data/functions.xml.in:3865 data/functions.xml.in:3890
+#: data/functions.xml.in:3910
 msgid "Variable of integration"
 msgstr "積分變數"
 
@@ -7488,9 +7839,12 @@ msgstr "極限"
 
 #: data/functions.xml.in:3915
 msgid ""
-"Returns the two-sided limit of the function if direction is zero, limit from left (below) if direction is -1, or limit from "
-"right (above) if direction is +1."
-msgstr "回傳函數的雙邊極限(如果方向為零)，左極限(如果方向為-1)，或右極限(如果方向為+1)。"
+"Returns the two-sided limit of the function if direction is zero, limit from "
+"left (below) if direction is -1, or limit from right (above) if direction is "
+"+1."
+msgstr ""
+"回傳函數的雙邊極限(如果方向為零)，左極限(如果方向為-1)，或右極限(如果方向為"
+"+1)。"
 
 #: data/functions.xml.in:3916
 msgid "r:limit"
@@ -7514,9 +7868,12 @@ msgstr "r:multilimit"
 
 #: data/functions.xml.in:3933
 msgid ""
-"Returns limit of a function for multiple variables. The limit is calculated recursively, for one variable in each iteration, "
-"with the result of each iteration used as function in the next."
-msgstr "回傳多變數函數的極限。極限遞迴計算(每次疊代一個變數)，每次疊代的結果用作下次疊代的函數。"
+"Returns limit of a function for multiple variables. The limit is calculated "
+"recursively, for one variable in each iteration, with the result of each "
+"iteration used as function in the next."
+msgstr ""
+"回傳多變數函數的極限。極限遞迴計算(每次疊代一個變數)，每次疊代的結果用作下次"
+"疊代的函數。"
 
 #: data/functions.xml.in:3944
 msgid "Value vector"
@@ -7682,11 +8039,13 @@ msgstr "斜邊"
 msgid "r:hypot"
 msgstr "r:hypot"
 
-#: data/functions.xml.in:4031 data/functions.xml.in:4053 data/functions.xml.in:4350 data/functions.xml.in:4365
+#: data/functions.xml.in:4031 data/functions.xml.in:4053
+#: data/functions.xml.in:4350 data/functions.xml.in:4365
 msgid "Side A"
 msgstr "邊A"
 
-#: data/functions.xml.in:4034 data/functions.xml.in:4056 data/functions.xml.in:4353 data/functions.xml.in:4368
+#: data/functions.xml.in:4034 data/functions.xml.in:4056
+#: data/functions.xml.in:4353 data/functions.xml.in:4368
 msgid "Side B"
 msgstr "邊B"
 
@@ -7698,9 +8057,12 @@ msgstr "三角形面積"
 msgid "r:triangle"
 msgstr "r:triangle"
 
-#: data/functions.xml.in:4045 data/functions.xml.in:4094 data/functions.xml.in:4105 data/functions.xml.in:4119
-#: data/functions.xml.in:4130 data/functions.xml.in:4230 data/functions.xml.in:4245 data/functions.xml.in:4260
-#: data/functions.xml.in:4278 data/functions.xml.in:4341 data/functions.xml.in:4371
+#: data/functions.xml.in:4045 data/functions.xml.in:4094
+#: data/functions.xml.in:4105 data/functions.xml.in:4119
+#: data/functions.xml.in:4130 data/functions.xml.in:4230
+#: data/functions.xml.in:4245 data/functions.xml.in:4260
+#: data/functions.xml.in:4278 data/functions.xml.in:4341
+#: data/functions.xml.in:4371
 msgid "Height"
 msgstr "高度"
 
@@ -7728,12 +8090,14 @@ msgstr "圓面積"
 msgid "r:circle"
 msgstr "r:circle"
 
-#: data/functions.xml.in:4068 data/functions.xml.in:4077
-msgid "Calculates the area of a circle using the radius"
-msgstr "使用半徑計算圓的面積"
+#: data/functions.xml.in:4068
+msgid "Calculates the area of a circle using the radius."
+msgstr "使用半徑計算圓的面積。"
 
-#: data/functions.xml.in:4071 data/functions.xml.in:4080 data/functions.xml.in:4091 data/functions.xml.in:4102
-#: data/functions.xml.in:4116 data/functions.xml.in:4127 data/functions.xml.in:4141 data/functions.xml.in:4149
+#: data/functions.xml.in:4071 data/functions.xml.in:4080
+#: data/functions.xml.in:4091 data/functions.xml.in:4102
+#: data/functions.xml.in:4116 data/functions.xml.in:4127
+#: data/functions.xml.in:4141 data/functions.xml.in:4149
 msgid "Radius"
 msgstr "半徑"
 
@@ -7744,6 +8108,12 @@ msgstr "圓周"
 #: data/functions.xml.in:4076
 msgid "r:circumference"
 msgstr "r:circumference"
+
+#: data/functions.xml.in:4077
+#, fuzzy
+#| msgid "Calculates the area of a circle using the radius"
+msgid "Calculates the circumference of a circle using the radius."
+msgstr "使用半徑計算圓的面積"
 
 #: data/functions.xml.in:4085
 msgid "Cylinder"
@@ -7813,8 +8183,10 @@ msgstr "正方形面積"
 msgid "r:square"
 msgstr "r:square"
 
-#: data/functions.xml.in:4160 data/functions.xml.in:4168 data/functions.xml.in:4179 data/functions.xml.in:4187
-#: data/functions.xml.in:4286 data/functions.xml.in:4294 data/functions.xml.in:4302 data/functions.xml.in:4310
+#: data/functions.xml.in:4160 data/functions.xml.in:4168
+#: data/functions.xml.in:4179 data/functions.xml.in:4187
+#: data/functions.xml.in:4286 data/functions.xml.in:4294
+#: data/functions.xml.in:4302 data/functions.xml.in:4310
 #: data/functions.xml.in:4318 data/functions.xml.in:4326
 msgid "Length of side"
 msgstr "邊長"
@@ -7859,7 +8231,8 @@ msgstr "矩形面積"
 msgid "r:rect"
 msgstr "r:rect"
 
-#: data/functions.xml.in:4201 data/functions.xml.in:4212 data/functions.xml.in:4227 data/functions.xml.in:4242
+#: data/functions.xml.in:4201 data/functions.xml.in:4212
+#: data/functions.xml.in:4227 data/functions.xml.in:4242
 #: data/functions.xml.in:4257
 msgid "Width"
 msgstr "寬度"
@@ -7925,7 +8298,9 @@ msgid "r:pyramid"
 msgstr "r:pyramid"
 
 #: data/functions.xml.in:4269
-msgid "Calculates the volume of a 3-dimensional shape standing on a rectangular base and terminating in a point at the top."
+msgid ""
+"Calculates the volume of a 3-dimensional shape standing on a rectangular "
+"base and terminating in a point at the top."
 msgstr "計算站在矩形底面並終止於頂部一點的3維形狀的體積。"
 
 #: data/functions.xml.in:4272
@@ -7997,7 +8372,9 @@ msgid "r:parallelogram"
 msgstr "r:parallelogram"
 
 #: data/functions.xml.in:4335
-msgid "Calculates the area of a four-sided figure whose opposite sides are both parallel and equal in length."
+msgid ""
+"Calculates the area of a four-sided figure whose opposite sides are both "
+"parallel and equal in length."
 msgstr "計算對邊平行且長度相等的四邊形面積。"
 
 #: data/functions.xml.in:4345
@@ -8009,7 +8386,9 @@ msgid "r:parallelogram_perimeter"
 msgstr "r:parallelogram_perimeter"
 
 #: data/functions.xml.in:4347
-msgid "Calculates the perimeter of a four-sided figure whose opposite sides are both parallel and equal in length."
+msgid ""
+"Calculates the perimeter of a four-sided figure whose opposite sides are "
+"both parallel and equal in length."
 msgstr "計算對邊平行且長度相等的四邊形周長。"
 
 #: data/functions.xml.in:4358
@@ -8046,15 +8425,19 @@ msgstr "r:elasticity"
 
 #: data/functions.xml.in:4383
 msgid ""
-"Calculates the demand elasticity. Also works for supply elasticity, income elasticity, cross-price elasticity, etc. Just "
-"replace demand with supply, or price with income...\n"
+"Calculates the demand elasticity. Also works for supply elasticity, income "
+"elasticity, cross-price elasticity, etc. Just replace demand with supply, or "
+"price with income...\n"
 "\n"
-"e.g. elasticity(100-x^2, 3) calculates the demand elasticity when the price is 3 for the function \"Q = 100 - x^2\" where x "
-"is the default price variable."
+"e.g. elasticity(100-x^2, 3) calculates the demand elasticity when the price "
+"is 3 for the function \"Q = 100 - x^2\" where x is the default price "
+"variable."
 msgstr ""
-"計算需求彈性。也適用於供給彈性、所得彈性、交叉價格彈性等等。只要用供給取代需求，或用所得取代價格...\n"
+"計算需求彈性。也適用於供給彈性、所得彈性、交叉價格彈性等等。只要用供給取代需"
+"求，或用所得取代價格...\n"
 "\n"
-"例如elasticity(100-x^2, 3)計算函數\"Q = 100 - x^2\"的價格為3時的需求彈性，其中x是預設的價格變數。"
+"例如elasticity(100-x^2, 3)計算函數\"Q = 100 - x^2\"的價格為3時的需求彈性，其"
+"中x是預設的價格變數。"
 
 #: data/functions.xml.in:4388
 msgid "Demand function"
@@ -8078,13 +8461,16 @@ msgstr "r:syd"
 
 #: data/functions.xml.in:4401
 msgid ""
-"Calculates the sum-of-years digits depreciation for an asset based on its cost, salvage value, anticipated life, and a "
-"particular period. This method accelerates the rate of the depreciation, so that more depreciation expense occurs in earlier "
-"periods than in later ones. The depreciable cost is the actual cost minus the salvage value. The useful life is the number of "
+"Calculates the sum-of-years digits depreciation for an asset based on its "
+"cost, salvage value, anticipated life, and a particular period. This method "
+"accelerates the rate of the depreciation, so that more depreciation expense "
+"occurs in earlier periods than in later ones. The depreciable cost is the "
+"actual cost minus the salvage value. The useful life is the number of "
 "periods (typically years) over which the asset is depreciated."
 msgstr ""
-"基於資產的成本、殘值、預期壽命和特定時期計算資產的年數總和折舊。這種方法加速折舊率，因此比晚期更多的折舊費用發生在早期。折舊成"
-"本是實際成本減去殘值。使用壽命是資產折舊的期數(通常是年)。"
+"基於資產的成本、殘值、預期壽命和特定時期計算資產的年數總和折舊。這種方法加速"
+"折舊率，因此比晚期更多的折舊費用發生在早期。折舊成本是實際成本減去殘值。使用"
+"壽命是資產折舊的期數(通常是年)。"
 
 #: data/functions.xml.in:4404 data/functions.xml.in:4424
 msgid "Cost"
@@ -8114,12 +8500,14 @@ msgstr "r:sln"
 msgid ""
 "Determines the straight line depreciation of an asset for a single period.\n"
 "\n"
-"Cost is the amount you paid for the asset. Salvage is the value of the asset at the end of the period. Life is the number of "
-"periods over which the asset is depreciated. SLN divides the cost evenly over the life of an asset."
+"Cost is the amount you paid for the asset. Salvage is the value of the asset "
+"at the end of the period. Life is the number of periods over which the asset "
+"is depreciated. SLN divides the cost evenly over the life of an asset."
 msgstr ""
 "決定一個週期內資產的直線折舊。\n"
 "\n"
-"成本是你為資產支付的金額。殘值是期末資產的價值。壽命是資產折舊的期數。SLN在資產壽命上均分成本。"
+"成本是你為資產支付的金額。殘值是期末資產的價值。壽命是資產折舊的期數。SLN在資"
+"產壽命上均分成本。"
 
 #: data/functions.xml.in:4434
 msgid "Present Value"
@@ -8133,34 +8521,41 @@ msgstr "ra:pv"
 msgid ""
 "Returns the present value of an investment.\n"
 "\n"
-"If type = 1 then the payment is made at the beginning of the period. If type = 0 (or omitted) it is made at the end of each "
-"period."
+"If type = 1 then the payment is made at the beginning of the period. If type "
+"= 0 (or omitted) it is made at the end of each period."
 msgstr ""
 "回傳投資的現值。\n"
 "\n"
 "如果類型=1，則支付是在期初。如果類型=0(或省略)，則在每個期末。"
 
-#: data/functions.xml.in:4441 data/functions.xml.in:4477 data/functions.xml.in:4613 data/functions.xml.in:4691
+#: data/functions.xml.in:4441 data/functions.xml.in:4477
+#: data/functions.xml.in:4613 data/functions.xml.in:4691
 #: data/functions.xml.in:4715
 msgid "Interest rate"
 msgstr "利率"
 
-#: data/functions.xml.in:4444 data/functions.xml.in:4541 data/functions.xml.in:4562 data/functions.xml.in:4586
-#: data/functions.xml.in:4658 data/functions.xml.in:4694 data/functions.xml.in:4754
+#: data/functions.xml.in:4444 data/functions.xml.in:4541
+#: data/functions.xml.in:4562 data/functions.xml.in:4586
+#: data/functions.xml.in:4658 data/functions.xml.in:4694
+#: data/functions.xml.in:4754
 msgid "Number of periods"
 msgstr "期數"
 
-#: data/functions.xml.in:4447 data/functions.xml.in:4590 data/functions.xml.in:4616 data/functions.xml.in:4697
+#: data/functions.xml.in:4447 data/functions.xml.in:4590
+#: data/functions.xml.in:4616 data/functions.xml.in:4697
 msgid "Payment made each period"
 msgstr "每期支付"
 
-#: data/functions.xml.in:4450 data/functions.xml.in:4568 data/functions.xml.in:4596 data/functions.xml.in:4622
+#: data/functions.xml.in:4450 data/functions.xml.in:4568
+#: data/functions.xml.in:4596 data/functions.xml.in:4622
 #: data/functions.xml.in:4640 data/functions.xml.in:4761
 msgid "Future value"
 msgstr "終值"
 
-#: data/functions.xml.in:4453 data/functions.xml.in:4571 data/functions.xml.in:4599 data/functions.xml.in:4625
-#: data/functions.xml.in:4668 data/functions.xml.in:4703 data/functions.xml.in:4764
+#: data/functions.xml.in:4453 data/functions.xml.in:4571
+#: data/functions.xml.in:4599 data/functions.xml.in:4625
+#: data/functions.xml.in:4668 data/functions.xml.in:4703
+#: data/functions.xml.in:4764
 msgid "Type"
 msgstr "類型"
 
@@ -8173,7 +8568,9 @@ msgid "r:nominal"
 msgstr "r:nominal"
 
 #: data/functions.xml.in:4459
-msgid "Calculates the nominal interest rate from a given effective interest rate compounded at given intervals."
+msgid ""
+"Calculates the nominal interest rate from a given effective interest rate "
+"compounded at given intervals."
 msgstr "在給定區間從給定的有效(複)利率計算名目利率。"
 
 #: data/functions.xml.in:4462
@@ -8212,14 +8609,19 @@ msgstr "r:tbillyield"
 msgid "Returns the yield for a treasury bill."
 msgstr "回傳短期公債的殖利率。"
 
-#: data/functions.xml.in:4489 data/functions.xml.in:4504 data/functions.xml.in:4519 data/functions.xml.in:4775
-#: data/functions.xml.in:4826 data/functions.xml.in:4851 data/functions.xml.in:4879 data/functions.xml.in:4907
-#: data/functions.xml.in:4934 data/functions.xml.in:4958 data/functions.xml.in:4983
+#: data/functions.xml.in:4489 data/functions.xml.in:4504
+#: data/functions.xml.in:4519 data/functions.xml.in:4775
+#: data/functions.xml.in:4826 data/functions.xml.in:4851
+#: data/functions.xml.in:4879 data/functions.xml.in:4907
+#: data/functions.xml.in:4934 data/functions.xml.in:4958
+#: data/functions.xml.in:4983
 msgid "Settlement date"
 msgstr "交割日"
 
-#: data/functions.xml.in:4492 data/functions.xml.in:4507 data/functions.xml.in:4522 data/functions.xml.in:4778
-#: data/functions.xml.in:4829 data/functions.xml.in:4854 data/functions.xml.in:4937 data/functions.xml.in:4961
+#: data/functions.xml.in:4492 data/functions.xml.in:4507
+#: data/functions.xml.in:4522 data/functions.xml.in:4778
+#: data/functions.xml.in:4829 data/functions.xml.in:4854
+#: data/functions.xml.in:4937 data/functions.xml.in:4961
 #: data/functions.xml.in:4986
 msgid "Maturity date"
 msgstr "到期日"
@@ -8240,7 +8642,8 @@ msgstr "r:tbillprice"
 msgid "Returns the price per $100 face value for a treasury bill."
 msgstr "回傳短期公債每$100面值的價格。"
 
-#: data/functions.xml.in:4510 data/functions.xml.in:4525 data/functions.xml.in:4835 data/functions.xml.in:4992
+#: data/functions.xml.in:4510 data/functions.xml.in:4525
+#: data/functions.xml.in:4835 data/functions.xml.in:4992
 msgid "Discount rate"
 msgstr "貼現率"
 
@@ -8268,7 +8671,8 @@ msgstr "r:ispmt"
 msgid "Calculates the interest paid on a given period of an investment."
 msgstr "計算在給定的投資時期支付的利息。"
 
-#: data/functions.xml.in:4534 data/functions.xml.in:4651 data/functions.xml.in:4747
+#: data/functions.xml.in:4534 data/functions.xml.in:4651
+#: data/functions.xml.in:4747
 msgid "Periodic interest rate"
 msgstr "定期利率"
 
@@ -8276,8 +8680,10 @@ msgstr "定期利率"
 msgid "Amortizement period"
 msgstr "攤還時期"
 
-#: data/functions.xml.in:4545 data/functions.xml.in:4565 data/functions.xml.in:4593 data/functions.xml.in:4619
-#: data/functions.xml.in:4637 data/functions.xml.in:4662 data/functions.xml.in:4700 data/functions.xml.in:4758
+#: data/functions.xml.in:4545 data/functions.xml.in:4565
+#: data/functions.xml.in:4593 data/functions.xml.in:4619
+#: data/functions.xml.in:4637 data/functions.xml.in:4662
+#: data/functions.xml.in:4700 data/functions.xml.in:4758
 msgid "Present value"
 msgstr "現值"
 
@@ -8291,22 +8697,25 @@ msgstr "r:pmt"
 
 #: data/functions.xml.in:4551
 msgid ""
-"Returns the amount of payment (negative) each period for a loan based on a constant interest rate and constant payments (each "
-"payment is equal amount).\n"
+"Returns the amount of payment (negative) each period for a loan based on a "
+"constant interest rate and constant payments (each payment is equal "
+"amount).\n"
 "\n"
-"If type = 1 then the payment is made at the beginning of the period. If type = 0 (or omitted) it is made at the end of each "
-"period.\n"
+"If type = 1 then the payment is made at the beginning of the period. If type "
+"= 0 (or omitted) it is made at the end of each period.\n"
 "\n"
-"Note that the interest rate here refers to the rate for each period and if you calculate with an annual rate, each period "
-"will be interpreted as a whole year. To get monthly payments divide the annual interest rate by 12 and enter the total number "
-"of months (12 times number of years) in the periods field."
+"Note that the interest rate here refers to the rate for each period and if "
+"you calculate with an annual rate, each period will be interpreted as a "
+"whole year. To get monthly payments divide the annual interest rate by 12 "
+"and enter the total number of months (12 times number of years) in the "
+"periods field."
 msgstr ""
 "基於固定利率和固定支付(每個支付金額相同)回傳貸款每期的支付(負數)金額。\n"
 "\n"
 "如果類型=1，則支付是在期初。如果類型=0(或省略)，則在每個期末。\n"
 "\n"
-"請注意，這裡的利率是指每個時期的利率，如果你用年利率計算，則每個時期將被解釋為全年。要得到每月支付，將年利率除以12並將總月數"
-"(12乘以年數)輸入期數欄位。"
+"請注意，這裡的利率是指每個時期的利率，如果你用年利率計算，則每個時期將被解釋"
+"為全年。要得到每月支付，將年利率除以12並將總月數(12乘以年數)輸入期數欄位。"
 
 #: data/functions.xml.in:4559 data/functions.xml.in:4634
 msgid "Rate"
@@ -8324,10 +8733,11 @@ msgstr "r:rate"
 msgid ""
 "Calculates the rate of return.\n"
 "\n"
-"If type = 1 then the payment is made at the beginning of the period. If type = 0 (or omitted) it is made at the end of each "
-"period.\n"
+"If type = 1 then the payment is made at the beginning of the period. If type "
+"= 0 (or omitted) it is made at the end of each period.\n"
 "\n"
-"Note that the optional guess is needed because there can be more than one valid result. It defaults to 10%."
+"Note that the optional guess is needed because there can be more than one "
+"valid result. It defaults to 10%."
 msgstr ""
 "計算報酬的利率。\n"
 "\n"
@@ -8349,9 +8759,11 @@ msgstr "r:nper"
 
 #: data/functions.xml.in:4608
 msgid ""
-"Calculates number of periods of an investment based on periodic constant payments and a constant interest rate.\n"
+"Calculates number of periods of an investment based on periodic constant "
+"payments and a constant interest rate.\n"
 "\n"
-"Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period."
+"Type defines the due date. 1 for payment at the beginning of a period and 0 "
+"(default) for payment at the end of a period."
 msgstr ""
 "基於定期固定支付和固定利率計算投資的期數。\n"
 "\n"
@@ -8366,7 +8778,9 @@ msgid "r:g_duration"
 msgstr "r:g_duration"
 
 #: data/functions.xml.in:4631
-msgid "Returns the number of periods needed for an investment to attain a desired value."
+msgid ""
+"Returns the number of periods needed for an investment to attain a desired "
+"value."
 msgstr "回傳投資達到期望值所需的期數。"
 
 #: data/functions.xml.in:4644
@@ -8381,7 +8795,8 @@ msgstr "r:ppmt"
 msgid ""
 "Calculates the amount of a payment of an annuity going towards principal.\n"
 "\n"
-"Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period."
+"Type defines the due date. 1 for payment at the beginning of a period and 0 "
+"(default) for payment at the end of a period."
 msgstr ""
 "計算年金用於本金的支付金額。\n"
 "\n"
@@ -8417,10 +8832,11 @@ msgstr "ra:fv,a:FV"
 
 #: data/functions.xml.in:4686
 msgid ""
-"Computes the future value of an investment. This is based on periodic, constant payments and a constant interest rate.\n"
+"Computes the future value of an investment. This is based on periodic, "
+"constant payments and a constant interest rate.\n"
 "\n"
-"If type = 1 then the payment is made at the beginning of the period. If type = 0 (or omitted) it is made at the end of each "
-"period."
+"If type = 1 then the payment is made at the beginning of the period. If type "
+"= 0 (or omitted) it is made at the end of each period."
 msgstr ""
 "計算投資的終值。這基於定期固定支付和固定利率。\n"
 "\n"
@@ -8435,7 +8851,9 @@ msgid "r:continuous"
 msgstr "r:continuous"
 
 #: data/functions.xml.in:4709
-msgid "Calculates the return on continuously compounded interest, given the principal, nominal rate and time in years."
+msgid ""
+"Calculates the return on continuously compounded interest, given the "
+"principal, nominal rate and time in years."
 msgstr "給定本金、名目利率和以年表示的時間，計算連續複利的報酬。"
 
 #: data/functions.xml.in:4712 data/functions.xml.in:4727
@@ -8451,7 +8869,9 @@ msgid "r:compound"
 msgstr "r:compound"
 
 #: data/functions.xml.in:4724
-msgid "Returns the value of an investment, given the principal, nominal interest rate, compounding frequency and time."
+msgid ""
+"Returns the value of an investment, given the principal, nominal interest "
+"rate, compounding frequency and time."
 msgstr "給定本金、名目利率、複利頻率和時間，回傳投資的值。"
 
 #: data/functions.xml.in:4733
@@ -8470,7 +8890,8 @@ msgstr "r:ipmt"
 msgid ""
 "Calculates the amount of a payment of an annuity going towards interest.\n"
 "\n"
-"Type defines the due date. 1 for payment at the beginning of a period and 0 (default) for payment at the end of a period."
+"Type defines the due date. 1 for payment at the beginning of a period and 0 "
+"(default) for payment at the end of a period."
 msgstr ""
 "計算年金用於利息的支付金額。\n"
 "\n"
@@ -8488,18 +8909,20 @@ msgstr "r:intrate"
 msgid ""
 "Returns the interest rate for a fully invested security.\n"
 "\n"
-"Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 "
-"or 4: European 30/360."
+"Basis is the type of day counting you want to use: 0: US 30/360 (default), "
+"1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 "回傳充分投資證券的利率。\n"
 "\n"
-"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天數/360、3: 實際天數/365或4: 歐洲30/360。"
+"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天"
+"數/360、3: 實際天數/365或4: 歐洲30/360。"
 
 #: data/functions.xml.in:4781 data/functions.xml.in:4832
 msgid "Investment"
 msgstr "投資"
 
-#: data/functions.xml.in:4784 data/functions.xml.in:4860 data/functions.xml.in:4967
+#: data/functions.xml.in:4784 data/functions.xml.in:4860
+#: data/functions.xml.in:4967
 msgid "Redemption"
 msgstr "贖回"
 
@@ -8512,7 +8935,8 @@ msgid "r:dollarfr"
 msgstr "r:dollarfr"
 
 #: data/functions.xml.in:4795
-msgid "Converts a decimal dollar price into a dollar price expressed as a fraction."
+msgid ""
+"Converts a decimal dollar price into a dollar price expressed as a fraction."
 msgstr "將小數價格轉換到以分數表示的價格。"
 
 #: data/functions.xml.in:4798
@@ -8532,7 +8956,9 @@ msgid "r:dollarde"
 msgstr "r:dollarde"
 
 #: data/functions.xml.in:4808
-msgid "Converts a dollar price expressed as a fraction into a dollar price expressed as a decimal number."
+msgid ""
+"Converts a dollar price expressed as a fraction into a dollar price "
+"expressed as a decimal number."
 msgstr "將以分數表示的價格轉換到以小數表示的價格。"
 
 #: data/functions.xml.in:4811
@@ -8551,13 +8977,14 @@ msgstr "r:received"
 msgid ""
 "Returns the amount received at the maturity date for an invested security.\n"
 "\n"
-"Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 "
-"or 4: European 30/360. The settlement date must be before maturity date."
+"Basis is the type of day counting you want to use: 0: US 30/360 (default), "
+"1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360. The "
+"settlement date must be before maturity date."
 msgstr ""
 "回傳投資證券到期日收到的金額。\n"
 "\n"
-"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天數/360、3: 實際天數/365或4: 歐洲30/360。交割日必須"
-"在到期日之前。"
+"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天"
+"數/360、3: 實際天數/365或4: 歐洲30/360。交割日必須在到期日之前。"
 
 #: data/functions.xml.in:4844
 msgid "Discount rate for a security"
@@ -8571,12 +8998,13 @@ msgstr "r:disc"
 msgid ""
 "Returns the discount rate for a security.\n"
 "\n"
-"Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 "
-"or 4: European 30/360."
+"Basis is the type of day counting you want to use: 0: US 30/360 (default), "
+"1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 "回傳證券的貼現率。\n"
 "\n"
-"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天數/360、3: 實際天數/365或4: 歐洲30/360。"
+"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天"
+"數/360、3: 實際天數/365或4: 歐洲30/360。"
 
 #: data/functions.xml.in:4869
 msgid "Accrued interest of security paying at maturity"
@@ -8588,16 +9016,19 @@ msgstr "r:accrintm"
 
 #: data/functions.xml.in:4871
 msgid ""
-"Returns the accrued interest for a security which pays interest at maturity date.\n"
+"Returns the accrued interest for a security which pays interest at maturity "
+"date.\n"
 "\n"
-"Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 "
-"or 4: European 30/360."
+"Basis is the type of day counting you want to use: 0: US 30/360 (default), "
+"1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 "回傳在到期日支付利息的證券的應計利息。\n"
 "\n"
-"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天數/360、3: 實際天數/365或4: 歐洲30/360。"
+"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天"
+"數/360、3: 實際天數/365或4: 歐洲30/360。"
 
-#: data/functions.xml.in:4876 data/functions.xml.in:4901 data/functions.xml.in:4989
+#: data/functions.xml.in:4876 data/functions.xml.in:4901
+#: data/functions.xml.in:4989
 msgid "Issue date"
 msgstr "發行日期"
 
@@ -8621,13 +9052,14 @@ msgstr "r:accrint"
 msgid ""
 "Returns accrued interest for a security which pays periodic interest.\n"
 "\n"
-"Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. Basis is the type of day counting you want to use: 0: "
-"US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
+"Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. Basis "
+"is the type of day counting you want to use: 0: US 30/360 (default), 1: real "
+"days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 "回傳支付定期利息的證券的應計利息。\n"
 "\n"
-"允許的頻率是1-年度、2-半年度或4-季度。基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天數/360、3: 實"
-"際天數/365或4: 歐洲30/360。"
+"允許的頻率是1-年度、2-半年度或4-季度。基礎是你想要使用的天數計數類型: 0: 美國"
+"30/360(預設)、1: 實際天數、2: 實際天數/360、3: 實際天數/365或4: 歐洲30/360。"
 
 #: data/functions.xml.in:4904
 msgid "First interest"
@@ -8647,14 +9079,16 @@ msgstr "r:coupnum"
 
 #: data/functions.xml.in:4929
 msgid ""
-"Returns the number of coupons to be paid between the settlement and the maturity.\n"
+"Returns the number of coupons to be paid between the settlement and the "
+"maturity.\n"
 "\n"
-"Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 "
-"or 4: European 30/360."
+"Basis is the type of day counting you want to use: 0: US 30/360 (default), "
+"1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 "回傳交割日和到期日之間要支付的息票數量。\n"
 "\n"
-"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天數/360、3: 實際天數/365或4: 歐洲30/360。"
+"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天"
+"數/360、3: 實際天數/365或4: 歐洲30/360。"
 
 #: data/functions.xml.in:4951
 msgid "Price per $100 face value of a discounted security"
@@ -8666,15 +9100,16 @@ msgstr "r:pricedisc"
 
 #: data/functions.xml.in:4953
 msgid ""
-"Calculates and returns the price per $100 face value of a discounted security. The security does not pay interest at "
-"maturity.\n"
+"Calculates and returns the price per $100 face value of a discounted "
+"security. The security does not pay interest at maturity.\n"
 "\n"
-"Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 "
-"or 4: European 30/360."
+"Basis is the type of day counting you want to use: 0: US 30/360 (default), "
+"1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 "計算並回傳貼現證券每$100面值的價格。證券在到期時不支付利息。\n"
 "\n"
-"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天數/360、3: 實際天數/365或4: 歐洲30/360。"
+"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天"
+"數/360、3: 實際天數/365或4: 歐洲30/360。"
 
 #: data/functions.xml.in:4964
 msgid "Discount"
@@ -8690,14 +9125,16 @@ msgstr "r:pricemat"
 
 #: data/functions.xml.in:4978
 msgid ""
-"Calculates and returns the price per $100 face value of a security. The security pays interest at maturity.\n"
+"Calculates and returns the price per $100 face value of a security. The "
+"security pays interest at maturity.\n"
 "\n"
-"Basis is the type of day counting you want to use: 0: US 30/360 (default), 1: real days, 2: real days/360, 3: real days/365 "
-"or 4: European 30/360."
+"Basis is the type of day counting you want to use: 0: US 30/360 (default), "
+"1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
 "計算並回傳證券每$100面值的價格。證券在到期時支付利息。\n"
 "\n"
-"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天數/360、3: 實際天數/365或4: 歐洲30/360。"
+"基礎是你想要使用的天數計數類型: 0: 美國30/360(預設)、1: 實際天數、2: 實際天"
+"數/360、3: 實際天數/365或4: 歐洲30/360。"
 
 #: data/functions.xml.in:4995
 msgid "Annual yield"
@@ -9488,7 +9925,6 @@ msgid "Slug"
 msgstr "斯勒格"
 
 #: data/units.xml.in:844
-#| msgid "r:erg,p:ergs"
 msgid "r:slug,p:slugs"
 msgstr "r:slug,斯勒格"
 
@@ -9559,11 +9995,13 @@ msgstr "r:year,年,as:a_j,a:yr,annus"
 
 #: data/units.xml.in:993
 msgid ""
-"Acts as calendar years when added to or subtracted from dates, but as exactly 365.25 days when converted to other units. Use "
-"the yearfrac() function, instead of subtraction, to calculate the exact number of calendar years between two dates."
+"Acts as calendar years when added to or subtracted from dates, but as "
+"exactly 365.25 days when converted to other units. Use the yearfrac() "
+"function, instead of subtraction, to calculate the exact number of calendar "
+"years between two dates."
 msgstr ""
-"從日期加上或減去時作為曆年，但是當轉換到其他單位時正好是365.25天。使用yearfrac()函數(而不是減法)以計算兩個日期之間的確切曆年"
-"數。"
+"從日期加上或減去時作為曆年，但是當轉換到其他單位時正好是365.25天。使用"
+"yearfrac()函數(而不是減法)以計算兩個日期之間的確切曆年數。"
 
 #: data/units.xml.in:1002
 msgid "Mean Gregorian Year"
@@ -9975,7 +10413,6 @@ msgid "Molar"
 msgstr "體積莫耳濃度"
 
 #: data/units.xml.in:1826
-#| msgid "r:mod"
 msgid "r:molar"
 msgstr "r:molar,體積莫耳濃度"
 
@@ -11543,7 +11980,8 @@ msgstr "半字節(十六進制數字)"
 
 #: data/units.xml.in:4708
 msgid "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets,hex_digit,p:hex_digits,hexadecimal_digit,p:hexadecimal_digits"
-msgstr "r:nibble,半字節,nybble,semioctet,hex_digit,hexadecimal_digit,十六進制數字"
+msgstr ""
+"r:nibble,半字節,nybble,semioctet,hex_digit,hexadecimal_digit,十六進制數字"
 
 #: data/units.xml.in:4716
 #, fuzzy
@@ -11662,9 +12100,12 @@ msgstr "PostScript點(DTP)"
 
 #: data/units.xml.in:4918
 msgid ""
-"The PostScript point, or desktop publishing point, is the screen-independent typographic unit commonly used in computer "
-"software and for digital printing. It is known as the big point (bp) in TeX."
-msgstr "Postscript點(或桌上出版點)是常用於計算機軟體和數位列印中與螢幕無關的印刷單位。它在Tex中被稱為大點(bp)。"
+"The PostScript point, or desktop publishing point, is the screen-independent "
+"typographic unit commonly used in computer software and for digital "
+"printing. It is known as the big point (bp) in TeX."
+msgstr ""
+"Postscript點(或桌上出版點)是常用於計算機軟體和數位列印中與螢幕無關的印刷單"
+"位。它在Tex中被稱為大點(bp)。"
 
 #: data/units.xml.in:4919
 msgid "ar:pt,a:pts,point,p:points,as:bp_tex,ao:tex_bp"
@@ -11793,7 +12234,6 @@ msgid "Per Million"
 msgstr "百萬分比"
 
 #: data/variables.xml.in:24
-#| msgid "r:ppmt"
 msgid "r:ppm"
 msgstr "r:ppm"
 
@@ -11802,7 +12242,6 @@ msgid "Per Billion"
 msgstr "十億分比"
 
 #: data/variables.xml.in:29
-#| msgid "r:ppmt"
 msgid "r:ppb"
 msgstr "r:ppb"
 
@@ -11811,7 +12250,6 @@ msgid "Per Trillion"
 msgstr "兆分比"
 
 #: data/variables.xml.in:34
-#| msgid "r:ppmt"
 msgid "r:ppt"
 msgstr "r:ppt"
 
@@ -11820,7 +12258,6 @@ msgid "Per Quadrillon"
 msgstr "千兆分比"
 
 #: data/variables.xml.in:39
-#| msgid "r:ppmt"
 msgid "r:ppq"
 msgstr "r:ppq"
 
@@ -12041,7 +12478,6 @@ msgid "Crore"
 msgstr "克若"
 
 #: data/variables.xml.in:177
-#| msgid "r:cross"
 msgid "r:crore"
 msgstr "r:crore,克若"
 

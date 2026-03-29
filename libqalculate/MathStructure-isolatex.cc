@@ -674,6 +674,26 @@ void collect_nonzero_checks(const MathStructure &m, MathStructure *mcheckpowers)
 	}
 }
 
+
+void recursive_zero_vector(MathStructure &m, const MathStructure &m2) {
+	if(m2.isVector()) {
+		m.setType(STRUCT_VECTOR);
+		m.resizeVector(m2.size(), m_zero);
+		if(m.size() != m2.size()) {m.setAborted(); return;}
+		for(size_t i = 0; i < m2.size(); i++) {
+			recursive_zero_vector(m[i], m2[i]);
+		}
+	}
+}
+bool is_zero_vector(MathStructure &m) {
+	if(m.isZero()) return true;
+	if(!m.isVector()) return false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(!is_zero_vector(m[i])) return false;
+	}
+	return true;
+}
+
 bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions &eo2, const MathStructure &x_var, MathStructure *morig) {
 	return isolate_x_sub(eo, eo2, x_var, morig, 0);
 }
@@ -715,6 +735,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					CHILD(0).setToChild(1, true);
 				} else if(CHILD(0).size() == 0) {
 					CHILD(0).clear(true);
+					recursive_zero_vector(CHILD(0), CHILD(1));
 				}
 				isolate_x_sub(eo, eo2, x_var, morig, depth + 1);
 				return true;
@@ -6386,9 +6407,10 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const EvaluationOptio
 	}
 
 	if(CHILD(0) == x_var && !CHILD(1).contains(x_var)) return true;
-	if(!CHILD(1).isZero()) {
+	if(!CHILD(1).isZero() && !is_zero_vector(CHILD(1))) {
 		CHILD(0).calculateSubtract(CHILD(1), eo);
 		CHILD(1).clear(true);
+		recursive_zero_vector(CHILD(1), CHILD(0));
 		CHILDREN_UPDATED
 	}
 

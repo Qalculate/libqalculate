@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sv\n"
 "Report-Msgid-Bugs-To: https://github.com/Qalculate/libqalculate/issues\n"
-"POT-Creation-Date: 2026-03-24 07:29+0100\n"
+"POT-Creation-Date: 2026-03-29 07:18+0200\n"
 "PO-Revision-Date: 2007-06-15 11:13+0100\n"
 "Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
 "Language-Team: Swedish\n"
@@ -8225,9 +8225,9 @@ msgstr "Cirkelarea"
 msgid "r:circle"
 msgstr "cirkel"
 
-#: data/functions.xml.in:4068 data/functions.xml.in:4077
-msgid "Calculates the area of a circle using the radius"
-msgstr "Beräknar arean för en cirkel."
+#: data/functions.xml.in:4068
+msgid "Calculates the area of a circle using the radius."
+msgstr "Beräknar arean för en cirkel givet radien."
 
 #: data/functions.xml.in:4071 data/functions.xml.in:4080
 #: data/functions.xml.in:4091 data/functions.xml.in:4102
@@ -8243,6 +8243,10 @@ msgstr "Cirkelomkrets"
 #: data/functions.xml.in:4076
 msgid "r:circumference"
 msgstr "omkrets"
+
+#: data/functions.xml.in:4077
+msgid "Calculates the circumference of a circle using the radius."
+msgstr "Beräknar omkretsen för en cirkel givet radien."
 
 #: data/functions.xml.in:4085
 msgid "Cylinder"

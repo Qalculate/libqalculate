@@ -228,6 +228,8 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const MathStructure &min, const MathStructure &max, const MathStructure &step, MathStructure &x_vector, MathStructure &y_vector, const EvaluationOptions &eo);
 bool has_predominately_negative_sign(const MathStructure &mstruct);
 void negate_struct(MathStructure &mstruct);
+void recursive_zero_vector(MathStructure &m, const MathStructure &m2);
+bool is_zero_vector(MathStructure &m);
 
 void replace_internal_operators(std::string &str);
 long int get_fixed_denominator(const std::string &str, NumberFractionFormat &nff, int frac, bool *has_sign = NULL);

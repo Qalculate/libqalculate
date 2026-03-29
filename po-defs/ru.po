@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: https://github.com/Qalculate/libqalculate/issues\n"
-"POT-Creation-Date: 2026-03-24 07:29+0100\n"
+"POT-Creation-Date: 2026-03-29 07:18+0200\n"
 "PO-Revision-Date: 2024-05-04 10:02+0700\n"
 "Last-Translator: Damir Islamov <damir@secretlaboratory.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -8318,8 +8318,8 @@ msgstr "Площадь круга"
 msgid "r:circle"
 msgstr "круг"
 
-#: data/functions.xml.in:4068 data/functions.xml.in:4077
-msgid "Calculates the area of a circle using the radius"
+#: data/functions.xml.in:4068
+msgid "Calculates the area of a circle using the radius."
 msgstr "Вычисляет площадь круга с использованием радиуса."
 
 #: data/functions.xml.in:4071 data/functions.xml.in:4080
@@ -8336,6 +8336,12 @@ msgstr "Окружность круга"
 #: data/functions.xml.in:4076
 msgid "r:circumference"
 msgstr "окружность"
+
+#: data/functions.xml.in:4077
+#, fuzzy
+#| msgid "Calculates the area of a circle using the radius"
+msgid "Calculates the circumference of a circle using the radius."
+msgstr "Вычисляет площадь круга с использованием радиуса."
 
 #: data/functions.xml.in:4085
 msgid "Cylinder"

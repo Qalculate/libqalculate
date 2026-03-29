@@ -1519,6 +1519,8 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 	CALCULATOR->endTemporaryStopMessages(); \
 	if(mtest.isNumber() && !mtest.number().isNonZero()) b = true;
 
+	bool prev_zero = false;
+
 	while(true) {
 		if(CALCULATOR->aborted()) break;
 		x_if = mfunc;
@@ -1539,7 +1541,17 @@ int NewtonRaphsonFunction::calculate(MathStructure &mstruct, const MathStructure
 		}
 		if(x_if.isZero() && x_i.isZero()) {ret = 1; break;}
 		if(iter > 0) x_itest = x_if.number();
-		if((iter > 0 && !compare_with_1 && !x_itest.divide(x_i)) || !x_itest.abs() || !x_i.subtract(x_if.number())) break;
+		if((iter > 0 && !compare_with_1 && !x_i.isZero() && !x_itest.divide(x_i)) || !x_itest.abs()) break;
+		if(!compare_with_1 && (prev_zero || x_i.isZero())) {
+			if(prev_zero) {
+				if(x_i.isZero()) break;
+				prev_zero = false;
+			}
+			if(!x_i.subtract(x_if.number())) break;
+			iter++;
+			continue;
+		}
+		if(!x_i.subtract(x_if.number())) break;
 		if(iter > 0) {
 			if(x_i.hasImaginaryPart()) {
 				if((x_itest.realPart() < nr_prec && x_itest.imaginaryPart() < nr_prec) || (!x_i.isNonZero() && (x_i.realPart() < nr_prec && x_i.imaginaryPart() < nr_prec && x_if.number().realPart() < nr_prec && x_if.number().imaginaryPart() < nr_prec))) {
@@ -1645,6 +1657,7 @@ int SecantMethodFunction::calculate(MathStructure &mstruct, const MathStructure 
 	v->setName(format_and_print(x0));
 	m_if.eval(eo2);
 	Number x_i(vargs[2].number()), x_itest, x_fi;
+	bool prev_zero = false;
 	if(m_if.isNumber()) {
 		Number f0(m_if.number());
 		x_i.setToFloatingPoint();
@@ -1662,7 +1675,18 @@ int SecantMethodFunction::calculate(MathStructure &mstruct, const MathStructure 
 			f0 = m_if.number();
 			if(x_fi.isZero() && x_i.isZero()) {ret = 1; break;}
 			if(iter > 0) x_itest = x_fi;
-			if((iter > 0 && !compare_with_1 && !x_itest.divide(x_i)) || !x_itest.abs() || !x_i.subtract(x_fi)) break;
+			if((iter > 0 && !compare_with_1 && !x_i.isZero() && !x_itest.divide(x_i)) || !x_itest.abs()) break;
+			if(!compare_with_1 && (prev_zero || x_i.isZero())) {
+				if(prev_zero) {
+					if(x_i.isZero()) break;
+					prev_zero = false;
+				}
+				if(!x_i.subtract(x_fi)) break;
+				iter++;
+				if(iter > max_iter) break;
+				continue;
+			}
+			if(!x_i.subtract(x_fi)) break;
 			if(iter > 0) {
 				if(x_i.hasImaginaryPart()) {
 					if((x_itest.realPart() < nr_prec && x_itest.imaginaryPart() < nr_prec) || (!x_i.isNonZero() && (x_i.realPart() < nr_prec && x_i.imaginaryPart() < nr_prec && x_fi.realPart() < nr_prec && x_fi.imaginaryPart() < nr_prec))) {

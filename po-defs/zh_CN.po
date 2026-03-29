@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: zh_CN\n"
 "Report-Msgid-Bugs-To: https://github.com/Qalculate/libqalculate/issues\n"
-"POT-Creation-Date: 2026-03-24 07:29+0100\n"
+"POT-Creation-Date: 2026-03-29 07:18+0200\n"
 "PO-Revision-Date: 2021-08-23 09:54+0800\n"
 "Last-Translator: tuberry <orzun@foxmail.com>\n"
 "Language-Team: Chinese (Simplified) <orzun@foxmail.com>\n"
@@ -8157,9 +8157,9 @@ msgstr "圆面积"
 msgid "r:circle"
 msgstr "-"
 
-#: data/functions.xml.in:4068 data/functions.xml.in:4077
-msgid "Calculates the area of a circle using the radius"
-msgstr "使用半径计算圆面积"
+#: data/functions.xml.in:4068
+msgid "Calculates the area of a circle using the radius."
+msgstr "使用半径计算圆面积。"
 
 #: data/functions.xml.in:4071 data/functions.xml.in:4080
 #: data/functions.xml.in:4091 data/functions.xml.in:4102
@@ -8175,6 +8175,12 @@ msgstr "圆周长"
 #: data/functions.xml.in:4076
 msgid "r:circumference"
 msgstr "-"
+
+#: data/functions.xml.in:4077
+#, fuzzy
+#| msgid "Calculates the area of a circle using the radius"
+msgid "Calculates the circumference of a circle using the radius."
+msgstr "使用半径计算圆面积"
 
 #: data/functions.xml.in:4085
 msgid "Cylinder"
