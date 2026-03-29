@@ -8113,7 +8113,7 @@ msgstr "r:circumference"
 #, fuzzy
 #| msgid "Calculates the area of a circle using the radius"
 msgid "Calculates the circumference of a circle using the radius."
-msgstr "使用半徑計算圓的面積"
+msgstr "使用半徑計算圓的圓周。"
 
 #: data/functions.xml.in:4085
 msgid "Cylinder"
