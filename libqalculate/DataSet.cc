@@ -1076,15 +1076,16 @@ string DataSet::printProperties(DataObject *o) {
 
 DataPropertyArgument::DataPropertyArgument(DataSet *data_set, string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
 	b_text = true;
+	b_handle_vector = true;
 	o_data = data_set;
 }
 DataPropertyArgument::DataPropertyArgument(const DataPropertyArgument *arg) {set(arg); b_text = true; o_data = arg->dataSet();}
 DataPropertyArgument::~DataPropertyArgument() {}
 bool DataPropertyArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
-	if(!value.isSymbolic()) {
+	if(!value.isSymbolic() && !value.isVector()) {
 		value.eval(eo);
 	}
-	return value.isSymbolic() && o_data && (o_data->getProperty(value.symbol()) || equalsIgnoreCase(value.symbol(), string("info")) || equalsIgnoreCase(value.symbol(), string(_c("Data set argument", "info"))));
+	return value.isVector() || (value.isSymbolic() && o_data && (o_data->getProperty(value.symbol()) || equalsIgnoreCase(value.symbol(), string("info")) || equalsIgnoreCase(value.symbol(), string(_c("Data set argument", "info")))));
 }
 int DataPropertyArgument::type() const {return ARGUMENT_TYPE_DATA_PROPERTY;}
 Argument *DataPropertyArgument::copy() const {return new DataPropertyArgument(this);}
@@ -1131,14 +1132,15 @@ void DataPropertyArgument::setDataSet(DataSet *data_set) {o_data = data_set;}
 
 DataObjectArgument::DataObjectArgument(DataSet *data_set, string name_, bool does_test, bool does_error) : Argument(name_, does_test, does_error) {
 	b_text = true;
+	b_handle_vector = true;
 	o_data = data_set;
 }
 DataObjectArgument::DataObjectArgument(const DataObjectArgument *arg) {set(arg); b_text = true; o_data = arg->dataSet();}
 DataObjectArgument::~DataObjectArgument() {}
 bool DataObjectArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
-	if(value.isSymbolic()) return true;
+	if(value.isSymbolic() || value.isVector()) return true;
 	value.eval(eo);
-	if(value.isSymbolic()) return true;
+	if(value.isSymbolic() || value.isVector()) return true;
 	if(!o_data) return false;
 	DataPropertyIter it;
 	DataProperty *dp = o_data->getFirstProperty(&it);
