@@ -1665,7 +1665,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 				return;
 			}
 			if(b_handle_vector && str[pars] == LEFT_VECTOR_WRAP_CH && str[str.length() - 1 - pars] == RIGHT_VECTOR_WRAP_CH && (str.find_first_of("\"\'", pars + 1) != string::npos || (str.find(LEFT_PARENTHESIS INTERNAL_ID_L) != string::npos && str.find(INTERNAL_ID_R RIGHT_PARENTHESIS) != string::npos))) {
-				CALCULATOR->parse(mstruct, str.substr(1 + pars, str.length() - 2 - pars * 2), po);
+				CALCULATOR->parse(mstruct, str.substr(pars, str.length() - pars * 2), po);
 				vector_fix_date_time_string(mstruct);
 				return;
 			}
