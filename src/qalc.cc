@@ -4929,7 +4929,6 @@ int main(int argc, char *argv[]) {
 	rl_pre_input_hook = &preinput_hook;
 	if(interactive_mode) {
 		rl_bind_key('\t', rlcom_tab);
-		rl_bind_keyseq("\\C-[", key_escape);
 		rl_bind_keyseq("\\C-e", key_exact);
 		rl_bind_keyseq("\\C-f", key_fraction);
 		rl_bind_keyseq("\\C-a", key_save);
