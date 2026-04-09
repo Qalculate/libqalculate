@@ -467,7 +467,7 @@ int CharFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 }
 
 string concat_add(const MathStructure &m, const EvaluationOptions &eo, bool eval = true, bool top = true) {
-	if(!top && !m.isSymbolic()) {
+	if(!top && eval && !m.isSymbolic()) {
 		MathStructure value(m);
 		value.eval(eo);
 		return concat_add(value, eo, false, false);
