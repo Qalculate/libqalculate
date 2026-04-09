@@ -1657,7 +1657,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 				fix_date_time_string(mstruct);
 				return;
 			}
-			if(b_handle_vector && str[pars] == LEFT_VECTOR_WRAP_CH && str[str.length() - 1 - pars] == RIGHT_VECTOR_WRAP_CH && (str.find_first_of("\"\'", pars + 1) != string::npos || (str.find(LEFT_PARENTHESIS INTERNAL_ID_L) != string::npos && str.find(INTERNAL_ID_R RIGHT_PARENTHESIS) != string::npos))) {
+			if((b_handle_vector || !b_test) && str[pars] == LEFT_VECTOR_WRAP_CH && str[str.length() - 1 - pars] == RIGHT_VECTOR_WRAP_CH && (str.find_first_of("\"\'", pars + 1) != string::npos || (str.find(LEFT_PARENTHESIS INTERNAL_ID_L) != string::npos && str.find(INTERNAL_ID_R RIGHT_PARENTHESIS) != string::npos))) {
 				CALCULATOR->parse(mstruct, str.substr(pars, str.length() - pars * 2), po);
 				vector_fix_date_time_string(mstruct);
 				return;
@@ -1786,7 +1786,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 					CALCULATOR->endTemporaryStopMessages(true);
 					return;
 				}
-				if(b_handle_vector && mtest.isVector()) {
+				if((b_handle_vector || !b_test) && mtest.isVector()) {
 					bool b = true;
 					for(size_t i = 0; i < mtest.size(); i++) {
 						if(!mtest[i].isSymbolic()) {b = false; break;}

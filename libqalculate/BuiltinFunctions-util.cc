@@ -466,16 +466,30 @@ int CharFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 
 }
 
-ConcatenateFunction::ConcatenateFunction() : MathFunction("concatenate", 1, -1) {
-	setArgumentDefinition(1, new TextArgument());
-	setArgumentDefinition(2, new TextArgument());
-}
-int ConcatenateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	string str;
-	for(size_t i = 0; i < vargs.size(); i++) {
-		str += vargs[i].symbol();
+string concat_add(const MathStructure &m, const EvaluationOptions &eo, bool eval = true, bool top = true) {
+	if(!top && !m.isSymbolic()) {
+		MathStructure value(m);
+		value.eval(eo);
+		return concat_add(value, eo, false, false);
 	}
-	mstruct.set(str, false, true);
+	if(m.isSymbolic()) return m.symbol();
+	if(m.isVector()) {
+		string str;
+		for(size_t i = 0; i < m.size(); i++) {
+			str += concat_add(m[i], eo, eval, false);
+		}
+		return str;
+	}
+	return format_and_print(m);
+}
+ConcatenateFunction::ConcatenateFunction() : MathFunction("concatenate", 1, -1) {
+	Argument *arg = new TextArgument("", false);
+	setArgumentDefinition(1, arg);
+	arg = new TextArgument("", false);
+	setArgumentDefinition(2, arg);
+}
+int ConcatenateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct.set(concat_add(vargs, eo), false, true);
 	return 1;
 }
 LengthFunction::LengthFunction() : MathFunction("len", 1) {
