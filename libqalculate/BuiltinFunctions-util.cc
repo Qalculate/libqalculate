@@ -85,10 +85,10 @@ bool contains_infinity_v(const MathStructure &m) {
 	return b_ret;
 }
 
-bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2) {
+bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2, bool exclude_limits) {
 	if(contains_infinity_v(m1) || contains_infinity_v(m2)) {
 		MathStructure m1b(m1), m2b(m2);
-		if(replace_infinity_v(m1b) || replace_infinity_v(m2b)) return create_interval(mstruct, m1b, m2b);
+		if(replace_infinity_v(m1b) || replace_infinity_v(m2b)) return create_interval(mstruct, m1b, m2b, exclude_limits);
 	}
 	if(m1 == m2) {
 		mstruct.set(m1, true);
@@ -96,6 +96,10 @@ bool create_interval(MathStructure &mstruct, const MathStructure &m1, const Math
 	} else if(m1.isNumber() && m2.isNumber()) {
 		Number nr;
 		if(!nr.setInterval(m1.number(), m2.number())) return false;
+		if(exclude_limits) {
+			mpfr_nextbelow(nr.internalUpperFloat());
+			mpfr_nextabove(nr.internalLowerFloat());
+		}
 		mstruct.set(nr, true);
 		return true;
 	} else if(m1.isMultiplication() && m2.isMultiplication() && m1.size() > 1 && m2.size() > 1) {
@@ -110,7 +114,11 @@ bool create_interval(MathStructure &mstruct, const MathStructure &m1, const Math
 			}
 		}
 		Number nr;
-		if(!nr.setInterval(i0 == 1 ? m1[0].number() : nr_one, i1 == 1 ? m2[0].number() : nr_one)) return 0;
+		if(!nr.setInterval(i0 == 1 ? m1[0].number() : nr_one, i1 == 1 ? m2[0].number() : nr_one)) return false;
+		if(exclude_limits) {
+			mpfr_nextbelow(nr.internalUpperFloat());
+			mpfr_nextabove(nr.internalLowerFloat());
+		}
 		mstruct.set(m1, true);
 		if(i0 == 1) mstruct.delChild(1, true);
 		mstruct *= nr;
@@ -129,6 +137,10 @@ bool create_interval(MathStructure &mstruct, const MathStructure &m1, const Math
 		}
 		Number nr;
 		if(!nr.setInterval(i0 == 1 ? m1.last().number() : nr_one, i1 == 1 ? m2.last().number() : nr_one)) return false;
+		if(exclude_limits) {
+			mpfr_nextbelow(nr.internalUpperFloat());
+			mpfr_nextabove(nr.internalLowerFloat());
+		}
 		mstruct.set(m1, true);
 		if(i0 == 1) mstruct.delChild(mstruct.size(), true);
 		mstruct += nr;
@@ -137,12 +149,20 @@ bool create_interval(MathStructure &mstruct, const MathStructure &m1, const Math
 	} else if(m1.isMultiplication() && m1.size() == 2 && m1[0].isNumber() && m2.equals(m1[1], true)) {
 		Number nr;
 		if(!nr.setInterval(m1[0].number(), nr_one)) return false;
+		if(exclude_limits) {
+			mpfr_nextbelow(nr.internalUpperFloat());
+			mpfr_nextabove(nr.internalLowerFloat());
+		}
 		mstruct.set(nr, true);
 		mstruct *= m2;
 		return true;
 	} else if(m2.isMultiplication() && m2.size() == 2 && m2[0].isNumber() && m1.equals(m2[1], true)) {
 		Number nr;
 		if(!nr.setInterval(nr_one, m2[0].number())) return false;
+		if(exclude_limits) {
+			mpfr_nextbelow(nr.internalUpperFloat());
+			mpfr_nextabove(nr.internalLowerFloat());
+		}
 		mstruct.set(nr, true);
 		mstruct *= m1;
 		return true;
@@ -150,17 +170,19 @@ bool create_interval(MathStructure &mstruct, const MathStructure &m1, const Math
 	return false;
 }
 
-IntervalFunction::IntervalFunction() : MathFunction("interval", 2) {
+IntervalFunction::IntervalFunction() : MathFunction("interval", 2, 3) {
 	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
 	setArgumentDefinition(2, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
+	setArgumentDefinition(3, new BooleanArgument());
+	setDefaultValue(3, "0");
 }
 int IntervalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(create_interval(mstruct, vargs[0], vargs[1])) return 1;
+	if(create_interval(mstruct, vargs[0], vargs[1], vargs[2].number().getBoolean())) return 1;
 	MathStructure marg1(vargs[0]);
 	marg1.eval(eo);
 	MathStructure marg2(vargs[1]);
 	marg2.eval(eo);
-	if(create_interval(mstruct, marg1, marg2)) return 1;
+	if(create_interval(mstruct, marg1, marg2, vargs[2].number().getBoolean())) return 1;
 	return 0;
 }
 bool IntervalFunction::representsPositive(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 2 && vargs[1].representsPositive(allow_units) && vargs[0].representsPositive(allow_units);}
@@ -295,6 +317,7 @@ int UncertaintyFunction::calculate(MathStructure &mstruct, const MathStructure &
 		m2->multiply(m_one);
 		m2->last() += vargs[1];
 		mstruct.addChild_nocopy(m2);
+		mstruct.addChild(m_zero);
 		return 1;
 	} else {
 		if(set_uncertainty(mstruct, munc, eo, true)) return 1;
@@ -304,6 +327,7 @@ int UncertaintyFunction::calculate(MathStructure &mstruct, const MathStructure &
 		MathStructure *m2 = new MathStructure(vargs[0]);
 		m2->add(vargs[1]);
 		mstruct.addChild_nocopy(m2);
+		mstruct.addChild(m_zero);
 		return 1;
 	}
 	return 0;
@@ -1656,6 +1680,7 @@ int GeographicDistanceFunction::calculate(MathStructure &mstruct, const MathStru
 		m2.addChild(ln2); mstruct.last() *= CALCULATOR->getRadUnit();
 		mstruct.transformById(FUNCTION_ID_INTERVAL);
 		mstruct.addChild(m2);
+		mstruct.addChild(m_zero);
 		return 1;
 	}
 	if(ln1.isInterval()) {
@@ -1671,6 +1696,7 @@ int GeographicDistanceFunction::calculate(MathStructure &mstruct, const MathStru
 		m2.addChild(ln2); mstruct.last() *= CALCULATOR->getRadUnit();
 		mstruct.transformById(FUNCTION_ID_INTERVAL);
 		mstruct.addChild(m2);
+		mstruct.addChild(m_zero);
 		return 1;
 	}
 	if(la2.isInterval()) {
@@ -1686,6 +1712,7 @@ int GeographicDistanceFunction::calculate(MathStructure &mstruct, const MathStru
 		m2.addChild(ln2); mstruct.last() *= CALCULATOR->getRadUnit();
 		mstruct.transformById(FUNCTION_ID_INTERVAL);
 		mstruct.addChild(m2);
+		mstruct.addChild(m_zero);
 		return 1;
 	}
 	if(ln2.isInterval()) {
@@ -1701,6 +1728,7 @@ int GeographicDistanceFunction::calculate(MathStructure &mstruct, const MathStru
 		m2.addChild(ln2.upperEndPoint()); mstruct.last() *= CALCULATOR->getRadUnit();
 		mstruct.transformById(FUNCTION_ID_INTERVAL);
 		mstruct.addChild(m2);
+		mstruct.addChild(m_zero);
 		return 1;
 	}
 	if(ln1 == ln2 && la1 == la2) {

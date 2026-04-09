@@ -982,6 +982,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								MathStructure mstruct_1(mstruct_1l);
 								mstruct_1.transform(STRUCT_FUNCTION, mstruct_1u);
 								mstruct_1.setFunctionId(FUNCTION_ID_INTERVAL);
+								mstruct_1.addChild(m_zero);
 								mstruct_1.calculateFunctions(eo, false);
 
 								// Lower -b-sqrt(b^2-4ac)
@@ -995,6 +996,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								MathStructure mstruct_2(mstruct_2l);
 								mstruct_2.transform(STRUCT_FUNCTION, mstruct_2u);
 								mstruct_2.setFunctionId(FUNCTION_ID_INTERVAL);
+								mstruct_2.addChild(m_zero);
 								mstruct_2.calculateFunctions(eo, false);
 
 								MathStructure mstruct_c(CHILD(1));
@@ -1170,6 +1172,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								MathStructure mstruct_1(mstruct_1l);
 								mstruct_1.transform(STRUCT_FUNCTION, mstruct_1u);
 								mstruct_1.setFunctionId(FUNCTION_ID_INTERVAL);
+								mstruct_1.addChild(m_zero);
 								mstruct_1.calculateFunctions(eo, false);
 
 								// Lower -b-sqrt(b^2-4ac)
@@ -1183,6 +1186,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								MathStructure mstruct_2(mstruct_2l);
 								mstruct_2.transform(STRUCT_FUNCTION, mstruct_2u);
 								mstruct_2.setFunctionId(FUNCTION_ID_INTERVAL);
+								mstruct_2.addChild(m_zero);
 								mstruct_2.calculateFunctions(eo, false);
 
 								mstruct_a.calculateMultiply(nr_two, eo2);

@@ -189,7 +189,7 @@ bool calculate_rand(MathStructure &mstruct, const EvaluationOptions &eo);
 bool contains_rand(const MathStructure &mstruct, bool check_variables = false);
 bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *failed = NULL, long int min_precision = 2, bool function_middle = false);
 bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const EvaluationOptions &eo = default_evaluation_options, bool do_eval = false);
-bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2);
+bool create_interval(MathStructure &mstruct, const MathStructure &m1, const MathStructure &m2, bool exclude_limits = false);
 bool combine_powers(MathStructure &m, const MathStructure &x_var, const EvaluationOptions &eo, const EvaluationOptions &feo);
 int contains_angle_unit(const MathStructure &m, const ParseOptions &po, int check_functions = 1);
 bool has_predominately_negative_sign(const MathStructure &mstruct);

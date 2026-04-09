@@ -404,18 +404,8 @@ bool set_precision_of_numbers(MathStructure &mstruct, int i_prec) {
 	return b;
 }
 bool replace_f_interval(MathStructure &mstruct) {
-	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_INTERVAL && mstruct.size() == 2) {
-		if(mstruct[0].isNumber() && mstruct[1].isNumber()) {
-			Number nr;
-			if(nr.setInterval(mstruct[0].number(), mstruct[1].number())) {
-				mstruct.set(nr, true);
-				return true;
-			}
-		} else {
-			MathStructure m1(mstruct[0]);
-			MathStructure m2(mstruct[1]);
-			if(create_interval(mstruct, m1, m2)) return true;
-		}
+	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_INTERVAL && mstruct.size() >= 2 && mstruct[2].isNumber()) {
+		if(create_interval(mstruct, mstruct[0], mstruct[1], mstruct.size() == 2 ? false : mstruct[2].number().getBoolean())) return true;
 	} else if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_UNCERTAINTY && mstruct.size() == 3 && mstruct[2].isNumber()) {
 		bool b_rel = mstruct[2].number().getBoolean();
 		if(mstruct[0].isNumber() && mstruct[1].isNumber()) {

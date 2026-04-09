@@ -3111,6 +3111,9 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <argument index="2">
           <title>Upper endpoint</title>
         </argument>
+        <argument index="3">
+          <title>Exclude endpoints</title>
+        </argument>
       </builtin_function>
       <builtin_function name="uncertainty">
         <title>Uncertainty</title>

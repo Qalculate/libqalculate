@@ -872,21 +872,13 @@ bool replace_intervals_f(MathStructure &mstruct) {
 }
 bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo) {
 	// replace interval() and uncertainty() with numbers with intervals, if possible
-	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_INTERVAL && mstruct.size() == 2) {
-		if(mstruct[0].isNumber() && mstruct[1].isNumber()) {
-			Number nr;
-			if(nr.setInterval(mstruct[0].number(), mstruct[1].number())) {
-				mstruct.set(nr, true);
-				return true;
-			}
-		} else {
-			MathStructure m1(mstruct[0]);
-			MathStructure m2(mstruct[1]);
-			if(create_interval(mstruct, m1, m2)) return true;
-			m1.eval(eo);
-			m2.eval(eo);
-			if(create_interval(mstruct, m1, m2)) return true;
-		}
+	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_INTERVAL && mstruct.size() >= 2 && mstruct[2].isNumber()) {
+		if(create_interval(mstruct, mstruct[0], mstruct[1], mstruct.size() == 2 ? false : mstruct[2].number().getBoolean())) return true;
+		MathStructure m1(mstruct[0]);
+		MathStructure m2(mstruct[1]);
+		m1.eval(eo);
+		m2.eval(eo);
+		if(create_interval(mstruct, m1, m2, mstruct.size() == 2 ? false : mstruct[2].number().getBoolean())) return true;
 		return false;
 	} else if(eo.interval_calculation != INTERVAL_CALCULATION_NONE && mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_UNCERTAINTY && mstruct.size() == 3) {
 		if(mstruct[0].isNumber() && mstruct[1].isNumber()) {
@@ -932,6 +924,7 @@ bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo) {
 				mstruct.transformById(FUNCTION_ID_INTERVAL);
 				m1 += m2;
 				mstruct.addChild(m1);
+				mstruct.addChild(m_zero);
 			}
 			replace_f_interval(mstruct, eo);
 			return true;

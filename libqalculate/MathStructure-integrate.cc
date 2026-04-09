@@ -7369,7 +7369,7 @@ bool MathStructure::integrate(const MathStructure &lower_limit, const MathStruct
 	MathStructure m_interval;
 	int den_check = 1;
 	if(!m1.isUndefined()) {
-		m_interval.set(CALCULATOR->getFunctionById(FUNCTION_ID_INTERVAL), &m1, &m2, NULL);
+		m_interval.set(CALCULATOR->getFunctionById(FUNCTION_ID_INTERVAL), &m1, &m2, &m_zero, NULL);
 		CALCULATOR->beginTemporaryStopMessages();
 		EvaluationOptions eo3 = eo;
 		eo3.approximation = APPROXIMATION_APPROXIMATE;

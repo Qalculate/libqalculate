@@ -5241,8 +5241,9 @@ bool fix_intervals(MathStructure &mstruct, const EvaluationOptions &eo, bool *fa
 			if(b) {
 				fix_intervals(mstruct, eo, failed, function_middle);
 				return true;
-			} else if(function_middle && mstruct.type() == STRUCT_FUNCTION && mstruct.function()->id() == FUNCTION_ID_INTERVAL && mstruct.size() == 2) {
+			} else if(function_middle && mstruct.type() == STRUCT_FUNCTION && mstruct.function()->id() == FUNCTION_ID_INTERVAL && mstruct.size() >= 2) {
 				mstruct.setType(STRUCT_ADDITION);
+				while(mstruct.size() > 2) mstruct.delChild(3);
 				mstruct.divide(nr_two);
 				return true;
 			} else if(function_middle && mstruct.type() == STRUCT_FUNCTION && mstruct.function()->id() == FUNCTION_ID_UNCERTAINTY && mstruct.size() >= 1) {

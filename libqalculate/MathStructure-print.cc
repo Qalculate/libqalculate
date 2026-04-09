@@ -2738,7 +2738,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				// root(f(a),3)=cbrt(f(a))
 				ERASE(1)
 				setFunctionId(FUNCTION_ID_CBRT);
-			} else if(o_function->id() == FUNCTION_ID_INTERVAL && SIZE == 2 && CHILD(0).isAddition() && CHILD(0).size() == 2 && CHILD(1).isAddition() && CHILD(1).size() == 2) {
+			} else if(o_function->id() == FUNCTION_ID_INTERVAL && SIZE >= 2 && CHILD(0).isAddition() && CHILD(0).size() == 2 && CHILD(1).isAddition() && CHILD(1).size() == 2) {
 				// interval(f(a)+c,f(a)-c)=uncertainty(f(a),c)
 				MathStructure *mmid = NULL, *munc = NULL;
 				if(CHILD(0)[0].equals(CHILD(1)[0], true, true)) {

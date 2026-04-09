@@ -986,7 +986,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, M
 					return v;
 				}
 			}
-		} else if(mvar.isFunction() && mvar.function()->id() == FUNCTION_ID_INTERVAL && mvar.size() == 2 && !mvar[0].containsInterval(true, true, false, 1, true) && !mvar[1].containsInterval(true, true, false, 1, true)) {
+		} else if(mvar.isFunction() && mvar.function()->id() == FUNCTION_ID_INTERVAL && mvar.size() >= 2 && !mvar[0].containsInterval(true, true, false, 1, true) && !mvar[1].containsInterval(true, true, false, 1, true)) {
 			if(mvar[0].isAddition() && mvar[0].size() == 2 && mvar[1].isAddition() && mvar[1].size() == 2) {
 				const MathStructure *mmid = NULL, *munc = NULL;
 				if(mvar[0][0].equals(mvar[1][0])) {
@@ -1048,7 +1048,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, M
 		KnownVariable *v = NULL;
 		find_interval_create_var(m.number(), m, unc, unc2, &v, v2);
 		return v;
-	} else if(m.isFunction() && m.function()->id() == FUNCTION_ID_INTERVAL && m.size() == 2 && !m[0].containsInterval(true, true, false, 1, true) && !m[1].containsInterval(true, true, false, 1, true)) {
+	} else if(m.isFunction() && m.function()->id() == FUNCTION_ID_INTERVAL && m.size() >= 2 && !m[0].containsInterval(true, true, false, 1, true) && !m[1].containsInterval(true, true, false, 1, true)) {
 		if(m[0].isAddition() && m[0].size() == 2 && m[1].isAddition() && m[1].size() == 2) {
 			MathStructure *mmid = NULL, *munc = NULL;
 			if(m[0][0].equals(m[1][0])) {
@@ -1107,7 +1107,7 @@ KnownVariable *find_interval_replace_var(MathStructure &m, MathStructure &unc, M
 }
 
 bool find_interval_replace_var_nr(MathStructure &m) {
-	if((m.isNumber() && m.number().isInterval(false) && m.number().precision(true) <= PRECISION + 10) || (m.isFunction() && m.function()->id() == FUNCTION_ID_INTERVAL && m.size() == 2) || (m.isFunction() && m.function()->id() == FUNCTION_ID_UNCERTAINTY && m.size() == 3)) {
+	if((m.isNumber() && m.number().isInterval(false) && m.number().precision(true) <= PRECISION + 10) || (m.isFunction() && m.function()->id() == FUNCTION_ID_INTERVAL && m.size() >= 2) || (m.isFunction() && m.function()->id() == FUNCTION_ID_UNCERTAINTY && m.size() == 3)) {
 		KnownVariable *v = new KnownVariable("", string("(") + format_and_print(m) + ")", m);
 		m.set(v);
 		v->destroy();
@@ -1246,7 +1246,7 @@ Variable *find_interval_replace_var_comp(MathStructure &m, const EvaluationOptio
 		*v = m.variable();
 		m.set(uv, true);
 		return uv;
-	} else if((m.isNumber() && m.number().isInterval(false) && m.number().precision(true) <= PRECISION + 10) || (m.isFunction() && m.function()->id() == FUNCTION_ID_INTERVAL && m.size() == 2) || (m.isFunction() && m.function()->id() == FUNCTION_ID_UNCERTAINTY && m.size() == 3)) {
+	} else if((m.isNumber() && m.number().isInterval(false) && m.number().precision(true) <= PRECISION + 10) || (m.isFunction() && m.function()->id() == FUNCTION_ID_INTERVAL && m.size() >= 2) || (m.isFunction() && m.function()->id() == FUNCTION_ID_UNCERTAINTY && m.size() == 3)) {
 		Variable *uv = NULL;
 		if(eo.approximation == APPROXIMATION_EXACT || eo.approximation == APPROXIMATION_EXACT_VARIABLES) {
 			uv = new KnownVariable("", string("(") + format_and_print(m) + ")", m);
