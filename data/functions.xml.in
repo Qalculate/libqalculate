@@ -3212,7 +3212,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     </builtin_function>
     <builtin_function name="concatenate">
       <title>Concatenate Strings</title>
-      <names>r:concatenate</names>
+      <names>r:concatenate, strcat</names>
       <argument index="1">
         <title>Text string 1</title>
       </argument>

@@ -466,22 +466,6 @@ int CharFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 
 }
 
-string concat_add(const MathStructure &m, const EvaluationOptions &eo, bool eval = true, bool top = true) {
-	if(!top && eval && !m.isSymbolic()) {
-		MathStructure value(m);
-		value.eval(eo);
-		return concat_add(value, eo, false, false);
-	}
-	if(m.isSymbolic()) return m.symbol();
-	if(m.isVector()) {
-		string str;
-		for(size_t i = 0; i < m.size(); i++) {
-			str += concat_add(m[i], eo, eval, false);
-		}
-		return str;
-	}
-	return format_and_print(m);
-}
 ConcatenateFunction::ConcatenateFunction() : MathFunction("concatenate", 1, -1) {
 	Argument *arg = new TextArgument("", false);
 	setArgumentDefinition(1, arg);
@@ -489,7 +473,47 @@ ConcatenateFunction::ConcatenateFunction() : MathFunction("concatenate", 1, -1) 
 	setArgumentDefinition(2, arg);
 }
 int ConcatenateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	mstruct.set(concat_add(vargs, eo), false, true);
+	MathStructure m(vargs);
+	for(size_t i = 0; i < m.size(); i++) {
+		m[i].eval(eo);
+	}
+	if(m.size() == 1 && m[0].isVector()) {
+		m.setToChild(1, true);
+	}
+	string str;
+	size_t vector_size = (size_t) -1;
+	size_t n_vector = 0;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(m[i].isVector()) {
+			n_vector++;
+			if(vector_size == (size_t) -1) {
+				vector_size = m[i].size();
+			} else if(vector_size != m[i].size()) {
+				CALCULATOR->error(true, _("Vector size mismatch"), NULL);
+				return 0;
+			}
+		}
+	}
+	if(n_vector > 0) {
+		mstruct.clearVector();
+		for(size_t i = 0; i < vector_size; i++) {
+			MathStructure *mi = new MathStructure(this, NULL);
+			for(size_t i2 = 0; i2 < m.size(); i2++) {
+				if(m[i2].isVector()) {
+					mi->addChild(m[i2][i]);
+				} else {
+					mi->addChild(m[i2]);
+				}
+			}
+			mstruct.addChild_nocopy(mi);
+		}
+		return 1;
+	}
+	for(size_t i = 0; i < m.size(); i++) {
+		if(m[i].isSymbolic()) str += m[i].symbol();
+		else str += format_and_print(m[i]);
+	}
+	mstruct.set(str, false, true);
 	return 1;
 }
 LengthFunction::LengthFunction() : MathFunction("len", 1) {
