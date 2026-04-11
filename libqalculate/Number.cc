@@ -3606,7 +3606,7 @@ bool Number::divide(const Number &o) {
 		return multiply(oinv);
 	}
 	if(!o.isNonZero()) {
-		if(isZero()) return false;
+		if(o.isZero()) CALCULATOR->error(false, _("Division by zero."), NULL);
 		return false;
 	}
 	if(isZero()) {
@@ -3622,7 +3622,10 @@ bool Number::divide(const Number &o) {
 	return true;
 }
 bool Number::divide(long int i) {
-	if(includesInfinity() && i == 0) return false;
+	if(includesInfinity() && i == 0) {
+		if(i == 0) CALCULATOR->error(false, _("Division by zero."), NULL);
+		return false;
+	}
 	if(isInfinite(true)) {
 		if(hasImaginaryPart()) {
 			if(!i_value->divide(i)) return false;
@@ -3657,6 +3660,7 @@ bool Number::divide(long int i) {
 
 bool Number::recip() {
 	if(!isNonZero()) {
+		if(isZero()) CALCULATOR->error(false, _("Division by zero."), NULL);
 		return false;
 	}
 	if(isInfinite(false)) {
@@ -3911,7 +3915,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 		}
 	}
 	if(isZero() && o.isNegative()) {
-		CALCULATOR->error(true, _("Division by zero."), NULL);
+		CALCULATOR->error(false, _("Division by zero."), NULL);
 		return false;
 	}
 	if(isZero()) {
