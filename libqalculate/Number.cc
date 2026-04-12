@@ -84,7 +84,10 @@ void init_randstate() {
 	init_randstate(seed);
 }
 void clear_randstate() {
-	gmp_randclear(randstate);
+	if (randstate_initialized) {
+		gmp_randclear(randstate);
+		randstate_initialized = false;
+	}
 }
 
 Number nr_e;
