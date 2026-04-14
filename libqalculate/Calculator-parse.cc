@@ -3002,7 +3002,16 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							if(objects_finished && ((Variable*) object)->isKnown() && str_index + name_length + 2 < str.length() && (str[str_index + name_length] == LEFT_PARENTHESIS_CH || str[str_index + name_length] == LEFT_VECTOR_WRAP_CH)) {
 								size_t i4 = str.find_first_not_of(NUMBERS, str_index + name_length + 1);
 								if(i4 != string::npos && i4 > str_index + name_length + 1 && ((str[str_index + name_length] == LEFT_PARENTHESIS_CH && str[i4] == RIGHT_PARENTHESIS_CH && ((KnownVariable*) object)->get().isVector()) || (str[str_index + name_length] == LEFT_VECTOR_WRAP_CH && str[i4] == RIGHT_VECTOR_WRAP_CH && (!((Variable*) object)->representsScalar() || (i4 == str_index + name_length + 2 && str[i4 - 1] == '1'))))) {
-									stmp += i2s(addId(new MathStructure(getFunctionById(FUNCTION_ID_ELEMENT), new MathStructure((Variable*) object), new MathStructure(Number(str.substr(str_index + name_length + 1, i4 - (str_index + name_length + 1)), po)), new MathStructure(), NULL)));
+									MathStructure *mcol = new MathStructure();
+									MathStructure *mrow = new MathStructure(Number(str.substr(str_index + name_length + 1, i4 - (str_index + name_length + 1)), po));
+									if(i4 + 3 < str.length() && str[i4 + 1] == str[str_index + name_length]) {
+										size_t i5 = str.find_first_not_of(NUMBERS, i4 + 2);
+										if(i5 != string::npos && i5 > i4 + 2 && str[i5] == str[i4]) {
+											mcol->set(Number(str.substr(i4 + 2, i5 - (i4 + 2)), po));
+											i4 = i5;
+										}
+									}
+									stmp += i2s(addId(new MathStructure(getFunctionById(FUNCTION_ID_ELEMENT), new MathStructure((Variable*) object), mrow, mcol, NULL)));
 									name_length = i4 - str_index + 1;
 								} else {
 									stmp += i2s(addId(new MathStructure((Variable*) object)));
@@ -3379,9 +3388,15 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 										if(i5 != string::npos && i5 > str_index + i4 + 1 && str[i5] == RIGHT_VECTOR_WRAP_CH && (!mstruct->representsScalar() || ((size_t) i5 == str_index + i4 + 2 && str[i5 - 1] == '1'))) {
 											mstruct->transformById(FUNCTION_ID_ELEMENT);
 											mstruct->addChild(Number(str.substr(str_index + i4 + 1, i5 - (str_index + i4 + 1)), po));
-											mstruct->addChild(m_zero);
+											if(i5 + 3 < str.length() && str[i5 + 1] == LEFT_VECTOR_WRAP_CH) {
+												size_t i6 = str.find_first_not_of(NUMBERS, i5 + 2);
+												if(i6 != string::npos && i6 > i5 + 2 && str[i6] == RIGHT_VECTOR_WRAP_CH) {
+													mstruct->addChild(Number(str.substr(i5 + 2, i6 - (i5 + 2)), po));
+													i5 = i6;
+												}
+											}
+											if(mstruct->size() == 2) mstruct->addChild(m_zero);
 											i4 = i5 - str_index + 1;
-										} else {
 										}
 									}
 									stmp += i2s(addId(mstruct));
