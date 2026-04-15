@@ -2702,11 +2702,13 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					str_index += stmp.length() - 1;
 				}
 			}
-		} else if(str[str_index] == DOT_CH && !po.rpn && str_index > 0 && str_index < str.length() - 1 && is_not_number(str[str_index + 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[str_index - 1]) && (((str[str_index + 1] == POWER_CH || str[str_index + 1] == MULTIPLICATION_CH || str[str_index + 1] == DIVISION_CH) && str_index + 1 < str.length() - 1 && str[str_index + 2] != str[str_index + 1]) || (is_not_number(str[str_index - 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[str_index + 1]))) && (str[str_index - 1] != DOT_CH || str[str_index + 1] != DOT_CH)) {
+		} else if(str[str_index] == DOT_CH && !po.rpn && str_index > 0 && str_index < str.length() - 1 && is_not_number(str[str_index + 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[str_index - 1]) && (((str[str_index + 1] == POWER_CH || str[str_index + 1] == MULTIPLICATION_CH || str[str_index + 1] == DIVISION_CH || str[str_index + 1] == PLUS_CH || str[str_index + 1] == MINUS_CH) && str_index + 1 < str.length() - 1 && str[str_index + 2] != str[str_index + 1]) || (is_not_number(str[str_index - 1], base) && is_not_in(INTERNAL_OPERATORS OPERATORS "\\", str[str_index + 1]))) && (str[str_index - 1] != DOT_CH || str[str_index + 1] != DOT_CH)) {
 			consecutive_objects = 0;
 			if(str[str_index + 1] == MULTIPLICATION_CH) str.replace(str_index, 2, "\x17");
 			else if(str[str_index + 1] == DIVISION_CH) str.replace(str_index, 2, "\x18");
 			else if(str[str_index + 1] == POWER_CH) str.replace(str_index, 2, "\x19");
+			else if(str[str_index + 1] == PLUS_CH) str.replace(str_index, 2, PLUS);
+			else if(str[str_index + 1] == MINUS_CH) str.replace(str_index, 2, MINUS);
 			else str[str_index] = '\x16';
 		} else if(is_not_in(NUMBERS INTERNAL_OPERATORS NOT_IN_NAMES INTERNAL_ID_LR, str[str_index])) {
 			// dx/dy derivative notation

@@ -1577,6 +1577,11 @@ bool expression_contains_save_function(const string &str, const ParseOptions &po
 		if(i_name2 == string::npos || i_name2 == 0 || str[i_name2] != LEFT_VECTOR_WRAP_CH) return false;
 		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
 		if(i_name2 == string::npos) return false;
+		if(i_name2 - i_name1 >= 2 && str[i_name2] == RIGHT_VECTOR_WRAP_CH) {
+			i_name2 = str.find_last_not_of(SPACES NUMBERS COMMAS, i_name2 - 1);
+			if(i_name2 == string::npos || i_name2 == 0 || str[i_name2] != LEFT_VECTOR_WRAP_CH) return false;
+			i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
+		}
 		b_matrix = true;
 	}
 	if(!b_quote && !CALCULATOR->variableNameIsValid(str.substr(i_name1, i_name2 - i_name1 + 1))) return false;
@@ -1667,6 +1672,12 @@ bool transform_expression_for_equals_save(string &str, const ParseOptions &po) {
 		if(i_name2 == string::npos || i_name2 == 0 || str[i_name2] != LEFT_VECTOR_WRAP_CH) return false;
 		i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
 		if(i_name2 == string::npos) return false;
+		if(i_name2 - i_name1 >= 2 && str[i_name2] == RIGHT_VECTOR_WRAP_CH) {
+			i_name2 = str.find_last_not_of(SPACES NUMBERS COMMAS, i_name2 - 1);
+			if(i_name2 == string::npos || i_name2 == 0 || str[i_name2] != LEFT_VECTOR_WRAP_CH) return false;
+			i_name2 = str.find_last_not_of(SPACES, i_name2 - 1);
+			if(i_name2 == string::npos) return false;
+		}
 		b_matrix = true;
 	}
 	if(!b_quote && !CALCULATOR->variableNameIsValid(str.substr(i_name1, i_name2 - i_name1 + 1))) return false;

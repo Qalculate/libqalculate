@@ -1068,8 +1068,10 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 										str2 += INTERNAL_ID_R RIGHT_PARENTHESIS;
 									}
 									str.replace(i2, svar.size(), str2);
-								} else {
+								} else if(priv->v_subs_calc[i] != svar) {
 									str.replace(i2, svar.size(), string("(") + priv->v_subs_calc[i] + ")");
+								} else {
+									break;
 								}
 							}
 						} else {
@@ -1121,8 +1123,10 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					if((i2 = stmp.find(svar, i2)) != string::npos) {
 						if(i2 != 0 && stmp[i2 - 1] == '\\') {
 							i2 += 2;
-						} else {
+						} else if(svar != str) {
 							stmp.replace(i2, svar.size(), str);
+						} else {
+							break;
 						}
 					} else {
 						break;
@@ -1148,8 +1152,10 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 										str2 += INTERNAL_ID_R RIGHT_PARENTHESIS;
 									}
 									str.replace(i2, svar.size(), str2);
-								} else {
+								} else if(priv->v_subs_calc[i] != svar) {
 									str.replace(i2, svar.size(), string("(") + priv->v_subs_calc[i] + ")");
+								} else {
+									break;
 								}
 							}
 						} else {
@@ -1168,8 +1174,10 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					if((i2 = stmp.find(svar, i2)) != string::npos) {
 						if(i2 != 0 && stmp[i2 - 1] == '\\') {
 							i2 += svar.size();
-						} else {
+						} else if(svar != str) {
 							stmp.replace(i2, svar.size(), string("(") + str + ")");
+						} else {
+							break;
 						}
 					} else {
 						break;

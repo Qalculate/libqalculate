@@ -1045,18 +1045,33 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			return 0;
 		}
 		i2 = vargs[1].symbol().rfind(RIGHT_VECTOR_WRAP);
-		string index;
+		string index, index2;
 		if(i2 == string::npos || i2 < i) index = vargs[1].symbol().substr(i + 1);
 		else index = vargs[1].symbol().substr(i + 1, i2 - (i + 1));
-		MathStructure mindex;
+		size_t i3 = index.find(RIGHT_VECTOR_WRAP);
+		if(i3 != string::npos && i3 != index.length() - 1) {
+			size_t i4 = index.find(LEFT_VECTOR_WRAP);
+			if(i4 != string::npos && i4 != index.length() - 1 && i4 == i3 + 1 && index.find_first_of(VECTOR_WRAPS, i4 + 1) == string::npos) {
+				index2 = index.substr(i4 + 1);
+				index = index.substr(0, i3);
+			}
+		}
+		MathStructure mindex, mindex2;
 		gsub(";", COMMA, index);
 		ParseOptions po = eo.parse_options;
 		po.base = 10;
 		CALCULATOR->parse(&mindex, index, po);
 		mindex.eval(eo);
+		if(!index2.empty()) {
+			CALCULATOR->parse(&mindex2, index2, po);
+			mindex2.eval(eo);
+		}
 		mstruct.transformById(FUNCTION_ID_REPLACE_PART);
 		mstruct.insertChild(((KnownVariable*) v)->get(), 1);
-		if(mindex.isVector()) {
+		if(!index2.empty()) {
+			mstruct.addChild(mindex);
+			mstruct.addChild(mindex2);
+		} else if(mindex.isVector()) {
 			for(size_t i = 0; i < mindex.size(); i++) {
 				mstruct.addChild(mindex[i]);
 			}
