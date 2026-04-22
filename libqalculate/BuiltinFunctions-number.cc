@@ -2769,21 +2769,20 @@ int IntegerDigitsFunction::calculate(MathStructure &mstruct, const MathStructure
 	Number nr_rem;
 	Number nr(vargs[0].number());
 	nr.abs();
-	size_t l = 0;
+	size_t l = 1;
+	mstruct.clearVector();
 	if(vargs[2].number().isPositive()) {
 		l = vargs[2].number().ulintValue();
-	} else if(!nr.isZero()) {
-		Number nr_log(nr);
-		nr_log.log(vargs[1].number());
-		nr_log.ceil();
-		l = nr_log.ulintValue();
+		mstruct.resizeVector(l, m_zero);
 	}
-	mstruct.clearVector();
-	mstruct.resizeVector(l, m_zero);
 	while(l > 0 && !nr.isZero()) {
 		if(CALCULATOR->aborted() || !nr.iquo(vargs[1].number(), nr_rem)) return 0;
-		mstruct[l - 1] = nr_rem;
-		l--;
+		if(vargs[2].number().isPositive()) {
+			mstruct[l - 1] = nr_rem;
+			l--;
+		} else {
+			mstruct.insertChild(nr_rem, 1);
+		}
 	}
 	return 1;
 }
