@@ -75,7 +75,8 @@ bool MathStructure::rankVector(bool ascending) {
 	if(sort_vector_comparison_failed) {
 		for(size_t i = 1; i < v_subs_new.size(); i++) {
 			if(CALCULATOR->aborted()) return false;
-			ComparisonResult cmp = v_subs_new[i - 1]->number().compare(v_subs_new[i]->number());
+			ComparisonResult cmp = COMPARISON_RESULT_UNKNOWN;
+			if(v_subs_new[i - 1]->isNumber() && v_subs_new[i]->isNumber()) cmp = v_subs_new[i - 1]->number().compare(v_subs_new[i]->number());
 			if(cmp != COMPARISON_RESULT_EQUAL && cmp != COMPARISON_RESULT_EQUAL_LIMITS && ((ascending && cmp != COMPARISON_RESULT_GREATER) || (!ascending && cmp != COMPARISON_RESULT_LESS))) {
 				for(size_t index = 0; index < SIZE; index++) {
 					if(CALCULATOR->aborted()) return false;
@@ -127,6 +128,14 @@ bool m_nr_cmp_d(const MathStructure *m1, const MathStructure *m2) {
 	if(!COMPARISON_IS_EQUAL_OR_GREATER(cmp)) sort_vector_comparison_failed = true;
 	return false;
 }
+bool m_sym_cmp_a(const MathStructure *m1, const MathStructure *m2) {
+	if(sort_vector_comparison_failed || CALCULATOR->aborted()) return false;
+	return std::locale("")(m1->symbol(), m2->symbol());
+}
+bool m_sym_cmp_d(const MathStructure *m1, const MathStructure *m2) {
+	if(sort_vector_comparison_failed || CALCULATOR->aborted()) return false;
+	return std::locale("")(m2->symbol(), m1->symbol());
+}
 bool MathStructure::sortVector(bool ascending) {
 	if(CALCULATOR->aborted()) return false;
 	vector<MathStructure*> v_subs_new = v_subs;
@@ -134,20 +143,35 @@ bool MathStructure::sortVector(bool ascending) {
 	if(ascending) std::sort(v_subs_new.begin(), v_subs_new.end(), m_nr_cmp_a);
 	else std::sort(v_subs_new.begin(), v_subs_new.end(), m_nr_cmp_d);
 	if(sort_vector_comparison_failed) {
-		for(size_t i = 1; i < v_subs_new.size(); i++) {
-			if(CALCULATOR->aborted()) return false;
-			ComparisonResult cmp = v_subs_new[i - 1]->number().compare(v_subs_new[i]->number());
-			if(cmp != COMPARISON_RESULT_EQUAL_LIMITS && ((ascending && !COMPARISON_IS_EQUAL_OR_GREATER(cmp)) || (!ascending && !COMPARISON_IS_EQUAL_OR_LESS(cmp)))) {
-				for(size_t index = 0; index < SIZE; index++) {
-					if(CALCULATOR->aborted()) return false;
-					if(&CHILD(index) == v_subs_new[i]) {
-						CALCULATOR->error(true, _("Unsolvable comparison at element %s when trying to sort vector."), i2s(index + 1).c_str(), NULL);
-					}
-				}
+		bool b_symbolic = true;
+		for(size_t i = 0; i < v_subs_new.size(); i++) {
+			if(!v_subs_new[i]->isSymbolic()) {
+				b_symbolic = false;
 				break;
 			}
 		}
-		return false;
+		if(b_symbolic) {
+			sort_vector_comparison_failed = false;
+			if(ascending) std::sort(v_subs_new.begin(), v_subs_new.end(), m_sym_cmp_a);
+			else std::sort(v_subs_new.begin(), v_subs_new.end(), m_sym_cmp_d);
+			if(sort_vector_comparison_failed) return false;
+		} else {
+			for(size_t i = 1; i < v_subs_new.size(); i++) {
+				if(CALCULATOR->aborted()) return false;
+				ComparisonResult cmp = COMPARISON_RESULT_UNKNOWN;
+				if(v_subs_new[i - 1]->isNumber() && v_subs_new[i]->isNumber()) cmp = v_subs_new[i - 1]->number().compare(v_subs_new[i]->number());
+				if(cmp != COMPARISON_RESULT_EQUAL_LIMITS && ((ascending && !COMPARISON_IS_EQUAL_OR_GREATER(cmp)) || (!ascending && !COMPARISON_IS_EQUAL_OR_LESS(cmp)))) {
+					for(size_t index = 0; index < SIZE; index++) {
+						if(CALCULATOR->aborted()) return false;
+						if(&CHILD(index) == v_subs_new[i]) {
+							CALCULATOR->error(true, _("Unsolvable comparison at element %s when trying to sort vector."), i2s(index + 1).c_str(), NULL);
+						}
+					}
+					break;
+				}
+			}
+			return false;
+		}
 	}
 	v_subs = v_subs_new;
 	for(size_t i = 0; i < v_order.size(); i++) {

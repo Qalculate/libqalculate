@@ -1734,7 +1734,7 @@ int IntersectFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				mstruct.delChild(i + 1);
 				continue;
 			}
-			if(cmp != COMPARISON_RESULT_GREATER) return 0;
+			if(cmp != COMPARISON_RESULT_GREATER && (!mstruct[i].isSymbolic() || !mstruct[i + 1].isSymbolic())) return 0;
 		}
 		while(true) {
 			if(i2 == mstruct2.size()) {
@@ -1751,7 +1751,16 @@ int IntersectFunction::calculate(MathStructure &mstruct, const MathStructure &va
 				mstruct.delChild(i + 1);
 				break;
 			}
-			if(cmp != COMPARISON_RESULT_LESS) return 0;
+			if(cmp != COMPARISON_RESULT_LESS) {
+				if(mstruct[i].isSymbolic() && mstruct[i2].isSymbolic()) {
+					if(std::locale("")(mstruct[i].symbol(), mstruct2[i2].symbol())) {
+						mstruct.delChild(i + 1);
+						break;
+					}
+				} else {
+					return 0;
+				}
+			}
 			i2++;
 		}
 	}
@@ -1784,7 +1793,7 @@ int SetDifferenceFunction::calculate(MathStructure &mstruct, const MathStructure
 				mstruct.delChild(i + 1);
 				continue;
 			}
-			if(cmp != COMPARISON_RESULT_GREATER) return 0;
+			if(cmp != COMPARISON_RESULT_GREATER && (!mstruct[i].isSymbolic() || !mstruct[i + 1].isSymbolic())) return 0;
 		}
 		while(true) {
 			if(i2 == mstruct2.size()) {
@@ -1801,7 +1810,16 @@ int SetDifferenceFunction::calculate(MathStructure &mstruct, const MathStructure
 				i++;
 				break;
 			}
-			if(cmp != COMPARISON_RESULT_LESS) return 0;
+			if(cmp != COMPARISON_RESULT_LESS) {
+				if(mstruct[i].isSymbolic() && mstruct[i2].isSymbolic()) {
+					if(std::locale("")(mstruct[i].symbol(), mstruct2[i2].symbol())) {
+						i++;
+						break;
+					}
+				} else {
+					return 0;
+				}
+			}
 			i2++;
 		}
 	}
@@ -1824,7 +1842,7 @@ int UniqueFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		ComparisonResult cmp = mstruct[i].compare(mstruct[i - 1]);
 		if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) {
 			mstruct.delChild(i + 1);
-		} else if(cmp != COMPARISON_RESULT_LESS) {
+		} else if(cmp != COMPARISON_RESULT_LESS && (!mstruct[i].isSymbolic() || !mstruct[i - 1].isSymbolic())) {
 			return 0;
 		} else {
 			i++;
