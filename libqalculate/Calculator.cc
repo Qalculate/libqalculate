@@ -1736,6 +1736,10 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new CircShiftFunction());
 	addFunction(new ReshapeFunction());
 
+	addFunction(new IntersectFunction());
+	addFunction(new SetDifferenceFunction());
+	addFunction(new UniqueFunction());
+
 	f_factorial = addFunction(new FactorialFunction());
 	f_factorial2 = addFunction(new DoubleFactorialFunction());
 	f_multifactorial = addFunction(new MultiFactorialFunction());

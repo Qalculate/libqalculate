@@ -512,6 +512,60 @@
         <title>Matrix 2</title>
       </argument>
     </builtin_function>
+    <builtin_function name="intersect">
+      <title>Set Intersection</title>
+      <names>r:intersect</names>
+      <description>Returns a sorted vector with the unique elements that exists in both vectors.</description>
+      <argument index="1">
+        <title>Vector 1</title>
+      </argument>
+      <argument index="2">
+        <title>Vector 2</title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="setdiff">
+      <title>Set Difference</title>
+      <names>r:setdiff</names>
+      <description>Returns a sorted vector with the unique elements that exists only in the first vector.</description>
+      <argument index="1">
+        <title>Vector 1</title>
+      </argument>
+      <argument index="2">
+        <title>Vector 2</title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="unique">
+      <title>Unique</title>
+      <names>r:unique</names>
+      <description>Returns a sorted vector with no repititions.</description>
+      <argument index="1">
+        <title>Vector</title>
+      </argument>
+    </builtin_function>
+    <function>
+      <title>Set Union</title>
+      <names>r:union</names>
+      <description>Combined two vectors and returns a sorted vector with no repititions.</description>
+      <expression>unique(combine(\x,\y))</expression>
+      <argument type="vector" index="1">
+        <title>Vector 1</title>
+      </argument>
+      <argument type="vector" index="2">
+        <title>Vector 2</title>
+      </argument>
+    </function>
+    <function>
+      <title>Symmetric Set Difference</title>
+      <names>r:setxor</names>
+      <description>Returns a sorted vector with the unique elements that exists in either the first or the second vector, but not in both.</description>
+      <expression>setdiff(combine(\x,\y),intersect(\x,\y))</expression>
+      <argument type="vector" index="1">
+        <title>Vector 1</title>
+      </argument>
+      <argument type="vector" index="2">
+        <title>Vector 2</title>
+      </argument>
+    </function>
   </category>
   <category>
     <title>Combinatorics</title>
@@ -3819,7 +3873,7 @@ The ":=" operator (e.g. var1:=10) is a shortcut for this function.</description>
       <title>Find Linear Function</title>
       <names>r:linearfunction</names>
       <description>Finds the linear function for the straight line between two distinct points.</description>
-      <expression>(\a-\y)/(\z-\x)*("x"-\x)+\y</expression>
+      <expression>(\a-\y)/(\z-\x)*(x-\x)+\y</expression>
       <argument type="free" index="1">
         <title>x1</title>
       </argument>

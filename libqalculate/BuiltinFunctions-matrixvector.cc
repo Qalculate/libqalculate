@@ -1707,3 +1707,128 @@ int KroneckerProductFunction::calculate(MathStructure &mstruct, const MathStruct
 	}
 	return 1;
 }
+
+IntersectFunction::IntersectFunction() : MathFunction("intersect", 2, 2) {
+	setArgumentDefinition(1, new VectorArgument(""));
+	setArgumentDefinition(2, new VectorArgument(""));
+}
+int IntersectFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	EvaluationOptions eo2 = eo;
+	eo2.approximation = APPROXIMATION_EXACT;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
+		mstruct[i].eval(eo2);
+	}
+	MathStructure mstruct2(vargs[1]);
+	for(size_t i = 0; i < mstruct2.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
+		mstruct2[i].eval(eo2);
+	}
+	if(!mstruct.sortVector() || !mstruct2.sortVector()) return 0;
+	size_t i2 = 0;
+	for(size_t i = 0; i < mstruct.size();) {
+		if(i + 1 < mstruct.size()) {
+			ComparisonResult cmp = mstruct[i].compare(mstruct[i + 1]);
+			if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) {
+				mstruct.delChild(i + 1);
+				continue;
+			}
+			if(cmp != COMPARISON_RESULT_GREATER) return 0;
+		}
+		while(true) {
+			if(i2 == mstruct2.size()) {
+				mstruct.delChild(i + 1);
+				break;
+			}
+			ComparisonResult cmp = mstruct[i].compare(mstruct2[i2]);
+			if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) {
+				i2++;
+				i++;
+				break;
+			}
+			if(cmp == COMPARISON_RESULT_GREATER) {
+				mstruct.delChild(i + 1);
+				break;
+			}
+			if(cmp != COMPARISON_RESULT_LESS) return 0;
+			i2++;
+		}
+	}
+	return 1;
+}
+
+SetDifferenceFunction::SetDifferenceFunction() : MathFunction("setdiff", 2, 2) {
+	setArgumentDefinition(1, new VectorArgument(""));
+	setArgumentDefinition(2, new VectorArgument(""));
+}
+int SetDifferenceFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	EvaluationOptions eo2 = eo;
+	eo2.approximation = APPROXIMATION_EXACT;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
+		mstruct[i].eval(eo2);
+	}
+	MathStructure mstruct2(vargs[1]);
+	for(size_t i = 0; i < mstruct2.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
+		mstruct2[i].eval(eo2);
+	}
+	if(!mstruct.sortVector() || !mstruct2.sortVector()) return 0;
+	size_t i2 = 0;
+	for(size_t i = 0; i < mstruct.size();) {
+		if(i + 1 < mstruct.size()) {
+			ComparisonResult cmp = mstruct[i].compare(mstruct[i + 1]);
+			if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) {
+				mstruct.delChild(i + 1);
+				continue;
+			}
+			if(cmp != COMPARISON_RESULT_GREATER) return 0;
+		}
+		while(true) {
+			if(i2 == mstruct2.size()) {
+				i++;
+				break;
+			}
+			ComparisonResult cmp = mstruct[i].compare(mstruct2[i2]);
+			if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) {
+				mstruct.delChild(i + 1);
+				i2++;
+				break;
+			}
+			if(cmp == COMPARISON_RESULT_GREATER) {
+				i++;
+				break;
+			}
+			if(cmp != COMPARISON_RESULT_LESS) return 0;
+			i2++;
+		}
+	}
+	return 1;
+}
+
+UniqueFunction::UniqueFunction() : MathFunction("unique", 1, 1) {
+	setArgumentDefinition(1, new VectorArgument(""));
+}
+int UniqueFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	EvaluationOptions eo2 = eo;
+	eo2.approximation = APPROXIMATION_EXACT;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
+		mstruct[i].eval(eo2);
+	}
+	if(!mstruct.sortVector()) return 0;
+	for(size_t i = 1; i < mstruct.size();) {
+		ComparisonResult cmp = mstruct[i].compare(mstruct[i - 1]);
+		if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) {
+			mstruct.delChild(i + 1);
+		} else if(cmp != COMPARISON_RESULT_LESS) {
+			return 0;
+		} else {
+			i++;
+		}
+	}
+	return 1;
+}
