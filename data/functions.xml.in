@@ -515,23 +515,29 @@
     <builtin_function name="intersect">
       <title>Set Intersection</title>
       <names>r:intersect</names>
-      <description>Returns a sorted vector with the unique elements that exists in both vectors.</description>
+      <description>Returns a sorted vector with the elements that exists in both vectors.</description>
       <argument index="1">
         <title>Vector 1</title>
       </argument>
       <argument index="2">
         <title>Vector 2</title>
+      </argument>
+      <argument index="3">
+        <title>Multiset</title>
       </argument>
     </builtin_function>
     <builtin_function name="setdiff">
       <title>Set Difference</title>
       <names>r:setdiff</names>
-      <description>Returns a sorted vector with the unique elements that exists only in the first vector.</description>
+      <description>Returns a sorted vector with the elements that exists only in the first vector.</description>
       <argument index="1">
         <title>Vector 1</title>
       </argument>
       <argument index="2">
         <title>Vector 2</title>
+      </argument>
+      <argument index="3">
+        <title>Multiset</title>
       </argument>
     </builtin_function>
     <builtin_function name="unique">
@@ -542,28 +548,44 @@
         <title>Vector</title>
       </argument>
     </builtin_function>
-    <function>
+    <builtin_function name="count">
+      <title>Count Occurrences</title>
+      <names>r:count</names>
+      <description>Returns the number of times the specified value appears in a vector.</description>
+      <argument index="1">
+        <title>Vector</title>
+      </argument>
+      <argument index="2">
+        <title>Value</title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="union">
       <title>Set Union</title>
       <names>r:union</names>
-      <description>Combined two vectors and returns a sorted vector with no repititions.</description>
-      <expression>unique(combine(\x,\y))</expression>
-      <argument type="vector" index="1">
+      <description>Combines two vectors and returns a sorted vector with no repititions (unless multiset is true).</description>
+      <argument index="1">
         <title>Vector 1</title>
       </argument>
-      <argument type="vector" index="2">
+      <argument index="2">
         <title>Vector 2</title>
       </argument>
-    </function>
+      <argument index="3">
+        <title>Multiset</title>
+      </argument>
+    </builtin_function>
     <function>
       <title>Symmetric Set Difference</title>
       <names>r:setxor</names>
-      <description>Returns a sorted vector with the unique elements that exists in either the first or the second vector, but not in both.</description>
-      <expression>setdiff(combine(\x,\y),intersect(\x,\y))</expression>
+      <description>Returns a sorted vector with the elements that exists in either the first or the second vector, but not in both.</description>
+      <expression>setdiff(union(\x,\y,\z),intersect(\x,\y,\z),\z)</expression>
       <argument type="vector" index="1">
         <title>Vector 1</title>
       </argument>
       <argument type="vector" index="2">
         <title>Vector 2</title>
+      </argument>
+      <argument type="boolean" index="3">
+        <title>Multiset</title>
       </argument>
     </function>
   </category>
@@ -3266,7 +3288,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     </builtin_function>
     <builtin_function name="concatenate">
       <title>Concatenate Strings</title>
-      <names>r:concatenate, strcat</names>
+      <names>r:concatenate,strcat</names>
       <argument index="1">
         <title>Text string 1</title>
       </argument>

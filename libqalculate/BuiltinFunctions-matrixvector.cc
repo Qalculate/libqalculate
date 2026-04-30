@@ -1613,7 +1613,7 @@ int SelectFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		mtest.replace(vargs[2], mstruct[i], false, false, true);
 		mtest.eval(eo);
 		if(!mtest.isNumber() || mtest.number().getBoolean() < 0) {
-			CALCULATOR->error(true, _("Comparison failed."), NULL);
+			CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), NULL);
 			return 0;
 		}
 		if(mtest.number().getBoolean() == 0) {
@@ -1627,6 +1627,40 @@ int SelectFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 			return 1;
 		} else {
 			i++;
+		}
+	}
+	if(vargs[3].number().getBoolean() > 0) {
+		CALCULATOR->error(true, _("No matching item found."), NULL);
+		return 0;
+	}
+	return 1;
+}
+FindFunction::FindFunction() : MathFunction("find", 2, 4) {
+	setArgumentDefinition(1, new VectorArgument());
+	setArgumentDefinition(3, new SymbolicArgument());
+	setDefaultValue(3, "undefined");
+	setArgumentDefinition(4, new BooleanArgument());
+	setDefaultValue(4, "0");
+}
+int FindFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	MathStructure mtest;
+	mstruct.clearVector();
+	for(size_t i = 0; i < vargs[0].size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
+		mtest = vargs[1];
+		mtest.replace(vargs[2], vargs[0][i], false, false, true);
+		mtest.eval(eo);
+		if(!mtest.isNumber() || mtest.number().getBoolean() < 0) {
+			CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), NULL);
+			return 0;
+		}
+		if(mtest.number().getBoolean() == 1) {
+			if(vargs[3].number().getBoolean() > 0) {
+				mstruct.set(i + 1, 1, 0);
+				return 1;
+			} else {
+				mstruct.addChild_nocopy(new MathStructure(i + 1, 1, 0));
+			}
 		}
 	}
 	if(vargs[3].number().getBoolean() > 0) {
@@ -1708,12 +1742,93 @@ int KroneckerProductFunction::calculate(MathStructure &mstruct, const MathStruct
 	return 1;
 }
 
-IntersectFunction::IntersectFunction() : MathFunction("intersect", 2, 2) {
+UnionFunction::UnionFunction() : MathFunction("union", 2, 3) {
 	setArgumentDefinition(1, new VectorArgument(""));
 	setArgumentDefinition(2, new VectorArgument(""));
+	setArgumentDefinition(3, new BooleanArgument(""));
+	setDefaultValue(3, "0");
+}
+int UnionFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	bool multiset = vargs[2].number().getBoolean();
+	EvaluationOptions eo2 = eo;
+	eo2.approximation = APPROXIMATION_EXACT;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
+		mstruct[i].eval(eo2);
+	}
+	MathStructure mstruct2(vargs[1]);
+	for(size_t i = 0; i < mstruct2.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
+		mstruct2[i].eval(eo2);
+	}
+	if(!mstruct.sortVector() || !mstruct2.sortVector()) return 0;
+	size_t i2 = 0;
+	for(size_t i = 0; i <= mstruct.size();) {
+		if(i == mstruct.size()) i++;
+		if(!multiset && i + 1 < mstruct.size()) {
+			ComparisonResult cmp = mstruct[i].compare(mstruct[i + 1]);
+			if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) {
+				mstruct.delChild(i + 1);
+				continue;
+			}
+			if(cmp != COMPARISON_RESULT_GREATER && (!mstruct[i].isSymbolic() || !mstruct[i + 1].isSymbolic())) return 0;
+		}
+		while(true) {
+			if(i2 == mstruct2.size()) {
+				i++;
+				break;
+			}
+			if(!multiset && i2 + 1 < mstruct2.size()) {
+				ComparisonResult cmp = mstruct2[i2].compare(mstruct2[i2 + 1]);
+				if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) {
+					mstruct2.delChild(i2 + 1);
+					continue;
+				}
+				if(cmp != COMPARISON_RESULT_GREATER && (!mstruct2[i2].isSymbolic() || !mstruct2[i2 + 1].isSymbolic())) return 0;
+			}
+			if(i >= mstruct.size()) {
+				mstruct2[i2].ref();
+				mstruct.addChild_nocopy(&mstruct2[i2]);
+				mstruct2.delChild(i2 + 1);
+				i++;
+				continue;
+			}
+			ComparisonResult cmp = mstruct[i].compare(mstruct2[i2]);
+			if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) {
+				i2++;
+				i++;
+				break;
+			}
+			if(cmp != COMPARISON_RESULT_LESS && cmp != COMPARISON_RESULT_GREATER && mstruct[i].isSymbolic() && mstruct[i2].isSymbolic()) {
+				if(std::locale("")(mstruct[i].symbol(), mstruct2[i2].symbol())) cmp = COMPARISON_RESULT_GREATER;
+				else cmp = COMPARISON_RESULT_LESS;
+			}
+			if(cmp == COMPARISON_RESULT_GREATER) {
+				i++;
+				break;
+			} else if(cmp == COMPARISON_RESULT_LESS) {
+				mstruct2[i2].ref();
+				mstruct.insertChild_nocopy(&mstruct2[i2], i + 1);
+				mstruct2.delChild(i2 + 1);
+				i++;
+			} else {
+				return 0;
+			}
+		}
+	}
+	return 1;
+}
+
+IntersectFunction::IntersectFunction() : MathFunction("intersect", 2, 3) {
+	setArgumentDefinition(1, new VectorArgument(""));
+	setArgumentDefinition(2, new VectorArgument(""));
+	setArgumentDefinition(3, new BooleanArgument(""));
+	setDefaultValue(3, "0");
 }
 int IntersectFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
+	bool multiset = vargs[2].number().getBoolean();
 	EvaluationOptions eo2 = eo;
 	eo2.approximation = APPROXIMATION_EXACT;
 	for(size_t i = 0; i < mstruct.size(); i++) {
@@ -1728,7 +1843,7 @@ int IntersectFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	if(!mstruct.sortVector() || !mstruct2.sortVector()) return 0;
 	size_t i2 = 0;
 	for(size_t i = 0; i < mstruct.size();) {
-		if(i + 1 < mstruct.size()) {
+		if(!multiset && i + 1 < mstruct.size()) {
 			ComparisonResult cmp = mstruct[i].compare(mstruct[i + 1]);
 			if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) {
 				mstruct.delChild(i + 1);
@@ -1767,12 +1882,15 @@ int IntersectFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	return 1;
 }
 
-SetDifferenceFunction::SetDifferenceFunction() : MathFunction("setdiff", 2, 2) {
+SetDifferenceFunction::SetDifferenceFunction() : MathFunction("setdiff", 2, 3) {
 	setArgumentDefinition(1, new VectorArgument(""));
 	setArgumentDefinition(2, new VectorArgument(""));
+	setArgumentDefinition(3, new BooleanArgument(""));
+	setDefaultValue(3, "0");
 }
 int SetDifferenceFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
+	bool multiset = vargs[2].number().getBoolean();
 	EvaluationOptions eo2 = eo;
 	eo2.approximation = APPROXIMATION_EXACT;
 	for(size_t i = 0; i < mstruct.size(); i++) {
@@ -1787,7 +1905,7 @@ int SetDifferenceFunction::calculate(MathStructure &mstruct, const MathStructure
 	if(!mstruct.sortVector() || !mstruct2.sortVector()) return 0;
 	size_t i2 = 0;
 	for(size_t i = 0; i < mstruct.size();) {
-		if(i + 1 < mstruct.size()) {
+		if(!multiset && i + 1 < mstruct.size()) {
 			ComparisonResult cmp = mstruct[i].compare(mstruct[i + 1]);
 			if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) {
 				mstruct.delChild(i + 1);
@@ -1826,6 +1944,52 @@ int SetDifferenceFunction::calculate(MathStructure &mstruct, const MathStructure
 	return 1;
 }
 
+IsMemberFunction::IsMemberFunction() : MathFunction("ismember", 2, 2) {
+	setArgumentDefinition(1, new VectorArgument(""));
+	setArgumentDefinition(2, new VectorArgument(""));
+}
+int IsMemberFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	EvaluationOptions eo2 = eo;
+	eo2.approximation = APPROXIMATION_EXACT;
+	bool b_symbolic = true;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
+		mstruct[i].eval(eo2);
+		if(b_symbolic && !mstruct[i].isSymbolic()) b_symbolic = false;
+	}
+	MathStructure mstruct2(vargs[1]);
+	for(size_t i = 0; i < mstruct2.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
+		mstruct2[i].eval(eo2);
+		if(b_symbolic && !mstruct2[i].isSymbolic()) b_symbolic = false;
+	}
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		bool b = false;
+		for(size_t i2 = 0; i2 < mstruct2.size(); i2++) {
+			if(b_symbolic) {
+				if(mstruct[i].symbol() == mstruct[i2].symbol()) {
+					b = true;
+					break;
+				}
+			} else {
+				ComparisonResult cmp = mstruct[i].compare(mstruct2[i2]);
+				if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) {
+					b = true;
+					break;
+				}
+				if(COMPARISON_MIGHT_BE_EQUAL(cmp)) {
+					CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), NULL);
+					return 0;
+				}
+			}
+		}
+		if(b) mstruct[i] = m_one;
+		else mstruct[i].clear();
+	}
+	return 1;
+}
+
 UniqueFunction::UniqueFunction() : MathFunction("unique", 1, 1) {
 	setArgumentDefinition(1, new VectorArgument(""));
 }
@@ -1848,5 +2012,40 @@ int UniqueFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 			i++;
 		}
 	}
+	return 1;
+}
+CountFunction::CountFunction() : MathFunction("count", 2) {
+	setArgumentDefinition(1, new VectorArgument(""));
+	Argument *arg = new Argument("");
+	arg->setHandleVector(true);
+	setArgumentDefinition(2, arg);
+}
+int CountFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[1].isVector()) return 0;
+	MathStructure value(vargs[1]);
+	EvaluationOptions eo2 = eo;
+	eo2.approximation = APPROXIMATION_EXACT;
+	value.eval(eo2);
+	if(value.isVector()) return -1;
+	MathStructure v(vargs[0]);
+	bool b_symbolic = true;
+	for(size_t i = 0; i < v.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
+		v[i].eval(eo2);
+		if(!v[i].isSymbolic()) b_symbolic = false;
+	}
+	size_t n = 0;
+	for(size_t i = 0; i < v.size(); i++) {
+		ComparisonResult cmp = v[i].compare(value);
+		if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) {
+			n++;
+		} else if(!b_symbolic && COMPARISON_MIGHT_BE_EQUAL(cmp)) {
+			if(CALCULATOR->showArgumentErrors()) {
+				CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), NULL);
+				return 0;
+			}
+		}
+	}
+	mstruct.set(n, 1, 0);
 	return 1;
 }

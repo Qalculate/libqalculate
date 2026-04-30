@@ -1738,7 +1738,10 @@ void Calculator::addBuiltinFunctions() {
 
 	addFunction(new IntersectFunction());
 	addFunction(new SetDifferenceFunction());
+	addFunction(new IsMemberFunction());
 	addFunction(new UniqueFunction());
+	addFunction(new CountFunction());
+	addFunction(new UnionFunction());
 
 	f_factorial = addFunction(new FactorialFunction());
 	f_factorial2 = addFunction(new DoubleFactorialFunction());
@@ -1917,6 +1920,7 @@ void Calculator::addBuiltinFunctions() {
 	f_csum = addFunction(new CustomSumFunction());
 	f_function = addFunction(new FunctionFunction());
 	f_select = addFunction(new SelectFunction());
+	addFunction(new FindFunction());
 	f_title = addFunction(new TitleFunction());
 	f_if = addFunction(new IFFunction());
 	f_is_number = addFunction(new IsNumberFunction());
