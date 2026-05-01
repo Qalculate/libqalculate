@@ -1736,12 +1736,12 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new CircShiftFunction());
 	addFunction(new ReshapeFunction());
 
-	addFunction(new IntersectFunction());
-	addFunction(new SetDifferenceFunction());
-	addFunction(new IsMemberFunction());
+	priv->f_intersect = addFunction(new IntersectFunction());
+	priv->f_setdiff = addFunction(new SetDifferenceFunction());
+	priv->f_ismember = addFunction(new IsMemberFunction());
 	addFunction(new UniqueFunction());
 	addFunction(new CountFunction());
-	addFunction(new UnionFunction());
+	priv->f_union = addFunction(new UnionFunction());
 
 	f_factorial = addFunction(new FactorialFunction());
 	f_factorial2 = addFunction(new DoubleFactorialFunction());

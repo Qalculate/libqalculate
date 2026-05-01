@@ -375,16 +375,16 @@ bool compare_name_with_error(const string &name, const string &str, const size_t
 	return true;
 }
 
-const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", "∠", "\x1c", "⊼", "\x1d", "⊽", "\x1e", "⊕", "\x1f", "⨯", "\x15", "∥", "\x14", "...", "\x12"};
+const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", "∠", "\x1c", "⊼", "\x1d", "⊽", "\x1e", "⊕", "\x1f", "⨯", "\x15", "∥", "\x14", "...", "\x12", "∪", "\x0""1", "∩", "\x10""2", "∖", "\x10""3", "⊖", "\x10""4", "∈", "\x10""5", "∉", "\x10""6"};
 #define INTERNAL_UPOW "\x13"
 #define INTERNAL_UPOW_CH '\x13'
-#define INTERNAL_SIGNS_COUNT 20
+#define INTERNAL_SIGNS_COUNT 30
 #define INTERNAL_NUMBER_CHARS "\b"
-#define INTERNAL_OPERATORS "\a\b%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a\x13\x12"
-#define INTERNAL_OPERATORS_TWO "\a\b%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x13\x12"
-#define INTERNAL_OPERATORS_NOPM "\a%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a\x13\x12"
-#define INTERNAL_OPERATORS_RPN "\a%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a\x12"
-#define INTERNAL_OPERATORS_NOMOD "\a\b\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a\x13\x12"
+#define INTERNAL_OPERATORS "\a\b%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a\x13\x12\x10"
+#define INTERNAL_OPERATORS_TWO "\a\b%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x13\x12\x10"
+#define INTERNAL_OPERATORS_NOPM "\a%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a\x13\x12\x10"
+#define INTERNAL_OPERATORS_RPN "\a%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a\x12\x10"
+#define INTERNAL_OPERATORS_NOMOD "\a\b\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a\x13\x12\x10"
 #define DUODECIMAL_CHARS "EXABab"
 
 string Calculator::parseComments(string &str, const ParseOptions &po, bool *double_tag) {
@@ -881,6 +881,20 @@ MathStructure Calculator::parse(string str, const ParseOptions &po) {
 
 }
 
+string internal_operator_replacement2(char c1, char c2) {
+	if(c1 == '\x10') {
+		switch(c2) {
+			case '1': return "∪";
+			case '2': return "∩";
+			case '3': return "∖";
+			case '4': return "⊖";
+			case '5': return "∈";
+			case '6': return "∉";
+		}
+	}
+	string str; str += c1;
+	return str;
+}
 string internal_operator_replacement(char c) {
 	switch(c) {
 		case '\a': return "xor";
@@ -927,6 +941,9 @@ void replace_internal_operators(string &str) {
 			prev_s = true;
 		} else if(str[i] == '\b' || str[i] == '\x12' || str[i] == '\x13' || str[i] == '\x14' || str[i] == '\x1c' || str[i] >= '\x16' || str[i] <= '\x1a' || str[i] == MULTIPLICATION_CH || str[i] == MINUS_CH || str[i] == DIVISION_CH) {
 			str.replace(i, 1, internal_operator_replacement(str[i]));
+			prev_s = false;
+		} else if(str[i] == '\x10' && i + 1 < str.length()) {
+			str.replace(i, 2, internal_operator_replacement2(str[i], str[i + 1]));
 			prev_s = false;
 		} else {
 			prev_s = (str[i] == SPACE_CH);
@@ -3947,6 +3964,10 @@ bool Calculator::parseNumber(MathStructure *mstruct, string str, const ParseOpti
 			// ignore operators
 			error(false, _("Misplaced operator(s) \"%s\" ignored"), internal_operator_replacement(str[i]).c_str(), NULL);
 			str.erase(i, 1);
+		} else if(str[i] == '\x10' && i + 1 < str.length()) {
+			// ignore operators
+			error(false, _("Misplaced operator(s) \"%s\" ignored"), internal_operator_replacement2(str[i], str[i + 1]).c_str(), NULL);
+			str.erase(i, 2);
 		} else if(str[i] == '\b' || str[i] == LEFT_PARENTHESIS_CH || str[i] == RIGHT_PARENTHESIS_CH) {
 			// +/-
 			b_exp = false;
@@ -5217,6 +5238,48 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		}
 	}
 
+
+	// Parse internal set operators
+	if((i = str.find("\x10", 0)) != string::npos && i + 2 < str.length()) {
+		char op = str[i + 1];
+		if(op <= '6' && op >= '5') {
+			MathFunction *f = NULL;
+			if(op == '5' || op == '6') f = priv->f_ismember;
+			if(f) {
+				str2 = str.substr(0, i);
+				str = str.substr(i + 2, str.length() - (i + 1));
+				parseAdd(str2, mstruct, po);
+				MathStructure *mstruct2 = new MathStructure();
+				parseAdd(str, mstruct2, po);
+				mstruct->transform(f);
+				mstruct->addChild_nocopy(mstruct2);
+				if(op == '7') mstruct->transform(STRUCT_LOGICAL_NOT);
+				return true;
+			}
+		}
+	}
+	if((i = str.find("\x10", 0)) != string::npos && i + 2 < str.length()) {
+		char op = str[i + 1];
+		if(op <= '4' && op >= '1') {
+			MathFunction *f = NULL;
+			if(op == '1') f = priv->f_union;
+			else if(op == '2') f = priv->f_intersect;
+			else if(op == '3') f = priv->f_setdiff;
+			else if(op == '4') f = getActiveFunction("setxor");
+			if(f) {
+				str2 = str.substr(0, i);
+				str = str.substr(i + 2, str.length() - (i + 1));
+				parseAdd(str2, mstruct, po);
+				MathStructure *mstruct2 = new MathStructure();
+				parseAdd(str, mstruct2, po);
+				mstruct->transform(f);
+				mstruct->addChild_nocopy(mstruct2);
+				mstruct->addChild(m_zero);
+				return true;
+			}
+		}
+	}
+
 	if(PARSING_MODE != PARSING_MODE_CHAIN) {
 
 		// Parse << and >> as bitwise shift
@@ -5878,8 +5941,13 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		} else if(str[i] == BITWISE_NOT_CH || str[i] == LOGICAL_NOT_CH) {
 			break;
 		} else if(is_in(OPERATORS INTERNAL_OPERATORS_TWO, str[i]) && str[i] != '\x19' && (po.base != BASE_ROMAN_NUMERALS || (str[i] != '(' && str[i] != ')' && str[i] != '|'))) {
-			error(false, _("Misplaced operator(s) \"%s\" ignored"), internal_operator_replacement(str[i]).c_str(), NULL);
-			str.erase(i, 1);
+			if(str[i] == '\x10' && i + 1 < str.length()) {
+				error(false, _("Misplaced operator(s) \"%s\" ignored"), internal_operator_replacement2(str[i], str[i + 1]).c_str(), NULL);
+				str.erase(i, 2);
+			} else {
+				error(false, _("Misplaced operator(s) \"%s\" ignored"), internal_operator_replacement(str[i]).c_str(), NULL);
+				str.erase(i, 1);
+			}
 		} else {
 			break;
 		}

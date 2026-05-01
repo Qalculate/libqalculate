@@ -573,11 +573,22 @@
         <title>Multiset</title>
       </argument>
     </builtin_function>
+    <builtin_function name="ismember">
+      <title>Find set members</title>
+      <names>r:ismember</names>
+      <description>Returns a vector with values of the first vector replaced with 1 or 0 (true or false), if the corresponding value is found or not in the second vector.</description>
+      <argument index="1">
+        <title>Vector 1</title>
+      </argument>
+      <argument index="2">
+        <title>Vector 2</title>
+      </argument>
+    </builtin_function>
     <function>
       <title>Symmetric Set Difference</title>
       <names>r:setxor</names>
       <description>Returns a sorted vector with the elements that exists in either the first or the second vector, but not in both.</description>
-      <expression>setdiff(union(\x,\y,\z),intersect(\x,\y,\z),\z)</expression>
+      <expression>setdiff(union(\x,\y,\Z{0}),intersect(\x,\y,\z),\z)</expression>
       <argument type="vector" index="1">
         <title>Vector 1</title>
       </argument>
@@ -3397,6 +3408,24 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     <builtin_function name="select">
       <title>Select Vector Elements</title>
       <names>r:select</names>
+      <description>Returns a vector with the elements that fulfil the specified condition.</description>
+      <argument index="1">
+        <title>Vector</title>
+      </argument>
+      <argument index="2">
+        <title>Condition</title>
+      </argument>
+      <argument index="3">
+        <title>Element variable</title>
+      </argument>
+      <argument index="4">
+        <title>Select first match</title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="find">
+      <title>Find Vector Elements</title>
+      <description>Returns a vector with the positions of elements that fulfil the specified condition.</description>
+      <names>r:find</names>
       <argument index="1">
         <title>Vector</title>
       </argument>
