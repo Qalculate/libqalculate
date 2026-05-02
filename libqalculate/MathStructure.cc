@@ -2950,14 +2950,14 @@ bool MathStructure::replace(const MathStructure &mfrom, const MathStructure &mto
 		if(((KnownVariable*) o_variable)->get().contains(mfrom, !exclude_function_arguments, true, false, true) > 0) {
 			MathStructure m(((KnownVariable*) o_variable)->get());
 			if(!m.isAborted() && m.replace(mfrom, mto, once_only, exclude_function_arguments, true)) {
-				if(!o_variable->isRegistered()) {
+				if(!o_variable->isRegistered() && o_variable->category() == "\x15") {
 					Variable *v = CALCULATOR->getActiveVariable(o_variable->referenceName());
-					if(v->isKnown() && ((KnownVariable*) v)->get().equals(m, true, true)) {
+					if(v && v->isKnown() && ((KnownVariable*) v)->get().equals(m, true, true)) {
 						set(v);
 						return true;
 					}
 				}
-				KnownVariable *var = new KnownVariable("", o_variable->referenceName(), m);
+				KnownVariable *var = new KnownVariable("\x15", o_variable->referenceName(), m);
 				set(var);
 				var->destroy();
 				return true;
