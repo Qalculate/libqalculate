@@ -195,7 +195,9 @@ int SiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 }
 CiFunction::CiFunction() : MathFunction("Ci", 1) {
 	names[0].case_sensitive = true;
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 }
 bool CiFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsPositive();}
 bool CiFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber();}
@@ -235,7 +237,10 @@ int CiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 }
 ShiFunction::ShiFunction() : MathFunction("Shi", 1) {
 	names[0].case_sensitive = true;
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
+
 }
 bool ShiFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsReal();}
 bool ShiFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNumber();}

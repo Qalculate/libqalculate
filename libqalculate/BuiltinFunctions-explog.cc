@@ -488,7 +488,18 @@ ExpFunction::ExpFunction() : MathFunction("exp", 1) {
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
 }
-int ExpFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+int ExpFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isVector()) return -1;
+	if(!vargs[0].representsScalar()) {
+		mstruct = vargs[0];
+		CALCULATOR->beginTemporaryStopMessages();
+		mstruct.eval(eo);
+		if(mstruct.isVector()) {
+			CALCULATOR->endTemporaryStopMessages(true);
+			return -1;
+		}
+		CALCULATOR->endTemporaryStopMessages();
+	}
 	mstruct = CALCULATOR->getVariableById(VARIABLE_ID_E);
 	mstruct ^= vargs[0];
 	return 1;

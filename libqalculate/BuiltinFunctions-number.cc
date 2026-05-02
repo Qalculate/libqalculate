@@ -72,7 +72,7 @@ using std::endl;
 #define FR_FUNCTION_2(FUNC)	Number nr(vargs[0].number()); FR_FUNCTION_2b(FUNC) FR_FUNCTION_2c0
 
 #define NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR(i)			NumberArgument *arg_non_complex##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
-#define NON_COMPLEX_NUMBER_ARGUMENT_NO_TEST(i)			NumberArgument *arg_non_complex##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
+#define NON_COMPLEX_NUMBER_ARGUMENT_NO_TEST(i)			NumberArgument *arg_non_complex##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false); arg_non_complex##i->setComplexAllowed(false); arg_non_complex##i->setHandleVector(true); setArgumentDefinition(i, arg_non_complex##i);
 #define NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR_NONZERO(i)		NumberArgument *arg_non_complex##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONZERO, true, false); arg_non_complex##i->setComplexAllowed(false); setArgumentDefinition(i, arg_non_complex##i);
 #define RATIONAL_NUMBER_ARGUMENT_NO_ERROR(i)			NumberArgument *arg_rational##i = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, true, false); arg_rational##i->setRationalNumber(true); setArgumentDefinition(i, arg_rational##i);
 #define RATIONAL_POLYNOMIAL_ARGUMENT(i)				Argument *arg_poly##i = new Argument(); arg_poly##i->setRationalPolynomial(true); setArgumentDefinition(i, arg_poly##i);
@@ -1171,6 +1171,7 @@ void remove_overflow_message() {
 	if(!message_vector.empty()) CALCULATOR->addMessages(&message_vector);
 }
 int RemFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isVector()) return 0;
 	if(!vargs[1].isInteger()) {
 		if(!vargs[0].isNumber()) {
 			mstruct = vargs[0];
@@ -1194,6 +1195,7 @@ int RemFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		} else {
 			mstruct.eval(eo);
 		}
+		if(mstruct.isVector()) {CALCULATOR->endTemporaryStopMessages(true); return -1;}
 		if(mstruct.isPower() && mstruct[0].isInteger() && mstruct[1].isInteger() && mstruct[1].number().isPositive()&& !mstruct[0].number().isZero()) {
 			Number nr;
 			if(powmod(nr, mstruct[0].number(), mstruct[1].number(), vargs[1].number(), true)) {
@@ -1226,6 +1228,7 @@ int RemFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		if(eo.approximation != APPROXIMATION_EXACT && !mstruct.isNumber()) {
 			mstruct = vargs[0];
 			mstruct.eval(eo);
+			if(mstruct.isVector()) return -1;
 		}
 		if(!mstruct.isNumber() || !mstruct.number().isReal()) return -1;
 		Number nr(mstruct.number());
@@ -1240,6 +1243,7 @@ ModFunction::ModFunction() : MathFunction("mod", 2) {
 	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR_NONZERO(2)
 }
 int ModFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isVector()) return 0;
 	if(!vargs[1].isInteger()) {
 		if(!vargs[0].isNumber()) {
 			mstruct = vargs[0];
@@ -1263,6 +1267,7 @@ int ModFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		} else {
 			mstruct.eval(eo);
 		}
+		if(mstruct.isVector()) {CALCULATOR->endTemporaryStopMessages(true); return -1;}
 		if(mstruct.isPower() && mstruct[0].isInteger() && mstruct[1].isInteger() && mstruct[1].number().isPositive() && !mstruct[0].number().isZero()) {
 			Number nr;
 			if(powmod(nr, mstruct[0].number(), mstruct[1].number(), vargs[1].number(), false)) {
@@ -1295,6 +1300,7 @@ int ModFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		if(eo.approximation != APPROXIMATION_EXACT && !mstruct.isNumber()) {
 			mstruct = vargs[0];
 			mstruct.eval(eo);
+			if(mstruct.isVector()) return -1;
 		}
 		if(!mstruct.isNumber() || !mstruct.number().isReal()) return -1;
 		Number nr(mstruct.number());
