@@ -2956,8 +2956,8 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
 		size_t i2 = i;
 		int l = 5;
 		while(i != 0) {
-			i2 = find_unquoted(str, _("where"), i - 1);
-			i = find_unquoted(str, "where", i - 1);
+			i2 = rfind_unquoted(str, _("where"), i - 1);
+			i = rfind_unquoted(str, "where", i - 1);
 			if(i2 != string::npos && (i == string::npos || i < i2)) {l = strlen(_("where")); i = i2;}
 			else l = 5;
 			if(i == string::npos) break;

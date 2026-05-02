@@ -2084,7 +2084,7 @@ int IsSubsetFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	}
 	if(!mstruct.sortVector() || !mstruct2.sortVector()) return 0;
 	PREPARE_INFINITE_SET
-	bool is_equal = !infinite_set;
+	bool is_equal = !infinite_set && (!multiset || mstruct.size() == mstruct2.size());
 	size_t i2 = 0;
 	bool moved_on = true;
 	for(size_t i = 0; i < mstruct.size(); i++) {
@@ -2117,16 +2117,16 @@ int IsSubsetFunction::calculate(MathStructure &mstruct, const MathStructure &var
 				}
 			}
 			i2++;
-			if(moved_on) is_equal = false;
+			if(moved_on && !multiset) is_equal = false;
 			moved_on = true;
 		}
-		moved_on = multiset;
+		moved_on = false;
 		if(!b) {
 			mstruct = m_zero;
 			return 1;
 		}
 	}
-	if(is_equal && !allow_equal) mstruct = m_zero;
+	if(is_equal && !allow_equal && (multiset || i2 + 1 == mstruct2.size())) mstruct = m_zero;
 	else mstruct = m_one;
 	return 1;
 }
