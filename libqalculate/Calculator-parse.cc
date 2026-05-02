@@ -378,7 +378,7 @@ bool compare_name_with_error(const string &name, const string &str, const size_t
 const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", "∠", "\x1c", "⊼", "\x1d", "⊽", "\x1e", "⊕", "\x1f", "⨯", "\x15", "∥", "\x14", "...", "\x12", "∪", "\x0""1", "∩", "\x10""2", "∖", "\x10""3", "⊖", "\x10""4", "∈", "\x10""5", "∉", "\x10""6"};
 #define INTERNAL_UPOW "\x13"
 #define INTERNAL_UPOW_CH '\x13'
-#define INTERNAL_SIGNS_COUNT 30
+#define INTERNAL_SIGNS_COUNT 32
 #define INTERNAL_NUMBER_CHARS "\b"
 #define INTERNAL_OPERATORS "\a\b%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a\x13\x12\x10"
 #define INTERNAL_OPERATORS_TWO "\a\b%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x13\x12\x10"
@@ -5248,12 +5248,14 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			if(f) {
 				str2 = str.substr(0, i);
 				str = str.substr(i + 2, str.length() - (i + 1));
+				remove_blank_ends(str);
 				parseAdd(str2, mstruct, po);
 				MathStructure *mstruct2 = new MathStructure();
-				parseAdd(str, mstruct2, po);
+				if(str == "ℤ" || str == "ℝ" || str == "ℚ" || str == "ℕ") mstruct2->set(str, false, true);
+				else parseAdd(str, mstruct2, po);
 				mstruct->transform(f);
 				mstruct->addChild_nocopy(mstruct2);
-				if(op == '7') mstruct->transform(STRUCT_LOGICAL_NOT);
+				if(op == '6') mstruct->transform(STRUCT_LOGICAL_NOT);
 				return true;
 			}
 		}
@@ -5269,9 +5271,11 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			if(f) {
 				str2 = str.substr(0, i);
 				str = str.substr(i + 2, str.length() - (i + 1));
+				remove_blank_ends(str);
 				parseAdd(str2, mstruct, po);
 				MathStructure *mstruct2 = new MathStructure();
-				parseAdd(str, mstruct2, po);
+				if((op == '2' || op == '3') && (str == "ℤ" || str == "ℝ" || str == "ℚ" || str == "ℕ")) mstruct2->set(str, false, true);
+				else parseAdd(str, mstruct2, po);
 				mstruct->transform(f);
 				mstruct->addChild_nocopy(mstruct2);
 				mstruct->addChild(m_zero);

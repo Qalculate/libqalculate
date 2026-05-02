@@ -573,9 +573,9 @@
         <title>Multiset</title>
       </argument>
     </builtin_function>
-    <builtin_function name="ismember">
+    <builtin_function name="isMember">
       <title>Find set members</title>
-      <names>r:ismember</names>
+      <names>r:isMember</names>
       <description>Returns a vector with values of the first vector replaced with 1 or 0 (true or false), if the corresponding value is found or not in the second vector.</description>
       <argument index="1">
         <title>Vector 1</title>

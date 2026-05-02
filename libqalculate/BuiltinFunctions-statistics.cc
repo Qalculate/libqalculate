@@ -46,6 +46,18 @@ int TotalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	}
 	return 1;
 }
+
+bool is_text_vector(const MathStructure &m, bool do_error = false) {
+	for(size_t i = 0; i < m.size(); i++) {
+		if(!m[i].isSymbolic()) return false;
+		if(i > 0 && m[i].symbol() != m[i - 1].symbol()) {
+			if(do_error) CALCULATOR->error(true, _("Unsolvable comparison at element %s when trying to sort vector."), i2s(i + 1).c_str(), NULL);
+			return true;
+		}
+	}
+	return false;
+}
+
 PercentileFunction::PercentileFunction() : MathFunction("percentile", 2, 3) {
 	Argument *varg = new VectorArgument("");
 	varg->setHandleVector(true);
@@ -74,7 +86,11 @@ int PercentileFunction::calculate(MathStructure &mstruct, const MathStructure &v
 	int i_variant = vargs[2].number().intValue();
 	EvaluationOptions eo2 = eo;
 	eo2.approximation = APPROXIMATION_EXACT;
-	v.eval(eo2);
+	for(size_t i = 0; i < v.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
+		v[i].eval(eo2);
+	}
+	if(is_text_vector(v, true)) return 0;
 	if(!v.sortVector()) return 0;
 	Number pfr(vargs[1].number());
 	if(pfr == fr100) {
@@ -276,15 +292,19 @@ int ModeFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	MathStructure v(vargs[0]);
 	EvaluationOptions eo2 = eo;
 	eo2.approximation = APPROXIMATION_EXACT;
-	v.eval(eo2);
+	for(size_t i = 0; i < v.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
+		v[i].eval(eo2);
+	}
 	if(!v.sortVector()) return 0;
+	bool b_text = is_text_vector(v);
 	size_t n = 1, nmax = 0;
 	const MathStructure *value = NULL;
 	for(size_t i = 1; i < v.size(); i++) {
 		ComparisonResult cmp = v[i].compare(v[i - 1]);
 		if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) {
 			n++;
-		} else if(COMPARISON_MIGHT_BE_EQUAL(cmp)) {
+		} else if(!b_text && COMPARISON_MIGHT_BE_EQUAL(cmp)) {
 			if(CALCULATOR->showArgumentErrors()) {
 				CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), NULL);
 				return 0;

@@ -1820,6 +1820,35 @@ int UnionFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	return 1;
 }
 
+bool test_infinite_set(const MathStructure &m, int infinite_set, const EvaluationOptions &eo) {
+	bool b = false;
+	if(infinite_set == 1) b = m.representsReal();
+	else if(infinite_set == 2) b = m.representsRational();
+	else if(infinite_set == 3) b = m.representsInteger();
+	else if(infinite_set == 4) b = m.representsInteger() && m.representsNonNegative();
+	if(!b && !m.isNumber()) {
+		MathStructure mtest(m);
+		CALCULATOR->beginTemporaryStopMessages();
+		mtest.eval(eo);
+		if(infinite_set == 1) b = mtest.representsReal();
+		else if(infinite_set == 2) b = mtest.representsRational();
+		else if(infinite_set == 3) b = mtest.representsInteger();
+		else if(infinite_set == 4) b = mtest.representsInteger() && mtest.representsNonNegative();
+		CALCULATOR->endTemporaryStopMessages();
+	}
+	return b;
+}
+
+#define PREPARE_INFINITE_SET\
+	int infinite_set = 0;\
+	if(mstruct2.size() == 1 && mstruct2[0].isSymbolic()) {\
+		if(mstruct2[0].symbol() == "ℝ") infinite_set = 1;\
+		else if(mstruct2[0].symbol() == "ℚ") infinite_set = 2;\
+		else if(mstruct2[0].symbol() == "ℤ") infinite_set = 3;\
+		else if(mstruct2[0].symbol() == "ℕ") infinite_set = 4;\
+		if(infinite_set > 0) eo2.approximation = APPROXIMATION_TRY_EXACT;\
+	}
+
 IntersectFunction::IntersectFunction() : MathFunction("intersect", 2, 3) {
 	setArgumentDefinition(1, new VectorArgument(""));
 	setArgumentDefinition(2, new VectorArgument(""));
@@ -1841,6 +1870,7 @@ int IntersectFunction::calculate(MathStructure &mstruct, const MathStructure &va
 		mstruct2[i].eval(eo2);
 	}
 	if(!mstruct.sortVector() || !mstruct2.sortVector()) return 0;
+	PREPARE_INFINITE_SET
 	size_t i2 = 0;
 	for(size_t i = 0; i < mstruct.size();) {
 		if(!multiset && i + 1 < mstruct.size()) {
@@ -1851,7 +1881,11 @@ int IntersectFunction::calculate(MathStructure &mstruct, const MathStructure &va
 			}
 			if(cmp != COMPARISON_RESULT_GREATER && (!mstruct[i].isSymbolic() || !mstruct[i + 1].isSymbolic())) return 0;
 		}
-		while(true) {
+		if(infinite_set > 0) {
+			if(test_infinite_set(mstruct[i], infinite_set, eo2)) i++;
+			else mstruct.delChild(i + 1);
+		}
+		while(!infinite_set) {
 			if(i2 == mstruct2.size()) {
 				mstruct.delChild(i + 1);
 				break;
@@ -1903,6 +1937,7 @@ int SetDifferenceFunction::calculate(MathStructure &mstruct, const MathStructure
 		mstruct2[i].eval(eo2);
 	}
 	if(!mstruct.sortVector() || !mstruct2.sortVector()) return 0;
+	PREPARE_INFINITE_SET
 	size_t i2 = 0;
 	for(size_t i = 0; i < mstruct.size();) {
 		if(!multiset && i + 1 < mstruct.size()) {
@@ -1913,7 +1948,11 @@ int SetDifferenceFunction::calculate(MathStructure &mstruct, const MathStructure
 			}
 			if(cmp != COMPARISON_RESULT_GREATER && (!mstruct[i].isSymbolic() || !mstruct[i + 1].isSymbolic())) return 0;
 		}
-		while(true) {
+		if(infinite_set > 0) {
+			if(!test_infinite_set(mstruct[i], infinite_set, eo2)) i++;
+			else mstruct.delChild(i + 1);
+		}
+		while(!infinite_set) {
 			if(i2 == mstruct2.size()) {
 				i++;
 				break;
@@ -1944,7 +1983,7 @@ int SetDifferenceFunction::calculate(MathStructure &mstruct, const MathStructure
 	return 1;
 }
 
-IsMemberFunction::IsMemberFunction() : MathFunction("ismember", 2, 2) {
+IsMemberFunction::IsMemberFunction() : MathFunction("isMember", 2, 2) {
 	setArgumentDefinition(1, new VectorArgument(""));
 	setArgumentDefinition(2, new VectorArgument(""));
 }
@@ -1964,10 +2003,14 @@ int IsMemberFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		mstruct2[i].eval(eo2);
 		if(b_symbolic && !mstruct2[i].isSymbolic()) b_symbolic = false;
 	}
+	PREPARE_INFINITE_SET
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		bool b = false;
 		for(size_t i2 = 0; i2 < mstruct2.size(); i2++) {
-			if(b_symbolic) {
+			if(infinite_set > 0) {
+				b = test_infinite_set(mstruct[i], infinite_set, eo2);
+				break;
+			} else if(b_symbolic) {
 				if(mstruct[i].symbol() == mstruct[i2].symbol()) {
 					b = true;
 					break;
