@@ -3327,6 +3327,13 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
         <title>Text string 2</title>
       </argument>
     </builtin_function>
+    <builtin_function name="string">
+      <title>Convert to Strings</title>
+      <names>r:string</names>
+      <argument index="1">
+        <title>Value</title>
+      </argument>
+    </builtin_function>
     <builtin_function name="replace">
       <title>Replace</title>
       <names>r:replace</names>
@@ -3808,6 +3815,15 @@ The ":=" operator (e.g. var1:=10) is a shortcut for this function.</description>
       </argument>
       <argument index="3">
         <title>Last position</title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="popCount">
+      <title>Population Count</title>
+      <description>Returns the number of 1 bits in the binary representation of the specified integer.</description>
+      <example>$name(9) = 2</example>
+      <names>r:popCount</names>
+      <argument index="1">
+        <title>Number</title>
       </argument>
     </builtin_function>
   </category>

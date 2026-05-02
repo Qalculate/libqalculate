@@ -466,6 +466,23 @@ int CharFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 
 }
 
+void string_print_set(MathStructure &m) {
+	if(m.isVector()) {
+		for(size_t i = 0; i < m.size(); i++) {
+			string_print_set(m[i]);
+		}
+	} else {
+		m.set(m.print(), true, true);
+	}
+}
+
+StringFunction::StringFunction() : MathFunction("string", 1) {}
+int StringFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	mstruct.eval(eo);
+	string_print_set(mstruct);
+	return 1;
+}
 ConcatenateFunction::ConcatenateFunction() : MathFunction("concatenate", 1, -1) {
 	Argument *arg = new TextArgument("", false);
 	setArgumentDefinition(1, arg);
@@ -475,6 +492,7 @@ ConcatenateFunction::ConcatenateFunction() : MathFunction("concatenate", 1, -1) 
 int ConcatenateFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	MathStructure m(vargs);
 	for(size_t i = 0; i < m.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
 		m[i].eval(eo);
 	}
 	if(m.size() == 1 && m[0].isVector()) {

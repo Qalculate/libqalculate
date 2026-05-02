@@ -61,6 +61,7 @@ int EiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, co
 }
 FresnelSFunction::FresnelSFunction() : MathFunction("fresnels", 1) {
 	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	arg->setHandleVector(true);
 	Number fr(-6, 1);
 	arg->setMin(&fr);
 	fr = 6;
@@ -107,8 +108,10 @@ bool FresnelSFunction::representsUndefined(const MathStructure&) const {return f
 		}\
 	}
 int FresnelSFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0];
 	mstruct.eval(eo);
+	if(mstruct.isVector()) return -1;
 	HANDLE_ANGLE_UNIT
 	if(!mstruct.isNumber()) return -1;
 	Number nr(mstruct.number()); if(!nr.fresnels() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {
@@ -119,6 +122,7 @@ int FresnelSFunction::calculate(MathStructure &mstruct, const MathStructure &var
 }
 FresnelCFunction::FresnelCFunction() : MathFunction("fresnelc", 1) {
 	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	arg->setHandleVector(true);
 	Number fr(-6, 1);
 	arg->setMin(&fr);
 	fr = 6;
@@ -140,8 +144,10 @@ bool FresnelCFunction::representsEven(const MathStructure&, bool) const {return 
 bool FresnelCFunction::representsOdd(const MathStructure&, bool) const {return false;}
 bool FresnelCFunction::representsUndefined(const MathStructure&) const {return false;}
 int FresnelCFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0];
 	mstruct.eval(eo);
+	if(mstruct.isVector()) return -1;
 	HANDLE_ANGLE_UNIT
 	if(!mstruct.isNumber()) return -1;
 	Number nr(mstruct.number()); if(!nr.fresnelc() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !vargs[0].isApproximate()) || (!eo.allow_complex && nr.isComplex() && !vargs[0].number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !vargs[0].number().includesInfinity())) {
@@ -273,7 +279,9 @@ int ShiFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 }
 ChiFunction::ChiFunction() : MathFunction("Chi", 1) {
 	names[0].case_sensitive = true;
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 }
 bool ChiFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsPositive();}
 bool ChiFunction::representsNonComplex(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNonNegative();}

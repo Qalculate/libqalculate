@@ -2728,9 +2728,12 @@ int LowerEndPointFunction::calculate(MathStructure &mstruct, const MathStructure
 	return 1;
 }
 MidPointFunction::MidPointFunction() : MathFunction("midpoint", 1) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false));
+	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 }
 int MidPointFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isVector()) return 0;
 	if(vargs[0].isFunction() && vargs[0].function()->id() == FUNCTION_ID_UNCERTAINTY && vargs[0].size() >= 1) {
 		mstruct = vargs[0][0];
 		return 1;

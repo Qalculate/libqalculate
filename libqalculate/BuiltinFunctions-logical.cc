@@ -343,6 +343,14 @@ int BitGetFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	return 1;
 }
 
+PopCountFunction::PopCountFunction() : MathFunction("popCount", 1) {
+	setArgumentDefinition(1, new IntegerArgument("", ARGUMENT_MIN_MAX_NONNEGATIVE));
+}
+int PopCountFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct.set(mpz_popcount(mpq_numref(vargs[0].number().internalRational())), 1L, 0L);
+	return 1;
+}
+
 IFFunction::IFFunction() : MathFunction("if", 3, 4) {
 	setArgumentDefinition(4, new BooleanArgument());
 	setDefaultValue(4, "0");

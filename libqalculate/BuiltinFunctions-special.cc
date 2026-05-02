@@ -329,7 +329,9 @@ int BesselyFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	FR_FUNCTION_2Rm(bessely)
 }
 ErfFunction::ErfFunction() : MathFunction("erf", 1) {
-	setArgumentDefinition(1, new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false));
+	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 }
 bool ErfFunction::representsPositive(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsPositive();}
 bool ErfFunction::representsNegative(const MathStructure &vargs, bool) const {return vargs.size() == 1 && vargs[0].representsNegative();}
@@ -590,6 +592,7 @@ int HeavisideFunction::calculate(MathStructure &mstruct, const MathStructure &va
 }
 DiracFunction::DiracFunction() : MathFunction("dirac", 1) {
 	NumberArgument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
+	arg->setHandleVector(true);
 	arg->setComplexAllowed(false);
 	setArgumentDefinition(1, arg);
 }
@@ -608,8 +611,10 @@ bool DiracFunction::representsEven(const MathStructure&, bool) const {return fal
 bool DiracFunction::representsOdd(const MathStructure&, bool) const {return false;}
 bool DiracFunction::representsUndefined(const MathStructure &vargs) const {return vargs.size() == 1 && vargs[0].representsUndefined();}
 int DiracFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[0].isVector()) return 0;
 	mstruct = vargs[0];
 	mstruct.eval(eo);
+	if(mstruct.isVector()) return -1;
 	if(!mstruct.representsNonComplex(true)) return false;
 	if(mstruct.representsNonZero(true)) {
 		mstruct.clear();

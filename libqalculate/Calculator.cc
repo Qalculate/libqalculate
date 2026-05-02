@@ -1759,6 +1759,7 @@ void Calculator::addBuiltinFunctions() {
 	addFunction(new BitGetFunction());
 	addFunction(new SetBitsFunction());
 	addFunction(new CircularShiftFunction());
+	addFunction(new PopCountFunction());
 
 	f_abs = addFunction(new AbsFunction());
 	f_signum = addFunction(new SignumFunction());
@@ -1907,6 +1908,7 @@ void Calculator::addBuiltinFunctions() {
 
 	f_length = addFunction(new LengthFunction());
 	f_concatenate = addFunction(new ConcatenateFunction());
+	addFunction(new StringFunction());
 
 	f_replace = addFunction(new ReplaceFunction());
 	f_stripunits = addFunction(new StripUnitsFunction());
