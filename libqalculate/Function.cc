@@ -1068,10 +1068,10 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 										str2 += INTERNAL_ID_R RIGHT_PARENTHESIS;
 									}
 									str.replace(i2, svar.size(), str2);
-								} else if(priv->v_subs_calc[i] != svar) {
-									str.replace(i2, svar.size(), string("(") + priv->v_subs_calc[i] + ")");
 								} else {
-									break;
+									str.replace(i2, svar.size(), string("(") + priv->v_subs_calc[i] + ")");
+									i2 += priv->v_subs_calc[i].size() + 2;
+									i2 -= svar.size();
 								}
 							}
 						} else {
@@ -1123,10 +1123,10 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					if((i2 = stmp.find(svar, i2)) != string::npos) {
 						if(i2 != 0 && stmp[i2 - 1] == '\\') {
 							i2 += 2;
-						} else if(svar != str) {
-							stmp.replace(i2, svar.size(), str);
 						} else {
-							break;
+							stmp.replace(i2, svar.size(), str);
+							i2 += str.size() + 2;
+							i2 -= svar.size();
 						}
 					} else {
 						break;
@@ -1152,10 +1152,10 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 										str2 += INTERNAL_ID_R RIGHT_PARENTHESIS;
 									}
 									str.replace(i2, svar.size(), str2);
-								} else if(priv->v_subs_calc[i] != svar) {
-									str.replace(i2, svar.size(), string("(") + priv->v_subs_calc[i] + ")");
 								} else {
-									break;
+									str.replace(i2, svar.size(), string("(") + priv->v_subs_calc[i] + ")");
+									i2 += priv->v_subs_calc[i].size() + 2;
+									i2 -= svar.size();
 								}
 							}
 						} else {
@@ -1174,10 +1174,10 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					if((i2 = stmp.find(svar, i2)) != string::npos) {
 						if(i2 != 0 && stmp[i2 - 1] == '\\') {
 							i2 += svar.size();
-						} else if(svar != str) {
-							stmp.replace(i2, svar.size(), string("(") + str + ")");
 						} else {
-							break;
+							stmp.replace(i2, svar.size(), string("(") + str + ")");
+							i2 += str.size() + 2;
+							i2 -= svar.size();
 						}
 					} else {
 						break;

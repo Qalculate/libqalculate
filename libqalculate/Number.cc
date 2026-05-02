@@ -84,7 +84,7 @@ void init_randstate() {
 	init_randstate(seed);
 }
 void clear_randstate() {
-	if (randstate_initialized) {
+	if(randstate_initialized) {
 		gmp_randclear(randstate);
 		randstate_initialized = false;
 	}
@@ -3625,8 +3625,8 @@ bool Number::divide(const Number &o) {
 	return true;
 }
 bool Number::divide(long int i) {
-	if(includesInfinity() && i == 0) {
-		if(i == 0) CALCULATOR->error(false, _("Division by zero."), NULL);
+	if(i == 0) {
+		CALCULATOR->error(false, _("Division by zero."), NULL);
 		return false;
 	}
 	if(isInfinite(true)) {
@@ -3643,7 +3643,6 @@ bool Number::divide(long int i) {
 		}
 		return true;
 	}
-	if(i == 0) return false;
 	if(isZero()) return true;
 	if(n_type == NUMBER_TYPE_FLOAT) {
 		Number oinv(i < 0 ? -1 : 1, i < 0 ? -i : i, 0);

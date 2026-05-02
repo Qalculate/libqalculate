@@ -4949,16 +4949,17 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		if(op == '5' || op == '6' || op == '7' || op == '8') f = priv->f_ismember;
 		if(op == '9' || op == '0' || op == '+' || op == '-') f = priv->f_issubset;
 		if(f) {
+			bool reverse = (op == '7' || op == '8' || op == '+' || op == '-');
 			str2 = str.substr(0, i);
 			str = str.substr(i + 2, str.length() - (i + 1));
 			remove_blank_ends(str);
-			parseAdd(str2, mstruct, po);
+			parseAdd(reverse ? str : str2, mstruct, po);
+			if(reverse) str = str2;
 			MathStructure *mstruct2 = new MathStructure();
 			if(str == "ℤ" || str == "ℝ" || str == "ℚ" || str == "ℕ") mstruct2->set(str, false, true);
 			else parseAdd(str, mstruct2, po);
 			mstruct->transform(f);
-			if(op == '7' || op == '8' || op == '+' || op == '-') mstruct->insertChild_nocopy(mstruct2, 1);
-			else mstruct->addChild_nocopy(mstruct2);
+			mstruct->addChild_nocopy(mstruct2);
 			if(op == '9' || op == '+') mstruct->addChild(m_one);
 			if(op == '0' || op == '-') mstruct->addChild(m_zero);
 			mstruct->addChild(m_zero);
