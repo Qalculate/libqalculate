@@ -2440,18 +2440,47 @@ bool Calculator::calculate(MathStructure *mstruct, int msecs, const EvaluationOp
 	}
 	return true;
 }
+
+
+bool position_is_quoted(const string &str, size_t index) {
+	bool cit1 = false, cit2 = false;
+	for(size_t i = 0; i < index; i++) {
+		if(!cit2 && str[i] == '\"') cit1 = !cit1;
+		else if(!cit1 && str[i] == '\'') cit2 = !cit2;
+	}
+	return cit1 || cit2;
+}
+size_t find_unquoted(const string &str, const char *match, size_t pos = 0) {
+	size_t i = str.find(match, pos);
+	if(i == string::npos) return i;
+	if(position_is_quoted(str, i)) {
+		if(i + 2 >= str.length()) return string::npos;
+		return find_unquoted(str, match, i + 1);
+	}
+	return i;
+}
+size_t rfind_unquoted(const string &str, const char *match, size_t pos = 0) {
+	size_t i = str.rfind(match, pos);
+	if(i == string::npos) return i;
+	if(position_is_quoted(str, i)) {
+		if(i <= 1) return string::npos;
+		return rfind_unquoted(str, match, i - 1);
+	}
+	return i;
+}
+
 bool Calculator::hasToExpression(const string &str, bool allow_empty_from) const {
 	if(str.empty()) return false;
-	size_t i = str.rfind("->");
+	size_t i = rfind_unquoted(str, "->");
 	if(i != string::npos && (allow_empty_from || i > 0)) return true;
-	i = str.rfind("→");
+	i = rfind_unquoted(str, "→");
 	if(i != string::npos && (allow_empty_from || i > 0)) return true;
-	i = str.rfind(SIGN_MINUS ">");
+	i = rfind_unquoted(str, SIGN_MINUS ">");
 	if(i != string::npos && (allow_empty_from || i > 0)) return true;
 	i = allow_empty_from ? 0 : 1;
 	while(true) {
 		// dingbat arrows
-		i = str.find("\xe2\x9e", i);
+		i = find_unquoted(str, "\xe2\x9e", i);
 		if(i == string::npos || i >= str.length() - 2) break;
 		if((unsigned char) str[i + 2] >= 0x94 && (unsigned char) str[i + 2] <= 0xbf) return true;
 		i += 3;
@@ -2460,8 +2489,8 @@ bool Calculator::hasToExpression(const string &str, bool allow_empty_from) const
 	size_t i2 = i;
 	int l = 2;
 	while(true) {
-		i2 = str.find(_("to"), i);
-		i = str.find("to", i);
+		i2 = find_unquoted(str, _("to"), i);
+		i = find_unquoted(str, "to", i);
 		if(i2 != string::npos && (i == string::npos || i2 < i)) {l = strlen(_("to")); i = i2;}
 		else l = 2;
 		if(i == string::npos) break;
@@ -2473,16 +2502,16 @@ bool Calculator::hasToExpression(const string &str, bool allow_empty_from) const
 bool Calculator::hasToExpression(const string &str, bool allow_empty_from, const EvaluationOptions &eo) const {
 	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
 	if(str.empty()) return false;
-	size_t i = str.rfind("->");
+	size_t i = rfind_unquoted(str, "->");
 	if(i != string::npos && (allow_empty_from || i > 0)) return true;
-	i = str.rfind("→");
+	i = rfind_unquoted(str, "→");
 	if(i != string::npos && (allow_empty_from || i > 0)) return true;
-	i = str.rfind(SIGN_MINUS ">");
+	i = rfind_unquoted(str, SIGN_MINUS ">");
 	if(i != string::npos && (allow_empty_from || i > 0)) return true;
 	i = allow_empty_from ? 0 : 1;
 	while(true) {
 		// dingbat arrows
-		i = str.find("\xe2\x9e", i);
+		i = find_unquoted(str, "\xe2\x9e", i);
 		if(i == string::npos || i >= str.length() - 2) break;
 		if((unsigned char) str[i + 2] >= 148 && (unsigned char) str[i + 2] <= 191) return true;
 		i += 3;
@@ -2491,8 +2520,8 @@ bool Calculator::hasToExpression(const string &str, bool allow_empty_from, const
 	size_t i2 = i;
 	int l = 2;
 	while(true) {
-		i2 = str.find(_("to"), i);
-		i = str.find("to", i);
+		i2 = find_unquoted(str, _("to"), i);
+		i = find_unquoted(str, "to", i);
 		if(i2 != string::npos && (i == string::npos || i2 < i)) {l = strlen(_("to")); i = i2;}
 		else l = 2;
 		if(i == string::npos) break;
@@ -2507,14 +2536,14 @@ bool Calculator::separateToExpression(string &str, string &to_str, const Evaluat
 	if(str.empty()) return false;
 	size_t i = 1, i2, l_arrow = 2;
 	if(allow_empty_from) i = 0;
-	size_t i_arrow = str.find("->", i);
-	i2 = str.find("→", i);
+	size_t i_arrow = find_unquoted(str, "->", i);
+	i2 = find_unquoted(str, "→", i);
 	if(i2 != string::npos && i2 < i_arrow) {i_arrow = i2; l_arrow = 3;}
-	i2 = str.find(SIGN_MINUS ">", i);
+	i2 = find_unquoted(str, SIGN_MINUS ">", i);
 	if(i2 != string::npos && i2 < i_arrow) {i_arrow = i2; l_arrow = 4;}
 	while(true) {
 		// dingbat arrows
-		i = str.find("\xe2\x9e", i); 
+		i = find_unquoted(str, "\xe2\x9e", i);
 		if(i == string::npos || (i_arrow != string::npos && i > i_arrow) || i >= str.length() - 2) break;
 		if((unsigned char) str[i + 2] >= 148 && (unsigned char) str[i + 2] <= 191) {i_arrow = i; l_arrow = 3; break;}
 		i += 3;
@@ -2522,8 +2551,8 @@ bool Calculator::separateToExpression(string &str, string &to_str, const Evaluat
 	i = 0;
 	int l = 2;
 	while(true) {
-		i2 = str.find(_("to"), i);
-		i = str.find("to", i);
+		i2 = find_unquoted(str, _("to"), i);
+		i = find_unquoted(str, "to", i);
 		l = 2;
 		bool b_arrow = false;
 		if(i2 != string::npos && (i == string::npos || i2 < i)) {l = strlen(_("to")); i = i2;}
@@ -2842,14 +2871,14 @@ bool Calculator::hasWhereExpression(const string &str, const EvaluationOptions &
 	int l = 2;
 	while(i != 0) {
 		//"where"-operator
-		i2 = str.rfind(_("where"), i - 1);
-		i = str.rfind("where", i - 1);
+		i2 = rfind_unquoted(str, _("where"), i - 1);
+		i = rfind_unquoted(str, "where", i - 1);
 		if(i2 != string::npos && (i == string::npos || i < i2)) {l = strlen(_("where")); i = i2;}
 		else l = 5;
 		if(i == string::npos) break;
 		if(i > 0 && is_in(SPACES, str[i - 1]) && i + l < str.length() && is_in(SPACES, str[i + l])) return true;
 	}
-	if(str.length() > 3 && (i = str.rfind("/.", str.length() - 2)) != string::npos && i > 0 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) return true;
+	if(str.length() > 3 && (i = rfind_unquoted(str, "/.", str.length() - 2)) != string::npos && i > 0 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) return true;
 	size_t i4 = rfind_outside_enclosures(str, COMMA_CH);
 	if(i4 == string::npos || i4 < 3) return false;
 	i = 0;
@@ -2920,15 +2949,15 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
 	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
 	to_str = "";
 	size_t i = 0;
-	if(str.length() > 3 && (i = str.rfind("/.", str.length() - 2)) != string::npos && i > 0 && i != str.length() - 2 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) {
+	if(str.length() > 3 && (i = rfind_unquoted(str, "/.", str.length() - 2)) != string::npos && i > 0 && i != str.length() - 2 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) {
 		to_str = str.substr(i + 2 , str.length() - i - 2);
 	} else {
 		i = str.length() - 1;
 		size_t i2 = i;
 		int l = 5;
 		while(i != 0) {
-			i2 = str.rfind(_("where"), i - 1);
-			i = str.rfind("where", i - 1);
+			i2 = find_unquoted(str, _("where"), i - 1);
+			i = find_unquoted(str, "where", i - 1);
 			if(i2 != string::npos && (i == string::npos || i < i2)) {l = strlen(_("where")); i = i2;}
 			else l = 5;
 			if(i == string::npos) break;
