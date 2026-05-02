@@ -1739,6 +1739,7 @@ void Calculator::addBuiltinFunctions() {
 	priv->f_intersect = addFunction(new IntersectFunction());
 	priv->f_setdiff = addFunction(new SetDifferenceFunction());
 	priv->f_ismember = addFunction(new IsMemberFunction());
+	priv->f_issubset = addFunction(new IsSubsetFunction());
 	addFunction(new UniqueFunction());
 	addFunction(new CountFunction());
 	priv->f_union = addFunction(new UnionFunction());

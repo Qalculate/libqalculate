@@ -375,10 +375,10 @@ bool compare_name_with_error(const string &name, const string &str, const size_t
 	return true;
 }
 
-const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", "∠", "\x1c", "⊼", "\x1d", "⊽", "\x1e", "⊕", "\x1f", "⨯", "\x15", "∥", "\x14", "...", "\x12", "∪", "\x0""1", "∩", "\x10""2", "∖", "\x10""3", "⊖", "\x10""4", "∈", "\x10""5", "∉", "\x10""6"};
+const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", "∠", "\x1c", "⊼", "\x1d", "⊽", "\x1e", "⊕", "\x1f", "⨯", "\x15", "∥", "\x14", "...", "\x12", "∪", "\x0""1", "∩", "\x10""2", "∖", "\x10""3", "⊖", "\x10""4", "∈", "\x10""5", "∉", "\x10""6", "∋", "\x10""7", "∌", "\x10""8", "⊊", "\x10""9", "⊆", "\x10""0", "⊋", "\x10""+", "⊇", "\x10""-"};
 #define INTERNAL_UPOW "\x13"
 #define INTERNAL_UPOW_CH '\x13'
-#define INTERNAL_SIGNS_COUNT 32
+#define INTERNAL_SIGNS_COUNT 44
 #define INTERNAL_NUMBER_CHARS "\b"
 #define INTERNAL_OPERATORS "\a\b%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x1a\x13\x12\x10"
 #define INTERNAL_OPERATORS_TWO "\a\b%\x1c\x1d\x1e\x1f\x14\x15\x16\x17\x18\x19\x13\x12\x10"
@@ -890,6 +890,12 @@ string internal_operator_replacement2(char c1, char c2) {
 			case '4': return "⊖";
 			case '5': return "∈";
 			case '6': return "∉";
+			case '7': return "∋";
+			case '8': return "∌";
+			case '9': return "⊊";
+			case '0': return "⊆";
+			case '+': return "⊋";
+			case '-': return "⊇";
 		}
 	}
 	string str; str += c1;
@@ -4935,6 +4941,53 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 		parseAdd(str, mstruct, po, OPERATION_LOGICAL_XOR);
 		return true;
 	}
+
+	// Parse internal set operators
+	if((i = str.find("\x10", 0)) != string::npos && i + 2 < str.length()) {
+		char op = str[i + 1];
+		MathFunction *f = NULL;
+		if(op == '5' || op == '6' || op == '7' || op == '8') f = priv->f_ismember;
+		if(op == '9' || op == '0' || op == '+' || op == '-') f = priv->f_issubset;
+		if(f) {
+			str2 = str.substr(0, i);
+			str = str.substr(i + 2, str.length() - (i + 1));
+			remove_blank_ends(str);
+			parseAdd(str2, mstruct, po);
+			MathStructure *mstruct2 = new MathStructure();
+			if(str == "ℤ" || str == "ℝ" || str == "ℚ" || str == "ℕ") mstruct2->set(str, false, true);
+			else parseAdd(str, mstruct2, po);
+			mstruct->transform(f);
+			if(op == '7' || op == '8' || op == '+' || op == '-') mstruct->insertChild_nocopy(mstruct2, 1);
+			else mstruct->addChild_nocopy(mstruct2);
+			if(op == '9' || op == '+') mstruct->addChild(m_one);
+			if(op == '0' || op == '-') mstruct->addChild(m_zero);
+			mstruct->addChild(m_zero);
+			if(op == '6' || op == '8') mstruct->transform(STRUCT_LOGICAL_NOT);
+			return true;
+		}
+	}
+	if((i = str.find("\x10", 0)) != string::npos && i + 2 < str.length()) {
+		char op = str[i + 1];
+		MathFunction *f = NULL;
+		if(op == '1') f = priv->f_union;
+		else if(op == '2') f = priv->f_intersect;
+		else if(op == '3') f = priv->f_setdiff;
+		else if(op == '4') f = getActiveFunction("setxor");
+		if(f) {
+			str2 = str.substr(0, i);
+			str = str.substr(i + 2, str.length() - (i + 1));
+			remove_blank_ends(str);
+			parseAdd(str2, mstruct, po);
+			MathStructure *mstruct2 = new MathStructure();
+			if((op == '2' || op == '3') && (str == "ℤ" || str == "ℝ" || str == "ℚ" || str == "ℕ")) mstruct2->set(str, false, true);
+			else parseAdd(str, mstruct2, po);
+			mstruct->transform(f);
+			mstruct->addChild_nocopy(mstruct2);
+			mstruct->addChild(m_zero);
+			return true;
+		}
+	}
+
 	// Parse | as bitwise or
 	if(PARSING_MODE != PARSING_MODE_CHAIN && po.base != BASE_ROMAN_NUMERALS && (i = str.find(BITWISE_OR, 1)) != string::npos && i + 1 != str.length()) {
 		bool b = false, append = false;
@@ -5235,52 +5288,6 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			prev_operator = c_operator;
 			c_operator = str[i];
 			str = str.substr(i + 1);
-		}
-	}
-
-
-	// Parse internal set operators
-	if((i = str.find("\x10", 0)) != string::npos && i + 2 < str.length()) {
-		char op = str[i + 1];
-		if(op <= '6' && op >= '5') {
-			MathFunction *f = NULL;
-			if(op == '5' || op == '6') f = priv->f_ismember;
-			if(f) {
-				str2 = str.substr(0, i);
-				str = str.substr(i + 2, str.length() - (i + 1));
-				remove_blank_ends(str);
-				parseAdd(str2, mstruct, po);
-				MathStructure *mstruct2 = new MathStructure();
-				if(str == "ℤ" || str == "ℝ" || str == "ℚ" || str == "ℕ") mstruct2->set(str, false, true);
-				else parseAdd(str, mstruct2, po);
-				mstruct->transform(f);
-				mstruct->addChild_nocopy(mstruct2);
-				if(op == '6') mstruct->transform(STRUCT_LOGICAL_NOT);
-				return true;
-			}
-		}
-	}
-	if((i = str.find("\x10", 0)) != string::npos && i + 2 < str.length()) {
-		char op = str[i + 1];
-		if(op <= '4' && op >= '1') {
-			MathFunction *f = NULL;
-			if(op == '1') f = priv->f_union;
-			else if(op == '2') f = priv->f_intersect;
-			else if(op == '3') f = priv->f_setdiff;
-			else if(op == '4') f = getActiveFunction("setxor");
-			if(f) {
-				str2 = str.substr(0, i);
-				str = str.substr(i + 2, str.length() - (i + 1));
-				remove_blank_ends(str);
-				parseAdd(str2, mstruct, po);
-				MathStructure *mstruct2 = new MathStructure();
-				if((op == '2' || op == '3') && (str == "ℤ" || str == "ℝ" || str == "ℚ" || str == "ℕ")) mstruct2->set(str, false, true);
-				else parseAdd(str, mstruct2, po);
-				mstruct->transform(f);
-				mstruct->addChild_nocopy(mstruct2);
-				mstruct->addChild(m_zero);
-				return true;
-			}
 		}
 	}
 

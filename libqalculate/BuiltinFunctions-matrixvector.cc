@@ -1635,16 +1635,19 @@ int SelectFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 	}
 	return 1;
 }
-FindFunction::FindFunction() : MathFunction("find", 2, 4) {
+FindFunction::FindFunction() : MathFunction("find", 2, 5) {
 	setArgumentDefinition(1, new VectorArgument());
 	setArgumentDefinition(3, new SymbolicArgument());
 	setDefaultValue(3, "undefined");
 	setArgumentDefinition(4, new BooleanArgument());
 	setDefaultValue(4, "0");
+	setArgumentDefinition(5, new BooleanArgument());
+	setDefaultValue(5, "0");
 }
 int FindFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	MathStructure mtest;
 	mstruct.clearVector();
+	bool column = vargs[4].number().getBoolean() > 0;
 	for(size_t i = 0; i < vargs[0].size(); i++) {
 		if(CALCULATOR->aborted()) return 0;
 		mtest = vargs[1];
@@ -1656,10 +1659,21 @@ int FindFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		}
 		if(mtest.number().getBoolean() == 1) {
 			if(vargs[3].number().getBoolean() > 0) {
-				mstruct.set(i + 1, 1, 0);
+				if(column) {
+					mstruct.addChild_nocopy(new MathStructure(i + 1, 1, 0));
+					mstruct.addChild(vargs[0][i]);
+				} else {
+					mstruct.set(i + 1, 1, 0);
+				}
 				return 1;
 			} else {
-				mstruct.addChild_nocopy(new MathStructure(i + 1, 1, 0));
+				if(column) {
+					mstruct.addChild(m_empty_vector);
+					mstruct.last().addChild_nocopy(new MathStructure(i + 1, 1, 0));
+					mstruct.last().addChild(vargs[0][i]);
+				} else {
+					mstruct.addChild_nocopy(new MathStructure(i + 1, 1, 0));
+				}
 			}
 		}
 	}
@@ -1813,6 +1827,7 @@ int UnionFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 				mstruct2.delChild(i2 + 1);
 				i++;
 			} else {
+				CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), NULL);
 				return 0;
 			}
 		}
@@ -1907,6 +1922,7 @@ int IntersectFunction::calculate(MathStructure &mstruct, const MathStructure &va
 						break;
 					}
 				} else {
+					CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), NULL);
 					return 0;
 				}
 			}
@@ -1974,6 +1990,7 @@ int SetDifferenceFunction::calculate(MathStructure &mstruct, const MathStructure
 						break;
 					}
 				} else {
+					CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), NULL);
 					return 0;
 				}
 			}
@@ -1983,12 +2000,15 @@ int SetDifferenceFunction::calculate(MathStructure &mstruct, const MathStructure
 	return 1;
 }
 
-IsMemberFunction::IsMemberFunction() : MathFunction("isMember", 2, 2) {
+IsMemberFunction::IsMemberFunction() : MathFunction("isMember", 2, 3) {
 	setArgumentDefinition(1, new VectorArgument(""));
 	setArgumentDefinition(2, new VectorArgument(""));
+	setArgumentDefinition(3, new BooleanArgument(""));
+	setDefaultValue(3, "0");
 }
 int IsMemberFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	mstruct = vargs[0];
+	bool multiset = vargs[2].number().getBoolean();
 	EvaluationOptions eo2 = eo;
 	eo2.approximation = APPROXIMATION_EXACT;
 	bool b_symbolic = true;
@@ -2003,33 +2023,111 @@ int IsMemberFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		mstruct2[i].eval(eo2);
 		if(b_symbolic && !mstruct2[i].isSymbolic()) b_symbolic = false;
 	}
+	if(!mstruct.sortVector() || !mstruct2.sortVector()) return 0;
 	PREPARE_INFINITE_SET
+	size_t i2 = 0;
 	for(size_t i = 0; i < mstruct.size(); i++) {
 		bool b = false;
-		for(size_t i2 = 0; i2 < mstruct2.size(); i2++) {
-			if(infinite_set > 0) {
-				b = test_infinite_set(mstruct[i], infinite_set, eo2);
+		if(infinite_set > 0) {
+			b = test_infinite_set(mstruct[i], infinite_set, eo2);
+		}
+		while(!infinite_set) {
+			if(i2 == mstruct2.size()) break;
+			ComparisonResult cmp = mstruct[i].compare(mstruct2[i2]);
+			if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) {
+				b = true;
+				if(multiset) i2++;
 				break;
-			} else if(b_symbolic) {
-				if(mstruct[i].symbol() == mstruct[i2].symbol()) {
-					b = true;
-					break;
-				}
-			} else {
-				ComparisonResult cmp = mstruct[i].compare(mstruct2[i2]);
-				if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) {
-					b = true;
-					break;
-				}
-				if(COMPARISON_MIGHT_BE_EQUAL(cmp)) {
+			}
+			if(cmp == COMPARISON_RESULT_GREATER) break;
+			if(cmp != COMPARISON_RESULT_LESS) {
+				if(mstruct[i].isSymbolic() && mstruct[i2].isSymbolic()) {
+					if(std::locale("")(mstruct[i].symbol(), mstruct2[i2].symbol())) break;
+				} else {
 					CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), NULL);
 					return 0;
 				}
 			}
+			i2++;
 		}
 		if(b) mstruct[i] = m_one;
 		else mstruct[i].clear();
 	}
+	return 1;
+}
+
+IsSubsetFunction::IsSubsetFunction() : MathFunction("isSubset", 2, 4) {
+	setArgumentDefinition(1, new VectorArgument(""));
+	setArgumentDefinition(2, new VectorArgument(""));
+	setArgumentDefinition(3, new BooleanArgument(""));
+	setDefaultValue(3, "0");
+	setArgumentDefinition(4, new BooleanArgument(""));
+	setDefaultValue(4, "0");
+}
+int IsSubsetFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	mstruct = vargs[0];
+	bool multiset = vargs[3].number().getBoolean();
+	bool allow_equal = !vargs[2].number().getBoolean();
+	EvaluationOptions eo2 = eo;
+	eo2.approximation = APPROXIMATION_EXACT;
+	bool b_symbolic = true;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
+		mstruct[i].eval(eo2);
+		if(b_symbolic && !mstruct[i].isSymbolic()) b_symbolic = false;
+	}
+	MathStructure mstruct2(vargs[1]);
+	for(size_t i = 0; i < mstruct2.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
+		mstruct2[i].eval(eo2);
+		if(b_symbolic && !mstruct2[i].isSymbolic()) b_symbolic = false;
+	}
+	if(!mstruct.sortVector() || !mstruct2.sortVector()) return 0;
+	PREPARE_INFINITE_SET
+	bool is_equal = !infinite_set;
+	size_t i2 = 0;
+	bool moved_on = true;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		bool b = false;
+		if(infinite_set > 0) {
+			b = test_infinite_set(mstruct[i], infinite_set, eo2);
+		}
+		while(!infinite_set) {
+			if(i2 == mstruct2.size()) break;
+			if(!allow_equal && is_equal && !multiset && i2 + 1 < mstruct2.size()) {
+				ComparisonResult cmp = mstruct2[i2].compare(mstruct2[i2 + 1]);
+				if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) {
+					i2++;
+					continue;
+				}
+			}
+			ComparisonResult cmp = mstruct[i].compare(mstruct2[i2]);
+			if(cmp == COMPARISON_RESULT_EQUAL || cmp == COMPARISON_RESULT_EQUAL_LIMITS) {
+				b = true;
+				if(multiset) i2++;
+				break;
+			}
+			if(cmp == COMPARISON_RESULT_GREATER) break;
+			if(cmp != COMPARISON_RESULT_LESS) {
+				if(mstruct[i].isSymbolic() && mstruct[i2].isSymbolic()) {
+					if(std::locale("")(mstruct[i].symbol(), mstruct2[i2].symbol())) break;
+				} else {
+					CALCULATOR->error(true, _("Unsolvable comparison in %s()."), name().c_str(), NULL);
+					return 0;
+				}
+			}
+			i2++;
+			if(moved_on) is_equal = false;
+			moved_on = true;
+		}
+		moved_on = multiset;
+		if(!b) {
+			mstruct = m_zero;
+			return 1;
+		}
+	}
+	if(is_equal && !allow_equal) mstruct = m_zero;
+	else mstruct = m_one;
 	return 1;
 }
 

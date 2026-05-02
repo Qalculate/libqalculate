@@ -574,7 +574,7 @@
       </argument>
     </builtin_function>
     <builtin_function name="isMember">
-      <title>Find set members</title>
+      <title>Is Member</title>
       <names>r:isMember</names>
       <description>Returns a vector with values of the first vector replaced with 1 or 0 (true or false), if the corresponding value is found or not in the second vector.</description>
       <argument index="1">
@@ -582,6 +582,26 @@
       </argument>
       <argument index="2">
         <title>Vector 2</title>
+      </argument>
+      <argument index="3">
+        <title>Multiset</title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="isSubset">
+      <title>Is Subset</title>
+      <names>r:isSubset</names>
+      <description>Returns true if the second vector contains all values of the first vector. If strict is true, equal vectors are not allowed.</description>
+      <argument index="1">
+        <title>Vector 1</title>
+      </argument>
+      <argument index="2">
+        <title>Vector 2</title>
+      </argument>
+      <argument index="3">
+        <title>Strict</title>
+      </argument>
+      <argument index="4">
+        <title>Multiset</title>
       </argument>
     </builtin_function>
     <function>
@@ -3437,6 +3457,9 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
       <argument index="4">
         <title>Select first match</title>
+      </argument>
+      <argument index="5">
+        <title>Add value column</title>
       </argument>
     </builtin_function>
     <builtin_function name="function">
