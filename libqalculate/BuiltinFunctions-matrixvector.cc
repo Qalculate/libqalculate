@@ -319,12 +319,16 @@ int MatrixToVectorFunction::calculate(MathStructure &mstruct, const MathStructur
 }
 RowFunction::RowFunction() : MathFunction("row", 2) {
 	setArgumentDefinition(1, new MatrixArgument());
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONZERO, true, true, INTEGER_TYPE_SINT));
 }
 int RowFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	size_t row = (size_t) vargs[1].number().uintValue();
-	if(row > vargs[0].rows()) {
-		CALCULATOR->error(true, _("Row %s does not exist in matrix."), format_and_print(vargs[1]).c_str(), NULL);
+	int row = vargs[1].number().intValue();
+	if(row < 0) {
+		row += vargs[0].rows();
+		row++;
+	}
+	if(row <= 0 || (size_t) row > vargs[0].rows()) {
+		CALCULATOR->error(true, _("Row %s does not exist in matrix."), format_and_print(MathStructure(row, 1, 0)).c_str(), NULL);
 		return 0;
 	}
 	vargs[0].rowToVector(row, mstruct);
@@ -332,12 +336,16 @@ int RowFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 }
 ColumnFunction::ColumnFunction() : MathFunction("column", 2) {
 	setArgumentDefinition(1, new MatrixArgument());
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONZERO, true, true, INTEGER_TYPE_SINT));
 }
 int ColumnFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	size_t col = (size_t) vargs[1].number().uintValue();
-	if(col > vargs[0].columns()) {
-		CALCULATOR->error(true, _("Column %s does not exist in matrix."), format_and_print(vargs[1]).c_str(), NULL);
+	int col = vargs[1].number().intValue();
+	if(col < 0) {
+		col += vargs[0].columns();
+		col++;
+	}
+	if(col <= 0 || (size_t) col > vargs[0].columns()) {
+		CALCULATOR->error(true, _("Column %s does not exist in matrix."), format_and_print(MathStructure(col, 1, 0)).c_str(), NULL);
 		return 0;
 	}
 	vargs[0].columnToVector(col, mstruct);
@@ -413,8 +421,8 @@ int ElementsFunction::calculate(MathStructure &mstruct, const MathStructure &var
 }
 ElementFunction::ElementFunction() : MathFunction("element", 2, 3) {
 	setArgumentDefinition(1, new MatrixArgument());
-	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_POSITIVE, true, true, INTEGER_TYPE_SIZE));
-	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SIZE));
+	setArgumentDefinition(2, new IntegerArgument("", ARGUMENT_MIN_MAX_NONZERO, true, true, INTEGER_TYPE_SINT));
+	setArgumentDefinition(3, new IntegerArgument("", ARGUMENT_MIN_MAX_NONE, true, true, INTEGER_TYPE_SINT));
 	setDefaultValue(3, "0");
 }
 bool ElementFunction::representsScalar(const MathStructure &vargs) const {
@@ -443,27 +451,40 @@ bool ElementFunction::representsNonMatrix(const MathStructure &vargs) const {
 	return false;
 }
 int ElementFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
-	size_t row = (size_t) vargs[1].number().uintValue();
-	size_t col = (size_t) vargs[2].number().uintValue();
+	int row = vargs[1].number().intValue();
+	int col = vargs[2].number().intValue();
 	if(col == 0) {
-		if(vargs[0].size() == 1 && vargs[0][0].size() >= row) {
+		if(row < 0) {
+			if(vargs[0].size() == 1) row += vargs[0][0].size();
+			else row += vargs[0].size();
+			row++;
+		}
+		if(row > 0 && vargs[0].size() == 1 && vargs[0][0].size() >= (size_t) row) {
 			mstruct = vargs[0][0][row - 1];
 			return 1;
 		}
-		if(vargs[0].size() >= row) {
+		if(row > 0 && vargs[0].size() >= (size_t) row) {
 			if(vargs[0][0].size() == 1) mstruct = vargs[0][row - 1][0];
 			else mstruct = vargs[0][row - 1];
 			return 1;
 		}
-		CALCULATOR->error(true, _("Element %s does not exist in vector."), format_and_print(vargs[1]).c_str(), NULL);
+		CALCULATOR->error(true, _("Element %s does not exist in vector."), format_and_print(MathStructure(row, 1, 0)).c_str(), NULL);
 		return 0;
 	}
-	if(col > vargs[0].columns()) {
-		CALCULATOR->error(true, _("Column %s does not exist in matrix."), format_and_print(vargs[2]).c_str(), NULL);
+	if(col < 0) {
+		col += vargs[0].columns();
+		col++;
+	}
+	if(col <= 0 || (size_t) col > vargs[0].columns()) {
+		CALCULATOR->error(true, _("Column %s does not exist in matrix."), format_and_print(MathStructure(col, 1, 0)).c_str(), NULL);
 		return 0;
 	}
-	if(row > vargs[0].rows()) {
-		CALCULATOR->error(true, _("Row %s does not exist in matrix."), format_and_print(vargs[1]).c_str(), NULL);
+	if(row < 0) {
+		row += vargs[0].rows();
+		row++;
+	}
+	if(row <= 0 || (size_t) row > vargs[0].rows()) {
+		CALCULATOR->error(true, _("Row %s does not exist in matrix."), format_and_print(MathStructure(row, 1, 0)).c_str(), NULL);
 		return 0;
 	}
 	const MathStructure *em = vargs[0].getElement(row, col);

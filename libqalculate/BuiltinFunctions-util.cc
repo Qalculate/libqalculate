@@ -476,10 +476,16 @@ void string_print_set(MathStructure &m) {
 	}
 }
 
-StringFunction::StringFunction() : MathFunction("string", 1) {}
+StringFunction::StringFunction() : MathFunction("string", 1, -1) {}
 int StringFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	mstruct = vargs[0];
-	mstruct.eval(eo);
+	mstruct = vargs;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(CALCULATOR->aborted()) return 0;
+		mstruct[i].eval(eo);
+	}
+	if(mstruct.size() == 1 && mstruct[0].isVector()) {
+		mstruct.setToChild(1, true);
+	}
 	string_print_set(mstruct);
 	return 1;
 }
