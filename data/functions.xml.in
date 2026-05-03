@@ -1059,6 +1059,32 @@ Mode determines the return value for integer factorization as follows.
         <test>false</test>
       </argument>
     </function>
+    <function>
+      <title>Digit sum</title>
+      <names>r:digitSum</names>
+      <expression>total(integerDigits(\x,\y))</expression>
+      <argument type="integer" index="1">
+        <title>Number</title>
+        <min>0</min>
+      </argument>
+      <argument type="integer" index="2">
+        <title>Base</title>
+        <min>2</min>
+      </argument>
+    </function>
+    <function>
+      <title>Digital Root</title>
+      <names>r:digitalRoot</names>
+      <expression>while("x">\y-1,\x,digitSum("x",\y),"x")</expression>
+      <argument type="integer" index="1">
+        <title>Number</title>
+        <min>0</min>
+      </argument>
+      <argument type="integer" index="2">
+        <title>Base</title>
+        <min>2</min>
+      </argument>
+    </function>
     <category>
       <title>Rounding</title>
       <title>Rounding</title>
@@ -3675,6 +3701,23 @@ The ":=" operator (e.g. var1:=10) is a shortcut for this function.</description>
         <title>Element variable</title>
       </argument>
     </builtin_function>
+    <function>
+      <title>While...Do</title>
+      <names>r:while</names>
+      <expression>for(1,"x",\x,undefined,\y,\z,\A{})</expression>
+      <argument index="1" type="free">
+        <title>While condition</title>
+      </argument>
+      <argument index="2" type="free">
+        <title>Initial value</title>
+      </argument>
+      <argument index="3" type="free">
+        <title>Do function</title>
+      </argument>
+      <argument index="4" type="symbol">
+        <title>Value variable</title>
+      </argument>
+    </function>
     <builtin_function name="if">
       <title>If...Then...Else</title>
       <names>r:if</names>

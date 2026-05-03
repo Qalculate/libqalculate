@@ -7115,7 +7115,14 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 					if(arg->type() == ARGUMENT_TYPE_VECTOR) {
 						if(!CHILD(i).transposeMatrix()) return false;
 					} else if((arg->tests() || (o_function->subtype() == SUBTYPE_USER_FUNCTION && CHILD(i).containsType(STRUCT_VECTOR, false, true, true) > 0)) && !CHILD(i).isVector() && !CHILD(i).representsScalar()) {
+						CALCULATOR->beginTemporaryStopMessages();
+						MathStructure mbak(CHILD(i));
 						CHILD(i).eval(eo);
+						if(CHILD(i).isVector()) {
+							CALCULATOR->endTemporaryStopMessages();
+						} else if(CALCULATOR->endTemporaryStopMessages(NULL, NULL, MESSAGE_ERROR)) {
+							CHILD(i) = mbak;
+						}
 					}
 					if(CHILD(i).isVector()) {
 						if(vector_size == (size_t) -1) {

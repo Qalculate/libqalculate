@@ -543,7 +543,8 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	MathStructure mupdate;
 	while(true) {
 		mtest = vargs[2];
-		mtest.replace(vargs[1], mcounter);
+		if(vargs[3].isUndefined()) mtest.replace(vargs[6], mstruct);
+		else mtest.replace(vargs[1], mcounter, vargs[6], mstruct);
 		mtest.eval(eo);
 		if(!mtest.isNumber() || CALCULATOR->aborted()) {
 			for(size_t i = 0; i < vars.size(); i++) vars[i]->destroy();
@@ -553,12 +554,16 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 			break;
 		}
 		mupdate = m5;
-		calculate_replace2(mupdate, vargs[1], mcounter, vargs[6], mstruct, eo);
+		if(vargs[3].isUndefined()) {
+			mupdate.calculateReplace(vargs[6], mstruct, eo);
+		} else {
+			calculate_replace2(mupdate, vargs[1], mcounter, vargs[6], mstruct, eo);
+			if(vargs[3].isComparison() && vargs[3].comparisonType() == COMPARISON_EQUALS && vargs[3][0] == vargs[1]) mcount = vargs[3][1];
+			else mcount = vargs[3];
+			mcount.calculateReplace(vargs[1], mcounter, eo, true);
+			mcounter = mcount;
+		}
 		mstruct = mupdate;
-		if(vargs[3].isComparison() && vargs[3].comparisonType() == COMPARISON_EQUALS && vargs[3][0] == vargs[1]) mcount = vargs[3][1];
-		else mcount = vargs[3];
-		mcount.calculateReplace(vargs[1], mcounter, eo, true);
-		mcounter = mcount;
 	}
 	for(size_t i = 0; i < vars.size(); i++) {
 		if(vars[i]->isKnown()) mstruct.replace(vars[i], ((KnownVariable*) vars[i])->get());
