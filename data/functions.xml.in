@@ -1062,7 +1062,7 @@ Mode determines the return value for integer factorization as follows.
     <function>
       <title>Digit sum</title>
       <names>r:digitSum</names>
-      <expression>total(integerDigits(\x,\y))</expression>
+      <expression>total(integerDigits(\x,\Y{10}))</expression>
       <argument type="integer" index="1">
         <title>Number</title>
         <min>0</min>
@@ -1075,7 +1075,7 @@ Mode determines the return value for integer factorization as follows.
     <function>
       <title>Digital Root</title>
       <names>r:digitalRoot</names>
-      <expression>while("x">\y-1,\x,digitSum("x",\y),"x")</expression>
+      <expression>while("x">\Y{10}-1,\x,digitSum("x",\y),"x")</expression>
       <argument type="integer" index="1">
         <title>Number</title>
         <min>0</min>
@@ -3355,7 +3355,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     </builtin_function>
     <builtin_function name="string">
       <title>Convert to Strings</title>
-      <names>r:string</names>
+      <names>r:string, r:str</names>
       <argument index="1">
         <title>Value</title>
       </argument>
