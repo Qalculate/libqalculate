@@ -3355,7 +3355,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
     </builtin_function>
     <builtin_function name="string">
       <title>Convert to Strings</title>
-      <names>r:string</names>
+      <names>r:string, r:str</names>
       <argument index="1">
         <title>Value</title>
       </argument>
