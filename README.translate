@@ -1,10 +1,8 @@
 The Qalculate! developer(s) are thankful for every possible translation and willing to answer any questions or help with any problems you may have as a translator. Please read through this document before starting the translation.
 
-Qalculate! is split up into one library package (libqalculate, which also includes the text interface) and GUI packages (currently only qalculate-gtk).
+Qalculate! is split up into a library package (libqalculate, which also includes the text interface) and GUI packages (qalculate-qt and qalculate-gtk).
 
-The GUI packages contain translations for the GUI text as usual in the po directory. The libqalculate translations are split up into two -- translation of error messages, type information and the text interface in po, and translation of definitions of functions, variables, units, etc. in po-defs (merged with the data files in data).
-
-The source packages for libqalculate and qalculate-gtk do not include any .pot files. Instead the pot file is created with "intltool-update --pot". You can then run "msginit --locale=??" or just copy the pot-file to ??.po. The translation file is updated with "intltool-update language code" (ex. intltool-update sv, for the Swedish translation) from the po directories. intltool-update is distributed with intltool.
+The GUI packages contain translations for the GUI text in the po directory for Gtk version (traditional Gettext files) and in the translations directory the Qt version (translated using Qt Linguist). The libqalculate translations are split up into two -- translation of error messages, type information and the text interface in po, and translation of definitions of functions, variables, units, etc. in po-defs (merged with the data files in data).
 
 The translation of the libqalculate message strings in po-defs requires some further knowledge. These are merged with the xml data files in libqalculate/data. The different types of message strings in these files are:
 
