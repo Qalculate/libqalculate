@@ -132,7 +132,7 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 			Number best_nr;
 			Unit *best_u = NULL;
 			bool non_int = false;
-			if(u->subtype() == SUBTYPE_ALIAS_UNIT && (muc == MIXED_UNITS_CONVERSION_FORCE_ALL || (((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == string::npos))) {
+			if(u->subtype() == SUBTYPE_ALIAS_UNIT && (muc == MIXED_UNITS_CONVERSION_FORCE_ALL || (((AliasUnit*) u)->expression().find_first_not_of(NUMBERS) == string::npos) || (muc == MIXED_UNITS_CONVERSION_FORCE_INTEGER && ((AliasUnit*) u)->firstBaseUnit()->referenceName() == "d"))) {
 				MathStructure mstruct_nr(nr);
 				MathStructure m_exp(m_one);
 				((AliasUnit*) u)->convertToFirstBaseUnit(mstruct_nr, m_exp);

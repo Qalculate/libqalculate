@@ -904,10 +904,31 @@ void fix_user_function_expression(string &str, const EvaluationOptions &eo) {
 }
 
 FunctionFunction::FunctionFunction() : MathFunction("function", 1, -1) {
-	setArgumentDefinition(1, new TextArgument());
+	Argument *arg = new TextArgument("", false);
+	arg->setHandleVector(true);
+	setArgumentDefinition(1, arg);
 }
 int FunctionFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	string str = vargs[0].symbol();
+	if(vargs[0].isVector()) return 0;
+	string str;
+	if(vargs[0].isSymbolic()) {
+		str = vargs[0].symbol();
+	} else {
+		MathStructure meval = vargs[0];
+		CALCULATOR->beginTemporaryStopMessages();
+		meval.eval(eo);
+		if(meval.isVector()) {
+			mstruct = meval;
+			return -1;
+		}
+		if(meval.isSymbolic()) {
+			CALCULATOR->endTemporaryStopMessages(true);
+			str = meval.symbol();
+		} else {
+			str = vargs[0].print(CALCULATOR->save_printoptions);
+			CALCULATOR->endTemporaryStopMessages();
+		}
+	}
 	fix_user_function_expression(str, eo);
 	UserFunction f = new UserFunction("", "Generated MathFunction", str);
 	MathStructure args = vargs;
