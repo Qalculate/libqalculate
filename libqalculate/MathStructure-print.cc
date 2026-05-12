@@ -1008,7 +1008,7 @@ int idm3_test(bool &b_fail, const MathStructure &mnum, const Number &nr, bool ex
 	return 0;
 }
 
-bool is_unit_exp_strict(const MathStructure &m, bool in_div = false, bool in_mul = false) {
+bool is_unit_exp_strict(const MathStructure &m, bool = false, bool = false) {
 	return m.isUnit() || (m.isPower() && m[0].isUnit() && ((m[1].isInteger() && !m[1].number().isZero()) || (m[1].isNegate() && m[1][0].isInteger() && m[1][0].number().isPositive())));
 }
 bool is_unit_multiexp_strict(const MathStructure &m, bool in_div = false, bool in_mul = false) {
@@ -2738,7 +2738,7 @@ void MathStructure::formatsub(const PrintOptions &po, MathStructure *parent, siz
 				// root(f(a),3)=cbrt(f(a))
 				ERASE(1)
 				setFunctionId(FUNCTION_ID_CBRT);
-			} else if(o_function->id() == FUNCTION_ID_INTERVAL && SIZE >= 2 && CHILD(0).isAddition() && CHILD(0).size() == 2 && CHILD(1).isAddition() && CHILD(1).size() == 2) {
+			} else if(o_function->id() == FUNCTION_ID_INTERVAL && (SIZE == 2 || (SIZE > 2 && CHILD(2).isZero())) && CHILD(0).isAddition() && CHILD(0).size() == 2 && CHILD(1).isAddition() && CHILD(1).size() == 2) {
 				// interval(f(a)+c,f(a)-c)=uncertainty(f(a),c)
 				MathStructure *mmid = NULL, *munc = NULL;
 				if(CHILD(0)[0].equals(CHILD(1)[0], true, true)) {

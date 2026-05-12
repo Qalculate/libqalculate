@@ -1062,7 +1062,7 @@ Mode determines the return value for integer factorization as follows.
     <function>
       <title>Digit sum</title>
       <names>r:digitSum</names>
-      <expression>total(integerDigits(\x,\y))</expression>
+      <expression>total(integerDigits(\x,\Y{10}))</expression>
       <argument type="integer" index="1">
         <title>Number</title>
         <min>0</min>
@@ -1075,7 +1075,7 @@ Mode determines the return value for integer factorization as follows.
     <function>
       <title>Digital Root</title>
       <names>r:digitalRoot</names>
-      <expression>while("x">\y-1,\x,digitSum("x",\y),"x")</expression>
+      <expression>while("x">\Y{10}-1,\x,digitSum("x",\y),"x")</expression>
       <argument type="integer" index="1">
         <title>Number</title>
         <min>0</min>
@@ -3359,6 +3359,17 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       <argument index="1">
         <title>Value</title>
       </argument>
+      <argument index="2">
+        <title>Value 2</title>
+      </argument>
+    </builtin_function>
+    <builtin_function name="characters">
+      <title>Convert to Characters Vector</title>
+      <example>$name("ABC")=["A"  "B"  "C"]</example>
+      <names>r:characters</names>
+      <argument index="1">
+        <title>Text string</title>
+      </argument>
     </builtin_function>
     <builtin_function name="replace">
       <title>Replace</title>
@@ -3704,7 +3715,8 @@ The ":=" operator (e.g. var1:=10) is a shortcut for this function.</description>
     <function>
       <title>While...Do</title>
       <names>r:while</names>
-      <expression>for(1,"x",\x,undefined,\y,\z,\A{})</expression>
+      <example>$name(x &lt; 10, 1, x * 2) = 16</example>
+      <expression>for(1,"",\x,undefined,\y,\z,\A{0})</expression>
       <argument index="1" type="free">
         <title>While condition</title>
       </argument>
@@ -3861,7 +3873,7 @@ The ":=" operator (e.g. var1:=10) is a shortcut for this function.</description>
       </argument>
     </builtin_function>
     <builtin_function name="popCount">
-      <title>Population Count</title>
+      <title>Bit Population Count</title>
       <description>Returns the number of 1 bits in the binary representation of the specified integer.</description>
       <example>$name(9) = 2</example>
       <names>r:popCount</names>

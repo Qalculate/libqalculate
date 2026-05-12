@@ -282,7 +282,7 @@ HorzCatFunction::HorzCatFunction() : MathFunction("horzcat", 1, -1) {
 	setArgumentDefinition(1, new MatrixArgument(""));
 	setArgumentDefinition(2, new MatrixArgument(""));
 }
-bool HorzCatFunction::representsScalar(const MathStructure &vargs) const {return false;}
+bool HorzCatFunction::representsScalar(const MathStructure&) const {return false;}
 bool HorzCatFunction::representsNonMatrix(const MathStructure &vargs) const {
 	for(size_t i = 0; i < vargs.size(); i++) {
 		if(!vargs[i].representsNonMatrix()) return false;
@@ -495,7 +495,7 @@ int ElementFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 DimensionFunction::DimensionFunction() : MathFunction("dimension", 1) {
 	setArgumentDefinition(1, new VectorArgument());
 }
-int DimensionFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int DimensionFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	mstruct.set((long int) vargs[0].countChildren(), 1L, 0L);
 	return 1;
 }
@@ -1058,7 +1058,7 @@ DotProductFunction::DotProductFunction() : MathFunction("dot", 2) {
 	setArgumentDefinition(1, new VectorArgument(""));
 	setArgumentDefinition(2, new VectorArgument(""));
 }
-int DotProductFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int DotProductFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	mstruct = vargs[0];
 	MathStructure m2(vargs[1]);
 	if(mstruct.size() == m2.size()) {

@@ -872,13 +872,21 @@ bool replace_intervals_f(MathStructure &mstruct) {
 }
 bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo) {
 	// replace interval() and uncertainty() with numbers with intervals, if possible
-	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_INTERVAL && mstruct.size() >= 2 && mstruct[2].isNumber()) {
-		if(create_interval(mstruct, mstruct[0], mstruct[1], mstruct.size() == 2 ? false : mstruct[2].number().getBoolean())) return true;
-		MathStructure m1(mstruct[0]);
-		MathStructure m2(mstruct[1]);
-		m1.eval(eo);
-		m2.eval(eo);
-		if(create_interval(mstruct, m1, m2, mstruct.size() == 2 ? false : mstruct[2].number().getBoolean())) return true;
+	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_INTERVAL && (mstruct.size() == 2 || (mstruct.size() > 2 && mstruct[2].isNumber()))) {
+		if(mstruct[0].isNumber() && mstruct[1].isNumber() && (mstruct.size() == 2 || !mstruct[2].number().getBoolean())) {
+			Number nr;
+			if(nr.setInterval(mstruct[0].number(), mstruct[1].number())) {
+				mstruct.set(nr, true);
+				return true;
+			}
+		} else {
+			MathStructure m1(mstruct[0]);
+			MathStructure m2(mstruct[1]);
+			if(create_interval(mstruct, m1, m2, mstruct.size() == 2 ? false : mstruct[2].number().getBoolean())) return true;
+			m1.eval(eo);
+			m2.eval(eo);
+			if(create_interval(mstruct, m1, m2, mstruct.size() == 2 ? false : mstruct[2].number().getBoolean())) return true;
+		}
 		return false;
 	} else if(eo.interval_calculation != INTERVAL_CALCULATION_NONE && mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_UNCERTAINTY && mstruct.size() == 3) {
 		if(mstruct[0].isNumber() && mstruct[1].isNumber()) {
@@ -911,7 +919,7 @@ bool replace_f_interval(MathStructure &mstruct, const EvaluationOptions &eo) {
 				m1 *= m_one;
 				m1.last() += m2;
 				mstruct.addChild(m1);
-				return 1;
+				return true;
 			} else {
 				if(set_uncertainty(m1, m2, eo, false)) return true;
 				m1.eval(eo);
@@ -1773,7 +1781,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 				CALCULATOR->endTemporaryStopMessages(true);
 				return;
 			}
-			if((mstruct->isVariable() && mstruct->variable()->isKnown() && ((KnownVariable*) mstruct->variable())->get().isSymbolic()) || (mstruct->isFunction() && ((mstruct->function()->subtype() == SUBTYPE_USER_FUNCTION && test_function_argument_testable(*mstruct)) || mstruct->function()->subtype() == SUBTYPE_DATA_SET || mstruct->function()->id() == FUNCTION_ID_REGISTER || mstruct->function()->id() == FUNCTION_ID_STACK || mstruct->function()->id() == FUNCTION_ID_LOAD || mstruct->function()->id() == FUNCTION_ID_CHAR || mstruct->function()->id() == FUNCTION_ID_CONCATENATE || mstruct->function()->id() == FUNCTION_ID_STRING || mstruct->function()->id() == FUNCTION_ID_COMPONENT || mstruct->function()->id() == FUNCTION_ID_BINARY_DECIMAL || mstruct->function()->id() == FUNCTION_ID_BIJECTIVE || mstruct->function()->id() == FUNCTION_ID_ROMAN || ((mstruct->function()->id() == FUNCTION_ID_BIN || mstruct->function()->id() == FUNCTION_ID_OCT || mstruct->function()->id() == FUNCTION_ID_DEC || mstruct->function()->id() == FUNCTION_ID_HEX || mstruct->function()->id() == FUNCTION_ID_BASE) && mstruct->size() > 1 && mstruct->last().isOne())))) {
+			if((mstruct->isVariable() && mstruct->variable()->isKnown() && ((KnownVariable*) mstruct->variable())->get().isSymbolic()) || (mstruct->isFunction() && ((mstruct->function()->subtype() == SUBTYPE_USER_FUNCTION && test_function_argument_testable(*mstruct)) || mstruct->function()->subtype() == SUBTYPE_DATA_SET || mstruct->function()->id() == FUNCTION_ID_REGISTER || mstruct->function()->id() == FUNCTION_ID_STACK || mstruct->function()->id() == FUNCTION_ID_LOAD || mstruct->function()->id() == FUNCTION_ID_CHAR || mstruct->function()->id() == FUNCTION_ID_CONCATENATE || mstruct->function()->id() == FUNCTION_ID_STRING || mstruct->function()->id() == FUNCTION_ID_CHARACTERS || mstruct->function()->id() == FUNCTION_ID_COMPONENT || mstruct->function()->id() == FUNCTION_ID_BINARY_DECIMAL || mstruct->function()->id() == FUNCTION_ID_BIJECTIVE || mstruct->function()->id() == FUNCTION_ID_ROMAN || mstruct->function()->id() == FUNCTION_ID_LIMITS || mstruct->function()->id() == FUNCTION_ID_CIRCSHIFT || mstruct->function()->id() == FUNCTION_ID_FLIP || ((mstruct->function()->id() == FUNCTION_ID_BIN || mstruct->function()->id() == FUNCTION_ID_OCT || mstruct->function()->id() == FUNCTION_ID_DEC || mstruct->function()->id() == FUNCTION_ID_HEX || mstruct->function()->id() == FUNCTION_ID_BASE) && mstruct->size() > 1 && mstruct->last().isOne())))) {
 				EvaluationOptions eo;
 				eo.parse_options = po2;
 				MathStructure mtest(*mstruct);
@@ -1782,7 +1790,7 @@ void Argument::parse(MathStructure *mstruct, const string &str, const ParseOptio
 				if(!b_c) CALCULATOR->startControl(100);
 				if(mtest.isFunction()) {
 					while(mtest.calculateFunctions(eo, false)) {
-						if(!(mstruct->isFunction() && ((mstruct->function()->subtype() == SUBTYPE_USER_FUNCTION && test_function_argument_testable(*mstruct)) || mstruct->function()->subtype() == SUBTYPE_DATA_SET || mstruct->function()->id() == FUNCTION_ID_REGISTER || mstruct->function()->id() == FUNCTION_ID_STACK || mstruct->function()->id() == FUNCTION_ID_LOAD || mstruct->function()->id() == FUNCTION_ID_CHAR || mstruct->function()->id() == FUNCTION_ID_CONCATENATE || mstruct->function()->id() == FUNCTION_ID_STRING || mstruct->function()->id() == FUNCTION_ID_COMPONENT || mstruct->function()->id() == FUNCTION_ID_BINARY_DECIMAL || mstruct->function()->id() == FUNCTION_ID_BIJECTIVE || mstruct->function()->id() == FUNCTION_ID_ROMAN || ((mstruct->function()->id() == FUNCTION_ID_BIN || mstruct->function()->id() == FUNCTION_ID_OCT || mstruct->function()->id() == FUNCTION_ID_DEC || mstruct->function()->id() == FUNCTION_ID_HEX || mstruct->function()->id() == FUNCTION_ID_BASE) && mstruct->size() > 1 && mstruct->last().isOne())))) break;
+						if(!(mstruct->isFunction() && ((mstruct->function()->subtype() == SUBTYPE_USER_FUNCTION && test_function_argument_testable(*mstruct)) || mstruct->function()->subtype() == SUBTYPE_DATA_SET || mstruct->function()->id() == FUNCTION_ID_REGISTER || mstruct->function()->id() == FUNCTION_ID_STACK || mstruct->function()->id() == FUNCTION_ID_LOAD || mstruct->function()->id() == FUNCTION_ID_CHAR || mstruct->function()->id() == FUNCTION_ID_CONCATENATE || mstruct->function()->id() == FUNCTION_ID_STRING || mstruct->function()->id() == FUNCTION_ID_CHARACTERS || mstruct->function()->id() == FUNCTION_ID_COMPONENT || mstruct->function()->id() == FUNCTION_ID_BINARY_DECIMAL || mstruct->function()->id() == FUNCTION_ID_BIJECTIVE || mstruct->function()->id() == FUNCTION_ID_ROMAN || mstruct->function()->id() == FUNCTION_ID_LIMITS || mstruct->function()->id() == FUNCTION_ID_CIRCSHIFT || mstruct->function()->id() == FUNCTION_ID_FLIP || ((mstruct->function()->id() == FUNCTION_ID_BIN || mstruct->function()->id() == FUNCTION_ID_OCT || mstruct->function()->id() == FUNCTION_ID_DEC || mstruct->function()->id() == FUNCTION_ID_HEX || mstruct->function()->id() == FUNCTION_ID_BASE) && mstruct->size() > 1 && mstruct->last().isOne())))) break;
 					}
 				} else {
 					mtest.eval(eo);
@@ -2373,7 +2381,7 @@ VectorArgument::~VectorArgument() {
 }
 
 bool function_returns_vector(int id) {
-	return id == FUNCTION_ID_SORT || id == FUNCTION_ID_RANK || id == FUNCTION_ID_LIMITS || id == FUNCTION_ID_FLIP || id == FUNCTION_ID_CIRCSHIFT || id == FUNCTION_ID_PROCESS || id == FUNCTION_ID_SELECT || id == FUNCTION_ID_COLON || id == FUNCTION_ID_GENERATE_VECTOR || id == FUNCTION_ID_RAND || id == FUNCTION_ID_RANDN || id == FUNCTION_ID_RAND_POISSON || id == FUNCTION_ID_INTEGER_DIGITS || id == FUNCTION_ID_ROW || id == FUNCTION_ID_COLUMN || id == FUNCTION_ID_IDENTITY || id == FUNCTION_ID_MATRIX || id == FUNCTION_ID_FIND || id == FUNCTION_ID_ENTRYWISE || id == FUNCTION_ID_INVERSE;
+	return id == FUNCTION_ID_SORT || id == FUNCTION_ID_RANK || id == FUNCTION_ID_LIMITS || id == FUNCTION_ID_FLIP || id == FUNCTION_ID_CIRCSHIFT || id == FUNCTION_ID_PROCESS || id == FUNCTION_ID_SELECT || id == FUNCTION_ID_COLON || id == FUNCTION_ID_GENERATE_VECTOR || id == FUNCTION_ID_RAND || id == FUNCTION_ID_RANDN || id == FUNCTION_ID_RAND_POISSON || id == FUNCTION_ID_INTEGER_DIGITS || id == FUNCTION_ID_ROW || id == FUNCTION_ID_COLUMN || id == FUNCTION_ID_IDENTITY || id == FUNCTION_ID_MATRIX || id == FUNCTION_ID_FIND || id == FUNCTION_ID_ENTRYWISE || id == FUNCTION_ID_INVERSE || id == FUNCTION_ID_CHARACTERS || id == FUNCTION_ID_INTERSECT || id == FUNCTION_ID_CHARACTERS || id == FUNCTION_ID_SET_DIFFERENCE || id == FUNCTION_ID_UNIQUE || id == FUNCTION_ID_UNION;
 }
 bool represents_loose_matrix(const MathStructure &m) {
 	if(m.isVector()) {

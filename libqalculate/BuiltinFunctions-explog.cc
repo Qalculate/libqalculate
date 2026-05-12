@@ -176,7 +176,7 @@ CbrtFunction::CbrtFunction() : MathFunction("cbrt", 1) {
 	arg->setHandleVector(true);
 	setArgumentDefinition(1, arg);
 }
-int CbrtFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+int CbrtFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	if(vargs[0].isVector()) return 0;
 	if(vargs[0].representsNegative(true)) {
 		mstruct = vargs[0];
@@ -489,7 +489,7 @@ ExpFunction::ExpFunction() : MathFunction("exp", 1) {
 	setArgumentDefinition(1, arg);
 }
 int ExpFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[0].isVector()) return -1;
+	if(vargs[0].isVector()) return 0;
 	if(!vargs[0].representsScalar()) {
 		mstruct = vargs[0];
 		CALCULATOR->beginTemporaryStopMessages();
@@ -966,7 +966,7 @@ PowerTowerFunction::PowerTowerFunction() : MathFunction("powertower", 2) {
 bool PowerTowerFunction::representsNumber(const MathStructure &vargs, bool) const {return vargs.size() == 2 && vargs[0].representsNumber() && vargs[1].representsInteger() && vargs[1].representsPositive();}
 bool PowerTowerFunction::representsReal(const MathStructure &vargs, bool) const {return vargs.size() == 2 && vargs[0].representsNonNegative() && vargs[1].representsInteger() && vargs[1].representsPositive();}
 bool PowerTowerFunction::representsNonComplex(const MathStructure &vargs, bool b) const {return representsReal(vargs, b);}
-bool PowerTowerFunction::representsComplex(const MathStructure &vargs, bool) const {return false;}
+bool PowerTowerFunction::representsComplex(const MathStructure&, bool) const {return false;}
 bool PowerTowerFunction::representsNonZero(const MathStructure &vargs, bool) const {return vargs.size() == 2 && vargs[0].representsNonZero() && vargs[1].representsInteger() && vargs[1].representsPositive();}
 int PowerTowerFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector()) return 0;

@@ -1076,7 +1076,7 @@ bool replace_equal_limits(MathStructure &mstruct, const MathStructure &x_var, co
 	}
 	return b_ret;
 }
-bool replace_equal_limits2(MathStructure &mstruct, const MathStructure &x_var, const MathStructure &nr_limit, const EvaluationOptions &eo, int approach_direction, bool at_top = true) {
+bool replace_equal_limits2(MathStructure &mstruct, const MathStructure &x_var, const MathStructure &nr_limit, const EvaluationOptions &eo, int approach_direction, bool = true) {
 	if(!nr_limit.isInfinite(false)) return false;
 	bool b_ret = false;
 	for(size_t i = 0; i < mstruct.size(); i++) {

@@ -75,7 +75,7 @@ void init_randstate() {
 #else
 	FILE *devrandom;
 	if((devrandom = fopen("/dev/urandom", "r")) != NULL) {
-		fread(&seed, sizeof(seed), 1, devrandom);
+		if(fread(&seed, sizeof(seed), 1, devrandom) == 0) seed = time(NULL);
 		fclose(devrandom);
 #endif
 	} else {
@@ -3609,7 +3609,7 @@ bool Number::divide(const Number &o) {
 		return multiply(oinv);
 	}
 	if(!o.isNonZero()) {
-		if(o.isZero()) CALCULATOR->error(false, _("Division by zero."), NULL);
+		//if(o.isZero()) CALCULATOR->error(false, _("Division by zero."), NULL);
 		return false;
 	}
 	if(isZero()) {
@@ -3626,7 +3626,7 @@ bool Number::divide(const Number &o) {
 }
 bool Number::divide(long int i) {
 	if(i == 0) {
-		CALCULATOR->error(false, _("Division by zero."), NULL);
+		//CALCULATOR->error(false, _("Division by zero."), NULL);
 		return false;
 	}
 	if(isInfinite(true)) {
@@ -3662,7 +3662,7 @@ bool Number::divide(long int i) {
 
 bool Number::recip() {
 	if(!isNonZero()) {
-		if(isZero()) CALCULATOR->error(false, _("Division by zero."), NULL);
+		//if(isZero()) CALCULATOR->error(false, _("Division by zero."), NULL);
 		return false;
 	}
 	if(isInfinite(false)) {
@@ -3917,7 +3917,7 @@ bool Number::raise(const Number &o, bool try_exact) {
 		}
 	}
 	if(isZero() && o.isNegative()) {
-		CALCULATOR->error(false, _("Division by zero."), NULL);
+		//CALCULATOR->error(false, _("Division by zero."), NULL);
 		return false;
 	}
 	if(isZero()) {

@@ -177,12 +177,12 @@ IntervalFunction::IntervalFunction() : MathFunction("interval", 2, 3) {
 	setDefaultValue(3, "0");
 }
 int IntervalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(create_interval(mstruct, vargs[0], vargs[1], vargs[2].number().getBoolean())) return 1;
+	if(create_interval(mstruct, vargs[0], vargs[1], vargs.size() >= 3 ? vargs[2].number().getBoolean() : false)) return 1;
 	MathStructure marg1(vargs[0]);
 	marg1.eval(eo);
 	MathStructure marg2(vargs[1]);
 	marg2.eval(eo);
-	if(create_interval(mstruct, marg1, marg2, vargs[2].number().getBoolean())) return 1;
+	if(create_interval(mstruct, marg1, marg2, vargs.size() >= 3 ? vargs[2].number().getBoolean() : false)) return 1;
 	return 0;
 }
 bool IntervalFunction::representsPositive(const MathStructure &vargs, bool allow_units) const {return vargs.size() == 2 && vargs[1].representsPositive(allow_units) && vargs[0].representsPositive(allow_units);}
@@ -208,18 +208,18 @@ bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const Evaluati
 	test_munc:
 	if(munc.isNumber()) {
 		if(munc.isZero()) {
-			return 1;
+			return true;
 		} else if(mstruct.isNumber()) {
 			mstruct.number().setUncertainty(munc.number(), eo.interval_calculation == INTERVAL_CALCULATION_NONE);
 			mstruct.numberUpdated();
-			return 1;
+			return true;
 		} else if(mstruct.isAddition()) {
 			for(size_t i = 0; i < mstruct.size(); i++) {
 				if(mstruct[i].isNumber()) {
 					mstruct[i].number().setUncertainty(munc.number(), eo.interval_calculation == INTERVAL_CALCULATION_NONE);
 					mstruct[i].numberUpdated();
 					mstruct.childUpdated(i + 1);
-					return 1;
+					return true;
 				}
 			}
 		}
@@ -227,7 +227,7 @@ bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const Evaluati
 		mstruct.last().number().setUncertainty(munc.number(), eo.interval_calculation == INTERVAL_CALCULATION_NONE);
 		mstruct.last().numberUpdated();
 		mstruct.childUpdated(mstruct.size());
-		return 1;
+		return true;
 	} else {
 		if(munc.isMultiplication()) {
 			if(!munc[0].isNumber()) {
@@ -243,14 +243,14 @@ bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const Evaluati
 					mstruct[0].number().setUncertainty(munc[0].number(), eo.interval_calculation == INTERVAL_CALCULATION_NONE);
 					mstruct[0].numberUpdated();
 					mstruct.childUpdated(1);
-					return 1;
+					return true;
 				} else if(mstruct.equals(munc[1]) || (munc[1].isFunction() && munc[1].function()->id() == FUNCTION_ID_ABS && munc[1].size() == 1 && mstruct.equals(munc[1][0]))) {
 					mstruct.transform(STRUCT_MULTIPLICATION);
 					mstruct.insertChild(m_one, 1);
 					mstruct[0].number().setUncertainty(munc[0].number(), eo.interval_calculation == INTERVAL_CALCULATION_NONE);
 					mstruct[0].numberUpdated();
 					mstruct.childUpdated(1);
-					return 1;
+					return true;
 				}
 			} else if(mstruct.isMultiplication()) {
 				size_t i2 = 0;
@@ -270,7 +270,7 @@ bool set_uncertainty(MathStructure &mstruct, MathStructure &munc, const Evaluati
 						mstruct[0].number().setUncertainty(munc[0].number(), eo.interval_calculation == INTERVAL_CALCULATION_NONE);
 						mstruct[0].numberUpdated();
 						mstruct.childUpdated(1);
-						return 1;
+						return true;
 					}
 				}
 			}
@@ -487,6 +487,25 @@ int StringFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		mstruct.setToChild(1, true);
 	}
 	string_print_set(mstruct);
+	return 1;
+}
+CharactersFunction::CharactersFunction() : MathFunction("characters", 1) {
+	setArgumentDefinition(1, new TextArgument());
+}
+int CharactersFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+	mstruct.clearVector();
+	for(size_t i = 0; i < vargs[0].symbol().length(); i++) {
+		if(CALCULATOR->aborted()) return false;
+		string str;
+		str += vargs[0].symbol()[i];
+		if((unsigned char) str[0] > 0xC0) {
+			while(i + 1 < vargs[0].symbol().length() && (signed char) vargs[0].symbol()[i + 1] < 0) {
+				i++;
+				str += vargs[0].symbol()[i];
+			}
+		}
+		mstruct.addChild_nocopy(new MathStructure(str, true));
+	}
 	return 1;
 }
 ConcatenateFunction::ConcatenateFunction() : MathFunction("concatenate", 1, -1) {
@@ -917,10 +936,6 @@ int FunctionFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		MathStructure meval = vargs[0];
 		CALCULATOR->beginTemporaryStopMessages();
 		meval.eval(eo);
-		if(meval.isVector()) {
-			mstruct = meval;
-			return -1;
-		}
 		if(meval.isSymbolic()) {
 			CALCULATOR->endTemporaryStopMessages(true);
 			str = meval.symbol();

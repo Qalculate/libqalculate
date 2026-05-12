@@ -596,7 +596,7 @@ DiracFunction::DiracFunction() : MathFunction("dirac", 1) {
 	arg->setComplexAllowed(false);
 	setArgumentDefinition(1, arg);
 }
-bool DiracFunction::representsPositive(const MathStructure&, bool allow_units) const {return false;}
+bool DiracFunction::representsPositive(const MathStructure&, bool) const {return false;}
 bool DiracFunction::representsNegative(const MathStructure&, bool) const {return false;}
 bool DiracFunction::representsNonNegative(const MathStructure&, bool) const {return true;}
 bool DiracFunction::representsNonPositive(const MathStructure&, bool) const {return false;}

@@ -1909,6 +1909,7 @@ void Calculator::addBuiltinFunctions() {
 	f_length = addFunction(new LengthFunction());
 	f_concatenate = addFunction(new ConcatenateFunction());
 	addFunction(new StringFunction());
+	addFunction(new CharactersFunction());
 
 	f_replace = addFunction(new ReplaceFunction());
 	f_stripunits = addFunction(new StripUnitsFunction());

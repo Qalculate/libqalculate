@@ -3058,7 +3058,7 @@ bool is_negation(const MathStructure &m1, const MathStructure &m2) {
 	return false;
 }
 
-int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &eo, MathStructure *mparent, size_t index_this, size_t index_mstruct, bool) {
+int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &eo, MathStructure *mparent, size_t index_this, size_t, bool) {
 	// test if base and exponent can be merged
 	if(mstruct.type() == STRUCT_NUMBER && m_type == STRUCT_NUMBER) {
 		// base and exponent are numbers try Number::raise()
@@ -3276,6 +3276,7 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 			raise_nocopy(&mstruct);
 			return 1;
 		}
+		if(o_number.isZero() && mstruct.number().isNegative()) CALCULATOR->error(false, _("Division by zero."), NULL);
 		return -1;
 	}
 
@@ -3381,9 +3382,13 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 	}
 
 	if(representsUndefined() || mstruct.representsUndefined()) return -1;
-	if(isZero() && mstruct.representsPositive()) {
-		// 0^a=0 if a is positive
-		return 1;
+	if(isZero()) {
+		if(mstruct.representsPositive()) {
+			// 0^a=0 if a is positive
+			return 1;
+		} else if(mstruct.representsNegative()) {
+			CALCULATOR->error(false, _("Division by zero."), NULL);
+		}
 	}
 	if(mstruct.isZero() && !representsUndefined(true, true) && (eo.assume_denominators_nonzero || representsNonZero(true))) {
 		if(isVariable()) {

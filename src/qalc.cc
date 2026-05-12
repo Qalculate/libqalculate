@@ -976,7 +976,7 @@ int rlcom_tab(int a, int b) {
 			} else if(!matches.empty()) {
 				int rows = 0, cols = 0;
 				rl_get_screen_size(&rows, &cols);
-				std::sort(matches.begin(), matches.end(), std::locale());
+				std::sort(matches.begin(), matches.end(), std::locale(""));
 				size_t max_l = 0;
 				for(size_t i = 0; i < matches.size(); i++) {
 					matches[i].insert(0, i2s(i + 1) + ". ");

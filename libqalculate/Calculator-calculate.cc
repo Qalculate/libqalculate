@@ -2459,7 +2459,7 @@ size_t find_unquoted(const string &str, const char *match, size_t pos = 0) {
 	}
 	return i;
 }
-size_t rfind_unquoted(const string &str, const char *match, size_t pos = 0) {
+size_t rfind_unquoted(const string &str, const char *match, size_t pos = string::npos) {
 	size_t i = str.rfind(match, pos);
 	if(i == string::npos) return i;
 	if(position_is_quoted(str, i)) {

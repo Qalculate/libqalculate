@@ -1031,7 +1031,7 @@ bool QalculateDateTime::addSeconds(const Number &seconds, bool count_leap_second
 				nr_frac++;
 				secnew--;
 			}
-			QalculateDateTime dt_nls = prevLeapSecond(*this);
+			QalculateDateTime dt_nls(prevLeapSecond(*this));
 			while(dt_nls.year() != 0) {
 				Number n_sto = secondsTo(dt_nls, true, false);
 				n_sto--;
@@ -1049,7 +1049,7 @@ bool QalculateDateTime::addSeconds(const Number &seconds, bool count_leap_second
 				n_sec--;
 				secnew -= n_sto;
 				secnew++;
-				dt_nls = prevLeapSecond(*this);
+				dt_nls.set(prevLeapSecond(*this));
 			}
 			secnew += nr_frac;
 			if(!addSeconds(secnew, false, false)) {set(dtbak); return false;}
@@ -1061,7 +1061,7 @@ bool QalculateDateTime::addSeconds(const Number &seconds, bool count_leap_second
 			if(i_hour == 23 && i_min == 59 && n_sec == 60) {
 				secnew--;
 			}
-			QalculateDateTime dt_nls = nextLeapSecond(*this);
+			QalculateDateTime dt_nls(nextLeapSecond(*this));
 			while(dt_nls.year() != 0) {
 				Number n_sto = secondsTo(dt_nls, true, false);
 				if(n_sto.isGreaterThan(secnew)) {
@@ -1081,7 +1081,7 @@ bool QalculateDateTime::addSeconds(const Number &seconds, bool count_leap_second
 				n_sec.clear();
 				secnew -= n_sto;
 				secnew--;
-				dt_nls = nextLeapSecond(*this);
+				dt_nls.set(nextLeapSecond(*this));
 			}
 			secnew += nr_frac;
 			if(!addSeconds(secnew, false, false)) {set(dtbak); return false;}
