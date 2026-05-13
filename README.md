@@ -58,6 +58,10 @@ Other software using libqalculate include
 * Step (http://kde.org/applications/education/step/)
 * Qalculate widget for KDE Plasma (https://store.kde.org/p/1155946/)
 
+### Add-ons
+
+* Ancient units: https://github.com/doronbehar/qalculate-ancient-units
+
 ## Features
 
 #### General
