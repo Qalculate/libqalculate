@@ -3787,14 +3787,15 @@ int key_save(int, int) {
 			}
 		}
 	}
-	fputs(prompt.c_str(), stdout);
 #ifdef HAVE_LIBREADLINE
-	block_autocalc++;
-	block_keys++;
-	rlbuffer = readline("");
-	block_keys--;
-	block_autocalc--;
+	rlbuffer = readline(prompt.c_str());
+	if(!rlbuffer) {
+		handle_exit();
+		exit(0);
+	}
 	if(rlbuffer) free(rlbuffer);
+#else
+	fputs(prompt.c_str(), stdout);
 #endif
 	return 0;
 }
