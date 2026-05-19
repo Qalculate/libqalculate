@@ -7124,7 +7124,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 						MathStructure mbak(CHILD(i));
 						CHILD(i).eval(eo);
 						if(CHILD(i).isVector()) {
-							CALCULATOR->endTemporaryStopMessages();
+							CALCULATOR->endTemporaryStopMessages(true);
 						} else if(CALCULATOR->endTemporaryStopMessages(NULL, NULL, MESSAGE_ERROR)) {
 							CHILD(i) = mbak;
 						}

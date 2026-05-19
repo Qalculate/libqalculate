@@ -75,8 +75,7 @@ bool MathStructure::rankVector(bool ascending) {
 	if(sort_vector_comparison_failed) {
 		for(size_t i = 1; i < v_subs_new.size(); i++) {
 			if(CALCULATOR->aborted()) return false;
-			ComparisonResult cmp = COMPARISON_RESULT_UNKNOWN;
-			if(v_subs_new[i - 1]->isNumber() && v_subs_new[i]->isNumber()) cmp = v_subs_new[i - 1]->number().compare(v_subs_new[i]->number());
+			ComparisonResult cmp = v_subs_new[i - 1]->compare(*v_subs_new[i]);
 			if(cmp != COMPARISON_RESULT_EQUAL && cmp != COMPARISON_RESULT_EQUAL_LIMITS && ((ascending && cmp != COMPARISON_RESULT_GREATER) || (!ascending && cmp != COMPARISON_RESULT_LESS))) {
 				for(size_t index = 0; index < SIZE; index++) {
 					if(CALCULATOR->aborted()) return false;
@@ -158,8 +157,7 @@ bool MathStructure::sortVector(bool ascending) {
 		} else {
 			for(size_t i = 1; i < v_subs_new.size(); i++) {
 				if(CALCULATOR->aborted()) return false;
-				ComparisonResult cmp = COMPARISON_RESULT_UNKNOWN;
-				if(v_subs_new[i - 1]->isNumber() && v_subs_new[i]->isNumber()) cmp = v_subs_new[i - 1]->number().compare(v_subs_new[i]->number());
+				ComparisonResult cmp = v_subs_new[i - 1]->compare(*v_subs_new[i]);
 				if(cmp != COMPARISON_RESULT_EQUAL_LIMITS && ((ascending && !COMPARISON_IS_EQUAL_OR_GREATER(cmp)) || (!ascending && !COMPARISON_IS_EQUAL_OR_LESS(cmp)))) {
 					for(size_t index = 0; index < SIZE; index++) {
 						if(CALCULATOR->aborted()) return false;

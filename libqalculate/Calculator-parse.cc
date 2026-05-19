@@ -3051,11 +3051,11 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 							break;
 						}
 						case 'f': {
-							if(((ExpressionItem*) object)->subtype() == SUBTYPE_DATA_SET && str[str_index + name_length] == DOT_CH) {
+							if(((ExpressionItem*) object)->subtype() == SUBTYPE_DATA_SET && str_index + name_length + 1 < str.length() && str[str_index + name_length] == DOT_CH) {
 								str[str_index + name_length] = LEFT_PARENTHESIS_CH;
 								size_t dot2_index = str.find(DOT_CH, str_index + name_length + 1);
-								str[dot2_index] = COMMA_CH;
-								size_t end_index = str.find_first_of(NOT_IN_NAMES INTERNAL_ID_LR INTERNAL_OPERATORS, dot2_index + 1);
+								if(dot2_index != string::npos) str[dot2_index] = COMMA_CH;
+								size_t end_index = str.find_first_of(NOT_IN_NAMES INTERNAL_ID_LR INTERNAL_OPERATORS, dot2_index == string::npos ? str_index + name_length + 1 : dot2_index + 1);
 								if(end_index == string::npos) str += RIGHT_PARENTHESIS_CH;
 								else str.insert(end_index, 1, RIGHT_PARENTHESIS_CH);
 							}

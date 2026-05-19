@@ -1131,10 +1131,7 @@ int DenominatorFunction::calculate(MathStructure &mstruct, const MathStructure &
 	mstruct.set(vargs[0].number().denominator());
 	return 1;
 }
-RemFunction::RemFunction() : MathFunction("rem", 2) {
-	NON_COMPLEX_NUMBER_ARGUMENT_NO_TEST(1)
-	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR_NONZERO(2)
-}
+
 bool powmod(Number &nr, const Number &base, const Number &exp, const Number &div, bool b_rem) {
 	mpz_t i;
 	mpz_init(i);
@@ -1169,6 +1166,10 @@ void remove_overflow_message() {
 		else i++;
 	}
 	if(!message_vector.empty()) CALCULATOR->addMessages(&message_vector);
+}
+RemFunction::RemFunction() : MathFunction("rem", 2) {
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_TEST(1)
+	NON_COMPLEX_NUMBER_ARGUMENT_NO_ERROR_NONZERO(2)
 }
 int RemFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	if(vargs[0].isVector()) return 0;
@@ -2783,6 +2784,8 @@ int IntegerDigitsFunction::calculate(MathStructure &mstruct, const MathStructure
 	if(vargs[2].number().isPositive()) {
 		l = vargs[2].number().ulintValue();
 		mstruct.resizeVector(l, m_zero);
+	} else if(nr.isZero()) {
+		mstruct.addChild(m_zero);
 	}
 	while(l > 0 && !nr.isZero()) {
 		if(CALCULATOR->aborted() || !nr.iquo(vargs[1].number(), nr_rem)) return 0;

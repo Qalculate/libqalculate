@@ -1,3 +1,96 @@
+2026-05-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix element index in unsolved compared error message (sort and rank functions)
+	* Fix integerDigits(0)
+	* Fix segfault when dataset function name is followed immediately by a single dot
+	* Fix duplicated input expression in output of exact and approximate result in some cases with sqrt() and cbrt() (e.g. "1/sqrt(6)")
+	* Return exact value for tan of angle 3/8*pi (and -3/8*pi, 5/8*pi, -5/8*pi)
+
+2026-05-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add characters() function (converts text string to vector of characters)
+
+2026-05-07 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix explicit conversion to mixed units for year variants
+	* Support non-text as first argument in function() function
+
+2026-05-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support negative row and column values in element(), row(), and column() functions
+	* Add support for value variable in condition of for() function and add while() function
+	* Add digitSum() and digitalRoot() functions
+	* Fix error message when determining if argument is vector
+
+2026-05-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support for infinite sets ("ℤ", "ℝ", and "ℚ") in set functions
+	* Add isSubset() function
+	* Add support for "∋", "∌", "⊆", "⊇", "⊊", and "⊋" set operators
+	* Ignore "to" and "where" (and equivalent symbols) inside quoation marks
+	* Fix support for vectors in (first) argument of mod, rem, Ci, Shi, exp, fresnelc, fresnels, Chi, dirac, erf, and midpoint functions
+	* Add string() function (converts value to text string)
+	* Add popCount() function
+	* Fix segfault in replace() with variable specified using where expression, e.g. "replace(v, x, 1) where v = x"
+
+2026-05-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add support for set operators "∪", "∩", "∖", "⊖", "∉", and "∈"
+
+2026-04-30 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add find() function (as select() but returns position)
+	* Add isMember() and count() functions
+
+2026-04-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add intersect(), union(), setdiff(), and setxor() functions for basic set operation on vectors
+	* Return expression with x instead of "x" in linearfunction()
+	* Add support text objects in sort() and set functions
+
+2026-04-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix first digit 1 missing in return value of integerDigits(), with automatic length (-1), when 1 is followed by only zeroes, e.g. integerDigits(100)
+
+2026-04-15 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix infinite loop when referencing subfunction in another subfunction
+	* Ignore dot in front of plus or minus (for consistent behaviour in line with entrywise operators)
+
+2026-04-14 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support matrix[row][column] syntax (in addition to vector[index])
+
+2026-04-12 LordMZTE <lord@mzte.de>
+
+	* Fix segfault when Calculator is destroyed with uninitialized randstate
+
+2026-04-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Show "Division by zero" message for all divisions by zero (not only when expoenent is not -1), and show as warning instead of error
+
+2026-04-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add strcat as alternative name for concatenate() function
+
+2026-04-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not bind escape key (fixes bad behaviour with keys that generate escape sequences, e.g function keys)
+
+2026-04-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add third optional argument to interval() function to allow exlusion of exact endpoints
+	* Concate all strings in vector together in concatenate() function, e.g. concatenate(["1", "2", "3"]) = "123"
+
+2026-04-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Support vectors as arguments in data set functions (return multiple objects and/or properties)
+	* Fix input of vector with elements separated by space in text argument
+
+2026-04-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix use of matrix/vector functions with code() function as argument, e.g. element(code("abcd"), 2)
+
 2026-03-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Initial support for comparison of vectors and matrices (e.g. "[1 2 3] = [1 2 3]" returns true)
@@ -199,6 +292,7 @@
 
 	* Do not show result for variable assignment when -t and -f command line options are used
 	* Ellipsize large matrices and vectors when a subset of output (e.g. in a failed function), in qalc
+	* Add additional abortion points in uncertainty calculation
 
 2025-12-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
 

@@ -1172,6 +1172,10 @@ MathStructure calculate_uncertainty(MathStructure &m, const EvaluationOptions &e
 	MathStructure unc, unc2;
 	if(eo.approximation != APPROXIMATION_EXACT_VARIABLES && eo.calculate_variables) replace_variables_with_interval(m, eo, false, eo.approximation == APPROXIMATION_EXACT);
 	while(true) {
+		if(CALCULATOR->aborted()) {
+			b_failed = true;
+			break;
+		}
 		Variable *prev_v = NULL;
 		MathStructure mnew;
 		KnownVariable *v2 = NULL;
@@ -1196,6 +1200,10 @@ MathStructure calculate_uncertainty(MathStructure &m, const EvaluationOptions &e
 	MathStructure muv(uv);
 	MathStructure *munc_i = NULL;
 	for(size_t i = 0; i < vars.size(); i++) {
+		if(CALCULATOR->aborted()) {
+			b_failed = true;
+			return m_zero;
+		}
 		if(!vars[i]->get().representsNonComplex(true)) {
 			b_failed = true;
 			uv->destroy();
@@ -2866,7 +2874,7 @@ MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 					}
 				}
 
-				if(!b_failed && !munc.isZero()) {
+				if(!b_failed && !munc.isZero() && !CALCULATOR->aborted()) {
 
 					// evaluate uncertainty and expression without uncertainty
 					EvaluationOptions eo3 = eo;

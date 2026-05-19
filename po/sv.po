@@ -1653,7 +1653,7 @@ msgid ""
 "acts as absolute if the expression contains different temperature units, "
 "otherwise as relative)."
 msgstr ""
-"Anger hur uttryck med temperaturenheter beräknas (hybrid agerar som abolsut "
+"Anger hur uttryck med temperaturenheter beräknas (hybrid agerar som absolut "
 "om uttrycket innehåller flera olika temperaturenheter, annars som relativ)."
 
 #: src/qalc.cc:2776

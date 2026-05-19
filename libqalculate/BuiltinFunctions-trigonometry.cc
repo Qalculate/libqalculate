@@ -878,6 +878,26 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 					mstruct.add_nocopy(new MathStructure(-1, 1, 0));
 				}
 				b = true;
+			} else if(nr.equals(Number(3, 8, 0))) {
+				mstruct.set(2, 1, 0);
+				mstruct.raise_nocopy(new MathStructure(1, 2, 0));
+				if(b_neg) {
+					mstruct.negate();
+					mstruct.add_nocopy(new MathStructure(-1, 1, 0));
+				} else {
+					mstruct.add_nocopy(new MathStructure(1, 1, 0));
+				}
+				b = true;
+			} else if(nr.equals(Number(5, 8, 0))) {
+				mstruct.set(2, 1, 0);
+				mstruct.raise_nocopy(new MathStructure(1, 2, 0));
+				if(!b_neg) {
+					mstruct.negate();
+					mstruct.add_nocopy(new MathStructure(-1, 1, 0));
+				} else {
+					mstruct.add_nocopy(new MathStructure(1, 1, 0));
+				}
+				b = true;
 			} else if(nr.equals(Number(7, 8, 0))) {
 				mstruct.set(2, 1, 0);
 				mstruct.raise_nocopy(new MathStructure(1, 2, 0));

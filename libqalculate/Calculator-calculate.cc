@@ -1213,6 +1213,22 @@ void replace_negdiv(MathStructure &m) {
 		m.setToChild(1);
 		return replace_negdiv(m);
 	}
+	if(m.isInverse() && m[0].isFunction()) {
+		replace_negdiv(m[0]);
+	}
+	if(m.isDivision()) {
+		if(m[1].isFunction()) replace_negdiv(m[1]);
+		if(m[1].isPower()) {
+			if(m[1][1].isNegate()) {
+				m[1][1].setToChild(1);
+			} else {
+				m[1][1].transform(STRUCT_NEGATE);
+			}
+			if(m[0].isOne()) m.setToChild(2);
+			else m.setType(STRUCT_MULTIPLICATION);
+			return replace_negdiv(m);
+		}
+	}
 	if(m.isInverse() && m[0].isPower()) {
 		if(m[0][1].isNegate()) {
 			m[0][1].setToChild(1);

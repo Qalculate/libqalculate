@@ -32,6 +32,8 @@
 
 using std::string;
 using std::vector;
+using std::cout;
+using std::endl;
 
 #define XML_GET_STRING_FROM_PROP(node, name, str)	value = xmlGetProp(node, (xmlChar*) name); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = "";
 #define XML_GET_STRING_FROM_TEXT(node, str)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); if(value) {str = (char*) value; remove_blank_ends(str); xmlFree(value);} else str = "";
@@ -1082,7 +1084,7 @@ DataPropertyArgument::DataPropertyArgument(DataSet *data_set, string name_, bool
 DataPropertyArgument::DataPropertyArgument(const DataPropertyArgument *arg) {set(arg); b_text = true; o_data = arg->dataSet();}
 DataPropertyArgument::~DataPropertyArgument() {}
 bool DataPropertyArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
-	if(!value.isSymbolic() && !value.isVector()) {
+	if(!value.isSymbolic()) {
 		value.eval(eo);
 	}
 	return value.isVector() || (value.isSymbolic() && o_data && (o_data->getProperty(value.symbol()) || equalsIgnoreCase(value.symbol(), string("info")) || equalsIgnoreCase(value.symbol(), string(_c("Data set argument", "info")))));
@@ -1138,7 +1140,7 @@ DataObjectArgument::DataObjectArgument(DataSet *data_set, string name_, bool doe
 DataObjectArgument::DataObjectArgument(const DataObjectArgument *arg) {set(arg); b_text = true; o_data = arg->dataSet();}
 DataObjectArgument::~DataObjectArgument() {}
 bool DataObjectArgument::subtest(MathStructure &value, const EvaluationOptions &eo) const {
-	if(value.isSymbolic() || value.isVector()) return true;
+	if(value.isSymbolic()) return true;
 	value.eval(eo);
 	if(value.isSymbolic() || value.isVector()) return true;
 	if(!o_data) return false;

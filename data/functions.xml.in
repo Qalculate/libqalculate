@@ -576,7 +576,7 @@
     <builtin_function name="isMember">
       <title>Is Member</title>
       <names>r:isMember</names>
-      <description>Returns a vector with values of the first vector replaced with 1 or 0 (true or false), if the corresponding value is found or not in the second vector.</description>
+      <description>Returns a vector with values of the first vector replaced with 1 or 0 (true or false), indicating if the corresponding value is found in the second vector.</description>
       <argument index="1">
         <title>Vector 1</title>
       </argument>
@@ -3237,7 +3237,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       <builtin_function name="interval">
         <title>Interval</title>
         <names>r:interval</names>
-        <description>Returns a closed interval with the specified endpoints.</description>
+        <description>Returns a closed interval with the specified endpoints. If exclude endpoints is true, the next closest floating point values toward the midpoint will be used (the exact values depends on the current internal precision), which can be useful for avoidance of invalid results at the endpoints.</description>
         <argument index="1">
           <title>Lower endpoint</title>
         </argument>
@@ -3354,7 +3354,7 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </builtin_function>
     <builtin_function name="string">
-      <title>Convert to Strings</title>
+      <title>Convert to String</title>
       <names>r:string</names>
       <argument index="1">
         <title>Value</title>
