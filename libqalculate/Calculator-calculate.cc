@@ -916,6 +916,90 @@ bool shown_with_scientific_notation(const Number &nr, const PrintOptions &po) {
 	return !exp.empty();
 }
 
+bool is_time_unit(const MathStructure &m) {
+	return m.isUnit() && m.unit()->baseUnit()->referenceName() == "s";
+}
+bool contains_time_unit(const MathStructure &m) {
+	if(is_time_unit(m)) return true;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_time_unit(m[i])) return true;
+	}
+	return false;
+}
+bool convert_for_time_format(MathStructure &m, const EvaluationOptions &eo, bool top = true) {
+	if(top && (!contains_time_unit(m) || !CALCULATOR->getActiveUnit("h"))) return false;
+	bool b = false;
+	if(is_time_unit(m)) {
+		if(top) {
+			b = true;
+		} else if(m.unit()->referenceName() != "h") {
+			m.convert(CALCULATOR->getActiveUnit("h"), false, NULL, true, eo);
+			m.eval(eo);
+			return true;
+		} else {
+			return false;
+		}
+	} else if(m.isMultiplication() && m.size() >= 1 && m[0].isNumber()) {
+		size_t index = 0;
+		for(size_t i = 1; i < m.size(); i++) {
+			if(is_time_unit(m[i])) {
+				index = i;
+				break;
+			}
+		}
+		if(index == 1 && m.size() == 2) {
+			if(top) {
+				b = true;
+			} else if(m[1].unit()->referenceName() != "h") {
+				m.convert(CALCULATOR->getActiveUnit("h"), false, NULL, true, eo);
+				m.eval(eo);
+				return true;
+			} else {
+				return false;
+			}
+		} else if(index > 0 && m[index].unit()->referenceName() != "h") {
+			CALCULATOR->beginTemporaryStopMessages();
+			MathStructure mnum(m[0]);
+			mnum.multiply(m[index]);
+			Unit *u = CALCULATOR->getActiveUnit("h");
+			mnum.convert(u, false, NULL, true, eo);
+			mnum.eval(eo);
+			if(mnum.isUnit() && mnum.unit() == u) mnum = m_one;
+			else if(mnum.isMultiplication() && mnum.size() == 2 && mnum[1].isUnit() && mnum[1].unit() == u) mnum.setToChild(1, true);
+			CALCULATOR->endTemporaryStopMessages(mnum.isNumber());
+			if(mnum.isNumber()) {
+				m.delChild(1);
+				m.insertChild(mnum, 1);
+				m[index].setUnit(u);
+				return true;
+			}
+			return false;
+		}
+	} else if(top && m.isAddition() && m.size() > 0) {
+		b = true;
+		for(size_t i = 0; i < m.size(); i++) {
+			if(is_time_unit(m[i])) {}
+			else if(m[i].isMultiplication() && m[i].size() == 2 && m[i][0].isNumber() && is_time_unit(m[i][1])) {}
+			else {b = false; break;}
+		}
+	}
+	if(b) {
+		EvaluationOptions eo2 = eo;
+		eo2.sync_units = true;
+		m.divide(CALCULATOR->getActiveUnit("h"));
+		m.eval(eo2);
+		return true;
+	}
+	bool b_ret = false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(convert_for_time_format(m[i], eo, false)) {
+			b_ret = true;
+			m.childUpdated(i + 1);
+		}
+	}
+	return b_ret;
+}
+
 void print_dual(const MathStructure &mresult, const string &original_expression, const MathStructure &mparse, MathStructure &mexact, string &result_str, vector<string> &results_v, PrintOptions &po, const EvaluationOptions &evalops, AutomaticFractionFormat auto_frac, AutomaticApproximation auto_approx, bool cplx_angle, bool *exact_cmp, bool b_parsed, bool format, int colorize, int tagtype, int max_length, bool converted) {
 
 	MathStructure m(mresult);
@@ -931,28 +1015,7 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 	}
 
 	// convert time units to hours when using time format
-	if(po.base == BASE_TIME) {
-		bool b = false;
-		if(m.isUnit() && m.unit()->baseUnit()->referenceName() == "s") {
-			b = true;
-		} else if(m.isMultiplication() && m.size() == 2 && m[0].isNumber() && m[1].isUnit() && m[1].unit()->baseUnit()->referenceName() == "s") {
-			b = true;
-		} else if(m.isAddition() && m.size() > 0) {
-			b = true;
-			for(size_t i = 0; i < m.size(); i++) {
-				if(m[i].isUnit() && m[i].unit()->baseUnit()->referenceName() == "s") {}
-				else if(m[i].isMultiplication() && m[i].size() == 2 && m[i][0].isNumber() && m[i][1].isUnit() && m[i][1].unit()->baseUnit()->referenceName() == "s") {}
-				else {b = false; break;}
-			}
-		}
-		if(b) {
-			Unit *u = CALCULATOR->getActiveUnit("h");
-			if(u) {
-				m.divide(u);
-				m.eval(evalops);
-			}
-		}
-	}
+	if(po.base == BASE_TIME) convert_for_time_format(m, evalops);
 
 	// dual and auto approximation and fractions
 	results_v.clear();
@@ -2295,28 +2358,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		}
 
 		// convert time units to hours when using time format
-		if(printops.base == BASE_TIME) {
-			bool b = false;
-			if(mstruct.isUnit() && mstruct.unit()->baseUnit()->referenceName() == "s") {
-				b = true;
-			} else if(mstruct.isMultiplication() && mstruct.size() == 2 && mstruct[0].isNumber() && mstruct[1].isUnit() && mstruct[1].unit()->baseUnit()->referenceName() == "s") {
-				b = true;
-			} else if(mstruct.isAddition() && mstruct.size() > 0) {
-				b = true;
-				for(size_t i = 0; i < mstruct.size(); i++) {
-					if(mstruct[i].isUnit() && mstruct[i].unit()->baseUnit()->referenceName() == "s") {}
-					else if(mstruct[i].isMultiplication() && mstruct[i].size() == 2 && mstruct[i][0].isNumber() && mstruct[i][1].isUnit() && mstruct[i][1].unit()->baseUnit()->referenceName() == "s") {}
-					else {b = false; break;}
-				}
-			}
-			if(b) {
-				Unit *u = getActiveUnit("h");
-				if(u) {
-					mstruct.divide(u);
-					mstruct.eval(evalops);
-				}
-			}
-		}
+		if(printops.base == BASE_TIME) convert_for_time_format(mstruct, evalops);
 
 		if(result_is_comparison && (mstruct.isComparison() || mstruct.isLogicalOr() || mstruct.isLogicalAnd()) && (!aborted() || result != timedOutString())) *result_is_comparison = true;
 

@@ -4181,6 +4181,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			else if(b_units && colorize && tagtype == TAG_TYPE_HTML) print_str = (colorize == 2 ? "<span style=\"color:#BBFFBB\">" : "<span style=\"color:#008000\">");
 			PrintOptions po2 = po;
 			if(CHILD(0).isUnit() && po.use_unicode_signs && po.abbreviate_names && CHILD(0).unit() == CALCULATOR->getDegUnit()) po2.use_unicode_signs = false;
+			if(CHILD(0).isUnit() && po.base == BASE_TIME) po2.base = 10;
 			size_t l = print_str.length();
 			print_str += CHILD(0).print(po2, format, b_units ? 0 : colorize, tagtype, ips_n);
 			if(!ips_n.wrap && CHILD(0).isNumber() && (print_str.find("<sup>", l) != string::npos || print_str.find("^", l) != string::npos || CONTAINS_MULTIPLICATION_SIGN(print_str, l))) {
