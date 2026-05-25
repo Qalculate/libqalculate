@@ -1,3 +1,11 @@
+2026-05-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix use of x, y, z, without backslash, for function arguments when using function command
+
+2026-05-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix set vector element in variable (v[i]=a)
+
 2026-05-20 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Make conversion of expression with time unit to time format more consistent (convert to hours for cases other than number with only time unit)
@@ -31,7 +39,7 @@
 	* Support for infinite sets ("ℤ", "ℝ", and "ℚ") in set functions
 	* Add isSubset() function
 	* Add support for "∋", "∌", "⊆", "⊇", "⊊", and "⊋" set operators
-	* Ignore "to" and "where" (and equivalent symbols) inside quoation marks
+	* Ignore "to" and "where" (and equivalent symbols) inside quotation marks
 	* Fix support for vectors in (first) argument of mod, rem, Ci, Shi, exp, fresnelc, fresnels, Chi, dirac, erf, and midpoint functions
 	* Add string() function (converts value to text string)
 	* Add popCount() function
@@ -83,7 +91,7 @@
 
 2026-04-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
-	* Add third optional argument to interval() function to allow exlusion of exact endpoints
+	* Add third optional argument to interval() function to allow exclusion of exact endpoints
 	* Concate all strings in vector together in concatenate() function, e.g. concatenate(["1", "2", "3"]) = "123"
 
 2026-04-05 Hanna Knutsson <hanna.knutsson@protonmail.com>

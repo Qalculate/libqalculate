@@ -917,7 +917,7 @@ bool shown_with_scientific_notation(const Number &nr, const PrintOptions &po) {
 }
 
 bool is_time_unit(const MathStructure &m) {
-	return m.isUnit() && m.unit()->baseUnit()->referenceName() == "s";
+	return m.isUnit() && m.unit()->baseUnit()->referenceName() == "s" && m.unit()->baseExponent() == 1;
 }
 bool contains_time_unit(const MathStructure &m) {
 	if(is_time_unit(m)) return true;

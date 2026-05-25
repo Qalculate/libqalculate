@@ -898,7 +898,7 @@ string internal_operator_replacement2(char c1, char c2) {
 			case '-': return "⊇";
 		}
 	}
-	string str; str += c1;
+	string str; str += c2;
 	return str;
 }
 string internal_operator_replacement(char c) {

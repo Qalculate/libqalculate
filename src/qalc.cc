@@ -5299,7 +5299,7 @@ int main(int argc, char *argv[]) {
 				b = !ask_questions || ask_question(_("A function with the same name already exists.\nDo you want to overwrite it (default: no)?"));
 			}
 			if(b) {
-				fix_user_function_expression(str, evalops);
+				fix_user_function_expression(expr, evalops);
 				MathFunction *f = CALCULATOR->getActiveFunction(name, true);
 				if(CALCULATOR->hasToExpression(expr)) {
 					PUTS_UNICODE(_("Conversion (using \"to\") is not supported in functions."));

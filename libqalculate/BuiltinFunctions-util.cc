@@ -1111,8 +1111,8 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		size_t i3 = index.find(RIGHT_VECTOR_WRAP);
 		if(i3 != string::npos && i3 != index.length() - 1) {
 			size_t i4 = index.find(LEFT_VECTOR_WRAP);
-			if(i4 != string::npos && i4 != index.length() - 1 && i4 == i3 + 1 && index.find_first_of(VECTOR_WRAPS, i4 + 1) == string::npos) {
-				index2 = index.substr(i4 + 1);
+			if(i4 != string::npos && i4 == i3 + 1 && index.find_first_of(VECTOR_WRAPS, i4 + 1) == string::npos) {
+				if(i4 != index.length() - 1) index2 = index.substr(i4 + 1);
 				index = index.substr(0, i3);
 			}
 		}
@@ -1136,11 +1136,17 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				mstruct.addChild(mindex[i]);
 			}
 		} else {
+			if(!((KnownVariable*) v)->get().isMatrix()) mstruct.addChild(m_one);
 			mstruct.addChild(mindex);
 		}
 		while(mstruct.size() < 6) mstruct.addChild(m_zero);
 		mstruct.calculateFunctions(eo, false);
-		if(mstruct.isMatrix()) ((KnownVariable*) v)->set(mstruct);
+		if(mstruct.isVector()) {
+			if(mstruct.isMatrix() && !((KnownVariable*) v)->get().isMatrix() && mstruct.size() == 1) ((KnownVariable*) v)->set(mstruct[0]);
+			else ((KnownVariable*) v)->set(mstruct);
+		} else {
+			return 0;
+		}
 		CALCULATOR->saveFunctionCalled();
 		return 1;
 	}

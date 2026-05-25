@@ -1294,11 +1294,11 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 			x_value.number() += step.number() / 2;
 			for(int i = 1; i < (int) x_vector.size(); i += 2) {
 				if(CALCULATOR->aborted()) break;
-				x_vector.insertChild(x_value, i);
+				x_vector.insertChild(x_value, i + 1);
 				y_value = mthis;
 				y_value.replace(x_mstruct, x_value);
 				y_value.eval(eo);
-				y_vector.insertChild(y_value, i);
+				y_vector.insertChild(y_value, i + 1);
 				x_value.number() += step.number();
 			}
 		} else {
