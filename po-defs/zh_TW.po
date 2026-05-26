@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/Qalculate/libqalculate/issues\n"
 "POT-Creation-Date: 2026-05-13 14:35+0200\n"
-"PO-Revision-Date: 2026-05-20 23:46+0800\n"
+"PO-Revision-Date: 2026-05-26 22:04+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_TW\n"
@@ -4133,7 +4133,7 @@ msgstr "回傳在指定範圍中該值的所有倍數。"
 
 #: data/functions.xml.in:1063
 msgid "Digit sum"
-msgstr "數字總和"
+msgstr "數字和"
 
 #: data/functions.xml.in:1064
 #| msgid "r:digitSet"
@@ -4142,7 +4142,7 @@ msgstr "r:digitSum"
 
 #: data/functions.xml.in:1076
 msgid "Digital Root"
-msgstr ""
+msgstr "數字根"
 
 #: data/functions.xml.in:1077
 #| msgid "r:digitSet"
@@ -7010,7 +7010,7 @@ msgstr "r:find"
 #: data/functions.xml.in:3506
 #| msgid "End column"
 msgid "Add value column"
-msgstr ""
+msgstr "加入值欄位"
 
 #: data/functions.xml.in:3511
 msgid "r:function"
