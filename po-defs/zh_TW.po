@@ -7010,7 +7010,7 @@ msgstr "r:find"
 #: data/functions.xml.in:3506
 #| msgid "End column"
 msgid "Add value column"
-msgstr "加入值欄位"
+msgstr "加入值欄"
 
 #: data/functions.xml.in:3511
 msgid "r:function"
