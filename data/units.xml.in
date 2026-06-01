@@ -2445,16 +2445,6 @@
           <mix>1</mix>
         </base>
       </unit>
-      <unit type="alias">
-        <title>Cup (U.S.)</title>
-        <system>US</system>
-        <names>r-c:cup,p-c:cups</names>
-        <base>
-          <unit>L</unit>
-          <relation>0.2365882365</relation>
-          <exponent>1</exponent>
-        </base>
-      </unit>
     </category>
     <category>
       <title>Imperial Capacity</title>
@@ -2500,12 +2490,23 @@
         </base>
       </unit>
       <unit type="alias">
+        <title>Imperial Cup</title>
+        <system>Imperial</system>
+        <names>as:cup_UK,aor:UK_cup,imperial_cup,p:imperial_cups</names>
+        <base>
+          <unit>UK_gi</unit>
+          <relation>2</relation>
+          <exponent>1</exponent>
+          <mix>1</mix>
+        </base>
+      </unit>
+      <unit type="alias">
         <title>Imperial Pint</title>
         <system>Imperial</system>
         <names>as:pt_UK,aor:UK_pt,imperial_pint,p:imperial_pints</names>
         <base>
-          <unit>UK_gi</unit>
-          <relation>4</relation>
+          <unit>UK_cup</unit>
+          <relation>2</relation>
           <exponent>1</exponent>
           <mix>1</mix>
         </base>
@@ -2617,12 +2618,22 @@
         </base>
       </unit>
       <unit type="alias">
+        <title>U.S. Cup</title>
+        <system>US</system>
+        <names>r-c:cup,p-c:cups</names>
+        <base>
+          <unit>fl_oz</unit>
+          <relation>8</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
         <title>U.S. Liquid Pint</title>
         <system>US</system>
         <names>ar:liq_pt,liquid_pint,p:liquid_pints</names>
         <base>
-          <unit>gi</unit>
-          <relation>4</relation>
+          <unit>cup</unit>
+          <relation>2</relation>
           <exponent>1</exponent>
         </base>
       </unit>
