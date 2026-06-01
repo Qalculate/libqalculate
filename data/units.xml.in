@@ -2417,19 +2417,19 @@
       <title>Cooking</title>
       <unit type="alias">
         <title>Teaspoon</title>
-        <names>r:teaspoon,p:teaspoons</names>
+        <names>ar:tsp,teaspoon,p:teaspoons</names>
         <base>
           <unit>L</unit>
           <relation>0.005</relation>
           <exponent>1</exponent>
-          <mix>1</mix>
+          <mix>3</mix>
         </base>
       </unit>
       <unit type="alias">
         <title>Dessertspoon</title>
-        <names>r:dessertspoon,p:dessertspoons</names>
+        <names>ar:dsp,dessertspoon,p:dessertspoons</names>
         <base>
-          <unit>teaspoon</unit>
+          <unit>tsp</unit>
           <relation>2</relation>
           <exponent>1</exponent>
           <mix>2</mix>
@@ -2437,10 +2437,60 @@
       </unit>
       <unit type="alias">
         <title>Tablespoon</title>
-        <names>r:tablespoon,p:tablespoons</names>
+        <names>ar:tbsp,tablespoon,p:tablespoons</names>
         <base>
-          <unit>teaspoon</unit>
+          <unit>tsp</unit>
           <relation>3</relation>
+          <exponent>1</exponent>
+          <mix>2</mix>
+        </base>
+      </unit>
+      <unit type="alias">
+        <title>Fluid Ounce (U.S. Legal)</title>
+        <names>ar:fl_oz,fluid_ounce,p:fluid_ounces</names>
+        <base>
+          <unit>tablespoon</unit>
+          <relation>2</relation>
+          <exponent>1</exponent>
+          <mix>1</mix>
+        </base>
+      </unit>
+      <unit type="alias">
+        <title>Cup (U.S. Legal)</title>
+        <names>r:cup,p:cups</names>
+        <base>
+          <unit>fl_oz</unit>
+          <relation>8</relation>
+          <exponent>1</exponent>
+          <mix>1</mix>
+        </base>
+      </unit>
+      <unit type="alias">
+        <title>Pint (U.S. Legal)</title>
+        <names>r:pint,p:pints</names>
+        <base>
+          <unit>cup</unit>
+          <relation>2</relation>
+          <exponent>1</exponent>
+          <mix>2</mix>
+        </base>
+      </unit>
+      <unit type="alias">
+        <title>Quart (U.S. Legal)</title>
+        <names>r:quart,p:quarts</names>
+        <base>
+          <unit>pint</unit>
+          <relation>2</relation>
+          <exponent>1</exponent>
+          <mix>2</mix>
+        </base>
+      </unit>
+      <unit type="alias">
+        <title>Gallon (U.S. Legal)</title>
+        <names>ar:gal,gallon,p:gallons</names>
+        <base>
+          <unit>quart</unit>
+          <relation>4</relation>
           <exponent>1</exponent>
           <mix>1</mix>
         </base>
