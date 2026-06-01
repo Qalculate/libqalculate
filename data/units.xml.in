@@ -2459,6 +2459,26 @@
     <category>
       <title>Imperial Capacity</title>
       <unit type="alias">
+        <title>Imperial Teaspoon</title>
+        <system>Imperial</system>
+        <names>as:tsp_UK,aor:UK_tsp,imperial_teaspoon,p:imperial_teaspoons</names>
+        <base>
+          <unit>UK_tbsp</unit>
+          <relation>1/3</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <title>Imperial Tablespoon</title>
+        <system>Imperial</system>
+        <names>as:tbsp_UK,aor:UK_tbsp,imperial_tablespoon,p:imperial_tablespoons</names>
+        <base>
+          <unit>UK_fl_oz</unit>
+          <relation>5/8</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
         <title>Imperial Fluid Ounce</title>
         <system>Imperial</system>
         <names>as:fl_oz_UK,aor:UK_fl_oz,imperial_fluid_ounce,p:imperial_fluid_ounces</names>
