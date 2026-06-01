@@ -2577,6 +2577,26 @@
     <category>
       <title>U.S. Capacity</title>
       <unit type="alias">
+        <title>U.S. Teaspoon</title>
+        <system>US</system>
+        <names>as:tsp_US,aor:US_tsp,US_teaspoon,p:US_teaspoons,ar:tsp</names>
+        <base>
+          <unit>US_tbsp</unit>
+          <relation>1/3</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <title>U.S. Tablespoon</title>
+        <system>US</system>
+        <names>as:tbsp_US,aor:US_tbsp,US_tablespoon,p:US_tablespoons,ar:tbsp</names>
+        <base>
+          <unit>fl_oz</unit>
+          <relation>1/2</relation>
+          <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
         <title>U.S. Fluid Ounce</title>
         <system>US</system>
         <names>ar:fl_oz,fluid_ounce,p:fluid_ounces</names>
