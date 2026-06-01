@@ -2582,7 +2582,7 @@
       <unit type="alias">
         <title>U.S. Teaspoon</title>
         <system>US</system>
-        <names>as:tsp_US,aor:US_tsp,US_teaspoon,p:US_teaspoons,ar:tsp</names>
+        <names>as:tsp_US,aor:US_tsp,US_teaspoon,p:US_teaspoons</names>
         <base>
           <unit>US_tbsp</unit>
           <relation>1/3</relation>
@@ -2593,9 +2593,9 @@
       <unit type="alias">
         <title>U.S. Tablespoon</title>
         <system>US</system>
-        <names>as:tbsp_US,aor:US_tbsp,US_tablespoon,p:US_tablespoons,ar:tbsp</names>
+        <names>as:tbsp_US,aor:US_tbsp,US_tablespoon,p:US_tablespoons</names>
         <base>
-          <unit>fl_oz</unit>
+          <unit>US_fl_oz</unit>
           <relation>1/2</relation>
           <exponent>1</exponent>
           <mix>2</mix>
@@ -2604,7 +2604,7 @@
       <unit type="alias">
         <title>U.S. Fluid Ounce</title>
         <system>US</system>
-        <names>ar:fl_oz,fluid_ounce,p:fluid_ounces</names>
+        <names>as:fl_oz_US,aor:US_fl_oz,US_fluid_ounce,p:US_fluid_ounces</names>
         <base>
           <unit>in</unit>
           <relation>231/128</relation>
@@ -2614,9 +2614,9 @@
       <unit type="alias">
         <title>U.S. Gill</title>
         <system>US</system>
-        <names>ar:gi,gill,p:gills</names>
+        <names>as:gi_US,aor:US_gi,US_gill,p:US_gills</names>
         <base>
-          <unit>fl_oz</unit>
+          <unit>US_fl_oz</unit>
           <relation>4</relation>
           <exponent>1</exponent>
         </base>
@@ -2624,9 +2624,9 @@
       <unit type="alias">
         <title>U.S. Cup</title>
         <system>US</system>
-        <names>r-c:cup,p-c:cups</names>
+        <names>as:cup_US,aor:US_cup,US_cup,p:US_cups</names>
         <base>
-          <unit>fl_oz</unit>
+          <unit>US_fl_oz</unit>
           <relation>8</relation>
           <exponent>1</exponent>
           <mix>1</mix>
@@ -2635,9 +2635,9 @@
       <unit type="alias">
         <title>U.S. Liquid Pint</title>
         <system>US</system>
-        <names>ar:liq_pt,liquid_pint,p:liquid_pints</names>
+        <names>as:liq_pt_US,aor:US_liq_pt,US_liquid_pint,p:US_liquid_pints</names>
         <base>
-          <unit>cup</unit>
+          <unit>US_cup</unit>
           <relation>2</relation>
           <exponent>1</exponent>
         </base>
@@ -2645,9 +2645,9 @@
       <unit type="alias">
         <title>U.S. Liquid Quart</title>
         <system>US</system>
-        <names>ar:liq_qt,liquid_quart,p:liquid_quarts</names>
+        <names>as:liq_qt_US,aor:US_liq_qt,US_liquid_quart,p:US_liquid_quarts</names>
         <base>
-          <unit>liq_pt</unit>
+          <unit>US_liq_pt</unit>
           <relation>2</relation>
           <exponent>1</exponent>
         </base>
@@ -2655,9 +2655,9 @@
       <unit type="alias">
         <title>U.S. Minim</title>
         <system>US</system>
-        <names>r:minim,p:minims</names>
+        <names>as:minim_US,aor:US_minim,US_minim,p:US_minims</names>
         <base>
-          <unit>fl_oz</unit>
+          <unit>US_fl_oz</unit>
           <relation>1/480</relation>
           <exponent>1</exponent>
         </base>
@@ -2665,9 +2665,9 @@
       <unit type="alias">
         <title>U.S. Fluid Drachm</title>
         <system>US</system>
-        <names>ar:fl_dr,fluid_drachm,p:fluid_drachms</names>
+        <names>as:fl_dr_US,aor:US_fl_dr,US_fluid_drachm,p:US_fluid_drachms</names>
         <base>
-          <unit>minim</unit>
+          <unit>US_minim</unit>
           <relation>60</relation>
           <exponent>1</exponent>
         </base>
@@ -2675,7 +2675,7 @@
       <unit type="alias">
         <title>U.S. Dry Pint</title>
         <system>US</system>
-        <names>ar:dry_pt,dry_pint,p:dry_pints</names>
+        <names>as:dry_pt_US,aor:US_dry_pt,US_dry_pint,p:US_dry_pints</names>
         <base>
           <unit>in</unit>
           <relation>33.6003125</relation>
@@ -2685,9 +2685,9 @@
       <unit type="alias">
         <title>U.S. Dry Quart</title>
         <system>US</system>
-        <names>ar:dry_qt,dry_quart,p:dry_quarts</names>
+        <names>as:dry_qt_US,aor:US_dry_qt,US_dry_quart,p:US_dry_quarts</names>
         <base>
-          <unit>dry_pt</unit>
+          <unit>US_dry_pt</unit>
           <relation>2</relation>
           <exponent>1</exponent>
         </base>
@@ -2695,9 +2695,9 @@
       <unit type="alias">
         <title>U.S. Peck</title>
         <system>US</system>
-        <names>ar:pk,peck,p:pecks</names>
+        <names>as:pk_US,aor:US_pk,US_peck,p:US_pecks</names>
         <base>
-          <unit>dry_qt</unit>
+          <unit>US_dry_qt</unit>
           <relation>8</relation>
           <exponent>1</exponent>
         </base>
@@ -2705,9 +2705,9 @@
       <unit type="alias">
         <title>U.S. Bushel</title>
         <system>US</system>
-        <names>ar:bu,bushel,p:bushels</names>
+        <names>as:bu_US,aor:US_bu,US_bushel,p:US_bushels</names>
         <base>
-          <unit>pk</unit>
+          <unit>US_pk</unit>
           <relation>4</relation>
           <exponent>1</exponent>
         </base>
@@ -2715,9 +2715,9 @@
       <unit type="alias">
         <title>U.S. Gallon</title>
         <system>US</system>
-        <names>ar:gal,gallon,p:gallons</names>
+        <names>as:gal_US,aor:US_gal,US_gallon,p:US_gallons</names>
         <base>
-          <unit>liq_qt</unit>
+          <unit>US_liq_qt</unit>
           <relation>4</relation>
           <exponent>1</exponent>
         </base>
@@ -2725,9 +2725,9 @@
       <unit type="alias">
         <title>U.S. Barrel (oil)</title>
         <system>US</system>
-        <names>ar:bbl,barrel,p:barrels</names>
+        <names>as:bbl_US,aor:US_bbl,US_barrel,p:US_barrels</names>
         <base>
-          <unit>gal</unit>
+          <unit>US_gal</unit>
           <relation>42</relation>
           <exponent>1</exponent>
         </base>
