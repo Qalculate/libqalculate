@@ -1094,26 +1094,41 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 			if(i == 0) {
 				result_str = "";
 			} else if(po.spell_out_logical_operators) {
+				if(format && tagtype == TAG_TYPE_LATEX) result_str += "\\text{";
 				result_str += " ";
 				result_str += _("or");
 				result_str += " ";
+				if(format && tagtype == TAG_TYPE_LATEX) result_str += "}";
 			} else {
-				if(po.spacious) result_str += " ";
-				result_str += "||";
-				if(po.spacious) result_str += " ";
+				if(format && tagtype == TAG_TYPE_LATEX) {
+					if(po.spacious) result_str += "\\ ||\\ ";
+					else result_str += "||";
+				} else {
+					if(po.spacious) result_str += " ";
+					result_str += "||";
+					if(po.spacious) result_str += " ";
+				}
 			}
 			if(m[i].isLogicalAnd() && (po.preserve_format || m[i].size() != 2 || !m[i][0].isComparison() || !m[i][1].isComparison() || m[i][0].comparisonType() == COMPARISON_EQUALS || m[i][0].comparisonType() == COMPARISON_NOT_EQUALS || m[i][1].comparisonType() == COMPARISON_EQUALS || m[i][1].comparisonType() == COMPARISON_NOT_EQUALS || m[i][0][0] != m[i][1][0])) {
 				int ml = max_length / m[i].size();
 				for(size_t i2 = 0; i2 < m[i].size(); i2++) {
 					if(i2 > 0) {
 						if(po.spell_out_logical_operators) {
+							if(format && tagtype == TAG_TYPE_LATEX) result_str += "\\text{";
 							result_str += " ";
 							result_str += _("and");
 							result_str += " ";
+							if(format && tagtype == TAG_TYPE_LATEX) result_str += "}";
 						} else {
-							if(po.spacious) result_str += " ";
-							result_str += "&&";
-							if(po.spacious) result_str += " ";
+							if(format && tagtype == TAG_TYPE_LATEX) {
+								if(po.spacious) result_str += "\\ \\&\\&\\ ";
+								else result_str += "\\&\\& ";
+							} else {
+								if(po.spacious) result_str += " ";
+								if(format && tagtype == TAG_TYPE_HTML) result_str += "&amp;&amp;";
+								else result_str += "&&";
+								if(po.spacious) result_str += " ";
+							}
 						}
 					}
 					bool b_wrap = m[i][i2].needsParenthesis(po, ips, m[i], i2 + 1, true, true);
@@ -1146,13 +1161,21 @@ void print_dual(const MathStructure &mresult, const string &original_expression,
 			if(i == 0) {
 				result_str = "";
 			} else if(po.spell_out_logical_operators) {
+				if(format && tagtype == TAG_TYPE_LATEX) result_str += "\\text{";
 				result_str += " ";
 				result_str += _("and");
 				result_str += " ";
+				if(format && tagtype == TAG_TYPE_LATEX) result_str += "}";
 			} else {
-				if(po.spacious) result_str += " ";
-				result_str += "&&";
-				if(po.spacious) result_str += " ";
+				if(format && tagtype == TAG_TYPE_LATEX) {
+					if(po.spacious) result_str += "\\ \\&\\&\\ ";
+					else result_str += "\\&\\& ";
+				} else {
+					if(po.spacious) result_str += " ";
+					if(format && tagtype == TAG_TYPE_HTML) result_str += "&amp;&amp;";
+					else result_str += "&&";
+					if(po.spacious) result_str += " ";
+				}
 			}
 			bool b_wrap = m[i].needsParenthesis(po, ips, m, i + 1, true, true);
 			string str;
@@ -1915,6 +1938,8 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				remove_blank_ends(to_str1);
 				to_str2 = to_str.substr(ispace + 1);
 				remove_blank_ends(to_str2);
+			} else {
+				to_str1 = "";
 			}
 			if(equalsIgnoreCase(to_str, "hex") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "hexadecimal", _("hexadecimal"))) {
 				printops.base = BASE_HEXADECIMAL;
@@ -2086,6 +2111,10 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 				printops.number_fraction_format = FRACTION_DECIMAL;
 				auto_fraction = AUTOMATIC_FRACTION_OFF;
 				fraction_changed = true;
+			} else if(equalsIgnoreCase(to_str, "latex")) {
+				tagtype = TAG_TYPE_LATEX;
+				do_calendars = false;
+				format = true;
 			} else {
 				NumberFractionFormat nff = FRACTION_DECIMAL;
 				string to_str2 = to_str;
@@ -2423,12 +2452,24 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 		}
 		parsed_struct.format(po_parsed);
 		*parsed_expression = parsed_struct.print(po_parsed, format, colorize, tagtype);
+		if(format && tagtype == TAG_TYPE_LATEX) {
+			if(parsed_expression->find("\\") != string::npos) parsed_expression->insert(0, "$\\displaystyle ");
+			else parsed_expression->insert(0, "$");
+			*parsed_expression += "$";
+		}
 	}
 	if(msecs > 0) stopControl();
 
 	printops.is_approximate = save_is_approximate;
 	if(po.is_approximate && (exact_comparison || !alt_results.empty())) *po.is_approximate = false;
 	else if(po.is_approximate && mstruct.isApproximate()) *po.is_approximate = true;
+
+	if(format && tagtype == TAG_TYPE_LATEX && !do_calendars) {
+		if(result.find("\\") != string::npos) result.insert(0, "$\\displaystyle ");
+		else result.insert(0, "$");
+		result.insert(0, "$\\displaystyle ");
+		result += "$";
+	}
 
 	return result;
 }
@@ -2661,6 +2702,8 @@ string Calculator::parseToExpression(string to_str, EvaluationOptions &evalops, 
 			remove_blank_ends(to_str1);
 			to_str2 = to_str.substr(ispace + 1);
 			remove_blank_ends(to_str2);
+		} else {
+			to_str1 = "";
 		}
 		if(equalsIgnoreCase(to_str, "hex") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "hexadecimal", _("hexadecimal"))) {
 			printops.base = BASE_HEXADECIMAL;

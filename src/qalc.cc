@@ -117,6 +117,8 @@ bool unittest = false;
 int simplified_percentage = -1;
 int defs_edited = 0;
 int unicode_exponents = 1;
+int output_format = TAG_TYPE_TERMINAL;
+int initial_output_format = TAG_TYPE_TERMINAL;
 bool had_to_expression = false;
 bool had_errors = false;
 vector<string> command_list;
@@ -229,16 +231,39 @@ bool test_convert_from_local(const char *str) {
 
 size_t unformatted_length(const string &str) {
 	size_t l = 0;
-	bool inform = false;
+	bool inform = false, inform2 = false;
 	for(size_t i = 0; i < str.length(); i++) {
-		if(!inform && str[i] == '\033') {
-			inform = true;
-		} else if(!inform && ((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0)) {
-			l++;
-		} else if(inform && str[i] == 'm') {
-			inform = false;
+		if(output_format == TAG_TYPE_LATEX) {
+			if(!inform2 && !inform && str[i] == '\\') {
+				inform = true;
+				l++;
+			} else if(str[i] == '[') {
+				inform2 = true;
+				inform = false;
+			} else if(inform2 && str[i] == ']') {
+				inform2 = false;
+			} else if(inform && str[i] == ' ') {
+				inform = false;
+			} else if(!inform && !inform2 && str[i] != '$' && str[i] != '{' && str[i] != '}' && ((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0)) {
+				l++;
+			}
+		} else if(output_format == TAG_TYPE_HTML) {
+			if(!inform && str[i] == '<') {
+				inform = true;
+			} else if(inform && str[i] == '>') {
+				inform = false;
+			} else if(!inform && ((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0)) {
+				l++;
+			}
+		} else {
+			if(!inform && str[i] == '\033') {
+				inform = true;
+			} else if(inform && str[i] == 'm') {
+				inform = false;
+			} else if(!inform && ((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0)) {
+				l++;
+			}
 		}
-
 	}
 	return l;
 }
@@ -4623,6 +4648,10 @@ int main(int argc, char *argv[]) {
 			load_datasets = false;
 		} else if(!calc_arg_begun && (strcmp(argv[i], "-nodefs") == 0 || strcmp(argv[i], "--nodefs") == 0 || strcmp(argv[i], "-n") == 0)) {
 			load_global_defs = false;
+		} else if(!calc_arg_begun && (strcmp(argv[i], "-latex") == 0 || strcmp(argv[i], "--latex") == 0)) {
+			initial_output_format = TAG_TYPE_LATEX;
+		} else if(!calc_arg_begun && (strcmp(argv[i], "-html") == 0 || strcmp(argv[i], "--html") == 0)) {
+			initial_output_format = TAG_TYPE_HTML;
 		} else if(!calc_arg_begun && (svar == "-time" || svar == "--time" || svar == "-m")) {
 			if(!svalue.empty()) {
 				i_maxtime += strtol(svalue.c_str(), NULL, 10);
@@ -6058,6 +6087,14 @@ int main(int argc, char *argv[]) {
 				printops.restrict_fraction_length = save_rfl;
 				printops.number_fraction_format = save_format;
 				dual_fraction = save_dual;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "latex", _("latex"))) {
+				output_format = TAG_TYPE_LATEX;
+				setResult(NULL, true);
+				output_format = initial_output_format;
+			} else if(EQUALS_IGNORECASE_AND_LOCAL(str, "html", _("html"))) {
+				output_format = TAG_TYPE_HTML;
+				setResult(NULL, true);
+				output_format = initial_output_format;
 			} else {
 				NumberFractionFormat nff = FRACTION_DECIMAL;
 				bool fixed_fraction_has_sign = true;
@@ -7182,7 +7219,7 @@ void view_thread_func(MathStructure *mresult, MathStructure *mparse, bool *is_ap
 		po.rounding = printops.rounding;
 		po.hexadecimal_twos_complement = printops.hexadecimal_twos_complement;
 		po.base = evalops.parse_options.base;
-		po.allow_non_usable = DO_FORMAT;
+		po.allow_non_usable = DO_FORMAT || output_format != TAG_TYPE_TERMINAL;
 		Number nr_base;
 		if(po.base == BASE_CUSTOM && (CALCULATOR->usesIntervalArithmetic() || CALCULATOR->customInputBase().isRational()) && (CALCULATOR->customInputBase().isInteger() || !CALCULATOR->customInputBase().isNegative()) && (CALCULATOR->customInputBase() > 1 || CALCULATOR->customInputBase() < -1)) {
 			nr_base = CALCULATOR->customOutputBase();
@@ -7194,20 +7231,20 @@ void view_thread_func(MathStructure *mresult, MathStructure *mparse, bool *is_ap
 			po.max_decimals = 5;
 			po.preserve_format = false;
 		}
-		po.abbreviate_names = false;
+		po.abbreviate_names = (output_format != TAG_TYPE_TERMINAL);
 		po.digit_grouping = printops.digit_grouping;
 		po.use_unicode_signs = printops.use_unicode_signs;
 		po.multiplication_sign = printops.multiplication_sign;
 		po.division_sign = printops.division_sign;
-		po.short_multiplication = false;
-		po.excessive_parenthesis = true;
+		po.short_multiplication = (output_format == TAG_TYPE_LATEX);
+		po.excessive_parenthesis = (output_format == TAG_TYPE_TERMINAL);
 		po.improve_division_multipliers = false;
 		po.restrict_to_parent_precision = false;
 		po.spell_out_logical_operators = printops.spell_out_logical_operators;
 		po.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 		MathStructure mp(*mparse);
 		mp.format(po);
-		parsed_text = mp.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
+		parsed_text = mp.print(po, DO_FORMAT || output_format != TAG_TYPE_TERMINAL, DO_COLOR, output_format);
 		if(po.base == BASE_CUSTOM) {
 			CALCULATOR->setCustomOutputBase(nr_base);
 		}
@@ -7217,12 +7254,12 @@ void view_thread_func(MathStructure *mresult, MathStructure *mparse, bool *is_ap
 
 	po.allow_non_usable = DO_FORMAT;
 
-	print_dual(*mresult, original_expression, mparse ? *mparse : *parsed_mstruct, mstruct_exact, result_text, alt_results, po, evalops, dual_fraction < 0 ? AUTOMATIC_FRACTION_AUTO : (dual_fraction > 0 ? AUTOMATIC_FRACTION_DUAL : AUTOMATIC_FRACTION_OFF), dual_approximation < 0 ? AUTOMATIC_APPROXIMATION_AUTO : (dual_approximation > 0 ? AUTOMATIC_APPROXIMATION_DUAL : AUTOMATIC_APPROXIMATION_OFF), complex_angle_form, &exact_comparison, mparse != NULL, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL, -1, had_to_expression);
+	print_dual(*mresult, original_expression, mparse ? *mparse : *parsed_mstruct, mstruct_exact, result_text, alt_results, po, evalops, dual_fraction < 0 ? AUTOMATIC_FRACTION_AUTO : (dual_fraction > 0 ? AUTOMATIC_FRACTION_DUAL : AUTOMATIC_FRACTION_OFF), dual_approximation < 0 ? AUTOMATIC_APPROXIMATION_AUTO : (dual_approximation > 0 ? AUTOMATIC_APPROXIMATION_DUAL : AUTOMATIC_APPROXIMATION_OFF), complex_angle_form, &exact_comparison, mparse != NULL, DO_FORMAT || output_format != TAG_TYPE_TERMINAL, DO_COLOR, output_format, -1, had_to_expression);
 
 	if(!prepend_mstruct.isUndefined() && !CALCULATOR->aborted()) {
 		prepend_mstruct.format(po);
 		po.min_exp = 0;
-		alt_results.insert(alt_results.begin(), prepend_mstruct.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL));
+		alt_results.insert(alt_results.begin(), prepend_mstruct.print(po, DO_FORMAT || output_format != TAG_TYPE_TERMINAL, DO_COLOR, output_format));
 	}
 
 	if(CALCULATOR->aborted() || avoid_recalculation) {
@@ -7234,7 +7271,7 @@ void view_thread_func(MathStructure *mresult, MathStructure *mparse, bool *is_ap
 			alt_results.clear();
 			MathStructure m;
 			m.setAborted();
-			result_text = m.print(po, DO_FORMAT, DO_COLOR, TAG_TYPE_TERMINAL);
+			result_text = m.print(po, DO_FORMAT || output_format != TAG_TYPE_TERMINAL, DO_COLOR, output_format);
 		}
 	}
 }
@@ -7291,7 +7328,12 @@ void add_equals(string &strout, bool b_exact, size_t *i_result_u = NULL, size_t 
 		if(i_result_u) *i_result_u = unicode_length_check(strout.c_str());
 		if(i_result) *i_result = strout.length();
 	} else {
-		if(printops.use_unicode_signs) {
+		if(output_format == TAG_TYPE_LATEX) {
+			if(add_space) strout += " \\approx ";
+			else strout += "\\approx ";
+			if(i_result_u) *i_result_u = unicode_length_check(strout.c_str());
+			if(i_result) *i_result = strout.length();
+		} else if(printops.use_unicode_signs) {
 			if(add_space) strout += " " SIGN_ALMOST_EQUAL " ";
 			else strout += SIGN_ALMOST_EQUAL " ";
 			if(i_result_u) *i_result_u = unicode_length_check(strout.c_str());
@@ -7432,7 +7474,7 @@ string ellipsize_vector(const string &str, size_t length) {
 		}
 	}
 	if(i1 == 0 || i2 == 0) return str;
-	return str.substr(0, i1) + string(printops.use_unicode_signs ? "(…)" : "(...)") + str.substr(i2);
+	return str.substr(0, i1) + string(output_format == TAG_TYPE_LATEX ? "\\cdots " : (printops.use_unicode_signs ? "(…)" : "(...)")) + str.substr(i2);
 }
 
 bool contains_large_matrix(const MathStructure &m, int top = 2) {
@@ -7648,6 +7690,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 #else
 		cols = 80;
 #endif
+		if(output_format != TAG_TYPE_TERMINAL) line_breaks = false;
 	}
 
 	bool autocalc_error = false, autocalc_warning = false, autocalc_info = false;
@@ -7678,22 +7721,29 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		RPNRegisterChanged(result_text, stack_index);
 	} else if(!unittest) {
 		string strout, sextra;
-		if(goto_input) strout += indent_s;
+		if(goto_input && output_format == TAG_TYPE_TERMINAL) strout += indent_s;
 		size_t i_result = 0, i_result_u = 0, i_result2 = 0, i_result_u2 = 0;
 		int b_comparison = 0;
 		if(!result_only) {
 			if(update_parse) {
 				if(parsed_mstruct->isComparison() || parsed_mstruct->isLogicalAnd() || parsed_mstruct->isLogicalOr()) b_comparison += 2;
-				if(mstruct->isComparison() || mstruct->isLogicalAnd() || mstruct->isLogicalOr()) b_comparison += (alt_results.empty() ? 1 : 4);
-				if(b_comparison && !(b_comparison & 1)) strout += LEFT_PARENTHESIS;
+				if(mstruct->isComparison() || mstruct->isLogicalAnd() || mstruct->isLogicalOr()) b_comparison += (alt_results.empty() && output_format == TAG_TYPE_TERMINAL ? 1 : 4);
+				if(b_comparison && !(b_comparison & 1)) {
+					if(output_format == TAG_TYPE_LATEX) strout += "\\left";
+					strout += LEFT_PARENTHESIS;
+				}
 				if(parsed_approx) {
-					if(printops.use_unicode_signs) strout += SIGN_ALMOST_EQUAL;
+					if(output_format == TAG_TYPE_LATEX) strout += "\\approx ";
+					else if(printops.use_unicode_signs) strout += SIGN_ALMOST_EQUAL;
 					else strout += _("approx.");
 					strout += " ";
 				}
 				strout += parsed_text;
-				if(b_comparison && !(b_comparison & 1)) strout += RIGHT_PARENTHESIS;
-				if(((evalops.parse_options.base <= 36 && evalops.parse_options.base >= 2 && evalops.parse_options.base != BASE_DECIMAL && evalops.parse_options.base != BASE_HEXADECIMAL && evalops.parse_options.base != BASE_OCTAL && evalops.parse_options.base != BASE_BINARY) || evalops.parse_options.base == BASE_CUSTOM || (evalops.parse_options.base <= BASE_GOLDEN_RATIO && evalops.parse_options.base >= BASE_SQRT2)) && (interactive_mode || saved_evalops.parse_options.base == evalops.parse_options.base)) {
+				if(b_comparison && !(b_comparison & 1)) {
+					if(output_format == TAG_TYPE_LATEX) strout += "\\right";
+					strout += RIGHT_PARENTHESIS;
+				}
+				if(output_format == TAG_TYPE_TERMINAL && ((evalops.parse_options.base <= 36 && evalops.parse_options.base >= 2 && evalops.parse_options.base != BASE_DECIMAL && evalops.parse_options.base != BASE_HEXADECIMAL && evalops.parse_options.base != BASE_OCTAL && evalops.parse_options.base != BASE_BINARY) || evalops.parse_options.base == BASE_CUSTOM || (evalops.parse_options.base <= BASE_GOLDEN_RATIO && evalops.parse_options.base >= BASE_SQRT2)) && (interactive_mode || saved_evalops.parse_options.base == evalops.parse_options.base)) {
 					BEGIN_ITALIC(strout)
 					strout += " (";
 					//number base
@@ -7712,13 +7762,19 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 				}
 			} else {
 				if(mstruct->isComparison() || mstruct->isLogicalAnd() || mstruct->isLogicalOr()) b_comparison = 3;
-				if(b_comparison && !(b_comparison & 1)) strout += LEFT_PARENTHESIS;
+				if(b_comparison && !(b_comparison & 1)) {
+					if(output_format == TAG_TYPE_LATEX) strout += "\\left";
+					strout += LEFT_PARENTHESIS;
+				}
 				strout += prev_result_text;
-				if(b_comparison && !(b_comparison & 1)) strout += RIGHT_PARENTHESIS;
+				if(b_comparison && !(b_comparison & 1)) {
+					if(output_format == TAG_TYPE_LATEX) strout += "\\right";
+					strout += RIGHT_PARENTHESIS;
+				}
 			}
 		}
 
-		bool b_matrix = mstruct->isMatrix() && DO_FORMAT && result_text.find('\n') != string::npos;
+		bool b_matrix = mstruct->isMatrix() && DO_FORMAT && result_text.find('\n') != string::npos && output_format == TAG_TYPE_TERMINAL;
 
 		bool show_result = !auto_calculate || (!was_aborted && !mstruct->isAborted() && (result_only || (!autocalc_error && (!alt_results.empty() || result_text != parsed_text))));
 		if(show_result && auto_calculate && mstruct->countTotalChildren(false) >= 10) {
@@ -7737,9 +7793,15 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 			for(size_t i = 0; i < alt_results.size(); i++) {
 				if(i != 0) add_equals(strout, true);
 				else if(!result_only) add_equals(strout, update_parse || !prev_approximate, &i_result_u, &i_result);
-				if(b_comparison & 4) strout += LEFT_PARENTHESIS;
+				if(b_comparison & 4) {
+					if(output_format == TAG_TYPE_LATEX) strout += "\\left";
+					strout += LEFT_PARENTHESIS;
+				}
 				strout += alt_results[i];
-				if(b_comparison & 4) strout += RIGHT_PARENTHESIS;
+				if(b_comparison & 4) {
+					if(output_format == TAG_TYPE_LATEX) strout += "\\right";
+					strout += RIGHT_PARENTHESIS;
+				}
 			}
 			if(!alt_results.empty()) {
 				if(b_matrix) {
@@ -7767,9 +7829,15 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 				i_result_u2 = i_result_u;
 				i_result2 = i_result;
 			}
-			if(b_comparison & 4) strout += LEFT_PARENTHESIS;
+			if(b_comparison & 4) {
+				if(output_format == TAG_TYPE_LATEX) strout += "\\left";
+				strout += LEFT_PARENTHESIS;
+			}
 			strout += result_text;
-			if(b_comparison & 4) strout += RIGHT_PARENTHESIS;
+			if(b_comparison & 4) {
+				if(output_format == TAG_TYPE_LATEX) strout += "\\right";
+				strout += RIGHT_PARENTHESIS;
+			}
 			if(!result_only && save_base == printops.base && (interactive_mode || saved_printops.base == printops.base)) {
 				if((printops.base <= 36 && printops.base >= 2 && printops.base != BASE_DECIMAL && printops.base != BASE_HEXADECIMAL && printops.base != BASE_OCTAL && printops.base != BASE_BINARY) || printops.base == BASE_CUSTOM || (printops.base <= BASE_GOLDEN_RATIO && printops.base >= BASE_SQRT2)) {
 					BEGIN_ITALIC(strout)
@@ -7841,12 +7909,37 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 				}
 				if(!b_matrix && line_breaks) addLineBreaks(strout, cols, true, mstruct->containsType(STRUCT_COMPARISON), result_only ? (goto_input ? prompt_l : 0) : i_result_u, i_result);
 				if(vertical_space && (b_matrix || goto_input) && !auto_calculate) strout += "\n";
+			} else if(output_format != TAG_TYPE_TERMINAL) {
+				if(autocalc_error) {
+					strout += " ";
+					if(DO_COLOR) strout += "\033[0;91m";
+					strout += "(!)";
+					if(DO_COLOR) strout += "\033[0m";
+				} else if(autocalc_warning) {
+					strout += " ";
+					if(DO_COLOR) strout += "\033[0;94m";
+					strout += "(!)";
+					if(DO_COLOR) strout += "\033[0m";
+				} else if(autocalc_info) {
+					strout += " (!)";
+				}
+				if(output_format == TAG_TYPE_LATEX) {
+					if(strout.find("\\") != string::npos) strout.insert(0, "$\\displaystyle ");
+					else strout.insert(0, "$");
+					strout += "$";
+				}
+				if(vertical_space && goto_input && !auto_calculate) strout += "\n";
 			}
 			if(b_matrix && goto_input && printops.digit_grouping != DIGIT_GROUPING_NONE) {
 				gsub(THIN_SPACE, " ", strout);
 				gsub(NNBSP, " ", strout);
 			}
 		} else {
+			if(output_format == TAG_TYPE_LATEX) {
+				if(strout.find("\\") != string::npos) strout.insert(0, "$\\displaystyle ");
+				else strout.insert(0, "$");
+				strout += "$";
+			}
 			if(autocalc_error) {
 				strout += " ";
 				if(DO_COLOR) strout += "\033[0;91m";
@@ -7860,7 +7953,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 			} else if(autocalc_info) {
 				strout += " (!)";
 			}
-			addLineBreaks(strout, cols, true, mstruct->containsType(STRUCT_COMPARISON), prompt_l);
+			if(line_breaks) addLineBreaks(strout, cols, true, mstruct->containsType(STRUCT_COMPARISON), prompt_l);
 		}
 		if(auto_calculate) {
 			autocalc_result = strout;
@@ -8771,6 +8864,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 	string str, str_conv, from_str;
 	bool do_bases = programmers_mode, do_mixed = false, do_factors = false, do_expand = false, do_pfe = false, do_calendars = false, do_binary_prefixes = false, fraction_changed = false;
 	avoid_recalculation = false;
+	output_format = initial_output_format;
 	bool goto_input = interactive_mode;
 
 	save_base = printops.base;
@@ -8829,6 +8923,8 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 					remove_blank_ends(to_str1);
 					to_str2 = to_str.substr(ispace + 1);
 					remove_blank_ends(to_str2);
+				} else {
+					to_str1 = "";
 				}
 				if(equalsIgnoreCase(to_str, "hex") || EQUALS_IGNORECASE_AND_LOCAL(to_str, "hexadecimal", _("hexadecimal"))) {
 					printops.base = BASE_HEXADECIMAL;
@@ -9012,6 +9108,12 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 					printops.restrict_fraction_length = false;
 					printops.number_fraction_format = FRACTION_DECIMAL;
 					fraction_changed = true;
+				} else if(equalsIgnoreCase(to_str, "latex")) {
+					output_format = TAG_TYPE_LATEX;
+					do_calendars = false;
+				} else if(equalsIgnoreCase(to_str, "html")) {
+					output_format = TAG_TYPE_HTML;
+					do_calendars = false;
 				} else {
 					NumberFractionFormat nff = FRACTION_DECIMAL;
 					ParseOptions pa = evalops.parse_options; pa.base = 10;
@@ -9621,6 +9723,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 	}
 
 	if(do_calendars && mstruct->isDateTime()) {
+		output_format = TAG_TYPE_TERMINAL;
 		setResult(NULL, (!do_stack || stack_index == 0), false, do_stack ? stack_index : 0, false, true);
 		if(goto_input && !auto_calculate) printf("\n");
 		string cal_str = show_calendars(*mstruct->datetime(), goto_input);
@@ -9650,11 +9753,13 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		if(goto_input && !auto_calculate) printf("\n");
 		if(!result_only) {
 			string prestr = parsed_text;
-			if(goto_input) prestr.insert(0, indent_s);
+			if(goto_input && output_format == TAG_TYPE_TERMINAL) prestr.insert(0, indent_s);
 			if(!(*printops.is_approximate) && !mstruct->isApproximate()) {
 				prestr += " = ";
 			} else {
-				if(printops.use_unicode_signs) {
+				if(output_format == TAG_TYPE_LATEX) {
+					prestr += " \\approx ";
+				} else if(printops.use_unicode_signs) {
 					prestr += " " SIGN_ALMOST_EQUAL " ";
 				} else {
 					prestr += " = ";
@@ -9664,8 +9769,13 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 			}
 			base_str = prestr + base_str;
 		}
+		if(output_format == TAG_TYPE_LATEX) {
+			if(base_str.find("\\") != string::npos) base_str.insert(0, "$\\displaystyle ");
+			else base_str.insert(0, "$");
+			base_str += "$";
+		}
 		result_text = base_str;
-		if(goto_input) {
+		if(goto_input && output_format == TAG_TYPE_TERMINAL) {
 			int cols = 0;
 #ifdef HAVE_LIBREADLINE
 			int rows = 0;

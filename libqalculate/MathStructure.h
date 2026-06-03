@@ -60,7 +60,8 @@ enum {
 
 enum {
 	TAG_TYPE_HTML,
-	TAG_TYPE_TERMINAL
+	TAG_TYPE_TERMINAL,
+	TAG_TYPE_LATEX
 };
 
 /// A structure representing a mathematical value/expression/result
