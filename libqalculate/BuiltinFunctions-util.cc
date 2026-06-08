@@ -1964,3 +1964,504 @@ int GeographicDistanceFunction::calculate(MathStructure &mstruct, const MathStru
 	return 1;
 }
 
+void get_latex_args(const string &str, size_t &i, string *s1 = NULL, string *s2 = NULL, string *opt = NULL, bool supsub = false) {
+	int in_sqb = 0, in_cub = 0;
+	size_t index = 0, cub_index = 0;
+	for(; i < str.length(); i++) {
+		if(index == 0 && str[i] == '[') {
+			if(!in_sqb) cub_index = i;
+			in_sqb++;
+		} else if(index == 0 && in_sqb && str[i] == ']') {
+			in_sqb--;
+			if(in_sqb == 0 && opt) *opt = str.substr(cub_index + 1, i - (cub_index + 1));
+		} else if(supsub && !in_cub && !in_sqb && ((str[i] == '_' && s1) || (str[i] == '^' && s2))) {
+			if(str[i] == '_') index = 1;
+			else index = 2;
+			size_t i2 = str.find_first_not_of(SPACES, i + 1);
+			if(i2 != string::npos) {
+				if(str[i2] == '{') {
+					in_cub++;
+					cub_index = i2;
+					i = i2;
+				} else if(str[i2] == '\\') {
+					cub_index = i2;
+					i2++;
+					for(; i2 < str.length(); i2++) {
+						if((str[i2] < 'a' || str[i2] > 'z') && (str[i2] < 'A' || str[i2] > 'Z')) {
+							break;
+						}
+					}
+					if(i2 == cub_index + 1) i2++;
+					if(index == 1) *s1 = str.substr(cub_index, i2 - cub_index);
+					else if(index == 2) *s2 = str.substr(cub_index, i2 - cub_index);
+					i = i2 - 1;
+				} else {
+					size_t l = 1;
+					if((signed char) str[i2] < 0) {
+						while(i2 + l < str.length() && (signed char) str[i2 + l] < 0 && (unsigned char) str[i2 + l] < 0xC0) l++;
+					}
+					if(index == 1) *s1 = str.substr(i2, l);
+					else if(index == 2) *s2 = str.substr(i2, l);
+					i = i2 + l - 1;
+				}
+				if(!cub_index) {
+					index = 0;
+					if((!s1 || !s1->empty()) && (!s2 || !s2->empty())) {i++; break;}
+				}
+			}
+		} else if(!in_sqb && (!supsub || in_cub) && str[i] == '{' && s1) {
+			if(!in_cub) {
+				cub_index = i;
+				index++;
+			}
+			in_cub++;
+		} else if(in_cub && str[i] == '}') {
+			in_cub--;
+			if(in_cub == 0) {
+				if(index == 1) {
+					*s1 = str.substr(cub_index + 1, i - (cub_index + 1));
+					if(s1->empty()) *s1 += " ";
+					if(!s2 || (supsub && !s2->empty())) {i++; break;}
+				} else if(index == 2) {
+					*s2 = str.substr(cub_index + 1, i - (cub_index + 1));
+					if(s2->empty()) *s2 += " ";
+					i++;
+					if(!supsub || !s1 || !s1->empty()) break;
+				}
+			}
+		} else if(!in_sqb && !in_cub && str[i] != ' ' && str[i] != '\t') {
+			break;
+		}
+	}
+	if(in_cub) {
+		if(index == 1) {
+			*s1 = str.substr(cub_index + 1);
+			if(s1->empty()) *s1 += " ";
+		} else if(index == 2) {
+			*s2 = str.substr(cub_index + 1);
+			if(s2->empty()) *s2 += " ";
+		}
+	}
+}
+void read_latex_num(string &str, bool cplx = false, bool angle = false) {
+	if(cplx) gsub(":", "∠", str);
+	if(angle) gsub(";", ":", str);
+	gsub(",", ".", str);
+	gsub("e", "E", str);
+	gsub("d", "E", str);
+	gsub("D", "E", str);
+	gsub("\\pm", "+/-", str);
+	gsub("+-", "+/-", str);
+	gsub("x", "*", str);
+}
+
+void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = false, bool preserve_i = false) {
+	bool square = false, cubic = false;
+	for(size_t i = 0; i < str.size();) {
+		if(str[i] == '$' || str[i] == '{' || str[i] == '}') {
+			str.erase(i, 1);
+		} else if(str[i] == '~') {
+			str[i] = ' ';
+			i++;
+		} else if(str[i] == '[') {
+			str[i] = '(';
+			i++;
+		} else if(str[i] == ']') {
+			str[i] = ')';
+			i++;
+		} else if(str[i] == 'i' && !preserve_i && (i == str.length() - 1 || ((str[i + 1] < 'a' || str[i + 1] > 'w') && (str[i + 1] < 'A' || str[i + 1] > 'Z')))) {
+			str.insert(i, 1, '\\');
+			i += 2;
+		} else if(in_unit && str[i] == '.') {
+			str[i] = '*';
+			i++;
+		} else if(str[i] == '\\') {
+			size_t i2 = i + 1;
+			for(; i2 < str.length(); i2++) {
+				if((str[i2] < 'a' || str[i2] > 'z') && (str[i2] < 'A' || str[i2] > 'Z')) {
+					break;
+				}
+			}
+			if(i2 == i + 1) i2++;
+			string s = str.substr(i + 1, i2 - (i + 1));
+			string snew;
+			bool unit_macro = in_unit;
+			if(in_unit) {
+				bool nonunit = false;
+				if(s == "square") {square = true; nonunit = true;}
+				else if(s == "cubic") {cubic = true; nonunit = true;}
+				else if(s == "squared") {
+					if(i > 0 && str[i - 1] == ' ') i--;
+					snew = "^(2)";
+					nonunit = true;
+				} else if(s == "cubed") {
+					if(i > 0 && str[i - 1] == ' ') i--;
+					snew = "^(3)";
+					nonunit = true;
+				} else if(s == "raiseto" || s == "tothe") {snew = "^"; nonunit = true;}
+				else if(s == "highlight" || s == "of") {
+					string s1;
+					get_latex_args(str, i2, &s1);
+					nonunit = true;
+				} else if(s == "per") {snew = "/"; nonunit = true;}
+				else if(s == "ampere") snew = "A";
+				else if(s == "candela") snew = "cd";
+				else if(s == "kelvin") snew = "K";
+				else if(s == "kilogram") snew = "kg";
+				else if(s == "metre") snew = "m";
+				else if(s == "mole") snew = "mol";
+				else if(s == "second") snew = "s";
+				else if(s == "becquerel") snew = "Bq";
+				else if(s == "degreeCelcius") snew = "oC";
+				else if(s == "coulomb") snew = "C";
+				else if(s == "farad") snew = "F";
+				else if(s == "gray") snew = "Gy";
+				else if(s == "hertz") snew = "Hex";
+				else if(s == "henry") snew = "H";
+				else if(s == "joule") snew = "J";
+				else if(s == "lumen") snew = "lm";
+				else if(s == "katal") snew = "kat";
+				else if(s == "lux") snew = "lx";
+				else if(s == "newton") snew = "N";
+				else if(s == "ohm") snew = "ohm";
+				else if(s == "pascal") snew = "Pa";
+				else if(s == "radian") snew = "rad";
+				else if(s == "seiemens") snew = "S";
+				else if(s == "sievert") snew = "Sv";
+				else if(s == "steradian") snew = "sr";
+				else if(s == "tesla") snew = "T";
+				else if(s == "volt") snew = "V";
+				else if(s == "watt") snew = "W";
+				else if(s == "weber") snew = "Wb";
+				else if(s == "astronomicalunit") snew = "au";
+				else if(s == "bel") snew = "B";
+				else if(s == "dalton") snew = "Da";
+				else if(s == "day") snew = "d";
+				else if(s == "decibel") snew = "dB";
+				else if(s == "degree") snew = "deg";
+				else if(s == "electronvolt") snew = "eV";
+				else if(s == "hectare") snew = "ha";
+				else if(s == "hour") snew = "h";
+				else if(s == "litre") snew = "L";
+				else if(s == "liter") snew = "L";
+				else if(s == "arcminute") snew = "arcmin";
+				else if(s == "minute") snew = "min";
+				else if(s == "arcsecond") snew = "arcsec";
+				else if(s == "neper") snew = "Np";
+				else if(s == "tonne") snew = "t";
+				else if(s == "atomicmassunit") snew = "u";
+				else if(s == "angstrom") snew = "Å";
+				else if(s == "bar") snew = "bar";
+				else if(s == "barn") snew = "b";
+				else if(s == "knot") snew = "knot";
+				else if(s == "mmHg") snew = "mmHg";
+				else if(s == "nauticalmile") snew = "nautical_mile";
+				else if(s == "bohr") snew = "bohr_unit";
+				else if(s == "clight") snew = "c_unit";
+				else if(s == "electronmass") snew = "electron_unit";
+				else if(s == "elementarycharge") snew = "e_unit";
+				else if(s == "hartree") snew = "Ha";
+				else if(s == "planckbar") snew = "planck_unit";
+				else if(CALCULATOR->getPrefix(s)) {snew = s; nonunit = true;}
+				else {
+					ParseOptions po;
+					MathStructure mtest;
+					CALCULATOR->beginTemporaryStopMessages();
+					CALCULATOR->parse(&mtest, s, po);
+					CALCULATOR->endTemporaryStopMessages();
+					if(mtest.isUnit()) {
+						snew = s;
+					} else {
+						unit_macro = false;
+						nonunit = true;
+					}
+				}
+				if(!nonunit) {
+					if(square) {
+						if(i > 0 && str[i - 1] == ' ') i--;
+						snew += "^(2)";
+						square = false;
+						cubic = false;
+					} else if(cubic) {
+						if(i > 0 && str[i - 1] == ' ') i--;
+						snew += "^(3)";
+						cubic = false;
+					} else {
+						snew += " ";
+					}
+				}
+			}
+			if(!unit_macro) {
+				if(s == "Gamma") {snew = "Γ";}
+				else if(s == "Delta") {snew = "Δ";}
+				else if(s == "Lambda") {snew = "Λ";}
+				else if(s == "Phi") {snew = "Φ";}
+				else if(s == "Pi") {snew = "Π";}
+				else if(s == "Psi") {snew = "Ψ";}
+				else if(s == "Sigma") {snew = "Σ";}
+				else if(s == "Theta") {snew = "Θ";}
+				else if(s == "Upsilon") {snew = "Υ";}
+				else if(s == "Xi") {snew = "Ξ";}
+				else if(s == "Omega") {snew = "Ω";}
+				else if(s == "alpha") {snew = "α";}
+				else if(s == "beta") {snew = "β";}
+				else if(s == "gamma") {snew = "γ";}
+				else if(s == "delta") {snew = "δ";}
+				else if(s == "epsilon") {snew = "ϵ";}
+				else if(s == "zeta") {snew = "ζ";}
+				else if(s == "eta") {snew = "η";}
+				else if(s == "theta") {snew = "θ";}
+				else if(s == "iota") {snew = "ι";}
+				else if(s == "kappa") {snew = "κ";}
+				else if(s == "lampda") {snew = "λ";}
+				else if(s == "mu") {snew = "μ";}
+				else if(s == "nu") {snew = "ν";}
+				else if(s == "xi") {snew = "ξ";}
+				else if(s == "pi") {snew = "π";}
+				else if(s == "rho") {snew = "ρ";}
+				else if(s == "sigma") {snew = "σ";}
+				else if(s == "tau") {snew = "τ";}
+				else if(s == "upsilon") {snew = "υ";}
+				else if(s == "phi") {snew = "ϕ";}
+				else if(s == "chi") {snew = "χ";}
+				else if(s == "psi") {snew = "ψ";}
+				else if(s == "omega") {snew = "ω";}
+				else if(s == "digamma") {snew = "ϝ";}
+				else if(s == "varepsilon") {snew = "ε";}
+				else if(s == "varkappa") {snew = "ϰ";}
+				else if(s == "varphi") {snew = "φ";}
+				else if(s == "varpi") {snew = "ϖ";}
+				else if(s == "varrho") {snew = "ϱ";}
+				else if(s == "varsigma") {snew = "ς";}
+				else if(s == "vartheta") {snew = "ϑ";}
+				else if(s == "infty") {snew = "∞";}
+				else if(s == "hbar") {snew = "ℏ";}
+				else if(s == "haslash") {snew = "ℏ";}
+				else if(s == "eth") {snew = "ð";}
+				else if(s == "mho") {snew = "℧";}
+				else if(s == "re") {snew = "ℜ";}
+				else if(s == "im") {snew = "ℑ";}
+				else if(s == "pm") {snew = "+/-";}
+				else if(s == "\\&") {snew = "&";}
+				else if(s == "\\{") {snew = "{";}
+				else if(s == "\\}") {snew = "}";}
+				else if(s == "times") {snew = "*";}
+				else if(s == "colon") {snew = ":";}
+				else if(s == "dots" || s == "cdots" || s == "ldots" || s == "dotsb" || s == "dotsi" || s == "dotsm" || s == "dotso") {snew = "...";}
+				else if(s == "subseteq" || s == "subseteqq") {snew = "⊆";}
+				else if(s == "subsetneq" || s == "subsetneqq") {snew = "⊊";}
+				else if(s == "supseteq" || s == "supseteqq") {snew = "⊇";}
+				else if(s == "supsetneq" || s == "supsetneqq") {snew = "⊋";}
+				else if(s == "in") {snew = "∈";}
+				else if(s == "notin") {snew = "∉";}
+				else if(s == "ni" || s == "own") {snew = "∋";}
+				else if(s == "geq" || s == "geqq" || s == "geqslant") {snew = ">=";}
+				else if(s == "leq" || s == "leqq" || s == "leqslant") {snew = "<=";}
+				else if(s == "neq") {snew = "!=";}
+				else if(s == "rvert") {snew = "|";}
+				else if(s == "lvert") {snew = "|";}
+				else if(s == "lfloor") {snew = "⌊";}
+				else if(s == "rfloor") {snew = "⌋";}
+				else if(s == "lceil") {snew = "⌈";}
+				else if(s == "rceil") {snew = "⌉";}
+				else if(s == "bmod" || s == "mod") {snew = "mod";}
+				else if(s == "qquad" || s == "quad" || s == "nobreakspace" || s == "thinspace" || s == "medspace" || s == "thickspace" || s == " ") snew = " ";
+				else if(s == "negthinspace" || s == "negmedspace" || s == "negthickspace") snew = "";
+				else if(s.empty()) snew = " ";
+				else if(s == "hspace" || s == "mspace" || s == "phantom") {
+					string s1;
+					get_latex_args(str, i2, &s1);
+					if(s != "phantom" || !s1.empty()) snew = " ";
+				} else if(!symbols_only) {
+					if(s == "displaystyle" || s == "textstyle" || s == "scriptstyle" || s == "scriptscriptstyle" || s == "left" || s == "right" || s == "bigl" || s == "biggl" || s == "Bigl" || s == "Biggl") snew = "";
+					else if(s == "text" || s == "mbox") {
+						get_latex_args(str, i2, &snew);
+						remove_blank_ends(snew);
+						if(snew != "and" && snew != "or" && snew != "xor") {
+							snew.insert(0, "\"");
+							snew += "\"";
+						}
+					} else if(s == "mathrm" || s == "mathbf" || s == "mathit" || s == "mathcal" || s == "mathbb" || s == "mathfrak" || s == "mathsf" || s == "mathtt" || s == "boxed") {
+						get_latex_args(str, i2, &snew);
+						parse_latex_string(snew, false, false, true);
+					} else if(s == "arccos" || s == "arcsin" || s == "arctan" || s == "arg" || s == "cos" || s == "cosh" || s == "cot" || s == "coth" || s == "csc" || s == "det" || s == "exp" || s == "gcd" || s == "lim" || s == "lg" || s == "ln" || s == "log" || s == "max" || s == "min" || s == "sec" || s == "sin" || s == "sinh" || s == "tan" || s == "tanh") {
+						if(s == "lim") s = "limit";
+						snew = s; snew += " ";
+					} else if(s == "deg" || s == "hom" || s == "inf" || s == "dim" || s == "inflim" || s == "ker" || s == "liminf" || s == "limsup" || s == "Pr" || s == "projlim" || s == "sup" || s == "varlimsup" || s == "varliminf" || s == "varprojlim" || s == "varinjlim") {
+						CALCULATOR->error(true, "Unsupported LaTeX command/macro %s.", (string("\\") + s).c_str(), NULL);
+					} else if(s == "frac" || s == "dfrac" || s == "tfrac") {
+						string s1, s2;
+						get_latex_args(str, i2, &s1, &s2);
+						parse_latex_string(s1);
+						parse_latex_string(s2);
+						snew = "("; snew += s1; snew += ")/("; snew += s2; snew += ")";
+					} else if(s == "operatorname") {
+						get_latex_args(str, i2, &snew);
+						parse_latex_string(snew, false, true);
+						MathFunction *f = CALCULATOR->getActiveFunction(snew);
+						if(!f) {
+							string snew2 = snew;
+							gsub("_", "", snew2);
+							f = CALCULATOR->getActiveFunction(snew);
+							if(f) snew = snew2;
+						}
+					} else if(s == "sqrt") {
+						string s1, opt;
+						get_latex_args(str, i2, &s1, NULL, &opt);
+						if(opt.empty()) snew = "sqrt";
+						else snew = "root";
+						parse_latex_string(s1);
+						parse_latex_string(opt);
+						if(s1.empty()) {
+							if(opt.empty()) {
+								snew += " ";
+							} else {
+							}
+						} else {
+							if(opt.empty()) {
+								snew += "("; snew += s1; snew += ")";
+							} else {
+								snew += "("; snew += s1; snew += ","; snew += opt; snew += ")";
+							}
+						}
+					} else if(s == "sum" || s == "prod") {
+						string s1, s2, s3;
+						get_latex_args(str, i2, &s1, &s2, NULL, true);
+						size_t i3 = s1.find("=");
+						if(i3 != string::npos) {
+							s3 = s1.substr(0, i3);
+							s1 = s1.substr(i3 + 1);
+						}
+						parse_latex_string(s1);
+						parse_latex_string(s2);
+						parse_latex_string(s3);
+						if(s == "sum") snew = "sum(";
+						else snew = "product(";
+						string sarg = str.substr(i2);
+						parse_latex_string(sarg);
+						snew += sarg;
+						snew += ",";
+						snew += s1;
+						snew += ",";
+						snew += s2;
+						if(!s3.empty()) {
+							snew += ",";
+							snew += s3;
+						}
+						snew += ")";
+						i2 = str.length();
+					} else if(s == "int" || s == "smallint") {
+						string s1, s2, s3;
+						get_latex_args(str, i2, &s1, &s2, NULL, true);
+						parse_latex_string(s1);
+						parse_latex_string(s2);
+						snew = "integrate(";
+						size_t i3 = i2;
+						while(true) {
+							i3 = str.find("d", i3 + 1);
+							if(i3 == string::npos) break;
+							if(i3 < str.length() - 1 && (str[i3 + 1] == 'x' || str[i3 + 1] == 'y' || str[i3 + 1] == 'z') && (str[i3 - 1] == ' ' || str[i3 - 1] == ')') && (i3 + 1 == str.length() - 1 || ((str[i3 + 2] < 'a' || str[i3 + 2] > 'z') && (str[i3 + 2] < 'A' || str[i3 + 2] > 'Z')))) break;
+						}
+						string sarg;
+						if(i3 == string::npos) {
+							sarg = str.substr(i2);
+							i2 = str.length();
+						} else {
+							sarg = str.substr(i2, i3 - i2);
+							s3 = str.substr(i3 + 1, 1);
+							i2 = i3 + 2;
+						}
+						parse_latex_string(sarg);
+						snew += sarg;
+						snew += ",";
+						snew += s1;
+						snew += ",";
+						snew += s2;
+						if(!s3.empty()) {
+							snew += ",";
+							snew += s3;
+						}
+						snew += ")";
+					} else if(s == "begin") {
+						get_latex_args(str, i2, &s);
+						if(s == "matrix" || s == "pmatrix" || s == "bmatrix" || s == "Bmatrix" || s == "vmatrix" || s == "Vmatrix" || s == "smallmatrix") {
+							size_t i3 = str.find(string("\\end{") + s + "}", i);
+							if(i3 == string::npos) i3 = str.length();
+							string matrix = str.substr(i2, i3 - i2);
+							gsub("&", ",", matrix);
+							gsub("\\\\", ";", matrix);
+							parse_latex_string(matrix);
+							snew = "["; snew += matrix; snew += "]";
+							i2 = i3;
+							if(i2 < str.length()) i2 += s.length() + 6;
+						} else {
+							CALCULATOR->error(true, "Unsupported LaTeX command/macro %s.", (string("\\begin{") + s + "}").c_str(), NULL);
+						}
+					} else if(s == "end") {
+						get_latex_args(str, i2, &s);
+					} else if(s == "num" || s == "complexnum" || s == "numproduct" || s == "numlist") {
+						string opt;
+						get_latex_args(str, i2, &snew, NULL, &opt);
+						if(opt.find("parse-numbers=false") == string::npos) {
+							read_latex_num(snew, s == "complexnum");
+						} else {
+							parse_latex_string(snew);
+						}
+					} else if(s == "ang") {
+						string opt;
+						get_latex_args(str, i2, &snew, NULL, &opt);
+						if(opt.find("parse-numbers=false") == string::npos) {
+							read_latex_num(snew, false, true);
+						} else {
+							parse_latex_string(snew);
+						}
+						snew += "deg ";
+					} else if(s == "unit") {
+						get_latex_args(str, i2, &snew);
+						parse_latex_string(snew, true);
+					} else if(s == "qty" || s == "complexqty" || s == "qtyproduct" || s == "qtylist" || s == "SI" || s == "si") {
+						string s1, s2, opt;
+						get_latex_args(str, i2, &s1, &s2, &opt);
+						if(opt.find("parse-numbers=false") == string::npos) {
+							read_latex_num(s1, s == "complexqty");
+						} else {
+							parse_latex_string(s1);
+						}
+						parse_latex_string(s2, true);
+						snew = s1; snew += " "; snew += s2;
+					} else {
+						CALCULATOR->error(true, "Unsupported LaTeX command/macro %s.", (string("\\") + s).c_str(), NULL);
+					}
+				}
+			}
+			str.replace(i, i2 - i, snew);
+			i += snew.length();
+		} else {
+			i++;
+		}
+	}
+}
+
+LaTeXFunction::LaTeXFunction() : MathFunction("LaTeX", 1, 2) {
+	setArgumentDefinition(1, new TextArgument());
+	setArgumentDefinition(2, new BooleanArgument());
+	setDefaultValue(2, "0");
+}
+int LaTeXFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
+	if(vargs[1].number().getBoolean()) {
+		CALCULATOR->parse(&mstruct, vargs[0].symbol(), eo.parse_options);
+		mstruct.eval(eo);
+		mstruct.set(mstruct.print(default_print_options, true, false, TAG_TYPE_LATEX), true, true);
+		return 1;
+	}
+	string str = vargs[0].symbol();
+	parse_latex_string(str);
+	ParseOptions po;
+	po.preserve_format = eo.parse_options.preserve_format;
+	po.unknowns_enabled = true;
+	bool cue = CALCULATOR->conciseUncertaintyInputEnabled();
+	if(!cue) CALCULATOR->setConciseUncertaintyInputEnabled(true);
+	CALCULATOR->parse(&mstruct, str, po);
+	if(!cue) CALCULATOR->setConciseUncertaintyInputEnabled(false);
+	return 1;
+}

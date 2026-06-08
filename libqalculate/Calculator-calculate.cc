@@ -1628,7 +1628,7 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 }
 
 bool expression_contains_save_function(const string &str, const ParseOptions &po, bool only_equals) {
-	if(str.length() < 2 || po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && CALCULATOR->customInputBase() > 62)) return false;
+	if(str.length() < 2 || DO_NOT_TOUCH_EXPRESSION(str, po)) return false;
 	size_t i = str.find("=", 1);
 	if(!only_equals) {
 		if(i != string::npos && ((i > 0 && str[i - 1] == ':') || (i < str.length() - 1 && str[i + 1] == ':'))) return true;
@@ -1739,7 +1739,7 @@ bool expression_contains_save_function(const string &str, const ParseOptions &po
 	return true;
 }
 bool transform_expression_for_equals_save(string &str, const ParseOptions &po) {
-	if(str.length() < 2 || po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && CALCULATOR->customInputBase() > 62)) return false;
+	if(str.length() < 2 || DO_NOT_TOUCH_EXPRESSION(str, po)) return false;
 	size_t i = str.find("=", 1);
 	if(i == string::npos) return false;
 	if(i < str.length() - 1) {
@@ -2599,7 +2599,7 @@ bool Calculator::hasToExpression(const string &str, bool allow_empty_from) const
 	return false;
 }
 bool Calculator::hasToExpression(const string &str, bool allow_empty_from, const EvaluationOptions &eo) const {
-	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
+	if(DO_NOT_TOUCH_EXPRESSION(str, eo.parse_options)) return false;
 	if(str.empty()) return false;
 	size_t i = rfind_unquoted(str, "->");
 	if(i != string::npos && (allow_empty_from || i > 0)) return true;
@@ -2630,7 +2630,7 @@ bool Calculator::hasToExpression(const string &str, bool allow_empty_from, const
 	return false;
 }
 bool Calculator::separateToExpression(string &str, string &to_str, const EvaluationOptions &eo, bool keep_modifiers, bool allow_empty_from) const {
-	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
+	if(DO_NOT_TOUCH_EXPRESSION(str, eo.parse_options)) return false;
 	to_str = "";
 	if(str.empty()) return false;
 	size_t i = 1, i2, l_arrow = 2;
@@ -2966,7 +2966,7 @@ size_t rfind_outside_enclosures(const string &str, char c) {
 	return pos;
 }
 bool Calculator::hasWhereExpression(const string &str, const EvaluationOptions &eo) const {
-	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
+	if(DO_NOT_TOUCH_EXPRESSION(str, eo.parse_options)) return false;
 	if(str.empty()) return false;
 	size_t i = str.length() - 1, i2 = i;
 	int l = 2;
@@ -3047,7 +3047,7 @@ bool Calculator::hasWhereExpression(const string &str, const EvaluationOptions &
 	return var_found;
 }
 bool Calculator::separateWhereExpression(string &str, string &to_str, const EvaluationOptions &eo) const {
-	if(eo.parse_options.base == BASE_UNICODE || (eo.parse_options.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return false;
+	if(DO_NOT_TOUCH_EXPRESSION(str, eo.parse_options)) return false;
 	to_str = "";
 	size_t i = 0;
 	if(str.length() > 3 && (i = rfind_unquoted(str, "/.", str.length() - 2)) != string::npos && i > 0 && i != str.length() - 2 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) {

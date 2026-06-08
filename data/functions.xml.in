@@ -3663,6 +3663,18 @@ The ":=" operator (e.g. var1:=10) is a shortcut for this function.</description>
         <title>Argument</title>
       </argument>
     </builtin_function>
+    <builtin_function name="latex">
+        <title>LaTeX</title>
+        <names>r:latex</names>
+        <description>Returns a value from a LaTeX amsmath and/or siunitx expression. Note that any expression that begins and ends with $ and contains a backslash is interpreted using this function.</description>
+	<example>$name("\frac{\pi}{2}") = pi/2; $name("\qty{5e2}{\km\per\second\squared}") = 500 km/s^2; $\sum_{x=2}^{10}(x^2)$ = sum(x^2, 2, 10, x) = 384</example>
+        <argument index="1">
+          <title>Expression</title>
+        </argument>
+        <argument index="2">
+          <title>Reverse conversion</title>
+        </argument>
+      </builtin_function>
   </category>
   <category>
     <title>Logical</title>

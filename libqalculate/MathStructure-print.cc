@@ -25,10 +25,6 @@
 
 #include "MathStructure-support.h"
 
-#ifdef _WIN32
-#	include <VersionHelpers.h>
-#endif
-
 using std::string;
 using std::cout;
 using std::vector;
@@ -3635,6 +3631,11 @@ bool test_fix_latex_name(string &str) {
 	gsub("ς", "\\varsigma ", str);
 	gsub("ϑ", "\\vartheta ", str);
 	gsub("∞", "\\infty ", str);
+	gsub("ℏ", "\\hbar", str);
+	gsub("ð", "\\eth", str);
+	gsub("℧", "\\mho", str);
+	gsub("ℜ", "\\re", str);
+	gsub("ℑ", "\\im", str);
 	for(size_t i = 0; i < str.size(); i++) {
 		if((signed char) str[i] < 0) return false;
 	}
@@ -3747,8 +3748,8 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					gsub(" ", "", str);
 					gsub(THIN_SPACE, "", str);
 					gsub(NNBSP, "", str);
-					gsub("…", "\\cdots ", str);
-					gsub("...", "\\cdots ", str);
+					gsub("…", "\\dots ", str);
+					gsub("...", "\\dots ", str);
 					if(ips.depth > 0) {
 						print_str += "\\num[parse-numbers=true]{";
 					} else {
@@ -4123,11 +4124,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				if(i > 0) {
 					switch(i_sign) {
 						case MULTIPLICATION_SIGN_SPACE: {
-							if(is_unit_multiexp(CHILD(i)) && ((po.digit_grouping == DIGIT_GROUPING_LOCALE && CALCULATOR->local_digit_group_separator == THIN_SPACE) || (po.use_unicode_signs && (po.digit_grouping == DIGIT_GROUPING_STANDARD || (po.digit_grouping == DIGIT_GROUPING_LOCALE && CALCULATOR->local_digit_group_separator.empty()))
-#ifdef _WIN32
-							&& IsWindows10OrGreater()
-#endif
-							)) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (NNBSP, po.can_display_unicode_string_arg))) {
+							if(is_unit_multiexp(CHILD(i)) && ((po.digit_grouping == DIGIT_GROUPING_LOCALE && CALCULATOR->local_digit_group_separator == THIN_SPACE) || (po.use_unicode_signs && (po.digit_grouping == DIGIT_GROUPING_STANDARD || (po.digit_grouping == DIGIT_GROUPING_LOCALE && CALCULATOR->local_digit_group_separator.empty())))) && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (NNBSP, po.can_display_unicode_string_arg))) {
 								print_str += NNBSP;
 							} else {
 								print_str += " ";
@@ -4793,10 +4790,12 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 						print_str += CHILD(i).print(po, format, colorize, tagtype, ips_n);
 					}
 					break;
-				} else if(o_function->id() == FUNCTION_ID_ABS && SIZE == 1 && !po.preserve_format) {
-					print_str += "|";
+				} else if(o_function->id() == FUNCTION_ID_ABS && SIZE == 1 && (!po.preserve_format || (format && tagtype == TAG_TYPE_LATEX))) {
+					if(format && tagtype == TAG_TYPE_LATEX) print_str += "\\lvert";
+					else print_str += "|";
 					print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
-					print_str += "|";
+					if(format && tagtype == TAG_TYPE_LATEX) print_str += "\\rvert";
+					else print_str += "|";
 					break;
 				} else if(o_function->id() == FUNCTION_ID_UNCERTAINTY && SIZE == 3 && CHILD(2).isZero()) {
 					MathStructure *mmid = NULL, *munc = NULL;
@@ -4899,6 +4898,16 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 							print_str += "d";
 							print_str += xvar.print(po, false, colorize, tagtype, ips_n);
 						}
+						break;
+					} else if(o_function->id() == FUNCTION_ID_CEIL && SIZE == 1) {
+						print_str += "\\lceil";
+						print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
+						print_str += "\\rceil";
+						break;
+					} else if(o_function->id() == FUNCTION_ID_FLOOR && SIZE == 1) {
+						print_str += "\\lfloor";
+						print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
+						print_str += "\\rfloor";
 						break;
 					}
 				}
@@ -5053,7 +5062,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 						if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 						if(i > 0) {
 							if(format && tagtype == TAG_TYPE_LATEX) {
-								print_str += "\\\\";
+								print_str += " \\\\ ";
 							} else {
 								print_str += ";";
 								if(po.spacious) print_str += " ";
@@ -5063,12 +5072,14 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 							if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 							if(i2 > 0) {
 								if(format && tagtype == TAG_TYPE_LATEX) {
-									if(b_vertcat) print_str += "\\\\";
-									else print_str += "&";
-								} else if(b_vertcat) print_str += ";";
-								else if(format && tagtype == TAG_TYPE_HTML && po.spacious) print_str += "&nbsp;";
-								else print_str += " ";
-								if(po.spacious) print_str += " ";
+									if(b_vertcat) print_str += " \\\\ ";
+									else print_str += " & ";
+								} else {
+									if(b_vertcat) print_str += ";";
+									else if(format && tagtype == TAG_TYPE_HTML && po.spacious) print_str += "&nbsp;";
+									else print_str += " ";
+									if(po.spacious) print_str += " ";
+								}
 							}
 							if(b_matrix) {
 								ips_n.wrap = CHILD(i)[i2].needsParenthesis(po, ips_n, *this, i + 1, flat_division, flat_power);

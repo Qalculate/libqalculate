@@ -389,7 +389,7 @@ const char *internal_signs[] = {SIGN_PLUSMINUS, "\b", "+/-", "\b", "⊻", "\a", 
 
 string Calculator::parseComments(string &str, const ParseOptions &po, bool *double_tag) {
 
-	if(str.length() <= 1 || po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return "";
+	if(str.length() <= 1 || DO_NOT_TOUCH_EXPRESSION(str, po)) return "";
 
 	if(double_tag) *double_tag = false;
 
@@ -526,6 +526,42 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 				q_end.push_back(quote_index);
 			}
 			quote_index++;
+		}
+	}
+	if(q_begin.size() == 0) {
+		quote_index = 0;
+		while(true) {
+			size_t l = 5, i = quote_index;
+			quote_index = str.find("latex", i);
+			if(quote_index == string::npos) quote_index = str.find("LaTeX", i);
+			if(quote_index == string::npos) quote_index = str.find("Latex", i);
+			if(quote_index == string::npos) quote_index = str.find("LATEX", i);
+			if(quote_index == string::npos) {
+				quote_index = str.find("code", i);
+				l = 4;
+			}
+			if(quote_index == string::npos) break;
+			if(quote_index == 0 || ((str[quote_index - 1] < 'a' || str[quote_index - 1] > 'z') && (str[quote_index - 1] < 'A' || str[quote_index - 1] > 'Z'))) {
+				quote_index = str.find_first_not_of(SPACES, quote_index + l);
+				if(str[quote_index] == '(') {
+					q_begin.push_back(quote_index + 1);
+					int par = 1;
+					while(quote_index < str.length()) {
+						if(str[quote_index] == '(') {
+							par++;
+						} else if(str[quote_index] == ')') {
+							par--;
+							if(par == 0) {
+								break;
+							}
+						}
+						quote_index++;
+					}
+					q_end.push_back(quote_index);
+				}
+			} else {
+				quote_index += l;
+			}
 		}
 	}
 
@@ -1023,7 +1059,7 @@ void bitwise_to_logical(MathStructure &m) {
 }
 
 string Calculator::localizeExpression(string str, const ParseOptions &po) const {
-	if((DOT_STR == DOT && COMMA_STR == COMMA && !po.comma_as_separator) || po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return str;
+	if((DOT_STR == DOT && COMMA_STR == COMMA && !po.comma_as_separator) || DO_NOT_TOUCH_EXPRESSION(str, po)) return str;
 	int base = po.base;
 	if(base == BASE_CUSTOM) {
 		base = (int) priv->custom_input_base_i;
@@ -1154,7 +1190,7 @@ string Calculator::localizeExpression(string str, const ParseOptions &po) const 
 	return str;
 }
 string Calculator::unlocalizeExpression(string str, const ParseOptions &po) const {
-	if(po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) return str;
+	if(DO_NOT_TOUCH_EXPRESSION(str, po)) return str;
 	if(((local_digit_group_separator.length() == 3 && local_digit_group_separator == "’") || (local_digit_group_separator.length() == 1 && local_digit_group_separator[0] == '\'')) && str.length() >= 5) {
 		size_t i = 0;
 		bool b = true, b_found = false;
@@ -1432,6 +1468,15 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	if(po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) {
 		// Read whole expression as a number if the number base digits other than alphanumerical characters
 		mstruct->set(Number(str, po));
+		return;
+	}
+
+	if(str.length() > 2 && str[0] == '$' && str[str.length() - 1] == '$' && str.find("\\") != string::npos) {
+		EvaluationOptions eo;
+		eo.parse_options = po;
+		MathStructure marg(str, true);
+		mstruct->set(priv->f_latex, &marg, &m_zero, NULL);
+		mstruct->calculateFunctions(eo, false, false);
 		return;
 	}
 
@@ -2734,6 +2779,30 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			else if(str[str_index + 1] == AND_CH) str.replace(str_index, 2, BITWISE_AND);
 			else if(str[str_index + 1] == OR_CH) str.replace(str_index, 2, BITWISE_OR);
 			else str[str_index] = '\x16';
+		} else if((unsigned char) str[str_index] == 0xE2 && str_index + 2 < str.length() && (unsigned char) str[str_index + 1] == 0x8C && ((unsigned char) str[str_index + 2] == 0x88 || (unsigned char) str[str_index + 2] == 0x8A)) {
+			size_t depth = 1;
+			size_t i2 = str_index;
+			bool floor = ((unsigned char) str[str_index + 2] == 0x8A);
+			while(true) {
+				size_t i3 = str.find(floor ? "⌋" : "⌉", i2 + 3);
+				if(i3 == string::npos) break;
+				size_t i4 = str.find(floor ? "⌊" : "⌈", i2 + 3);
+				if(i4 != string::npos && i4 < i3) {
+					depth++;
+					i2 = i4;
+				} else {
+					i2 = i3;
+					depth--;
+					if(depth == 0) break;
+				}
+			}
+			if(i2 == string::npos) stmp2 = str.substr(str_index + 3);
+			else stmp2 = str.substr(str_index + 3, i2 - (str_index + 3));
+			stmp = LEFT_PARENTHESIS INTERNAL_ID_L;
+			stmp += i2s(parseAddId(floor ? f_floor : f_ceil, stmp2, po));
+			stmp += INTERNAL_ID_R RIGHT_PARENTHESIS;
+			str.replace(str_index, i2 - str_index + 3, stmp);
+			str_index += stmp.length() - 1;
 		} else if(is_not_in(NUMBERS INTERNAL_OPERATORS NOT_IN_NAMES INTERNAL_ID_LR, str[str_index])) {
 			// dx/dy derivative notation
 			if((str[str_index] == 'd' && is_not_number('d', base)) || ((signed char) str[str_index] == -50 && str_index + 1 < str.length() && (signed char) str[str_index + 1] == -108) || ((signed char) str[str_index] == -16 && str_index + 3 < str.length() && (signed char) str[str_index + 1] == -99 && (signed char) str[str_index + 2] == -102 && (signed char) str[str_index + 3] == -85)) {
@@ -3424,6 +3493,11 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 											if(mstruct->size() == 2) mstruct->addChild(m_zero);
 											i4 = i5 - str_index + 1;
 										}
+									}
+									if(f->id() == FUNCTION_ID_LATEX && mstruct->size() == 2 && (*mstruct)[1].isZero()) {
+										EvaluationOptions eo;
+										eo.parse_options = po;
+										mstruct->calculateFunctions(eo, false, false);
 									}
 									stmp += i2s(addId(mstruct));
 									po.unended_function = NULL;

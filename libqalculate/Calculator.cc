@@ -1975,6 +1975,8 @@ void Calculator::addBuiltinFunctions() {
 
 	addFunction(new GeographicDistanceFunction());
 
+	priv->f_latex = addFunction(new LaTeXFunction());
+
 	f_plot = addFunction(new PlotFunction());
 
 	/*void *plugin = dlopen("", RTLD_NOW);
