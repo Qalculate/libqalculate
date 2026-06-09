@@ -1227,7 +1227,7 @@ The set of digits used can be selected using the third argument (defaults to 0 f
         <argument index="3">
           <title>Set of digits</title>
         </argument>
-	<argument index="4">
+        <argument index="4">
           <title>Reverse conversion</title>
         </argument>
       </builtin_function>
@@ -1241,7 +1241,7 @@ The set of digits used can be selected using the third argument (defaults to 0 f
         <argument index="2">
           <title>Two's complement</title>
         </argument>
-	<argument index="3">
+        <argument index="3">
           <title>Reverse conversion</title>
         </argument>
       </builtin_function>
@@ -1252,7 +1252,7 @@ The set of digits used can be selected using the third argument (defaults to 0 f
         <argument index="1">
           <title>Octal number</title>
         </argument>
-	<argument index="2">
+        <argument index="2">
           <title>Reverse conversion</title>
         </argument>
       </builtin_function>
@@ -1263,7 +1263,7 @@ The set of digits used can be selected using the third argument (defaults to 0 f
         <argument index="1">
           <title>Decimal number</title>
         </argument>
-	<argument index="2">
+        <argument index="2">
           <title>Reverse conversion</title>
         </argument>
       </builtin_function>
@@ -1277,7 +1277,7 @@ The set of digits used can be selected using the third argument (defaults to 0 f
         <argument index="2">
           <title>Two's complement</title>
         </argument>
-	<argument index="3">
+        <argument index="3">
           <title>Reverse conversion</title>
         </argument>
       </builtin_function>
@@ -1287,6 +1287,9 @@ The set of digits used can be selected using the third argument (defaults to 0 f
         <description>Returns a value from an expression in bijective base-26. Conversion in the opposite direction is also supported.</description>
         <argument index="1">
           <title>Bijective base-26 number</title>
+        </argument>
+        <argument index="2">
+          <title>Reverse conversion</title>
         </argument>
       </builtin_function>
       <builtin_function name="bcd">
@@ -1298,6 +1301,9 @@ The set of digits used can be selected using the third argument (defaults to 0 f
         <argument index="2">
           <!-- Packed binary-coded decimal -->
           <title>Packed</title>
+        </argument>
+        <argument index="3">
+          <title>Reverse conversion</title>
         </argument>
       </builtin_function>
     </category>
@@ -1949,6 +1955,9 @@ The set of digits used can be selected using the third argument (defaults to 0 f
       <argument index="1">
         <title>Roman number</title>
       </argument>
+      <argument index="2">
+          <title>Reverse conversion</title>
+        </argument>
     </builtin_function>
     <builtin_function name="geodistance">
       <title>Distance Between GPS Coordinates</title>

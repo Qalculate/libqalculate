@@ -1919,11 +1919,13 @@ int BaseFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	}
 	return 1;
 }
-RomanFunction::RomanFunction() : MathFunction("roman", 1) {
+RomanFunction::RomanFunction() : MathFunction("roman", 1, 2) {
 	setArgumentDefinition(1, new TextArgument());
+	setArgumentDefinition(2, new BooleanArgument());
+	setDefaultValue(2, "0");
 }
 int RomanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[0].symbol().find_first_not_of("0123456789.:" SIGNS) == string::npos && vargs[0].symbol().find_first_not_of("0" SIGNS) != string::npos) {
+	if(vargs[1].number().getBoolean() || (vargs[0].symbol().find_first_not_of(SPACES "0123456789.:" SIGNS) == string::npos && vargs[0].symbol().find_first_not_of("0" SIGNS) != string::npos)) {
 		CALCULATOR->parse(&mstruct, vargs[0].symbol(), eo.parse_options);
 		PrintOptions po; po.base = BASE_ROMAN_NUMERALS;
 		mstruct.eval(eo);
@@ -1935,11 +1937,13 @@ int RomanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
 	return 1;
 }
-BijectiveFunction::BijectiveFunction() : MathFunction("bijective", 1) {
+BijectiveFunction::BijectiveFunction() : MathFunction("bijective", 1, 2) {
 	setArgumentDefinition(1, new TextArgument());
+	setArgumentDefinition(2, new BooleanArgument());
+	setDefaultValue(2, "0");
 }
 int BijectiveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
-	if(vargs[0].symbol().find_first_not_of("0123456789.:" SIGNS) == string::npos && vargs[0].symbol().find_first_not_of(SIGNS) != string::npos) {
+	if(vargs[1].number().getBoolean() || (vargs[0].symbol().find_first_not_of(SPACES "0123456789.:" SIGNS) == string::npos && vargs[0].symbol().find_first_not_of(SIGNS) != string::npos)) {
 		CALCULATOR->parse(&mstruct, vargs[0].symbol(), eo.parse_options);
 		PrintOptions po; po.base = BASE_BIJECTIVE_26;
 		mstruct.eval(eo);
@@ -1951,14 +1955,16 @@ int BijectiveFunction::calculate(MathStructure &mstruct, const MathStructure &va
 	CALCULATOR->parse(&mstruct, vargs[0].symbol(), po);
 	return 1;
 }
-BinaryDecimalFunction::BinaryDecimalFunction() : MathFunction("bcd", 1, 2) {
+BinaryDecimalFunction::BinaryDecimalFunction() : MathFunction("bcd", 1, 3) {
 	setArgumentDefinition(1, new TextArgument());
 	setArgumentDefinition(2, new BooleanArgument());
 	setDefaultValue(2, "1");
+	setArgumentDefinition(3, new BooleanArgument());
+	setDefaultValue(3, "0");
 }
 int BinaryDecimalFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	bool b_packed = vargs[1].number().getBoolean();
-	if(vargs[0].symbol().find_first_of("23456789") != string::npos) {
+	if(vargs[2].number().getBoolean() || vargs[0].symbol().find_first_of("23456789") != string::npos) {
 		CALCULATOR->parse(&mstruct, vargs[0].symbol(), eo.parse_options);
 		PrintOptions po; po.base = BASE_BINARY_DECIMAL; po.base_display = BASE_DISPLAY_NORMAL;
 		mstruct.eval(eo);
