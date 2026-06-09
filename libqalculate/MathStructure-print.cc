@@ -3659,16 +3659,220 @@ void replace_latex_sub(string &str, bool do_text = false) {
 
 string get_latex_name(ExpressionItem *o, const PrintOptions &po, bool b_plural = false, bool *abbreviated = NULL) {
 	bool ref = po.use_reference_names || (o->type() == TYPE_UNIT && po.preserve_format && ((Unit*) o)->isCurrency());
-	const ExpressionName *ename = &o->preferredDisplayName(po.abbreviate_names, true, b_plural, ref, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
+	const ExpressionName *ename = &o->preferredDisplayName(true, true, b_plural, ref, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
 	string str = ename->formattedName(o->type(), !po.use_reference_names, true, false, true, true);
 	if(!test_fix_latex_name(str) && ename->unicode) {
-		ename = &o->preferredDisplayName(po.abbreviate_names, false, b_plural, ref, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
+		ename = &o->preferredDisplayName(true, false, b_plural, ref, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
 		str = ename->formattedName(o->type(), !po.use_reference_names, true, false, true, true);
 		test_fix_latex_name(str);
 	}
 	if(abbreviated) *abbreviated = ename->abbreviation;
 	replace_latex_sub(str, o->type() == TYPE_VARIABLE);
 	return str;
+}
+
+string get_latex_unit(const MathStructure &m, const PrintOptions &po, bool b_plural = false, bool div = false) {
+	string str, pstr;
+	Unit *u = NULL; Prefix *prefix = NULL;
+	if(m.isUnit()) {u = m.unit(); prefix = m.prefix();}
+	else {u = m[0].unit(); prefix = m[0].prefix();}
+	string name = u->referenceName(), pname;
+	int p = 0;
+	if(prefix) {
+		if(prefix->type() == PREFIX_DECIMAL) {
+			p = ((DecimalPrefix*) prefix)->exponent();
+			if(p == -30) {pname = "q"; pstr = "\\quecto";}
+			else if(p == -27) {pname = "r"; pstr = "\\ronto";}
+			else if(p == -24) {pname = "y"; pstr = "\\yocto";}
+			else if(p == -21) {pname = "z"; pstr = "\\zepo";}
+			else if(p == -18) {pname = "a"; pstr = "\\atto";}
+			else if(p == -15) {pname = "f"; pstr = "\\femto";}
+			else if(p == -12) {pname = "p"; pstr = "\\pico";}
+			else if(p == -9) {pname = "n"; pstr = "\\nano";}
+			else if(p == -6) {pname = "u"; pstr = "\\micro";}
+			else if(p == -3) {pname = "m"; pstr = "\\milli";}
+			else if(p == -2) {pname = "c"; pstr = "\\centi";}
+			else if(p == -1) {pname = "d"; pstr = "\\deci";}
+			else if(p == 1) {pname = "da"; pstr = "\\deca";}
+			else if(p == 2) {pname = "h"; pstr = "\\hecto";}
+			else if(p == 3) {pname = "k"; pstr = "\\kilo";}
+			else if(p == 6) {pname = "M"; pstr = "\\mega";}
+			else if(p == 9) {pname = "G"; pstr = "\\giga";}
+			else if(p == 12) {pname = "T"; pstr = "\\tera";}
+			else if(p == 15) {pname = "P"; pstr = "\\peta";}
+			else if(p == 18) {pname = "E"; pstr = "\\exa";}
+			else if(p == 21) {pname = "Z"; pstr = "\\zetta";}
+			else if(p == 24) {pname = "Y"; pstr = "\\yotta";}
+			else if(p == 27) {pname = "R"; pstr = "\\ronna";}
+			else if(p == 30) {pname = "Q"; pstr = "\\quetta";}
+		} else if(prefix->type() == PREFIX_BINARY) {
+			p = ((BinaryPrefix*) prefix)->exponent();
+			if(p == 10) {pname = "Ki"; pstr = "\\kibi";}
+			else if(p == 20) {pname = "Mi"; pstr = "\\mebi";}
+			else if(p == 30) {pname = "Gi"; pstr = "\\gibi";}
+			else if(p == 40) {pname = "Ti"; pstr = "\\tebi";}
+			else if(p == 50) {pname = "Pi"; pstr = "\\pebi";}
+			else if(p == 60) {pname = "Ei"; pstr = "\\exbi";}
+			else if(p == 70) {pname = "Zi"; pstr = "\\zebi";}
+			else if(p == 80) {pname = "Yi"; pstr = "\\yobi";}
+			p = 1000;
+		} else {
+			p = 1000;
+		}
+	}
+	if(name == "g") {
+		if(p <= 3 && p >= -15 && p % 3 == 0) {str = "\\"; str += pname; str += name; p = 0;}
+		else str = "\\gram";
+	} else if(name == "m") {
+		if(p <= 3 && p >= -12 && (p < 0 || p % 3 == 0)) {str = "\\"; str += pname; str += name; p = 0;}
+		else str = "\\metre";
+	} else if(name == "s") {
+		if(p < 0 && p >= -18 && p % 3 == 0) {str = "\\"; str += pname; str += name; p = 0;}
+		else str = "\\second";
+	} else if(name == "mol") {
+		if(p <= 3 && p >= -15 && p % 3 == 0) {str = "\\"; str += pname; str += name; p = 0;}
+		else str = "\\mole";
+	} else if(name == "A") {
+		if(p <= 3 && p >= -12 && p % 3 == 0) {str = "\\"; str += pname; str += name; p = 0;}
+		else str = "\\ampere";
+	} else if(name == "L") {
+		if(p <= 2 && p >= -12 && (p == 2 || p % 3 == 0)) {str = "\\"; str += pname; str += name; p = 0;}
+		else str = "\\litre";
+	} else if(name == "Hz") {
+		if(p <= 12 && p >= -3 && p % 3 == 0) {str = "\\"; str += pname; str += name; p = 0;}
+		else str = "\\hertz";
+	} else if(name == "N") {
+		if(p <= 6 && p >= -3 && p % 3 == 0) {str = "\\"; str += pname; str += name; p = 0;}
+		else str = "\\newton";
+	} else if(name == "Pa") {
+		if(p <= 9 && p >= 0 && p % 3 == 0) {str = "\\"; str += pname; str += name; p = 0;}
+		else str = "\\pascal";
+	} else if(name == "ohm") {
+		if(p <= 6 && p >= -3 && p % 3 == 0) {str = "\\"; str += pname; str += name; p = 0;}
+		else str = "\\ohm";
+	} else if(name == "V") {
+		if(p <= 3 && p >= -12 && p % 3 == 0) {str = "\\"; str += pname; str += name; p = 0;}
+		else str = "\\volt";
+	} else if(name == "W") {
+		if(p <= 9 && p >= -9 && p % 3 == 0) {str = "\\"; str += pname; str += name; p = 0;}
+		else str = "\\watt";
+	} else if(name == "J") {
+		if(p <= 3 && p >= -6 && p % 3 == 0) {str = "\\"; str += pname; str += name; p = 0;}
+		else str = "\\joule";
+	} else if(name == "eV") {
+		if(p <= 12 && p >= -3 && p % 3 == 0) {str = "\\"; str += pname; str += name; p = 0;}
+		else str = "\\electronvolt";
+	} else if(name == "F") {
+		if(p <= 0 && p >= -15 && p % 3 == 0) {str = "\\"; str += pname; str += name; p = 0;}
+		else str = "\\farad";
+	} else if(name == "H") {
+		if(p <= 0 && p >= -15 && p % 3 == 0) {str = "\\"; str += pname; str += name; p = 0;}
+		else str = "\\henry";
+	} else if(name == "C") {
+		if(p <= 0 && p >= -9 && p % 3 == 0) {str = "\\"; str += pname; str += name; p = 0;}
+		else str = "\\coulomb";
+	} else if(name == "T") {
+		if(p <= 0 && p >= -6 && p % 3 == 0) {str = "\\"; str += pname; str += name; p = 0;}
+		else str = "\\tesla";
+	} else if(name == "K") {
+		if(p == 0) {str = "\\"; str += pname; str += name; p = 0;}
+		else str = "\\kelvin";
+	} else if(name == "bel") {
+		if(p == -1) {str = "\\dB"; p = 0;}
+		else str = "\\bel";
+	} else if(name == "a") {
+		if(p == 2) {str = "\\hectare"; p = 0;}
+	} else if(name == "cd") str = "\\candela";
+	else if(name == "Bq") str = "\\bequerel";
+	else if(name == "oC") str = "\\degreeCelsius";
+	else if(name == "Gy") str = "\\gray";
+	else if(name == "lm") str = "\\lumen";
+	else if(name == "kat") str = "\\katal";
+	else if(name == "lx") str = "\\lux";
+	else if(name == "rad") str = "\\radian";
+	else if(name == "S") str = "\\siemens";
+	else if(name == "Sv") str = "\\sievert";
+	else if(name == "sr") str = "\\steradian";
+	else if(name == "Wb") str = "\\weber";
+	else if(name == "au") str = "\\astronomicalunit";
+	else if(name == "Da") str = "\\dalton";
+	else if(name == "d") str = "\\day";
+	else if(name == "ha") str = "\\hectare";
+	else if(name == "dB") str = "\\decibel";
+	else if(name == "hour") str = "\\hour";
+	else if(name == "arcmin") str = "\\arcminute";
+	else if(name == "min") str = "\\minute";
+	else if(name == "arcsec") str = "\\arcsecond";
+	else if(name == "Np") str = "\\neper";
+	else if(name == "t") str = "\\tonne";
+	bool abbreviated = true;
+	if(str.empty()) {
+		str = get_latex_name(m.unit(), po, b_plural, &abbreviated);
+	}
+	if(p != 0) {
+		if(!pstr.empty()) {
+			if(str.empty() || str[0] != '\\') str.insert(0, " ");
+			str.insert(0, pstr);
+		} else {
+			const ExpressionName *ename = &prefix->preferredDisplayName(abbreviated, true, b_plural, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
+			string str2 = ename->formattedName(-1, false, true, false, true, true);
+			if(!test_fix_latex_name(str2) && ename->unicode) {
+				ename = &prefix->preferredDisplayName(abbreviated, false, b_plural, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
+				str2 = ename->formattedName(-1, false, true, false, true, true);
+				test_fix_latex_name(str2);
+			}
+			replace_latex_sub(str2, false);
+			str.insert(0, str2);
+		}
+	}
+	if(div) {
+		if(str.empty() || str[0] != '\\') str.insert(0, " ");
+		str.insert(0, "\\per");
+	}
+	if(m.isPower() && !m[1].isOne()) {
+		if(m[1].number() == 2) {
+			str += "\\squared";
+		} else if(m[1].number() == 3) {
+			str += "\\cubed";
+		} else if(m[1].number() == -1 && !div) {
+			if(str.empty() || str[0] != '\\') str.insert(0, " ");
+			str.insert(0, "\\per");
+		} else if(m[1].number() == -2 && !div) {
+			if(str.empty() || str[0] != '\\') str.insert(0, " ");
+			str.insert(0, "\\per");
+			str += "\\squared";
+		} else if(m[1].number() == -3 && !div) {
+			if(str.empty() || str[0] != '\\') str.insert(0, " ");
+			str.insert(0, "\\per");
+			str += "\\cubed";
+		} else {
+			PrintOptions po2 = po;
+			po2.exp_display = EXP_LOWERCASE_E;
+			po2.digit_grouping = DIGIT_GROUPING_NONE;
+			po2.decimalpoint_sign = ".";
+			str += "\\tothe{";
+			str += m.print(po2, false, false, TAG_TYPE_LATEX);
+			str += "}";
+		}
+	}
+	return str;
+}
+
+string get_latex_units(const MathStructure &m, size_t first_unit, const PrintOptions &po, bool div = false) {
+	if(m.isUnit() || m.isUnit_exp()) {
+		return get_latex_unit(m, po, m.isPlural(), div);
+	}
+	if(!m.isMultiplication() && !m.isDivision() && !m.isInverse()) return "";
+	bool use_dot = false;
+	string print_str;
+	for(size_t i = first_unit; i < m.size(); i++) {
+		if(m.isInverse() || (m.isDivision() && i == 1)) div = !div;
+		string str = get_latex_units(m[i], 0, po, div);
+		if(!use_dot && !str.empty() && (str[0] != '\\' || str.find(" ") != string::npos)) use_dot = true;
+		if(i > first_unit && use_dot && str.find("\\per") != 0) print_str += ".";
+		print_str += str;
+	}
+	return print_str;
 }
 
 #define EXP_MODE_10 (po.exp_display == EXP_POWER_OF_10 || (po.exp_display == EXP_DEFAULT && !po.lower_case_e))
@@ -4067,7 +4271,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				print_str += CHILD(1)[0].print(po, format, colorize, tagtype, ips_n);
 				break;
 			}
-			if(format && tagtype == TAG_TYPE_LATEX && SIZE >= 2 && is_unit_multiexp(LAST)) {
+			if(format && tagtype == TAG_TYPE_LATEX && SIZE >= 2 && is_unit_multiexp_strict(LAST)) {
 				size_t first_unit = SIZE - 1;
 				while(first_unit > 0 && is_unit_multiexp(CHILD(first_unit - 1))) first_unit--;
 				if(first_unit == 1 && po.base == 10 && CHILD(0).isNumber()) {
@@ -4078,35 +4282,30 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					po2.decimalpoint_sign = ".";
 					print_str += CHILD(0).print(po2, false, false, TAG_TYPE_LATEX, ips_n);
 					print_str += "}";
-				} else if(first_unit > 0) {
-					print_str += "\\qty[parse-numbers=false]{";
-					if(first_unit > 1) {
+				} else if(first_unit > 1) {
 						MathStructure mmul;
 						mmul.setType(STRUCT_MULTIPLICATION);
 						for(size_t i = 0; i < first_unit; i++) mmul.addChild(CHILD(i));
-						print_str += mmul.print(po, format, colorize, TAG_TYPE_LATEX, ips_n);
-					} else {
+						if(mmul.containsType(STRUCT_UNIT, false, false, false) <= 0) {
+							print_str += "\\qty[parse-numbers=false]{";
+							print_str += mmul.print(po, format, colorize, TAG_TYPE_LATEX, ips_n);
+							print_str += "}";
+						}
+				} else if(first_unit == 1) {
+					if(CHILD(0).containsType(STRUCT_UNIT, false, false, false) <= 0) {
+						print_str += "\\qty[parse-numbers=false]{";
 						print_str += CHILD(0).print(po, format, colorize, TAG_TYPE_LATEX, ips_n);
+						print_str += "}";
 					}
-					print_str += "}";
 				} else {
 					print_str += "\\unit";
 				}
-				print_str += "{";
-				PrintOptions po2 = po;
-				po2.division_sign = DIVISION_SIGN_SLASH;
-				po2.multiplication_sign = MULTIPLICATION_SIGN_ASTERISK;
-				po2.use_unicode_signs = UNICODE_SIGNS_WITHOUT_EXPONENTS;
-				for(size_t i = first_unit; i < SIZE; i++) {
-					if(i > first_unit) print_str += ".";
-					ips_n.depth = 1000;
-					string str = CHILD(i).print(po2, false, false, TAG_TYPE_LATEX, ips_n);
-					gsub("*", ".", str);
-					gsub(SIGN_MIDDLEDOT, ".", str);
-					print_str += str;
+				if(!print_str.empty()) {
+					print_str += "{";
+					print_str += get_latex_units(*this, first_unit, po);
+					print_str += "}";
+					break;
 				}
-				print_str += "}";
-				break;
 			}
 			bool b_units = false;
 			int b_colorize_units = 0;
@@ -4235,7 +4434,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				print_str = "\\frac{";
 				print_str += m_one.print(po, format, colorize, tagtype, ips_n);
 				print_str += "}{";
-				print_str += CHILD(1).print(po, format, colorize, tagtype, ips_n);
+				print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
 				print_str += "}";
 				break;
 			}
@@ -4689,24 +4888,10 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			break;
 		}
 		case STRUCT_UNIT: {
-			if((format || ips.depth > 1000) && tagtype == TAG_TYPE_LATEX) {
-				if(ips.depth == 0) print_str += "\\unit{";
-				bool abbreviated = false;
-				string str = get_latex_name(o_unit, po, b_plural, &abbreviated);
-				if(o_prefix) {
-					const ExpressionName *ename = &o_prefix->preferredDisplayName(abbreviated, true, b_plural, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
-					string str2 = ename->formattedName(-1, false, true, false, true, true);
-					if(!test_fix_latex_name(str2) && ename->unicode) {
-						ename = &o_prefix->preferredDisplayName(abbreviated, false, b_plural, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
-						str2 = ename->formattedName(-1, false, true, false, true, true);
-						test_fix_latex_name(str2);
-					}
-					replace_latex_sub(str2, false);
-					print_str += str2;
-				}
-				print_str += str;
-				gsub("\\mu ", "\\micro ", print_str);
-				if(ips.depth == 0) print_str += "}";
+			if(format && tagtype == TAG_TYPE_LATEX) {
+				print_str += "\\unit{";
+				print_str += get_latex_unit(*this, po, b_plural, false);
+				print_str += "}";
 				break;
 			}
 			const ExpressionName *ename = &o_unit->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, b_plural, po.use_reference_names || (po.preserve_format && o_unit->isCurrency()), po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
@@ -4899,6 +5084,31 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 							print_str += xvar.print(po, false, colorize, tagtype, ips_n);
 						}
 						break;
+					} else if(o_function->id() == FUNCTION_ID_LIMIT && SIZE == 4 && (CHILD(3).isNumber() || (CHILD(3).isNegate() && CHILD(3)[0].isNumber()))) {
+						print_str += "\\lim";
+						print_str += "_{";
+						MathStructure xvar(CHILD(2));
+						if(xvar.isUndefined()) {
+							if(CHILD(0).isVariable() && CHILD(0).variable()->isKnown()) xvar.set(((KnownVariable*) CHILD(0).variable())->get().find_x_var(), true);
+							else xvar.set(CHILD(0).find_x_var(), true);
+						}
+						if(!xvar.isUndefined()) {
+							print_str += xvar.print(po, false, colorize, tagtype, ips_n);
+							print_str += " \\to ";
+						}
+						print_str += CHILD(1).print(po, false, colorize, tagtype, ips_n);
+						if(CHILD(3).isNegate()) {
+							if(CHILD(3)[0].number().isPositive()) print_str += "-";
+							else if(CHILD(3)[0].number().isNegative()) print_str += "+";
+						} else {
+							if(CHILD(3).number().isPositive()) print_str += "+";
+							else if(CHILD(3).number().isNegative()) print_str += "-";
+						}
+						print_str += "}";
+						print_str += "\\left(";
+						print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
+						print_str += "\\right)";
+						break;
 					} else if(o_function->id() == FUNCTION_ID_CEIL && SIZE == 1) {
 						print_str += "\\lceil";
 						print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
@@ -4912,9 +5122,42 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 					}
 				}
 				if(format && tagtype == TAG_TYPE_LATEX) {
-					print_str += "\\operatorname{";
-					print_str += get_latex_name(o_function, po);
-					print_str += "}";
+					switch(o_function->id()) {
+						case FUNCTION_ID_ACOS: {print_str += "\\arccos"; break;}
+						case FUNCTION_ID_ASIN: {print_str += "\\arcsin"; break;}
+						case FUNCTION_ID_ATAN: {print_str += "\\arctan"; break;}
+						case FUNCTION_ID_ARG: {print_str += "\\arg"; break;}
+						case FUNCTION_ID_COS: {print_str += "\\cos"; break;}
+						case FUNCTION_ID_COSH: {print_str += "\\cosh"; break;}
+						case FUNCTION_ID_DETERMINANT: {print_str += "\\det"; break;}
+						case FUNCTION_ID_EXP: {print_str += "\\exp"; break;}
+						case FUNCTION_ID_GCD: {print_str += "\\gcd"; break;}
+						case FUNCTION_ID_LOG: {print_str += "\\ln"; break;}
+						case FUNCTION_ID_LOGN: {print_str += "\\log"; break;}
+						case FUNCTION_ID_MAX: {print_str += "\\max"; break;}
+						case FUNCTION_ID_MIN: {print_str += "\\min"; break;}
+						case FUNCTION_ID_SIN: {print_str += "\\sin"; break;}
+						case FUNCTION_ID_SINH: {print_str += "\\sinh"; break;}
+						case FUNCTION_ID_TAN: {print_str += "\\tan"; break;}
+						case FUNCTION_ID_TANH: {print_str += "\\tanh"; break;}
+						default: {
+							if(o_function->referenceName() == "sec") {
+								print_str += "\\sec";
+							} else if(o_function->referenceName() == "csc") {
+								print_str += "\\csc";
+							} else if(o_function->referenceName() == "cot") {
+								print_str += "\\cot";
+							} else if(o_function->referenceName() == "coth") {
+								print_str += "\\coth";
+							} else if(o_function->referenceName() == "log10") {
+								print_str += "\\lg";
+							} else {
+								print_str += "\\operatorname{";
+								print_str += get_latex_name(o_function, po);
+								print_str += "}";
+							}
+						}
+					}
 				} else {
 					const ExpressionName *ename = &o_function->preferredDisplayName(po.abbreviate_names, po.use_unicode_signs, false, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
 					bool b_nous = false;

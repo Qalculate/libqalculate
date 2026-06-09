@@ -1968,7 +1968,11 @@ void get_latex_args(const string &str, size_t &i, string *s1 = NULL, string *s2 
 	int in_sqb = 0, in_cub = 0;
 	size_t index = 0, cub_index = 0;
 	for(; i < str.length(); i++) {
-		if(index == 0 && str[i] == '[') {
+		if(index == 0 && str[i] == '\\' && str.find("limits", i + 1) == i + 1) {
+			i += 6;
+		} else if(index == 0 && str[i] == '\\' && str.find("nolimits", i + 1) == i + 1) {
+			i += 8;
+		} else if(index == 0 && str[i] == '[') {
 			if(!in_sqb) cub_index = i;
 			in_sqb++;
 		} else if(index == 0 && in_sqb && str[i] == ']') {
@@ -2108,11 +2112,12 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 				else if(s == "candela") snew = "cd";
 				else if(s == "kelvin") snew = "K";
 				else if(s == "kilogram") snew = "kg";
-				else if(s == "metre") snew = "m";
+				else if(s == "gram") snew = "g";
+				else if(s == "metre" || s == "meter") snew = "m";
 				else if(s == "mole") snew = "mol";
 				else if(s == "second") snew = "s";
 				else if(s == "becquerel") snew = "Bq";
-				else if(s == "degreeCelcius") snew = "oC";
+				else if(s == "degreeCelsius") snew = "oC";
 				else if(s == "coulomb") snew = "C";
 				else if(s == "farad") snew = "F";
 				else if(s == "gray") snew = "Gy";
@@ -2162,7 +2167,9 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 				else if(s == "elementarycharge") snew = "e_unit";
 				else if(s == "hartree") snew = "Ha";
 				else if(s == "planckbar") snew = "planck_unit";
+				else if(s == "kWh") snew = "kWh";
 				else if(CALCULATOR->getPrefix(s)) {snew = s; nonunit = true;}
+				else if(s == "deka") {snew = "deca"; nonunit = true;}
 				else {
 					ParseOptions po;
 					MathStructure mtest;
@@ -2273,7 +2280,7 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 					get_latex_args(str, i2, &s1);
 					if(s != "phantom" || !s1.empty()) snew = " ";
 				} else if(!symbols_only) {
-					if(s == "displaystyle" || s == "textstyle" || s == "scriptstyle" || s == "scriptscriptstyle" || s == "left" || s == "right" || s == "bigl" || s == "biggl" || s == "Bigl" || s == "Biggl") snew = "";
+					if(s == "displaystyle" || s == "textstyle" || s == "scriptstyle" || s == "scriptscriptstyle" || s == "left" || s == "right" || s == "bigl" || s == "biggl" || s == "Bigl" || s == "Biggl" || s == "limits" || s == "nolimits") snew = "";
 					else if(s == "text" || s == "mbox") {
 						get_latex_args(str, i2, &snew);
 						remove_blank_ends(snew);
@@ -2284,17 +2291,53 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 					} else if(s == "mathrm" || s == "mathbf" || s == "mathit" || s == "mathcal" || s == "mathbb" || s == "mathfrak" || s == "mathsf" || s == "mathtt" || s == "boxed") {
 						get_latex_args(str, i2, &snew);
 						parse_latex_string(snew, false, false, true);
-					} else if(s == "arccos" || s == "arcsin" || s == "arctan" || s == "arg" || s == "cos" || s == "cosh" || s == "cot" || s == "coth" || s == "csc" || s == "det" || s == "exp" || s == "gcd" || s == "lim" || s == "lg" || s == "ln" || s == "log" || s == "max" || s == "min" || s == "sec" || s == "sin" || s == "sinh" || s == "tan" || s == "tanh") {
-						if(s == "lim") s = "limit";
+					} else if(s == "arccos" || s == "arcsin" || s == "arctan" || s == "arg" || s == "cos" || s == "cosh" || s == "cot" || s == "coth" || s == "csc" || s == "det" || s == "exp" || s == "gcd" || s == "lg" || s == "ln" || s == "log" || s == "max" || s == "min" || s == "sec" || s == "sin" || s == "sinh" || s == "tan" || s == "tanh") {
 						snew = s; snew += " ";
 					} else if(s == "deg" || s == "hom" || s == "inf" || s == "dim" || s == "inflim" || s == "ker" || s == "liminf" || s == "limsup" || s == "Pr" || s == "projlim" || s == "sup" || s == "varlimsup" || s == "varliminf" || s == "varprojlim" || s == "varinjlim") {
 						CALCULATOR->error(true, "Unsupported LaTeX command/macro %s.", (string("\\") + s).c_str(), NULL);
-					} else if(s == "frac" || s == "dfrac" || s == "tfrac") {
+					} else if(s == "frac" || s == "dfrac" || s == "tfrac" || s == "cfrac") {
 						string s1, s2;
 						get_latex_args(str, i2, &s1, &s2);
 						parse_latex_string(s1);
 						parse_latex_string(s2);
 						snew = "("; snew += s1; snew += ")/("; snew += s2; snew += ")";
+					} else if(s == "lim") {
+						string s1, s2;
+						get_latex_args(str, i2, &s1, NULL, NULL, true);
+						size_t i3 = s1.find("\\to");
+						int sgn = 0;
+						if(i3 != string::npos) {
+							s2 = s1.substr(0, i3);
+							s1 = s1.substr(i3 + 3);
+						}
+						remove_blank_ends(s1);
+						if(!s1.empty() && s1[s1.length()] == '+') sgn = 1;
+						else if(!s1.empty() && s1[s1.length()] == '-') sgn = -1;
+						if(sgn != 0) s1.erase(s1.length() - 1, 1);
+						parse_latex_string(s1);
+						parse_latex_string(s2);
+						snew = "limit(";
+						string sarg = str.substr(i2);
+						parse_latex_string(sarg);
+						snew += sarg;
+						snew += ",";
+						snew += s1;
+						if(!s2.empty() || sgn != 0) {
+							snew += ",";
+							snew += s2;
+						}
+						if(sgn != 0) {
+							snew += ",";
+							snew += i2s(sgn);
+						}
+						snew += ")";
+						i2 = str.length();
+					} else if(s == "binom" || s == "dbinom" || s == "tbinom") {
+						string s1, s2;
+						get_latex_args(str, i2, &s1, &s2);
+						parse_latex_string(s1);
+						parse_latex_string(s2);
+						snew = "binomial("; snew += s1; snew += ","; snew += s2; snew += ")";
 					} else if(s == "operatorname") {
 						get_latex_args(str, i2, &snew);
 						parse_latex_string(snew, false, true);
