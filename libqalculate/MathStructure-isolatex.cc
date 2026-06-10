@@ -3148,6 +3148,145 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				}
 			}
 
+			if(CHILD(0).size() == 2 && CHILD(1).isZero() && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS)) {
+				// a*x^b+c*d^x=0 => -b*lambertw(-root(-c/a, b)*ln(d)/b)/ln(d) || -b*lambertw(root(-c/a, b)*ln(d)/b)/ln(d) || -b*lambertw(-root(-c/a, b)*ln(d)/b, -1)/ln(d) || -b*lambertw(root(-c/a, b)*ln(d)/b, -1)/ln(d)
+				MathStructure *m1 = NULL, *m2 = NULL;
+				size_t i_x1 = 0, i_x2 = 0;
+				if(CHILD(0)[0].isPower()) {
+					m1 = &CHILD(0)[0];
+				} else if(CHILD(0)[0].isMultiplication()) {
+					for(size_t i = 0; i < CHILD(0)[0].size(); i++) {
+						if(CHILD(0)[0][i].contains(x_var)) {
+							if(m1) {m1 = NULL; break;}
+							if(CHILD(0)[0][i].isPower()) m1 = &CHILD(0)[0][i];
+							i_x1 = i;
+							break;
+						}
+					}
+				}
+				if(m1 && CHILD(0)[1].isPower()) {
+					m2 = &CHILD(0)[1];
+				} else if(m1 && CHILD(0)[1].isMultiplication()) {
+					for(size_t i = 0; i < CHILD(0)[1].size(); i++) {
+						if(CHILD(0)[1][i].contains(x_var)) {
+							if(m2) {m2 = NULL; break;}
+							if(CHILD(0)[1][i].isPower()) m2 = &CHILD(0)[1][i];
+							i_x2 = i;
+						}
+					}
+				}
+				bool b_swap = false;
+				if(m1 && m2) {
+					if((*m1)[1].contains(x_var)) {
+						MathStructure *m = m2; m2 = m1; m1 = m;
+						b_swap = true;
+						size_t i = i_x2;
+						i_x2 = i_x1;
+						i_x1 = i;
+					}
+					if((*m1)[1].contains(x_var) || (*m2)[0].contains(x_var) || !(*m1)[0].equals((*m2)[1]) || !(*m1)[0].representsReal()) {
+						m1 = NULL; m2 = NULL; b_swap = false;
+					}
+					if(b_swap) CHILD(0).swapChildren(1, 2);
+				}
+				if(m1 && m2) {
+					MathStructure m((*m1)[1]);
+					MathStructure mlog(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &(*m2)[0], NULL);
+					mlog.calculateFunctions(eo);
+					MathStructure mroot;
+					bool b_int = false, b_two;
+					if(CHILD(0)[0].isPower() && CHILD(0)[1].isPower()) {
+						mroot = mlog;
+					} else {
+						if(CHILD(0)[1].isPower()) {
+							mroot.set(1, 1, 0);
+						} else {
+							mroot = CHILD(0)[1];
+							mroot.delChild(i_x2 + 1, true);
+							b_int = mroot.isMinusOne();
+							b_two = b_int && (*m1)[1].isNumber() && ((*m1)[1].number() == 2 || (*m1)[1].number() == 4);
+						}
+						mroot.negate();
+						if(!CHILD(0)[0].isPower()) {
+							mroot.multiply(CHILD(0)[0]);
+							mroot.last().delChild(i_x1 + 1, true);
+							mroot.last().inverse();
+							b_two = false;
+							b_int = false;
+						} else if(b_int && !(*m1)[1].equals((*m2)[0])) {
+							b_int = false;
+							b_two = false;
+						}
+						mroot ^= m;
+						mroot.last().inverse();
+						mroot *= mlog;
+					}
+					mroot /= m;
+					MathStructure mroot3(mroot);
+					MathStructure mroot2;
+					if(b_two) {
+						mroot.set(4, 1, 0);
+						mroot2.set(2, 1, 0);
+					} else {
+						mroot.negate();
+						mroot.transformById(FUNCTION_ID_LAMBERT_W);
+						mroot2 = mroot;
+						mroot.addChild(m_zero);
+						mroot.calculateFunctions(eo);
+						mroot.multiply(m);
+						mroot.divide(mlog);
+						mroot.negate();
+						if(b_int) {
+							mroot2 = (*m1)[1];
+						} else {
+							mroot2.addChild(m_minus_one);
+							mroot2.calculateFunctions(eo);
+							mroot2.multiply(m);
+							mroot2.divide(mlog);
+							mroot2.negate();
+						}
+					}
+					mroot3.transformById(FUNCTION_ID_LAMBERT_W);
+					MathStructure mroot4(mroot3);
+					mroot4.addChild(m_minus_one);
+					mroot3.addChild(m_zero);
+					mroot3.calculateFunctions(eo);
+					mroot4.calculateFunctions(eo);
+					mroot3.multiply(m);
+					mroot3.divide(mlog);
+					mroot4.multiply(m);
+					mroot4.divide(mlog);
+					mroot3.negate();
+					mroot4.negate();
+					MathStructure mbak(*this);
+					CHILD(0).setToChild(1, true);
+					if(!CHILD(0).isPower()) CHILD(0).setToChild(i_x1 + 1, true);
+					CHILD(0).setToChild(1, true);
+					MathStructure *malt = new MathStructure(*this);
+					(*malt)[1] = mroot2;
+					MathStructure *malt2 = new MathStructure(*this);
+					(*malt2)[1] = mroot3;
+					MathStructure *malt3 = new MathStructure(*this);
+					(*malt3)[1] = mroot4;
+					CHILD(1) = mroot;
+					ComparisonType ct_comp_bak = ct_comp;
+					malt->isolate_x_sub(eo, eo2, x_var, NULL, depth + 1);
+					malt2->isolate_x_sub(eo, eo2, x_var, NULL, depth + 1);
+					malt3->isolate_x_sub(eo, eo2, x_var, NULL, depth + 1);
+					isolate_x_sub(eo, eo2, x_var, NULL, depth + 1);
+					add_nocopy(malt, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
+					addChild_nocopy(malt2);
+					addChild_nocopy(malt3);
+					calculatesub(eo2, eo, false);
+					if((isLogicalAnd() || isLogicalOr() || isComparison()) && test_comparisons(mbak, *this, x_var, eo, false, eo2.expand ? 1 : 2) < 0) {
+						set(mbak);
+					} else {
+						return true;
+					}
+
+				}
+				if(b_swap) CHILD(0).swapChildren(1, 2);
+			}
 
 			// abs(x)+x=a => -x+x=a || x+x=a; sgn(x)+x=a => -1+x=a || 0+x=a || 1+x=a
 			MathStructure *m = find_abs_sgn(CHILD(0), x_var);
