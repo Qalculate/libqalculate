@@ -2417,7 +2417,7 @@
       <title>Cooking</title>
       <unit type="alias">
         <title>Teaspoon</title>
-        <names>r:teaspoon,p:teaspoons</names>
+        <names>r:teaspoon,a:tsp,p:teaspoons</names>
         <base>
           <unit>L</unit>
           <relation>0.005</relation>
@@ -2437,7 +2437,7 @@
       </unit>
       <unit type="alias">
         <title>Tablespoon</title>
-        <names>r:tablespoon,p:tablespoons</names>
+        <names>r:tablespoon,a:tbsp,p:tablespoons</names>
         <base>
           <unit>teaspoon</unit>
           <relation>3</relation>
@@ -2446,13 +2446,56 @@
         </base>
       </unit>
       <unit type="alias">
-        <title>Cup (U.S.)</title>
+        <title>U.S. Teaspoon</title>
         <system>US</system>
+        <names>r:US_teaspoon,as:tsp_US,p:US_teaspoons</names>
+        <base>
+          <unit>fl_oz</unit>
+          <relation>1/6</relation>
+          <exponent>1</exponent>
+          <mix>1</mix>
+        </base>
+      </unit>
+      <unit type="alias">
+        <title>U.S. Dessertspoon</title>
+        <system>US</system>
+        <names>r:US_dessertspoon,p:US_dessertspoons</names>
+        <base>
+          <unit>US_teaspoon</unit>
+          <relation>2</relation>
+          <exponent>1</exponent>
+          <mix>2</mix>
+        </base>
+      </unit>
+      <unit type="alias">
+        <title>U.S. Tablespoon</title>
+        <system>US</system>
+        <names>r:US_tablespoon,as:tbsp_US,p:US_tablespoons</names>
+        <base>
+          <unit>US_teaspoon</unit>
+          <relation>3</relation>
+          <exponent>1</exponent>
+          <mix>1</mix>
+        </base>
+      </unit>
+      <unit type="alias">
+        <title>Cup (U.S. Legal)</title>
         <names>r-c:cup,p-c:cups</names>
         <base>
           <unit>L</unit>
-          <relation>0.2365882365</relation>
+          <relation>0.24</relation>
           <exponent>1</exponent>
+        </base>
+      </unit>
+      <unit type="alias">
+        <title>U.S. Cup</title>
+        <system>US</system>
+        <names>ras:cup_US,US_cup,p:US_cups</names>
+        <base>
+          <unit>US_tablespoon</unit>
+          <relation>16</relation>
+          <exponent>1</exponent>
+          <mix>1</mix>
         </base>
       </unit>
     </category>
