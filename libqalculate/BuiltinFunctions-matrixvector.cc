@@ -196,9 +196,9 @@ int ReshapeFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		}
 	}
 	if(rows * cols < elements) {
-		CALCULATOR->error(false, _("Elements where from the end of matrix/vector in %s()."), name().c_str(), NULL);
+		CALCULATOR->error(false, _("Elements were removed from the end of matrix/vector in %s()."), name().c_str(), NULL);
 	} else if(rows * cols > elements) {
-		CALCULATOR->error(false, _("Matrix/vector where expanded with zeroes in %s()."), name().c_str(), NULL);
+		CALCULATOR->error(false, _("Matrix/vector were expanded with zeroes in %s()."), name().c_str(), NULL);
 	}
 	return 1;
 }
@@ -553,7 +553,7 @@ int LimitsFunction::calculate(MathStructure &mstruct, const MathStructure &vargs
 		if((size_t) i2 - i1 + 1 > mstruct.size()) {mstruct.resizeVector(i2 - i1 + 1, m_zero); expanded = true;}
 		if(mstruct.size() != (size_t) i2 - i1 + 1) return 0;
 	}
-	if(expanded) CALCULATOR->error(false, _("Matrix/vector where expanded with zeroes in %s()."), name().c_str(), NULL);
+	if(expanded) CALCULATOR->error(false, _("Matrix/vector were expanded with zeroes in %s()."), name().c_str(), NULL);
 	return 1;
 }
 AreaFunction::AreaFunction() : MathFunction("area", 2, 5) {
@@ -611,7 +611,7 @@ int AreaFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			mstruct[i].flipVector();
 		}
 	}
-	if(expanded) CALCULATOR->error(false, _("Matrix/vector where expanded with zeroes in %s()."), name().c_str(), NULL);
+	if(expanded) CALCULATOR->error(false, _("Matrix/vector were expanded with zeroes in %s()."), name().c_str(), NULL);
 	return 1;
 }
 ReplacePartFunction::ReplacePartFunction() : MathFunction("replacePart", 3, 6) {

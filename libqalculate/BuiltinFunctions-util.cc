@@ -2062,7 +2062,7 @@ void read_latex_num(string &str, bool cplx = false, bool angle = false) {
 void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = false, bool preserve_i = false) {
 	bool square = false, cubic = false;
 	for(size_t i = 0; i < str.size();) {
-		if(str[i] == '$' || str[i] == '{' || str[i] == '}') {
+		if(str[i] == '$' || str[i] == '{' || str[i] == '}' || str[i] == '&') {
 			str.erase(i, 1);
 		} else if(str[i] == '~') {
 			str[i] = ' ';
@@ -2221,7 +2221,7 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 				else if(s == "iota") {snew = "ι";}
 				else if(s == "kappa") {snew = "κ";}
 				else if(s == "lampda") {snew = "λ";}
-				else if(s == "mu") {snew = "μ";}
+				else if(s == "mu" || s == "textmu" || s == "micro") {snew = "μ";}
 				else if(s == "nu") {snew = "ν";}
 				else if(s == "xi") {snew = "ξ";}
 				else if(s == "pi") {snew = "π";}
@@ -2241,6 +2241,17 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 				else if(s == "varrho") {snew = "ϱ";}
 				else if(s == "varsigma") {snew = "ς";}
 				else if(s == "vartheta") {snew = "ϑ";}
+				else if(s == "varGamma") {snew = "Γ";}
+				else if(s == "varDelta") {snew = "Δ";}
+				else if(s == "varLambda") {snew = "Λ";}
+				else if(s == "varPhi") {snew = "Φ";}
+				else if(s == "varPi") {snew = "Π";}
+				else if(s == "varPsi") {snew = "Ψ";}
+				else if(s == "varSigma") {snew = "Σ";}
+				else if(s == "varTheta") {snew = "Θ";}
+				else if(s == "varUpsilon") {snew = "Υ";}
+				else if(s == "varXi") {snew = "Ξ";}
+				else if(s == "varOmega") {snew = "Ω";}
 				else if(s == "infty") {snew = "∞";}
 				else if(s == "hbar") {snew = "ℏ";}
 				else if(s == "haslash") {snew = "ℏ";}
@@ -2249,12 +2260,30 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 				else if(s == "re") {snew = "ℜ";}
 				else if(s == "im") {snew = "ℑ";}
 				else if(s == "pm") {snew = "+/-";}
-				else if(s == "\\&") {snew = "&";}
-				else if(s == "\\{") {snew = "{";}
-				else if(s == "\\}") {snew = "}";}
+				else if(s == "AA") {snew = "Å";}
+				else if(s == "AE") {snew = "Æ";}
+				else if(s == "O") {snew = "Ø";}
+				else if(s == "OE") {snew = "Œ";}
+				else if(s == "aa") {snew = "å";}
+				else if(s == "ae") {snew = "æ";}
+				else if(s == "o") {snew = "ø";}
+				else if(s == "oe") {snew = "œ";}
+				else if(s == "celsius") {snew = "℃";}
+				else if(s == "degree") {snew = "°";}
+				else if(s == "perthousand" || s == "textperthousand") {snew = "‰";}
+				else if(s == "&") {snew = "&";}
+				else if(s == "{") {snew = "{";}
+				else if(s == "}") {snew = "}";}
+				else if(s == "%") {snew = "%";}
+				else if(s == "\\" || s == "*" || s == "[" || s == "]") {snew = " ";}
+				else if(s == "$" || s == "mathdollar" || s == "textdollar") {snew = "$";}
+				else if(s == "matheuro" || s == "texteuro") {snew = "€";}
+				else if(s == "mathsterling" || s == "textsterling" || s == "pounds") {snew = "£";}
+				else if(s == "mathunderscore" || s == "textunderscore" || s == "_") {snew = "_";}
 				else if(s == "times") {snew = "*";}
+				else if(s == "div") {snew = "/";}
 				else if(s == "colon") {snew = ":";}
-				else if(s == "dots" || s == "cdots" || s == "ldots" || s == "dotsb" || s == "dotsi" || s == "dotsm" || s == "dotso") {snew = "...";}
+				else if(s == "dots" || s == "cdots" || s == "ldots" || s == "dotsb" || s == "dotsi" || s == "dotsm" || s == "dotso" || s == "mathellipsis") {snew = "...";}
 				else if(s == "subseteq" || s == "subseteqq") {snew = "⊆";}
 				else if(s == "subsetneq" || s == "subsetneqq") {snew = "⊊";}
 				else if(s == "supseteq" || s == "supseteqq") {snew = "⊇";}
@@ -2265,22 +2294,25 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 				else if(s == "geq" || s == "geqq" || s == "geqslant") {snew = ">=";}
 				else if(s == "leq" || s == "leqq" || s == "leqslant") {snew = "<=";}
 				else if(s == "neq") {snew = "!=";}
-				else if(s == "rvert") {snew = "|";}
-				else if(s == "lvert") {snew = "|";}
+				else if(s == "rvert" || s == "lvert" || s == "vert" || s == "textbar") {snew = "|";}
+				else if(s == "|" || s == "lVert" || s == "rVert" || s == "Vert") {snew = "||";}
 				else if(s == "lfloor") {snew = "⌊";}
 				else if(s == "rfloor") {snew = "⌋";}
 				else if(s == "lceil") {snew = "⌈";}
 				else if(s == "rceil") {snew = "⌉";}
+				else if(s == "backslash" || s == "textbackslash") {snew = "\\";}
+				else if(s == "textless") {snew = "<";}
+				else if(s == "textgreater") {snew = ">";}
 				else if(s == "bmod" || s == "mod") {snew = "mod";}
 				else if(s == "qquad" || s == "quad" || s == "nobreakspace" || s == "thinspace" || s == "medspace" || s == "thickspace" || s == " ") snew = " ";
 				else if(s == "negthinspace" || s == "negmedspace" || s == "negthickspace") snew = "";
 				else if(s.empty()) snew = " ";
-				else if(s == "hspace" || s == "mspace" || s == "phantom") {
+				else if(s == "hspace" || s == "mspace" || s == "phantom" || s == "label" || s == "ref" || s == "displaybreak" || s == "pagebreak" || s == "intertext" || s == "shortintertext" || s == "tag") {
 					string s1;
 					get_latex_args(str, i2, &s1);
 					if(s != "phantom" || !s1.empty()) snew = " ";
 				} else if(!symbols_only) {
-					if(s == "displaystyle" || s == "textstyle" || s == "scriptstyle" || s == "scriptscriptstyle" || s == "left" || s == "right" || s == "bigl" || s == "biggl" || s == "Bigl" || s == "Biggl" || s == "limits" || s == "nolimits") snew = "";
+					if(s == "displaystyle" || s == "textstyle" || s == "scriptstyle" || s == "scriptscriptstyle" || s == "left" || s == "right" || s == "bigl" || s == "biggl" || s == "Bigl" || s == "Biggl" || s == "limits" || s == "nolimits" || s == "nobreakdash" || s == "notag") snew = "";
 					else if(s == "text" || s == "mbox") {
 						get_latex_args(str, i2, &snew);
 						remove_blank_ends(snew);
@@ -2288,7 +2320,7 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 							snew.insert(0, "\"");
 							snew += "\"";
 						}
-					} else if(s == "mathrm" || s == "mathbf" || s == "mathit" || s == "mathcal" || s == "mathbb" || s == "mathfrak" || s == "mathsf" || s == "mathtt" || s == "boxed") {
+					} else if(s == "mathrm" || s == "mathbf" || s == "mathit" || s == "mathcal" || s == "mathbb" || s == "mathfrak" || s == "mathsf" || s == "mathtt" || s == "boxed" || s == "smash") {
 						get_latex_args(str, i2, &snew);
 						parse_latex_string(snew, false, false, true);
 					} else if(s == "arccos" || s == "arcsin" || s == "arctan" || s == "arg" || s == "cos" || s == "cosh" || s == "cot" || s == "coth" || s == "csc" || s == "det" || s == "exp" || s == "gcd" || s == "lg" || s == "ln" || s == "log" || s == "max" || s == "min" || s == "sec" || s == "sin" || s == "sinh" || s == "tan" || s == "tanh") {
@@ -2427,6 +2459,8 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 						snew += ")";
 					} else if(s == "begin") {
 						get_latex_args(str, i2, &s);
+						remove_blank_ends(s);
+						if(!s.empty() && s[s.length() - 1] == '*') s.erase(s.length() - 1, 1);
 						if(s == "matrix" || s == "pmatrix" || s == "bmatrix" || s == "Bmatrix" || s == "vmatrix" || s == "Vmatrix" || s == "smallmatrix") {
 							size_t i3 = str.find(string("\\end{") + s + "}", i);
 							if(i3 == string::npos) i3 = str.length();
@@ -2437,11 +2471,16 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 							snew = "["; snew += matrix; snew += "]";
 							i2 = i3;
 							if(i2 < str.length()) i2 += s.length() + 6;
-						} else {
+						} else if(s == "alignat" || s == "alignedat") {
+							get_latex_args(str, i2, &s);
+						} else if(s != "align" && s != "gather" && s != "aligned" && s != "gathered" && s != "equation" && s != "subequations" && s != "split" && s != "multiline" && s != "flalign" && s != "cases") {
 							CALCULATOR->error(true, "Unsupported LaTeX command/macro %s.", (string("\\begin{") + s + "}").c_str(), NULL);
 						}
 					} else if(s == "end") {
 						get_latex_args(str, i2, &s);
+					} else if(s == "numberwithin") {
+						string s2;
+						get_latex_args(str, i2, &s, &s2);
 					} else if(s == "num" || s == "complexnum" || s == "numproduct" || s == "numlist") {
 						string opt;
 						get_latex_args(str, i2, &snew, NULL, &opt);

@@ -3636,6 +3636,9 @@ bool test_fix_latex_name(string &str) {
 	gsub("℧", "\\mho", str);
 	gsub("ℜ", "\\re", str);
 	gsub("ℑ", "\\im", str);
+	gsub("$", "\\$", str);
+	gsub("£", "\\pounds", str);
+	gsub("%", "\\%", str);
 	for(size_t i = 0; i < str.size(); i++) {
 		if((signed char) str[i] < 0) return false;
 	}
@@ -3661,13 +3664,19 @@ string get_latex_name(ExpressionItem *o, const PrintOptions &po, bool b_plural =
 	bool ref = po.use_reference_names || (o->type() == TYPE_UNIT && po.preserve_format && ((Unit*) o)->isCurrency());
 	const ExpressionName *ename = &o->preferredDisplayName(true, true, b_plural, ref, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
 	string str = ename->formattedName(o->type(), !po.use_reference_names, true, false, true, true);
-	if(!test_fix_latex_name(str) && ename->unicode) {
+	if(!test_fix_latex_name(str) && (o->type() != TYPE_UNIT || str != "Å")) {
 		ename = &o->preferredDisplayName(true, false, b_plural, ref, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
 		str = ename->formattedName(o->type(), !po.use_reference_names, true, false, true, true);
 		test_fix_latex_name(str);
 	}
 	if(abbreviated) *abbreviated = ename->abbreviation;
 	replace_latex_sub(str, o->type() == TYPE_VARIABLE);
+	for(size_t i = 0; i + 1 < str.size(); i++) {
+		if(str[i] == '_' && str[i + 1] != '{') {
+			str.insert(i, "\\");
+			i++;
+		}
+	}
 	return str;
 }
 

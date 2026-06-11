@@ -29,7 +29,6 @@
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #	include <windows.h>
-#	include <VersionHelpers.h>
 #	include <io.h>
 #endif
 #ifndef _WIN32
@@ -166,8 +165,6 @@ enum {
 #define EQUALS_IGNORECASE_AND_LOCAL(x,y,z)	(equalsIgnoreCase(x, y) || equalsIgnoreCase(x, z))
 #define EQUALS_IGNORECASE_AND_LOCAL_NR(x,y,z,a)	(equalsIgnoreCase(x, y a) || (x.length() == strlen(z) + strlen(a) && equalsIgnoreCase(x.substr(0, x.length() - strlen(a)), z) && equalsIgnoreCase(x.substr(x.length() - strlen(a)), a)))
 
-#define DO_WIN_FORMAT IsWindows10OrGreater()
-
 #ifdef _WIN32
 #	define DO_FORMAT (force_color > 0 || (force_color != 0 && colorize && interactive_mode))
 #else
@@ -292,6 +289,7 @@ void update_command_list() {
 		ADD_TO_COMMANDS("approximate", 0);
 		ADD_TO_COMMANDS("approx", 0);
 		ADD_TO_COMMANDS("factor", 0);
+		ADD_TO_COMMANDS("partial fraction", 0);
 		ADD_TO_COMMANDS("simplify", 0);
 		ADD_TO_COMMANDS("expand", 0);
 		ADD_TO_COMMANDS("mode", 0);
@@ -4266,9 +4264,6 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 
 #ifdef HAVE_LIBREADLINE
 void ask_autocalc() {
-#	ifdef _WIN32
-	if(!DO_WIN_FORMAT) return;
-#	endif
 	if(autocalc >= 0) return;
 	INIT_COLS
 	snprintf(buffer, 10000, _("%s now includes an option (controlled using \"%s\") to continuously display the result of the current expression as you type."), "Qalc", (string(_("set")) + " autocalc").c_str());
@@ -4944,10 +4939,8 @@ int main(int argc, char *argv[]) {
 #ifdef _WIN32
 	DWORD outMode = 0;
 	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-	if(DO_WIN_FORMAT) {
-		GetConsoleMode(hOut, &outMode);
-		SetConsoleMode(hOut, outMode | DISABLE_NEWLINE_AUTO_RETURN | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
-	}
+	GetConsoleMode(hOut, &outMode);
+	SetConsoleMode(hOut, outMode | DISABLE_NEWLINE_AUTO_RETURN | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 #endif
 
 #ifdef HAVE_LIBREADLINE
@@ -7140,7 +7133,7 @@ int main(int argc, char *argv[]) {
 	handle_exit();
 
 #ifdef _WIN32
-	if(DO_WIN_FORMAT) SetConsoleMode(hOut, outMode);
+	SetConsoleMode(hOut, outMode);
 #endif
 
 	if(unittest && retval != EXIT_FAILURE) {
@@ -9998,11 +9991,7 @@ void load_preferences() {
 	auto_update_exchange_rates = -1;
 	first_time = false;
 	
-#ifdef _WIN32
-	colorize = DO_WIN_FORMAT;
-#else
 	colorize = 1;
-#endif
 
 	FILE *file = NULL;
 #ifdef HAVE_LIBREADLINE
@@ -10078,7 +10067,7 @@ void load_preferences() {
 					indent_s.append(prompt_l, ' ');
 				} else if(svar == "colorize") {
 #ifdef _WIN32
-					if(version_numbers[0] > 3 || (version_numbers[0] == 3 && (version_numbers[1] > 13 || (version_numbers[1] == 13 && version_numbers[2] > 0))) || !DO_WIN_FORMAT) {
+					if(version_numbers[0] > 3 || (version_numbers[0] == 3 && (version_numbers[1] > 13 || (version_numbers[1] == 13 && version_numbers[2] > 0)))) {
 						colorize = v;
 					}
 #else

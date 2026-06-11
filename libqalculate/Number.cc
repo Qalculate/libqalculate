@@ -22,9 +22,6 @@
 #include <sstream>
 #include <string.h>
 #include "util.h"
-#ifdef _WIN32
-#	include <VersionHelpers.h>
-#endif
 
 using std::string;
 using std::cout;
@@ -200,10 +197,6 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 				if(do_thin_space == -1) {
 					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (THIN_SPACE, po.can_display_unicode_string_arg))) do_thin_space = 1;
 					else do_thin_space = 0;
-#ifdef _WIN32
-					// do not use thin space on Windows < 10
-					if(do_thin_space != 0 && !IsWindows10OrGreater()) do_thin_space = 0;
-#endif
 				}
 				while(i < str.length()) {
 					if(do_thin_space) {
@@ -226,10 +219,6 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 					if(do_thin_space == -1) {
 						if((po.digit_grouping == DIGIT_GROUPING_LOCALE && !CALCULATOR->local_digit_group_separator.empty()) || (po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (nobreak ? NNBSP : THIN_SPACE, po.can_display_unicode_string_arg)))) do_thin_space = 1;
 						else do_thin_space = 0;
-#ifdef _WIN32
-						// do not use thin space on Windows < 10
-						if(do_thin_space != 0 && !IsWindows10OrGreater()) do_thin_space = 0;
-#endif
 					}
 					if(do_thin_space) {
 						// thin space is preferred
@@ -13111,11 +13100,7 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 			} else {
 				bool nobreak = str.length() <= 20;
 				if(i_dp != string::npos && ((infinite_series == 1 && i_dp + po.decimalpoint().length() + 2 < str.length() - infinite_series) || (infinite_series > 1 && i_dp + po.decimalpoint().length() < str.length() - infinite_series))) {
-					if(po.use_unicode_signs
-#ifdef _WIN32
-					&& IsWindows10OrGreater()
-#endif
-					&& (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (nobreak ? NNBSP : THIN_SPACE, po.can_display_unicode_string_arg))) {
+					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (nobreak ? NNBSP : THIN_SPACE, po.can_display_unicode_string_arg))) {
 						str.insert(str.length() - (infinite_series == 1 ? 3 : infinite_series), nobreak ? NNBSP : THIN_SPACE);
 					} else {
 						str.insert(str.length() - (infinite_series == 1 ? 3 : infinite_series), " ");
