@@ -3190,6 +3190,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 				}
 				if(m1 && m2) {
+					CALCULATOR->beginTemporaryStopMessages();
 					MathStructure m((*m1)[1]);
 					MathStructure mlog(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &(*m2)[0], NULL);
 					mlog.calculateFunctions(eo);
@@ -3292,11 +3293,12 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					addChild_nocopy(malt3);
 					calculatesub(eo2, eo, false);
 					if((isLogicalAnd() || isLogicalOr() || isComparison()) && test_comparisons(mbak, *this, x_var, eo, false, eo2.expand ? 1 : 2) < 0) {
+						CALCULATOR->endTemporaryStopMessages();
 						set(mbak);
 					} else {
+						CALCULATOR->endTemporaryStopMessages(true);
 						return true;
 					}
-
 				}
 			}
 
@@ -3376,6 +3378,103 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				if(malt0) add_nocopy(malt0, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
 				calculatesub(eo2, eo, false);
 				return true;
+			}
+
+			if(CHILD(0).size() >= 2 && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS)) {
+				// ax^2+b*abs(x)=c, x is complex => replace re(x), or im(x) with zero
+				MathStructure *m_x = NULL;
+				for(size_t i = 0; i < CHILD(0).size(); i++) {
+					if(CHILD(0)[i].isMultiplication()) {
+						for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
+							if(CHILD(0)[i][i2].isFunction() && CHILD(0)[i][i2].function()->id() == FUNCTION_ID_ABS && CHILD(0)[i][i2].size() == 1 && CHILD(0)[i][i2].contains(x_var)) {
+								m_x = &CHILD(0)[i][i2][0];
+								break;
+							}
+						}
+					} else if(CHILD(0)[i].isFunction() && CHILD(0)[i].function()->id() == FUNCTION_ID_ABS && CHILD(0)[i].size() == 1 && CHILD(0)[i].contains(x_var)) {
+						m_x = &CHILD(0)[i][0];
+						break;
+					}
+				}
+				bool b_x2 = false;
+				if(m_x && !m_x->representsReal()) {
+					for(size_t i = 0; i < CHILD(0).size(); i++) {
+						if(CHILD(0)[i].isMultiplication()) {
+							bool b = false;
+							for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
+								if(CHILD(0)[i][i2].contains(x_var)) {
+									if(!b && CHILD(0)[i][i2].isFunction() && CHILD(0)[i][i2].function()->id() == FUNCTION_ID_ABS && CHILD(0)[i][i2].size() == 1 && m_x->equals(CHILD(0)[i][i2][0])) {
+										b = true;
+									} else if(!b && CHILD(0)[i][i2].isPower() && CHILD(0)[i][i2][1] == nr_two && CHILD(0)[i][i2][0].equals(*m_x)) {
+										b_x2 = true;
+										b = true;
+									} else {
+										b_x2 = false;
+										break;
+									}
+								}
+							}
+							if(!b) {
+								b_x2 = false;
+								break;
+							}
+						} else if(CHILD(0)[i].isFunction() && CHILD(0)[i].function()->id() == FUNCTION_ID_ABS && CHILD(0)[i].size() == 1) {
+							if(!m_x->equals(CHILD(0)[i][0])) {
+								b_x2 = false;
+								break;
+							}
+						} else if(CHILD(0)[i].isPower() && CHILD(0)[i][1] == nr_two && CHILD(0)[i][0].equals(*m_x)) {
+							b_x2 = true;
+						} else {
+							b_x2 = false;
+							break;
+						}
+					}
+				}
+				if(b_x2) {
+					CALCULATOR->beginTemporaryStopMessages();
+					MathStructure mbak(*this);
+					UnknownVariable *var = new UnknownVariable("", "r");
+					var->setAssumptions(new Assumptions());
+					var->assumptions()->setType(ASSUMPTION_TYPE_REAL);
+					MathStructure mu(var);
+					MathStructure mx(*m_x);
+					ComparisonType ct_comp_bak = ct_comp;
+					MathStructure *malt = new MathStructure(*this);
+					CHILD(0).calculateReplace(mx, mu, eo);
+					CHILD_UPDATED(0)
+					for(size_t i = 0; i < (*malt)[0].size(); i++) {
+						if((*malt)[0][i].isMultiplication()) {
+							for(size_t i2 = 0; i2 < (*malt)[0][i].size(); i2++) {
+								if((*malt)[0][i][i2].isPower() && (*malt)[0][i][i2].contains(x_var)) {
+									(*malt)[0][i].calculateNegate(eo);
+									break;
+								}
+							}
+						} else if((*malt)[0][i].isPower()) {
+							(*malt)[0][i].calculateNegate(eo);
+						}
+					}
+					(*malt)[0].calculateReplace(mx, mu, eo);
+					malt->childUpdated(1);
+					if(isolate_x_sub(eo, eo2, mu, NULL, depth + 1) && malt->isolate_x_sub(eo, eo2, mu, NULL, depth + 1)) {
+						CALCULATOR->endTemporaryStopMessages(true);
+						calculateReplace(mu, mx, eo);
+						isolate_x(eo2, eo, x_var, false, depth + 1);
+						mx.calculateDivide(nr_one_i, eo);
+						malt->calculateReplace(mu, mx, eo);
+						malt->isolate_x(eo2, eo, x_var, false, depth + 1);
+						add_nocopy(malt, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
+						calculatesub(eo2, eo, false);
+						var->destroy();
+						return true;
+					} else {
+						CALCULATOR->endTemporaryStopMessages(false);
+						malt->unref();
+						set(mbak);
+						var->destroy();
+					}
+				}
 			}
 
 			// Use newton raphson to calculate approximate solution for polynomial
