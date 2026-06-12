@@ -2547,7 +2547,7 @@ bool position_is_quoted(const string &str, size_t index) {
 		if(!cit2 && str[i] == '\"') cit1 = !cit1;
 		else if(!cit1 && str[i] == '\'') cit2 = !cit2;
 	}
-	return cit1 || cit2;
+	return (cit1 && str.find('\"', index) != string::npos) || (cit2 && str.find('\'', index) != string::npos);
 }
 size_t find_unquoted(const string &str, const char *match, size_t pos = 0) {
 	size_t i = str.find(match, pos);
