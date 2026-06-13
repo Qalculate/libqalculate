@@ -3396,8 +3396,9 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						break;
 					}
 				}
-				bool b_x2 = false;
-				if(m_x && !m_x->representsReal()) {
+				bool b_x2 = false, b_x = false, b_xp = false;
+				MathStructure *mpow = NULL;
+				if(m_x && !m_x->representsReal() && CHILD(1).representsReal()) {
 					for(size_t i = 0; i < CHILD(0).size(); i++) {
 						if(CHILD(0)[i].isMultiplication()) {
 							bool b = false;
@@ -3405,74 +3406,117 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								if(CHILD(0)[i][i2].contains(x_var)) {
 									if(!b && CHILD(0)[i][i2].isFunction() && CHILD(0)[i][i2].function()->id() == FUNCTION_ID_ABS && CHILD(0)[i][i2].size() == 1 && m_x->equals(CHILD(0)[i][i2][0])) {
 										b = true;
-									} else if(!b && CHILD(0)[i][i2].isPower() && CHILD(0)[i][i2][1] == nr_two && CHILD(0)[i][i2][0].equals(*m_x)) {
+									} else if(!b && !b_x && !b_xp && CHILD(0)[i][i2].isPower() && CHILD(0)[i][i2][1] == nr_two && CHILD(0)[i][i2][0].equals(*m_x)) {
 										b_x2 = true;
 										b = true;
+									} else if(!b && !b_x && !b_x2 && ((mpow && CHILD(0)[i][i2].equals(*mpow)) || (!mpow && ((CHILD(0)[i][i2].isPower() && CHILD(0)[i][i2][1].representsFraction()) || (CHILD(0)[i][i2].isFunction() && CHILD(0)[i][i2].function()->id() == FUNCTION_ID_ROOT && VALID_ROOT(CHILD(0)[i][i2])) || (CHILD(0)[i][i2].isFunction() && CHILD(0)[i][i2].function()->id() == FUNCTION_ID_LOG && CHILD(0)[i][i2].size() == 1)) && CHILD(0)[i][i2][0].equals(*m_x)))) {
+										mpow = &CHILD(0)[i][i2];
+										b_xp = true;
+										b = true;
+									} else if(!b && !b_x2 && !b_xp && CHILD(0)[i][i2].equals(*m_x)) {
+										b_x = true;
+										b = true;
 									} else {
-										b_x2 = false;
+										b = false;
 										break;
 									}
+								} else if(!CHILD(0)[i][i2].representsReal()) {
+									b = false;
+									break;
 								}
 							}
 							if(!b) {
 								b_x2 = false;
+								b_xp = false;
+								b_x = false;
 								break;
 							}
-						} else if(CHILD(0)[i].isFunction() && CHILD(0)[i].function()->id() == FUNCTION_ID_ABS && CHILD(0)[i].size() == 1) {
-							if(!m_x->equals(CHILD(0)[i][0])) {
-								b_x2 = false;
-								break;
-							}
-						} else if(CHILD(0)[i].isPower() && CHILD(0)[i][1] == nr_two && CHILD(0)[i][0].equals(*m_x)) {
+						} else if(CHILD(0)[i].isFunction() && CHILD(0)[i].function()->id() == FUNCTION_ID_ABS && CHILD(0)[i].size() == 1 && m_x->equals(CHILD(0)[i][0])) {
+						} else if(!b_x && !b_xp && CHILD(0)[i].isPower() && CHILD(0)[i][1] == nr_two && CHILD(0)[i][0].equals(*m_x)) {
 							b_x2 = true;
+						} else if(!b_x && !b_x2 && ((mpow && CHILD(0)[i].equals(*mpow)) || (!mpow && ((CHILD(0)[i].isPower() && CHILD(0)[i][1].representsFraction()) || (CHILD(0)[i].isFunction() && CHILD(0)[i].function()->id() == FUNCTION_ID_ROOT && VALID_ROOT(CHILD(0)[i])) || (CHILD(0)[i].isFunction() && CHILD(0)[i].function()->id() == FUNCTION_ID_LOG && CHILD(0)[i].size() == 1)) && CHILD(0)[i][0].equals(*m_x)))) {
+							mpow = &CHILD(0)[i];
+							b_xp = true;
+						} else if(!b_x2 && !b_xp && CHILD(0)[i].equals(*m_x)) {
+							b_x = true;
 						} else {
 							b_x2 = false;
+							b_xp = false;
+							b_x = false;
 							break;
 						}
 					}
 				}
-				if(b_x2) {
-					CALCULATOR->beginTemporaryStopMessages();
-					MathStructure mbak(*this);
-					UnknownVariable *var = new UnknownVariable("", "r");
-					var->setAssumptions(new Assumptions());
-					var->assumptions()->setType(ASSUMPTION_TYPE_REAL);
-					MathStructure mu(var);
-					MathStructure mx(*m_x);
-					ComparisonType ct_comp_bak = ct_comp;
-					MathStructure *malt = new MathStructure(*this);
-					CHILD(0).calculateReplace(mx, mu, eo);
-					CHILD_UPDATED(0)
-					for(size_t i = 0; i < (*malt)[0].size(); i++) {
-						if((*malt)[0][i].isMultiplication()) {
-							for(size_t i2 = 0; i2 < (*malt)[0][i].size(); i2++) {
-								if((*malt)[0][i][i2].isPower() && (*malt)[0][i][i2].contains(x_var)) {
-									(*malt)[0][i].calculateNegate(eo);
+				if(b_xp) b_x = true;
+				if(b_x2 || b_x) {
+					MathStructure m_a;
+					for(size_t i = 0; i < CHILD(0).size(); i++) {
+						if(CHILD(0)[i].isMultiplication()) {
+							for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
+								if(CHILD(0)[i][i2].contains(x_var) && !(CHILD(0)[i][i2].isFunction() && CHILD(0)[i][i2].function()->id() == FUNCTION_ID_ABS && CHILD(0)[i][i2].size() == 1 && m_x->equals(CHILD(0)[i][i2][0]))) {
+									if(m_a.isZero()) {
+										m_a.set(CHILD(0)[i]);
+										m_a.delChild(i2 + 1, true);
+									} else {
+										m_a.add(CHILD(0)[i], true);
+										m_a.last().delChild(i2 + 1, true);
+									}
 									break;
 								}
 							}
-						} else if((*malt)[0][i].isPower()) {
-							(*malt)[0][i].calculateNegate(eo);
+						} else if(!(CHILD(0)[i].isFunction() && CHILD(0)[i].function()->id() == FUNCTION_ID_ABS && CHILD(0)[i].size() == 1 && m_x->equals(CHILD(0)[i][0]))) {
+							if(m_a.isZero()) m_a = m_one;
+							else m_a.add(m_one, true);
 						}
 					}
-					(*malt)[0].calculateReplace(mx, mu, eo);
-					malt->childUpdated(1);
-					if(isolate_x_sub(eo, eo2, mu, NULL, depth + 1) && malt->isolate_x_sub(eo, eo2, mu, NULL, depth + 1)) {
-						CALCULATOR->endTemporaryStopMessages(true);
-						calculateReplace(mu, mx, eo);
-						isolate_x(eo2, eo, x_var, false, depth + 1);
-						mx.calculateDivide(nr_one_i, eo);
-						malt->calculateReplace(mu, mx, eo);
-						malt->isolate_x(eo2, eo, x_var, false, depth + 1);
-						add_nocopy(malt, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
-						calculatesub(eo2, eo, false);
-						var->destroy();
-						return true;
-					} else {
-						CALCULATOR->endTemporaryStopMessages(false);
-						malt->unref();
-						set(mbak);
-						var->destroy();
+					if(comparison_is_not_equal(m_a.compare(m_zero))) {
+						CALCULATOR->beginTemporaryStopMessages();
+						MathStructure mbak(*this);
+						UnknownVariable *var = new UnknownVariable("", "r");
+						var->setAssumptions(new Assumptions());
+						var->assumptions()->setType(ASSUMPTION_TYPE_REAL);
+						MathStructure mu(var);
+						MathStructure mx(*m_x);
+						ComparisonType ct_comp_bak = ct_comp;
+						MathStructure *malt = NULL;
+						if(b_x2) {
+							malt = new MathStructure(*this);
+							for(size_t i = 0; i < (*malt)[0].size(); i++) {
+								if((*malt)[0][i].isMultiplication()) {
+									for(size_t i2 = 0; i2 < (*malt)[0][i].size(); i2++) {
+										if((*malt)[0][i][i2].isPower() && (*malt)[0][i][i2].contains(x_var)) {
+											(*malt)[0][i].calculateNegate(eo);
+											break;
+										}
+									}
+								} else if((*malt)[0][i].isPower()) {
+									(*malt)[0][i].calculateNegate(eo);
+								}
+							}
+							(*malt)[0].calculateReplace(mx, mu, eo);
+							malt->childUpdated(1);
+						}
+						CHILD(0).calculateReplace(mx, mu, eo);
+						CHILD_UPDATED(0)
+						if(isolate_x_sub(eo, eo2, mu, NULL, depth + 1) && (!malt || malt->isolate_x_sub(eo, eo2, mu, NULL, depth + 1))) {
+							CALCULATOR->endTemporaryStopMessages(true);
+							calculateReplace(mu, mx, eo);
+							isolate_x(eo2, eo, x_var, false, depth + 1);
+							if(malt) {
+								mx.calculateDivide(nr_one_i, eo);
+								malt->calculateReplace(mu, mx, eo);
+								malt->isolate_x(eo2, eo, x_var, false, depth + 1);
+								add_nocopy(malt, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
+								calculatesub(eo2, eo, false);
+							}
+							var->destroy();
+							return true;
+						} else {
+							CALCULATOR->endTemporaryStopMessages(false);
+							if(malt) malt->unref();
+							set(mbak);
+							var->destroy();
+						}
 					}
 				}
 			}
