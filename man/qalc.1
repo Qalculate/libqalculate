@@ -615,10 +615,6 @@ Activates continuous calculation of the currently edited expression.
 Do not save expression history on exit.
 .PP
 .TP 8
-.B max history \fI(>= 0) 100*\fP
-Save expressions up to limit in history on exit.
-.PP
-.TP 8
 .B completion \fI(0 = off, 1* = select multiple, 2 = select, 3 = list multiple, 4 = list)\fP
 Determines completion action when pressing tab key. "select" shows a numbered list of matches and waits for an item to be selected by entering a number, while "list" returns directly to the expression without input. "select multiple" and "list multiple" completes the word directly if there is only one match.
 .PP
@@ -628,6 +624,10 @@ Ignore system language and use English (requires restart).
 .PP
 .TP 8
 .B language
+.PP
+.TP 8
+.B max history \fI(>= 0) 100*\fP
+Maximum number of expressions kept in history.
 .PP
 .TP 8
 .B prompt
@@ -852,6 +852,10 @@ prepend with - to show as simple fraction
 .TP 8
 .B Other conversion commands
 - factors (factorize result)
+.br
+- partial fraction (apply partial fraction decomposition to the result)
+.br
+- latex (show expression and result in LaTeX format)
 .PP
 Similarly \fIwhere\fP (or alternatively "/.") can be used at the end (but before "to"), for variable assignments, function replacements, etc. (e.g. "x+y where x=1 and y=2", "x^2=4 where x>0", and "sin(5) where sin()=cos()"). Variables assignments can also be placed before the expression, separated by comma, e.g. <quote>x=1, y=2, x+y</quote>, but this syntax is more strict.
 .PP

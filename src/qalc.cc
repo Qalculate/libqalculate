@@ -64,7 +64,7 @@ KnownVariable *vans[5], *v_memory;
 string result_text, parsed_text, original_expression;
 vector<string> alt_results;
 bool load_global_defs, fetch_exchange_rates_at_startup, first_time, save_mode_on_exit, save_defs_on_exit = true, clear_history_on_exit, load_defaults = false, save_config = true;
-int max_history_size;
+int max_history = 100;
 int auto_update_exchange_rates;
 PrintOptions printops, saved_printops;
 bool saved_concise_uncertainty_input = false;
@@ -2101,6 +2101,7 @@ void set_option(string str) {
 		} else {
 			save_mode_on_exit = false;
 		}
+#ifdef HAVE_LIBREADLINE
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "clear history", _("clear history")) || equalsIgnoreCase(svar, "save history")) {
 		int v = s2b(svalue);
 		if(v >= 0 && equalsIgnoreCase(svar, "save history")) v = !v;
@@ -2111,16 +2112,16 @@ void set_option(string str) {
 		} else {
 			clear_history_on_exit = false;
 		}
-	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "max history", _("max history")) || equalsIgnoreCase(svar, "max history")) {
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "max history", _("max history"))) {
 		int v = s2i(svalue);
 		if(v < 0) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
-			max_history_size = v;
-#ifdef HAVE_LIBREADLINE
-			stifle_history(max_history_size);
-#endif
+			max_history = v;
+
+			stifle_history(max_history);
 		}
+#endif
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "save definitions", _("save definitions")) || svar == "save defs") {
 		int v = s2b(svalue);
 		if(v < 0) {
@@ -2820,16 +2821,9 @@ bool show_set_help(string set_option = "") {
 #ifdef HAVE_LIBREADLINE
 	STR_AND_TABS_BOOL("calculate as you type", "autocalc", _("Activates continuous calculation of the currently edited expression."), (autocalc > 0));
 #endif
+#ifdef HAVE_LIBREADLINE
 	STR_AND_TABS_YESNO("clear history", "", _("Do not save expression history on exit."), clear_history_on_exit);
-	if(SET_OPTION_MATCHES("max history", "")) {
-		STR_AND_TABS_SET("max history", "");
-		SET_DESCRIPTION(_("Specifies the number of calculations to keep in history."));
-		str += "(>= 0) ";
-		str += i2s(max_history_size);
-		str += "*";
-		CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-		SET_OPTION_FOUND
-	}
+#endif
 #ifdef HAVE_LIBREADLINE
 	STR_AND_TABS_4("completion", "", _("Determines completion action when pressing tab key. \"select\" shows a numbered list of matches and waits for an item to be selected by entering a number, while \"list\" returns directly to the expression without input. \"select multiple\" and \"list multiple\" completes the word directly if there is only one match."), completion_mode, _("off"), _("select multiple"), _("select"), _("list multiple"), _("list"));
 #endif
@@ -2843,6 +2837,17 @@ bool show_set_help(string set_option = "") {
 		CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 		SET_OPTION_FOUND
 	}
+#ifdef HAVE_LIBREADLINE
+	if(SET_OPTION_MATCHES("max history", "")) {
+		STR_AND_TABS_SET("max history", "");
+		SET_DESCRIPTION(_("Maximum number of expressions kept in history."));
+		str += "(>= 0) ";
+		str += i2s(max_history);
+		str += "*";
+		CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+		SET_OPTION_FOUND
+	}
+#endif
 	if(SET_OPTION_MATCHES("prompt", "")) {
 		STR_AND_TABS_SET("prompt", "");
 		str += " ";
@@ -4506,6 +4511,8 @@ int main(int argc, char *argv[]) {
 			fputs("\t", stdout); PUTS_UNICODE(_("display this help and exit"));
 			fputs("\n\t-i, -interactive\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("start in interactive mode"));
+			fputs("\n\t-latex", stdout);
+			fputs("\t", stdout); PUTS_UNICODE(_("output in LaTeX format"));
 			fputs("\n\t-l, -list", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("SEARCH TERM"), stdout); fputs("]\n", stdout);
 			fputs("\t", stdout); PUTS_UNICODE(_("displays a list of all user-defined or matching variables, functions, units, and prefixes"));
 			fputs("\n\t--list-functions", stdout); fputs(" [", stdout); FPUTS_UNICODE(_("SEARCH TERM"), stdout); fputs("]\n", stdout);
@@ -6617,8 +6624,9 @@ int main(int argc, char *argv[]) {
 #ifdef HAVE_LIBREADLINE
 			PRINT_AND_COLON_TABS(_("calculate as you type"), "autocalc"); str += b2yn(autocalc > 0, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 #endif
+#ifdef HAVE_LIBREADLINE
 			PRINT_AND_COLON_TABS(_("clear history"), ""); str += b2yn(clear_history_on_exit, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
-			PRINT_AND_COLON_TABS(_("max history"), ""); str += max_history_size; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+#endif
 #ifdef HAVE_LIBREADLINE
 			PRINT_AND_COLON_TABS(_("completion"), "");
 			switch(completion_mode) {
@@ -6632,6 +6640,10 @@ int main(int argc, char *argv[]) {
 #endif
 			PRINT_AND_COLON_TABS(_("ignore locale"), ""); str += b2yn(ignore_locale, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			if(!custom_lang.empty()) {PRINT_AND_COLON_TABS(_("language"), ""); str += custom_lang; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())}
+#ifdef HAVE_LIBREADLINE
+			PRINT_AND_COLON_TABS(_("max history"), ""); str += max_history; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+#endif
+
 			PRINT_AND_COLON_TABS(_("prompt"), ""); str += prompt; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("rpn"), ""); str += b2oo(rpn_mode, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("save config"), ""); str += b2yn(save_config, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
@@ -6983,6 +6995,8 @@ int main(int argc, char *argv[]) {
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- UTC (show date and time in UTC time zone)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- UTC+/-hh[:mm] (show date and time in specified time zone)"));
 				CHECK_IF_SCREEN_FILLED_PUTS(_("- calendars"));
+				CHECK_IF_SCREEN_FILLED_PUTS("");
+				CHECK_IF_SCREEN_FILLED_PUTS(_("- latex (show in LaTeX format)"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
 				CHECK_IF_SCREEN_FILLED_PUTS(_("Example: to ?g"));
 				CHECK_IF_SCREEN_FILLED_PUTS("");
@@ -10011,7 +10025,7 @@ void load_preferences() {
 	save_config = true;
 	clear_history_on_exit = false;
 	auto_update_exchange_rates = -1;
-	max_history_size = 100;
+	max_history = 100;
 	first_time = false;
 	
 	colorize = 1;
@@ -10059,8 +10073,8 @@ void load_preferences() {
 					save_mode_on_exit = v;
 				} else if(svar == "clear_history_on_exit") {
 					clear_history_on_exit = v;
-				} else if(svar == "max_history_size") {
-					max_history_size = v;
+				} else if(svar == "max_history") {
+					max_history = v;
 				} else if(svar == "save_definitions_on_exit") {
 					save_defs_on_exit = v;
 				} else if(svar == "sigint_action") {
@@ -10428,7 +10442,7 @@ void load_preferences() {
 
 #ifdef HAVE_LIBREADLINE
 	string historyfile = buildPath(getLocalStateDir(), "qalc.history");
-	stifle_history(clear_history_on_exit ? 0 : max_history_size);
+	stifle_history(clear_history_on_exit ? 0 : max_history);
 	if(fileExists(historyfile)) {
 		read_history(historyfile.c_str());
 	} else {
@@ -10448,22 +10462,26 @@ void load_preferences() {
 void save_history() {
 #ifdef HAVE_LIBREADLINE
 	string history_dir = getLocalStateDir();
-	if(!dirExists(history_dir)) recursiveMakeDir(history_dir);
-	if(!ans_variables.empty()) {
-		for(int i = 0; i < history_length; i++) {
-			HIST_ENTRY *hist = history_get(i + history_base);
-			if(hist && hist->line) {
-				string str = hist->line;
-				if(str.find("ans") != string::npos) {
-					for(size_t i2 = 0; i2 < ans_variables.size(); i2++) {
-						if(!ans_text[i2].empty()) gsub(ans_variables[i2]->name(), ans_text[i2], str);
+	if(clear_history_on_exit) {
+		if(fileExists(buildPath(history_dir, "qalc.history"))) history_truncate_file(buildPath(history_dir, "qalc.history").c_str(), 0);
+	} else {
+		if(!dirExists(history_dir)) recursiveMakeDir(history_dir);
+		if(!ans_variables.empty()) {
+			for(int i = 0; i < history_length; i++) {
+				HIST_ENTRY *hist = history_get(i + history_base);
+				if(hist && hist->line) {
+					string str = hist->line;
+					if(str.find("ans") != string::npos) {
+						for(size_t i2 = 0; i2 < ans_variables.size(); i2++) {
+							if(!ans_text[i2].empty()) gsub(ans_variables[i2]->name(), ans_text[i2], str);
+						}
+						replace_history_entry(i, str.c_str(), NULL);
 					}
-					replace_history_entry(i, str.c_str(), NULL);
 				}
 			}
 		}
+		write_history(buildPath(history_dir, "qalc.history").c_str());
 	}
-	write_history(buildPath(history_dir, "qalc.history").c_str());
 #endif
 }
 
@@ -10493,7 +10511,7 @@ bool save_preferences(bool mode) {
 	fprintf(file, "save_mode_on_exit=%i\n", save_mode_on_exit);
 	fprintf(file, "save_definitions_on_exit=%i\n", save_defs_on_exit);
 	fprintf(file, "clear_history_on_exit=%i\n", clear_history_on_exit);
-	fprintf(file, "max_history_size=%i\n", max_history_size);
+	fprintf(file, "max_history=%i\n", max_history);
 #ifndef _WIN32
 	if(sigint_action != 1) fprintf(file, "sigint_action=%i\n", sigint_action);
 #endif
