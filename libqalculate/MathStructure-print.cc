@@ -3816,7 +3816,7 @@ string get_latex_unit(const MathStructure &m, const PrintOptions &po, bool b_plu
 	else if(name == "t") str = "\\tonne";
 	bool abbreviated = true;
 	if(str.empty()) {
-		str = get_latex_name(m.unit(), po, b_plural, &abbreviated);
+		str = get_latex_name(u, po, b_plural, &abbreviated);
 	}
 	if(p != 0) {
 		if(!pstr.empty()) {
@@ -4181,7 +4181,14 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 		}
 		case STRUCT_ABORTED: {}
 		case STRUCT_SYMBOLIC: {
-			if(po.allow_non_usable) {
+			if(m_type == STRUCT_SYMBOLIC && po.allow_non_usable && format && (tagtype == TAG_TYPE_HTML || (tagtype == TAG_TYPE_TERMINAL && po.use_unicode_signs)) && unicode_length(s_sym) == 3 && s_sym.find('_', 1) < s_sym.length() - 1) {
+				if(tagtype == TAG_TYPE_HTML) {
+					print_str = sub_suffix_html(s_sym);
+				} else {
+					print_str = s_sym;
+					sub_suffix_unicode(print_str, 1);
+				}
+			} else if(po.allow_non_usable) {
 				print_str = s_sym;
 			} else {
 				if((text_length_is_one(s_sym) && s_sym.find("\'") == string::npos) || s_sym.find("\"") != string::npos) {
@@ -5224,6 +5231,10 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 						print_str += CHILD(i).print(po2, format, colorize, tagtype, ips_n);
 					} else if(o_function->id() == FUNCTION_ID_LOGN && i == 0 && argcount >= 2 && CHILD(i).type() == STRUCT_UNDEFINED) {
 						// 2nd argument before parenthesis and input of 1st argument not begun
+					} else if(CHILD(i).isSymbolic() && o_function->getArgumentDefinition(i + 1) && o_function->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_TEXT && po.allow_non_usable) {
+						PrintOptions po2 = po;
+						po2.allow_non_usable = false;
+						print_str += CHILD(i).print(po2, format, colorize, tagtype, ips_n);
 					} else {
 						print_str += CHILD(i).print(po, format, colorize, tagtype, ips_n);
 					}

@@ -2307,7 +2307,7 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 				else if(s == "qquad" || s == "quad" || s == "nobreakspace" || s == "thinspace" || s == "medspace" || s == "thickspace" || s == " ") snew = " ";
 				else if(s == "negthinspace" || s == "negmedspace" || s == "negthickspace") snew = "";
 				else if(s.empty()) snew = " ";
-				else if(s == "hspace" || s == "mspace" || s == "phantom" || s == "label" || s == "ref" || s == "displaybreak" || s == "pagebreak" || s == "intertext" || s == "shortintertext" || s == "tag") {
+				else if(s == "hspace" || s == "vspace" || s == "mspace" || s == "phantom" || s == "label" || s == "ref" || s == "displaybreak" || s == "pagebreak" || s == "intertext" || s == "shortintertext" || s == "tag") {
 					string s1;
 					get_latex_args(str, i2, &s1);
 					if(s != "phantom" || !s1.empty()) snew = " ";
@@ -2316,7 +2316,7 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 					else if(s == "text" || s == "mbox") {
 						get_latex_args(str, i2, &snew);
 						remove_blank_ends(snew);
-						if(snew != "and" && snew != "or" && snew != "xor") {
+						if(snew != "and" && snew != "or" && snew != "xor" && (i == 0 || str[i - 1] != '_') && (i2 >= str.length() || str[i2] != '_')) {
 							snew.insert(0, "\"");
 							snew += "\"";
 						}
@@ -2327,7 +2327,7 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 						snew = s; snew += " ";
 					} else if(s == "deg" || s == "hom" || s == "inf" || s == "dim" || s == "inflim" || s == "ker" || s == "liminf" || s == "limsup" || s == "Pr" || s == "projlim" || s == "sup" || s == "varlimsup" || s == "varliminf" || s == "varprojlim" || s == "varinjlim") {
 						CALCULATOR->error(true, "Unsupported LaTeX command/macro %s.", (string("\\") + s).c_str(), NULL);
-					} else if(s == "frac" || s == "dfrac" || s == "tfrac" || s == "cfrac") {
+					} else if(s == "frac" || s == "dfrac" || s == "tfrac" || s == "cfrac" || s == "sfrac" || s == "nicefrac") {
 						string s1, s2;
 						get_latex_args(str, i2, &s1, &s2);
 						parse_latex_string(s1);
@@ -2473,7 +2473,7 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 							if(i2 < str.length()) i2 += s.length() + 6;
 						} else if(s == "alignat" || s == "alignedat") {
 							get_latex_args(str, i2, &s);
-						} else if(s != "align" && s != "gather" && s != "aligned" && s != "gathered" && s != "equation" && s != "subequations" && s != "split" && s != "multiline" && s != "flalign" && s != "cases") {
+						} else if(s != "align" && s != "gather" && s != "aligned" && s != "gathered" && s != "equation" && s != "subequations" && s != "split" && s != "multiline" && s != "flalign" && s != "cases" && s != "eqnarray") {
 							CALCULATOR->error(true, "Unsupported LaTeX command/macro %s.", (string("\\begin{") + s + "}").c_str(), NULL);
 						}
 					} else if(s == "end") {
@@ -2524,6 +2524,14 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 	}
 }
 
+bool contains_underscore_symbol(const MathStructure &m) {
+	if(m.isSymbolic() && !m.symbol().empty() && m.symbol()[0] == '_') return true;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_underscore_symbol(m[i])) return true;
+	}
+	return false;
+}
+
 LaTeXFunction::LaTeXFunction() : MathFunction("LaTeX", 1, 2) {
 	setArgumentDefinition(1, new TextArgument());
 	setArgumentDefinition(2, new BooleanArgument());
@@ -2543,7 +2551,24 @@ int LaTeXFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	po.unknowns_enabled = true;
 	bool cue = CALCULATOR->conciseUncertaintyInputEnabled();
 	if(!cue) CALCULATOR->setConciseUncertaintyInputEnabled(true);
+	CALCULATOR->beginTemporaryStopMessages();
 	CALCULATOR->parse(&mstruct, str, po);
+	if(contains_underscore_symbol(mstruct)) {
+		CALCULATOR->endTemporaryStopMessages();
+		for(size_t i = 1; i < str.size(); i++) {
+			if(str[i] == '_') {
+				size_t l = 1;
+				while(i - l > 0 && (signed char) str[i - l] < 0 && (unsigned char) str[i - l] < 0xC0) l++;
+				if((signed char) str[i - l] < 0 || (str[i - l] >= 'a' && str[i - l] <= 'z') || (str[i - l] >= 'A' && str[i - l] <= 'Z')) {
+					str.insert(i - l, "\\");
+					i += 2;
+				}
+			}
+		}
+		CALCULATOR->parse(&mstruct, str, po);
+	} else {
+		CALCULATOR->endTemporaryStopMessages(true);
+	}
 	if(!cue) CALCULATOR->setConciseUncertaintyInputEnabled(false);
 	return 1;
 }

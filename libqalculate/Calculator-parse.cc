@@ -543,6 +543,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 			if(quote_index == string::npos) break;
 			if(quote_index == 0 || ((str[quote_index - 1] < 'a' || str[quote_index - 1] > 'z') && (str[quote_index - 1] < 'A' || str[quote_index - 1] > 'Z'))) {
 				quote_index = str.find_first_not_of(SPACES, quote_index + l);
+				if(quote_index == string::npos) break;
 				if(str[quote_index] == '(') {
 					q_begin.push_back(quote_index + 1);
 					int par = 1;
@@ -2438,6 +2439,15 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 						l++;
 					} while(str_index + l < str.length() && (signed char) str[str_index + l] < 0 && (unsigned char) str[str_index + l] < 0xC0);
 					l--;
+				}
+				if(str_index + l + 2 < str.length() && str[str_index + 1 + l] == '_') {
+					l += 2;
+					if((signed char) str[str_index + l] < 0) {
+						do {
+							l++;
+						} while(str_index + l < str.length() && (signed char) str[str_index + l] < 0 && (unsigned char) str[str_index + l] < 0xC0);
+						l--;
+					}
 				}
 				MathStructure *mstruct = new MathStructure(str.substr(str_index + 1, l));
 				stmp += i2s(addId(mstruct));
