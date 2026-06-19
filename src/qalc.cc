@@ -3515,6 +3515,9 @@ void do_autocalc(bool force, const char *action_text) {
 				}
 				int p_bak = rl_point;
 				INIT_COLS
+				if(output_format != TAG_TYPE_TERMINAL && autocalc_lines == (vertical_space ? 3 : 1)) {
+					autocalc_lines += unicode_length(autocalc_result) / cols;
+				}
 				bool move_pos = unicode_length(orig_str) + prompt_l + 1 < (size_t) cols && unicode_length(autocalc_str) + prompt_l + 1 < (size_t) cols && !contains_wide_character(orig_str.c_str()) && !contains_wide_character(autocalc_str.c_str());
 				string sout;
 				if(rl_point != rl_end) {
@@ -10092,7 +10095,7 @@ void load_preferences() {
 					indent_s.append(prompt_l, ' ');
 				} else if(svar == "colorize") {
 #ifdef _WIN32
-					if(version_numbers[0] > 3 || (version_numbers[0] == 3 && (version_numbers[1] > 13 || (version_numbers[1] == 13 && version_numbers[2] > 0)))) {
+					if(version_numbers[0] > 3 || (version_numbers[0] == 3 && (version_numbers[1] > 13 || (version_numbers[1] == 13 && version_numbers[2] > 0))) && (v > 0 || version_numbers[0] != 5 || (version_numbers[1] != 10 && version_numbers[1] != 11))) {
 						colorize = v;
 					}
 #else
@@ -10396,7 +10399,13 @@ void load_preferences() {
 						evalops.interval_calculation = (IntervalCalculation) v;
 					}
 				} else if(svar == "calculate_as_you_type") {
+#ifdef _WIN32
+					if(autocalc != 0 || version_numbers[0] != 5 || (version_numbers[1] != 10 && version_numbers[1] != 11))) {
+						autocalc = v;
+					}
+#else
 					autocalc = v;
+#endif
 				} else if(svar == "completion_mode") {
 					if(v >= COMPLETION_OFF && v <= COMPLETION_LIST) {
 						completion_mode = v;

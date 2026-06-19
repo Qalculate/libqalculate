@@ -2056,7 +2056,7 @@ void read_latex_num(string &str, bool cplx = false, bool angle = false) {
 	gsub("D", "E", str);
 	gsub("\\pm", "+/-", str);
 	gsub("+-", "+/-", str);
-	gsub("x", "*", str);
+	remove_blanks(str);
 }
 
 void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = false, bool preserve_i = false) {
@@ -2280,7 +2280,7 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 				else if(s == "matheuro" || s == "texteuro") {snew = "€";}
 				else if(s == "mathsterling" || s == "textsterling" || s == "pounds") {snew = "£";}
 				else if(s == "mathunderscore" || s == "textunderscore" || s == "_") {snew = "_";}
-				else if(s == "times") {snew = "*";}
+				else if(s == "times" || s == "cdot") {snew = "*";}
 				else if(s == "div") {snew = "/";}
 				else if(s == "colon") {snew = ":";}
 				else if(s == "dots" || s == "cdots" || s == "ldots" || s == "dotsb" || s == "dotsi" || s == "dotsm" || s == "dotso" || s == "mathellipsis") {snew = "...";}
@@ -2320,7 +2320,7 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 							snew.insert(0, "\"");
 							snew += "\"";
 						}
-					} else if(s == "mathrm" || s == "mathbf" || s == "mathit" || s == "mathcal" || s == "mathbb" || s == "mathfrak" || s == "mathsf" || s == "mathtt" || s == "boxed" || s == "smash") {
+					} else if(s == "mathrm" || s == "mathbf" || s == "mathit" || s == "mathcal" || s == "mathbb" || s == "mathfrak" || s == "mathsf" || s == "mathtt" || s == "boxed" || s == "smash" || s == "ensuremath") {
 						get_latex_args(str, i2, &snew);
 						parse_latex_string(snew, false, false, true);
 					} else if(s == "arccos" || s == "arcsin" || s == "arctan" || s == "arg" || s == "cos" || s == "cosh" || s == "cot" || s == "coth" || s == "csc" || s == "det" || s == "exp" || s == "gcd" || s == "lg" || s == "ln" || s == "log" || s == "max" || s == "min" || s == "sec" || s == "sin" || s == "sinh" || s == "tan" || s == "tanh") {
@@ -2489,6 +2489,21 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 						} else {
 							parse_latex_string(snew);
 						}
+						if(s == "numproduct") {
+							string prodsym = "*";
+							size_t ip = opt.find("product-symbol");
+							if(ip != string::npos) ip = opt.find("=", ip);
+							if(ip != string::npos) {
+								size_t ip2 = opt.find(",", ip);
+								if(ip2 == string::npos) ip2 = opt.length();
+								prodsym = opt.substr(ip + 1, ip2 - (ip + 1));
+								parse_latex_string(prodsym);
+							}
+							gsub("x", prodsym, snew);
+						} else if(s == "numlist") {
+							snew.insert(0, "(");
+							snew += ")";
+						}
 					} else if(s == "ang") {
 						string opt;
 						get_latex_args(str, i2, &snew, NULL, &opt);
@@ -2508,6 +2523,21 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 							read_latex_num(s1, s == "complexqty");
 						} else {
 							parse_latex_string(s1);
+						}
+						if(s == "qtyproduct") {
+							string prodsym = "*";
+							size_t ip = opt.find("product-symbol");
+							if(ip != string::npos) ip = opt.find("=", ip);
+							if(ip != string::npos) {
+								size_t ip2 = opt.find(",", ip);
+								if(ip2 == string::npos) ip2 = opt.length();
+								prodsym = opt.substr(ip + 1, ip2 - (ip + 1));
+								parse_latex_string(prodsym);
+							}
+							gsub("x", prodsym, snew);
+						} else if(s == "qtylist") {
+							snew.insert(0, "(");
+							snew += ")";
 						}
 						parse_latex_string(s2, true);
 						snew = s1; snew += " "; snew += s2;

@@ -132,8 +132,6 @@
 					unformat(xeo); \
 					fix_intervals(*this, xeo, NULL, PRECISION);
 
-#define DO_NOT_TOUCH_EXPRESSION(str, po)	(po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && CALCULATOR->customInputBase() > 62) || (str.length() > 3 && str[0] == '$' && str[str.length() - 1] == '$' && str.find("\\") != string::npos))
-
 void printRecursive(const MathStructure &mstruct);
 
 std::string format_and_print(const MathStructure &mstruct);

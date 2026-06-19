@@ -53,6 +53,9 @@ enum {
 	PROC_NO_COMMAND
 };
 
+#define DO_NOT_TOUCH_EXPRESSION_C(str, po)	(po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && CALCULATOR->customInputBase() > 62) || (str.length() > 3 && str[0] == '$' && str[str.length() - 1] == '$' && str.find("\\") != string::npos))
+#define DO_NOT_TOUCH_EXPRESSION(str, po)	(po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && priv->custom_input_base_i > 62) || (str.length() > 3 && str[0] == '$' && str[str.length() - 1] == '$' && str.find("\\") != string::npos))
+
 class Calculator_p {
 	public:
 		unordered_map<size_t, MathStructure*> id_structs;

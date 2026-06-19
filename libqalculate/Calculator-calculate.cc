@@ -1628,7 +1628,7 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 }
 
 bool expression_contains_save_function(const string &str, const ParseOptions &po, bool only_equals) {
-	if(str.length() < 2 || DO_NOT_TOUCH_EXPRESSION(str, po)) return false;
+	if(str.length() < 2 || DO_NOT_TOUCH_EXPRESSION_C(str, po)) return false;
 	size_t i = str.find("=", 1);
 	if(!only_equals) {
 		if(i != string::npos && ((i > 0 && str[i - 1] == ':') || (i < str.length() - 1 && str[i + 1] == ':'))) return true;
@@ -1739,7 +1739,7 @@ bool expression_contains_save_function(const string &str, const ParseOptions &po
 	return true;
 }
 bool transform_expression_for_equals_save(string &str, const ParseOptions &po) {
-	if(str.length() < 2 || DO_NOT_TOUCH_EXPRESSION(str, po)) return false;
+	if(str.length() < 2 || DO_NOT_TOUCH_EXPRESSION_C(str, po)) return false;
 	size_t i = str.find("=", 1);
 	if(i == string::npos) return false;
 	if(i < str.length() - 1) {
@@ -2543,11 +2543,21 @@ bool Calculator::calculate(MathStructure *mstruct, int msecs, const EvaluationOp
 
 bool position_is_quoted(const string &str, size_t index) {
 	bool cit1 = false, cit2 = false;
+	size_t last_cit = 0;
 	for(size_t i = 0; i < index; i++) {
-		if(!cit2 && str[i] == '\"') cit1 = !cit1;
-		else if(!cit1 && str[i] == '\'') cit2 = !cit2;
+		if(!cit2 && str[i] == '\"') {
+			cit1 = !cit1;
+			if(cit1) last_cit = i;
+		} else if(!cit1 && str[i] == '\'') {
+			cit2 = !cit2;
+			if(cit2) last_cit = i;
+		}
 	}
-	return (cit1 && str.find('\"', index) != string::npos) || (cit2 && str.find('\'', index) != string::npos);
+	if(!cit1 && !cit2) return false;
+	if(str.find(cit1 ? '\"' : '\'', index) != string::npos) return true;
+	if(last_cit == 0) return false;
+	last_cit = str.find_last_not_of(SPACES, last_cit - 1);
+	return last_cit != string::npos && str[last_cit] == '(';
 }
 size_t find_unquoted(const string &str, const char *match, size_t pos = 0) {
 	size_t i = str.find(match, pos);

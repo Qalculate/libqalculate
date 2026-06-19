@@ -126,8 +126,9 @@ MathStructure Calculator::convertToMixedUnits(const MathStructure &mstruct, cons
 			Number int_nr(nr);
 			int_nr.intervalToMidValue();
 			int_nr.trunc();
-			if(muc == MIXED_UNITS_CONVERSION_DOWNWARDS_KEEP && int_nr.isZero()) break;
+			if(muc == MIXED_UNITS_CONVERSION_DOWNWARDS_KEEP && int_nr.isZero() && u == original_u) break;
 			nr -= int_nr;
+			if(!int_nr.isZero() && nr.compareAbsolute(Number(1, 1, -PRECISION)) == COMPARISON_RESULT_GREATER) break;
 			bool b = false;
 			Number best_nr;
 			Unit *best_u = NULL;

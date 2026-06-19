@@ -528,47 +528,39 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 			quote_index++;
 		}
 	}
-	if(q_begin.size() == 0) {
+	bool b_latex = false;
+	if(q_begin.size() == 0 && str.find("{") != string::npos) {
 		quote_index = 0;
-		while(true) {
-			size_t l = 5, i = quote_index;
-			quote_index = str.find("latex", i);
-			if(quote_index == string::npos) quote_index = str.find("LaTeX", i);
-			if(quote_index == string::npos) quote_index = str.find("Latex", i);
-			if(quote_index == string::npos) quote_index = str.find("LATEX", i);
-			if(quote_index == string::npos) {
-				quote_index = str.find("code", i);
-				l = 4;
-			}
-			if(quote_index == string::npos) break;
-			if(quote_index == 0 || ((str[quote_index - 1] < 'a' || str[quote_index - 1] > 'z') && (str[quote_index - 1] < 'A' || str[quote_index - 1] > 'Z'))) {
-				quote_index = str.find_first_not_of(SPACES, quote_index + l);
-				if(quote_index == string::npos) break;
-				if(str[quote_index] == '(') {
-					q_begin.push_back(quote_index + 1);
-					int par = 1;
-					while(quote_index < str.length()) {
-						if(str[quote_index] == '(') {
-							par++;
-						} else if(str[quote_index] == ')') {
-							par--;
-							if(par == 0) {
-								break;
-							}
+		size_t l = 5, i = quote_index;
+		quote_index = str.find("latex", i);
+		if(quote_index == string::npos) quote_index = str.find("LaTeX", i);
+		if(quote_index == string::npos) quote_index = str.find("Latex", i);
+		if(quote_index == string::npos) quote_index = str.find("LATEX", i);
+		if(quote_index != string::npos && quote_index + l < str.length() && (quote_index == 0 || ((str[quote_index - 1] < 'a' || str[quote_index - 1] > 'z') && (str[quote_index - 1] < 'A' || str[quote_index - 1] > 'Z')))) {
+			quote_index = str.find_first_not_of(SPACES, quote_index + l);
+			if(quote_index != string::npos && str[quote_index] == '(') {
+				int par = 1;
+				while(quote_index < str.length()) {
+					if(str[quote_index] == '(') {
+						par++;
+					} else if(str[quote_index] == ')') {
+						par--;
+						if(par == 0) {
+							break;
 						}
-						quote_index++;
+					} else if(par == 1 && str[quote_index] == COMMA_CH) {
+						break;
 					}
-					q_end.push_back(quote_index);
+					quote_index++;
 				}
-			} else {
-				quote_index += l;
+				b_latex = (par == 0 || quote_index == str.length());
 			}
 		}
 	}
 
 	// search and replace string alternatives
 	for(size_t i = 0; i < signs.size(); i++) {
-		if(b_unicode || signs[i][0] > 0) {
+		if((b_unicode || signs[i][0] > 0) && (!b_latex || (signs[i] != "{" && signs[i] != "}"))) {
 			size_t ui = str.find(signs[i]);
 			size_t ui2 = 0;
 			while(ui != string::npos) {
@@ -2055,7 +2047,11 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	char character_after_object = 0;
 	char character_before_object = 0;
 	for(size_t str_index = 0; str_index < str.length(); str_index++) {
-		if(str[str_index] == LEFT_VECTOR_WRAP_CH) {
+		if(str[str_index] == '{') {
+			str[str_index] = '(';
+		} else if(str[str_index] == '}') {
+			str[str_index] = ')';
+		} else if(str[str_index] == LEFT_VECTOR_WRAP_CH) {
 			consecutive_objects = 0;
 			// vector
 			int b_old_matrix = 2;
@@ -2786,6 +2782,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 			else if(str[str_index + 1] == DIVISION_CH) str.replace(str_index, 2, "\x18");
 			else if(str[str_index + 1] == POWER_CH) str.replace(str_index, 2, "\x19");
 			else if(str[str_index + 1] == PLUS_CH) str.replace(str_index, 2, PLUS);
+			else if(str[str_index + 1] == MINUS_CH) str.replace(str_index, 2, MINUS);
 			else if(str[str_index + 1] == AND_CH) str.replace(str_index, 2, BITWISE_AND);
 			else if(str[str_index + 1] == OR_CH) str.replace(str_index, 2, BITWISE_OR);
 			else str[str_index] = '\x16';

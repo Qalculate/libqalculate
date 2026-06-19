@@ -135,7 +135,7 @@ string ExpressionName::formattedName(int type, bool capitalize, bool html_suffix
 			} else {
 				str = str.substr(0, name.length() - l);
 				if((!sub_suffix_unicode(str, unicode_suffix)) && html_suffix) str = sub_suffix_html(str);
-				}
+			}
 			if(was_formatted) *was_formatted = true;
 		} else if(sub_suffix_unicode(str, unicode_suffix)) {
 			if(was_formatted) *was_formatted = true;

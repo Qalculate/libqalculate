@@ -4720,8 +4720,8 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				if(CALCULATOR->aborted()) return CALCULATOR->abortedMessage();
 				if(i > 0) {
 					if(format && tagtype == TAG_TYPE_LATEX) {
-							if(po.spacious) print_str += "\\ |\\ ";
-							else print_str += "|";
+						if(po.spacious) print_str += "\\ |\\ ";
+						else print_str += "|";
 					} else {
 						if(po.spacious) print_str += " ";
 						print_str += "|";
@@ -4772,14 +4772,14 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 						break;
 					}
 					case COMPARISON_EQUALS_LESS: {
-						if(format && tagtype == TAG_TYPE_LATEX) print_str += "\\le ";
+						if(format && tagtype == TAG_TYPE_LATEX) print_str += "\\ge ";
 						else if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_GREATER_OR_EQUAL, po.can_display_unicode_string_arg))) print_str += SIGN_GREATER_OR_EQUAL;
 						else if(format && tagtype == TAG_TYPE_HTML) print_str += "&gt;=";
 						else print_str += ">=";
 						break;
 					}
 					case COMPARISON_EQUALS_GREATER: {
-						if(format && tagtype == TAG_TYPE_LATEX) print_str += "\\ge ";
+						if(format && tagtype == TAG_TYPE_LATEX) print_str += "\\le ";
 						else if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (SIGN_LESS_OR_EQUAL, po.can_display_unicode_string_arg))) print_str += SIGN_LESS_OR_EQUAL;
 						else if(format && tagtype == TAG_TYPE_HTML) print_str += "&lt;=";
 						else print_str += "<=";
