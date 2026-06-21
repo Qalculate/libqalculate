@@ -2803,7 +2803,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 					if(depth == 0) break;
 				}
 			}
-			if(i2 == string::npos) stmp2 = str.substr(str_index + 3);
+			if(depth > 0) stmp2 = str.substr(str_index + 3);
 			else stmp2 = str.substr(str_index + 3, i2 - (str_index + 3));
 			stmp = LEFT_PARENTHESIS INTERNAL_ID_L;
 			stmp += i2s(parseAddId(floor ? f_floor : f_ceil, stmp2, po));

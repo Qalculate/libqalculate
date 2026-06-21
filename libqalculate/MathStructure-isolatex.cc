@@ -932,6 +932,21 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 				}
 
+#define SECOND_DEGREE_TEST_COMPLEX	if(CHILD(0).representsReal(true)) {\
+						if(mstruct_1.representsComplex(true)) {\
+							if(mstruct_2.representsComplex(true)) {\
+								if(ct_comp == COMPARISON_NOT_EQUALS) {\
+									set(1, 1, 0, true);\
+								} else {\
+									clear(true);\
+								}\
+							} else {\
+								mstruct_1 = mstruct_2;\
+							}\
+						} else if(mstruct_2.representsComplex(true)) {\
+							mstruct_2 = mstruct_1;\
+						}\
+					}
 				if(b) {
 					int a_iv = find_interval_precision(mstruct_a);
 					int b_iv = find_interval_precision(mstruct_b);
@@ -1009,6 +1024,8 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 
 								CHILD(0) = x_var;
 								if(!mpow_b.isOne()) {CHILD(0) ^= mpow_b; CHILD_UPDATED(0);}
+								SECOND_DEGREE_TEST_COMPLEX
+								if(!isComparison()) return true;
 								if(mstruct_1 == mstruct_2) {
 									CHILD(1) = mstruct_1;
 									isolate_x_sub(eo, eo2, x_var, morig, depth + 1);
@@ -1067,7 +1084,9 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 
 							CHILD(0) = x_var;
 							if(!mpow_b.isOne()) {CHILD(0) ^= mpow_b; CHILD_UPDATED(0);}
-							if(mstruct_1 == mstruct_2) {
+							SECOND_DEGREE_TEST_COMPLEX
+							if(!isComparison()) {
+							} else if(mstruct_1 == mstruct_2) {
 								CHILD(1) = mstruct_1;
 								isolate_x_sub(eo, eo3, x_var, morig, depth + 1);
 							} else {
@@ -1193,8 +1212,11 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								mstruct_a.calculateInverse(eo2);
 								mstruct_1.calculateMultiply(mstruct_a, eo2);
 								mstruct_2.calculateMultiply(mstruct_a, eo2);
+
 								CHILD(0) = x_var;
 								if(!mpow_b.isOne()) {CHILD(0) ^= mpow_b; CHILD_UPDATED(0);}
+								SECOND_DEGREE_TEST_COMPLEX
+								if(!isComparison()) return true;
 								if(mstruct_1 == mstruct_2) {
 									CHILD(1) = mstruct_1;
 									isolate_x_sub(eo, eo2, x_var, morig, depth + 1);
@@ -1246,9 +1268,12 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							mstruct_a.calculateInverse(eo3);
 							mstruct_1.calculateMultiply(mstruct_a, eo3);
 							mstruct_2.calculateMultiply(mstruct_a, eo3);
+
 							CHILD(0) = x_var;
 							if(!mpow_b.isOne()) {CHILD(0) ^= mpow_b; CHILD_UPDATED(0);}
-							if(mstruct_1 == mstruct_2) {
+							SECOND_DEGREE_TEST_COMPLEX
+							if(!isComparison()) {
+							} else if(mstruct_1 == mstruct_2) {
 								CHILD(1) = mstruct_1;
 								isolate_x_sub(eo, eo3, x_var, morig, depth + 1);
 							} else {
@@ -3155,7 +3180,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					if(CHILD(0)[i].isPower()) {
 						bool b1 = CHILD(0)[i][0].contains(x_var);
 						bool b2 = CHILD(0)[i][1].contains(x_var);
-						if(b1 == b2) {m1 = NULL; break;}
+						if(b1 == b2 || (b1 && !CHILD(0)[i][1].isInteger()) || (b2 && !CHILD(0)[i][0].representsNonNegative())) {m1 = NULL; break;}
 						if(b1) {
 							if((m1 && !CHILD(0)[i].equals(*m1)) || (!m2 && !m1 && !CHILD(0)[i][0].representsReal()) || (!m1 && m2 && !CHILD(0)[i][0].equals((*m2)[1]))) {m1 = NULL; break;}
 							else if(!m1) m1 = &CHILD(0)[i];
@@ -3170,7 +3195,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								if(b1 || b2 || !CHILD(0)[i][i2].isPower()) {m1 = NULL; m2 = NULL; break;}
 								b1 = CHILD(0)[i][i2][0].contains(x_var);
 								b2 = CHILD(0)[i][i2][1].contains(x_var);
-								if(b1 == b2) {m2 = NULL; m1 = NULL; break;}
+								if(b1 == b2 || (b1 && !CHILD(0)[i][i2][1].isInteger()) || (b2 && !CHILD(0)[i][i2][0].representsNonNegative())) {m2 = NULL; m1 = NULL; break;}
 								if(b1) {
 									if((m1 && !CHILD(0)[i][i2].equals(*m1)) || (!m2 && !m1 && !CHILD(0)[i][i2][0].representsReal()) || (!m1 && m2 && !CHILD(0)[i][i2][0].equals((*m2)[1]))) {m1 = NULL; m2 = NULL; break;}
 									else if(!m1) m1 = &CHILD(0)[i][i2];
@@ -3228,8 +3253,8 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						mroot = m_c;
 						mroot->divide_nocopy(m_a);
 						mroot->negate();
-						mroot->raise(m);
-						mroot->last().inverse();
+						mroot->transformById(FUNCTION_ID_ROOT);
+						mroot->addChild(m);
 						mroot->multiply(mlog);
 					}
 					mroot->divide(m);
@@ -3320,7 +3345,15 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				mcheck->add(m_zero, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_EQUALS_GREATER : OPERATION_LESS);
 				mcheck->isolate_x_sub(eo, eo2, x_var, NULL, depth + 1);
 				malt->isolate_x_sub(eo, eo2, x_var, NULL, depth + 1);
-				malt->add_nocopy(mcheck, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				if((ct_comp_bak == COMPARISON_EQUALS && malt->isLogicalOr()) || (ct_comp_bak == COMPARISON_NOT_EQUALS && malt->isLogicalAnd())) {
+					for(size_t i = 0; i < malt->size(); i++) {
+						(*malt)[i].add_nocopy(i != SIZE - 1 ? new MathStructure(*mcheck) : mcheck, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+						(*malt)[i].calculatesub(eo2, eo, false);
+					}
+					malt->childrenUpdated();
+				} else {
+					malt->add_nocopy(mcheck, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				}
 				malt->calculatesub(eo2, eo, false);
 
 				mcheck = new MathStructure(mabs[0]);
@@ -3330,7 +3363,15 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 				mcheck->add(m_zero, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LESS : OPERATION_EQUALS_GREATER);
 				mcheck->isolate_x_sub(eo, eo2, x_var, NULL, depth + 1);
 				isolate_x_sub(eo, eo2, x_var, NULL, depth + 1);
-				add_nocopy(mcheck, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				if((ct_comp_bak == COMPARISON_EQUALS && isLogicalOr()) || (ct_comp_bak == COMPARISON_NOT_EQUALS && isLogicalAnd())) {
+					for(size_t i = 0; i < SIZE; i++) {
+						CHILD(i).add_nocopy(i != SIZE - 1 ? new MathStructure(*mcheck) : mcheck, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+						CHILD(i).calculatesub(eo2, eo, false);
+					}
+					CHILDREN_UPDATED
+				} else {
+					add_nocopy(mcheck, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND, true);
+				}
 				calculatesub(eo2, eo, false);
 				add_nocopy(malt, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
 				calculatesub(eo2, eo, false);
@@ -3381,7 +3422,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 			}
 
 			if(CHILD(0).size() >= 2 && (ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS)) {
-				// ax^2+b*abs(x)=c, x is complex => replace re(x), or im(x) with zero
+				// ax^2+b*abs(x)=c, x is complex => replace re(x) or im(x) with zero
 				MathStructure *m_x = NULL;
 				for(size_t i = 0; i < CHILD(0).size(); i++) {
 					if(CHILD(0)[i].isMultiplication()) {

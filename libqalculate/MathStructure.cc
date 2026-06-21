@@ -1326,6 +1326,14 @@ bool MathStructure::representsNonMatrix() const {
 		case STRUCT_NEGATE: {}
 		case STRUCT_DIVISION: {}
 		case STRUCT_MULTIPLICATION: {}
+		case STRUCT_LOGICAL_OR: {}
+		case STRUCT_LOGICAL_AND: {}
+		case STRUCT_LOGICAL_XOR: {}
+		case STRUCT_LOGICAL_NOT: {}
+		case STRUCT_BITWISE_OR: {}
+		case STRUCT_BITWISE_AND: {}
+		case STRUCT_BITWISE_XOR: {}
+		case STRUCT_BITWISE_NOT: {}
 		case STRUCT_ADDITION: {
 			for(size_t i = 0; i < SIZE; i++) {
 				if(!CHILD(i).representsNonMatrix()) {
@@ -1355,6 +1363,14 @@ bool MathStructure::representsScalar() const {
 		case STRUCT_NEGATE: {}
 		case STRUCT_DIVISION: {}
 		case STRUCT_MULTIPLICATION: {}
+		case STRUCT_LOGICAL_OR: {}
+		case STRUCT_LOGICAL_AND: {}
+		case STRUCT_LOGICAL_XOR: {}
+		case STRUCT_LOGICAL_NOT: {}
+		case STRUCT_BITWISE_OR: {}
+		case STRUCT_BITWISE_AND: {}
+		case STRUCT_BITWISE_XOR: {}
+		case STRUCT_BITWISE_NOT: {}
 		case STRUCT_ADDITION: {
 			for(size_t i = 0; i < SIZE; i++) {
 				if(!CHILD(i).representsScalar()) {
