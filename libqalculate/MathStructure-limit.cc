@@ -617,13 +617,15 @@ bool calculate_limit_sub(MathStructure &mstruct, const MathStructure &x_var, con
 					if(mnum.differentiate(x_var, eo) && !contains_diff_for(mnum, x_var) && mden.differentiate(x_var, eo) && !contains_diff_for(mden, x_var)) {
 						mnum /= mden;
 						mnum.eval(eo);
-						calculate_limit_sub(mnum, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth + 1);
-						if(!limit_contains_undefined(mnum)) {
-							mstruct.set(mnum, true);
-							for(size_t i = 0; i < mleft.size(); i++) {
-								mstruct.calculateMultiply(mleft[i], eo);
+						if(mnum.countTotalChildren(false) < 3000) {
+							calculate_limit_sub(mnum, x_var, nr_limit, eo, approach_direction, NULL, lhop_depth + 1);
+							if(!limit_contains_undefined(mnum)) {
+								mstruct.set(mnum, true);
+								for(size_t i = 0; i < mleft.size(); i++) {
+									mstruct.calculateMultiply(mleft[i], eo);
+								}
+								return true;
 							}
-							return true;
 						}
 					}
 				}
