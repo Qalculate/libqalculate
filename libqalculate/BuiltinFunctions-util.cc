@@ -2304,7 +2304,7 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 				else if(s == "textless") {snew = "<";}
 				else if(s == "textgreater") {snew = ">";}
 				else if(s == "bmod" || s == "mod") {snew = "mod";}
-				else if(s == "qquad" || s == "quad" || s == "nobreakspace" || s == "thinspace" || s == "medspace" || s == "thickspace" || s == " ") snew = " ";
+				else if(s == "qquad" || s == "quad" || s == "nobreakspace" || s == "thinspace" || s == "medspace" || s == "thickspace" || s == " " || s == "," || s == ";") snew = " ";
 				else if(s == "negthinspace" || s == "negmedspace" || s == "negthickspace") snew = "";
 				else if(s.empty()) snew = " ";
 				else if(s == "hspace" || s == "vspace" || s == "mspace" || s == "phantom" || s == "label" || s == "ref" || s == "displaybreak" || s == "pagebreak" || s == "intertext" || s == "shortintertext" || s == "tag") {
@@ -2324,7 +2324,12 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 						get_latex_args(str, i2, &snew);
 						parse_latex_string(snew, false, false, true);
 					} else if(s == "arccos" || s == "arcsin" || s == "arctan" || s == "arg" || s == "cos" || s == "cosh" || s == "cot" || s == "coth" || s == "csc" || s == "det" || s == "exp" || s == "gcd" || s == "lg" || s == "ln" || s == "log" || s == "max" || s == "min" || s == "sec" || s == "sin" || s == "sinh" || s == "tan" || s == "tanh") {
-						snew = s; snew += " ";
+						snew = s;
+						if(s == "log" && i2 < str.length() && str[i2] == '_') {
+							i2++;
+						} else if(i2 < str.length() && is_not_in(NOT_IN_NAMES, str[i2])) {
+							snew += " ";
+						}
 					} else if(s == "deg" || s == "hom" || s == "inf" || s == "dim" || s == "inflim" || s == "ker" || s == "liminf" || s == "limsup" || s == "Pr" || s == "projlim" || s == "sup" || s == "varlimsup" || s == "varliminf" || s == "varprojlim" || s == "varinjlim") {
 						CALCULATOR->error(true, "Unsupported LaTeX command/macro %s.", (string("\\") + s).c_str(), NULL);
 					} else if(s == "frac" || s == "dfrac" || s == "tfrac" || s == "cfrac" || s == "sfrac" || s == "nicefrac") {
@@ -2431,22 +2436,21 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 						parse_latex_string(s1);
 						parse_latex_string(s2);
 						snew = "integrate(";
-						size_t i3 = i2;
-						while(true) {
-							i3 = str.find("d", i3 + 1);
-							if(i3 == string::npos) break;
-							if(i3 < str.length() - 1 && (str[i3 + 1] == 'x' || str[i3 + 1] == 'y' || str[i3 + 1] == 'z') && (str[i3 - 1] == ' ' || str[i3 - 1] == ')') && (i3 + 1 == str.length() - 1 || ((str[i3 + 2] < 'a' || str[i3 + 2] > 'z') && (str[i3 + 2] < 'A' || str[i3 + 2] > 'Z')))) break;
-						}
-						string sarg;
-						if(i3 == string::npos) {
-							sarg = str.substr(i2);
-							i2 = str.length();
-						} else {
-							sarg = str.substr(i2, i3 - i2);
-							s3 = str.substr(i3 + 1, 1);
-							i2 = i3 + 2;
-						}
+						string sarg, sleft;
+						sarg = str.substr(i2);
 						parse_latex_string(sarg);
+						i2 = str.length();
+						size_t i3 = 0;
+						while(true) {
+							i3 = sarg.find("d", i3 + 1);
+							if(i3 == string::npos) break;
+							if(i3 + 1 < sarg.length() && (sarg[i3 + 1] == 'x' || sarg[i3 + 1] == 'y' || sarg[i3 + 1] == 'z') && (sarg[i3 - 1] == ' ' || sarg[i3 - 1] == ')') && (i3 + 2 == sarg.length() || ((sarg[i3 + 2] < 'a' || sarg[i3 + 2] > 'z') && (sarg[i3 + 2] < 'A' || sarg[i3 + 2] > 'Z')))) break;
+						}
+						if(i3 != string::npos) {
+							s3 = sarg.substr(i3 + 1, 1);
+							sleft = sarg.substr(i3 + 2);
+							sarg = sarg.substr(0, i3);
+						}
 						snew += sarg;
 						snew += ",";
 						snew += s1;
@@ -2457,6 +2461,7 @@ void parse_latex_string(string &str, bool in_unit = false, bool symbols_only = f
 							snew += s3;
 						}
 						snew += ")";
+						snew += sleft;
 					} else if(s == "begin") {
 						get_latex_args(str, i2, &s);
 						remove_blank_ends(s);

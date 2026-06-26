@@ -3647,7 +3647,7 @@ bool test_fix_latex_name(string &str) {
 
 void replace_latex_sub(string &str, bool do_text = false) {
 	size_t i = str.find("<sub>");
-	if(i != string::npos && str.find("</sub>", i) == str.length() - 6) {
+	if(i != string::npos && str.length() > 11 && str.find("</sub>", i) == str.length() - 6) {
 		str.erase(str.length() - 6, 6);
 		str.erase(i, 5);
 		if(do_text) {
@@ -3671,7 +3671,7 @@ string get_latex_name(ExpressionItem *o, const PrintOptions &po, bool b_plural =
 	}
 	if(abbreviated) *abbreviated = ename->abbreviation;
 	replace_latex_sub(str, o->type() == TYPE_VARIABLE);
-	for(size_t i = 0; i + 1 < str.size(); i++) {
+	for(size_t i = 0; i + 1 < str.length(); i++) {
 		if(str[i] == '_' && str[i + 1] != '{') {
 			str.insert(i, "\\");
 			i++;
@@ -3693,7 +3693,7 @@ string get_latex_unit(const MathStructure &m, const PrintOptions &po, bool b_plu
 			if(p == -30) {pname = "q"; pstr = "\\quecto";}
 			else if(p == -27) {pname = "r"; pstr = "\\ronto";}
 			else if(p == -24) {pname = "y"; pstr = "\\yocto";}
-			else if(p == -21) {pname = "z"; pstr = "\\zepo";}
+			else if(p == -21) {pname = "z"; pstr = "\\zepto";}
 			else if(p == -18) {pname = "a"; pstr = "\\atto";}
 			else if(p == -15) {pname = "f"; pstr = "\\femto";}
 			else if(p == -12) {pname = "p"; pstr = "\\pico";}
@@ -3820,7 +3820,7 @@ string get_latex_unit(const MathStructure &m, const PrintOptions &po, bool b_plu
 	}
 	if(p != 0) {
 		if(!pstr.empty()) {
-			if(str.empty() || str[0] != '\\') str.insert(0, " ");
+			if(str.empty() || (str[0] != '\\' && str[0] != ' ')) str.insert(0, " ");
 			str.insert(0, pstr);
 		} else {
 			const ExpressionName *ename = &prefix->preferredDisplayName(abbreviated, true, b_plural, po.use_reference_names, po.can_display_unicode_string_function, po.can_display_unicode_string_arg);
@@ -3835,7 +3835,7 @@ string get_latex_unit(const MathStructure &m, const PrintOptions &po, bool b_plu
 		}
 	}
 	if(div) {
-		if(str.empty() || str[0] != '\\') str.insert(0, " ");
+		if(str.empty() || (str[0] != '\\' && str[0] != ' ')) str.insert(0, " ");
 		str.insert(0, "\\per");
 	}
 	if(m.isPower() && !m[1].isOne()) {
@@ -3844,14 +3844,14 @@ string get_latex_unit(const MathStructure &m, const PrintOptions &po, bool b_plu
 		} else if(m[1].number() == 3) {
 			str += "\\cubed";
 		} else if(m[1].number() == -1 && !div) {
-			if(str.empty() || str[0] != '\\') str.insert(0, " ");
+			if(str.empty() || (str[0] != '\\' && str[0] != ' ')) str.insert(0, " ");
 			str.insert(0, "\\per");
 		} else if(m[1].number() == -2 && !div) {
-			if(str.empty() || str[0] != '\\') str.insert(0, " ");
+			if(str.empty() || (str[0] != '\\' && str[0] != ' ')) str.insert(0, " ");
 			str.insert(0, "\\per");
 			str += "\\squared";
 		} else if(m[1].number() == -3 && !div) {
-			if(str.empty() || str[0] != '\\') str.insert(0, " ");
+			if(str.empty() || (str[0] != '\\' && str[0] != ' ')) str.insert(0, " ");
 			str.insert(0, "\\per");
 			str += "\\cubed";
 		} else {
@@ -3939,21 +3939,20 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				po2.number_fraction_format = FRACTION_DECIMAL;
 				return print(po2, format, colorize, tagtype, ips);
 			} else if(format && tagtype == TAG_TYPE_LATEX) {
+				PrintOptions po2 = po;
+				po2.multiplication_sign = MULTIPLICATION_SIGN_ASTERISK;
+				po2.division_sign = DIVISION_SIGN_SLASH;
+				po2.exp_display = EXP_LOWERCASE_E;
+				po2.decimalpoint_sign = ".";
+				po2.use_unicode_signs = false;
+				ips_n.wrap = false;
 				if(po.base != 10) {
-					PrintOptions po2 = po;
-					po2.multiplication_sign = MULTIPLICATION_SIGN_ASTERISK;
-					po2.division_sign = DIVISION_SIGN_SLASH;
-					po2.use_unicode_signs = false;
 					print_str += "\\text{";
 					print_str += print(po2, false, false, TAG_TYPE_LATEX, ips_n);
 					print_str += "}";
 					break;
 				}
-				PrintOptions po2 = po;
-				po2.exp_display = EXP_LOWERCASE_E;
 				po2.digit_grouping = DIGIT_GROUPING_STANDARD;
-				po2.decimalpoint_sign = ".";
-				ips_n.wrap = false;
 				string str = print(po2, false, false, TAG_TYPE_LATEX, ips_n);
 				if(str.find_first_not_of(NUMBERS DOT) != string::npos) {
 					gsub("±", "\\pm ", str);
@@ -4289,27 +4288,30 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			}
 			if(format && tagtype == TAG_TYPE_LATEX && SIZE >= 2 && is_unit_multiexp_strict(LAST)) {
 				size_t first_unit = SIZE - 1;
-				while(first_unit > 0 && is_unit_multiexp(CHILD(first_unit - 1))) first_unit--;
+				while(first_unit > 0 && is_unit_multiexp_strict(CHILD(first_unit - 1))) first_unit--;
 				if(first_unit == 1 && po.base == 10 && CHILD(0).isNumber()) {
 					print_str += "\\qty{";
 					PrintOptions po2 = po;
 					po2.exp_display = EXP_LOWERCASE_E;
 					po2.digit_grouping = DIGIT_GROUPING_NONE;
 					po2.decimalpoint_sign = ".";
+					ips_n.wrap = false;
 					print_str += CHILD(0).print(po2, false, false, TAG_TYPE_LATEX, ips_n);
 					print_str += "}";
 				} else if(first_unit > 1) {
-						MathStructure mmul;
-						mmul.setType(STRUCT_MULTIPLICATION);
-						for(size_t i = 0; i < first_unit; i++) mmul.addChild(CHILD(i));
-						if(mmul.containsType(STRUCT_UNIT, false, false, false) <= 0) {
-							print_str += "\\qty[parse-numbers=false]{";
-							print_str += mmul.print(po, format, colorize, TAG_TYPE_LATEX, ips_n);
-							print_str += "}";
-						}
+					MathStructure mmul;
+					mmul.setType(STRUCT_MULTIPLICATION);
+					for(size_t i = 0; i < first_unit; i++) mmul.addChild(CHILD(i));
+					if(mmul.containsType(STRUCT_UNIT, false, false, false) <= 0) {
+						print_str += "\\qty[parse-numbers=false]{";
+						ips_n.wrap = false;
+						print_str += mmul.print(po, format, colorize, TAG_TYPE_LATEX, ips_n);
+						print_str += "}";
+					}
 				} else if(first_unit == 1) {
 					if(CHILD(0).containsType(STRUCT_UNIT, false, false, false) <= 0) {
 						print_str += "\\qty[parse-numbers=false]{";
+						ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, flat_division, flat_power);
 						print_str += CHILD(0).print(po, format, colorize, TAG_TYPE_LATEX, ips_n);
 						print_str += "}";
 					}
@@ -4450,6 +4452,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				print_str = "\\frac{";
 				print_str += m_one.print(po, format, colorize, tagtype, ips_n);
 				print_str += "}{";
+				ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, flat_division, flat_power);
 				print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
 				print_str += "}";
 				break;
@@ -4492,8 +4495,10 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 			ips_n.division_depth++;
 			if(format && tagtype == TAG_TYPE_LATEX) {
 				print_str = "\\frac{";
+				ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, flat_division, flat_power);
 				print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
 				print_str += "}{";
+				ips_n.wrap = CHILD(1).needsParenthesis(po, ips_n, *this, 2, flat_division, flat_power);
 				print_str += CHILD(1).print(po, format, colorize, tagtype, ips_n);
 				print_str += "}";
 				break;
@@ -4572,15 +4577,22 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 		}
 		case STRUCT_POWER: {
 			ips_n.depth++;
-			ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, true);
 			if(format && tagtype == TAG_TYPE_LATEX) {
-				print_str = "";
+				if(is_unit_exp_strict(*this)) {
+					print_str += "\\unit{";
+					print_str += get_latex_unit(*this, po, b_plural, false);
+					print_str += "}";
+					break;
+				}
+				ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, flat_division, true);
 				print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
+				ips_n.wrap = CHILD(1).needsParenthesis(po, ips_n, *this, 2, flat_division, flat_power);
 				print_str += "^{";
 				print_str += CHILD(1).print(po, format, colorize, tagtype, ips_n);
 				print_str += "}";
 				break;
 			}
+			ips_n.wrap = CHILD(0).needsParenthesis(po, ips_n, *this, 1, true, true);
 			bool b_units = po.place_units_separately && (tagtype == TAG_TYPE_TERMINAL || tagtype == TAG_TYPE_HTML) && COLORIZE_AS_UNIT((*this));
 			if(b_units && colorize && tagtype == TAG_TYPE_TERMINAL) print_str = colorize == 2 ? "\033[0;92m" : "\033[0;32m";
 			else if(b_units && colorize && tagtype == TAG_TYPE_HTML) print_str = (colorize == 2 ? "<span style=\"color:#BBFFBB\">" : "<span style=\"color:#008000\">");
@@ -4994,6 +5006,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 				} else if(o_function->id() == FUNCTION_ID_ABS && SIZE == 1 && (!po.preserve_format || (format && tagtype == TAG_TYPE_LATEX))) {
 					if(format && tagtype == TAG_TYPE_LATEX) print_str += "\\lvert";
 					else print_str += "|";
+					ips_n.wrap = false;
 					print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
 					if(format && tagtype == TAG_TYPE_LATEX) print_str += "\\rvert";
 					else print_str += "|";
@@ -5033,6 +5046,7 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 						break;
 					}
 				} else if(format && tagtype == TAG_TYPE_LATEX) {
+					ips_n.wrap = false;
 					if((o_function->id() == FUNCTION_ID_SQRT || o_function->id() == FUNCTION_ID_CBRT) && SIZE == 1) {
 						if(o_function->id() == FUNCTION_ID_CBRT) print_str += "\\sqrt[3]{";
 						else if(o_function->id() == FUNCTION_ID_SQRT) print_str += "\\sqrt{";
@@ -5046,9 +5060,19 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 						print_str += CHILD(1).print(po, format, colorize, tagtype, ips_n);
 						print_str += "}";
 						break;
+					} else if((o_function->id() == FUNCTION_ID_LOGN && SIZE == 2) || ((o_function->referenceName() == "log10" || o_function->referenceName() == "log2") && SIZE == 1)) {
+						print_str += "\\log_{";
+						if(SIZE == 1) print_str += o_function->referenceName().substr(3);
+						else print_str += CHILD(1).print(po, false, colorize, tagtype, ips_n);
+						print_str += "}(";
+						if(CHILD(0).type() != STRUCT_UNDEFINED) print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
+						print_str += ")";
+						break;
 					} else if(o_function->id() == FUNCTION_ID_MOD && SIZE == 2 && ips.depth == 0) {
+						ips_n.wrap = CHILD(0).isAddition() || (CHILD(0).size() > 0 && CHILD(0).type() > STRUCT_VECTOR);
 						print_str += CHILD(0).print(po, false, colorize, tagtype, ips_n);
 						print_str += " \\bmod ";
+						ips_n.wrap = CHILD(1).isAddition() || (CHILD(1).size() > 0 && CHILD(1).type() > STRUCT_VECTOR);
 						print_str += CHILD(1).print(po, format, colorize, tagtype, ips_n);
 						break;
 					} else if(o_function->id() == FUNCTION_ID_BINOMIAL && SIZE == 2) {
@@ -5072,9 +5096,9 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 						print_str += "}^{";
 						print_str += CHILD(2).print(po, false, colorize, tagtype, ips_n);
 						print_str += "}";
-						print_str += "\\left(";
+						print_str += " ";
+						ips_n.wrap = ips.depth > 0 || CHILD(0).isAddition() || CHILD(0).type() > STRUCT_VECTOR;
 						print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
-						print_str += "\\right)";
 						break;
 					} else if(o_function->id() == FUNCTION_ID_INTEGRATE && SIZE == 5 && CHILD(4).isZero()) {
 						print_str += "\\int";
@@ -5087,16 +5111,17 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 							else print_str += CHILD(2).print(po, false, colorize, tagtype, ips_n);
 							print_str += "}";
 						}
-						print_str += "\\left(";
+						print_str += " ";
+						ips_n.wrap = ips.depth > 0 || CHILD(0).isAddition() || CHILD(0).type() > STRUCT_VECTOR;
 						print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
-						print_str += "\\right)";
 						MathStructure xvar(CHILD(3));
 						if(xvar.isUndefined()) {
 							if(CHILD(0).isVariable() && CHILD(0).variable()->isKnown()) xvar.set(((KnownVariable*) CHILD(0).variable())->get().find_x_var(), true);
 							else xvar.set(CHILD(0).find_x_var(), true);
 						}
 						if(!xvar.isUndefined()) {
-							print_str += "d";
+							print_str += " \\,d";
+							ips_n.wrap = false;
 							print_str += xvar.print(po, false, colorize, tagtype, ips_n);
 						}
 						break;
@@ -5121,9 +5146,9 @@ string MathStructure::print(const PrintOptions &po, bool format, int colorize, i
 							else if(CHILD(3).number().isNegative()) print_str += "-";
 						}
 						print_str += "}";
-						print_str += "\\left(";
+						print_str += " ";
+						ips_n.wrap = ips.depth > 0 || CHILD(0).isAddition() || CHILD(0).type() > STRUCT_VECTOR;
 						print_str += CHILD(0).print(po, format, colorize, tagtype, ips_n);
-						print_str += "\\right)";
 						break;
 					} else if(o_function->id() == FUNCTION_ID_CEIL && SIZE == 1) {
 						print_str += "\\lceil";

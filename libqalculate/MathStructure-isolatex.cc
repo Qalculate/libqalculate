@@ -2015,7 +2015,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 									}
 								}
 							}
-							if(!mx.isOne() && mmul1.representsNonZero() && mmul2.representsNonZero() && !mmul2.contains(x_var)) {
+							if(!mx.isOne() && (mmul1.representsNegative() || mmul1.representsNonNegative()) && mmul2.representsNonZero() && !mmul2.contains(x_var)) {
 								MathStructure *marg;
 								if(!CHILD(1).isZero()) {
 									marg = new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_E));
@@ -2035,14 +2035,28 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 									mreq1->isolate_x(eo2, eo, m_undefined, false, depth + 1);
 								}
 								marg->transformById(FUNCTION_ID_LAMBERT_W);
+								MathStructure *marg2 = NULL;
+								if(mmul1.representsNegative()) {
+									marg2 = new MathStructure(*marg);
+									marg2->addChild(m_minus_one);
+									if(marg2->calculateFunctions(eo)) marg2->calculatesub(eo2, eo, true);
+									marg2->calculateDivide(mmul1, eo2);
+								}
 								marg->addChild(m_zero);
 								if(marg->calculateFunctions(eo)) marg->calculatesub(eo2, eo, true);
+								if(!mmul1.isOne()) marg->calculateDivide(mmul1, eo2);
 								CHILD(0).set(mx, true);
 								setChild_nocopy(marg, 2);
-								if(!mmul1.isOne()) CHILD(1).calculateDivide(mmul1, eo2);
 								CHILDREN_UPDATED
 								ComparisonType ct_comp_bak = ct_comp;
 								isolate_x_sub(eo, eo2, x_var, morig, depth + 1);
+								if(marg2) {
+									marg2->transform(ct_comp_bak, mx);
+									marg2->swapChildren(1, 2);
+									marg2->isolate_x_sub(eo, eo2, x_var, morig, depth + 1);
+									add_nocopy(marg2, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+									calculatesub(eo2, eo, false);
+								}
 								if(mreq1) {
 									add_nocopy(mreq1, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_OR : OPERATION_LOGICAL_AND);
 									calculatesub(eo2, eo, false);
@@ -3218,7 +3232,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					CALCULATOR->beginTemporaryStopMessages();
 					MathStructure m((*m1)[1]);
 					MathStructure mlog(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &(*m2)[0], NULL);
-					mlog.calculateFunctions(eo);
+					if(mlog.calculateFunctions(eo)) mlog.calculatesub(eo2, eo, true);
 					MathStructure *mroot = NULL;
 					bool b_int = false, b_two = false;
 					if(CHILD(0).size() == 2 && CHILD(0)[0].isPower() && CHILD(0)[1].isPower()) {
@@ -3251,49 +3265,51 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						b_int = m_a->isOne() && m_c->isMinusOne() && (*m1)[1].equals((*m2)[0]);
 						b_two = b_int && (*m1)[1].isNumber() && ((*m1)[1].number() == 2 || (*m1)[1].number() == 4);
 						mroot = m_c;
-						mroot->divide_nocopy(m_a);
-						mroot->negate();
+						m_a->calculateRaise(nr_minus_one, eo2);
+						mroot->multiply_nocopy(m_a);
+						mroot->calculateMultiplyLast(eo2);
+						mroot->calculateNegate(eo2);
 						mroot->transformById(FUNCTION_ID_ROOT);
 						mroot->addChild(m);
-						mroot->multiply(mlog);
+						mroot->calculateMultiply(mlog, eo2);
 					}
-					mroot->divide(m);
+					mroot->calculateDivide(m, eo2);
 					MathStructure *mroot3 = new MathStructure(*mroot);
 					MathStructure *mroot2 = new MathStructure();
 					if(b_two) {
 						mroot->set(4, 1, 0);
 						mroot2->set(2, 1, 0);
 					} else {
-						mroot->negate();
+						mroot->calculateNegate(eo2);
 						mroot->transformById(FUNCTION_ID_LAMBERT_W);
 						mroot2->set(*mroot);
 						mroot->addChild(m_zero);
-						mroot->calculateFunctions(eo);
-						mroot->multiply(m);
-						mroot->divide(mlog);
-						mroot->negate();
+						if(mroot->calculateFunctions(eo)) mroot->calculatesub(eo2, eo, true);
+						mroot->calculateMultiply(m, eo2);
+						mroot->calculateDivide(mlog, eo2);
+						mroot->calculateNegate(eo2);
 						if(b_int) {
 							mroot2->set((*m1)[1]);
 						} else {
 							mroot2->addChild(m_minus_one);
-							mroot2->calculateFunctions(eo);
-							mroot2->multiply(m);
-							mroot2->divide(mlog);
-							mroot2->negate();
+							if(mroot2->calculateFunctions(eo)) mroot2->calculatesub(eo2, eo, true);
+							mroot2->calculateMultiply(m, eo2);
+							mroot2->calculateDivide(mlog, eo2);
+							mroot2->calculateNegate(eo2);
 						}
 					}
 					mroot3->transformById(FUNCTION_ID_LAMBERT_W);
 					MathStructure *mroot4 = new MathStructure(*mroot3);
 					mroot4->addChild(m_minus_one);
 					mroot3->addChild(m_zero);
-					mroot3->calculateFunctions(eo);
-					mroot4->calculateFunctions(eo);
-					mroot3->multiply(m);
-					mroot3->divide(mlog);
-					mroot4->multiply(m);
-					mroot4->divide(mlog);
-					mroot3->negate();
-					mroot4->negate();
+					if(mroot3->calculateFunctions(eo)) mroot3->calculatesub(eo2, eo, true);
+					if(mroot4->calculateFunctions(eo)) mroot4->calculatesub(eo2, eo, true);
+					mroot3->calculateMultiply(m, eo2);
+					mroot3->calculateDivide(mlog, eo);
+					mroot4->calculateMultiply(m, eo2);
+					mroot4->calculateDivide(mlog, eo2);
+					mroot3->calculateNegate(eo2);
+					mroot4->calculateNegate(eo2);
 					ComparisonType ct_comp_bak = ct_comp;
 					MathStructure mbak(*this);
 					MathStructure mvar((*m1)[0]);
