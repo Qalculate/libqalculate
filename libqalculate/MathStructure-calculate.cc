@@ -2295,6 +2295,24 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 								return 1;
 							}
 						}
+					} else if(CHILD(0).isNumber() && mstruct[0].isNumber() && mstruct[1].isNumber() && CHILD(1).isNumber() && CHILD(1).number() == -mstruct[1].number() && ((mstruct[1].number().isNegative() && CHILD(0).number().isIntegerDivisible(mstruct[0].number())) || (CHILD(1).number().isNegative() && mstruct[0].number().isIntegerDivisible(CHILD(0).number())))) {
+						if(mstruct[1].number().isNegative()) {
+							if(CHILD(0).number().divide(mstruct[0].number())) {
+								CHILD(0).numberUpdated();
+								MERGE_APPROX_AND_PREC(mstruct)
+								return 1;
+							}
+						} else {
+							if(mstruct[0].number().divide(CHILD(0).number())) {
+								mstruct[0].numberUpdated();
+								if(mparent) {
+									mparent->swapChildren(index_this + 1, index_mstruct + 1);
+								} else {
+									set_nocopy(mstruct, true);
+								}
+								return 1;
+							}
+						}
 					} else if(eo.transform_trigonometric_functions && CHILD(1).isInteger() && mstruct[1].isInteger() && CHILD(0).isFunction() && mstruct[0].isFunction() && eo.protected_function != mstruct[0].function() && eo.protected_function != CHILD(0).function() && mstruct[0].size() == 1 && CHILD(0).size() == 1 && CHILD(0)[0] == mstruct[0][0]) {
 						if(CHILD(1).number().isNonNegative() != mstruct[1].number().isNonNegative()) {
 							if(CHILD(0).function()->id() == FUNCTION_ID_SIN) {
