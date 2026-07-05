@@ -110,7 +110,7 @@ bool tc_set = false, sinc_set = false;
 bool ignore_locale = false;
 string custom_lang, default_currency;
 bool utf8_encoding = false;
-bool result_only = false, vertical_space = true;
+bool result_only = false, vertical_space = true, force_vertical_space = false;
 bool do_imaginary_j = false;
 int sigint_action = 1;
 bool unittest = false;
@@ -240,7 +240,7 @@ size_t unformatted_length(const string &str) {
 				inform = false;
 			} else if(inform2 && str[i] == ']') {
 				inform2 = false;
-			} else if(inform && str[i] == ' ') {
+			} else if(inform && ((str[i] < 'a' || str[i] > 'z') && (str[i] < 'A' || str[i] > 'Z'))) {
 				inform = false;
 			} else if(!inform && !inform2 && str[i] != '$' && str[i] != '{' && str[i] != '}' && ((signed char) str[i] > 0 || (unsigned char) str[i] >= 0xC0)) {
 				l++;
@@ -415,8 +415,10 @@ void update_option_list() {
 		ADD_OPTION_TO_LIST("default currency", "currency")
 		ADD_OPTION_TO_LIST1("prompt")
 		ADD_OPTION_TO_LIST1("save mode")
+#ifdef HAVE_LIBREADLINE
 		ADD_OPTION_TO_LIST1("clear history")
 		ADD_OPTION_TO_LIST1("max history")
+#endif
 		ADD_OPTION_TO_LIST("save definitions", "save defs")
 		ADD_OPTION_TO_LIST1("save config")
 		ADD_OPTION_TO_LIST3("scientific notation", "exp", "exp mode")
@@ -1781,8 +1783,10 @@ void set_option(string str) {
 		int v = s2b(svalue); if(v < 0) {PUTS_UNICODE(_("Illegal value."));} else {printops.limit_implicit_multiplication = v; evalops.parse_options.limit_implicit_multiplication = v; expression_format_updated(true);}
 	//extra space next to operators
 	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "spacious", _("spacious")) || svar == "space") SET_BOOL_D(printops.spacious)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "vertical space", _("vertical space")) || svar == "vspace") SET_BOOL(vertical_space)
-	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unicode", _("unicode")) || svar == "uni") {
+	else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "vertical space", _("vertical space")) || svar == "vspace") {
+		SET_BOOL(vertical_space)
+		force_vertical_space = vertical_space;
+	} else if(EQUALS_IGNORECASE_AND_LOCAL(svar, "unicode", _("unicode")) || svar == "uni") {
 		int v = s2b(svalue);
 		if(v < 0) {
 			PUTS_UNICODE(_("Illegal value."));
@@ -2118,7 +2122,6 @@ void set_option(string str) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
 			max_history = v;
-
 			stifle_history(max_history);
 		}
 #endif
@@ -4749,6 +4752,8 @@ int main(int argc, char *argv[]) {
 	//load application specific preferences
 	load_preferences();
 
+	if(force_color > 0 && !command_file.empty() && vertical_space) force_vertical_space = true;
+
 	if(result_only) {
 		dual_approximation = 0;
 		dual_fraction = 0;
@@ -4861,7 +4866,7 @@ int main(int argc, char *argv[]) {
 
 	if(!result_only) {
 		int cols = 0;
-		if((interactive_mode || (!cfile && calc_arg.empty())) && CALCULATOR->message()) {
+		if((interactive_mode || (command_file.empty() && calc_arg.empty())) && CALCULATOR->message()) {
 #ifdef HAVE_LIBREADLINE
 			int rows = 0;
 			rl_initialize();
@@ -4945,6 +4950,7 @@ int main(int argc, char *argv[]) {
 		}
 		use_readline = false;
 		execute_expression();
+		if(vertical_space && force_vertical_space) puts("");
 		if(!interactive_mode) {
 			if(!had_errors) {
 				while(CALCULATOR->message()) {
@@ -5036,6 +5042,7 @@ int main(int argc, char *argv[]) {
 					}
 					execute_expression();
 				}
+				if(vertical_space && force_vertical_space) puts("");
 				if(!interactive_mode) break;
 				i_maxtime = 0;
 				if(ask_questions && pref_ia_activated) {
@@ -5979,6 +5986,8 @@ int main(int argc, char *argv[]) {
 #else
 					cols = 80;
 #endif
+				} else if(force_vertical_space) {
+					base_str = "\n";
 				}
 				base_str += result_text;
 				if(save_base != BASE_BINARY) {
@@ -6644,7 +6653,7 @@ int main(int argc, char *argv[]) {
 			PRINT_AND_COLON_TABS(_("ignore locale"), ""); str += b2yn(ignore_locale, false); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			if(!custom_lang.empty()) {PRINT_AND_COLON_TABS(_("language"), ""); str += custom_lang; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())}
 #ifdef HAVE_LIBREADLINE
-			PRINT_AND_COLON_TABS(_("max history"), ""); str += max_history; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
+			PRINT_AND_COLON_TABS(_("max history"), ""); str += i2s(max_history); CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 #endif
 
 			PRINT_AND_COLON_TABS(_("prompt"), ""); str += prompt; CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
@@ -7506,7 +7515,7 @@ string ellipsize_vector(const string &str, size_t length) {
 		}
 	}
 	if(i1 == 0 || i2 == 0) return str;
-	return str.substr(0, i1) + string(output_format == TAG_TYPE_LATEX ? "\\cdots " : (printops.use_unicode_signs ? "(…)" : "(...)")) + str.substr(i2);
+	return str.substr(0, i1) + string(output_format == TAG_TYPE_LATEX ? "(\\cdots)" : (printops.use_unicode_signs ? "(…)" : "(...)")) + str.substr(i2);
 }
 
 bool contains_large_matrix(const MathStructure &m, int top = 2) {
@@ -7706,7 +7715,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 	b_busy = true;
 
 	if(has_printed) printf("\n");
-	if(!auto_calculate && goto_input && vertical_space) printf("\n");
+	if(!auto_calculate && (goto_input || force_vertical_space) && vertical_space) printf("\n");
 
 	if(register_moved) {
 		update_parse = true;
@@ -7940,8 +7949,13 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 					strout += " (!)";
 				}
 				if(!b_matrix && line_breaks) addLineBreaks(strout, cols, true, mstruct->containsType(STRUCT_COMPARISON), result_only ? (goto_input ? prompt_l : 0) : i_result_u, i_result);
-				if(vertical_space && (b_matrix || goto_input) && !auto_calculate) strout += "\n";
+				if(vertical_space && ((b_matrix && !force_vertical_space) || goto_input) && !auto_calculate) strout += "\n";
 			} else if(output_format != TAG_TYPE_TERMINAL) {
+				if(output_format == TAG_TYPE_LATEX) {
+					if(strout.find("\\") != string::npos) strout.insert(0, "$\\displaystyle ");
+					else strout.insert(0, "$");
+					strout += "$";
+				}
 				if(autocalc_error) {
 					strout += " ";
 					if(DO_COLOR) strout += "\033[0;91m";
@@ -7954,11 +7968,6 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 					if(DO_COLOR) strout += "\033[0m";
 				} else if(autocalc_info) {
 					strout += " (!)";
-				}
-				if(output_format == TAG_TYPE_LATEX) {
-					if(strout.find("\\") != string::npos) strout.insert(0, "$\\displaystyle ");
-					else strout.insert(0, "$");
-					strout += "$";
 				}
 				if(vertical_space && goto_input && !auto_calculate) strout += "\n";
 			}
