@@ -2295,21 +2295,17 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 								return 1;
 							}
 						}
-					} else if(CHILD(0).isNumber() && mstruct[0].isNumber() && mstruct[1].isNumber() && CHILD(1).isNumber() && CHILD(1).number() == -mstruct[1].number() && ((mstruct[1].number().isNegative() && CHILD(0).number().isIntegerDivisible(mstruct[0].number())) || (CHILD(1).number().isNegative() && mstruct[0].number().isIntegerDivisible(CHILD(0).number())))) {
-						if(mstruct[1].number().isNegative()) {
-							if(CHILD(0).number().divide(mstruct[0].number())) {
-								CHILD(0).numberUpdated();
-								MERGE_APPROX_AND_PREC(mstruct)
-								return 1;
-							}
-						} else {
-							if(mstruct[0].number().divide(CHILD(0).number())) {
-								mstruct[0].numberUpdated();
-								if(mparent) {
-									mparent->swapChildren(index_this + 1, index_mstruct + 1);
-								} else {
-									set_nocopy(mstruct, true);
-								}
+					} else if(mstruct[1].isNumber() && CHILD(1).isNumber() && CHILD(0).isInteger() && mstruct[0].isInteger() && CHILD(1).number().isPositive() != mstruct[1].number().isPositive() && CHILD(1).number() == -mstruct[1].number()) {
+						Number nr(CHILD(0).number());
+						if(nr.gcd(mstruct[0].number()) && nr > 1) {
+							Number nr1(CHILD(0).number());
+							Number nr2(mstruct[0].number());
+							if(nr1.divide(nr) && nr2.divide(nr) && nr1.isInteger() && nr2.isInteger()) {
+								CHILD(0).number() = nr1;
+								mstruct[0].number() = nr2;
+								calculateRaiseExponent(eo);
+								mstruct.calculateRaiseExponent(eo);
+								calculateMultiply(mstruct, eo);
 								return 1;
 							}
 						}

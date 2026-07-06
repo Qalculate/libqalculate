@@ -3312,7 +3312,9 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 					default: {return true;}
 				}
 			}
-			return false;
+			if(!parent.function() || (parent.function()->id() != FUNCTION_ID_HORZCAT && parent.function()->id() != FUNCTION_ID_VERTCAT) || parent.size() < 2) {
+				return false;
+			}
 		}
 		case STRUCT_VECTOR: {
 			if(!CALCULATOR->usesMatlabStyleMatrices() || (!flat_division && (isDivision() || isInverse())) || (!flat_power && isPower())) return false;
