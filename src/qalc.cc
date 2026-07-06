@@ -110,7 +110,7 @@ bool tc_set = false, sinc_set = false;
 bool ignore_locale = false;
 string custom_lang, default_currency;
 bool utf8_encoding = false;
-bool result_only = false, vertical_space = true, force_vertical_space = false;
+bool result_only = false, vertical_space = true, force_vertical_space = false, cfile_output_begun = false;
 bool do_imaginary_j = false;
 int sigint_action = 1;
 bool unittest = false;
@@ -4748,11 +4748,9 @@ int main(int argc, char *argv[]) {
 
 	//create the almighty Calculator object
 	new Calculator(ignore_locale);
-	
+
 	//load application specific preferences
 	load_preferences();
-
-	if(force_color > 0 && !command_file.empty() && vertical_space) force_vertical_space = true;
 
 	if(result_only) {
 		dual_approximation = 0;
@@ -5042,8 +5040,8 @@ int main(int argc, char *argv[]) {
 					}
 					execute_expression();
 				}
-				if(vertical_space && force_vertical_space) puts("");
 				if(!interactive_mode) break;
+				if(vertical_space && cfile_output_begun) puts("");
 				i_maxtime = 0;
 				if(ask_questions && pref_ia_activated) {
 					set_option("ia 0");
@@ -5986,9 +5984,10 @@ int main(int argc, char *argv[]) {
 #else
 					cols = 80;
 #endif
-				} else if(force_vertical_space) {
+				} else if(force_vertical_space && (cfile_output_begun || !cfile)) {
 					base_str = "\n";
 				}
+				cfile_output_begun = true;
 				base_str += result_text;
 				if(save_base != BASE_BINARY) {
 					base_str += " = ";
@@ -7715,7 +7714,8 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 	b_busy = true;
 
 	if(has_printed) printf("\n");
-	if(!auto_calculate && (goto_input || force_vertical_space) && vertical_space) printf("\n");
+	if(!auto_calculate && (goto_input || ((force_vertical_space || (interactive_mode && cfile)) && (cfile_output_begun || !cfile) && stack_index == 0 && !unittest)) && vertical_space) printf("\n");
+	cfile_output_begun = true;
 
 	if(register_moved) {
 		update_parse = true;
@@ -7918,6 +7918,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 						}
 						if(exact_comparison && i_result == i_result2) {
 							if(goto_input) {strout.insert(i_result, indent_s); strout.insert(i_result, "\n\n");}
+							else if(interactive_mode && cfile) strout.insert(i_result, "\n\n");
 							else strout.insert(i_result, "\n");
 						} else {
 							strout[i_result - 1] = '\n';
@@ -7949,7 +7950,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 					strout += " (!)";
 				}
 				if(!b_matrix && line_breaks) addLineBreaks(strout, cols, true, mstruct->containsType(STRUCT_COMPARISON), result_only ? (goto_input ? prompt_l : 0) : i_result_u, i_result);
-				if(vertical_space && ((b_matrix && !force_vertical_space) || goto_input) && !auto_calculate) strout += "\n";
+				if(vertical_space && (goto_input || (b_matrix && !force_vertical_space && (!cfile || !interactive_mode))) && !auto_calculate) strout += "\n";
 			} else if(output_format != TAG_TYPE_TERMINAL) {
 				if(output_format == TAG_TYPE_LATEX) {
 					if(strout.find("\\") != string::npos) strout.insert(0, "$\\displaystyle ");
