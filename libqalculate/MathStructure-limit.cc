@@ -1064,16 +1064,20 @@ bool replace_equal_limits(MathStructure &mstruct, const MathStructure &x_var, co
 		}
 	}
 	if(at_top) return b_ret;
-	if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_SINH || mstruct.function()->id() == FUNCTION_ID_COSH) && mstruct.size() == 1 && mstruct.contains(x_var, true)) {
+	if(mstruct.isFunction() && (mstruct.function()->id() == FUNCTION_ID_SINH || mstruct.function()->id() == FUNCTION_ID_COSH) && mstruct.size() == 1 && mstruct[0].contains(x_var, true)) {
 		MathStructure mterm1(CALCULATOR->getVariableById(VARIABLE_ID_E));
 		mterm1.raise(mstruct[0]);
 		MathStructure mterm2(mterm1);
 		mterm2[1].negate();
 		mterm1 *= nr_half;
 		mterm2 *= nr_half;
-		mstruct = mterm1;
-		if(mstruct.function()->id() == FUNCTION_ID_SINH) mstruct -= mterm2;
-		else mstruct += mterm2;
+		if(mstruct.function()->id() == FUNCTION_ID_SINH) {
+			mstruct = mterm1;
+			mstruct -= mterm2;
+		} else {
+			mstruct = mterm1;
+			mstruct += mterm2;
+		}
 		return true;
 	}
 	return b_ret;
