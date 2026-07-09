@@ -3304,7 +3304,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								else stmp += i2s(parseAddId(f, stmp2, po));
 								stmp += INTERNAL_ID_R RIGHT_PARENTHESIS;
 								str.replace(i7, str_index + name_length - i7, stmp);
-								str_index += name_length;
+								str_index = i7 + stmp.length();
 								moved_forward = true;
 							} else {
 								bool b = false, b_unended_function = false, b_comma_before = false, b_power_before = false;
