@@ -8801,6 +8801,7 @@ bool test_autocalculable(const MathStructure &m, bool where = false, bool top = 
 			mfunc.calculateFunctions(evalops, false);
 			return false;
 		}
+		if(m.function()->id() == FUNCTION_ID_INTEGRATE && m.size() >= 3 && m[2].isUndefined() && !m[1].isUndefined()) return false;
 		if(m.function()->id() == FUNCTION_ID_SAVE || m.function()->id() == FUNCTION_ID_PLOT || m.function()->id() == FUNCTION_ID_EXPORT || m.function()->id() == FUNCTION_ID_LOAD || m.function()->id() == FUNCTION_ID_COMMAND || (m.function()->subtype() == SUBTYPE_USER_FUNCTION && ((UserFunction*) m.function())->formula().find("plot(") != string::npos)) return false;
 		if(m.size() > 0 && (m.function()->id() == FUNCTION_ID_FACTORIAL || m.function()->id() == FUNCTION_ID_DOUBLE_FACTORIAL || m.function()->id() == FUNCTION_ID_MULTI_FACTORIAL) && m[0].isInteger() && m[0].number().integerLength() > 17) {
 			return false;
@@ -10061,7 +10062,7 @@ void load_preferences() {
 		makeDir(getLocalDir());
 	}
 
-	int version_numbers[] = {5, 11, 0};
+	int version_numbers[] = {5, 12, 0};
 
 	if(file) {
 		char line[10000];
@@ -10105,7 +10106,7 @@ void load_preferences() {
 					indent_s.append(prompt_l, ' ');
 				} else if(svar == "colorize") {
 #ifdef _WIN32
-					if(version_numbers[0] > 3 || (version_numbers[0] == 3 && (version_numbers[1] > 13 || (version_numbers[1] == 13 && version_numbers[2] > 0))) && (v > 0 || version_numbers[0] != 5 || (version_numbers[1] != 10 && version_numbers[1] != 11))) {
+					if((version_numbers[0] > 3 || (version_numbers[0] == 3 && (version_numbers[1] > 13 || (version_numbers[1] == 13 && version_numbers[2] > 0)))) && (v > 0 || version_numbers[0] != 5 || (version_numbers[1] != 10 && version_numbers[1] != 11))) {
 						colorize = v;
 					}
 #else
@@ -10410,7 +10411,7 @@ void load_preferences() {
 					}
 				} else if(svar == "calculate_as_you_type") {
 #ifdef _WIN32
-					if(autocalc != 0 || version_numbers[0] != 5 || (version_numbers[1] != 10 && version_numbers[1] != 11))) {
+					if(autocalc != 0 || version_numbers[0] != 5 || (version_numbers[1] != 10 && version_numbers[1] != 11)) {
 						autocalc = v;
 					}
 #else

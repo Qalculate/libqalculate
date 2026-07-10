@@ -1,3 +1,81 @@
+2026-07-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix RPN syntax for expressions with multiple functions
+
+2026-07-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault when calculating limit for expression with sinh or cosh (also affects integrals with infinite lower or upper limit)
+	* Do not automatically calculate integral with only lower limit defined
+
+2026-07-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Use vertical space (vspace) setting for output in non-interactive mode, when specified on command line (e.g. "qalc -s vspace")
+	* Add space between results when reading expressions from file before interactive mode (unless vspace is disabled)
+
+2026-07-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix parentheses in output of parsed vector
+	* Improve simplification of a^(c/d)/b^(c/d), where a, b, c, and d are integers, and gcd(a, b) > 1, in exact mode (e.g. cbrt(12)/cbrt(4)=cbrt(3))
+
+2026-06-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix a*x+b*ln(x)=c where sgn(a)!=sgn(b) (only one solution were found)
+
+2026-06-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix extremely slow calculation of limit((1/x + 1)^(1 / (2x)), ∞)
+
+2026-06-22 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Solve x*abs(x)=a and x^2*abs(x)=a for complex x
+
+2026-06-19 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not stop mixed unit conversion to specified unit when value < 1, unless at first unit (e.g. "1 yd + 9 in", instead of "1 yd + 0.75 ft", for "1.25 yd to yd", as without "to yd")
+	* Stop mixed unit conversion when remaining value < 10^(-precision) (e.g. 1.000 000 000 ft, instead of 1 ft + 1e-20 in)
+
+2026-06-16 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Interpret the character after underscore, when immediately after backslash and character, as suffix (e.g. \x_n = "x_n", with n shown as subscript in output)
+	* Always use quotation marks for output of text arguments
+
+2026-06-14 Eike Gebauer <me@rcx.one>
+
+	* Add max history option to configure maximum number of expressions saved in history
+
+2026-06-13 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Solve a*f(x)+b*abs(x)=c, where f(x) is x, x^(m/n) with m < n, or ln(x), for complex x
+
+2026-06-12 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Solve a*x^2+b*abs(x)=c for complex x
+	* Fix conversion of feet and inches when using ' and " (e.g. 5'2" to cm)
+
+2026-06-11 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add tsp and tbsp abbreviations, change cup to exactly 240 mL (U.S. legal), and add U.S. customary cup, tablespoon, and teaspoon
+
+2026-06-10 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Solve a*x^b+c*d^x=0 for real x
+
+2026-06-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add argument for reverse conversion to roman(), bijective(), and bcd() functions, and ignore blank space for automatic detection of reverse conversion
+
+2026-06-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Apply logical and bitwise operation entrywise to vectors and matrices
+
+2026-06-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* LaTeX input (using latex() function or "$\...$")
+
+2026-06-03 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add support for LaTeX output (use --latex or "to latex" in qalc)
+
 2026-05-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix use of x, y, z, without backslash, for function arguments when using function command
