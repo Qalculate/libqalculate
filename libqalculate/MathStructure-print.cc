@@ -3862,7 +3862,7 @@ string get_latex_unit(const MathStructure &m, const PrintOptions &po, bool b_plu
 			po2.digit_grouping = DIGIT_GROUPING_NONE;
 			po2.decimalpoint_sign = ".";
 			str += "\\tothe{";
-			str += m.print(po2, false, false, TAG_TYPE_LATEX);
+			str += m[1].print(po2, false, false, TAG_TYPE_LATEX);
 			str += "}";
 		}
 	}
