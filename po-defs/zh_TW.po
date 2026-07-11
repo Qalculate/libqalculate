@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/Qalculate/libqalculate/issues\n"
-"POT-Creation-Date: 2026-06-11 11:24+0200\n"
-"PO-Revision-Date: 2026-05-20 23:46+0800\n"
+"POT-Creation-Date: 2026-06-27 14:18+0200\n"
+"PO-Revision-Date: 2026-07-11 15:12+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_TW\n"
@@ -4273,7 +4273,7 @@ msgstr "回傳在指定範圍中該值的所有倍數。"
 
 #: data/functions.xml.in:1063
 msgid "Digit sum"
-msgstr "數字總和"
+msgstr "數字和"
 
 #: data/functions.xml.in:1064
 msgid "r:digitSum"
@@ -4281,7 +4281,7 @@ msgstr "r:digitSum"
 
 #: data/functions.xml.in:1076
 msgid "Digital Root"
-msgstr ""
+msgstr "數字根"
 
 #: data/functions.xml.in:1077
 msgid "r:digitalRoot"
@@ -4458,8 +4458,8 @@ msgid ""
 "digits ('z' equals 61).\n"
 "\n"
 "Bases over 62 use Unicode characters as digits, with the character code as "
-"value (e.g. '0' equals 48). Escaped characters are in this case supported "
-"(e.g. '\\0' = 0, '\\523' = 523, '\\x7f' = 127).\n"
+"value (e.g. '0' equals 48). Escaped characters are in this case supported (e."
+"g. '\\0' = 0, '\\523' = 523, '\\x7f' = 127).\n"
 "\n"
 "Negative bases use the same digits as the corresponding positive bases and "
 "the digits used for non-integer bases are determined by rounding the base "
@@ -4469,11 +4469,11 @@ msgid ""
 "The set of digits used can be selected using the third argument (defaults to "
 "0 for automatic selection). Set it to 1 for digits 0-9 and A-Z, 2 for 0-9, A-"
 "Z and a-z, 3 for Unicode digits, and 4 for phonewords (e.g. ABC=2, DEF=3, "
-"etc.), or enter a text string with all digits placed in ascending order "
-"(e.g. \"0123456789\") and optionally separated by semicolon (to enable "
-"multiple equivalent digits, e.g. \"0;aA1;bB2;cC3\"). When the set of digits "
-"is manually selected, the specified expression is always converted to a "
-"single number."
+"etc.), or enter a text string with all digits placed in ascending order (e."
+"g. \"0123456789\") and optionally separated by semicolon (to enable multiple "
+"equivalent digits, e.g. \"0;aA1;bB2;cC3\"). When the set of digits is "
+"manually selected, the specified expression is always converted to a single "
+"number."
 msgstr ""
 "使用指定的底數(基數)從表達式回傳一個值。對於-62和62之間的底數，支援完整的數學"
 "表達式(包含運算子和函數)，而對於其他底數，指定的表達式轉換到單個數字。\n"
@@ -5427,8 +5427,8 @@ msgstr "r:floatParts"
 msgid ""
 "Converts a value to a number in a IEEE 754 floating-point format and returns "
 "sign, exponent, and significand in a vector. If the third argument (exponent "
-"bits) is set to zero, the standard number of exponent bits will be used "
-"(e.g. 8 for 32-bit format)."
+"bits) is set to zero, the standard number of exponent bits will be used (e."
+"g. 8 for 32-bit format)."
 msgstr ""
 "將值轉換到IEEE 754浮點格式的數字並以向量回傳符號、指數和有效數。如果第三個引"
 "數(指數位元)設定為零，則使用標準數量的指數位元(例如8用於32位元格式)。"
@@ -5653,9 +5653,10 @@ msgid ""
 "that are in acceptably sharp focus in a photo. Enter focal length (e.g. 50 "
 "mm) and distance (e.g. 5 m) with units, and f-stop without unit (2.8, 4.0, "
 "5.6, etc.). Specify either a cicle of confusion diameter limit (e.g. 0.05 "
-"mm) or the sensor size of the camera - 0=\"35mm\", 1=\"APS-H\", 2=\"APS-CN\" "
-"(Nikon, Pentax, Sony), 3=\"APS-C\" (Canon), 4=\"4/3\" (Four Thirds System), "
-"or 5='1\"' (Nikon 1, Sony RX10, Sony RX100) - for a diameter based on d/1500."
+"mm) or the sensor size of the camera - 0=\"35mm\", 1=\"APS-H\", 2=\"APS-"
+"CN\" (Nikon, Pentax, Sony), 3=\"APS-C\" (Canon), 4=\"4/3\" (Four Thirds "
+"System), or 5='1\"' (Nikon 1, Sony RX10, Sony RX100) - for a diameter based "
+"on d/1500."
 msgstr ""
 "回傳照片中可接受的銳利焦點中最近和最遠的物體之間的估計距離。輸入具有單位的焦"
 "距(例如50 mm)和距離(例如5 m)，和無單位的F值(2.8、4.0、5.6等等)。指定模糊圈直"
@@ -5690,8 +5691,8 @@ msgstr "r:awg"
 #: data/functions.xml.in:2104
 msgid ""
 "For gauges larger than 0000 (4/0), please use negative values (00=-1, "
-"000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation "
-"(e.g. awg(x) = 20 mm^2)."
+"000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation (e."
+"g. awg(x) = 20 mm^2)."
 msgstr ""
 "對於大於0000(4/0)的線規，請使用負值(00=-1、000=-2、0000=-3、00000=-4等等)。要"
 "轉換到AWG，使用方程式(例如awg(x) = 20 mm^2)。"
@@ -5711,8 +5712,8 @@ msgstr "r:awgd"
 #: data/functions.xml.in:2113
 msgid ""
 "For gauges larger than 0000 (4/0), please use negative values (00=-1, "
-"000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation "
-"(e.g. awgd(x) = 5 mm)."
+"000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation (e."
+"g. awgd(x) = 5 mm)."
 msgstr ""
 "對於大於0000(4/0)的線規，請使用負值(00=-1、000=-2、0000=-3、00000=-4等等)。要"
 "轉換到AWG，使用方程式(例如awgd(x) = 5 mm)。"
@@ -7325,7 +7326,7 @@ msgstr "r:find"
 
 #: data/functions.xml.in:3515
 msgid "Add value column"
-msgstr ""
+msgstr "加入值欄"
 
 #: data/functions.xml.in:3520
 msgid "r:function"
@@ -7402,8 +7403,8 @@ msgstr ""
 "將值儲存在變數中或將表達式儲存為函數。\n"
 "\n"
 "如果名稱包含括號(例如\"f()\")，則建立一個函數。函數引數可以在名稱中選擇性的指"
-"定(例如\"save(a+b,f(a,b))\")。否則函數引數預期使用\\x、\\y、\\z、\\a、"
-"\\b、...，或x、y、z(例如\"save(x+y,f())\")。\n"
+"定(例如\"save(a+b,f(a,b))\")。否則函數引數預期使用"
+"\\x、\\y、\\z、\\a、\\b、...，或x、y、z(例如\"save(x+y,f())\")。\n"
 "\n"
 "如果函數被建立，則已處理的函數表達式回傳為文字字串，否則回傳該值。\n"
 "\n"
@@ -7567,13 +7568,12 @@ msgstr "命令"
 
 #: data/functions.xml.in:3676
 msgid "LaTeX"
-msgstr ""
+msgstr "LaTeX"
 
 #: data/functions.xml.in:3677
-#, fuzzy
 #| msgid "r:ramlatency"
 msgid "r:latex"
-msgstr "r:ramlatency"
+msgstr "r:latex"
 
 #: data/functions.xml.in:3678
 msgid ""
@@ -7581,6 +7581,8 @@ msgid ""
 "any expression that begins and ends with $ and contains a backslash is "
 "interpreted using this function."
 msgstr ""
+"從LaTeX amsmath和/或siunitx表達式傳回一個值。請注意，以$開頭和結尾並包含反斜"
+"線的任何表達式都將使用此函數判讀。"
 
 #: data/functions.xml.in:3689
 msgid "Logical"
@@ -9937,7 +9939,8 @@ msgid "Turn"
 msgstr "轉"
 
 #: data/units.xml.in:490
-msgid "a:tr,r:turn,p:turns,a:pla,a:rev,revolution,p:revolutions,a:cyc,cycle,p:cycles"
+msgid ""
+"a:tr,r:turn,p:turns,a:pla,a:rev,revolution,p:revolutions,a:cyc,cycle,p:cycles"
 msgstr "a:tr,r:turn,轉,a:pla,a:rev,revolution,a:cyc,cycle"
 
 #: data/units.xml.in:499
@@ -11002,60 +11005,44 @@ msgid "r:tablespoon,a:tbsp,p:tablespoons"
 msgstr "r:tablespoon,a:tbsp,湯匙"
 
 #: data/units.xml.in:2449
-#, fuzzy
-#| msgid "Teaspoon"
 msgid "U.S. Teaspoon"
-msgstr "茶匙"
+msgstr "美制茶匙"
 
 #: data/units.xml.in:2451
-#, fuzzy
-#| msgid "r:teaspoon,p:teaspoons"
 msgid "r:US_teaspoon,as:tsp_US,p:US_teaspoons"
-msgstr "r:teaspoon,茶匙"
+msgstr "r:US_teaspoon,as:tsp_US,美制茶匙"
 
 #: data/units.xml.in:2460
-#, fuzzy
-#| msgid "Dessertspoon"
 msgid "U.S. Dessertspoon"
-msgstr "甜點匙"
+msgstr "美制甜點匙"
 
 #: data/units.xml.in:2462
-#, fuzzy
-#| msgid "r:dessertspoon,p:dessertspoons"
 msgid "r:US_dessertspoon,p:US_dessertspoons"
-msgstr "r:dessertspoon,甜點匙"
+msgstr "r:US_dessertspoon,美制甜點匙"
 
 #: data/units.xml.in:2471
-#, fuzzy
-#| msgid "Tablespoon"
 msgid "U.S. Tablespoon"
-msgstr "湯匙"
+msgstr "美制湯匙"
 
 #: data/units.xml.in:2473
-#, fuzzy
-#| msgid "r:tablespoon,p:tablespoons"
 msgid "r:US_tablespoon,as:tbsp_US,p:US_tablespoons"
-msgstr "r:tablespoon,湯匙"
+msgstr "r:US_tablespoon,as:tbsp_US,美制湯匙"
 
 #: data/units.xml.in:2482
-#, fuzzy
-#| msgid "Cup (U.S.)"
 msgid "Cup (U.S. Legal)"
-msgstr "杯(U.S.)"
+msgstr "杯(美制法定)"
 
 #: data/units.xml.in:2483
 msgid "r-c:cup,p-c:cups"
 msgstr "r-c:cup,杯"
 
 #: data/units.xml.in:2491
-#, fuzzy
-#| msgid "U.S. Capacity"
 msgid "U.S. Cup"
-msgstr "美制容量"
+msgstr "美制杯"
 
 #: data/units.xml.in:2493
 msgid "ras:cup_US,US_cup,p:US_cups"
-msgstr ""
+msgstr "ras:cup_US,US_cup,美制杯"
 
 #: data/units.xml.in:2503
 msgid "Imperial Capacity"
@@ -11114,7 +11101,8 @@ msgid "Imperial Fluid Scruple"
 msgstr "英制液量吩"
 
 #: data/units.xml.in:2571
-msgid "r:imperial_fluid_scruple,p:imperial_fluid_scruples,ro:imperial_fluid_scuple"
+msgid ""
+"r:imperial_fluid_scruple,p:imperial_fluid_scruples,ro:imperial_fluid_scuple"
 msgstr "r:imperial_fluid_scruple,英制液量吩,ro:imperial_fluid_scuple"
 
 #: data/units.xml.in:2579
@@ -11303,7 +11291,7 @@ msgstr "a-cr:cfs"
 
 #: data/units.xml.in:2916
 msgid "Gallons per Minute (U.S.)"
-msgstr "加侖每分鐘(U.S.)"
+msgstr "加侖每分鐘(美制)"
 
 #: data/units.xml.in:2918
 msgid "a-cr:gpm"
@@ -11311,7 +11299,7 @@ msgstr "a-cr:gpm"
 
 #: data/units.xml.in:2942
 msgid "Gallons per Hour (U.S.)"
-msgstr "加侖每小時(U.S.)"
+msgstr "加侖每小時(美制)"
 
 #: data/units.xml.in:2944
 msgid "a-cr:gph"
@@ -11319,7 +11307,7 @@ msgstr "a-cr:gph"
 
 #: data/units.xml.in:2952
 msgid "Gallons per Second (U.S.)"
-msgstr "加侖每秒(U.S.)"
+msgstr "加侖每秒(美制)"
 
 #: data/units.xml.in:2989
 msgid "Speed"
@@ -11889,7 +11877,7 @@ msgstr "r:therm_ISO,a:thm_ISO"
 
 #: data/units.xml.in:4109
 msgid "Therm (U.S.)"
-msgstr "捨姆(U.S.)"
+msgstr "捨姆(美制)"
 
 #: data/units.xml.in:4110
 msgid "r:therm_US,p:therms_US,a:thm_US"
@@ -12242,7 +12230,8 @@ msgid "Trit (Ternary Digit)"
 msgstr "Trit(三進制數字)"
 
 #: data/units.xml.in:4714
-msgid "r:trit,p:trits,trinary_digit,p:trinary_digits,ternary_digit,p:ternary_digits"
+msgid ""
+"r:trit,p:trits,trinary_digit,p:trinary_digits,ternary_digit,p:ternary_digits"
 msgstr "r:trit,trinary_digit,ternary_digit,三進制數字"
 
 #: data/units.xml.in:4722
@@ -12274,7 +12263,9 @@ msgid "Nibble (Hexadecimal Digit)"
 msgstr "半字節(十六進制數字)"
 
 #: data/units.xml.in:4751
-msgid "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets,hex_digit,p:hex_digits,hexadecimal_digit,p:hexadecimal_digits"
+msgid ""
+"r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets,hex_digit,p:"
+"hex_digits,hexadecimal_digit,p:hexadecimal_digits"
 msgstr ""
 "r:nibble,半字節,nybble,semioctet,hex_digit,hexadecimal_digit,十六進制數字"
 

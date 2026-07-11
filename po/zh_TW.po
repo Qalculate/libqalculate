@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/Qalculate/libqalculate/issues\n"
 "POT-Creation-Date: 2026-07-07 07:46+0200\n"
-"PO-Revision-Date: 2026-03-28 19:56+0800\n"
+"PO-Revision-Date: 2026-07-10 23:00+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_TW\n"
@@ -1094,10 +1094,8 @@ msgid "clear history"
 msgstr "clear history"
 
 #: src/qalc.cc:2119 src/qalc.cc:6655
-#, fuzzy
-#| msgid "history"
 msgid "max history"
-msgstr "history"
+msgstr "最大歷史記錄"
 
 #. qalc command
 #: src/qalc.cc:2128 src/qalc.cc:5136 src/qalc.cc:6661 src/qalc.cc:6709
@@ -1665,10 +1663,8 @@ msgid "Ignore system language and use English (requires restart)."
 msgstr "忽略系統語言並使用英語(需要重新啟動)。"
 
 #: src/qalc.cc:2846
-#, fuzzy
-#| msgid "Lists the expression history."
 msgid "Maximum number of expressions kept in history."
-msgstr "列出表達式歷史記錄。"
+msgstr "歷史記錄中保留表達式的最大數量。"
 
 #: src/qalc.cc:2862
 msgid "Activates the Reverse Polish Notation stack."
@@ -1932,7 +1928,7 @@ msgstr "以互動模式啟動"
 
 #: src/qalc.cc:4521
 msgid "output in LaTeX format"
-msgstr ""
+msgstr "以LaTeX格式輸出"
 
 #: src/qalc.cc:4522 src/qalc.cc:4524 src/qalc.cc:4526 src/qalc.cc:4528
 #: src/qalc.cc:4530
@@ -2042,8 +2038,8 @@ msgid ""
 "qalculate.github.io/manual/index.html)."
 msgstr ""
 "有關數學表達式和不同選項的更多資訊，以及函數、變數和單位的完整列表，請觀看圖"
-"形使用者介面手冊中的相關區段(可以在https://qalculate.github.io/manual/"
-"index.html得到)。"
+"形使用者介面手冊中的相關區段(可以在https://qalculate.github.io/manual/index."
+"html得到)。"
 
 #: src/qalc.cc:4562 src/qalc.cc:6732
 msgid ""
@@ -2286,11 +2282,11 @@ msgstr "小數"
 
 #: src/qalc.cc:6122
 msgid "latex"
-msgstr ""
+msgstr "latex"
 
 #: src/qalc.cc:6126
 msgid "html"
-msgstr ""
+msgstr "html"
 
 #. qalc command
 #: src/qalc.cc:6202 src/qalc.cc:6696 src/qalc.cc:6779 src/qalc.cc:7088
@@ -2806,10 +2802,8 @@ msgid "- calendars"
 msgstr "- calendars"
 
 #: src/qalc.cc:7010
-#, fuzzy
-#| msgid "- time (show in time format)"
 msgid "- latex (show in LaTeX format)"
-msgstr "- time(以時間格式顯示)"
+msgstr "- latex(以LaTeX格式顯示)"
 
 #: src/qalc.cc:7012
 msgid "Example: to ?g"
@@ -3213,10 +3207,9 @@ msgid "Too many elements (%s) for the dimensions (%sx%s) of the matrix."
 msgstr "元素(%s)對矩陣的大小(%sx%s)來說太多。"
 
 #: libqalculate/BuiltinFunctions-matrixvector.cc:199
-#, fuzzy, c-format
-#| msgid "Elements where from the end of matrix/vector in %s()."
+#, c-format
 msgid "Elements were removed from the end of matrix/vector in %s()."
-msgstr "在%s()中元素來自矩陣/向量的結尾。"
+msgstr "在%s()中從矩陣/向量的結尾移除元素。"
 
 #: libqalculate/BuiltinFunctions-matrixvector.cc:201
 #: libqalculate/BuiltinFunctions-matrixvector.cc:556
