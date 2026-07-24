@@ -102,8 +102,17 @@ bool is_number_angle_value(const MathStructure &mstruct, bool allow_infinity = f
 	return false;
 }
 
+bool neg_sign_contains_addition(const MathStructure &mstruct) {
+	if(mstruct.isAddition()) return true;
+	if(!mstruct.isMultiplication() && !mstruct.isNegate() && !mstruct.isPower() && !mstruct.isDivision() && !mstruct.isInverse()) return false;
+	if(mstruct.isPower() && mstruct[1].isNumber() && !mstruct[1].number().isInteger()) return false;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(neg_sign_contains_addition(mstruct[i])) return true;
+	}
+	return false;
+}
 bool has_predominately_negative_sign(const MathStructure &mstruct) {
-	if(mstruct.hasNegativeSign() && !mstruct.containsType(STRUCT_ADDITION, true)) return true;
+	if(mstruct.hasNegativeSign() && !neg_sign_contains_addition(mstruct)) return true;
 	if(mstruct.containsInfinity(false, false, false) > 0) return false;
 	if(mstruct.isAddition() && mstruct.size() > 0) {
 		size_t p_count = 0;
@@ -1068,6 +1077,17 @@ void multiply_by_fraction_of_radian(MathStructure &mstruct, const EvaluationOpti
 		mstruct.divide_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
 	}
 }
+void divide_by_fraction_of_radian(MathStructure &mstruct, const EvaluationOptions &eo, long int num, long int den) {
+	if(DEFAULT_RADIANS(eo.parse_options.angle_unit)) {
+		if(num != 1 && den != 1) {
+			mstruct.multiply(Number(den, num, 0L));
+		}
+		if(NO_DEFAULT_ANGLE_UNIT(eo.parse_options.angle_unit)) mstruct /= CALCULATOR->getRadUnit();
+	} else {
+		mstruct /= angle_units_in_turn(eo, num, den * 2);
+		mstruct.multiply_nocopy(new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_PI)));
+	}
+}
 AsinFunction::AsinFunction() : MathFunction("asin", 1) {
 	Argument *arg = new NumberArgument("", ARGUMENT_MIN_MAX_NONE, false, false);
 	arg->setHandleVector(true);
@@ -1511,11 +1531,23 @@ int AsinhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(!mstruct.isNumber()) {
+		if(trig_remove_i(mstruct)) {
+			mstruct.transformById(FUNCTION_ID_ASIN);
+			mstruct *= nr_one_i;
+			divide_by_fraction_of_radian(mstruct, eo, 1, 1);
+			return 1;
+		}
 		if(has_predominately_negative_sign(mstruct)) {negate_struct(mstruct); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
 	Number nr = mstruct.number();
 	if(!nr.asinh() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
+		if(trig_remove_i(mstruct)) {
+			mstruct.transformById(FUNCTION_ID_ASIN);
+			mstruct *= nr_one_i;
+			divide_by_fraction_of_radian(mstruct, eo, 1, 1);
+			return 1;
+		}
 		if(has_predominately_negative_sign(mstruct)) {mstruct.number().negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
@@ -1560,6 +1592,12 @@ int AtanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	mstruct.eval(eo);
 	if(mstruct.isVector()) return -1;
 	if(!mstruct.isNumber()) {
+		if(trig_remove_i(mstruct)) {
+			mstruct.transformById(FUNCTION_ID_ATAN);
+			mstruct *= nr_one_i;
+			divide_by_fraction_of_radian(mstruct, eo, 1, 1);
+			return 1;
+		}
 		if(has_predominately_negative_sign(mstruct)) {negate_struct(mstruct); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}
@@ -1594,6 +1632,12 @@ int AtanhFunction::calculate(MathStructure &mstruct, const MathStructure &vargs,
 	}
 	Number nr = mstruct.number();
 	if(!nr.atanh() || (eo.approximation == APPROXIMATION_EXACT && nr.isApproximate() && !mstruct.isApproximate()) || (!eo.allow_complex && nr.isComplex() && !mstruct.number().isComplex()) || (!eo.allow_infinite && nr.includesInfinity() && !mstruct.number().includesInfinity())) {
+		if(trig_remove_i(mstruct)) {
+			mstruct.transformById(FUNCTION_ID_ATAN);
+			mstruct *= nr_one_i;
+			divide_by_fraction_of_radian(mstruct, eo, 1, 1);
+			return 1;
+		}
 		if(has_predominately_negative_sign(mstruct)) {mstruct.number().negate(); mstruct.transform(this); mstruct.negate(); return 1;}
 		return -1;
 	}

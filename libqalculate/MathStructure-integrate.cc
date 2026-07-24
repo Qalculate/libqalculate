@@ -5355,6 +5355,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 									// sqrt(ax+b)/x: 2*sqrt(ax + b) - 2*sqrt(b)*atanh(sqrt(ax + b)/sqrt(b))
 									SET_CHILD_MAP(1)
 									CHILD(1).set(nr_half, true);
+									MathStructure *mterm = new MathStructure(*this);
 									bool add_neg = madd.representsNegative();
 									if(add_neg) {
 										if(madd.isNumber()) madd.number().negate();
@@ -5364,7 +5365,6 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 										madd ^= nr_half;
 										divide(madd);
 									}
-									MathStructure *mterm = new MathStructure(*this);
 									if(add_neg) transformById(FUNCTION_ID_ATAN);
 									else transformById(FUNCTION_ID_ATANH);
 									if(!madd.isOne()) multiply(madd);
@@ -5374,7 +5374,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 									add_nocopy(mterm);
 									return true;
 								} else if(mexp.number() == nr_minus_half) {
-									// 1/(x*sqrt(ax+b)) = -(2*atanh(sqrt(ax+b)/sqrt(b)))/sqrt(b)
+									// 1/(x*sqrt(ax+b)): -(2*atanh(sqrt(ax+b)/sqrt(b)))/sqrt(b)
 									SET_CHILD_MAP(1)
 									CHILD(1).set(nr_half, true);
 									bool add_neg = madd.representsNegative();
@@ -5561,6 +5561,31 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 							mterm2 /= madd;
 							mterm2 *= nr_half;
 							add(mterm2);
+							return true;
+						} else if(mexp == nr_minus_half && CHILD(0).isPower() && CHILD(0)[0] == x_var && CHILD(0)[1].isMinusOne()) {
+							// 1/(x*sqrt(ax+bx^2+c)): (2*atanh((sqrt(b)x-sqrt(ax+bx^2+c))/sqrt(c)))/sqrt(c)
+							SET_CHILD_MAP(1)
+							CHILD(1).set(nr_half, true);
+							bool add_neg = madd.representsNegative();
+							if(add_neg) {
+								if(madd.isNumber()) madd.number().negate();
+								else madd.negate();
+							}
+							if(!mmul2.isOne()) {
+								mmul2 ^= nr_half;
+								mmul2 *= x_var;
+							}
+							negate();
+							add(mmul2);
+							if(!madd.isOne()) {
+								madd ^= nr_minus_half;
+								multiply(madd);
+							}
+							if(add_neg) transformById(FUNCTION_ID_ATAN);
+							else transformById(FUNCTION_ID_ATANH);
+							if(!madd.isOne()) multiply(madd);
+							multiply(nr_two);
+							if(add_neg) negate();
 							return true;
 						} else if(mexp.isInteger() && mexp.number().isNegative() && CHILD(0) == x_var) {
 							MathStructure mbak(*this);
