@@ -132,6 +132,15 @@
 					unformat(xeo); \
 					fix_intervals(*this, xeo, NULL, PRECISION);
 
+bool contains_approx_num_without_interval(const MathStructure&);
+#define BOOL_PRESERVE_PRECISION (b_approx && (i_precision >= 0 || !CALCULATOR->usesIntervalArithmetic() || contains_approx_num_without_interval(*this)))
+#define BOOL_PRESERVE_PRECISION_M(x) (x.isApproximate() && (x.precision() >= 0 || !CALCULATOR->usesIntervalArithmetic() || contains_approx_num_without_interval(x)))
+#define SET_FALSE_TPA {clear(BOOL_PRESERVE_PRECISION);}
+#define SET_TRUE_TPA {set(1, 1, 0, BOOL_PRESERVE_PRECISION);}
+#define MERGE_TPA(x) {if(BOOL_PRESERVE_PRECISION_M(x)) {MERGE_APPROX_AND_PREC(x)}}
+#define SET_FALSE_TPA_M(x) {x.clear(BOOL_PRESERVE_PRECISION_M(x));}
+#define MERGE_TPA_M(x, y) {if(BOOL_PRESERVE_PRECISION_M(y)) {x.mergePrecision(y);}}
+
 void printRecursive(const MathStructure &mstruct);
 
 std::string format_and_print(const MathStructure &mstruct);

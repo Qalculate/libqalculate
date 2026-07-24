@@ -1595,6 +1595,7 @@ void calculate_dual_exact(MathStructure &mstruct_exact, MathStructure *mstruct, 
 									if(comparison_compare(mtest, m2)) {
 										if(!mtest.isApproximate()) {(*mcmpi)[1].set(mtest); mstruct_exact[i2][1].setUndefined();}
 										else (*mcmpi)[1].set(m2);
+										mcmpi->setApproximate(false);
 										mstruct_exact[i2].setProtected();
 										break;
 									}

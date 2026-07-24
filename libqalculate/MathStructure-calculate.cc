@@ -4234,7 +4234,8 @@ int MathStructure::merge_logical_and(MathStructure &mstruct, const EvaluationOpt
 			return 2;
 		}
 		if(mstruct.representsNonZero()) {
-			MERGE_APPROX_AND_PREC(mstruct)
+			if(mparent) mparent->mergePrecision(mstruct);
+			else {MERGE_APPROX_AND_PREC(mstruct)}
 			return 2;
 		}
 		if(mstruct.isZero()) {
@@ -4614,7 +4615,8 @@ int MathStructure::merge_logical_or(MathStructure &mstruct, const EvaluationOpti
 			return 3;
 		}
 		if(mstruct.isZero()) {
-			MERGE_APPROX_AND_PREC(mstruct)
+			if(mparent) mparent->mergePrecision(mstruct);
+			else {MERGE_APPROX_AND_PREC(mstruct)}
 			return 2;
 		}
 		if(representsNonZero()) {
@@ -5531,6 +5533,15 @@ int contains_temp_unit(const MathStructure &m, bool top = true) {
 	return 0;
 }
 
+bool contains_approx_num_without_interval(const MathStructure &m) {
+	if(m.isNumber()) return m.number().isApproximate() && !m.number().isInterval();
+	if(m.isVariable() && m.variable()->isKnown()) return contains_approx_num_without_interval(((KnownVariable*) m.variable())->get());
+	for(size_t i = 0; i < m.size(); i++) {
+		if(contains_approx_num_without_interval(m[i])) return true;
+	}
+	return false;
+}
+
 int compare_vectors(const MathStructure &m1, const MathStructure &m2) {
 	if(CALCULATOR->aborted()) return -1;
 	if(!m1.isVector()) {
@@ -6129,15 +6140,19 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 			}
 			if(((CHILD(0).isNumber() || (CHILD(0).isVariable() && !CHILD(0).variable()->isKnown() && ((UnknownVariable*) CHILD(0).variable())->interval().isNumber())) && (CHILD(1).isNumber() || ((CHILD(1).isVariable() && !CHILD(1).variable()->isKnown() && ((UnknownVariable*) CHILD(1).variable())->interval().isNumber())))) || (CHILD(0).isDateTime() && CHILD(1).isDateTime())) {
 				ComparisonResult cr;
-				if(CHILD(0).isNumber()) {
-					if(CHILD(1).isNumber()) cr = CHILD(1).number().compareApproximately(CHILD(0).number());
-					else cr = ((UnknownVariable*) CHILD(1).variable())->interval().number().compareApproximately(CHILD(0).number());
-				} else if(CHILD(1).isNumber()) {
-					cr = CHILD(1).number().compareApproximately(((UnknownVariable*) CHILD(0).variable())->interval().number());
-				} else if(CHILD(1).isVariable()) {
-					cr = ((UnknownVariable*) CHILD(1).variable())->interval().number().compareApproximately(((UnknownVariable*) CHILD(0).variable())->interval().number());
-				} else {
+				bool keep_approx = false;
+				if(CHILD(0).isDateTime()) {
 					cr = CHILD(1).compare(CHILD(0));
+				} else {
+					const Number *nr0 = NULL, *nr1 = NULL;
+					if(CHILD(0).isNumber()) nr0 = &CHILD(0).number();
+					else nr0 = &((UnknownVariable*) CHILD(0).variable())->interval().number();
+					if(CHILD(1).isNumber()) nr1 = &CHILD(1).number();
+					else nr1 = &((UnknownVariable*) CHILD(1).variable())->interval().number();
+					if(!keep_approx && nr0->isApproximate() && (nr0->precision() >= 0 || !nr0->isInterval())) keep_approx = true;
+					if(!keep_approx && nr1->isApproximate() && (nr1->precision() >= 0 || !nr1->isInterval())) keep_approx = true;
+					cr = nr1->compareApproximately(*nr0);
+					if(cr == COMPARISON_RESULT_EQUAL && !keep_approx) keep_approx = !nr1->equals(*nr0);
 				}
 				if(cr >= COMPARISON_RESULT_UNKNOWN) {
 					break;
@@ -6145,60 +6160,60 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				switch(ct_comp) {
 					case COMPARISON_EQUALS: {
 						if(cr == COMPARISON_RESULT_EQUAL) {
-							set(1, 1, 0, true);
+							set(1, 1, 0, keep_approx);
 							b = true;
 						} else if(COMPARISON_IS_NOT_EQUAL(cr)) {
-							clear(true);
+							clear(keep_approx);
 							b = true;
 						}
 						break;
 					}
 					case COMPARISON_NOT_EQUALS: {
 						if(cr == COMPARISON_RESULT_EQUAL) {
-							clear(true);
+							clear(keep_approx);
 							b = true;
 						} else if(COMPARISON_IS_NOT_EQUAL(cr)) {
-							set(1, 1, 0, true);
+							set(1, 1, 0, keep_approx);
 							b = true;
 						}
 						break;
 					}
 					case COMPARISON_LESS: {
 						if(cr == COMPARISON_RESULT_LESS) {
-							set(1, 1, 0, true);
+							set(1, 1, 0, keep_approx);
 							b = true;
 						} else if(cr != COMPARISON_RESULT_EQUAL_OR_LESS && cr != COMPARISON_RESULT_NOT_EQUAL) {
-							clear(true);
+							clear(keep_approx);
 							b = true;
 						}
 						break;
 					}
 					case COMPARISON_EQUALS_LESS: {
 						if(COMPARISON_IS_EQUAL_OR_LESS(cr)) {
-							set(1, 1, 0, true);
+							set(1, 1, 0, keep_approx);
 							b = true;
 						} else if(cr != COMPARISON_RESULT_EQUAL_OR_GREATER && cr != COMPARISON_RESULT_NOT_EQUAL) {
-							clear(true);
+							clear(keep_approx);
 							b = true;
 						}
 						break;
 					}
 					case COMPARISON_GREATER: {
 						if(cr == COMPARISON_RESULT_GREATER) {
-							set(1, 1, 0, true);
+							set(1, 1, 0, keep_approx);
 							b = true;
 						} else if(cr != COMPARISON_RESULT_EQUAL_OR_GREATER && cr != COMPARISON_RESULT_NOT_EQUAL) {
-							clear(true);
+							clear(keep_approx);
 							b = true;
 						}
 						break;
 					}
 					case COMPARISON_EQUALS_GREATER: {
 						if(COMPARISON_IS_EQUAL_OR_GREATER(cr)) {
-							set(1, 1, 0, true);
+							set(1, 1, 0, keep_approx);
 							b = true;
 						} else if(cr != COMPARISON_RESULT_EQUAL_OR_LESS && cr != COMPARISON_RESULT_NOT_EQUAL) {
-							clear(true);
+							clear(keep_approx);
 							b = true;
 						}
 						break;
@@ -6225,11 +6240,11 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 			}
 			if((CHILD(0).representsUndefined() && !CHILD(1).representsUndefined(true, true, true)) || (CHILD(1).representsUndefined() && !CHILD(0).representsUndefined(true, true, true))) {
 				if(ct_comp == COMPARISON_EQUALS) {
-					clear(true);
+					SET_FALSE_TPA
 					b = true;
 					break;
 				} else if(ct_comp == COMPARISON_NOT_EQUALS) {
-					set(1, 1, 0, true);
+					SET_TRUE_TPA
 					b = true;
 					break;
 				}
@@ -6281,29 +6296,29 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 			if(ct_comp == COMPARISON_EQUALS || ct_comp == COMPARISON_NOT_EQUALS) {
 				if((CHILD(0).representsReal(true) && CHILD(1).representsComplex(true)) || (CHILD(1).representsReal(true) && CHILD(0).representsComplex(true))) {
 					if(ct_comp == COMPARISON_EQUALS) {
-						clear(true);
+						SET_FALSE_TPA
 					} else {
-						set(1, 1, 0, true);
+						SET_TRUE_TPA
 					}
 					b = true;
 				} else if((CHILD(0).representsZero(true) && CHILD(1).representsZero(true))) {
 					if(ct_comp != COMPARISON_EQUALS) {
-						clear(true);
+						SET_FALSE_TPA
 					} else {
-						set(1, 1, 0, true);
+						SET_TRUE_TPA
 					}
 					b = true;
 				} else if(CHILD(0).isVariable() && !CHILD(0).variable()->isKnown() && CHILD(0).representsInteger() && test_non_integer(CHILD(1), eo)) {
-					if(ct_comp == COMPARISON_EQUALS) clear(true);
-					else set(1, 1, 0, true);
+					if(ct_comp == COMPARISON_EQUALS) SET_FALSE_TPA
+					else SET_TRUE_TPA
 					b = true;
 				} else if((CHILD(0).representsBoolean() && ((CHILD(1).isNumber() && CHILD(1).number().isNonZero() && comparison_is_not_equal(CHILD(1).number().compare(nr_one))) || CHILD(1).representsNegative())) || (CHILD(1).representsBoolean() && ((CHILD(0).isNumber() && CHILD(0).number().isNonZero() && comparison_is_not_equal(CHILD(0).number().compare(nr_one))) || CHILD(0).representsNegative()))) {
-					if(ct_comp == COMPARISON_EQUALS) clear(true);
-					else set(1, 1, 0, true);
+					if(ct_comp == COMPARISON_EQUALS) SET_FALSE_TPA
+					else SET_TRUE_TPA
 					b = true;
 				} else if((CHILD(1).isInfinite() && CHILD(0).representsFinite()) || (CHILD(0).isInfinite() && CHILD(1).representsFinite())) {
-					if(ct_comp == COMPARISON_EQUALS) clear(true);
-					else set(1, 1, 0, true);
+					if(ct_comp == COMPARISON_EQUALS) SET_FALSE_TPA
+					else SET_TRUE_TPA
 					b = true;
 				}
 			}
@@ -6312,12 +6327,12 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				if(CHILD(1).number().isNonInteger()) {
 					switch(ct_comp) {
 						case COMPARISON_EQUALS: {
-							clear(true);
+							SET_FALSE_TPA
 							b = true;
 							break;
 						}
 						case COMPARISON_NOT_EQUALS: {
-							set(1, 1, 0, true);
+							SET_TRUE_TPA
 							b = true;
 							break;
 						}
@@ -6332,29 +6347,29 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					bool b_inc = ass->includeEqualsMin();
 					switch(ct_comp) {
 						case COMPARISON_EQUALS: {
-							if((b_inc && CHILD(1).number() < *ass->min()) || (!b_inc && CHILD(1).number() <= *ass->min())) {clear(true); b = true;}
+							if((b_inc && CHILD(1).number() < *ass->min()) || (!b_inc && CHILD(1).number() <= *ass->min())) {SET_FALSE_TPA; b = true;}
 							break;
 						}
 						case COMPARISON_NOT_EQUALS: {
-							if((b_inc && CHILD(1).number() < *ass->min()) || (!b_inc && CHILD(1).number() <= *ass->min())) {set(1, 1, 0, true); b = true;}
+							if((b_inc && CHILD(1).number() < *ass->min()) || (!b_inc && CHILD(1).number() <= *ass->min())) {SET_TRUE_TPA; b = true;}
 							break;
 						}
 						case COMPARISON_LESS: {
-							if(CHILD(1).number() <= *ass->min()) {clear(true); b = true;}
+							if(CHILD(1).number() <= *ass->min()) {SET_FALSE_TPA; b = true;}
 
 							break;
 						}
 						case COMPARISON_GREATER: {
-							if((b_inc && CHILD(1).number() < *ass->min()) || (!b_inc && CHILD(1).number() <= *ass->min())) {set(1, 1, 0, true); b = true;}
+							if((b_inc && CHILD(1).number() < *ass->min()) || (!b_inc && CHILD(1).number() <= *ass->min())) {SET_TRUE_TPA; b = true;}
 							break;
 						}
 						case COMPARISON_EQUALS_LESS: {
 							if(b_inc && CHILD(1).number() == *ass->min()) {ct_comp = COMPARISON_EQUALS; b = true;}
-							else if((b_inc && CHILD(1).number() < *ass->min()) || (!b_inc && CHILD(1).number() <= *ass->min())) {clear(true); b = true;}
+							else if((b_inc && CHILD(1).number() < *ass->min()) || (!b_inc && CHILD(1).number() <= *ass->min())) {SET_FALSE_TPA; b = true;}
 							break;
 						}
 						case COMPARISON_EQUALS_GREATER: {
-							if(CHILD(1).number() <= *ass->min()) {set(1, 1, 0, true); b = true;}
+							if(CHILD(1).number() <= *ass->min()) {SET_TRUE_TPA; b = true;}
 							break;
 						}
 					}
@@ -6363,28 +6378,28 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 					bool b_inc = ass->includeEqualsMax();
 					switch(ct_comp) {
 						case COMPARISON_EQUALS: {
-							if((b_inc && CHILD(1).number() > *ass->max()) || (!b_inc && CHILD(1).number() >= *ass->max())) {clear(true); b = true;}
+							if((b_inc && CHILD(1).number() > *ass->max()) || (!b_inc && CHILD(1).number() >= *ass->max())) {SET_FALSE_TPA; b = true;}
 							break;
 						}
 						case COMPARISON_NOT_EQUALS: {
-							if((b_inc && CHILD(1).number() > *ass->max()) || (!b_inc && CHILD(1).number() >= *ass->max())) {set(1, 1, 0, true); b = true;}
+							if((b_inc && CHILD(1).number() > *ass->max()) || (!b_inc && CHILD(1).number() >= *ass->max())) {SET_TRUE_TPA; b = true;}
 							break;
 						}
 						case COMPARISON_LESS: {
-							if((b_inc && CHILD(1).number() > *ass->max()) || (!b_inc && CHILD(1).number() >= *ass->max())) {set(1, 1, 0, true); b = true;}
+							if((b_inc && CHILD(1).number() > *ass->max()) || (!b_inc && CHILD(1).number() >= *ass->max())) {SET_TRUE_TPA; b = true;}
 							break;
 						}
 						case COMPARISON_GREATER: {
-							if(CHILD(1).number() >= *ass->max()) {clear(true); b = true;}
+							if(CHILD(1).number() >= *ass->max()) {SET_FALSE_TPA; b = true;}
 							break;
 						}
 						case COMPARISON_EQUALS_LESS: {
-							if(CHILD(1).number() >= *ass->max()) {set(1, 1, 0, true); b = true;}
+							if(CHILD(1).number() >= *ass->max()) {SET_TRUE_TPA; b = true;}
 							break;
 						}
 						case COMPARISON_EQUALS_GREATER: {
 							if(b_inc && CHILD(1).number() == *ass->max()) {ct_comp = COMPARISON_EQUALS; b = true;}
-							else if((b_inc && CHILD(1).number() > *ass->max()) || (!b_inc && CHILD(1).number() >= *ass->max())) {clear(true); b = true;}
+							else if((b_inc && CHILD(1).number() > *ass->max()) || (!b_inc && CHILD(1).number() >= *ass->max())) {SET_FALSE_TPA; b = true;}
 							break;
 						}
 					}
@@ -6499,26 +6514,26 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 			switch(ct_comp) {
 				case COMPARISON_EQUALS: {
 					if(incomp > 0) {
-						clear(true);
+						SET_FALSE_TPA
 						b = true;
 					} else if(mtest->representsZero(true)) {
-						set(1, 1, 0, true);
+						SET_TRUE_TPA
 						b = true;
 					} else if(mtest->representsNonZero(true)) {
-						clear(true);
+						SET_FALSE_TPA
 						b = true;
 					}
 					break;
 				}
 				case COMPARISON_NOT_EQUALS: {
 					if(incomp > 0) {
-						set(1, 1, 0, true);
+						SET_TRUE_TPA
 						b = true;
 					} else if(mtest->representsNonZero(true)) {
-						set(1, 1, 0, true);
+						SET_TRUE_TPA
 						b = true;
 					} else if(mtest->representsZero(true)) {
-						clear(true);
+						SET_FALSE_TPA
 						b = true;
 					}
 					break;
@@ -6526,10 +6541,10 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				case COMPARISON_LESS: {
 					if(incomp > 0) {
 					} else if(mtest->representsNegative(true)) {
-						set(1, 1, 0, true);
+						SET_TRUE_TPA
 						b = true;
 					} else if(mtest->representsNonNegative(true)) {
-						clear(true);
+						SET_FALSE_TPA
 						b = true;
 					}
 					break;
@@ -6537,10 +6552,10 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				case COMPARISON_GREATER: {
 					if(incomp > 0) {
 					} else if(mtest->representsPositive(true)) {
-						set(1, 1, 0, true);
+						SET_TRUE_TPA
 						b = true;
 					} else if(mtest->representsNonPositive(true)) {
-						clear(true);
+						SET_FALSE_TPA
 						b = true;
 					}
 					break;
@@ -6548,10 +6563,10 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				case COMPARISON_EQUALS_LESS: {
 					if(incomp > 0) {
 					} else if(mtest->representsNonPositive(true)) {
-						set(1, 1, 0, true);
+						SET_TRUE_TPA
 						b = true;
 					} else if(mtest->representsPositive(true)) {
-						clear(true);
+						SET_FALSE_TPA
 						b = true;
 					}
 					break;
@@ -6559,10 +6574,10 @@ bool MathStructure::calculatesub(const EvaluationOptions &eo, const EvaluationOp
 				case COMPARISON_EQUALS_GREATER: {
 					if(incomp > 0) {
 					} else if(mtest->representsNonNegative(true)) {
-						set(1, 1, 0, true);
+						SET_TRUE_TPA
 						b = true;
 					} else if(mtest->representsNegative(true)) {
-						clear(true);
+						SET_FALSE_TPA
 						b = true;
 					}
 					break;
