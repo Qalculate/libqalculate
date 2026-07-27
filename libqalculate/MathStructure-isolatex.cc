@@ -592,10 +592,86 @@ bool is_units_with_multiplier(const MathStructure &mstruct) {
 	return true;
 }
 
-bool fix_n_multiple(MathStructure &mstruct, const EvaluationOptions &eo, const EvaluationOptions &feo, const MathStructure &x_var) {
+int find_variable_n(const MathStructure &m) {
+	if(m.isVariable()) {
+		const string &name = m.variable()->referenceName();
+		if(name == "n") {
+			return 1;
+		} else if(name.length() >= 2 && name[0] == 'n' && name[1] > '0' && name[1] <= '9') {
+			for(size_t i = 2; i < name.length(); i++) {
+				if(name[i] < '0' || name[i] > '9') return 0;
+			}
+			return s2i(name.substr(1, name.length() - 1));
+		}
+	}
+	int n = 0;
+	for(size_t i = 0; i < m.size(); i++) {
+		int n_i = find_variable_n(m[i]);
+		if(n_i > n) n = n_i;
+	}
+	return n;
+}
+
+Variable *find_next_variable_n(const MathStructure &m, int n, int *index_p = NULL) {
+	if(m.isVariable() && !m.variable()->isKnown()) {
+		const string &name = m.variable()->referenceName();
+		if(n <= 1 && name == "n") {
+			if(index_p) *index_p = 1;
+			return m.variable();
+		} else if(name.length() >= 2 && name[0] == 'n' && name[1] > '0' && name[1] <= '9') {
+			for(size_t i = 2; i < name.length(); i++) {
+				if(name[i] < '0' || name[i] > '9') return 0;
+			}
+			int i = s2i(name.substr(1, name.length() - 1));
+			if(i >= n) {
+				if(index_p) *index_p = i;
+				return m.variable();
+			}
+		}
+	}
+	Variable *v = NULL;
+	int index = 0;
+	for(size_t i = 0; i < m.size(); i++) {
+		int n_i = 0;
+		Variable *v_i = find_next_variable_n(m[i], n, &n_i);
+		if(v_i && (index == 0 || ((n >= 0 && n_i < index) || (n < 0 && n_i > index)))) {
+			v = v_i;
+			index = n_i;
+			if(index == n) break;
+		}
+	}
+	if(index_p) *index_p = index;
+	return v;
+}
+
+MathStructure *get_variable_n(const MathStructure &m) {
+	int n = find_variable_n(m);
+	if(n == 0) return new MathStructure(CALCULATOR->getVariableById(VARIABLE_ID_N));
+	UnknownVariable *var = new UnknownVariable("", string("n") + i2s(n + 1));
+	var->setAssumptions(new Assumptions());
+	var->assumptions()->setType(ASSUMPTION_TYPE_INTEGER);
+	MathStructure *mvar = new MathStructure(var);
+	var->destroy();
+	return mvar;
+}
+
+bool fix_n_multiple(MathStructure &mstruct, const EvaluationOptions &eo, const EvaluationOptions &feo, const MathStructure &x_var, int index = -1, Variable *v_n = NULL) {
+	if(!v_n) {
+		bool b = false;
+		if(index == 0) index = 1;
+		while(true) {
+			int n = 0;
+			v_n = find_next_variable_n(mstruct, index, &n);
+			if(!v_n) return b;
+			if(fix_n_multiple(mstruct, eo, feo, x_var, index, v_n)) b = true;
+			if(index < 0) break;
+			index = n + 1;
+		}
+		return b;
+	}
 	bool b_ret = false;
 	if(mstruct.isComparison()) {
-		if(mstruct.comparisonType() == COMPARISON_EQUALS && x_var.isVariable() && !x_var.variable()->isKnown() && (!((UnknownVariable*) x_var.variable())->interval().isUndefined() || (((UnknownVariable*) x_var.variable())->assumptions() && ((((UnknownVariable*) x_var.variable())->assumptions()->min() || x_var.representsNonNegative()) && (((UnknownVariable*) x_var.variable())->assumptions()->max() || x_var.representsNonPositive())))) && mstruct[1].contains(CALCULATOR->getVariableById(VARIABLE_ID_N))) {
+		if(mstruct.comparisonType() == COMPARISON_EQUALS && x_var.isVariable() && !x_var.variable()->isKnown() && (!((UnknownVariable*) x_var.variable())->interval().isUndefined() || (((UnknownVariable*) x_var.variable())->assumptions() && ((((UnknownVariable*) x_var.variable())->assumptions()->min() || x_var.representsNonNegative()) && (((UnknownVariable*) x_var.variable())->assumptions()->max() || x_var.representsNonPositive())))) && mstruct[1].contains(v_n)) {
 			MathStructure mtest(mstruct);
 			if(((UnknownVariable*) x_var.variable())->interval().isUndefined()) {
 				Assumptions *ass = ((UnknownVariable*) x_var.variable())->assumptions();
@@ -623,20 +699,20 @@ bool fix_n_multiple(MathStructure &mstruct, const EvaluationOptions &eo, const E
 				CALCULATOR->beginTemporaryStopMessages();
 				mtest.calculateFunctions(feo2);
 				if(eo.approximation == APPROXIMATION_EXACT) mtest.calculatesub(eo2, feo2, true);
-				if(mtest.isolate_x(eo2, feo2, CALCULATOR->getVariableById(VARIABLE_ID_N))) {
+				if(mtest.isolate_x(eo2, feo2, v_n)) {
 					if(CALCULATOR->endTemporaryStopMessages() == 0) {
 						if(mtest.isZero()) {
 							SET_FALSE_TPA_M(mstruct)
 							MERGE_TPA_M(mstruct, mtest)
 							b_ret = true;
-						} else if(mtest.isComparison() && mtest.comparisonType() == COMPARISON_EQUALS && mtest[0].isVariable() && mtest[0].variable() == CALCULATOR->getVariableById(VARIABLE_ID_N) && mtest[1].isNumber()) {
+						} else if(mtest.isComparison() && mtest.comparisonType() == COMPARISON_EQUALS && mtest[0].isVariable() && mtest[0].variable() == v_n && mtest[1].isNumber()) {
 							if(mtest[1].number().isInteger()) {
-								mstruct.calculateReplace(CALCULATOR->getVariableById(VARIABLE_ID_N), mtest[1], eo);
+								mstruct.calculateReplace(v_n, mtest[1], eo);
 								b_ret = true;
 							} else if(mtest[1].number().isInterval()) {
 								Number nr_int; bool b_multiple = false;
 								if(mtest[1].number().getCentralInteger(nr_int, &b_multiple)) {
-									mstruct.calculateReplace(CALCULATOR->getVariableById(VARIABLE_ID_N), nr_int, eo);
+									mstruct.calculateReplace(v_n, nr_int, eo);
 									b_ret = true;
 								} else if(!b_multiple) {
 									SET_FALSE_TPA_M(mstruct)
@@ -658,7 +734,7 @@ bool fix_n_multiple(MathStructure &mstruct, const EvaluationOptions &eo, const E
 		}
 	} else {
 		for(size_t i = 0; i < mstruct.size(); i++) {
-			if(fix_n_multiple(mstruct[i], eo, feo, x_var)) {
+			if(fix_n_multiple(mstruct[i], eo, feo, x_var, index, v_n)) {
 				mstruct.childUpdated(i + 1);
 				b_ret = true;
 			}
@@ -1465,7 +1541,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							return true;
 						} else if(marg) {
 							marg->transformById(FUNCTION_ID_LAMBERT_W);
-							marg->addChild(CALCULATOR->getVariableById(VARIABLE_ID_N));
+							marg->addChild_nocopy(get_variable_n(*this));
 							if(marg->calculateFunctions(eo)) marg->calculatesub(eo2, eo, true);
 							marg->calculateNegate(eo2);
 							if(CHILD(1).isZero()) {
@@ -2069,6 +2145,33 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								return true;
 							}
 							set(mbak);
+						}
+						size_t ln_i = 0;
+						if(CHILD(0).size() == 2 && &CHILD(0)[0] == mvar) ln_i = 1;
+						if(CHILD(0).size() == 2 && ((mvar->isPower() && (*mvar)[1] == (*mln)[0] && (((*mvar)[0].isVariable() && (*mvar)[0].variable() == CALCULATOR->getVariableById(VARIABLE_ID_E)) || ((*mvar)[0].isNumber() && (*mvar)[0].number().compare(((KnownVariable*) CALCULATOR->getVariableById(VARIABLE_ID_E))->get().number()) == COMPARISON_RESULT_EQUAL_LIMITS)) && CHILD(0)[ln_i].isMultiplication() && CHILD(0)[ln_i].size() == 2 && CHILD(0)[ln_i][0].isMinusOne()) || (mvar->isMultiplication() && mvar->size() == 2 && (*mvar)[0].isMinusOne() && (*mvar)[1].isPower() && (*mvar)[1][1] == (*mln)[0] && (((*mvar)[1][0].isVariable() && (*mvar)[1][0].variable() == CALCULATOR->getVariableById(VARIABLE_ID_E)) || ((*mvar)[1][0].isNumber() && (*mvar)[1][0].number().compare(((KnownVariable*) CALCULATOR->getVariableById(VARIABLE_ID_E))->get().number()) == COMPARISON_RESULT_EQUAL_LIMITS)) && &CHILD(0)[ln_i] == mln))) {
+							// e^x = ln(x)
+							if((*mln)[0].representsReal()) {
+								if(ct_comp == COMPARISON_EQUALS) SET_FALSE_TPA
+								else SET_TRUE_TPA
+							}
+							CHILD(0).setToChild(ln_i + 1, true);
+							if(CHILD(0).isMultiplication()) CHILD(0).setToChild(2, true);
+							CHILD(0).setToChild(1, true);
+							CHILD(1).set(m_minus_one, true);
+							CHILD(1).transformById(FUNCTION_ID_LAMBERT_W);
+							MathStructure *malt = new MathStructure(*this);
+							CHILD(1).addChild(m_zero);
+							(*malt)[1].addChild(m_minus_one);
+							if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
+							if((*malt)[1].calculateFunctions(eo)) (*malt)[1].calculatesub(eo2, eo, true);
+							CHILD(1).calculateNegate(eo2);
+							(*malt)[1].calculateNegate(eo2);
+							ComparisonType ct_comp_bak = ct_comp;
+							isolate_x_sub(eo, eo2, x_var, morig, depth + 1);
+							malt->isolate_x_sub(eo, eo2, x_var, morig, depth + 1);
+							add_nocopy(malt, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+							calculatesub(eo2, eo, false);
+							return true;
 						}
 					}
 				}
@@ -4232,7 +4335,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							if(mchecknegative) mcheckmulti->unref();
 							if(mchecknonzeropow) mcheckmulti->unref();
 							marg->transformById(FUNCTION_ID_LAMBERT_W);
-							marg->addChild(CALCULATOR->getVariableById(VARIABLE_ID_N));
+							marg->addChild_nocopy(get_variable_n(*this));
 							if(marg->calculateFunctions(eo)) marg->calculatesub(eo2, eo, true);
 							if(!m_a.isZero()) {
 								m_a.calculateMultiply(mln, eo2);
@@ -4919,7 +5022,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							marg->add(nr_one_i);
 							marg->last().multiply(nr_two);
 							marg->last().multiply(CALCULATOR->getVariableById(VARIABLE_ID_PI), true);
-							marg->last().multiply(CALCULATOR->getVariableById(VARIABLE_ID_N), true);
+							marg->last().multiply_nocopy(get_variable_n(*this), true);
 							marg->evalSort(true);
 							MathStructure *mreq2 = NULL;
 							if(!CHILD(1).representsNonZero()) {
@@ -5550,7 +5653,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							bool b_m1 = CHILD(1).isMinusOne();
 							CHILD(0).setToChild(2, true);
 							CHILD(1).set(2, 1, 0, true);
-							CHILD(1) *= CALCULATOR->getVariableById(VARIABLE_ID_N);
+							CHILD(1).multiply_nocopy(get_variable_n(*this));
 							if(b_m1) CHILD(1) += m_one;
 							CHILD(1).evalSort(false);
 							fix_n_multiple(*this, eo2, eo, x_var);
@@ -5652,7 +5755,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						CHILD(1) += nr_one_i;
 						CHILD(1)[1] *= nr_two;
 						CHILD(1)[1].multiply(CALCULATOR->getVariableById(VARIABLE_ID_PI), true);
-						CHILD(1)[1].multiply(CALCULATOR->getVariableById(VARIABLE_ID_N), true);
+						CHILD(1)[1].multiply_nocopy(get_variable_n(*this), true);
 					}
 					CHILD(1).divide_nocopy(new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &CHILD(0)[0], NULL));
 					CHILD(1).evalSort(true);
@@ -6048,7 +6151,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						CHILD(1)[1] *= CALCULATOR->getRadUnit();
 					}
 				}
-				CHILD(1)[1] *= CALCULATOR->getVariableById(VARIABLE_ID_N);
+				CHILD(1)[1].multiply_nocopy(get_variable_n(*this));
 				if(b_zero && f->id() == FUNCTION_ID_COS) {
 					add_fraction_of_turn(CHILD(1), eo2, -1, 4, true);
 				}
@@ -6094,8 +6197,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					CHILD(1) *= nr_one_i;
 					(*malt)[1] *= nr_minus_i;
 					CHILD(1) += CALCULATOR->getVariableById(VARIABLE_ID_PI);
-					CHILD(1) += CALCULATOR->getVariableById(VARIABLE_ID_N); CHILD(1).last() *= CALCULATOR->getVariableById(VARIABLE_ID_PI); CHILD(1).last() *= nr_two;
-					(*malt)[1] += CALCULATOR->getVariableById(VARIABLE_ID_N); (*malt)[1].last() *= CALCULATOR->getVariableById(VARIABLE_ID_PI); (*malt)[1].last() *= nr_two;
+					MathStructure *m_n = get_variable_n(*this);
+					MathStructure *m_n2 = new MathStructure(*m_n);
+					CHILD(1).add_nocopy(m_n); CHILD(1).last() *= CALCULATOR->getVariableById(VARIABLE_ID_PI); CHILD(1).last() *= nr_two;
+					(*malt)[1].add_nocopy(m_n2); (*malt)[1].last() *= CALCULATOR->getVariableById(VARIABLE_ID_PI); (*malt)[1].last() *= nr_two;
 					CHILD(1) *= nr_one_i;
 					(*malt)[1] *= nr_one_i;
 					CHILD(1).calculatesub(eo2, eo, true);
@@ -6128,8 +6233,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					MathStructure *malt = new MathStructure(*this);
 					CHILD(1) *= nr_one_i;
 					(*malt)[1] *= nr_minus_i;
-					CHILD(1) += CALCULATOR->getVariableById(VARIABLE_ID_N); CHILD(1).last() *= CALCULATOR->getVariableById(VARIABLE_ID_PI); CHILD(1).last() *= nr_two;
-					(*malt)[1] += CALCULATOR->getVariableById(VARIABLE_ID_N); (*malt)[1].last() *= CALCULATOR->getVariableById(VARIABLE_ID_PI); (*malt)[1].last() *= nr_two;
+					MathStructure *m_n = get_variable_n(*this);
+					MathStructure *m_n2 = new MathStructure(*m_n);
+					CHILD(1).add_nocopy(m_n); CHILD(1).last() *= CALCULATOR->getVariableById(VARIABLE_ID_PI); CHILD(1).last() *= nr_two;
+					(*malt)[1].add_nocopy(m_n2); (*malt)[1].last() *= CALCULATOR->getVariableById(VARIABLE_ID_PI); (*malt)[1].last() *= nr_two;
 					CHILD(1) *= nr_one_i;
 					(*malt)[1] *= nr_one_i;
 					CHILD(1).calculatesub(eo2, eo, true);
@@ -6153,7 +6260,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					isolate_x_sub(eo, eo2, x_var, morig, depth + 1);
 				} else {
 					CHILD(1) *= nr_minus_i;
-					CHILD(1) += CALCULATOR->getVariableById(VARIABLE_ID_N); CHILD(1).last() *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
+					CHILD(1).add_nocopy(get_variable_n(*this)); CHILD(1).last() *= CALCULATOR->getVariableById(VARIABLE_ID_PI);
 					CHILD(1) *= nr_one_i;
 					CHILD(1).calculatesub(eo2, eo, true);
 					CHILDREN_UPDATED;
@@ -6950,7 +7057,7 @@ bool MathStructure::isolate_x(const EvaluationOptions &eo, const EvaluationOptio
 			}
 		}
 	}
-	fix_n_multiple(*this, eo, feo, x_var);
+	fix_n_multiple(*this, eo, feo, x_var, 1);
 	if(check_result && b) {
 		b = test_comparisons(msave, *this, x_var, eo) >= 0;
 	}

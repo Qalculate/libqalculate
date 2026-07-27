@@ -1887,7 +1887,7 @@ bool contains_fraction_q(const MathStructure &m) {
 
 bool contains_extreme_number_q(const MathStructure &m) {
 	if(m.isNumber()) {
-		if(m.number().isFloatingPoint() && (mpfr_get_exp(m.number().internalUpperFloat()) > 50000000L || mpfr_get_exp(m.number().internalLowerFloat()) < -50000000L)) {
+		if(m.number().isFloatingPoint() && (mpfr_get_exp(m.number().internalUpperFloat()) > 50000000L || (m.number().isNonZero() && mpfr_get_exp(m.number().internalUpperFloat()) < -50000000L && mpfr_get_exp(m.number().internalLowerFloat()) < -50000000L))) {
 			return true;
 		} else if(m.number().isInteger() && ::abs(m.number().integerLength()) > 50000000L) {
 			return true;
