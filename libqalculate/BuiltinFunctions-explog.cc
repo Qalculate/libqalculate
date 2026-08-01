@@ -881,42 +881,66 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_EXACT;
 		CALCULATOR->beginTemporaryStopMessages();
+		eo2.protected_function = CALCULATOR->getFunctionById(FUNCTION_ID_LOG);
 		mstruct.eval(eo2);
 		if(mstruct.isVector()) {CALCULATOR->endTemporaryStopMessages(true); return -1;}
+	} else if(eo.approximation == APPROXIMATION_EXACT) {
+		CALCULATOR->beginTemporaryStopMessages();
+		mstruct.eval(eo);
+		if(mstruct.containsFunctionId(FUNCTION_ID_LOG, false) > 0 && mstruct.contains(CALCULATOR->getVariableById(VARIABLE_ID_E), false) == 0) {
+			CALCULATOR->beginTemporaryStopMessages();
+			EvaluationOptions eo2 = eo;
+			eo2.protected_function = CALCULATOR->getFunctionById(FUNCTION_ID_LOG);
+			mstruct = vargs[0];
+			mstruct.eval(eo2);
+		} else {
+			CALCULATOR->endTemporaryStopMessages(true);
+		}
+		if(mstruct.isVector()) return -1;
 	} else {
 		mstruct.eval(eo);
 		if(mstruct.isVector()) return -1;
 	}
 
 	bool b = false;
-#define LAMBERTW_TEST_X(x) ((vargs[1].isZero() && (x.representsNonNegative() || COMPARISON_IS_EQUAL_OR_LESS(x.compare(m_minus_one)))) || (!vargs[1].isZero() && COMPARISON_IS_EQUAL_OR_GREATER(x.compare(m_minus_one))))
 	if(mstruct.isMultiplication() && mstruct.size() >= 2 && (vargs[1].isZero() || vargs[1].isMinusOne())) {
 		for(size_t i = 0; i < mstruct.size(); i++) {
 			if(mstruct[i].isPower() && mstruct[i][0].isVariable() && mstruct[i][0].variable()->id() == VARIABLE_ID_E) {
 				if(mstruct.size() == 2) {
-					if(i == 1 && mstruct[1][1] == mstruct[0] && LAMBERTW_TEST_X(mstruct[0])) {
-						mstruct.setToChild(1, true);
-						b = true;
-					} else if(i == 0 && mstruct[0][1] == mstruct[1] && LAMBERTW_TEST_X(mstruct[1])) {
-						mstruct.setToChild(2, true);
-						b = true;
-					}
+					b = (i == 1 && mstruct[i][1] == mstruct[0]) || (i == 0 && mstruct[i][1] == mstruct[1]);
 				} else if(mstruct[i][1].isMultiplication() && mstruct[i][1].size() == mstruct.size() - 1) {
 					MathStructure *mpow = &mstruct[i];
 					mpow->ref();
 					mstruct.delChild(i + 1);
-					if(mstruct == (*mpow)[1] && LAMBERTW_TEST_X(mstruct)) {
-						mpow->unref();
-						b = true;
-					} else {
-						mstruct.insertChild_nocopy(mpow, i + 1);
-					}
+					b = (mstruct == (*mpow)[1]);
+					mstruct.insertChild_nocopy(mpow, i + 1);
 				}
+				if(!b) break;
+				b = (vargs[1].isZero() && (mstruct[i][1].representsNonNegative() || COMPARISON_IS_EQUAL_OR_LESS(mstruct[i][1].compare(m_minus_one)))) || (!vargs[1].isZero() && COMPARISON_IS_EQUAL_OR_GREATER(mstruct[i][1].compare(m_minus_one)));
+				if(b) {
+					mstruct.setToChild(i + 1, true);
+					mstruct.setToChild(2, true);
+				}
+				break;
+			} else if(mstruct[i].isFunction() && mstruct[i].function()->id() == FUNCTION_ID_LOG && mstruct[i].size() == 1 && mstruct[i][0].representsPositive()) {
+				if(mstruct.size() == 2) {
+					b = (i == 1 && mstruct[i][0] == mstruct[0]) || (i == 0 && mstruct[i][0] == mstruct[1]);
+				} else if(mstruct[i][0].isMultiplication() && mstruct[i][0].size() == mstruct.size() - 1) {
+					MathStructure *mln = &mstruct[i];
+					mln->ref();
+					mstruct.delChild(i + 1);
+					b = (mstruct == (*mln)[0]);
+					mstruct.insertChild_nocopy(mln, i + 1);
+				}
+				if(!b) break;
+				MathStructure mcmp(CALCULATOR->getVariableById(VARIABLE_ID_E));
+				mcmp.inverse();
+				b = (vargs[1].isZero() && COMPARISON_IS_EQUAL_OR_LESS(mstruct[i][0].compare(mcmp))) || (!vargs[1].isZero() && COMPARISON_IS_EQUAL_OR_GREATER(mstruct[i][0].compare(mcmp)));
+				if(b) mstruct.setToChild(i + 1, true);
 				break;
 			}
 		}
-	}
-	if(vargs[1].isZero()) {
+	} else if(vargs[1].isZero()) {
 		if(mstruct.isZero()) {
 			b = true;
 		} else if(mstruct.isVariable() && mstruct.variable()->id() == VARIABLE_ID_E) {
