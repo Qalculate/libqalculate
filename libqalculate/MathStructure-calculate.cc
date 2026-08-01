@@ -1680,6 +1680,11 @@ int MathStructure::merge_multiplication(MathStructure &mstruct, const Evaluation
 			if(eo.calculate_functions) calculateFunctions(eo, false);
 			MERGE_APPROX_AND_PREC(mstruct)
 			return 1;
+		} else if(mstruct.function()->id() == FUNCTION_ID_LAMBERT_W && mstruct.size() == 2 && mstruct[1].isZero() && m_type == STRUCT_POWER && CHILD(1) == mstruct && CHILD(0).isVariable() && CHILD(0).variable()->id() == VARIABLE_ID_E) {
+			SET_CHILD_MAP(1)
+			SET_CHILD_MAP(0)
+			MERGE_APPROX_AND_PREC(mstruct)
+			return 1;
 		}
 	}
 	if(isZero()) {
