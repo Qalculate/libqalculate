@@ -923,22 +923,72 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 				}
 				break;
 			} else if(mstruct[i].isFunction() && mstruct[i].function()->id() == FUNCTION_ID_LOG && mstruct[i].size() == 1 && mstruct[i][0].representsPositive()) {
+				bool b_neg = false;
+				MathStructure mcmp2;
 				if(mstruct.size() == 2) {
-					b = (i == 1 && mstruct[i][0] == mstruct[0]) || (i == 0 && mstruct[i][0] == mstruct[1]);
+					MathStructure *m2 = (i == 1 ? &mstruct[0] : & mstruct[1]);
+					if(m2->representsNegative()) {
+						b_neg = true;
+						mcmp2 = *m2;
+						CALCULATOR->beginTemporaryStopMessages();
+						EvaluationOptions eo2 = eo;
+						eo2.approximation = APPROXIMATION_EXACT;
+						mcmp2.calculateInverse(eo2);
+						mcmp2.calculateNegate(eo2);
+						CALCULATOR->endTemporaryStopMessages();
+						b = mstruct[i][0] == mcmp2;
+					} else {
+						b = (mstruct[i][0] == *m2);
+					}
 				} else if(mstruct[i][0].isMultiplication() && mstruct[i][0].size() == mstruct.size() - 1) {
 					MathStructure *mln = &mstruct[i];
 					mln->ref();
 					mstruct.delChild(i + 1);
-					b = (mstruct == (*mln)[0]);
+					if(mstruct.representsNegative()) {
+						b_neg = true;
+						mcmp2 = mstruct;
+						CALCULATOR->beginTemporaryStopMessages();
+						EvaluationOptions eo2 = eo;
+						eo2.approximation = APPROXIMATION_EXACT;
+						mcmp2.calculateInverse(eo2);
+						mcmp2.calculateNegate(eo2);
+						CALCULATOR->endTemporaryStopMessages();
+						b = (*mln)[0] == mcmp2;
+					} else {
+						b = (mstruct == (*mln)[0]);
+					}
 					mstruct.insertChild_nocopy(mln, i + 1);
 				}
 				if(!b) break;
 				MathStructure mcmp(CALCULATOR->getVariableById(VARIABLE_ID_E));
 				mcmp.inverse();
-				b = (vargs[1].isZero() && COMPARISON_IS_EQUAL_OR_LESS(mstruct[i][0].compare(mcmp))) || (!vargs[1].isZero() && COMPARISON_IS_EQUAL_OR_GREATER(mstruct[i][0].compare(mcmp)));
-				if(b) mstruct.setToChild(i + 1, true);
+				if(b_neg) {
+					b = (vargs[1].isZero() && COMPARISON_IS_EQUAL_OR_LESS(mcmp2.compare(mcmp))) || (!vargs[1].isZero() && (COMPARISON_IS_EQUAL_OR_GREATER(mcmp2.compare(mcmp))));
+					if(b) {
+						mstruct.setToChild(i + 1, true);
+						mstruct.negate();
+					} else if(!vargs[1].isZero() && mcmp2 == nr_two) {
+						b = true;
+						mstruct.setToChild(i + 1, true);
+						mstruct.multiply_nocopy(new MathStructure(-2, 1, 0));
+					}
+				} else {
+					b = (vargs[1].isZero() && COMPARISON_IS_EQUAL_OR_LESS(mstruct[i][0].compare(mcmp))) || (!vargs[1].isZero() && COMPARISON_IS_EQUAL_OR_GREATER(mstruct[i][0].compare(mcmp)));
+					if(b) {
+						mstruct.setToChild(i + 1, true);
+					} else if(!vargs[1].isZero() && mstruct[i][0] == nr_half) {
+						b = true;
+						mstruct.setToChild(i + 1, true);
+						mstruct.multiply_nocopy(new MathStructure(2, 1, 0));
+					}
+				}
 				break;
 			}
+		}
+		if(!b && mstruct.size() == 2 && mstruct[0] == nr_minus_half && mstruct[1].isVariable() && mstruct[1].variable()->id() == VARIABLE_ID_PI && vargs[1].isZero()) {
+			mstruct[0].number().negate();
+			mstruct[0].number().multiply(nr_one_i);
+			b = true;
 		}
 	} else if(vargs[1].isZero()) {
 		if(mstruct.isZero()) {
