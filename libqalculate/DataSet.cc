@@ -406,7 +406,7 @@ int DataSet::subtype() const {
 	return SUBTYPE_DATA_SET;
 }
 
-int DataSet::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
+int DataSet::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 	DataObject *o = getObject(vargs[0]);
 	if(!o) {
 		CALCULATOR->error(true, _("Object %s not available in data set."), vargs[0].symbol().c_str(), NULL);
@@ -427,7 +427,9 @@ int DataSet::calculate(MathStructure &mstruct, const MathStructure &vargs, const
 		CALCULATOR->error(true, _("Property %s not defined for object %s."), vargs[1].symbol().c_str(), vargs[0].symbol().c_str(), NULL);
 		return 0;
 	}
+	if(pmstruct->isAborted() || (eo.approximation == APPROXIMATION_EXACT && (pmstruct->isApproximate() || pmstruct->containsInterval(true, false, false, 0, true)))) return 0;
 	mstruct.set(*pmstruct);
+	fix_intervals(mstruct, eo, NULL, PRECISION);
 	return 1;
 }
 

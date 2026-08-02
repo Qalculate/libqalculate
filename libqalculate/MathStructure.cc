@@ -19,6 +19,7 @@
 #include "Variable.h"
 #include "Unit.h"
 #include "Prefix.h"
+#include "DataSet.h"
 #include <map>
 #include <algorithm>
 #include "MathStructure-support.h"
@@ -777,7 +778,13 @@ bool MathStructure::representsNumber(bool allow_units) const {
 		case STRUCT_NUMBER: {return !o_number.includesInfinity();}
 		case STRUCT_VARIABLE: {return o_variable->representsNumber(allow_units);}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNumber();}
-		case STRUCT_FUNCTION: {return (function_value && function_value->representsNumber(allow_units)) || o_function->representsNumber(*this, allow_units);}
+		case STRUCT_FUNCTION: {
+			if(o_function->subtype() == SUBTYPE_DATA_SET && SIZE >= 2 && CHILD(0).isSymbolic() && CHILD(1).isSymbolic()) {
+				DataProperty *dp = ((DataSet*) o_function)->getProperty(CHILD(1).symbol());
+				return dp && dp->propertyType() == PROPERTY_NUMBER && (allow_units || dp->getUnitString().empty());
+			}
+			return (function_value && function_value->representsNumber(allow_units)) || o_function->representsNumber(*this, allow_units);
+		}
 		case STRUCT_UNIT: {return allow_units;}
 		case STRUCT_DATETIME: {return allow_units;}
 		case STRUCT_POWER: {
@@ -1319,6 +1326,10 @@ bool MathStructure::representsNonMatrix() const {
 		case STRUCT_VARIABLE: {return o_variable->representsNonMatrix();}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNonMatrix();}
 		case STRUCT_FUNCTION: {
+			if(o_function->subtype() == SUBTYPE_DATA_SET && SIZE >= 2 && CHILD(0).isSymbolic() && CHILD(1).isSymbolic()) {
+				DataProperty *dp = ((DataSet*) o_function)->getProperty(CHILD(1).symbol());
+				return dp && (dp->propertyType() == PROPERTY_NUMBER || dp->propertyType() == PROPERTY_STRING);
+			}
 			if(o_function->id() == FUNCTION_ID_STRIP_UNITS && SIZE == 1) return CHILD(0).representsNonMatrix();
 			return (function_value && function_value->representsNonMatrix()) || o_function->representsNonMatrix(*this);
 		}
@@ -1356,6 +1367,10 @@ bool MathStructure::representsScalar() const {
 		case STRUCT_VARIABLE: {return o_variable->representsScalar();}
 		case STRUCT_SYMBOLIC: {return CALCULATOR->defaultAssumptions()->isNonMatrix();}
 		case STRUCT_FUNCTION: {
+			if(o_function->subtype() == SUBTYPE_DATA_SET && SIZE >= 2 && CHILD(0).isSymbolic() && CHILD(1).isSymbolic()) {
+				DataProperty *dp = ((DataSet*) o_function)->getProperty(CHILD(1).symbol());
+				return dp && (dp->propertyType() == PROPERTY_NUMBER || dp->propertyType() == PROPERTY_STRING);
+			}
 			if(o_function->id() == FUNCTION_ID_STRIP_UNITS && SIZE == 1) return CHILD(0).representsScalar();
 			return (function_value && function_value->representsScalar()) || o_function->representsScalar(*this);
 		}

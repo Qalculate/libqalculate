@@ -557,10 +557,44 @@ bool calculate_differentiable_functions(MathStructure &m, const EvaluationOption
 	}
 	return b;
 }
+bool calculate_dataset_functions(MathStructure &m, MathStructure *mtop, const EvaluationOptions &eo, bool do_unformat, size_t depth = 0) {
+	if(!check_recursive_function_depth(depth)) return false;
+	if(m.isFunction() && m.function() != eo.protected_function && m.function()->subtype() == SUBTYPE_DATA_SET) {
+		MathStructure mbak(m);
+		if(m.calculateFunctions(eo, false, do_unformat)) {
+			if(m.containsInterval(false, false, false, 1, true) && mtop->contains(mbak, true)) {
+				Variable *v = new KnownVariable("", format_and_print(m), m);
+				m.set(v, true);
+				v->destroy();
+				mtop->replace(mbak, m);
+			}
+			calculate_dataset_functions(m, mtop, eo, do_unformat, depth + 1);
+			return true;
+		}
+	}
+	bool b = false;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(CALCULATOR->aborted()) break;
+		if(calculate_dataset_functions(m[i], mtop, eo, do_unformat, depth + 1)) {
+			m.childUpdated(i + 1);
+			b = true;
+		}
+	}
+	return b;
+}
 bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOptions &eo, bool recursive, bool do_unformat, int i_type, size_t depth) {
 	if(recursive && !check_recursive_function_depth(depth)) return false;
+	if(depth == 0 && recursive && i_type <= 0 && i_type > -10 && eo.interval_calculation != INTERVAL_CALCULATION_NONE) {
+		bool b = calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type, 1);
+		if(calculate_dataset_functions(m, &m, eo, do_unformat)) {
+			b = true;
+			calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, -10, 1);
+		}
+		return b;
+	}
+	if(depth == 0) depth = 1;
 	if(m.isFunction() && m.function() != eo.protected_function) {
-		if((i_type <= 0 && (!function_differentiable(m.function()) || (m.function()->id() == FUNCTION_ID_INCOMPLETE_BETA && (m.size() != 3 || m[1].containsInterval(true, false, false, 1, true) || m[2].containsInterval(true, false, false, 1, true))) || (m.function()->id() == FUNCTION_ID_I_GAMMA && (m.size() != 2 || m[1].containsInterval(true, false, false, 1, true))))) || (i_type >= 0 && !contains_interval_variable(m, i_type))) {
+		if((i_type <= 0 && (!recursive || m.function()->subtype() != SUBTYPE_DATA_SET || i_type <= -10) && (!function_differentiable(m.function()) || (m.function()->id() == FUNCTION_ID_INCOMPLETE_BETA && (m.size() != 3 || m[1].containsInterval(true, false, false, 1, true) || m[2].containsInterval(true, false, false, 1, true))) || (m.function()->id() == FUNCTION_ID_I_GAMMA && (m.size() != 2 || m[1].containsInterval(true, false, false, 1, true))))) || (i_type >= 0 && !contains_interval_variable(m, i_type))) {
 			if(m.calculateFunctions(eo, false, do_unformat)) {
 				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type, depth + 1);
 				return true;

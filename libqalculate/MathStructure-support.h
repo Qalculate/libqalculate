@@ -219,7 +219,7 @@ bool replace_interval_unknowns(MathStructure &m, bool do_assumptions = false);
 bool remove_rad_unit(MathStructure &m, const EvaluationOptions &eo, bool top = true);
 int contains_ass_intval(const MathStructure &m);
 int compare_check_incompability(MathStructure *mtest);
-bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOptions &eo, bool recursive = true, bool do_unformat = true, int i_type = 0, size_t depth = 1);
+bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOptions &eo, bool recursive = true, bool do_unformat = true, int i_type = 0, size_t depth = 0);
 bool function_differentiable(MathFunction *o_function);
 bool montecarlo(const MathStructure &minteg, Number &nvalue, const MathStructure &x_var, const EvaluationOptions &eo, Number a, Number b, Number n);
 bool romberg(const MathStructure &minteg, Number &nvalue, const MathStructure &x_var, const EvaluationOptions &eo, Number a, Number b, long int max_steps = -1, long int min_steps = 6, bool safety_measures = true);
