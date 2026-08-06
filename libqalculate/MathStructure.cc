@@ -1977,7 +1977,18 @@ bool MathStructure::equals(const MathStructure &o, bool allow_interval, bool all
 	}
 	if(SIZE < 1) return true;
 	for(size_t i = 0; i < SIZE; i++) {
-		if(!CHILD(i).equals(o[i], allow_interval, allow_infinite)) return false;
+		if(!CHILD(i).equals(o[i], allow_interval, allow_infinite)) {
+			if(m_type == STRUCT_FUNCTION && CHILD(i).isSymbolic() && o[i].isSymbolic() && o_function->subtype() == SUBTYPE_DATA_SET && o_function->getArgumentDefinition(i + 1)) {
+				if(o_function->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_DATA_PROPERTY) {
+					DataProperty *dp = ((DataSet*) o_function)->getProperty(CHILD(i).symbol());
+					if(dp && dp == ((DataSet*) o_function)->getProperty(o[i].symbol())) continue;
+				} else if(o_function->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_DATA_OBJECT) {
+					DataObject *dobj = ((DataSet*) o_function)->getObject(CHILD(i).symbol());
+					if(dobj && dobj == ((DataSet*) o_function)->getObject(o[i].symbol())) continue;
+				}
+			}
+			return false;
+		}
 	}
 	return true;
 }
