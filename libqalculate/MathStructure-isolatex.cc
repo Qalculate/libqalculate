@@ -2176,7 +2176,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 				}
 				if(CHILD(0).containsFunctionId(FUNCTION_ID_COSH) && CHILD(0).containsFunctionId(FUNCTION_ID_SINH)) {
-					// a*cosh(x) + b*cosh(x)
+					// a*sinh(x) + b*cosh(x)
 					MathStructure *marg = NULL, *m_cosh = NULL, *m_sinh = NULL;
 					for(size_t i = 0; i < CHILD(0).size(); i++) {
 						if(CHILD(0)[i].isMultiplication()) {
@@ -2227,9 +2227,196 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						mtest[0].calculateReplace(*m_sinh, mr_sinh, eo3);
 						mtest[0].calculateReplace(*m_cosh, mr_cosh, eo3);
 						if(mtest.isolate_x_sub(eo, eo3, x_var, morig, depth + 1)) {
-							if(eo2.approximation != APPROXIMATION_EXACT) mtest.calculatesub(eo2, eo, true);
+							if(eo2.approximation != APPROXIMATION_EXACT) {
+								mtest.calculateFunctions(eo);
+								mtest.calculatesub(eo2, eo, true);
+							}
 							set(mtest);
 							return true;
+						}
+					}
+				} else if(CHILD(0).size() == 2 && CHILD(1).isZero()) {
+					if(CHILD(0).containsFunctionId(FUNCTION_ID_SIN) && CHILD(0).containsFunctionId(FUNCTION_ID_TAN)) {
+						// a*sin(x) +/- a*tan(x)=0
+						MathStructure *marg = NULL, *m_tan = NULL, *m_sin = NULL;
+						size_t i_sin = 0, i_tan = 0;
+						for(size_t i = 0; i < CHILD(0).size(); i++) {
+							if(CHILD(0)[i].isMultiplication()) {
+								bool b_found = false;
+								for(size_t i2 = 0; i2 < CHILD(0)[i].size(); i2++) {
+									if(CHILD(0)[i][i2].contains(x_var)) {
+										if(!b_found && CHILD(0)[i][i2].isFunction() && (CHILD(0)[i][i2].function()->id() == FUNCTION_ID_SIN || CHILD(0)[i][i2].function()->id() == FUNCTION_ID_TAN) && CHILD(0)[i][i2].size() == 1 && (!marg || marg->equals(CHILD(0)[i][i2][0]))) {
+											if(!marg) marg = &CHILD(0)[i][i2][0];
+											if(CHILD(0)[i][i2].function()->id() == FUNCTION_ID_SIN) {m_sin = &CHILD(0)[i][i2]; i_sin = i2;}
+											else {m_tan = &CHILD(0)[i][i2]; i_tan = i2;}
+											b_found = true;
+										} else {
+											b_found = false;
+											break;
+										}
+									}
+								}
+								if(!b_found) {
+									marg = NULL;
+									break;
+								}
+							} else if(CHILD(0)[i].isFunction() && (CHILD(0)[i].function()->id() == FUNCTION_ID_SIN || CHILD(0)[i].function()->id() == FUNCTION_ID_TAN) && CHILD(0)[i].size() == 1 && (!marg || marg->equals(CHILD(0)[i][0]))) {
+								if(!marg) marg = &CHILD(0)[i][0];
+								if(CHILD(0)[i].function()->id() == FUNCTION_ID_SIN) m_sin = &CHILD(0)[i];
+								else m_tan = &CHILD(0)[i];
+							} else {
+								marg = NULL;
+								break;
+							}
+						}
+						if(marg && m_tan && m_sin) {
+							bool b = false;
+							if(m_tan->isMultiplication()) {
+								if(m_sin->isMultiplication()) {
+									b = m_tan->size() == 2 && (*m_tan)[0].isMinusOne();
+								} else {
+									MathStructure mtanmul(m_tan);
+									MathStructure msinmul(m_sin);
+									mtanmul.delChild(i_tan + 1, true);
+									msinmul.delChild(i_sin + 1, true);
+									if(mtanmul.representsNonZero()) {
+										if(mtanmul.compare(msinmul) == COMPARISON_RESULT_EQUAL) {
+											b = true;
+										} else {
+											mtanmul.negate();
+											b = (mtanmul.compare(msinmul) == COMPARISON_RESULT_EQUAL);
+										}
+									}
+								}
+							} else if(m_sin->isMultiplication()) {
+								b = m_sin->size() == 2 && (*m_sin)[0].isMinusOne();
+							} else {
+								b = true;
+							}
+							if(b) {
+								MathStructure m0(*marg);
+								CHILD(0).set_nocopy(m0);
+								CHILD(0).calculateDivide(CALCULATOR->getRadUnit(), eo2);
+								CHILD(1).set(CALCULATOR->getVariableById(VARIABLE_ID_PI));
+								CHILD(1) *= CALCULATOR->getVariableById(VARIABLE_ID_N);
+								isolate_x_sub(eo, eo2, x_var, morig, depth + 1);
+								return true;
+							}
+						}
+					} else {
+						// sin(x)=sin(x^2): (1+/-sqrt(1-8pi*n))/2, (-1+/-sqrt(1-4pi+8pi*n))/2 / (-1+/-sqrt(1+8pi*n))/2, (1+/-sqrt(1+12pi-8pi*n))/2
+						// cos(x)=cos(x^2): (1+/-sqrt(1-8pi*n))/2, (-1+/-sqrt(1+8pi*n))/2 / (-1+/-sqrt(1-4pi+8pi*n))/2, (1+/-sqrt(1+12pi-8pi*n))/2
+						// tan(x)=tan(x^2): (1+/-sqrt(1-4pi*n))/2 / (-1+/-sqrt(1+4pi*n))/2
+						// sinh(x)=sinh(x^2): 0, 1 / -1, 0
+						// cosh(x)=cosh(x^2): -1, 0, 1 / -
+						// tanh(x)=tanh(x^2): 0, 1 / -1, 0
+						// asin(x)=asin(x^2): 0, 1 / -1, 0
+						// acos(x)=acos(x^2): 0, 1 / 1
+						// atan(x)=atan(x^2): 0, 1 / -1, 0
+						// asinh(x)=asinh(x^2): 0, 1 / -1, 0
+						// acosh(x)=acosh(x^2): 0, 1 / 1
+						// atanh(x)=atanh(x^2): 0 / 0
+						// a^(x)=a^(x^2), a real, a != 0: 0, 1 / -
+						bool b_minus = true;
+						MathStructure *m0 = NULL, *m1 = NULL;
+						if(CHILD(0)[0].isFunction() || CHILD(0)[0].isPower()) {
+							m0 = &CHILD(0)[0];
+						} else if(CHILD(0)[0].isMultiplication() && CHILD(0)[0].size() == 2 && CHILD(0)[0][0].isMinusOne() && (CHILD(0)[0][1].isFunction() || CHILD(0)[0][1].isPower())) {
+							m0 = &CHILD(0)[0][1];
+							b_minus = !b_minus;
+						}
+						if(CHILD(0)[1].isFunction() || CHILD(0)[1].isPower()) {
+							m1 = &CHILD(0)[1];
+						} else if(CHILD(0)[1].isMultiplication() && CHILD(0)[1].size() == 2 && CHILD(0)[1][0].isMinusOne() && (CHILD(0)[1][1].isFunction() || CHILD(0)[1][1].isPower())) {
+							m1 = &CHILD(0)[1][1];
+							b_minus = !b_minus;
+						}
+						if(m0 && m1 && m0->type() == m1->type() && ((m0->isFunction() && m0->function() == m1->function()) || (m0->isPower() && !b_minus && (*m0)[0] == (*m1)[0] && !(*m0)[0].contains(x_var) && (*m0)[0].representsNonZero() && (*m0)[0].representsReal()))) {
+							int fid = 0;
+							if(m0->isFunction()) fid = m0->function()->id();
+							if(fid == 0 || (fid >= FUNCTION_ID_SIN && fid <= FUNCTION_ID_ATANH && (!b_minus || fid != FUNCTION_ID_COSH) && m0->size() == 1 && m1->size() == 1)) {
+								MathStructure mtest(m1->isPower() ? (*m1)[1] : (*m1)[0]);
+								mtest ^= nr_two;
+								if(mtest.compare(m0->isPower() ? (*m0)[1] : (*m0)[0]) == COMPARISON_RESULT_EQUAL) {
+									CHILD(0).setToChild(2, true);
+									if(CHILD(0).isMultiplication()) CHILD(0).setToChild(2, true);
+									CHILD(0).setToChild(fid == 0 ? 2 : 1, true);
+									MathStructure *malt = NULL, *malt2 = NULL, *malt3 = NULL;
+									if(fid == FUNCTION_ID_SIN || fid == FUNCTION_ID_COS || fid == FUNCTION_ID_TAN) {
+										CHILD(0).calculateDivide(CALCULATOR->getRadUnit(), eo2);
+										CHILD(1).set(CALCULATOR->getVariableById(VARIABLE_ID_PI));
+										CHILD(1).multiply(CALCULATOR->getVariableById(VARIABLE_ID_N));
+										if(fid != FUNCTION_ID_TAN) {
+											malt = new MathStructure(*this);
+											(*malt)[1].multiply_nocopy(new MathStructure(b_minus ? -8 : 8, 1, 0), true);
+											(*malt)[1] += m_one;
+											if(fid == FUNCTION_ID_SIN || b_minus) {
+												(*malt)[1].add(CALCULATOR->getVariableById(VARIABLE_ID_PI), true);
+												(*malt)[1].last().multiply_nocopy(new MathStructure(b_minus ? 12 : -4, 1, 0), true);
+											}
+											(*malt)[1].raise(nr_half);
+											(*malt)[1].multiply(nr_half);
+											(*malt)[1].calculatesub(eo2, eo, true);
+										}
+										if(b_minus) CHILD(1).multiply_nocopy(new MathStructure(fid == FUNCTION_ID_TAN ? 4 : 8, 1, 0), true);
+										else CHILD(1).multiply_nocopy(new MathStructure(fid == FUNCTION_ID_TAN ? -4 : -8, 1, 0), true);
+										if(fid == FUNCTION_ID_COS && b_minus) {
+											CHILD(1).add(CALCULATOR->getVariableById(VARIABLE_ID_PI), true);
+											CHILD(1).last().multiply_nocopy(new MathStructure(-4, 1, 0), true);
+										}
+										CHILD(1) += m_one;
+										CHILD(1).raise(nr_half);
+										CHILD(1).multiply(nr_half);
+										CHILD(1).calculatesub(eo2, eo, true);
+										malt2 = new MathStructure(*this);
+										if(malt) malt3 = new MathStructure(*malt);
+										if(malt2) (*malt2)[1].calculateNegate(eo2);
+										if(malt3) (*malt3)[1].calculateNegate(eo2);
+										if(b_minus) {
+											CHILD(1).calculateAdd(nr_minus_half, eo2);
+											if(malt) (*malt)[1].calculateAdd(nr_half, eo2);
+											if(malt2) (*malt2)[1].calculateAdd(nr_minus_half, eo2);
+											if(malt3) (*malt3)[1].calculateAdd(nr_half, eo2);
+										} else {
+											CHILD(1).calculateAdd(nr_half, eo2);
+											if(malt) (*malt)[1].calculateAdd(nr_minus_half, eo2);
+											if(malt2) (*malt2)[1].calculateAdd(nr_half, eo2);
+											if(malt3) (*malt3)[1].calculateAdd(nr_minus_half, eo2);
+										}
+										CHILD_UPDATED(1)
+										if(malt) malt->childUpdated(1);
+										if(malt2) malt2->childUpdated(1);
+										if(malt3) malt3->childUpdated(1);
+										if(!malt) {malt = malt2; malt2 = NULL;}
+									} else if(b_minus && (fid == FUNCTION_ID_ACOS || fid == FUNCTION_ID_ACOSH)) {
+										CHILD(1).set(nr_one, true);
+									} else if(fid == FUNCTION_ID_COSH) {
+										malt = new MathStructure(*this);
+										(*malt)[1].set(nr_one, true);
+										malt2 = new MathStructure(*this);
+										(*malt2)[1].set(nr_one, true);
+									} else if(fid != FUNCTION_ID_ATANH) {
+										malt = new MathStructure(*this);
+										(*malt)[1].set(b_minus ? nr_minus_one : nr_one, true);
+									}
+									ComparisonType ct_comp_bak = ct_comp;
+									isolate_x_sub(eo, eo2, x_var, morig, depth + 1);
+									if(malt) {
+										malt->isolate_x_sub(eo, eo2, x_var, morig, depth + 1);
+										add_nocopy(malt, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR);
+									}
+									if(malt2) {
+										malt2->isolate_x_sub(eo, eo2, x_var, morig, depth + 1);
+										add_nocopy(malt2, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
+									}
+									if(malt3) {
+										malt3->isolate_x_sub(eo, eo2, x_var, morig, depth + 1);
+										add_nocopy(malt3, ct_comp_bak == COMPARISON_NOT_EQUALS ? OPERATION_LOGICAL_AND : OPERATION_LOGICAL_OR, true);
+									}
+									if(malt || malt2 || malt3) calculatesub(eo2, eo, false);
+									return true;
+								}
+							}
 						}
 					}
 				}
@@ -5783,16 +5970,19 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					}
 				} else {
 					CHILD(1).set(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &msave, NULL);
+					if(CHILD(1).calculateFunctions(eo)) CHILD(1).calculatesub(eo2, eo, true);
 					if(!msave.isZero()) {
 						CHILD(1) += nr_one_i;
 						CHILD(1)[1] *= nr_two;
 						CHILD(1)[1].multiply(CALCULATOR->getVariableById(VARIABLE_ID_PI), true);
 						CHILD(1)[1].multiply_nocopy(get_variable_n(*this), true);
 					}
-					CHILD(1).divide_nocopy(new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &CHILD(0)[0], NULL));
+					MathStructure *mdiv = new MathStructure(CALCULATOR->getFunctionById(FUNCTION_ID_LOG), &CHILD(0)[0], NULL);
+					if(mdiv->calculateFunctions(eo)) mdiv->calculatesub(eo2, eo, true);
+					mdiv->calculateInverse(eo);
+					CHILD(1).multiply_nocopy(mdiv);
+					CHILD(1).calculateMultiplyLast(eo);
 					CHILD(1).evalSort(true);
-					bool b = CHILD(1).calculateFunctions(eo);
-					if(b) CHILD(1).calculatesub(eo2, eo, true);
 				}
 				CHILD(0).setToChild(2, true);
 				CHILDREN_UPDATED;
