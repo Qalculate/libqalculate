@@ -3906,9 +3906,12 @@ string get_latex_units(const MathStructure &m, size_t first_unit, const PrintOpt
 // evaluation is allowed to recurse up to check_recursive_function_depth()'s
 // limit of 3000), which is enough to exhaust the stack of whichever thread
 // calls print() -- crashing the process instead of just producing an
-// unwieldy string. Cap it well below any plausible stack size, matching the
-// project's existing recursive-depth-limit convention.
-#define MAX_PRINT_RECURSION_DEPTH 200
+// unwieldy string. Cap it well below any plausible stack size (verified in a
+// release build to leave ample headroom against an 8 MiB stack; ASan's own
+// per-frame overhead is much larger than a real build's and isn't a useful
+// yardstick here), while still being high enough that legitimately-nested
+// results aren't truncated unnecessarily.
+#define MAX_PRINT_RECURSION_DEPTH 1000
 
 string MathStructure::print(const PrintOptions &po, bool format, int colorize, int tagtype, const InternalPrintStruct &ips) const {
 	if(ips.depth > MAX_PRINT_RECURSION_DEPTH) return "...";
