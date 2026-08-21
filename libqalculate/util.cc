@@ -1132,6 +1132,15 @@ bool Thread::cancel() {
 
 Thread::Thread() : running(false), m_pipe_r(NULL), m_pipe_w(NULL) {
 	pthread_attr_init(&m_thread_attr);
+	// Some platforms (e.g. macOS) give secondary threads a much smaller
+	// default stack than the main thread (512 KiB vs. 8 MiB on macOS).
+	// Calculation involves deep, mutually recursive evaluation/simplification
+	// passes that are only bounded by check_recursive_function_depth()'s
+	// depth limit of 3000; with a too-small stack that limit is never
+	// reached and the process crashes with a stack overflow instead of
+	// failing gracefully. Request a stack comparable to a typical main
+	// thread's so the existing recursion depth limit is actually reachable.
+	pthread_attr_setstacksize(&m_thread_attr, 16 * 1024 * 1024);
 	int pipe_wr[] = {0, 0};
 #ifdef HAVE_PIPE2
 	if(pipe2(pipe_wr, O_CLOEXEC) == 0) {
