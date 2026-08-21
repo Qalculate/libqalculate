@@ -784,7 +784,7 @@
     </unit>
     <unit type="alias">
       <title>Cent (USD)</title>
-      <names>au:¢,r:cent,p:cents</names>
+      <names>r:US_cent,p:US_cents,aou:¢,o:cent,po:cents</names>
       <base>
         <unit>USD</unit>
         <relation>1/100</relation>
