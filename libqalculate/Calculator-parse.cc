@@ -1456,6 +1456,8 @@ MathStructure *last_is_function(MathStructure &m) {
 
 void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &parseoptions) {
 
+	initialize_global_variables();
+
 	ParseOptions po = parseoptions;
 
 	if(po.base == BASE_UNICODE || (po.base == BASE_CUSTOM && priv->custom_input_base_i > 62)) {

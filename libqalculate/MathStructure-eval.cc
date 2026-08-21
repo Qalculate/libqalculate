@@ -2661,6 +2661,8 @@ bool fix_inequalities(MathStructure &m, const EvaluationOptions &eo) {
 
 MathStructure &MathStructure::eval(const EvaluationOptions &eo) {
 
+	initialize_global_variables();
+
 	if(m_type == STRUCT_NUMBER) {FORMAT_COMPLEX_NUMBERS; return *this;}
 
 	if(eo.structuring != STRUCTURING_NONE) warn_ratio_units(*this);

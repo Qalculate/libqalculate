@@ -798,6 +798,8 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 	int name_index, prec;
 	ExpressionName ename;
 
+	initialize_global_variables();
+
 	string locale, altlocale;
 	if(!priv->definitions_locale_set) {
 #ifdef _WIN32
@@ -3564,6 +3566,8 @@ bool Calculator::loadExchangeRates() {
 	string currency, rate, sdate;
 
 	unordered_map<Unit*, bool> cunits;
+
+	initialize_global_variables();
 
 	string filename = buildPath(getLocalDataDir(), "custom_exchange_rates");
 	ifstream cfile(filename.c_str());

@@ -49,7 +49,40 @@ using std::iterator;
 
 #include "Calculator_p.h"
 
-PrintOptions::PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), base_display(BASE_DISPLAY_NONE), lower_case_numbers(false), lower_case_e(false), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), show_ending_zeroes(true), abbreviate_names(true), use_reference_names(false), place_units_separately(true), use_unit_prefixes(true), use_prefixes_for_all_units(false), use_prefixes_for_currencies(false), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), limit_implicit_multiplication(false), allow_non_usable(false), use_unicode_signs(false), multiplication_sign(MULTIPLICATION_SIGN_DOT), division_sign(DIVISION_SIGN_DIVISION_SLASH), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), round_halfway_to_even(false), improve_division_multipliers(true), prefix(NULL), is_approximate(NULL), can_display_unicode_string_function(NULL), can_display_unicode_string_arg(NULL), hide_underscore_spaces(false), preserve_format(false), allow_factorization(false), spell_out_logical_operators(false), restrict_to_parent_precision(true), restrict_fraction_length(false), exp_to_root(false), preserve_precision(false), interval_display(INTERVAL_DISPLAY_INTERVAL), digit_grouping(DIGIT_GROUPING_NONE), date_time_format(DATE_TIME_FORMAT_ISO), time_zone(TIME_ZONE_LOCAL), custom_time_zone(0), twos_complement(true), hexadecimal_twos_complement(false), binary_bits(0), exp_display(EXP_DEFAULT), duodecimal_symbols(false), rounding(ROUNDING_HALF_AWAY_FROM_ZERO) {}
+Calculator *calculator = NULL;
+
+MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one, m_minus_one, m_one_i;
+Number nr_zero, nr_one, nr_two, nr_three, nr_minus_one, nr_one_i, nr_minus_i, nr_half, nr_minus_half, nr_plus_inf, nr_minus_inf;
+EvaluationOptions no_evaluation;
+ExpressionName empty_expression_name;
+
+void initialize_global_variables(bool initial) {
+	if(!initial && nr_one_i.hasImaginaryPart()) return;
+	m_undefined.setUndefined();
+	m_empty_vector.clearVector();
+	m_empty_matrix.clearMatrix();
+	m_zero.clear();
+	m_one.set(1, 1, 0);
+	m_minus_one.set(-1, 1, 0);
+	nr_zero.clear();
+	nr_one.set(1, 1, 0);
+	nr_two.set(2, 1, 0);
+	nr_three.set(3, 1, 0);
+	nr_half.set(1, 2, 0);
+	nr_minus_half.set(-1, 2, 0);
+	nr_one_i.setImaginaryPart(1, 1, 0);
+	nr_minus_i.setImaginaryPart(-1, 1, 0);
+	m_one_i.set(nr_one_i);
+	nr_minus_one.set(-1, 1, 0);
+	nr_plus_inf.setPlusInfinity();
+	nr_minus_inf.setMinusInfinity();
+	no_evaluation.approximation = APPROXIMATION_EXACT;
+	no_evaluation.structuring = STRUCTURING_NONE;
+	no_evaluation.sync_units = false;
+	default_user_evaluation_options.structuring = STRUCTURING_SIMPLIFY;
+}
+
+PrintOptions::PrintOptions() : min_exp(EXP_PRECISION), base(BASE_DECIMAL), base_display(BASE_DISPLAY_NONE), lower_case_numbers(false), lower_case_e(false), number_fraction_format(FRACTION_DECIMAL), indicate_infinite_series(false), show_ending_zeroes(true), abbreviate_names(true), use_reference_names(false), place_units_separately(true), use_unit_prefixes(true), use_prefixes_for_all_units(false), use_prefixes_for_currencies(false), use_all_prefixes(false), use_denominator_prefix(true), negative_exponents(false), short_multiplication(true), limit_implicit_multiplication(false), allow_non_usable(false), use_unicode_signs(false), multiplication_sign(MULTIPLICATION_SIGN_DOT), division_sign(DIVISION_SIGN_DIVISION_SLASH), spacious(true), excessive_parenthesis(false), halfexp_to_sqrt(true), min_decimals(0), max_decimals(-1), use_min_decimals(true), use_max_decimals(true), round_halfway_to_even(false), improve_division_multipliers(true), prefix(NULL), is_approximate(NULL), can_display_unicode_string_function(NULL), can_display_unicode_string_arg(NULL), hide_underscore_spaces(false), preserve_format(false), allow_factorization(false), spell_out_logical_operators(false), restrict_to_parent_precision(true), restrict_fraction_length(false), exp_to_root(false), preserve_precision(false), interval_display(INTERVAL_DISPLAY_INTERVAL), digit_grouping(DIGIT_GROUPING_NONE), date_time_format(DATE_TIME_FORMAT_ISO), time_zone(TIME_ZONE_LOCAL), custom_time_zone(0), twos_complement(true), hexadecimal_twos_complement(false), binary_bits(0), exp_display(EXP_DEFAULT), duodecimal_symbols(false), rounding(ROUNDING_HALF_AWAY_FROM_ZERO) {initialize_global_variables();}
 
 string semicolon_s;
 
@@ -69,7 +102,7 @@ InternalPrintStruct::InternalPrintStruct() : depth(0), power_depth(0), division_
 
 ParseOptions::ParseOptions() : variables_enabled(true), functions_enabled(true), unknowns_enabled(true), units_enabled(true), rpn(false), base(BASE_DECIMAL), limit_implicit_multiplication(false), read_precision(DONT_READ_PRECISION), dot_as_separator(false), brackets_as_parentheses(false), angle_unit(ANGLE_UNIT_NONE), unended_function(NULL), preserve_format(false), default_dataset(NULL), parsing_mode(PARSING_MODE_ADAPTIVE), twos_complement(false), hexadecimal_twos_complement(false), binary_bits(0) {}
 
-EvaluationOptions::EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_nonlinear_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), expand(true), combine_divisions(false), reduce_divisions(true), allow_complex(true), allow_infinite(true), assume_denominators_nonzero(true), warn_about_denominators_assumed_nonzero(false), split_squares(true), keep_zero_units(true), auto_post_conversion(POST_CONVERSION_OPTIMAL), mixed_units_conversion(MIXED_UNITS_CONVERSION_DEFAULT), structuring(STRUCTURING_SIMPLIFY), isolate_var(NULL), do_polynomial_division(true), protected_function(NULL), complex_number_form(COMPLEX_NUMBER_FORM_RECTANGULAR), local_currency_conversion(true), transform_trigonometric_functions(true), interval_calculation(INTERVAL_CALCULATION_VARIANCE_FORMULA) {}
+EvaluationOptions::EvaluationOptions() : approximation(APPROXIMATION_TRY_EXACT), sync_units(true), sync_nonlinear_unit_relations(true), keep_prefixes(false), calculate_variables(true), calculate_functions(true), test_comparisons(true), isolate_x(true), expand(true), combine_divisions(false), reduce_divisions(true), allow_complex(true), allow_infinite(true), assume_denominators_nonzero(true), warn_about_denominators_assumed_nonzero(false), split_squares(true), keep_zero_units(true), auto_post_conversion(POST_CONVERSION_OPTIMAL), mixed_units_conversion(MIXED_UNITS_CONVERSION_DEFAULT), structuring(STRUCTURING_SIMPLIFY), isolate_var(NULL), do_polynomial_division(true), protected_function(NULL), complex_number_form(COMPLEX_NUMBER_FORM_RECTANGULAR), local_currency_conversion(true), transform_trigonometric_functions(true), interval_calculation(INTERVAL_CALCULATION_VARIANCE_FORMULA) {initialize_global_variables();}
 
 /*#include <time.h>
 #include <sys/time.h>
@@ -141,12 +174,6 @@ bool Calculator::delDefaultStringAlternative(string replacement, string standard
 	return false;
 }
 
-Calculator *calculator = NULL;
-
-MathStructure m_undefined, m_empty_vector, m_empty_matrix, m_zero, m_one, m_minus_one, m_one_i;
-Number nr_zero, nr_one, nr_two, nr_three, nr_minus_one, nr_one_i, nr_minus_i, nr_half, nr_minus_half, nr_plus_inf, nr_minus_inf;
-EvaluationOptions no_evaluation;
-ExpressionName empty_expression_name;
 #ifdef HAVE_ICU
 	extern UCaseMap *ucm;
 #endif
@@ -341,27 +368,8 @@ Calculator::Calculator() {
 
 	decimal_null_prefix = new DecimalPrefix(0, "", "");
 	binary_null_prefix = new BinaryPrefix(0, "", "");
-	m_undefined.setUndefined();
-	m_empty_vector.clearVector();
-	m_empty_matrix.clearMatrix();
-	m_zero.clear();
-	m_one.set(1, 1, 0);
-	m_minus_one.set(-1, 1, 0);
-	nr_zero.clear();
-	nr_one.set(1, 1, 0);
-	nr_two.set(2, 1, 0);
-	nr_three.set(3, 1, 0);
-	nr_half.set(1, 2, 0);
-	nr_minus_half.set(-1, 2, 0);
-	nr_one_i.setImaginaryPart(1, 1, 0);
-	nr_minus_i.setImaginaryPart(-1, 1, 0);
-	m_one_i.set(nr_one_i);
-	nr_minus_one.set(-1, 1, 0);
-	nr_plus_inf.setPlusInfinity();
-	nr_minus_inf.setMinusInfinity();
-	no_evaluation.approximation = APPROXIMATION_EXACT;
-	no_evaluation.structuring = STRUCTURING_NONE;
-	no_evaluation.sync_units = false;
+
+	initialize_global_variables(true);
 
 	save_printoptions.decimalpoint_sign = ".";
 	save_printoptions.comma_sign = ",";
@@ -380,8 +388,6 @@ Calculator::Calculator() {
 	message_printoptions.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 	message_printoptions.spell_out_logical_operators = true;
 	message_printoptions.number_fraction_format = FRACTION_FRACTIONAL;
-
-	default_user_evaluation_options.structuring = STRUCTURING_SIMPLIFY;
 
 	default_assumptions = new Assumptions;
 	default_assumptions->setType(ASSUMPTION_TYPE_REAL);
@@ -411,6 +417,7 @@ Calculator::Calculator() {
 	gnuplot_pipe = NULL;
 
 	calculate_thread = new CalculateThread;
+
 }
 Calculator::Calculator(bool ignore_locale) {
 
@@ -607,27 +614,8 @@ Calculator::Calculator(bool ignore_locale) {
 
 	decimal_null_prefix = new DecimalPrefix(0, "", "");
 	binary_null_prefix = new BinaryPrefix(0, "", "");
-	m_undefined.setUndefined();
-	m_empty_vector.clearVector();
-	m_empty_matrix.clearMatrix();
-	m_zero.clear();
-	m_one.set(1, 1, 0);
-	m_minus_one.set(-1, 1, 0);
-	nr_zero.clear();
-	nr_one.set(1, 1, 0);
-	nr_two.set(2, 1, 0);
-	nr_three.set(3, 1, 0);
-	nr_half.set(1, 2, 0);
-	nr_minus_half.set(-1, 2, 0);
-	nr_one_i.setImaginaryPart(1, 1, 0);
-	nr_minus_i.setImaginaryPart(-1, 1, 0);
-	m_one_i.set(nr_one_i);
-	nr_minus_one.set(-1, 1, 0);
-	nr_plus_inf.setPlusInfinity();
-	nr_minus_inf.setMinusInfinity();
-	no_evaluation.approximation = APPROXIMATION_EXACT;
-	no_evaluation.structuring = STRUCTURING_NONE;
-	no_evaluation.sync_units = false;
+
+	initialize_global_variables(true);
 
 	save_printoptions.decimalpoint_sign = ".";
 	save_printoptions.comma_sign = ",";
@@ -646,8 +634,6 @@ Calculator::Calculator(bool ignore_locale) {
 	message_printoptions.interval_display = INTERVAL_DISPLAY_PLUSMINUS;
 	message_printoptions.spell_out_logical_operators = true;
 	message_printoptions.number_fraction_format = FRACTION_FRACTIONAL;
-
-	default_user_evaluation_options.structuring = STRUCTURING_SIMPLIFY;
 
 	default_assumptions = new Assumptions;
 	default_assumptions->setType(ASSUMPTION_TYPE_REAL);
@@ -677,6 +663,7 @@ Calculator::Calculator(bool ignore_locale) {
 	gnuplot_pipe = NULL;
 
 	calculate_thread = new CalculateThread;
+
 }
 Calculator::~Calculator() {
 	closeGnuplot();
@@ -1458,6 +1445,7 @@ void Calculator::prefixNameChanged(Prefix *p, bool new_item) {
 #define PRECISION_TO_BITS(p) ((((double) p) * 3.3219281) + 100)
 #define BITS_TO_PRECISION(p) (::ceil((((double) p) - 100) / 3.3219281))
 void Calculator::setPrecision(int precision) {
+	initialize_global_variables();
 	if(precision <= 0) precision = DEFAULT_PRECISION;
 	if(PRECISION_TO_BITS(precision) > (double) MPFR_PREC_MAX - 1000L) {
 		if(BITS_TO_PRECISION(MPFR_PREC_MAX) > INT_MAX) i_precision = INT_MAX;

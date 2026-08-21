@@ -266,5 +266,7 @@ void init_randstate(unsigned long int seed);
 void init_randstate();
 void clear_randstate();
 
+void initialize_global_variables(bool = false);
+
 #endif
 
