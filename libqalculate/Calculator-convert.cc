@@ -795,12 +795,14 @@ void test_convert(MathStructure &mstruct_new, Unit *to_unit, long int &n, bool b
 		n = ntest;
 	}
 	if(b_pos && n > 1) {
+		CALCULATOR->beginTemporaryStopMessages();
 		MathStructure mtest(mstruct_new);
 		mtest.inverse();
 		mtest.eval(eo2);
 		mtest = CALCULATOR->convertToOptimalUnit(mtest, eo2, false);
 		long int ntest = count_unit_powers(mtest);
 		if(!contains_part_of_unit(mtest, to_unit) && ntest < n) {
+			CALCULATOR->endTemporaryStopMessages(true);
 			replace_hz(mtest);
 			eo2.sync_units = false;
 			mtest.inverse();
@@ -808,6 +810,8 @@ void test_convert(MathStructure &mstruct_new, Unit *to_unit, long int &n, bool b
 			eo2.sync_units = true;
 			mstruct_new = mtest;
 			n = ntest;
+		} else {
+			CALCULATOR->endTemporaryStopMessages();
 		}
 	}
 	eo2.auto_post_conversion = pc;
@@ -1146,6 +1150,7 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 				}
 			}
 		}
+
 		if(mstruct_new.convert(to_unit, true, NULL, false, eo2, eo.keep_prefixes ? decimal_null_prefix : NULL)) {
 			b = true;
 		} else if(b_ratio) {
@@ -1248,12 +1253,16 @@ MathStructure Calculator::convert(const MathStructure &mstruct, Unit *to_unit, c
 					MathStructure mtest(mbak);
 					MathStructure mtest2;
 					if(b_pos && b_neg) {
+						CALCULATOR->beginTemporaryStopMessages();
 						mtest.inverse();
 						mtest.divide_nocopy(new MathStructure(to_unit, NULL));
 						mtest.eval(eo2);
 						if(!mtest.containsType(STRUCT_UNIT)) {
+							CALCULATOR->endTemporaryStopMessages(true);
 							mstruct_new = mtest;
 							n = 0;
+						} else {
+							CALCULATOR->endTemporaryStopMessages();
 						}
 					}
 					bool prio_power = transform_orig;
