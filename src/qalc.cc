@@ -1724,13 +1724,15 @@ void set_option(string str) {
 		//digit grouping mode
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "none", _("none"))) v = DIGIT_GROUPING_NONE;
 		//digit grouping mode
+		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "underscore", _("underscore"))) v = DIGIT_GROUPING_UNDERSCORE;
+		//digit grouping mode
 		else if(empty_value || EQUALS_IGNORECASE_AND_LOCAL(svalue, "standard", _("standard"))
 		 || EQUALS_IGNORECASE_AND_LOCAL(svalue, "on", _("on"))) v = DIGIT_GROUPING_STANDARD;
 		else if(EQUALS_IGNORECASE_AND_LOCAL(svalue, "locale", _("locale"))) v = DIGIT_GROUPING_LOCALE;
 		else if(svalue.find_first_not_of(SPACES NUMBERS) == string::npos) {
 			v = s2i(svalue);
 		}
-		if(v < DIGIT_GROUPING_NONE || v > DIGIT_GROUPING_LOCALE) {
+		if(v < DIGIT_GROUPING_NONE || v > DIGIT_GROUPING_UNDERSCORE) {
 			PUTS_UNICODE(_("Illegal value."));
 		} else {
 			printops.digit_grouping = (DigitGrouping) v;
@@ -2628,7 +2630,7 @@ bool show_set_help(string set_option = "") {
 		CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 		SET_OPTION_FOUND
 	}
-	STR_AND_TABS_2("digit grouping", "group", "", printops.digit_grouping, _("off"), _("standard"), _("locale"));
+	STR_AND_TABS_3("digit grouping", "group", "", printops.digit_grouping, _("off"), _("standard"), _("locale"), _("underscore"));
 	if(SET_OPTION_MATCHES("digits", "")) {
 		STR_AND_TABS_SET("digits", "");
 		SET_DESCRIPTION(_("Specifies the number of displayed significant digits (by default determined by precision)."));
@@ -6410,6 +6412,7 @@ int main(int argc, char *argv[]) {
 				case DIGIT_GROUPING_NONE: {str += _("off"); break;}
 				case DIGIT_GROUPING_STANDARD: {str += _("standard"); break;}
 				case DIGIT_GROUPING_LOCALE: {str += _("locale"); break;}
+				case DIGIT_GROUPING_UNDERSCORE: {str += _("underscore"); break;}
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("digits"), "");
@@ -6493,7 +6496,7 @@ int main(int argc, char *argv[]) {
 			}
 			CHECK_IF_SCREEN_FILLED_PUTS(str.c_str())
 			PRINT_AND_COLON_TABS(_("repeating decimals"), "repdeci");
-			switch(printops.digit_grouping) {
+			switch(printops.indicate_infinite_series) {
 				case REPEATING_DECIMALS_OFF: {str += _("off"); break;}
 				case REPEATING_DECIMALS_ELLIPSIS: {str += _("ellipsis"); break;}
 				case REPEATING_DECIMALS_OVERLINE: {str += _("overline"); break;}
@@ -10381,7 +10384,7 @@ void load_preferences() {
 				} else if(svar == "show_ending_zeroes") {
 					if(version_numbers[0] > 2 || (version_numbers[0] == 2 && version_numbers[1] >= 9)) printops.show_ending_zeroes = v;
 				} else if(svar == "digit_grouping") {
-					if(v >= DIGIT_GROUPING_NONE && v <= DIGIT_GROUPING_LOCALE) {
+					if(v >= DIGIT_GROUPING_NONE && v <= DIGIT_GROUPING_UNDERSCORE) {
 						printops.digit_grouping = (DigitGrouping) v;
 					}
 				} else if(svar == "round_halfway_to_even") {

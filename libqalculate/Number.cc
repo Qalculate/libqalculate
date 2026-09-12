@@ -195,7 +195,7 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 			if(po.digit_grouping != DIGIT_GROUPING_LOCALE && i_deci + po.decimalpoint().length() < str.length() - 4 && str.find("…") == string::npos && str.find("...") == string::npos && str.find("¯") == string::npos) {
 				i = i_deci + 3 + po.decimalpoint().length();
 				if(do_thin_space == -1) {
-					if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (THIN_SPACE, po.can_display_unicode_string_arg))) do_thin_space = 1;
+					if(po.use_unicode_signs && po.digit_grouping != DIGIT_GROUPING_UNDERSCORE && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (THIN_SPACE, po.can_display_unicode_string_arg))) do_thin_space = 1;
 					else do_thin_space = 0;
 				}
 				while(i < str.length()) {
@@ -203,7 +203,7 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 						str.insert(i, nobreak ? NNBSP : THIN_SPACE);
 						i += 3 + strlen(nobreak ? NNBSP : THIN_SPACE);
 					} else {
-						str.insert(i, " ");
+						str.insert(i, 1, po.digit_grouping == DIGIT_GROUPING_UNDERSCORE ? '_' : ' ');
 						i += 4;
 					}
 				}
@@ -217,14 +217,14 @@ void insert_thousands_separator(string &str, const PrintOptions &po) {
 				i -= group_size;
 				if(po.digit_grouping != DIGIT_GROUPING_LOCALE || CALCULATOR->local_digit_group_separator.empty() || (nobreak && CALCULATOR->local_digit_group_separator == THIN_SPACE && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (NNBSP, po.can_display_unicode_string_arg)))) {
 					if(do_thin_space == -1) {
-						if((po.digit_grouping == DIGIT_GROUPING_LOCALE && !CALCULATOR->local_digit_group_separator.empty()) || (po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (nobreak ? NNBSP : THIN_SPACE, po.can_display_unicode_string_arg)))) do_thin_space = 1;
+						if((po.digit_grouping == DIGIT_GROUPING_LOCALE && !CALCULATOR->local_digit_group_separator.empty()) || (po.use_unicode_signs && po.digit_grouping != DIGIT_GROUPING_UNDERSCORE && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) (nobreak ? NNBSP : THIN_SPACE, po.can_display_unicode_string_arg)))) do_thin_space = 1;
 						else do_thin_space = 0;
 					}
 					if(do_thin_space) {
 						// thin space is preferred
 						str.insert(i, nobreak ? NNBSP : THIN_SPACE);
 					} else {
-						str.insert(i, " ");
+						str.insert(i, 1, po.digit_grouping == DIGIT_GROUPING_UNDERSCORE ? '_' : ' ');
 					}
 				} else {
 					str.insert(i, CALCULATOR->local_digit_group_separator);
