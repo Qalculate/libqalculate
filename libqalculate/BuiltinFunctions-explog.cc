@@ -887,8 +887,8 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 	} else if(eo.approximation == APPROXIMATION_EXACT) {
 		CALCULATOR->beginTemporaryStopMessages();
 		mstruct.eval(eo);
-		if(mstruct.containsFunctionId(FUNCTION_ID_LOG, false) > 0 && mstruct.contains(CALCULATOR->getVariableById(VARIABLE_ID_E), false) == 0) {
-			CALCULATOR->beginTemporaryStopMessages();
+		if(mstruct.containsFunctionId(FUNCTION_ID_LOG, false) > 0 && (!mstruct.isMultiplication() || mstruct.contains(CALCULATOR->getVariableById(VARIABLE_ID_E), false) == 0)) {
+			CALCULATOR->endTemporaryStopMessages();
 			EvaluationOptions eo2 = eo;
 			eo2.protected_function = CALCULATOR->getFunctionById(FUNCTION_ID_LOG);
 			mstruct = vargs[0];
@@ -935,8 +935,7 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 						eo2.approximation = APPROXIMATION_EXACT;
 						mcmp2.calculateInverse(eo2);
 						mcmp2.calculateNegate(eo2);
-						CALCULATOR->endTemporaryStopMessages();
-						b = mstruct[i][0] == mcmp2;
+						if(!CALCULATOR->endTemporaryStopMessages()) b = (mstruct[i][0] == mcmp2);
 					} else {
 						b = (mstruct[i][0] == *m2);
 					}
@@ -952,8 +951,7 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 						eo2.approximation = APPROXIMATION_EXACT;
 						mcmp2.calculateInverse(eo2);
 						mcmp2.calculateNegate(eo2);
-						CALCULATOR->endTemporaryStopMessages();
-						b = (*mln)[0] == mcmp2;
+						if(!CALCULATOR->endTemporaryStopMessages()) b = ((*mln)[0] == mcmp2);
 					} else {
 						b = (mstruct == (*mln)[0]);
 					}
@@ -961,9 +959,8 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 				}
 				if(!b) break;
 				MathStructure mcmp(CALCULATOR->getVariableById(VARIABLE_ID_E));
-				mcmp.inverse();
 				if(b_neg) {
-					b = (vargs[1].isZero() && COMPARISON_IS_EQUAL_OR_LESS(mcmp2.compare(mcmp))) || (!vargs[1].isZero() && (COMPARISON_IS_EQUAL_OR_GREATER(mcmp2.compare(mcmp))));
+					b = (vargs[1].isZero() && COMPARISON_IS_EQUAL_OR_LESS(mcmp.compare(mcmp2))) || (!vargs[1].isZero() && (COMPARISON_IS_EQUAL_OR_GREATER(mcmp.compare(mcmp2))));
 					if(b) {
 						mstruct.setToChild(i + 1, true);
 						mstruct.negate();
@@ -973,6 +970,7 @@ int LambertWFunction::calculate(MathStructure &mstruct, const MathStructure &var
 						mstruct.multiply_nocopy(new MathStructure(-2, 1, 0));
 					}
 				} else {
+					mcmp.inverse();
 					b = (vargs[1].isZero() && COMPARISON_IS_EQUAL_OR_LESS(mstruct[i][0].compare(mcmp))) || (!vargs[1].isZero() && COMPARISON_IS_EQUAL_OR_GREATER(mstruct[i][0].compare(mcmp)));
 					if(b) {
 						mstruct.setToChild(i + 1, true);

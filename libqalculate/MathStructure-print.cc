@@ -3900,21 +3900,12 @@ string get_latex_units(const MathStructure &m, size_t first_unit, const PrintOpt
 		print_str += ")";\
 	}
 
-// Printing recurses roughly one call per nesting level of the structure
-// (STRUCT_MULTIPLICATION, STRUCT_INVERSE, STRUCT_POWER, ...), with no depth
-// limit of its own. A structure can legitimately end up deeply nested (e.g.
-// evaluation is allowed to recurse up to check_recursive_function_depth()'s
-// limit of 3000), which is enough to exhaust the stack of whichever thread
-// calls print() -- crashing the process instead of just producing an
-// unwieldy string. Cap it well below any plausible stack size (verified in a
-// release build to leave ample headroom against an 8 MiB stack; ASan's own
-// per-frame overhead is much larger than a real build's and isn't a useful
-// yardstick here), while still being high enough that legitimately-nested
-// results aren't truncated unnecessarily.
-#define MAX_PRINT_RECURSION_DEPTH 1000
-
 string MathStructure::print(const PrintOptions &po, bool format, int colorize, int tagtype, const InternalPrintStruct &ips) const {
-	if(ips.depth > MAX_PRINT_RECURSION_DEPTH) return "...";
+	if(ips.depth > 1000) {
+		CALCULATOR->error(true, _("Maximum recursive depth reached."), NULL);
+		if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("…", po.can_display_unicode_string_arg))) return "…";
+		return "...";
+	}
 	if(ips.depth == 0 && po.is_approximate) *po.is_approximate = false;
 	if(ips.depth == 0 && tagtype == TAG_TYPE_TERMINAL && colorize < 0) {
 		colorize = -colorize;

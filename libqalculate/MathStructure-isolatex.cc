@@ -1558,6 +1558,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							mvar->ref();
 							CHILD(0).clear(true);
 							setChild_nocopy(mvar, 1, true);
+							fix_n_multiple(*this, eo2, eo, x_var);
 							CHILDREN_UPDATED
 							isolate_x_sub(eo, eo2, x_var, morig, depth + 1);
 							return true;
@@ -2247,8 +2248,8 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 									if(CHILD(0)[i][i2].contains(x_var)) {
 										if(!b_found && CHILD(0)[i][i2].isFunction() && (CHILD(0)[i][i2].function()->id() == FUNCTION_ID_SIN || CHILD(0)[i][i2].function()->id() == FUNCTION_ID_TAN) && CHILD(0)[i][i2].size() == 1 && (!marg || marg->equals(CHILD(0)[i][i2][0]))) {
 											if(!marg) marg = &CHILD(0)[i][i2][0];
-											if(CHILD(0)[i][i2].function()->id() == FUNCTION_ID_SIN) {m_sin = &CHILD(0)[i][i2]; i_sin = i2;}
-											else {m_tan = &CHILD(0)[i][i2]; i_tan = i2;}
+											if(CHILD(0)[i][i2].function()->id() == FUNCTION_ID_SIN) {m_sin = &CHILD(0)[i]; i_sin = i2;}
+											else {m_tan = &CHILD(0)[i]; i_tan = i2;}
 											b_found = true;
 										} else {
 											b_found = false;
@@ -2272,13 +2273,14 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 						if(marg && m_tan && m_sin) {
 							bool b = false;
 							if(m_tan->isMultiplication()) {
-								if(m_sin->isMultiplication()) {
+								if(!m_sin->isMultiplication()) {
 									b = m_tan->size() == 2 && (*m_tan)[0].isMinusOne();
 								} else {
-									MathStructure mtanmul(m_tan);
-									MathStructure msinmul(m_sin);
+									MathStructure mtanmul(*m_tan);
+									MathStructure msinmul(*m_sin);
 									mtanmul.delChild(i_tan + 1, true);
 									msinmul.delChild(i_sin + 1, true);
+									b = false;
 									if(mtanmul.representsNonZero()) {
 										if(mtanmul.compare(msinmul) == COMPARISON_RESULT_EQUAL) {
 											b = true;
@@ -2298,7 +2300,8 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								CHILD(0).set_nocopy(m0);
 								CHILD(0).calculateDivide(CALCULATOR->getRadUnit(), eo2);
 								CHILD(1).set(CALCULATOR->getVariableById(VARIABLE_ID_PI));
-								CHILD(1) *= CALCULATOR->getVariableById(VARIABLE_ID_N);
+								CHILD(1).multiply_nocopy(get_variable_n(*this));
+								fix_n_multiple(*this, eo2, eo, x_var);
 								isolate_x_sub(eo, eo2, x_var, morig, depth + 1);
 								return true;
 							}
@@ -2336,8 +2339,11 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							if(m0->isFunction()) fid = m0->function()->id();
 							if(fid == 0 || (fid >= FUNCTION_ID_SIN && fid <= FUNCTION_ID_ATANH && (!b_minus || fid != FUNCTION_ID_COSH) && m0->size() == 1 && m1->size() == 1)) {
 								MathStructure mtest(m1->isPower() ? (*m1)[1] : (*m1)[0]);
+								if(fid == FUNCTION_ID_SIN || fid == FUNCTION_ID_COS || fid == FUNCTION_ID_TAN) mtest.divide(CALCULATOR->getRadUnit());
 								mtest ^= nr_two;
-								if(mtest.compare(m0->isPower() ? (*m0)[1] : (*m0)[0]) == COMPARISON_RESULT_EQUAL) {
+								MathStructure mtest2(m0->isPower() ? (*m0)[1] : (*m0)[0]);
+								if(fid == FUNCTION_ID_SIN || fid == FUNCTION_ID_COS || fid == FUNCTION_ID_TAN) mtest2.divide(CALCULATOR->getRadUnit());
+								if(mtest.compare(mtest2) == COMPARISON_RESULT_EQUAL) {
 									CHILD(0).setToChild(2, true);
 									if(CHILD(0).isMultiplication()) CHILD(0).setToChild(2, true);
 									CHILD(0).setToChild(fid == 0 ? 2 : 1, true);
@@ -2345,7 +2351,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 									if(fid == FUNCTION_ID_SIN || fid == FUNCTION_ID_COS || fid == FUNCTION_ID_TAN) {
 										CHILD(0).calculateDivide(CALCULATOR->getRadUnit(), eo2);
 										CHILD(1).set(CALCULATOR->getVariableById(VARIABLE_ID_PI));
-										CHILD(1).multiply(CALCULATOR->getVariableById(VARIABLE_ID_N));
+										CHILD(1).multiply_nocopy(get_variable_n(*this));
 										if(fid != FUNCTION_ID_TAN) {
 											malt = new MathStructure(*this);
 											(*malt)[1].multiply_nocopy(new MathStructure(b_minus ? -8 : 8, 1, 0), true);
@@ -2387,6 +2393,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 										if(malt) malt->childUpdated(1);
 										if(malt2) malt2->childUpdated(1);
 										if(malt3) malt3->childUpdated(1);
+										fix_n_multiple(*this, eo2, eo, x_var);
+										if(malt) fix_n_multiple(*malt, eo2, eo, x_var);
+										if(malt2) fix_n_multiple(*malt2, eo2, eo, x_var);
+										if(malt3) fix_n_multiple(*malt3, eo2, eo, x_var);
 										if(!malt) {malt = malt2; malt2 = NULL;}
 									} else if(b_minus && (fid == FUNCTION_ID_ACOS || fid == FUNCTION_ID_ACOSH)) {
 										CHILD(1).set(nr_one, true);
@@ -4451,10 +4461,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							if(mchecknegative) mcheckmulti->unref();
 							if(mchecknonzeropow) mcheckmulti->unref();
 							if(marg->representsComplex()) {
-								marg->unref();
 								if(ct_comp == COMPARISON_EQUALS) SET_FALSE_TPA
 								else SET_TRUE_TPA
 								MERGE_TPA((*marg))
+								marg->unref();
 								return true;
 							}
 							MathStructure *mreq1 = NULL;
@@ -4535,6 +4545,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							CHILD(0).clear(true);
 							setChild_nocopy(mvar, 1, true);
 							CHILDREN_UPDATED
+							fix_n_multiple(*this, eo2, eo, x_var);
 							isolate_x_sub(eo, eo2, x_var, morig, depth + 1);
 							return true;
 						}
@@ -5227,8 +5238,10 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 								mreq1->calculatesub(eo3, eo, false);
 								if(mreq1->isNumber()) {
 									if(mreq1->number().getBoolean() == (ct_comp == COMPARISON_NOT_EQUALS)) {
-										SET_FALSE_TPA
+										if(ct_comp == COMPARISON_NOT_EQUALS) SET_TRUE_TPA
+										else SET_FALSE_TPA
 										MERGE_TPA((*mreq1))
+										mreq1->unref();
 										return true;
 									} else {
 										mreq1->unref();
