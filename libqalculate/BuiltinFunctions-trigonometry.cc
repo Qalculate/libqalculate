@@ -489,7 +489,7 @@ int SinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(b);
 	if(b) return 1;
-	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
+	if((eo.approximation == APPROXIMATION_TRY_EXACT || (f && eo.approximation == APPROXIMATION_APPROXIMATE)) && !mstruct.isNumber()) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
 		if(b_recalc) convert_to_radians(vargs[0], mstruct, eo2);
@@ -718,7 +718,7 @@ int CosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(b);
 	if(b) return 1;
-	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
+	if((eo.approximation == APPROXIMATION_TRY_EXACT || (f && eo.approximation == APPROXIMATION_APPROXIMATE)) && !mstruct.isNumber()) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
 		if(b_recalc) convert_to_radians(vargs[0], mstruct, eo2);
@@ -1003,7 +1003,7 @@ int TanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	}
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(b);
 	if(b) return 1;
-	if(eo.approximation == APPROXIMATION_TRY_EXACT && !mstruct.isNumber()) {
+	if((eo.approximation == APPROXIMATION_TRY_EXACT || (f && eo.approximation == APPROXIMATION_APPROXIMATE)) && !mstruct.isNumber()) {
 		EvaluationOptions eo2 = eo;
 		eo2.approximation = APPROXIMATION_APPROXIMATE;
 		if(b_recalc) convert_to_radians(vargs[0], mstruct, eo2);
@@ -1124,6 +1124,27 @@ int AsinFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 		return 1;
 	}
+	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_SIN && mstruct.size() == 1 && eo.approximation != APPROXIMATION_APPROXIMATE) {
+		if((mstruct[0].isUnit() && mstruct[0].unit() == CALCULATOR->getRadUnit()) || (mstruct[0].isMultiplication() && mstruct[0].size() == 2 && mstruct[0][0].isNumber() && mstruct[0][1].isUnit() && mstruct[0][1].unit() == CALCULATOR->getRadUnit() && mstruct[0][0].number() <= Number(157, 100, 0) && mstruct[0][0].number() >= Number(-157, 100, 0))) {
+			mstruct.setToChild(1);
+			Unit *u = default_angle_unit(eo);
+			if(u) mstruct.divide(u);
+			return 1;
+		} else if(eo.approximation == APPROXIMATION_EXACT) {
+			MathStructure mcomp(CALCULATOR->getVariableById(VARIABLE_ID_PI));
+			mcomp *= nr_half;
+			mcomp *= CALCULATOR->getRadUnit();
+			if(comparison_is_equal_or_greater(mstruct[0].compare(mcomp))) {
+				mcomp.negate();
+				if(comparison_is_equal_or_less(mstruct[0].compare(mcomp))) {
+					mstruct.setToChild(1);
+					Unit *u = default_angle_unit(eo);
+					if(u) mstruct.divide(u);
+					return 1;
+				}
+			}
+		}
+	}
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
 		if(!mstruct.isNumber()) {
 			CALCULATOR->endTemporaryStopMessages(false);
@@ -1208,6 +1229,25 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		set_fraction_of_turn(mstruct, eo, 1, 8);
 		if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 		return 1;
+	}
+	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_COS && mstruct.size() == 1 && eo.approximation != APPROXIMATION_APPROXIMATE) {
+		if((mstruct[0].isUnit() && mstruct[0].unit() == CALCULATOR->getRadUnit()) || (mstruct[0].isMultiplication() && mstruct[0].size() == 2 && mstruct[0][0].isNumber() && mstruct[0][1].isUnit() && mstruct[0][1].unit() == CALCULATOR->getRadUnit() && mstruct[0][0].number().isNonNegative() && mstruct[0][0].number() <= Number(314, 100, 0))) {
+			mstruct.setToChild(1);
+			Unit *u = default_angle_unit(eo);
+			if(u) mstruct.divide(u);
+			return 1;
+		} else if(eo.approximation == APPROXIMATION_EXACT) {
+			if(comparison_is_equal_or_less(mstruct[0].compare(m_zero))) {
+				MathStructure mcomp(CALCULATOR->getVariableById(VARIABLE_ID_PI));
+				mcomp *= CALCULATOR->getRadUnit();
+				if(comparison_is_equal_or_greater(mstruct[0].compare(mcomp))) {
+					mstruct.setToChild(1);
+					Unit *u = default_angle_unit(eo);
+					if(u) mstruct.divide(u);
+					return 1;
+				}
+			}
+		}
 	}
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
 		if(!mstruct.isNumber()) {
@@ -1305,6 +1345,27 @@ int AtanFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			set_fraction_of_turn(mstruct, eo, 1, 10);
 			if(eo.approximation == APPROXIMATION_TRY_EXACT) CALCULATOR->endTemporaryStopMessages(true);
 			return 1;
+		}
+	}
+	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_TAN && mstruct.size() == 1 && eo.approximation != APPROXIMATION_APPROXIMATE) {
+		if((mstruct[0].isUnit() && mstruct[0].unit() == CALCULATOR->getRadUnit()) || (mstruct[0].isMultiplication() && mstruct[0].size() == 2 && mstruct[0][0].isNumber() && mstruct[0][1].isUnit() && mstruct[0][1].unit() == CALCULATOR->getRadUnit() && mstruct[0][0].number() <= Number(157, 100, 0) && mstruct[0][0].number() >= Number(-157, 100, 0))) {
+			mstruct.setToChild(1);
+			Unit *u = default_angle_unit(eo);
+			if(u) mstruct.divide(u);
+			return 1;
+		} else if(eo.approximation == APPROXIMATION_EXACT) {
+			MathStructure mcomp(CALCULATOR->getVariableById(VARIABLE_ID_PI));
+			mcomp *= nr_half;
+			mcomp *= CALCULATOR->getRadUnit();
+			if(mstruct[0].compare(mcomp) == COMPARISON_RESULT_GREATER) {
+				mcomp.negate();
+				if(mstruct[0].compare(mcomp) == COMPARISON_RESULT_LESS) {
+					mstruct.setToChild(1);
+					Unit *u = default_angle_unit(eo);
+					if(u) mstruct.divide(u);
+					return 1;
+				}
+			}
 		}
 	}
 	if(eo.approximation == APPROXIMATION_TRY_EXACT) {
