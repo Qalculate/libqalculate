@@ -6,6 +6,14 @@ dnl  ----------------------
 dnl | initialize autotools |---------------------------------------------------
 dnl  ----------------------
 
+dnl Autoconf < 2.73 makes AC_PROG_CXX force -std=gnu++11 on the compiler,
+dnl which breaks building against ICU headers on GCC 16 and newer (ICU uses
+dnl an 'auto' non-type template parameter that requires C++17). Autoconf
+dnl 2.73 dropped that forced downgrade in favor of the compiler's own
+dnl default. Require it here so a configure script regenerated for a
+dnl release doesn't reintroduce the FTBFS (see issue #979).
+AC_PREREQ([2.73])
+
 AC_INIT([libqalculate],[5.12.0])
 AC_CONFIG_SRCDIR(libqalculate/Calculator.cc)
 AM_INIT_AUTOMAKE
