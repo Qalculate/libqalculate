@@ -1510,7 +1510,7 @@ bool equals_with_vname(const MathStructure &m1, const MathStructure &m2) {
 }
 
 bool contains_no_recalculate_exact_object(const MathStructure &m, int dual_approx) {
-	if(m.isFunction() && (m.function()->id() == FUNCTION_ID_SAVE || m.function()->id() == FUNCTION_ID_PLOT || m.function()->id() == FUNCTION_ID_RAND || m.function()->id() == FUNCTION_ID_RANDN || m.function()->id() == FUNCTION_ID_RAND_POISSON || m.function()->id() == FUNCTION_ID_EXPORT || m.function()->id() == FUNCTION_ID_COMMAND || m.function()->id() == FUNCTION_ID_TIME || (dual_approx < 0 && (m.function()->id() == FUNCTION_ID_GENERATE_VECTOR || m.function()->id() == FUNCTION_ID_SUM || m.function()->id() == FUNCTION_ID_PRODUCT || m.function()->id() == FUNCTION_ID_FOR || m.function()->id() == FUNCTION_ID_FOREACH || m.function()->id() == FUNCTION_ID_NEWTON_RAPHSON || m.function()->id() == FUNCTION_ID_SECANT_METHOD)))) return true;
+	if(m.isFunction() && (m.function()->id() == FUNCTION_ID_SAVE || m.function()->id() == FUNCTION_ID_PLOT || m.function()->id() == FUNCTION_ID_RAND || m.function()->id() == FUNCTION_ID_RANDN || m.function()->id() == FUNCTION_ID_RAND_POISSON || m.function()->id() == FUNCTION_ID_EXPORT || m.function()->id() == FUNCTION_ID_COMMAND || m.function()->id() == FUNCTION_ID_TIME || (dual_approx < 0 && (m.function()->id() == FUNCTION_ID_GENERATE_VECTOR || m.function()->id() == FUNCTION_ID_SUM || m.function()->id() == FUNCTION_ID_PRODUCT || m.function()->id() == FUNCTION_ID_FOR || m.function()->id() == FUNCTION_ID_FOREACH || m.function()->id() == FUNCTION_ID_NEWTON_RAPHSON || m.function()->id() == FUNCTION_ID_SECANT_METHOD || m.function()->id() == FUNCTION_ID_IS_NUMBER || m.function()->id() == FUNCTION_ID_IS_REAL)))) return true;
 	if(m.isVariable() && (m.variable()->id() == VARIABLE_ID_UPTIME || m.variable()->id() == VARIABLE_ID_NOW)) return true;
 	for(size_t i = 0; i < m.size(); i++) {
 		if(contains_no_recalculate_exact_object(m[i], dual_approx)) return true;
@@ -2560,7 +2560,7 @@ bool position_is_quoted(const string &str, size_t index) {
 	last_cit = str.find_last_not_of(SPACES, last_cit - 1);
 	return last_cit != string::npos && str[last_cit] == '(';
 }
-size_t find_unquoted(const string &str, const char *match, size_t pos = 0) {
+size_t find_unquoted(const string &str, const char *match, size_t pos) {
 	size_t i = str.find(match, pos);
 	if(i == string::npos) return i;
 	if(position_is_quoted(str, i)) {

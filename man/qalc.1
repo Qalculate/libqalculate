@@ -46,6 +46,10 @@ display a list of command line options and exit
 start in interactive mode
 .PP
 .TP 8
+.B \-\-latex
+output in LaTeX format
+.PP
+.TP 8
 .B \-l, \-\-list \fI[search term]\fP
 display a list of all user-defined or matching variables, functions, units, and prefixes, and exit
 .PP
@@ -100,7 +104,7 @@ conversion)
 .PP
 .TP 8
 .B \-s, \-\-set \(dq\fIoption\fP \fIvalue\fP\(dq
-as set command in interactive program session (ex. \-\-set "base 16")
+as set command in interactive program session (e.g. \-\-set "base 16")
 .PP
 .TP 8
 .B \-t, \-\-terse
@@ -163,7 +167,7 @@ Factorizes the current result.
 .PP
 .TP 8
 .B find, list \fI[name]\fP
-Displays a list of variables, functions and units.
+Displays a list of variables, functions, units, and prefixes.
 Enter with argument 'currencies', 'functions', 'variables', 'units', or 'prefixes' to show a list of all currencies, functions, variables, units, or prefixes. Enter a search term to find matching variables, functions, units, and/or prefixes. If command is called with no argument all user-definied objects are listed.
 .br
 Example: list functions.
@@ -199,7 +203,7 @@ Example: keep var1.
 .PP
 .TP 8
 .B MC/MS/M+/M-
-Memory operations (memory clear, memory store, memory plus, memory minus). Recall the memory using the MR/MRC variable.
+Memory operations (memory clear, memory store, memory plus, memory minus). Recall the memory using the MR variable.
 .PP
 .TP 8
 .B mode
@@ -445,7 +449,7 @@ Numerical display:
 Determines the default decimal separator.
 .PP
 .TP 8
-.B digit grouping, group \fI(0* = off, 1 = standard, 2 = locale)\fP
+.B digit grouping, group \fI(0* = off, 1 = standard, 2 = locale, 3 = underscore)\fP
 .PP
 .TP 8
 .B digits \fI(-1* = auto, >= 2)\fP

@@ -218,6 +218,7 @@ DaysFunction::DaysFunction() : MathFunction("days", 2, 4) {
 	setArgumentDefinition(3, arg);
 	setArgumentDefinition(4, new BooleanArgument());
 	setDefaultValue(3, "1");
+	setDefaultValue(4, "0");
 }
 int DaysFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	QalculateDateTime date1(*vargs[0].datetime()), date2(*vargs[1].datetime());
@@ -227,9 +228,11 @@ int DaysFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 	mstruct.set(days);
 	return 1;
 }
-YMDFunction::YMDFunction() : MathFunction("ymd", 2) {
+YMDFunction::YMDFunction() : MathFunction("ymd", 2, 3) {
 	setArgumentDefinition(1, new DateArgument());
 	setArgumentDefinition(2, new DateArgument());
+	setArgumentDefinition(3, new BooleanArgument());
+	setDefaultValue(3, "0");
 }
 int YMDFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	QalculateDateTime date1(*vargs[0].datetime()), date2(*vargs[1].datetime());
@@ -254,11 +257,32 @@ int YMDFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		years--;
 		months += 12;
 	}
+	Number hours;
+	if(vargs[2].number().getBoolean()) {
+		hours = days;
+		days.floor();
+		hours -= days;
+	}
 	mstruct.clearVector();
 	if(neg) {years.negate(); months.negate(); days.negate();}
 	mstruct.addChild(years);
 	mstruct.addChild(months);
 	mstruct.addChild(days);
+	if(vargs[2].number().getBoolean()) {
+		hours *= 24;
+		Number minutes(hours);
+		hours.floor();
+		minutes -= hours;
+		minutes *= 60;
+		Number seconds(minutes);
+		minutes.floor();
+		seconds -= minutes;
+		seconds *= 60;
+		if(neg) {hours.negate(); minutes.negate(); seconds.negate();}
+		mstruct.addChild(hours);
+		mstruct.addChild(minutes);
+		mstruct.addChild(seconds);
+	}
 	return 1;
 }
 YearFracFunction::YearFracFunction() : MathFunction("yearfrac", 2, 4) {
@@ -272,6 +296,7 @@ YearFracFunction::YearFracFunction() : MathFunction("yearfrac", 2, 4) {
 	setArgumentDefinition(3, arg);
 	setArgumentDefinition(4, new BooleanArgument());
 	setDefaultValue(3, "1");
+	setDefaultValue(4, "0");
 }
 int YearFracFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions&) {
 	QalculateDateTime date1(*vargs[0].datetime()), date2(*vargs[1].datetime());

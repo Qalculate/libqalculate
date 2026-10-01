@@ -1231,7 +1231,7 @@ int AcosFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		return 1;
 	}
 	if(mstruct.isFunction() && mstruct.function()->id() == FUNCTION_ID_COS && mstruct.size() == 1 && eo.approximation != APPROXIMATION_APPROXIMATE) {
-		if((mstruct[0].isUnit() && mstruct[0].unit() == CALCULATOR->getRadUnit()) || (mstruct[0].isMultiplication() && mstruct[0].size() == 2 && mstruct[0][0].isNumber() && mstruct[0][1].isUnit() && mstruct[0][1].unit() == CALCULATOR->getRadUnit() && mstruct[0][0].number().isNonNegative() && mstruct[0][0].number() <= Number(314, 100, 0))) {
+		if((mstruct[0].isUnit() && mstruct[0].unit() == CALCULATOR->getRadUnit()) || (mstruct[0].isMultiplication() && mstruct[0].size() == 2 && mstruct[0][0].isNumber() && mstruct[0][1].isUnit() && mstruct[0][1].unit() == CALCULATOR->getRadUnit() && mstruct[0][0].number().isNonNegative() && mstruct[0][0].number() <= Number(157, 50, 0))) {
 			mstruct.setToChild(1);
 			Unit *u = default_angle_unit(eo);
 			if(u) mstruct.divide(u);

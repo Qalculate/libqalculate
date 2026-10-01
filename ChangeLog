@@ -1,3 +1,85 @@
+2026-09-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix trigonometric functions with function in argument not calculated when angle unit is not radians
+	* Simplify asin(sin(x)), acos(cos(x)), and atan(tan(x)) to x when appropriate
+	* Improve handling of quoted arguments in function save string when using ":=" or "=:"
+	* Save specified quoted arguments in function save string as function argument names
+
+2026-09-28 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Avoid use of "celsius" and "fahrenheit" (in output of parsed expression)
+
+2026-09-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add ymd() function which returns the number of calendar years, months, and days between two dates (e.g. ymd(2025-05-30, 2026-08-23) = [1  2  24])
+
+2026-09-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Add option to use underscore as digit group separator
+
+2026-09-08 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix division by zero warning during (attempted) conversion of expression with zero quantity (e.g. "1 m * 0 kg")
+
+2026-09-04 Jonathan Baldie <jon@jonbaldie.com>
+
+	* Fix NULL pointer dereference in Calculator::parseToExpression() with prefix queries (when unit expression begins with "b?" or "d?")
+
+2026-08-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix integrate(xsinx/(1+(cosx)^2),0,pi) (infinite loop in gcd with zero exponent)
+
+2026-08-21 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Make sure that some global variables are initialized properly (when a Calculator instance lives in a different translation unit's global scope)
+	* Use "US_cent" for cent unit by default
+
+2026-08-20 Jonathan Baldie <jon@jonbaldie.com>
+
+	* Fix stack-overflow crashes in evaluation and printing of deeply recursive expressions (on MacOS where stack size is smaller for secondary threads)
+
+2026-08-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Solve f(x)=f(x^2) and f(x)=-f(x^2) for sin, cos, tan, asin, acos (only 1st variant), atan, sinh, cosh, tanh, asinh, acosh, atanh, and exponentation (1st variant, if base is non-zero real)
+	* Solve a*sin(x)=a*tan(x) and a*sin(x)=-a*tan(x)
+	* Fix logarithm not calculated when solving a*sinh(x)+b*cosh(x)=c
+
+2026-08-06 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not return x=-infinity as solution for a^x=0
+	* Fix a=1 && b=1 solution for a^x=b when the value of a and b are unknown
+	* Identify data set function expression as equal if object and property are equal, even if the text identifiers provided as arguments differs
+
+2026-08-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix uncertainty propagation with duplicate equal data set functions
+	* Do not return interval in data set function when interval calculation is disabled (e.g. when generating plot data)
+	* Do not return approximate value in data set function in exact mode
+
+2026-08-01 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* lambertw(x)*e^lambertw(x) = x
+	* lambertw(-pi/2) = (i*pi)/2
+	* lambertw(-ln(2)/2, -1) = -ln(4)
+	* lambertw(a*ln(a), b) = ln(a), when b=0 and a>=1/e, or b=-1 and 0<a<=1/e
+
+2026-07-27 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Do not use same "n" variable (append index) for different unknown integer values in equation result (e.g. e^e^x=1)
+	* Solve e^x=ln(x)
+	* Fix result containing interval with zero as lower value not displayed automatically
+
+2026-07-24 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Avoid inheritance of approximate/precision property when (in)equality is evaluated to boolean value (fixes equals sign)
+	* Integrate x^-1*sqrt(ax^2+bx+c)^-1
+	* Simplify asinh(i*x) to i*asin(x) and atanh(i*x) to i*atan(x)
+	* Improve normalization of sign in some cases
+
+2026-07-23 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Integrate x^-1*sqrt(ax+b) and x^-1*sqrt(ax+b)^-1
+
 2026-07-09 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix RPN syntax for expressions with multiple functions

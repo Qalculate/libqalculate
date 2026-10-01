@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<QALCULATE version="5.12.0">
+<QALCULATE version="5.13.0">
   <category>
     <title>Matrices &amp; Vectors</title>
     <builtin_function name="vector">
@@ -3091,15 +3091,18 @@ Basis is the type of day counting you want to use: 0: US 30/360, 1: real days (d
       </argument>
     </builtin_function>
     <builtin_function name="ymd">
-      <title>Calendar years, months and days between dates</title>
+      <title>Calendar years, months, and days between dates</title>
       <names>r:ymd</names>
-      <description>Returns a vector with the number of calendar years, months, and days between two dates.</description>
+      <description>Returns a vector with the number of calendar years, months, and days (and optionally hours, minutes, and seconds) between two dates.</description>
       <example>$name(2025-05-30, 2026-08-23) = [1  2  24]</example>
       <argument index="1">
         <title>First date</title>
       </argument>
       <argument index="2">
         <title>Second date</title>
+      </argument>
+      <argument index="3">
+        <title>Add time</title>
       </argument>
     </builtin_function>
     <builtin_function name="week">

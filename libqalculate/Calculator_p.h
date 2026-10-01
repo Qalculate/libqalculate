@@ -96,5 +96,6 @@ class CalculateThread : public Thread {
 };
 
 bool is_not_number(char c, int base);
+size_t find_unquoted(const std::string &str, const char *match, size_t pos = 0);
 
 #endif

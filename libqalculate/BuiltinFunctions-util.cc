@@ -1052,8 +1052,9 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			sarg_new[1] = carg;
 		}
 		if(CALCULATOR->hasToExpression(expr)) CALCULATOR->error(false, _("Conversion (using \"to\") is not supported in functions."), NULL);
+		MathFunction *f = NULL;
 		if(CALCULATOR->functionNameTaken(name)) {
-			MathFunction *f = CALCULATOR->getActiveFunction(name, true);
+			f = CALCULATOR->getActiveFunction(name, true);
 			if(f && f->isLocal() && f->subtype() == SUBTYPE_USER_FUNCTION) {
 				if(!vargs[2].symbol().empty()) f->setCategory(vargs[2].symbol());
 				if(!vargs[3].symbol().empty()) f->setTitle(vargs[3].symbol());
@@ -1067,10 +1068,15 @@ int SaveFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				}
 			} else {
 				CALCULATOR->error(false, MESSAGE_CATEGORY_GLOBAL_OBJECT_DEACTIVATED, _("A global function was deactivated. It will be restored after the new function has been removed."), NULL);
-				CALCULATOR->addFunction(new UserFunction(vargs[2].symbol(), name, expr, true, marg.size() == 0 ? -1 : marg.size(), vargs[3].symbol()))->setChanged(true);
+				f = CALCULATOR->addFunction(new UserFunction(vargs[2].symbol(), name, expr, true, marg.size() == 0 ? -1 : marg.size(), vargs[3].symbol()));
+				f->setChanged(true);
 			}
 		} else {
-			CALCULATOR->addFunction(new UserFunction(vargs[2].symbol(), name, expr, true, marg.size() == 0 ? -1 : marg.size(), vargs[3].symbol()))->setChanged(true);
+			f = CALCULATOR->addFunction(new UserFunction(vargs[2].symbol(), name, expr, true, marg.size() == 0 ? -1 : marg.size(), vargs[3].symbol()));
+			f->setChanged(true);
+		}
+		for(size_t i = 0; f && i < marg.size(); i++) {
+			if(marg[i].isSymbolic()) f->setArgumentDefinition(i + 1,  new Argument(marg[i].symbol()));
 		}
 		mstruct = expr;
 		CALCULATOR->saveFunctionCalled();

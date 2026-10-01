@@ -1607,41 +1607,9 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 	// replace alternative strings (primarily operators) with default ascii versions
 	parseSigns(str, true);
 
-	if(test_or_parallel) test_or_parallel = (str.find("&&") == string::npos && str.find('\x14') == string::npos);
-
-	// parse quoted string as symbolic MathStructure
-	for(size_t str_index = 0; str_index < str.length(); str_index++) {
-		if(str[str_index] == '\"' || str[str_index] == '\'') {
-			if(str_index == str.length() - 1) {
-				str.erase(str_index, 1);
-			} else {
-				size_t i = str.find(str[str_index], str_index + 1);
-				size_t name_length;
-				if(i == string::npos) {
-					i = str.length();
-					name_length = i - str_index;
-				} else {
-					name_length = i - str_index + 1;
-				}
-				stmp = LEFT_PARENTHESIS INTERNAL_ID_L;
-				MathStructure *mstruct = new MathStructure(str.substr(str_index + 1, i - str_index - 1));
-				stmp += i2s(addId(mstruct));
-				stmp += INTERNAL_ID_R RIGHT_PARENTHESIS;
-				str.replace(str_index, name_length, stmp);
-				str_index += stmp.length() - 1;
-			}
-		}
-	}
-
-	if(po.brackets_as_parentheses) {
-		// replace [ and ] with ( and )
-		gsub(LEFT_VECTOR_WRAP, LEFT_PARENTHESIS, str);
-		gsub(RIGHT_VECTOR_WRAP, RIGHT_PARENTHESIS, str);
-	}
-
 	// Transform var:=a to save(save, a)
 	size_t isave = 0;
-	if((isave = str.find(":=", 1)) != string::npos || (isave = str.find("=:", 1)) != string::npos) {
+	if((isave = find_unquoted(str,":=", 1)) != string::npos || (isave = find_unquoted(str,"=:", 1)) != string::npos) {
 		string name = str.substr(0, isave);
 		remove_blank_ends(name);
 		replace_internal_operators(name);
@@ -1674,6 +1642,38 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 		}
 		mstruct->set(f_save, &mvalue, &mname, &mcat, &mtitle, str[isave] == '=' ? &m_one : &m_zero, NULL);
 		return;
+	}
+
+	if(test_or_parallel) test_or_parallel = (str.find("&&") == string::npos && str.find('\x14') == string::npos);
+
+	// parse quoted string as symbolic MathStructure
+	for(size_t str_index = 0; str_index < str.length(); str_index++) {
+		if(str[str_index] == '\"' || str[str_index] == '\'') {
+			if(str_index == str.length() - 1) {
+				str.erase(str_index, 1);
+			} else {
+				size_t i = str.find(str[str_index], str_index + 1);
+				size_t name_length;
+				if(i == string::npos) {
+					i = str.length();
+					name_length = i - str_index;
+				} else {
+					name_length = i - str_index + 1;
+				}
+				stmp = LEFT_PARENTHESIS INTERNAL_ID_L;
+				MathStructure *mstruct = new MathStructure(str.substr(str_index + 1, i - str_index - 1));
+				stmp += i2s(addId(mstruct));
+				stmp += INTERNAL_ID_R RIGHT_PARENTHESIS;
+				str.replace(str_index, name_length, stmp);
+				str_index += stmp.length() - 1;
+			}
+		}
+	}
+
+	if(po.brackets_as_parentheses) {
+		// replace [ and ] with ( and )
+		gsub(LEFT_VECTOR_WRAP, LEFT_PARENTHESIS, str);
+		gsub(RIGHT_VECTOR_WRAP, RIGHT_PARENTHESIS, str);
 	}
 
 	if(po.default_dataset != NULL && str.length() > 1) {

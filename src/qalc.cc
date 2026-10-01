@@ -984,12 +984,12 @@ int rlcom_tab(int a, int b) {
 	if(rl_point != rl_end && (size_t) rl_point < str.length()) {
 		str = str.substr(0, rl_point);
 	}
-	if(!str.empty() && (last_is_operator(str) || is_in(VECTOR_WRAPS PARENTHESISS SPACES, str.back()))) return key_insert(a, b);
+	if(!str.empty() && (last_is_operator(str) || is_in(VECTOR_WRAPS PARENTHESISS SPACES, str[str.length() - 1]))) return key_insert(a, b);
 	if(completion_mode == COMPLETION_OFF) return 0;
 	bool b_clear = result_autocalculated;
 	if(b_clear) clear_autocalc();
 	if((completion_mode == COMPLETION_SELECT || completion_mode == COMPLETION_SELECT_MULTIPLE) && !str.empty()) {
-		size_t pos = str.find_last_of(is_in(NUMBERS, str.back()) ? NOT_IN_NAMES : NOT_IN_NAMES NUMBERS);
+		size_t pos = str.find_last_of(is_in(NUMBERS, str[str.length() - 1]) ? NOT_IN_NAMES : NOT_IN_NAMES NUMBERS);
 		if(pos == string::npos || pos < str.length() - 1) {
 			generate_completion_matches(pos == string::npos ? str.c_str() : str.substr(pos + 1).c_str());
 			if(matches.size() == 1 && completion_mode == COMPLETION_SELECT_MULTIPLE) {
@@ -1124,7 +1124,7 @@ int rlcom_tab(int a, int b) {
 		}
 	} else {
 #	if RL_READLINE_VERSION >= 0x0802
-		if(!str.empty() && is_in(NUMBERS, str.back())) {
+		if(!str.empty() && is_in(NUMBERS, str[str.length() - 1])) {
 			rl_completer_word_break_characters = NOT_IN_NAMES;
 			rl_complete_internal(completion_mode == COMPLETION_LIST ? '?' : '!');
 			rl_completer_word_break_characters = rl_basic_word_break_characters;
@@ -5672,6 +5672,7 @@ int main(int argc, char *argv[]) {
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "to", _("to")) || (str.length() > 2 && str[0] == '-' && str[1] == '>') || (str.length() > 3 && str[0] == '\xe2' && ((str[1] == '\x86' && str[2] == '\x92') || (str[1] == '\x9e' && (unsigned char) str[2] >= 148 && (unsigned char) str[2] <= 191)))) {
 			if(!scom.empty() && (EQUALS_IGNORECASE_AND_LOCAL(scom, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(scom, "to", _("to")))) {
 				str = str.substr(ispace + 1, slen - (ispace + 1));
+				if(scom == "convert" && str.length() > 3 && str.find("to ") == 0) str = str.substr(3, str.length() - 3);
 			} else if(str[0] == '-') {
 				str = str.substr(2, slen - 2);
 			} else {
@@ -10065,7 +10066,7 @@ void load_preferences() {
 		makeDir(getLocalDir());
 	}
 
-	int version_numbers[] = {5, 12, 0};
+	int version_numbers[] = {5, 13, 0};
 
 	if(file) {
 		char line[10000];
