@@ -1143,7 +1143,22 @@ Thread::Thread() : running(false), m_pipe_r(NULL), m_pipe_w(NULL) {
 	pthread_attr_setstacksize(&m_thread_attr, 16 * 1024 * 1024);
 	int pipe_wr[] = {0, 0};
 #ifdef HAVE_PIPE2
+#	ifdef __APPLE__
+	int pipe_ret;
+	// A newer SDK can declare pipe2 even when the running OS lacks it.
+	if(__builtin_available(macOS 27.0, *)) {
+		pipe_ret = pipe2(pipe_wr, O_CLOEXEC);
+	} else {
+		pipe_ret = pipe(pipe_wr);
+		if(pipe_ret == 0) {
+			fcntl(pipe_wr[0], F_SETFD, FD_CLOEXEC);
+			fcntl(pipe_wr[1], F_SETFD, FD_CLOEXEC);
+		}
+	}
+	if(pipe_ret == 0) {
+#	else
 	if(pipe2(pipe_wr, O_CLOEXEC) == 0) {
+#	endif
 #else
 	if(pipe(pipe_wr) == 0) {
 #endif
