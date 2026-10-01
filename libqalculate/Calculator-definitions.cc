@@ -907,7 +907,7 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 	if(strlen(file_name) > 1 && file_name[0] == '<') {
 		doc = xmlParseMemory(file_name, strlen(file_name));
 	} else {
-		doc = xmlReadFile(file_name, NULL, XML_PARSE_NOBLANKS);
+		doc = xmlParseFile(file_name);
 	}
 	if(doc == NULL) {
 		return false;
