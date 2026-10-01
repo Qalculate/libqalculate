@@ -3890,6 +3890,11 @@ bool Calculator::loadExchangeRates() {
 #endif
 	}
 	string builtin_str = "<builtin_unit name=\"";
+	// codes that follow builtin_str in currency_defs (avoids searching currency_defs once per currency)
+	unordered_map<string, bool> builtin_currencies;
+	for(size_t i_b = currency_defs.find(builtin_str); i_b != string::npos; i_b = currency_defs.find(builtin_str, i_b + 1)) {
+		builtin_currencies[currency_defs.substr(i_b + builtin_str.length(), 3)] = true;
+	}
 	while(i != string::npos) {
 		currency = ""; sname = ""; rate = "";
 		size_t i2 = 0, i3 = 0;
@@ -3913,7 +3918,7 @@ bool Calculator::loadExchangeRates() {
 			}
 			i = sbuffer.find("\"", i2 + 1);
 		}
-		if(currency.length() == 3 && (currency_defs.empty() || currency_defs.find(builtin_str + currency) != string::npos) && currency != "BYR") {
+		if(currency.length() == 3 && (currency_defs.empty() || builtin_currencies.find(currency) != builtin_currencies.end()) && currency != "BYR") {
 			if(!byn_found && currency == "BYN") byn_found = true;
 			u = getUnit(currency);
 			if(!u || (u->subtype() == SUBTYPE_ALIAS_UNIT && (u->isHidden() || (((AliasUnit*) u)->firstBaseUnit() == u_euro && u->precision() == -2 && ((AliasUnit*) u)->firstBaseExponent() == 1)) && u->isBuiltin() && !u->isLocal())) {
