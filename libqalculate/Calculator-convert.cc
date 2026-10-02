@@ -2153,7 +2153,7 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 			}
 			MathStructure mstruct_new(mstruct_old);
 			int eru_bak = b_exchange_rates_used;
-			mstruct_new.convertToBaseUnits(true, NULL, true, eo2, true);
+			if(!is_currency || old_points != 1) mstruct_new.convertToBaseUnits(true, NULL, true, eo2, true);
 			if(!mstruct_new.equals(mstruct, true, true)) {
 				mstruct_new.eval(eo2);
 			}

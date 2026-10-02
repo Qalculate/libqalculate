@@ -339,9 +339,10 @@ bool Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp) const {
 					i = i | 0b0100;
 				}
 			}
-			if(isBuiltin() && u->isBuiltin() && u->subtype() == SUBTYPE_ALIAS_UNIT && subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit() == ((AliasUnit*) this)->firstBaseUnit()) {
-				((AliasUnit*) u)->convertToBaseCurrencyAlt(mvalue, mexp);
-				((AliasUnit*) this)->convertFromBaseCurrencyAlt(mvalue, mexp);
+
+			if(isBuiltin() && u->isBuiltin() && (i & 0b0100) && (u->subtype() == SUBTYPE_ALIAS_UNIT ? ((AliasUnit*) u)->firstBaseUnit() : u) == (subtype() == SUBTYPE_ALIAS_UNIT ? ((AliasUnit*) this)->firstBaseUnit() : this)) {
+				if(u->subtype() == SUBTYPE_ALIAS_UNIT) ((AliasUnit*) u)->convertToBaseCurrencyAlt(mvalue, mexp);
+				if(subtype() == SUBTYPE_ALIAS_UNIT) ((AliasUnit*) this)->convertFromBaseCurrencyAlt(mvalue, mexp);
 			} else {
 				u->convertToBaseUnit(mvalue, mexp);
 				convertFromBaseUnit(mvalue, mexp);
