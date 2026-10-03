@@ -339,11 +339,33 @@ bool Unit::convert(Unit *u, MathStructure &mvalue, MathStructure &mexp) const {
 					i = i | 0b0100;
 				}
 			}
-
-			if(isBuiltin() && u->isBuiltin() && (i & 0b0100) && (u->subtype() == SUBTYPE_ALIAS_UNIT ? ((AliasUnit*) u)->firstBaseUnit() : u) == (subtype() == SUBTYPE_ALIAS_UNIT ? ((AliasUnit*) this)->firstBaseUnit() : this)) {
-				if(u->subtype() == SUBTYPE_ALIAS_UNIT) ((AliasUnit*) u)->convertToBaseCurrencyAlt(mvalue, mexp);
-				if(subtype() == SUBTYPE_ALIAS_UNIT) ((AliasUnit*) this)->convertFromBaseCurrencyAlt(mvalue, mexp);
+			if((u->subtype() == SUBTYPE_ALIAS_UNIT && subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit() == ((AliasUnit*) this)->firstBaseUnit())) {
+				if(isBuiltin() && u->isBuiltin() && ((i & 0b0100) || i & 0b1000)) {
+					i = (i & ~0b0011) | 0b0100;
+					((AliasUnit*) u)->convertToBaseCurrencyAlt(mvalue, mexp);
+					((AliasUnit*) this)->convertFromBaseCurrencyAlt(mvalue, mexp);
+				} else {
+					((AliasUnit*) u)->convertToFirstBaseUnit(mvalue, mexp);
+					((AliasUnit*) this)->convertFromFirstBaseUnit(mvalue, mexp);
+				}
+			} else if(u->subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) u)->firstBaseUnit() == this) {
+				if(isBuiltin() && u->isBuiltin() && ((i & 0b0100) || i & 0b1000)) {
+					i = (i & ~0b0011);
+					((AliasUnit*) u)->convertToBaseCurrencyAlt(mvalue, mexp);
+				} else {
+					if(i & 0b0010) i = 0b0010;
+					((AliasUnit*) u)->convertToFirstBaseUnit(mvalue, mexp);
+				}
+			} else if(subtype() == SUBTYPE_ALIAS_UNIT && ((AliasUnit*) this)->firstBaseUnit() == u) {
+				if(isBuiltin() && u->isBuiltin() && ((i & 0b0100) || i & 0b1000)) {
+					i = (i & ~0b0011);
+					((AliasUnit*) this)->convertFromBaseCurrencyAlt(mvalue, mexp);
+				} else {
+					if(i & 0b0010) i = 0b0010;
+					((AliasUnit*) this)->convertFromFirstBaseUnit(mvalue, mexp);
+				}
 			} else {
+				i = i | 0b0001;
 				u->convertToBaseUnit(mvalue, mexp);
 				convertFromBaseUnit(mvalue, mexp);
 			}
@@ -639,7 +661,7 @@ MathStructure &AliasUnit::convertFromFirstBaseUnit(MathStructure &mvalue, MathSt
 	return mvalue;
 }
 MathStructure &AliasUnit::convertFromBaseCurrencyAlt(MathStructure &mvalue, MathStructure &mexp) const {
-	if(sinverse.empty() || !inverseExpression().empty()) return convertFromBaseUnit(mvalue, mexp);
+	if(sinverse.empty() || !inverseExpression().empty()) return convertFromFirstBaseUnit(mvalue, mexp);
 	ParseOptions po;
 	MathStructure *mstruct = new MathStructure();
 	CALCULATOR->parse(mstruct, sinverse, po);
@@ -744,7 +766,7 @@ MathStructure &AliasUnit::convertToFirstBaseUnit(MathStructure &mvalue, MathStru
 	return mvalue;
 }
 MathStructure &AliasUnit::convertToBaseCurrencyAlt(MathStructure &mvalue, MathStructure &mexp) const {
-	if(sinverse.empty() || !inverseExpression().empty()) return convertToBaseUnit(mvalue, mexp);
+	if(sinverse.empty() || !inverseExpression().empty()) return convertToFirstBaseUnit(mvalue, mexp);
 	ParseOptions po;
 	MathStructure *mstruct = new MathStructure();
 	CALCULATOR->parse(mstruct, sinverse, po);

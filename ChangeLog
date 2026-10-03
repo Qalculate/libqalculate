@@ -1,5 +1,14 @@
 2026-09-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
+	* Fix inconsistent use of alternative exchanges rate sources
+
+2026-10-01 Jonathan Baldie <jon@jonbaldie.com>
+
+	* Speed up loading of exchange rates (~25% faster qalc startup)
+	* Fix macOS startup crash from unavailable pipe2 weak import
+
+2026-09-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
 	* Fix trigonometric functions with function in argument not calculated when angle unit is not radians
 	* Simplify asin(sin(x)), acos(cos(x)), and atan(tan(x)) to x when appropriate
 	* Improve handling of quoted arguments in function save string when using ":=" or "=:"

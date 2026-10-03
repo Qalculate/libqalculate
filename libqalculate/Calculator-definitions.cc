@@ -4331,7 +4331,10 @@ bool Calculator::exchangeRatesWarningEnabled() const {
 	return b_exchange_rates_warning_enabled;
 }
 int Calculator::exchangeRatesUsed() const {
-	if(b_exchange_rates_used > 100) return b_exchange_rates_used - 100;
+	if(b_exchange_rates_used > 100) {
+		if((b_exchange_rates_used - 100) & 0b1000) return ((b_exchange_rates_used - 100) & ~0b1000) | 0b0100;
+		return b_exchange_rates_used - 100;
+	}
 	if(b_exchange_rates_used & 0b1000) {
 		if(b_exchange_rates_used & 0b0100) return 5;
 		return 4;

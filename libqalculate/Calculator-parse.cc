@@ -1609,7 +1609,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 
 	// Transform var:=a to save(save, a)
 	size_t isave = 0;
-	if((isave = find_unquoted(str,":=", 1)) != string::npos || (isave = find_unquoted(str,"=:", 1)) != string::npos) {
+	if((isave = find_unquoted(str, ":=", 1)) != string::npos || (isave = find_unquoted(str, "=:", 1)) != string::npos) {
 		string name = str.substr(0, isave);
 		remove_blank_ends(name);
 		replace_internal_operators(name);

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libqalculate 5.13.0\n"
 "Report-Msgid-Bugs-To: https://github.com/Qalculate/libqalculate/issues\n"
-"POT-Creation-Date: 2026-09-26 07:36+0200\n"
+"POT-Creation-Date: 2026-10-03 13:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -325,7 +325,7 @@ msgstr ""
 msgid "or"
 msgstr ""
 
-#: src/qalc.cc:1298 libqalculate/Calculator-definitions.cc:4319
+#: src/qalc.cc:1298 libqalculate/Calculator-definitions.cc:4324
 #, c-format
 msgid "It has been %s day since the exchange rates last were updated."
 msgid_plural "It has been %s days since the exchange rates last were updated."
@@ -2033,7 +2033,7 @@ msgstr ""
 msgid "No file specified."
 msgstr ""
 
-#: src/qalc.cc:4741 libqalculate/BuiltinFunctions-util.cc:1564
+#: src/qalc.cc:4741 libqalculate/BuiltinFunctions-util.cc:1570
 #, c-format
 msgid "Unrecognized option: %s."
 msgstr ""
@@ -3219,9 +3219,9 @@ msgstr ""
 
 #: libqalculate/BuiltinFunctions-matrixvector.cc:1728
 #: libqalculate/BuiltinFunctions-matrixvector.cc:1750
-#: libqalculate/BuiltinFunctions-util.cc:1306
-#: libqalculate/BuiltinFunctions-util.cc:1310
-#: libqalculate/BuiltinFunctions-util.cc:1379 libqalculate/Variable.cc:690
+#: libqalculate/BuiltinFunctions-util.cc:1312
+#: libqalculate/BuiltinFunctions-util.cc:1316
+#: libqalculate/BuiltinFunctions-util.cc:1385 libqalculate/Variable.cc:690
 #, c-format
 msgid "%s is disabled when %s is compiled with \"%s\" configure option."
 msgstr ""
@@ -3346,48 +3346,48 @@ msgstr ""
 msgid "Invalid function name (%s)."
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1069
+#: libqalculate/BuiltinFunctions-util.cc:1070
 msgid ""
 "A global function was deactivated. It will be restored after the new "
 "function has been removed."
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1103
+#: libqalculate/BuiltinFunctions-util.cc:1109
 #, c-format
 msgid "Matrix/vector (%s) not found."
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1154
+#: libqalculate/BuiltinFunctions-util.cc:1160
 #, c-format
 msgid "Invalid variable name (%s)."
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1173
+#: libqalculate/BuiltinFunctions-util.cc:1179
 msgid ""
 "A global unit or variable was deactivated. It will be restored after the new "
 "variable has been removed."
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1188
+#: libqalculate/BuiltinFunctions-util.cc:1194
 #, c-format
 msgid "Register %s does not exist. Returning zero."
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1217
 #: libqalculate/BuiltinFunctions-util.cc:1223
-#: libqalculate/BuiltinFunctions-util.cc:1234
-#: libqalculate/BuiltinFunctions-util.cc:1259
-#: libqalculate/BuiltinFunctions-util.cc:1274
+#: libqalculate/BuiltinFunctions-util.cc:1229
+#: libqalculate/BuiltinFunctions-util.cc:1240
+#: libqalculate/BuiltinFunctions-util.cc:1265
+#: libqalculate/BuiltinFunctions-util.cc:1280
 #, c-format
 msgid "Failed to run external command (%s)."
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1298
+#: libqalculate/BuiltinFunctions-util.cc:1304
 #, c-format
 msgid "Parsing of command output failed: %s"
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1343
+#: libqalculate/BuiltinFunctions-util.cc:1349
 msgid ""
 "Plots one or more expressions or vectors. Use a vector for the first "
 "argument to plot multiple series. Only the first argument is used for vector "
@@ -3395,7 +3395,7 @@ msgid ""
 "and y values."
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1345
+#: libqalculate/BuiltinFunctions-util.cc:1351
 msgid ""
 "Additional arguments specify various plot options. Enter the name of the "
 "option and the desired value, either separated by space or as separate "
@@ -3407,241 +3407,241 @@ msgid ""
 "10) or step value."
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1347
+#: libqalculate/BuiltinFunctions-util.cc:1353
 msgid "List of options:"
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1384
+#: libqalculate/BuiltinFunctions-util.cc:1390
 msgid "Gnuplot was not found"
-msgstr ""
-
-#: libqalculate/BuiltinFunctions-util.cc:1410
-msgctxt "plot"
-msgid "smooth"
-msgstr ""
-
-#: libqalculate/BuiltinFunctions-util.cc:1411
-msgctxt "plot"
-msgid "style"
-msgstr ""
-
-#: libqalculate/BuiltinFunctions-util.cc:1412
-msgctxt "plot"
-msgid "step"
-msgstr ""
-
-#: libqalculate/BuiltinFunctions-util.cc:1413
-msgctxt "plot"
-msgid "samples"
-msgstr ""
-
-#: libqalculate/BuiltinFunctions-util.cc:1414
-msgctxt "plot"
-msgid "color"
-msgstr ""
-
-#: libqalculate/BuiltinFunctions-util.cc:1415
-msgctxt "plot"
-msgid "grid"
 msgstr ""
 
 #: libqalculate/BuiltinFunctions-util.cc:1416
 msgctxt "plot"
-msgid "title"
+msgid "smooth"
 msgstr ""
 
 #: libqalculate/BuiltinFunctions-util.cc:1417
 msgctxt "plot"
-msgid "legend"
+msgid "style"
 msgstr ""
 
 #: libqalculate/BuiltinFunctions-util.cc:1418
 msgctxt "plot"
-msgid "ylabel"
+msgid "step"
 msgstr ""
 
 #: libqalculate/BuiltinFunctions-util.cc:1419
 msgctxt "plot"
-msgid "xlabel"
+msgid "samples"
 msgstr ""
 
 #: libqalculate/BuiltinFunctions-util.cc:1420
 msgctxt "plot"
-msgid "linewidth"
+msgid "color"
 msgstr ""
 
 #: libqalculate/BuiltinFunctions-util.cc:1421
 msgctxt "plot"
-msgid "monochrome"
+msgid "grid"
 msgstr ""
 
 #: libqalculate/BuiltinFunctions-util.cc:1422
 msgctxt "plot"
-msgid "ymin"
+msgid "title"
 msgstr ""
 
 #: libqalculate/BuiltinFunctions-util.cc:1423
 msgctxt "plot"
-msgid "ymax"
+msgid "legend"
 msgstr ""
 
 #: libqalculate/BuiltinFunctions-util.cc:1424
 msgctxt "plot"
-msgid "ylog"
+msgid "ylabel"
 msgstr ""
 
 #: libqalculate/BuiltinFunctions-util.cc:1425
 msgctxt "plot"
-msgid "xlog"
+msgid "xlabel"
 msgstr ""
 
 #: libqalculate/BuiltinFunctions-util.cc:1426
 msgctxt "plot"
-msgid "logscale"
+msgid "linewidth"
 msgstr ""
 
 #: libqalculate/BuiltinFunctions-util.cc:1427
 msgctxt "plot"
-msgid "variable"
+msgid "monochrome"
 msgstr ""
 
 #: libqalculate/BuiltinFunctions-util.cc:1428
 msgctxt "plot"
-msgid "complex"
+msgid "ymin"
 msgstr ""
 
 #: libqalculate/BuiltinFunctions-util.cc:1429
 msgctxt "plot"
+msgid "ymax"
+msgstr ""
+
+#: libqalculate/BuiltinFunctions-util.cc:1430
+msgctxt "plot"
+msgid "ylog"
+msgstr ""
+
+#: libqalculate/BuiltinFunctions-util.cc:1431
+msgctxt "plot"
+msgid "xlog"
+msgstr ""
+
+#: libqalculate/BuiltinFunctions-util.cc:1432
+msgctxt "plot"
+msgid "logscale"
+msgstr ""
+
+#: libqalculate/BuiltinFunctions-util.cc:1433
+msgctxt "plot"
+msgid "variable"
+msgstr ""
+
+#: libqalculate/BuiltinFunctions-util.cc:1434
+msgctxt "plot"
+msgid "complex"
+msgstr ""
+
+#: libqalculate/BuiltinFunctions-util.cc:1435
+msgctxt "plot"
 msgid "real"
-msgstr ""
-
-#: libqalculate/BuiltinFunctions-util.cc:1479
-msgctxt "plot style"
-msgid "lines"
-msgstr ""
-
-#: libqalculate/BuiltinFunctions-util.cc:1480
-msgctxt "plot style"
-msgid "points"
-msgstr ""
-
-#: libqalculate/BuiltinFunctions-util.cc:1481
-msgctxt "plot style"
-msgid "dots"
-msgstr ""
-
-#: libqalculate/BuiltinFunctions-util.cc:1482
-msgctxt "plot style"
-msgid "boxes"
-msgstr ""
-
-#: libqalculate/BuiltinFunctions-util.cc:1483
-msgctxt "plot style"
-msgid "histogram"
-msgstr ""
-
-#: libqalculate/BuiltinFunctions-util.cc:1484
-msgctxt "plot style"
-msgid "candlesticks"
 msgstr ""
 
 #: libqalculate/BuiltinFunctions-util.cc:1485
 msgctxt "plot style"
-msgid "steps"
+msgid "lines"
 msgstr ""
 
 #: libqalculate/BuiltinFunctions-util.cc:1486
 msgctxt "plot style"
-msgid "linespoints"
+msgid "points"
 msgstr ""
 
 #: libqalculate/BuiltinFunctions-util.cc:1487
+msgctxt "plot style"
+msgid "dots"
+msgstr ""
+
+#: libqalculate/BuiltinFunctions-util.cc:1488
+msgctxt "plot style"
+msgid "boxes"
+msgstr ""
+
+#: libqalculate/BuiltinFunctions-util.cc:1489
+msgctxt "plot style"
+msgid "histogram"
+msgstr ""
+
+#: libqalculate/BuiltinFunctions-util.cc:1490
+msgctxt "plot style"
+msgid "candlesticks"
+msgstr ""
+
+#: libqalculate/BuiltinFunctions-util.cc:1491
+msgctxt "plot style"
+msgid "steps"
+msgstr ""
+
+#: libqalculate/BuiltinFunctions-util.cc:1492
+msgctxt "plot style"
+msgid "linespoints"
+msgstr ""
+
+#: libqalculate/BuiltinFunctions-util.cc:1493
 msgctxt "plot"
 msgid "polar"
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1488
+#: libqalculate/BuiltinFunctions-util.cc:1494
 msgctxt "plot smoothing"
 msgid "none"
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1489
+#: libqalculate/BuiltinFunctions-util.cc:1495
 msgctxt "plot smoothing"
 msgid "splines"
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1490
+#: libqalculate/BuiltinFunctions-util.cc:1496
 msgctxt "plot smoothing"
 msgid "bezier"
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1491
+#: libqalculate/BuiltinFunctions-util.cc:1497
 msgctxt "plot legend"
 msgid "none"
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1492
+#: libqalculate/BuiltinFunctions-util.cc:1498
 msgctxt "plot legend"
 msgid "top-left"
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1493
+#: libqalculate/BuiltinFunctions-util.cc:1499
 msgctxt "plot legend"
 msgid "top-right"
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1494
+#: libqalculate/BuiltinFunctions-util.cc:1500
 msgctxt "plot legend"
 msgid "bottom-left"
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1495
+#: libqalculate/BuiltinFunctions-util.cc:1501
 msgctxt "plot legend"
 msgid "bottom-right"
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1496
+#: libqalculate/BuiltinFunctions-util.cc:1502
 msgctxt "plot legend"
 msgid "below"
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1497
+#: libqalculate/BuiltinFunctions-util.cc:1503
 msgctxt "plot legend"
 msgid "outside"
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1530
-#: libqalculate/BuiltinFunctions-util.cc:1535
-#: libqalculate/BuiltinFunctions-util.cc:1547
-#: libqalculate/BuiltinFunctions-util.cc:1552
-#: libqalculate/BuiltinFunctions-util.cc:1561
+#: libqalculate/BuiltinFunctions-util.cc:1536
+#: libqalculate/BuiltinFunctions-util.cc:1541
+#: libqalculate/BuiltinFunctions-util.cc:1553
+#: libqalculate/BuiltinFunctions-util.cc:1558
+#: libqalculate/BuiltinFunctions-util.cc:1567
 #, c-format
 msgid "Illegal value: %s."
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1602
-#: libqalculate/BuiltinFunctions-util.cc:1618
+#: libqalculate/BuiltinFunctions-util.cc:1608
+#: libqalculate/BuiltinFunctions-util.cc:1624
 msgid "Matrix"
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1631
-#: libqalculate/BuiltinFunctions-util.cc:1683
+#: libqalculate/BuiltinFunctions-util.cc:1637
+#: libqalculate/BuiltinFunctions-util.cc:1689
 msgid "Vector"
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1648
-#: libqalculate/BuiltinFunctions-util.cc:1696
+#: libqalculate/BuiltinFunctions-util.cc:1654
+#: libqalculate/BuiltinFunctions-util.cc:1702
 #: libqalculate/Calculator-plot.cc:200
 msgid "Unable to generate plot data with current min, max and step size."
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1650
-#: libqalculate/BuiltinFunctions-util.cc:1698
+#: libqalculate/BuiltinFunctions-util.cc:1656
+#: libqalculate/BuiltinFunctions-util.cc:1704
 msgid "Sampling rate must be a positive integer."
 msgstr ""
 
-#: libqalculate/BuiltinFunctions-util.cc:1657
-#: libqalculate/BuiltinFunctions-util.cc:1705
+#: libqalculate/BuiltinFunctions-util.cc:1663
+#: libqalculate/BuiltinFunctions-util.cc:1711
 #: libqalculate/Calculator-plot.cc:167
 msgid "Unable to generate plot data with current min, max and sampling rate."
 msgstr ""
@@ -3745,7 +3745,7 @@ msgstr ""
 #: libqalculate/Calculator-definitions.cc:3624
 #: libqalculate/Calculator-definitions.cc:3629
 #: libqalculate/Calculator-definitions.cc:3708
-#: libqalculate/Calculator-definitions.cc:3949
+#: libqalculate/Calculator-definitions.cc:3954
 msgid "Currency"
 msgstr ""
 
@@ -3802,19 +3802,19 @@ msgstr ""
 msgid "Column "
 msgstr ""
 
-#: libqalculate/Calculator-definitions.cc:4102
-#: libqalculate/Calculator-definitions.cc:4112
+#: libqalculate/Calculator-definitions.cc:4107
+#: libqalculate/Calculator-definitions.cc:4117
 #, c-format
 msgid "Failed to download exchange rates (%s) from %s: %s."
 msgstr ""
 
-#: libqalculate/Calculator-definitions.cc:4103
-#: libqalculate/Calculator-definitions.cc:4113
+#: libqalculate/Calculator-definitions.cc:4108
+#: libqalculate/Calculator-definitions.cc:4118
 #, c-format
 msgid "Failed to download exchange rates from %s: %s."
 msgstr ""
 
-#: libqalculate/Calculator-definitions.cc:4106
+#: libqalculate/Calculator-definitions.cc:4111
 #, c-format
 msgid "Exchange rates were successfully downloaded from %s."
 msgstr ""
@@ -4131,7 +4131,7 @@ msgid ""
 "points"
 msgstr ""
 
-#: libqalculate/MathStructure-print.cc:5412
+#: libqalculate/MathStructure-print.cc:5415
 msgid "undefined"
 msgstr ""
 
@@ -4774,7 +4774,7 @@ msgstr ""
 msgid "leap month"
 msgstr ""
 
-#: libqalculate/Unit.cc:1419 libqalculate/Unit.cc:1422
+#: libqalculate/Unit.cc:1442 libqalculate/Unit.cc:1445
 msgid "Error(s) in unit expression."
 msgstr ""
 
