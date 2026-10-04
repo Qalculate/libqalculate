@@ -993,7 +993,7 @@ int rlcom_tab(int a, int b) {
 		if(pos == string::npos || pos < str.length() - 1) {
 			generate_completion_matches(pos == string::npos ? str.c_str() : str.substr(pos + 1).c_str());
 			if(matches.size() == 1 && completion_mode == COMPLETION_SELECT_MULTIPLE) {
-				if(matches[0].substr(str.length() - (pos == string::npos ? 0 : pos + 1)) == (pos == string::npos ? str : str.substr(pos + 1))) {
+				if(matches[0].length() >= str.length() - (pos == string::npos ? 0 : pos + 1) && matches[0].substr(0, str.length() - (pos == string::npos ? 0 : pos + 1)) == (pos == string::npos ? str : str.substr(pos + 1))) {
 					rl_insert_text(matches[0].substr(str.length() - (pos == string::npos ? 0 : pos + 1)).c_str());
 				} else {
 					rl_point = (pos == string::npos ? 0 : pos + 1);

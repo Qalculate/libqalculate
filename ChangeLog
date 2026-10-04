@@ -1,4 +1,8 @@
-2026-09-29 Hanna Knutsson <hanna.knutsson@protonmail.com>
+2026-10-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Fix segfault when completion results in a shorter text string (e.g. rho to ρ)
+
+2026-10-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix inconsistent use of alternative exchanges rate sources
 
