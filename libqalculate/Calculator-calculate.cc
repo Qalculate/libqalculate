@@ -1509,8 +1509,30 @@ bool equals_with_vname(const MathStructure &m1, const MathStructure &m2) {
 	return true;
 }
 
+bool contains_plot_or_save_lib(const string &str) {
+	for(size_t f_i = 0; f_i < 4; f_i++) {
+		int id = 0;
+		if(f_i == 0) id = FUNCTION_ID_PLOT;
+		else if(f_i == 1) id = FUNCTION_ID_EXPORT;
+		else if(f_i == 2) id = FUNCTION_ID_LOAD;
+		else if(f_i == 3) id = FUNCTION_ID_SAVE;
+		MathFunction *f = CALCULATOR->getFunctionById(id);
+		for(size_t i = 1; f && i <= f->countNames(); i++) {
+			if(str.find(f->getName(i).name) != string::npos) {
+				MathStructure mtest;
+				CALCULATOR->beginTemporaryStopMessages();
+				CALCULATOR->parse(&mtest, str);
+				CALCULATOR->endTemporaryStopMessages();
+				if(mtest.containsFunctionId(FUNCTION_ID_PLOT) || mtest.containsFunctionId(FUNCTION_ID_EXPORT) || mtest.containsFunctionId(FUNCTION_ID_LOAD) || mtest.containsFunctionId(FUNCTION_ID_SAVE)) return true;
+				return false;
+			}
+		}
+	}
+	return false;
+}
+
 bool contains_no_recalculate_exact_object(const MathStructure &m, int dual_approx) {
-	if(m.isFunction() && (m.function()->id() == FUNCTION_ID_SAVE || m.function()->id() == FUNCTION_ID_PLOT || m.function()->id() == FUNCTION_ID_RAND || m.function()->id() == FUNCTION_ID_RANDN || m.function()->id() == FUNCTION_ID_RAND_POISSON || m.function()->id() == FUNCTION_ID_EXPORT || m.function()->id() == FUNCTION_ID_COMMAND || m.function()->id() == FUNCTION_ID_TIME || (dual_approx < 0 && (m.function()->id() == FUNCTION_ID_GENERATE_VECTOR || m.function()->id() == FUNCTION_ID_SUM || m.function()->id() == FUNCTION_ID_PRODUCT || m.function()->id() == FUNCTION_ID_FOR || m.function()->id() == FUNCTION_ID_FOREACH || m.function()->id() == FUNCTION_ID_NEWTON_RAPHSON || m.function()->id() == FUNCTION_ID_SECANT_METHOD || m.function()->id() == FUNCTION_ID_IS_NUMBER || m.function()->id() == FUNCTION_ID_IS_REAL)))) return true;
+	if(m.isFunction() && (m.function()->id() == FUNCTION_ID_SAVE || m.function()->id() == FUNCTION_ID_PLOT || m.function()->id() == FUNCTION_ID_RAND || m.function()->id() == FUNCTION_ID_RANDN || m.function()->id() == FUNCTION_ID_RAND_POISSON || m.function()->id() == FUNCTION_ID_EXPORT || m.function()->id() == FUNCTION_ID_COMMAND || m.function()->id() == FUNCTION_ID_TIME || (m.function()->subtype() == SUBTYPE_USER_FUNCTION && contains_plot_or_save_lib(((UserFunction*) m.function())->formula())) || (dual_approx < 0 && (m.function()->id() == FUNCTION_ID_GENERATE_VECTOR || m.function()->id() == FUNCTION_ID_SUM || m.function()->id() == FUNCTION_ID_PRODUCT || m.function()->id() == FUNCTION_ID_FOR || m.function()->id() == FUNCTION_ID_FOREACH || m.function()->id() == FUNCTION_ID_NEWTON_RAPHSON || m.function()->id() == FUNCTION_ID_SECANT_METHOD || m.function()->id() == FUNCTION_ID_IS_NUMBER || m.function()->id() == FUNCTION_ID_IS_REAL)))) return true;
 	if(m.isVariable() && (m.variable()->id() == VARIABLE_ID_UPTIME || m.variable()->id() == VARIABLE_ID_NOW)) return true;
 	for(size_t i = 0; i < m.size(); i++) {
 		if(contains_no_recalculate_exact_object(m[i], dual_approx)) return true;

@@ -4096,6 +4096,7 @@ string Calculator::getExchangeRatesUrl(int index) {
 }
 bool Calculator::fetchExchangeRates(int timeout, string) {return fetchExchangeRates(timeout);}
 size_t write_data(void *ptr, size_t size, size_t nmemb, string *sbuffer) {
+	if(nmemb * size > 1000000 || (nmemb * size) + sbuffer->length() > 1000000) return 0;
 	sbuffer->append((char*) ptr, size * nmemb);
 	return size * nmemb;
 }
@@ -4136,6 +4137,7 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
 	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
+	curl_easy_setopt(curl, CURLOPT_MAXFILESIZE_LARGE, 1000000);
 	error_buffer[0] = 0;
 	curl_easy_setopt(curl, CURLOPT_FILETIME, &file_time);
 #ifdef _WIN32
@@ -4189,6 +4191,7 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
 		curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
+		curl_easy_setopt(curl, CURLOPT_MAXFILESIZE_LARGE, 1000000);
 
 		res = curl_easy_perform(curl);
 
@@ -4226,6 +4229,7 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
 			curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
+			curl_easy_setopt(curl, CURLOPT_MAXFILESIZE_LARGE, 1000000);
 			if(i == 4) curl_easy_setopt(curl, CURLOPT_USERAGENT, (string("libqalculate/") + VERSION).c_str());
 
 			res = curl_easy_perform(curl);
@@ -4271,6 +4275,7 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
 		curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
+		curl_easy_setopt(curl, CURLOPT_MAXFILESIZE_LARGE, 1000000);
 
 		res = curl_easy_perform(curl);
 

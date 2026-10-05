@@ -1,6 +1,12 @@
+2026-10-05 Hanna Knutsson <hanna.knutsson@protonmail.com>
+
+	* Detect functions (plot, save, export, load) in user functions when deciding to disable calculate as you type or dual approximation
+
 2026-10-04 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
 	* Fix segfault when completion results in a shorter text string (e.g. rho to ρ)
+	* Set maximum size (1 MB) for downloaded exchange rates file
+	* Fix number of decimals for currency quantity when currency is placed before quantity
 
 2026-10-02 Hanna Knutsson <hanna.knutsson@protonmail.com>
 
