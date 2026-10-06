@@ -2154,6 +2154,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 							if((*mln)[0].representsReal()) {
 								if(ct_comp == COMPARISON_EQUALS) SET_FALSE_TPA
 								else SET_TRUE_TPA
+								return true;
 							}
 							CHILD(0).setToChild(ln_i + 1, true);
 							if(CHILD(0).isMultiplication()) CHILD(0).setToChild(2, true);
