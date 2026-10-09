@@ -10087,6 +10087,9 @@ bool Number::factorial() {
 	}
 	if(!mpz_fits_slong_p(mpq_numref(r_value))) return false;
 	long int n = mpz_get_si(mpq_numref(r_value));
+#ifdef _WIN32
+	if(n > 50000000) return false;
+#endif
 	if(!recfact(mpq_numref(r_value), 1, n)) {
 		mpz_set_si(mpq_numref(r_value), n);
 		return false;

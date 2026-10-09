@@ -141,7 +141,7 @@ protected:
 	template <class T> T read() {
 #ifdef _WIN32
 		MSG msg;
-		int ret = GetMessage(&msg, NULL, WM_USER, WM_USER);
+		GetMessage(&msg, NULL, WM_USER, WM_USER);
 		return (T) msg.wParam;
 #else
 		T x;

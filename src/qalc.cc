@@ -4466,13 +4466,14 @@ int main(int argc, char *argv[]) {
 	if(!ignore_locale) setlocale(LC_ALL, "");
 	else setlocale(LC_CTYPE, "");
 
+#ifdef _WIN32
+	utf8_encoding = true;
+#else
 	char *gstr = locale_from_utf8(SIGN_MULTIPLICATION);
 	if(gstr) {
 		utf8_encoding = !strcmp(gstr, SIGN_MULTIPLICATION);
 		free(gstr);
-	}
-#ifndef _WIN32
-	else {
+	} else {
 		utf8_encoding = true;
 	}
 #endif
@@ -7667,6 +7668,9 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 #else
 		char c = 0;
 #endif
+#ifdef _WIN32
+		if(b_busy && !result_only && view_thread->running) {PREPARE_TIMECHECK_TIME(60000);}
+#endif
 		while(b_busy && view_thread->running) {
 			if(cfile || auto_calculate) {
 				sleep_ms(10);
@@ -7701,7 +7705,10 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 					sleep_ms(10);
 					i++;
 #ifdef _WIN32
-					if(i == 10000 && !result_only) on_abort_display();
+					if(!result_only) {
+						DO_TIMECHECK {on_abort_display();}
+						else if(i >= 10000) on_abort_display();
+					}
 #endif
 				}
 			}
@@ -8204,6 +8211,9 @@ void execute_command(int command_type, bool show_result, bool auto_calculate) {
 #else
 		char c = 0;
 #endif
+#ifdef _WIN32
+		if(b_busy && !result_only && command_thread->running) {PREPARE_TIMECHECK_TIME(60000);}
+#endif
 		while(b_busy && command_thread->running) {
 			if(cfile || auto_calculate) {
 				sleep_ms(10);
@@ -8229,7 +8239,10 @@ void execute_command(int command_type, bool show_result, bool auto_calculate) {
 					sleep_ms(10);
 					i++;
 #ifdef _WIN32
-					if(i == 10000 && !result_only) on_abort_display();
+					if(!result_only) {
+						DO_TIMECHECK {on_abort_command();}
+						else if(i >= 10000) on_abort_command();
+					}
 #endif
 				}
 			}
@@ -9525,6 +9538,9 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 #else
 		char c = 0;
 #endif
+#ifdef _WIN32
+		if(!result_only && CALCULATOR->busy()) {PREPARE_TIMECHECK_TIME(60000);}
+#endif
 		while(CALCULATOR->busy()) {
 			if(cfile || auto_calculate) {
 				sleep_ms(10);
@@ -9561,7 +9577,10 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 					sleep_ms(10);
 					i++;
 #ifdef _WIN32
-					if(i == 10000 && !result_only) on_abort_display();
+					if(!result_only) {
+						DO_TIMECHECK {CALCULATOR->abort(); avoid_recalculation = true;}
+						else if(i >= 10000) {CALCULATOR->abort(); avoid_recalculation = true;}
+					}
 #endif
 				}
 			}

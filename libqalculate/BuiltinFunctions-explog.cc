@@ -1056,7 +1056,7 @@ int PowerTowerFunction::calculate(MathStructure &mstruct, const MathStructure &v
 				continue;
 			}
 		}
-		if((mstruct.isNumber() || i == 1) && vargs[1].number() - i >= 1000) {
+		if((mstruct.isNumber() || i == 1) && vargs[1].number() - i >= 500) {
 			CALCULATOR->error(true, _("Maximum recursive depth reached."), NULL);
 			return 0;
 		}

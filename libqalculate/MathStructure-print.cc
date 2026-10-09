@@ -2305,7 +2305,7 @@ void MathStructure::format(const PrintOptions &po) {
 		// 1*a=a
 		remove_multi_one(*this);
 	}
-	formatsub(po, NULL, 0, true, this);
+	if(check_recursive_depth(*this)) formatsub(po, NULL, 0, true, this);
 	if(!po.preserve_format) {
 		postFormatUnits(po);
 		if(po.sort_options.prefix_currencies) {
@@ -3901,7 +3901,7 @@ string get_latex_units(const MathStructure &m, size_t first_unit, const PrintOpt
 	}
 
 string MathStructure::print(const PrintOptions &po, bool format, int colorize, int tagtype, const InternalPrintStruct &ips) const {
-	if(ips.depth > 1000) {
+	if(ips.depth > 500) {
 		CALCULATOR->error(true, _("Maximum recursive depth reached."), NULL);
 		if(po.use_unicode_signs && (!po.can_display_unicode_string_function || (*po.can_display_unicode_string_function) ("…", po.can_display_unicode_string_arg))) return "…";
 		return "...";

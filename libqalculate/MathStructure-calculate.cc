@@ -7126,7 +7126,7 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 }
 
 bool check_recursive_function_depth(size_t depth, bool show_error) {
-	if(depth > 3000) {
+	if(depth > 1500) {
 		if(show_error) CALCULATOR->error(true, _("Maximum recursive depth reached."), NULL);
 		return false;
 	}
