@@ -213,7 +213,6 @@ void Prefix::setName(string sname, size_t index) {
 void Prefix::addName(const ExpressionName &ename, size_t index) {
 	if(index < 1 || index > names.size()) {
 		names.push_back(ename);
-		index = names.size();
 	} else {
 		names.insert(names.begin() + (index - 1), ename);
 	}
@@ -222,7 +221,6 @@ void Prefix::addName(const ExpressionName &ename, size_t index) {
 void Prefix::addName(string sname, size_t index) {
 	if(index < 1 || index > names.size()) {
 		names.push_back(ExpressionName(sname));
-		index = names.size();
 	} else {
 		names.insert(names.begin() + (index - 1), ExpressionName(sname));
 	}

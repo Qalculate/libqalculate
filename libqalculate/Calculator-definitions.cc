@@ -1542,7 +1542,6 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					dc->setChanged(builtin && is_user_defs);
 					if(!builtin) addDataSet(dc, true, is_user_defs);
 				}
-				done_something = true;
 			} else if(!xmlStrcmp(cur->name, (const xmlChar*) "builtin_function")) {
 				XML_GET_STRING_FROM_PROP(cur, "name", name)
 				f = getFunction(name);
@@ -2324,7 +2323,6 @@ int Calculator::loadDefinitions(const char* file_name, bool is_user_defs, bool c
 					cur = unfinished_nodes[0];
 					category = unfinished_cats[0];
 					in_unfinished = 0;
-					done_something = false;
 				}
 				in_unfinished++;
 				done_something = false;
@@ -2635,62 +2633,62 @@ void Calculator::saveVariables(void *xmldoc, bool save_global, bool save_only_te
 						if(((UnknownVariable*) variables[i])->assumptions()) {
 							switch(((UnknownVariable*) variables[i])->assumptions()->type()) {
 								case ASSUMPTION_TYPE_INTEGER: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "integer");
+									xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "integer");
 									break;
 								}
 								case ASSUMPTION_TYPE_BOOLEAN: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "boolean");
+									xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "boolean");
 									break;
 								}
 								case ASSUMPTION_TYPE_RATIONAL: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "rational");
+									xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "rational");
 									break;
 								}
 								case ASSUMPTION_TYPE_REAL: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "real");
+									xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "real");
 									break;
 								}
 								case ASSUMPTION_TYPE_COMPLEX: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "complex");
+									xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "complex");
 									break;
 								}
 								case ASSUMPTION_TYPE_NUMBER: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "number");
+									xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "number");
 									break;
 								}
 								case ASSUMPTION_TYPE_NONMATRIX: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "non-matrix");
+									xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "non-matrix");
 									break;
 								}
 								case ASSUMPTION_TYPE_NONE: {
-									newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "none");
+									xmlNewTextChild(newnode, NULL, (xmlChar*) "type", (xmlChar*) "none");
 									break;
 								}
 							}
 							if(((UnknownVariable*) variables[i])->assumptions()->type() != ASSUMPTION_TYPE_BOOLEAN) {
 								switch(((UnknownVariable*) variables[i])->assumptions()->sign()) {
 									case ASSUMPTION_SIGN_NONZERO: {
-										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "non-zero");
+										xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "non-zero");
 										break;
 									}
 									case ASSUMPTION_SIGN_NONPOSITIVE: {
-										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "non-positive");
+										xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "non-positive");
 										break;
 									}
 									case ASSUMPTION_SIGN_NEGATIVE: {
-										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "negative");
+										xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "negative");
 										break;
 									}
 									case ASSUMPTION_SIGN_NONNEGATIVE: {
-										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "non-negative");
+										xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "non-negative");
 										break;
 									}
 									case ASSUMPTION_SIGN_POSITIVE: {
-										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "positive");
+										xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "positive");
 										break;
 									}
 									case ASSUMPTION_SIGN_UNKNOWN: {
-										newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "unknown");
+										xmlNewTextChild(newnode, NULL, (xmlChar*) "sign", (xmlChar*) "unknown");
 										break;
 									}
 								}
@@ -2976,7 +2974,7 @@ void Calculator::saveFunctions(void *xmldoc, bool save_global, bool save_only_te
 						xmlNewTextChild(newnode, NULL, (xmlChar*) "description", (xmlChar*) str.c_str());
 					}
 				}
-				if(!functions[i]->example(true).empty()) newnode2 = xmlNewTextChild(newnode, NULL, (xmlChar*) "example", (xmlChar*) functions[i]->example(true).c_str());
+				if(!functions[i]->example(true).empty()) xmlNewTextChild(newnode, NULL, (xmlChar*) "example", (xmlChar*) functions[i]->example(true).c_str());
 				if(functions[i]->isBuiltin()) {
 					cur = newnode;
 					for(size_t i2 = 1; i2 <= functions[i]->lastArgumentDefinitionIndex(); i2++) {
@@ -3341,7 +3339,7 @@ bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int fi
 						headers->push_back(str1);
 					}
 					mstruct.resizeMatrix(1, columns, m_undefined);
-					if(mstruct.rows() < 1 || mstruct.columns() < (size_t) columns) return false;
+					if(mstruct.rows() < 1 || mstruct.columns() < (size_t) columns) {fclose(file); return false;}
 				}
 			}
 			if((!headers || row > first_row) && !stmp.empty()) {
@@ -3369,6 +3367,7 @@ bool Calculator::importCSV(MathStructure &mstruct, const char *file_name, int fi
 			}
 		}
 	}
+	fclose(file);
 	return true;
 }
 
@@ -3434,7 +3433,7 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
 					}
 					if(to_matrix) {
 						mstruct.resizeMatrix(1, columns, m_undefined);
-						if(mstruct.rows() < 1 || mstruct.columns() < (size_t) columns) return false;
+						if(mstruct.rows() < 1 || mstruct.columns() < (size_t) columns) {fclose(file); return false;}
 					} else {
 						vectors.push_back(m_empty_vector);
 					}
@@ -3474,6 +3473,7 @@ bool Calculator::importCSV(const char *file_name, int first_row, bool headers, s
 			}
 		}
 	}
+	fclose(file);
 	if(to_matrix) {
 		addVariable(new KnownVariable(category, name, mstruct, title));
 	} else {

@@ -1281,7 +1281,6 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 					for(size_t i3 = 0; i3 < CHILD(i2)[0].size(); i3++) {
 						if(CHILD(i2)[0][i3].isUnit_exp()) {
 							if(CHILD(i2)[0][i3].unit_exp_prefix()) {
-								b = false;
 								return;
 							}
 							if(!b) {
@@ -1363,7 +1362,7 @@ void MathStructure::setPrefixes(const PrintOptions &po, MathStructure *parent, s
 											b = true;
 											exp = CHILD(i2)[1].number();
 											exp *= exp_multi;
-											i = i2;
+											//i = i2;
 										} else {
 											b2 = true;
 											exp2 = CHILD(i2)[1].number();
@@ -3045,7 +3044,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_LOGICAL_XOR: {return true;}
 				case STRUCT_LOGICAL_NOT: {return po.excessive_parenthesis;}
 				case STRUCT_COMPARISON: {return true;}
-				case STRUCT_FUNCTION: {return o_function->id() == FUNCTION_ID_UNCERTAINTY && SIZE == 3 && CHILD(2).isZero();}
+				case STRUCT_FUNCTION: {return o_function && o_function->id() == FUNCTION_ID_UNCERTAINTY && SIZE == 3 && CHILD(2).isZero();}
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return o_number.isInfinite() || (o_number.hasImaginaryPart() && o_number.hasRealPart()) || (o_number.isNegative() && (po.interval_display != INTERVAL_DISPLAY_INTERVAL || !o_number.isInterval()));}
 				case STRUCT_VARIABLE: {return false;}
@@ -3075,7 +3074,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_LOGICAL_XOR: {return flat_division || po.excessive_parenthesis;}
 				case STRUCT_LOGICAL_NOT: {return flat_division && po.excessive_parenthesis;}
 				case STRUCT_COMPARISON: {return flat_division || po.excessive_parenthesis;}
-				case STRUCT_FUNCTION: {return o_function->id() == FUNCTION_ID_UNCERTAINTY && SIZE == 3 && CHILD(2).isZero();}
+				case STRUCT_FUNCTION: {return o_function && o_function->id() == FUNCTION_ID_UNCERTAINTY && SIZE == 3 && CHILD(2).isZero();}
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {
 					return (flat_division || po.excessive_parenthesis) && (o_number.isInfinite() || o_number.hasImaginaryPart() || (o_number.isNegative() && (po.interval_display != INTERVAL_DISPLAY_INTERVAL || !o_number.isInterval())));
@@ -3135,7 +3134,7 @@ bool MathStructure::needsParenthesis(const PrintOptions &po, const InternalPrint
 				case STRUCT_LOGICAL_XOR: {return true;}
 				case STRUCT_LOGICAL_NOT: {return index == 1 || po.excessive_parenthesis;}
 				case STRUCT_COMPARISON: {return true;}
-				case STRUCT_FUNCTION: {return o_function->id() == FUNCTION_ID_UNCERTAINTY && SIZE == 3 && CHILD(2).isZero();}
+				case STRUCT_FUNCTION: {return o_function && o_function->id() == FUNCTION_ID_UNCERTAINTY && SIZE == 3 && CHILD(2).isZero();}
 				case STRUCT_VECTOR: {return false;}
 				case STRUCT_NUMBER: {return o_number.isInfinite() || o_number.hasImaginaryPart() || (index == 1 && o_number.isNegative() && (po.interval_display != INTERVAL_DISPLAY_INTERVAL || !o_number.isInterval()));}
 				case STRUCT_VARIABLE: {return false;}

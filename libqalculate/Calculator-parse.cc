@@ -3430,7 +3430,7 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 								}
 								size_t i9 = i6;
 								if(b) {
-									b = false;
+									//b = false;
 									i6 = i6 + 1 + str_index + name_length;
 									size_t i7 = i6 - 1;
 									size_t i8 = i7;
@@ -3444,15 +3444,12 @@ void Calculator::parse(MathStructure *mstruct, string str, const ParseOptions &p
 										}
 										if(i5 < (i6 = str.find(LEFT_PARENTHESIS_CH, i8)) || i6 == string::npos) {
 											i6 = i5;
-											b = true;
 											break;
 										}
 										i7 = i5 + 1;
 										i8 = i6 + 1;
 									}
-									if(!b) {
-										b_unended_function = false;
-									}
+									//if(!b) b_unended_function = false;
 								}
 								if(b) {
 									stmp2 = str.substr(str_index + name_length + i9, i6 - (str_index + name_length + i9));
@@ -4492,7 +4489,6 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	}
 	if(PARSING_MODE == PARSING_MODE_RPN) {
 		// parse operators with RPN syntax
-		i = 0;
 		i3 = 0;
 		ParseOptions po2 = po;
 		po2.rpn = false;
@@ -4927,7 +4923,6 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 	}
 	if(PARSING_MODE == PARSING_MODE_RPN) remove_blanks(str);
 
-	i = 0;
 	i3 = 0;
 
 	// Parse && as logical and
@@ -5613,7 +5608,6 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 							if(priv->id_structs.find(id) != priv->id_structs.end()) m_temp2 = priv->id_structs[id];
 						}
 						if(!m_temp2 || !m_temp2->isUnit()) {
-							b = false;
 							break;
 						}
 						had_unit = true;
@@ -5983,7 +5977,7 @@ bool Calculator::parseOperators(MathStructure *mstruct, string str, const ParseO
 			if(f) mstruct->transform(f);
 			else mstruct->transform(STRUCT_MULTIPLICATION);
 			mstruct->addChild_nocopy(mstruct2);
-		} else if(op == '\x16') {
+		} else {
 			mstruct->transform(priv->f_dot);
 			mstruct->addChild_nocopy(mstruct2);
 		}

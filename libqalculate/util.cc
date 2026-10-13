@@ -932,6 +932,7 @@ char *utf8_strup(const char *str, int l) {
 				free(buffer);
 				return NULL;
 			}
+			free(buffer2);
 		}
 		return buffer;
 	} else if(err == U_BUFFER_OVERFLOW_ERROR) {
@@ -955,6 +956,7 @@ char *utf8_strup(const char *str, int l) {
 				free(buffer);
 				return NULL;
 			}
+			free(buffer2);
 			return buffer;
 		}
 	}

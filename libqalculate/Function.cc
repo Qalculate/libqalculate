@@ -421,7 +421,7 @@ int MathFunction::args(const string &argstr, MathStructure &vargs, const ParseOp
 				if(!vargs[vargs.size() - 1].isVector() || vargs[vargs.size() - 1].size() != 1) {
 					vargs[vargs.size() - 1].transform(STRUCT_VECTOR);
 				}
-				vctr_started = true;
+				//vctr_started = true;
 			}
 			stmp = str.substr(start_pos, str.length() - start_pos);
 			remove_blank_ends(stmp);
@@ -1094,7 +1094,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 				if(maxargs() < 0) {
 					i2 = 0;
 					while(true) {
-						if((i2 = str.find("\\v")) != string::npos) {
+						if((i2 = str.find("\\v", i2)) != string::npos) {
 							if(i2 != 0 && str[i2 - 1] == '\\') {
 								i2 += 2;
 							} else {
@@ -1106,7 +1106,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 					}
 					i2 = 0;
 					while(true) {
-						if((i2 = str.find("\\w")) != string::npos) {
+						if((i2 = str.find("\\w", i2)) != string::npos) {
 							if(i2 != 0 && str[i2 - 1] == '\\') {
 								i2 += 2;
 							} else {
@@ -1216,7 +1216,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		if(maxargs() < 0) {
 			i2 = 0;
 			while(true) {
-				if((i2 = stmp.find("\\v")) != string::npos) {
+				if((i2 = stmp.find("\\v", i2)) != string::npos) {
 					if(i2 != 0 && stmp[i2 - 1] == '\\') {
 						i2 += 2;
 					} else {
@@ -1228,7 +1228,7 @@ int UserFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 			}
 			i2 = 0;
 			while(true) {
-				if((i2 = stmp.find("\\w")) != string::npos) {
+				if((i2 = stmp.find("\\w", i2)) != string::npos) {
 					if(i2 != 0 && stmp[i2 - 1] == '\\') {
 						i2 += 2;
 					} else {
@@ -1570,12 +1570,12 @@ bool Argument::test(MathStructure &value, int index, MathFunction *f, const Eval
 	if(!b && b_handle_vector) {
 		if(!evaled && !value.isVector()) {
 			value.eval(eo);
-			evaled = true;
+			//evaled = true;
 		}
 		if(value.isVector()) return false;
 	}
 	if(!b) {
-		if((b_error || (index == 2 && f && f->id() == FUNCTION_ID_ROOT && value.isNumber())) && (type() != ARGUMENT_TYPE_SYMBOLIC || !value.isUndefined())) {
+		if(f && (b_error || (index == 2 && f->id() == FUNCTION_ID_ROOT && value.isNumber())) && (type() != ARGUMENT_TYPE_SYMBOLIC || !value.isUndefined())) {
 			if(sname.empty()) {
 				CALCULATOR->error(true, _("Argument %s in %s() must be %s."), i2s(index).c_str(), f->name().c_str(), printlong().c_str(), NULL);
 			} else {

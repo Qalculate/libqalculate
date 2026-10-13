@@ -1292,7 +1292,6 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 			endtime.tv_sec++;
 		}
 		endtime.tv_usec = usecs;
-		max_msecs = 0;
 		endtime_p = &endtime;
 	}
 
@@ -2509,7 +2508,6 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 									(*mmul)[i].number() = nr2;
 								}
 							} else if(CHILD(i).isMultiplication() && CHILD(i).size() > 1) {
-								b = true;
 								size_t i2 = 0;
 								if(CHILD(i)[0].isNumber()) {
 									if(i == 0) {
@@ -3011,7 +3009,6 @@ bool MathStructure::factorize(const EvaluationOptions &eo_pre, bool unfactorize,
 						insertChild_nocopy(mdel, i + 1);
 					}
 				}
-				b = false;
 				// a*y + a*z + x = a(y + z) + x
 				syms.clear();
 				counts.clear();

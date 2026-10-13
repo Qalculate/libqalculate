@@ -766,7 +766,7 @@ bool Calculator::utf8_pos_is_valid_in_name(char *pos) const {
 			// operators
 			if(pos[1] == '\x97' || pos[1] == '\xb7') return false;
 		}
-		pos += (l - 1);
+		//pos += (l - 1);
 	}
 	return true;
 }

@@ -125,7 +125,6 @@ void generate_units_tree_struct() {
 			if(!CALCULATOR->units[i]->category().empty()) {
 				cat = CALCULATOR->units[i]->category();
 				cat_i = cat.find("/"); cat_i_prev = 0;
-				b = false;
 				while(true) {
 					if(cat_i == string::npos) {
 						cat_sub = cat.substr(cat_i_prev, cat.length() - cat_i_prev);
@@ -189,7 +188,6 @@ void generate_variables_tree_struct() {
 			if(!CALCULATOR->variables[i]->category().empty()) {
 				cat = CALCULATOR->variables[i]->category();
 				cat_i = cat.find("/"); cat_i_prev = 0;
-				b = false;
 				while(true) {
 					if(cat_i == string::npos) {
 						cat_sub = cat.substr(cat_i_prev, cat.length() - cat_i_prev);
@@ -254,7 +252,6 @@ void generate_functions_tree_struct() {
 			if(!CALCULATOR->functions[i]->category().empty()) {
 				cat = CALCULATOR->functions[i]->category();
 				cat_i = cat.find("/"); cat_i_prev = 0;
-				b = false;
 				while(true) {
 					if(cat_i == string::npos) {
 						cat_sub = cat.substr(cat_i_prev, cat.length() - cat_i_prev);

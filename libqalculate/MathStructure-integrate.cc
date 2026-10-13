@@ -4343,7 +4343,7 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 		}
 		if(b) {
 			if(x_var.isVariable() && !x_var.variable()->isKnown() && !((UnknownVariable*) x_var.variable())->interval().isUndefined()) {
-				if(fix_sgn_x(*this, x_var, eo_t)) recalc = true;
+				fix_sgn_x(*this, x_var, eo_t); //recalc =
 				while(true) {
 					mfound = find_abs_x2(*this, x_var);
 					if(mfound) {
@@ -4354,10 +4354,10 @@ int MathStructure::integrate(const MathStructure &x_var, const EvaluationOptions
 						if(!CALCULATOR->endTemporaryStopMessages()) break;
 						if(m_interval.representsNonNegative(true)) {
 							replace_abs_x(*this, MathStructure(*mfound), false);
-							recalc = true;
+							//recalc = true;
 						} else if(m_interval.representsNegative(true)) {
 							replace_abs_x(*this, MathStructure(*mfound), true);
-							recalc = true;
+							//recalc = true;
 						} else {
 							break;
 						}
@@ -7568,29 +7568,30 @@ bool MathStructure::integrate(const MathStructure &lower_limit, const MathStruct
 						mstruct_lower.replace(x_var, lower_limit, false, false, true);
 						b = eo.approximation == APPROXIMATION_EXACT || !contains_incalc_function(mstruct_lower, eo);
 					}
-					MathStructure mstruct_upper(mstruct);
-					if(m2.containsInfinity()) {
-						b = mstruct_upper.calculateLimit(x_var, m2, eo3) && !mstruct_upper.containsInfinity();
-					} else {
-						mstruct_upper.replace(x_var, upper_limit, false, false, true);
-						b = eo.approximation == APPROXIMATION_EXACT || !contains_incalc_function(mstruct_upper, eo);
-					}
 					if(b) {
-						set(mstruct_upper);
-						subtract(mstruct_lower);
-						return true;
-					} else {
-						if(definite_integral > 0) {
-							CALCULATOR->endTemporaryStopMessages(true);
-							CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
-							if(simplify_first) {
-								set(mbak);
-								replace(x_var, x_var_pre);
-							}
-							return false;
+						MathStructure mstruct_upper(mstruct);
+						if(m2.containsInfinity()) {
+							b = mstruct_upper.calculateLimit(x_var, m2, eo3) && !mstruct_upper.containsInfinity();
 						} else {
-							definite_integral = 0;
+							mstruct_upper.replace(x_var, upper_limit, false, false, true);
+							b = eo.approximation == APPROXIMATION_EXACT || !contains_incalc_function(mstruct_upper, eo);
 						}
+						if(b) {
+							set(mstruct_upper);
+							subtract(mstruct_lower);
+							return true;
+						}
+					}
+					if(definite_integral > 0) {
+						CALCULATOR->endTemporaryStopMessages(true);
+						CALCULATOR->error(false, _("Unable to integrate the expression."), NULL);
+						if(simplify_first) {
+							set(mbak);
+							replace(x_var, x_var_pre);
+						}
+						return false;
+					} else {
+						definite_integral = 0;
 					}
 				} else {
 					mstruct_lower.replace(x_var, lower_limit, false, false, true);

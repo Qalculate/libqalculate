@@ -79,6 +79,7 @@ int RankFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, 
 		MathStructure mvector;
 		mvector.clearVector();
 		size_t rows = vargs[0].size(), cols = vargs[0][0].size();
+		if(cols == 0) return 1;
 		for(size_t i = 0; i < rows; i++) {
 			for(size_t i2 = 0; i2 < cols; i2++) {
 				if(CALCULATOR->aborted()) return 0;

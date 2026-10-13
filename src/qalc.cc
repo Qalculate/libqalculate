@@ -3520,7 +3520,7 @@ void do_autocalc(bool force, const char *action_text) {
 				}
 				int p_bak = rl_point;
 				INIT_COLS
-				if(output_format != TAG_TYPE_TERMINAL && autocalc_lines == (vertical_space ? 3 : 1)) {
+				if(output_format != TAG_TYPE_TERMINAL && autocalc_lines == (vertical_space ? 3 : 1) && cols > 0) {
 					autocalc_lines += unicode_length(autocalc_result) / cols;
 				}
 				bool move_pos = unicode_length(orig_str) + prompt_l + 1 < (size_t) cols && unicode_length(autocalc_str) + prompt_l + 1 < (size_t) cols && !contains_wide_character(orig_str.c_str()) && !contains_wide_character(autocalc_str.c_str());
@@ -9208,6 +9208,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 				}
 				if(str_left.empty()) break;
 				to_str = str_left;
+				str_left = "";
 			}
 			str = from_str;
 			if(!str_conv.empty()) {
@@ -9231,7 +9232,6 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 			}
 		}
 	}
-
 	if(!delay_complex || (cnf != COMPLEX_NUMBER_FORM_POLAR && cnf != COMPLEX_NUMBER_FORM_CIS)) {
 		evalops.complex_number_form = cnf;
 		delay_complex = false;
@@ -9656,7 +9656,7 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		if(!simplified_percentage) evalops.parse_options.parsing_mode = (ParsingMode) (evalops.parse_options.parsing_mode & ~PARSE_PERCENT_AS_ORDINARY_CONSTANT);
 		return;
 	}
-	if(!result_only) warn_assumptions(*parsed_mstruct, auto_calculate);
+	if(!result_only && parsed_mstruct) warn_assumptions(*parsed_mstruct, auto_calculate);
 	if(auto_calculate && ask_questions && !avoid_recalculation && !do_mathoperation && !CALCULATOR->message() && (test_ask_sinc(*parsed_mstruct) || test_ask_sinc(*mstruct) || test_ask_percent() || test_ask_tc(*parsed_mstruct))) {
 		CALCULATOR->error(false, "", NULL);
 	}

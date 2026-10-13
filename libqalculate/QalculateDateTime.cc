@@ -2741,7 +2741,7 @@ QalculateDateTime findNextSolarLongitude(const QalculateDateTime &date, Number l
 	Number time = date.second(); time /= 60; time += date.minute(); time -= dateTimeZone(date, false); time /= 60; time += date.hour(); time /= 24;
 	fixed += time;
 	fixed = solar_longitude_after(longitude, fixed);
-	long int y, m, d;
+	long int y = 0, m = 0, d = 0;
 	fixed_to_date(fixed, y, m, d, CALENDAR_GREGORIAN);
 	QalculateDateTime dt(y, m, d);
 	Number fixed2 = date_to_fixed(y, m, d, CALENDAR_GREGORIAN);
@@ -2767,7 +2767,7 @@ QalculateDateTime findNextLunarPhase(const QalculateDateTime &date, Number phase
 	fixed += time;
 	phase *= 360;
 	fixed = lunar_phase_at_or_after(phase, fixed);
-	long int y, m, d;
+	long int y = 0, m = 0, d = 0;
 	fixed_to_date(fixed, y, m, d, CALENDAR_GREGORIAN);
 	QalculateDateTime dt(y, m, d);
 	Number fixed2 = date_to_fixed(y, m, d, CALENDAR_GREGORIAN);

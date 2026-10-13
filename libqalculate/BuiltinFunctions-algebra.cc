@@ -609,7 +609,6 @@ int solve_equation(MathStructure &mstruct, const MathStructure &m_eqn, const Mat
 			return 1;
 		} else if(mstruct.isLogicalAnd()) {
 			MathStructure *mtruefor = NULL;
-			bool b_partial;
 			MathStructure mcopy(mstruct);
 			MathStructure *mcondition = solve_handle_logical_and(mstruct, &mtruefor, ct, b_partial, y_var);
 			if((!mstruct.isComparison() && !mstruct.isLogicalAnd()) || (ct == COMPARISON_EQUALS && (!mstruct.isComparison() || mstruct.comparisonType() != COMPARISON_EQUALS || mstruct[0] != y_var)) || !mstruct.contains(y_var)) {

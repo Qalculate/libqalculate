@@ -12773,7 +12773,6 @@ string Number::print(const PrintOptions &po, const InternalPrintStruct &ips) con
 				mpz_tdiv_qr(num, remainder, num, d);
 				mpz_clear(i_div);
 				exact = false;
-				do_div = 0;
 				precision2 = precision - nondecimals;
 				if(min_decimals > 0) {
 					if(precision2 < min_decimals) precision2 = min_decimals;

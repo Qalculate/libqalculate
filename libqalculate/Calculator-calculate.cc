@@ -2172,6 +2172,7 @@ string Calculator::calculateAndPrint(string str, int msecs, const EvaluationOpti
 			}
 			if(str_left.empty()) break;
 			to_str = str_left;
+			str_left = "";
 		}
 		str = from_str;
 		if(!str_conv.empty()) {
@@ -2618,7 +2619,7 @@ bool Calculator::hasToExpression(const string &str, bool allow_empty_from) const
 		i += 3;
 	}
 	i = allow_empty_from ? 0 : 1;
-	size_t i2 = i;
+	size_t i2;
 	int l = 2;
 	while(true) {
 		i2 = find_unquoted(str, _("to"), i);
@@ -2649,7 +2650,7 @@ bool Calculator::hasToExpression(const string &str, bool allow_empty_from, const
 		i += 3;
 	}
 	i = allow_empty_from ? 0 : 1;
-	size_t i2 = i;
+	size_t i2;
 	int l = 2;
 	while(true) {
 		i2 = find_unquoted(str, _("to"), i);
@@ -2663,8 +2664,8 @@ bool Calculator::hasToExpression(const string &str, bool allow_empty_from, const
 	return false;
 }
 bool Calculator::separateToExpression(string &str, string &to_str, const EvaluationOptions &eo, bool keep_modifiers, bool allow_empty_from) const {
-	if(DO_NOT_TOUCH_EXPRESSION(str, eo.parse_options)) return false;
 	to_str = "";
+	if(DO_NOT_TOUCH_EXPRESSION(str, eo.parse_options)) return false;
 	if(str.empty()) return false;
 	size_t i = 1, i2, l_arrow = 2;
 	if(allow_empty_from) i = 0;
@@ -3001,7 +3002,7 @@ size_t rfind_outside_enclosures(const string &str, char c) {
 bool Calculator::hasWhereExpression(const string &str, const EvaluationOptions &eo) const {
 	if(DO_NOT_TOUCH_EXPRESSION(str, eo.parse_options)) return false;
 	if(str.empty()) return false;
-	size_t i = str.length() - 1, i2 = i;
+	size_t i = str.length() - 1, i2;
 	int l = 2;
 	while(i != 0) {
 		//"where"-operator
@@ -3015,7 +3016,6 @@ bool Calculator::hasWhereExpression(const string &str, const EvaluationOptions &
 	if(str.length() > 3 && (i = rfind_unquoted(str, "/.", str.length() - 2)) != string::npos && i > 0 && eo.parse_options.base >= 2 && eo.parse_options.base <= 10 && (str[i + 2] < '0' || str[i + 2] > '9')) return true;
 	size_t i4 = rfind_outside_enclosures(str, COMMA_CH);
 	if(i4 == string::npos || i4 < 3) return false;
-	i = 0;
 	i2 = 0;
 	bool var_found = false;
 	while(true) {
@@ -3087,7 +3087,7 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
 		to_str = str.substr(i + 2 , str.length() - i - 2);
 	} else {
 		i = str.length() - 1;
-		size_t i2 = i;
+		size_t i2;
 		int l = 5;
 		while(i != 0) {
 			i2 = rfind_unquoted(str, _("where"), i - 1);
@@ -3120,7 +3120,6 @@ bool Calculator::separateWhereExpression(string &str, string &to_str, const Eval
 
 	size_t i4 = rfind_outside_enclosures(str, COMMA_CH);
 	if(i4 == string::npos || i4 < 3) return false;
-	i = 0;
 	size_t i2 = 0;
 	bool var_found = false;
 	while(true) {
@@ -4048,6 +4047,7 @@ MathStructure Calculator::calculate(string str, const EvaluationOptions &eo, Mat
 					}
 					if(str2b.empty()) break;
 					str2 = str2b;
+					str2b = "";
 				}
 			}
 		} else if(b_units) {

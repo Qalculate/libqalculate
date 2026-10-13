@@ -2883,7 +2883,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					CHILD_UPDATED(0)
 					b = isolate_x_sub(eo, eo2, u_var, NULL, depth + 1);
 					calculateReplace(u_var, mvar, eo2);
-					var->destroy();
+					if(var) var->destroy();
 					if(b && contains(mbak, true, false, false, true)) {
 						set(mbak);
 						return false;
@@ -2898,7 +2898,7 @@ bool MathStructure::isolate_x_sub(const EvaluationOptions &eo, EvaluationOptions
 					CHILD_UPDATED(0)
 					b = isolate_x_sub(eo, eo2, u_var, NULL, depth + 1);
 					calculateReplace(u_var, mvar, eo2);
-					var->destroy();
+					if(var) var->destroy();
 					if(b && contains(mbak, true, false, false, true)) {
 						set(mbak);
 						return false;

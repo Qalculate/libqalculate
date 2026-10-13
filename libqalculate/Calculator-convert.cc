@@ -1974,7 +1974,7 @@ MathStructure Calculator::convertToOptimalUnit(const MathStructure &mstruct, con
 					mstruct_new = convertToOptimalUnit(mstruct_new, eo, convert_to_si_units);
 					if(mstruct_new.equals(mstruct, true, true)) {b_exchange_rates_used = eru_bak; return mstruct;}
 				} else {
-					Unit *u_new = u;
+					Unit *u_new = NULL;
 					if(mstruct_new.isUnit()) {
 						u_new = getOptimalUnit(u, false, eo.local_currency_conversion);
 						if(u_new == u) {b_exchange_rates_used = eru_bak; return mstruct;}

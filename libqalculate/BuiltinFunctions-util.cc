@@ -2002,16 +2002,16 @@ void get_latex_args(const string &str, size_t &i, string *s1 = NULL, string *s2 
 						}
 					}
 					if(i2 == cub_index + 1) i2++;
-					if(index == 1) *s1 = str.substr(cub_index, i2 - cub_index);
-					else if(index == 2) *s2 = str.substr(cub_index, i2 - cub_index);
+					if(index == 1 && s1) *s1 = str.substr(cub_index, i2 - cub_index);
+					else if(index == 2 && s2) *s2 = str.substr(cub_index, i2 - cub_index);
 					i = i2 - 1;
 				} else {
 					size_t l = 1;
 					if((signed char) str[i2] < 0) {
 						while(i2 + l < str.length() && (signed char) str[i2 + l] < 0 && (unsigned char) str[i2 + l] < 0xC0) l++;
 					}
-					if(index == 1) *s1 = str.substr(i2, l);
-					else if(index == 2) *s2 = str.substr(i2, l);
+					if(index == 1 && s1) *s1 = str.substr(i2, l);
+					else if(index == 2 && s2) *s2 = str.substr(i2, l);
 					i = i2 + l - 1;
 				}
 				if(!cub_index) {
@@ -2029,12 +2029,16 @@ void get_latex_args(const string &str, size_t &i, string *s1 = NULL, string *s2 
 			in_cub--;
 			if(in_cub == 0) {
 				if(index == 1) {
-					*s1 = str.substr(cub_index + 1, i - (cub_index + 1));
-					if(s1->empty()) *s1 += " ";
+					if(s1) {
+						*s1 = str.substr(cub_index + 1, i - (cub_index + 1));
+						if(s1->empty()) *s1 += " ";
+					}
 					if(!s2 || (supsub && !s2->empty())) {i++; break;}
 				} else if(index == 2) {
-					*s2 = str.substr(cub_index + 1, i - (cub_index + 1));
-					if(s2->empty()) *s2 += " ";
+					if(s2) {
+						*s2 = str.substr(cub_index + 1, i - (cub_index + 1));
+						if(s2->empty()) *s2 += " ";
+					}
 					i++;
 					if(!supsub || !s1 || !s1->empty()) break;
 				}
@@ -2044,10 +2048,10 @@ void get_latex_args(const string &str, size_t &i, string *s1 = NULL, string *s2 
 		}
 	}
 	if(in_cub) {
-		if(index == 1) {
+		if(index == 1 && s1) {
 			*s1 = str.substr(cub_index + 1);
 			if(s1->empty()) *s1 += " ";
-		} else if(index == 2) {
+		} else if(index == 2 && s2) {
 			*s2 = str.substr(cub_index + 1);
 			if(s2->empty()) *s2 += " ";
 		}
