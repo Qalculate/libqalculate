@@ -627,6 +627,14 @@ bool calculate_dataset_functions(MathStructure &m, MathStructure *mtop, const Ev
 	}
 	return b;
 }
+size_t recursive_depth(const MathStructure &m, size_t depth = 0) {
+	size_t n = 0;
+	for(size_t i = 0; i < m.size(); i++) {
+		size_t i_depth = recursive_depth(m[i], 1);
+		if(i_depth > n) n = i_depth;
+	}
+	return depth + n;
+}
 bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOptions &eo, bool recursive, bool do_unformat, int i_type, size_t depth) {
 	if(recursive && !check_recursive_function_depth(depth)) return false;
 	if(depth == 0 && recursive && i_type <= 0 && i_type > -10 && eo.interval_calculation != INTERVAL_CALCULATION_NONE) {
@@ -640,8 +648,23 @@ bool calculate_nondifferentiable_functions(MathStructure &m, const EvaluationOpt
 	if(depth == 0) depth = 1;
 	if(m.isFunction() && m.function() != eo.protected_function && (!recursive || i_type > 0 || i_type <= -10 || m.function()->subtype() != SUBTYPE_DATA_SET)) {
 		if((i_type <= 0 && (!function_differentiable(m.function()) || (m.function()->id() == FUNCTION_ID_INCOMPLETE_BETA && (m.size() != 3 || m[1].containsInterval(true, false, false, 1, true) || m[2].containsInterval(true, false, false, 1, true))) || (m.function()->id() == FUNCTION_ID_I_GAMMA && (m.size() != 2 || m[1].containsInterval(true, false, false, 1, true))))) || ((i_type >= 0 || i_type == -10) && !contains_interval_variable(m, i_type))) {
+			bool b_user = m.function()->subtype() == SUBTYPE_USER_FUNCTION && m.function()->isLocal();
 			if(m.calculateFunctions(eo, false, do_unformat)) {
-				if(recursive) calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type, depth + 1);
+				if(recursive && !CALCULATOR->aborted()) {
+					if(b_user && depth > 50 && !check_recursive_depth(m, 50, false)) {
+						EvaluationOptions eo2 = eo;
+						eo2.approximation = APPROXIMATION_EXACT;
+						eo2.calculate_functions = false;
+						m.calculatesub(eo2, eo2, true);
+					}
+					if(b_user && depth > 10 && depth <= 100) {
+						MathStructure mbak(m);
+						calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type, 101);
+						if(!check_recursive_depth(m)) m = mbak;
+					} else {
+						calculate_nondifferentiable_functions(m, eo, recursive, do_unformat, i_type, depth + 1);
+					}
+				}
 				return true;
 			} else {
 				return false;

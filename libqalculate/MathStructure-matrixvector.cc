@@ -918,6 +918,7 @@ bool calculate_userfunctions(MathStructure &m, const MathStructure &x_mstruct, c
 	if(!check_recursive_function_depth(depth)) return false;
 	bool b_ret = false;
 	for(size_t i = 0; i < m.size(); i++) {
+		if(CALCULATOR->aborted()) return b_ret;
 		if(calculate_userfunctions(m[i], x_mstruct, eo, b_vector, depth + 1)) {
 			m.childUpdated(i + 1);
 			b_ret = true;
@@ -944,8 +945,21 @@ bool calculate_userfunctions(MathStructure &m, const MathStructure &x_mstruct, c
 					break;
 				}
 			}
+			bool b_user = m.function()->isLocal();
 			if(b && m.calculateFunctions(eo, false)) {
-				calculate_userfunctions(m, x_mstruct, eo, false, depth + 1);
+				if(!CALCULATOR->aborted()) return true;
+				if(b_user && depth > 1 && depth % 50 == 0 && !check_recursive_depth(m, 50, false)) {
+					EvaluationOptions eo2 = eo;
+					eo2.calculate_functions = false;
+					m.calculatesub(eo2, eo2, true);
+				}
+				if(b_user && depth > 10 && depth <= 100) {
+					MathStructure mbak(m);
+					calculate_userfunctions(m, x_mstruct, eo, false, 101);
+					if(!check_recursive_depth(m)) m = mbak;
+				} else {
+					calculate_userfunctions(m, x_mstruct, eo, false, depth + 1);
+				}
 				b_ret = true;
 			}
 		} else if(b_vector && ((m.function()->id() == FUNCTION_ID_DIFFERENTIATE && (m.size() < 3 || m[3].isUndefined())) || (m.function()->id() == FUNCTION_ID_INTEGRATE && (m.size() < 3 || (m[1].isUndefined() && m[2].isUndefined()))))) {
@@ -1025,6 +1039,7 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 	MathStructure y_value;
 	y_vector.clearVector();
 	x_vector.clearVector();
+	unsigned int steps = 0;
 	if(min != max) {
 		MathStructure mtest(max);
 		mtest.calculateSubtract(min, eo);
@@ -1038,13 +1053,16 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 			return;
 		}
 		mtest.number().round();
-		unsigned int steps = mtest.number().uintValue();
-		y_vector.resizeVector(steps, m_zero);
-		x_vector.resizeVector(steps, m_zero);
+		steps = mtest.number().uintValue();
 	}
 	MathStructure mthis(m);
 	mthis.unformat();
 	calculate_userfunctions(mthis, x_mstruct, eo, true);
+	if(CALCULATOR->aborted()) return;
+	if(steps > 0) {
+		y_vector.resizeVector(steps, m_zero);
+		x_vector.resizeVector(steps, m_zero);
+	}
 	ComparisonResult cr = max.compare(x_value);
 	size_t i = 0;
 	while(COMPARISON_IS_EQUAL_OR_LESS(cr)) {
@@ -1094,15 +1112,16 @@ void generate_plotvector(const MathStructure &m, MathStructure x_mstruct, const 
 		CALCULATOR->error(true, _("The selected min and max do not result in a positive, finite number of data points"), NULL);
 		return;
 	}
+	MathStructure mthis(m);
+	mthis.unformat();
+	calculate_userfunctions(mthis, x_mstruct, eo, true);
+	if(CALCULATOR->aborted()) return;
 	MathStructure ydiff;
 	if(adaptive) ydiff.resizeVector(steps, m_zero);
 	Number ydiff_total;
 	Number ydiff_real;
 	y_vector.resizeVector(steps, m_zero);
 	x_vector.resizeVector(steps, m_zero);
-	MathStructure mthis(m);
-	mthis.unformat();
-	calculate_userfunctions(mthis, x_mstruct, eo, true);
 	MathStructure meval;
 	MathStructure mdiff;
 	int prev_illegal = -1;
@@ -1366,11 +1385,12 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 		CALCULATOR->error(true, _("The selected min and max do not result in a positive, finite number of data points"), NULL);
 		return y_vector;
 	}
-	y_vector.resizeVector(steps, m_zero);
-	if(x_vector) x_vector->resizeVector(steps, m_zero);
 	MathStructure mthis(*this);
 	mthis.unformat();
 	calculate_userfunctions(mthis, x_mstruct, eo, true);
+	if(CALCULATOR->aborted()) return y_vector;
+	y_vector.resizeVector(steps, m_zero);
+	if(x_vector) x_vector->resizeVector(steps, m_zero);
 	for(int i = 0; i < steps; i++) {
 		if(x_vector) {
 			(*x_vector)[i] = x_value;
@@ -1479,6 +1499,7 @@ MathStructure MathStructure::generateVector(MathStructure x_mstruct, const MathS
 	MathStructure mthis(*this);
 	mthis.unformat();
 	calculate_userfunctions(mthis, x_mstruct, eo, true);
+	if(CALCULATOR->aborted()) return y_vector;
 	for(size_t i = 1; i <= x_vector.countChildren(); i++) {
 		if(CALCULATOR->aborted()) {
 			y_vector.clearVector();

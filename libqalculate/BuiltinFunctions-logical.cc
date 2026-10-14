@@ -449,6 +449,7 @@ bool calculate_userfunctions2(MathStructure &m, const MathStructure &x_mstruct, 
 	if(!check_recursive_function_depth(depth)) return false;
 	bool b_ret = false;
 	for(size_t i = 0; i < m.size(); i++) {
+		if(CALCULATOR->aborted()) return b_ret;
 		if(calculate_userfunctions2(m[i], x_mstruct, x_mstruct2, eo, depth + 1)) {
 			m.childUpdated(i + 1);
 			b_ret = true;
@@ -475,8 +476,21 @@ bool calculate_userfunctions2(MathStructure &m, const MathStructure &x_mstruct, 
 					break;
 				}
 			}
+			bool b_user = m.function()->isLocal();
 			if(b && m.calculateFunctions(eo, false)) {
-				calculate_userfunctions2(m, x_mstruct, x_mstruct2, eo, depth + 1);
+				if(!CALCULATOR->aborted()) return true;
+				if(b_user && depth > 1 && depth % 50 == 0 && !check_recursive_depth(m, 50, false)) {
+					EvaluationOptions eo2 = eo;
+					eo2.calculate_functions = false;
+					m.calculatesub(eo2, eo2, true);
+				}
+				if(b_user && depth > 10 && depth <= 100) {
+					MathStructure mbak(m);
+					calculate_userfunctions2(m, x_mstruct, x_mstruct2, eo, 101);
+					if(!check_recursive_depth(m)) m = mbak;
+				} else {
+					calculate_userfunctions2(m, x_mstruct, x_mstruct2, eo, depth + 1);
+				}
 				b_ret = true;
 			}
 		}
@@ -520,7 +534,7 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	eo2.expand = false;
 	CALCULATOR->beginTemporaryStopMessages();
 	m5.eval(eo2);
-	if(calculate_userfunctions2(m5, vargs[6], vargs[1], eo)) {
+	if(calculate_userfunctions2(m5, vargs[6], vargs[1], eo) && !CALCULATOR->aborted()) {
 		if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
 			while(true) {
 				Variable *v = NULL;
@@ -546,7 +560,7 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		if(vargs[3].isUndefined()) mtest.replace(vargs[6], mstruct);
 		else mtest.replace(vargs[1], mcounter, vargs[6], mstruct);
 		mtest.eval(eo);
-		if(!mtest.isNumber() || CALCULATOR->aborted()) {
+		if(!mtest.isNumber() || CALCULATOR->aborted() || !check_recursive_depth(mstruct)) {
 			for(size_t i = 0; i < vars.size(); i++) vars[i]->destroy();
 			return 0;
 		}
@@ -570,7 +584,6 @@ int ForFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 		else mstruct.replace(vars[i], ((UnknownVariable*) vars[i])->interval());
 		vars[i]->destroy();
 	}
-	if(!check_recursive_depth(mstruct)) return 0;
 	return 1;
 
 }
@@ -613,7 +626,7 @@ int ForEachFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	eo2.expand = false;
 	CALCULATOR->beginTemporaryStopMessages();
 	m5.eval(eo2);
-	if(calculate_userfunctions2(m5, vargs[3], vargs[4], eo)) {
+	if(calculate_userfunctions2(m5, vargs[3], vargs[4], eo) && !CALCULATOR->aborted()) {
 		if(eo.interval_calculation == INTERVAL_CALCULATION_VARIANCE_FORMULA || eo.interval_calculation == INTERVAL_CALCULATION_INTERVAL_ARITHMETIC) {
 			while(true) {
 				Variable *v = NULL;
@@ -632,7 +645,7 @@ int ForEachFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 	MathStructure mupdate;
 	for(size_t i = 0; i < vargs[0].size(); i++) {
 		for(size_t i2 = 0; i2 < vargs[0][i].size(); i2++) {
-			if(CALCULATOR->aborted()) {
+			if(CALCULATOR->aborted() || !check_recursive_depth(mstruct)) {
 				for(size_t i = 0; i < vars.size(); i++) vars[i]->destroy();
 				return 0;
 			}
@@ -646,7 +659,6 @@ int ForEachFunction::calculate(MathStructure &mstruct, const MathStructure &varg
 		else mstruct.replace(vars[i], ((UnknownVariable*) vars[i])->interval());
 		vars[i]->destroy();
 	}
-	if(!check_recursive_depth(mstruct)) return 0;
 	return 1;
 
 }

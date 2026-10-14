@@ -2282,6 +2282,7 @@ void set_unit_plural(MathStructure &m) {
 	}
 }
 void MathStructure::format(const PrintOptions &po) {
+	if(!check_recursive_depth(*this)) return;
 	if(!po.preserve_format) {
 		if(po.place_units_separately) {
 			// a*u+b*u=(a+b)*u
@@ -2304,7 +2305,7 @@ void MathStructure::format(const PrintOptions &po) {
 		// 1*a=a
 		remove_multi_one(*this);
 	}
-	if(check_recursive_depth(*this)) formatsub(po, NULL, 0, true, this);
+	formatsub(po, NULL, 0, true, this);
 	if(!po.preserve_format) {
 		postFormatUnits(po);
 		if(po.sort_options.prefix_currencies) {

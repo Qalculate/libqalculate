@@ -7302,11 +7302,21 @@ bool MathStructure::calculateFunctions(const EvaluationOptions &eo, bool recursi
 				// function calculation was successful
 				while(mstruct->isVector() && mstruct->size() == 1) mstruct->setToChild(1, true);
 				m_type = STRUCT_FUNCTION;
+				bool b_user = o_function->subtype() == SUBTYPE_USER_FUNCTION && o_function->isLocal();
 				if(mstruct->equals(*this, true, true) && mstruct->isApproximate() == b_approx && mstruct->precision() == i_precision && !mstruct->isProtected()) ret = 0;
 				set_nocopy(*mstruct, true);
-				if(ret && recursive) calculateFunctions(eo, recursive, do_unformat, depth + 1);
 				mstruct->unref();
 				if(do_unformat) unformat(eo);
+				if(ret && recursive && !CALCULATOR->aborted()) {
+					if(b_user && recursive && depth > 50 && !check_recursive_depth(*this, 50, false)) calculatesub(eo, eo, true);
+					if(b_user && depth > 10 && depth <= 100) {
+						MathStructure mbak(*this);
+						calculateFunctions(eo, recursive, do_unformat, 101);
+						if(!check_recursive_depth(*this)) set(mbak);
+					} else {
+						calculateFunctions(eo, recursive, do_unformat, depth + 1);
+					}
+				}
 				return ret;
 			} else {
 				// function calculation failed
