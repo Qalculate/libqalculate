@@ -609,7 +609,7 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 			if(ui == string::npos) break;
 			bool b_erase = (ui > 0 && str[ui - 1] >= '0' && str[ui - 1] <= '9' && ui < str.length() - 1 && str[ui + 1] >= '0' && str[ui + 1] <= '9');
 			// adjust quotation mark indices
-			int index_shift = (b_erase ? 3 : 2);
+			int index_shift = (b_erase ? -3 : -2);
 			for(size_t ui3 = ui2; ui3 < q_begin.size(); ui3++) {
 				q_begin[ui3] += index_shift;
 				q_end[ui3] += index_shift;
@@ -617,6 +617,37 @@ void Calculator::parseSigns(string &str, bool convert_to_internal_representation
 			if(b_erase) str.erase(ui, 3);
 			else str.replace(ui, 3, SPACE);
 			ui = str.find(THIN_SPACE, ui + (b_erase ? 0 : 1));
+		}
+
+		// replace Arabic numerals
+		ui = str.find_first_of("\xd9\xdb");
+		ui2 = 0;
+		while(ui != string::npos) {
+			// check that found index is outside quotes
+			for(; ui2 < q_end.size(); ui2++) {
+				if(ui >= q_begin[ui2]) {
+					if(ui <= q_end[ui2]) {
+						ui = str.find_first_of("\xd9\xdb", q_end[ui2] + 1);
+						if(ui == string::npos) break;
+					}
+				} else {
+					break;
+				}
+			}
+			if(ui == string::npos || ui + 1 >= str.length()) break;
+			bool b_erase = false;
+			if((str[ui] == '\xd9' && ((str[ui + 1] >= '\xa0' && str[ui + 1] <= '\xa9') || str[ui + 1] == '\xab' || str[ui + 1] == '\xac')) || (str[ui] == '\xdb' && (str[ui + 1] >= '\xb0' && str[ui + 1] <= '\xb9'))) {
+				b_erase = (str[ui + 1] == '\xac');
+				// adjust quotation mark indices
+				int index_shift = (b_erase ? -2 : -1);
+				for(size_t ui3 = ui2; ui3 < q_begin.size(); ui3++) {
+					q_begin[ui3] += index_shift;
+					q_end[ui3] += index_shift;
+				}
+				if(b_erase) str.erase(ui, 2);
+				else str.replace(ui, 2, 1, str[ui + 1] == '\xab' ? '.' : '0' + str[ui + 1] - (str[ui + 1] == '\xdb' ? '\xb0' : '\xa0'));
+			}
+			ui = str.find("\xd9", ui + (b_erase ? 0 : 1));
 		}
 
 		// replace Unicode exponents
