@@ -543,6 +543,7 @@ bool Calculator::loadLocalDefinitions() {
 					if(new_names && ((best_names.empty() && fulfilled_translation != 2) || default_names.empty()) && !xmlStrcmp(child->name, (const xmlChar*) "names")) {\
 						value = xmlNodeListGetString(doc, child->xmlChildrenNode, 1);\
  						lang = xmlNodeGetLang(child);\
+						UPDATE_LOCALE_LANG \
 						if(!lang) {\
 							if(default_names.empty()) {\
 								if(value) {\
