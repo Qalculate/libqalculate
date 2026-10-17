@@ -469,6 +469,24 @@ size_t unicode_length_check(const char *str) {
 	return l2;
 }
 
+size_t unicode_width(const string &str) {
+	size_t cSize = mbstowcs(NULL, str.c_str(), 0) + 1;
+	wchar_t *wc = new wchar_t[cSize];
+	mbstowcs(wc, str.c_str(), cSize);
+	size_t n = wcswidth(wc, wcslen(wc));
+	delete[] wc;
+	return n;
+}
+
+size_t unicode_width(const string &str, size_t l) {
+	size_t cSize = mbstowcs(NULL, str.substr(0, l).c_str(), 0) + 1;
+	wchar_t *wc = new wchar_t[cSize];
+	mbstowcs(wc, str.c_str(), cSize);
+	size_t n = wcswidth(wc, wcslen(wc));
+	delete[] wc;
+	return n;
+}
+
 int s2b(const string &str) {
 	if(str.empty()) return -1;
 	if(EQUALS_IGNORECASE_AND_LOCAL(str, "yes", _("yes"))) return 1;
@@ -1264,8 +1282,15 @@ int addLineBreaks(string &str, int cols, bool expr = false, bool or_break = fals
 					or_point = string::npos;
 					r++;
 				} else {
-					if(str[i] == '\t') c += 8;
-					else c++;
+					if(str[i] == '\t') {
+						c += 8;
+					} else if((signed char) str[i] > 0) {
+						c++;
+					} else {
+						size_t l = 1;
+						while(i + l < str.length() && (signed char) str[i + l] <= 0 && (unsigned char) str[i + l] < 0xC0) l++;
+						c += unicode_width(str.substr(i, l));
+					}
 				}
 			}
 		} else if(expr && !printops.spacious && printops.use_unicode_signs && i + 1 < str.length() && ((signed char) str[i + 1] > 0 || (unsigned char) str[i + 1] >= 0xC0)) {
@@ -3521,9 +3546,9 @@ void do_autocalc(bool force, const char *action_text) {
 				int p_bak = rl_point;
 				INIT_COLS
 				if(output_format != TAG_TYPE_TERMINAL && autocalc_lines == (vertical_space ? 3 : 1) && cols > 0) {
-					autocalc_lines += unicode_length(autocalc_result) / cols;
+					autocalc_lines += unicode_width(autocalc_result) / cols;
 				}
-				bool move_pos = unicode_length(orig_str) + prompt_l + 1 < (size_t) cols && unicode_length(autocalc_str) + prompt_l + 1 < (size_t) cols && !contains_wide_character(orig_str.c_str()) && !contains_wide_character(autocalc_str.c_str());
+				bool move_pos = unicode_width(orig_str) + prompt_l + 1 < (size_t) cols && unicode_width(autocalc_str) + prompt_l + 1 < (size_t) cols && !contains_wide_character(orig_str.c_str()) && !contains_wide_character(autocalc_str.c_str());
 				string sout;
 				if(rl_point != rl_end) {
 					if(move_pos) {
@@ -3556,7 +3581,7 @@ void do_autocalc(bool force, const char *action_text) {
 				if(vertical_space) sout += "\n";
 				sout += "\033["; sout += i2s(autocalc_lines); sout += "A";
 				if(move_pos) {
-					sout += "\033["; sout += i2s((local_converted ? rl_point : unicode_length(orig_str, rl_point)) + prompt_l + 1); sout += "G";
+					sout += "\033["; sout += i2s((local_converted ? rl_point : unicode_width(orig_str, rl_point)) + prompt_l + 1); sout += "G";
 				}
 				FPUTS_UNICODE(sout.c_str(), stdout);
 				fflush(stdout);
