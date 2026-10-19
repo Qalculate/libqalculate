@@ -455,36 +455,56 @@ void update_message_print_options() {
 	CALCULATOR->setMessagePrintOptions(message_printoptions);
 }
 
-size_t unicode_length_check(const char *str) {
+size_t unicode_width(const string &str, size_t l, bool check_uni = true) {
+	if(str.empty() || l == 0) return 0;
+	if(l > str.length()) l = str.length();
+	size_t n = 0;
+	for(size_t i = 0; i < l && check_uni; i++) {
+		if((signed char) str[i] >= 32) {
+			n++;
+		} else if((unsigned char) str[i] >= 0xC0) {
+			if((unsigned char) str[i] <= 0xC9 || ((unsigned char) str[i] >= 0xCE && (unsigned char) str[i] <= 0xD1) || ((unsigned char) str[i] == 0xE2 && i + 2 < l && (((unsigned char) str[i + 1] == 0x80 && (unsigned char) str[i + 2] >= 0xB0) || ((unsigned char) str[i + 1] == 0x81 && (unsigned char) str[i + 2] >= 0xB0) || (unsigned char) str[i + 1] == 0x82 || ((unsigned char) str[i + 1] >= 0x84 && (unsigned char) str[i + 1] <= 0x8b) || ((unsigned char) str[i + 1] == 0x98 && (unsigned char) str[i + 2] == 0x89)))) {
+				n++;
+			} else if((unsigned char) str[i] != 0xCC) {
+				n = l + 1;
+				break;
+			}
+		}
+	}
+	if(n <= l) return n;
+	size_t cSize = mbstowcs(NULL, l == str.length() ? str.c_str() : str.substr(0, l).c_str(), 0) + 1;
+	if(cSize == 0) return 1;
+	wchar_t *wc = new wchar_t[cSize];
+	if(!wc) return 1;
+	mbstowcs(wc, str.c_str(), cSize);
+	n = wcswidth(wc, wcslen(wc));
+	delete[] wc;
+	if(n == (size_t) -1) return 1;
+	return n;
+}
+size_t unicode_width(const string &str) {
+	return unicode_width(str, str.length());
+}
+size_t unicode_width_check(const char *str) {
 	size_t l = strlen(str), l2 = 0;
 	for(size_t i = 0; i < l; i++) {
 		if(str[i] == '\033') {
 			do {
 				i++;
 			} while(i < l && str[i] != 'm');
-		} else if((signed char) str[i] >= 32 || (unsigned char) str[i] >= 0xC0) {
+		} else if((signed char) str[i] >= 32) {
 			l2++;
+		} else if((unsigned char) str[i] >= 0xC0) {
+			if((unsigned char) str[i] <= 0xC9 || ((unsigned char) str[i] >= 0xCE && (unsigned char) str[i] <= 0xD1) || ((unsigned char) str[i] == 0xE2 && i + 2 < l && (((unsigned char) str[i + 1] == 0x80 && (unsigned char) str[i + 2] >= 0xB0) || ((unsigned char) str[i + 1] == 0x81 && (unsigned char) str[i + 2] >= 0xB0) || (unsigned char) str[i + 1] == 0x82 || ((unsigned char) str[i + 1] >= 0x84 && (unsigned char) str[i + 1] <= 0x8b) || ((unsigned char) str[i + 1] == 0x98 && (unsigned char) str[i + 2] == 0x89)))) {
+				l2++;
+			} else if((unsigned char) str[i] != 0xCC) {
+				string s; s += str[i];
+				while(i + 1 < strlen(str) && (signed char) str[i + 1] <= 0) {i++; s += str[i];}
+				l2 += unicode_width(s, s.length(), false);
+			}
 		}
 	}
 	return l2;
-}
-
-size_t unicode_width(const string &str) {
-	size_t cSize = mbstowcs(NULL, str.c_str(), 0) + 1;
-	wchar_t *wc = new wchar_t[cSize];
-	mbstowcs(wc, str.c_str(), cSize);
-	size_t n = wcswidth(wc, wcslen(wc));
-	delete[] wc;
-	return n;
-}
-
-size_t unicode_width(const string &str, size_t l) {
-	size_t cSize = mbstowcs(NULL, str.substr(0, l).c_str(), 0) + 1;
-	wchar_t *wc = new wchar_t[cSize];
-	mbstowcs(wc, str.c_str(), cSize);
-	size_t n = wcswidth(wc, wcslen(wc));
-	delete[] wc;
-	return n;
 }
 
 int s2b(const string &str) {
@@ -549,7 +569,7 @@ bool equalsIgnoreCaseFirst(const string &str1, const char *str2) {
 
 #define READLINE_SPACE_PROMPT \
 		char *rlbuffer = NULL; \
-		if(mode_in_prompt && prompt_l > unicode_length_check(prompt.c_str())) { \
+		if(mode_in_prompt && prompt_l > unicode_width_check(prompt.c_str())) { \
 			fputs(" ", stdout); \
 			rlbuffer = readline(""); \
 		} else { \
@@ -1041,7 +1061,7 @@ int rlcom_tab(int a, int b) {
 						PUTS_UNICODE(matches[i].c_str());
 						l++;
 					} else {
-						int l = unicode_length_check(matches[i].c_str());
+						int l = unicode_width_check(matches[i].c_str());
 						int nr_of_tabs = max_tabs - (l / 8);
 						for(int tab_nr = 0; tab_nr < nr_of_tabs; tab_nr++) {
 							matches[i] += "\t";
@@ -1350,13 +1370,13 @@ void check_vi_mode_change(bool initial = false) {
 	}
 	if(initial || vi_mode != cur_mode) {
 		if(!initial) {
-			if(vi_mode == 0) prompt_l -= unicode_length_check(rl_variable_value("emacs-mode-string"));
-			else if(vi_mode == 1) prompt_l -= unicode_length_check(rl_variable_value("vi-ins-mode-string"));
-			else if(vi_mode == 2) prompt_l -= unicode_length_check(rl_variable_value("vi-cmd-mode-string"));
+			if(vi_mode == 0) prompt_l -= unicode_width_check(rl_variable_value("emacs-mode-string"));
+			else if(vi_mode == 1) prompt_l -= unicode_width_check(rl_variable_value("vi-ins-mode-string"));
+			else if(vi_mode == 2) prompt_l -= unicode_width_check(rl_variable_value("vi-cmd-mode-string"));
 		}
-		if(cur_mode == 0) prompt_l += unicode_length_check(rl_variable_value("emacs-mode-string"));
-		else if(cur_mode == 1) prompt_l += unicode_length_check(rl_variable_value("vi-ins-mode-string"));
-		else if(cur_mode == 2) prompt_l += unicode_length_check(rl_variable_value("vi-cmd-mode-string"));
+		if(cur_mode == 0) prompt_l += unicode_width_check(rl_variable_value("emacs-mode-string"));
+		else if(cur_mode == 1) prompt_l += unicode_width_check(rl_variable_value("vi-ins-mode-string"));
+		else if(cur_mode == 2) prompt_l += unicode_width_check(rl_variable_value("vi-cmd-mode-string"));
 		indent_s.clear();
 		indent_s.append(prompt_l, ' ');
 		vi_mode = cur_mode;
@@ -2102,7 +2122,7 @@ void set_option(string str) {
 		if(svalue == "0" || svalue == "1" || EQUALS_IGNORECASE_AND_LOCAL(svar, "default", _("default"))) svalue = "> ";
 		if(svalue != prompt) {
 			prompt = svalue + " ";
-			prompt_l = unicode_length_check(prompt.c_str());
+			prompt_l = unicode_width_check(prompt.c_str());
 #ifdef HAVE_LIBREADLINE
 			check_vi_mode_change(true);
 			rl_set_prompt(prompt.c_str());
@@ -2463,11 +2483,11 @@ void set_option(string str) {
 	}
 }
 
-#define STR_AND_TABS(x) str = x; pctl = unicode_length(str); if(pctl >= 32) {str += "\t";} else if(pctl >= 24) {str += "\t\t";} else if(pctl >= 16) {str += "\t\t\t";} else if(pctl >= 8) {str += "\t\t\t\t";} else {str += "\t\t\t\t\t";}
-#define STR_AND_TABS_T1(x) str = x; pctl = unicode_length(str); str += "\t";
-#define STR_AND_TABS_T2(x) str = x; pctl = unicode_length(str); if(pctl >= 8) {str += "\t";} else {str += "\t\t";}
-#define STR_AND_TABS_T3(x) str = x; pctl = unicode_length(str); if(pctl >= 16) {str += "\t";} else if(pctl >= 8) {str += "\t\t";} else {str += "\t\t\t";}
-#define STR_AND_TABS_T4(x) str = x; pctl = unicode_length(str); if(pctl >= 24) {str += "\t";} else if(pctl >= 16) {str += "\t\t";} else if(pctl >= 8) {str += "\t\t\t";} else {str += "\t\t\t\t";}
+#define STR_AND_TABS(x) str = x; pctl = unicode_width(str); if(pctl >= 32) {str += "\t";} else if(pctl >= 24) {str += "\t\t";} else if(pctl >= 16) {str += "\t\t\t";} else if(pctl >= 8) {str += "\t\t\t\t";} else {str += "\t\t\t\t\t";}
+#define STR_AND_TABS_T1(x) str = x; pctl = unicode_width(str); str += "\t";
+#define STR_AND_TABS_T2(x) str = x; pctl = unicode_width(str); if(pctl >= 8) {str += "\t";} else {str += "\t\t";}
+#define STR_AND_TABS_T3(x) str = x; pctl = unicode_width(str); if(pctl >= 16) {str += "\t";} else if(pctl >= 8) {str += "\t\t";} else {str += "\t\t\t";}
+#define STR_AND_TABS_T4(x) str = x; pctl = unicode_width(str); if(pctl >= 24) {str += "\t";} else if(pctl >= 16) {str += "\t\t";} else if(pctl >= 8) {str += "\t\t\t";} else {str += "\t\t\t\t";}
 
 #define BEGIN_BOLD(x) if(DO_FORMAT) {x += "\033[1m";}
 #define END_BOLD(x) if(DO_FORMAT) {x += "\033[0m";}
@@ -2897,8 +2917,8 @@ bool show_set_help(string set_option = "") {
 	return b_ret;
 }
 
-#define PRINT_AND_COLON_TABS_INFO(x) FPUTS_UNICODE(x, stdout); pctl = unicode_length_check(x); if(pctl >= 23) fputs(":\t", stdout); else if(pctl >= 15) fputs(":\t\t", stdout); else if(pctl >= 7) fputs(":\t\t\t", stdout); else fputs(":\t\t\t\t", stdout);
-#define STR_AND_COLON_TABS_INFO(x) pctl = unicode_length(x); if(pctl >= 23) x += ":\t"; else if(pctl >= 15) x += ":\t\t"; else if(pctl >= 7) x += ":\t\t\t"; else x += ":\t\t\t\t";
+#define PRINT_AND_COLON_TABS_INFO(x) FPUTS_UNICODE(x, stdout); pctl = unicode_width_check(x); if(pctl >= 23) fputs(":\t", stdout); else if(pctl >= 15) fputs(":\t\t", stdout); else if(pctl >= 7) fputs(":\t\t\t", stdout); else fputs(":\t\t\t\t", stdout);
+#define STR_AND_COLON_TABS_INFO(x) pctl = unicode_width(x); if(pctl >= 23) x += ":\t"; else if(pctl >= 15) x += ":\t\t"; else if(pctl >= 7) x += ":\t\t\t"; else x += ":\t\t\t\t";
 
 bool show_object_info(string name) {
 	int pctl;
@@ -3260,7 +3280,7 @@ bool show_object_info(string name) {
 					}
 				}
 				INIT_COLS
-				addLineBreaks(value, cols, true, false, unicode_length(value_pre) + tabs, unicode_length(value_pre) + tabs);
+				addLineBreaks(value, cols, true, false, unicode_width(value_pre) + tabs, unicode_width(value_pre) + tabs);
 				CHECK_IF_SCREEN_FILLED_PUTS(value.c_str());
 				if(!item->description().empty()) {
 					fputs("\n", stdout);
@@ -4097,7 +4117,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 					PUTS_UNICODE(it->c_str());
 				} else {
 					if(c == 1 && in_interactive) {CHECK_IF_SCREEN_FILLED}
-					int l = unicode_length_check(it->c_str());
+					int l = unicode_width_check(it->c_str());
 					int nr_of_tabs = max_tabs - (l / 8);
 					for(int tab_nr = 0; tab_nr < nr_of_tabs; tab_nr++) {
 						*it += "\t";
@@ -4302,7 +4322,7 @@ void list_defs(bool in_interactive, char list_type = 0, string search_str = "") 
 				PUTS_UNICODE(it->c_str());
 			} else {
 				if(c == 1 && in_interactive) {CHECK_IF_SCREEN_FILLED}
-				int l = unicode_length_check(it->c_str());
+				int l = unicode_width_check(it->c_str());
 				int nr_of_tabs = max_tabs - (l / 8);
 				for(int tab_nr = 0; tab_nr < nr_of_tabs; tab_nr++) {
 					*it += "\t";
@@ -6257,7 +6277,7 @@ int main(int argc, char *argv[]) {
 
 			CHECK_IF_SCREEN_FILLED_HEADING(_("Algebraic Mode"));
 
-#define PRINT_AND_COLON_TABS(x, s) str = x; pctl = unicode_length_check(x); if(strlen(s) > 0) {str += " (" s ")"; pctl += unicode_length_check(" (" s ")");} do {str += '\t'; pctl += 8;} while(pctl < 48);
+#define PRINT_AND_COLON_TABS(x, s) str = x; pctl = unicode_width_check(x); if(strlen(s) > 0) {str += " (" s ")"; pctl += unicode_width_check(" (" s ")");} do {str += '\t'; pctl += 8;} while(pctl < 48);
 
 			PRINT_AND_COLON_TABS(_("algebra mode"), "alg");
 			switch(evalops.structuring) {
@@ -7251,7 +7271,7 @@ bool display_errors(bool goto_input, int cols, bool *implicit_warning) {
 					str += _("warning"); str += ": ";
 				}
 				size_t indent = 0;
-				if((goto_input || cols) && !str.empty()) indent = unicode_length_check(str.c_str());
+				if((goto_input || cols) && !str.empty()) indent = unicode_width_check(str.c_str());
 				if(DO_COLOR && (mtype == MESSAGE_ERROR || mtype == MESSAGE_WARNING)) str += "\033[0m";
 				BEGIN_ITALIC(str)
 				str += CALCULATOR->message()->message();
@@ -7395,23 +7415,23 @@ void add_equals(string &strout, bool b_exact, size_t *i_result_u = NULL, size_t 
 	if(b_exact) {
 		if(add_space) strout += " = ";
 		else strout += "= ";
-		if(i_result_u) *i_result_u = unicode_length_check(strout.c_str());
+		if(i_result_u) *i_result_u = unicode_width_check(strout.c_str());
 		if(i_result) *i_result = strout.length();
 	} else {
 		if(output_format == TAG_TYPE_LATEX) {
 			if(add_space) strout += " \\approx ";
 			else strout += "\\approx ";
-			if(i_result_u) *i_result_u = unicode_length_check(strout.c_str());
+			if(i_result_u) *i_result_u = unicode_width_check(strout.c_str());
 			if(i_result) *i_result = strout.length();
 		} else if(printops.use_unicode_signs) {
 			if(add_space) strout += " " SIGN_ALMOST_EQUAL " ";
 			else strout += SIGN_ALMOST_EQUAL " ";
-			if(i_result_u) *i_result_u = unicode_length_check(strout.c_str());
+			if(i_result_u) *i_result_u = unicode_width_check(strout.c_str());
 			if(i_result) *i_result = strout.length();
 		} else {
 			if(add_space) strout += " = ";
 			else strout += "= ";
-			if(i_result_u) *i_result_u = unicode_length_check(strout.c_str());
+			if(i_result_u) *i_result_u = unicode_width_check(strout.c_str());
 			if(i_result) *i_result = strout.length();
 			strout += _("approx.");
 			strout += " ";
@@ -7889,7 +7909,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 					}
 					strout += "\n\n";
 					i_result_u = 0;
-				} else if(!result_only && ((b_comparison & 1) || (line_breaks && cols > 0 && i_result_u > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols))) {
+				} else if(!result_only && ((b_comparison & 1) || (line_breaks && cols > 0 && i_result_u > (size_t) cols / 2 && unicode_width_check(strout.c_str()) > (size_t) cols))) {
 					strout[i_result - 1] = '\n';
 					if(goto_input) {
 						strout.insert(i_result, indent_s);
@@ -7901,7 +7921,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 				add_equals(strout, !(*printops.is_approximate) && !mstruct->isApproximate(), &i_result_u2, &i_result2, !b_matrix);
 				if(b_matrix && result_only) strout += "\n\n";
 			} else if(!result_only) {
-				if(exact_comparison) {i_result_u = unicode_length_check(strout.c_str()); i_result = strout.length();}
+				if(exact_comparison) {i_result_u = unicode_width_check(strout.c_str()); i_result = strout.length();}
 				else add_equals(strout, (update_parse || !prev_approximate) && (exact_comparison || (!(*printops.is_approximate) && !mstruct->isApproximate())), &i_result_u, &i_result);
 				i_result_u2 = i_result_u;
 				i_result2 = i_result;
@@ -7947,7 +7967,7 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 					} else if(i_result_u == 2 && i_result_u != i_result_u2) {
 						strout[i_result2 - 1] = '\n';
 						if(goto_input) strout.insert(i_result2, indent_s);
-					} else if((b_comparison & 1) || (cols > 0 && i_result_u2 > (size_t) cols / 2 && unicode_length_check(strout.c_str()) > (size_t) cols)) {
+					} else if((b_comparison & 1) || (cols > 0 && i_result_u2 > (size_t) cols / 2 && unicode_width_check(strout.c_str()) > (size_t) cols)) {
 						if(i_result != i_result2) {
 							strout[i_result2 - 1] = '\n';
 							if(goto_input) strout.insert(i_result2, indent_s);
@@ -10151,7 +10171,7 @@ void load_preferences() {
 					ignore_locale = v;
 				} else if(svar == "prompt") {
 					prompt = svalue + " ";
-					prompt_l = unicode_length_check(prompt.c_str());
+					prompt_l = unicode_width_check(prompt.c_str());
 					indent_s.clear();
 					indent_s.append(prompt_l, ' ');
 				} else if(svar == "colorize") {
