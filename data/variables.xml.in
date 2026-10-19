@@ -349,12 +349,12 @@
       <variable>
         <title>Tau Mass (in u)</title>
         <names translatable="no">rs:tau_u</names>
-        <value unit="u" uncertainty="1.3E-4">1.90754</value>
+        <value unit="u" uncertainty="1.29E-4">1.9075375</value>
       </variable>
       <variable>
         <title>Muon Mass (in u)</title>
         <names translatable="no">rs:muon_u</names>
-        <value unit="u" uncertainty="2.5E-9">0.1134289257</value>
+        <value unit="u" uncertainty="2.502E-9">0.113428925701</value>
       </variable>
       <variable>
         <title>Triton Mass (in u)</title>
@@ -566,7 +566,7 @@
       <variable>
         <title>Fine-Structure Constant</title>
         <names translatable="no">r:fine_structure,au:α,ao:alpha</names>
-        <value uncertainty="1.13E-12">7.29735256434E-3</value>
+        <value uncertainty="1.1322E-12">7.29735256434E-3</value>
       </variable>
       <variable>
         <title>Hartree Energy (constant)</title>
@@ -586,7 +586,7 @@
       <variable>
         <title>Rydberg Constant</title>
         <names translatable="no">r:rydberg,asu:R_∞</names>
-        <value uncertainty="0.000012" unit="m^(-1)">10973731.5681569</value>
+        <value uncertainty="0.000012" unit="m^(-1)">10973731.56815693</value>
       </variable>
       <variable>
         <title>Thomson cross section</title>

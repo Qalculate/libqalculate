@@ -3756,8 +3756,8 @@
         <names>ar:mHg</names>
         <hidden>true</hidden>
         <base>
-          <unit>atm</unit>
-          <relation>1000/760</relation>
+          <unit>Pa</unit>
+          <relation>133322.387415</relation>
           <exponent>1</exponent>
         </base>
         <use_with_prefixes default="-3">true</use_with_prefixes>
@@ -4265,7 +4265,7 @@
         <names>ar:hp,horsepower,p:horsepowers</names>
         <base>
           <unit>W</unit>
-          <relation>745.699987158227022</relation>
+          <relation>745.69987158227022</relation>
           <exponent>1</exponent>
         </base>
       </unit>
