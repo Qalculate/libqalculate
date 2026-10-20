@@ -3738,7 +3738,7 @@ bool Calculator::loadExchangeRates() {
 	if(sdate.empty()) {
 		struct stat stats;
 		if(stat(filename.c_str(), &stats) == 0) {
-			if(exchange_rates_time[0] >= stats.st_mtime) {
+			if(priv->exchange_rates_fetched && exchange_rates_time[0] >= stats.st_mtime) {
 #ifdef _WIN32
 				struct _utimbuf new_times;
 #else
@@ -3773,6 +3773,7 @@ bool Calculator::loadExchangeRates() {
 			}
 		}
 	}
+	priv->exchange_rates_fetched = false;
 
 	if(cunits.find(u_btc) == cunits.end()) {
 		filename = getExchangeRatesFileName(2);
@@ -4183,6 +4184,7 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 		utime(getExchangeRatesFileName(1).c_str(), &new_times);
 #endif
 	}
+	priv->exchange_rates_fetched = true;
 
 	if(n <= 0 || n >= 2) {
 

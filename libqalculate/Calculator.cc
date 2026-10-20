@@ -251,6 +251,7 @@ Calculator::Calculator() {
 	b_exchange_rates_warning_enabled = true;
 	b_exchange_rates_used = 0;
 	priv->exchange_rates_url3 = 0;
+	priv->exchange_rates_fetched = false;
 
 	i_aborted = 0;
 	b_controlled = false;
@@ -503,6 +504,7 @@ Calculator::Calculator(bool ignore_locale) {
 	b_exchange_rates_warning_enabled = true;
 	b_exchange_rates_used = 0;
 	priv->exchange_rates_url3 = 0;
+	priv->exchange_rates_fetched = false;
 
 	i_aborted = 0;
 	b_controlled = false;

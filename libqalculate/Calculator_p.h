@@ -85,6 +85,7 @@ class Calculator_p {
 		bool concise_uncertainty_input;
 		bool simplified_percentage_used;
 		int exchange_rates_url3;
+		bool exchange_rates_fetched;
 		long int fixed_denominator;
 		std::vector<std::string> definitions_locales;
 		bool definitions_locale_set;
