@@ -20,6 +20,9 @@
 #include "Calculator.h"
 #include <limits.h>
 #include <stdlib.h>
+#ifndef _WIN32
+#	include <langinfo.h>
+#endif
 #ifndef _MSC_VER
 #	include <sys/time.h>
 #endif
@@ -491,7 +494,16 @@ bool QalculateDateTime::set(string str) {
 		if(sscanf(str.c_str(), "%4ld%2lu%2lu%zn", &newyear, &newmonth, &newday, &n) != 3) {
 #ifndef _WIN32
 			struct tm tmdate;
-			if(strptime(str.c_str(), "%x", &tmdate) || strptime(str.c_str(), "%Ex", &tmdate)) {
+			// only accept the locale's date format if it matches the whole string
+			const char *date_end = strptime(str.c_str(), "%x", &tmdate);
+			if(!date_end || *date_end != '\0') date_end = strptime(str.c_str(), "%Ex", &tmdate);
+			if(!date_end || *date_end != '\0') {
+				// a two-digit year format (e.g. "%m/%d/%y") would otherwise read "01/01/1601" as 2016-01-01
+				string date_fmt = nl_langinfo(D_FMT);
+				gsub("%y", "%Y", date_fmt);
+				date_end = strptime(str.c_str(), date_fmt.c_str(), &tmdate);
+			}
+			if(date_end && *date_end == '\0') {
 				n = str.length();
 				newyear = tmdate.tm_year + 1900;
 				newmonth = tmdate.tm_mon + 1;
