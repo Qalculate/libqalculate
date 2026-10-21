@@ -100,7 +100,7 @@ using std::queue;
 									}\
 								}\
 							}
-#define XML_GET_LOCALE_STRING_FROM_TEXT(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); UPDATE_LOCALE_LANG if(!best) {if(!lang) {if(!next_best) {if(value) {str = (char*) value; remove_blank_ends(str);} else str = ""; if(locale.empty()) {best = true;}}} else {if(locale == (char*) lang) {best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && fulfilled_translation == 0  && !altlocale.empty() && altlocale == (char*) lang) {next_best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && str.empty() && value) {str = (char*) value; remove_blank_ends(str);}}} if(value) xmlFree(value); if(lang) xmlFree(lang);
+#define XML_GET_LOCALE_STRING_FROM_TEXT(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); UPDATE_LOCALE_LANG if(!best) {if(!lang) {if(!next_best) {if(value) {str = (char*) value; remove_blank_ends(str);} else str = ""; if(locale.empty()) {best = true;}}} else {if(locale == (char*) lang) {best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && fulfilled_translation == 0 && !altlocale.empty() && altlocale == (char*) lang) {next_best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && str.empty() && value) {str = (char*) value; remove_blank_ends(str);}}} if(value) xmlFree(value); if(lang) xmlFree(lang);
 #define XML_GET_LOCALE_STRING_FROM_TEXT_REQ(node, str, best, next_best)		value = xmlNodeListGetString(doc, node->xmlChildrenNode, 1); lang = xmlNodeGetLang(node); UPDATE_LOCALE_LANG if(!best) {if(!lang) {if(!next_best) {if(value) {str = (char*) value; remove_blank_ends(str);} else str = ""; if(locale.empty()) {best = true;}}} else {if(locale == (char*) lang) {best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && fulfilled_translation == 0 && !altlocale.empty() && altlocale == (char*) lang) {next_best = true; if(value) {str = (char*) value; remove_blank_ends(str);} else str = "";} else if(!next_best && str.empty() && value && !require_translation) {str = (char*) value; remove_blank_ends(str);}}} if(value) xmlFree(value); if(lang) xmlFree(lang);
 
 #define VERSION_BEFORE(i1, i2, i3) (version_numbers[0] < i1 || (version_numbers[0] == i1 && (version_numbers[1] < i2 || (version_numbers[1] == i2 && version_numbers[2] < i3))))
@@ -542,7 +542,7 @@ bool Calculator::loadLocalDefinitions() {
 #define ITEM_READ_NAMES \
 					if(new_names && ((best_names.empty() && fulfilled_translation != 2) || default_names.empty()) && !xmlStrcmp(child->name, (const xmlChar*) "names")) {\
 						value = xmlNodeListGetString(doc, child->xmlChildrenNode, 1);\
- 						lang = xmlNodeGetLang(child);\
+						lang = xmlNodeGetLang(child);\
 						UPDATE_LOCALE_LANG \
 						if(!lang) {\
 							if(default_names.empty()) {\
@@ -3738,39 +3738,8 @@ bool Calculator::loadExchangeRates() {
 	if(sdate.empty()) {
 		struct stat stats;
 		if(stat(filename.c_str(), &stats) == 0) {
-			if(exchange_rates_time[0] >= stats.st_mtime) {
-#ifdef _WIN32
-				struct _utimbuf new_times;
-#else
-				struct utimbuf new_times;
-#endif
-				struct tm *temptm = localtime(&exchange_rates_time[0]);
-				if(temptm) {
-					struct tm extm = *temptm;
-					time_t time_now = time(NULL);
-					struct tm *newtm = localtime(&time_now);
-					if(newtm && newtm->tm_mday != extm.tm_mday) {
-						newtm->tm_hour = extm.tm_hour;
-						newtm->tm_min = extm.tm_min;
-						newtm->tm_sec = extm.tm_sec;
-						exchange_rates_time[0] = mktime(newtm);
-					} else {
-						time(&exchange_rates_time[0]);
-					}
-				} else {
-					time(&exchange_rates_time[0]);
-				}
-				new_times.modtime = exchange_rates_time[0];
-				new_times.actime = exchange_rates_time[0];
-#ifdef _WIN32
-				_utime(filename.c_str(), &new_times);
-#else
-				utime(filename.c_str(), &new_times);
-#endif
-			} else {
-				exchange_rates_time[0] = stats.st_mtime;
-				if(exchange_rates_time[0] > exchange_rates_check_time[0]) exchange_rates_check_time[0] = exchange_rates_time[0];
-			}
+			exchange_rates_time[0] = stats.st_mtime;
+			if(exchange_rates_time[0] > exchange_rates_check_time[0]) exchange_rates_check_time[0] = exchange_rates_time[0];
 		}
 	}
 
@@ -4129,18 +4098,17 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 	char error_buffer[CURL_ERROR_SIZE];
 	CURL *curl;
 	CURLcode res;
-	long int file_time = 0;
 	curl_global_init(CURL_GLOBAL_DEFAULT);
 	curl = curl_easy_init();
 	if(!curl) {return false;}
 	curl_easy_setopt(curl, CURLOPT_URL, getExchangeRatesUrl(1).c_str());
-	curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
+	curl_easy_setopt(curl, CURLOPT_TIMEOUT, (long) timeout);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
 	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
-	curl_easy_setopt(curl, CURLOPT_MAXFILESIZE_LARGE, 1000000);
+	curl_easy_setopt(curl, CURLOPT_MAXFILESIZE, 1000000L);
 	error_buffer[0] = 0;
-	curl_easy_setopt(curl, CURLOPT_FILETIME, &file_time);
+	curl_easy_setopt(curl, CURLOPT_FILETIME, 1L);
 #ifdef _WIN32
 	char exepath[MAX_PATH];
 	GetModuleFileName(NULL, exepath, MAX_PATH);
@@ -4153,7 +4121,6 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 	}
 #endif
 	res = curl_easy_perform(curl);
-
 	if(res != CURLE_OK) {
 		if(strlen(error_buffer)) {FER_ERROR("ecb.europa.eu", error_buffer, "", "");}
 		else {FER_ERROR("ecb.europa.eu", curl_easy_strerror(res), "", "");}
@@ -4167,32 +4134,42 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 		FETCH_FAIL_CLEANUP
 		return false;
 	}
+	time_t file_time = 0;
+	long file_time_pre = 0;
+	if(curl_easy_getinfo(curl, CURLINFO_FILETIME, &file_time_pre) == CURLE_OK) file_time = (time_t) file_time_pre;
 	file << sbuffer;
 	file.close();
-	if(file_time > 0) {
 #ifdef _WIN32
-		struct _utimbuf new_times;
+	struct _utimbuf new_times;
 #else
-		struct utimbuf new_times;
+	struct utimbuf new_times;
 #endif
-		new_times.modtime = (time_t) file_time;
-		new_times.actime = (time_t) file_time;
-#ifdef _WIN32
-		_utime(getExchangeRatesFileName(1).c_str(), &new_times);
-#else
-		utime(getExchangeRatesFileName(1).c_str(), &new_times);
-#endif
+	if(file_time == 0) {
+		time(&exchange_rates_time[0]);
+	} else {
+		if(exchange_rates_time[0] >= file_time) {
+			time_t time_now = time(NULL);
+			if(time_now > file_time) file_time += floor(difftime(time_now, file_time) / 86400) * 86400;
+		}
+		exchange_rates_time[0] = file_time;
 	}
+	new_times.modtime = exchange_rates_time[0];
+	new_times.actime = exchange_rates_time[0];
+#ifdef _WIN32
+	_utime(getExchangeRatesFileName(1).c_str(), &new_times);
+#else
+	utime(getExchangeRatesFileName(1).c_str(), &new_times);
+#endif
 
 	if(n <= 0 || n >= 2) {
 
 		sbuffer = "";
 		curl_easy_setopt(curl, CURLOPT_URL, getExchangeRatesUrl(2).c_str());
-		curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
+		curl_easy_setopt(curl, CURLOPT_TIMEOUT, (long) timeout);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
 		curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
-		curl_easy_setopt(curl, CURLOPT_MAXFILESIZE_LARGE, 1000000);
+		curl_easy_setopt(curl, CURLOPT_MAXFILESIZE, 1000000L);
 
 		res = curl_easy_perform(curl);
 
@@ -4226,11 +4203,11 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 			else if(i == 1) curl_easy_setopt(curl, CURLOPT_URL, "https://latest.currency-api.pages.dev/v1/currencies/eur.json");
 			else if(i == 3) curl_easy_setopt(curl, CURLOPT_URL, "https://www.floatrates.com/daily/eur.json");
 			else curl_easy_setopt(curl, CURLOPT_URL, "https://www.mycurrency.net/FR.json");
-			curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
+			curl_easy_setopt(curl, CURLOPT_TIMEOUT, (long) timeout);
 			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
 			curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
-			curl_easy_setopt(curl, CURLOPT_MAXFILESIZE_LARGE, 1000000);
+			curl_easy_setopt(curl, CURLOPT_MAXFILESIZE, 1000000L);
 			if(i == 4) curl_easy_setopt(curl, CURLOPT_USERAGENT, (string("libqalculate/") + VERSION).c_str());
 
 			res = curl_easy_perform(curl);
@@ -4272,11 +4249,11 @@ bool Calculator::fetchExchangeRates(int timeout, int n) {
 
 		sbuffer = "";
 		curl_easy_setopt(curl, CURLOPT_URL, getExchangeRatesUrl(4).c_str());
-		curl_easy_setopt(curl, CURLOPT_TIMEOUT, (timeout > 1 && n <= 0) ? 1 : timeout);
+		curl_easy_setopt(curl, CURLOPT_TIMEOUT, (timeout > 1 && n <= 0) ? 1L : (long) timeout);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &sbuffer);
 		curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_buffer);
-		curl_easy_setopt(curl, CURLOPT_MAXFILESIZE_LARGE, 1000000);
+		curl_easy_setopt(curl, CURLOPT_MAXFILESIZE, 1000000L);
 
 		res = curl_easy_perform(curl);
 
