@@ -3485,6 +3485,7 @@ bool contains_updating_time(const MathStructure &m) {
 string result_text_a;
 MathStructure *mstruct_a = NULL, *parsed_mstruct_a = NULL;
 MathStructure mstruct_exact_a, prepend_mstruct_a;
+MathStructure mparsedf;
 
 string current_action_text;
 void do_autocalc(bool force, const char *action_text) {
@@ -3534,7 +3535,7 @@ void do_autocalc(bool force, const char *action_text) {
 		for(size_t i = 0; !str.empty() && i < command_list.size(); i++) {
 			if(str.rfind(command_list[i], command_list[i].length() - 1) == 0 && (str.length() == command_list[i].length() || (command_arg[i] != 0 && str[command_list[i].length()] == ' '))) str = "";
 		}
-		if(!str.empty() && (autocalc_was_aborted || prev_action_text || evalops.parse_options.parsing_mode == PARSING_MODE_RPN || rl_point != rl_end || unicode_length(orig_str) != unicode_length(autocalc_str) + 1 || !last_is_operator(str) || (rpn_mode && (str.find_first_not_of(OPERATORS) == string::npos || (str.length() > 1 && unicode_length(str) == 1))))) {
+		if(!str.empty() && (autocalc_was_aborted || prev_action_text || evalops.parse_options.parsing_mode == PARSING_MODE_RPN || rl_point != rl_end || unicode_length(orig_str) != unicode_length(autocalc_str) + 1 || !last_is_operator(str) || (str[str.length() - 1] == LEFT_PARENTHESIS_CH && prev_autocalc_result.empty() && str.length() > 1 && CALCULATOR->getActiveFunction(str.substr(0, str.length() - 1))) || (rpn_mode && (str.find_first_not_of(OPERATORS) == string::npos || (str.length() > 1 && unicode_length(str) == 1))))) {
 			expression_str = str;
 			if((autocalc_was_aborted || prev_action_text) && evalops.parse_options.parsing_mode != PARSING_MODE_RPN && rl_point == rl_end && unicode_length(orig_str) == unicode_length(autocalc_str) + 1) {
 				int l = last_is_operator(expression_str);
@@ -7822,7 +7823,99 @@ void setResult(Prefix *prefix, bool update_parse, bool goto_input, size_t stack_
 		size_t i_result = 0, i_result_u = 0, i_result2 = 0, i_result_u2 = 0;
 		int b_comparison = 0;
 		if(!result_only) {
-			if(update_parse) {
+			if(auto_calculate && mstruct->isAborted() && mparsedf.isFunction()) {
+				Argument *arg;
+				MathFunction *f = mparsedf.function();
+				int iargs = f->maxargs();
+				int arg_index = mparsedf.countChildren();
+				if(arg_index == 0) arg_index = 1;
+				Argument default_arg;
+				string str2, str3;
+				const ExpressionName *ename = &f->preferredName(false, printops.use_unicode_signs, false, false);
+				bool last_is_vctr = f->getArgumentDefinition(iargs) && f->getArgumentDefinition(iargs)->type() == ARGUMENT_TYPE_VECTOR;
+				autocalc_error = false;
+				autocalc_warning = false;
+				autocalc_info = false;
+				strout += ename->formattedName(TYPE_FUNCTION, true, false, printops.use_unicode_signs);
+				if(iargs < 0) {
+					iargs = f->minargs() + 1;
+					if((int) f->lastArgumentDefinitionIndex() > iargs) iargs = (int) f->lastArgumentDefinitionIndex();
+					if(arg_index > iargs) arg_index = iargs;
+				}
+				if(arg_index > iargs && last_is_vctr) arg_index = iargs;
+				strout += "(";
+				int i_reduced = 0;
+				if(iargs != 0) {
+					for(int i2 = 1; i2 <= iargs; i2++) {
+						if(i2 > f->minargs() && arg_index < i2) {
+							strout += "[";
+						}
+						if(i2 > 1) {
+							strout += CALCULATOR->getComma();
+							strout += " ";
+						}
+						if(i2 == arg_index) {BEGIN_BOLD(strout);}
+						arg = f->getArgumentDefinition(i2);
+						if(arg && !arg->name().empty()) {
+							str2 = arg->name();
+						} else {
+							str2 = _("argument");
+							if(i2 > 1 || f->maxargs() != 1) {
+								str2 += " ";
+								str2 += i2s(i2);
+							}
+						}
+						if(i2 == arg_index) {
+							if(arg) {
+								if(i_reduced == 2) str3 = arg->print();
+								else str3 = arg->printlong();
+							} else {
+								Argument arg_default;
+								if(i_reduced == 2) str3 = arg_default.print();
+								else str3 = arg_default.printlong();
+							}
+							if(i_reduced != 2 && printops.use_unicode_signs) {
+								gsub(">=", SIGN_GREATER_OR_EQUAL, str3);
+								gsub("<=", SIGN_LESS_OR_EQUAL, str3);
+								gsub("!=", SIGN_NOT_EQUAL, str3);
+							}
+							if(!str3.empty()) {
+								str2 += ": ";
+								str2 += str3;
+							}
+							strout += str2;
+							END_BOLD(strout);
+							if(i_reduced < 2) {
+								if(cols > 0 && unicode_width(strout) > cols) {
+									strout = ename->formattedName(TYPE_FUNCTION, true, false, printops.use_unicode_signs);
+									strout += "(";
+									if(i2 != 1) {
+										if(printops.use_unicode_signs) strout += "…";
+										else strout += "...";
+										i_reduced++;
+									} else {
+										i_reduced = 2;
+									}
+									i2--;
+								}
+							} else {
+								i_reduced = 0;
+							}
+						} else {
+							strout += str2;
+							if(i2 > f->minargs() && arg_index < i2) {
+								strout += "]";
+							}
+						}
+					}
+					if(f->maxargs() < 0) {
+						strout += CALCULATOR->getComma();
+						if(printops.use_unicode_signs) strout += "…";
+						else strout += "...";
+					}
+				}
+				strout += ")";
+			} else if(update_parse) {
 				if(parsed_mstruct->isComparison() || parsed_mstruct->isLogicalAnd() || parsed_mstruct->isLogicalOr()) b_comparison += 2;
 				if(mstruct->isComparison() || mstruct->isLogicalAnd() || mstruct->isLogicalOr()) b_comparison += (alt_results.empty() && output_format == TAG_TYPE_TERMINAL ? 1 : 4);
 				if(b_comparison && !(b_comparison & 1)) {
@@ -9003,6 +9096,8 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 	bool save_zeroes = printops.show_ending_zeroes;
 	bool save_neg = printops.negative_exponents;
 
+	if(auto_calculate) mparsedf.clear();
+
 	if(do_stack) {
 	} else {
 		str = expression_str;
@@ -9431,19 +9526,28 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 					if(auto_calculate) {
 						ParseOptions po = evalops.parse_options;
 						po.preserve_format = true;
-						MathStructure mfunc;
-						po.unended_function = &mfunc;
+						if(rl_point == rl_end) po.unended_function = &mparsedf;
 						bool do_calc = true;
 						CALCULATOR->startControl(50);
 						if(str_conv.empty() && !CALCULATOR->hasWhereExpression(original_expression, evalops)) {
 							CALCULATOR->parse(parsed_mstruct, str2, po);
 							do_calc = test_autocalculable(*parsed_mstruct);
 #ifdef HAVE_LIBREADLINE
-							if(do_calc && !parsed_mstruct->isNumber() && rl_point == rl_end && !had_to_expression && (!mfunc.isFunction() || mfunc.size() == 0 || !mfunc.function()->getArgumentDefinition(mfunc.size()) || !mfunc.function()->getArgumentDefinition(mfunc.size())->suggestsQuotes()) && !((evalops.parse_options.base > 10 && evalops.parse_options.base <= 36) || evalops.parse_options.base == BASE_UNICODE || evalops.parse_options.base == BASE_BIJECTIVE_26 || (evalops.parse_options.base == BASE_CUSTOM && (CALCULATOR->customInputBase() > 10 || CALCULATOR->customInputBase() < -10)))) {
+							if(do_calc && !parsed_mstruct->isNumber() && rl_point == rl_end && !had_to_expression && (!mparsedf.isFunction() || mparsedf.size() == 0 || !mparsedf.function()->getArgumentDefinition(mparsedf.size()) || !mparsedf.function()->getArgumentDefinition(mparsedf.size())->suggestsQuotes()) && !((evalops.parse_options.base > 10 && evalops.parse_options.base <= 36) || evalops.parse_options.base == BASE_UNICODE || evalops.parse_options.base == BASE_BIJECTIVE_26 || (evalops.parse_options.base == BASE_CUSTOM && (CALCULATOR->customInputBase() > 10 || CALCULATOR->customInputBase() < -10)))) {
 								do_calc = test_autocalc_function(str2);
 							}
 #endif
+							if(mparsedf.isFunction()) {
+								if(mparsedf.size() > 0 && mparsedf.size() == (size_t) mparsedf.function()->minargs() && mparsedf.last().isZero()) {
+									size_t i = original_expression.find_last_not_of(SPACES);
+									if(i != string::npos && (original_expression[i] == COMMA_CH || original_expression[i] == ';')) do_calc = false;
+									else mparsedf.clear();
+								} else if(!do_calc && (mparsedf.size() >= (size_t) mparsedf.function()->minargs() || (mparsedf.size() == 1 && mparsedf[0].isVector()))) {
+									mparsedf.clear();
+								}
+							}
 						} else {
+							po.unended_function = NULL;
 							from_str = CALCULATOR->unlocalizeExpression(from_str, po);
 							string str_w;
 							if(CALCULATOR->separateWhereExpression(from_str, str_w, evalops)) {
@@ -9490,19 +9594,28 @@ void execute_expression(bool do_mathoperation, MathOperation op, MathFunction *f
 		} else if(auto_calculate) {
 			ParseOptions po = evalops.parse_options;
 			po.preserve_format = true;
-			MathStructure mfunc;
-			po.unended_function = &mfunc;
+			if(rl_point == rl_end) po.unended_function = &mparsedf;
 			bool do_calc = true;
 			CALCULATOR->startControl(50);
 			if(str_conv.empty() && !CALCULATOR->hasWhereExpression(original_expression, evalops)) {
 				CALCULATOR->parse(parsed_mstruct, original_expression, po);
 				do_calc = test_autocalculable(*parsed_mstruct);
 #ifdef HAVE_LIBREADLINE
-				if(do_calc && !parsed_mstruct->isNumber() && rl_point == rl_end && !had_to_expression && (!mfunc.isFunction() || mfunc.size() == 0 || !mfunc.function()->getArgumentDefinition(mfunc.size()) || !mfunc.function()->getArgumentDefinition(mfunc.size())->suggestsQuotes()) && !((evalops.parse_options.base > 10 && evalops.parse_options.base <= 36) || evalops.parse_options.base == BASE_UNICODE || evalops.parse_options.base == BASE_BIJECTIVE_26 || (evalops.parse_options.base == BASE_CUSTOM && (CALCULATOR->customInputBase() > 10 || CALCULATOR->customInputBase() < -10)))) {
+				if(do_calc && !parsed_mstruct->isNumber() && rl_point == rl_end && !had_to_expression && (!mparsedf.isFunction() || mparsedf.size() == 0 || !mparsedf.function()->getArgumentDefinition(mparsedf.size()) || !mparsedf.function()->getArgumentDefinition(mparsedf.size())->suggestsQuotes()) && !((evalops.parse_options.base > 10 && evalops.parse_options.base <= 36) || evalops.parse_options.base == BASE_UNICODE || evalops.parse_options.base == BASE_BIJECTIVE_26 || (evalops.parse_options.base == BASE_CUSTOM && (CALCULATOR->customInputBase() > 10 || CALCULATOR->customInputBase() < -10)))) {
 					do_calc = test_autocalc_function(original_expression);
 				}
 #endif
+				if(mparsedf.isFunction()) {
+					if(mparsedf.size() > 0 && mparsedf.size() == (size_t) mparsedf.function()->minargs() && mparsedf.last().isZero()) {
+						size_t i = original_expression.find_last_not_of(SPACES);
+						if(i != string::npos && (original_expression[i] == COMMA_CH || original_expression[i] == ';')) do_calc = false;
+						else mparsedf.clear();
+					} else if(!do_calc && (mparsedf.size() >= (size_t) mparsedf.function()->minargs() || (mparsedf.size() == 1 && mparsedf[0].isVector()))) {
+						mparsedf.clear();
+					}
+				}
 			} else {
+				po.unended_function = NULL;
 				from_str = CALCULATOR->unlocalizeExpression(from_str, po);
 				string str_w;
 				if(CALCULATOR->separateWhereExpression(from_str, str_w, evalops)) {
