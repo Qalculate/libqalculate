@@ -313,6 +313,8 @@ void update_command_list() {
 		ADD_TO_COMMANDS("to", 1);
 		ADD_TO_COMMANDS("find", 1);
 		ADD_TO_COMMANDS("info", 1);
+		ADD_TO_COMMANDS("arguments", 1);
+		ADD_TO_COMMANDS("args", 1);
 
 		ADD_TO_COMMANDS("store", -1);
 		ADD_TO_COMMANDS("clear", -1);
@@ -832,7 +834,7 @@ void generate_completion_matches(const char *text) {
 	if(!str.empty() && strlen(text) == str.length()) {
 		update_command_list();
 		for(size_t i = 0; i < command_list.size(); i++) {
-			if(command_list[i].rfind(text, strlen(text) - 1) == 0) {
+			if(command_list[i].rfind(text, strlen(text) - 1) == 0 && command_list[i] != "args") {
 				bool b = false;
 				for(size_t i2 = 0; i2 < matches.size(); i2++) {
 					if(matches[i2] == command_list[i]) {
@@ -2920,11 +2922,17 @@ bool show_set_help(string set_option = "") {
 #define PRINT_AND_COLON_TABS_INFO(x) FPUTS_UNICODE(x, stdout); pctl = unicode_width_check(x); if(pctl >= 23) fputs(":\t", stdout); else if(pctl >= 15) fputs(":\t\t", stdout); else if(pctl >= 7) fputs(":\t\t\t", stdout); else fputs(":\t\t\t\t", stdout);
 #define STR_AND_COLON_TABS_INFO(x) pctl = unicode_width(x); if(pctl >= 23) x += ":\t"; else if(pctl >= 15) x += ":\t\t"; else if(pctl >= 7) x += ":\t\t\t"; else x += ":\t\t\t\t";
 
-bool show_object_info(string name) {
+bool show_object_info(string name, bool only_args = false) {
 	int pctl;
 	string str;
-	ExpressionItem *item = CALCULATOR->getActiveExpressionItem(name);
-	Prefix *prefix = CALCULATOR->getPrefix(name);
+	ExpressionItem *item = NULL;
+	Prefix *prefix = NULL;
+	if(only_args) {
+		item = CALCULATOR->getActiveFunction(name);
+	} else {
+		item = CALCULATOR->getActiveExpressionItem(name);
+		prefix = CALCULATOR->getPrefix(name);
+	}
 	if(!item && !prefix) return false;
 	INIT_SCREEN_CHECK
 	CHECK_IF_SCREEN_FILLED_PUTS("");
@@ -2937,89 +2945,93 @@ bool show_object_info(string name) {
 				MathFunction *f = (MathFunction*) item;
 				Argument *arg;
 				Argument default_arg;
-				string str2;
-				str = _("Function");
-				if(!f->title(false).empty()) {
-					str += ": ";
-					str += f->title();
-				}
-				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-				CHECK_IF_SCREEN_FILLED_PUTS("");
-				const ExpressionName *ename = &f->preferredName(false, printops.use_unicode_signs);
-				str = ename->formattedName(TYPE_FUNCTION, true, false, printops.use_unicode_signs);
 				int iargs = f->maxargs();
-				if(iargs < 0) {
-					iargs = f->minargs() + 1;
-					if((int) f->lastArgumentDefinitionIndex() > iargs) iargs = (int) f->lastArgumentDefinitionIndex();
-				}
-				str += "(";
-				if(iargs != 0) {
-					for(int i2 = 1; i2 <= iargs; i2++) {
-						if(i2 > f->minargs()) {
-							str += "[";
-						}
-						if(i2 > 1) {
-							str += CALCULATOR->getComma();
-							str += " ";
-						}
-						arg = f->getArgumentDefinition(i2);
-						if(arg && !arg->name().empty()) {
-							str2 = arg->name();
-						} else {
-							str2 = _("argument");
-							if(i2 > 1 || f->maxargs() != 1) {
-								str2 += " ";
-								str2 += i2s(i2);
+				string str2;
+				if(!only_args) {
+					str = _("Function");
+					if(!f->title(false).empty()) {
+						str += ": ";
+						str += f->title();
+					}
+					CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+					CHECK_IF_SCREEN_FILLED_PUTS("");
+					const ExpressionName *ename = &f->preferredName(false, printops.use_unicode_signs);
+					str = ename->formattedName(TYPE_FUNCTION, true, false, printops.use_unicode_signs);
+					if(iargs < 0) {
+						iargs = f->minargs() + 1;
+						if((int) f->lastArgumentDefinitionIndex() > iargs) iargs = (int) f->lastArgumentDefinitionIndex();
+					}
+					str += "(";
+					if(iargs != 0) {
+						for(int i2 = 1; i2 <= iargs; i2++) {
+							if(i2 > f->minargs()) {
+								str += "[";
+							}
+							if(i2 > 1) {
+								str += CALCULATOR->getComma();
+								str += " ";
+							}
+							arg = f->getArgumentDefinition(i2);
+							if(arg && !arg->name().empty()) {
+								str2 = arg->name();
+							} else {
+								str2 = _("argument");
+								if(i2 > 1 || f->maxargs() != 1) {
+									str2 += " ";
+									str2 += i2s(i2);
+								}
+							}
+							str += str2;
+							if(i2 > f->minargs()) {
+								str += "]";
 							}
 						}
-						str += str2;
-						if(i2 > f->minargs()) {
-							str += "]";
+						if(f->maxargs() < 0) {
+							str += CALCULATOR->getComma();
+							str += " ...";
 						}
 					}
-					if(f->maxargs() < 0) {
-						str += CALCULATOR->getComma();
-						str += " ...";
-					}
-				}
-				str += ")";
-				CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-				for(size_t i2 = 1; i2 <= f->countNames(); i2++) {
-					if(&f->getName(i2) != ename) {
-						CHECK_IF_SCREEN_FILLED_PUTS(f->getName(i2).formattedName(TYPE_FUNCTION, true, false, printops.use_unicode_signs).c_str());
-					}
-				}
-				if(f->subtype() == SUBTYPE_DATA_SET) {
-					CHECK_IF_SCREEN_FILLED_PUTS("");
-					snprintf(buffer, 10000, _("Retrieves data from the %s data set for a given object and property. If \"info\" is typed as property, all properties of the object will be listed."), f->title().c_str());
-					CHECK_IF_SCREEN_FILLED_PUTS(buffer);
-				}
-				if(!f->description().empty()) {
-					CHECK_IF_SCREEN_FILLED_PUTS("");
-					str = f->description();
-					while(true) {
-						size_t i2 = str.find("\n", 1);
-						if(i2 == string::npos || i2 == str.length() - 1) {
-							CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-							break;
-						} else {
-							CHECK_IF_SCREEN_FILLED_PUTS(str.substr(0, i2).c_str());
-							str = str.substr(i2 + 1);
-						}
-					}
-				}
-				if(!f->example(true).empty()) {
-					CHECK_IF_SCREEN_FILLED_PUTS("");
-					str = _("Example:"); str += " "; str += f->example(false, ename->formattedName(TYPE_FUNCTION, true, false, printops.use_unicode_signs));
+					str += ")";
 					CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
-				}
-				if(f->subtype() == SUBTYPE_DATA_SET && !((DataSet*) f)->copyright().empty()) {
-					CHECK_IF_SCREEN_FILLED_PUTS("");
-					CHECK_IF_SCREEN_FILLED_PUTS(((DataSet*) f)->copyright().c_str());
+					for(size_t i2 = 1; i2 <= f->countNames(); i2++) {
+						if(&f->getName(i2) != ename) {
+							CHECK_IF_SCREEN_FILLED_PUTS(f->getName(i2).formattedName(TYPE_FUNCTION, true, false, printops.use_unicode_signs).c_str());
+						}
+					}
+					if(f->subtype() == SUBTYPE_DATA_SET) {
+						CHECK_IF_SCREEN_FILLED_PUTS("");
+						snprintf(buffer, 10000, _("Retrieves data from the %s data set for a given object and property. If \"info\" is typed as property, all properties of the object will be listed."), f->title().c_str());
+						CHECK_IF_SCREEN_FILLED_PUTS(buffer);
+					}
+					if(!f->description().empty()) {
+						CHECK_IF_SCREEN_FILLED_PUTS("");
+						str = f->description();
+						while(true) {
+							size_t i2 = str.find("\n", 1);
+							if(i2 == string::npos || i2 == str.length() - 1) {
+								CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+								break;
+							} else {
+								CHECK_IF_SCREEN_FILLED_PUTS(str.substr(0, i2).c_str());
+								str = str.substr(i2 + 1);
+							}
+						}
+					}
+					if(!f->example(true).empty()) {
+						CHECK_IF_SCREEN_FILLED_PUTS("");
+						str = _("Example:"); str += " "; str += f->example(false, ename->formattedName(TYPE_FUNCTION, true, false, printops.use_unicode_signs));
+						CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
+					}
+					if(f->subtype() == SUBTYPE_DATA_SET && !((DataSet*) f)->copyright().empty()) {
+						CHECK_IF_SCREEN_FILLED_PUTS("");
+						CHECK_IF_SCREEN_FILLED_PUTS(((DataSet*) f)->copyright().c_str());
+					}
 				}
 				if(iargs) {
-					CHECK_IF_SCREEN_FILLED_PUTS("");
-					CHECK_IF_SCREEN_FILLED_PUTS(_("Arguments"));
+					if(!only_args) {
+						CHECK_IF_SCREEN_FILLED_PUTS("");
+						CHECK_IF_SCREEN_FILLED_PUTS(_("Arguments"));
+					}
 					for(int i2 = 1; i2 <= iargs; i2++) {
 						arg = f->getArgumentDefinition(i2);
 						if(arg && !arg->name().empty()) {
@@ -3068,7 +3080,7 @@ bool show_object_info(string name) {
 					}
 					CHECK_IF_SCREEN_FILLED_PUTS(str.c_str());
 				}
-				if(f->subtype() == SUBTYPE_DATA_SET) {
+				if(!only_args && f->subtype() == SUBTYPE_DATA_SET) {
 					DataSet *ds = (DataSet*) f;
 					CHECK_IF_SCREEN_FILLED_PUTS("");
 					CHECK_IF_SCREEN_FILLED_PUTS(_("Properties"));
@@ -3098,7 +3110,7 @@ bool show_object_info(string name) {
 						dp = ds->getNextProperty(&it);
 					}
 				}
-				if(f->subtype() == SUBTYPE_USER_FUNCTION) {
+				if(!only_args && f->subtype() == SUBTYPE_USER_FUNCTION) {
 					CHECK_IF_SCREEN_FILLED_PUTS("");
 					ParseOptions pa = evalops.parse_options; pa.base = 10;
 					str = _("Expression:"); str += " "; str += CALCULATOR->unlocalizeExpression(((UserFunction*) f)->formula(), pa);
@@ -3291,6 +3303,7 @@ bool show_object_info(string name) {
 				break;
 			}
 		}
+		if(only_args) break;
 	}
 	if(prefix) {
 		FPUTS_UNICODE(_("Prefix"), stdout);
@@ -6823,6 +6836,12 @@ int main(int argc, char *argv[]) {
 			if(!show_object_info(str)) {
 				PUTS_UNICODE(_("No function, variable, unit, or prefix with specified name exist."));
 			}
+		} else if(scom == "args" || EQUALS_IGNORECASE_AND_LOCAL(scom, "arguments", _("arguments"))) {
+			str = str.substr(ispace + 1, slen - (ispace + 1));
+			remove_blank_ends(str);
+			if(!show_object_info(str, true)) {
+				PUTS_UNICODE(_("No function with specified name exist."));
+			}
 		} else if(EQUALS_IGNORECASE_AND_LOCAL(scom, "help", _("help"))) {
 			str = str.substr(ispace + 1, slen - (ispace + 1));
 			remove_blank_ends(str);
@@ -7144,7 +7163,7 @@ int main(int argc, char *argv[]) {
 				snprintf(buffer, 10000, _("%s does not accept any arguments."), str.c_str());
 				PUTS_UNICODE(buffer)
 				str = "";
-			} else if(scom.empty() && (explicit_command || str.find_first_of(NOT_IN_NAMES) == string::npos) && (EQUALS_IGNORECASE_AND_LOCAL(str, "set", _("set")) || EQUALS_IGNORECASE_AND_LOCAL(str, "save", _("save")) || EQUALS_IGNORECASE_AND_LOCAL(str, "store", _("store")) || EQUALS_IGNORECASE_AND_LOCAL(str, "variable", _("variable")) || EQUALS_IGNORECASE_AND_LOCAL(str, "function", _("function")) || EQUALS_IGNORECASE_AND_LOCAL(str, "delete", _("delete")) || EQUALS_IGNORECASE_AND_LOCAL(str, "keep", _("keep")) || EQUALS_IGNORECASE_AND_LOCAL(str, "unkeep", _("unkeep")) || EQUALS_IGNORECASE_AND_LOCAL(str, "assume", _("assume")) || EQUALS_IGNORECASE_AND_LOCAL(str, "base", _("base")) || EQUALS_IGNORECASE_AND_LOCAL(str, "rpn", _("rpn")) || EQUALS_IGNORECASE_AND_LOCAL(str, "move", _("move")) || EQUALS_IGNORECASE_AND_LOCAL(str, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(str, "to", _("to")) || EQUALS_IGNORECASE_AND_LOCAL(str, "find", _("find")) || EQUALS_IGNORECASE_AND_LOCAL(str, "info", _("info")))) {
+			} else if(scom.empty() && (explicit_command || str.find_first_of(NOT_IN_NAMES) == string::npos) && (EQUALS_IGNORECASE_AND_LOCAL(str, "set", _("set")) || EQUALS_IGNORECASE_AND_LOCAL(str, "save", _("save")) || EQUALS_IGNORECASE_AND_LOCAL(str, "store", _("store")) || EQUALS_IGNORECASE_AND_LOCAL(str, "variable", _("variable")) || EQUALS_IGNORECASE_AND_LOCAL(str, "function", _("function")) || EQUALS_IGNORECASE_AND_LOCAL(str, "delete", _("delete")) || EQUALS_IGNORECASE_AND_LOCAL(str, "keep", _("keep")) || EQUALS_IGNORECASE_AND_LOCAL(str, "unkeep", _("unkeep")) || EQUALS_IGNORECASE_AND_LOCAL(str, "assume", _("assume")) || EQUALS_IGNORECASE_AND_LOCAL(str, "base", _("base")) || EQUALS_IGNORECASE_AND_LOCAL(str, "rpn", _("rpn")) || EQUALS_IGNORECASE_AND_LOCAL(str, "move", _("move")) || EQUALS_IGNORECASE_AND_LOCAL(str, "convert", _("convert")) || EQUALS_IGNORECASE_AND_LOCAL(str, "to", _("to")) || EQUALS_IGNORECASE_AND_LOCAL(str, "find", _("find")) || EQUALS_IGNORECASE_AND_LOCAL(str, "info", _("info")) || EQUALS_IGNORECASE_AND_LOCAL(str, "arguments", _("arguments")) || str == "args")) {
 				bool b = explicit_command;
 				if(!b) {
 					CALCULATOR->beginTemporaryStopMessages();
