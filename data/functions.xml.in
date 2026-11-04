@@ -623,6 +623,7 @@
     <function>
       <title>Angle between Vector</title>
       <names>r:angleVector</names>
+	  <description>Calculate the angle between two vectors</description>
       <expression>acos(dot(\x,\y)/(norm(\x)*norm(\y)))</expression>
       <argument type="vector" index="1"/>
       <argument type="vector" index="2"/>
@@ -630,20 +631,21 @@
     <function>
       <title>Unit Vector</title>
       <names>r:unitV</names>
+	  <description>Calculate the unit of a given vector/description>
       <expression>transpose(\x / norm(\x))</expression>
       <argument type="vector" index="1"/>
     </function>
     <function>
       <title>Cartesian to polar</title>
-      <names>r:PolarAngle</names>
-      <description>tranpose a vector from a cartesian coordinate form to a polar coordinate form</description>
+      <names>r:polarAngle</names>
+      <description>Tranpose a vector from a cartesian coordinate form to a polar coordinate form</description>
       <expression>atan(element(\x, 2) / element(\x, 1)))</expression>
       <argument type="vector" index="1"/>
     </function>
     <function>
       <title>Polar to cartesian</title>
       <names>r:polar2cart</names>
-      <description>Transform polar coordinates into cartesian(geometric) coordinates</description>
+      <description>Tranpose polar coordinates into cartesian(geometric) coordinates</description>
       <expression>[\x * cos(\y) ; \x * sin(\y)]</expression>
       <argument type="number" index="1"/>
 	  <title>magnitude</title>
