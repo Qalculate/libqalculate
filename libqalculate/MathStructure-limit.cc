@@ -26,6 +26,14 @@ using std::cout;
 using std::vector;
 using std::endl;
 
+bool contains_x_root(const MathStructure &mstruct, const MathStructure &x_var) {
+	if(mstruct.isPower() && mstruct[0].contains(x_var) && mstruct[1].compare(m_one) != COMPARISON_RESULT_LESS) return true;
+	for(size_t i = 0; i < mstruct.size(); i++) {
+		if(contains_x_root(mstruct[i], x_var)) return true;
+	}
+	return false;
+}
+
 int limit_inf_cmp(const MathStructure &mstruct, const MathStructure &mcmp, const MathStructure &x_var) {
 	if(mstruct.equals(mcmp)) return 0;
 	bool b_multi1 = false, b_multi2 = false;
@@ -74,12 +82,12 @@ int limit_inf_cmp(const MathStructure &mstruct, const MathStructure &mcmp, const
 	int itype1 = 0;
 	int itype2 = 0;
 	if(m1->isFunction() && m1->function()->id() == FUNCTION_ID_GAMMA) itype1 = 4;
-	else if(m1->isPower() && m1->exponent()->contains(x_var, true)) itype1 = 3;
+	else if(m1->isPower() && m1->exponent()->contains(x_var, true) && !contains_x_root(*m1, x_var)) itype1 = 3;
 	else if(m1->equals(x_var) || (m1->isPower() && m1->base()->equals(x_var) && m1->exponent()->representsPositive())) itype1 = 2;
 	else if(m1->isFunction() && m1->function()->id() == FUNCTION_ID_LOG) itype1 = 1;
 	else return -2;
 	if(m2->isFunction() && m2->function()->id() == FUNCTION_ID_GAMMA) itype2 = 4;
-	else if(m2->isPower() && m2->exponent()->contains(x_var, true)) itype2 = 3;
+	else if(m2->isPower() && m2->exponent()->contains(x_var, true) && !contains_x_root(*m2, x_var)) itype2 = 3;
 	else if(m2->equals(x_var) || (m2->isPower() && m2->base()->equals(x_var) && m2->exponent()->representsPositive())) itype2 = 2;
 	else if(m2->isFunction() && m2->function()->id() == FUNCTION_ID_LOG) itype2 = 1;
 	else return -2;
