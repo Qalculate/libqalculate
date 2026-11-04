@@ -621,36 +621,31 @@
     </function>
 	  <category>
     <function>
-      <title>Angle between Vector</title>
+      <title>Angle between vectors</title>
       <names>r:angleVector</names>
 	  <description>Calculate the angle between two vectors</description>
       <expression>acos(dot(\x,\y)/(norm(\x)*norm(\y)))</expression>
+	  <condition>dimension(\x)=dimension(\y)</condition>
       <argument type="vector" index="1"/>
       <argument type="vector" index="2"/>
     </function>
     <function>
       <title>Unit Vector</title>
-      <names>r:unitV</names>
+      <names>r:unitVector</names>
 	  <description>Calculate the unit of a given vector</description>
-      <expression>transpose(\x / norm(\x))</expression>
+      <expression>(\x / norm(\x))</expression>
       <argument type="vector" index="1"/>
     </function>
     <function>
-      <title>Cartesian to polar</title>
-      <names>r:polarAngle</names>
-      <description>Tranpose a vector from a cartesian coordinate form to a polar coordinate form</description>
-      <expression>atan(element(\x, 2) / element(\x, 1)))</expression>
-      <argument type="vector" index="1"/>
-    </function>
-    <function>
-      <title>Polar to cartesian</title>
-      <names>r:polar2cart</names>
-      <description>Tranpose polar coordinates into cartesian(geometric) coordinates</description>
-      <expression>[\x * cos(\y) ; \x * sin(\y)]</expression>
+      <title>Polar to Cartesian Conversion</title>
+      <names>a-c:polar2cart,r:polarToCartesian</names>
+      <description>Convert polar coordinates into cartesian(geometric) coordinates</description>
+      <expression>[\x * cos(\y) , \x * sin(\y)]</expression>
       <argument type="number" index="1"/>
-	  <title>magnitude</title>
+	  <title>radial coordinate</title>
 	  </argument>
       <argument type="angle" index="2"/>
+	  <title>angular coordinate</title>
     </function>
   </category>
   </category>
