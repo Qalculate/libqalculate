@@ -631,7 +631,7 @@
     <function>
       <title>Unit Vector</title>
       <names>r:unitV</names>
-	  <description>Calculate the unit of a given vector/description>
+	  <description>Calculate the unit of a given vector</description>
       <expression>transpose(\x / norm(\x))</expression>
       <argument type="vector" index="1"/>
     </function>
