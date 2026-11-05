@@ -619,35 +619,52 @@
         <title>Multiset</title>
       </argument>
     </function>
-	  <category>
     <function>
-      <title>Angle between vectors</title>
-      <names>r:angleVector</names>
-	  <description>Calculate the angle between two vectors</description>
+      <title>Angle between Two Vectors</title>
+      <names>r:vectorAngle</names>
+      <description>Returns the angle between two vectors.</description>
       <expression>acos(dot(\x,\y)/(norm(\x)*norm(\y)))</expression>
-	  <condition>dimension(\x)=dimension(\y)</condition>
-      <argument type="vector" index="1"/>
-      <argument type="vector" index="2"/>
+      <condition>dimension(\x)=dimension(\y)</condition>
+      <argument type="vector" index="1">
+        <title>Vector 1</title>
+      </argument>
+      <argument type="vector" index="2">
+        <title>Vector 2</title>
+      </argument>
     </function>
     <function>
       <title>Unit Vector</title>
       <names>r:unitVector</names>
-	  <description>Calculate the unit of a given vector</description>
-      <expression>(\x / norm(\x))</expression>
-      <argument type="vector" index="1"/>
+      <description>Returns the unit of a vector.</description>
+      <expression>\x/norm(\x)</expression>
+      <argument type="vector" index="1">
+        <title>Vector</title>
+      </argument>
     </function>
     <function>
-      <title>Polar to Cartesian Conversion</title>
-      <names>a-c:polar2cart,r:polarToCartesian</names>
-      <description>Convert polar coordinates into cartesian(geometric) coordinates</description>
-      <expression>[\x * cos(\y) , \x * sin(\y)]</expression>
-      <argument type="number" index="1"/>
-	  <title>radial coordinate</title>
-	  </argument>
-      <argument type="angle" index="2"/>
-	  <title>angular coordinate</title>
+      <title>Polar to Cartesian Coordinates</title>
+      <names>r:fromPolarCoordinates,polar2cart</names>
+      <description>Converts polar coordinates to Cartesian (geometric) coordinates.</description>
+      <expression>[\x*cos(\y),\x*sin(\y)]</expression>
+      <argument type="number" index="1">
+        <title>Radial coordinate</title>
+      </argument>
+      <argument type="angle" index="2">
+        <title>Angular coordinate</title>
+      </argument>
     </function>
-  </category>
+    <function>
+      <title>Cartesian to Polar Coordinates</title>
+      <names>r:toPolarCoordinates,cart2polar</names>
+      <description>Converts Cartesian (geometric) coordinates to polar coordinates.</description>
+      <expression>[sqrt(\x^2+\y^2),atan2(\y,\x)]</expression>
+      <argument type="number" index="1">
+        <title translatable="no">x</title>
+      </argument>
+      <argument type="angle" index="2">
+        <title translatable="no">y</title>
+      </argument>
+    </function>
   </category>
   <category>
     <title>Combinatorics</title>
