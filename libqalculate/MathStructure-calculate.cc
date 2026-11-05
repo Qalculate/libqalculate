@@ -4225,6 +4225,16 @@ int MathStructure::merge_power(MathStructure &mstruct, const EvaluationOptions &
 		}\
 	}
 
+bool contains_nosymarg(const MathStructure &m, const MathStructure &mstruct) {
+	if(mstruct.isUnit() && mstruct.prefix() == NULL && m.isUnit()) return mstruct.unit() == m.unit();
+	if(m.equals(mstruct)) return true;
+	for(size_t i = 0; i < m.size(); i++) {
+		if(m.isFunction() && m.function()->getArgumentDefinition(i + 1) && m.function()->getArgumentDefinition(i + 1)->type() == ARGUMENT_TYPE_SYMBOLIC) continue;
+		if(contains_nosymarg(m[i], mstruct)) return true;
+	}
+	return false;
+}
+
 int MathStructure::merge_logical_and(MathStructure &mstruct, const EvaluationOptions &eo, MathStructure *mparent, size_t index_this, size_t index_mstruct, bool) {
 
 	if(isVector()) {
@@ -4560,14 +4570,14 @@ int MathStructure::merge_logical_and(MathStructure &mstruct, const EvaluationOpt
 					return -1;
 				}
 			}
-		} else if(eo.test_comparisons && comparisonType() == COMPARISON_EQUALS && !CHILD(0).isNumber() && !CHILD(0).containsInterval() && (CHILD(1).isNumber() || eo.isolate_x) && mstruct.contains(CHILD(0)) && !CHILD(1).contains(CHILD(0)) && !CHILD(1).contains(mstruct[0])) {
+		} else if(eo.test_comparisons && comparisonType() == COMPARISON_EQUALS && !CHILD(0).isNumber() && !CHILD(0).containsInterval() && (CHILD(1).isNumber() || eo.isolate_x) && contains_nosymarg(mstruct, CHILD(0)) && !CHILD(1).contains(CHILD(0)) && !CHILD(1).contains(mstruct[0])) {
 			mstruct.calculateReplace(CHILD(0), CHILD(1), eo);
 			if(eo.isolate_x) {mstruct.isolate_x(eo, eo); mstruct.calculatesub(eo, eo, true);}
 			mstruct.ref();
 			add_nocopy(&mstruct, OPERATION_LOGICAL_AND);
 			calculateLogicalAndLast(eo);
 			return 1;
-		} else if(eo.test_comparisons && mstruct.comparisonType() == COMPARISON_EQUALS && !mstruct[0].isNumber() && !mstruct[0].containsInterval() && (mstruct[1].isNumber() || eo.isolate_x) && contains(mstruct[0]) && !mstruct[1].contains(mstruct[0]) && !mstruct[1].contains(CHILD(0))) {
+		} else if(eo.test_comparisons && mstruct.comparisonType() == COMPARISON_EQUALS && !mstruct[0].isNumber() && !mstruct[0].containsInterval() && (mstruct[1].isNumber() || eo.isolate_x) && contains_nosymarg(*this, mstruct[0]) && !mstruct[1].contains(mstruct[0]) && !mstruct[1].contains(CHILD(0))) {
 			calculateReplace(mstruct[0], mstruct[1], eo);
 			if(eo.isolate_x) {isolate_x(eo, eo); calculatesub(eo, eo, true);}
 			mstruct.ref();
@@ -4955,14 +4965,14 @@ int MathStructure::merge_logical_or(MathStructure &mstruct, const EvaluationOpti
 					return -1;
 				}
 			}
-		} else if(eo.test_comparisons && comparisonType() == COMPARISON_NOT_EQUALS && !CHILD(0).isNumber() && !CHILD(0).containsInterval() && (CHILD(1).isNumber() || eo.isolate_x) && mstruct.contains(CHILD(0)) && !CHILD(1).contains(CHILD(0)) && !CHILD(1).contains(mstruct[0])) {
+		} else if(eo.test_comparisons && comparisonType() == COMPARISON_NOT_EQUALS && !CHILD(0).isNumber() && !CHILD(0).containsInterval() && (CHILD(1).isNumber() || eo.isolate_x) && contains_nosymarg(mstruct, CHILD(0)) && !CHILD(1).contains(CHILD(0)) && !CHILD(1).contains(mstruct[0])) {
 			mstruct.calculateReplace(CHILD(0), CHILD(1), eo);
 			if(eo.isolate_x) {mstruct.isolate_x(eo, eo); mstruct.calculatesub(eo, eo, true);}
 			mstruct.ref();
 			add_nocopy(&mstruct, OPERATION_LOGICAL_OR);
 			calculateLogicalOrLast(eo);
 			return 1;
-		} else if(eo.test_comparisons && mstruct.comparisonType() == COMPARISON_NOT_EQUALS && !mstruct[0].isNumber() && !mstruct[0].containsInterval() && (mstruct[1].isNumber() || eo.isolate_x) && contains(mstruct[0]) && !mstruct[1].contains(mstruct[0]) && !mstruct[1].contains(CHILD(0))) {
+		} else if(eo.test_comparisons && mstruct.comparisonType() == COMPARISON_NOT_EQUALS && !mstruct[0].isNumber() && !mstruct[0].containsInterval() && (mstruct[1].isNumber() || eo.isolate_x) && contains_nosymarg(*this, mstruct[0]) && !mstruct[1].contains(mstruct[0]) && !mstruct[1].contains(CHILD(0))) {
 			calculateReplace(mstruct[0], mstruct[1], eo);
 			if(eo.isolate_x) {isolate_x(eo, eo); calculatesub(eo, eo, true);}
 			mstruct.ref();
