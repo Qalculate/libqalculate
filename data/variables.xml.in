@@ -354,7 +354,7 @@
       <variable>
         <title>Muon Mass (in u)</title>
         <names translatable="no">rs:muon_u</names>
-        <value unit="u" uncertainty="2.502E-9">0.113428925701</value>
+        <value unit="u" uncertainty="2.504E-9">0.113428925701</value>
       </variable>
       <variable>
         <title>Triton Mass (in u)</title>

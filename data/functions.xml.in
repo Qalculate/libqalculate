@@ -635,34 +635,10 @@
     <function>
       <title>Unit Vector</title>
       <names>r:unitVector</names>
-      <description>Returns the unit of a vector.</description>
+      <description>Returns a normalized (unit) vector (of length 1).</description>
       <expression>\x/norm(\x)</expression>
       <argument type="vector" index="1">
         <title>Vector</title>
-      </argument>
-    </function>
-    <function>
-      <title>Polar to Cartesian Coordinates</title>
-      <names>r:fromPolarCoordinates,polar2cart</names>
-      <description>Converts polar coordinates to Cartesian (geometric) coordinates.</description>
-      <expression>[\x*cos(\y),\x*sin(\y)]</expression>
-      <argument type="number" index="1">
-        <title>Radial coordinate</title>
-      </argument>
-      <argument type="angle" index="2">
-        <title>Angular coordinate</title>
-      </argument>
-    </function>
-    <function>
-      <title>Cartesian to Polar Coordinates</title>
-      <names>r:toPolarCoordinates,cart2polar</names>
-      <description>Converts Cartesian (geometric) coordinates to polar coordinates.</description>
-      <expression>[sqrt(\x^2+\y^2),atan2(\y,\x)]</expression>
-      <argument type="number" index="1">
-        <title translatable="no">x</title>
-      </argument>
-      <argument type="angle" index="2">
-        <title translatable="no">y</title>
       </argument>
     </function>
   </category>
@@ -2172,6 +2148,30 @@ Note that you must use units for weight (ex. 59kg) and length (ex. 174cm).</desc
       <expression>if((isInteger(\x),isNumber(\1),len(\x)=1&amp;&amp;code(\x)&lt;91&amp;&amp;code(\x)&gt;64),(if(\x&gt;107||\x&lt;1,undefined,element(\2,\x+26)*in),if(sum(\1&gt;(element(\2,"i")+element(\2,"i"+1))/2,1,132,"i")&gt;106,char(sum(\1&gt;(element(\2,"i")+element(\2,"i"+1))/2,1,132,"i")-42),107-sum(\1&gt;(element(\2,"i")+element(\2,"i"+1))/2,1,132,"i")),element(\2,26-(code(\x)-65))*in),undefined, 1)</expression>
       <argument index="1">
         <title>Diameter or Gauge</title>
+      </argument>
+    </function>
+    <function>
+      <title>Polar to Cartesian Coordinates</title>
+      <names>r:fromPolar,polar2cart</names>
+      <description>Converts polar coordinates to Cartesian (geometric) coordinates.</description>
+      <expression>[\x*cos(\y),\x*sin(\y)]</expression>
+      <argument type="number" index="1">
+        <title>Radial coordinate</title>
+      </argument>
+      <argument type="angle" index="2">
+        <title>Angular coordinate</title>
+      </argument>
+    </function>
+    <function>
+      <title>Cartesian to Polar Coordinates</title>
+      <names>r:toPolar,cart2polar</names>
+      <description>Converts Cartesian (geometric) coordinates to polar coordinates.</description>
+      <expression>[sqrt(\x^2+\y^2),atan2(\y,\x)]</expression>
+      <argument type="number" index="1">
+        <title translatable="no">x</title>
+      </argument>
+      <argument type="angle" index="2">
+        <title translatable="no">y</title>
       </argument>
     </function>
   </category>

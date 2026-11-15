@@ -881,7 +881,7 @@ msgstr "gra"
 
 #: src/qalc.cc:1843 src/qalc.cc:2535
 msgid "gradians"
-msgstr "gradienter"
+msgstr "nygrader"
 
 #: src/qalc.cc:1846 src/qalc.cc:2535
 msgid "custom"
@@ -1412,7 +1412,7 @@ msgstr "Tolka odefinierade symboler i uttryck som okända variabler."
 msgid ""
 "If activated physical constants include units (e.g. c = 299 792 458 m∕s)."
 msgstr ""
-"Om aktiverat inkluderar fysiska konstanter enheter (t.ex. c = 299 792 458 "
+"Om aktiverat inkluderar fysikaliska konstanter enheter (t.ex. c = 299 792 458 "
 "m∕s)."
 
 #: src/qalc.cc:2561 src/qalc.cc:6319
@@ -3896,7 +3896,7 @@ msgstr "minus"
 
 #: libqalculate/Calculator.cc:701
 msgid "Gradians unit is missing. Creating one for this session."
-msgstr "Gradientenheten saknas. Skapar en för nuvarande session."
+msgstr "Nygradsenheten saknas. Skapar en för nuvarande session."
 
 #: libqalculate/Calculator.cc:702 libqalculate/Calculator.cc:710
 #: libqalculate/Calculator.cc:718
