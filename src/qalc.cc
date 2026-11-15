@@ -473,7 +473,7 @@ size_t unicode_width(const string &str, size_t l, bool check_uni = true) {
 			}
 		}
 	}
-	if(n <= l) return n;
+	if(check_uni && n <= l) return n;
 	size_t cSize = mbstowcs(NULL, l == str.length() ? str.c_str() : str.substr(0, l).c_str(), 0) + 1;
 	if(cSize == 0) return 1;
 	wchar_t *wc = new wchar_t[cSize];
