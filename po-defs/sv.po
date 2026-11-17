@@ -4,11 +4,11 @@
 # #calorie, allroots, revolutions, thermie, weak mixing angle
 msgid ""
 msgstr ""
-"Project-Id-Version: sv\n"
+"Project-Id-Version: libqalculate\n"
 "Report-Msgid-Bugs-To: https://github.com/Qalculate/libqalculate/issues\n"
-"POT-Creation-Date: 2026-09-26 07:37+0200\n"
-"PO-Revision-Date: 2007-06-15 11:13+0100\n"
-"Last-Translator: Hanna Knutsson <hanna.knutsson@protonmail.com>\n"
+"POT-Creation-Date: 2026-11-17 07:27+0200\n"
+"PO-Revision-Date: 2026-11-17 05:42+0000\n"
+"Last-Translator: Jonatan Nyberg <84130654+NickWick13@users.noreply.github.com>\n"
 "Language-Team: Swedish\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
@@ -34,10 +34,10 @@ msgid ""
 "Malta, Netherlands, Portugal, San Marino, Slovakia, Slovenia, Spain, Vatican "
 "City"
 msgstr ""
-"Andorra, Österrike, Belgien, Bulgarien, Cypern, Estland, Finland, Frankrike, "
-"Tyskland, Grekland, Irland, Italien, Kroatien, Lettland, Litauen, Luxemburg, "
-"Malta, Nederländerna, Portugal, San Marina, Slovakien, Slovenien, Spanien, "
-"Vatikanstaten"
+"Andorra, Österrike, Belgien, Bulgarien, Cypern, Estland, Finland, "
+"Frankrike, Tyskland, Grekland, Irland, Italien, Kroatien, Lettland, "
+"Litauen, Luxemburg, Malta, Nederländerna, Portugal, San Marino, Slovakien,"
+" Slovenien, Spanien, Vatikanstaten"
 
 #: data/currencies.xml.in:11
 msgid "U.S. Dollar"
@@ -52,7 +52,7 @@ msgid ""
 "United States, East Timor, Ecuador, El Salvador, Micronesia, Marshall "
 "Islands, Palau, Zimbabwe"
 msgstr ""
-"USA, Östtimor, Ecuador, El Salvador, Mikronesien, Marskallöarna, Palau, "
+"USA, Östtimor, Ecuador, El Salvador, Mikronesien, Marshallöarna, Palau, "
 "Zimbabwe"
 
 #: data/currencies.xml.in:16
@@ -293,7 +293,7 @@ msgstr "-"
 
 #: data/currencies.xml.in:115
 msgid "New Zealand Dollar"
-msgstr "Nya Zeeländsk dollar"
+msgstr "Nyzeeländsk dollar"
 
 #: data/currencies.xml.in:116
 msgid "a-cr:NZD"
@@ -625,7 +625,7 @@ msgstr "-"
 
 #: data/currencies.xml.in:253
 msgid "West African CFA Franc"
-msgstr "Västafrikansk CFA franc"
+msgstr "Västafrikansk CFA-franc"
 
 #: data/currencies.xml.in:254
 msgid "a-cr:XOF"
@@ -652,7 +652,7 @@ msgstr "-"
 
 #: data/currencies.xml.in:263
 msgid "Bolivian Boliviano Bs"
-msgstr "Bolviansk boliviano Bs"
+msgstr "Boliviansk boliviano Bs"
 
 #: data/currencies.xml.in:264
 msgid "a-cr:BOB"
@@ -724,7 +724,7 @@ msgstr "Kambodja"
 
 #: data/currencies.xml.in:293
 msgid "Central African CFA Franc"
-msgstr "Centralafrikansk CFA franc"
+msgstr "Centralafrikansk CFA-franc"
 
 #: data/currencies.xml.in:294
 msgid "a-cr:XAF"
@@ -764,7 +764,7 @@ msgstr "Caymanöarna"
 
 #: data/currencies.xml.in:308
 msgid "Chilean Peso"
-msgstr "Chilensk pesos"
+msgstr "Chilensk peso"
 
 #: data/currencies.xml.in:309
 msgid "a-cr:CLP"
@@ -776,7 +776,7 @@ msgstr "-"
 
 #: data/currencies.xml.in:313
 msgid "Colombian Peso"
-msgstr "Colombianska peso"
+msgstr "Colombiansk peso"
 
 #: data/currencies.xml.in:314
 msgid "a-cr:COP"
@@ -1384,7 +1384,7 @@ msgstr "-"
 
 #: data/currencies.xml.in:567
 msgid "Nicaraguan Córdoba"
-msgstr "Nicaragiska córdoba"
+msgstr "Nicaraguansk córdoba"
 
 #: data/currencies.xml.in:568
 msgid "a-cr:NIO"
@@ -1444,7 +1444,7 @@ msgstr "-"
 
 #: data/currencies.xml.in:592
 msgid "Papua New Guinean Kina"
-msgstr "Papua Nya Guineansk kina"
+msgstr "Papua Nya Guineas kina"
 
 #: data/currencies.xml.in:593
 msgid "a-cr:PGK"
@@ -1552,7 +1552,7 @@ msgstr "Seychellerna"
 
 #: data/currencies.xml.in:637
 msgid "Sierra Leonean Leone"
-msgstr "Sierra Leonsk leone"
+msgstr "Sierraleonsk leone"
 
 #: data/currencies.xml.in:638
 msgid "a-cr:SLE"
@@ -1588,7 +1588,7 @@ msgstr "-"
 
 #: data/currencies.xml.in:652
 msgid "Sri Lankan Rupee"
-msgstr "Lankesisk rupee"
+msgstr "Lankesisk rupie"
 
 #: data/currencies.xml.in:653
 msgid "a-cr:LKR,aou:௹"
@@ -1660,7 +1660,7 @@ msgstr "-"
 
 #: data/currencies.xml.in:682
 msgid "Tajikistani Somoni"
-msgstr "Tajikisk somoni"
+msgstr "Tadzjikisk somoni"
 
 #: data/currencies.xml.in:683
 msgid "a-cr:TJS"
@@ -1668,7 +1668,7 @@ msgstr "-"
 
 #: data/currencies.xml.in:684
 msgid "Tajikistan"
-msgstr "-"
+msgstr "Tadzjikistan"
 
 #: data/currencies.xml.in:687
 msgid "Tanzanian Shilling"
@@ -1891,10 +1891,8 @@ msgid "Cent (USD)"
 msgstr "-"
 
 #: data/currencies.xml.in:787
-#, fuzzy
-#| msgid "au:¢,r:cent,p:cents"
 msgid "r:US_cent,p:US_cents,aou:¢,o:cent,po:cents"
-msgstr "au:¢,cent"
+msgstr "au:¢,cent,p:US_cents,po:cents"
 
 #: data/currencies.xml.in:796
 msgid "Belgian Franc (obsolete)"
@@ -2018,7 +2016,7 @@ msgstr "-"
 
 #: data/currencies.xml.in:946
 msgid "Estonian Kroon (obsolete)"
-msgstr "Estonisk kroon (obsolet)"
+msgstr "Estnisk krona (obsolet)"
 
 #: data/currencies.xml.in:947
 msgid "a-cr:EEK"
@@ -2042,7 +2040,7 @@ msgstr "-"
 
 #: data/currencies.xml.in:976
 msgid "Latvian Lats (obsolete)"
-msgstr "Lettiska lats (obsolet)"
+msgstr "Lettisk lats (obsolet)"
 
 #: data/currencies.xml.in:977
 msgid "a-cr:LVL"
@@ -2077,7 +2075,9 @@ msgstr "Grundämnen"
 msgid ""
 "This data uses material from the Wikipedia, under the Creative Commons "
 "Attribution-ShareAlike License"
-msgstr "-"
+msgstr ""
+"Uppgifterna bygger på material från Wikipedia som omfattas av licensen "
+"Creative Commons Attribution-ShareAlike"
 
 #: data/datasets.xml.in:10
 msgid "r:atom"
@@ -2086,7 +2086,7 @@ msgstr "-"
 #. Object argument for chemical elements data set
 #: data/datasets.xml.in:13
 msgid "!datasets!Element"
-msgstr "Element"
+msgstr "Grundämne"
 
 #: data/datasets.xml.in:16
 msgid "Symbol"
@@ -2134,7 +2134,7 @@ msgid ""
 "10 Noble Gas\n"
 "11 Unknown chemical properties"
 msgstr ""
-"Ett nummer som representerar en elementgrupp:\n"
+"Ett nummer som representerar en grundämnesgrupp:\n"
 "1 Alkalimetall\n"
 "2 Jordalkalimetall\n"
 "3 Lantanid\n"
@@ -2159,7 +2159,9 @@ msgstr "Atommassa"
 msgid ""
 "The property uses standard atomic weight, when determined, or the mass "
 "number."
-msgstr "Egenskapen använder standard atomvikt, när bestämd, eller masstalet."
+msgstr ""
+"Egenskapen använder standardatomvikten, om den är fastställd, eller "
+"masstalet."
 
 #: data/datasets.xml.in:59
 msgid "r:mass,r:weight"
@@ -2227,7 +2229,18 @@ msgid ""
 "\"Uranus\" (http://www.wikipedia.org/wiki/Uranus), and\n"
 "\"Venus\" (http://en.wikipedia.org/wiki/Venus), under Creative Commons "
 "Attribution-ShareAlike License"
-msgstr "-"
+msgstr ""
+"Uppgifterna bygger på material från Wikipedia-artiklarna\n"
+"\n"
+"\"Earth\" (http://www.wikipedia.org/wiki/Earth),\n"
+"\"Jupiter\" (http://www.wikipedia.org/wiki/Jupiter),\n"
+"\"Mars\" (http://www.wikipedia.org/wiki/Mars),\n"
+"\"Mercury (planet)\" (http://www.wikipedia.org/wiki/Mercury_(planet)),\n"
+"\"Neptune\" (http://www.wikipedia.org/wiki/Neptune),\n"
+"\"Pluto\" (http://www.wikipedia.org/wiki/Pluto),\n"
+"\"Saturn\" (http://www.wikipedia.org/wiki/Saturn),\n"
+"\"Uranus\" (http://www.wikipedia.org/wiki/Uranus) och\n"
+"\"Venus\" (http://en.wikipedia.org/wiki/Venus), som omfattas av licensen Creative Commons Attribution-ShareAlike"
 
 #: data/datasets.xml.in:109
 msgid "r:planet"
@@ -2239,7 +2252,7 @@ msgstr "-"
 
 #: data/datasets.xml.in:120
 msgid "Orbital Period (Year)"
-msgstr "Omkretstid (år)"
+msgstr "Omloppstid (år)"
 
 #. Orbital period for planet
 #: data/datasets.xml.in:125
@@ -2264,7 +2277,7 @@ msgstr "excentricitet"
 
 #: data/datasets.xml.in:141
 msgid "Inclination (to ecliptic)"
-msgstr "Inklination (till eklitisk)"
+msgstr "Inklination (mot ekliptikan)"
 
 #: data/datasets.xml.in:144
 msgid "r:inclination"
@@ -2302,7 +2315,7 @@ msgstr "-"
 
 #: data/datasets.xml.in:175
 msgid "Equatorial Gravity"
-msgstr "Ekvatoriell tyngdkraft"
+msgstr "Tyngdacceleration vid ekvatorn"
 
 #: data/datasets.xml.in:179
 msgid "r:gravity"
@@ -2578,7 +2591,7 @@ msgstr "-"
 
 #: data/elements.xml.in:632
 msgid "Gadolinium"
-msgstr "Gadolinium guld"
+msgstr "-"
 
 #: data/elements.xml.in:642
 msgid "Terbium"
@@ -2767,7 +2780,7 @@ msgstr "-"
 
 #: data/elements.xml.in:1087
 msgid "Roentgenium"
-msgstr "-"
+msgstr "Röntgenium"
 
 #: data/elements.xml.in:1095
 msgid "Copernicium"
@@ -2783,7 +2796,7 @@ msgstr "-"
 
 #: data/elements.xml.in:1120
 msgid "Moscovium"
-msgstr "-"
+msgstr "Moskovium"
 
 #: data/elements.xml.in:1130
 msgid "Livermorium"
@@ -2791,7 +2804,7 @@ msgstr "-"
 
 #: data/elements.xml.in:1140
 msgid "Tennessine"
-msgstr "-"
+msgstr "Tenness"
 
 #: data/elements.xml.in:1150
 msgid "Oganesson"
@@ -2816,7 +2829,7 @@ msgstr "Returnerar en vektor med listade element."
 #. Vector/matrix elements
 #: data/functions.xml.in:11 data/functions.xml.in:161 data/functions.xml.in:254
 msgid "Elements"
-msgstr "Element (antal)"
+msgstr "Element"
 
 #: data/functions.xml.in:15
 msgid "Generate Vector"
@@ -2879,7 +2892,7 @@ msgstr "Använd stegstorlek"
 
 #: data/functions.xml.in:39
 msgid "Colon Function (number sequence vector)"
-msgstr "Kolonfunktion (vektor med numbersekvens)"
+msgstr "Kolonfunktion (vektor med talföljd)"
 
 #: data/functions.xml.in:40
 msgid "r:colon"
@@ -2887,7 +2900,7 @@ msgstr "kolon"
 
 #: data/functions.xml.in:42
 msgid "Returns a sequence of numbers as a vector."
-msgstr "Returnerar en numbersekvens som en vektor."
+msgstr "Returnerar en talföljd som en vektor."
 
 #: data/functions.xml.in:44
 msgid "Starting value"
@@ -2956,9 +2969,9 @@ msgid ""
 "order of rows is reversed, if 2 column order is changed, and if 0 (default) "
 "both are changed."
 msgstr ""
-"Returnernar matrix eller vektor med element i omvänd ordning. Om dimension "
-"är 1, ordningen för rader vänds, om 2 ändras kolumnordningen, och om 0 "
-"(förvalt) ändras båda."
+"Vänder ordningen på elementen i en matris eller vektor. Om dimensionen är "
+"1 vänds radordningen, om den är 2 vänds kolumnordningen och om den är 0 "
+"(förvalt) vänds båda."
 
 #: data/functions.xml.in:83 data/functions.xml.in:94 data/functions.xml.in:108
 #: data/functions.xml.in:258 data/functions.xml.in:267
@@ -2972,7 +2985,7 @@ msgstr "-"
 
 #: data/functions.xml.in:90
 msgid "Circular Vector Shift"
-msgstr "Cirkulär vektorskift"
+msgstr "Cirkulärt vektorskift"
 
 #: data/functions.xml.in:91
 msgid "r:circshift"
@@ -3157,7 +3170,7 @@ msgstr "kolumner"
 
 #: data/functions.xml.in:226
 msgid "Returns the number of columns in a matrix."
-msgstr "Returner antalet kolumner i en matris."
+msgstr "Returnerar antalet kolumner i en matris."
 
 #: data/functions.xml.in:232
 msgid "Extract Row as Vector"
@@ -3304,7 +3317,7 @@ msgstr "kofaktor"
 
 #: data/functions.xml.in:319
 msgid "Calculates the cofactor of the element at specified position."
-msgstr "Beräknar kofaktorn för elementet på angiven position"
+msgstr "Beräknar kofaktorn för elementet på angiven position."
 
 #: data/functions.xml.in:331
 msgid "Matrix Inverse"
@@ -3319,8 +3332,9 @@ msgid ""
 "Calculates the inverse of a matrix. The inverse is the matrix that "
 "multiplied by the original matrix equals the identity matrix (AB = BA = I)."
 msgstr ""
-"Beräknar inversen av en matris. Inversen är den matrix som multiplicerad med "
-"den ursprungliga matrisen är lika med identitetsmatrisen (AB = BA = I)."
+"Beräknar inversen av en matris. Inversen är den matris som multiplicerad "
+"med den ursprungliga matrisen är lika med identitetsmatrisen (AB = BA = "
+"I)."
 
 #: data/functions.xml.in:339
 msgid "Load CSV File"
@@ -3357,7 +3371,7 @@ msgstr "exportera"
 
 #: data/functions.xml.in:356
 msgid "Exports a matrix to a CSV data file."
-msgstr "Exporterar en matris till en CSV-datafil"
+msgstr "Exporterar en matris till en CSV-datafil."
 
 #: data/functions.xml.in:368
 msgid "Magnitude"
@@ -3430,7 +3444,7 @@ msgstr "-"
 
 #: data/functions.xml.in:390
 msgid "Concatenate Horizontally"
-msgstr "Sammanfoga horizontellt"
+msgstr "Sammanfoga horisontellt"
 
 #: data/functions.xml.in:393 data/functions.xml.in:403
 #: data/functions.xml.in:509
@@ -3462,10 +3476,11 @@ msgid ""
 "with each matrix/vector argument followed by the corresponding variable used "
 "in the function argument."
 msgstr ""
-"Beräknar en ny matris eller vektor utifrån varje separat element i matris/"
-"vektor 1 och motsvarande (i samma rad och kolumnen) element i matris/vektor "
-"2. Ett obegränsat antal matriser/vektorer kan anges, med varje matris-/"
-"vektorparameter följd av motsvarande variabel använd i functionsparametern."
+"Beräknar en ny matris eller vektor utifrån varje separat element i "
+"matris/vektor 1 och motsvarande element (i samma rad och kolumn) i "
+"matris/vektor 2. Ett obegränsat antal matriser/vektorer kan anges, med "
+"varje matris-/vektorparameter följd av motsvarande variabel som används i "
+"funktionsparametern."
 
 #: data/functions.xml.in:418
 msgid "Matrices/vectors and variables"
@@ -3473,7 +3488,7 @@ msgstr "Matriser/vektorer och variabler"
 
 #: data/functions.xml.in:422
 msgid "Norm (length)"
-msgstr "Normal"
+msgstr "Norm (längd)"
 
 #: data/functions.xml.in:423
 msgid "r:norm"
@@ -3481,7 +3496,7 @@ msgstr "-"
 
 #: data/functions.xml.in:424
 msgid "Calculates the norm/length of a vector."
-msgstr "Beräknar normalen för en vektor."
+msgstr "Beräknar normen/längden av en vektor."
 
 #: data/functions.xml.in:429
 msgid "Exponent (p)"
@@ -3629,7 +3644,7 @@ msgid ""
 "vector."
 msgstr ""
 "Returnerar en sorterad vektor med de element som enbart existerar i den "
-"först vektorn."
+"första vektorn."
 
 #: data/functions.xml.in:544
 msgid "Unique"
@@ -3637,7 +3652,7 @@ msgstr "Unika element"
 
 #: data/functions.xml.in:545
 msgid "r:unique"
-msgstr ""
+msgstr "-"
 
 #: data/functions.xml.in:546
 msgid "Returns a sorted vector with no repititions."
@@ -3685,9 +3700,9 @@ msgid ""
 "or false), indicating if the corresponding value is found in the second "
 "vector."
 msgstr ""
-"Returnerar en vektor med värden från den första vektors ersatta med 1 eller "
-"0 (sant eller falskt), som visar om motsvarande värde finns (eller inte) i "
-"den andra vektorn."
+"Returnerar en vektor där värdena i den första vektorn ersatts med 1 eller "
+"0 (sant eller falskt), vilket anger om motsvarande värde finns i den andra"
+" vektorn."
 
 #: data/functions.xml.in:591
 msgid "Is Subset"
@@ -3722,7 +3737,7 @@ msgid ""
 "Returns a sorted vector with the elements that exists in either the first or "
 "the second vector, but not in both."
 msgstr ""
-"Returnerar en sorterad vektor med de element som exister i antingen den "
+"Returnerar en sorterad vektor med de element som existerar i antingen den "
 "första eller den andra vektorn, men inte i båda."
 
 #: data/functions.xml.in:624
@@ -3740,7 +3755,7 @@ msgid ""
 "followed by one exclamation mark."
 msgstr ""
 "Beräknar fakulteten för ett heltal. Multiplicerar parametern med varje "
-"mindre positivt heltal (n(n-1)(n-2)...2*1). Kan också skrivas som ett nummer "
+"mindre positivt heltal (n(n-1)(n-2)...2*1). Kan också skrivas som ett tal "
 "följt av ett utropstecken."
 
 #: data/functions.xml.in:629
@@ -3762,8 +3777,8 @@ msgid ""
 "as a number followed by two exclamation marks."
 msgstr ""
 "Beräknar dubbelfakulteten för ett heltal. Multiplicerar parametern med "
-"varannan mindre positivt heltal (n(n-2)(n-4)...). Kan också skrivas som ett "
-"nummer följt av två utropstecken."
+"vartannat mindre positivt heltal (n(n-2)(n-4)...). Kan också skrivas som "
+"ett tal följt av två utropstecken."
 
 #: data/functions.xml.in:644
 msgid "Multifactorial"
@@ -3779,13 +3794,13 @@ msgid ""
 "every x lesser positive integer (n(n-x)(n-2x)...). Can also be entered as a "
 "number followed by three or more exclamation marks."
 msgstr ""
-"Beräknar multifakulteten för ett heltal. Multiplicerar parametern med varje "
-"x mindre positivt heltal (n(n-x)(n-2x)...). Kan också skrivas som ett nummer "
-"följt av tre eller fler utropstecken."
+"Beräknar multifakulteten för ett heltal. Multiplicerar parametern med vart"
+" x:te mindre positivt heltal (n(n-x)(n-2x)...). Kan också skrivas som ett "
+"tal följt av tre eller fler utropstecken."
 
 #: data/functions.xml.in:656
 msgid "Binomial Coefficient"
-msgstr "Binomial koefficient"
+msgstr "Binomialkoefficient"
 
 #: data/functions.xml.in:657
 msgid "r:binomial"
@@ -3805,8 +3820,9 @@ msgid ""
 "by itself with every lesser positive integer raised by themselves (1^1 * "
 "2^2 ... n^n)."
 msgstr ""
-"Beräknar hyperfakulteten för ett heltal. Multiplicerar parametern upphöjt "
-"med varje mindre positivt heltal upphöjt dem själva(1^1 * 2^2 ... n^n)."
+"Beräknar hyperfakulteten för ett heltal. Multiplicerar parametern upphöjd "
+"till sig själv med varje mindre positivt heltal upphöjt till sig självt "
+"(1^1 * 2^2 ... n^n)."
 
 #: data/functions.xml.in:677
 msgid "Superfactorial"
@@ -3822,8 +3838,9 @@ msgid ""
 "argument with the factorial of every lesser positive integer (1! * 2! ... "
 "n!)."
 msgstr ""
-"Beräknar superfakulteten för ett heltal. Mulitplicerar fakulteten av "
-"parametern med fakulteten för varje mindre positivt heltal (1! * 2! ... n!)."
+"Beräknar superfakulteten för ett heltal. Multiplicerar fakulteten av "
+"parametern med fakulteten för varje mindre positivt heltal (1! * 2! ... "
+"n!)."
 
 #: data/functions.xml.in:688
 msgid "Permutations (Variations)"
@@ -3901,7 +3918,7 @@ msgstr "Antal element"
 
 #: data/functions.xml.in:723
 msgid "Number Theory"
-msgstr "Nummerteori"
+msgstr "Talteori"
 
 #: data/functions.xml.in:725
 msgid "Absolute Value"
@@ -3917,7 +3934,7 @@ msgstr "Aritmetik"
 
 #: data/functions.xml.in:734
 msgid "Signum"
-msgstr "Sigma"
+msgstr "Signum"
 
 #: data/functions.xml.in:735
 msgid "r:sgn"
@@ -3935,7 +3952,7 @@ msgstr "-"
 #: data/functions.xml.in:3878 data/functions.xml.in:3902
 #: data/functions.xml.in:3917
 msgid "Number"
-msgstr "Nummer"
+msgstr "Tal"
 
 #: data/functions.xml.in:741
 msgid "Value for zero"
@@ -3976,8 +3993,8 @@ msgid ""
 "divisor of the numerator and the denominator must be 1."
 msgstr ""
 "Hittar den modulära inversen för negativa exponenter och är annars "
-"ekvivalent med mod(a^b, c). För negative exponenter krävs att den största "
-"gemensamma nämnaren av täljare och nämnare är 1."
+"ekvivalent med mod(a^b, c). För negativa exponenter måste den största "
+"gemensamma delaren för täljaren och nämnaren vara 1."
 
 #: data/functions.xml.in:781
 msgid "r:powmod,power_mod"
@@ -4239,14 +4256,13 @@ msgid ""
 "2: factors and exponents in a matrix with two columns\n"
 "3: the exponent after each factor in vector"
 msgstr ""
-"Utför heltals- eller polynomfaktorisering och returnerar faktorerna i en "
-"vektor.\n"
+"Utför heltals- eller polynomfaktorisering och returnerar faktorerna i en vektor.\n"
 "\n"
-"Läge avgör returnvärdet vid heltalsfaktorisering enligt nedan.\n"
-"0: all primtalsfaktorer\n"
+"Läget avgör returvärdet vid heltalsfaktorisering enligt följande.\n"
+"0: alla primtalsfaktorer\n"
 "1: faktorer utan dubletter\n"
-"2: factorer och exponenter i en matris med två kolumner\n"
-"3: exponent efter varje faktor i en vektor"
+"2: faktorer och exponenter i en matris med två kolumner\n"
+"3: exponenten efter varje faktor i en vektor"
 
 #: data/functions.xml.in:1009
 msgid "Mode"
@@ -4351,16 +4367,9 @@ msgid ""
 "even (1), half to odd (2), half toward zero (3), half up (4), half down (5), "
 "half random (6), toward zero (7), away from zero (8), up (9), down (10)"
 msgstr ""
-"Avrundar till närmaste heltal eller decimal. Om den andra parametern är "
-"noll, avrundas värdet till närmaste heltal, annars avrundas värdet till det "
-"motsvarande antalet siffror till höger (om positiv) eller till vänster (om "
-"negativ) om decimaltecknet.\n"
+"Avrundar till närmaste heltal eller decimal. Om den andra parametern är noll, avrundas värdet till närmaste heltal, annars avrundas värdet till det motsvarande antalet siffror till höger (om positiv) eller till vänster (om negativ) om decimaltecknet.\n"
 "\n"
-"Tillgängliga metoder för avrundning (3:e parametern): mitt-i-mellan bort "
-"från noll (0), mitt-i-mellan till jämn (1), mitt-i-mellan till udda (2), "
-"mitt-i-mellan mot noll (3), mitt-i-mellan upp (4), mitt-i-mellan ner (5), "
-"mitt-i-mellan slumpmässig (6), mot noll (7), bort från noll (8), upp (9), "
-"ner (10)"
+"Tillgängliga metoder för avrundning (3:e parametern): mitt emellan bort från noll (0), mitt emellan till jämn (1), mitt emellan till udda (2), mitt emellan mot noll (3), mitt emellan upp (4), mitt emellan ner (5), mitt emellan slumpmässig (6), mot noll (7), bort från noll (8), upp (9), ner (10)"
 
 #: data/functions.xml.in:1101
 msgid "Number of decimals"
@@ -4437,8 +4446,8 @@ msgid ""
 "Returns digit at specified position (index of first digit left of decimal "
 "sign is zero)."
 msgstr ""
-"Returnerar siffran på angiven position (index för första siffrar vänster om "
-"decimalavgränsaren är noll)."
+"Returnerar siffran på angiven position (index för den första siffran till "
+"vänster om decimaltecknet är noll)."
 
 #: data/functions.xml.in:1163 data/functions.xml.in:1177
 #: data/functions.xml.in:3860 data/functions.xml.in:3905
@@ -4458,8 +4467,8 @@ msgid ""
 "Sets the digit at specified position (index of first digit left of decimal "
 "sign is zero)."
 msgstr ""
-"Ändrar siffran på angiven position (index för första siffrar vänster om "
-"decimalavgränsaren är noll)."
+"Ändrar siffran på angiven position (index för den första siffran till "
+"vänster om decimaltecknet är noll)."
 
 #: data/functions.xml.in:1187
 msgid "Clip"
@@ -4524,33 +4533,17 @@ msgid ""
 "is manually selected, the specified expression is always converted to a "
 "single number."
 msgstr ""
-"Returnerar ett värde från ett uttryck med angiven talbas. Talbaser mellan "
-"-62 och 62 har fullt stöd för matematiska uttryck (inklusive operatorer och "
-"funktioner). För övriga talbaser omvandlas angivet uttryck till ett enda "
-"nummer.\n"
+"Returnerar ett värde från ett uttryck med angiven talbas. Talbaser mellan -62 och 62 har fullt stöd för matematiska uttryck (inklusive operatorer och funktioner). För övriga talbaser omvandlas det angivna uttrycket till ett enda tal.\n"
 "\n"
-"Talbaser ≤ 36 används siffror 0-9 och A-Z (ej skiftlägeskänsligt).\n"
+"Talbaser ≤ 36 använder siffrorna 0-9 och A-Z (ej skiftlägeskänsligt).\n"
 "\n"
-"Talbaser mellan 37 och 62 använder skiftlägeskänsliga bokstäver (0-9, A-Z, a-"
-"z) som siffror ('Z' motsvarar 61).\n"
+"Talbaser mellan 37 och 62 använder skiftlägeskänsliga bokstäver (0-9, A-Z, a-z) som siffror ('z' motsvarar 61).\n"
 "\n"
-"Talbaser över 62 använder Unicode-tecken som siffror, med teckenkoden som "
-"värde ('0' motsvarar 48). I detta kan '\\' följt av ett nummer användas "
-"istället (t.ex. '\\0' = 0, '\\523' = 523, '\\x7f' = 127).\n"
+"Talbaser över 62 använder Unicode-tecken som siffror, med teckenkoden som värde (t.ex. '0' motsvarar 48). I detta fall stöds escape-sekvenser (t.ex. '\\0' = 0, '\\523' = 523, '\\x7f' = 127).\n"
 "\n"
-"Negativa talbaser använder samma siffror som motsvarande positiv talbas och "
-"sifforna som används för talbaser som inte är heltal avgörs genom att "
-"avrunda bort från noll. Talbaser som inte är reella tal använder som förval "
-"siffrorna 0-9 och A-Z.\n"
+"Negativa talbaser använder samma siffror som motsvarande positiva talbaser. Siffrorna som används för talbaser som inte är heltal bestäms genom att avrunda talbasen bort från noll. Talbaser som inte är reella tal använder som förval siffrorna 0-9 och A-Z.\n"
 "\n"
-"Uppsättningen siffror som används kan väljas manuellt genom att använda "
-"funktionens tredje parameter (är 0 som förval, för automatiskt val). Ange "
-"som 1 för siffror 0-9 och A-Z, 2 för 0-9, A-Z och a-z, 3 för Unicode-siffror "
-"och 4 för textnummer, eller ange en textsträng med alla siffror placerade i "
-"stigande ordning (t.ex. \"0123456789\") och eventuellt åtskilda av semikolon "
-"(för att möjliggöra flera ekvivalenta siffror, t.ex. \"0;aA1;bB2;cC3\"). När "
-"uppsättningen siffror väljs manuellt, omvandlas alltid det angivna uttrycket "
-"till ett enda nummer."
+"Uppsättningen siffror som används kan väljas med den tredje parametern (förvalet är 0 för automatiskt val). Ange 1 för siffrorna 0-9 och A-Z, 2 för 0-9, A-Z och a-z, 3 för Unicode-siffror och 4 för textnummer (t.ex. ABC=2, DEF=3 o.s.v.), eller ange en textsträng med alla siffror placerade i stigande ordning (t.ex. \"0123456789\") och eventuellt åtskilda av semikolon (för att möjliggöra flera ekvivalenta siffror, t.ex. \"0;aA1;bB2;cC3\"). När uppsättningen siffror väljs manuellt omvandlas alltid det angivna uttrycket till ett enda tal."
 
 #: data/functions.xml.in:1228
 msgid "Set of digits"
@@ -4584,7 +4577,7 @@ msgstr ""
 
 #: data/functions.xml.in:1239
 msgid "Binary number"
-msgstr "Binärt nummer"
+msgstr "Binärt tal"
 
 #: data/functions.xml.in:1242 data/functions.xml.in:1278
 msgid "Two's complement"
@@ -4604,7 +4597,7 @@ msgstr "Returnerar ett värde från ett oktalt uttryck."
 
 #: data/functions.xml.in:1253
 msgid "Octal number"
-msgstr "Oktalt nummer"
+msgstr "Oktalt tal"
 
 #: data/functions.xml.in:1260
 msgid "Decimal"
@@ -4620,7 +4613,7 @@ msgstr "Returnerar ett värde från ett decimalt uttryck."
 
 #: data/functions.xml.in:1264
 msgid "Decimal number"
-msgstr "Decimalt nummer"
+msgstr "Decimalt tal"
 
 #: data/functions.xml.in:1271
 msgid "Hexadecimal"
@@ -4642,7 +4635,7 @@ msgstr ""
 
 #: data/functions.xml.in:1275
 msgid "Hexadecimal number"
-msgstr "Hexadecimalt nummer"
+msgstr "Hexadecimalt tal"
 
 #: data/functions.xml.in:1285
 msgid "Bijective base-26"
@@ -4695,7 +4688,7 @@ msgstr "jämn"
 
 #: data/functions.xml.in:1320
 msgid "Odd"
-msgstr "Ojämnt"
+msgstr "Udda"
 
 #: data/functions.xml.in:1321
 msgid "r:odd"
@@ -4755,7 +4748,7 @@ msgstr "-"
 
 #: data/functions.xml.in:1355
 msgid "Inverse Error Function"
-msgstr "Invers felfunktionen"
+msgstr "Invers felfunktion"
 
 #: data/functions.xml.in:1356
 msgid "r:erfinv"
@@ -4810,7 +4803,7 @@ msgstr "Riemanns Zeta"
 
 #: data/functions.xml.in:1394
 msgid "Calculates Hurwitz zeta function if the second argument is not 1."
-msgstr "Beräknar Hurwizs zetafunction om den andra parametern inte är 1."
+msgstr "Beräknar Hurwitz zetafunktion om den andra parametern inte är 1."
 
 #: data/functions.xml.in:1395
 msgid "r:zeta"
@@ -4834,7 +4827,7 @@ msgstr "-"
 
 #: data/functions.xml.in:1406
 msgid "Returns 0 if i != j and 1 if i = j."
-msgstr "Returnerar 0 om i != j och 1 if i = j."
+msgstr "Returnerar 0 om i != j och 1 om i = j."
 
 #: data/functions.xml.in:1409
 msgid "Value 1 (i)"
@@ -4885,8 +4878,8 @@ msgid ""
 "Discontinuous function also known as \"unit step function\". Returns 0 if x "
 "< 0, 1 if x > 0, and 1/2 if x = 0."
 msgstr ""
-"Stegfunktion även kallad \"enhetsstegfunktion\". Returnerar 0 om x < 0, 1 om "
-"x > 0, och 1/2 om x = 0."
+"Diskontinuerlig funktion även kallad \"enhetsstegfunktion\". Returnerar 0 "
+"om x < 0, 1 om x > 0 och 1/2 om x = 0."
 
 #: data/functions.xml.in:1454
 msgid "Dirac Delta Function"
@@ -4898,7 +4891,7 @@ msgstr "-"
 
 #: data/functions.xml.in:1456
 msgid "Returns 0 if x is non-zero, and infinity if x is zero."
-msgstr "Returnerar 0 om x inte är noĺl, och oändlighet om x är noll."
+msgstr "Returnerar 0 om x inte är noll, och oändlighet om x är noll."
 
 #: data/functions.xml.in:1459
 msgid "Ramp Function"
@@ -4939,7 +4932,7 @@ msgstr "-"
 #: data/functions.xml.in:1496 data/functions.xml.in:1503
 #: data/functions.xml.in:1510 data/functions.xml.in:1518
 msgid "Complex number"
-msgstr "Komplext nummer"
+msgstr "Komplext tal"
 
 #: data/functions.xml.in:1500
 msgid "Imaginary Part"
@@ -4951,7 +4944,7 @@ msgstr "-"
 
 #: data/functions.xml.in:1507
 msgid "Principal Argument"
-msgstr "Principialargument"
+msgstr "Principalargument"
 
 #: data/functions.xml.in:1508
 msgid "r:arg"
@@ -4995,7 +4988,7 @@ msgstr "-"
 
 #: data/functions.xml.in:1536
 msgid "Returns the third real root."
-msgstr "Returnerar den tredje reella roten."
+msgstr "Returnerar den reella kubikroten."
 
 #: data/functions.xml.in:1542
 msgid "Nth root"
@@ -5011,7 +5004,7 @@ msgid ""
 "values are not allowed."
 msgstr ""
 "Returnerar den reella roten. För negativa värden krävs en udda grad. "
-"Komplexa  värden är inte tillåtna."
+"Komplexa värden är inte tillåtna."
 
 #. nth root argument
 #: data/functions.xml.in:1550 data/functions.xml.in:1561
@@ -5071,9 +5064,8 @@ msgid ""
 "Returns the inverse function for x*e^x as ln() does for e^x. Only the "
 "principal branch and real valued results are currently supported."
 msgstr ""
-"Returnerar den inverterade funktionen för x*e^x såsom ln() gör för e^x. "
-"Enbart principalgrenen och värden som ger reeala result stöds för "
-"närvarande. "
+"Returnerar den inversa funktionen till x*e^x såsom ln() gör för e^x. "
+"Enbart principalgrenen och reella resultat stöds för närvarande."
 
 #: data/functions.xml.in:1603
 msgid "Branch"
@@ -5081,7 +5073,7 @@ msgstr "Gren"
 
 #: data/functions.xml.in:1607
 msgid "Complex Exponential (Cis)"
-msgstr "Komplex exponentialfunction (Cis)"
+msgstr "Komplex exponentialfunktion (Cis)"
 
 #: data/functions.xml.in:1608
 msgid "r:cis"
@@ -5113,7 +5105,7 @@ msgstr "-"
 
 #: data/functions.xml.in:1645
 msgid "2 raised to the power X"
-msgstr "2 upphöjt med X"
+msgstr "2 upphöjt till X"
 
 #: data/functions.xml.in:1646
 msgid "rs:exp2"
@@ -5121,7 +5113,7 @@ msgstr "-"
 
 #: data/functions.xml.in:1653
 msgid "10 raised to the power X"
-msgstr "10 upphöjt med X"
+msgstr "10 upphöjt till X"
 
 #: data/functions.xml.in:1654
 msgid "rs:exp10"
@@ -5141,7 +5133,7 @@ msgstr "Returnerar icke-negativa kvadratroten av x * pi"
 
 #: data/functions.xml.in:1666
 msgid "Non-negative value"
-msgstr "Icke-negativt nummer"
+msgstr "Icke-negativt värde"
 
 #: data/functions.xml.in:1672
 msgid "Trigonometry"
@@ -5262,8 +5254,8 @@ msgid ""
 "Computes the principal value of the argument function applied to the complex "
 "number x+iy."
 msgstr ""
-"Beräknar principalvärdet för argumentfunktionen applicerad på det komplex "
-"talet x+iy."
+"Beräknar principalvärdet för argumentfunktionen applicerad på det komplexa"
+" talet x+iy."
 
 #: data/functions.xml.in:1736
 msgid "Y"
@@ -5423,10 +5415,10 @@ msgid ""
 "third argument (exponent bits) is set to zero, the standard number of "
 "exponent bits will be used (e.g. 8 for 32-bit format)."
 msgstr ""
-"Läser ett tal i ett format IEEE 754-flyttal. Talet tolkas som ett binärt, "
-"såvida det inte innehåller andra siffror än 1 eller 0  Om den tredje "
-"parametern (exponentbitar) anges som noll, används standardantal "
-"exponentbitar (t.ex. 8 för format med 32 bitar)"
+"Läser ett tal i ett IEEE 754-flyttalsformat. Talet tolkas som ett binärt "
+"tal, såvida det inte innehåller andra siffror än 1 eller 0. Om den tredje "
+"parametern (exponentbitar) anges som noll används standardantalet "
+"exponentbitar (t.ex. 8 för ett 32-bitarsformat)."
 
 #: data/functions.xml.in:1871
 msgid "Floating-point number (binary)"
@@ -5465,10 +5457,10 @@ msgid ""
 "(exponent bits) is set to zero, the standard number of exponent bits will be "
 "used (e.g. 8 for 32-bit format)."
 msgstr ""
-"Omvandlar ett värde till ett tal i ett format IEEE 754-flyttal och "
-"returnerar ett tal som motsvarar den binära representation. Om den tredje "
-"parametern (exponentbitar) anges som noll, används standardantal "
-"exponentbitar (t.ex. 8 för format med 32 bitar)"
+"Omvandlar ett värde till ett tal i ett IEEE 754-flyttalsformat och "
+"returnerar talet som motsvarar den binära representationen. Om den tredje "
+"parametern (exponentbitar) anges som noll används standardantalet "
+"exponentbitar (t.ex. 8 för ett 32-bitarsformat)."
 
 #: data/functions.xml.in:1901
 msgid "IEEE 754 Floating-Point Error"
@@ -5485,10 +5477,10 @@ msgid ""
 "third argument (exponent bits) is set to zero, the standard number of "
 "exponent bits will be used (e.g. 8 for 32-bit format)."
 msgstr ""
-"Beräknar felvärdet (skillnaden mellan ursprungligt och omvandlat värde) vid "
-"omvandling ett tal i ett IEEE 754-flyttal. Om den tredje parametern "
-"(exponentbitar) anges som noll, används standardantal exponentbitar (t.ex. 8 "
-"för format med 32 bitar)"
+"Beräknar felet (skillnaden mellan det ursprungliga och det omvandlade "
+"värdet) vid omvandling av ett värde till ett IEEE 754-flyttalsformat. Om "
+"den tredje parametern (exponentbitar) anges som noll används "
+"standardantalet exponentbitar (t.ex. 8 för ett 32-bitarsformat)."
 
 #: data/functions.xml.in:1918
 msgid "IEEE 754 Floating-Point Components"
@@ -5505,10 +5497,10 @@ msgid ""
 "bits) is set to zero, the standard number of exponent bits will be used "
 "(e.g. 8 for 32-bit format)."
 msgstr ""
-"Omvandlar ett värde till ett tal i ett format för IEEE 754-flyttal och "
+"Omvandlar ett värde till ett tal i ett IEEE 754-flyttalsformat och "
 "returnerar tecken, exponent och signifikand i en vektor. Om den tredje "
-"parametern (exponentbitar) anges som noll, används standardantal "
-"exponentbitar (t.ex. 8 för format med 32 bitar)"
+"parametern (exponentbitar) anges som noll används standardantalet "
+"exponentbitar (t.ex. 8 för ett 32-bitarsformat)."
 
 #: data/functions.xml.in:1935
 msgid "IEEE 754 Floating-Point Value"
@@ -5524,9 +5516,10 @@ msgid ""
 "point format. If the third argument (exponent bits) is set to zero, the "
 "standard number of exponent bits will be used (e.g. 8 for 32-bit format)."
 msgstr ""
-"Returnerar det närmaste värde som kan representeras av ett IEEE 754-flyttal. "
-"Om den tredje parametern (exponentbitar) anges som noll, används "
-"standardantal exponentbitar (t.ex. 8 för format med 32 bitar)"
+"Returnerar det närmaste värde som kan representeras i ett IEEE "
+"754-flyttalsformat. Om den tredje parametern (exponentbitar) anges som "
+"noll används standardantalet exponentbitar (t.ex. 8 för ett "
+"32-bitarsformat)."
 
 #: data/functions.xml.in:1952
 msgid "Roman Number"
@@ -5560,12 +5553,12 @@ msgid ""
 "decimal degrees), an angle (e.g. with degree unit), or a text string ending "
 "with N, S, E, or W (S for negative latitude, W for negative longitude)."
 msgstr ""
-"Beräknar avståndet mellan två geodetiska koordinater med hjälp Vincentys "
-"formulae (med datum WGS 84), eller, vid misslyckande, haversine-formeln  "
-"Varje koordinat kan anges med ett numeriskt värde (som motsvarar decimala "
-"grader), en vinkel (t.ex. med enheten grader) eller en textsträng som "
-"avslutas med N, S, E eller W (S för negativa latituder, W för negativa "
-"longituder)."
+"Beräknar avståndet mellan två geodetiska koordinater med hjälp av "
+"Vincentys formler (med geodetiskt datum WGS 84) eller, om det misslyckas, "
+"haversine-formeln. Varje koordinat kan anges med ett numeriskt värde (som "
+"motsvarar decimala grader), en vinkel (t.ex. med enheten grader) eller en "
+"textsträng som avslutas med N, S, E eller W (S för negativ latitud, W för "
+"negativ longitud)."
 
 #: data/functions.xml.in:1967
 msgid "Latitude 1"
@@ -5598,10 +5591,10 @@ msgid ""
 "sign bit. If the value is an integer, and the fourth argument is false, the "
 "value is converted from fixed point, otherwise to."
 msgstr ""
-"Omvandlar till eller från ett fixpunktstal. Motsvarar formatet Qm.n där m är "
-"den andra parametern och n den tredje. m inkluderar teckenbiten. Om angivet "
-"värde är ett heltal, och den fjärde parametern är falsk, omvandlas värdet "
-"från fixpunktstal, annars till."
+"Omvandlar till eller från ett fixpunktstal. Motsvarar formatet Qm.n där m "
+"är den andra parametern och n den tredje. m inkluderar inte teckenbiten. "
+"Om angivet värde är ett heltal, och den fjärde parametern är falsk, "
+"omvandlas värdet från fixpunktstal, annars till."
 
 #: data/functions.xml.in:1990 data/functions.xml.in:2010
 msgid "Bits (integer part)"
@@ -5625,7 +5618,7 @@ msgstr "-"
 
 #: data/functions.xml.in:2019
 msgid "Body Mass Index (BMI)"
-msgstr "-"
+msgstr "Kroppsmasseindex (BMI)"
 
 #: data/functions.xml.in:2020
 msgid "r:bmi"
@@ -5643,16 +5636,14 @@ msgid ""
 "\n"
 "Note that you must use units for weight (ex. 59kg) and length (ex. 174cm)."
 msgstr ""
-"Beräknar BMI (Body Mass Index). Det resulterande BMI-värdet tolkas ibland "
-"som följer\n"
+"Beräknar kroppsmasseindex (BMI). Det resulterande BMI-värdet tolkas ibland enligt följande (men tolkningen varierar med ålder, kön m.m.):\n"
 "\n"
 "Undervikt < 18.5\n"
-"Idealvikt 18.5-25\n"
+"Normalvikt 18.5-25\n"
 "Övervikt 25-30\n"
 "Fetma > 30\n"
 "\n"
-"Notera att du måste använda enheter för vikt (ex. 59kg) och längd (ex. "
-"174cm)."
+"Observera att du måste använda enheter för vikt (t.ex. 59kg) och längd (t.ex. 174cm)."
 
 #: data/functions.xml.in:2032
 msgid "Weight"
@@ -5702,7 +5693,7 @@ msgstr "-"
 
 #: data/functions.xml.in:2061
 msgid "RAM Latency"
-msgstr "-"
+msgstr "RAM-latens"
 
 #: data/functions.xml.in:2062
 msgid "r:ramlatency"
@@ -5710,19 +5701,19 @@ msgstr "-"
 
 #: data/functions.xml.in:2066
 msgid "Data Rate"
-msgstr "-"
+msgstr "Datahastighet"
 
 #: data/functions.xml.in:2069
 msgid "CAS Latency"
-msgstr "-"
+msgstr "CAS-latens"
 
 #: data/functions.xml.in:2073
 msgid "Word"
-msgstr "-"
+msgstr "Ord"
 
 #: data/functions.xml.in:2077
 msgid "Transfers per Clock Cycle"
-msgstr "-"
+msgstr "Överföringar per klockcykel"
 
 #: data/functions.xml.in:2082
 msgid "Depth of Field"
@@ -5742,14 +5733,14 @@ msgid ""
 "(Nikon, Pentax, Sony), 3=\"APS-C\" (Canon), 4=\"4/3\" (Four Thirds System), "
 "or 5='1\"' (Nikon 1, Sony RX10, Sony RX100) - for a diameter based on d/1500."
 msgstr ""
-"Returnerar det ungefärliga avståndet mellan de närmaste och mest avlägsna "
-"objekts som har acceptabelt skarpt fokus i ett fotografi. Ange brännvidd "
-"(t.ex. 50 mm) och avstånd (t.ex. 5 m) med enheter, och f-stop (bländarvärde) "
-"utan enhet (2.8, 4.0, 5.6, etc.). Ange antingen oskärpecirkelns "
-"diametergräns (t.ex. 0.05 mm) eller kamerasensors storlek - 0=\"35mm\", "
+"Returnerar det uppskattade avståndet mellan de närmaste och de mest "
+"avlägsna objekt som är acceptabelt skarpa i ett fotografi. Ange brännvidd "
+"(t.ex. 50 mm) och avstånd (t.ex. 5 m) med enheter samt bländarvärde utan "
+"enhet (2.8, 4.0, 5.6 o.s.v.). Ange antingen en gräns för oskärpecirkelns "
+"diameter (t.ex. 0.05 mm) eller kamerans sensorstorlek - 0=\"35mm\", "
 "1=\"APS-H\", 2=\"APS-CN\" (Nikon, Pentax, Sony), 3=\"APS-C\" (Canon), "
-"4=\"4/3\" (Fourt Thirds System), or 5='1\"' (Nikon 1, Sony RX10, Sony RX100) "
-"- för en diameter baserad på d/1500."
+"4=\"4/3\" (Four Thirds System) eller 5='1\"' (Nikon 1, Sony RX10, Sony "
+"RX100) - för en diameter baserad på d/1500."
 
 #: data/functions.xml.in:2088
 msgid "Focal Length"
@@ -5780,11 +5771,14 @@ msgid ""
 "For gauges larger than 0000 (4/0), please use negative values (00=-1, "
 "000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation "
 "(e.g. awg(x) = 20 mm^2)."
-msgstr "-"
+msgstr ""
+"För storlekar större än 0000 (4/0), använd negativa värden (00=-1, 000=-2,"
+" 0000=-3, 00000=-4 o.s.v.). För omvandling till AWG, använd en ekvation "
+"(t.ex. awg(x) = 20 mm^2)."
 
 #: data/functions.xml.in:2107 data/functions.xml.in:2116
 msgid "AWG"
-msgstr ""
+msgstr "-"
 
 #: data/functions.xml.in:2111
 msgid "American Wire Gauge Diameter"
@@ -5799,7 +5793,10 @@ msgid ""
 "For gauges larger than 0000 (4/0), please use negative values (00=-1, "
 "000=-2, 0000=-3, 00000=-4, etc). For conversion to AWG, use an equation "
 "(e.g. awgd(x) = 5 mm)."
-msgstr "-"
+msgstr ""
+"För storlekar större än 0000 (4/0), använd negativa värden (00=-1, 000=-2,"
+" 0000=-3, 00000=-4 o.s.v.). För omvandling till AWG, använd en ekvation "
+"(t.ex. awgd(x) = 5 mm)."
 
 #: data/functions.xml.in:2120
 msgid "Drill Bit Size"
@@ -5814,13 +5811,15 @@ msgid ""
 "Returns drill bit gauge number or letter, if argument is fraction or "
 "diameter value with length unit, or drill bit diameter (with length unit), "
 "if argument is an integer or an upper-case character (quoted)"
-msgstr "-"
+msgstr ""
+"Returnerar borrens storleksnummer eller storleksbokstav om parametern är "
+"ett bråk eller ett diametervärde med längdenhet, eller borrens diameter "
+"(med längdenhet) om parametern är ett heltal eller en versal bokstav (inom"
+" citattecken)"
 
 #: data/functions.xml.in:2128
-#, fuzzy
-#| msgid "Millimeter of Water"
 msgid "Diameter or Gauge"
-msgstr "Millimeter vattenpelare"
+msgstr "Diameter eller storleksbeteckning"
 
 #: data/functions.xml.in:2133
 msgid "Statistics"
@@ -5907,7 +5906,7 @@ msgstr "omfång"
 
 #: data/functions.xml.in:2184
 msgid "Calculates the difference between the min and max value."
-msgstr "Beräknar skillnaden mellan min och max värdet."
+msgstr "Beräknar skillnaden mellan min- och maxvärdet."
 
 #: data/functions.xml.in:2191
 msgid "Median"
@@ -5947,7 +5946,7 @@ msgstr "Beräknar skillnaden mellan den första och tredje kvartilen."
 
 #: data/functions.xml.in:2249
 msgid "Number of Samples"
-msgstr "Antal"
+msgstr "Antal observationer"
 
 #. Number of samples
 #: data/functions.xml.in:2251
@@ -5956,7 +5955,7 @@ msgstr "antal"
 
 #: data/functions.xml.in:2252
 msgid "Returns the number of samples."
-msgstr "Returnerar antalet prov."
+msgstr "Returnerar antalet observationer."
 
 #: data/functions.xml.in:2261
 msgid "Random Numbers"
@@ -5976,8 +5975,8 @@ msgid ""
 "between 0 and 1, if ceil is zero (default), or integers between 1 and "
 "(including) ceil."
 msgstr ""
-"Generar likformigt fördelade pseudo-slumpmässiga tal. Returnerar reella tal "
-"mellan 0 och 1, om taket är noll (förval), eller heltal mellan 1 och "
+"Genererar likformigt fördelade pseudo-slumpmässiga tal. Returnerar reella "
+"tal mellan 0 och 1, om taket är noll (förval), eller heltal mellan 1 och "
 "(inklusive) taket."
 
 #: data/functions.xml.in:2267
@@ -6052,8 +6051,8 @@ msgid ""
 "Returns uniformly distributed random integers between (including) bottom and "
 "top."
 msgstr ""
-"Returnerar likformigt fördelade slumpmässiga heltal mellan (inklusive) nedre "
-"och övre gräns"
+"Returnerar likformigt fördelade slumpmässiga heltal mellan (inklusive) "
+"nedre och övre gräns."
 
 #: data/functions.xml.in:2321
 msgid "Bottom"
@@ -6065,7 +6064,7 @@ msgstr "Övre gräns"
 
 #: data/functions.xml.in:2332
 msgid "Exponential Random Number"
-msgstr "Eponentialslumptal"
+msgstr "Exponentialfördelat slumptal"
 
 #: data/functions.xml.in:2333
 msgid "r:randexp"
@@ -6073,7 +6072,7 @@ msgstr "-"
 
 #: data/functions.xml.in:2336
 msgid "Rate parameter"
-msgstr "Parameter"
+msgstr "Intensitetsparameter"
 
 #: data/functions.xml.in:2345
 msgid "Rayleigh Distributed Random Number"
@@ -6089,7 +6088,7 @@ msgstr "-"
 
 #: data/functions.xml.in:2359
 msgid "Means"
-msgstr "Medelvärde"
+msgstr "Medelvärden"
 
 #: data/functions.xml.in:2362
 msgid "r:mean,average,au:x̄"
@@ -6241,7 +6240,7 @@ msgstr "-"
 
 #: data/functions.xml.in:2527
 msgid "Simple Linear Fit"
-msgstr "Linjär passning"
+msgstr "Enkel linjär anpassning"
 
 #: data/functions.xml.in:2528
 msgid "r:linearfit"
@@ -6254,7 +6253,13 @@ msgid ""
 "least squares method. If the vector of y values is empty, the first argument "
 "is used for sequential y values (with x values 1, 2, ..., n). It is possible "
 "to pass both x and y values in a two column matrix as the first argument."
-msgstr "-"
+msgstr ""
+"Returnerar den linjära funktion som för en uppsättning x- och y-värden "
+"skattas med enkel linjär regression med en enda förklarande variabel och "
+"minsta kvadratmetoden. Om vektorn med y-värden är tom används den första "
+"parametern för y-värden i följd (med x-värdena 1, 2, ..., n). Det går att "
+"ange både x- och y-värden i en matris med två kolumner som första "
+"parameter."
 
 #: data/functions.xml.in:2535 data/functions.xml.in:2551
 #: data/functions.xml.in:2567
@@ -6268,7 +6273,7 @@ msgstr "Y-värden"
 
 #: data/functions.xml.in:2542
 msgid "Quadratic Fit"
-msgstr "Kvadratisk passning"
+msgstr "Kvadratisk anpassning"
 
 #: data/functions.xml.in:2543
 msgid "r:quadraticfit"
@@ -6280,11 +6285,15 @@ msgid ""
 "vector of y values is empty, the first argument is used for sequential y "
 "values (with x values 1, 2, ..., n). It is possible to pass both x and y "
 "values in a two column matrix as the first argument."
-msgstr "-"
+msgstr ""
+"Anpassar data till ett polynom av grad 2 med minsta kvadratmetoden. Om "
+"vektorn med y-värden är tom används den första parametern för y-värden i "
+"följd (med x-värdena 1, 2, ..., n). Det går att ange både x- och y-värden "
+"i en matris med två kolumner som första parameter."
 
 #: data/functions.xml.in:2558
 msgid "Cubic Fit"
-msgstr "Kubisk passning"
+msgstr "Kubisk anpassning"
 
 #: data/functions.xml.in:2559
 msgid "r:cubicfit"
@@ -6296,7 +6305,11 @@ msgid ""
 "vector of y values is empty, the first argument is used for sequential y "
 "values (with x values 1, 2, ..., n). It is possible to pass both x and y "
 "values in a two column matrix as the first argument."
-msgstr "-"
+msgstr ""
+"Anpassar data till ett polynom av grad 3 med minsta kvadratmetoden. Om "
+"vektorn med y-värden är tom används den första parametern för y-värden i "
+"följd (med x-värdena 1, 2, ..., n). Det går att ange både x- och y-värden "
+"i en matris med två kolumner som första parameter."
 
 #: data/functions.xml.in:2575
 msgid "Correlation"
@@ -6320,11 +6333,11 @@ msgstr "-"
 
 #: data/functions.xml.in:2601
 msgid "Statistical Tests"
-msgstr "Statistika tester"
+msgstr "Statistiska tester"
 
 #: data/functions.xml.in:2603
 msgid "Unpaired T-Test"
-msgstr "T-test"
+msgstr "Oparat t-test"
 
 #: data/functions.xml.in:2604
 msgid "r:ttest"
@@ -6340,7 +6353,7 @@ msgstr "-"
 
 #: data/functions.xml.in:2627
 msgid "Distribution"
-msgstr "-"
+msgstr "Fördelning"
 
 #: data/functions.xml.in:2629
 msgid "Binomial Distribution"
@@ -6355,8 +6368,8 @@ msgid ""
 "Returns the probability mass or cumulative distribution function of the "
 "binomial distribution."
 msgstr ""
-"Returnerar täthetsfunktionen eller den kumulative distributionsfunktionen "
-"för binomialfördelning."
+"Returnerar sannolikhetsfunktionen eller den kumulativa "
+"fördelningsfunktionen för binomialfördelningen."
 
 #: data/functions.xml.in:2634
 msgid "Number of successes (k)"
@@ -6393,8 +6406,8 @@ msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "exponential distribution."
 msgstr ""
-"Returnerar täthetsfunktionen eller den kumulative distributionsfunktionen "
-"för exponentialfördelning."
+"Returnerar täthetsfunktionen eller den kumulativa fördelningsfunktionen "
+"för exponentialfördelningen."
 
 #: data/functions.xml.in:2668
 msgid "Exponential Inverse Cumulative Distribution"
@@ -6423,8 +6436,8 @@ msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "logistic distribution."
 msgstr ""
-"Returnerar täthetsfunktionen eller den kumulative distributionsfunktionen "
-"för logistisk fördelning."
+"Returnerar täthetsfunktionen eller den kumulativa fördelningsfunktionen "
+"för den logistiska fördelningen."
 
 #: data/functions.xml.in:2690
 msgid "Scale (s)"
@@ -6447,8 +6460,8 @@ msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "normal distribution."
 msgstr ""
-"Returnerar täthetsfunktionen eller den kumulative distributionsfunktionen "
-"för normaldistribution."
+"Returnerar täthetsfunktionen eller den kumulativa fördelningsfunktionen "
+"för normalfördelningen."
 
 #: data/functions.xml.in:2709 data/functions.xml.in:2729
 msgid "Mean (μ)"
@@ -6479,8 +6492,8 @@ msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "Pareto distribution."
 msgstr ""
-"Returnerar täthetsfunktionen eller den kumulative distributionsfunktionen "
-"för Paretofördelning."
+"Returnerar täthetsfunktionen eller den kumulativa fördelningsfunktionen "
+"för Paretofördelningen."
 
 #: data/functions.xml.in:2746 data/functions.xml.in:2910
 msgid "Shape (α)"
@@ -6503,8 +6516,8 @@ msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "Poisson distribution."
 msgstr ""
-"Returnerar täthetsfunktionen eller den kumulative distributionsfunktionen "
-"för Poissonfördelning."
+"Returnerar sannolikhetsfunktionen eller den kumulativa "
+"fördelningsfunktionen för Poissonfördelningen."
 
 #: data/functions.xml.in:2775
 msgid "Rayleigh Distribution"
@@ -6519,8 +6532,8 @@ msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "Rayleigh distribution."
 msgstr ""
-"Returnerar täthetsfunktionen eller den kumulative distributionsfunktionen "
-"för Rayleighfördelning."
+"Returnerar täthetsfunktionen eller den kumulativa fördelningsfunktionen "
+"för Rayleighfördelningen."
 
 #: data/functions.xml.in:2784 data/functions.xml.in:2803
 msgid "Scale (σ)"
@@ -6538,7 +6551,9 @@ msgstr "-"
 msgid ""
 "Returns the probability density p(x) at x for a Rayleigh tail distribution "
 "with scale parameter sigma and a lower limit. (from Gnumeric)"
-msgstr "-"
+msgstr ""
+"Returnerar sannolikhetstätheten p(x) vid x för en Rayleighsvansfördelning "
+"med skalparametern sigma och en undre gräns. (från Gnumeric)"
 
 #: data/functions.xml.in:2808
 msgid "Gamma Distribution"
@@ -6553,8 +6568,8 @@ msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "gamma distribution."
 msgstr ""
-"Returnerar täthetsfunktionen eller den kumulative distributionsfunktionen "
-"för gammafördelning."
+"Returnerar täthetsfunktionen eller den kumulativa fördelningsfunktionen "
+"för gammafördelningen."
 
 #: data/functions.xml.in:2817 data/functions.xml.in:2874
 #: data/functions.xml.in:2895
@@ -6578,8 +6593,8 @@ msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "chi-square distribution."
 msgstr ""
-"Returnerar täthetsfunktionen eller den kumulative distributionsfunktionen "
-"för chitvåfördelning (chikvadratfördelning)."
+"Returnerar täthetsfunktionen eller den kumulativa fördelningsfunktionen "
+"för chitvåfördelningen (chikvadratfördelningen)."
 
 #: data/functions.xml.in:2838 data/functions.xml.in:2856
 msgid "Degrees of freedom (k)"
@@ -6606,8 +6621,8 @@ msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "Weibull distribution."
 msgstr ""
-"Returnerar täthetsfunktionen eller den kumulative distributionsfunktionen "
-"för Weibullfördelning."
+"Returnerar täthetsfunktionen eller den kumulativa fördelningsfunktionen "
+"för Weibullfördelningen."
 
 #: data/functions.xml.in:2870 data/functions.xml.in:2891
 msgid "Scale (λ)"
@@ -6634,8 +6649,8 @@ msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "beta distribution."
 msgstr ""
-"Returnerar täthetsfunktionen eller den kumulative distributionsfunktionen "
-"för betafördelning."
+"Returnerar täthetsfunktionen eller den kumulativa fördelningsfunktionen "
+"för betafördelningen."
 
 #: data/functions.xml.in:2914
 msgid "Shape (β)"
@@ -6654,7 +6669,7 @@ msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "Student's t distribution."
 msgstr ""
-"Returnerar täthetsfunktionen eller den kumulative distributionsfunktionen "
+"Returnerar täthetsfunktionen eller den kumulativa fördelningsfunktionen "
 "för Students t-fördelning."
 
 #: data/functions.xml.in:2930 data/functions.xml.in:2948
@@ -6682,8 +6697,8 @@ msgid ""
 "Returns the probability density or cumulative distribution function of the F-"
 "distribution."
 msgstr ""
-"Returnerar täthetsfunktionen eller den kumulative distributionsfunktionen "
-"för F-fördelning."
+"Returnerar täthetsfunktionen eller den kumulativa fördelningsfunktionen "
+"för F-fördelningen."
 
 #: data/functions.xml.in:2962 data/functions.xml.in:2984
 msgid "Degrees of freedom (numerator)"
@@ -6714,8 +6729,8 @@ msgid ""
 "Returns the probability density or cumulative distribution function of the "
 "Cauchy distribution."
 msgstr ""
-"Returnerar täthetsfunktionen eller den kumulative distributionsfunktionen "
-"för Cauchyfördelning."
+"Returnerar täthetsfunktionen eller den kumulativa fördelningsfunktionen "
+"för Cauchyfördelningen."
 
 #: data/functions.xml.in:3002
 msgid "Location (x_0)"
@@ -6745,11 +6760,12 @@ msgid ""
 "2697 BCE and chinese leap months are indicated by adding 12 to the month "
 "number (e.g. leap month 4 = 16)."
 msgstr ""
-"Returnerar ett datum. Tillgängliga kalendrar är grekoriansk (1), hebreisk "
+"Returnerar ett datum. Tillgängliga kalendrar är gregoriansk (1), hebreisk "
 "(2), muslimsk (3), persisk (4), indisk (5), kinesisk (6), juliansk (7), "
-"milnkovic (8), koptisk (9), etiopisk (10), egyptisk (11). Det kinesiska året "
-"använder en epok som börjar 2697 f.Kr. och kinesiska skottmånader indikeras "
-"genom att addera 12 till månadens nummer (t.ex. skottmånad 4 = 16)."
+"milankovic (8), koptisk (9), etiopisk (10), egyptisk (11). Det kinesiska "
+"året använder en epok som börjar 2697 f.Kr. och kinesiska skottmånader "
+"indikeras genom att addera 12 till månadens nummer (t.ex. skottmånad 4 = "
+"16)."
 
 #: data/functions.xml.in:3021 data/functions.xml.in:3037
 #: data/functions.xml.in:3143
@@ -6830,7 +6846,7 @@ msgstr "Dagsräkningssystem"
 
 #: data/functions.xml.in:3071 data/functions.xml.in:3090
 msgid "Financial function mode"
-msgstr "Läge för financiella funktioner"
+msgstr "Läge för finansiella funktioner"
 
 #: data/functions.xml.in:3075
 msgid "Years between two dates"
@@ -6859,7 +6875,7 @@ msgstr "Kalenderår, månader och dagar mellan datum"
 
 #: data/functions.xml.in:3095
 msgid "r:ymd"
-msgstr ""
+msgstr "-"
 
 #: data/functions.xml.in:3096
 msgid ""
@@ -6867,7 +6883,7 @@ msgid ""
 "optionally hours, minutes, and seconds) between two dates."
 msgstr ""
 "Returnerar en vektor med antalet kalenderår, månader och dagar (och, om "
-"valt, timmar, minuter och sekunder) melland två datum."
+"valt, timmar, minuter och sekunder) mellan två datum."
 
 #: data/functions.xml.in:3105
 msgid "Add time"
@@ -6945,7 +6961,8 @@ msgstr "tidsvärde"
 
 #: data/functions.xml.in:3163
 msgid "Returns the time part, in fractional hours, of a date and time value."
-msgstr "Returnerar tidsdelen, i timmar, för ett datum och tid-värde."
+msgstr ""
+"Returnerar tidsdelen, i timmar med decimaler, av ett datum- och tidsvärde."
 
 #: data/functions.xml.in:3169
 msgid "Date to Unix Timestamp"
@@ -6968,8 +6985,8 @@ msgid ""
 "Returns the local date and time represented by the specified Unix timestamp "
 "(seconds, excluding leap seconds, since 1970-01-01). Supports time units."
 msgstr ""
-"Returnerar det lokala datum och tid som representeras av den angivna "
-"Unixtiden (sekunderar, exklusive skottsekunders, sedan 1970-01-01). "
+"Returnerar det lokala datum och den lokala tid som representeras av den "
+"angivna Unixtiden (sekunder, exklusive skottsekunder, sedan 1970-01-01). "
 "Tidsenheter stöds."
 
 #: data/functions.xml.in:3180
@@ -7048,9 +7065,9 @@ msgid ""
 "date. This value corresponds to an angle between 0 and 360 degrees. 0 "
 "represents new moon, 0.5 full moon, and 0.25 and 0.75 quarter moons."
 msgstr ""
-"Returnerar månfasen, som ett nummer mellan 0 och 1, för det angivna datumet. "
+"Returnerar månfasen, som ett tal mellan 0 och 1, för det angivna datumet. "
 "Detta värde motsvarar en vinkel mellan 0 och 360 grader. 0 representerar "
-"nymåne, 0,5 fullmånar, och 0,25 samt 0,75 kvartsmånar."
+"nymåne, 0,5 fullmåne och 0,25 samt 0,75 första respektive sista kvarteret."
 
 #: data/functions.xml.in:3236
 msgid "Find Lunar Phase"
@@ -7069,11 +7086,12 @@ msgid ""
 "rad = 180° which corresponds to a value of 0.5). Values above 1, without "
 "unit, are interpreted as degrees."
 msgstr ""
-"Returnerar datumet när den angivna månfasen inträffar. Funktion söker framåt "
-"med början på angivet datum. Månfasen anges som ett nummer mellan 0 och 1, "
-"där 0 representerar nymåne, 0,5 fullmånar, och 0,25 samt 0,75 kvartsmånar. "
-"Vinkelvärden är också tillåtna (t.ex. π rad = 180° som motsvarar ett värde "
-"på 0,5). Värden över 1, utan enhet, tolkas som grader."
+"Returnerar datumet när den angivna månfasen inträffar. Funktionen söker "
+"framåt med början på angivet datum. Månfasen anges som ett tal mellan 0 "
+"och 1, där 0 representerar nymåne, 0,5 fullmåne och 0,25 samt 0,75 första "
+"respektive sista kvarteret. Vinkelvärden är också tillåtna (t.ex. π rad = "
+"180° som motsvarar ett värde på 0,5). Värden över 1, utan enhet, tolkas "
+"som grader."
 
 #: data/functions.xml.in:3240
 msgid "Lunar phase"
@@ -7114,10 +7132,11 @@ msgid ""
 "used (the exact values depends on the current internal precision), which can "
 "be useful for avoidance of invalid results at the endpoints."
 msgstr ""
-"Returnerar ett stängt intervall med angivna gränser. Om exkludera "
-"gränsvärden är sant, används de näst närmaste (mot mittpunkten) "
-"flyttalsvärdena (exakta värden avgörs av nuvarande intern precision), vilket "
-"kan vara användbart för att undvika ogiltiga resultat vid ändpunkterna."
+"Returnerar ett slutet intervall med angivna ändpunkter. Om exkludera "
+"ändpunkter är sant används de närmaste flyttalsvärdena innanför "
+"ändpunkterna, i riktning mot mittpunkten (de exakta värdena beror på den "
+"aktuella interna precisionen). Detta kan vara användbart för att undvika "
+"ogiltiga resultat vid ändpunkterna."
 
 #: data/functions.xml.in:3266
 msgid "Lower endpoint"
@@ -7129,7 +7148,7 @@ msgstr "Övre gräns"
 
 #: data/functions.xml.in:3272
 msgid "Exclude endpoints"
-msgstr "Exkludera gränsvärden"
+msgstr "Exkludera ändpunkter"
 
 #: data/functions.xml.in:3276 data/functions.xml.in:3283
 msgid "Uncertainty"
@@ -7243,10 +7262,10 @@ msgid ""
 "argument is true, each separate code unit (8, 16, or 32 bits depending on "
 "encoding) is placed in a vector."
 msgstr ""
-"Kodar ett Unicode-tecken eller en textsträng i angett format. De "
+"Kodar ett Unicode-tecken eller en textsträng i det valda formatet. De "
 "teckenkodningar som stöds är UTF-8 (0), UTF-16 (1) och UTF-32 (2). Om den "
-"tredje parametern är satt till sant, placerar varje separat kodenhet (8, 16 "
-"eller 32 bitar, beroende på teckenkodning) i en vektor."
+"tredje parametern är satt till sant placeras varje separat kodenhet (8, 16"
+" eller 32 bitar, beroende på teckenkodning) i en vektor."
 
 #: data/functions.xml.in:3347
 msgid "Character"
@@ -7298,7 +7317,7 @@ msgstr "Textsträng 2"
 
 #: data/functions.xml.in:3381
 msgid "Convert to String"
-msgstr "Omvändla till textsträng"
+msgstr "Omvandla till textsträng"
 
 #: data/functions.xml.in:3382
 msgid "r:string"
@@ -7329,8 +7348,8 @@ msgid ""
 "Replaces a certain value in an expression with a new value. The expression "
 "is calculated before the replacement if the fourth argument is true."
 msgstr ""
-"Ersätt ett visst värde i ett uttryck med ett nytt värde. Uttrycket beräknas "
-"innan ersättandet om den parametern är satt till sant."
+"Ersätter ett visst värde i ett uttryck med ett nytt värde. Uttrycket "
+"beräknas innan ersättandet om den fjärde parametern är satt till sant."
 
 #: data/functions.xml.in:3403 data/functions.xml.in:3421
 #: data/functions.xml.in:3538 data/functions.xml.in:3696
@@ -7464,8 +7483,8 @@ msgid ""
 "Returns a vector with the positions of elements that fulfil the specified "
 "condition."
 msgstr ""
-"Returnerar en vektor med positionen för element som uppfyller angivet "
-"villkor."
+"Returnerar en vektor med positionerna för de element som uppfyller angivet"
+" villkor."
 
 #: data/functions.xml.in:3516
 msgid "r:find"
@@ -7549,13 +7568,9 @@ msgid ""
 msgstr ""
 "Lagrar ett värde i en variabel eller sparar ett uttryck som en funktion.\n"
 "\n"
-"En funktion skapas om namnet inkluderar parenteser (t.ex. \"f()\". "
-"Funktionsparametrar kan, om så önskas, specificeras i namnet (t.ex. "
-"\"save(a+b;f(a;b))\"). Annars förväntas funktionsparametrar hänvisas till "
-"med \\x, \\y, \\z, \\a, \\b, ..., eller x, y, z (t.ex. \"save(x+y;f())\").\n"
+"En funktion skapas om namnet inkluderar parenteser (t.ex. \"f()\"). Funktionsparametrar kan, om så önskas, specificeras i namnet (t.ex. \"save(a+b;f(a;b))\"). Annars förväntas funktionsparametrar hänvisas till med \\x, \\y, \\z, \\a, \\b, ..., eller x, y, z (t.ex. \"save(x+y;f())\").\n"
 "\n"
-"Om en funktion skapas, returneras det skapade funktionsuttrycket som en "
-"textsträng, annars returneras det angivna värdet.\n"
+"Om en funktion skapas, returneras det skapade funktionsuttrycket som en textsträng, annars returneras det angivna värdet.\n"
 "\n"
 "\":=\"-operatorn (t.ex. var1:=10) är en genväg för denna funktion."
 
@@ -7593,7 +7608,7 @@ msgstr "Returnerar RPN-stacken som en vektor."
 
 #: data/functions.xml.in:3615
 msgid "Is Number"
-msgstr "Är nummer"
+msgstr "Är tal"
 
 #: data/functions.xml.in:3616
 msgid "r:isNumber"
@@ -7603,7 +7618,9 @@ msgstr "ärNummer"
 msgid ""
 "Returns true if evaluated argument value is explicitly a real, complex, or "
 "infinite number (has number type)."
-msgstr "-"
+msgstr ""
+"Returnerar sant om det beräknade parametervärdet uttryckligen är ett "
+"reellt, komplext eller oändligt tal (har taltyp)."
 
 #: data/functions.xml.in:3623
 msgid "Is Real"
@@ -7617,7 +7634,9 @@ msgstr "ärReellt"
 msgid ""
 "Returns true if evaluated argument value is explicitly a real number (has "
 "number type with zero imaginary part)."
-msgstr "-"
+msgstr ""
+"Returnerar sant om det beräknade parametervärdet uttryckligen är ett "
+"reellt tal (har taltyp med imaginärdelen noll)."
 
 #: data/functions.xml.in:3631
 msgid "Is Rational"
@@ -7631,7 +7650,9 @@ msgstr "ärRationellt"
 msgid ""
 "Returns true if evaluated argument value is explicitly a rational number "
 "(has rational type)."
-msgstr "-"
+msgstr ""
+"Returnerar sant om det beräknade parametervärdet uttryckligen är ett "
+"rationellt tal (har rationell typ)."
 
 #: data/functions.xml.in:3639
 msgid "Is Integer"
@@ -7645,11 +7666,13 @@ msgstr "ärHeltal"
 msgid ""
 "Returns true if evaluated argument value is explicitly an integer (has "
 "integer type)."
-msgstr "-"
+msgstr ""
+"Returnerar sant om det beräknade parametervärdet uttryckligen är ett "
+"heltal (har heltalstyp)."
 
 #: data/functions.xml.in:3648
 msgid "Represents Number"
-msgstr "Representar nummer"
+msgstr "Representerar tal"
 
 #: data/functions.xml.in:3649
 msgid "r:representsNumber"
@@ -7659,7 +7682,9 @@ msgstr "representerarNummer"
 msgid ""
 "Returns true if value is or represents a number (scalar without unit). False "
 "negatives are allowed."
-msgstr "-"
+msgstr ""
+"Returnerar sant om värdet är eller representerar ett tal (skalär utan "
+"enhet). Falskt negativa resultat tillåts."
 
 #: data/functions.xml.in:3656
 msgid "Represents Real"
@@ -7673,7 +7698,9 @@ msgstr "representerarReelt"
 msgid ""
 "Returns true if value is or represents a real number. False negatives are "
 "allowed."
-msgstr "-"
+msgstr ""
+"Returnerar sant om värdet är eller representerar ett reellt tal. Falskt "
+"negativa resultat tillåts."
 
 #: data/functions.xml.in:3664
 msgid "Represents Rational"
@@ -7687,7 +7714,9 @@ msgstr "representerarRationellt"
 msgid ""
 "Returns true if value is or represents a rational number. False negatives "
 "are allowed."
-msgstr "-"
+msgstr ""
+"Returnerar sant om värdet är eller representerar ett rationellt tal. "
+"Falskt negativa resultat tillåts."
 
 #: data/functions.xml.in:3672
 msgid "Represents Integer"
@@ -7701,7 +7730,9 @@ msgstr "representarHeltal"
 msgid ""
 "Returns true if value is or represents an integer. False negatives are "
 "allowed."
-msgstr "-"
+msgstr ""
+"Returnerar sant om värdet är eller representerar ett heltal. Falskt "
+"negativa resultat tillåts."
 
 #: data/functions.xml.in:3681
 msgid "External Command"
@@ -7717,11 +7748,9 @@ msgstr "Kommando"
 
 #: data/functions.xml.in:3691
 msgid "LaTeX"
-msgstr ""
+msgstr "-"
 
 #: data/functions.xml.in:3692
-#, fuzzy
-#| msgid "r:ramlatency"
 msgid "r:latex"
 msgstr "-"
 
@@ -7731,6 +7760,9 @@ msgid ""
 "any expression that begins and ends with $ and contains a backslash is "
 "interpreted using this function."
 msgstr ""
+"Returnerar ett värde från ett LaTeX-uttryck med amsmath och/eller siunitx."
+" Observera att alla uttryck som börjar och slutar med $ och innehåller ett"
+" omvänt snedstreck tolkas med denna funktion."
 
 #: data/functions.xml.in:3704
 msgid "Logical"
@@ -7754,7 +7786,7 @@ msgstr "Räknarvariabel"
 
 #: data/functions.xml.in:3716
 msgid "For condition"
-msgstr "Medans-villkor"
+msgstr "Upprepningsvillkor"
 
 #: data/functions.xml.in:3719
 msgid "Counter update function"
@@ -7775,7 +7807,7 @@ msgstr "föralla"
 
 #: data/functions.xml.in:3752
 msgid "While...Do"
-msgstr "Medans...utför"
+msgstr "Medan...utför"
 
 #: data/functions.xml.in:3753
 msgid "r:while"
@@ -7783,7 +7815,7 @@ msgstr "-"
 
 #: data/functions.xml.in:3757
 msgid "While condition"
-msgstr "Medans-villkor"
+msgstr "Upprepningsvillkor"
 
 #: data/functions.xml.in:3770
 msgid "If...Then...Else"
@@ -7798,8 +7830,9 @@ msgid ""
 "Tests a condition and returns a value depending on the result. Vectors can "
 "be used for argument 1 and 2, instead of nested functions."
 msgstr ""
-"Testar ett villkor och returnerar ett värde beroende av result. Vektorer kan "
-"anges för parameter 1 och 2, för att undvika nästlade funktioner."
+"Testar ett villkor och returnerar ett värde beroende på resultatet. "
+"Vektorer kan anges för parameter 1 och 2 i stället för nästlade "
+"funktioner."
 
 #: data/functions.xml.in:3777
 msgid "Expression if condition is met"
@@ -7853,7 +7886,7 @@ msgstr "Aritmetiskt skift med tvåkomplement"
 
 #: data/functions.xml.in:3821
 msgid "Bitwise Complement (Not)"
-msgstr "Bitvivst komplement (Icke)"
+msgstr "Bitvist komplement (Icke)"
 
 #: data/functions.xml.in:3822
 msgid ""
@@ -7861,9 +7894,10 @@ msgid ""
 "1 for signed and 0 for unsigned). If bit width is zero, the smallest "
 "necessary number of bits (of 8, 16, 32, 64, 128, ...) will be used."
 msgstr ""
-"Applicerar bitvist NOT på ett heltal, med angiven bitvidd och specificerat "
-"som signed (1) eller unsigned (0). Om bitvidd är noll, används det minsta "
-"nödvändiga antalet bitar (av 8, 16, 32, 64, 128, ...)."
+"Applicerar bitvist NOT på ett heltal med angiven bitbredd och "
+"teckenhantering (använd 1 för heltal med tecken och 0 för heltal utan "
+"tecken). Om bitbredden är noll används det minsta nödvändiga antalet bitar"
+" (av 8, 16, 32, 64, 128, ...)."
 
 #: data/functions.xml.in:3823
 msgid "r:bitcmp"
@@ -7877,7 +7911,7 @@ msgstr "Bitbredd"
 #: data/functions.xml.in:3831 data/functions.xml.in:3848
 #: data/functions.xml.in:3869 data/functions.xml.in:3893
 msgid "Signed integer"
-msgstr "Signed integer"
+msgstr "Heltal med tecken"
 
 #: data/functions.xml.in:3835
 msgid "Bit Rotation"
@@ -7891,11 +7925,12 @@ msgid ""
 "(use negative values for right shift). If bit width is zero, the smallest "
 "necessary number of bits (of 8, 16, 32, 64, 128, ...) will be used."
 msgstr ""
-"Applicerar cirkulärt bitvist skift på ett heltal, med angiven bitvidd och "
-"specificerat som signed (1) eller unsigned (0). Den andra parametern anger "
-"antalet steg som varje binär bit flyttas åt vänster (använd negativa värden "
-"för högerskift). Om bitvidd är noll, används det minsta nödvändiga antalet "
-"bitar (av 8, 16, 32, 64, 128, ...)."
+"Applicerar cirkulärt bitvist skift på ett heltal med angiven bitbredd och "
+"teckenhantering (använd 1 för heltal med tecken och 0 för heltal utan "
+"tecken). Den andra parametern anger antalet steg som varje binär bit "
+"flyttas åt vänster (använd negativa värden för högerskift). Om bitbredden "
+"är noll används det minsta nödvändiga antalet bitar (av 8, 16, 32, 64, "
+"128, ...)."
 
 #: data/functions.xml.in:3837
 msgid "r:bitrot"
@@ -7911,9 +7946,10 @@ msgid ""
 "is 1. Specify bit width and signedness (use 1 for signed and 0 for unsigned) "
 "to allow sign changes when the most significant bit is set."
 msgstr ""
-"Ändrar binär bit på angiven position. Index för den minst signifikanta "
-"siffran är 1. Ange bitvidd och specificera som signed (1) eller unsigned (0) "
-"för att tillåta ändring av tecken när den mest signifikanta biten sätts."
+"Ändrar den binära biten på angiven position. Index för den minst "
+"signifikanta biten är 1. Ange bitbredd och teckenhantering (använd 1 för "
+"heltal med tecken och 0 för heltal utan tecken) för att tillåta ändring av"
+" tecken när den mest signifikanta biten sätts."
 
 #: data/functions.xml.in:3855
 msgid "r:bitset"
@@ -7930,11 +7966,11 @@ msgid ""
 "bit width and signedness (use 1 for signed and 0 for unsigned) to allow sign "
 "changes when the most significant bit is set."
 msgstr ""
-"Ändrar binär bitar inom angivet intervall med binära bitar från ett heltal "
-"(index 1 till längden på intervallet). Index för den minst signifikanta "
-"siffran är 1). Index för den minst signifikanta siffran är 1. Ange bitvidd "
-"och specificera som signed (1) eller unsigned (0) för att tillåta ändring av "
-"tecken när den mest signifikanta biten sätts."
+"Ändrar binära bitar inom angivet intervall med binära bitar från ett "
+"heltal (index 1 till längden på intervallet). Index för den minst "
+"signifikanta biten är 1. Ange bitbredd och teckenhantering (använd 1 för "
+"heltal med tecken och 0 för heltal utan tecken) för att tillåta ändring av"
+" tecken när den mest signifikanta biten sätts."
 
 #: data/functions.xml.in:3876
 msgid "r:setbits"
@@ -7959,19 +7995,18 @@ msgid ""
 "position to, and including, last position are returned as a new binary "
 "number."
 msgstr ""
-"Returnerar binär bit på specificerad position. Index för den minst "
-"signifikanta siffran är 1. Om sista index inte är noll, returneras bitar "
-"från (första) position till och med sista position som ett nytt binärt tal."
+"Returnerar den binära biten på angiven position. Index för den minst "
+"signifikanta biten är 1. Om sista index inte är noll returneras bitarna "
+"från den första positionen till och med den sista positionen som ett nytt "
+"binärt tal."
 
 #: data/functions.xml.in:3900
 msgid "r:bitget"
 msgstr "-"
 
 #: data/functions.xml.in:3912
-#, fuzzy
-#| msgid "Bit Rotation"
 msgid "Bit Population Count"
-msgstr "Bitrotation"
+msgstr "Antal ettbitar"
 
 #: data/functions.xml.in:3913
 msgid ""
@@ -8018,7 +8053,7 @@ msgstr "Övre gräns (n)"
 
 #: data/functions.xml.in:3942
 msgid "Product of a sequence"
-msgstr "Produkt av en serie"
+msgstr "Produkt av en talföljd"
 
 #: data/functions.xml.in:3943
 msgid "au:Π,r:product"
@@ -8093,8 +8128,8 @@ msgid ""
 "differential equations are currently supported."
 msgstr ""
 "Löser en differentialekvation och returnerar värdet på y(x). Derivatan i "
-"ekvation måste vara i formatet diff(y; x). Enbart första ordningens "
-"differentialekvationer stöds för nuvarande."
+"ekvationen måste vara i formatet diff(y; x). Enbart första ordningens "
+"differentialekvationer stöds för närvarande."
 
 #: data/functions.xml.in:3995
 msgid "Solve using Newton's Method"
@@ -8120,7 +8155,7 @@ msgstr "Max iterationer"
 
 #: data/functions.xml.in:4014
 msgid "Solve using Secant Method"
-msgstr "Lös med hjälp sekantmetoden"
+msgstr "Lös med hjälp av sekantmetoden"
 
 #: data/functions.xml.in:4015
 msgid "r:secantsolve"
@@ -8147,8 +8182,8 @@ msgid ""
 "Solves two equations with two unknown variables. Returns the value of the "
 "first variable."
 msgstr ""
-"Lös två ekvationer med två okända variabler. Returnerar värdet på den första "
-"variabeln."
+"Löser två ekvationer med två okända variabler. Returnerar värdet på den "
+"första variabeln."
 
 #: data/functions.xml.in:4041
 msgid "Equation 1"
@@ -8199,7 +8234,7 @@ msgstr "-"
 
 #: data/functions.xml.in:4073
 msgid "Calculus"
-msgstr "-"
+msgstr "Differential- och integralkalkyl"
 
 #: data/functions.xml.in:4075
 msgid "Differentiate"
@@ -8344,7 +8379,7 @@ msgstr "Integralen av e^x/x."
 
 #: data/functions.xml.in:4212
 msgid "Sine Integral"
-msgstr "Sineintegral"
+msgstr "Sinusintegral"
 
 #: data/functions.xml.in:4213
 msgid "rc:Si,sinint"
@@ -8356,7 +8391,7 @@ msgstr "Integralen av sin(x)/x"
 
 #: data/functions.xml.in:4217
 msgid "Cosine Integral"
-msgstr "Cosineintegral"
+msgstr "Cosinusintegral"
 
 #: data/functions.xml.in:4218
 msgid "rc:Ci,cosint"
@@ -8491,7 +8526,7 @@ msgstr "Höjd"
 
 #: data/functions.xml.in:4287
 msgid "Triangle Perimeter"
-msgstr "Rektangelomkrets"
+msgstr "Triangelomkrets"
 
 #: data/functions.xml.in:4288
 msgid "r:triangle_perimeter"
@@ -8668,11 +8703,11 @@ msgstr "rektangelomkrets"
 
 #: data/functions.xml.in:4455
 msgid "Prism"
-msgstr "-"
+msgstr "Prisma"
 
 #: data/functions.xml.in:4457
 msgid "Volume of Rectangular Prism"
-msgstr "Volym för en rektangulär prism"
+msgstr "Volym för ett rektangulärt prisma"
 
 #: data/functions.xml.in:4458
 msgid "r:rectprism"
@@ -8680,11 +8715,11 @@ msgstr "rektangelprism"
 
 #: data/functions.xml.in:4459
 msgid "Calculates the volume of a prism with rectangular base."
-msgstr "Beräknar volymen för en prisma med rektangulär bas."
+msgstr "Beräknar volymen för ett prisma med rektangulär bas."
 
 #: data/functions.xml.in:4472
 msgid "Surface Area of Rectangular Prism"
-msgstr "Ytarea för en rektangulär prism"
+msgstr "Ytarea för ett rektangulärt prisma"
 
 #: data/functions.xml.in:4473
 msgid "r:rectprism_sa"
@@ -8692,11 +8727,11 @@ msgstr "rektangelprismyta"
 
 #: data/functions.xml.in:4474
 msgid "Calculates the surface area of a prism with rectangular base."
-msgstr "Beräknar ytarean för en prisma med rektangulär bas."
+msgstr "Beräknar ytarean för ett prisma med rektangulär bas."
 
 #: data/functions.xml.in:4487
 msgid "Volume of Triangular Prism"
-msgstr "Volym för en triangulär prism"
+msgstr "Volym för ett triangulärt prisma"
 
 #: data/functions.xml.in:4488
 msgid "r:triangleprism"
@@ -8704,7 +8739,7 @@ msgstr "triangelprism"
 
 #: data/functions.xml.in:4489
 msgid "Calculates the volume of a prism with triangular base."
-msgstr "Beräknar volymen för en prisma med triangulär bas."
+msgstr "Beräknar volymen för ett prisma med triangulär bas."
 
 #: data/functions.xml.in:4503
 msgid "Pyramid"
@@ -8723,8 +8758,8 @@ msgid ""
 "Calculates the volume of a 3-dimensional shape standing on a rectangular "
 "base and terminating in a point at the top."
 msgstr ""
-"Beräknar volymen för en 3-dimensionell form som står på en rektangulär bas "
-"och som slutar en punkt på toppen."
+"Beräknar volymen för en 3-dimensionell form som står på en rektangulär bas"
+" och som slutar i en punkt på toppen."
 
 #: data/functions.xml.in:4510
 msgid "Length of base"
@@ -8736,7 +8771,7 @@ msgstr "Basens bredd"
 
 #: data/functions.xml.in:4520
 msgid "Volume of Regular Tetrahedron"
-msgstr "Volym för en liksidig tetrahedron"
+msgstr "Volym för en regelbunden tetraeder"
 
 #: data/functions.xml.in:4521
 msgid "r:tetrahedron"
@@ -8744,7 +8779,7 @@ msgstr "-"
 
 #: data/functions.xml.in:4528
 msgid "Surface Area of Regular Tetrahedron"
-msgstr "Ytarea för en liksidig tetrahedron"
+msgstr "Ytarea för en regelbunden tetraeder"
 
 #: data/functions.xml.in:4529
 msgid "r:tetrahedron_sa"
@@ -8752,7 +8787,7 @@ msgstr "tetrahedronyta"
 
 #: data/functions.xml.in:4536
 msgid "Height of Regular Tetrahedron"
-msgstr "Höjden på en liksidig tetrahedron"
+msgstr "Höjden på en regelbunden tetraeder"
 
 #: data/functions.xml.in:4537
 msgid "r:tetrahedron_height"
@@ -8784,11 +8819,11 @@ msgstr "kvpyramidhöjd"
 
 #: data/functions.xml.in:4569
 msgid "Parallelogram"
-msgstr "-"
+msgstr "Parallellogram"
 
 #: data/functions.xml.in:4571
 msgid "Parallelogram Area"
-msgstr "Parallelogramarea"
+msgstr "Parallellogramarea"
 
 #: data/functions.xml.in:4572
 msgid "r:parallelogram"
@@ -8804,7 +8839,7 @@ msgstr ""
 
 #: data/functions.xml.in:4583
 msgid "Parallelogram Perimeter"
-msgstr "Parallelogramomkrets"
+msgstr "Parallellogramomkrets"
 
 #: data/functions.xml.in:4584
 msgid "r:parallelogram_perimeter"
@@ -8820,11 +8855,11 @@ msgstr ""
 
 #: data/functions.xml.in:4596
 msgid "Trapezoid"
-msgstr "Trapetsoid"
+msgstr "Trapets"
 
 #: data/functions.xml.in:4598
 msgid "Trapezoid Area"
-msgstr "Trapetsoidarea"
+msgstr "Trapetsarea"
 
 #: data/functions.xml.in:4599
 msgid "r:trapezoid"
@@ -8860,12 +8895,9 @@ msgid ""
 "is 3 for the function \"Q = 100 - x^2\" where x is the default price "
 "variable."
 msgstr ""
-"Beräknar efterfrågeelasticitet. Fungerar lika bra för tillgång- och "
-"inkomstelasticitet, etc. Ersätt bara efterfrågan med tillgång, eller pris "
-"med inkomst...\n"
+"Beräknar efterfrågeelasticitet. Fungerar även för utbudselasticitet, inkomstelasticitet, korspriselasticitet med mera. Ersätt bara efterfrågan med utbud eller pris med inkomst...\n"
 "\n"
-"t.ex. elasticity(100-x^2, 3) beräknar efterfrågeelasticiteten när priset är "
-"3 för functionen \"Q = 100 - x^2\" där x är den förvalda prisvariabeln."
+"T.ex. beräknar elasticity(100-x^2, 3) efterfrågeelasticiteten när priset är 3 för funktionen \"Q = 100 - x^2\", där x är den förvalda prisvariabeln."
 
 #: data/functions.xml.in:4626
 msgid "Demand function"
@@ -8896,11 +8928,12 @@ msgid ""
 "actual cost minus the salvage value. The useful life is the number of "
 "periods (typically years) over which the asset is depreciated."
 msgstr ""
-"Beräknar \"sum-of-years digits\"-avskrivningen för en tillgång, baserat på "
-"dess kostnad, slutvärde, förväntad livslängd och en given period. Metoden "
-"accelererar värdeminskningen, så att störst värdeminskning sker i början. "
-"Den avskrivbara kostnaden är den faktiskta kostnaden minus slutvärdet. "
-"Livslängden är den period (anges ofta i år) som värdeminskningen pågår."
+"Beräknar avskrivningen enligt metoden \"sum-of-years digits\" för en "
+"tillgång, baserat på dess kostnad, restvärde, förväntade livslängd och en "
+"given period. Metoden ger större avskrivningar under tidigare perioder än "
+"under senare. Det avskrivningsbara beloppet är den faktiska kostnaden "
+"minus restvärdet. Livslängden är antalet perioder (vanligen år) som "
+"tillgången skrivs av över."
 
 #: data/functions.xml.in:4642 data/functions.xml.in:4662
 msgid "Cost"
@@ -8908,7 +8941,7 @@ msgstr "Kostnad"
 
 #: data/functions.xml.in:4645 data/functions.xml.in:4665
 msgid "Salvage value"
-msgstr "Slutvärde"
+msgstr "Restvärde"
 
 #: data/functions.xml.in:4648 data/functions.xml.in:4668
 msgid "Life"
@@ -8933,7 +8966,10 @@ msgid ""
 "Cost is the amount you paid for the asset. Salvage is the value of the asset "
 "at the end of the period. Life is the number of periods over which the asset "
 "is depreciated. SLN divides the cost evenly over the life of an asset."
-msgstr "-"
+msgstr ""
+"Beräknar den linjära avskrivningen för en tillgång under en enskild period.\n"
+"\n"
+"Kostnaden är det belopp som du betalade för tillgången. Restvärdet är tillgångens värde vid periodens slut. Livslängden är antalet perioder som tillgången skrivs av över. SLN fördelar kostnaden jämnt över tillgångens livslängd."
 
 #: data/functions.xml.in:4672
 msgid "Present Value"
@@ -8998,7 +9034,9 @@ msgstr "-"
 msgid ""
 "Calculates the nominal interest rate from a given effective interest rate "
 "compounded at given intervals."
-msgstr "Beräknar den nominella räntesatsen från en given effektiv ränta."
+msgstr ""
+"Beräknar den nominella räntesatsen från en given effektiv ränta med "
+"kapitalisering vid angivna intervall."
 
 #: data/functions.xml.in:4700
 msgid "Effective interest rate"
@@ -9018,7 +9056,8 @@ msgstr "-"
 
 #: data/functions.xml.in:4709
 msgid "Calculates the value of a zero-coupon (pure discount) bond."
-msgstr "-"
+msgstr ""
+"Beräknar värdet på en nollkupongobligation (ren diskonteringsobligation)."
 
 #: data/functions.xml.in:4712 data/functions.xml.in:5247
 msgid "Face value"
@@ -9034,7 +9073,7 @@ msgstr "-"
 
 #: data/functions.xml.in:4724
 msgid "Returns the yield for a treasury bill."
-msgstr "-"
+msgstr "Returnerar avkastningen för en statsskuldväxel."
 
 #: data/functions.xml.in:4727 data/functions.xml.in:4742
 #: data/functions.xml.in:4757 data/functions.xml.in:5013
@@ -9051,11 +9090,11 @@ msgstr "Avräkningsdatum"
 #: data/functions.xml.in:5175 data/functions.xml.in:5199
 #: data/functions.xml.in:5224
 msgid "Maturity date"
-msgstr "Mognadsdatum"
+msgstr "Förfallodatum"
 
 #: data/functions.xml.in:4733 data/functions.xml.in:5095
 msgid "Price per $100 face value"
-msgstr "Pris per 100 kr nominellt värde"
+msgstr "Pris per 100 dollar nominellt värde"
 
 #: data/functions.xml.in:4737
 msgid "Treasury Bill Price"
@@ -9067,7 +9106,8 @@ msgstr "-"
 
 #: data/functions.xml.in:4739
 msgid "Returns the price per $100 face value for a treasury bill."
-msgstr "-"
+msgstr ""
+"Returnerar priset per 100 dollar nominellt värde för en statsskuldväxel."
 
 #: data/functions.xml.in:4748 data/functions.xml.in:4763
 #: data/functions.xml.in:5073 data/functions.xml.in:5230
@@ -9076,7 +9116,7 @@ msgstr "Diskonto"
 
 #: data/functions.xml.in:4752
 msgid "Treasury Bill Equivalent"
-msgstr "Statsskultväxelavkastning motsvarande obligation"
+msgstr "Obligationsekvivalent avkastning för statsskuldväxel"
 
 #: data/functions.xml.in:4753
 msgid "r:tbilleq"
@@ -9084,7 +9124,8 @@ msgstr "-"
 
 #: data/functions.xml.in:4754
 msgid "Returns the bond equivalent yield for a treasury bill."
-msgstr "-"
+msgstr ""
+"Returnerar den obligationsekvivalenta avkastningen för en statsskuldväxel."
 
 #: data/functions.xml.in:4767
 msgid "Interest paid on a given period of an investment (ISPMT)"
@@ -9172,13 +9213,11 @@ msgid ""
 "Note that the optional guess is needed because there can be more than one "
 "valid result. It defaults to 10%."
 msgstr ""
-"Beräknar återbetalningsräntan.\n"
+"Beräknar avkastningsräntan.\n"
 "\n"
-"Om typ = 1 så sker betalningar vid början av perioden. Om typ = 0 (eller "
-"utelämnad) sker de i slutet av varje period.\n"
+"Om typ = 1 så sker betalningar vid början av perioden. Om typ = 0 (eller utelämnad) sker de i slutet av varje period.\n"
 "\n"
-"Observera att den frivilliga gissningsparametern behövs eftersom det kan "
-"finnas mer än ett giltigt resultat. Standardvärdet är 10%."
+"Observera att den frivilliga gissningsparametern behövs eftersom det kan finnas mer än ett giltigt resultat. Standardvärdet är 10%."
 
 #: data/functions.xml.in:4840
 msgid "Guess"
@@ -9224,7 +9263,7 @@ msgstr ""
 
 #: data/functions.xml.in:4882
 msgid "Payment of an annuity going towards principal (PPMT)"
-msgstr "Betalning för livränta som går mot kapital (PPMT)"
+msgstr "Amorteringsdel av annuitet (PPMT)"
 
 #: data/functions.xml.in:4883
 msgid "r:ppmt"
@@ -9237,10 +9276,9 @@ msgid ""
 "Type defines the due date. 1 for payment at the beginning of a period and 0 "
 "(default) for payment at the end of a period."
 msgstr ""
-"Beräknar summan av en betalning på en livränta som går mot kapital.\n"
+"Beräknar den del av en annuitetsbetalning som går till amortering.\n"
 "\n"
-"Typ anger när betalningarna sker. 1 för betalning i början av perioden och 0 "
-"(förvald) för betalning i slutet av perioden."
+"Typ anger när betalningarna sker. 1 för betalning i början av perioden och 0 (förvald) för betalning i slutet av perioden."
 
 #: data/functions.xml.in:4903
 msgid "Desired future value"
@@ -9296,11 +9334,13 @@ msgstr "-"
 msgid ""
 "Calculates the return on continuously compounded interest, given the "
 "principal, nominal rate and time in years."
-msgstr "-"
+msgstr ""
+"Beräknar avkastningen vid kontinuerlig kapitalisering av räntan, givet "
+"kapitalbeloppet, den nominella räntan och tiden i år."
 
 #: data/functions.xml.in:4950 data/functions.xml.in:4965
 msgid "Principal"
-msgstr "-"
+msgstr "Kapitalbelopp"
 
 #: data/functions.xml.in:4960
 msgid "Compound"
@@ -9314,7 +9354,9 @@ msgstr "-"
 msgid ""
 "Returns the value of an investment, given the principal, nominal interest "
 "rate, compounding frequency and time."
-msgstr "-"
+msgstr ""
+"Returnerar värdet på en investering, givet kapitalbeloppet, den nominella "
+"räntesatsen, kapitaliseringsfrekvensen och tiden."
 
 #: data/functions.xml.in:4971
 msgid "Periods per year"
@@ -9322,7 +9364,7 @@ msgstr "Perioder per år"
 
 #: data/functions.xml.in:4978
 msgid "Payment of an annuity going towards interest (IPMT)"
-msgstr "Betalning för livränta som går mot ränta (IPMT)"
+msgstr "Räntedel av annuitet (IPMT)"
 
 #: data/functions.xml.in:4979
 msgid "r:ipmt"
@@ -9335,10 +9377,9 @@ msgid ""
 "Type defines the due date. 1 for payment at the beginning of a period and 0 "
 "(default) for payment at the end of a period."
 msgstr ""
-"Beräknar summan av en betalning på en livränta som går mot ränta.\n"
+"Beräknar den del av en annuitetsbetalning som går till ränta.\n"
 "\n"
-"Typ anger när betalningarna sker. 1 för betalning i början av perioden och 0 "
-"(förvald) för betalning i slutet av perioden."
+"Typ anger när betalningarna sker. 1 för betalning i början av perioden och 0 (förvald) för betalning i slutet av perioden."
 
 #: data/functions.xml.in:5006
 msgid "Interest rate for a fully invested security"
@@ -9354,7 +9395,10 @@ msgid ""
 "\n"
 "Basis is the type of day counting you want to use: 0: US 30/360 (default), "
 "1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
-msgstr "-"
+msgstr ""
+"Returnerar räntesatsen för ett fullt betalt värdepapper.\n"
+"\n"
+"Bas anger vilken metod för dagräkning som ska användas: 0: amerikansk 30/360 (förvald), 1: faktiska dagar, 2: faktiska dagar/360, 3: faktiska dagar/365 eller 4: europeisk 30/360."
 
 #: data/functions.xml.in:5019 data/functions.xml.in:5070
 msgid "Investment"
@@ -9363,11 +9407,11 @@ msgstr "Investering"
 #: data/functions.xml.in:5022 data/functions.xml.in:5098
 #: data/functions.xml.in:5205
 msgid "Redemption"
-msgstr "Utlösande summa"
+msgstr "Inlösenbelopp"
 
 #: data/functions.xml.in:5031
 msgid "Dollar Fraction"
-msgstr "Kronor till bråktal"
+msgstr "Dollar som bråktal"
 
 #: data/functions.xml.in:5032
 msgid "r:dollarfr"
@@ -9376,11 +9420,13 @@ msgstr "-"
 #: data/functions.xml.in:5033
 msgid ""
 "Converts a decimal dollar price into a dollar price expressed as a fraction."
-msgstr "-"
+msgstr ""
+"Omvandlar ett dollarpris uttryckt som ett decimaltal till ett dollarpris "
+"uttryckt som ett bråktal."
 
 #: data/functions.xml.in:5036
 msgid "Decimal dollar"
-msgstr "Bråktal till kronor"
+msgstr "Dollar som decimaltal"
 
 #: data/functions.xml.in:5039 data/functions.xml.in:5052
 msgid "Denominator of fraction"
@@ -9388,7 +9434,7 @@ msgstr "Bråktalets nämnare "
 
 #: data/functions.xml.in:5044
 msgid "Dollar Decimal"
-msgstr "Decimaltal"
+msgstr "Dollar som decimaltal"
 
 #: data/functions.xml.in:5045
 msgid "r:dollarde"
@@ -9398,15 +9444,17 @@ msgstr "-"
 msgid ""
 "Converts a dollar price expressed as a fraction into a dollar price "
 "expressed as a decimal number."
-msgstr "-"
+msgstr ""
+"Omvandlar ett dollarpris uttryckt som ett bråktal till ett dollarpris "
+"uttryckt som ett decimaltal."
 
 #: data/functions.xml.in:5049
 msgid "Fractional dollar"
-msgstr "Bråktal"
+msgstr "Dollar som bråktal"
 
 #: data/functions.xml.in:5057
 msgid "Amount received at maturity"
-msgstr "Erhållet belopp vid mognad"
+msgstr "Erhållet belopp vid förfall"
 
 #: data/functions.xml.in:5058
 msgid "r:received"
@@ -9419,11 +9467,14 @@ msgid ""
 "Basis is the type of day counting you want to use: 0: US 30/360 (default), "
 "1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360. The "
 "settlement date must be before maturity date."
-msgstr "-"
+msgstr ""
+"Returnerar det belopp som erhålls på förfallodagen för ett värdepapper som man investerat i.\n"
+"\n"
+"Bas anger vilken metod för dagräkning som ska användas: 0: amerikansk 30/360 (förvald), 1: faktiska dagar, 2: faktiska dagar/360, 3: faktiska dagar/365 eller 4: europeisk 30/360. Avräkningsdatumet måste infalla före förfallodatumet."
 
 #: data/functions.xml.in:5082
 msgid "Discount rate for a security"
-msgstr "Reduceringshastighet för säkerhet"
+msgstr "Diskonteringsränta för ett värdepapper"
 
 #: data/functions.xml.in:5083
 msgid "r:disc"
@@ -9435,11 +9486,14 @@ msgid ""
 "\n"
 "Basis is the type of day counting you want to use: 0: US 30/360 (default), "
 "1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
-msgstr "-"
+msgstr ""
+"Returnerar diskonteringsräntan för ett värdepapper.\n"
+"\n"
+"Bas anger vilken metod för dagräkning som ska användas: 0: amerikansk 30/360 (förvald), 1: faktiska dagar, 2: faktiska dagar/360, 3: faktiska dagar/365 eller 4: europeisk 30/360."
 
 #: data/functions.xml.in:5107
 msgid "Accrued interest of security paying at maturity"
-msgstr "Ränta för en säkerhet från start till mognad"
+msgstr "Upplupen ränta för värdepapper med räntebetalning vid förfall"
 
 #: data/functions.xml.in:5108
 msgid "r:accrintm"
@@ -9452,16 +9506,19 @@ msgid ""
 "\n"
 "Basis is the type of day counting you want to use: 0: US 30/360 (default), "
 "1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
-msgstr "-"
+msgstr ""
+"Returnerar den upplupna räntan för ett värdepapper som betalar ränta på förfallodagen.\n"
+"\n"
+"Bas anger vilken metod för dagräkning som ska användas: 0: amerikansk 30/360 (förvald), 1: faktiska dagar, 2: faktiska dagar/360, 3: faktiska dagar/365 eller 4: europeisk 30/360."
 
 #: data/functions.xml.in:5114 data/functions.xml.in:5139
 #: data/functions.xml.in:5227
 msgid "Issue date"
-msgstr "Startdatum"
+msgstr "Emissionsdatum"
 
 #: data/functions.xml.in:5120 data/functions.xml.in:5148
 msgid "Annual rate of security"
-msgstr "Årlig hastighet"
+msgstr "Årlig räntesats för värdepapper"
 
 #: data/functions.xml.in:5123 data/functions.xml.in:5151
 msgid "Par value"
@@ -9469,7 +9526,7 @@ msgstr "Nominellt värde"
 
 #: data/functions.xml.in:5132
 msgid "Accrued interest of security with periodic interest payments"
-msgstr "Ränta för en säkerhet med periodisk ränta"
+msgstr "Upplupen ränta för värdepapper med periodiska räntebetalningar"
 
 #: data/functions.xml.in:5133
 msgid "r:accrint"
@@ -9482,7 +9539,10 @@ msgid ""
 "Allowed frequencies are 1 - annual, 2 - semi-annual or 4 - quarterly. Basis "
 "is the type of day counting you want to use: 0: US 30/360 (default), 1: real "
 "days, 2: real days/360, 3: real days/365 or 4: European 30/360."
-msgstr "-"
+msgstr ""
+"Returnerar den upplupna räntan för ett värdepapper som betalar ränta periodiskt.\n"
+"\n"
+"Tillåtna frekvenser är 1: årligen, 2: halvårsvis eller 4: kvartalsvis. Bas anger vilken metod för dagräkning som ska användas: 0: amerikansk 30/360 (förvald), 1: faktiska dagar, 2: faktiska dagar/360, 3: faktiska dagar/365 eller 4: europeisk 30/360."
 
 #: data/functions.xml.in:5142
 msgid "First interest"
@@ -9507,11 +9567,14 @@ msgid ""
 "\n"
 "Basis is the type of day counting you want to use: 0: US 30/360 (default), "
 "1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
-msgstr "-"
+msgstr ""
+"Returnerar antalet kuponger som ska betalas mellan avräkningsdatumet och förfallodatumet.\n"
+"\n"
+"Bas anger vilken metod för dagräkning som ska användas: 0: amerikansk 30/360 (förvald), 1: faktiska dagar, 2: faktiska dagar/360, 3: faktiska dagar/365 eller 4: europeisk 30/360."
 
 #: data/functions.xml.in:5189
 msgid "Price per $100 face value of a discounted security"
-msgstr "Pris per 100 kr nominellt värde för diskonterat värdepapper"
+msgstr "Pris per 100 dollar nominellt värde för ett diskonterat värdepapper"
 
 #: data/functions.xml.in:5190
 msgid "r:pricedisc"
@@ -9525,12 +9588,9 @@ msgid ""
 "Basis is the type of day counting you want to use: 0: US 30/360 (default), "
 "1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"Beräknar och returnerar priset per 100 kr värde av en diskonterad säkerhet. "
-"Säkerheten betalar inte ränta vid mognad.\n"
+"Beräknar och returnerar priset per 100 dollar nominellt värde för ett diskonterat värdepapper. Värdepapperet betalar inte ränta vid förfall.\n"
 "\n"
-"Dagsräkningssystem kan vara: 0: Amerikanskt 30/360 (förvald), 1: verkliga "
-"dagar, 2: verkliga dagar/360, 3: verkliga dagar/365, eller 4: Europeiskt "
-"30/360"
+"Bas anger vilken metod för dagräkning som ska användas: 0: amerikansk 30/360 (förvald), 1: faktiska dagar, 2: faktiska dagar/360, 3: faktiska dagar/365 eller 4: europeisk 30/360."
 
 #: data/functions.xml.in:5202
 msgid "Discount"
@@ -9538,7 +9598,7 @@ msgstr "Diskonto"
 
 #: data/functions.xml.in:5214
 msgid "Price per $100 face value of a security"
-msgstr "Pris per 100 kr nominellt värde för säkerhet"
+msgstr "Pris per 100 dollar nominellt värde för ett värdepapper"
 
 #: data/functions.xml.in:5215
 msgid "r:pricemat"
@@ -9552,12 +9612,9 @@ msgid ""
 "Basis is the type of day counting you want to use: 0: US 30/360 (default), "
 "1: real days, 2: real days/360, 3: real days/365 or 4: European 30/360."
 msgstr ""
-"Beräknar och returnerar priset per $100 värde av en säkerhet. Säkerheten "
-"betalar ränta vid mognad.\n"
+"Beräknar och returnerar priset per 100 dollar nominellt värde för ett värdepapper. Värdepapperet betalar ränta vid förfall.\n"
 "\n"
-"Dagsräkningssystem kan vara: 0: Amerikanskt 30/360 (förvald), 1: verkliga "
-"dagar, 2: verkliga dagar/360, 3: verkliga dagar/365, eller 4: Europeiskt "
-"30/360"
+"Bas anger vilken metod för dagräkning som ska användas: 0: amerikansk 30/360 (förvald), 1: faktiska dagar, 2: faktiska dagar/360, 3: faktiska dagar/365 eller 4: europeisk 30/360."
 
 #: data/functions.xml.in:5233
 msgid "Annual yield"
@@ -9565,7 +9622,7 @@ msgstr "Årlig avkastning"
 
 #: data/functions.xml.in:5242
 msgid "Level-Coupon Bond"
-msgstr "Jämn kupongobligation"
+msgstr "Obligation med fast kupong"
 
 #: data/functions.xml.in:5243
 msgid "r:level_coupon"
@@ -9573,7 +9630,7 @@ msgstr "-"
 
 #: data/functions.xml.in:5244
 msgid "Calculates the value of a level-coupon bond."
-msgstr "-"
+msgstr "Beräknar värdet på en obligation med fast kupong."
 
 #: data/functions.xml.in:5250
 msgid "Coupon rate"
@@ -9827,7 +9884,7 @@ msgstr "-"
 
 #: data/units.xml.in:96
 msgid "U.S. Survey Inch"
-msgstr "-"
+msgstr "Tum (amerikanskt lantmäterimått)"
 
 #: data/units.xml.in:98
 msgid "as:in_US,aor:US_in,US_inch,p:US_inches"
@@ -9859,7 +9916,7 @@ msgstr "-"
 
 #: data/units.xml.in:138
 msgid "U.S. Survey Foot"
-msgstr "-"
+msgstr "Fot (amerikanskt lantmäterimått)"
 
 #: data/units.xml.in:140
 msgid "as:ft_US,aor:US_ft,US_foot,p:US_feet"
@@ -9891,7 +9948,7 @@ msgstr "-"
 
 #: data/units.xml.in:182
 msgid "U.S. Survey Rod"
-msgstr "-"
+msgstr "Rod (amerikanskt lantmäterimått)"
 
 #: data/units.xml.in:184
 msgid "as:rd_US,aor:US_rd,US_rod,p:US_rods"
@@ -9931,7 +9988,7 @@ msgstr "-"
 
 #: data/units.xml.in:237
 msgid "U.S. Survey Mile"
-msgstr "-"
+msgstr "Mile (amerikanskt lantmäterimått)"
 
 #: data/units.xml.in:239
 msgid "as:mi_US,aor:US_mi,US_mile,p:US_miles"
@@ -10003,7 +10060,7 @@ msgstr "solradius,au:R_☉"
 
 #: data/units.xml.in:322
 msgid "Pied du roi (French Royal Foot)"
-msgstr "-"
+msgstr "Pied du roi (fransk kunglig fot)"
 
 #: data/units.xml.in:323
 msgid "r:pied_du_roi,p:pieds_du_roi"
@@ -10011,7 +10068,7 @@ msgstr "-"
 
 #: data/units.xml.in:331
 msgid "Pouce (French Royal Inch)"
-msgstr "-"
+msgstr "Pouce (fransk kunglig tum)"
 
 #: data/units.xml.in:332
 msgid "r:pouce,p:pouces"
@@ -10085,7 +10142,7 @@ msgstr "a:deg,au:°,grad,degree,p:grader,p:degrees"
 
 #: data/units.xml.in:461
 msgid "Gradian (Gon)"
-msgstr "Gradient (Gon)"
+msgstr "Nygrad (gon)"
 
 #: data/units.xml.in:462
 msgid "ar:gra,gradian,p:gradians,gon,p:gons"
@@ -10133,7 +10190,7 @@ msgstr "Vinkelacceleration"
 
 #: data/units.xml.in:524
 msgid "Radians per Second Squared"
-msgstr "Radianter per kvadratsekund"
+msgstr "Radianer per kvadratsekund"
 
 #: data/units.xml.in:539
 msgid "Angular Velocity"
@@ -10141,7 +10198,7 @@ msgstr "Vinkelhastighet"
 
 #: data/units.xml.in:542
 msgid "Radians per Second"
-msgstr "Radianter per sekund"
+msgstr "Radianer per sekund"
 
 #: data/units.xml.in:571
 msgid "Revolutions per Minute (RPM)"
@@ -10198,7 +10255,7 @@ msgstr "-"
 
 #: data/units.xml.in:641
 msgid "Ounce (troy)"
-msgstr "-"
+msgstr "Ounce (troyvikt)"
 
 #: data/units.xml.in:643
 msgid "ars:oz_t,troy_ounce,p:troy_ounces"
@@ -10238,7 +10295,7 @@ msgstr "-"
 
 #: data/units.xml.in:694
 msgid "Short Hundredweight (Cental)"
-msgstr "-"
+msgstr "Kort hundredweight (cental)"
 
 #: data/units.xml.in:696
 msgid "ar:cwt,hundredweight,cental,p:hundredweights,centals"
@@ -10246,7 +10303,7 @@ msgstr "-"
 
 #: data/units.xml.in:704
 msgid "Long Hundredweight"
-msgstr "-"
+msgstr "Lång hundredweight"
 
 #: data/units.xml.in:706
 msgid "ar:l_cwt,long_hundredweight,p:long_hundredweights"
@@ -10254,7 +10311,7 @@ msgstr "-"
 
 #: data/units.xml.in:714
 msgid "Short Ton"
-msgstr "-"
+msgstr "Kort ton"
 
 #: data/units.xml.in:716
 msgid "ar:s_ton,short_ton,p:short_tons"
@@ -10262,7 +10319,7 @@ msgstr "-"
 
 #: data/units.xml.in:724
 msgid "Long Ton"
-msgstr "-"
+msgstr "Långt ton"
 
 #: data/units.xml.in:726
 msgid "ar:l_ton,long_ton,p:long_tons"
@@ -10342,13 +10399,11 @@ msgstr "solmassa,au:M_☉"
 
 #: data/units.xml.in:843
 msgid "Slug"
-msgstr ""
+msgstr "-"
 
 #: data/units.xml.in:844
-#, fuzzy
-#| msgid "r:erg,p:ergs"
 msgid "r:slug,p:slugs"
-msgstr "-"
+msgstr "+"
 
 #: data/units.xml.in:855
 msgid "Kilogram per Cubic Meter"
@@ -10400,7 +10455,7 @@ msgstr "vecka,week,p:veckor,p:weeks"
 
 #: data/units.xml.in:982
 msgid "Fortnight"
-msgstr "-"
+msgstr "Tvåveckorsperiod"
 
 #: data/units.xml.in:983
 msgid "r:fortnight,p:fortnights"
@@ -10421,10 +10476,10 @@ msgid ""
 "function, instead of subtraction, to calculate the exact number of calendar "
 "years between two dates."
 msgstr ""
-"Agerar som kalenderår när adderade till eller subtraherade från datum, men "
-"som exakt 365,25 dagar vid omvandling till andra enheter. Använd funktion "
-"yearfrac(), istället för subtraktion, för att beräkna exakt antal kalenderår "
-"mellan två datum."
+"Fungerar som kalenderår när de adderas till eller subtraheras från datum, "
+"men som exakt 365,25 dagar vid omvandling till andra enheter. Använd "
+"funktionen yearfrac(), i stället för subtraktion, för att beräkna det "
+"exakta antalet kalenderår mellan två datum."
 
 #: data/units.xml.in:1002
 msgid "Mean Gregorian Year"
@@ -10693,11 +10748,11 @@ msgstr "Newton per coulomb"
 
 #: data/units.xml.in:1523
 msgid "Atomic Unit of Electric Field"
-msgstr "Atomär enhet för eletriskt fält"
+msgstr "Atomär enhet för elektriskt fält"
 
 #: data/units.xml.in:1544
 msgid "Permittivity"
-msgstr "Permitivitet"
+msgstr "Permittivitet"
 
 #: data/units.xml.in:1547
 msgid "Farad per Meter"
@@ -10825,7 +10880,7 @@ msgstr "Mol per kubikmeter"
 
 #: data/units.xml.in:1797
 msgid "Mole per Liter"
-msgstr "Mol per Liter"
+msgstr "Mol per liter"
 
 #: data/units.xml.in:1811
 msgid "Mole per Cubic Decimeter"
@@ -10865,7 +10920,7 @@ msgstr "Ljus"
 
 #: data/units.xml.in:1885
 msgid "Luminous Intensity"
-msgstr "Luminansintensitet"
+msgstr "Ljusstyrka"
 
 #: data/units.xml.in:1888
 msgid "Candela"
@@ -10909,7 +10964,7 @@ msgstr "-"
 
 #: data/units.xml.in:1939
 msgid "Luminous Flux"
-msgstr "Luminansflöde"
+msgstr "Ljusflöde"
 
 #: data/units.xml.in:1957
 msgid "Lumen"
@@ -11141,7 +11196,7 @@ msgstr "Kilometer per liter"
 
 #: data/units.xml.in:2406
 msgid "Miles per Gallon"
-msgstr "-"
+msgstr "Mile per gallon"
 
 #: data/units.xml.in:2408
 msgid "a-cr:mpg"
@@ -11177,7 +11232,7 @@ msgstr "matsked,a:msk,p:matskedar"
 
 #: data/units.xml.in:2449
 msgid "U.S. Teaspoon"
-msgstr "-"
+msgstr "Amerikansk tesked"
 
 #: data/units.xml.in:2451
 msgid "r:US_teaspoon,as:tsp_US,p:US_teaspoons"
@@ -11185,7 +11240,7 @@ msgstr "-"
 
 #: data/units.xml.in:2460
 msgid "U.S. Dessertspoon"
-msgstr "-"
+msgstr "Amerikansk dessertsked"
 
 #: data/units.xml.in:2462
 msgid "r:US_dessertspoon,p:US_dessertspoons"
@@ -11193,7 +11248,7 @@ msgstr "-"
 
 #: data/units.xml.in:2471
 msgid "U.S. Tablespoon"
-msgstr "-"
+msgstr "Amerikansk matsked"
 
 #: data/units.xml.in:2473
 msgid "r:US_tablespoon,as:tbsp_US,p:US_tablespoons"
@@ -11201,7 +11256,7 @@ msgstr "-"
 
 #: data/units.xml.in:2482
 msgid "Cup (U.S. Legal)"
-msgstr "-"
+msgstr "Cup (amerikanskt lagstadgat mått)"
 
 #: data/units.xml.in:2483
 msgid "r-c:cup,p-c:cups"
@@ -11209,19 +11264,19 @@ msgstr "-"
 
 #: data/units.xml.in:2491
 msgid "U.S. Cup"
-msgstr "-"
+msgstr "Amerikansk cup"
 
 #: data/units.xml.in:2493
 msgid "ras:cup_US,US_cup,p:US_cups"
-msgstr ""
+msgstr "+"
 
 #: data/units.xml.in:2503
 msgid "Imperial Capacity"
-msgstr "-"
+msgstr "Brittiska volymmått"
 
 #: data/units.xml.in:2505
 msgid "Imperial Fluid Ounce"
-msgstr "-"
+msgstr "Fluid ounce (brittiskt mått)"
 
 #: data/units.xml.in:2507
 msgid "as:fl_oz_UK,aor:UK_fl_oz,imperial_fluid_ounce,p:imperial_fluid_ounces"
@@ -11229,7 +11284,7 @@ msgstr "-"
 
 #: data/units.xml.in:2515
 msgid "Imperial Gill"
-msgstr "-"
+msgstr "Brittisk gill"
 
 #: data/units.xml.in:2517
 msgid "as:gi_UK,aor:UK_gi,imperial_gill,p:imperial_gills"
@@ -11237,7 +11292,7 @@ msgstr "-"
 
 #: data/units.xml.in:2526
 msgid "Imperial Pint"
-msgstr "-"
+msgstr "Brittisk pint"
 
 #: data/units.xml.in:2528
 msgid "as:pt_UK,aor:UK_pt,imperial_pint,p:imperial_pints"
@@ -11245,7 +11300,7 @@ msgstr "-"
 
 #: data/units.xml.in:2537
 msgid "Imperial Quart"
-msgstr "-"
+msgstr "Brittisk quart"
 
 #: data/units.xml.in:2539
 msgid "as:qt_UK,aor:UK_qt,imperial_quart,p:imperial_quarts"
@@ -11253,7 +11308,7 @@ msgstr "-"
 
 #: data/units.xml.in:2548
 msgid "Imperial Gallon"
-msgstr "-"
+msgstr "Brittisk gallon"
 
 #: data/units.xml.in:2550
 msgid "as:gal_UK,aor:UK_gal,imperial_gallon,p:imperial_gallons"
@@ -11261,7 +11316,7 @@ msgstr "-"
 
 #: data/units.xml.in:2559
 msgid "Imperial Minim"
-msgstr "-"
+msgstr "Brittisk minim"
 
 #: data/units.xml.in:2561
 msgid "r:imperial_minim,p:imperial_minims"
@@ -11269,7 +11324,7 @@ msgstr "-"
 
 #: data/units.xml.in:2569
 msgid "Imperial Fluid Scruple"
-msgstr "-"
+msgstr "Fluid scruple (brittiskt mått)"
 
 #: data/units.xml.in:2571
 msgid "r:imperial_fluid_scruple,p:imperial_fluid_scruples,ro:imperial_fluid_scuple"
@@ -11277,7 +11332,7 @@ msgstr "-"
 
 #: data/units.xml.in:2579
 msgid "Imperial Fluid Drachm"
-msgstr "-"
+msgstr "Fluid drachm (brittiskt mått)"
 
 #: data/units.xml.in:2581
 msgid "as:fl_dr_UK,aor:UK_fl_dr,imperial_fluid_drachm,p:imperial_fluid_drachms"
@@ -11285,7 +11340,7 @@ msgstr "-"
 
 #: data/units.xml.in:2589
 msgid "Imperial Bushel"
-msgstr "-"
+msgstr "Brittisk bushel"
 
 #: data/units.xml.in:2591
 msgid "as:bu_UK,aor:UK_bu,imperial_bushel,p:imperial_bushels"
@@ -11293,11 +11348,11 @@ msgstr "-"
 
 #: data/units.xml.in:2601
 msgid "U.S. Capacity"
-msgstr "-"
+msgstr "Amerikanska volymmått"
 
 #: data/units.xml.in:2603
 msgid "U.S. Fluid Ounce"
-msgstr "-"
+msgstr "Fluid ounce (amerikanskt mått)"
 
 #: data/units.xml.in:2605
 msgid "ar:fl_oz,fluid_ounce,p:fluid_ounces"
@@ -11305,7 +11360,7 @@ msgstr "-"
 
 #: data/units.xml.in:2613
 msgid "U.S. Gill"
-msgstr "-"
+msgstr "Amerikansk gill"
 
 #: data/units.xml.in:2615
 msgid "ar:gi,gill,p:gills"
@@ -11313,7 +11368,7 @@ msgstr "-"
 
 #: data/units.xml.in:2623
 msgid "U.S. Liquid Pint"
-msgstr "-"
+msgstr "Amerikansk pint (våtmått)"
 
 #: data/units.xml.in:2625
 msgid "ar:liq_pt,liquid_pint,p:liquid_pints"
@@ -11321,7 +11376,7 @@ msgstr "-"
 
 #: data/units.xml.in:2633
 msgid "U.S. Liquid Quart"
-msgstr "-"
+msgstr "Amerikansk quart (våtmått)"
 
 #: data/units.xml.in:2635
 msgid "ar:liq_qt,liquid_quart,p:liquid_quarts"
@@ -11329,7 +11384,7 @@ msgstr "-"
 
 #: data/units.xml.in:2643
 msgid "U.S. Minim"
-msgstr "-"
+msgstr "Amerikansk minim"
 
 #: data/units.xml.in:2645
 msgid "r:minim,p:minims"
@@ -11337,7 +11392,7 @@ msgstr "-"
 
 #: data/units.xml.in:2653
 msgid "U.S. Fluid Drachm"
-msgstr "-"
+msgstr "Fluid drachm (amerikanskt mått)"
 
 #: data/units.xml.in:2655
 msgid "ar:fl_dr,fluid_drachm,p:fluid_drachms"
@@ -11345,7 +11400,7 @@ msgstr "-"
 
 #: data/units.xml.in:2663
 msgid "U.S. Dry Pint"
-msgstr "-"
+msgstr "Amerikansk pint (torrmått)"
 
 #: data/units.xml.in:2665
 msgid "ar:dry_pt,dry_pint,p:dry_pints"
@@ -11353,7 +11408,7 @@ msgstr "-"
 
 #: data/units.xml.in:2673
 msgid "U.S. Dry Quart"
-msgstr "-"
+msgstr "Amerikansk quart (torrmått)"
 
 #: data/units.xml.in:2675
 msgid "ar:dry_qt,dry_quart,p:dry_quarts"
@@ -11361,7 +11416,7 @@ msgstr "-"
 
 #: data/units.xml.in:2683
 msgid "U.S. Peck"
-msgstr "-"
+msgstr "Amerikansk peck"
 
 #: data/units.xml.in:2685
 msgid "ar:pk,peck,p:pecks"
@@ -11369,7 +11424,7 @@ msgstr "-"
 
 #: data/units.xml.in:2693
 msgid "U.S. Bushel"
-msgstr "-"
+msgstr "Amerikansk bushel"
 
 #: data/units.xml.in:2695
 msgid "ar:bu,bushel,p:bushels"
@@ -11377,7 +11432,7 @@ msgstr "-"
 
 #: data/units.xml.in:2703
 msgid "U.S. Gallon"
-msgstr "-"
+msgstr "Amerikansk gallon"
 
 #: data/units.xml.in:2705
 msgid "ar:gal,gallon,p:gallons"
@@ -11385,7 +11440,7 @@ msgstr "-"
 
 #: data/units.xml.in:2713
 msgid "U.S. Barrel (oil)"
-msgstr "-"
+msgstr "Amerikanskt fat (olja)"
 
 #: data/units.xml.in:2715
 msgid "ar:bbl,barrel,p:barrels"
@@ -11513,7 +11568,7 @@ msgstr "knop"
 
 #: data/units.xml.in:3070
 msgid "Miles per Hour"
-msgstr "-"
+msgstr "Mile per timme"
 
 #: data/units.xml.in:3072
 msgid "a-cr:mph"
@@ -11561,7 +11616,7 @@ msgstr "-"
 
 #: data/units.xml.in:3174
 msgid "Acceleration Change"
-msgstr "Accelerationförändring"
+msgstr "Accelerationsförändring"
 
 #: data/units.xml.in:3177
 msgid "Meter per Second Cubed (Jerk)"
@@ -11573,15 +11628,15 @@ msgstr "Standardgravitation per sekund"
 
 #: data/units.xml.in:3205
 msgid "Meter per Second to the Fourth (Snap)"
-msgstr "Meter per sekund upphöjd med 4 (sprak)"
+msgstr "Meter per sekund upphöjd till 4 (sprak)"
 
 #: data/units.xml.in:3219
 msgid "Meter per Second to the Fifth (Crackle)"
-msgstr "Meter per sekund upphöjd med 5 (knak)"
+msgstr "Meter per sekund upphöjd till 5 (knak)"
 
 #: data/units.xml.in:3233
 msgid "Meter per Second to the Sixth (Pop)"
-msgstr "Meter per sekund upphöjd med 6 (brak)"
+msgstr "Meter per sekund upphöjd till 6 (brak)"
 
 #: data/units.xml.in:3250
 msgid "Magnetism"
@@ -11837,7 +11892,7 @@ msgstr "-"
 
 #: data/units.xml.in:3775
 msgid "Inch of Mercury"
-msgstr "Fot kvicksilver"
+msgstr "Tum kvicksilver"
 
 #: data/units.xml.in:3776
 msgid "ar:inHg"
@@ -11973,7 +12028,7 @@ msgstr "Kilokalori"
 
 #: data/units.xml.in:4027
 msgid "Calorie (capital C)"
-msgstr "Kalorier (med stort K)"
+msgstr "Kalori (Calorie med stort C)"
 
 #: data/units.xml.in:4028
 msgid "cr:Calorie,cp:Calories"
@@ -12168,14 +12223,12 @@ msgid "r:solar_luminosity,au:L_☉"
 msgstr "solluminositet,au:L_☉"
 
 #: data/units.xml.in:4341
-#, fuzzy
-#| msgid "Monte Carlo Integration"
 msgid "Ton of Refrigeration"
-msgstr "Monte Carlo-integrering"
+msgstr "Ton (kyleffekt)"
 
 #: data/units.xml.in:4342
 msgid "r:ton_refrigaration,ac:TOR"
-msgstr ""
+msgstr "+"
 
 #: data/units.xml.in:4351
 msgid "Entropy"
@@ -12323,7 +12376,7 @@ msgstr "Exponering"
 
 #: data/units.xml.in:4614
 msgid "Coulomb per Kilogram"
-msgstr "Coloumb per kilogram"
+msgstr "Coulomb per kilogram"
 
 #: data/units.xml.in:4628
 msgid "Roentgen"
@@ -12347,7 +12400,7 @@ msgstr "Millirem per timme"
 
 #: data/units.xml.in:4672
 msgid "Ratio"
-msgstr "-"
+msgstr "Förhållande"
 
 #: data/units.xml.in:4674
 msgid "Neper"
@@ -12379,7 +12432,7 @@ msgstr "-"
 
 #: data/units.xml.in:4699
 msgid "Bit (Binary Digit)"
-msgstr "-"
+msgstr "Bit (binär siffra)"
 
 #: data/units.xml.in:4700
 msgid "r:bit,p:bits,shannon,p:shannons,c:Sh,binary_digit,p:binary_digits"
@@ -12395,7 +12448,7 @@ msgstr "-"
 
 #: data/units.xml.in:4713
 msgid "Trit (Ternary Digit)"
-msgstr "-"
+msgstr "Trit (ternär siffra)"
 
 #: data/units.xml.in:4714
 msgid "r:trit,p:trits,trinary_digit,p:trinary_digits,ternary_digit,p:ternary_digits"
@@ -12403,7 +12456,7 @@ msgstr "-"
 
 #: data/units.xml.in:4722
 msgid "Octal Digit"
-msgstr "-"
+msgstr "Oktal siffra"
 
 #: data/units.xml.in:4723
 msgid "r:octal_digit,p:octal_digits"
@@ -12411,7 +12464,7 @@ msgstr "-"
 
 #: data/units.xml.in:4731
 msgid "Hartley (Decimal Digit)"
-msgstr "-"
+msgstr "Hartley (decimal siffra)"
 
 #: data/units.xml.in:4732
 msgid "r:hartley,p:hartleys,a:Hart,dit,p:dits,decimal_digit,p:decimal_digits"
@@ -12419,7 +12472,7 @@ msgstr "-"
 
 #: data/units.xml.in:4740
 msgid "Byte (8-bit)"
-msgstr "-"
+msgstr "Byte (8 bitar)"
 
 #: data/units.xml.in:4741
 msgid "r:byte,a:B,p:bytes,octet,p:octets,a:o"
@@ -12427,7 +12480,7 @@ msgstr "byte,a:B,p:byte,p:bytes"
 
 #: data/units.xml.in:4750
 msgid "Nibble (Hexadecimal Digit)"
-msgstr "-"
+msgstr "Nibble (hexadecimal siffra)"
 
 #: data/units.xml.in:4751
 msgid "r:nibble,p:nibbles,nybble,p:nybbles,semioctet,p:semioctets,hex_digit,p:hex_digits,hexadecimal_digit,p:hexadecimal_digits"
@@ -12459,7 +12512,7 @@ msgstr "-"
 
 #: data/units.xml.in:4786
 msgid "Word (16-bit)"
-msgstr "-"
+msgstr "Ord (16 bitar)"
 
 #: data/units.xml.in:4787
 msgid "r:word,p:words"
@@ -12543,14 +12596,17 @@ msgstr "Typografi"
 
 #: data/units.xml.in:4960
 msgid "PostScript Point (DTP)"
-msgstr "PostScipt-punkt (DTP)"
+msgstr "PostScript-punkt (DTP)"
 
 #: data/units.xml.in:4961
 msgid ""
 "The PostScript point, or desktop publishing point, is the screen-independent "
 "typographic unit commonly used in computer software and for digital "
 "printing. It is known as the big point (bp) in TeX."
-msgstr "-"
+msgstr ""
+"PostScript-punkten, även kallad DTP-punkten, är den skärmoberoende "
+"typografiska enhet som vanligen används i datorprogram och för digitalt "
+"tryck. I TeX kallas den big point (bp)."
 
 #: data/units.xml.in:4962
 msgid "ar:pt,a:pts,point,p:points,as:bp_tex,ao:tex_bp"
@@ -12670,7 +12726,7 @@ msgstr "Per 100 000"
 
 #: data/variables.xml.in:19
 msgid "r:pcm"
-msgstr ""
+msgstr "-"
 
 #: data/variables.xml.in:23
 msgid "Per Million"
@@ -12954,7 +13010,7 @@ msgstr "tjog"
 
 #: data/variables.xml.in:199
 msgid "Long Hundred"
-msgstr "Stor-hundrade"
+msgstr "Storhundrade"
 
 #: data/variables.xml.in:200
 msgid "-r:long_hundred,great_hundred,twelfty"
@@ -12998,7 +13054,7 @@ msgstr "Karaktäristisk impedans för vakuum"
 
 #: data/variables.xml.in:229
 msgid "Electric Constant (Permittivity of Free Space)"
-msgstr "Elektriska konstanten (tomrummets permettivitet)"
+msgstr "Elektriska konstanten (tomrummets permittivitet)"
 
 #: data/variables.xml.in:234
 msgid "Magnetic Constant (Permeability of Free Space)"
@@ -13274,7 +13330,7 @@ msgstr "Klassisk elektron-radie"
 
 #: data/variables.xml.in:562
 msgid "Fermi Coupling Constant"
-msgstr "Fermi Coupling-konstanten"
+msgstr "Fermis kopplingskonstant"
 
 #: data/variables.xml.in:567
 msgid "Fine-Structure Constant"
@@ -13298,7 +13354,7 @@ msgstr "Rydbergs konstant"
 
 #: data/variables.xml.in:592
 msgid "Thomson cross section"
-msgstr "Thomsons krossektion"
+msgstr "Thomsons tvärsnitt"
 
 #: data/variables.xml.in:597
 msgid "Weak Mixing Angle (sin²θw)"
@@ -13314,7 +13370,7 @@ msgstr "Fysikalisk-kemiska konstanter"
 
 #: data/variables.xml.in:610
 msgid "Lattice Spacing of Ideal Silicon (220)"
-msgstr "Gitteravstånd för idealt silikon (220)"
+msgstr "Gitteravstånd för idealt kisel (220)"
 
 #: data/variables.xml.in:615
 msgid "Atomic Mass Constant"
@@ -13354,7 +13410,7 @@ msgstr "Gaskonstanten"
 
 #: data/variables.xml.in:660
 msgid "Lattice Parameter of Silicon"
-msgstr "Gitterparameter för silikon"
+msgstr "Gitterparameter för kisel"
 
 #: data/variables.xml.in:665
 msgid "Loschmidt Constant (273.15 K, 100 kPa)"
@@ -13474,7 +13530,7 @@ msgstr "Förhållande kilogram till Hertz"
 
 #: data/variables.xml.in:808
 msgid "Kilogram - Inverse Meter Relationship"
-msgstr "Förhållande kilogram till recriprok meter"
+msgstr "Förhållande kilogram till reciprok meter"
 
 #: data/variables.xml.in:813
 msgid "Kilogram - Joule Relationship"
@@ -13510,7 +13566,7 @@ msgstr "-"
 
 #: data/variables.xml.in:852
 msgid "Plastic Number"
-msgstr "Plastnummer"
+msgstr "Plastiska talet"
 
 #: data/variables.xml.in:857
 msgid "Base of Natural Logarithms (e)"
@@ -13530,7 +13586,7 @@ msgstr "Catalans konstant"
 
 #: data/variables.xml.in:874
 msgid "Special Numbers"
-msgstr "Speciella nummer"
+msgstr "Speciella tal"
 
 #: data/variables.xml.in:876
 msgid "Imaginary i (sqrt -1)"
@@ -13586,7 +13642,7 @@ msgstr "-"
 
 #: data/variables.xml.in:910
 msgid "Pauli Matrix 1"
-msgstr "Paulimatris 2"
+msgstr "Paulimatris 1"
 
 #: data/variables.xml.in:911
 msgid "rs:pauli_1,aus:σ_1"
@@ -13614,7 +13670,7 @@ msgstr "-"
 
 #: data/variables.xml.in:932
 msgid "System Uptime"
-msgstr "Uptime för operativsystemet"
+msgstr "Operativsystemets drifttid"
 
 #: data/variables.xml.in:933
 msgid "r:uptime"
@@ -13659,6 +13715,64 @@ msgstr "Nu (datum och tid)"
 #: data/variables.xml.in:968
 msgid "r:now"
 msgstr "nu"
+
+#: data/functions.xml.in:623
+msgid "Angle between Two Vectors"
+msgstr "Vinkel mellan två vektorer"
+
+#: data/functions.xml.in:624
+msgid "r:vectorAngle"
+msgstr "-"
+
+#: data/functions.xml.in:625
+msgid "Returns the angle between two vectors."
+msgstr "Returnerar vinkeln mellan två vektorer."
+
+#: data/functions.xml.in:636
+msgid "Unit Vector"
+msgstr "Enhetsvektor"
+
+#: data/functions.xml.in:637
+msgid "r:unitVector"
+msgstr "-"
+
+#: data/functions.xml.in:638
+msgid "Returns a normalized (unit) vector (of length 1)."
+msgstr "Returnerar en normaliserad vektor (enhetsvektor med längden 1)."
+
+#: data/functions.xml.in:2154
+msgid "Polar to Cartesian Coordinates"
+msgstr "Polära till kartesiska koordinater"
+
+#: data/functions.xml.in:2155
+msgid "r:fromPolar,polar2cart"
+msgstr "+"
+
+#: data/functions.xml.in:2156
+msgid "Converts polar coordinates to Cartesian (geometric) coordinates."
+msgstr ""
+"Omvandlar polära koordinater till kartesiska (geometriska) koordinater."
+
+#: data/functions.xml.in:2159
+msgid "Radial coordinate"
+msgstr "Radiell koordinat"
+
+#: data/functions.xml.in:2162
+msgid "Angular coordinate"
+msgstr "Vinkelkoordinat"
+
+#: data/functions.xml.in:2166
+msgid "Cartesian to Polar Coordinates"
+msgstr "Kartesiska till polära koordinater"
+
+#: data/functions.xml.in:2167
+msgid "r:toPolar,cart2polar"
+msgstr "+"
+
+#: data/functions.xml.in:2168
+msgid "Converts Cartesian (geometric) coordinates to polar coordinates."
+msgstr ""
+"Omvandlar kartesiska (geometriska) koordinater till polära koordinater."
 
 #~ msgid "Returns a closed interval with the specified endpoints."
 #~ msgstr "Returnerar ett stängt intervall med angivna gränser."
