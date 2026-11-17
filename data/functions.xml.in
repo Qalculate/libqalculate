@@ -1617,7 +1617,7 @@ The set of digits used can be selected using the third argument (defaults to 0 f
     <builtin_function name="lambertw">
       <title>Lambert W Function (Omega Function, Product Log)</title>
       <names>r:lambertw,productlog</names>
-      <description>Returns the inverse function for x*e^x as ln() does for e^x. Only the principal branch and real valued results are currently supported.</description>
+      <description>Returns the inverse function for x*e^x as ln() does for e^x.</description>
       <argument index="1">
         <title>Value</title>
       </argument>

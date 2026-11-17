@@ -4024,7 +4024,7 @@
       </part>
     </unit>
     <unit type="alias">
-      <title>Calorie (capital C)</title>
+      <title>Large Calorie (capital C)</title>
       <names>cr:Calorie,cp:Calories</names>
       <base>
         <unit>cal_th</unit>
