@@ -752,8 +752,8 @@ bool Calculator::loadLocalDefinitions() {
 						}\
 					}
 
-static const char *definition_linguas[] = {"ca", "es", "fr", "nl", "sv", "ru", "zh_CN", "zh_TW"};
-size_t n_definition_linguas = 8;
+static const char *definition_linguas[] = {"ca", "es", "fr", "nl", "sv", "ru", "uk", "zh_CN", "zh_TW"};
+size_t n_definition_linguas = 9;
 
 string set_definition_language(const string &s) {
 	if(s == "C" || s == "POSIX") return "en";
