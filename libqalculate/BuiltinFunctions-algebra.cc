@@ -37,6 +37,7 @@ SumFunction::SumFunction() : MathFunction("sum", 3, 4) {
 	setArgumentDefinition(2, arg);
 	arg = new IntegerArgument();
 	arg->setHandleVector(false);
+	arg->setTests(false);
 	setArgumentDefinition(3, arg);
 	setArgumentDefinition(4, new SymbolicArgument());
 	setDefaultValue(4, "undefined");
@@ -44,13 +45,113 @@ SumFunction::SumFunction() : MathFunction("sum", 3, 4) {
 }
 int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, const EvaluationOptions &eo) {
 
+	MathStructure m3(vargs[2]);
+	if(!m3.isNumber()) m3.eval(eo);
+	if(m3.isNumber() && m3.number().hasImaginaryPart()) {
+		if(!m3.number().imaginaryPartIsNonZero() && m3.number().imaginaryPart().isFraction()) m3.number().clearImaginary();
+	}
+	if(m3.isNumber() && m3.number().isPlusInfinity()) {
+		if(vargs[1].isOne() || vargs[1].isZero()) {
+			UnknownVariable *var = new UnknownVariable("", format_and_print(vargs[3]));
+			Assumptions *ass = new Assumptions();
+			ass->setType(ASSUMPTION_TYPE_INTEGER);
+			ass->setSign(vargs[1].isZero() ? ASSUMPTION_SIGN_NONNEGATIVE : ASSUMPTION_SIGN_POSITIVE);
+			var->setAssumptions(ass);
+			MathStructure mvar(var);
+			var->destroy();
+			mstruct = vargs[0];
+			mstruct.replace(vargs[3], mvar);
+			mstruct.eval(eo);
+			mstruct.replace(mvar, vargs[3]);
+			if(mstruct.isMultiplication() && mstruct.size() >= 2 && mstruct[0].isNumber()) {
+				mstruct[1].transform(this);
+				mstruct[1].addChild(vargs[1]);
+				mstruct[1].addChild(m3);
+				mstruct[1].addChild(vargs[3]);
+				return 1;
+			} else if(mstruct.isAddition()) {
+				for(size_t i = 0; i < mstruct.size(); i++) {
+					mstruct[i].transform(this);
+					mstruct[i].addChild(vargs[1]);
+					mstruct[i].addChild(m3);
+					mstruct[i].addChild(vargs[3]);
+				}
+				return 1;
+			}
+			if(vargs[1].isZero()) {
+				mstruct = vargs[0];
+				mstruct.eval(eo);
+				if(mstruct.isPower()) {
+					if(mstruct[1] == vargs[3] && mstruct[0].representsFraction()) {
+						mstruct.setToChild(1, true);
+						mstruct.negate();
+						mstruct += m_one;
+						mstruct.inverse();
+						return 1;
+					}
+				} else if(mstruct.isMultiplication()) {
+					for(size_t i = 0; i < mstruct.size(); i++) {
+						if(mstruct[i].isPower() && mstruct[i][1] == vargs[3] && mstruct[i][0].representsFraction()) {
+							MathStructure m_r(mstruct[i][0]);
+							mstruct.delChild(i + 1, true);
+							if(mstruct.contains(vargs[3])) return 0;
+							m_r.negate();
+							m_r += m_one;
+							mstruct /= m_r;
+							return 1;
+						}
+					}
+				}
+			} else if(vargs[1].isOne()) {
+				if(mstruct.isPower()) {
+					if(mstruct[0] == vargs[3] && mstruct[1].representsEven() && mstruct[1].representsNegative()) {
+						mstruct.setToChild(2, true);
+						mstruct.negate();
+						mstruct.transformById(FUNCTION_ID_ZETA);
+						return 1;
+					} else if(mstruct[1].isMinusOne() && mstruct[0].isAddition() && mstruct[0].size() == 2 && mstruct[0][0].isPower() && mstruct[0][0][0] == vargs[3] && mstruct[0][0][1].isNumber() && mstruct[0][0][1].number().isTwo()) {
+						if(mstruct[0][1] == vargs[3]) {
+							mstruct.set(m_one, true);
+							return 1;
+						} else if(mstruct[0][1].isMultiplication() && mstruct[0][1].size() == 2 && mstruct[0][1][1] == vargs[3] && mstruct[0][1][0].isInteger() && mstruct[0][1][0].number().isPositive()) {
+							MathStructure m_k(mstruct[0][1][0]);
+							UnknownVariable *var_k = new UnknownVariable("", "k");
+							MathStructure mvar(var_k);
+							var_k->destroy();
+							MathStructure mharm(this, &mvar, &m_one, &m_k, &mvar, NULL);
+							mharm[0].inverse();
+							mstruct.set(mharm, true);
+							mstruct.divide(m_k);
+							return 1;
+						}
+					}
+				}
+			}
+			return -1;
+		}
+		return 0;
+	}
+	if(m3.isNumber() && m3.number().isReal() && !m3.number().isInteger() && m3.number().isInterval() && m3.number().precision(true) > PRECISION + 10) {
+		Number nr;
+		if(m3.number().getCentralInteger(nr)) m3.set(nr, true);
+	}
+	if(!m3.isInteger()) {
+		Argument *arg = getArgumentDefinition(3);
+		if(arg) {
+			arg->setTests(true);
+			arg->test(m3, 1, this, eo);
+			arg->setTests(false);
+		}
+		return 0;
+	}
+
 	MathStructure m1(vargs[0]);
 	EvaluationOptions eo2 = eo;
 	eo2.calculate_functions = false;
 	eo2.expand = false;
 	Number i_nr(vargs[1].number());
 	if(eo2.approximation == APPROXIMATION_TRY_EXACT) {
-		Number nr(vargs[2].number());
+		Number nr(m3.number());
 		nr.subtract(i_nr);
 		if(nr.isGreaterThan(100)) eo2.approximation = APPROXIMATION_APPROXIMATE;
 	}
@@ -86,14 +187,14 @@ int SumFunction::calculate(MathStructure &mstruct, const MathStructure &vargs, c
 	mstruct.clear();
 	MathStructure mstruct_calc;
 	bool started = false;
-	while(i_nr.isLessThanOrEqualTo(vargs[2].number())) {
+	while(i_nr.isLessThanOrEqualTo(m3.number())) {
 		if(CALCULATOR->aborted()) {
 			if(!started) {
 				for(size_t i = 0; i < vars.size(); i++) vars[i]->destroy();
 				return 0;
-			} else if(i_nr != vargs[2].number()) {
+			} else if(i_nr != m3.number()) {
 				MathStructure mmin(i_nr);
-				mstruct.add(MathStructure(this, &vargs[0], &mmin, &vargs[2], &vargs[3], NULL), true);
+				mstruct.add(MathStructure(this, &vargs[0], &mmin, &m3, &vargs[3], NULL), true);
 				break;
 			}
 		}
